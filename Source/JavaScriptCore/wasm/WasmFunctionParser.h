@@ -212,7 +212,13 @@ private:
     WARN_UNUSED_RETURN PartialResult parseUnreachableExpression();
     WARN_UNUSED_RETURN PartialResult unifyControl(ArgumentList&, unsigned level);
     WARN_UNUSED_RETURN PartialResult checkLocalInitialized(uint32_t);
-    WARN_UNUSED_RETURN PartialResult checkExpressionStack(const ControlType&, bool forceSignature = false);
+
+    enum FallThroughStateTag {
+        NewSiblingBlock,
+        MergePoint,
+    };
+
+    WARN_UNUSED_RETURN PartialResult checkBlockFallthrough(const ControlType&, FallThroughStateTag);
 
     enum BranchConditionalityTag {
         Unconditional,
@@ -1806,7 +1812,7 @@ auto FunctionParser<Context>::checkLocalInitialized(uint32_t index) -> PartialRe
 }
 
 template<typename Context>
-auto FunctionParser<Context>::checkExpressionStack(const ControlType& controlData, bool forceSignature) -> PartialResult
+auto FunctionParser<Context>::checkBlockFallthrough(const ControlType& controlData, FallThroughStateTag fallthrough) -> PartialResult
 {
     auto blockSignature = controlData.signature();
     const FunctionSignature* signature = blockSignature.m_signature;
@@ -1815,7 +1821,11 @@ auto FunctionParser<Context>::checkExpressionStack(const ControlType& controlDat
         const auto actualType = m_expressionStack[i].type();
         const auto expectedType = signature->returnType(i);
         WASM_VALIDATOR_FAIL_IF(!isSubtype(actualType, expectedType), "control flow returns with unexpected type. "_s, actualType, " is not a "_s, expectedType);
-        if (forceSignature)
+        // The spec requires the output type of a structured control instruction to be
+        // the result type from its signature, even when the fallthrough value is a subtype.
+        // FIXME: We should support some sort of abstract interpretation so this can be the
+        // least upper bound of the merging CFG.
+        if (fallthrough == MergePoint)
             m_expressionStack[i].setType(expectedType);
     }
 
@@ -3404,7 +3414,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         ControlEntry& controlEntry = m_controlStack.last();
 
         WASM_VALIDATOR_FAIL_IF(!ControlType::isIf(controlEntry.controlData), "else block isn't associated to an if");
-        WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(controlEntry.controlData));
+        WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(controlEntry.controlData, NewSiblingBlock));
         WASM_TRY_ADD_TO_CONTEXT(addElse(controlEntry.controlData, m_expressionStack));
         m_expressionStack = WTF::move(controlEntry.elseBlockStack);
         resetLocalInitStackToHeight(controlEntry.localInitStackHeight);
@@ -3444,7 +3454,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         ControlEntry& controlEntry = m_controlStack.last();
         WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(controlEntry.controlData), "catch block isn't associated to a try");
-        WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(controlEntry.controlData));
+        WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(controlEntry.controlData, NewSiblingBlock));
 
         ResultList results;
         Stack preCatchStack;
@@ -3470,7 +3480,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         ControlEntry& controlEntry = m_controlStack.last();
 
         WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(controlEntry.controlData), "catch block isn't associated to a try");
-        WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(controlEntry.controlData));
+        WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(controlEntry.controlData, NewSiblingBlock));
 
         ResultList results;
         Stack preCatchStack;
@@ -3582,7 +3592,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_VALIDATOR_FAIL_IF(!ControlType::isTry(targetData) && !ControlType::isTopLevel(targetData), "delegate target isn't a try or the top level block");
 
         WASM_TRY_ADD_TO_CONTEXT(addDelegate(targetData, controlEntry.controlData));
-        WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(controlEntry.controlData));
+        WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(controlEntry.controlData, NewSiblingBlock));
         WASM_TRY_ADD_TO_CONTEXT(endBlock(controlEntry, m_expressionStack));
         m_expressionStack.swap(controlEntry.enclosedExpressionStack);
         resetLocalInitStackToHeight(controlEntry.localInitStackHeight);
@@ -3714,16 +3724,14 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     case End: {
         ControlEntry data = m_controlStack.takeLast();
         if (ControlType::isIf(data.controlData)) {
-            WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(data.controlData));
+            WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(data.controlData, NewSiblingBlock));
             WASM_TRY_ADD_TO_CONTEXT(addElse(data.controlData, m_expressionStack));
             m_expressionStack = WTF::move(data.elseBlockStack);
         }
-        // The spec requires the output type of a structured control instruction to be
-        // the result type from its signature, even when the fallthrough value is a subtype.
         // FIXME: This is a little weird in that it will modify the expressionStack for the result of the block.
         // That's a little too effectful for me but I don't have a better API right now.
         // see: https://bugs.webkit.org/show_bug.cgi?id=164353
-        WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(data.controlData, true));
+        WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(data.controlData, MergePoint));
         WASM_TRY_ADD_TO_CONTEXT(endBlock(data, m_expressionStack));
         m_expressionStack.swap(data.enclosedExpressionStack);
         if (!ControlType::isTopLevel(data.controlData))
@@ -3913,7 +3921,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             if (ControlType::isIf(data.controlData)) {
                 WASM_TRY_ADD_TO_CONTEXT(addElseToUnreachable(data.controlData));
                 m_expressionStack = WTF::move(data.elseBlockStack);
-                WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(data.controlData));
+                WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(data.controlData, MergePoint));
                 WASM_TRY_ADD_TO_CONTEXT(endBlock(data, m_expressionStack));
             } else {
                 Stack emptyStack;
