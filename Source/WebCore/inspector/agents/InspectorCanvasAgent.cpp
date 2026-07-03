@@ -358,11 +358,7 @@ void InspectorCanvasAgent::didCreateCanvasRenderingContext(CanvasRenderingContex
 
 void InspectorCanvasAgent::didChangeCanvasSize(CanvasRenderingContext& context)
 {
-    RefPtr<InspectorCanvas> inspectorCanvas;
-
-    if (!inspectorCanvas)
-        inspectorCanvas = findInspectorCanvas(context);
-
+    RefPtr inspectorCanvas = findInspectorCanvas(context);
     ASSERT(inspectorCanvas);
     if (!inspectorCanvas)
         return;
@@ -373,11 +369,7 @@ void InspectorCanvasAgent::didChangeCanvasSize(CanvasRenderingContext& context)
 
 void InspectorCanvasAgent::didChangeCanvasMemory(const CanvasRenderingContext& context)
 {
-    RefPtr<InspectorCanvas> inspectorCanvas;
-
-    if (!inspectorCanvas)
-        inspectorCanvas = findInspectorCanvas(context);
-
+    RefPtr inspectorCanvas = findInspectorCanvas(context);
     ASSERT(inspectorCanvas);
     if (!inspectorCanvas)
         return;
