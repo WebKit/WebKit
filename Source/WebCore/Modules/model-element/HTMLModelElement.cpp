@@ -31,6 +31,7 @@
 
 #include "ARKitBadgeSystemImage.h"
 #include "AbortSignal.h"
+#include "CommonAtomStrings.h"
 #include "ContainerNodeInlines.h"
 #include "DOMMatrixReadOnly.h"
 #include "DOMPointReadOnly.h"
@@ -69,6 +70,7 @@
 #include "LegacySchemeRegistry.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
+#include "MediaQueryEvaluator.h"
 #include "Model.h"
 #include "ModelPlayer.h"
 #include "ModelPlayerAnimationState.h"
@@ -229,8 +231,13 @@ URL HTMLModelElement::selectModelSource() const
     if (auto src = getNonEmptyURLAttribute(srcAttr); src.isValid())
         return src;
 
+    Ref document = this->document();
     for (Ref element : childrenOfType<HTMLSourceElement>(*this)) {
         if (!isSupportedModelType(element->attributeWithoutSynchronization(typeAttr)))
+            continue;
+
+        auto& queries = element->parsedMediaAttribute(document);
+        if (!queries.isEmpty() && !MQ::MediaQueryEvaluator { screenAtom(), document }.evaluate(queries))
             continue;
 
         if (auto src = element->getNonEmptyURLAttribute(srcAttr); src.isValid())

@@ -184,6 +184,12 @@ void HTMLSourceElement::attributeChanged(const QualifiedName& name, const AtomSt
         RefPtr parent = parentElement();
         if (m_shouldCallSourcesChanged && parent)
             downcast<HTMLPictureElement>(*parent).sourcesChanged();
+#if ENABLE(MODEL_ELEMENT)
+        if (name == mediaAttr) {
+            if (RefPtr parentModelElement = dynamicDowncast<HTMLModelElement>(parent.get()))
+                parentModelElement->sourcesChanged();
+        }
+#endif
         break;
     }
     case AttributeNames::widthAttr:
