@@ -1833,8 +1833,12 @@ void NetworkConnectionToWebProcess::installMockContentFilter(WebCore::MockConten
 
 void NetworkConnectionToWebProcess::useRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier identifier, WebCore::ResourceResponse&& response)
 {
-    if (RefPtr loader = m_networkResourceLoaders.get(identifier))
-        loader->useRedirectionForCurrentNavigation(WTF::move(response));
+    MESSAGE_CHECK(response.isRedirection());
+    RefPtr loader = m_networkResourceLoaders.get(identifier);
+    if (!loader)
+        return;
+    MESSAGE_CHECK(loader->isMainFrameLoad());
+    loader->useRedirectionForCurrentNavigation(WTF::move(response));
 }
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
