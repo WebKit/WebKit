@@ -594,6 +594,10 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
 
     MESSAGE_CHECK(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate);
 
+    auto cachePartition = RegistrableDomain::uncheckedCreateFromHost(loadParameters.request.cachePartition());
+    auto allowCachePartition = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, cachePartition);
+    MESSAGE_CHECK(allowCachePartition != NetworkProcess::AllowCookieAccess::Terminate);
+
     CONNECTION_RELEASE_LOG(Loading, "scheduleResourceLoad: (parentPID=%d, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", existingLoaderToResume=%" PRIu64 ")", loadParameters.parentPID, loadParameters.webPageProxyID.toUInt64(), loadParameters.webPageID.toUInt64(), loadParameters.webFrameID.toUInt64(), loadParameters.identifier ? loadParameters.identifier->toUInt64() : 0, existingLoaderToResume ? existingLoaderToResume->toUInt64() : 0);
 
     if (CheckedPtr session = networkSession()) {
