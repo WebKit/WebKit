@@ -1,0 +1,116 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<pre id="log"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(s) { document.getElementById('log').textContent += s + '\n'; }
+
+function S(v)    { return {type: 'String', value: v}; }
+function U8(v)   { return {type: 'uint8_t', value: v}; }
+function I64(v)  { return {type: 'int64_t', value: v}; }
+function U64(v)  { return {type: 'uint64_t', value: v}; }
+function B(v)    { return {type: 'bool', value: v}; }
+function DBL(v)  { return {type: 'double', value: v}; }
+function URLv(v) { return {type: 'URL', value: v}; }
+
+function resourceRequest(url) {
+    return [
+        U8(0),                      // Variant<RequestData,PlatformData> index
+        URLv(url),                  // m_url
+        URLv(url),                  // m_firstPartyForCookies
+        DBL(60.0),                  // m_timeoutInterval
+        S('GET'),                   // m_httpMethod
+        U64(0n), U64(0n),           // HTTPHeaderMap: commonHeaders, uncommonHeaders sizes
+        U64(0n),                    // m_responseContentDispositionEncodingFallbackArray size
+        U8(0),                      // m_cachePolicy
+        U8(0),                      // m_sameSiteDisposition
+        U8(0),                      // m_priority
+        U8(0),                      // m_requester
+        B(1),                       // m_allowCookies
+        B(0),                       // m_isTopSite
+        B(1),                       // m_isAppInitiated
+        B(0),                       // m_privacyProxyFailClosedForUnreachableNonMainHosts
+        B(0),                       // m_useAdvancedPrivacyProtections
+        B(0),                       // m_didFilterLinkDecoration
+        B(0),                       // m_isPrivateTokenUsageByThirdPartyAllowed
+        B(0),                       // m_wasSchemeOptimisticallyUpgraded
+        B(0),                       // m_targetAddressSpace
+        S(''),                      // cachePartition
+        B(0),                       // hiddenFromInspector
+    ];
+}
+
+function coreIPCError(domain, code, failingURL) {
+    return [
+        S(domain),                  // m_domain
+        I64(code),                  // m_code
+        B(0),                       // m_underlyingError
+        B(0),                       // m_clientCertificateChain
+        B(0),                       // m_peerCertificateChain
+        S('repro'),                 // m_localizedDescription
+        S(null),                    // m_localizedFailureReasonError
+        S(null),                    // m_localizedRecoverySuggestionError
+        B(0),                       // m_localizedRecoveryOptionsError
+        S(null),                    // m_localizedFailureError
+        S(null),                    // m_helpAnchorError
+        S(null),                    // m_debugDescriptionError
+        B(0),                       // m_stringEncodingError
+        B(0),                       // m_failingURLPeerTrustError
+        B(0),                       // m_urlError
+        B(1), B(1), URLv(failingURL), // m_failingURLError = NSURL(failingURL)
+        S(null),                    // m_filePathError
+        S(null),                    // m_networkTaskDescription
+        S(null),                    // m_networkTaskMetricsPrivacyStance
+        S(null),                    // m_description
+    ];
+}
+
+function resourceError(domain, code, failingURL) {
+    return [
+        B(1),                       // std::optional<ResourceError::IPCData> engaged
+        U8(1),                      // IPCData.type = General
+        B(1), B(1),                 // RetainPtr<NSError> engaged, std::optional<CoreIPCError> engaged
+        ...coreIPCError(domain, code, failingURL),
+        B(0),                       // IPCData.isSanitized
+    ];
+}
+
+function takeInvalidMessageString() {
+    let reply = IPC.sendSyncMessage('UI', 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []);
+    return reply && reply.arguments && reply.arguments[0] ? reply.arguments[0].value : '';
+}
+
+function sendDidFailLoad(failingURL) {
+    // Use a generic error code (not -1001 NSURLErrorTimedOut or -999 NSURLErrorCancelled)
+    // so ResourceError::fromIPCData's mapPlatformError() leaves m_type as General, matching
+    // the IPC-supplied type and avoiding ResourceErrorBase::setType's debug assertion.
+    IPC.sendMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_DidFailLoadForFrame.name, [
+        {type: 'FrameID', value: IPC.frameID},      // frameID
+        {type: 'FrameInfoData', value: IPC},        // frameInfo
+        ...resourceRequest(location.href),          // request
+        B(0),                                       // navigationID = nullopt
+        ...resourceError('NSURLErrorDomain', -2, failingURL),
+        B(0),                                       // userData
+    ]);
+}
+
+if (window.IPC) {
+    takeInvalidMessageString(); // clear any prior error string
+
+    sendDidFailLoad('file:///private/var/x');
+    let error = takeInvalidMessageString();
+
+    if (error.includes('Message check failed') && error.includes('error.failingURL'))
+        log('PASS: WebPageProxy::didFailLoadForFrame MESSAGE_CHECK rejected file:// failingURL');
+    else if (error)
+        log('FAIL: message rejected for unexpected reason: ' + error);
+    else
+        log('FAIL: WebPageProxy::didFailLoadForFrame accepted file:// failingURL without MESSAGE_CHECK');
+} else
+    log('PASS: WebPageProxy::didFailLoadForFrame MESSAGE_CHECK rejected file:// failingURL');
+</script>
+</body>
+</html>

@@ -8031,6 +8031,7 @@ void WebPageProxy::didFailLoadForFrame(IPC::Connection& connection, FrameIdentif
     // the message could be sent by original process whose load gets cancelled as the provisional
     // load is continuing in another process.
     Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_URL(process, error.failingURL());
     if (m_provisionalPage && frame->isMainFrame() && m_provisionalPage->process() != process.get()) {
         WEBPAGEPROXY_RELEASE_LOG(Loading, "didFailLoadForFrame: frameID=%" PRIu64 ", isMainFrame=%d, domain=%s, code=%d, provisionalPID=%i", frameID.toUInt64(), frame->isMainFrame(), error.domain().utf8().data(), error.errorCode(), m_provisionalPage->process().processID());
         return;
