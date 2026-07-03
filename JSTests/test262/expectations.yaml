@@ -49,9 +49,6 @@ test/built-ins/Uint8Array/prototype/setFromBase64/trailing-garbage-empty.js:
 test/built-ins/Uint8Array/prototype/setFromBase64/trailing-garbage.js:
   default: 'SyntaxError: Uint8Array.prototype.setFromBase64 requires a valid base64 string'
   strict mode: 'SyntaxError: Uint8Array.prototype.setFromBase64 requires a valid base64 string'
-test/intl402/FallbackSymbol/per-realm.js:
-  default: 'Test262Error: %Intl%.[[FallbackSymbol]] should be different per-realm Expected SameValue(«Symbol(IntlLegacyConstructedSymbol)», «Symbol(IntlLegacyConstructedSymbol)») to be false'
-  strict mode: 'Test262Error: %Intl%.[[FallbackSymbol]] should be different per-realm Expected SameValue(«Symbol(IntlLegacyConstructedSymbol)», «Symbol(IntlLegacyConstructedSymbol)») to be false'
 test/intl402/NumberFormat/prototype/format/unit-ja-JP.js:
   default: 'Test262Error: Expected SameValue(«"時速-987キロメートル"», «"時速 -987 キロメートル"») to be true'
   strict mode: 'Test262Error: Expected SameValue(«"時速-987キロメートル"», «"時速 -987 キロメートル"») to be true'

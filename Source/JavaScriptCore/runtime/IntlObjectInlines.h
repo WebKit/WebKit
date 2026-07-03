@@ -89,7 +89,7 @@ JSValue constructIntlInstanceWithWorkaroundForLegacyIntlConstructor(JSGlobalObje
         if (hasInstance) {
             PropertyDescriptor descriptor(instance, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
             scope.release();
-            thisObject->methodTable()->defineOwnProperty(thisObject, globalObject, vm.propertyNames->builtinNames().intlLegacyConstructedSymbol(), descriptor, true);
+            thisObject->methodTable()->defineOwnProperty(thisObject, globalObject, globalObject->intlLegacyConstructedSymbol(), descriptor, true);
             return thisObject;
         }
     }
@@ -118,7 +118,7 @@ InstanceType* unwrapForLegacyIntlConstructor(JSGlobalObject* globalObject, JSVal
     if (!hasInstance)
         return nullptr;
 
-    JSValue value = thisObject->get(globalObject, vm.propertyNames->builtinNames().intlLegacyConstructedSymbol());
+    JSValue value = thisObject->get(globalObject, globalObject->intlLegacyConstructedSymbol());
     RETURN_IF_EXCEPTION(scope, nullptr);
     return dynamicDowncast<InstanceType>(value);
 }
