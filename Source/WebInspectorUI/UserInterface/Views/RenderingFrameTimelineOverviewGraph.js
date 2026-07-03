@@ -44,6 +44,9 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
         this._framesPerSecondDividerMap = new Map;
 
         this.reset();
+
+        for (let record of this._renderingFrameTimeline.records)
+            this._maximumFrameDuration = Math.max(this._maximumFrameDuration, record.duration);
     }
 
     // Public
@@ -53,11 +56,7 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
         if (!isNaN(this._graphHeightSeconds))
             return this._graphHeightSeconds;
 
-        var maximumFrameDuration = this._renderingFrameTimeline.records.reduce(function(previousValue, currentValue) {
-            return Math.max(previousValue, currentValue.duration);
-        }, 0);
-
-        this._graphHeightSeconds = maximumFrameDuration * 1.1; // Add 10% margin above frames.
+        this._graphHeightSeconds = this._maximumFrameDuration * 1.1; // Add 10% margin above frames.
         this._graphHeightSeconds = Math.min(this._graphHeightSeconds, WI.RenderingFrameTimelineOverviewGraph.MaximumGraphHeightSeconds);
         this._graphHeightSeconds = Math.max(this._graphHeightSeconds, WI.RenderingFrameTimelineOverviewGraph.MinimumGraphHeightSeconds);
         return this._graphHeightSeconds;
@@ -70,6 +69,8 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
         this.element.removeChildren();
 
         this.selectedRecord = null;
+
+        this._maximumFrameDuration = 0;
 
         this._framesPerSecondDividerMap.clear();
     }
@@ -170,6 +171,7 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
 
     _timelineRecordAdded(event)
     {
+        this._maximumFrameDuration = Math.max(this._maximumFrameDuration, event.data.record.duration);
         this._graphHeightSeconds = NaN;
 
         this.needsLayout();
