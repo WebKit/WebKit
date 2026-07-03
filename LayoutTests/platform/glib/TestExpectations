@@ -3476,6 +3476,19 @@ fast/speechsynthesis/lockdown-mode [ Skip ]
 # NEEDS TRIAGING. If unsure, put it in this section.
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# WPE ARM64 v252 bot failures, gardened on main.
+webkit.org/b/316359 accessibility/aria-hidden-deep-dom-no-crash.html [ Timeout Pass ]
+webkit.org/b/315858 [ Release ] accessibility/aria-owns-deep-chain-no-timeout.html [ Timeout Pass ]
+webkit.org/b/310178 css3/font-variant-font-face-override.html [ ImageOnlyFailure ]
+webkit.org/b/310178 fast/canvas/fill-text-with-font-features.html [ ImageOnlyFailure ]
+webkit.org/b/304002 fast/inline/missing-content-on-autofill-with-out-of-flow-input-descendant.html [ Skip ]
+webkit.org/b/298925 fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Timeout ]
+webkit.org/b/312138 fast/mediastream/mediastreamtrack-video-frameRate-clone-decreasing.html [ Failure ]
+webkit.org/b/306384 [ arm64 ] imported/w3c/web-platform-tests/css/filter-effects/root-element-with-opacity-filter-001.html [ ImageOnlyFailure ]
+webkit.org/b/309373 [ x86_64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-denormals.https.window.html [ Failure ]
+webkit.org/b/306463 imported/w3c/web-platform-tests/import-maps/bare-specifiers.sub.html [ Failure Pass ]
+webkit.org/b/306463 imported/w3c/web-platform-tests/import-maps/data-url-specifiers.sub.html [ Failure Pass ]
+
 webkit.org/b/264933 fast/mediastream/image-capture-take-photo.html [ Pass Failure Crash ]
 
 webkit.org/b/264700 imported/w3c/web-platform-tests/css/css-color/filters-under-will-change-opacity.html [ Pass ImageOnlyFailure ]
