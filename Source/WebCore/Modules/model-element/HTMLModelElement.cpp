@@ -815,8 +815,15 @@ void HTMLModelElement::reloadModelPlayer()
 #if ENABLE(MODEL_PROCESS) || ENABLE(GPU_PROCESS_MODEL)
     if (!m_modelPlayerProvider)
         m_modelPlayerProvider = document().page()->modelPlayerProvider();
+#if ENABLE(GPU_PROCESS_MODEL)
+    RefPtr<ModelPlayer> previousPlayer = modelPlayer;
+#endif
     if (RefPtr modelPlayerProvider = m_modelPlayerProvider) {
         modelPlayer = modelPlayerProvider->createModelPlayer(*this);
+#if ENABLE(GPU_PROCESS_MODEL)
+        if (modelPlayer && previousPlayer)
+            modelPlayer->adoptContentsDisplayDelegateFrom(*previousPlayer);
+#endif
         m_modelPlayer = modelPlayer.copyRef();
     }
     if (!modelPlayer) {

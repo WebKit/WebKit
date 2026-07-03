@@ -112,6 +112,9 @@ void WebModelPlayerProvider::deleteModelPlayer(WebCore::ModelPlayer& modelPlayer
     Ref page = m_page.get();
     if (page->corePage() && page->corePage()->settings().modelProcessEnabled())
         WebProcess::singleton().modelProcessModelPlayerManager().deleteModelProcessModelPlayer(modelPlayer);
+#elif ENABLE(GPU_PROCESS_MODEL)
+    if (RefPtr webModelPlayer = dynamicDowncast<WebModelPlayer>(modelPlayer))
+        webModelPlayer->releaseModelResources();
 #else
     UNUSED_PARAM(modelPlayer);
 #endif

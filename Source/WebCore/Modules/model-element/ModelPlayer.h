@@ -71,6 +71,7 @@ public:
 
     virtual ModelPlayerIdentifier identifier() const = 0;
     virtual bool NODELETE isPlaceholder() const;
+    virtual bool NODELETE isWebModelPlayerInstance() const;
 
     // Loading.
     virtual void load(Model&, LayoutSize, bool) = 0;
@@ -78,6 +79,7 @@ public:
 
     // Graphics.
     virtual void configureGraphicsLayer(GraphicsLayer&, ModelPlayerGraphicsLayerConfiguration&&) = 0;
+    virtual void NODELETE adoptContentsDisplayDelegateFrom(ModelPlayer&);
 
     virtual RefPtr<ImageBuffer> snapshotCurrentFrame(const FloatSize& deviceSize, const DestinationColorSpace&);
 

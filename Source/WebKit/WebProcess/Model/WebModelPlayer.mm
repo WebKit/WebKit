@@ -111,6 +111,10 @@ public:
     {
         m_contentsFormat = contentsFormat;
     }
+    void setModelPlayer(WebModelPlayer& modelPlayer)
+    {
+        m_modelPlayer = modelPlayer;
+    }
 private:
     ModelDisplayBufferDisplayDelegate(WebModelPlayer& modelPlayer, float contentsScale)
         : m_modelPlayer(modelPlayer)
@@ -201,6 +205,7 @@ void WebModelPlayer::load(WebCore::Model& modelSource, WebCore::LayoutSize size,
     m_displayTextureIndex = 0;
     m_hasRenderedFrame = false;
     m_isUpdateLoopRunning = false;
+    m_pendingClientFinishLoadingNotification = false;
     RefPtr document = corePage->localTopDocument();
     if (!document)
         return;
@@ -266,14 +271,7 @@ void WebModelPlayer::load(WebCore::Model& modelSource, WebCore::LayoutSize size,
                 protectedThis->m_didFinishLoading = true;
                 [protectedThis->m_modelLoader setLoop:protectedThis->m_isLooping];
                 protectedThis->m_cachedAnimationState = protectedThis->currentAnimationState();
-
-                client->didFinishLoading(protectedThis.get());
-                auto [center, extents] = protectedThis->boundingBoxCenterAndExtents();
-                client->didUpdateBoundingBox(protectedThis.get(), center, extents);
-                protectedThis->notifyEntityTransformUpdated();
-
-                if (auto environmentMap = protectedThis->m_environmentMap)
-                    protectedThis->setEnvironmentMap(WTF::move(*environmentMap));
+                protectedThis->m_pendingClientFinishLoadingNotification = true;
             }
             protectedThis->startUpdateLoopIfNeeded();
         });
@@ -492,6 +490,20 @@ void WebModelPlayer::configureGraphicsLayer(WebCore::GraphicsLayer& graphicsLaye
     graphicsLayer.setContentsDisplayDelegate(contentsDisplayDelegate(), WebCore::GraphicsLayer::ContentsLayerPurpose::Canvas);
 }
 
+void WebModelPlayer::adoptContentsDisplayDelegateFrom(WebCore::ModelPlayer& previousPlayer)
+{
+    auto* webPrevious = dynamicDowncast<WebModelPlayer>(previousPlayer);
+    if (!webPrevious)
+        return;
+
+    RefPtr delegate = std::exchange(webPrevious->m_contentsDisplayDelegate, nullptr);
+    if (!delegate)
+        return;
+
+    delegate->setModelPlayer(*this);
+    m_contentsDisplayDelegate = WTF::move(delegate);
+}
+
 const MachSendRight* WebModelPlayer::displayBuffer() const
 {
     if (m_displayTextureIndex >= m_displayBuffers.size())
@@ -667,6 +679,7 @@ bool WebModelPlayer::render()
                 protectedThis->updateScreenHeadroomFromPage();
             }
 
+            protectedThis->notifyClientDidFinishLoading();
             protectedThis->scheduleDisplayUpdate();
         });
     });
@@ -678,6 +691,30 @@ void WebModelPlayer::scheduleDisplayUpdate()
 {
     if (RefPtr graphicsLayer = m_graphicsLayer)
         graphicsLayer->setContentsNeedsDisplay();
+}
+
+void WebModelPlayer::notifyClientDidFinishLoading()
+{
+    if (!m_pendingClientFinishLoadingNotification)
+        return;
+
+    RefPtr client { m_client };
+    if (!client)
+        return;
+
+    m_pendingClientFinishLoadingNotification = false;
+
+    Ref protectedThis { *this };
+    client->didFinishLoading(protectedThis);
+
+    if (m_currentModel) {
+        auto [center, extents] = boundingBoxCenterAndExtents();
+        client->didUpdateBoundingBox(protectedThis, center, extents);
+    }
+    notifyEntityTransformUpdated();
+
+    if (auto environmentMap = m_environmentMap)
+        setEnvironmentMap(WTF::move(*environmentMap));
 }
 
 bool WebModelPlayer::supportsTransform(WebCore::TransformationMatrix transformationMatrix)
@@ -829,6 +866,22 @@ static bool disableReloading()
     return disableReloading;
 }
 
+void WebModelPlayer::releaseModelResources()
+{
+    m_currentModel = nullptr;
+    m_retainedData = nil;
+    m_didFinishLoading = false;
+    m_modelLoader = nil;
+    m_displayBuffers.clear();
+    m_environmentMap = std::nullopt;
+    m_isUpdateLoopRunning = false;
+    m_isUpdateScheduled = false;
+    m_isUpdating = false;
+    m_displayTextureIndex = 0;
+    m_hasRenderedFrame = false;
+    m_pendingClientFinishLoadingNotification = false;
+}
+
 void WebModelPlayer::visibilityStateDidChange()
 {
     // When the model becomes invisible, release memory-intensive resources.
@@ -842,17 +895,7 @@ void WebModelPlayer::visibilityStateDidChange()
         m_cachedTransformState = currentTransformState();
 
         // Model is no longer visible - release resources to save memory
-        m_currentModel = nullptr;
-        m_retainedData = nil;
-        m_didFinishLoading = false;
-        m_modelLoader = nil;
-        m_displayBuffers.clear();
-        m_environmentMap = std::nullopt;
-        m_isUpdateLoopRunning = false;
-        m_isUpdateScheduled = false;
-        m_isUpdating = false;
-        m_displayTextureIndex = 0;
-        m_hasRenderedFrame = false;
+        releaseModelResources();
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
         m_cachedModelSource = nullptr;
 #endif
