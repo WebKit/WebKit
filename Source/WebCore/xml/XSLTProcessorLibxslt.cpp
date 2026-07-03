@@ -303,6 +303,13 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
     xsltStylesheetPtr sheet = xsltStylesheetPointer(m_stylesheet, m_stylesheetRootNode.get());
     if (!sheet) {
         setXSLTLoadCallBack(nullptr, nullptr, nullptr);
+        // Clear dangling document pointers in the stylesheet tree. When compilation
+        // fails, libxslt may have already freed imported child docs via
+        // xsltParseStylesheetImport() → xmlFreeDoc(). Without this call, child
+        // stylesheets retain dangling m_stylesheetDoc pointers that can be
+        // dereferenced if a delayed subresource later triggers parseString().
+        if (RefPtr stylesheet = m_stylesheet)
+            stylesheet->clearDocuments();
         m_stylesheet = nullptr;
         return false;
     }
