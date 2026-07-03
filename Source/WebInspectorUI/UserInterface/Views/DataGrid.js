@@ -1377,6 +1377,8 @@ WI.DataGrid = class DataGrid extends WI.View
             return reverseFactor * comparator(aNode, bNode);
         }
 
+        if (this._sortNodesRequestId)
+            window.cancelAnimationFrame(this._sortNodesRequestId);
         this._sortNodesRequestId = undefined;
         this._sortNodesComparator = null;
 
