@@ -149,7 +149,7 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
                 .release();
 
             RefPtr<const TimingFunction> timingFunction;
-            if (!parsedKeyframes.isEmpty())
+            if (i < parsedKeyframes.size())
                 timingFunction = parsedKeyframes[i].timingFunction;
             if (!timingFunction)
                 timingFunction = blendingKeyframe.timingFunction();
