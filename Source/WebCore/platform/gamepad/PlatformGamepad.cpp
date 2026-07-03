@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 NVIDIA Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=GAMEPAD,
-    EnabledBySetting=GamepadsEnabled,
-    Exposed=Window
-] interface GamepadButton {
-    readonly attribute boolean pressed;
-    readonly attribute double value;
-    [EnabledBySetting=GamepadButtonTypeEnabled] readonly attribute GamepadButtonType type;
-};
+#include "config.h"
+#include "PlatformGamepad.h"
 
+#if ENABLE(GAMEPAD)
+
+#include "GamepadConstants.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformGamepad);
+
+void PlatformGamepad::setNonStandardButtonTypes(size_t buttonCount)
+{
+    m_buttonTypes = Vector<GamepadButtonType>(FillWith { }, buttonCount, GamepadButtonType::NonStandard);
+}
+
+void PlatformGamepad::setButtonTypesForStandardMapping(size_t buttonCount)
+{
+    setNonStandardButtonTypes(buttonCount);
+
+    for (size_t i = 0; i < buttonCount && i < numberOfStandardGamepadButtonsWithHomeButton; ++i)
+        m_buttonTypes[i] = GamepadButtonType::Standard;
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(GAMEPAD)

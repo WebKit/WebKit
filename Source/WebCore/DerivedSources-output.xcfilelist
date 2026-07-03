@@ -1481,6 +1481,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepad.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepad.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepadButton.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepadButton.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepadButtonType.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepadButtonType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepadEffectParameters.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepadEffectParameters.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepadEvent.cpp

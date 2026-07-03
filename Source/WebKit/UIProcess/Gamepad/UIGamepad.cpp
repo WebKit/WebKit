@@ -43,6 +43,7 @@ UIGamepad::UIGamepad(WebCore::PlatformGamepad& platformGamepad)
     , m_mapping(platformGamepad.mapping())
     , m_axisValues(platformGamepad.axisValues().size())
     , m_buttonValues(platformGamepad.buttonValues().size())
+    , m_buttonTypes(platformGamepad.buttonTypes())
     , m_lastUpdateTime(platformGamepad.lastUpdateTime())
     , m_supportedEffectTypes(platformGamepad.supportedEffectTypes())
 {
@@ -54,15 +55,17 @@ void UIGamepad::updateFromPlatformGamepad(WebCore::PlatformGamepad& platformGame
     ASSERT(m_index == platformGamepad.index());
     ASSERT(m_axisValues.size() == platformGamepad.axisValues().size());
     ASSERT(m_buttonValues.size() == platformGamepad.buttonValues().size());
+    ASSERT(platformGamepad.buttonTypes().isEmpty() || m_buttonValues.size() == platformGamepad.buttonTypes().size());
 
     m_axisValues = platformGamepad.axisValues();
     m_buttonValues = platformGamepad.buttonValues();
+    m_buttonTypes = platformGamepad.buttonTypes();
     m_lastUpdateTime = platformGamepad.lastUpdateTime();
 }
 
 GamepadData UIGamepad::gamepadData() const
 {
-    return { m_index, m_id, m_mapping, m_axisValues, m_buttonValues, m_lastUpdateTime, m_supportedEffectTypes };
+    return { m_index, m_id, m_mapping, m_axisValues, m_buttonValues, m_buttonTypes, m_lastUpdateTime, m_supportedEffectTypes };
 }
 
 }
