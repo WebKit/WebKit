@@ -151,7 +151,13 @@ final class BrowserViewModel {
         assert(url.isFileURL)
 
         let data = try! Data(contentsOf: url)
-        page.load(data, mimeType: "text/html", characterEncoding: .utf8, baseURL: URL(string: "about:blank")!)
+
+        let isWebArchive = UTType(filenameExtension: url.pathExtension)?.conforms(to: .webArchive) ?? false
+        let mimeType = isWebArchive ? "application/x-webarchive" : "text/html"
+
+        // The `about:blank` URL will never be `nil`.
+        // swift-format-ignore: NeverForceUnwrap
+        page.load(data, mimeType: mimeType, characterEncoding: .utf8, baseURL: URL(string: "about:blank")!)
     }
 
     func didReceiveNavigationEvent(_ event: WebPage.NavigationEvent) {
