@@ -57,7 +57,7 @@ public:
     using CustomPropertyOrKeyword = Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>;
 
     RefPtr<const CustomProperty> resolveCustomPropertyForContainerQueries(const CSSCustomPropertyValue&);
-    std::optional<CustomPropertyOrKeyword> resolveFunctionResult(const CSSCustomPropertyValue&);
+    std::optional<CustomPropertyOrKeyword> resolveFunctionResult();
 
     BuilderState& state() { return m_state; }
     const MatchResult& matchResult() const { return m_cascade.matchResult(); }

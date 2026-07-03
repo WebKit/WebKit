@@ -15,7 +15,7 @@ PASS Dashed-function, self-cycle
 PASS Cycle through other function (--g)
 PASS Cycle through other function (--f)
 PASS Cycle through local, self
-FAIL Cycle through unused local assert_equals: expected "PASS" but got "FAIL-result"
+PASS Cycle through unused local
 PASS Cycle through global, self
 PASS Cycle through local, other function
 PASS Cycle through local, other function, fallback in function

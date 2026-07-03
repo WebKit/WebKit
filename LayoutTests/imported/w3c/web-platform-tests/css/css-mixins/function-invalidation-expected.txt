@@ -2,5 +2,5 @@
 PASS Appending a rule
 PASS Prepending a rule
 PASS Deleting a rule
-FAIL Prepending a rule, then deleting last assert_equals: expected "10px" but got "42px"
+PASS Prepending a rule, then deleting last
 

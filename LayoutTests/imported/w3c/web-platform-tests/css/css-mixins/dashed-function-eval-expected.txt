@@ -28,7 +28,7 @@ PASS Multiple parameters with defaults, typed
 PASS Default referencing another parameter
 PASS Default referencing another parameter, local interference
 PASS Default referencing another defaulted parameter
-FAIL Typed default with reference assert_equals: expected "5px 6px" but got ""
+PASS Typed default with reference
 PASS IACVT arguments are defaulted
 PASS IACVT arguments are defaulted, typed
 PASS Arguments are defaulted on type mismatch
@@ -70,7 +70,7 @@ PASS Local variable with initial keyword
 PASS Local variable with initial keyword, defaulted
 PASS Local variable with initial keyword, no value via IACVT-capture
 PASS Default with initial keyword
-FAIL initial appearing via fallback assert_equals: expected "PASS" but got ""
+PASS initial appearing via fallback
 PASS Local variable with inherit keyword
 PASS Local variable with inherit keyword (nested)
 PASS Inheriting an invalid value
@@ -86,6 +86,6 @@ PASS unset keyword left unresolved on result descriptor
 PASS revert keyword left unresolved on result descriptor
 PASS revert-layer keyword left unresolved on result descriptor
 PASS revert-rule keyword left unresolved on result descriptor
-FAIL Keyword can be returned from function into local variable assert_equals: expected "PASS" but got ""
+PASS Keyword can be returned from function into local variable
 PASS Can not return CSS-wide keyword as length
 

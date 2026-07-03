@@ -375,10 +375,6 @@ bool SubstitutionResolver::substituteDashedFunction(StringView functionName, CSS
     if (!substitutedArguments)
         return false;
 
-    auto resultValue = dynamicDowncast<CSSCustomPropertyValue>(protect(customFunction->properties)->getPropertyCSSValue(CSSPropertyResult));
-    if (!resultValue)
-        return false;
-
     // "Let registrations be an initially empty set of custom property registrations."
     auto registrations = LocalPropertyRegistry { };
 
@@ -418,8 +414,7 @@ bool SubstitutionResolver::substituteDashedFunction(StringView functionName, CSS
     bodyBuilder.state().addGuardedFunctionContexts(m_styleBuilder.state());
 
     // "Return the value of the result property in body styles."
-    // Body custom properties are applied lazily as result's var() references reach them.
-    auto resolvedResult = bodyBuilder.resolveFunctionResult(*resultValue);
+    auto resolvedResult = bodyBuilder.resolveFunctionResult();
     if (!resolvedResult)
         return false;
 

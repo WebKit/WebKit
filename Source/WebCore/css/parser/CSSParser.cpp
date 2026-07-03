@@ -1177,9 +1177,17 @@ RefPtr<StyleRuleFunction> CSSParser::consumeFunctionRule(CSSParserTokenRange pre
 
                 auto defaultRange = defaultRangeStart.rangeUntil(parametersRange);
 
-                // "If a default value and a parameter type are both provided, then the default value must parse
-                // successfully according to that parameter type’s syntax. Otherwise, the @function rule is invalid."
-                if (!CSSPropertyParser::isValidCustomPropertyValueForSyntax(parameter.type, defaultRange, m_context))
+                auto isValidDefault = [&] {
+                    // "If a default value and a parameter type are both provided, then the default value
+                    // must parse successfully according to that parameter type's syntax. Otherwise, the
+                    // @function rule is invalid." A default containing arbitrary substitution functions
+                    // (var(), a dashed-function) is assumed valid at parse time and validated after
+                    // substitution.
+                    if (CSSSubstitutionParser::containsSubstitutionFunctions(defaultRange, m_context))
+                        return true;
+                    return CSSPropertyParser::isValidCustomPropertyValueForSyntax(parameter.type, defaultRange, m_context);
+                };
+                if (!isValidDefault())
                     return { };
 
                 parameter.defaultValue = CSSVariableData::create(defaultRange);

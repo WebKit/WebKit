@@ -570,6 +570,8 @@ void RuleSetBuilder::addMutatingRulesToResolver()
             auto declarationsList = m_functionDeclarationsMap.get(*functionRule);
             CheckedRef registry = resolver->ensureCustomFunctionRegistry();
             registry->registerFunction(*functionRule, declarationsList);
+            // The cache keys on matched properties, not on the function registry. Mirrors @property.
+            resolver->invalidateMatchedDeclarationsCache();
         }
     }
 }
