@@ -67,7 +67,7 @@ void RemoteImageDecoderAVFProxy::createDecoder(const IPC::SharedBufferReference&
 {
     MESSAGE_CHECK_WITH_MESSAGE_BASE(ImageDecoderAVFObjC::canDecodeType(mimeType), m_connectionToWebProcess.get()->connection(), "createDecoder() should not be called with unsupported mime-type.");
 
-    auto imageDecoder = ImageDecoderAVFObjC::create(data.isNull() ? SharedBuffer::create() : data.unsafeBuffer().releaseNonNull(), mimeType, AlphaOption::Premultiplied, GammaAndColorProfileOption::Ignored, m_resourceOwner);
+    auto imageDecoder = ImageDecoderAVFObjC::create(data.isNull() ? SharedBuffer::create() : SharedBuffer::create(data.span()), mimeType, AlphaOption::Premultiplied, GammaAndColorProfileOption::Ignored, m_resourceOwner);
 
     std::optional<ImageDecoderIdentifier> imageDecoderIdentifier;
     if (!imageDecoder)
