@@ -104,11 +104,11 @@ void PageRuntimeAgent::frameNavigated(LocalFrame& frame)
 
 void PageRuntimeAgent::didClearWindowObjectInWorld(LocalFrame& frame, DOMWrapperWorld& world)
 {
-    auto frameId = m_inspectedPage->inspectorController().identifierRegistry().frameId(&frame);
-    if (frameId.isEmpty())
+    if (m_ignoreDidClearWindowObject)
         return;
 
-    if (m_ignoreDidClearWindowObject)
+    auto frameId = m_inspectedPage->inspectorController().identifierRegistry().frameId(&frame);
+    if (frameId.isEmpty())
         return;
 
     SetForScope ignoreDidClearWindowObject(m_ignoreDidClearWindowObject, true);
