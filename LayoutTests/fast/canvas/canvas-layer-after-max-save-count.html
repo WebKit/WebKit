@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CanvasLayersEnabled=true ] -->
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<p>This test passes if it does not crash.</p>
+<canvas id="c" width="200" height="200"></canvas>
+<script>
+const ctx = document.getElementById('c').getContext('2d');
+for (let i = 0; i < 20000; i++)
+    ctx.save();
+ctx.beginLayer();
+ctx.beginLayer();
+ctx.beginLayer();
+</script>
