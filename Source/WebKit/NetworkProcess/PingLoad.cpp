@@ -49,6 +49,13 @@ PingLoad::PingLoad(NetworkProcess& networkProcess, PAL::SessionID sessionID, Net
     , m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
     , m_networkLoadChecker(NetworkLoadChecker::create(networkProcess, nullptr, nullptr, FetchOptions { m_parameters.options }, m_sessionID, m_parameters.webPageProxyID, WTF::move(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections))
 {
+    // initialize() registers a completion handler with NetworkLoadChecker that
+    // captures WeakPtr { *this } and may fire synchronously (e.g. when the
+    // content-extension backend for this UserContentController is already
+    // cached in the NetworkProcess). Dereferencing that WeakPtr inside the
+    // sync callback calls ref() before the caller has had a chance to
+    // adoptRef() us, which trips WTF's refcount-debugger adoption assert.
+    relaxAdoptionRequirement();
     initialize(networkProcess);
 }
 
@@ -60,6 +67,8 @@ PingLoad::PingLoad(NetworkConnectionToWebProcess& connection, NetworkResourceLoa
     , m_networkLoadChecker(NetworkLoadChecker::create(connection.networkProcess(), nullptr,  &connection.schemeRegistry(), FetchOptions { m_parameters.options }, m_sessionID, m_parameters.webPageProxyID, WTF::move(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections))
     , m_blobFiles(connection.resolveBlobReferences(m_parameters))
 {
+    // See comment in the other constructor.
+    relaxAdoptionRequirement();
     for (Ref file : borrow(m_blobFiles).get())
         file->prepareForFileAccess();
 
@@ -123,7 +132,9 @@ void PingLoad::loadRequest(NetworkProcess& networkProcess, ResourceRequest&& req
     PING_RELEASE_LOG("startNetworkLoad");
     if (CheckedPtr networkSession = networkProcess.networkSession(m_sessionID)) {
         auto loadParameters = m_parameters.networkLoadParameters();
-        loadParameters.request = WTF::move(request);
+        loadParameters.request = request;
+        if (m_parameters.request.requester() == WebCore::ResourceRequestRequester::FetchLater)
+            m_requestForRetry = WTF::move(request);
         Ref task = NetworkDataTask::create(*networkSession, *this, WTF::move(loadParameters));
         m_task = task.copyRef();
         task->resume();
@@ -187,7 +198,33 @@ void PingLoad::didCompleteWithError(const ResourceError& error, const NetworkLoa
     else
         PING_RELEASE_LOG("didCompleteWithError, error_code=%d", error.errorCode());
 
+    if (shouldRetryTransientFailure(error)) {
+        retryLoad();
+        return;
+    }
+
     didFinish(error);
+}
+
+bool PingLoad::shouldRetryTransientFailure(const ResourceError& error) const
+{
+    if (m_parameters.request.requester() != WebCore::ResourceRequestRequester::FetchLater)
+        return false;
+    if (m_retryCount >= maxTransientRetries)
+        return false;
+    if (error.isNull() || error.isCancellation() || error.isAccessControl())
+        return false;
+    return error.isGeneral() || error.isTimeout();
+}
+
+void PingLoad::retryLoad()
+{
+    ++m_retryCount;
+    if (RefPtr task = std::exchange(m_task, nullptr)) {
+        task->clearClient();
+        task->cancel();
+    }
+    loadRequest(protect(m_networkLoadChecker->networkProcess()), ResourceRequest { m_requestForRetry });
 }
 
 void PingLoad::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend)

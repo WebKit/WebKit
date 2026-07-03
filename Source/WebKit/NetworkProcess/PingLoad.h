@@ -85,9 +85,15 @@ private:
 
     void loadRequest(NetworkProcess&, WebCore::ResourceRequest&&);
 
+    bool shouldRetryTransientFailure(const WebCore::ResourceError&) const;
+    void retryLoad();
+
     void didFinish(const WebCore::ResourceError& = { }, const WebCore::ResourceResponse& response = { });
     
     RefPtr<PingLoad> m_selfReference;
+    WebCore::ResourceRequest m_requestForRetry;
+    uint8_t m_retryCount { 0 };
+    static constexpr uint8_t maxTransientRetries = 3;
     PAL::SessionID m_sessionID;
     NetworkResourceLoadParameters m_parameters;
     CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)> m_completionHandler;

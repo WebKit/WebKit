@@ -1,0 +1,5 @@
+
+PASS Default "deferred-fetch" permissions policy ["self"] allows fetchLater() in the top-level document.
+PASS Default "deferred-fetch" permissions policy ["self"] allows fetchLater() in the same-origin iframe.
+PASS Default "deferred-fetch-minimal" permissions policy ["*"] allows fetchLater() in the cross-origin iframe.
+

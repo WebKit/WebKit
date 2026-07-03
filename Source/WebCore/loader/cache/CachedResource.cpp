@@ -242,7 +242,9 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         m_fragmentIdentifierForRequest = String();
     }
 
-    if (m_options.keepAlive && type() != Type::Ping && !cachedResourceLoader.keepaliveRequestTracker().tryRegisterRequest(*this)) {
+    // fetchLater() has its own per-Document quota accounting via DeferredFetchRegistry, so it must not
+    // consume the shared 64KiB keepalive quota tracked by KeepaliveRequestTracker.
+    if (m_options.keepAlive && type() != Type::Ping && m_resourceRequest.requester() != ResourceRequestRequester::FetchLater && !cachedResourceLoader.keepaliveRequestTracker().tryRegisterRequest(*this)) {
         setResourceError({ errorDomainWebKitInternal, 0, request.url(), "Reached maximum amount of queued data of 64Kb for keepalive requests"_s, ResourceError::Type::AccessControl });
         failBeforeStarting();
         return;

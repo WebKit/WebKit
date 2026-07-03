@@ -82,6 +82,7 @@ public:
     virtual bool isDOMWindowCaches() const { return false; }
     virtual bool isDOMWindowIndexedDatabase() const { return false; }
     virtual bool isDOMWindowTrustedTypes() const { return false; }
+    virtual bool isDeferredFetchRegistry() const { return false; }
     virtual bool isDeviceMotionController() const { return false; }
     virtual bool isDeviceOrientationController() const { return false; }
     virtual bool isDocumentMediaElement() const { return false; }

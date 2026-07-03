@@ -1387,7 +1387,15 @@ webkit.org/b/247283 imported/w3c/web-platform-tests/fetch/metadata/generated/css
 
 # Fetch features that are not implemented.
 imported/w3c/web-platform-tests/fetch/corb [ Skip ]
-imported/w3c/web-platform-tests/fetch/fetch-later [ Skip ]
+
+# fetchLater(): iframe / permissions-policy quota delegation is a follow-up patch (bug 284347).
+# The baselines contain per-run generated UUIDs so results cannot be textually stable until
+# the underlying feature is implemented.
+webkit.org/b/284347 imported/w3c/web-platform-tests/fetch/fetch-later/quota/cross-origin-iframe/max-payload.https.window.html [ Skip ]
+webkit.org/b/284347 imported/w3c/web-platform-tests/fetch/fetch-later/quota/cross-origin-iframe/oversized-payload.https.window.html [ Skip ]
+webkit.org/b/284347 imported/w3c/web-platform-tests/fetch/fetch-later/quota/same-origin-iframe/multiple-iframes.https.window.html [ Skip ]
+
+
 
 # ReadableStream upload is not supported.
 imported/w3c/web-platform-tests/fetch/api/basic/request-upload.h2.any.html [ Skip ]
