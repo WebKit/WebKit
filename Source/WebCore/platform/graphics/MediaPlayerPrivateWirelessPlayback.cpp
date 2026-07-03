@@ -280,7 +280,7 @@ void MediaPlayerPrivateWirelessPlayback::seekToTarget(const SeekTarget& seekTarg
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER, seekTarget);
-    route->setPlaybackPosition(seekTarget.time);
+    route->setCurrentPlaybackPosition(seekTarget.time);
 }
 
 bool MediaPlayerPrivateWirelessPlayback::paused() const
@@ -430,12 +430,12 @@ void MediaPlayerPrivateWirelessPlayback::readyDidChange(MediaDeviceRoute& route)
         setReadyState(MediaPlayerReadyState::HaveEnoughData);
 }
 
-void MediaPlayerPrivateWirelessPlayback::errorDidChange(MediaDeviceRoute& route)
+void MediaPlayerPrivateWirelessPlayback::playbackErrorDidChange(MediaDeviceRoute& route)
 {
     ASSERT(&route == this->route());
-    ALWAYS_LOG(LOGIDENTIFIER, !!route.error());
+    ALWAYS_LOG(LOGIDENTIFIER, !!route.playbackError());
 
-    if (route.error())
+    if (route.playbackError())
         setNetworkState(route.ready() ? MediaPlayer::NetworkState::DecodeError : MediaPlayer::NetworkState::FormatError);
 }
 
@@ -448,14 +448,14 @@ void MediaPlayerPrivateWirelessPlayback::audioOptionsDidChange(MediaDeviceRoute&
         player->characteristicChanged();
 }
 
-void MediaPlayerPrivateWirelessPlayback::playbackPositionDidChange(MediaDeviceRoute& route)
+void MediaPlayerPrivateWirelessPlayback::currentPlaybackPositionDidChange(MediaDeviceRoute& route)
 {
     ASSERT(&route == this->route());
 
-    auto playbackPosition = route.playbackPosition();
-    ALWAYS_LOG(LOGIDENTIFIER, playbackPosition);
+    auto currentPlaybackPosition = route.currentPlaybackPosition();
+    ALWAYS_LOG(LOGIDENTIFIER, currentPlaybackPosition);
 
-    updateTimebaseTimeAndRate(playbackPosition, route.playing() ? route.playbackSpeed() : 0);
+    updateTimebaseTimeAndRate(currentPlaybackPosition, route.playing() ? route.playbackSpeed() : 0);
 
     auto currentTime = this->currentTime();
 
@@ -492,7 +492,7 @@ CMTimebaseRef MediaPlayerPrivateWirelessPlayback::ensureTimebase()
     dispatch_activate(m_timerSource.get());
 
     if (RefPtr route = this->route())
-        updateTimebaseTimeAndRate(route->playbackPosition() ?: MediaTime::zeroTime(), route->playing() ? route->playbackSpeed() : 0);
+        updateTimebaseTimeAndRate(route->currentPlaybackPosition() ?: MediaTime::zeroTime(), route->playing() ? route->playbackSpeed() : 0);
 
     return m_timebase.get();
 }
