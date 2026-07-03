@@ -1359,7 +1359,8 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncIndexOf, (JSGlobalObject* globalObject, C
             RETURN_IF_EXCEPTION(scope, { });
 
             JSValue result = jsNumber(-1);
-            if (vm.atomStringToJSStringMap.contains(search.data)) {
+            bool mayContainSearch = (search.data->length() == 1 && search.data->at(0) <= maxSingleCharacterString) || vm.atomStringToJSStringMap.contains(search.data);
+            if (mayContainSearch) {
                 auto data = butterfly->contiguous().data();
                 for (unsigned i = index; i < length; ++i) {
                     JSValue value = data[i].get();

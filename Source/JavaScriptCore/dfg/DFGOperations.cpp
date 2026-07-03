@@ -5298,7 +5298,8 @@ JSC_DEFINE_JIT_OPERATION(operationCopyOnWriteArrayIndexOfString, UCPUStrictInt32
         OPERATION_RETURN_IF_EXCEPTION(scope, 0);
 
         UCPUStrictInt32 result = toUCPUStrictInt32(-1);
-        if (vm.atomStringToJSStringMap.contains(search.data)) {
+        bool mayContainSearch = (search.data->length() == 1 && search.data->at(0) <= maxSingleCharacterString) || vm.atomStringToJSStringMap.contains(search.data);
+        if (mayContainSearch) {
             int32_t length = butterfly->publicLength();
             auto data = butterfly->contiguous().data();
             for (int32_t i = index; i < length; ++i) {

@@ -1178,8 +1178,9 @@ JSCell* stringSplitFast(JSGlobalObject* globalObject, JSString* thisString, JSSt
             }
 
             for (unsigned i = 0; i < resultSize; ++i) {
-                auto* string = jsSingleCharacterString(vm, input[i]);
-                if (makeAtomStringsArray) {
+                char16_t character = input[i];
+                auto* string = jsSingleCharacterString(vm, character);
+                if (makeAtomStringsArray && character > maxSingleCharacterString) [[unlikely]] {
                     Identifier identifier = string->toIdentifier(globalObject);
                     RETURN_IF_EXCEPTION(scope, { });
                     DeferGC defer(vm);
