@@ -370,6 +370,10 @@ bool NetworkLoadChecker::shouldBlockForTrackingPolicy(const ResourceRequest& req
     if (!networkResourceLoader->parameters().mayBlockNetworkRequest)
         return false;
 
+    CheckedPtr networkSession = m_networkProcess->networkSession(m_sessionID);
+    if (!networkSession || !networkSession->isTrackingPreventionEnabled())
+        return false;
+
     if (RefPtr topOrigin = networkResourceLoader->parameters().topOrigin) {
         if (RegistrableDomain(request.url()).matches(topOrigin->data()))
             return false;

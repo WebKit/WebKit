@@ -156,7 +156,8 @@ static bool supportsFingerprintingScriptRequests()
 }
 
 static RetainPtr<TestWKWebView> setUpWebViewForFingerprintingTests(NSString *pageURLString, id<WKUIDelegate> uiDelegate, NSDictionary<NSString *, NSString *> *responseData,
-    NSString *referrer = @"https://webkit.org", _WKWebsiteNetworkConnectionIntegrityPolicy policies = _WKWebsiteNetworkConnectionIntegrityPolicyNone, WKWebsiteDataStore *datastore = nil)
+    NSString *referrer = @"https://webkit.org", _WKWebsiteNetworkConnectionIntegrityPolicy policies = _WKWebsiteNetworkConnectionIntegrityPolicyNone, WKWebsiteDataStore *datastore = nil,
+    BOOL enableResourceLoadStatistics = YES)
 {
     RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     for (_WKFeature *feature in WKPreferences._features) {
@@ -167,7 +168,7 @@ static RetainPtr<TestWKWebView> setUpWebViewForFingerprintingTests(NSString *pag
     }
 
     RetainPtr dataStore = datastore ?: [WKWebsiteDataStore defaultDataStore];
-    [dataStore _setResourceLoadStatisticsEnabled:YES];
+    [dataStore _setResourceLoadStatisticsEnabled:enableResourceLoadStatistics];
     [configuration setWebsiteDataStore:dataStore.get()];
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
     [[configuration defaultWebpagePreferences] _setNetworkConnectionIntegrityPolicy:policies];
@@ -226,6 +227,11 @@ static RetainPtr<TestWKWebView> setUpWebViewForFingerprintingTests(NSString *pag
 static RetainPtr<TestWKWebView> setUpWebViewForFingerprintingTests(NSString *pageURLString, WKWebsiteDataStore *datastore)
 {
     return setUpWebViewForFingerprintingTests(pageURLString, nil, @{ }, nil, _WKWebsiteNetworkConnectionIntegrityPolicyNone, datastore);
+}
+
+static RetainPtr<TestWKWebView> setUpWebViewForFingerprintingTests(NSString *pageURLString, WKWebsiteDataStore *datastore, BOOL enableResourceLoadStatistics)
+{
+    return setUpWebViewForFingerprintingTests(pageURLString, nil, @{ }, nil, _WKWebsiteNetworkConnectionIntegrityPolicyNone, datastore, enableResourceLoadStatistics);
 }
 
 static NSString *getBundleResourceAsText(NSString *filename, NSString *extension)
@@ -936,11 +942,8 @@ TEST(ScriptTrackingPrivacyTests, MainFrameNavigationNotBlocked)
     EXPECT_TRUE(receivedNavigationRequest);
 }
 
-TEST(ScriptTrackingPrivacyTests, CrossSiteFetchBlocked)
+static RetainPtr<NSString> crossSiteFetchResultToTrackerDomain(BOOL enableResourceLoadStatistics)
 {
-    if (!supportsFingerprintingScriptRequests())
-        return;
-
     FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
 
     auto server = HTTPServer(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
@@ -980,15 +983,29 @@ TEST(ScriptTrackingPrivacyTests, CrossSiteFetchBlocked)
     }];
 
     RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
-
-    RetainPtr webView = setUpWebViewForFingerprintingTests(@"http://top-domain.org/index.html", dataStore.get());
+    RetainPtr webView = setUpWebViewForFingerprintingTests(@"http://top-domain.org/index.html", dataStore.get(), enableResourceLoadStatistics);
 
     Util::waitForConditionWithLogging([&] -> bool {
         return [[webView stringByEvaluatingJavaScript:@"window.fetchResult || ''"] length] > 0;
     }, 10, @"Timed out waiting for fetch result.");
 
-    RetainPtr fetchResult = [webView stringByEvaluatingJavaScript:@"window.fetchResult"];
-    EXPECT_TRUE([fetchResult hasPrefix:@"error"]);
+    return [webView stringByEvaluatingJavaScript:@"window.fetchResult"];
+}
+
+TEST(ScriptTrackingPrivacyTests, CrossSiteFetchBlocked)
+{
+    if (!supportsFingerprintingScriptRequests())
+        return;
+
+    EXPECT_TRUE([crossSiteFetchResultToTrackerDomain(YES) hasPrefix:@"error"]);
+}
+
+TEST(ScriptTrackingPrivacyTests, CrossSiteFetchNotBlockedWhenResourceLoadStatisticsDisabled)
+{
+    if (!supportsFingerprintingScriptRequests())
+        return;
+
+    EXPECT_TRUE([crossSiteFetchResultToTrackerDomain(NO) hasPrefix:@"success"]);
 }
 
 } // namespace TestWebKitAPI
