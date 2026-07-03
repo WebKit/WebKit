@@ -242,7 +242,6 @@ page/LocalDOMWindow.cpp
 page/LocalFrame.cpp
 page/LocalFrameView.cpp
 page/LocalFrameViewLayoutContext.cpp
-page/NavigateEvent.cpp
 page/NavigationDestination.h
 page/PartitionedSecurityOrigin.h
 page/Performance.cpp

@@ -154,7 +154,6 @@ void NavigateEvent::processScrollBehavior(Document& document)
 
     if (m_navigationType == NavigationNavigationType::Traverse) {
         document.frame()->loader().history().restoreScrollPositionAndViewState();
-
         return;
     }
 
@@ -162,8 +161,7 @@ void NavigateEvent::processScrollBehavior(Document& document)
         if (m_navigationType == NavigationNavigationType::Reload)
             document.frame()->loader().history().restoreScrollPositionAndViewState();
         else
-            protect(document)->frame()->view()->setScrollPosition({ 0, 0 });
-
+            protect(protect(document)->frame()->view())->setScrollPosition({ 0, 0 });
         return;
     }
 
@@ -172,14 +170,13 @@ void NavigateEvent::processScrollBehavior(Document& document)
     if (!document.findAnchor(document.url().fragmentIdentifier())) {
         if (m_navigationType == NavigationNavigationType::Reload)
             document.frame()->loader().history().restoreScrollPositionAndViewState();
-
         return;
     }
 
     if (!document.haveStylesheetsLoaded())
         document.setGotoAnchorNeededAfterStylesheetsLoad(true);
     else
-        protect(document)->frame()->view()->scrollToFragment(document.url());
+        protect(protect(document)->frame()->view())->scrollToFragment(document.url());
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigateevent-scroll

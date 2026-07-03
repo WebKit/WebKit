@@ -240,7 +240,6 @@ page/LocalFrame.cpp
 page/LocalFrameView.cpp
 page/LocalFrameViewLayoutContext.cpp
 page/MemoryRelease.cpp
-page/NavigateEvent.cpp
 [ iOS ] page/Page.cpp
 page/PageSerializer.cpp
 page/Performance.cpp
