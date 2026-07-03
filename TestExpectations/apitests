@@ -352,3 +352,5 @@ webkit.org/b/318265 [ mac debug ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetR
 webkit.org/b/318460 TestWebKitAPI.WebKit.BlockedUploadDirectory [ Failure ]
 
 webkit.org/b/318485 [ mac release ] TestWebKitAPI.WebKit.MediaBufferingPolicy [ Pass Failure ]
+
+webkit.org/b/318502 TestWebKitAPI.ParentalControlsContentFilteringTests.BlockedURL [ Failure ]
