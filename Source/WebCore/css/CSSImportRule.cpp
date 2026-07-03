@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSImportRule);
+
 CSSImportRule::CSSImportRule(StyleRuleImport& importRule, CSSStyleSheet* parent)
     : CSSRule(parent)
     , m_importRule(importRule)

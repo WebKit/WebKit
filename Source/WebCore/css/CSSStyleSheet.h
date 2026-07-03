@@ -26,8 +26,10 @@
 #include <WebCore/MediaList.h>
 #include <WebCore/MediaQuery.h>
 #include <WebCore/StyleSheet.h>
+#include <WebCore/WebCoreOpaqueRoot.h>
 #include <memory>
 #include <wtf/CheckedPtr.h>
+#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/WeakHashSet.h>
@@ -105,7 +107,7 @@ public:
     URL baseURL() const final;
     bool isLoading() const final;
 
-    void clearOwnerRule() { m_ownerRule = nullptr; }
+    void clearOwnerRule();
 
     void removeAdoptingTreeScope(ContainerNode&);
     void addAdoptingTreeScope(ContainerNode&);
@@ -162,6 +164,8 @@ public:
     String cssText(const CSS::SerializationContext&);
     void getChildStyleSheets(HashSet<Ref<CSSStyleSheet>>&);
 
+    WebCoreOpaqueRoot opaqueRootForGCThread() override;
+
     bool isDetached() const;
 
 private:
@@ -188,8 +192,9 @@ private:
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_constructorDocument;
     WeakHashSet<ContainerNode, WeakPtrImplWithEventTargetData> m_adoptingTreeScopes;
 
-    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_ownerNode;
-    WeakPtr<CSSImportRule> m_ownerRule;
+    mutable Lock m_opaqueRootLockForGC;
+    CheckedPtr<Node> m_ownerNode;
+    CheckedPtr<CSSImportRule> m_ownerRule;
 
     TextPosition m_startPosition;
 
