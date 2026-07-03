@@ -1046,4 +1046,143 @@ TEST(WKBackForwardList, BackForwardUpdateItemRejectsFileURL)
         EXPECT_FALSE([item.URL.absoluteString hasPrefix:@"file://"]);
 }
 
+static constexpr auto forgedFileURLTestMainBytes = R"TESTRESOURCE(
+<!DOCTYPE html>
+<script src="coreipc.js"></script>
+<script>
+(async () => {
+    if (typeof IPC !== 'object') {
+        alert('FAIL: IPC testing API not available');
+        return;
+    }
+
+    // Patch the shared coreipc.js: parseMarkable returns a flat value when present,
+    // but serializeMarkable expects it wrapped in { optionalValue }. Make them agree
+    // for the duration of this test.
+    const origParseMarkable = ArgumentParser.parseMarkable;
+    ArgumentParser.parseMarkable = function (buffer, position, innerType) {
+        const [newPos, result] = origParseMarkable.call(this, buffer, position, innerType);
+        if (result && typeof result === 'object' && Object.keys(result).length > 0 && !Object.hasOwn(result, 'optionalValue'))
+            return [newPos, { optionalValue: result }];
+        return [newPos, result];
+    };
+
+    const CoreIPC = new CoreIPCClass();
+
+    // Fixups for FrameState round-tripping.
+    function fixTypeInfo(ti) {
+        for (const k in ti) {
+            const v = ti[k];
+            if (!Array.isArray(v)) continue;
+            for (const f of v) {
+                if (typeof f.type === 'string') {
+                    if (f.type.startsWith('HashSet<') && f.type.includes(', IntHash')) {
+                        const inner = f.type.slice('HashSet<'.length, -1).split(',')[0].trim();
+                        f.type = 'HashSet<' + inner + '>';
+                    }
+                    f.type = f.type.replace(/std::monostate/g, 'std::nullptr_t');
+                }
+                if (f.variantTypes)
+                    f.variantTypes = f.variantTypes.map(t => t === 'std::monostate' ? 'std::nullptr_t' : t);
+            }
+        }
+    }
+    fixTypeInfo(CoreIPC.typeInfo);
+    try { fixTypeInfo(IPC.serializedTypeInfo); } catch (e) {}
+
+    const origSerializeOptional = ArgumentSerializer.prototype.serializeOptional;
+    ArgumentSerializer.prototype.serializeOptional = function (t, a) { return origSerializeOptional.call(this, t, a ?? {}); };
+    const origSerializeMarkable = ArgumentSerializer.prototype.serializeMarkable;
+    ArgumentSerializer.prototype.serializeMarkable = function (t, a) { return origSerializeMarkable.call(this, t, a ?? {}); };
+
+    function fixNullVariants(o, depth = 0) {
+        if (depth > 100) return o;
+        if (o && typeof o === 'object') {
+            if (o.variantType === 'std::nullptr_t' && o.variant === 'null') o.variant = null;
+            for (const k in o) fixNullVariants(o[k], depth + 1);
+        }
+        return o;
+    }
+
+    // Capture a legitimate BackForwardAddItem IPC template via same-origin pushState.
+    let bfTemplate = null;
+    const BF_NAME = IPC.messages.WebBackForwardList_BackForwardAddItem.name;
+    const tap = new IPCWireTap('UI', 'Outgoing');
+    tap.tapAll((proc, dest, name, typed, parsed) => {
+        if (name === BF_NAME && !bfTemplate)
+            bfTemplate = parsed;
+    });
+    history.pushState({}, '', location.pathname + '?capture=1');
+    for (let i = 0; i < 40 && !bfTemplate; i++)
+        await new Promise(r => setTimeout(r, 25));
+    if (!bfTemplate) {
+        alert('FAIL: could not capture BackForwardAddItem template');
+        return;
+    }
+    fixNullVariants(bfTemplate);
+
+    // Our process identifier, extracted from the captured item's BackForwardItemIdentifier.
+    const myProcId = bfTemplate.navigatedFrameState.itemID.optionalValue.processIdentifier;
+
+    // Forge a BackForwardAddItem for a file:// URL this process has never visited.
+    const forgedItemID = { object: 0x5a5a5a5an, processIdentifier: myProcId };
+    const forgedFrameItemID = { object: 0x5b5b5b5bn, processIdentifier: myProcId };
+    const fs = bfTemplate.navigatedFrameState;
+    fs.urlString = 'file:///etc/forged-never-visited-by-this-process';
+    fs.originalURLString = fs.urlString;
+    fs.referrer = '';
+    fs.target = { string: '' };
+    fs.title = '';
+    fs.frameID = { optionalValue: BigInt(IPC.frameID) };
+    fs.itemID = { optionalValue: forgedItemID };
+    fs.frameItemID = { optionalValue: forgedFrameItemID };
+    fs.children = [];
+    fs.stateObjectData = {};
+    fs.httpBody = {};
+    fs.sessionStateObject = {};
+    fs.documentState = [];
+
+    CoreIPC.UI.WebBackForwardList.BackForwardAddItem(IPC.webPageProxyID, bfTemplate);
+
+    // Yield so the UI process can dispatch the (rejected) message.
+    await new Promise(r => setTimeout(r, 100));
+
+    // Synchronous probe: is the forged item in the back-forward list?
+    let wasAdded = null;
+    CoreIPC.UI.WebBackForwardList.BackForwardListContainsItem(IPC.webPageProxyID,
+        { itemID: forgedItemID },
+        (reply) => { wasAdded = reply.contains; });
+
+    if (wasAdded === false)
+        alert('PASS: forged file:// back-forward item was rejected by MESSAGE_CHECK');
+    else
+        alert('FAIL: forged file:// back-forward item leaked into the list (wasAdded=' + wasAdded + ')');
+})().catch(e => alert('FAIL: ' + e + '\n' + (e && e.stack ? e.stack : '')));
+</script>
+)TESTRESOURCE"_s;
+
+TEST(WKBackForwardList, ForgedFileURLItemIsRejected)
+{
+    RetainPtr coreIPCURL = [NSBundle.test_resourcesBundle URLForResource:@"coreipc" withExtension:@"js"];
+    RetainPtr coreIPCData = [NSData dataWithContentsOfURL:coreIPCURL.get()];
+
++    TestWebKitAPI::HTTPServer server({
++        { "/"_s, { forgedFileURLTestMainBytes } },
++        { "/coreipc.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, coreIPCData.get() } },
++    });
++
++    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
++    for (_WKFeature *feature in [WKPreferences _features]) {
++        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
++            [[configuration preferences] _setEnabled:YES forFeature:feature];
++            break;
++        }
++    }
++
++    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
++    [webView loadRequest:server.request("/"_s)];
++
++    EXPECT_WK_STREQ([webView _test_waitForAlert], "PASS: forged file:// back-forward item was rejected by MESSAGE_CHECK");
++}
+
 #endif // ENABLE(IPC_TESTING_API)
