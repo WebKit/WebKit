@@ -759,7 +759,7 @@ String Range::toString() const
 ExceptionOr<Ref<DocumentFragment>> Range::createContextualFragment(Variant<RefPtr<TrustedHTML>, String>&& markup)
 {
     Ref node = startContainer();
-    auto stringValueHolder = trustedTypeCompliantString(node->document().contextDocument(), WTF::move(markup), "Range createContextualFragment"_s);
+    auto stringValueHolder = trustedTypeCompliantString(protect(node->document().contextDocument()), WTF::move(markup), "Range createContextualFragment"_s);
 
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
