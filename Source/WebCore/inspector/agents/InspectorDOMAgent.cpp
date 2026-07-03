@@ -3051,7 +3051,7 @@ void InspectorDOMAgent::mediaMetricsTimerFired()
             continue;
         }
 
-        bool isPowerEfficient = (displayCompositedVideoFrames - iterator->value.displayCompositedFrames) > 0;
+        bool isPowerEfficient = displayCompositedVideoFrames > iterator->value.displayCompositedFrames;
         if (iterator->value.isPowerEfficient != isPowerEfficient) {
             iterator->value.isPowerEfficient = isPowerEfficient;
 
