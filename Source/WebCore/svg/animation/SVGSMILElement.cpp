@@ -1049,12 +1049,13 @@ float SVGSMILElement::calculateAnimationPercentAndRepeat(SMILTime elapsed, unsig
     SMILTime activeTime = elapsed - m_intervalBegin;
     SMILTime repeatingDuration = this->repeatingDuration();
 
+    // Clamp the page-controlled repeat count to prevent overflow.
     if ((elapsed >= m_intervalEnd && !repeatingDuration.isIndefinite()) || activeTime > repeatingDuration) {
-        repeat = static_cast<unsigned>(repeatingDuration.value() / simpleDuration.value());
-        if (!fmod(repeatingDuration.value(), simpleDuration.value()))
+        repeat = clampTo<unsigned>(repeatingDuration.value() / simpleDuration.value());
+        if (repeat && !fmod(repeatingDuration.value(), simpleDuration.value()))
             --repeat;
     } else
-        repeat = static_cast<unsigned>(activeTime.value() / simpleDuration.value());
+        repeat = clampTo<unsigned>(activeTime.value() / simpleDuration.value());
 
     double percent;
     if (elapsed >= m_intervalEnd || activeTime > repeatingDuration) {
@@ -1187,16 +1188,9 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, 
         if (m_activeState == Inactive || m_activeState == Frozen)
             smilEventSender().dispatchEventSoon(*this, eventNames().endEventEvent);
 
-        if (repeat) {
-            // We intentionally dispatch repeat - 1 events here because the first repeat
-            // event (for the initial loop) is sent elsewhere during continuous animation run.
-            // If repeat == 1, no events are dispatched here.
-            for (unsigned i = 0; i < repeat - 1; ++i)
-                smilEventSender().dispatchEventSoon(*this, eventNames().repeatEventEvent);
-
-            if (m_activeState == Inactive)
-                smilEventSender().dispatchEventSoon(*this, eventNames().repeatEventEvent);
-        }
+        // Coalesce the skipped repeat iterations into a single event instead of one per interval.
+        if (repeat > 1 || (repeat && m_activeState == Inactive))
+            smilEventSender().dispatchEventSoon(*this, eventNames().repeatEventEvent);
     }
 
     m_nextProgressTime = calculateNextProgressTime(elapsed);
