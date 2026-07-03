@@ -1,0 +1,51 @@
+<html>
+<head>
+    <style>
+        #box {
+            position: absolute;
+            top: 200px;
+            left: 200px;
+            filter: drop-shadow(0 2px 10px black);
+        }
+
+        #child {
+            height: 100px;
+            width: 100px;
+            background-color: green;
+        }
+
+        #child.hidden {
+            display: none;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        var layerTreeAsText;
+        window.addEventListener('load', async () => {
+            description("Test repaint rects when a box with drop-shadow changes size");
+            await UIHelper.renderingUpdate();
+
+            if (window.internals)
+                internals.startTrackingRepaints();
+
+            document.getElementById('child').classList.add('hidden');
+
+            if (window.internals) {
+                debug(window.internals.repaintRectsAsText());
+                internals.stopTrackingRepaints();
+            }
+
+            finishJSTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="box">
+        <div id="child"></div>
+    </div>
+    <div id="console"></div>
+</body>
+</html>

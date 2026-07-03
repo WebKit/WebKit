@@ -233,8 +233,6 @@ public:
     void clearOverflow();
     RenderOverflow& ensureOverflow();
 
-    IntBoxExtent computeFilterOutsets() const;
-
     void addVisualEffectOverflow();
     LayoutRect applyVisualEffectOverflow(const LayoutRect&, EnumSet<VisualEffectOverflowOption> = { }) const;
     virtual void addOverflowFromInFlowChildren(OptionSet<ComputeOverflowOptions> = { });

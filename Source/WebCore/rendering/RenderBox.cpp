@@ -4663,20 +4663,6 @@ bool RenderBox::avoidsFloats() const
     return false;
 }
 
-IntBoxExtent RenderBox::computeFilterOutsets() const
-{
-    if (!hasFilter())
-        return { };
-
-    auto zoom = style().usedZoomForLength();
-
-    if (auto outsets = style().filter().calculateOutsets(zoom))
-        return *outsets;
-
-    // FIXME: Need to compute outsets for reference filters: webkit.org/b/237538.
-    return { };
-}
-
 void RenderBox::addVisualEffectOverflow()
 {
     bool hasBoxShadow = !style().boxShadow().isNone();
