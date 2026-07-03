@@ -1145,6 +1145,7 @@ static bool shouldCheckBlobFileAccess()
 #endif
 }
 
+// FIXME: (rdar://176402219) The web process should not send file paths to the network process. File paths should come from the UI process.
 void NetworkConnectionToWebProcess::registerInternalFileBlobURL(const URL& url, const String& path, const String& replacementPath, SandboxExtension::Handle&& extensionHandle, const String& contentType)
 {
     MESSAGE_CHECK(!url.isEmpty());
@@ -1162,14 +1163,12 @@ void NetworkConnectionToWebProcess::registerInternalFileBlobURL(const URL& url, 
         // For transcoded files, check if the WebProcess has actual sandbox access
         // via the extension granted for the original file, rather than checking
         // our internal allowed paths list (which won't include temporary transcoded files).
-        if (sandboxExtension) {
-            // sandbox_check returns 0 on success (has access), non-zero on failure
-            if (sandbox_check(m_connection->remoteProcessID(), "file-read-data", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_PATH | SANDBOX_CHECK_NO_REPORT), FileSystem::fileSystemRepresentation(replacementPath).data())) {
-                CONNECTION_RELEASE_LOG_ERROR(Sandbox, "registerInternalFileBlobURL: WebProcess does not have sandbox access to replacementPath");
-                MESSAGE_CHECK(false);
-            }
-        } else // No sandbox extension provided, fall back to path allowlist check
-            MESSAGE_CHECK(isFilePathAllowed(replacementPath));
+        MESSAGE_CHECK(sandboxExtension);
+        // sandbox_check returns 0 on success (has access), non-zero on failure
+        if (sandbox_check(m_connection->remoteProcessID(), "file-read-data", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_PATH | SANDBOX_CHECK_NO_REPORT), FileSystem::fileSystemRepresentation(replacementPath).data())) {
+            CONNECTION_RELEASE_LOG_ERROR(Sandbox, "registerInternalFileBlobURL: WebProcess does not have sandbox access to replacementPath");
+            MESSAGE_CHECK(false);
+        }
 #else
         MESSAGE_CHECK(isFilePathAllowed(replacementPath));
 #endif
