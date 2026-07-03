@@ -722,7 +722,7 @@ Expected<int64_t, GrowFailReason> SharedArrayBufferContents::grow(const Abstract
 
 ASCIILiteral errorMessageForTransfer(ArrayBuffer* buffer)
 {
-    ASSERT(buffer->isLocked());
+    ASSERT(!buffer->isDetachable());
     if (buffer->isShared())
         return "Cannot transfer a SharedArrayBuffer"_s;
     if (buffer->isWasmMemory())
