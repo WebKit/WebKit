@@ -28,6 +28,7 @@
 
 #include "IDBStorageConnectionToClient.h"
 #include "Logging.h"
+#include "NetworkStorageManager.h"
 #include <WebCore/UniqueIDBDatabaseConnection.h>
 #include <WebCore/UniqueIDBDatabaseTransaction.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -36,7 +37,10 @@
 
 namespace WebKit {
 
-IDBStorageRegistry::IDBStorageRegistry() = default;
+IDBStorageRegistry::IDBStorageRegistry(NetworkStorageManager& manager)
+    : m_manager(manager)
+{
+}
 
 IDBStorageRegistry::~IDBStorageRegistry() = default;
 
@@ -48,7 +52,7 @@ WebCore::IDBServer::IDBConnectionToClient* IDBStorageRegistry::ensureConnectionT
     auto identifier = *requestIdentifier.connectionIdentifier();
     auto addResult = m_connectionsToClient.add(identifier, nullptr);
     if (addResult.isNewEntry)
-        addResult.iterator->value = makeUnique<IDBStorageConnectionToClient>(ipcConnection.uniqueID(), identifier);
+        addResult.iterator->value = makeUnique<IDBStorageConnectionToClient>(m_manager.get(), ipcConnection.uniqueID(), identifier);
 
     MESSAGE_CHECK_WITH_RETURN_VALUE(addResult.iterator->value->ipcConnection() == ipcConnection.uniqueID(), ipcConnection, nullptr);
     return &addResult.iterator->value->connectionToClient();
