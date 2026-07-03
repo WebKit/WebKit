@@ -3456,6 +3456,7 @@ media/adopt-node-after-showing-picker-crash.html [ Skip ]
 
 # LEGACY_ENCRYPTED_MEDIA is deprecated
 fast/events/webkit-media-key-events-constructor.html [ Skip ]
+ipc/legacy-cdm-session-avcontentkeysession-destruction-race.html [ Skip ]
 
 # NowPlaying is macOS and iOS only.
 http/tests/media/now-playing-info-private-browsing.html [ Skip ]

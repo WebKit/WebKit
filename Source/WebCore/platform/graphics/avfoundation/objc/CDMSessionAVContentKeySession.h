@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,7 +49,7 @@ class LegacyCDMPrivateAVFObjC;
 class MediaSampleAVFObjC;
 class SharedBuffer;
 
-class CDMSessionAVContentKeySession final : public LegacyCDMSession, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<CDMSessionAVContentKeySession> {
+class CDMSessionAVContentKeySession final : public LegacyCDMSession, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<CDMSessionAVContentKeySession, WTF::DestructionThread::Main> {
     WTF_MAKE_TZONE_ALLOCATED(CDMSessionAVContentKeySession);
 public:
     static Ref<CDMSessionAVContentKeySession> create(Vector<int>&& protocolVersions, int cdmVersion, LegacyCDMPrivateAVFObjC& parent, LegacyCDMSessionClient& client)

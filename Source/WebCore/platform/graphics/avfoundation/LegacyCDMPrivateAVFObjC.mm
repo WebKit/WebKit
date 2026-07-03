@@ -138,6 +138,7 @@ bool LegacyCDMPrivateAVFObjC::supportsMIMEType(const String& mimeType) const
 
 RefPtr<LegacyCDMSession> LegacyCDMPrivateAVFObjC::createSession(LegacyCDMSessionClient& client)
 {
+    ASSERT(isMainThread());
     String keySystem = m_cdm->keySystem(); // Local copy for StringView usage
     auto parameters = parseKeySystem(m_cdm->keySystem());
     ASSERT(parameters);
@@ -152,6 +153,7 @@ RefPtr<LegacyCDMSession> LegacyCDMPrivateAVFObjC::createSession(LegacyCDMSession
 
 void LegacyCDMPrivateAVFObjC::invalidateSession(CDMSessionAVContentKeySession* session)
 {
+    ASSERT(isMainThread());
     ASSERT(m_sessions.contains(session));
     m_sessions.removeAll(session);
 }
