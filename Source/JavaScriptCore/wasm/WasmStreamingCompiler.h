@@ -77,7 +77,7 @@ private:
     void didFinishParsing() final;
     void didComplete() WTF_REQUIRES_LOCK(m_lock);
     void completeIfNecessary() WTF_REQUIRES_LOCK(m_lock);
-    RefPtr<DeferredWorkTimer::TicketData> takeTicketIfActive();
+    RefPtr<DeferredWorkTimer::Ticket> takeTicketIfActive();
 
     VM& m_vm;
     CompilerMode m_compilerMode;
@@ -87,7 +87,7 @@ private:
     std::optional<WebAssemblyCompileOptions> m_compileOptions;
     Lock m_lock;
     unsigned m_remainingCompilationRequests { 0 };
-    ThreadSafeWeakPtr<DeferredWorkTimer::TicketData> m_ticket;
+    ThreadSafeWeakPtr<DeferredWorkTimer::Ticket> m_ticket;
     const Ref<Wasm::ModuleInformation> m_info;
     StreamingParser m_parser;
     RefPtr<EntryPlan> m_plan;

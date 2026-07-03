@@ -2383,7 +2383,6 @@
 		FFE31BDB2E6212CD006FE0B7 /* WasmVirtualAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = FFE31BDA2E6212CD006FE0B7 /* WasmVirtualAddress.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFE88B9E2EC96CA700C9F5E2 /* ExecutionHandlerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFE88B9D2EC96CA700C9F5E2 /* ExecutionHandlerTest.cpp */; };
 		FFF3373F2BCDF1240070D04B /* JSCBytecodeCacheVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF3373E2BCDF1240070D04B /* JSCBytecodeCacheVersion.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FFF4D5A32CE304CD006EA634 /* DeferredWorkTimerInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF4D5A22CE304C2006EA634 /* DeferredWorkTimerInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFF79F9A2FB2F1B2003FF02A /* PlainDateTimeCore.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF79F962FB2F1B2003FF02A /* PlainDateTimeCore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFF79F9B2FB2F1B2003FF02A /* CalendarFields.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF79F922FB2F1B2003FF02A /* CalendarFields.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFF79F9C2FB2F1B2003FF02A /* ZonedDateTimeCore.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF79F982FB2F1B2003FF02A /* ZonedDateTimeCore.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6615,7 +6614,6 @@
 		FFE88B9D2EC96CA700C9F5E2 /* ExecutionHandlerTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutionHandlerTest.cpp; sourceTree = "<group>"; };
 		FFF3373D2BCDF1240070D04B /* JSCBytecodeCacheVersion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCBytecodeCacheVersion.cpp; sourceTree = "<group>"; };
 		FFF3373E2BCDF1240070D04B /* JSCBytecodeCacheVersion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCBytecodeCacheVersion.h; sourceTree = "<group>"; };
-		FFF4D5A22CE304C2006EA634 /* DeferredWorkTimerInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeferredWorkTimerInlines.h; sourceTree = "<group>"; };
 		FFF79F922FB2F1B2003FF02A /* CalendarFields.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CalendarFields.h; sourceTree = "<group>"; };
 		FFF79F932FB2F1B2003FF02A /* CalendarFields.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CalendarFields.cpp; sourceTree = "<group>"; };
 		FFF79F942FB2F1B2003FF02A /* DurationArithmetic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DurationArithmetic.h; sourceTree = "<group>"; };
@@ -8758,7 +8756,6 @@
 				276B38AB2A71D1E700252F4E /* DatePrototypeInlines.h */,
 				534638761E71E06E00F12AC1 /* DeferredWorkTimer.cpp */,
 				534638741E70DDEC00F12AC1 /* DeferredWorkTimer.h */,
-				FFF4D5A22CE304C2006EA634 /* DeferredWorkTimerInlines.h */,
 				FE9F3FC626163CA90069E89F /* DeferTermination.h */,
 				169948EDE68D4054B01EF797 /* DefinePropertyAttributes.h */,
 				734B655423F4A33100A069D1 /* DeletePropertySlot.h */,
@@ -11500,7 +11497,6 @@
 				0FC712DF17CD877C008CC93C /* DeferredCompilationCallback.h in Headers */,
 				FE5068651AE246390009DAB7 /* DeferredSourceDump.h in Headers */,
 				534638751E70DDEC00F12AC1 /* DeferredWorkTimer.h in Headers */,
-				FFF4D5A32CE304CD006EA634 /* DeferredWorkTimerInlines.h in Headers */,
 				FE9F3FC826163CA90069E89F /* DeferTermination.h in Headers */,
 				473DA4A4764C45FE871B0485 /* DefinePropertyAttributes.h in Headers */,
 				0FBB73BB1DEF8645002C009E /* DeleteAllCodeEffort.h in Headers */,
