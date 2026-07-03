@@ -41,9 +41,8 @@ public:
         return vm.temporalPlainDateTimeSpace<mode>();
     }
 
-    static TemporalPlainDateTime* create(VM&, Structure*, ISO8601::PlainDate&&, ISO8601::PlainTime&&);
-    static TemporalPlainDateTime* create(VM&, Structure*, ISO8601::PlainDate&&, ISO8601::PlainTime&&, CalendarID);
-    static TemporalPlainDateTime* tryCreateIfValid(JSGlobalObject*, Structure*, ISO8601::PlainDate&&, ISO8601::PlainTime&&);
+    static TemporalPlainDateTime* create(VM&, Structure*, ISO8601::PlainDate&&, ISO8601::PlainTime&&, CalendarID = iso8601CalendarID());
+    static TemporalPlainDateTime* tryCreateIfValid(JSGlobalObject*, Structure*, ISO8601::PlainDate&&, ISO8601::PlainTime&&, CalendarID = iso8601CalendarID());
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
@@ -53,8 +52,6 @@ public:
     ISO8601::PlainDate plainDate() const { return m_plainDate; }
     ISO8601::PlainTime plainTime() const { return m_plainTime; }
     CalendarID calendarID() const { return m_calendarID; }
-    void setCalendarId(WTF::StringView id) { m_calendarID = TemporalCore::calendarIDFromString(id); }
-    void setCalendarID(CalendarID id) { m_calendarID = id; }
     String calendarIDAsString() const { return TemporalCore::calendarIDToString(m_calendarID).toString(); }
 
 #define JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD(name, capitalizedName) \
@@ -67,16 +64,14 @@ public:
     JSC_TEMPORAL_PLAIN_TIME_UNITS(JSC_DEFINE_TEMPORAL_PLAIN_TIME_FIELD);
 #undef JSC_DEFINE_TEMPORAL_PLAIN_TIME_FIELD
 
-    TemporalPlainDateTime* with(JSGlobalObject*, JSObject* temporalDateLike, JSValue options);
-    TemporalPlainDateTime* round(JSGlobalObject*, JSValue options);
-
     String monthCode() const { return ISO8601::monthCode(m_plainDate.month()); }
     uint8_t dayOfWeek() const { return ISO8601::dayOfWeek(m_plainDate); }
     uint16_t dayOfYear() const { return ISO8601::dayOfYear(m_plainDate); }
     uint8_t weekOfYear() const { return ISO8601::weekOfYear(m_plainDate); }
     int32_t yearOfWeek() const { return ISO8601::yearOfWeek(m_plainDate); }
 
-    ISO8601::Duration differenceTemporalPlainDateTime(JSGlobalObject*, DifferenceOperation, TemporalPlainDateTime*, TemporalUnit, TemporalUnit, RoundingMode, double);
+    template<DifferenceOperation>
+    ISO8601::Duration differenceTemporalPlainDateTime(JSGlobalObject*, TemporalPlainDateTime*, JSValue optionsValue);
 
     String toString(JSGlobalObject*, JSValue options) const;
     String toString(std::tuple<Precision, unsigned> precision = { Precision::Auto, 0 }) const
@@ -86,7 +81,6 @@ public:
 
 private:
     TemporalPlainDateTime(VM&, Structure*, ISO8601::PlainDate&&, ISO8601::PlainTime&&);
-    TemporalPlainDateTime(VM&, Structure*, ISO8601::PlainDate&&, ISO8601::PlainTime&&, String&&);
     DECLARE_DEFAULT_FINISH_CREATION;
 
     ISO8601::PlainDate m_plainDate;

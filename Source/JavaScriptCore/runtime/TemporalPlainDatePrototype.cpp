@@ -460,10 +460,8 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToPlainDateTime, (JSGloba
     }
 
     // Steps 5-6: CombineISODateAndTimeRecord + CreateTemporalDateTime.
-    auto* result = TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), plainDate->plainDate(), WTF::move(plainTime));
+    auto* result = TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), plainDate->plainDate(), WTF::move(plainTime), plainDate->calendarID());
     RETURN_IF_EXCEPTION(scope, { });
-    if (result && plainDate->calendarID() != iso8601CalendarID())
-        result->setCalendarID(plainDate->calendarID());
     return JSValue::encode(result);
 }
 
