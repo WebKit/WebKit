@@ -373,7 +373,7 @@ private:
         Ref source = m_source;
         auto deviceType = source->deviceType();
 
-        if ((deviceType == CaptureDevice::DeviceType::Screen || deviceType == CaptureDevice::DeviceType::Window) && m_videoConstraints && updateVideoConstraints(*m_videoConstraints)) {
+        if (m_isObservingMedia && (deviceType == CaptureDevice::DeviceType::Screen || deviceType == CaptureDevice::DeviceType::Window) && m_videoConstraints && updateVideoConstraints(*m_videoConstraints)) {
             source->removeVideoFrameObserver(*this);
             source->addVideoFrameObserver(*this, { m_widthConstraint, m_heightConstraint }, m_frameRateConstraint);
         }
