@@ -34,8 +34,8 @@ class BitmapTexture;
 
 class CoordinatedPlatformLayerBufferRGB final : public CoordinatedPlatformLayerBuffer {
 public:
-    static std::unique_ptr<CoordinatedPlatformLayerBufferRGB> create(Ref<BitmapTexture>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
-    static std::unique_ptr<CoordinatedPlatformLayerBufferRGB> create(unsigned textureID, const IntSize&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
+    static Ref<CoordinatedPlatformLayerBufferRGB> create(Ref<BitmapTexture>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
+    static Ref<CoordinatedPlatformLayerBufferRGB> create(unsigned textureID, const IntSize&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
     CoordinatedPlatformLayerBufferRGB(Ref<BitmapTexture>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
     CoordinatedPlatformLayerBufferRGB(unsigned textureID, const IntSize&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
     virtual ~CoordinatedPlatformLayerBufferRGB();

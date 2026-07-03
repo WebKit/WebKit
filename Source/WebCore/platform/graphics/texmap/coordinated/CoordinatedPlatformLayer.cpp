@@ -505,7 +505,7 @@ bool CoordinatedPlatformLayer::hasCommittedContentsBuffer() const
     return !!m_contentsBuffer.committed;
 }
 
-void CoordinatedPlatformLayer::setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer, std::optional<Damage>&& dirtyRegion, RequireComposition requireComposition)
+void CoordinatedPlatformLayer::setContentsBuffer(RefPtr<CoordinatedPlatformLayerBuffer>&& buffer, std::optional<Damage>&& dirtyRegion, RequireComposition requireComposition)
 {
     ASSERT(m_lock.isHeld());
     if (!buffer && !m_contentsBuffer.pending && !hasCommittedContentsBuffer())

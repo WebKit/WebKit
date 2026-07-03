@@ -36,7 +36,7 @@ namespace WebCore {
 
 class CoordinatedPlatformLayerBufferSkiaImage final : public CoordinatedPlatformLayerBuffer {
 public:
-    static std::unique_ptr<CoordinatedPlatformLayerBufferSkiaImage> create(const sk_sp<SkImage>&, const sk_sp<GrContextThreadSafeProxy>&);
+    static Ref<CoordinatedPlatformLayerBufferSkiaImage> create(const sk_sp<SkImage>&, const sk_sp<GrContextThreadSafeProxy>&);
     explicit CoordinatedPlatformLayerBufferSkiaImage(sk_sp<SkImage>&&);
     virtual ~CoordinatedPlatformLayerBufferSkiaImage() = default;
 

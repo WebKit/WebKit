@@ -160,7 +160,7 @@ public:
     void setContentsScale(float);
     float contentsScale() const;
     enum class RequireComposition : bool { No, Yes };
-    void setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&, std::optional<Damage>&& = std::nullopt, RequireComposition = RequireComposition::Yes);
+    void setContentsBuffer(RefPtr<CoordinatedPlatformLayerBuffer>&&, std::optional<Damage>&& = std::nullopt, RequireComposition = RequireComposition::Yes);
 #if ENABLE(VIDEO) && USE(GSTREAMER)
     void replaceCurrentContentsBufferWithCopy();
 #endif
@@ -327,8 +327,8 @@ private:
         RefPtr<CoordinatedImageBackingStore> committed;
     } m_imageBackingStore WTF_GUARDED_BY_LOCK(m_lock);
     struct {
-        std::unique_ptr<CoordinatedPlatformLayerBuffer> pending;
-        std::unique_ptr<CoordinatedPlatformLayerBuffer> committed;
+        RefPtr<CoordinatedPlatformLayerBuffer> pending;
+        RefPtr<CoordinatedPlatformLayerBuffer> committed;
     } m_contentsBuffer WTF_GUARDED_BY_LOCK(m_lock);
     struct {
         Path path;

@@ -28,6 +28,7 @@
 #if USE(COORDINATED_GRAPHICS)
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -40,13 +41,13 @@ public:
     virtual ~GraphicsLayerContentsDisplayDelegateCoordinated();
 
 private:
-    void setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&) final;
+    void setDisplayBuffer(RefPtr<CoordinatedPlatformLayerBuffer>&&) final;
     bool display(CoordinatedPlatformLayer&, std::optional<Damage>&&) final;
 
 protected:
     GraphicsLayerContentsDisplayDelegateCoordinated();
 
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_displayBuffer;
+    RefPtr<CoordinatedPlatformLayerBuffer> m_displayBuffer;
 };
 
 } // namespace WebCore

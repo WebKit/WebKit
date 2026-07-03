@@ -62,7 +62,7 @@ public:
     virtual void display(PlatformCALayer&) = 0;
     virtual GraphicsLayerCompositingCoordinatesOrientation orientation() const;
 #elif USE(COORDINATED_GRAPHICS)
-    virtual void setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&) = 0;
+    virtual void setDisplayBuffer(RefPtr<CoordinatedPlatformLayerBuffer>&&) = 0;
     virtual bool display(CoordinatedPlatformLayer&, std::optional<Damage>&&) = 0;
 #if USE(SKIA)
     void setThreadSafeGrContext(const sk_sp<GrContextThreadSafeProxy>&);

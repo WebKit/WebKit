@@ -190,7 +190,7 @@ void SkiaCompositingLayer::setImageBackingStore(CoordinatedImageBackingStore* im
     m_imageBackingStore = imageBackingStore;
 }
 
-void SkiaCompositingLayer::setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& contentsBuffer)
+void SkiaCompositingLayer::setContentsBuffer(RefPtr<CoordinatedPlatformLayerBuffer>&& contentsBuffer)
 {
     m_contentsBuffer = WTF::move(contentsBuffer);
 }
