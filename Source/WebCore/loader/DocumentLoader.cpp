@@ -1138,6 +1138,16 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
             return;
         }
 
+        // Defense-in-depth: refuse to download a data: URL through a top-frame navigation that
+        // wasn't initiated by the user or the API client, mirroring the existing check in the
+        // PolicyAction::Use branch. The primary defense lives in the UI process; this guards
+        // ports / future flows that don't share that boundary.
+        if (disallowDataRequest()) {
+            protectedFrameLoader()->policyChecker().cannotShowMIMEType(m_response);
+            stopLoadingForPolicyChange();
+            return;
+        }
+
         if (RefPtr mainResourceLoader = this->mainResourceLoader())
             InspectorInstrumentation::continueWithPolicyDownload(*frame, *mainResourceLoader->identifier(), *this, m_response);
 

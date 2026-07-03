@@ -5415,6 +5415,19 @@ void WebPageProxy::receivedNavigationResponsePolicyDecision(WebCore::PolicyActio
     if (!hasRunningProcess())
         return completionHandler(PolicyDecision { });
 
+    // Refuse to convert a navigation response into a download when the request is a data: URL,
+    // unless the navigation was driven by the API client (e.g. -loadRequest: with a data: URL).
+    // Otherwise a compromised Web Content process could navigate to a data: URL with an unshowable
+    // MIME type and rely on the navigation delegate's stock "download unshowable responses"
+    // behavior to write attacker-controlled bytes to disk without user interaction. Legitimate
+    // downloads of data: URLs go through the navigation action policy (e.g. <a href="data:..." download>)
+    // or the explicit download API, neither of which reaches this code path.
+    if (action == PolicyAction::Download && request.url().protocolIsData()
+        && (!navigation || !navigation->isFromAPIClientRequest())) {
+        WEBPAGEPROXY_RELEASE_LOG(Loading, "receivedNavigationResponsePolicyDecision: refusing to download data: URL not initiated by API client");
+        action = PolicyAction::Ignore;
+    }
+
     Ref pageLoadState = internals().pageLoadState;
     auto transaction = pageLoadState->transaction();
 
