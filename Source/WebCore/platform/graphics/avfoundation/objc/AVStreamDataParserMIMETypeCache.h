@@ -42,7 +42,7 @@ public:
 
     bool isAvailable() const final;
     MediaPlayerEnums::SupportsType canDecodeType(const String&) final;
-    HashSet<String>& supportedTypes() final;
+    HashSet<String> supportedTypes() final;
 
 private:
     friend NeverDestroyed<AVStreamDataParserMIMETypeCache>;
