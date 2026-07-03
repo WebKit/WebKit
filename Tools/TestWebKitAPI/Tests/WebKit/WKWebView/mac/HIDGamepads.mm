@@ -36,8 +36,11 @@
 #import "Helpers/mac/VirtualGamepad.h"
 #import "InstanceMethodSwizzler.h"
 #import "TestURLSchemeHandler.h"
-#import <WebCore/GameControllerSoftLink.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/_WKFeature.h>
+
+#import <WebCore/GameControllerSoftLink.h>
 
 static bool gamepadsNotRecentlyAccessed = true;
 
@@ -570,6 +573,10 @@ TEST(Gamepad, LogitechBasic)
     auto keyWindowSwizzler = makeUnique<InstanceMethodSwizzler>([NSApplication class], @selector(keyWindow), reinterpret_cast<IMP>(getKeyWindowForTesting));
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in WKPreferences._features) {
+        if ([feature.key isEqualToString:@"GamepadButtonTypeEnabled"])
+            [configuration.get().preferences _setEnabled:YES forFeature:feature];
+    }
     RetainPtr messageHandler = adoptNS([[GamepadMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gamepad"];
 
@@ -634,6 +641,20 @@ TEST(Gamepad, LogitechBasic)
 
     [webView callAsyncJavaScript:@(pollGamepadStateFunction) arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:resultBlock];
 
+    Util::run(&done);
+    done = false;
+
+    // Logitech F310/F710 have no home button. Its reserved slot must not be standard.
+    [webView callAsyncJavaScript:@"return Array.from(navigator.getGamepads()).filter(Boolean).map(gamepad => gamepad.buttons.map(button => button.type));" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&](id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_EQ([(NSArray *)result count], 2u);
+        for (NSArray *types in result) {
+            EXPECT_EQ(types.count, expectedButtons);
+            EXPECT_TRUE([types[0] isEqualToString:@"standard"]);
+            EXPECT_TRUE([types[16] isEqualToString:@"non-standard"]);
+        }
+        done = true;
+    }];
     Util::run(&done);
     didReceiveMessage = true;
 }

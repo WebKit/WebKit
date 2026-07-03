@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests GamepadButton.type classification and stability across input updates.");
+jsTestIsAsync = true;
+
+if (window.internals)
+    internals.settings.setGamepadButtonTypeEnabled(true);
+
+var gamepad;
+var button;
+
+function nextEvent(type)
+{
+    return new Promise(resolve => addEventListener(type, resolve, { once: true }));
+}
+
+async function runTest()
+{
+    let connected = nextEvent("gamepadconnected");
+    testRunner.setMockGamepadDetails(0, "Standard Gamepad", "standard", 4, 18, false);
+    testRunner.connectMockGamepad(0);
+    gamepad = (await connected).gamepad;
+
+    shouldBeEqualToString("gamepad.mapping", "standard");
+    shouldBe("gamepad.buttons.length", "18");
+    shouldBeTrue("gamepad.buttons.slice(0, 17).every(button => button.type === 'standard')");
+    shouldBeEqualToString("gamepad.buttons[17].type", "non-standard");
+
+    button = gamepad.buttons[0];
+    testRunner.setMockGamepadButtonValue(0, 0, 1);
+    while (!navigator.getGamepads()[0].buttons[0].pressed)
+        await new Promise(requestAnimationFrame);
+    gamepad = navigator.getGamepads()[0];
+    shouldBeTrue("gamepad.buttons[0] === button");
+    shouldBeTrue("button.pressed");
+    shouldBeEqualToString("button.type", "standard");
+
+    testRunner.setMockGamepadButtonValue(0, 0, 0);
+    while (navigator.getGamepads()[0].buttons[0].pressed)
+        await new Promise(requestAnimationFrame);
+    shouldBeFalse("button.pressed");
+    shouldBeEqualToString("button.type", "standard");
+    button.type = "trackpad";
+    shouldBeEqualToString("button.type", "standard");
+
+    const disconnected = nextEvent("gamepaddisconnected");
+    testRunner.disconnectMockGamepad(0);
+    await disconnected;
+
+    connected = nextEvent("gamepadconnected");
+    testRunner.setMockGamepadDetails(0, "Unmapped Gamepad", "", 4, 18, false);
+    testRunner.connectMockGamepad(0);
+    gamepad = (await connected).gamepad;
+    shouldBeEqualToString("gamepad.mapping", "");
+    shouldBe("gamepad.buttons.length", "18");
+    shouldBeTrue("gamepad.buttons.every(button => button.type === 'non-standard')");
+
+    finishJSTest();
+}
+
+onload = () => runTest().catch(error => {
+    testFailed(String(error));
+    finishJSTest();
+});
+</script>
+</body>
