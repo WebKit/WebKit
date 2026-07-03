@@ -1031,6 +1031,31 @@ function(_webkit_setup_swift_header_deps _target _stamp _header _resp)
     add_dependencies(${_target}_SwiftInterop ${_target}_SwiftCxxHeader)
 endfunction()
 
+# Keeps a Clang module (and the Swift modules that import it) from going stale
+# when a header is added to or removed from it. This is the cmake replacement for
+# the manual "touch count" comment that umbrella modulemaps otherwise need in
+# Xcode builds.
+#
+# Background: for an umbrella modulemap (`umbrella "."`), adding a header to the
+# directory does not change the modulemap's contents, and neither swiftc's
+# -emit-dependencies (rdar://177840132) nor Clang's implicit module machinery
+# reliably notices the new header. The cached PCM then stays stale until the
+# modulemap itself changes.
+#
+# ARGN is the set of headers that constitute the module.
+function(WEBKIT_INVALIDATE_UMBRELLA_MODULE_ON_HEADER_SET_CHANGE _id _modulemap)
+    string(SHA1 _header_set_hash "${ARGN}")
+    set(_hash_file "${CMAKE_CURRENT_BINARY_DIR}/${_id}-module-header-set.hash")
+    set(_previous_hash "")
+    if (EXISTS "${_hash_file}")
+        file(READ "${_hash_file}" _previous_hash)
+    endif ()
+    if (NOT _previous_hash STREQUAL _header_set_hash)
+        execute_process(COMMAND ${CMAKE_COMMAND} -E touch "${_modulemap}")
+        file(WRITE "${_hash_file}" "${_header_set_hash}")
+    endif ()
+endfunction()
+
 macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_name _interop_module_path _output_header)
     if (SWIFT_REQUIRED)
         set_target_properties(${_target} PROPERTIES Swift_MODULE_NAME ${_module_name})

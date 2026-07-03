@@ -118,6 +118,7 @@ if (SWIFT_REQUIRED AND NOT (PORT STREQUAL GTK OR PORT STREQUAL WPE))
     # FIXME(rdar://177840132): swiftc -emit-dependencies records imported
     # clang modulemaps, but sometimes skips individual C++ headers.
     set(PAL_SWIFT_INTEROP_HEADERS ${PAL_PUBLIC_HEADERS})
+    WEBKIT_INVALIDATE_UMBRELLA_MODULE_ON_HEADER_SET_CHANGE(pal "${PAL_DIR}/pal/module.modulemap" ${PAL_SWIFT_INTEROP_HEADERS})
 
     WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(PAL pal
         "${PAL_FRAMEWORK_HEADERS_DIR}/pal"
