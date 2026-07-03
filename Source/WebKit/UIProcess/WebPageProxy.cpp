@@ -11900,6 +11900,8 @@ void WebPageProxy::focusedElementChanged(IPC::Connection& connection, const std:
 void WebPageProxy::focusedFrameChanged(IPC::Connection& connection, std::optional<FrameIdentifier>&& frameID)
 {
     RefPtr frame = frameID ? WebFrameProxy::webFrame(*frameID) : nullptr;
+    if (frame)
+        MESSAGE_CHECK_BASE(frame->page() == this, connection);
     m_focusedFrame = WTF::move(frame);
     broadcastFocusedFrameToOtherProcesses(connection, WTF::move(frameID));
 }
