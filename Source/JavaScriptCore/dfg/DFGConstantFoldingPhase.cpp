@@ -2012,6 +2012,33 @@ private:
                 break;
             }
 
+            case NewResolvedPromise: {
+                if (node->isResolvedValueKnownNonThenable())
+                    break;
+
+                AbstractValue& argument = m_state.forNode(node->child1());
+                if (argument.isType(~SpecObject)) {
+                    node->setResolvedValueKnownNonThenable();
+                    changed = true;
+                    break;
+                }
+
+                auto& structureSet = argument.m_structure;
+                if (structureSet.isFinite() && structureSet.size() == 1) {
+                    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+                    auto conditionSet = m_graph.tryEnsureAbsence(globalObject, structureSet.toStructureSet(), CacheableIdentifier::createFromImmortalIdentifier(m_graph.m_vm.propertyNames->then.impl()));
+                    if (conditionSet.isValid()) {
+                        if (m_graph.watchConditions(conditionSet)) {
+                            node->setResolvedValueKnownNonThenable();
+                            changed = true;
+                            break;
+                        }
+                    }
+                }
+
+                break;
+            }
+
             case PromiseResolve: {
                 JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
                 if (JSValue constructor = m_state.forNode(node->child1()).m_value) {

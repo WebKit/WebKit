@@ -947,6 +947,12 @@ public:
         return m_opInfo.as<bool>();
     }
 
+    void setResolvedValueKnownNonThenable()
+    {
+        ASSERT(op() == NewResolvedPromise);
+        m_opInfo = static_cast<uint32_t>(true);
+    }
+
     void NODELETE convertToNewArrayBuffer(FrozenValue* immutableButterfly);
     void NODELETE convertToNewArrayWithSize();
     void NODELETE convertToNewArrayWithButterfly(Graph&, Node* butterfly);
