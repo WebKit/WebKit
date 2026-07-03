@@ -54,6 +54,19 @@
 			name = "Fuzzers (libwebrtc)";
 			productName = Fuzzers;
 		};
+		DDAD6FF72FF59BEB0054DF83 /* Setup */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = DDAD6FF82FF59BEB0054DF83 /* Build configuration list for PBXAggregateTarget "Setup" */;
+			buildPhases = (
+				DDAD6FFC2FF59C250054DF83 /* Public SDK gate */,
+			);
+			dependencies = (
+			);
+			name = Setup;
+			packageProductDependencies = (
+			);
+			productName = Setup;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -5800,6 +5813,76 @@
 			proxyType = 1;
 			remoteGlobalIDString = DDF30D0527C5C003006A526F;
 			remoteInfo = absl;
+		};
+		DDAD6FFD2FF59C6F0054DF83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDAD6FF72FF59BEB0054DF83;
+			remoteInfo = Setup;
+		};
+		DDAD6FFF2FF59C740054DF83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDAD6FF72FF59BEB0054DF83;
+			remoteInfo = Setup;
+		};
+		DDAD70012FF59C770054DF83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDAD6FF72FF59BEB0054DF83;
+			remoteInfo = Setup;
+		};
+		DDAD70032FF59C7A0054DF83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDAD6FF72FF59BEB0054DF83;
+			remoteInfo = Setup;
+		};
+		DDAD70052FF59C7D0054DF83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDAD6FF72FF59BEB0054DF83;
+			remoteInfo = Setup;
+		};
+		DDAD70072FF59C830054DF83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDAD6FF72FF59BEB0054DF83;
+			remoteInfo = Setup;
+		};
+		DDAD70092FF59C870054DF83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDAD6FF72FF59BEB0054DF83;
+			remoteInfo = Setup;
+		};
+		DDAD700B2FF59C8A0054DF83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDAD6FF72FF59BEB0054DF83;
+			remoteInfo = Setup;
+		};
+		DDAD700D2FF59C8F0054DF83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDAD6FF72FF59BEB0054DF83;
+			remoteInfo = Setup;
+		};
+		DDAD700F2FF59C930054DF83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDAD6FF72FF59BEB0054DF83;
+			remoteInfo = Setup;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -24185,6 +24268,7 @@
 				41CB0A57215C8E060097B8AA /* PBXBuildRule */,
 			);
 			dependencies = (
+				DDAD70082FF59C830054DF83 /* PBXTargetDependency */,
 				41BE7174215BF42300A7B196 /* PBXTargetDependency */,
 			);
 			name = vpx;
@@ -24203,6 +24287,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				DDAD700A2FF59C870054DF83 /* PBXTargetDependency */,
 			);
 			name = yasm;
 			productName = yasm;
@@ -24624,6 +24709,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				DDAD70042FF59C7A0054DF83 /* PBXTargetDependency */,
 			);
 			name = srtp;
 			productName = srtp;
@@ -24644,6 +24730,7 @@
 				410B392C292CC6890003E515 /* PBXBuildRule */,
 			);
 			dependencies = (
+				DDAD70062FF59C7D0054DF83 /* PBXTargetDependency */,
 			);
 			name = yuv;
 			productName = yuv;
@@ -24663,6 +24750,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				DDAD70022FF59C770054DF83 /* PBXTargetDependency */,
 			);
 			name = opus;
 			productName = opus;
@@ -24682,6 +24770,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				DDAD70002FF59C740054DF83 /* PBXTargetDependency */,
 			);
 			name = boringssl;
 			productName = boringssl;
@@ -24700,6 +24789,7 @@
 				51DA3FE32CB58200002C095E /* PBXBuildRule */,
 			);
 			dependencies = (
+				DDAD700C2FF59C8A0054DF83 /* PBXTargetDependency */,
 			);
 			name = webm;
 			productName = webm;
@@ -24717,6 +24807,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				DDAD700E2FF59C8F0054DF83 /* PBXTargetDependency */,
 			);
 			name = aom;
 			productName = aom;
@@ -24739,6 +24830,7 @@
 				DDC901FB27C6BB28008685BF /* PBXBuildRule */,
 			);
 			dependencies = (
+				DDAD70102FF59C930054DF83 /* PBXTargetDependency */,
 			);
 			name = absl;
 			productName = absl;
@@ -24750,7 +24842,6 @@
 			buildConfigurationList = FB39D0D61200F11E00088E69 /* Build configuration list for PBXNativeTarget "libwebrtc.dylib" */;
 			buildPhases = (
 				FB39D77B1201110C00088E69 /* Headers */,
-				DD114ECB2CEFBDBA00125A79 /* Use WTF's derived Public SDK Headers */,
 				44C229C02A0AF12E0008308E /* Generate Export Files */,
 				FB39D0CE1200F0E300088E69 /* Sources */,
 				FB39D0CF1200F0E300088E69 /* Frameworks */,
@@ -24770,6 +24861,7 @@
 				DDF30CFA27C5A98F006A526F /* PBXBuildRule */,
 			);
 			dependencies = (
+				DDAD6FFE2FF59C6F0054DF83 /* PBXTargetDependency */,
 				410B3827292B73E90003E515 /* PBXTargetDependency */,
 				DD2E76E827C6B69A00F2A74C /* PBXTargetDependency */,
 				CDEBB4CC24C01AB400ADBD44 /* PBXTargetDependency */,
@@ -24810,6 +24902,9 @@
 						CreatedOnToolsVersion = 12.0;
 						ProvisioningStyle = Automatic;
 					};
+					DDAD6FF72FF59BEB0054DF83 = {
+						CreatedOnToolsVersion = 26.5;
+					};
 					DDF30D0527C5C003006A526F = {
 						CreatedOnToolsVersion = 13.3;
 					};
@@ -24830,6 +24925,7 @@
 			projectRoot = "";
 			targets = (
 				31339FA12CEEFECC0054D8D5 /* libwebrtc */,
+				DDAD6FF72FF59BEB0054DF83 /* Setup */,
 				FB39D0D01200F0E300088E69 /* libwebrtc.dylib */,
 				5C63FA7A1E418411002CA531 /* boringssl */,
 				5C4B490E1E42C336002651C8 /* opus */,
@@ -24948,7 +25044,7 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-cryptex.sh\"\n";
 		};
-		DD114ECB2CEFBDBA00125A79 /* Use WTF's derived Public SDK Headers */ = {
+		DDAD6FFC2FF59C250054DF83 /* Public SDK gate */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -24957,16 +25053,17 @@
 			);
 			inputPaths = (
 				"$(WK_DERIVED_SDK_HEADERS_DIR)",
+				"$(WK_AVAILABILITY_OVERLAY_YAML)",
 			);
-			name = "Use WTF's derived Public SDK Headers";
+			name = "Public SDK gate";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/use-derived-public-sdk-headers.timestamp",
+				"$(DERIVED_FILE_DIR)/public-sdk-ready.timestamp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "[ -z \"${WK_DERIVED_SDK_HEADERS_DIR}\" -o -d \"${WK_DERIVED_SDK_HEADERS_DIR}\" ] && touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -28088,6 +28185,56 @@
 			target = DDF30D0527C5C003006A526F /* absl */;
 			targetProxy = DD2E76E727C6B69A00F2A74C /* PBXContainerItemProxy */;
 		};
+		DDAD6FFE2FF59C6F0054DF83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDAD6FF72FF59BEB0054DF83 /* Setup */;
+			targetProxy = DDAD6FFD2FF59C6F0054DF83 /* PBXContainerItemProxy */;
+		};
+		DDAD70002FF59C740054DF83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDAD6FF72FF59BEB0054DF83 /* Setup */;
+			targetProxy = DDAD6FFF2FF59C740054DF83 /* PBXContainerItemProxy */;
+		};
+		DDAD70022FF59C770054DF83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDAD6FF72FF59BEB0054DF83 /* Setup */;
+			targetProxy = DDAD70012FF59C770054DF83 /* PBXContainerItemProxy */;
+		};
+		DDAD70042FF59C7A0054DF83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDAD6FF72FF59BEB0054DF83 /* Setup */;
+			targetProxy = DDAD70032FF59C7A0054DF83 /* PBXContainerItemProxy */;
+		};
+		DDAD70062FF59C7D0054DF83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDAD6FF72FF59BEB0054DF83 /* Setup */;
+			targetProxy = DDAD70052FF59C7D0054DF83 /* PBXContainerItemProxy */;
+		};
+		DDAD70082FF59C830054DF83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDAD6FF72FF59BEB0054DF83 /* Setup */;
+			targetProxy = DDAD70072FF59C830054DF83 /* PBXContainerItemProxy */;
+		};
+		DDAD700A2FF59C870054DF83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDAD6FF72FF59BEB0054DF83 /* Setup */;
+			targetProxy = DDAD70092FF59C870054DF83 /* PBXContainerItemProxy */;
+		};
+		DDAD700C2FF59C8A0054DF83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDAD6FF72FF59BEB0054DF83 /* Setup */;
+			targetProxy = DDAD700B2FF59C8A0054DF83 /* PBXContainerItemProxy */;
+		};
+		DDAD700E2FF59C8F0054DF83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDAD6FF72FF59BEB0054DF83 /* Setup */;
+			targetProxy = DDAD700D2FF59C8F0054DF83 /* PBXContainerItemProxy */;
+		};
+		DDAD70102FF59C930054DF83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDAD6FF72FF59BEB0054DF83 /* Setup */;
+			targetProxy = DDAD700F2FF59C930054DF83 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -28813,6 +28960,30 @@
 			};
 			name = Production;
 		};
+		DDAD6FF92FF59BEB0054DF83 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		DDAD6FFA2FF59BEB0054DF83 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		DDAD6FFB2FF59BEB0054DF83 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
 		DDEBB11A24C0187400ADBD44 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = DDEBB11E24C0189600ADBD44 /* libaom.xcconfig */;
@@ -29213,6 +29384,16 @@
 				CDEBB11A24C0187400ADBD44 /* Debug */,
 				CDEBB11B24C0187400ADBD44 /* Release */,
 				CDEBB11C24C0187400ADBD44 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		DDAD6FF82FF59BEB0054DF83 /* Build configuration list for PBXAggregateTarget "Setup" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DDAD6FF92FF59BEB0054DF83 /* Debug */,
+				DDAD6FFA2FF59BEB0054DF83 /* Release */,
+				DDAD6FFB2FF59BEB0054DF83 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

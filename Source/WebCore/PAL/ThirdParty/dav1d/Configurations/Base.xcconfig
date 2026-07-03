@@ -23,6 +23,12 @@
 
 #include "../../../../../Configurations/CommonBase.xcconfig"
 
+// Third-party target: opt out of the availability overlay. dav1d doesn't
+// touch API_UNAVAILABLE-marked SDK APIs, and it may build in parallel with
+// bmalloc's Run Script that produces the overlay YAML.
+WK_AVAILABILITY_OVERLAY_FLAGS = ;
+WK_AVAILABILITY_OVERLAY_SWIFT_FLAGS = ;
+
 AD_HOC_CODE_SIGNING_ALLOWED = YES;
 CODE_SIGN_IDENTITY = -;
 

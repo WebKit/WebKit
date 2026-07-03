@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -321,6 +321,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 44E750C62AC7291000828AC4 /* Build configuration list for PBXNativeTarget "gmock" */;
 			buildPhases = (
+				DDAD7E562FF6456F0054DF83 /* Public SDK gate */,
 				448631492AE2D94C00F9BC42 /* Product Dependencies */,
 				44E750BE2AC7291000828AC4 /* Headers */,
 				44E750BF2AC7291000828AC4 /* Sources */,
@@ -371,6 +372,30 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		DDAD7E562FF6456F0054DF83 /* Public SDK gate */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(WK_DERIVED_SDK_HEADERS_DIR)",
+				"$(WK_AVAILABILITY_OVERLAY_YAML)",
+			);
+			name = "Public SDK gate";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/public-sdk-ready.timestamp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		44E750BF2AC7291000828AC4 /* Sources */ = {

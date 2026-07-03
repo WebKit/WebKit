@@ -58,45 +58,33 @@ set(CMAKE_HAVE_PTHREAD_H 1 CACHE INTERNAL "")
 set(CMAKE_HAVE_LIBC_PTHREAD 1 CACHE INTERNAL "")
 find_package(Threads REQUIRED)
 
-string(REGEX MATCH "^[0-9]+" _sdk_major "${_sdk_version}")
-set(_additions_candidates
-    "${CMAKE_SOURCE_DIR}/WebKitLibraries/SDKs/${WEBKIT_SDK_NAME}${_sdk_major}.0-additions.sdk/usr/local/include"
-    "${CMAKE_SOURCE_DIR}/WebKitLibraries/SDKs/${WEBKIT_SDK_NAME}${_sdk_major_minor}-additions.sdk/usr/local/include"
-)
-set(_additions_found FALSE)
-foreach (_additions IN LISTS _additions_candidates)
-    if (EXISTS "${_additions}/AvailabilityProhibitedInternal.h")
-        add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-isystem${_additions}>")
-        message(STATUS "SDK additions overlay: ${_additions} (disables API_UNAVAILABLE for SPI code)")
-        set(_additions_found TRUE)
-        break ()
-    endif ()
-endforeach ()
-if (NOT _additions_found)
-    file(GLOB _all_additions "${CMAKE_SOURCE_DIR}/WebKitLibraries/SDKs/${WEBKIT_SDK_NAME}*-additions.sdk")
-    list(SORT _all_additions)
-    list(REVERSE _all_additions)
-    foreach (_additions_sdk IN LISTS _all_additions)
-        set(_additions "${_additions_sdk}/usr/local/include")
-        if (EXISTS "${_additions}/AvailabilityProhibitedInternal.h")
-            add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-isystem${_additions}>")
-            message(STATUS "SDK additions overlay (fallback): ${_additions}")
-            set(_additions_found TRUE)
-            break ()
-        endif ()
-    endforeach ()
-    unset(_all_additions)
-    unset(_additions_sdk)
-endif ()
-if (NOT _additions_found)
-    message(WARNING "No SDK additions overlay found -- API_UNAVAILABLE classes (AVAudioSession etc.) will fail to compile")
-endif ()
-unset(_sdk_version)
-unset(_sdk_major)
-unset(_sdk_major_minor)
-unset(_additions_candidates)
-unset(_additions)
-unset(_additions_found)
+# Replace the SDK's availability headers with stubs that defuse availability
+# checks.
+set(_availability_overlay_dir "${CMAKE_SOURCE_DIR}/WebKitLibraries/AvailabilityOverlay")
+set(_availability_overlay_yaml "${CMAKE_BINARY_DIR}/availability-overlay.yaml")
+file(WRITE "${_availability_overlay_yaml}.tmp"
+"{
+  \"version\": 0,
+  \"case-sensitive\": false,
+  \"roots\": [
+    {
+      \"name\": \"${CMAKE_OSX_SYSROOT}/usr/include/os/availability.h\",
+      \"type\": \"file\",
+      \"external-contents\": \"${_availability_overlay_dir}/usr/include/os/availability.h\"
+    },
+    {
+      \"name\": \"${CMAKE_OSX_SYSROOT}/usr/include/Availability.h\",
+      \"type\": \"file\",
+      \"external-contents\": \"${_availability_overlay_dir}/usr/include/Availability.h\"
+    }
+  ]
+}
+")
+file(COPY_FILE "${_availability_overlay_yaml}.tmp" ${_availability_overlay_yaml} ONLY_IF_DIFFERENT)
+add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:SHELL:-ivfsoverlay ${_availability_overlay_yaml}>")
+add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-vfsoverlay ${_availability_overlay_yaml}>")
+unset(_availability_overlay_dir)
+unset(_availability_overlay_yaml)
 
 if (EXISTS "/usr/local/include/WebKitAdditions" AND NOT EXISTS "/usr/local/include/AppleFeatures/AppleFeatures.h")
     set(_apple_features_stub "${CMAKE_BINARY_DIR}/generated-stubs/AppleFeatures")
