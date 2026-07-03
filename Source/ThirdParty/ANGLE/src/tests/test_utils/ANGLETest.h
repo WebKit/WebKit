@@ -598,6 +598,8 @@ class ANGLETestBase : public ::testing::Test
         return mCurrentParams->getRenderer() == EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE;
     }
 
+    bool shouldShowWindow() const;
+
     bool isDriverSystemEgl() const
     {
         return mCurrentParams->driver == angle::GLESDriverType::SystemEGL;

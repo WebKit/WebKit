@@ -43,7 +43,7 @@ class RobustBufferAccessBehaviorTest : public ANGLETest<>
         {
             return false;
         }
-        setWindowVisible(mOSWindow, true);
+        setWindowVisible(mOSWindow, shouldShowWindow());
 
         Library *driverLib = ANGLETestEnvironment::GetDriverLibrary(getDriverType());
 

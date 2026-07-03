@@ -744,7 +744,7 @@ TEST_P(EGLSurfaceTest, SurfaceUseAfterFreeBug)
 // Test that the window can be reset repeatedly before surface creation.
 TEST_P(EGLSurfaceTest, ResetNativeWindow)
 {
-    setWindowVisible(mOSWindow, true);
+    setWindowVisible(mOSWindow, shouldShowWindow());
 
     initializeDisplay();
 
@@ -3305,7 +3305,7 @@ TEST_P(EGLSurfaceTest, DISABLED_RandomClearTearing)
 // the app get over the problem.
 TEST_P(EGLSurfaceTest, DestroyAndRecreateWhileCurrent)
 {
-    setWindowVisible(mOSWindow, true);
+    setWindowVisible(mOSWindow, shouldShowWindow());
 
     initializeDisplay();
 
@@ -3863,7 +3863,7 @@ TEST_P(EGLSurfaceTest, ResizeAfterSwap)
     constexpr std::array<int, kSizeCount> kHeights{499, 200};
 
     // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
-    setWindowVisible(mOSWindow, true);
+    setWindowVisible(mOSWindow, shouldShowWindow());
 
     initializeDisplay();
     initializeSurfaceWithDefaultConfig(true);
@@ -3908,7 +3908,7 @@ TEST_P(EGLSurfaceTest, ResizeAfterSwapSkipSizeQuery)
     constexpr std::array<int, kSizeCount> kHeights{499, 200};
 
     // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
-    setWindowVisible(mOSWindow, true);
+    setWindowVisible(mOSWindow, shouldShowWindow());
 
     initializeDisplay();
     initializeSurfaceWithDefaultConfig(true);
@@ -3943,7 +3943,7 @@ TEST_P(EGLSurfaceTest, ResizeBeforeDraw)
     constexpr std::array<int, kSizeCount> kHeights{64, 499, 200};
 
     // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
-    setWindowVisible(mOSWindow, true);
+    setWindowVisible(mOSWindow, shouldShowWindow());
 
     initializeDisplay();
     initializeSurfaceWithDefaultConfig(true);
@@ -3996,7 +3996,7 @@ TEST_P(EGLSurfaceTest, ResizeBeforeDrawPostSizeQuery)
     constexpr std::array<int, kSizeCount> kHeights{64, 499, 200};
 
     // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
-    setWindowVisible(mOSWindow, true);
+    setWindowVisible(mOSWindow, shouldShowWindow());
 
     initializeDisplay();
     initializeSurfaceWithDefaultConfig(true);
@@ -4055,7 +4055,7 @@ TEST_P(EGLSurfaceTest, ResizeAfterDraw)
     constexpr std::array<int, kSizeCount> kHeights{64, 499, 200};
 
     // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
-    setWindowVisible(mOSWindow, true);
+    setWindowVisible(mOSWindow, shouldShowWindow());
 
     initializeDisplay();
     initializeSurfaceWithDefaultConfig(true);
@@ -4113,7 +4113,7 @@ TEST_P(EGLSurfaceTest, ResizeLargeWindow)
     constexpr std::array<int, kSizeCount> kHeights{999, 1079};
 
     // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
-    setWindowVisible(mOSWindow, true);
+    setWindowVisible(mOSWindow, shouldShowWindow());
 
     initializeDisplay();
     initializeSurfaceWithDefaultConfig(true);
@@ -4214,7 +4214,7 @@ TEST_P(EGLSurfaceTest, ResizeBeforeMakeCurrent)
     constexpr std::array<int, kSizeCount> kHeights{64, 499};
 
     // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
-    setWindowVisible(mOSWindow, true);
+    setWindowVisible(mOSWindow, shouldShowWindow());
 
     initializeDisplay();
     initializeSurfaceWithDefaultConfig(true);
@@ -4282,7 +4282,7 @@ TEST_P(EGLSurfaceTest, ResizeBeforeMakeCurrentPostSizeQuery)
     constexpr std::array<int, kSizeCount> kHeights{64, 499};
 
     // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
-    setWindowVisible(mOSWindow, true);
+    setWindowVisible(mOSWindow, shouldShowWindow());
 
     initializeDisplay();
     initializeSurfaceWithDefaultConfig(true);
@@ -4349,7 +4349,7 @@ TEST_P(EGLSurfaceTest, ResizeAndReadPixelsRobustANGLE)
     constexpr std::array<int, kSizeCount> kHeights{499, 200};
 
     // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
-    setWindowVisible(mOSWindow, true);
+    setWindowVisible(mOSWindow, shouldShowWindow());
 
     initializeDisplay();
     initializeSurfaceWithDefaultConfig(true);
@@ -4400,7 +4400,7 @@ TEST_P(EGLSurfaceTest, ResizeAndBlitFramebufferANGLE)
     constexpr std::array<int, kSizeCount> kHeights{499, 200};
 
     // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
-    setWindowVisible(mOSWindow, true);
+    setWindowVisible(mOSWindow, shouldShowWindow());
 
     initializeDisplay();
 
@@ -4476,7 +4476,7 @@ class EGLWindowSurfaceColorspaceTestES3 : public EGLSurfaceTest
 // Test interaction between GL_EXT_sRGB_write_control and default framebuffer
 TEST_P(EGLWindowSurfaceColorspaceTestES3, ToggleSrgbWriteControl)
 {
-    setWindowVisible(mOSWindow, true);
+    setWindowVisible(mOSWindow, shouldShowWindow());
 
     initializeDisplay();
 
@@ -4547,7 +4547,7 @@ TEST_P(EGLWindowSurfaceColorspaceTestES3, ToggleSrgbWriteControl)
 // wouldn't refresh the framebuffer
 TEST_P(EGLWindowSurfaceColorspaceTestES3, ToggleSrgbWriteControlWithinRenderPass)
 {
-    setWindowVisible(mOSWindow, true);
+    setWindowVisible(mOSWindow, shouldShowWindow());
 
     initializeDisplay();
 
@@ -4623,7 +4623,7 @@ TEST_P(EGLWindowSurfaceColorspaceTestES3, ToggleSrgbWriteControlWithinRenderPass
 TEST_P(EGLSurfaceTest, PreserveThenClearToBlack)
 {
     // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
-    setWindowVisible(mOSWindow, true);
+    setWindowVisible(mOSWindow, shouldShowWindow());
 
     initializeDisplay();
 
@@ -4669,7 +4669,7 @@ TEST_P(EGLSurfaceTest, PreserveThenClearToBlack)
 TEST_P(EGLSurfaceTest, PreserveThenBlend)
 {
     // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
-    setWindowVisible(mOSWindow, true);
+    setWindowVisible(mOSWindow, shouldShowWindow());
 
     initializeDisplay();
 
@@ -4715,7 +4715,7 @@ TEST_P(EGLSurfaceTest, PreserveThenBlend)
 TEST_P(EGLSurfaceTest, ClearThenPreserve)
 {
     // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
-    setWindowVisible(mOSWindow, true);
+    setWindowVisible(mOSWindow, shouldShowWindow());
 
     initializeDisplay();
 
