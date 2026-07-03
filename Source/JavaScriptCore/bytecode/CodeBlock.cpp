@@ -3011,29 +3011,21 @@ bool CodeBlock::hasIdentifier(UniquedStringImpl* uid)
 void CodeBlock::updateAllNonLazyValueProfilePredictionsAndCountLiveness(const ConcurrentJSLocker& locker, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles)
 {
     numberOfLiveNonArgumentValueProfiles = 0;
-    numberOfSamplesInProfiles = 0; // If this divided by ValueProfile::numberOfBuckets equals numberOfValueProfiles() then value profiles are full.
+    numberOfSamplesInProfiles = 0;
 
     unsigned index = 0;
     UnlinkedCodeBlock* unlinkedCodeBlock = this->unlinkedCodeBlock();
     bool isBuiltinFunction = unlinkedCodeBlock->isBuiltinFunction();
     auto unlinkedValueProfiles = unlinkedCodeBlock->unlinkedValueProfiles().mutableSpan();
     forEachValueProfile([&](auto& profile, bool isArgument) {
-        unsigned numSamples = profile.totalNumberOfSamples();
         using Profile = std::remove_reference_t<decltype(profile)>;
         static_assert(Profile::numberOfBuckets == 1);
-        if (numSamples > Profile::numberOfBuckets)
-            numSamples = Profile::numberOfBuckets; // We don't want profiles that are extremely hot to be given more weight.
-        numberOfSamplesInProfiles += numSamples;
-        if (isArgument) {
-            profile.computeUpdatedPrediction(locker);
-            if (!isBuiltinFunction)
-                unlinkedValueProfiles[index].update(profile);
-            ++index;
-            return;
+        bool wasLive = profile.computeUpdatedPrediction(locker) != SpecNone;
+        if (wasLive) {
+            ++numberOfSamplesInProfiles;
+            if (!isArgument)
+                ++numberOfLiveNonArgumentValueProfiles;
         }
-        if (profile.numberOfSamples() || profile.isSampledBefore())
-            numberOfLiveNonArgumentValueProfiles++;
-        profile.computeUpdatedPrediction(locker);
         if (!isBuiltinFunction)
             unlinkedValueProfiles[index].update(profile);
         ++index;
