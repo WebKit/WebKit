@@ -92,7 +92,7 @@ WI.DOMManager = class DOMManager extends WI.Object
     {
         console.assert(target instanceof WI.FrameTarget);
 
-        let data = {document: null, target: target};
+        let data = {document: null, target: target, attributeLoadNodeIds: {}, loadNodeAttributesTimeout: 0};
         this._frameTargetDOMData.set(target, data);
 
         target.DOMAgent.getDocument((error, root) => {
@@ -237,6 +237,11 @@ WI.DOMManager = class DOMManager extends WI.Object
         if (!data)
             return;
 
+        if (data.loadNodeAttributesTimeout) {
+            clearTimeout(data.loadNodeAttributesTimeout);
+            data.loadNodeAttributesTimeout = 0;
+        }
+
         let frameDocument = data.document;
         if (frameDocument && frameDocument.parentNode) {
             let iframeElement = frameDocument.parentNode;
@@ -337,27 +342,47 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     _frameTargetInlineStyleInvalidated(target, nodeIds)
     {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=316416 The page-target variant 
-        // (`_inlineStyleInvalidated`) debounces and batches the `DOM.getAttributes` calls 
-        // so they run at most once per tick. Mimic that here to avoid
-        // issuing one command per invalidated node.
-        for (let nodeId of nodeIds) {
+        let data = this._frameTargetDOMData.get(target);
+        if (!data)
+            return;
+
+        // Batch the DOM.getAttributes calls so they run at most once per tick, mirroring the
+        // page-target `_inlineStyleInvalidated`.
+        for (let nodeId of nodeIds)
+            data.attributeLoadNodeIds[nodeId] = true;
+        if (data.loadNodeAttributesTimeout)
+            return;
+        data.loadNodeAttributesTimeout = setTimeout(this._loadFrameTargetNodeAttributes.bind(this, target), 0);
+    }
+
+    _loadFrameTargetNodeAttributes(target)
+    {
+        let data = this._frameTargetDOMData.get(target);
+        if (!data)
+            return;
+
+        data.loadNodeAttributesTimeout = 0;
+
+        let nodeIds = data.attributeLoadNodeIds;
+        data.attributeLoadNodeIds = {};
+
+        for (let nodeId in nodeIds) {
             let scopedId = target.identifier + ":" + nodeId;
-            let node = this._idToDOMNode[scopedId];
-            if (!node)
+            if (!this._idToDOMNode[scopedId])
                 continue;
 
-            target.DOMAgent.getAttributes(nodeId, (error, attributes) => {
+            let nodeIdAsNumber = parseInt(nodeId);
+            target.DOMAgent.getAttributes(nodeIdAsNumber, (error, attributes) => {
                 if (error || !attributes)
                     return;
 
-                let currentNode = this._idToDOMNode[scopedId];
-                if (!currentNode)
+                let node = this._idToDOMNode[scopedId];
+                if (!node)
                     return;
 
-                currentNode._setAttributesPayload(attributes);
-                this.dispatchEventToListeners(WI.DOMManager.Event.AttributeModified, {node: currentNode, name: "style"});
-                currentNode.dispatchEventToListeners(WI.DOMNode.Event.AttributeModified, {name: "style"});
+                node._setAttributesPayload(attributes);
+                this.dispatchEventToListeners(WI.DOMManager.Event.AttributeModified, {node, name: "style"});
+                node.dispatchEventToListeners(WI.DOMNode.Event.AttributeModified, {name: "style"});
             });
         }
     }
