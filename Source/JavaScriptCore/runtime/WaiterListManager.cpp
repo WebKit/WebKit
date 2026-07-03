@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WaiterListManager.h"
 
-#include "DeferredWorkTimerInlines.h"
 #include "HeapCellInlines.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
@@ -205,8 +204,8 @@ void WaiterListManager::notifyWaiterImpl(const AbstractLocker& listLocker, Ref<W
     ASSERT(!waiter->isOnList());
 
     if (waiter->isAsync()) {
-        waiter->scheduleWorkAndClear(listLocker, [resolveResult](DeferredWorkTimer::Ticket ticket) {
-            JSPromise* promise = jsCast<JSPromise*>(ticket->target());
+        waiter->scheduleWorkAndClear(listLocker, [resolveResult](DeferredWorkTimer::Ticket& ticket) {
+            JSPromise* promise = jsCast<JSPromise*>(ticket.target());
             JSGlobalObject* globalObject = promise->globalObject();
             VM& vm = promise->vm();
             JSValue result = resolveResult == ResolveResult::Ok ? vm.smallStrings.okString() : vm.smallStrings.timedOutString();
@@ -244,10 +243,8 @@ size_t WaiterListManager::totalWaiterCount()
 void Waiter::scheduleWorkAndClear(const AbstractLocker& listLocker, DeferredWorkTimer::Task&& task)
 {
     ASSERT(m_isAsync && m_vm && !isOnList());
-    if (auto ticket = this->ticket(listLocker)) {
-        m_vm->deferredWorkTimer->scheduleWorkSoon(ticket.get(), WTF::move(task));
+    if (m_vm->deferredWorkTimer->scheduleWorkSoonIfActive(m_ticket, WTF::move(task)))
         clearTicket(listLocker);
-    }
     clearTimer(listLocker);
 }
 
@@ -255,8 +252,7 @@ void Waiter::cancelAndClear(const AbstractLocker& listLocker)
 {
     ASSERT(m_isAsync);
     if (auto ticket = this->ticket(listLocker)) {
-        m_vm->deferredWorkTimer->cancelPendingWork(ticket.get());
-        m_vm->deferredWorkTimer->scheduleWorkSoon(ticket.get(), [](DeferredWorkTimer::Ticket) { });
+        m_vm->deferredWorkTimer->cancelPendingWork(*ticket);
         clearTicket(listLocker);
     }
     clearTimer(listLocker);
