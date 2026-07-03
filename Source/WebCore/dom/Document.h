@@ -1019,6 +1019,7 @@ public:
     void flushAutofocusCandidates();
 
     void reveal();
+    bool hasBeenRevealed() const { return m_hasBeenRevealed; }
 
     void hoveredElementDidDetach(Element&);
     void elementInActiveChainDidDetach(Element&);

@@ -2547,6 +2547,12 @@ CanTriggerCrossDocumentViewTransition DocumentLoader::navigationCanTriggerCrossD
     if (loadStartedDuringSwipeAnimation())
         return CanTriggerCrossDocumentViewTransition::No;
 
+    // A document that navigates away before it has been revealed (had its first
+    // rendering opportunity) has no captured state to animate from, so no outbound
+    // cross-document view transition is started.
+    if (!oldDocument.hasBeenRevealed())
+        return CanTriggerCrossDocumentViewTransition::No;
+
     if (std::holds_alternative<Document::SkipTransition>(oldDocument.resolveViewTransitionRule()))
         return CanTriggerCrossDocumentViewTransition::No;
 

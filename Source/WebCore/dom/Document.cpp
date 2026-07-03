@@ -8954,6 +8954,13 @@ void Document::reveal()
 {
     if (m_hasBeenRevealed)
         return;
+
+    // A navigation away from this document that will replace it is in progress, so this
+    // document is being discarded before it was ever revealed. Do not reveal it (and do
+    // not mark it revealed, so it can still reveal if the navigation is aborted).
+    if (RefPtr frame = this->frame(); frame && frame->loader().provisionalDocumentLoader())
+        return;
+
     m_hasBeenRevealed = true;
 
     PageRevealEvent::Init init;

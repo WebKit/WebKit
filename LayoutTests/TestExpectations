@@ -7167,7 +7167,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-m
 
 # Chromium specific test.
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/chromium-paint-holding-timeout.html [ ImageOnlyFailure ]
-webkit.org/b/278756 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/skip-outbound-vt-before-reveal.html [ Failure ]
 
 # prerender not supported.
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/prerender-removed-during-navigation.html [ Skip ]
