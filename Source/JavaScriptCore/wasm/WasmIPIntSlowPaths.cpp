@@ -349,6 +349,12 @@ static void copyExceptionPayloadToStack(const Wasm::FunctionSignature& tagType, 
     ASSERT(!payloadIndex);
 }
 
+static ALWAYS_INLINE IPIntLocal& rethrowSlotForDepth(IPIntLocal* pl, Wasm::IPIntCallee* callee, uint32_t depth)
+{
+    RELEASE_ASSERT(depth && depth <= callee->rethrowSlots());
+    return pl[static_cast<size_t>(callee->localSizeToAlloc()) + static_cast<size_t>(depth) - 1];
+}
+
 WASM_IPINT_EXTERN_CPP_DECL(retrieve_and_clear_exception, CallFrame* callFrame, IPIntStackEntry* stackPointer, IPIntLocal* pl)
 {
     VM& vm = instance->vm();
@@ -356,10 +362,8 @@ WASM_IPINT_EXTERN_CPP_DECL(retrieve_and_clear_exception, CallFrame* callFrame, I
     RELEASE_ASSERT(!!throwScope.exception());
 
     Wasm::IPIntCallee* callee = IPINT_CALLEE(callFrame);
-    if (callee->rethrowSlots()) {
-        RELEASE_ASSERT(vm.targetTryDepthForThrow <= callee->rethrowSlots());
-        pl[callee->localSizeToAlloc() + vm.targetTryDepthForThrow - 1].i64 = std::bit_cast<uint64_t>(throwScope.exception()->value());
-    }
+    if (callee->rethrowSlots())
+        rethrowSlotForDepth(pl, callee, vm.targetTryDepthForThrow).i64 = std::bit_cast<uint64_t>(throwScope.exception()->value());
 
     if (stackPointer) {
         // We only have a stack pointer if we're doing a catch not a catch_all
@@ -383,10 +387,8 @@ WASM_IPINT_EXTERN_CPP_DECL(retrieve_clear_and_push_exception, CallFrame* callFra
     RELEASE_ASSERT(!!throwScope.exception());
 
     Wasm::IPIntCallee* callee = IPINT_CALLEE(callFrame);
-    if (callee->rethrowSlots()) {
-        RELEASE_ASSERT(vm.targetTryDepthForThrow <= callee->rethrowSlots());
-        pl[callee->localSizeToAlloc() + vm.targetTryDepthForThrow - 1].i64 = std::bit_cast<uint64_t>(throwScope.exception()->value());
-    }
+    if (callee->rethrowSlots())
+        rethrowSlotForDepth(pl, callee, vm.targetTryDepthForThrow).i64 = std::bit_cast<uint64_t>(throwScope.exception()->value());
 
     Exception* exception = throwScope.exception();
     stackPointer[0].ref = JSValue::encode(exception->value());
@@ -406,10 +408,8 @@ WASM_IPINT_EXTERN_CPP_DECL(retrieve_clear_and_push_exception_and_arguments, Call
     RELEASE_ASSERT(!!throwScope.exception());
 
     Wasm::IPIntCallee* callee = IPINT_CALLEE(callFrame);
-    if (callee->rethrowSlots()) {
-        RELEASE_ASSERT(vm.targetTryDepthForThrow <= callee->rethrowSlots());
-        pl[callee->localSizeToAlloc() + vm.targetTryDepthForThrow - 1].i64 = std::bit_cast<uint64_t>(throwScope.exception()->value());
-    }
+    if (callee->rethrowSlots())
+        rethrowSlotForDepth(pl, callee, vm.targetTryDepthForThrow).i64 = std::bit_cast<uint64_t>(throwScope.exception()->value());
 
     Exception* exception = throwScope.exception();
     auto* wasmException = jsSecureCast<JSWebAssemblyException*>(exception->value());
@@ -453,7 +453,7 @@ WASM_IPINT_EXTERN_CPP_DECL(throw_exception, CallFrame* callFrame, IPIntStackEntr
     WASM_RETURN_TWO(vm.targetMachinePCForThrow, nullptr);
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(rethrow_exception, CallFrame* callFrame, IPIntStackEntry* pl, unsigned tryDepth)
+WASM_IPINT_EXTERN_CPP_DECL(rethrow_exception, CallFrame* callFrame, IPIntLocal* pl, unsigned tryDepth)
 {
     SlowPathFrameTracer tracer(instance->vm(), callFrame);
 
@@ -462,11 +462,11 @@ WASM_IPINT_EXTERN_CPP_DECL(rethrow_exception, CallFrame* callFrame, IPIntStackEn
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     Wasm::IPIntCallee* callee = IPINT_CALLEE(callFrame);
-    RELEASE_ASSERT(tryDepth <= callee->rethrowSlots());
+    auto& slot = rethrowSlotForDepth(pl, callee, tryDepth);
 #if CPU(ADDRESS64)
-    JSWebAssemblyException* exception = std::bit_cast<JSWebAssemblyException*>(pl[callee->localSizeToAlloc() + tryDepth - 1].i64);
+    JSWebAssemblyException* exception = std::bit_cast<JSWebAssemblyException*>(slot.i64);
 #else
-    JSWebAssemblyException* exception = std::bit_cast<JSWebAssemblyException*>(pl[callee->localSizeToAlloc() + tryDepth - 1].i32);
+    JSWebAssemblyException* exception = std::bit_cast<JSWebAssemblyException*>(slot.i32);
 #endif
     RELEASE_ASSERT(exception);
     throwException(globalObject, throwScope, exception);
