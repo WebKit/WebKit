@@ -1,0 +1,3 @@
+
+FAIL FetchLater allowed by CSP should succeed assert_equals: Number of sent beacons does not match expected count: expected 1 but got 0
+

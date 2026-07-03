@@ -26,7 +26,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
+#include <WebCore/DOMException.h>
 #include <WebCore/ExceptionCode.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -34,17 +36,26 @@ namespace WebCore {
 class Exception {
 public:
     explicit Exception(ExceptionCode, String = { });
+    Exception(ExceptionCode, Ref<DOMException>&&);
 
     ExceptionCode code() const { return m_code; }
     const String& message() const LIFETIME_BOUND { return m_message; }
     String&& releaseMessage() { return WTF::move(m_message); }
 
+    // When non-null, this pre-constructed DOMException (or subclass) should
+    // be surfaced to JS rather than a fresh DOMException built from the code
+    // and message. Used for exception subtypes that carry extra attributes
+    // (e.g. QuotaExceededError.quota / .requested).
+    DOMException* attachedException() const { return m_attachedException.get(); }
+    RefPtr<DOMException> takeAttachedException() { return WTF::move(m_attachedException); }
+
     Exception isolatedCopy() const & { return Exception { m_code, m_message.isolatedCopy() }; }
     Exception isolatedCopy() && { return Exception { m_code, WTF::move(m_message).isolatedCopy() }; }
-    
+
 private:
     ExceptionCode m_code;
     String m_message;
+    RefPtr<DOMException> m_attachedException;
 };
 
 inline Exception::Exception(ExceptionCode code, String message)
@@ -53,5 +64,11 @@ inline Exception::Exception(ExceptionCode code, String message)
 {
 }
 
+inline Exception::Exception(ExceptionCode code, Ref<DOMException>&& attachedException)
+    : m_code { code }
+    , m_message { attachedException->message() }
+    , m_attachedException { WTF::move(attachedException) }
+{
+}
 
 } // namespace WebCore

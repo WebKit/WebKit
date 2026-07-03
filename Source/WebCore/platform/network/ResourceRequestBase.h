@@ -60,7 +60,7 @@ enum HTTPBodyUpdatePolicy : uint8_t {
 class ResourceRequest;
 class ResourceResponse;
 
-enum class ResourceRequestRequester : uint8_t { Unspecified, Main, XHR, Fetch, Media, Model, ImportScripts, Ping, Beacon, EventSource };
+enum class ResourceRequestRequester : uint8_t { Unspecified, Main, XHR, Fetch, Media, Model, ImportScripts, Ping, Beacon, EventSource, FetchLater };
 enum class ShouldUpgradeLocalhostAndIPAddress : bool { No, Yes };
 
 // Do not use this type directly.  Use ResourceRequest instead.
@@ -387,7 +387,8 @@ template<> struct EnumTraitsForPersistence<WebCore::ResourceRequestRequester> {
         WebCore::ResourceRequestRequester::ImportScripts,
         WebCore::ResourceRequestRequester::Ping,
         WebCore::ResourceRequestRequester::Beacon,
-        WebCore::ResourceRequestRequester::EventSource
+        WebCore::ResourceRequestRequester::EventSource,
+        WebCore::ResourceRequestRequester::FetchLater
     >;
 };
 

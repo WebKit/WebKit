@@ -215,6 +215,16 @@ JSValue createDOMException(JSGlobalObject* lexicalGlobalObject, ExceptionCode ec
 
 JSValue createDOMException(JSGlobalObject& lexicalGlobalObject, Exception&& exception)
 {
+    // If the caller attached a pre-built DOMException subclass (e.g. a
+    // QuotaExceededError carrying its quota/requested attributes), wrap that
+    // object directly instead of constructing a fresh, less-specific DOMException.
+    if (RefPtr attached = exception.takeAttachedException()) {
+        JSDOMGlobalObject* globalObject = deprecatedGlobalObjectForPrototype(&lexicalGlobalObject);
+        JSValue errorObject = toJS(&lexicalGlobalObject, globalObject, *attached);
+        ASSERT(errorObject);
+        addErrorInfo(&lexicalGlobalObject, asObject(errorObject), true);
+        return errorObject;
+    }
     return createDOMException(&lexicalGlobalObject, exception.code(), exception.releaseMessage());
 }
 

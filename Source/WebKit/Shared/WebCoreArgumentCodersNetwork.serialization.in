@@ -152,7 +152,8 @@ enum class WebCore::ResourceRequestCachePolicy : uint8_t {
     ImportScripts,
     Ping,
     Beacon,
-    EventSource
+    EventSource,
+    FetchLater
 };
 
 enum class WebCore::ResourceLoadPriority : uint8_t {
