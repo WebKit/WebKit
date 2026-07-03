@@ -16,9 +16,9 @@ target {
     <div style="display:none" id="test-root">
         <target id="target"></target>
         <script>
-            description('The selector :nth-last-child() should fail to match if the following sibling have not been parsed yet.');
+            description('The selector :nth-last-child() matches during parsing for querySelector(), but style resolution does not update until the following siblings are parsed.');
             debug("Testing the state in the middle of HTML parsing.")
-            shouldBe('document.querySelectorAll(":nth-last-child(n of target)").length', '0');
+            shouldBe('document.querySelectorAll(":nth-last-child(n of target)").length', '1');
             shouldBeEqualToString('getComputedStyle(document.getElementById("target")).backgroundColor', 'rgb(255, 255, 255)');
         </script>
         <target></target>
