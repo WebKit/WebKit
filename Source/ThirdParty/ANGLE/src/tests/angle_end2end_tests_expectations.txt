@@ -2771,6 +2771,9 @@
 0 METAL : IncompatibleTextureTest.*/* = SKIP
 0 METAL : WebGL2GLSLValidationTest.ManyChainedBinaryExpressions/* = SKIP
 
+// rdar://129353155
+0 METAL IOSSIMULATOR DEBUGLAYERS : DrawBuffersTestES3.CubeMapTextures/* = SKIP
+
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // Slow tests, should appear last in this file
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

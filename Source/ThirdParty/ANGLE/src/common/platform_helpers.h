@@ -60,6 +60,15 @@ inline constexpr bool IsIOS()
 #endif
 }
 
+inline constexpr bool IsIOSSimulator()
+{
+#if defined(ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR)
+    return true;
+#else
+    return false;
+#endif
+}
+
 inline constexpr bool IsLinux()
 {
 #if defined(ANGLE_PLATFORM_LINUX)
