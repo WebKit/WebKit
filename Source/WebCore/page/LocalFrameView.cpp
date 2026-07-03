@@ -4375,7 +4375,15 @@ Color LocalFrameView::baseBackgroundColor() const
     return m_baseBackgroundColor;
 }
 
-void LocalFrameView::invalidateForBaseBackgroundOrColorSchemeChange()
+void LocalFrameView::invalidateForFrameOwnerColorSchemeChange()
+{
+    invalidateForBaseBackgroundChange();
+
+    if (RefPtr document = frame().document())
+        document->appearanceDidChange();
+}
+
+void LocalFrameView::invalidateForBaseBackgroundChange()
 {
     recalculateScrollbarOverlayStyle();
     setNeedsLayoutAfterViewConfigurationChange();
@@ -4396,7 +4404,7 @@ void LocalFrameView::setBaseBackgroundColor(const Color& backgroundColor)
     if (!isViewForDocumentInFrame())
         return;
 
-    invalidateForBaseBackgroundOrColorSchemeChange();
+    invalidateForBaseBackgroundChange();
 }
 
 #if ENABLE(DARK_MODE_CSS)

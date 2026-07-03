@@ -60,7 +60,7 @@ void RenderFrameBase::styleDidChange(Style::Difference diff, const Style::Comput
     RefPtr document = this->document();
 
     if (document->useDarkAppearance(oldStyle) != document->useDarkAppearance(protect(&style()))) {
-        childFrameView->invalidateForBaseBackgroundOrColorSchemeChange();
+        childFrameView->invalidateForFrameOwnerColorSchemeChange();
         protect(childFrameView->layoutContext())->scheduleLayout();
     }
 }

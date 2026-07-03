@@ -10021,6 +10021,12 @@ bool Document::useDarkAppearance([[maybe_unused]] const Style::ComputedStyle* st
 
 void Document::appearanceDidChange()
 {
+    styleScope().didChangeStyleSheetEnvironment();
+    styleScope().evaluateMediaQueriesForAppearanceChange();
+    updateElementsAffectedByMediaQueries();
+    scheduleRenderingUpdate(RenderingUpdateStep::MediaQueryEvaluation);
+    invalidateScrollbars();
+
     if (std::exchange(m_cachedThemeColor, Color()) != themeColor())
         themeColorChanged();
 }

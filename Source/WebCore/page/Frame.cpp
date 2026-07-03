@@ -362,7 +362,7 @@ void Frame::updateFrameTreeSyncData(const FrameTreeSyncSerializationData& data)
             if (!oldFrameInfo || !newFrameInfo || oldFrameInfo->ownerElementAppearance().contains(FrameOwnerElementAppearance::IsDark) != newFrameInfo->ownerElementAppearance().contains(FrameOwnerElementAppearance::IsDark)) {
                 RefPtr localChildView = localChild->view();
 
-                localChildView->invalidateForBaseBackgroundOrColorSchemeChange();
+                localChildView->invalidateForFrameOwnerColorSchemeChange();
                 protect(localChildView->layoutContext())->scheduleLayout();
             }
         }
