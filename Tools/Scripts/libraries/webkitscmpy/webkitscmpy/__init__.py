@@ -60,7 +60,7 @@ AutoInstall.register(Package('xmltodict', Version(0, 11, 0)))
 AutoInstall.register(Package('webkitbugspy', Version(0, 15, 1)), local=True)
 
 if sys.version_info >= (3, 10):
-    AutoInstall.register(Package('rapidfuzz', Version(3, 14, 5), wheel=True))
+    AutoInstall.register(Package('rapidfuzz', Version(3, 14, 3), wheel=True))
 else:
     AutoInstall.register(Package('rapidfuzz', Version(3, 4, 0)))
 
