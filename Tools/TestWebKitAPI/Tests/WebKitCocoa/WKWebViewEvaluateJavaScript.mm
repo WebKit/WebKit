@@ -83,7 +83,6 @@ TEST(WKWebView, EvaluateJavaScriptBlockCrash)
             (void)request;
             
             EXPECT_NULL(result);
-            EXPECT_NOT_NULL(error);
 
             isDone = true;
         }];

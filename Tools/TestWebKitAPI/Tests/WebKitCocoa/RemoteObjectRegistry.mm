@@ -256,6 +256,46 @@ TEST(RemoteObjectRegistry, CallReplyBlockAfterOriginatingWebViewDeallocates)
     localObject->completionHandlerFromWebProcess();
 }
 
+// Regression test for the WebProcess termination that occurred when the WebProcess
+// sent a RemoteObjectRegistry::InvokeMethod IPC while handling WebPage::Close.
+// Before the fix, the UIProcess had already removed the page from WebProcessProxy's
+// page maps by the time the InvokeMethod arrived, so handleRemoteObjectRegistryMessage
+// returned false, the message was marked invalid, and didReceiveInvalidMessage killed
+// the WebProcess. The fix tracks pages pending close so isAssociatedWithPage stays
+// true until the WebPage::Close async reply arrives.
+TEST(RemoteObjectRegistry, InvokeMethodFromBundleDuringPageClose)
+{
+    auto localObject = adoptNS([[LocalObject alloc] init]);
+
+    NSString * const testPlugInClassName = @"RemoteObjectRegistryPlugIn";
+    auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:testPlugInClassName]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+
+    [[webView _remoteObjectRegistry] registerExportedObject:localObject.get() interface:localObjectInterface()];
+
+    id<RemoteObjectProtocol> object = [[webView _remoteObjectRegistry] remoteObjectProxyWithInterface:remoteObjectInterface()];
+
+    // Arm the bundle to send a UIProcess-bound InvokeMethod from
+    // -[WKWebProcessPlugIn webProcessPlugIn:willDestroyBrowserContextController:],
+    // which fires synchronously inside WebPage::close() in the WebProcess.
+    [object triggerCallToUIProcessOnClose];
+
+    // Round-trip through the bundle so we know the flag flip has been processed
+    // before we close the WKWebView.
+    __block bool roundTripDone = false;
+    [object sayHello:@"sync" completionHandler:^(NSString *) {
+        roundTripDone = true;
+    }];
+    TestWebKitAPI::Util::run(&roundTripDone);
+
+    // Triggers WebPage::Close → bundle InvokeMethod → UIProcess delivery.
+    [webView _close];
+
+    // With the bug, this hangs (message dropped, WebProcess terminated). With the fix,
+    // the local object's reply handler runs.
+    TestWebKitAPI::Util::run(&localObject->hasCompletionHandler);
+}
+
 @interface StringReplyObject : NSObject<StringReplyObjectProtocol> {
 @public
     bool calledCompletionHandler;

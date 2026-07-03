@@ -118,7 +118,7 @@ void WebProcess::stopRunLoop()
     // ensure the threaded compositor is invalidated and GL resources
     // released (see https://bugs.webkit.org/show_bug.cgi?id=217655).
     for (auto& webPage : copyToVector(m_pageMap.values()))
-        webPage->close();
+        webPage->close([] { });
 
     if (auto* display = PlatformDisplay::sharedDisplayIfExists())
         display->clearGLContexts();

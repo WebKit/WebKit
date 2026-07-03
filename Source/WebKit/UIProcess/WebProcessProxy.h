@@ -56,6 +56,7 @@
 #include <pal/SessionID.h>
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Logger.h>
@@ -280,6 +281,8 @@ public:
     void removeWebPage(WebPageProxy&, EndsUsingDataStore);
     void addPagePendingClose(WebPageProxyIdentifier);
     void removePagePendingClose(WebPageProxyIdentifier);
+
+    void sendPageCloseMessage(std::optional<WebPageProxyIdentifier>, WebCore::PageIdentifier, CompletionHandler<void()>&& = [] { });
 
     void addProvisionalPageProxy(ProvisionalPageProxy&);
     void removeProvisionalPageProxy(ProvisionalPageProxy&);
@@ -804,7 +807,7 @@ private:
     WeakHashSet<RemotePageProxy> m_remotePages;
     WeakHashSet<ProvisionalPageProxy> m_provisionalPages;
     WeakHashSet<SuspendedPageProxy> m_suspendedPages;
-    HashSet<WebPageProxyIdentifier> m_pagesPendingClose;
+    HashCountedSet<WebPageProxyIdentifier> m_pagesPendingClose;
     UserInitiatedActionMap m_userInitiatedActionMap;
     HashMap<WebCore::PageIdentifier, UserInitiatedActionByAuthorizationTokenMap> m_userInitiatedActionByAuthorizationTokenMap;
 

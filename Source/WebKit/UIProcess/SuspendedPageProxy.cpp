@@ -232,7 +232,8 @@ void SuspendedPageProxy::close()
 
     RELEASE_LOG(ProcessSwapping, "%p - SuspendedPageProxy::close()", this);
     m_isClosed = true;
-    send(Messages::WebPage::Close());
+    RefPtr page = m_page;
+    m_process->sendPageCloseMessage(page ? std::optional { page->identifier() } : std::nullopt, m_webPageID);
 }
 
 void SuspendedPageProxy::pageDidFirstLayerFlush()

@@ -952,6 +952,20 @@ void WebProcessProxy::didCommitLoadClientOrigin(WebCore::ClientOrigin&& clientOr
     m_committedClientOrigins.add(WTF::move(clientOrigin));
 }
 
+void WebProcessProxy::sendPageCloseMessage(std::optional<WebPageProxyIdentifier> pageProxyID, WebCore::PageIdentifier pageID, CompletionHandler<void()>&& completionHandler)
+{
+    if (pageProxyID)
+        m_pagesPendingClose.add(*pageProxyID);
+    sendWithAsyncReply(Messages::WebPage::Close(), [weakThis = WeakPtr { *this }, pageProxyID, completionHandler = WTF::move(completionHandler)]() mutable {
+        if (RefPtr protectedThis = weakThis; protectedThis && pageProxyID) {
+            protectedThis->m_pagesPendingClose.remove(*pageProxyID);
+            protectedThis->reportProcessDisassociatedWithPageIfNecessary(*pageProxyID);
+        }
+        if (completionHandler)
+            completionHandler();
+    }, pageID);
+}
+
 void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, WebPageProxyIdentifier pageID)
 {
     auto& users = m_visitedLinkStoresWithUsers.ensure(visitedLinkStore, [] {
