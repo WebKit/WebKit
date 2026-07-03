@@ -213,16 +213,24 @@ public:
     using Base = SVGAnimationAdditiveValueFunction<float>;
     using Base::Base;
 
-    bool setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement&, const String& from, const String& to) override
     {
-        m_from = SVGPropertyTraits<float>::fromString(targetElement, from);
-        m_to = SVGPropertyTraits<float>::fromString(targetElement, to);
+        // In to-animation mode 'from' is empty; the start value is resolved at runtime.
+        auto fromNumber = !from.isEmpty() ? SVGPropertyTraits<float>::parse(from) : std::optional<float>(0);
+        auto toNumber = SVGPropertyTraits<float>::parse(to);
+        if (!fromNumber || !toNumber)
+            return false;
+        m_from = *fromNumber;
+        m_to = *toNumber;
         return true;
     }
 
-    bool setToAtEndOfDurationValue(SVGElement& targetElement, const String& toAtEndOfDuration) override
+    bool setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) override
     {
-        m_toAtEndOfDuration = SVGPropertyTraits<float>::fromString(targetElement, toAtEndOfDuration);
+        auto toAtEndOfDurationNumber = SVGPropertyTraits<float>::parse(toAtEndOfDuration);
+        if (!toAtEndOfDurationNumber)
+            return false;
+        m_toAtEndOfDuration = *toAtEndOfDurationNumber;
         return true;
     }
 
@@ -251,14 +259,23 @@ public:
 
     bool setFromAndToValues(SVGElement&, const String& from, const String& to) override
     {
-        m_from = SVGPathByteStream(from);
-        m_to = SVGPathByteStream(to);
+        // An empty string is a legal (empty) path, so it is accepted; only a malformed
+        // path yields std::nullopt and rejects the animation.
+        auto fromStream = SVGPathByteStream::create(from);
+        auto toStream = SVGPathByteStream::create(to);
+        if (!fromStream || !toStream)
+            return false;
+        m_from = WTF::move(*fromStream);
+        m_to = WTF::move(*toStream);
         return true;
     }
 
     bool setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) override
     {
-        m_toAtEndOfDuration = SVGPathByteStream(toAtEndOfDuration);
+        auto toAtEndOfDurationStream = SVGPathByteStream::create(toAtEndOfDuration);
+        if (!toAtEndOfDurationStream)
+            return false;
+        m_toAtEndOfDuration = WTF::move(*toAtEndOfDurationStream);
         return true;
     }
 

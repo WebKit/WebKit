@@ -127,6 +127,16 @@ public:
         buildSVGPathByteStreamFromString(string, *this, UnalteredParsing);
     }
 
+    // Returns std::nullopt when the string is not a legal path. An empty string is a legal
+    // (empty) path, so callers that must reject an empty value should check that separately.
+    static std::optional<SVGPathByteStream> create(StringView string)
+    {
+        SVGPathByteStream stream;
+        if (!buildSVGPathByteStreamFromString(string, stream, UnalteredParsing))
+            return std::nullopt;
+        return stream;
+    }
+
     SVGPathByteStream(const SVGPathByteStream& other)
         : CanMakeSingleThreadWeakPtr<SVGPathByteStream>()
         , m_data(other.m_data)

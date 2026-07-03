@@ -76,12 +76,15 @@ struct SVGPropertyTraits<std::pair<int, int>> {
     static std::pair<int, int> initialValue() { return { }; }
     static std::pair<int, int> fromString(SVGElement&, const String& string)
     {
+        return parse(string).value_or(initialValue());
+    }
+    static std::optional<std::pair<int, int>> parse(const String& string)
+    {
         auto result = parseNumberOptionalNumber(string);
         if (!result)
-            return { };
+            return std::nullopt;
         return std::make_pair(static_cast<int>(std::round(result->first)), static_cast<int>(std::round(result->second)));
     }
-    static std::optional<std::pair<int, int>> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
     static String toString(std::pair<int, int>) { ASSERT_NOT_REACHED(); return emptyString(); }
 };
 
@@ -92,9 +95,13 @@ struct SVGPropertyTraits<float> {
     {
         return parseNumber(string).value_or(0);
     }
-    static std::optional<float> parse(const QualifiedName&, const String& string)
+    static std::optional<float> parse(const String& string)
     {
         return parseNumber(string);
+    }
+    static std::optional<float> parse(const QualifiedName&, const String& string)
+    {
+        return parse(string);
     }
     static String toString(float type) { return String::number(type); }
 };
@@ -104,9 +111,12 @@ struct SVGPropertyTraits<std::pair<float, float>> {
     static std::pair<float, float> initialValue() { return { }; }
     static std::pair<float, float> fromString(SVGElement&, const String& string)
     {
-        return valueOrDefault(parseNumberOptionalNumber(string));
+        return parse(string).value_or(initialValue());
     }
-    static std::optional<std::pair<float, float>> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
+    static std::optional<std::pair<float, float>> parse(const String& string)
+    {
+        return parseNumberOptionalNumber(string);
+    }
     static String toString(std::pair<float, float>) { ASSERT_NOT_REACHED(); return emptyString(); }
 };
 

@@ -28,6 +28,7 @@
 #include "SVGAnimatedPropertyImpl.h"
 #include "SVGAnimatedPropertyPairAnimator.h"
 #include "SVGMarkerTypes.h"
+#include "SVGPropertyTraits.h"
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -134,37 +135,44 @@ public:
 private:
     SVGAnimatorType animatorType() const final { return SVGAnimatorType::IntegerPair; }
 
-    bool setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) final
+    bool setFromAndToValues(SVGElement&, const String& from, const String& to) final
     {
-        auto pairFrom = SVGPropertyTraits<std::pair<int, int>>::fromString(targetElement, from);
-        auto pairTo = SVGPropertyTraits<std::pair<int, int>>::fromString(targetElement, to);
+        // In to-animation mode 'from' is empty; the start value is resolved at runtime.
+        auto pairFrom = !from.isEmpty() ? SVGPropertyTraits<std::pair<int, int>>::parse(from) : std::optional<std::pair<int, int>>(std::in_place);
+        auto pairTo = SVGPropertyTraits<std::pair<int, int>>::parse(to);
+        if (!pairFrom || !pairTo)
+            return false;
 
-        m_animatedPropertyAnimator1->m_function.m_from = pairFrom.first;
-        m_animatedPropertyAnimator1->m_function.m_to = pairTo.first;
+        m_animatedPropertyAnimator1->m_function.m_from = pairFrom->first;
+        m_animatedPropertyAnimator1->m_function.m_to = pairTo->first;
 
-        m_animatedPropertyAnimator2->m_function.m_from = pairFrom.second;
-        m_animatedPropertyAnimator2->m_function.m_to = pairTo.second;
+        m_animatedPropertyAnimator2->m_function.m_from = pairFrom->second;
+        m_animatedPropertyAnimator2->m_function.m_to = pairTo->second;
         return true;
     }
 
-    bool setFromAndByValues(SVGElement& targetElement, const String& from, const String& by) final
+    bool setFromAndByValues(SVGElement&, const String& from, const String& by) final
     {
-        auto pairFrom = SVGPropertyTraits<std::pair<int, int>>::fromString(targetElement, from);
-        auto pairBy = SVGPropertyTraits<std::pair<int, int>>::fromString(targetElement, by);
+        auto pairFrom = !from.isEmpty() ? SVGPropertyTraits<std::pair<int, int>>::parse(from) : std::optional<std::pair<int, int>>(std::in_place);
+        auto pairBy = SVGPropertyTraits<std::pair<int, int>>::parse(by);
+        if (!pairFrom || !pairBy)
+            return false;
 
-        m_animatedPropertyAnimator1->m_function.m_from = pairFrom.first;
-        m_animatedPropertyAnimator1->m_function.m_to = pairFrom.first + pairBy.first;
+        m_animatedPropertyAnimator1->m_function.m_from = pairFrom->first;
+        m_animatedPropertyAnimator1->m_function.m_to = pairFrom->first + pairBy->first;
 
-        m_animatedPropertyAnimator2->m_function.m_from = pairFrom.second;
-        m_animatedPropertyAnimator2->m_function.m_to = pairFrom.second + pairBy.second;
+        m_animatedPropertyAnimator2->m_function.m_from = pairFrom->second;
+        m_animatedPropertyAnimator2->m_function.m_to = pairFrom->second + pairBy->second;
         return true;
     }
 
-    bool setToAtEndOfDurationValue(SVGElement& targetElement, const String& toAtEndOfDuration) final
+    bool setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) final
     {
-        auto pairToAtEndOfDuration = SVGPropertyTraits<std::pair<int, int>>::fromString(targetElement, toAtEndOfDuration);
-        m_animatedPropertyAnimator1->m_function.m_toAtEndOfDuration = pairToAtEndOfDuration.first;
-        m_animatedPropertyAnimator2->m_function.m_toAtEndOfDuration = pairToAtEndOfDuration.second;
+        auto pair = SVGPropertyTraits<std::pair<int, int>>::parse(toAtEndOfDuration);
+        if (!pair)
+            return false;
+        m_animatedPropertyAnimator1->m_function.m_toAtEndOfDuration = pair->first;
+        m_animatedPropertyAnimator2->m_function.m_toAtEndOfDuration = pair->second;
         return true;
     }
 };
@@ -183,37 +191,44 @@ public:
 private:
     SVGAnimatorType animatorType() const final { return SVGAnimatorType::NumberPair; }
 
-    bool setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) final
+    bool setFromAndToValues(SVGElement&, const String& from, const String& to) final
     {
-        auto pairFrom = SVGPropertyTraits<std::pair<float, float>>::fromString(targetElement, from);
-        auto pairTo = SVGPropertyTraits<std::pair<float, float>>::fromString(targetElement, to);
-        
-        m_animatedPropertyAnimator1->m_function.m_from = pairFrom.first;
-        m_animatedPropertyAnimator1->m_function.m_to = pairTo.first;
-        
-        m_animatedPropertyAnimator2->m_function.m_from = pairFrom.second;
-        m_animatedPropertyAnimator2->m_function.m_to = pairTo.second;
+        // In to-animation mode 'from' is empty; the start value is resolved at runtime.
+        auto pairFrom = !from.isEmpty() ? SVGPropertyTraits<std::pair<float, float>>::parse(from) : std::optional<std::pair<float, float>>(std::in_place);
+        auto pairTo = SVGPropertyTraits<std::pair<float, float>>::parse(to);
+        if (!pairFrom || !pairTo)
+            return false;
+
+        m_animatedPropertyAnimator1->m_function.m_from = pairFrom->first;
+        m_animatedPropertyAnimator1->m_function.m_to = pairTo->first;
+
+        m_animatedPropertyAnimator2->m_function.m_from = pairFrom->second;
+        m_animatedPropertyAnimator2->m_function.m_to = pairTo->second;
         return true;
     }
 
-    bool setFromAndByValues(SVGElement& targetElement, const String& from, const String& by) final
+    bool setFromAndByValues(SVGElement&, const String& from, const String& by) final
     {
-        auto pairFrom = SVGPropertyTraits<std::pair<float, float>>::fromString(targetElement, from);
-        auto pairBy = SVGPropertyTraits<std::pair<float, float>>::fromString(targetElement, by);
-        
-        m_animatedPropertyAnimator1->m_function.m_from = pairFrom.first;
-        m_animatedPropertyAnimator1->m_function.m_to = pairFrom.first + pairBy.first;
-        
-        m_animatedPropertyAnimator2->m_function.m_from = pairFrom.second;
-        m_animatedPropertyAnimator2->m_function.m_to = pairFrom.second + pairBy.second;
+        auto pairFrom = !from.isEmpty() ? SVGPropertyTraits<std::pair<float, float>>::parse(from) : std::optional<std::pair<float, float>>(std::in_place);
+        auto pairBy = SVGPropertyTraits<std::pair<float, float>>::parse(by);
+        if (!pairFrom || !pairBy)
+            return false;
+
+        m_animatedPropertyAnimator1->m_function.m_from = pairFrom->first;
+        m_animatedPropertyAnimator1->m_function.m_to = pairFrom->first + pairBy->first;
+
+        m_animatedPropertyAnimator2->m_function.m_from = pairFrom->second;
+        m_animatedPropertyAnimator2->m_function.m_to = pairFrom->second + pairBy->second;
         return true;
     }
 
-    bool setToAtEndOfDurationValue(SVGElement& targetElement, const String& toAtEndOfDuration) final
+    bool setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) final
     {
-        auto pairToAtEndOfDuration = SVGPropertyTraits<std::pair<float, float>>::fromString(targetElement, toAtEndOfDuration);
-        m_animatedPropertyAnimator1->m_function.m_toAtEndOfDuration = pairToAtEndOfDuration.first;
-        m_animatedPropertyAnimator2->m_function.m_toAtEndOfDuration = pairToAtEndOfDuration.second;
+        auto pair = SVGPropertyTraits<std::pair<float, float>>::parse(toAtEndOfDuration);
+        if (!pair)
+            return false;
+        m_animatedPropertyAnimator1->m_function.m_toAtEndOfDuration = pair->first;
+        m_animatedPropertyAnimator2->m_function.m_toAtEndOfDuration = pair->second;
         return true;
     }
 };
