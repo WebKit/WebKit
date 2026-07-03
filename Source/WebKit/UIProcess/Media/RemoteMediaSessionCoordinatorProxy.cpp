@@ -165,22 +165,22 @@ void RemoteMediaSessionCoordinatorProxy::trackIdentifierChanged(const String& id
 
 void RemoteMediaSessionCoordinatorProxy::seekSessionToTime(double time, CompletionHandler<void(bool)>&& callback)
 {
-    protect(protect(m_webPageProxy)->legacyMainFrameProcess())->sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::SeekSessionToTime { time }, callback, m_webPageProxy->webPageIDInMainFrameProcess());
+    protect(protect(m_webPageProxy)->legacyMainFrameProcess())->sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::SeekSessionToTime { time }, WTF::move(callback), m_webPageProxy->webPageIDInMainFrameProcess());
 }
 
 void RemoteMediaSessionCoordinatorProxy::playSession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime, CompletionHandler<void(bool)>&& callback)
 {
-    protect(protect(m_webPageProxy)->legacyMainFrameProcess())->sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::PlaySession { WTF::move(atTime), WTF::move(hostTime) }, callback, m_webPageProxy->webPageIDInMainFrameProcess());
+    protect(protect(m_webPageProxy)->legacyMainFrameProcess())->sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::PlaySession { WTF::move(atTime), WTF::move(hostTime) }, WTF::move(callback), m_webPageProxy->webPageIDInMainFrameProcess());
 }
 
 void RemoteMediaSessionCoordinatorProxy::pauseSession(CompletionHandler<void(bool)>&& callback)
 {
-    protect(protect(m_webPageProxy)->legacyMainFrameProcess())->sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::PauseSession { }, callback, m_webPageProxy->webPageIDInMainFrameProcess());
+    protect(protect(m_webPageProxy)->legacyMainFrameProcess())->sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::PauseSession { }, WTF::move(callback), m_webPageProxy->webPageIDInMainFrameProcess());
 }
 
 void RemoteMediaSessionCoordinatorProxy::setSessionTrack(const String& trackId, CompletionHandler<void(bool)>&& callback)
 {
-    protect(protect(m_webPageProxy)->legacyMainFrameProcess())->sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::SetSessionTrack { trackId }, callback, m_webPageProxy->webPageIDInMainFrameProcess());
+    protect(protect(m_webPageProxy)->legacyMainFrameProcess())->sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::SetSessionTrack { trackId }, WTF::move(callback), m_webPageProxy->webPageIDInMainFrameProcess());
 }
 
 void RemoteMediaSessionCoordinatorProxy::coordinatorStateChanged(WebCore::MediaSessionCoordinatorState state)
