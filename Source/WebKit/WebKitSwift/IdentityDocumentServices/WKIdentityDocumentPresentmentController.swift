@@ -52,6 +52,12 @@ extension WKIdentityDocumentPresentmentController {
 
         private var performRequestTask: Task<any IdentityDocumentWebPresentmentResponse, any Error>?
 
+        // Single-use: one request per instance, so isCancelled is terminal and never reset.
+        // hasStartedRequest makes reuse fail loudly rather than silently reject as cancelled.
+        private var isCancelled = false
+
+        private var hasStartedRequest = false
+
         weak var delegate: (any WKIdentityDocumentPresentmentDelegate)?
 
         init() {
@@ -61,6 +67,17 @@ extension WKIdentityDocumentPresentmentController {
         }
 
         func perform(request: WKIdentityDocumentPresentmentRequest) async throws -> WKIdentityDocumentPresentmentResponse {
+            if isCancelled {
+                Self.logger.debug("IdentityDocumentPresentmentController perform called after cancellation; not presenting")
+                throw WKIdentityDocumentPresentmentError(.cancelled)
+            }
+
+            if hasStartedRequest {
+                assertionFailure("IdentityDocumentPresentmentController perform called more than once on a single-use controller")
+                throw WKIdentityDocumentPresentmentError(.requestInProgress)
+            }
+            hasStartedRequest = true
+
             do {
                 Self.logger.debug("IdentityDocumentPresentmentController performRequest called with request \(String(describing: request))")
                 let convertedRequests = request.mobileDocumentRequests.map(ISO18013MobileDocumentRequest.init(_:))
@@ -99,12 +116,15 @@ extension WKIdentityDocumentPresentmentController {
                 default:
                     throw WKIdentityDocumentPresentmentError(.unknown, userInfo: userInfo)
                 }
+            } catch is CancellationError {
+                throw WKIdentityDocumentPresentmentError(.cancelled)
             } catch {
                 throw WKIdentityDocumentPresentmentError(.unknown)
             }
         }
 
         func cancelRequest() {
+            isCancelled = true
             performRequestTask?.cancel()
         }
     }
