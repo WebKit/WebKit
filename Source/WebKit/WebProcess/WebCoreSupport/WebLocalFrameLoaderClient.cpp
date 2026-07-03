@@ -42,7 +42,6 @@
 #include "NavigationActionData.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
-#include "NetworkResourceLoadParameters.h"
 #include "PluginView.h"
 #include "UserData.h"
 #include "WKBundleAPICast.h"
@@ -1884,22 +1883,11 @@ void WebLocalFrameLoaderClient::sendH2Ping(const URL& url, CompletionHandler<voi
     if (!webPage)
         return completionHandler(makeUnexpected(internalError(url)));
 
-    NetworkResourceLoadParameters parameters {
-        webPage->webPageProxyIdentifier(),
-        webPage->identifier(),
-        m_frame->frameID(),
-        ResourceRequest(URL { url })
-    };
-    parameters.createSandboxExtensionHandlesIfNecessary();
-
-    parameters.identifier = WebCore::ResourceLoaderIdentifier::generate();
-    parameters.parentPID = legacyPresentingApplicationPID();
-    parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
-    parameters.options.destination = FetchOptions::Destination::EmptyString;
+    std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
 #if ENABLE(APP_BOUND_DOMAINS)
-    parameters.isNavigatingToAppBoundDomain = m_frame->isTopFrameNavigatingToAppBoundDomain();
+    isNavigatingToAppBoundDomain = m_frame->isTopFrameNavigatingToAppBoundDomain();
 #endif
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::SendH2Ping(WTF::move(parameters)), WTF::move(completionHandler));
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::SendH2Ping(url, webPage->webPageProxyIdentifier(), webPage->identifier(), m_frame->frameID(), isNavigatingToAppBoundDomain), WTF::move(completionHandler));
 }
 
 void WebLocalFrameLoaderClient::didRestoreScrollPosition()

@@ -607,6 +607,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	NetworkProcess/NetworkProcessCreationParameters.serialization.in \
 	NetworkProcess/NetworkResourceLoadParameters.serialization.in \
 	NetworkProcess/NetworkSessionCreationParameters.serialization.in \
+	NetworkProcess/PreconnectRequest.serialization.in \
 	NetworkProcess/Classifier/ITPThirdPartyData.serialization.in \
 	NetworkProcess/Classifier/ITPThirdPartyDataForSpecificFirstParty.serialization.in \
 	NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.serialization.in \

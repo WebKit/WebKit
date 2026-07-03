@@ -1470,6 +1470,7 @@
 		5C1426ED1C23F80900D41183 /* NetworkProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */; };
 		5C1426EE1C23F80900D41183 /* NetworkProcessSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E41C23F80500D41183 /* NetworkProcessSupplement.h */; };
 		5C1426F01C23F80900D41183 /* NetworkResourceLoadParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E61C23F80500D41183 /* NetworkResourceLoadParameters.h */; };
+		1D3F2E8A99B47C6E5F7A2D11 /* PreconnectRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D3F2E8A99B47C6E5F7A2D12 /* PreconnectRequest.h */; };
 		5C1427021C23F84C00D41183 /* Download.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426F41C23F84300D41183 /* Download.h */; };
 		5C1427051C23F84C00D41183 /* DownloadID.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426F71C23F84300D41183 /* DownloadID.h */; };
 		5C1427071C23F84C00D41183 /* DownloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426F91C23F84300D41183 /* DownloadManager.h */; };
@@ -7126,6 +7127,8 @@
 		8623B1282ACE1DE4002BA9EA /* ResourceLoadInfo.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ResourceLoadInfo.serialization.in; sourceTree = "<group>"; };
 		862C44DE2E856922000DB57E /* WebCoreFont.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCoreFont.serialization.in; sourceTree = "<group>"; };
 		863551D229647AB400C2BE98 /* NetworkResourceLoadParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = NetworkResourceLoadParameters.serialization.in; sourceTree = "<group>"; };
+		1D3F2E8A99B47C6E5F7A2D12 /* PreconnectRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreconnectRequest.h; sourceTree = "<group>"; };
+		1D3F2E8A99B47C6E5F7A2D13 /* PreconnectRequest.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PreconnectRequest.serialization.in; sourceTree = "<group>"; };
 		8644890A27B47020007A1C66 /* _WKSystemPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSystemPreferences.h; sourceTree = "<group>"; };
 		8644890C27B47045007A1C66 /* _WKSystemPreferences.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKSystemPreferences.mm; sourceTree = "<group>"; };
 		8644890E27B5CB43007A1C66 /* _WKSystemPreferencesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSystemPreferencesInternal.h; sourceTree = "<group>"; };
@@ -13548,6 +13551,8 @@
 				5C9EF2E721F058F9003BDC56 /* NetworkStorageSessionProvider.h */,
 				462107D71F38DBD300DD7810 /* PingLoad.cpp */,
 				5CE85B1F1C88E6430070BFCE /* PingLoad.h */,
+				1D3F2E8A99B47C6E5F7A2D12 /* PreconnectRequest.h */,
+				1D3F2E8A99B47C6E5F7A2D13 /* PreconnectRequest.serialization.in */,
 				83A0ED331F747CC7003299EB /* PreconnectTask.cpp */,
 				83A0ED321F747CC6003299EB /* PreconnectTask.h */,
 				41287D4D225C161F009A3E26 /* WebSocketTask.h */,
@@ -18192,6 +18197,7 @@
 				1A6FB7AF11E64B6800DB1371 /* PluginView.h in Headers */,
 				49ECA41C23FCA5D80023358D /* PolicyDecision.h in Headers */,
 				57FD318122B3515B008D0E8B /* PopUpSOAuthorizationSession.h in Headers */,
+				1D3F2E8A99B47C6E5F7A2D11 /* PreconnectRequest.h in Headers */,
 				83A0ED351F747CCF003299EB /* PreconnectTask.h in Headers */,
 				C15CBB3623F3777100300CC7 /* PreferenceObserver.h in Headers */,
 				AAB145E6223F931200E489D8 /* PrefetchCache.h in Headers */,

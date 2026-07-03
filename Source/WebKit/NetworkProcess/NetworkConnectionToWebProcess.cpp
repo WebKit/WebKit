@@ -56,6 +56,7 @@
 #include "NetworkTransportSessionMessages.h"
 #include "NotificationManagerMessageHandlerMessages.h"
 #include "PingLoad.h"
+#include "PreconnectRequest.h"
 #include "PreconnectTask.h"
 #include "RTCDataChannelRemoteManagerProxy.h"
 #include "RemoteWorkerType.h"
@@ -719,37 +720,46 @@ void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
     m_networkProcess->prefetchDNS(hostname);
 }
 
-void NetworkConnectionToWebProcess::sendH2Ping(NetworkResourceLoadParameters&& parameters, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&& completionHandler)
+void NetworkConnectionToWebProcess::sendH2Ping(URL&& url, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&& completionHandler)
 {
 #if ENABLE(SERVER_PRECONNECT)
     CheckedPtr networkSession = this->networkSession();
     if (!networkSession)
-        return completionHandler(makeUnexpected(internalError(parameters.request.url())));
+        return completionHandler(makeUnexpected(internalError(url)));
 
-    URL url = parameters.request.url();
-    Ref task = PreconnectTask::create(*networkSession, parameters.networkLoadParameters());
-    task->setH2PingCallback(url, WTF::move(completionHandler));
+    NetworkLoadParameters parameters;
+    parameters.webPageProxyID = webPageProxyID;
+    parameters.webPageID = webPageID;
+    parameters.webFrameID = webFrameID;
+    parameters.parentPID = legacyPresentingApplicationPID();
+    parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
+    parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
+    parameters.request = ResourceRequest { WTF::move(url) };
+
+    auto pingURL = parameters.request.url();
+    Ref task = PreconnectTask::create(*networkSession, WTF::move(parameters));
+    task->setH2PingCallback(pingURL, WTF::move(completionHandler));
     task->start();
 #else
     ASSERT_NOT_REACHED();
-    completionHandler(makeUnexpected(internalError(parameters.request.url())));
+    completionHandler(makeUnexpected(internalError(url)));
 #endif
 }
 
-void NetworkConnectionToWebProcess::preconnectTo(std::optional<WebCore::ResourceLoaderIdentifier> preconnectionIdentifier, NetworkResourceLoadParameters&& loadParameters)
+void NetworkConnectionToWebProcess::preconnectTo(PreconnectRequest&& preconnectRequest)
 {
-    CONNECTION_RELEASE_LOG(Loading, "preconnectTo: (parentPID=%d, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ")", loadParameters.parentPID, loadParameters.webPageProxyID.toUInt64(), loadParameters.webPageID.toUInt64(), loadParameters.webFrameID.toUInt64(), loadParameters.identifier ? loadParameters.identifier->toUInt64() : 0);
+    MESSAGE_CHECK(!preconnectRequest.request.httpBody());
 
-    ASSERT(!loadParameters.request.httpBody());
+    CONNECTION_RELEASE_LOG(Loading, "preconnectTo: (parentPID=%d, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ")", legacyPresentingApplicationPID(), preconnectRequest.webPageProxyID.toUInt64(), preconnectRequest.webPageID.toUInt64(), preconnectRequest.webFrameID.toUInt64(), preconnectRequest.preconnectionIdentifier ? preconnectRequest.preconnectionIdentifier->toUInt64() : 0);
 
-    auto completionHandler = [this, protectedThis = Ref { *this }, preconnectionIdentifier = WTF::move(preconnectionIdentifier)](const ResourceError& error) {
+    auto completionHandler = [this, protectedThis = Ref { *this }, preconnectionIdentifier = preconnectRequest.preconnectionIdentifier](const ResourceError& error) {
         if (preconnectionIdentifier)
             didFinishPreconnection(*preconnectionIdentifier, error);
     };
 
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
-    if (RefPtr { m_networkProcess->supplement<LegacyCustomProtocolManager>() }->supportsScheme(loadParameters.request.url().protocol().toString())) {
-        completionHandler(internalError(loadParameters.request.url()));
+    if (RefPtr { m_networkProcess->supplement<LegacyCustomProtocolManager>() }->supportsScheme(preconnectRequest.request.url().protocol().toString())) {
+        completionHandler(internalError(preconnectRequest.request.url()));
         return;
     }
 #endif
@@ -757,14 +767,25 @@ void NetworkConnectionToWebProcess::preconnectTo(std::optional<WebCore::Resource
 #if ENABLE(SERVER_PRECONNECT)
     CheckedPtr session = networkSession();
     if (session && session->allowsServerPreconnect()) {
-        Ref preconnectTask = PreconnectTask::create(*session, loadParameters.networkLoadParameters());
+        NetworkLoadParameters parameters;
+        parameters.webPageProxyID = preconnectRequest.webPageProxyID;
+        parameters.webPageID = preconnectRequest.webPageID;
+        parameters.webFrameID = preconnectRequest.webFrameID;
+        parameters.parentPID = legacyPresentingApplicationPID();
+        parameters.storedCredentialsPolicy = preconnectRequest.storedCredentialsPolicy;
+        parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
+        parameters.isNavigatingToAppBoundDomain = preconnectRequest.isNavigatingToAppBoundDomain;
+        parameters.advancedPrivacyProtections = preconnectRequest.advancedPrivacyProtections;
+        parameters.request = WTF::move(preconnectRequest.request);
+
+        Ref preconnectTask = PreconnectTask::create(*session, WTF::move(parameters));
         preconnectTask->start([completionHandler = WTF::move(completionHandler)] (const ResourceError& error, const WebCore::NetworkLoadMetrics&) {
             completionHandler(error);
         });
         return;
     }
 #endif
-    completionHandler(internalError(loadParameters.request.url()));
+    completionHandler(internalError(preconnectRequest.request.url()));
 }
 
 void NetworkConnectionToWebProcess::isResourceLoadFinished(WebCore::ResourceLoaderIdentifier loadIdentifier, CompletionHandler<void(bool)>&& callback)

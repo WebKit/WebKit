@@ -149,6 +149,7 @@ $(PROJECT_DIR)/NetworkProcess/NetworkResourceLoader.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkSessionCreationParameters.serialization.in
 $(PROJECT_DIR)/NetworkProcess/NetworkSocketChannel.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkTransportChannel.messages.in
+$(PROJECT_DIR)/NetworkProcess/PreconnectRequest.serialization.in
 $(PROJECT_DIR)/NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.serialization.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.messages.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.messages.in
