@@ -74,6 +74,28 @@ function test()
         },
     });
 
+    suite.addTestCase({
+        name: "Network.InterceptAbortedRequest.Request",
+        description: "Tests request interception that continues an aborted request with a request",
+        async test() {
+            ProtocolTest.log("Triggering load...");
+            let [requestInterceptedEvent] = await Promise.all([
+                InspectorProtocol.awaitEvent({event: "Network.requestIntercepted"}),
+                ProtocolTest.evaluateInPage(`fetchAndAbort()`),
+            ]);
+
+            ProtocolTest.log("Intercepting with request...");
+            await ProtocolTest.expectException(async () => {
+                await InspectorProtocol.awaitCommand({
+                    method: "Network.interceptWithRequest",
+                    params: {
+                        requestId: requestInterceptedEvent.params.requestId,
+                    },
+                });
+            });
+        },
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

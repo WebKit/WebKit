@@ -1206,6 +1206,9 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithReq
         return makeUnexpected("Missing pending intercept request for given requestId"_s);
 
     Ref loader = *pendingRequest->m_loader;
+    if (loader->reachedTerminalState())
+        return makeUnexpected("Unable to intercept request, it has already been processed"_s);
+
     ResourceRequest request = loader->request();
     if (!!url)
         request.setURL(URL({ }, url));
