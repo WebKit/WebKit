@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function triggerFetch() {
+    fetch("resources/echo.py?content=test&r=" + Math.random());
+}
+
+function test()
+{
+    const headerA = "X-WebKit-Test-Header-A";
+    const valueA = "ValueA";
+    const headerB = "X-WebKit-Test-Header-B";
+    const valueB = "ValueB";
+
+    let suite = InspectorTest.createAsyncSuite("Network.setExtraHTTPHeaders");
+
+    async function loadAndGetResource() {
+        let [resourceWasAddedEvent] = await Promise.all([
+            WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+            InspectorTest.evaluateInPage(`triggerFetch()`),
+        ]);
+        return resourceWasAddedEvent.data.resource;
+    }
+
+    suite.addTestCase({
+        name: "Network.setExtraHTTPHeaders.Replace",
+        description: "A subsequent Network.setExtraHTTPHeaders call replaces the previously set headers instead of accumulating them.",
+        async test() {
+            // First call sets header A.
+            await NetworkAgent.setExtraHTTPHeaders({[headerA]: valueA});
+            let firstResource = await loadAndGetResource();
+            InspectorTest.expectEqual(firstResource.requestHeaders.valueForCaseInsensitiveKey(headerA), valueA, `First request should include "${headerA}".`);
+
+            // Second call sets header B only. Header A must no longer be sent.
+            await NetworkAgent.setExtraHTTPHeaders({[headerB]: valueB});
+            let secondResource = await loadAndGetResource();
+            InspectorTest.expectEqual(secondResource.requestHeaders.valueForCaseInsensitiveKey(headerB), valueB, `Second request should include "${headerB}".`);
+            InspectorTest.expectThat(!secondResource.requestHeaders.valueForCaseInsensitiveKey(headerA), `Second request should not include "${headerA}" from the previous call.`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Network.setExtraHTTPHeaders replaces previously set headers instead of accumulating them.</p>
+</body>
+</html>

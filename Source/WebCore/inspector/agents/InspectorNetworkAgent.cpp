@@ -911,6 +911,8 @@ void InspectorNetworkAgent::continuePendingResponses()
 
 Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::setExtraHTTPHeaders(Ref<JSON::Object>&& headers)
 {
+    m_extraRequestHeaders.clear();
+
     for (auto& entry : headers.get()) {
         auto stringValue = entry.value->asString();
         if (!!stringValue)
