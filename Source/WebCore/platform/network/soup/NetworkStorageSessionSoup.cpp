@@ -878,7 +878,8 @@ void NetworkStorageSession::stopListeningForCookieChangeNotifications(CookieChan
 {
     for (auto& host : hosts) {
         auto it = m_cookieChangeObservers.find(host);
-        ASSERT(it != m_cookieChangeObservers.end());
+        if (it == m_cookieChangeObservers.end())
+            continue;
 
         auto& observers = it->value;
         ASSERT(observers.contains(observer));
