@@ -534,7 +534,7 @@ Ref<DOMPromise> ReadableStream::cancel(JSDOMGlobalObject& globalObject, JSC::JSV
             return promise;
         }
 
-        auto* jsPromise = downcast<JSC::JSPromise>(result);
+        auto* jsPromise = dynamicDowncast<JSC::JSPromise>(result);
         if (!jsPromise)
             return promise;
 
