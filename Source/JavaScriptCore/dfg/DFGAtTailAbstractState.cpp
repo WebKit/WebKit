@@ -54,9 +54,8 @@ void AtTailAbstractState::createValueForNode(NodeFlowProjection node)
     m_valuesAtTailMap.at(m_block).add(node, AbstractValue());
 }
 
-AbstractValue& AtTailAbstractState::forNode(NodeFlowProjection node)
+AbstractValue& AtTailAbstractState::forNodeImpl(NodeFlowProjection node)
 {
-    ASSERT(!node->isTuple());
     auto& valuesAtTail = m_valuesAtTailMap.at(m_block);
     UncheckedKeyHashMap<NodeFlowProjection, AbstractValue>::iterator iter = valuesAtTail.find(node);
     DFG_ASSERT(m_graph, node.node(), iter != valuesAtTail.end());

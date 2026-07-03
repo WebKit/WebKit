@@ -53,7 +53,12 @@ public:
     
     AbstractValue& fastForward(AbstractValue& value) { return value; }
     
-    AbstractValue& forNode(NodeFlowProjection);
+    AbstractValue& forNode(NodeFlowProjection node)
+    {
+        ASSERT(!node->isTuple());
+        return forNodeImpl(node);
+    }
+
     AbstractValue& forNode(Edge edge)
     {
         ASSERT(!edge.node()->isTuple());
@@ -75,13 +80,13 @@ public:
     {
         return value.filter(type);
     }
-    
+
     ALWAYS_INLINE void clearForNode(NodeFlowProjection node)
     {
-        ASSERT(!node->isTuple());
-        forNode(node).clear();
+        // Intentionally handle tuples too.
+        forNodeImpl(node).clear();
     }
-    
+
     ALWAYS_INLINE void clearForNode(Edge edge)
     {
         clearForNode(edge.node());
@@ -267,6 +272,8 @@ public:
     }
 
 private:
+    AbstractValue& forNodeImpl(NodeFlowProjection);
+
     Graph& m_graph;
     IndexMap<BasicBlock*, UncheckedKeyHashMap<NodeFlowProjection, AbstractValue>> m_valuesAtTailMap;
     IndexMap<BasicBlock*, Vector<AbstractValue>> m_tupleAbstractValues;
