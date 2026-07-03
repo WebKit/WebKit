@@ -35,9 +35,11 @@
 #import <WebCore/PlatformVideoColorSpace.h>
 #import <WebCore/PlatformVideoMatrixCoefficients.h>
 #import <WebCore/PlatformVideoTransferCharacteristics.h>
+#import <WebCore/SharedBuffer.h>
 #import <WebCore/TrackInfo.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cf/TypeCastsCF.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 
@@ -127,6 +129,158 @@ TEST(CMUtilities, GetKeyIDsWithActiveGigacage)
         for (size_t i = 0; i < 16; ++i)
             EXPECT_EQ(span[i], uint8_t(i));
     }
+}
+
+// Verifies that when a video format description carries both encryption extensions and
+// SampleDescriptionExtensionAtoms, each atom is emitted exactly once (as CFData) rather than
+// as a CFArray of duplicate entries.
+TEST(CMUtilities, EncryptedVideoExtensionAtomsRoundTripDoesNotDuplicate)
+{
+    constexpr uint8_t tencData[] = {
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x08,
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+        0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
+    };
+    constexpr uint8_t dvcCBuf[] = { 0x01, 0x02, 0x03 };
+    constexpr uint8_t hvcCBuf[] = { 0x0a, 0x0b };
+
+    WebCore::EncryptionDataCollection encryptionCollection {
+        .encryptionData = { WebCore::EncryptionBoxType::CommonEncryptionTrackEncryptionBox, WebCore::SharedBuffer::create(std::span<const uint8_t> { tencData, sizeof(tencData) }) },
+    };
+
+    auto videoInfo = WebCore::VideoInfo::create({
+        { .codecName = WebCore::FourCC('hvc1'), .encryptionData = WTF::move(encryptionCollection) }, {
+            .size = { 640, 480 },
+            .displaySize = { 640, 480 },
+            .extensionAtoms = {
+                { WebCore::FourCC('dvcC'), WebCore::SharedBuffer::create(std::span<const uint8_t> { dvcCBuf, sizeof(dvcCBuf) }) },
+                { WebCore::FourCC('hvcC'), WebCore::SharedBuffer::create(std::span<const uint8_t> { hvcCBuf, sizeof(hvcCBuf) }) },
+            },
+        }
+    });
+
+    auto desc = WebCore::createFormatDescriptionFromTrackInfo(videoInfo);
+    ASSERT_TRUE(desc);
+
+    RetainPtr atomDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(desc.get(), PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
+    ASSERT_TRUE(atomDict);
+    ASSERT_EQ(CFDictionaryGetCount(atomDict.get()), 2);
+
+    auto dvcCValue = CFDictionaryGetValue(atomDict.get(), CFSTR("dvcC"));
+    ASSERT_TRUE(dvcCValue);
+    EXPECT_EQ(CFGetTypeID(dvcCValue), CFDataGetTypeID());
+    ASSERT_EQ(CFDataGetLength(checked_cf_cast<CFDataRef>(dvcCValue)), 3);
+
+    auto hvcCValue = CFDictionaryGetValue(atomDict.get(), CFSTR("hvcC"));
+    ASSERT_TRUE(hvcCValue);
+    EXPECT_EQ(CFGetTypeID(hvcCValue), CFDataGetTypeID());
+    ASSERT_EQ(CFDataGetLength(checked_cf_cast<CFDataRef>(hvcCValue)), 2);
+}
+
+// Verifies the WebContent -> GPU-process round trip: parsing an encrypted CMFormatDescription
+// into a VideoInfo and rebuilding a CMFormatDescription from it preserves each extension atom
+// exactly once.
+TEST(CMUtilities, EncryptedVideoFormatDescriptionRoundTripDoesNotDuplicateAtoms)
+{
+    constexpr uint8_t tencData[] = {
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x08,
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+        0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
+    };
+    constexpr uint8_t dvcCBuf[] = { 0x01, 0x02, 0x03 };
+    constexpr uint8_t hvcCBuf[] = { 0x0a, 0x0b };
+    RetainPtr tencCFData = adoptCF(CFDataCreate(kCFAllocatorDefault, tencData, sizeof(tencData)));
+    NSData *dvcCData = [NSData dataWithBytes:dvcCBuf length:sizeof(dvcCBuf)];
+    NSData *hvcCData = [NSData dataWithBytes:hvcCBuf length:sizeof(hvcCBuf)];
+    NSDictionary *extensions = @{
+        (__bridge NSString *)PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms: @{ @"dvcC": dvcCData, @"hvcC": hvcCData },
+        @"CommonEncryptionTrackEncryptionBox": (__bridge NSData *)tencCFData.get(),
+    };
+    CMFormatDescriptionRef rawDesc = nullptr;
+    PAL::CMVideoFormatDescriptionCreate(kCFAllocatorDefault, kCMVideoCodecType_HEVC, 1920, 1080, (__bridge CFDictionaryRef)extensions, &rawDesc);
+    RetainPtr desc = adoptCF(rawDesc);
+    ASSERT_TRUE(desc.get());
+
+    RefPtr videoInfo = WebCore::createVideoInfoFromFormatDescription(desc.get());
+    ASSERT_TRUE(videoInfo);
+    ASSERT_TRUE(videoInfo->encryptionDataCollection());
+    EXPECT_TRUE(videoInfo->encryptionDataCollection()->encryptionInitDatas.isEmpty());
+    ASSERT_EQ(videoInfo->extensionAtoms().size(), 2u);
+
+    RetainPtr reconstructed = WebCore::createFormatDescriptionFromTrackInfo(*videoInfo);
+    ASSERT_TRUE(reconstructed);
+
+    RetainPtr atomDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(reconstructed.get(), PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
+    ASSERT_TRUE(atomDict);
+    ASSERT_EQ(CFDictionaryGetCount(atomDict.get()), 2);
+
+    auto dvcCValue = CFDictionaryGetValue(atomDict.get(), CFSTR("dvcC"));
+    ASSERT_TRUE(dvcCValue);
+    EXPECT_EQ(CFGetTypeID(dvcCValue), CFDataGetTypeID());
+    ASSERT_EQ(CFDataGetLength(checked_cf_cast<CFDataRef>(dvcCValue)), 3);
+
+    auto hvcCValue = CFDictionaryGetValue(atomDict.get(), CFSTR("hvcC"));
+    ASSERT_TRUE(hvcCValue);
+    EXPECT_EQ(CFGetTypeID(hvcCValue), CFDataGetTypeID());
+    ASSERT_EQ(CFDataGetLength(checked_cf_cast<CFDataRef>(hvcCValue)), 2);
+}
+
+// Verifies that a genuinely duplicated FourCC (CFArray of multiple distinct atoms sharing
+// one key, e.g. 'avcC') round-trips through an encrypted video CMFormatDescription without
+// being merged into any other atom's data or multiplied beyond its original count.
+TEST(CMUtilities, EncryptedVideoWithDuplicateFourCCAtomsRoundTrip)
+{
+    constexpr uint8_t tencData[] = {
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x08,
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+        0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
+    };
+    constexpr uint8_t avcC1[] = { 0xAA };
+    constexpr uint8_t avcC2[] = { 0xBB, 0xBB };
+    constexpr uint8_t hvcCBuf[] = { 0x0a, 0x0b };
+    RetainPtr tencCFData = adoptCF(CFDataCreate(kCFAllocatorDefault, tencData, sizeof(tencData)));
+    NSData *avcCData1 = [NSData dataWithBytes:avcC1 length:sizeof(avcC1)];
+    NSData *avcCData2 = [NSData dataWithBytes:avcC2 length:sizeof(avcC2)];
+    NSData *hvcCData = [NSData dataWithBytes:hvcCBuf length:sizeof(hvcCBuf)];
+    NSDictionary *extensions = @{
+        (__bridge NSString *)PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms: @{ @"avcC": @[avcCData1, avcCData2], @"hvcC": hvcCData },
+        @"CommonEncryptionTrackEncryptionBox": (__bridge NSData *)tencCFData.get(),
+    };
+    CMFormatDescriptionRef rawDesc = nullptr;
+    PAL::CMVideoFormatDescriptionCreate(kCFAllocatorDefault, kCMVideoCodecType_HEVC, 1920, 1080, (__bridge CFDictionaryRef)extensions, &rawDesc);
+    RetainPtr desc = adoptCF(rawDesc);
+    ASSERT_TRUE(desc.get());
+
+    RefPtr videoInfo = WebCore::createVideoInfoFromFormatDescription(desc.get());
+    ASSERT_TRUE(videoInfo);
+    ASSERT_TRUE(videoInfo->encryptionDataCollection());
+    EXPECT_TRUE(videoInfo->encryptionDataCollection()->encryptionInitDatas.isEmpty());
+    ASSERT_EQ(videoInfo->extensionAtoms().size(), 3u);
+
+    RetainPtr reconstructed = WebCore::createFormatDescriptionFromTrackInfo(*videoInfo);
+    ASSERT_TRUE(reconstructed.get());
+
+    RetainPtr atomDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(reconstructed.get(), PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
+    ASSERT_TRUE(atomDict);
+    ASSERT_EQ(CFDictionaryGetCount(atomDict.get()), 2);
+
+    auto avcCValue = CFDictionaryGetValue(atomDict.get(), CFSTR("avcC"));
+    ASSERT_TRUE(avcCValue);
+    EXPECT_EQ(CFGetTypeID(avcCValue), CFArrayGetTypeID());
+    auto avcCArray = checked_cf_cast<CFArrayRef>(avcCValue);
+    ASSERT_EQ(CFArrayGetCount(avcCArray), 2);
+    auto avcCEntry0 = checked_cf_cast<CFDataRef>(CFArrayGetValueAtIndex(avcCArray, 0));
+    ASSERT_EQ(CFDataGetLength(avcCEntry0), 1);
+    EXPECT_EQ(CFDataGetBytePtr(avcCEntry0)[0], 0xAA);
+    auto avcCEntry1 = checked_cf_cast<CFDataRef>(CFArrayGetValueAtIndex(avcCArray, 1));
+    ASSERT_EQ(CFDataGetLength(avcCEntry1), 2);
+    EXPECT_EQ(CFDataGetBytePtr(avcCEntry1)[0], 0xBB);
+    EXPECT_EQ(CFDataGetBytePtr(avcCEntry1)[1], 0xBB);
+
+    auto hvcCValue = CFDictionaryGetValue(atomDict.get(), CFSTR("hvcC"));
+    ASSERT_TRUE(hvcCValue);
+    EXPECT_EQ(CFGetTypeID(hvcCValue), CFDataGetTypeID());
+    ASSERT_EQ(CFDataGetLength(checked_cf_cast<CFDataRef>(hvcCValue)), 2);
 }
 
 #endif // ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
@@ -309,6 +463,196 @@ TEST(CMUtilities, MatrixCoefficientsRoundTrip)
     testMatrix(M::Bt2020NonconstantLuminance);
     testMatrix(M::Bt2020ConstantLuminance);
     testMatrix(M::Unspecified);
+}
+
+// ---- Extension Atoms (kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms) ----
+// Per <CoreMedia/CMFormatDescription.h>, each value is either a CFData payload or
+// a CFArray of CFData (multiple atoms sharing a FourCC).
+
+static RetainPtr<CMFormatDescriptionRef> makeVideoFormatDescriptionWithAtoms(NSDictionary *atomsDict)
+{
+    NSDictionary *extensions = @{
+        (__bridge NSString *)PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms: atomsDict,
+    };
+    CMFormatDescriptionRef desc = nullptr;
+    PAL::CMVideoFormatDescriptionCreate(kCFAllocatorDefault, kCMVideoCodecType_H264, 1920, 1080, (__bridge CFDictionaryRef)extensions, &desc);
+    return adoptCF(desc);
+}
+
+TEST(CMUtilities, ExtensionAtomsCFArrayValueDoesNotCrash)
+{
+    constexpr uint8_t buf1[] = { 0x01, 0x02, 0x03 };
+    constexpr uint8_t buf2[] = { 0x0a, 0x0b };
+    NSData *data1 = [NSData dataWithBytes:buf1 length:sizeof(buf1)];
+    NSData *data2 = [NSData dataWithBytes:buf2 length:sizeof(buf2)];
+    auto desc = makeVideoFormatDescriptionWithAtoms(@{ @"avcC": @[data1, data2] });
+    ASSERT_TRUE(desc);
+
+    auto videoInfo = WebCore::createVideoInfoFromFormatDescription(desc.get());
+    ASSERT_TRUE(videoInfo);
+
+    auto& atoms = videoInfo->extensionAtoms();
+    ASSERT_EQ(atoms.size(), 2u);
+    EXPECT_EQ(atoms[0].first, WebCore::FourCC('avcC'));
+    EXPECT_EQ(atoms[1].first, WebCore::FourCC('avcC'));
+
+    auto span0 = atoms[0].second->span();
+    ASSERT_EQ(span0.size(), 3u);
+    EXPECT_EQ(span0[0], 0x01);
+    EXPECT_EQ(span0[1], 0x02);
+    EXPECT_EQ(span0[2], 0x03);
+    auto span1 = atoms[1].second->span();
+    ASSERT_EQ(span1.size(), 2u);
+    EXPECT_EQ(span1[0], 0x0a);
+    EXPECT_EQ(span1[1], 0x0b);
+}
+
+TEST(CMUtilities, ExtensionAtomsCFDataValueIngest)
+{
+    constexpr uint8_t buf[] = { 0xDE, 0xAD, 0xBE, 0xEF };
+    NSData *data = [NSData dataWithBytes:buf length:sizeof(buf)];
+    auto desc = makeVideoFormatDescriptionWithAtoms(@{ @"avcC": data });
+    ASSERT_TRUE(desc);
+
+    auto videoInfo = WebCore::createVideoInfoFromFormatDescription(desc.get());
+    ASSERT_TRUE(videoInfo);
+
+    auto& atoms = videoInfo->extensionAtoms();
+    ASSERT_EQ(atoms.size(), 1u);
+    EXPECT_EQ(atoms[0].first, WebCore::FourCC('avcC'));
+    auto span = atoms[0].second->span();
+    ASSERT_EQ(span.size(), 4u);
+    EXPECT_EQ(span[0], 0xDE);
+    EXPECT_EQ(span[1], 0xAD);
+    EXPECT_EQ(span[2], 0xBE);
+    EXPECT_EQ(span[3], 0xEF);
+}
+
+static Ref<WebCore::VideoInfo> makeVideoInfoWithAtoms(Vector<WebCore::TrackInfo::AtomData>&& atoms)
+{
+    return WebCore::VideoInfo::create({
+        { .codecName = WebCore::FourCC('avc1') }, {
+            .size = { 640, 480 },
+            .displaySize = { 640, 480 },
+            .extensionAtoms = WTF::move(atoms),
+        }
+    });
+}
+
+TEST(CMUtilities, CreateFormatDescriptionEmitsCFDataForSingleAtom)
+{
+    constexpr uint8_t buf[] = { 0x11, 0x22, 0x33 };
+    auto videoInfo = makeVideoInfoWithAtoms({
+        { WebCore::FourCC('avcC'), WebCore::SharedBuffer::create(std::span<const uint8_t> { buf, sizeof(buf) }) },
+    });
+    auto desc = WebCore::createFormatDescriptionFromTrackInfo(videoInfo);
+    ASSERT_TRUE(desc);
+
+    RetainPtr atomDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(desc.get(), PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
+    ASSERT_TRUE(atomDict);
+
+    auto value = CFDictionaryGetValue(atomDict.get(), CFSTR("avcC"));
+    ASSERT_TRUE(value);
+    EXPECT_EQ(CFGetTypeID(value), CFDataGetTypeID());
+    auto cfData = checked_cf_cast<CFDataRef>(value);
+    ASSERT_EQ(CFDataGetLength(cfData), 3);
+    auto bytes = CFDataGetBytePtr(cfData);
+    EXPECT_EQ(bytes[0], 0x11);
+    EXPECT_EQ(bytes[1], 0x22);
+    EXPECT_EQ(bytes[2], 0x33);
+}
+
+TEST(CMUtilities, CreateFormatDescriptionEmitsCFArrayForMultipleAtomsSameFourCC)
+{
+    constexpr uint8_t a[] = { 0xAA };
+    constexpr uint8_t b[] = { 0xBB, 0xBB };
+    auto videoInfo = makeVideoInfoWithAtoms({
+        { WebCore::FourCC('avcC'), WebCore::SharedBuffer::create(std::span<const uint8_t> { a, sizeof(a) }) },
+        { WebCore::FourCC('avcC'), WebCore::SharedBuffer::create(std::span<const uint8_t> { b, sizeof(b) }) },
+    });
+    auto desc = WebCore::createFormatDescriptionFromTrackInfo(videoInfo);
+    ASSERT_TRUE(desc);
+
+    RetainPtr atomDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(desc.get(), PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
+    ASSERT_TRUE(atomDict);
+
+    auto value = CFDictionaryGetValue(atomDict.get(), CFSTR("avcC"));
+    ASSERT_TRUE(value);
+    EXPECT_EQ(CFGetTypeID(value), CFArrayGetTypeID());
+    auto cfArray = checked_cf_cast<CFArrayRef>(value);
+    ASSERT_EQ(CFArrayGetCount(cfArray), 2);
+
+    auto entry0 = checked_cf_cast<CFDataRef>(CFArrayGetValueAtIndex(cfArray, 0));
+    ASSERT_EQ(CFDataGetLength(entry0), 1);
+    EXPECT_EQ(CFDataGetBytePtr(entry0)[0], 0xAA);
+
+    auto entry1 = checked_cf_cast<CFDataRef>(CFArrayGetValueAtIndex(cfArray, 1));
+    ASSERT_EQ(CFDataGetLength(entry1), 2);
+    EXPECT_EQ(CFDataGetBytePtr(entry1)[0], 0xBB);
+    EXPECT_EQ(CFDataGetBytePtr(entry1)[1], 0xBB);
+}
+
+TEST(CMUtilities, CreateFormatDescriptionGroupsNonContiguousDuplicates)
+{
+    constexpr uint8_t a1[] = { 0x01 };
+    constexpr uint8_t b[]  = { 0x02 };
+    constexpr uint8_t a2[] = { 0x03 };
+    auto videoInfo = makeVideoInfoWithAtoms({
+        { WebCore::FourCC('avcC'), WebCore::SharedBuffer::create(std::span<const uint8_t> { a1, sizeof(a1) }) },
+        { WebCore::FourCC('hvcC'), WebCore::SharedBuffer::create(std::span<const uint8_t> { b,  sizeof(b)  }) },
+        { WebCore::FourCC('avcC'), WebCore::SharedBuffer::create(std::span<const uint8_t> { a2, sizeof(a2) }) },
+    });
+    auto desc = WebCore::createFormatDescriptionFromTrackInfo(videoInfo);
+    ASSERT_TRUE(desc);
+
+    RetainPtr atomDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(desc.get(), PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
+    ASSERT_TRUE(atomDict);
+
+    auto avccValue = CFDictionaryGetValue(atomDict.get(), CFSTR("avcC"));
+    ASSERT_TRUE(avccValue);
+    EXPECT_EQ(CFGetTypeID(avccValue), CFArrayGetTypeID());
+    auto avccArray = checked_cf_cast<CFArrayRef>(avccValue);
+    ASSERT_EQ(CFArrayGetCount(avccArray), 2);
+    EXPECT_EQ(CFDataGetBytePtr(checked_cf_cast<CFDataRef>(CFArrayGetValueAtIndex(avccArray, 0)))[0], 0x01);
+    EXPECT_EQ(CFDataGetBytePtr(checked_cf_cast<CFDataRef>(CFArrayGetValueAtIndex(avccArray, 1)))[0], 0x03);
+
+    auto hvccValue = CFDictionaryGetValue(atomDict.get(), CFSTR("hvcC"));
+    ASSERT_TRUE(hvccValue);
+    EXPECT_EQ(CFGetTypeID(hvccValue), CFDataGetTypeID());
+    auto hvccData = checked_cf_cast<CFDataRef>(hvccValue);
+    ASSERT_EQ(CFDataGetLength(hvccData), 1);
+    EXPECT_EQ(CFDataGetBytePtr(hvccData)[0], 0x02);
+}
+
+TEST(CMUtilities, ExtensionAtomsRoundTripPreservesMultipleSameFourCC)
+{
+    constexpr uint8_t a[] = { 0x01, 0x02 };
+    constexpr uint8_t b[] = { 0x03, 0x04, 0x05 };
+    auto sourceInfo = makeVideoInfoWithAtoms({
+        { WebCore::FourCC('avcC'), WebCore::SharedBuffer::create(std::span<const uint8_t> { a, sizeof(a) }) },
+        { WebCore::FourCC('avcC'), WebCore::SharedBuffer::create(std::span<const uint8_t> { b, sizeof(b) }) },
+    });
+    auto desc = WebCore::createFormatDescriptionFromTrackInfo(sourceInfo);
+    ASSERT_TRUE(desc);
+
+    auto roundTripped = WebCore::createVideoInfoFromFormatDescription(desc.get());
+    ASSERT_TRUE(roundTripped);
+
+    auto& atoms = roundTripped->extensionAtoms();
+    ASSERT_EQ(atoms.size(), 2u);
+    EXPECT_EQ(atoms[0].first, WebCore::FourCC('avcC'));
+    EXPECT_EQ(atoms[1].first, WebCore::FourCC('avcC'));
+
+    auto span0 = atoms[0].second->span();
+    ASSERT_EQ(span0.size(), 2u);
+    EXPECT_EQ(span0[0], 0x01);
+    EXPECT_EQ(span0[1], 0x02);
+
+    auto span1 = atoms[1].second->span();
+    ASSERT_EQ(span1.size(), 3u);
+    EXPECT_EQ(span1[0], 0x03);
+    EXPECT_EQ(span1[1], 0x04);
+    EXPECT_EQ(span1[2], 0x05);
 }
 
 } // namespace TestWebKitAPI
