@@ -82,7 +82,9 @@ set(WebKit_SWIFT_EXPLICIT_MODULE_BUILD TRUE)
 
 # Xcode does not set SWIFT_TREAT_WARNINGS_AS_ERRORS; override CMake's -warnings-as-errors.
 # Must go in WebKit_COMPILE_OPTIONS (applied after -warnings-as-errors in _WEBKIT_TARGET_SETUP).
-list(APPEND WebKit_COMPILE_OPTIONS "$<$<COMPILE_LANGUAGE:Swift>:-no-warnings-as-errors>")
+# Re-assert SWIFT_FATAL_DIAGNOSTIC_FLAGS afterwards so the intentional -Werror groups
+# (e.g. StrictMemorySafety) stay fatal. These flags are handled left-to-right
+list(APPEND WebKit_COMPILE_OPTIONS "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-no-warnings-as-errors ${SWIFT_FATAL_DIAGNOSTIC_FLAGS}>")
 
 # The full WebKit_Internal C++ module pulls in WebPageProxy.h and friends, which
 # quote-include across the entire WebKit/WebCore/JSC private header set. Mirror

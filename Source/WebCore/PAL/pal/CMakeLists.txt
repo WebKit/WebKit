@@ -149,4 +149,4 @@ if (DEFINED PAL_SWIFT_INTEROP_SOURCES)
 endif ()
 
 # Must come after WEBKIT_FRAMEWORK() which adds -warnings-as-errors.
-target_compile_options(PAL PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -no-warnings-as-errors>")
+target_compile_options(PAL PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-no-warnings-as-errors ${SWIFT_FATAL_DIAGNOSTIC_FLAGS}>")

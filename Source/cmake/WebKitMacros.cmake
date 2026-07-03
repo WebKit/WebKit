@@ -2,6 +2,8 @@
 # exclusively needed in only one subdirectory of Source (e.g. only needed by
 # WebCore), then put it there instead.
 
+set(SWIFT_FATAL_DIAGNOSTIC_FLAGS "-Werror ExistentialAny -Werror StrictMemorySafety -Werror ForeignReferenceType -Werror NoUseUnstructuredThrowingTask -Werror NoUsage")
+
 macro(WEBKIT_COMPUTE_SOURCES _framework)
     set(_derivedSourcesPath ${${_framework}_DERIVED_SOURCES_DIR})
 
@@ -370,7 +372,7 @@ macro(_WEBKIT_TARGET_SETUP _target _logical_name)
         target_compile_options(${_target} PRIVATE
             "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:${DEVELOPER_MODE_CXX_FLAGS}>")
         target_compile_options(${_target} PRIVATE
-            "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Werror ExistentialAny -Werror StrictMemorySafety -Werror ForeignReferenceType>")
+            "$<$<COMPILE_LANGUAGE:Swift>:SHELL:${SWIFT_FATAL_DIAGNOSTIC_FLAGS}>")
     endif ()
 
     target_compile_definitions(${_target} PRIVATE "BUILDING_${_logical_name}")
