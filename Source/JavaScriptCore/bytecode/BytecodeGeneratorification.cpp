@@ -93,7 +93,7 @@ public:
                 data.m_scope = bytecode.m_scope;
                 data.m_symbolTable = bytecode.m_symbolTable;
                 data.m_initialValue = bytecode.m_initialValue;
-                m_generatorFrameData = WTF::move(data);
+                m_generatorFrameDataList.append(WTF::move(data));
                 break;
             }
 
@@ -128,9 +128,9 @@ public:
         return m_instructions.at(m_enterPoint);
     }
 
-    std::optional<GeneratorFrameData> NODELETE generatorFrameData() const
+    const Vector<GeneratorFrameData>& NODELETE generatorFrameDataList() const
     {
-        return m_generatorFrameData;
+        return m_generatorFrameDataList;
     }
 
     const JSInstructionStream& NODELETE instructions() const
@@ -168,7 +168,7 @@ private:
 
     BytecodeGenerator& m_bytecodeGenerator;
     JSInstructionStream::Offset m_enterPoint;
-    std::optional<GeneratorFrameData> m_generatorFrameData;
+    Vector<GeneratorFrameData> m_generatorFrameDataList;
     UnlinkedCodeBlockGenerator* m_codeBlock;
     JSInstructionStreamWriter& m_instructions;
     BytecodeGraph m_graph;
@@ -274,14 +274,14 @@ void BytecodeGeneratorification::run()
         });
     }
 
-    if (m_generatorFrameData) {
-        auto instruction = m_instructions.at(m_generatorFrameData->m_point);
+    for (const GeneratorFrameData& data : m_generatorFrameDataList) {
+        auto instruction = m_instructions.at(data.m_point);
         rewriter.replaceBytecodeWithFragment(instruction, [&] (BytecodeRewriter::Fragment& fragment) {
             if (!m_generatorFrameSymbolTable->scopeSize()) {
                 // This will cause us to put jsUndefined() into the generator frame's scope value.
-                fragment.appendInstruction<OpMov>(m_generatorFrameData->m_dst, m_generatorFrameData->m_initialValue);
+                fragment.appendInstruction<OpMov>(data.m_dst, data.m_initialValue);
             } else
-                fragment.appendInstruction<OpCreateLexicalEnvironment>(m_generatorFrameData->m_dst, m_generatorFrameData->m_scope, m_generatorFrameData->m_symbolTable, m_generatorFrameData->m_initialValue);
+                fragment.appendInstruction<OpCreateLexicalEnvironment>(data.m_dst, data.m_scope, data.m_symbolTable, data.m_initialValue);
         });
     }
 

@@ -958,17 +958,11 @@ IGNORE_GCC_WARNINGS_END
     if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode)) {
         m_generatorFrameSymbolTable.set(m_vm, functionSymbolTable);
         m_generatorFrameSymbolTableIndex = symbolTableConstantIndex;
-        if (m_lexicalEnvironmentRegister)
-            move(generatorFrameRegister(), m_lexicalEnvironmentRegister);
-        else {
-            // It would be possible that generator does not need to suspend and resume any registers.
-            // In this case, we would like to avoid creating a lexical environment as much as possible.
-            // op_create_generator_frame_environment is a marker, which is similar to op_yield.
-            // Generatorification inserts lexical environment creation if necessary. Otherwise, we convert it to op_mov frame, `undefined`.
-            OpCreateGeneratorFrameEnvironment::emit(this, generatorFrameRegister(), scopeRegister(), VirtualRegister { symbolTableConstantIndex }, addConstantValue(jsUndefined()));
-        }
         static_assert(static_cast<unsigned>(JSGenerator::Field::Frame) == static_cast<unsigned>(JSAsyncGenerator::Field::Frame));
-        emitPutInternalField(generatorRegister(), static_cast<unsigned>(JSGenerator::Field::Frame), generatorFrameRegister());
+        if (m_lexicalEnvironmentRegister) {
+            move(generatorFrameRegister(), m_lexicalEnvironmentRegister);
+            emitPutInternalField(generatorRegister(), static_cast<unsigned>(JSGenerator::Field::Frame), generatorFrameRegister());
+        }
     }
 
     bool shouldInitializeBlockScopedFunctions = false; // We generate top-level function declarations in ::generate().
@@ -5278,6 +5272,15 @@ void BytecodeGenerator::emitRequireObjectCoercibleForDestructuring(RegisterID* v
 
 void BytecodeGenerator::emitYieldPoint(RegisterID* argument, JSAsyncGenerator::AsyncGeneratorSuspendReason result)
 {
+    if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode()) && !m_lexicalEnvironmentRegister) {
+        // Lazily create the generator frame environment when we actually yield.
+        Ref<Label> frameReady = newLabel();
+        OpJnundefinedOrNull::emit(this, generatorFrameRegister(), frameReady->bind(this));
+        OpCreateGeneratorFrameEnvironment::emit(this, generatorFrameRegister(), scopeRegister(), VirtualRegister { m_generatorFrameSymbolTableIndex }, addConstantValue(jsUndefined()));
+        emitPutInternalField(generatorRegister(), static_cast<unsigned>(JSGenerator::Field::Frame), generatorFrameRegister());
+        emitLabel(frameReady.get());
+    }
+
     Ref<Label> mergePoint = newLabel();
     unsigned yieldPointIndex = m_yieldPoints++;
     auto state = Checked<int32_t>(yieldPointIndex) + 1;
