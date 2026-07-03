@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSImportRule);
+
 CSSImportRule::CSSImportRule(StyleRuleImport& importRule, CSSStyleSheet* parent)
     : CSSRule(parent)
     , m_importRule(importRule)
@@ -45,7 +47,7 @@ CSSImportRule::CSSImportRule(StyleRuleImport& importRule, CSSStyleSheet* parent)
 CSSImportRule::~CSSImportRule()
 {
     if (m_styleSheetCSSOMWrapper)
-        m_styleSheetCSSOMWrapper->clearOwnerRule();
+        protect(m_styleSheetCSSOMWrapper)->clearOwnerRule();
     if (m_mediaCSSOMWrapper)
         protect(m_mediaCSSOMWrapper)->detachFromParent();
 }

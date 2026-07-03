@@ -22,6 +22,7 @@
 #pragma once
 
 #include <WebCore/CSSRule.h>
+#include <wtf/CheckedPtr.h>
 
 namespace WebCore {
 
@@ -33,7 +34,9 @@ struct MediaQuery;
 using MediaQueryList = Vector<MediaQuery>;
 }
 
-class CSSImportRule final : public CSSRule {
+class CSSImportRule final : public CSSRule, public CanMakeCheckedPtr<CSSImportRule> {
+    WTF_MAKE_TZONE_ALLOCATED(CSSImportRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSImportRule);
 public:
     static Ref<CSSImportRule> create(StyleRuleImport& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSImportRule(rule, sheet)); }
 

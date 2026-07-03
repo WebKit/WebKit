@@ -28,6 +28,8 @@
 #include "StyleSheet.h"
 #include <libxml/parser.h>
 #include <libxslt/transform.h>
+#include <wtf/CheckedPtr.h>
+#include <wtf/Lock.h>
 #include <wtf/Ref.h>
 #include <wtf/TypeCasts.h>
 
@@ -93,7 +95,8 @@ public:
     String href() const override { return m_originalURL; }
     String title() const override { return { }; }
 
-    void clearOwnerNode() override { m_ownerNode = nullptr; }
+    void clearOwnerNode() override;
+    WebCoreOpaqueRoot opaqueRootForGCThread() override;
     URL baseURL() const override { return m_finalURL; }
     bool isLoading() const override;
 
@@ -106,7 +109,8 @@ private:
 
     void clearXSLStylesheetDocument();
 
-    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_ownerNode;
+    mutable Lock m_opaqueRootLockForGC;
+    CheckedPtr<Node> m_ownerNode;
     String m_originalURL;
     URL m_finalURL;
     bool m_isDisabled { false };

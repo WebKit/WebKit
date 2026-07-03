@@ -52,13 +52,15 @@
 - (DOMMediaList *)media
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->media()));
+    CheckedPtr impl = IMPL;
+    return kit(WTF::getPtr(impl->media()));
 }
 
 - (DOMCSSStyleSheet *)styleSheet
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->styleSheet()));
+    CheckedPtr impl = IMPL;
+    return kit(WTF::getPtr(impl->styleSheet()));
 }
 
 @end

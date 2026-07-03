@@ -26,6 +26,7 @@
 #include "DocumentResourceLoader.h"
 #include "FrameConsoleClient.h"
 #include "FrameDestructionObserverInlines.h"
+#include "JSNodeCustomInlines.h"
 #include "LocalFrame.h"
 #include "NodeDocument.h"
 #include "Page.h"
@@ -44,8 +45,7 @@
 namespace WebCore {
 
 XSLStyleSheet::XSLStyleSheet(XSLStyleSheet* parentSheet, const String& originalURL, const URL& finalURL)
-    : m_ownerNode(nullptr)
-    , m_originalURL(originalURL)
+    : m_originalURL(originalURL)
     , m_finalURL(finalURL)
     , m_embedded(false)
     , m_processed(false) // Child sheets get marked as processed when the libxslt engine has finally seen them.
@@ -70,6 +70,20 @@ XSLStyleSheet::~XSLStyleSheet()
         ASSERT(import->parentStyleSheet() == this);
         import->setParentStyleSheet(nullptr);
     }
+}
+
+void XSLStyleSheet::clearOwnerNode()
+{
+    Locker locker { m_opaqueRootLockForGC };
+    m_ownerNode = nullptr;
+}
+
+WebCoreOpaqueRoot XSLStyleSheet::opaqueRootForGCThread()
+{
+    Locker locker { m_opaqueRootLockForGC };
+    if (m_ownerNode)
+        return root(m_ownerNode.get());
+    return WebCoreOpaqueRoot { this };
 }
 
 bool XSLStyleSheet::isLoading() const

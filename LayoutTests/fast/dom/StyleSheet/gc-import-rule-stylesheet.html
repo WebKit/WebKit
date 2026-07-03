@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+description("Test that a parent stylesheet wrapper is not collected when only the @import child stylesheet is alive.");
+
+var style = document.createElement("style");
+style.textContent = '@import url("resources/detached-style.css");';
+document.head.appendChild(style);
+
+var parentSheet = style.sheet;
+shouldBeTrue("parentSheet instanceof CSSStyleSheet");
+shouldBe("parentSheet.cssRules[0].type", "CSSRule.IMPORT_RULE");
+
+// Set a custom property on the parent stylesheet wrapper.
+parentSheet.foo = "bar";
+
+// Hold onto the imported (child) stylesheet only.
+window.onload = () => {
+    window.childSheet = parentSheet.cssRules[0].styleSheet;
+
+    // Release all direct references to the parent.
+    parentSheet = null;
+    style.remove();
+    style = null;
+
+    gc();
+    setTimeout(function() {
+        gc();
+        // The parent wrapper should survive because the child's opaque root
+        // should group it with the parent. If it doesn't, the parent wrapper
+        // is collected and a new one is created without the custom property.
+        shouldBeEqualToString('childSheet.parentStyleSheet.foo', 'bar');
+        finishJSTest();
+    }, 0);
+}
+
+</script>
+</body>
+</html>
