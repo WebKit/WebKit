@@ -1,0 +1,22 @@
+<style>
+html {
+ columns: 0;
+ widows: 4;
+}
+
+body {
+ text-overflow: ellipsis;
+}
+
+body, canvas, textarea {
+ width: 40px;
+ overflow-y: auto;
+}
+
+canvas {
+  border-right-style: solid;
+}
+</style><textarea></textarea>PASS if no crash<textarea></textarea><canvas>or assert.</canvas>
+<script>
+window.testRunner?.dumpAsText();
+</script>

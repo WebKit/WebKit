@@ -439,26 +439,24 @@ InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const L
     auto boxes = InlineDisplayContentBuilder { *this, constraints, lineBox, displayLine }.build(lineLayoutResult);
     displayLine.setBoxCount(boxes.size());
 
-    auto addTrailingEllipsisIfApplicable = [&] {
-        if (lineLayoutResult.isBlockContent()) {
-            // When a block line is clamped, its content gets clamped and not this line itself.
-            return;
-        }
+    auto ellipsis = std::optional<InlineDisplay::Line::Ellipsis> { };
+    // When a block line is clamped, its content gets clamped and not this line itself.
+    if (!lineLayoutResult.isBlockContent()) {
         auto isLegacyLineClamp = lineClamp && lineClamp->isLegacy;
         auto truncationPolicy = InlineFormattingUtils::lineEndingTruncationPolicy(root().style(), numberOfLinesWithInlineContent, numberOfVisibleLinesAllowed, lineBox.hasContent());
-        auto ellipsis = InlineDisplayLineBuilder::applyEllipsisIfNeeded(truncationPolicy, displayLine, boxes, isLegacyLineClamp);
+        ellipsis = InlineDisplayLineBuilder::applyEllipsisIfNeeded(truncationPolicy, displayLine, boxes, isLegacyLineClamp);
         if (ellipsis) {
-            displayContent.setLineEllipsis(lineBox.lineIndex(), WTF::move(*ellipsis));
             displayLine.setHasEllipsis();
             auto lineHasLegacyLineClamp = isLegacyLineClamp && truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection;
             if (lineHasLegacyLineClamp)
                 inlineLayoutState.setLegacyClampedLineIndex(lineBox.lineIndex());
         }
-    };
-    addTrailingEllipsisIfApplicable();
+    }
 
     displayContent.boxes.appendVector(WTF::move(boxes));
     displayContent.lines.append(displayLine);
+    if (ellipsis)
+        displayContent.setEllipsisOnTrailingLine(WTF::move(*ellipsis));
     inlineLayoutState.setLineCountWithInlineContentIncludingNestedBlocks(numberOfLinesWithInlineContent);
     return InlineFormattingUtils::flipVisualRectToLogicalForWritingMode(displayContent.lines.last().lineBoxRect(), root().writingMode());
 }
