@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("AudioBufferSourceNode should not read from a freed channel buffer when the buffer is set before scheduling and its backing ArrayBuffer is then transferred and collected.");
+
+jsTestIsAsync = true;
+
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+    for (let i = 0; i < 200; i++)
+        new ArrayBuffer(1 << 20);
+}
+
+var transferError = null;
+
+(async () => {
+    const sampleRate = 44100;
+    const ctx = new OfflineAudioContext(1, 256, sampleRate);
+    const audioBuffer = ctx.createBuffer(1, 0x4000, sampleRate);
+
+    const node = ctx.createBufferSource();
+    node.buffer = audioBuffer;
+
+    const channelBuffer = audioBuffer.getChannelData(0).buffer;
+    try {
+        structuredClone(channelBuffer, { transfer: [channelBuffer] });
+        testFailed("Transfer should have thrown because the buffer is pinned.");
+    } catch (e) {
+        transferError = e;
+    }
+    shouldBeTrue("transferError instanceof TypeError");
+    gc();
+    gc();
+
+    node.loop = true;
+    node.playbackRate.value = 0;
+    node.connect(ctx.destination);
+    node.start();
+
+    await ctx.startRendering();
+    testPassed("Rendering completed without crashing.");
+    finishJSTest();
+})();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
