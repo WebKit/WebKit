@@ -295,6 +295,10 @@
                 "CMAKE_IOS_SIMULATOR": {
                     "type": "BOOL",
                     "value": "ON"
+                },
+                "CMAKE_MAKE_PROGRAM": {
+                    "type": "FILEPATH",
+                    "value": "${sourceDir}/Source/cmake/ninja-wrapper"
                 }
             },
             "environment": {
