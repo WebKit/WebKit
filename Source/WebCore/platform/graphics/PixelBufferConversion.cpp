@@ -357,8 +357,9 @@ static void writeFloat16(Float16 f16, const std::span<uint8_t>& spanFloat16, siz
 
 static void convertImagePixelsFromFloat16ToFloat16(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
 {
-    if (source.format.colorSpace != destination.format.colorSpace)
-        return;
+    // FIXME: Float16-to-Float16 color-space conversion is unimplemented; fall through and copy
+    // verbatim. Do not early-return on a color-space mismatch: the destination is allocated
+    // uninitialized, so skipping the write would leak heap bytes through getPixelBuffer().
 
     auto sourceBytes = source.rows.size_bytes();
     auto sourcePixelComponents = sourceBytes / 2;
