@@ -1,0 +1,98 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setUserMediaPermission(true);
+}
+
+function done() {
+    document.body.textContent = "This test passes if it does not crash.";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function failTest(error) {
+    document.body.textContent = `Fail: ${error.message}`;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+async function runTest()
+{
+    if (!window.IPC) {
+        done();
+        return;
+    }
+
+    const { CoreIPC } = await import('./coreipc.js');
+
+    let stream;
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (error) {
+        throw error;
+    }
+
+    const sourceId = 100n;
+    const emptyConstraintMap = {
+        m_width: {}, m_height: {}, m_sampleRate: {}, m_sampleSize: {},
+        m_aspectRatio: {}, m_frameRate: {}, m_volume: {},
+        m_echoCancellation: {}, m_displaySurface: {}, m_logicalSurface: {},
+        m_facingMode: {}, m_deviceId: {}, m_groupId: {}, m_whiteBalanceMode: {},
+        m_zoom: {}, m_torch: {}, m_backgroundBlur: {}, m_powerEfficient: {}
+    };
+
+    let timer;
+    await new Promise((resolve, reject) => {
+        CoreIPC.GPU.UserMediaCaptureManagerProxy.CreateMediaSourceForCaptureDeviceWithConstraints(0, {
+            id: sourceId,
+            device: {
+                persistentId: '239c24b0-2b15-11e3-8224-0800200c9a66',
+                type: 2,
+                label: 'Mock audio device 1',
+                groupId: 'microphonegroup',
+                enabled: true,
+                isDefault: true,
+                isMockDevice: true,
+                isEphemeral: false
+            },
+            hashSalts: { persistentDeviceSalt: 'a', ephemeralDeviceSalt: 'b' },
+            constraints: { mandatoryConstraints: emptyConstraintMap, advancedConstraints: [], isValid: true },
+            shouldUseGPUProcessRemoteFrames: false,
+            pageIdentifier: IPC.pageID
+        }, () => { 
+            resolve();
+        });
+
+        timer = setTimeout(() => reject(`Timed out waiting for CreateMediaSourceForCaptureDeviceWithConstraints`), 5000);
+    });
+    clearTimeout(timer);
+
+    CoreIPC.GPU.UserMediaCaptureManagerProxy.StartProducingData(0, { id: sourceId, pageIdentifier: IPC.pageID });
+
+    let count = 0;
+    const interval = setInterval(() => {
+        for (let i = 0; i < 10; i++)
+            CoreIPC.GPU.UserMediaCaptureManagerProxy.StartProducingData(0, { id: sourceId, pageIdentifier: IPC.pageID });
+        if (++count > 20) {
+            clearInterval(interval);
+            stream.getTracks().forEach(t => t.stop());
+            done();
+        }
+    }, 10);
+}
+
+window.addEventListener('load', async event => {
+    runTest().catch((error) => {
+        failTest(error);
+    });
+});
+
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>
