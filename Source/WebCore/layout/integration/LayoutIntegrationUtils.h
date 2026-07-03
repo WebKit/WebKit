@@ -48,7 +48,9 @@ public:
     LayoutUnit maxContentWidth(const ElementBox&) const;
     LayoutUnit minContentWidth(const ElementBox&) const;
     LayoutUnit minContentHeight(const ElementBox&) const;
-    LayoutUnit minContentHeight(const ElementBox&, LayoutUnit inlineConstraint) const;
+    LayoutUnit minContentHeightForGridItem(const ElementBox&, LayoutUnit inlineAxisConstraint) const;
+    LayoutUnit minContentContributionHeightForGridItem(const ElementBox&, LayoutUnit inlineAxisConstraint) const;
+    LayoutUnit maxContentContributionHeightForGridItem(const ElementBox&, LayoutUnit inlineAxisConstraint) const;
     LayoutUnit minContentLogicalWidthContribution(const ElementBox&) const;
     LayoutUnit maxContentLogicalWidthContribution(const ElementBox&) const;
     void layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLineLogicalTopLeft, const InlineLayoutState&) const;

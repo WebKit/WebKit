@@ -118,7 +118,7 @@ static BorderBoxSize blockContentSizeSuggestion(const PlacedGridItem& gridItem, 
 {
     // FIXME: Clamp by opposite-axis min/max sizes converted through the aspect ratio.
     ASSERT(!gridItem.preferredAspectRatio(), "Grid items with preferred aspect ratio not supported yet.");
-    return BorderBoxSize::fromIntegrationFunction(formattingContext.integrationUtils().minContentHeight(gridItem.layoutBox(), inlineAxisConstraint));
+    return BorderBoxSize::fromIntegrationFunction(formattingContext.integrationUtils().minContentHeightForGridItem(gridItem.layoutBox(), inlineAxisConstraint));
 }
 
 // https://drafts.csswg.org/css-overflow-3/#overflow-properties
@@ -463,15 +463,13 @@ LayoutUnit inlineAxisMaxContentContribution(const PlacedGridItem& gridItem, Layo
 // FIXME: this should be marginBoxHeight().
 LayoutUnit blockAxisMinContentContribution(const PlacedGridItem& gridItem, LayoutUnit inlineAxisConstraint, const GridFormattingContext& formattingContext)
 {
-    formattingContext.integrationUtils().layoutWithFormattingContextForBox(gridItem.layoutBox(), inlineAxisConstraint);
-    return BorderBoxSize::fromIntegrationFunction(formattingContext.geometryForGridItem(gridItem.layoutBox()).borderBoxHeight()).value;
+    return BorderBoxSize::fromIntegrationFunction(formattingContext.integrationUtils().minContentContributionHeightForGridItem(gridItem.layoutBox(), inlineAxisConstraint)).value;
 }
 
 // FIXME: this should be marginBoxHeight().
 LayoutUnit blockAxisMaxContentContribution(const PlacedGridItem& gridItem, LayoutUnit inlineAxisConstraint, const GridFormattingContext& formattingContext)
 {
-    formattingContext.integrationUtils().layoutWithFormattingContextForBox(gridItem.layoutBox(), inlineAxisConstraint);
-    return BorderBoxSize::fromIntegrationFunction(formattingContext.geometryForGridItem(gridItem.layoutBox()).borderBoxHeight()).value;
+    return BorderBoxSize::fromIntegrationFunction(formattingContext.integrationUtils().maxContentContributionHeightForGridItem(gridItem.layoutBox(), inlineAxisConstraint)).value;
 }
 
 // https://www.w3.org/TR/css-sizing-3/#behave-as-auto

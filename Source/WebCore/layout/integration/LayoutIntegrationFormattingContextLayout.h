@@ -51,7 +51,9 @@ enum class LogicalWidthType : uint8_t  {
 LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox&, LogicalWidthType);
 
 enum class LogicalHeightType : uint8_t  {
-    MinContent
+    MinContent,
+    MinContentContribution,
+    MaxContentContribution
 };
 LayoutUnit formattingContextRootLogicalHeightForType(const Layout::ElementBox&, LogicalHeightType);
 
