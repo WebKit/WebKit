@@ -1697,6 +1697,7 @@ list(APPEND WebCore_IDL_INCLUDES
 list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/gamepad/Gamepad.idl
     Modules/gamepad/GamepadButton.idl
+    Modules/gamepad/GamepadButtonType.idl
     Modules/gamepad/GamepadEffectParameters.idl
     Modules/gamepad/GamepadEvent.idl
     Modules/gamepad/GamepadHapticActuator.idl
@@ -1714,6 +1715,7 @@ if (ENABLE_GAMEPAD)
 
         platform/gamepad/EmptyGamepadProvider.cpp
         platform/gamepad/GamepadProvider.cpp
+        platform/gamepad/PlatformGamepad.cpp
     )
 endif ()
 

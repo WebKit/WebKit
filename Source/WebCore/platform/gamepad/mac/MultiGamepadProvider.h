@@ -87,6 +87,7 @@ private:
             m_id = wrapped->id();
             m_mapping = wrapped->mapping();
             m_connectTime = wrapped->connectTime();
+            m_buttonTypes = wrapped->buttonTypes();
         }
 
         MonotonicTime lastUpdateTime() const final { return protect(platformGamepad())->lastUpdateTime(); }
