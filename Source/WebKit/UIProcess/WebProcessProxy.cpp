@@ -1350,35 +1350,21 @@ bool WebProcessProxy::handleRemoteObjectRegistryMessage(IPC::Connection& connect
 {
     if (!WebPageProxyIdentifier::isValidIdentifier(decoder.destinationID()))
         return false;
+
     WebPageProxyIdentifier pageID(decoder.destinationID());
-
-    auto receiveMessage = [&] (WebPageProxy& page) {
-        if (RefPtr registry = page.uiRemoteObjectRegistry()) {
-            registry->didReceiveMessage(connection, decoder);
-            return true;
-        }
+    if (!isAssociatedWithPage(pageID))
         return false;
-    };
 
-    if (RefPtr page = m_pageMap.get(pageID))
-        return receiveMessage(*page);
+    RefPtr page = WebPageProxy::fromIdentifier(pageID);
+    if (!page)
+        return false;
 
-    for (Ref remotePage : m_remotePages) {
-        if (RefPtr page = remotePage->page(); page && page->identifier() == pageID)
-            return receiveMessage(*page);
-    }
+    RefPtr registry = page->uiRemoteObjectRegistry();
+    if (!registry)
+        return false;
 
-    for (Ref provisionalPage : m_provisionalPages) {
-        if (RefPtr page = provisionalPage->page(); page && page->identifier() == pageID)
-            return receiveMessage(*page);
-    }
-
-    for (Ref suspendedPage : m_suspendedPages) {
-        if (RefPtr page = suspendedPage->page(); page && page->identifier() == pageID)
-            return receiveMessage(*page);
-    }
-
-    return false;
+    registry->didReceiveMessage(connection, decoder);
+    return true;
 }
 #endif
 

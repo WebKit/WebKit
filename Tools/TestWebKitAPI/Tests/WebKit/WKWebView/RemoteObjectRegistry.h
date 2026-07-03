@@ -58,6 +58,7 @@
 - (void)sendError:(NSError *)error completionHandler:(void (^)(NSError *))completionHandler;
 - (void)sendAwakener:(TestAwakener *)awakener completionHandler:(void (^)(TestAwakener *))completionHandler;
 - (void)getGroupIdentifier:(void(^)(NSString *))completionHandler;
+- (void)triggerCallToUIProcessOnClose;
 
 @end
 
