@@ -881,7 +881,7 @@ inline bool JSObject::getPrivateField(JSGlobalObject* globalObject, PropertyName
     ASSERT(!slot.isVMInquiry());
     if (!JSObject::getPrivateFieldSlot(this, globalObject, propertyName, slot)) {
         throwException(globalObject, scope, createInvalidPrivateNameError(globalObject));
-        RELEASE_AND_RETURN(scope, false);
+        return false;
     }
     EXCEPTION_ASSERT(!scope.exception());
     RELEASE_AND_RETURN(scope, true);
@@ -894,7 +894,7 @@ inline void JSObject::setPrivateField(JSGlobalObject* globalObject, PropertyName
     PropertySlot slot(this, PropertySlot::InternalMethodType::HasProperty);
     if (!JSObject::getPrivateFieldSlot(this, globalObject, propertyName, slot)) {
         throwException(globalObject, scope, createInvalidPrivateNameError(globalObject));
-        RELEASE_AND_RETURN(scope, void());
+        return;
     }
     EXCEPTION_ASSERT(!scope.exception());
 
@@ -906,10 +906,16 @@ inline void JSObject::definePrivateField(JSGlobalObject* globalObject, PropertyN
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (type() == WebAssemblyGCObjectType) {
+        throwTypeError(globalObject, scope, "Cannot define private field on a WebAssembly GC object"_s);
+        return;
+    }
+
     PropertySlot slot(this, PropertySlot::InternalMethodType::HasProperty);
     if (JSObject::getPrivateFieldSlot(this, globalObject, propertyName, slot)) {
         throwException(globalObject, scope, createRedefinedPrivateNameError(globalObject));
-        RELEASE_AND_RETURN(scope, void());
+        return;
     }
     EXCEPTION_ASSERT(!scope.exception());
 
@@ -970,9 +976,14 @@ inline void JSObject::setPrivateBrand(JSGlobalObject* globalObject, JSValue bran
     Structure* structure = this->structure();
     if (structure->isBrandedStructure() && jsCast<BrandedStructure*>(structure)->checkBrand(asSymbol(brand))) {
         throwException(globalObject, scope, createReinstallPrivateMethodError(globalObject));
-        RELEASE_AND_RETURN(scope, void());
+        return;
     }
     EXCEPTION_ASSERT(!scope.exception());
+
+    if (type() == WebAssemblyGCObjectType) {
+        throwTypeError(globalObject, scope, "Cannot add private method to a WebAssembly GC object"_s);
+        return;
+    }
 
     scope.release();
 
