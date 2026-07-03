@@ -459,7 +459,7 @@ static std::optional<Cookie> parseCookieObject(Inspector::Protocol::ErrorString&
         return std::nullopt;
     }
 
-    cookie.session = *session;
+    cookie.session = session.value_or(false);
 
     auto sameSiteString = cookieObject->getString("sameSite"_s);
     if (!sameSiteString) {
