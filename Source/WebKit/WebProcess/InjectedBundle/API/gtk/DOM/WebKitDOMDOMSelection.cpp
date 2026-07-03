@@ -25,6 +25,7 @@
 #include <WebCore/DOMException.h>
 #include <WebCore/Document.h>
 #include <WebCore/JSExecState.h>
+#include <WebCore/ShadowRoot.h>
 #include "WebKitDOMDOMSelectionPrivate.h"
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"

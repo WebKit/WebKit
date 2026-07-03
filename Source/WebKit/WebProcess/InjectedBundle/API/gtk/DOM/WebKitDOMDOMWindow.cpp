@@ -44,6 +44,7 @@
 #include <WebCore/JSDOMPromiseDeferred.h>
 #include <WebCore/JSExecState.h>
 #include <WebCore/SerializedScriptValue.h>
+#include <WebCore/ShadowRoot.h>
 #include <WebCore/UserMessageHandlersNamespace.h>
 #include <WebCore/WebKitNamespace.h>
 #include <WebCore/WindowProxy.h>
