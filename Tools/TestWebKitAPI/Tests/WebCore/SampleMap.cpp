@@ -231,6 +231,10 @@ TEST_F(SampleMapTest, findSamplesBetweenPresentationTimes)
     iterator_range = presentationMap.findSamplesBetweenPresentationTimes(MediaTime(30, 1), MediaTime(31, 1));
     EXPECT_TRUE(presentationMap.end() == iterator_range.first);
     EXPECT_TRUE(presentationMap.end() == iterator_range.second);
+
+    iterator_range = presentationMap.findSamplesBetweenPresentationTimes(MediaTime(5, 1), MediaTime(2, 1));
+    EXPECT_TRUE(presentationMap.end() == iterator_range.first);
+    EXPECT_TRUE(presentationMap.end() == iterator_range.second);
 }
 
 TEST_F(SampleMapTest, findSamplesBetweenPresentationTimesFromEnd)
@@ -266,6 +270,10 @@ TEST_F(SampleMapTest, findSamplesBetweenPresentationTimesFromEnd)
     EXPECT_TRUE(presentationMap.end() == iterator_range.second);
 
     iterator_range = presentationMap.findSamplesBetweenPresentationTimesFromEnd(MediaTime(30, 1), MediaTime(31, 1));
+    EXPECT_TRUE(presentationMap.end() == iterator_range.first);
+    EXPECT_TRUE(presentationMap.end() == iterator_range.second);
+
+    iterator_range = presentationMap.findSamplesBetweenPresentationTimesFromEnd(MediaTime(5, 1), MediaTime(2, 1));
     EXPECT_TRUE(presentationMap.end() == iterator_range.first);
     EXPECT_TRUE(presentationMap.end() == iterator_range.second);
 }

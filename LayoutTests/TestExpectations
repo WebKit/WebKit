@@ -95,6 +95,8 @@ media/encrypted-media/encrypted-media-append-encrypted-unencrypted.html [ Skip ]
 media/media-source/media-source-append-play-corrupt-aac.html [ Skip ]
 media/media-source/media-source-mp4ttsimple.html [ Skip ]
 media/media-source/media-source-inband-cea608-track.html [ Skip ]
+# WebM generator not present in safari-7624.5-branch branch.
+media/media-source/media-source-webm-reversed-timestamps-crash.html [ Failure ]
 media/modern-media-controls/ios-inline-media-controls/touch [ Skip ]
 media/modern-media-controls/overflow-support [ Skip ]
 media/modern-media-controls/visionos-inline-media-controls [ Skip ]
