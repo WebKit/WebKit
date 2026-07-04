@@ -52,6 +52,8 @@
                 "slider-fill",
                 "slider-thumb",
                 "slider-track",
+                "placeholder",
+                "file-selector-button",
                 "view-transition",
                 "view-transition-group",
                 "view-transition-image-pair",

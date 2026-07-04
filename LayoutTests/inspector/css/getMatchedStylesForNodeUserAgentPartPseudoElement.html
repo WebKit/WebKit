@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.getMatchedStylesForNode.UserAgentPartPseudoElement");
+
+    async function pseudoElementStylesForSelector(selector, pseudoSelectorName)
+    {
+        let documentNode = await WI.domManager.requestDocument();
+        let nodeId = await documentNode.querySelector(selector);
+        let domNode = WI.domManager.nodeForId(nodeId);
+        InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+
+        let domNodeStyles = WI.cssManager.stylesForNode(domNode);
+        await domNodeStyles.refreshIfNeeded();
+        return domNodeStyles.pseudoElements.get(pseudoSelectorName);
+    }
+
+    function addPresentTestCase({name, description, selector, pseudoSelectorName, expectedDisplayName, expectedAuthoredSelectors})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                InspectorTest.expectEqual(WI.CSSManager.displayNameForPseudoId(pseudoSelectorName), expectedDisplayName, `Display name should be '${expectedDisplayName}'.`);
+
+                let pseudoStyles = await pseudoElementStylesForSelector(selector, pseudoSelectorName);
+                InspectorTest.expectThat(pseudoStyles, `Should have '${expectedDisplayName}' pseudo-element styles.`);
+                if (!pseudoStyles)
+                    return;
+
+                let authoredSelectors = pseudoStyles.filter((style) => style.ownerRule && style.ownerRule.type === WI.CSSStyleSheet.Type.Author).map((style) => style.ownerRule.selectorText);
+                for (let expectedSelector of expectedAuthoredSelectors)
+                    InspectorTest.expectThat(authoredSelectors.includes(expectedSelector), `Should have authored rule for selector '${expectedSelector}'.`);
+            },
+        });
+    }
+
+    addPresentTestCase({
+        name: "CSS.getMatchedStylesForNode.UserAgentPartPseudoElement.Placeholder",
+        description: "An input should expose authored `::placeholder` rules under the input node.",
+        selector: "#text-field",
+        pseudoSelectorName: WI.CSSManager.PseudoSelectorNames.Placeholder,
+        expectedDisplayName: "::placeholder",
+        expectedAuthoredSelectors: ["input::placeholder", "#text-field::placeholder"],
+    });
+
+    addPresentTestCase({
+        name: "CSS.getMatchedStylesForNode.UserAgentPartPseudoElement.FileSelectorButton",
+        description: "A file input should expose authored `::file-selector-button` rules under the input node.",
+        selector: "#file-field",
+        pseudoSelectorName: WI.CSSManager.PseudoSelectorNames.FileSelectorButton,
+        expectedDisplayName: "::file-selector-button",
+        expectedAuthoredSelectors: ["input::file-selector-button", "#file-field::file-selector-button"],
+    });
+
+    suite.addTestCase({
+        name: "CSS.getMatchedStylesForNode.UserAgentPartPseudoElement.NoPlaceholderForNonInput",
+        description: "A non-input element without a user-agent shadow part should not expose `::placeholder` rules.",
+        async test() {
+            let pseudoStyles = await pseudoElementStylesForSelector("#not-an-input", WI.CSSManager.PseudoSelectorNames.Placeholder);
+            InspectorTest.expectEqual(pseudoStyles, undefined, "Should not have `::placeholder` pseudo-element styles.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+input::placeholder { color: red; }
+#text-field::placeholder { font-weight: bold; }
+
+input::file-selector-button { color: green; }
+#file-field::file-selector-button { font-weight: bold; }
+</style>
+</head>
+<body onload="runTest()">
+    <p>Tests for the CSS.getMatchedStyleForNode command exposing authored styles for user-agent part pseudo-elements like `::placeholder` and `::file-selector-button`.</p>
+    <input id="text-field" placeholder="type here">
+    <input id="file-field" type="file">
+    <div id="not-an-input"></div>
+</body>
+</html>
