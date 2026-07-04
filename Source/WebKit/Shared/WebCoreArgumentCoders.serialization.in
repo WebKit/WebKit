@@ -2901,6 +2901,7 @@ header: <WebCore/TextExtractionTypes.h>
     URL completedURL;
     String shortenedURLString;
     bool linksToCurrentURL;
+    String shortenedSelfLinkURLString;
 };
 
 header: <WebCore/TextExtractionTypes.h>

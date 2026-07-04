@@ -20,6 +20,12 @@ root
 		link url=example.com/3 'Plain link (3)'
 		link url=/test/cat.png 'Local file'
 		link 'Self link'
+		link url=debug-text-extraction-shorten-urls.html?tab=details 'Self link (query)'
+		link 'Self link (multi query)'
+		link 'Self link (opaque query)'
+		link url=debug-text-extraction-shorten-urls.html#installation 'Self link (fragment)'
+		link 'Self link (opaque fragment)'
+		link url=debug-text-extraction-shorten-urls.html?tab=details 'Self link (query and fragment)'
 	section
 		image src=image alt='SVG data URL'
 		image src=image2 alt='PNG data URL'
@@ -51,7 +57,13 @@ root
 [Plain link \(2\)](example.com/2)
 [Plain link \(3\)](example.com/3)
 [Local file](/test/cat.png)
-[Self link](/text-extraction/debug-text-extraction-shorten-urls.html)
+Self link
+[Self link \(query\)](debug-text-extraction-shorten-urls.html?tab=details)
+Self link \(multi query\)
+Self link \(opaque query\)
+[Self link \(fragment\)](debug-text-extraction-shorten-urls.html#installation)
+Self link \(opaque fragment\)
+[Self link \(query and fragment\)](debug-text-extraction-shorten-urls.html?tab=details)
 
 ![SVG data URL](image)
 ![PNG data URL](image2)
@@ -63,5 +75,48 @@ root
 ![Image with high entropy name \(duplicate\)](image2.gif)
 ![Image with high entropy name, no extension](image.png)
 ![File extension with trailing text](image.jpg)
+
+-- html
+
+<body>
+	<section>
+		<a href='example.com/search'>Multiple query parameters</a>
+		<a href='example.com/search2'>Multiple query parameter 2</a>
+		<a href='example.com/path/to/file.html'>Path components 1</a>
+		<a href='example.com/oiiai_cat'>Path components 2</a>
+		<a href='javascript:'>JavaScript link</a>
+		<a href='data:'>HTML data URL</a>
+		<a href='mailto:test@example.com'>Email with params</a>
+		<a href='mailto:test@example.com'>
+		<a href='tel:+1-555-123-4567'>Phone number</a>
+		<a href='blob:'>Blob URL</a>
+		<a href='example.com/docs/guide.html'>Path, query, and fragment</a>
+		<a href='example.com/docs/guide2.html'>Query parameter</a>
+		<a href='example.com/docs/guide2.html'>Query parameter (duplicate)</a>
+		<a href='example.com'>Plain link</a>
+		<a href='example.com/2'>Plain link (2)</a>
+		<a href='example.com/3'>Plain link (3)</a>
+		<a href='/test/cat.png'>Local file</a>
+		<a>Self link</a>
+		<a href='debug-text-extraction-shorten-urls.html?tab=details'>Self link (query)</a>
+		<a>Self link (multi query)</a>
+		<a>Self link (opaque query)</a>
+		<a href='debug-text-extraction-shorten-urls.html#installation'>Self link (fragment)</a>
+		<a>Self link (opaque fragment)</a>
+		<a href='debug-text-extraction-shorten-urls.html?tab=details'>Self link (query and fragment)</a>
+	</section>
+	<section>
+		<img src='image' alt='SVG data URL'>
+		<img src='image2' alt='PNG data URL'>
+		<img src='vacation-2024-summer-beach.jpg' alt='Long image path'>
+		<img src='thumbnail.png' alt='Image with path'>
+		<img src='thumbnail2.png' alt='Image with query params'>
+		<img src='image.gif' alt='Image with high entropy name'>
+		<img src='image2.gif' alt='Image with high entropy name 2'>
+		<img src='image2.gif' alt='Image with high entropy name (duplicate)'>
+		<img src='image.png' alt='Image with high entropy name, no extension'>
+		<img src='image.jpg' alt='File extension with trailing text'>
+	</section>
+</body>
 
 

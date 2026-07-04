@@ -860,6 +860,13 @@ public:
             containers.append(WTF::move(identifiers));
     }
 
+    String shortenedURLStringForLink(const TextExtraction::LinkItemData& data)
+    {
+        if (shortenURLs() && data.linksToCurrentURL)
+            return data.shortenedSelfLinkURLString;
+        return stringForURL(data);
+    }
+
 private:
     void filterRecursive(const String& originalText, const std::optional<FrameIdentifier>& frameIdentifier, const std::optional<NodeIdentifier>& identifier, size_t index, CompletionHandler<void(String&&)>&& completion)
     {
@@ -1546,7 +1553,7 @@ static void addPartsForText(const TextExtraction::TextItemData& textItem, Vector
                     auto escapedText = escapeStringForMarkdown(trimmedContent);
                     if (valueOrDefault(urlString).containsIgnoringASCIICase(escapedText))
                         escapedText = { };
-                    escapedText = urlString ? makeString('[', WTF::move(escapedText), "]("_s, WTF::move(*urlString), ')') : escapedText;
+                    escapedText = (urlString && !urlString->isEmpty()) ? makeString('[', WTF::move(escapedText), "]("_s, WTF::move(*urlString), ')') : escapedText;
                     if (isStrikethrough)
                         escapedText = makeString("~~"_s, WTF::move(escapedText), "~~"_s);
                     textParts.append(WTF::move(escapedText));
@@ -1807,8 +1814,11 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
             if (aggregator.useHTMLOutput()) {
                 auto attributes = partsForItem(item, aggregator, includeRectForParentItem);
 
-                if (!linkData.completedURL.isEmpty() && aggregator.includeURLs())
-                    attributes.append(makeString("href='"_s, aggregator.stringForURL(linkData), '\''));
+                if (!linkData.completedURL.isEmpty() && aggregator.includeURLs()) {
+                    auto urlString = aggregator.shortenedURLStringForLink(linkData);
+                    if (!urlString.isEmpty())
+                        attributes.append(makeString("href='"_s, urlString, '\''));
+                }
 
                 if (attributes.isEmpty())
                     parts.append(makeString('<', item.nodeName.convertToASCIILowercase(), '>'));
@@ -1818,9 +1828,11 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                 parts.append("link"_s);
                 parts.appendVector(partsForItem(item, aggregator, includeRectForParentItem));
 
-                bool omitSelfLinkURL = aggregator.useTextTreeOutput() && aggregator.shortenURLs() && linkData.linksToCurrentURL;
-                if (!linkData.completedURL.isEmpty() && aggregator.includeURLs() && !omitSelfLinkURL)
-                    parts.append(makeString("url="_s, quoteValue(aggregator.stringForURL(linkData), streamlined)));
+                if (!linkData.completedURL.isEmpty() && aggregator.includeURLs()) {
+                    auto urlString = aggregator.shortenedURLStringForLink(linkData);
+                    if (!urlString.isEmpty())
+                        parts.append(makeString("url="_s, quoteValue(urlString, streamlined)));
+                }
             }
 
             aggregator.addResult(line, WTF::move(parts));
@@ -2009,7 +2021,7 @@ static void addTextRepresentationRecursive(const TextExtraction::Item& item, std
         if (auto attributeFromClient = item.clientAttributes.get("href"_s); !attributeFromClient.isEmpty())
             linkURLString = WTF::move(attributeFromClient);
         else if (aggregator.includeURLs())
-            linkURLString = aggregator.stringForURL(*link);
+            linkURLString = aggregator.shortenedURLStringForLink(*link);
         aggregator.pushURLString(WTF::move(linkURLString));
         isLink = true;
     }

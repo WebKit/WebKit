@@ -618,14 +618,26 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
                     return { WTF::move(url) };
 
                 auto shortenedString = shortenedURLString(url);
-                bool linksToCurrentURL = [&] {
-                    auto urlAsView = [](const URL& url) -> StringView {
-                        if (url.hasFragmentIdentifier() && url.fragmentIdentifier().isEmpty())
-                            return url.viewWithoutFragmentIdentifier();
-                        return url.string();
-                    };
-                    return urlAsView(url) == urlAsView(protect(element->document())->url());
-                }();
+                bool linksToCurrentURL = url.viewWithoutQueryOrFragmentIdentifier() == element->document().url().viewWithoutQueryOrFragmentIdentifier();
+
+                String shortenedSelfLinkURLString;
+                if (linksToCurrentURL) {
+                    using namespace StringEntropyHelpers;
+                    String tail;
+                    auto params = queryParameters(url);
+                    if (params.size() == 1 && isProbablyHumanReadable(params[0].key) && isProbablyHumanReadable(params[0].value))
+                        tail = url.queryWithLeadingQuestionMark().toString();
+                    else if (url.hasFragmentIdentifier() && !url.fragmentIdentifier().isEmpty() && isProbablyHumanReadable(url.fragmentIdentifier()))
+                        tail = url.fragmentIdentifierWithLeadingNumberSign().toString();
+
+                    if (!tail.isEmpty()) {
+                        auto lastPathComponent = url.lastPathComponent();
+                        if (isProbablyHumanReadable(lastPathComponent))
+                            shortenedSelfLinkURLString = makeString(lastPathComponent, WTF::move(tail));
+                        else
+                            shortenedSelfLinkURLString = WTF::move(tail);
+                    }
+                }
 
                 String target;
                 if (RefPtr anchor = dynamicDowncast<HTMLAnchorElement>(*element))
@@ -636,6 +648,7 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
                     WTF::move(url),
                     WTF::move(shortenedString),
                     linksToCurrentURL,
+                    WTF::move(shortenedSelfLinkURLString),
                 } };
             }
         }
