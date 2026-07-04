@@ -59,7 +59,7 @@ extern "C" size_t LLVMFuzzerMutate(uint8_t *, size_t, size_t)
     {
         std::ifstream file{fileEntry.path(), std::ios::binary};
         file.seekg(0, std::ios::end);
-        std::streampos fileSize = file.tellg();
+        size_t fileSize = static_cast<size_t>(file.tellg());
         file.seekg(0, std::ios::beg);
 
         std::vector<uint8_t> fileData(fileSize);

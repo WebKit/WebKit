@@ -9,6 +9,8 @@
 #ifndef UTIL_IOS_WINDOW_H_
 #define UTIL_IOS_WINDOW_H_
 
+#include <string>
+
 #include "common/debug.h"
 #include "util/OSWindow.h"
 
@@ -17,6 +19,8 @@ class IOSWindow : public OSWindow
   public:
     IOSWindow() {}
     ~IOSWindow() override {}
+
+    static std::string GetResourcePath();
 
     void disableErrorMessageDialog() override {}
     void destroy() override {}

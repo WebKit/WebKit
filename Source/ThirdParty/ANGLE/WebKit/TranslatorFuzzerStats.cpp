@@ -61,11 +61,11 @@ int main(int argc, const char *argv[])
     {
         for (int i = 1; i < argc; ++i)
         {
-            std::streampos fileSize;
+            size_t fileSize;
             {
                 std::ifstream file{argv[i], std::ios::binary};
                 file.seekg(0, std::ios::end);
-                fileSize = file.tellg();
+                fileSize = static_cast<size_t>(file.tellg());
                 file.seekg(0, std::ios::beg);
                 if (fileData.size() < static_cast<size_t>(fileSize))
                 {

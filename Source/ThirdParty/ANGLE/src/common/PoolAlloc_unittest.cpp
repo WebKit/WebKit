@@ -119,6 +119,7 @@ TEST_F(PoolAllocatorTest, ResetRecyclesMemory)
 class PoolAllocatorGuardTest : public PoolAllocatorTest
 {};
 
+#ifdef GTEST_HAS_DEATH_TEST
 // Verify that alignment guard detects overflowing write.
 TEST_F(PoolAllocatorGuardTest, AlignmentGuardDetectsOverflowWrite)
 {
@@ -151,6 +152,8 @@ TEST_F(PoolAllocatorGuardTest, AllocationGuardsDetectsUnderflowWrite)
     };
     ASSERT_DEATH(testUnderflow(), "");
 }
+
+#endif
 
 #endif
 

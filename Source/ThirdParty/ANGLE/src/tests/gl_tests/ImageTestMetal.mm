@@ -122,10 +122,14 @@ bool IsDepthOrStencil(MTLPixelFormat format)
         case MTLPixelFormatDepth16Unorm:
         case MTLPixelFormatDepth32Float:
         case MTLPixelFormatStencil8:
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case MTLPixelFormatDepth24Unorm_Stencil8:
+#endif
         case MTLPixelFormatDepth32Float_Stencil8:
         case MTLPixelFormatX32_Stencil8:
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case MTLPixelFormatX24_Stencil8:
+#endif
             return true;
 
         default:
@@ -346,8 +350,12 @@ class ImageTestMetal : public ANGLETest<>
 
     bool hasDepth24Stencil8PixelFormat()
     {
+    #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         id<MTLDevice> device = getMtlDevice();
         return device.depth24Stencil8PixelFormatSupported;
+    #else
+        return false;
+    #endif
     }
 
     bool hasImageNativeMetalTextureExt() const
