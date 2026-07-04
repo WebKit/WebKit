@@ -57,7 +57,7 @@ void GStreamerTest::TearDownTestSuite()
 
 TEST_F(GStreamerTest, gstStructureGetters)
 {
-    GUniquePtr<GstStructure> structure(gst_structure_new("foo", "int-val", G_TYPE_INT, -5, "int64-val", G_TYPE_INT64, -10, "uint-val", G_TYPE_UINT, 5, "uint64-val", G_TYPE_UINT64, 18014398509481982, "double-val", G_TYPE_DOUBLE, 1.0, "bool-val", G_TYPE_BOOLEAN, TRUE, "str-val", G_TYPE_STRING, "hello-world", nullptr));
+    GUniquePtr<GstStructure> structure(gst_structure_new("foo", "int-val", G_TYPE_INT, -5, "int64-val", G_TYPE_INT64, static_cast<gint64>(-10), "uint-val", G_TYPE_UINT, 5, "uint64-val", G_TYPE_UINT64, 18014398509481982, "double-val", G_TYPE_DOUBLE, 1.0, "bool-val", G_TYPE_BOOLEAN, TRUE, "str-val", G_TYPE_STRING, "hello-world", nullptr));
     ASSERT_EQ(gstStructureGet<int>(structure.get(), "int-val"_s), -5);
     ASSERT_TRUE(!gstStructureGet<int>(structure.get(), "int-val-noexist"_s).has_value());
     ASSERT_EQ(gstStructureGet<int64_t>(structure.get(), "int64-val"_s), -10);
@@ -100,7 +100,7 @@ TEST_F(GStreamerTest, gstStructureGetters)
 
 TEST_F(GStreamerTest, gstStructureJSONSerializing)
 {
-    GUniquePtr<GstStructure> structure(gst_structure_new("foo", "int-val", G_TYPE_INT, 5, "str-val", G_TYPE_STRING, "foo", "bool-val", G_TYPE_BOOLEAN, TRUE, "uint64-val", G_TYPE_UINT64, 18014398509481982, "uint-val", G_TYPE_UINT, 2147483648, "int64-val", G_TYPE_INT64, 666, nullptr));
+    GUniquePtr<GstStructure> structure(gst_structure_new("foo", "int-val", G_TYPE_INT, 5, "str-val", G_TYPE_STRING, "foo", "bool-val", G_TYPE_BOOLEAN, TRUE, "uint64-val", G_TYPE_UINT64, static_cast<guint64>(18014398509481982), "uint-val", G_TYPE_UINT, 2147483648, "int64-val", G_TYPE_INT64, static_cast<gint64>(666), nullptr));
     auto jsonString = gstStructureToJSONString(structure.get());
     ASSERT_EQ(jsonString, "{\"int-val\":5,\"str-val\":\"foo\",\"bool-val\":1,\"uint64-val\":{\"$biguint\":\"18014398509481982\"},\"uint-val\":2147483648,\"int64-val\":{\"$bigint\":\"666\"}}"_s);
 
