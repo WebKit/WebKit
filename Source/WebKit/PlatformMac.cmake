@@ -116,6 +116,30 @@ foreach (_dir IN LISTS WebKit_SWIFT_INCLUDE_DIRECTORIES)
     target_compile_options(WebKit PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:-I${_dir}>")
 endforeach ()
 
+# Turn on library evolution and emit the swift interface files.
+target_compile_options(WebKit PRIVATE
+        "$<$<COMPILE_LANGUAGE:Swift>:-enable-library-evolution>"
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-emit-module-interface-path ${CMAKE_BINARY_DIR}/Source/WebKit/WebKit.swiftinterface>"
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-emit-private-module-interface-path ${CMAKE_BINARY_DIR}/Source/WebKit/WebKit.private.swiftinterface>"
+)
+
+# Use the `generate-swift-availability-macros` script to generate WebKit's custom Swift @available macros.
+set(_wk_swift_availability_file "${CMAKE_CURRENT_BINARY_DIR}/WebKit-swift-availability.txt")
+execute_process(
+        COMMAND ${CMAKE_COMMAND} -E env
+        "WK_PLATFORM_NAME=macosx"
+        "MACOSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
+        "IPHONEOS_DEPLOYMENT_TARGET=9999"
+        "XROS_DEPLOYMENT_TARGET=9999"
+        "SDKROOT=${CMAKE_OSX_SYSROOT}"
+        "SCRIPT_OUTPUT_FILE_0=${_wk_swift_availability_file}"
+        bash "${WEBKIT_DIR}/Scripts/generate-swift-availability-macros"
+        OUTPUT_QUIET)
+file(STRINGS "${_wk_swift_availability_file}" _wk_avail_lines)
+foreach (_line IN LISTS _wk_avail_lines)
+    target_compile_options(WebKit PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:SHELL:${_line}>")
+endforeach ()
+
 add_custom_command(
     OUTPUT ${_log_messages_generated}
     DEPENDS
@@ -424,6 +448,78 @@ target_link_options(WebKit PRIVATE
     -Wl,-reexport-lobjc
 )
 add_dependencies(WebKit WebInspectorUIFramework)
+
+# Stage WebKit's Swift module + module maps into the framework's Modules dir
+
+file(MAKE_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework")
+file(CREATE_LINK "Versions/Current/Modules"
+        "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Modules" SYMBOLIC)
+
+set(_wk_modules_dir "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/Modules")
+set(_wk_triple "${WEBKIT_SWIFT_MODULE_TRIPLE}")
+
+set(_wk_swift_out "${CMAKE_BINARY_DIR}/Source/WebKit")
+set(_wk_swiftmodule_dir "${_wk_modules_dir}/WebKit.swiftmodule")
+set(_wk_swiftmodule_outputs
+        "${_wk_swiftmodule_dir}/${_wk_triple}.swiftmodule"
+        "${_wk_swiftmodule_dir}/${_wk_triple}.swiftdoc"
+        "${_wk_swiftmodule_dir}/${_wk_triple}.abi.json"
+        "${_wk_swiftmodule_dir}/${_wk_triple}.swiftinterface"
+        "${_wk_swiftmodule_dir}/${_wk_triple}.private.swiftinterface"
+        "${_wk_swiftmodule_dir}/Project/${_wk_triple}.swiftsourceinfo"
+)
+
+add_custom_command(
+        OUTPUT ${_wk_swiftmodule_outputs}
+        DEPENDS WebKit
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${_wk_swiftmodule_dir}/Project"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_wk_swift_out}/WebKit.swiftmodule"
+        "${_wk_swiftmodule_dir}/${_wk_triple}.swiftmodule"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_wk_swift_out}/WebKit.swiftdoc"
+        "${_wk_swiftmodule_dir}/${_wk_triple}.swiftdoc"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_wk_swift_out}/WebKit.abi.json"
+        "${_wk_swiftmodule_dir}/${_wk_triple}.abi.json"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_wk_swift_out}/WebKit.swiftinterface"
+        "${_wk_swiftmodule_dir}/${_wk_triple}.swiftinterface"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_wk_swift_out}/WebKit.private.swiftinterface"
+        "${_wk_swiftmodule_dir}/${_wk_triple}.private.swiftinterface"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_wk_swift_out}/WebKit.swiftsourceinfo"
+        "${_wk_swiftmodule_dir}/Project/${_wk_triple}.swiftsourceinfo"
+        COMMENT "Staging WebKit.swiftmodule into WebKit.framework/Versions/A/Modules/"
+        VERBATIM
+)
+
+# Copy the module maps and swift overlay; all are copied verbatim except the private module map,
+# which is preprocessed exactly like Xcode's Unifdef module.private.modulemap" phase.
+
+add_custom_command(
+        OUTPUT "${_wk_modules_dir}/module.modulemap"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${_wk_modules_dir}"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${WEBKIT_DIR}/Modules/OSX.modulemap" "${_wk_modules_dir}/module.modulemap"
+        MAIN_DEPENDENCY "${WEBKIT_DIR}/Modules/OSX.modulemap"
+        VERBATIM)
+add_custom_command(
+        OUTPUT "${_wk_modules_dir}/module.private.modulemap"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${_wk_modules_dir}"
+        COMMAND xcrun clang -E -P -w -target ${CMAKE_Swift_COMPILER_TARGET} - < "${WEBKIT_DIR}/Modules/OSX_Private.modulemap" >
+        "${_wk_modules_dir}/module.private.modulemap"
+        MAIN_DEPENDENCY "${WEBKIT_DIR}/Modules/OSX_Private.modulemap"
+        VERBATIM)
+add_custom_command(
+        OUTPUT "${_wk_modules_dir}/WebKit.swiftcrossimport/SwiftUI.swiftoverlay"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${_wk_modules_dir}/WebKit.swiftcrossimport"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${WEBKIT_DIR}/Modules/SwiftUI.swiftoverlay"
+        "${_wk_modules_dir}/WebKit.swiftcrossimport/SwiftUI.swiftoverlay"
+        MAIN_DEPENDENCY "${WEBKIT_DIR}/Modules/SwiftUI.swiftoverlay"
+        VERBATIM)
+
+add_custom_target(WebKit_StageModules ALL DEPENDS
+        ${_wk_swiftmodule_outputs}
+        "${_wk_modules_dir}/module.modulemap"
+        "${_wk_modules_dir}/module.private.modulemap"
+        "${_wk_modules_dir}/WebKit.swiftcrossimport/SwiftUI.swiftoverlay")
+
+add_dependencies(WebKit_StageModules WebKit)
 
 set(WebKit_OUTPUT_NAME WebKit)
 
