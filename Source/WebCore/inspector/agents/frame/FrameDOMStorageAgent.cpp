@@ -26,8 +26,16 @@
 #include "config.h"
 #include "FrameDOMStorageAgent.h"
 
+#include "DOMException.h"
+#include "Document.h"
+#include "DocumentPage.h"
 #include "InstrumentingAgents.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
+#include "Page.h"
+#include "SecurityOrigin.h"
+#include "StorageArea.h"
+#include "StorageNamespaceProvider.h"
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/JSONValues.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -79,28 +87,110 @@ Inspector::CommandResult<void> FrameDOMStorageAgent::disable()
     return { };
 }
 
-Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::DOMStorage::Item>>> FrameDOMStorageAgent::getDOMStorageItems(Ref<JSON::Object>&&)
+Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::DOMStorage::Item>>> FrameDOMStorageAgent::getDOMStorageItems(Ref<JSON::Object>&& storageId)
 {
-    // FIXME: <rdar://179249711>: Implement DOMStorage commands for frame targets.
-    return makeUnexpected("DOMStorage commands are not yet implemented for frame targets"_s);
+    Inspector::Protocol::ErrorString errorString;
+
+    RefPtr<LocalFrame> frame;
+    RefPtr storageArea = findStorageArea(errorString, storageId, frame);
+    if (!storageArea)
+        return makeUnexpected(errorString);
+
+    auto storageItems = JSON::ArrayOf<JSON::ArrayOf<String>>::create();
+    for (unsigned i = 0; i < storageArea->length(); ++i) {
+        String key = storageArea->key(i);
+        String value = storageArea->item(key);
+
+        auto entry = JSON::ArrayOf<String>::create();
+        entry->addItem(key);
+        entry->addItem(value);
+        storageItems->addItem(WTF::move(entry));
+    }
+    return storageItems;
 }
 
-Inspector::CommandResult<void> FrameDOMStorageAgent::setDOMStorageItem(Ref<JSON::Object>&&, const String&, const String&)
+Inspector::CommandResult<void> FrameDOMStorageAgent::setDOMStorageItem(Ref<JSON::Object>&& storageId, const String& key, const String& value)
 {
-    // FIXME: <rdar://179249711>: Implement DOMStorage commands for frame targets.
-    return makeUnexpected("DOMStorage commands are not yet implemented for frame targets"_s);
+    Inspector::Protocol::ErrorString errorString;
+
+    RefPtr<LocalFrame> frame;
+    RefPtr storageArea = findStorageArea(errorString, storageId, frame);
+    if (!storageArea)
+        return makeUnexpected(errorString);
+
+    bool quotaException = false;
+    storageArea->setItem(*frame, key, value, quotaException);
+    if (quotaException)
+        return makeUnexpected(DOMException::name(ExceptionCode::QuotaExceededError));
+
+    return { };
 }
 
-Inspector::CommandResult<void> FrameDOMStorageAgent::removeDOMStorageItem(Ref<JSON::Object>&&, const String&)
+Inspector::CommandResult<void> FrameDOMStorageAgent::removeDOMStorageItem(Ref<JSON::Object>&& storageId, const String& key)
 {
-    // FIXME: <rdar://179249711>: Implement DOMStorage commands for frame targets.
-    return makeUnexpected("DOMStorage commands are not yet implemented for frame targets"_s);
+    Inspector::Protocol::ErrorString errorString;
+
+    RefPtr<LocalFrame> frame;
+    RefPtr storageArea = findStorageArea(errorString, storageId, frame);
+    if (!storageArea)
+        return makeUnexpected(errorString);
+
+    storageArea->removeItem(*frame, key);
+
+    return { };
 }
 
-Inspector::CommandResult<void> FrameDOMStorageAgent::clearDOMStorageItems(Ref<JSON::Object>&&)
+Inspector::CommandResult<void> FrameDOMStorageAgent::clearDOMStorageItems(Ref<JSON::Object>&& storageId)
 {
-    // FIXME: <rdar://179249711>: Implement DOMStorage commands for frame targets.
-    return makeUnexpected("DOMStorage commands are not yet implemented for frame targets"_s);
+    Inspector::Protocol::ErrorString errorString;
+
+    RefPtr<LocalFrame> frame;
+    RefPtr storageArea = findStorageArea(errorString, storageId, frame);
+    if (!storageArea)
+        return makeUnexpected(errorString);
+
+    storageArea->clear(*frame);
+
+    return { };
+}
+
+RefPtr<StorageArea> FrameDOMStorageAgent::findStorageArea(Inspector::Protocol::ErrorString& errorString, const JSON::Object& storageId, RefPtr<LocalFrame>& targetFrame)
+{
+    auto securityOrigin = storageId.getString("securityOrigin"_s);
+    if (!securityOrigin) {
+        errorString = "Missing securityOrigin in given storageId"_s;
+        return nullptr;
+    }
+
+    auto isLocalStorage = storageId.getBoolean("isLocalStorage"_s);
+    if (!isLocalStorage) {
+        errorString = "Missing isLocalStorage in given storageId"_s;
+        return nullptr;
+    }
+
+    RefPtr frame = m_inspectedFrame.get();
+    RefPtr page = frame ? frame->page() : nullptr;
+    RefPtr document = frame ? frame->document() : nullptr;
+    if (!frame || !page || !document) {
+        errorString = "Frame or page not available"_s;
+        return nullptr;
+    }
+
+    // The frame agent only operates on its own frame's storage, so securityOrigin is not used
+    // to locate the area (unlike the page-level agent's origin search). It is still validated
+    // as a precondition: a mismatch means the storageId was routed to the wrong frame or is
+    // stale after a navigation, and proceeding would mutate a different origin's storage. Fail
+    // so the frontend can re-resolve, rather than silently acting on the wrong origin.
+    if (protect(document->securityOrigin())->toRawString() != securityOrigin) {
+        errorString = "Given securityOrigin does not match the inspected frame's origin"_s;
+        return nullptr;
+    }
+
+    targetFrame = WTF::move(frame);
+
+    if (*isLocalStorage)
+        return page->storageNamespaceProvider().localStorageArea(*document);
+    return page->storageNamespaceProvider().sessionStorageArea(*document);
 }
 
 } // namespace WebCore

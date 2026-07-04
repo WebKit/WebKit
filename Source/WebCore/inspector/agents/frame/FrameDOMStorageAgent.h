@@ -39,6 +39,7 @@ class DOMStorageFrontendDispatcher;
 namespace WebCore {
 
 class LocalFrame;
+class StorageArea;
 
 // FrameDOMStorageAgent is the per-frame DOMStorage agent for Site Isolation. Each
 // LocalFrame owns one, and it only ever serves its own frame's storage areas (which
@@ -66,6 +67,8 @@ public:
     Inspector::CommandResult<void> clearDOMStorageItems(Ref<JSON::Object>&& storageId) override;
 
 private:
+    RefPtr<StorageArea> findStorageArea(Inspector::Protocol::ErrorString&, const JSON::Object& storageId, RefPtr<LocalFrame>& targetFrame);
+
     const UniqueRef<Inspector::DOMStorageFrontendDispatcher> m_frontendDispatcher;
     const Ref<Inspector::DOMStorageBackendDispatcher> m_backendDispatcher;
 
