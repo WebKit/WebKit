@@ -582,7 +582,31 @@ static void overrideDefaults()
     }
 
 #if OS(DARWIN) && CPU(ARM64)
-    Options::numberOfGCMarkers() = std::min<unsigned>(4, kernTCSMAwareNumberOfProcessorCores());
+    {
+        // Example topologies.
+        //                P0       P1       GC
+        // M1       :      4        4        6
+        // M1 Pro   :      6        2        6
+        // M1 Max   :      8        2        7
+        // M1 Ultra :     16        4        7
+        // M4       :    3-4      4-6      6-7
+        // M4 Pro   :   8-10        4        7
+        // M4 Max   :  10-12        4        7
+        // M5       :    3-4        6        7
+        // M5 Pro   :    5-6    10-12        7
+        // M5 Max   :      6       12        7
+        // A18      :      2        4        4
+        unsigned p0 = hwNumberOfP0Cores();
+        unsigned p1 = hwNumberOfP1Cores();
+        unsigned gcMarkers = 0;
+        if (p0 < 3)
+            gcMarkers = std::min<unsigned>(4, kernTCSMAwareNumberOfProcessorCores());
+        else if ((p0 + p1) < 9)
+            gcMarkers = std::min<unsigned>(6, kernTCSMAwareNumberOfProcessorCores());
+        else
+            gcMarkers = std::min<unsigned>(7, kernTCSMAwareNumberOfProcessorCores());
+        Options::numberOfGCMarkers() = gcMarkers;
+    }
 
     Options::minNumberOfWorklistThreads() = 1;
     Options::maxNumberOfWorklistThreads() = std::min<unsigned>(4, kernTCSMAwareNumberOfProcessorCores());

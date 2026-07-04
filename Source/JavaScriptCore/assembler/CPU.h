@@ -206,6 +206,12 @@ ALWAYS_INLINE int64_t hwL3CacheSize() { return 0; }
 ALWAYS_INLINE int32_t hwPhysicalCPUMax() { return kernTCSMAwareNumberOfProcessorCores(); }
 #endif
 
+#if CPU(ARM64) && OS(DARWIN)
+int32_t hwNumberOfP0Cores();
+int32_t hwNumberOfP1Cores();
+int32_t hwNumberOfP2Cores();
+#endif
+
 constexpr size_t prologueStackPointerDelta()
 {
 #if ENABLE(C_LOOP)

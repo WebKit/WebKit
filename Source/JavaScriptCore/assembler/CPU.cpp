@@ -105,6 +105,34 @@ int32_t hwPhysicalCPUMax()
 
 #endif // #if (CPU(X86) || CPU(X86_64)) && OS(DARWIN)
 
+#if CPU(ARM64) && OS(DARWIN)
+static int32_t hwPerfLevelPhysicalCPUMax(const char* name)
+{
+    int32_t val = 0;
+    size_t valSize = sizeof(val);
+    int rc = sysctlbyname(name, &val, &valSize, nullptr, 0);
+    if (rc < 0)
+        return 0;
+    return val;
+}
+
+// The highest performance cores.
+int32_t hwNumberOfP0Cores()
+{
+    return hwPerfLevelPhysicalCPUMax("hw.perflevel0.physicalcpu_max");
+}
+
+int32_t hwNumberOfP1Cores()
+{
+    return hwPerfLevelPhysicalCPUMax("hw.perflevel1.physicalcpu_max");
+}
+
+int32_t hwNumberOfP2Cores()
+{
+    return hwPerfLevelPhysicalCPUMax("hw.perflevel2.physicalcpu_max");
+}
+#endif // #if CPU(ARM64) && OS(DARWIN)
+
 #if CPU(ARM64) && !(CPU(ARM64E) || OS(MACOS))
 bool isARM64_LSE()
 {
