@@ -174,7 +174,8 @@ void IPIntPlan::completeInStreaming()
 void IPIntPlan::didCompileFunctionInStreaming()
 {
     Locker locker { m_lock };
-    moveToState(EntryPlan::State::Compiled);
+    if (hasWork())
+        moveToState(EntryPlan::State::Compiled);
 }
 
 void IPIntPlan::didFailInStreaming(String&& message)
