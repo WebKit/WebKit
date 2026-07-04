@@ -135,6 +135,17 @@
 #define BALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
+/* BIGNORE_CLANG_STATIC_ANALYZER_WARNINGS_ATTRIBUTE() - suppress a clang static analyzer warning on the following statement.
+ * https://clang.llvm.org/docs/AttributeReference.html#suppress */
+#if defined(__has_cpp_attribute)
+#if __has_cpp_attribute(clang::suppress)
+#define BIGNORE_CLANG_STATIC_ANALYZER_WARNINGS_ATTRIBUTE(warning, ...) [[clang::suppress]]
+#endif
+#endif
+#if !defined(BIGNORE_CLANG_STATIC_ANALYZER_WARNINGS_ATTRIBUTE)
+#define BIGNORE_CLANG_STATIC_ANALYZER_WARNINGS_ATTRIBUTE(warning, ...)
+#endif
+
 /* MUST_TAIL_CALL */
 
 // 32-bit platforms use different calling conventions, so a MUST_TAIL_CALL function

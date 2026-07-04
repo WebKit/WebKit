@@ -62,12 +62,12 @@
 
 #if defined(__GNUC__) // GCC or Clang
 #define BCRASH() do { \
-    *(int*)0xbbadbeef = 0; \
+    BIGNORE_CLANG_STATIC_ANALYZER_WARNINGS_ATTRIBUTE("core.FixedAddressDereference") *(int*)0xbbadbeef = 0; \
     __builtin_trap(); \
 } while (0)
 #else
 #define BCRASH() do { \
-    *(int*)0xbbadbeef = 0; \
+    BIGNORE_CLANG_STATIC_ANALYZER_WARNINGS_ATTRIBUTE("core.FixedAddressDereference") *(int*)0xbbadbeef = 0; \
     ((void(*)())0)(); \
 } while (0)
 #endif // defined(__GNUC__)
