@@ -28,6 +28,7 @@ SCOPE CHAIN:
     Closure
       - localVariable2: 12
     Closure
+      - arguments: Arguments
       - localVariable1: 11
     FunctionName
       - functionName: function functionName() {
@@ -42,10 +43,12 @@ SCOPE CHAIN:
     Closure
       - innerClosureVariable2: 6
     Closure
+      - arguments: Arguments
       - innerClosureVariable1: 5
     Closure
       - closureVariable2: 4
     Closure
+      - arguments: Arguments
       - innerScope: function innerScope() {
       - closureVariable1: 3
     GlobalLexicalEnvironment
@@ -55,11 +58,11 @@ SCOPE CHAIN:
 -- Running test case: WI.ScopeChainNode.FunctionNameInFunctionExpression
 SCOPE CHAIN:
     Closure
-      (empty)
+      - arguments: Arguments
     FunctionName
       - functionName: function functionName() {
     Closure
-      (empty)
+      - arguments: Arguments
     GlobalLexicalEnvironment
       - lexicalGlobalVariable: 2
     Global
@@ -67,11 +70,11 @@ SCOPE CHAIN:
 -- Running test case: WI.ScopeChainNode.FunctionNameInClassMethod
 SCOPE CHAIN:
     Closure
-      (empty)
+      - arguments: Arguments
     Block
       - MyClass: class MyClass
     Closure
-      (empty)
+      - arguments: Arguments
     GlobalLexicalEnvironment
       - lexicalGlobalVariable: 2
     Global
@@ -105,33 +108,33 @@ SCOPE CHAIN:
     Closure
       - a: 1
     Closure
-      (empty)
+      - arguments: Arguments
     GlobalLexicalEnvironment
       - lexicalGlobalVariable: 2
     Global
 PASS: Pause #17 - Contains a Block scope.
 SCOPE CHAIN:
     Closure
-      (empty)
+      - arguments: Arguments
     Block
       - MyClass: class MyClass
     Closure
       - a: 1
     Closure
-      (empty)
+      - arguments: Arguments
     GlobalLexicalEnvironment
       - lexicalGlobalVariable: 2
     Global
 PASS: Pause #18 - Contains a Block scope.
 SCOPE CHAIN:
     Closure
-      (empty)
+      - arguments: Arguments
     Block
       - MyClassWithStaticMethod: class MyClassWithStaticMethod
     Closure
       - a: 1
     Closure
-      (empty)
+      - arguments: Arguments
     GlobalLexicalEnvironment
       - lexicalGlobalVariable: 2
     Global

@@ -19,7 +19,7 @@ CALL STACK:
   -------------
 3: [F] startABC
   ----Scope----
-  --  empty  --
+  arguments: Arguments
   -------------
 4: [P] Global Code
   ----Scope----
