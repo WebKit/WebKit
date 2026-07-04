@@ -1,0 +1,6 @@
+
+PASS types: ident("abc") shoud result in []
+PASS types: abc ident("xyz") shoud result in []
+PASS types: ident("-ua" -2 "-name") shoud result in []
+PASS types: abc ident("-ua" -2 "-name") shoud result in []
+

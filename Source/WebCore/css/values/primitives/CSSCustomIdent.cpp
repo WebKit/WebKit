@@ -46,6 +46,19 @@ bool CustomIdent::isNull() const
     return resolved && resolved->isNull();
 }
 
+WTF::String mockEvaluation(const IdentFunction& function)
+{
+    StringBuilder builder;
+    for (auto& argument : function.parameters) {
+        WTF::switchOn(argument,
+            [&](const IdentFunctionIdent& ident) { builder.append(ident.value); },
+            [&](const String& string) { builder.append(string.value); },
+            [&](const Integer<>&) { builder.append('0'); }
+        );
+    }
+    return builder.toString();
+}
+
 bool CustomIdent::startsWith(StringView prefix) const
 {
     return WTF::switchOn(value,
@@ -53,17 +66,7 @@ bool CustomIdent::startsWith(StringView prefix) const
             return resolved.startsWith(prefix);
         },
         [&](const IdentFunction& function) {
-            // Build the identifier with every <integer> argument treated as "0", then test the prefix.
-            // https://github.com/w3c/csswg-drafts/issues/12206#issuecomment-3998743769
-            StringBuilder builder;
-            for (auto& argument : function.parameters) {
-                WTF::switchOn(argument,
-                    [&](const IdentFunctionIdent& ident) { builder.append(ident.value); },
-                    [&](const String& string) { builder.append(string.value); },
-                    [&](const Integer<>&) { builder.append('0'); }
-                );
-            }
-            return StringView { builder }.startsWith(prefix);
+            return mockEvaluation(function).startsWith(prefix);
         }
     );
 }

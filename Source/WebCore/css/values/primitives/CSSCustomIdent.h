@@ -52,6 +52,12 @@ using IdentFunctionArg = Variant<IdentFunctionIdent, String, Integer<>>;
 // https://drafts.csswg.org/css-values-5/#ident
 using IdentFunction = FunctionNotation<CSSValueIdent, SpaceSeparatedVector<IdentFunctionArg>>;
 
+// The identifier produced by concatenating the function's arguments with every
+// <integer> argument treated as "0". Used for parse-time validity checks against
+// restricted <custom-ident> productions ("mock-evaluation").
+// https://github.com/w3c/csswg-drafts/issues/12206#issuecomment-3998743769
+WTF::String mockEvaluation(const IdentFunction&);
+
 // https://drafts.csswg.org/css-values-4/#identifier-value
 struct CustomIdent {
     Variant<AtomString, IdentFunction> value;
