@@ -44,8 +44,8 @@ struct VMEntryRecord {
     JSCell* const m_context;
     // The following two fields are sometimes treated as a pair in assembly code, making usages of the second one implicit.
     // To find them, look for loadpairq/storepairq of "VMEntryRecord::m_prevTopCallFrame" in *.asm files.
-    CallFrame* const m_prevTopCallFrame;
-    EntryFrame* const m_prevTopEntryFrame;
+    SUPPRESS_FORWARD_DECL_MEMBER CallFrame* const m_prevTopCallFrame;
+    SUPPRESS_FORWARD_DECL_MEMBER EntryFrame* const m_prevTopEntryFrame;
 
 #if !ENABLE(C_LOOP) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
     CPURegister calleeSaveRegistersBuffer[NUMBER_OF_CALLEE_SAVES_REGISTERS];

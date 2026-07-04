@@ -286,6 +286,7 @@ public:
     JS_EXPORT_PRIVATE static RegisterSet NODELETE calleeSaveRegisters();
     JS_EXPORT_PRIVATE static RegisterSet NODELETE vmCalleeSaveRegisters();
     JS_EXPORT_PRIVATE static RegisterAtOffsetList* vmCalleeSaveRegisterOffsets();
+    JS_EXPORT_PRIVATE static std::span<const int8_t> vmCalleeSaveBufferSlotsByRegIndex();
     JS_EXPORT_PRIVATE static RegisterSet NODELETE llintBaselineCalleeSaveRegisters();
     JS_EXPORT_PRIVATE static RegisterSet NODELETE dfgCalleeSaveRegisters();
     JS_EXPORT_PRIVATE static RegisterSet NODELETE ftlCalleeSaveRegisters();

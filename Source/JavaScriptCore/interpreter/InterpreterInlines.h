@@ -173,28 +173,36 @@ ALWAYS_INLINE JSValue Interpreter::tryCallWithArguments(CachedCall& cachedCall, 
 }
 #endif
 
+inline UnwindFunctorBase::UnwindFunctorBase(VM& vm)
+    : m_vm(vm)
+#if ENABLE(ASSEMBLER)
+    , m_vmCalleeSaveBufferSlotsByRegIndex(RegisterSet::vmCalleeSaveBufferSlotsByRegIndex())
+    , m_vmEntryRecord(vm.topEntryFrame ? vmEntryRecord(vm.topEntryFrame) : nullptr)
+#endif
+{
+}
+
 inline void UnwindFunctorBase::copyCalleeSavesToEntryFrameCalleeSavesBuffer(StackVisitor& visitor) const
 {
 #if ENABLE(ASSEMBLER)
     CallFrame* callFrame = visitor->callFrame();
-    std::optional<RegisterAtOffsetList> currentCalleeSaves = visitor->calleeSaveRegistersForUnwinding();
+    const RegisterAtOffsetList* currentCalleeSaves = visitor->calleeSaveRegistersForUnwinding();
 
     if (!currentCalleeSaves)
         return;
 
-    RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
     auto dontCopyRegisters = RegisterSet::stackRegisters();
     CPURegister* frame = reinterpret_cast<CPURegister*>(callFrame->registers());
 
     unsigned registerCount = currentCalleeSaves->registerCount();
-    VMEntryRecord* record = vmEntryRecord(m_vm.topEntryFrame);
+    VMEntryRecord* record = m_vmEntryRecord;
     for (unsigned i = 0; i < registerCount; i++) {
         RegisterAtOffset currentEntry = currentCalleeSaves->at(i);
         if (dontCopyRegisters.contains(currentEntry.reg(), IgnoreVectors))
             continue;
-        RegisterAtOffset* calleeSavesEntry = allCalleeSaves->find(currentEntry.reg());
+        int8_t bufferSlot = m_vmCalleeSaveBufferSlotsByRegIndex[currentEntry.reg().index()];
 
-        if (!calleeSavesEntry) {
+        if (bufferSlot < 0) {
             if constexpr (!isARM_THUMB2())
                 RELEASE_ASSERT_NOT_REACHED();
             // This can happen on ARMv7, because there are more callee save
@@ -211,9 +219,7 @@ inline void UnwindFunctorBase::copyCalleeSavesToEntryFrameCalleeSavesBuffer(Stac
             // its frame.
             continue;
         }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        record->calleeSaveRegistersBuffer[calleeSavesEntry->offsetAsIndex()] = *(frame + currentEntry.offsetAsIndex());
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        record->calleeSaveRegistersBuffer[bufferSlot] = *(frame + currentEntry.offsetAsIndex());
     }
 #else
     UNUSED_PARAM(visitor);

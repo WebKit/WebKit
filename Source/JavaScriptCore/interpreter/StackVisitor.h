@@ -113,7 +113,7 @@ public:
         JS_EXPORT_PRIVATE LineColumn computeLineAndColumn() const;
 
 #if ENABLE(ASSEMBLER)
-        std::optional<RegisterAtOffsetList> calleeSaveRegistersForUnwinding();
+        const RegisterAtOffsetList* calleeSaveRegistersForUnwinding();
 #endif
 
         ClonedArguments* createArguments(VM&);

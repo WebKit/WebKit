@@ -32,6 +32,8 @@
 #include <JavaScriptCore/BytecodeIndex.h>
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/MacroAssemblerCodeRef.h>
+#include <JavaScriptCore/VMEntryRecord.h>
+#include <span>
 #include <wtf/HashMap.h>
 #include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
@@ -206,14 +208,16 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, uintptr_t /* IPIntOffs
 
     class UnwindFunctorBase {
     protected:
-        UnwindFunctorBase(VM& vm)
-            : m_vm(vm)
-        { }
+        inline UnwindFunctorBase(VM&);
 
         void copyCalleeSavesToEntryFrameCalleeSavesBuffer(StackVisitor&) const;
         void notifyDebuggerOfUnwinding(JSGlobalObject*, CallFrame*) const;
 
         VM& m_vm;
+#if ENABLE(ASSEMBLER)
+        std::span<const int8_t> m_vmCalleeSaveBufferSlotsByRegIndex;
+        VMEntryRecord* m_vmEntryRecord;
+#endif
     };
 } // namespace JSC
 

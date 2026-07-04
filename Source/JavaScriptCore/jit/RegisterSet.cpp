@@ -32,6 +32,7 @@
 #include "GPRInfo.h"
 #include "MacroAssembler.h"
 #include "RegisterAtOffsetList.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace JSC {
 
@@ -46,6 +47,23 @@ RegisterAtOffsetList* RegisterSet::vmCalleeSaveRegisterOffsets()
 #endif
     });
     return result;
+}
+
+std::span<const int8_t> RegisterSet::vmCalleeSaveBufferSlotsByRegIndex()
+{
+    static LazyNeverDestroyed<std::array<int8_t, Reg::maxIndex() + 1>> slots;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] () {
+        slots.construct();
+        slots->fill(-1);
+        RegisterAtOffsetList* list = vmCalleeSaveRegisterOffsets();
+        for (unsigned i = 0; i < list->registerCount(); i++) {
+            RegisterAtOffset entry = list->at(i);
+            ASSERT(entry.offsetAsIndex() >= 0 && entry.offsetAsIndex() <= INT8_MAX);
+            slots.get()[entry.reg().index()] = static_cast<int8_t>(entry.offsetAsIndex());
+        }
+    });
+    return slots.get();
 }
 
 RegisterSet RegisterSet::stackRegisters()

@@ -348,13 +348,13 @@ StackVisitor::Frame::CodeType StackVisitor::Frame::codeType() const
 }
 
 #if ENABLE(ASSEMBLER)
-std::optional<RegisterAtOffsetList> StackVisitor::Frame::calleeSaveRegistersForUnwinding()
+const RegisterAtOffsetList* StackVisitor::Frame::calleeSaveRegistersForUnwinding()
 {
     if (!NUMBER_OF_CALLEE_SAVES_REGISTERS)
-        return std::nullopt;
+        return nullptr;
 
     if (isInlinedDFGFrame())
-        return std::nullopt;
+        return nullptr;
 
     if (isNativeCalleeFrame()) {
         auto* nativeCallee = callee().asNativeCallee();
@@ -363,7 +363,7 @@ std::optional<RegisterAtOffsetList> StackVisitor::Frame::calleeSaveRegistersForU
 #if ENABLE(WEBASSEMBLY)
             auto* wasmCallee = uncheckedDowncast<Wasm::Callee>(nativeCallee);
             if (auto* calleeSaveRegisters = wasmCallee->calleeSaveRegisters())
-                return *calleeSaveRegisters;
+                return calleeSaveRegisters;
 #endif // ENABLE(WEBASSEMBLY)
             break;
         }
@@ -371,13 +371,13 @@ std::optional<RegisterAtOffsetList> StackVisitor::Frame::calleeSaveRegistersForU
             break;
         }
         }
-        return std::nullopt;
+        return nullptr;
     }
 
     if (CodeBlock* codeBlock = this->codeBlock())
-        return *codeBlock->jitCode()->calleeSaveRegisters();
+        return codeBlock->jitCode()->calleeSaveRegisters();
 
-    return std::nullopt;
+    return nullptr;
 }
 #endif // ENABLE(ASSEMBLER)
 
