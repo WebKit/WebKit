@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<style>
+#shadow-host::part(label) { color: red; }
+</style>
+<script>
+function test()
+{
+    let documentNode;
+
+    let suite = InspectorTest.createAsyncSuite("CSS.ShadowPartStyle");
+
+    suite.addTestCase({
+        name: "CSS.ShadowPartStyle.PartElement",
+        description: "A shadow part element should be shown the ::part() styles that target it from the host document.",
+        test(resolve, reject) {
+            documentNode.querySelector("#shadow-host", (hostNodeId) => {
+                let hostNode = WI.domManager.nodeForId(hostNodeId);
+                hostNode.shadowRoots()[0].querySelector("#part-node", (nodeId) => {
+                    if (!nodeId) {
+                        InspectorTest.fail("Part node not found.");
+                        reject();
+                        return;
+                    }
+
+                    let node = WI.domManager.nodeForId(nodeId);
+                    let nodeStyles = WI.cssManager.stylesForNode(node);
+                    nodeStyles.refresh().then(() => {
+                        let partStyle = nodeStyles.matchedRules.map((match) => match.style).find((style) => style.selectorText && style.selectorText.includes("::part(label)"));
+                        InspectorTest.expectThat(partStyle, "Should find the ::part(label) rule from the host document.");
+                        if (partStyle) {
+                            let colorProperty = partStyle.enabledProperties.find((property) => property.name === "color");
+                            InspectorTest.expectThat(colorProperty, "The ::part(label) rule should include its `color` property.");
+                            InspectorTest.expectEqual(colorProperty?.value, "red", "The `color` property should be `red`.");
+                        }
+                        resolve();
+                    }).catch(reject);
+                });
+            });
+        }
+    });
+
+    WI.domManager.requestDocument((node) => {
+        documentNode = node;
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that a shadow part element shows the <code>::part()</code> styles that target it from the host document. <a href="https://webkit.org/b/245208">Bug 245208</a></p>
+<div id="shadow-host"></div>
+<script>
+(function() {
+    let shadowRoot = document.getElementById("shadow-host").attachShadow({mode: "open"});
+    shadowRoot.innerHTML = `<div id="part-node" part="label">Part Content</div>`;
+})();
+</script>
+</body>
+</html>
