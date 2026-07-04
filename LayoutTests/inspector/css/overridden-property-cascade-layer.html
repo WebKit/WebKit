@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("OverriddenPropertyCascadeLayer");
+
+    function dumpColorDeclarations(selector, resolve) {
+        WI.domManager.requestDocument((documentNode) => {
+            documentNode.querySelector(selector, (nodeId) => {
+                if (!nodeId) {
+                    InspectorTest.fail(`DOM node not found for "${selector}".`);
+                    resolve();
+                    return;
+                }
+
+                let domNode = WI.domManager.nodeForId(nodeId);
+                let nodeStyles = WI.cssManager.stylesForNode(domNode);
+
+                function dump() {
+                    for (let rule of nodeStyles.matchedRules) {
+                        if (rule.type !== WI.CSSStyleSheet.Type.Author)
+                            continue;
+
+                        for (let property of rule.style.enabledProperties) {
+                            if (property.name !== "color")
+                                continue;
+
+                            let layerNames = rule.groupings.filter((grouping) => grouping.isLayer).map((grouping) => grouping.text || "(anonymous)");
+                            let layerText = layerNames.length ? `@layer ${layerNames.join(".")}` : "(unlayered)";
+                            InspectorTest.log(`${property.value}${property.important ? " !important" : ""} ${layerText} ${property.overridden ? "OVERRIDDEN" : "effective"}`);
+                        }
+                    }
+                    resolve();
+                }
+
+                if (nodeStyles.needsRefresh)
+                    nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, dump);
+                else
+                    dump();
+            });
+        });
+    }
+
+    function addTestCase(name, selector, description) {
+        suite.addTestCase({
+            name,
+            description,
+            test(resolve, reject) {
+                InspectorTest.log(`-- ${selector}`);
+                dumpColorDeclarations(selector, resolve);
+            },
+        });
+    }
+
+    addTestCase("ImportantInDifferentLayers", "#important-different-layers", "An `!important` declaration in an earlier layer wins over one in a later layer.");
+    addTestCase("ImportantLayeredBeatsUnlayered", "#important-layered-vs-unlayered", "A layered `!important` declaration wins over an unlayered `!important` declaration.");
+    addTestCase("ImportantAcrossThreeLayers", "#important-three-layers", "The earliest layer wins among three `!important` declarations.");
+    addTestCase("NormalInDifferentLayers", "#normal-different-layers", "A normal declaration in a later layer wins over one in an earlier layer.");
+    addTestCase("ImportantBeatsNormalAcrossLayers", "#important-beats-normal", "An `!important` declaration wins over a normal declaration regardless of layer order.");
+    addTestCase("ImportantInSameLayer", "#important-same-layer", "The later source order wins among `!important` declarations in the same layer.");
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+@layer base, theme;
+@layer alpha, beta, gamma;
+
+@layer base { #important-different-layers { color: red !important; } }
+@layer theme { #important-different-layers { color: blue !important; } }
+
+@layer base { #important-layered-vs-unlayered { color: red !important; } }
+#important-layered-vs-unlayered { color: blue !important; }
+
+@layer alpha { #important-three-layers { color: red !important; } }
+@layer beta { #important-three-layers { color: green !important; } }
+@layer gamma { #important-three-layers { color: blue !important; } }
+
+@layer base { #normal-different-layers { color: red; } }
+@layer theme { #normal-different-layers { color: blue; } }
+
+@layer base { #important-beats-normal { color: red !important; } }
+@layer theme { #important-beats-normal { color: blue; } }
+
+@layer base { #important-same-layer { color: red !important; } #important-same-layer { color: blue !important; } }
+</style>
+</head>
+<body onload="runTest()">
+    <p>Test that CSSProperty.prototype.overridden accounts for cascade layers when comparing `!important` declarations.</p>
+    <div id="important-different-layers"></div>
+    <div id="important-layered-vs-unlayered"></div>
+    <div id="important-three-layers"></div>
+    <div id="normal-different-layers"></div>
+    <div id="important-beats-normal"></div>
+    <div id="important-same-layer"></div>
+</body>
+</html>
