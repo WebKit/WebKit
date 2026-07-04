@@ -82,7 +82,6 @@
 
 #if USE(CG)
 #include "PDFDocumentImage.h"
-#include "Settings.h"
 #endif
 
 #if ENABLE(SPATIAL_IMAGE_CONTROLS)

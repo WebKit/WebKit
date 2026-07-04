@@ -152,7 +152,6 @@
 #include <wtf/text/TextStream.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include "DocumentLoader.h"
 #include "LegacyTileCache.h"
 #endif
 

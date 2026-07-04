@@ -41,10 +41,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#if PLATFORM(IOS_FAMILY)
-#include "ScriptController.h"
-#endif
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioScheduledSourceNode);

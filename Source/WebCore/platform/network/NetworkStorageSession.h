@@ -55,7 +55,6 @@
 #endif
 
 #if USE(SOUP)
-#include <wtf/Function.h>
 #include <wtf/glib/GRefPtr.h>
 typedef struct _SoupCookieJar SoupCookieJar;
 typedef struct _SoupCookie SoupCookie;

@@ -245,7 +245,6 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 #include "MediaSessionCoordinator.h"
-#include "NavigatorMediaSession.h"
 #endif
 
 #if USE(ATSPI)

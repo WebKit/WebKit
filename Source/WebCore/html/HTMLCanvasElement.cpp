@@ -92,7 +92,6 @@
 
 #if ENABLE(WEBXR)
 #include "LocalDOMWindow.h"
-#include "Navigator.h"
 #include "NavigatorWebXR.h"
 #include "WebXRSystem.h"
 #endif

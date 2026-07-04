@@ -36,10 +36,6 @@
 #include "Settings.h"
 #include "Text.h"
 
-#if PLATFORM(IOS_FAMILY)
-#include "RenderText.h"
-#endif
-
 namespace WebCore {
 
 InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(Ref<Text>&& node, unsigned offset, const String& text, AllowPasswordEcho allowPasswordEcho, EditAction editingAction)

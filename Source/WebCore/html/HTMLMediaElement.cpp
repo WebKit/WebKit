@@ -226,10 +226,6 @@
 #include "VideoPresentationModel.h"
 #endif
 
-#if ENABLE(MEDIA_SESSION)
-#include "MediaSession.h"
-#endif
-
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 #include "EventTarget.h"
 #include "MediaSessionCoordinator.h"
