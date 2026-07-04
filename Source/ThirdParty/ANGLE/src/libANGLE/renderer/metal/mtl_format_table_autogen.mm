@@ -5854,6 +5854,15 @@ void FormatTable::initNativeFormatCapsAutogen(const DisplayMtl *display)
 #endif // TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST || mac 11.0+
 
     // clang-format on
+
+#if !(TARGET_OS_OSX || TARGET_OS_MACCATALYST)
+    const bool supportsiOS2 = SupportsAppleGPUFamily(display->getMetalDevice(), 2);
+    const bool supportsiOS4 = SupportsAppleGPUFamily(display->getMetalDevice(), 4);
+    for (auto &entry : mNativePixelFormatCapsTable)
+    {
+        adjustFormatCapsForDevice(entry.first, supportsiOS2, supportsiOS4);
+    }
+#endif
 }
 
 }  // namespace mtl
