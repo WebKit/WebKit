@@ -4,6 +4,10 @@
 
 import("../gni/angle.gni")
 
+if (angle_use_wayland) {
+  import("//build_overrides/wayland.gni")
+}
+
 _util_sources = [
   "EGLPlatformParameters.h",
   "EGLWindow.cpp",
@@ -228,7 +232,8 @@ angle_source_set("angle_trace_fixture") {
     "$angle_root:includes",
   ]
   if (is_ios) {
-    # shared libraries are hidden inside ios_framework_bundle, but we include headers from them
+    # shared libraries are hidden inside ios_framework_bundle, but we include
+    # headers from them
     check_includes = false
   }
 }
@@ -249,7 +254,8 @@ if (angle_enable_cl) {
       "$angle_root:includes",
     ]
     if (is_ios) {
-      # shared libraries are hidden inside ios_framework_bundle, but we include headers from them
+      # shared libraries are hidden inside ios_framework_bundle, but we include
+      # headers from them
       check_includes = false
     }
   }
@@ -307,7 +313,10 @@ config("angle_util_config") {
   if ((is_linux || is_chromeos) && angle_use_x11) {
     libs = [ "X11" ]
   }
-  configs = [ "$angle_root:angle_vulkan_wayland_config" ]
+  configs = [
+    "$angle_root:angle_vulkan_wayland_config",
+    "$angle_root:internal_config",
+  ]
 }
 
 foreach(is_shared_library,
@@ -361,6 +370,15 @@ foreach(is_shared_library,
     configs += [ "$angle_root:debug_annotations_config" ]
 
     public_configs += [ ":angle_util_config" ]
+
+    if (is_linux && angle_use_wayland) {
+      public_deps += [
+        "$wayland_gn_dir:wayland_client",
+        "$wayland_gn_dir:wayland_egl",
+        "$wayland_protocols_gn_dir:xdg_decoration_protocol",
+        "$wayland_protocols_gn_dir:xdg_shell_protocol",
+      ]
+    }
 
     if (is_fuchsia) {
       public_deps += [

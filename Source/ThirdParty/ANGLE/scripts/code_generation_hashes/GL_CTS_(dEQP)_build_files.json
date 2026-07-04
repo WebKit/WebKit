@@ -50,7 +50,7 @@
   "third_party/VK-GL-CTS/src/external/vulkan-validationlayers/CMakeLists.txt":
     "53b56df74a8a4ac5ae1cedcbb1ff440f",
   "third_party/VK-GL-CTS/src/external/vulkan-video-samples/CMakeLists.txt":
-    "4b82176e0913a0ee812178b692de9cc3",
+    "620a4f4d6962cb9a300a31be329b3b2a",
   "third_party/VK-GL-CTS/src/external/vulkancts/framework/vulkan/CMakeLists.txt":
     "0139e89b14acf44e1688127c3bf5c9da",
   "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/CMakeLists.txt":

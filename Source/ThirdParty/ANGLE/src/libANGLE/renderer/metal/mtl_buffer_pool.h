@@ -59,10 +59,10 @@ class BufferPool
     angle::Result allocate(ContextMtl *contextMtl, size_t sizeInBytes, BufferSlice *outBuffer);
 
     // The buffer will be automatically mapped and the mapped region returned in outMappedData.
-    angle::Result allocate(ContextMtl *contextMtl,
-                           size_t sizeInBytes,
-                           angle::Span<uint8_t> *outMappedData,
-                           BufferSlice *outBuffer);
+    angle::Result allocateAndMap(ContextMtl *contextMtl,
+                                 size_t sizeInBytes,
+                                 angle::Span<uint8_t> *outMappedData,
+                                 BufferSlice *outBuffer);
 
     // After a sequence of CPU writes, call commit to ensure the data is visible to the GPU.
     // Note: the data will only be made visible to the GPU if the buffer's storage mode is not

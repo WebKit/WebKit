@@ -7019,6 +7019,34 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test that samplers in structs can be used on the right-hand side of a comma, where the expression
+// has side effect, and that the struct field can be selected on the comma expression.
+TEST_P(GLSLTest_ES3, SamplerInStructRHSOfCommaWithSideEffectWithSelectField)
+{
+    // Only correctly handled by the IR.
+    ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::UseIr));
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+uniform struct {
+    sampler2D n;
+    vec2 c;
+} s[4];
+out vec4 color;
+void main()
+{
+    int i = 0;
+    vec4 zero = vec4(texture((s[i += 1], s[0]).n, vec2(0)).xyz, 0);
+    vec4 zero2 = vec4(texture(((s[i += 2], i += 4), s[0]).n, vec2(0)).xyz, 0);
+
+    color = vec4(i == 7, 0, 0, 1) - zero - zero2;
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
 // Test that samplers in structs can be extracted if the first reference to the struct does not
 // select an attribute.
 TEST_P(GLSLTest, SamplerInStructNoMemberIndexing)
@@ -25361,6 +25389,82 @@ void main() {
 
     drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
+}
+
+// This test recreates a bug seen on some platforms regarding static
+// reads of varying arrays, specifically on 565 configs
+// http://issuetracker.google.com/456812545
+TEST_P(GLSLTest_ES3, DynamicWriteStaticReadVaryingArray)
+{
+    constexpr char kVS[] =
+        R"(#version 300 es
+        in highp vec4 a_position;
+        in highp vec4 a_coords;
+        uniform mediump int ui_zero, ui_one, ui_two, ui_three;
+        out mediump vec4 var[4];
+
+        void main()
+        {
+            gl_Position = a_position;
+
+            // Sum exactly to 1.0 when a_coords is 1.0
+            var[ui_zero]  = vec4(a_coords) * 0.5;    // 0.5
+            var[ui_one]   = vec4(a_coords) * 0.25;   // 0.25
+            var[ui_two]   = vec4(a_coords) * 0.125;  // 0.125
+            var[ui_three] = vec4(a_coords) * 0.125;  // 0.125
+        })";
+
+    constexpr char kFS[] =
+        R"(#version 300 es
+        precision mediump int;
+        layout(location = 0) out mediump vec4 o_color;
+        in mediump vec4 var[4];
+
+        void main()
+        {
+            mediump vec4 res = vec4(0.0);
+
+            // FAIL pattern: statically reading a dynamically written varying array
+            res += var[0];
+            res += var[1];
+            res += var[2];
+            res += var[3];
+
+            o_color = vec4(res);
+        })";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    GLFramebuffer fbo;
+    GLRenderbuffer rbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+
+    // Allocate RGB565 storage matching the default test window size
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB565, getWindowWidth(), getWindowHeight());
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Bind dynamic indices
+    glUniform1i(glGetUniformLocation(program, "ui_zero"), 0);
+    glUniform1i(glGetUniformLocation(program, "ui_one"), 1);
+    glUniform1i(glGetUniformLocation(program, "ui_two"), 2);
+    glUniform1i(glGetUniformLocation(program, "ui_three"), 3);
+
+    // By passing 1.0, our expected sum is exactly 1.0, which perfectly
+    // translates to 255 in 8-bit channels and 31/63 in 565 channels.
+    GLint coordsLoc = glGetAttribLocation(program, "a_coords");
+    ASSERT_NE(coordsLoc, -1);
+    glVertexAttrib4f(coordsLoc, 1.0f, 1.0f, 1.0f, 1.0f);
+
+    drawQuad(program, "a_position", 0.0f);
+    ASSERT_GL_NO_ERROR();
+
+    // If the read fails, the sum drops to <= 0.875, resulting in a dark pixel.
+    // We use GLColor::white to verify it hit 1.0 across all channels.
+    // (Note: 565 with no alpha, glReadPixels will pad alpha to 255).
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
 }
 }  // anonymous namespace
 

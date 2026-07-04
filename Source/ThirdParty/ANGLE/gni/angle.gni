@@ -135,6 +135,11 @@ if (!defined(checkout_angle_restricted_traces)) {
 # Subdirectory to place data files (e.g. layer JSON files).
 angle_data_dir = "angledata"
 
+if (angle_use_wayland) {
+  wayland_protocols_gn_dir = "//third_party/wayland-protocols"
+  wayland_protocols_dir = "$wayland_protocols_gn_dir/src"
+}
+
 declare_args() {
   angle_assert_always_on = dcheck_always_on
 
@@ -196,6 +201,11 @@ declare_args() {
 }
 
 declare_args() {
+  # True if ANGLE is linked statically in Chromium.
+  if (!defined(angle_use_static_angle)) {
+    angle_use_static_angle = false
+  }
+
   # By default, ANGLE is using a thread pool for parallel compilation.
   # Activating the delegate worker results in posting the tasks using the
   # embedder API. In Chromium code base, it results in sending tasks to the
@@ -320,9 +330,6 @@ declare_args() {
 
   # Disable performance counter output by default
   angle_enable_perf_counter_output = false
-
-  # Directory where to find wayland source files
-  angle_wayland_dir = "$angle_root/third_party/wayland"
 
   angle_vulkan_headers_dir = "$angle_root/third_party/vulkan-headers/src"
   angle_vulkan_loader_dir = "$angle_root/third_party/vulkan-loader/src"

@@ -1225,11 +1225,13 @@ TEST_P(ImageClearTestMetal, ClearUnsizedRGBAF16)
 
 TEST_P(ImageClearTestMetal, ClearUnsizedR16)
 {
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_norm16"));
     RunUnsizedClearTest(MTLPixelFormatR16Unorm);
 }
 
 TEST_P(ImageClearTestMetal, ClearUnsizedRG16)
 {
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_norm16"));
     RunUnsizedClearTest(MTLPixelFormatRG16Unorm);
 }
 

@@ -177,14 +177,6 @@ bool ValidReadPixelsUnsignedNormalizedDepthType(const Context *context,
     }
 }
 
-bool ValidReadPixelsFloatDepthType(const Context *context,
-                                   const gl::InternalFormat *info,
-                                   GLenum type)
-{
-    return context->getExtensions().readDepthNV && (type == GL_FLOAT) &&
-           context->getExtensions().depthBufferFloat2NV;
-}
-
 bool ValidReadPixelsFormatType(const Context *context,
                                const gl::InternalFormat *info,
                                GLenum format,
@@ -235,7 +227,7 @@ bool ValidReadPixelsFormatType(const Context *context,
                 case GL_RGBA:
                     return (type == GL_FLOAT);
                 case GL_DEPTH_COMPONENT:
-                    return ValidReadPixelsFloatDepthType(context, info, type);
+                    return context->getExtensions().readDepthNV && (type == GL_FLOAT);
                 case GL_DEPTH_STENCIL_OES:
                     return context->getExtensions().readDepthStencilNV &&
                            type == GL_FLOAT_32_UNSIGNED_INT_24_8_REV && info->stencilBits > 0;
@@ -716,7 +708,7 @@ ANGLE_INLINE const char *ValidateProgramDrawStates(const Context *context,
                 return gl::err::kUniformBufferTooSmall;
             }
 
-            if (uniformBuffer->hasWebGLXFBBindingConflict(context->isWebGL()))
+            if (uniformBuffer->hasTFBBindingConflict())
             {
                 return gl::err::kUniformBufferBoundForTransformFeedback;
             }
@@ -1197,26 +1189,29 @@ bool ValidImageSizeParameters(const Context *context,
                               GLsizei depth,
                               bool isSubImage)
 {
-    if (width < 0 || height < 0 || depth < 0)
+    if (ANGLE_UNLIKELY(!ValidMipLevel(context, target, level)))
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kInvalidMipLevel);
+        return false;
+    }
+
+    if (ANGLE_UNLIKELY(width < 0 || height < 0 || depth < 0))
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeSize);
         return false;
     }
-    // TexSubImage parameters can be NPOT without textureNPOT extension,
-    // as long as the destination texture is POT.
-    bool hasNPOTSupport =
-        context->getExtensions().textureNpotOES || context->getClientVersion() >= Version(3, 0);
-    if (!isSubImage && !hasNPOTSupport &&
-        (level != 0 && (!isPow2(width) || !isPow2(height) || !isPow2(depth))))
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kTextureNotPow2);
-        return false;
-    }
 
-    if (!ValidMipLevel(context, target, level))
+    // NPOT validation applies only when redefining a non-zero level.
+    if (!isSubImage && level != 0)
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kInvalidMipLevel);
-        return false;
+        const bool hasNPOTDimensions = (!isPow2(width) || !isPow2(height) || !isPow2(depth));
+        const bool hasNPOTSupport =
+            context->getClientVersion() >= ES_3_0 || context->getExtensions().textureNpotOES;
+        if (ANGLE_UNLIKELY(hasNPOTDimensions && !hasNPOTSupport))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kTextureNotPow2);
+            return false;
+        }
     }
 
     return true;
@@ -3775,6 +3770,12 @@ bool ValidateCopyTexImageParametersBase(const Context *context,
                                         GLint border,
                                         Format *textureFormatOut)
 {
+    if (!isSubImage && IsAngleInternalFormat(internalformat))
+    {
+        ANGLE_VALIDATION_ERRORF(GL_INVALID_ENUM, kInvalidInternalFormat, internalformat);
+        return false;
+    }
+
     TextureType texType = TextureTargetToType(target);
 
     if (xoffset < 0 || yoffset < 0 || zoffset < 0)
@@ -4566,8 +4567,8 @@ const char *ValidateDrawElementsStates(const Context *context)
 
     if (elementArrayBuffer)
     {
-        if (ANGLE_UNLIKELY(context->isWebGL()) &&
-            elementArrayBuffer->hasWebGLXFBBindingConflict(context->isWebGL()))
+        if (ANGLE_UNLIKELY(context->isWebGL() || context->isHardenedContext()) &&
+            elementArrayBuffer->hasTFBBindingConflict())
         {
             return kElementArrayBufferBoundForTransformFeedback;
         }
@@ -7011,8 +7012,8 @@ bool ValidatePixelPack(const Context *context,
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufferMapped);
         return false;
     }
-    if (pixelPackBuffer != nullptr &&
-        pixelPackBuffer->hasWebGLXFBBindingConflict(context->isWebGL()))
+    if (pixelPackBuffer != nullptr && (context->isWebGL() || context->isHardenedContext()) &&
+        pixelPackBuffer->hasTFBBindingConflict())
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kPixelPackBufferBoundForTransformFeedback);
         return false;

@@ -1184,14 +1184,6 @@ bool ValidateES2TexImageParametersBase(const Context *context,
                             return false;
                         }
                         break;
-                    case GL_SHORT:
-                    case GL_UNSIGNED_SHORT:
-                        if (!context->getExtensions().textureNorm16EXT)
-                        {
-                            ANGLE_VALIDATION_ERRORF(GL_INVALID_ENUM, kEnumNotSupported, type);
-                            return false;
-                        }
-                        break;
                     default:
                         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kMismatchedTypeAndFormat);
                         return false;
@@ -1205,14 +1197,6 @@ bool ValidateES2TexImageParametersBase(const Context *context,
                     case GL_UNSIGNED_INT_2_10_10_10_REV_EXT:
                     case GL_FLOAT:
                     case GL_HALF_FLOAT_OES:
-                        break;
-                    case GL_SHORT:
-                    case GL_UNSIGNED_SHORT:
-                        if (!context->getExtensions().textureNorm16EXT)
-                        {
-                            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kMismatchedTypeAndFormat);
-                            return false;
-                        }
                         break;
                     default:
                         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kMismatchedTypeAndFormat);
@@ -1228,14 +1212,6 @@ bool ValidateES2TexImageParametersBase(const Context *context,
                     case GL_FLOAT:
                     case GL_HALF_FLOAT_OES:
                     case GL_UNSIGNED_INT_2_10_10_10_REV_EXT:
-                        break;
-                    case GL_SHORT:
-                    case GL_UNSIGNED_SHORT:
-                        if (!context->getExtensions().textureNorm16EXT)
-                        {
-                            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kMismatchedTypeAndFormat);
-                            return false;
-                        }
                         break;
                     default:
                         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kMismatchedTypeAndFormat);
@@ -1278,13 +1254,6 @@ bool ValidateES2TexImageParametersBase(const Context *context,
                 {
                     case GL_UNSIGNED_SHORT:
                     case GL_UNSIGNED_INT:
-                        break;
-                    case GL_FLOAT:
-                        if (!context->getExtensions().depthBufferFloat2NV)
-                        {
-                            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kMismatchedTypeAndFormat);
-                            return false;
-                        }
                         break;
                     default:
                         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kMismatchedTypeAndFormat);
@@ -1614,20 +1583,6 @@ bool ValidateES2TexImageParametersBase(const Context *context,
 
                     break;
 
-                case GL_R16_EXT:
-                case GL_RG16_EXT:
-                case GL_RGB16_EXT:
-                case GL_RGBA16_EXT:
-                case GL_R16_SNORM_EXT:
-                case GL_RG16_SNORM_EXT:
-                case GL_RGB16_SNORM_EXT:
-                case GL_RGBA16_SNORM_EXT:
-                    if (!context->getExtensions().textureNorm16EXT)
-                    {
-                        ANGLE_VALIDATION_ERRORF(GL_INVALID_ENUM, kEnumNotSupported, internalformat);
-                        return false;
-                    }
-                    break;
                 default:
                     // Compressed formats are not valid internal formats for glTexImage*D
                     ANGLE_VALIDATION_ERRORF(GL_INVALID_VALUE, kInvalidInternalFormat,
@@ -3194,10 +3149,13 @@ bool ValidateMapBufferBase(const Context *context,
         }
     }
 
-    if (buffer->hasWebGLXFBBindingConflict(context->isWebGL()))
+    if (context->isWebGL() || context->isHardenedContext())
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufferBoundForTransformFeedback);
-        return false;
+        if (buffer->hasTFBBindingConflict())
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufferBoundForTransformFeedback);
+            return false;
+        }
     }
 
     return true;
@@ -3736,9 +3694,9 @@ bool ValidateBufferData(const Context *context,
     }
 
     // Do some additional WebGL-specific validation
-    if (ANGLE_UNLIKELY(context->isWebGL()))
+    if (ANGLE_UNLIKELY(context->isWebGL() || context->isHardenedContext()))
     {
-        if (buffer->hasWebGLXFBBindingConflict(true))
+        if (buffer->hasTFBBindingConflict())
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufferBoundForTransformFeedback);
             return false;
@@ -3808,9 +3766,9 @@ bool ValidateBufferSubData(const Context *context,
     }
 
     // Do some additional WebGL-specific validation
-    if (ANGLE_UNLIKELY(context->isWebGL()))
+    if (ANGLE_UNLIKELY(context->isWebGL() || context->isHardenedContext()))
     {
-        if (buffer->hasWebGLXFBBindingConflict(true))
+        if (buffer->hasTFBBindingConflict())
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufferBoundForTransformFeedback);
             return false;

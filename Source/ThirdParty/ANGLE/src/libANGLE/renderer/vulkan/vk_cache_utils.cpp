@@ -6836,15 +6836,20 @@ angle::Result DescriptorSetDescBuilder::updateInputAttachments(
 
             if (newMask[depthStencilIndex])
             {
-                writeDescriptorDescs[binding].descriptorCount = 1;
-
                 if ((imageAspects & aspect) != 0)
                 {
+                    writeDescriptorDescs[binding].descriptorCount = 1;
+
                     const vk::ImageView *imageView = nullptr;
                     ANGLE_TRY(
                         renderTargetVk->getDepthOrStencilImageView(contextVk, aspect, &imageView));
                     updateInputAttachment(contextVk, binding, inputAttachmentLayout, imageView,
                                           serial, writeDescriptorDescs);
+                }
+                else
+                {
+                    writeDescriptorDescs[binding].descriptorCount = 0;
+                    resetDescriptor(writeDescriptorDescs[binding].descriptorInfoIndex);
                 }
             }
             else if (prevMask[depthStencilIndex])

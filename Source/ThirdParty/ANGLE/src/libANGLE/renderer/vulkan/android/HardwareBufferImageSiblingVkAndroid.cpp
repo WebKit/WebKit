@@ -236,6 +236,15 @@ egl::Error HardwareBufferImageSiblingVkAndroid::ValidateHardwareBuffer(
         VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_ANDROID;
     bufferFormatProperties.pNext = nullptr;
 
+    VkAndroidHardwareBufferFormatResolvePropertiesANDROID bufferFormatResolveProperties = {};
+    if (renderer->getFeatures().supportsExternalFormatResolve.enabled)
+    {
+        bufferFormatResolveProperties.sType =
+            VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_RESOLVE_PROPERTIES_ANDROID;
+        bufferFormatResolveProperties.pNext = nullptr;
+        vk::AddToPNextChain(&bufferFormatProperties, &bufferFormatResolveProperties);
+    }
+
     VkAndroidHardwareBufferPropertiesANDROID bufferProperties = {};
     bufferProperties.sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_PROPERTIES_ANDROID;
     bufferProperties.pNext = &bufferFormatProperties;
@@ -488,6 +497,13 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
                     bufferFormatProperties.formatFeatures);
 
             vkFormat = &renderer->getFormat(externalFormatID);
+            // mFormat based on pixelFormat may not actually render-able. But if we are here, the
+            // image is render-able with colorAttachmentFormat. So use colorAttachmentFormat to
+            // deduce mFormat, which is used by front end to decide if FBO is complete etc.
+            angle::FormatID colorAttachmentFormatID =
+                vk::GetFormatIDFromVkFormat(bufferFormatResolveProperties.colorAttachmentFormat);
+            const vk::Format &colorAttachmentFormat = renderer->getFormat(colorAttachmentFormatID);
+            mFormat = gl::Format(colorAttachmentFormat.getIntendedGLFormat());
         }
         else
         {

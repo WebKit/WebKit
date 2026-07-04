@@ -1,0 +1,41 @@
+{
+    "TraceMetadata": {
+        "AreClientArraysEnabled": true,
+        "AreExtensionsEnabled": true,
+        "CaptureRevision": 27837,
+        "ConfigAlphaBits": 8,
+        "ConfigBlueBits": 8,
+        "ConfigDepthBits": 24,
+        "ConfigGreenBits": 8,
+        "ConfigRedBits": 8,
+        "ConfigStencilBits": 8,
+        "ContextClientMajorVersion": 3,
+        "ContextClientMinorVersion": 0,
+        "DisplayDeviceType": "0x320A",
+        "DisplayPlatformType": "0x3450",
+        "DrawSurfaceColorSpace": "0x308A",
+        "DrawSurfaceHeight": 128,
+        "DrawSurfaceWidth": 128,
+        "FrameEnd": 5,
+        "FrameStart": 1,
+        "IsBinaryDataCompressed": false,
+        "IsBindGeneratesResourcesEnabled": true,
+        "IsHardenedContextEnabled": false,
+        "IsRobustResourceInitEnabled": false,
+        "IsWebGLCompatibilityEnabled": false
+    },
+    "BinaryMetadata": {
+        "BlockCount": 1,
+        "BlockSize": "268435456",
+        "IndexOffset": "0",
+        "ResidentSize": "2147483648",
+        "Version": 1
+    },
+    "TraceFiles": [
+        "CapturedTest_ExternalAHB_ES3_Vulkan.cpp",
+        "CapturedTest_ExternalAHB_ES3_Vulkan.h",
+        "CapturedTest_ExternalAHB_ES3_Vulkan_0001.cpp",
+        "CapturedTest_ExternalAHB_ES3_Vulkan_shared.cpp"
+    ],
+    "WindowSurfaceContextID": 5
+}

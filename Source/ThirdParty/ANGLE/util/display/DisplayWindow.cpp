@@ -80,7 +80,7 @@ void DisplayWindow::signalTestEvent()
 
 // static
 #if defined(ANGLE_USE_VULKAN_DISPLAY) && defined(EGL_NO_X11) && !defined(ANGLE_USE_WAYLAND)
-OSWindow *OSWindow::New()
+OSWindow *OSWindow::New(void * /*nativeDisplay*/)
 {
     return new DisplayWindow();
 }

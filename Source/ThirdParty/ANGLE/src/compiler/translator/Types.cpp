@@ -517,8 +517,10 @@ size_t TType::getObjectSize() const
 
     for (size_t arraySize : mArraySizes)
     {
-        if (arraySize > INT_MAX / totalSize)
-            totalSize = INT_MAX;
+        if (arraySize > std::numeric_limits<size_t>::max() / totalSize)
+        {
+            totalSize = std::numeric_limits<size_t>::max();
+        }
         else
             totalSize *= arraySize;
     }
@@ -877,8 +879,10 @@ size_t TFieldListCollection::calculateObjectSize() const
     for (const TField *field : *mFields)
     {
         size_t fieldSize = field->type()->getObjectSize();
-        if (fieldSize > INT_MAX - size)
-            size = INT_MAX;
+        if (fieldSize > std::numeric_limits<size_t>::max() - size)
+        {
+            size = std::numeric_limits<size_t>::max();
+        }
         else
             size += fieldSize;
     }

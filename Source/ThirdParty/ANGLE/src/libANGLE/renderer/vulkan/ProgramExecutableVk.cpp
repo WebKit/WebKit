@@ -633,8 +633,10 @@ angle::Result ProgramInfo::initProgram(vk::ErrorContext *context,
     options.isMultisampledFramebufferFetch =
         optionBits.multiSampleFramebufferFetch && shaderType == gl::ShaderType::Fragment;
     options.enableSampleShading = optionBits.enableSampleShading;
-    options.removeDepthStencilInput =
-        optionBits.removeDepthStencilInput && shaderType == gl::ShaderType::Fragment;
+    options.removeDepthInput =
+        optionBits.removeDepthInput && shaderType == gl::ShaderType::Fragment;
+    options.removeStencilInput =
+        optionBits.removeStencilInput && shaderType == gl::ShaderType::Fragment;
 
     options.useSpirvVaryingPrecisionFixer =
         context->getFeatures().varyingsRequireMatchingPrecisionInSpirv.enabled;
@@ -1505,9 +1507,14 @@ ProgramTransformOptions ProgramExecutableVk::getTransformOptions(
     transformOptions.multiSampleFramebufferFetch = hasFramebufferFetch && isMultisampled;
     transformOptions.enableSampleShading =
         contextVk->getState().isSampleShadingEnabled() && isMultisampled;
-    transformOptions.removeDepthStencilInput =
-        hasDepthStencilFramebufferFetch &&
-        drawFrameBuffer->getDepthStencilRenderTarget() == nullptr;
+    transformOptions.removeDepthInput =
+        mExecutable->usesDepthFramebufferFetch() &&
+        (drawFrameBuffer->getDepthStencilRenderTarget() == nullptr ||
+         drawFrameBuffer->getDepthStencilRenderTarget()->getImageActualFormat().depthBits == 0);
+    transformOptions.removeStencilInput =
+        mExecutable->usesStencilFramebufferFetch() &&
+        (drawFrameBuffer->getDepthStencilRenderTarget() == nullptr ||
+         drawFrameBuffer->getDepthStencilRenderTarget()->getImageActualFormat().stencilBits == 0);
 
     transformOptions.ditherControl = static_cast<uint16_t>(desc.getEmulatedDitherControl());
 

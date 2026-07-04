@@ -28,7 +28,7 @@ bool HasDefaultAttribs(const RenderPipelineDesc &rpdesc)
     const VertexDesc &desc = rpdesc.vertexDescriptor;
     for (uint8_t i = 0; i < desc.numAttribs; ++i)
     {
-        if (desc.attributes[i].bufferIndex == kDefaultAttribsBindingIndex)
+        if (desc.attributes[i].getBufferIndex() == kDefaultAttribsBindingIndex)
         {
             return true;
         }

@@ -220,7 +220,7 @@ std::ostream &operator<<(std::ostream &os, const MultiviewImplementationParams &
 {
     const PlatformParameters &base = static_cast<const PlatformParameters &>(params);
     os << base << "_";
-    if (params.mMultiviewExtension)
+    if (params.mMultiviewExtension == angle::multiview)
     {
         os << "_multiview";
     }

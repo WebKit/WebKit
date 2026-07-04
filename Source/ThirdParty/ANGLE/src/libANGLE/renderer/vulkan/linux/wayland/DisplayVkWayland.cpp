@@ -84,7 +84,7 @@ bool DisplayVkWayland::isValidNativeWindow(EGLNativeWindowType window) const
 SurfaceImpl *DisplayVkWayland::createWindowSurfaceVk(const egl::SurfaceState &state,
                                                      EGLNativeWindowType window)
 {
-    return new WindowSurfaceVkWayland(state, window, mWaylandDisplay);
+    return new WindowSurfaceVkWayland(state, window);
 }
 
 egl::ConfigSet DisplayVkWayland::generateConfigs()

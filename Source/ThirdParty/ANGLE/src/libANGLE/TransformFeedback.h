@@ -135,7 +135,6 @@ class TransformFeedback final : public RefCountObject<TransformFeedbackID>, publ
     void bindProgram(const Context *context, Program *program);
     void bindProgramPipeline(const Context *context, ProgramPipeline *programPipeline);
     void bindPPOPrograms(ProgramPipeline *programPipeline);
-    void recomputeVertexCapacity(const Context *context);
 
     TransformFeedbackState mState;
     rx::TransformFeedbackImpl *mImplementation;

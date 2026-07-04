@@ -22,7 +22,7 @@
 class ANGLE_UTIL_EXPORT OSWindow
 {
   public:
-    static OSWindow *New();
+    static OSWindow *New(void *nativeDisplay = nullptr);
     static void Delete(OSWindow **osWindow);
 
     bool initialize(const std::string &name, int width, int height);

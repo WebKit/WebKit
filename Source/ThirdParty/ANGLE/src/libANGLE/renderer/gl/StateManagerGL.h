@@ -375,6 +375,7 @@ class StateManagerGL final : angle::NonCopyable
 
     void syncSamplersState(const gl::Context *context);
     void syncTransformFeedbackState(const gl::Context *context);
+    void syncProgramState(const gl::Context *context);
 
     void updateEmulatedClipDistanceState(const gl::ProgramExecutable *executable,
                                          const gl::ClipDistanceEnableBits enables) const;

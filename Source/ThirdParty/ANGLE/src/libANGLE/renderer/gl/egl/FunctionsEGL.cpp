@@ -44,6 +44,7 @@ bool IsValidPlatformTypeForPlatformDisplayConnection(EGLAttrib platformType)
     {
         case EGL_PLATFORM_SURFACELESS_MESA:
         case EGL_PLATFORM_GBM_KHR:
+        case EGL_PLATFORM_WAYLAND_EXT:
             return true;
         default:
             break;
@@ -251,8 +252,14 @@ egl::Error FunctionsEGL::initialize(EGLAttrib platformType, EGLNativeDisplayType
     // extensions once the display is created and initialized.
     queryExtensions();
 
+#if defined(ANGLE_USE_WAYLAND)
+    if (platformType == EGL_PLATFORM_WAYLAND_EXT)
+    {
+        mEGLDisplay = getPlatformDisplay(platformType, nativeDisplay);
+    }
+#endif
 #if defined(ANGLE_HAS_LIBDRM)
-    if (platformType != EGL_PLATFORM_GBM_KHR || !nativeDisplay)
+    if (mEGLDisplay == EGL_NO_DISPLAY && (platformType != EGL_PLATFORM_GBM_KHR || !nativeDisplay))
     {
         mEGLDisplay = getPreferredDisplay(&majorVersion, &minorVersion);
     }
@@ -436,6 +443,12 @@ EGLDisplay FunctionsEGL::getPlatformDisplay(EGLAttrib platformType,
             break;
         case EGL_PLATFORM_GBM_KHR:
             if (!hasExtension("EGL_KHR_platform_gbm") && !hasExtension("EGL_MESA_platform_gbm"))
+            {
+                return EGL_NO_DISPLAY;
+            }
+            break;
+        case EGL_PLATFORM_WAYLAND_EXT:
+            if (!hasExtension("EGL_EXT_platform_wayland"))
             {
                 return EGL_NO_DISPLAY;
             }

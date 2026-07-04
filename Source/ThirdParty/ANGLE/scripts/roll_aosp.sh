@@ -89,7 +89,7 @@ function generate_Android_bp_file() {
             # "angle_ir = true"
         )
 
-        if [[ "$1" == "--enableApiTrace" ]]; then
+        if [[ "$ENABLE_API_TRACE" == "true" ]]; then
             gn_args=(
                 "${gn_args[@]}"
                 "angle_enable_trace = true"
@@ -135,8 +135,104 @@ function generate_angle_commit_file() {
         angle_commit.h
 }
 
-if [[ "$1" == "--genAndroidBp" ]];then
-    generate_Android_bp_file "$2"
+function print_help() {
+    echo "Usage: roll_aosp.sh [options]
+
+Generate Android.bp for compiling current ANGLE code in Android repo
+
+Options:
+  -h, --help                 Show this help message and exit
+  --genAndroidBp             Only test Android.bp generation without rolling deps. This should only be done in upstream chromium ANGLE checkout for testing purposes
+  --enableApiTrace           Enable API tracing in the generated Android.bp
+  --cleanGitSubmodules=true|false Clean up git submodules at the end (default to true when inside Android repo)
+
+It is allowed to pass multiple options to the script, for example:
+  roll_aosp.sh --enableApiTrace --cleanGitSubmodules=true"
+}
+
+# Check if we are inside an Android repo
+is_in_android_repo() {
+    if [[ -n "$ANDROID_BUILD_TOP" && -d "$ANDROID_BUILD_TOP/.repo" ]]; then
+        return 0
+    fi
+    if [[ -d "../../.repo" ]]; then
+        return 0
+    fi
+    return 1
+}
+
+# throw an error if ANGLE_UPSTREAM_HASH is not set (b/348044346)
+if [[ -z "${ANGLE_UPSTREAM_HASH}" ]]; then
+    echo "ANGLE_UPSTREAM_HASH environment variable is not set. Please run command 'export ANGLE_UPSTREAM_HASH=\"{git_hash}\"' before running roll_aosp.sh.
+{git_hash} should be the git hash of the most recent ANGLE commit in upstream that current repo has already rolled in."
+    exit 1
+fi
+
+CLEAN_GIT_SUBMODULES=false
+if is_in_android_repo; then
+    CLEAN_GIT_SUBMODULES=true
+fi
+
+CLEAN_GIT_SUBMODULES_EXPLICITLY_SET=false
+GEN_ANDROID_BP=false
+ENABLE_API_TRACE=false
+
+if [[ $# -eq 1 && ( "$1" == "-h" || "$1" == "--help" ) ]]; then
+    print_help
+    exit 0
+fi
+
+for arg in "$@"; do
+    case "$arg" in
+        --cleanGitSubmodules)
+            if [[ "$CLEAN_GIT_SUBMODULES_EXPLICITLY_SET" == "true" ]]; then
+                echo "Error: --cleanGitSubmodules specified more than once."
+                exit 1
+            fi
+            echo "Error: --cleanGitSubmodules requires a value (e.g. --cleanGitSubmodules=true or --cleanGitSubmodules=false)"
+            echo ""
+            print_help
+            exit 1
+            ;;
+        --cleanGitSubmodules=*)
+            if [[ "$CLEAN_GIT_SUBMODULES_EXPLICITLY_SET" == "true" ]]; then
+                echo "Error: --cleanGitSubmodules specified more than once."
+                exit 1
+            fi
+            CLEAN_GIT_SUBMODULES_EXPLICITLY_SET=true
+            val="${arg#*=}"
+            if [[ "$val" == "true" ]]; then
+                CLEAN_GIT_SUBMODULES=true
+            elif [[ "$val" == "false" ]]; then
+                CLEAN_GIT_SUBMODULES=false
+            else
+                echo "Error: Invalid value '$val' for --cleanGitSubmodules. Must be true or false."
+                echo ""
+                print_help
+                exit 1
+            fi
+            ;;
+        --genAndroidBp)
+            GEN_ANDROID_BP=true
+            ;;
+        --enableApiTrace)
+            ENABLE_API_TRACE=true
+            ;;
+        -h|--help)
+            print_help
+            ;;
+        *)
+            echo "Error: Unknown option '$arg'"
+            echo ""
+            print_help
+            exit 1
+            ;;
+    esac
+done
+
+
+if [[ "$GEN_ANDROID_BP" == "true" ]]; then
+    generate_Android_bp_file
     exit 0
 fi
 
@@ -275,3 +371,20 @@ done
 
 # Done with depot_tools
 rm -rf $DEPOT_TOOLS_DIR
+
+# Clean git submodules
+# This should only be performed when roll_aosp.sh is ran in
+# android_repo/external/angle.
+if [[ "$CLEAN_GIT_SUBMODULES" == "true" ]]; then
+    # delete submodules
+    # first save the submodules dir to a list
+    files=$(git ls-files -s | awk '/^160000/ { print $4; }')
+    for f in $files
+    do
+        # remove the submodules from git:
+        git rm -f --cached $f
+        # remove the submodules from disk:
+        echo "remove $f from disk"
+        rm -rf $f
+    done
+fi

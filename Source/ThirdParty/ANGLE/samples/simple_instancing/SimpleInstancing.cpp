@@ -185,9 +185,9 @@ void main()
     GLint mInstancePosLoc;
 
     // Loaded entry points
-    PFNGLVERTEXATTRIBDIVISORANGLEPROC mVertexAttribDivisorANGLE;
-    PFNGLDRAWARRAYSINSTANCEDANGLEPROC mDrawArraysInstancedANGLE;
-    PFNGLDRAWELEMENTSINSTANCEDANGLEPROC mDrawElementsInstancedANGLE;
+    PFNGLVERTEXATTRIBDIVISORANGLEPROC mVertexAttribDivisorANGLE     = nullptr;
+    PFNGLDRAWARRAYSINSTANCEDANGLEPROC mDrawArraysInstancedANGLE     = nullptr;
+    PFNGLDRAWELEMENTSINSTANCEDANGLEPROC mDrawElementsInstancedANGLE = nullptr;
 
     // Vertex data
     std::vector<Vector3> mVertices;

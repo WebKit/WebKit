@@ -672,6 +672,25 @@ bool IsAnySamplesQuery(gl::QueryType type)
     return type == gl::QueryType::AnySamples || type == gl::QueryType::AnySamplesConservative;
 }
 
+GLsizei GetRoundedDataCountForEmulatedXfb(const ContextVk *contextVk,
+                                          gl::PrimitiveMode mode,
+                                          GLsizei vertexOrIndexCount)
+{
+    ASSERT(contextVk->getFeatures().emulateTransformFeedback.enabled &&
+           contextVk->getState().isTransformFeedbackActiveUnpaused());
+    // For lines and triangles, the count should be rounded down to align with the number of
+    // vertices in the lines or triangles without leftover data.
+    if (mode == gl::PrimitiveMode::Triangles)
+    {
+        return vertexOrIndexCount - vertexOrIndexCount % 3;
+    }
+    if (mode == gl::PrimitiveMode::Lines)
+    {
+        return vertexOrIndexCount - vertexOrIndexCount % 2;
+    }
+    return vertexOrIndexCount;
+}
+
 bool QueueSerialsHaveDifferentIndexOrSmaller(const QueueSerial &queueSerial1,
                                              const QueueSerial &queueSerial2)
 {
@@ -1624,8 +1643,9 @@ angle::Result ContextVk::setupDraw(const gl::Context *context,
         ASSERT(firstVertexOrInvalid != -1);
         TransformFeedbackVk *transformFeedbackVk =
             vk::GetImpl(mState.getCurrentTransformFeedback());
-        std::array<int32_t, 4> &bufferOffsets = mGraphicsDriverUniforms.updateTransformFeedbackData(
-            static_cast<int32_t>(vertexOrIndexCount));
+        GLsizei roundedCount = GetRoundedDataCountForEmulatedXfb(this, mode, vertexOrIndexCount);
+        std::array<int32_t, 4> &bufferOffsets =
+            mGraphicsDriverUniforms.updateTransformFeedbackData(static_cast<int32_t>(roundedCount));
 
         transformFeedbackVk->getBufferOffsets(this, firstVertexOrInvalid, bufferOffsets.data(),
                                               bufferOffsets.size());
@@ -2813,6 +2833,21 @@ angle::Result ContextVk::handleDirtyGraphicsVertexBuffersVertexInputDynamicState
                 0, maxAttrib, bufferHandles.data(), bufferOffsets.data(), strides.data());
         }
     }
+    else if (getFeatures().supportsBindVertexBuffers2.enabled)
+    {
+        if (mUseSizePointerForBindingVertexBuffers)
+        {
+            const gl::AttribArray<VkDeviceSize> &bufferSizes =
+                vertexArrayVk->getCurrentArrayBufferSizes();
+            mRenderPassCommandBuffer->bindVertexBuffers2NoStride(
+                0, maxAttrib, bufferHandles.data(), bufferOffsets.data(), bufferSizes.data());
+        }
+        else
+        {
+            mRenderPassCommandBuffer->bindVertexBuffers2NoSizeNoStride(
+                0, maxAttrib, bufferHandles.data(), bufferOffsets.data());
+        }
+    }
     else
     {
         mRenderPassCommandBuffer->bindVertexBuffers(0, maxAttrib, bufferHandles.data(),
@@ -3798,11 +3833,18 @@ angle::Result ContextVk::submitCommands(const vk::Semaphore *signalSemaphore,
         // Framebuffer::syncState will not get called for current draw call since
         // State::syncDirtyObjects already took the dirty bits. Here we try to detect that current
         // drawFBO is getting affected and invalidate cached object in FramebufferVk so that they
-        // could get recreated. We have to do this detection logic before fallback since fallback
-        // will clear mImageWithTileMemory pointer.
+        // could get recreated. Note that in this case, the FBO dirty bits must already been
+        // processed, otherwise we won't have this bug since next draw call should trigger dirty bit
+        // processing and everything will be in sync. Without check
+        // drawFramebuffer->hasAnyDirtyBit() you may run the risk of accessing an already deleted
+        // RenderTargetVk object due to FramebufferVk's mRenderTargetCache has a stale reference. We
+        // have to do this detection logic before fallback since fallback will clear
+        // mImageWithTileMemory pointer.
+        const gl::Framebuffer *drawFramebuffer = mState.getDrawFramebuffer();
         const vk::ImageHelper *drawFBOImageWithTileMemory =
-            mState.getDrawFramebuffer() != nullptr ? getDrawFramebuffer()->getImageWithTileMemory()
-                                                   : nullptr;
+            (drawFramebuffer != nullptr && !drawFramebuffer->hasAnyDirtyBit())
+                ? getDrawFramebuffer()->getImageWithTileMemory()
+                : nullptr;
         const bool drawFBOImageFallbackFromTileMemory =
             drawFBOImageWithTileMemory && drawFBOImageWithTileMemory == mImageWithTileMemory;
 
@@ -3904,16 +3946,6 @@ void ContextVk::clearAllGarbage()
         garbage.destroy(mRenderer);
     }
     mCurrentGarbage.clear();
-}
-
-void ContextVk::handleDeviceLost()
-{
-    vk::SecondaryCommandBufferCollector collector;
-    (void)mOutsideRenderPassCommands->reset(this, &collector);
-    (void)mRenderPassCommands->reset(this, &collector);
-    collector.releaseCommandBuffers();
-
-    mRenderer->notifyDeviceLost();
 }
 
 angle::Result ContextVk::drawArrays(const gl::Context *context,
@@ -7018,6 +7050,23 @@ void ContextVk::handleError(VkResult errorCode,
 
     getRenderer()->getMemoryAllocationTracker()->logMemoryStatsOnError();
 
+    // Command buffers maybe left in limbo state, we need to reset them.
+    vk::SecondaryCommandBufferCollector collector;
+    if (!mOutsideRenderPassCommands->empty())
+    {
+        mLastFlushedQueueSerial = mOutsideRenderPassCommands->getQueueSerial();
+        mOutsideRenderPassCommands->abandon(this, &collector);
+    }
+    if (mRenderPassCommands->started())
+    {
+        mLastFlushedQueueSerial = mRenderPassCommands->getQueueSerial();
+        mRenderPassCommands->abandon(this, &collector);
+    }
+    collector.releaseCommandBuffers();
+
+    mOutsideRenderPassSerialFactory.reset();
+    generateOutsideRenderPassCommandsQueueSerial();
+
     if (errorCode == VK_ERROR_DEVICE_LOST)
     {
         VkResult deviceLostInfoErrorCode = getRenderer()->retrieveDeviceLostDetails();
@@ -7030,7 +7079,7 @@ void ContextVk::handleError(VkResult errorCode,
         }
 
         WARN() << errorStream.str();
-        handleDeviceLost();
+        mRenderer->notifyDeviceLost();
     }
 
     mErrors->handleError(glErrorCode, errorStream.str().c_str(), file, function, line);
@@ -7553,6 +7602,21 @@ angle::Result ContextVk::flushAndSubmitCommands(const vk::Semaphore *signalSemap
                                                 const vk::SharedExternalFence *externalFence,
                                                 QueueSubmitReason queueSubmitReason)
 {
+    const angle::Result result =
+        flushAndSubmitCommandsImpl(signalSemaphore, externalFence, queueSubmitReason);
+
+    if (result != angle::Result::Continue)
+    {
+        forgetAllForeignImagesOnError();
+    }
+
+    return result;
+}
+
+angle::Result ContextVk::flushAndSubmitCommandsImpl(const vk::Semaphore *signalSemaphore,
+                                                    const vk::SharedExternalFence *externalFence,
+                                                    QueueSubmitReason queueSubmitReason)
+{
     // Even if render pass does not have any command, we may still need to submit it in case it has
     // CLEAR loadOp.
     bool someCommandsNeedFlush =
@@ -8024,9 +8088,13 @@ angle::Result ContextVk::flushCommandsAndEndRenderPass(RenderPassClosureReason r
     // here. Next addImageWithTileMemory will just overwrite the pointer with new pointer.
     if (mImageWithTileMemory && mImageWithTileMemory->isVkImageContentDefined())
     {
-        FramebufferVk *drawFramebufferVk = getDrawFramebuffer();
+        // Only consult the FramebufferVk render-target cache if the draw framebuffer is in
+        // sync.  If it has pending dirty bits, the cached RenderTargetVk* may dangle.
+        const gl::Framebuffer *drawFramebuffer = mState.getDrawFramebuffer();
         const vk::ImageHelper *nextImageWithTileMemory =
-            drawFramebufferVk->getImageWithTileMemory();
+            (drawFramebuffer != nullptr && !drawFramebuffer->hasAnyDirtyBit())
+                ? getDrawFramebuffer()->getImageWithTileMemory()
+                : nullptr;
         if (nextImageWithTileMemory && nextImageWithTileMemory != mImageWithTileMemory)
         {
             ASSERT(nextImageWithTileMemory->useTileMemory());

@@ -250,6 +250,34 @@ TEST_P(TransformFeedbackTest, QueryActiveNoXfbDrawThenXfbBeginEnd)
     EXPECT_EQ(primitivesWritten, 0u);
 }
 
+// Test that starting transform feedback with one program but pausing and drawing with another
+// program draws the expected results
+TEST_P(TransformFeedbackTest, DrawWithOtherProgramDuringPause)
+{
+    ANGLE_GL_PROGRAM(blueProgram, essl3_shaders::vs::Simple(), essl3_shaders::fs::Blue());
+
+    std::vector<std::string> tfVaryings;
+    tfVaryings.push_back("gl_Position");
+    compileDefaultProgram(tfVaryings, GL_INTERLEAVED_ATTRIBS);
+    glUseProgram(mProgram);
+
+    // Bind the buffer for transform feedback output and start transform feedback
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mTransformFeedbackBuffer);
+    glBeginTransformFeedback(GL_TRIANGLES);
+    glPauseTransformFeedback();
+    EXPECT_GL_NO_ERROR();
+
+    glUseProgram(blueProgram);
+    drawQuad(blueProgram, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+
+    glUseProgram(mProgram);
+    glResumeTransformFeedback();
+    glEndTransformFeedback();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+}
+
 // Test that resuming transform feedback with a different program results in validation error.
 TEST_P(TransformFeedbackTest, ProgramSwitchDuringPauseAndResume)
 {
@@ -4973,19 +5001,6 @@ TEST_P(WebGLTransformFeedbackTest, TooSmallBuffers)
     glDrawArrays(GL_POINTS, 0, verticesToDraw);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
     glEndTransformFeedback();
-
-    // Set up the buffer to be the right size but make it smaller after glBeginTransformFeedback
-    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, bytesNeeded, &tfData, GL_STATIC_DRAW);
-    glBeginTransformFeedback(GL_POINTS);
-    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, bytesNeeded - 1, &tfData, GL_STATIC_DRAW);
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
-    glPauseTransformFeedback();
-    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, bytesNeeded - 1, &tfData, GL_STATIC_DRAW);
-    EXPECT_GL_NO_ERROR();
-    glResumeTransformFeedback();
-    glDrawArrays(GL_POINTS, 0, verticesToDraw);
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
-    glEndTransformFeedback();
 }
 
 // Test that UseProgram generates INVALID_OPERATION when transform feedback is active and not paused.
@@ -5132,6 +5147,59 @@ TEST_P(WebGLTransformFeedbackTest, TooSmallBuffersMultiDraw)
     glMultiDrawArraysANGLE(GL_POINTS, firsts, counts, drawcount);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
     glEndTransformFeedback();
+}
+
+// Changing the buffer storage while transform feedback is active (but paused) is undefined
+// behaviour. Make sure it generates an error for WebGL.
+TEST_P(WebGLTransformFeedbackTest, ChangeBufferWhilePaused)
+{
+    std::vector<std::string> tfVaryings;
+    tfVaryings.push_back("gl_Position");
+    compileDefaultProgram(tfVaryings, GL_INTERLEAVED_ATTRIBS);
+    GLint positionLocation = glGetAttribLocation(mProgram, essl1_shaders::PositionAttrib());
+
+    glUseProgram(mProgram);
+
+    const GLfloat vertices[] = {
+        -1.0f, 1.0f, 0.5f, -1.0f, -1.0f, 0.5f, 1.0f, -1.0f, 0.5f,
+        -1.0f, 1.0f, 0.5f, 1.0f,  -1.0f, 0.5f, 1.0f, 1.0f,  0.5f,
+    };
+
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLocation);
+
+    const GLsizei verticesToDraw = 3;
+    const size_t stride          = sizeof(float) * 4;
+    const GLsizei drawcount      = 2;
+    const size_t bytesNeeded     = stride * verticesToDraw * drawcount;
+
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mTransformFeedbackBuffer);
+    uint8_t tfData[bytesNeeded] = {0};
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, bytesNeeded, &tfData, GL_STATIC_DRAW);
+
+    glBeginTransformFeedback(GL_POINTS);
+    glDrawArrays(GL_POINTS, 0, verticesToDraw);
+    EXPECT_GL_NO_ERROR();
+
+    glPauseTransformFeedback();
+    EXPECT_GL_NO_ERROR();
+
+    // Try modifying the buffer while it's a transform feedback output
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, bytesNeeded, &tfData, GL_STATIC_DRAW);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glBufferSubData(GL_TRANSFORM_FEEDBACK_BUFFER, 0, bytesNeeded, &tfData);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glResumeTransformFeedback();
+    glDrawArrays(GL_POINTS, 0, verticesToDraw);
+    EXPECT_GL_NO_ERROR();
+
+    glEndTransformFeedback();
+    EXPECT_GL_NO_ERROR();
 }
 
 // Test validation of buffer bounds checking for transform feedback with multidraw instanced

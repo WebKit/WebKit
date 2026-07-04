@@ -184,8 +184,6 @@ void main()
 
     bool hasReadStencilSupport() const { return IsGLExtensionEnabled("GL_NV_read_stencil"); }
 
-    bool hasFloatDepthSupport() const { return IsGLExtensionEnabled("GL_NV_depth_buffer_float2"); }
-
     void depthStencilReadbackCase(const ReadbackTestParam &type);
 
     GLuint mProgram;
@@ -247,7 +245,8 @@ void DepthStencilFormatsTestBase::depthStencilReadbackCase(const ReadbackTestPar
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_depth_texture"));
 
     const bool hasFloatDepth = (type.type == GL_FLOAT);
-    ANGLE_SKIP_TEST_IF(hasFloatDepth && !hasFloatDepthSupport());
+    const bool hasFloatDepthSupport = getClientMajorVersion() >= 3;
+    ANGLE_SKIP_TEST_IF(hasFloatDepth && !hasFloatDepthSupport);
 
     const bool hasStencil = (type.format != GL_DEPTH_COMPONENT);
 
@@ -518,11 +517,7 @@ TEST_P(DepthStencilFormatsTest, DepthStencilReadback_DepthStencil)
 // Verify that packed D/S readPixels with a D32_FLOAT_S8X24_UINT attachment
 TEST_P(DepthStencilFormatsTestES3, DepthStencilReadback_DepthFloatStencil)
 {
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_packed_depth_stencil") ||
-                       !IsGLExtensionEnabled("GL_NV_depth_buffer_float2") ||
-                       !IsGLExtensionEnabled("GL_NV_read_depth") ||
-                       !IsGLExtensionEnabled("GL_NV_read_depth_stencil") ||
-                       !IsGLExtensionEnabled("GL_NV_read_stencil"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_NV_read_depth_stencil"));
 
     GLFramebuffer FBO;
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);

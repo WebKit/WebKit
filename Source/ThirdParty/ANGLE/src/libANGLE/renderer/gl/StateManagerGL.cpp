@@ -2323,14 +2323,8 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                 updateDispatchIndirectBufferBinding(context);
                 break;
             case gl::state::DIRTY_BIT_PROGRAM_BINDING:
-            {
-                gl::Program *program = state.getProgram();
-                if (program != nullptr)
-                {
-                    useProgram(GetImplAs<ProgramGL>(program)->getProgramID());
-                }
+                syncProgramState(context);
                 break;
-            }
             case gl::state::DIRTY_BIT_PROGRAM_EXECUTABLE:
             {
                 const gl::ProgramExecutable *executable = state.getProgramExecutable();
@@ -2905,6 +2899,18 @@ void StateManagerGL::syncTransformFeedbackState(const gl::Context *context)
     {
         bindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
         mCurrentTransformFeedback = nullptr;
+    }
+
+    syncProgramState(context);
+}
+
+void StateManagerGL::syncProgramState(const gl::Context *context)
+{
+    gl::Program *program = context->getState().getProgram();
+    if (program != nullptr)
+    {
+        ProgramGL *programGL = GetImplAs<ProgramGL>(program);
+        useProgram(programGL->getProgramID());
     }
 }
 

@@ -122,7 +122,7 @@ void ScenicWindow::updateViewSize()
 }
 
 // static
-OSWindow *OSWindow::New()
+OSWindow *OSWindow::New(void * /*nativeDisplay*/)
 {
     return new ScenicWindow;
 }

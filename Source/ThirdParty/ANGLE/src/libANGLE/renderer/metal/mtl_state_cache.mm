@@ -17,17 +17,11 @@
 #include <sstream>
 
 #include "common/debug.h"
-#include "common/hash_utils.h"
 #include "common/span.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/mtl_resources.h"
 #include "libANGLE/renderer/metal/mtl_utils.h"
 #include "platform/autogen/FeaturesMtl_autogen.h"
-
-#define ANGLE_OBJC_CP_PROPERTY(DST, SRC, PROPERTY) \
-    (DST).PROPERTY = static_cast<__typeof__((DST).PROPERTY)>(ToObjC((SRC).PROPERTY))
-
-#define ANGLE_PROP_EQ(LHS, RHS, PROP) ((LHS).PROP == (RHS).PROP)
 
 namespace rx
 {
@@ -37,64 +31,58 @@ namespace mtl
 namespace
 {
 
-template <class T>
-inline T ToObjC(const T p)
-{
-    return p;
-}
-
 inline angle::ObjCPtr<MTLStencilDescriptor> ToObjC(const StencilDesc &desc)
 {
     auto objCDesc = angle::adoptObjCPtr([[MTLStencilDescriptor alloc] init]);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, stencilFailureOperation);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, depthFailureOperation);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, depthStencilPassOperation);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, stencilCompareFunction);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, readMask);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, writeMask);
+    objCDesc.get().stencilFailureOperation = desc.getStencilFailureOperation();
+    objCDesc.get().depthFailureOperation   = desc.getDepthFailureOperation();
+    objCDesc.get().depthStencilPassOperation = desc.getDepthStencilPassOperation();
+    objCDesc.get().stencilCompareFunction    = desc.getStencilCompareFunction();
+    objCDesc.get().readMask                  = desc.readMask;
+    objCDesc.get().writeMask                 = desc.writeMask;
     return objCDesc;
 }
 
 inline angle::ObjCPtr<MTLDepthStencilDescriptor> ToObjC(const DepthStencilDesc &desc)
 {
     auto objCDesc = angle::adoptObjCPtr([[MTLDepthStencilDescriptor alloc] init]);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, backFaceStencil);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, frontFaceStencil);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, depthCompareFunction);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, depthWriteEnabled);
+    objCDesc.get().backFaceStencil  = ToObjC(desc.backFaceStencil);
+    objCDesc.get().frontFaceStencil = ToObjC(desc.frontFaceStencil);
+    objCDesc.get().depthCompareFunction = desc.getDepthCompareFunction();
+    objCDesc.get().depthWriteEnabled    = desc.isDepthWriteEnabled();
     return objCDesc;
 }
 
 inline angle::ObjCPtr<MTLSamplerDescriptor> ToObjC(const SamplerDesc &desc)
 {
     auto objCDesc = angle::adoptObjCPtr([[MTLSamplerDescriptor alloc] init]);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, rAddressMode);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, sAddressMode);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, tAddressMode);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, minFilter);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, magFilter);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, mipFilter);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, maxAnisotropy);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, compareFunction);
+    objCDesc.get().rAddressMode    = desc.getRAddressMode();
+    objCDesc.get().sAddressMode    = desc.getSAddressMode();
+    objCDesc.get().tAddressMode    = desc.getTAddressMode();
+    objCDesc.get().minFilter       = desc.getMinFilter();
+    objCDesc.get().magFilter       = desc.getMagFilter();
+    objCDesc.get().mipFilter       = desc.getMipFilter();
+    objCDesc.get().maxAnisotropy   = desc.getMaxAnisotropy();
+    objCDesc.get().compareFunction = desc.getCompareFunction();
     return objCDesc;
 }
 
 inline angle::ObjCPtr<MTLVertexAttributeDescriptor> ToObjC(const VertexAttributeDesc &desc)
 {
     auto objCDesc = angle::adoptObjCPtr([[MTLVertexAttributeDescriptor alloc] init]);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, format);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, offset);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, bufferIndex);
-    ASSERT(desc.bufferIndex >= kVboBindingIndexStart);
+    objCDesc.get().format      = desc.getFormat();
+    objCDesc.get().offset      = desc.getOffset();
+    objCDesc.get().bufferIndex = desc.getBufferIndex();
+    ASSERT(desc.getBufferIndex() >= kVboBindingIndexStart);
     return objCDesc;
 }
 
 inline angle::ObjCPtr<MTLVertexBufferLayoutDescriptor> ToObjC(const VertexBufferLayoutDesc &desc)
 {
     auto objCDesc = angle::adoptObjCPtr([[MTLVertexBufferLayoutDescriptor alloc] init]);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, stepFunction);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, stepRate);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, stride);
+    objCDesc.get().stepFunction = desc.getStepFunction();
+    objCDesc.get().stepRate     = desc.stepRate;
+    objCDesc.get().stride       = desc.stride;
     return objCDesc;
 }
 
@@ -112,7 +100,7 @@ inline angle::ObjCPtr<MTLVertexDescriptor> ToObjC(const VertexDesc &desc)
     {
         // Ignore if stepFunction is kVertexStepFunctionInvalid.
         // If we don't set this slot, it will apparently be disabled by metal runtime.
-        if (desc.layouts[i].stepFunction != kVertexStepFunctionInvalid)
+        if (desc.layouts[i].getStepFunction() != kVertexStepFunctionInvalid)
         {
             [objCDesc.get().layouts setObject:ToObjC(desc.layouts[i]) atIndexedSubscript:i];
         }
@@ -125,15 +113,15 @@ inline angle::ObjCPtr<MTLRenderPipelineColorAttachmentDescriptor> ToObjC(
     const RenderPipelineColorAttachmentDesc &desc)
 {
     auto objCDesc = angle::adoptObjCPtr([[MTLRenderPipelineColorAttachmentDescriptor alloc] init]);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, pixelFormat);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, writeMask);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, alphaBlendOperation);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, rgbBlendOperation);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, destinationAlphaBlendFactor);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, destinationRGBBlendFactor);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, sourceAlphaBlendFactor);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, sourceRGBBlendFactor);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, blendingEnabled);
+    objCDesc.get().pixelFormat                 = desc.getPixelFormat();
+    objCDesc.get().writeMask                   = desc.getWriteMask();
+    objCDesc.get().sourceRGBBlendFactor        = desc.getSourceRgbBlendFactor();
+    objCDesc.get().sourceAlphaBlendFactor      = desc.getSourceAlphaBlendFactor();
+    objCDesc.get().destinationRGBBlendFactor   = desc.getDestinationRgbBlendFactor();
+    objCDesc.get().destinationAlphaBlendFactor = desc.getDestinationAlphaBlendFactor();
+    objCDesc.get().rgbBlendOperation           = desc.getRgbBlendOperation();
+    objCDesc.get().alphaBlendOperation         = desc.getAlphaBlendOperation();
+    objCDesc.get().blendingEnabled             = desc.isBlendingEnabled();
     return objCDesc;
 }
 
@@ -172,33 +160,30 @@ void BaseRenderPassAttachmentDescToObjC(const RenderPassAttachmentDesc &src,
         dst.resolveDepthPlane = 0;
     }
 
-    ANGLE_OBJC_CP_PROPERTY(dst, src, loadAction);
-    ANGLE_OBJC_CP_PROPERTY(dst, src, storeAction);
-    ANGLE_OBJC_CP_PROPERTY(dst, src, storeActionOptions);
+    dst.loadAction         = src.loadAction;
+    dst.storeAction        = src.storeAction;
+    dst.storeActionOptions = src.storeActionOptions;
 }
 
 void ToObjC(const RenderPassColorAttachmentDesc &desc,
             MTLRenderPassColorAttachmentDescriptor *objCDesc)
 {
     BaseRenderPassAttachmentDescToObjC(desc, objCDesc);
-
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, clearColor);
+    objCDesc.clearColor = desc.clearColor;
 }
 
 void ToObjC(const RenderPassDepthAttachmentDesc &desc,
             MTLRenderPassDepthAttachmentDescriptor *objCDesc)
 {
     BaseRenderPassAttachmentDescToObjC(desc, objCDesc);
-
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, clearDepth);
+    objCDesc.clearDepth = desc.clearDepth;
 }
 
 void ToObjC(const RenderPassStencilAttachmentDesc &desc,
             MTLRenderPassStencilAttachmentDescriptor *objCDesc)
 {
     BaseRenderPassAttachmentDescToObjC(desc, objCDesc);
-
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, clearStencil);
+    objCDesc.clearStencil = desc.clearStencil;
 }
 
 MTLColorWriteMask AdjustColorWriteMaskForSharedExponent(MTLColorWriteMask mask)
@@ -213,72 +198,11 @@ MTLColorWriteMask AdjustColorWriteMaskForSharedExponent(MTLColorWriteMask mask)
 
 }  // namespace
 
-// StencilDesc implementation
-bool StencilDesc::operator==(const StencilDesc &rhs) const
-{
-    return ANGLE_PROP_EQ(*this, rhs, stencilFailureOperation) &&
-           ANGLE_PROP_EQ(*this, rhs, depthFailureOperation) &&
-           ANGLE_PROP_EQ(*this, rhs, depthStencilPassOperation) &&
-
-           ANGLE_PROP_EQ(*this, rhs, stencilCompareFunction) &&
-
-           ANGLE_PROP_EQ(*this, rhs, readMask) && ANGLE_PROP_EQ(*this, rhs, writeMask);
-}
-
-void StencilDesc::reset()
-{
-    stencilFailureOperation = depthFailureOperation = depthStencilPassOperation =
-        MTLStencilOperationKeep;
-
-    stencilCompareFunction = MTLCompareFunctionAlways;
-    readMask = writeMask = std::numeric_limits<uint32_t>::max() & mtl::kStencilMaskAll;
-}
-
-// DepthStencilDesc implementation
-DepthStencilDesc::DepthStencilDesc()
-{
-    memset(this, 0, sizeof(*this));
-}
-DepthStencilDesc::DepthStencilDesc(const DepthStencilDesc &src)
-{
-    memcpy(this, &src, sizeof(*this));
-}
-DepthStencilDesc::DepthStencilDesc(DepthStencilDesc &&src)
-{
-    memcpy(this, &src, sizeof(*this));
-}
-
-DepthStencilDesc &DepthStencilDesc::operator=(const DepthStencilDesc &src)
-{
-    memcpy(this, &src, sizeof(*this));
-    return *this;
-}
-
-bool DepthStencilDesc::operator==(const DepthStencilDesc &rhs) const
-{
-    return ANGLE_PROP_EQ(*this, rhs, backFaceStencil) &&
-           ANGLE_PROP_EQ(*this, rhs, frontFaceStencil) &&
-
-           ANGLE_PROP_EQ(*this, rhs, depthCompareFunction) &&
-
-           ANGLE_PROP_EQ(*this, rhs, depthWriteEnabled);
-}
-
-void DepthStencilDesc::reset()
-{
-    frontFaceStencil.reset();
-    backFaceStencil.reset();
-
-    depthCompareFunction = MTLCompareFunctionAlways;
-    depthWriteEnabled    = true;
-}
-
 void DepthStencilDesc::updateDepthTestEnabled(const gl::DepthStencilState &dsState)
 {
     if (!dsState.depthTest)
     {
-        depthCompareFunction = MTLCompareFunctionAlways;
-        depthWriteEnabled    = false;
+        setDepthWriteDisabled();
     }
     else
     {
@@ -289,7 +213,7 @@ void DepthStencilDesc::updateDepthTestEnabled(const gl::DepthStencilState &dsSta
 
 void DepthStencilDesc::updateDepthWriteEnabled(const gl::DepthStencilState &dsState)
 {
-    depthWriteEnabled = dsState.depthTest && dsState.depthMask;
+    mDepthWriteEnabled = dsState.depthTest && dsState.depthMask;
 }
 
 void DepthStencilDesc::updateDepthCompareFunc(const gl::DepthStencilState &dsState)
@@ -298,21 +222,21 @@ void DepthStencilDesc::updateDepthCompareFunc(const gl::DepthStencilState &dsSta
     {
         return;
     }
-    depthCompareFunction = GetCompareFunc(dsState.depthFunc);
+    mDepthCompareFunction = static_cast<uint32_t>(GetCompareFunc(dsState.depthFunc));
 }
 
 void DepthStencilDesc::updateStencilTestEnabled(const gl::DepthStencilState &dsState)
 {
     if (!dsState.stencilTest)
     {
-        frontFaceStencil.stencilCompareFunction    = MTLCompareFunctionAlways;
-        frontFaceStencil.depthFailureOperation     = MTLStencilOperationKeep;
-        frontFaceStencil.depthStencilPassOperation = MTLStencilOperationKeep;
-        frontFaceStencil.writeMask                 = 0;
+        frontFaceStencil.setStencilCompareFunction(MTLCompareFunctionAlways);
+        frontFaceStencil.setDepthFailureOperation(MTLStencilOperationKeep);
+        frontFaceStencil.setDepthStencilPassOperation(MTLStencilOperationKeep);
+        frontFaceStencil.writeMask = 0;
 
-        backFaceStencil.stencilCompareFunction    = MTLCompareFunctionAlways;
-        backFaceStencil.depthFailureOperation     = MTLStencilOperationKeep;
-        backFaceStencil.depthStencilPassOperation = MTLStencilOperationKeep;
+        backFaceStencil.setStencilCompareFunction(MTLCompareFunctionAlways);
+        backFaceStencil.setDepthFailureOperation(MTLStencilOperationKeep);
+        backFaceStencil.setDepthStencilPassOperation(MTLStencilOperationKeep);
         backFaceStencil.writeMask                 = 0;
     }
     else
@@ -332,9 +256,9 @@ void DepthStencilDesc::updateStencilFrontOps(const gl::DepthStencilState &dsStat
     {
         return;
     }
-    frontFaceStencil.stencilFailureOperation   = GetStencilOp(dsState.stencilFail);
-    frontFaceStencil.depthFailureOperation     = GetStencilOp(dsState.stencilPassDepthFail);
-    frontFaceStencil.depthStencilPassOperation = GetStencilOp(dsState.stencilPassDepthPass);
+    frontFaceStencil.setStencilFailureOperation(GetStencilOp(dsState.stencilFail));
+    frontFaceStencil.setDepthFailureOperation(GetStencilOp(dsState.stencilPassDepthFail));
+    frontFaceStencil.setDepthStencilPassOperation(GetStencilOp(dsState.stencilPassDepthPass));
 }
 
 void DepthStencilDesc::updateStencilBackOps(const gl::DepthStencilState &dsState)
@@ -343,9 +267,9 @@ void DepthStencilDesc::updateStencilBackOps(const gl::DepthStencilState &dsState
     {
         return;
     }
-    backFaceStencil.stencilFailureOperation   = GetStencilOp(dsState.stencilBackFail);
-    backFaceStencil.depthFailureOperation     = GetStencilOp(dsState.stencilBackPassDepthFail);
-    backFaceStencil.depthStencilPassOperation = GetStencilOp(dsState.stencilBackPassDepthPass);
+    backFaceStencil.setStencilFailureOperation(GetStencilOp(dsState.stencilBackFail));
+    backFaceStencil.setDepthFailureOperation(GetStencilOp(dsState.stencilBackPassDepthFail));
+    backFaceStencil.setDepthStencilPassOperation(GetStencilOp(dsState.stencilBackPassDepthPass));
 }
 
 void DepthStencilDesc::updateStencilFrontFuncs(const gl::DepthStencilState &dsState)
@@ -354,8 +278,8 @@ void DepthStencilDesc::updateStencilFrontFuncs(const gl::DepthStencilState &dsSt
     {
         return;
     }
-    frontFaceStencil.stencilCompareFunction = GetCompareFunc(dsState.stencilFunc);
-    frontFaceStencil.readMask               = dsState.stencilMask & mtl::kStencilMaskAll;
+    frontFaceStencil.setStencilCompareFunction(GetCompareFunc(dsState.stencilFunc));
+    frontFaceStencil.readMask = dsState.stencilMask & mtl::kStencilMaskAll;
 }
 
 void DepthStencilDesc::updateStencilBackFuncs(const gl::DepthStencilState &dsState)
@@ -364,8 +288,8 @@ void DepthStencilDesc::updateStencilBackFuncs(const gl::DepthStencilState &dsSta
     {
         return;
     }
-    backFaceStencil.stencilCompareFunction = GetCompareFunc(dsState.stencilBackFunc);
-    backFaceStencil.readMask               = dsState.stencilBackMask & mtl::kStencilMaskAll;
+    backFaceStencil.setStencilCompareFunction(GetCompareFunc(dsState.stencilBackFunc));
+    backFaceStencil.readMask = dsState.stencilBackMask & mtl::kStencilMaskAll;
 }
 
 void DepthStencilDesc::updateStencilFrontWriteMask(const gl::DepthStencilState &dsState)
@@ -386,119 +310,26 @@ void DepthStencilDesc::updateStencilBackWriteMask(const gl::DepthStencilState &d
     backFaceStencil.writeMask = dsState.stencilBackWritemask & mtl::kStencilMaskAll;
 }
 
-size_t DepthStencilDesc::hash() const
+SamplerDesc::SamplerDesc(const gl::SamplerState &glState)
+    : mRAddressMode(static_cast<uint32_t>(GetSamplerAddressMode(glState.getWrapR()))),
+      mSAddressMode(static_cast<uint32_t>(GetSamplerAddressMode(glState.getWrapS()))),
+      mTAddressMode(static_cast<uint32_t>(GetSamplerAddressMode(glState.getWrapT()))),
+      mMinFilter(static_cast<uint32_t>(GetFilter(glState.getMinFilter()))),
+      mMagFilter(static_cast<uint32_t>(GetFilter(glState.getMagFilter()))),
+      mMipFilter(static_cast<uint32_t>(GetMipmapFilter(glState.getMinFilter()))),
+      mMaxAnisotropy(static_cast<uint32_t>(glState.getMaxAnisotropy())),
+      mCompareFunction(static_cast<uint32_t>(GetCompareFunc(glState.getCompareFunc())))
 {
-    return angle::ComputeGenericHash(angle::byte_span_from_ref(*this));
 }
 
-// SamplerDesc implementation
-SamplerDesc::SamplerDesc()
-{
-    memset(this, 0, sizeof(*this));
-}
-SamplerDesc::SamplerDesc(const SamplerDesc &src)
-{
-    memcpy(this, &src, sizeof(*this));
-}
-SamplerDesc::SamplerDesc(SamplerDesc &&src)
-{
-    memcpy(this, &src, sizeof(*this));
-}
-
-SamplerDesc::SamplerDesc(const gl::SamplerState &glState) : SamplerDesc()
-{
-    rAddressMode = GetSamplerAddressMode(glState.getWrapR());
-    sAddressMode = GetSamplerAddressMode(glState.getWrapS());
-    tAddressMode = GetSamplerAddressMode(glState.getWrapT());
-
-    minFilter = GetFilter(glState.getMinFilter());
-    magFilter = GetFilter(glState.getMagFilter());
-    mipFilter = GetMipmapFilter(glState.getMinFilter());
-
-    maxAnisotropy = static_cast<uint32_t>(glState.getMaxAnisotropy());
-
-    compareFunction = GetCompareFunc(glState.getCompareFunc());
-}
-
-SamplerDesc &SamplerDesc::operator=(const SamplerDesc &src)
-{
-    memcpy(this, &src, sizeof(*this));
-    return *this;
-}
-
-void SamplerDesc::reset()
-{
-    rAddressMode = MTLSamplerAddressModeClampToEdge;
-    sAddressMode = MTLSamplerAddressModeClampToEdge;
-    tAddressMode = MTLSamplerAddressModeClampToEdge;
-
-    minFilter = MTLSamplerMinMagFilterNearest;
-    magFilter = MTLSamplerMinMagFilterNearest;
-    mipFilter = MTLSamplerMipFilterNearest;
-
-    maxAnisotropy = 1;
-
-    compareFunction = MTLCompareFunctionNever;
-}
-
-bool SamplerDesc::operator==(const SamplerDesc &rhs) const
-{
-    return ANGLE_PROP_EQ(*this, rhs, rAddressMode) && ANGLE_PROP_EQ(*this, rhs, sAddressMode) &&
-           ANGLE_PROP_EQ(*this, rhs, tAddressMode) &&
-
-           ANGLE_PROP_EQ(*this, rhs, minFilter) && ANGLE_PROP_EQ(*this, rhs, magFilter) &&
-           ANGLE_PROP_EQ(*this, rhs, mipFilter) &&
-
-           ANGLE_PROP_EQ(*this, rhs, maxAnisotropy) &&
-
-           ANGLE_PROP_EQ(*this, rhs, compareFunction);
-}
-
-size_t SamplerDesc::hash() const
-{
-    return angle::ComputeGenericHash(angle::byte_span_from_ref(*this));
-}
-
-// BlendDesc implementation
-bool BlendDesc::operator==(const BlendDesc &rhs) const
-{
-    return ANGLE_PROP_EQ(*this, rhs, writeMask) &&
-
-           ANGLE_PROP_EQ(*this, rhs, alphaBlendOperation) &&
-           ANGLE_PROP_EQ(*this, rhs, rgbBlendOperation) &&
-
-           ANGLE_PROP_EQ(*this, rhs, destinationAlphaBlendFactor) &&
-           ANGLE_PROP_EQ(*this, rhs, destinationRGBBlendFactor) &&
-           ANGLE_PROP_EQ(*this, rhs, sourceAlphaBlendFactor) &&
-           ANGLE_PROP_EQ(*this, rhs, sourceRGBBlendFactor) &&
-
-           ANGLE_PROP_EQ(*this, rhs, blendingEnabled);
-}
-
-void BlendDesc::reset()
-{
-    reset(MTLColorWriteMaskAll);
-}
-
-void BlendDesc::reset(MTLColorWriteMask _writeMask)
-{
-    writeMask = _writeMask;
-
-    blendingEnabled     = false;
-    alphaBlendOperation = rgbBlendOperation = MTLBlendOperationAdd;
-
-    destinationAlphaBlendFactor = destinationRGBBlendFactor = MTLBlendFactorZero;
-    sourceAlphaBlendFactor = sourceRGBBlendFactor = MTLBlendFactorOne;
-}
-
-void BlendDesc::updateWriteMask(const uint8_t angleMask)
+void BlendDesc::updateWriteMask(uint8_t angleMask)
 {
     ASSERT(angleMask == (angleMask & 0xF));
 
 // ANGLE's packed color mask is abgr (matches Vulkan & D3D11), while Metal expects rgba.
 #if defined(__aarch64__)
     // ARM64 can reverse bits in a single instruction
-    writeMask = __builtin_bitreverse8(angleMask) >> 4;
+    mWriteMask = __builtin_bitreverse8(angleMask) >> 4;
 #else
     /* On other architectures, Clang generates a polyfill that uses more
        instructions than the following expression optimized for a 4-bit value.
@@ -516,107 +347,81 @@ void BlendDesc::updateWriteMask(const uint8_t angleMask)
         b.r.bargbarg.a.g.
               ^^^^
     */
-    writeMask = ((((angleMask * 0x41) & 0x14A) * 0x111) >> 7) & 0xF;
+    mWriteMask = ((((angleMask * 0x41) & 0x14A) * 0x111) >> 7) & 0xF;
 #endif
 }
 
-// RenderPipelineColorAttachmentDesc implementation
-bool RenderPipelineColorAttachmentDesc::operator==(
-    const RenderPipelineColorAttachmentDesc &rhs) const
+void RenderPipelineColorAttachmentDesc::reset(MTLPixelFormat format, MTLColorWriteMask writeMask)
 {
-    if (!BlendDesc::operator==(rhs))
-    {
-        return false;
-    }
-    return ANGLE_PROP_EQ(*this, rhs, pixelFormat);
-}
-
-void RenderPipelineColorAttachmentDesc::reset()
-{
-    reset(MTLPixelFormatInvalid);
-}
-
-void RenderPipelineColorAttachmentDesc::reset(MTLPixelFormat format)
-{
-    reset(format, MTLColorWriteMaskAll);
-}
-
-void RenderPipelineColorAttachmentDesc::reset(MTLPixelFormat format, MTLColorWriteMask _writeMask)
-{
-    this->pixelFormat = format;
-
     if (format == MTLPixelFormatRGB9E5Float)
     {
-        _writeMask = AdjustColorWriteMaskForSharedExponent(_writeMask);
+        writeMask = static_cast<uint32_t>(AdjustColorWriteMaskForSharedExponent(writeMask));
     }
-
-    BlendDesc::reset(_writeMask);
+    // Reset the entire BlendDesc to defaults (blendingEnabled=false, default factors/operations),
+    // then set the specific values.
+    BlendDesc::operator=({});
+    mWriteMask   = static_cast<uint32_t>(writeMask);
+    mPixelFormat = static_cast<uint32_t>(format);
 }
 
 void RenderPipelineColorAttachmentDesc::reset(MTLPixelFormat format, const BlendDesc &blendDesc)
 {
-    this->pixelFormat = format;
-
     BlendDesc::operator=(blendDesc);
-
     if (format == MTLPixelFormatRGB9E5Float)
     {
-        writeMask = AdjustColorWriteMaskForSharedExponent(writeMask);
+        mWriteMask = static_cast<uint32_t>(AdjustColorWriteMaskForSharedExponent(mWriteMask));
     }
+    mPixelFormat = static_cast<uint32_t>(format);
 }
 
-// RenderPipelineOutputDesc implementation
+bool RenderPipelineOutputDesc::operator==(const RenderPipelineOutputDesc &rhs) const
+{
+    if (mNumColorAttachments != rhs.mNumColorAttachments)
+    {
+        return false;
+    }
+
+    for (uint8_t i = 0; i < mNumColorAttachments; ++i)
+    {
+        if (colorAttachments[i] != rhs.colorAttachments[i])
+        {
+            return false;
+        }
+    }
+
+    return mDepthAttachmentPixelFormat == rhs.mDepthAttachmentPixelFormat &&
+           mStencilAttachmentPixelFormat == rhs.mStencilAttachmentPixelFormat &&
+           mRasterSampleCount == rhs.mRasterSampleCount;
+}
+
+size_t RenderPipelineOutputDesc::hash() const
+{
+    size_t hash = 0;
+    angle::HashCombine(hash, mNumColorAttachments);
+    for (uint8_t i = 0; i < mNumColorAttachments; ++i)
+    {
+        angle::HashCombine(hash, colorAttachments[i]);
+    }
+    angle::HashCombine(hash, mDepthAttachmentPixelFormat);
+    angle::HashCombine(hash, mStencilAttachmentPixelFormat);
+    angle::HashCombine(hash, mRasterSampleCount);
+    return hash;
+}
+
 void RenderPipelineOutputDesc::updateEnabledDrawBuffers(gl::DrawBufferMask enabledBuffers)
 {
-    for (uint32_t colorIndex = 0; colorIndex < this->numColorAttachments; ++colorIndex)
+    for (uint32_t colorIndex = 0; colorIndex < mNumColorAttachments; ++colorIndex)
     {
         if (!enabledBuffers.test(colorIndex))
         {
-            this->colorAttachments[colorIndex].writeMask = MTLColorWriteMaskNone;
+            colorAttachments[colorIndex].setWriteMask(MTLColorWriteMaskNone);
         }
     }
 }
 
-// RenderPipelineDesc implementation
-RenderPipelineDesc::RenderPipelineDesc()
-{
-    memset(this, 0, sizeof(*this));
-    outputDescriptor.rasterSampleCount = 1;
-    rasterizationType                  = RenderPipelineRasterization::Enabled;
-}
-
-RenderPipelineDesc::RenderPipelineDesc(const RenderPipelineDesc &src)
-{
-    memcpy(this, &src, sizeof(*this));
-}
-
-RenderPipelineDesc::RenderPipelineDesc(RenderPipelineDesc &&src)
-{
-    memcpy(this, &src, sizeof(*this));
-}
-
-RenderPipelineDesc &RenderPipelineDesc::operator=(const RenderPipelineDesc &src)
-{
-    memcpy(this, &src, sizeof(*this));
-    return *this;
-}
-
-bool RenderPipelineDesc::operator==(const RenderPipelineDesc &rhs) const
-{
-    // NOTE(hqle): Use a faster way to compare, i.e take into account
-    // the number of active vertex attributes & render targets.
-    // If that way is used, hash() method must be changed also.
-    return memcmp(this, &rhs, sizeof(*this)) == 0;
-}
-
-size_t RenderPipelineDesc::hash() const
-{
-    return angle::ComputeGenericHash(angle::byte_span_from_ref(*this));
-}
-
 bool RenderPipelineDesc::rasterizationEnabled() const
 {
-    return rasterizationType != RenderPipelineRasterization::Disabled;
+    return mRasterizationType != static_cast<uint32_t>(RenderPipelineRasterization::Disabled);
 }
 
 angle::ObjCPtr<MTLRenderPipelineDescriptor> RenderPipelineDesc::createMetalDesc(
@@ -626,19 +431,19 @@ angle::ObjCPtr<MTLRenderPipelineDescriptor> RenderPipelineDesc::createMetalDesc(
     auto objCDesc = angle::adoptObjCPtr([[MTLRenderPipelineDescriptor alloc] init]);
     [objCDesc reset];
 
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), *this, vertexDescriptor);
+    objCDesc.get().vertexDescriptor = ToObjC(vertexDescriptor);
 
-    for (uint8_t i = 0; i < outputDescriptor.numColorAttachments; ++i)
+    for (uint8_t i = 0; i < outputDescriptor.getNumColorAttachments(); ++i)
     {
         [objCDesc.get().colorAttachments setObject:ToObjC(outputDescriptor.colorAttachments[i])
                                 atIndexedSubscript:i];
     }
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), outputDescriptor, depthAttachmentPixelFormat);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), outputDescriptor, stencilAttachmentPixelFormat);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), outputDescriptor, rasterSampleCount);
-
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), *this, inputPrimitiveTopology);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), *this, alphaToCoverageEnabled);
+    objCDesc.get().depthAttachmentPixelFormat = outputDescriptor.getDepthAttachmentPixelFormat();
+    objCDesc.get().stencilAttachmentPixelFormat =
+        outputDescriptor.getStencilAttachmentPixelFormat();
+    objCDesc.get().rasterSampleCount      = outputDescriptor.getRasterSampleCount();
+    objCDesc.get().inputPrimitiveTopology = getInputPrimitiveTopology();
+    objCDesc.get().alphaToCoverageEnabled = getAlphaToCoverageEnabled();
 
     // rasterizationEnabled will be true for both EmulatedDiscard & Enabled.
     objCDesc.get().rasterizationEnabled = rasterizationEnabled();
@@ -647,26 +452,6 @@ angle::ObjCPtr<MTLRenderPipelineDescriptor> RenderPipelineDesc::createMetalDesc(
     objCDesc.get().fragmentFunction = objCDesc.get().rasterizationEnabled ? fragmentShader : nil;
 
     return objCDesc;
-}
-
-// RenderPassDesc implementation
-RenderPassAttachmentDesc::RenderPassAttachmentDesc()
-{
-    reset();
-}
-
-void RenderPassAttachmentDesc::reset()
-{
-    texture.reset();
-    resolveTexture.reset();
-    level               = mtl::kZeroNativeMipLevel;
-    sliceOrDepth        = 0;
-    resolveLevel        = mtl::kZeroNativeMipLevel;
-    resolveSliceOrDepth = 0;
-    blendable           = false;
-    loadAction          = MTLLoadActionLoad;
-    storeAction         = MTLStoreActionStore;
-    storeActionOptions  = MTLStoreActionOptionNone;
 }
 
 bool RenderPassAttachmentDesc::equalIgnoreLoadStoreOptions(
@@ -710,22 +495,20 @@ void RenderPassDesc::populateRenderPipelineOutputDesc(const WriteMaskArray &writ
 void RenderPassDesc::populateRenderPipelineOutputDesc(const BlendDescArray &blendDescArray,
                                                       RenderPipelineOutputDesc *outDesc) const
 {
-    RenderPipelineOutputDesc &outputDescriptor = *outDesc;
-    outputDescriptor.numColorAttachments       = this->numColorAttachments;
-    outputDescriptor.rasterSampleCount         = this->rasterSampleCount;
+    outDesc->setNumColorAttachments(numColorAttachments);
+    outDesc->setRasterSampleCount(rasterSampleCount);
     for (uint32_t i = 0; i < this->numColorAttachments; ++i)
     {
-        auto &renderPassColorAttachment = this->colorAttachments[i];
+        auto &renderPassColorAttachment = colorAttachments[i];
         auto texture                    = renderPassColorAttachment.texture;
-
+        auto &outColorAttachment        = outDesc->colorAttachments[i];
         if (texture)
         {
             if (renderPassColorAttachment.blendable &&
-                blendDescArray[i].writeMask != MTLColorWriteMaskNone)
+                blendDescArray[i].getWriteMask() != MTLColorWriteMaskNone)
             {
                 // Copy parameters from blend state
-                outputDescriptor.colorAttachments[i].reset(texture->pixelFormat(),
-                                                           blendDescArray[i]);
+                outColorAttachment.reset(texture->pixelFormat(), blendDescArray[i]);
             }
             else
             {
@@ -742,36 +525,36 @@ void RenderPassDesc::populateRenderPipelineOutputDesc(const BlendDescArray &blen
                 //
                 // Besides disabling blending, use default values for factors and
                 // operations to reduce the number of unique pipeline states.
-                outputDescriptor.colorAttachments[i].reset(texture->pixelFormat(),
-                                                           blendDescArray[i].writeMask);
+                outColorAttachment.reset(texture->pixelFormat(), blendDescArray[i].getWriteMask());
             }
 
             // Combine the masks. This is useful when the texture is not supposed to have alpha
             // channel such as GL_RGB8, however, Metal doesn't natively support 24 bit RGB, so
             // we need to use RGBA texture, and then disable alpha write to this texture
-            outputDescriptor.colorAttachments[i].writeMask &= texture->getColorWritableMask();
+            outColorAttachment.setWriteMask(outColorAttachment.getWriteMask() &
+                                            texture->getColorWritableMask());
         }
         else
         {
 
-            outputDescriptor.colorAttachments[i].blendingEnabled = false;
-            outputDescriptor.colorAttachments[i].pixelFormat     = MTLPixelFormatInvalid;
+            outColorAttachment.setBlendingDisabled();
+            outColorAttachment.setPixelFormat(MTLPixelFormatInvalid);
         }
     }
 
     // Reset the unused output slots to ensure consistent hash value
-    for (uint32_t i = this->numColorAttachments; i < outputDescriptor.colorAttachments.size(); ++i)
+    for (uint32_t i = this->numColorAttachments; i < outDesc->colorAttachments.size(); ++i)
     {
-        outputDescriptor.colorAttachments[i].reset();
+        outDesc->colorAttachments[i] = {};
     }
 
-    auto depthTexture = this->depthAttachment.texture;
-    outputDescriptor.depthAttachmentPixelFormat =
-        depthTexture ? depthTexture->pixelFormat() : MTLPixelFormatInvalid;
+    auto depthTexture = depthAttachment.texture;
+    outDesc->setDepthAttachmentPixelFormat(depthTexture ? depthTexture->pixelFormat()
+                                                        : MTLPixelFormatInvalid);
 
-    auto stencilTexture = this->stencilAttachment.texture;
-    outputDescriptor.stencilAttachmentPixelFormat =
-        stencilTexture ? stencilTexture->pixelFormat() : MTLPixelFormatInvalid;
+    auto stencilTexture = stencilAttachment.texture;
+    outDesc->setStencilAttachmentPixelFormat(stencilTexture ? stencilTexture->pixelFormat()
+                                                            : MTLPixelFormatInvalid);
 }
 
 bool RenderPassDesc::equalIgnoreLoadStoreOptions(const RenderPassDesc &other) const
@@ -814,20 +597,14 @@ bool RenderPassDesc::operator==(const RenderPassDesc &other) const
 
     for (uint32_t i = 0; i < numColorAttachments; ++i)
     {
-        auto &renderPassColorAttachment = colorAttachments[i];
-        auto &otherRPAttachment         = other.colorAttachments[i];
-        if (renderPassColorAttachment != (otherRPAttachment))
+        if (colorAttachments[i] != other.colorAttachments[i])
         {
             return false;
         }
     }
-
-    if (defaultWidth != other.defaultWidth || defaultHeight != other.defaultHeight)
-    {
-        return false;
-    }
-
-    return depthAttachment == other.depthAttachment && stencilAttachment == other.stencilAttachment;
+    return depthAttachment == other.depthAttachment &&
+           stencilAttachment == other.stencilAttachment && defaultWidth == other.defaultWidth &&
+           defaultHeight == other.defaultHeight && rasterSampleCount == other.rasterSampleCount;
 }
 
 // Convert to Metal object
@@ -879,10 +656,8 @@ angle::ObjCPtr<id<MTLDepthStencilState>> StateCache::getNullDepthStencilState(
 {
     if (!mNullDepthStencilState)
     {
-        DepthStencilDesc desc;
-        desc.reset();
-        ASSERT(desc.frontFaceStencil.stencilCompareFunction == MTLCompareFunctionAlways);
-        desc.depthWriteEnabled = false;
+        DepthStencilDesc desc(MTLCompareFunctionAlways, false);
+        ASSERT(desc.frontFaceStencil.getStencilCompareFunction() == MTLCompareFunctionAlways);
         mNullDepthStencilState = getDepthStencilState(device, desc);
     }
     return mNullDepthStencilState;
@@ -940,8 +715,6 @@ angle::ObjCPtr<id<MTLSamplerState>> StateCache::getNullSamplerState(
     const mtl::ContextDevice &device)
 {
     SamplerDesc desc;
-    desc.reset();
-
     return getSamplerState(device, desc);
 }
 

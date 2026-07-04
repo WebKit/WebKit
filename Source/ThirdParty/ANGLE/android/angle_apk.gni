@@ -14,6 +14,11 @@ angle_libraries = [
   "libfeature_support",
 ]
 
+enable_compressed_symbols =
+    symbol_level != 0 &&
+    (angle_standalone || (build_with_chromium && !use_mold)) &&
+    !angle_use_static_angle
+
 if (enable_java_templates) {
   template("angle_apk") {
     manifest_target_name = "${target_name}__manifest"
@@ -43,7 +48,7 @@ if (enable_java_templates) {
       min_sdk_version = 26
       target_sdk_version = 28
       deps = [ ":${invoker.package_name}_assets" ]
-      if (symbol_level != 0) {
+      if (enable_compressed_symbols) {
         deps += [ ":compressed_symbols" ]
         if (android_64bit_target_cpu &&
             defined(android_secondary_abi_toolchain)) {
@@ -53,7 +58,7 @@ if (enable_java_templates) {
 
       if (android_64bit_target_cpu &&
           defined(android_secondary_abi_toolchain)) {
-        if (symbol_level == 0) {
+        if (!enable_compressed_symbols) {
           secondary_abi_shared_libraries = []
           foreach(_library, angle_libraries) {
             secondary_abi_shared_libraries +=
@@ -82,7 +87,7 @@ if (enable_java_templates) {
         }
       }
 
-      if (symbol_level == 0) {
+      if (!enable_compressed_symbols) {
         shared_libraries = []
         foreach(_library, angle_libraries) {
           shared_libraries += [ "$angle_root:$_library" ]

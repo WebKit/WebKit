@@ -448,7 +448,7 @@ std::string AndroidWindow::GetExternalStorageDirectory()
 }
 
 // static
-OSWindow *OSWindow::New()
+OSWindow *OSWindow::New(void * /*nativeDisplay*/)
 {
     // There should be only one live instance of AndroidWindow at a time,
     // as there is only one Activity Surface behind it.

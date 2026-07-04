@@ -12,7 +12,6 @@
 
 #include "libANGLE/renderer/vulkan/SurfaceVk.h"
 
-struct wl_display;
 struct wl_egl_window;
 
 namespace rx
@@ -25,16 +24,16 @@ class WindowSurfaceVkWayland : public WindowSurfaceVk
     // before the next operation which would provoke a backbuffer to be pulled.
     static void ResizeCallback(wl_egl_window *window, void *payload);
 
-    WindowSurfaceVkWayland(const egl::SurfaceState &surfaceState,
-                           EGLNativeWindowType window,
-                           wl_display *display);
+    // The wl_display for the Vulkan surface is derived from the wl_surface
+    // proxy inside createSurfaceVk (wl_proxy_set_queue requires proxy and
+    // queue to share a connection); no display argument is needed.
+    WindowSurfaceVkWayland(const egl::SurfaceState &surfaceState, EGLNativeWindowType window);
 
   private:
     angle::Result createSurfaceVk(vk::ErrorContext *context) override;
     angle::Result getCurrentWindowSize(vk::ErrorContext *context,
                                        gl::Extents *extentsOut) const override;
 
-    wl_display *mWaylandDisplay;
     gl::Extents mExtents;
 };
 

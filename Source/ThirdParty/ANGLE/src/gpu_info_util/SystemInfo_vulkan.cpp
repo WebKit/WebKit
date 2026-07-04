@@ -187,8 +187,9 @@ bool HasKhronosValidationLayer(const std::vector<VkLayerProperties> &layerProps)
 {
     for (const auto &layerProp : layerProps)
     {
-        std::string layerPropLayerName = std::string(layerProp.layerName);
-        if (layerPropLayerName == kVkKhronosValidationLayerName[0])
+        ASSERT(strlen(layerProp.layerName) < sizeof(layerProp.layerName));
+        if (strncmp(layerProp.layerName, kVkKhronosValidationLayerName[0],
+                    sizeof(layerProp.layerName)) == 0)
         {
             return true;
         }

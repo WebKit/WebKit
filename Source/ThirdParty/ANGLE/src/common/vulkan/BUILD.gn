@@ -42,7 +42,7 @@ if (angle_enable_vulkan || angle_build_vulkan_system_info) {
       defines = [ "ANGLE_SHARED_LIBVULKAN=1" ]
     }
     if (angle_use_wayland) {
-      include_dirs = [ "$wayland_dir/src" ]
+      include_dirs = [ "$wayland_dir" ]
     }
     configs = [ "$angle_root:angle_vulkan_wayland_config" ]
   }
@@ -50,7 +50,7 @@ if (angle_enable_vulkan || angle_build_vulkan_system_info) {
   angle_source_set("angle_vulkan_headers") {
     sources = [ "vk_headers.h" ]
     if (angle_shared_libvulkan) {
-      public_deps = [ "$angle_root/src/third_party/volk:volk" ]
+      public_deps = [ "$angle_root/src/third_party/volk" ]
     } else {
       public_deps = [ "$angle_vulkan_headers_dir:vulkan_headers" ]
     }

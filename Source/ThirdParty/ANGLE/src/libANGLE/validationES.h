@@ -908,9 +908,9 @@ ANGLE_INLINE bool ValidateDrawInstancedAttribs(const Context *context,
     if (ANGLE_LIKELY(baseinstance == 0))
     {
         // Fast path when baseinstance == 0:
-        // floor((primcount - 1) / attrib.divisor) < attrib.elementLimit
+        // for all attribs: floor((primcount - 1) / attrib.divisor) < attrib.elementLimit
         // ->
-        // primcount <= min(attrib.elementLimit * divisor)
+        // primcount <= min(for all attribs: attrib.elementLimit * attrib.divisor)
         const GLint64 limit = context->getInstancedVertexElementLimit();
         if (primcount > limit)
         {

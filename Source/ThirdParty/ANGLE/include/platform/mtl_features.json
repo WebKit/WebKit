@@ -418,6 +418,13 @@
                 "Inject statements into loop bodies when needed to ensure infinite loops are optimized out."
             ],
             "issue": "http://crbug.com/1513738"
+        },
+        {
+            "name": "allocate_non_zero_textures",
+            "category": "Features",
+            "description": [
+                "Clear allocated textures to non-zero values to help detect uninitialized reads."
+            ]
         }
     ]
 }

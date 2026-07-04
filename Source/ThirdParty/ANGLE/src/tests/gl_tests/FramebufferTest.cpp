@@ -620,9 +620,9 @@ TEST_P(FramebufferTest_ES3, InvalidateIncompleteDepthStencil)
     GLFramebuffer framebuffer;
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
-    // Try to attach level 2 (out of range) to GL_DEPTH_STENCIL_ATTACHMENT.
+    // Try to attach level 1 (out of range) to GL_DEPTH_STENCIL_ATTACHMENT.
     // This makes the framebuffer incomplete.
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, texture, 2, 0);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, texture, 1, 0);
     EXPECT_GL_NO_ERROR();
 
     // Verify the framebuffer is incomplete.

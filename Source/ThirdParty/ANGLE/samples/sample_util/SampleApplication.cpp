@@ -101,7 +101,7 @@ SampleApplication::SampleApplication(std::string name,
         mEntryPointsLib.reset(angle::OpenSharedLibrary("opengl32", angle::SearchType::SystemDir));
         mDriverType = angle::GLESDriverType::SystemWGL;
 #else
-        mGLWindow = EGLWindow::New(glMajorVersion, glMinorVersion);
+        mGLWindow = mEGLWindow = EGLWindow::New(glMajorVersion, glMinorVersion);
         mEntryPointsLib.reset(angle::OpenSharedLibraryWithExtension(
             angle::GetNativeEGLLibraryNameWithExtension(), angle::SearchType::SystemDir));
         mDriverType = angle::GLESDriverType::SystemEGL;

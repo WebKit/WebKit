@@ -43,6 +43,7 @@ bool GetNvidiaDriverVersionWithXNVCtrl(std::string *version)
                 ASSERT(buffer != nullptr);
                 *version = buffer;
                 XFree(buffer);
+                XCloseDisplay(display);
                 return true;
             }
         }

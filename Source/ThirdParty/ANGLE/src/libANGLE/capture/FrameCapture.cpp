@@ -21,6 +21,7 @@
 
 #include "common/aligned_memory.h"
 #include "common/angle_version_info.h"
+#include "common/base/anglebase/no_destructor.h"
 #include "common/frame_capture_utils.h"
 #include "common/gl_enum_utils.h"
 #include "common/mathutil.h"
@@ -542,7 +543,10 @@ void MaybeMergeClientAttributes(const gl::VertexArray *vao,
         const gl::VertexBinding &binding  = vao->getVertexBinding(attrib.bindingIndex);
 
         const void *clientSideAddress = clientVertexArrayData[attribIndex];
-        ASSERT(clientSideAddress != nullptr);
+        if (clientSideAddress == nullptr)
+        {
+            continue;
+        }
 
         size_t bytesToCapture = attrib.format->pixelBytes;
         if (shouldCaptureClientArrayData)
@@ -1106,6 +1110,37 @@ void MaybeResetFenceSyncObjects(std::stringstream &out,
             WriteCppReplayForCall(call, replayWriter, out, header, binaryData,
                                   maxResourceIDBufferSize);
             out << ";\n";
+        }
+    }
+}
+
+// Emit external-texture EGLImage rebinds for any bindings this context changed
+// during capture. Per-context placement ensures each glEGLImageTargetTexture2DOES
+// runs with the originating context current, so the rebind scopes correctly
+void MaybeResetEGLImageBindings(gl::ContextID contextID,
+                                std::stringstream &resetStream,
+                                ResourceTracker *resourceTracker,
+                                bool *anyResourceReset)
+{
+    auto imageBinding = resourceTracker->getExternalImageBindingsToRestore().find(contextID);
+    if (imageBinding != resourceTracker->getExternalImageBindingsToRestore().end() &&
+        !imageBinding->second.empty())
+    {
+        const std::map<GLuint, egl::ImageID> &textureIDToImageTable =
+            resourceTracker->getTextureIDToImageTable();
+        for (GLuint textureID : imageBinding->second)
+        {
+            auto imageBindingMap = textureIDToImageTable.find(textureID);
+            if (imageBindingMap != textureIDToImageTable.end())
+            {
+                resetStream << "    glBindTexture(GL_TEXTURE_EXTERNAL_OES, "
+                               "gTextureMap["
+                            << textureID << "]);\n";
+                resetStream << "    glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, "
+                               "gEGLImageMap2["
+                            << imageBindingMap->second.value << "]);\n";
+                *anyResourceReset = true;
+            }
         }
     }
 }
@@ -3940,8 +3975,14 @@ void CaptureShareGroupMidExecutionSetup(
 
         auto eglImageAttribIter = resourceTracker->getImageToAttribTable().find(
             reinterpret_cast<EGLImage>(static_cast<uintptr_t>(eglImageID)));
-        ASSERT(eglImageAttribIter != resourceTracker->getImageToAttribTable().end());
-        const egl::AttributeMap &attribs = eglImageAttribIter->second;
+
+        // EGLCreateImage calls commonly specify no attribs so use an empty default
+        // if needed
+        static const angle::base::NoDestructor<egl::AttributeMap> kDefaultAttribs;
+        const egl::AttributeMap &attribs =
+            (eglImageAttribIter != resourceTracker->getImageToAttribTable().end())
+                ? eglImageAttribIter->second
+                : *kDefaultAttribs;
 
         for (std::vector<CallCapture> *calls : imageGenCalls)
         {
@@ -4239,23 +4280,40 @@ void CaptureShareGroupMidExecutionSetup(
                 }
                 else
                 {
-                    // Original image was deleted and needs to be recreated first
+                    // Original image was deleted, just use a placeholder ID for now.
+                    // UpdateEGLImageData() will create the staging texture at bind
+                    // time
                     eglImageID = {maxAccessedResourceIDs[ResourceIDType::Image] + 1};
-                    for (std::vector<CallCapture> *calls : texSetupCalls)
-                    {
-                        egl::AttributeMap attribs = egl::AttributeMap::CreateFromIntArray(nullptr);
-                        CallCapture eglCreateImageKHRCall = egl::CaptureCreateImageKHR(
-                            nullptr, true, nullptr, context->id(), EGL_GL_TEXTURE_2D,
-                            reinterpret_cast<EGLClientBuffer>(static_cast<uintptr_t>(0)), attribs,
-                            reinterpret_cast<EGLImage>(static_cast<uintptr_t>(eglImageID.value)));
-                        CaptureCustomCreateEGLImage(context, "CreateEGLImageKHR", desc.size.width,
-                                                    desc.size.height, eglCreateImageKHRCall,
-                                                    *calls);
-                    }
                 }
-                // Pass the eglImage to the texture that is bound to GL_TEXTURE_EXTERNAL_OES target
+
+                // Output an UpdateEGLImageData() call immediately before the external bind call to
+                // prepare a texture with either a representation of the AHB or a default texture
+                // if AHB retrieval fails
                 for (std::vector<CallCapture> *calls : texSetupCalls)
                 {
+                    auto imageEntry = resourceTracker->getImageDataMap().find(eglImageID);
+
+                    ParamBuffer params;
+                    params.addValueParam("imageID", ParamType::TGLuint, eglImageID.value);
+                    params.addValueParam("width", ParamType::TGLsizei,
+                                         static_cast<GLsizei>(desc.size.width));
+                    params.addValueParam("height", ParamType::TGLsizei,
+                                         static_cast<GLsizei>(desc.size.height));
+
+                    ParamCapture pixelsParam("pixels", ParamType::TvoidConstPointer);
+                    if (imageEntry != resourceTracker->getImageDataMap().end())
+                    {
+                        pixelsParam.value.voidConstPointerVal = imageEntry->second.data();
+                        pixelsParam.data.push_back(imageEntry->second);
+                    }
+                    else
+                    {
+                        pixelsParam.value.voidConstPointerVal = nullptr;
+                    }
+                    params.addParam(std::move(pixelsParam));
+
+                    calls->emplace_back("UpdateEGLImageData", std::move(params));
+
                     Capture(calls, CaptureEGLImageTargetTexture2DOES(
                                        replayState, true, gl::TextureType::External, eglImageID));
                 }
@@ -8002,8 +8060,16 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
                     .value.TextureTypeVal;
             egl::ImageID imageID =
                 call.params.getParam("imagePacked", ParamType::TImageID, 1).value.ImageIDVal;
-            mResourceTracker.getTextureIDToImageTable().insert(std::pair<GLuint, egl::ImageID>(
-                context->getState().getTargetTexture(target)->getId(), imageID));
+            GLuint textureID            = context->getState().getTargetTexture(target)->getId();
+            auto &textureIDToImageTable = mResourceTracker.getTextureIDToImageTable();
+            auto existingBinding        = textureIDToImageTable.find(textureID);
+            if (isCaptureActive() && existingBinding != textureIDToImageTable.end() &&
+                existingBinding->second != imageID)
+            {
+                mResourceTracker.getExternalImageBindingsToRestore()[context->id()].insert(
+                    textureID);
+            }
+            textureIDToImageTable.insert(std::pair<GLuint, egl::ImageID>(textureID, imageID));
             break;
         }
 
@@ -8051,6 +8117,8 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
                     ++texImageIter;
                 }
             }
+
+            mResourceTracker.getImageDataMap().erase(eglImageID);
 
             FrameCaptureShared *frameCaptureShared =
                 context->getShareGroup()->getFrameCaptureShared();
@@ -8391,6 +8459,66 @@ void FrameCaptureShared::maybeCapturePostCallUpdates(const gl::Context *context)
                 context->getProgramResolveLink(param.value.ShaderProgramIDVal);
             CaptureUpdateUniformLocations(program, &mFrameCalls);
             CaptureUpdateUniformBlockIndexes(program, &mFrameCalls);
+            break;
+        }
+        case EntryPoint::GLEGLImageTargetTexture2DOES:
+        {
+            gl::TextureType target =
+                lastCall.params.getParam("targetPacked", ParamType::TTextureType, 0)
+                    .value.TextureTypeVal;
+            egl::ImageID imageID =
+                lastCall.params.getParam("imagePacked", ParamType::TImageID, 1).value.ImageIDVal;
+
+            const egl::Image *eglImage = context->getDisplay()->getImage(imageID);
+            if (!eglImage)
+            {
+                break;
+            }
+
+            size_t width  = eglImage->getWidth();
+            size_t height = eglImage->getHeight();
+
+            // Try to read back AHB contents. External textures are normally unreadable in
+            // GLES but the ANGLE Vulkan backend supports this. If unsupported, output
+            // UpdateEGLImageData(..., nullptr) which will then default to a fallback green
+            // placeholder texture.
+            bool imageDataCaptured = false;
+            gl::Texture *texture   = context->getState().getTargetTexture(target);
+            if (texture && context->getExtensions().getImageANGLE)
+            {
+                std::vector<uint8_t> imagePixels(width * height * 4);
+                gl::PixelPackState packState;
+                packState.alignment = 1;
+                if (texture->getTexImage(
+                        context, packState, nullptr, gl::NonCubeTextureTypeToTarget(target), 0,
+                        GL_RGBA, GL_UNSIGNED_BYTE, imagePixels.data()) == angle::Result::Continue)
+                {
+                    mResourceTracker.getImageDataMap()[imageID] = std::move(imagePixels);
+                    imageDataCaptured                           = true;
+                }
+            }
+
+            ParamBuffer params;
+            params.addValueParam("imageID", ParamType::TGLuint, imageID.value);
+            params.addValueParam("width", ParamType::TGLsizei, static_cast<GLsizei>(width));
+            params.addValueParam("height", ParamType::TGLsizei, static_cast<GLsizei>(height));
+
+            ParamCapture pixelsParam("pixels", ParamType::TvoidConstPointer);
+            if (imageDataCaptured)
+            {
+                auto &storedImagePixels               = mResourceTracker.getImageDataMap()[imageID];
+                pixelsParam.value.voidConstPointerVal = storedImagePixels.data();
+                pixelsParam.data.push_back(storedImagePixels);
+            }
+            else
+            {
+                pixelsParam.value.voidConstPointerVal = nullptr;
+            }
+            params.addParam(std::move(pixelsParam));
+
+            // Insert UpdateEGLImageData so the EGLImage and data are valid for the
+            // glEGLImageTargetTexture2DOES() bind call
+            mFrameCalls.emplace(mFrameCalls.end() - 1, "UpdateEGLImageData", std::move(params));
             break;
         }
         case EntryPoint::GLUseProgram:
@@ -9669,6 +9797,9 @@ void FrameCaptureShared::writeMainContextCppReplay(const gl::Context *context,
                                         &mBinaryData, anyResourceReset, &mResourceIDBufferSize);
                 }
 
+                MaybeResetEGLImageBindings(contextID, resetStream, &mResourceTracker,
+                                           &anyResourceReset);
+
                 // Only call eglMakeCurrent if anything was actually reset in the function and the
                 // context differs from current
                 if (anyResourceReset && contextID != context->id())
@@ -9939,6 +10070,15 @@ namespace egl
 {
 angle::ParamCapture CaptureAttributeMap(const egl::AttributeMap &attribMap)
 {
+    // It is common for EGL entrypoints to take NULL attribute lists, for instance
+    // eglCreateImage()
+    if (attribMap.getType() == AttributeMapType::Invalid || attribMap.isEmpty())
+    {
+        angle::ParamCapture paramCapture("attrib_list", angle::ParamType::TEGLintPointer);
+        paramCapture.value.EGLintPointerVal = nullptr;
+        return paramCapture;
+    }
+
     switch (attribMap.getType())
     {
         case AttributeMapType::Attrib:

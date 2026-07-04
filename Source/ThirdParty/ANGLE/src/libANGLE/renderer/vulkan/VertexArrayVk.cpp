@@ -248,7 +248,7 @@ angle::Result StreamVertexData(ContextVk *contextVk,
 angle::Result StreamVertexDataWithDivisor(ContextVk *contextVk,
                                           vk::BufferHelper *dstBufferHelper,
                                           const uint8_t *srcData,
-                                          size_t bytesToAllocate,
+                                          size_t dstBufferSize,
                                           size_t srcStride,
                                           size_t dstStride,
                                           VertexCopyFunction vertexLoadFunction,
@@ -261,23 +261,23 @@ angle::Result StreamVertexDataWithDivisor(ContextVk *contextVk,
     uint8_t *dst = dstBufferHelper->getMappedMemory();
 
     // Each source vertex is used `divisor` times before advancing. Clamp to avoid OOB reads.
-    size_t clampedSize =
-        std::min((skipVertices + numSrcVertices * divisor) * dstStride, bytesToAllocate);
-
-    ASSERT(clampedSize % dstStride == 0);
-    ASSERT(divisor > 0);
+    ASSERT(dstBufferSize % dstStride == 0);
+    const size_t dstBufferVertexCount =
+        std::min(skipVertices + numSrcVertices * divisor, dstBufferSize / dstStride);
 
     // If base instance is non-zero, a number of vertices are skipped.  Since they are not used, set
     // them to zero.
     if (skipVertices > 0)
     {
-        memset(dst, 0, std::min(skipVertices * dstStride, bytesToAllocate));
+        memset(dst, 0, std::min(skipVertices * dstStride, dstBufferSize));
         dst += skipVertices * dstStride;
         srcData += skipVertices * srcStride;
     }
 
+    // Convert vertices from skipVertices to the end.
+    ASSERT(divisor > 0);
     uint32_t srcVertexUseCount = 0;
-    for (size_t dataCopied = 0; dataCopied < clampedSize; dataCopied += dstStride)
+    for (size_t vertexIndex = skipVertices; vertexIndex < dstBufferVertexCount; ++vertexIndex)
     {
         vertexLoadFunction(srcData, srcStride, 1, dst);
         srcVertexUseCount++;
@@ -290,12 +290,9 @@ angle::Result StreamVertexDataWithDivisor(ContextVk *contextVk,
     }
 
     // Satisfy robustness constraints (only if extension enabled)
-    if (contextVk->getExtensions().robustnessAny())
+    if (contextVk->getExtensions().robustnessAny() && dstBufferVertexCount < dstBufferSize)
     {
-        if (clampedSize < bytesToAllocate)
-        {
-            memset(dst, 0, bytesToAllocate - clampedSize);
-        }
+        memset(dst, 0, dstBufferSize - dstBufferVertexCount * dstStride);
     }
 
     ANGLE_TRY(dstBufferHelper->flush(renderer));
@@ -1502,17 +1499,18 @@ angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
             }
             else
             {
-                // TODO: Test and take baseInstance into account. http://anglebug.com/512867159
                 ASSERT(getVertexArrayBuffer(attrib.bindingIndex) == nullptr);
                 size_t count           = UnsignedCeilDivide(instanceCount, divisor);
-                size_t bytesToAllocate = count * stride;
+                size_t srcOffset       = baseInstance * stride;
+                size_t dstOffset       = srcOffset;
+                size_t bytesToAllocate = count * stride + dstOffset;
 
                 // Allocate buffer for results
                 ANGLE_TRY(contextVk->allocateStreamedVertexBuffer(attribIndex, bytesToAllocate,
                                                                   &vertexDataBuffer));
 
-                ANGLE_TRY(StreamVertexData(contextVk, vertexDataBuffer, src, bytesToAllocate, 0,
-                                           count, binding.getStride(),
+                ANGLE_TRY(StreamVertexData(contextVk, vertexDataBuffer, src + srcOffset,
+                                           bytesToAllocate, dstOffset, count, binding.getStride(),
                                            vertexFormat.getVertexLoadFunction()));
             }
         }
