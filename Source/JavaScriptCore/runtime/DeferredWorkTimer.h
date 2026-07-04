@@ -113,7 +113,7 @@ public:
 
     static Ref<DeferredWorkTimer> create(VM& vm) { return adoptRef(*new DeferredWorkTimer(vm)); }
 private:
-    DeferredWorkTimer(VM&);
+    JS_EXPORT_PRIVATE DeferredWorkTimer(VM&);
 
     Lock m_taskLock;
     bool m_runTasks { true };
