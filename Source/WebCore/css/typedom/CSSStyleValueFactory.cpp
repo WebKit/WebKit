@@ -277,8 +277,10 @@ static ExceptionOr<Ref<CSSStyleValue>> reifyValue(CSS::SpecificKeyword auto cons
     return WebCore::reifyValue(keyword.value);
 }
 
-static ExceptionOr<Ref<CSSStyleValue>> reifyValue(const CSS::CustomIdent& customIdent)
+static ExceptionOr<Ref<CSSStyleValue>> reifyValue(const CSS::CustomIdent& customIdent, const CSSValue& cssValue, AssociatedProperty&& associatedProperty)
 {
+    if (!customIdent.isResolved())
+        return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)), WTF::move(associatedProperty));
     return upcast<CSSStyleValue>(CSSOMKeywordValue::rectifyKeywordish(CSS::serializationForCSS(CSS::defaultSerializationContext(), customIdent)));
 }
 
@@ -289,7 +291,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Document& docum
     else if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(cssValue))
         return WebCore::reifyValue(keywordValue->keyword());
     else if (auto* customIdentValue = dynamicDowncast<CSSCustomIdentValue>(cssValue))
-        return WebCore::reifyValue(customIdentValue->customIdent());
+        return WebCore::reifyValue(customIdentValue->customIdent(), cssValue, WTF::move(associatedProperty));
     else if (auto* imageValue = dynamicDowncast<CSSImageValue>(cssValue))
         return Ref<CSSStyleValue> { CSSStyleImageValue::create(const_cast<CSSImageValue&>(*imageValue), document) };
     else if (auto* referenceValue = dynamicDowncast<CSSSubstitutionValue>(cssValue))
@@ -383,7 +385,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Document& docum
                 return WebCore::reifyValue(keyword);
             },
             [&](const CSS::CustomIdent& customIdent) -> ExceptionOr<Ref<CSSStyleValue>> {
-                return WebCore::reifyValue(customIdent);
+                return WebCore::reifyValue(customIdent, cssValue, WTF::move(associatedProperty));
             },
             [&](const auto&) -> ExceptionOr<Ref<CSSStyleValue>> {
                 return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)), WTF::move(associatedProperty));

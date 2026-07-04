@@ -98,6 +98,9 @@ StringView consumeEagerlyResolvableCustomIdentRawExcluding(CSSParserTokenRange& 
 
 std::optional<CSS::CustomIdent> consumeUnresolvedCustomIdent(CSSParserTokenRange& range, CSS::PropertyParserState&)
 {
+    // FIXME: When support for the ident() function is added, it must only be consumed within an
+    // element context (https://github.com/w3c/csswg-drafts/issues/12219), so descriptors and
+    // at-rule preludes continue to reject it.
     if (range.peek().type() != IdentToken || !isValidCustomIdentifier(range.peek().id()))
         return { };
     return CSS::CustomIdent { range.consumeIncludingWhitespace().value().toAtomString() };
@@ -105,6 +108,11 @@ std::optional<CSS::CustomIdent> consumeUnresolvedCustomIdent(CSSParserTokenRange
 
 std::optional<CSS::CustomIdent> consumeUnresolvedCustomIdentExcluding(CSSParserTokenRange& range, CSS::PropertyParserState&, std::initializer_list<CSSValueID> excluding)
 {
+    // FIXME: When support for the ident() function is added, here must be tested
+    // against the mock-evaluation from https://github.com/w3c/csswg-drafts/issues/12206, not against this
+    // single token's id.
+    // e.g. for excluding={none}, ident("no" "ne") -> "none" must be rejected
+    // while ident("none" 1) -> "none0" must be accepted.
     if (range.peek().type() != IdentToken || !isValidCustomIdentifier(range.peek().id()) || std::ranges::find(excluding, range.peek().id()) != excluding.end())
         return { };
     return CSS::CustomIdent { range.consumeIncludingWhitespace().value().toAtomString() };
@@ -138,6 +146,11 @@ StringView consumeEagerlyResolvableDashedIdentRaw(CSSParserTokenRange& range)
 
 std::optional<CSS::CustomIdent> consumeUnresolvedDashedIdent(CSSParserTokenRange& range, CSS::PropertyParserState&)
 {
+    // FIXME: When support for the ident() function is added, here must be tested with
+    // the mock-evaluation from https://github.com/w3c/csswg-drafts/issues/12206,
+    // not against this single token's value.
+    // e.g. ident("--" "foo") -> "--foo" must be accepted while
+    // ident("-" 1) -> "-0" must be rejected.
     if (range.peek().type() != IdentToken || !range.peek().value().startsWith("--"_s))
         return { };
     return CSS::CustomIdent { range.consumeIncludingWhitespace().value().toAtomString() };

@@ -51,6 +51,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StyleComputedStyle+SettersInlines.h"
+#include "StyleCustomIdent.h"
 #include "StyleCustomProperty.h"
 #include "StyleCustomPropertyData.h"
 #include "StyleCustomPropertyRegistry.h"
@@ -439,7 +440,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         style.setHasExplicitlyInheritedProperties();
 
     if (RefPtr paintImageValue = dynamicDowncast<CSSPaintImageValue>(valueToApply.get())) {
-        auto& name = paintImageValue->name().value;
+        auto name = toStyle(paintImageValue->name(), m_state).value;
         if (RefPtr paintWorklet = const_cast<Document&>(m_state->document()).paintWorkletGlobalScopeForName(name)) {
             Locker locker { paintWorklet->paintDefinitionLock() };
             if (auto* registration = paintWorklet->paintDefinitionMap().get(name)) {
