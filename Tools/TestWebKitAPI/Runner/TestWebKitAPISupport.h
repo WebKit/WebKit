@@ -37,7 +37,7 @@ extern "C" {
 
 void TestWebKitAPIEnableAllSDKAlignedBehaviors(void);
 
-BOOL TestWebKitAPIRunTests(int argc, char * _Nullable * _Nonnull argv);
+BOOL TestWebKitAPIRunTests(int argc, char * _Nullable * _Nonnull argv, bool * _Nonnull didRunAnyTest);
 
 const void * _Nonnull swt_abiv0_getEntryPoint(void); // Defined in Swift Testing
 

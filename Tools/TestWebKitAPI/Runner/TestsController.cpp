@@ -78,7 +78,7 @@ TestsController::TestsController()
     WTF::setProcessPrivileges(allPrivileges());
 }
 
-bool TestsController::run(int argc, char** argv)
+bool TestsController::run(int argc, char** argv, bool* didRunAnyTest)
 {
     bool useDefaultPrinter = false;
     for (int i = 1; i < argc; ++i) {
@@ -94,7 +94,17 @@ bool TestsController::run(int argc, char** argv)
         listeners.Append(new Printer);
     }
 
-    return !RUN_ALL_TESTS();
+    bool status = !RUN_ALL_TESTS();
+
+    // A run only actually executes tests when we are not merely listing them and the
+    // filter selected at least one test to run.
+    auto& unitTest = *::testing::UnitTest::GetInstance();
+    bool outDidRunAnyTest = !GTEST_FLAG_GET(list_tests) && unitTest.test_to_run_count() > 0;
+
+    if (didRunAnyTest)
+        *didRunAnyTest = outDidRunAnyTest;
+
+    return status;
 }
 
 } // namespace TestWebKitAPI

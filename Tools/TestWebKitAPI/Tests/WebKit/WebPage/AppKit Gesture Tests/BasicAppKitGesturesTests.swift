@@ -61,6 +61,8 @@ extension AppKitGesturesTests {
             self.window.setFrameOrigin(.zero)
             NSApp.activate(ignoringOtherApps: true)
             self.window.makeKeyAndOrderFront(nil)
+
+            await NSApp.waitForActivation()
         }
     }
 }
@@ -93,8 +95,6 @@ extension AppKitGesturesTests.Basic {
 
         let toBounds = try await screenBoundsOfText("to")
 
-        guard NSApp.isActive else { return }
-
         await recap.play { composer in
             composer._wk_click(at: toBounds.center, for: .seconds(0.05))
         }
@@ -121,11 +121,6 @@ extension AppKitGesturesTests.Basic {
         let crazyBounds = try await screenBoundsOfText("crazy")
 
         let editorStateSnapshots = page.editorStateSnapshots()
-
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
 
         await recap.play { composer in
             composer._wk_click(at: toBounds.center, for: .seconds(0.1))
@@ -157,11 +152,6 @@ extension AppKitGesturesTests.Basic {
 
         let startViewportCoordinates = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: "line97"))
         let startBounds = screenBounds(ofRectInViewportCoordinates: startViewportCoordinates)
-
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
 
         let initialScrollPosition = try await page.callJavaScript(JavaScriptMessages.ScrollPosition())
         #expect(CGPoint(initialScrollPosition) == .zero)
@@ -200,11 +190,6 @@ extension AppKitGesturesTests.Basic {
         await page.waitForNextPresentationUpdate()
 
         let startBounds = try await screenBounds(ofElementWithID: "line97")
-
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
 
         // Record (timestamp, scrollY) on every scroll event so we can observe that scrolling continues
         // throughout the hold, rather than scrolling in one burst and stopping early (the pre-fix bug).
@@ -252,11 +237,6 @@ extension AppKitGesturesTests.Basic {
 
         let startBounds = try await screenBounds(ofElementWithID: "line97")
 
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
-
         let initialScrollPosition = try await page.callJavaScript(JavaScriptMessages.ScrollPosition())
         #expect(CGPoint(initialScrollPosition) == .zero)
 
@@ -284,11 +264,6 @@ extension AppKitGesturesTests.Basic {
 
         let startBounds = try await screenBounds(ofElementWithID: "line97")
 
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
-
         let dragEnd = screenBounds(ofPointInWindowCoordinates: NSPoint(x: window.frame.width / 2, y: 20))
 
         await recap.play { composer in
@@ -315,11 +290,6 @@ extension AppKitGesturesTests.Basic {
     func draggingSelectionToTopEdgeScrollsUp() async throws {
         try await loadScrollableText()
         await page.waitForNextPresentationUpdate()
-
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
 
         // Start partway down the page so there is room to scroll back up.
         try await page.callJavaScript { "window.scrollTo(0, 3000);" }
@@ -352,11 +322,6 @@ extension AppKitGesturesTests.Basic {
         try await loadScrollableText()
         await page.waitForNextPresentationUpdate()
 
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
-
         // Begin the selection inside the bottom edge band (~70pt from the bottom; the band is 100pt) and
         // drag only a short distance toward the edge - less than the ~50pt threshold. The selection
         // originates near the edge but the drag is too small to be a deliberate "scroll past the edge"
@@ -384,11 +349,6 @@ extension AppKitGesturesTests.Basic {
     func selectionOriginatingNearEdgeAutoscrollsAfterDraggingPastThreshold() async throws {
         try await loadScrollableText()
         await page.waitForNextPresentationUpdate()
-
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
 
         // Same near-edge origin as the short-drag test, but now drag well past the threshold (and past the
         // window edge) and hold, so the deliberate gesture engages autoscroll.
@@ -427,11 +387,6 @@ extension AppKitGesturesTests.Basic {
 
         await page.waitForNextPresentationUpdate()
 
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
-
         await withSwizzledContextMenu {
             await recap.play { composer in
                 composer._wk_click(at: crazyBoundsInScreenCoordinates.center, for: .seconds(0.1))
@@ -450,11 +405,6 @@ extension AppKitGesturesTests.Basic {
         try await loadHTML(contentEditable: contentEditable)
 
         let middleOfWindow = screenBounds(ofPointInWindowCoordinates: window.frame.center)
-
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
 
         await withSwizzledContextMenu {
             await recap.play { composer in
@@ -491,11 +441,6 @@ extension AppKitGesturesTests.Basic {
         let crazyBoundsInScreenCoordinates = try await screenBoundsOfText("crazy")
         await page.waitForNextPresentationUpdate()
 
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
-
         await recap.play { composer in
             composer._wk_click(at: crazyBoundsInScreenCoordinates.center, for: .seconds(1))
         }
@@ -520,11 +465,6 @@ extension AppKitGesturesTests.Basic {
         let crazyBoundsInScreenCoordinates = try await screenBoundsOfText("crazy")
 
         await page.waitForNextPresentationUpdate()
-
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
 
         await recap.play { composer in
             composer._wk_click(at: crazyBoundsInScreenCoordinates.center, for: .seconds(0.1))
@@ -562,11 +502,6 @@ extension AppKitGesturesTests.Basic {
 
         await page.waitForNextPresentationUpdate()
 
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
-
         await recap.play { composer in
             composer._wk_click(at: crazyBoundsInScreenCoordinates.center, for: .seconds(0.1))
             composer.advanceTime(0.1)
@@ -587,11 +522,6 @@ extension AppKitGesturesTests.Basic {
         let pdfURL = try #require(Bundle.testResources.url(forResource: "test", withExtension: "pdf"))
         try await page.load(pdfURL).wait()
         await page.waitForNextPresentationUpdate()
-
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
 
         let clickPoint = screenBounds(ofPointInWindowCoordinates: .init(x: 100, y: 350))
 
@@ -626,11 +556,6 @@ extension AppKitGesturesTests.Basic {
         try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", offset: 0))
 
         await page.waitForNextPresentationUpdate()
-
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
 
         await recap.play { composer in
             composer._wk_click(at: point, for: .seconds(0.1))
@@ -703,10 +628,6 @@ extension AppKitGesturesTests.Basic {
 
         await page.waitForNextPresentationUpdate()
 
-        guard NSApp.isActive else {
-            return
-        }
-
         let initialScrollPosition = try await page.callJavaScript(JavaScriptMessages.ScrollPosition())
         #expect(CGPoint(initialScrollPosition) == .zero)
 
@@ -735,11 +656,6 @@ extension AppKitGesturesTests.Basic {
         let initialURL = try #require(URL(string: "http://webkit.org/"))
         try await page.load(html: html, baseURL: initialURL).wait()
         await page.waitForNextPresentationUpdate()
-
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
 
         let center = screenBounds(ofPointInWindowCoordinates: window.frame.center)
         let scrollEnd = CGPoint(x: center.x, y: center.y - 200)
@@ -795,10 +711,6 @@ extension AppKitGesturesTests.Basic {
 
         await page.waitForNextPresentationUpdate()
 
-        guard NSApp.isActive else {
-            return
-        }
-
         await recap.play { composer in
             composer._wk_click(at: convertedBounds.center, for: .seconds(0.1))
         }
@@ -831,10 +743,6 @@ extension AppKitGesturesTests.Basic {
 
         try await page.callJavaScript(arguments: ["elementID": "custom-slider"], script: styleAdjustmentForCustomWidgetScript)
         await page.waitForNextPresentationUpdate()
-
-        guard NSApp.isActive else {
-            return
-        }
 
         let sliderBounds = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: elementID))
         let convertedSliderBounds = screenBounds(ofRectInViewportCoordinates: sliderBounds)
@@ -885,8 +793,6 @@ extension AppKitGesturesTests.Basic {
         try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", offset: 0))
         await page.waitForNextPresentationUpdate()
 
-        guard NSApp.isActive else { return }
-
         await recap.play { composer in
             composer._wk_drag(
                 withStart: toBounds.center,
@@ -936,8 +842,6 @@ extension AppKitGesturesTests.Basic {
         }()
 
         let dragEnd = CGPoint(x: linkBounds.maxX + 50, y: linkBounds.midY)
-
-        guard NSApp.isActive else { return }
 
         let dragInitiated = Future()
 
@@ -994,8 +898,6 @@ extension AppKitGesturesTests.Basic {
 
         let dragEnd = CGPoint(x: imgBounds.maxX + 50, y: imgBounds.midY)
 
-        guard NSApp.isActive else { return }
-
         let dragInitiated = Future()
 
         let implementation: @convention(block) (NSView, NSArray, NSGestureRecognizer, AnyObject) -> NSDraggingSession? = { _, _, _, _ in
@@ -1048,8 +950,6 @@ extension AppKitGesturesTests.Basic {
 
         let crazyBounds = try await screenBoundsOfText("crazy")
         let onesBounds = try await screenBoundsOfText("ones")
-
-        guard NSApp.isActive else { return }
 
         let dragInitiated = Future()
 

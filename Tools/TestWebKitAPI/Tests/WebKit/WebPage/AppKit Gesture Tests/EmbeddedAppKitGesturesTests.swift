@@ -85,6 +85,8 @@ extension AppKitGesturesTests {
             self.window.setFrameOrigin(.zero)
             NSApp.activate(ignoringOtherApps: true)
             self.window.makeKeyAndOrderFront(nil)
+
+            await NSApp.waitForActivation()
         }
     }
 }
@@ -103,11 +105,6 @@ extension AppKitGesturesTests.Embedded {
 
         try await page.load(html: html, baseURL: baseURL).wait()
         await page.waitForNextPresentationUpdate()
-
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
 
         let cgScreenOrigin = screenBounds(ofPointInWindowCoordinates: .init(x: 0, y: windowSize.height))
         let viewportInCGScreen = CGRect(origin: cgScreenOrigin, size: windowSize)
@@ -142,11 +139,6 @@ extension AppKitGesturesTests.Embedded {
 
         try await page.load(html: html).wait()
         await page.waitForNextPresentationUpdate()
-
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
 
         let toBounds = try await screenBoundsOfText("to")
         let crazyBounds = try await screenBoundsOfText("crazy")
@@ -183,11 +175,6 @@ extension AppKitGesturesTests.Embedded {
 
         try await page.load(html: html).wait()
         await page.waitForNextPresentationUpdate()
-
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
 
         let crazyBounds = try await screenBoundsOfText("crazy")
 
@@ -231,11 +218,6 @@ extension AppKitGesturesTests.Embedded {
         let crazyBounds = try await screenBoundsOfText("crazy")
 
         await page.waitForNextPresentationUpdate()
-
-        // Recap requires this test to be ran within an app host.
-        guard NSApp.isActive else {
-            return
-        }
 
         await recap.play { composer in
             composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))

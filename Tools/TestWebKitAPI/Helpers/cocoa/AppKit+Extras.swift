@@ -41,4 +41,24 @@ extension NSWindow {
     }
 }
 
+extension NSApplication {
+    /// Suspends execution until this application is active.
+    ///
+    /// - Note: This must be called prior to any test that depends on having a "real" NSApplication.
+    @MainActor
+    public func waitForActivation() async {
+        // Activation is processed asynchronously by the AppKit event loop, so wait for it to take
+        // effect before synthesizing events.
+        var attempts = 0
+        while !NSApp.isActive && attempts < 500 {
+            try? await Task.sleep(for: .milliseconds(10))
+            attempts += 1
+        }
+
+        guard NSApp.isActive else {
+            fatalError("NSApp is not active; unable to properly run test")
+        }
+    }
+}
+
 #endif // os(macOS)

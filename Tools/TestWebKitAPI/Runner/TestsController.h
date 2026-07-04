@@ -34,7 +34,7 @@ class TestsController {
 public:
     static TestsController& singleton();
 
-    bool run(int argc, char** argv);
+    bool run(int argc, char** argv, bool* didRunAnyTest = nullptr);
 
 private:
     TestsController();

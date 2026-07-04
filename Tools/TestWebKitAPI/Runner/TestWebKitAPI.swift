@@ -67,7 +67,7 @@ struct TestWebKitAPI {
     }
 
     @MainActor
-    private func run() async throws {
+    private func configure() -> TestRunner.Configuration {
         #if WTF_PLATFORM_MACCATALYST
         UINSApplicationInstantiate()
         #endif
@@ -100,16 +100,59 @@ struct TestWebKitAPI {
         _ = NSApplication.shared
         #endif
 
-        let configuration = TestRunner.Configuration(parsing: CommandLine.arguments)
+        return TestRunner.Configuration(parsing: CommandLine.arguments)
+    }
 
-        let passedGTests = try await GoogleTestsController.shared.run(with: configuration)
-        let passedSwiftTests = try await SwiftTestsController.shared.run(with: configuration)
+    @MainActor
+    private func runGoogleTests(with configuration: TestRunner.Configuration) async throws -> (passed: Bool, didRun: Bool) {
+        let (passed, didRun) = try await GoogleTestsController.shared.run(with: configuration)
+        if didRun && !configuration.listTests {
+            exit(passed ? EXIT_SUCCESS : EXIT_FAILURE)
+        }
 
-        exit(passedGTests && passedSwiftTests ? EXIT_SUCCESS : EXIT_FAILURE)
+        return (passed, didRun)
+    }
+
+    @MainActor
+    private func runSwiftTests(with configuration: TestRunner.Configuration, googleTestsPassed: Bool) async throws {
+        let (passed, didRun) = try await SwiftTestsController.shared.run(with: configuration)
+        if didRun && !configuration.listTests {
+            exit(passed ? EXIT_SUCCESS : EXIT_FAILURE)
+        }
+
+        exit(googleTestsPassed && passed ? EXIT_SUCCESS : EXIT_FAILURE)
     }
 
     static func main() async throws {
         let instance = TestWebKitAPI()
-        try await instance.run()
+
+        let configuration = instance.configure()
+
+        let (googleTestsPassed, didRunGoogleTests) = try await instance.runGoogleTests(with: configuration)
+
+        #if WTF_PLATFORM_MAC
+        // Some tests synthesize HID events that the system delivers only to the frontmost app, and
+        // delivery requires a running AppKit event loop. Only start it when we will actually run
+        // Swift tests: i.e. when running (not listing) tests and no GoogleTest tests have run.
+        if !configuration.listTests && !didRunGoogleTests {
+            let application = NSApplication.shared
+            application.setActivationPolicy(.regular)
+
+            Task { @MainActor in
+                do {
+                    try await instance.runSwiftTests(with: configuration, googleTestsPassed: googleTestsPassed)
+                } catch {
+                    exit(EXIT_FAILURE)
+                }
+            }
+
+            application.activate(ignoringOtherApps: true)
+            application.run()
+            return
+        }
+        #endif
+
+        // Non-macOS, or macOS when listing tests / after GoogleTest tests ran: no event loop needed.
+        try await instance.runSwiftTests(with: configuration, googleTestsPassed: googleTestsPassed)
     }
 }

@@ -28,10 +28,12 @@ import struct Swift.String
 final class GoogleTestsController: TestRunner {
     static let shared = GoogleTestsController()
 
-    func run(with configuration: Configuration) async throws -> Bool {
+    func run(with configuration: Configuration) async throws -> (status: Bool, didRunAnyTest: Bool) {
         let arguments = Self.parseArguments(configuration: configuration)
         return unsafe withUnsafeMutableCStyleArguments(arguments) { argc, argv in
-            unsafe TestWebKitAPIRunTests(argc, argv)
+            var didRunAnyTest = false
+            let status = unsafe TestWebKitAPIRunTests(argc, argv, &didRunAnyTest)
+            return (status, didRunAnyTest)
         }
     }
 }

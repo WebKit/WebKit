@@ -94,12 +94,7 @@ actor SwiftTestsController: TestRunner {
         }
     }
 
-    nonisolated private func handleRecord(_ record: SwiftTestingABI.Record) {
-        saveRecord(record)
-        writeOutputIfNeeded(record)
-    }
-
-    func run(with configuration: Configuration) async throws -> Bool {
+    func run(with configuration: Configuration) async throws -> (status: Bool, didRunAnyTest: Bool) {
         let abiConfiguration = SwiftTestingABI.__CommandLineArguments_v0(configuration)
         let encodedConfiguration = try encoder.encode(abiConfiguration)
 
@@ -112,9 +107,9 @@ actor SwiftTestsController: TestRunner {
         unsafe encodedConfiguration.copyBytes(to: mutableBuffer)
         let buffer = UnsafeRawBufferPointer(mutableBuffer)
 
-        return unsafe try await Self.entryPoint(buffer) { [self, abiConfiguration] recordJSON in
-            // Either use custom logging, or Swift Testing logging, not both
-            guard abiConfiguration.verbosity == .min else {
+        let status = unsafe try await Self.entryPoint(buffer) { [self, abiConfiguration] recordJSON in
+            // Nothing runs when only listing tests, so there is nothing to record or log.
+            guard abiConfiguration.listTests == false else {
                 return
             }
 
@@ -122,8 +117,19 @@ actor SwiftTestsController: TestRunner {
             // The program should terminate if this `try` fails, any other behavior would lead to unexpected results.
             // swift-format-ignore: NeverUseForceTry
             let decoded = try! decoder.decode(SwiftTestingABI.Record.self, from: data)
-            handleRecord(decoded)
+
+            saveRecord(decoded)
+
+            // Either use custom logging, or Swift Testing logging, not both.
+            guard abiConfiguration.verbosity == .min else {
+                return
+            }
+
+            writeOutputIfNeeded(decoded)
         }
+
+        let didRunAnyTest = storage.withLock { !$0.tests.isEmpty }
+        return (status, didRunAnyTest)
     }
 }
 

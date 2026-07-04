@@ -27,7 +27,7 @@ import struct Swift.String
 protocol TestRunner {
     typealias Configuration = TestRunnerConfiguration
 
-    func run(with configuration: Configuration) async throws -> Bool
+    func run(with configuration: Configuration) async throws -> (status: Bool, didRunAnyTest: Bool)
 }
 
 struct TestRunnerConfiguration {

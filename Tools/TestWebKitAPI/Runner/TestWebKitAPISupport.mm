@@ -33,7 +33,7 @@ void TestWebKitAPIEnableAllSDKAlignedBehaviors(void)
     WTF::enableAllSDKAlignedBehaviors();
 }
 
-BOOL TestWebKitAPIRunTests(int argc, char** argv)
+BOOL TestWebKitAPIRunTests(int argc, char** argv, bool *didRunAnyTest)
 {
-    return TestWebKitAPI::TestsController::singleton().run(argc, argv);
+    return TestWebKitAPI::TestsController::singleton().run(argc, argv, didRunAnyTest);
 }
