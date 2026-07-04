@@ -77,7 +77,8 @@ public:
 
     void continueWithRequest(const WebCore::ResourceRequest& request)
     {
-        m_completionCallback(request);
+        if (!m_loader->reachedTerminalState())
+            m_completionCallback(request);
     }
 
     PendingInterceptRequest() = default;
