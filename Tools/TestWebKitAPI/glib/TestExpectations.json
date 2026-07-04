@@ -150,7 +150,7 @@
     "TestWebKitWebContext": {
         "subtests": {
             "/webkit/WebKitWebContext/uri-scheme": {
-                "expected": {"gtk": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/279204"}}
+                "expected": {"all": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/279204"}}
             },
             "/webkit/WebKitWebContext/languages": {
                 "expected": {"all": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/281942"}}
@@ -419,6 +419,15 @@
             },
             "WTF_WorkQueue.DestroyDispatchedOnDispatchQueue": {
                 "expected": {"all": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/260211" }}
+            },
+            "WTF.clampSameSignIntegers": {
+                "expected": {"wpe:arm64": {"status": ["FAIL"], "bug": "webkit.org/b/309746"}}
+            },
+            "WTF.clampUnsignedToSigned": {
+                "expected": {"wpe:arm64": {"status": ["FAIL"], "bug": "webkit.org/b/309746"}}
+            },
+            "WTF.clampSignedToUnsigned": {
+                "expected": {"wpe:arm64": {"status": ["FAIL"], "bug": "webkit.org/b/309746"}}
             },
             "WTF_DateMath.calculateLocalTimeOffset": {
                 "expected": {"wpe": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/297780"}}
