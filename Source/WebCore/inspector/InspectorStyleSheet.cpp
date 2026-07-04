@@ -1371,8 +1371,6 @@ Vector<Ref<CSSStyleRule>> InspectorStyleSheet::cssStyleRulesSplitFromSameRule(CS
 
 Vector<const CSSSelector*> InspectorStyleSheet::selectorsForCSSStyleRule(CSSStyleRule& rule)
 {
-    auto rules = cssStyleRulesSplitFromSameRule(rule);
-
     Vector<const CSSSelector*> selectors;
     for (auto& rule : cssStyleRulesSplitFromSameRule(rule)) {
         for (auto& selector : rule->styleRule().selectorList())
