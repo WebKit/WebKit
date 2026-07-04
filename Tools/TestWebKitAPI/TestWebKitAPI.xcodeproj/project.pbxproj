@@ -25,6 +25,15 @@
 			name = "Apply Configuration to XCFileLists";
 			productName = "Apply Configuration to XCFileLists";
 		};
+		07A11A5702F9C0FE00000001 /* Testing.framework Overlays */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 07A11A5702F9C0FE00000002 /* Build configuration list for PBXAggregateTarget "Testing.framework Overlays" */;
+			buildPhases = (
+				0777713A2F887DCE00A1C903 /* Embed Testing.framework */,
+			);
+			name = "Testing.framework Overlays";
+			productName = "Testing.framework Overlays";
+		};
 		5C9D921422D7DA02008E9266 /* Generate Unified Sources */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 5C9D921922D7DA02008E9266 /* Build configuration list for PBXAggregateTarget "Generate Unified Sources" */;
@@ -186,6 +195,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 0723A7492F80357300CB96E7;
 			remoteInfo = "Derived Sources";
+		};
+		07A11A5702F9C0FE00000005 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07A11A5702F9C0FE00000001;
+			remoteInfo = "Testing.framework Overlays";
+		};
+		07A11A5702F9C0FE00000006 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07A11A5702F9C0FE00000001;
+			remoteInfo = "Testing.framework Overlays";
 		};
 		0723A7562F80359900CB96E7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2010,7 +2033,6 @@
 			buildConfigurationList = 1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "TestWebKitAPI" */;
 			buildPhases = (
 				A1508C552DAF1F8000C3E213 /* Process Entitlements */,
-				0777713A2F887DCE00A1C903 /* Embed Testing.framework */,
 				8DD76F990486AA7600D96B5E /* Sources */,
 				8DD76F9B0486AA7600D96B5E /* Frameworks */,
 			);
@@ -2018,6 +2040,7 @@
 			);
 			dependencies = (
 				0723A75B2F8035A300CB96E7 /* PBXTargetDependency */,
+				07A11A5702F9C0FE00000007 /* PBXTargetDependency */,
 				BC575A96126E74E7006F0F12 /* PBXTargetDependency */,
 				7CCE7F511A4124DB00447C4C /* PBXTargetDependency */,
 				A17C48562C98EBF50023F3C7 /* PBXTargetDependency */,
@@ -2098,6 +2121,7 @@
 			);
 			dependencies = (
 				A18898FE2CA9F70B00FEB09A /* PBXTargetDependency */,
+				07A11A5702F9C0FE00000008 /* PBXTargetDependency */,
 			);
 			name = TestWebKitAPIBundle;
 			productName = TestBundle;
@@ -2189,6 +2213,7 @@
 			targets = (
 				7C83E02B1D0A5E1000FEBCF3 /* All */,
 				0723A7492F80357300CB96E7 /* Derived Sources */,
+				07A11A5702F9C0FE00000001 /* Testing.framework Overlays */,
 				5C9D921422D7DA02008E9266 /* Generate Unified Sources */,
 				7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */,
 				7C83DE951D0A590C00FEBCF3 /* TestWTFLibrary */,
@@ -2480,6 +2505,16 @@
 			target = 0723A7492F80357300CB96E7 /* Derived Sources */;
 			targetProxy = 0723A7542F80358F00CB96E7 /* PBXContainerItemProxy */;
 		};
+		07A11A5702F9C0FE00000007 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07A11A5702F9C0FE00000001 /* Testing.framework Overlays */;
+			targetProxy = 07A11A5702F9C0FE00000005 /* PBXContainerItemProxy */;
+		};
+		07A11A5702F9C0FE00000008 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07A11A5702F9C0FE00000001 /* Testing.framework Overlays */;
+			targetProxy = 07A11A5702F9C0FE00000006 /* PBXContainerItemProxy */;
+		};
 		0723A7572F80359900CB96E7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0723A7492F80357300CB96E7 /* Derived Sources */;
@@ -2580,6 +2615,22 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
+		};
+		07A11A5702F9C0FE00000003 /* Debug configuration for PBXAggregateTarget "Testing.framework Overlays" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		07A11A5702F9C0FE00000004 /* Release configuration for PBXAggregateTarget "Testing.framework Overlays" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
 		};
 		0723A74B2F80357300CB96E7 /* Release configuration for PBXAggregateTarget "Derived Sources" */ = {
 			isa = XCBuildConfiguration;
@@ -2841,6 +2892,14 @@
 			buildConfigurations = (
 				0723A74A2F80357300CB96E7 /* Debug configuration for PBXAggregateTarget "Derived Sources" */,
 				0723A74B2F80357300CB96E7 /* Release configuration for PBXAggregateTarget "Derived Sources" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		07A11A5702F9C0FE00000002 /* Build configuration list for PBXAggregateTarget "Testing.framework Overlays" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				07A11A5702F9C0FE00000003 /* Debug configuration for PBXAggregateTarget "Testing.framework Overlays" */,
+				07A11A5702F9C0FE00000004 /* Release configuration for PBXAggregateTarget "Testing.framework Overlays" */,
 			);
 			defaultConfigurationName = Release;
 		};
