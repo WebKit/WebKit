@@ -429,7 +429,7 @@ TextStream& operator<<(TextStream& ts, CursorType cursor)
     case CursorType::NResize: ts << "n-resize"_s; break;
     case CursorType::NEResize: ts << "ne-resize"_s; break;
     case CursorType::NWResize: ts << "nw-resize"_s; break;
-    case CursorType::SResize: ts << "sr-esize"_s; break;
+    case CursorType::SResize: ts << "s-resize"_s; break;
     case CursorType::SEResize: ts << "se-resize"_s; break;
     case CursorType::SWResize: ts << "sw-resize"_s; break;
     case CursorType::WResize: ts << "w-resize"_s; break;
@@ -497,22 +497,22 @@ TextStream& operator<<(TextStream& ts, EventListenerRegionType listenerType)
     case EventListenerRegionType::PointerDown: ts << "pointer down"_s; break;
     case EventListenerRegionType::NonPassivePointerDown: ts << "active pointer down"_s; break;
     case EventListenerRegionType::PointerEnter: ts << "pointer enter"_s; break;
-    case EventListenerRegionType::NonPassivePointerEnter: ts << "active pointer down"_s; break;
+    case EventListenerRegionType::NonPassivePointerEnter: ts << "active pointer enter"_s; break;
     case EventListenerRegionType::PointerLeave: ts << "pointer leave"_s; break;
-    case EventListenerRegionType::NonPassivePointerLeave: ts << "active pointer down"_s; break;
+    case EventListenerRegionType::NonPassivePointerLeave: ts << "active pointer leave"_s; break;
     case EventListenerRegionType::PointerMove: ts << "pointer move"_s; break;
-    case EventListenerRegionType::NonPassivePointerMove: ts << "active pointer down"_s; break;
+    case EventListenerRegionType::NonPassivePointerMove: ts << "active pointer move"_s; break;
     case EventListenerRegionType::PointerOut: ts << "pointer out"_s; break;
-    case EventListenerRegionType::NonPassivePointerOut: ts << "active pointer down"_s; break;
+    case EventListenerRegionType::NonPassivePointerOut: ts << "active pointer out"_s; break;
     case EventListenerRegionType::PointerOver: ts << "pointer over"_s; break;
-    case EventListenerRegionType::NonPassivePointerOver: ts << "active pointer down"_s; break;
+    case EventListenerRegionType::NonPassivePointerOver: ts << "active pointer over"_s; break;
     case EventListenerRegionType::PointerUp: ts << "pointer up"_s; break;
-    case EventListenerRegionType::NonPassivePointerUp: ts << "active pointer down"_s; break;
+    case EventListenerRegionType::NonPassivePointerUp: ts << "active pointer up"_s; break;
     case EventListenerRegionType::MouseDown: ts << "mouse down"_s; break;
     case EventListenerRegionType::NonPassiveMouseDown: ts << "active mouse down"_s; break;
     case EventListenerRegionType::MouseUp: ts << "mouse up"_s; break;
     case EventListenerRegionType::NonPassiveMouseUp: ts << "active mouse up"_s; break;
-    case EventListenerRegionType::MouseMove: ts << "mouse down"_s; break;
+    case EventListenerRegionType::MouseMove: ts << "mouse move"_s; break;
     case EventListenerRegionType::NonPassiveMouseMove: ts << "active mouse move"_s; break;
     case EventListenerRegionType::GestureChange: ts << "gesture change"_s; break;
     case EventListenerRegionType::NonPassiveGestureChange: ts << "active gesture change"_s; break;
@@ -985,7 +985,7 @@ TextStream& operator<<(TextStream& ts, ScrollSnapAxis axis)
 {
     switch (axis) {
     case ScrollSnapAxis::XAxis: ts << "x-axis"_s; break;
-    case ScrollSnapAxis::YAxis: ts << "y-Axis"_s; break;
+    case ScrollSnapAxis::YAxis: ts << "y-axis"_s; break;
     case ScrollSnapAxis::Block: ts << "block"_s; break;
     case ScrollSnapAxis::Inline: ts << "inline"_s; break;
     case ScrollSnapAxis::Both: ts << "both"_s; break;
