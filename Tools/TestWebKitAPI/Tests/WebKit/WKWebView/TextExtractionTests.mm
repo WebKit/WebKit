@@ -2169,6 +2169,25 @@ TEST(TextExtractionTests, KeyPressInsertsCharactersInOrder)
     EXPECT_WK_STREQ("abc", [webView stringByEvaluatingJavaScript:@"document.getElementById('q').value"]);
 }
 
+TEST(TextExtractionTests, KeyPressInsertsBracketCharacters)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<input type='text' id='q'>"];
+    [webView stringByEvaluatingJavaScript:@"document.getElementById('q').focus()"];
+
+    for (NSString *character in @[ @"[", @"{", @"]", @"}" ]) {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionKeyPress]);
+        [interaction setText:character];
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction.get()];
+        EXPECT_NULL([result error]);
+    }
+
+    EXPECT_WK_STREQ("[{]}", [webView stringByEvaluatingJavaScript:@"document.getElementById('q').value"]);
+}
+
 #endif // PLATFORM(MAC)
 
 #if ENABLE(TEXT_EXTRACTION_FILTER) && HAVE(SAFARI_SAFE_BROWSING_NAMESPACED_LISTS)
