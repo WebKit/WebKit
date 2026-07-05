@@ -2807,6 +2807,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case RegExpExecSticky: {
+        compileRegExpExecSticky(node);
+        break;
+    }
+
     case RegExpMatchFastGlobal: {
         compileRegExpMatchFastGlobal(node);
         break;

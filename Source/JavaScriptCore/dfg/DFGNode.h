@@ -967,6 +967,7 @@ public:
     void NODELETE convertToCallDOM(Graph&);
 
     void NODELETE convertToRegExpExecNonGlobalOrStickyWithoutChecks(FrozenValue* regExp);
+    void NODELETE convertToRegExpExecStickyWithoutChecks(FrozenValue* regExp);
     void NODELETE convertToRegExpMatchFastGlobalWithoutChecks(FrozenValue* regExp);
     void NODELETE convertToRegExpMatchFast(Node* globalObjectNode);
     void NODELETE convertToRegExpSearch(Node* globalObjectNode);
@@ -2151,6 +2152,7 @@ public:
         case ArraySplice:
         case RegExpExec:
         case RegExpExecNonGlobalOrSticky:
+        case RegExpExecSticky:
         case RegExpTest:
         case RegExpTestInline:
         case RegExpMatchFast:
@@ -2255,6 +2257,7 @@ public:
         case CallWasm:
         case TailCallInlinedCallerWasm:
         case RegExpExecNonGlobalOrSticky:
+        case RegExpExecSticky:
         case RegExpMatchFastGlobal:
         case RegExpTestInline:
             return true;

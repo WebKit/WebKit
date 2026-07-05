@@ -404,6 +404,7 @@ inline CapabilityLevel canCompile(DFG::Node* node)
     case CreateRest:
     case RegExpExec:
     case RegExpExecNonGlobalOrSticky:
+    case RegExpExecSticky:
     case RegExpTest:
     case RegExpTestInline:
     case RegExpMatchFast:

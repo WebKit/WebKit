@@ -3434,6 +3434,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             
     case RegExpExec:
     case RegExpExecNonGlobalOrSticky:
+    case RegExpExecSticky:
         if (node->op() == RegExpExec) {
             // Even if we've proven known input types as RegExpObject and String,
             // accessing lastIndex is effectful if it's a global regexp.

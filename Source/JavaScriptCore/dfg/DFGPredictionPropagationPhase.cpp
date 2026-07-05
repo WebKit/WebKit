@@ -1041,6 +1041,7 @@ private:
         case ArraySplice:
         case RegExpExec:
         case RegExpExecNonGlobalOrSticky:
+        case RegExpExecSticky:
         case RegExpTest:
         case RegExpTestInline:
         case RegExpMatchFast:

@@ -238,6 +238,7 @@ JSC_DECLARE_JIT_OPERATION(operationRegExpExecString, EncodedJSValue, (JSGlobalOb
 JSC_DECLARE_JIT_OPERATION(operationRegExpExec, EncodedJSValue, (JSGlobalObject*, RegExpObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationRegExpExecGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationRegExpExecNonGlobalOrSticky, EncodedJSValue, (JSGlobalObject*, RegExp*, JSString*));
+JSC_DECLARE_JIT_OPERATION(operationRegExpExecStickyKnownRegExp, EncodedJSValue, (JSGlobalObject*, RegExp*, RegExpObject*, JSString*));
 JSC_DECLARE_JIT_OPERATION(operationRegExpMatchFastGlobalString, EncodedJSValue, (JSGlobalObject*, RegExp*, JSString*));
 JSC_DECLARE_JIT_OPERATION(operationRegExpMatchFastString, EncodedJSValue, (JSGlobalObject*, RegExpObject*, JSString*));
 JSC_DECLARE_JIT_OPERATION(operationRegExpSplitFast, EncodedJSValue, (JSGlobalObject*, RegExpObject*, JSString*, EncodedJSValue));

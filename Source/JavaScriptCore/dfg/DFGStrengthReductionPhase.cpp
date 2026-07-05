@@ -820,6 +820,7 @@ private:
             ASSERT(m_node->op() != RegExpMatchFast);
 
             bool needLastIndexTypeCheck = false;
+            bool stickyRuntimeLastIndex = false;
             auto insertLastIndexTypeCheckIfNecessary = [&](NodeOrigin origin) {
                 if (needLastIndexTypeCheck) {
                     ASSERT(m_node->op() != RegExpExecNonGlobalOrSticky);
@@ -862,9 +863,18 @@ private:
                     // We cannot statically prove lastIndex. But still there is a chance.
                     // If RegExp is not global and not sticky, then only thing we care is ToIntegerOrInfinity(regExp.lastIndex).
                     // Thus, we can emit Int32Use check to protect further when conversion happens.
-                    if (regExp->globalOrSticky()) {
+                    if (regExp->global()) {
                         dataLogLnIf(verbose, "Giving up because the last index is not known.");
                         break;
+                    }
+
+                    if (regExp->sticky()) {
+                        // Sticky (non-global) RegExpExec does not need to prove its value here.
+                        if (m_node->op() != RegExpExec) {
+                            dataLogLnIf(verbose, "Giving up because the last index is not known.");
+                            break;
+                        }
+                        stickyRuntimeLastIndex = true;
                     }
 
                     if (m_graph.hasExitSite(m_node->origin.semantic, BadType)) {
@@ -1187,8 +1197,26 @@ private:
                 return true;
             };
 
-            if (foldToConstant())
-                break;
+            auto convertToSticky = [&] {
+                if (m_node->op() != RegExpExec)
+                    return false;
+                if (!regExp->sticky() || regExp->global())
+                    return false;
+                if (m_node->child3().useKind() != StringUse)
+                    return false;
+
+                NodeOrigin origin = m_node->origin;
+                m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, origin, m_node->children.justChecks());
+                insertLastIndexTypeCheckIfNecessary(origin);
+                m_node->convertToRegExpExecStickyWithoutChecks(m_graph.freeze(regExp));
+                m_changed = true;
+                return true;
+            };
+
+            if (!stickyRuntimeLastIndex) {
+                if (foldToConstant())
+                    break;
+            }
 
 #if ENABLE(YARR_JIT_REGEXP_TEST_INLINE)
             if (convertTestToTestInline())
@@ -1196,6 +1224,9 @@ private:
 #endif
 
             if (convertToStatic())
+                break;
+
+            if (convertToSticky())
                 break;
 
             break;

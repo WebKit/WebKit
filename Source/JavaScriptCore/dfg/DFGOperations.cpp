@@ -1735,6 +1735,44 @@ JSC_DEFINE_JIT_OPERATION(operationRegExpExecNonGlobalOrSticky, EncodedJSValue, (
     OPERATION_RETURN(scope, JSValue::encode(array));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationRegExpExecStickyKnownRegExp, EncodedJSValue, (JSGlobalObject* globalObject, RegExp* regExp, RegExpObject* regExpObject, JSString* string))
+{
+    SuperSamplerScope superSamplerScope(false);
+
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(regExp->sticky() && !regExp->global());
+    ASSERT(regExpObject->regExp() == regExp);
+
+    auto input = string->view(globalObject);
+    OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    unsigned lastIndex = getRegExpObjectLastIndexAsUnsigned(globalObject, regExpObject, input);
+    OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    if (lastIndex == UINT_MAX) {
+        scope.release();
+        regExpObject->setLastIndex(globalObject, 0);
+        OPERATION_RETURN(scope, JSValue::encode(jsNull()));
+    }
+
+    MatchResult result;
+    JSArray* array = createRegExpMatchesArray(vm, globalObject, string, input, regExp, lastIndex, result);
+    if (!array) {
+        OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        scope.release();
+        regExpObject->setLastIndex(globalObject, 0);
+        OPERATION_RETURN(scope, JSValue::encode(jsNull()));
+    }
+
+    regExpObject->setLastIndex(globalObject, result.end);
+    OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    globalObject->regExpGlobalData().recordMatch(vm, globalObject, regExp, string, result, /* oneCharacterMatch */ false);
+    OPERATION_RETURN(scope, JSValue::encode(array));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationRegExpMatchFastString, EncodedJSValue, (JSGlobalObject* globalObject, RegExpObject* regExpObject, JSString* argument))
 {
     SuperSamplerScope superSamplerScope(false);

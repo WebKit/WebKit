@@ -1729,6 +1729,7 @@ public:
     void compileNotifyWrite(Node*);
     void compileRegExpExec(Node*);
     void compileRegExpExecNonGlobalOrSticky(Node*);
+    void compileRegExpExecSticky(Node*);
     void compileRegExpMatchFast(Node*);
     void compileRegExpMatchFastGlobal(Node*);
     void compileRegExpSplitFast(Node*);

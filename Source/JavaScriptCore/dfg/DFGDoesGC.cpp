@@ -376,6 +376,7 @@ bool doesGC(Graph& graph, Node* node)
     case PutToArguments:
     case RegExpExec:
     case RegExpExecNonGlobalOrSticky:
+    case RegExpExecSticky:
     case RegExpMatchFast:
     case RegExpMatchFastGlobal:
     case RegExpSplitFast:

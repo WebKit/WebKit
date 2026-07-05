@@ -357,6 +357,16 @@ void Node::convertToRegExpExecNonGlobalOrStickyWithoutChecks(FrozenValue* regExp
     m_opInfo = regExp;
 }
 
+void Node::convertToRegExpExecStickyWithoutChecks(FrozenValue* regExp)
+{
+    ASSERT(op() == RegExpExec);
+    setOpAndDefaultFlags(RegExpExecSticky);
+    children.child1() = Edge(children.child1().node(), KnownCellUse);
+    children.child2() = Edge(children.child2().node(), RegExpObjectUse);
+    children.child3() = Edge(children.child3().node(), KnownStringUse);
+    m_opInfo = regExp;
+}
+
 void Node::convertToRegExpMatchFastGlobalWithoutChecks(FrozenValue* regExp)
 {
     ASSERT(op() == RegExpMatchFast);

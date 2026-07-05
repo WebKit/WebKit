@@ -2930,6 +2930,7 @@ private:
         case SetRegExpObjectLastIndex:
         case RecordRegExpCachedResult:
         case RegExpExecNonGlobalOrSticky:
+        case RegExpExecSticky:
         case RegExpMatchFastGlobal:
         case GetUndetachedTypeArrayLength:
         case ObjectDefinePropertyFromFields:

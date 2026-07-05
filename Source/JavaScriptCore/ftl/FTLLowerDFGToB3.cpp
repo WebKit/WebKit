@@ -1844,6 +1844,9 @@ private:
         case RegExpExecNonGlobalOrSticky:
             compileRegExpExecNonGlobalOrSticky();
             break;
+        case RegExpExecSticky:
+            compileRegExpExecSticky();
+            break;
         case RegExpTest:
             compileRegExpTest();
             break;
@@ -19324,6 +19327,15 @@ IGNORE_CLANG_WARNINGS_END
         LValue globalObject = lowCell(m_node->child1());
         LValue argument = lowString(m_node->child2());
         LValue result = vmCall(Int64, operationRegExpExecNonGlobalOrSticky, globalObject, frozenPointer(m_node->cellOperand()), argument);
+        setJSValue(result);
+    }
+
+    void compileRegExpExecSticky()
+    {
+        LValue globalObject = lowCell(m_node->child1());
+        LValue base = lowRegExpObject(m_node->child2());
+        LValue argument = lowString(m_node->child3());
+        LValue result = vmCall(Int64, operationRegExpExecStickyKnownRegExp, globalObject, frozenPointer(m_node->cellOperand()), base, argument);
         setJSValue(result);
     }
 

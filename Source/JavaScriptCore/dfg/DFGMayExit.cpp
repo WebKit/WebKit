@@ -218,6 +218,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case ToNumeric:
     case ToObject:
     case RegExpExecNonGlobalOrSticky:
+    case RegExpExecSticky:
     case RegExpMatchFastGlobal:
     case CallWasm:
     case TailCallInlinedCallerWasm:

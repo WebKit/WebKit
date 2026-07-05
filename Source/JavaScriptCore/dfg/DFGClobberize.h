@@ -2320,6 +2320,13 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(RegExpObject_lastIndex);
         return;
 
+    case RegExpExecSticky:
+        read(RegExpState);
+        read(RegExpObject_lastIndex);
+        write(RegExpState);
+        write(RegExpObject_lastIndex);
+        return;
+
     case RegExpExecNonGlobalOrSticky:
     case RegExpMatchFastGlobal:
         read(RegExpState);
