@@ -1,4 +1,4 @@
 
-FAIL Load a CSS module with dynamic import() promise_test: Unhandled rejection with value: object "TypeError: 'text/css' is not a valid JavaScript MIME type."
+FAIL Load a CSS module with dynamic import() promise_test: Unhandled rejection with value: object "TypeError: 'text/css' is not a valid JavaScript MIME type for module script 'http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/css-module/resources/basic.css'."
 PASS Ensure that loading a CSS module with dymnamic import() fails without a type assertion
 

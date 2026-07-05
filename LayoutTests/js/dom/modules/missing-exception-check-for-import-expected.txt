@@ -10,7 +10,7 @@ Importing a module script should fail if the file is not found.
 PASS String(error) is "TypeError: Importing a module script failed."
 
 Importing a module script should fail if it does not not a valid JavaScript MIME type.
-PASS String(error) is "TypeError: 'text/html' is not a valid JavaScript MIME type."
+PASS String(error) is "TypeError: 'text/html' is not a valid JavaScript MIME type for module script 'data:text/html,Hello World'."
 
 Importing a simple module script should succeed.
 PASS error is null

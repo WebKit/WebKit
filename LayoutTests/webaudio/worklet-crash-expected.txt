@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: TypeError: 'text/html' is not a valid JavaScript MIME type.
+CONSOLE MESSAGE: TypeError: 'text/html' is not a valid JavaScript MIME type for module script 'worklet-crash.html'.
 This test passes if it does not crash.
