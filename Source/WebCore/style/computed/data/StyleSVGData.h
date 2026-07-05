@@ -76,6 +76,7 @@ public:
         PREFERRED_TYPE(ColorInterpolation) unsigned colorInterpolation : 2;
         PREFERRED_TYPE(ColorInterpolation) unsigned colorInterpolationFilters : 2;
         PREFERRED_TYPE(SVGGlyphOrientationVertical) unsigned glyphOrientationVertical : 3;
+        PREFERRED_TYPE(DominantBaseline) unsigned dominantBaseline : 4;
     };
 
     struct NonInheritedFlags {
@@ -86,7 +87,6 @@ public:
 #endif
 
         PREFERRED_TYPE(AlignmentBaseline) unsigned alignmentBaseline : 4;
-        PREFERRED_TYPE(DominantBaseline) unsigned dominantBaseline : 4;
         PREFERRED_TYPE(VectorEffect) unsigned vectorEffect : 1;
         PREFERRED_TYPE(BufferedRendering) unsigned bufferedRendering : 2;
         PREFERRED_TYPE(MaskType) unsigned maskType : 1;

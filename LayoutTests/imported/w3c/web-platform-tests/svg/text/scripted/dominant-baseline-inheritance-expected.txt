@@ -1,0 +1,10 @@
+T
+T
+T
+T
+
+PASS computed style of tspan reflects inherited dominant-baseline
+PASS tspan can override inherited dominant-baseline in computed style
+PASS inherited dominant-baseline produces same baseline offset as directly set
+PASS tspan override of inherited dominant-baseline works correctly
+
