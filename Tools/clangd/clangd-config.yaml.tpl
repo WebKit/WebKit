@@ -27,16 +27,16 @@ CompileFlags:
     Add: [
         $header_file_platform_specific_flags
         $platform_specific_flags
-        --include=config.h,
+        -Xclang, -include, -Xclang, config.h,
         -std=c++2b,
     ]
 ---
 If:
     PathMatch: [.*\.mm]
 CompileFlags:
-    Add: [$platform_specific_flags -xobjective-c++, --include=config.h, -std=c++2b]
+    Add: [$platform_specific_flags -xobjective-c++, -std=c++2b]
 ---
 If:
     PathMatch: [.*\.m]
 CompileFlags:
-    Add: [$platform_specific_flags -xobjective-c, --include=config.h]
+    Add: [$platform_specific_flags -xobjective-c]
