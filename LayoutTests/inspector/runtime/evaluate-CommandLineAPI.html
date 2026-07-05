@@ -106,12 +106,16 @@ function test()
     });
 
     suite.addTestCase({
-        name: "ExpectedExceptionCreatingDuplicateLexicalGlobalVariables",
-        description: "Test evaluate produces expected exception creating duplicate lexical global variables across evaluations.",
+        name: "RedeclaringLexicalGlobalVariableRebinds",
+        description: "Test evaluate rebinds a lexical global when it is re-declared across evaluations instead of throwing.",
         test(resolve, reject) {
             testEvaluate(`let duplicateGlobalVariable = 1`);
-            testEvaluateThrow(`let duplicateGlobalVariable = 1`, (wasThrown) => {
-                InspectorTest.expectThat(wasThrown, "Should be an exception defining a lexical global multiple times.");
+            testEvaluate(`duplicateGlobalVariable`, (resultValue) => {
+                InspectorTest.expectThat(resultValue === 1, "Should be able to access the lexical global.");
+            });
+            testEvaluate(`let duplicateGlobalVariable = 2`);
+            testEvaluate(`duplicateGlobalVariable`, (resultValue) => {
+                InspectorTest.expectThat(resultValue === 2, "Re-declaring a lexical global should rebind it to the new value.");
                 resolve();
             });
         }

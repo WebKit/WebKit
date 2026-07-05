@@ -19,8 +19,9 @@ PASS: Should be able to access created const in global scope.
 -- Running test case: CreateGlobalClass
 PASS: Should be able to access class created in earlier evaluation.
 
--- Running test case: ExpectedExceptionCreatingDuplicateLexicalGlobalVariables
-PASS: Should be an exception defining a lexical global multiple times.
+-- Running test case: RedeclaringLexicalGlobalVariableRebinds
+PASS: Should be able to access the lexical global.
+PASS: Re-declaring a lexical global should rebind it to the new value.
 
 -- Running test case: NonStrictAndStrictEvaluations
 PASS: Non-strict evaluation. Should be able to access arguments.callee.

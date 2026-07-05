@@ -75,6 +75,7 @@
 #include <wtf/Lock.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
+#include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -128,7 +129,15 @@ JSValue JSInjectedScriptHost::evaluateWithScopeExtension(JSGlobalObject* globalO
 
     NakedPtr<Exception> exception;
     JSObject* scopeExtension = callFrame->argument(1).getObject();
+
+    bool didAllowRedeclaringSymbols = vm.allowRedeclaringSymbols();
+    vm.setAllowRedeclaringSymbols(true);
+    auto resetAllowRedeclaringSymbols = makeScopeExit([&] {
+        vm.setAllowRedeclaringSymbols(didAllowRedeclaringSymbols);
+    });
+
     JSValue result = JSC::evaluateWithScopeExtension(globalObject, makeSource(program, callFrame->callerSourceOrigin(vm), SourceTaintedOrigin::Untainted), scopeExtension, exception);
+
     if (exception)
         throwException(globalObject, scope, exception);
 

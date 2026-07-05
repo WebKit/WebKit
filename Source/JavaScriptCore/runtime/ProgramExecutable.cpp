@@ -125,6 +125,8 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
                 bool hasProperty = globalLexicalEnvironment->hasProperty(globalObject, entry.key.get());
                 RETURN_IF_EXCEPTION(throwScope, nullptr);
                 if (hasProperty) {
+                    if (vm.allowRedeclaringSymbols()) [[unlikely]]
+                        continue;
                     if (entry.value.isConst() && !vm.globalConstRedeclarationShouldThrow() && !isInStrictContext()) [[unlikely]] {
                         // We only allow "const" duplicate declarations under this setting.
                         // For example, we don't allow "let" variables to be overridden by "const" variables.
@@ -250,6 +252,8 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
         SymbolTable* symbolTable = globalLexicalEnvironment->symbolTable();
         ConcurrentJSLocker locker(symbolTable->m_lock);
         for (auto& entry : lexicalDeclarations) {
+            if (vm.allowRedeclaringSymbols() && symbolTable->contains(locker, entry.key.get())) [[unlikely]]
+                continue;
             if (entry.value.isConst() && !vm.globalConstRedeclarationShouldThrow() && !isInStrictContext()) [[unlikely]] {
                 if (symbolTable->contains(locker, entry.key.get()))
                     continue;

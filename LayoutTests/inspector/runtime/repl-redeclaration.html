@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    const objectGroup = "test";
+    const includeCommandLineAPI = true;
+    const returnByValue = true;
+
+    function evaluate(expression) {
+        return new Promise((resolve, reject) => {
+            RuntimeAgent.evaluate.invoke({expression, objectGroup, includeCommandLineAPI, returnByValue}, (error, resultValue, wasThrown) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                resolve({value: resultValue.value, wasThrown: !!wasThrown});
+            });
+        });
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Runtime.evaluate.REPLRedeclaration");
+
+    suite.addTestCase({
+        name: "Runtime.evaluate.REPLRedeclaration.let",
+        description: "Re-declaring a top-level `let` in the console should rebind it instead of throwing.",
+        async test() {
+            InspectorTest.expectFalse((await evaluate("let replLet = 1;")).wasThrown, "`let replLet = 1;` should not throw.");
+            InspectorTest.expectEqual((await evaluate("replLet")).value, 1, "`replLet` should be 1.");
+
+            InspectorTest.expectFalse((await evaluate("let replLet = 2;")).wasThrown, "Re-declaring `let replLet = 2;` should not throw.");
+            InspectorTest.expectEqual((await evaluate("replLet")).value, 2, "`replLet` should now be 2.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Runtime.evaluate.REPLRedeclaration.const",
+        description: "Re-declaring a top-level `const` in the console should rebind it instead of throwing.",
+        async test() {
+            InspectorTest.expectFalse((await evaluate("const replConst = 1;")).wasThrown, "`const replConst = 1;` should not throw.");
+            InspectorTest.expectEqual((await evaluate("replConst")).value, 1, "`replConst` should be 1.");
+
+            InspectorTest.expectFalse((await evaluate("const replConst = 2;")).wasThrown, "Re-declaring `const replConst = 2;` should not throw.");
+            InspectorTest.expectEqual((await evaluate("replConst")).value, 2, "`replConst` should now be 2.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Runtime.evaluate.REPLRedeclaration.class",
+        description: "Re-declaring a top-level `class` in the console should rebind it instead of throwing.",
+        async test() {
+            InspectorTest.expectFalse((await evaluate("class ReplClass { m() { return 1; } };")).wasThrown, "First `class ReplClass` should not throw.");
+            InspectorTest.expectEqual((await evaluate("new ReplClass().m()")).value, 1, "`new ReplClass().m()` should be 1.");
+
+            InspectorTest.expectFalse((await evaluate("class ReplClass { m() { return 2; } };")).wasThrown, "Re-declaring `class ReplClass` should not throw.");
+            InspectorTest.expectEqual((await evaluate("new ReplClass().m()")).value, 2, "`new ReplClass().m()` should now be 2.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Runtime.evaluate.REPLRedeclaration.CrossKind",
+        description: "Re-declaring across `let`/`const` in the console should not throw and should update the value.",
+        async test() {
+            InspectorTest.expectFalse((await evaluate("const replCross = 1;")).wasThrown, "`const replCross = 1;` should not throw.");
+            InspectorTest.expectFalse((await evaluate("let replCross = 2;")).wasThrown, "Re-declaring as `let replCross = 2;` should not throw.");
+            InspectorTest.expectEqual((await evaluate("replCross")).value, 2, "`replCross` should now be 2.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that re-declaring a top-level <code>let</code>/<code>const</code>/<code>class</code> in the console rebinds it instead of throwing "has already been declared". <a href="https://webkit.org/b/285757">Bug 285757</a></p>
+</body>
+</html>

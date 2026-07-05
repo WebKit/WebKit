@@ -1026,6 +1026,9 @@ public:
     void setGlobalConstRedeclarationShouldThrow(bool globalConstRedeclarationThrow) { m_globalConstRedeclarationShouldThrow = globalConstRedeclarationThrow; }
     ALWAYS_INLINE bool globalConstRedeclarationShouldThrow() const { return m_globalConstRedeclarationShouldThrow; }
 
+    void setAllowRedeclaringSymbols(bool allowRedeclaringSymbols) { m_allowRedeclaringSymbols = allowRedeclaringSymbols; }
+    ALWAYS_INLINE bool allowRedeclaringSymbols() const { return m_allowRedeclaringSymbols; }
+
     void setShouldBuildPCToCodeOriginMapping() { m_shouldBuildPCToCodeOriginMapping = true; }
     bool shouldBuilderPCToCodeOriginMapping() const { return m_shouldBuildPCToCodeOriginMapping; }
 
@@ -1211,6 +1214,7 @@ public:
 private:
     bool m_failNextNewCodeBlock { false };
     bool m_globalConstRedeclarationShouldThrow { true };
+    bool m_allowRedeclaringSymbols { false };
     bool m_shouldBuildPCToCodeOriginMapping { false };
     DeletePropertyMode m_deletePropertyMode { DeletePropertyMode::Default };
     HeapAnalyzer* m_activeHeapAnalyzer { nullptr };

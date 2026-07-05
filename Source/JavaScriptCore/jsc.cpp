@@ -3927,6 +3927,12 @@ static void runInteractive(GlobalObject* globalObject)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
+    bool didAllowRedeclaringSymbols = vm.allowRedeclaringSymbols();
+    vm.setAllowRedeclaringSymbols(true);
+    auto resetAllowRedeclaringSymbols = makeScopeExit([&] {
+        vm.setAllowRedeclaringSymbols(didAllowRedeclaringSymbols);
+    });
+
     URL directoryName = currentWorkingDirectory();
     if (!directoryName.isValid())
         return;
