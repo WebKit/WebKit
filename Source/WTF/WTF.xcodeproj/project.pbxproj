@@ -151,6 +151,7 @@
 		50DE35F5215BB01500B979C7 /* ExternalStringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DE35F3215BB01500B979C7 /* ExternalStringImpl.cpp */; };
 		515F794E1CFC9F4A00CCED93 /* CrossThreadCopier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515F794B1CFC9F4A00CCED93 /* CrossThreadCopier.cpp */; };
 		5164042D2AB1D46B0042B1C3 /* NativePromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 5164042C2AB1D46B0042B1C3 /* NativePromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5164042E2AB1D46B0042B1C3 /* NativePromiseCoroutine.h in Headers */ = {isa = PBXBuildFile; fileRef = 5164042F2AB1D46B0042B1C3 /* NativePromiseCoroutine.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5164042F2AB1D4DD0042B1C3 /* TypeTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 5164042E2AB1D4DD0042B1C3 /* TypeTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517F82D71FD22F3000DA3DEA /* CrossThreadTaskHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517F82D51FD22F2F00DA3DEA /* CrossThreadTaskHandler.cpp */; };
 		5187AC952C08570600549EFE /* MainThreadDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5187AC942C08570600549EFE /* MainThreadDispatcher.cpp */; };
@@ -1418,6 +1419,7 @@
 		515F794D1CFC9F4A00CCED93 /* CrossThreadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadTask.h; sourceTree = "<group>"; };
 		515F79551CFD3A6900CCED93 /* CrossThreadQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadQueue.h; sourceTree = "<group>"; };
 		5164042C2AB1D46B0042B1C3 /* NativePromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativePromise.h; sourceTree = "<group>"; };
+		5164042F2AB1D46B0042B1C3 /* NativePromiseCoroutine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativePromiseCoroutine.h; sourceTree = "<group>"; };
 		5164042E2AB1D4DD0042B1C3 /* TypeTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeTraits.h; sourceTree = "<group>"; };
 		517A53571F5734B700DCDC0A /* Identified.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Identified.h; sourceTree = "<group>"; };
 		517F82D51FD22F2F00DA3DEA /* CrossThreadTaskHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossThreadTaskHandler.cpp; sourceTree = "<group>"; };
@@ -2629,6 +2631,7 @@
 				FE8225301B2A1E5B00BA68FD /* NakedPtr.h */,
 				51B07F532AB8797300E14EE9 /* NativePromise.cpp */,
 				5164042C2AB1D46B0042B1C3 /* NativePromise.h */,
+				5164042F2AB1D46B0042B1C3 /* NativePromiseCoroutine.h */,
 				0F5BF1651F2317830029D91D /* NaturalLoops.h */,
 				1A3F6BE6174ADA2100B2EEA7 /* NeverDestroyed.h */,
 				0F0D85B317234CB100338210 /* NoLock.h */,
@@ -3796,6 +3799,7 @@
 				DD3DC96827A4BF8E007E5B61 /* MonotonicTime.h in Headers */,
 				DD3DC96227A4BF8E007E5B61 /* NakedPtr.h in Headers */,
 				5164042D2AB1D46B0042B1C3 /* NativePromise.h in Headers */,
+				5164042E2AB1D46B0042B1C3 /* NativePromiseCoroutine.h in Headers */,
 				DD3DC8D827A4BF8E007E5B61 /* NaturalLoops.h in Headers */,
 				E396C11D2BE885D9000CBAE1 /* neon.h in Headers */,
 				46335BEF2E778B1300860375 /* NetworkOSObject.h in Headers */,

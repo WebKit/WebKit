@@ -30,7 +30,9 @@
 #if ASSERT_ENABLED
 #include <atomic>
 #endif
+#include <coroutine>
 #include <functional>
+#include <optional>
 #include <type_traits>
 #include <utility>
 #include <wtf/Assertions.h>
@@ -1080,6 +1082,64 @@ public:
             }
             return invokeWithVoidOrWithArg(thisVal.get(), rejectMethod, maybeMove(result.error()));
         }, callSite);
+    }
+
+    // Coroutine support. Suspends the current coroutine until the promise is settled, then
+    // resumes it on `dispatcher` with the promise's Result. `dispatcher` must be the
+    // dispatcher the coroutine is currently running on (asserted in awaitOn()) so that the
+    // coroutine resumes on the same thread it awaited from.
+    // Usage: auto result = co_await promise->awaitOn(dispatcher);
+    // (NativePromiseCoroutine.h defines `co_await promise` as a shorthand that resumes on
+    // the main thread.)
+    class [[nodiscard]] Awaiter {
+        WTF_FORBID_HEAP_ALLOCATION;
+    public:
+        Awaiter(Ref<NativePromise>&& promise, GuaranteedSerialFunctionDispatcher& dispatcher)
+            : m_promise(WTF::move(promise))
+            , m_dispatcher(dispatcher)
+        {
+        }
+
+        bool await_ready() const { return false; }
+
+        bool await_suspend(std::coroutine_handle<> handle)
+        {
+            m_handle = handle;
+            // If the promise is already settled and set to dispatch synchronously, the
+            // settle callback runs re-entrantly from the ThenCommand destructor at the end
+            // of this statement, before m_suspended is set: it stores the result but must
+            // not resume, and await_suspend returns false so the coroutine continues without
+            // suspending. Otherwise the callback runs later on m_dispatcher (the same thread,
+            // per the isCurrent() assert) and resumes the suspended coroutine. Either way
+            // there is no cross-thread race on m_suspended/m_result.
+            m_promise->whenSettled(m_dispatcher.get(), [this](ResultParam result) {
+                m_result.emplace(maybeMove(result));
+                if (m_suspended)
+                    m_handle.resume();
+            });
+            m_suspended = !m_result;
+            return m_suspended;
+        }
+
+        Result await_resume()
+        {
+            assertIsCurrent(m_dispatcher.get());
+            ASSERT(m_result);
+            return WTF::move(*m_result);
+        }
+
+    private:
+        const Ref<NativePromise> m_promise;
+        const Ref<GuaranteedSerialFunctionDispatcher> m_dispatcher;
+        std::optional<Result> m_result;
+        std::coroutine_handle<> m_handle;
+        bool m_suspended { false };
+    };
+
+    Awaiter awaitOn(GuaranteedSerialFunctionDispatcher& dispatcher)
+    {
+        ASSERT(dispatcher.isCurrent()); // The coroutine must resume on the thread it awaited from.
+        return Awaiter { Ref { *this }, dispatcher };
     }
 
     void chainTo(Producer&& chainedPromise, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)

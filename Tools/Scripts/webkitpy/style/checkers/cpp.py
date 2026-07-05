@@ -2460,7 +2460,7 @@ def check_spacing(file_extension, clean_lines, line_number, file_state, error):
     # 'delete []' or 'new char * []'. Objective-C can't follow this rule
     # because of method calls.
     if file_extension != 'mm' and file_extension != 'm':
-        if search(r'\w\s+\[', line) and not search(r'(delete|return|auto)\s+\[', line) and not search(r'\s+\[\[(likely|unlikely|noreturn)\]\]', line):
+        if search(r'\w\s+\[', line) and not search(r'(delete|return|auto)\s+\[', line) and not search(r'\s+\[\[(likely|unlikely|noreturn|nodiscard)\]\]', line):
             error(line_number, 'whitespace/brackets', 5,
                   'Extra space before [.')
 
@@ -4724,6 +4724,9 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
                 and not modified_identifier.startswith('hb_')
                 and not modified_identifier.find('::_q_') >= 0
                 and not modified_identifier == "const_iterator"
+                and not modified_identifier == "await_ready"
+                and not modified_identifier == "await_suspend"
+                and not modified_identifier == "await_resume"
                 and not modified_identifier == "vm_throw"
                 and not modified_identifier == "DFG_OPERATION"
                 and not modified_identifier == "LIFETIME_BOUND"
