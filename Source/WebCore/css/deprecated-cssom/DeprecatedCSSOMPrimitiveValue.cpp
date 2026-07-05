@@ -336,7 +336,9 @@ ExceptionOr<String> DeprecatedCSSOMPrimitiveValue::getStringValue() const
 {
     return WTF::switchOn(m_data.get(),
         [](const CSS::CustomIdent& customIdent) -> ExceptionOr<String> {
-            return String { customIdent.value };
+            if (auto* resolved = std::get_if<AtomString>(&customIdent.value))
+                return String { resolved->string() };
+            return CSS::serializationForCSS(CSS::defaultSerializationContext(), customIdent);
         },
         [](const CSS::Keyword& keyword) -> ExceptionOr<String> {
             return String { nameStringForSerialization(keyword.value) };
@@ -361,27 +363,33 @@ ExceptionOr<String> DeprecatedCSSOMPrimitiveValue::getStringValue() const
 
 ExceptionOr<Ref<DeprecatedCSSOMCounter>> DeprecatedCSSOMPrimitiveValue::getCounterValue() const
 {
-    auto convertStyleToString = [](auto& style) -> String {
+    auto customIdentString = [](const CSS::CustomIdent& customIdent) -> String {
+        if (auto* resolved = std::get_if<AtomString>(&customIdent.value))
+            return resolved->string();
+        return CSS::serializationForCSS(CSS::defaultSerializationContext(), customIdent);
+    };
+
+    auto convertStyleToString = [&](auto& style) -> String {
         return WTF::switchOn(style.identifier,
             [](const CSS::Keyword& predefinedKeyword) -> String {
                 return nameLiteralForSerialization(predefinedKeyword.value);
             },
-            [](const CSS::CustomIdent& customIdent) -> String {
-                return customIdent.value.string();
+            [&](const CSS::CustomIdent& customIdent) -> String {
+                return customIdentString(customIdent);
             }
         );
     };
 
     if (auto* contentCounter = std::get_if<CSS::ContentCounterFunction>(&m_data->value)) {
         return DeprecatedCSSOMCounter::create(
-            contentCounter->parameters.identifier.value,
+            customIdentString(contentCounter->parameters.identifier),
             emptyString(),
             convertStyleToString(contentCounter->parameters.style)
         );
     }
     if (auto* contentCounters = std::get_if<CSS::ContentCountersFunction>(&m_data->value)) {
         return DeprecatedCSSOMCounter::create(
-            contentCounters->parameters.identifier.value,
+            customIdentString(contentCounters->parameters.identifier),
             contentCounters->parameters.separator.value,
             convertStyleToString(contentCounters->parameters.style)
         );

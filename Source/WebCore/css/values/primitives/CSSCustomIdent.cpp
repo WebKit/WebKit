@@ -29,6 +29,10 @@
 
 #include "CSSCustomIdentValue.h"
 #include "CSSMarkup.h"
+#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
+#include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
+#include "CSSSerializationContext.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include <wtf/Hasher.h>
 #include <wtf/text/TextStream.h>
@@ -36,9 +40,78 @@
 namespace WebCore {
 namespace CSS {
 
-void Serialize<CustomIdent>::operator()(StringBuilder& builder, const SerializationContext&, const CustomIdent& value)
+bool CustomIdent::isNull() const
+{
+    auto* resolved = std::get_if<AtomString>(&value);
+    return resolved && resolved->isNull();
+}
+
+bool CustomIdent::startsWith(StringView prefix) const
+{
+    return WTF::switchOn(value,
+        [&](const AtomString& resolved) {
+            return resolved.startsWith(prefix);
+        },
+        [&](const IdentFunction& function) {
+            // Build the identifier with every <integer> argument treated as "0", then test the prefix.
+            // https://github.com/w3c/csswg-drafts/issues/12206#issuecomment-3998743769
+            StringBuilder builder;
+            for (auto& argument : function.parameters) {
+                WTF::switchOn(argument,
+                    [&](const IdentFunctionIdent& ident) { builder.append(ident.value); },
+                    [&](const String& string) { builder.append(string.value); },
+                    [&](const Integer<>&) { builder.append('0'); }
+                );
+            }
+            return StringView { builder }.startsWith(prefix);
+        }
+    );
+}
+
+// MARK: - Equality
+
+SUPPRESS_NODELETE bool CustomIdent::operator==(const CustomIdent& other) const
+{
+    return value == other.value;
+}
+
+void Serialize<IdentFunctionIdent>::operator()(StringBuilder& builder, const SerializationContext&, const IdentFunctionIdent& value)
 {
     WebCore::serializeIdentifier(builder, value.value);
+}
+
+void Serialize<CustomIdent>::operator()(StringBuilder& builder, const SerializationContext& context, const CustomIdent& value)
+{
+    WTF::switchOn(value.value,
+        [&](const AtomString& resolved) {
+            WebCore::serializeIdentifier(builder, resolved);
+        },
+        [&](const IdentFunction& function) {
+            serializationForCSS(builder, context, function);
+        }
+    );
+}
+
+void ComputedStyleDependenciesCollector<CustomIdent>::operator()(ComputedStyleDependencies& dependencies, const CustomIdent& value)
+{
+    WTF::switchOn(value.value,
+        [&](const AtomString&) { },
+        [&](const IdentFunction& function) {
+            collectComputedStyleDependencies(dependencies, function);
+        }
+    );
+}
+
+IterationStatus CSSValueChildrenVisitor<CustomIdent>::operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>& func, const CustomIdent& value)
+{
+    return WTF::switchOn(value.value,
+        [&](const AtomString&) {
+            return IterationStatus::Continue;
+        },
+        [&](const IdentFunction& function) {
+            return visitCSSValueChildren(func, function);
+        }
+    );
 }
 
 Ref<CSSValue> CSSValueCreation<CustomIdent>::operator()(CSSValuePool&, const CustomIdent& value)
@@ -55,14 +128,32 @@ Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<CustomIdent>::operator()(
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const CustomIdent& value)
 {
-    return ts << value.value;
+    WTF::switchOn(value.value,
+        [&](const AtomString& resolved) {
+            ts << resolved;
+        },
+        [&](const IdentFunction&) {
+            ts << serializationForCSS(defaultSerializationContext(), value);
+        }
+    );
+    return ts;
 }
 
 // MARK: - Hashing
 
-void add(Hasher& hasher, const CustomIdent& value)
+SUPPRESS_NODELETE void add(Hasher& hasher, const CustomIdent& value)
 {
-    add(hasher, value.value);
+    add(hasher, value.value.index());
+
+    WTF::switchOn(value.value,
+        [&](const AtomString& resolved) {
+            add(hasher, resolved);
+        },
+        [&](const IdentFunction& function) {
+            // Hash the serialization; an <integer> argument may be an unevaluated calc with no raw value.
+            add(hasher, serializationForCSS(defaultSerializationContext(), function));
+        }
+    );
 }
 
 } // namespace CSS

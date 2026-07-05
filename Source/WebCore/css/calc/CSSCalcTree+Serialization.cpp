@@ -406,7 +406,7 @@ void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<R
                     // Noting to do.
                 },
                 [&](const CSS::CustomIdent& customIdent) {
-                    if (!customIdent.value.isNull()) {
+                    if (!customIdent.isNull()) {
                         CSS::serializationForCSS(builder, state.serializationContext, customIdent);
                         if (options.elementScoped)
                             builder.append(' ', nameLiteralForSerialization(CSSValueElementScoped), ", "_s);
@@ -524,7 +524,7 @@ template<typename Op> void serializeMathFunctionArguments(StringBuilder& builder
             }
         },
         [&](const CSS::CustomIdent& root) {
-            if (!root.value.isNull()) {
+            if (!root.isNull()) {
                 builder.append(std::exchange(separator, ", "_s));
                 CSS::serializationForCSS(builder, state.serializationContext, root);
             }

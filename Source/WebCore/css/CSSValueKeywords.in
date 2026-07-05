@@ -1553,6 +1553,9 @@ infinity
 -infinity id=NegativeInfinity
 NaN
 
+// ident()
+ident
+
 from-image
 
 // overflow
