@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>View transitions: ident() is rejected in the @view-transition types descriptor</title>
+<link rel="help" href="https://drafts.csswg.org/css-view-transitions-2/">
+<link rel="help" href="https://drafts.csswg.org/css-values-5/#ident">
+<link rel="help" href="https://github.com/w3c/csswg-drafts/issues/12219#issuecomment-3910348143">
+<link rel="help" href="https://github.com/w3c/csswg-drafts/issues/12206#issuecomment-4750414359">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+  function parse_types(declaration) {
+    const stylesheet = new CSSStyleSheet();
+    stylesheet.replaceSync(`@view-transition { types: ${declaration} }`);
+    return stylesheet.rules.length ? stylesheet.rules[0] : null;
+  }
+
+  // @view-transition { types: declaration; } has
+  // - CSSViewTransitionRule.types = expectedTypes
+  // - CSSViewTransitionRule.cssText = expectedTypesText ?? expectedTypes.join(" ")
+  function types_parser_test(declaration, expectedTypes, expectedTypesText) {
+    const typesText = expectedTypesText ?? expectedTypes.join(" ");
+    const expectedCssText = typesText
+      ? `@view-transition { types: ${typesText}; }`
+      : `@view-transition { }`;
+
+    test(() => {
+      const rule = parse_types(declaration);
+      assert_array_equals(rule.types, expectedTypes);
+      assert_equals(rule.cssText, expectedCssText);
+    }, `types: ${declaration} shoud result in ${JSON.stringify(expectedTypes)}`);
+  }
+
+  types_parser_test('ident("abc")', []);
+  types_parser_test('abc ident("xyz")', []);
+  types_parser_test('ident("-ua" -2 "-name")', []);
+  types_parser_test('abc ident("-ua" -2 "-name")', []);
+</script>

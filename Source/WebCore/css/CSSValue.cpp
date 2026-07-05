@@ -322,6 +322,10 @@ void CSSValue::collectComputedStyleDependencies(ComputedStyleDependencies& depen
             listValue.collectComputedStyleDependencies(dependencies);
         return;
     }
+    if (auto* asCustomIdentValue = dynamicDowncast<CSSCustomIdentValue>(*this)) {
+        CSS::collectComputedStyleDependencies(dependencies, asCustomIdentValue->customIdent());
+        return;
+    }
     if (auto* asPrimitiveValue = dynamicDowncast<CSSPrimitiveValue>(*this))
         asPrimitiveValue->collectComputedStyleDependencies(dependencies);
 }

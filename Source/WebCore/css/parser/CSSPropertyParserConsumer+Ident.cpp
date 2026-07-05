@@ -26,8 +26,16 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 
+#include "CSSCustomIdent.h"
 #include "CSSCustomIdentValue.h"
+#include "CSSParserContext.h"
 #include "CSSParserIdioms.h"
+#include "CSSPropertyParser.h"
+#include "CSSPropertyParserConsumer+IntegerDefinitions.h"
+#include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
+#include "CSSPropertyParserState.h"
+#include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
 
 namespace WebCore {
@@ -80,7 +88,8 @@ RefPtr<CSSKeywordValue> consumeIdentRange(CSSParserTokenRange& range, CSSValueID
 
 StringView consumeEagerlyResolvableCustomIdentRaw(CSSParserTokenRange& range)
 {
-    // FIXME: When support for the ident() function is added, this will only succeed if the ident() function can be eagerly resolved without additional context.
+    // ident() is not supported here: this consumer backs selector arguments, which are not
+    // an element context. https://github.com/w3c/csswg-drafts/issues/12219
 
     if (range.peek().type() != IdentToken || !isValidCustomIdentifier(range.peek().id()))
         return { };
@@ -89,22 +98,102 @@ StringView consumeEagerlyResolvableCustomIdentRaw(CSSParserTokenRange& range)
 
 StringView consumeEagerlyResolvableCustomIdentRawExcluding(CSSParserTokenRange& range, std::initializer_list<CSSValueID> excluding)
 {
-    // FIXME: When support for the ident() function is added, this will only succeed if the ident() function can be eagerly resolved without additional context.
+    // ident() is not supported here: this consumer backs an at-rule prelude, which is not an
+    // element context. https://github.com/w3c/csswg-drafts/issues/12219
 
     if (range.peek().type() != IdentToken || !isValidCustomIdentifier(range.peek().id()) || std::ranges::find(excluding, range.peek().id()) != excluding.end())
         return { };
     return range.consumeIncludingWhitespace().value();
 }
 
-std::optional<CSS::CustomIdent> consumeUnresolvedCustomIdent(CSSParserTokenRange& range, CSS::PropertyParserState&)
+// MARK: <ident()>
+// https://drafts.csswg.org/css-values-5/#ident
+
+static std::optional<CSS::IdentFunction> consumeUnresolvedIdentFunction(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
+    // <ident()> = ident( <ident-arg>+ )
+    // <ident-arg> = <string> | <integer> | <ident>
+    ASSERT(range.peek().type() == FunctionToken);
+    ASSERT(range.peek().functionId() == CSSValueIdent);
+
+    auto rangeCopy = range;
+    auto args = consumeFunction(rangeCopy);
+
+    Vector<CSS::IdentFunctionArg> arguments;
+    while (!args.atEnd()) {
+        switch (args.peek().type()) {
+        case IdentToken:
+            arguments.append(CSS::IdentFunctionIdent { args.consumeIncludingWhitespace().value().toAtomString() });
+            break;
+        case StringToken:
+            arguments.append(CSS::String { args.consumeIncludingWhitespace().value().toString() });
+            break;
+        case NumberToken:
+        case FunctionToken: {
+            auto randomFunctionCountBefore = state.cssRandomFunctionCount;
+            auto integer = MetaConsumer<CSS::Integer<>>::consume(args, state);
+            // random() is not supported inside ident(), matching other engines.
+            if (!integer || state.cssRandomFunctionCount != randomFunctionCountBefore)
+                return { };
+            arguments.append(WTF::move(*integer));
+            break;
+        }
+        default:
+            return { };
+        }
+    }
+
+    if (arguments.isEmpty())
+        return { };
+
+    range = rangeCopy;
+    return CSS::IdentFunction { .parameters = { WTF::move(arguments) } };
+}
+
+static std::optional<CSS::CustomIdent> consumeUnresolvedCustomIdentFunction(CSSParserTokenRange& range, CSS::PropertyParserState& state, std::initializer_list<CSSValueID> excluding)
+{
+    if (range.peek().functionId() != CSSValueIdent || !state.context.cssIdentFunctionEnabled)
+        return { };
+
+    // ident() is only valid within an element context, so descriptors and at-rule preludes
+    // reject it, using the same gate as sibling-index()/sibling-count().
+    // https://github.com/w3c/csswg-drafts/issues/12219
+    if (state.currentRule != StyleRuleType::Style && state.currentRule != StyleRuleType::Keyframe)
+        return { };
+    if (state.currentProperty == CSSPropertyInvalid)
+        return { };
+
+    auto function = consumeUnresolvedIdentFunction(range, state);
+    if (!function)
+        return { };
+
+    // The produced identifier is held to the same requirements a literal ident would be,
+    // tested at parse time against its mock-evaluation: the concatenation of the arguments
+    // with every <integer> argument treated as "0".
+    // https://github.com/w3c/csswg-drafts/issues/12206#issuecomment-3998743769
+    auto mock = CSS::mockEvaluation(*function);
+    if (mock.isEmpty())
+        return { };
+    auto keyword = cssValueKeywordID(mock);
+    if (!isValidCustomIdentifier(keyword) || std::ranges::find(excluding, keyword) != excluding.end())
+        return { };
+
+    return CSS::CustomIdent { WTF::move(*function) };
+}
+
+std::optional<CSS::CustomIdent> consumeUnresolvedCustomIdent(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    if (range.peek().type() == FunctionToken)
+        return consumeUnresolvedCustomIdentFunction(range, state, { });
     if (range.peek().type() != IdentToken || !isValidCustomIdentifier(range.peek().id()))
         return { };
     return CSS::CustomIdent { range.consumeIncludingWhitespace().value().toAtomString() };
 }
 
-std::optional<CSS::CustomIdent> consumeUnresolvedCustomIdentExcluding(CSSParserTokenRange& range, CSS::PropertyParserState&, std::initializer_list<CSSValueID> excluding)
+std::optional<CSS::CustomIdent> consumeUnresolvedCustomIdentExcluding(CSSParserTokenRange& range, CSS::PropertyParserState& state, std::initializer_list<CSSValueID> excluding)
 {
+    if (range.peek().type() == FunctionToken)
+        return consumeUnresolvedCustomIdentFunction(range, state, excluding);
     if (range.peek().type() != IdentToken || !isValidCustomIdentifier(range.peek().id()) || std::ranges::find(excluding, range.peek().id()) != excluding.end())
         return { };
     return CSS::CustomIdent { range.consumeIncludingWhitespace().value().toAtomString() };
@@ -129,7 +218,8 @@ RefPtr<CSSValue> consumeCustomIdentExcluding(CSSParserTokenRange& range, CSS::Pr
 
 StringView consumeEagerlyResolvableDashedIdentRaw(CSSParserTokenRange& range)
 {
-    // FIXME: When support for the ident() function is added, this will only succeed if the ident() function can be eagerly resolved without additional context.
+    // ident() is not supported here: this consumer backs an at-rule prelude, which is not an
+    // element context. https://github.com/w3c/csswg-drafts/issues/12219
 
     if (range.peek().type() != IdentToken || !range.peek().value().startsWith("--"_s))
         return { };
@@ -138,6 +228,11 @@ StringView consumeEagerlyResolvableDashedIdentRaw(CSSParserTokenRange& range)
 
 std::optional<CSS::CustomIdent> consumeUnresolvedDashedIdent(CSSParserTokenRange& range, CSS::PropertyParserState&)
 {
+    // FIXME: When support for the ident() function is added, here must be tested with
+    // the mock-evaluation from https://github.com/w3c/csswg-drafts/issues/12206,
+    // not against this single token's value.
+    // e.g. ident("--" "foo") -> "--foo" must be accepted while
+    // ident("-" 1) -> "-0" must be rejected.
     if (range.peek().type() != IdentToken || !range.peek().value().startsWith("--"_s))
         return { };
     return CSS::CustomIdent { range.consumeIncludingWhitespace().value().toAtomString() };

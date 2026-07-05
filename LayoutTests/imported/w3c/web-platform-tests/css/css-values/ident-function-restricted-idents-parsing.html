@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<title>CSS Values: ident() in restricted &lt;custom-ident&gt; contexts (parsing)</title>
+<link rel="help" href="https://drafts.csswg.org/css-values-5/#ident">
+<link rel="help" href="https://github.com/w3c/csswg-drafts/issues/12206#issuecomment-3998743769">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/css/support/parsing-testcommon.js"></script>
+<script>
+  // container-name = none | <custom-ident>+, excluding none/and/or/not (default reserved)
+  test_valid_value('container-name', 'ident("foo")');
+  test_valid_value('container-name', 'ident("foo" 1)');             // -> "foo0"
+  test_valid_value('container-name', 'ident("and" 1)');             // -> "and0"
+  test_valid_value('container-name', 'ident("no" "ne" 0)');         // -> "none0"
+  test_invalid_value('container-name', 'ident("none")');
+  test_invalid_value('container-name', 'ident("no" "ne")');         // -> "none"
+  test_invalid_value('container-name', 'ident("and")');
+  test_invalid_value('container-name', 'ident("a" "nd")');          // -> "and"
+  test_invalid_value('container-name', 'ident("default")');
+
+  // view-transition-name excludes none/auto/match-element
+  test_valid_value('view-transition-name', 'ident("foo")');
+  test_valid_value('view-transition-name', 'ident("none" 1)');      // -> "none0"
+  test_valid_value('view-transition-name', 'ident("auto" 1)');      // -> "auto0"
+  test_invalid_value('view-transition-name', 'ident("none")');
+  test_invalid_value('view-transition-name', 'ident("no" "ne")');   // -> "none"
+  test_invalid_value('view-transition-name', 'ident("auto")');
+  test_invalid_value('view-transition-name', 'ident("match-element")');
+</script>

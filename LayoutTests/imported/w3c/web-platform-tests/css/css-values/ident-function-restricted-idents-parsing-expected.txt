@@ -1,0 +1,18 @@
+
+PASS e.style['container-name'] = "ident(\"foo\")" should set the property value
+PASS e.style['container-name'] = "ident(\"foo\" 1)" should set the property value
+PASS e.style['container-name'] = "ident(\"and\" 1)" should set the property value
+PASS e.style['container-name'] = "ident(\"no\" \"ne\" 0)" should set the property value
+PASS e.style['container-name'] = "ident(\"none\")" should not set the property value
+PASS e.style['container-name'] = "ident(\"no\" \"ne\")" should not set the property value
+PASS e.style['container-name'] = "ident(\"and\")" should not set the property value
+PASS e.style['container-name'] = "ident(\"a\" \"nd\")" should not set the property value
+PASS e.style['container-name'] = "ident(\"default\")" should not set the property value
+PASS e.style['view-transition-name'] = "ident(\"foo\")" should set the property value
+PASS e.style['view-transition-name'] = "ident(\"none\" 1)" should set the property value
+PASS e.style['view-transition-name'] = "ident(\"auto\" 1)" should set the property value
+PASS e.style['view-transition-name'] = "ident(\"none\")" should not set the property value
+PASS e.style['view-transition-name'] = "ident(\"no\" \"ne\")" should not set the property value
+PASS e.style['view-transition-name'] = "ident(\"auto\")" should not set the property value
+PASS e.style['view-transition-name'] = "ident(\"match-element\")" should not set the property value
+

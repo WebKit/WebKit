@@ -13200,7 +13200,7 @@
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::ViewTransitionName",
-                "parser-grammar": "none | auto | match-element | <custom-ident>"
+                "parser-grammar": "none | auto | match-element | <custom-ident excluding=none,auto,match-element>"
             },
             "specification": {
                 "category": "css-view-transitions",
