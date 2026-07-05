@@ -497,26 +497,21 @@ void MediaSessionManagerInterface::sessionWillBeginPlayback(PlatformMediaSession
         // is visible to JS observers (e.g., the 'playing' event handler reading
         // internals.audioSessionActive()) by the time play() resolves.
         //
-        // Set m_becameActive on IPC success, not optimistically. An optimistic
-        // pre-IPC update would allow an interleaved maybeDeactivateAudioSession
-        // (triggered by a readyState or updateSessionState callback during the
-        // async window) to pass the !m_becameActive guard and send a spurious
-        // tryToSetActive(false) IPC. That deactivation IPC optimistically clears
-        // configuration().isActive before the "playing" event task runs, causing
-        // internals.audioSessionActive() to return false inside the handler.
-        // Setting m_becameActive only on success avoids that race.
-        //
-        // The session-deleted-before-reply case (e.g., iframe GC'd during the
-        // async window) is handled by the !activeAudioSessionRequired() check
-        // below: if no audio is needed after activation, deactivate immediately.
+        // Complete the playback admission FIRST — completeWillBeginPlayback()
+        // drives the session to State::Playing (via clientWillBeginPlayback's
+        // completion), so activeAudioSessionRequired() below reflects the real
+        // state. Checking before completion would see a not-yet-Playing session,
+        // wrongly report "no active session needed", and fire a spurious
+        // maybeDeactivateAudioSession(). The session-deleted case (e.g. iframe GC'd
+        // during the async window) never reaches Playing, so the check still
+        // deactivates and doesn't leak an active session.
         AudioSession::singleton().tryToSetActive(true)->whenSettled(RunLoop::mainSingleton(),
             [this, protectedThis = Ref { *this }, completeWillBeginPlayback = WTF::move(completeWillBeginPlayback)](auto&& result) mutable {
-                if (result) {
+                if (result)
                     m_becameActive = true;
-                    if (!activeAudioSessionRequired())
-                        maybeDeactivateAudioSession();
-                }
                 completeWillBeginPlayback(result.has_value());
+                if (result && !activeAudioSessionRequired())
+                    maybeDeactivateAudioSession();
             });
         return;
     }
@@ -605,6 +600,16 @@ void MediaSessionManagerInterface::sessionStateChanged(PlatformMediaSessionInter
 void MediaSessionManagerInterface::sessionCanProduceAudioChanged()
 {
     MEDIASESSIONMANAGERINTERFACE_RELEASE_LOG(SessionCanProduceAudioChanged);
+
+    // Activate synchronously so isActive() reflects the newly-audible
+    // state immediately. The WebContent process always holds a RemoteAudioSession
+    // (GPU process is always enabled), whose tryToSetActive sets m_active
+    // optimistically+synchronously — so internals.audioSessionActive() (and any
+    // 'playing'-handler read) sees the correct state without waiting for the
+    // debounced task below, which can otherwise land after the 'playing' event.
+    // No-op unless activeAudioSessionRequired(); redundant with the deferred call,
+    // which coalesces at RemoteAudioSession's IPC FIFO.
+    maybeActivateAudioSession();
 
     if (m_alreadyScheduledSessionStatedUpdate)
         return;
