@@ -49,8 +49,8 @@ class WebGLProgram;
 class WebGLTransformFeedback final : public WebGLObject {
 public:
     virtual ~WebGLTransformFeedback();
-
-    static RefPtr<WebGLTransformFeedback> create(WebGL2RenderingContext&);
+    static Ref<WebGLTransformFeedback> createLost();
+    static Ref<WebGLTransformFeedback> create(WebGL2RenderingContext&);
 
     bool isActive() const { return m_active; }
     bool isPaused() const { return m_paused; }
@@ -83,6 +83,7 @@ public:
 
 private:
     WebGLTransformFeedback(WebGL2RenderingContext&, PlatformGLObject);
+    WebGLTransformFeedback();
 
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 

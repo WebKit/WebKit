@@ -55,11 +55,16 @@ Lock& WebGLProgram::instancesLock()
     return s_instancesLock;
 }
 
-RefPtr<WebGLProgram> WebGLProgram::create(WebGLRenderingContextBase& context)
+Ref<WebGLProgram> WebGLProgram::createLost(WebGLRenderingContextBase& context)
+{
+    return adoptRef(*new WebGLProgram { context });
+}
+
+Ref<WebGLProgram> WebGLProgram::create(WebGLRenderingContextBase& context)
 {
     auto object = context.graphicsContextGL()->createProgram();
     if (!object)
-        return nullptr;
+        return createLost(context);
     return adoptRef(*new WebGLProgram { context, object });
 }
 
@@ -69,6 +74,16 @@ WebGLProgram::WebGLProgram(WebGLRenderingContextBase& context, PlatformGLObject 
 {
     ASSERT(scriptExecutionContext());
 
+    {
+        Locker locker { instancesLock() };
+        instances().add(this, &context);
+    }
+}
+
+WebGLProgram::WebGLProgram(WebGLRenderingContextBase& context)
+    : ContextDestructionObserver(context.scriptExecutionContext())
+{
+    ASSERT(scriptExecutionContext());
     {
         Locker locker { instancesLock() };
         instances().add(this, &context);

@@ -33,12 +33,17 @@
 #include <wtf/Locker.h>
 
 namespace WebCore {
-    
-RefPtr<WebGLQuery> WebGLQuery::create(WebGLRenderingContextBase& context)
+
+Ref<WebGLQuery> WebGLQuery::createLost()
+{
+    return adoptRef(*new WebGLQuery { });
+}
+
+Ref<WebGLQuery> WebGLQuery::create(WebGLRenderingContextBase& context)
 {
     auto object = context.graphicsContextGL()->createQuery();
     if (!object)
-        return nullptr;
+        return createLost();
     return adoptRef(*new WebGLQuery { context, object });
 }
 
@@ -54,6 +59,8 @@ WebGLQuery::WebGLQuery(WebGLRenderingContextBase& context, PlatformGLObject obje
     : WebGLObject(context, object)
 {
 }
+
+WebGLQuery::WebGLQuery() = default;
 
 void WebGLQuery::deleteObjectImpl(const AbstractLocker&, GraphicsContextGL* context3d, PlatformGLObject object)
 {

@@ -93,9 +93,11 @@ public:
 
 protected:
     WebGLVertexArrayObjectBase(WebGLRenderingContextBase&, PlatformGLObject, Type);
+    WebGLVertexArrayObjectBase();
+
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override = 0;
 
-    Type m_type;
+    const Type m_type;
     bool m_hasEverBeenBound { false };
     WebGLBindingPoint<WebGLBuffer, GraphicsContextGL::ELEMENT_ARRAY_BUFFER> m_boundElementArrayBuffer;
     Vector<VertexAttribState> m_vertexAttribState;

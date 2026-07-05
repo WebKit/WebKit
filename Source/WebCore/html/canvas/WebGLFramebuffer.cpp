@@ -120,11 +120,16 @@ static bool entryHasObject(const WebGLFramebuffer::AttachmentEntry& entry)
         });
 }
 
-RefPtr<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContextBase& context)
+Ref<WebGLFramebuffer> WebGLFramebuffer::createLost()
+{
+    return adoptRef(*new WebGLFramebuffer { });
+}
+
+Ref<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContextBase& context)
 {
     auto object = context.graphicsContextGL()->createFramebuffer();
     if (!object)
-        return nullptr;
+        return createLost();
     return adoptRef(*new WebGLFramebuffer { context, object, Type::Plain });
 }
 
@@ -145,6 +150,13 @@ WebGLFramebuffer::WebGLFramebuffer(WebGLRenderingContextBase& context, PlatformG
 #endif
 {
     UNUSED_PARAM(type);
+}
+
+WebGLFramebuffer::WebGLFramebuffer()
+#if ENABLE(WEBXR)
+    : m_isOpaque(false)
+#endif
+{
 }
 
 WebGLFramebuffer::~WebGLFramebuffer()

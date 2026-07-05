@@ -35,11 +35,16 @@
 
 namespace WebCore {
 
-RefPtr<WebGLSync> WebGLSync::create(WebGLRenderingContextBase& context)
+Ref<WebGLSync> WebGLSync::createLost()
+{
+    return adoptRef(*new WebGLSync { });
+}
+
+Ref<WebGLSync> WebGLSync::create(WebGLRenderingContextBase& context)
 {
     auto object = context.graphicsContextGL()->fenceSync(GraphicsContextGL::SYNC_GPU_COMMANDS_COMPLETE, 0);
     if (!object)
-        return nullptr;
+        return createLost();
     return adoptRef(*new WebGLSync { context, object });
 }
 
@@ -54,6 +59,11 @@ WebGLSync::~WebGLSync()
 WebGLSync::WebGLSync(WebGLRenderingContextBase& context, GCGLsync object)
     : WebGLObject(context, static_cast<PlatformGLObject>(-1)) // This value is unused because the sync object is a pointer type, but it needs to be non-zero or other parts of the code will assume the object is invalid.
     , m_sync(object)
+{
+}
+
+WebGLSync::WebGLSync()
+    : m_sync(nullptr)
 {
 }
 
@@ -97,6 +107,8 @@ bool WebGLSync::isSignaled() const
 
 void WebGLSync::scheduleAllowCacheUpdate(WebGLRenderingContextBase& context)
 {
+    if (!m_sync)
+        return;
     context.protectedCanvasBase()->queueTaskKeepingObjectAlive(TaskSource::WebGL, [protectedThis = Ref { *this }](auto&) {
         protectedThis->m_allowCacheUpdate = true;
     });

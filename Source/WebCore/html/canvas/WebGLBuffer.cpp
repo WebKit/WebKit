@@ -35,18 +35,25 @@
 
 namespace WebCore {
 
-RefPtr<WebGLBuffer> WebGLBuffer::create(WebGLRenderingContextBase& context)
+Ref<WebGLBuffer> WebGLBuffer::create(WebGLRenderingContextBase& context)
 {
     auto object = context.graphicsContextGL()->createBuffer();
     if (!object)
-        return nullptr;
+        return createLost();
     return adoptRef(*new WebGLBuffer { context, object });
+}
+
+Ref<WebGLBuffer> WebGLBuffer::createLost()
+{
+    return adoptRef(*new WebGLBuffer { });
 }
 
 WebGLBuffer::WebGLBuffer(WebGLRenderingContextBase& context, PlatformGLObject object)
     : WebGLObject(context, object)
 {
 }
+
+WebGLBuffer::WebGLBuffer() = default;
 
 WebGLBuffer::~WebGLBuffer()
 {

@@ -53,7 +53,8 @@ class WebGLFramebuffer final : public WebGLObject {
 public:
     virtual ~WebGLFramebuffer();
 
-    static RefPtr<WebGLFramebuffer> create(WebGLRenderingContextBase&);
+    static Ref<WebGLFramebuffer> createLost();
+    static Ref<WebGLFramebuffer> create(WebGLRenderingContextBase&);
 #if ENABLE(WEBXR)
     static RefPtr<WebGLFramebuffer> createOpaque(WebGLRenderingContextBase&);
 #endif
@@ -114,6 +115,7 @@ private:
 #endif
     };
     WebGLFramebuffer(WebGLRenderingContextBase&, PlatformGLObject, Type);
+    WebGLFramebuffer();
 
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 

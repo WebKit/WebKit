@@ -42,7 +42,7 @@ public:
 
     static bool supported(GraphicsContextGL&);
 
-    RefPtr<WebGLVertexArrayObjectOES> createVertexArrayOES();
+    Ref<WebGLVertexArrayObjectOES> createVertexArrayOES();
     void deleteVertexArrayOES(WebGLVertexArrayObjectOES*);
     GCGLboolean isVertexArrayOES(WebGLVertexArrayObjectOES*);
     void bindVertexArrayOES(WebGLVertexArrayObjectOES*);

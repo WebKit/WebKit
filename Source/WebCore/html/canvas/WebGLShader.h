@@ -34,7 +34,8 @@ namespace WebCore {
 
 class WebGLShader final : public WebGLObject {
 public:
-    static RefPtr<WebGLShader> create(WebGLRenderingContextBase&, GCGLenum);
+    static Ref<WebGLShader> createLost(GCGLenum);
+    static Ref<WebGLShader> create(WebGLRenderingContextBase&, GCGLenum);
     virtual ~WebGLShader();
 
     GCGLenum getType() const { return m_type; }
@@ -46,6 +47,7 @@ public:
     bool isInitialized() const { return true; }
 private:
     WebGLShader(WebGLRenderingContextBase&, PlatformGLObject, GCGLenum);
+    WebGLShader(GCGLenum);
 
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) final;
 

@@ -49,10 +49,10 @@ bool OESVertexArrayObject::supported(GraphicsContextGL& context)
     return context.supportsExtension(GCGLExtension::OES_vertex_array_object);
 }
 
-RefPtr<WebGLVertexArrayObjectOES> OESVertexArrayObject::createVertexArrayOES()
+Ref<WebGLVertexArrayObjectOES> OESVertexArrayObject::createVertexArrayOES()
 {
     if (isContextLost())
-        return nullptr;
+        return WebGLVertexArrayObjectOES::createLost();
     return WebGLVertexArrayObjectOES::createUser(context().get());
 }
 

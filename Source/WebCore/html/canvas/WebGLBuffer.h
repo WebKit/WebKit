@@ -39,7 +39,8 @@ namespace WebCore {
 
 class WebGLBuffer final : public WebGLObject {
 public:
-    static RefPtr<WebGLBuffer> create(WebGLRenderingContextBase&);
+    static Ref<WebGLBuffer> create(WebGLRenderingContextBase&);
+    static Ref<WebGLBuffer> createLost();
     virtual ~WebGLBuffer();
 
     GCGLenum getTarget() const { return m_target; }
@@ -48,6 +49,7 @@ public:
     bool isInitialized() const { return m_target; }
 private:
     WebGLBuffer(WebGLRenderingContextBase&, PlatformGLObject);
+    WebGLBuffer();
 
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 

@@ -50,7 +50,8 @@ class WebGLShader;
 
 class WebGLProgram final : public WebGLObject, public ContextDestructionObserver {
 public:
-    static RefPtr<WebGLProgram> create(WebGLRenderingContextBase&);
+    static Ref<WebGLProgram> createLost(WebGLRenderingContextBase&);
+    static Ref<WebGLProgram> create(WebGLRenderingContextBase&);
     virtual ~WebGLProgram();
 
     // ContextDestructionObserver.
@@ -95,6 +96,7 @@ public:
 
 private:
     WebGLProgram(WebGLRenderingContextBase&, PlatformGLObject);
+    WebGLProgram(WebGLRenderingContextBase&);
 
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 

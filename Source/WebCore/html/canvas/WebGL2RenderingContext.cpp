@@ -1732,11 +1732,10 @@ void WebGL2RenderingContext::clearBufferfi(GCGLenum buffer, GCGLint drawbuffer, 
     graphicsContextGL()->clearBufferfi(buffer, drawbuffer, depth, stencil);
 }
 
-RefPtr<WebGLQuery> WebGL2RenderingContext::createQuery()
+Ref<WebGLQuery> WebGL2RenderingContext::createQuery()
 {
     if (isContextLost())
-        return nullptr;
-
+        return WebGLQuery::createLost();
     return WebGLQuery::create(*this);
 }
 
@@ -1898,10 +1897,10 @@ WebGLAny WebGL2RenderingContext::getQueryParameter(WebGLQuery& query, GCGLenum p
     return nullptr;
 }
 
-RefPtr<WebGLSampler> WebGL2RenderingContext::createSampler()
+Ref<WebGLSampler> WebGL2RenderingContext::createSampler()
 {
     if (isContextLost())
-        return nullptr;
+        return WebGLSampler::createLost();
     return WebGLSampler::create(*this);
 }
 
@@ -2003,9 +2002,6 @@ WebGLAny WebGL2RenderingContext::getSamplerParameter(WebGLSampler& sampler, GCGL
 
 RefPtr<WebGLSync> WebGL2RenderingContext::fenceSync(GCGLenum condition, GCGLbitfield flags)
 {
-    if (isContextLost())
-        return nullptr;
-
     if (condition != GraphicsContextGL::SYNC_GPU_COMMANDS_COMPLETE) {
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "fenceSync"_s, "condition must be SYNC_GPU_COMMANDS_COMPLETE"_s);
         return nullptr;
@@ -2014,9 +2010,7 @@ RefPtr<WebGLSync> WebGL2RenderingContext::fenceSync(GCGLenum condition, GCGLbitf
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "fenceSync"_s, "flags must be zero"_s);
         return nullptr;
     }
-    auto sync = WebGLSync::create(*this);
-    if (!sync)
-        return nullptr;
+    Ref sync = WebGLSync::create(*this);
     sync->scheduleAllowCacheUpdate(*this);
     return sync;
 }
@@ -2099,11 +2093,10 @@ WebGLAny WebGL2RenderingContext::getSyncParameter(WebGLSync& sync, GCGLenum pnam
     }
 }
 
-RefPtr<WebGLTransformFeedback> WebGL2RenderingContext::createTransformFeedback()
+Ref<WebGLTransformFeedback> WebGL2RenderingContext::createTransformFeedback()
 {
     if (isContextLost())
-        return nullptr;
-
+        return WebGLTransformFeedback::createLost();
     return WebGLTransformFeedback::create(*this);
 }
 
@@ -2558,11 +2551,10 @@ void WebGL2RenderingContext::uniformBlockBinding(WebGLProgram& program, GCGLuint
     graphicsContextGL()->uniformBlockBinding(program.object(), uniformBlockIndex, uniformBlockBinding);
 }
 
-RefPtr<WebGLVertexArrayObject> WebGL2RenderingContext::createVertexArray()
+Ref<WebGLVertexArrayObject> WebGL2RenderingContext::createVertexArray()
 {
     if (isContextLost())
-        return nullptr;
-
+        return WebGLVertexArrayObject::createLost();
     return WebGLVertexArrayObject::create(*this, WebGLVertexArrayObject::Type::User);
 }
 

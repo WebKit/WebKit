@@ -35,11 +35,16 @@
 
 namespace WebCore {
 
-RefPtr<WebGLShader> WebGLShader::create(WebGLRenderingContextBase& context, GCGLenum type)
+Ref<WebGLShader> WebGLShader::createLost(GCGLenum type)
+{
+    return adoptRef(*new WebGLShader(type));
+}
+
+Ref<WebGLShader> WebGLShader::create(WebGLRenderingContextBase& context, GCGLenum type)
 {
     auto object = context.graphicsContextGL()->createShader(type);
     if (!object)
-        return nullptr;
+        return createLost(type);
     return adoptRef(*new WebGLShader(context, object, type));
 }
 
@@ -47,6 +52,11 @@ WebGLShader::WebGLShader(WebGLRenderingContextBase& context, PlatformGLObject ob
     : WebGLObject(context, object)
     , m_type(type)
     , m_source(emptyString())
+{
+}
+
+WebGLShader::WebGLShader(GCGLenum type)
+    : m_type(type)
 {
 }
 
