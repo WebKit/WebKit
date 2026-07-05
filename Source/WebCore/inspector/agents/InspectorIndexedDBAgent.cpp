@@ -483,7 +483,7 @@ public:
     }
 
     BackendDispatcher::CallbackBase& requestCallback() override { return m_requestCallback.get(); }
-    DataLoader(ScriptExecutionContext* scriptExecutionContext, Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback>&& requestCallback, const InjectedScript& injectedScript, const String& objectStoreName, const String& indexName, RefPtr<IDBKeyRange> idbKeyRange, int skipCount, unsigned pageSize)
+    DataLoader(ScriptExecutionContext* scriptExecutionContext, Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback>&& requestCallback, const InjectedScript& injectedScript, const String& objectStoreName, const String& indexName, RefPtr<IDBKeyRange>&& idbKeyRange, int skipCount, unsigned pageSize)
         : ExecutableWithDatabase(scriptExecutionContext)
         , m_requestCallback(WTF::move(requestCallback))
         , m_injectedScript(injectedScript)
