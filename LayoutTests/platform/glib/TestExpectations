@@ -932,6 +932,10 @@ imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-inset-025.htm
 # Passing since 314012@main.
 imported/w3c/web-platform-tests/html/interaction/focus/anchor-element-focus-ring.html [ Pass ]
 
+# Passing since 316397@main.
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-notch.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-superellipse-negative-inf.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3187,7 +3191,7 @@ webkit.org/b/286481 imported/w3c/web-platform-tests/webrtc/protocol/rtp-demuxing
 
 # Simulcast support is not complete yet.
 imported/w3c/web-platform-tests/webrtc/simulcast [ Pass ]
-imported/w3c/web-platform-tests/webrtc/simulcast/h264.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webrtc/simulcast/h264.https.html [ Pass Crash Failure ]
 imported/w3c/web-platform-tests/webrtc/simulcast/negotiation-encodings.https.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-encodings.https.html [ Failure ]
 
@@ -4512,6 +4516,7 @@ webkit.org/b/229761 http/tests/media/media-stream/audio-capture-and-category.htt
 # Flaky tests detected both on GTK and WPE from 29Jan2023 to 23Feb2023
 webkit.org/b/252878 http/tests/media/modern-media-controls/skip-back-support/skip-back-support-live-broadcast.html [ Timeout ]
 webkit.org/b/252878 http/tests/workers/service/shownotification-allowed.html [ Pass Failure Timeout ]
+webkit.org/b/252878 imported/blink/fast/transforms/transform-update-frame-overflow.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/wasm/webapi/instantiateStreaming.any.serviceworker.html [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/wasm/webapi/instantiateStreaming.any.sharedworker.html [ Failure Pass ]
 webkit.org/b/252878 loader/navigation-policy/should-open-external-urls/subframe-navigated-programatically-by-main-frame.html [ Failure Pass ]
@@ -5455,7 +5460,8 @@ webkit.org/b/278719 fast/events/touch/inserted-fragment-touch-target.html [ Time
 # This test has been failing on glib ports since its creation.
 imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-supplementary-ideograph.html [ ImageOnlyFailure ]
 
-webkit.org/b/311844 fast/mediastream/mediastreamtrack-configurationchange.html [ Failure ]
+# Flaky since 316301@main.
+webkit.org/b/311844 fast/mediastream/mediastreamtrack-configurationchange.html [ Failure Pass ]
 
 # This is expected to fail in all platforms but it rarely passes in GTK and WPE.
 imported/w3c/web-platform-tests/css/compositing/background-blending/background-blend-mode-plus-lighter.html [ ImageOnlyFailure Pass ]
@@ -5617,6 +5623,12 @@ webkit.org/b/317966 [ x86_64 ] http/tests/web-locks/web-lock-in-serviceworker.ht
 webkit.org/b/317968 [ x86_64 ] imported/w3c/web-platform-tests/navigation-timing/nav2-test-redirect-server.html [ Pass Failure ]
 
 webkit.org/b/318434 ipc/send-gpu-GetShareableBitmap-RemoteRenderingBackend.html [ Crash Pass ]
+
+webkit.org/b/318634 ipc/loadping-firstpartyforcookies-message-check.html [ Failure ]
+
+webkit.org/b/318635 fast/mediastream/mediastreamtrack-clone-muted.html [ Crash Timeout Pass ]
+
+webkit.org/b/318637 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/cors-check.https.html [ Crash Failure Pass ]
 
 # End: Common failures between GTK and WPE.
 

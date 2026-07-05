@@ -552,7 +552,6 @@ webkit.org/b/307143 imported/w3c/web-platform-tests/preload/preload-in-data-doc.
 # Flaky tests detected from 29Jan2023 to 23Feb2023
 webkit.org/b/281053 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Failure ]
 webkit.org/b/252878 http/wpt/service-workers/controlled-sharedworker.https.html [ Failure Pass ]
-webkit.org/b/252878 imported/blink/fast/transforms/transform-update-frame-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/214454 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-margin-root-001.html [ ImageOnlyFailure ]
 webkit.org/b/214454 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-root.html [ ImageOnlyFailure ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/css/css-pseudo/backdrop-animate-002.html [ ImageOnlyFailure ]
@@ -1275,7 +1274,6 @@ webkit.org/b/313036 imported/w3c/web-platform-tests/editing/other/copy-elements-
 
 webkit.org/b/313054 [ arm64 ] compositing/backing/animate-into-view-with-descendant.html [ Pass Failure ]
 webkit.org/b/160119 [ arm64 ] editing/selection/caret-at-bidi-boundary.html [ Pass Timeout ]
-webkit.org/b/313055 [ arm64 ] fast/canvas/image-buffer-backend-variants.html [ Pass Failure Timeout ]
 webkit.org/b/313112 [ arm64 ] webrtc/video-mute.html [ Pass Failure Timeout ]
 
 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-005.html [ Failure ]
@@ -1334,11 +1332,12 @@ webkit.org/b/317969 [ x86_64 ] imported/w3c/web-platform-tests/webrtc/RTCDataCha
 webkit.org/b/317970 [ x86_64 ] imported/w3c/web-platform-tests/css/css-anchor-position/scroll-to-anchored-fixed-000.html [ ImageOnlyFailure Pass ]
 webkit.org/b/317972 [ x86_64 ] streams/pipeTo-unhandled-promise.html [ Crash Pass ]
 webkit.org/b/305514 [ x86_64 ] fast/images/imagebitmap-memory.html [ ImageOnlyFailure Pass Timeout ]
-webkit.org/b/313055 [ x86_64 ] fast/canvas/image-buffer-backend-variants.html [ Failure ]
 webkit.org/b/317973 [ arm64 ] fast/visual-viewport/client-rects-relative-to-layout-viewport-zoomed.html [ Failure ]
 webkit.org/b/317974 [ arm64 ] imported/w3c/web-platform-tests/largest-contentful-paint/cross-origin-image.sub.html [ Failure Pass ]
 webkit.org/b/317975 [ arm64 ] fast/dom/HTMLImageElement/sizes/image-sizes-js-innerhtml.html [ Failure Pass ]
 webkit.org/b/317976 [ arm64 ] imported/w3c/web-platform-tests/largest-contentful-paint/observe-svg-data-uri-image.html [ Failure Pass ]
+
+webkit.org/b/313055 fast/canvas/image-buffer-backend-variants.html [ Pass Failure Timeout ]
 
 # Gardening 2026-06-27 (WPE x86_64, builder 40) https://bugs.webkit.org/show_bug.cgi?id=318036
 webkit.org/b/318034 [ x86_64 ] fast/canvas/image-potential-subsample.html [ Failure Pass ]
@@ -1347,3 +1346,5 @@ webkit.org/b/318345 [ x86_64 ] media/track/video-track-configuration-mp4-default
 
 webkit.org/b/318349 [ arm64 ] imported/w3c/web-platform-tests/largest-contentful-paint/image-TAO.sub.html [ Failure Pass ]
 webkit.org/b/318350 [ arm64 ] http/tests/websocket/tests/hybi/inspector/handshake-error.html [ Failure Pass ]
+
+webkit.org/b/318638 http/tests/misc/iframe-shadow-realm.html [ Crash Pass ]
