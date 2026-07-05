@@ -776,7 +776,7 @@ RefPtr<ImageBuffer> WebGLRenderingContextBase::surfaceBufferToImageBuffer(Surfac
     RefPtr scriptExecutionContext = this->scriptExecutionContext();
     if (!scriptExecutionContext)
         return nullptr;
-    auto size = m_defaultFramebuffer->size();
+    auto size = clampedCanvasSize();
     if (size.isEmpty())
         return nullptr;
     RefPtr<ImageBuffer> buffer;
@@ -885,15 +885,17 @@ RefPtr<ImageBuffer> WebGLRenderingContextBase::transferToImageBuffer()
 
 void WebGLRenderingContextBase::didUpdateCanvasSizeProperties(bool)
 {
-    if (isContextLost())
-        return;
-
     auto newSize = clampedCanvasSize();
     if (newSize == m_defaultFramebuffer->size())
         return;
 
     m_readDrawingBuffer = nullptr;
     m_readDisplayBuffer = nullptr;
+    if (isContextLost()) {
+        updateMemoryCost();
+        return;
+    }
+
     m_defaultFramebuffer->reshape(newSize);
     updateMemoryCost();
 
@@ -5727,14 +5729,16 @@ void WebGLRenderingContextBase::updateMemoryCost() const
         newMemoryCost += Ref { *m_readDisplayBuffer }->memoryCost();
     if (m_readDrawingBuffer)
         newMemoryCost += Ref { *m_readDrawingBuffer }->memoryCost();
-    size_t area = m_defaultFramebuffer->size().unclampedArea();
-    size_t bytesPerSample = 4;
-    if (m_attributes.depth)
-        bytesPerSample += 4;
-    else if (m_attributes.stencil)
-        bytesPerSample += 1;
-    size_t samplesPerPixel = m_attributes.antialias ? 4 : 1;
-    newMemoryCost += area * samplesPerPixel * bytesPerSample;
+    if (!isContextLost()) {
+        size_t area = m_defaultFramebuffer->size().unclampedArea();
+        size_t bytesPerSample = 4;
+        if (m_attributes.depth)
+            bytesPerSample += 4;
+        else if (m_attributes.stencil)
+            bytesPerSample += 1;
+        size_t samplesPerPixel = m_attributes.antialias ? 4 : 1;
+        newMemoryCost += area * samplesPerPixel * bytesPerSample;
+    }
     CanvasRenderingContext::updateMemoryCost(newMemoryCost);
 }
 
