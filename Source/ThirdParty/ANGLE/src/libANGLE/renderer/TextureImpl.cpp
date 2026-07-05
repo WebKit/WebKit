@@ -117,17 +117,6 @@ angle::Result TextureImpl::copy3DSubTexture(const gl::Context *context,
     return angle::Result::Stop;
 }
 
-angle::Result TextureImpl::setImageExternal(const gl::Context *context,
-                                            const gl::ImageIndex &index,
-                                            GLenum internalFormat,
-                                            const gl::Extents &size,
-                                            GLenum format,
-                                            GLenum type)
-{
-    UNREACHABLE();
-    return angle::Result::Stop;
-}
-
 angle::Result TextureImpl::setBuffer(const gl::Context *context, GLenum internalFormat)
 {
     UNREACHABLE();
@@ -186,12 +175,6 @@ GLint TextureImpl::getFormatSupportedCompressionRates(const gl::Context *context
                                                       GLenum internalformat,
                                                       GLsizei bufSize,
                                                       GLint *rates)
-{
-    UNREACHABLE();
-    return 0;
-}
-
-GLint TextureImpl::getNativeID() const
 {
     UNREACHABLE();
     return 0;

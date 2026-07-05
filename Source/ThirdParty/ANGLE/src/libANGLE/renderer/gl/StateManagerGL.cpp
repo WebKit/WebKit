@@ -537,15 +537,6 @@ void StateManagerGL::bindTexture(gl::TextureType type, GLuint texture)
     }
 }
 
-void StateManagerGL::invalidateTexture(gl::TextureType type)
-{
-    // Assume the tracked texture binding is incorrect, query the real bound texture from GL.
-    GLint boundTexture = 0;
-    mFunctions->getIntegerv(nativegl::GetTextureBindingQuery(type), &boundTexture);
-    mTextures[type][mTextureUnitIndex] = static_cast<GLuint>(boundTexture);
-    mLocalDirtyBits.set(gl::state::DIRTY_BIT_TEXTURE_BINDINGS);
-}
-
 void StateManagerGL::bindSampler(size_t unit, GLuint sampler)
 {
     if (mSamplers[unit] != sampler)

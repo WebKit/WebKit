@@ -2115,7 +2115,6 @@ bool IsTextureUpdate(CallCapture &call)
         case EntryPoint::GLCopyTexture3DANGLE:
         case EntryPoint::GLCopyTextureCHROMIUM:
         case EntryPoint::GLTexImage2D:
-        case EntryPoint::GLTexImage2DExternalANGLE:
         case EntryPoint::GLTexImage2DRobustANGLE:
         case EntryPoint::GLTexImage3D:
         case EntryPoint::GLTexImage3DOES:

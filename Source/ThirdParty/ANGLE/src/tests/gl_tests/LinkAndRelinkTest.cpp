@@ -741,6 +741,7 @@ void main()
     color = vec4(0, 1, 0, 1);
 })";
     constexpr char kGoodFS[] = R"(#version 310 es
+precision highp int;
 in mediump vec4 color;
 out mediump vec4 colorOut;
 mediump uniform float u;  // should be 0.5;

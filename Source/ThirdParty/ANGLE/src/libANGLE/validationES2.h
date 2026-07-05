@@ -679,24 +679,6 @@ ANGLE_INLINE bool ValidateBindTexture(const Context *context,
     return true;
 }
 
-// Validation of all Tex[Sub]Image2D parameters except TextureTarget.
-bool ValidateES2TexImageParametersBase(const Context *context,
-                                       angle::EntryPoint entryPoint,
-                                       TextureTarget target,
-                                       GLint level,
-                                       GLenum internalformat,
-                                       bool isCompressed,
-                                       bool isSubImage,
-                                       GLint xoffset,
-                                       GLint yoffset,
-                                       GLsizei width,
-                                       GLsizei height,
-                                       GLint border,
-                                       GLenum format,
-                                       GLenum type,
-                                       const void *pixels,
-                                       GLuint *outImageSize);
-
 // Validation of TexStorage*2DEXT
 bool ValidateES2TexStorageParametersBase(const Context *context,
                                          angle::EntryPoint entryPoint,

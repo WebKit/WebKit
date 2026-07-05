@@ -357,6 +357,8 @@ class [[nodiscard]] TScopedSymbolTableLevel
     TSymbolTable *mTable;
 };
 
+}  // namespace
+
 int GetMaxShaderVersionForSpec(ShShaderSpec spec)
 {
     switch (spec)
@@ -376,8 +378,6 @@ int GetMaxShaderVersionForSpec(ShShaderSpec spec)
             return 0;
     }
 }
-
-}  // namespace
 
 TShHandleBase::TShHandleBase()
 {
@@ -491,11 +491,6 @@ TIntermBlock *TCompiler::compileTreeImpl(angle::Span<const char *const> shaderSt
 
     setShaderMetadata(parseContext);
 
-    if (!checkShaderVersion(&parseContext))
-    {
-        return nullptr;
-    }
-
     TIntermBlock *root = parseContext.getTreeRoot();
 #ifdef ANGLE_IR
     if (compileOptions.useIR)
@@ -569,70 +564,7 @@ TIntermBlock *TCompiler::compileTreeImpl(angle::Span<const char *const> shaderSt
     return root;
 }
 
-bool TCompiler::checkShaderVersion(TParseContext *parseContext)
-{
-    if (GetMaxShaderVersionForSpec(mShaderSpec) < mShaderVersion)
-    {
-        mDiagnostics.globalError("unsupported shader version");
-        return false;
-    }
 
-    ASSERT(parseContext);
-    switch (mShaderType)
-    {
-        case GL_COMPUTE_SHADER:
-            if (mShaderVersion < 310)
-            {
-                mDiagnostics.globalError("Compute shader is not supported in this shader version.");
-                return false;
-            }
-            break;
-
-        case GL_GEOMETRY_SHADER_EXT:
-            if (mShaderVersion < 310)
-            {
-                mDiagnostics.globalError(
-                    "Geometry shader is not supported in this shader version.");
-                return false;
-            }
-            else if (mShaderVersion == 310)
-            {
-                if (!parseContext->checkCanUseOneOfExtensions(
-                        sh::TSourceLoc(),
-                        std::array<TExtension, 2u>{
-                            {TExtension::EXT_geometry_shader, TExtension::OES_geometry_shader}}))
-                {
-                    return false;
-                }
-            }
-            break;
-
-        case GL_TESS_CONTROL_SHADER_EXT:
-        case GL_TESS_EVALUATION_SHADER_EXT:
-            if (mShaderVersion < 310)
-            {
-                mDiagnostics.globalError(
-                    "Tessellation shaders are not supported in this shader version.");
-                return false;
-            }
-            else if (mShaderVersion == 310)
-            {
-                if (!parseContext->checkCanUseOneOfExtensions(
-                        sh::TSourceLoc(),
-                        std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
-                                                    TExtension::OES_tessellation_shader}}))
-                {
-                    return false;
-                }
-            }
-            break;
-
-        default:
-            break;
-    }
-
-    return true;
-}
 
 void TCompiler::setShaderMetadata(const TParseContext &parseContext)
 {

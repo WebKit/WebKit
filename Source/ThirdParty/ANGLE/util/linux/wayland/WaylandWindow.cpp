@@ -352,6 +352,11 @@ EGLNativeDisplayType WaylandWindow::getNativeDisplay() const
     return reinterpret_cast<EGLNativeDisplayType>(gDisplay);
 }
 
+EGLenum WaylandWindow::getNativeDisplayPlatformType() const
+{
+    return EGL_PLATFORM_WAYLAND_EXT;
+}
+
 void WaylandWindow::messageLoop()
 {
     while (wl_display_prepare_read(gDisplay) != 0)

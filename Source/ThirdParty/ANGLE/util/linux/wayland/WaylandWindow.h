@@ -35,6 +35,7 @@ class ANGLE_UTIL_EXPORT WaylandWindow : public OSWindow
 
     void setNativeDisplay(EGLNativeDisplayType display) override;
     EGLNativeDisplayType getNativeDisplay() const override;
+    EGLenum getNativeDisplayPlatformType() const override;
 
     void messageLoop() override;
 

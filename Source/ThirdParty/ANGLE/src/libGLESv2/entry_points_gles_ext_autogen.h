@@ -603,17 +603,6 @@ ANGLE_EXPORT void GL_APIENTRY GL_GetFramebufferPixelLocalStorageParameteruivANGL
 
 // GL_ANGLE_texture_compression_dxt5
 
-// GL_ANGLE_texture_external_update
-ANGLE_EXPORT void GL_APIENTRY GL_TexImage2DExternalANGLE(GLenum target,
-                                                         GLint level,
-                                                         GLint internalformat,
-                                                         GLsizei width,
-                                                         GLsizei height,
-                                                         GLint border,
-                                                         GLenum format,
-                                                         GLenum type);
-ANGLE_EXPORT void GL_APIENTRY GL_InvalidateTextureANGLE(GLenum target);
-
 // GL_ANGLE_texture_multisample
 ANGLE_EXPORT void GL_APIENTRY GL_TexStorage2DMultisampleANGLE(GLenum target,
                                                               GLsizei samples,

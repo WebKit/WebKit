@@ -851,7 +851,6 @@
 		7BD3D2BA2FCDB8A300C386DC /* SwizzleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A72DE59E0900327F7F /* SwizzleTest.cpp */; };
 		7BD3D2BB2FCDB8A300C386DC /* system_info_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6662DE5A7A200327F7F /* system_info_util.cpp */; };
 		7BD3D2BC2FCDB8A300C386DC /* TestSuite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B8C09082F7E843B007E37DE /* TestSuite.cpp */; };
-		7BD3D2BD2FCDB8A300C386DC /* TextureExternalUpdateTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A92DE59E0900327F7F /* TextureExternalUpdateTest.cpp */; };
 		7BD3D2BE2FCDB8A300C386DC /* TextureFixedRateCompressionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AA2DE59E0900327F7F /* TextureFixedRateCompressionTest.cpp */; };
 		7BD3D2BF2FCDB8A300C386DC /* TextureMultisampleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AB2DE59E0900327F7F /* TextureMultisampleTest.cpp */; };
 		7BD3D2C02FCDB8A300C386DC /* TextureRectangleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AC2DE59E0900327F7F /* TextureRectangleTest.cpp */; };
@@ -1144,7 +1143,6 @@
 		7BFAF5C62DE59E0900327F7F /* ProgramPipelineTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5882DE59E0900327F7F /* ProgramPipelineTest.cpp */; };
 		7BFAF5C72DE59E0900327F7F /* SRGBTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A52DE59E0900327F7F /* SRGBTextureTest.cpp */; };
 		7BFAF5C82DE59E0900327F7F /* MatrixTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF56E2DE59E0900327F7F /* MatrixTest.cpp */; };
-		7BFAF5C92DE59E0900327F7F /* TextureExternalUpdateTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A92DE59E0900327F7F /* TextureExternalUpdateTest.cpp */; };
 		7BFAF5CA2DE59E0900327F7F /* MultisampleCompatibilityTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5752DE59E0900327F7F /* MultisampleCompatibilityTest.cpp */; };
 		7BFAF5CB2DE59E0900327F7F /* PVRTCCompressedTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF58A2DE59E0900327F7F /* PVRTCCompressedTextureTest.cpp */; };
 		7BFAF5CC2DE59E0900327F7F /* TextureMultisampleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AB2DE59E0900327F7F /* TextureMultisampleTest.cpp */; };
@@ -2657,7 +2655,6 @@
 		7BFAF5A52DE59E0900327F7F /* SRGBTextureTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SRGBTextureTest.cpp; sourceTree = "<group>"; };
 		7BFAF5A62DE59E0900327F7F /* StateChangeTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StateChangeTest.cpp; sourceTree = "<group>"; };
 		7BFAF5A72DE59E0900327F7F /* SwizzleTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SwizzleTest.cpp; sourceTree = "<group>"; };
-		7BFAF5A92DE59E0900327F7F /* TextureExternalUpdateTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextureExternalUpdateTest.cpp; sourceTree = "<group>"; };
 		7BFAF5AA2DE59E0900327F7F /* TextureFixedRateCompressionTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextureFixedRateCompressionTest.cpp; sourceTree = "<group>"; };
 		7BFAF5AB2DE59E0900327F7F /* TextureMultisampleTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextureMultisampleTest.cpp; sourceTree = "<group>"; };
 		7BFAF5AC2DE59E0900327F7F /* TextureRectangleTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextureRectangleTest.cpp; sourceTree = "<group>"; };
@@ -4308,7 +4305,6 @@
 				7BFAF5A52DE59E0900327F7F /* SRGBTextureTest.cpp */,
 				7BFAF5A62DE59E0900327F7F /* StateChangeTest.cpp */,
 				7BFAF5A72DE59E0900327F7F /* SwizzleTest.cpp */,
-				7BFAF5A92DE59E0900327F7F /* TextureExternalUpdateTest.cpp */,
 				7BFAF5AA2DE59E0900327F7F /* TextureFixedRateCompressionTest.cpp */,
 				7BFAF5AB2DE59E0900327F7F /* TextureMultisampleTest.cpp */,
 				7BFAF5AC2DE59E0900327F7F /* TextureRectangleTest.cpp */,
@@ -6344,7 +6340,6 @@
 				7BD3D2BA2FCDB8A300C386DC /* SwizzleTest.cpp in Sources */,
 				7BD3D2BB2FCDB8A300C386DC /* system_info_util.cpp in Sources */,
 				7BD3D2BC2FCDB8A300C386DC /* TestSuite.cpp in Sources */,
-				7BD3D2BD2FCDB8A300C386DC /* TextureExternalUpdateTest.cpp in Sources */,
 				7BD3D2BE2FCDB8A300C386DC /* TextureFixedRateCompressionTest.cpp in Sources */,
 				7BD3D2BF2FCDB8A300C386DC /* TextureMultisampleTest.cpp in Sources */,
 				7BD3D2C02FCDB8A300C386DC /* TextureRectangleTest.cpp in Sources */,
@@ -6553,7 +6548,6 @@
 				7BFAF5BD2DE59E0900327F7F /* SwizzleTest.cpp in Sources */,
 				7BFAF6672DE5A7A200327F7F /* system_info_util.cpp in Sources */,
 				7B8C09092F7E843B007E37DE /* TestSuite.cpp in Sources */,
-				7BFAF5C92DE59E0900327F7F /* TextureExternalUpdateTest.cpp in Sources */,
 				7BFAF6042DE59E0900327F7F /* TextureFixedRateCompressionTest.cpp in Sources */,
 				7BFAF5CC2DE59E0900327F7F /* TextureMultisampleTest.cpp in Sources */,
 				7BFAF6092DE59E0900327F7F /* TextureRectangleTest.cpp in Sources */,

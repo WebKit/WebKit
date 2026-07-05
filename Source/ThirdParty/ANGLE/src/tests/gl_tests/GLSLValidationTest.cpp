@@ -337,7 +337,7 @@ TEST_P(GLSLValidationTest, CompareStructsContainingSamplers)
 // The ESSL 3.00 spec says that equality is supported for all types, but glslang does not accept
 // equality between structs with samplers.  glslang is the reference compiler, so ANGLE follows
 // suit with the same validation.
-TEST_P(GLSLValidationTest, CompareStructsContainingSamplersESSL300)
+TEST_P(GLSLValidationTest_ES3, CompareStructsContainingSamplersESSL300)
 {
     constexpr char kFS[] = R"(#version 300 es
 precision mediump float;
@@ -3162,23 +3162,21 @@ TEST_P(GLSLValidationTest_ES31, ValidatePerVertexTessellationControlShader)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_tessellation_shader"));
 
     {
-        // Cannot use out gl_PerVertex with a name (without EXT_shader_io_blocks)
+        // Cannot use tessellation control shaders in #version 300 shaders
         constexpr char kTCS[] = R"(#version 300 es
 out gl_PerVertex{vec4 gl_Position;} name[];
 void main() {})";
         validateError(GL_TESS_CONTROL_SHADER, kTCS,
-                      "'out' : invalid qualifier: interface blocks must be uniform in version "
-                      "lower than GLSL ES 3.10");
+                      "Tessellation shaders are not supported in this shader version.");
     }
 
     {
-        // Cannot use in gl_PerVertex with a name (without EXT_shader_io_blocks)
+        // Cannot use tessellation control shaders in #version 300 shaders
         constexpr char kTCS[] = R"(#version 300 es
 in gl_PerVertex{vec4 gl_Position;} name[];
 void main() {})";
         validateError(GL_TESS_CONTROL_SHADER, kTCS,
-                      "'in' : invalid qualifier: interface blocks must be uniform in version lower "
-                      "than GLSL ES 3.10");
+                      "Tessellation shaders are not supported in this shader version.");
     }
 
     {
@@ -3260,23 +3258,21 @@ TEST_P(GLSLValidationTest_ES31, ValidatePerVertexTessellationEvaluationShader)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_tessellation_shader"));
 
     {
-        // Cannot use out gl_PerVertex with a name (without EXT_shader_io_blocks)
+        // Cannot use tessellation evaluation shaders in #version 300 shaders
         constexpr char kTES[] = R"(#version 300 es
 out gl_PerVertex{vec4 gl_Position;} name;
 void main() {})";
         validateError(GL_TESS_EVALUATION_SHADER, kTES,
-                      "'out' : invalid qualifier: interface blocks must be uniform in version "
-                      "lower than GLSL ES 3.10");
+                      "Tessellation shaders are not supported in this shader version.");
     }
 
     {
-        // Cannot use in gl_PerVertex with a name (without EXT_shader_io_blocks)
+        // Cannot use tessellation evaluation shaders in #version 300 shaders
         constexpr char kTES[] = R"(#version 300 es
 in gl_PerVertex{vec4 gl_Position;} name[];
 void main() {})";
         validateError(GL_TESS_EVALUATION_SHADER, kTES,
-                      "'in' : invalid qualifier: interface blocks must be uniform in version lower "
-                      "than GLSL ES 3.10");
+                      "Tessellation shaders are not supported in this shader version.");
     }
 
     {
@@ -3359,23 +3355,21 @@ TEST_P(GLSLValidationTest_ES31, ValidatePerVertexGeometryShader)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
 
     {
-        // Cannot use out gl_PerVertex with a name (without EXT_shader_io_blocks)
+        // Cannot use geometry shaders in #version 300 shaders
         constexpr char kGS[] = R"(#version 300 es
 out gl_PerVertex{vec4 gl_Position;} name;
 void main() {})";
         validateError(GL_GEOMETRY_SHADER, kGS,
-                      "'out' : invalid qualifier: interface blocks must be uniform in version "
-                      "lower than GLSL ES 3.10");
+                      "Geometry shader is not supported in this shader version.");
     }
 
     {
-        // Cannot use in gl_PerVertex with a name (without EXT_shader_io_blocks)
+        // Cannot use geometry shaders in #version 300 shaders
         constexpr char kGS[] = R"(#version 300 es
 in gl_PerVertex{vec4 gl_Position;} name[];
 void main() {})";
         validateError(GL_GEOMETRY_SHADER, kGS,
-                      "'in' : invalid qualifier: interface blocks must be uniform in version lower "
-                      "than GLSL ES 3.10");
+                      "Geometry shader is not supported in this shader version.");
     }
 
     {
@@ -4108,6 +4102,85 @@ void main()
     validateError(GL_FRAGMENT_SHADER, kFS,
                   "'Internal Error' : accessing fields of the result of a comma expression that is "
                   "a structure with samplers is not currently supported");
+}
+
+// Test that struct with samplers can be passed to functions where the function modifies a
+// non-sampler field.
+TEST_P(GLSLValidationTest_ES3, StructWithSamplersNonSamplerFieldModifiedInFunction)
+{
+    const char kFS[] = R"(#version 300 es
+precision mediump float;
+
+struct OnlySampler
+{
+    sampler2D s;
+};
+
+struct Inner
+{
+    sampler2D s;
+    float a;
+    OnlySampler o;
+};
+
+uniform struct Outer
+{
+    Inner i;
+    float b[3];
+    OnlySampler o;
+} u[2];
+
+out vec4 color;
+
+vec4 sampleFromOnlySampler(OnlySampler o)
+{
+    return texture(o.s, vec2(0));
+}
+
+float getAndModifyInner(Inner i)
+{
+    i.a += 0.2;
+    i.a += sampleFromOnlySampler(i.o).x;
+    return i.a;
+}
+
+vec3 getAndModifyOuter(Outer o)
+{
+    o.b[0] += 0.3;
+    o.b[0] += getAndModifyInner(o.i);
+    o.b[0] += sampleFromOnlySampler(o.o).y;
+    o.b[1] += 0.4;
+    o.b[2] += 0.5;
+    return vec3(o.b[0], o.b[1], o.b[2]);
+}
+
+void main()
+{
+    int a = 0;
+    color = vec4(getAndModifyInner(u[a++].i), getAndModifyOuter(u[1]));
+    if (a != 1)
+        color = vec4(1, 0, 0, 1);
+})";
+
+    // Note: The above is actually valid GLSL, but is unsupported.  Once implemented correctly, the
+    // test should move to GLSLTest.cpp with the following verification:
+    //
+    //     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    //     glUseProgram(program);
+    //
+    //     glUniform1f(glGetUniformLocation(program, "u[0].i.a"), 0.05f);
+    //     glUniform1f(glGetUniformLocation(program, "u[1].i.a"), 0.15f);
+    //     glUniform1f(glGetUniformLocation(program, "u[1].b[0]"), 0.05f);
+    //     glUniform1f(glGetUniformLocation(program, "u[1].b[1]"), 0.25f);
+    //     glUniform1f(glGetUniformLocation(program, "u[1].b[2]"), 0.35f);
+    //
+    //     drawQuad(program, essl3_shaders::PositionAttrib(), 0.0f);
+    //     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(64, 128, 166, 217), 1);
+    //     ASSERT_GL_NO_ERROR();
+    //
+    validateError(
+        GL_FRAGMENT_SHADER, kFS,
+        "l-value required (modifying structures containing samplers is not currently supported");
 }
 
 // Test a fuzzer-discovered bug with the VectorizeVectorScalarArithmetic transformation.
@@ -5772,7 +5845,7 @@ int E=int)";
         fs << "[]";
     }
     fs << "()";
-    validateError(GL_FRAGMENT_SHADER, fs.str().c_str(), "array has too many dimensions");
+    validateError(GL_FRAGMENT_SHADER, fs.str().c_str(), "unsupported shader version");
 }
 
 // Validate that too many array dimensions fail in WebGL.
@@ -5790,7 +5863,7 @@ int E=int)";
     {
         fs << "(2)";
     }
-    validateError(GL_FRAGMENT_SHADER, fs.str().c_str(), "array has too many dimensions");
+    validateError(GL_FRAGMENT_SHADER, fs.str().c_str(), "unsupported shader version");
 }
 
 // Validate that too-complex unary expressions fail to compile in WebGL.
@@ -8898,6 +8971,47 @@ void main() {
     const std::string fragmentShader = fsStream.str();
     validateError(GL_FRAGMENT_SHADER, fragmentShader.c_str(),
                   "uniform block count greater than per stage maximum uniform blocks");
+}
+
+// Test that attempting to declare a multidimensional array (not supported by WebGL)
+// using an unsupported shader version is rejected immediately with an unsupported
+// version error, and compilation aborts.
+TEST_P(WebGL2GLSLValidationTest, AttemptedArraySizeOverflow)
+{
+    // The shader declares a multidimensional array which is not supported in WebGL,
+    // and uses a version directive (#version 310 es) that is also unsupported.
+    constexpr char kFS[] = R"(#version 310 es
+precision highp float;
+float big[65536][65536];
+out vec4 col;
+void main() { big[0][0] = 1.0; col = vec4(big[0][0]); })";
+
+    validateError(GL_FRAGMENT_SHADER, kFS, "unsupported shader version");
+}
+
+// Test that declaring a multidimensional array is not supported in ESSL 3.00.
+TEST_P(WebGL2GLSLValidationTest, MultidimensionalArrayUnsupported)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+float big[65536][65536];
+out vec4 col;
+void main() { big[0][0] = 1.0; col = vec4(big[0][0]); })";
+
+    validateError(GL_FRAGMENT_SHADER, kFS, "arrays of arrays");
+}
+
+// Test that having a second version directive is rejected.
+TEST_P(WebGL2GLSLValidationTest, DoubleVersionDirective)
+{
+    constexpr char kFS[] = R"(#version 300 es
+#version 310 es
+precision highp float;
+float big[65536][65536];
+out vec4 col;
+void main() { big[0][0] = 1.0; col = vec4(big[0][0]); })";
+
+    validateError(GL_FRAGMENT_SHADER, kFS, "version");
 }
 
 }  // namespace

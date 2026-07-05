@@ -70,8 +70,11 @@ class Preprocessor : angle::NonCopyable
     // Set maximum preprocessor token size
     void setMaxTokenSize(size_t maxTokenSize);
 
+    void forceEOF();
+
   private:
     PreprocessorImpl *mImpl;
+    bool mForceEOF;
 };
 
 }  // namespace pp

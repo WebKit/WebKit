@@ -1027,9 +1027,6 @@
     "glInvalidateTexSubImage": {
         "texture": "TextureID"
     },
-    "glInvalidateTexture": {
-        "target": "TextureType"
-    },
     "glIsBuffer": {
         "buffer": "BufferID"
     },

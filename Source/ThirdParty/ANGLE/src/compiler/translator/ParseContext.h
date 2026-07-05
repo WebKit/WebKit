@@ -86,12 +86,15 @@ class TParseContext : angle::NonCopyable
     void *getScanner() const { return mScanner; }
     void setScanner(void *scanner) { mScanner = scanner; }
     int getShaderVersion() const { return mShaderVersion; }
-    void onShaderVersionDeclared(int version);
+    void onShaderVersionDeclared(const TSourceLoc &loc, int version);
+    bool checkShaderVersion(const TSourceLoc &loc);
+    bool checkCanUseShaderType(const TSourceLoc &loc);
     sh::GLenum getShaderType() const { return mShaderType; }
     ShShaderSpec getShaderSpec() const { return mShaderSpec; }
     int numErrors() const { return mDiagnostics->numErrors(); }
     void error(const TSourceLoc &loc, const char *reason, const char *token);
     void error(const TSourceLoc &loc, const char *reason, const ImmutableString &token);
+    void fatal(const TSourceLoc &loc, const char *reason);
     void warning(const TSourceLoc &loc, const char *reason, const char *token);
 
     // If isError is false, a warning will be reported instead.

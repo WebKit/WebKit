@@ -690,8 +690,6 @@ class Texture final : public RefCountObject<TextureID>,
     // Used specifically for FramebufferAttachmentObject.
     GLuint getId() const override;
 
-    GLuint getNativeID() const;
-
     // Needed for robust resource init.
     angle::Result ensureInitialized(const Context *context);
     InitState initState(GLenum binding, const ImageIndex &imageIndex) const override;

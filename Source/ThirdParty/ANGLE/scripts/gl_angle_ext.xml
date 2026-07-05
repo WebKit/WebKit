@@ -695,21 +695,6 @@
             <param group="GraphicsResetStatus"><ptype>GLenum</ptype> <name>other</name></param>
         </command>
         <command>
-            <proto>void <name>glTexImage2DExternalANGLE</name></proto>
-            <param group="TextureTarget"><ptype>GLenum</ptype> <name>target</name></param>
-            <param group="CheckedInt32"><ptype>GLint</ptype> <name>level</name></param>
-            <param group="InternalFormat"><ptype>GLint</ptype> <name>internalformat</name></param>
-            <param><ptype>GLsizei</ptype> <name>width</name></param>
-            <param><ptype>GLsizei</ptype> <name>height</name></param>
-            <param group="CheckedInt32"><ptype>GLint</ptype> <name>border</name></param>
-            <param group="PixelFormat"><ptype>GLenum</ptype> <name>format</name></param>
-            <param group="PixelType"><ptype>GLenum</ptype> <name>type</name></param>
-        </command>
-        <command>
-            <proto>void <name>glInvalidateTextureANGLE</name></proto>
-            <param group="TextureTarget"><ptype>GLenum</ptype> <name>target</name></param>
-        </command>
-        <command>
             <proto>void <name>glGetTexImageANGLE</name></proto>
             <param group="TextureTarget"><ptype>GLenum</ptype> <name>target</name></param>
             <param group="CheckedInt32"><ptype>GLint</ptype> <name>level</name></param>
@@ -1096,12 +1081,6 @@
                 <enum name="GL_INNOCENT_CONTEXT_RESET"/>
                 <enum name="GL_UNKNOWN_CONTEXT_RESET"/>
                 <command name="glLoseContextCHROMIUM"/>
-            </require>
-        </extension>
-        <extension name="GL_ANGLE_texture_external_update" supported='gl|gles2'>
-            <require>
-                <command name="glTexImage2DExternalANGLE"/>
-                <command name="glInvalidateTextureANGLE"/>
             </require>
         </extension>
         <extension name ="GL_ANGLE_get_image" supported='gles2'>

@@ -51,6 +51,8 @@ class GLFragColorBroadcastTraverser : public TIntermTraverser
     bool isGLSecondaryFragColorUsed() const { return mGLSecondaryFragColorUsed; }
 
   protected:
+    bool visitGlobalQualifierDeclaration(Visit visit,
+                                         TIntermGlobalQualifierDeclaration *node) override;
     void visitSymbol(TIntermSymbol *node) override;
 
     TIntermBinary *constructGLFragDataNode(int index, bool secondary) const;
@@ -82,6 +84,31 @@ TIntermBinary *GLFragColorBroadcastTraverser::constructGLFragDataAssignNode(int 
     TIntermTyped *fragDataZero  = constructGLFragDataNode(0, secondary);
 
     return new TIntermBinary(EOpAssign, fragDataIndex, fragDataZero);
+}
+
+bool GLFragColorBroadcastTraverser::visitGlobalQualifierDeclaration(
+    Visit visit,
+    TIntermGlobalQualifierDeclaration *node)
+{
+    TIntermSymbol *symbol = node->getSymbol();
+    if (symbol->variable().symbolType() == SymbolType::BuiltIn)
+    {
+        if (symbol->getName() == "gl_FragColor")
+        {
+            queueReplacementWithParent(
+                node, node->getSymbol(),
+                ReferenceBuiltInVariable(kGlFragDataString, *mSymbolTable, mShaderVersion),
+                OriginalNode::IS_DROPPED);
+        }
+        else if (symbol->getName() == "gl_SecondaryFragColorEXT")
+        {
+            queueReplacementWithParent(
+                node, node->getSymbol(),
+                ReferenceBuiltInVariable(kGlSecondaryFragDataString, *mSymbolTable, mShaderVersion),
+                OriginalNode::IS_DROPPED);
+        }
+    }
+    return false;
 }
 
 void GLFragColorBroadcastTraverser::visitSymbol(TIntermSymbol *node)

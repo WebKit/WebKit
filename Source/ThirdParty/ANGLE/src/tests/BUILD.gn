@@ -1616,6 +1616,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
       ":angle_deqp_framework_qphelper",
       ":angle_deqp_framework_xexml",
     ]
+    deps = [ "${angle_jsoncpp_dir}:jsoncpp" ]
   }
 
   config("angle_deqp_framework_opengl_config") {

@@ -986,6 +986,9 @@
 376899587 PIXEL4ORXL : dEQP-GLES3.functional.negative_api.vertex_array.draw_range_elements = SKIP
 376899587 PIXEL4ORXL : dEQP-GLES3.functional.negative_api.vertex_array.draw_range_elements_incomplete_primitive = SKIP
 
+// VK-GL-CTS bug
+519062401 : dEQP-GLES3.functional.negative_api.shader.shader_source = FAIL
+
 // Translator IR failures
 /// IR's use of `while` and `if (!condition) break` instead of `for(..)` makes the HLSL generator think the loops are discontinous, and as a result it drops the derivative built-ins!
 349994211 IR D3D11 NVIDIA : dEQP-GLES3.functional.shaders.derivate.*.uniform_loop* = SKIP

@@ -1048,8 +1048,8 @@ TEST_P(BufferDataTestES3, GLDriverErrorWhenMappingArrayBuffersDuringDraw)
 
     GLBuffer vb;
     glBindBuffer(GL_ARRAY_BUFFER, vb);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * quadVertices.size() * 3, quadVertices.data(),
-                 GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices[0]) * quadVertices.size(),
+                 quadVertices.data(), GL_STATIC_DRAW);
 
     GLint positionLocation = glGetAttribLocation(program, essl3_shaders::PositionAttrib());
     ASSERT_NE(-1, positionLocation);
@@ -1058,6 +1058,7 @@ TEST_P(BufferDataTestES3, GLDriverErrorWhenMappingArrayBuffersDuringDraw)
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
     EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
     GLBuffer pb;
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pb);
@@ -1065,8 +1066,10 @@ TEST_P(BufferDataTestES3, GLDriverErrorWhenMappingArrayBuffersDuringDraw)
     glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, 1024, GL_MAP_WRITE_BIT);
     EXPECT_GL_NO_ERROR();
 
+    glClear(GL_COLOR_BUFFER_BIT);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
 
 // Tests a null crash bug caused by copying from null back-end buffer pointer
