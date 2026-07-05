@@ -6405,7 +6405,7 @@ void Internals::setAsRunningUserScripts(Document& document)
 }
 
 #if ENABLE(WEBGL)
-void Internals::simulateEventForWebGLContext(SimulatedWebGLContextEvent event, WebGLRenderingContext& context)
+void Internals::simulateEventForWebGLContext(SimulatedWebGLContextEvent event, WebGLRenderingContextBase& context)
 {
     WebGLRenderingContext::SimulatedEventForTesting contextEvent;
     switch (event) {
@@ -6422,7 +6422,7 @@ void Internals::simulateEventForWebGLContext(SimulatedWebGLContextEvent event, W
     context.simulateEventForTesting(contextEvent);
 }
 
-Internals::RequestedGPU Internals::requestedGPU(WebGLRenderingContext& context)
+Internals::RequestedGPU Internals::requestedGPU(WebGLRenderingContextBase& context)
 {
     switch (context.creationAttributes().powerPreference) {
     case WebGLPowerPreference::Default:

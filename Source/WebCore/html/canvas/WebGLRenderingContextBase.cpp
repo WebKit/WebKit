@@ -817,7 +817,7 @@ RefPtr<ByteArrayPixelBuffer> WebGLRenderingContextBase::drawingBufferToPixelBuff
     if (m_attributes.premultipliedAlpha)
         return nullptr;
     clearIfComposited(CallerTypeOther);
-    auto size = m_defaultFramebuffer->size();
+    auto size = clampedCanvasSize();
     if (size.isEmpty())
         return nullptr;
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
@@ -867,7 +867,7 @@ RefPtr<ImageBuffer> WebGLRenderingContextBase::transferToImageBuffer()
     RefPtr scriptExecutionContext = this->scriptExecutionContext();
     if (!scriptExecutionContext)
         return nullptr;
-    const auto size = m_defaultFramebuffer->size();
+    auto size = clampedCanvasSize();
     if (size.isEmpty())
         return nullptr;
     RefPtr buffer = createImageBufferForWebGLContextReads(size, *scriptExecutionContext);
@@ -887,16 +887,19 @@ RefPtr<ImageBuffer> WebGLRenderingContextBase::transferToImageBuffer()
 
 void WebGLRenderingContextBase::didUpdateCanvasSizeProperties(bool)
 {
+    if (isContextLost()) {
+        m_readDrawingBuffer = nullptr;
+        m_readDisplayBuffer = nullptr;
+        updateMemoryCost();
+        return;
+    }
+
     auto newSize = clampedCanvasSize();
     if (newSize == m_defaultFramebuffer->size())
         return;
 
     m_readDrawingBuffer = nullptr;
     m_readDisplayBuffer = nullptr;
-    if (isContextLost()) {
-        updateMemoryCost();
-        return;
-    }
 
     m_defaultFramebuffer->reshape(newSize);
     updateMemoryCost();

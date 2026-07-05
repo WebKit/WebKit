@@ -1211,7 +1211,9 @@ enum ContentsFormat {
     undefined setSpeculativeTilingDelayDisabledForTesting(boolean disabled);
 
     [Conditional=WEBGL] undefined simulateEventForWebGLContext(SimulatedWebGLContextEvent event, WebGLRenderingContext context);
+    [Conditional=WEBGL] undefined simulateEventForWebGLContext(SimulatedWebGLContextEvent event, WebGL2RenderingContext context);
     [Conditional=WEBGL] RequestedGPU requestedGPU(WebGLRenderingContext context);
+    [Conditional=WEBGL] RequestedGPU requestedGPU(WebGL2RenderingContext context);
 
     undefined setPageVisibility(boolean isVisible);
     undefined setPageIsFocused(boolean isFocused);

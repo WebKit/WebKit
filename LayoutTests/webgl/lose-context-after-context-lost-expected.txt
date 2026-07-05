@@ -2,44 +2,266 @@ Test that WEBGL_lose_context functions do not crash after context has been lost.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-TEST COMPLETE: 31 PASS, 0 FAIL
+TEST COMPLETE: 217 PASS, 0 FAIL
 
-Running test: loseMethod: loseContext, testedMethod: loseContext
+Running test: canvasType: OffscreenCanvas, contextType: webgl, loseMethod: loseContext, testedMethod: loseContext
 PASS Got webglcontextlost.
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
 PASS Did not crash on tested method loseContext.
-Running test: loseMethod: loseContext, testedMethod: restoreContext
+Running test: canvasType: OffscreenCanvas, contextType: webgl, loseMethod: loseContext, testedMethod: restoreContext
 PASS Got webglcontextlost.
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
 PASS Did not crash on tested method restoreContext.
-Running test: loseMethod: manyContexts, testedMethod: loseContext
+Running test: canvasType: OffscreenCanvas, contextType: webgl, loseMethod: loseContext, testedMethod: resize
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method resize.
+Running test: canvasType: OffscreenCanvas, contextType: webgl, loseMethod: loseContext, testedMethod: transferToImageBitmap
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS canvas.transferToImageBitmap() threw exception UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)..
+PASS Did not crash on tested method transferToImageBitmap.
+Running test: canvasType: OffscreenCanvas, contextType: webgl, loseMethod: manyContexts, testedMethod: loseContext
 PASS Got webglcontextlost.
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
 PASS Did not crash on tested method loseContext.
-Running test: loseMethod: manyContexts, testedMethod: restoreContext
+Running test: canvasType: OffscreenCanvas, contextType: webgl, loseMethod: manyContexts, testedMethod: restoreContext
 PASS Got webglcontextlost.
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
 PASS Did not crash on tested method restoreContext.
-Running test: loseMethod: gpuStatusFailure, testedMethod: loseContext
+Running test: canvasType: OffscreenCanvas, contextType: webgl, loseMethod: manyContexts, testedMethod: resize
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method resize.
+Running test: canvasType: OffscreenCanvas, contextType: webgl, loseMethod: manyContexts, testedMethod: transferToImageBitmap
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS canvas.transferToImageBitmap() threw exception UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)..
+PASS Did not crash on tested method transferToImageBitmap.
+Running test: canvasType: OffscreenCanvas, contextType: webgl, loseMethod: gpuStatusFailure, testedMethod: loseContext
 PASS Got webglcontextlost.
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
 PASS Did not crash on tested method loseContext.
-Running test: loseMethod: gpuStatusFailure, testedMethod: restoreContext
+Running test: canvasType: OffscreenCanvas, contextType: webgl, loseMethod: gpuStatusFailure, testedMethod: restoreContext
 PASS Got webglcontextlost.
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
 PASS Did not crash on tested method restoreContext.
+Running test: canvasType: OffscreenCanvas, contextType: webgl, loseMethod: gpuStatusFailure, testedMethod: resize
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method resize.
+Running test: canvasType: OffscreenCanvas, contextType: webgl, loseMethod: gpuStatusFailure, testedMethod: transferToImageBitmap
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS canvas.transferToImageBitmap() threw exception UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)..
+PASS Did not crash on tested method transferToImageBitmap.
+Running test: canvasType: OffscreenCanvas, contextType: webgl2, loseMethod: loseContext, testedMethod: loseContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method loseContext.
+Running test: canvasType: OffscreenCanvas, contextType: webgl2, loseMethod: loseContext, testedMethod: restoreContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method restoreContext.
+Running test: canvasType: OffscreenCanvas, contextType: webgl2, loseMethod: loseContext, testedMethod: resize
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method resize.
+Running test: canvasType: OffscreenCanvas, contextType: webgl2, loseMethod: loseContext, testedMethod: transferToImageBitmap
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS canvas.transferToImageBitmap() threw exception UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)..
+PASS Did not crash on tested method transferToImageBitmap.
+Running test: canvasType: OffscreenCanvas, contextType: webgl2, loseMethod: manyContexts, testedMethod: loseContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method loseContext.
+Running test: canvasType: OffscreenCanvas, contextType: webgl2, loseMethod: manyContexts, testedMethod: restoreContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method restoreContext.
+Running test: canvasType: OffscreenCanvas, contextType: webgl2, loseMethod: manyContexts, testedMethod: resize
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method resize.
+Running test: canvasType: OffscreenCanvas, contextType: webgl2, loseMethod: manyContexts, testedMethod: transferToImageBitmap
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS canvas.transferToImageBitmap() threw exception UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)..
+PASS Did not crash on tested method transferToImageBitmap.
+Running test: canvasType: OffscreenCanvas, contextType: webgl2, loseMethod: gpuStatusFailure, testedMethod: loseContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method loseContext.
+Running test: canvasType: OffscreenCanvas, contextType: webgl2, loseMethod: gpuStatusFailure, testedMethod: restoreContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method restoreContext.
+Running test: canvasType: OffscreenCanvas, contextType: webgl2, loseMethod: gpuStatusFailure, testedMethod: resize
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method resize.
+Running test: canvasType: OffscreenCanvas, contextType: webgl2, loseMethod: gpuStatusFailure, testedMethod: transferToImageBitmap
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS canvas.transferToImageBitmap() threw exception UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)..
+PASS Did not crash on tested method transferToImageBitmap.
+Running test: canvasType: Canvas, contextType: webgl, loseMethod: loseContext, testedMethod: loseContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method loseContext.
+Running test: canvasType: Canvas, contextType: webgl, loseMethod: loseContext, testedMethod: restoreContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method restoreContext.
+Running test: canvasType: Canvas, contextType: webgl, loseMethod: loseContext, testedMethod: resize
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method resize.
+Running test: canvasType: Canvas, contextType: webgl, loseMethod: manyContexts, testedMethod: loseContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method loseContext.
+Running test: canvasType: Canvas, contextType: webgl, loseMethod: manyContexts, testedMethod: restoreContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method restoreContext.
+Running test: canvasType: Canvas, contextType: webgl, loseMethod: manyContexts, testedMethod: resize
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method resize.
+Running test: canvasType: Canvas, contextType: webgl, loseMethod: gpuStatusFailure, testedMethod: loseContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method loseContext.
+Running test: canvasType: Canvas, contextType: webgl, loseMethod: gpuStatusFailure, testedMethod: restoreContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method restoreContext.
+Running test: canvasType: Canvas, contextType: webgl, loseMethod: gpuStatusFailure, testedMethod: resize
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method resize.
+Running test: canvasType: Canvas, contextType: webgl2, loseMethod: loseContext, testedMethod: loseContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method loseContext.
+Running test: canvasType: Canvas, contextType: webgl2, loseMethod: loseContext, testedMethod: restoreContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method restoreContext.
+Running test: canvasType: Canvas, contextType: webgl2, loseMethod: loseContext, testedMethod: resize
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method resize.
+Running test: canvasType: Canvas, contextType: webgl2, loseMethod: manyContexts, testedMethod: loseContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method loseContext.
+Running test: canvasType: Canvas, contextType: webgl2, loseMethod: manyContexts, testedMethod: restoreContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method restoreContext.
+Running test: canvasType: Canvas, contextType: webgl2, loseMethod: manyContexts, testedMethod: resize
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method resize.
+Running test: canvasType: Canvas, contextType: webgl2, loseMethod: gpuStatusFailure, testedMethod: loseContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method loseContext.
+Running test: canvasType: Canvas, contextType: webgl2, loseMethod: gpuStatusFailure, testedMethod: restoreContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method restoreContext.
+Running test: canvasType: Canvas, contextType: webgl2, loseMethod: gpuStatusFailure, testedMethod: resize
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method resize.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -15,6 +15,7 @@ description("Test that WEBGL_lose_context functions do not crash after context h
 
 var wtu = WebGLTestUtils;
 var gl;
+var canvas;
 
 async function waitForWebGLContextLost(canvas)
 {
@@ -28,13 +29,21 @@ function testDescription(subcase) {
     return Object.keys(subcase).map((k) => `${k}: ${typeof subcase[k] === "function" ? subcase[k].name : subcase[k]}`).join(", ");
 }
 
-async function runTest(subcase)
+function createCanvas(subcase)
 {
-    debug(`Running test: ${testDescription(subcase)}`);
+    if (subcase.canvasType == "OffscreenCanvas")
+        return new OffscreenCanvas(1, 1);
     const canvas = document.createElement("canvas");
     canvas.width = 1;
     canvas.height = 1;
-    gl = wtu.create3DContext(canvas);
+    return canvas;
+}
+
+async function runTest(subcase)
+{
+    debug(`Running test: ${testDescription(subcase)}`);
+    canvas = createCanvas(subcase);
+    gl = canvas.getContext(subcase.contextType);
     const WEBGL_lose_context = wtu.getExtensionWithKnownPrefixes(gl, "WEBGL_lose_context");
     if (!WEBGL_lose_context) {
         debug("Could not find WEBGL_lose_context extension");
@@ -51,8 +60,9 @@ async function runTest(subcase)
     } else if (subcase.loseMethod == "manyContexts") {
         // This causes the older contexts to be lost, including the first one we created
         // for testing.
+        let contexts = [];
         for (let i = 0; i < 50; ++i)
-            document.createElement("canvas").getContext("webgl");
+            contexts.push(createCanvas(subcase).getContext(subcase.contextType));
     }
 
     try {
@@ -69,18 +79,33 @@ async function runTest(subcase)
         WEBGL_lose_context.loseContext();
     else if (subcase.testedMethod == "restoreContext")
         WEBGL_lose_context.restoreContext();
+    else if (subcase.testedMethod == "resize")
+        canvas.width = canvas.width + 7;
+    else if (subcase.testedMethod == "transferToImageBitmap") {
+        shouldThrow("canvas.transferToImageBitmap()");
+    }
     testPassed(`Did not crash on tested method ${subcase.testedMethod}.`);
 }
 
+const canvasTypes = ["OffscreenCanvas", "Canvas"];
+const contextTypes = ["webgl", "webgl2"];
 const loseMethods = ["loseContext", "manyContexts"];
 if (window.internals)
     loseMethods.push("gpuStatusFailure");
-const testedMethods = ["loseContext", "restoreContext"];
+const testedMethods = ["loseContext", "restoreContext", "resize", "transferToImageBitmap"];
 
 const subcases = [];
-for (const loseMethod of loseMethods)
-    for (const testedMethod of testedMethods)
-        subcases.push({loseMethod, testedMethod});
+for (const canvasType of canvasTypes) {
+    for (const contextType of contextTypes) {
+        for (const loseMethod of loseMethods) {
+            for (const testedMethod of testedMethods) {
+                if (testedMethod == "transferToImageBitmap" && canvasType != "OffscreenCanvas")
+                    continue;
+                subcases.push({canvasType, contextType, loseMethod, testedMethod});
+            }
+        }
+    }
+}
 
 async function test()
 {

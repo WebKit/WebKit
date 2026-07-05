@@ -148,6 +148,7 @@ class TypeConversions;
 class VoidCallback;
 class WebAnimation;
 class WebGLRenderingContext;
+class WebGLRenderingContextBase;
 class WindowProxy;
 class XMLHttpRequest;
 
@@ -1026,14 +1027,14 @@ public:
         GPUStatusFailure,
         Timeout
     };
-    void simulateEventForWebGLContext(SimulatedWebGLContextEvent, WebGLRenderingContext&);
+    void simulateEventForWebGLContext(SimulatedWebGLContextEvent, WebGLRenderingContextBase&);
 
     enum class RequestedGPU {
         Default,
         LowPower,
         HighPerformance
     };
-    RequestedGPU requestedGPU(WebGLRenderingContext&);
+    RequestedGPU requestedGPU(WebGLRenderingContextBase&);
 #endif
 
     void setPageVisibility(bool isVisible);

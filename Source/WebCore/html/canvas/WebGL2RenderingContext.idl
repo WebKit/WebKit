@@ -63,6 +63,7 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement
     GenerateIsReachable=ImplCanvasBase,
     JSCustomMarkFunction,
     DoNotCheckConstants,
+    ExportMacro=WEBCORE_EXPORT,
     ReportExtraMemoryCost,
     ReportExternalMemoryCost,
     Exposed=(Window,Worker),
