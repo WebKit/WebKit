@@ -1357,8 +1357,8 @@ private:
         BasicBlock* trueBlock = nullptr;
         BasicBlock* falseBlock = nullptr;
         if (!isCast) {
-            trueBlock = m_proc.addBlock();
-            falseBlock = m_proc.addBlock();
+            trueBlock = m_proc.addBlock(m_block->frequency());
+            falseBlock = m_proc.addBlock(m_block->frequency());
         }
 
         auto castFailure = [=](CCallHelpers& jit, const StackmapGenerationParams&) {
@@ -1418,7 +1418,7 @@ private:
                 check->setGenerator(generator);
             } else {
                 ASSERT(falseBlock);
-                BasicBlock* success = m_proc.addBlock();
+                BasicBlock* success = m_proc.addBlock(m_block->frequency());
                 currentBlock->appendNewControlValue(m_proc, B3::Branch, m_origin, condition, FrequentedBlock(falseBlock), FrequentedBlock(success));
                 falseBlock->addPredecessor(currentBlock);
                 success->addPredecessor(currentBlock);
@@ -1427,8 +1427,8 @@ private:
         };
 
         {
-            BasicBlock* nullCase = m_proc.addBlock();
-            BasicBlock* nonNullCase = m_proc.addBlock();
+            BasicBlock* nullCase = m_proc.addBlock(m_block->frequency());
+            BasicBlock* nonNullCase = m_proc.addBlock(m_block->frequency());
 
             Value* isNull = nullptr;
             if (referenceIsNullable) {
@@ -1484,13 +1484,13 @@ private:
                 } else {
                     currentBlock->appendNewControlValue(m_proc, Jump, m_origin, falseBlock);
                     falseBlock->addPredecessor(currentBlock);
-                    currentBlock = m_proc.addBlock();
+                    currentBlock = m_proc.addBlock(m_block->frequency());
                 }
                 break;
             case Wasm::TypeKind::Eqref: {
                 auto nop = [] (CCallHelpers&, const B3::StackmapGenerationParams&) { };
                 BasicBlock* endBlock = isCast ? continuation : trueBlock;
-                BasicBlock* checkObject = m_proc.addBlock();
+                BasicBlock* checkObject = m_proc.addBlock(m_block->frequency());
 
                 // The eqref case chains together checks for i31, array, and struct with disjunctions so the control flow is more complicated, and requires some extra basic blocks to be created.
                 emitCheckOrBranchForCast(CastKind::Test, currentBlock->appendNew<Value>(m_proc, Below, m_origin, value, constant(Int64, JSValue::NumberTag)), nop, checkObject);
@@ -1605,7 +1605,7 @@ private:
                     equalBlock = continuation;
                 else
                     equalBlock = trueBlock;
-                BasicBlock* slowPath = m_proc.addBlock();
+                BasicBlock* slowPath = m_proc.addBlock(m_block->frequency());
                 currentBlock->appendNewControlValue(m_proc, B3::Branch, m_origin, currentBlock->appendNew<Value>(m_proc, Equal, m_origin, rtt, targetRTTPointer), FrequentedBlock(equalBlock), FrequentedBlock(slowPath));
                 equalBlock->addPredecessor(currentBlock);
                 slowPath->addPredecessor(currentBlock);
