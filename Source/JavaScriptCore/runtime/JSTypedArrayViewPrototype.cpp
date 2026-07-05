@@ -68,6 +68,13 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsDetached, (JSGlobalObject*, 
     return JSValue::encode(jsBoolean(uncheckedDowncast<JSArrayBufferView>(argument)->isDetached()));
 }
 
+JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsOutOfBounds, (JSGlobalObject*, CallFrame* callFrame))
+{
+    JSValue argument = callFrame->uncheckedArgument(0);
+    ASSERT(argument.isCell() && isTypedView(argument.asCell()->type()));
+    return JSValue::encode(jsBoolean(uncheckedDowncast<JSArrayBufferView>(argument)->isOutOfBounds()));
+}
+
 JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncLength, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();

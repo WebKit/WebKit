@@ -109,14 +109,14 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
         @throwTypeError("TypedArray.from constructed typed array of insufficient length");
 
     for (var k = 0; k < arrayLikeLength; k++) {
-        if (@isTypedArrayView(arrayLike) && (@isDetached(arrayLike) || k >= @typedArrayLength(arrayLike)))
+        if (@isTypedArrayView(arrayLike) && (@isTypedArrayOutOfBounds(arrayLike) || k >= @typedArrayLength(arrayLike)))
             break;
         var value = arrayLike[k];
         if (mapFn === @undefined)
             result[k] = value;
         else {
             var mapped = thisArg === @undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k);
-            if (@isTypedArrayView(result) && (k >= @typedArrayLength(result) || @isDetached(result)))
+            if (@isTypedArrayView(result) && (@isTypedArrayOutOfBounds(result) || k >= @typedArrayLength(result)))
                 break;
             result[k] = mapped;
         }
