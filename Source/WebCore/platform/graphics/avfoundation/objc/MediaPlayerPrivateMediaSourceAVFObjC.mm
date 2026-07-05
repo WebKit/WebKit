@@ -544,7 +544,7 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::initialTime() const
     return MediaTime::zeroTime();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::seekToTarget(const SeekTarget& target)
+Ref<MediaTimePromise> MediaPlayerPrivateMediaSourceAVFObjC::seekToTarget(const SeekTarget& target)
 {
     assertIsMainThread();
     ALWAYS_LOG(LOGIDENTIFIER, "time = ", target.time, ", negativeThreshold = ", target.negativeThreshold, ", positiveThreshold = ", target.positiveThreshold);
@@ -554,6 +554,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekToTarget(const SeekTarget& target
     if (m_seekTimer.isActive())
         m_seekTimer.stop();
     m_seekTimer.startOneShot(0_s);
+
+    m_seekPromise.emplace(PlatformMediaError::Cancelled);
+    return *m_seekPromise;
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
@@ -669,17 +672,15 @@ void MediaPlayerPrivateMediaSourceAVFObjC::completeSeek(const MediaTime& seekedT
     assertIsMainThread();
     ALWAYS_LOG(LOGIDENTIFIER, "");
 
-    m_seeking = false;
+    m_lastSeekTime = seekedTime;
 
-    if (RefPtr player = m_player.get()) {
-        player->seeked(seekedTime);
-        player->timeChanged();
-    }
-
+    // The renderer seek is done and its target frame is available.
     if (hasVideo())
         setHasAvailableVideoFrame(true);
+    m_seeking = false;
 
-    // Apply any state transition deferred by updateStateFromReadyState() while seeking.
+    // Propagate readyState/playback; this also resolves the seek promise (the target position is
+    // buffered and, for video, its frame is available by this point).
     updateStateFromReadyState();
 }
 
@@ -1204,6 +1205,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateStateFromReadyState()
     // Seek owns renderer rate and event sequencing from prepareToSeek through completeSeek.
     if (seeking())
         return;
+
     if (shouldBePlaying()) {
         dispatchToRendererQueue([](auto& renderer) {
             renderer.play();
@@ -1218,6 +1220,13 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateStateFromReadyState()
 
     if (RefPtr player = m_player.get())
         player->readyStateChanged();
+
+    // Complete any pending seek now that readyState has been propagated, so
+    // loadeddata/canplay/canplaythrough are queued before the 'seeked' event. Reaching here means
+    // the renderer seek finished (!m_seeking) with the target data buffered and, for video, a
+    // frame available.
+    if (auto promise = std::exchange(m_seekPromise, std::nullopt))
+        promise->resolve(m_lastSeekTime);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setNetworkState(MediaPlayer::NetworkState networkState)

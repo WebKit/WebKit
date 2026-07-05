@@ -31,6 +31,7 @@
 #include "MediaPlayerPrivate.h"
 #include <wtf/Logger.h>
 #include <wtf/MediaTime.h>
+#include <wtf/NativePromise.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -88,8 +89,7 @@ private:
     bool hasVideo() const override;
     bool hasAudio() const override;
     void setPageIsVisible(bool) final;
-    void seekToTarget(const SeekTarget&) final;
-    bool seeking() const final;
+    Ref<MediaTimePromise> seekToTarget(const SeekTarget&) final;
     bool paused() const override;
     MediaPlayer::NetworkState networkState() const override;
     void mediaSourceHasRetrievedAllData() final;
@@ -108,6 +108,7 @@ private:
     MediaTime m_currentTime;
     MediaTime m_duration;
     std::optional<SeekTarget> m_lastSeekTarget;
+    std::optional<MediaTimePromise::AutoRejectProducer> m_seekPromise;
     MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
     bool m_playing { false };
 };

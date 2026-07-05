@@ -90,7 +90,6 @@ HTMLMediaElementMediaPlayerEngineUpdated, "HTMLMediaElement::mediaPlayerEngineUp
 HTMLMediaElementMediaPlayerMuteChanged, "HTMLMediaElement::mediaPlayerMuteChanged(%" PRIX64 ")", (uint64_t), DEFAULT, Media
 HTMLMediaElementMediaPlayerRateChanged, "HTMLMediaElement::mediaPlayerRateChanged(%" PRIX64 ") rate: %f", (uint64_t, double), DEFAULT, Media
 HTMLMediaElementMediaPlayerResourceNotSupported, "HTMLMediaElement::mediaPlayerResourceNotSupported(%" PRIX64 ")", (uint64_t), DEFAULT, Media
-HTMLMediaElementMediaPlayerSeeked, "HTMLMediaElement::mediaPlayerSeeked(%" PRIX64 ")", (uint64_t), DEFAULT, Media
 HTMLMediaElementMediaPlayerSizeChanged, "HTMLMediaElement::mediaPlayerSizeChanged(%" PRIX64 ") w = %f, h = %f", (uint64_t, float, float), DEFAULT, Media
 HTMLMediaElementMediaPlayerTimeChanged, "HTMLMediaElement::mediaPlayerTimeChanged(%" PRIX64 ")", (uint64_t), DEFAULT, Media
 HTMLMediaElementMediaPlayerTimeChangedLooping, "HTMLMediaElement::mediaPlayerTimeChanged(%" PRIX64 ") current time (%f) is greater then duration (%f), looping", (uint64_t, double, double), DEFAULT, Media

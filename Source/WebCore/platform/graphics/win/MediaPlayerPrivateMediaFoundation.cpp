@@ -281,12 +281,7 @@ void MediaPlayerPrivateMediaFoundation::setPageIsVisible(bool visible)
     m_visible = visible;
 }
 
-bool MediaPlayerPrivateMediaFoundation::seeking() const
-{
-    return m_seeking;
-}
-
-void MediaPlayerPrivateMediaFoundation::seekToTarget(const SeekTarget& target)
+Ref<MediaTimePromise> MediaPlayerPrivateMediaFoundation::seekToTarget(const SeekTarget& target)
 {
     PROPVARIANT propVariant;
     PropVariantInit(&propVariant);
@@ -297,8 +292,9 @@ void MediaPlayerPrivateMediaFoundation::seekToTarget(const SeekTarget& target)
     ASSERT_UNUSED(hr, SUCCEEDED(hr));
     PropVariantClear(&propVariant);
 
-    m_seeking = true;
     m_sessionEnded = false;
+    m_seekPromise.emplace(PlatformMediaError::Cancelled);
+    return *m_seekPromise;
 }
 
 void MediaPlayerPrivateMediaFoundation::setRate(float rate)
@@ -897,11 +893,10 @@ void MediaPlayerPrivateMediaFoundation::onSessionStarted()
     if (!player)
         return;
     m_sessionEnded = false;
-    if (m_seeking) {
-        m_seeking = false;
+    if (m_seekPromise) {
         if (m_paused)
             m_mediaSession->Pause();
-        player->timeChanged();
+        std::exchange(m_seekPromise, std::nullopt)->resolve(currentTime());
         return;
     }
 

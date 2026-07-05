@@ -796,15 +796,16 @@ void AudioVideoRendererAVFObjC::handleEffectiveRateChanged(double rate)
     if (m_startupGateObserver)
         return;
 
-    // 0 -> non-zero. Hold the rate change until the timebase actually
-    // moves (in either direction).
-    SUPPRESS_UNRETAINED_ARG MediaTime baseTime = PAL::toMediaTime(PAL::CMTimebaseGetTime([m_synchronizer timebase]));
-    m_startupGateObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 100) queue:mainDispatchQueueSingleton() usingBlock:makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }, baseTime](CMTime) mutable {
+    // 0 -> non-zero. Hold the rate change until the timebase is actually live — i.e. until the
+    // synchronizer time is valid (>= 0 and not below the last seek target), matching effectiveRate()'s
+    // guard. Releasing merely because the timebase value changed forwards while the time is still in
+    // pre-roll, publishing a rate-0 (frozen) snapshot that nothing subsequently advances past.
+    m_startupGateObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 100) queue:mainDispatchQueueSingleton() usingBlock:makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }](CMTime) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !protectedThis->m_startupGateObserver)
             return;
         SUPPRESS_UNRETAINED_ARG MediaTime now = PAL::toMediaTime(PAL::CMTimebaseGetTime([protectedThis->m_synchronizer timebase]));
-        if (now != baseTime)
+        if (now >= MediaTime::zeroTime() && protectedThis->clampTimeToLastSeekTime(now) == now)
             protectedThis->releaseStartupGateAndForwardRate();
     }).get()];
 }

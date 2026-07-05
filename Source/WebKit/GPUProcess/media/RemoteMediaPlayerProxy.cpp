@@ -244,10 +244,30 @@ void RemoteMediaPlayerProxy::pause()
     sendCachedState();
 }
 
-void RemoteMediaPlayerProxy::seekToTarget(const WebCore::SeekTarget& target)
+static MediaTimeUpdateData timeUpdateData(const MediaPlayer& player, MediaTime time)
+{
+    return {
+        time,
+        player.timeIsProgressing() ? player.effectiveRate() : 0.0,
+        MonotonicTime::now()
+    };
+}
+
+void RemoteMediaPlayerProxy::seekToTarget(const WebCore::SeekTarget& target, CompletionHandler<void(Expected<WebCore::MediaTimeUpdateData, WebCore::PlatformMediaError>)>&& handler)
 {
     ALWAYS_LOG(LOGIDENTIFIER, target);
-    protect(m_player)->seekToTarget(target);
+    protect(m_player)->seekToTarget(target)->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, handler = WTF::move(handler)](auto&& result) mutable {
+        if (!result) {
+            handler(makeUnexpected(result.error()));
+            return;
+        }
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis) {
+            handler(makeUnexpected(PlatformMediaError::Cancelled));
+            return;
+        }
+        handler(timeUpdateData(*protect(protectedThis->m_player), *result));
+    });
 }
 
 void RemoteMediaPlayerProxy::setVolumeLocked(bool volumeLocked)
@@ -444,21 +464,6 @@ void RemoteMediaPlayerProxy::mediaPlayerVolumeChanged()
 void RemoteMediaPlayerProxy::mediaPlayerMuteChanged()
 {
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::MuteChanged(m_player->muted()), m_id);
-}
-
-static MediaTimeUpdateData timeUpdateData(const MediaPlayer& player, MediaTime time)
-{
-    return {
-        time,
-        player.timeIsProgressing() ? player.effectiveRate() : 0.0,
-        MonotonicTime::now()
-    };
-}
-
-void RemoteMediaPlayerProxy::mediaPlayerSeeked(const MediaTime& time)
-{
-    ALWAYS_LOG(LOGIDENTIFIER, time);
-    protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::Seeked(timeUpdateData(*protect(m_player), time)), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerTimeChanged()

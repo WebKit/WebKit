@@ -146,8 +146,7 @@ public:
 
     virtual void willSeekToTarget(const MediaTime& time) { m_pendingSeekTime = time; }
     virtual MediaTime pendingSeekTime() const { return m_pendingSeekTime; }
-    virtual void seekToTarget(const SeekTarget&) = 0;
-    virtual bool seeking() const = 0;
+    virtual Ref<MediaTimePromise> seekToTarget(const SeekTarget&) = 0;
 
     virtual MediaTime startTime() const { return MediaTime::zeroTime(); }
     virtual MediaTime initialTime() const { return MediaTime::zeroTime(); }

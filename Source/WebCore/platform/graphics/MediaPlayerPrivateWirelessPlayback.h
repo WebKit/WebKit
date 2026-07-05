@@ -94,8 +94,7 @@ private:
     bool hasVideo() const final { return true; }
     bool hasAudio() const final;
     void setPageIsVisible(bool) final { }
-    void seekToTarget(const SeekTarget&) final;
-    bool seeking() const final { return false; }
+    Ref<MediaTimePromise> seekToTarget(const SeekTarget&) final;
     bool paused() const final;
     MediaPlayer::NetworkState networkState() const final { return m_networkState; }
     MediaPlayer::ReadyState readyState() const final { return m_readyState; }
@@ -158,6 +157,7 @@ private:
     bool m_allowsWirelessVideoPlayback { true };
     bool m_volumeLocked { false };
     ShouldPlayToTarget m_shouldPlayToTarget { ShouldPlayToTarget::Unknown };
+    std::optional<MediaTimePromise::AutoRejectProducer> m_seekPromise;
     RefPtr<MediaPlaybackTarget> m_playbackTarget;
     MediaPlayer::CurrentTimeDidChangeCallback m_currentTimeDidChangeCallback;
     RetainPtr<CMTimebaseRef> m_timebase;

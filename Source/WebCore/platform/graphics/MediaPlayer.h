@@ -206,9 +206,6 @@ public:
     // the mute state has changed
     virtual void mediaPlayerMuteChanged() { }
 
-    // the last seek operation has completed
-    virtual void mediaPlayerSeeked(const MediaTime&) { }
-
     // time has jumped, eg. not as a result of normal playback
     virtual void mediaPlayerTimeChanged() { }
 
@@ -487,11 +484,8 @@ public:
 
     bool paused() const;
     void willSeekToTarget(const MediaTime&);
-    void seekToTime(const MediaTime&);
     void seekWhenPossible(const MediaTime&);
-    void seekToTarget(const SeekTarget&);
-    bool seeking() const;
-    void seeked(const MediaTime&);
+    Ref<MediaTimePromise> seekToTarget(const SeekTarget&);
 
     static double invalidTime() { return -1.0; }
     MediaTime duration() const;
@@ -854,6 +848,8 @@ private:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     MediaPlaybackTargetType playbackTargetType() const;
 #endif
+
+    void seekToTime(const MediaTime&);
 
     WeakPtr<MediaPlayerClient> m_client;
     Timer m_reloadTimer;

@@ -74,8 +74,7 @@ public:
 
     void setPageIsVisible(bool) final { };
 
-    bool seeking() const final { return false; }
-    void seekToTarget(const SeekTarget&) final { }
+    Ref<MediaTimePromise> seekToTarget(const SeekTarget&) final { return MediaTimePromise::createAndResolve(MediaTime::zeroTime()); }
 
     bool paused() const final { return false; };
 

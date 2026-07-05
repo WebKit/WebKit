@@ -57,7 +57,7 @@ public:
     void play() override;
     void pause() override;
     void willSeekToTarget(const MediaTime&) override;
-    void seekToTarget(const SeekTarget&) override;
+    Ref<MediaTimePromise> seekToTarget(const SeekTarget&) override;
     bool doSeek(const SeekTarget&, float rate, bool isAsync = false, bool isSegment = false) override;
 
     void updatePipelineState(GstState);

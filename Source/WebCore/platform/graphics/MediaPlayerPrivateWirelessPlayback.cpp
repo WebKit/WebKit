@@ -273,14 +273,16 @@ bool MediaPlayerPrivateWirelessPlayback::hasAudio() const
     return false;
 }
 
-void MediaPlayerPrivateWirelessPlayback::seekToTarget(const SeekTarget& seekTarget)
+Ref<MediaTimePromise> MediaPlayerPrivateWirelessPlayback::seekToTarget(const SeekTarget& seekTarget)
 {
     RefPtr route = this->route();
     if (!route)
-        return;
+        return MediaTimePromise::createAndReject(PlatformMediaError::Cancelled);
 
     ALWAYS_LOG(LOGIDENTIFIER, seekTarget);
+    m_seekPromise.emplace(PlatformMediaError::Cancelled);
     route->setPlaybackPosition(seekTarget.time);
+    return *m_seekPromise;
 }
 
 bool MediaPlayerPrivateWirelessPlayback::paused() const
@@ -459,10 +461,11 @@ void MediaPlayerPrivateWirelessPlayback::playbackPositionDidChange(MediaDeviceRo
 
     auto currentTime = this->currentTime();
 
-    if (RefPtr player = m_player.get()) {
-        player->seeked(currentTime);
+    if (auto seekPromise = std::exchange(m_seekPromise, std::nullopt))
+        seekPromise->resolve(currentTime);
+
+    if (RefPtr player = m_player.get())
         player->timeChanged();
-    }
 
     if (m_currentTimeDidChangeCallback)
         m_currentTimeDidChangeCallback(currentTime);

@@ -610,6 +610,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_playbackControlsManagerBehaviorRestrictionsTimer(*this, &HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired)
     , m_seekToPlaybackPositionEndedTimer(*this, &HTMLMediaElement::seekToPlaybackPositionEndedTimerFired)
     , m_checkPlaybackTargetCompatibilityTimer(*this, &HTMLMediaElement::checkPlaybackTargetCompatibility)
+    , m_seekRequest(NativePromiseRequest::create())
     , m_currentIdentifier(MediaUniqueIdentifier::generate())
     , m_lastTimeUpdateEventMovieTime(MediaTime::positiveInfiniteTime())
     , m_firstTimePlaying(true)
@@ -625,8 +626,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_seeking(false)
     , m_buffering(false)
     , m_stalled(false)
-    , m_seekRequested(false)
     , m_wasPlayingBeforeSeeking(false)
+    , m_pendingNotifyAboutPlaying(false)
     , m_sentStalledEvent(false)
     , m_sentEndEvent(false)
     , m_pausedInternal(false)
@@ -777,6 +778,9 @@ void HTMLMediaElement::initializeMediaSession()
 HTMLMediaElement::~HTMLMediaElement()
 {
     HTMLMEDIAELEMENT_RELEASE_LOG(Destructor);
+
+    if (m_seekRequest->hasCallback())
+        m_seekRequest->disconnect();
 
     invalidateWatchtimeTimer();
     invalidateBufferingStopwatch();
@@ -1412,12 +1416,28 @@ void HTMLMediaElement::resolvePendingPlayPromises(PlayPromiseVector&& pendingPla
         promise.resolve();
 }
 
-void HTMLMediaElement::scheduleNotifyAboutPlaying()
+void HTMLMediaElement::scheduleNotifyAboutPlaying(bool deferWhileSeeking)
 {
+    // A readyState-driven 'playing' that coincides with seek completion must be queued after the
+    // seek's 'seeked' event; defer it until finishSeek() flushes it via maybeFirePendingPlaying().
+    // Playback resumed explicitly via play() (deferWhileSeeking == false) is not deferred.
+    if (deferWhileSeeking && m_seeking) {
+        m_pendingNotifyAboutPlaying = true;
+        return;
+    }
+
     queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [pendingPlayPromises = WTF::move(m_pendingPlayPromises)](auto& element) mutable {
         if (!element.isContextStopped())
             element.notifyAboutPlaying(WTF::move(pendingPlayPromises));
     });
+}
+
+void HTMLMediaElement::maybeFirePendingPlaying()
+{
+    if (!m_pendingNotifyAboutPlaying)
+        return;
+    m_pendingNotifyAboutPlaying = false;
+    scheduleNotifyAboutPlaying(false);
 }
 
 void HTMLMediaElement::notifyAboutPlaying(PlayPromiseVector&& pendingPlayPromises)
@@ -3324,10 +3344,6 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
             ALWAYS_LOG(LOGIDENTIFIER, "queuing waiting event, currentTime = ", currentMediaTime());
             scheduleEvent(eventNames().waitingEvent);
         }
-
-        // 4.8.10.10 step 14 & 15.
-        if (m_seekRequested && !player->seeking() && m_readyState >= HAVE_CURRENT_DATA)
-            finishSeek();
     } else {
         if (wasPotentiallyPlaying && m_readyState < HAVE_FUTURE_DATA) {
             // 4.8.10.8
@@ -4109,8 +4125,38 @@ void HTMLMediaElement::seekTask()
     scheduleEvent(eventNames().seekingEvent);
 
     // 11 - Set the current playback position to the given new playback position
-    m_seekRequested = true;
-    player->seekToTarget({ time, negativeTolerance, positiveTolerance });
+    // A previous seek's promise may still be tracked if a new seekTask runs before it settled;
+    // cancel it so the new request can be tracked.
+    if (m_seekRequest->hasCallback())
+        m_seekRequest->disconnect();
+    player->seekToTarget({ time, negativeTolerance, positiveTolerance })->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }](auto&& result) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        protectedThis->m_seekRequest->complete();
+        if (!result) {
+            if (result.error() == PlatformMediaError::Cancelled)
+                ALWAYS_LOG_WITH_THIS(protectedThis, LOGIDENTIFIER_WITH_THIS(protectedThis), "seek cancelled");
+            else
+                ERROR_LOG_WITH_THIS(protectedThis, LOGIDENTIFIER_WITH_THIS(protectedThis), "seek failed: ", result.error());
+            // A new seek would have disconnected this callback before it ran, so none is in flight:
+            // reset the seeking state this failed seek left behind.
+            protectedThis->clearSeeking();
+            protectedThis->maybeFirePendingPlaying();
+            return;
+        }
+
+#if ENABLE(MEDIA_SOURCE)
+        if (RefPtr mediaSource = protectedThis->m_mediaSource)
+            mediaSource->monitorSourceBuffers(); // Update readyState.
+#endif
+
+        ALWAYS_LOG_WITH_THIS(protectedThis, LOGIDENTIFIER_WITH_THIS(protectedThis), "seek completed time: ", *result, " readyState: ", convertEnumerationToString(protectedThis->m_readyState));
+        // 4.8.10.9 step 14 & 15.
+        protectedThis->finishSeek();
+
+        protectedThis->handlePlaybackPositionChanged();
+    })->track(m_seekRequest);
 
     // 12 - Wait until the user agent has established whether or not the media data for the new playback
     // position is available, and, if it is, until it has decoded enough data to play back that position.
@@ -4125,7 +4171,8 @@ void HTMLMediaElement::clearSeeking()
     if (RefPtr player = m_player)
         player->willSeekToTarget(MediaTime::invalidTime());
     setSeeking(false);
-    m_seekRequested = false;
+    if (m_seekRequest->hasCallback())
+        m_seekRequest->disconnect();
     m_pendingSeekType = NoSeek;
     m_wasPlayingBeforeSeeking = false;
     invalidateOfficialPlaybackPosition();
@@ -4158,16 +4205,14 @@ void HTMLMediaElement::finishSeek()
     // 17 - Queue a task to fire a simple event named seeked at the element.
     scheduleEvent(eventNames().seekedEvent);
 
+    maybeFirePendingPlaying();
+
     if (protect(document())->quirks().needsCanPlayAfterSeekedQuirk() && m_readyState > HAVE_CURRENT_DATA)
         scheduleEvent(eventNames().canplayEvent);
 
     if (RefPtr mediaSession = m_mediaSession)
         mediaSession->clientCharacteristicsChanged(true);
 
-#if ENABLE(MEDIA_SOURCE)
-    if (RefPtr mediaSource = m_mediaSource)
-        mediaSource->monitorSourceBuffers();
-#endif
     if (wasPlayingBeforeSeeking)
         playInternal();
 }
@@ -4712,7 +4757,7 @@ void HTMLMediaElement::playInternal()
         //     natural transition handles the late notify when readyState
         //     eventually transitions up.
         if (shouldNotifyAboutPlaying)
-            protectedThis->scheduleNotifyAboutPlaying();
+            protectedThis->scheduleNotifyAboutPlaying(false);
         else if (shouldResolvePromises)
             protectedThis->scheduleResolvePendingPlayPromises();
         protectedThis->completePlayInternal();
@@ -6046,23 +6091,22 @@ void HTMLMediaElement::mediaPlayerTimeChanged()
 
     updateActiveTextTrackCues(currentMediaTime());
 
-    beginProcessingMediaPlayerCallback();
+    if (seeking())
+        return;
 
     invalidateOfficialPlaybackPosition();
-    bool wasSeeking = seeking();
 
-    // 4.8.10.9 step 14 & 15.  Needed if no ReadyState change is associated with the seek.
-    if (m_seekRequested && m_readyState >= HAVE_CURRENT_DATA && !protect(player())->seeking())
-        finishSeek();
-
-    // Otherwise schedule a discontinuity 'timeupdate' (per the spec's timeupdate event
+    // Schedule a discontinuity 'timeupdate' (per the spec's timeupdate event
     // definition: "the current playback position changed [...] in an especially
-    // interesting way, for example discontinuously"). Skip while m_seeking is true:
-    // the seek's own seeking/timeupdate/seeked events would race with this one, and
-    // m_seekRequested is still false in the gap before seekTask runs so the if-branch
-    // above can't catch it.
-    else if (!m_seeking)
-        scheduleTimeupdateEvent(false);
+    // interesting way, for example discontinuously").
+    scheduleTimeupdateEvent(false);
+
+    handlePlaybackPositionChanged();
+}
+
+void HTMLMediaElement::handlePlaybackPositionChanged()
+{
+    beginProcessingMediaPlayerCallback();
 
 #if ENABLE(MEDIA_SOURCE)
     // Without this, `waiting` would fire up to maxTimeupdateEventFrequency (~250ms) late — the
@@ -6117,8 +6161,7 @@ void HTMLMediaElement::mediaPlayerTimeChanged()
             if (!m_sentEndEvent) {
                 m_sentEndEvent = true;
                 scheduleEvent(eventNames().endedEvent);
-                if (!wasSeeking)
-                    addBehaviorRestrictionsOnEndIfNecessary();
+                addBehaviorRestrictionsOnEndIfNecessary();
                 setAutoplayEventPlaybackState(AutoplayEventPlaybackState::None);
                 if (now > m_lastSeekTime)
                     addPlayedRange(m_lastSeekTime, now);
@@ -6144,8 +6187,7 @@ void HTMLMediaElement::mediaPlayerTimeChanged()
                 if (RefPtr player = m_player; player && player->ended()) {
                     m_sentEndEvent = true;
                     scheduleEvent(eventNames().endedEvent);
-                    if (!wasSeeking)
-                        addBehaviorRestrictionsOnEndIfNecessary();
+                    addBehaviorRestrictionsOnEndIfNecessary();
                     setPaused(true);
                     setPlaying(false);
                 }
@@ -6225,16 +6267,6 @@ void HTMLMediaElement::mediaPlayerMuteChanged()
     if (RefPtr player = m_player)
         setMuted(player->muted());
     endProcessingMediaPlayerCallback();
-}
-
-void HTMLMediaElement::mediaPlayerSeeked(const MediaTime&)
-{
-    HTMLMEDIAELEMENT_RELEASE_LOG(MediaPlayerSeeked);
-
-#if ENABLE(MEDIA_SOURCE)
-    if (RefPtr mediaSource = m_mediaSource)
-        mediaSource->monitorSourceBuffers(); // Update readyState.
-#endif
 }
 
 void HTMLMediaElement::mediaPlayerDurationChanged()

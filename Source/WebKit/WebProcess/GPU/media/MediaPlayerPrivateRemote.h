@@ -119,7 +119,6 @@ public:
     void readyStateChanged(RemoteMediaPlayerState&&, WebCore::MediaPlayer::ReadyState);
     void volumeChanged(double);
     void muteChanged(bool);
-    void seeked(MediaTimeUpdateData&&);
     void timeChanged(RemoteMediaPlayerState&&, MediaTimeUpdateData&&);
     void durationChanged(RemoteMediaPlayerState&&);
     void rateChanged(double, MediaTimeUpdateData&&);
@@ -313,8 +312,7 @@ private:
 
     void willSeekToTarget(const MediaTime&) final;
     MediaTime pendingSeekTime() const final;
-    void seekToTarget(const WebCore::SeekTarget&) final;
-    bool seeking() const final;
+    Ref<WebCore::MediaTimePromise> seekToTarget(const WebCore::SeekTarget&) final;
 
     MediaTime startTime() const final;
 

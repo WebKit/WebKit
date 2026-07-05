@@ -233,13 +233,16 @@ MediaTime MediaPlayerPrivateGStreamerMSE::duration() const
     return m_mediaTimeDuration.isValid() ? m_mediaTimeDuration : MediaTime::zeroTime();
 }
 
-void MediaPlayerPrivateGStreamerMSE::seekToTarget(const SeekTarget& target)
+Ref<MediaTimePromise> MediaPlayerPrivateGStreamerMSE::seekToTarget(const SeekTarget& target)
 {
+    m_seekPromise.emplace(PlatformMediaError::Cancelled);
     if (!m_pipeline)
         rebuildPipeline();
 
     GST_INFO_OBJECT(pipeline(), "Requested seek to %s", target.time.toString().utf8().data());
-    doSeek(target, m_playbackRate);
+    if (!doSeek(target, m_playbackRate))
+        m_seekPromise->reject(PlatformMediaError::Cancelled);
+    return *m_seekPromise;
 }
 
 bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate, bool isAsync, bool isSegment)
@@ -409,7 +412,7 @@ void MediaPlayerPrivateGStreamerMSE::propagateReadyStateToPlayer()
 
     // The readyState change may be a result of monitorSourceBuffers() finding that currentTime == duration, which
     // should cause the video to be marked as ended. Let's have the player check that.
-    if (player && (!m_isWaitingForPreroll || currentTime() == duration()))
+    if (player && currentTime() == duration())
         player->timeChanged();
 }
 
@@ -443,8 +446,8 @@ void MediaPlayerPrivateGStreamerMSE::didPreroll()
         m_canFallBackToLastFinishedSeekPosition = true;
         invalidateCachedPosition();
         GST_DEBUG("Seek complete because of preroll. currentMediaTime = %s", currentTime().toString().utf8().data());
-        // By calling timeChanged(), m_isSeeking will be checked an a "seeked" event will be emitted.
-        timeChanged(currentTime());
+        if (auto seekPromise = std::exchange(m_seekPromise, std::nullopt))
+            seekPromise->resolve(currentTime());
     }
 
     propagateReadyStateToPlayer();

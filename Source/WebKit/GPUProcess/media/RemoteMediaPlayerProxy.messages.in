@@ -43,7 +43,7 @@ messages -> RemoteMediaPlayerProxy {
     SetVolume(double volume)
     SetMuted(bool muted)
 
-    SeekToTarget(struct WebCore::SeekTarget target)
+    SeekToTarget(struct WebCore::SeekTarget target) -> (Expected<WebCore::MediaTimeUpdateData, WebCore::PlatformMediaError> result)
 
     SetPreload(enum:uint8_t WebCore::MediaPlayerPreload preload)
     SetPrivateBrowsingMode(bool privateMode)

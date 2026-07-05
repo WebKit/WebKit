@@ -215,8 +215,8 @@ private:
     MediaTime startTime() const override;
     MediaTime initialTime() const override;
 
-    void seekToTarget(const SeekTarget&) final;
-    bool seeking() const final;
+    Ref<MediaTimePromise> seekToTarget(const SeekTarget&) final;
+    bool seeking() const;
     void setRateDouble(double) override;
     double rate() const override;
     double effectiveRate() const override;
@@ -355,12 +355,13 @@ private:
 
     // Seeking
     Timer m_seekTimer WTF_GUARDED_BY_CAPABILITY(mainThread);
-    bool m_seeking  WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
     std::optional<SeekTarget> m_pendingSeek WTF_GUARDED_BY_CAPABILITY(mainThread);
     const Ref<NativePromiseRequest> m_waitForTargetRequest WTF_GUARDED_BY_CAPABILITY(mainThread);
     const Ref<NativePromiseRequest> m_rendererPrepareSeekRequest WTF_GUARDED_BY_CAPABILITY(mainThread);
     const Ref<NativePromiseRequest> m_rendererFinishSeekRequest WTF_GUARDED_BY_CAPABILITY(mainThread);
     const Ref<NativePromiseRequest> m_stallRequest WTF_GUARDED_BY_CAPABILITY(mainThread);
+    std::optional<MediaTimePromise::AutoRejectProducer> m_seekPromise WTF_GUARDED_BY_CAPABILITY(mainThread);
+    bool m_seeking WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     ThreadSafeWeakPtr<CDMSessionAVContentKeySession> m_session;

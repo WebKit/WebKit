@@ -139,8 +139,7 @@ private:
     MediaTime duration() const override;
     MediaTime currentTime() const override;
 
-    void seekToTarget(const SeekTarget&) final { };
-    bool seeking() const final { return false; }
+    Ref<MediaTimePromise> seekToTarget(const SeekTarget&) final { return MediaTimePromise::createAndReject(PlatformMediaError::Cancelled); }
 
     const PlatformTimeRanges& seekable() const override;
     const PlatformTimeRanges& buffered() const override;

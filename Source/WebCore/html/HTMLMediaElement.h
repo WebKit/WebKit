@@ -237,7 +237,9 @@ public:
     using PlayPromiseVector = Vector<DOMPromiseDeferred<void>>;
     void rejectPendingPlayPromises(PlayPromiseVector&&, Ref<DOMException>&&);
     void resolvePendingPlayPromises(PlayPromiseVector&&);
-    void scheduleNotifyAboutPlaying();
+    void scheduleNotifyAboutPlaying(bool deferWhileSeeking = true);
+    void maybeFirePendingPlaying();
+    void handlePlaybackPositionChanged();
     void notifyAboutPlaying(PlayPromiseVector&&);
     void durationChanged();
     
@@ -794,7 +796,6 @@ protected:
     void mediaPlayerTimeChanged() final;
     void mediaPlayerVolumeChanged() final;
     void mediaPlayerMuteChanged() final;
-    void mediaPlayerSeeked(const MediaTime&) final;
     void mediaPlayerDurationChanged() final;
     void mediaPlayerRateChanged() final;
     void mediaPlayerPlaybackStateChanged() final;
@@ -1210,6 +1211,7 @@ private:
     TaskCancellationGroup m_updatePlayStateTaskCancellationGroup;
     TaskCancellationGroup m_resumeTaskCancellationGroup;
     TaskCancellationGroup m_seekTaskCancellationGroup;
+    const Ref<NativePromiseRequest> m_seekRequest;
     TaskCancellationGroup m_playbackControlsManagerBehaviorRestrictionsTaskCancellationGroup;
     TaskCancellationGroup m_bufferedTimeRangesChangedTaskCancellationGroup;
     TaskCancellationGroup m_resourceSelectionTaskCancellationGroup;
@@ -1328,8 +1330,8 @@ private:
     bool m_seeking : 1;
     bool m_buffering : 1;
     bool m_stalled : 1;
-    bool m_seekRequested : 1;
     bool m_wasPlayingBeforeSeeking : 1;
+    bool m_pendingNotifyAboutPlaying : 1;
 
     // data has not been loaded since sending a "stalled" event
     bool m_sentStalledEvent : 1;

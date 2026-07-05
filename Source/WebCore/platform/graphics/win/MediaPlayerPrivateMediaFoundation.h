@@ -41,6 +41,7 @@
 
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
+#include <wtf/NativePromise.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadingPrimitives.h>
@@ -84,8 +85,7 @@ public:
 
     void setPageIsVisible(bool) final;
 
-    bool seeking() const final;
-    void seekToTarget(const SeekTarget&) final;
+    Ref<MediaTimePromise> seekToTarget(const SeekTarget&) final;
 
     void setRate(float) final;
 
@@ -130,7 +130,7 @@ private:
     bool m_visible;
     bool m_loadingProgress;
     bool m_paused;
-    bool m_seeking { false };
+    std::optional<MediaTimePromise::AutoRejectProducer> m_seekPromise;
     bool m_sessionEnded { false };
     bool m_hasAudio;
     bool m_hasVideo;
