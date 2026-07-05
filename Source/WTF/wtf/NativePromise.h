@@ -276,15 +276,16 @@ public:
 
 class ConvertibleToNativePromise { };
 
-class NativePromiseRequest final : public RefCountedAndCanMakeWeakPtr<NativePromiseRequest> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NativePromiseRequest);
+// Implementation detail of NativePromiseRequest; do not use directly.
+class NativePromiseRequestData final : public RefCountedAndCanMakeWeakPtr<NativePromiseRequestData> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NativePromiseRequestData);
 public:
-    static Ref<NativePromiseRequest> create()
+    static Ref<NativePromiseRequestData> create()
     {
-        return adoptRef(*new NativePromiseRequest);
+        return adoptRef(*new NativePromiseRequestData);
     }
 
-    ~NativePromiseRequest()
+    ~NativePromiseRequestData()
     {
         ASSERT(!m_callback, "complete() or disconnect() wasn't called");
     }
@@ -294,7 +295,6 @@ public:
         virtual ~Callback() = default;
         virtual void disconnect() = 0;
     };
-
 
     void track(Ref<Callback> callback)
     {
@@ -321,9 +321,36 @@ public:
     }
 
 private:
-    NativePromiseRequest() = default;
+    NativePromiseRequestData() = default;
 
     RefPtr<Callback> m_callback;
+};
+
+// Stack/member value type used to track a then()/whenSettled() command and cancel its delivery via
+// disconnect(). Movable (so it can be captured by move into a callback); copying is disabled.
+class NativePromiseRequest final {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NativePromiseRequest);
+public:
+    using Callback = NativePromiseRequestData::Callback;
+
+    NativePromiseRequest() = default;
+    NativePromiseRequest(NativePromiseRequest&&) = default;
+    NativePromiseRequest& operator=(NativePromiseRequest&&) = default;
+
+    void track(Ref<Callback> callback) { protect(m_data)->track(WTF::move(callback)); }
+
+    explicit operator bool() const { return m_data->hasCallback(); }
+
+    void complete() { protect(m_data)->complete(); }
+
+    void disconnect() { protect(m_data)->disconnect(); }
+
+    // Weak reference to the internal state, for tracking in a WeakHashSet. Stays valid across moves
+    // of this NativePromiseRequest.
+    WeakPtr<NativePromiseRequestData> weakPtr() const { return m_data.get(); }
+
+private:
+    Ref<NativePromiseRequestData> m_data { NativePromiseRequestData::create() };
 };
 
 template<typename ResolveValueT, typename RejectValueT, unsigned options = 0>
@@ -700,7 +727,7 @@ private:
         PROMISE_LOG("creating ", *this);
     }
 
-    class ThenCallbackBase : public NativePromiseRequest::Callback {
+    class ThenCallbackBase : public NativePromiseRequestData::Callback {
 
     public:
         ThenCallbackBase(RefPtr<GuaranteedSerialFunctionDispatcher>&& targetQueue, const Logger::LogSiteIdentifier& callSite)
@@ -932,7 +959,11 @@ private:
             return completionPromise()->whenSettled(targetQueue, thisVal, std::forward<SettleMethod>(settleMethod), callSite);
         }
 
-        void track(NativePromiseRequest& requestHolder)
+        // Tracks the command through either a NativePromiseRequest (the common stack/member value
+        // type) or its internal NativePromiseRequestData (used when only a WeakPtr to the state is
+        // available, e.g. after the request has been moved into the settle callback).
+        template<typename RequestType>
+        void track(RequestType& requestHolder)
         {
             ASSERT(m_thenCallback, "Can only track a request once");
             requestHolder.track(*m_thenCallback);
@@ -1607,5 +1638,6 @@ using WTF::GenericPromise;
 using WTF::GenericNonExclusivePromise;
 using WTF::NativePromise;
 using WTF::NativePromiseRequest;
+using WTF::NativePromiseRequestData;
 using WTF::PromiseDispatchMode;
 using WTF::PromiseOption;

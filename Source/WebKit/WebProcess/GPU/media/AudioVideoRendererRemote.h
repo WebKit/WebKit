@@ -272,7 +272,7 @@ private:
     Function<void(const MediaTime&)> m_currentTimeDidChangeCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     Function<void(double)> m_effectiveRateChangedCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     std::optional<WebCore::MediaTimePromise::Producer> m_stallProducer WTF_GUARDED_BY_CAPABILITY(queueSingleton());
-    Ref<NativePromiseRequest> m_stallRequest WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    NativePromiseRequest m_stallRequest WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     Function<void(const MediaTime&)> m_performTaskAtTimeCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     MediaTime m_performTaskAtTime WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     Function<void(const MediaTime&, WebCore::FloatSize)> m_videoLayerSizeChangedCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
@@ -287,9 +287,9 @@ private:
     WebCore::FloatSize m_naturalSize WTF_GUARDED_BY_LOCK(m_lock);
 
     // Seek Tracking
-    Ref<NativePromiseRequest> m_prepareSeekRequest WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    NativePromiseRequest m_prepareSeekRequest WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     std::optional<WebCore::MediaTimePromise::Producer> m_prepareSeekPromise WTF_GUARDED_BY_CAPABILITY(queueSingleton());
-    Ref<NativePromiseRequest> m_finishSeekRequest WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    NativePromiseRequest m_finishSeekRequest WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     std::optional<GenericPromise::Producer> m_finishSeekPromise WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     std::atomic<bool> m_seeking { false };
     MediaTime m_lastSeekTime WTF_GUARDED_BY_LOCK(m_lock);

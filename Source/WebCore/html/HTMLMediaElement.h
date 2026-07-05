@@ -1211,7 +1211,7 @@ private:
     TaskCancellationGroup m_updatePlayStateTaskCancellationGroup;
     TaskCancellationGroup m_resumeTaskCancellationGroup;
     TaskCancellationGroup m_seekTaskCancellationGroup;
-    const Ref<NativePromiseRequest> m_seekRequest;
+    NativePromiseRequest m_seekRequest;
     TaskCancellationGroup m_playbackControlsManagerBehaviorRestrictionsTaskCancellationGroup;
     TaskCancellationGroup m_bufferedTimeRangesChangedTaskCancellationGroup;
     TaskCancellationGroup m_resourceSelectionTaskCancellationGroup;

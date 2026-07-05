@@ -42,11 +42,13 @@
 namespace WTF {
 class CrossThreadTask;
 class NativePromiseRequest;
+class NativePromiseRequestData;
 class URL;
 } // namespace WTF
 
 using WTF::CrossThreadTask;
 using WTF::NativePromiseRequest;
+using WTF::NativePromiseRequestData;
 using WTF::URL;
 
 namespace JSC {
@@ -481,7 +483,7 @@ private:
     bool m_hasLoggedAuthenticatedEncryptionWarning { false };
 
     const RefPtr<GuaranteedSerialFunctionDispatcher> m_nativePromiseDispatcher;
-    WeakHashSet<NativePromiseRequest> m_nativePromiseRequests;
+    WeakHashSet<NativePromiseRequestData> m_nativePromiseRequests;
     std::unique_ptr<JSC::WeakGCSet<JSC::JSGlobalObject, JSC::WeakGCSetHash<JSC::JSGlobalObject>, JSC::WeakGCSetHashTraits<JSC::JSGlobalObject>>> m_microtaskGlobalObjects;
 };
 

@@ -296,15 +296,15 @@ TEST(NativePromise, GenericPromise)
 
         GenericPromise::Producer producer3;
         Ref<GenericPromise> promise3 = producer3;
-        auto request3 = NativePromiseRequest::create();
+        NativePromiseRequest request3;
 
         // Note that if you're not interested in the result you can provide two Function<void()> to then()
-        promise3->then(queue, doFail(), doFail()).track(request3.get());
+        promise3->then(queue, doFail(), doFail()).track(request3);
         producer3.resolve();
 
         // We are no longer interested by the result of the promise. We disconnect the request holder.
         // doFail() above will never be called.
-        request3->disconnect();
+        request3.disconnect();
 
         // Note that if you're not interested in the result you can also provide one Function<void()> with whenSettled()
         GenericPromise::Producer producer4;
@@ -422,7 +422,7 @@ TEST(NativePromise, PromiseRequest)
     // We declare the Request holder before using the runLoop to ensure it stays in scope for the entire run.
     // ASSERTION FAILED: !m_request
     using MyPromise = NativePromise<bool, bool>;
-    auto request1 = NativePromiseRequest::create();
+    NativePromiseRequest request1;
 
     runInCurrentRunLoop([&](auto& runLoop) {
         MyPromise::Producer producer1;
@@ -433,17 +433,17 @@ TEST(NativePromise, PromiseRequest)
             [&](MyPromise::Result&& result) {
                 EXPECT_TRUE(result.has_value());
                 EXPECT_TRUE(result.value());
-                EXPECT_TRUE(request1->hasCallback());
-                request1->complete();
-                EXPECT_FALSE(request1->hasCallback());
-            }).track(request1.get());
+                EXPECT_TRUE(!!request1);
+                request1.complete();
+                EXPECT_FALSE(!!request1);
+            }).track(request1);
     });
 
     // PromiseRequest allows to use capture by reference or pointer to ref-counted object and ensure the
     // lifetime of the object.
     bool objectToShare = true;
     runInCurrentRunLoop([&](auto& runLoop) {
-        auto request2 = NativePromiseRequest::create();
+        NativePromiseRequest request2;
         GenericPromise::Producer producer2;
         Ref<GenericPromise> promise2 = producer2;
         promise2->whenSettled(runLoop,
@@ -451,10 +451,10 @@ TEST(NativePromise, PromiseRequest)
                 // It would be normally unsafe to access `objectToShare` as it went out of scope.
                 // but this function will never run as we've disconnected the ThenCommand.
                 objectToShare = false;
-            }).track(request2.get());
-        EXPECT_TRUE(request2->hasCallback());
-        request2->disconnect();
-        EXPECT_FALSE(request2->hasCallback());
+            }).track(request2);
+        EXPECT_TRUE(!!request2);
+        request2.disconnect();
+        EXPECT_FALSE(!!request2);
         producer2.resolve();
         EXPECT_TRUE(objectToShare);
     });
@@ -465,14 +465,14 @@ TEST(NativePromise, PromiseRequest)
 TEST(NativePromise, PromiseRequestDisconnected1)
 {
     runInCurrentRunLoop([](auto& runLoop) {
-        auto request = NativePromiseRequest::create();
+        NativePromiseRequest request;
 
         TestPromise::Producer producer;
         Ref<TestPromise> promise = producer;
-        promise->then(runLoop, doFail(), doFail()).track(request.get());
+        promise->then(runLoop, doFail(), doFail()).track(request);
 
         producer.resolve(1);
-        request->disconnect();
+        request.disconnect();
     });
 }
 
@@ -480,15 +480,15 @@ TEST(NativePromise, PromiseRequestDisconnected1)
 TEST(NativePromise, PromiseRequestDisconnected2)
 {
     runInCurrentRunLoop([](auto& runLoop) {
-        auto request = NativePromiseRequest::create();
+        NativePromiseRequest request;
 
         TestPromise::Producer producer;
         Ref<TestPromise> promise = producer;
         producer.resolve(1);
 
-        promise->then(runLoop, doFail(), doFail())->track(request.get());
+        promise->then(runLoop, doFail(), doFail())->track(request);
 
-        request->disconnect();
+        request.disconnect();
     });
 }
 
@@ -928,7 +928,7 @@ TEST(NativePromise, PromiseAllSettledAsync)
 TEST(NativePromise, Chaining)
 {
     // We declare this variable before |awq| to ensure the destructor is run after |holder.disconnect()|.
-    auto holder = NativePromiseRequest::create();
+    NativePromiseRequest holder;
 
     AutoWorkQueue awq;
     auto queue = awq.queue();
@@ -949,7 +949,7 @@ TEST(NativePromise, Chaining)
             if (i == kIterations / 2) {
                 promise->then(queue,
                     [queue, &holder] {
-                        holder->disconnect();
+                        holder.disconnect();
                         queue->beginShutdown();
                     },
                     doFail());
@@ -957,7 +957,7 @@ TEST(NativePromise, Chaining)
         }
         // We will hit the assertion if we don't disconnect the leaf Request
         // in the promise chain.
-        promise->whenSettled(queue, [] { })->track(holder.get());
+        promise->whenSettled(queue, [] { })->track(holder);
     });
 }
 
@@ -1261,7 +1261,7 @@ TEST(NativePromise, HeterogeneousChaining)
     using Promise1 = NativePromise<std::unique_ptr<char>, bool>;
     using Promise2 = NativePromise<std::unique_ptr<int>, bool>;
 
-    auto holder = NativePromiseRequest::create();
+    NativePromiseRequest holder;
 
     AutoWorkQueue awq;
     auto queue = awq.queue();
@@ -1269,13 +1269,13 @@ TEST(NativePromise, HeterogeneousChaining)
     queue->dispatch([queue, &holder] {
         Promise1::createAndResolve(makeUniqueWithoutFastMallocCheck<char>(0))->whenSettled(queue,
             [&holder] {
-                holder->disconnect();
+                holder.disconnect();
                 return Promise2::createAndResolve(makeUniqueWithoutFastMallocCheck<int>(0));
             })->whenSettled(queue,
                 [] {
                     // Shouldn't be called for we've disconnected the request.
                     EXPECT_FALSE(true);
-                })->track(holder.get());
+                })->track(holder);
     });
 
     Promise1::createAndResolve(makeUniqueWithoutFastMallocCheck<char>(87))->then(queue,
@@ -1681,10 +1681,10 @@ TEST(NativePromise, CreateSettledPromise)
 TEST(NativePromise, DisconnectNotOwnedInstance)
 {
     GenericPromise::Producer producer;
-    auto request = NativePromiseRequest::create();
-    WeakPtr weakRequest { request.get() };
+    NativePromiseRequest request;
+    auto weakRequest = request.weakPtr();
     producer->whenSettled(RunLoop::mainSingleton(), [request = WTF::move(request)] (auto&& result) mutable {
-        request->complete();
+        request.complete();
         EXPECT_TRUE(false);
     })->track(*weakRequest);
     weakRequest->disconnect();

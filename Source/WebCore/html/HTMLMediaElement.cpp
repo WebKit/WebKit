@@ -610,7 +610,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_playbackControlsManagerBehaviorRestrictionsTimer(*this, &HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired)
     , m_seekToPlaybackPositionEndedTimer(*this, &HTMLMediaElement::seekToPlaybackPositionEndedTimerFired)
     , m_checkPlaybackTargetCompatibilityTimer(*this, &HTMLMediaElement::checkPlaybackTargetCompatibility)
-    , m_seekRequest(NativePromiseRequest::create())
     , m_currentIdentifier(MediaUniqueIdentifier::generate())
     , m_lastTimeUpdateEventMovieTime(MediaTime::positiveInfiniteTime())
     , m_firstTimePlaying(true)
@@ -779,8 +778,8 @@ HTMLMediaElement::~HTMLMediaElement()
 {
     HTMLMEDIAELEMENT_RELEASE_LOG(Destructor);
 
-    if (m_seekRequest->hasCallback())
-        m_seekRequest->disconnect();
+    if (m_seekRequest)
+        m_seekRequest.disconnect();
 
     invalidateWatchtimeTimer();
     invalidateBufferingStopwatch();
@@ -4127,13 +4126,13 @@ void HTMLMediaElement::seekTask()
     // 11 - Set the current playback position to the given new playback position
     // A previous seek's promise may still be tracked if a new seekTask runs before it settled;
     // cancel it so the new request can be tracked.
-    if (m_seekRequest->hasCallback())
-        m_seekRequest->disconnect();
+    if (m_seekRequest)
+        m_seekRequest.disconnect();
     player->seekToTarget({ time, negativeTolerance, positiveTolerance })->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }](auto&& result) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        protectedThis->m_seekRequest->complete();
+        protectedThis->m_seekRequest.complete();
         if (!result) {
             if (result.error() == PlatformMediaError::Cancelled)
                 ALWAYS_LOG_WITH_THIS(protectedThis, LOGIDENTIFIER_WITH_THIS(protectedThis), "seek cancelled");
@@ -4171,8 +4170,8 @@ void HTMLMediaElement::clearSeeking()
     if (RefPtr player = m_player)
         player->willSeekToTarget(MediaTime::invalidTime());
     setSeeking(false);
-    if (m_seekRequest->hasCallback())
-        m_seekRequest->disconnect();
+    if (m_seekRequest)
+        m_seekRequest.disconnect();
     m_pendingSeekType = NoSeek;
     m_wasPlayingBeforeSeeking = false;
     invalidateOfficialPlaybackPosition();

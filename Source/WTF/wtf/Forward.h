@@ -212,6 +212,7 @@ template<typename ResolveValueT, typename RejectValueT, unsigned options = 0> cl
 using GenericPromise = NativePromise<void, void>;
 using GenericNonExclusivePromise = NativePromise<void, void, 1>;
 class NativePromiseRequest;
+class NativePromiseRequestData;
 
 template<typename ValueArg, typename HashArg = DefaultHash<WeakPtr<ValueArg>>, typename HashTraitsArg = HashTraits<WeakPtr<ValueArg>>, typename HashTableTraitsArg = HashTableTraits>
 using WeakKeyHashSet = HashSet<WeakPtr<ValueArg>, HashArg, HashTraitsArg, HashTableTraitsArg>;
@@ -292,6 +293,7 @@ using WTF::MediaTime;
 using WTF::MonotonicTime;
 using WTF::NativePromise;
 using WTF::NativePromiseRequest;
+using WTF::NativePromiseRequestData;
 using WTF::NeverDestroyed;
 using WTF::OSObjectPtr;
 using WTF::ObjectIdentifier;

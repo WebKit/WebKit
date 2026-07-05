@@ -396,8 +396,8 @@ private:
     std::optional<SeekTarget> m_pendingSeek WTF_GUARDED_BY_CAPABILITY(mainThread);
     std::atomic<bool> m_hasPendingSeek { false };
     std::optional<GenericPromise::AutoRejectProducer> m_waitForTimeBufferedPromise WTF_GUARDED_BY_CAPABILITY(runningQueue());
-    Ref<NativePromiseRequest> m_rendererSeekRequest;
-    Ref<NativePromiseRequest> m_stallRequest;
+    NativePromiseRequest m_rendererSeekRequest;
+    NativePromiseRequest m_stallRequest;
     std::atomic<bool> m_seeking { false };
     std::optional<MediaTimePromise::AutoRejectProducer> m_seekPromise WTF_GUARDED_BY_CAPABILITY(mainThread);
 #if HAVE(SPATIAL_TRACKING_LABEL)

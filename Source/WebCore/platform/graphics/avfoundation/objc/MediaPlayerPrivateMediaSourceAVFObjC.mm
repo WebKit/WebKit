@@ -103,10 +103,6 @@ Ref<AudioVideoRenderer> MediaPlayerPrivateMediaSourceAVFObjC::createRenderer(Log
 MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer& player)
     : m_player(player)
     , m_seekTimer(*this, &MediaPlayerPrivateMediaSourceAVFObjC::seekInternal)
-    , m_waitForTargetRequest(NativePromiseRequest::create())
-    , m_rendererPrepareSeekRequest(NativePromiseRequest::create())
-    , m_rendererFinishSeekRequest(NativePromiseRequest::create())
-    , m_stallRequest(NativePromiseRequest::create())
     , m_networkState(MediaPlayer::NetworkState::Empty)
     , m_pageIsVisible { player.pageIsVisible() }
     , m_viewportVisibility { player.viewportVisibility() }
@@ -137,8 +133,8 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
     // which accesses the already-destroyed m_logger).
     weakPtrFactory().revokeAll();
 
-    if (m_stallRequest->hasCallback())
-        protect(m_stallRequest)->disconnect();
+    if (m_stallRequest)
+        m_stallRequest.disconnect();
 
     cancelPendingSeek();
     m_seekTimer.stop();
@@ -588,7 +584,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        protectedThis->m_waitForTargetRequest->complete();
+        protectedThis->m_waitForTargetRequest.complete();
 
         if (!result)
             return; // seek cancelled;
@@ -610,7 +606,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::continueSeek(const MediaTime& seekTim
         if (!protectedThis)
             return;
 
-        protectedThis->m_rendererPrepareSeekRequest->complete();
+        protectedThis->m_rendererPrepareSeekRequest.complete();
 
         if (!result)
             return;
@@ -646,7 +642,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::reenqueueMediaForTimeAndFinishSeek(co
         if (!protectedThis)
             return;
 
-        protectedThis->m_rendererFinishSeekRequest->complete();
+        protectedThis->m_rendererFinishSeekRequest.complete();
 
         if (!result)
             return; // cancelled.
@@ -659,12 +655,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::cancelPendingSeek()
 {
     assertIsMainThread();
 
-    if (m_waitForTargetRequest->hasCallback())
-        m_waitForTargetRequest->disconnect();
-    if (m_rendererPrepareSeekRequest->hasCallback())
-        m_rendererPrepareSeekRequest->disconnect();
-    if (m_rendererFinishSeekRequest->hasCallback())
-        m_rendererFinishSeekRequest->disconnect();
+    if (m_waitForTargetRequest)
+        m_waitForTargetRequest.disconnect();
+    if (m_rendererPrepareSeekRequest)
+        m_rendererPrepareSeekRequest.disconnect();
+    if (m_rendererFinishSeekRequest)
+        m_rendererFinishSeekRequest.disconnect();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::completeSeek(const MediaTime& seekedTime)
@@ -770,8 +766,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::bufferedChanged()
 void MediaPlayerPrivateMediaSourceAVFObjC::resetStallForTime(const MediaTime& time)
 {
     assertIsMainThread();
-    if (m_stallRequest->hasCallback())
-        protect(m_stallRequest)->disconnect();
+    if (m_stallRequest)
+        m_stallRequest.disconnect();
     m_renderer->cancelTimeReachedAction();
 
     auto logSiteIdentifier = LOGIDENTIFIER;
@@ -782,8 +778,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::resetStallForTime(const MediaTime& ti
         if (!protectedThis)
             return;
 
-        if (protectedThis->m_stallRequest->hasCallback())
-            protect(protectedThis->m_stallRequest)->complete();
+        if (protectedThis->m_stallRequest)
+            protectedThis->m_stallRequest.complete();
 
         if (!result)
             return;

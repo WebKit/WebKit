@@ -356,10 +356,10 @@ private:
     // Seeking
     Timer m_seekTimer WTF_GUARDED_BY_CAPABILITY(mainThread);
     std::optional<SeekTarget> m_pendingSeek WTF_GUARDED_BY_CAPABILITY(mainThread);
-    const Ref<NativePromiseRequest> m_waitForTargetRequest WTF_GUARDED_BY_CAPABILITY(mainThread);
-    const Ref<NativePromiseRequest> m_rendererPrepareSeekRequest WTF_GUARDED_BY_CAPABILITY(mainThread);
-    const Ref<NativePromiseRequest> m_rendererFinishSeekRequest WTF_GUARDED_BY_CAPABILITY(mainThread);
-    const Ref<NativePromiseRequest> m_stallRequest WTF_GUARDED_BY_CAPABILITY(mainThread);
+    NativePromiseRequest m_waitForTargetRequest WTF_GUARDED_BY_CAPABILITY(mainThread);
+    NativePromiseRequest m_rendererPrepareSeekRequest WTF_GUARDED_BY_CAPABILITY(mainThread);
+    NativePromiseRequest m_rendererFinishSeekRequest WTF_GUARDED_BY_CAPABILITY(mainThread);
+    NativePromiseRequest m_stallRequest WTF_GUARDED_BY_CAPABILITY(mainThread);
     std::optional<MediaTimePromise::AutoRejectProducer> m_seekPromise WTF_GUARDED_BY_CAPABILITY(mainThread);
     bool m_seeking WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
 
