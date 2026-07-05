@@ -2114,12 +2114,12 @@ void NetworkProcessProxy::reportNetworkIssue(WebPageProxyIdentifier pageIdentifi
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-void NetworkProcessProxy::setEmulatedConditions(PAL::SessionID sessionID, std::optional<int64_t>&& bytesPerSecondLimit)
+void NetworkProcessProxy::setEmulatedConditions(PAL::SessionID sessionID, std::optional<uint64_t>&& bandwidthBytesPerSecond, Seconds latency)
 {
     if (!canSendMessage())
         return;
 
-    send(Messages::NetworkProcess::SetEmulatedConditions(sessionID, WTF::move(bytesPerSecondLimit)), 0);
+    send(Messages::NetworkProcess::SetEmulatedConditions(sessionID, WTF::move(bandwidthBytesPerSecond), latency), 0);
 }
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)

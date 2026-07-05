@@ -285,9 +285,9 @@ void WebInspectorBackend::setDeveloperPreferenceOverride(InspectorBackendClient:
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-void WebInspectorBackend::setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit)
+void WebInspectorBackend::setEmulatedConditions(std::optional<uint64_t>&& bandwidthBytesPerSecond, Seconds latency)
 {
-    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::SetEmulatedConditions(WTF::move(bytesPerSecondLimit)), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::SetEmulatedConditions(WTF::move(bandwidthBytesPerSecond), latency), m_page->identifier());
 }
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)

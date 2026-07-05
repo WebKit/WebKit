@@ -29,6 +29,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <optional>
 #include <wtf/Forward.h>
+#include <wtf/Seconds.h>
 
 namespace Inspector {
 class FrontendChannel;
@@ -83,7 +84,7 @@ public:
     virtual void setDeveloperPreferenceOverride(DeveloperPreference, std::optional<bool>) { }
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-    virtual bool setEmulatedConditions(std::optional<int64_t>&& /* bytesPerSecondLimit */) { return false; }
+    virtual bool setEmulatedConditions(std::optional<uint64_t>&& /* bandwidthBytesPerSecond */, Seconds /* latency */) { return false; }
 #endif
 };
 

@@ -61,7 +61,7 @@ public:
     void setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference, std::optional<bool>);
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-    void setEmulatedConditions(std::optional<int64_t>);
+    void setEmulatedConditions(std::optional<uint64_t>&& bandwidthBytesPerSecond, Seconds latency);
 #endif
 
     void attachAvailabilityChanged(bool);

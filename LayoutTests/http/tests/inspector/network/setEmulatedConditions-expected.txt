@@ -2,13 +2,44 @@ Tests for `Network.setEmulatedConditions`.
 
 
 == Running test suite: Network.setEmulatedConditions
--- Running test case: Network.setEmulatedConditions.bytesPerSecondLimit.Slow
+-- Running test case: Network.setEmulatedConditions.bandwidth.Slow
 Limiting to 1bps...
 Triggering load...
 Waiting 100ms...
 PASS: Should not have finished loading.
+Removing bandwidth limit...
+PASS: Should finish loading after removing the bandwidth limit.
 
--- Running test case: Network.setEmulatedConditions.bytesPerSecondLimit.Negative
+-- Running test case: Network.setEmulatedConditions.bandwidth.FractionalBytes
+Limiting to 10bps...
+Triggering load...
+PASS: Should finish reading the response at a low positive bandwidth.
+PASS: Should receive the complete response in order.
+
+-- Running test case: Network.setEmulatedConditions.bandwidth.Abort
+Limiting to 10bps...
+Triggering load...
+PASS: Should receive part of the response before aborting.
+PASS: Should still have buffered data before aborting.
+Aborting load...
+PASS: Should reject further reads after aborting.
+Removing bandwidth limit...
+PASS: Should report the aborted load as failed.
+PASS: Should not finish the aborted load after removing the bandwidth limit.
+
+-- Running test case: Network.setEmulatedConditions.bandwidth.Negative
 PASS: Should produce an exception.
-Error: bytesPerSecond cannot be negative
+Error: bandwidth cannot be negative
+
+-- Running test case: Network.setEmulatedConditions.latency.Slow
+Adding 10s of latency...
+Triggering load...
+Waiting 100ms...
+PASS: Should not have finished loading.
+Removing latency...
+PASS: Should finish loading after removing latency.
+
+-- Running test case: Network.setEmulatedConditions.latency.Negative
+PASS: Should produce an exception.
+Error: latency cannot be negative
 

@@ -84,6 +84,10 @@ public:
 
     virtual void didNegotiateModernTLS(const URL&) { }
 
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    virtual void emulatedConditionsDidChange() { }
+#endif
+
     void didCompleteWithError(const WebCore::ResourceError& error)
     {
         WebCore::NetworkLoadMetrics emptyMetrics;
@@ -147,7 +151,11 @@ public:
     String attributedBundleIdentifier(WebPageProxyIdentifier);
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-    virtual void setEmulatedConditions(const std::optional<int64_t>& /* bytesPerSecondLimit */) { }
+    void notifyEmulatedConditionsChanged()
+    {
+        if (RefPtr client = m_client.get())
+            client->emulatedConditionsDidChange();
+    }
 #endif
 
     PAL::SessionID sessionID() const { return m_session->sessionID(); }

@@ -360,7 +360,8 @@
             "targetTypes": ["page", "web-page"],
             "condition": "defined(ENABLE_INSPECTOR_NETWORK_THROTTLING) && ENABLE_INSPECTOR_NETWORK_THROTTLING",
             "parameters": [
-                { "name": "bytesPerSecondLimit", "type": "integer", "optional": true, "description": "Limits the bytes per second of requests if positive. Removes any limits if zero or not provided." }
+                { "name": "bandwidth", "type": "integer", "optional": true, "description": "Limits the bytes per second of requests if positive. Removes any limits if zero or not provided." },
+                { "name": "latency", "type": "integer", "optional": true, "description": "Adds a round-trip delay (in milliseconds) to each request if positive. Removes any delay if zero or not provided." }
             ]
         }
     ],

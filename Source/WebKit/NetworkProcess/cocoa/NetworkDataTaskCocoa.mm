@@ -757,15 +757,6 @@ void NetworkDataTaskCocoa::setPriority(WebCore::ResourceLoadPriority priority)
     m_task.get().priority = toNSURLSessionTaskPriority(priority);
 }
 
-#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-
-void NetworkDataTaskCocoa::setEmulatedConditions(const std::optional<int64_t>& bytesPerSecondLimit)
-{
-    m_task.get()._bytesPerSecondLimit = bytesPerSecondLimit.value_or(0);
-}
-
-#endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
-
 void NetworkDataTaskCocoa::setTimingAllowFailedFlag()
 {
     networkLoadMetrics().failsTAOCheck = true;

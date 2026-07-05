@@ -92,7 +92,7 @@ public:
     CommandResult<void> interceptRequestWithResponse(const Protocol::Network::RequestId&, const String& content, bool base64Encoded, const String& mimeType, int status, const String& statusText, Ref<JSON::Object>&& headers) final;
     CommandResult<void> interceptRequestWithError(const Protocol::Network::RequestId&, Protocol::Network::ResourceErrorType) final;
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-    CommandResult<void> setEmulatedConditions(std::optional<int>&& bytesPerSecondLimit) final;
+    CommandResult<void> setEmulatedConditions(std::optional<int>&& bandwidth, std::optional<int>&& latency) final;
 #endif
 
 private:

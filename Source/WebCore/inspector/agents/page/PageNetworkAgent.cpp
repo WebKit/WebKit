@@ -119,9 +119,9 @@ void PageNetworkAgent::setResourceCachingDisabledInternal(bool disabled)
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-bool PageNetworkAgent::setEmulatedConditionsInternal(std::optional<int>&& bytesPerSecondLimit)
+bool PageNetworkAgent::setEmulatedConditionsInternal(std::optional<uint64_t>&& bandwidthBytesPerSecond, Seconds latency)
 {
-    return m_client && m_client->setEmulatedConditions(WTF::move(bytesPerSecondLimit));
+    return m_client && m_client->setEmulatedConditions(WTF::move(bandwidthBytesPerSecond), latency);
 }
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)

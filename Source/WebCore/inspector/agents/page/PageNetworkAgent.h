@@ -57,7 +57,7 @@ private:
     Vector<Ref<WebSocket>> activeWebSockets() WTF_REQUIRES_LOCK(WebSocket::allActiveWebSocketsLock());
     void setResourceCachingDisabledInternal(bool);
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-    bool setEmulatedConditionsInternal(std::optional<int>&& bytesPerSecondLimit);
+    bool setEmulatedConditionsInternal(std::optional<uint64_t>&& bandwidthBytesPerSecond, Seconds latency);
 #endif
     ScriptExecutionContext* scriptExecutionContext(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::FrameId&);
     void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&);

@@ -30,3 +30,9 @@
     right: 0;
     bottom: 0;
 }
+
+@media (prefers-color-scheme: dark) {
+    .tab-bar > .tabs > .item.network.emulated-condition > .icon {
+        filter: none;
+    }
+}

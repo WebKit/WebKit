@@ -30,6 +30,10 @@
 #include "NetworkLoadParameters.h"
 #include "NetworkSession.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/CompletionHandler.h>
+#include <wtf/Deque.h>
+#include <wtf/MonotonicTime.h>
+#include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
@@ -118,8 +122,23 @@ private:
     void wasBlockedByRestrictions() final;
     void wasBlockedByDisabledFTP() final;
     void didNegotiateModernTLS(const URL&) final;
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    void emulatedConditionsDidChange() final;
+#endif
 
     void notifyDidReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&&);
+
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    enum class EmulatedConditionState : uint8_t { None, WaitingForLatency, Throttling };
+    enum class ShouldNotifyClient : bool { No, Yes };
+
+    std::optional<uint64_t> emulatedBandwidthBytesPerSecond() const;
+    Seconds emulatedLatency() const;
+    void scheduleEmulatedConditionTimer(Seconds, EmulatedConditionState);
+    void emulatedConditionTimerFired();
+    void updateThrottledBudget();
+    void clearEmulatedConditions();
+#endif
 
     WeakPtr<NetworkLoadClient> m_client;
     const Ref<NetworkProcess> m_networkProcess;
@@ -129,6 +148,18 @@ private:
 
     // FIXME: Deduplicate this with NetworkDataTask's m_previousRequest.
     WebCore::ResourceRequest m_currentRequest; // Updated on redirects.
+
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    std::unique_ptr<RunLoop::Timer> m_emulatedConditionTimer;
+    EmulatedConditionState m_emulatedConditionState { EmulatedConditionState::None };
+
+    Deque<Ref<const WebCore::SharedBuffer>> m_throttledData;
+    size_t m_throttledDataFirstOffset { 0 };
+    double m_throttledBudget { 0 };
+    MonotonicTime m_throttledBudgetUpdateTime;
+    uint64_t m_throttledBandwidthBytesPerSecond { 0 };
+    CompletionHandler<void(ShouldNotifyClient)> m_throttledCompletion;
+#endif
 };
 
 } // namespace WebKit

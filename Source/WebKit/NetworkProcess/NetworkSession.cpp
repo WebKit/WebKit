@@ -32,6 +32,7 @@
 #include "LoadedWebArchive.h"
 #include "Logging.h"
 #include "NetworkBroadcastChannelRegistry.h"
+#include "NetworkDataTask.h"
 #include "NetworkLoadScheduler.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
@@ -786,12 +787,13 @@ void NetworkSession::requestBackgroundFetchPermission(const ClientOrigin& origin
 }
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-void NetworkSession::setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit)
+void NetworkSession::setEmulatedConditions(std::optional<uint64_t>&& bandwidthBytesPerSecond, Seconds latency)
 {
-    m_bytesPerSecondLimit = WTF::move(bytesPerSecondLimit);
+    m_emulatedBandwidthBytesPerSecond = WTF::move(bandwidthBytesPerSecond);
+    m_emulatedLatency = latency;
 
-    m_dataTaskSet.forEach([&] (auto& task) {
-        task.setEmulatedConditions(m_bytesPerSecondLimit);
+    m_dataTaskSet.forEach([](auto& task) {
+        task.notifyEmulatedConditionsChanged();
     });
 }
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)

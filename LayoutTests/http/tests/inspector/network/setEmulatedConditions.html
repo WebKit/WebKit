@@ -12,32 +12,164 @@ function test()
     let suite = InspectorTest.createAsyncSuite("Network.setEmulatedConditions");
 
     suite.addTestCase({
-        name: "Network.setEmulatedConditions.bytesPerSecondLimit.Slow",
-        description: "Check that providing a small bytesPerSecondLimit prevents resources from loading quickly.",
+        name: "Network.setEmulatedConditions.bandwidth.Slow",
+        description: "Check that providing a small bandwidth prevents resources from loading quickly.",
         async test() {
             InspectorTest.log("Limiting to 1bps...");
             await NetworkAgent.setEmulatedConditions(1);
 
-            InspectorTest.log("Triggering load...");
-            let [resourceWasAddedEvent] = await Promise.all([
-                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
-                InspectorTest.evaluateInPage(`fetch("/resources/square100.png")`),
-            ])
-            let {resource} = resourceWasAddedEvent.data;
+            try {
+                InspectorTest.log("Triggering load...");
+                let [resourceWasAddedEvent] = await Promise.all([
+                    WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                    InspectorTest.evaluateInPage(`fetch("/resources/square100.png?bandwidth")`),
+                ]);
+                let {resource} = resourceWasAddedEvent.data;
+                let loadCompleted = Promise.race([
+                    resource.awaitEvent(WI.Resource.Event.LoadingDidFinish),
+                    resource.awaitEvent(WI.Resource.Event.LoadingDidFail),
+                ]);
 
-            InspectorTest.log("Waiting 100ms...");
-            await Promise.delay(100);
+                InspectorTest.log("Waiting 100ms...");
+                await Promise.delay(100);
 
-            InspectorTest.expectFalse(resource.finished, "Should not have finished loading.");
+                InspectorTest.expectFalse(resource.finished, "Should not have finished loading.");
+
+                InspectorTest.log("Removing bandwidth limit...");
+                await NetworkAgent.setEmulatedConditions(0);
+                await loadCompleted;
+                InspectorTest.expectTrue(resource.finished, "Should finish loading after removing the bandwidth limit.");
+            } finally {
+                await NetworkAgent.setEmulatedConditions(0, 0);
+            }
         },
     });
 
     suite.addTestCase({
-        name: "Network.setEmulatedConditions.bytesPerSecondLimit.Negative",
-        description: "Check that providing a negative bytesPerSecondLimit throws.",
+        name: "Network.setEmulatedConditions.bandwidth.FractionalBytes",
+        description: "Check that a bandwidth below one byte per delivery interval still delivers the complete response.",
+        async test() {
+            InspectorTest.log("Limiting to 10bps...");
+            await NetworkAgent.setEmulatedConditions(10, 0);
+
+            try {
+                InspectorTest.log("Triggering load...");
+                let response = await InspectorTest.evaluateInPage(`fetch("resources/echo.py?content=abcde").then((response) => response.text())`);
+                let {result, wasThrown} = await RuntimeAgent.awaitPromise(response.objectId, true);
+                InspectorTest.expectFalse(wasThrown, "Should finish reading the response at a low positive bandwidth.");
+                InspectorTest.expectEqual(result.value, "abcde", "Should receive the complete response in order.");
+            } finally {
+                await NetworkAgent.setEmulatedConditions(0, 0);
+            }
+        },
+    });
+
+    suite.addTestCase({
+        name: "Network.setEmulatedConditions.bandwidth.Abort",
+        description: "Check that aborting a partially delivered response discards its buffered data and completion.",
+        async test() {
+            InspectorTest.log("Limiting to 10bps...");
+            await NetworkAgent.setEmulatedConditions(10, 0);
+
+            try {
+                InspectorTest.log("Triggering load...");
+                let [resourceWasAddedEvent, firstChunk] = await Promise.all([
+                    WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                    InspectorTest.evaluateInPage(`
+                        (async () => {
+                            let content = "abcdefghijklmnopqrstuvwxyz".repeat(16);
+                            window.throttledAbortController = new AbortController;
+                            let response = await fetch("resources/echo.py?content=" + content, {signal: window.throttledAbortController.signal});
+                            window.throttledReader = response.body.getReader();
+                            let {done, value} = await window.throttledReader.read();
+                            return !done && value.byteLength > 0 && value.byteLength < content.length;
+                        })();
+                    `),
+                ]);
+                let {resource} = resourceWasAddedEvent.data;
+                let loadCompleted = Promise.race([
+                    resource.awaitEvent(WI.Resource.Event.LoadingDidFinish),
+                    resource.awaitEvent(WI.Resource.Event.LoadingDidFail),
+                ]);
+
+                let {result} = await RuntimeAgent.awaitPromise(firstChunk.objectId, true);
+                InspectorTest.expectTrue(result.value, "Should receive part of the response before aborting.");
+                InspectorTest.expectFalse(resource.finished, "Should still have buffered data before aborting.");
+
+                InspectorTest.log("Aborting load...");
+                let readAfterAbort = await InspectorTest.evaluateInPage(`
+                    window.throttledAbortController.abort();
+                    window.throttledReader.read().then(() => "No error", (error) => error.name);
+                `);
+                let readResult = await RuntimeAgent.awaitPromise(readAfterAbort.objectId, true);
+                InspectorTest.expectEqual(readResult.result.value, "AbortError", "Should reject further reads after aborting.");
+                await loadCompleted;
+
+                InspectorTest.log("Removing bandwidth limit...");
+                await NetworkAgent.setEmulatedConditions(0, 0);
+                InspectorTest.expectTrue(resource.failed, "Should report the aborted load as failed.");
+                InspectorTest.expectFalse(resource.finished, "Should not finish the aborted load after removing the bandwidth limit.");
+            } finally {
+                await InspectorTest.evaluateInPage(`
+                    window.throttledAbortController?.abort();
+                    delete window.throttledAbortController;
+                    delete window.throttledReader;
+                `);
+                await NetworkAgent.setEmulatedConditions(0, 0);
+            }
+        },
+    });
+
+    suite.addTestCase({
+        name: "Network.setEmulatedConditions.bandwidth.Negative",
+        description: "Check that providing a negative bandwidth throws.",
         async test() {
             await InspectorTest.expectException(async () => {
                 await NetworkAgent.setEmulatedConditions(-1);
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "Network.setEmulatedConditions.latency.Slow",
+        description: "Check that providing a large latency prevents resources from loading quickly.",
+        async test() {
+            InspectorTest.log("Adding 10s of latency...");
+            await NetworkAgent.setEmulatedConditions(0, 10_000);
+
+            try {
+                InspectorTest.log("Triggering load...");
+                let [resourceWasAddedEvent] = await Promise.all([
+                    WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                    InspectorTest.evaluateInPage(`fetch("/resources/square100.png?latency")`),
+                ]);
+                let {resource} = resourceWasAddedEvent.data;
+                let loadCompleted = Promise.race([
+                    resource.awaitEvent(WI.Resource.Event.LoadingDidFinish),
+                    resource.awaitEvent(WI.Resource.Event.LoadingDidFail),
+                ]);
+
+                InspectorTest.log("Waiting 100ms...");
+                await Promise.delay(100);
+
+                InspectorTest.expectFalse(resource.finished, "Should not have finished loading.");
+
+                InspectorTest.log("Removing latency...");
+                await NetworkAgent.setEmulatedConditions(0, 0);
+                await loadCompleted;
+                InspectorTest.expectTrue(resource.finished, "Should finish loading after removing latency.");
+            } finally {
+                await NetworkAgent.setEmulatedConditions(0, 0);
+            }
+        },
+    });
+
+    suite.addTestCase({
+        name: "Network.setEmulatedConditions.latency.Negative",
+        description: "Check that providing a negative latency throws.",
+        async test() {
+            await InspectorTest.expectException(async () => {
+                await NetworkAgent.setEmulatedConditions(0, -1);
             });
         },
     });

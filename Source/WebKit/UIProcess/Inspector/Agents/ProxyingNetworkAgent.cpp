@@ -296,7 +296,7 @@ CommandResult<void> ProxyingNetworkAgent::disable()
     m_resourceCachingDisabled = false;
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     if (RefPtr inspectedPage = m_inspectedPage.get())
-        inspectedPage->websiteDataStore().setEmulatedConditions(std::nullopt);
+        protect(inspectedPage->websiteDataStore())->setEmulatedConditions(std::nullopt, 0_s);
 #endif
 
     return { };
@@ -525,17 +525,23 @@ CommandResult<void> ProxyingNetworkAgent::interceptRequestWithError(const Protoc
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-CommandResult<void> ProxyingNetworkAgent::setEmulatedConditions(std::optional<int>&& bytesPerSecondLimit)
+CommandResult<void> ProxyingNetworkAgent::setEmulatedConditions(std::optional<int>&& bandwidth, std::optional<int>&& latency)
 {
+    if (bandwidth && *bandwidth < 0)
+        return makeUnexpected("bandwidth cannot be negative"_s);
+
+    if (latency && *latency < 0)
+        return makeUnexpected("latency cannot be negative"_s);
+
     RefPtr inspectedPage = m_inspectedPage.get();
     if (!inspectedPage)
         return makeUnexpected("Inspected page is gone"_s);
 
-    std::optional<int64_t> limit;
-    if (bytesPerSecondLimit)
-        limit = *bytesPerSecondLimit;
+    std::optional<uint64_t> bandwidthBytesPerSecond;
+    if (bandwidth)
+        bandwidthBytesPerSecond = *bandwidth;
 
-    inspectedPage->websiteDataStore().setEmulatedConditions(WTF::move(limit));
+    protect(inspectedPage->websiteDataStore())->setEmulatedConditions(WTF::move(bandwidthBytesPerSecond), Seconds::fromMilliseconds(latency.value_or(0)));
     return { };
 }
 

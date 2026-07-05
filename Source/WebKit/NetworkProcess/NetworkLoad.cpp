@@ -48,6 +48,13 @@ namespace WebKit {
 
 using namespace WebCore;
 
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
+// This is the delivery cadence for bandwidth throttling. Latency delays starting the request separately.
+static constexpr Seconds bandwidthDeliveryInterval = 50_ms;
+
+#endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkLoad);
 
 NetworkLoad::NetworkLoad(NetworkLoadClient& client, NetworkLoadParameters&& parameters, NetworkSession& networkSession)
@@ -83,6 +90,13 @@ Ref<NetworkProcess> NetworkLoad::networkProcess()
 
 void NetworkLoad::start()
 {
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    if (auto latency = emulatedLatency(); latency > 0_s) {
+        scheduleEmulatedConditionTimer(latency, EmulatedConditionState::WaitingForLatency);
+        return;
+    }
+#endif
+
     if (RefPtr task = m_task)
         task->resume();
 }
@@ -100,6 +114,11 @@ void NetworkLoad::startWithScheduling()
 NetworkLoad::~NetworkLoad()
 {
     ASSERT(RunLoop::isMain());
+
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    clearEmulatedConditions();
+#endif
+
     if (RefPtr scheduler = m_scheduler.get())
         scheduler->unschedule(*this);
     if (auto* task = m_task.get())
@@ -108,6 +127,10 @@ NetworkLoad::~NetworkLoad()
 
 void NetworkLoad::cancel()
 {
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    clearEmulatedConditions();
+#endif
+
     if (RefPtr task = m_task)
         task->cancel();
 }
@@ -304,6 +327,20 @@ void NetworkLoad::notifyDidReceiveResponse(ResourceResponse&& response, Negotiat
 
 void NetworkLoad::didReceiveData(const WebCore::SharedBuffer& buffer)
 {
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    if (emulatedBandwidthBytesPerSecond().value_or(0) || !m_throttledData.isEmpty()) {
+        if (!buffer.size())
+            return;
+        m_throttledData.append(protect(buffer));
+
+        if (m_emulatedConditionState != EmulatedConditionState::Throttling) {
+            m_throttledBudgetUpdateTime = MonotonicTime::now();
+            m_throttledBandwidthBytesPerSecond = emulatedBandwidthBytesPerSecond().value_or(0);
+            scheduleEmulatedConditionTimer(bandwidthDeliveryInterval, EmulatedConditionState::Throttling);
+        }
+        return;
+    }
+#endif
     if (RefPtr client = m_client.get())
         client->didReceiveBuffer(buffer);
 }
@@ -313,14 +350,29 @@ void NetworkLoad::didCompleteWithError(const ResourceError& error, const WebCore
     if (RefPtr scheduler = std::exchange(m_scheduler, nullptr).get())
         scheduler->unschedule(*this, &networkLoadMetrics);
 
-    RefPtr client = m_client.get();
-    if (!client)
-        return;
+    auto completion = [weakClient = m_client, error, networkLoadMetrics] {
+        RefPtr client = weakClient.get();
+        if (!client)
+            return;
 
-    if (error.isNull())
-        client->didFinishLoading(networkLoadMetrics);
-    else
-        client->didFailLoading(error);
+        if (error.isNull())
+            client->didFinishLoading(networkLoadMetrics);
+        else
+            client->didFailLoading(error);
+    };
+
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    if (!m_throttledData.isEmpty()) {
+        ASSERT(!m_throttledCompletion);
+        m_throttledCompletion = [completion = WTF::move(completion)](ShouldNotifyClient shouldNotifyClient) {
+            if (shouldNotifyClient == ShouldNotifyClient::Yes)
+                completion();
+        };
+        return;
+    }
+#endif
+
+    completion();
 }
 
 void NetworkLoad::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend)
@@ -328,6 +380,136 @@ void NetworkLoad::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpect
     if (RefPtr client = m_client.get())
         client->didSendData(totalBytesSent, totalBytesExpectedToSend);
 }
+
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
+std::optional<uint64_t> NetworkLoad::emulatedBandwidthBytesPerSecond() const
+{
+    if (RefPtr task = m_task) {
+        if (auto* session = task->networkSession())
+            return session->emulatedBandwidthBytesPerSecond();
+    }
+    return std::nullopt;
+}
+
+Seconds NetworkLoad::emulatedLatency() const
+{
+    if (RefPtr task = m_task) {
+        if (auto* session = task->networkSession())
+            return session->emulatedLatency();
+    }
+    return 0_s;
+}
+
+void NetworkLoad::scheduleEmulatedConditionTimer(Seconds delay, EmulatedConditionState state)
+{
+    if (!m_emulatedConditionTimer)
+        m_emulatedConditionTimer = makeUnique<RunLoop::Timer>(RunLoop::mainSingleton(), "NetworkLoad::EmulatedConditionTimer"_s, this, &NetworkLoad::emulatedConditionTimerFired);
+    m_emulatedConditionState = state;
+    m_emulatedConditionTimer->startOneShot(delay);
+}
+
+void NetworkLoad::updateThrottledBudget()
+{
+    auto now = MonotonicTime::now();
+    // Retain fractional bytes, and account for elapsed time at the old rate before applying a new one.
+    m_throttledBudget += (now - m_throttledBudgetUpdateTime).seconds() * m_throttledBandwidthBytesPerSecond;
+    m_throttledBudgetUpdateTime = now;
+    m_throttledBandwidthBytesPerSecond = emulatedBandwidthBytesPerSecond().value_or(0);
+}
+
+void NetworkLoad::emulatedConditionTimerFired()
+{
+    Ref protectedThis { *this };
+    RefPtr client = m_client.get();
+    if (!client) {
+        clearEmulatedConditions();
+        return;
+    }
+
+    if (m_emulatedConditionState == EmulatedConditionState::WaitingForLatency) {
+        m_emulatedConditionState = EmulatedConditionState::None;
+        if (RefPtr task = m_task)
+            task->resume();
+        return;
+    }
+
+    if (m_emulatedConditionState != EmulatedConditionState::Throttling)
+        return;
+
+    updateThrottledBudget();
+
+    while (!m_throttledData.isEmpty() && (!m_throttledBandwidthBytesPerSecond || m_throttledBudget >= 1)) {
+        auto first = m_throttledData.first();
+        size_t firstRemaining = first->size() - m_throttledDataFirstOffset;
+        size_t bytesToDeliver = firstRemaining;
+        if (m_throttledBandwidthBytesPerSecond && m_throttledBudget < bytesToDeliver)
+            bytesToDeliver = static_cast<size_t>(m_throttledBudget);
+
+        Ref chunk = WebCore::SharedBuffer::create(first->span().subspan(m_throttledDataFirstOffset, bytesToDeliver));
+
+        if (m_throttledBandwidthBytesPerSecond)
+            m_throttledBudget -= bytesToDeliver;
+
+        m_throttledDataFirstOffset += bytesToDeliver;
+        if (m_throttledDataFirstOffset >= first->size()) {
+            m_throttledData.removeFirst();
+            m_throttledDataFirstOffset = 0;
+        }
+
+        client->didReceiveBuffer(chunk);
+
+        if (m_emulatedConditionState != EmulatedConditionState::Throttling)
+            return;
+        if (m_client.get() != client.get()) {
+            clearEmulatedConditions();
+            return;
+        }
+    }
+
+    if (m_throttledData.isEmpty()) {
+        m_emulatedConditionTimer->stop();
+        m_emulatedConditionState = EmulatedConditionState::None;
+        m_throttledBudget = 0;
+
+        if (auto completion = std::exchange(m_throttledCompletion, { }))
+            completion(ShouldNotifyClient::Yes);
+        return;
+    }
+
+    scheduleEmulatedConditionTimer(bandwidthDeliveryInterval, EmulatedConditionState::Throttling);
+}
+
+void NetworkLoad::emulatedConditionsDidChange()
+{
+    if (m_emulatedConditionState == EmulatedConditionState::WaitingForLatency && emulatedLatency() <= 0_s) {
+        scheduleEmulatedConditionTimer(0_s, EmulatedConditionState::WaitingForLatency);
+        return;
+    }
+
+    if (m_emulatedConditionState == EmulatedConditionState::Throttling) {
+        updateThrottledBudget();
+        scheduleEmulatedConditionTimer(0_s, EmulatedConditionState::Throttling);
+    }
+}
+
+void NetworkLoad::clearEmulatedConditions()
+{
+    if (m_emulatedConditionTimer)
+        m_emulatedConditionTimer->stop();
+    m_emulatedConditionState = EmulatedConditionState::None;
+
+    m_throttledData.clear();
+    m_throttledDataFirstOffset = 0;
+    m_throttledBudget = 0;
+    m_throttledBudgetUpdateTime = { };
+    m_throttledBandwidthBytesPerSecond = 0;
+
+    if (auto completion = std::exchange(m_throttledCompletion, { }))
+        completion(ShouldNotifyClient::No);
+}
+
+#endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
 void NetworkLoad::wasBlocked()
 {

@@ -71,7 +71,7 @@ void WorkerNetworkAgent::setResourceCachingDisabledInternal(bool disabled)
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-bool WorkerNetworkAgent::setEmulatedConditionsInternal(std::optional<int>&& /* bytesPerSecondLimit */)
+bool WorkerNetworkAgent::setEmulatedConditionsInternal(std::optional<uint64_t>&& /* bandwidthBytesPerSecond */, Seconds /* latency */)
 {
     return false;
 }

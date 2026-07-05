@@ -52,6 +52,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefCounter.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Seconds.h>
 #include <wtf/SwiftBridging.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashSet.h>
@@ -477,7 +478,7 @@ public:
     void workerUpdatedAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t>);
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-    void setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit);
+    void setEmulatedConditions(std::optional<uint64_t>&& bandwidthBytesPerSecond, Seconds latency);
 #endif
 
     void addPage(WebPageProxy&);

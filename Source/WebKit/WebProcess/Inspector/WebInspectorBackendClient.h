@@ -82,7 +82,7 @@ private:
 
     void setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference, std::optional<bool>) final;
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-    bool setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit) final;
+    bool setEmulatedConditions(std::optional<uint64_t>&& bandwidthBytesPerSecond, Seconds latency) final;
 #endif
 
     // PageOverlayClient
