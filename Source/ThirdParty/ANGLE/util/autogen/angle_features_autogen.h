@@ -75,6 +75,7 @@ enum class Feature
     ClampPointSize,
     ClBestUniformFitWGS,
     ClDumpVkSpirv,
+    ClearMsaaRg16UnormWithDrawWorkaround,
     ClearsWithGapsNeedFlush,
     ClipCullDistanceBrokenWithPassthroughShaders,
     ClipSrcRegionForBlitFramebuffer,

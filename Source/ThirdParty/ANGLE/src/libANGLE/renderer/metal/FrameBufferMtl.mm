@@ -1482,12 +1482,36 @@ angle::Result FramebufferMtl::clearImpl(const gl::Context *context,
     if (clearOpts.clearArea == renderArea &&
         (!clearOpts.clearColor.valid() || allBuffersUnmasked) &&
         (!clearOpts.clearStencil.valid() ||
-         (stencilMask & mtl::kStencilMaskAll) == mtl::kStencilMaskAll))
+         (stencilMask & mtl::kStencilMaskAll) == mtl::kStencilMaskAll) &&
+        !needsRG16UnormMSAAClearWorkaround(contextMtl, clearColorBuffers))
     {
         return clearWithLoadOp(context, clearColorBuffers, clearOpts);
     }
 
     return clearWithDraw(context, clearColorBuffers, clearOpts);
+}
+
+bool FramebufferMtl::needsRG16UnormMSAAClearWorkaround(const ContextMtl *contextMtl,
+                                                       gl::DrawBufferMask clearColorBuffers) const
+{
+    if (!contextMtl->getDisplay()->getFeatures().clearMsaaRg16UnormWithDrawWorkaround.enabled)
+    {
+        return false;
+    }
+    for (size_t i : clearColorBuffers)
+    {
+        if (i >= mColorRenderTargets.size())
+        {
+            break;
+        }
+        const RenderTargetMtl *rt = mColorRenderTargets[i];
+        if (rt && rt->getRenderSamples() > 1 &&
+            rt->getFormat().metalFormat == MTLPixelFormatRG16Unorm)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 angle::Result FramebufferMtl::invalidateImpl(const gl::Context *context,

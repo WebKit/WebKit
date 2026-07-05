@@ -201,6 +201,16 @@
             "issue": "http://anglebug.com/42265518"
         },
         {
+            "name": "clear_msaa_rg16_unorm_with_draw_workaround",
+            "category": "Workarounds",
+            "description": [
+                "AMD Metal driver silently drops MTLLoadActionClear for MSAA RG16Unorm color ",
+                "attachments at certain attachment indices. Force such clears through a ",
+                "draw-call-based clear path instead of the load-action path."
+            ],
+            "issue": "rdar://178796612"
+        },
+        {
             "name": "copy_IOSurface_to_non_IOSurface_for_read_optimization",
             "category": "Workarounds",
             "description": [
