@@ -35,6 +35,13 @@ from pathlib import Path
 
 DEFAULT_TIMEOUT = 120
 
+# gtest's end-of-run banner is printed once a run completes cleanly (whether
+# tests pass or fail). Its absence in captured output means the test process
+# aborted before reaching the end — used as a crash signal on simulator/device,
+# where simctl --console returns 0 even on SIGABRT.
+END_OF_RUN_RE = re.compile(r"^\[==========\].*ran\.", re.MULTILINE)
+NO_BANNER_EXIT = -999
+
 
 def default_paths(config):
     """Return mode → default path mapping for the given build config."""
@@ -59,25 +66,51 @@ def is_crash(returncode):
         return False
     return returncode > 1 or returncode < 0
 
+def run(cmd, verbose, *, capture, timeout=None):
+    """subprocess.run wrapper that, when verbose, prints the command before
+    launch and (for capture=True) the captured stdout/stderr afterwards.
+
+    capture=False inherits the parent's stdio so test output streams live;
+    capture=True returns a CompletedProcess whose stdout/stderr are strings.
+    Raises subprocess.TimeoutExpired on timeout (caller decides how to recover).
+    """
+    if verbose:
+        print(f"+ {shlex.join(cmd)}", flush=True)
+    if not capture:
+        return subprocess.run(cmd)
+    result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+    if verbose:
+        if result.stdout:
+            sys.stdout.write(result.stdout)
+            if not result.stdout.endswith("\n"):
+                sys.stdout.write("\n")
+            sys.stdout.flush()
+        if result.stderr:
+            sys.stderr.write(result.stderr)
+            if not result.stderr.endswith("\n"):
+                sys.stderr.write("\n")
+            sys.stderr.flush()
+    return result
+
 
 class LocalRunner:
     """Runs the test binary directly on the local machine."""
 
     def __init__(self, executable):
         self.executable = Path(executable)
+        self.verbose = False
 
     def install(self):
         pass  # no install step for local binaries
 
     def launch(self, gtest_args):
-        return subprocess.call([str(self.executable), *gtest_args])
+        cmd = [str(self.executable), *gtest_args]
+        return run(cmd, self.verbose, capture=False).returncode
 
     def run_capturing(self, gtest_args, timeout):
+        cmd = [str(self.executable), *gtest_args]
         try:
-            result = subprocess.run(
-                [str(self.executable), *gtest_args],
-                capture_output=True, text=True, timeout=timeout,
-            )
+            result = run(cmd, self.verbose, capture=True, timeout=timeout)
             return result.returncode, result.stdout
         except subprocess.TimeoutExpired:
             return None, ""
@@ -96,6 +129,7 @@ class SimulatorRunner:
         self.app_path = app_path
         self.device = device
         self.bundle_id = bundle_id
+        self.verbose = False
 
     def install(self):
         print(f"Installing on simulator {self.device} ...")
@@ -110,7 +144,7 @@ class SimulatorRunner:
             "--console", "--terminate-running-process",
             self.device, self.bundle_id, *gtest_args,
         ]
-        return subprocess.call(cmd)
+        return run(cmd, self.verbose, capture=False).returncode
 
     def run_capturing(self, gtest_args, timeout):
         cmd = [
@@ -119,7 +153,7 @@ class SimulatorRunner:
             self.device, self.bundle_id, *gtest_args,
         ]
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+            result = run(cmd, self.verbose, capture=True, timeout=timeout)
             return result.returncode, result.stdout
         except subprocess.TimeoutExpired:
             subprocess.run(
@@ -168,6 +202,7 @@ class DeviceRunner:
         self.app_path = app_path
         self.device = device  # may be None until resolved
         self.bundle_id = bundle_id
+        self.verbose = False
 
     @staticmethod
     def _list_devices_json():
@@ -226,7 +261,7 @@ class DeviceRunner:
             "--console", "--terminate-existing",
             self.bundle_id, *gtest_args,
         ]
-        return subprocess.call(cmd)
+        return run(cmd, self.verbose, capture=False).returncode
 
     def run_capturing(self, gtest_args, timeout):
         self.resolve_device()
@@ -237,7 +272,7 @@ class DeviceRunner:
             self.bundle_id, *gtest_args,
         ]
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+            result = run(cmd, self.verbose, capture=True, timeout=timeout)
             return result.returncode, result.stdout
         except subprocess.TimeoutExpired:
             # devicectl has no simple "terminate by bundle id"; the next launch's
@@ -309,16 +344,26 @@ def list_tests(runner, timeout, extra_args=()):
 
 
 def run_filter(runner, filter_str, timeout):
-    code, _ = runner.run_capturing(
+    code, stdout = runner.run_capturing(
         [f"--gtest_filter={filter_str}", "--gtest_color=no"],
         timeout,
     )
+    if code is None or is_crash(code):
+        return code
+    # gtest prints "[==========] N tests from M test suites ran. (X ms total)"
+    # at the end of every clean run, pass or fail. simctl --console returns 0
+    # even when the app aborts with SIGABRT, so the absence of this banner is
+    # our crash signal of last resort.
+    if not END_OF_RUN_RE.search(stdout):
+        return NO_BANNER_EXIT
     return code
 
 
 def status_for(code):
     if code is None:
         return "TIMEOUT"
+    if code == NO_BANNER_EXIT:
+        return "CRASH (no end-of-run banner)"
     if is_crash(code):
         return f"CRASH (exit {code})"
     return f"ok (exit {code})"
@@ -334,22 +379,23 @@ def run_per_suite(runner, timeout, suites_only, list_args=()):
     # instance can run on a given simulator/device.
     crashing_suites = {}
     for i, (suite_name, tests) in enumerate(suites.items(), 1):
+        print(f"[{i}/{len(suites)}] {suite_name} ({len(tests)} tests) ... ", end='', flush=True)
         code = run_filter(runner, f"{suite_name}.*", timeout)
-        status = status_for(code)
         if is_crash(code):
             crashing_suites[suite_name] = tests
-        print(f"[{i}/{len(suites)}] {suite_name} ({len(tests)} tests) ... {status}")
+        print(f"{status_for(code)}")
 
     if not crashing_suites:
         print("\nNo crashing suites found.")
         return 0
 
+    print(f"\n{'='*60}")
+    print(f"CRASHING SUITES ({len(crashing_suites)})")
+    print(f"{'='*60}")
+    for suite_name, tests in crashing_suites.items():
+        print(f"  {suite_name}  ({len(tests)} tests)")
+
     if suites_only:
-        print(f"\n{'='*60}")
-        print(f"CRASHING SUITES ({len(crashing_suites)})")
-        print(f"{'='*60}")
-        for suite_name, tests in crashing_suites.items():
-            print(f"  {suite_name}  ({len(tests)} tests)")
         return 1
 
     # Phase 2: isolate individual crashing tests in crashing suites.
@@ -360,15 +406,11 @@ def run_per_suite(runner, timeout, suites_only, list_args=()):
     pairs = [(s, t) for s, ts in crashing_suites.items() for t in ts]
     crashing_tests = {}  # {suite_name: [test, ...]}
     for i, (suite_name, test) in enumerate(pairs, 1):
+        print(f"  [{i}/{len(pairs)}] {suite_name}.{test} ... ", end='', flush=True)
         code = run_filter(runner, f"{suite_name}.{test}", timeout)
-        if code is None:
-            status = "TIMEOUT"
-        elif is_crash(code):
-            status = f"CRASH (exit {code})"
+        if is_crash(code):
             crashing_tests.setdefault(suite_name, []).append(test)
-        else:
-            status = "ok"
-        print(f"  [{i}/{len(pairs)}] {suite_name}.{test} ... {status}")
+        print(f"{status_for(code)}")
 
     print(f"\n{'='*60}")
     print("CRASHING TESTS")
@@ -449,6 +491,11 @@ def main():
         help="With --per-suite: stop after the suite phase; skip per-test isolation")
     parser.add_argument("--timeout", type=int, default=DEFAULT_TIMEOUT,
         help=f"Per-suite/per-test timeout in seconds (default: {DEFAULT_TIMEOUT})")
+    parser.add_argument("--verbose", "-v", action="store_true",
+        help="Print each subprocess command and its captured output. With "
+             "--per-suite this surfaces the per-suite/per-test command lines "
+             "and the test binary's stdout/stderr that would otherwise be "
+             "captured silently.")
     args, gtest_args = parser.parse_known_args()
 
     # Default to local mac mode if no mode flag was given.
@@ -503,6 +550,8 @@ def main():
         parser.error("--suites-only requires --per-suite")
     if args.per_suite and args.lldb:
         parser.error("--per-suite is incompatible with --lldb")
+
+    runner.verbose = args.verbose
 
     if not args.no_install:
         runner.install()
