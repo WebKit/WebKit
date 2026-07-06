@@ -927,8 +927,16 @@ void WebPageProxy::elementDidFocus(IPC::Connection& connection, const FocusedEle
             if (!pageClient)
                 return;
 
+            bool focusedElementIsInRemoteFrame = convertedInfo.frame && !convertedInfo.frame->isMainFrame;
+
             pageClient->elementDidFocus(convertedInfo, userIsInteracting,
                 blurPreviousNode, activityStateChanges, userDataObject.get());
+
+            // Converting the rects of a remote frame element takes an IPC round trip, during which the
+            // post-layout EditorState for this focus usually arrives and is dropped because nothing was
+            // waiting for it yet. Ask for another one.
+            if (focusedElementIsInRemoteFrame && protectedThis->waitingForPostLayoutEditorStateUpdateAfterFocusingElement())
+                protectedThis->scheduleFullEditorStateUpdate();
         });
 }
 
