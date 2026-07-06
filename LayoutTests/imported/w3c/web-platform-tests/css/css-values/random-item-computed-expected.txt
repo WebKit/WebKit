@@ -1,0 +1,30 @@
+
+PASS Property color value 'random-item(fixed 0, rgb(1, 0, 0), rgb(0, 1, 0), rgb(0, 0, 1))'
+PASS Property color value 'random-item(fixed 0.5, rgb(1, 0, 0), rgb(0, 1, 0), rgb(0, 0, 1))'
+PASS Property color value 'random-item(fixed 0.999, rgb(1, 0, 0), rgb(0, 1, 0), rgb(0, 0, 1))'
+PASS Property color value 'random-item(fixed 1, rgb(1, 0, 0), rgb(0, 1, 0), rgb(0, 0, 1))'
+PASS Property color value 'random-item(fixed 0, rgb(1, 0, 0))'
+PASS Property color value 'random-item(auto, rgb(1, 0, 0))'
+PASS Property color value 'random-item(auto, rgb(1, 0, 0), rgb(0, 1, 0), rgb(0, 0, 1))'
+PASS Property color value 'random-item(--key, rgb(1, 0, 0), rgb(0, 1, 0), rgb(0, 0, 1))'
+PASS Property color value 'random-item(element-scoped, rgb(1, 0, 0), rgb(0, 1, 0))'
+PASS Property color value 'random-item(--key element-scoped, rgb(1, 0, 0), rgb(0, 1, 0))'
+PASS Property font-family value 'random-item(fixed 0, {Times, serif}, {Arial, sans-serif})'
+PASS Property font-family value 'random-item(fixed 0.999, {Times, serif}, {Arial, sans-serif})'
+PASS Property font-family value 'random-item(fixed 0, { Times, serif }, { Arial, sans-serif })'
+PASS Property font-family value 'random-item(fixed 0.999, { Times, serif }, { Arial, sans-serif })'
+PASS Property color value 'random-item(fixed calc(0.5), rgb(1, 0, 0), rgb(0, 1, 0), rgb(0, 0, 1))'
+PASS Property color value 'random-item(fixed calc(1 / 4), rgb(1, 0, 0), rgb(0, 1, 0), rgb(0, 0, 1))'
+PASS Property color value 'random-item(fixed 1, rgb(1, 0, 0))'
+PASS Property color value 'random-item(element-scoped --key, rgb(1, 0, 0), rgb(0, 1, 0))'
+PASS random-item() with a var()-derived <random-key> resolves
+PASS random-item() selecting var(--a) into a registered <length>
+PASS random-item() selecting var(--b) into a registered <length>
+PASS random-item() into a registered <length>
+PASS random-item() into a registered <number>
+PASS Selecting an empty item is invalid at computed-value time
+PASS random-item() selection is stable across style recalculation
+PASS Independent auto random-item() instances each resolve to a valid item
+PASS A shared dashed-ident key selects the same item across properties
+PASS random() and random-item() using auto in one declaration both resolve
+
