@@ -8750,19 +8750,39 @@ IGNORE_CLANG_WARNINGS_END
                 return false;
             };
 
-            if (isCopyOnWriteArrayWithContiguous()) {
+            bool isOnlyAtomStrings = isCopyOnWriteArrayWithContiguous();
+            LBasicBlock checkAtomStructure = nullptr;
+            LBasicBlock atomCheckSearchIsAtom = nullptr;
+            LBasicBlock atomLoopHeader = nullptr;
+            LBasicBlock atomLoopBody = nullptr;
+            LBasicBlock atomLoopNext = nullptr;
+            LBasicBlock atomNotFound = nullptr;
+            ValueFromBlock initialStartIndexForAtom;
+
+            if (isOnlyAtomStrings) {
                 operation = operationCopyOnWriteArrayIndexOfString;
-                LValue targetStructureID = encodeStructureID(weakPointer(vm().cellButterflyOnlyAtomStringsStructure.get()));
-                LValue butterflyStructureID = m_out.load32(m_out.add(storage, m_out.constIntPtr(-JSCellButterfly::offsetOfData())), m_heaps.JSCell_structureID);
-                m_out.branch(m_out.equal(butterflyStructureID, targetStructureID), unsure(slowCase), unsure(checkSearchRopeString));
-            } else
-                m_out.jump(checkSearchRopeString);
+                checkAtomStructure = m_out.newBlock();
+                atomCheckSearchIsAtom = m_out.newBlock();
+                atomLoopHeader = m_out.newBlock();
+                atomLoopBody = m_out.newBlock();
+                atomLoopNext = m_out.newBlock();
+                atomNotFound = m_out.newBlock();
+                initialStartIndexForAtom = m_out.anchor(startIndex);
+            }
+            m_out.jump(checkSearchRopeString);
 
             LBasicBlock lastNext = m_out.appendTo(checkSearchRopeString, checkSearchElement8Bit);
-            m_out.branch(isRopeString(searchElement, searchElementEdge), rarely(slowCase), usually(checkSearchElement8Bit));
+            LValue searchElementImpl = m_out.loadPtr(searchElement, m_heaps.JSString_value);
+            m_out.branch(isRopeString(searchElement, searchElementEdge), rarely(slowCase), usually(isOnlyAtomStrings ? checkAtomStructure : checkSearchElement8Bit));
+
+            if (isOnlyAtomStrings) {
+                m_out.appendTo(checkAtomStructure, checkSearchElement8Bit);
+                LValue targetStructureID = weakStructureID(m_graph.registerStructure(vm().cellButterflyOnlyAtomStringsStructure.get()));
+                LValue butterflyStructureID = m_out.load32(m_out.add(storage, m_out.constIntPtr(-JSCellButterfly::offsetOfData())), m_heaps.JSCell_structureID);
+                m_out.branch(m_out.equal(butterflyStructureID, targetStructureID), unsure(atomCheckSearchIsAtom), unsure(checkSearchElement8Bit));
+            }
 
             m_out.appendTo(checkSearchElement8Bit, loopHeader);
-            LValue searchElementImpl = m_out.loadPtr(searchElement, m_heaps.JSString_value);
             m_out.branch(m_out.testIsZero32(m_out.load32(searchElementImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIs8Bit())), unsure(slowCase), unsure(loopHeader));
 
             m_out.appendTo(loopHeader, fastCheckElementEmpty);
@@ -8859,13 +8879,45 @@ IGNORE_CLANG_WARNINGS_END
             ValueFromBlock slowCaseResult = isArrayIncludes ? m_out.anchor(vmCall(Int32, operationArrayIncludesString, weakPointer(globalObject), storage, searchElement, startIndex)) : m_out.anchor(vmCall(Int64, operation, weakPointer(globalObject), storage, searchElement, startIndex));
             m_out.jump(continuation);
 
+            Vector<ValueFromBlock, 5> results;
+            results.append(notFoundResult);
+            results.append(foundResult);
+            results.append(slowCaseResult);
+
+            if (isOnlyAtomStrings) {
+                m_out.appendTo(atomCheckSearchIsAtom, atomLoopHeader);
+                m_out.branch(m_out.testIsZero32(m_out.load32(searchElementImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIsAtom())), rarely(slowCase), usually(atomLoopHeader));
+
+                m_out.appendTo(atomLoopHeader, atomLoopBody);
+                LValue atomIndex = m_out.phi(pointerType(), initialStartIndexForAtom);
+                m_out.branch(m_out.notEqual(atomIndex, length), usually(atomLoopBody), rarely(atomNotFound));
+
+                m_out.appendTo(atomLoopBody, atomLoopNext);
+                ValueFromBlock atomFoundResult = isArrayIncludes ? m_out.anchor(m_out.constBool(true)) : m_out.anchor(atomIndex);
+                LValue atomElement = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, storage, atomIndex));
+                LValue atomElementImpl = m_out.loadPtr(atomElement, m_heaps.JSString_value);
+                m_out.branch(m_out.equal(atomElementImpl, searchElementImpl), rarely(continuation), usually(atomLoopNext));
+
+                m_out.appendTo(atomLoopNext, atomNotFound);
+                LValue atomNextIndex = m_out.add(atomIndex, m_out.intPtrOne);
+                m_out.addIncomingToPhi(atomIndex, m_out.anchor(atomNextIndex));
+                m_out.jump(atomLoopHeader);
+
+                m_out.appendTo(atomNotFound, continuation);
+                ValueFromBlock atomNotFoundResult = isArrayIncludes ? m_out.anchor(m_out.constBool(false)) : m_out.anchor(m_out.constIntPtr(-1));
+                m_out.jump(continuation);
+
+                results.append(atomNotFoundResult);
+                results.append(atomFoundResult);
+            }
+
             m_out.appendTo(continuation, lastNext);
             // We have to keep base alive since that keeps content of storage alive.
             ensureStillAliveHere(base);
             if (isArrayIncludes)
-                setBoolean(m_out.phi(Int32, notFoundResult, foundResult, slowCaseResult));
+                setBoolean(m_out.phi(Int32, results));
             else
-                setInt32(m_out.castToInt32(m_out.phi(Int64, notFoundResult, foundResult, slowCaseResult)));
+                setInt32(m_out.castToInt32(m_out.phi(Int64, results)));
             return;
         }
 
