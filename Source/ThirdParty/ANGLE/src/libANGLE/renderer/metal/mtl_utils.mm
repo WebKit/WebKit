@@ -412,19 +412,17 @@ bool PreferStagedTextureUploads(const gl::Context *context,
                                 const Format &textureObjFormat,
                                 StagingPurpose purpose)
 {
-    // The simulator MUST upload all textures as staged.
-    if (TARGET_OS_SIMULATOR)
-    {
-        return true;
-    }
-
-    ContextMtl *contextMtl             = mtl::GetImpl(context);
-    const angle::FeaturesMtl &features = contextMtl->getDisplay()->getFeatures();
-
+    // Compressed textures cannot be uploaded from staging textures.
     const gl::InternalFormat &intendedInternalFormat = textureObjFormat.intendedInternalFormat();
     if (intendedInternalFormat.compressed || textureObjFormat.actualAngleFormat().isBlock)
     {
         return false;
+    }
+
+    // The simulator MUST upload all non-compressed textures as staged.
+    if (TARGET_OS_SIMULATOR)
+    {
+        return true;
     }
 
     // If the intended internal format is luminance, we can still
@@ -438,6 +436,9 @@ bool PreferStagedTextureUploads(const gl::Context *context,
     {
         return (purpose == StagingPurpose::Initialization);
     }
+
+    ContextMtl *contextMtl             = mtl::GetImpl(context);
+    const angle::FeaturesMtl &features = contextMtl->getDisplay()->getFeatures();
 
     if (features.disableStagedInitializationOfPackedTextureFormats.enabled)
     {

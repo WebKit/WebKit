@@ -3533,6 +3533,49 @@ TEST_P(WebGLCompatibilityTest, CompressedTexImageBPTC)
     }
 }
 
+// Sampling an uninitialized COMPRESSED_RGBA_ASTC_4x4_KHR texture allocated via glTexStorage2D
+// should yield NaN per the ASTC spec for empty/undefined block data; the NaN-to-magenta shader
+// should therefore produce magenta. Isolates the first failing sub-test of the WebGL conformance
+// test webgl/2.0.y/conformance/extensions/webgl-compressed-texture-astc.html on Metal.
+TEST_P(WebGL2CompatibilityTest, CompressedTextureASTCEmptyStorageError)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_KHR_texture_compression_astc_ldr"));
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+uniform sampler2D u_tex2D;
+in vec2 v_texCoord;
+out vec4 out_color;
+void main()
+{
+    vec4 c = texture(u_tex2D, v_texCoord);
+    if (all(isnan(c)))
+        out_color = vec4(1, 0, 1, 1);
+    else
+        out_color = c;
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Texture2DLod(), kFS);
+    glUseProgram(program);
+    glUniform1i(glGetUniformLocation(program, essl3_shaders::Texture2DUniform()), 0);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGBA_ASTC_4x4_KHR, 16, 16);
+    ASSERT_GL_NO_ERROR();
+
+    glViewport(0, 0, getWindowWidth(), getWindowHeight());
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.0f, 1.0f, /*useVertexBuffer=*/true);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+}
+
 TEST_P(WebGLCompatibilityTest, L32FTextures)
 {
     constexpr float textureData[]   = {15.1f, 0.0f, 0.0f, 0.0f};
