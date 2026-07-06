@@ -1186,6 +1186,8 @@ String wgpuAdapterFeatureName(WGPUFeatureName feature)
         return "core-features-and-limits"_s;
     case WGPUFeatureName_TextureFormatsTier1:
         return "texture-formats-tier1"_s;
+    case WGPUFeatureName_TextureFormatsTier2:
+        return "texture-formats-tier2"_s;
     case WGPUFeatureName_Force32:
         return emptyString();
     }

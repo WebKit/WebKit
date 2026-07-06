@@ -96,6 +96,7 @@ static GPUFeatureName convertFeatureNameToEnum(const String& stringValue)
         { "texture-compression-bc-sliced-3d"_s, GPUFeatureName::TextureCompressionBcSliced3d },
         { "texture-compression-etc2"_s, GPUFeatureName::TextureCompressionEtc2 },
         { "texture-formats-tier1"_s, GPUFeatureName::TextureFormatsTier1 },
+        { "texture-formats-tier2"_s, GPUFeatureName::TextureFormatsTier2 },
         { "timestamp-query"_s, GPUFeatureName::TimestampQuery },
     }) };
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); enumerationValue) [[likely]]

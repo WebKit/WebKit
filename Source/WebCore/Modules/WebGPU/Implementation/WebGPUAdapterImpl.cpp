@@ -186,6 +186,9 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         return convertToBackingContext.convertToBacking(featureName);
     });
 
+    if (features.contains(WGPUFeatureName_TextureFormatsTier2) && !features.contains(WGPUFeatureName_TextureFormatsTier1))
+        features.append(WGPUFeatureName_TextureFormatsTier1);
+
     if (features.contains(WGPUFeatureName_TextureFormatsTier1) && !features.contains(WGPUFeatureName_RG11B10UfloatRenderable))
         features.append(WGPUFeatureName_RG11B10UfloatRenderable);
 

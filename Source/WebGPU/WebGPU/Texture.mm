@@ -1643,17 +1643,20 @@ bool Texture::hasStorageBindingCapability(WGPUTextureFormat format, const Device
 {
     // https://gpuweb.github.io/gpuweb/#plain-color-formats
     switch (format) {
+    // These formats always support read-only and write-only storage access;
+    // texture-formats-tier2 additionally grants read-write storage access.
     case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8Snorm:
     case WGPUTextureFormat_RGBA8Uint:
     case WGPUTextureFormat_RGBA8Sint:
     case WGPUTextureFormat_RGBA16Uint:
     case WGPUTextureFormat_RGBA16Sint:
     case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RG32Float:
     case WGPUTextureFormat_RGBA32Float:
     case WGPUTextureFormat_RGBA32Uint:
     case WGPUTextureFormat_RGBA32Sint:
+        return (!access || *access != WGPUStorageTextureAccess_ReadWrite) || device.hasFeature(WGPUFeatureName_TextureFormatsTier2);
+    case WGPUTextureFormat_RGBA8Snorm:
+    case WGPUTextureFormat_RG32Float:
     case WGPUTextureFormat_RG32Uint:
     case WGPUTextureFormat_RG32Sint:
         return !access || *access != WGPUStorageTextureAccess_ReadWrite;
@@ -1663,17 +1666,20 @@ bool Texture::hasStorageBindingCapability(WGPUTextureFormat format, const Device
     case WGPUTextureFormat_R32Uint:
     case WGPUTextureFormat_R32Sint:
         return true;
+    // These formats support storage access only with texture-formats-tier1;
+    // texture-formats-tier2 additionally grants read-write storage access.
     case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Snorm:
     case WGPUTextureFormat_R8Uint:
     case WGPUTextureFormat_R8Sint:
+    case WGPUTextureFormat_R16Float:
+    case WGPUTextureFormat_R16Uint:
+    case WGPUTextureFormat_R16Sint:
+        return ((!access || *access != WGPUStorageTextureAccess_ReadWrite) || device.hasFeature(WGPUFeatureName_TextureFormatsTier2)) && device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
+    case WGPUTextureFormat_R8Snorm:
     case WGPUTextureFormat_RG8Unorm:
     case WGPUTextureFormat_RG8Snorm:
     case WGPUTextureFormat_RG8Uint:
     case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
     case WGPUTextureFormat_R16Unorm:
     case WGPUTextureFormat_R16Snorm:
     case WGPUTextureFormat_RG16Uint:
