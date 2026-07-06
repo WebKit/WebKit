@@ -51,12 +51,6 @@ pdfjs-download-button-label = Iscàrriga
 pdfjs-bookmark-button =
     .title = Pàgina atuale (ammustra s’URL de sa pàgina atuale)
 pdfjs-bookmark-button-label = Pàgina atuale
-# Used in Firefox for Android.
-pdfjs-open-in-app-button =
-    .title = Aberi in un’aplicatzione
-# Used in Firefox for Android.
-# Length of the translation matters since we are in a mobile context, with limited screen estate.
-pdfjs-open-in-app-button-label = Aberi in un’aplicatzione
 
 ##  Secondary toolbar and context menu
 
@@ -101,24 +95,12 @@ pdfjs-document-properties-button =
 pdfjs-document-properties-button-label = Propiedades de su documentu…
 pdfjs-document-properties-file-name = Nòmine de s'archìviu:
 pdfjs-document-properties-file-size = Mannària de s'archìviu:
-# Variables:
-#   $size_kb (Number) - the PDF file size in kilobytes
-#   $size_b (Number) - the PDF file size in bytes
-pdfjs-document-properties-kb = { $size_kb } KB ({ $size_b } bytes)
-# Variables:
-#   $size_mb (Number) - the PDF file size in megabytes
-#   $size_b (Number) - the PDF file size in bytes
-pdfjs-document-properties-mb = { $size_mb } MB ({ $size_b } bytes)
 pdfjs-document-properties-title = Tìtulu:
 pdfjs-document-properties-author = Autoria:
 pdfjs-document-properties-subject = Ogetu:
 pdfjs-document-properties-keywords = Faeddos crae:
 pdfjs-document-properties-creation-date = Data de creatzione:
 pdfjs-document-properties-modification-date = Data de modìfica:
-# Variables:
-#   $date (Date) - the creation/modification date of the PDF file
-#   $time (Time) - the creation/modification time of the PDF file
-pdfjs-document-properties-date-string = { $date }, { $time }
 pdfjs-document-properties-creator = Creatzione:
 pdfjs-document-properties-producer = Produtore de PDF:
 pdfjs-document-properties-version = Versione de PDF:
@@ -158,7 +140,7 @@ pdfjs-print-progress-message = Aparitzende s'imprenta de su documentu…
 # Variables:
 #   $progress (Number) - percent value
 pdfjs-print-progress-percent = { $progress }%
-pdfjs-print-progress-close-button = Cantzella
+pdfjs-print-progress-close-button = Annulla
 pdfjs-printing-not-supported = Atentzione: s'imprenta no est funtzionende de su totu in custu navigadore.
 pdfjs-printing-not-ready = Atentzione: su PDF no est istadu carrigadu de su totu pro s'imprenta.
 
@@ -240,19 +222,12 @@ pdfjs-missing-file-error = Ammancat s'archìviu PDF.
 pdfjs-unexpected-response-error = Risposta imprevista de su serbidore.
 pdfjs-rendering-error = Faddina in sa visualizatzione de sa pàgina.
 
-## Annotations
-
-# Variables:
-#   $date (Date) - the modification date of the annotation
-#   $time (Time) - the modification time of the annotation
-pdfjs-annotation-date-string = { $date }, { $time }
-
 ## Password
 
 pdfjs-password-label = Inserta sa crae pro abèrrere custu archìviu PDF.
 pdfjs-password-invalid = Sa crae no est curreta. Torra a nche proare.
 pdfjs-password-ok-button = Andat bene
-pdfjs-password-cancel-button = Cantzella
+pdfjs-password-cancel-button = Annulla
 pdfjs-web-fonts-disabled = Is tipografias web sunt disativadas: is tipografias incrustadas a su PDF non podent èssere impreadas.
 
 ## Editing
@@ -266,6 +241,27 @@ pdfjs-editor-ink-button-label = Disinnu
 pdfjs-editor-stamp-button =
     .title = Agiunghe o modìfica immàgines
 pdfjs-editor-stamp-button-label = Agiunghe o modìfica immàgines
+pdfjs-editor-highlight-button =
+    .title = Evidèntzia
+pdfjs-editor-highlight-button-label = Evidèntzia
+pdfjs-highlight-floating-button1 =
+    .title = Evidèntzia
+    .aria-label = Evidèntzia
+pdfjs-highlight-floating-button-label = Evidèntzia
+
+## Remove button for the various kind of editor.
+
+pdfjs-editor-remove-ink-button =
+    .title = Boga su disinnu
+pdfjs-editor-remove-freetext-button =
+    .title = Boga su testu
+pdfjs-editor-remove-stamp-button =
+    .title = Boga s’immàgine
+pdfjs-editor-remove-highlight-button =
+    .title = Boga s’evidèntzia
+
+##
+
 # Editor Parameters
 pdfjs-editor-free-text-color-input = Colore
 pdfjs-editor-free-text-size-input = Mannària
@@ -274,17 +270,73 @@ pdfjs-editor-ink-thickness-input = Grussària
 pdfjs-editor-stamp-add-image-button =
     .title = Agiunghe un’immàgine
 pdfjs-editor-stamp-add-image-button-label = Agiunghe un’immàgine
-pdfjs-free-text =
+# This refers to the thickness of the line used for free highlighting (not bound to text)
+pdfjs-editor-free-highlight-thickness-input = Grussària
+# .default-content is used as a placeholder in an empty text editor.
+pdfjs-free-text2 =
     .aria-label = Editore de testu
-pdfjs-free-text-default-content = Cumintza a iscrìere…
-pdfjs-ink =
-    .aria-label = Editore de disinnos
-pdfjs-ink-canvas =
-    .aria-label = Immàgine creada dae s’utente
+    .default-content = Cumintza a iscrìere…
 
 ## Alt-text dialog
 
+pdfjs-editor-alt-text-button-label = Testu alternativu
+pdfjs-editor-alt-text-dialog-label = Sèbera un’optzione
+pdfjs-editor-alt-text-dialog-description = Su testu alternativu (“alt text”) est ùtile pro persones chi non podent bìdere s’immàgine o cando non benit carrigada.
+pdfjs-editor-alt-text-add-description-label = Agiunghe una descritzione
+pdfjs-editor-alt-text-cancel-button = Annulla
+pdfjs-editor-alt-text-save-button = Sarva
 
-## Editor resizers
-## This is used in an aria label to help to understand the role of the resizer.
+## Color picker
 
+pdfjs-editor-colorpicker-button =
+    .title = Modifica su colore
+pdfjs-editor-colorpicker-dropdown =
+    .aria-label = Colores a disponimentu
+pdfjs-editor-colorpicker-yellow =
+    .title = Grogu
+pdfjs-editor-colorpicker-green =
+    .title = Birde
+pdfjs-editor-colorpicker-blue =
+    .title = Biaitu
+pdfjs-editor-colorpicker-pink =
+    .title = Rosa
+
+## New alt-text dialog
+## Group note for entire feature: Alternative text (alt text) helps when people can't see the image. This feature includes a tool to create alt text automatically using an AI model that works locally on the user's device to preserve privacy.
+
+pdfjs-editor-new-alt-text-missing-button-label = Mancat su testu alternativu
+pdfjs-editor-new-alt-text-to-review-button-label = Revisiona su testu alternativu
+# "Created automatically" is a prefix that will be added to the beginning of any alt text that has been automatically generated. After the colon, the user will see/hear the actual alt text description. If the alt text has been edited by a human, this prefix will not appear.
+# Variables:
+#   $generatedAltText (String) - the generated alt-text.
+pdfjs-editor-new-alt-text-generated-alt-text-with-disclaimer = Creadu in automàticu: { $generatedAltText }
+
+## Image alt-text settings
+
+pdfjs-image-alt-text-settings-button =
+    .title = Cunfiguratzione de su testu alternativu de is immàgines
+pdfjs-image-alt-text-settings-button-label = Cunfiguratzione de su testu alternativu de is immàgines
+pdfjs-editor-alt-text-settings-dialog-label = Cunfiguratzione de su testu alternativu de is immàgines
+pdfjs-editor-alt-text-settings-automatic-title = Testu alternativu automàticu
+pdfjs-editor-alt-text-settings-create-model-button-label = Crea testu alternativu in automàticu
+pdfjs-editor-alt-text-settings-create-model-description = Cussìgiat descritziones pro agiudare a gente chi non podet bìdere s’immàgine o cando non benit carrigada.
+# Variables:
+#   $totalSize (Number) - the total size (in MB) of the AI model.
+pdfjs-editor-alt-text-settings-download-model-label = Modellu de IA pro su testu alternativu ({ $totalSize } MB)
+pdfjs-editor-alt-text-settings-ai-model-description = Est esecutadu in locale in manera chi is datos tuos abarrent in privadu. Rechestu pro sa generatzione automàtica de testu alternativu.
+pdfjs-editor-alt-text-settings-delete-model-button = Cantzella
+pdfjs-editor-alt-text-settings-download-model-button = Iscàrriga
+pdfjs-editor-alt-text-settings-downloading-model-button = Iscarrighende…
+pdfjs-editor-alt-text-settings-editor-title = Editore de testu alternativu
+pdfjs-editor-alt-text-settings-show-dialog-button-label = Mustra deretu s’editore de testu alternativu cando siat agiunta un’immàgine
+pdfjs-editor-alt-text-settings-show-dialog-description = T’agiudat a assegurare chi totu is immàgines tuas tèngiant unu testu alternativu.
+pdfjs-editor-alt-text-settings-close-button = Serra
+
+## Dialog buttons
+
+pdfjs-editor-add-signature-cancel-button = Annulla
+
+##  Edit a comment dialog
+
+pdfjs-editor-edit-comment-dialog-text-input =
+    .placeholder = Cumintza a iscrìere…

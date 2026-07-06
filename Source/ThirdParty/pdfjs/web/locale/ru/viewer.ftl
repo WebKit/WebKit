@@ -44,19 +44,13 @@ pdfjs-save-button =
 pdfjs-save-button-label = Сохранить
 # Used in Firefox for Android as a tooltip for the download button (“download” is a verb).
 pdfjs-download-button =
-    .title = Загрузить
+    .title = Скачать
 # Used in Firefox for Android as a label for the download button (“download” is a verb).
 # Length of the translation matters since we are in a mobile context, with limited screen estate.
-pdfjs-download-button-label = Загрузить
+pdfjs-download-button-label = Скачать
 pdfjs-bookmark-button =
     .title = Текущая страница (просмотр URL-адреса с текущей страницы)
 pdfjs-bookmark-button-label = Текущая страница
-# Used in Firefox for Android.
-pdfjs-open-in-app-button =
-    .title = Открыть в приложении
-# Used in Firefox for Android.
-# Length of the translation matters since we are in a mobile context, with limited screen estate.
-pdfjs-open-in-app-button-label = Открыть в программе
 
 ##  Secondary toolbar and context menu
 
@@ -76,10 +70,10 @@ pdfjs-page-rotate-ccw-button =
     .title = Повернуть против часовой стрелки
 pdfjs-page-rotate-ccw-button-label = Повернуть против часовой стрелки
 pdfjs-cursor-text-select-tool-button =
-    .title = Включить Инструмент «Выделение текста»
+    .title = Включить инструмент «Выделение текста»
 pdfjs-cursor-text-select-tool-button-label = Инструмент «Выделение текста»
 pdfjs-cursor-hand-tool-button =
-    .title = Включить Инструмент «Рука»
+    .title = Включить инструмент «Рука»
 pdfjs-cursor-hand-tool-button-label = Инструмент «Рука»
 pdfjs-scroll-page-button =
     .title = Использовать прокрутку страниц
@@ -111,13 +105,13 @@ pdfjs-document-properties-button-label = Свойства документа…
 pdfjs-document-properties-file-name = Имя файла:
 pdfjs-document-properties-file-size = Размер файла:
 # Variables:
-#   $size_kb (Number) - the PDF file size in kilobytes
-#   $size_b (Number) - the PDF file size in bytes
-pdfjs-document-properties-kb = { $size_kb } КБ ({ $size_b } байт)
+#   $kb (Number) - the PDF file size in kilobytes
+#   $b (Number) - the PDF file size in bytes
+pdfjs-document-properties-size-kb = { NUMBER($kb, maximumSignificantDigits: 3) } КБ ({ $b } байт)
 # Variables:
-#   $size_mb (Number) - the PDF file size in megabytes
-#   $size_b (Number) - the PDF file size in bytes
-pdfjs-document-properties-mb = { $size_mb } МБ ({ $size_b } байт)
+#   $mb (Number) - the PDF file size in megabytes
+#   $b (Number) - the PDF file size in bytes
+pdfjs-document-properties-size-mb = { NUMBER($mb, maximumSignificantDigits: 3) } МБ ({ $b } байт)
 pdfjs-document-properties-title = Заголовок:
 pdfjs-document-properties-author = Автор:
 pdfjs-document-properties-subject = Тема:
@@ -125,9 +119,8 @@ pdfjs-document-properties-keywords = Ключевые слова:
 pdfjs-document-properties-creation-date = Дата создания:
 pdfjs-document-properties-modification-date = Дата изменения:
 # Variables:
-#   $date (Date) - the creation/modification date of the PDF file
-#   $time (Time) - the creation/modification time of the PDF file
-pdfjs-document-properties-date-string = { $date }, { $time }
+#   $dateObj (Date) - the creation/modification date and time of the PDF file
+pdfjs-document-properties-date-time-string = { DATETIME($dateObj, dateStyle: "short", timeStyle: "medium") }
 pdfjs-document-properties-creator = Приложение:
 pdfjs-document-properties-producer = Производитель PDF:
 pdfjs-document-properties-version = Версия PDF:
@@ -208,6 +201,15 @@ pdfjs-thumb-page-title =
 #   $page (Number) - the page number
 pdfjs-thumb-page-canvas =
     .aria-label = Миниатюра страницы { $page }
+# Variables:
+#   $page (Number) - the page number
+pdfjs-thumb-page-checkbox1 =
+    .title = Выбрать страницу { $page }
+# Variables:
+#   $page (Number) - the page number
+#   $total (Number) - the number of pages
+pdfjs-thumb-page-title1 =
+    .title = Страница { $page } из { $total }
 
 ## Find panel button title and messages
 
@@ -272,10 +274,6 @@ pdfjs-rendering-error = При создании страницы произош�
 
 ## Annotations
 
-# Variables:
-#   $date (Date) - the modification date of the annotation
-#   $time (Time) - the modification time of the annotation
-pdfjs-annotation-date-string = { $date }, { $time }
 # .alt: This is used as a tooltip.
 # Variables:
 #   $type (String) - an annotation type from a list defined in the PDF spec
@@ -283,6 +281,9 @@ pdfjs-annotation-date-string = { $date }, { $time }
 # Some common types are e.g.: "Check", "Text", "Comment", "Note"
 pdfjs-text-annotation-type =
     .alt = [Аннотация { $type }]
+# Variables:
+#   $dateObj (Date) - the modification date and time of the annotation
+pdfjs-annotation-date-time-string = { DATETIME($dateObj, dateStyle: "short", timeStyle: "medium") }
 
 ## Password
 
@@ -296,9 +297,13 @@ pdfjs-web-fonts-disabled = Веб-шрифты отключены: не удал
 
 pdfjs-editor-free-text-button =
     .title = Текст
+pdfjs-editor-color-picker-free-text-input =
+    .title = Изменить цвет текста
 pdfjs-editor-free-text-button-label = Текст
 pdfjs-editor-ink-button =
     .title = Рисовать
+pdfjs-editor-color-picker-ink-input =
+    .title = Изменить цвет прорисовки
 pdfjs-editor-ink-button-label = Рисовать
 pdfjs-editor-stamp-button =
     .title = Добавить или изменить изображения
@@ -306,12 +311,37 @@ pdfjs-editor-stamp-button-label = Добавить или изменить из�
 pdfjs-editor-highlight-button =
     .title = Выделение
 pdfjs-editor-highlight-button-label = Выделение
-pdfjs-highlight-floating-button =
-    .title = Выделение
 pdfjs-highlight-floating-button1 =
     .title = Выделение
     .aria-label = Выделение
 pdfjs-highlight-floating-button-label = Выделение
+pdfjs-comment-floating-button =
+    .title = Комментировать
+    .aria-label = Комментировать
+pdfjs-comment-floating-button-label = Комментировать
+pdfjs-editor-comment-button =
+    .title = Комментарий
+    .aria-label = Комментарий
+pdfjs-editor-comment-button-label = Комментарий
+pdfjs-editor-signature-button =
+    .title = Добавить подпись
+pdfjs-editor-signature-button-label = Добавить подпись
+
+## Default editor aria labels
+
+# “Highlight” is a noun, the string is used on the editor for highlights.
+pdfjs-editor-highlight-editor =
+    .aria-label = Редактор выделения
+# “Drawing” is a noun, the string is used on the editor for drawings.
+pdfjs-editor-ink-editor =
+    .aria-label = Редактор изображений
+# Used when a signature editor is selected/hovered.
+# Variables:
+#   $description (String) - a string describing/labeling the signature.
+pdfjs-editor-signature-editor1 =
+    .aria-description = Редактор подписи: { $description }
+pdfjs-editor-stamp-editor =
+    .aria-label = Редактор изображений
 
 ## Remove button for the various kind of editor.
 
@@ -323,6 +353,8 @@ pdfjs-editor-remove-stamp-button =
     .title = Удалить изображение
 pdfjs-editor-remove-highlight-button =
     .title = Удалить выделение
+pdfjs-editor-remove-signature-button =
+    .title = Удалить подпись
 
 ##
 
@@ -339,19 +371,42 @@ pdfjs-editor-stamp-add-image-button-label = Добавить изображен�
 pdfjs-editor-free-highlight-thickness-input = Толщина
 pdfjs-editor-free-highlight-thickness-title =
     .title = Изменить толщину при выделении элементов, кроме текста
-pdfjs-free-text =
+pdfjs-editor-add-signature-container =
+    .aria-label = Управление подписями и сохранённые подписи
+pdfjs-editor-signature-add-signature-button =
+    .title = Добавить новую подпись
+pdfjs-editor-signature-add-signature-button-label = Добавить новую подпись
+# Used on the button to use an already saved signature.
+# Variables:
+#   $description (String) - a string describing/labeling the signature.
+pdfjs-editor-add-saved-signature-button =
+    .title = Сохранённая подпись: { $description }
+# .default-content is used as a placeholder in an empty text editor.
+pdfjs-free-text2 =
     .aria-label = Текстовый редактор
-pdfjs-free-text-default-content = Начните вводить…
-pdfjs-ink =
-    .aria-label = Редактор рисования
-pdfjs-ink-canvas =
-    .aria-label = Созданное пользователем изображение
+    .default-content = Начните ввод...
+# Used to show how many comments are present in the pdf file.
+# Variables:
+#   $count (Number) - the number of comments.
+pdfjs-editor-comments-sidebar-title =
+    { $count ->
+        [one] Комментарий
+        [few] Комментарии
+       *[many] Комментарии
+    }
+pdfjs-editor-comments-sidebar-close-button =
+    .title = Закрыть боковую панель
+    .aria-label = Закрыть боковую панель
+pdfjs-editor-comments-sidebar-close-button-label = Закрыть боковую панель
+# Instructional copy to add a comment by selecting text or an annotations.
+pdfjs-editor-comments-sidebar-no-comments1 = Увидели что-то интересное? Выделите и оставьте комментарий.
+pdfjs-editor-comments-sidebar-no-comments-link = Подробнее
 
 ## Alt-text dialog
 
-# Alternative text (alt text) helps when people can't see the image.
 pdfjs-editor-alt-text-button-label = Альтернативный текст
-pdfjs-editor-alt-text-edit-button-label = Изменить альтернативный текст
+pdfjs-editor-alt-text-edit-button =
+    .aria-label = Изменить альтернативный текст
 pdfjs-editor-alt-text-dialog-label = Выберите вариант
 pdfjs-editor-alt-text-dialog-description = Альтернативный текст помогает, когда люди не видят изображение или оно не загружается.
 pdfjs-editor-alt-text-add-description-label = Добавить описание
@@ -364,18 +419,29 @@ pdfjs-editor-alt-text-decorative-tooltip = Помечен как декорат�
 # .placeholder: This is a placeholder for the alt text input area
 pdfjs-editor-alt-text-textarea =
     .placeholder = Например: «Молодой человек садится за стол, чтобы поесть»
+# Alternative text (alt text) helps when people can't see the image.
+pdfjs-editor-alt-text-button =
+    .aria-label = Альтернативный текст
 
 ## Editor resizers
 ## This is used in an aria label to help to understand the role of the resizer.
 
-pdfjs-editor-resizer-label-top-left = Левый верхний угол — изменить размер
-pdfjs-editor-resizer-label-top-middle = Вверху посередине — изменить размер
-pdfjs-editor-resizer-label-top-right = Верхний правый угол — изменить размер
-pdfjs-editor-resizer-label-middle-right = В центре справа — изменить размер
-pdfjs-editor-resizer-label-bottom-right = Нижний правый угол — изменить размер
-pdfjs-editor-resizer-label-bottom-middle = Внизу посередине — изменить размер
-pdfjs-editor-resizer-label-bottom-left = Нижний левый угол — изменить размер
-pdfjs-editor-resizer-label-middle-left = В центре слева — изменить размер
+pdfjs-editor-resizer-top-left =
+    .aria-label = Левый верхний угол — изменить размер
+pdfjs-editor-resizer-top-middle =
+    .aria-label = Вверху посередине — изменить размер
+pdfjs-editor-resizer-top-right =
+    .aria-label = Верхний правый угол — изменить размер
+pdfjs-editor-resizer-middle-right =
+    .aria-label = В центре справа — изменить размер
+pdfjs-editor-resizer-bottom-right =
+    .aria-label = Нижний правый угол — изменить размер
+pdfjs-editor-resizer-bottom-middle =
+    .aria-label = Внизу посередине — изменить размер
+pdfjs-editor-resizer-bottom-left =
+    .aria-label = Нижний левый угол — изменить размер
+pdfjs-editor-resizer-middle-left =
+    .aria-label = В центре слева — изменить размер
 
 ## Color picker
 
@@ -402,3 +468,288 @@ pdfjs-editor-colorpicker-red =
 pdfjs-editor-highlight-show-all-button-label = Показать все
 pdfjs-editor-highlight-show-all-button =
     .title = Показать все
+
+## New alt-text dialog
+## Group note for entire feature: Alternative text (alt text) helps when people can't see the image. This feature includes a tool to create alt text automatically using an AI model that works locally on the user's device to preserve privacy.
+
+# Modal header positioned above a text box where users can edit the alt text.
+pdfjs-editor-new-alt-text-dialog-edit-label = Изменить альтернативный текст (описание изображения)
+# Modal header positioned above a text box where users can add the alt text.
+pdfjs-editor-new-alt-text-dialog-add-label = Добавить альтернативный текст (описание изображения)
+pdfjs-editor-new-alt-text-textarea =
+    .placeholder = Напишите здесь своё описание…
+# This text refers to the alt text box above this description. It offers a definition of alt text.
+pdfjs-editor-new-alt-text-description = Короткое описание для людей, которые не видят изображение, или если изображение не загружается.
+# This is a required legal disclaimer that refers to the automatically created text inside the alt text box above this text. It disappears if the text is edited by a human.
+pdfjs-editor-new-alt-text-disclaimer1 = Этот альтернативный текст был создан автоматически и может быть неточным.
+pdfjs-editor-new-alt-text-disclaimer-learn-more-url = Подробнее
+pdfjs-editor-new-alt-text-create-automatically-button-label = Автоматически создавать альтернативный текст
+pdfjs-editor-new-alt-text-not-now-button = Не сейчас
+pdfjs-editor-new-alt-text-error-title = Не удалось автоматически создать альтернативный текст
+pdfjs-editor-new-alt-text-error-description = Пожалуйста, напишите свой альтернативный текст или попробуйте ещё раз позже.
+pdfjs-editor-new-alt-text-error-close-button = Закрыть
+# Variables:
+#   $totalSize (Number) - the total size (in MB) of the AI model.
+#   $downloadedSize (Number) - the downloaded size (in MB) of the AI model.
+pdfjs-editor-new-alt-text-ai-model-downloading-progress = Загрузка модели ИИ для альтернативного текста ({ $downloadedSize } из { $totalSize } МБ)
+    .aria-valuetext = Загрузка модели ИИ для альтернативного текста ({ $downloadedSize } из { $totalSize } МБ)
+# This is a button that users can click to edit the alt text they have already added.
+pdfjs-editor-new-alt-text-added-button =
+    .aria-label = Альтернативный текст добавлен
+pdfjs-editor-new-alt-text-added-button-label = Альтернативный текст добавлен
+# This is a button that users can click to open the alt text editor and add alt text when it is not present.
+pdfjs-editor-new-alt-text-missing-button =
+    .aria-label = Отсутствует альтернативный текст
+pdfjs-editor-new-alt-text-missing-button-label = Отсутствует альтернативный текст
+# This is a button that opens up the alt text modal where users should review the alt text that was automatically generated.
+pdfjs-editor-new-alt-text-to-review-button =
+    .aria-label = Оценить альтернативный текст
+pdfjs-editor-new-alt-text-to-review-button-label = Оценить альтернативный текст
+# "Created automatically" is a prefix that will be added to the beginning of any alt text that has been automatically generated. After the colon, the user will see/hear the actual alt text description. If the alt text has been edited by a human, this prefix will not appear.
+# Variables:
+#   $generatedAltText (String) - the generated alt-text.
+pdfjs-editor-new-alt-text-generated-alt-text-with-disclaimer = Создано автоматически: { $generatedAltText }
+
+## Image alt-text settings
+
+pdfjs-image-alt-text-settings-button =
+    .title = Настройки альтернативного текста для изображения
+pdfjs-image-alt-text-settings-button-label = Настройки альтернативного текста для изображения
+pdfjs-editor-alt-text-settings-dialog-label = Настройки альтернативного текста для изображения
+pdfjs-editor-alt-text-settings-automatic-title = Автоматический альтернативный текст
+pdfjs-editor-alt-text-settings-create-model-button-label = Автоматически создавать альтернативный текст
+pdfjs-editor-alt-text-settings-create-model-description = Предлагает описания, чтобы помочь людям, которые не видят изображение, или если изображение не загружается.
+# Variables:
+#   $totalSize (Number) - the total size (in MB) of the AI model.
+pdfjs-editor-alt-text-settings-download-model-label = ИИ-модель альтернативного текста ({ $totalSize } МБ)
+pdfjs-editor-alt-text-settings-ai-model-description = Запускается локально на вашем устройстве, поэтому ваши данные остаются конфиденциальными. Требуется для автоматического альтернативного текста.
+pdfjs-editor-alt-text-settings-delete-model-button = Удалить
+pdfjs-editor-alt-text-settings-download-model-button = Скачать
+pdfjs-editor-alt-text-settings-downloading-model-button = Загрузка…
+pdfjs-editor-alt-text-settings-editor-title = Редактор альтернативного текста
+pdfjs-editor-alt-text-settings-show-dialog-button-label = Сразу показывать редактор альтернативного текста при добавлении изображения
+pdfjs-editor-alt-text-settings-show-dialog-description = Помогает вам убедиться, что все ваши изображения имеют альтернативный текст.
+pdfjs-editor-alt-text-settings-close-button = Закрыть
+
+## Accessibility labels (announced by screen readers) for objects added to the editor.
+
+pdfjs-editor-highlight-added-alert = Выделение добавлено
+pdfjs-editor-freetext-added-alert = Текст добавлен
+pdfjs-editor-ink-added-alert = Изображение добавлено
+pdfjs-editor-stamp-added-alert = Изображение добавлено
+pdfjs-editor-signature-added-alert = Подпись добавлена
+
+## "Annotations removed" bar
+
+pdfjs-editor-undo-bar-message-highlight = Выделение удалено
+pdfjs-editor-undo-bar-message-freetext = Текст удалён
+pdfjs-editor-undo-bar-message-ink = Рисунок удалён
+pdfjs-editor-undo-bar-message-stamp = Изображение удалено
+pdfjs-editor-undo-bar-message-signature = Подпись удалена
+pdfjs-editor-undo-bar-message-comment = Комментарий удалён
+# Variables:
+#   $count (Number) - the number of removed annotations.
+pdfjs-editor-undo-bar-message-multiple =
+    { $count ->
+        [one] { $count } аннотация удалена
+        [few] { $count } аннотации удалены
+       *[many] { $count } аннотаций удалены
+    }
+pdfjs-editor-undo-bar-undo-button =
+    .title = Отменить
+pdfjs-editor-undo-bar-undo-button-label = Отменить
+pdfjs-editor-undo-bar-close-button =
+    .title = Закрыть
+pdfjs-editor-undo-bar-close-button-label = Закрыть
+
+## Add a signature dialog
+
+pdfjs-editor-add-signature-dialog-label = Это окно позволяет пользователю создать подпись для добавления в PDF-документ. Пользователь может отредактировать имя (которое также используется в качестве альтернативного текста) и, по желанию, сохранить подпись для повторного использования.
+pdfjs-editor-add-signature-dialog-title = Добавить подпись
+
+## Tab names
+
+# Type is a verb (you can type your name as signature)
+pdfjs-editor-add-signature-type-button = Ввод
+    .title = Ввод
+# Draw is a verb (you can draw your signature)
+pdfjs-editor-add-signature-draw-button = Рисовать
+    .title = Рисовать
+pdfjs-editor-add-signature-image-button = Изображение
+    .title = Изображение
+
+## Tab panels
+
+pdfjs-editor-add-signature-type-input =
+    .aria-label = Введите свою подпись
+    .placeholder = Введите свою подпись
+pdfjs-editor-add-signature-draw-placeholder = Нарисуйте свою подпись
+pdfjs-editor-add-signature-draw-thickness-range-label = Толщина
+# Variables:
+#   $thickness (Number) - the thickness (in pixels) of the line used to draw a signature.
+pdfjs-editor-add-signature-draw-thickness-range =
+    .title = Толщина рисунка: { $thickness }
+pdfjs-editor-add-signature-image-placeholder = Перетащите сюда файл для загрузки
+pdfjs-editor-add-signature-image-browse-link =
+    { PLATFORM() ->
+        [macos] Или просмотрите файлы изображений
+       *[other] Или просмотрите файлы изображений
+    }
+
+## Controls
+
+pdfjs-editor-add-signature-description-label = Описание (альтернативный текст)
+pdfjs-editor-add-signature-description-input =
+    .title = Описание (альтернативный текст)
+pdfjs-editor-add-signature-description-default-when-drawing = Подпись
+pdfjs-editor-add-signature-clear-button-label = Удалить подпись
+pdfjs-editor-add-signature-clear-button =
+    .title = Удалить подпись
+pdfjs-editor-add-signature-save-checkbox = Сохранить подпись
+pdfjs-editor-add-signature-save-warning-message = Вы достигли лимита в 5 сохранённых подписей. Удалите одну, чтобы сохранить другие.
+pdfjs-editor-add-signature-image-upload-error-title = Не удалось загрузить изображение
+pdfjs-editor-add-signature-image-upload-error-description = Проверьте подключение к сети или попробуйте другое изображение.
+pdfjs-editor-add-signature-image-no-data-error-title = Не удалось преобразовать это изображение в подпись
+pdfjs-editor-add-signature-image-no-data-error-description = Пожалуйста, попробуйте загрузить другое изображение.
+pdfjs-editor-add-signature-error-close-button = Закрыть
+
+## Dialog buttons
+
+pdfjs-editor-add-signature-cancel-button = Отмена
+pdfjs-editor-add-signature-add-button = Добавить
+pdfjs-editor-edit-signature-update-button = Обновить
+
+## Comment popup
+
+pdfjs-editor-edit-comment-popup-button-label = Редактировать комментарий
+pdfjs-editor-edit-comment-popup-button =
+    .title = Редактировать комментарий
+pdfjs-editor-delete-comment-popup-button-label = Удалить комментарий
+pdfjs-editor-delete-comment-popup-button =
+    .title = Удалить комментарий
+pdfjs-show-comment-button =
+    .title = Показать комментарий
+
+##  Edit a comment dialog
+
+# An existing comment is edited
+pdfjs-editor-edit-comment-dialog-title-when-editing = Редактировать комментарий
+pdfjs-editor-edit-comment-dialog-save-button-when-editing = Обновить
+# No existing comment
+pdfjs-editor-edit-comment-dialog-title-when-adding = Добавить комментарий
+pdfjs-editor-edit-comment-dialog-save-button-when-adding = Добавить
+pdfjs-editor-edit-comment-dialog-text-input =
+    .placeholder = Начните ввод…
+pdfjs-editor-edit-comment-dialog-cancel-button = Отмена
+
+## Edit a comment button in the editor toolbar
+
+pdfjs-editor-add-comment-button =
+    .title = Добавить комментарий
+
+## The view manager is a sidebar displaying different views:
+##  - thumbnails;
+##  - outline;
+##  - attachments;
+##  - layers.
+## The thumbnails view is used to edit the pdf: remove/insert pages, ...
+
+pdfjs-toggle-views-manager-notification-button =
+    .title = Показать/скрыть боковую панель (документ содержит миниатюры/структуру/вложения/слои)
+pdfjs-toggle-views-manager-button1-label = Управление страницами
+pdfjs-views-manager-sidebar =
+    .aria-label = Боковая панель
+pdfjs-views-manager-sidebar-resizer =
+    .aria-label = Изменение размера боковой панели
+pdfjs-views-manager-view-selector-button =
+    .title = Вид
+pdfjs-views-manager-view-selector-button-label = Вид
+pdfjs-views-manager-pages-title = Страницы
+pdfjs-views-manager-outlines-title1 = Структура документа
+    .title = Структура документа (щёлкните дважды, чтобы раскрыть/свернуть все элементы)
+pdfjs-views-manager-attachments-title = Вложения
+pdfjs-views-manager-layers-title1 = Слои
+    .title = Слои (щёлкните дважды, чтобы сбросить все слои в положение по умолчанию)
+pdfjs-views-manager-pages-option-label = Страницы
+pdfjs-views-manager-outlines-option-label = Структура документа
+pdfjs-views-manager-attachments-option-label = Вложения
+pdfjs-views-manager-layers-option-label = Слои
+pdfjs-views-manager-add-file-button =
+    .title = Добавить файл
+pdfjs-views-manager-add-file-button-label = Добавить файл
+# Variables:
+#   $count (Number) - the number of selected pages.
+pdfjs-views-manager-pages-status-action-label =
+    { $count ->
+        [one] Выбрана { $count }
+        [few] Выбраны { $count }
+       *[many] Выбрано { $count }
+    }
+pdfjs-views-manager-pages-status-none-action-label = Выбрать страницы
+pdfjs-views-manager-pages-status-action-button-label = Управление
+pdfjs-views-manager-pages-status-copy-button-label = Копировать
+pdfjs-views-manager-pages-status-cut-button-label = Вырезать
+pdfjs-views-manager-pages-status-delete-button-label = Удалить
+pdfjs-views-manager-pages-status-export-selected-button-label = Экспортировать выбранное…
+# Variables:
+#   $count (Number) - the number of selected pages to be cut.
+pdfjs-views-manager-status-undo-cut-label =
+    { $count ->
+        [one] Вырезана 1 страница
+        [few] Вырезаны { $count } страницы
+       *[many] Вырезано { $count } страниц
+    }
+# Variables:
+#   $count (Number) - the number of selected pages to be copied.
+pdfjs-views-manager-pages-status-undo-copy-label =
+    { $count ->
+        [one] Скопирована 1 страница
+        [few] Скопированы { $count } страницы
+       *[many] Скопировано { $count } страниц
+    }
+# Variables:
+#   $count (Number) - the number of selected pages to be deleted.
+pdfjs-views-manager-pages-status-undo-delete-label =
+    { $count ->
+        [one] Удалена 1 страница
+        [few] Удалены { $count } страницы
+       *[many] Удалено { $count } страниц
+    }
+pdfjs-views-manager-pages-status-waiting-ready-label = Идёт подготовка файла…
+pdfjs-views-manager-pages-status-waiting-uploading-label = Выгрузка файла…
+pdfjs-views-manager-status-warning-cut-label = Не удалось вырезать. Обновить страницу и попробовать ещё раз.
+pdfjs-views-manager-status-warning-copy-label = Не удалось скопировать. Обновить страницу и попробовать ещё раз.
+pdfjs-views-manager-status-warning-delete-label = Не удалось удалить. Обновить страницу и попробовать ещё раз.
+pdfjs-views-manager-status-warning-save-label = Не удалось сохранить. Обновить страницу и попробовать ещё раз.
+pdfjs-views-manager-status-undo-button-label = Отменить
+pdfjs-views-manager-status-done-button-label = Готово
+pdfjs-views-manager-status-close-button =
+    .title = Закрыть
+pdfjs-views-manager-status-close-button-label = Закрыть
+pdfjs-views-manager-paste-button-label = Вставить
+pdfjs-views-manager-paste-button-before =
+    .title = Вставить перед первой страницей
+# Variables:
+#   $page (Number) - the page number after which the paste button is.
+pdfjs-views-manager-paste-button-after =
+    .title = Вставить после страницы { $page }
+# Badge used to promote a new feature in the UI, keep it as short as possible.
+# It's spelled uppercase for English, but it can be translated as usual.
+pdfjs-new-badge-content = НОВОЕ
+pdfjs-views-manager-waiting-for-file = Загрузка файла…
+pdfjs-toggle-views-manager-button1 =
+    .title = Управление страницами
+
+## Main menu for adding/removing signatures
+
+pdfjs-editor-delete-signature-button1 =
+    .title = Удалить сохранённую подпись
+pdfjs-editor-delete-signature-button-label1 = Удалить сохранённую подпись
+
+## Editor toolbar
+
+pdfjs-editor-add-signature-edit-button-label = Изменить описание
+
+## Edit signature description dialog
+
+pdfjs-editor-edit-signature-dialog-title = Изменить описание
