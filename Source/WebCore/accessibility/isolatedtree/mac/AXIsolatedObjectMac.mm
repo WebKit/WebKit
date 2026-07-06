@@ -283,6 +283,32 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
         return { };
     }
 
+    if (std::optional stitchGroup = stitchGroupIfRepresentative()) {
+        // A stitch representative's text is the concatenation of its members, so its
+        // range must span the first through last member with text runs, like the
+        // main-thread AccessibilityObject::simpleRange().
+        RefPtr<AXIsolatedObject> firstMember;
+        RefPtr<AXIsolatedObject> lastMember;
+        unsigned lastMemberLength = 0;
+        for (AXID memberID : stitchGroup->members()) {
+            RefPtr member = tree().objectForID(memberID);
+            if (!member || member->isAXHidden())
+                continue;
+            const auto* runs = member->textRuns();
+            if (!runs)
+                continue;
+            unsigned length = runs->totalLength();
+            if (!length)
+                continue;
+            if (!firstMember)
+                firstMember = member;
+            lastMember = member;
+            lastMemberLength = length;
+        }
+        if (firstMember && lastMember)
+            return { AXTextMarker { *firstMember, 0 }, AXTextMarker { *lastMember, lastMemberLength } };
+    }
+
     // This object doesn't have text content of its own. Create a range pointing to the first and last
     // text positions of our descendants. We can do this by stopping text marker traversal when we try
     // to move to our sibling. For example, getting textMarkerRange() for {ID 1, Role Group}:
@@ -295,15 +321,6 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
     //
     // We would expect the returned range to be: {ID 2, offset 0} to {ID 4, offset 3}
     Ref stopAfterObject = *this;
-
-    if (std::optional stitchGroup = stitchGroupIfRepresentative()) {
-        for (auto axID = stitchGroup->members().rbegin(); axID != stitchGroup->members().rend(); ++axID) {
-            if (RefPtr lastGroupMember = tree().objectForID(*axID); lastGroupMember && !lastGroupMember->isAXHidden()) {
-                stopAfterObject = lastGroupMember.releaseNonNull();
-                break;
-            }
-        }
-    }
     std::optional<AXID> stopAtID = stopAfterObject->idOfNextSiblingIncludingIgnoredOrParent();
 
     auto thisMarker = AXTextMarker { *this, 0 };
@@ -314,6 +331,7 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
         // One or more of our descendants have text, so let's form a range from the first and last text positions.
         range = { WTF::move(startMarker), WTF::move(endMarker) };
     }
+
     return range;
 }
 

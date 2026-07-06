@@ -1,0 +1,31 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityTextStitchingEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="byline">By <strong>John Gruber</strong></p>
+
+<script>
+var output = "This test ensures AXTextMarkerRangeForUIElement spans the full text of a stitch-group representative, rather than collapsing to its first run.\n\n";
+
+if (window.accessibilityController) {
+    // "By " and the bold "John Gruber" are stitched into a single StaticText. Its
+    // text marker range must cover the whole stitched string, not just the first
+    // run "By " (rdar://problem regression: textMarkerRange() derived its endpoint
+    // from a topology-dependent tree traversal instead of the stitch member list).
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var stitchedText = accessibilityController.accessibleElementById("byline").childAtIndex(0);
+    var range = webArea.textMarkerRangeForElement(stitchedText);
+    var rangeString = webArea.stringForTextMarkerRange(range);
+
+    output += expect("rangeString", "'By John Gruber'");
+    output += expect("webArea.textMarkerRangeLength(range)", "14");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
