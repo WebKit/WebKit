@@ -270,10 +270,12 @@ void ExtensionCapabilityGranter::setMediaCapabilityActive(MediaCapability& capab
         switch (kind) {
         case MediaCapability::Kind::MediaPlayback:
         case MediaCapability::Kind::CameraAndMicCapture:
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (isActive)
                 [platformMediaEnvironment activateWithError:&error];
             else
                 [platformMediaEnvironment suspendWithError:&error];
+ALLOW_DEPRECATED_DECLARATIONS_END
             break;
 
         case MediaCapability::Kind::DisplayCapture:
