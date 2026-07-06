@@ -6,7 +6,7 @@
 ## Main toolbar buttons (tooltips and alt text for images)
 
 pdfjs-previous-button =
-    .title = Pagjine precedente
+    .title = Pagjine di prime
 pdfjs-previous-button-label = Indaûr
 pdfjs-next-button =
     .title = Prossime pagjine
@@ -51,12 +51,6 @@ pdfjs-download-button-label = Discjame
 pdfjs-bookmark-button =
     .title = Pagjine corinte (mostre URL de pagjine atuâl)
 pdfjs-bookmark-button-label = Pagjine corinte
-# Used in Firefox for Android.
-pdfjs-open-in-app-button =
-    .title = Vierç te aplicazion
-# Used in Firefox for Android.
-# Length of the translation matters since we are in a mobile context, with limited screen estate.
-pdfjs-open-in-app-button-label = Vierç te aplicazion
 
 ##  Secondary toolbar and context menu
 
@@ -111,13 +105,13 @@ pdfjs-document-properties-button-label = Proprietâts dal document…
 pdfjs-document-properties-file-name = Non dal file:
 pdfjs-document-properties-file-size = Dimension dal file:
 # Variables:
-#   $size_kb (Number) - the PDF file size in kilobytes
-#   $size_b (Number) - the PDF file size in bytes
-pdfjs-document-properties-kb = { $size_kb } KB ({ $size_b } bytes)
+#   $kb (Number) - the PDF file size in kilobytes
+#   $b (Number) - the PDF file size in bytes
+pdfjs-document-properties-size-kb = { NUMBER($kb, maximumSignificantDigits: 3) } KB ({ $b } bytes)
 # Variables:
-#   $size_mb (Number) - the PDF file size in megabytes
-#   $size_b (Number) - the PDF file size in bytes
-pdfjs-document-properties-mb = { $size_mb } MB ({ $size_b } bytes)
+#   $mb (Number) - the PDF file size in megabytes
+#   $b (Number) - the PDF file size in bytes
+pdfjs-document-properties-size-mb = { NUMBER($mb, maximumSignificantDigits: 3) } MB ({ $b } bytes)
 pdfjs-document-properties-title = Titul:
 pdfjs-document-properties-author = Autôr:
 pdfjs-document-properties-subject = Ogjet:
@@ -125,9 +119,8 @@ pdfjs-document-properties-keywords = Peraulis clâf:
 pdfjs-document-properties-creation-date = Date di creazion:
 pdfjs-document-properties-modification-date = Date di modifiche:
 # Variables:
-#   $date (Date) - the creation/modification date of the PDF file
-#   $time (Time) - the creation/modification time of the PDF file
-pdfjs-document-properties-date-string = { $date }, { $time }
+#   $dateObj (Date) - the creation/modification date and time of the PDF file
+pdfjs-document-properties-date-time-string = { DATETIME($dateObj, dateStyle: "short", timeStyle: "medium") }
 pdfjs-document-properties-creator = Creatôr
 pdfjs-document-properties-producer = Gjeneradôr PDF:
 pdfjs-document-properties-version = Version PDF:
@@ -270,10 +263,6 @@ pdfjs-rendering-error = Al è vignût fûr un erôr tal realizâ la visualizazio
 
 ## Annotations
 
-# Variables:
-#   $date (Date) - the modification date of the annotation
-#   $time (Time) - the modification time of the annotation
-pdfjs-annotation-date-string = { $date }, { $time }
 # .alt: This is used as a tooltip.
 # Variables:
 #   $type (String) - an annotation type from a list defined in the PDF spec
@@ -281,6 +270,9 @@ pdfjs-annotation-date-string = { $date }, { $time }
 # Some common types are e.g.: "Check", "Text", "Comment", "Note"
 pdfjs-text-annotation-type =
     .alt = [Anotazion { $type }]
+# Variables:
+#   $dateObj (Date) - the modification date and time of the annotation
+pdfjs-annotation-date-time-string = { DATETIME($dateObj, dateStyle: "short", timeStyle: "medium") }
 
 ## Password
 
@@ -294,9 +286,13 @@ pdfjs-web-fonts-disabled = I caratars dal Web a son disativâts: Impussibil dopr
 
 pdfjs-editor-free-text-button =
     .title = Test
+pdfjs-editor-color-picker-free-text-input =
+    .title = Cambie colôr dal test
 pdfjs-editor-free-text-button-label = Test
 pdfjs-editor-ink-button =
     .title = Dissen
+pdfjs-editor-color-picker-ink-input =
+    .title = Cambie colôr dal dissen
 pdfjs-editor-ink-button-label = Dissen
 pdfjs-editor-stamp-button =
     .title = Zonte o modifiche imagjins
@@ -304,12 +300,37 @@ pdfjs-editor-stamp-button-label = Zonte o modifiche imagjins
 pdfjs-editor-highlight-button =
     .title = Evidenzie
 pdfjs-editor-highlight-button-label = Evidenzie
-pdfjs-highlight-floating-button =
-    .title = Evidenzie
 pdfjs-highlight-floating-button1 =
     .title = Evidenzie
     .aria-label = Evidenzie
 pdfjs-highlight-floating-button-label = Evidenzie
+pdfjs-comment-floating-button =
+    .title = Comente
+    .aria-label = Comente
+pdfjs-comment-floating-button-label = Comente
+pdfjs-editor-comment-button =
+    .title = Comente
+    .aria-label = Comente
+pdfjs-editor-comment-button-label = Comente
+pdfjs-editor-signature-button =
+    .title = Zonte firme
+pdfjs-editor-signature-button-label = Zonte firme
+
+## Default editor aria labels
+
+# “Highlight” is a noun, the string is used on the editor for highlights.
+pdfjs-editor-highlight-editor =
+    .aria-label = Modifiche evidenziazions
+# “Drawing” is a noun, the string is used on the editor for drawings.
+pdfjs-editor-ink-editor =
+    .aria-label = Modifiche dissens
+# Used when a signature editor is selected/hovered.
+# Variables:
+#   $description (String) - a string describing/labeling the signature.
+pdfjs-editor-signature-editor1 =
+    .aria-description = Editôr firmis: { $description }
+pdfjs-editor-stamp-editor =
+    .aria-label = Modifiche imagjins
 
 ## Remove button for the various kind of editor.
 
@@ -321,6 +342,8 @@ pdfjs-editor-remove-stamp-button =
     .title = Gjave imagjin
 pdfjs-editor-remove-highlight-button =
     .title = Gjave evidenziazion
+pdfjs-editor-remove-signature-button =
+    .title = Gjave firme
 
 ##
 
@@ -337,19 +360,41 @@ pdfjs-editor-stamp-add-image-button-label = Zonte imagjin
 pdfjs-editor-free-highlight-thickness-input = Spessôr
 pdfjs-editor-free-highlight-thickness-title =
     .title = Modifiche il spessôr de selezion pai elements che no son testuâi
-pdfjs-free-text =
+pdfjs-editor-add-signature-container =
+    .aria-label = Controi firme e firmis salvadis
+pdfjs-editor-signature-add-signature-button =
+    .title = Zonte gnove firme
+pdfjs-editor-signature-add-signature-button-label = Zonte gnove firme
+# Used on the button to use an already saved signature.
+# Variables:
+#   $description (String) - a string describing/labeling the signature.
+pdfjs-editor-add-saved-signature-button =
+    .title = Firme salvade: { $description }
+# .default-content is used as a placeholder in an empty text editor.
+pdfjs-free-text2 =
     .aria-label = Editôr di test
-pdfjs-free-text-default-content = Scomence a scrivi…
-pdfjs-ink =
-    .aria-label = Editôr dissens
-pdfjs-ink-canvas =
-    .aria-label = Imagjin creade dal utent
+    .default-content = Scomence a scrivi…
+# Used to show how many comments are present in the pdf file.
+# Variables:
+#   $count (Number) - the number of comments.
+pdfjs-editor-comments-sidebar-title =
+    { $count ->
+        [one] Coment
+       *[other] Coments
+    }
+pdfjs-editor-comments-sidebar-close-button =
+    .title = Siere la sbare laterâl
+    .aria-label = Siere la sbare laterâl
+pdfjs-editor-comments-sidebar-close-button-label = Siere la sbare laterâl
+# Instructional copy to add a comment by selecting text or an annotations.
+pdfjs-editor-comments-sidebar-no-comments1 = Âstu cjatât alc di interessant? Evidenzilu e lasse un coment.
+pdfjs-editor-comments-sidebar-no-comments-link = Plui informazions
 
 ## Alt-text dialog
 
-# Alternative text (alt text) helps when people can't see the image.
 pdfjs-editor-alt-text-button-label = Test alternatîf
-pdfjs-editor-alt-text-edit-button-label = Modifiche test alternatîf
+pdfjs-editor-alt-text-edit-button =
+    .aria-label = Modifiche test alternatîf
 pdfjs-editor-alt-text-dialog-label = Sielç une opzion
 pdfjs-editor-alt-text-dialog-description = Il test alternatîf (“alt text”) al jude cuant che lis personis no puedin viodi la imagjin o cuant che la imagjine no ven cjariade.
 pdfjs-editor-alt-text-add-description-label = Zonte une descrizion
@@ -362,18 +407,29 @@ pdfjs-editor-alt-text-decorative-tooltip = Segnade come decorative
 # .placeholder: This is a placeholder for the alt text input area
 pdfjs-editor-alt-text-textarea =
     .placeholder = Par esempli, “Un zovin si sente a taule par mangjâ”
+# Alternative text (alt text) helps when people can't see the image.
+pdfjs-editor-alt-text-button =
+    .aria-label = Test alternatîf
 
 ## Editor resizers
 ## This is used in an aria label to help to understand the role of the resizer.
 
-pdfjs-editor-resizer-label-top-left = Cjanton in alt a çampe — ridimensione
-pdfjs-editor-resizer-label-top-middle = Bande superiôr tal mieç — ridimensione
-pdfjs-editor-resizer-label-top-right = Cjanton in alt a diestre — ridimensione
-pdfjs-editor-resizer-label-middle-right = Bande diestre tal mieç — ridimensione
-pdfjs-editor-resizer-label-bottom-right = Cjanton in bas a diestre — ridimensione
-pdfjs-editor-resizer-label-bottom-middle = Bande inferiôr tal mieç — ridimensione
-pdfjs-editor-resizer-label-bottom-left = Cjanton in bas a çampe — ridimensione
-pdfjs-editor-resizer-label-middle-left = Bande di çampe tal mieç — ridimensione
+pdfjs-editor-resizer-top-left =
+    .aria-label = Cjanton in alt a çampe — ridimensione
+pdfjs-editor-resizer-top-middle =
+    .aria-label = Bande superiôr tal mieç — ridimensione
+pdfjs-editor-resizer-top-right =
+    .aria-label = Cjanton in alt a diestre — ridimensione
+pdfjs-editor-resizer-middle-right =
+    .aria-label = Bande diestre tal mieç — ridimensione
+pdfjs-editor-resizer-bottom-right =
+    .aria-label = Cjanton in bas a diestre — ridimensione
+pdfjs-editor-resizer-bottom-middle =
+    .aria-label = Bande inferiôr tal mieç — ridimensione
+pdfjs-editor-resizer-bottom-left =
+    .aria-label = Cjanton in bas a çampe — ridimensione
+pdfjs-editor-resizer-middle-left =
+    .aria-label = Bande di çampe tal mieç — ridimensione
 
 ## Color picker
 
@@ -400,3 +456,193 @@ pdfjs-editor-colorpicker-red =
 pdfjs-editor-highlight-show-all-button-label = Mostre dut
 pdfjs-editor-highlight-show-all-button =
     .title = Mostre dut
+
+## New alt-text dialog
+## Group note for entire feature: Alternative text (alt text) helps when people can't see the image. This feature includes a tool to create alt text automatically using an AI model that works locally on the user's device to preserve privacy.
+
+# Modal header positioned above a text box where users can edit the alt text.
+pdfjs-editor-new-alt-text-dialog-edit-label = Modifiche test alternatîf (descrizion de imagjin)
+# Modal header positioned above a text box where users can add the alt text.
+pdfjs-editor-new-alt-text-dialog-add-label = Zonte test alternatîf (descrizion de imagjin)
+pdfjs-editor-new-alt-text-textarea =
+    .placeholder = Scrîf achì la tô descrizion…
+# This text refers to the alt text box above this description. It offers a definition of alt text.
+pdfjs-editor-new-alt-text-description = Curte descrizion par personis che no rivin a viodi la imagjin, o che e ven mostrade cuant che no si rive a cjariâle.
+# This is a required legal disclaimer that refers to the automatically created text inside the alt text box above this text. It disappears if the text is edited by a human.
+pdfjs-editor-new-alt-text-disclaimer1 = Chest test alternatîf al è stât creât in automatic e al è pussibil che nol sedi cret.
+pdfjs-editor-new-alt-text-disclaimer-learn-more-url = Plui informazions
+pdfjs-editor-new-alt-text-create-automatically-button-label = Cree test alternatîf in automatic
+pdfjs-editor-new-alt-text-not-now-button = No cumò
+pdfjs-editor-new-alt-text-error-title = Impussibil creâ test alternatîf in automatic
+pdfjs-editor-new-alt-text-error-description = Scrîf il to test alternatîf o prove plui tart.
+pdfjs-editor-new-alt-text-error-close-button = Siere
+# Variables:
+#   $totalSize (Number) - the total size (in MB) of the AI model.
+#   $downloadedSize (Number) - the downloaded size (in MB) of the AI model.
+pdfjs-editor-new-alt-text-ai-model-downloading-progress = Daûr a discjariâil model IA pal test alternatîf ({ $downloadedSize } di { $totalSize } MB)
+    .aria-valuetext = Daûr a discjariâ il model IA pal test alternatîf ({ $downloadedSize } di { $totalSize } MB)
+# This is a button that users can click to edit the alt text they have already added.
+pdfjs-editor-new-alt-text-added-button =
+    .aria-label = Test alternatîf zontât
+pdfjs-editor-new-alt-text-added-button-label = Test alternatîf zontât
+# This is a button that users can click to open the alt text editor and add alt text when it is not present.
+pdfjs-editor-new-alt-text-missing-button =
+    .aria-label = Al mancje il test alternatîf
+pdfjs-editor-new-alt-text-missing-button-label = Al mancje il test alternatîf
+# This is a button that opens up the alt text modal where users should review the alt text that was automatically generated.
+pdfjs-editor-new-alt-text-to-review-button =
+    .aria-label = Verifiche test alternatîf
+pdfjs-editor-new-alt-text-to-review-button-label = Verifiche test alternatîf
+# "Created automatically" is a prefix that will be added to the beginning of any alt text that has been automatically generated. After the colon, the user will see/hear the actual alt text description. If the alt text has been edited by a human, this prefix will not appear.
+# Variables:
+#   $generatedAltText (String) - the generated alt-text.
+pdfjs-editor-new-alt-text-generated-alt-text-with-disclaimer = Creât in automatic: { $generatedAltText }
+
+## Image alt-text settings
+
+pdfjs-image-alt-text-settings-button =
+    .title = Impostazions test alternatîf pes imagjins
+pdfjs-image-alt-text-settings-button-label = Impostazions test alternatîf pes imagjins
+pdfjs-editor-alt-text-settings-dialog-label = Impostazions test alternatîf pes imagjins
+pdfjs-editor-alt-text-settings-automatic-title = Test alternatîf automatic
+pdfjs-editor-alt-text-settings-create-model-button-label = Cree test alternatîf in automatic
+pdfjs-editor-alt-text-settings-create-model-description = Al sugjerìs descrizions par judâ lis personis che no rivin a viodi la imagjin o cuant che la imagjin no ven cjariade.
+# Variables:
+#   $totalSize (Number) - the total size (in MB) of the AI model.
+pdfjs-editor-alt-text-settings-download-model-label = Model IA pal test alternatîf ({ $totalSize } MB)
+pdfjs-editor-alt-text-settings-ai-model-description = Al ven eseguît in locâl sul to dispositîf, cussì che i tiei dâts a restin riservâts. Al è necessari pe gjenerazion automatiche dal test alternatîf.
+pdfjs-editor-alt-text-settings-delete-model-button = Elimine
+pdfjs-editor-alt-text-settings-download-model-button = Discjame
+pdfjs-editor-alt-text-settings-downloading-model-button = Daûr a discjariâ…
+pdfjs-editor-alt-text-settings-editor-title = Modifiche test alternatîf
+pdfjs-editor-alt-text-settings-show-dialog-button-label = Mostre l'editôr dal test alternatîf a pene che e ven zontade une imagjin
+pdfjs-editor-alt-text-settings-show-dialog-description = Ti jude a sigurâti che dutis lis tôs imagjins a vedin il test alternatîf.
+pdfjs-editor-alt-text-settings-close-button = Siere
+
+## Accessibility labels (announced by screen readers) for objects added to the editor.
+
+pdfjs-editor-highlight-added-alert = Evidenziazion zontade
+pdfjs-editor-freetext-added-alert = Test zontât
+pdfjs-editor-ink-added-alert = Dissen zontât
+pdfjs-editor-stamp-added-alert = Imagjin zontade
+pdfjs-editor-signature-added-alert = Firme zontade
+
+## "Annotations removed" bar
+
+pdfjs-editor-undo-bar-message-highlight = Evidenziazion gjavade
+pdfjs-editor-undo-bar-message-freetext = Test gjavât
+pdfjs-editor-undo-bar-message-ink = Dissen gjavât
+pdfjs-editor-undo-bar-message-stamp = Imagjin gjavade
+pdfjs-editor-undo-bar-message-signature = Firme gjavade
+# Variables:
+#   $count (Number) - the number of removed annotations.
+pdfjs-editor-undo-bar-message-multiple =
+    { $count ->
+        [one] { $count } note gjavade
+       *[other] { $count } notis gjavadis
+    }
+pdfjs-editor-undo-bar-undo-button =
+    .title = Anule
+pdfjs-editor-undo-bar-undo-button-label = Anule
+pdfjs-editor-undo-bar-close-button =
+    .title = Siere
+pdfjs-editor-undo-bar-close-button-label = Siere
+
+## Add a signature dialog
+
+pdfjs-editor-add-signature-dialog-label = Chest barcon al permet al utent di creâ une firme di zontâ a un document PDF. L’utent al pues modificâ il non (che al vignarà doprât ancje come test alternatîf) e, se lu desidere, salvâ la firme par tornâ a doprâle un doman.
+pdfjs-editor-add-signature-dialog-title = Zonte une firme
+
+## Tab names
+
+# Type is a verb (you can type your name as signature)
+pdfjs-editor-add-signature-type-button = Scrîf
+    .title = Scrîf
+# Draw is a verb (you can draw your signature)
+pdfjs-editor-add-signature-draw-button = Dissegne
+    .title = Dissegne
+pdfjs-editor-add-signature-image-button = Imagjin
+    .title = Imagjin
+
+## Tab panels
+
+pdfjs-editor-add-signature-type-input =
+    .aria-label = Scrîf la tô firme
+    .placeholder = Scrîf la tô firme
+pdfjs-editor-add-signature-draw-placeholder = Dissegne la tô firme
+pdfjs-editor-add-signature-draw-thickness-range-label = Spessôr
+# Variables:
+#   $thickness (Number) - the thickness (in pixels) of the line used to draw a signature.
+pdfjs-editor-add-signature-draw-thickness-range =
+    .title = Spessôr de tresse: { $thickness }
+pdfjs-editor-add-signature-image-placeholder = Strissine un file achì par cjariâlu
+pdfjs-editor-add-signature-image-browse-link =
+    { PLATFORM() ->
+        [macos] Opûr sielç i files imagjin
+       *[other] Opûr sgarfe pai files imagjin
+    }
+
+## Controls
+
+pdfjs-editor-add-signature-description-label = Descrizion (test alternatîf)
+pdfjs-editor-add-signature-description-input =
+    .title = Descrizion (test alternatîf)
+pdfjs-editor-add-signature-description-default-when-drawing = Firme
+pdfjs-editor-add-signature-clear-button-label = Nete firme
+pdfjs-editor-add-signature-clear-button =
+    .title = Nete firme
+pdfjs-editor-add-signature-save-checkbox = Salve firme
+pdfjs-editor-add-signature-save-warning-message = Tu sês rivât/rivade al limit di 5 firmis salvadis. Gjave une  par salvânt une altre.
+pdfjs-editor-add-signature-image-upload-error-title = Impussibil cjariâ la imagjin
+pdfjs-editor-add-signature-image-upload-error-description = Controle la conession di rêt o prove cuntune altre imagjin.
+pdfjs-editor-add-signature-image-no-data-error-title = Impussibil convertî cheste imagjin intune firme
+pdfjs-editor-add-signature-image-no-data-error-description = Prove a cjariâ une altre imagjin.
+pdfjs-editor-add-signature-error-close-button = Siere
+
+## Dialog buttons
+
+pdfjs-editor-add-signature-cancel-button = Anule
+pdfjs-editor-add-signature-add-button = Zonte
+pdfjs-editor-edit-signature-update-button = Inzorne
+
+## Comment popup
+
+pdfjs-editor-edit-comment-popup-button-label = Modifiche coment
+pdfjs-editor-edit-comment-popup-button =
+    .title = Modifiche coment
+pdfjs-editor-delete-comment-popup-button-label = Gjave coment
+pdfjs-editor-delete-comment-popup-button =
+    .title = Gjave coment
+pdfjs-show-comment-button =
+    .title = Mostre coment
+
+##  Edit a comment dialog
+
+# An existing comment is edited
+pdfjs-editor-edit-comment-dialog-title-when-editing = Modifiche coment
+pdfjs-editor-edit-comment-dialog-save-button-when-editing = Inzorne
+# No existing comment
+pdfjs-editor-edit-comment-dialog-title-when-adding = Zonte coment
+pdfjs-editor-edit-comment-dialog-save-button-when-adding = Zonte
+pdfjs-editor-edit-comment-dialog-text-input =
+    .placeholder = Scomence a scrivi…
+pdfjs-editor-edit-comment-dialog-cancel-button = Anule
+
+## Edit a comment button in the editor toolbar
+
+pdfjs-editor-add-comment-button =
+    .title = Zonte coment
+
+## Main menu for adding/removing signatures
+
+pdfjs-editor-delete-signature-button1 =
+    .title = Gjave firme salvade
+pdfjs-editor-delete-signature-button-label1 = Gjave firme salvade
+
+## Editor toolbar
+
+pdfjs-editor-add-signature-edit-button-label = Modifiche descrizion
+
+## Edit signature description dialog
+
+pdfjs-editor-edit-signature-dialog-title = Modifiche descrizion
