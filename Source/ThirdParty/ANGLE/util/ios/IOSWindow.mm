@@ -48,3 +48,12 @@ OSWindow *OSWindow::New(void * /*nativeDisplay*/)
 {
     return new IOSWindow;
 }
+
+// static
+std::string IOSWindow::GetResourcePath()
+{
+    NSString *resourcePath = [[NSBundle mainBundle] resourcePath];
+    if (!resourcePath)
+        return {};
+    return [resourcePath UTF8String];
+}

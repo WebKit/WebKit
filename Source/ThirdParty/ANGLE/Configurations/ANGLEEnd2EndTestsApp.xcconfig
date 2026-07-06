@@ -1,4 +1,4 @@
-// Copyright (C) 2025 Apple Inc. All rights reserved.
+// Copyright (C) 2026 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -23,15 +23,36 @@
 
 #include "BaseTarget.xcconfig"
 
-PRODUCT_NAME = ANGLEEnd2EndTests
+PRODUCT_NAME = ANGLEEnd2EndTestsApp;
+PRODUCT_BUNDLE_IDENTIFIER = org.webkit.$(PRODUCT_NAME:rfc1034identifier);
 
+SKIP_INSTALL[sdk=macosx*] = YES;
+
+WRAPPER_EXTENSION = app;
+INFOPLIST_FILE = $(SRCROOT)/WebKit/ANGLEEnd2EndTestsAppInfo.plist;
+TARGETED_DEVICE_FAMILY = 1,2,3,4,7;
+
+// Same compile environment as ANGLEEnd2EndTests.xcconfig.
 ALTERNATE_HEADER_SEARCH_PATHS = $(ALTERNATE_HEADER_SEARCH_PATHS_$(SDK_VARIANT));
 ALTERNATE_HEADER_SEARCH_PATHS_iosmac = $(BUILT_PRODUCTS_DIR)$(WK_ALTERNATE_FRAMEWORKS_DIR)/usr/local/include
 
 HEADER_SEARCH_PATHS = $(ALTERNATE_HEADER_SEARCH_PATHS) ${BUILT_PRODUCTS_DIR}/usr/local/include $(ANGLE_HEADER_PATH_PREFIX)/src/tests/ $(inherited);
 GCC_PREPROCESSOR_DEFINITIONS = EGL_EGLEXT_PROTOTYPES=1 GL_GLES_PROTOTYPES=1 GL_GLEXT_PROTOTYPES=1 ANGLE_EGL_LIBRARY_NAME=\"\" ANGLE_GLESV2_LIBRARY_NAME=\"\" ANGLE_MESA_EGL_LIBRARY_NAME=\"mesa-libEGL\" ANGLE_MESA_GLESV2_LIBRARY_NAME=\"mesa-libGLESv2\" ANGLE_VULKAN_SECONDARIES_EGL_LIBRARY_NAME=\"vk-libEGL\" ANGLE_VULKAN_SECONDARIES_GLESV2_LIBRARY_NAME=\"vk-libGLESv2\" $(inherited);
 
-ANGLE_OTHER_LDFLAGS = -framework AppKit -framework QuartzCore -framework CoreGraphics -framework Foundation -framework IOSurface -framework Metal -framework Cocoa -framework IOKit -lz;
+// Use ios_main (in util/ios/ios_main.mm, already linked via libutils.a) as the
+// binary entry point so UIKit is initialized before the gtest main runs.
+// Mirrors angle_root/util/ios/ios_main.mm wiring in upstream gni/angle.gni.
+ANGLE_OTHER_LDFLAGS = -framework UIKit -framework QuartzCore -framework CoreGraphics -framework Foundation -framework IOSurface -framework Metal $(ANGLE_OTHER_LDFLAGS_$(WK_PLATFORM_NAME)) -lz -Wl,-e,_ios_main;
+ANGLE_OTHER_LDFLAGS_maccatalyst = -framework IOKit;
+
+// Disable the Xcode 16+ debug-dylib stub-executor pattern. The stub's entry is
+// fixed and ignores OTHER_LDFLAGS=-e, which would silently strand UIKit init.
+ENABLE_DEBUG_DYLIB = NO;
+
+CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*] = Configurations/ANGLEEnd2EndTestsApp-iOS-simulator.entitlements;
+CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]        = Configurations/ANGLEEnd2EndTestsApp-iOS.entitlements;
+CODE_SIGN_ENTITLEMENTS[sdk=appletv*]         = Configurations/ANGLEEnd2EndTestsApp-iOS.entitlements;
+CODE_SIGN_ENTITLEMENTS[sdk=xr*]              = Configurations/ANGLEEnd2EndTestsApp-iOS.entitlements;
 
 WARNING_CFLAGS = $(inherited) -Wno-global-constructors;
 GCC_WARN_64_TO_32_BIT_CONVERSION = NO;

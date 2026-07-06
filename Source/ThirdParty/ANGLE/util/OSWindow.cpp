@@ -22,6 +22,10 @@
 #    include "util/android/AndroidWindow.h"
 #endif  // defined(ANGLE_PLATFORM_ANDROID)
 
+#if ANGLE_PLATFORM_IOS_FAMILY
+#    include "util/ios/IOSWindow.h"
+#endif  // ANGLE_PLATFORM_IOS_FAMILY
+
 #ifndef DEBUG_EVENTS
 #    define DEBUG_EVENTS 0
 #endif
@@ -468,7 +472,8 @@ bool FindTestDataPath(const char *searchPath, char *dataPathOut, size_t maxDataP
         AndroidWindow::GetApplicationDirectory() + "/chromium_tests_root"};
 #elif ANGLE_PLATFORM_IOS_FAMILY
     const std::string searchPaths[] = {GetExecutableDirectory(),
-                                       GetExecutableDirectory() + "/third_party/angle"};
+                                       GetExecutableDirectory() + "/third_party/angle",
+                                       IOSWindow::GetResourcePath()};
 #else
     const std::string searchPaths[] = {GetExecutableDirectory(),
                                        GetExecutableDirectory() + "/../..",
