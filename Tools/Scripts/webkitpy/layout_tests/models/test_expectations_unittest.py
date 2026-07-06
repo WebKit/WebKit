@@ -30,12 +30,16 @@
 import unittest
 
 from collections import OrderedDict
+from pyfakefs.fake_filesystem_unittest import TestCaseMixin
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.filesystem import FileSystem
 
 from webkitpy.layout_tests.models.test_configuration import *
 from webkitpy.layout_tests.models.test_expectations import *
 from webkitpy.layout_tests.models.test_configuration import *
+
+from webkitpy.port.test import TestPort, add_unit_tests_to_mock_filesystem
 
 from webkitcorepy import OutputCapture
 
@@ -830,3 +834,60 @@ class TestExpectationSerializationTests(unittest.TestCase):
         self.assert_round_trip('[ FOO ] bar [        BAZ ]  # Qux.', '[ FOO ] bar [ BAZ ] # Qux.')
         self.assert_round_trip('[ FOO ]       bar [    BAZ ]  # Qux.', '[ FOO ] bar [ BAZ ] # Qux.')
         self.assert_round_trip('[ FOO ]       bar     [    BAZ ]  # Qux.', '[ FOO ] bar [ BAZ ] # Qux.')
+
+
+class GeneratedVariantExistenceTests(unittest.TestCase, TestCaseMixin):
+    WPT_PREFIX = 'imported/w3c/web-platform-tests'
+
+    def setUp(self):
+        self.setUpPyfakefs()
+        host = MockHost(create_stub_repository_files=True, filesystem=FileSystem())
+        add_unit_tests_to_mock_filesystem(host.filesystem)
+        self.port = TestPort(host)
+        self.filesystem = host.filesystem
+        base = self.filesystem.join(self.port.layout_tests_dir(), self.WPT_PREFIX, 'foo')
+        self.filesystem.maybe_make_directory(base)
+        self.filesystem.write_text_file(
+            self.filesystem.join(base, 'basic.any.js'),
+            '// META: global=window,worker\ntest(() => {}, "pass");\n')
+        # Stub-backed variant: an on-disk .any.worker.html stub exists.
+        self.filesystem.write_text_file(
+            self.filesystem.join(base, 'basic.any.worker.html'), '<!-- stub -->')
+
+    def _parse(self, name):
+        parser = TestExpectationParser(self.port, [], allow_rebaseline_modifier=False)
+        line = parser._tokenize_line('TestExpectations', 'Bug(x) %s [ Failure ]' % name, 1)
+        parser._parse_line(line)
+        return line
+
+    def _exists(self, name):
+        return TestExpectationParser(
+            self.port, [], allow_rebaseline_modifier=False)._test_exists(name)
+
+    def test_stub_backed_variant_does_not_warn(self):
+        stub = self.WPT_PREFIX + '/foo/basic.any.worker.html'
+        self.assertNotIn('Path does not exist.', self._parse(stub).warnings)
+
+    def test_nonexistent_test_still_warns(self):
+        line = self._parse(self.WPT_PREFIX + '/foo/does-not-exist-xyz.html')
+        self.assertIn('Path does not exist.', line.warnings)
+
+    def test_disabled_by_rename_now_warns(self):
+        # The dead `-disabled` fallback is gone: a test present only as
+        # `<name>-disabled` on disk now warns (it was silently accepted before).
+        self.filesystem.write_text_file(
+            self.filesystem.join(self.port.layout_tests_dir(), 'renamed.html-disabled'), 'x')
+        self.assertIn('Path does not exist.', self._parse('renamed.html').warnings)
+
+    def test_filesystem_and_variant_fast_paths(self):
+        self.assertTrue(self._exists('passes'))
+        self.assertTrue(self._exists('passes/text.html'))
+        self.assertFalse(self._exists('passes/does_not_exist.html'))
+        self.assertTrue(self._exists('variant/variant.any.html?1-100'))
+        self.assertTrue(self._exists('variant/variant.any.html#frag'))
+        self.assertTrue(self._exists('variant/variant.any.html#frag?1-100'))
+        self.assertTrue(self._exists('variant/variant.any.html?a.b.c'))
+        self.assertTrue(self._exists('variant/variant.any.html#frag.name'))
+        self.assertTrue(self._exists('variant/variant.any.html?a.b#c.d'))
+        self.assertFalse(self._exists('passes/does_not_exist.html?variant'))
+        self.assertFalse(self._exists('passes/does_not_exist.html#frag'))
