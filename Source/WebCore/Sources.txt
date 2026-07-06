@@ -260,6 +260,7 @@ Modules/mediastream/MediaStreamTrackProcessor.cpp @cost:5
 Modules/mediastream/MediaTrackCapabilities.cpp
 Modules/mediastream/MediaTrackConstraints.cpp
 Modules/mediastream/NavigatorMediaDevices.cpp @cost:4
+Modules/mediastream/OverconstrainedError.cpp
 Modules/mediastream/OverconstrainedErrorEvent.cpp
 Modules/mediastream/PeerConnectionBackend.cpp @cost:5
 Modules/mediastream/RTCCertificate.cpp

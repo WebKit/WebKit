@@ -7791,6 +7791,7 @@
 		070363DE181A1CDC00C074A5 /* AVVideoCaptureSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVVideoCaptureSource.h; sourceTree = "<group>"; };
 		070363DF181A1CDC00C074A5 /* AVVideoCaptureSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVVideoCaptureSource.mm; sourceTree = "<group>"; };
 		0704A4031D6DE9F10086DCDB /* OverconstrainedError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OverconstrainedError.idl; sourceTree = "<group>"; };
+		0704A4041D6DE9F10086DCDB /* OverconstrainedError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OverconstrainedError.cpp; sourceTree = "<group>"; };
 		0704A4051D6DE9F10086DCDB /* OverconstrainedError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OverconstrainedError.h; sourceTree = "<group>"; };
 		0704A4091D6DFC690086DCDB /* JSOverconstrainedError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOverconstrainedError.cpp; sourceTree = "<group>"; };
 		0704A40A1D6DFC690086DCDB /* JSOverconstrainedError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOverconstrainedError.h; sourceTree = "<group>"; };
@@ -24088,6 +24089,7 @@
 				5EA725CC1ACABCB500EAD17B /* Navigator+MediaDevices.idl */,
 				5EA725CA1ACABCB500EAD17B /* NavigatorMediaDevices.cpp */,
 				5EA725CB1ACABCB500EAD17B /* NavigatorMediaDevices.h */,
+				0704A4041D6DE9F10086DCDB /* OverconstrainedError.cpp */,
 				0704A4051D6DE9F10086DCDB /* OverconstrainedError.h */,
 				0704A4031D6DE9F10086DCDB /* OverconstrainedError.idl */,
 				E3BF19E322AF2FA5009C9926 /* OverconstrainedErrorEvent.cpp */,

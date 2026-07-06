@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016, 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,15 +26,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://w3c.github.io/mediacapture-main/#dom-overconstrainederror
+#include "config.h"
+#include "OverconstrainedError.h"
 
-[
-    Conditional=MEDIA_STREAM,
-    Exposed=Window,
-    JSGenerateToNativeObject,
-    SkipVTableValidation
-] interface OverconstrainedError : DOMException {
-    constructor(DOMString constraint, optional DOMString message = "");
+#if ENABLE(MEDIA_STREAM)
 
-    readonly attribute DOMString constraint;
-};
+namespace WebCore {
+
+OverconstrainedError::OverconstrainedError(const String& constraint, const String& message)
+    : DOMException(0, "OverconstrainedError"_s, message, Type::OverconstrainedError)
+    , m_constraint(constraint)
+{
+}
+
+OverconstrainedError::OverconstrainedError(MediaConstraintType invalidConstraint, const String& message)
+    : DOMException(0, "OverconstrainedError"_s, message, Type::OverconstrainedError)
+    , m_invalidConstraint(invalidConstraint)
+{
+}
+
+String OverconstrainedError::constraint() const
+{
+    if (m_constraint.isNull())
+        m_constraint = convertToString(m_invalidConstraint);
+    return m_constraint;
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_STREAM)

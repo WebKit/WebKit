@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,13 +30,13 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "DOMException.h"
 #include "MediaConstraintType.h"
-#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class OverconstrainedError  : public RefCounted<OverconstrainedError> {
+class OverconstrainedError final : public DOMException {
 public:
     static Ref<OverconstrainedError> create(const String& constraint, const String& message)
     {
@@ -48,34 +48,19 @@ public:
     }
 
     String constraint() const;
-    String message() const { return m_message; }
-    String name() const { return "OverconstrainedError"_s; }
-
-protected:
-    OverconstrainedError(const String& constraint, const String& message)
-        : m_constraint(constraint)
-        , m_message(message)
-    {
-    }
-    OverconstrainedError(MediaConstraintType invalidConstraint, const String& message)
-        : m_invalidConstraint(invalidConstraint)
-        , m_message(message)
-    {
-    }
 
 private:
+    OverconstrainedError(const String& constraint, const String& message);
+    OverconstrainedError(MediaConstraintType invalidConstraint, const String& message);
+
     mutable String m_constraint;
-    MediaConstraintType m_invalidConstraint;
-    String m_message;
+    MediaConstraintType m_invalidConstraint { MediaConstraintType::Unknown };
 };
 
-inline String OverconstrainedError::constraint() const
-{
-    if (m_constraint.isNull())
-        m_constraint = convertToString(m_invalidConstraint);
-    return m_constraint;
-}
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::OverconstrainedError)
+    static bool isType(const WebCore::DOMException& exception) { return exception.type() == WebCore::DOMException::Type::OverconstrainedError; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif
