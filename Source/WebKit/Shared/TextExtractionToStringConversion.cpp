@@ -490,6 +490,7 @@ static FoldedTextResult foldForReplacement(const String& source)
         appendCodePoint(quoteFoldedView.substring(start, i - start), start);
     }
     sourceOffsetByFoldedIndex.append(quoteFolded.length());
+    ASSERT(sourceOffsetByFoldedIndex.size() == builder.length() + 1);
 
     return { builder.toString(), WTF::move(sourceOffsetByFoldedIndex) };
 }
@@ -497,6 +498,46 @@ static FoldedTextResult foldForReplacement(const String& source)
 String foldTextForReplacement(const String& source)
 {
     return foldForReplacement(source).text;
+}
+
+String applyReplacements(const String& text, const Vector<std::pair<String, String>>& replacementStrings)
+{
+    if (replacementStrings.isEmpty())
+        return text;
+
+    auto folded = foldForReplacement(text);
+    StringBuilder result;
+    result.reserveCapacity(text.length());
+    unsigned cursor = 0;
+    while (cursor < folded.text.length()) {
+        bool matched = false;
+        for (auto [foldedKey, replacement] : replacementStrings) {
+            if (foldedKey.isEmpty()) {
+                ASSERT_NOT_REACHED();
+                break;
+            }
+
+            if (foldedKey.length() > folded.text.length() - cursor)
+                continue;
+
+            if (StringView { folded.text }.substring(cursor, foldedKey.length()) != foldedKey)
+                continue;
+
+            result.append(replacement);
+            cursor += foldedKey.length();
+            matched = true;
+            break;
+        }
+
+        if (matched)
+            continue;
+
+        unsigned originalStart = folded.sourceOffsetByFoldedIndex[cursor];
+        unsigned originalEnd = folded.sourceOffsetByFoldedIndex[cursor + 1];
+        result.append(StringView { text }.substring(originalStart, originalEnd - originalStart));
+        ++cursor;
+    }
+    return result.toString();
 }
 
 class TextExtractionAggregator : public RefCounted<TextExtractionAggregator> {
@@ -716,38 +757,8 @@ public:
 
     void applyReplacements(String& text)
     {
-        if (m_options.replacementStrings.isEmpty())
-            return;
-
-        auto folded = foldForReplacement(text);
-        StringBuilder result;
-        result.reserveCapacity(text.length());
-        unsigned cursor = 0;
-        while (cursor < folded.text.length()) {
-            bool matched = false;
-            for (auto& [foldedKey, replacement] : m_options.replacementStrings) {
-                if (foldedKey.length() > folded.text.length() - cursor)
-                    continue;
-                if (StringView { folded.text }.substring(cursor, foldedKey.length()) != foldedKey)
-                    continue;
-
-                result.append(replacement);
-                cursor += foldedKey.length();
-                matched = true;
-                break;
-            }
-
-            if (matched)
-                continue;
-
-            unsigned originalStart = folded.sourceOffsetByFoldedIndex[cursor];
-            unsigned originalEnd = folded.sourceOffsetByFoldedIndex[cursor + 1];
-            result.append(StringView { text }.substring(originalStart, originalEnd - originalStart));
-            ++cursor;
-        }
-        text = result.toString();
+        text = WebKit::applyReplacements(text, m_options.replacementStrings);
     }
-
 
     void truncateTextByWordLimitIfNeeded(String& text, const Vector<CharacterRange>& linkCharacterRanges = { }, HasAdjacentLinkAfter hasAdjacentLinkAfter = HasAdjacentLinkAfter::No)
     {

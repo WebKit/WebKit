@@ -7306,6 +7306,8 @@ static RetainPtr<_WKTextExtractionResult> createEmptyTextExtractionResult()
     if (!_textExtractionURLCache)
         _textExtractionURLCache = WebKit::TextExtractionURLCache::create();
 
+    _lastTextExtractionReplacementStrings = extractReplacementStrings(configuration);
+
     [self _requestTextExtractionInternal:configuration completion:[
         startTime = MonotonicTime::now(),
         completionHandler = makeBlockPtr(completionHandler),
@@ -7321,7 +7323,7 @@ static RetainPtr<_WKTextExtractionResult> createEmptyTextExtractionResult()
         shortenURLs = configuration.shortenURLs,
         maxWordsPerParagraph = WTF::move(maxWordsPerParagraph),
         version,
-        replacementStrings = extractReplacementStrings(configuration),
+        replacementStrings = _lastTextExtractionReplacementStrings,
         outputFormat = textExtractionOutputFormat(configuration),
         endTextExtractionScope = WTF::move(endTextExtractionScope),
         origin = _page->pageLoadState().origin(),
@@ -8189,7 +8191,7 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
         auto description = WTF::move(result.description);
         auto stringsToValidate = WTF::move(result.stringsToValidate);
         auto valid = Box<bool>::create(true);
-        Ref aggregator = MainRunLoopCallbackAggregator::create([completionHandler = WTF::move(completionHandler), description, valid, staleNodeNote] {
+        Ref aggregator = MainRunLoopCallbackAggregator::create([completionHandler = WTF::move(completionHandler), description, valid, staleNodeNote, weakSelf, stringsToValidate] {
             if (!valid.get()) {
                 completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{
                     NSDebugDescriptionErrorKey: @"One or more strings failed validation."
@@ -8197,7 +8199,16 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
                 return;
             }
 
-            RetainPtr summary = description.createNSString();
+            String replacedDescription = description;
+            if (RetainPtr strongSelf = weakSelf.get(); strongSelf && !strongSelf->_lastTextExtractionReplacementStrings.isEmpty()) {
+                for (auto& string : stringsToValidate) {
+                    auto replaced = WebKit::applyReplacements(string, strongSelf->_lastTextExtractionReplacementStrings);
+                    if (replaced != string)
+                        replacedDescription = makeStringByReplacingAll(replacedDescription, string, replaced);
+                }
+            }
+
+            RetainPtr summary = replacedDescription.createNSString();
             if (!staleNodeNote.isEmpty())
                 summary = adoptNS([[NSString alloc] initWithFormat:@"%@ %@", summary.get(), staleNodeNote.createNSString().get()]);
             completionHandler(summary, nil);

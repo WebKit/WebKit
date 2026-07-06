@@ -131,4 +131,6 @@ std::optional<ExtractedNodeInfo> parseExtractedNodeInfo(StringView);
 
 String foldTextForReplacement(const String& source);
 
+String applyReplacements(const String& text, const Vector<std::pair<String, String>>& replacementStrings);
+
 } // namespace WebKit

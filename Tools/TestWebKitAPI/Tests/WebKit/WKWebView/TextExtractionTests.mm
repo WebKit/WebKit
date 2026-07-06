@@ -659,6 +659,38 @@ TEST(TextExtractionTests, ReplacementStringsDiacriticInsensitive)
     EXPECT_FALSE([debugText containsString:@"Zurich"]);
 }
 
+TEST(TextExtractionTests, ReplacementStringsAppliedToInteractionDescription)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:nil];
+    RetainPtr composeID = extractNodeIdentifier(debugText, @"Compose");
+
+    [webView synchronouslyGetDebugText:^{
+        RetainPtr replacementConfiguration = adoptNS([_WKTextExtractionConfiguration new]);
+        [replacementConfiguration setReplacementStrings:@{
+            @"FOX": @"cat",
+            @"compose a new message": @"[redacted subject]",
+        }];
+        return replacementConfiguration.autorelease();
+    }()];
+
+    NSError *error = nil;
+    RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [interaction setNodeIdentifier:composeID];
+    RetainPtr description = [interaction debugDescriptionInWebView:webView error:&error];
+    EXPECT_NULL(error);
+
+    EXPECT_TRUE([description containsString:@"[redacted subject]"]);
+    EXPECT_TRUE([description containsString:@"brown cat jumped over the lazy dog"]);
+    EXPECT_FALSE([description containsString:@"Compose a new message"]);
+    EXPECT_FALSE([description containsString:@"fox"]);
+}
+
 TEST(TextExtractionTests, VisibleTextOnly)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
