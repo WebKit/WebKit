@@ -23,7 +23,7 @@ PASS SVG Geometry Properties: getComputedStyle().width, <foreignObject> inline s
 PASS SVG Geometry Properties: getComputedStyle().width, <foreignObject> inline style (pixels)
 PASS SVG Geometry Properties: getComputedStyle().width, <foreignObject> inline style but "display: none"
 PASS SVG Geometry Properties: getComputedStyle().width, <svg> initial
-FAIL SVG Geometry Properties: getComputedStyle().width, <svg> presentation attribute assert_equals: presentation attribute expected "auto" but got "100px"
+PASS SVG Geometry Properties: getComputedStyle().width, <svg> presentation attribute
 PASS SVG Geometry Properties: getComputedStyle().width, <svg> inline style (auto)
 PASS SVG Geometry Properties: getComputedStyle().width, <svg> inline style (pixels)
 PASS SVG Geometry Properties: getComputedStyle().width, <svg> inline style (percentage)
@@ -34,7 +34,7 @@ PASS SVG Geometry Properties: getComputedStyle().width, <g> inline style (percen
 PASS SVG Geometry Properties: getComputedStyle().width, <g> inline style (auto)
 PASS SVG Geometry Properties: getComputedStyle().width, <g> inline style (pixels)
 PASS SVG Geometry Properties: getComputedStyle().width, <text> initial
-FAIL SVG Geometry Properties: getComputedStyle().width, <text> initial (with dummy attribute) assert_equals: initial (with dummy attribute) expected "auto" but got "100px"
+PASS SVG Geometry Properties: getComputedStyle().width, <text> initial (with dummy attribute)
 PASS SVG Geometry Properties: getComputedStyle().width, <text> inline style (percentage)
 PASS SVG Geometry Properties: getComputedStyle().width, <text> inline style (auto)
 PASS SVG Geometry Properties: getComputedStyle().width, <text> inline style (pixels)
