@@ -551,13 +551,29 @@ std::optional<RenderLayer::SVGRendererTransform> RenderLayer::computeRendererTra
     CheckedRef layerModelObject = downcast<RenderLayerModelObject>(rendererRef.get());
     TransformationMatrix transform;
     CheckedRef style = layerModelObject->style();
-    auto referenceBoxRect = layerModelObject->transformReferenceBoxRect(style);
 
-    // For non-layer renderers, undo the alignReferenceBox shift applied in transformReferenceBoxRect().
-    if (!rendererRef->hasSelfPaintingLayer() && rendererRef->isSVGLayerAwareRenderer())
-        referenceBoxRect.moveBy(layerModelObject->nominalSVGLayoutLocation());
+    // Fast path: a non-layer SVG renderer already caches 'transform' in m_localTransform.
+    // The only difference from the paint transform is the reference-box + nominal shift, which
+    // just moves the transform-origin, so the paint transform equals:
+    // translate(nominal) * m_localTransform * translate(-nominal).
+    bool isNonLayerSVG = !rendererRef->hasSelfPaintingLayer() && rendererRef->isSVGLayerAwareRenderer();
+    CheckedPtr useTransformRenderer = (isNonLayerSVG && !is<RenderSVGViewportContainer>(rendererRef.get()))
+        ? dynamicDowncast<RenderSVGModelObject>(rendererRef.get()) : nullptr;
 
-    layerModelObject->applyTransform(transform, style, referenceBoxRect, Style::TransformResolver::allTransformOperations);
+    if (useTransformRenderer) {
+        auto nominal = useTransformRenderer->nominalSVGLayoutLocation();
+        transform.translate(nominal.x().toFloat(), nominal.y().toFloat());
+        transform.multiply(TransformationMatrix(useTransformRenderer->localTransform()));
+        transform.translate(-nominal.x().toFloat(), -nominal.y().toFloat());
+    } else {
+        auto referenceBoxRect = layerModelObject->transformReferenceBoxRect(style);
+
+        // For non-layer renderers, undo the alignReferenceBox shift applied in transformReferenceBoxRect().
+        if (isNonLayerSVG)
+            referenceBoxRect.moveBy(layerModelObject->nominalSVGLayoutLocation());
+
+        layerModelObject->applyTransform(transform, style, referenceBoxRect, Style::TransformResolver::allTransformOperations);
+    }
 
     // For the outermost viewport container (anonymous child of RenderSVGRoot), apply the
     // content-box origin offset (border+padding).
