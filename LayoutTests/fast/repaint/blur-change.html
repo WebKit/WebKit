@@ -1,0 +1,58 @@
+<html>
+<head>
+    <style>
+        .box {
+            width: 100px;
+            height: 100px;
+            margin: 120px 100px;
+            background-color: silver;
+        }
+        
+        .box.bigtosmall {
+            filter: blur(30px);
+        }
+        
+        .box.smalltobig {
+            filter: blur(1px);
+        }
+        
+        body.changed .box.bigtosmall {
+            filter: blur(1px);
+        }
+
+        body.changed .box.smalltobig {
+            filter: blur(30px);
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        var layerTreeAsText;
+        window.addEventListener('load', async () => {
+            description("Test repaint rects when the drop-shadow filter property changes");
+            await UIHelper.renderingUpdate();
+
+            if (window.internals)
+                internals.startTrackingRepaints();
+            
+            await UIHelper.delayFor(1500);
+        
+            document.body.classList.add('changed');
+
+            if (window.internals) {
+                debug(window.internals.repaintRectsAsText());
+                internals.stopTrackingRepaints();
+            }
+
+            finishJSTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="box smalltobig"></div>
+    <div class="box bigtosmall"></div>
+
+    <div id="console"></div>
+</html>

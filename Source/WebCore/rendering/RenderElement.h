@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include <WebCore/BoxExtents.h>
 #include <WebCore/HitTestRequest.h>
 #include <WebCore/RenderObject.h>
 #include <WebCore/RenderPtr.h>
@@ -224,6 +225,8 @@ public:
     inline bool hasBackdropFilter() const; // Defined in RenderElementStyleInlines.h.
     inline bool hasBlendMode() const; // Defined in RenderElementStyleInlines.h.
     inline bool hasShapeOutside() const; // Defined in RenderElementStyleInlines.h.
+
+    IntBoxExtent filterOutsets() const;
 
 #if HAVE(CORE_MATERIAL)
     inline bool hasAppleVisualEffect() const; // Defined in RenderElementStyleInlines.h.

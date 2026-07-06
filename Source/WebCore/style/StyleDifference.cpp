@@ -71,9 +71,17 @@ public:
             if (&a.nonInheritedData() == &b.nonInheritedData())
                 return false;
 
-            if (a.nonInheritedData().miscData.ptr() != b.nonInheritedData().miscData.ptr()
-                && a.nonInheritedData().miscData->boxShadow != b.nonInheritedData().miscData->boxShadow)
-                return true;
+            if (a.nonInheritedData().miscData.ptr() != b.nonInheritedData().miscData.ptr()) {
+                if (a.nonInheritedData().miscData->boxShadow != b.nonInheritedData().miscData->boxShadow)
+                    return true;
+
+                if (a.nonInheritedData().miscData->filter.ptr() != b.nonInheritedData().miscData->filter.ptr()) {
+                    auto aOutsets = a.nonInheritedData().miscData->filter->filter.outsets();
+                    auto bOutsets = b.nonInheritedData().miscData->filter->filter.outsets();
+                    if (aOutsets != bOutsets)
+                        return true;
+                }
+            }
 
             if (a.nonInheritedData().backgroundData.ptr() != b.nonInheritedData().backgroundData.ptr()) {
                 auto aHasOutlineInVisualOverflow = a.hasOutlineInVisualOverflow();

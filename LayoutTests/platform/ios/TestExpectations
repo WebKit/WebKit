@@ -4744,6 +4744,7 @@ imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-functi
 imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-repeating-linear-gradient.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-repeating-radial-gradient.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-mask-large.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-003.html [ Pass ImageOnlyFailure ]
 
 http/tests/site-isolation/mouse-events/ [ Skip ]
 webkit.org/b/257904 http/tests/site-isolation/draw-after-navigation.html [ Skip ]

@@ -1,0 +1,13 @@
+Test repaint rects when a box with drop-shadow changes size
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+(repaint rects
+  (rect 192 192 206 156)
+)
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

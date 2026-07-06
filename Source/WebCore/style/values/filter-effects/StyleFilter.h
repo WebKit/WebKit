@@ -79,7 +79,7 @@ struct Filter : ListOrNone<FilterValueList> {
     bool hasReferenceFilter() const;
     bool isReferenceFilter() const;
 
-    IntOutsets outsets() const;
+    std::optional<IntOutsets> outsets() const;
 
     enum class PlatformConversionAllowsCurrentColor : bool { No, Yes };
 };

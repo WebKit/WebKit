@@ -79,9 +79,10 @@ bool Filter::hasFilterThatShouldBeRestrictedBySecurityOrigin() const
     return std::ranges::any_of(*this, [](auto& op) { return op->shouldBeRestrictedBySecurityOrigin(); });
 }
 
-IntOutsets Filter::outsets() const
+std::optional<IntOutsets> Filter::outsets() const
 {
     IntOutsets totalOutsets;
+    bool haveReferenceFilter = false;
     for (auto& value : *this) {
         Ref operation = value.value;
         switch (operation->type()) {
@@ -109,12 +110,16 @@ IntOutsets Filter::outsets() const
             break;
         }
         case FilterOperation::Type::Reference:
-            ASSERT_NOT_REACHED();
+            haveReferenceFilter = true;
             break;
         default:
             break;
         }
     }
+
+    if (haveReferenceFilter)
+        return { };
+
     return totalOutsets;
 }
 
