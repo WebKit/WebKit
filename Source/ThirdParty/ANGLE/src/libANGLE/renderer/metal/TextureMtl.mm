@@ -2753,7 +2753,7 @@ angle::Result TextureMtl::copySubTextureImpl(const gl::Context *context,
     ContextMtl *contextMtl = mtl::GetImpl(context);
     TextureMtl *sourceMtl  = mtl::GetImpl(source);
 
-    const ImageDefinitionMtl &imageDef = getImageDefinition(sourceIndex);
+    const ImageDefinitionMtl &imageDef = getImageDefinition(index);
     ANGLE_CHECK_ASSERT(contextMtl, imageDef.image && imageDef.image->valid());
     const ImageDefinitionMtl &sourceImageDef = sourceMtl->getImageDefinition(sourceIndex);
     ANGLE_CHECK_ASSERT(contextMtl, sourceImageDef.image && sourceImageDef.image->valid());
