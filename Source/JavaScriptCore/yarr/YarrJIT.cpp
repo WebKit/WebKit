@@ -1757,7 +1757,7 @@ class YarrGenerator final : public YarrJITInfo {
         else {
             // For reading Unicode characters, use the standard resultReg so we can call the standard tryReadUnicodeChar()
             // helper instead of emitting an inlined version.
-            readCharacter(op.m_checkedOffset - term->inputPosition, character, patternIndex);
+            readCharacter(0, character, patternIndex);
             m_jit.move(character, patternCharacter);
         }
 #else
