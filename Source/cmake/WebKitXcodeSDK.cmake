@@ -102,20 +102,45 @@ function(WEBKIT_RESOLVE_TOOL OUTPUT_VAR _tool)
     endif ()
 endfunction()
 
-# Run Source/${PROJECT}/Scripts/process-entitlements.sh against an executable
-# target and ad-hoc codesign it with the resulting entitlements. Mirrors the
-# Xcode build's "Process Entitlements" build phase plus the signing step.
+# Ad-hoc codesign a target with entitlements, mirroring the Xcode build. For
+# MACOSX_BUNDLE targets the whole .app bundle is signed; otherwise the target
+# executable. Two modes select where the entitlements come from:
 #
-# Usage:
 #   WEBKIT_PROCESS_ENTITLEMENTS(target PROJECT name [PRODUCT_NAME name])
+#       Generate entitlements at build time by running
+#       Source/<PROJECT>/Scripts/process-entitlements.sh, mirroring Xcode's
+#       "Process Entitlements" build phase. PROJECT names the directory under
+#       Source/ containing the script (e.g. JavaScriptCore, WebKit).
+#       PRODUCT_NAME defaults to the CMake target name; set it explicitly when
+#       the script's dispatcher keys off a different name.
 #
-# PROJECT names the directory under Source/ containing Scripts/process-entitlements.sh
-# (e.g. JavaScriptCore, WebKit). PRODUCT_NAME defaults to the CMake target name;
-# set it explicitly when the script's dispatcher keys off a different name.
+#   WEBKIT_PROCESS_ENTITLEMENTS(target ENTITLEMENTS path)
+#       Sign with a static, checked-in entitlements file, mirroring Xcode's
+#       CODE_SIGN_ENTITLEMENTS setting (e.g. MiniBrowser).
 function(WEBKIT_PROCESS_ENTITLEMENTS _target)
-    cmake_parse_arguments(_arg "" "PROJECT;PRODUCT_NAME" "" ${ARGN})
+    cmake_parse_arguments(_arg "" "PROJECT;PRODUCT_NAME;ENTITLEMENTS" "" ${ARGN})
+    if (_arg_PROJECT AND _arg_ENTITLEMENTS)
+        message(FATAL_ERROR "WEBKIT_PROCESS_ENTITLEMENTS(${_target}): PROJECT and ENTITLEMENTS are mutually exclusive")
+    endif ()
+
+    # Sign the .app bundle for bundled targets, otherwise the executable.
+    get_target_property(_is_bundle ${_target} MACOSX_BUNDLE)
+    if (_is_bundle)
+        set(_sign_path $<TARGET_BUNDLE_DIR:${_target}>)
+    else ()
+        set(_sign_path $<TARGET_FILE:${_target}>)
+    endif ()
+
+    if (_arg_ENTITLEMENTS)
+        add_custom_command(TARGET ${_target} POST_BUILD
+            COMMAND codesign --force --sign - --entitlements ${_arg_ENTITLEMENTS} ${_sign_path}
+            VERBATIM
+        )
+        return()
+    endif ()
+
     if (NOT _arg_PROJECT)
-        message(FATAL_ERROR "WEBKIT_PROCESS_ENTITLEMENTS(${_target}): PROJECT is required")
+        message(FATAL_ERROR "WEBKIT_PROCESS_ENTITLEMENTS(${_target}): PROJECT or ENTITLEMENTS is required")
     endif ()
     if (NOT _arg_PRODUCT_NAME)
         set(_arg_PRODUCT_NAME ${_target})
@@ -127,7 +152,7 @@ function(WEBKIT_PROCESS_ENTITLEMENTS _target)
             WK_PLATFORM_NAME=${WEBKIT_SDK_NAME}
             PRODUCT_NAME=${_arg_PRODUCT_NAME}
             ${CMAKE_SOURCE_DIR}/Source/${_arg_PROJECT}/Scripts/process-entitlements.sh
-        COMMAND codesign --force --sign - --entitlements ${_xcent} $<TARGET_FILE:${_target}>
+        COMMAND codesign --force --sign - --entitlements ${_xcent} ${_sign_path}
         VERBATIM
     )
 endfunction()
