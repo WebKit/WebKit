@@ -132,7 +132,7 @@ AnchorScrollAdjuster::AnchorScrollAdjuster(RenderBox& anchored, const RenderBoxM
     if (!m_needsYAdjustment) {
         m_needsYAdjustment = containingWritingMode.isHorizontal()
             ? style.alignSelf().isAnchorCenter()
-            : style.alignSelf().isAnchorCenter();
+            : style.justifySelf().isAnchorCenter();
     }
 
     m_isHidden = style.isForceHidden();
