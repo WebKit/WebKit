@@ -99,6 +99,8 @@ NS_SWIFT_UI_ACTOR
 
 - (void)setUpPanGestureRecognizer;
 
++ (NSString *)loggingDescriptionForGestureRecognizer:(nullable NSGestureRecognizer *)gestureRecognizer;
+
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)

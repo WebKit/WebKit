@@ -29,6 +29,7 @@ import AppKit
 import AppKit_Private.NSPanGestureRecognizer_Private
 private import CxxStdlib
 private import WebCore_Private
+import struct Swift.String
 
 final class WKPanGestureRecognizer: NSPanGestureRecognizer {
     private weak var webView: WKWebView?
@@ -98,6 +99,39 @@ extension WKAppKitGestureController {
         panGestureRecognizer.name = "WKPanGesture"
 
         self.panGestureRecognizer = panGestureRecognizer
+    }
+
+    @objc(loggingDescriptionForGestureRecognizer:)
+    class func loggingDescription(for gestureRecognizer: NSGestureRecognizer?) -> String {
+        guard let gestureRecognizer else {
+            return "nil"
+        }
+
+        var parts: [String] = []
+        parts.append("\(type(of: gestureRecognizer)): \(UInt(bitPattern: ObjectIdentifier(self)))")
+
+        if let name = gestureRecognizer.name {
+            parts.append("name = \(name)")
+        }
+
+        parts.append("state = \(gestureRecognizer.state.name)")
+
+        return "<\(parts.joined(separator: "; "))>"
+    }
+}
+
+extension NSGestureRecognizer.State {
+    fileprivate var name: String {
+        switch self {
+        case .began: "Began"
+        case .possible: "Possible"
+        case .changed: "Changed"
+        case .ended: "Ended"
+        case .cancelled: "Cancelled"
+        case .failed: "Failed"
+        @unknown default:
+            fatalError()
+        }
     }
 }
 
