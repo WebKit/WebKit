@@ -80,6 +80,7 @@ static ExceptionOr<IntersectionObserverMarginBox> parseMargin(String& margin, co
     auto parserContext = CSSParserContext { HTMLStandardMode };
     auto parserState = CSS::PropertyParserState {
         .context = parserContext,
+        .absoluteLengthUnitsOnly = true
     };
 
     CSSTokenizer tokenizer(margin);
@@ -90,30 +91,15 @@ static ExceptionOr<IntersectionObserverMarginBox> parseMargin(String& margin, co
         return IntersectionObserverMarginBox { IntersectionObserverMarginEdge::Dimension { 0 } };
 
     auto consumeEdge = [&] -> ExceptionOr<IntersectionObserverMarginEdge> {
-        auto parsedValue = MetaConsumer<CSS::LengthPercentage<CSS::All, float>>::consume(tokenRange, parserState);
+        auto parsedValue = MetaConsumer<CSS::LengthPercentageRaw<CSS::All, float>>::consume(tokenRange, parserState);
 
-        if (!parsedValue || parsedValue->isCalc())
-            return Exception { ExceptionCode::SyntaxError, makeString("Failed to construct 'IntersectionObserver': "_s, marginName, " must be specified in pixels or percent."_s) };
+        if (!parsedValue)
+            return Exception { ExceptionCode::SyntaxError, makeString("Failed to construct 'IntersectionObserver': "_s, marginName, " must be specified as an absolute length or a percentage."_s) };
 
-        auto raw = parsedValue->raw();
-        return CSS::switchOnUnitType(raw->unit,
-            [&](CSS::PercentageUnit) -> ExceptionOr<IntersectionObserverMarginEdge> {
-                return { IntersectionObserverMarginEdge::Percentage {
-                    Style::toStyle(CSS::PercentageRaw<CSS::All, float> { raw->value }, NoConversionDataRequiredToken { }).value
-                } };
-            },
-            [&](CSS::LengthUnit lengthUnit) -> ExceptionOr<IntersectionObserverMarginEdge> {
-                // FIXME: This should support all absolute length units, not just px.
-                // Spec states: "Similar to the CSS margin property, this is a string of 1-4 components, each either an *absolute length* or a percentage."
-                // https://w3c.github.io/IntersectionObserver/#dom-intersectionobserverinit-rootmargin
-                if (lengthUnit == CSS::LengthUnit::Px) {
-                    return { IntersectionObserverMarginEdge::Dimension {
-                        Style::toStyle(CSS::LengthRaw<CSS::All, float> { lengthUnit, raw->value }, NoConversionDataRequiredToken { }).unresolvedValue()
-                    } };
-                }
-                return Exception { ExceptionCode::SyntaxError, makeString("Failed to construct 'IntersectionObserver': "_s, marginName, " must be specified in pixels or percent."_s) };
-            }
-        );
+        // Due to setting the parser state's `absoluteLengthUnitsOnly` to true, no units requiring conversion data should be present.
+        ASSERT(!conversionToCanonicalUnitRequiresConversionData(parsedValue->unit));
+
+        return Style::toStyle(*parsedValue, NoConversionDataRequiredToken { });
     };
 
     auto edge1 = consumeEdge();

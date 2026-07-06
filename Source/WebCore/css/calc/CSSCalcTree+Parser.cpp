@@ -667,7 +667,13 @@ static std::optional<Random::SharingFixed> consumeOptionalRandomSharingFixed(CSS
 
     // Use a non-property parsing state for the fixed number value to disconnect it from the current parse.
     // FIXME: Add a mechanism to pass along the depth count when doing this so that we can limit stack usage.
-    auto numberParsingState = CSS::PropertyParserState { .context = state.propertyParserState.context, .pool = state.propertyParserState.pool };
+    // FIXME: This should probably maintain the `cssRandomFunctionCount` state from the current state to allow for random() functions nested in the <number> or should document why this is not necessary.
+    auto numberParsingState = CSS::PropertyParserState {
+        .context = state.propertyParserState.context,
+        .pool = state.propertyParserState.pool,
+        .absoluteLengthUnitsOnly = state.propertyParserState.absoluteLengthUnitsOnly
+    };
+
     auto number = CSSPropertyParserHelpers::MetaConsumer<CSS::Number<CSS::ClosedUnitRange>>::consume(tokens, numberParsingState);
     if (!number)
         return { };
@@ -1683,8 +1689,11 @@ std::optional<TypedChild> parseCalcKeyword(const CSSParserToken& token, ParserSt
         auto child = Symbol { token.id(), *unit };
         auto type = Type::determineType(*unit);
 
-        if (conversionToCanonicalUnitRequiresConversionData(*unit))
+        if (conversionToCanonicalUnitRequiresConversionData(*unit)) {
+            if (state.propertyParserState.absoluteLengthUnitsOnly)
+                return std::nullopt;
             state.requiresConversionData = true;
+        }
 
         if (auto* simplificationOptions = state.simplificationOptions) {
             if (auto replacement = simplify(child, *simplificationOptions))
@@ -1726,8 +1735,11 @@ std::optional<TypedChild> parseCalcDimension(const CSSParserToken& token, Parser
     auto child = makeNumeric(token.numericValue(), token.unitType());
     auto type = Type::determineType(token.unitType());
 
-    if (conversionToCanonicalUnitRequiresConversionData(token.unitType()))
+    if (conversionToCanonicalUnitRequiresConversionData(token.unitType())) {
+        if (state.propertyParserState.absoluteLengthUnitsOnly)
+            return std::nullopt;
         state.requiresConversionData = true;
+    }
 
     if (auto* simplificationOptions = state.simplificationOptions)
         return TypedChild { copyAndSimplify(WTF::move(child), *simplificationOptions), type };

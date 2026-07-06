@@ -45,6 +45,9 @@ struct PropertyParserState {
 
     // Count of CSS random() functions seen so far for the current property.
     unsigned cssRandomFunctionCount { 0 };
+
+    // Used by non-CSS users of the CSS parsers like `DOMMatrix` to limit <length> and <length-percentage> parsing to only absolute units.
+    bool absoluteLengthUnitsOnly { false };
 };
 
 } // namespace CSS

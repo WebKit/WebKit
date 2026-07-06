@@ -46,5 +46,9 @@ template<auto R, typename V> struct ConsumerDefinition<CSS::Number<R, V>> {
     using NumberToken = NumberConsumer<CSS::Number<R, V>, NumberValidator>;
 };
 
+template<auto R, typename V> struct ConsumerDefinition<CSS::NumberRaw<R, V>> {
+    using NumberToken = NumberConsumer<CSS::Number<R, V>, NumberValidator>;
+};
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

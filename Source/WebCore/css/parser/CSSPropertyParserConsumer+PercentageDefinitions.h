@@ -46,5 +46,9 @@ template<auto R, typename V> struct ConsumerDefinition<CSS::Percentage<R, V>> {
     using PercentageToken = PercentageConsumer<CSS::Percentage<R, V>, PercentageValidator>;
 };
 
+template<auto R, typename V> struct ConsumerDefinition<CSS::PercentageRaw<R, V>> {
+    using PercentageToken = PercentageConsumer<CSS::Percentage<R, V>, PercentageValidator>;
+};
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

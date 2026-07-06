@@ -50,5 +50,9 @@ template<auto R, typename V> struct ConsumerDefinition<CSS::Time<R, V>> {
     using DimensionToken = DimensionConsumer<CSS::Time<R, V>, TimeValidator>;
 };
 
+template<auto R, typename V> struct ConsumerDefinition<CSS::TimeRaw<R, V>> {
+    using DimensionToken = DimensionConsumer<CSS::Time<R, V>, TimeValidator>;
+};
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

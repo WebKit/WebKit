@@ -60,10 +60,13 @@ template<typename Primitive, typename Validator> struct NumberConsumerForInteger
     }
 };
 
-template<CSS::Range R, typename IntType>
-struct ConsumerDefinition<CSS::Integer<R, IntType>> {
-    using FunctionToken = FunctionConsumerForCalcValues<CSS::Integer<R, IntType>>;
-    using NumberToken = NumberConsumerForIntegerValues<CSS::Integer<R, IntType>, IntegerValidator>;
+template<auto R, typename V> struct ConsumerDefinition<CSS::Integer<R, V>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::Integer<R, V>>;
+    using NumberToken = NumberConsumerForIntegerValues<CSS::Integer<R, V>, IntegerValidator>;
+};
+
+template<auto R, typename V> struct ConsumerDefinition<CSS::IntegerRaw<R, V>> {
+    using NumberToken = NumberConsumerForIntegerValues<CSS::Integer<R, V>, IntegerValidator>;
 };
 
 } // namespace CSSPropertyParserHelpers

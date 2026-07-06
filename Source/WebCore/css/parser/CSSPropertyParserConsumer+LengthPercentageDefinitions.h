@@ -59,5 +59,11 @@ template<auto R, typename V> struct ConsumerDefinition<CSS::LengthPercentage<R, 
     using NumberToken = NumberConsumerForUnitlessValues<CSS::LengthPercentage<R, V>, LengthPercentageValidator, CSS::LengthUnit::Px>;
 };
 
+template<auto R, typename V> struct ConsumerDefinition<CSS::LengthPercentageRaw<R, V>> {
+    using DimensionToken = DimensionConsumer<CSS::LengthPercentage<R, V>, LengthPercentageValidator>;
+    using PercentageToken = PercentageConsumer<CSS::LengthPercentage<R, V>, LengthPercentageValidator>;
+    using NumberToken = NumberConsumerForUnitlessValues<CSS::LengthPercentage<R, V>, LengthPercentageValidator, CSS::LengthUnit::Px>;
+};
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

@@ -50,5 +50,9 @@ template<auto R, typename V> struct ConsumerDefinition<CSS::Resolution<R, V>> {
     using DimensionToken = DimensionConsumer<CSS::Resolution<R, V>, ResolutionValidator>;
 };
 
+template<auto R, typename V> struct ConsumerDefinition<CSS::ResolutionRaw<R, V>> {
+    using DimensionToken = DimensionConsumer<CSS::Resolution<R, V>, ResolutionValidator>;
+};
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

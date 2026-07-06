@@ -50,5 +50,9 @@ template<auto R, typename V> struct ConsumerDefinition<CSS::Frequency<R, V>> {
     using DimensionToken = DimensionConsumer<CSS::Frequency<R, V>, FrequencyValidator>;
 };
 
+template<auto R, typename V> struct ConsumerDefinition<CSS::FrequencyRaw<R, V>> {
+    using DimensionToken = DimensionConsumer<CSS::Frequency<R, V>, FrequencyValidator>;
+};
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

@@ -65,5 +65,10 @@ template<auto R, typename V> struct ConsumerDefinition<CSS::Angle<R, V>> {
     using NumberToken = NumberConsumerForUnitlessValues<CSS::Angle<R, V>, AngleValidator, CSS::AngleUnit::Deg>;
 };
 
+template<auto R, typename V> struct ConsumerDefinition<CSS::AngleRaw<R, V>> {
+    using DimensionToken = DimensionConsumer<CSS::Angle<R, V>, AngleValidator>;
+    using NumberToken = NumberConsumerForUnitlessValues<CSS::Angle<R, V>, AngleValidator, CSS::AngleUnit::Deg>;
+};
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

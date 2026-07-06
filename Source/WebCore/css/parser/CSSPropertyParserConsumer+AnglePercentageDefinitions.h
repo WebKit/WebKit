@@ -59,5 +59,11 @@ template<auto R, typename V> struct ConsumerDefinition<CSS::AnglePercentage<R, V
     using NumberToken = NumberConsumerForUnitlessValues<CSS::AnglePercentage<R, V>, AnglePercentageValidator, CSS::AngleUnit::Deg>;
 };
 
+template<auto R, typename V> struct ConsumerDefinition<CSS::AnglePercentageRaw<R, V>> {
+    using DimensionToken = DimensionConsumer<CSS::AnglePercentage<R, V>, AnglePercentageValidator>;
+    using PercentageToken = PercentageConsumer<CSS::AnglePercentage<R, V>, AnglePercentageValidator>;
+    using NumberToken = NumberConsumerForUnitlessValues<CSS::AnglePercentage<R, V>, AnglePercentageValidator, CSS::AngleUnit::Deg>;
+};
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

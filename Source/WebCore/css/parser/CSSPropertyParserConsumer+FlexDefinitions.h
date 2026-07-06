@@ -46,5 +46,9 @@ template<auto R, typename V> struct ConsumerDefinition<CSS::Flex<R, V>> {
     using DimensionToken = DimensionConsumer<CSS::Flex<R, V>, FlexValidator>;
 };
 
+template<auto R, typename V> struct ConsumerDefinition<CSS::FlexRaw<R, V>> {
+    using DimensionToken = DimensionConsumer<CSS::Flex<R, V>, FlexValidator>;
+};
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

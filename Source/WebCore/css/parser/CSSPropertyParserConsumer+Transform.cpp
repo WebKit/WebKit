@@ -418,7 +418,7 @@ std::optional<Style::Transform> parseTransformRaw(const String& string, const CS
     // Handle leading whitespace.
     range.consumeWhitespace();
 
-    auto state = CSS::PropertyParserState { .context = context };
+    auto state = CSS::PropertyParserState { .context = context, .absoluteLengthUnitsOnly = true };
     auto parsedValue = CSSPropertyParsing::consumeTransform(range, state);
     if (!parsedValue)
         return { };
@@ -432,8 +432,7 @@ std::optional<Style::Transform> parseTransformRaw(const String& string, const CS
     auto dummyStyle = Style::ComputedStyle::create();
     auto dummyState = Style::BuilderState::create(dummyStyle);
 
-    if (!parsedValue->canResolveDependenciesWithConversionData(dummyState->cssToLengthConversionData()))
-        return { };
+    ASSERT(parsedValue->canResolveDependenciesWithConversionData(dummyState->cssToLengthConversionData()));
 
     return Style::toStyleFromCSSValue<Style::Transform>(*CheckedPtr { dummyState.ptr() }, *parsedValue);
 }
