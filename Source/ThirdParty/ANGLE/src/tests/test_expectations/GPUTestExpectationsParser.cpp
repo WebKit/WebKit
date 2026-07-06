@@ -56,6 +56,7 @@ enum Token
     kConfigMacMojave,
     kConfigMac,
     kConfigIOS,
+    kConfigIOSSimulator,
     kConfigLinux,
     kConfigChromeOS,
     kConfigAndroid,
@@ -71,6 +72,7 @@ enum Token
     // build type
     kConfigRelease,
     kConfigDebug,
+    kConfigDebugLayers,
     // ANGLE renderer
     kConfigD3D9,
     kConfigD3D11,
@@ -187,6 +189,7 @@ constexpr TokenInfo kTokenData[kNumberOfTokens] = {
     {"mojave", GPUTestConfig::kConditionMacMojave},
     {"mac", GPUTestConfig::kConditionMac},
     {"ios", GPUTestConfig::kConditionIOS},
+    {"iossimulator", GPUTestConfig::kConditionIOSSimulator},
     {"linux", GPUTestConfig::kConditionLinux},
     {"chromeos",
      GPUTestConfig::kConditionNone},  // https://anglebug.com/42262032 CrOS not supported
@@ -201,6 +204,7 @@ constexpr TokenInfo kTokenData[kNumberOfTokens] = {
     {"samsung", GPUTestConfig::kConditionSamsung},
     {"release", GPUTestConfig::kConditionRelease},
     {"debug", GPUTestConfig::kConditionDebug},
+    {"debuglayers", GPUTestConfig::kConditionDebugLayers},
     {"d3d9", GPUTestConfig::kConditionD3D9},
     {"d3d11", GPUTestConfig::kConditionD3D11},
     {"opengl", GPUTestConfig::kConditionGLDesktop},
@@ -527,6 +531,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
             case kConfigMacMojave:
             case kConfigMac:
             case kConfigIOS:
+            case kConfigIOSSimulator:
             case kConfigLinux:
             case kConfigChromeOS:
             case kConfigAndroid:
@@ -540,6 +545,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
             case kConfigSamsung:
             case kConfigRelease:
             case kConfigDebug:
+            case kConfigDebugLayers:
             case kConfigD3D9:
             case kConfigD3D11:
             case kConfigGLDesktop:
