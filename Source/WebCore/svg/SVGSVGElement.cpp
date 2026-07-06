@@ -638,6 +638,18 @@ FloatRect SVGSVGElement::currentViewBoxRect() const
 
 FloatSize SVGSVGElement::currentViewportSizeExcludingZoom() const
 {
+    // The cache is only flushed from the LBSE renderers (RenderSVGRoot / RenderSVGViewportContainer),
+    // so only serve cached values when LBSE is active. The legacy engine always recomputes.
+    if (!document().settings().layerBasedSVGEngineEnabled())
+        return computeCurrentViewportSizeExcludingZoom();
+
+    if (!m_cachedViewportSizeExcludingZoom)
+        m_cachedViewportSizeExcludingZoom = computeCurrentViewportSizeExcludingZoom();
+    return *m_cachedViewportSizeExcludingZoom;
+}
+
+FloatSize SVGSVGElement::computeCurrentViewportSizeExcludingZoom() const
+{
     FloatSize viewportSize;
 
     if (renderer()) {

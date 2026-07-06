@@ -243,6 +243,10 @@ void RenderSVGRoot::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
+    // Drop the cached viewport size before any in-layout length/transform resolution reads it, so a
+    // resize-triggered relayout recomputes against the new content box rather than a stale value.
+    svgSVGElement().invalidateCachedViewportSizeExcludingZoom();
+
     // Arbitrary affine transforms are incompatible with RenderLayoutState.
     LayoutStateDisabler layoutStateDisabler(view().frameView().layoutContext());
 
@@ -268,6 +272,11 @@ void RenderSVGRoot::layout()
     addVisualEffectOverflow();
 
     invalidateBackgroundObscurationStatus();
+
+    // The viewport size (content box) is finalized - flush the cached value now so post-layout
+    // transform/length resolution recomputes it once instead of repeating the same computation
+    // whenver the view port size is queried.
+    svgSVGElement().invalidateCachedViewportSizeExcludingZoom();
 
     repainter.repaintAfterLayout();
     clearNeedsLayout();

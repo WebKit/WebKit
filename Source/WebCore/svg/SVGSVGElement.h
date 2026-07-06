@@ -108,6 +108,8 @@ public:
     bool hasIntrinsicDimensions() const;
 
     FloatSize currentViewportSizeExcludingZoom() const;
+    void invalidateCachedViewportSizeExcludingZoom() const { m_cachedViewportSizeExcludingZoom = std::nullopt; }
+
     FloatRect currentViewBoxRect() const;
 
     AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
@@ -147,6 +149,8 @@ private:
     RefPtr<LocalFrame> frameForCurrentScale() const;
     Ref<NodeList> collectIntersectionOrEnclosureList(SVGRect&, SVGElement*, bool (*checkFunction)(SVGElement&, SVGRect&));
 
+    FloatSize computeCurrentViewportSizeExcludingZoom() const;
+
     RefPtr<SVGViewElement> findViewAnchor(StringView fragmentIdentifier) const;
     SVGSVGElement* NODELETE findRootAnchor(const SVGViewElement*) const;
     SVGSVGElement* findRootAnchor(StringView) const;
@@ -158,6 +162,8 @@ private:
     String m_currentViewFragmentIdentifier;
 
     Ref<SVGPoint> m_currentTranslate { SVGPoint::create() };
+
+    mutable std::optional<FloatSize> m_cachedViewportSizeExcludingZoom;
 
     const Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
     const Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, SVGLengthMode::Height) };

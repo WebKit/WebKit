@@ -89,7 +89,11 @@ bool RenderSVGViewportContainer::updateLayoutSizeIfNeeded()
 {
     auto previousViewportSize = viewportSize();
     m_viewport = { computeViewportLocation(), computeViewportSize() };
-    return selfNeedsLayout() || previousViewportSize != viewportSize();
+    if (previousViewportSize != viewportSize()) {
+        svgSVGElement().invalidateCachedViewportSizeExcludingZoom();
+        return true;
+    }
+    return selfNeedsLayout();
 }
 
 bool RenderSVGViewportContainer::needsHasSVGTransformFlags() const
