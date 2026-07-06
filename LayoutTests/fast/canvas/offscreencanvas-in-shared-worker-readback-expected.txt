@@ -1,0 +1,3 @@
+
+PASS OffscreenCanvas draw + getImageData readback in a shared worker
+

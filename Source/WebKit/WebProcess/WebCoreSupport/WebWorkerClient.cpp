@@ -27,6 +27,7 @@
 #include "WebWorkerClient.h"
 
 #include "ImageBufferShareableBitmapBackend.h"
+#include "Logging.h"
 #include "ModelDowncastConvertToBackingContext.h"
 #include "RemoteGPUProxy.h"
 #include "RemoteImageBufferProxy.h"
@@ -34,6 +35,7 @@
 #include "WebGPUDowncastConvertToBackingContext.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/ImageBuffer.h>
 #include <WebCore/Page.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -103,7 +105,12 @@ RefPtr<ImageBuffer> GPUProcessWebWorkerClient::createImageBuffer(const FloatSize
         assertIsCurrent(*dispatcher);
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(purpose))
         return protect(ensureRenderingBackend())->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat);
+#if HAVE(IOSURFACE)
+    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "GPUProcessWebWorkerClient::createImageBuffer - not remoting (purpose=" << purpose << "); using unaccelerated CPU buffer to avoid in-process IOSurface");
+    return ImageBuffer::create(size, RenderingMode::Unaccelerated, purpose, resolutionScale, colorSpace, pixelFormat);
+#else
     return nullptr;
+#endif
 }
 
 #if ENABLE(WEBGL)

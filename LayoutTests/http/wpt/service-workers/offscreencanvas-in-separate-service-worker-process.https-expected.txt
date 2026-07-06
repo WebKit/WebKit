@@ -1,0 +1,4 @@
+
+PASS Setup service worker in a separate process
+PASS Page-less service worker OffscreenCanvas falls back to a CPU buffer when not remoted
+

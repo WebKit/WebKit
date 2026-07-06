@@ -93,6 +93,7 @@ private:
 
     RefPtr<WebCore::NativeImage> copyNativeImage() const final;
     RefPtr<WebCore::NativeImage> createNativeImageReference() const final;
+    bool isRemoteImageBufferProxy() const final { return true; }
     RefPtr<WebCore::NativeImage> sinkIntoNativeImage() final;
 
     RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread() final;

@@ -76,6 +76,8 @@ public:
     void NODELETE enableConsoleMessageReporting(ScriptExecutionContext&);
     void logReportedConsoleMessage(ScriptExecutionContext&, const String&);
 
+    String effectiveRenderingModeOfNewlyCreatedAcceleratedCanvasBuffer(ScriptExecutionContext&);
+
 private:
     ServiceWorkerInternals(ServiceWorkerGlobalScope&, ServiceWorkerIdentifier);
 

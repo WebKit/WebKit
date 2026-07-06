@@ -350,6 +350,11 @@ RefPtr<NativeImage> ImageBuffer::createNativeImageReference() const
     return nullptr;
 }
 
+bool ImageBuffer::isRemoteImageBufferProxy() const
+{
+    return false;
+}
+
 RefPtr<NativeImage> ImageBuffer::sinkIntoNativeImage()
 {
     if (auto* backend = ensureBackend())

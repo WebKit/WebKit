@@ -1,0 +1,49 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForCanvasRenderingEnabled=false ] -->
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+var activeWorker;
+
+promise_test(async (test) => {
+    assert_true(!!window.testRunner, "test requires testRunner");
+    assert_true(!!window.internals, "test requires window.internals");
+
+    testRunner.setUseSeparateServiceWorkerProcess(true);
+    await fetch("").then(() => { }, () => { }); // let the SW machinery reinitialize
+
+    const registration = await navigator.serviceWorker.register(
+        "offscreencanvas-in-separate-service-worker-process-worker.js", { scope: "" });
+    activeWorker = registration.active || registration.installing;
+    if (activeWorker.state === "activated")
+        return;
+    return new Promise(resolve => {
+        activeWorker.addEventListener("statechange", () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup service worker in a separate process");
+
+promise_test(async (test) => {
+    const promise = new Promise(resolve => {
+        navigator.serviceWorker.addEventListener("message", e => resolve(e.data), { once: true });
+    });
+    activeWorker.postMessage("RUN");
+    const result = await promise;
+
+    assert_equals(result.error, undefined, "worker ran the canvas workload without throwing");
+    assert_not_equals(result.pid, internals.processIdentifier, "service worker runs in a separate process");
+    // With canvas GPU-process rendering off, the page-less worker canvas must fall back to an unaccelerated CPU
+    // buffer, never a local IOSurface.
+    assert_equals(result.renderingMode, "unaccelerated", "page-less worker canvas falls back to a CPU buffer");
+    // Sanity: the readback produced correct pixels.
+    assert_array_equals(result.topLeft, [0, 255, 0, 255], "top-left pixel is the drawn green tile");
+    assert_array_equals(result.bottomRight, [255, 0, 0, 255], "bottom-right pixel is the red fill");
+}, "Page-less service worker OffscreenCanvas falls back to a CPU buffer when not remoted");
+</script>
+</body>
+</html>
