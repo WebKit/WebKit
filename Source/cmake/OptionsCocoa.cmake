@@ -86,7 +86,8 @@ add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-vfsoverlay ${_availabili
 unset(_availability_overlay_dir)
 unset(_availability_overlay_yaml)
 
-if (EXISTS "/usr/local/include/WebKitAdditions" AND NOT EXISTS "/usr/local/include/AppleFeatures/AppleFeatures.h")
+if (EXISTS "/usr/local/include/WebKitAdditions" AND NOT EXISTS "/usr/local/include/AppleFeatures/AppleFeatures.h"
+        AND NOT EXISTS "${CMAKE_OSX_SYSROOT}/usr/local/include/AppleFeatures/AppleFeatures.h")
     set(_apple_features_stub "${CMAKE_BINARY_DIR}/generated-stubs/AppleFeatures")
     file(MAKE_DIRECTORY "${_apple_features_stub}")
     file(CONFIGURE OUTPUT "${_apple_features_stub}/AppleFeatures.h" CONTENT
