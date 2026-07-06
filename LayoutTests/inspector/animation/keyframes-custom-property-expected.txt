@@ -1,0 +1,29 @@
+Tests that getting the keyframes of a CSS animation that animates a registered custom property does not crash. Bug 283981
+
+
+== Running test suite: Animation.CustomPropertyKeyframes
+-- Running test case: Animation.CustomPropertyKeyframes.NoCrash
+PASS: Animation created 'spin'.
+PASS: Animation type should be CSS Animation.
+iterationCount: 1
+iterationDuration: 10000
+timingFunction: "linear"
+playbackDirection: "normal"
+fillMode: "none"
+keyframes:
+[
+  {
+    "offset": 0,
+    "easing": "linear",
+    "style": "--angle: 0deg;"
+  },
+  {
+    "offset": 1,
+    "easing": "linear",
+    "style": "--angle: 360deg;"
+  }
+]
+
+PASS: Animation should have keyframes.
+PASS: Keyframes should include the animated custom property.
+

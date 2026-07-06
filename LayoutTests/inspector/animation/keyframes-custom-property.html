@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/lifecycle-utilities.js"></script>
+<style>
+@property --angle {
+    syntax: "<angle>";
+    initial-value: 0turn;
+    inherits: false;
+}
+
+@keyframes spin {
+    from { --angle: 0turn; }
+    to { --angle: 1turn; }
+}
+
+#target.active {
+    animation: spin 10s linear;
+}
+</style>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Animation.CustomPropertyKeyframes");
+
+    suite.addTestCase({
+        name: "Animation.CustomPropertyKeyframes.NoCrash",
+        description: "Getting the keyframes of a CSS animation that animates a registered custom property should not crash.",
+        async test() {
+            let [animation] = await Promise.all([
+                InspectorTest.AnimationLifecycleUtilities.awaitAnimationCreated(WI.Animation.Type.CSSAnimation),
+                InspectorTest.evaluateInPage(`document.getElementById("target").classList.add("active")`),
+            ]);
+
+            await animation.ensureEffect();
+
+            InspectorTest.expectNotEmpty(animation.keyframes, "Animation should have keyframes.");
+            InspectorTest.expectTrue(animation.keyframes.some((keyframe) => keyframe.style?.includes("--angle")), "Keyframes should include the animated custom property.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that getting the keyframes of a CSS animation that animates a registered custom property does not crash. <a href="https://webkit.org/b/283981">Bug 283981</a></p>
+<div id="target"></div>
+</body>
+</html>

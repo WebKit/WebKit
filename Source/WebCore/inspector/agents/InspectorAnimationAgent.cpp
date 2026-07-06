@@ -175,7 +175,7 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
                         stylePayloadBuilder.append(
                             customProperty,
                             ": "_s,
-                            computedStyleExtractor.customPropertyValueSerialization(customProperty, CSS::defaultSerializationContext())
+                            computedStyleExtractor.customPropertyValueSerializationInStyle(style, customProperty, CSS::defaultSerializationContext())
                         );
                     }
                 );
