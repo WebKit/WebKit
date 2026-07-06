@@ -579,7 +579,7 @@ void PannerNode::invalidateCachedPropertiesIfNecessary()
 {
     auto lastPosition = std::exchange(m_lastPosition, position());
     bool hasPositionChanged = m_lastPosition != lastPosition;
-    auto lastOrientation = std::exchange(m_lastOrientation, position());
+    auto lastOrientation = std::exchange(m_lastOrientation, orientation());
     bool hasOrientationChanged = m_lastOrientation != lastOrientation;
     auto& listener = this->listener();
 
