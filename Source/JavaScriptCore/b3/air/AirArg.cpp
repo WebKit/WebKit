@@ -116,14 +116,9 @@ unsigned Arg::jsHash() const
     case BigImm:
     case BitImm64:
     case FPImm64:
-        result += static_cast<unsigned>(m_offset);
-        result += static_cast<unsigned>(m_offset >> 32);
-        break;
     case FPImm128:
         result += static_cast<unsigned>(m_offset);
         result += static_cast<unsigned>(m_offset >> 32);
-        result += static_cast<unsigned>(m_additional);
-        result += static_cast<unsigned>(m_additional >> 32);
         break;
     case SimpleAddr:
         result += m_base.internalValue();

@@ -594,7 +594,7 @@ public:
         Arg result;
         result.m_kind = FPImm128;
         result.m_offset = value.u64x2[0];
-        result.m_additional = value.u64x2[0];
+        ASSERT(bitEquals(value, result.asV128()));
         return result;
     }
 
@@ -1510,6 +1510,7 @@ public:
         if (!isARM64() && !isX86_64())
             return false;
 
+        // This condition is important as we only hold FPImm128 which value.u64x2[0] == value.u64x2[1].
         WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         if (value.u64x2[0] == value.u64x2[1])
             return isValidFPImm64Form(value.u64x2[0]);
@@ -1729,7 +1730,7 @@ public:
         if constexpr (is32Bit())
             UNREACHABLE_FOR_PLATFORM();
         ASSERT(isFPImm128());
-        return v128_t(m_offset, m_additional);
+        return v128_t(m_offset, m_offset);
     }
 
     decltype(auto) asTrustedBigImm() const
@@ -1900,7 +1901,6 @@ public:
 
 private:
     int64_t m_offset { 0 };
-    int64_t m_additional { 0 };
     Kind m_kind { Invalid };
     MacroAssembler::Extend m_extend { MacroAssembler::Extend::None };
     JSC::SIMDInfo m_simdInfo;
