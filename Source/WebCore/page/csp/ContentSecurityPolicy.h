@@ -260,6 +260,7 @@ public:
     const HashAlgorithmSetCollection& hashesToReport() LIFETIME_BOUND;
 
     void setIsReportingToConsoleEnabled(bool value) { m_isReportingToConsoleEnabled = value; }
+    void setIsReportingEnabled(bool value) { m_isReportingEnabled = value; }
 
     // Captures the current JavaScript source location from the call stack.
     // Used to preserve source location across async boundaries for CSP violation reporting.
