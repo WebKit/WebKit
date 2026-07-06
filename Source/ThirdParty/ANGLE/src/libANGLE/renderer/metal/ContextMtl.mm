@@ -316,8 +316,9 @@ angle::Result ContextMtl::drawTriFanArraysWithBaseVertex(const gl::Context *cont
 
     ASSERT(!getState().isTransformFeedbackActiveUnpaused());
     bool isNoOp = false;
-    ANGLE_TRY(setupDraw(context, first, count, instances, gl::DrawElementsType::InvalidEnum,
-                        reinterpret_cast<const void *>(0), false, &isNoOp));
+    ANGLE_TRY(setupDraw(context, first, count, instances, baseInstance,
+                        gl::DrawElementsType::InvalidEnum, reinterpret_cast<const void *>(0), false,
+                        &isNoOp));
     if (!isNoOp)
     {
         // Draw with the zero starting index buffer, shift the vertex index using baseVertex
@@ -347,7 +348,7 @@ angle::Result ContextMtl::drawTriFanArraysLegacy(const gl::Context *context,
 
     ASSERT(!getState().isTransformFeedbackActiveUnpaused());
     bool isNoOp = false;
-    ANGLE_TRY(setupDraw(context, first, count, instances, gl::DrawElementsType::InvalidEnum,
+    ANGLE_TRY(setupDraw(context, first, count, instances, 0, gl::DrawElementsType::InvalidEnum,
                         reinterpret_cast<const void *>(0), false, &isNoOp));
     if (!isNoOp)
     {
@@ -411,8 +412,8 @@ angle::Result ContextMtl::drawLineLoopArrays(const gl::Context *context,
 
     ASSERT(!getState().isTransformFeedbackActiveUnpaused());
     bool isNoOp = false;
-    ANGLE_TRY(setupDraw(context, first, count, instances, gl::DrawElementsType::InvalidEnum,
-                        nullptr, false, &isNoOp));
+    ANGLE_TRY(setupDraw(context, first, count, instances, baseInstance,
+                        gl::DrawElementsType::InvalidEnum, nullptr, false, &isNoOp));
     if (!isNoOp)
     {
         if (baseInstance == 0)
@@ -481,8 +482,8 @@ angle::Result ContextMtl::drawArraysImpl(const gl::Context *context,
 #define DRAW_GENERIC_ARRAY(xfbPass)                                                                \
     {                                                                                              \
         bool isNoOp = false;                                                                       \
-        ANGLE_TRY(setupDraw(context, first, count, instances, gl::DrawElementsType::InvalidEnum,   \
-                            nullptr, xfbPass, &isNoOp));                                           \
+        ANGLE_TRY(setupDraw(context, first, count, instances, baseInstance,                        \
+                            gl::DrawElementsType::InvalidEnum, nullptr, xfbPass, &isNoOp));        \
         if (!isNoOp)                                                                               \
         {                                                                                          \
                                                                                                    \
@@ -571,7 +572,8 @@ angle::Result ContextMtl::drawTriFanElements(const gl::Context *context,
 
         ANGLE_TRY(mTriFanIndexBuffer.commit(this));
         bool isNoOp = false;
-        ANGLE_TRY(setupDraw(context, 0, count, instances, type, indices, false, &isNoOp));
+        ANGLE_TRY(
+            setupDraw(context, 0, count, instances, baseInstance, type, indices, false, &isNoOp));
         if (!isNoOp && genIndicesCount > 0)
         {
             if (baseVertex == 0 && baseInstance == 0)
@@ -642,7 +644,8 @@ angle::Result ContextMtl::drawLineLoopElements(const gl::Context *context,
 
         ANGLE_TRY(mLineLoopIndexBuffer.commit(this));
         bool isNoOp = false;
-        ANGLE_TRY(setupDraw(context, 0, count, instances, type, indices, false, &isNoOp));
+        ANGLE_TRY(
+            setupDraw(context, 0, count, instances, baseInstance, type, indices, false, &isNoOp));
         if (!isNoOp && genIndicesCount > 0)
         {
             if (baseVertex == 0 && baseInstance == 0)
@@ -693,8 +696,8 @@ angle::Result ContextMtl::drawArraysProvokingVertexImpl(const gl::Context *conte
     if (xfbPass)                                                                                   \
     {                                                                                              \
         bool isNoOp = false;                                                                       \
-        ANGLE_TRY(setupDraw(context, first, count, instances, gl::DrawElementsType::InvalidEnum,   \
-                            nullptr, xfbPass, &isNoOp));                                           \
+        ANGLE_TRY(setupDraw(context, first, count, instances, baseInstance,                        \
+                            gl::DrawElementsType::InvalidEnum, nullptr, xfbPass, &isNoOp));        \
         if (!isNoOp)                                                                               \
         {                                                                                          \
             MTLPrimitiveType mtlType = mtl::GetPrimitiveType(mode);                                \
@@ -720,8 +723,8 @@ angle::Result ContextMtl::drawArraysProvokingVertexImpl(const gl::Context *conte
     else                                                                                           \
     {                                                                                              \
         bool isNoOp = false;                                                                       \
-        ANGLE_TRY(setupDraw(context, first, count, instances, gl::DrawElementsType::InvalidEnum,   \
-                            nullptr, xfbPass, &isNoOp));                                           \
+        ANGLE_TRY(setupDraw(context, first, count, instances, baseInstance,                        \
+                            gl::DrawElementsType::InvalidEnum, nullptr, xfbPass, &isNoOp));        \
                                                                                                    \
         if (!isNoOp)                                                                               \
         {                                                                                          \
@@ -792,7 +795,8 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
         mState.isPrimitiveRestartEnabled(), &newMode, &drawCommands, &idxBuffer, &idxBufferOffset,
         &idxBufferType));
     bool isNoOp = false;
-    ANGLE_TRY(setupDraw(context, 0, count, instances, type, indices, false, &isNoOp));
+    ANGLE_TRY(
+        setupDraw(context, 0, count, instances, baseInstance, type, indices, false, &isNoOp));
     if (!isNoOp)
     {
         MTLPrimitiveType mtlType = mtl::GetPrimitiveType(newMode);
@@ -2464,13 +2468,14 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
                                     GLint firstVertex,
                                     GLsizei vertexOrIndexCount,
                                     GLsizei instances,
+                                    GLuint baseInstance,
                                     gl::DrawElementsType indexTypeOrNone,
                                     const void *indices,
                                     bool xfbPass,
                                     bool *isNoOp)
 {
-    ANGLE_TRY(setupDrawImpl(context, firstVertex, vertexOrIndexCount, instances, indexTypeOrNone,
-                            indices, xfbPass, isNoOp));
+    ANGLE_TRY(setupDrawImpl(context, firstVertex, vertexOrIndexCount, instances, baseInstance,
+                            indexTypeOrNone, indices, xfbPass, isNoOp));
     if (*isNoOp)
     {
         return angle::Result::Continue;
@@ -2481,7 +2486,7 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
         // pass state. This would happen for example when there is no more space in the uniform
         // buffers in the uniform buffer pool. The rendering would be flushed to free the uniform
         // buffer memory for new usage. In this case, re-run the setup.
-        ANGLE_TRY(setupDrawImpl(context, firstVertex, vertexOrIndexCount, instances,
+        ANGLE_TRY(setupDrawImpl(context, firstVertex, vertexOrIndexCount, instances, baseInstance,
                                 indexTypeOrNone, indices, xfbPass, isNoOp));
 
         if (*isNoOp)
@@ -2513,6 +2518,7 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
                                         GLint firstVertex,
                                         GLsizei vertexOrIndexCount,
                                         GLsizei instances,
+                                        GLuint baseInstance,
                                         gl::DrawElementsType indexTypeOrNone,
                                         const void *indices,
                                         bool xfbPass,
@@ -2526,7 +2532,8 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
     if (context->hasAnyActiveClientAttrib())
     {
         ANGLE_TRY(mVertexArray->updateClientAttribs(context, firstVertex, vertexOrIndexCount,
-                                                    instanceCount, indexTypeOrNone, indices));
+                                                    instanceCount, baseInstance, indexTypeOrNone,
+                                                    indices));
     }
 
     // This must be called before render command encoder is started.
