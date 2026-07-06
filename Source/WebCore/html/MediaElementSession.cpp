@@ -1586,7 +1586,7 @@ void MediaElementSession::updateMediaUsageIfChanged()
 #if ENABLE(FULLSCREEN_API)
     if (RefPtr documentFullscreen = document->fullscreenIfExists()) {
         if (RefPtr fullscreenElement = protect(document->fullscreen())->fullscreenElement())
-            isOutsideOfFullscreen = element->isDescendantOf(*fullscreenElement);
+            isOutsideOfFullscreen = !element->isDescendantOf(*fullscreenElement);
     }
 #endif
     bool isAudio = client().presentationType() == MediaType::Audio;

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src='media-file.js'></script>
+        <script src='video-test.js'></script>
+        <script>
+
+            let usage;
+
+            function enterFullscreen(element)
+            {
+                let changed = waitFor(document, 'webkitfullscreenchange');
+                runWithKeyDown(() => { element.webkitRequestFullscreen(); });
+                return changed;
+            }
+
+            function exitFullscreen()
+            {
+                let changed = waitFor(document, 'webkitfullscreenchange');
+                run('document.webkitExitFullscreen()');
+                return changed;
+            }
+
+            window.addEventListener('load', async event => {
+
+                if (!window.internals) {
+                    failTest(`<br>This test requires internals!`);
+                    return;
+                }
+
+                findMediaElement();
+                video.src = findMediaFile("video", "content/test");
+                await waitFor(video, 'canplaythrough');
+
+                consoleWrite("<br>** No element is fullscreen: video is not 'outside of fullscreen'.")
+                usage = internals.mediaUsageState(video);
+                testExpected('usage.outsideOfFullscreen', false);
+
+                consoleWrite("<br>** A sibling element is fullscreen: video is outside of fullscreen.")
+                await enterFullscreen(document.getElementById('sibling'));
+                usage = internals.mediaUsageState(video);
+                testExpected('usage.outsideOfFullscreen', true);
+                await exitFullscreen();
+
+                consoleWrite("<br>** The video's container is fullscreen: video is inside fullscreen.")
+                await enterFullscreen(document.getElementById('container'));
+                usage = internals.mediaUsageState(video);
+                testExpected('usage.outsideOfFullscreen', false);
+                await exitFullscreen();
+
+                endTest();
+            });
+
+        </script>
+    </head>
+    <body>
+        <div id="sibling">Sibling element that does not contain the video.</div>
+        <div id="container"><video controls></video></div>
+        <p>Test that MediaUsageInfo::outsideOfFullscreen reflects whether the media element is outside the fullscreen element.</p>
+    </body>
+</html>
