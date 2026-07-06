@@ -376,9 +376,9 @@ CSSParserToken::CSSParserToken(CSSParserTokenType type, char16_t c)
 CSSParserToken::CSSParserToken(CSSParserTokenType type, StringView value, BlockType blockType)
     : m_type(type)
     , m_blockType(blockType)
+    , m_id(-1)
 {
     initValueFromStringView(value);
-    m_id = -1;
 }
 
 CSSParserToken::CSSParserToken(double numericValue, NumericValueType numericValueType, NumericSign sign, StringView originalText)
