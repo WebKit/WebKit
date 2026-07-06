@@ -29,8 +29,11 @@
 #include <WebCore/HTMLNames.h>
 #include <WebCore/ICUSearcher.h>
 #include <WebCore/TextExtractionTypes.h>
+#include <wtf/CoroutineUtilities.h>
 #include <wtf/EnumSet.h>
 #include <wtf/JSONValues.h>
+#include <wtf/MainThread.h>
+#include <wtf/NativePromiseCoroutine.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -701,13 +704,14 @@ public:
 
     RefPtr<TextExtractionFilterPromise> filter(const String& text, const std::optional<FrameIdentifier>& frameIdentifier, const std::optional<NodeIdentifier>& identifier)
     {
+        assertIsMainThread();
         if (m_options.filterCallbacks.isEmpty())
             return nullptr;
 
         TextExtractionFilterPromise::Producer producer;
         Ref promise = producer.promise();
 
-        filterRecursive(text, frameIdentifier, identifier, 0, [producer = WTF::move(producer)](auto&& result) mutable {
+        filterRecursive(text, frameIdentifier, identifier, [producer = WTF::move(producer)](auto&& result) mutable {
             producer.settle(WTF::move(result));
         });
 
@@ -868,21 +872,20 @@ public:
     }
 
 private:
-    void filterRecursive(const String& originalText, const std::optional<FrameIdentifier>& frameIdentifier, const std::optional<NodeIdentifier>& identifier, size_t index, CompletionHandler<void(String&&)>&& completion)
+    Task filterRecursive(String originalText, std::optional<FrameIdentifier> frameIdentifier, std::optional<NodeIdentifier> identifier, CompletionHandler<void(String&&)>&& completion)
     {
-        if (index >= m_options.filterCallbacks.size())
-            return completion(String { originalText });
-
-        Ref promise = m_options.filterCallbacks[index](originalText, std::optional { frameIdentifier }, std::optional { identifier });
-        promise->whenSettled(RunLoop::mainSingleton(), [originalText, completion = WTF::move(completion), protectedThis = Ref { *this }, frameIdentifier, identifier, index](auto&& result) mutable {
+        Ref protectedThis { *this };
+        for (auto& filterCallback : m_options.filterCallbacks) {
+            auto result = co_await filterCallback(originalText, std::optional { frameIdentifier }, std::optional { identifier });
             if (originalText != result)
-                protectedThis->m_filteredOutAnyText = true;
-
-            if (!result)
-                return completion({ });
-
-            protectedThis->filterRecursive(WTF::move(*result), frameIdentifier, identifier, index + 1, WTF::move(completion));
-        });
+                m_filteredOutAnyText = true;
+            if (!result) {
+                completion({ });
+                co_return;
+            }
+            originalText = WTF::move(*result);
+        }
+        completion(WTF::move(originalText));
     }
 
     String stringForURL(const String& shortenedString, const URL& url, ExtractedURLType type)

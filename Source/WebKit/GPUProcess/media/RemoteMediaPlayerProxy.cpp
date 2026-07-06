@@ -83,6 +83,7 @@
 #endif
 
 #include <wtf/NativePromise.h>
+#include <wtf/NativePromiseCoroutine.h>
 
 namespace WebKit {
 
@@ -253,21 +254,17 @@ static MediaTimeUpdateData timeUpdateData(const MediaPlayer& player, MediaTime t
     };
 }
 
-void RemoteMediaPlayerProxy::seekToTarget(const WebCore::SeekTarget& target, CompletionHandler<void(Expected<WebCore::MediaTimeUpdateData, WebCore::PlatformMediaError>)>&& handler)
+Awaitable<Expected<WebCore::MediaTimeUpdateData, WebCore::PlatformMediaError>> RemoteMediaPlayerProxy::seekToTarget(const WebCore::SeekTarget& target)
 {
     ALWAYS_LOG(LOGIDENTIFIER, target);
-    protect(m_player)->seekToTarget(target)->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, handler = WTF::move(handler)](auto&& result) mutable {
-        if (!result) {
-            handler(makeUnexpected(result.error()));
-            return;
-        }
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis) {
-            handler(makeUnexpected(PlatformMediaError::Cancelled));
-            return;
-        }
-        handler(timeUpdateData(*protect(protectedThis->m_player), *result));
-    });
+    WeakPtr weakThis { *this };
+    auto result = co_await protect(m_player)->seekToTarget(target);
+    if (!result)
+        co_return makeUnexpected(result.error());
+    RefPtr protectedThis = weakThis.get();
+    if (!protectedThis)
+        co_return makeUnexpected(PlatformMediaError::Cancelled);
+    co_return timeUpdateData(*protect(protectedThis->m_player), *result);
 }
 
 void RemoteMediaPlayerProxy::setVolumeLocked(bool volumeLocked)
@@ -995,21 +992,16 @@ void RemoteMediaPlayerProxy::videoFrameForCurrentTimeIfChanged(CompletionHandler
     completionHandler(WTF::move(result), changed);
 }
 
-void RemoteMediaPlayerProxy::bitmapImageForCurrentTime(CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
+Awaitable<std::optional<WebCore::ShareableBitmap::Handle>> RemoteMediaPlayerProxy::bitmapImageForCurrentTime()
 {
     RefPtr player = m_player;
-    if (!player) {
-        completionHandler({ });
-        return;
-    }
+    if (!player)
+        co_return std::nullopt;
 
-    player->bitmapImageForCurrentTime()->whenSettled(RunLoop::mainSingleton(), [completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
-        if (!result) {
-            completionHandler({ });
-            return;
-        }
-        completionHandler((*result)->createHandle());
-    });
+    auto result = co_await player->bitmapImageForCurrentTime();
+    if (!result)
+        co_return std::nullopt;
+    co_return (*result)->createHandle();
 }
 
 void RemoteMediaPlayerProxy::setShouldDisableHDR(bool shouldDisable)

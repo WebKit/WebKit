@@ -53,6 +53,7 @@
 #include <WebCore/SharedTimebase.h>
 
 #include <wtf/LoggerHelper.h>
+#include <wtf/NativePromiseCoroutine.h>
 #if PLATFORM(COCOA)
 #include <wtf/MachSendRightAnnotated.h>
 #endif
@@ -268,17 +269,18 @@ void RemoteAudioVideoRendererProxyManager::removeTrack(RemoteAudioVideoRendererI
         renderer->removeTrack(trackIdentifier);
 }
 
-void RemoteAudioVideoRendererProxyManager::requestMediaDataWhenReady(RemoteAudioVideoRendererIdentifier identifier, TrackIdentifier trackIdentifier)
+Awaitable<void> RemoteAudioVideoRendererProxyManager::requestMediaDataWhenReady(RemoteAudioVideoRendererIdentifier identifier, TrackIdentifier trackIdentifier)
 {
     RefPtr renderer = rendererFor(identifier);
     if (!renderer)
-        return;
-    renderer->requestMediaDataWhenReady(trackIdentifier)->whenSettled(RunLoop::mainSingleton(), [identifier, trackIdentifier, weakThis = ThreadSafeWeakPtr { *this }](auto result) {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis || !result)
-            return;
-        protectedThis->publishAndSend(identifier, Messages::AudioVideoRendererRemoteMessageReceiver::ReadyForMoreMediaData(trackIdentifier));
-    });
+        co_return;
+
+    ThreadSafeWeakPtr weakThis { *this };
+    auto result = co_await renderer->requestMediaDataWhenReady(trackIdentifier);
+    RefPtr protectedThis = weakThis.get();
+    if (!protectedThis || !result)
+        co_return;
+    protectedThis->publishAndSend(identifier, Messages::AudioVideoRendererRemoteMessageReceiver::ReadyForMoreMediaData(trackIdentifier));
 }
 
 MediaSampleConverter& RemoteAudioVideoRendererProxyManager::converterFor(RendererContext& context, TrackIdentifier trackIdentifier)
@@ -311,13 +313,12 @@ void RemoteAudioVideoRendererProxyManager::enqueueSample(RemoteAudioVideoRendere
     completionHandler(false);
 }
 
-void RemoteAudioVideoRendererProxyManager::notifyTimeReachedAndStall(RemoteAudioVideoRendererIdentifier identifier, const MediaTime& time, CompletionHandler<void(WebCore::MediaTimePromise::Result&&)>&& completionHandler)
+Awaitable<WebCore::MediaTimePromise::Result> RemoteAudioVideoRendererProxyManager::notifyTimeReachedAndStall(RemoteAudioVideoRendererIdentifier identifier, MediaTime time)
 {
-    if (RefPtr renderer = rendererFor(identifier)) {
-        renderer->notifyTimeReachedAndStall(time)->whenSettled(RunLoop::mainSingleton(), WTF::move(completionHandler));
-        return;
-    }
-    completionHandler(makeUnexpected(PlatformMediaError::NotSupportedError));
+    RefPtr renderer = rendererFor(identifier);
+    if (!renderer)
+        co_return makeUnexpected(PlatformMediaError::NotSupportedError);
+    co_return co_await renderer->notifyTimeReachedAndStall(time);
 }
 
 void RemoteAudioVideoRendererProxyManager::cancelTimeReachedAction(RemoteAudioVideoRendererIdentifier identifier)
@@ -437,32 +438,30 @@ void RemoteAudioVideoRendererProxyManager::stall(RemoteAudioVideoRendererIdentif
     context.renderer->stall();
 }
 
-void RemoteAudioVideoRendererProxyManager::prepareToSeek(RemoteAudioVideoRendererIdentifier identifier, const MediaTime& seekTime, CompletionHandler<void(WebCore::MediaTimePromise::Result&&)>&& completionHandler)
+Awaitable<WebCore::MediaTimePromise::Result> RemoteAudioVideoRendererProxyManager::prepareToSeek(RemoteAudioVideoRendererIdentifier identifier, MediaTime seekTime)
 {
     RefPtr renderer = rendererFor(identifier);
-    if (!renderer) {
-        completionHandler(makeUnexpected(PlatformMediaError::NotSupportedError));
-        return;
-    }
-    renderer->prepareToSeek(seekTime)->whenSettled(RunLoop::mainSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, identifier, completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->publishAndSend(identifier, Messages::AudioVideoRendererRemoteMessageReceiver::StateUpdate(protectedThis->stateFor(identifier)));
-        completionHandler(WTF::move(result));
-    });
+    if (!renderer)
+        co_return makeUnexpected(PlatformMediaError::NotSupportedError);
+
+    ThreadSafeWeakPtr weakThis { *this };
+    auto result = co_await renderer->prepareToSeek(seekTime);
+    if (RefPtr protectedThis = weakThis.get())
+        protectedThis->publishAndSend(identifier, Messages::AudioVideoRendererRemoteMessageReceiver::StateUpdate(protectedThis->stateFor(identifier)));
+    co_return WTF::move(result);
 }
 
-void RemoteAudioVideoRendererProxyManager::finishSeek(RemoteAudioVideoRendererIdentifier identifier, const MediaTime& time, CompletionHandler<void(GenericPromise::Result&&)>&& completionHandler)
+Awaitable<GenericPromise::Result> RemoteAudioVideoRendererProxyManager::finishSeek(RemoteAudioVideoRendererIdentifier identifier, MediaTime time)
 {
     RefPtr renderer = rendererFor(identifier);
-    if (!renderer) {
-        completionHandler(makeUnexpected(GenericPromise::RejectValueType { }));
-        return;
-    }
-    renderer->finishSeek(time)->whenSettled(RunLoop::mainSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, identifier, completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->publishAndSend(identifier, Messages::AudioVideoRendererRemoteMessageReceiver::StateUpdate(protectedThis->stateFor(identifier)));
-        completionHandler(WTF::move(result));
-    });
+    if (!renderer)
+        co_return makeUnexpected(GenericPromise::RejectValueType { });
+
+    ThreadSafeWeakPtr weakThis { *this };
+    auto result = co_await renderer->finishSeek(time);
+    if (RefPtr protectedThis = weakThis.get())
+        protectedThis->publishAndSend(identifier, Messages::AudioVideoRendererRemoteMessageReceiver::StateUpdate(protectedThis->stateFor(identifier)));
+    co_return WTF::move(result);
 }
 
 void RemoteAudioVideoRendererProxyManager::setScreenReserved(RemoteAudioVideoRendererIdentifier identifier, bool reserved)
@@ -645,20 +644,16 @@ void RemoteAudioVideoRendererProxyManager::currentVideoFrame(RemoteAudioVideoRen
     completionHandler(WTF::move(result));
 }
 
-void RemoteAudioVideoRendererProxyManager::currentBitmapImage(RemoteAudioVideoRendererIdentifier identifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler) const
+Awaitable<std::optional<WebCore::ShareableBitmap::Handle>> RemoteAudioVideoRendererProxyManager::currentBitmapImage(RemoteAudioVideoRendererIdentifier identifier) const
 {
     RefPtr renderer = rendererFor(identifier);
-    if (!renderer) {
-        completionHandler(std::nullopt);
-        return;
-    }
-    renderer->currentBitmapImage()->whenSettled(RunLoop::mainSingleton(), [completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
-        if (!result) {
-            completionHandler(std::nullopt);
-            return;
-        }
-        completionHandler((*result)->createHandle());
-    });
+    if (!renderer)
+        co_return std::nullopt;
+
+    auto result = co_await renderer->currentBitmapImage();
+    if (!result)
+        co_return std::nullopt;
+    co_return (*result)->createHandle();
 }
 
 

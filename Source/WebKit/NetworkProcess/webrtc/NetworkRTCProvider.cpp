@@ -310,16 +310,13 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
         signalSocketIsClosed(identifier);
 }
 
-void NetworkRTCProvider::getInterfaceName(URL&& url, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags flags, WebCore::RegistrableDomain&& domain, CompletionHandler<void(String&&)>&& completionHandler)
+Awaitable<String> NetworkRTCProvider::getInterfaceName(URL&& url, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags flags, WebCore::RegistrableDomain&& domain)
 {
-    if (!url.protocolIsInHTTPFamily()) {
-        completionHandler({ });
-        return;
-    }
+    if (!url.protocolIsInHTTPFamily())
+        co_return { };
 
-    NetworkRTCTCPSocketCocoa::getInterfaceName(*this, url, attributedBundleIdentifierFromPageIdentifier(pageIdentifier), flags, domain)->whenSettled(m_rtcNetworkThreadQueue, [completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
-        completionHandler(result ? WTF::move(result.value()) : String { });
-    });
+    auto result = co_await NetworkRTCTCPSocketCocoa::getInterfaceName(*this, url, attributedBundleIdentifierFromPageIdentifier(pageIdentifier), flags, domain)->awaitOn(m_rtcNetworkThreadQueue);
+    co_return result ? WTF::move(result.value()) : String { };
 }
 
 void NetworkRTCProvider::callOnRTCNetworkThread(Function<void()>&& callback)

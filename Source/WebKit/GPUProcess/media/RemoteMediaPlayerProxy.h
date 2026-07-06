@@ -49,6 +49,7 @@
 #include <WebCore/PlatformMediaResourceLoader.h>
 #include <WebCore/ShareableBitmap.h>
 #include <optional>
+#include <wtf/CoroutineUtilities.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
@@ -158,7 +159,7 @@ public:
     void play();
     void pause();
 
-    void seekToTarget(const WebCore::SeekTarget&, CompletionHandler<void(Expected<WebCore::MediaTimeUpdateData, WebCore::PlatformMediaError>)>&&);
+    Awaitable<Expected<WebCore::MediaTimeUpdateData, WebCore::PlatformMediaError>> seekToTarget(const WebCore::SeekTarget&);
 
     void setVolumeLocked(bool);
     void setVolume(double);
@@ -366,7 +367,7 @@ private:
     void colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
 #endif
     void videoFrameForCurrentTimeIfChanged(CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>&&, bool)>&&);
-    void bitmapImageForCurrentTime(CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
+    Awaitable<std::optional<WebCore::ShareableBitmap::Handle>> bitmapImageForCurrentTime();
 
     void setShouldDisableHDR(bool);
     using LayerHostingContextCallback = WebCore::MediaPlayer::LayerHostingContextCallback;
