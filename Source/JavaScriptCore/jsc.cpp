@@ -366,6 +366,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionCallMasquerader);
 static JSC_DECLARE_HOST_FUNCTION(functionHasCustomProperties);
 static JSC_DECLARE_HOST_FUNCTION(functionDumpTypesForAllVariables);
 static JSC_DECLARE_HOST_FUNCTION(functionDrainMicrotasks);
+static JSC_DECLARE_HOST_FUNCTION(functionDumpBytecodeProfile);
 static JSC_DECLARE_HOST_FUNCTION(functionSetTimeout);
 static JSC_DECLARE_HOST_FUNCTION(functionReleaseWeakRefs);
 static JSC_DECLARE_HOST_FUNCTION(functionFinalizationRegistryLiveCount);
@@ -734,6 +735,7 @@ private:
 
         addFunction(vm, "drainMicrotasks"_s, functionDrainMicrotasks, 0);
         addFunction(vm, "setTimeout"_s, functionSetTimeout, 2);
+        addFunction(vm, "dumpBytecodeProfile"_s, functionDumpBytecodeProfile, 1);
 
         addFunction(vm, "releaseWeakRefs"_s, functionReleaseWeakRefs, 0);
         addFunction(vm, "finalizationRegistryLiveCount"_s, functionFinalizationRegistryLiveCount, 0);
@@ -2943,6 +2945,25 @@ JSC_DEFINE_HOST_FUNCTION(functionDrainMicrotasks, (JSGlobalObject* globalObject,
     VM& vm = globalObject->vm();
     vm.drainMicrotasks();
     return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionDumpBytecodeProfile, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!vm.m_perBytecodeProfiler)
+        return JSValue::encode(jsBoolean(false));
+
+    if (!callFrame->argumentCount())
+        return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "dumpBytecodeProfile requires a path argument."_s)));
+
+    String path = callFrame->argument(0).toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto pathUtf8 = path.utf8();
+    bool ok = vm.m_perBytecodeProfiler->save(pathUtf8.data());
+    return JSValue::encode(jsBoolean(ok));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionSetTimeout, (JSGlobalObject* globalObject, CallFrame* callFrame))
