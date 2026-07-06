@@ -356,3 +356,5 @@ webkit.org/b/318485 [ mac release ] TestWebKitAPI.WebKit.MediaBufferingPolicy [ 
 webkit.org/b/318502 TestWebKitAPI.ParentalControlsContentFilteringTests.BlockedURL [ Failure ]
 
 webkit.org/b/318586 [ Tahoe X86_64 ] TestIPC.IPCSerialization.SecTrustRef [ Failure ]
+
+webkit.org/b/318713 [ Debug x86_64 ] TestWebKitAPI.EvaluateJavaScript.Serialization [ Timeout ]
