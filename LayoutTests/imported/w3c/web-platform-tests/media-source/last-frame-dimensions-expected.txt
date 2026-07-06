@@ -1,0 +1,5 @@
+
+
+PASS setup
+FAIL last frame dimensions assert_equals: videoWidth 640 expected 640 but got 320
+

@@ -13,6 +13,7 @@ PASS Test appending a neutered ArrayBufferView.
 PASS Test appending an empty ArrayBuffer.
 PASS Test appending a neutered ArrayBuffer.
 PASS Test appendBuffer with partial init segments.
+FAIL Test appendBuffer more Audio tracks than Video tracks The operation is not supported.
 PASS Test appendBuffer with partial media segments.
 FAIL Test appendBuffer events order. assert_true: expected true got false
 PASS Test abort in the middle of an initialization segment.

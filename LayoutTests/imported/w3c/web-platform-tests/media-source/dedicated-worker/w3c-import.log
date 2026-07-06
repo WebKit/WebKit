@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-message-util.js
 /LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-detach-element.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-detach-element.js

@@ -1,0 +1,4 @@
+
+Harness Error (FAIL), message = Error: assert_implements: SourceBuffer prototype hasOwnProperty "appendEncodedChunks", used here to feature detect MSE-for-WebCodecs implementation. undefined
+
+

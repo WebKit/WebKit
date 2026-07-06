@@ -1829,7 +1829,6 @@ media/media-source/media-source-evict-invalid-time-crash.html [ Timeout ]
 webkit.org/b/211995 fast/images/animated-image-mp4.html [ Timeout ]
 
 # Player is often not rendering in image tests, especially in Release
-webkit.org/b/234352 imported/w3c/web-platform-tests/media-source/mediasource-video-is-visible.html [ ImageOnlyFailure ]
 webkit.org/b/234352 media/media-source/media-source-video-renders.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/308023 media/video-played-reset.html [ Failure Pass ]

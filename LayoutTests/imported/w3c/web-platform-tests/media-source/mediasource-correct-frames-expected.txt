@@ -1,3 +1,5 @@
 
+Harness Error (FAIL), message = Error: assert_true: The note being played matches the expected one (boxes lit: 7, 659.3 Hz), found ~-5.4 Hz expected true got false
+
 PASS Test the expected frames are played at the expected times
 

@@ -10,6 +10,7 @@ PASS Test remove with a NaN duration.
 PASS Test remove while update pending.
 PASS Test aborting a remove operation.
 PASS Test remove with a start at the duration.
+PASS Test remove with a nanosecond range.
 PASS Test remove transitioning readyState from 'ended' to 'open'.
 PASS Test removing all appended data.
 PASS Test removing beginning of appended data.

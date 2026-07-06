@@ -4835,6 +4835,9 @@
     "imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-h264-play-starved.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/media-source/mediasource-play.html": [
         "slow"
     ],
