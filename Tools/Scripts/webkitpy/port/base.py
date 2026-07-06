@@ -558,18 +558,6 @@ class Port(object):
         # Used by test_expectations.py to apply rules to whole directories.
         return self._filesystem.isdir(self.abspath_for_test(test_name))
 
-    @memoized
-    def test_exists(self, test_name):
-        """Return True if the test name refers to an existing test or baseline."""
-        # Used by test_expectations.py to determine if an entry refers to a
-        # valid test and by printing.py to determine if baselines exist.
-        if self.test_isfile(test_name) or self.test_isdir(test_name):
-            return True
-        if '?' in test_name or '#' in test_name:
-            (base_name, variant) = Port.test_name_and_variant(test_name)
-            return self.test_isfile(base_name)
-        return False
-
     def split_test(self, test_name):
         """Splits a test name into the 'directory' part and the 'basename' part."""
         index = test_name.rfind(self.TEST_PATH_SEPARATOR)

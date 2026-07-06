@@ -41,8 +41,8 @@ from webkitpy.layout_tests.controllers.manager import Manager
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models.server_routing import ServerRoute, ServerType
 from webkitpy.layout_tests.models.test import Reference, Test
+from webkitpy.layout_tests.models.test_expectations import TestExpectations
 from webkitpy.layout_tests.models.test_input import ReferenceInput
-from webkitpy.layout_tests.models.test_expectations import *
 from webkitpy.layout_tests.models.test_run_results import TestRunResults
 from webkitpy.port.test import LAYOUT_TEST_DIR, TestPort
 from webkitpy.thirdparty.mock import Mock

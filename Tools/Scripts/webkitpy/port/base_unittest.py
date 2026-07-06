@@ -251,21 +251,6 @@ class PortTest(unittest.TestCase):
             self.assertFalse(port.check_httpd())
         self.assertEqual('httpd seems broken. Cannot run http tests.\n', captured.root.log.getvalue())
 
-    def test_test_exists(self):
-        port = self.make_port(with_tests=True)
-        self.assertTrue(port.test_exists('passes'))
-        self.assertTrue(port.test_exists('passes/text.html'))
-        self.assertFalse(port.test_exists('passes/does_not_exist.html'))
-        self.assertTrue(port.test_exists('variant/variant.any.html?1-100'))
-        self.assertTrue(port.test_exists('variant/variant.any.html?val=2.3'))
-        self.assertTrue(port.test_exists('variant/variant.any.html#frag'))
-        self.assertTrue(port.test_exists('variant/variant.any.html#frag?1-100'))
-        self.assertTrue(port.test_exists('variant/variant.any.html?a.b.c'))
-        self.assertTrue(port.test_exists('variant/variant.any.html#frag.name'))
-        self.assertTrue(port.test_exists('variant/variant.any.html?a.b#c.d'))
-        self.assertFalse(port.test_exists('passes/does_not_exist.html?variant'))
-        self.assertFalse(port.test_exists('passes/does_not_exist.html#frag'))
-
     def test_test_isfile(self):
         port = self.make_port(with_tests=True)
         self.assertFalse(port.test_isfile('passes'))
