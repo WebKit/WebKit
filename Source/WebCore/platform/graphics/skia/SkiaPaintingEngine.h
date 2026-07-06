@@ -68,11 +68,11 @@ public:
     const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext() const { return m_threadSafeGrContext; }
 
     Ref<CoordinatedTileBuffer> paint(const GraphicsLayerCoordinated&, const IntRect& dirtyRect, bool contentsOpaque, float contentsScale);
-    Ref<SkiaRecordingResult> record(const GraphicsLayerCoordinated&, const IntRect& recordRect, bool contentsOpaque, float contentsScale);
-    Ref<CoordinatedTileBuffer> replay(const GraphicsLayerCoordinated&, Ref<SkiaRecordingResult>&&, const IntRect& tileRect, const IntRect& dirtyRect);
+    Ref<SkiaRecordingResult> record(const GraphicsLayerCoordinated&, const IntRect& recordRect, bool contentsOpaque, float contentsScale, unsigned msaaSampleCount);
+    Ref<CoordinatedTileBuffer> replay(const GraphicsLayerCoordinated&, Ref<SkiaRecordingResult>&&, const IntRect& tileRect, const IntRect& dirtyRect, unsigned msaaSampleCount);
 
 private:
-    Ref<CoordinatedTileBuffer> createBuffer(RenderingMode, const IntSize&, bool contentsOpaque) const;
+    Ref<CoordinatedTileBuffer> createBuffer(RenderingMode, const IntSize&, bool contentsOpaque, unsigned msaaSampleCount = 0) const;
     void paintIntoGraphicsContext(const GraphicsLayer&, GraphicsContext&, const IntRect&, bool contentsOpaque, float contentsScale) const;
     RefPtr<SkiaGPUAtlas> createAtlas(const SkiaImageAtlasLayout&, AtlasUploadCondition&);
     bool tryReuseCachedAtlases(SkiaRecordingResult&, unsigned fingerprint);

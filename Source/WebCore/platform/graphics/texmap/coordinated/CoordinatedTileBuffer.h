@@ -146,7 +146,7 @@ private:
 class CoordinatedAcceleratedTileBuffer final : public CoordinatedTileBuffer {
 public:
     WEBCORE_EXPORT static Ref<CoordinatedTileBuffer> create(Ref<BitmapTexture>&&);
-    WEBCORE_EXPORT static Ref<CoordinatedTileBuffer> create(const sk_sp<GrContextThreadSafeProxy>&, const IntSize&, Flags);
+    WEBCORE_EXPORT static Ref<CoordinatedTileBuffer> create(const sk_sp<GrContextThreadSafeProxy>&, const IntSize&, Flags, unsigned msaaSampleCount);
     WEBCORE_EXPORT virtual ~CoordinatedAcceleratedTileBuffer();
 
     RefPtr<BitmapTexture> texture() const { return m_texture; }

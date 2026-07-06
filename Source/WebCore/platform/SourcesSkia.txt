@@ -70,6 +70,7 @@ platform/graphics/skia/SkiaHarfBuzzFontCache.cpp
 platform/graphics/skia/SkiaImageAtlasLayout.cpp
 platform/graphics/skia/SkiaImageAtlasLayoutBuilder.cpp
 platform/graphics/skia/SkiaPaintingEngine.cpp
+platform/graphics/skia/SkiaRecordCanvas.cpp
 platform/graphics/skia/SkiaRecordingResult.cpp
 platform/graphics/skia/SkiaReplayAtlas.cpp
 platform/graphics/skia/SkiaReplayCanvas.cpp

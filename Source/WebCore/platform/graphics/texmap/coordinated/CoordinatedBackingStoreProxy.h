@@ -104,7 +104,7 @@ private:
         void resize(const IntSize& size)
         {
             rect.setSize(size);
-            dirtyRect = rect;
+            setDirtyRect(rect);
         }
 
         void addDirtyRect(const IntRect& dirty)
@@ -112,6 +112,11 @@ private:
             auto tileDirtyRect = intersection(dirty, rect);
             ASSERT(!tileDirtyRect.isEmpty());
             dirtyRect.unite(tileDirtyRect);
+        }
+
+        void setDirtyRect(const IntRect& dirty)
+        {
+            dirtyRect = dirty;
         }
 
         bool isDirty() const
@@ -152,6 +157,9 @@ private:
     IntRect m_visibleRect;
     IntRect m_coverRect;
     IntRect m_keepRect;
+#if USE(SKIA)
+    unsigned m_msaaSampleCount { 0 };
+#endif
     HashMap<IntPoint, Tile> m_tiles;
     struct {
         Lock lock;

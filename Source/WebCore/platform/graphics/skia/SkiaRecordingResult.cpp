@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-SkiaRecordingResult::SkiaRecordingResult(sk_sp<SkPicture>&& picture, SkiaRecordingData&& recordingData, const IntRect& recordRect, RenderingMode renderingMode, bool contentsOpaque, float contentsScale)
+SkiaRecordingResult::SkiaRecordingResult(sk_sp<SkPicture>&& picture, SkiaRecordingData&& recordingData, const IntRect& recordRect, RenderingMode renderingMode, bool contentsOpaque, float contentsScale, unsigned msaaSampleCount)
     : m_picture(WTF::move(picture))
     , m_imageToFenceMap(WTF::move(recordingData.imageToFenceMap))
     , m_atlasLayouts(WTF::move(recordingData.atlasLayouts))
@@ -39,14 +39,15 @@ SkiaRecordingResult::SkiaRecordingResult(sk_sp<SkPicture>&& picture, SkiaRecordi
     , m_renderingMode(renderingMode)
     , m_contentsOpaque(contentsOpaque)
     , m_contentsScale(contentsScale)
+    , m_msaaSampleCount(msaaSampleCount)
 {
 }
 
 SkiaRecordingResult::~SkiaRecordingResult() = default;
 
-Ref<SkiaRecordingResult> SkiaRecordingResult::create(sk_sp<SkPicture>&& picture, SkiaRecordingData&& recordingData, const IntRect& recordRect, RenderingMode renderingMode, bool contentsOpaque, float contentsScale)
+Ref<SkiaRecordingResult> SkiaRecordingResult::create(sk_sp<SkPicture>&& picture, SkiaRecordingData&& recordingData, const IntRect& recordRect, RenderingMode renderingMode, bool contentsOpaque, float contentsScale, unsigned msaaSampleCount)
 {
-    return adoptRef(*new SkiaRecordingResult(WTF::move(picture), WTF::move(recordingData), recordRect, renderingMode, contentsOpaque, contentsScale));
+    return adoptRef(*new SkiaRecordingResult(WTF::move(picture), WTF::move(recordingData), recordRect, renderingMode, contentsOpaque, contentsScale, msaaSampleCount));
 }
 
 bool SkiaRecordingResult::hasFences()

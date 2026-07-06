@@ -124,14 +124,33 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
 
     Vector<Update::TileUpdate> tilesToUpdate;
     if (dirtyTilesCount) {
-        WTFBeginSignpost(this, UpdateTiles, "dirty tiles: %u", dirtyTilesCount);
-
 #if USE(SKIA)
         // Record only once the whole layer.
         RefPtr<SkiaRecordingResult> recording;
-        if (layer.client().paintingEngine().useThreadedRendering()) [[likely]]
-            recording = layer.record(tileDirtyRectUnion);
+        if (layer.client().paintingEngine().useThreadedRendering()) [[likely]] {
+            recording = layer.record(tileDirtyRectUnion, m_msaaSampleCount);
+            if (!m_msaaSampleCount) {
+                m_msaaSampleCount = recording->msaaSampleCount();
+                if (m_msaaSampleCount) {
+                    WTFEmitSignpost(this, UpdateTiles, "Enabling MSAA with %u samples", m_msaaSampleCount);
+
+                    // Switching to MSAA, we need to invalidate all tiles.
+                    tileDirtyRectUnion = { };
+                    for (auto& tile : m_tiles.values()) {
+                        tile.setDirtyRect(tile.rect);
+                        tileDirtyRectUnion.unite(tile.dirtyRect);
+                    }
+                    dirtyTilesCount = m_tiles.size();
+
+                    // If the new dirty area is not already covered we need to record again.
+                    if (!recording->recordRect().contains(tileDirtyRectUnion))
+                        recording = layer.record(tileDirtyRectUnion, m_msaaSampleCount);
+                }
+            }
+        }
 #endif
+
+        WTFBeginSignpost(this, UpdateTiles, "dirty tiles: %u", dirtyTilesCount);
 
         unsigned dirtyTileIndex = 0;
         for (auto& tile : m_tiles.values()) {
@@ -142,7 +161,7 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
                 tile.rect.x(), tile.rect.y(), tile.rect.width(), tile.rect.height(), tile.dirtyRect.x(), tile.dirtyRect.y(), tile.dirtyRect.width(), tile.dirtyRect.height());
 
 #if USE(SKIA)
-            auto buffer = recording ? layer.replay(Ref { *recording }, tile.rect, tile.dirtyRect) : layer.paint(tile.dirtyRect);
+            auto buffer = recording ? layer.replay(Ref { *recording }, tile.rect, tile.dirtyRect, m_msaaSampleCount) : layer.paint(tile.dirtyRect);
 #else
             auto buffer = layer.paint(tile.dirtyRect);
 #endif
@@ -229,6 +248,9 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(const IntRect& unscaledV
         if (tileSizeChanged || contentsScaleChanged || m_contentsRect.isEmpty()) {
             m_coverRect = { };
             m_keepRect = { };
+#if USE(SKIA)
+            m_msaaSampleCount = 0;
+#endif
             if (!m_tiles.isEmpty()) {
                 for (const auto& tile : m_tiles.values())
                     tilesToRemove.append(tile.id);
