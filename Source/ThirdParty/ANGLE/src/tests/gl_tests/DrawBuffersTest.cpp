@@ -1922,19 +1922,24 @@ constexpr GLenum kDrawBuffersAnyFormatMSAAColorFormats[] = {
     GL_RGBX8_ANGLE,
 };
 
+#if ANGLE_PLATFORM_IOS_FAMILY
 constexpr GLint kDrawBuffersAnyFormatMaxTestedSampleCount = 4;
-
-struct DrawBuffersAnyFormatExpectationPerSampleResult
-{
-    GLint sampleCount;                  // 0 = single-sampled
-    GLint firstFailingDrawBufferCount;  // Count where FRAMEBUFFER_UNSUPPORTED starts.
-};
+#else
+constexpr GLint kDrawBuffersAnyFormatMaxTestedSampleCount = 8;
+#endif
 
 struct DrawBuffersAnyFormatExpectation
 {
     const char *deviceNameSubstring;
     GLenum colorFormat;
-    DrawBuffersAnyFormatExpectationPerSampleResult sampleCounts[3];
+    // First draw-buffer count at which the FBO becomes FRAMEBUFFER_UNSUPPORTED.
+    // Single-sampled (samples == 0) and MSAA paths are tracked separately because
+    // MSAA samples multiply the per-pixel byte budget. The MSAA value applies to
+    // every MSAA sample count tested by this suite.
+    //   0 -- FBO is expected FRAMEBUFFER_UNSUPPORTED at every count
+    //   9 -- FBO is expected FRAMEBUFFER_COMPLETE at every count
+    GLint firstFailingDrawBufferCountAliased;
+    GLint firstFailingDrawBufferCountMSAA;
 };
 
 // Per-known device results for framebuffer-completeness for the
@@ -1945,60 +1950,56 @@ struct DrawBuffersAnyFormatExpectation
 // For this (color format, sampleCount), the FBO is expected to
 // become FRAMEBUFFER_UNSUPPORTED at firstFailingDrawBufferCount
 // and remain unsupported for larger counts.
-//
-// firstFailingDrawBufferCount:
-//   0 -- FBO is expected FRAMEBUFFER_UNSUPPORTED at every count
-//   9 -- FBO is expected FRAMEBUFFER_COMPLETE at every count
 constexpr DrawBuffersAnyFormatExpectation kDrawBuffersAnyFormatExpectedFramebufferIncomplete[] = {
 #if ANGLE_PLATFORM_MACOS
     // Force expectations by having one result: all framebuffers are complete.
-    {"Apple", GL_RGBA32F, {{0, 9}, {2, 9}, {4, 9}}},
+    {"", GL_RGBA32F, 9, 9},
 #elif ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR
     // Simulator uses a 32-byte color tile budget but its emulated
     // pixelBytes don't match a real Apple GPU.  Many "small" formats
     // come out oversized.
-    {"Apple iOS simulator GPU", GL_R11F_G11F_B10F, {{0, 5}, {2, 5}, {4, 5}}},
-    {"Apple iOS simulator GPU", GL_RG32F, {{0, 5}, {2, 0}, {4, 0}}},
-    {"Apple iOS simulator GPU", GL_RG32I, {{0, 5}, {2, 0}, {4, 0}}},
-    {"Apple iOS simulator GPU", GL_RG32UI, {{0, 5}, {2, 0}, {4, 0}}},
-    {"Apple iOS simulator GPU", GL_RGB10_A2, {{0, 5}, {2, 5}, {4, 5}}},
-    {"Apple iOS simulator GPU", GL_RGB10_A2UI, {{0, 9}, {2, 0}, {4, 0}}},
-    {"Apple iOS simulator GPU", GL_RGB565, {{0, 9}, {2, 5}, {4, 5}}},
-    {"Apple iOS simulator GPU", GL_RGB5_A1, {{0, 9}, {2, 5}, {4, 5}}},
-    {"Apple iOS simulator GPU", GL_RGB8, {{0, 9}, {2, 5}, {4, 5}}},
-    {"Apple iOS simulator GPU", GL_RGB16F, {{0, 5}, {2, 5}, {4, 5}}},
-    {"Apple iOS simulator GPU", GL_RGBA16F, {{0, 5}, {2, 5}, {4, 5}}},
-    {"Apple iOS simulator GPU", GL_RGBA16I, {{0, 5}, {2, 0}, {4, 0}}},
-    {"Apple iOS simulator GPU", GL_RGBA16UI, {{0, 5}, {2, 0}, {4, 0}}},
-    {"Apple iOS simulator GPU", GL_RGBA32F, {{0, 3}, {2, 0}, {4, 0}}},
-    {"Apple iOS simulator GPU", GL_RGBA32I, {{0, 3}, {2, 0}, {4, 0}}},
-    {"Apple iOS simulator GPU", GL_RGBA32UI, {{0, 3}, {2, 0}, {4, 0}}},
-    {"Apple iOS simulator GPU", GL_RGBA4, {{0, 9}, {2, 5}, {4, 5}}},
-    {"Apple iOS simulator GPU", GL_RGBA8, {{0, 9}, {2, 5}, {4, 5}}},
-    {"Apple iOS simulator GPU", GL_RGBA8_SNORM, {{0, 9}, {2, 5}, {4, 5}}},
-    {"Apple iOS simulator GPU", GL_RGBA16_EXT, {{0, 5}, {2, 5}, {4, 5}}},
-    {"Apple iOS simulator GPU", GL_RGBA16_SNORM_EXT, {{0, 5}, {2, 5}, {4, 5}}},
-    {"Apple iOS simulator GPU", GL_SRGB8_ALPHA8, {{0, 9}, {2, 5}, {4, 5}}},
-    {"Apple iOS simulator GPU", GL_BGRA8_EXT, {{0, 9}, {2, 5}, {4, 5}}},
+    {"Apple iOS simulator GPU", GL_R11F_G11F_B10F, 5, 5},
+    {"Apple iOS simulator GPU", GL_RG32F, 5, 0},
+    {"Apple iOS simulator GPU", GL_RG32I, 5, 0},
+    {"Apple iOS simulator GPU", GL_RG32UI, 5, 0},
+    {"Apple iOS simulator GPU", GL_RGB10_A2, 5, 5},
+    {"Apple iOS simulator GPU", GL_RGB10_A2UI, 9, 0},
+    {"Apple iOS simulator GPU", GL_RGB565, 9, 5},
+    {"Apple iOS simulator GPU", GL_RGB5_A1, 9, 5},
+    {"Apple iOS simulator GPU", GL_RGB8, 9, 5},
+    {"Apple iOS simulator GPU", GL_RGB16F, 5, 5},
+    {"Apple iOS simulator GPU", GL_RGBA16F, 5, 5},
+    {"Apple iOS simulator GPU", GL_RGBA16I, 5, 0},
+    {"Apple iOS simulator GPU", GL_RGBA16UI, 5, 0},
+    {"Apple iOS simulator GPU", GL_RGBA32F, 3, 0},
+    {"Apple iOS simulator GPU", GL_RGBA32I, 3, 0},
+    {"Apple iOS simulator GPU", GL_RGBA32UI, 3, 0},
+    {"Apple iOS simulator GPU", GL_RGBA4, 9, 5},
+    {"Apple iOS simulator GPU", GL_RGBA8, 9, 5},
+    {"Apple iOS simulator GPU", GL_RGBA8_SNORM, 9, 5},
+    {"Apple iOS simulator GPU", GL_RGBA16_EXT, 5, 5},
+    {"Apple iOS simulator GPU", GL_RGBA16_SNORM_EXT, 5, 5},
+    {"Apple iOS simulator GPU", GL_SRGB8_ALPHA8, 9, 5},
+    {"Apple iOS simulator GPU", GL_BGRA8_EXT, 9, 5},
 #elif ANGLE_PLATFORM_IOS_FAMILY
     // Apple A12*, Apple5, 64 bytes of implicit image block size.
-    {"Apple A12", GL_RGBA32F, {{0, 5}, {2, 5}, {4, 5}}},
-    {"Apple A12", GL_RGBA32I, {{0, 5}, {2, 0}, {4, 0}}},
-    {"Apple A12", GL_RGBA32UI, {{0, 5}, {2, 0}, {4, 0}}},
+    {"Apple A12", GL_RGBA32F, 5, 5},
+    {"Apple A12", GL_RGBA32I, 5, 0},
+    {"Apple A12", GL_RGBA32UI, 5, 0},
 
     // Apple A13*, Apple6, 64 bytes of implicit image block size.
-    {"Apple A13", GL_RGBA32F, {{0, 5}, {2, 5}, {4, 5}}},
-    {"Apple A13", GL_RGBA32I, {{0, 5}, {2, 0}, {4, 0}}},
-    {"Apple A13", GL_RGBA32UI, {{0, 5}, {2, 0}, {4, 0}}},
+    {"Apple A13", GL_RGBA32F, 5, 5},
+    {"Apple A13", GL_RGBA32I, 5, 0},
+    {"Apple A13", GL_RGBA32UI, 5, 0},
 
     // Force expect success, Apple7+, 128 bytes of implicit image block size.
-    {"Apple A14", GL_RGBA32F, {{0, 9}, {2, 9}, {4, 9}}},
-    {"Apple A15", GL_RGBA32F, {{0, 9}, {2, 9}, {4, 9}}},
-    {"Apple A16", GL_RGBA32F, {{0, 9}, {2, 9}, {4, 9}}},
-    {"Apple A17", GL_RGBA32F, {{0, 9}, {2, 9}, {4, 9}}},
-    {"Apple A18", GL_RGBA32F, {{0, 9}, {2, 9}, {4, 9}}},
-    {"Apple A19", GL_RGBA32F, {{0, 9}, {2, 9}, {4, 9}}},
-    {"Apple M", GL_RGBA32F, {{0, 9}, {2, 9}, {4, 9}}},
+    {"Apple A14", GL_RGBA32F, 9, 9},
+    {"Apple A15", GL_RGBA32F, 9, 9},
+    {"Apple A16", GL_RGBA32F, 9, 9},
+    {"Apple A17", GL_RGBA32F, 9, 9},
+    {"Apple A18", GL_RGBA32F, 9, 9},
+    {"Apple A19", GL_RGBA32F, 9, 9},
+    {"Apple M", GL_RGBA32F, 9, 9},
 #endif
 };
 
@@ -2606,14 +2607,8 @@ testing::AssertionResult DrawBuffersAnyFormatTestES3::verifyKnownDeviceExpectedF
         {
             continue;
         }
-        for (const DrawBuffersAnyFormatExpectationPerSampleResult &r : e.sampleCounts)
-        {
-            if (r.sampleCount == samples())
-            {
-                expectedFirstFailingBufferCount = r.firstFailingDrawBufferCount;
-                break;
-            }
-        }
+        expectedFirstFailingBufferCount = (samples() == 0) ? e.firstFailingDrawBufferCountAliased
+                                                           : e.firstFailingDrawBufferCountMSAA;
     }
     if (hasExpectation)
     {
@@ -2634,9 +2629,9 @@ testing::AssertionResult DrawBuffersAnyFormatTestES3::verifyKnownDeviceExpectedF
     // ((true)) to log a candidate row to add to the expectations table.
     if (status != GL_FRAMEBUFFER_COMPLETE && ((false)))
     {
-        printf("DrawBuffersAnyFormat incomplete: {\"%s\", %s, {..., {%d, %d}, ...}},\n",
+        printf("DrawBuffersAnyFormat incomplete: {\"%s\", %s, /* %s n=%d */},\n",
                deviceName.c_str(), gl::GLenumToString(gl::GLESEnum::AllEnums, colorFormat()),
-               samples(), numAttachments);
+               samples() == 0 ? "Aliased" : "MSAA", numAttachments);
     }
     return testing::AssertionSuccess();
 }
@@ -2893,5 +2888,21 @@ INSTANTIATE_TEST_SUITE_P(
         testing::ValuesIn(kDrawBuffersAnyFormatMSAAColorFormats),
         testing::ValuesIn(kDrawBuffersAnyFormatDepthStencilFormats),
         testing::Values(false),  // renderbuffers only; ES 3.0 has no MSAA textures
-        testing::Values<GLint>(2, kDrawBuffersAnyFormatMaxTestedSampleCount)),
+        testing::Values<GLint>(2, 4)),
     DrawBuffersAnyFormatVariationsTestPrint);
+
+#if !ANGLE_PLATFORM_IOS_FAMILY
+// List MSAA8 in its own instantiation, so it's easier to understand that it's frequently
+// skipped.
+INSTANTIATE_TEST_SUITE_P(
+    MSAA8,
+    DrawBuffersAnyFormatTestES3,
+    testing::Combine(
+        testing::ValuesIn(::angle::FilterTestParams(kDrawBuffersAnyFormatPlatforms,
+                                                    ArraySize(kDrawBuffersAnyFormatPlatforms))),
+        testing::ValuesIn(kDrawBuffersAnyFormatMSAAColorFormats),
+        testing::ValuesIn(kDrawBuffersAnyFormatDepthStencilFormats),
+        testing::Values(false),  // renderbuffers only; ES 3.0 has no MSAA textures
+        testing::Values<GLint>(kDrawBuffersAnyFormatMaxTestedSampleCount)),
+    DrawBuffersAnyFormatVariationsTestPrint);
+#endif

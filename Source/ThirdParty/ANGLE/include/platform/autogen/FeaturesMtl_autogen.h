@@ -182,6 +182,12 @@ struct FeaturesMtl : FeatureSetBase
         &members,
     };
 
+    FeatureInfo clearMsaaRg16UnormWithDrawWorkaround = {
+        "clearMsaaRg16UnormWithDrawWorkaround",
+        FeatureCategory::MetalWorkarounds,
+        &members,
+    };
+
     FeatureInfo copyIOSurfaceToNonIOSurfaceForReadOptimization = {
         "copyIOSurfaceToNonIOSurfaceForReadOptimization",
         FeatureCategory::MetalWorkarounds,

@@ -1266,6 +1266,8 @@ void DisplayMtl::initializeFeatures()
     ANGLE_FEATURE_CONDITION((&mFeatures), writeHelperSampleMask, supportsAppleGPUFamily(1));
 
     ANGLE_FEATURE_CONDITION((&mFeatures), multisampleColorFormatShaderReadWorkaround, isAMD());
+    // At least for Radeon 5500M. See rdar://178796612.
+    ANGLE_FEATURE_CONDITION((&mFeatures), clearMsaaRg16UnormWithDrawWorkaround, isAMD());
     ANGLE_FEATURE_CONDITION((&mFeatures), copyIOSurfaceToNonIOSurfaceForReadOptimization,
                             isIntel() || isAMD());
     ANGLE_FEATURE_CONDITION((&mFeatures), copyTextureToBufferForReadOptimization, isAMD());
