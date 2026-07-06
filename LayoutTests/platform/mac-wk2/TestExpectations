@@ -2413,3 +2413,5 @@ webkit.org/b/318452 [ Release ] platform/mac/media/audio-session-deactivated-whe
 fast/animation/css-animation-throttling.html [ Pass Failure ]
 fast/animation/request-animation-frame-throttle-inside-overflow-scroll.html [ Pass Failure ]
 fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Pass Failure ]
+
+webkit.org/b/318697 inspector/animation/lifecycle-web-animation.html [ Failure ]
