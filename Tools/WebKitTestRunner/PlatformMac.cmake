@@ -153,6 +153,8 @@ list(APPEND WebKitTestRunner_SOURCES
     ${WebKitTestRunner_SHARED_DIR}/cocoa/PlatformViewHelpers.mm
     ${WebKitTestRunner_SHARED_DIR}/cocoa/PoseAsClass.mm
 
+    ${WebKitTestRunner_SHARED_DIR}/mac/NSPasteboardAdditions.mm
+
     ${WebKitTestRunner_SHARED_DIR}/EventSerialization/mac/EventSerializerMac.mm
     ${WebKitTestRunner_SHARED_DIR}/EventSerialization/mac/SharedEventStreamsMac.mm
 )
