@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</head>
+<body>
+<script>
+promise_test(async (t) => {
+    let resolveChunk;
+    const haveChunk = new Promise(r => resolveChunk = r);
+    let keyChunkData;
+    let decoderConfig;
+
+    const encoder = new VideoEncoder({
+        output(chunk, metadata) {
+            if (metadata.decoderConfig)
+                decoderConfig = metadata.decoderConfig;
+            const buffer = new Uint8Array(chunk.byteLength);
+            chunk.copyTo(buffer);
+            keyChunkData = buffer;
+            resolveChunk();
+        },
+        error(e) { }
+    });
+    encoder.configure({ codec: "avc1.42001E", width: 64, height: 64, bitrate: 100000, framerate: 30, avc: { format: "annexb" } });
+    const canvas = new OffscreenCanvas(64, 64);
+    canvas.getContext("2d").fillRect(0, 0, 64, 64);
+    const frame = new VideoFrame(canvas, { timestamp: 0 });
+    encoder.encode(frame, { keyFrame: true });
+    frame.close();
+    await encoder.flush();
+    await haveChunk;
+    encoder.close();
+
+    const decoder = new VideoDecoder({
+        output(frame) { frame.close(); },
+        error(e) { }
+    });
+    decoder.configure(decoderConfig || { codec: "avc1.42001E" });
+
+    // Submit many decodes carrying a duration so that addDuration() runs on this
+    // thread while completedDecoding() drains on the LibWebRTCCodecs work queue.
+    for (let i = 0; i < 2000; ++i) {
+        decoder.decode(new EncodedVideoChunk({
+            type: "key",
+            timestamp: i,
+            duration: 1,
+            data: keyChunkData
+        }));
+        if (decoder.decodeQueueSize > 64)
+            await new Promise(r => setTimeout(r, 0));
+    }
+    await decoder.flush().catch(() => { });
+    decoder.close();
+}, "Concurrent VideoDecoder.decode() and output delivery should not race on the timestamp-to-duration map");
+</script>
+</body>
+</html>
