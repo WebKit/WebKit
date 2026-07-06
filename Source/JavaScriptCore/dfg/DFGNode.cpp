@@ -422,6 +422,22 @@ void Node::convertToDefineAccessorProperty(Graph& graph, Edge base, Edge propert
     children = AdjacencyList(AdjacencyList::Variable, firstChild, 5);
 }
 
+void Node::convertToEnumeratorHasOwnProperty(Graph& graph, Edge base, Edge propertyName, Edge index, Edge mode, Edge enumerator, ArrayMode arrayMode, unsigned enumeratorMetadata)
+{
+    ASSERT(op() == HasOwnProperty);
+    setOpAndDefaultFlags(EnumeratorHasOwnProperty);
+    m_opInfo = arrayMode.asWord();
+    m_opInfo2 = enumeratorMetadata;
+
+    unsigned firstChild = graph.m_varArgChildren.size();
+    graph.m_varArgChildren.append(base);
+    graph.m_varArgChildren.append(propertyName);
+    graph.m_varArgChildren.append(index);
+    graph.m_varArgChildren.append(mode);
+    graph.m_varArgChildren.append(enumerator);
+    children = AdjacencyList(AdjacencyList::Variable, firstChild, 5);
+}
+
 void Node::convertToObjectDefinePropertyFromFields(Graph& graph, Edge target, Edge key, Edge enumerable, Edge configurable, Edge value, Edge writable, Edge getter, Edge setter)
 {
     ASSERT(op() == ObjectDefineProperty);
