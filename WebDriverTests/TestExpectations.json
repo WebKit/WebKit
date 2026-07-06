@@ -119,6 +119,10 @@
         }
     },
 
+    "imported/selenium/py/test/selenium/webdriver/common/bidi_storage_tests.py": {
+        "expected": {"all": {"status": ["FAIL"], "note": ["webkit.org/b/296240", "webkit.org/b/296255"]}}
+    },
+
     "imported/selenium/py/test/selenium/webdriver/common/fedcm_tests.py": {
         "expected": {"all": {"status": ["SKIP"], "note": "FEDCM is not supported in WebKit"}}
     },
@@ -469,6 +473,10 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213060"}}
             }
         }
+    },
+
+    "imported/w3c/webdriver/tests/classic/perform_actions/pointer_dblclick.py": {
+        "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/174674"}}
     },
 
     "imported/w3c/webdriver/tests/classic/perform_actions/key_events.py": {
@@ -1784,6 +1792,9 @@
         "subtests": {
             "test_default": {
                 "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_create_remove_contexts": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288107", "note": "False PASS, Error on the teardown fixture, given we don't support user contexts."}}
             }
         }
     },
@@ -1793,6 +1804,15 @@
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288108"}}
             }
         }
+    },
+
+    "imported/w3c/webdriver/tests/bidi/browser/remove_user_context/user_context.py": {
+        "subtests": {
+            "test_remove_context": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288108", "note": "False PASS. Error on the teardown fixture, given we don't support user contexts."}}
+            }
+        },
+        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288108"}}
     },
     "imported/w3c/webdriver/tests/bidi/browser/set_download_behavior/download_behavior_allowed.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/303204"}}
@@ -2302,6 +2322,15 @@
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288330"}}
             }
         }
+    },
+
+    "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/navigate.py": {
+        "subtests": {
+            "test_payload": {
+                "expected": { "all": { "status": ["PASS"]}}
+            }
+        },
+        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288330"}}
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/navigate_beforeunload.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288330"}}
