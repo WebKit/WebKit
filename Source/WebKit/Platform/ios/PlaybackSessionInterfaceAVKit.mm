@@ -37,9 +37,9 @@
 #import <pal/cf/CoreMediaSoftLink.h>
 
 SOFTLINK_AVKIT_FRAMEWORK()
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVInterfaceMediaSelectionOptionSource)
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVInterfaceMetadata)
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVInterfaceTimelineSegment)
+SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPlaybackUserInterfaceMediaSelectionOption)
+SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPlaybackUserInterfaceContentMetadata)
+SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPlaybackUserInterfaceTimelineSegment)
 
 namespace WebKit {
 
@@ -77,14 +77,14 @@ PlaybackSessionInterfaceAVKit::~PlaybackSessionInterfaceAVKit()
 void PlaybackSessionInterfaceAVKit::durationChanged(double duration)
 {
     [m_contentSource setTimeRange:PAL::CMTimeRangeMake(PAL::kCMTimeZero, PAL::CMTimeMakeWithSeconds(duration, 1000))];
-    [m_contentSource setSupportedSeekCapabilities:AVInterfaceSeekCapabilitiesSeek];
+    [m_contentSource setSupportedSeekCapabilities:AVPlaybackUserInterfaceSeekCapabilitiesSeek];
     [m_contentSource setHasAudio:YES];
     [m_contentSource setReady:YES];
 }
 
-void PlaybackSessionInterfaceAVKit::currentTimeChanged(double currentTime, double)
+void PlaybackSessionInterfaceAVKit::currentTimeChanged(double currentTime, double anchorTime)
 {
-    [m_contentSource setCurrentPlaybackPositionInternal:PAL::CMTimeMakeWithSeconds(currentTime, 1000)];
+    [m_contentSource setPlaybackPositionInternal:PAL::CMTimeMakeWithSeconds(currentTime, 1000) hostTime:PAL::CMTimeMakeWithSeconds(anchorTime, 1000)];
 }
 
 void PlaybackSessionInterfaceAVKit::rateChanged(OptionSet<WebCore::PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double)
@@ -100,9 +100,9 @@ void PlaybackSessionInterfaceAVKit::seekableRangesChanged(const WebCore::Platfor
     [m_contentSource setSeekableTimeRanges:makeNSArray(timeRanges).get()];
 }
 
-static RetainPtr<AVInterfaceMediaSelectionOptionSource> mediaSelectionOptionSource(const WebCore::MediaSelectionOption& option)
+static RetainPtr<AVPlaybackUserInterfaceMediaSelectionOption> mediaSelectionOptionSource(const WebCore::MediaSelectionOption& option)
 {
-    return adoptNS([allocAVInterfaceMediaSelectionOptionSourceInstance() initWithDisplayName:option.displayName.createNSString().get() identifier:[NSUUID UUID].UUIDString extendedLanguageTag:option.languageTag.createNSString().get()]);
+    return adoptNS([allocAVPlaybackUserInterfaceMediaSelectionOptionInstance() initWithDisplayName:option.displayName.createNSString().get() identifier:[NSUUID UUID].UUIDString extendedLanguageTag:option.languageTag.createNSString().get() mediaCharacteristics:[NSArray array]]);
 }
 
 void PlaybackSessionInterfaceAVKit::audioMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex)
