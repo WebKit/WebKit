@@ -200,6 +200,8 @@ ALWAYS_INLINE std::pair<JSGlobalObject*, bool> MicrotaskQueue::drainImpl(JSGloba
             if (globalObject != currentGlobalObject) [[unlikely]]
                 return { globalObject, false };
 
+            EnsureStillAliveScope dispatcherScope(jsMicrotaskDispatcher);
+
             auto task = m_queue.dequeue();
             QueuedTask::Result result;
             {

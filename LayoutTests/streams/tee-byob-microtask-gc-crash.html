@@ -1,0 +1,54 @@
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--collectContinuously=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(async () => {
+    function readAll(reader) {
+        return new Promise(resolve => {
+            (function loop() {
+                reader.read().then(result => {
+                    if (result.done)
+                        resolve();
+                    else
+                        loop();
+                }, () => resolve());
+            })();
+        });
+    }
+
+    function makeChain() {
+        let chunksLeft = 32;
+        let current = new ReadableStream({
+            type: "bytes",
+            pull(controller) {
+                if (--chunksLeft <= 0) {
+                    controller.close();
+                    return;
+                }
+                controller.enqueue(new Uint8Array(16384));
+            }
+        });
+
+        const readers = [];
+        for (let i = 0; i < 2; ++i) {
+            const teed = current.tee();
+            readers.push(teed[1].getReader());
+            current = teed[0];
+        }
+        readers.push(current.getReader());
+        return Promise.all(readers.map(readAll));
+    }
+
+    const chains = [];
+    for (let i = 0; i < 4; ++i)
+        chains.push(makeChain());
+    await Promise.all(chains);
+}, "Teeing a byte ReadableStream and reading both branches under continuous GC should not crash");
+</script>
+</body>
+</html>
