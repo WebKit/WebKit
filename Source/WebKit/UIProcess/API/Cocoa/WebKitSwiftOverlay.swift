@@ -23,8 +23,6 @@
 
 // FIXME: Eliminate this file since the refined API can now just go with the rest of the normal API where it belongs.
 
-#if !os(tvOS) && !os(watchOS)
-
 // Older versions of the Swift compiler fail to import WebKit_Private. Can be
 // removed when WebKit drops support for macOS Sonoma.
 #if ENABLE_WK_WEB_EXTENSIONS
@@ -32,6 +30,8 @@ import WebKit_Private.WKWebExtensionPrivate
 #endif
 
 @available(anyAppleOSAndDownlevels 14.0, *)
+@available(watchOS, unavailable)
+@available(tvOS, unavailable)
 extension WKPDFConfiguration {
     // This is pre-existing API whose documentation does not use the source code.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
@@ -42,6 +42,8 @@ extension WKPDFConfiguration {
 }
 
 @available(anyAppleOSAndDownlevels 14.0, *)
+@available(watchOS, unavailable)
+@available(tvOS, unavailable)
 extension WKWebView {
     // This is pre-existing API whose documentation does not use the source code.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
@@ -100,6 +102,8 @@ extension WKWebView {
 }
 
 @available(anyAppleOSAndDownlevels 15.0, *)
+@available(watchOS, unavailable)
+@available(tvOS, unavailable)
 extension WKWebView {
     // This is pre-existing API whose documentation does not use the source code.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
@@ -211,5 +215,3 @@ extension WKWebExtensionContext {
     }
 }
 #endif
-
-#endif // !os(tvOS) && !os(watchOS)
