@@ -84,6 +84,8 @@
 
 #include <wtf/NativePromise.h>
 
+#define MESSAGE_CHECK(assertion, message) MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, m_webProcessConnection.get(), message)
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -1225,6 +1227,8 @@ void RemoteMediaPlayerProxy::setPlatformDynamicRangeLimit(PlatformDynamicRangeLi
 void RemoteMediaPlayerProxy::createAudioSourceProvider()
 {
 #if ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
+    MESSAGE_CHECK(!m_remoteAudioSourceProvider, "RemoteAudioSourceProvider already created.");
+
     RefPtr player = m_player;
     if (!player)
         return;
@@ -1375,5 +1379,7 @@ void RemoteMediaPlayerProxy::screenReservedChanged(bool reserved)
 #endif
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
