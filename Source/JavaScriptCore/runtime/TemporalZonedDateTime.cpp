@@ -474,9 +474,8 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
             return nullptr;
     }
 
-    // Steps 10-12 (unified epilogue — both string and property-bag paths converge here).
-    // Steps 6-9 are encoded in args: offsetBehaviour (steps 6-8) and inlineOffsetNs (steps 9-10).
-    // Step 10: epochNanoseconds = ? InterpretISODateTimeOffset(...).
+    // Steps 6-10 are encoded in args: offsetBehaviour (Steps 6-8: exact/wall/option) and inlineOffsetNs (Steps 9-10: default 0, or ParseDateTimeUTCOffset(offsetString) when option).
+    // Step 11: epochNanoseconds = ? InterpretISODateTimeOffset(...).
     auto exactTimeResult = TemporalCore::interpretISODateTimeOffset(
         args->plainDate, args->plainTime, args->useStartOfDay,
         args->offsetBehaviour, args->offsetOpt, args->inlineOffsetNs,

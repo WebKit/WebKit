@@ -155,14 +155,8 @@ JSC_DEFINE_HOST_FUNCTION(callTemporalZonedDateTime, (JSGlobalObject* globalObjec
 // https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.from
 JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimeConstructorFuncFrom, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     // Step 1: Return ? ToTemporalZonedDateTime(item, options).
-    auto* zdt = TemporalZonedDateTime::from(globalObject, callFrame->argument(0), callFrame->argument(1));
-    RETURN_IF_EXCEPTION(scope, { });
-    ASSERT(zdt);
-    return JSValue::encode(zdt);
+    return JSValue::encode(TemporalZonedDateTime::from(globalObject, callFrame->argument(0), callFrame->argument(1)));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.compare
