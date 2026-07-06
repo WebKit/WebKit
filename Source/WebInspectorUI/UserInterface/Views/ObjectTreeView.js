@@ -274,6 +274,8 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
         this._trackWeakEntries();
 
         this.update();
+
+        this.dispatchEventToListeners(WI.ObjectTreeView.Event.DisclosureChanged);
     }
 
     collapse()
@@ -288,6 +290,8 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
             this._previewView.showPreview();
 
         this._untrackWeakEntries();
+
+        this.dispatchEventToListeners(WI.ObjectTreeView.Event.DisclosureChanged);
     }
 
     showOnlyProperties()
@@ -525,5 +529,6 @@ WI.ObjectTreeView.Mode = {
 };
 
 WI.ObjectTreeView.Event = {
-    Updated: "object-tree-updated",
+    DisclosureChanged: "object-tree-view-disclosure-changed",
+    Updated: "object-tree-view-updated",
 };

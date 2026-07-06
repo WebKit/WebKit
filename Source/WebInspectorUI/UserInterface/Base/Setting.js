@@ -243,6 +243,7 @@ WI.settings = {
     experimentalCSSSortPropertyNameAutocompletionByUsage: new WI.Setting("experimental-css-sort-property-name-autocompletion-by-usage", true),
     experimentalEnableNetworkEmulatedCondition: new WI.Setting("experimental-enable-network-emulated-condition", false),
     experimentalGroupSourceMapErrors: new WI.Setting("experimental-group-source-map-errors", true),
+    experimentalConsoleVirtualization: new WI.Setting("experimental-console-virtualization", true),
     experimentalLimitSourceCodeHighlighting: new WI.Setting("engineering-limit-source-code-highlighting", false),
     experimentalUseFuzzyMatchingForCSSCodeCompletion: new WI.Setting("experimental-use-fuzzy-matching-for-css-code-completion", true),
     experimentalUseStrictCheckForGlobMatching: new WI.Setting("experimental-use-strict-check-for-glob-matching", false),

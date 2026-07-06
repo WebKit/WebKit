@@ -123,9 +123,16 @@ WI.ConsoleGroup = class ConsoleGroup extends WI.Object
         var groupTitleElement = event.target.closest(".console-group-title");
         if (groupTitleElement) {
             var groupElement = groupTitleElement.closest(".console-group");
-            if (groupElement)
+            if (groupElement) {
                 groupElement.classList.toggle("collapsed");
+                this.dispatchEventToListeners(WI.ConsoleGroup.Event.DisclosureChanged);
+            }
+
             groupTitleElement.scrollIntoViewIfNeeded(true);
         }
     }
+};
+
+WI.ConsoleGroup.Event = {
+    DisclosureChanged: "console-group-disclosure-changed",
 };
