@@ -171,6 +171,8 @@ const char *GetColorName(GLColorRGB color)
 // Always re-use displays when using --bot-mode in the test runner.
 bool gReuseDisplays = false;
 
+bool gAlwaysShowWindow = false;
+
 bool ShouldAlwaysForceNewDisplay(const PlatformParameters &params)
 {
     // When running WebGPU tests always force a new display.
@@ -443,6 +445,7 @@ constexpr char kDelayTestStart[]                 = "--delay-test-start=";
 constexpr char kRenderDoc[]                      = "--renderdoc";
 constexpr char kNoRenderDoc[]                    = "--no-renderdoc";
 constexpr char kDisableDebugLayers[]             = "--disable-debug-layers";
+constexpr char kAlwaysShowWindow[]               = "--always-show-window";
 
 void SetupEnvironmentVarsForCaptureReplay()
 {
@@ -621,9 +624,7 @@ void ANGLETestBase::initOSWindow()
         return;
     }
 
-    // On Linux we must keep the test windows visible. On Windows or Metal it doesn't seem to need
-    // it.
-    setWindowVisible(getOSWindow(), !(IsWindows() || IsMac() || IsIOS()));
+    setWindowVisible(getOSWindow(), shouldShowWindow());
 
     switch (mCurrentParams->driver)
     {
@@ -1720,6 +1721,13 @@ int ANGLETestBase::getClientMajorVersion() const
     return getGLWindow()->getClientMajorVersion();
 }
 
+bool ANGLETestBase::shouldShowWindow() const
+{
+    // On Linux we must keep the test windows visible. On Windows or Metal it doesn't seem to need
+    // it.
+    return gAlwaysShowWindow || !(IsWindows() || IsMac() || IsIOS());
+}
+
 int ANGLETestBase::getClientMinorVersion() const
 {
     return getGLWindow()->getClientMinorVersion();
@@ -1916,6 +1924,10 @@ void ANGLEProcessTestArgs(int *argc, char *argv[])
         else if (strncmp(argv[argIndex], kDisableDebugLayers, strlen(kDisableDebugLayers)) == 0)
         {
             gDisableDebugLayers = true;
+        }
+        else if (strncmp(argv[argIndex], kAlwaysShowWindow, strlen(kAlwaysShowWindow)) == 0)
+        {
+            gAlwaysShowWindow = true;
         }
     }
 }

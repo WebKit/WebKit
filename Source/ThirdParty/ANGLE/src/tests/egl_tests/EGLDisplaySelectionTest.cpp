@@ -69,7 +69,7 @@ class EGLDisplaySelectionTestNoFixture : public EGLDisplaySelectionTest
     {
         mOSWindow = OSWindow::New();
         mOSWindow->initialize("EGLDisplaySelectionTestMultiDisplay", kWindowWidth, kWindowHeight);
-        setWindowVisible(mOSWindow, true);
+        setWindowVisible(mOSWindow, shouldShowWindow());
     }
 
     void initializeContextForDisplay(EGLDisplay display, EGLContext *context)
