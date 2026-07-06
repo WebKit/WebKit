@@ -6644,6 +6644,7 @@ private:
         }
             
         case B3::EntrySwitch: {
+            m_procedure.setUsesEntrySwitch(true);
             append(Air::EntrySwitch);
             return;
         }

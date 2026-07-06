@@ -323,6 +323,8 @@ public:
     bool usesColdCCall() const { return m_usesColdCCall; }
     void setUsesShuffle(bool flag) { m_usesShuffle = flag; }
     bool usesShuffle() const { return m_usesShuffle; }
+    void setUsesEntrySwitch(bool flag) { m_usesEntrySwitch = flag; }
+    bool usesEntrySwitch() const { return m_usesEntrySwitch; }
 
 private:
     friend class BlockInsertionSet;
@@ -359,6 +361,7 @@ private:
     bool m_isWasm : 1 { false };
     bool m_usesColdCCall : 1 { false };
     bool m_usesShuffle : 1 { false };
+    bool m_usesEntrySwitch : 1 { false };
 };
     
 } } // namespace JSC::B3

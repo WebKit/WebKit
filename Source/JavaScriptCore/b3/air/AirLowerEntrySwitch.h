@@ -34,7 +34,7 @@ class Code;
 // Converts code that seems to have one entrypoint and emulates multiple entrypoints with
 // EntrySwitch into code that really has multiple entrypoints. This is accomplished by duplicating
 // the backwards transitive closure from all EntrySwitches.
-void lowerEntrySwitch(Code&);
+bool lowerEntrySwitch(Code&);
 
 } } } // namespace JSC::B3::Air
 

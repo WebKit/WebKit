@@ -36,28 +36,29 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
-void reportUsedRegisters(Code& code)
+bool reportUsedRegisters(Code& code)
 {
     PhaseScope phaseScope(code, "reportUsedRegisters"_s);
-    
+
     static constexpr bool verbose = false;
 
     padInterference(code);
-    
+
     if (verbose)
         dataLog("Doing reportUsedRegisters on:\n", code);
 
     RegLiveness liveness(code);
 
+    bool changed = false;
     for (BasicBlock* block : code) {
         if (verbose)
             dataLog("Looking at: ", *block, "\n");
-        
+
         RegLiveness::LocalCalc localCalc(liveness, block);
 
         for (unsigned instIndex = block->size(); instIndex--;) {
             Inst& inst = block->at(instIndex);
-            
+
             if (verbose)
                 dataLog("   Looking at: ", inst, "\n");
 
@@ -96,15 +97,20 @@ void reportUsedRegisters(Code& code)
                 inst.reportUsedRegisters(localCalc.live());
             localCalc.execute(instIndex);
         }
-        
-        block->insts().removeAllMatching(
-            [&] (const Inst& inst) -> bool {
+
+        unsigned sizeBefore = block->size();
+        unsigned removed = block->insts().removeAllMatching(
+            [&](const Inst& inst) -> bool {
                 return !inst;
             });
+        if (removed && sizeBefore - removed <= 1)
+            changed = true;
     }
 
     if (verbose)
         dataLog("After reportUsedRegisters:\n", code);
+
+    return changed;
 }
 
 } } } // namespace JSC::B3::Air
