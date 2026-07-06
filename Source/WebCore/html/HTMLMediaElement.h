@@ -786,7 +786,7 @@ protected:
     bool showPosterFlag() const { return m_showPoster; }
     void setShowPosterFlag(bool);
 
-    void setChangingVideoFullscreenMode(bool value) { m_changingVideoFullscreenMode = value; }
+    void setChangingVideoFullscreenMode(bool);
     bool isChangingVideoFullscreenMode() const { return m_changingVideoFullscreenMode; }
 
     void mediaPlayerEngineUpdated() override;
@@ -816,6 +816,8 @@ protected:
 
     SoundStageSize soundStageSize() const { return m_soundStageSize; }
     void setSoundStageSize(SoundStageSize);
+
+    void scheduleUpdateAcceleratedRenderingState();
 
 protected:
     // ActiveDOMObject
@@ -1216,6 +1218,7 @@ private:
     TaskCancellationGroup m_bufferedTimeRangesChangedTaskCancellationGroup;
     TaskCancellationGroup m_resourceSelectionTaskCancellationGroup;
     TaskCancellationGroup m_updateShouldAutoplayTaskCancellationGroup;
+    TaskCancellationGroup m_updateAcceleratedRenderingStateTaskCancellationGroup;
     RefPtr<TimeRanges> m_playedTimeRanges;
     TaskCancellationGroup m_asyncEventsCancellationGroup;
     TaskCancellationGroup m_periodicTimeupdateCancellationGroup;

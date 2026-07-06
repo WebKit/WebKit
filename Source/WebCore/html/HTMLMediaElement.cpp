@@ -1347,13 +1347,7 @@ void HTMLMediaElement::willDetachRenderers()
 void HTMLMediaElement::didDetachRenderers()
 {
     scheduleUpdateShouldAutoplay();
-
-    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [](auto& element) {
-        // If we detach a media element from a renderer, we may no longer need the MediaPlayerPrivate
-        // to vend a PlatformLayer. However, the renderer may be torn down and re-attached during a
-        // single run-loop as a result of layout or due to the element being re-parented.
-        element.computeAcceleratedRenderingStateAndUpdateMediaPlayer();
-    });
+    scheduleUpdateAcceleratedRenderingState();
 }
 
 void HTMLMediaElement::didRecalcStyle(OptionSet<Style::Change>)
@@ -6830,6 +6824,19 @@ void HTMLMediaElement::pausePlayer()
     player->pause();
 }
 
+void HTMLMediaElement::scheduleUpdateAcceleratedRenderingState()
+{
+    if (m_updateAcceleratedRenderingStateTaskCancellationGroup.hasPendingTask())
+        return;
+
+    queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, m_updateAcceleratedRenderingStateTaskCancellationGroup, [](auto& element) {
+        // If we detach a media element from a renderer, we may no longer need the MediaPlayerPrivate
+        // to vend a PlatformLayer. However, the renderer may be torn down and re-attached during a
+        // single run-loop as a result of layout or due to the element being re-parented.
+        element.computeAcceleratedRenderingStateAndUpdateMediaPlayer();
+    });
+}
+
 void HTMLMediaElement::checkForAudioAndVideo()
 {
     m_hasEverHadAudio |= hasAudio();
@@ -6887,6 +6894,7 @@ void HTMLMediaElement::cancelPendingTasks()
     m_seekTaskCancellationGroup.cancel();
     m_playbackControlsManagerBehaviorRestrictionsTaskCancellationGroup.cancel();
     m_updateShouldAutoplayTaskCancellationGroup.cancel();
+    m_updateAcceleratedRenderingStateTaskCancellationGroup.cancel();
     if (m_volumeLocked)
         m_volumeRevertTaskCancellationGroup.cancel();
 }
@@ -7718,7 +7726,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     if (m_waitingToEnterFullscreen)
         return;
 
-    m_changingVideoFullscreenMode = true;
+    setChangingVideoFullscreenMode(true);
 
     fireAndRestartWatchtimeTimer();
 
@@ -7732,7 +7740,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
             auto* rawThis = weakThis.get();
             if (!rawThis || !result.hasException())
                 return;
-            rawThis->m_changingVideoFullscreenMode = false;
+            rawThis->setChangingVideoFullscreenMode(false);
             rawThis->m_waitingToEnterFullscreen = false;
         }, mode);
         return;
@@ -7748,7 +7756,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
 
         if (element.document().hidden() && mode != HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) {
             ALWAYS_LOG_WITH_THIS(&element, logIdentifier, " returning because document is hidden");
-            element.m_changingVideoFullscreenMode = false;
+            element.setChangingVideoFullscreenMode(false);
             return;
         }
 
@@ -7781,7 +7789,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
             ALWAYS_LOG_WITH_THIS(&element, logIdentifier, "Could not enter fullscreen mode ", mode, ", support = ", supportsFullscreen, ", canEnter = ", canEnterFullscreen);
         }
 
-        element.m_changingVideoFullscreenMode = false;
+        element.setChangingVideoFullscreenMode(false);
     });
 }
 
@@ -7800,7 +7808,7 @@ void HTMLMediaElement::exitFullscreen()
     Ref fullscreen = protect(document())->fullscreen();
     if (fullscreen->fullscreenElement() == this) {
         if (fullscreen->isFullscreen()) {
-            m_changingVideoFullscreenMode = true;
+            setChangingVideoFullscreenMode(true);
             fullscreen->fullyExitFullscreen();
         }
 
@@ -7836,12 +7844,12 @@ void HTMLMediaElement::exitFullscreen()
     } else if (document().page()->chrome().client().supportsVideoFullscreen(oldVideoFullscreenMode)) {
         if (m_videoFullscreenStandby) {
             setFullscreenMode(VideoFullscreenModeNone);
-            m_changingVideoFullscreenMode = true;
+            setChangingVideoFullscreenMode(true);
             document().page()->chrome().client().enterVideoFullscreenForVideoElement(*videoElement, m_videoFullscreenMode, m_videoFullscreenStandby);
             return;
         }
 
-        m_changingVideoFullscreenMode = true;
+        setChangingVideoFullscreenMode(true);
 
         if (!paused() && protect(document())->quirks().needsPauseBeforeFullscreenExitQuirk())
             pauseInternal();
@@ -7898,7 +7906,7 @@ void HTMLMediaElement::didBecomeFullscreenElement()
 {
     ALWAYS_LOG(LOGIDENTIFIER, ", fullscreen mode = ", fullscreenMode());
     m_waitingToEnterFullscreen = false;
-    m_changingVideoFullscreenMode = false;
+    setChangingVideoFullscreenMode(false);
     scheduleUpdatePlayState();
 }
 
@@ -7912,7 +7920,7 @@ void HTMLMediaElement::willStopBeingFullscreenElement()
 
 void HTMLMediaElement::didStopBeingFullscreenElement()
 {
-    m_changingVideoFullscreenMode = false;
+    setChangingVideoFullscreenMode(false);
 }
 
 #if ENABLE(FULLSCREEN_API)
@@ -10017,8 +10025,8 @@ void HTMLMediaElement::setFullscreenMode(VideoFullscreenMode mode)
     m_videoFullscreenMode = mode;
     visibilityStateChanged();
     schedulePlaybackControlsManagerUpdate();
+    scheduleUpdateAcceleratedRenderingState();
 
-    computeAcceleratedRenderingStateAndUpdateMediaPlayer();
     updatePlayerDynamicRangeLimit();
 }
 
@@ -10364,6 +10372,17 @@ void HTMLMediaElement::setSoundStageSize(SoundStageSize size)
 
     if (RefPtr player = m_player)
         player->soundStageSizeDidChange();
+}
+
+void HTMLMediaElement::setChangingVideoFullscreenMode(bool changing)
+{
+    if (m_changingVideoFullscreenMode == changing)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, changing);
+    m_changingVideoFullscreenMode = changing;
+
+    scheduleUpdateAcceleratedRenderingState();
 }
 
 bool HTMLMediaElement::shouldLogWatchtimeEvent() const

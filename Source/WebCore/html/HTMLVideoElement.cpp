@@ -152,7 +152,7 @@ void HTMLVideoElement::didAttachRenderers()
 
 void HTMLVideoElement::acceleratedRenderingStateChanged()
 {
-    computeAcceleratedRenderingStateAndUpdateMediaPlayer();
+    scheduleUpdateAcceleratedRenderingState();
 }
 
 bool HTMLVideoElement::supportsAcceleratedRendering() const
@@ -165,7 +165,7 @@ void HTMLVideoElement::mediaPlayerRenderingModeChanged()
     HTMLVIDEOELEMENT_RELEASE_LOG(MediaPlayerRenderingModeChanged);
 
     // Kick off a fake recalcStyle that will update the compositing tree.
-    computeAcceleratedRenderingStateAndUpdateMediaPlayer();
+    scheduleUpdateAcceleratedRenderingState();
     invalidateStyleAndLayerComposition();
 }
 
@@ -179,7 +179,7 @@ void HTMLVideoElement::computeAcceleratedRenderingStateAndUpdateMediaPlayer()
     // picture-in-picture window or if it is in fullscreen.
     // Otherwise, the MediaPlayerPrivate* may destroy the video layer if
     // it is no longer in the DOM.
-    bool isInFullScreen = fullscreenMode() != VideoFullscreenModeNone;
+    bool isInFullScreen = (fullscreenMode() != VideoFullscreenModeNone) || isChangingVideoFullscreenMode();
 #else
     bool isInFullScreen = false;
 #endif
@@ -795,7 +795,7 @@ void HTMLVideoElement::viewportIntersectionChanged(bool isIntersecting)
     m_isIntersectingViewport = isIntersecting;
 
     isVisibleInViewportChanged();
-    computeAcceleratedRenderingStateAndUpdateMediaPlayer();
+    scheduleUpdateAcceleratedRenderingState();
 }
 
 static void processVideoFrameMetadataTimestamps(VideoFrameMetadata& metadata, Performance& performance)
