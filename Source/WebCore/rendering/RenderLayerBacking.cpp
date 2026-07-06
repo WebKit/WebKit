@@ -1162,11 +1162,8 @@ void RenderLayerBacking::updateAfterLayout(bool needsClippingUpdate, bool needsF
         setContentsNeedDisplay();
 }
 
-// This can only update things that don't require up-to-date layout.
-void RenderLayerBacking::updateConfigurationAfterStyleChange()
+void RenderLayerBacking::updateReflectionLayer()
 {
-    updateMaskingLayer(renderer().hasMask(), renderer().hasClipPath());
-
     if (m_owningLayer.hasReflection()) {
         if (m_owningLayer.reflectionLayer()->backing()) {
             RefPtr reflectionLayer = m_owningLayer.reflectionLayer()->backing()->graphicsLayer();
@@ -1174,6 +1171,14 @@ void RenderLayerBacking::updateConfigurationAfterStyleChange()
         }
     } else
         m_graphicsLayer->setReplicatedByLayer(nullptr);
+}
+
+// This can only update things that don't require up-to-date layout.
+void RenderLayerBacking::updateConfigurationAfterStyleChange()
+{
+    updateMaskingLayer(renderer().hasMask(), renderer().hasClipPath());
+
+    updateReflectionLayer();
 
     // FIXME: do we care if opacity is animating?
     auto& style = renderer().style();
@@ -1276,13 +1281,7 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     if (updateMaskingLayer(renderer().hasMask(), renderer().hasClipPath()))
         layerConfigChanged = true;
 
-    if (m_owningLayer.hasReflection()) {
-        if (m_owningLayer.reflectionLayer()->backing()) {
-            RefPtr reflectionLayer = m_owningLayer.reflectionLayer()->backing()->graphicsLayer();
-            m_graphicsLayer->setReplicatedByLayer(WTF::move(reflectionLayer));
-        }
-    } else
-        m_graphicsLayer->setReplicatedByLayer(nullptr);
+    updateReflectionLayer();
 
     PaintedContentsInfo contentsInfo(*this);
 
