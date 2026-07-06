@@ -205,6 +205,7 @@ set(WEBKIT_MAX_BUNDLE_SIZE 128)
 # Add PrivateFrameworks to framework search path (mirrors Base.xcconfig).
 if (CMAKE_OSX_SYSROOT)
     add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks>")
+    add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -iframework${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks>")
 endif ()
 
 # Regenerate the Xcode debug wrapper on every (re)configure so its scheme paths
