@@ -349,9 +349,6 @@
 42266310 PIXEL4ORXL GLES : dEQP-GLES2.functional.shaders.function.global_variable_aliasing_* = FAIL
 42267039 PIXEL4ORXL GLES : dEQP-GLES2.functional.texture.mipmap.cube.projected.nearest_linear = FAIL
 
-// Pixel 6 test expectations.
-428802465 PIXEL6 VULKAN : dEQP-GLES2.functional.negative_api.texture.generatemipmap_zero_level_array_compressed = FAIL
-
 // Pixel 10
 449087811 PIXEL10 GLES : dEQP-GLES2.functional.shaders.fragdata.valid_dynamic_index = FAIL
 449087811 PIXEL10 GLES : dEQP-GLES2.functional.shaders.fragdata.valid_uniform_index = FAIL

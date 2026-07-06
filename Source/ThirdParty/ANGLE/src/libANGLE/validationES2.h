@@ -679,15 +679,6 @@ ANGLE_INLINE bool ValidateBindTexture(const Context *context,
     return true;
 }
 
-// Validation of TexStorage*2DEXT
-bool ValidateES2TexStorageParametersBase(const Context *context,
-                                         angle::EntryPoint entryPoint,
-                                         TextureType target,
-                                         GLsizei levels,
-                                         GLenum internalformat,
-                                         GLsizei width,
-                                         GLsizei height);
-
 // Validation of [Push,Pop]DebugGroup
 bool ValidatePushDebugGroupBase(const Context *context,
                                 angle::EntryPoint entryPoint,

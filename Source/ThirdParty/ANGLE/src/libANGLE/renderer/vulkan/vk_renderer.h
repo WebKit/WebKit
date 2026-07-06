@@ -235,7 +235,7 @@ class Renderer : angle::NonCopyable
     uint32_t getQueueFamilyIndex() const { return mCurrentQueueFamilyIndex; }
     const VkQueueFamilyProperties &getQueueFamilyProperties() const
     {
-        return mQueueFamilyProperties[mCurrentQueueFamilyIndex];
+        return mQueueFamilyProperties2[mCurrentQueueFamilyIndex].queueFamilyProperties;
     }
     const DeviceQueueIndex getDeviceQueueIndex(egl::ContextPriority priority) const
     {
@@ -731,7 +731,9 @@ class Renderer : angle::NonCopyable
                               const angle::FeatureOverrides &featureOverrides,
                               UseVulkanSwapchain useVulkanSwapchain,
                               angle::NativeWindowSystem nativeWindowSystem);
-    angle::Result createDeviceAndQueue(vk::ErrorContext *context, uint32_t queueFamilyIndex);
+    angle::Result createDeviceAndQueue(vk::ErrorContext *context,
+                                       uint32_t queueFamilyIndex,
+                                       VkQueueGlobalPriority globalPriority);
     void ensureCapsInitialized() const;
     void initializeValidationMessageSuppressions();
 
@@ -946,7 +948,7 @@ class Renderer : angle::NonCopyable
     angle::ShadingRateSet mSupportedFragmentShadingRatesEXT;
     angle::ShadingRateMap mSupportedFragmentShadingRateEXTSampleCounts;
 
-    std::vector<VkQueueFamilyProperties> mQueueFamilyProperties;
+    std::vector<VkQueueFamilyProperties2> mQueueFamilyProperties2;
     uint32_t mCurrentQueueFamilyIndex;
     uint32_t mMaxVertexAttribDivisor;
     VkDeviceSize mMaxVertexAttribStride;

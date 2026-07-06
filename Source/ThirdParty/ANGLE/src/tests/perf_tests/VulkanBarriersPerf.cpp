@@ -7,11 +7,8 @@
 //   Performance tests for ANGLE's Vulkan backend w.r.t barrier efficiency.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <sstream>
+#include "common/unsafe_buffers.h"
 
 #include "ANGLEPerfTest.h"
 #include "test_utils/gl_raii.h"
@@ -194,9 +191,10 @@ void VulkanBarriersPerfBenchmark::createTexture(uint32_t textureIndex,
     // TODO(syoussefi): compressed copy using vkCmdCopyImage not yet implemented in the vulkan
     // backend. http://anglebug.com/42261682
 
-    glBindTexture(GL_TEXTURE_2D, mTextures[textureIndex]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, params.kImageSizes[sizeIndex],
-                 params.kImageSizes[sizeIndex], 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glBindTexture(GL_TEXTURE_2D, ANGLE_UNSAFE_TODO(mTextures[textureIndex]));
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ANGLE_UNSAFE_TODO(params.kImageSizes[sizeIndex]),
+                 ANGLE_UNSAFE_TODO(params.kImageSizes[sizeIndex]), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
 
     // Disable mipmapping
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -220,9 +218,9 @@ void VulkanBarriersPerfBenchmark::createFramebuffer(uint32_t fboIndex,
 {
     createTexture(textureIndex, sizeIndex, false);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, mFbos[fboIndex]);
+    glBindFramebuffer(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(mFbos[fboIndex]));
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-                           mTextures[textureIndex], 0);
+                           ANGLE_UNSAFE_TODO(mTextures[textureIndex]), 0);
 }
 
 void VulkanBarriersPerfBenchmark::createResources()
@@ -371,25 +369,27 @@ void VulkanBarriersPerfBenchmark::drawBenchmark()
         if (params.doBufferCopy)
         {
             // Transfer data between the 2 Uniform buffers
-            glBindBuffer(GL_COPY_READ_BUFFER, mUniformBuffers[uniformBufferReadIndex]);
-            glBindBuffer(GL_COPY_WRITE_BUFFER, mUniformBuffers[uniformBufferWriteIndex]);
+            glBindBuffer(GL_COPY_READ_BUFFER,
+                         ANGLE_UNSAFE_TODO(mUniformBuffers[uniformBufferReadIndex]));
+            glBindBuffer(GL_COPY_WRITE_BUFFER,
+                         ANGLE_UNSAFE_TODO(mUniformBuffers[uniformBufferWriteIndex]));
             glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0,
                                 params.kBufferSize);
         }
 
         // Bind the framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, mFbos[fboDestIndex]);
+        glBindFramebuffer(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(mFbos[fboDestIndex]));
 
         // Set the viewport
-        glViewport(0, 0, params.kImageSizes[fboDestSizeIndex],
-                   params.kImageSizes[fboDestSizeIndex]);
+        glViewport(0, 0, ANGLE_UNSAFE_TODO(params.kImageSizes[fboDestSizeIndex]),
+                   ANGLE_UNSAFE_TODO(params.kImageSizes[fboDestSizeIndex]));
 
         // Clear the color buffer
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Bind the texture
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, mTextures[fboTexSrcIndex]);
+        glBindTexture(GL_TEXTURE_2D, ANGLE_UNSAFE_TODO(mTextures[fboTexSrcIndex]));
 
         ASSERT_GL_NO_ERROR();
 

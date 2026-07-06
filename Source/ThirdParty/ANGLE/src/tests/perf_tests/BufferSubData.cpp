@@ -7,11 +7,8 @@
 //   Performance test for ANGLE buffer updates.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <sstream>
+#include "common/unsafe_buffers.h"
 
 #include "ANGLEPerfTest.h"
 #include "test_utils/draw_call_perf_utils.h"
@@ -105,12 +102,12 @@ GLsizeiptr GetNormalizedData(GLsizeiptr numElements, GLfloat *floatData, std::ve
     GLsizeiptr triDataSize = sizeof(T) * numElements;
     data->resize(triDataSize);
 
-    T *destPtr = reinterpret_cast<T *>(data->data());
+    T *destPtr = ANGLE_UNSAFE_TODO(reinterpret_cast<T *>(data->data()));
 
     for (GLsizeiptr dataIndex = 0; dataIndex < numElements; dataIndex++)
     {
-        GLfloat scaled = floatData[dataIndex] * 0.25f;
-        destPtr[dataIndex] =
+        GLfloat scaled = ANGLE_UNSAFE_TODO(floatData[dataIndex]) * 0.25f;
+        ANGLE_UNSAFE_TODO(destPtr[dataIndex]) =
             static_cast<T>(scaled * static_cast<GLfloat>(std::numeric_limits<T>::max()));
     }
 
@@ -123,11 +120,12 @@ GLsizeiptr GetIntData(GLsizeiptr numElements, GLfloat *floatData, std::vector<ui
     GLsizeiptr triDataSize = sizeof(T) * numElements;
     data->resize(triDataSize);
 
-    T *destPtr = reinterpret_cast<T *>(data->data());
+    T *destPtr = ANGLE_UNSAFE_TODO(reinterpret_cast<T *>(data->data()));
 
     for (GLsizeiptr dataIndex = 0; dataIndex < numElements; dataIndex++)
     {
-        destPtr[dataIndex] = static_cast<T>(floatData[dataIndex]);
+        ANGLE_UNSAFE_TODO(destPtr[dataIndex]) =
+            static_cast<T>(ANGLE_UNSAFE_TODO(floatData[dataIndex]));
     }
 
     return triDataSize;
@@ -145,7 +143,7 @@ GLsizeiptr GetVertexData(GLenum type,
     {
         triDataSize = sizeof(GLfloat) * componentCount * 3;
         data->resize(triDataSize);
-        memcpy(data->data(), floatData, triDataSize);
+        ANGLE_UNSAFE_TODO(memcpy(data->data(), floatData, triDataSize));
     }
     else if (normalized == GL_TRUE)
     {
@@ -280,7 +278,7 @@ void BufferSubDataBenchmark::initializeBenchmark()
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     std::vector<uint8_t> zeroData(params.bufferSize);
-    memset(&zeroData[0], 0, zeroData.size());
+    ANGLE_UNSAFE_TODO(memset(&zeroData[0], 0, zeroData.size()));
 
     glGenBuffers(1, &mBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
@@ -302,7 +300,7 @@ void BufferSubDataBenchmark::initializeBenchmark()
     mNumTris = static_cast<int>(params.updateSize / triDataSize);
     for (int i = 0, offset = 0; i < mNumTris; ++i)
     {
-        memcpy(mUpdateData + offset, &data[0], triDataSize);
+        ANGLE_UNSAFE_TODO(memcpy(mUpdateData + offset, &data[0], triDataSize));
         offset += triDataSize;
     }
 

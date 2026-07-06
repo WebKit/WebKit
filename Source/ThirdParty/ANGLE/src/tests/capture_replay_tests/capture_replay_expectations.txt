@@ -199,6 +199,10 @@
 42266040 : ImageTestES3.SourceCubeTargetExternalESSL3_Colorspace/* = SKIP_FOR_CAPTURE
 42266040 : ImageTestES3.SourceRenderbufferTargetTextureExternalESSL3_Colorspace/* = SKIP_FOR_CAPTURE
 
+# Mishandling of EGL image level in glGetTexImage
+525079760 : ImageTestES3.MipLevelsNonZeroBaseLevel/* = SKIP_FOR_CAPTURE
+525079760 : ImageTestES3.NonZeroLevel*/* = SKIP_FOR_CAPTURE
+
 353538491 : ImageTest.TargetTexture2DDeletedWhileInUse/* = SKIP_FOR_CAPTURE
 353538491 : ImageTest.TargetTexture2DDeletedWhileInUse2/* = SKIP_FOR_CAPTURE
 353538491 : ImageTest.TargetRenderbufferDeletedWhileInUse/* = SKIP_FOR_CAPTURE

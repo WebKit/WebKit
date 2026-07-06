@@ -234,16 +234,17 @@ angle::Result RenderbufferVk::copyRenderbufferSubData(const gl::Context *context
     ANGLE_TRY(sourceVk->ensureImageInitialized(context));
     ANGLE_TRY(ensureImageInitialized(context));
 
-    return vk::ImageHelper::CopyImageSubData(context, sourceVk->getImage(), 0, srcX, srcY, 0,
-                                             mImage, 0, dstX, dstY, 0, srcWidth, srcHeight, 1);
+    return vk::ImageHelper::CopyImageSubData(context, sourceVk->getImage(), gl::LevelIndex(0), srcX,
+                                             srcY, 0, mImage, gl::LevelIndex(0), dstX, dstY, 0,
+                                             srcWidth, srcHeight, 1);
 }
 
 angle::Result RenderbufferVk::copyTextureSubData(const gl::Context *context,
                                                  const gl::Texture *srcTexture,
-                                                 GLint srcLevel,
+                                                 gl::OwnLevel ownSrcLevel,
                                                  GLint srcX,
                                                  GLint srcY,
-                                                 GLint srcZ,
+                                                 gl::OwnLayer ownSrcZ,
                                                  GLint dstX,
                                                  GLint dstY,
                                                  GLsizei srcWidth,
@@ -256,14 +257,17 @@ angle::Result RenderbufferVk::copyTextureSubData(const gl::Context *context,
     ANGLE_TRY(sourceVk->ensureImageInitialized(contextVk, ImageMipLevels::EnabledLevels));
     ANGLE_TRY(ensureImageInitialized(context));
 
-    return vk::ImageHelper::CopyImageSubData(context, &sourceVk->getImage(), srcLevel, srcX, srcY,
-                                             srcZ, mImage, 0, dstX, dstY, 0, srcWidth, srcHeight,
-                                             1);
+    // TODO(http://anglebug.com/525079760): Get the translated level/layer 0 for renderbuffer to
+    // account for EGL image targets.
+    return vk::ImageHelper::CopyImageSubData(context, &sourceVk->getImage(),
+                                             ownSrcLevel.getUntranslated(), srcX, srcY,
+                                             ownSrcZ.getUntranslated(), mImage, gl::LevelIndex(0),
+                                             dstX, dstY, 0, srcWidth, srcHeight, 1);
 }
 
 angle::Result RenderbufferVk::getAttachmentRenderTarget(const gl::Context *context,
                                                         GLenum binding,
-                                                        const gl::ImageIndex &imageIndex,
+                                                        const gl::OwnImageIndex &ownImageIndex,
                                                         GLsizei samples,
                                                         FramebufferAttachmentRenderTarget **rtOut)
 {
@@ -274,8 +278,10 @@ angle::Result RenderbufferVk::getAttachmentRenderTarget(const gl::Context *conte
 
 angle::Result RenderbufferVk::initializeContents(const gl::Context *context,
                                                  GLenum binding,
-                                                 const gl::ImageIndex &imageIndex)
+                                                 const gl::OwnImageIndex &ownImageIndex)
 {
+    const gl::ImageIndex imageIndex = ownImageIndex.getUntranslated();
+
     // Note: stageSubresourceRobustClear only uses the intended format to count channels.
     mImage->stageRobustResourceClear(imageIndex, mImage->getAspectFlags());
     return mImage->flushAllStagedUpdates(vk::GetImpl(context));

@@ -5553,8 +5553,7 @@ TEST_P(Texture2DTest, CopySubImageFloat_RGBA_RGBA)
 
 // Port of
 // https://www.khronos.org/registry/webgl/conformance-suites/1.0.3/conformance/textures/texture-npot.html
-// Run against GL_ALPHA/UNSIGNED_BYTE format, to ensure that D3D11 Feature Level 9_3 correctly
-// handles GL_ALPHA
+// Run against GL_ALPHA/UNSIGNED_BYTE format, to ensure that GL_ALPHA is handled correctly.
 TEST_P(Texture2DTest, TextureNPOT_GL_ALPHA_UBYTE)
 {
     const int npotTexSize = 5;
@@ -9702,8 +9701,6 @@ TEST_P(Texture2DTestES3, InternalFormatNotEnabled_ANGLEX)
     verify(GL_BGR565_ANGLEX, GL_RGB, GL_UNSIGNED_SHORT_5_6_5);
     verify(GL_BGRA4_ANGLEX, GL_BGRA_EXT, GL_UNSIGNED_SHORT_4_4_4_4_REV_EXT);
     verify(GL_BGR5_A1_ANGLEX, GL_BGRA_EXT, GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT);
-    verify(GL_INT_64_ANGLEX, GL_RED, GL_INT);
-    verify(GL_UINT_64_ANGLEX, GL_RED, GL_UNSIGNED_INT);
     verify(GL_BGRA8_SRGB_ANGLEX, GL_BGRA_EXT, GL_UNSIGNED_BYTE);
     verify(GL_BGR10_A2_ANGLEX, GL_BGRA_EXT, GL_UNSIGNED_INT_2_10_10_10_REV);
     verify(GL_BGRX8_SRGB_ANGLEX, GL_BGRA_EXT, GL_UNSIGNED_BYTE);
@@ -15478,11 +15475,11 @@ TEST_P(TextureCubeTestES32, MaxArrayTextureLayersVerify)
                  GL_UNSIGNED_BYTE, nullptr);
     EXPECT_GL_ERROR(GL_INVALID_VALUE);
 
-    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, kSize, kSize, maxTextureLayers);
-    ASSERT_GL_NO_ERROR();
-
     glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, kSize, kSize, maxTextureLayers + 1);
     EXPECT_GL_ERROR(GL_INVALID_VALUE);
+
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, kSize, kSize, maxTextureLayers);
+    ASSERT_GL_NO_ERROR();
 }
 
 // Tests defining a cube map array texture using glTexImage3D().

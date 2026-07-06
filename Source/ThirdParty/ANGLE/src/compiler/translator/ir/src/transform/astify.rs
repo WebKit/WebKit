@@ -578,7 +578,10 @@ fn declare_temp_variable_if_high_precision_constant(
             VariableScope::Local,
         );
         transforms.push(traverser::Transform::DeclareVariable(variable_id));
-        variable_typed_id
+        traverser::add_typed_instruction(
+            transforms,
+            instruction::make!(load, state.ir_meta, variable_typed_id),
+        )
     } else {
         id
     }
@@ -1102,7 +1105,7 @@ fn transform_continue_adjust_condition_block(
     // Create a block that sets the given variables all to true, and ends in `Break`.
     let mut break_block = Block::new();
     for variable_id in variables_to_set {
-        let variable_id = TypedId::from_bool_variable_id(variable_id);
+        let variable_id = TypedId::from_bool_variable_id(state.ir_meta, variable_id);
         break_block.add_void_instruction(OpCode::Store(variable_id, TYPED_CONSTANT_ID_TRUE));
     }
     break_block.terminate(OpCode::Break);
@@ -1160,8 +1163,8 @@ fn transform_continue_post_visit_switch<'block>(
         //     %value = Load %variable
         //     If %value
         let mut propagate_break_block = Block::new();
-        let load_instruction =
-            instruction::make!(load, state.ir_meta, TypedId::from_bool_variable_id(variable_id));
+        let variable_typed_id = TypedId::from_bool_variable_id(state.ir_meta, variable_id);
+        let load_instruction = instruction::make!(load, state.ir_meta, variable_typed_id);
         let load_value = propagate_break_block.add_typed_instruction(load_instruction);
         propagate_break_block.terminate(OpCode::If(load_value));
         propagate_break_block.set_if_true_block(break_block);

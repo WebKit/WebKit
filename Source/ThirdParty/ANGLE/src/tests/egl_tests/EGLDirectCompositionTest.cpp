@@ -7,10 +7,7 @@
 // EGLDirectCompositionTest.cpp:
 //   Tests pertaining to DirectComposition and WindowsUIComposition.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #ifdef ANGLE_ENABLE_D3D11_COMPOSITOR_NATIVE_WINDOW
 
 #    include <d3d11.h>
@@ -184,7 +181,8 @@ class EGLDirectCompositionTest : public ANGLETest<>
         auto displayExtensions = eglQueryString(mEglDisplay, EGL_EXTENSIONS);
 
         // Check that the EGL_ANGLE_windows_ui_composition display extension is available
-        ASSERT_TRUE(strstr(displayExtensions, "EGL_ANGLE_windows_ui_composition") != nullptr);
+        ASSERT_TRUE(ANGLE_UNSAFE_TODO(
+                        strstr(displayExtensions, "EGL_ANGLE_windows_ui_composition")) != nullptr);
 
         const EGLint contextAttributes[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
 
@@ -287,7 +285,7 @@ TEST_P(EGLDirectCompositionTest, RenderSolidColor)
     mOSWindow->messageLoop();
 
     uint8_t *pixelBuffer = static_cast<uint8_t *>(malloc(WINDOWWIDTH * WINDOWHEIGHT * 4));
-    ZeroMemory(pixelBuffer, WINDOWWIDTH * WINDOWHEIGHT * 4);
+    ANGLE_UNSAFE_TODO(ZeroMemory(pixelBuffer, WINDOWWIDTH * WINDOWHEIGHT * 4));
 
     // In order to accurately capture a bitmap, we need to temporarily shift into per-monitor DPI
     // mode in order to get the window offset from desktop correct
@@ -296,10 +294,10 @@ TEST_P(EGLDirectCompositionTest, RenderSolidColor)
     mFpSetThreadDpiAwarenessContext(previous);
     ASSERT_EGL_TRUE(success);
 
-    ASSERT_EGL_TRUE(pixelBuffer[(50 * 50 * 4)] == 255);
-    ASSERT_EGL_TRUE(pixelBuffer[(50 * 50 * 4) + 1] == 0);
-    ASSERT_EGL_TRUE(pixelBuffer[(50 * 50 * 4) + 2] == 0);
-    ASSERT_EGL_TRUE(pixelBuffer[(50 * 50 * 4) + 3] == 255);
+    ASSERT_EGL_TRUE(ANGLE_UNSAFE_TODO(pixelBuffer[(50 * 50 * 4)]) == 255);
+    ASSERT_EGL_TRUE(ANGLE_UNSAFE_TODO(pixelBuffer[(50 * 50 * 4) + 1]) == 0);
+    ASSERT_EGL_TRUE(ANGLE_UNSAFE_TODO(pixelBuffer[(50 * 50 * 4) + 2]) == 0);
+    ASSERT_EGL_TRUE(ANGLE_UNSAFE_TODO(pixelBuffer[(50 * 50 * 4) + 3]) == 255);
 
     ASSERT_TRUE(eglMakeCurrent(mEglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) !=
                 EGL_FALSE);

@@ -7,10 +7,7 @@
 //   Tests for ETC lossy decode formats.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -382,7 +379,8 @@ TEST_P(ETCToBCTextureTest, ETC2Rgba8UnormToBC3)
     {
         for (int j = 0; j < 4; ++j)
         {
-            EXPECT_PIXEL_COLOR_NEAR(j, i, GLColor(kExpectedRGBAColor[i * 4 + j]), kAbsError);
+            ANGLE_UNSAFE_TODO(
+                EXPECT_PIXEL_COLOR_NEAR(j, i, GLColor(kExpectedRGBAColor[i * 4 + j]), kAbsError));
         }
     }
 }
@@ -498,7 +496,8 @@ TEST_P(ETCToBCTextureTest, ETC2R11SignedToBC4)
     {
         for (int j = 0; j < 4; ++j)
         {
-            EXPECT_PIXEL_COLOR_NEAR(j, i, GLColor(kExpectedR11SignedColor[i * 4 + j]), kAbsError);
+            ANGLE_UNSAFE_TODO(EXPECT_PIXEL_COLOR_NEAR(
+                j, i, GLColor(kExpectedR11SignedColor[i * 4 + j]), kAbsError));
         }
     }
 }
@@ -529,7 +528,7 @@ TEST_P(ETCToBCTextureTest, ETC2RG11ToBC5)
     {
         for (int j = 0; j < 4; ++j)
         {
-            uint32_t color = (kExpectedRGBAColor[i * 4 + j] & 0xff000000) >> 24;
+            uint32_t color = (ANGLE_UNSAFE_TODO(kExpectedRGBAColor[i * 4 + j]) & 0xff000000) >> 24;
             color |= color << 8;
             color |= 0xff000000;
             EXPECT_PIXEL_COLOR_NEAR(j, i, GLColor(color), kAbsError);
@@ -558,7 +557,8 @@ TEST_P(ETCToBCTextureTest, ETC2Rgb8a1UnormToBC1)
     {
         for (int j = 0; j < 4; ++j)
         {
-            EXPECT_PIXEL_COLOR_NEAR(j, i, GLColor(kExpectedRgb8a1[i * 4 + j]), kAbsError);
+            ANGLE_UNSAFE_TODO(
+                EXPECT_PIXEL_COLOR_NEAR(j, i, GLColor(kExpectedRgb8a1[i * 4 + j]), kAbsError));
         }
     }
 }

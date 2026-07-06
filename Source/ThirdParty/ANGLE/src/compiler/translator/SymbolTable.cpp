@@ -247,6 +247,12 @@ const TVariable *TSymbolTable::gl_SecondaryFragDataEXT() const
     return static_cast<const TVariable *>(m_gl_SecondaryFragDataEXT);
 }
 
+bool TSymbolTable::isSecondaryFragDataUsed() const
+{
+    // Extension variables may not always be initialized (saves some time at symbol table init).
+    return gl_SecondaryFragDataEXT() != nullptr && isStaticallyUsed(*gl_SecondaryFragDataEXT());
+}
+
 TSymbolTable::VariableMetadata *TSymbolTable::getOrCreateVariableMetadata(const TVariable &variable)
 {
     int id    = variable.uniqueId().get();

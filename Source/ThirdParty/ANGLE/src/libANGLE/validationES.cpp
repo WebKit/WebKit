@@ -1229,78 +1229,6 @@ bool ValidCompressedImageSize(const Context *context,
     return true;
 }
 
-bool ValidCompressedSubImageSize(const Context *context,
-                                 GLenum internalFormat,
-                                 GLint xoffset,
-                                 GLint yoffset,
-                                 GLint zoffset,
-                                 GLsizei width,
-                                 GLsizei height,
-                                 GLsizei depth,
-                                 size_t textureWidth,
-                                 size_t textureHeight,
-                                 size_t textureDepth)
-{
-    // Passing non-compressed internal format to sub-image compressed entry points generates
-    // INVALID_OPERATION, so check it here.
-    const InternalFormat &formatInfo = GetSizedInternalFormatInfo(internalFormat);
-    if (!formatInfo.compressed)
-    {
-        return false;
-    }
-
-    // Negative dimensions already checked in ValidImageSizeParameters called by
-    // ValidateES2TexImageParameters or ValidateES3TexImageParametersBase.
-    ASSERT(width >= 0 && height >= 0 && depth >= 0);
-
-    // Negative and overflowed offsets already checked in ValidateES2TexImageParameters or
-    // ValidateES3TexImageParametersBase.
-    ASSERT(xoffset >= 0 && yoffset >= 0 && zoffset >= 0);
-    ASSERT(std::numeric_limits<GLsizei>::max() - xoffset >= width &&
-           std::numeric_limits<GLsizei>::max() - yoffset >= height &&
-           std::numeric_limits<GLsizei>::max() - zoffset >= depth);
-
-    // Ensure that format's block dimensions are set.
-    ASSERT(formatInfo.compressedBlockWidth > 0 && formatInfo.compressedBlockHeight > 0 &&
-           formatInfo.compressedBlockDepth > 0);
-
-    // Check if the whole image is being replaced. For 2D texture blocks, zoffset and depth do not
-    // affect whether the replaced region fills the entire image.
-    if ((xoffset == 0 && static_cast<size_t>(width) == textureWidth) &&
-        (yoffset == 0 && static_cast<size_t>(height) == textureHeight) &&
-        ((zoffset == 0 && static_cast<size_t>(depth) == textureDepth) ||
-         formatInfo.compressedBlockDepth == 1))
-    {
-        // All compressed formats support whole image replacement, early pass.
-        return true;
-    }
-
-    // The replaced region does not match the image size. Fail if the format does not support
-    // partial updates.
-    if (CompressedFormatRequiresWholeImage(internalFormat))
-    {
-        return false;
-    }
-
-    // The format supports partial updates. Check that the origin of the replaced region is aligned
-    // to block boundaries.
-    if (xoffset % formatInfo.compressedBlockWidth != 0 ||
-        yoffset % formatInfo.compressedBlockHeight != 0 ||
-        zoffset % formatInfo.compressedBlockDepth != 0)
-    {
-        return false;
-    }
-
-    // The replaced region dimensions must either be multiples of the block dimensions or exactly
-    // reach the image boundaries.
-    return (static_cast<size_t>(xoffset + width) == textureWidth ||
-            width % formatInfo.compressedBlockWidth == 0) &&
-           (static_cast<size_t>(yoffset + height) == textureHeight ||
-            height % formatInfo.compressedBlockHeight == 0) &&
-           (static_cast<size_t>(zoffset + depth) == textureDepth ||
-            depth % formatInfo.compressedBlockDepth == 0);
-}
-
 bool ValidImageDataSize(const Context *context,
                         angle::EntryPoint entryPoint,
                         TextureType texType,
@@ -7953,6 +7881,339 @@ bool ValidateMultitextureUnit(const PrivateState &state,
         errors->validationError(entryPoint, GL_INVALID_ENUM, kInvalidMultitextureUnit);
         return false;
     }
+    return true;
+}
+
+bool ValidateTexStorage(const Context *context,
+                        angle::EntryPoint entryPoint,
+                        TextureType targetPacked,
+                        GLsizei levels,
+                        GLenum internalformat,
+                        GLsizei width,
+                        GLsizei height,
+                        GLsizei depth,
+                        TexImageDimension texImageDimension)
+{
+    const Version &clientVersion = context->getClientVersion();
+    const Extensions &extensions = context->getExtensions();
+    const Caps &caps             = context->getCaps();
+
+    GLsizei maxDimension = 0;
+
+    // Target is valid for the command and in the current context.
+    {
+        bool validForCommand = false;
+        bool validForContext = false;
+        switch (targetPacked)
+        {
+            case TextureType::_2D:
+                validForCommand = (texImageDimension == TexImageDimension::_2D);
+                validForContext = true;
+                maxDimension    = caps.max2DTextureSize;
+                break;
+            case TextureType::CubeMap:
+                validForCommand = (texImageDimension == TexImageDimension::_2D);
+                validForContext = (clientVersion >= ES_2_0 || extensions.textureCubeMapOES);
+                maxDimension    = caps.maxCubeMapTextureSize;
+                break;
+            case TextureType::Rectangle:
+                validForCommand = (texImageDimension == TexImageDimension::_2D);
+                validForContext = extensions.textureRectangleANGLE;
+                maxDimension    = caps.maxRectangleTextureSize;
+                break;
+            case TextureType::_2DArray:
+                validForCommand = (texImageDimension == TexImageDimension::_3D);
+                validForContext = (clientVersion >= ES_3_0);
+                maxDimension    = caps.max2DTextureSize;
+                break;
+            case TextureType::_3D:
+                validForCommand = (texImageDimension == TexImageDimension::_3D);
+                validForContext = (clientVersion >= ES_3_0 || extensions.texture3DOES);
+                maxDimension    = caps.max3DTextureSize;
+                break;
+            case TextureType::CubeMapArray:
+                validForCommand = (texImageDimension == TexImageDimension::_3D);
+                validForContext = (clientVersion >= ES_3_2 || extensions.textureCubeMapArrayAny());
+                maxDimension    = caps.maxCubeMapTextureSize;
+                break;
+            default:
+                ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kTargetUnknown);
+                return false;
+        }
+
+        if (ANGLE_UNLIKELY(!validForCommand || !validForContext))
+        {
+            ANGLE_VALIDATION_ERRORF(GL_INVALID_ENUM, kTextureTargetInvalid, ToGLenum(targetPacked));
+            return false;
+        }
+
+        ASSERT(maxDimension > 0);
+    }
+
+    // Texture bound to target can be redefined.
+    {
+        Texture *texture = context->getTextureByType(targetPacked);
+        ASSERT(texture != nullptr);
+
+        if (ANGLE_UNLIKELY(texture->id().value == 0))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kZeroBoundToTarget);
+            return false;
+        }
+
+        if (ANGLE_UNLIKELY(texture->getImmutableFormat()))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kTextureIsImmutable);
+            return false;
+        }
+
+        if (ANGLE_UNLIKELY(!ValidateNoActivePLSConflict(context, entryPoint, texture->id())))
+        {
+            // Error already generated.
+            return false;
+        }
+    }
+
+    // TODO(http://anglebug.com/527973959)
+    // Remove after handling of special internal formats is fixed.
+    if (ANGLE_UNLIKELY(IsAngleInternalFormat(internalformat)))
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInternalFormatNotSupportedTexStorage);
+        return false;
+    }
+
+    const InternalFormat &internalFormatInfo = GetSizedInternalFormatInfo(internalformat);
+
+    // Format is sized, not paletted, and supported in the current context for textures.
+    {
+        const bool validForContext = internalFormatInfo.textureSupport(clientVersion, extensions);
+        const bool validForCommand = internalFormatInfo.sized && !internalFormatInfo.paletted;
+        if (ANGLE_UNLIKELY(!validForContext || !validForCommand))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInternalFormatNotSupportedTexStorage);
+            return false;
+        }
+    }
+
+    // TODO(http://anglebug.com/528570875)
+    // Remove after this state becomes accessible from the InternalFormat struct.
+    const bool isYuvFormat = IsYuvFormat(internalformat);
+
+    // Format is valid for target.
+    {
+        if (internalFormatInfo.compressed)
+        {
+            // If the format does not support 2D arrays, disallow it for cube map arrays too.
+            if (targetPacked == TextureType::_2DArray || targetPacked == TextureType::CubeMapArray)
+            {
+                if (ANGLE_UNLIKELY(
+                        !ValidCompressedFormatForTexture2DArray(internalformat, extensions)))
+                {
+                    ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInternalFormatRequiresTexture2D);
+                    return false;
+                }
+            }
+            else if (targetPacked == TextureType::_3D)
+            {
+                if (ANGLE_UNLIKELY(!ValidCompressedFormatForTexture3D(internalformat, extensions)))
+                {
+                    ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION,
+                                           kInternalFormatNotSupportedTexture3D);
+                    return false;
+                }
+            }
+            else if (ANGLE_UNLIKELY(targetPacked == TextureType::Rectangle))
+            {
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kRectangleTextureCompressed);
+                return false;
+            }
+
+            // Compressed formats with 3D blocks support only 3D textures.
+            if (ANGLE_UNLIKELY(internalFormatInfo.compressedBlockDepth > 1 &&
+                               targetPacked != TextureType::_3D))
+            {
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInternalFormatRequiresTexture3D);
+                return false;
+            }
+        }
+        else if (internalFormatInfo.isDepthOrStencil())
+        {
+            if (targetPacked == TextureType::CubeMap)
+            {
+                if (ANGLE_UNLIKELY(clientVersion < ES_3_0 && !extensions.depthTextureCubeMapOES))
+                {
+                    ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kDepthFormatCubemap);
+                    return false;
+                }
+            }
+            else if (ANGLE_UNLIKELY(targetPacked == TextureType::_3D))
+            {
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInternalFormatNotSupportedTexture3D);
+                return false;
+            }
+        }
+        else if (isYuvFormat)
+        {
+            if (ANGLE_UNLIKELY(targetPacked != TextureType::_2D))
+            {
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kYUVFormatNot2DTarget);
+                return false;
+            }
+        }
+    }
+
+    // Dimensions are positive.
+    if (ANGLE_UNLIKELY(width < 1 || height < 1 || depth < 1))
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNonPositiveDimensions);
+        return false;
+    }
+
+    // Dimensions are not NPOT or the context support NPOT dimensions.
+    if (ANGLE_UNLIKELY(clientVersion < ES_2_0 && !extensions.textureNpotOES))
+    {
+        ASSERT(targetPacked == TextureType::_2D || targetPacked == TextureType::CubeMap);
+        if (ANGLE_UNLIKELY(!isPow2(width) || !isPow2(height)))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kTextureNotPow2);
+            return false;
+        }
+    }
+
+    // Dimensions do not exceed target-specific maximums.
+    {
+        ASSERT(texImageDimension == TexImageDimension::_3D || depth == 1);
+        ASSERT(maxDimension > 0);
+
+        const bool isArray =
+            targetPacked == TextureType::_2DArray || targetPacked == TextureType::CubeMapArray;
+        const GLsizei maxDepth = isArray ? caps.maxArrayTextureLayers : maxDimension;
+        const bool areDimsInRange =
+            (width <= maxDimension) && (height <= maxDimension) && (depth <= maxDepth);
+        if (ANGLE_UNLIKELY(!areDimsInRange))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kResourceMaxTextureSize);
+            return false;
+        }
+    }
+
+    // Dimensions are valid for cube maps.
+    if (targetPacked == TextureType::CubeMap || targetPacked == TextureType::CubeMapArray)
+    {
+        if (ANGLE_UNLIKELY(width != height))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kCubemapFaceNotSquare);
+            return false;
+        }
+
+        if (ANGLE_UNLIKELY(targetPacked == TextureType::CubeMapArray && (depth % 6 != 0)))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kCubemapInvalidDepth);
+            return false;
+        }
+    }
+
+    // Dimensions are valid for the format.
+    if (internalFormatInfo.compressed)
+    {
+        if (IsPVRTC1Format(internalformat))
+        {
+            // PVRTC1 requires dimensions to be powers of two by design.
+            // Supported platforms (Apple silicon) accept only square PVRTC1 textures.
+            if (ANGLE_UNLIKELY(!isPow2(width) || !isPow2(height) || (width != height)))
+            {
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kTextureDimensionsPVRTC1);
+                return false;
+            }
+        }
+        else if (IsS3TCFormat(internalformat) || IsRGTCFormat(internalformat) ||
+                 IsBPTCFormat(internalformat))
+        {
+            // D3D11 requires the implied level 0 dimensions of BCn textures to be
+            // multiples of four. WebGL has the same limitation for these formats.
+            if (context->isWebGL() ||
+                context->getLimitations().compressedBaseMipLevelMultipleOfFour)
+            {
+                if (ANGLE_UNLIKELY((width % 4) != 0 || (height % 4) != 0))
+                {
+                    ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kTextureDimensionsBCn);
+                    return false;
+                }
+            }
+        }
+    }
+
+    // If not exactly one level is allocated, additional target,
+    // format, and dimension-specific validations are needed.
+    if (levels != 1)
+    {
+        // Levels value is positive.
+        if (ANGLE_UNLIKELY(levels < 1))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNonPositiveLevels);
+            return false;
+        }
+
+        const GLsizei depthForLevels = (targetPacked == TextureType::_3D) ? depth : 1;
+        GLsizei maxLevels            = log2(std::max({width, height, depthForLevels})) + 1;
+
+        if (targetPacked == TextureType::Rectangle)
+        {
+            maxLevels = 1;  // Rectangle textures do not support mipmaps.
+        }
+        else if (internalFormatInfo.isDepthOrStencil())
+        {
+            if (clientVersion < ES_3_0 && !extensions.depthTextureOES)
+            {
+                // This is possible if the context is below ES 3.0
+                // and only GL_ANGLE_depth_texture is enabled.
+                maxLevels = 1;
+            }
+        }
+        else if (isYuvFormat)
+        {
+            maxLevels = 1;  // YUV textures do not support mipmaps.
+        }
+        else if (clientVersion < ES_3_0 && !extensions.textureNpotOES)
+        {
+            if (!isPow2(width) || !isPow2(height) ||
+                (targetPacked == TextureType::_3D && !isPow2(depth)))
+            {
+                maxLevels = 1;  // The context does not support NPOT mipmaps.
+            }
+        }
+
+        ASSERT(levels > 1 && maxLevels >= 1);
+
+        // The number of levels does not exceed the maximum
+        // possible for the target, format, and dimensions.
+        if (ANGLE_UNLIKELY(levels > maxLevels))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kLevelsGreaterThanMax);
+            return false;
+        }
+
+        // The context supports partial mipmaps or all levels are allocated.
+        if (ANGLE_UNLIKELY(clientVersion < ES_3_0 && levels < maxLevels))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kLevelsLessThanMax);
+            return false;
+        }
+    }
+
+    // Make sure computeImageSize sets expectedImageSize.
+    GLuint expectedImageSize = std::numeric_limits<GLuint>::max();
+    {
+        const bool isSizeValid = internalFormatInfo.computeImageSize(Extents(width, height, depth),
+                                                                     0, &expectedImageSize);
+        if (ANGLE_UNLIKELY(!isSizeValid ||
+                           expectedImageSize > context->getLimitations().maxTextureBytes))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kTextureSizeLimitation);
+            return false;
+        }
+    }
+
     return true;
 }
 

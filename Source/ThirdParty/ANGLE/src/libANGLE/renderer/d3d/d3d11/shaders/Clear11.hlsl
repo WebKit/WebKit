@@ -8,8 +8,6 @@
 // specifying float depth values and either float, uint or sint clear colors.
 // Notes:
 //  - UINT & SINT clears can only be compiled with FL10+
-//  - VS_Clear_FL9 requires a VB to be bound with vertices to create
-//    a primitive covering the entire surface (in clip co-ordinates)
 
 // Constants
 static const float2 g_Corners[6] =

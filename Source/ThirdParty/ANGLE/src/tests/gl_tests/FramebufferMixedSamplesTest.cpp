@@ -8,10 +8,7 @@
 //   This extension allows rendering to a framebuffer that has different
 //   sample counts for different render buffers (stencil, depth, color)
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
 using namespace angle;
@@ -212,17 +209,18 @@ TEST_P(CHROMIUMFramebufferMixedSamplesTest, CoverageModulation)
         {
             glCoverageModulationCHROMIUM(GL_NONE);
         }
-        results[pass].reset(new uint8_t[kResultSize]);
-        memset(results[pass].get(), 123u, kResultSize);
-        glReadPixels(0, 0, kWidth, kHeight, GL_RGBA, GL_UNSIGNED_BYTE, results[pass].get());
+        ANGLE_UNSAFE_TODO(results[pass]).reset(new uint8_t[kResultSize]);
+        ANGLE_UNSAFE_TODO(memset(results[pass].get(), 123u, kResultSize));
+        glReadPixels(0, 0, kWidth, kHeight, GL_RGBA, GL_UNSIGNED_BYTE,
+                     ANGLE_UNSAFE_TODO(results[pass]).get());
 
         cleanup();
     }
 
-    EXPECT_NE(0, memcmp(results[0].get(), results[1].get(), kResultSize));
+    ANGLE_UNSAFE_TODO(EXPECT_NE(0, memcmp(results[0].get(), results[1].get(), kResultSize)));
     // Verify that rendering is deterministic, so that the pass above does not
     // come from non-deterministic rendering.
-    EXPECT_EQ(0, memcmp(results[0].get(), results[2].get(), kResultSize));
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(0, memcmp(results[0].get(), results[2].get(), kResultSize)));
 }
 
 // The test tests that the stencil buffer can be multisampled, even though the
@@ -257,17 +255,18 @@ TEST_P(CHROMIUMFramebufferMixedSamplesTest, MultisampleStencilEffective)
         glUniform4fv(mColorLoc, 1, kBlue);
         glDrawArrays(GL_TRIANGLES, 3, 3);
 
-        results[pass].reset(new uint8_t[kResultSize]);
-        memset(results[pass].get(), 12u, kResultSize);
-        glReadPixels(0, 0, kWidth, kHeight, GL_RGBA, GL_UNSIGNED_BYTE, results[pass].get());
+        ANGLE_UNSAFE_TODO(results[pass]).reset(new uint8_t[kResultSize]);
+        ANGLE_UNSAFE_TODO(memset(results[pass].get(), 12u, kResultSize));
+        glReadPixels(0, 0, kWidth, kHeight, GL_RGBA, GL_UNSIGNED_BYTE,
+                     ANGLE_UNSAFE_TODO(results[pass]).get());
 
         cleanup();
     }
 
-    EXPECT_NE(0, memcmp(results[0].get(), results[1].get(), kResultSize));
+    ANGLE_UNSAFE_TODO(EXPECT_NE(0, memcmp(results[0].get(), results[1].get(), kResultSize)));
     // Verify that rendering is deterministic, so that the pass above does not
     // come from non-deterministic rendering.
-    EXPECT_EQ(0, memcmp(results[0].get(), results[2].get(), kResultSize));
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(0, memcmp(results[0].get(), results[2].get(), kResultSize)));
 }
 
 ANGLE_INSTANTIATE_TEST_ES2(CHROMIUMFramebufferMixedSamplesTest);

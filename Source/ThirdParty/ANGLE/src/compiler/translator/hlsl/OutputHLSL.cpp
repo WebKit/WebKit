@@ -615,10 +615,12 @@ void OutputHLSL::header(TInfoSinkBase &out,
     }
 
     // Suppress some common warnings:
+    // 3081 : comma expression used where a vector constructor may have been intended
     // 3556 : Integer divides might be much slower, try using uints if possible.
+    // 3557 : loop only executes for 1 iteration(s), forcing loop to unroll
     // 3571 : The pow(f, e) intrinsic function won't work for negative f, use abs(f) or
     //        conditionally handle negative values if you expect them.
-    out << "#pragma warning( disable: 3556 3571 )\n";
+    out << "#pragma warning( disable: 3081 3556 3557 3571 )\n";
 
     out << mStructureHLSL->structsHeader();
 
@@ -995,10 +997,9 @@ void OutputHLSL::header(TInfoSinkBase &out,
                 out << "    float3 dx_DepthRange : packoffset(c0);\n";
             }
 
-            // dx_ViewAdjust and dx_ViewCoords will only be used in Feature Level 9
-            // shaders. However, we declare it for all shaders (including Feature Level 10+).
-            // The bytecode is the same whether we declare it or not, since D3DCompiler removes it
-            // if it's unused.
+            // dx_ViewAdjust and dx_ViewCoords are only used by some shaders (e.g. the D3D9
+            // backend). However, we declare them for all shaders. The bytecode is the same whether
+            // we declare them or not, since D3DCompiler removes them if they're unused.
             out << "    float4 dx_ViewAdjust : packoffset(c1);\n";
             out << "    float2 dx_ViewCoords : packoffset(c2);\n";
             out << "    float2 dx_ViewScale  : packoffset(c3);\n";

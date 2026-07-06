@@ -8,11 +8,8 @@
 //   EXT_shader_framebuffer_fetch_non_coherent extensions.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "common/debug.h"
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
@@ -937,8 +934,8 @@ class FramebufferFetchES31 : public ANGLETest<>
         glBindTexture(GL_TEXTURE_2D, 0);
         for (unsigned int i = 0; i < kMaxColorBuffer; i++)
         {
-            glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachments[i], GL_TEXTURE_2D,
-                                   colorBufferTex[i], 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(colorAttachments[i]),
+                                   GL_TEXTURE_2D, ANGLE_UNSAFE_TODO(colorBufferTex[i]), 0);
         }
         glDrawBuffers(kMaxColorBuffer, &colorAttachments[0]);
 
@@ -1017,8 +1014,8 @@ class FramebufferFetchES31 : public ANGLETest<>
         glBindTexture(GL_TEXTURE_2D, 0);
         for (unsigned int i = 0; i < kMaxColorBuffer; i++)
         {
-            glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachments[i], GL_TEXTURE_2D,
-                                   colorBufferTex[i], 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(colorAttachments[i]),
+                                   GL_TEXTURE_2D, ANGLE_UNSAFE_TODO(colorBufferTex[i]), 0);
         }
         glDrawBuffers(kMaxColorBuffer, &colorAttachments[0]);
 
@@ -1228,7 +1225,7 @@ class FramebufferFetchES31 : public ANGLETest<>
         void *bufferData = glMapBufferRange(
             GL_SHADER_STORAGE_BUFFER, 0, kBufferSize,
             GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
-        memset(bufferData, 0, kBufferSize);
+        ANGLE_UNSAFE_TODO(memset(bufferData, 0, kBufferSize));
         glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
         glUseProgram(programNonFetch);
@@ -1299,10 +1296,14 @@ class FramebufferFetchES31 : public ANGLETest<>
             for (uint32_t x = 0; x < kViewportWidth; ++x)
             {
                 uint32_t ssboIndex = (y * kViewportWidth + x) * 4;
-                EXPECT_NEAR(colorData[ssboIndex + 0], initColor[0].R / 255.0, 0.05);
-                EXPECT_NEAR(colorData[ssboIndex + 1], initColor[0].G / 255.0, 0.05);
-                EXPECT_NEAR(colorData[ssboIndex + 2], initColor[0].B / 255.0, 0.05);
-                EXPECT_NEAR(colorData[ssboIndex + 3], initColor[0].A / 255.0, 0.05);
+                ANGLE_UNSAFE_TODO(
+                    EXPECT_NEAR(colorData[ssboIndex + 0], initColor[0].R / 255.0, 0.05));
+                ANGLE_UNSAFE_TODO(
+                    EXPECT_NEAR(colorData[ssboIndex + 1], initColor[0].G / 255.0, 0.05));
+                ANGLE_UNSAFE_TODO(
+                    EXPECT_NEAR(colorData[ssboIndex + 2], initColor[0].B / 255.0, 0.05));
+                ANGLE_UNSAFE_TODO(
+                    EXPECT_NEAR(colorData[ssboIndex + 3], initColor[0].A / 255.0, 0.05));
             }
         }
         glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
@@ -1363,8 +1364,8 @@ class FramebufferFetchES31 : public ANGLETest<>
         glBindTexture(GL_TEXTURE_2D, 0);
         for (unsigned int i = 0; i < kMaxColorBuffer; i++)
         {
-            glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachments[i], GL_TEXTURE_2D,
-                                   colorBufferTex1[i], 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(colorAttachments[i]),
+                                   GL_TEXTURE_2D, ANGLE_UNSAFE_TODO(colorBufferTex1[i]), 0);
         }
         glDrawBuffers(kMaxColorBuffer, &colorAttachments[0]);
         ASSERT_GL_NO_ERROR();
@@ -1405,8 +1406,8 @@ class FramebufferFetchES31 : public ANGLETest<>
         glBindTexture(GL_TEXTURE_2D, 0);
         for (unsigned int i = 0; i < kMaxColorBuffer; i++)
         {
-            glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachments[i], GL_TEXTURE_2D,
-                                   colorBufferTex2[i], 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(colorAttachments[i]),
+                                   GL_TEXTURE_2D, ANGLE_UNSAFE_TODO(colorBufferTex2[i]), 0);
         }
         glDrawBuffers(kMaxColorBuffer, &colorAttachments[0]);
         ASSERT_GL_NO_ERROR();
@@ -1468,11 +1469,11 @@ class FramebufferFetchES31 : public ANGLETest<>
                                                     GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
         for (unsigned int i = 0; i < kMaxColorBuffer; i++)
         {
-            glBindTexture(GL_TEXTURE_2D, colorBufferTex1[i]);
+            glBindTexture(GL_TEXTURE_2D, ANGLE_UNSAFE_TODO(colorBufferTex1[i]));
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kViewportWidth, kViewportHeight, 0, GL_RGBA,
                          GL_UNSIGNED_BYTE, color1.data());
-            glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachments[i], GL_TEXTURE_2D,
-                                   colorBufferTex1[i], 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(colorAttachments[i]),
+                                   GL_TEXTURE_2D, ANGLE_UNSAFE_TODO(colorBufferTex1[i]), 0);
         }
         glBindTexture(GL_TEXTURE_2D, 0);
         glDrawBuffers(kMaxColorBuffer, &colorAttachments[0]);
@@ -1534,11 +1535,11 @@ class FramebufferFetchES31 : public ANGLETest<>
                                                     GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
         for (unsigned int i = 0; i < kMaxColorBuffer; i++)
         {
-            glBindTexture(GL_TEXTURE_2D, colorBufferTex1[i]);
+            glBindTexture(GL_TEXTURE_2D, ANGLE_UNSAFE_TODO(colorBufferTex1[i]));
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kViewportWidth, kViewportHeight, 0, GL_RGBA,
                          GL_UNSIGNED_BYTE, color1.data());
-            glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachments[i], GL_TEXTURE_2D,
-                                   colorBufferTex1[i], 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(colorAttachments[i]),
+                                   GL_TEXTURE_2D, ANGLE_UNSAFE_TODO(colorBufferTex1[i]), 0);
         }
         glBindTexture(GL_TEXTURE_2D, 0);
         glDrawBuffers(kMaxColorBuffer, &colorAttachments[0]);
@@ -1613,8 +1614,8 @@ class FramebufferFetchES31 : public ANGLETest<>
         glBindTexture(GL_TEXTURE_2D, 0);
         for (unsigned int i = 0; i < kMaxColorBuffer; i++)
         {
-            glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachments[i], GL_TEXTURE_2D,
-                                   colorBufferTex1[i], 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(colorAttachments[i]),
+                                   GL_TEXTURE_2D, ANGLE_UNSAFE_TODO(colorBufferTex1[i]), 0);
         }
         glDrawBuffers(kMaxColorBuffer, &colorAttachments[0]);
         ASSERT_GL_NO_ERROR();
@@ -2117,10 +2118,10 @@ void main()
         ASSERT_GL_NO_ERROR();
         for (GLuint i = 0; i < kMaxColorBuffer; ++i)
         {
-            glBindRenderbuffer(GL_RENDERBUFFER, color[i]);
+            glBindRenderbuffer(GL_RENDERBUFFER, ANGLE_UNSAFE_TODO(color[i]));
             glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_RGBA8, width, height);
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER,
-                                      color[i]);
+                                      ANGLE_UNSAFE_TODO(color[i]));
             ASSERT_GL_NO_ERROR();
         }
         glBindRenderbuffer(GL_RENDERBUFFER, *depthStencil);
@@ -2206,7 +2207,7 @@ void main()
                               supportedSampleCounts);
         for (int i = 0; i < numSupportedSampleCounts; ++i)
         {
-            if (supportedSampleCounts[i] == sampleCount || sampleCount == 0)
+            if (ANGLE_UNSAFE_TODO(supportedSampleCounts[i]) == sampleCount || sampleCount == 0)
             {
                 return true;
             }
@@ -3090,10 +3091,11 @@ TEST_P(FramebufferFetchES31, ReopenRenderPass)
     GLFramebuffer fbo[2];
     for (uint32_t i = 0; i < 2; ++i)
     {
-        glBindRenderbuffer(GL_RENDERBUFFER, color[i]);
+        glBindRenderbuffer(GL_RENDERBUFFER, ANGLE_UNSAFE_TODO(color[i]));
         glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kViewportWidth, kViewportHeight);
-        glBindFramebuffer(GL_FRAMEBUFFER, fbo[i]);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color[i]);
+        glBindFramebuffer(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(fbo[i]));
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                  ANGLE_UNSAFE_TODO(color[i]));
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, fbo[0]);
@@ -3412,8 +3414,8 @@ void main()
     glBindTexture(GL_TEXTURE_2D, 0);
     for (unsigned int i = 0; i < kMaxColorBuffer; i++)
     {
-        glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachments[i], GL_TEXTURE_2D,
-                               colorBufferTex[i], 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(colorAttachments[i]),
+                               GL_TEXTURE_2D, ANGLE_UNSAFE_TODO(colorBufferTex[i]), 0);
     }
     glDrawBuffers(kMaxColorBuffer, &colorAttachments[0]);
 
@@ -3428,7 +3430,7 @@ void main()
     userCounters = static_cast<GLuint *>(glMapBufferRange(
         GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint),
         GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT));
-    memset(userCounters, 0, sizeof(GLuint));
+    ANGLE_UNSAFE_TODO(memset(userCounters, 0, sizeof(GLuint)));
     glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
 
     glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, atomicBuffer);
@@ -3447,7 +3449,7 @@ void main()
     // and sets all attachments to black.
     for (unsigned int i = 0; i < kMaxColorBuffer; i++)
     {
-        glReadBuffer(colorAttachments[i]);
+        glReadBuffer(ANGLE_UNSAFE_TODO(colorAttachments[i]));
         EXPECT_PIXEL_COLOR_EQ(kViewportWidth / 2, kViewportHeight / 2, GLColor::black);
     }
 

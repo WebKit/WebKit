@@ -4,11 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "test_utils/angle_test_configs.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 #include "common/platform.h"
@@ -34,7 +31,8 @@ void AppendCapitalizedFeature(std::ostream &stream, Feature feature)
 
     const std::string camelCase = angle::ToCamelCase(name);
 
-    stream << static_cast<char>(std::toupper(camelCase[0])) << (camelCase.c_str() + 1);
+    stream << static_cast<char>(std::toupper(camelCase[0]))
+           << (ANGLE_UNSAFE_TODO(camelCase.c_str() + 1));
 }
 
 bool HasFeatureOverride(const std::vector<Feature> &overrides, Feature feature)

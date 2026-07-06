@@ -21,19 +21,19 @@ if "%1" == "release" (
 
 :: Shaders for OpenGL ES 2.0 and OpenGL ES 3.0+
 ::              | Input file         | Entry point            | Type            | Output file                        | Debug |
-call:BuildShader Passthrough2D11.hlsl VS_Passthrough2D         vs_4_0_level_9_3  compiled\passthrough2d11vs.h         %debug%
-call:BuildShader Passthrough2D11.hlsl PS_PassthroughRGBA2D     ps_4_0_level_9_3  compiled\passthroughrgba2d11ps.h     %debug%
-call:BuildShader Passthrough2D11.hlsl PS_PassthroughA2D        ps_4_0_level_9_3  compiled\passthrougha2d11ps.h        %debug%
+call:BuildShader Passthrough2D11.hlsl VS_Passthrough2D         vs_4_0            compiled\passthrough2d11vs.h         %debug%
+call:BuildShader Passthrough2D11.hlsl PS_PassthroughRGBA2D     ps_4_0            compiled\passthroughrgba2d11ps.h     %debug%
+call:BuildShader Passthrough2D11.hlsl PS_PassthroughA2D        ps_4_0            compiled\passthrougha2d11ps.h        %debug%
 call:BuildShader Passthrough2D11.hlsl PS_PassthroughRGBA2DMS   ps_4_1            compiled\passthroughrgba2dms11ps.h   %debug%
-call:BuildShader Passthrough2D11.hlsl PS_PassthroughRGB2D      ps_4_0_level_9_3  compiled\passthroughrgb2d11ps.h      %debug%
-call:BuildShader Passthrough2D11.hlsl PS_PassthroughRG2D       ps_4_0_level_9_3  compiled\passthroughrg2d11ps.h       %debug%
-call:BuildShader Passthrough2D11.hlsl PS_PassthroughR2D        ps_4_0_level_9_3  compiled\passthroughr2d11ps.h        %debug%
-call:BuildShader Passthrough2D11.hlsl PS_PassthroughLum2D      ps_4_0_level_9_3  compiled\passthroughlum2d11ps.h      %debug%
-call:BuildShader Passthrough2D11.hlsl PS_PassthroughLumAlpha2D ps_4_0_level_9_3  compiled\passthroughlumalpha2d11ps.h %debug%
+call:BuildShader Passthrough2D11.hlsl PS_PassthroughRGB2D      ps_4_0            compiled\passthroughrgb2d11ps.h      %debug%
+call:BuildShader Passthrough2D11.hlsl PS_PassthroughRG2D       ps_4_0            compiled\passthroughrg2d11ps.h       %debug%
+call:BuildShader Passthrough2D11.hlsl PS_PassthroughR2D        ps_4_0            compiled\passthroughr2d11ps.h        %debug%
+call:BuildShader Passthrough2D11.hlsl PS_PassthroughLum2D      ps_4_0            compiled\passthroughlum2d11ps.h      %debug%
+call:BuildShader Passthrough2D11.hlsl PS_PassthroughLumAlpha2D ps_4_0            compiled\passthroughlumalpha2d11ps.h %debug%
 
-call:BuildShader Passthrough2D11.hlsl PS_PassthroughRGBA2D_4444 ps_4_0_level_9_3 compiled\passthroughrgba2d_4444_11ps.h %debug%
-call:BuildShader Passthrough2D11.hlsl PS_PassthroughRGB2D_565   ps_4_0_level_9_3 compiled\passthroughrgb2d_565_11ps.h   %debug%
-call:BuildShader Passthrough2D11.hlsl PS_PassthroughRGBA2D_5551 ps_4_0_level_9_3 compiled\passthroughrgba2d_5551_11ps.h %debug%
+call:BuildShader Passthrough2D11.hlsl PS_PassthroughRGBA2D_4444 ps_4_0           compiled\passthroughrgba2d_4444_11ps.h %debug%
+call:BuildShader Passthrough2D11.hlsl PS_PassthroughRGB2D_565   ps_4_0           compiled\passthroughrgb2d_565_11ps.h   %debug%
+call:BuildShader Passthrough2D11.hlsl PS_PassthroughRGBA2D_5551 ps_4_0           compiled\passthroughrgba2d_5551_11ps.h %debug%
 
 call:BuildShader ResolveColor.hlsl PS_ResolveColor2D ps_4_1 compiled\resolvecolor2dps.h %debug%
 

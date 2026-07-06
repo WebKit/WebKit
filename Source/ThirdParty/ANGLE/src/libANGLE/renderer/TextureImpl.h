@@ -14,7 +14,6 @@
 #include "angle_gl.h"
 #include "common/angleutils.h"
 #include "libANGLE/Error.h"
-#include "libANGLE/ImageIndex.h"
 #include "libANGLE/Stream.h"
 #include "libANGLE/Texture.h"
 #include "libANGLE/angletypes.h"
@@ -47,7 +46,7 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
     virtual void onDestroy(const gl::Context *context);
 
     virtual angle::Result setImage(const gl::Context *context,
-                                   const gl::ImageIndex &index,
+                                   const gl::OwnImageIndex &index,
                                    GLenum internalFormat,
                                    const gl::Extents &size,
                                    GLenum format,
@@ -56,7 +55,7 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
                                    gl::Buffer *unpackBuffer,
                                    const uint8_t *pixels)    = 0;
     virtual angle::Result setSubImage(const gl::Context *context,
-                                      const gl::ImageIndex &index,
+                                      const gl::OwnImageIndex &index,
                                       const gl::Box &area,
                                       GLenum format,
                                       GLenum type,
@@ -65,14 +64,14 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
                                       const uint8_t *pixels) = 0;
 
     virtual angle::Result setCompressedImage(const gl::Context *context,
-                                             const gl::ImageIndex &index,
+                                             const gl::OwnImageIndex &index,
                                              GLenum internalFormat,
                                              const gl::Extents &size,
                                              const gl::PixelUnpackState &unpack,
                                              size_t imageSize,
                                              const uint8_t *pixels)    = 0;
     virtual angle::Result setCompressedSubImage(const gl::Context *context,
-                                                const gl::ImageIndex &index,
+                                                const gl::OwnImageIndex &index,
                                                 const gl::Box &area,
                                                 GLenum format,
                                                 const gl::PixelUnpackState &unpack,
@@ -80,29 +79,29 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
                                                 const uint8_t *pixels) = 0;
 
     virtual angle::Result copyImage(const gl::Context *context,
-                                    const gl::ImageIndex &index,
+                                    const gl::OwnImageIndex &index,
                                     const gl::Rectangle &sourceArea,
                                     GLenum internalFormat,
                                     gl::Framebuffer *source)    = 0;
     virtual angle::Result copySubImage(const gl::Context *context,
-                                       const gl::ImageIndex &index,
+                                       const gl::OwnImageIndex &index,
                                        const gl::Offset &destOffset,
                                        const gl::Rectangle &sourceArea,
                                        gl::Framebuffer *source) = 0;
 
     virtual angle::Result copyTexture(const gl::Context *context,
-                                      const gl::ImageIndex &index,
+                                      const gl::OwnImageIndex &index,
                                       GLenum internalFormat,
                                       GLenum type,
-                                      GLint sourceLevel,
+                                      gl::OwnLevel sourceLevel,
                                       bool unpackFlipY,
                                       bool unpackPremultiplyAlpha,
                                       bool unpackUnmultiplyAlpha,
                                       const gl::Texture *source);
     virtual angle::Result copySubTexture(const gl::Context *context,
-                                         const gl::ImageIndex &index,
+                                         const gl::OwnImageIndex &index,
                                          const gl::Offset &destOffset,
-                                         GLint sourceLevel,
+                                         gl::OwnLevel sourceLevel,
                                          const gl::Box &sourceBox,
                                          bool unpackFlipY,
                                          bool unpackPremultiplyAlpha,
@@ -113,23 +112,23 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
                                                   const gl::Renderbuffer *srcBuffer,
                                                   GLint srcX,
                                                   GLint srcY,
-                                                  GLint dstLevel,
+                                                  gl::OwnLevel dstLevel,
                                                   GLint dstX,
                                                   GLint dstY,
-                                                  GLint dstZ,
+                                                  gl::OwnLayer dstZ,
                                                   GLsizei srcWidth,
                                                   GLsizei srcHeight);
 
     virtual angle::Result copyTextureSubData(const gl::Context *context,
                                              const gl::Texture *srcTexture,
-                                             GLint srcLevel,
+                                             gl::OwnLevel srcLevel,
                                              GLint srcX,
                                              GLint srcY,
-                                             GLint srcZ,
-                                             GLint dstLevel,
+                                             gl::OwnLayer srcZ,
+                                             gl::OwnLevel dstLevel,
                                              GLint dstX,
                                              GLint dstY,
-                                             GLint dstZ,
+                                             gl::OwnLayer dstZ,
                                              GLsizei srcWidth,
                                              GLsizei srcHeight,
                                              GLsizei srcDepth);
@@ -141,8 +140,8 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
                                         gl::TextureTarget target,
                                         GLenum internalFormat,
                                         GLenum type,
-                                        GLint sourceLevel,
-                                        GLint destLevel,
+                                        gl::OwnLevel sourceLevel,
+                                        gl::OwnLevel destLevel,
                                         bool unpackFlipY,
                                         bool unpackPremultiplyAlpha,
                                         bool unpackUnmultiplyAlpha,
@@ -150,8 +149,8 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
     virtual angle::Result copy3DSubTexture(const gl::Context *context,
                                            const gl::TextureTarget target,
                                            const gl::Offset &destOffset,
-                                           GLint sourceLevel,
-                                           GLint destLevel,
+                                           gl::OwnLevel sourceLevel,
+                                           gl::OwnLevel destLevel,
                                            const gl::Box &srcBox,
                                            bool unpackFlipY,
                                            bool unpackPremultiplyAlpha,
@@ -203,12 +202,12 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
     virtual angle::Result generateMipmap(const gl::Context *context) = 0;
 
     virtual angle::Result clearImage(const gl::Context *context,
-                                     GLint level,
+                                     gl::OwnLevel level,
                                      GLenum format,
                                      GLenum type,
                                      const uint8_t *data);
     virtual angle::Result clearSubImage(const gl::Context *context,
-                                        GLint level,
+                                        gl::OwnLevel level,
                                         const gl::Box &area,
                                         GLenum format,
                                         GLenum type,
@@ -223,7 +222,7 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
 
     // Override if accurate native memory size information is available
     virtual GLint getMemorySize() const;
-    virtual GLint getLevelMemorySize(gl::TextureTarget target, GLint level);
+    virtual GLint getLevelMemorySize(gl::TextureTarget target, gl::OwnLevel level);
 
     virtual GLint getImageCompressionRate(const gl::Context *context);
     virtual GLint getFormatSupportedCompressionRates(const gl::Context *context,
@@ -242,7 +241,7 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
                                       const gl::PixelPackState &packState,
                                       gl::Buffer *packBuffer,
                                       gl::TextureTarget target,
-                                      GLint level,
+                                      gl::OwnLevel level,
                                       GLenum format,
                                       GLenum type,
                                       void *pixels);
@@ -251,7 +250,7 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
                                                 const gl::PixelPackState &packState,
                                                 gl::Buffer *packBuffer,
                                                 gl::TextureTarget target,
-                                                GLint level,
+                                                gl::OwnLevel level,
                                                 void *pixels);
 
     virtual GLint getRequiredExternalTextureImageUnits(const gl::Context *context);

@@ -254,16 +254,8 @@ TEST_P(DrawBuffersTest, VerifyD3DLimits)
 
     glGetIntegerv(GL_MAX_DRAW_BUFFERS, &mMaxDrawBuffers);
 
-    if (platform.majorVersion == 9 && platform.minorVersion == 3)
-    {
-        // D3D11 Feature Level 9_3 supports 4 draw buffers
-        ASSERT_EQ(mMaxDrawBuffers, 4);
-    }
-    else
-    {
-        // D3D11 Feature Level 10_0+ supports 8 draw buffers
-        ASSERT_EQ(mMaxDrawBuffers, 8);
-    }
+    // D3D11 Feature Level 10_0+ supports 8 draw buffers
+    ASSERT_EQ(mMaxDrawBuffers, 8);
 }
 
 TEST_P(DrawBuffersTest, Gaps)

@@ -185,6 +185,8 @@ void InsertInitCode(TCompiler *compiler,
                     const TExtensionBehavior &extensionBehavior,
                     bool canUseLoopsToInitialize)
 {
+    const bool secondaryFragDataUsed = symbolTable->isSecondaryFragDataUsed();
+
     TIntermSequence *mainBody = FindMainBody(root)->getSequence();
     for (const TVariable *var : variables)
     {
@@ -214,10 +216,13 @@ void InsertInitCode(TCompiler *compiler,
 
         initializedSymbol = new TIntermSymbol(var);
         if (qualifier == EvqFragData &&
-            !IsExtensionEnabled(extensionBehavior, TExtension::EXT_draw_buffers))
+            (!IsExtensionEnabled(extensionBehavior, TExtension::EXT_draw_buffers) ||
+             secondaryFragDataUsed))
         {
             // If GL_EXT_draw_buffers is disabled, only the 0th index of gl_FragData can be
-            // written to.
+            // written to.  Same with if dual source blending is used.  Note that
+            // MaxDualSourceDrawBuffers is never larger than 1.
+            ASSERT(compiler->getBuiltInResources().MaxDualSourceDrawBuffers <= 1);
             initializedSymbol =
                 new TIntermBinary(EOpIndexDirect, initializedSymbol, CreateIndexNode(0));
         }

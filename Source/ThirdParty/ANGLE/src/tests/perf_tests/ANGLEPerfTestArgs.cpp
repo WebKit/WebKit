@@ -7,10 +7,6 @@
 //   Parse command line arguments for angle_perftests.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "ANGLEPerfTestArgs.h"
 #include <string.h>
 #include <sstream>

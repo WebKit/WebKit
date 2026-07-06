@@ -6,13 +6,10 @@
 // EGLIOSurfaceClientBufferTest.cpp: tests for the EGL_ANGLE_iosurface_client_buffer extension.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "test_utils/ANGLETest.h"
 
 #include "common/mathutil.h"
+#include "common/unsafe_buffers.h"
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
 
@@ -271,8 +268,9 @@ class IOSurfaceClientBufferTest : public ANGLETest<>
 
         IOSurfaceLock(ioSurface.get(), kIOSurfaceLockReadOnly, nullptr);
         std::array<T, dataSize> iosurfaceData;
-        memcpy(iosurfaceData.data(), IOSurfaceGetBaseAddressOfPlane(ioSurface.get(), plane),
-               sizeof(T) * data.size());
+        ANGLE_UNSAFE_TODO(memcpy(iosurfaceData.data(),
+                                 IOSurfaceGetBaseAddressOfPlane(ioSurface.get(), plane),
+                                 sizeof(T) * data.size()));
         IOSurfaceUnlock(ioSurface.get(), kIOSurfaceLockReadOnly, nullptr);
 
         if (internalFormat == GL_RGB && IsMac() && IsOpenGL())
@@ -313,7 +311,8 @@ class IOSurfaceClientBufferTest : public ANGLETest<>
     {
         // Write the data to the IOSurface
         IOSurfaceLock(ioSurface.get(), 0, nullptr);
-        memcpy(IOSurfaceGetBaseAddressOfPlane(ioSurface.get(), plane), data, dataSize);
+        ANGLE_UNSAFE_TODO(
+            memcpy(IOSurfaceGetBaseAddressOfPlane(ioSurface.get(), plane), data, dataSize));
         IOSurfaceUnlock(ioSurface.get(), 0, nullptr);
 
         GLTexture texture;

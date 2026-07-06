@@ -6,14 +6,11 @@
 
 // EGLRobustnessTest.cpp: tests for EGL_EXT_create_context_robustness
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 // Tests causing GPU resets are disabled, use the following args to run them:
 // --gtest_also_run_disabled_tests --gtest_filter=EGLRobustnessTest\*
 
 #include <gtest/gtest.h>
+#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 #include "test_utils/ANGLETest.h"
@@ -130,7 +127,7 @@ class EGLRobustnessTest : public ANGLETest<>
         ASSERT_EGL_SUCCESS();
 
         const char *extensionString = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
-        ASSERT_NE(nullptr, strstr(extensionString, "GL_ANGLE_instanced_arrays"));
+        ANGLE_UNSAFE_TODO(ASSERT_NE(nullptr, strstr(extensionString, "GL_ANGLE_instanced_arrays")));
     }
 
     void createClientVersion3NonRobustContext(EGLint resetStrategy)
@@ -156,7 +153,7 @@ class EGLRobustnessTest : public ANGLETest<>
         ASSERT_EGL_SUCCESS();
 
         const char *extensionString = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
-        ASSERT_NE(nullptr, strstr(extensionString, "GL_ANGLE_instanced_arrays"));
+        ANGLE_UNSAFE_TODO(ASSERT_NE(nullptr, strstr(extensionString, "GL_ANGLE_instanced_arrays")));
     }
 
     void createRobustContext(EGLint resetStrategy, EGLContext shareContext)
@@ -729,7 +726,7 @@ void main (void)
     glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
     void *mappedBuffer =
         glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(readbackData), GL_MAP_READ_BIT);
-    memcpy(readbackData.data(), mappedBuffer, sizeof(readbackData));
+    ANGLE_UNSAFE_TODO(memcpy(readbackData.data(), mappedBuffer, sizeof(readbackData)));
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
     EXPECT_EQ(readbackData, kBufferData);
@@ -754,7 +751,7 @@ void main (void)
     glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
     mappedBuffer =
         glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(readbackData), GL_MAP_READ_BIT);
-    memcpy(readbackData.data(), mappedBuffer, sizeof(readbackData));
+    ANGLE_UNSAFE_TODO(memcpy(readbackData.data(), mappedBuffer, sizeof(readbackData)));
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
     ASSERT_GL_NO_ERROR();
 
@@ -808,12 +805,12 @@ void main() {
     uint32_t bufferDataOut[kBufferSize] = {};
     const uint32_t *ptr                 = reinterpret_cast<uint32_t *>(
         glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(kBufferData), GL_MAP_READ_BIT));
-    memcpy(bufferDataOut, ptr, sizeof(kBufferData));
+    ANGLE_UNSAFE_TODO(memcpy(bufferDataOut, ptr, sizeof(kBufferData)));
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
     for (uint32_t index = 0; index < kBufferSize; ++index)
     {
-        EXPECT_EQ(bufferDataOut[index], index) << " index " << index;
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(bufferDataOut[index], index)) << " index " << index;
     }
 }
 
@@ -858,12 +855,12 @@ void main() {
     uint32_t bufferDataOut[kBufferSize] = {};
     const uint32_t *ptr                 = reinterpret_cast<uint32_t *>(
         glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(kBufferData), GL_MAP_READ_BIT));
-    memcpy(bufferDataOut, ptr, sizeof(kBufferData));
+    ANGLE_UNSAFE_TODO(memcpy(bufferDataOut, ptr, sizeof(kBufferData)));
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
     for (uint32_t index = 0; index < kBufferSize; ++index)
     {
-        EXPECT_EQ(bufferDataOut[index], index) << " index " << index;
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(bufferDataOut[index], index)) << " index " << index;
     }
 }
 

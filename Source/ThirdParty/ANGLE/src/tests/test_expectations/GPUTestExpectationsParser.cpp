@@ -4,11 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "GPUTestExpectationsParser.h"
+#include "common/unsafe_buffers.h"
 
 #include <stddef.h>
 #include <stdint.h>
@@ -278,7 +275,7 @@ inline Char ToLowerASCII(Char c)
 template <typename Iter>
 inline bool DoLowerCaseEqualsASCII(Iter a_begin, Iter a_end, const char *b)
 {
-    for (Iter it = a_begin; it != a_end; ++it, ++b)
+    for (Iter it = a_begin; it != a_end; ++it, ANGLE_UNSAFE_TODO(++b))
     {
         if (!*b || ToLowerASCII(*it) != *b)
             return false;
@@ -298,8 +295,10 @@ inline Token ParseToken(const std::string &word)
 
     for (int32_t i = 0; i < kNumberOfExactMatchTokens; ++i)
     {
-        if (LowerCaseEqualsASCII(word, kTokenData[i].name))
+        if (LowerCaseEqualsASCII(word, ANGLE_UNSAFE_TODO(kTokenData[i]).name))
+        {
             return static_cast<Token>(i);
+        }
     }
     return kTokenWord;
 }
@@ -601,7 +600,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
                     else
                     {
                         // Store the conditions for later comparison if we don't have a config.
-                        entry.conditions[kTokenData[token].condition] = true;
+                        entry.conditions[ANGLE_UNSAFE_TODO(kTokenData[token]).condition] = true;
                     }
                     if (err)
                     {
@@ -670,13 +669,14 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
                                      lineNumber);
                     return false;
                 }
-                if ((mExpectationsAllowMask & kTokenData[token].expectation) == 0)
+                if ((mExpectationsAllowMask & ANGLE_UNSAFE_TODO(kTokenData[token]).expectation) ==
+                    0)
                 {
                     pushErrorMessage(kErrorMessage[kErrorEntryWithDisallowedExpectation],
                                      lineNumber);
                     return false;
                 }
-                entry.testExpectation = kTokenData[token].expectation;
+                entry.testExpectation = ANGLE_UNSAFE_TODO(kTokenData[token]).expectation;
                 if (stage == kLineParserEqual)
                     stage++;
                 break;
@@ -711,8 +711,8 @@ bool GPUTestExpectationsParser::checkTokenCondition(const GPUTestConfig &config,
         return false;
     }
 
-    if (kTokenData[token].condition == GPUTestConfig::kConditionNone ||
-        kTokenData[token].condition >= GPUTestConfig::kNumberOfConditions)
+    if (ANGLE_UNSAFE_TODO(kTokenData[token]).condition == GPUTestConfig::kConditionNone ||
+        ANGLE_UNSAFE_TODO(kTokenData[token]).condition >= GPUTestConfig::kNumberOfConditions)
     {
         pushErrorMessage(kErrorMessage[kErrorInvalidEntry], lineNumber);
         // error on any unsupported conditions
@@ -720,7 +720,7 @@ bool GPUTestExpectationsParser::checkTokenCondition(const GPUTestConfig &config,
         return false;
     }
     err = false;
-    return config.getConditions()[kTokenData[token].condition];
+    return config.getConditions()[ANGLE_UNSAFE_TODO(kTokenData[token]).condition];
 }
 
 bool GPUTestExpectationsParser::detectConflictsBetweenEntries()

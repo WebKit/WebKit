@@ -6,11 +6,8 @@
 
 // EGLX11VisualTest.cpp: tests for EGL_ANGLE_x11_visual extension
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <gtest/gtest.h>
+#include "common/unsafe_buffers.h"
 
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
@@ -61,9 +58,9 @@ class EGLX11VisualHintTest : public ANGLETest<>
 
         for (int i = 0; i < numVisuals; ++i)
         {
-            if (visuals[i].visualid != visualId)
+            if (ANGLE_UNSAFE_TODO(visuals[i]).visualid != visualId)
             {
-                int result = visuals[i].visualid;
+                int result = ANGLE_UNSAFE_TODO(visuals[i]).visualid;
                 XFree(visuals);
                 return result;
             }

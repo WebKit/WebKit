@@ -8,15 +8,12 @@
 //   size_t overflow scenario.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
 #include "common/apple_platform_utils.h"
 #include "common/mathutil.h"
+#include "common/unsafe_buffers.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
@@ -88,7 +85,7 @@ TEST_P(BufferPoolTest, AllocationOffsetNoTruncation)
     // Fill first allocation with a known pattern (0xAA)
     // We only fill the first 4KB to avoid spending too much time on this test
     constexpr size_t kPatternSize = 4096;
-    memset(mappedData1.data(), 0xAA, kPatternSize);
+    ANGLE_UNSAFE_TODO(memset(mappedData1.data(), 0xAA, kPatternSize));
 
     // Commit the first allocation to ensure it's written to the buffer
     ASSERT_EQ(bufferPool.commit(contextMtl), angle::Result::Continue);
@@ -112,7 +109,7 @@ TEST_P(BufferPoolTest, AllocationOffsetNoTruncation)
     EXPECT_NE(slice1.buffer().get(), slice2.buffer().get());
 
     // Fill second allocation with a different pattern (0xBB)
-    memset(mappedData2.data(), 0xBB, kSmallSize);
+    ANGLE_UNSAFE_TODO(memset(mappedData2.data(), 0xBB, kSmallSize));
 
     // Commit the second allocation
     ASSERT_EQ(bufferPool.commit(contextMtl), angle::Result::Continue);

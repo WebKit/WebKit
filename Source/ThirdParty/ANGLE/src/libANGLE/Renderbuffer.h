@@ -46,6 +46,24 @@ class RenderbufferState final : angle::NonCopyable
     InitState getInitState() const;
     void setProtectedContent(bool hasProtectedContent);
 
+    const egl::ImageSourceAttributes &getEGLImageSourceAttributes() const
+    {
+        return mEGLImageSourceAttributes;
+    }
+
+    SourceImageIndex toSourceIndex(const OwnImageIndex &index) const
+    {
+        return mEGLImageSourceAttributes.toSourceIndex(index);
+    }
+    SourceLevel toSourceLevel(OwnLevel level) const
+    {
+        return mEGLImageSourceAttributes.toSourceLevel(level);
+    }
+    SourceLayer toSourceLayer(OwnLayer layer) const
+    {
+        return mEGLImageSourceAttributes.toSourceLayer(layer);
+    }
+
   private:
     friend class Renderbuffer;
 
@@ -65,6 +83,12 @@ class RenderbufferState final : angle::NonCopyable
 
     // For robust resource init.
     InitState mInitState;
+
+    // |mEGLImageSourceAttributes.type| is only valid if this texture is an "EGLImage target" and
+    // the associated EGL Image was originally sourced from an OpenGL texture.  Such EGL Images can
+    // be a slice of the underlying resource.  The level and layer offset are used to track the
+    // location of the slice.
+    egl::ImageSourceAttributes mEGLImageSourceAttributes;
 };
 
 class Renderbuffer final : public RefCountObject<RenderbufferID>,
@@ -159,6 +183,9 @@ class Renderbuffer final : public RefCountObject<RenderbufferID>,
   private:
     // ObserverInterface implementation.
     void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
+
+    angle::Result orphanImages(const gl::Context *context,
+                               egl::RefCountObjectReleaser<egl::Image> *outReleaseImage);
 
     rx::FramebufferAttachmentObjectImpl *getAttachmentImpl() const override;
 

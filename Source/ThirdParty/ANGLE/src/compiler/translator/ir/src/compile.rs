@@ -569,6 +569,7 @@ fn collect_reflection_info(ir: &mut IR, options: &Options) {
     // variables can be detected as inactive.  However, reflection info for inactive variables must
     // also be collected, so the transformation reports the set of active interface variables
     // without removing inactive ones.
+    ir.meta.cache_built_in_static_use_before_dce();
     let active_interface_variables = transform::run!(dead_code_eliminate, ir);
 
     {
@@ -587,24 +588,31 @@ fn collect_reflection_info(ir: &mut IR, options: &Options) {
     // varying, but the FS reading from it, which is not allowed.  That's why inactive shader
     // outputs are not removed.  Inactive fragment shader outputs can be removed though.
     //
-    // For now, inactive built-ins are also retained.
-    if options.remove_inactive_interface_variables {
-        let retain_inactive_outputs = options.retain_inactive_fragment_outputs
-            || ir.meta.get_shader_type() != ShaderType::Fragment;
+    let shader_type = ir.meta.get_shader_type();
+    let retain_inactive_outputs = !options.remove_inactive_interface_variables
+        || options.retain_inactive_fragment_outputs
+        || shader_type != ShaderType::Fragment;
 
-        ir.meta.prune_global_variables(|variable_id, variable| {
-            // Keep the variable if:
-            //
-            // * Not an interface variable, or
-            // * Is active, or
-            // * Is output and should be kept, or
-            // * Is built-in
-            !variable.is_interface_variable()
-                || active_interface_variables.contains(&variable_id)
-                || (retain_inactive_outputs && variable.decorations.has(Decoration::Output))
-                || variable.is_built_in()
-        });
-    }
+    ir.meta.prune_global_variables(|variable_id, variable| {
+        // Keep the variable if:
+        //
+        // * Not an interface variable, or
+        // * Is active, or
+        // * Is output and should be kept, or
+        // * Is not built-in and options.remove_inactive_interface_variables is not set.
+        //   * Inactive built-ins are always removed.
+        //   * gl_Position is exceptionally retained so it can be zero-initialized.
+        //   * gl_ClipDistance and gl_CullDistance are retained, as various AST transformations
+        //     don't expect them to be pruned.
+        !variable.is_interface_variable()
+            || active_interface_variables.contains(&variable_id)
+            || (retain_inactive_outputs && variable.decorations.has(Decoration::Output))
+            || (!options.remove_inactive_interface_variables && !variable.is_built_in())
+            || matches!(
+                variable.built_in,
+                Some(BuiltIn::Position) | Some(BuiltIn::ClipDistance) | Some(BuiltIn::CullDistance)
+            )
+    });
 }
 
 fn common_post_variable_collection_transforms(ir: &mut IR, options: &Options) {
@@ -639,6 +647,7 @@ fn common_post_variable_collection_transforms(ir: &mut IR, options: &Options) {
     if options.clamp_indirect_indices {
         let transform_options = transform::localized_workarounds::Options {
             clamp_indirect_indices: options.clamp_indirect_indices,
+            max_dual_source_draw_buffers: options.limits.max_dual_source_draw_buffers,
         };
         transform::run!(localized_workarounds, ir, &transform_options);
     }

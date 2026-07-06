@@ -4,10 +4,6 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <sstream>
 #include <string>
 #include "common/string_utils.h"
@@ -500,7 +496,10 @@ class ShaderInfoLog
         return compileResult != 0;
     }
 
-    bool has(const char *subStr) const { return strstr(mInfoLog.c_str(), subStr); }
+    bool has(const char *subStr) const
+    {
+        return ANGLE_UNSAFE_TODO(strstr(mInfoLog.c_str(), subStr));
+    }
 
     const char *c_str() const { return mInfoLog.c_str(); }
 
@@ -1639,15 +1638,16 @@ TEST_P(PixelLocalStorageTest, ForgetBarrier)
         //
         // Which (assumimg the read and/or write operations themselves are atomic), is equivalent to
         // 1 of 4 potential effects:
-        bool isAcceptableValue = pixels[r] == 211 ||  // A, then B  (  7 + (100 + 1 * 2) * 2 == 211)
-                                 pixels[r] == 118 ||  // B, then A  (100 + (  7 + 1 * 2) * 2 == 118)
-                                 pixels[r] == 102 ||  // A only     (100 +             1 * 2 == 102)
-                                 pixels[r] == 9;
+        bool isAcceptableValue =
+            ANGLE_UNSAFE_TODO(pixels[r]) == 211 ||  // A, then B  (  7 + (100 + 1 * 2) * 2 == 211)
+            ANGLE_UNSAFE_TODO(pixels[r]) == 118 ||  // B, then A  (100 + (  7 + 1 * 2) * 2 == 118)
+            ANGLE_UNSAFE_TODO(pixels[r]) == 102 ||  // A only     (100 +             1 * 2 == 102)
+            ANGLE_UNSAFE_TODO(pixels[r]) == 9;
         if (!isAcceptableValue)
         {
             printf(__FILE__ "(%i): UNACCEPTABLE value at pixel location [%i, %i]\n", __LINE__,
                    (r / 4) % W, (r / 4) / W);
-            printf("              Got: %f\n", pixels[r]);
+            printf("              Got: %f\n", ANGLE_UNSAFE_TODO(pixels[r]));
             printf("  Expected one of: { 211, 118, 102, 9 }\n");
         }
         ASSERT_TRUE(isAcceptableValue);
@@ -2202,15 +2202,16 @@ void PixelLocalStorageTest::doCoherencyTest(CoherencyMode coherencyMode)
     glDrawBuffers(0, nullptr);
 
     std::vector<uint8_t> expected(H * W * 4);
-    memset(expected.data(), 0, H * W * 4);
+    ANGLE_UNSAFE_TODO(memset(expected.data(), 0, H * W * 4));
 
     // This test times out on Swiftshader and noncoherent backends if we draw anywhere near the
     // same number of boxes as we do on coherent, hardware backends.
-    int boxesPerList = !IsGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage_coherent") ||
-                               coherencyMode != CoherencyMode::Default ||
-                               strstr((const char *)glGetString(GL_RENDERER), "SwiftShader")
-                           ? 200
-                           : H * W * 3;
+    int boxesPerList =
+        !IsGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage_coherent") ||
+                coherencyMode != CoherencyMode::Default ||
+                ANGLE_UNSAFE_TODO(strstr((const char *)glGetString(GL_RENDERER), "SwiftShader"))
+            ? 200
+            : H * W * 3;
 
     // Prepare a ton of random sized boxes in various draws.
     std::vector<Box> boxesList[5];
@@ -2727,7 +2728,8 @@ void PixelLocalStorageTest::doStateRestorationTest()
             glTexStorage3D(GL_TEXTURE_2D_ARRAY, 3, GL_RGBA8, 8, 8, 5);
             GLboolean layered = i % 2;
             glBindImageTexture(i, images.back(), i % 3, layered, layered == GL_FALSE ? i % 5 : 0,
-                               imageAccesses[i % 3], imageFormats[i % 4]);
+                               ANGLE_UNSAFE_TODO(imageAccesses[i % 3]),
+                               ANGLE_UNSAFE_TODO(imageFormats[i % 4]));
         }
 
         glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, 17);
@@ -2770,8 +2772,8 @@ void PixelLocalStorageTest::doStateRestorationTest()
             EXPECT_EQ(level, i % 3);
             EXPECT_EQ(layered, i % 2);
             EXPECT_EQ(layer, layered == GL_FALSE ? i % 5 : 0);
-            EXPECT_EQ(static_cast<GLuint>(access), imageAccesses[i % 3]);
-            EXPECT_EQ(static_cast<GLuint>(format), imageFormats[i % 4]);
+            ANGLE_UNSAFE_TODO(EXPECT_EQ(static_cast<GLuint>(access), imageAccesses[i % 3]));
+            ANGLE_UNSAFE_TODO(EXPECT_EQ(static_cast<GLuint>(format), imageFormats[i % 4]));
         }
 
         GLint defaultWidth, defaultHeight;
@@ -3793,7 +3795,8 @@ TEST_P(PixelLocalStorageTest, ClearWithActivePLS)
         GLenum drawBuffers[2];
         for (int i = 0; i < 2; ++i)
         {
-            drawBuffers[i] = (colorAttachmentMask & (1 << i)) ? GL_COLOR_ATTACHMENT0 + i : GL_NONE;
+            ANGLE_UNSAFE_TODO(drawBuffers[i]) =
+                (colorAttachmentMask & (1 << i)) ? GL_COLOR_ATTACHMENT0 + i : GL_NONE;
         }
         glDrawBuffers(2, drawBuffers);
 
@@ -5963,8 +5966,8 @@ static std::vector<char> FormatBannedCapMsg(GLenum cap)
 {
     constexpr char format[] =
         "Cap 0x%04X cannot be enabled or disabled while pixel local storage is active.";
-    std::vector<char> msg(std::snprintf(nullptr, 0, format, cap) + 1);
-    std::snprintf(msg.data(), msg.size(), format, cap);
+    std::vector<char> msg(ANGLE_UNSAFE_TODO(std::snprintf(nullptr, 0, format, cap) + 1));
+    ANGLE_UNSAFE_TODO(std::snprintf(msg.data(), msg.size(), format, cap));
     return msg;
 }
 
@@ -8513,7 +8516,8 @@ TEST_P(PixelLocalStorageValidationTest, ClearDuringPLSDoesntAffectDrawBuffers)
         GLenum drawBuffers[2];
         for (int i = 0; i < 2; ++i)
         {
-            drawBuffers[i] = (colorAttachmentMask & (1 << i)) ? GL_COLOR_ATTACHMENT0 + i : GL_NONE;
+            ANGLE_UNSAFE_TODO(drawBuffers[i]) =
+                (colorAttachmentMask & (1 << i)) ? GL_COLOR_ATTACHMENT0 + i : GL_NONE;
         }
         glDrawBuffers(2, drawBuffers);
 

@@ -11,6 +11,7 @@
 #include "compiler/translator/Compiler.h"
 #include "compiler/translator/StaticType.h"
 #include "compiler/translator/SymbolTable.h"
+#include "compiler/translator/tree_util/BuiltIn.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
 
@@ -25,7 +26,9 @@ class ClampIndirectIndicesTraverser : public TIntermTraverser
   public:
     ClampIndirectIndicesTraverser(TCompiler *compiler, TSymbolTable *symbolTable)
         : TIntermTraverser(true, false, false, symbolTable), mCompiler(compiler)
-    {}
+    {
+        mIsSecondaryFragDataUsed = symbolTable->isSecondaryFragDataUsed();
+    }
 
     bool visitBinary(Visit visit, TIntermBinary *node) override
     {
@@ -68,8 +71,15 @@ class ClampIndirectIndicesTraverser : public TIntermTraverser
 
         if (leftType.isArray())
         {
-            max = createClampValue(static_cast<int>(leftType.getOutermostArraySize()) - 1,
-                                   useFloatClamp);
+            int arraySize = static_cast<int>(leftType.getOutermostArraySize());
+            if (leftType.getQualifier() == EvqFragData && mIsSecondaryFragDataUsed)
+            {
+                // When gl_SecondaryFragDataEXT is used, only indices up to MaxDualSourceDrawBuffers
+                // of gl_FragData may be accessed.
+                arraySize =
+                    std::min(arraySize, mCompiler->getBuiltInResources().MaxDualSourceDrawBuffers);
+            }
+            max = createClampValue(arraySize - 1, useFloatClamp);
         }
         else
         {
@@ -123,6 +133,7 @@ class ClampIndirectIndicesTraverser : public TIntermTraverser
     }
 
     TCompiler *mCompiler;
+    bool mIsSecondaryFragDataUsed = false;
 };
 }  // anonymous namespace
 

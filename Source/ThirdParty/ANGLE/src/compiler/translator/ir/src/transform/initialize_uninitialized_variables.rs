@@ -289,12 +289,23 @@ fn make_init_block(
             let variable = TypedId::from_variable_id(ir_meta, id);
             // For gl_FragData, the array elements are assigned one by one to keep the AST
             // compatible with ESSL 1.00 which doesn't have array assignment.
-            current_block = initialize_with_zeros(
-                ir_meta,
-                current_block,
-                variable,
-                options.loops_allowed_when_initializing_variables && !is_fragment_output_array,
-            );
+            //
+            // If dual source blending is enabled, only initialize element 0.
+            current_block = if is_fragment_output_array && ir_meta.uses_secondary_frag_data() {
+                let element_zero = current_block.add_typed_instruction(instruction::index(
+                    ir_meta,
+                    variable,
+                    TYPED_CONSTANT_ID_INT_ZERO,
+                ));
+                initialize_with_zeros(ir_meta, current_block, element_zero, false)
+            } else {
+                initialize_with_zeros(
+                    ir_meta,
+                    current_block,
+                    variable,
+                    options.loops_allowed_when_initializing_variables && !is_fragment_output_array,
+                )
+            };
             ir_meta.on_variable_zero_initialization_done(id);
             any_code_generated = true;
         }

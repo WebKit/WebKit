@@ -113,7 +113,7 @@ EGLint OffscreenSurfaceWgpu::getSwapBehavior() const
 
 angle::Result OffscreenSurfaceWgpu::initializeContents(const gl::Context *context,
                                                        GLenum binding,
-                                                       const gl::ImageIndex &imageIndex)
+                                                       const gl::OwnImageIndex &ownImageIndex)
 {
     UNIMPLEMENTED();
     return angle::Result::Continue;
@@ -136,7 +136,7 @@ egl::Error OffscreenSurfaceWgpu::detachFromFramebuffer(const gl::Context *contex
 angle::Result OffscreenSurfaceWgpu::getAttachmentRenderTarget(
     const gl::Context *context,
     GLenum binding,
-    const gl::ImageIndex &imageIndex,
+    const gl::OwnImageIndex &ownImageIndex,
     GLsizei samples,
     FramebufferAttachmentRenderTarget **rtOut)
 {
@@ -283,7 +283,7 @@ EGLint WindowSurfaceWgpu::getSwapBehavior() const
 
 angle::Result WindowSurfaceWgpu::initializeContents(const gl::Context *context,
                                                     GLenum binding,
-                                                    const gl::ImageIndex &imageIndex)
+                                                    const gl::OwnImageIndex &ownImageIndex)
 {
     UNIMPLEMENTED();
     return angle::Result::Continue;
@@ -308,7 +308,7 @@ egl::Error WindowSurfaceWgpu::detachFromFramebuffer(const gl::Context *context,
 angle::Result WindowSurfaceWgpu::getAttachmentRenderTarget(
     const gl::Context *context,
     GLenum binding,
-    const gl::ImageIndex &imageIndex,
+    const gl::OwnImageIndex &ownImageIndex,
     GLsizei samples,
     FramebufferAttachmentRenderTarget **rtOut)
 {

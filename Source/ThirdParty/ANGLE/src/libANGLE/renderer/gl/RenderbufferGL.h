@@ -50,7 +50,7 @@ class RenderbufferGL : public RenderbufferImpl
 
     angle::Result initializeContents(const gl::Context *context,
                                      GLenum binding,
-                                     const gl::ImageIndex &imageIndex) override;
+                                     const gl::OwnImageIndex &ownImageIndex) override;
 
     GLuint getRenderbufferID() const;
     GLenum getNativeInternalFormat() const;

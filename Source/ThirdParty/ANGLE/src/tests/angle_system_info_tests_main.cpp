@@ -30,10 +30,7 @@
 //     ]
 // }
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "gpu_info_util/SystemInfo.h"
 
 #include <gtest/gtest.h>
@@ -64,21 +61,21 @@ int main(int argc, char **argv)
 
     for (int arg = 1; arg < argc; ++arg)
     {
-        if (strcmp(argv[arg], "--vulkan") == 0)
+        if (ANGLE_UNSAFE_TODO(strcmp(argv[arg], "--vulkan")) == 0)
         {
             useVulkan = true;
         }
-        else if (strcmp(argv[arg], "--gtest_list_tests") == 0)
+        else if (ANGLE_UNSAFE_TODO(strcmp(argv[arg], "--gtest_list_tests")) == 0)
         {
             listTests = true;
         }
-        else if (strcmp(argv[arg], "--swiftshader") == 0)
+        else if (ANGLE_UNSAFE_TODO(strcmp(argv[arg], "--swiftshader")) == 0)
         {
             useSwiftShader = true;
         }
-        else if (strstr(argv[arg], kRenderTestOutputDir))
+        else if (ANGLE_UNSAFE_TODO(strstr(argv[arg], kRenderTestOutputDir)))
         {
-            output_dir = argv[arg] + strlen(kRenderTestOutputDir);
+            output_dir = ANGLE_UNSAFE_TODO(argv[arg] + strlen(kRenderTestOutputDir));
         }
     }
 
@@ -172,7 +169,7 @@ int main(int argc, char **argv)
     doc.Accept(writer);
 
     const char *output = buffer.GetString();
-    printf("%s\n", output);
+    ANGLE_UNSAFE_TODO(printf("%s\n", output));
 
     if (!output_dir.empty())
     {
@@ -180,7 +177,7 @@ int main(int argc, char **argv)
         FILE *fp               = fopen(outputFile.c_str(), "w");
         if (fp)
         {
-            fwrite(output, sizeof(char), strlen(output), fp);
+            ANGLE_UNSAFE_TODO(fwrite(output, sizeof(char), strlen(output), fp));
             fclose(fp);
         }
     }

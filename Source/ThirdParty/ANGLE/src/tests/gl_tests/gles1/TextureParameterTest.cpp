@@ -6,10 +6,7 @@
 
 // TextureParameterTest.cpp: Tests GLES1-specific usage of glTexParameter.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -115,7 +112,7 @@ TEST_P(TextureParameterTest, Set)
 
     for (int i = 0; i < 4; i++)
     {
-        EXPECT_EQ(cropRect[i], params[i]);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(cropRect[i], params[i]));
     }
 }
 

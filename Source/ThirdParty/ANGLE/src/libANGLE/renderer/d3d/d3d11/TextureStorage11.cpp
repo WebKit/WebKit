@@ -240,12 +240,6 @@ angle::Result TextureStorage11::getSRVForSampler(const gl::Context *context,
     // which corresponds to GL level 0)
     mipLevels = std::min(mipLevels, mMipLevels - mTopLevel - effectiveBaseLevel);
 
-    if (mRenderer->getRenderer11DeviceCaps().featureLevel <= D3D_FEATURE_LEVEL_9_3)
-    {
-        ASSERT(!swizzleRequired);
-        ASSERT(mipLevels == 1 || mipLevels == mMipLevels);
-    }
-
     if (swizzleRequired)
     {
         verifySwizzleExists(GetEffectiveSwizzle(textureState));
@@ -402,11 +396,6 @@ angle::Result TextureStorage11::getSRVLevels(const gl::Context *context,
     // Make sure there's 'mipLevels' mipmap levels below the base level (offset by the top level,
     // which corresponds to GL level 0)
     mipLevels = std::min(mipLevels, mMipLevels - mTopLevel - baseLevel);
-
-    if (mRenderer->getRenderer11DeviceCaps().featureLevel <= D3D_FEATURE_LEVEL_9_3)
-    {
-        ASSERT(mipLevels == 1 || mipLevels == mMipLevels);
-    }
 
     // TODO(jmadill): Assert we don't need to drop stencil.
 
@@ -694,30 +683,7 @@ angle::Result TextureStorage11::copySubresourceLevel(const gl::Context *context,
 
     // D3D11 can't perform partial CopySubresourceRegion on depth/stencil textures, so pSrcBox
     // should be nullptr.
-    D3D11_BOX srcBox;
     D3D11_BOX *pSrcBox = nullptr;
-    if (mRenderer->getRenderer11DeviceCaps().featureLevel <= D3D_FEATURE_LEVEL_9_3)
-    {
-        GLsizei width  = region.width;
-        GLsizei height = region.height;
-        d3d11::MakeValidSize(false, mFormatInfo.texFormat, &width, &height, nullptr);
-
-        // Keep srcbox as nullptr if we're dealing with tiny mips of compressed textures.
-        if (width == region.width && height == region.height)
-        {
-            // However, D3D10Level9 doesn't always perform CopySubresourceRegion correctly unless
-            // the source box is specified. This is okay, since we don't perform
-            // CopySubresourceRegion on depth/stencil textures on 9_3.
-            ASSERT(mFormatInfo.dsvFormat == DXGI_FORMAT_UNKNOWN);
-            srcBox.left   = region.x;
-            srcBox.right  = region.x + region.width;
-            srcBox.top    = region.y;
-            srcBox.bottom = region.y + region.height;
-            srcBox.front  = region.z;
-            srcBox.back   = region.z + region.depth;
-            pSrcBox       = &srcBox;
-        }
-    }
 
     deviceContext->CopySubresourceRegion(dstTexture.get(), dstSubresource, region.x, region.y,
                                          region.z, srcTexture->get(), srcSubresource, pSrcBox);
@@ -1214,15 +1180,6 @@ angle::Result TextureStorage11_2D::getRenderTarget(const gl::Context *context,
     const int level = index.getLevelIndex();
     ASSERT(level >= 0 && level < getLevelCount());
 
-    // In GL ES 2.0, the application can only render to level zero of the texture (Section 4.4.3 of
-    // the GLES 2.0 spec, page 113 of version 2.0.25). Other parts of TextureStorage11_2D could
-    // create RTVs on non-zero levels of the texture (e.g. generateMipmap).
-    // On Feature Level 9_3, this is unlikely to be useful. The renderer can't create SRVs on the
-    // individual levels of the texture, so methods like generateMipmap can't do anything useful
-    // with non-zero-level RTVs. Therefore if level > 0 on 9_3 then there's almost certainly
-    // something wrong.
-    ASSERT(
-        !(mRenderer->getRenderer11DeviceCaps().featureLevel <= D3D_FEATURE_LEVEL_9_3 && level > 0));
     ASSERT(outRT);
     if (mRenderTarget[level])
     {

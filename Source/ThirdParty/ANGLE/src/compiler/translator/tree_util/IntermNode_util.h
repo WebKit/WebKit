@@ -130,7 +130,7 @@ TIntermSymbol *ReferenceGlobalVariable(const ImmutableString &name,
                                        const TSymbolTable &symbolTable);
 
 TIntermSymbol *ReferenceBuiltInVariable(const ImmutableString &name,
-                                        const TSymbolTable &symbolTable,
+                                        TSymbolTable &symbolTable,
                                         int shaderVersion);
 
 TIntermTyped *CreateBuiltInFunctionCallNode(const char *name,

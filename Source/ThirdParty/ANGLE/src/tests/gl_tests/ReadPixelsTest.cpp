@@ -7,10 +7,7 @@
 //   Tests calls related to glReadPixels.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
 #include <array>
@@ -195,8 +192,8 @@ TEST_P(ReadPixelsPBONVTest, Basic)
     EXPECT_GL_NO_ERROR();
 
     EXPECT_EQ(GLColor::red, dataColor[0]);
-    EXPECT_EQ(GLColor::red, dataColor[16 * 16 - 2]);
-    EXPECT_EQ(GLColor::green, dataColor[16 * 16 - 1]);
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::red, dataColor[16 * 16 - 2]));
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::green, dataColor[16 * 16 - 1]));
 
     glUnmapBufferOES(GL_PIXEL_PACK_BUFFER);
     EXPECT_GL_NO_ERROR();
@@ -229,7 +226,7 @@ TEST_P(ReadPixelsPBONVTest, SubDataPreservesContents)
     EXPECT_GL_NO_ERROR();
 
     EXPECT_EQ(GLColor(1, 2, 3, 4), dataColor[0]);
-    EXPECT_EQ(GLColor::red, dataColor[1]);
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::red, dataColor[1]));
 
     glUnmapBufferOES(GL_ARRAY_BUFFER);
     EXPECT_GL_NO_ERROR();
@@ -265,7 +262,7 @@ TEST_P(ReadPixelsPBONVTest, DynamicPBO)
     EXPECT_GL_NO_ERROR();
 
     EXPECT_EQ(GLColor(1, 2, 3, 4), dataColor[0]);
-    EXPECT_EQ(GLColor::red, dataColor[1]);
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::red, dataColor[1]));
 
     glUnmapBufferOES(GL_ARRAY_BUFFER);
     EXPECT_GL_NO_ERROR();
@@ -296,8 +293,8 @@ TEST_P(ReadPixelsPBONVTest, ReadFromFBO)
     EXPECT_GL_NO_ERROR();
 
     EXPECT_EQ(GLColor::red, dataColor[0]);
-    EXPECT_EQ(GLColor::red, dataColor[mFBOWidth * mFBOHeight - 2]);
-    EXPECT_EQ(GLColor::green, dataColor[mFBOWidth * mFBOHeight - 1]);
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::red, dataColor[mFBOWidth * mFBOHeight - 2]));
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::green, dataColor[mFBOWidth * mFBOHeight - 1]));
 
     glUnmapBufferOES(GL_PIXEL_PACK_BUFFER);
     EXPECT_GL_NO_ERROR();
@@ -331,9 +328,9 @@ TEST_P(ReadPixelsPBONVTest, ReadFromFBOWithDataOffset)
     GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
     EXPECT_GL_NO_ERROR();
 
-    EXPECT_EQ(GLColor::green, dataColor[mFBOWidth]);
-    EXPECT_EQ(GLColor::red, dataColor[mFBOWidth + 1]);
-    EXPECT_EQ(GLColor::red, dataColor[mFBOWidth * mFBOHeight - 1]);
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::green, dataColor[mFBOWidth]));
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::red, dataColor[mFBOWidth + 1]));
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::red, dataColor[mFBOWidth * mFBOHeight - 1]));
 
     glUnmapBufferOES(GL_PIXEL_PACK_BUFFER);
     EXPECT_GL_NO_ERROR();
@@ -439,7 +436,7 @@ TEST_P(ReadPixelsPBOTest, Snorm)
 
     std::vector<GLColor> result(kSize * kSize);
     void *mappedPtr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, kSize * kSize * 4, GL_MAP_READ_BIT);
-    memcpy(result.data(), mappedPtr, kSize * kSize * 4);
+    ANGLE_UNSAFE_TODO(memcpy(result.data(), mappedPtr, kSize * kSize * 4));
     glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
     EXPECT_GL_NO_ERROR();
 
@@ -449,7 +446,7 @@ TEST_P(ReadPixelsPBOTest, Snorm)
             for (size_t j = 0; j < kSize; ++j)
             {
                 uint32_t index = (i < kSize / 2 ? 0 : 1) << 1 | (j < kSize / 2 ? 0 : 1);
-                EXPECT_EQ(result[i * kSize + j], expect[index]) << i << " " << j;
+                ANGLE_UNSAFE_TODO(EXPECT_EQ(result[i * kSize + j], expect[index])) << i << " " << j;
             }
         }
     };
@@ -477,7 +474,7 @@ TEST_P(ReadPixelsPBOTest, Snorm)
         glReadPixels(0, 0, kSize, kSize, GL_RGBA, GL_BYTE, 0);
 
         mappedPtr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, kSize * kSize * 4, GL_MAP_READ_BIT);
-        memcpy(result.data(), mappedPtr, kSize * kSize * 4);
+        ANGLE_UNSAFE_TODO(memcpy(result.data(), mappedPtr, kSize * kSize * 4));
         glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
         EXPECT_GL_NO_ERROR();
 
@@ -520,7 +517,7 @@ TEST_P(ReadPixelsPBOTest, SrgbUnorm)
 
     GLColor result;
     void *mappedPtr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, kSize * kSize * 4, GL_MAP_READ_BIT);
-    memcpy(result.data(), mappedPtr, kSize * kSize * 4);
+    ANGLE_UNSAFE_TODO(memcpy(result.data(), mappedPtr, kSize * kSize * 4));
     glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
     EXPECT_GL_NO_ERROR();
 
@@ -607,7 +604,7 @@ TEST_P(ReadPixelsPBOTest, ExistingDataPreserved)
     EXPECT_EQ(GLColor::red, dataColor[0]);
 
     // Test pixel 16 is green (new data)
-    EXPECT_EQ(GLColor::green, dataColor[16]);
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::green, dataColor[16]));
 
     glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
     EXPECT_GL_NO_ERROR();
@@ -668,7 +665,7 @@ TEST_P(ReadPixelsPBOTest, SubDataOffsetPreservesContents)
     EXPECT_GL_NO_ERROR();
 
     EXPECT_EQ(GLColor::red, dataColor[0]);
-    EXPECT_EQ(GLColor(1, 2, 3, 4), dataColor[4]);
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor(1, 2, 3, 4), dataColor[4]));
 
     glUnmapBuffer(GL_ARRAY_BUFFER);
     EXPECT_GL_NO_ERROR();
@@ -731,9 +728,9 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     EXPECT_EQ(GLColor::blue, dataColor[0]);
-    EXPECT_EQ(GLColor::green, dataColor[1]);
-    EXPECT_EQ(GLColor::green, dataColor[2]);
-    EXPECT_EQ(GLColor::green, dataColor[3]);
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::green, dataColor[1]));
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::green, dataColor[2]));
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::green, dataColor[3]));
 
     glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
     EXPECT_GL_NO_ERROR();
@@ -781,9 +778,9 @@ TEST_P(ReadPixelsPBOTest, SmallRowLength)
     {
         GLColor *colorPtr = static_cast<GLColor *>(mappedPtr);
         EXPECT_EQ(colorPtr[0], GLColor::red);
-        EXPECT_EQ(colorPtr[1], GLColor::blue);
-        EXPECT_EQ(colorPtr[2], GLColor::white);
-        EXPECT_EQ(colorPtr[3], GLColor::black);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(colorPtr[1], GLColor::blue));
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(colorPtr[2], GLColor::white));
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(colorPtr[3], GLColor::black));
     }
     ASSERT_TRUE(glUnmapBuffer(GL_PIXEL_PACK_BUFFER));
     ASSERT_GL_NO_ERROR();
@@ -998,12 +995,13 @@ class ReadPixelsTextureNorm16PBOTest : public ReadPixelsTest
         EXPECT_EQ(dataRead[0], data[0]);
         if (readFormat == GL_RGBA || readFormat == GL_RG)
         {
-            EXPECT_EQ(dataRead[1], format != GL_RED ? data[1] : 0);
+            ANGLE_UNSAFE_TODO(EXPECT_EQ(dataRead[1], format != GL_RED ? data[1] : 0));
         }
         if (readFormat == GL_RGBA)
         {
-            EXPECT_EQ(dataRead[2], format == GL_RGBA ? data[2] : 0);
-            EXPECT_EQ(dataRead[3], format == GL_RGBA ? data[3] : (isSigned ? 32767 : 65535));
+            ANGLE_UNSAFE_TODO(EXPECT_EQ(dataRead[2], format == GL_RGBA ? data[2] : 0));
+            ANGLE_UNSAFE_TODO(
+                EXPECT_EQ(dataRead[3], format == GL_RGBA ? data[3] : (isSigned ? 32767 : 65535)));
         }
         glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
     }
@@ -1205,7 +1203,7 @@ TEST_P(ReadPixelsMultisampleTest, DefaultFramebufferPBO)
     const void *mapPointer =
         glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, sizeof(angle::GLColor) * w * h, GL_MAP_READ_BIT);
     ASSERT_NE(nullptr, mapPointer);
-    memcpy(actualColor.data(), mapPointer, sizeof(angle::GLColor) * w * h);
+    ANGLE_UNSAFE_TODO(memcpy(actualColor.data(), mapPointer, sizeof(angle::GLColor) * w * h));
     glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
 
     EXPECT_EQ(expectedColor, actualColor);
@@ -1346,7 +1344,8 @@ class ReadPixelsTextureTest : public ANGLETest<>
         void *mapPointer = glMapBufferRange(GL_PIXEL_PACK_BUFFER, offset,
                                             sizeof(angle::GLColor) * size * size, GL_MAP_READ_BIT);
         ASSERT_NE(nullptr, mapPointer);
-        memcpy(actualColor.data(), mapPointer, sizeof(angle::GLColor) * size * size);
+        ANGLE_UNSAFE_TODO(
+            memcpy(actualColor.data(), mapPointer, sizeof(angle::GLColor) * size * size));
         glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
 
         ASSERT_GL_NO_ERROR();

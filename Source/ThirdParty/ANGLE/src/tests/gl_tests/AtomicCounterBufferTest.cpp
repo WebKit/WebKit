@@ -7,10 +7,7 @@
 //   Various tests related for atomic counter buffers.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -171,7 +168,8 @@ TEST_P(AtomicCounterBufferTest31, TessellationControlShaderMaxAtomicCounterTests
     GLuint atomicBufferID;
     glGenBuffers(1, &atomicBufferID);
     GLuint *atomicBufferData = new GLuint[maxTessellationControlAtomicCounters];
-    memset(atomicBufferData, 0, sizeof(GLuint) * maxTessellationControlAtomicCounters);
+    ANGLE_UNSAFE_TODO(
+        memset(atomicBufferData, 0, sizeof(GLuint) * maxTessellationControlAtomicCounters));
     glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicBufferID);
     glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint) * maxTessellationControlAtomicCounters,
                  NULL, GL_DYNAMIC_COPY);
@@ -210,7 +208,7 @@ TEST_P(AtomicCounterBufferTest31, TessellationControlShaderMaxAtomicCounterTests
                 expected_value++;
             }
         }
-        EXPECT_EQ(atomicBufferResult[n_ac - 1], expected_value);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(atomicBufferResult[n_ac - 1], expected_value));
     }
 
     glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
@@ -317,7 +315,8 @@ TEST_P(AtomicCounterBufferTest31, TessellationEvaluationShaderMaxAtomicCounterTe
     GLuint atomicBufferID;
     glGenBuffers(1, &atomicBufferID);
     GLuint *atomicBufferData = new GLuint[maxTessellationEvaluationAtomicCounters];
-    memset(atomicBufferData, 0, sizeof(GLuint) * maxTessellationEvaluationAtomicCounters);
+    ANGLE_UNSAFE_TODO(
+        memset(atomicBufferData, 0, sizeof(GLuint) * maxTessellationEvaluationAtomicCounters));
     glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicBufferID);
     glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint) * maxTessellationEvaluationAtomicCounters,
                  NULL, GL_DYNAMIC_COPY);
@@ -347,7 +346,7 @@ TEST_P(AtomicCounterBufferTest31, TessellationEvaluationShaderMaxAtomicCounterTe
     unsigned int expected_value = tessellationControlPointsCount;
     for (GLint n_ac = 0; n_ac < maxTessellationEvaluationAtomicCounters; ++n_ac)
     {
-        EXPECT_EQ(atomicBufferResult[n_ac], expected_value);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(atomicBufferResult[n_ac], expected_value));
     }
 
     glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
@@ -594,7 +593,7 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterBufferRepeatedBindUnbind)
     // Populate atomicCounterBuffer[0] with valid data and the rest with nullptr
     for (int32_t bufferIndex = 0; bufferIndex < kBufferCount; bufferIndex++)
     {
-        glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffer[bufferIndex]);
+        glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, ANGLE_UNSAFE_TODO(atomicCounterBuffer[bufferIndex]));
         glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(bufferData),
                      (bufferIndex == 0) ? bufferData : nullptr, GL_STATIC_DRAW);
     }
@@ -607,7 +606,7 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterBufferRepeatedBindUnbind)
     {
         constexpr int32_t kBufferIndices[kBufferCount] = {7, 12, 15, 5, 13, 14, 1, 2,
                                                           0, 6,  4,  9, 8,  11, 3, 10};
-        int32_t bufferIndex                            = kBufferIndices[i];
+        int32_t bufferIndex                            = ANGLE_UNSAFE_TODO(kBufferIndices[i]);
 
         // Randomly bind/unbind buffers to/from different binding points,
         // capped by GL_MAX_COMPUTE_ATOMIC_COUNTER_BUFFERS
@@ -618,10 +617,10 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterBufferRepeatedBindUnbind)
                                                                    12, 11, 8, 5,  10, 2, 7, 13};
 
             uint32_t bindingSlotIndex = bufferCount % kBindingSlotsSize;
-            uint32_t bindingSlot      = kBindingSlots[bindingSlotIndex];
+            uint32_t bindingSlot      = ANGLE_UNSAFE_TODO(kBindingSlots[bindingSlotIndex]);
             uint32_t bindingPoint     = bindingSlot % maxAtomicCounterBuffers;
             bool even                 = (bufferCount % 2 == 0);
-            int32_t bufferId          = (even) ? 0 : atomicCounterBuffer[bufferIndex];
+            int32_t bufferId = (even) ? 0 : ANGLE_UNSAFE_TODO(atomicCounterBuffer[bufferIndex]);
 
             glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, bindingPoint, bufferId);
         }
@@ -667,7 +666,7 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterIncrementAndDecrement)
     glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffer);
     void *mappedBuffer =
         glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 3, GL_MAP_READ_BIT);
-    memcpy(bufferData, mappedBuffer, sizeof(bufferData));
+    ANGLE_UNSAFE_TODO(memcpy(bufferData, mappedBuffer, sizeof(bufferData)));
     glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
 
     EXPECT_EQ(11u, bufferData[0]);
@@ -706,10 +705,10 @@ void main()
     for (unsigned int ii = 0; ii < kBufferCount; ++ii)
     {
         GLuint initialData[1] = {ii};
-        glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffers[ii]);
+        glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, ANGLE_UNSAFE_TODO(atomicCounterBuffers[ii]));
         glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(initialData), initialData, GL_STATIC_DRAW);
 
-        glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, ii, atomicCounterBuffers[ii]);
+        glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, ii, ANGLE_UNSAFE_TODO(atomicCounterBuffers[ii]));
     }
 
     glDispatchCompute(1, 1, 1);
@@ -719,7 +718,7 @@ void main()
 
     for (unsigned int ii = 0; ii < kBufferCount; ++ii)
     {
-        glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffers[ii]);
+        glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, ANGLE_UNSAFE_TODO(atomicCounterBuffers[ii]));
         GLuint *mappedBuffer = static_cast<GLuint *>(
             glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint), GL_MAP_READ_BIT));
         EXPECT_EQ(ii + 1, mappedBuffer[0]);
@@ -843,7 +842,7 @@ void main()
     unsigned int bufferData[kAtomicCounterCount] = {};
     for (uint32_t index = 0; index < kAtomicCounterCount; ++index)
     {
-        bufferData[index] = index;
+        ANGLE_UNSAFE_TODO(bufferData[index]) = index;
     }
 
     GLBuffer atomicCounterBuffer;
@@ -861,12 +860,12 @@ void main()
     glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffer);
     void *mappedBuffer =
         glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(bufferData), GL_MAP_READ_BIT);
-    memcpy(result, mappedBuffer, sizeof(bufferData));
+    ANGLE_UNSAFE_TODO(memcpy(result, mappedBuffer, sizeof(bufferData)));
     glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
 
     for (uint32_t index = 0; index < kAtomicCounterCount; ++index)
     {
-        EXPECT_EQ(result[index], bufferData[index] + 1) << "index " << index;
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(result[index], bufferData[index] + 1)) << "index " << index;
     }
 }
 
@@ -1000,24 +999,24 @@ void main()
         GLint size;
         GLenum type;
 
-        glGetActiveUniform(program, uniformsIndices[index], maxLength, nullptr, &size, &type,
-                           queryNames.data());
+        glGetActiveUniform(program, ANGLE_UNSAFE_TODO(uniformsIndices[index]), maxLength, nullptr,
+                           &size, &type, queryNames.data());
 
-        if (0 == std::strcmp(queryNames.data(), activeACNames[0]))
+        if (0 == ANGLE_UNSAFE_TODO(std::strcmp(queryNames.data(), activeACNames[0])))
         {
-            EXPECT_EQ(queryOffsets[index], 0);
+            ANGLE_UNSAFE_TODO(EXPECT_EQ(queryOffsets[index], 0));
         }
-        else if (0 == std::strcmp(queryNames.data(), activeACNames[1]))
+        else if (0 == ANGLE_UNSAFE_TODO(std::strcmp(queryNames.data(), activeACNames[1])))
         {
-            EXPECT_EQ(queryOffsets[index], 4);
+            ANGLE_UNSAFE_TODO(EXPECT_EQ(queryOffsets[index], 4));
         }
-        else if (0 == std::strcmp(queryNames.data(), activeACNames[2]))
+        else if (0 == ANGLE_UNSAFE_TODO(std::strcmp(queryNames.data(), activeACNames[2])))
         {
-            EXPECT_EQ(queryOffsets[index], 12);
+            ANGLE_UNSAFE_TODO(EXPECT_EQ(queryOffsets[index], 12));
         }
-        else if (0 == std::strcmp(queryNames.data(), activeACNames[3]))
+        else if (0 == ANGLE_UNSAFE_TODO(std::strcmp(queryNames.data(), activeACNames[3])))
         {
-            EXPECT_EQ(queryOffsets[index], 24);
+            ANGLE_UNSAFE_TODO(EXPECT_EQ(queryOffsets[index], 24));
         }
         else
         {
@@ -1047,7 +1046,7 @@ void main()
     GLuint results[kAtomicCounterCount] = {};
     void *ptr = glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(results), GL_MAP_READ_BIT);
     ASSERT_NE(ptr, nullptr);
-    memcpy(results, ptr, sizeof(results));
+    ANGLE_UNSAFE_TODO(memcpy(results, ptr, sizeof(results)));
     glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
 
     // Validate values:
@@ -1063,7 +1062,7 @@ void main()
     const GLuint kExpectedResults[kAtomicCounterCount] = {1, 99, 201, 301, 399, 501, 599, 701, 801};
     for (uint32_t i = 0; i < kAtomicCounterCount; ++i)
     {
-        EXPECT_EQ(results[i], kExpectedResults[i]) << "at index " << i;
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(results[i], kExpectedResults[i])) << "at index " << i;
     }
     EXPECT_GL_NO_ERROR();
 }

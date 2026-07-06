@@ -7,11 +7,8 @@
 //   Performance test for device creation.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "ANGLEPerfTest.h"
+#include "common/unsafe_buffers.h"
 #include "platform/PlatformMethods.h"
 #include "test_utils/angle_test_configs.h"
 #include "test_utils/angle_test_instantiate.h"
@@ -46,16 +43,16 @@ void CapturePlatform_histogramCustomCounts(angle::PlatformMethods *platformMetho
     Captures *captures = static_cast<Captures *>(platformMethods->context);
 
     // These must match the names of the histograms.
-    if (strcmp(name, "GPU.ANGLE.Renderer11InitializeDLLsMS") == 0)
+    if (ANGLE_UNSAFE_TODO(strcmp(name, "GPU.ANGLE.Renderer11InitializeDLLsMS")) == 0)
     {
         captures->loadDLLsMS += static_cast<size_t>(sample);
     }
     // Note: not captured in debug, due to creating a debug device
-    else if (strcmp(name, "GPU.ANGLE.D3D11CreateDeviceMS") == 0)
+    else if (ANGLE_UNSAFE_TODO(strcmp(name, "GPU.ANGLE.D3D11CreateDeviceMS")) == 0)
     {
         captures->createDeviceMS += static_cast<size_t>(sample);
     }
-    else if (strcmp(name, "GPU.ANGLE.Renderer11InitializeDeviceMS") == 0)
+    else if (ANGLE_UNSAFE_TODO(strcmp(name, "GPU.ANGLE.Renderer11InitializeDeviceMS")) == 0)
     {
         captures->initResourcesMS += static_cast<size_t>(sample);
     }

@@ -4,10 +4,7 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
 #include <d3d11.h>
@@ -289,10 +286,12 @@ class EGLPresentPathD3D11 : public ANGLETest<>
         }
 
         EXPECT_EQ(expectedTopLeftPixel, byteData[0]);
-        EXPECT_EQ(expectedTopRightPixel, byteData[(mWindowWidth - 1)]);
-        EXPECT_EQ(expectedBottomLeftPixel, byteData[(mWindowWidth - 1) * mWindowWidth]);
-        EXPECT_EQ(expectedBottomRightPixel,
-                  byteData[(mWindowWidth - 1) * mWindowWidth + (mWindowWidth - 1)]);
+        EXPECT_EQ(expectedTopRightPixel, ANGLE_UNSAFE_TODO(byteData[(mWindowWidth - 1)]));
+        EXPECT_EQ(expectedBottomLeftPixel,
+                  ANGLE_UNSAFE_TODO(byteData[(mWindowWidth - 1) * mWindowWidth]));
+        EXPECT_EQ(
+            expectedBottomRightPixel,
+            ANGLE_UNSAFE_TODO(byteData[(mWindowWidth - 1) * mWindowWidth + (mWindowWidth - 1)]));
 
         context->Unmap(cpuTexture, 0);
         SafeRelease(cpuTexture);

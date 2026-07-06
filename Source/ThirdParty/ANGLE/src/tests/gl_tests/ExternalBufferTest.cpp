@@ -7,10 +7,7 @@
 //   Tests the correctness of external buffer ext extension.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
@@ -66,7 +63,7 @@ class ExternalBufferTestES31 : public ANGLETest<>
 
         if (data)
         {
-            memcpy(mappedMemory, data, size);
+            ANGLE_UNSAFE_TODO(memcpy(mappedMemory, data, size));
         }
 
         EXPECT_EQ(0, AHardwareBuffer_unlock(aHardwareBuffer, nullptr));
@@ -132,7 +129,7 @@ TEST_P(ExternalBufferTestES31, BufferSubData)
 
     for (uint32_t i = 0; i < kBufferSize; ++i)
     {
-        EXPECT_EQ(data[i], 0xFF);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(data[i], 0xFF));
     }
 
     unlockAndroidHardwareBuffer(aHardwareBuffer);
@@ -185,7 +182,7 @@ TEST_P(ExternalBufferTestES31, SubDataDoesNotCauseOrphaning)
 
     for (uint32_t i = 0; i < kBufferSize; ++i)
     {
-        EXPECT_EQ(data[i], 0xFF);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(data[i], 0xFF));
     }
 
     unlockAndroidHardwareBuffer(aHardwareBuffer);
@@ -245,7 +242,7 @@ TEST_P(ExternalBufferTestES31, DispatchCompute)
 
     for (uint32_t i = 0; i < (kBufferSize / sizeof(uint32_t)); ++i)
     {
-        EXPECT_EQ(data[i], static_cast<uint32_t>(i * 3));
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(data[i], static_cast<uint32_t>(i * 3)));
     }
 
     unlockAndroidHardwareBuffer(aHardwareBuffer);
@@ -284,7 +281,7 @@ TEST_P(ExternalBufferTestES31, MapBuffer)
 
     for (uint32_t i = 0; i < kBufferSize; ++i)
     {
-        EXPECT_EQ(data[i], 0xFF);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(data[i], 0xFF));
     }
 
     glUnmapBufferOES(GL_SHADER_STORAGE_BUFFER);
@@ -346,7 +343,7 @@ TEST_P(ExternalBufferTestES31, MapBufferDoesNotCauseOrphaning)
 
     for (uint32_t i = 0; i < kBufferSize; ++i)
     {
-        EXPECT_EQ(data[i], 0xFF);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(data[i], 0xFF));
     }
 
     unlockAndroidHardwareBuffer(aHardwareBuffer);

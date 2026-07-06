@@ -6,10 +6,7 @@
 
 // CopyTexture3DTest.cpp: Tests of the GL_ANGLE_copy_texture_3d extension
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
 #include "test_utils/gl_raii.h"
@@ -410,7 +407,7 @@ TEST_P(Texture3DCopy, OffsetSubCopy)
     // Create pixel data for a 3x3x3 red cube
     for (int i = 0; i < 27; i++)
     {
-        rgbaPixels[i] = GLColor(255u, 0u, 0u, 255u);
+        ANGLE_UNSAFE_TODO(rgbaPixels[i]) = GLColor(255u, 0u, 0u, 255u);
     }
 
     // Change a pixel to create a 1x1x1 blue cube at (0, 0, 0)
@@ -1176,7 +1173,7 @@ TEST_P(Texture2DArrayCopy, OffsetSubCopy)
     // Create pixel data for a 3x3x3 red cube
     for (int i = 0; i < 27; i++)
     {
-        rgbaPixels[i] = GLColor(255u, 0u, 0u, 255u);
+        ANGLE_UNSAFE_TODO(rgbaPixels[i]) = GLColor(255u, 0u, 0u, 255u);
     }
 
     // Change a pixel to create a 1x1x1 blue cube at (0, 0, 0)

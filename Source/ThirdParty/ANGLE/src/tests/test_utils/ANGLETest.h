@@ -10,13 +10,10 @@
 #ifndef ANGLE_TESTS_ANGLE_TEST_H_
 #define ANGLE_TESTS_ANGLE_TEST_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <array>
+#include "common/unsafe_buffers.h"
 
 #include "RenderDoc.h"
 #include "angle_test_configs.h"
@@ -142,9 +139,9 @@ struct GLColor
 
     angle::Vector4 toNormalizedVector() const;
 
-    GLubyte &operator[](size_t index) { return (&R)[index]; }
+    GLubyte &operator[](size_t index) { return ANGLE_UNSAFE_TODO((&R)[index]); }
 
-    const GLubyte &operator[](size_t index) const { return (&R)[index]; }
+    const GLubyte &operator[](size_t index) const { return ANGLE_UNSAFE_TODO((&R)[index]); }
 
     const GLubyte *data() const { return &R; }
     GLubyte *data() { return &R; }

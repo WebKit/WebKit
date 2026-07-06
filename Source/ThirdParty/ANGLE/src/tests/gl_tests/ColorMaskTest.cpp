@@ -71,8 +71,7 @@ TEST_P(ColorMaskTest, AMDZeroColorMaskBug)
 }
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
-// tests should be run against. D3D11 Feature Level 9_3 uses different D3D formats for vertex
-// attribs compared to Feature Levels 10_0+, so we should test them separately.
+// tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ColorMaskTest);
 
 }  // namespace angle

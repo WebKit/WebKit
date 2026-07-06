@@ -4,10 +4,7 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -375,7 +372,8 @@ TEST_P(ViewportTest, Overflow)
     for (const int *viewportSize : kTestViewportSizes)
     {
         // Set the viewport.
-        glViewport(viewportSize[0], viewportSize[1], viewportSize[2], viewportSize[3]);
+        ANGLE_UNSAFE_TODO(
+            glViewport(viewportSize[0], viewportSize[1], viewportSize[2], viewportSize[3]));
 
         glClear(GL_COLOR_BUFFER_BIT);
         glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(vertices.size()));
@@ -437,8 +435,8 @@ TEST_P(ViewportTest, ClampOnStore)
 }
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
-// tests should be run against. D3D11 Feature Level 9 and D3D9 emulate large and negative viewports
-// in the vertex shader. We should test both of these as well as D3D11 Feature Level 10_0+.
+// tests should be run against. D3D9 emulates large and negative viewports
+// in the vertex shader. We should test this as well as D3D11.
 ANGLE_INSTANTIATE_TEST_ES2_AND(ViewportTest, ES2_D3D11_PRESENT_PATH_FAST());
 
 // This test suite is not instantiated on some OSes.

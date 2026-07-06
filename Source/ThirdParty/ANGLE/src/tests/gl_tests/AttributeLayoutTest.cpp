@@ -10,11 +10,8 @@
 //   - various combinations of data types
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <vector>
+#include "common/unsafe_buffers.h"
 
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -67,7 +64,7 @@ class VertexData
     unsigned getNumVertices() const { return mNumVertices; }
     double getValue(unsigned vertexNumber, int component) const
     {
-        return mData[mOffset + mStride * vertexNumber + component];
+        return ANGLE_UNSAFE_TODO(mData[mOffset + mStride * vertexNumber + component]);
     }
 
   private:
@@ -85,8 +82,8 @@ class Container
   public:
     static constexpr size_t kSize = 1024;
 
-    void open(void) { memset(mMemory, 0xff, kSize); }
-    void *getDestination(size_t offset) { return mMemory + offset; }
+    void open(void) { ANGLE_UNSAFE_TODO(memset(mMemory, 0xff, kSize)); }
+    void *getDestination(size_t offset) { return ANGLE_UNSAFE_TODO(mMemory + offset); }
     virtual void close(void) {}
     virtual ~Container() {}
     virtual const char *getAddress() = 0;
@@ -173,7 +170,7 @@ struct Attrib
     bool inClientMemory() const { return mContainer->getAddress() != nullptr; }
     const char *getContainerOffset() const
     {
-        return inClientMemory() ? mContainer->getAddress() + mOffset
+        return inClientMemory() ? ANGLE_UNSAFE_TODO(mContainer->getAddress() + mOffset)
                                 : reinterpret_cast<const char *>(mOffset);
     }
 
@@ -197,7 +194,7 @@ template <class T>
 void Store(double value, void *dest)
 {
     T v = static_cast<T>(value);
-    memcpy(dest, &v, sizeof(v));
+    ANGLE_UNSAFE_TODO(memcpy(dest, &v, sizeof(v)));
 }
 
 // Function object that makes Attrib structs according to a vertex format.
@@ -349,7 +346,7 @@ class AttributeLayoutTest : public ANGLETest<>
             }
             else
             {
-                Draw(3, kNumVertices - 3, mIndices + 3);
+                Draw(3, kNumVertices - 3, ANGLE_UNSAFE_TODO(mIndices + 3));
                 testCase = "skip";
             }
 
@@ -572,41 +569,41 @@ ResType GetRefValue(const void *data, GLenum glType)
         case GL_BYTE:
         {
             const int8_t *p = reinterpret_cast<const int8_t *>(data);
-            return ResType(p[0], p[1], p[2], p[3]);
+            return ANGLE_UNSAFE_TODO(ResType(p[0], p[1], p[2], p[3]));
         }
         case GL_SHORT:
         case GL_HALF_FLOAT:
         {
             const int16_t *p = reinterpret_cast<const int16_t *>(data);
-            return ResType(p[0], p[1], p[2], p[3]);
+            return ANGLE_UNSAFE_TODO(ResType(p[0], p[1], p[2], p[3]));
         }
         case GL_INT:
         case GL_FIXED:
         {
             const int32_t *p = reinterpret_cast<const int32_t *>(data);
-            return ResType(p[0], p[1], p[2], p[3]);
+            return ANGLE_UNSAFE_TODO(ResType(p[0], p[1], p[2], p[3]));
         }
         case GL_UNSIGNED_BYTE:
         {
             const uint8_t *p = reinterpret_cast<const uint8_t *>(data);
-            return ResType(p[0], p[1], p[2], p[3]);
+            return ANGLE_UNSAFE_TODO(ResType(p[0], p[1], p[2], p[3]));
         }
         case GL_UNSIGNED_SHORT:
         {
             const uint16_t *p = reinterpret_cast<const uint16_t *>(data);
-            return ResType(p[0], p[1], p[2], p[3]);
+            return ANGLE_UNSAFE_TODO(ResType(p[0], p[1], p[2], p[3]));
         }
         case GL_FLOAT:
         case GL_UNSIGNED_INT:
         {
             const uint32_t *p = reinterpret_cast<const uint32_t *>(data);
-            return ResType(p[0], p[1], p[2], p[3]);
+            return ANGLE_UNSAFE_TODO(ResType(p[0], p[1], p[2], p[3]));
         }
         default:
         {
             ASSERT(0);
             const uint32_t *p = reinterpret_cast<const uint32_t *>(data);
-            return ResType(p[0], p[1], p[2], p[3]);
+            return ANGLE_UNSAFE_TODO(ResType(p[0], p[1], p[2], p[3]));
         }
     }
 }
@@ -704,12 +701,14 @@ class AttributeDataTypeMismatchTest : public ANGLETest<>
 
         for (int i = VsInputDataType::FLOAT; i < VsInputDataType::COUNT; ++i)
         {
-            mProgram[i] = CompileProgram(kVS[i], kFS[i], BindAttribLocation);
-            ASSERT_NE(0u, mProgram[i]);
-            mRbo[i] = createRbo(static_cast<VsInputDataType>(i));
-            ASSERT_NE(0u, mRbo[i]);
-            mFbo[i] = createFbo(mRbo[i]);
-            ASSERT_NE(0u, mFbo[i]);
+            ANGLE_UNSAFE_TODO({
+                mProgram[i] = CompileProgram(kVS[i], kFS[i], BindAttribLocation);
+                ASSERT_NE(0u, mProgram[i]);
+                mRbo[i] = createRbo(static_cast<VsInputDataType>(i));
+                ASSERT_NE(0u, mRbo[i]);
+                mFbo[i] = createFbo(mRbo[i]);
+                ASSERT_NE(0u, mFbo[i]);
+            })
         }
 
         glGenBuffers(1, &mIndexBuffer);
@@ -772,9 +771,11 @@ class AttributeDataTypeMismatchTest : public ANGLETest<>
         mTestCases.clear();
         for (int i = 0; i < VsInputDataType::COUNT; ++i)
         {
-            glDeleteProgram(mProgram[i]);
-            glDeleteFramebuffers(1, &mFbo[i]);
-            glDeleteRenderbuffers(1, &mRbo[i]);
+            ANGLE_UNSAFE_TODO({
+                glDeleteProgram(mProgram[i]);
+                glDeleteFramebuffers(1, &mFbo[i]);
+                glDeleteRenderbuffers(1, &mRbo[i]);
+            })
         }
         glDeleteBuffers(1, &mIndexBuffer);
     }
@@ -808,9 +809,11 @@ class AttributeDataTypeMismatchTest : public ANGLETest<>
     {
         GetTestCases(dataType);
         ASSERT(dataType < VsInputDataType::COUNT);
-        glBindFramebuffer(GL_FRAMEBUFFER, mFbo[dataType]);
-        glViewport(0, 0, kRboSize, kRboSize);
-        glUseProgram(mProgram[dataType]);
+        ANGLE_UNSAFE_TODO({
+            glBindFramebuffer(GL_FRAMEBUFFER, mFbo[dataType]);
+            glViewport(0, 0, kRboSize, kRboSize);
+            glUseProgram(mProgram[dataType]);
+        })
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer);
         for (unsigned i = 0; i < mTestCases.size(); ++i)
         {

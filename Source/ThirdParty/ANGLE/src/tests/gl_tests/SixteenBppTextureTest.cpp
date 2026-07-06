@@ -6,10 +6,7 @@
 // SixteenBppTextureTest:
 //   Basic tests using 16bpp texture formats (e.g. GL_RGB565).
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -144,7 +141,7 @@ class SixteenBppTextureTestES3 : public SixteenBppTextureTest
 TEST_P(SixteenBppTextureTest, RGB565Validation)
 {
     GLuint test;
-    memcpy(&test, &GLColor::black, 4);
+    ANGLE_UNSAFE_TODO(memcpy(&test, &GLColor::black, 4));
 
     R5G6B5 pixels[4] = {Convert565(GLColor::red), Convert565(GLColor::green),
                         Convert565(GLColor::blue), Convert565(GLColor::yellow)};

@@ -7,12 +7,9 @@
 //   Performance test for glBindVertexArray.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "ANGLEPerfTest.h"
 #include "DrawCallPerfParams.h"
+#include "common/unsafe_buffers.h"
 #include "test_utils/gl_raii.h"
 
 using namespace angle;
@@ -183,7 +180,8 @@ void VertexArrayBenchmark::drawBenchmark()
         for (GLuint vertexArray : mVertexArrays)
         {
             bufferSizeIndex = ((bufferSizeIndex + 1) == 5) ? 0 : (bufferSizeIndex + 1);
-            updateBufferData(vertexArray, mBuffers[0], params.bufferSize[bufferSizeIndex]);
+            updateBufferData(vertexArray, mBuffers[0],
+                             ANGLE_UNSAFE_TODO(params.bufferSize[bufferSizeIndex]));
         }
     }
     else

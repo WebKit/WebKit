@@ -132,7 +132,7 @@ GLuint RenderbufferGL::getRenderbufferID() const
 
 angle::Result RenderbufferGL::initializeContents(const gl::Context *context,
                                                  GLenum binding,
-                                                 const gl::ImageIndex &imageIndex)
+                                                 const gl::OwnImageIndex &ownImageIndex)
 {
     BlitGL *blitter = GetBlitGL(context);
     return blitter->clearRenderbuffer(context, this, mNativeInternalFormat);

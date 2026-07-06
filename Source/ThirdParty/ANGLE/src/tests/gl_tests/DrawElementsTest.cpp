@@ -7,10 +7,7 @@
 //   Tests for indexed draws.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -313,8 +310,8 @@ TEST_P(DrawElementsTest, LineLoopTriangles)
 
     for (int i = 0; i < 2; i++)
     {
-        glBindVertexArray(vertexArray[i]);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer[i]);
+        glBindVertexArray(ANGLE_UNSAFE_TODO(vertexArray[i]));
+        glBindBuffer(GL_ARRAY_BUFFER, ANGLE_UNSAFE_TODO(vertexBuffer[i]));
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(),
                      GL_STATIC_DRAW);
         glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -372,8 +369,8 @@ TEST_P(DrawElementsTest, LineLoopTriangles2)
 
     for (int i = 0; i < 2; i++)
     {
-        glBindVertexArray(vertexArray[i]);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer[i]);
+        glBindVertexArray(ANGLE_UNSAFE_TODO(vertexArray[i]));
+        glBindBuffer(GL_ARRAY_BUFFER, ANGLE_UNSAFE_TODO(vertexBuffer[i]));
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(),
                      GL_STATIC_DRAW);
         glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);

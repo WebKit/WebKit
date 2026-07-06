@@ -8,13 +8,10 @@
 //   This test can only be enabled when HLSL support is enabled.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "common/angleutils.h"
+#include "common/unsafe_buffers.h"
 #include "gtest/gtest.h"
 #include "tests/test_utils/compiler_test.h"
 
@@ -51,7 +48,7 @@ class UnrollFlattenTest : public testing::Test
         const char *badPatterns[] = {UNROLL, FLATTEN};
         for (size_t i = 0; i < count; i++)
         {
-            const char *pattern = patterns[i];
+            const char *pattern = ANGLE_UNSAFE_TODO(patterns[i]);
             auto position       = mTranslatedSource.find(pattern, mCurrentPosition);
             if (position == std::string::npos)
             {
@@ -62,7 +59,7 @@ class UnrollFlattenTest : public testing::Test
 
             for (size_t j = 0; j < ArraySize(badPatterns); j++)
             {
-                const char *badPattern = badPatterns[j];
+                const char *badPattern = ANGLE_UNSAFE_TODO(badPatterns[j]);
                 if (pattern != badPattern &&
                     mTranslatedSource.find(badPattern, mCurrentPosition) < position)
                 {

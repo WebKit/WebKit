@@ -7,11 +7,8 @@
 //   Performance test for ANGLE GLES mapped buffers.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "ANGLEPerfTest.h"
+#include "common/unsafe_buffers.h"
 
 #include <sstream>
 #include <vector>
@@ -116,12 +113,12 @@ GLsizei GetNormalizedData(GLsizeiptr numElements,
     GLsizei triDataSize = sizeof(T) * numElements;
     data->resize(triDataSize);
 
-    T *destPtr = reinterpret_cast<T *>(data->data());
+    T *destPtr = ANGLE_UNSAFE_TODO(reinterpret_cast<T *>(data->data()));
 
     for (GLsizeiptr dataIndex = 0; dataIndex < numElements; dataIndex++)
     {
-        GLfloat scaled = floatData[dataIndex] * 0.25f;
-        destPtr[dataIndex] =
+        GLfloat scaled = ANGLE_UNSAFE_TODO(floatData[dataIndex]) * 0.25f;
+        ANGLE_UNSAFE_TODO(destPtr[dataIndex]) =
             static_cast<T>(scaled * static_cast<GLfloat>(std::numeric_limits<T>::max()));
     }
 
@@ -134,11 +131,12 @@ GLsizei GetIntData(GLsizeiptr numElements, const GLfloat *floatData, std::vector
     GLsizei triDataSize = sizeof(T) * numElements;
     data->resize(triDataSize);
 
-    T *destPtr = reinterpret_cast<T *>(data->data());
+    T *destPtr = ANGLE_UNSAFE_TODO(reinterpret_cast<T *>(data->data()));
 
     for (GLsizeiptr dataIndex = 0; dataIndex < numElements; dataIndex++)
     {
-        destPtr[dataIndex] = static_cast<T>(floatData[dataIndex]);
+        ANGLE_UNSAFE_TODO(destPtr[dataIndex]) =
+            static_cast<T>(ANGLE_UNSAFE_TODO(floatData[dataIndex]));
     }
 
     return triDataSize;
@@ -156,7 +154,7 @@ GLsizei GetVertexData(GLenum type,
     {
         triDataSize = sizeof(GLfloat) * componentCount * 3;
         data->resize(triDataSize);
-        memcpy(data->data(), floatData, triDataSize);
+        ANGLE_UNSAFE_TODO(memcpy(data->data(), floatData, triDataSize));
     }
     else if (normalized == GL_TRUE)
     {
@@ -313,7 +311,7 @@ void MapBufferRangeBenchmark::initializeBenchmark()
 
     for (int i = 1; i < totalTris; ++i)
     {
-        memcpy(mVertexData.data() + i * mTriSize, mVertexData.data(), mTriSize);
+        ANGLE_UNSAFE_TODO(memcpy(mVertexData.data() + i * mTriSize, mVertexData.data(), mTriSize));
     }
 
     if (params.updateSize == 0)
@@ -346,7 +344,8 @@ void MapBufferRangeBenchmark::drawBenchmark()
         {
             void *mapPtr = glMapBufferRange(GL_ARRAY_BUFFER, params.updateOffset, params.updateSize,
                                             params.access);
-            memcpy(mapPtr, mVertexData.data() + params.updateOffset, params.updateSize);
+            ANGLE_UNSAFE_TODO(
+                memcpy(mapPtr, mVertexData.data() + params.updateOffset, params.updateSize));
             glUnmapBuffer(GL_ARRAY_BUFFER);
         }
 

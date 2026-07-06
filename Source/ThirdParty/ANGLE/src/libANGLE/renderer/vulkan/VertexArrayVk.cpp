@@ -1635,6 +1635,29 @@ angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
     return angle::Result::Continue;
 }
 
+void VertexArrayVk::resetInactiveStreamedAttribs(const gl::Context *context)
+{
+    ContextVk *contextVk = vk::GetImpl(context);
+    const gl::AttributesMask activeAttribs =
+        context->getActiveClientAttribsMask() | context->getActiveBufferedAttribsMask();
+    const gl::AttributesMask inactiveStreamedAttribs = mStreamingVertexAttribsMask & ~activeAttribs;
+    if (inactiveStreamedAttribs.any())
+    {
+        vk::BufferHelper &emptyBuffer = contextVk->getEmptyBuffer();
+        for (size_t attribIndex : inactiveStreamedAttribs)
+        {
+            if (mCurrentArrayBuffers[attribIndex] != &emptyBuffer)
+            {
+                mCurrentArrayBuffers[attribIndex]       = &emptyBuffer;
+                mCurrentArrayBufferSerial[attribIndex]  = emptyBuffer.getBufferSerial();
+                mCurrentArrayBufferHandles[attribIndex] = emptyBuffer.getBuffer().getHandle();
+                mCurrentArrayBufferOffsets[attribIndex] = emptyBuffer.getOffset();
+                mCurrentArrayBufferSizes[attribIndex]   = emptyBuffer.getSize();
+            }
+        }
+    }
+}
+
 angle::Result VertexArrayVk::handleLineLoop(ContextVk *contextVk,
                                             GLint firstVertex,
                                             GLsizei vertexOrIndexCount,

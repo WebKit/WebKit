@@ -6,10 +6,7 @@
 
 // GeometryShaderTest.cpp : Tests of the implementation of geometry shader
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -1475,10 +1472,10 @@ void GeometryShaderTest::verifyLayeredFramebufferColor(GLuint colorTexture,
         glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, colorTexture, 0, layer);
         EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-        EXPECT_PIXEL_COLOR_NEAR(0, 0, expected[layer], 1);
-        EXPECT_PIXEL_COLOR_NEAR(kWidth - 1, 0, expected[layer], 1);
-        EXPECT_PIXEL_COLOR_NEAR(0, kHeight - 1, expected[layer], 1);
-        EXPECT_PIXEL_COLOR_NEAR(kWidth - 1, kHeight - 1, expected[layer], 1);
+        ANGLE_UNSAFE_TODO(EXPECT_PIXEL_COLOR_NEAR(0, 0, expected[layer], 1));
+        ANGLE_UNSAFE_TODO(EXPECT_PIXEL_COLOR_NEAR(kWidth - 1, 0, expected[layer], 1));
+        ANGLE_UNSAFE_TODO(EXPECT_PIXEL_COLOR_NEAR(0, kHeight - 1, expected[layer], 1));
+        ANGLE_UNSAFE_TODO(EXPECT_PIXEL_COLOR_NEAR(kWidth - 1, kHeight - 1, expected[layer], 1));
     }
 }
 
@@ -1524,16 +1521,18 @@ void GeometryShaderTest::verifyLayeredFramebufferDepthStencil(GLuint depthStenci
 
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glStencilFunc(GL_EQUAL, expectedStencil[layer], 0xFF);
+        glStencilFunc(GL_EQUAL, ANGLE_UNSAFE_TODO(expectedStencil[layer]), 0xFF);
 
         // Pass depth slightly less than expected
         glDepthFunc(GL_LESS);
         glUniform4f(colorUniformLocation, 0.1f, 0.2f, 0.3f, 0.4f);
-        drawQuad(drawColor, essl1_shaders::PositionAttrib(), expectedDepth[layer] * 2 - 1 - 0.01f);
+        drawQuad(drawColor, essl1_shaders::PositionAttrib(),
+                 ANGLE_UNSAFE_TODO(expectedDepth[layer]) * 2 - 1 - 0.01f);
 
         // Fail depth slightly greater than expected
         glUniform4f(colorUniformLocation, 0.5f, 0.6f, 0.7f, 0.8f);
-        drawQuad(drawColor, essl1_shaders::PositionAttrib(), expectedDepth[layer] * 2 - 1 + 0.01f);
+        drawQuad(drawColor, essl1_shaders::PositionAttrib(),
+                 ANGLE_UNSAFE_TODO(expectedDepth[layer]) * 2 - 1 + 0.01f);
 
         ASSERT_GL_NO_ERROR();
 

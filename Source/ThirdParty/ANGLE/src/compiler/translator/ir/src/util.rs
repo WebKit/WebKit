@@ -761,6 +761,9 @@ pub fn inspect_pointer_access<State, OnAccess>(
         | &OpCode::Binary(BinaryOpCode::AtomicExchange, pointer, _) => {
             on_access(state, pointer, PointerAccess::Read);
         }
+        OpCode::BuiltIn(BuiltInOpCode::AtomicCompSwap, args) => {
+            on_access(state, args[0], PointerAccess::Read);
+        }
 
         // Write accesses
         &OpCode::Store(pointer, _)

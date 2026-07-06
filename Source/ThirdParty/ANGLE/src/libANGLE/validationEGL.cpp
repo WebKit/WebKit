@@ -888,7 +888,6 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
                     break;
                 case EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE:
                 case EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE:
-                case EGL_PLATFORM_ANGLE_DISPLAY_KEY_ANGLE:
                     if (!clientExtensions.platformANGLEDeviceId)
                     {
                         val->setError(EGL_BAD_ATTRIBUTE,
@@ -896,6 +895,15 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
                         return false;
                     }
                     deviceIdSpecified = true;
+                    break;
+
+                case EGL_PLATFORM_ANGLE_DISPLAY_KEY_ANGLE:
+                    if (!clientExtensions.platformANGLEDisplayKey)
+                    {
+                        val->setError(EGL_BAD_ATTRIBUTE,
+                                      "EGL_ANGLE_platform_angle_device_id is not supported");
+                        return false;
+                    }
                     break;
 
                 case EGL_PLATFORM_ANGLE_DAWN_PROC_TABLE_ANGLE:

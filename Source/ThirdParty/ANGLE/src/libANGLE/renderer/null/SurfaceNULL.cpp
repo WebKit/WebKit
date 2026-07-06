@@ -89,7 +89,7 @@ EGLint SurfaceNULL::getSwapBehavior() const
 
 angle::Result SurfaceNULL::initializeContents(const gl::Context *context,
                                               GLenum binding,
-                                              const gl::ImageIndex &imageIndex)
+                                              const gl::OwnImageIndex &ownImageIndex)
 {
     return angle::Result::Continue;
 }

@@ -7,11 +7,8 @@
 //   Performance test for setting uniform data.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "ANGLEPerfTest.h"
+#include "common/unsafe_buffers.h"
 
 #include <array>
 #include <iostream>
@@ -164,7 +161,8 @@ std::vector<Matrix4> GenMatrixData(size_t count, int parity)
         {
             for (int col = 0; col < 4; ++col)
             {
-                mat.data[row * 4 + col] = (row * col + parity) % 2 == 0 ? 1.0f : -1.0f;
+                ANGLE_UNSAFE_TODO(mat.data[row * 4 + col]) =
+                    (row * col + parity) % 2 == 0 ? 1.0f : -1.0f;
             }
         }
 

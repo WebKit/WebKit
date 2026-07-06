@@ -6,10 +6,7 @@
 
 // TextureFixedRateCompressionTest: Tests for GL_EXT_texture_storage_compression
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -84,7 +81,8 @@ void TextureFixedRateCompressionTest::invalidTestHelper(const GLint *attribs)
         /* Compressed texture is not supported in glBindImageTexture. */
         ASSERT_GL_ERROR(GL_INVALID_VALUE);
     }
-    else if (attribs[1] == GL_SURFACE_COMPRESSION_FIXED_RATE_NONE_EXT || attribs[0] == GL_NONE)
+    else if (ANGLE_UNSAFE_TODO(attribs[1]) == GL_SURFACE_COMPRESSION_FIXED_RATE_NONE_EXT ||
+             attribs[0] == GL_NONE)
     {
         /* Default attrib which is non-compressed formats will return GL_NO_ERROR. */
         ASSERT_GL_NO_ERROR();
@@ -108,9 +106,9 @@ void TextureFixedRateCompressionTest::basicTestHelper(const GLint *attribs)
     ASSERT_GL_NO_ERROR();
 
     if (nullptr != attribs && compressRate != GL_SURFACE_COMPRESSION_FIXED_RATE_NONE_EXT &&
-        attribs[1] != GL_SURFACE_COMPRESSION_FIXED_RATE_DEFAULT_EXT)
+        ANGLE_UNSAFE_TODO(attribs[1]) != GL_SURFACE_COMPRESSION_FIXED_RATE_DEFAULT_EXT)
     {
-        EXPECT_EQ(compressRate, attribs[1]);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(compressRate, attribs[1]));
     }
 
     GLFramebuffer fbo;
@@ -184,7 +182,7 @@ void TextureFixedRateCompressionTest::RenderToTexture(const GLenum internalForma
     // Query and check the compression rate
     glGetTexParameteriv(GL_TEXTURE_2D, GL_SURFACE_COMPRESSION_EXT, &compressRate);
     ASSERT_GL_NO_ERROR();
-    ASSERT_EQ(compressRate, attribs[1])
+    ANGLE_UNSAFE_TODO(ASSERT_EQ(compressRate, attribs[1]))
         << "Compression rate of original texture: " << Name(compressRate);
 
     ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
@@ -195,7 +193,7 @@ void TextureFixedRateCompressionTest::RenderToTexture(const GLenum internalForma
     // Query and check the compression rate after render
     glGetTexParameteriv(GL_TEXTURE_2D, GL_SURFACE_COMPRESSION_EXT, &compressRate);
     ASSERT_GL_NO_ERROR();
-    ASSERT_EQ(compressRate, attribs[1])
+    ANGLE_UNSAFE_TODO(ASSERT_EQ(compressRate, attribs[1]))
         << "Compression rate of texture after render: " << Name(compressRate);
 }
 

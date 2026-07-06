@@ -33,7 +33,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     void onDestroy(const gl::Context *context) override;
 
     angle::Result setImage(const gl::Context *context,
-                           const gl::ImageIndex &index,
+                           const gl::OwnImageIndex &ownIndex,
                            GLenum internalFormat,
                            const gl::Extents &size,
                            GLenum format,
@@ -42,7 +42,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                            gl::Buffer *unpackBuffer,
                            const uint8_t *pixels) override;
     angle::Result setSubImage(const gl::Context *context,
-                              const gl::ImageIndex &index,
+                              const gl::OwnImageIndex &ownIndex,
                               const gl::Box &area,
                               GLenum format,
                               GLenum type,
@@ -51,14 +51,14 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                               const uint8_t *pixels) override;
 
     angle::Result setCompressedImage(const gl::Context *context,
-                                     const gl::ImageIndex &index,
+                                     const gl::OwnImageIndex &ownIndex,
                                      GLenum internalFormat,
                                      const gl::Extents &size,
                                      const gl::PixelUnpackState &unpack,
                                      size_t imageSize,
                                      const uint8_t *pixels) override;
     angle::Result setCompressedSubImage(const gl::Context *context,
-                                        const gl::ImageIndex &index,
+                                        const gl::OwnImageIndex &ownIndex,
                                         const gl::Box &area,
                                         GLenum format,
                                         const gl::PixelUnpackState &unpack,
@@ -66,29 +66,29 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                         const uint8_t *pixels) override;
 
     angle::Result copyImage(const gl::Context *context,
-                            const gl::ImageIndex &index,
+                            const gl::OwnImageIndex &ownIndex,
                             const gl::Rectangle &sourceArea,
                             GLenum internalFormat,
                             gl::Framebuffer *source) override;
     angle::Result copySubImage(const gl::Context *context,
-                               const gl::ImageIndex &index,
+                               const gl::OwnImageIndex &ownIndex,
                                const gl::Offset &destOffset,
                                const gl::Rectangle &sourceArea,
                                gl::Framebuffer *source) override;
 
     angle::Result copyTexture(const gl::Context *context,
-                              const gl::ImageIndex &index,
+                              const gl::OwnImageIndex &ownIndex,
                               GLenum internalFormat,
                               GLenum type,
-                              GLint sourceLevelGL,
+                              gl::OwnLevel ownSourceLevelGL,
                               bool unpackFlipY,
                               bool unpackPremultiplyAlpha,
                               bool unpackUnmultiplyAlpha,
                               const gl::Texture *source) override;
     angle::Result copySubTexture(const gl::Context *context,
-                                 const gl::ImageIndex &index,
+                                 const gl::OwnImageIndex &ownIndex,
                                  const gl::Offset &destOffset,
-                                 GLint sourceLevelGL,
+                                 gl::OwnLevel ownSourceLevelGL,
                                  const gl::Box &sourceBox,
                                  bool unpackFlipY,
                                  bool unpackPremultiplyAlpha,
@@ -99,23 +99,23 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                           const gl::Renderbuffer *srcBuffer,
                                           GLint srcX,
                                           GLint srcY,
-                                          GLint dstLevel,
+                                          gl::OwnLevel ownDstLevel,
                                           GLint dstX,
                                           GLint dstY,
-                                          GLint dstZ,
+                                          gl::OwnLayer ownDstZ,
                                           GLsizei srcWidth,
                                           GLsizei srcHeight) override;
 
     angle::Result copyTextureSubData(const gl::Context *context,
                                      const gl::Texture *srcTexture,
-                                     GLint srcLevel,
+                                     gl::OwnLevel ownSrcLevel,
                                      GLint srcX,
                                      GLint srcY,
-                                     GLint srcZ,
-                                     GLint dstLevel,
+                                     gl::OwnLayer ownSrcZ,
+                                     gl::OwnLevel ownDstLevel,
                                      GLint dstX,
                                      GLint dstY,
-                                     GLint dstZ,
+                                     gl::OwnLayer ownDstZ,
                                      GLsizei srcWidth,
                                      GLsizei srcHeight,
                                      GLsizei srcDepth) override;
@@ -124,13 +124,13 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                         const gl::Texture *source) override;
 
     angle::Result clearImage(const gl::Context *context,
-                             GLint level,
+                             gl::OwnLevel ownLevel,
                              GLenum format,
                              GLenum type,
                              const uint8_t *data) override;
 
     angle::Result clearSubImage(const gl::Context *context,
-                                GLint level,
+                                gl::OwnLevel ownLevel,
                                 const gl::Box &area,
                                 GLenum format,
                                 GLenum type,
@@ -173,7 +173,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
 
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,
-                                            const gl::ImageIndex &imageIndex,
+                                            const gl::OwnImageIndex &ownImageIndex,
                                             GLsizei samples,
                                             FramebufferAttachmentRenderTarget **rtOut) override;
 
@@ -197,7 +197,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
 
     angle::Result initializeContents(const gl::Context *context,
                                      GLenum binding,
-                                     const gl::ImageIndex &imageIndex) override;
+                                     const gl::OwnImageIndex &ownImageIndex) override;
 
     angle::Result initializeContentsWithBlack(const gl::Context *context,
                                               GLenum binding,
@@ -306,7 +306,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                               const gl::PixelPackState &packState,
                               gl::Buffer *packBuffer,
                               gl::TextureTarget target,
-                              GLint level,
+                              gl::OwnLevel ownLevel,
                               GLenum format,
                               GLenum type,
                               void *pixels) override;
@@ -315,7 +315,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                         const gl::PixelPackState &packState,
                                         gl::Buffer *packBuffer,
                                         gl::TextureTarget target,
-                                        GLint level,
+                                        gl::OwnLevel ownLevel,
                                         void *pixels) override;
 
     ANGLE_INLINE bool hasBeenBoundAsImage() const { return mState.hasBeenBoundAsImage(); }
@@ -388,8 +388,11 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     void setImageHelper(ContextVk *contextVk,
                         vk::ImageHelper *imageHelper,
                         bool selfOwned);
+    void getRenderTargetLayerCountAndIndex(const gl::OwnImageIndex &index,
+                                           gl::OwnLayer *layerIndex,
+                                           GLuint *layerCount,
+                                           GLuint *imageLayerCount);
     angle::Result syncAsAttachmentRenderTarget(const gl::Context *context,
-                                               const gl::ImageIndex &imageIndex,
                                                GLsizei samples);
 
     vk::ImageViewHelper &getImageViews() { return mImageView; }
@@ -417,7 +420,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     // something like glCopyTexSubImage2D() (which simultaneously is reading from said framebuffer,
     // i.e. mip 0 of the texture).
     angle::Result redefineLevel(const gl::Context *context,
-                                const gl::ImageIndex &index,
+                                const gl::OwnImageIndex &ownIndex,
                                 const vk::Format &format,
                                 const gl::Extents &size);
 
@@ -499,7 +502,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                               uint8_t *sourceData);
 
     angle::Result copySubImageImpl(const gl::Context *context,
-                                   const gl::ImageIndex &index,
+                                   const gl::SourceImageIndex &index,
                                    const gl::Offset &destOffset,
                                    const gl::Rectangle &sourceArea,
                                    const gl::InternalFormat &internalFormat,
@@ -517,7 +520,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                      TextureVk *source);
 
     angle::Result copySubImageImplWithTransfer(ContextVk *contextVk,
-                                               const gl::ImageIndex &index,
+                                               const gl::SourceImageIndex &index,
                                                const gl::Offset &dstOffset,
                                                const vk::Format &dstFormat,
                                                gl::LevelIndex sourceLevelGL,
@@ -526,7 +529,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                                vk::ImageHelper *srcImage);
 
     angle::Result copySubImageImplWithDraw(ContextVk *contextVk,
-                                           const gl::ImageIndex &index,
+                                           const gl::SourceImageIndex &index,
                                            const gl::Offset &dstOffset,
                                            const vk::Format &dstFormat,
                                            gl::LevelIndex sourceLevelGL,
@@ -556,15 +559,15 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     angle::Result initImageViews(ContextVk *contextVk, uint32_t levelCount);
     void initSingleLayerRenderTargets(ContextVk *contextVk,
                                       GLuint layerCount,
-                                      gl::LevelIndex levelIndexGL,
+                                      gl::OwnLevel levelIndex,
                                       gl::RenderToTextureImageIndex renderToTextureIndex);
     RenderTargetVk *getMultiLayerRenderTarget(ContextVk *contextVk,
-                                              gl::LevelIndex level,
-                                              GLuint layerIndex,
+                                              gl::OwnLevel ownLevel,
+                                              gl::OwnLayer ownLayer,
                                               GLuint layerCount);
     angle::Result getLevelLayerImageView(ContextVk *contextVk,
-                                         gl::LevelIndex levelGL,
-                                         size_t layer,
+                                         gl::SourceLevel level,
+                                         gl::SourceLayer layer,
                                          const vk::ImageView **imageViewOut);
 
     // Flush image's staged updates for all levels and layers.
@@ -596,13 +599,11 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                               const vk::Format &bufferVkFormat,
                               GLenum type) const;
 
-    bool updateMustBeStaged(gl::LevelIndex textureLevelIndexGL, angle::FormatID dstFormatID) const;
-    bool updateMustBeFlushed(gl::LevelIndex textureLevelIndexGL, angle::FormatID dstFormatID) const;
-    bool shouldUpdateBeFlushed(gl::LevelIndex textureLevelIndexGL,
-                               angle::FormatID dstFormatID) const
+    bool updateMustBeStaged(gl::SourceLevel level, angle::FormatID dstFormatID) const;
+    bool updateMustBeFlushed(gl::SourceLevel level, angle::FormatID dstFormatID) const;
+    bool shouldUpdateBeFlushed(gl::SourceLevel level, angle::FormatID dstFormatID) const
     {
-        return updateMustBeFlushed(textureLevelIndexGL, dstFormatID) ||
-               !updateMustBeStaged(textureLevelIndexGL, dstFormatID);
+        return updateMustBeFlushed(level, dstFormatID) || !updateMustBeStaged(level, dstFormatID);
     }
 
     // We monitor the staging buffer and set dirty bits if the staging buffer changes. Note that we

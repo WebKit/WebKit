@@ -7,11 +7,8 @@
 // EGLSyncControlTest.cpp:
 //   Tests pertaining to eglGetSyncValuesCHROMIUM.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include <d3d11.h>
+#include "common/unsafe_buffers.h"
 
 #include "test_utils/ANGLETest.h"
 #include "util/OSWindow.h"
@@ -45,9 +42,9 @@ class EGLSyncControlTest : public testing::Test
 
         const char *extensionString =
             static_cast<const char *>(eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS));
-        if (strstr(extensionString, "EGL_ANGLE_device_creation"))
+        if (ANGLE_UNSAFE_TODO(strstr(extensionString, "EGL_ANGLE_device_creation")))
         {
-            if (strstr(extensionString, "EGL_ANGLE_device_creation_d3d11"))
+            if (ANGLE_UNSAFE_TODO(strstr(extensionString, "EGL_ANGLE_device_creation_d3d11")))
             {
                 mDeviceCreationD3D11ExtAvailable = true;
             }
@@ -202,7 +199,7 @@ TEST_F(EGLSyncControlTest, DISABLED_SyncValuesTest)
 
     const char *extensionString =
         static_cast<const char *>(eglQueryString(mDisplay, EGL_EXTENSIONS));
-    ASSERT_TRUE(strstr(extensionString, "EGL_CHROMIUM_sync_control"));
+    ASSERT_TRUE(ANGLE_UNSAFE_TODO(strstr(extensionString, "EGL_CHROMIUM_sync_control")));
 
     EGLuint64KHR ust = 0, msc = 0, sbc = 0;
     // It appears there is a race condition so the very first call to eglGetSyncValuesCHROMIUM

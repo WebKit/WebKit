@@ -7,11 +7,8 @@
 //   Performance of texture upload and draw using various formats.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "ANGLEPerfTest.h"
+#include "common/unsafe_buffers.h"
 
 #include <iostream>
 #include <random>
@@ -61,7 +58,8 @@ std::string FormatUploadDrawPerfParams::story() const
 {
     std::stringstream strstr;
 
-    strstr << RenderTestParams::story() << "_" << kTestedFormatString[ToUnderlying(testedFormat)];
+    strstr << RenderTestParams::story() << "_"
+           << ANGLE_UNSAFE_TODO(kTestedFormatString[ToUnderlying(testedFormat)]);
 
     return strstr.str();
 }
@@ -129,7 +127,7 @@ void FormatUploadDrawPerfBenchmark::initializeBenchmark()
 
     // Initialize color data.
     mColors.resize(mTextureSize * mTextureSize * mPixelSize);
-    memset(mColors.data(), 0, mTextureSize * mTextureSize * mPixelSize);
+    ANGLE_UNSAFE_TODO(memset(mColors.data(), 0, mTextureSize * mTextureSize * mPixelSize));
 
     // Set up program.
     std::string vs = R"(#version 300 es

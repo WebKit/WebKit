@@ -10,11 +10,8 @@
 //   order to stress the GPU's memory system.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "ANGLEPerfTest.h"
+#include "common/unsafe_buffers.h"
 #include "common/vector_utils.h"
 #include "platform/autogen/FeaturesD3D_autogen.h"
 #include "test_utils/MultiviewTest.h"
@@ -513,27 +510,27 @@ void MultiviewGPUBoundBenchmark::initializeBenchmark()
 
             auto &v0    = vertexData[index];
             v0.position = Vector4(2.f * wf - 1.f, 2.f * hf - 1.f, .0f, 1.f);
-            memset(v0.colorAttributeData, 0, sizeof(v0.colorAttributeData));
+            ANGLE_UNSAFE_TODO(memset(v0.colorAttributeData, 0, sizeof(v0.colorAttributeData)));
 
             auto &v1    = vertexData[index + 1];
             v1.position = Vector4(v0.position.x() + quadWidth, v0.position.y(), .0f, 1.f);
-            memset(v1.colorAttributeData, 0, sizeof(v1.colorAttributeData));
+            ANGLE_UNSAFE_TODO(memset(v1.colorAttributeData, 0, sizeof(v1.colorAttributeData)));
 
             auto &v2    = vertexData[index + 2];
             v2.position = Vector4(v1.position.x(), v1.position.y() + quadHeight, .0f, 1.f);
-            memset(v2.colorAttributeData, 0, sizeof(v2.colorAttributeData));
+            ANGLE_UNSAFE_TODO(memset(v2.colorAttributeData, 0, sizeof(v2.colorAttributeData)));
 
             auto &v3    = vertexData[index + 3];
             v3.position = v0.position;
-            memset(v3.colorAttributeData, 0, sizeof(v3.colorAttributeData));
+            ANGLE_UNSAFE_TODO(memset(v3.colorAttributeData, 0, sizeof(v3.colorAttributeData)));
 
             auto &v4    = vertexData[index + 4];
             v4.position = v2.position;
-            memset(v4.colorAttributeData, 0, sizeof(v4.colorAttributeData));
+            ANGLE_UNSAFE_TODO(memset(v4.colorAttributeData, 0, sizeof(v4.colorAttributeData)));
 
             auto &v5    = vertexData[index + 5];
             v5.position = Vector4(v0.position.x(), v0.position.y() + quadHeight, .0f, 1.f);
-            memset(v5.colorAttributeData, 0, sizeof(v5.colorAttributeData));
+            ANGLE_UNSAFE_TODO(memset(v5.colorAttributeData, 0, sizeof(v5.colorAttributeData)));
         }
     }
 

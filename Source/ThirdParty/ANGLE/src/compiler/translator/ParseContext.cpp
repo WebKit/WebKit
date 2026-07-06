@@ -357,10 +357,7 @@ void ValidateFragColorAndFragData(GLenum shaderType,
     {
         usesFragColor = true;
     }
-    // Extension variables may not always be initialized (saves some time at symbol table init).
-    bool secondaryFragDataUsed =
-        symbolTable.gl_SecondaryFragDataEXT() != nullptr &&
-        symbolTable.isStaticallyUsed(*symbolTable.gl_SecondaryFragDataEXT());
+    const bool secondaryFragDataUsed = symbolTable.isSecondaryFragDataUsed();
     if (symbolTable.isStaticallyUsed(*symbolTable.gl_FragData()) || secondaryFragDataUsed)
     {
         usesFragData = true;

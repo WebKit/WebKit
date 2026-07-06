@@ -1657,7 +1657,7 @@ angle::Result ContextMtl::bindMetalRasterizationRateMap(gl::Context *context,
     if (auto *metalRenderbuffer = static_cast<RenderbufferMtl *>(renderbuffer))
     {
         FramebufferAttachmentRenderTarget *rtOut = nullptr;
-        gl::ImageIndex index;
+        gl::OwnImageIndex index(gl::ImageIndex::Make2D(0));
         GLenum binding = 0;
         if (angle::Result::Continue ==
             metalRenderbuffer->getAttachmentRenderTarget(context, binding, index, 1, &rtOut))
@@ -2777,7 +2777,8 @@ angle::Result ContextMtl::handleDirtyActiveTextures(const gl::Context *context)
         TextureMtl *textureMtl = mtl::GetImpl(texture);
 
         // Make sure texture's image definitions will be transferred to GPU.
-        ANGLE_TRY(textureMtl->ensureNativeStorageCreated(context, true));
+        ANGLE_TRY(textureMtl->ensureNativeStorageCreated(context, /*keepImages=*/true,
+                                                         ImageMipLevels::EnabledLevels));
 
         // The binding of this texture will be done by ProgramMtl.
         return angle::Result::Continue;

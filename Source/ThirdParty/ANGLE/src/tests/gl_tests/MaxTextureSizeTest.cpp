@@ -4,11 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <cmath>
+#include "common/unsafe_buffers.h"
 
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -106,13 +103,13 @@ TEST_P(MaxTextureSizeTest, SpecificationTexImage)
     {
         for (int x = 0; x < textureWidth; x++)
         {
-            GLubyte *pixel = &data[0] + ((y * textureWidth + x) * 4);
+            GLubyte *pixel = ANGLE_UNSAFE_TODO(&data[0] + ((y * textureWidth + x) * 4));
 
             // Draw a gradient, red in direction, green in y direction
             pixel[0] = static_cast<GLubyte>((float(x) / textureWidth) * 255);
-            pixel[1] = static_cast<GLubyte>((float(y) / textureHeight) * 255);
-            pixel[2] = 0;
-            pixel[3] = 255;
+            ANGLE_UNSAFE_TODO(pixel[1]) = static_cast<GLubyte>((float(y) / textureHeight) * 255);
+            ANGLE_UNSAFE_TODO(pixel[2]) = 0;
+            ANGLE_UNSAFE_TODO(pixel[3]) = 255;
         }
     }
 
@@ -132,13 +129,15 @@ TEST_P(MaxTextureSizeTest, SpecificationTexImage)
     {
         for (int x = 1; x < getWindowWidth(); x++)
         {
-            const GLubyte *prevPixel = &pixels[0] + (((y - 1) * getWindowWidth() + (x - 1)) * 4);
-            const GLubyte *curPixel  = &pixels[0] + ((y * getWindowWidth() + x) * 4);
+            const GLubyte *prevPixel =
+                ANGLE_UNSAFE_TODO(&pixels[0] + (((y - 1) * getWindowWidth() + (x - 1)) * 4));
+            const GLubyte *curPixel =
+                ANGLE_UNSAFE_TODO(&pixels[0] + ((y * getWindowWidth() + x) * 4));
 
             EXPECT_GE(curPixel[0], prevPixel[0]);
-            EXPECT_GE(curPixel[1], prevPixel[1]);
-            EXPECT_EQ(curPixel[2], prevPixel[2]);
-            EXPECT_EQ(curPixel[3], prevPixel[3]);
+            ANGLE_UNSAFE_TODO(EXPECT_GE(curPixel[1], prevPixel[1]));
+            ANGLE_UNSAFE_TODO(EXPECT_EQ(curPixel[2], prevPixel[2]));
+            ANGLE_UNSAFE_TODO(EXPECT_EQ(curPixel[3], prevPixel[3]));
         }
     }
 }
@@ -168,13 +167,13 @@ TEST_P(MaxTextureSizeTest, SpecificationTexStorage)
     {
         for (int x = 0; x < textureWidth; x++)
         {
-            GLubyte *pixel = &data[0] + ((y * textureWidth + x) * 4);
+            GLubyte *pixel = ANGLE_UNSAFE_TODO(&data[0] + ((y * textureWidth + x) * 4));
 
             // Draw a gradient, red in direction, green in y direction
             pixel[0] = static_cast<GLubyte>((float(x) / textureWidth) * 255);
-            pixel[1] = static_cast<GLubyte>((float(y) / textureHeight) * 255);
-            pixel[2] = 0;
-            pixel[3] = 255;
+            ANGLE_UNSAFE_TODO(pixel[1]) = static_cast<GLubyte>((float(y) / textureHeight) * 255);
+            ANGLE_UNSAFE_TODO(pixel[2]) = 0;
+            ANGLE_UNSAFE_TODO(pixel[3]) = 255;
         }
     }
 
@@ -204,13 +203,15 @@ TEST_P(MaxTextureSizeTest, SpecificationTexStorage)
     {
         for (int x = 1; x < getWindowWidth(); x++)
         {
-            const GLubyte *prevPixel = &pixels[0] + (((y - 1) * getWindowWidth() + (x - 1)) * 4);
-            const GLubyte *curPixel  = &pixels[0] + ((y * getWindowWidth() + x) * 4);
+            const GLubyte *prevPixel =
+                ANGLE_UNSAFE_TODO(&pixels[0] + (((y - 1) * getWindowWidth() + (x - 1)) * 4));
+            const GLubyte *curPixel =
+                ANGLE_UNSAFE_TODO(&pixels[0] + ((y * getWindowWidth() + x) * 4));
 
             EXPECT_GE(curPixel[0], prevPixel[0]);
-            EXPECT_GE(curPixel[1], prevPixel[1]);
-            EXPECT_EQ(curPixel[2], prevPixel[2]);
-            EXPECT_EQ(curPixel[3], prevPixel[3]);
+            ANGLE_UNSAFE_TODO(EXPECT_GE(curPixel[1], prevPixel[1]));
+            ANGLE_UNSAFE_TODO(EXPECT_EQ(curPixel[2], prevPixel[2]));
+            ANGLE_UNSAFE_TODO(EXPECT_EQ(curPixel[3], prevPixel[3]));
         }
     }
 }

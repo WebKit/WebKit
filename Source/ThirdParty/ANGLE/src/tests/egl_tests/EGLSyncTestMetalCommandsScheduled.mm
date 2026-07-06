@@ -6,10 +6,6 @@
 //   Tests pertaining to EGL_ANGLE_metal_commands_scheduled_sync extension.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <gtest/gtest.h>
 
 #include "test_utils/ANGLETest.h"

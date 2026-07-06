@@ -6,10 +6,7 @@
 // D3DImageFormatConversionTest:
 //   Basic tests to validate code relating to D3D Image format conversions.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
 #include "image_util/imageformats.h"
@@ -94,7 +91,8 @@ void main()
         // Convert the ColorF into the pixels that will be fed to glTexImage2D
         for (unsigned int i = 0; i < 4; i++)
         {
-            ColorStructType::writeColor(&(pixels[i]), &(srcColorF[i]));
+            ColorStructType::writeColor(&(ANGLE_UNSAFE_TODO(pixels[i])),
+                                        &(ANGLE_UNSAFE_TODO(srcColorF[i])));
         }
 
         // Generate the texture

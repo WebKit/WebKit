@@ -59,7 +59,6 @@ class ProgramD3DMetadata final : angle::NonCopyable
 
   private:
     const int mRendererMajorShaderModel;
-    const std::string mShaderModelSuffix;
     const bool mUsesViewScale;
     const bool mCanSelectViewInVertexShader;
     gl::SharedCompiledShaderState mFragmentShader;

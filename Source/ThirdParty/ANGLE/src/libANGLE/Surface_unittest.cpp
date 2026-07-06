@@ -46,7 +46,7 @@ class MockSurfaceImpl : public rx::SurfaceImpl
     MOCK_METHOD5(getAttachmentRenderTarget,
                  angle::Result(const gl::Context *,
                                GLenum,
-                               const gl::ImageIndex &,
+                               const gl::OwnImageIndex &,
                                GLsizei,
                                rx::FramebufferAttachmentRenderTarget **));
     MOCK_METHOD2(attachToFramebuffer, egl::Error(const gl::Context *, gl::Framebuffer *));

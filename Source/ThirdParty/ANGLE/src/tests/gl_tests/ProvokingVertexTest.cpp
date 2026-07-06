@@ -9,11 +9,8 @@
 //   in the ES 3 specs.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "GLES2/gl2.h"
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -190,7 +187,7 @@ TEST_P(ProvokingVertexTest, FlatTriWithTransformFeedback)
     int *mappedInts = static_cast<int *>(mapPointer);
     for (unsigned int cnt = 0; cnt < 6; ++cnt)
     {
-        EXPECT_EQ(vertexData[cnt], mappedInts[cnt]);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(vertexData[cnt], mappedInts[cnt]));
     }
 }
 
@@ -289,10 +286,12 @@ TEST_P(ProvokingVertexTest, FlatTriStrip)
 
     for (unsigned int triIndex = 0; triIndex < 4; ++triIndex)
     {
-        GLfloat sumX = positionData[triIndex * 2 + 0] + positionData[triIndex * 2 + 2] +
-                       positionData[triIndex * 2 + 4];
-        GLfloat sumY = positionData[triIndex * 2 + 1] + positionData[triIndex * 2 + 3] +
-                       positionData[triIndex * 2 + 5];
+        GLfloat sumX = ANGLE_UNSAFE_TODO(positionData[triIndex * 2 + 0]) +
+                       ANGLE_UNSAFE_TODO(positionData[triIndex * 2 + 2]) +
+                       ANGLE_UNSAFE_TODO(positionData[triIndex * 2 + 4]);
+        GLfloat sumY = ANGLE_UNSAFE_TODO(positionData[triIndex * 2 + 1]) +
+                       ANGLE_UNSAFE_TODO(positionData[triIndex * 2 + 3]) +
+                       ANGLE_UNSAFE_TODO(positionData[triIndex * 2 + 5]);
 
         float centerX = sumX / 3.0f * 0.5f + 0.5f;
         float centerY = sumY / 3.0f * 0.5f + 0.5f;
@@ -304,7 +303,7 @@ TEST_P(ProvokingVertexTest, FlatTriStrip)
 
         unsigned int provokingVertexIndex = triIndex + 2;
 
-        EXPECT_EQ(vertexData[provokingVertexIndex], pixelBuffer[pixelIndex * 4]);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(vertexData[provokingVertexIndex], pixelBuffer[pixelIndex * 4]));
     }
 }
 
@@ -341,14 +340,16 @@ TEST_P(ProvokingVertexTest, FlatTriStripPrimitiveRestart)
 
     for (unsigned int triIndex = 0; triIndex < 4; ++triIndex)
     {
-        GLint vertexA = indexData[triOffsets[triIndex] + 0];
-        GLint vertexB = indexData[triOffsets[triIndex] + 1];
-        GLint vertexC = indexData[triOffsets[triIndex] + 2];
+        GLint vertexA = ANGLE_UNSAFE_TODO(indexData[triOffsets[triIndex] + 0]);
+        GLint vertexB = ANGLE_UNSAFE_TODO(indexData[triOffsets[triIndex] + 1]);
+        GLint vertexC = ANGLE_UNSAFE_TODO(indexData[triOffsets[triIndex] + 2]);
 
-        GLfloat sumX =
-            positionData[vertexA * 2] + positionData[vertexB * 2] + positionData[vertexC * 2];
-        GLfloat sumY = positionData[vertexA * 2 + 1] + positionData[vertexB * 2 + 1] +
-                       positionData[vertexC * 2 + 1];
+        GLfloat sumX = ANGLE_UNSAFE_TODO(positionData[vertexA * 2]) +
+                       ANGLE_UNSAFE_TODO(positionData[vertexB * 2]) +
+                       ANGLE_UNSAFE_TODO(positionData[vertexC * 2]);
+        GLfloat sumY = ANGLE_UNSAFE_TODO(positionData[vertexA * 2 + 1]) +
+                       ANGLE_UNSAFE_TODO(positionData[vertexB * 2 + 1]) +
+                       ANGLE_UNSAFE_TODO(positionData[vertexC * 2 + 1]);
 
         float centerX = sumX / 3.0f * 0.5f + 0.5f;
         float centerY = sumY / 3.0f * 0.5f + 0.5f;
@@ -360,7 +361,7 @@ TEST_P(ProvokingVertexTest, FlatTriStripPrimitiveRestart)
 
         unsigned int provokingVertexIndex = triIndex + 2;
 
-        EXPECT_EQ(vertexData[provokingVertexIndex], pixelBuffer[pixelIndex * 4]);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(vertexData[provokingVertexIndex], pixelBuffer[pixelIndex * 4]));
     }
 }
 
@@ -402,7 +403,7 @@ TEST_P(ProvokingVertexTest, ANGLEProvokingVertex)
         glReadPixels(0, 0, 1, 1, GL_RGBA_INTEGER, GL_INT, &pixelValue);
 
         ASSERT_GL_NO_ERROR();
-        EXPECT_EQ(vertexData[id], pixelValue[0]);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(vertexData[id], pixelValue[0]));
     };
 
     fnExpectId(2);

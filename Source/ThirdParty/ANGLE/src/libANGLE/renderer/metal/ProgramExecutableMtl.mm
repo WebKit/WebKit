@@ -258,8 +258,10 @@ void InitArgumentBufferEncoder(mtl::Context *context,
         angle::adoptObjCPtr([function newArgumentEncoderWithBufferIndex:bufferIndex]);
     if (encoder->metalArgBufferEncoder)
     {
-        encoder->bufferPool.initialize(context, encoder->metalArgBufferEncoder.get().encodedLength,
-                                       mtl::kArgumentBufferOffsetAlignment, 0);
+        const NSUInteger encodedLength      = encoder->metalArgBufferEncoder.get().encodedLength;
+        constexpr size_t kArgBufferPoolSize = 64 * 1024;
+        const size_t poolSize = std::max(static_cast<size_t>(encodedLength), kArgBufferPoolSize);
+        encoder->bufferPool.initialize(context, poolSize, mtl::kArgumentBufferOffsetAlignment, 0);
     }
 }
 

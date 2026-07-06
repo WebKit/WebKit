@@ -2245,6 +2245,13 @@
             "description": [
                 "VkDevice supports the VK_AMD_shader_core_properties extension"
             ]
+        },
+        {
+            "name": "initialize_color_attachment_with_white",
+            "category": "Workarounds",
+            "description": [
+                "Initialize color tetxure attachment with white color for app bug workaround."
+            ]
         }
     ]
 }

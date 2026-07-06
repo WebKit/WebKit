@@ -1706,6 +1706,12 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo initializeColorAttachmentWithWhite = {
+        "initializeColorAttachmentWithWhite",
+        FeatureCategory::VulkanWorkarounds,
+        &members,
+    };
+
 };
 
 inline FeaturesVk::FeaturesVk()  = default;

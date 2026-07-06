@@ -240,6 +240,7 @@ class TSymbolTable : angle::NonCopyable, TSymbolTableBase
 
     const TVariable *gl_FragData() const;
     const TVariable *gl_SecondaryFragDataEXT() const;
+    bool isSecondaryFragDataUsed() const;
 
     void markStaticUse(const TVariable &variable);
 

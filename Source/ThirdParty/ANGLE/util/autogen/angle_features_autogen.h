@@ -235,6 +235,7 @@ enum class Feature
     HasTextureSwizzle,
     HasVariableRasterizationRate,
     InitFragmentOutputVariables,
+    InitializeColorAttachmentWithWhite,
     InitializeCurrentVertexAttributes,
     InjectAsmStatementIntoLoopBodies,
     IsVertexSyncDeferred,

@@ -579,6 +579,98 @@ TEST_P(EGLDisplaySelectionTestDeviceId, DeviceIdConcurrently)
     terminateWindow();
 }
 
+class EGLDisplaySelectionTestDisplayKey : public EGLDisplaySelectionTestNoFixture
+{
+
+  protected:
+    void initializeDisplayWithKey(EGLDisplay *display, EGLAttrib displayKey)
+    {
+        GLenum platformType          = GetParam().getRenderer();
+        GLenum deviceType            = GetParam().getDeviceType();
+        GLint displayPowerPreference = GetParam().eglParameters.displayPowerPreference;
+
+        std::vector<EGLAttrib> displayAttributes;
+        displayAttributes.push_back(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
+        displayAttributes.push_back(platformType);
+        displayAttributes.push_back(EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE);
+        displayAttributes.push_back(EGL_DONT_CARE);
+        displayAttributes.push_back(EGL_PLATFORM_ANGLE_MAX_VERSION_MINOR_ANGLE);
+        displayAttributes.push_back(EGL_DONT_CARE);
+        displayAttributes.push_back(EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE);
+        displayAttributes.push_back(deviceType);
+        displayAttributes.push_back(EGL_PLATFORM_ANGLE_DISPLAY_KEY_ANGLE);
+        displayAttributes.push_back(displayKey);
+        if (displayPowerPreference != EGL_DONT_CARE)
+        {
+            displayAttributes.push_back(EGL_POWER_PREFERENCE_ANGLE);
+            displayAttributes.push_back(displayPowerPreference);
+        }
+        displayAttributes.push_back(EGL_NONE);
+
+        *display = eglGetPlatformDisplay(GetEglPlatform(),
+                                         reinterpret_cast<void *>(mOSWindow->getNativeDisplay()),
+                                         displayAttributes.data());
+        ASSERT_TRUE(*display != EGL_NO_DISPLAY);
+
+        EGLint majorVersion, minorVersion;
+        ASSERT_TRUE(eglInitialize(*display, &majorVersion, &minorVersion) == EGL_TRUE);
+
+        eglBindAPI(EGL_OPENGL_ES_API);
+        ASSERT_EGL_SUCCESS();
+    }
+};
+
+// Test creating multiple displays with different display keys and verifying they are unique.
+TEST_P(EGLDisplaySelectionTestDisplayKey, ConcurentDisplayKey)
+{
+    ANGLE_SKIP_TEST_IF(!IsEGLClientExtensionEnabled("EGL_ANGLE_platform_angle_display_key"));
+
+    initializeWindow();
+    struct ContextForKey
+    {
+        EGLDisplay display{};
+        EGLContext context{};
+    };
+    std::vector<ContextForKey> contexts;
+    constexpr size_t kDisplayCount = 10;
+
+    for (size_t i = 0; i < kDisplayCount; i++)
+    {
+        ContextForKey contextForKey;
+        auto &display = contextForKey.display;
+        auto &context = contextForKey.context;
+        initializeDisplayWithKey(&display, i);
+        initializeContextForDisplay(display, &context);
+        eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, context);
+
+        // Test that this display is unique
+        for (auto &otherContext : contexts)
+        {
+            EXPECT_NE(display, otherContext.display);
+        }
+
+        contexts.push_back(contextForKey);
+    }
+
+    // Test that requesting using the same display key returns the same display
+    for (size_t i = 0; i < kDisplayCount; i++)
+    {
+        EGLDisplay display = EGL_NO_DISPLAY;
+        initializeDisplayWithKey(&display, i);
+        EXPECT_EQ(contexts[i].display, display);
+    }
+
+    for (auto &context : contexts)
+    {
+        // Terminate the displays
+        terminateContext(context.display, context.context);
+        eglMakeCurrent(context.display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        terminateDisplay(context.display);
+    }
+
+    terminateWindow();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLDisplaySelectionTest);
 ANGLE_INSTANTIATE_TEST(EGLDisplaySelectionTest,
                        WithLowPowerGPU(ES2_METAL()),
@@ -597,6 +689,19 @@ ANGLE_INSTANTIATE_TEST(EGLDisplaySelectionTestDeviceId,
                        WithNoFixture(ES3_D3D11()),
                        WithNoFixture(ES2_METAL()),
                        WithNoFixture(ES3_METAL()),
+                       WithNoFixture(WithLowPowerGPU(ES2_METAL())),
+                       WithNoFixture(WithLowPowerGPU(ES3_METAL())),
+                       WithNoFixture(WithHighPowerGPU(ES2_METAL())),
+                       WithNoFixture(WithHighPowerGPU(ES3_METAL())));
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLDisplaySelectionTestDisplayKey);
+ANGLE_INSTANTIATE_TEST(EGLDisplaySelectionTestDisplayKey,
+                       WithNoFixture(ES2_D3D11()),
+                       WithNoFixture(ES3_D3D11()),
+                       WithNoFixture(ES2_METAL()),
+                       WithNoFixture(ES3_METAL()),
+                       WithNoFixture(ES2_WEBGPU()),
+                       WithNoFixture(ES3_WEBGPU()),
                        WithNoFixture(WithLowPowerGPU(ES2_METAL())),
                        WithNoFixture(WithLowPowerGPU(ES3_METAL())),
                        WithNoFixture(WithHighPowerGPU(ES2_METAL())),

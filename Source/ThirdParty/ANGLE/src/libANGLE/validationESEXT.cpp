@@ -1221,7 +1221,7 @@ bool ValidateMemoryObjectParameterivEXT(const Context *context,
 
 bool ValidateTexStorageMem2DEXT(const Context *context,
                                 angle::EntryPoint entryPoint,
-                                TextureType target,
+                                TextureType targetPacked,
                                 GLsizei levels,
                                 GLenum internalFormat,
                                 GLsizei width,
@@ -1229,14 +1229,14 @@ bool ValidateTexStorageMem2DEXT(const Context *context,
                                 MemoryObjectID memory,
                                 GLuint64 offset)
 {
-    if (context->getClientVersion() < ES_3_0)
+    if (!ValidateTexStorage(context, entryPoint, targetPacked, levels, internalFormat, width,
+                            height, 1, TexImageDimension::_2D))
     {
-        return ValidateES2TexStorageParametersBase(context, entryPoint, target, levels,
-                                                   internalFormat, width, height);
+        // Error already generated.
+        return false;
     }
 
-    return ValidateES3TexStorage2DParameters(context, entryPoint, target, levels, internalFormat,
-                                             width, height, 1);
+    return true;
 }
 
 bool ValidateTexStorageMem3DEXT(const Context *context,
@@ -4119,14 +4119,20 @@ bool ValidateTexStorageAttribs2DEXT(const Context *context,
                                     GLsizei height,
                                     const GLint *attrib_list)
 {
+    if (!ValidateTexStorage2D(context, entryPoint, FromGLenum<TextureType>(target), levels,
+                              internalformat, width, height))
+    {
+        // Error already generated.
+        return false;
+    }
+
     if (!ValidateTexStorageAttribs(attrib_list))
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kInvalidAttribList);
         return false;
     }
 
-    return ValidateES3TexStorage2DParameters(context, entryPoint, FromGLenum<TextureType>(target),
-                                             levels, internalformat, width, height, 1);
+    return true;
 }
 
 bool ValidateTexStorageAttribs3DEXT(const Context *context,
@@ -4139,14 +4145,20 @@ bool ValidateTexStorageAttribs3DEXT(const Context *context,
                                     GLsizei depth,
                                     const GLint *attrib_list)
 {
+    if (!ValidateTexStorage3D(context, entryPoint, FromGLenum<TextureType>(target), levels,
+                              internalformat, width, height, depth))
+    {
+        // Error already generated.
+        return false;
+    }
+
     if (!ValidateTexStorageAttribs(attrib_list))
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kInvalidAttribList);
         return false;
     }
 
-    return ValidateES3TexStorage3DParameters(context, entryPoint, FromGLenum<TextureType>(target),
-                                             levels, internalformat, width, height, depth);
+    return true;
 }
 
 }  // namespace gl

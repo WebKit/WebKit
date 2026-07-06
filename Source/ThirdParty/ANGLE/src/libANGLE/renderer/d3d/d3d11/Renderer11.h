@@ -133,7 +133,6 @@ class Renderer11 : public RendererD3D
 
     int getMajorShaderModel() const override;
     int getMinorShaderModel() const override;
-    std::string getShaderModelSuffix() const override;
 
     // Pixel operations
     angle::Result copyImage2D(const gl::Context *context,

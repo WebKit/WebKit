@@ -2736,6 +2736,90 @@ TEST_P(FramebufferTestWithFormatFallback, R4G4B4A4_CubeTexImage)
     cubeTexImageFollowedByFBORead(GL_RGBA4, GL_UNSIGNED_SHORT_4_4_4_4);
 }
 
+// Test cube map texture format fallback after one face of a non-base level is incompatibly
+// redefined.  When the image is reformatted, the other faces of that level must be preserved.
+TEST_P(FramebufferTestWithFormatFallback, R4G4B4A4_CubeTexImageRedefinedFace)
+{
+    constexpr GLenum kInternalFormat = GL_RGBA4;
+    constexpr GLenum kType           = GL_UNSIGNED_SHORT_4_4_4_4;
+    const GLColor kColors[6]         = {GLColor::red,  GLColor::green,  GLColor::blue,
+                                        GLColor::cyan, GLColor::yellow, GLColor::magenta};
+
+    // Create a two-level cube map and upload distinct colors to every face.
+    GLTexture cube;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cube);
+    for (GLenum face = 0; face < 6; ++face)
+    {
+        const GLenum target     = GL_TEXTURE_CUBE_MAP_POSITIVE_X + face;
+        const GLushort u16Color = convertGLColorToUShort(kInternalFormat, kColors[face]);
+        std::vector<GLushort> pixels(kTexWidth * kTexHeight, u16Color);
+        glTexImage2D(target, 0, kInternalFormat, kTexWidth, kTexHeight, 0, GL_RGBA, kType,
+                     pixels.data());
+        glTexImage2D(target, 1, kInternalFormat, kTexWidth / 2, kTexHeight / 2, 0, GL_RGBA, kType,
+                     pixels.data());
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 1);
+    ASSERT_GL_NO_ERROR();
+
+    // Sample from the cube map so the backing image is allocated and committed.
+    constexpr char kFS[] = R"(precision highp float;
+    uniform samplerCube texCube;
+    void main()
+    {
+          gl_FragColor = textureCube(texCube, vec3(0, 0, 1));
+    })";
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Incompatibly redefine one face of level 1 with a different size.
+    {
+        const GLushort u16Color = convertGLColorToUShort(kInternalFormat, GLColor::white);
+        std::vector<GLushort> pixels(kTexWidth * kTexHeight, u16Color);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 1, kInternalFormat, kTexWidth, kTexHeight, 0,
+                     GL_RGBA, kType, pixels.data());
+    }
+
+    // Attach a face of level 0 to a framebuffer and read it back.  This is the point at which the
+    // image may be reformatted.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+                           cube, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_PIXEL_COLOR_EQ(kTexWidth / 4, kTexHeight / 4, kColors[0]);
+
+    // Restore the redefined face to a compatible size, then verify every face of level 1.  The
+    // other five faces must still hold the data that was originally uploaded.
+    {
+        const GLushort u16Color = convertGLColorToUShort(kInternalFormat, GLColor::white);
+        std::vector<GLushort> pixels((kTexWidth / 2) * (kTexHeight / 2), u16Color);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 1, kInternalFormat, kTexWidth / 2,
+                     kTexHeight / 2, 0, GL_RGBA, kType, pixels.data());
+    }
+    for (GLenum face = 0; face < 6; ++face)
+    {
+        const GLenum target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + face;
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, cube, 1);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        const GLColor expected =
+            target == GL_TEXTURE_CUBE_MAP_NEGATIVE_X ? GLColor::white : kColors[face];
+        EXPECT_PIXEL_COLOR_EQ(kTexWidth / 4, kTexHeight / 4, expected) << "face " << face;
+    }
+
+    // Verify level 0 is also intact.
+    for (GLenum face = 0; face < 6; ++face)
+    {
+        const GLenum target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + face;
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, cube, 0);
+        EXPECT_PIXEL_COLOR_EQ(kTexWidth / 4, kTexHeight / 4, kColors[face]) << "face " << face;
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
 // Tests that the out-of-range staged update is reformatted when mipmapping is enabled, but not
 // before it.
 TEST_P(FramebufferTestWithFormatFallback, R4G4B4A4_OutOfRangeStagedUpdateReformated)
@@ -9609,8 +9693,10 @@ ANGLE_INSTANTIATE_TEST_ES31_AND(FramebufferTest_ES31,
                                 ES31_VULKAN()
                                     .disable(Feature::PreferDynamicRendering)
                                     .disable(Feature::SupportsImagelessFramebuffer));
-ANGLE_INSTANTIATE_TEST_ES3_AND(FramebufferTestWithFormatFallback,
-                               ES3_VULKAN().disable(Feature::PreferDynamicRendering));
+ANGLE_INSTANTIATE_TEST_ES3_AND(
+    FramebufferTestWithFormatFallback,
+    ES3_VULKAN().disable(Feature::PreferDynamicRendering),
+    ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceRenderableFallbackFormat));
 ANGLE_INSTANTIATE_TEST_ES3_AND(DefaultFramebufferTest,
                                ES3_VULKAN().disable(Feature::PreferDynamicRendering));
 

@@ -4,12 +4,9 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <algorithm>
 #include <climits>
+#include "common/unsafe_buffers.h"
 
 #include "PreprocessorTest.h"
 #include "compiler/preprocessor/Token.h"
@@ -30,7 +27,7 @@ static const int kNumPunctuators = sizeof(kPunctuators) / sizeof(kPunctuators[0]
 bool isPunctuator(char c)
 {
     static const char *kPunctuatorBeg = kPunctuators;
-    static const char *kPunctuatorEnd = kPunctuators + kNumPunctuators;
+    static const char *kPunctuatorEnd = ANGLE_UNSAFE_TODO(kPunctuators + kNumPunctuators);
     return std::find(kPunctuatorBeg, kPunctuatorEnd, c) != kPunctuatorEnd;
 }
 
@@ -40,7 +37,7 @@ static const int kNumWhitespaces = sizeof(kWhitespaces) / sizeof(kWhitespaces[0]
 bool isWhitespace(char c)
 {
     static const char *kWhitespaceBeg = kWhitespaces;
-    static const char *kWhitespaceEnd = kWhitespaces + kNumWhitespaces;
+    static const char *kWhitespaceEnd = ANGLE_UNSAFE_TODO(kWhitespaces + kNumWhitespaces);
     return std::find(kWhitespaceBeg, kWhitespaceEnd, c) != kWhitespaceEnd;
 }
 

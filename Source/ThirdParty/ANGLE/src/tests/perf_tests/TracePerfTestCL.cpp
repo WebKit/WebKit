@@ -7,10 +7,7 @@
 //   Performance test for ANGLE CL replaying traces.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "tests/perf_tests/ANGLEComputeTestCL.h"
 #include "tests/perf_tests/TracePerfTest.h"
 
@@ -50,7 +47,7 @@ class TracePerfTestCL : public ANGLEComputeTestCL
 
     bool traceNameIs(const char *name) const
     {
-        return strncmp(name, mParams->traceInfo.name, kTraceInfoMaxNameLen) == 0;
+        return ANGLE_UNSAFE_TODO(strncmp(name, mParams->traceInfo.name, kTraceInfoMaxNameLen)) == 0;
     }
 
   private:
@@ -72,8 +69,8 @@ ANGLEPerfTest *CreateTracePerfTestCL(std::unique_ptr<const TracePerfParams> para
 bool FindTraceTestDataPath(const char *traceName, char *testDataDirOut, size_t maxDataDirLen)
 {
     char relativeTestDataDir[kMaxPath] = {};
-    snprintf(relativeTestDataDir, kMaxPath, "%s%c%s", kTraceTestFolder, GetPathSeparator(),
-             traceName);
+    ANGLE_UNSAFE_TODO(snprintf(relativeTestDataDir, kMaxPath, "%s%c%s", kTraceTestFolder,
+                               GetPathSeparator(), traceName));
     return angle::FindTestDataPath(relativeTestDataDir, testDataDirOut, maxDataDirLen);
 }
 
@@ -110,7 +107,7 @@ void TracePerfTestCL::initializeBenchmark()
     if (gTraceInterpreter)
     {
         mTraceReplay.reset(new TraceLibrary("angle_trace_interpreter", traceInfo, baseDir));
-        if (strcmp(gTraceInterpreter, "gz") == 0)
+        if (ANGLE_UNSAFE_TODO(strcmp(gTraceInterpreter, "gz")) == 0)
         {
             std::string traceGzPath = FindTraceGzPath(traceInfo.name);
             if (traceGzPath.empty())

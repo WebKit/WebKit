@@ -7,10 +7,7 @@
 //   Test issuing multiview Draw* commands.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "platform/autogen/FeaturesD3D_autogen.h"
 #include "test_utils/MultiviewTest.h"
 #include "test_utils/gl_raii.h"
@@ -527,9 +524,9 @@ class MultiviewRenderPrimitiveTest : public MultiviewRenderTest
                 {
                     size_t flatIndex =
                         static_cast<size_t>(view * mViewWidth * mViewHeight + mViewWidth * h + w);
-                    EXPECT_EQ(GLColor(0, expectedGreenChannelData[flatIndex], 0,
-                                      expectedGreenChannelData[flatIndex]),
-                              GetViewColor(w, h, view))
+                    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor(0, expectedGreenChannelData[flatIndex], 0,
+                                                        expectedGreenChannelData[flatIndex]),
+                                                GetViewColor(w, h, view)))
                         << "view: " << view << ", w: " << w << ", h: " << h;
                 }
             }
@@ -1322,9 +1319,9 @@ void main()
         {
             for (int x = 0; x < kViewWidth; ++x)
             {
-                EXPECT_EQ(GLColor(0, expectedGreenChannel[view][y][x], 0,
-                                  expectedGreenChannel[view][y][x]),
-                          GetViewColor(x, y, view));
+                ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor(0, expectedGreenChannel[view][y][x], 0,
+                                                    expectedGreenChannel[view][y][x]),
+                                            GetViewColor(x, y, view)));
             }
         }
     }
@@ -1541,9 +1538,9 @@ void main()
         {
             for (int col = 0; col < 4; ++col)
             {
-                EXPECT_EQ(GLColor(0, expectedGreenChannel[view][row][col], 0,
-                                  expectedGreenChannel[view][row][col]),
-                          GetViewColor(col, row, view));
+                ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor(0, expectedGreenChannel[view][row][col], 0,
+                                                    expectedGreenChannel[view][row][col]),
+                                            GetViewColor(col, row, view)));
             }
         }
     }
@@ -1617,7 +1614,7 @@ void main()
     GLVertexArray vao[2];
     for (size_t i = 0u; i < 2u; ++i)
     {
-        glBindVertexArray(vao[i]);
+        glBindVertexArray(ANGLE_UNSAFE_TODO(vao[i]));
 
         glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
@@ -2272,7 +2269,7 @@ void main()
         glGetAttachedShaders(program, numAttachedShaders, nullptr, attachedShaders);
         for (int i = 0; i < 2; ++i)
         {
-            glDetachShader(program, attachedShaders[i]);
+            glDetachShader(program, ANGLE_UNSAFE_TODO(attachedShaders[i]));
         }
 
         glAttachShader(program, vs);

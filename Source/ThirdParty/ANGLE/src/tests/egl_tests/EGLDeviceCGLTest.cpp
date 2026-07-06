@@ -6,10 +6,7 @@
 // EGLDeviceCGLTest.cpp: tests for the EGL_ANGLE_device_cgl extension.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "util/EGLWindow.h"
 #include "util/OSWindow.h"
@@ -50,7 +47,7 @@ class EGLDeviceCGLQueryTest : public ANGLETest<>
             eglQueryDisplayAttribEXT(getEGLWindow()->getDisplay(), EGL_DEVICE_EXT, &angleDevice));
         extensionString = static_cast<const char *>(
             eglQueryDeviceStringEXT(reinterpret_cast<EGLDeviceEXT>(angleDevice), EGL_EXTENSIONS));
-        if (strstr(extensionString, "EGL_ANGLE_device_cgl") == nullptr)
+        if (ANGLE_UNSAFE_TODO(strstr(extensionString, "EGL_ANGLE_device_cgl")) == nullptr)
         {
             FAIL() << "ANGLE extension EGL_ANGLE_device_cgl was not found";
         }

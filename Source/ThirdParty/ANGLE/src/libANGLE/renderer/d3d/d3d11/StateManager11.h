@@ -41,7 +41,6 @@ class ShaderConstants11 : angle::NonCopyable
     void onViewportChange(const gl::Rectangle &glViewport,
                           const D3D11_VIEWPORT &dxViewport,
                           const gl::Offset &glFragCoordOffset,
-                          bool is9_3,
                           bool presentPathFast);
     bool onFirstVertexChange(GLint firstVertex);
     void onImageLayerChange(gl::ShaderType shaderType, unsigned int imageIndex, int layer);
@@ -475,7 +474,6 @@ class StateManager11 final : angle::NonCopyable
     ShaderConstants11 mShaderConstants;
 
     // Render target variables
-    gl::Extents mViewportBounds;
     bool mRenderTargetIsDirty;
 
     // EGL_ANGLE_experimental_present_path variables

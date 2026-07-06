@@ -327,18 +327,6 @@ angle::Result RenderStateCache::getSamplerState(const gl::Context *context,
     samplerDesc.MinLOD         = samplerState.getMinLod();
     samplerDesc.MaxLOD         = samplerState.getMaxLod();
 
-    if (featureLevel <= D3D_FEATURE_LEVEL_9_3)
-    {
-        // Check that maxLOD is nearly FLT_MAX (1000.0f is the default), since 9_3 doesn't support
-        // anything other than FLT_MAX. Note that Feature Level 9_* only supports GL ES 2.0, so the
-        // consumer of ANGLE can't modify the Max LOD themselves.
-        ASSERT(samplerState.getMaxLod() >= 999.9f);
-
-        // Now just set MaxLOD to FLT_MAX. Other parts of the renderer (e.g. the non-zero max LOD
-        // workaround) should take account of this.
-        samplerDesc.MaxLOD = FLT_MAX;
-    }
-
     d3d11::SamplerState dx11SamplerState;
     ANGLE_TRY(
         renderer->allocateResource(GetImplAs<Context11>(context), samplerDesc, &dx11SamplerState));

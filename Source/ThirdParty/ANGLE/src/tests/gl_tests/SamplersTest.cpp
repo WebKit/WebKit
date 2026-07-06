@@ -6,10 +6,7 @@
 
 // SamplerTest.cpp : Tests for samplers.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "gtest/gtest.h"
 #include "test_utils/ANGLETest.h"
 
@@ -153,13 +150,14 @@ void main()
         {
             for (GLubyte x = 0; x < getTextureWidth(); x++)
             {
-                GLubyte *pixel = &gradientPixels[0] + ((y * getTextureWidth() + x) * 4);
+                GLubyte *pixel =
+                    ANGLE_UNSAFE_TODO(&gradientPixels[0] + ((y * getTextureWidth() + x) * 4));
 
                 // Draw a gradient, red in x direction, green in y direction
                 pixel[0] = x;
-                pixel[1] = y;
-                pixel[2] = 0u;
-                pixel[3] = 255u;
+                ANGLE_UNSAFE_TODO(pixel[1]) = y;
+                ANGLE_UNSAFE_TODO(pixel[2]) = 0u;
+                ANGLE_UNSAFE_TODO(pixel[3]) = 255u;
             }
         }
 
@@ -256,24 +254,26 @@ void main()
         {
             for (size_t x = 1; x < checkWidth; x++)
             {
-                const GLubyte *prevPixel =
-                    pixels.data() + (((y - 1) * getTextureWidth() + (x - 1)) * 4);
-                const GLubyte *curPixel = pixels.data() + ((y * getTextureWidth() + x) * 4);
+                const GLubyte *prevPixel = ANGLE_UNSAFE_TODO(
+                    pixels.data() + (((y - 1) * getTextureWidth() + (x - 1)) * 4));
+                const GLubyte *curPixel =
+                    ANGLE_UNSAFE_TODO(pixels.data() + ((y * getTextureWidth() + x) * 4));
 
                 if (strict)
                 {
                     EXPECT_EQ(curPixel[0], prevPixel[0] + 1)
                         << " failed at (" << x << ", " << y << ")";
-                    EXPECT_EQ(curPixel[1], prevPixel[1] + 1)
+                    ANGLE_UNSAFE_TODO(EXPECT_EQ(curPixel[1], prevPixel[1] + 1))
                         << " failed at (" << x << ", " << y << ")";
                 }
                 else
                 {
                     EXPECT_GE(curPixel[0], prevPixel[0]) << " failed at (" << x << ", " << y << ")";
-                    EXPECT_GE(curPixel[1], prevPixel[1]) << " failed at (" << x << ", " << y << ")";
+                    ANGLE_UNSAFE_TODO(EXPECT_GE(curPixel[1], prevPixel[1]))
+                        << " failed at (" << x << ", " << y << ")";
                 }
-                EXPECT_EQ(curPixel[2], prevPixel[2]);
-                EXPECT_EQ(curPixel[3], prevPixel[3]);
+                ANGLE_UNSAFE_TODO(EXPECT_EQ(curPixel[2], prevPixel[2]));
+                ANGLE_UNSAFE_TODO(EXPECT_EQ(curPixel[3], prevPixel[3]));
             }
         }
     }

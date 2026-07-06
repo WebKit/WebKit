@@ -71,9 +71,7 @@ class Clear11 : angle::NonCopyable
         std::array<d3d11::LazyShader<ID3D11PixelShader>, kNumShaders> mPsSInt;
     };
 
-    bool useVertexBuffer() const;
     angle::Result ensureConstantBufferCreated(const gl::Context *context);
-    angle::Result ensureVertexBufferCreated(const gl::Context *context);
     angle::Result ensureResourcesInitialized(const gl::Context *context);
 
     Renderer11 *mRenderer;
@@ -88,7 +86,6 @@ class Clear11 : angle::NonCopyable
     // Shaders and shader resources
     ShaderManager mShaderManager;
     d3d11::Buffer mConstantBuffer;
-    d3d11::Buffer mVertexBuffer;
 
     // Buffer data and draw parameters
     RtvDsvClearInfo<float> mShaderData;

@@ -1050,18 +1050,57 @@ def main():
     handle_angle_non_conformant_extensions_and_versions(generated_targets, blueprint_targets)
 
     # Move cflags that are repeated in each target to cc_defaults
-    all_cflags = [set(bp['cflags']) for _, bp in generated_targets if 'cflags' in bp]
-    all_target_cflags = set.intersection(*all_cflags)
+    # 1. Identify common cflags across all generated targets.
+    targets_with_cflags = [bp for _, bp in generated_targets if 'cflags' in bp]
+    if targets_with_cflags:
+        common_cflags = set.intersection(*(set(bp['cflags']) for bp in targets_with_cflags))
+    else:
+        common_cflags = set()
 
+    # 2. Identify common arch-specific cflags.
+    common_arch_cflags = {}
+    for abi in ABI_TARGETS:
+        targets_with_arch_cflags = [
+            bp for _, bp in generated_targets
+            if 'arch' in bp and abi in bp['arch'] and 'cflags' in bp['arch'][abi]
+        ]
+        if targets_with_arch_cflags:
+            common_arch_cflags[abi] = set.intersection(
+                *(set(bp['arch'][abi]['cflags']) for bp in targets_with_arch_cflags))
+        else:
+            common_arch_cflags[abi] = set()
+
+    # 3. Move these common flags to angle_common_auto_cflags and remove from individual targets.
     for _, bp in generated_targets:
         if 'cflags' in bp:
-            bp['cflags'] = list(set(bp['cflags']) - all_target_cflags)
-            bp['defaults'].append('angle_common_auto_cflags')
+            bp['cflags'] = list(set(bp['cflags']) - common_cflags)
+            # Every generated target that had cflags should inherit from angle_common_auto_cflags
+            if 'angle_common_auto_cflags' not in bp.get('defaults', []):
+                bp.setdefault('defaults', []).append('angle_common_auto_cflags')
 
-    blueprint_targets.append(('cc_defaults', {
+        for abi, flags in common_arch_cflags.items():
+            if flags and 'arch' in bp and abi in bp['arch'] and 'cflags' in bp['arch'][abi]:
+                bp['arch'][abi]['cflags'] = list(set(bp['arch'][abi]['cflags']) - flags)
+                # Cleanup empty structures
+                if not bp['arch'][abi]['cflags']:
+                    del bp['arch'][abi]['cflags']
+                if not bp['arch'][abi]:
+                    del bp['arch'][abi]
+                if not bp['arch']:
+                    del bp['arch']
+
+    # 4. Create the consolidated cc_defaults
+    auto_cflags_bp = {
         'name': 'angle_common_auto_cflags',
-        'cflags': list(all_target_cflags),
-    }))
+        'cflags': list(common_cflags),
+    }
+    if any(common_arch_cflags.values()):
+        auto_cflags_bp['arch'] = {}
+        for abi, flags in common_arch_cflags.items():
+            if flags:
+                auto_cflags_bp['arch'][abi] = {'cflags': list(flags)}
+
+    blueprint_targets.append(('cc_defaults', auto_cflags_bp))
     blueprint_targets.extend(generated_targets)
 
     # Add license build rules

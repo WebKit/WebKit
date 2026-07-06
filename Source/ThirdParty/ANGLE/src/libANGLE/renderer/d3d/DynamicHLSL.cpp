@@ -299,7 +299,7 @@ std::string DynamicHLSL::GeneratePixelShaderForOutputSignature(
     size_t numOutputs = outputLayout.size();
 
     // Workaround for HLSL 3.x: We can't do a depth/stencil only render, the runtime will complain.
-    if (numOutputs == 0 && (shaderModel == 3 || !renderer->getShaderModelSuffix().empty()))
+    if (numOutputs == 0 && shaderModel == 3)
     {
         numOutputs = 1u;
     }
@@ -660,8 +660,8 @@ void DynamicHLSL::GenerateShaderLinkHLSL(
         vertexGenerateOutput << "    output.gl_Layer = ViewID_OVR;\n";
     }
 
-    // On D3D9 or D3D11 Feature Level 9, we need to emulate large viewports using dx_ViewAdjust.
-    if (shaderModel >= 4 && renderer->getShaderModelSuffix() == "")
+    // On D3D9, we need to emulate large viewports using dx_ViewAdjust.
+    if (shaderModel >= 4)
     {
         vertexGenerateOutput << "    output.dx_Position.x = gl_Position.x;\n";
 
@@ -692,21 +692,9 @@ void DynamicHLSL::GenerateShaderLinkHLSL(
         vertexGenerateOutput << "    output.dx_Position.x = gl_Position.x * dx_ViewAdjust.z + "
                                 "dx_ViewAdjust.x * gl_Position.w;\n";
 
-        // If usesViewScale() is true and we're using the D3D11 renderer via Feature Level 9_*,
-        // then we need to multiply the gl_Position.y by the viewScale.
-        // usesViewScale() isn't supported when using the D3D9 renderer.
-        if (programMetadata.usesViewScale() &&
-            (shaderModel >= 4 && renderer->getShaderModelSuffix() != ""))
-        {
-            vertexGenerateOutput << "    output.dx_Position.y = dx_ViewScale.y * (gl_Position.y * "
-                                    "dx_ViewAdjust.w + dx_ViewAdjust.y * gl_Position.w);\n";
-        }
-        else
-        {
-            vertexGenerateOutput << "    output.dx_Position.y = clipControlOrigin * (gl_Position.y "
-                                    "* dx_ViewAdjust.w + "
-                                    "dx_ViewAdjust.y * gl_Position.w);\n";
-        }
+        vertexGenerateOutput << "    output.dx_Position.y = clipControlOrigin * (gl_Position.y "
+                                "* dx_ViewAdjust.w + "
+                                "dx_ViewAdjust.y * gl_Position.w);\n";
 
         vertexGenerateOutput
             << "    if (clipControlZeroToOne)\n"
@@ -805,13 +793,13 @@ void DynamicHLSL::GenerateShaderLinkHLSL(
         pixelPrologue << "    float rhw = 1.0 / input.gl_FragCoord.w;\n";
 
         // Certain Shader Models (4_0+ and 3_0) allow reading from dx_Position in the pixel shader.
-        // Other Shader Models (4_0_level_9_3 and 2_x) don't support this, so we emulate it using
+        // Other Shader Models (2_x) don't support this, so we emulate it using
         // dx_ViewCoords.
         // DComp usually gives us an offset at (0, 0), but this is not always the case. It is
         // valid for DComp to give us an offset into the texture atlas. In that scenario, we
         // need to offset gl_FragCoord using dx_FragCoordOffset to point to the correct location
         // of the pixel.
-        if (shaderModel >= 4 && renderer->getShaderModelSuffix() == "")
+        if (shaderModel >= 4)
         {
             pixelPrologue << "    gl_FragCoord.x = input.dx_Position.x - dx_FragCoordOffset.x;\n"
                           << "    gl_FragCoord.y = input.dx_Position.y - dx_FragCoordOffset.y;\n";
@@ -835,11 +823,8 @@ void DynamicHLSL::GenerateShaderLinkHLSL(
 
         if (programMetadata.usesViewScale())
         {
-            // For Feature Level 9_3 and below, we need to correct gl_FragCoord.y to account
-            // for dx_ViewScale. On Feature Level 10_0+, gl_FragCoord.y is calculated above using
-            // dx_ViewCoords and is always correct irrespective of dx_ViewScale's value.
             // NOTE: usesViewScale() can only be true on D3D11 (i.e. Shader Model 4.0+).
-            if (shaderModel >= 4 && renderer->getShaderModelSuffix() == "")
+            if (shaderModel >= 4)
             {
                 // Some assumptions:
                 //  - dx_ViewScale.y = -1.0f when rendering to texture
@@ -876,7 +861,7 @@ void DynamicHLSL::GenerateShaderLinkHLSL(
             }
         }
 
-        if (shaderModel >= 4 && renderer->getShaderModelSuffix() == "")
+        if (shaderModel >= 4)
         {
             pixelPrologue << "    gl_FragCoord.z = input.dx_Position.z;\n";
         }

@@ -40,11 +40,11 @@ class RenderbufferWgpu : public RenderbufferImpl, public angle::ObserverInterfac
 
     angle::Result initializeContents(const gl::Context *context,
                                      GLenum binding,
-                                     const gl::ImageIndex &imageIndex) override;
+                                     const gl::OwnImageIndex &ownImageIndex) override;
 
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,
-                                            const gl::ImageIndex &imageIndex,
+                                            const gl::OwnImageIndex &ownImageIndex,
                                             GLsizei samples,
                                             FramebufferAttachmentRenderTarget **rtOut) override;
 

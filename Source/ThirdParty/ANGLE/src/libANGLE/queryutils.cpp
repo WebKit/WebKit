@@ -3559,7 +3559,7 @@ bool GetQueryParameterInfo(const State &glState,
             {
                 return false;
             }
-            *type      = GL_INT_64_ANGLEX;
+            *type      = GL_INT64;
             *numParams = 1;
             return true;
         case GL_GPU_DISJOINT_EXT:
@@ -4103,7 +4103,7 @@ bool GetQueryParameterInfo(const State &glState,
         case GL_MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS:
         case GL_MAX_SERVER_WAIT_TIMEOUT:
         {
-            *type      = GL_INT_64_ANGLEX;
+            *type      = GL_INT64;
             *numParams = 1;
             return true;
         }
@@ -4287,7 +4287,7 @@ bool GetQueryParameterInfo(const State &glState,
             *numParams = 1;
             return true;
         case GL_MAX_SHADER_STORAGE_BLOCK_SIZE:
-            *type      = GL_INT_64_ANGLEX;
+            *type      = GL_INT64;
             *numParams = 1;
             return true;
         case GL_SAMPLE_SHADING:
@@ -4391,7 +4391,7 @@ bool GetIndexedQueryParameterInfo(const State &glState,
         case GL_UNIFORM_BUFFER_START:
         case GL_UNIFORM_BUFFER_SIZE:
         {
-            *type      = GL_INT_64_ANGLEX;
+            *type      = GL_INT64;
             *numParams = 1;
             return true;
         }
@@ -4471,7 +4471,7 @@ bool GetIndexedQueryParameterInfo(const State &glState,
         case GL_SHADER_STORAGE_BUFFER_START:
         case GL_SHADER_STORAGE_BUFFER_SIZE:
         {
-            *type      = GL_INT_64_ANGLEX;
+            *type      = GL_INT64;
             *numParams = 1;
             return true;
         }

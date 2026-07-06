@@ -6,11 +6,8 @@
 // EGLChooseConfigTest.cpp:
 //   Tests of proper default-value semantics for eglChooseConfig
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <gtest/gtest.h>
+#include "common/unsafe_buffers.h"
 
 #include "test_utils/ANGLETest.h"
 #include "test_utils/angle_test_configs.h"
@@ -134,8 +131,8 @@ TEST_P(EGLChooseConfigTest, NegativeValidationBadAttributes)
 
     for (size_t i = 0; i < 4; i++)
     {
-        ASSERT_EGL_FALSE(
-            eglChooseConfig(display, &invalidConfigAttributeList[i][0], &config, 1, &configCount));
+        ANGLE_UNSAFE_TODO(ASSERT_EGL_FALSE(
+            eglChooseConfig(display, &invalidConfigAttributeList[i][0], &config, 1, &configCount)));
         ASSERT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
     }
 }

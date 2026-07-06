@@ -70,7 +70,7 @@ class SurfaceMtl : public SurfaceImpl
 
     angle::Result initializeContents(const gl::Context *context,
                                      GLenum binding,
-                                     const gl::ImageIndex &imageIndex) override;
+                                     const gl::OwnImageIndex &ownImageIndex) override;
 
     const mtl::TextureRef &getColorTexture() { return mColorTexture; }
     const mtl::Format &getColorFormat() const { return mColorFormat; }
@@ -81,7 +81,7 @@ class SurfaceMtl : public SurfaceImpl
 
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,
-                                            const gl::ImageIndex &imageIndex,
+                                            const gl::OwnImageIndex &ownImageIndex,
                                             GLsizei samples,
                                             FramebufferAttachmentRenderTarget **rtOut) override;
     egl::Error attachToFramebuffer(const gl::Context *context,
@@ -143,13 +143,13 @@ class WindowSurfaceMtl : public SurfaceMtl
 
     angle::Result initializeContents(const gl::Context *context,
                                      GLenum binding,
-                                     const gl::ImageIndex &imageIndex) override;
+                                     const gl::OwnImageIndex &ownImageIndex) override;
 
     // size can change with client window resizing
     gl::Extents getSize() const override;
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,
-                                            const gl::ImageIndex &imageIndex,
+                                            const gl::OwnImageIndex &ownImageIndex,
                                             GLsizei samples,
                                             FramebufferAttachmentRenderTarget **rtOut) override;
     egl::Error attachToFramebuffer(const gl::Context *context,
@@ -207,7 +207,7 @@ class OffscreenSurfaceMtl : public SurfaceMtl
 
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,
-                                            const gl::ImageIndex &imageIndex,
+                                            const gl::OwnImageIndex &ownImageIndex,
                                             GLsizei samples,
                                             FramebufferAttachmentRenderTarget **rtOut) override;
 

@@ -442,7 +442,7 @@ egl::Error SurfaceD3D::detachFromFramebuffer(const gl::Context *context,
 
 angle::Result SurfaceD3D::getAttachmentRenderTarget(const gl::Context *context,
                                                     GLenum binding,
-                                                    const gl::ImageIndex &imageIndex,
+                                                    const gl::OwnImageIndex &ownImageIndex,
                                                     GLsizei samples,
                                                     FramebufferAttachmentRenderTarget **rtOut)
 {
@@ -459,7 +459,7 @@ angle::Result SurfaceD3D::getAttachmentRenderTarget(const gl::Context *context,
 
 angle::Result SurfaceD3D::initializeContents(const gl::Context *context,
                                              GLenum binding,
-                                             const gl::ImageIndex &imageIndex)
+                                             const gl::OwnImageIndex &ownImageIndex)
 {
     switch (binding)
     {

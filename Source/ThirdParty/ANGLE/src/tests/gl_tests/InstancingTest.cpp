@@ -4,10 +4,7 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -62,7 +59,7 @@ class InstancingTest : public ANGLETest<>
     {
         for (unsigned i = 0; i < kMaxDrawn; ++i)
         {
-            mInstanceData[i] = i * kDrawSize;
+            ANGLE_UNSAFE_TODO(mInstanceData[i]) = i * kDrawSize;
         }
         glGenBuffers(1, &mInstanceBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, mInstanceBuffer);
@@ -130,7 +127,7 @@ class InstancingTest : public ANGLETest<>
         ASSERT_TRUE(instanceAttrib == 0 || instanceAttrib == 1);
         const int positionAttrib = 1 - instanceAttrib;
 
-        glUseProgram(mProgram[instanceAttrib]);
+        glUseProgram(ANGLE_UNSAFE_TODO(mProgram[instanceAttrib]));
 
         glBindBuffer(GL_ARRAY_BUFFER, storage == Buffer ? mInstanceBuffer : 0);
         glVertexAttribPointer(instanceAttrib, 1, GL_FLOAT, GL_FALSE, 0,
@@ -239,7 +236,8 @@ class InstancingTest : public ANGLETest<>
             int iy = static_cast<int>((y + 1.0f) / 2.0f * getWindowHeight());
             for (unsigned j = 0; j < 8; j += 2)
             {
-                int ix = static_cast<int>((kPointVertices[j] + 1.0f) / 2.0f * getWindowWidth());
+                int ix = static_cast<int>((ANGLE_UNSAFE_TODO(kPointVertices[j]) + 1.0f) / 2.0f *
+                                          getWindowWidth());
                 EXPECT_PIXEL_COLOR_EQ(ix, iy, i <= lastDrawn ? GLColor::red : GLColor::blue)
                     << std::endl;
             }
@@ -549,8 +547,8 @@ void main()
 
     for (size_t i = 0; i < instances; ++i)
     {
-        glVertexAttrib3fv(1, transform + 3 * i);
-        glVertexAttrib3fv(2, colors + 3 * i);
+        glVertexAttrib3fv(1, ANGLE_UNSAFE_TODO(transform + 3 * i));
+        glVertexAttrib3fv(2, ANGLE_UNSAFE_TODO(colors + 3 * i));
 
         glDrawElements(GL_LINE_STRIP, ArraySize(lineloopAsStripIndices), GL_UNSIGNED_SHORT,
                        lineloopAsStripIndices);

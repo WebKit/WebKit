@@ -7,10 +7,7 @@
 //   Tests for sRGB DXT textures (GL_EXT_texture_compression_s3tc_srgb)
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -78,11 +75,12 @@ class DXTSRGBCompressedTextureTest : public ANGLETest<>
         {
             for (GLsizei x = 0; x < test.width; ++x)
             {
-                GLColor exp = reinterpret_cast<const GLColor *>(test.expected)[y * test.width + x];
+                GLColor exp = ANGLE_UNSAFE_TODO(
+                    reinterpret_cast<const GLColor *>(test.expected)[y * test.width + x]);
                 size_t x_actual = (x * kWindowSize + kWindowSize / 2) / test.width;
                 size_t y_actual =
                     ((test.height - y - 1) * kWindowSize + kWindowSize / 2) / test.height;
-                GLColor act = actual[y_actual * kWindowSize + x_actual];
+                GLColor act = ANGLE_UNSAFE_TODO(actual[y_actual * kWindowSize + x_actual]);
                 EXPECT_COLOR_NEAR(exp, act, 2.0);
             }
         }

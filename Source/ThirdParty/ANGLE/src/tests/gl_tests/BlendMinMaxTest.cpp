@@ -4,11 +4,8 @@
 // found in the LICENSE file.
 //
 
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
-
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
 
 using namespace angle;
 
@@ -62,7 +59,7 @@ class BlendMinMaxTest : public ANGLETest<>
         {
             for (size_t j = 0; j < 4; j++)
             {
-                colors[i].values[j] =
+                ANGLE_UNSAFE_TODO(colors[i].values[j]) =
                     static_cast<float>(minValue + (rand() % (maxValue - minValue)));
             }
         }
@@ -70,7 +67,7 @@ class BlendMinMaxTest : public ANGLETest<>
         float prevColor[4];
         for (size_t i = 0; i < colorCount; i++)
         {
-            const Color &color = colors[i];
+            const Color &color = ANGLE_UNSAFE_TODO(colors[i]);
             glUseProgram(mProgram);
             glUniform4f(mColorLocation, color.values[0], color.values[1], color.values[2],
                         color.values[3]);
@@ -87,7 +84,8 @@ class BlendMinMaxTest : public ANGLETest<>
                 glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, ubytePixel);
                 for (size_t componentIdx = 0; componentIdx < ArraySize(pixel); componentIdx++)
                 {
-                    pixel[componentIdx] = ubytePixel[componentIdx] / 255.0f;
+                    ANGLE_UNSAFE_TODO(pixel[componentIdx]) =
+                        ANGLE_UNSAFE_TODO(ubytePixel[componentIdx]) / 255.0f;
                 }
             }
             else if (type == GL_FLOAT)
@@ -104,9 +102,9 @@ class BlendMinMaxTest : public ANGLETest<>
                 const float errorRange = 1.0f / 255.0f;
                 for (size_t componentIdx = 0; componentIdx < ArraySize(pixel); componentIdx++)
                 {
-                    EXPECT_NEAR(
+                    ANGLE_UNSAFE_TODO(EXPECT_NEAR(
                         getExpected(blendMin, color.values[componentIdx], prevColor[componentIdx]),
-                        pixel[componentIdx], errorRange)
+                        pixel[componentIdx], errorRange))
                         << " blendMin=" << blendMin << " componentIdx=" << componentIdx << std::endl
                         << " color.values[0]=" << color.values[0]
                         << " prevColor[0]=" << prevColor[0] << std::endl
@@ -119,7 +117,7 @@ class BlendMinMaxTest : public ANGLETest<>
                 }
             }
 
-            memcpy(prevColor, pixel, sizeof(pixel));
+            ANGLE_UNSAFE_TODO(memcpy(prevColor, pixel, sizeof(pixel)));
         }
     }
 

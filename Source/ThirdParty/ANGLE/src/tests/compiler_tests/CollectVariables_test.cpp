@@ -7,11 +7,8 @@
 //   Some tests for shader inspection
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <memory>
+#include "common/unsafe_buffers.h"
 
 #include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
@@ -1100,7 +1097,7 @@ TEST_F(CollectGeometryVariablesTest, GLInArraySize)
 
         const ShaderVariable &glIn = inVaryings[0];
         ASSERT_EQ("gl_in", glIn.name);
-        EXPECT_EQ(kArraySizeForInputPrimitives[i], glIn.arraySizes[0]);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(kArraySizeForInputPrimitives[i], glIn.arraySizes[0]));
     }
 }
 
@@ -1450,7 +1447,7 @@ TEST_F(CollectGeometryVariablesTest, CollectInputs)
     {
         const ShaderVariable &varying = inputVaryings[i];
 
-        EXPECT_EQ(kVaryingName[i], varying.name);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(kVaryingName[i], varying.name));
         EXPECT_TRUE(varying.isArray());
         EXPECT_FALSE(varying.isStruct());
         EXPECT_TRUE(varying.staticUse);
@@ -1490,7 +1487,7 @@ TEST_F(CollectGeometryVariablesTest, CollectInputArraySizeForUnsizedInput)
         const ShaderVariable *varying = &inputVaryings[0];
         EXPECT_EQ("texcoord", varying->name);
         ASSERT_EQ(1u, varying->arraySizes.size());
-        EXPECT_EQ(kArraySizeForInputPrimitives[i], varying->arraySizes.back());
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(kArraySizeForInputPrimitives[i], varying->arraySizes.back()));
     }
 }
 

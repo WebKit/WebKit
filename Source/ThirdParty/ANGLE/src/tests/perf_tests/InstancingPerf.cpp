@@ -7,11 +7,8 @@
 //   Performance tests for ANGLE instanced draw calls.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "ANGLEPerfTest.h"
+#include "common/unsafe_buffers.h"
 
 #include <cmath>
 #include <sstream>
@@ -158,13 +155,14 @@ void InstancingPerfBenchmark::initializeBenchmark()
         {
             for (GLuint indexIndex = 0; indexIndex < 6; ++indexIndex)
             {
-                indexData.push_back(baseIndexData[indexIndex] + pointIndex * pointVertexStride);
+                indexData.push_back(ANGLE_UNSAFE_TODO(baseIndexData[indexIndex]) +
+                                    pointIndex * pointVertexStride);
             }
 
             Vector3 randVec = RandomVector3(&mRNG);
             for (GLuint vertexIndex = 0; vertexIndex < 4; ++vertexIndex)
             {
-                positionData.push_back(basePositionData[vertexIndex]);
+                positionData.push_back(ANGLE_UNSAFE_TODO(basePositionData[vertexIndex]));
                 mTranslateData.push_back(randVec);
             }
         }

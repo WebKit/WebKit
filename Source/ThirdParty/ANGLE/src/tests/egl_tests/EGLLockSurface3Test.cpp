@@ -7,11 +7,8 @@
 //   EGL extension EGL_KHR_lock_surface
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <gtest/gtest.h>
+#include "common/unsafe_buffers.h"
 
 #include <chrono>
 #include <iostream>
@@ -83,10 +80,10 @@ class EGLLockSurface3Test : public ANGLETest<>
     {
         for (uint32_t y = 0; y < kHeight; y++)
         {
-            uint32_t *pixelPtr = bitMapPtr + (y * (stride / 4));
+            uint32_t *pixelPtr = ANGLE_UNSAFE_TODO(bitMapPtr + (y * (stride / 4)));
             for (uint32_t x = 0; x < kWidth; x++)
             {
-                pixelPtr[x] = ChannelOrder(colorIn).asUint();
+                ANGLE_UNSAFE_TODO(pixelPtr[x]) = ChannelOrder(colorIn).asUint();
             }
         }
     }
@@ -99,7 +96,7 @@ class EGLLockSurface3Test : public ANGLETest<>
         std::array<uint32_t, (kWidth * kHeight)> bitmap;
         for (uint32_t i = 0; i < (kWidth * kHeight); i++)
         {
-            bitmap[i] = bitMapPtr[i];
+            bitmap[i] = ANGLE_UNSAFE_TODO(bitMapPtr[i]);
         }
 
         if (bitmap != checkmap)

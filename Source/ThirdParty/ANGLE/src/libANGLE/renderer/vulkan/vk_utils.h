@@ -1528,7 +1528,7 @@ void InitGetImageSubresourceLayoutEXTFunctionFromKHR();
 GLenum CalculateGenerateMipmapFilter(ContextVk *contextVk, angle::FormatID formatID);
 
 bool HasRequiredGlobalPriority(
-    const std::vector<VkQueueFamilyGlobalPriorityPropertiesEXT> &globalPriorityProperties,
+    const VkQueueFamilyGlobalPriorityProperties &globalPriorityProperties,
     VkQueueGlobalPriorityEXT requiredGlobalPriority);
 
 namespace gl_vk

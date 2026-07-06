@@ -126,9 +126,9 @@ QueryT CastFromStateValue(GLenum pname, NativeT value)
     switch (queryType)
     {
         case GL_INT:
-        case GL_INT_64_ANGLEX:
+        case GL_INT64:
         case GL_UNSIGNED_INT:
-        case GL_UINT_64_ANGLEX:
+        case GL_UNSIGNED_INT64:
             return CastFromStateValueToInt<QueryT, NativeT>(pname, value);
         case GL_FLOAT:
             return CastFromStateValueToFloat<QueryT, NativeT>(pname, value);
@@ -164,9 +164,9 @@ NativeT CastQueryValueTo(GLenum pname, QueryT value)
     switch (nativeType)
     {
         case GL_INT:
-        case GL_INT_64_ANGLEX:
+        case GL_INT64:
         case GL_UNSIGNED_INT:
-        case GL_UINT_64_ANGLEX:
+        case GL_UNSIGNED_INT64:
             return CastQueryValueToInt<NativeT, QueryT>(pname, value);
         case GL_FLOAT:
             return static_cast<NativeT>(value);
@@ -227,7 +227,7 @@ void CastStateValues(const Context *context,
             outParams[i] = CastFromStateValue<QueryT>(pname, floatParams[i]);
         }
     }
-    else if (nativeType == GL_INT_64_ANGLEX)
+    else if (nativeType == GL_INT64)
     {
         std::vector<GLint64> int64Params(numParams, 0);
         context->getInteger64vImpl(pname, int64Params.data());
@@ -286,7 +286,7 @@ void CastIndexedStateValues(Context *context,
                 (boolParams[i] == GL_FALSE ? static_cast<QueryT>(0) : static_cast<QueryT>(1));
         }
     }
-    else if (nativeType == GL_INT_64_ANGLEX)
+    else if (nativeType == GL_INT64)
     {
         std::vector<GLint64> int64Params(numParams, 0);
         context->getInteger64i_v(pname, index, int64Params.data());

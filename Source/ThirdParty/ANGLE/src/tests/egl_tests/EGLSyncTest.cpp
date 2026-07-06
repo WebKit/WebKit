@@ -6,11 +6,8 @@
 // EGLSyncTest.cpp:
 //   Tests of EGL_KHR_fence_sync and EGL_KHR_wait_sync extensions.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <gtest/gtest.h>
+#include "common/unsafe_buffers.h"
 
 #include "test_utils/ANGLETest.h"
 #include "test_utils/angle_test_configs.h"
@@ -768,7 +765,8 @@ TEST_P(EGLSyncTest, NegativeValidationBadAttributes)
 
     for (size_t i = 0; i < 3; i++)
     {
-        sync = eglCreateSyncKHR(display, EGL_SYNC_FENCE_KHR, &invalidCreateSyncAttributeList[i][0]);
+        sync = eglCreateSyncKHR(display, EGL_SYNC_FENCE_KHR,
+                                &ANGLE_UNSAFE_TODO(invalidCreateSyncAttributeList[i][0]));
 
         ASSERT_EQ(sync, EGL_NO_SYNC_KHR);
         ASSERT_EGL_ERROR(EGL_BAD_ATTRIBUTE);

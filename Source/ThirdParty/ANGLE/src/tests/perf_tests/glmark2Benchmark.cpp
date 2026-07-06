@@ -7,11 +7,8 @@
 //   Runs the glmark2 benchmark.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include <gtest/gtest.h>
+#include "common/unsafe_buffers.h"
 
 #include <stdio.h>
 #include <sstream>
@@ -153,7 +150,7 @@ class GLMark2Benchmark : public testing::TestWithParam<GLMark2TestParams>
         {
             args.push_back("--benchmark");
             args.push_back(benchmark);
-            fprintf(stderr, "Running benchmark: %s\n", benchmark);
+            ANGLE_UNSAFE_TODO(fprintf(stderr, "Running benchmark: %s\n", benchmark));
         }
         args.push_back(nullptr);
 

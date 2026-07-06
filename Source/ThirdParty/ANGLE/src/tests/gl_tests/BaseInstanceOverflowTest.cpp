@@ -36,6 +36,7 @@ class RobustBaseInstanceOverflowTest : public ANGLETest<>
         }
     }
 };
+
 // Regression Test (crbug.com/489791424)
 // Reproduces integer overflow in vertex buffer streaming path.
 // The bug occurs when baseInstance is large, causing a wrap-around in reservation
@@ -65,34 +66,12 @@ TEST_P(RobustBaseInstanceOverflowTest, BaseInstanceOverflow)
     glVertexAttribDivisor(posLoc, 1);
 
     // Trigger overflow by using a large baseInstance.
-    // elementCount calculation in Renderer11::getVertexSpaceRequired:
-    // (instances + baseInstance) / divisor
-    // If instances = 300, baseInstance = 0xFFFFFF00, divisor = 1:
-    // 300 + 0xFFFFFF00 = 0x10000002C.
-    // 32-bit truncation results in 0x2C = 44 elements reserved.
-    // However, StreamingVertexBufferInterface::storeDynamicAttribute uses 64-bit size_t:
-    // adjustedCount = 300 + 0xFFFFFF00 = 4,294,967,340 elements copied.
     GLuint baseInstance   = 0xFFFFFF00;
     GLsizei instanceCount = 300;
 
-    // This call is expected to crash the GPU process without the fix.
-    // With the fix, the large baseInstance is caught by validation in VertexDataManager (D3D11)
-    // or ContextGL (OpenGL) because it exceeds the source buffer's bounds, returning
-    // GL_INVALID_OPERATION (D3D11) or avoiding the draw (OpenGL fallback).
+    // The call should fail due to validation of base instance + count overflow.
     glDrawArraysInstancedBaseInstanceANGLE(GL_TRIANGLES, 0, 3, instanceCount, baseInstance);
-
-    if (isD3D11Renderer())
-    {
-        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
-    }
-    else if (isMetalRenderer())
-    {
-        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
-    }
-    else
-    {
-        EXPECT_GL_NO_ERROR();
-    }
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
 // Test that baseinstance + primcount overflow is properly validated for backends that cannot draw
@@ -167,7 +146,7 @@ TEST_P(BaseInstanceOverflowTest, BaseInstanceOverflow2)
     for (const auto &subcase : subcases)
     {
         SCOPED_TRACE(testing::Message() << "primcount: " << subcase.primcount
-                                        << " baseInstance:" << subcase.baseInstance);
+                                        << " baseInstance: " << subcase.baseInstance);
         // Use divisor = primcount so only one element (at baseInstance) is accessed.
         const GLuint divisor = static_cast<GLuint>(subcase.primcount);
         glVertexAttribDivisor(dataLoc, divisor);
@@ -180,11 +159,12 @@ TEST_P(BaseInstanceOverflowTest, BaseInstanceOverflow2)
         glBindBuffer(GL_ARRAY_BUFFER, instBuffer);
         glBufferData(GL_ARRAY_BUFFER, bufSize, nullptr, GL_DYNAMIC_DRAW);
         GLenum error = glGetError();
-        ANGLE_SKIP_TEST_IF(error == static_cast<GLenum>(GL_OUT_OF_MEMORY));
+        ANGLE_SKIP_TEST_IF(error == GL_OUT_OF_MEMORY);
+
         const bool largeBuffersMayBeInvalid = !isMetalRenderer();
         if (largeBuffersMayBeInvalid)
         {
-            ANGLE_SKIP_TEST_IF(error == static_cast<GLenum>(GL_INVALID_OPERATION));
+            continue;
         }
         EXPECT_EQ(error, static_cast<GLenum>(GL_NO_ERROR));
 
@@ -205,6 +185,8 @@ TEST_P(BaseInstanceOverflowTest, BaseInstanceOverflow2)
             static_cast<uint64_t>(subcase.primcount - 1) + subcase.baseInstance >
             std::numeric_limits<GLuint>::max();
         error = glGetError();
+        // The D3D backend may return OOM in emulation path
+        ANGLE_SKIP_TEST_IF(error == GL_OUT_OF_MEMORY);
         if (error == GL_INVALID_OPERATION)
         {
             EXPECT_TRUE(expectOverflow);
@@ -212,7 +194,7 @@ TEST_P(BaseInstanceOverflowTest, BaseInstanceOverflow2)
         else
         {
             EXPECT_EQ(error, static_cast<GLenum>(GL_NO_ERROR));
-            EXPECT_TRUE(!(isMetalRenderer() && expectOverflow));
+            EXPECT_TRUE(!expectOverflow);
 
             // No overflow; the draw should succeed and produce green.
             ASSERT_GL_NO_ERROR();

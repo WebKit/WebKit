@@ -31,19 +31,19 @@ class FramebufferAttachmentObjectImpl : public angle::Subject
 
     virtual angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                                     GLenum binding,
-                                                    const gl::ImageIndex &imageIndex,
+                                                    const gl::OwnImageIndex &imageIndex,
                                                     GLsizei samples,
                                                     FramebufferAttachmentRenderTarget **rtOut);
 
     virtual angle::Result initializeContents(const gl::Context *context,
                                              GLenum binding,
-                                             const gl::ImageIndex &imageIndex);
+                                             const gl::OwnImageIndex &imageIndex);
 };
 
 inline angle::Result FramebufferAttachmentObjectImpl::getAttachmentRenderTarget(
     const gl::Context *context,
     GLenum binding,
-    const gl::ImageIndex &imageIndex,
+    const gl::OwnImageIndex &imageIndex,
     GLsizei samples,
     FramebufferAttachmentRenderTarget **rtOut)
 {
@@ -54,7 +54,7 @@ inline angle::Result FramebufferAttachmentObjectImpl::getAttachmentRenderTarget(
 inline angle::Result FramebufferAttachmentObjectImpl::initializeContents(
     const gl::Context *context,
     GLenum binding,
-    const gl::ImageIndex &imageIndex)
+    const gl::OwnImageIndex &imageIndex)
 {
     UNIMPLEMENTED();
     return angle::Result::Stop;

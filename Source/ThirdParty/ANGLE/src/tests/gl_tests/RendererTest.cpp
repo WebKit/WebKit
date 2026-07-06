@@ -104,11 +104,6 @@ TEST_P(RendererTest, RequestedRendererCreated)
             }
         }
 
-        if (platform.majorVersion == 9 && platform.minorVersion == 3)
-        {
-            acceptableShaderModels.push_back("ps_4_0_level_9_3");
-        }
-
         bool found = false;
         for (size_t i = 0; i < acceptableShaderModels.size(); i++)
         {

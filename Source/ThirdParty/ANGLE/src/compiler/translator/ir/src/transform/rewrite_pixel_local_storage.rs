@@ -638,7 +638,10 @@ fn transform_store_by_image(
                     &mut transforms,
                     instruction::store(ir_meta, highp_value, clamped),
                 );
-                highp_value
+                traverser::add_typed_instruction(
+                    &mut transforms,
+                    instruction::load(ir_meta, highp_value),
+                )
             } else {
                 clamped
             };
@@ -699,8 +702,7 @@ fn transform_store_by_image(
                 traverser::add_typed_instruction(
                     &mut transforms,
                     instruction::load(ir_meta, highp_value),
-                );
-                highp_value
+                )
             } else {
                 lowbits
             };

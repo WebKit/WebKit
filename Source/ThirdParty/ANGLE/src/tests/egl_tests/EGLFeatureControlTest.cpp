@@ -6,12 +6,9 @@
 // Tests the eglQueryStringiANGLE and eglQueryDisplayAttribANGLE functions exposed by the
 // extension EGL_ANGLE_feature_control.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <gtest/gtest.h>
 #include <optional>
+#include "common/unsafe_buffers.h"
 
 #include "common/string_utils.h"
 #include "libANGLE/Display.h"
@@ -239,7 +236,8 @@ TEST_P(EGLFeatureControlTest, OverrideFeaturesWildcard)
             std::transform(featureName.begin(), featureName.end(), featureName.begin(),
                            [](unsigned char c) { return std::tolower(c); });
 
-            const bool featureMatch = strncmp(featureName.c_str(), "allowhostimage", 14) == 0;
+            const bool featureMatch =
+                ANGLE_UNSAFE_TODO(strncmp(featureName.c_str(), "allowhostimage", 14)) == 0;
 
             std::optional<bool> overrideState;
             if (featureMatch)
@@ -342,7 +340,7 @@ TEST_P(EGLFeatureControlTest, OverrideFeaturesDependent)
         bool featureMatch = false;
         for (auto *ptr : featuresExpectDisabled)
         {
-            if (strcmp(ptr, features[i]->name) == 0)
+            if (ANGLE_UNSAFE_TODO(strcmp(ptr, features[i]->name)) == 0)
             {
                 featureMatch = true;
                 break;

@@ -7,11 +7,8 @@
 //   Base class for google test performance tests
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "ANGLEPerfTest.h"
+#include "common/unsafe_buffers.h"
 
 #if defined(ANGLE_PLATFORM_ANDROID)
 #    include <android/log.h>
@@ -125,7 +122,7 @@ const unsigned char *GetPerfTraceCategoryEnabled(PlatformMethods *platform,
     {
         for (const TraceCategory &category : gTraceCategories)
         {
-            if (strcmp(category.name, categoryName) == 0)
+            if (ANGLE_UNSAFE_TODO(strcmp(category.name, categoryName)) == 0)
             {
                 return &category.enabled;
             }
@@ -187,7 +184,8 @@ void DumpTraceEventsToJSONFile(const std::vector<TraceEvent> &traceEvents,
         js::Document::StringRefType eventName(traceEvent.name);
         js::Document::StringRefType categoryName(traceEvent.categoryName);
         js::Document::StringRefType pidName(
-            strcmp(traceEvent.categoryName, "gpu.angle.gpu") == 0 ? "GPU" : "ANGLE");
+            ANGLE_UNSAFE_TODO(strcmp(traceEvent.categoryName, "gpu.angle.gpu")) == 0 ? "GPU"
+                                                                                     : "ANGLE");
 
         value.AddMember("name", eventName, allocator);
         value.AddMember("cat", categoryName, allocator);
@@ -203,11 +201,11 @@ void DumpTraceEventsToJSONFile(const std::vector<TraceEvent> &traceEvents,
 
     if (WriteJsonFile(outputFileName, &doc))
     {
-        printf("Wrote trace file to %s\n", outputFileName);
+        ANGLE_UNSAFE_TODO(printf("Wrote trace file to %s\n", outputFileName));
     }
     else
     {
-        printf("Error writing trace file to %s\n", outputFileName);
+        ANGLE_UNSAFE_TODO(printf("Error writing trace file to %s\n", outputFileName));
     }
 }
 
@@ -299,7 +297,7 @@ TraceEvent::TraceEvent(char phaseIn,
     : phase(phaseIn), categoryName(categoryNameIn), name{}, timestamp(timestampIn), tid(tidIn)
 {
     ASSERT(strlen(nameIn) < kMaxNameLen);
-    strcpy(name, nameIn);
+    ANGLE_UNSAFE_TODO(strcpy(name, nameIn));
 }
 
 ANGLEPerfTest::ANGLEPerfTest(const std::string &name,
@@ -701,7 +699,7 @@ void ANGLEPerfTest::processClockResult(const char *metric, double resultSeconds)
     bool foundMetric = mReporter->GetMetricInfo(metric, &metricInfo);
     if (!foundMetric)
     {
-        fprintf(stderr, "Error getting metric info for %s.\n", metric);
+        ANGLE_UNSAFE_TODO(fprintf(stderr, "Error getting metric info for %s.\n", metric));
         return;
     }
     units = metricInfo.units;
@@ -1126,8 +1124,8 @@ void ANGLERenderTest::SetUp()
 
     if (gVerboseLogging)
     {
-        printf("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
-        printf("GL_VERSION: %s\n", glGetString(GL_VERSION));
+        ANGLE_UNSAFE_TODO(printf("GL_RENDERER: %s\n", glGetString(GL_RENDERER)));
+        ANGLE_UNSAFE_TODO(printf("GL_VERSION: %s\n", glGetString(GL_VERSION)));
         switch (mEndQueryFlushPolicy)
         {
             case EndQueryFlushPolicy::Flush:
@@ -1196,8 +1194,9 @@ void ANGLERenderTest::initPerfCounters()
 
     if (!IsGLExtensionEnabled(kPerfMonitorExtensionName))
     {
-        fprintf(stderr, "Cannot report perf metrics because %s is not available.\n",
-                kPerfMonitorExtensionName);
+        ANGLE_UNSAFE_TODO(fprintf(stderr,
+                                  "Cannot report perf metrics because %s is not available.\n",
+                                  kPerfMonitorExtensionName));
         return;
     }
 

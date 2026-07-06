@@ -7,11 +7,8 @@
 //   Basic implementation of a test harness in ANGLE.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "TestSuite.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 #include "common/hash_containers.h"
@@ -104,7 +101,7 @@ void SignalHandler(int sig, siginfo_t *info, void *reserved)
         std::cerr << "SignalHandler: TestSuite not initialized!" << std::endl;
     }
 
-    g_originalSigaction[sig].sa_sigaction(sig, info, reserved);
+    ANGLE_UNSAFE_TODO(g_originalSigaction[sig].sa_sigaction(sig, info, reserved));
 }
 
 void InstallExceptionHandlers()
@@ -118,9 +115,10 @@ void InstallExceptionHandlers()
     // The list of signals which are considered to be crashes.
     const int exceptionSignals[] = {SIGSEGV, SIGABRT, SIGFPE, SIGILL, SIGBUS, -1};
 
-    for (unsigned int i = 0; exceptionSignals[i] != -1; ++i)
+    for (unsigned int i = 0; ANGLE_UNSAFE_TODO(exceptionSignals[i]) != -1; ++i)
     {
-        sigaction(exceptionSignals[i], &sa, &g_originalSigaction[exceptionSignals[i]]);
+        ANGLE_UNSAFE_TODO(
+            sigaction(exceptionSignals[i], &sa, &g_originalSigaction[exceptionSignals[i]]));
     }
 }
 #endif  // ANGLE_PLATFORM_ANDROID
@@ -396,7 +394,7 @@ TestIdentifier GetTestIdentifier(const testing::TestInfo &testInfo)
 
 bool IsTestDisabled(const testing::TestInfo &testInfo)
 {
-    return ::strstr(testInfo.name(), "DISABLED_") == testInfo.name();
+    return ANGLE_UNSAFE_TODO(::strstr(testInfo.name(), "DISABLED_")) == testInfo.name();
 }
 
 using TestIdentifierFilter = std::function<bool(const TestIdentifier &id)>;
@@ -1040,7 +1038,8 @@ TestIdentifier &TestIdentifier::operator=(const TestIdentifier &other) = default
 
 void TestIdentifier::snprintfName(char *outBuffer, size_t maxLen) const
 {
-    snprintf(outBuffer, maxLen, "%s.%s", testSuiteName.c_str(), testName.c_str());
+    ANGLE_UNSAFE_TODO(
+        snprintf(outBuffer, maxLen, "%s.%s", testSuiteName.c_str(), testName.c_str()));
 }
 
 // static
@@ -1168,19 +1167,20 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
             continue;
         }
 
-        if (strstr(argv[argIndex], "--gtest_filter=") == argv[argIndex])
+        if (ANGLE_UNSAFE_TODO(strstr(argv[argIndex], "--gtest_filter=")) ==
+            ANGLE_UNSAFE_TODO(argv[argIndex]))
         {
             filterArgIndex = argIndex;
         }
         else
         {
             // Don't include disabled tests in test lists unless the user asks for them.
-            if (strcmp("--gtest_also_run_disabled_tests", argv[argIndex]) == 0)
+            if (ANGLE_UNSAFE_TODO(strcmp("--gtest_also_run_disabled_tests", argv[argIndex])) == 0)
             {
                 alsoRunDisabledTests = true;
             }
 
-            mChildProcessArgs.push_back(argv[argIndex]);
+            mChildProcessArgs.push_back(ANGLE_UNSAFE_TODO(argv[argIndex]));
         }
         ++argIndex;
     }
@@ -1747,7 +1747,7 @@ bool TestSuite::finishProcess(ProcessInfo *processInfo)
         }
         else
         {
-            printf(" (%s)\n", ResultTypeToString(result.type));
+            ANGLE_UNSAFE_TODO(printf(" (%s)\n", ResultTypeToString(result.type)));
             mFailureCount++;
 
             const std::string &batchStdout = processInfo->process->getStdout();
@@ -1821,7 +1821,7 @@ int TestSuite::run()
 [==========] 1 test from 1 test suite ran. (24 ms total)
 [  PASSED  ] 1 test.
 )";
-        printf(kPlaceholderTestTest);
+        ANGLE_UNSAFE_TODO(printf(kPlaceholderTestTest));
 #endif  // defined(ANGLE_PLATFORM_ANDROID)
 
         return EXIT_SUCCESS;

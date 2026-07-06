@@ -6,10 +6,7 @@
 
 // SemaphoreTest.cpp : Tests of the GL_EXT_semaphore extension.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
 #include "test_utils/gl_raii.h"
@@ -44,7 +41,7 @@ TEST_P(SemaphoreTest, SemaphoreShouldBeSemaphore)
 
     for (GLsizei i = 0; i < kSemaphoreCount; ++i)
     {
-        EXPECT_TRUE(glIsSemaphoreEXT(semaphores[i]));
+        ANGLE_UNSAFE_TODO(EXPECT_TRUE(glIsSemaphoreEXT(semaphores[i])));
     }
 
     glDeleteSemaphoresEXT(kSemaphoreCount, semaphores);

@@ -856,11 +856,12 @@ angle::Result FramebufferMtl::prepareForUse(const gl::Context *context) const
 
         if (mBackbuffer->hasRobustResourceInit())
         {
-            ANGLE_TRY(mBackbuffer->initializeContents(context, GL_BACK, gl::ImageIndex::Make2D(0)));
+            ANGLE_TRY(mBackbuffer->initializeContents(
+                context, GL_BACK, gl::OwnImageIndex(gl::ImageIndex::Make2D(0))));
             if (mBackbuffer->hasDepthStencil())
             {
-                ANGLE_TRY(
-                    mBackbuffer->initializeContents(context, GL_DEPTH, gl::ImageIndex::Make2D(0)));
+                ANGLE_TRY(mBackbuffer->initializeContents(
+                    context, GL_DEPTH, gl::OwnImageIndex(gl::ImageIndex::Make2D(0))));
             }
         }
     }

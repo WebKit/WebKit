@@ -1800,7 +1800,15 @@ void ProgramExecutableD3D::defineUniformBase(gl::ShaderType shaderType,
         return;
     }
 
-    if (uniform.isBuiltIn() && !uniform.isEmulatedBuiltIn())
+    const SharedCompiledShaderStateD3D &shaderD3D = mAttachedShaders[shaderType];
+
+    bool skipUniformEncoding =
+        // Uniform is a real builtin in HLSL
+        (uniform.isBuiltIn() && !uniform.isEmulatedBuiltIn()) ||
+        // Uniform ended up as unreferenced during HLSL generation.
+        !shaderD3D->hasUniform(uniform.name);
+
+    if (skipUniformEncoding)
     {
         UniformEncodingVisitorD3D visitor(shaderType, HLSLRegisterType::None, &stubEncoder,
                                           uniformMap);
@@ -1808,9 +1816,8 @@ void ProgramExecutableD3D::defineUniformBase(gl::ShaderType shaderType,
         return;
     }
 
-    const SharedCompiledShaderStateD3D &shaderD3D = mAttachedShaders[shaderType];
-    unsigned int startRegister                    = shaderD3D->getUniformRegister(uniform.name);
-    ShShaderOutput outputType                     = shaderD3D->compilerOutputType;
+    unsigned int startRegister = shaderD3D->getUniformRegister(uniform.name);
+    ShShaderOutput outputType  = shaderD3D->compilerOutputType;
     sh::HLSLBlockEncoder encoder(sh::HLSLBlockEncoder::GetStrategyFor(outputType), true);
     encoder.skipRegisters(startRegister);
 

@@ -7,11 +7,8 @@
 //   Performance benchmark for angle::ComputeGenericHash(...)
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "ANGLEPerfTest.h"
+#include "common/unsafe_buffers.h"
 
 #include <chrono>
 
@@ -53,7 +50,7 @@ void ComputeGenericHashPerfTest<T>::SetUp()
         constexpr size_t kKeySize = key.size();
         std::vector<uint8_t> bytes(kKeySize);
         FillVectorWithRandomUBytes(&mRNG, &bytes);
-        memcpy(key.data(), bytes.data(), kKeySize);
+        ANGLE_UNSAFE_TODO(memcpy(key.data(), bytes.data(), kKeySize));
         mKeys.insert(key);
     }
 }
@@ -90,7 +87,7 @@ class KeySizeNames
     template <typename BitSetType>
     static std::string GetName(int typeIndex)
     {
-        return kTestTypeNames[typeIndex];
+        return ANGLE_UNSAFE_TODO(kTestTypeNames[typeIndex]);
     }
 };
 

@@ -62,12 +62,12 @@ class SurfaceD3D : public SurfaceImpl
 
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,
-                                            const gl::ImageIndex &imageIndex,
+                                            const gl::OwnImageIndex &ownImageIndex,
                                             GLsizei samples,
                                             FramebufferAttachmentRenderTarget **rtOut) override;
     angle::Result initializeContents(const gl::Context *context,
                                      GLenum binding,
-                                     const gl::ImageIndex &imageIndex) override;
+                                     const gl::OwnImageIndex &ownImageIndex) override;
 
     const angle::Format *getClientBufferTextureColorFormat() const override;
 

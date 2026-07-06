@@ -1139,7 +1139,11 @@ bool TIntermSwitch::replaceChildNode(TIntermNode *original, TIntermNode *replace
     return false;
 }
 
-TIntermCase::TIntermCase(const TIntermCase &node) : TIntermCase(node.mCondition->deepCopy()) {}
+TIntermCase::TIntermCase(const TIntermCase &node)
+    : TIntermCase(node.mCondition ? node.mCondition->deepCopy() : nullptr)
+{
+    setLine(node.getLine());
+}
 
 size_t TIntermCase::getChildCount() const
 {

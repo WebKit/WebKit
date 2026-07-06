@@ -186,7 +186,6 @@ ProgramD3DMetadata::ProgramD3DMetadata(
     const gl::ShaderMap<SharedCompiledShaderStateD3D> &attachedShaders,
     int shaderVersion)
     : mRendererMajorShaderModel(renderer->getMajorShaderModel()),
-      mShaderModelSuffix(renderer->getShaderModelSuffix()),
       mUsesViewScale(renderer->presentPathFastEnabled()),
       mCanSelectViewInVertexShader(renderer->canSelectViewInVertexShader()),
       mFragmentShader(fragmentShader),
@@ -282,10 +281,7 @@ bool ProgramD3DMetadata::addsPointCoordToVertexShader() const
 
 bool ProgramD3DMetadata::usesTransformFeedbackGLPosition() const
 {
-    // gl_Position only needs to be outputted from the vertex shader if transform feedback is
-    // active. This isn't supported on D3D11 Feature Level 9_3, so we don't output gl_Position from
-    // the vertex shader in this case. This saves us 1 output vector.
-    return !(mRendererMajorShaderModel >= 4 && mShaderModelSuffix != "");
+    return true;
 }
 
 bool ProgramD3DMetadata::usesSystemValuePointSize() const
@@ -655,19 +651,6 @@ angle::Result ProgramD3D::linkJobImpl(d3d::Context *context,
                        << "See UniformBlockToStructuredBufferTranslation.md "
                        << "(https://shorturl.at/drFY7) for details.";
             }
-        }
-    }
-
-    if (mRenderer->getNativeLimitations().noFrontFacingSupport)
-    {
-        const SharedCompiledShaderStateD3D &fragmentShader =
-            executableD3D->mAttachedShaders[gl::ShaderType::Fragment];
-        if (fragmentShader && fragmentShader->usesFrontFacing)
-        {
-            mState.getExecutable().getInfoLog()
-                << "The current renderer doesn't support gl_FrontFacing";
-            // Fail compilation
-            ANGLE_CHECK_HR(context, false, "gl_FrontFacing not supported", E_NOTIMPL);
         }
     }
 

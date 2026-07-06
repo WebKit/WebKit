@@ -13,7 +13,6 @@
 #  any issues as ANGLE does not internally check for "never supported".
 #
 # MSDN links:
-#  10Level9 9_3: https://msdn.microsoft.com/en-us/library/windows/desktop/mt790740.aspx
 #  10_0: https://msdn.microsoft.com/en-us/library/windows/desktop/cc627090.aspx
 #  10_1: https://msdn.microsoft.com/en-us/library/windows/desktop/cc627091.aspx
 #  11_0: https://msdn.microsoft.com/en-us/library/windows/desktop/ff471325.aspx
@@ -66,19 +65,6 @@ const DXGISupport &GetDefaultSupport()
         D3D11_FORMAT_SUPPORT_DEPTH_STENCIL | D3D11_FORMAT_SUPPORT_MIP_AUTOGEN;
     static const DXGISupport defaultSupport(0, 0, AllSupportFlags);
     return defaultSupport;
-}}
-
-const DXGISupport &GetDXGISupport_9_3(DXGI_FORMAT dxgiFormat)
-{{
-    // clang-format off
-    switch (dxgiFormat)
-    {{
-{table_data_9_3}
-        default:
-            UNREACHABLE();
-            return GetDefaultSupport();
-    }}
-    // clang-format on
 }}
 
 const DXGISupport &GetDXGISupport_10_0(DXGI_FORMAT dxgiFormat)
@@ -148,8 +134,6 @@ const DXGISupport &GetDXGISupport(DXGI_FORMAT dxgiFormat, D3D_FEATURE_LEVEL feat
 {{
     switch (featureLevel)
     {{
-        case D3D_FEATURE_LEVEL_9_3:
-            return GetDXGISupport_9_3(dxgiFormat);
         case D3D_FEATURE_LEVEL_10_0:
             return GetDXGISupport_10_0(dxgiFormat);
         case D3D_FEATURE_LEVEL_10_1:
@@ -172,7 +156,7 @@ const DXGISupport &GetDXGISupport(DXGI_FORMAT dxgiFormat, D3D_FEATURE_LEVEL feat
 
 
 def do_format(format_data):
-    table_data = {'9_3': '', '10_0': '', '10_1': '', '11_0': '', '11_1': ''}
+    table_data = {'10_0': '', '10_1': '', '11_0': '', '11_1': ''}
 
     json_flag_to_d3d = {
         'texture2D': macro_prefix + '2D',
@@ -190,8 +174,6 @@ def do_format(format_data):
         always_supported = set()
         never_supported = set()
         optionally_supported = set()
-        fl_9_3_supported = set()
-        fl_9_3_check = set()
         fl_10_0_supported = set()
         fl_10_1_supported = set()
         fl_11_0_supported = set()
@@ -227,26 +209,14 @@ def do_format(format_data):
                 fl_10_0_check_11_0_supported.update(d3d_flag)
             elif support == '11_0check':
                 fl_11_0_check.update(d3d_flag)
-            elif support == '9_3always_10_0check11_0always':
-                fl_9_3_supported.update(d3d_flag)
-                fl_10_0_check_11_0_supported.update(d3d_flag)
-            elif support == '9_3check_10_0always':
-                fl_9_3_check.update(d3d_flag)
-                fl_10_0_supported.update(d3d_flag)
-            elif support == '9_3check11_0always':
-                fl_9_3_check.update(d3d_flag)
-                fl_10_0_check_11_0_supported.update(d3d_flag)
             else:
                 print("Data specification error: " + support)
                 sys.exit(1)
 
-        for feature_level in ['9_3', '10_0', '10_1', '11_0', '11_1']:
+        for feature_level in ['10_0', '10_1', '11_0', '11_1']:
             always_for_fl = always_supported
             optional_for_fl = optionally_supported
-            if feature_level == '9_3':
-                always_for_fl = fl_9_3_supported.union(always_for_fl)
-                optional_for_fl = fl_9_3_check.union(optional_for_fl)
-            elif feature_level == '10_0':
+            if feature_level == '10_0':
                 always_for_fl = fl_10_0_supported.union(always_for_fl)
                 optional_for_fl = fl_10_0_check_10_1_supported.union(optional_for_fl)
                 optional_for_fl = fl_10_0_check_11_0_supported.union(optional_for_fl)
@@ -292,7 +262,6 @@ def do_format(format_data):
 
 def join_table_data(table_data_1, table_data_2):
     return {
-        '9_3': table_data_1['9_3'] + table_data_2['9_3'],
         '10_0': table_data_1['10_0'] + table_data_2['10_0'],
         '10_1': table_data_1['10_1'] + table_data_2['10_1'],
         '11_0': table_data_1['11_0'] + table_data_2['11_0'],
@@ -321,14 +290,13 @@ def main():
         dxgi_file.close()
         json_data = json.loads(file_data)
 
-        table_data = {'9_3': '', '10_0': '', '10_1': '', '11_0': '', '11_1': ''}
+        table_data = {'10_0': '', '10_1': '', '11_0': '', '11_1': ''}
 
         for format_data in json_data:
             table_data = join_table_data(table_data, do_format(format_data))
 
         out_data = template.format(
             prefix=macro_prefix,
-            table_data_9_3=table_data['9_3'],
             table_data_10_0=table_data['10_0'],
             table_data_10_1=table_data['10_1'],
             table_data_11_0=table_data['11_0'],

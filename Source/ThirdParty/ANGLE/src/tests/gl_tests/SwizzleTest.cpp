@@ -4,10 +4,7 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
 #include <vector>
@@ -139,11 +136,11 @@ void main()
             case GL_RED:
                 return unswizzled[0];
             case GL_GREEN:
-                return unswizzled[1];
+                return ANGLE_UNSAFE_TODO(unswizzled[1]);
             case GL_BLUE:
-                return unswizzled[2];
+                return ANGLE_UNSAFE_TODO(unswizzled[2]);
             case GL_ALPHA:
-                return unswizzled[3];
+                return ANGLE_UNSAFE_TODO(unswizzled[3]);
             case GL_ZERO:
                 return 0;
             case GL_ONE:

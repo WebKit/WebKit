@@ -7,10 +7,7 @@
 //   Tests for the ANGLE_get_image extension.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "image_util/storeimage.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -918,7 +915,7 @@ void TestCompressedTexImage3D(GLenum target, uint32_t numLayers, int clientMajor
 
         // GL_TEXTURE_3D with ASTC requires additional extension
         if (target == GL_TEXTURE_3D &&
-            strcmp(ext.name, "GL_KHR_texture_compression_astc_ldr") == 0 &&
+            ANGLE_UNSAFE_TODO(strcmp(ext.name, "GL_KHR_texture_compression_astc_ldr")) == 0 &&
             !IsGLExtensionEnabled("GL_KHR_texture_compression_astc_sliced_3d") &&
             !IsGLExtensionEnabled("GL_KHR_texture_compression_astc_hdr"))
         {

@@ -61,7 +61,6 @@ namespace rx
 namespace
 {
 constexpr uint32_t g_ConstantBufferSize = sizeof(RtvDsvClearInfo<float>);
-constexpr uint32_t g_VertexSize         = sizeof(d3d11::PositionVertex);
 
 // Updates color, depth and alpha components of cached CB if necessary.
 // Returns true if any constants are updated, false otherwise.
@@ -195,7 +194,6 @@ Clear11::Clear11(Renderer11 *renderer)
       mScissorDisabledRasterizerState(),
       mShaderManager(),
       mConstantBuffer(),
-      mVertexBuffer(),
       mShaderData({})
 {}
 
@@ -267,11 +265,6 @@ angle::Result Clear11::ensureResourcesInitialized(const gl::Context *context)
     return angle::Result::Continue;
 }
 
-bool Clear11::useVertexBuffer() const
-{
-    return (mRenderer->getRenderer11DeviceCaps().featureLevel <= D3D_FEATURE_LEVEL_9_3);
-}
-
 angle::Result Clear11::ensureConstantBufferCreated(const gl::Context *context)
 {
     if (mConstantBuffer.valid())
@@ -297,44 +290,6 @@ angle::Result Clear11::ensureConstantBufferCreated(const gl::Context *context)
     ANGLE_TRY(mRenderer->allocateResource(GetImplAs<Context11>(context), bufferDesc, &initialData,
                                           &mConstantBuffer));
     mConstantBuffer.setInternalName("Clear11ConstantBuffer");
-    return angle::Result::Continue;
-}
-
-angle::Result Clear11::ensureVertexBufferCreated(const gl::Context *context)
-{
-    ASSERT(useVertexBuffer());
-
-    if (mVertexBuffer.valid())
-    {
-        return angle::Result::Continue;
-    }
-
-    // Create vertex buffer with vertices for a quad covering the entire surface
-
-    static_assert((sizeof(d3d11::PositionVertex) % 16) == 0,
-                  "d3d11::PositionVertex should be a multiple of 16 bytes");
-    const d3d11::PositionVertex vbData[6] = {{-1.0f, 1.0f, 0.0f, 1.0f},  {1.0f, -1.0f, 0.0f, 1.0f},
-                                             {-1.0f, -1.0f, 0.0f, 1.0f}, {-1.0f, 1.0f, 0.0f, 1.0f},
-                                             {1.0f, 1.0f, 0.0f, 1.0f},   {1.0f, -1.0f, 0.0f, 1.0f}};
-
-    const UINT vbSize = sizeof(vbData);
-
-    D3D11_BUFFER_DESC bufferDesc;
-    bufferDesc.ByteWidth           = vbSize;
-    bufferDesc.Usage               = D3D11_USAGE_IMMUTABLE;
-    bufferDesc.BindFlags           = D3D11_BIND_VERTEX_BUFFER;
-    bufferDesc.CPUAccessFlags      = 0;
-    bufferDesc.MiscFlags           = 0;
-    bufferDesc.StructureByteStride = 0;
-
-    D3D11_SUBRESOURCE_DATA initialData;
-    initialData.pSysMem          = vbData;
-    initialData.SysMemPitch      = vbSize;
-    initialData.SysMemSlicePitch = initialData.SysMemPitch;
-
-    ANGLE_TRY(mRenderer->allocateResource(GetImplAs<Context11>(context), bufferDesc, &initialData,
-                                          &mVertexBuffer));
-    mVertexBuffer.setInternalName("Clear11VertexBuffer");
     return angle::Result::Continue;
 }
 
@@ -364,7 +319,7 @@ angle::Result Clear11::clearFramebuffer(const gl::Context *context,
     // To clear the remaining buffers, a shader based clear is performed:
     // - The appropriate ShaderManagers (VS & PS) for the clearType is set
     // - A CB containing the clear color and Z values is bound
-    // - An IL and VB are bound (for FL93 and below)
+    // - An IL is bound
     // - ScissorRect/Raststate/Viewport set as required
     // - Blendstate set containing appropriate colorMasks
     // - DepthStencilState set with appropriate parameters for a z or stencil clear if required
@@ -708,15 +663,7 @@ angle::Result Clear11::clearFramebuffer(const gl::Context *context,
     stateManager->setIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
     stateManager->setInputLayout(il);
 
-    if (useVertexBuffer())
-    {
-        ANGLE_TRY(ensureVertexBufferCreated(context));
-        stateManager->setSingleVertexBuffer(&mVertexBuffer, g_VertexSize, 0);
-    }
-    else
-    {
-        stateManager->setSingleVertexBuffer(nullptr, 0, 0);
-    }
+    stateManager->setSingleVertexBuffer(nullptr, 0, 0);
 
     stateManager->setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 

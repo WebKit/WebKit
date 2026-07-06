@@ -8,10 +8,7 @@
 //   For example we can verify a certain call set doesn't break the render pass.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "include/platform/Feature.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/MultiThreadSteps.h"
@@ -686,7 +683,7 @@ void VulkanPerformanceCounterTest::maskedFramebufferFetchDraw(const GLColor &cle
     void *bufferData = glMapBufferRange(
         GL_SHADER_STORAGE_BUFFER, 0, kBufferSize,
         GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
-    memset(bufferData, 0, kBufferSize);
+    ANGLE_UNSAFE_TODO(memset(bufferData, 0, kBufferSize));
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
     // Mask color output
@@ -739,10 +736,12 @@ void VulkanPerformanceCounterTest::maskedFramebufferFetchDrawVerify(const GLColo
         for (uint32_t x = 0; x < kOpsTestSize; ++x)
         {
             uint32_t ssboIndex = (y * kOpsTestSize + x) * 4;
-            EXPECT_NEAR(colorData[ssboIndex + 0], expectedAsVec4[0], 0.05);
-            EXPECT_NEAR(colorData[ssboIndex + 1], expectedAsVec4[1], 0.05);
-            EXPECT_NEAR(colorData[ssboIndex + 2], expectedAsVec4[2], 0.05);
-            EXPECT_NEAR(colorData[ssboIndex + 3], expectedAsVec4[3], 0.05);
+            ANGLE_UNSAFE_TODO({
+                EXPECT_NEAR(colorData[ssboIndex + 0], expectedAsVec4[0], 0.05);
+                EXPECT_NEAR(colorData[ssboIndex + 1], expectedAsVec4[1], 0.05);
+                EXPECT_NEAR(colorData[ssboIndex + 2], expectedAsVec4[2], 0.05);
+                EXPECT_NEAR(colorData[ssboIndex + 3], expectedAsVec4[3], 0.05);
+            })
         }
     }
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
@@ -2059,7 +2058,7 @@ void main()
 
         if (invalidate == Invalidate::AfterEachResolve)
         {
-            glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, discards + 1);
+            glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, ANGLE_UNSAFE_TODO(discards + 1));
         }
         else if (invalidate == Invalidate::AllAtEnd)
         {
@@ -6147,7 +6146,7 @@ void main()
 
     void *mapPtr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, kPackBufferSize, GL_MAP_READ_BIT);
     ASSERT_NE(nullptr, mapPtr);
-    memcpy(actualData.data(), mapPtr, kPackBufferSize);
+    ANGLE_UNSAFE_TODO(memcpy(actualData.data(), mapPtr, kPackBufferSize));
 
     glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
 
@@ -6231,7 +6230,7 @@ void main()
     ASSERT_EQ(getPerfCounters().renderPasses, 1u);
     ASSERT_EQ(getPerfCounters().buffersGhosted, 1u);
 
-    memcpy(mappedBuffer, kUpdateData1.data(), sizeof(kInitialData));
+    ANGLE_UNSAFE_TODO(memcpy(mappedBuffer, kUpdateData1.data(), sizeof(kInitialData)));
 
     glUnmapBuffer(GL_UNIFORM_BUFFER);
     ASSERT_GL_NO_ERROR();
@@ -6827,7 +6826,7 @@ void main()
     EXPECT_GL_NO_ERROR();
     for (unsigned int idx = 0; idx < 4; idx++)
     {
-        EXPECT_EQ(1.0, *(ptr + idx));
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(1.0, *(ptr + idx)));
     }
 
     // Step3
@@ -7466,7 +7465,7 @@ TEST_P(VulkanPerformanceCounterTest, InvalidateThenRepeatedClearThenBlitThenDraw
     GLTexture tex[3];
     for (int i = 0; i < 3; ++i)
     {
-        glBindTexture(GL_TEXTURE_2D, tex[i]);
+        glBindTexture(GL_TEXTURE_2D, ANGLE_UNSAFE_TODO(tex[i]));
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                      nullptr);
     }
@@ -7474,8 +7473,9 @@ TEST_P(VulkanPerformanceCounterTest, InvalidateThenRepeatedClearThenBlitThenDraw
     GLFramebuffer fbo[3];
     for (int i = 0; i < 3; ++i)
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, fbo[i]);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex[i], 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(fbo[i]));
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                               ANGLE_UNSAFE_TODO(tex[i]), 0);
     }
 
     // Expect rpCount+1, color(Clears+0, Loads+1, LoadNones+0, Stores+1, StoreNones+0)
@@ -8136,7 +8136,7 @@ TEST_P(VulkanPerformanceCounterTest, SetTextureSwizzleWithDifferentValueOnFBOAtt
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, swizzle_B);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, GL_ALPHA);
                 drawQuad(textureProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
-                EXPECT_PIXEL_COLOR_EQ(0, 0, expectedColors[loop]);
+                ANGLE_UNSAFE_TODO(EXPECT_PIXEL_COLOR_EQ(0, 0, expectedColors[loop]));
                 loop++;
             }
         }
@@ -8362,7 +8362,7 @@ TEST_P(VulkanPerformanceCounterTest_ES31, DestroyAtomicCounterBufferAlsoDestroyD
     {
         // Allocate a padding buffer so that atomicCounterBuffer will be allocated in different
         // offset
-        glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, paddingBuffers[i]);
+        glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, ANGLE_UNSAFE_TODO(paddingBuffers[i]));
         glBufferData(GL_ATOMIC_COUNTER_BUFFER, 256, nullptr, GL_STATIC_DRAW);
         // Allocate, use, destroy atomic counter buffer
         GLBuffer atomicCounterBuffer;
@@ -8710,7 +8710,7 @@ TEST_P(VulkanPerformanceCounterTest,
         glMapBufferRange(GL_ARRAY_BUFFER, 0, bufferSize, GL_MAP_READ_BIT));
     ASSERT_NE(nullptr, mapPtr);
     EXPECT_EQ(0x89abcdef, mapPtr[0]);
-    EXPECT_EQ(0x89abcdef, mapPtr[count - 1]);
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(0x89abcdef, mapPtr[count - 1]));
     glUnmapBuffer(GL_ARRAY_BUFFER);
     ASSERT_GL_NO_ERROR();
 }
@@ -9009,9 +9009,10 @@ TEST_P(VulkanPerformanceCounterTest, ClearThenBlitThenDraw)
     GLuint stencilValue = 0x55;
     for (size_t i = 0; i < 2; i++)
     {
-        setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i], GL_DEPTH24_STENCIL8,
-                                        kWidth, kHeight);
-        setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i], kWidth, kHeight);
+        ANGLE_UNSAFE_TODO(setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i],
+                                                          GL_DEPTH24_STENCIL8, kWidth, kHeight));
+        ANGLE_UNSAFE_TODO(setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i],
+                                   kWidth, kHeight));
 
         glDepthMask(GL_TRUE);
         glEnable(GL_DEPTH_TEST);
@@ -9075,9 +9076,10 @@ TEST_P(VulkanPerformanceCounterTest, ScissoredDrawThenBlitThenDraw)
     GLuint stencilValue                = 0x55;
     for (size_t i = 0; i < 2; i++)
     {
-        setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i], GL_DEPTH24_STENCIL8,
-                                        kWidth, kHeight);
-        setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i], kWidth, kHeight);
+        ANGLE_UNSAFE_TODO(setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i],
+                                                          GL_DEPTH24_STENCIL8, kWidth, kHeight));
+        ANGLE_UNSAFE_TODO(setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i],
+                                   kWidth, kHeight));
 
         glDepthMask(GL_TRUE);
         glEnable(GL_DEPTH_TEST);
@@ -9146,9 +9148,10 @@ TEST_P(VulkanPerformanceCounterTest, DrawThenBlitThenDrawWithXFB)
     GLuint stencilValue = 0x55;
     for (size_t i = 0; i < 2; i++)
     {
-        setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i], GL_DEPTH24_STENCIL8,
-                                        kWidth, kHeight);
-        setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i], kWidth, kHeight);
+        ANGLE_UNSAFE_TODO(setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i],
+                                                          GL_DEPTH24_STENCIL8, kWidth, kHeight));
+        ANGLE_UNSAFE_TODO(setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i],
+                                   kWidth, kHeight));
 
         glDepthMask(GL_TRUE);
         glEnable(GL_DEPTH_TEST);
@@ -9221,8 +9224,10 @@ TEST_P(VulkanPerformanceCounterTest, DrawThenBlitThenDrawWithXFB)
     {
         for (uint32_t i = 0; i < vertexCount; ++i)
         {
-            EXPECT_EQ(*mappedFloats, expect[i]);
-            mappedFloats++;
+            ANGLE_UNSAFE_TODO({
+                EXPECT_EQ(*mappedFloats, expect[i]);
+                mappedFloats++;
+            })
         }
     }
     glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
@@ -9247,9 +9252,10 @@ TEST_P(VulkanPerformanceCounterTest, DrawThenBlitThenDrawWithQuery)
     std::array<GLfloat, 2> depthValues = {0.0f, 0.5};
     for (size_t i = 0; i < 2; i++)
     {
-        setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i], GL_DEPTH24_STENCIL8,
-                                        kWidth, kHeight);
-        setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i], kWidth, kHeight);
+        ANGLE_UNSAFE_TODO(setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i],
+                                                          GL_DEPTH24_STENCIL8, kWidth, kHeight));
+        ANGLE_UNSAFE_TODO(setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i],
+                                   kWidth, kHeight));
 
         glDepthMask(GL_TRUE);
         glEnable(GL_DEPTH_TEST);
@@ -9322,9 +9328,10 @@ TEST_P(VulkanPerformanceCounterTest, DrawThenBlitThenDrawWithSameProgram)
     std::array<GLfloat, 2> depthValues = {0.0f, 0.5};
     for (size_t i = 0; i < 2; i++)
     {
-        setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i], GL_DEPTH24_STENCIL8,
-                                        kWidth, kHeight);
-        setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i], kWidth, kHeight);
+        ANGLE_UNSAFE_TODO(setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i],
+                                                          GL_DEPTH24_STENCIL8, kWidth, kHeight));
+        ANGLE_UNSAFE_TODO(setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i],
+                                   kWidth, kHeight));
 
         glDepthMask(GL_TRUE);
         glEnable(GL_DEPTH_TEST);

@@ -6,10 +6,7 @@
 
 // IndexBufferOffsetTest.cpp: Test glDrawElements with an offset and an index buffer
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 #include "util/test_utils.h"
@@ -130,7 +127,7 @@ void main()
         size_t indexDataWidth = 6 * typeWidth;
 
         std::vector<GLubyte> indexData(6 * 3 * sizeof(GLuint), 0);
-        memcpy(indexData.data() + indexDataWidth, indexDataIn, indexDataWidth);
+        ANGLE_UNSAFE_TODO(memcpy(indexData.data() + indexDataWidth, indexDataIn, indexDataWidth));
 
         GLFramebuffer elementUpdateFbo;
         GLTexture elementUpdateTex;
@@ -149,21 +146,21 @@ void main()
         {
             glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indexDataWidth, indexData.data());
             glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, indexDataWidth, indexDataWidth,
-                            indexData.data() + indexDataWidth);
+                            ANGLE_UNSAFE_TODO(indexData.data() + indexDataWidth));
             glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 2 * indexDataWidth, indexDataWidth,
-                            indexData.data() + 2 * indexDataWidth);
+                            ANGLE_UNSAFE_TODO(indexData.data() + 2 * indexDataWidth));
         }
         else if (updateType == UpdateType::SmallThenBigUpdate)
         {
             glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, 4, indexData.data());
             glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 4, 3 * indexDataWidth - 4,
-                            indexData.data() + 4);
+                            ANGLE_UNSAFE_TODO(indexData.data() + 4));
         }
         else if (updateType == UpdateType::BigThenSmallUpdate)
         {
             glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, 3 * indexDataWidth - 4, indexData.data());
             glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 3 * indexDataWidth - 4, 4,
-                            indexData.data() + 3 * indexDataWidth - 4);
+                            ANGLE_UNSAFE_TODO(indexData.data() + 3 * indexDataWidth - 4));
         }
         else
         {
@@ -190,20 +187,20 @@ void main()
             glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, indexDataWidth, indexDataWidth,
                             indexData.data());
             glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 2 * indexDataWidth, indexDataWidth,
-                            indexData.data() + indexDataWidth);
+                            ANGLE_UNSAFE_TODO(indexData.data() + indexDataWidth));
         }
         else if (updateType == UpdateType::SmallThenBigUpdate)
         {
             glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, indexDataWidth, 4, indexData.data());
             glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, indexDataWidth + 4, 2 * indexDataWidth - 4,
-                            indexData.data() + 4);
+                            ANGLE_UNSAFE_TODO(indexData.data() + 4));
         }
         else if (updateType == UpdateType::BigThenSmallUpdate)
         {
             glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, indexDataWidth, 2 * indexDataWidth - 4,
                             indexData.data());
             glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 3 * indexDataWidth - 4, 4,
-                            indexData.data() + 2 * indexDataWidth - 4);
+                            ANGLE_UNSAFE_TODO(indexData.data() + 2 * indexDataWidth - 4));
         }
         else
         {
@@ -447,7 +444,7 @@ TEST_P(IndexBufferOffsetTest, DrawAtUnAlignedIndexBuffer)
     indicesUnaligned[0] = 0;
     for (unsigned long i = 0; i < sizeof(indices); ++i)
     {
-        indicesUnaligned[i + 1] = ((GLubyte *)indices)[i];
+        ANGLE_UNSAFE_TODO(indicesUnaligned[i + 1] = ((GLubyte *)indices)[i]);
     }
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

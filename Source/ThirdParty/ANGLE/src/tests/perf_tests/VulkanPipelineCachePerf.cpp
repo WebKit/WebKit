@@ -7,11 +7,8 @@
 //   Performance benchmark for the Vulkan Pipeline cache.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "ANGLEPerfTest.h"
+#include "common/unsafe_buffers.h"
 
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
@@ -89,7 +86,7 @@ void VulkanPipelineCachePerfTest::randomizeDesc(vk::GraphicsPipelineDesc *desc)
 {
     std::vector<uint8_t> bytes(sizeof(vk::GraphicsPipelineDesc));
     FillVectorWithRandomUBytes(&mRNG, &bytes);
-    memcpy(desc, bytes.data(), sizeof(vk::GraphicsPipelineDesc));
+    ANGLE_UNSAFE_TODO(memcpy(desc, bytes.data(), sizeof(vk::GraphicsPipelineDesc)));
 
     desc->setSupportsDynamicStateForTest(GetParam().withDynamicState);
 }

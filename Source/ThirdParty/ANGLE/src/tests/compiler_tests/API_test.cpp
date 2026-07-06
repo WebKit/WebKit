@@ -7,12 +7,9 @@
 //   Some tests for the compiler API.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
+#include "common/unsafe_buffers.h"
 #include "gtest/gtest.h"
 
 TEST(APITest, CompareShBuiltInResources)
@@ -25,5 +22,5 @@ TEST(APITest, CompareShBuiltInResources)
     memset(&b_resources, 77, sizeof(b_resources));
     sh::InitBuiltInResources(&b_resources);
 
-    EXPECT_TRUE(memcmp(&a_resources, &b_resources, sizeof(a_resources)) == 0);
+    ANGLE_UNSAFE_TODO(EXPECT_TRUE(memcmp(&a_resources, &b_resources, sizeof(a_resources)) == 0));
 }

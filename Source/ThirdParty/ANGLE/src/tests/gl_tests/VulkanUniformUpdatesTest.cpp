@@ -7,10 +7,7 @@
 //   Tests to validate our Vulkan dynamic uniform updates are working as expected.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/angletypes.h"
@@ -439,7 +436,7 @@ TEST_P(VulkanUniformUpdatesTest, TextureStagingBufferRecycling)
         for (int y = 0; y < 2; ++y)
         {
             const int kColorIndex = x + y * 2;
-            const GLColor kColor  = kColors[kColorIndex];
+            const GLColor kColor  = ANGLE_UNSAFE_TODO(kColors[kColorIndex]);
 
             for (int iteration = 0; iteration < kIterations; ++iteration)
             {
@@ -470,7 +467,7 @@ TEST_P(VulkanUniformUpdatesTest, TextureStagingBufferRecycling)
             const GLsizei xoffset = x * kHalfX;
             const GLsizei yoffset = y * kHalfY;
             const int kColorIndex = x + y * 2;
-            const GLColor kColor  = kColors[kColorIndex];
+            const GLColor kColor  = ANGLE_UNSAFE_TODO(kColors[kColorIndex]);
             EXPECT_PIXEL_RECT_EQ(xoffset, yoffset, kHalfX, kHalfY, kColor);
         }
     }

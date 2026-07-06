@@ -149,8 +149,12 @@
 #define EGL_ANGLE_platform_angle_device_id
 #define EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE 0x34D6
 #define EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE 0x34D7
-#define EGL_PLATFORM_ANGLE_DISPLAY_KEY_ANGLE 0x34DC
 #endif /* EGL_ANGLE_platform_angle_device_id */
+
+#ifndef EGL_ANGLE_platform_angle_display_key
+#define EGL_ANGLE_platform_angle_display_key
+#define EGL_PLATFORM_ANGLE_DISPLAY_KEY_ANGLE 0x34DC
+#endif /* EGL_ANGLE_platform_angle_display_key */
 
 #ifndef EGL_ANGLE_x11_visual
 #define EGL_ANGLE_x11_visual

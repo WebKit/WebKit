@@ -6,10 +6,6 @@
 //   Contains native implementation for com.android.angle.test.AngleNativeTest.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <jni.h>
 #include <vector>
 
@@ -21,6 +17,7 @@
 
 #include "common/angleutils.h"
 #include "common/string_utils.h"
+#include "common/unsafe_buffers.h"
 
 // The main function of the program to be wrapped as a test apk.
 extern int main(int argc, char **argv);
@@ -54,7 +51,7 @@ void SignalHandler(int sig, siginfo_t *info, void *reserved)
 {
     // Output the crash marker.
     write(STDOUT_FILENO, kCrashedMarker, sizeof(kCrashedMarker) - 1);
-    g_old_sa[sig].sa_sigaction(sig, info, reserved);
+    ANGLE_UNSAFE_TODO(g_old_sa[sig].sa_sigaction(sig, info, reserved));
 }
 
 std::string ASCIIJavaStringToUTF8(JNIEnv *env, jstring str)
@@ -75,7 +72,7 @@ std::string ASCIIJavaStringToUTF8(JNIEnv *env, jstring str)
     // bytes.
     const jchar *jchars   = env->GetStringChars(str, NULL);
     const char16_t *chars = reinterpret_cast<const char16_t *>(jchars);
-    std::string out(chars, chars + length);
+    std::string out(chars, ANGLE_UNSAFE_TODO(chars + length));
     env->ReleaseStringChars(str, jchars);
     return out;
 }
@@ -103,9 +100,9 @@ void InstallExceptionHandlers()
     sa.sa_sigaction = SignalHandler;
     sa.sa_flags     = SA_SIGINFO;
 
-    for (unsigned int i = 0; kExceptionSignals[i] != -1; ++i)
+    for (unsigned int i = 0; ANGLE_UNSAFE_TODO(kExceptionSignals[i]) != -1; ++i)
     {
-        sigaction(kExceptionSignals[i], &sa, &g_old_sa[kExceptionSignals[i]]);
+        ANGLE_UNSAFE_TODO(sigaction(kExceptionSignals[i], &sa, &g_old_sa[kExceptionSignals[i]]));
     }
 }
 
@@ -113,7 +110,7 @@ void AndroidLog(int priority, const char *format, ...)
 {
     va_list args;
     va_start(args, format);
-    __android_log_vprint(priority, kLogTag, format, args);
+    ANGLE_UNSAFE_TODO(__android_log_vprint(priority, kLogTag, format, args));
     va_end(args);
 }
 

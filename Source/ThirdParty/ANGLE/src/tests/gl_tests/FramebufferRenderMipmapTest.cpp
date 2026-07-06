@@ -4,10 +4,7 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
 using namespace angle;
@@ -135,7 +132,7 @@ TEST_P(FramebufferRenderMipmapTest, RenderToMipmap)
         EXPECT_GL_NO_ERROR();
 
         glUseProgram(mProgram);
-        glUniform4fv(mColorLocation, 1, levelColors + (i * 4));
+        glUniform4fv(mColorLocation, 1, ANGLE_UNSAFE_TODO(levelColors + (i * 4)));
 
         drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
         EXPECT_GL_NO_ERROR();
@@ -147,8 +144,9 @@ TEST_P(FramebufferRenderMipmapTest, RenderToMipmap)
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, i);
         EXPECT_GL_NO_ERROR();
 
-        const GLfloat *color = levelColors + (i * 4);
-        EXPECT_PIXEL_EQ(0, 0, color[0] * 255, color[1] * 255, color[2] * 255, color[3] * 255);
+        const GLfloat *color = ANGLE_UNSAFE_TODO(levelColors + (i * 4));
+        ANGLE_UNSAFE_TODO(
+            EXPECT_PIXEL_EQ(0, 0, color[0] * 255, color[1] * 255, color[2] * 255, color[3] * 255));
     }
 
     glDeleteFramebuffers(1, &fbo);

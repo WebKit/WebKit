@@ -63,7 +63,7 @@ class OffscreenSurfaceWgpu : public SurfaceWgpu
 
     angle::Result initializeContents(const gl::Context *context,
                                      GLenum binding,
-                                     const gl::ImageIndex &imageIndex) override;
+                                     const gl::OwnImageIndex &ownImageIndex) override;
 
     egl::Error attachToFramebuffer(const gl::Context *context,
                                    gl::Framebuffer *framebuffer) override;
@@ -72,7 +72,7 @@ class OffscreenSurfaceWgpu : public SurfaceWgpu
 
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,
-                                            const gl::ImageIndex &imageIndex,
+                                            const gl::OwnImageIndex &ownImageIndex,
                                             GLsizei samples,
                                             FramebufferAttachmentRenderTarget **rtOut) override;
 
@@ -111,7 +111,7 @@ class WindowSurfaceWgpu : public SurfaceWgpu
 
     angle::Result initializeContents(const gl::Context *context,
                                      GLenum binding,
-                                     const gl::ImageIndex &imageIndex) override;
+                                     const gl::OwnImageIndex &ownImageIndex) override;
 
     egl::Error attachToFramebuffer(const gl::Context *context,
                                    gl::Framebuffer *framebuffer) override;
@@ -120,7 +120,7 @@ class WindowSurfaceWgpu : public SurfaceWgpu
 
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,
-                                            const gl::ImageIndex &imageIndex,
+                                            const gl::OwnImageIndex &ownImageIndex,
                                             GLsizei samples,
                                             FramebufferAttachmentRenderTarget **rtOut) override;
 

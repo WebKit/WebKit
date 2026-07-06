@@ -1079,7 +1079,7 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
         bool usesFragDepth             = false;
         bool usesFragDepthEXT          = false;
         bool usesSecondaryFragColorEXT = false;
-        bool usesSecondaryFragDataEXT  = false;
+        bool usesSecondaryFragDataEXT  = symbolTable.isSecondaryFragDataUsed();
         for (const ShaderVariable &outputVarying : mOutputVariables)
         {
             if (outputVarying.isBuiltIn())
@@ -1103,10 +1103,6 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
                 else if (outputVarying.name == "gl_SecondaryFragColorEXT")
                 {
                     usesSecondaryFragColorEXT = true;
-                }
-                else if (outputVarying.name == "gl_SecondaryFragDataEXT")
-                {
-                    usesSecondaryFragDataEXT = true;
                 }
                 else if (outputVarying.name == "gl_SampleMask")
                 {

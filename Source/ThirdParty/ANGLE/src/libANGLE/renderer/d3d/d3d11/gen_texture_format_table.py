@@ -228,16 +228,7 @@ def parse_json_angle_format_case(format_name, angle_format, json_data):
     fallback = None
 
     for k, v in sorted(angle_format.items()):
-        if k == "FL10Plus":
-            assert support_test is None
-            support_test = "OnlyFL10Plus(deviceCaps)"
-            for k2, v2 in sorted(v.items()):
-                supported_case[k2] = v2
-        elif k == "FL9_3":
-            split = True
-            for k2, v2 in sorted(v.items()):
-                unsupported_case[k2] = v2
-        elif k == "supportTest":
+        if k == "supportTest":
             assert support_test is None
             support_test = v
         elif k == "fallbackFormat":

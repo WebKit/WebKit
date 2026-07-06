@@ -7,11 +7,8 @@
 //   Tests for eglBindTexImage
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <gtest/gtest.h>
+#include "common/unsafe_buffers.h"
 
 #include <iostream>
 #include "test_utils/ANGLETest.h"
@@ -137,13 +134,13 @@ class EGLBindTexImageTest : public ANGLETest<EGLBindTexImageTestParams>
             eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
             for (size_t i = 0; i < 2; i++)
             {
-                if (mSurfaces[i] != EGL_NO_SURFACE)
+                if (ANGLE_UNSAFE_TODO(mSurfaces[i]) != EGL_NO_SURFACE)
                 {
-                    eglDestroySurface(mDisplay, mSurfaces[i]);
+                    eglDestroySurface(mDisplay, ANGLE_UNSAFE_TODO(mSurfaces[i]));
                 }
-                if (mContexts[i] != EGL_NO_CONTEXT)
+                if (ANGLE_UNSAFE_TODO(mContexts[i]) != EGL_NO_CONTEXT)
                 {
-                    eglDestroyContext(mDisplay, mContexts[i]);
+                    eglDestroyContext(mDisplay, ANGLE_UNSAFE_TODO(mContexts[i]));
                 }
             }
             eglTerminate(mDisplay);

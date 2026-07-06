@@ -2698,7 +2698,7 @@ void Context::getInteger64i_vRobust(GLenum target,
     const bool paramFound = getIndexedQueryParameterInfo(target, &nativeType, &numParams);
     ASSERT(paramFound);
 
-    if (nativeType == GL_INT_64_ANGLEX)
+    if (nativeType == GL_INT64)
     {
         mState.getInteger64i_v(target, index, data);
     }
@@ -4670,6 +4670,13 @@ void Context::updateCaps()
     caps->compressedTextureFormats.clear();
     textureCaps->clear();
 
+    // Workaround for dEQP bug
+    // https://gitlab.khronos.org/Tracker/vk-gl-cts/-/issues/6138
+    // . Put paletted formats at the end of the compressed texture
+    // format list. If these tests are fixed, remove this vector and
+    // simplify the code below.
+    std::vector<GLenum> palettedFormats;
+
     for (GLenum sizedInternalFormat : GetAllSizedInternalFormats())
     {
         TextureCaps formatCaps = mImplementation->getNativeTextureCaps().get(sizedInternalFormat);
@@ -4748,13 +4755,23 @@ void Context::updateCaps()
             }
         }
 
-        if (formatCaps.texturable && (formatInfo.compressed || formatInfo.paletted))
+        if (formatCaps.texturable)
         {
-            caps->compressedTextureFormats.push_back(sizedInternalFormat);
+            if (formatInfo.compressed)
+            {
+                caps->compressedTextureFormats.push_back(sizedInternalFormat);
+            }
+            else if (formatInfo.paletted)
+            {
+                palettedFormats.push_back(sizedInternalFormat);
+            }
         }
 
         textureCaps->insert(sizedInternalFormat, formatCaps);
     }
+
+    caps->compressedTextureFormats.insert(caps->compressedTextureFormats.end(),
+                                          palettedFormats.begin(), palettedFormats.end());
 
     // If program binary is disabled, blank out the memory cache pointer.
     if (!mSupportedExtensions.getProgramBinaryOES)
@@ -8175,7 +8192,7 @@ void Context::getInteger64vRobust(GLenum pname, GLsizei paramCount, GLsizei *len
         return;  // Avoid crashing with invalid apps running with no validation.
     }
 
-    if (nativeType == GL_INT_64_ANGLEX)
+    if (nativeType == GL_INT64)
     {
         getInteger64vImpl(pname, data);
     }

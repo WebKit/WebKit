@@ -173,7 +173,7 @@ angle::Result RenderbufferMtl::setStorageEGLImageTarget(const gl::Context *conte
 
 angle::Result RenderbufferMtl::getAttachmentRenderTarget(const gl::Context *context,
                                                          GLenum binding,
-                                                         const gl::ImageIndex &imageIndex,
+                                                         const gl::OwnImageIndex &ownImageIndex,
                                                          GLsizei samples,
                                                          FramebufferAttachmentRenderTarget **rtOut)
 {
@@ -184,8 +184,10 @@ angle::Result RenderbufferMtl::getAttachmentRenderTarget(const gl::Context *cont
 
 angle::Result RenderbufferMtl::initializeContents(const gl::Context *context,
                                                   GLenum binding,
-                                                  const gl::ImageIndex &imageIndex)
+                                                  const gl::OwnImageIndex &ownImageIndex)
 {
+    const gl::ImageIndex imageIndex = ownImageIndex.getUntranslated();
+
     if (imageIndex.valid())
         return mtl::InitializeTextureContents(
             context, mTexture, mFormat, mtl::ImageNativeIndex::FromBaseZeroGLIndex(imageIndex));

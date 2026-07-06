@@ -7,11 +7,8 @@
 //   This test prints out the extension strings, configs and their attributes
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <gtest/gtest.h>
+#include "common/unsafe_buffers.h"
 
 #include "common/string_utils.h"
 #include "test_utils/ANGLETest.h"
@@ -151,7 +148,7 @@ TEST_P(EGLPrintEGLinfoTest, PrintGLInfo)
 
         FILE *fp = fopen(artifactPath.c_str(), "wb");
         ASSERT(fp);
-        fwrite(jsonData.data(), sizeof(uint8_t), jsonData.size(), fp);
+        ANGLE_UNSAFE_TODO(fwrite(jsonData.data(), sizeof(uint8_t), jsonData.size(), fp));
         fclose(fp);
     }
 #endif  // defined(ANGLE_HAS_RAPIDJSON)
@@ -205,7 +202,8 @@ static void LogGles2Capabilities(std::ostream &stream)
     QUERY_AND_LOG_CAPABILITY(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, stream);
     QUERY_AND_LOG_CAPABILITY(GL_MAX_VERTEX_UNIFORM_VECTORS, stream);
     constexpr int kMaxViewPortDimsReturnValuesSize = 2;
-    QUERY_AND_LOG_CAPABILITY_ARRAY(GL_MAX_VIEWPORT_DIMS, kMaxViewPortDimsReturnValuesSize, stream);
+    ANGLE_UNSAFE_TODO(QUERY_AND_LOG_CAPABILITY_ARRAY(GL_MAX_VIEWPORT_DIMS,
+                                                     kMaxViewPortDimsReturnValuesSize, stream));
     QUERY_AND_LOG_CAPABILITY(GL_NUM_COMPRESSED_TEXTURE_FORMATS, stream);
     QUERY_AND_LOG_CAPABILITY(GL_NUM_SHADER_BINARY_FORMATS, stream);
 }
@@ -554,7 +552,7 @@ TEST_P(EGLPrintFeaturesVulkanExtensionsInfoTest, LogEnabledFeatures)
     {
         const char *name   = eglQueryStringiANGLE(mDisplay, EGL_FEATURE_NAME_ANGLE, i);
         const char *status = eglQueryStringiANGLE(mDisplay, EGL_FEATURE_STATUS_ANGLE, i);
-        if (std::strcmp(status, kEnabled) == 0)
+        if (ANGLE_UNSAFE_TODO(std::strcmp(status, kEnabled)) == 0)
         {
             std::cout << name << std::endl;
         }
@@ -584,9 +582,9 @@ TEST_P(EGLPrintFeaturesVulkanExtensionsInfoTest, LogEnabledVulkanExtensions)
     EXPECT_NE(extensions, nullptr);
 
     std::cout << "Enabled Vulkan Instance extensions:" << std::endl;
-    while (extensions[nextExtension])
+    while (ANGLE_UNSAFE_TODO(extensions[nextExtension]))
     {
-        std::cout << extensions[nextExtension] << std::endl;
+        std::cout << ANGLE_UNSAFE_TODO(extensions[nextExtension]) << std::endl;
         nextExtension++;
     }
 
@@ -598,9 +596,9 @@ TEST_P(EGLPrintFeaturesVulkanExtensionsInfoTest, LogEnabledVulkanExtensions)
     EXPECT_NE(extensions, nullptr);
 
     std::cout << "Enabled Vulkan Device extensions:" << std::endl;
-    while (extensions[nextExtension])
+    while (ANGLE_UNSAFE_TODO(extensions[nextExtension]))
     {
-        std::cout << extensions[nextExtension] << std::endl;
+        std::cout << ANGLE_UNSAFE_TODO(extensions[nextExtension]) << std::endl;
         nextExtension++;
     }
 }

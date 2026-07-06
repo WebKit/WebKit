@@ -4,10 +4,6 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #ifndef ANGLE_ENABLE_D3D9
 #    define ANGLE_ENABLE_D3D9
 #endif
@@ -17,6 +13,7 @@
 #endif
 
 #include <d3d11.h>
+#include "common/unsafe_buffers.h"
 
 #include "test_utils/ANGLETest.h"
 #include "util/EGLWindow.h"
@@ -63,9 +60,9 @@ class EGLDeviceCreationTest : public ANGLETest<>
 
         const char *extensionString =
             static_cast<const char *>(eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS));
-        if (strstr(extensionString, "EGL_ANGLE_device_creation"))
+        if (ANGLE_UNSAFE_TODO(strstr(extensionString, "EGL_ANGLE_device_creation")))
         {
-            if (strstr(extensionString, "EGL_ANGLE_device_creation_d3d11"))
+            if (ANGLE_UNSAFE_TODO(strstr(extensionString, "EGL_ANGLE_device_creation_d3d11")))
             {
                 mDeviceCreationD3D11ExtAvailable = true;
             }
@@ -108,7 +105,7 @@ class EGLDeviceCreationTest : public ANGLETest<>
                                D3D11_SDK_VERSION, &mDevice, &mFeatureLevel, &mDeviceContext);
 
         ASSERT_TRUE(SUCCEEDED(hr));
-        ASSERT_GE(mFeatureLevel, D3D_FEATURE_LEVEL_9_3);
+        ASSERT_GE(mFeatureLevel, D3D_FEATURE_LEVEL_10_0);
     }
 
     void CreateWindowSurface()
@@ -140,27 +137,6 @@ class EGLDeviceCreationTest : public ANGLETest<>
         // Make the surface current
         eglMakeCurrent(mDisplay, mSurface, mSurface, mContext);
         ASSERT_EGL_SUCCESS();
-    }
-
-    // This triggers a D3D device lost on current Windows systems
-    // This behavior could potentially change in the future
-    void trigger9_3DeviceLost()
-    {
-        ID3D11Buffer *gsBuffer       = nullptr;
-        D3D11_BUFFER_DESC bufferDesc = {0};
-        bufferDesc.ByteWidth         = 64;
-        bufferDesc.Usage             = D3D11_USAGE_DEFAULT;
-        bufferDesc.BindFlags         = D3D11_BIND_CONSTANT_BUFFER;
-
-        HRESULT result = mDevice->CreateBuffer(&bufferDesc, nullptr, &gsBuffer);
-        ASSERT_TRUE(SUCCEEDED(result));
-
-        mDeviceContext->GSSetConstantBuffers(0, 1, &gsBuffer);
-        SafeRelease(gsBuffer);
-        gsBuffer = nullptr;
-
-        result = mDevice->GetDeviceRemovedReason();
-        ASSERT_TRUE(FAILED(result));
     }
 
     HMODULE mD3D11Module;

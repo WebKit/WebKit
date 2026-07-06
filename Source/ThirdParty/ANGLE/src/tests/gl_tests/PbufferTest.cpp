@@ -4,10 +4,7 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
@@ -351,6 +348,54 @@ TEST_P(PbufferTest, BindTexImageOverwrite)
 
     destroyTestPbufferSurface(otherPbuffer);
     destroyPbuffer();
+    ASSERT_EGL_SUCCESS();
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that eglBindTexImage redefines all mip levels to empty.
+TEST_P(PbufferTestES3, BindRedefinesAllMips)
+{
+    // Test skipped because Pbuffers are not supported or Pbuffer does not support binding to RGBA
+    // textures.
+    ANGLE_SKIP_TEST_IF(!mSupportsPbuffers || !mSupportsBindTexImage);
+
+    EGLWindow *window = getEGLWindow();
+    window->makeCurrent();
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+
+    constexpr GLint kBaseLevel = 3;
+
+    // Define a texture with data in mip 3
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    const GLColor kLevelData[4] = {GLColor::red, GLColor::red, GLColor::red, GLColor::red};
+    glTexImage2D(GL_TEXTURE_2D, kBaseLevel, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kLevelData);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    // Set the base level 3 and verify the data is sampleable
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, kBaseLevel);
+    EXPECT_GL_NO_ERROR();
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Bind the pbuffer to the texture. All mips of the texture should be redefined. The texture
+    // will now be incomplete because BASE_LEVEL has no data.
+    EGLSurface pbuffer = createTestPbufferSurface();
+    ASSERT_NE(pbuffer, EGL_NO_SURFACE);
+    EXPECT_TRUE(eglBindTexImage(window->getDisplay(), pbuffer, EGL_BACK_BUFFER));
+    ASSERT_EGL_SUCCESS();
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+
+    eglReleaseTexImage(window->getDisplay(), pbuffer, EGL_BACK_BUFFER);
+    destroyTestPbufferSurface(pbuffer);
     ASSERT_EGL_SUCCESS();
     ASSERT_GL_NO_ERROR();
 }
@@ -1299,8 +1344,9 @@ TEST_P(PbufferTest, NegativeValidationBadAttributes)
 
     for (size_t i = 0; i < 2; i++)
     {
-        pbufferSurface = eglCreatePbufferSurface(window->getDisplay(), window->getConfig(),
-                                                 &invalidPBufferAttributeList[i][0]);
+        pbufferSurface =
+            eglCreatePbufferSurface(window->getDisplay(), window->getConfig(),
+                                    &ANGLE_UNSAFE_TODO(invalidPBufferAttributeList[i][0]));
         ASSERT_EQ(pbufferSurface, EGL_NO_SURFACE);
         ASSERT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
     }

@@ -7,11 +7,8 @@
 //   Tests for StaticType, TType and BasicType.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "angle_gl.h"
+#include "common/unsafe_buffers.h"
 #include "compiler/translator/PoolAlloc.h"
 #include "compiler/translator/StaticType.h"
 #include "compiler/translator/Types.h"
@@ -57,9 +54,9 @@ TEST(Type, BaseTypeMangledNamesUnique)
         if (mangledName[0] != '{')
         {
             if (mangledName[0] == '0')
-                ASSERT_TRUE(uniqueNames0.insert(mangledName[1]).second);
+                ANGLE_UNSAFE_TODO(ASSERT_TRUE(uniqueNames0.insert(mangledName[1]).second));
             if (mangledName[0] == '1')
-                ASSERT_TRUE(uniqueNames1.insert(mangledName[1]).second);
+                ANGLE_UNSAFE_TODO(ASSERT_TRUE(uniqueNames1.insert(mangledName[1]).second));
         }
     }
 }

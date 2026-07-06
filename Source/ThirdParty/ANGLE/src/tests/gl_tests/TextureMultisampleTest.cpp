@@ -6,10 +6,7 @@
 
 // TextureMultisampleTest: Tests of multisampled texture
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
 #include "test_utils/gl_raii.h"
@@ -1505,7 +1502,8 @@ void main()
     {
         for (GLsizei channel = 0; channel < kPixelChannels; ++channel)
         {
-            EXPECT_NEAR(ptr[pixel * kPixelChannels + channel], kExpectedColors[pixel][channel], 1)
+            ANGLE_UNSAFE_TODO(EXPECT_NEAR(ptr[pixel * kPixelChannels + channel],
+                                          kExpectedColors[pixel][channel], 1))
                 << pixel << " " << channel;
         }
     }

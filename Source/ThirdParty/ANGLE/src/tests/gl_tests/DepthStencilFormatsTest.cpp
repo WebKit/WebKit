@@ -4,10 +4,7 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -375,18 +372,22 @@ void DepthStencilFormatsTestBase::depthStencilReadbackCase(const ReadbackTestPar
             constexpr float kEpsilon = 0.002f;
             const float *pixels      = reinterpret_cast<const float *>(actualPixels);
             ASSERT_NEAR(pixels[0], d00, kEpsilon);
-            ASSERT_NEAR(pixels[0 + destRes], d01, kEpsilon);
-            ASSERT_NEAR(pixels[1], d10, kEpsilon);
-            ASSERT_NEAR(pixels[1 + destRes], d11, kEpsilon);
+            ANGLE_UNSAFE_TODO({
+                ASSERT_NEAR(pixels[0 + destRes], d01, kEpsilon);
+                ASSERT_NEAR(pixels[1], d10, kEpsilon);
+                ASSERT_NEAR(pixels[1 + destRes], d11, kEpsilon);
+            })
         }
         else
         {
             constexpr unsigned short kEpsilon = 2;
             const unsigned short *pixels = reinterpret_cast<const unsigned short *>(actualPixels);
             ASSERT_NEAR(pixels[0], gl::unorm<16>(d00), kEpsilon);
-            ASSERT_NEAR(pixels[0 + destRes], gl::unorm<16>(d01), kEpsilon);
-            ASSERT_NEAR(pixels[1], gl::unorm<16>(d10), kEpsilon);
-            ASSERT_NEAR(pixels[1 + destRes], gl::unorm<16>(d11), kEpsilon);
+            ANGLE_UNSAFE_TODO({
+                ASSERT_NEAR(pixels[0 + destRes], gl::unorm<16>(d01), kEpsilon);
+                ASSERT_NEAR(pixels[1], gl::unorm<16>(d10), kEpsilon);
+                ASSERT_NEAR(pixels[1 + destRes], gl::unorm<16>(d11), kEpsilon);
+            })
         }
     }
     else
@@ -428,11 +429,13 @@ void DepthStencilFormatsTestBase::depthStencilReadbackCase(const ReadbackTestPar
             const Pixel *pixels               = reinterpret_cast<const Pixel *>(actualPixels);
 
             ASSERT_NEAR(pixels[0].d24(), gl::unorm<24>(d00), kEpsilon);
-            ASSERT_NEAR(pixels[0 + destRes].d24(), gl::unorm<24>(d01), kEpsilon);
-            ASSERT_NEAR(pixels[1].d24(), gl::unorm<24>(d10), kEpsilon);
-            ASSERT_NEAR(pixels[1 + destRes].d24(), gl::unorm<24>(d11), kEpsilon);
-            ASSERT_TRUE((pixels[0].s8() == 1) && (pixels[1].s8() == 2) &&
-                        (pixels[0 + destRes].s8() == 3) && (pixels[1 + destRes].s8() == 4));
+            ANGLE_UNSAFE_TODO({
+                ASSERT_NEAR(pixels[0 + destRes].d24(), gl::unorm<24>(d01), kEpsilon);
+                ASSERT_NEAR(pixels[1].d24(), gl::unorm<24>(d10), kEpsilon);
+                ASSERT_NEAR(pixels[1 + destRes].d24(), gl::unorm<24>(d11), kEpsilon);
+                ASSERT_TRUE((pixels[0].s8() == 1) && (pixels[1].s8() == 2) &&
+                            (pixels[0 + destRes].s8() == 3) && (pixels[1 + destRes].s8() == 4));
+            })
         }
         else
         {
@@ -811,8 +814,8 @@ void main()
             {
                 GLfloat init[] = {d00, d00, d10, d10, d00, d00, d10, d10,
                                   d01, d01, d11, d11, d01, d01, d11, d11};
-                expectedMin.insert(expectedMin.begin(), init, init + 16);
-                expectedMax.insert(expectedMax.begin(), init, init + 16);
+                expectedMin.insert(expectedMin.begin(), init, ANGLE_UNSAFE_TODO(init + 16));
+                expectedMax.insert(expectedMax.begin(), init, ANGLE_UNSAFE_TODO(init + 16));
 
                 for (int i = 0; i < 16; i++)
                 {
@@ -830,15 +833,16 @@ void main()
                     d00 + eps, d10, d10, d10 + eps, d01,       d11, d11, d11,
                     d01,       d11, d11, d11,       d01 + eps, d11, d11, d11 + eps,
                 };
-                expectedMin.insert(expectedMin.begin(), initMin, initMin + 16);
-                expectedMax.insert(expectedMax.begin(), initMax, initMax + 16);
+                expectedMin.insert(expectedMin.begin(), initMin, ANGLE_UNSAFE_TODO(initMin + 16));
+                expectedMax.insert(expectedMax.begin(), initMax, ANGLE_UNSAFE_TODO(initMax + 16));
             }
             for (int yy = 0; yy < destRes; ++yy)
             {
                 for (int xx = 0; xx < destRes; ++xx)
                 {
                     const int t        = xx + destRes * yy;
-                    const GLfloat was  = (GLfloat)(actualPixels[4 * t] / 255.0);  // 4bpp
+                    const GLfloat was =
+                        (GLfloat)(ANGLE_UNSAFE_TODO(actualPixels[4 * t]) / 255.0);  // 4bpp
                     const GLfloat eMin = expectedMin[t];
                     const GLfloat eMax = expectedMax[t];
                     EXPECT_TRUE(was >= eMin && was <= eMax)
@@ -915,7 +919,7 @@ TEST_P(DepthStencilFormatsTestES3, DrawWithDepth16)
     GLushort data[16];
     for (unsigned int i = 0; i < 16; i++)
     {
-        data[i] = std::numeric_limits<GLushort>::max();
+        ANGLE_UNSAFE_TODO(data[i]) = std::numeric_limits<GLushort>::max();
     }
     glBindTexture(GL_TEXTURE_2D, mTexture);
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT16, 4, 4);

@@ -6,11 +6,8 @@
 // TestSuite_unittest.cpp: Unit tests for ANGLE's test harness.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include <gtest/gtest.h>
+#include "common/unsafe_buffers.h"
 
 #include "../angle_test_instantiate.h"
 #include "TestSuite.h"
@@ -82,7 +79,7 @@ class TestSuiteTest : public testing::Test
             printf("Test arguments:\n");
             for (const char *arg : args)
             {
-                printf("%s ", arg);
+                ANGLE_UNSAFE_TODO(printf("%s ", arg));
             }
             printf("\n");
         }
@@ -253,7 +250,7 @@ TEST(MockFlakyTestSuiteTest, DISABLED_Flaky)
         FILE *fp = fopen(tempFileName.c_str(), "r");
         if (fp)
         {
-            ASSERT_EQ(fscanf(fp, "%d", &fails), 1);
+            ANGLE_UNSAFE_TODO(ASSERT_EQ(fscanf(fp, "%d", &fails), 1));
             fclose(fp);
         }
     }

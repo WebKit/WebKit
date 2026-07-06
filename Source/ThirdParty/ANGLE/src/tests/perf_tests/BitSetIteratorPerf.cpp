@@ -7,11 +7,8 @@
 //   Performance test for bitset iterators.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "ANGLEPerfTest.h"
+#include "common/unsafe_buffers.h"
 
 #include <gmock/gmock.h>
 
@@ -66,7 +63,7 @@ class BitSetIteratorTypeNames
     template <typename BitSetType>
     static std::string GetName(int typeIndex)
     {
-        return kTestTypeNames[typeIndex];
+        return ANGLE_UNSAFE_TODO(kTestTypeNames[typeIndex]);
     }
 };
 

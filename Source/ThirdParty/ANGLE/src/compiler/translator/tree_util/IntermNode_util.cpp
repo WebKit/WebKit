@@ -489,12 +489,13 @@ TIntermSymbol *ReferenceGlobalVariable(const ImmutableString &name, const TSymbo
 }
 
 TIntermSymbol *ReferenceBuiltInVariable(const ImmutableString &name,
-                                        const TSymbolTable &symbolTable,
+                                        TSymbolTable &symbolTable,
                                         int shaderVersion)
 {
     const TVariable *var =
         static_cast<const TVariable *>(symbolTable.findBuiltIn(name, shaderVersion));
     ASSERT(var);
+    symbolTable.markStaticUse(*var);
     return new TIntermSymbol(var);
 }
 

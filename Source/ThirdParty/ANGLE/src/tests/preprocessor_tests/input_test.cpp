@@ -4,12 +4,9 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "compiler/preprocessor/Input.h"
 #include "PreprocessorTest.h"
+#include "common/unsafe_buffers.h"
 #include "compiler/preprocessor/Token.h"
 
 namespace angle
@@ -179,9 +176,9 @@ TEST(InputTest, ReadStringsWithLineContinuation)
     pp::Input input(count, str, length);
     EXPECT_EQ(3u, input.read(buf, maxSize, &lineNo));
     EXPECT_EQ(0, lineNo);
-    EXPECT_EQ(2u, input.read(buf + 3, maxSize - 3, &lineNo));
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(2u, input.read(buf + 3, maxSize - 3, &lineNo)));
     EXPECT_EQ(1, lineNo);
-    EXPECT_EQ(1u, input.read(buf + 5, maxSize - 5, &lineNo));
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(1u, input.read(buf + 5, maxSize - 5, &lineNo)));
     EXPECT_EQ(2, lineNo);
     EXPECT_STREQ("foobar", buf);
 }

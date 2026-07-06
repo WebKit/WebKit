@@ -170,7 +170,6 @@ class Renderer9 : public RendererD3D
 
     int getMajorShaderModel() const override;
     int getMinorShaderModel() const override;
-    std::string getShaderModelSuffix() const override;
 
     DWORD getCapsDeclTypes() const;
 

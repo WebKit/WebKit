@@ -7,11 +7,8 @@
 //   Performance test for binding objects
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "ANGLEPerfTest.h"
+#include "common/unsafe_buffers.h"
 
 #include <iostream>
 #include <random>
@@ -196,8 +193,8 @@ void BindingsBenchmark::drawBenchmark()
         size_t bindingIndex         = it % bindingPointsSize;
         for (GLuint bufferIdx = 0; bufferIdx < buffersSize; bufferIdx++)
         {
-            GLenum binding = bindingPoints[bindingIndex];
-            glBindBuffer(binding, buffers[bufferIdx]);
+            GLenum binding = ANGLE_UNSAFE_TODO(bindingPoints[bindingIndex]);
+            glBindBuffer(binding, ANGLE_UNSAFE_TODO(buffers[bufferIdx]));
 
             // Instead of doing a costly division to get an index in the range [0,bindingPointsSize)
             // do a bounds-check and reset the index.

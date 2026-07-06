@@ -24,6 +24,8 @@
 //     validate_image_types()
 //   - Variables are Pointers: validate_all_alive_variables_are_pointers()
 //   - No pointer->pointer type: validate_no_pointer_to_pointer_type()
+//   - Validate pointer types for instruction operands and results
+//     validate_pointer_types_for_operands(), validate_pointer_types_for_result()
 //
 // Control flow:
 //   - Branches must have the appropriate targets set (merge, trueblock for if, etc); every block
@@ -52,7 +54,6 @@
 //   - Precision is not applied to types that don't are not applicable.  It _is_ applied to types
 //     that are applicable (including uniforms and samplers for example).  Needs to work to make
 //     sure precision is always assigned.
-//   - Pointers only valid in the left arg of load/store/access/call
 //   - Arguments of OpCode that must be pointer type is indeed a pointer
 //   - Loop blocks ends in the appropriate instructions.
 //   - Do blocks end in DoLoop (unless already terminated by something else, like Return)
@@ -1708,13 +1709,15 @@ impl<'a> Validator<'a> {
             &mut (),
             &self.ir.function_entries,
             &|_, instruction| {
-                let (opcode, _result) = instruction.get_op_and_result(&self.ir.meta);
+                let (opcode, result) = instruction.get_op_and_result(&self.ir.meta);
                 self.validate_struct_field_in_bounds(opcode);
                 self.validate_if_condition_is_bool(opcode);
                 self.validate_case_values_are_int_or_uint_constants(opcode);
                 self.validate_switch_has_unique_case_values(opcode);
                 self.validate_no_constant_foldable_instruction(opcode);
                 self.validate_no_merge_input_opcode_in_block_instruction(opcode);
+                self.validate_pointer_types_for_operands(opcode);
+                self.validate_pointer_types_for_result(opcode, result);
             },
         );
     }
@@ -1784,6 +1787,285 @@ impl<'a> Validator<'a> {
                 "invalid Switch instruction: {:?}, has duplicated case values",
                 opcode
             ));
+        }
+    }
+
+    fn validate_pointer_types_for_result(&self, opcode: &OpCode, result: Option<TypedRegisterId>) {
+        let Some(result) = result else {
+            return;
+        };
+
+        let is_result_ptr = self.ir.meta.get_type(result.type_id).is_pointer();
+        match opcode {
+            // Instructions that produce pointer results
+            &OpCode::AccessStructField(..)
+            | &OpCode::AccessVectorComponent(..)
+            | &OpCode::AccessVectorComponentMulti(..)
+            | &OpCode::AccessMatrixColumn(..)
+            | &OpCode::AccessArrayElement(..)
+            | &OpCode::AccessVectorComponentDynamic(..) => {
+                if !is_result_ptr {
+                    self.on_error(format_args!(
+                        "invalid instruction: {:?}, result register {:?} must be a pointer",
+                        opcode, result
+                    ));
+                }
+            }
+            // Instructions that produce value results
+            &OpCode::ExtractVectorComponent(..)
+            | &OpCode::ExtractVectorComponentMulti(..)
+            | &OpCode::ExtractStructField(..)
+            | &OpCode::ExtractVectorComponentDynamic(..)
+            | &OpCode::ExtractMatrixColumn(..)
+            | &OpCode::ExtractArrayElement(..)
+            | &OpCode::ConstructScalarFromScalar(..)
+            | &OpCode::ConstructVectorFromScalar(..)
+            | &OpCode::ConstructMatrixFromScalar(..)
+            | &OpCode::ConstructMatrixFromMatrix(..)
+            | &OpCode::ConstructVectorFromMultiple(..)
+            | &OpCode::ConstructMatrixFromMultiple(..)
+            | &OpCode::ConstructStruct(..)
+            | &OpCode::ConstructArray(..)
+            | &OpCode::Load(..)
+            | &OpCode::Call(..)
+            | &OpCode::Unary(..)
+            | &OpCode::Binary(..)
+            | &OpCode::BuiltIn(..)
+            | &OpCode::Texture(..) => {
+                if is_result_ptr {
+                    self.on_error(format_args!(
+                        "invalid instruction: {:?}, result register {:?} must not be a pointer",
+                        opcode, result
+                    ));
+                }
+            }
+            // Alias must match the pointer/non-pointer type of the old id.
+            &OpCode::Alias(old_id) => {
+                let is_old_id_ptr = self.ir.meta.get_type(old_id.type_id).is_pointer();
+                if is_result_ptr != is_old_id_ptr {
+                    self.on_error(format_args!(
+                        "invalid instruction: {:?}, result register {:?} must match \
+                         pointer/non-pointer type of the old id {:?}",
+                        opcode, result, old_id
+                    ));
+                }
+            }
+            // Instructions that produce no result
+            &OpCode::MergeInput
+            | &OpCode::Discard
+            | &OpCode::Return(..)
+            | &OpCode::Break
+            | &OpCode::Continue
+            | &OpCode::Passthrough
+            | &OpCode::NextBlock
+            | &OpCode::Merge(..)
+            | &OpCode::If(..)
+            | &OpCode::Loop
+            | &OpCode::DoLoop
+            | &OpCode::LoopIf(..)
+            | &OpCode::Switch(..)
+            | &OpCode::Store(..) => {}
+        }
+    }
+
+    fn validate_pointer_types_for_operands(&self, opcode: &OpCode) {
+        let validate_operand_is_not_pointer = |operand: TypedId| {
+            if self.ir.meta.get_type(operand.type_id).is_pointer() {
+                self.on_error(format_args!(
+                    "invalid instruction: {:?}, operand {:?} must not be a pointer",
+                    opcode, operand
+                ));
+            }
+        };
+        let validate_operand_is_pointer = |operand: TypedId| {
+            if !self.ir.meta.get_type(operand.type_id).is_pointer() {
+                self.on_error(format_args!(
+                    "invalid instruction: {:?}, operand {:?} must be a pointer",
+                    opcode, operand
+                ));
+            }
+        };
+        match opcode {
+            // Single pointer operand
+            &OpCode::Unary(UnaryOpCode::ArrayLength, ptr)
+            | &OpCode::Unary(UnaryOpCode::PrefixIncrement, ptr)
+            | &OpCode::Unary(UnaryOpCode::PrefixDecrement, ptr)
+            | &OpCode::Unary(UnaryOpCode::PostfixIncrement, ptr)
+            | &OpCode::Unary(UnaryOpCode::PostfixDecrement, ptr)
+            | &OpCode::Unary(UnaryOpCode::AtomicCounter, ptr)
+            | &OpCode::Unary(UnaryOpCode::AtomicCounterIncrement, ptr)
+            | &OpCode::Unary(UnaryOpCode::AtomicCounterDecrement, ptr)
+            | &OpCode::AccessStructField(ptr, _)
+            | &OpCode::AccessVectorComponent(ptr, _)
+            | &OpCode::AccessVectorComponentMulti(ptr, _)
+            | &OpCode::Load(ptr) => {
+                validate_operand_is_pointer(ptr);
+            }
+            // Single value operand
+            &OpCode::Return(Some(val))
+            | &OpCode::Merge(Some(val))
+            | &OpCode::If(val)
+            | &OpCode::LoopIf(val)
+            | &OpCode::Switch(val, _)
+            | &OpCode::ExtractVectorComponent(val, _)
+            | &OpCode::ExtractVectorComponentMulti(val, _)
+            | &OpCode::ExtractStructField(val, _)
+            | &OpCode::ConstructScalarFromScalar(val)
+            | &OpCode::ConstructVectorFromScalar(val)
+            | &OpCode::ConstructMatrixFromScalar(val)
+            | &OpCode::ConstructMatrixFromMatrix(val)
+            | &OpCode::Unary(_, val) => {
+                validate_operand_is_not_pointer(val);
+            }
+            // Pointer operand followed by value operand.
+            &OpCode::AccessMatrixColumn(ptr, val)
+            | &OpCode::AccessArrayElement(ptr, val)
+            | &OpCode::AccessVectorComponentDynamic(ptr, val)
+            | &OpCode::Store(ptr, val)
+            | &OpCode::Binary(BinaryOpCode::AtomicAdd, ptr, val)
+            | &OpCode::Binary(BinaryOpCode::AtomicMin, ptr, val)
+            | &OpCode::Binary(BinaryOpCode::AtomicMax, ptr, val)
+            | &OpCode::Binary(BinaryOpCode::AtomicAnd, ptr, val)
+            | &OpCode::Binary(BinaryOpCode::AtomicOr, ptr, val)
+            | &OpCode::Binary(BinaryOpCode::AtomicXor, ptr, val)
+            | &OpCode::Binary(BinaryOpCode::AtomicExchange, ptr, val) => {
+                validate_operand_is_pointer(ptr);
+                validate_operand_is_not_pointer(val);
+            }
+            // Value operand followed by pointer operand.
+            &OpCode::Binary(BinaryOpCode::Modf, val, ptr)
+            | &OpCode::Binary(BinaryOpCode::Frexp, val, ptr) => {
+                validate_operand_is_not_pointer(val);
+                validate_operand_is_pointer(ptr);
+            }
+            // Two value operands
+            &OpCode::ExtractVectorComponentDynamic(val1, val2)
+            | &OpCode::ExtractMatrixColumn(val1, val2)
+            | &OpCode::ExtractArrayElement(val1, val2)
+            | &OpCode::Binary(_, val1, val2) => {
+                validate_operand_is_not_pointer(val1);
+                validate_operand_is_not_pointer(val2);
+            }
+
+            // First operand is a pointer, other operands are values.
+            &OpCode::BuiltIn(BuiltInOpCode::AtomicCompSwap, ref args) => {
+                for (i, &arg) in args.iter().enumerate() {
+                    if i == 0 {
+                        validate_operand_is_pointer(arg);
+                    } else {
+                        validate_operand_is_not_pointer(arg);
+                    }
+                }
+            }
+            // Third operand is a pointer, other operands are values.
+            &OpCode::BuiltIn(BuiltInOpCode::UaddCarry, ref args)
+            | &OpCode::BuiltIn(BuiltInOpCode::UsubBorrow, ref args) => {
+                for (i, &arg) in args.iter().enumerate() {
+                    if i == 2 {
+                        validate_operand_is_pointer(arg);
+                    } else {
+                        validate_operand_is_not_pointer(arg);
+                    }
+                }
+            }
+            // Third and fourth operands are pointers, other operands are values.
+            &OpCode::BuiltIn(BuiltInOpCode::UmulExtended, ref args)
+            | &OpCode::BuiltIn(BuiltInOpCode::ImulExtended, ref args) => {
+                for (i, &arg) in args.iter().enumerate() {
+                    if i == 2 || i == 3 {
+                        validate_operand_is_pointer(arg);
+                    } else {
+                        validate_operand_is_not_pointer(arg);
+                    }
+                }
+            }
+            // All operands are values.
+            &OpCode::ConstructVectorFromMultiple(ref vals)
+            | &OpCode::ConstructMatrixFromMultiple(ref vals)
+            | &OpCode::ConstructStruct(ref vals)
+            | &OpCode::ConstructArray(ref vals)
+            | &OpCode::BuiltIn(_, ref vals) => {
+                for &val in vals {
+                    validate_operand_is_not_pointer(val);
+                }
+            }
+
+            &OpCode::Call(function_id, ref args) => {
+                let param_directions = self
+                    .ir
+                    .meta
+                    .get_function(function_id)
+                    .params
+                    .iter()
+                    .map(|param| param.direction);
+                args.iter().zip(param_directions).for_each(|(&arg, direction)| {
+                    match direction {
+                        FunctionParamDirection::InputOutput | FunctionParamDirection::Output => {
+                            // `out` and `in out` parameters are always pointers.
+                            validate_operand_is_pointer(arg);
+                        }
+                        FunctionParamDirection::Input => {
+                            // `in` parameter could be pointer or value.
+                        }
+                    };
+                });
+            }
+
+            // Texture instructions take value operands only.
+            &OpCode::Texture(ref texture_opcode, sampler, coord) => {
+                validate_operand_is_not_pointer(sampler);
+                validate_operand_is_not_pointer(coord);
+                match *texture_opcode {
+                    TextureOpCode::Implicit { offset, .. } | TextureOpCode::Gather { offset } => {
+                        if let Some(offset) = offset {
+                            validate_operand_is_not_pointer(offset);
+                        }
+                    }
+                    TextureOpCode::Compare { compare } => {
+                        validate_operand_is_not_pointer(compare);
+                    }
+                    TextureOpCode::Lod { lod, offset, .. } => {
+                        validate_operand_is_not_pointer(lod);
+                        if let Some(offset) = offset {
+                            validate_operand_is_not_pointer(offset);
+                        }
+                    }
+                    TextureOpCode::CompareLod { compare, lod } => {
+                        validate_operand_is_not_pointer(compare);
+                        validate_operand_is_not_pointer(lod);
+                    }
+                    TextureOpCode::Bias { bias, offset, .. } => {
+                        validate_operand_is_not_pointer(bias);
+                        if let Some(offset) = offset {
+                            validate_operand_is_not_pointer(offset);
+                        }
+                    }
+                    TextureOpCode::CompareBias { compare, bias } => {
+                        validate_operand_is_not_pointer(compare);
+                        validate_operand_is_not_pointer(bias);
+                    }
+                    TextureOpCode::Grad { dx, dy, offset, .. } => {
+                        validate_operand_is_not_pointer(dx);
+                        validate_operand_is_not_pointer(dy);
+                        if let Some(offset) = offset {
+                            validate_operand_is_not_pointer(offset);
+                        }
+                    }
+                    TextureOpCode::GatherComponent { component, offset } => {
+                        validate_operand_is_not_pointer(component);
+                        if let Some(offset) = offset {
+                            validate_operand_is_not_pointer(offset);
+                        }
+                    }
+                    TextureOpCode::GatherRef { refz, offset } => {
+                        validate_operand_is_not_pointer(refz);
+                        if let Some(offset) = offset {
+                            validate_operand_is_not_pointer(offset);
+                        }
+                    }
+                }
+            }
+            _ => (),
         }
     }
 }

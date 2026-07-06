@@ -18,10 +18,7 @@
  *
  */
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "egluNativeDisplay.hpp"
 
 #include "tcuANGLENativeDisplayFactory.h"
@@ -71,7 +68,7 @@ destType bitCast(sourceType source)
     constexpr size_t copySize =
         sizeof(destType) < sizeof(sourceType) ? sizeof(destType) : sizeof(sourceType);
     destType output(0);
-    memcpy(&output, &source, copySize);
+    ANGLE_UNSAFE_TODO(memcpy(&output, &source, copySize));
     return output;
 }
 
@@ -470,20 +467,23 @@ ANGLENativeDisplayFactory::ANGLENativeDisplayFactory(
             reinterpret_cast<const char **>(mPlatformAttributes[attrIndex + 1]);
         DE_ASSERT(enabledFeatures != nullptr && *enabledFeatures != nullptr);
 
-        for (; *enabledFeatures; ++enabledFeatures)
+        for (; *enabledFeatures; ANGLE_UNSAFE_TODO(++enabledFeatures))
         {
-            if (strcmp(enabledFeatures[0],
-                       angle::GetFeatureName(angle::Feature::EmulatedPrerotation90)) == 0)
+            if (ANGLE_UNSAFE_TODO(
+                    strcmp(enabledFeatures[0],
+                           angle::GetFeatureName(angle::Feature::EmulatedPrerotation90))) == 0)
             {
                 preRotation = 90;
             }
-            else if (strcmp(enabledFeatures[0],
-                            angle::GetFeatureName(angle::Feature::EmulatedPrerotation180)) == 0)
+            else if (ANGLE_UNSAFE_TODO(strcmp(
+                         enabledFeatures[0],
+                         angle::GetFeatureName(angle::Feature::EmulatedPrerotation180))) == 0)
             {
                 preRotation = 180;
             }
-            else if (strcmp(enabledFeatures[0],
-                            angle::GetFeatureName(angle::Feature::EmulatedPrerotation270)) == 0)
+            else if (ANGLE_UNSAFE_TODO(strcmp(
+                         enabledFeatures[0],
+                         angle::GetFeatureName(angle::Feature::EmulatedPrerotation270))) == 0)
             {
                 preRotation = 270;
             }

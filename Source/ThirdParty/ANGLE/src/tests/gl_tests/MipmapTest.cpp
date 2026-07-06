@@ -4,10 +4,7 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
 #include "test_utils/gl_raii.h"
@@ -675,9 +672,7 @@ TEST_P(MipmapTestES3, GenerateMipmapLongNPOTTexture)
 // This test generates (and uses) mipmaps on a texture using init data. D3D11 will use a
 // non-renderable TextureStorage for this. The test then disables mips, renders to level zero of the
 // texture, and reenables mips before using the texture again. To do this, D3D11 has to convert the
-// TextureStorage into a renderable one. This test ensures that the conversion works correctly. In
-// particular, on D3D11 Feature Level 9_3 it ensures that both the zero LOD workaround texture AND
-// the 'normal' texture are copied during conversion.
+// TextureStorage into a renderable one. This test ensures that the conversion works correctly.
 TEST_P(MipmapTest, GenerateMipmapFromInitDataThenRender)
 {
     // http://anglebug.com/42264262
@@ -807,9 +802,6 @@ TEST_P(MipmapTest, GenerateMipmapAfterModifyingBaseLevel)
 }
 
 // This test ensures that mips are correctly generated from a rendered image.
-// In particular, on D3D11 Feature Level 9_3, the clear call will be performed on the zero-level
-// texture, rather than the mipped one. The test ensures that the zero-level texture is correctly
-// copied into the mipped texture before the mipmaps are generated.
 TEST_P(MipmapTest, GenerateMipmapFromRenderedImage)
 {
     // http://anglebug.com/42264262
@@ -928,7 +920,7 @@ TEST_P(MipmapTest, DefineValidExtraLevelAndUseItLater)
     for (int i = 0; i < maxLevel; i++)
     {
         glTexImage2D(GL_TEXTURE_2D, i, GL_RGB, getWindowWidth() >> i, getWindowHeight() >> i, 0,
-                     GL_RGB, GL_UNSIGNED_BYTE, levels[i % 3]);
+                     GL_RGB, GL_UNSIGNED_BYTE, ANGLE_UNSAFE_TODO(levels[i % 3]));
     }
 
     // Define an extra level that won't be used for now
@@ -968,7 +960,7 @@ TEST_P(MipmapTest, DefineValidExtraLevelAndUseItLater)
     for (int i = 0; i < maxLevel - 1; i++)
     {
         glTexImage2D(GL_TEXTURE_2D, i + 1, GL_RGB, getWindowWidth() >> i, getWindowHeight() >> i, 0,
-                     GL_RGB, GL_UNSIGNED_BYTE, levels[i % 3]);
+                     GL_RGB, GL_UNSIGNED_BYTE, ANGLE_UNSAFE_TODO(levels[i % 3]));
     }
 
     // At this point we have a valid mip chain, the last level being magenta if we draw 1x1 pixel.
@@ -1019,9 +1011,8 @@ TEST_P(MipmapTest, MipMapGenerationD3D9Bug)
     EXPECT_PIXEL_COLOR_NEAR(0, 0, mip1Color, 1.0);
 }
 
-// This test ensures that the level-zero workaround for TextureCubes (on D3D11 Feature Level 9_3)
-// works as expected. It tests enabling/disabling mipmaps, generating mipmaps, and rendering to
-// level zero.
+// This test ensures that TextureCubes work as expected when enabling/disabling mipmaps,
+// generating mipmaps, and rendering to level zero.
 TEST_P(MipmapTest, TextureCubeGeneralLevelZero)
 {
     // http://anglebug.com/42261821
@@ -2308,10 +2299,12 @@ void main()
     GLubyte mip0Color[16 * 4];
     for (size_t i = 0; i < 16; i++)
     {
-        mip0Color[i * 4 + 0] = kRedColor[i];
-        mip0Color[i * 4 + 1] = 0;
-        mip0Color[i * 4 + 2] = 0;
-        mip0Color[i * 4 + 3] = 0xff;
+        ANGLE_UNSAFE_TODO({
+            mip0Color[i * 4 + 0] = kRedColor[i];
+            mip0Color[i * 4 + 1] = 0;
+            mip0Color[i * 4 + 2] = 0;
+            mip0Color[i * 4 + 3] = 0xff;
+        })
     }
 
     GLFramebuffer fb0, fb1, fb2;
@@ -2371,14 +2364,14 @@ void main()
     glReadPixels(0, 0, 2, 2, GL_RGBA, GL_UNSIGNED_BYTE, &resultColors[0]);
     for (size_t i = 0; i < 4; i++)
     {
-        EXPECT_EQ(resultColors[i * 4], kExpectedMip1Color[i]);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(resultColors[i * 4], kExpectedMip1Color[i]));
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, fb2);
     glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &resultColors[0]);
     for (size_t i = 0; i < 1; i++)
     {
-        EXPECT_EQ(resultColors[i * 4], kExpectedMip2Color[i]);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(resultColors[i * 4], kExpectedMip2Color[i]));
     }
 }
 

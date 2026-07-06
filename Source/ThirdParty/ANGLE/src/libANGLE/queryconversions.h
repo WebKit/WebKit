@@ -45,12 +45,12 @@ struct GLTypeToGLenum<GLboolean>
 template <>
 struct GLTypeToGLenum<GLint64>
 {
-    static constexpr GLenum value = GL_INT_64_ANGLEX;
+    static constexpr GLenum value = GL_INT64;
 };
 template <>
 struct GLTypeToGLenum<GLuint64>
 {
-    static constexpr GLenum value = GL_UINT_64_ANGLEX;
+    static constexpr GLenum value = GL_UNSIGNED_INT64;
 };
 template <>
 struct GLTypeToGLenum<GLfloat>

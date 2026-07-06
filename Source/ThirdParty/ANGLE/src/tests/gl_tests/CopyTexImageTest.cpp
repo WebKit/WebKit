@@ -1752,6 +1752,75 @@ TEST_P(CopyTexImageTestES3, RedefineSameLevel)
                          GLColor::yellow);
 }
 
+// Test glCopyTexSubImage3D() for an SNORM 3D texture to make sure it updates the correct depth.
+TEST_P(CopyTexImageTestES3, Snorm3DTextureNonZeroOffset)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_render_snorm"));
+
+    constexpr size_t kWidth   = 9;
+    constexpr size_t kHeight  = 4;
+    constexpr size_t kDepth   = 8;
+    constexpr size_t kZOffset = 3;
+    static_assert(kZOffset < kDepth);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    // Bind an RGBA SNORM texture to the framebuffer and clear it to a single color.
+    GLTexture srcTexture;
+    glBindTexture(GL_TEXTURE_2D, srcTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8_SNORM, kWidth, kHeight);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, srcTexture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ASSERT_GL_NO_ERROR();
+
+    // The destination texture is defined as 3D with RGB SNORM format and cleared. Then the bound
+    // framebuffer is copied into a non-zero depth of this texture.
+    GLTexture dstTexture;
+    glBindTexture(GL_TEXTURE_3D, dstTexture);
+    glTexStorage3D(GL_TEXTURE_3D, 1, GL_RGB8_SNORM, kWidth, kHeight, kDepth);
+
+    std::vector<uint8_t> colorWhiteRGB8Snorm(kWidth * kHeight * kDepth * 3, 0x7F);
+    glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, kWidth, kHeight, kDepth, GL_RGB, GL_BYTE,
+                    colorWhiteRGB8Snorm.data());
+    glCopyTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, kZOffset, 0, 0, kWidth, kHeight);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify that the correct depth of the 3D texture has been copied into and the rest of it
+    // remains intact. This is done through sampling from each depth of the 3D texture and drawing
+    // to the FBO which is bound to an RGBA8 texture.
+    GLTexture outTexture;
+    glBindTexture(GL_TEXTURE_2D, outTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, outTexture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    constexpr char k3DSampleFromDepthFS[] = R"(#version 300 es
+precision highp float;
+uniform highp sampler3D tex3D;
+uniform int u_depth;
+out vec4 fragColor;
+void main() {
+    fragColor = texelFetch(tex3D, ivec3(0, 0, u_depth), 0);
+})";
+    ANGLE_GL_PROGRAM(tex3DProgram, essl3_shaders::vs::Simple(), k3DSampleFromDepthFS);
+    glUseProgram(tex3DProgram);
+    glUniform1i(glGetUniformLocation(tex3DProgram, "tex3D"), 0);
+
+    for (size_t z = 0; z < kDepth; z++)
+    {
+        glUniform1i(glGetUniformLocation(tex3DProgram, "u_depth"), z);
+        drawQuad(tex3DProgram, std::string(essl3_shaders::PositionAttrib()), 0.0f);
+        ASSERT_GL_NO_ERROR();
+
+        GLColor expectedColor = z == kZOffset ? GLColor::green : GLColor::white;
+        EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, expectedColor);
+    }
+}
+
 // Based on the WebGL conformance test copy-texture-image-same-texture.html.
 TEST_P(CopyTexImageLumaWorkaroundTestES3, SameTextureDifferentLevelLuminanceAlpha)
 {

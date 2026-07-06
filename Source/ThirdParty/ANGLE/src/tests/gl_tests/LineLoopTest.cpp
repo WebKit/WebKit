@@ -4,10 +4,7 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
 #include "test_utils/gl_raii.h"
@@ -59,11 +56,14 @@ class LineLoopTest : public ANGLETest<>
         {
             for (int x = 0; x < getWindowWidth(); x++)
             {
-                const GLubyte *pixel = &pixels[0] + ((y * getWindowWidth() + x) * 4);
+                const GLubyte *pixel =
+                    ANGLE_UNSAFE_TODO(&pixels[0] + ((y * getWindowWidth() + x) * 4));
 
                 EXPECT_EQ(pixel[0], 0) << "Failed at " << x << ", " << y << std::endl;
-                EXPECT_EQ(pixel[1], pixel[2]) << "Failed at " << x << ", " << y << std::endl;
-                ASSERT_EQ(pixel[3], 255) << "Failed at " << x << ", " << y << std::endl;
+                ANGLE_UNSAFE_TODO(EXPECT_EQ(pixel[1], pixel[2]))
+                    << "Failed at " << x << ", " << y << std::endl;
+                ANGLE_UNSAFE_TODO(ASSERT_EQ(pixel[3], 255))
+                    << "Failed at " << x << ", " << y << std::endl;
             }
         }
     }
@@ -199,7 +199,7 @@ TEST_P(LineLoopTest, LineLoopUByteIndicesBlend)
     ignoreD3D11SDKLayersWarnings();
 
     static const GLubyte indices[] = {0, 7, 6, 9, 8, 0};
-    runTestBlend(GL_UNSIGNED_BYTE, 0, indices + 1);
+    runTestBlend(GL_UNSIGNED_BYTE, 0, ANGLE_UNSAFE_TODO(indices + 1));
 }
 
 // Line loop test that draws a loop and a strip, blends the colors, and checks they're correct. No
@@ -210,7 +210,7 @@ TEST_P(LineLoopTest, LineLoopUShortIndicesBlend)
     ignoreD3D11SDKLayersWarnings();
 
     static const GLushort indices[] = {0, 7, 6, 9, 8, 0};
-    runTestBlend(GL_UNSIGNED_SHORT, 0, indices + 1);
+    runTestBlend(GL_UNSIGNED_SHORT, 0, ANGLE_UNSAFE_TODO(indices + 1));
 }
 
 // Line loop test that draws a loop and a strip, blends the colors, and checks they're correct. No
@@ -226,7 +226,7 @@ TEST_P(LineLoopTest, LineLoopUIntIndicesBlend)
     ignoreD3D11SDKLayersWarnings();
 
     static const GLuint indices[] = {0, 7, 6, 9, 8, 0};
-    runTestBlend(GL_UNSIGNED_INT, 0, indices + 1);
+    runTestBlend(GL_UNSIGNED_INT, 0, ANGLE_UNSAFE_TODO(indices + 1));
 }
 
 // Line loop test that draws a loop and a strip, blends the colors, and checks they're correct.
@@ -292,7 +292,7 @@ TEST_P(LineLoopTest, LineLoopUByteIndicesNoBlend)
     ignoreD3D11SDKLayersWarnings();
 
     static const GLubyte indices[] = {0, 7, 6, 9, 8, 0};
-    runTestNoBlend(GL_UNSIGNED_BYTE, 0, indices + 1);
+    runTestNoBlend(GL_UNSIGNED_BYTE, 0, ANGLE_UNSAFE_TODO(indices + 1));
 }
 
 // Line loop test that draws a loop, reads it, then a strip, reads it, and confirms the pixels are
@@ -303,7 +303,7 @@ TEST_P(LineLoopTest, LineLoopUShortIndicesNoBlend)
     ignoreD3D11SDKLayersWarnings();
 
     static const GLushort indices[] = {0, 7, 6, 9, 8, 0};
-    runTestNoBlend(GL_UNSIGNED_SHORT, 0, indices + 1);
+    runTestNoBlend(GL_UNSIGNED_SHORT, 0, ANGLE_UNSAFE_TODO(indices + 1));
 }
 
 // Line loop test that draws a loop, reads it, then a strip, reads it, and confirms the pixels are
@@ -319,7 +319,7 @@ TEST_P(LineLoopTest, LineLoopUIntIndicesNoBlend)
     ignoreD3D11SDKLayersWarnings();
 
     static const GLuint indices[] = {0, 7, 6, 9, 8, 0};
-    runTestNoBlend(GL_UNSIGNED_INT, 0, indices + 1);
+    runTestNoBlend(GL_UNSIGNED_INT, 0, ANGLE_UNSAFE_TODO(indices + 1));
 }
 
 // Line loop test that draws a loop, reads it, then a strip, reads it, and confirms the pixels are
@@ -1028,8 +1028,9 @@ void main()
 
     for (int loop = 0; loop < 4; ++loop)
     {
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, vertices + 8 * loop);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, transform + 12 * loop);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, ANGLE_UNSAFE_TODO(vertices + 8 * loop));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0,
+                              ANGLE_UNSAFE_TODO(transform + 12 * loop));
 
         glDrawElements(GL_LINE_STRIP, 5, GL_UNSIGNED_SHORT, lineloopAsStripIndices);
     }
@@ -1209,8 +1210,9 @@ void main()
 
     for (int loop = 1; loop < 3; ++loop)
     {
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, vertices + 8 * loop);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, transform + 12 * loop);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, ANGLE_UNSAFE_TODO(vertices + 8 * loop));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0,
+                              ANGLE_UNSAFE_TODO(transform + 12 * loop));
 
         glDrawElements(GL_LINE_STRIP, 5, GL_UNSIGNED_SHORT, lineloopAsStripIndices);
     }
@@ -1279,8 +1281,9 @@ void main()
     {
         for (unsigned j = 0; j < expected_count; j++)
         {
-            EXPECT_EQ(mappedBufferData[j], expected[j])
-                << "Expected pixel at " << j << " to be " << expected[j] << std::endl;
+            ANGLE_UNSAFE_TODO(EXPECT_EQ(mappedBufferData[j], expected[j]))
+                << "Expected pixel at " << j << " to be " << ANGLE_UNSAFE_TODO(expected[j])
+                << std::endl;
         }
     }
 
@@ -1690,19 +1693,24 @@ TEST_P(LineLoopIndirectTest, IndirectAndElementDrawsShareIndexBuffer)
     {
         for (int x = 0; x < getWindowWidth() / 2; x++)
         {
-            const GLubyte *pixel = &pixels[0] + ((y * getWindowWidth() + x) * 4);
+            const GLubyte *pixel = ANGLE_UNSAFE_TODO(&pixels[0] + ((y * getWindowWidth() + x) * 4));
 
-            EXPECT_TRUE(pixel[0] == pixel[2]) << "Failed at " << x << ", " << y << std::endl;
-            EXPECT_TRUE(pixel[1] == 0) << "Failed at " << x << ", " << y << std::endl;
-            ASSERT_EQ(pixel[3], 255) << "Failed at " << x << ", " << y << std::endl;
+            ANGLE_UNSAFE_TODO(EXPECT_TRUE(pixel[0] == pixel[2]))
+                << "Failed at " << x << ", " << y << std::endl;
+            ANGLE_UNSAFE_TODO(EXPECT_TRUE(pixel[1] == 0))
+                << "Failed at " << x << ", " << y << std::endl;
+            ANGLE_UNSAFE_TODO(ASSERT_EQ(pixel[3], 255))
+                << "Failed at " << x << ", " << y << std::endl;
         }
         for (int x = getWindowWidth() / 2; x < getWindowWidth(); x++)
         {
-            const GLubyte *pixel = &pixels[0] + ((y * getWindowWidth() + x) * 4);
+            const GLubyte *pixel = ANGLE_UNSAFE_TODO(&pixels[0] + ((y * getWindowWidth() + x) * 4));
 
             EXPECT_TRUE(pixel[0] == 0) << "Failed at " << x << ", " << y << std::endl;
-            EXPECT_TRUE(pixel[1] == pixel[2]) << "Failed at " << x << ", " << y << std::endl;
-            ASSERT_EQ(pixel[3], 255) << "Failed at " << x << ", " << y << std::endl;
+            ANGLE_UNSAFE_TODO(EXPECT_TRUE(pixel[1] == pixel[2]))
+                << "Failed at " << x << ", " << y << std::endl;
+            ANGLE_UNSAFE_TODO(ASSERT_EQ(pixel[3], 255))
+                << "Failed at " << x << ", " << y << std::endl;
         }
     }
 }
@@ -1802,7 +1810,7 @@ void main()
     ASSERT_GL_NO_ERROR();
     for (size_t i = 0; i < expected.size(); i++)
     {
-        EXPECT_EQ(mapped[i], expected[i]);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(mapped[i], expected[i]));
     }
 }
 ANGLE_INSTANTIATE_TEST_ES2_AND(LineLoopTest,

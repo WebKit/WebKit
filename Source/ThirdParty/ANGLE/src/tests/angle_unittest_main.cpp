@@ -4,11 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "GLSLANG/ShaderLang.h"
+#include "common/unsafe_buffers.h"
 #include "gtest/gtest.h"
 #include "test_utils/runner/TestSuite.h"
 
@@ -39,7 +36,8 @@ int main(int argc, char **argv)
 {
     for (int argIndex = 1; argIndex < argc; ++argIndex)
     {
-        if (strcmp(argv[argIndex], "-v") == 0 || strcmp(argv[argIndex], "--verbose") == 0)
+        if (ANGLE_UNSAFE_TODO(strcmp(argv[argIndex], "-v")) == 0 ||
+            ANGLE_UNSAFE_TODO(strcmp(argv[argIndex], "--verbose")) == 0)
         {
             gVerbose = true;
         }

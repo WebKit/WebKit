@@ -4,10 +4,7 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
 #include <stdint.h>
@@ -1193,15 +1190,16 @@ TEST_P(ProgramBinaryES3Test, ArrayOfStructContainingArrayOfSamplers)
     GLTexture textures[4];
     GLColor expected = MakeGLColor(32, 64, 96, 255);
     GLubyte data[8]  = {};  // 4 bytes of padding, so that texture can be initialized with 4 bytes
-    memcpy(data, expected.data(), sizeof(expected));
+    ANGLE_UNSAFE_TODO(memcpy(data, expected.data(), sizeof(expected)));
     for (int i = 0; i < 4; i++)
     {
         int outerIdx = i % 2;
         int innerIdx = i / 2;
         glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(GL_TEXTURE_2D, textures[i]);
+        glBindTexture(GL_TEXTURE_2D, ANGLE_UNSAFE_TODO(textures[i]));
         // Each element provides two components.
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data + i);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     ANGLE_UNSAFE_TODO(data + i));
         std::stringstream uniformName;
         uniformName << "test[" << innerIdx << "].data[" << outerIdx << "]";
         // Then send it as a uniform
@@ -1391,7 +1389,7 @@ void main() {
     glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffer);
     void *mappedBuffer =
         glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 3, GL_MAP_READ_BIT);
-    memcpy(bufferData, mappedBuffer, sizeof(bufferData));
+    ANGLE_UNSAFE_TODO(memcpy(bufferData, mappedBuffer, sizeof(bufferData)));
     glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
 
     EXPECT_EQ(11u, bufferData[0]);

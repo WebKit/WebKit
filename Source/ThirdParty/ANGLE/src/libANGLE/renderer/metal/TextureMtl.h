@@ -19,6 +19,7 @@
 #include "libANGLE/renderer/metal/mtl_command_buffer.h"
 #include "libANGLE/renderer/metal/mtl_context_device.h"
 #include "libANGLE/renderer/metal/mtl_resources.h"
+#include "libANGLE/renderer/renderer_utils.h"
 namespace rx
 {
 
@@ -42,7 +43,7 @@ class TextureMtl : public TextureImpl
     void onDestroy(const gl::Context *context) override;
 
     angle::Result setImage(const gl::Context *context,
-                           const gl::ImageIndex &index,
+                           const gl::OwnImageIndex &ownIndex,
                            GLenum internalFormat,
                            const gl::Extents &size,
                            GLenum format,
@@ -51,7 +52,7 @@ class TextureMtl : public TextureImpl
                            gl::Buffer *unpackBuffer,
                            const uint8_t *pixels) override;
     angle::Result setSubImage(const gl::Context *context,
-                              const gl::ImageIndex &index,
+                              const gl::OwnImageIndex &ownIndex,
                               const gl::Box &area,
                               GLenum format,
                               GLenum type,
@@ -60,14 +61,14 @@ class TextureMtl : public TextureImpl
                               const uint8_t *pixels) override;
 
     angle::Result setCompressedImage(const gl::Context *context,
-                                     const gl::ImageIndex &index,
+                                     const gl::OwnImageIndex &ownIndex,
                                      GLenum internalFormat,
                                      const gl::Extents &size,
                                      const gl::PixelUnpackState &unpack,
                                      size_t imageSize,
                                      const uint8_t *pixels) override;
     angle::Result setCompressedSubImage(const gl::Context *context,
-                                        const gl::ImageIndex &index,
+                                        const gl::OwnImageIndex &ownIndex,
                                         const gl::Box &area,
                                         GLenum format,
                                         const gl::PixelUnpackState &unpack,
@@ -75,29 +76,29 @@ class TextureMtl : public TextureImpl
                                         const uint8_t *pixels) override;
 
     angle::Result copyImage(const gl::Context *context,
-                            const gl::ImageIndex &index,
+                            const gl::OwnImageIndex &ownIndex,
                             const gl::Rectangle &sourceArea,
                             GLenum internalFormat,
                             gl::Framebuffer *source) override;
     angle::Result copySubImage(const gl::Context *context,
-                               const gl::ImageIndex &index,
+                               const gl::OwnImageIndex &ownIndex,
                                const gl::Offset &destOffset,
                                const gl::Rectangle &sourceArea,
                                gl::Framebuffer *source) override;
 
     angle::Result copyTexture(const gl::Context *context,
-                              const gl::ImageIndex &index,
+                              const gl::OwnImageIndex &ownIndex,
                               GLenum internalFormat,
                               GLenum type,
-                              GLint sourceLevel,
+                              gl::OwnLevel ownSourceLevel,
                               bool unpackFlipY,
                               bool unpackPremultiplyAlpha,
                               bool unpackUnmultiplyAlpha,
                               const gl::Texture *source) override;
     angle::Result copySubTexture(const gl::Context *context,
-                                 const gl::ImageIndex &index,
+                                 const gl::OwnImageIndex &ownIndex,
                                  const gl::Offset &destOffset,
-                                 GLint sourceLevel,
+                                 gl::OwnLevel ownSourceLevel,
                                  const gl::Box &sourceBox,
                                  bool unpackFlipY,
                                  bool unpackPremultiplyAlpha,
@@ -149,7 +150,7 @@ class TextureMtl : public TextureImpl
 
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,
-                                            const gl::ImageIndex &imageIndex,
+                                            const gl::OwnImageIndex &ownImageIndex,
                                             GLsizei samples,
                                             FramebufferAttachmentRenderTarget **rtOut) override;
 
@@ -159,13 +160,19 @@ class TextureMtl : public TextureImpl
 
     angle::Result initializeContents(const gl::Context *context,
                                      GLenum binding,
-                                     const gl::ImageIndex &imageIndex) override;
+                                     const gl::OwnImageIndex &ownImageIndex) override;
 
     // The texture's data is initially initialized and stored in an array
     // of images through glTexImage*/glCopyTex* calls. During draw calls, the caller must make sure
     // the actual texture is created by calling this method to transfer the stored images data
     // to the actual texture.
-    angle::Result ensureNativeStorageCreated(const gl::Context *context, bool keepImages);
+    // With |mipLevels| == ImageMipLevels::EnabledLevels, only the mip levels that have actually
+    // been specified are allocated, deferring allocation of the rest of the mip chain. With
+    // ImageMipLevels::FullMipChainForGenerateMipmap (used by glGenerateMipmap), the full mip chain
+    // from base to max level is allocated.
+    angle::Result ensureNativeStorageCreated(const gl::Context *context,
+                                             bool keepImages,
+                                             ImageMipLevels mipLevels);
 
     angle::Result bindToShader(const gl::Context *context,
                                mtl::RenderCommandEncoder *cmdEncoder,
@@ -191,6 +198,12 @@ class TextureMtl : public TextureImpl
                                       const gl::Extents &size,
                                       const mtl::Format &format);
     angle::Result onBaseMaxLevelsChanged(const gl::Context *context);
+    // Number of native mip levels the storage should be allocated with, starting at the effective
+    // base level. With ImageMipLevels::EnabledLevels this is limited to the contiguous levels that
+    // have actually been specified (so a texture with only level 0 defined does not allocate a full
+    // mip pyramid). With ImageMipLevels::FullMipChainForGenerateMipmap the full chain from base to
+    // max level is returned (for glGenerateMipmap).
+    GLuint getStorageMipLevelCount(ImageMipLevels mipLevels) const;
     angle::Result ensureSamplerStateCreated(const gl::Context *context);
     // Ensure all image views at all faces/levels are retained.
     void retainImageDefinitions();

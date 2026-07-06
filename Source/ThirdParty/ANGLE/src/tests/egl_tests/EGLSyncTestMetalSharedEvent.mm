@@ -7,12 +7,9 @@
 //   Tests pertaining to EGL_ANGLE_sync_mtl_shared_event extension.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <gtest/gtest.h>
 
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "util/EGLWindow.h"
 
@@ -187,7 +184,8 @@ TEST_P(EGLSyncTestMetalSharedEvent, GetSyncAttrib_ExplicitSyncCondition)
     {
         uint64_t initialSignalValue = sharedEvent.signaledValue;
 
-        EGLSync sync = eglCreateSync(display, EGL_SYNC_METAL_SHARED_EVENT_ANGLE, syncAttribs[i]);
+        EGLSync sync = eglCreateSync(display, EGL_SYNC_METAL_SHARED_EVENT_ANGLE,
+                                     ANGLE_UNSAFE_TODO(syncAttribs[i]));
         EXPECT_NE(sync, EGL_NO_SYNC);
 
         constexpr EGLAttrib kSentinelAttribValue = 123456789;
@@ -197,7 +195,7 @@ TEST_P(EGLSyncTestMetalSharedEvent, GetSyncAttrib_ExplicitSyncCondition)
 
         attribValue = kSentinelAttribValue;
         EXPECT_EGL_TRUE(eglGetSyncAttrib(display, sync, EGL_SYNC_CONDITION, &attribValue));
-        EXPECT_EQ(attribValue, expectedSyncCondition[i]);
+        EXPECT_EQ(attribValue, ANGLE_UNSAFE_TODO(expectedSyncCondition[i]));
 
         attribValue = kSentinelAttribValue;
         EXPECT_EGL_TRUE(eglGetSyncAttrib(display, sync, EGL_SYNC_STATUS, &attribValue));

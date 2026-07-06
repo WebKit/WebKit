@@ -7,11 +7,8 @@
 //   Performance benchmark for streaming hashers
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "ANGLEPerfTest.h"
+#include "common/unsafe_buffers.h"
 
 #include "anglebase/sha1.h"
 #include "common/hash_utils.h"
@@ -112,7 +109,7 @@ class StreamingHasherNames
     template <typename BitSetType>
     static std::string GetName(int typeIndex)
     {
-        return kTestTypeNames[typeIndex];
+        return ANGLE_UNSAFE_TODO(kTestTypeNames[typeIndex]);
     }
 };
 

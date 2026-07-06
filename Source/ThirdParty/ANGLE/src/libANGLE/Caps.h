@@ -108,12 +108,6 @@ struct Limitations
 
     Limitations &operator=(const Limitations &other);
 
-    // Renderer doesn't support gl_FrontFacing in fragment shaders
-    bool noFrontFacingSupport = false;
-
-    // Renderer doesn't support GL_SAMPLE_ALPHA_TO_COVERAGE
-    bool noSampleAlphaToCoverageSupport = false;
-
     // In glVertexAttribDivisorANGLE, attribute zero must have a zero divisor
     bool attributeZeroRequiresZeroDivisorInEXT = false;
 
@@ -153,10 +147,6 @@ struct Limitations
 
     // D3D does not support compressed textures where the base mip level is not a multiple of 4
     bool compressedBaseMipLevelMultipleOfFour = false;
-
-    // True if the underlying API uses `base instance + instance` as its native
-    // instance id representation.
-    bool instanceIdMayOverflow = false;
 
     // An extra limit for WebGL texture size. Ignored if 0.
     GLint webGLTextureSizeLimit = 0;
@@ -839,6 +829,9 @@ struct ClientExtensions
 
     // EGL_ANGLE_platform_angle_device_id
     bool platformANGLEDeviceId = false;
+
+    // EGL_ANGLE_platform_angle_display_key
+    bool platformANGLEDisplayKey = false;
 
     // EGL_ANGLE_device_creation
     bool deviceCreation = false;

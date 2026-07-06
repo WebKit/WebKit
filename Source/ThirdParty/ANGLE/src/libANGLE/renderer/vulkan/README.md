@@ -74,6 +74,36 @@ In this example we'll be recording a buffer copy command:
     commandBuffer->copyBuffer(srcBuffer->getBuffer(), dstBuffer->getBuffer(), copyCount, copies);
 ```
 
+## Handling EGL image offsets
+
+A `Texture` can have a number of levels and layers. An EGL image may be created out of the texture,
+viewing a specific level and layer specified by `EGL_GL_TEXTURE_LEVEL_KHR` and
+`EGL_GL_TEXTURE_ZOFFSET_KHR`. The EGL image can then be imported into another texture whose own
+state does not include these offsets (e.g. the texture is accessed at level 0). It may similarly be
+imported into a renderbuffer that doesn't even have a level and layer state.
+
+The `TextureVk` and `RenderbufferVk` classes use `gl::OwnLevel`, `gl::OwnLayer`, and
+`gl::OwnImageIndex` to refer to the level and layer from the point of view of the
+texture/renderbuffer itself, i.e. these values will be 0 for an EGL image target. When these values
+are needed as integers, e.g. to access an array, they are retrieved via `getUntranslated()`.
+
+However, any references outside these classes to levels and layers, i.e. those that are paired with
+`VkImage` and `VkImageView`, must use the source texture's original level and layer. This is done
+via the `mState.toSource*()` helpers, which return a strongly typed `gl::SourceLevel`,
+`gl::SourceLayer` and `gl::SourceImageIndex`. The level and layer can be retrieved from these types
+with a `get()`.
+
+Ideally, _all_ the code in the front-end would use `gl::Own*` types and all the code in the backend
+outside these classes would use `gl::Source*` for maximum safety, where the compiler ensures there
+are no mistakes. This is not yet done, but in the meantime, any reference to level and layer in the
+front-end is implicitly from the point of view of the texture/renderbuffer itself (i.e. equivalent
+to `gl::Own*`). Any such reference outside `TextureVk` and `RenderbufferVk` in the backend is
+implicitly from the point of view of the owner of the `VkImage` (i.e. equivalent to `gl::Source*`).
+
+The code in `TextureVk` and `RenderbufferVk` must always use `mState.toSource*` to convert the types
+before using a level or layer in conjunction with an `ImageHelper`, `ImageViewHelper`,
+`RenderTargetVk`, `UtilsVk` etc calls.
+
 ## Additional Reading
 
 More implementation details can be found in the `doc` directory:

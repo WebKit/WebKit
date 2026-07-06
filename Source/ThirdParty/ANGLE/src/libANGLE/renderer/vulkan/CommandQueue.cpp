@@ -1336,7 +1336,7 @@ void QueueFamily::initialize(const VkQueueFamilyProperties &queueFamilyPropertie
     mQueueFamilyIndex = queueFamilyIndex;
 }
 
-uint32_t QueueFamily::FindIndex(const std::vector<VkQueueFamilyProperties> &queueFamilyProperties,
+uint32_t QueueFamily::FindIndex(const std::vector<VkQueueFamilyProperties2> &queueFamilyProperties2,
                                 VkQueueFlags includeFlags,
                                 VkQueueFlags optionalFlags,
                                 VkQueueFlags excludeFlags,
@@ -1345,28 +1345,28 @@ uint32_t QueueFamily::FindIndex(const std::vector<VkQueueFamilyProperties> &queu
     // check with both include and optional flags
     VkQueueFlags preferredFlags = includeFlags | optionalFlags;
     auto findIndexPredicate     = [&preferredFlags,
-                               &excludeFlags](const VkQueueFamilyProperties &queueInfo) {
-        return (queueInfo.queueFlags & excludeFlags) == 0 &&
-               (queueInfo.queueFlags & preferredFlags) == preferredFlags;
+                                   &excludeFlags](const VkQueueFamilyProperties2 &queueInfo) {
+        return (queueInfo.queueFamilyProperties.queueFlags & excludeFlags) == 0 &&
+               (queueInfo.queueFamilyProperties.queueFlags & preferredFlags) == preferredFlags;
     };
 
-    auto it = std::find_if(queueFamilyProperties.begin(), queueFamilyProperties.end(),
+    auto it = std::find_if(queueFamilyProperties2.begin(), queueFamilyProperties2.end(),
                            findIndexPredicate);
-    if (it == queueFamilyProperties.end())
+    if (it == queueFamilyProperties2.end())
     {
         // didn't find a match, exclude the optional flags from the list
         preferredFlags = includeFlags;
-        it             = std::find_if(queueFamilyProperties.begin(), queueFamilyProperties.end(),
+        it             = std::find_if(queueFamilyProperties2.begin(), queueFamilyProperties2.end(),
                                       findIndexPredicate);
     }
-    if (it == queueFamilyProperties.end())
+    if (it == queueFamilyProperties2.end())
     {
         *matchCount = 0;
         return QueueFamily::kInvalidIndex;
     }
 
     *matchCount = 1;
-    return static_cast<uint32_t>(std::distance(queueFamilyProperties.begin(), it));
+    return static_cast<uint32_t>(std::distance(queueFamilyProperties2.begin(), it));
 }
 
 }  // namespace vk

@@ -6,10 +6,6 @@
 // BlobCacheTest:
 //   Unit tests for the GL_ANGLE_blob_cache extension.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 // Must be included first to prevent errors with "None".
 #include "test_utils/ANGLETest.h"
 
@@ -18,6 +14,7 @@
 
 #include "common/PackedEnums.h"
 #include "common/angleutils.h"
+#include "common/unsafe_buffers.h"
 #include "test_utils/MultiThreadSteps.h"
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
@@ -65,10 +62,10 @@ void GL_APIENTRY SetBlob(const void *key,
     TestUserData *data = reinterpret_cast<TestUserData *>(const_cast<void *>(userParam));
 
     std::vector<uint8_t> keyVec(keySize);
-    memcpy(keyVec.data(), key, keySize);
+    ANGLE_UNSAFE_TODO(memcpy(keyVec.data(), key, keySize));
 
     std::vector<uint8_t> valueVec(valueSize);
-    memcpy(valueVec.data(), value, valueSize);
+    ANGLE_UNSAFE_TODO(memcpy(valueVec.data(), value, valueSize));
 
     data->cache[keyVec] = valueVec;
 
@@ -84,10 +81,10 @@ void GL_APIENTRY SetCorruptedBlob(const void *key,
     TestUserData *data = reinterpret_cast<TestUserData *>(const_cast<void *>(userParam));
 
     std::vector<uint8_t> keyVec(keySize);
-    memcpy(keyVec.data(), key, keySize);
+    ANGLE_UNSAFE_TODO(memcpy(keyVec.data(), key, keySize));
 
     std::vector<uint8_t> valueVec(valueSize);
-    memcpy(valueVec.data(), value, valueSize);
+    ANGLE_UNSAFE_TODO(memcpy(valueVec.data(), value, valueSize));
 
     // Corrupt the data
     ++valueVec[valueVec.size() / 2];
@@ -110,7 +107,7 @@ GLsizeiptr GL_APIENTRY GetBlob(const void *key,
     TestUserData *data = reinterpret_cast<TestUserData *>(const_cast<void *>(userParam));
 
     std::vector<uint8_t> keyVec(keySize);
-    memcpy(keyVec.data(), key, keySize);
+    ANGLE_UNSAFE_TODO(memcpy(keyVec.data(), key, keySize));
 
     auto entry = data->cache.find(keyVec);
     if (entry == data->cache.end())
@@ -128,7 +125,7 @@ GLsizeiptr GL_APIENTRY GetBlob(const void *key,
 
     if (entry->second.size() <= static_cast<size_t>(valueSize))
     {
-        memcpy(value, entry->second.data(), entry->second.size());
+        ANGLE_UNSAFE_TODO(memcpy(value, entry->second.data(), entry->second.size()));
         data->cacheOpResult = CacheOpResult::GetSuccess;
     }
     else

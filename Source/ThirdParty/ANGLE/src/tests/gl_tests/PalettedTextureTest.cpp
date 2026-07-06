@@ -148,6 +148,26 @@ TEST_P(PalettedTextureTest, PalettedTextureSampling)
     }
 }
 
+// Check that mipmap validation for paletted formats is correct.
+TEST_P(PalettedTextureTest, LevelValidation)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_compressed_paletted_texture"));
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    ASSERT_GL_NO_ERROR();
+
+    // Level is positive
+    glCompressedTexImage2D(GL_TEXTURE_2D, 1, GL_PALETTE4_RGBA8_OES, 2, 2, 0, sizeof testImage,
+                           &testImage);
+    EXPECT_GL_ERROR(GL_INVALID_VALUE);
+
+    // Level is inconsistent with dimensions
+    glCompressedTexImage2D(GL_TEXTURE_2D, -2, GL_PALETTE4_RGBA8_OES, 2, 2, 0, sizeof testImage,
+                           &testImage);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
 // Check that validation for paletted formats is correct in ES 1.0 contexts.
 TEST_P(PalettedTextureTest, Validation)
 {

@@ -6,10 +6,7 @@
 
 // VertexPointerTest.cpp: Tests basic usage of built-in vertex attributes of GLES1.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -45,26 +42,26 @@ TEST_P(VertexPointerTest, AssignRetrieve)
     glGetPointerv(GL_VERTEX_ARRAY_POINTER, &ptr);
     EXPECT_EQ(testVertexAttribute.data(), ptr);
 
-    glColorPointer(4, GL_FLOAT, 0, testVertexAttribute.data() + 4);
+    glColorPointer(4, GL_FLOAT, 0, ANGLE_UNSAFE_TODO(testVertexAttribute.data() + 4));
     glGetPointerv(GL_COLOR_ARRAY_POINTER, &ptr);
-    EXPECT_EQ(testVertexAttribute.data() + 4, ptr);
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(testVertexAttribute.data() + 4, ptr));
 
-    glNormalPointer(GL_FLOAT, 0, testVertexAttribute.data() + 8);
+    glNormalPointer(GL_FLOAT, 0, ANGLE_UNSAFE_TODO(testVertexAttribute.data() + 8));
     glGetPointerv(GL_NORMAL_ARRAY_POINTER, &ptr);
-    EXPECT_EQ(testVertexAttribute.data() + 8, ptr);
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(testVertexAttribute.data() + 8, ptr));
 
-    glPointSizePointerOES(GL_FLOAT, 0, testVertexAttribute.data() + 8);
+    glPointSizePointerOES(GL_FLOAT, 0, ANGLE_UNSAFE_TODO(testVertexAttribute.data() + 8));
     glGetPointerv(GL_POINT_SIZE_ARRAY_POINTER_OES, &ptr);
-    EXPECT_EQ(testVertexAttribute.data() + 8, ptr);
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(testVertexAttribute.data() + 8, ptr));
 
     GLint maxTextureUnits;
     glGetIntegerv(GL_MAX_TEXTURE_UNITS, &maxTextureUnits);
     for (int i = 0; i < maxTextureUnits; i++)
     {
         glClientActiveTexture(GL_TEXTURE0 + i);
-        glTexCoordPointer(4, GL_FLOAT, 0, testVertexAttribute.data() + i * 4);
+        glTexCoordPointer(4, GL_FLOAT, 0, ANGLE_UNSAFE_TODO(testVertexAttribute.data() + i * 4));
         glGetPointerv(GL_TEXTURE_COORD_ARRAY_POINTER, &ptr);
-        EXPECT_EQ(testVertexAttribute.data() + i * 4, ptr);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(testVertexAttribute.data() + i * 4, ptr));
     }
 }
 

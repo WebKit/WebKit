@@ -23,11 +23,6 @@ inline bool OnlyFL11_1Plus(const Renderer11DeviceCaps &deviceCaps)
     return (deviceCaps.featureLevel >= D3D_FEATURE_LEVEL_11_1);
 }
 
-inline bool OnlyFL10Plus(const Renderer11DeviceCaps &deviceCaps)
-{
-    return (deviceCaps.featureLevel >= D3D_FEATURE_LEVEL_10_0);
-}
-
 inline bool SupportsFormat(DXGI_FORMAT format, const Renderer11DeviceCaps &deviceCaps)
 {
     // Must support texture, SRV and RTV support

@@ -6,10 +6,6 @@
 // EGLBlobCacheTest:
 //   Unit tests for the EGL_ANDROID_blob_cache extension.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 // Must be included first to prevent errors with "None".
 #include "test_utils/ANGLETest.h"
 
@@ -18,6 +14,7 @@
 
 #include "common/PackedEnums.h"
 #include "common/angleutils.h"
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/MultiThreadSteps.h"
 #include "test_utils/gl_raii.h"
@@ -59,10 +56,10 @@ CacheOpResult gLastCacheOpResult = CacheOpResult::ValueNotSet;
 void SetBlob(const void *key, EGLsizeiANDROID keySize, const void *value, EGLsizeiANDROID valueSize)
 {
     std::vector<uint8_t> keyVec(keySize);
-    memcpy(keyVec.data(), key, keySize);
+    ANGLE_UNSAFE_TODO(memcpy(keyVec.data(), key, keySize));
 
     std::vector<uint8_t> valueVec(valueSize);
-    memcpy(valueVec.data(), value, valueSize);
+    ANGLE_UNSAFE_TODO(memcpy(valueVec.data(), value, valueSize));
 
     gApplicationCache[keyVec] = valueVec;
 
@@ -75,10 +72,10 @@ void SetCorruptedBlob(const void *key,
                       EGLsizeiANDROID valueSize)
 {
     std::vector<uint8_t> keyVec(keySize);
-    memcpy(keyVec.data(), key, keySize);
+    ANGLE_UNSAFE_TODO(memcpy(keyVec.data(), key, keySize));
 
     std::vector<uint8_t> valueVec(valueSize);
-    memcpy(valueVec.data(), value, valueSize);
+    ANGLE_UNSAFE_TODO(memcpy(valueVec.data(), value, valueSize));
 
     // Corrupt the data
     ++valueVec[valueVec.size() / 2];
@@ -98,7 +95,7 @@ EGLsizeiANDROID GetBlob(const void *key,
                         EGLsizeiANDROID valueSize)
 {
     std::vector<uint8_t> keyVec(keySize);
-    memcpy(keyVec.data(), key, keySize);
+    ANGLE_UNSAFE_TODO(memcpy(keyVec.data(), key, keySize));
 
     auto entry = gApplicationCache.find(keyVec);
     if (entry == gApplicationCache.end())
@@ -116,7 +113,7 @@ EGLsizeiANDROID GetBlob(const void *key,
 
     if (entry->second.size() <= static_cast<size_t>(valueSize))
     {
-        memcpy(value, entry->second.data(), entry->second.size());
+        ANGLE_UNSAFE_TODO(memcpy(value, entry->second.data(), entry->second.size()));
         gLastCacheOpResult = CacheOpResult::GetSuccess;
     }
     else

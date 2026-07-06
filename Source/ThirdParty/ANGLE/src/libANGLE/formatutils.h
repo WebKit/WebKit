@@ -244,9 +244,6 @@ struct InternalFormat
     GLenum getReadPixelsFormat(const Extensions &extensions) const;
     GLenum getReadPixelsType(const Version &version) const;
 
-    // Support upload a portion of image?
-    bool supportSubImage() const;
-
     ANGLE_INLINE bool isChannelSizeCompatible(GLuint redSize,
                                               GLuint greenSize,
                                               GLuint blueSize,
@@ -354,9 +351,6 @@ GLenum GetSizedFormatInternal(GLenum format, GLenum type);
 // Strip sizing information from an internal format.  Doesn't necessarily validate that the internal
 // format is valid.
 GLenum GetUnsizedFormat(GLenum internalFormat);
-
-// Return whether the compressed format requires whole image/mip level to be uploaded to texture.
-bool CompressedFormatRequiresWholeImage(GLenum internalFormat);
 
 // In support of GetImage, check for LUMA formats and override with real format
 void MaybeOverrideLuminance(GLenum &format, GLenum &type, GLenum actualFormat, GLenum actualType);

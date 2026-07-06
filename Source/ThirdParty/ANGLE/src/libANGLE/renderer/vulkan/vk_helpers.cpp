@@ -8095,12 +8095,12 @@ void ImageHelper::Copy(Renderer *renderer,
 // static
 angle::Result ImageHelper::CopyImageSubData(const gl::Context *context,
                                             ImageHelper *srcImage,
-                                            GLint srcLevel,
+                                            gl::LevelIndex srcLevelGL,
                                             GLint srcX,
                                             GLint srcY,
                                             GLint srcZ,
                                             ImageHelper *dstImage,
-                                            GLint dstLevel,
+                                            gl::LevelIndex dstLevelGL,
                                             GLint dstX,
                                             GLint dstY,
                                             GLint dstZ,
@@ -8110,9 +8110,6 @@ angle::Result ImageHelper::CopyImageSubData(const gl::Context *context,
 {
     ContextVk *contextVk = GetImpl(context);
     Renderer *renderer   = contextVk->getRenderer();
-
-    const gl::LevelIndex srcLevelGL = gl::LevelIndex(srcLevel);
-    const gl::LevelIndex dstLevelGL = gl::LevelIndex(dstLevel);
 
     if (CanCopyWithTransferForCopyImage(renderer, srcImage, dstImage))
     {
@@ -9606,6 +9603,17 @@ angle::Result ImageHelper::stageSubresourceUpdateFromFramebuffer(
 
     gl::LevelIndex updateLevelGL(index.getLevelIndex());
 
+    // If the image is not an array type, the base layer index and layer count should be 0 and 1
+    // respectively.
+    uint32_t layerIndex = index.hasLayer() ? index.getLayerIndex() : 0;
+    uint32_t layerCount = index.getLayerCount();
+    if (index.getType() == gl::TextureType::_3D)
+    {
+        ASSERT(static_cast<uint32_t>(dstOffset.z) == layerIndex);
+        layerIndex = 0;
+        layerCount = 1;
+    }
+
     // 3- enqueue the destination image subresource update
     VkBufferImageCopy copyToImage               = {};
     copyToImage.bufferOffset                    = static_cast<VkDeviceSize>(stagingOffset);
@@ -9613,8 +9621,8 @@ angle::Result ImageHelper::stageSubresourceUpdateFromFramebuffer(
     copyToImage.bufferImageHeight               = clippedRectangle.height;
     copyToImage.imageSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
     copyToImage.imageSubresource.mipLevel       = updateLevelGL.get();
-    copyToImage.imageSubresource.baseArrayLayer = index.hasLayer() ? index.getLayerIndex() : 0;
-    copyToImage.imageSubresource.layerCount     = index.getLayerCount();
+    copyToImage.imageSubresource.baseArrayLayer = layerIndex;
+    copyToImage.imageSubresource.layerCount     = layerCount;
     gl_vk::GetOffset(dstOffset, &copyToImage.imageOffset);
     gl_vk::GetExtent(dstExtent, &copyToImage.imageExtent);
 
@@ -12611,16 +12619,16 @@ angle::Result ImageViewHelper::initLinearAndSrgbReadViewsImpl(ContextVk *context
         if (!mLinearCopyImageView.valid())
         {
             ANGLE_TRY(image.initReinterpretedLayerImageView(
-                contextVk, fetchType, aspectFlags, formatSwizzle, &mLinearCopyImageView,
-                LevelIndex(0), image.getLevelCount(), baseLayer, layerCount, imageUsageFlags,
-                linearFormat, astcDecodePrecision));
+                contextVk, fetchType, aspectFlags, formatSwizzle, &mLinearCopyImageView, baseLevel,
+                levelCount, baseLayer, layerCount, imageUsageFlags, linearFormat,
+                astcDecodePrecision));
         }
         if (srgbFormat != angle::FormatID::NONE && !mSRGBCopyImageView.valid())
         {
             ANGLE_TRY(image.initReinterpretedLayerImageView(
-                contextVk, fetchType, aspectFlags, formatSwizzle, &mSRGBCopyImageView,
-                LevelIndex(0), image.getLevelCount(), baseLayer, layerCount, imageUsageFlags,
-                srgbFormat, astcDecodePrecision));
+                contextVk, fetchType, aspectFlags, formatSwizzle, &mSRGBCopyImageView, baseLevel,
+                levelCount, baseLayer, layerCount, imageUsageFlags, srgbFormat,
+                astcDecodePrecision));
         }
     }
 

@@ -6,11 +6,8 @@
 
 // ProgramInterfaceTest: Tests of program interfaces.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "common/string_utils.h"
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -252,8 +249,8 @@ void main()
     {
         GLint numActiveResources = 0;
         GLchar name[64];
-        GLuint program          = kInterfaceProps[i].programIndex;
-        GLenum programInterface = kInterfaceProps[i].iface;
+        GLuint program          = ANGLE_UNSAFE_TODO(kInterfaceProps[i]).programIndex;
+        GLenum programInterface = ANGLE_UNSAFE_TODO(kInterfaceProps[i]).iface;
         bool resourceFound      = false;
 
         // Get the number of active resources for the given interface. Should be bigger than zero.
@@ -277,7 +274,7 @@ void main()
             EXPECT_GL_NO_ERROR();
             ASSERT_EQ((GLuint)queryResourceIndex, resourceIndex);
 
-            if (strcmp(name, kInterfaceProps[i].resourceName) == 0)
+            if (ANGLE_UNSAFE_TODO(strcmp(name, kInterfaceProps[i].resourceName)) == 0)
             {
                 GLsizei length = 0;
                 glGetProgramResourceiv(program, programInterface, resourceIndex, kPropCount,
@@ -286,7 +283,8 @@ void main()
                 ASSERT_NE(0, length);
 
                 // Validate queried resource properties.
-                ASSERT_EQ(strlen(kInterfaceProps[i].resourceName) + 1, (GLuint)resourceResults[0]);
+                ANGLE_UNSAFE_TODO(ASSERT_EQ(strlen(kInterfaceProps[i].resourceName) + 1,
+                                            (GLuint)resourceResults[0]));
                 ASSERT_EQ(GL_FLOAT, resourceResults[1]);
                 ASSERT_EQ(2, resourceResults[2]);
 
@@ -687,7 +685,7 @@ TEST_P(ProgramInterfaceTestES31, GetUniformBlockProperties)
     GLint magic = 0xBEEF;
 
     // Tests bufSize is respected even some prop returns more than one value.
-    params[propCount] = magic;
+    ANGLE_UNSAFE_TODO(params[propCount]) = magic;
     glGetProgramResourceiv(program, GL_UNIFORM_BLOCK, index, propCount, props, propCount, &length,
                            params);
     EXPECT_GL_NO_ERROR();

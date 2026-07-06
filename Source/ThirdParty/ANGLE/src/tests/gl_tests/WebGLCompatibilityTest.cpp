@@ -6,10 +6,7 @@
 
 // WebGLCompatibilityTest.cpp : Tests of the GL_ANGLE_webgl_compatibility extension.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
 #include "common/mathutil.h"
@@ -243,8 +240,8 @@ void main()
 
         drawQuad(mUniformColorRenderingProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
 
-        EXPECT_PIXEL_COLOR32F_NEAR(
-            0, 0, GLColor32F(floatData[0], floatData[1], floatData[2], floatData[3]), 1.0f);
+        ANGLE_UNSAFE_TODO(EXPECT_PIXEL_COLOR32F_NEAR(
+            0, 0, GLColor32F(floatData[0], floatData[1], floatData[2], floatData[3]), 1.0f));
     }
 
     void TestExtFloatBlend(GLenum internalFormat, GLenum type, bool shouldBlend)
@@ -5536,7 +5533,7 @@ TEST_P(WebGLCompatibilityTest, DrawBuffers)
         for (int i = 0; i < 4; ++i)
         {
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
-                                      renderbuffers[i]);
+                                      ANGLE_UNSAFE_TODO(renderbuffers[i]));
             glClear(GL_COLOR_BUFFER_BIT);
         }
         ASSERT_GL_NO_ERROR();
@@ -5552,7 +5549,7 @@ TEST_P(WebGLCompatibilityTest, DrawBuffers)
             if (mask & (1 << attachmentIndex))
             {
                 glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
-                                          renderbuffers[attachmentIndex]);
+                                          ANGLE_UNSAFE_TODO(renderbuffers[attachmentIndex]));
                 EXPECT_PIXEL_COLOR_EQ(0, 0, color) << "attachment " << attachmentIndex;
             }
         }
@@ -5578,10 +5575,10 @@ TEST_P(WebGLCompatibilityTest, DrawBuffers)
     GLRenderbuffer renderbuffers[4];
     for (int i = 0; i < 4; ++i)
     {
-        glBindRenderbuffer(GL_RENDERBUFFER, renderbuffers[i]);
+        glBindRenderbuffer(GL_RENDERBUFFER, ANGLE_UNSAFE_TODO(renderbuffers[i]));
         glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA4, 1, 1);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER,
-                                  renderbuffers[i]);
+                                  ANGLE_UNSAFE_TODO(renderbuffers[i]));
     }
 
     ASSERT_GL_NO_ERROR();
@@ -7542,12 +7539,15 @@ void main()
 
     for (int i = 0; i < 4; ++i)
     {
-        glBindBuffer(GL_ARRAY_BUFFER, buffers[i]);
-        glBufferData(GL_ARRAY_BUFFER, kBufferSizes[i] + kBufferOffsets[i], nullptr, GL_STATIC_DRAW);
+        ANGLE_UNSAFE_TODO({
+            glBindBuffer(GL_ARRAY_BUFFER, buffers[i]);
+            glBufferData(GL_ARRAY_BUFFER, kBufferSizes[i] + kBufferOffsets[i], nullptr,
+                         GL_STATIC_DRAW);
 
-        glEnableVertexAttribArray(attrLocations[i]);
-        glVertexAttribPointer(attrLocations[i], kAttrComponents[i], kAttrTypes[i], GL_TRUE,
-                              kAttrStrides[i], reinterpret_cast<void *>(kBufferOffsets[i]));
+            glEnableVertexAttribArray(attrLocations[i]);
+            glVertexAttribPointer(attrLocations[i], kAttrComponents[i], kAttrTypes[i], GL_TRUE,
+                                  kAttrStrides[i], reinterpret_cast<void *>(kBufferOffsets[i]));
+        })
     }
     ASSERT_GL_NO_ERROR();
 
@@ -7884,9 +7884,11 @@ void main()
         size_t base         = 124 + i * 12;
         int16_t *components = reinterpret_cast<int16_t *>(&instData[base]);
         components[0]       = 0;       // R = 0
-        components[1]       = 0x7FFF;  // G = 1.0 (normalized)
-        components[2]       = 0;       // B = 0
-        components[3]       = 0x7FFF;  // A = 1.0 (normalized)
+        ANGLE_UNSAFE_TODO({
+            components[1] = 0x7FFF;  // G = 1.0 (normalized)
+            components[2] = 0;       // B = 0
+            components[3] = 0x7FFF;  // A = 1.0 (normalized)
+        })
     }
     GLBuffer instBuffer;
     glBindBuffer(GL_ARRAY_BUFFER, instBuffer);

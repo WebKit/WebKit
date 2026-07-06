@@ -11,8 +11,10 @@ use crate::ir::*;
 use crate::*;
 
 pub struct Options {
-    // Clamp non-constant indices to the bounds of the entity being indexed.
+    // Clamp non-constant indices to the bounds of the entity being indexed.  For gl_FragData,
+    // clamp it to max_dual_source_draw_buffers if gl_SecondaryFragDataEXT is used.
     pub clamp_indirect_indices: bool,
+    pub max_dual_source_draw_buffers: u32,
 }
 
 pub fn run(ir: &mut IR, options: &Options) {
@@ -29,7 +31,13 @@ pub fn run(ir: &mut IR, options: &Options) {
                 | OpCode::AccessMatrixColumn(indexed, index)
                 | OpCode::AccessArrayElement(indexed, index) => {
                     if options.clamp_indirect_indices {
-                        clamp_indirect_index(ir_meta, indexed, index, result.unwrap())
+                        clamp_indirect_index(
+                            ir_meta,
+                            indexed,
+                            index,
+                            result.unwrap(),
+                            options.max_dual_source_draw_buffers,
+                        )
                     } else {
                         vec![]
                     }
@@ -45,11 +53,18 @@ fn clamp_indirect_index(
     indexed: TypedId,
     index: TypedId,
     result: TypedRegisterId,
+    max_dual_source_draw_buffers: u32,
 ) -> Vec<traverser::Transform> {
     // No need to clamp constant indices, they are already validated to be in range.
     if index.id.is_constant() {
         return vec![];
     }
+
+    let is_frag_data = if let Id::Variable(id) = indexed.id {
+        ir_meta.get_variable(id).built_in == Some(BuiltIn::FragData)
+    } else {
+        false
+    };
 
     let mut indexed_type = ir_meta.get_type(indexed.type_id);
     if indexed_type.is_pointer() {
@@ -75,11 +90,17 @@ fn clamp_indirect_index(
     //     clamped  = Clamp index' 0 MAX
     //     clamped' = ConstructScalarFromScalar clamped (int)
     let max = match *indexed_type {
-        Type::Vector(_, max) | Type::Matrix(_, max) | Type::Array(_, max) => {
-            ir_meta.get_constant_float_typed((max - 1) as f32)
+        Type::Vector(_, max) | Type::Matrix(_, max) => max,
+        Type::Array(_, max) => {
+            if is_frag_data && ir_meta.uses_secondary_frag_data() {
+                max.min(max_dual_source_draw_buffers)
+            } else {
+                max
+            }
         }
         _ => panic!("Internal error: Invalid type to index"),
     };
+    let max = ir_meta.get_constant_float_typed((max - 1) as f32);
     let index_as_float = traverser::add_typed_instruction(
         &mut transforms,
         instruction::make!(construct, ir_meta, TYPE_ID_FLOAT, vec![index]),

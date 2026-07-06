@@ -123,20 +123,6 @@ int GetWrapBits(GLenum wrap)
     return wrapBits;
 }
 
-Optional<size_t> FindFirstNonInstanced(
-    const std::vector<const TranslatedAttribute *> &currentAttributes)
-{
-    for (size_t index = 0; index < currentAttributes.size(); ++index)
-    {
-        if (currentAttributes[index]->divisor == 0)
-        {
-            return Optional<size_t>(index);
-        }
-    }
-
-    return Optional<size_t>::Invalid();
-}
-
 void SortAttributesByLayout(const ProgramExecutableD3D &executableD3D,
                             const std::vector<TranslatedAttribute> &vertexArrayAttribs,
                             const std::vector<TranslatedAttribute> &currentValueAttribs,
@@ -365,25 +351,10 @@ bool ShaderConstants11::updateSamplerMetadata(SamplerMetadata *data,
 void ShaderConstants11::onViewportChange(const gl::Rectangle &glViewport,
                                          const D3D11_VIEWPORT &dxViewport,
                                          const gl::Offset &glFragCoordOffset,
-                                         bool is9_3,
                                          bool presentPathFast)
 {
     mShaderConstantsDirty.set(gl::ShaderType::Vertex);
     mShaderConstantsDirty.set(gl::ShaderType::Fragment);
-
-    // On Feature Level 9_*, we must emulate large and/or negative viewports in the shaders
-    // using viewAdjust (like the D3D9 renderer).
-    if (is9_3)
-    {
-        mVertex.viewAdjust[0] = static_cast<float>((glViewport.width - dxViewport.Width) +
-                                                   2 * (glViewport.x - dxViewport.TopLeftX)) /
-                                dxViewport.Width;
-        mVertex.viewAdjust[1] = static_cast<float>((glViewport.height - dxViewport.Height) +
-                                                   2 * (glViewport.y - dxViewport.TopLeftY)) /
-                                dxViewport.Height;
-        mVertex.viewAdjust[2] = static_cast<float>(glViewport.width) / dxViewport.Width;
-        mVertex.viewAdjust[3] = static_cast<float>(glViewport.height) / dxViewport.Height;
-    }
 
     mPixel.viewCoords[0] = glViewport.width * 0.5f;
     mPixel.viewCoords[1] = glViewport.height * 0.5f;
@@ -561,7 +532,6 @@ StateManager11::StateManager11(Renderer11 *renderer)
       mCurViewport(),
       mCurNear(0.0f),
       mCurFar(0.0f),
-      mViewportBounds(),
       mRenderTargetIsDirty(true),
       mCurPresentPathFastEnabled(false),
       mCurPresentPathFastColorBufferHeight(0),
@@ -1228,17 +1198,6 @@ void StateManager11::syncViewport(const gl::Context *context)
     int dxMinViewportBoundsX = -dxMaxViewportBoundsX;
     int dxMinViewportBoundsY = -dxMaxViewportBoundsY;
 
-    bool is9_3 = mRenderer->getRenderer11DeviceCaps().featureLevel <= D3D_FEATURE_LEVEL_9_3;
-
-    if (is9_3)
-    {
-        // Feature Level 9 viewports shouldn't exceed the dimensions of the rendertarget.
-        dxMaxViewportBoundsX = static_cast<int>(mViewportBounds.width);
-        dxMaxViewportBoundsY = static_cast<int>(mViewportBounds.height);
-        dxMinViewportBoundsX = 0;
-        dxMinViewportBoundsY = 0;
-    }
-
     bool clipSpaceOriginLowerLeft = glState.getClipOrigin() == gl::ClipOrigin::LowerLeft;
     mShaderConstants.onClipOriginChange(clipSpaceOriginLowerLeft);
 
@@ -1310,7 +1269,7 @@ void StateManager11::syncViewport(const gl::Context *context)
                                            static_cast<FLOAT>(dxViewportHeight),
                                            actualZNear,
                                            actualZFar};
-    mShaderConstants.onViewportChange(viewport, adjustViewport, mCurViewportOffset, is9_3,
+    mShaderConstants.onViewportChange(viewport, adjustViewport, mCurViewportOffset,
                                       mCurPresentPathFastEnabled);
 }
 
@@ -1369,20 +1328,6 @@ void StateManager11::processFramebufferInvalidation(const gl::Context *context)
     }
 
     checkPresentPath(context);
-
-    if (mRenderer->getRenderer11DeviceCaps().featureLevel <= D3D_FEATURE_LEVEL_9_3)
-    {
-        const auto *firstAttachment = fbo->getFirstNonNullAttachment();
-        if (firstAttachment)
-        {
-            const auto &size = firstAttachment->getSize();
-            if (mViewportBounds.width != size.width || mViewportBounds.height != size.height)
-            {
-                mViewportBounds = gl::Extents(size.width, size.height, 1);
-                invalidateViewport(context);
-            }
-        }
-    }
 }
 
 void StateManager11::invalidateBoundViews()
@@ -2745,23 +2690,6 @@ angle::Result StateManager11::syncVertexBuffersAndInputLayout(
     SortAttributesByLayout(*mExecutableD3D, vertexArrayAttribs, mCurrentValueAttribs,
                            &sortedSemanticIndices, &mCurrentAttributes);
 
-    D3D_FEATURE_LEVEL featureLevel = mRenderer->getRenderer11DeviceCaps().featureLevel;
-
-    // If we are using FL 9_3, make sure the first attribute is not instanced
-    if (featureLevel <= D3D_FEATURE_LEVEL_9_3 && !mCurrentAttributes.empty())
-    {
-        if (mCurrentAttributes[0]->divisor > 0)
-        {
-            Optional<size_t> firstNonInstancedIndex = FindFirstNonInstanced(mCurrentAttributes);
-            if (firstNonInstancedIndex.valid())
-            {
-                size_t index = firstNonInstancedIndex.value();
-                std::swap(mCurrentAttributes[0], mCurrentAttributes[index]);
-                std::swap(sortedSemanticIndices[0], sortedSemanticIndices[index]);
-            }
-        }
-    }
-
     // Update the applied input layout by querying the cache.
     const gl::State &state                = context->getState();
     const d3d11::InputLayout *inputLayout = nullptr;
@@ -3105,7 +3033,6 @@ angle::Result StateManager11::applyDriverUniforms(const gl::Context *context)
     }
 
     // needed for the point sprite geometry shader
-    // GSSetConstantBuffers triggers device removal on 9_3, so we should only call it for ES3.
     if (mRenderer->isES3Capable())
     {
         d3d11::Buffer &driverConstantBufferPS =

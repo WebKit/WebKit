@@ -7,11 +7,8 @@
 //   Tests pertaining to Android pre-rotation.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <gtest/gtest.h>
+#include "common/unsafe_buffers.h"
 
 #include <vector>
 
@@ -760,7 +757,7 @@ class EGLPreRotationBlitFramebufferTest : public EGLPreRotationLargeSurfaceTest
         std::vector<GLfloat> redGreenData = {// green(0,1), black(0,0), red(1,0), yellow(1,1)
                                              0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f};
 
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
+        glBindBuffer(GL_ARRAY_BUFFER, ANGLE_UNSAFE_TODO(vertexBuffers[1]));
         glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * redGreenData.size(), &redGreenData[0],
                      GL_STATIC_DRAW);
         glVertexAttribPointer(redGreenLocation, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 2,

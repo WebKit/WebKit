@@ -6,10 +6,7 @@
 
 // ShadingRateEXTTest.cpp : Tests of the GL_EXT_fragment_shading_rate extension.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
 #include "test_utils/gl_raii.h"
@@ -111,7 +108,7 @@ TEST_P(ShadingRateEXTTest, FragmentShadingRate)
 
     for (int i = 0; i < count; i++)
     {
-        glShadingRateEXT(shadingRates[i]);
+        glShadingRateEXT(ANGLE_UNSAFE_TODO(shadingRates[i]));
     }
     ASSERT_GL_NO_ERROR();
 

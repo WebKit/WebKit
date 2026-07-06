@@ -2,11 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "perf_test.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/angleutils.h"
 #include "common/base/anglebase/no_destructor.h"
@@ -23,15 +20,15 @@ std::string FormatString(const char *fmt, va_list vararg)
     static angle::base::NoDestructor<std::vector<char>> buffer(512);
 
     // Attempt to just print to the current buffer
-    int len = vsnprintf(buffer->data(), buffer->size(), fmt, vararg);
+    int len = ANGLE_UNSAFE_TODO(vsnprintf(buffer->data(), buffer->size(), fmt, vararg));
     if (len < 0 || static_cast<size_t>(len) >= buffer->size())
     {
         // Buffer was not large enough, calculate the required size and resize the buffer
-        len = vsnprintf(NULL, 0, fmt, vararg);
+        len = ANGLE_UNSAFE_TODO(vsnprintf(NULL, 0, fmt, vararg));
         buffer->resize(len + 1);
 
         // Print again
-        vsnprintf(buffer->data(), buffer->size(), fmt, vararg);
+        ANGLE_UNSAFE_TODO(vsnprintf(buffer->data(), buffer->size(), fmt, vararg));
     }
 
     return std::string(buffer->data(), len);

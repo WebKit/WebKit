@@ -7,11 +7,8 @@
 //   Performance test for draws using interleaved attribute data in vertex buffers.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <sstream>
+#include "common/unsafe_buffers.h"
 
 #include "ANGLEPerfTest.h"
 #include "util/shader_utils.h"
@@ -144,8 +141,8 @@ void InterleavedAttributeDataBenchmark::initializeBenchmark()
         }
 
         // Generate the GL buffer with the position/color data
-        glGenBuffers(1, &mPositionColorBuffer[i]);
-        glBindBuffer(GL_ARRAY_BUFFER, mPositionColorBuffer[i]);
+        glGenBuffers(1, &ANGLE_UNSAFE_TODO(mPositionColorBuffer[i]));
+        glBindBuffer(GL_ARRAY_BUFFER, ANGLE_UNSAFE_TODO(mPositionColorBuffer[i]));
         glBufferData(GL_ARRAY_BUFFER, params.numSprites * mBytesPerSprite, &(positionColorData[0]),
                      GL_STATIC_DRAW);
     }
@@ -159,7 +156,7 @@ void InterleavedAttributeDataBenchmark::destroyBenchmark()
 
     for (size_t i = 0; i < ArraySize(mPositionColorBuffer); i++)
     {
-        glDeleteBuffers(1, &mPositionColorBuffer[i]);
+        glDeleteBuffers(1, &ANGLE_UNSAFE_TODO(mPositionColorBuffer[i]));
     }
 }
 
@@ -179,14 +176,15 @@ void InterleavedAttributeDataBenchmark::drawBenchmark()
             ASSERT_NE(colorLocation, -1);
 
             // Bind the position data from one buffer
-            glBindBuffer(GL_ARRAY_BUFFER, mPositionColorBuffer[i]);
+            glBindBuffer(GL_ARRAY_BUFFER, ANGLE_UNSAFE_TODO(mPositionColorBuffer[i]));
             glEnableVertexAttribArray(positionLocation);
             glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE,
                                   static_cast<GLsizei>(mBytesPerSprite), 0);
 
             // But bind the color data from the other buffer.
-            glBindBuffer(GL_ARRAY_BUFFER,
-                         mPositionColorBuffer[(i + 1) % ArraySize(mPositionColorBuffer)]);
+            glBindBuffer(
+                GL_ARRAY_BUFFER,
+                ANGLE_UNSAFE_TODO(mPositionColorBuffer[(i + 1) % ArraySize(mPositionColorBuffer)]));
             glEnableVertexAttribArray(colorLocation);
             glVertexAttribPointer(colorLocation, 3, GL_UNSIGNED_BYTE, GL_TRUE,
                                   static_cast<GLsizei>(mBytesPerSprite),

@@ -23,11 +23,8 @@ VULKAN_SAMPLE_DESCRIPTION
 samples utility functions
 */
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "vulkan_command_buffer_utils.h"
+#include "common/unsafe_buffers.h"
 
 #include <assert.h>
 #include <string.h>
@@ -118,7 +115,7 @@ VkResult init_global_layer_properties(struct sample_info &info)
     for (uint32_t i = 0; i < instance_layer_count; i++)
     {
         layer_properties layer_props;
-        layer_props.properties = vk_props[i];
+        layer_props.properties = ANGLE_UNSAFE_TODO(vk_props[i]);
         res                    = init_global_extension_properties(layer_props);
         if (res)
             return res;
@@ -173,7 +170,7 @@ VkBool32 demo_check_layers(const std::vector<layer_properties> &layer_props,
         VkBool32 found = 0;
         for (uint32_t j = 0; j < layer_count; j++)
         {
-            if (!strcmp(layer_names[i], layer_props[j].properties.layerName))
+            if (!ANGLE_UNSAFE_TODO(strcmp(layer_names[i], layer_props[j].properties.layerName)))
             {
                 found = 1;
             }
@@ -411,7 +408,7 @@ void init_window(struct sample_info &info)
     ASSERT(info.height > 0);
 
     info.connection = GetModuleHandle(NULL);
-    sprintf(info.name, "Sample");
+    ANGLE_UNSAFE_TODO(sprintf(info.name, "Sample"));
 
     // Initialize the window class structure:
     win_class.cbSize        = sizeof(WNDCLASSEX);
@@ -622,7 +619,8 @@ void init_swapchain_extension(struct sample_info &info)
     VkBool32 *pSupportsPresent = (VkBool32 *)malloc(info.queue_family_count * sizeof(VkBool32));
     for (uint32_t i = 0; i < info.queue_family_count; i++)
     {
-        vkGetPhysicalDeviceSurfaceSupportKHR(info.gpus[0], i, info.surface, &pSupportsPresent[i]);
+        vkGetPhysicalDeviceSurfaceSupportKHR(info.gpus[0], i, info.surface,
+                                             &ANGLE_UNSAFE_TODO(pSupportsPresent[i]));
     }
 
     // Search for a graphics and a present queue in the array of queue
@@ -636,7 +634,7 @@ void init_swapchain_extension(struct sample_info &info)
             if (info.graphics_queue_family_index == UINT32_MAX)
                 info.graphics_queue_family_index = i;
 
-            if (pSupportsPresent[i] == VK_TRUE)
+            if (ANGLE_UNSAFE_TODO(pSupportsPresent[i]) == VK_TRUE)
             {
                 info.graphics_queue_family_index = i;
                 info.present_queue_family_index  = i;
@@ -650,7 +648,7 @@ void init_swapchain_extension(struct sample_info &info)
         // If didn't find a queue that supports both graphics and present, then
         // find a separate present queue.
         for (size_t i = 0; i < info.queue_family_count; ++i)
-            if (pSupportsPresent[i] == VK_TRUE)
+            if (ANGLE_UNSAFE_TODO(pSupportsPresent[i]) == VK_TRUE)
             {
                 info.present_queue_family_index = i;
                 break;
@@ -861,7 +859,7 @@ void init_swap_chain(struct sample_info &info, VkImageUsageFlags usageFlags)
 
     for (uint32_t presentModeIndex = 0; presentModeIndex < presentModeCount; ++presentModeIndex)
     {
-        if (presentModes[presentModeIndex] == VK_PRESENT_MODE_IMMEDIATE_KHR)
+        if (ANGLE_UNSAFE_TODO(presentModes[presentModeIndex]) == VK_PRESENT_MODE_IMMEDIATE_KHR)
         {
             swapchainPresentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
             break;
@@ -895,9 +893,9 @@ void init_swap_chain(struct sample_info &info, VkImageUsageFlags usageFlags)
     };
     for (uint32_t i = 0; i < sizeof(compositeAlphaFlags); i++)
     {
-        if (surfCapabilities.supportedCompositeAlpha & compositeAlphaFlags[i])
+        if (surfCapabilities.supportedCompositeAlpha & ANGLE_UNSAFE_TODO(compositeAlphaFlags[i]))
         {
-            compositeAlpha = compositeAlphaFlags[i];
+            compositeAlpha = ANGLE_UNSAFE_TODO(compositeAlphaFlags[i]);
             break;
         }
     }
@@ -970,7 +968,7 @@ void init_swap_chain(struct sample_info &info, VkImageUsageFlags usageFlags)
         color_image_view.viewType                        = VK_IMAGE_VIEW_TYPE_2D;
         color_image_view.flags                           = 0;
 
-        sc_buffer.image = swapchainImages[i];
+        sc_buffer.image = ANGLE_UNSAFE_TODO(swapchainImages[i]);
 
         color_image_view.image = sc_buffer.image;
 
@@ -998,8 +996,8 @@ bool memory_type_from_properties(struct sample_info &info,
         if ((typeBits & 1) == 1)
         {
             // Type is available, does it match user properties?
-            if ((info.memory_properties.memoryTypes[i].propertyFlags & requirements_mask) ==
-                requirements_mask)
+            if ((ANGLE_UNSAFE_TODO(info.memory_properties.memoryTypes[i]).propertyFlags &
+                 requirements_mask) == requirements_mask)
             {
                 *typeIndex = i;
                 return true;
@@ -1162,7 +1160,7 @@ void init_uniform_buffer(struct sample_info &info)
     res = vkMapMemory(info.device, info.uniform_data.mem, 0, mem_reqs.size, 0, (void **)&pData);
     ASSERT(res == VK_SUCCESS);
 
-    memcpy(pData, info.MVP.data(), sizeof(float) * 16);  // info.MVP.data() size
+    ANGLE_UNSAFE_TODO(memcpy(pData, info.MVP.data(), sizeof(float) * 16));  // info.MVP.data() size
 
     vkUnmapMemory(info.device, info.uniform_data.mem);
 
@@ -1317,7 +1315,8 @@ void init_framebuffers(struct sample_info &info, bool include_depth)
     for (i = 0; i < info.swapchainImageCount; i++)
     {
         attachments[0] = info.buffers[i].view;
-        res            = vkCreateFramebuffer(info.device, &fb_info, NULL, &info.framebuffers[i]);
+        res            = vkCreateFramebuffer(info.device, &fb_info, NULL,
+                                             &ANGLE_UNSAFE_TODO(info.framebuffers[i]));
         ASSERT(res == VK_SUCCESS);
     }
 }
@@ -1367,7 +1366,7 @@ void init_vertex_buffer(struct sample_info &info,
     res = vkMapMemory(info.device, info.vertex_buffer.mem, 0, mem_reqs.size, 0, (void **)&pData);
     ASSERT(res == VK_SUCCESS);
 
-    memcpy(pData, vertexData, dataSize);
+    ANGLE_UNSAFE_TODO(memcpy(pData, vertexData, dataSize));
 
     vkUnmapMemory(info.device, info.vertex_buffer.mem);
 
@@ -1466,8 +1465,8 @@ bool GLSLtoSPV(const VkShaderStageFlagBits shader_type,
 
     if (!shader.parse(&Resources, 100, false, messages))
     {
-        puts(shader.getInfoLog());
-        puts(shader.getInfoDebugLog());
+        ANGLE_UNSAFE_TODO(puts(shader.getInfoLog()));
+        ANGLE_UNSAFE_TODO(puts(shader.getInfoDebugLog()));
         return false;  // something didn't work
     }
 
@@ -1479,8 +1478,8 @@ bool GLSLtoSPV(const VkShaderStageFlagBits shader_type,
 
     if (!program.link(messages))
     {
-        puts(shader.getInfoLog());
-        puts(shader.getInfoDebugLog());
+        ANGLE_UNSAFE_TODO(puts(shader.getInfoLog()));
+        ANGLE_UNSAFE_TODO(puts(shader.getInfoDebugLog()));
         fflush(stdout);
         return false;
     }
@@ -1913,7 +1912,7 @@ void destroy_framebuffers(struct sample_info &info)
 {
     for (uint32_t i = 0; i < info.swapchainImageCount; i++)
     {
-        vkDestroyFramebuffer(info.device, info.framebuffers[i], NULL);
+        vkDestroyFramebuffer(info.device, ANGLE_UNSAFE_TODO(info.framebuffers[i]), NULL);
     }
     free(info.framebuffers);
 }

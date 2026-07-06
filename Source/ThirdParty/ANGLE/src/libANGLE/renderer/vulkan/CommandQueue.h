@@ -131,7 +131,7 @@ class QueueFamily final : angle::NonCopyable
   public:
     static const uint32_t kInvalidIndex = std::numeric_limits<uint32_t>::max();
 
-    static uint32_t FindIndex(const std::vector<VkQueueFamilyProperties> &queueFamilyProperties,
+    static uint32_t FindIndex(const std::vector<VkQueueFamilyProperties2> &queueFamilyProperties2,
                               VkQueueFlags includeFlags,
                               VkQueueFlags optionalFlags,
                               VkQueueFlags excludeFlags,

@@ -228,7 +228,7 @@ def upgrade_single_trace(args, trace_binary, trace, out_path, no_overwrite, c_so
     if c_sources:
         additional_env['ANGLE_CAPTURE_SOURCE_EXT'] = 'c'
 
-    additional_args = ['--retrace-mode']
+    additional_args = ['--retrace-mode', '--include-inactive-resources']
 
     try:
         if not os.path.isdir(trace_path):

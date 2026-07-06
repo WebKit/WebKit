@@ -275,3 +275,15 @@ void main()
     compile(shaderString);
     EXPECT_FALSE(foundInCode("map_instances"));
 }
+
+// Test that default hlsl warnings are suppressed.
+TEST_F(HLSLOutputTest, DefaultHLSLWarningsSuppressed)
+{
+    const std::string &shaderString =
+        "precision mediump float;\n"
+        "void main() {\n"
+        "   gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);\n"
+        "}\n";
+    compile(shaderString);
+    EXPECT_TRUE(foundInCode("#pragma warning( disable: 3081 3556 3557 3571 )"));
+}

@@ -2280,6 +2280,7 @@ static ClientExtensions GenerateClientExtensions()
     extensions.featureControlANGLE       = true;
     extensions.deviceQueryEXT            = true;
     extensions.noErrorANGLE              = true;
+    extensions.platformANGLEDisplayKey   = true;
 
     return extensions;
 }

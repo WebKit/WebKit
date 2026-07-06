@@ -7,11 +7,8 @@
 //   Tests pertaining to egl::Stream.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include <gtest/gtest.h>
+#include "common/unsafe_buffers.h"
 
 #include <d3d11.h>
 #include <vector>
@@ -70,7 +67,7 @@ TEST_P(EGLStreamTest, StreamValidationTest)
     EGLWindow *window            = getEGLWindow();
     EGLDisplay display           = window->getDisplay();
     const char *extensionsString = eglQueryString(display, EGL_EXTENSIONS);
-    if (strstr(extensionsString, "EGL_KHR_stream") == nullptr)
+    if (ANGLE_UNSAFE_TODO(strstr(extensionsString, "EGL_KHR_stream")) == nullptr)
     {
         std::cout << "Stream extension not supported" << std::endl;
         return;
@@ -165,7 +162,7 @@ TEST_P(EGLStreamTest, StreamConsumerGLTextureValidationTest)
     EGLWindow *window            = getEGLWindow();
     EGLDisplay display           = window->getDisplay();
     const char *extensionsString = eglQueryString(display, EGL_EXTENSIONS);
-    if (strstr(extensionsString, "EGL_KHR_stream_consumer_gltexture") == nullptr)
+    if (ANGLE_UNSAFE_TODO(strstr(extensionsString, "EGL_KHR_stream_consumer_gltexture")) == nullptr)
     {
         std::cout << "Stream consumer gltexture extension not supported" << std::endl;
         return;
@@ -203,7 +200,8 @@ TEST_P(EGLStreamTest, StreamConsumerGLTextureYUVValidationTest)
     EGLWindow *window            = getEGLWindow();
     EGLDisplay display           = window->getDisplay();
     const char *extensionsString = eglQueryString(display, EGL_EXTENSIONS);
-    if (strstr(extensionsString, "EGL_NV_stream_consumer_gltexture_yuv") == nullptr)
+    if (ANGLE_UNSAFE_TODO(strstr(extensionsString, "EGL_NV_stream_consumer_gltexture_yuv")) ==
+        nullptr)
     {
         std::cout << "Stream consumer gltexture yuv extension not supported" << std::endl;
         return;
@@ -320,7 +318,8 @@ TEST_P(EGLStreamTest, StreamConsumerGLTextureYUVDeletionTest)
     EGLWindow *window            = getEGLWindow();
     EGLDisplay display           = window->getDisplay();
     const char *extensionsString = eglQueryString(display, EGL_EXTENSIONS);
-    if (strstr(extensionsString, "EGL_ANGLE_stream_producer_d3d_texture") == nullptr)
+    if (ANGLE_UNSAFE_TODO(strstr(extensionsString, "EGL_ANGLE_stream_producer_d3d_texture")) ==
+        nullptr)
     {
         std::cout << "Stream producer d3d texture not supported" << std::endl;
         return;

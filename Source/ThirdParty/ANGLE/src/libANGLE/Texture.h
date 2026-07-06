@@ -202,7 +202,23 @@ class TextureState final : private angle::NonCopyable
 
     GLenum getSurfaceCompressionFixedRate() const { return mCompressionFixedRate; }
 
-    const ImageIndex &getEGLImageSourceIndex() const { return mEGLImageSourceIndex; }
+    const egl::ImageSourceAttributes &getEGLImageSourceAttributes() const
+    {
+        return mEGLImageSourceAttributes;
+    }
+
+    SourceImageIndex toSourceIndex(const OwnImageIndex &index) const
+    {
+        return mEGLImageSourceAttributes.toSourceIndex(index);
+    }
+    SourceLevel toSourceLevel(OwnLevel level) const
+    {
+        return mEGLImageSourceAttributes.toSourceLevel(level);
+    }
+    SourceLayer toSourceLayer(OwnLayer layer) const
+    {
+        return mEGLImageSourceAttributes.toSourceLayer(layer);
+    }
 
   private:
     // Texture needs access to the ImageDesc functions.
@@ -304,10 +320,11 @@ class TextureState final : private angle::NonCopyable
     // GL_EXT_texture_compression_astc_decode_mode_rgb9e5
     GLenum mAstcDecodePrecision;
 
-    // Only valid if this texture is an "EGLImage target" and the associated EGL Image was
-    // originally sourced from an OpenGL texture. Such EGL Images can be a slice of the underlying
-    // resource. The layer and level offsets are used to track the location of the slice.
-    ImageIndex mEGLImageSourceIndex;
+    // |mEGLImageSourceAttributes.type| is only valid if this texture is an "EGLImage target" and
+    // the associated EGL Image was originally sourced from an OpenGL texture.  Such EGL Images can
+    // be a slice of the underlying resource.  The level and layer offset are used to track the
+    // location of the slice.
+    egl::ImageSourceAttributes mEGLImageSourceAttributes;
 };
 
 bool operator==(const TextureState &a, const TextureState &b);

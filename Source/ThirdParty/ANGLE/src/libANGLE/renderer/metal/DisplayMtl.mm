@@ -904,10 +904,6 @@ void DisplayMtl::ensureCapsInitialized() const
     // Metal doesn't support GL_TEXTURE_COMPARE_MODE=GL_NONE for shadow samplers
     mNativeLimitations.noShadowSamplerCompareModeNone = true;
 
-    // MSL `uint32 instance_id = baseInstance + count`, so GLES baseinstance + primcount
-    // must not overflow GLuint.
-    mNativeLimitations.instanceIdMayOverflow = true;
-
     if (mFeatures.disableProgrammableBlending.enabled || !supportsAppleGPUFamily(1))
     {
         const MTLReadWriteTextureTier readWriteTextureTier = [mMetalDevice readWriteTextureSupport];

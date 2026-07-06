@@ -154,7 +154,7 @@ TEST_P(TextureRectangleTest, TexStorage2D)
         // Use 5 levels because the EXT_texture_storage extension requires a mip chain all the way
         // to a 1x1 mip.
         TexStorage2D(GL_TEXTURE_RECTANGLE_ANGLE, 5, GL_RGBA8, 16, 16);
-        ASSERT_GL_ERROR(GL_INVALID_VALUE);
+        ASSERT_GL_ERROR(GL_INVALID_OPERATION);
     }
 
     GLint maxSize = 0;
@@ -188,7 +188,7 @@ TEST_P(TextureRectangleTest, TexStorage2D)
         GLTexture tex;
         glBindTexture(GL_TEXTURE_RECTANGLE_ANGLE, tex);
         TexStorage2D(GL_TEXTURE_RECTANGLE_ANGLE, 1, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, 16, 16);
-        ASSERT_GL_ERROR(GL_INVALID_ENUM);
+        ASSERT_GL_ERROR(GL_INVALID_OPERATION);
     }
 }
 

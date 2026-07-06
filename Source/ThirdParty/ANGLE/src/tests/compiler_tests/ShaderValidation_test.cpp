@@ -7,11 +7,8 @@
 //   Tests that malformed shaders fail compilation, and that correct shaders pass compilation.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "GLSLANG/ShaderLang.h"
+#include "common/unsafe_buffers.h"
 #include "gtest/gtest.h"
 #include "tests/test_utils/ShaderCompileTreeTest.h"
 
@@ -4063,8 +4060,9 @@ TEST_F(FragmentShaderValidationTest, NothingButEarlyFragmentTestsWithInWithoutVa
 
     for (size_t i = 0; i < ArraySize(noValueQualifiers); ++i)
     {
-        const std::string shaderString =
-            kShaderStringPre + std::string(noValueQualifiers[i]) + kShaderStringPost;
+        const std::string shaderString = kShaderStringPre +
+                                         std::string(ANGLE_UNSAFE_TODO(noValueQualifiers[i])) +
+                                         kShaderStringPost;
 
         if (compile(shaderString))
         {
@@ -4074,8 +4072,9 @@ TEST_F(FragmentShaderValidationTest, NothingButEarlyFragmentTestsWithInWithoutVa
 
     for (size_t i = 0; i < ArraySize(withValueQualifiers); ++i)
     {
-        const std::string shaderString =
-            kShaderStringPre + std::string(withValueQualifiers[i]) + "=1" + kShaderStringPost;
+        const std::string shaderString = kShaderStringPre +
+                                         std::string(ANGLE_UNSAFE_TODO(withValueQualifiers[i])) +
+                                         "=1" + kShaderStringPost;
 
         if (compile(shaderString))
         {

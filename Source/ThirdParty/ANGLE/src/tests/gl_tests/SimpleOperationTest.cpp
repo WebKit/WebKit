@@ -7,10 +7,7 @@
 //   Basic GL commands such as linking a program, initializing a buffer, etc.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
 #include <vector>
@@ -72,7 +69,7 @@ void SimpleOperationTest::verifyBuffer(const std::vector<uint8_t> &data, GLenum 
     ASSERT_GL_NO_ERROR();
 
     std::vector<uint8_t> readbackData(data.size());
-    memcpy(readbackData.data(), mapPointer, data.size());
+    ANGLE_UNSAFE_TODO(memcpy(readbackData.data(), mapPointer, data.size()));
     glUnmapBufferOES(GL_ARRAY_BUFFER);
 
     EXPECT_EQ(data, readbackData);
@@ -1068,8 +1065,10 @@ TEST_P(SimpleOperationTest, DrawWithCubeTexture)
     // tiles horizontally and three tiles vertically (hence the w4 and h3 variable naming).
     for (Vector2 &pos : positions)
     {
-        pos.data()[0] = pos.data()[0] * w4 * 2.0f - 1.0f;
-        pos.data()[1] = pos.data()[1] * h3 * 2.0f - 1.0f;
+        ANGLE_UNSAFE_TODO({
+            pos.data()[0] = pos.data()[0] * w4 * 2.0f - 1.0f;
+            pos.data()[1] = pos.data()[1] * h3 * 2.0f - 1.0f;
+        })
     }
 
     const Vector3 posX(1, 0, 0);

@@ -4,10 +4,7 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "gtest/gtest.h"
 #include "test_utils/runner/TestSuite.h"
 #include "util/OSWindow.h"
@@ -29,7 +26,7 @@ bool HasArg(int argc, char **argv, const char *arg)
 {
     for (int i = 1; i < argc; ++i)
     {
-        if (strstr(argv[i], arg) != nullptr)
+        if (ANGLE_UNSAFE_TODO(strstr(argv[i], arg)) != nullptr)
         {
             return true;
         }

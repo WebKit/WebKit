@@ -394,10 +394,6 @@ void ImageHelper::removeStagedUpdates(gl::LevelIndex levelToRemove)
 
 void ImageHelper::resetImage()
 {
-    if (mTexture)
-    {
-        mProcTable->textureDestroy(mTexture.get());
-    }
     mProcTable           = nullptr;
     mTexture             = nullptr;
     mTextureDescriptor   = WGPU_TEXTURE_DESCRIPTOR_INIT;

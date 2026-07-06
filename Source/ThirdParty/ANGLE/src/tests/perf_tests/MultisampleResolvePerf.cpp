@@ -7,11 +7,8 @@
 //   Performance tests for glBlitFramebuffer and glInvalidateFramebuffer where the framebuffer is
 //   multisampled.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "ANGLEPerfTest.h"
+#include "common/unsafe_buffers.h"
 
 #include "util/shader_utils.h"
 
@@ -116,12 +113,12 @@ void MultisampleResolvePerf::initializeBenchmark()
 
     for (uint32_t i = 0; i < 2; ++i)
     {
-        glBindRenderbuffer(GL_RENDERBUFFER, mResolveColor[i]);
+        glBindRenderbuffer(GL_RENDERBUFFER, ANGLE_UNSAFE_TODO(mResolveColor[i]));
         glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, size, size);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, mResolveFramebuffer[i]);
+        glBindFramebuffer(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(mResolveFramebuffer[i]));
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
-                                  mResolveColor[i]);
+                                  ANGLE_UNSAFE_TODO(mResolveColor[i]));
         ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
     }
 
@@ -268,13 +265,13 @@ void MultisampleResolvePerf::drawBenchmark()
         {
             for (uint32_t i = 0; i < 2; ++i)
             {
-                glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mResolveFramebuffer[i]);
-                glReadBuffer(discards[i]);
+                glBindFramebuffer(GL_DRAW_FRAMEBUFFER, ANGLE_UNSAFE_TODO(mResolveFramebuffer[i]));
+                glReadBuffer(ANGLE_UNSAFE_TODO(discards[i]));
                 glBlitFramebuffer(0, 0, size, size, 0, 0, size, size, GL_COLOR_BUFFER_BIT,
                                   GL_NEAREST);
                 ASSERT_GL_NO_ERROR();
 
-                glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, &discards[i]);
+                glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, &ANGLE_UNSAFE_TODO(discards[i]));
             }
 
             if (param.withDepthStencil)

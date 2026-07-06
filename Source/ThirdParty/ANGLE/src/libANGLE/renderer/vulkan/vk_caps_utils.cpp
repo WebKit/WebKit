@@ -162,25 +162,27 @@ bool CanSupportYuvInternalFormat(const Renderer *renderer)
     return twoPlane8bitYuvFormatSupported && threePlane8bitYuvFormatSupported;
 }
 
-uint32_t GetTimestampValidBits(const std::vector<VkQueueFamilyProperties> &queueFamilyProperties,
+uint32_t GetTimestampValidBits(const std::vector<VkQueueFamilyProperties2> &queueFamilyProperties2,
                                uint32_t queueFamilyIndex)
 {
-    ASSERT(!queueFamilyProperties.empty());
+    ASSERT(!queueFamilyProperties2.empty());
 
-    if (queueFamilyIndex < queueFamilyProperties.size())
+    if (queueFamilyIndex < queueFamilyProperties2.size())
     {
         // If a queue family is already selected (which is only currently the case if there is only
         // one family), get the timestamp valid bits from that queue.
-        return queueFamilyProperties[queueFamilyIndex].timestampValidBits;
+        return queueFamilyProperties2[queueFamilyIndex].queueFamilyProperties.timestampValidBits;
     }
 
     // If a queue family is not already selected, we cannot know which queue family will end up
     // being used until a surface is used.  Take the minimum valid bits from all queues as a safe
     // measure.
-    uint32_t timestampValidBits = queueFamilyProperties[0].timestampValidBits;
-    for (const VkQueueFamilyProperties &properties : queueFamilyProperties)
+    uint32_t timestampValidBits =
+        queueFamilyProperties2[0].queueFamilyProperties.timestampValidBits;
+    for (const VkQueueFamilyProperties2 &properties2 : queueFamilyProperties2)
     {
-        timestampValidBits = std::min(timestampValidBits, properties.timestampValidBits);
+        timestampValidBits =
+            std::min(timestampValidBits, properties2.queueFamilyProperties.timestampValidBits);
     }
     return timestampValidBits;
 }
@@ -478,7 +480,7 @@ void Renderer::ensureCapsInitialized() const
         vk::RenderPassCommandBuffer::SupportsQueries(mPhysicalDeviceFeatures))
     {
         const uint32_t timestampValidBits =
-            vk::GetTimestampValidBits(mQueueFamilyProperties, mCurrentQueueFamilyIndex);
+            vk::GetTimestampValidBits(mQueueFamilyProperties2, mCurrentQueueFamilyIndex);
 
         mNativeExtensions.disjointTimerQueryEXT = timestampValidBits > 0;
         mNativeCaps.queryCounterBitsTimeElapsed = timestampValidBits;
