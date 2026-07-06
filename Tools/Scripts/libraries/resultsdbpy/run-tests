@@ -30,8 +30,16 @@ import os
 import sys
 import unittest
 
-import resultsdbpy
-from webkitcorepy import AutoInstall
+def _maybe_add_webkitcorepy_path():
+    # Hopefully we're beside webkitcorepy, otherwise webkitcorepy will need to be installed.
+    libraries_path = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+    webkitcorepy_path = os.path.join(libraries_path, 'webkitcorepy')
+    if os.path.isdir(webkitcorepy_path) and os.path.isdir(os.path.join(webkitcorepy_path, 'webkitcorepy')) and webkitcorepy_path not in sys.path:
+        sys.path.insert(0, webkitcorepy_path)
+
+_maybe_add_webkitcorepy_path()
+
+from webkitcorepy import AutoInstall, Package, Version
 
 libraries = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if sys.platform == 'darwin':
@@ -40,6 +48,10 @@ if sys.platform == 'darwin':
     if (is_root or not does_own_libraries):
         libraries = os.path.expanduser('~/Library/webkitpy')
 AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}'.format(sys.version_info[0])))
+
+AutoInstall.register(Package('webkitbugspy', Version(0, 3, 1)), local=True)
+
+import resultsdbpy
 
 from cassandra.cqlengine.management import CQLENG_ALLOW_SCHEMA_MANAGEMENT
 
