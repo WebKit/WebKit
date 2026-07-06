@@ -277,10 +277,7 @@ void FormatTable::setFormatCaps(MTLPixelFormat formatId, const FormatCaps &caps)
     mNativePixelFormatCapsTable[formatId] = caps;
 }
 
-void FormatTable::adjustFormatCapsForDevice(const mtl::ContextDevice &device,
-                                            MTLPixelFormat id,
-                                            bool supportsiOS2,
-                                            bool supportsiOS4)
+void FormatTable::adjustFormatCapsForDevice(MTLPixelFormat id, bool supportsiOS2, bool supportsiOS4)
 {
 #if !(TARGET_OS_OSX || TARGET_OS_MACCATALYST)
 

@@ -11,6 +11,10 @@
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
+#include "common/gl_enum_utils.h"
+
+#include <limits>
+
 using namespace angle;
 
 class DrawBuffersTest : public ANGLETest<>
@@ -1785,8 +1789,1068 @@ TEST_P(ColorMaskForDrawBuffersTest, StateChangeAffectsBlendState)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test parameters: <platform, color format, depth/stencil format (0 if none),
+// useTexture, sample count (0 = single-sampled)>.
+using DrawBuffersAnyFormatVariationsTestParams =
+    std::tuple<angle::PlatformParameters, GLenum, GLenum, bool, GLint>;
+
+std::string DrawBuffersAnyFormatVariationsTestPrint(
+    const ::testing::TestParamInfo<DrawBuffersAnyFormatVariationsTestParams> &paramsInfo)
+{
+    const DrawBuffersAnyFormatVariationsTestParams &params = paramsInfo.param;
+    std::ostringstream out;
+    out << std::get<0>(params) << "__"
+        << gl::GLenumToString(gl::GLESEnum::AllEnums, std::get<1>(params)) << "_"
+        << (std::get<2>(params) == 0
+                ? "NoDepthStencil"
+                : gl::GLenumToString(gl::GLESEnum::AllEnums, std::get<2>(params)))
+        << "_" << (std::get<3>(params) ? "Texture" : "Renderbuffer");
+    if (std::get<4>(params) > 0)
+    {
+        out << "_MSAA" << std::get<4>(params);
+    }
+    return out.str();
+}
+
+constexpr GLenum kDrawBuffersAnyFormatColorFormats[] = {
+    // Normalized / float-castable
+    GL_R8,
+    GL_RG8,
+    GL_RGB8,
+    GL_RGB565,
+    GL_RGB5_A1,
+    GL_RGBA4,
+    GL_RGB10_A2,
+    GL_RGBA8,
+    GL_SRGB8_ALPHA8,
+    // Signed / unsigned integer
+    GL_R8I,
+    GL_R8UI,
+    GL_R16I,
+    GL_R16UI,
+    GL_R32I,
+    GL_R32UI,
+    GL_RG8I,
+    GL_RG8UI,
+    GL_RG16I,
+    GL_RG16UI,
+    GL_RG32I,
+    GL_RG32UI,
+    GL_RGBA8I,
+    GL_RGBA8UI,
+    GL_RGBA16I,
+    GL_RGBA16UI,
+    GL_RGBA32I,
+    GL_RGBA32UI,
+    GL_RGB10_A2UI,
+    // Float, require EXT_color_buffer_half_float / EXT_color_buffer_float.
+    GL_R16F,
+    GL_RG16F,
+    GL_RGBA16F,
+    GL_RGB16F,  // Renderable only via EXT_color_buffer_half_float;
+    GL_R32F,
+    GL_RG32F,
+    GL_RGBA32F,
+    GL_R11F_G11F_B10F,
+    // Shared exponent, requires GL_QCOM_render_shared_exponent to render.
+    GL_RGB9_E5,
+    // Unsigned normalized 16-bit, requires GL_EXT_texture_norm16 to render.
+    GL_R16_EXT,
+    GL_RG16_EXT,
+    GL_RGBA16_EXT,
+    // Signed normalized 8-bit, requires GL_EXT_render_snorm to render.
+    GL_R8_SNORM,
+    GL_RG8_SNORM,
+    GL_RGBA8_SNORM,
+    // Signed normalized 16-bit, requires GL_EXT_render_snorm + GL_EXT_texture_norm16 to render.
+    GL_R16_SNORM_EXT,
+    GL_RG16_SNORM_EXT,
+    GL_RGBA16_SNORM_EXT,
+    // Requires GL_EXT_texture_format_BGRA8888.
+    GL_BGRA8_EXT,
+    // Requires GL_ANGLE_rgbx_internal_format.
+    GL_RGBX8_ANGLE,
+};
+
+constexpr GLenum kDrawBuffersAnyFormatDepthStencilFormats[] = {
+    0,  // No depth/stencil attachment
+    GL_DEPTH_COMPONENT16,
+    GL_DEPTH_COMPONENT24,
+    GL_DEPTH_COMPONENT32F,
+    GL_STENCIL_INDEX8,
+    GL_DEPTH24_STENCIL8,
+    GL_DEPTH32F_STENCIL8,
+};
+
+constexpr GLenum kDrawBuffersAnyFormatMSAAColorFormats[] = {
+    GL_R8,
+    GL_RG8,
+    GL_RGB8,
+    GL_RGB565,
+    GL_RGB5_A1,
+    GL_RGBA4,
+    GL_RGB10_A2,
+    GL_RGBA8,
+    GL_SRGB8_ALPHA8,
+    // Half/float color.
+    GL_R16F,
+    GL_RG16F,
+    GL_RGBA16F,
+    // RGB half-float is renderable only via EXT_color_buffer_half_float.
+    GL_RGB16F,
+    GL_R32F,
+    GL_RG32F,
+    GL_RGBA32F,
+    GL_R11F_G11F_B10F,
+    // Shared exponent.
+    GL_RGB9_E5,
+    // Unsigned normalized 16-bit.
+    GL_R16_EXT,
+    GL_RG16_EXT,
+    GL_RGBA16_EXT,
+    // Signed normalized 8-bit.
+    GL_R8_SNORM,
+    GL_RG8_SNORM,
+    GL_RGBA8_SNORM,
+    // Signed normalized 16-bit.
+    GL_R16_SNORM_EXT,
+    GL_RG16_SNORM_EXT,
+    GL_RGBA16_SNORM_EXT,
+    // BGRA8, requires GL_EXT_texture_format_BGRA8888.
+    GL_BGRA8_EXT,
+    // RGBX8, requires GL_ANGLE_rgbx_internal_format.
+    GL_RGBX8_ANGLE,
+};
+
+constexpr GLint kDrawBuffersAnyFormatMaxTestedSampleCount = 4;
+
+struct DrawBuffersAnyFormatExpectationPerSampleResult
+{
+    GLint sampleCount;                  // 0 = single-sampled
+    GLint firstFailingDrawBufferCount;  // Count where FRAMEBUFFER_UNSUPPORTED starts.
+};
+
+struct DrawBuffersAnyFormatExpectation
+{
+    const char *deviceNameSubstring;
+    GLenum colorFormat;
+    DrawBuffersAnyFormatExpectationPerSampleResult sampleCounts[3];
+};
+
+// Per-known device results for framebuffer-completeness for the
+// (color format, sample count) keys listed.
+// If the device does not appear in the table at all, it is unknown
+// device. Any framebuffer status at any buffer count is tolerated.
+// For known devices:
+// For this (color format, sampleCount), the FBO is expected to
+// become FRAMEBUFFER_UNSUPPORTED at firstFailingDrawBufferCount
+// and remain unsupported for larger counts.
+//
+// firstFailingDrawBufferCount:
+//   0 -- FBO is expected FRAMEBUFFER_UNSUPPORTED at every count
+//   9 -- FBO is expected FRAMEBUFFER_COMPLETE at every count
+constexpr DrawBuffersAnyFormatExpectation kDrawBuffersAnyFormatExpectedFramebufferIncomplete[] = {
+#if ANGLE_PLATFORM_MACOS
+    // Force expectations by having one result: all framebuffers are complete.
+    {"Apple", GL_RGBA32F, {{0, 9}, {2, 9}, {4, 9}}},
+#elif ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR
+    // Simulator uses a 32-byte color tile budget but its emulated
+    // pixelBytes don't match a real Apple GPU.  Many "small" formats
+    // come out oversized.
+    {"Apple iOS simulator GPU", GL_R11F_G11F_B10F, {{0, 5}, {2, 5}, {4, 5}}},
+    {"Apple iOS simulator GPU", GL_RG32F, {{0, 5}, {2, 0}, {4, 0}}},
+    {"Apple iOS simulator GPU", GL_RG32I, {{0, 5}, {2, 0}, {4, 0}}},
+    {"Apple iOS simulator GPU", GL_RG32UI, {{0, 5}, {2, 0}, {4, 0}}},
+    {"Apple iOS simulator GPU", GL_RGB10_A2, {{0, 5}, {2, 5}, {4, 5}}},
+    {"Apple iOS simulator GPU", GL_RGB10_A2UI, {{0, 9}, {2, 0}, {4, 0}}},
+    {"Apple iOS simulator GPU", GL_RGB565, {{0, 9}, {2, 5}, {4, 5}}},
+    {"Apple iOS simulator GPU", GL_RGB5_A1, {{0, 9}, {2, 5}, {4, 5}}},
+    {"Apple iOS simulator GPU", GL_RGB8, {{0, 9}, {2, 5}, {4, 5}}},
+    {"Apple iOS simulator GPU", GL_RGB16F, {{0, 5}, {2, 5}, {4, 5}}},
+    {"Apple iOS simulator GPU", GL_RGBA16F, {{0, 5}, {2, 5}, {4, 5}}},
+    {"Apple iOS simulator GPU", GL_RGBA16I, {{0, 5}, {2, 0}, {4, 0}}},
+    {"Apple iOS simulator GPU", GL_RGBA16UI, {{0, 5}, {2, 0}, {4, 0}}},
+    {"Apple iOS simulator GPU", GL_RGBA32F, {{0, 3}, {2, 0}, {4, 0}}},
+    {"Apple iOS simulator GPU", GL_RGBA32I, {{0, 3}, {2, 0}, {4, 0}}},
+    {"Apple iOS simulator GPU", GL_RGBA32UI, {{0, 3}, {2, 0}, {4, 0}}},
+    {"Apple iOS simulator GPU", GL_RGBA4, {{0, 9}, {2, 5}, {4, 5}}},
+    {"Apple iOS simulator GPU", GL_RGBA8, {{0, 9}, {2, 5}, {4, 5}}},
+    {"Apple iOS simulator GPU", GL_RGBA8_SNORM, {{0, 9}, {2, 5}, {4, 5}}},
+    {"Apple iOS simulator GPU", GL_RGBA16_EXT, {{0, 5}, {2, 5}, {4, 5}}},
+    {"Apple iOS simulator GPU", GL_RGBA16_SNORM_EXT, {{0, 5}, {2, 5}, {4, 5}}},
+    {"Apple iOS simulator GPU", GL_SRGB8_ALPHA8, {{0, 9}, {2, 5}, {4, 5}}},
+    {"Apple iOS simulator GPU", GL_BGRA8_EXT, {{0, 9}, {2, 5}, {4, 5}}},
+#elif ANGLE_PLATFORM_IOS_FAMILY
+    // Apple A12*, Apple5, 64 bytes of implicit image block size.
+    {"Apple A12", GL_RGBA32F, {{0, 5}, {2, 5}, {4, 5}}},
+    {"Apple A12", GL_RGBA32I, {{0, 5}, {2, 0}, {4, 0}}},
+    {"Apple A12", GL_RGBA32UI, {{0, 5}, {2, 0}, {4, 0}}},
+
+    // Apple A13*, Apple6, 64 bytes of implicit image block size.
+    {"Apple A13", GL_RGBA32F, {{0, 5}, {2, 5}, {4, 5}}},
+    {"Apple A13", GL_RGBA32I, {{0, 5}, {2, 0}, {4, 0}}},
+    {"Apple A13", GL_RGBA32UI, {{0, 5}, {2, 0}, {4, 0}}},
+
+    // Force expect success, Apple7+, 128 bytes of implicit image block size.
+    {"Apple A14", GL_RGBA32F, {{0, 9}, {2, 9}, {4, 9}}},
+    {"Apple A15", GL_RGBA32F, {{0, 9}, {2, 9}, {4, 9}}},
+    {"Apple A16", GL_RGBA32F, {{0, 9}, {2, 9}, {4, 9}}},
+    {"Apple A17", GL_RGBA32F, {{0, 9}, {2, 9}, {4, 9}}},
+    {"Apple A18", GL_RGBA32F, {{0, 9}, {2, 9}, {4, 9}}},
+    {"Apple A19", GL_RGBA32F, {{0, 9}, {2, 9}, {4, 9}}},
+    {"Apple M", GL_RGBA32F, {{0, 9}, {2, 9}, {4, 9}}},
+#endif
+};
+
+class DrawBuffersAnyFormatTestES3 : public ANGLETest<DrawBuffersAnyFormatVariationsTestParams>
+{
+  protected:
+    DrawBuffersAnyFormatTestES3()
+    {
+        setWindowWidth(128);
+        setWindowHeight(128);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+        setConfigDepthBits(24);
+        setConfigStencilBits(8);
+    }
+
+    GLenum colorFormat() const { return std::get<1>(GetParam()); }
+    GLenum depthStencilFormat() const { return std::get<2>(GetParam()); }
+    bool useTexture() const { return std::get<3>(GetParam()); }
+    GLint samples() const { return std::get<4>(GetParam()); }
+
+    bool isSignedInt() const;
+    bool isUnsignedInt() const;
+    bool isFloatColorFormat() const;
+    bool isSnorm8ColorFormat() const;
+    bool isSnorm16ColorFormat() const;
+
+    static GLenum DepthStencilAttachmentFor(GLenum format);
+    static int NumColorChannels(GLenum internalformat);
+
+    void setUpFramebufferAttachments(GLFramebuffer &fb, GLint numAttachments);
+
+    void clearColorAttachment(GLint i);
+    testing::AssertionResult verifyColorAttachment(GLint i);
+
+    void clearAll(GLint numAttachments);
+
+    // Verifies each color attachment was cleared to its per-attachment value.
+    testing::AssertionResult verifyAttachments(GLint numAttachments);
+
+    bool deviceSupportsParameters() const;
+
+    testing::AssertionResult verifyKnownDeviceExpectedFramebufferStatus(GLenum status,
+                                                                        GLint numAttachments) const;
+};
+
+bool DrawBuffersAnyFormatTestES3::isSignedInt() const
+{
+    switch (colorFormat())
+    {
+        case GL_R8I:
+        case GL_R16I:
+        case GL_R32I:
+        case GL_RG8I:
+        case GL_RG16I:
+        case GL_RG32I:
+        case GL_RGBA8I:
+        case GL_RGBA16I:
+        case GL_RGBA32I:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool DrawBuffersAnyFormatTestES3::isUnsignedInt() const
+{
+    switch (colorFormat())
+    {
+        case GL_R8UI:
+        case GL_R16UI:
+        case GL_R32UI:
+        case GL_RG8UI:
+        case GL_RG16UI:
+        case GL_RG32UI:
+        case GL_RGBA8UI:
+        case GL_RGBA16UI:
+        case GL_RGBA32UI:
+        case GL_RGB10_A2UI:
+            return true;
+        default:
+            return false;
+    }
+}
+
+GLenum DrawBuffersAnyFormatTestES3::DepthStencilAttachmentFor(GLenum format)
+{
+    switch (format)
+    {
+        case GL_DEPTH_COMPONENT16:
+        case GL_DEPTH_COMPONENT24:
+        case GL_DEPTH_COMPONENT32F:
+            return GL_DEPTH_ATTACHMENT;
+        case GL_STENCIL_INDEX8:
+            return GL_STENCIL_ATTACHMENT;
+        case GL_DEPTH24_STENCIL8:
+        case GL_DEPTH32F_STENCIL8:
+            return GL_DEPTH_STENCIL_ATTACHMENT;
+        default:
+            return 0;
+    }
+}
+
+bool DrawBuffersAnyFormatTestES3::isFloatColorFormat() const
+{
+    switch (colorFormat())
+    {
+        case GL_R16F:
+        case GL_RG16F:
+        case GL_RGBA16F:
+        case GL_RGB16F:
+        case GL_R32F:
+        case GL_RG32F:
+        case GL_RGBA32F:
+        case GL_R11F_G11F_B10F:
+        case GL_RGB9_E5:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool DrawBuffersAnyFormatTestES3::isSnorm8ColorFormat() const
+{
+    switch (colorFormat())
+    {
+        case GL_R8_SNORM:
+        case GL_RG8_SNORM:
+        case GL_RGBA8_SNORM:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool DrawBuffersAnyFormatTestES3::isSnorm16ColorFormat() const
+{
+    switch (colorFormat())
+    {
+        case GL_R16_SNORM_EXT:
+        case GL_RG16_SNORM_EXT:
+        case GL_RGBA16_SNORM_EXT:
+            return true;
+        default:
+            return false;
+    }
+}
+
+int DrawBuffersAnyFormatTestES3::NumColorChannels(GLenum internalformat)
+{
+    switch (internalformat)
+    {
+        case GL_R8:
+        case GL_R8I:
+        case GL_R8UI:
+        case GL_R16I:
+        case GL_R16UI:
+        case GL_R32I:
+        case GL_R32UI:
+        case GL_R16F:
+        case GL_R32F:
+        case GL_R16_EXT:
+        case GL_R8_SNORM:
+        case GL_R16_SNORM_EXT:
+            return 1;
+        case GL_RG8:
+        case GL_RG8I:
+        case GL_RG8UI:
+        case GL_RG16I:
+        case GL_RG16UI:
+        case GL_RG32I:
+        case GL_RG32UI:
+        case GL_RG16F:
+        case GL_RG32F:
+        case GL_RG16_EXT:
+        case GL_RG8_SNORM:
+        case GL_RG16_SNORM_EXT:
+            return 2;
+        case GL_RGB8:
+        case GL_RGB565:
+        case GL_RGB16F:
+        case GL_R11F_G11F_B10F:
+        case GL_RGB9_E5:
+        case GL_RGBX8_ANGLE:
+            return 3;
+        default:
+            return 4;
+    }
+}
+
+void DrawBuffersAnyFormatTestES3::setUpFramebufferAttachments(GLFramebuffer &fb,
+                                                              GLint numAttachments)
+{
+    constexpr GLsizei kSize = 16;
+    const GLenum cFormat    = colorFormat();
+    const GLenum dsFormat   = depthStencilFormat();
+    const GLenum dsAttach   = DepthStencilAttachmentFor(dsFormat);
+    const GLint msaa        = samples();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
+    if (useTexture())
+    {
+        // Multisampled textures require ES 3.1 or an extension.  The MSAA
+        // suite uses renderbuffers only; this branch is for samples == 0.
+        ASSERT_EQ(msaa, 0);
+        std::vector<GLTexture> colorTexs(numAttachments);
+        for (GLint i = 0; i < numAttachments; ++i)
+        {
+            glBindTexture(GL_TEXTURE_2D, colorTexs[i]);
+            glTexStorage2D(GL_TEXTURE_2D, 1, cFormat, kSize, kSize);
+            ASSERT_GL_NO_ERROR() << i;
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D,
+                                   colorTexs[i], 0);
+            ASSERT_GL_NO_ERROR() << i;
+        }
+        GLTexture dsTex;
+        if (dsAttach != 0)
+        {
+            glBindTexture(GL_TEXTURE_2D, dsTex);
+            glTexStorage2D(GL_TEXTURE_2D, 1, dsFormat, kSize, kSize);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, dsAttach, GL_TEXTURE_2D, dsTex, 0);
+        }
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+    else
+    {
+        std::vector<GLRenderbuffer> colorRbs(numAttachments);
+        for (GLint i = 0; i < numAttachments; ++i)
+        {
+            glBindRenderbuffer(GL_RENDERBUFFER, colorRbs[i]);
+            if (msaa > 0)
+            {
+                glRenderbufferStorageMultisample(GL_RENDERBUFFER, msaa, cFormat, kSize, kSize);
+            }
+            else
+            {
+                glRenderbufferStorage(GL_RENDERBUFFER, cFormat, kSize, kSize);
+            }
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER,
+                                      colorRbs[i]);
+        }
+        GLRenderbuffer dsRb;
+        if (dsAttach != 0)
+        {
+            glBindRenderbuffer(GL_RENDERBUFFER, dsRb);
+            if (msaa > 0)
+            {
+                glRenderbufferStorageMultisample(GL_RENDERBUFFER, msaa, dsFormat, kSize, kSize);
+            }
+            else
+            {
+                glRenderbufferStorage(GL_RENDERBUFFER, dsFormat, kSize, kSize);
+            }
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, dsAttach, GL_RENDERBUFFER, dsRb);
+        }
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+}
+
+void DrawBuffersAnyFormatTestES3::clearColorAttachment(GLint i)
+{
+    // Per-attachment R/G/B is the bit decomposition of (i+1); A is always
+    // "max".  Using only 0 / max (=255 / 1.0 / 1) values means the cleared
+    // values round-trip through any normalized format.
+    const bool R = ((i + 1) & 1) != 0;
+    const bool G = ((i + 1) & 2) != 0;
+    const bool B = ((i + 1) & 4) != 0;
+    if (isUnsignedInt())
+    {
+        const GLuint v[4] = {R ? 1u : 0u, G ? 1u : 0u, B ? 1u : 0u, 1u};
+        glClearBufferuiv(GL_COLOR, i, v);
+    }
+    else if (isSignedInt())
+    {
+        const GLint v[4] = {R ? 1 : 0, G ? 1 : 0, B ? 1 : 0, 1};
+        glClearBufferiv(GL_COLOR, i, v);
+    }
+    else
+    {
+        const GLfloat v[4] = {R ? 1.0f : 0.0f, G ? 1.0f : 0.0f, B ? 1.0f : 0.0f, 1.0f};
+        glClearBufferfv(GL_COLOR, i, v);
+    }
+}
+
+testing::AssertionResult DrawBuffersAnyFormatTestES3::verifyColorAttachment(GLint i)
+{
+    GLFramebuffer resolveFb;
+    GLRenderbuffer resolveRb;
+    GLint sourceFb = 0;
+
+    if (samples() > 0)
+    {
+        constexpr GLsizei kSize = 16;
+        glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &sourceFb);
+
+        glBindRenderbuffer(GL_RENDERBUFFER, resolveRb);
+        glRenderbufferStorage(GL_RENDERBUFFER, colorFormat(), kSize, kSize);
+
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFb);
+        glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                  resolveRb);
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, sourceFb);
+        glReadBuffer(GL_COLOR_ATTACHMENT0 + i);
+        glBlitFramebuffer(0, 0, kSize, kSize, 0, 0, kSize, kSize, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, sourceFb);
+        const GLenum blitErr = glGetError();
+        if (blitErr != GL_NO_ERROR)
+        {
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, sourceFb);
+            return testing::AssertionFailure()
+                   << "MSAA blit-resolve attachment " << i << ": "
+                   << gl::GLenumToString(gl::GLESEnum::AllEnums, blitErr);
+        }
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFb);
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+    }
+    else
+    {
+        glReadBuffer(GL_COLOR_ATTACHMENT0 + i);
+    }
+
+    const int numC = NumColorChannels(colorFormat());
+
+    // Mask the expected components by the format's channel count.  Channels
+    // not present in the format read back as 0 (RGB) or "1" (alpha) per the
+    // ES 3.0 spec.
+    const bool R = numC >= 1 && ((i + 1) & 1) != 0;
+    const bool G = numC >= 2 && ((i + 1) & 2) != 0;
+    const bool B = numC >= 3 && ((i + 1) & 4) != 0;
+
+    testing::AssertionResult result = testing::AssertionSuccess();
+
+    if (isUnsignedInt())
+    {
+        GLuint pixel[4]          = {0u, 0u, 0u, 0u};
+        const GLuint expected[4] = {R ? 1u : 0u, G ? 1u : 0u, B ? 1u : 0u, 1u};
+        glReadPixels(0, 0, 1, 1, GL_RGBA_INTEGER, GL_UNSIGNED_INT, pixel);
+        if (memcmp(pixel, expected, sizeof(pixel)) != 0)
+        {
+            result = testing::AssertionFailure()
+                     << "color attachment " << i << ": got (" << pixel[0] << ", " << pixel[1]
+                     << ", " << pixel[2] << ", " << pixel[3] << "), expected (" << expected[0]
+                     << ", " << expected[1] << ", " << expected[2] << ", " << expected[3] << ")";
+        }
+    }
+    else if (isSignedInt())
+    {
+        GLint pixel[4]          = {0, 0, 0, 0};
+        const GLint expected[4] = {R ? 1 : 0, G ? 1 : 0, B ? 1 : 0, 1};
+        glReadPixels(0, 0, 1, 1, GL_RGBA_INTEGER, GL_INT, pixel);
+        if (memcmp(pixel, expected, sizeof(pixel)) != 0)
+        {
+            result = testing::AssertionFailure()
+                     << "color attachment " << i << ": got (" << pixel[0] << ", " << pixel[1]
+                     << ", " << pixel[2] << ", " << pixel[3] << "), expected (" << expected[0]
+                     << ", " << expected[1] << ", " << expected[2] << ", " << expected[3] << ")";
+        }
+    }
+    else if (isSnorm8ColorFormat())
+    {
+        // GL_EXT_render_snorm adds GL_RGBA + GL_BYTE to ReadPixels.  SNORM
+        // 1.0 maps to 127.
+        GLbyte pixel[4]          = {0, 0, 0, 0};
+        const GLbyte expected[4] = {static_cast<GLbyte>(R ? 127 : 0),
+                                    static_cast<GLbyte>(G ? 127 : 0),
+                                    static_cast<GLbyte>(B ? 127 : 0), 127};
+        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_BYTE, pixel);
+        if (std::memcmp(pixel, expected, sizeof(pixel)) != 0)
+        {
+            result = testing::AssertionFailure()
+                     << "color attachment " << i << ": got (" << +pixel[0] << ", " << +pixel[1]
+                     << ", " << +pixel[2] << ", " << +pixel[3] << "), expected (" << +expected[0]
+                     << ", " << +expected[1] << ", " << +expected[2] << ", " << +expected[3] << ")";
+        }
+    }
+    else if (isSnorm16ColorFormat())
+    {
+        // GL_EXT_render_snorm adds GL_RGBA + GL_SHORT to ReadPixels.  SNORM
+        // 1.0 maps to 32767.
+        GLshort pixel[4]          = {0, 0, 0, 0};
+        const GLshort expected[4] = {static_cast<GLshort>(R ? 32767 : 0),
+                                     static_cast<GLshort>(G ? 32767 : 0),
+                                     static_cast<GLshort>(B ? 32767 : 0), 32767};
+        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_SHORT, pixel);
+        if (std::memcmp(pixel, expected, sizeof(pixel)) != 0)
+        {
+            result = testing::AssertionFailure()
+                     << "color attachment " << i << ": got (" << pixel[0] << ", " << pixel[1]
+                     << ", " << pixel[2] << ", " << pixel[3] << "), expected (" << expected[0]
+                     << ", " << expected[1] << ", " << expected[2] << ", " << expected[3] << ")";
+        }
+    }
+    else if (isFloatColorFormat())
+    {
+        const GLColor32F expected(R ? 1.0f : 0.0f, G ? 1.0f : 0.0f, B ? 1.0f : 0.0f, 1.0f);
+        const GLColor32F actual = angle::ReadColor32F(0, 0);
+        if (actual != expected)
+        {
+            result = testing::AssertionFailure()
+                     << "color attachment " << i << ": got " << actual << ", expected " << expected;
+        }
+    }
+    else
+    {
+        const GLColor expected(static_cast<GLubyte>(R ? 255 : 0), static_cast<GLubyte>(G ? 255 : 0),
+                               static_cast<GLubyte>(B ? 255 : 0), 255);
+        const GLColor actual = angle::ReadColor(0, 0);
+        if (actual != expected)
+        {
+            result = testing::AssertionFailure()
+                     << "color attachment " << i << ": got " << actual << ", expected " << expected;
+        }
+    }
+
+    if (samples() > 0)
+    {
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, sourceFb);
+    }
+    return result;
+}
+
+void DrawBuffersAnyFormatTestES3::clearAll(GLint numAttachments)
+{
+    const GLenum dsAttach = DepthStencilAttachmentFor(depthStencilFormat());
+
+    for (GLint i = 0; i < numAttachments; ++i)
+    {
+        clearColorAttachment(i);
+    }
+
+    GLbitfield clearMask = 0;
+    if (dsAttach == GL_DEPTH_ATTACHMENT || dsAttach == GL_DEPTH_STENCIL_ATTACHMENT)
+    {
+        glClearDepthf(1.0f);
+        clearMask |= GL_DEPTH_BUFFER_BIT;
+    }
+    if (dsAttach == GL_STENCIL_ATTACHMENT || dsAttach == GL_DEPTH_STENCIL_ATTACHMENT)
+    {
+        glClearStencil(0x55);
+        clearMask |= GL_STENCIL_BUFFER_BIT;
+    }
+    if (clearMask != 0)
+    {
+        glClear(clearMask);
+    }
+}
+
+testing::AssertionResult DrawBuffersAnyFormatTestES3::verifyAttachments(GLint numAttachments)
+{
+    for (GLint i = 0; i < numAttachments; ++i)
+    {
+        testing::AssertionResult r = verifyColorAttachment(i);
+        if (!r)
+        {
+            return r;
+        }
+    }
+    return testing::AssertionSuccess();
+}
+
+bool DrawBuffersAnyFormatTestES3::deviceSupportsParameters() const
+{
+    switch (colorFormat())
+    {
+        case GL_R16F:
+        case GL_RG16F:
+        case GL_RGBA16F:
+            if (!EnsureGLExtensionEnabled("GL_EXT_color_buffer_half_float") &&
+                !EnsureGLExtensionEnabled("GL_EXT_color_buffer_float"))
+            {
+                return false;
+            }
+            break;
+        case GL_RGB16F:
+            if (!EnsureGLExtensionEnabled("GL_EXT_color_buffer_half_float"))
+            {
+                return false;
+            }
+            break;
+        case GL_R32F:
+        case GL_RG32F:
+        case GL_RGBA32F:
+        case GL_R11F_G11F_B10F:
+            if (!EnsureGLExtensionEnabled("GL_EXT_color_buffer_float"))
+            {
+                return false;
+            }
+            break;
+        case GL_RGB9_E5:
+            if (!EnsureGLExtensionEnabled("GL_QCOM_render_shared_exponent"))
+            {
+                return false;
+            }
+            break;
+        case GL_R16_EXT:
+        case GL_RG16_EXT:
+        case GL_RGBA16_EXT:
+            if (!EnsureGLExtensionEnabled("GL_EXT_texture_norm16"))
+            {
+                return false;
+            }
+            break;
+        case GL_R8_SNORM:
+        case GL_RG8_SNORM:
+        case GL_RGBA8_SNORM:
+            if (!EnsureGLExtensionEnabled("GL_EXT_render_snorm"))
+            {
+                return false;
+            }
+            break;
+        case GL_R16_SNORM_EXT:
+        case GL_RG16_SNORM_EXT:
+        case GL_RGBA16_SNORM_EXT:
+            if (!EnsureGLExtensionEnabled("GL_EXT_render_snorm") ||
+                !EnsureGLExtensionEnabled("GL_EXT_texture_norm16"))
+            {
+                return false;
+            }
+            break;
+        case GL_BGRA8_EXT:
+            if (!EnsureGLExtensionEnabled("GL_EXT_texture_format_BGRA8888"))
+            {
+                return false;
+            }
+            break;
+        case GL_RGBX8_ANGLE:
+            if (!EnsureGLExtensionEnabled("GL_ANGLE_rgbx_internal_format"))
+            {
+                return false;
+            }
+            break;
+        default:
+            break;
+    }
+
+    // Stencil-only attachments as textures require GL_OES_texture_stencil8.
+    // Renderbuffer GL_STENCIL_INDEX8 is required by ES 3.0 with no extension.
+    if (useTexture() && depthStencilFormat() == GL_STENCIL_INDEX8)
+    {
+        if (!EnsureGLExtensionEnabled("GL_OES_texture_stencil8"))
+        {
+            return false;
+        }
+    }
+
+    if (samples() > 0)
+    {
+        if (isSignedInt() || isUnsignedInt())
+        {
+            UNREACHABLE();
+            return false;
+        }
+        GLint maxSamplesForColor = 0;
+        glGetInternalformativ(GL_RENDERBUFFER, colorFormat(), GL_SAMPLES, 1, &maxSamplesForColor);
+        if (samples() > maxSamplesForColor)
+        {
+            return false;
+        }
+        if (depthStencilFormat() != 0)
+        {
+            GLint maxSamplesForDS = 0;
+            glGetInternalformativ(GL_RENDERBUFFER, depthStencilFormat(), GL_SAMPLES, 1,
+                                  &maxSamplesForDS);
+            if (samples() > maxSamplesForDS)
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+testing::AssertionResult DrawBuffersAnyFormatTestES3::verifyKnownDeviceExpectedFramebufferStatus(
+    GLenum status,
+    GLint numAttachments) const
+{
+    // Known Devices have entry in the table.
+    // For given (format, samples, numAttachments, status), verify status:
+    //   * A matching entry covers the (format, samples, numAttachments)  ->
+    //     Expect status incomplete.
+    //   * status Complete   -> success (expectations default to success).
+    //   * status Incomplete -> failure (missing expectation).
+
+    const std::string deviceName(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+    bool hasExpectation = false;
+    // If we have expectation, the default is that all framebuffers resolve to working.
+    GLint expectedFirstFailingBufferCount = std::numeric_limits<GLint>::max();
+    for (const DrawBuffersAnyFormatExpectation &e :
+         kDrawBuffersAnyFormatExpectedFramebufferIncomplete)
+    {
+        if (deviceName.find(e.deviceNameSubstring) == std::string::npos)
+        {
+            continue;
+        }
+        // NOTE: If device has any entry in the table, we expect the table fully
+        // define the status behavior.
+        hasExpectation = true;
+        if (e.colorFormat != colorFormat())
+        {
+            continue;
+        }
+        for (const DrawBuffersAnyFormatExpectationPerSampleResult &r : e.sampleCounts)
+        {
+            if (r.sampleCount == samples())
+            {
+                expectedFirstFailingBufferCount = r.firstFailingDrawBufferCount;
+                break;
+            }
+        }
+    }
+    if (hasExpectation)
+    {
+        GLenum expectedStatus = static_cast<GLenum>(numAttachments < expectedFirstFailingBufferCount
+                                                        ? GL_FRAMEBUFFER_COMPLETE
+                                                        : GL_FRAMEBUFFER_UNSUPPORTED);
+        if (status == expectedStatus)
+        {
+            return testing::AssertionSuccess();
+        }
+        return testing::AssertionFailure()
+               << "device: " << deviceName << " n=" << numAttachments << " samples=" << samples()
+               << " format=" << gl::GLenumToString(gl::GLESEnum::AllEnums, colorFormat())
+               << " expected status: " << gl::GLenumToString(gl::GLESEnum::AllEnums, expectedStatus)
+               << " got status: " << gl::GLenumToString(gl::GLESEnum::AllEnums, status);
+    }
+    // Device not in the table: any status is tolerated.  Toggle ((false)) ->
+    // ((true)) to log a candidate row to add to the expectations table.
+    if (status != GL_FRAMEBUFFER_COMPLETE && ((false)))
+    {
+        printf("DrawBuffersAnyFormat incomplete: {\"%s\", %s, {..., {%d, %d}, ...}},\n",
+               deviceName.c_str(), gl::GLenumToString(gl::GLESEnum::AllEnums, colorFormat()),
+               samples(), numAttachments);
+    }
+    return testing::AssertionSuccess();
+}
+
+// Fill FBO with maximum amount of attachments for a specific format.
+// Test clear codepath with the FBO.
+TEST_P(DrawBuffersAnyFormatTestES3, ClearIterativeAttachmentCount)
+{
+    ANGLE_SKIP_TEST_IF(!deviceSupportsParameters());
+
+    GLint maxDrawBuffers = 0;
+    glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
+    ASSERT_GE(maxDrawBuffers, 4);
+
+    for (GLint n = maxDrawBuffers; n >= 1; --n)
+    {
+        SCOPED_TRACE(testing::Message() << "numAttachments=" << n);
+
+        GLFramebuffer fb;
+        setUpFramebufferAttachments(fb, n);
+        glBindFramebuffer(GL_FRAMEBUFFER, fb);
+        ASSERT_GL_NO_ERROR();
+
+        const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        EXPECT_TRUE(verifyKnownDeviceExpectedFramebufferStatus(status, n));
+        if (status != GL_FRAMEBUFFER_COMPLETE)
+        {
+            continue;
+        }
+
+        std::vector<GLenum> drawBuffers(n);
+        for (GLint i = 0; i < n; ++i)
+        {
+            drawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
+        }
+        glDrawBuffers(n, drawBuffers.data());
+
+        clearAll(n);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_TRUE(verifyAttachments(n));
+        break;
+    }
+}
+
+// Fill FBO with maximum amount of attachments for a specific format.
+// Test clear-after-draw codepath with the FBO.
+TEST_P(DrawBuffersAnyFormatTestES3, DrawThenClearIterativeAttachmentCount)
+{
+    ANGLE_SKIP_TEST_IF(!deviceSupportsParameters());
+
+    GLint maxDrawBuffers = 0;
+    glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
+    ASSERT_GE(maxDrawBuffers, 4);
+
+    for (GLint n = maxDrawBuffers; n >= 1; --n)
+    {
+        SCOPED_TRACE(testing::Message() << "numAttachments=" << n);
+
+        GLFramebuffer fb;
+        setUpFramebufferAttachments(fb, n);
+        glBindFramebuffer(GL_FRAMEBUFFER, fb);
+        ASSERT_GL_NO_ERROR();
+
+        const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        EXPECT_TRUE(verifyKnownDeviceExpectedFramebufferStatus(status, n));
+        if (status != GL_FRAMEBUFFER_COMPLETE)
+        {
+            continue;
+        }
+
+        std::vector<GLenum> drawBuffers(n);
+        for (GLint i = 0; i < n; ++i)
+        {
+            drawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
+        }
+        glDrawBuffers(n, drawBuffers.data());
+
+        const GLenum dsAttach = DepthStencilAttachmentFor(depthStencilFormat());
+        const bool hasDepth =
+            dsAttach == GL_DEPTH_ATTACHMENT || dsAttach == GL_DEPTH_STENCIL_ATTACHMENT;
+        const bool hasStencil =
+            dsAttach == GL_STENCIL_ATTACHMENT || dsAttach == GL_DEPTH_STENCIL_ATTACHMENT;
+        if (hasDepth)
+        {
+            glEnable(GL_DEPTH_TEST);
+            glDepthFunc(GL_ALWAYS);
+        }
+        else
+        {
+            glDisable(GL_DEPTH_TEST);
+        }
+        if (hasStencil)
+        {
+            glEnable(GL_STENCIL_TEST);
+            glStencilFunc(GL_ALWAYS, 0x3C, 0xFF);
+            glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+            glStencilMask(0xFF);
+        }
+        else
+        {
+            glDisable(GL_STENCIL_TEST);
+        }
+
+        const char *outType = isUnsignedInt() ? "uvec4" : (isSignedInt() ? "ivec4" : "vec4");
+        const char *outValue =
+            isUnsignedInt() ? "uvec4(0u, 0u, 1u, 1u)"
+                            : (isSignedInt() ? "ivec4(0, 0, 1, 1)" : "vec4(0.0, 0.0, 1.0, 1.0)");
+
+        std::stringstream fs;
+        fs << "#version 300 es\nprecision highp float;\n";
+        for (GLint i = 0; i < n; ++i)
+        {
+            fs << "layout(location = " << i << ") out " << outType << " value" << i << ";\n";
+        }
+        fs << "void main(){\n";
+        for (GLint i = 0; i < n; ++i)
+        {
+            fs << "value" << i << " = " << outValue << ";\n";
+        }
+        fs << "}\n";
+
+        ANGLE_GL_PROGRAM(drawMRT, essl3_shaders::vs::Simple(), fs.str().c_str());
+        drawQuad(drawMRT, essl3_shaders::PositionAttrib(), 0.0f);
+
+        clearAll(n);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_TRUE(verifyAttachments(n));
+        break;
+    }
+}
+
+// Setup a big framebuffer and if it returns incomplete, expect clear to
+// fail too.
+TEST_P(DrawBuffersAnyFormatTestES3, IncompleteClearIsInvalidFramebufferOperation)
+{
+    ANGLE_SKIP_TEST_IF(!deviceSupportsParameters());
+
+    GLint maxDrawBuffers = 0;
+    glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
+    ASSERT_GE(maxDrawBuffers, 4);
+
+    for (GLint n = 1; n <= maxDrawBuffers; ++n)
+    {
+        SCOPED_TRACE(testing::Message() << "numAttachments=" << n);
+
+        GLFramebuffer fb;
+        setUpFramebufferAttachments(fb, n);
+        glBindFramebuffer(GL_FRAMEBUFFER, fb);
+        ASSERT_GL_NO_ERROR();
+
+        const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        EXPECT_TRUE(verifyKnownDeviceExpectedFramebufferStatus(status, n));
+        if (status == GL_FRAMEBUFFER_COMPLETE)
+        {
+            continue;
+        }
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        EXPECT_GL_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+        glClear(GL_STENCIL_BUFFER_BIT);
+        EXPECT_GL_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    }
+}
+
+// Sanity test: detects implementations that advertise a per-format max
+// sample count exceeding what the MSAA instantiation of
+// DrawBuffersAnyFormatTestES3 actually exercises.  If this fires, raise
+// kDrawBuffersAnyFormatMaxTestedSampleCount and add the new value to the
+// MSAA instantiation's sample-count list.
+TEST_P(DrawBuffersTestES3, DrawBuffersAnyFormatMSAASampleLimitIsEnough)
+{
+    EnsureGLExtensionEnabled("GL_EXT_color_buffer_half_float");
+    EnsureGLExtensionEnabled("GL_EXT_color_buffer_float");
+    EnsureGLExtensionEnabled("GL_QCOM_render_shared_exponent");
+    EnsureGLExtensionEnabled("GL_EXT_texture_norm16");
+    EnsureGLExtensionEnabled("GL_EXT_render_snorm");
+    EnsureGLExtensionEnabled("GL_EXT_texture_format_BGRA8888");
+    EnsureGLExtensionEnabled("GL_ANGLE_rgbx_internal_format");
+
+    auto checkFormat = [&](GLenum fmt) {
+        GLint numCounts = 0;
+        glGetInternalformativ(GL_RENDERBUFFER, fmt, GL_NUM_SAMPLE_COUNTS, 1, &numCounts);
+        if (glGetError() != GL_NO_ERROR)
+        {
+            return;
+        }
+        if (numCounts == 0)
+        {
+            return;
+        }
+        GLint maxSamples = 0;
+        glGetInternalformativ(GL_RENDERBUFFER, fmt, GL_SAMPLES, 1, &maxSamples);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_LE(maxSamples, kDrawBuffersAnyFormatMaxTestedSampleCount)
+            << "format: " << gl::GLenumToString(gl::GLESEnum::AllEnums, fmt);
+    };
+
+    for (GLenum fmt : kDrawBuffersAnyFormatMSAAColorFormats)
+    {
+        checkFormat(fmt);
+    }
+    for (GLenum fmt : kDrawBuffersAnyFormatDepthStencilFormats)
+    {
+        if (fmt == 0)
+        {
+            continue;  // sentinel for "no depth/stencil attachment"
+        }
+        checkFormat(fmt);
+    }
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(DrawBuffersTest,
                                        ES2_METAL().enable(Feature::LimitMaxDrawBuffersForTesting),
+                                       ES3_METAL().enable(Feature::LimitMaxDrawBuffersForTesting),
                                        ES2_VULKAN()
                                            .disable(Feature::SupportsTransformFeedbackExtension)
                                            .disable(Feature::EmulateTransformFeedback));
@@ -1799,3 +2863,35 @@ ANGLE_INSTANTIATE_TEST_ES3(DrawBuffersTestES3);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ColorMaskForDrawBuffersTest);
 ANGLE_INSTANTIATE_TEST_ES3(ColorMaskForDrawBuffersTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawBuffersAnyFormatTestES3);
+
+const angle::PlatformParameters kDrawBuffersAnyFormatPlatforms[] = {
+    ANGLE_ALL_TEST_PLATFORMS_ES3,
+    ES3_VULKAN().enable(Feature::ForceFallbackFormat),
+    ES3_VULKAN().enable(Feature::PreferDrawClearOverVkCmdClearAttachments),
+};
+
+INSTANTIATE_TEST_SUITE_P(
+    NonMSAA,
+    DrawBuffersAnyFormatTestES3,
+    testing::Combine(
+        testing::ValuesIn(::angle::FilterTestParams(kDrawBuffersAnyFormatPlatforms,
+                                                    ArraySize(kDrawBuffersAnyFormatPlatforms))),
+        testing::ValuesIn(kDrawBuffersAnyFormatColorFormats),
+        testing::ValuesIn(kDrawBuffersAnyFormatDepthStencilFormats),
+        testing::Bool(),
+        testing::Values<GLint>(0)),
+    DrawBuffersAnyFormatVariationsTestPrint);
+
+INSTANTIATE_TEST_SUITE_P(
+    MSAA,
+    DrawBuffersAnyFormatTestES3,
+    testing::Combine(
+        testing::ValuesIn(::angle::FilterTestParams(kDrawBuffersAnyFormatPlatforms,
+                                                    ArraySize(kDrawBuffersAnyFormatPlatforms))),
+        testing::ValuesIn(kDrawBuffersAnyFormatMSAAColorFormats),
+        testing::ValuesIn(kDrawBuffersAnyFormatDepthStencilFormats),
+        testing::Values(false),  // renderbuffers only; ES 3.0 has no MSAA textures
+        testing::Values<GLint>(2, kDrawBuffersAnyFormatMaxTestedSampleCount)),
+    DrawBuffersAnyFormatVariationsTestPrint);

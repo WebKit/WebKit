@@ -156,10 +156,7 @@ class FormatTable final : angle::NonCopyable
 
     void setFormatCaps(MTLPixelFormat formatId, const FormatCaps &caps);
 
-    void adjustFormatCapsForDevice(const mtl::ContextDevice &device,
-                                   MTLPixelFormat id,
-                                   bool supportsiOS2,
-                                   bool supportsiOS4);
+    void adjustFormatCapsForDevice(MTLPixelFormat id, bool supportsiOS2, bool supportsiOS4);
 
     std::array<Format, angle::kNumANGLEFormats> mPixelFormatTable;
     angle::HashMap<MTLPixelFormat, FormatCaps> mNativePixelFormatCapsTable;
