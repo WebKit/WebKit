@@ -256,7 +256,7 @@ void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
         disallowDynamicMediaQueryEvaluationIfNeeded();
 
         auto functionDeclarations = uncheckedDowncast<StyleRuleFunctionDeclarations>(WTF::move(rule));
-        m_currentFunctionDeclarationsList.append(WTF::move(functionDeclarations));
+        m_currentFunctionDeclarationsList.append({ WTF::move(functionDeclarations), m_currentContainerQueryIdentifier });
         return;
     }
 
@@ -568,8 +568,18 @@ void RuleSetBuilder::addMutatingRulesToResolver()
 
         if (RefPtr functionRule = dynamicDowncast<StyleRuleFunction>(rule.get())) {
             auto declarationsList = m_functionDeclarationsMap.get(*functionRule);
+
+            // Keep each block's wrapping @container chain rather than merging it away. @container in a
+            // function body depends on the calling element, so it is evaluated when the function is called.
+            auto declarationBlocks = WTF::map<1>(declarationsList, [&](auto& block) {
+                return CustomFunction::DeclarationsBlock {
+                    block.declarations->properties(),
+                    m_ruleSet->containerQueryChainFor(block.containerQueryIdentifier)
+                };
+            });
+
             CheckedRef registry = resolver->ensureCustomFunctionRegistry();
-            registry->registerFunction(*functionRule, declarationsList);
+            registry->registerFunction(*functionRule, WTF::move(declarationBlocks));
             // The cache keys on matched properties, not on the function registry. Mirrors @property.
             resolver->invalidateMatchedDeclarationsCache();
         }

@@ -29,16 +29,25 @@
 namespace WebCore {
 namespace Style {
 
-// CustomFunction registration represents @function after things like conditional group rules (@media) and cascade layers have been resolved.
+// CustomFunction registration represents @function after things like @media and cascade layers have
+// been resolved.
 // https://drafts.csswg.org/css-mixins/#evaluating-custom-functions
 
 struct CustomFunction : CanMakeCheckedPtr<CustomFunction> {
+    struct DeclarationsBlock {
+        Ref<const StyleProperties> properties;
+        Vector<Ref<const StyleRuleContainer>> containerQueries;
+    };
+
+    // A function body without conditional group rules is a single block.
+    using DeclarationsBlocks = Vector<DeclarationsBlock, 1>;
+
     AtomString name;
     const Vector<StyleRuleFunction::Parameter> parameters;
     const CSSCustomPropertySyntax returnType;
-    Ref<const StyleProperties> properties;
+    DeclarationsBlocks declarationBlocks;
 
-    CustomFunction(const AtomString&, const Vector<StyleRuleFunction::Parameter>&, const CSSCustomPropertySyntax& returnType, const StyleProperties&);
+    CustomFunction(const AtomString&, const Vector<StyleRuleFunction::Parameter>&, const CSSCustomPropertySyntax& returnType, DeclarationsBlocks&&);
 
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(CustomFunction);
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(CustomFunction);
@@ -51,7 +60,7 @@ public:
     CustomFunctionRegistry() = default;
 
     const CustomFunction* NODELETE functionForName(const AtomString&) const;
-    void registerFunction(const StyleRuleFunction&, const Vector<Ref<const StyleRuleFunctionDeclarations>>&);
+    void registerFunction(const StyleRuleFunction&, CustomFunction::DeclarationsBlocks&&);
 
 private:
     HashMap<AtomString, UniqueRef<const CustomFunction>> m_functions;

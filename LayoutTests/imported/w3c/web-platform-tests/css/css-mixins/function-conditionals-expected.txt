@@ -13,12 +13,12 @@ PASS Locals within @media
 PASS @supports within @media
 PASS @media within @supports
 PASS Basic @container
-FAIL Basic @container (false) assert_equals: expected "PASS" but got "FAIL"
-FAIL Nested @container assert_equals: expected "PASS" but got "FAIL"
-FAIL Nested @container (false) assert_equals: expected "PASS" but got "FAIL"
+PASS Basic @container (false)
+PASS Nested @container
+PASS Nested @container (false)
 PASS Locals within @container
 PASS @supports within @container
-FAIL @container within @supports assert_equals: expected "PASS" but got "FAIL"
+PASS @container within @supports
 PASS @container, @media, @supports
 PASS @supports, @media, @container
 

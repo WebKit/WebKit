@@ -25,8 +25,6 @@
 #include "config.h"
 #include "CustomFunctionRegistry.h"
 
-#include "ImmutableStyleProperties.h"
-#include "MutableStyleProperties.h"
 #include "StylePropertiesInlines.h"
 
 namespace WebCore {
@@ -35,32 +33,20 @@ namespace Style {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomFunction);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomFunctionRegistry);
 
-CustomFunction::CustomFunction(const AtomString& name, const Vector<StyleRuleFunction::Parameter>& parameters, const CSSCustomPropertySyntax& returnType, const StyleProperties& properties)
+CustomFunction::CustomFunction(const AtomString& name, const Vector<StyleRuleFunction::Parameter>& parameters, const CSSCustomPropertySyntax& returnType, DeclarationsBlocks&& declarationBlocks)
     : name(name)
     , parameters(parameters)
     , returnType(returnType)
-    , properties(properties)
+    , declarationBlocks(WTF::move(declarationBlocks))
 {
 }
 
-void CustomFunctionRegistry::registerFunction(const StyleRuleFunction& function, const Vector<Ref<const StyleRuleFunctionDeclarations>>& declarationsList)
+void CustomFunctionRegistry::registerFunction(const StyleRuleFunction& function, CustomFunction::DeclarationsBlocks&& declarationBlocks)
 {
-    if (declarationsList.isEmpty())
+    if (declarationBlocks.isEmpty())
         return;
 
-    auto mergedProperties = [&]() -> Ref<const StyleProperties> {
-        if (declarationsList.size() == 1)
-            return declarationsList.first()->properties();
-
-        auto mutableProperties = MutableStyleProperties::create();
-        for (auto& declarations : declarationsList) {
-            Ref properties = declarations->properties();
-            mutableProperties->mergeAndOverrideOnConflict(properties.get());
-        }
-        return mutableProperties->immutableCopy();
-    };
-
-    auto customFunction = makeUniqueRef<CustomFunction>(function.name(), function.parameters(), function.returnType(), mergedProperties());
+    auto customFunction = makeUniqueRef<CustomFunction>(function.name(), function.parameters(), function.returnType(), WTF::move(declarationBlocks));
 
     // Last function with the same name wins.
     m_functions.set(function.name(), WTF::move(customFunction));
@@ -73,4 +59,3 @@ const CustomFunction* CustomFunctionRegistry::functionForName(const AtomString& 
 
 }
 }
-

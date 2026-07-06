@@ -44,6 +44,7 @@
 #include "CSSVariableData.h"
 #include "CSSWideKeyword.h"
 #include "ConstantPropertyMap.h"
+#include "ContainerQueryEvaluator.h"
 #include "CustomFunctionRegistry.h"
 #include "Document.h"
 #include "Element.h"
@@ -394,9 +395,35 @@ bool SubstitutionResolver::substituteDashedFunction(StringView functionName, CSS
     // "Let body rule be the function body."
     // The body resolves tree-scoped references (var(), nested dashed-functions) relative to the scope
     // where the function was defined, not the calling element's scope.
+    // Merge the body's declaration blocks now, dropping blocks whose @container conditions do not
+    // match the calling element. https://drafts.csswg.org/css-mixins/#evaluating-custom-functions
+    auto bodyProperties = [&]() -> Ref<const StyleProperties> {
+        auto& blocks = customFunction->declarationBlocks;
+
+        // The common case is a single block with no container queries.
+        if (blocks.size() == 1 && blocks.first().containerQueries.isEmpty())
+            return blocks.first().properties;
+
+        ContainerQueryEvaluator evaluator(*element, ContainerQueryEvaluator::SelectionMode::Element, foundScopeOrdinal, nullptr);
+        auto containerQueriesMatch = [&](const auto& chain) {
+            for (auto& containerRule : chain) {
+                if (!evaluator.evaluate(containerRule->containerQuery()))
+                    return false;
+            }
+            return true;
+        };
+
+        auto mutableProperties = MutableStyleProperties::create();
+        for (auto& block : blocks) {
+            if (containerQueriesMatch(block.containerQueries))
+                mutableProperties->mergeAndOverrideOnConflict(block.properties.get());
+        }
+        return mutableProperties;
+    }();
+
     auto bodyMatchResult = MatchResult::create();
     bodyMatchResult->authorDeclarations.append({ *resolvedArgumentProperties });
-    bodyMatchResult->authorDeclarations.append({ .properties = customFunction->properties, .styleScopeOrdinal = foundScopeOrdinal });
+    bodyMatchResult->authorDeclarations.append({ .properties = bodyProperties, .styleScopeOrdinal = foundScopeOrdinal });
 
     // "Resolve function styles using custom function, body rule, registrations, and calling context."
     // The hypothetical element acts as a child of the calling element, inheriting its computed custom

@@ -710,8 +710,8 @@ bool ElementRuleCollector::containerQueriesMatch(const RuleData& ruleData, const
 
     // "Style rules defined on an element inside multiple nested container queries apply when all of the wrapping container queries are true for that element."
     ContainerQueryEvaluator evaluator(element(), selectionMode, matchRequest.styleScopeOrdinal, containerQueryEvaluationState);
-    for (auto* query : queries) {
-        if (!evaluator.evaluate(*query))
+    for (auto& containerRule : queries) {
+        if (!evaluator.evaluate(containerRule->containerQuery()))
             return false;
     }
     return true;

@@ -140,7 +140,7 @@ public:
     CascadeLayerPriority cascadeLayerPriorityFor(const RuleData&) const;
 
     bool hasContainerQueries() const { return !m_containerQueries.isEmpty(); }
-    Vector<const CQ::ContainerQuery*> containerQueriesFor(const RuleData&) const;
+    Vector<Ref<const StyleRuleContainer>> containerQueriesFor(const RuleData&) const;
     Vector<Ref<const StyleRuleContainer>> containerQueryRules() const;
 
     bool hasScopeRules() const { return !m_scopeRules.isEmpty(); }
@@ -195,6 +195,8 @@ private:
         Ref<const StyleRuleContainer> containerRule;
         ContainerQueryIdentifier parent;
     };
+    const ContainerQueryAndParent& containerQueryForIdentifier(ContainerQueryIdentifier identifier) const LIFETIME_BOUND { return m_containerQueries[identifier - 1]; }
+    Vector<Ref<const StyleRuleContainer>> containerQueryChainFor(ContainerQueryIdentifier) const;
 
     struct DynamicMediaQueryRules {
         Vector<MQ::MediaQueryList> mediaQueries;
@@ -292,21 +294,23 @@ inline CascadeLayerPriority RuleSet::cascadeLayerPriorityFor(const RuleData& rul
     return cascadeLayerPriorityForIdentifier(identifier);
 }
 
-inline Vector<const CQ::ContainerQuery*> RuleSet::containerQueriesFor(const RuleData& ruleData) const
+inline Vector<Ref<const StyleRuleContainer>> RuleSet::containerQueryChainFor(ContainerQueryIdentifier identifier) const
+{
+    Vector<Ref<const StyleRuleContainer>> chain;
+    while (identifier) {
+        auto& query = containerQueryForIdentifier(identifier);
+        chain.append(query.containerRule);
+        identifier = query.parent;
+    }
+    return chain;
+}
+
+inline Vector<Ref<const StyleRuleContainer>> RuleSet::containerQueriesFor(const RuleData& ruleData) const
 {
     if (m_containerQueryIdentifierForRulePosition.size() <= ruleData.position())
         return { };
 
-    Vector<const CQ::ContainerQuery*> queries;
-
-    auto identifier = m_containerQueryIdentifierForRulePosition[ruleData.position()];
-    while (identifier) {
-        auto& query = m_containerQueries[identifier - 1];
-        queries.append(&query.containerRule->containerQuery());
-        identifier = query.parent;
-    };
-
-    return queries;
+    return containerQueryChainFor(m_containerQueryIdentifierForRulePosition[ruleData.position()]);
 }
 
 } // namespace Style

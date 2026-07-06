@@ -1,5 +1,5 @@
 
 PASS Can query named container in shadow
-FAIL ::part() can see inner named containers assert_equals: expected "5px" but got "10px"
-FAIL ::slotted() can see inner named containers assert_equals: expected "5px 5px" but got "10px 10px"
+PASS ::part() can see inner named containers
+PASS ::slotted() can see inner named containers
 
