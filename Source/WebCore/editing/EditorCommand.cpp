@@ -246,8 +246,10 @@ static bool executeBackColor(LocalFrame& frame, Event*, EditorCommandSource sour
 
 static bool executeCopy(LocalFrame& frame, Event*, EditorCommandSource source, const String&)
 {
-    protect(frame.editor())->copy(source == EditorCommandSource::MenuOrKeyBinding ? Editor::FromMenuOrKeyBinding::Yes : Editor::FromMenuOrKeyBinding::No);
-    return true;
+    Ref editor = frame.editor();
+    bool couldCopy = editor->canCopy();
+    editor->copy(source == EditorCommandSource::MenuOrKeyBinding ? Editor::FromMenuOrKeyBinding::Yes : Editor::FromMenuOrKeyBinding::No);
+    return couldCopy;
 }
 
 static bool executeCopyFont(LocalFrame& frame, Event*, EditorCommandSource source, const String&)
@@ -268,12 +270,14 @@ static bool executeCreateLink(LocalFrame& frame, Event*, EditorCommandSource, co
 
 static bool executeCut(LocalFrame& frame, Event*, EditorCommandSource source, const String&)
 {
+    Ref editor = frame.editor();
+    bool couldCut = editor->canCut();
     if (source == EditorCommandSource::MenuOrKeyBinding) {
         UserTypingGestureIndicator typingGestureIndicator(frame);
-        protect(frame.editor())->cut(Editor::FromMenuOrKeyBinding::Yes);
+        editor->cut(Editor::FromMenuOrKeyBinding::Yes);
     } else
-        protect(frame.editor())->cut();
-    return true;
+        editor->cut();
+    return couldCut;
 }
 
 static bool executeClearText(LocalFrame& frame, Event*, EditorCommandSource, const String&)
@@ -1329,7 +1333,7 @@ static bool enableCaretInEditableText(LocalFrame& frame, Event* event, EditorCom
     return selection.isCaret() && selection.isContentEditable();
 }
 
-static bool allowCopyCutFromDOM(LocalFrame& frame)
+static bool NODELETE allowCopyCutFromDOM(LocalFrame& frame)
 {
     auto& settings = frame.settings();
     if (settings.javaScriptCanAccessClipboard())
@@ -1643,14 +1647,14 @@ static bool NODELETE doNotAllowExecutionWhenDisabled(LocalFrame&, EditorCommandS
     return false;
 }
 
-static bool NODELETE allowExecutionWhenDisabledCopyCut(LocalFrame&, EditorCommandSource source)
+static bool NODELETE allowExecutionWhenDisabledCopyCut(LocalFrame& frame, EditorCommandSource source)
 {
     switch (source) {
     case EditorCommandSource::MenuOrKeyBinding:
         return true;
     case EditorCommandSource::DOM:
     case EditorCommandSource::DOMWithUserInterface:
-        return false;
+        return allowCopyCutFromDOM(frame);
     }
 
     ASSERT_NOT_REACHED();

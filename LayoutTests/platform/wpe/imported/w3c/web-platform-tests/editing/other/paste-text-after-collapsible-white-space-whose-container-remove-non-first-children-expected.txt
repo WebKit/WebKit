@@ -1,6 +1,6 @@
 XYZ X
 
-abc defOriginal text
+abc defNew text
 
 PASS Pasting text ends with a visible character
 PASS Pasting text ends with a collapsible white-space

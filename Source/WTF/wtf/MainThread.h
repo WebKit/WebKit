@@ -52,7 +52,7 @@ WTF_EXPORT_PRIVATE void dispatchAsyncOnMainThreadWithWebThreadLockIfNeeded(void 
 WTF_EXPORT_PRIVATE void callOnWebThreadOrDispatchAsyncOnMainThread(void (^block)());
 #endif
 
-WTF_EXPORT_PRIVATE bool isMainThread();
+WTF_EXPORT_PRIVATE bool NODELETE isMainThread();
 
 WTF_EXPORT_PRIVATE bool canCurrentThreadAccessThreadLocalData(Thread&);
 

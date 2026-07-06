@@ -400,6 +400,34 @@ TEST(WebKit, CanInvokeTranslateWithTextSelection)
 
 #else
 
+TEST(WKWebViewEditActions, CopyMenuItemDisabledWithNoSelection)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<p>Hello, WebKit</p>"];
+    [webView becomeFirstResponder];
+    [webView waitForNextPresentationUpdate];
+
+    auto validateCopyItem = [&] -> BOOL {
+        RetainPtr menu = adoptNS([NSMenu new]);
+        RetainPtr item = adoptNS([NSMenuItem new]);
+        [item setTarget:webView];
+        [item setAction:@selector(copy:)];
+        [menu addItem:item];
+        [webView validateUserInterfaceItem:item];
+        [webView waitForNextPresentationUpdate];
+        return [item isEnabled];
+    };
+
+    // With no selection the Copy menu item must be disabled.
+    [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
+    EXPECT_FALSE(validateCopyItem());
+
+    // With a range selection the Copy menu item must be enabled.
+    [webView selectAll:nil];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(validateCopyItem());
+}
+
 TEST(WKWebViewEditActions, ModifyTextWritingDirection)
 {
     auto webView = webViewForEditActionTesting(@"<div id='text' style='direction: rtl; unicode-bidi: bidi-override;'>WebKit</div>");

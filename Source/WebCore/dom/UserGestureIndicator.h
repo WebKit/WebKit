@@ -145,7 +145,7 @@ class UserGestureIndicator {
 public:
     WEBCORE_EXPORT static RefPtr<UserGestureToken> currentUserGesture();
 
-    WEBCORE_EXPORT static bool processingUserGesture(const Document* = nullptr);
+    WEBCORE_EXPORT static bool NODELETE processingUserGesture(const Document* = nullptr);
     WEBCORE_EXPORT static bool processingUserGestureForMedia();
 
     // If a document is provided, its last known user gesture timestamp is updated.

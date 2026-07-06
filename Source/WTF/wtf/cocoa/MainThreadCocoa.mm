@@ -94,7 +94,7 @@ static bool webThreadIsUninitializedOrLockedOrDisabled()
 
 bool isMainThread()
 {
-    return (isWebThread() || pthread_main_np()) && webThreadIsUninitializedOrLockedOrDisabled();
+    SUPPRESS_NODELETE { return (isWebThread() || pthread_main_np()) && webThreadIsUninitializedOrLockedOrDisabled(); }
 }
 
 bool isUIThread()
@@ -141,7 +141,7 @@ bool canCurrentThreadAccessThreadLocalData(Thread& thread)
 
 bool isMainThread()
 {
-    return pthread_main_np();
+    SUPPRESS_NODELETE { return pthread_main_np(); }
 }
 
 #endif // USE(WEB_THREAD)

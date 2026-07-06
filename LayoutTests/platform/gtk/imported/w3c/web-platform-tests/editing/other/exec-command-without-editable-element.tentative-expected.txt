@@ -33,15 +33,15 @@ PASS ChildDocument.execCommand(superscript, false, null) with a[b]c: checking re
 PASS ChildDocument.execCommand(superscript, false, null) with a[b]c: checking result content in executed document
 PASS ChildDocument.execCommand(cut, false, null) with ab[]c: calling execCommand
 PASS ChildDocument.execCommand(cut, false, null) with ab[]c: checking event on focused document
-FAIL ChildDocument.execCommand(cut, false, null) with ab[]c: checking event on executed document assert_equals: "cut" event should be fired expected true but got false
+PASS ChildDocument.execCommand(cut, false, null) with ab[]c: checking event on executed document
 PASS ChildDocument.execCommand(cut, false, null) with ab[]c: checking result content in focused document
 PASS ChildDocument.execCommand(cut, false, null) with ab[]c: checking result content in executed document
 PASS ChildDocument.execCommand(cut, false, null) with a[b]c: calling execCommand
 PASS ChildDocument.execCommand(cut, false, null) with a[b]c: checking event on focused document
-FAIL ChildDocument.execCommand(cut, false, null) with a[b]c: checking event on executed document assert_equals: "cut" event should be fired expected true but got false
+PASS ChildDocument.execCommand(cut, false, null) with a[b]c: checking event on executed document
 PASS ChildDocument.execCommand(cut, false, null) with a[b]c: checking result content in focused document
 PASS ChildDocument.execCommand(cut, false, null) with a[b]c: checking result content in executed document
-FAIL ChildDocument.execCommand(copy, false, null) with ab[]c: calling execCommand assert_equals: execCommand should return false expected false but got true
+PASS ChildDocument.execCommand(copy, false, null) with ab[]c: calling execCommand
 PASS ChildDocument.execCommand(copy, false, null) with ab[]c: checking event on focused document
 PASS ChildDocument.execCommand(copy, false, null) with ab[]c: checking event on executed document
 PASS ChildDocument.execCommand(copy, false, null) with ab[]c: checking result content in focused document
@@ -250,15 +250,15 @@ PASS ParentDocument.execCommand(superscript, false, null) with a[b]c: checking r
 PASS ParentDocument.execCommand(superscript, false, null) with a[b]c: checking result content in executed document
 PASS ParentDocument.execCommand(cut, false, null) with ab[]c: calling execCommand
 PASS ParentDocument.execCommand(cut, false, null) with ab[]c: checking event on focused document
-FAIL ParentDocument.execCommand(cut, false, null) with ab[]c: checking event on executed document assert_equals: "cut" event should be fired expected true but got false
+PASS ParentDocument.execCommand(cut, false, null) with ab[]c: checking event on executed document
 PASS ParentDocument.execCommand(cut, false, null) with ab[]c: checking result content in focused document
 PASS ParentDocument.execCommand(cut, false, null) with ab[]c: checking result content in executed document
 PASS ParentDocument.execCommand(cut, false, null) with a[b]c: calling execCommand
 PASS ParentDocument.execCommand(cut, false, null) with a[b]c: checking event on focused document
-FAIL ParentDocument.execCommand(cut, false, null) with a[b]c: checking event on executed document assert_equals: "cut" event should be fired expected true but got false
+PASS ParentDocument.execCommand(cut, false, null) with a[b]c: checking event on executed document
 PASS ParentDocument.execCommand(cut, false, null) with a[b]c: checking result content in focused document
 PASS ParentDocument.execCommand(cut, false, null) with a[b]c: checking result content in executed document
-FAIL ParentDocument.execCommand(copy, false, null) with ab[]c: calling execCommand assert_equals: execCommand should return false expected false but got true
+PASS ParentDocument.execCommand(copy, false, null) with ab[]c: calling execCommand
 PASS ParentDocument.execCommand(copy, false, null) with ab[]c: checking event on focused document
 PASS ParentDocument.execCommand(copy, false, null) with ab[]c: checking event on executed document
 PASS ParentDocument.execCommand(copy, false, null) with ab[]c: checking result content in focused document

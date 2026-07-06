@@ -563,7 +563,7 @@ bool Editor::canCopy() const
     if (imageElementFromImageDocument(protect(document())))
         return true;
     const VisibleSelection& selection = document().selection().selection();
-    return (selection.isRange() || !isEditablePosition(selection.start())) && (!selection.isInPasswordField() || selection.isInAutoFilledAndViewableField());
+    return selection.isRange() && (!selection.isInPasswordField() || selection.isInAutoFilledAndViewableField());
 }
 
 bool Editor::canDelete() const
@@ -1547,7 +1547,8 @@ void Editor::cut(FromMenuOrKeyBinding fromMenuOrKeyBinding)
     if (tryDHTMLCut())
         return; // DHTML did the whole operation
     if (!canCut()) {
-        SystemSoundManager::singleton().systemBeep();
+        if (fromMenuOrKeyBinding == FromMenuOrKeyBinding::Yes)
+            SystemSoundManager::singleton().systemBeep();
         return;
     }
 
@@ -1560,7 +1561,8 @@ void Editor::copy(FromMenuOrKeyBinding fromMenuOrKeyBinding)
     if (tryDHTMLCopy())
         return; // DHTML did the whole operation
     if (!canCopy()) {
-        SystemSoundManager::singleton().systemBeep();
+        if (fromMenuOrKeyBinding == FromMenuOrKeyBinding::Yes)
+            SystemSoundManager::singleton().systemBeep();
         return;
     }
 
