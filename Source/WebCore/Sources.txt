@@ -1713,7 +1713,7 @@ html/NavigatorUserActivation.cpp
 html/NumberInputType.cpp @header:RenderStyleGetters @cost:6
 html/OffscreenCanvas.cpp
 html/Origin.cpp
-html/PDFDocument.cpp
+html/PDFJSDocument.cpp
 html/PasswordInputType.cpp
 html/PermissionsPolicy.cpp
 html/PluginDocument.cpp

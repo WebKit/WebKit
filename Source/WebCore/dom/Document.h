@@ -690,7 +690,7 @@ public:
 #if ENABLE(MODEL_ELEMENT)
     bool isModelDocument() const { return m_documentClasses.contains(DocumentClass::Model); }
 #endif
-    bool isPDFDocument() const { return m_documentClasses.contains(DocumentClass::PDF); }
+    bool isPDFJSDocument() const { return m_documentClasses.contains(DocumentClass::PDFJS); }
 
     bool NODELETE hasSVGRootNode() const;
     virtual bool isFrameSet() const { return false; }

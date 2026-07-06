@@ -91,7 +91,7 @@
 #include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(PDFJS)
-#include "PDFDocument.h"
+#include "PDFJSDocument.h"
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)
@@ -1223,7 +1223,7 @@ void ContextMenuController::populate()
             
             RefPtr page = frame->page();
             RefPtr ownerElement = frame->ownerElement();
-            bool isPDFDocument = ownerElement && ownerElement->document().isPDFDocument();
+            bool isPDFJSDocument = ownerElement && ownerElement->document().isPDFJSDocument();
             bool isMainFrame = frame->isMainFrame();
 
             if (m_context.hitTestResult().isSelected()) {
@@ -1289,7 +1289,7 @@ void ContextMenuController::populate()
 #endif
                 }
 
-                if (page && !isMainFrame && !isPDFDocument) 
+                if (page && !isMainFrame && !isPDFJSDocument)
                     appendItem(OpenFrameItem, m_contextMenu.get());
                 if (!ShareMenuItem.isNull()) {
                     appendItem(*separatorItem(), m_contextMenu.get());
@@ -1297,7 +1297,7 @@ void ContextMenuController::populate()
                 }
             }
 #if ENABLE(PDFJS)
-            if (isPDFDocument) {
+            if (isPDFJSDocument) {
                 if (m_contextMenu && !m_contextMenu->items().isEmpty())
                     appendItem(*separatorItem(), m_contextMenu.get());
                 appendItem(PDFAutoSizeItem, m_contextMenu.get());
@@ -1521,7 +1521,7 @@ void ContextMenuController::addDebuggingItems()
     ASSERT(page->inspectorController().enabled());
 
 #if ENABLE(PDFJS)
-    if (RefPtr ownerElement = frame->ownerElement(); ownerElement && ownerElement->document().isPDFDocument())
+    if (RefPtr ownerElement = frame->ownerElement(); ownerElement && ownerElement->document().isPDFJSDocument())
         return;
 #endif
 
@@ -1946,7 +1946,7 @@ void ContextMenuController::showImageControlsMenu(Event& event)
 
 void ContextMenuController::performPDFJSAction(LocalFrame& frame, const String& action)
 {
-    if (RefPtr document = dynamicDowncast<PDFDocument>(frame.ownerElement()->document()))
+    if (RefPtr document = dynamicDowncast<PDFJSDocument>(frame.ownerElement()->document()))
         document->postMessageToIframe(action, nullptr);
 }
 

@@ -791,7 +791,7 @@ list(REMOVE_ITEM WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/HTMLArticleElement.h
     html/HTMLAudioElement.h
     html/Origin.h
-    html/PDFDocument.h
+    html/PDFJSDocument.h
 
     layout/FormattingState.h
 

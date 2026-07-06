@@ -203,9 +203,9 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
 
     ASSERT(frameOwnerElement == m_frame->ownerElement());
 
-    // Only the PDFDocument iframe is allowed to navigate to webkit-pdfjs-viewer URLs
-    bool isInPDFDocumentFrame = frameOwnerElement && frameOwnerElement->document().isPDFDocument();
-    if (isInPDFDocumentFrame && request.url().protocolIs("webkit-pdfjs-viewer"_s)) {
+    // Only the PDFJSDocument iframe is allowed to navigate to webkit-pdfjs-viewer URLs
+    bool isInPDFJSDocumentFrame = frameOwnerElement && frameOwnerElement->document().isPDFJSDocument();
+    if (isInPDFJSDocumentFrame && request.url().protocolIs("webkit-pdfjs-viewer"_s)) {
         POLICYCHECKER_RELEASE_LOG("checkNavigationPolicy: continuing because PDFJS URL");
         return function(WTF::move(request), formSubmission, NavigationPolicyDecision::ContinueLoad);
     }

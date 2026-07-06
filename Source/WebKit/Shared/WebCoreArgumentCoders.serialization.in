@@ -3989,7 +3989,7 @@ header: <WebCore/DocumentClasses.h>
 #if ENABLE(MODEL_ELEMENT)
     Model,
 #endif
-    PDF
+    PDFJS
 };
 
 #if ENABLE(MODEL_PROCESS)

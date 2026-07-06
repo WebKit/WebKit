@@ -46,7 +46,7 @@
 #include "MediaPlayer.h"
 #include "MediaQueryParser.h"
 #include "NameValidation.h"
-#include "PDFDocument.h"
+#include "PDFJSDocument.h"
 #include "ParserContentPolicy.h"
 #include "PluginData.h"
 #include "PluginDocument.h"
@@ -174,7 +174,7 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Local
 
 #if ENABLE(PDFJS)
     if (frame && settings.pdfJSViewerEnabled() && MIMETypeRegistry::isPDFMIMEType(contentType))
-        return PDFDocument::create(*frame, url);
+        return PDFJSDocument::create(*frame, url);
 #endif
 
     bool isImage = MIMETypeRegistry::isSupportedImageMIMEType(contentType);

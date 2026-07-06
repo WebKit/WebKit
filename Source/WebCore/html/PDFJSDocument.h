@@ -32,20 +32,20 @@
 namespace WebCore {
 
 class HTMLIFrameElement;
-class PDFDocumentEventListener;
+class PDFJSDocumentEventListener;
 
-class PDFDocument final : public HTMLDocument {
-    WTF_MAKE_TZONE_ALLOCATED(PDFDocument);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PDFDocument);
+class PDFJSDocument final : public HTMLDocument {
+    WTF_MAKE_TZONE_ALLOCATED(PDFJSDocument);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PDFJSDocument);
 public:
-    static Ref<PDFDocument> create(LocalFrame& frame, const URL& url)
+    static Ref<PDFJSDocument> create(LocalFrame& frame, const URL& url)
     {
-        auto document = adoptRef(*new PDFDocument(frame, url));
+        Ref document = adoptRef(*new PDFJSDocument(frame, url));
         document->addToContextsMap();
         return document;
     }
 
-    ~PDFDocument();
+    ~PDFJSDocument();
 
     void updateDuringParsing();
     void finishedParsing();
@@ -58,7 +58,7 @@ public:
     void setContentScriptLoaded(bool loaded) { m_isContentScriptLoaded = loaded; }
 
 private:
-    PDFDocument(LocalFrame&, const URL&);
+    PDFJSDocument(LocalFrame&, const URL&);
 
     Ref<DocumentParser> createParser() override;
 
@@ -69,13 +69,13 @@ private:
     bool m_isContentScriptLoaded { false };
     RefPtr<HTMLIFrameElement> m_iframe;
     RefPtr<HTMLScriptElement> m_script;
-    RefPtr<PDFDocumentEventListener> m_listener;
+    RefPtr<PDFJSDocumentEventListener> m_listener;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PDFDocument)
-    static bool isType(const WebCore::Document& document) { return document.isPDFDocument(); }
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PDFJSDocument)
+    static bool isType(const WebCore::Document& document) { return document.isPDFJSDocument(); }
     static bool isType(const WebCore::Node& node)
     {
         auto* document = dynamicDowncast<WebCore::Document>(node);

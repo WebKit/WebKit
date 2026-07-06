@@ -1653,7 +1653,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/OffscreenCanvas.h
     html/Origin.h
     html/OwnerPermissionsPolicyData.h
-    html/PDFDocument.h
+    html/PDFJSDocument.h
     html/PermissionsPolicy.h
     html/PluginDocument.h
     html/ResolvedCaptionDisplaySettingsOptions.h

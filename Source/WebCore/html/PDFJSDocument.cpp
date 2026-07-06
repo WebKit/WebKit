@@ -23,7 +23,7 @@
  */
 
 #include "config.h"
-#include "PDFDocument.h"
+#include "PDFJSDocument.h"
 
 #if ENABLE(PDFJS)
 
@@ -55,57 +55,57 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFDocument);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFJSDocument);
 
 using namespace HTMLNames;
 
-/* PDFDocumentParser: this receives the PDF bytes */
+/* PDFJSDocumentParser: this receives the PDF bytes */
 
-class PDFDocumentParser final : public RawDataDocumentParser {
+class PDFJSDocumentParser final : public RawDataDocumentParser {
 public:
-    static Ref<PDFDocumentParser> create(PDFDocument& document)
+    static Ref<PDFJSDocumentParser> create(PDFJSDocument& document)
     {
-        return adoptRef(*new PDFDocumentParser(document));
+        return adoptRef(*new PDFJSDocumentParser(document));
     }
 
 private:
-    explicit PDFDocumentParser(PDFDocument& document)
+    explicit PDFJSDocumentParser(PDFJSDocument& document)
         : RawDataDocumentParser(document)
     {
     }
 
-    PDFDocument& document() const;
+    PDFJSDocument& document() const;
 
     void appendBytes(DocumentWriter&, std::span<const uint8_t>) override;
     void finish() override;
 };
 
-inline PDFDocument& PDFDocumentParser::document() const
+inline PDFJSDocument& PDFJSDocumentParser::document() const
 {
     // Only used during parsing, so document is guaranteed to be non-null.
     ASSERT(RawDataDocumentParser::document());
-    return downcast<PDFDocument>(*RawDataDocumentParser::document());
+    return downcast<PDFJSDocument>(*RawDataDocumentParser::document());
 }
 
-void PDFDocumentParser::appendBytes(DocumentWriter&, std::span<const uint8_t>)
+void PDFJSDocumentParser::appendBytes(DocumentWriter&, std::span<const uint8_t>)
 {
     document().updateDuringParsing();
 }
 
-void PDFDocumentParser::finish()
+void PDFJSDocumentParser::finish()
 {
     document().finishedParsing();
 }
 
-/* PDFDocumentEventListener: event listener for the PDFDocument iframe */
+/* PDFJSDocumentEventListener: event listener for the PDFJSDocument iframe */
 
-class PDFDocumentEventListener final : public EventListener {
+class PDFJSDocumentEventListener final : public EventListener {
 public:
-    static Ref<PDFDocumentEventListener> create(PDFDocument& document) { return adoptRef(*new PDFDocumentEventListener(document)); }
+    static Ref<PDFJSDocumentEventListener> create(PDFJSDocument& document) { return adoptRef(*new PDFJSDocumentEventListener(document)); }
 
 private:
-    explicit PDFDocumentEventListener(PDFDocument& document)
-        : EventListener(PDFDocumentEventListenerType)
+    explicit PDFJSDocumentEventListener(PDFJSDocument& document)
+        : EventListener(PDFJSDocumentEventListenerType)
         , m_document(document)
     {
     }
@@ -113,10 +113,10 @@ private:
     bool operator==(const EventListener&) const override;
     void handleEvent(ScriptExecutionContext&, Event&) override;
 
-    WeakPtr<PDFDocument, WeakPtrImplWithEventTargetData> m_document;
+    WeakPtr<PDFJSDocument, WeakPtrImplWithEventTargetData> m_document;
 };
 
-void PDFDocumentEventListener::handleEvent(ScriptExecutionContext&, Event& event)
+void PDFJSDocumentEventListener::handleEvent(ScriptExecutionContext&, Event& event)
 {
     if (is<HTMLIFrameElement>(event.target()) && event.type() == eventNames().loadEvent) {
         m_document->injectStyleAndContentScript();
@@ -128,27 +128,27 @@ void PDFDocumentEventListener::handleEvent(ScriptExecutionContext&, Event& event
         ASSERT_NOT_REACHED();
 }
 
-bool PDFDocumentEventListener::operator==(const EventListener& other) const
+bool PDFJSDocumentEventListener::operator==(const EventListener& other) const
 {
-    // All PDFDocumentEventListenerType objects compare as equal; OK since there is only one per document.
-    return other.type() == PDFDocumentEventListenerType;
+    // All PDFJSDocumentEventListenerType objects compare as equal; OK since there is only one per document.
+    return other.type() == PDFJSDocumentEventListenerType;
 }
 
-/* PDFDocument */
+/* PDFJSDocument */
 
-PDFDocument::PDFDocument(LocalFrame& frame, const URL& url)
-    : HTMLDocument(&frame, frame.settings(), url, { }, { DocumentClass::PDF })
+PDFJSDocument::PDFJSDocument(LocalFrame& frame, const URL& url)
+    : HTMLDocument(&frame, frame.settings(), url, { }, { DocumentClass::PDFJS })
 {
 }
 
-PDFDocument::~PDFDocument() = default;
+PDFJSDocument::~PDFJSDocument() = default;
 
-Ref<DocumentParser> PDFDocument::createParser()
+Ref<DocumentParser> PDFJSDocument::createParser()
 {
-    return PDFDocumentParser::create(*this);
+    return PDFJSDocumentParser::create(*this);
 }
 
-void PDFDocument::createDocumentStructure()
+void PDFJSDocument::createDocumentStructure()
 {
     // Description of parameters:
     // - Empty `?file=` parameter prevents default pdf from loading.
@@ -166,19 +166,19 @@ void PDFDocument::createDocumentStructure()
     m_iframe->setAttribute(srcAttr, AtomString(viewerURL));
     m_iframe->setAttribute(styleAttr, "width: 100%; height: 100%; border: 0; display: block;"_s);
 
-    m_listener = PDFDocumentEventListener::create(*this);
+    m_listener = PDFJSDocumentEventListener::create(*this);
     m_iframe->addEventListener(eventNames().loadEvent, *m_listener);
 
     body->appendChild(*m_iframe);
 }
 
-void PDFDocument::updateDuringParsing()
+void PDFJSDocument::updateDuringParsing()
 {
     if (!m_iframe)
         createDocumentStructure();
 }
 
-void PDFDocument::finishedParsing()
+void PDFJSDocument::finishedParsing()
 {
     ASSERT(m_iframe);
     m_isFinishedParsing = true;
@@ -186,7 +186,7 @@ void PDFDocument::finishedParsing()
         finishLoadingPDF();
 }
 
-void PDFDocument::postMessageToIframe(const String& name, JSC::JSObject* data)
+void PDFJSDocument::postMessageToIframe(const String& name, JSC::JSObject* data)
 {
     auto globalObject = this->globalObject();
     auto& vm = globalObject->vm();
@@ -211,7 +211,7 @@ void PDFDocument::postMessageToIframe(const String& name, JSC::JSObject* data)
         returnValue.releaseException();
 }
 
-void PDFDocument::sendPDFArrayBuffer()
+void PDFJSDocument::sendPDFArrayBuffer()
 {
     auto* documentLoader = loader();
     ASSERT(documentLoader);
@@ -225,7 +225,7 @@ void PDFDocument::sendPDFArrayBuffer()
     }
 }
 
-void PDFDocument::finishLoadingPDF()
+void PDFJSDocument::finishLoadingPDF()
 {
     sendPDFArrayBuffer();
 
@@ -237,7 +237,7 @@ void PDFDocument::finishLoadingPDF()
     m_listener = nullptr;
 }
 
-void PDFDocument::injectStyleAndContentScript()
+void PDFJSDocument::injectStyleAndContentScript()
 {
     if (m_injectedStyleAndScript)
         return;

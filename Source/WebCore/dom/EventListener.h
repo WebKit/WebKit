@@ -47,7 +47,7 @@ public:
         GObjectEventListenerType,
         NativeEventListenerType,
         SVGTRefTargetEventListenerType,
-        PDFDocumentEventListenerType,
+        PDFJSDocumentEventListenerType,
     };
 
     virtual ~EventListener() = default;

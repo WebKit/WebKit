@@ -41,7 +41,7 @@ enum class DocumentClass : uint16_t {
 #if ENABLE(MODEL_ELEMENT)
     Model = 1 << 8,
 #endif
-    PDF = 1 << 9,
+    PDFJS = 1 << 9,
 };
 
 using DocumentClasses = OptionSet<DocumentClass>;

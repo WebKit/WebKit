@@ -12223,8 +12223,8 @@
 		494BD79C0F55C94C00747828 /* JSWebKitPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitPoint.h; sourceTree = "<group>"; };
 		494BDBDC2E16156A0079E324 /* FindRevealAlgorithms.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FindRevealAlgorithms.h; sourceTree = "<group>"; };
 		494BDBDD2E16156A0079E324 /* FindRevealAlgorithms.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FindRevealAlgorithms.cpp; sourceTree = "<group>"; };
-		494EBD0627AA9C5300F4844F /* PDFDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDFDocument.h; sourceTree = "<group>"; };
-		494EBD0827AA9C5300F4844F /* PDFDocument.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PDFDocument.cpp; sourceTree = "<group>"; };
+		494EBD0627AA9C5300F4844F /* PDFJSDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDFJSDocument.h; sourceTree = "<group>"; };
+		494EBD0827AA9C5300F4844F /* PDFJSDocument.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PDFJSDocument.cpp; sourceTree = "<group>"; };
 		4958781F12A57DDF007238AC /* PlatformCAAnimationCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformCAAnimationCocoa.mm; sourceTree = "<group>"; };
 		4958782012A57DDF007238AC /* PlatformCALayerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformCALayerCocoa.mm; sourceTree = "<group>"; };
 		4958F02D2FC903F3008AF649 /* CSSColorImageValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSColorImageValue.h; sourceTree = "<group>"; };
@@ -33460,8 +33460,8 @@
 				3AD4AB892C3CABCD00A3E7F3 /* OwnerPermissionsPolicyData.h */,
 				F55B3D951251F12D003EF269 /* PasswordInputType.cpp */,
 				F55B3D961251F12D003EF269 /* PasswordInputType.h */,
-				494EBD0827AA9C5300F4844F /* PDFDocument.cpp */,
-				494EBD0627AA9C5300F4844F /* PDFDocument.h */,
+				494EBD0827AA9C5300F4844F /* PDFJSDocument.cpp */,
+				494EBD0627AA9C5300F4844F /* PDFJSDocument.h */,
 				41A0829B22932EF4008426E0 /* PermissionsPolicy.cpp */,
 				41A0829922932EF4008426E0 /* PermissionsPolicy.h */,
 				97205AB91239292700B17380 /* PluginDocument.cpp */,
