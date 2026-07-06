@@ -174,10 +174,9 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 {
     // LBSE handles transforms via RenderLayer, no need to handle CSS transforms here.
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        auto concatenatedTransform = protect(transform())->concatenate();
-        if (concatenatedTransform && m_supplementalTransform)
-            return *m_supplementalTransform * *concatenatedTransform;
-        return m_supplementalTransform ? *m_supplementalTransform : concatenatedTransform.value_or(identity);
+        if (m_supplementalTransform)
+            return *m_supplementalTransform * concatenatedTransform();
+        return concatenatedTransform();
     }
 
     AffineTransform matrix;
@@ -230,6 +229,8 @@ void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         ASSERT(attrName == SVGNames::transformAttr);
         InstanceInvalidationGuard guard(*this);
+
+        invalidateConcatenatedTransformCache();
 
         if (document().settings().layerBasedSVGEngineEnabled()) {
             updateSVGRendererForElementChange(Style::SVGRendererUpdateType::TransformAttributeOnly);
