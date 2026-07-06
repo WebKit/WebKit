@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -216,7 +216,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openKeyCursor(RefPtr<IDBKeyRange>&&
 
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openKeyCursor(JSGlobalObject& execState, JSValue key, IDBCursorDirection direction)
 {
-    return doOpenCursor(direction, [state = &execState, key]() {
+    return doOpenKeyCursor(direction, [state = &execState, key]() {
         auto onlyResult = IDBKeyRange::only(*state, key);
         if (onlyResult.hasException())
             return ExceptionOr<RefPtr<IDBKeyRange>> { Exception(ExceptionCode::DataError, "Failed to execute 'openKeyCursor' on 'IDBObjectStore': The parameter is not a valid key."_s) };

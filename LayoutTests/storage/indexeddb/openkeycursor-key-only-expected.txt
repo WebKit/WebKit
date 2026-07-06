@@ -1,0 +1,27 @@
+Test that IDBObjectStore.openKeyCursor() called with a key value returns a key-only cursor that does not expose 'value'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+objectStore = db.createObjectStore('store');
+objectStore.put('some value', 5);
+
+testKeyOnlyCursor():
+trans = db.transaction('store', 'readonly');
+objectStore = trans.objectStore('store');
+request = objectStore.openKeyCursor(5);
+PASS cursor is non-null.
+PASS cursor instanceof IDBCursorWithValue is false
+PASS 'value' in cursor is false
+PASS cursor.key is 5
+PASS cursor.primaryKey is 5
+cursor.continue();
+PASS cursor is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
