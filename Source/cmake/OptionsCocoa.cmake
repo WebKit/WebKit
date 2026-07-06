@@ -82,7 +82,6 @@ file(WRITE "${_availability_overlay_yaml}.tmp"
 ")
 file(COPY_FILE "${_availability_overlay_yaml}.tmp" ${_availability_overlay_yaml} ONLY_IF_DIFFERENT)
 add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:SHELL:-ivfsoverlay ${_availability_overlay_yaml}>")
-add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-vfsoverlay ${_availability_overlay_yaml}>")
 unset(_availability_overlay_dir)
 unset(_availability_overlay_yaml)
 
