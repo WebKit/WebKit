@@ -432,6 +432,9 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
     if (renderer->usedPointerEvents() == PointerEvents::None)
         return std::nullopt;
 
+    if (renderer->style().isEffectivelyTransparent())
+        return std::nullopt;
+
     bool isOriginalMatch = matchedElement == originalElement;
 
     // FIXME: Consider also allowing elements that only receive touch events.
