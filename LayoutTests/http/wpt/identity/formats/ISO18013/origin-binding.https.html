@@ -13,7 +13,7 @@
   <iframe id="same-origin"></iframe>
 </body>
 <script type="module">
-import { makeGetOptions, sendMessage, loadIframe } from "../support/helper.js";
+import { makeGetOptions, sendMessage, loadIframe } from "./support/helper.js";
 
 // Tests for origin binding behavior with org-iso-mdoc.
 //
@@ -35,15 +35,15 @@ promise_setup(async () => {
   await Promise.all([
     loadIframe(
       iframeCrossOrigin,
-      `${hostInfo.HTTPS_REMOTE_ORIGIN}/digital-credentials/support/iframe.html`
+      `${hostInfo.HTTPS_REMOTE_ORIGIN}${location.pathname.replace(/\/[^\/]*$/, "/")}support/iframe.html`
     ),
     loadIframe(
       iframeSandboxed,
-      "/digital-credentials/support/iframe.html"
+      "support/iframe.html"
     ),
     loadIframe(
       iframeSameOrigin,
-      "/digital-credentials/support/iframe.html"
+      "support/iframe.html"
     ),
   ]);
 });
@@ -120,7 +120,7 @@ promise_test(async (t) => {
   document.body.appendChild(iframe);
   t.add_cleanup(() => iframe.remove());
 
-  await loadIframe(iframe, `${hostInfo.HTTPS_REMOTE_ORIGIN}/digital-credentials/support/iframe.html`);
+  await loadIframe(iframe, `${hostInfo.HTTPS_REMOTE_ORIGIN}${location.pathname.replace(/\/[^\/]*$/, "/")}support/iframe.html`);
 
   const options = makeGetOptions({ protocol: "org-iso-mdoc" });
   const result = await sendMessage(iframe, {
