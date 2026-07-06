@@ -101,7 +101,7 @@
         },
         {
             "id": "AccessibilityProperties",
-            "description": "A structure holding accessibility properties.",
+            "description": "A structure holding accessibility properties, either forwarded to the DOM Element from its backing Accessibility Node, and/or some local properties (e.g., ignored) that may clarify other characteristics, such as why a backing Accessibility Node is not available for this DOM Element.",
             "type": "object",
             "properties": [
                 { "name": "activeDescendantNodeId", "$ref": "NodeId", "optional": true, "description": "<code>DOMNode</code> id of the accessibility object referenced by aria-activedescendant." },
