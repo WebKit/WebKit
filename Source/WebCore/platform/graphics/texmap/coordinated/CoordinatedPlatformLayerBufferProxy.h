@@ -43,7 +43,7 @@ public:
     ~CoordinatedPlatformLayerBufferProxy();
 
     void setTargetLayer(CoordinatedPlatformLayer*);
-    void consumePendingBufferIfNeeded();
+    void setTargetBufferIfNeeded();
     void setDisplayBuffer(RefPtr<CoordinatedPlatformLayerBuffer>&&);
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
@@ -56,7 +56,7 @@ private:
 
     Lock m_lock;
     RefPtr<CoordinatedPlatformLayer> m_layer WTF_GUARDED_BY_LOCK(m_lock);
-    RefPtr<CoordinatedPlatformLayerBuffer> m_pendingBuffer WTF_GUARDED_BY_LOCK(m_lock);
+    RefPtr<CoordinatedPlatformLayerBuffer> m_buffer WTF_GUARDED_BY_LOCK(m_lock);
 #if ENABLE(VIDEO) && USE(GSTREAMER)
     RefPtr<RunLoop> m_compositingRunLoop WTF_GUARDED_BY_LOCK(m_lock);
 #endif

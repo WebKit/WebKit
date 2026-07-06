@@ -61,24 +61,21 @@ void CoordinatedPlatformLayerBufferProxy::setTargetLayer(CoordinatedPlatformLaye
         m_compositingRunLoop = m_layer->compositingRunLoop();
 #endif
     } else {
-        m_pendingBuffer = nullptr;
 #if ENABLE(VIDEO) && USE(GSTREAMER)
         m_compositingRunLoop = nullptr;
 #endif
     }
 }
 
-void CoordinatedPlatformLayerBufferProxy::consumePendingBufferIfNeeded()
+void CoordinatedPlatformLayerBufferProxy::setTargetBufferIfNeeded()
 {
     ASSERT(RunLoop::isMain());
     Locker locker { m_lock };
-    if (!m_pendingBuffer)
+    if (!m_buffer)
         return;
 
     if (m_layer)
-        m_layer->setContentsBuffer(WTF::move(m_pendingBuffer));
-    else
-        m_pendingBuffer = nullptr;
+        m_layer->setContentsBuffer(m_buffer.copyRef());
 }
 
 void CoordinatedPlatformLayerBufferProxy::setDisplayBuffer(RefPtr<CoordinatedPlatformLayerBuffer>&& buffer)
@@ -87,11 +84,11 @@ void CoordinatedPlatformLayerBufferProxy::setDisplayBuffer(RefPtr<CoordinatedPla
     {
         Locker locker { m_lock };
         if (!m_layer) {
-            m_pendingBuffer = WTF::move(buffer);
+            m_buffer = WTF::move(buffer);
             return;
         }
 
-        m_pendingBuffer = nullptr;
+        m_buffer = buffer;
         layer = m_layer;
     }
 
