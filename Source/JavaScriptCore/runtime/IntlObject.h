@@ -61,7 +61,6 @@ static constexpr uint8_t numberOfRelevantExtensionKeys = 0 JSC_INTL_RELEVANT_EXT
 #undef JSC_COUNT_INTL_RELEVANT_EXTENSION_KEYS
 
 struct MeasureUnit {
-    ASCIILiteral type;
     ASCIILiteral subType;
 };
 
