@@ -616,11 +616,6 @@
     /* GL_ANGLE_stencil_texturing */                                                               \
     /* GL_ANGLE_texture_compression_dxt3 */                                                        \
     /* GL_ANGLE_texture_compression_dxt5 */                                                        \
-    /* GL_ANGLE_texture_external_update */                                                         \
-    void texImage2DExternal(TextureTarget targetPacked, GLint level, GLint internalformat,         \
-                            GLsizei width, GLsizei height, GLint border, GLenum format,            \
-                            GLenum type);                                                          \
-    void invalidateTexture(TextureType targetPacked);                                              \
     /* GL_ANGLE_texture_multisample */                                                             \
     /* GL_ANGLE_texture_rectangle */                                                               \
     /* GL_ANGLE_variable_rasterization_rate_metal */                                               \

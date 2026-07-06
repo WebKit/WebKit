@@ -287,8 +287,6 @@ class ContextGL : public ContextImpl
 
     void setMaxShaderCompilerThreads(GLuint count) override;
 
-    void invalidateTexture(gl::TextureType target) override;
-
     void validateState() const;
 
     void setNeedsFlushBeforeDeleteTextures();

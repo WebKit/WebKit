@@ -1868,6 +1868,8 @@ deqp_framework_common_sources = [
   "$deqp_path/framework/common/tcuMatrixUtil.hpp",
   "$deqp_path/framework/common/tcuMaybe.cpp",
   "$deqp_path/framework/common/tcuMaybe.hpp",
+  "$deqp_path/framework/common/tcuMustpassGen.cpp",
+  "$deqp_path/framework/common/tcuMustpassGen.hpp",
   "$deqp_path/framework/common/tcuPixelFormat.hpp",
   "$deqp_path/framework/common/tcuPlatform.cpp",
   "$deqp_path/framework/common/tcuPlatform.hpp",

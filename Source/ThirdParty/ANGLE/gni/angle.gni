@@ -167,6 +167,10 @@ declare_args() {
   winappsdk_dir = ""
 }
 
+if (!defined(angle_shared_libvulkan_on_mac)) {
+  angle_shared_libvulkan_on_mac = false
+}
+
 declare_args() {
   # By default we enable debug layers when asserts are turned on.
   angle_debug_layers_enabled = is_debug || angle_assert_always_on
@@ -177,8 +181,9 @@ declare_args() {
     ndk_api_level_at_least_26 = android_ndk_api_level >= 26
   }
 
-  # Vulkan loader is statically linked on Mac. http://anglebug.com/40096682
-  angle_shared_libvulkan = !is_mac
+  # Vulkan loader is statically linked on Mac unless the embedder specifies
+  # otherwise. http://anglebug.com/40096682
+  angle_shared_libvulkan = !is_mac || angle_shared_libvulkan_on_mac
 
   # There's no "is_winuwp" helper in BUILDCONFIG.gn, so we define one ourselves
   # Windows App SDK is almost UWP but for Win32, so we want all the same things

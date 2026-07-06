@@ -20,11 +20,6 @@ ContextImpl::ContextImpl(const gl::State &state, gl::ErrorSet *errorSet)
 
 ContextImpl::~ContextImpl() {}
 
-void ContextImpl::invalidateTexture(gl::TextureType target)
-{
-    UNREACHABLE();
-}
-
 angle::Result ContextImpl::startTiling(const gl::Context *context,
                                        const gl::Rectangle &area,
                                        GLbitfield preserveMask)

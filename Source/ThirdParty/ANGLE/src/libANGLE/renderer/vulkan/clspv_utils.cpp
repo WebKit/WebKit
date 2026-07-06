@@ -19,6 +19,7 @@
 
 #include <mutex>
 #include <string>
+#include <string_view>
 
 #include "CL/cl_half.h"
 
@@ -35,10 +36,10 @@ constexpr bool kAngleDebug = false;
 
 namespace rx
 {
-constexpr std::string_view kPrintfConversionSpecifiers = "diouxXfFeEgGaAcsp";
+constexpr std::string_view kPrintfConversionSpecifiers = "diouxXfFeEgGaAcsp%";
 constexpr std::string_view kPrintfFlagsSpecifiers      = "-+ #0";
 constexpr std::string_view kPrintfPrecisionSpecifiers  = "123456789.";
-constexpr std::string_view kPrintfVectorSizeSpecifiers = "23468";
+constexpr std::string_view kPrintfVectorSizeSpecifiers = "2346816";
 
 namespace
 {
@@ -55,11 +56,6 @@ T ReadPtrAsAndIncrement(unsigned char *&data)
     T out = *(reinterpret_cast<T *>(data));
     data += sizeof(T);
     return out;
-}
-
-char getPrintfConversionSpecifier(std::string_view formatString)
-{
-    return formatString.at(formatString.find_first_of(kPrintfConversionSpecifiers));
 }
 
 bool IsVectorFormat(std::string_view formatString)
@@ -85,7 +81,7 @@ std::string PrintFormattedString(const std::string &formatString,
     std::vector<char> out(outSize);
     out[0] = '\0';
 
-    char conversion = std::tolower(getPrintfConversionSpecifier(formatString));
+    char conversion = std::tolower(formatString.back());
     bool finished   = false;
     while (!finished)
     {
@@ -172,17 +168,17 @@ std::string PrintVectorFormatIntoString(std::string formatString,
 {
     ASSERT(IsVectorFormat(formatString));
 
-    size_t conversionPos = formatString.find_first_of(kPrintfConversionSpecifiers);
+    size_t conversionPos = formatString.length() - 1;
     // keep everything after conversion specifier in remainingFormat
     std::string remainingFormat = formatString.substr(conversionPos + 1);
     formatString                = formatString.substr(0, conversionPos + 1);
 
     size_t vectorPos       = formatString.find_first_of('v');
-    size_t vectorLengthPos = ++vectorPos;
+    size_t vectorLengthPos = vectorPos + 1;
     size_t vectorLengthPosEnd =
         formatString.find_first_not_of(kPrintfVectorSizeSpecifiers, vectorLengthPos);
 
-    std::string preVectorString  = formatString.substr(0, vectorPos - 1);
+    std::string preVectorString  = formatString.substr(0, vectorPos);
     std::string postVectorString = formatString.substr(vectorLengthPosEnd, formatString.size());
     std::string vectorLengthStr  = formatString.substr(vectorLengthPos, vectorLengthPosEnd);
     int vectorLength             = std::atoi(vectorLengthStr.c_str());
@@ -237,84 +233,90 @@ void ProcessPrintfStatement(unsigned char *&data,
                             const unsigned char *dataEnd)
 {
     // printf storage buffer contents - | id | formatString | argSizes... |
-    uint32_t printfID               = ReadPtrAsAndIncrement<uint32_t>(data);
-    const std::string &formatString = descs->at(printfID).formatSpecifier;
+    uint32_t printfID = ReadPtrAsAndIncrement<uint32_t>(data);
 
-    std::string printfOutput = "";
+    const std::string &formatString       = descs->at(printfID).formatSpecifier;
+    const std::vector<uint32_t> &argSizes = descs->at(printfID).argSizes;
 
-    // formatString could be "<string literal> <% format specifiers ...> <string literal>"
-    // print the literal part if any first
-    size_t nextFormatSpecPos = formatString.find_first_of('%');
-    printfOutput += formatString.substr(0, nextFormatSpecPos);
-
-    // print each <% format specifier> + any string literal separately using snprintf
-    size_t idx = 0;
-    while (nextFormatSpecPos < formatString.size() - 1)
+    if (formatString.find_first_of('%') == std::string::npos)
     {
-        // Get the part of the format string before the next format specifier
-        size_t partStart             = nextFormatSpecPos;
-        size_t partEnd               = formatString.find_first_of('%', partStart + 1);
-        std::string partFormatString = formatString.substr(partStart, partEnd - partStart);
+        data = const_cast<unsigned char *>(dataEnd);
+        std::printf("%s", formatString.c_str());
+        return;
+    }
 
-        // Handle special cases
-        if (partEnd == partStart + 1)
+    // process each char from the format string
+    std::string printfOutput = "";
+    size_t argIdx            = 0;
+    size_t formatIdx         = 0;
+    const size_t formatLen   = formatString.length();
+    while (formatIdx < formatLen)
+    {
+        if (formatString[formatIdx] == '%' && (formatIdx + 1) < formatLen)
         {
-            printfOutput += "%";
-            nextFormatSpecPos = partEnd + 1;
-            continue;
-        }
-        else if (partEnd == std::string::npos && idx >= descs->at(printfID).argSizes.size())
-        {
-            // If there are no remaining arguments, the rest of the format
-            // should be printed verbatim
-            printfOutput += partFormatString;
-            break;
-        }
-
-        // The size of the argument that this format part will consume
-        const uint32_t &size = descs->at(printfID).argSizes[idx];
-
-        if (data + size > dataEnd)
-        {
-            data += size;
-            return;
-        }
-
-        // vector format need special care for snprintf
-        if (!IsVectorFormat(partFormatString))
-        {
-            // not a vector format can be printed through snprintf
-            // except for %s
-            if (getPrintfConversionSpecifier(partFormatString) == 's')
+            const size_t formatSpecifierEndPos =
+                formatString.find_first_of(kPrintfConversionSpecifiers, formatIdx + 1);
+            if (ANGLE_UNLIKELY(formatSpecifierEndPos == std::string::npos))
             {
-                uint32_t stringID = ReadPtrAs<uint32_t>(data);
-                printfOutput +=
-                    PrintFormattedString(partFormatString,
-                                         reinterpret_cast<const unsigned char *>(
-                                             descs->at(stringID).formatSpecifier.c_str()),
-                                         size);
+                WARN() << "malformed/trailing format specifier. skipping...";
+                data = const_cast<unsigned char *>(dataEnd);
+                return;
+            }
+
+            std::string_view formatSpecifier =
+                std::string_view(&formatString[formatIdx], (formatSpecifierEndPos - formatIdx) + 1);
+
+            if (formatSpecifier == "%%")
+            {  // special case where "%%" specifier is treated as literal "%"
+                printfOutput += "%";
+                formatIdx += formatSpecifier.size();
+                continue;
+            }
+
+            // The size of the argument that this format part will consume
+            const uint32_t &size = argSizes[argIdx++];
+            if (data + size > dataEnd)
+            {
+                data += size;
+                return;
+            }
+
+            if (!IsVectorFormat(formatSpecifier))
+            {
+                if (formatSpecifier.back() == 's')
+                {
+                    uint32_t stringID = ReadPtrAs<uint32_t>(data);
+                    printfOutput +=
+                        PrintFormattedString(std::string{formatSpecifier},
+                                             reinterpret_cast<const unsigned char *>(
+                                                 descs->at(stringID).formatSpecifier.c_str()),
+                                             size);
+                }
+                else
+                {
+                    printfOutput += PrintFormattedString(std::string{formatSpecifier}, data, size);
+                }
+                data += size;
             }
             else
             {
-                printfOutput += PrintFormattedString(partFormatString, data, size);
+                printfOutput +=
+                    PrintVectorFormatIntoString(std::string{formatSpecifier}, data, size);
+                data += size;
             }
-            data += size;
+            formatIdx += formatSpecifier.size();
         }
         else
         {
-            printfOutput += PrintVectorFormatIntoString(partFormatString, data, size);
-            data += size;
+            printfOutput += formatString[formatIdx];
+            formatIdx++;
         }
-
-        // Move to the next format part and prepare to handle the next arg
-        nextFormatSpecPos = partEnd;
-        idx++;
     }
 
     std::printf("%s", printfOutput.c_str());
 
     if (kAngleDebug)
-    {
+    {  // note/fyi: this log will break conformance testing
         INFO() << "ANGLE-CL.Kernel: " << printfOutput.c_str();
     }
 }

@@ -394,6 +394,9 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                         uint32_t imageLevelOffset,
                         uint32_t imageLayerOffset,
                         bool selfOwned);
+    angle::Result syncAsAttachmentRenderTarget(const gl::Context *context,
+                                               const gl::ImageIndex &imageIndex,
+                                               GLsizei samples);
 
     vk::ImageViewHelper &getImageViews() { return mImageView; }
     const vk::ImageViewHelper &getImageViews() const { return mImageView; }

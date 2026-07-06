@@ -341,9 +341,6 @@ void QueryTexParameterBase(const Context *context,
         case GL_TEXTURE_BORDER_COLOR:
             ConvertFromColor<isPureInteger>(texture->getBorderColor(), params);
             break;
-        case GL_TEXTURE_NATIVE_ID_ANGLE:
-            *params = CastFromSpecialValue<isGLfixed, ParamType>(pname, texture->getNativeID());
-            break;
         case GL_IMPLEMENTATION_COLOR_READ_FORMAT:
             *params = CastFromGLintStateValue<ParamType>(
                 pname, texture->getImplementationColorReadFormat(context));

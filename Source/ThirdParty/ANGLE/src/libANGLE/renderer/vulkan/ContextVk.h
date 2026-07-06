@@ -390,8 +390,6 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     angle::Result memoryBarrier(const gl::Context *context, GLbitfield barriers) override;
     angle::Result memoryBarrierByRegion(const gl::Context *context, GLbitfield barriers) override;
 
-    ANGLE_INLINE void invalidateTexture(gl::TextureType target) override {}
-
     bool hasDisplayTextureShareGroup() const { return mState.hasDisplayTextureShareGroup(); }
 
     // EXT_shader_framebuffer_fetch_non_coherent

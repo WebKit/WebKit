@@ -53,6 +53,7 @@ class ANGLE_UTIL_EXPORT OSWindow
 
     virtual void setNativeDisplay(EGLNativeDisplayType display) {}
     virtual EGLNativeDisplayType getNativeDisplay() const = 0;
+    virtual EGLenum getNativeDisplayPlatformType() const { return 0; }
 
     virtual void messageLoop() = 0;
 

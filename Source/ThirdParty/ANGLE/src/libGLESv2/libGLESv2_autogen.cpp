@@ -3707,25 +3707,6 @@ void GL_APIENTRY glGetFramebufferPixelLocalStorageParameteruivANGLE(GLint plane,
 
 // GL_ANGLE_texture_compression_dxt5
 
-// GL_ANGLE_texture_external_update
-void GL_APIENTRY glTexImage2DExternalANGLE(GLenum target,
-                                           GLint level,
-                                           GLint internalformat,
-                                           GLsizei width,
-                                           GLsizei height,
-                                           GLint border,
-                                           GLenum format,
-                                           GLenum type)
-{
-    return GL_TexImage2DExternalANGLE(target, level, internalformat, width, height, border, format,
-                                      type);
-}
-
-void GL_APIENTRY glInvalidateTextureANGLE(GLenum target)
-{
-    return GL_InvalidateTextureANGLE(target);
-}
-
 // GL_ANGLE_texture_multisample
 void GL_APIENTRY glTexStorage2DMultisampleANGLE(GLenum target,
                                                 GLsizei samples,

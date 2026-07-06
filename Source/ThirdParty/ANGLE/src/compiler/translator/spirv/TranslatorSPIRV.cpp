@@ -60,6 +60,7 @@ namespace sh
 namespace
 {
 constexpr ImmutableString kFlippedPointCoordName    = ImmutableString("flippedPointCoord");
+constexpr ImmutableString kFlippedSamplePositionName = ImmutableString("flippedSamplePosition");
 constexpr ImmutableString kFlippedFragCoordName     = ImmutableString("flippedFragCoord");
 constexpr ImmutableString kDefaultUniformsBlockName = ImmutableString("defaultUniforms");
 
@@ -898,13 +899,13 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
                         static_cast<const TVariable *>(getSymbolTable().findBuiltIn(
                             ImmutableString("gl_SampleID"), getShaderVersion()));
                     assignSpirvId(sampleID->uniqueId(), vk::spirv::kIdSampleID);
-                    break;
+                    continue;
                 }
 
                 if (inputVarying.name == "gl_PointCoord")
                 {
                     usesPointCoord = true;
-                    break;
+                    continue;
                 }
 
                 if (inputVarying.name == "gl_FragCoord")
@@ -914,7 +915,7 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
                         static_cast<const TVariable *>(getSymbolTable().findBuiltIn(
                             ImmutableString("gl_FragCoord"), getShaderVersion()));
                     assignSpirvId(fragCoord->uniqueId(), vk::spirv::kIdFragCoord);
-                    break;
+                    continue;
                 }
             }
 
@@ -977,7 +978,7 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
                         ImmutableString("gl_SamplePosition"), getShaderVersion()));
                 if (!RotateAndFlipBuiltinVariable(this, root, GetMainSequence(root), swapXY, flipXY,
                                                   &getSymbolTable(), samplePositionBuiltin,
-                                                  kFlippedPointCoordName, pivot))
+                                                  kFlippedSamplePositionName, pivot))
                 {
                     return false;
                 }

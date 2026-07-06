@@ -49,7 +49,8 @@ fn broadcast(
         let replacement = ir.meta.get_variable_mut(original_id);
         replacement.name = Name::new_temp(name);
         replacement.built_in = None;
-        debug_assert!(replacement.decorations.decorations.is_empty());
+        // The built-in might have decorations such as Invariant
+        let decorations = std::mem::replace(&mut replacement.decorations, Decorations::new_none());
         debug_assert!(replacement.scope == VariableScope::Global);
         debug_assert!(!replacement.is_const);
 
@@ -66,7 +67,9 @@ fn broadcast(
         let type_id = ir.meta.get_array_type_id(type_id, array_size);
         let (arrayed_built_in_id, arrayed_built_in) =
             ir.meta.declare_built_in_variable(type_id, precision, broadcast_to);
-        ir.meta.get_variable_mut(arrayed_built_in_id).is_static_use = true;
+        let new_built_in = ir.meta.get_variable_mut(arrayed_built_in_id);
+        new_built_in.is_static_use = true;
+        new_built_in.decorations = decorations;
 
         // Since the variable ID is unchanged, the IR does not need further modification.  The
         // transformation only needs to replicate the value of the global variable in each element

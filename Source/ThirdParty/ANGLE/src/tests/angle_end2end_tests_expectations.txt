@@ -131,6 +131,7 @@
 448658624 WIN INTEL VULKAN : GLSLTestLoops.ForContinueInSwitchComplex/* = SKIP
 448658624 WIN INTEL VULKAN : GLSLTest_ES31.ConstantPrecisionPropagation/* = SKIP
 452159379 WIN INTEL VULKAN : ProgramBinaryTest.ReturnedBinaryTwiceShouldMatch/* = SKIP
+519062400 WIN INTEL OPENGL : CopyTextureTestES3.ChangeBaseLevel/* = SKIP
 
 42266241 PIXEL6 VULKAN : VertexAttributeTestES31.MismatchingSignsChangingAttributeType/* = SKIP
 42266241 PIXEL6 VULKAN : VertexAttributeTestES31.MismatchingSignsChangingProgramType/* = SKIP
@@ -150,6 +151,7 @@
 447556589 WIN INTEL OPENGL : GeometryShaderTest.ImplicitSizedArrayMatchesExplicitSizedArray2/* = SKIP
 451644991 WIN INTEL OPENGL : WebGL2GLSLTest.NotInfiniteLoop/* = SKIP
 436598955 WIN D3D11 : DepthStencilFormatsTest.DepthTextureRender/ES3*D3D11 = SKIP
+498904293 WIN NVIDIA GLES : DXTSRGBCompressedTextureTest.Decompression8x8RGBADXT1/* = SKIP
 
 // Failures on Intel Comet Lake S UHD Graphics 630 (8086:9bc5-31.0.101.2111)
 40644896 WIN INTEL OPENGL : D3DImageFormatConversionTest.WriteColorFunctionR8G8B8A8/* = SKIP
@@ -426,6 +428,7 @@
 497533569 MAC INTEL OPENGL : TransformFeedbackTest.ProgramSwitchDuringPauseAndResume/* = SKIP
 497533569 MAC INTEL OPENGL : TransformFeedbackTest.ProgramSwitchDuringPauseAndResumeWithBufferChange/* = SKIP
 513172707 MAC INTEL OPENGL : DrawBaseVertexBaseInstanceTest_ES3.InstanceIDDoesNotIncludeBaseInstance/* = SKIP
+519471062 MAC OPENGL : GLSLTest_ES3.SamplerInStructRHSOfCommaWithSideEffect/* = SKIP
 
 // BlitFramebufferTest.ScissoredMultisampleStencil failures
 42262159 MAC INTEL OPENGL : BlitFramebufferTest.ScissoredMultisampleStencil/* = SKIP
@@ -495,6 +498,8 @@
 494341324 MAC OPENGL : MipmapTestES3.MismatchingLevelFormats/* = SKIP
 496604559 MAC METAL : RobustResourceInitTestES3.DrawThenInvalidateThenVerifyDepthStencil/* = SKIP
 515709506 MAC METAL : DrawBaseVertexBaseInstanceTest_ES3.BaseInstanceSmallDivisorClientMemory/* = SKIP
+518849408 MAC OPENGL : GLSLTest.EmulateGLFragColorBroadcastInvariantFragColor/* = SKIP
+518849408 MAC OPENGL : GLSLTest.EmulateGLFragColorBroadcastInvariantFragColorUnused/* = SKIP
 
 // The workaround is not intended to be enabled in this configuration so
 // skip it as the failure is likely a driver bug.
@@ -879,6 +884,9 @@
 465140993 PIXEL6 VULKAN : GLSLTest_ES3_PackUnpackEmulation.PackHalf2x16/* = SKIP
 465140993 PIXEL6 VULKAN : GLSLTest_ES3_PackUnpackEmulation.PackSnorm2x16/* = SKIP
 491488984 PIXEL6 VULKAN : GLSLTest_ES31.HelperInvocationsAfterDiscard/* = SKIP
+
+// Blocked on preferBGR565ToRGB565 availability
+519580088 PIXEL6 VULKAN : VulkanImageTest.ImportRGB565/ES3_Vulkan_ForceFallbackFormat = SKIP
 
 // Pixel 10 expectations.
 480069042 PIXEL10 GLES : AtomicCounterBufferTest31.DependentAtomicCounterBufferChange/* = SKIP
@@ -2298,6 +2306,8 @@
 // WebGPU failures
 // All tests are flaky on Linux Intel due to X errors.
 454630429 WGPU LINUX INTEL : * = SKIP
+// Flakily causes test timeout issues on Linux/NVIDIA
+517972806 WGPU LINUX NVIDIA : * = SKIP
 // BasicUniformUsage tests fail too frequently with WGPU
 376553328 LINUX INTEL WGPU : BasicUniformUsageTest.* = SKIP
 // Can't use a uniform struct outside of uniform address space.
@@ -2601,6 +2611,7 @@
 362486580 LINUX NVIDIA OPENGL : EXTBlendFuncExtendedDrawTestES3.FragmentOutputLocationsInShader/* = SKIP
 362486580 LINUX NVIDIA OPENGL : EXTBlendFuncExtendedDrawTestES3.MaxDualSourceDrawBuffers/* = SKIP
 362486580 LINUX NVIDIA OPENGL : InstancingTestES31.UpdateAttribBindingByVertexAttribDivisor/* = SKIP
+519266528 LINUX NVIDIA OPENGL : LineLoopIndirectTest.IndirectAndElementDrawsShareIndexBuffer/* = SKIP
 362486580 LINUX NVIDIA OPENGL : LineLoopIndirectTest.TwoIndirectDrawsShareIndexBuffer/* = SKIP
 362486580 LINUX NVIDIA OPENGL : LineLoopIndirectTest.UByteIndexIndirectBuffer/* = SKIP
 362486580 LINUX NVIDIA OPENGL : LineLoopIndirectTest.UShortIndexIndirectBuffer/* = SKIP
@@ -2609,7 +2620,11 @@
 362486580 LINUX NVIDIA OPENGL : MultiDrawIndirectTest.MultiDrawArraysIndirect/* = SKIP
 362486580 LINUX NVIDIA OPENGL : MultiDrawIndirectTest.MultiDrawElementsIndirect/* = SKIP
 362486580 LINUX NVIDIA OPENGL : SampleMultisampleInterpolationTest31.SampleShadingThenSimpleDraw/* = SKIP
+519266528 LINUX NVIDIA OPENGL : UniformBufferTest31.ConsecutiveBindingsForBlockArray/* = SKIP
 362486580 LINUX NVIDIA OPENGL : UniformBufferTest31.UniformBufferBindings/* = SKIP
+519266528 LINUX NVIDIA OPENGL : VertexAttributeTestES31.ChangeAttribFormatAfterVertexAttribPointer/* = SKIP
+519266528 LINUX NVIDIA OPENGL : VertexAttributeTestES31.DrawArraysWithLargeStride/* = SKIP
+519266528 LINUX NVIDIA OPENGL : VertexAttributeTestES31.UseComputeShaderToUpdateVertexBuffer/* = SKIP
 
 362486580 LINUX NVIDIA VULKAN : ClearTextureEXTTestES31Renderable.Clear/*__GL_RGB5_A1_GL_RGBA_GL_UNSIGNED_INT_2_10_10_10_REV_* = SKIP
 362486580 LINUX NVIDIA VULKAN : EGLSurfaceTest.ResizeBeforeMakeCurrent*/* = SKIP
@@ -2805,6 +2820,9 @@
 
 // Timeout on Intel/Vulkan
 517981272 WIN INTEL VULKAN : EGLMultiContextTest.RepeatedEglInitAndTerminate/* = SKIP
+
+// Crashing on Win and Linux Vulkan
+519817006 VULKAN : VulkanPerformanceCounterTest_TileMemory.RedefineSharedDepthTextureWithOpenRenderPasses/* = SKIP
 
 0 METAL : IncompatibleTextureTest.*/* = SKIP
 0 METAL : WebGL2GLSLValidationTest.ManyChainedBinaryExpressions/* = SKIP

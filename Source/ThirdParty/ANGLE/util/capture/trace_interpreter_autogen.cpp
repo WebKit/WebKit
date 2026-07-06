@@ -3798,13 +3798,6 @@ CallCapture ParseCallCapture(const Token &nameToken,
                 paramTokens, strings);
         return CallCapture(EntryPoint::GLInvalidateSubFramebuffer, std::move(params));
     }
-    if (strcmp(nameToken, "glInvalidateTextureANGLE") == 0)
-    {
-        ParamBuffer params =
-            ParseParameters<std::remove_pointer<PFNGLINVALIDATETEXTUREANGLEPROC>::type>(paramTokens,
-                                                                                        strings);
-        return CallCapture(EntryPoint::GLInvalidateTextureANGLE, std::move(params));
-    }
     if (strcmp(nameToken, "glIsBuffer") == 0)
     {
         ParamBuffer params =
@@ -5458,13 +5451,6 @@ CallCapture ParseCallCapture(const Token &nameToken,
         ParamBuffer params =
             ParseParameters<std::remove_pointer<PFNGLTEXIMAGE2DPROC>::type>(paramTokens, strings);
         return CallCapture(EntryPoint::GLTexImage2D, std::move(params));
-    }
-    if (strcmp(nameToken, "glTexImage2DExternalANGLE") == 0)
-    {
-        ParamBuffer params =
-            ParseParameters<std::remove_pointer<PFNGLTEXIMAGE2DEXTERNALANGLEPROC>::type>(
-                paramTokens, strings);
-        return CallCapture(EntryPoint::GLTexImage2DExternalANGLE, std::move(params));
     }
     if (strcmp(nameToken, "glTexImage2DRobustANGLE") == 0)
     {

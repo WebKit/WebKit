@@ -1024,12 +1024,120 @@ TEST_P(VulkanMemoryTest, AllocateBufferAfterFreeing2DGarbageWhenDeviceOOM)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test importing VkImage with VK_FORMAT_R5G6B5_UNORM_PACK16 when ForceFallbackFormat is enabled.
+// This forces ANGLE to use a fallback format (RGBA8) for internal GLES RGB565 textures,
+// but the imported sibling must still use the actual RGB565 format.
+TEST_P(VulkanImageTest, ImportRGB565)
+{
+    EGLWindow *window  = getEGLWindow();
+    EGLDisplay display = window->getDisplay();
+
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(display, "EGL_ANGLE_vulkan_image"));
+
+    VulkanHelper helper;
+    helper.initializeFromANGLE();
+
+    // Check if VK_FORMAT_R5G6B5_UNORM_PACK16 is supported by the physical device.
+    VkFormatProperties properties;
+    vkGetPhysicalDeviceFormatProperties(helper.getPhysicalDevice(), VK_FORMAT_R5G6B5_UNORM_PACK16,
+                                        &properties);
+    ANGLE_SKIP_TEST_IF(!(properties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT));
+
+    constexpr VkImageUsageFlags kDefaultImageUsageFlags =
+        VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+        VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
+
+    VkImage vkImage                   = VK_NULL_HANDLE;
+    VkDeviceMemory vkDeviceMemory     = VK_NULL_HANDLE;
+    VkDeviceSize deviceSize           = 0u;
+    VkImageCreateInfo imageCreateInfo = {};
+
+    VkResult result = VK_SUCCESS;
+    result = helper.createImage2D(VK_FORMAT_R5G6B5_UNORM_PACK16, 0, kDefaultImageUsageFlags,
+                                  {kWidth, kHeight, 1}, &vkImage, &vkDeviceMemory, &deviceSize,
+                                  &imageCreateInfo);
+    EXPECT_EQ(result, VK_SUCCESS);
+    EXPECT_EQ(imageCreateInfo.sType, VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO);
+
+    uint64_t info    = reinterpret_cast<uint64_t>(&imageCreateInfo);
+    EGLint attribs[] = {
+        EGL_VULKAN_IMAGE_CREATE_INFO_HI_ANGLE,
+        static_cast<EGLint>((info >> 32) & 0xffffffff),
+        EGL_VULKAN_IMAGE_CREATE_INFO_LO_ANGLE,
+        static_cast<EGLint>(info & 0xffffffff),
+        EGL_NONE,
+    };
+    EGLImageKHR eglImage = eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_VULKAN_IMAGE_ANGLE,
+                                             reinterpret_cast<EGLClientBuffer>(&vkImage), attribs);
+    EXPECT_NE(eglImage, EGL_NO_IMAGE_KHR);
+
+    // Create a custom FBO with RGBA8 attachment for rendering to avoid 16x16 window limits.
+    GLTexture colorTex;
+    glBindTexture(GL_TEXTURE_2D, colorTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTex, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Set up the imported RGB565 texture.
+    GLTexture texture;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, eglImage);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    GLuint textures[1] = {texture};
+    GLenum layouts[1]  = {GL_NONE};
+    glAcquireTexturesANGLE(1, textures, layouts);
+
+    // Fill the texture with red color (0xF800 in RGB565).
+    std::vector<GLushort> pixels(kWidth * kHeight, 0xF800);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight, GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
+                    pixels.data());
+    EXPECT_GL_NO_ERROR();
+
+    // Draw a quad to our FBO sampling from the imported texture.
+    ANGLE_GL_PROGRAM(drawTex2D, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    glUseProgram(drawTex2D);
+
+    glViewport(0, 0, kWidth, kHeight);
+    glClearColor(0.f, 0.f, 1.f, 1.f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    drawQuad(drawTex2D, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+
+    // Verify the FBO is now red.
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::red);
+
+    // Release the texture before destroying the image.
+    glReleaseTexturesANGLE(1, textures, layouts);
+
+    EXPECT_GL_NO_ERROR();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    framebuffer.reset();
+    colorTex.reset();
+    texture.reset();
+
+    glFinish();
+
+    EXPECT_EGL_TRUE(eglDestroyImageKHR(display, eglImage));
+    vkDestroyImage(helper.getDevice(), vkImage, nullptr);
+    vkFreeMemory(helper.getDevice(), vkDeviceMemory, nullptr);
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(VulkanImageTest);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(VulkanImageTest,
+                                       ES3_VULKAN().enable(Feature::ForceFallbackFormat));
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     VulkanRGB565Test,
-    ES3_VULKAN_SWIFTSHADER().enable(Feature::PreferBGR565ToRGB565));
+    ES3_VULKAN_SWIFTSHADER().enable(Feature::PreferBGR565ToRGB565),
+    ES3_VULKAN().enable(Feature::PreferBGR565ToRGB565).enable(Feature::ForceFallbackFormat));
 ANGLE_INSTANTIATE_TEST_ES3(VulkanMemoryTest);
 
 }  // namespace angle

@@ -192,13 +192,6 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
                                                    GLbitfield usageFlags,
                                                    const void *imageCreateInfoPNext) = 0;
 
-    virtual angle::Result setImageExternal(const gl::Context *context,
-                                           const gl::ImageIndex &index,
-                                           GLenum internalFormat,
-                                           const gl::Extents &size,
-                                           GLenum format,
-                                           GLenum type);
-
     virtual angle::Result setEGLImageTarget(const gl::Context *context,
                                             gl::TextureType type,
                                             egl::Image *image) = 0;
@@ -234,8 +227,6 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
     // Override if accurate native memory size information is available
     virtual GLint getMemorySize() const;
     virtual GLint getLevelMemorySize(gl::TextureTarget target, GLint level);
-
-    virtual GLint getNativeID() const;
 
     virtual GLint getImageCompressionRate(const gl::Context *context);
     virtual GLint getFormatSupportedCompressionRates(const gl::Context *context,

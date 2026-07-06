@@ -640,10 +640,6 @@ EXPORTS
 
     ; GL_ANGLE_texture_compression_dxt5
 
-    ; GL_ANGLE_texture_external_update
-    glInvalidateTextureANGLE
-    glTexImage2DExternalANGLE
-
     ; GL_ANGLE_texture_multisample
     glGetMultisamplefvANGLE
     glSampleMaskiANGLE

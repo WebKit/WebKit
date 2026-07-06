@@ -171,7 +171,6 @@ angle_end2end_tests_sources = [
   "gl_tests/SixteenBppTextureTest.cpp",
   "gl_tests/StateChangeTest.cpp",
   "gl_tests/SwizzleTest.cpp",
-  "gl_tests/TextureExternalUpdateTest.cpp",
   "gl_tests/TextureFixedRateCompressionTest.cpp",
   "gl_tests/TextureMultisampleTest.cpp",
   "gl_tests/TextureRectangleTest.cpp",

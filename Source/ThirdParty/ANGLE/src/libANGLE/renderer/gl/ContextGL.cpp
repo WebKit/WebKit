@@ -1089,11 +1089,6 @@ void ContextGL::setMaxShaderCompilerThreads(GLuint count)
     mRenderer->setMaxShaderCompilerThreads(count);
 }
 
-void ContextGL::invalidateTexture(gl::TextureType target)
-{
-    mRenderer->getStateManager()->invalidateTexture(target);
-}
-
 void ContextGL::validateState() const
 {
     const StateManagerGL *stateManager = mRenderer->getStateManager();

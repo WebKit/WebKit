@@ -2033,7 +2033,6 @@ void GenerateCaps(const FunctionsGL *functions,
                                        functions->hasGLExtension("GL_EXT_provoking_vertex") ||
                                        functions->isAtLeastGL(gl::Version(3, 2));
 
-    extensions->textureExternalUpdateANGLE = true;
     extensions->texture3DOES               = functions->isAtLeastGL(gl::Version(1, 2)) ||
                                functions->isAtLeastGLES(gl::Version(3, 0)) ||
                                functions->hasGLESExtension("GL_OES_texture_3D");

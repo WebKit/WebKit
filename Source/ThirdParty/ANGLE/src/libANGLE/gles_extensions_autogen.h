@@ -810,9 +810,6 @@ struct Extensions
     // GL_ANGLE_texture_compression_dxt5
     bool textureCompressionDxt5ANGLE = false;
 
-    // GL_ANGLE_texture_external_update
-    bool textureExternalUpdateANGLE = false;
-
     // GL_ANGLE_texture_multisample
     bool textureMultisampleANGLE = false;
 
