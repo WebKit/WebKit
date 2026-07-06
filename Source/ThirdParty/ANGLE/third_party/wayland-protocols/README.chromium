@@ -1,0 +1,35 @@
+Name: wayland-protocols
+URL: http://wayland.freedesktop.org/
+Version: N/A
+Revision: DEPS
+License: MIT
+License File: LICENSE
+Security Critical: no
+Shipped: no
+
+Description:
+wayland-protocols/src contains the official library of Wayland protocol
+extensions maintained by the developers of the Wayland project.
+
+unstable/ contains unofficial ChromeOS extensions to wayland.
+
+Repository:
+https://anongit.freedesktop.org/git/wayland/wayland-protocols.git.
+
+Source checkout path:
+src/third_party/wayland-protocols/src
+
+Additional note:
+This component wraps several external sources of Wayland protocol extensions.
+Descriptions of each source go below.
+
+To upgrade a source to a new version:
+- Find the commit hash of that version in the project's git repository specified
+  in the source's section below.
+- Update the DEPS entry to the commit found above with this command:
+  $ roll-dep --roll-to=<commit> <source-checkout-path>
+- Run gclient sync to update the local working copy with the new version.
+- Update this README to reflect the new version number in the source's section.
+
+Please follow the guideline below when updating an extension protocol.
+https://source.chromium.org/chromium/chromium/src/+/main:components/exo/wayland/README.md

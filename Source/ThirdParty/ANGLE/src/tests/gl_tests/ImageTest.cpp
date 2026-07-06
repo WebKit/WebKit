@@ -5448,6 +5448,81 @@ TEST_P(ImageTestES3, PartialRenderToYUVAHB)
     destroyAndroidHardwareBuffer(source);
 }
 
+// Test rendering to a YUV AHB using EXT_yuv_target then reading back the pixels into PBO.
+TEST_P(ImageTestES3, RenderToYUVAHBThenReadPixels)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt() || !hasYUVTargetExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+    ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+
+    // 3 planes of data, initialize to all zeroes
+    GLubyte dataY[4]  = {0, 0, 0, 0};
+    GLubyte dataCb[1] = {
+        0,
+    };
+    GLubyte dataCr[1] = {
+        0,
+    };
+
+    constexpr uint32_t kWidth  = 2;
+    constexpr uint32_t kHeight = 2;
+
+    // Create the Image
+    AHardwareBuffer *source;
+    EGLImageKHR image;
+    createEGLImageAndroidHardwareBufferSource(
+        kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs,
+        {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &source, &image);
+
+    // Create a texture target to bind the egl image
+    GLTexture target;
+    createEGLImageTargetTextureExternal(image, target);
+
+    // Set up a framebuffer to render into the AHB
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_EXTERNAL_OES, target,
+                           0);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glUseProgram(mRenderYUVProgram2);
+    glUniform4f(mRenderYUVUniformLocation, kYUVColorRedY[0] / 255.0f, kYUVColorRedCb[0] / 255.0f,
+                kYUVColorRedCr[0] / 255.0f, 1.0f);
+
+    drawQuad(mRenderYUVProgram2, "position", 0.0f);
+    ASSERT_GL_NO_ERROR();
+
+    // Read back into PBO.
+    std::array<GLColor, kWidth * kHeight> readback;
+    readback.fill(GLColor(123, 234, 213, 231));
+
+    GLBuffer pbo;
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
+    glBufferData(GL_PIXEL_PACK_BUFFER, sizeof(readback), nullptr, GL_STATIC_DRAW);
+    glPixelStorei(GL_PACK_ALIGNMENT, 4);
+    glReadPixels(0, 0, kWidth, kHeight, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+    const GLColor *mapped = reinterpret_cast<const GLColor *>(
+        glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, sizeof(readback), GL_MAP_READ_BIT));
+    memcpy(readback.data(), mapped, sizeof(readback));
+    glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+
+    for (uint32_t r = 0; r < kHeight; ++r)
+    {
+        for (uint32_t c = 0; c < kWidth; ++c)
+        {
+            EXPECT_COLOR_NEAR(readback[r * kWidth + c], GLColor::red, 1);
+        }
+    }
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+    destroyAndroidHardwareBuffer(source);
+}
+
 // Test glClear on FBO with AHB attachment is applied to the AHB image before we read back
 TEST_P(ImageTestES3, AHBClearAppliedBeforeReadBack)
 {

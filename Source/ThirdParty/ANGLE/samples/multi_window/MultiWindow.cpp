@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <sstream>
 #include <vector>
 
 #include "util/Matrix.h"
@@ -57,9 +58,11 @@ void main()
         for (size_t i = 1; i < numWindows; i++)
         {
             window window;
-
             window.osWindow = OSWindow::New();
-            if (!window.osWindow->initialize("MultiWindow", 256, 256))
+
+            std::stringstream ss;
+            ss << "MultiWindow " << i;
+            if (!window.osWindow->initialize(ss.str().c_str(), 256, 256))
             {
                 return false;
             }

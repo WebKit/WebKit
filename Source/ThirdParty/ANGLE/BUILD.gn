@@ -32,8 +32,9 @@ if (angle_has_build) {
 
 declare_args() {
   # Use the PCI lib to collect GPU information on Linux.
-  use_libpci = (is_linux || is_chromeos) && (angle_use_x11 || use_ozone) &&
-               angle_has_build
+  use_libpci =
+      (is_linux || is_chromeos) &&
+      (angle_use_x11 || angle_use_wayland || use_ozone) && angle_has_build
 
   # Enable using Vulkan to collect system info as a fallback.
   angle_enable_vulkan_system_info = is_chromeos
@@ -263,21 +264,22 @@ config("internal_config") {
     defines += [ "ANGLE_PLATFORM_CHROMEOS" ]
   }
 
+  # Enable system without X11.
+  if (!angle_use_x11) {
+    defines += [ "EGL_NO_X11" ]
+  }
+
+  # These two are needed here to correctly select OSWindow::New
+  if (angle_use_x11) {
+    defines += [ "ANGLE_USE_X11" ]
+  }
+  if (angle_use_wayland) {
+    defines += [ "ANGLE_USE_WAYLAND" ]
+  }
   if (angle_use_vulkan_null_display) {
     defines += [ "ANGLE_USE_VULKAN_NULL_DISPLAY" ]
   } else if (angle_use_vulkan_display) {
     defines += [ "ANGLE_USE_VULKAN_DISPLAY" ]
-    if (!angle_use_x11) {
-      defines += [ "EGL_NO_X11" ]
-    }
-
-    # These two are needed here to correctly select OSWindow::New
-    if (angle_use_x11) {
-      defines += [ "ANGLE_USE_X11" ]
-    }
-    if (angle_use_wayland) {
-      defines += [ "ANGLE_USE_WAYLAND" ]
-    }
 
     if (angle_vulkan_display_mode == "simple") {
       defines += [ "ANGLE_VULKAN_DISPLAY_MODE_SIMPLE" ]
@@ -365,6 +367,11 @@ config("extra_warnings") {
       "/we4458",  # declaration hides class member.
       "/we4800",  # forcing value to bool.
       "/we4838",  # narrowing conversion.
+    ]
+
+    # Explicitly disable some warnings
+    cflags += [
+      "/wd4715",  # not all control paths return a value.
     ]
   }
   if (is_clang) {
@@ -1236,7 +1243,7 @@ if (angle_use_wayland) {
 
     include_dirs = [
       "$wayland_dir/egl",
-      "$wayland_dir/src",
+      "$wayland_dir",
     ]
   }
 
@@ -1468,11 +1475,17 @@ template("angle_libGLESv2") {
   }
 }
 
-angle_libGLESv2("libGLESv2") {
-  if (angle_with_capture_by_default) {
-    deps = [ ":libANGLE_with_capture" ]
-  } else {
-    deps = [ ":libANGLE" ]
+if (angle_use_static_angle) {
+  group("libGLESv2") {
+    public_deps = [ ":libGLESv2_static" ]
+  }
+} else {
+  angle_libGLESv2("libGLESv2") {
+    if (angle_with_capture_by_default) {
+      deps = [ ":libANGLE_with_capture" ]
+    } else {
+      deps = [ ":libANGLE" ]
+    }
   }
 }
 
@@ -1517,26 +1530,31 @@ angle_static_library("libGLESv2_static") {
   public_deps = [ ":libGLESv2_thin_static" ]
 }
 
-angle_shared_library("libGLESv1_CM") {
-  sources = libglesv1_cm_sources
-  output_name = "libGLESv1_CM${angle_libs_suffix}"
+if (angle_use_static_angle) {
+  group("libGLESv1_CM") {
+  }
+} else {
+  angle_shared_library("libGLESv1_CM") {
+    sources = libglesv1_cm_sources
+    output_name = "libGLESv1_CM${angle_libs_suffix}"
 
-  configs += [
-    ":angle_gl_visibility_config",
-    ":debug_annotations_config",
-    ":gl_prototypes",
-  ]
+    configs += [
+      ":angle_gl_visibility_config",
+      ":debug_annotations_config",
+      ":gl_prototypes",
+    ]
 
-  defines = []
+    defines = []
 
-  deps = [
-    ":includes",
-    ":libGLESv2",
-  ]
+    deps = [
+      ":includes",
+      ":libGLESv2",
+    ]
 
-  if (is_win) {
-    sources += [ "src/libGLESv1_CM/libGLESv1_CM.def" ]
-    deps += [ ":angle_version" ]
+    if (is_win) {
+      sources += [ "src/libGLESv1_CM/libGLESv1_CM.def" ]
+      deps += [ ":angle_version" ]
+    }
   }
 }
 
@@ -1607,13 +1625,19 @@ template("libEGL_shared_template") {
   }
 }
 
-libEGL_shared_template("libEGL") {
-  defines = [ "ANGLE_DISPATCH_LIBRARY=\"${_angle_glesv2_library_name}\"" ]
-  output_name = "libEGL"
-  gles_library = "libGLESv2"
-  sources = []
-  if (is_win) {
-    sources += [ "src/libEGL/libEGL_autogen.def" ]
+if (angle_use_static_angle) {
+  group("libEGL") {
+    public_deps = [ ":libEGL_static" ]
+  }
+} else {
+  libEGL_shared_template("libEGL") {
+    defines = [ "ANGLE_DISPATCH_LIBRARY=\"${_angle_glesv2_library_name}\"" ]
+    output_name = "libEGL"
+    gles_library = "libGLESv2"
+    sources = []
+    if (is_win) {
+      sources += [ "src/libEGL/libEGL_autogen.def" ]
+    }
   }
 }
 
@@ -1715,8 +1739,7 @@ if (angle_enable_cgl) {
   }
 }
 
-if (is_android && symbol_level != 0 &&
-    (angle_standalone || (build_with_chromium && !use_mold))) {
+if (angle_has_build && is_android && enable_compressed_symbols) {
   action_foreach("compressed_symbols") {
     sources = []
     foreach(_library, angle_libraries) {
@@ -1863,20 +1886,24 @@ if (install_prefix != "") {
 }
 
 group("angle") {
-  data_deps = [
-    ":libEGL",
-    ":libGLESv1_CM",
-    ":libGLESv2",
-  ]
-  if (angle_enable_vulkan) {
-    data_deps += [
-      ":libEGL_vulkan_secondaries",
-      ":libGLESv2_vulkan_secondaries",
+  if (defined(angle_use_static_angle) && angle_use_static_angle) {
+    public_deps = [ ":angle_static" ]
+  } else {
+    data_deps = [
+      ":libEGL",
+      ":libGLESv1_CM",
+      ":libGLESv2",
     ]
-  }
-  if (is_ios) {
-    # Need to bundle the libraries inside the .app.
-    deps = data_deps
+    if (angle_enable_vulkan) {
+      data_deps += [
+        ":libEGL_vulkan_secondaries",
+        ":libGLESv2_vulkan_secondaries",
+      ]
+    }
+    if (is_ios) {
+      # Need to bundle the libraries inside the .app.
+      deps = data_deps
+    }
   }
 }
 

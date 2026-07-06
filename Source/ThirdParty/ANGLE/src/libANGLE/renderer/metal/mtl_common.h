@@ -135,6 +135,7 @@ constexpr uint32_t kUniformBufferSettingOffsetMinAlignment = 4;
 constexpr uint32_t kIndexBufferOffsetAlignment       = 4;
 constexpr uint32_t kArgumentBufferOffsetAlignment    = kUniformBufferSettingOffsetMinAlignment;
 constexpr uint32_t kTextureToBufferBlittingAlignment = 256;
+constexpr size_t kConstantBufferOffsetAlignment = 32;  // Metal3 minimum constant buffer alignment.
 
 // Front end binding limits
 constexpr uint32_t kMaxGLSamplerBindings = 2 * kMaxShaderSamplers;

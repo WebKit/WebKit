@@ -4147,7 +4147,7 @@ angle::Result FramebufferVk::flushDepthStencilDeferredClear(ContextVk *contextVk
 
     vk::CommandResources resources;
     resources.onImageTransferWrite(renderTarget->getLevelIndex(), 1, renderTarget->getLayerIndex(),
-                                   1, image.getAspectFlags(), &image);
+                                   renderTarget->getLayerCount(), image.getAspectFlags(), &image);
     vk::OutsideRenderPassCommandBuffer *commandBuffer;
     ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(resources, &commandBuffer));
 
@@ -4156,7 +4156,7 @@ angle::Result FramebufferVk::flushDepthStencilDeferredClear(ContextVk *contextVk
     range.baseMipLevel            = image.toVkLevel(renderTarget->getLevelIndex()).get();
     range.levelCount              = 1;
     range.baseArrayLayer          = renderTarget->getLayerIndex();
-    range.layerCount              = 1;
+    range.layerCount              = renderTarget->getLayerCount();
 
     VkClearDepthStencilValue clearValue = {};
 

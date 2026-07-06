@@ -183,9 +183,6 @@ struct Extensions
     // GL_OES_depth32
     bool depth32OES = false;
 
-    // GL_NV_depth_buffer_float2
-    bool depthBufferFloat2NV = false;
-
     // GL_EXT_depth_clamp
     bool depthClampEXT = false;
 

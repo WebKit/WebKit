@@ -60,6 +60,24 @@ TEST(PrintSystemInfoTest, GetSystemInfoNoCrashOnInvalidDisplay)
     {
         SetEnvironmentVar(kX11DisplayEnvVar, previous_display.c_str());
     }
+#elif defined(SYSTEM_INFO_IMPLEMENTED) && defined(ANGLE_USE_WAYLAND)
+    const char kWaylandDisplayEnvVar[] = "WAYLAND_DISPLAY";
+    const char kInvalidDisplay[]       = "wayland-123";
+    std::string previous_display       = GetEnvironmentVar(kWaylandDisplayEnvVar);
+    SetEnvironmentVar(kWaylandDisplayEnvVar, kInvalidDisplay);
+    SystemInfo info;
+
+    // This should not crash.
+    GetSystemInfo(&info);
+
+    if (previous_display.empty())
+    {
+        UnsetEnvironmentVar(kWaylandDisplayEnvVar);
+    }
+    else
+    {
+        SetEnvironmentVar(kWaylandDisplayEnvVar, previous_display.c_str());
+    }
 #elif defined(SYSTEM_INFO_IMPLEMENTED)
     std::cerr << "GetSystemInfo not implemented, skipping" << std::endl;
 #else

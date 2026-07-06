@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 411
+#define ANGLE_SH_VERSION 412
 
 enum ShShaderSpec
 {
@@ -1084,6 +1084,9 @@ enum ReservedIds
     kIdIntSeven,
 
     kIdFloatTwo,
+
+    kIdVec4Zero,
+    kIdIVec4Zero,
 
     // Type pointers
     kIdIntInputTypePointer,

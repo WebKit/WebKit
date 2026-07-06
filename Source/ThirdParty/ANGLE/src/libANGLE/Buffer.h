@@ -70,7 +70,6 @@ class BufferState final : angle::NonCopyable
     GLint64 getMapOffset() const { return mMapOffset; }
     GLint64 getMapLength() const { return mMapLength; }
     GLint64 getSize() const { return mSize; }
-    bool isBoundForTransformFeedback() const { return mTransformFeedbackIndexedBindingCount != 0; }
     std::string getLabel() const { return mLabel; }
     WebGLBufferType getWebGLType() const { return mWebGLType; }
 
@@ -90,6 +89,7 @@ class BufferState final : angle::NonCopyable
     int mBindingCount;
     int mTransformFeedbackIndexedBindingCount;
     int mTransformFeedbackGenericBindingCount;
+    int mActiveTransformFeedbackCount;
     GLboolean mImmutable;
     GLbitfield mStorageExtUsageFlags;
     GLboolean mExternal;
@@ -190,15 +190,8 @@ class Buffer final : public ThreadSafeRefCountObject<BufferID>,
 
     rx::BufferImpl *getImplementation() const { return mImpl; }
 
-    // Note: we pass "isWebGL" to this function to clarify it's only valid if WebGL is enabled.
-    // We pass the boolean flag instead of the pointer because this header can't read Context.h.
-    ANGLE_INLINE bool hasWebGLXFBBindingConflict(bool isWebGL) const
+    ANGLE_INLINE bool isBoundToTFAndNonTFSimultaneously() const
     {
-        if (!isWebGL)
-        {
-            return false;
-        }
-
         // The transform feedback generic binding point is not an indexed binding point but it also
         // does not count as a non-transform-feedback use of the buffer, so we subtract it from the
         // binding count when checking if the buffer is bound to a non-transform-feedback location.
@@ -208,8 +201,21 @@ class Buffer final : public ThreadSafeRefCountObject<BufferID>,
                    mState.mBindingCount - mState.mTransformFeedbackGenericBindingCount;
     }
 
+    // If this buffer is bound as a transform feedback output, even if that transform feedback is
+    // paused and not the current transform feedback.
+    ANGLE_INLINE bool isBoundToActiveTransformFeedback() const
+    {
+        return mState.mActiveTransformFeedbackCount > 0;
+    }
+
+    ANGLE_INLINE bool hasTFBBindingConflict() const
+    {
+        return isBoundToTFAndNonTFSimultaneously() || isBoundToActiveTransformFeedback();
+    }
+
     bool isDoubleBoundForTransformFeedback() const;
     void onTFBindingChanged(const Context *context, bool bound, bool indexed);
+    void onTFActiveChanged(const Context *context, bool active);
     void onNonTFBindingChanged(int incr) { mState.mBindingCount += incr; }
     angle::Result getSubData(const gl::Context *context,
                              GLintptr offset,

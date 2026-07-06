@@ -66,7 +66,6 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_EXT_debug_marker"] = esOnlyExtension(&Extensions::debugMarkerEXT);
         map["GL_OES_depth24"] = esOnlyExtension(&Extensions::depth24OES);
         map["GL_OES_depth32"] = esOnlyExtension(&Extensions::depth32OES);
-        map["GL_NV_depth_buffer_float2"] = enableableExtension(&Extensions::depthBufferFloat2NV);
         map["GL_EXT_depth_clamp"] = enableableExtension(&Extensions::depthClampEXT);
         map["GL_ANGLE_depth_texture"] = esOnlyExtension(&Extensions::depthTextureANGLE);
         map["GL_OES_depth_texture"] = esOnlyExtension(&Extensions::depthTextureOES);

@@ -520,10 +520,10 @@ ANGLE_INLINE VertexArray::DirtyBindingBits VertexArray::bindVertexBufferImpl(con
             boundBuffer->addRef();
             boundBuffer->onNonTFBindingChanged(1);
             boundBuffer->addVertexArrayBinding(context, bindingIndex);
-            if (context->isWebGL())
+            if (context->isWebGL() || context->isHardenedContext())
             {
                 mCachedBufferPropertyTransformFeedbackConflict.set(
-                    bindingIndex, boundBuffer->hasWebGLXFBBindingConflict(true));
+                    bindingIndex, boundBuffer->hasTFBBindingConflict());
             }
             mBufferBindingMask.set(bindingIndex);
             mState.mClientMemoryAttribsMask &= ~binding->getBoundAttributesMask();
@@ -531,10 +531,7 @@ ANGLE_INLINE VertexArray::DirtyBindingBits VertexArray::bindVertexBufferImpl(con
         }
         else
         {
-            if (context->isWebGL())
-            {
-                mCachedBufferPropertyTransformFeedbackConflict.set(bindingIndex, false);
-            }
+            mCachedBufferPropertyTransformFeedbackConflict.set(bindingIndex, false);
             mState.mClientMemoryAttribsMask |= binding->getBoundAttributesMask();
             mCachedBufferPropertyMapped.set(bindingIndex, false);
             mCachedBufferPropertyMutableOrImpersistent.set(bindingIndex, false);
@@ -763,11 +760,11 @@ void VertexArray::onBind(const Context *context)
         }
     }
 
-    if (context->isWebGL())
+    if (context->isWebGL() || context->isHardenedContext())
     {
         for (size_t bindingIndex : bufferBindingMask)
         {
-            bool hasConflict = mVertexArrayBuffers[bindingIndex]->hasWebGLXFBBindingConflict(true);
+            bool hasConflict = mVertexArrayBuffers[bindingIndex]->hasTFBBindingConflict();
             mCachedBufferPropertyTransformFeedbackConflict.set(bindingIndex, hasConflict);
         }
     }
@@ -866,9 +863,9 @@ void VertexArray::onSharedBufferBind(const Context *context,
         }
     }
 
-    if (context->isWebGL())
+    if (context->isWebGL() || context->isHardenedContext())
     {
-        if (buffer->hasWebGLXFBBindingConflict(true))
+        if (buffer->hasTFBBindingConflict())
         {
             mCachedBufferPropertyTransformFeedbackConflict |= vertexBufferBindingMask;
         }
@@ -916,11 +913,11 @@ void VertexArray::onBufferChanged(const Context *context,
             break;
 
         case angle::SubjectMessage::BindingChanged:
-            if (context->isWebGL())
+            if (context->isWebGL() || context->isHardenedContext())
             {
                 bufferBindingMask.reset(kElementArrayBufferIndex);
 
-                bool hasConflict = buffer->hasWebGLXFBBindingConflict(true);
+                bool hasConflict = buffer->hasTFBBindingConflict();
                 if (hasConflict)
                 {
                     mCachedBufferPropertyTransformFeedbackConflict |= bufferBindingMask;

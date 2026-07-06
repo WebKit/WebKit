@@ -1198,10 +1198,10 @@ TEST_P(D3DTextureTestMS, CopyTexSubImage2DTest)
     eglDestroySurface(display, pbuffer);
 }
 
-class D3DTextureClearTest : public D3DTextureTest
+class D3DTextureClearTestES3 : public D3DTextureTest
 {
   protected:
-    D3DTextureClearTest() : D3DTextureTest() {}
+    D3DTextureClearTestES3() : D3DTextureTest() {}
 
     void RunClearTest(DXGI_FORMAT format)
     {
@@ -1327,42 +1327,42 @@ class D3DTextureClearTest : public D3DTextureTest
     }
 };
 
-TEST_P(D3DTextureClearTest, ClearRGBA8)
+TEST_P(D3DTextureClearTestES3, ClearRGBA8)
 {
     RunClearTest(DXGI_FORMAT_R8G8B8A8_UNORM);
 }
 
-TEST_P(D3DTextureClearTest, ClearBGRA8)
+TEST_P(D3DTextureClearTestES3, ClearBGRA8)
 {
     RunClearTest(DXGI_FORMAT_B8G8R8A8_UNORM);
 }
 
-TEST_P(D3DTextureClearTest, ClearR8)
+TEST_P(D3DTextureClearTestES3, ClearR8)
 {
     RunClearTest(DXGI_FORMAT_R8_UNORM);
 }
 
-TEST_P(D3DTextureClearTest, ClearRG8)
+TEST_P(D3DTextureClearTestES3, ClearRG8)
 {
     RunClearTest(DXGI_FORMAT_R8G8_UNORM);
 }
 
-TEST_P(D3DTextureClearTest, ClearRGB10A2)
+TEST_P(D3DTextureClearTestES3, ClearRGB10A2)
 {
     RunClearTest(DXGI_FORMAT_R10G10B10A2_UNORM);
 }
 
-TEST_P(D3DTextureClearTest, ClearRGBAF16)
+TEST_P(D3DTextureClearTestES3, ClearRGBAF16)
 {
     RunClearTest(DXGI_FORMAT_R16G16B16A16_FLOAT);
 }
 
-TEST_P(D3DTextureClearTest, ClearR16)
+TEST_P(D3DTextureClearTestES3, ClearR16)
 {
     RunClearTest(DXGI_FORMAT_R16_UNORM);
 }
 
-TEST_P(D3DTextureClearTest, ClearRG16)
+TEST_P(D3DTextureClearTestES3, ClearRG16)
 {
     RunClearTest(DXGI_FORMAT_R16G16_UNORM);
 }
@@ -1627,7 +1627,7 @@ TEST_P(D3DTextureTest, TextureArray)
     d3d11Texture->Release();
 }
 
-class D3DTextureYUVTest : public D3DTextureTest
+class D3DTextureYUVTestES3 : public D3DTextureTest
 {
   protected:
     void CreateAndBindImageToTexture(EGLDisplay display,
@@ -2371,63 +2371,63 @@ class D3DTextureYUVTest : public D3DTextureTest
 
 // Test that an NV12 D3D11 texture can be imported as two R8 and RG8 EGLImages and the resulting GL
 // textures can be sampled from.
-TEST_P(D3DTextureYUVTest, NV12TextureImageSampler)
+TEST_P(D3DTextureYUVTestES3, NV12TextureImageSampler)
 {
     RunYUVSamplerTest(DXGI_FORMAT_NV12);
 }
 
-// ANGLE ES2/D3D11 supports GL_EXT_texture_norm16 even though the extension spec says it's ES3 only.
-// Test P010 on ES2 since Chromium's Skia context is ES2 and it uses P010 for HDR video playback.
-TEST_P(D3DTextureYUVTest, P010TextureImageSampler)
+// Test that a P010 D3D11 texture can be imported as two R16 and RG16 EGLImages and the resulting GL
+// textures can be sampled from.
+TEST_P(D3DTextureYUVTestES3, P010TextureImageSampler)
 {
     RunYUVSamplerTest(DXGI_FORMAT_P010);
 }
 
 // Same as above, but for P016. P016 doesn't seem to be supported on all GPUs so it might be skipped
 // more often than P010 and NV12 e.g. on the NVIDIA GTX 1050 Ti.
-TEST_P(D3DTextureYUVTest, P016TextureImageSampler)
+TEST_P(D3DTextureYUVTestES3, P016TextureImageSampler)
 {
     RunYUVSamplerTest(DXGI_FORMAT_P016);
 }
 
 // Test that an NV12 D3D11 texture can be imported as two R8 and RG8 EGLImages and rendered to as
 // framebuffer attachments.
-TEST_P(D3DTextureYUVTest, NV12TextureImageRender)
+TEST_P(D3DTextureYUVTestES3, NV12TextureImageRender)
 {
     RunYUVRenderTest(DXGI_FORMAT_NV12);
 }
 
-// ANGLE ES2/D3D11 supports GL_EXT_texture_norm16 even though the extension spec says it's ES3 only.
-// Test P010 on ES2 since Chromium's Skia context is ES2 and it uses P010 for HDR video playback.
-TEST_P(D3DTextureYUVTest, P010TextureImageRender)
+// Test that a P010 D3D11 texture can be imported as two R16 and RG16 EGLImages and rendered to as
+// framebuffer attachments.
+TEST_P(D3DTextureYUVTestES3, P010TextureImageRender)
 {
     RunYUVRenderTest(DXGI_FORMAT_P010);
 }
 
 // Same as above, but for P016. P016 doesn't seem to be supported on all GPUs so it might be skipped
 // more often than P010 and NV12 e.g. on the NVIDIA GTX 1050 Ti.
-TEST_P(D3DTextureYUVTest, P016TextureImageRender)
+TEST_P(D3DTextureYUVTestES3, P016TextureImageRender)
 {
     RunYUVRenderTest(DXGI_FORMAT_P016);
 }
 
 // Test that an NV12 D3D11 texture can be imported as two R8 and RG8 EGLImages and rendered to as
 // framebuffer attachments and then read from as individual planes.
-TEST_P(D3DTextureYUVTest, NV12TextureImageReadPixel)
+TEST_P(D3DTextureYUVTestES3, NV12TextureImageReadPixel)
 {
     RunYUVReadPixelTest(DXGI_FORMAT_NV12);
 }
 
-// ANGLE ES2/D3D11 supports GL_EXT_texture_norm16 even though the extension spec says it's ES3 only.
-// Test P010 on ES2 since Chromium's Skia context is ES2 and it uses P010 for HDR video playback.
-TEST_P(D3DTextureYUVTest, P010TextureImageReadPixel)
+// Test that a P010 D3D11 texture can be imported as two R16 and RG16 EGLImages and rendered to as
+// framebuffer attachments and then read from as individual planes.
+TEST_P(D3DTextureYUVTestES3, P010TextureImageReadPixel)
 {
     RunYUVReadPixelTest(DXGI_FORMAT_P010);
 }
 
 // Same as above, but for P016. P016 doesn't seem to be supported on all GPUs so it might be skipped
 // more often than P010 and NV12 e.g. on the NVIDIA GTX 1050 Ti.
-TEST_P(D3DTextureYUVTest, P016TextureImageReadPixel)
+TEST_P(D3DTextureYUVTestES3, P016TextureImageReadPixel)
 {
     RunYUVReadPixelTest(DXGI_FORMAT_P016);
 }
@@ -2435,7 +2435,7 @@ TEST_P(D3DTextureYUVTest, P016TextureImageReadPixel)
 // Test that an NV12 D3D11 texture can be imported as two R8 and RG8 EGLImages and write data to
 // them through glTexSubImage2D and then rendered to as framebuffer attachments and then read from
 // as individual planes.
-TEST_P(D3DTextureYUVTest, NV12TextureImageWritePixel)
+TEST_P(D3DTextureYUVTestES3, NV12TextureImageWritePixel)
 {
     RunYUVWritePixelTest<uint8_t>(DXGI_FORMAT_NV12);
 }
@@ -2443,7 +2443,7 @@ TEST_P(D3DTextureYUVTest, NV12TextureImageWritePixel)
 // Test that an P010 D3D11 texture can be imported as two R16 and RG16 EGLImages and write data to
 // them through glTexSubImage2D and then rendered to as framebuffer attachments and then read from
 // as individual planes.
-TEST_P(D3DTextureYUVTest, P010TextureImageWritePixel)
+TEST_P(D3DTextureYUVTestES3, P010TextureImageWritePixel)
 {
     RunYUVWritePixelTest<uint16_t>(DXGI_FORMAT_P010);
 }
@@ -2451,7 +2451,7 @@ TEST_P(D3DTextureYUVTest, P010TextureImageWritePixel)
 // Test that an P016 D3D11 texture can be imported as two R16 and RG16 EGLImages and write data to
 // them through glTexSubImage2D and then rendered to as framebuffer attachments and then read from
 // as individual planes.
-TEST_P(D3DTextureYUVTest, P016TextureImageWritePixel)
+TEST_P(D3DTextureYUVTestES3, P016TextureImageWritePixel)
 {
     RunYUVWritePixelTest<uint16_t>(DXGI_FORMAT_P016);
 }
@@ -2459,8 +2459,8 @@ TEST_P(D3DTextureYUVTest, P016TextureImageWritePixel)
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2(D3DTextureTest);
-ANGLE_INSTANTIATE_TEST_ES2(D3DTextureClearTest);
-ANGLE_INSTANTIATE_TEST_ES2(D3DTextureYUVTest);
+ANGLE_INSTANTIATE_TEST_ES3(D3DTextureClearTestES3);
+ANGLE_INSTANTIATE_TEST_ES3(D3DTextureYUVTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(D3DTextureTestES3);
 // D3D Debug device reports an error. http://anglebug.com/40096593
 // ANGLE_INSTANTIATE_TEST(D3DTextureTestMS, ES2_D3D11());

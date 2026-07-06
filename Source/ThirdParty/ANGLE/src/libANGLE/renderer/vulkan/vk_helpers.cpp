@@ -950,6 +950,9 @@ void CommandBufferHelperCommon::resetImpl(ErrorContext *context)
 
     ASSERT(mRefCountedEvents.empty());
     ASSERT(mRefCountedEventCollector.empty());
+
+    ASSERT(mPipelineBarriers.isEmpty());
+    ASSERT(mEventBarriers.isEmpty());
 }
 
 template <class DerivedT>
@@ -1241,6 +1244,18 @@ angle::Result OutsideRenderPassCommandBufferHelper::reset(
     mQueueSerial = QueueSerial();
 
     return initializeCommandBuffer(context);
+}
+
+void OutsideRenderPassCommandBufferHelper::abandon(
+    ErrorContext *context,
+    SecondaryCommandBufferCollector *commandBufferCollector)
+{
+    // reset call assumes we have flushed out barriers. But this may not be the case when error
+    // happened.
+    mPipelineBarriers.reset();
+    mEventBarriers.reset();
+
+    (void)reset(context, commandBufferCollector);
 }
 
 void OutsideRenderPassCommandBufferHelper::imageRead(Context *context,
@@ -1542,6 +1557,17 @@ angle::Result RenderPassCommandBufferHelper::reset(
     mQueueSerial = QueueSerial();
 
     return initializeCommandBuffer(context);
+}
+
+void RenderPassCommandBufferHelper::abandon(ErrorContext *context,
+                                            SecondaryCommandBufferCollector *commandBufferCollector)
+{
+    // reset call assumes we have flushed out barriers. But this may not be the case when error
+    // happened.
+    mPipelineBarriers.reset();
+    mEventBarriers.reset();
+
+    (void)reset(context, commandBufferCollector);
 }
 
 void RenderPassCommandBufferHelper::imageRead(ContextVk *contextVk,
@@ -4489,7 +4515,7 @@ VkResult QueryHelper::getResultImpl(ContextVk *contextVk,
 
     VkDevice device = contextVk->getDevice();
     VkResult result = getQueryPool().getResults(device, mQuery, mQueryCount, sizeof(results),
-                                                results.data(), sizeof(uint64_t), flags);
+                                                results.data(), resultOut->getDataSize(), flags);
 
     if (result == VK_SUCCESS)
     {
@@ -8811,7 +8837,8 @@ angle::Result ImageHelper::updateSubresourceOnHost(ContextVk *contextVk,
 
 angle::Result ImageHelper::reformatStagedBufferUpdates(ContextVk *contextVk,
                                                        angle::FormatID srcFormatID,
-                                                       angle::FormatID dstFormatID)
+                                                       angle::FormatID dstFormatID,
+                                                       gl::TextureType dstTextureType)
 {
     const angle::Format &srcFormat = angle::Format::Get(srcFormatID);
     const angle::Format &dstFormat = angle::Format::Get(dstFormatID);
@@ -8838,7 +8865,7 @@ angle::Result ImageHelper::reformatStagedBufferUpdates(ContextVk *contextVk,
                 const size_t srcDataDepthPitch = srcDataRowPitch * copy.imageExtent.height;
                 const size_t dstDataDepthPitch = dstDataRowPitch * copy.imageExtent.height;
 
-                const uint32_t depthOrLayerCount = mImageType == VK_IMAGE_TYPE_3D
+                const uint32_t depthOrLayerCount = dstTextureType == gl::TextureType::_3D
                                                        ? copy.imageExtent.depth
                                                        : copy.imageSubresource.layerCount;
 
@@ -11321,8 +11348,10 @@ angle::Result ImageHelper::readPixelsImpl(ContextVk *contextVk,
     Renderer *renderer = contextVk->getRenderer();
 
     bool isExternalFormat = getExternalFormat() != 0;
-    ASSERT(!isExternalFormat || (mActualFormatID >= angle::FormatID::EXTERNAL0 &&
-                                 mActualFormatID <= angle::FormatID::EXTERNAL7));
+
+    // Vulkan spec says that mYcbcrConversionDesc is always set for samplable external-format
+    // images
+    ASSERT(!isExternalFormat || mYcbcrConversionDesc.valid());
 
     // If the source image is multisampled, we need to resolve it into a temporary image before
     // performing a readback.

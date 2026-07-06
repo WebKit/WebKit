@@ -842,6 +842,16 @@ class PipelineBarrierArray final
 
     void addDiagnosticsString(std::ostringstream &out) const;
 
+    bool isEmpty() const { return mBarrierMask.none(); }
+    void reset()
+    {
+        for (auto &barrier : mBarriers)
+        {
+            barrier.reset();
+        }
+        mBarrierMask.reset();
+    }
+
   private:
     angle::PackedEnumMap<PipelineStage, PipelineBarrier> mBarriers;
     PipelineStagesMask mBarrierMask;
@@ -1588,6 +1598,8 @@ class OutsideRenderPassCommandBufferHelper final : public CommandBufferHelperCom
 
     angle::Result reset(ErrorContext *context,
                         SecondaryCommandBufferCollector *commandBufferCollector);
+    // abandon is the reset under error handling situation.
+    void abandon(ErrorContext *context, SecondaryCommandBufferCollector *commandBufferCollector);
 
     static constexpr bool ExecutesInline()
     {
@@ -1823,6 +1835,8 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
 
     angle::Result reset(ErrorContext *context,
                         SecondaryCommandBufferCollector *commandBufferCollector);
+    // abandon is the reset under error handling situation.
+    void abandon(ErrorContext *context, SecondaryCommandBufferCollector *commandBufferCollector);
 
     static constexpr bool ExecutesInline() { return RenderPassCommandBuffer::ExecutesInline(); }
 
@@ -2952,7 +2966,8 @@ class ImageHelper final : public Resource, public angle::Subject
                                           uint32_t layerCount);
     angle::Result reformatStagedBufferUpdates(ContextVk *contextVk,
                                               angle::FormatID srcFormatID,
-                                              angle::FormatID dstFormatID);
+                                              angle::FormatID dstFormatID,
+                                              gl::TextureType dstTextureType);
     bool hasStagedImageUpdatesWithMismatchedFormat(gl::LevelIndex levelStart,
                                                    gl::LevelIndex levelEnd,
                                                    angle::FormatID formatID) const;

@@ -18,7 +18,7 @@
 
 // static
 #if defined(ANGLE_USE_X11) || defined(ANGLE_USE_WAYLAND)
-OSWindow *OSWindow::New()
+OSWindow *OSWindow::New(void *nativeDisplay)
 {
 #    if defined(ANGLE_USE_X11)
     // Prefer X11
@@ -31,7 +31,7 @@ OSWindow *OSWindow::New()
 #    if defined(ANGLE_USE_WAYLAND)
     if (IsWaylandWindowAvailable())
     {
-        return new WaylandWindow();
+        return new WaylandWindow(nativeDisplay);
     }
 #    endif
 

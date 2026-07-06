@@ -3933,14 +3933,7 @@ Extensions Context::generateSupportedExtensions() const
         supportedExtensions.textureFormatSRGBOverrideEXT            = false;
         supportedExtensions.renderSharedExponentQCOM                = false;
         supportedExtensions.renderSnormEXT                          = false;
-
-        // Support GL_EXT_texture_norm16 on non-WebGL ES2 contexts. This is needed for R16/RG16
-        // texturing for HDR video playback in Chromium which uses ES2 for compositor contexts.
-        // Remove this workaround after Chromium migrates to ES3 for compositor contexts.
-        if (mWebGLContext || getClientVersion() < ES_2_0)
-        {
-            supportedExtensions.textureNorm16EXT = false;
-        }
+        supportedExtensions.textureNorm16EXT                        = false;
 
         // Requires immutable textures
         supportedExtensions.yuvInternalFormatANGLE = false;
@@ -4307,12 +4300,18 @@ void Context::initCaps()
         }                                      \
     } while (0)
 
-    // Apply/Verify implementation limits
-    ANGLE_LIMIT_CAP(caps->maxDrawBuffers, IMPLEMENTATION_MAX_DRAW_BUFFERS);
+    // Apply/Verify implementation limits.
+    //
+    // GLES requires that draw buffers are mapped to color attachments with an identical index (in
+    // glDrawBuffers), and so draw buffers and color attachments are frequently interchanged in the
+    // codebase.  The same limit is thus used for both.
+    const GLint maxDrawBuffersAndColorAttachments = std::min<GLint>(
+        std::min(caps->maxDrawBuffers, caps->maxColorAttachments), IMPLEMENTATION_MAX_DRAW_BUFFERS);
+    ANGLE_LIMIT_CAP(caps->maxDrawBuffers, maxDrawBuffersAndColorAttachments);
     ANGLE_LIMIT_CAP(caps->maxFramebufferWidth, IMPLEMENTATION_MAX_FRAMEBUFFER_SIZE);
     ANGLE_LIMIT_CAP(caps->maxFramebufferHeight, IMPLEMENTATION_MAX_FRAMEBUFFER_SIZE);
     ANGLE_LIMIT_CAP(caps->maxRenderbufferSize, IMPLEMENTATION_MAX_RENDERBUFFER_SIZE);
-    ANGLE_LIMIT_CAP(caps->maxColorAttachments, IMPLEMENTATION_MAX_DRAW_BUFFERS);
+    ANGLE_LIMIT_CAP(caps->maxColorAttachments, maxDrawBuffersAndColorAttachments);
     ANGLE_LIMIT_CAP(caps->maxVertexAttributes, MAX_VERTEX_ATTRIBS);
     if (mDisplay->getFrontendFeatures().forceMinimumMaxVertexAttributes.enabled &&
         getClientVersion() <= Version(2, 0))

@@ -285,7 +285,6 @@
     void framebufferParameteriMESA(GLenum target, GLenum pname, GLint param);                      \
     void getFramebufferParameterivMESA(GLenum target, GLenum pname, GLint *params);                \
     /* GL_NV_EGL_stream_consumer_external */                                                       \
-    /* GL_NV_depth_buffer_float2 */                                                                \
     /* GL_NV_fence */                                                                              \
     void deleteFencesNV(GLsizei n, const FenceNVID *fencesPacked);                                 \
     void finishFenceNV(FenceNVID fencePacked);                                                     \

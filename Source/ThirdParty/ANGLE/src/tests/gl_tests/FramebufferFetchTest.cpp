@@ -7245,6 +7245,141 @@ void main (void)
     EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
 }
 
+// First draw with D24S8 populates the stencil
+// descriptor slot with a real VkImageView. After deleting that renderbuffer
+// and re-binding a depth-only D24 attachment, test that the stale VkImageView is not
+// re-submitted to vkUpdateDescriptorSets and dereferenced (use-after-free).
+TEST_P(FramebufferFetchES31, StencilFetchDepthOnlyAttachmentStale)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+
+    const char kFS[] = R"(#version 310 es
+#extension GL_ARM_shader_framebuffer_fetch_depth_stencil : require
+
+highp out vec4 color;
+
+void main()
+{
+    color = vec4(float(gl_LastFragStencilARM) / 255.0, 0, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Passthrough(), kFS);
+
+    GLRenderbuffer color;
+    GLFramebuffer fbo;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, color);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kViewportWidth, kViewportHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color);
+
+    // Phase 1: D24S8 - populate the stencil input-attachment descriptor slot
+    // with a real VkImageView handle.
+    GLuint ds = 0;
+    glGenRenderbuffers(1, &ds);
+    glBindRenderbuffer(GL_RENDERBUFFER, ds);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kViewportWidth, kViewportHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, ds);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    glClearDepthf(0.5f);
+    glClearStencil(0x42);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
+    glFinish();
+    ASSERT_GL_NO_ERROR();
+
+    // Detach and destroy the D24S8 renderbuffer. After glFinish() the
+    // VkImageView backing the stencil aspect will be freed.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+    glDeleteRenderbuffers(1, &ds);
+    glFinish();
+
+    // Phase 2: Add a depth-only attachment to framebuffer.
+    GLRenderbuffer depth;
+    glBindRenderbuffer(GL_RENDERBUFFER, depth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, kViewportWidth, kViewportHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    glClearDepthf(0.5f);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    // Test that vkUpdateDescriptorSets is not called with the freed VkImageView -> UAF.
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
+    glFinish();
+    ASSERT_GL_NO_ERROR();
+}
+
+// Similar to StencilFetchDepthOnlyAttachmentStale but the phase 2 uses depth framebuffer fetch on a
+// framebuffer with stencil-only attachment
+TEST_P(FramebufferFetchES31, DepthFetchStencilOnlyAttachmentStale)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+
+    const char kFS[] = R"(#version 310 es
+#extension GL_ARM_shader_framebuffer_fetch_depth_stencil : require
+
+highp out vec4 color;
+
+void main()
+{
+    color = vec4(gl_LastFragDepthARM, 0, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Passthrough(), kFS);
+
+    GLRenderbuffer color;
+    GLFramebuffer fbo;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, color);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kViewportWidth, kViewportHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color);
+
+    // Phase 1: D24S8 - populate the stencil input-attachment descriptor slot
+    // with a real VkImageView handle.
+    GLuint ds = 0;
+    glGenRenderbuffers(1, &ds);
+    glBindRenderbuffer(GL_RENDERBUFFER, ds);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kViewportWidth, kViewportHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, ds);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    glClearDepthf(0.5f);
+    glClearStencil(0x42);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
+    glFinish();
+    ASSERT_GL_NO_ERROR();
+
+    // Detach and destroy the D24S8 renderbuffer. After glFinish() the
+    // VkImageView backing the depth aspect will be freed.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+    glDeleteRenderbuffers(1, &ds);
+    glFinish();
+
+    // Phase 2: Add a stencil-only attachment to framebuffer.
+    GLRenderbuffer stencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, stencil);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, kViewportWidth, kViewportHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, stencil);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    glClearStencil(0x42);
+    glClear(GL_STENCIL_BUFFER_BIT);
+    // Test that vkUpdateDescriptorSets is not called with the freed VkImageView -> UAF.
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
+    glFinish();
+    ASSERT_GL_NO_ERROR();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FramebufferFetchES31);
 ANGLE_INSTANTIATE_TEST_ES31_AND(FramebufferFetchES31,
                                 ES31_VULKAN().disable(Feature::SupportsSPIRV14));

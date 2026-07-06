@@ -845,7 +845,7 @@ void Win32Window::signalTestEvent()
 }
 
 // static
-OSWindow *OSWindow::New()
+OSWindow *OSWindow::New(void * /*nativeDisplay*/)
 {
     return new Win32Window();
 }

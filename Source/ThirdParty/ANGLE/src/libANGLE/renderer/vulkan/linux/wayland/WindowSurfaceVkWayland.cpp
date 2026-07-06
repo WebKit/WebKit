@@ -11,6 +11,7 @@
 
 #include "libANGLE/renderer/vulkan/vk_renderer.h"
 
+#include <wayland-client.h>
 #include <wayland-egl-backend.h>
 
 namespace rx
@@ -25,9 +26,8 @@ void WindowSurfaceVkWayland::ResizeCallback(wl_egl_window *eglWindow, void *payl
 }
 
 WindowSurfaceVkWayland::WindowSurfaceVkWayland(const egl::SurfaceState &surfaceState,
-                                               EGLNativeWindowType window,
-                                               wl_display *display)
-    : WindowSurfaceVk(surfaceState, window), mWaylandDisplay(display)
+                                               EGLNativeWindowType window)
+    : WindowSurfaceVk(surfaceState, window)
 {
     wl_egl_window *eglWindow   = reinterpret_cast<wl_egl_window *>(window);
     eglWindow->resize_callback = WindowSurfaceVkWayland::ResizeCallback;
@@ -38,19 +38,27 @@ WindowSurfaceVkWayland::WindowSurfaceVkWayland(const egl::SurfaceState &surfaceS
 
 angle::Result WindowSurfaceVkWayland::createSurfaceVk(vk::ErrorContext *context)
 {
+    wl_egl_window *eglWindow = reinterpret_cast<wl_egl_window *>(mNativeWindowType);
+
+    // VkWaylandSurfaceCreateInfoKHR::display and ::surface must share a
+    // wl_display connection -- vkCreateSwapchainKHR calls wl_proxy_set_queue
+    // which asserts proxy->display == queue->display. Derive the display
+    // from the surface so this holds structurally regardless of how the EGL
+    // display was initialized.
+    wl_display *surfaceDisplay = static_cast<wl_display *>(
+        wl_proxy_get_display(reinterpret_cast<wl_proxy *>(eglWindow->surface)));
+
     ANGLE_VK_CHECK(context,
                    vkGetPhysicalDeviceWaylandPresentationSupportKHR(
                        context->getRenderer()->getPhysicalDevice(),
-                       context->getRenderer()->getQueueFamilyIndex(), mWaylandDisplay),
+                       context->getRenderer()->getQueueFamilyIndex(), surfaceDisplay),
                    VK_ERROR_INITIALIZATION_FAILED);
-
-    wl_egl_window *eglWindow = reinterpret_cast<wl_egl_window *>(mNativeWindowType);
 
     VkWaylandSurfaceCreateInfoKHR createInfo = {};
 
     createInfo.sType   = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
     createInfo.flags   = 0;
-    createInfo.display = mWaylandDisplay;
+    createInfo.display = surfaceDisplay;
     createInfo.surface = eglWindow->surface;
     ANGLE_VK_TRY(context, vkCreateWaylandSurfaceKHR(context->getRenderer()->getInstance(),
                                                     &createInfo, nullptr, &mSurface));

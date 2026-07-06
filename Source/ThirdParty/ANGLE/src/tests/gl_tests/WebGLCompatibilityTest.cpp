@@ -4590,6 +4590,36 @@ void main() {
     drawBuffersFeedbackLoop(program, {{GL_COLOR_ATTACHMENT0, GL_NONE}}, GL_INVALID_OPERATION);
 }
 
+// WebGL requires that all framebuffer attachments are unique
+TEST_P(WebGL2CompatibilityTest, UniqueFramebufferAttachments)
+{
+    GLTexture tex0;
+    FillTexture2D(tex0, 8, 8, GLColor::red, 0, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex0, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, tex0, 0);
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_UNSUPPORTED, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+}
+
+// Hardened contexts also require that all framebuffer color attachments are unique
+TEST_P(HardenedContextTest, UniqueFramebufferAttachments)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+
+    GLTexture tex0;
+    FillTexture2D(tex0, 8, 8, GLColor::red, 0, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex0, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, tex0, 0);
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_UNSUPPORTED, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+}
+
 // This tests that texture base level for immutable textures is clamped to the valid range, unlike
 // for non-immutable textures, for purposes of validation. Related to WebGL test
 // conformance2/textures/misc/immutable-tex-render-feedback.html
@@ -6252,6 +6282,49 @@ TEST_P(WebGL2CompatibilityTest, TransformFeedbackBufferModification)
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
+// Modifying a buffer that is part of an active transform feedback object (even when that transform
+// feedback is paused and not current) is invalid.
+TEST_P(WebGL2CompatibilityTest, TransformFeedbackBufferModificationWhileNotCurrent)
+{
+    constexpr char kVS[] = R"(attribute float a; varying float b; void main() { b = a; })";
+    constexpr char kFS[] = R"(void main(){})";
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    static const char *varyings[] = {"b"};
+    glTransformFeedbackVaryings(program, 1, varyings, GL_SEPARATE_ATTRIBS);
+    glLinkProgram(program);
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    // Bind the transform feedback varyings to non-overlapping regions of the same buffer.
+    GLTransformFeedback tf1;
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tf1);
+
+    GLBuffer buffer;
+    glBindBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buffer, 0, 4);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, 8, nullptr, GL_STATIC_DRAW);
+    glBeginTransformFeedback(GL_POINTS);
+    ASSERT_GL_NO_ERROR();
+
+    glPauseTransformFeedback();
+
+    GLTransformFeedback tf2;
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tf2);
+    ASSERT_GL_NO_ERROR();
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    ASSERT_GL_NO_ERROR();
+
+    glBufferData(GL_ARRAY_BUFFER, 8, nullptr, GL_STATIC_DRAW);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    constexpr uint8_t data[8] = {0};
+    glBufferSubData(GL_ARRAY_BUFFER, 0, 8, data);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glMapBufferRange(GL_ARRAY_BUFFER, 0, 8, GL_MAP_READ_BIT);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
 // Check the return type of a given parameter upon getting the active uniforms.
 TEST_P(WebGL2CompatibilityTest, UniformVariablesReturnTypes)
 {
@@ -7504,7 +7577,7 @@ void main()
     // Buffer data region = 64 bytes -> fits 5 vertices (attrib=8 bytes, (64-8)/12+1=5).
     // Total buffer = 64 + 124 = 188 bytes.
     std::vector<uint8_t> instData(188, 0);
-    // Write GL_SHORT×4 green values (0, 0x7FFF, 0, 0x7FFF) at offset=124, stride=12 for 5 entries.
+    // Write 4 GL_SHORT green values (0, 0x7FFF, 0, 0x7FFF) at offset=124, stride=12 for 5 entries.
     for (int i = 0; i < 5; ++i)
     {
         size_t base         = 124 + i * 12;

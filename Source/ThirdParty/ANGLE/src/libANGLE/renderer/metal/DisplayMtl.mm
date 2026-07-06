@@ -526,6 +526,8 @@ void DisplayMtl::initializeFrontendFeatures(angle::FrontendFeatures *features) c
     // The Metal backend's handling of compile and link is thread-safe
     ANGLE_FEATURE_CONDITION(features, compileJobIsThreadSafe, true);
     ANGLE_FEATURE_CONDITION(features, linkJobIsThreadSafe, true);
+
+    ANGLE_FEATURE_CONDITION(features, setNeedInitOnInvalidation, true);
 }
 
 void DisplayMtl::populateFeatureList(angle::FeatureList *features)
@@ -1196,7 +1198,6 @@ void DisplayMtl::initializeTextureCaps() const
     // Disable all depth buffer and stencil buffer readback extensions until we need them
     mNativeExtensions.readDepthNV         = false;
     mNativeExtensions.readStencilNV       = false;
-    mNativeExtensions.depthBufferFloat2NV = false;
 }
 
 void DisplayMtl::initializeFeatures()

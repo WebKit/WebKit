@@ -2495,6 +2495,200 @@ TEST_P(MipmapTestES31, GenerateLowerMipsWithDraw)
     }
 }
 
+// Test glGenerateMipmap in the presence of mismatching level formats.  Regression test for a bug in
+// mesa.
+TEST_P(MipmapTestES3, MismatchingLevelFormats)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_rgtc"));
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    const std::vector<GLColor> kAllGreen(1000, GLColor::green);
+    const std::vector<GLColor> kAllBlue(1000, GLColor::blue);
+    const std::vector<GLColor> kAllCyan(1000, GLColor::cyan);
+
+    // Create mips at levels that should not be touched by glGenerateMipmap.
+    glTexImage2D(GL_TEXTURE_2D, 5, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, kAllCyan.data());
+    glTexImage2D(GL_TEXTURE_2D, 6, GL_RGBA, 20, 30, 0, GL_RGBA, GL_UNSIGNED_BYTE, kAllBlue.data());
+
+    // Create RGTC1 at level 1.  A 16x12 image has 4x3 blocks of 8 bytes each.
+    const std::vector<uint8_t> redRGTC1((16 / 4) * (12 / 4) * 8, 0xFF);
+    glCompressedTexImage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RED_RGTC1_EXT, 16, 12, 0,
+                           static_cast<GLsizei>(redRGTC1.size()), redRGTC1.data());
+
+    // Trigger mesa bug: After uploading a 4x4 image at level 0 and 1x2 at level 2, calling
+    // glGenerateMipmap silently gets nooped.  While ANGLE considers mip 1 now to be in RGBA format,
+    // mesa still thinks it's RGTC1 due to the noop.
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, kAllGreen.data());
+    glTexImage2D(GL_TEXTURE_2D, 2, GL_RGBA, 1, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, kAllBlue.data());
+    glGenerateMipmap(GL_TEXTURE_2D);
+    ASSERT_GL_NO_ERROR();
+
+    // Now dirty mesa's tracking again by reuploading to level 0, then call glGenerateMipmap on
+    // level 1, which ANGLE lets through because that mip is supposed to be RGBA now.  Mesa supports
+    // glGenerateMipmap on RGTC1 textures.  Where the bug is present, this glGenerateMipmap crashes
+    // by mistakenly processing levels 5 and 6 above (out of mipmap range).
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, kAllBlue.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify correctness
+    ANGLE_GL_PROGRAM(verify, essl3_shaders::vs::Texture2DLod(), essl3_shaders::fs::Texture2DLod());
+    glUseProgram(verify);
+    const GLint lodLoc = glGetUniformLocation(verify, essl3_shaders::LodUniform());
+
+    glUniform1i(glGetUniformLocation(verify, essl3_shaders::Texture2DUniform()), 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+
+    glUniform1f(lodLoc, 0);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    glUniform1f(lodLoc, 1);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    glUniform1f(lodLoc, 2);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test glGenerateMipmap in the presence of mismatching level format, after a separate mutable
+// texture has been used.
+TEST_P(MipmapTestES3, MismatchingLevelFormats2)
+{
+    const std::vector<GLColor> kAllGreen(1000, GLColor::green);
+    const std::vector<GLColor> kAllBlue(1000, GLColor::blue);
+    const std::vector<GLColor> kAllCyan(1000, GLColor::cyan);
+
+    // Create an unrelated texture and draw with it to ensure it's synced.  This test uses a
+    // mutable texture.
+    GLTexture texture2;
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 20, 20, 0, GL_RGBA, GL_UNSIGNED_BYTE, kAllBlue.data());
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, 10, 10, 0, GL_RGBA, GL_UNSIGNED_BYTE, kAllCyan.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1);
+
+    ANGLE_GL_PROGRAM(verify, essl3_shaders::vs::Texture2DLod(), essl3_shaders::fs::Texture2DLod());
+    glUseProgram(verify);
+    const GLint lodLoc = glGetUniformLocation(verify, essl3_shaders::LodUniform());
+
+    glUniform1i(glGetUniformLocation(verify, essl3_shaders::Texture2DUniform()), 0);
+    glUniform1f(lodLoc, 0);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Switch to the texture that whose mipmaps are going to be generated.
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    // Create level 0 as RGBA.
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, kAllGreen.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    // Ensure this texture is also synced.
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Switch back to the already-synced unrelated texture and draw with it to ensure it's bound in
+    // the GL backend.
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Now switch to the original texture and generate mipmaps
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify that mipmap generation worked
+    for (uint32_t lod = 0; lod <= 2; ++lod)
+    {
+        glUniform1f(lodLoc, 0);
+        drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    }
+
+    // Verify that the unrelated texture is untouched.
+    glBindTexture(GL_TEXTURE_2D, texture2);
+
+    glUniform1f(lodLoc, 0);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    glUniform1f(lodLoc, 1);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::cyan);
+}
+
+// Test glGenerateMipmap in the presence of mismatching level format, after a separate mutable
+// texture has been used.
+TEST_P(MipmapTestES3, MismatchingLevelFormats3)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_rgtc"));
+
+    const std::vector<GLColor> kAllGreen(1000, GLColor::green);
+    const std::vector<GLColor> kAllBlue(1000, GLColor::blue);
+    const std::vector<GLColor> kAllCyan(1000, GLColor::cyan);
+
+    // Create an unrelated texture and draw with it to ensure it's synced.  This test uses an
+    // immutable texture.
+    GLTexture texture2;
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexStorage2D(GL_TEXTURE_2D, 2, GL_RGBA8, 20, 20);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 20, 20, GL_RGBA, GL_UNSIGNED_BYTE, kAllBlue.data());
+    glTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, 10, 10, GL_RGBA, GL_UNSIGNED_BYTE, kAllCyan.data());
+
+    ANGLE_GL_PROGRAM(verify, essl3_shaders::vs::Texture2DLod(), essl3_shaders::fs::Texture2DLod());
+    glUseProgram(verify);
+    const GLint lodLoc = glGetUniformLocation(verify, essl3_shaders::LodUniform());
+
+    glUniform1i(glGetUniformLocation(verify, essl3_shaders::Texture2DUniform()), 0);
+    glUniform1f(lodLoc, 0);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Switch to the texture that whose mipmaps are going to be generated.
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    // Create level 0 as RGBA.
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, kAllGreen.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    // Ensure this texture is also synced.
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Switch back to the already-synced unrelated texture and draw with it to ensure it's bound in
+    // the GL backend.
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Now switch to the original texture and generate mipmaps
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify that mipmap generation worked
+    for (uint32_t lod = 0; lod <= 2; ++lod)
+    {
+        glUniform1f(lodLoc, 0);
+        drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    }
+
+    // Verify that the unrelated texture is untouched.
+    glBindTexture(GL_TEXTURE_2D, texture2);
+
+    glUniform1f(lodLoc, 0);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    glUniform1f(lodLoc, 1);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::cyan);
+}
+
 // Verifies texture uploads work correctly after size transitions that change mipmap dimensions.
 TEST_P(MipmapTest, UploadAfterSizeTransition)
 {
@@ -2568,67 +2762,6 @@ TEST_P(MipmapTest, GeneratedMipmapsInvalidatedAfterSizeChange)
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 1);
     EXPECT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(64, 64, GLColor::green);
-}
-
-
-// Test glGenerateMipmap in the presence of mismatching level formats.  Regression test for a bug in
-// mesa.
-TEST_P(MipmapTestES3, MismatchingLevelFormats)
-{
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_rgtc"));
-
-    GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    const std::vector<GLColor> kAllGreen(1000, GLColor::green);
-    const std::vector<GLColor> kAllBlue(1000, GLColor::blue);
-    const std::vector<GLColor> kAllCyan(1000, GLColor::cyan);
-
-    // Create mips at levels that should not be touched by glGenerateMipmap.
-    glTexImage2D(GL_TEXTURE_2D, 5, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, kAllCyan.data());
-    glTexImage2D(GL_TEXTURE_2D, 6, GL_RGBA, 20, 30, 0, GL_RGBA, GL_UNSIGNED_BYTE, kAllBlue.data());
-
-    // Create RGTC1 at level 1.  A 16x12 image has 4x3 blocks of 8 bytes each.
-    const std::vector<uint8_t> redRGTC1((16 / 4) * (12 / 4) * 8, 0xFF);
-    glCompressedTexImage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RED_RGTC1_EXT, 16, 12, 0,
-                           static_cast<GLsizei>(redRGTC1.size()), redRGTC1.data());
-
-    // Trigger mesa bug: After uploading a 4x4 image at level 0 and 1x2 at level 2, calling
-    // glGenerateMipmap silently gets nooped.  While ANGLE considers mip 1 now to be in RGBA format,
-    // mesa still thinks it's RGTC1 due to the noop.
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, kAllGreen.data());
-    glTexImage2D(GL_TEXTURE_2D, 2, GL_RGBA, 1, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, kAllBlue.data());
-    glGenerateMipmap(GL_TEXTURE_2D);
-    ASSERT_GL_NO_ERROR();
-
-    // Now dirty mesa's tracking again by reuploading to level 0, then call glGenerateMipmap on
-    // level 1, which ANGLE lets through because that mip is supposed to be RGBA now.  Mesa supports
-    // glGenerateMipmap on RGTC1 textures.  Where the bug is present, this glGenerateMipmap crashes
-    // by mistakenly processing levels 5 and 6 above (out of mipmap range).
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, kAllBlue.data());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
-    glGenerateMipmap(GL_TEXTURE_2D);
-    ASSERT_GL_NO_ERROR();
-
-    // Verify correctness
-    ANGLE_GL_PROGRAM(verify, essl3_shaders::vs::Texture2DLod(), essl3_shaders::fs::Texture2DLod());
-    glUseProgram(verify);
-    const GLint lodLoc = glGetUniformLocation(verify, essl3_shaders::LodUniform());
-
-    glUniform1i(glGetUniformLocation(verify, essl3_shaders::Texture2DUniform()), 0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-
-    glUniform1f(lodLoc, 0);
-    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
-
-    glUniform1f(lodLoc, 1);
-    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-
-    glUniform1f(lodLoc, 2);
-    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these

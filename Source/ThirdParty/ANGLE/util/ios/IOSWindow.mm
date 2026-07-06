@@ -44,7 +44,7 @@ bool IOSWindow::resize(int width, int height)
 }
 
 // static
-OSWindow *OSWindow::New()
+OSWindow *OSWindow::New(void * /*nativeDisplay*/)
 {
     return new IOSWindow;
 }

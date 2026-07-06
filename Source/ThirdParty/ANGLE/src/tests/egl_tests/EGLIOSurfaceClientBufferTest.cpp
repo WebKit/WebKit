@@ -1415,6 +1415,32 @@ TEST_P(IOSurfaceClientBufferTest, MultisampledRenderToTextureBGRX)
 // TODO(cwallez@chromium.org): Test setting width and height to less than the IOSurface's work as
 // expected.
 
+// Test that binding an IOSurface and setting base level to 3 does not cause an error.
+TEST_P(IOSurfaceClientBufferTest, SetNonZeroBaseLevel)
+{
+    ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
+    ANGLE_SKIP_TEST_IF(getGLTextureTarget() != GL_TEXTURE_2D);
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+
+    // Create a 1x1 IOSurface
+    ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'BGRA', 4);
+
+    // Bind it to a texture
+    EGLSurface pbuffer;
+    GLTexture texture;
+    bindIOSurfaceToTexture(ioSurface, 1, 1, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, &pbuffer, &texture);
+
+    // Set base level to 3
+    glTexParameteri(getGLTextureTarget(), GL_TEXTURE_BASE_LEVEL, 3);
+    EXPECT_GL_NO_ERROR();
+
+    // Clean up
+    EGLBoolean result = eglReleaseTexImage(mDisplay, pbuffer, EGL_BACK_BUFFER);
+    EXPECT_EGL_TRUE(result);
+    result = eglDestroySurface(mDisplay, pbuffer);
+    EXPECT_EGL_TRUE(result);
+}
+
 ANGLE_INSTANTIATE_TEST(IOSurfaceClientBufferTest,
                        ES2_OPENGL(),
                        ES3_OPENGL(),

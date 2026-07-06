@@ -270,6 +270,13 @@
             "description": [
                 "Allow #extension ... : disable after non preprocessor tokens in WebGL."
             ]
+        },
+        {
+            "name": "set_need_init_on_invalidation",
+            "category": "Features",
+            "description": [
+                "Set Texture's InitState to MayNeedInit inside invalidateFramebuffer or discardFramebuffer."
+            ]
         }
     ]
 }

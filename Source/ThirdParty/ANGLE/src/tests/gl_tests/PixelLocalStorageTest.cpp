@@ -888,6 +888,92 @@ TEST_P(PixelLocalStorageTest, R32_always_noncoherent)
     doR32Test(PixelLocalStorageTest::CoherencyMode::AlwaysNoncoherent);
 }
 
+// Test that comma operator and passing PLS planes to functions work.
+TEST_P(PixelLocalStorageTest, CommaOperator)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_color_buffer_float"));
+
+    constexpr char kFS[] = R"(layout(r32f, binding=0) uniform highp pixelLocalANGLE plane1;
+    layout(binding=1, r32i) uniform highp ipixelLocalANGLE plane2;
+    layout(r32ui, binding=2) uniform highp upixelLocalANGLE plane3;
+
+    highp vec4 loadPlane(highp pixelLocalANGLE p)
+    {
+        return pixelLocalLoadANGLE(p);
+    }
+
+    highp ivec4 iloadPlane(highp ipixelLocalANGLE p)
+    {
+        return pixelLocalLoadANGLE(p);
+    }
+
+    highp uvec4 uloadPlane(highp pixelLocalANGLE unused, highp upixelLocalANGLE p)
+    {
+        return pixelLocalLoadANGLE(p);
+    }
+
+    int j = 0;
+    void incJ()
+    {
+        ++j;
+    }
+
+    void main()
+    {
+        highp int i = 0;
+        pixelLocalStoreANGLE(plane1, color + loadPlane((++i, plane1)));
+        pixelLocalStoreANGLE(plane2, ivec4(aux1) + iloadPlane((plane1, incJ(), plane2)));
+        pixelLocalStoreANGLE(plane3, uvec4(aux2) + uloadPlane((++i, plane1), (loadPlane((++i, incJ(), plane1)), plane3)));
+        if (i != 3 || j != 2)
+        {
+            pixelLocalStoreANGLE(plane3, uvec4(1234));
+        }
+    })";
+    mProgram.compile(kFS);
+
+    PLSTestTexture tex1(GL_R32F);
+    PLSTestTexture tex2(GL_R32I);
+    PLSTestTexture tex3(GL_R32UI);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexturePixelLocalStorageANGLE(0, tex1, 0, 0, GL_NONE);
+    glFramebufferTexturePixelLocalStorageANGLE(1, tex2, 0, 0, GL_NONE);
+    glFramebufferTexturePixelLocalStorageANGLE(2, tex3, 0, 0, GL_NONE);
+    glViewport(0, 0, W, H);
+    glDrawBuffers(0, nullptr);
+
+    glBeginPixelLocalStorageANGLE(
+        3, GLenumArray({GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE}));
+
+    // Accumulate R in 4 separate passes.
+    mProgram.drawBoxes(
+        {{FULLSCREEN, {-1.5, 0, 0, 0}, {0x000000ff, 0, 0, 0}, {0x000000ff, 0, 0, 0}},
+         {FULLSCREEN, {-10.25, 0, 0, 0}, {0x0000ff00, 0, 0, 0}, {0x0000ff00, 0, 0, 0}},
+         {FULLSCREEN, {-100, 0, 0, 0}, {0x00ff0000, 0, 0, 0}, {0x00ff0000, 0, 0, 0}},
+         {FULLSCREEN, {.25, 0, 0, 0}, {-0x1000000, 0, 0, 0}, {0xff000000, 0, 0, 22}}},
+        UseBarriers::IfNotCoherent);
+
+    glEndPixelLocalStorageANGLE(3, GLenumArray({GL_STORE_OP_STORE_ANGLE, GL_STORE_OP_STORE_ANGLE,
+                                                GL_STORE_OP_STORE_ANGLE}));
+
+    // Incorrectly transformed without the IR.  Test above makes sure there is no compiler crash
+    // without the IR.
+    ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::UseIr));
+
+    attachTexture2DToScratchFBO(tex1);
+    EXPECT_PIXEL_RECT32F_EQ(0, 0, W, H, GLColor32F(-111.5, 0, 0, 1));
+
+    attachTexture2DToScratchFBO(tex2);
+    EXPECT_PIXEL_RECT32I_EQ(0, 0, W, H, GLColor32I(-1, 0, 0, 1));
+
+    attachTexture2DToScratchFBO(tex3);
+    EXPECT_PIXEL_RECT32UI_EQ(0, 0, W, H, GLColor32UI(0xffffffff, 0, 0, 1));
+
+    ASSERT_GL_NO_ERROR();
+}
+
 // Check proper functioning of the clear value state.
 TEST_P(PixelLocalStorageTest, ClearValues_rgba8)
 {

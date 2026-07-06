@@ -1646,7 +1646,6 @@ void GenerateCaps(ID3D11Device *device,
     // readPixels on depth & stencil not working with D3D11 backend.
     extensions->readDepthNV         = false;
     extensions->readStencilNV       = false;
-    extensions->depthBufferFloat2NV = false;
 
     // GL_EXT_clip_control
     extensions->clipControlEXT = (featureLevel >= D3D_FEATURE_LEVEL_10_0);

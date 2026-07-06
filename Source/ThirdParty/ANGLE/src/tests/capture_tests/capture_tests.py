@@ -105,6 +105,12 @@ def run_test(args, test_name, overwrite_expected):
         else:
             filtered_files = expected_files
 
+        # Only compare expected results for Android specific tests (i.e., AHBs) when
+        # run on Android platforms
+        if not angle_test_util.IsAndroid():
+            filtered_files = [f for f in filtered_files if 'ExternalAHB' not in f]
+            logging.warning('External AHB capturing is not included in the comparison.')
+
         if overwrite_expected:
             for f in filtered_files:
                 os.remove(os.path.join(expected_dir, f))
@@ -119,8 +125,12 @@ def run_test(args, test_name, overwrite_expected):
 
         has_diffs = False
         for fn in files:
-            if not fn.startswith('CapturedTestCL'):
-                has_diffs |= diff_files(os.path.join(temp_dir, fn), os.path.join(expected_dir, fn))
+            if fn.startswith('CapturedTestCL'):
+                continue
+            # Do not expect External AHB files to be generated on non-android platforms
+            if 'ExternalAHB' in fn and not angle_test_util.IsAndroid():
+                continue
+            has_diffs |= diff_files(os.path.join(temp_dir, fn), os.path.join(expected_dir, fn))
 
         return not has_diffs
 

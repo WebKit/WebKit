@@ -157,7 +157,14 @@ angle::Result TransformFeedback::begin(const Context *context,
     bindProgramPipeline(context, programPipeline);
     bindPPOPrograms(programPipeline);
 
-    recomputeVertexCapacity(context);
+    for (auto &buffer : mState.mIndexedBuffers)
+    {
+        if (buffer.get())
+        {
+            buffer->onTFActiveChanged(context, true);
+        }
+    }
+
     return angle::Result::Continue;
 }
 
@@ -182,6 +189,13 @@ angle::Result TransformFeedback::end(const Context *context)
     for (const ShaderType shaderType : gl::AllShaderTypes())
     {
         mState.mPPOPrograms[shaderType].value = 0;
+    }
+    for (auto &buffer : mState.mIndexedBuffers)
+    {
+        if (buffer.get())
+        {
+            buffer->onTFActiveChanged(context, false);
+        }
     }
     return angle::Result::Continue;
 }
@@ -319,32 +333,6 @@ void TransformFeedback::bindPPOPrograms(ProgramPipeline *programPipeline)
     }
 }
 
-void TransformFeedback::recomputeVertexCapacity(const Context *context)
-{
-    // In one of the angle_unittests - "TransformFeedbackTest.SideEffectsOfStartAndStop"
-    // there is a code path where <context> is a nullptr, account for that possibility.
-    const ProgramExecutable *programExecutable =
-        context ? context->getState().getLinkedProgramExecutable(context) : nullptr;
-    if (programExecutable)
-    {
-        // Compute the number of vertices we can draw before overflowing the bound buffers.
-        auto strides = programExecutable->getTransformFeedbackStrides();
-        ASSERT(strides.size() <= mState.mIndexedBuffers.size() && !strides.empty());
-        GLsizeiptr minCapacity = std::numeric_limits<GLsizeiptr>::max();
-        for (size_t index = 0; index < strides.size(); index++)
-        {
-            GLsizeiptr capacity =
-                GetBoundBufferAvailableSize(mState.mIndexedBuffers[index]) / strides[index];
-            minCapacity = std::min(minCapacity, capacity);
-        }
-        mState.mVertexCapacity = minCapacity;
-    }
-    else
-    {
-        mState.mVertexCapacity = 0;
-    }
-}
-
 bool TransformFeedback::hasBoundProgram(ShaderProgramID program) const
 {
     return mState.mProgram != nullptr && mState.mProgram->id().value == program.value;
@@ -429,7 +417,7 @@ bool TransformFeedback::buffersBoundForOtherUseInWebGL() const
 {
     for (auto &buffer : mState.mIndexedBuffers)
     {
-        if (buffer.get() && buffer->hasWebGLXFBBindingConflict(true))
+        if (buffer.get() && buffer->isBoundToTFAndNonTFSimultaneously())
         {
             return true;
         }

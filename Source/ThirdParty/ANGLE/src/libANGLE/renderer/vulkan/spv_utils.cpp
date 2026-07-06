@@ -1148,6 +1148,8 @@ namespace
 [[maybe_unused]] constexpr spirv::IdRef IntSix(sh::vk::spirv::kIdIntSix);
 [[maybe_unused]] constexpr spirv::IdRef IntSeven(sh::vk::spirv::kIdIntSeven);
 [[maybe_unused]] constexpr spirv::IdRef FloatTwo(sh::vk::spirv::kIdFloatTwo);
+[[maybe_unused]] constexpr spirv::IdRef Vec4Zero(sh::vk::spirv::kIdVec4Zero);
+[[maybe_unused]] constexpr spirv::IdRef IVec4Zero(sh::vk::spirv::kIdIVec4Zero);
 [[maybe_unused]] constexpr spirv::IdRef IntInputTypePointer(sh::vk::spirv::kIdIntInputTypePointer);
 [[maybe_unused]] constexpr spirv::IdRef Vec4InputTypePointer(
     sh::vk::spirv::kIdVec4InputTypePointer);
@@ -3346,7 +3348,11 @@ void SpirvSecondaryOutputTransformer::writeOutputPrologue(
 class SpirvDepthStencilInputRemover final : angle::NonCopyable
 {
   public:
-    SpirvDepthStencilInputRemover() {}
+    SpirvDepthStencilInputRemover(const SpvTransformOptions &options)
+        : removeDepthInput(options.removeDepthInput), removeStencilInput(options.removeStencilInput)
+    {}
+
+    void init(size_t indexBound);
 
     TransformationState transformName(spirv::IdRef id, spirv::LiteralString name);
     TransformationState transformDecorate(spirv::IdRef id,
@@ -3368,24 +3374,36 @@ class SpirvDepthStencilInputRemover final : angle::NonCopyable
     void writePendingDeclarations(spirv::Blob *blobOut);
 
   private:
-    bool isDepthStencilInput(spirv::IdRef id)
-    {
-        return id == sh::vk::spirv::kIdDepthInputAttachment ||
-               id == sh::vk::spirv::kIdStencilInputAttachment;
-    }
+    bool isDepthInput(spirv::IdRef id) { return id == sh::vk::spirv::kIdDepthInputAttachment; }
 
-    spirv::IdRef mVec4ZeroId;
-    spirv::IdRef mIVec4ZeroId;
+    bool isStencilInput(spirv::IdRef id) { return id == sh::vk::spirv::kIdStencilInputAttachment; }
 
-    std::vector<spirv::IdRef> mImageReadParamIdsToRemove;
+    bool removeDepthInput;
+    bool removeStencilInput;
+
+    std::vector<bool> mDepthImageReadParamIdsToRemove;
+    std::vector<bool> mStencilImageReadParamIdsToRemove;
 };
+
+void SpirvDepthStencilInputRemover::init(size_t indexBound)
+{
+    mDepthImageReadParamIdsToRemove.resize(indexBound, false);
+    mStencilImageReadParamIdsToRemove.resize(indexBound, false);
+}
 
 TransformationState SpirvDepthStencilInputRemover::transformName(spirv::IdRef id,
                                                                  spirv::LiteralString name)
 {
-    // Both depth and stencil input variables are removed, so remove their debug info too
-    return isDepthStencilInput(id) ? TransformationState::Transformed
-                                   : TransformationState::Unchanged;
+    if (removeDepthInput && isDepthInput(id))
+    {
+        return TransformationState::Transformed;
+    }
+
+    if (removeStencilInput && isStencilInput(id))
+    {
+        return TransformationState::Transformed;
+    }
+    return TransformationState::Unchanged;
 }
 
 TransformationState SpirvDepthStencilInputRemover::transformDecorate(
@@ -3394,18 +3412,34 @@ TransformationState SpirvDepthStencilInputRemover::transformDecorate(
     const spirv::LiteralIntegerList &decorationValues,
     spirv::Blob *blobOut)
 {
-    // Both depth and stencil input variables are removed, so remove their decorations too
-    return isDepthStencilInput(id) ? TransformationState::Transformed
-                                   : TransformationState::Unchanged;
+    // If depth or stencil input variables are removed, remove their decorations too
+    if (removeDepthInput && isDepthInput(id))
+    {
+        return TransformationState::Transformed;
+    }
+
+    if (removeStencilInput && isStencilInput(id))
+    {
+        return TransformationState::Transformed;
+    }
+    return TransformationState::Unchanged;
 }
 
 TransformationState SpirvDepthStencilInputRemover::transformVariable(spirv::IdResultType typeId,
                                                                      spirv::IdResult id,
                                                                      spirv::Blob *blobOut)
 {
-    // Both depth and stencil input variables are removed
-    return isDepthStencilInput(id) ? TransformationState::Transformed
-                                   : TransformationState::Unchanged;
+    // depth or stencil input variables are removed based on the cached SpvTransformOptions
+    if (removeDepthInput && isDepthInput(id))
+    {
+        return TransformationState::Transformed;
+    }
+
+    if (removeStencilInput && isStencilInput(id))
+    {
+        return TransformationState::Transformed;
+    }
+    return TransformationState::Unchanged;
 }
 
 TransformationState SpirvDepthStencilInputRemover::transformLoad(spirv::IdResultType typeId,
@@ -3413,23 +3447,24 @@ TransformationState SpirvDepthStencilInputRemover::transformLoad(spirv::IdResult
                                                                  spirv::IdRef pointerId,
                                                                  spirv::Blob *blobOut)
 {
-    if (isDepthStencilInput(pointerId))
+    if (removeDepthInput && isDepthInput(pointerId))
     {
-        // Both depth and stencil input variables are removed, so OpLoad from them needs to be
-        // removed.  Later, OpImageRead from the result of this instruction should also be removed,
-        // so keep that in |mImageReadParamIdsToRemove|.
-        mImageReadParamIdsToRemove.push_back(id);
+        // depth input variables are removed, so OpLoad from them needs to be
+        // removed.  Later, OpImageRead from the result of this instruction should also be
+        // removed, so keep that in |mDepthImageReadParamIdsToRemove|.
+        mDepthImageReadParamIdsToRemove[id] = true;
+        return TransformationState::Transformed;
+    }
 
-        // The result of OpLoad for the stencil attachment is decorated with RelaxedPrecision.  At
-        // this point, we have passed the OpDecorate section; instead of adding another pass to
-        // either discover this ID earlier or remove the OpDecorate later, this instruction is
-        // simply replaced with OpCopyObject given the ivec4(0) constant.  The driver would
+    if (removeStencilInput && isStencilInput(pointerId))
+    {
+        mStencilImageReadParamIdsToRemove[id] = true;
+        // The result of OpLoad for the stencil attachment is decorated with RelaxedPrecision.
+        // At this point, we have passed the OpDecorate section; instead of adding another pass
+        // to either discover this ID earlier or remove the OpDecorate later, this instruction
+        // is simply replaced with OpCopyObject given the ivec4(0) constant.  The driver would
         // eliminate it as dead code.
-        if (pointerId == sh::vk::spirv::kIdStencilInputAttachment)
-        {
-            spirv::WriteCopyObject(blobOut, ID::IVec4, id, mIVec4ZeroId);
-        }
-
+        spirv::WriteCopyObject(blobOut, ID::IVec4, id, ID::IVec4Zero);
         return TransformationState::Transformed;
     }
 
@@ -3449,13 +3484,17 @@ TransformationState SpirvDepthStencilInputRemover::transformImageRead(const uint
     spirv::ParseImageRead(instruction, &idResultType, &idResult, &image, &coordinate,
                           &imageOperands, &imageOperandIdsList);
 
-    if (std::find(mImageReadParamIdsToRemove.begin(), mImageReadParamIdsToRemove.end(), image) !=
-        mImageReadParamIdsToRemove.end())
+    if (removeDepthInput && mDepthImageReadParamIdsToRemove[image])
     {
-        // Replace the OpImageRead from removed images with OpCopyObject from [i]vec4(0).
-        ASSERT(idResultType == ID::Vec4 || idResultType == ID::IVec4);
-        spirv::WriteCopyObject(blobOut, idResultType, idResult,
-                               idResultType == ID::Vec4 ? mVec4ZeroId : mIVec4ZeroId);
+        ASSERT(idResultType == ID::Vec4);
+        spirv::WriteCopyObject(blobOut, idResultType, idResult, ID::Vec4Zero);
+        return TransformationState::Transformed;
+    }
+
+    if (removeStencilInput && mStencilImageReadParamIdsToRemove[image])
+    {
+        ASSERT(idResultType == ID::IVec4);
+        spirv::WriteCopyObject(blobOut, idResultType, idResult, ID::IVec4Zero);
         return TransformationState::Transformed;
     }
 
@@ -3465,29 +3504,26 @@ TransformationState SpirvDepthStencilInputRemover::transformImageRead(const uint
 void SpirvDepthStencilInputRemover::modifyEntryPointInterfaceList(spirv::IdRefList *interfaceList,
                                                                   spirv::Blob *blobOut)
 {
-    // Remove the depth and stencil input variables from the interface list.
+    // Remove the depth or stencil input variables from the interface list.
     size_t writeIndex = 0;
     for (size_t index = 0; index < interfaceList->size(); ++index)
     {
         spirv::IdRef id((*interfaceList)[index]);
-        if (!isDepthStencilInput(id))
+        if (removeDepthInput && isDepthInput(id))
         {
-            (*interfaceList)[writeIndex] = id;
-            ++writeIndex;
+            continue;
         }
+
+        if (removeStencilInput && isStencilInput(id))
+        {
+            continue;
+        }
+
+        (*interfaceList)[writeIndex] = id;
+        ++writeIndex;
     }
 
     interfaceList->resize_down(writeIndex);
-}
-
-void SpirvDepthStencilInputRemover::writePendingDeclarations(spirv::Blob *blobOut)
-{
-    // Add vec4(0) and uvec4(0) declarations for future use.
-    mVec4ZeroId  = SpirvTransformerBase::GetNewId(blobOut);
-    mIVec4ZeroId = SpirvTransformerBase::GetNewId(blobOut);
-
-    spirv::WriteConstantNull(blobOut, ID::Vec4, mVec4ZeroId);
-    spirv::WriteConstantNull(blobOut, ID::IVec4, mIVec4ZeroId);
 }
 
 // Helper class that adds dithering emulation by adding an offset matrix to color outputs.
@@ -3928,6 +3964,7 @@ class SpirvTransformer final : public SpirvTransformerBase
           mXfbCodeGenerator(options),
           mPositionTransformer(options),
           mMultisampleTransformer(options),
+          mDepthStencilInputRemover(options),
           mDitherEmulationTransformer(options)
     {}
 
@@ -4029,6 +4066,10 @@ void SpirvTransformer::resolveVariableIds()
     if (mOptions.shaderType == gl::ShaderType::Fragment)
     {
         mSecondaryOutputTransformer.init(indexBound);
+    }
+    if (mOptions.removeDepthInput || mOptions.removeStencilInput)
+    {
+        mDepthStencilInputRemover.init(indexBound);
     }
 
     // Allocate storage for id-to-info map.  If %i is an id in mVariableInfoMap, index i in this
@@ -4213,10 +4254,6 @@ void SpirvTransformer::transformInstruction()
 // present in the original shader need to be done here.
 void SpirvTransformer::writePendingDeclarations()
 {
-    if (mOptions.removeDepthStencilInput)
-    {
-        mDepthStencilInputRemover.writePendingDeclarations(mSpirvBlobOut);
-    }
     if (mOptions.ditherControl != 0)
     {
         mDitherEmulationTransformer.writePendingDeclarations(mNonSemanticInstructions,
@@ -4501,7 +4538,7 @@ TransformationState SpirvTransformer::transformDecorate(const uint32_t *instruct
         }
     }
 
-    if (mOptions.removeDepthStencilInput)
+    if (mOptions.removeDepthInput || mOptions.removeStencilInput)
     {
         if (mDepthStencilInputRemover.transformDecorate(id, decoration, decorationValues,
                                                         mSpirvBlobOut) ==
@@ -4674,7 +4711,7 @@ TransformationState SpirvTransformer::transformName(const uint32_t *instruction)
     spirv::LiteralString name;
     spirv::ParseName(instruction, &id, &name);
 
-    if (mOptions.removeDepthStencilInput)
+    if (mOptions.removeDepthInput || mOptions.removeStencilInput)
     {
         if (mDepthStencilInputRemover.transformName(id, name) == TransformationState::Transformed)
         {
@@ -4724,7 +4761,7 @@ TransformationState SpirvTransformer::transformEntryPoint(const uint32_t *instru
     {
         mVaryingPrecisionFixer.modifyEntryPointInterfaceList(entryPointList(), &interfaceList);
     }
-    if (mOptions.removeDepthStencilInput)
+    if (mOptions.removeDepthInput || mOptions.removeStencilInput)
     {
         mDepthStencilInputRemover.modifyEntryPointInterfaceList(&interfaceList, mSpirvBlobOut);
     }
@@ -4839,7 +4876,7 @@ TransformationState SpirvTransformer::transformExtInst(const uint32_t *instructi
 
 TransformationState SpirvTransformer::transformLoad(const uint32_t *instruction)
 {
-    if (!mOptions.removeDepthStencilInput)
+    if (!mOptions.removeDepthInput && !mOptions.removeStencilInput)
     {
         return TransformationState::Unchanged;
     }
@@ -4899,7 +4936,7 @@ TransformationState SpirvTransformer::transformVariable(const uint32_t *instruct
         }
     }
 
-    if (mOptions.removeDepthStencilInput)
+    if (mOptions.removeDepthInput || mOptions.removeStencilInput)
     {
         if (mDepthStencilInputRemover.transformVariable(typeId, id, mSpirvBlobOut) ==
             TransformationState::Transformed)
@@ -4944,7 +4981,7 @@ TransformationState SpirvTransformer::transformTypeImage(const uint32_t *instruc
 
 TransformationState SpirvTransformer::transformImageRead(const uint32_t *instruction)
 {
-    if (mOptions.removeDepthStencilInput)
+    if (mOptions.removeDepthInput || mOptions.removeStencilInput)
     {
         if (mDepthStencilInputRemover.transformImageRead(instruction, mSpirvBlobOut) ==
             TransformationState::Transformed)

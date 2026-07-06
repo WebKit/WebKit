@@ -197,9 +197,9 @@ class TextureMtl : public TextureImpl
     mtl::TextureRef createImageViewFromTextureStorage(GLuint cubeFaceOrZero, GLuint glLevel);
     angle::Result createViewFromBaseToMaxLevel();
     angle::Result ensureLevelViewsWithinBaseMaxCreated();
-    angle::Result checkForEmulatedChannels(const gl::Context *context,
-                                           const mtl::Format &mtlFormat,
-                                           const mtl::TextureRef &texture);
+    angle::Result initializeNowIfNeeded(const gl::Context *context,
+                                        const mtl::Format &mtlFormat,
+                                        const mtl::TextureRef &texture);
     mtl::TextureRef &getImage(const gl::ImageIndex &imageIndex);
     ImageDefinitionMtl &getImageDefinition(const gl::ImageIndex &imageIndex);
     angle::Result getRenderTarget(ContextMtl *context,

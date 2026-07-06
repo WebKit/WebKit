@@ -2231,6 +2231,13 @@
                 "VkDevice supports the VK_EXT_shader_demote_to_helper_invocation extension"
             ],
             "issue": "http://anglebug.com/490910899"
+        },
+        {
+            "name": "avoid_image_ghost_outside_render_pass",
+            "category": "Features",
+            "description": [
+                "Avoid ghosting the image if it is not used in an active render pass."
+            ]
         }
     ]
 }

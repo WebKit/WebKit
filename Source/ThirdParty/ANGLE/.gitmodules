@@ -251,10 +251,6 @@
 	path = third_party/vulkan_memory_allocator
 	url = https://chromium.googlesource.com/external/github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
 	gclient-condition = not build_with_chromium
-[submodule "third_party/wayland"]
-	path = third_party/wayland
-	url = https://chromium.googlesource.com/external/anongit.freedesktop.org/git/wayland/wayland
-	gclient-condition = not build_with_chromium and host_os == "linux"
 [submodule "third_party/zlib"]
 	path = third_party/zlib
 	url = https://chromium.googlesource.com/chromium/src/third_party/zlib
@@ -303,3 +299,15 @@
 	path = tools/win
 	url = https://chromium.googlesource.com/chromium/src/tools/win
 	gclient-condition = checkout_win and not build_with_chromium
+[submodule "third_party/wayland/src"]
+	path = third_party/wayland/src
+	url = https://chromium.googlesource.com/external/anongit.freedesktop.org/git/wayland/wayland
+        gclient-condition = not build_with_chromium and host_os == "linux"
+[submodule "third_party/wayland-protocols/src"]
+	path = third_party/wayland-protocols/src
+	url = https://chromium.googlesource.com/external/anongit.freedesktop.org/git/wayland/wayland-protocols
+        gclient-condition = not build_with_chromium and host_os == "linux"
+[submodule "third_party/expat/src"]
+	path = third_party/expat/src
+	url = https://chromium.googlesource.com/external/github.com/libexpat/libexpat
+        gclient-condition = not build_with_chromium and host_os == "linux"

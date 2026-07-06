@@ -6613,7 +6613,7 @@ TEST_P(VertexAttributeResizeDefaultTest, ResizeAndSwitch)
 
     // Draw enough instances to force a large allocation in mStreamedVertexBuffers. This ensures
     // old BufferHelper is destroyed.
-    glDrawArraysInstanced(GL_POINTS, 0, 1, 2000);
+    glDrawArraysInstanced(GL_POINTS, 0, 1, 1200);
     ASSERT_GL_NO_ERROR();
     glFinish();
 
@@ -6673,7 +6673,7 @@ TEST_P(VertexAttributeResizeDefaultTest, ResizeAndSwitchWithNoDefaultAttribsActi
 
     // Draw enough instances to force a large allocation in mStreamedVertexBuffers. This ensures
     // old BufferHelper is destroyed.
-    glDrawArraysInstanced(GL_POINTS, 0, 1, 2000);
+    glDrawArraysInstanced(GL_POINTS, 0, 1, 1200);
     ASSERT_GL_NO_ERROR();
     glFinish();
     EXPECT_PIXEL_COLOR_EQ(74, 74, GLColor::red);

@@ -808,6 +808,55 @@ TEST_P(RobustResourceInitTestES3, DrawThenInvalidateThenReadBack)
     EXPECT_GL_NO_ERROR();
 }
 
+// Calling invalidate after clear should either read back the result of the clear call (invalidate
+// didn't happen) or transparent black (the init color).
+TEST_P(RobustResourceInitTestES3, ClearThenInvalidateThenReadBack)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    for (int i = 0; i < 10; ++i)
+    {
+        GLTexture tex;
+        GLRenderbuffer rb;
+        GLFramebuffer fbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+        if (i % 2 == 0)
+        {
+            glBindTexture(GL_TEXTURE_2D, tex);
+            glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+        }
+        else
+        {
+            glBindRenderbuffer(GL_RENDERBUFFER, rb);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kWidth, kHeight);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb);
+        }
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Clear to red
+        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Invalidate
+        std::array<GLenum, 1> attachments = {GL_COLOR_ATTACHMENT0};
+        glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, attachments.data());
+
+        const int w = getWindowWidth();
+        const int h = getWindowHeight();
+
+        // Read back, ensure the content is either red or transparent black
+        GLColor invalidated(100, 100, 100, 100);
+        glReadPixels(w / 2, h / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &invalidated);
+        EXPECT_TRUE(invalidated == GLColor::red || invalidated == GLColor::transparentBlack)
+            << "At iteration " << i << ", color is " << invalidated;
+        EXPECT_GL_NO_ERROR();
+    }
+}
+
 // Calling invalidate after draw should either read back the result of the draw call (invalidate
 // didn't happen) or the init depth/stencil values.
 TEST_P(RobustResourceInitTestES3, DrawThenInvalidateThenReadBackDepthStencil)
@@ -3371,6 +3420,7 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(RobustResourceInitTestES3);
 ANGLE_INSTANTIATE_TEST_ES3_AND(RobustResourceInitTestES3,
                                ES3_METAL().enable(Feature::EmulateDontCareLoadWithRandomClear),
+                               ES3_METAL().enable(Feature::AllocateNonZeroTextures),
                                ES3_VULKAN().enable(Feature::AllocateNonZeroMemory));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(RobustResourceInitTestES31);

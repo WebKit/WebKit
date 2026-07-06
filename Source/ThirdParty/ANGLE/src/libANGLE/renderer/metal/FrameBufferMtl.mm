@@ -1045,9 +1045,9 @@ angle::Result FramebufferMtl::updateColorRenderTarget(const gl::Context *context
 {
     ASSERT(colorIndexGL < mColorRenderTargets.size());
     // Reset load store action
-    mRenderPassDesc.colorAttachments[colorIndexGL].reset();
+    mRenderPassDesc.colorAttachments[colorIndexGL] = {};
     ANGLE_TRY(updateCachedRenderTarget(context, mState.getColorAttachment(colorIndexGL),
-                                       &mColorRenderTargets[colorIndexGL]));
+                                    &mColorRenderTargets[colorIndexGL]));
 #if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
     if (mState.getColorResolveAttachment(colorIndexGL))
     {
@@ -1061,7 +1061,7 @@ angle::Result FramebufferMtl::updateColorRenderTarget(const gl::Context *context
 angle::Result FramebufferMtl::updateDepthRenderTarget(const gl::Context *context)
 {
     // Reset load store action
-    mRenderPassDesc.depthAttachment.reset();
+    mRenderPassDesc.depthAttachment = {};
     ANGLE_TRY(updateCachedRenderTarget(context, mState.getDepthAttachment(), &mDepthRenderTarget));
 #if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
     if (mState.getDepthResolveAttachment())
@@ -1076,7 +1076,7 @@ angle::Result FramebufferMtl::updateDepthRenderTarget(const gl::Context *context
 angle::Result FramebufferMtl::updateStencilRenderTarget(const gl::Context *context)
 {
     // Reset load store action
-    mRenderPassDesc.stencilAttachment.reset();
+    mRenderPassDesc.stencilAttachment = {};
     ANGLE_TRY(
         updateCachedRenderTarget(context, mState.getStencilAttachment(), &mStencilRenderTarget));
 #if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
@@ -1166,7 +1166,7 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
         }
         else
         {
-            colorAttachment.reset();
+            colorAttachment = {};
         }
     }
 
@@ -1184,7 +1184,7 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
     }
     else
     {
-        desc.depthAttachment.reset();
+        desc.depthAttachment = {};
     }
 
     if (mStencilRenderTarget)
@@ -1201,7 +1201,7 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
     }
     else
     {
-        desc.stencilAttachment.reset();
+        desc.stencilAttachment = {};
     }
 
     if (desc.numColorAttachments == 0 && mDepthRenderTarget == nullptr &&
