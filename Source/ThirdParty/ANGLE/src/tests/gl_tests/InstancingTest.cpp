@@ -616,6 +616,18 @@ class InstancingTestES31 : public InstancingTest
     InstancingTestES31() {}
 };
 
+class RobustInstancingTestES3 : public InstancingTestES3
+{
+  public:
+    RobustInstancingTestES3()
+    {
+        if (!IsMac() && !IsIOS())
+        {
+            setRobustAccess(true);
+        }
+    }
+};
+
 // Verify that VertexAttribDivisor can update both binding divisor and attribBinding.
 TEST_P(InstancingTestES31, UpdateAttribBindingByVertexAttribDivisor)
 {
@@ -889,8 +901,10 @@ void main()
 }
 
 // Regression test for out-of-bounds read during divisor emulation. http://crbug.com/500476886
-TEST_P(InstancingTestES3, IncompleteStrideForLastVertex)
+TEST_P(RobustInstancingTestES3, IncompleteStrideForLastVertex)
 {
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_KHR_robust_buffer_access_behavior"));
+
     constexpr char kVS[] = R"(#version 300 es
     layout(location=0) in vec4 a_inst;
     layout(location=1) in float a_unused;
@@ -964,6 +978,9 @@ void main() { o = v; })";
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(InstancingTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(InstancingTestES3);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(RobustInstancingTestES3);
+ANGLE_INSTANTIATE_TEST_ES3(RobustInstancingTestES3);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(InstancingTestES31);
 ANGLE_INSTANTIATE_TEST_ES31(InstancingTestES31);
