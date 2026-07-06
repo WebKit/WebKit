@@ -55,7 +55,6 @@ my @suites = ( {"name" => "DOM Level 1 Core   (html)", "directory" => "dom/html/
 
 my $totalCount = 0;
 my $totalSuccesses = 0;
-my $totalDisabled = 0;
 my $totalFailed = 0;
 
 foreach my $suite (@suites) {
@@ -64,7 +63,6 @@ foreach my $suite (@suites) {
     my $directory = $suite{"directory"};
     my $name = $suite{"name"};
     my @results = `find "${testDirectory}/${directory}" -name "*-expected.txt"`;
-    my @disabled = `find "${testDirectory}/${directory}" -name "*-disabled"`;
 
     my @failures = ();
     my $count = 0;
@@ -85,12 +83,9 @@ foreach my $suite (@suites) {
         }
     }
 
-    my $disabledCount = (scalar @disabled);
     my $failureCount = (scalar @failures);
 
-    $count += $disabledCount;
-
-    my $successCount = $count - $failureCount - $disabledCount;
+    my $successCount = $count - $failureCount;
     my $percentage = (sprintf "%.1f", ($successCount * 100.0 / $count));
     
     if ($percentage == 100) {
@@ -98,19 +93,9 @@ foreach my $suite (@suites) {
     } else {
         print "${name}: ${successCount} out of ${count} tests succeeded (${percentage}%)";
     }
-    print " ($disabledCount disabled)" if $disabledCount;
     print "\n";
     if ($verbose) {
         print "\n";
-        if (@disabled) {
-            print "    Disabled:\n";
-            
-            foreach my $failure (sort @disabled) {
-                $failure =~ s|.*/||;
-                $failure =~ s|-disabled||;
-                print "        ${directory}/${failure}";
-            }
-        }
         if (@failures) {
             print "    Failed:\n";
             
@@ -128,15 +113,12 @@ foreach my $suite (@suites) {
 
     $totalCount += $count;
     $totalSuccesses += $successCount;
-    $totalDisabled += $disabledCount;
     $totalFailed += $failureCount;
 }
 
 
 my $totalPercentage = (sprintf "%.1f", ($totalSuccesses * 100.0 / $totalCount));
-my $totalDisabledPercentage = (sprintf "%.1f", ($totalDisabled * 100.0 / $totalCount));
 my $totalFailedPercentage = (sprintf "%.1f", ($totalFailed * 100.0 / $totalCount));
 
 print "Total: ${totalSuccesses} out of ${totalCount} tests succeeded (${totalPercentage}%)\n";
-print "       ${totalDisabled} tests disabled (${totalDisabledPercentage}%)\n";
 print "       ${totalFailed} tests failed (${totalFailedPercentage}%)\n";
