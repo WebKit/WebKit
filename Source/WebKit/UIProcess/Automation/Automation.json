@@ -3,6 +3,20 @@
     "description": "Automation domain exposes commands for automating user interactions with the browser.",
     "types": [
         {
+            "id": "AccessibilityProperties",
+            "type": "object",
+            "description": "Snapshot of a DOM node's computed accessibility properties used in WebDriver contexts.",
+            "properties": [
+                { "name": "accessibilityNodeId", "type": "string" },
+                { "name": "role", "type": "string" },
+                { "name": "label", "type": "string" },
+                { "name": "checked", "type": "string" },
+                { "name": "pressed", "type": "string" },
+                { "name": "parent", "type": "string" },
+                { "name": "children", "type": "array", "items": { "type": "string" } }
+            ]
+        },
+        {
             "id": "Point",
             "type": "object",
             "properties": [
@@ -712,6 +726,32 @@
                 { "name": "label", "type": "string", "description": "The computed label for the element." }
             ],
             "async": true
+        },
+        {
+            "name": "getAccessibilityPropertiesForElement",
+            "description": "Get computed accessibility properties for a DOM element.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "frameHandle",  "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame that contains the element. The main frame is used if this parameter is empty string or excluded." },
+                { "name": "nodeHandle", "$ref": "NodeHandle", "description": "The handle of the element to get the accessibility properties for." }
+            ],
+            "returns": [
+                { "name": "properties", "$ref": "AccessibilityProperties" }
+            ],
+            "async": true
+        },
+        {
+            "name": "getAccessibilityPropertiesForAccessibilityNode",
+            "description": "Get computed accessibility properties for an accessibility node from WebKit's accessibility tree.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "accessibilityNodeHandle", "type": "string", "description": "The handle of the accessibility node to get the accessibility properties for." }
+            ],
+            "returns": [
+                { "name": "properties", "$ref": "AccessibilityProperties" }
+            ],
+            "async": true
+
         },
         {
             "name": "selectOptionElement",

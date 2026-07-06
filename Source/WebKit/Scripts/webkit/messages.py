@@ -1162,6 +1162,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WallTime': ['<wtf/WallTime.h>'],
         'WebCore::AXDebugInfo': ['<WebCore/AXObjectCache.h>'],
         'WebCore::AccessibilityMode': ['<WebCore/AXObjectCache.h>'],
+        'WebCore::AccessibilityProperties': ['<WebCore/AXObjectCache.h>'],
         'WebCore::AccessibilityRemoteToken': ['<WebCore/AXObjectCache.h>'],
         'WebCore::AccessibilitySearchCriteriaIPC': ['<WebCore/AXSearchManager.h>'],
         'WebCore::AriaNotifyData': ['<WebCore/AXObjectCache.h>'],

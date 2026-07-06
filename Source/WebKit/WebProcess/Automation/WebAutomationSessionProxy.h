@@ -30,6 +30,7 @@
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/PrivateName.h>
+#include <WebCore/AXObjectCache.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageIdentifier.h>
@@ -77,6 +78,16 @@ public:
     struct JSCallbackIdentifierType { };
     using JSCallbackIdentifier = ObjectIdentifier<JSCallbackIdentifierType>;
 
+    struct ComputedAXProperties {
+        String accessibilityNodeId;
+        String role;
+        String label;
+        String checked;
+        String pressed;
+        String parent;
+        Vector<String> children;
+    };
+
     void didEvaluateJavaScriptFunction(WebCore::FrameIdentifier, JSCallbackIdentifier, const String& result, const String& errorType);
 
 private:
@@ -86,6 +97,7 @@ private:
     JSObjectRef scriptObjectForFrame(WebFrame&);
     WebCore::Element* elementForNodeHandle(WebFrame&, const String&);
     WebCore::AccessibilityObject* getAccessibilityObjectForNode(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, String& error);
+    Inspector::CommandResult<WebCore::AccessibilityObject*> getAccessibilityObjectForAXNode(WebCore::PageIdentifier, String accessibilityNodeHandle);
 
     void ensureObserverForFrame(WebFrame&);
 
@@ -103,6 +115,8 @@ private:
     void computeElementLayout(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, bool scrollIntoViewIfNeeded, CoordinateSystem, CompletionHandler<void(std::optional<String>, WebCore::FloatRect, std::optional<WebCore::IntPoint>, bool)>&&);
     void getComputedRole(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, CompletionHandler<void(std::optional<String>, std::optional<String>)>&&);
     void getComputedLabel(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, CompletionHandler<void(std::optional<String>, std::optional<String>)>&&);
+    void getAccessibilityPropertiesForElement(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, CompletionHandler<void(std::optional<String>, WebCore::AccessibilityProperties)>&&);
+    void getAccessibilityPropertiesForAccessibilityNode(WebCore::PageIdentifier, String accessibilityNodeHandle, CompletionHandler<void(std::optional<String>, WebCore::AccessibilityProperties)>&&);
     void selectOptionElement(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, CompletionHandler<void(std::optional<String>)>&&);
     void setFilesForInputFileUpload(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, Vector<String>&& filenames, CompletionHandler<void(std::optional<String>)>&&);
     void takeScreenshot(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&, String&&)>&&);

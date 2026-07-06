@@ -4062,6 +4062,17 @@ header: <WebCore/AXObjectCache.h>
 };
 
 header: <WebCore/AXObjectCache.h>
+[CustomHeader] struct WebCore::AccessibilityProperties {
+    std::optional<String> accessibilityNodeId;
+    std::optional<String> role;
+    std::optional<String> label;
+    std::optional<String> checked;
+    std::optional<String> pressed;
+    std::optional<String> parent;
+    Vector<String> children;
+};
+
+header: <WebCore/AXObjectCache.h>
 [CustomHeader] struct WebCore::AriaNotifyData {
     String message;
     WebCore::NotifyPriority priority;
