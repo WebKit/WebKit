@@ -2659,6 +2659,48 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
         with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.run_step()
 
+    def test_run_subtest_tests_strips_wpt_directory_from_additional_arguments(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('additionalArguments', ['--child-processes=4', 'imported/w3c/web-platform-tests'])
+        self.setProperty('first_run_failures', ['imported/w3c/web-platform-tests/test1.html', 'imported/w3c/web-platform-tests/test2.html'])
+        self.setProperty('second_run_failures', ['imported/w3c/web-platform-tests/test2.html', 'imported/w3c/web-platform-tests/test3.html'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        log_environ=False,
+                        timeout=19800,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 60 --skip-failing-tests --child-processes=4 --builder-name iOS-13-Simulator-WK2-Tests-EWS --build-number 123 --buildbot-worker ews126 --buildbot-master {EWS_BUILD_HOSTNAMES[0]} --report https://results.webkit.org/ --skipped=always imported/w3c/web-platform-tests/test1.html imported/w3c/web-platform-tests/test2.html imported/w3c/web-platform-tests/test3.html 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
+                        )
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='layout-tests')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            return self.run_step()
+
+    def test_run_subtest_tests_preserves_flags_and_exclude_value(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('additionalArguments', ['imported/w3c/web-platform-tests', '--site-isolation-enabled-by-default', '--exclude-tests', 'imported/w3c/web-platform-tests/css'])
+        self.setProperty('first_run_failures', ['imported/w3c/web-platform-tests/test1.html'])
+        self.setProperty('second_run_failures', ['imported/w3c/web-platform-tests/test1.html'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        log_environ=False,
+                        timeout=19800,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 60 --skip-failing-tests --site-isolation-enabled-by-default --exclude-tests imported/w3c/web-platform-tests/css --builder-name iOS-13-Simulator-WK2-Tests-EWS --build-number 123 --buildbot-worker ews126 --buildbot-master {EWS_BUILD_HOSTNAMES[0]} --report https://results.webkit.org/ --skipped=always imported/w3c/web-platform-tests/test1.html 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
+                        )
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='layout-tests')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            return self.run_step()
+
     def test_run_subtest_tests_removes_skipped_that_fails(self):
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
