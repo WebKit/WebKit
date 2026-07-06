@@ -1,0 +1,3 @@
+
+FAIL The 2nd fetchLater(same-origin) call in a same-origin child iframe is not allowed to exceed per-origin quota for its POST body of String. promise_test: Unhandled rejection with value: object "Error: iframe[src=https://web-platform.test:9443/fetch/fetch-later/resources/fetch-later.html?url=https%253A%252F%252Fweb-platform.test%253A9443%252F&activateAfter=0&referrer=&method=POST&bodyType=String&bodySize=20] threw nothing, expected QuotaExceededError"
+

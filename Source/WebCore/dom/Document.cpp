@@ -80,6 +80,7 @@
 #include "DOMTimer.h"
 #include "DateComponents.h"
 #include "DebugPageOverlays.h"
+#include "DeferredFetchRegistry.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentFontLoader.h"
 #include "DocumentFragment.h"
@@ -3656,6 +3657,12 @@ void Document::willBeRemovedFromFrame()
 {
     if (m_hasPreparedForDestruction)
         return;
+
+    // Activate any pending fetchLater() requests before the document goes away.
+    // Must happen before we start tearing down subsystems the load path relies on
+    // (e.g. the CachedResourceLoader / DocumentLoader below).
+    if (RefPtr registry = DeferredFetchRegistry::from(*this))
+        registry->documentIsBeingDestroyed();
 
 #if ENABLE(WEB_RTC)
     if (RefPtr rtcNetworkManager = m_rtcNetworkManager)
@@ -7631,6 +7638,13 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
             idbConnectionProxy->setContextSuspended(*scriptExecutionContext(), false);
         break;
     case AboutToEnterBackForwardCache:
+        // https://fetch.spec.whatwg.org/#deferred-fetch-task-destination
+        // Activate all pending deferred fetches when the document becomes
+        // "not fully active" (i.e. enters bfcache). This happens before the
+        // pagehide event so the loads are already dispatched by the time
+        // author script runs.
+        if (RefPtr registry = DeferredFetchRegistry::from(*this))
+            registry->documentIsAboutToEnterBackForwardCache();
         break;
     }
 }

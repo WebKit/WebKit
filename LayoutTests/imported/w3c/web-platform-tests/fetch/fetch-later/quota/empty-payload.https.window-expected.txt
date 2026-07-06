@@ -1,0 +1,11 @@
+
+PASS fetchLater() accepts an empty POST request body of String.
+PASS fetchLater() accepts an empty POST request body of ArrayBuffer.
+PASS fetchLater() accepts an empty POST request body of FormData.
+PASS fetchLater() accepts an empty POST request body of URLSearchParams.
+PASS fetchLater() accepts an empty POST request body of Blob.
+PASS fetchLater() accepts an empty POST request body of File.
+PASS fetchLater() accept a GET request.
+PASS fetchLater() accept a DELETE request.
+PASS fetchLater() accept a PUT request.
+

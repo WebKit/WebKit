@@ -475,7 +475,10 @@ $(PROJECT_DIR)/Modules/entriesapi/FileSystemEntryCallback.idl
 $(PROJECT_DIR)/Modules/entriesapi/FileSystemFileEntry.idl
 $(PROJECT_DIR)/Modules/entriesapi/HTMLInputElement+EntriesAPI.idl
 $(PROJECT_DIR)/Modules/fetch/FetchBody.idl
+$(PROJECT_DIR)/Modules/fetch/DOMWindow+FetchLater.idl
+$(PROJECT_DIR)/Modules/fetch/DeferredRequestInit.idl
 $(PROJECT_DIR)/Modules/fetch/FetchHeaders.idl
+$(PROJECT_DIR)/Modules/fetch/FetchLaterResult.idl
 $(PROJECT_DIR)/Modules/fetch/FetchReferrerPolicy.idl
 $(PROJECT_DIR)/Modules/fetch/FetchRequest.idl
 $(PROJECT_DIR)/Modules/fetch/FetchRequestCache.idl
@@ -1560,6 +1563,8 @@ $(PROJECT_DIR)/dom/PredicateCallback.idl
 $(PROJECT_DIR)/dom/ProcessingInstruction.idl
 $(PROJECT_DIR)/dom/ProgressEvent.idl
 $(PROJECT_DIR)/dom/PromiseRejectionEvent.idl
+$(PROJECT_DIR)/dom/QuotaExceededError.idl
+$(PROJECT_DIR)/dom/QuotaExceededErrorOptions.idl
 $(PROJECT_DIR)/dom/Range+CSSOMView.idl
 $(PROJECT_DIR)/dom/Range+DOMParsing.idl
 $(PROJECT_DIR)/dom/Range.idl

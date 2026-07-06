@@ -49,6 +49,13 @@ PingLoad::PingLoad(NetworkProcess& networkProcess, PAL::SessionID sessionID, Net
     , m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
     , m_networkLoadChecker(NetworkLoadChecker::create(networkProcess, nullptr, nullptr, FetchOptions { m_parameters.options }, m_sessionID, m_parameters.webPageProxyID, WTF::move(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections))
 {
+    // initialize() registers a completion handler with NetworkLoadChecker that
+    // captures WeakPtr { *this } and may fire synchronously (e.g. when the
+    // content-extension backend for this UserContentController is already
+    // cached in the NetworkProcess). Dereferencing that WeakPtr inside the
+    // sync callback calls ref() before the caller has had a chance to
+    // adoptRef() us, which trips WTF's refcount-debugger adoption assert.
+    relaxAdoptionRequirement();
     initialize(networkProcess);
 }
 
@@ -60,6 +67,8 @@ PingLoad::PingLoad(NetworkConnectionToWebProcess& connection, NetworkResourceLoa
     , m_networkLoadChecker(NetworkLoadChecker::create(connection.networkProcess(), nullptr,  &connection.schemeRegistry(), FetchOptions { m_parameters.options }, m_sessionID, m_parameters.webPageProxyID, WTF::move(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections))
     , m_blobFiles(connection.resolveBlobReferences(m_parameters))
 {
+    // See comment in the other constructor.
+    relaxAdoptionRequirement();
     for (Ref file : borrow(m_blobFiles).get())
         file->prepareForFileAccess();
 

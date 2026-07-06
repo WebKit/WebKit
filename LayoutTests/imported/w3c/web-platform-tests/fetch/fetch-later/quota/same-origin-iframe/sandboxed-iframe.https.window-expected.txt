@@ -1,0 +1,3 @@
+
+FAIL A sandboxed iframe with 'allow-same-origin' should be treated as same-origin and share the parent's quota. promise_test: Unhandled rejection with value: object "Error: iframe[src=https://web-platform.test:9443/fetch/fetch-later/resources/fetch-later.html?url=https%253A%252F%252Fweb-platform.test%253A9443%252F&activateAfter=0&referrer=&method=POST&bodyType=String&bodySize=4096] threw nothing, expected QuotaExceededError"
+
