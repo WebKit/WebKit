@@ -1047,7 +1047,11 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
     }
 
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
+<<<<<<< HEAD
     if (RefPtr loader = policySourceDocumentLoaderForFrame(*protect(webFrame.coreLocalFrame())))
+=======
+    if (RefPtr loader = policySourceDocumentLoaderForFrame(*webFrame.protectedCoreLocalFrame()))
+>>>>>>> 02c6dfb19415 ([WebKit Networking] missing MESSAGE_CHECK and unvalidated shouldPreconnectOnly in NetworkConnectionToWebProcess::preconnectTo / sendH2Ping)
         advancedPrivacyProtections = loader->advancedPrivacyProtections();
 
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;

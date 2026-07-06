@@ -18677,7 +18677,10 @@
 				1A6FB7AF11E64B6800DB1371 /* PluginView.h in Headers */,
 				49ECA41C23FCA5D80023358D /* PolicyDecision.h in Headers */,
 				57FD318122B3515B008D0E8B /* PopUpSOAuthorizationSession.h in Headers */,
+<<<<<<< HEAD
 				07AE8FC82F3BCF1600A4C0CA /* PositionInformationForWebPage.h in Headers */,
+=======
+>>>>>>> 02c6dfb19415 ([WebKit Networking] missing MESSAGE_CHECK and unvalidated shouldPreconnectOnly in NetworkConnectionToWebProcess::preconnectTo / sendH2Ping)
 				1D3F2E8A99B47C6E5F7A2D11 /* PreconnectRequest.h in Headers */,
 				83A0ED351F747CCF003299EB /* PreconnectTask.h in Headers */,
 				C15CBB3623F3777100300CC7 /* PreferenceObserver.h in Headers */,
