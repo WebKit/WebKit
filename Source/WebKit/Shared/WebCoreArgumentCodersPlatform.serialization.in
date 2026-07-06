@@ -1004,6 +1004,8 @@ enum class WebCore::ReferrerPolicy : uint8_t {
 enum class WebCore::StyleAppearance : uint8_t {
     None,
     Auto,
+    Base,
+    BaseSelect,
     Checkbox,
     Radio,
     PushButton,

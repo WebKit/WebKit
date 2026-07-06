@@ -22,6 +22,7 @@
 
 header: <JavaScriptCore/ConsoleTypes.h>
 enum class JSC::MessageSource : uint8_t {
+    Accessibility,
     XML,
     JS,
     Network,
@@ -83,4 +84,5 @@ enum class Inspector::InspectorTargetType : uint8_t {
     Page,
     DedicatedWorker,
     ServiceWorker,
+    Frame,
 };

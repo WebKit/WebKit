@@ -435,6 +435,9 @@ enum class WebCore::MediaConstraintType : uint8_t {
     WhiteBalanceMode,
     Zoom,
     Torch,
+    FocusDistance,
+    BackgroundBlur,
+    PowerEfficient,
 };
 
 header: <WebCore/MediaConstraints.h>
@@ -558,6 +561,7 @@ class WebCore::RealtimeMediaSourceSettings {
     Screen,
     Window,
     SystemAudio
+    Canvas
 };
 
 class WebCore::CaptureDevice {

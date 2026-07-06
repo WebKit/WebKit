@@ -1630,9 +1630,8 @@ template<> bool isValidEnum<EnumNamespace::BoolEnumType>(bool value)
     case 0:
     case 1:
         return true;
-    default:
-        return false;
     }
+    return false;
 }
 #endif
 
@@ -1643,9 +1642,8 @@ template<> bool isValidEnum<EnumWithoutNamespace>(uint8_t value)
     case EnumWithoutNamespace::Value2:
     case EnumWithoutNamespace::Value3:
         return true;
-    default:
-        return false;
     }
+    return false;
 }
 
 #if ENABLE(UINT16_ENUM)
@@ -1657,9 +1655,8 @@ template<> bool isValidEnum<EnumNamespace::EnumType>(uint16_t value)
     case EnumNamespace::EnumType::SecondValue:
 #endif
         return true;
-    default:
-        return false;
     }
+    return false;
 }
 #endif
 
@@ -1730,9 +1727,8 @@ template<> bool isValidEnum<EnumNamespace::InnerEnumType>(uint8_t value)
     case EnumNamespace::InnerEnumType::OtherInnerInnerValue:
 #endif
         return true;
-    default:
-        return false;
     }
+    return false;
 }
 #endif
 
@@ -1743,9 +1739,8 @@ template<> bool isValidEnum<EnumNamespace::InnerBoolType>(bool value)
     case 0:
     case 1:
         return true;
-    default:
-        return false;
     }
+    return false;
 }
 #endif
 

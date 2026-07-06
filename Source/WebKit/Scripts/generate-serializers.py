@@ -1577,9 +1577,8 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
                     if valid_value.condition is not None:
                         result.append('#endif')
             result.append('        return true;')
-            result.append('    default:')
-            result.append('        return false;')
             result.append('    }')
+            result.append('    return false;')
         result.append('}')
         if enum.condition is not None:
             result.append('#endif')

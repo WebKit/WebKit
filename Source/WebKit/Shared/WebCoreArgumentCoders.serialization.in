@@ -149,6 +149,7 @@ enum class WebCore::PermissionName : uint8_t {
     Push,
     ScreenWakeLock,
     SpeakerSelection
+    StorageAccess
 };
 
 header: <WebCore/PermissionQuerySource.h>
@@ -2475,11 +2476,13 @@ enum class WebCore::AllowsContentJavaScript : bool
 enum class WebCore::ViolationReportType : uint8_t {
     COEPInheritenceViolation,
     CORPViolation,
+    CSPHashReport
     ContentSecurityPolicy,
     CrossOriginOpenerPolicy,
     Deprecation,
     StandardReportingAPIViolation,
     Test
+    IntegrityPolicy
 };
 
 enum class WebCore::COEPDisposition : bool;
