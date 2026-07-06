@@ -467,6 +467,7 @@ angle::Result VertexArrayMtl::updateClientAttribs(const gl::Context *context,
                                                   GLint firstVertex,
                                                   GLsizei vertexOrIndexCount,
                                                   GLsizei instanceCount,
+                                                  GLuint baseInstance,
                                                   gl::DrawElementsType indexTypeOrInvalid,
                                                   const void *indices)
 {
@@ -505,8 +506,10 @@ angle::Result VertexArrayMtl::updateClientAttribs(const gl::Context *context,
         }
         else
         {
-            // Per instance attribute
-            startElement = 0;
+            // Per instance attribute.  The GPU vertex fetcher reads element index
+            // baseInstance + floor(instance / divisor), so the buffer/inline-data range
+            // must extend through the highest such index.
+            startElement = baseInstance;
             elementCount = UnsignedCeilDivide(instanceCount, binding.getDivisor());
         }
         size_t bytesIntendedToUse = (startElement + elementCount) * binding.getStride();

@@ -42,6 +42,7 @@ class VertexArrayMtl : public VertexArrayImpl
                                       GLint firstVertex,
                                       GLsizei vertexOrIndexCount,
                                       GLsizei instanceCount,
+                                      GLuint baseInstance,
                                       gl::DrawElementsType indexTypeOrInvalid,
                                       const void *indices);
 

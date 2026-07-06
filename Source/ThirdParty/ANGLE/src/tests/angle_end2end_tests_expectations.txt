@@ -497,7 +497,6 @@
 494392011 MAC METAL : MipmapTestES3.MismatchingLevelFormats/* = SKIP
 494341324 MAC OPENGL : MipmapTestES3.MismatchingLevelFormats/* = SKIP
 496604559 MAC METAL : RobustResourceInitTestES3.DrawThenInvalidateThenVerifyDepthStencil/* = SKIP
-515709506 MAC METAL : DrawBaseVertexBaseInstanceTest_ES3.BaseInstanceSmallDivisorClientMemory/* = SKIP
 518849408 MAC OPENGL : GLSLTest.EmulateGLFragColorBroadcastInvariantFragColor/* = SKIP
 518849408 MAC OPENGL : GLSLTest.EmulateGLFragColorBroadcastInvariantFragColorUnused/* = SKIP
 
