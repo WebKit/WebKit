@@ -2415,3 +2415,5 @@ fast/animation/request-animation-frame-throttle-inside-overflow-scroll.html [ Pa
 fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Pass Failure ]
 
 webkit.org/b/318697 inspector/animation/lifecycle-web-animation.html [ Failure ]
+
+webkit.org/b/318382 [ Debug ] ipc/networksessioncocoa-empty-resource-request.html [ Failure ]
