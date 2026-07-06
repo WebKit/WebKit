@@ -266,7 +266,6 @@ inline CapabilityLevel canCompile(DFG::Node* node)
     case ArraySortCommit:
     case NewArrayWithSpecies:
     case NewArrayWithSizeAndStructure:
-    case TryGetById:
     case GetById:
     case GetByIdFlush:
     case GetByIdMegamorphic:

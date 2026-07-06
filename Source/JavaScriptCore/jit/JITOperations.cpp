@@ -285,65 +285,6 @@ JSC_DEFINE_JIT_OPERATION(operationThrowIteratorResultIsNotObject, void, (JSGloba
     OPERATION_RETURN(scope);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationTryGetByIdGaveUp, EncodedJSValue, (EncodedJSValue base, PropertyInlineCache* propertyCache))
-{
-    JSGlobalObject* globalObject = propertyCache->globalObject();
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    ICSlowPathCallFrameTracer tracer(vm, callFrame, propertyCache);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-
-    propertyCache->tookSlowPath = true;
-
-    CacheableIdentifier identifier = propertyCache->identifier();
-
-    JSValue baseValue = JSValue::decode(base);
-    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry, &vm);
-    baseValue.getPropertySlot(globalObject, identifier, slot);
-
-    OPERATION_RETURN(scope, JSValue::encode(slot.getPureResult()));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationTryGetByIdGeneric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, uintptr_t rawCacheableIdentifier))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
-
-    JSValue baseValue = JSValue::decode(base);
-    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry, &vm);
-    baseValue.getPropertySlot(globalObject, identifier, slot);
-
-    OPERATION_RETURN(scope, JSValue::encode(slot.getPureResult()));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationTryGetByIdOptimize, EncodedJSValue, (EncodedJSValue base, PropertyInlineCache* propertyCache))
-{
-    JSGlobalObject* globalObject = propertyCache->globalObject();
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    ICSlowPathCallFrameTracer tracer(vm, callFrame, propertyCache);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    CacheableIdentifier identifier = propertyCache->identifier();
-
-    JSValue baseValue = JSValue::decode(base);
-    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry, &vm);
-
-    baseValue.getPropertySlot(globalObject, identifier, slot);
-    OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    if (propertyCache->considerRepatchingCacheBy(vm, codeBlock, baseValue.structureOrNull(), identifier) && !slot.isTaintedByOpaqueObject() && (slot.isCacheableValue() || slot.isCacheableGetter() || slot.isUnset()))
-        repatchGetBy(globalObject, codeBlock, baseValue, identifier, slot, *propertyCache, GetByKind::TryById, /* isNonStringPrimitiveKey */ false);
-
-    OPERATION_RETURN(scope, JSValue::encode(slot.getPureResult()));
-}
-
 JSC_DEFINE_JIT_OPERATION(operationGetByIdDirectGaveUp, EncodedJSValue, (EncodedJSValue base, PropertyInlineCache* propertyCache))
 {
     JSGlobalObject* globalObject = propertyCache->globalObject();

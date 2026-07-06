@@ -980,9 +980,6 @@ private:
         case PutStructure:
             compilePutStructure();
             break;
-        case TryGetById:
-            compileGetById(AccessType::TryGetById);
-            break;
         case GetById:
         case GetByIdFlush:
             compileGetById(AccessType::GetById);
@@ -4452,7 +4449,7 @@ private:
 
     void compileGetById(AccessType type)
     {
-        ASSERT(type == AccessType::GetById || type == AccessType::TryGetById || type == AccessType::GetByIdDirect);
+        ASSERT(type == AccessType::GetById || type == AccessType::GetByIdDirect);
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         switch (m_node->child1().useKind()) {
         case CellUse: {

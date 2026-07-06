@@ -1248,7 +1248,6 @@ public:
     bool hasCacheableIdentifier()
     {
         switch (op()) {
-        case TryGetById:
         case GetById:
         case GetByIdFlush:
         case GetByIdMegamorphic:
@@ -1278,7 +1277,6 @@ public:
     {
         ASSERT(hasCacheableIdentifier());
         switch (op()) {
-        case TryGetById:
         case GetById:
         case GetByIdFlush:
         case GetByIdWithThis:
@@ -1327,7 +1325,6 @@ public:
     bool hasGetByIdData() const
     {
         switch (op()) {
-        case TryGetById:
         case GetById:
         case GetByIdFlush:
         case GetByIdWithThis:
@@ -2116,7 +2113,6 @@ public:
         case GetByIdDirect:
         case GetByIdDirectFlush:
         case GetPrototypeOf:
-        case TryGetById:
         case EnumeratorGetByVal:
         case GetByVal:
         case GetByValMegamorphic:

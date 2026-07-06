@@ -1059,7 +1059,6 @@ private:
         case GetByIdWithThisMegamorphic:
         case GetByIdDirect:
         case GetByIdDirectFlush:
-        case TryGetById:
         case GetByValWithThis:
         case GetByValWithThisMegamorphic:
         case GetByOffset:

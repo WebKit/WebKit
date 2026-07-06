@@ -38,7 +38,6 @@ class PropertyInlineCache;
 enum class GetByKind {
     ById,
     ByVal,
-    TryById,
     ByIdWithThis,
     ByIdDirect,
     ByValWithThis,

@@ -56,7 +56,6 @@ class PolymorphicAccess;
     macro(GetById) \
     macro(GetByIdWithThis) \
     macro(GetByIdDirect) \
-    macro(TryGetById) \
     macro(GetByVal) \
     macro(GetByValWithThis) \
     macro(PutByIdStrict) \
@@ -733,8 +732,6 @@ inline auto appropriateGetByIdOptimizeFunction(AccessType type) -> decltype(&ope
     switch (type) {
     case AccessType::GetById:
         return operationGetByIdOptimize;
-    case AccessType::TryGetById:
-        return operationTryGetByIdOptimize;
     case AccessType::GetByIdDirect:
         return operationGetByIdDirectOptimize;
     case AccessType::GetPrivateNameById:
@@ -751,8 +748,6 @@ inline auto appropriateGetByIdGenericFunction(AccessType type) -> decltype(&oper
     switch (type) {
     case AccessType::GetById:
         return operationGetByIdGeneric;
-    case AccessType::TryGetById:
-        return operationTryGetByIdGeneric;
     case AccessType::GetByIdDirect:
         return operationGetByIdDirectGeneric;
     case AccessType::GetPrivateNameById:
@@ -811,7 +806,6 @@ inline bool hasConstantIdentifier(AccessType accessType)
     case AccessType::DeleteByIdStrict:
     case AccessType::DeleteByIdSloppy:
     case AccessType::InById:
-    case AccessType::TryGetById:
     case AccessType::GetByIdDirect:
     case AccessType::GetById:
     case AccessType::GetPrivateNameById:

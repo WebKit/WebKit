@@ -404,7 +404,6 @@ bool doesGC(Graph& graph, Node* node)
     case ToPropertyKey:
     case ToPropertyKeyOrNumber:
     case ToThis:
-    case TryGetById:
     case CreateThis:
     case CreatePromise:
     case CreateGenerator:

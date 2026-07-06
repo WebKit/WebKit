@@ -3495,11 +3495,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case TryGetById: {
-        compileGetById(node, AccessType::TryGetById);
-        break;
-    }
-
     case GetByIdDirect: {
         compileGetById(node, AccessType::GetByIdDirect);
         break;
@@ -4726,7 +4721,7 @@ void SpeculativeJIT::compileCreateClonedArguments(Node* node)
 
 void SpeculativeJIT::compileGetById(Node* node, AccessType accessType)
 {
-    ASSERT(accessType == AccessType::GetById || accessType == AccessType::GetByIdDirect || accessType == AccessType::TryGetById);
+    ASSERT(accessType == AccessType::GetById || accessType == AccessType::GetByIdDirect);
 
     switch (node->child1().useKind()) {
     case CellUse: {

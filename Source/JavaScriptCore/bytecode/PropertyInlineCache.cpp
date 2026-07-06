@@ -289,9 +289,6 @@ void PropertyInlineCache::reset(const ConcurrentJSLockerBase& locker, CodeBlock*
     dataLogLnIf(Options::verboseOSR(), "Clearing structure cache (kind ", static_cast<int>(accessType), ") in ", RawPointer(codeBlock), ".");
 
     switch (accessType) {
-    case AccessType::TryGetById:
-        resetGetBy(codeBlock, *this, GetByKind::TryById);
-        break;
     case AccessType::GetById:
         resetGetBy(codeBlock, *this, GetByKind::ById);
         break;
@@ -600,8 +597,6 @@ static CodePtr<OperationPtrTag> NODELETE slowOperationFromUnlinkedPropertyInline
         return operationInByIdOptimize;
     case AccessType::GetById:
         return operationGetByIdOptimize;
-    case AccessType::TryGetById:
-        return operationTryGetByIdOptimize;
     case AccessType::GetByIdDirect:
         return operationGetByIdDirectOptimize;
     case AccessType::GetByIdWithThis:
@@ -727,7 +722,6 @@ void PropertyInlineCache::initializePredefinedRegisters()
         m_valueTagGPR = BaselineJITRegisters::InById::resultJSR.tagGPR();
 #endif
         break;
-    case AccessType::TryGetById:
     case AccessType::GetByIdDirect:
     case AccessType::GetById:
     case AccessType::GetPrivateNameById:

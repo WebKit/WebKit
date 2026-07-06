@@ -228,7 +228,6 @@ namespace JSC { namespace DFG {
     macro(PutPrivateNameById, NodeMustGenerate) \
     macro(CheckPrivateBrand, NodeMustGenerate) \
     macro(SetPrivateBrand, NodeMustGenerate) \
-    macro(TryGetById, NodeResultJS) \
     macro(GetById, NodeResultJS | NodeMustGenerate) \
     macro(GetByIdFlush, NodeResultJS | NodeMustGenerate) \
     macro(GetByIdWithThis, NodeResultJS | NodeMustGenerate) \

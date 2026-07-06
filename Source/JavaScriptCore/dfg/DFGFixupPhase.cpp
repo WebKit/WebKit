@@ -1183,7 +1183,7 @@ private:
         case StringMatch: {
             if (node->child2()->shouldSpeculateRegExpObject()) {
                 if (m_graph.isWatchingRegExpPrimordialPropertiesWatchpoint(node)) {
-                    addRegExpPrimordialStructureCheck(node->child2().node());
+                    addRegExpPrimordialStructureCheck(node->child2().node(), /* speculateLastIndexIsNumber */ true);
 
                     JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
                     Node* globalObjectNode = m_insertionSet.insertNode(
@@ -1209,7 +1209,7 @@ private:
         case StringSearch: {
             if (node->child2()->shouldSpeculateRegExpObject()) {
                 if (m_graph.isWatchingRegExpPrimordialPropertiesWatchpoint(node)) {
-                    addRegExpPrimordialStructureCheck(node->child2().node());
+                    addRegExpPrimordialStructureCheck(node->child2().node(), /* speculateLastIndexIsNumber */ true);
 
                     JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
                     Node* globalObjectNode = m_insertionSet.insertNode(
@@ -1885,7 +1885,14 @@ private:
         case RegExpTest:
         case RegExpTestInline: {
             fixEdge<KnownCellUse>(node->child1());
-            
+
+            if (op == RegExpTest) {
+                if (m_graph.isWatchingRegExpPrimordialPropertiesWatchpoint(node))
+                    addRegExpPrimordialStructureCheck(node->child2().node(), /* speculateLastIndexIsNumber */ false);
+                else
+                    m_insertionSet.insertNode(m_indexInBlock, SpecNone, ForceOSRExit, node->origin);
+            }
+
             if (node->child2()->shouldSpeculateRegExpObject()) {
                 fixEdge<RegExpObjectUse>(node->child2());
 
@@ -1898,7 +1905,7 @@ private:
         case RegExpSearch: {
             fixEdge<KnownCellUse>(node->child1());
             if (m_graph.isWatchingRegExpPrimordialPropertiesWatchpoint(node))
-                addRegExpPrimordialStructureCheck(node->child2().node());
+                addRegExpPrimordialStructureCheck(node->child2().node(), /* speculateLastIndexIsNumber */ true);
             else
                 m_insertionSet.insertNode(m_indexInBlock, SpecNone, ForceOSRExit, node->origin);
             fixEdge<RegExpObjectUse>(node->child2());
@@ -1910,7 +1917,7 @@ private:
         case RegExpMatchFast: {
             fixEdge<KnownCellUse>(node->child1());
             if (m_graph.isWatchingRegExpPrimordialPropertiesWatchpoint(node))
-                addRegExpPrimordialStructureCheck(node->child2().node());
+                addRegExpPrimordialStructureCheck(node->child2().node(), /* speculateLastIndexIsNumber */ true);
             else
                 m_insertionSet.insertNode(m_indexInBlock, SpecNone, ForceOSRExit, node->origin);
             fixEdge<RegExpObjectUse>(node->child2());
@@ -1920,7 +1927,7 @@ private:
 
         case RegExpSplitFast: {
             if (m_graph.isWatchingRegExpPrimordialPropertiesWatchpoint(node) && m_graph.isWatchingRegExpSpeciesWatchpoint(node))
-                addRegExpPrimordialStructureCheck(node->child1().node());
+                addRegExpPrimordialStructureCheck(node->child1().node(), /* speculateLastIndexIsNumber */ true);
             else
                 m_insertionSet.insertNode(m_indexInBlock, SpecNone, ForceOSRExit, node->origin);
             fixEdge<RegExpObjectUse>(node->child1());
@@ -1958,7 +1965,7 @@ private:
 
             if (op == StringReplace || op == StringReplaceAll) {
                 if (node->child2()->shouldSpeculateRegExpObject() && m_graph.isWatchingRegExpPrimordialPropertiesWatchpoint(node))
-                    addRegExpPrimordialStructureCheck(node->child2().node());
+                    addRegExpPrimordialStructureCheck(node->child2().node(), /* speculateLastIndexIsNumber */ true);
                 else
                     m_insertionSet.insertNode(m_indexInBlock, SpecNone, ForceOSRExit, node->origin);
             }
@@ -2366,12 +2373,6 @@ private:
             
         case NukeStructureAndSetButterfly: {
             fixEdge<KnownCellUse>(node->child1());
-            break;
-        }
-
-        case TryGetById: {
-            if (node->child1()->shouldSpeculateCell())
-                fixEdge<CellUse>(node->child1());
             break;
         }
 
@@ -4617,7 +4618,7 @@ private:
         m_insertionSet.execute(block);
     }
     
-    void addRegExpPrimordialStructureCheck(Node* regExp)
+    void addRegExpPrimordialStructureCheck(Node* regExp, bool speculateLastIndexIsNumber)
     {
         Node* node = m_currentNode;
         JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
@@ -4629,6 +4630,9 @@ private:
             m_indexInBlock, SpecNone, CheckStructure, node->origin,
             OpInfo(m_graph.addStructureSet(globalObject->regExpStructure())),
             Edge(regExp, KnownCellUse));
+
+        if (!speculateLastIndexIsNumber)
+            return;
 
         Node* lastIndexProperty = m_insertionSet.insertNode(
             m_indexInBlock, SpecNone, GetRegExpObjectLastIndex, node->origin,

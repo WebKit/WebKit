@@ -1045,9 +1045,9 @@ public:
         return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::RegExpSpeciesWatchpointSet);
     }
 
-    bool isWatchingPromiseThenWatchpoint(Node* node)
+    bool isWatchingPromiseThenWatchpoint(const CodeOrigin& semanticOrigin)
     {
-        JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
+        JSGlobalObject* globalObject = globalObjectFor(semanticOrigin);
         InlineWatchpointSet& set = globalObject->promiseThenWatchpointSet();
         return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::PromiseThenWatchpointSet);
     }

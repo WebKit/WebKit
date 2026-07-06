@@ -1761,12 +1761,10 @@ MacroAssemblerCodeRef<JITThunkPtrTag> InlineCacheCompiler::generateSlowPathCode(
 {
     switch (type) {
     case AccessType::GetById:
-    case AccessType::TryGetById:
     case AccessType::GetByIdDirect:
     case AccessType::InById:
     case AccessType::GetPrivateNameById: {
         using ArgumentTypes = FunctionTraits<decltype(operationGetByIdOptimize)>::ArgumentTypes;
-        static_assert(std::same_as<FunctionTraits<decltype(operationTryGetByIdOptimize)>::ArgumentTypes, ArgumentTypes>);
         static_assert(std::same_as<FunctionTraits<decltype(operationGetByIdDirectOptimize)>::ArgumentTypes, ArgumentTypes>);
         static_assert(std::same_as<FunctionTraits<decltype(operationInByIdOptimize)>::ArgumentTypes, ArgumentTypes>);
         static_assert(std::same_as<FunctionTraits<decltype(operationGetPrivateNameByIdOptimize)>::ArgumentTypes, ArgumentTypes>);
@@ -7386,7 +7384,6 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
             Vector<ObjectPropertyCondition, 64> checkingConditions;
             switch (m_propertyCache.accessType) {
             case AccessType::GetById:
-            case AccessType::TryGetById:
             case AccessType::GetByIdDirect:
             case AccessType::GetPrivateNameById: {
                 switch (accessCase.m_type) {

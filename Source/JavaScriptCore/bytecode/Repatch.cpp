@@ -433,8 +433,6 @@ inline CodePtr<CFunctionPtrTag> NODELETE appropriateGetByOptimizeFunction(GetByK
         return operationGetByIdOptimize;
     case GetByKind::ByIdWithThis:
         return operationGetByIdWithThisOptimize;
-    case GetByKind::TryById:
-        return operationTryGetByIdOptimize;
     case GetByKind::ByIdDirect:
         return operationGetByIdDirectOptimize;
     case GetByKind::ByVal:
@@ -456,8 +454,6 @@ inline CodePtr<CFunctionPtrTag> NODELETE appropriateGetByGaveUpFunction(GetByKin
         return operationGetByIdGaveUp;
     case GetByKind::ByIdWithThis:
         return operationGetByIdWithThisGaveUp;
-    case GetByKind::TryById:
-        return operationTryGetByIdGaveUp;
     case GetByKind::ByIdDirect:
         return operationGetByIdDirectGaveUp;
     case GetByKind::ByVal:
@@ -677,19 +673,7 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
             if (slot.isCacheableCustom() && slot.domAttribute())
                 domAttribute = slot.domAttribute();
 
-            if (kind == GetByKind::TryById) {
-                AccessCase::AccessType type;
-                if (slot.isCacheableValue())
-                    type = AccessCase::Load;
-                else if (slot.isUnset())
-                    type = AccessCase::Miss;
-                else if (slot.isCacheableGetter())
-                    type = AccessCase::GetGetter;
-                else
-                    RELEASE_ASSERT_NOT_REACHED();
-
-                newCase = ProxyableAccessCase::create(vm, codeBlock, type, propertyName, offset, structure, conditionSet, loadTargetFromProxy, slot.watchpointSet(), WTF::move(prototypeAccessChain));
-            } else if (!loadTargetFromProxy && getter && InlineCacheCompiler::canEmitIntrinsicGetter(propertyCache, getter, structure))
+            if (!loadTargetFromProxy && getter && InlineCacheCompiler::canEmitIntrinsicGetter(propertyCache, getter, structure))
                 newCase = IntrinsicGetterAccessCase::create(vm, codeBlock, propertyName, slot.cachedOffset(), structure, conditionSet, getter, WTF::move(prototypeAccessChain));
             else {
                 if (isPrivate) {
