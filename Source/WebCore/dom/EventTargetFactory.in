@@ -52,7 +52,6 @@ RTCDtlsTransport conditional=WEB_RTC
 RTCDTMFSender conditional=WEB_RTC
 RTCIceTransport conditional=WEB_RTC
 RTCPeerConnection conditional=WEB_RTC
-RTCRtpSFrameTransform conditional=WEB_RTC
 RTCSctpTransport conditional=WEB_RTC
 ServiceWorker
 ServiceWorkerContainer

@@ -2934,12 +2934,6 @@ imported/w3c/web-platform-tests/webrtc-encoded-transform/RTCRtpScriptTransform-s
 imported/w3c/web-platform-tests/webrtc-encoded-transform/idlharness.https.window.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedAudioFrame-audiolevel.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedFrame-timestamps.html [ Skip ]
-webrtc/audio-sframe.html [ Failure ]
-webrtc/sframe-test-vectors.html [ Pass ]
-webrtc/sframe-transform-buffer-source.html [ Pass ]
-webrtc/video-sframe.html [ Skip ]
-webkit.org/b/219825 webrtc/sframe-keys.html [ Skip ]
-webkit.org/b/229055 http/wpt/webrtc/sframe-transform-error.html [ Skip ]
 http/wpt/webrtc/video-script-transform-simulcast.html [ Skip ]
 http/wpt/webrtc/unset-transform.html [ Failure ]
 

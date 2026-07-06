@@ -36,11 +36,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCRtpTransform);
 
-std::unique_ptr<RTCRtpTransform> RTCRtpTransform::from(std::optional<Internal>&& internal)
+std::unique_ptr<RTCRtpTransform> RTCRtpTransform::from(RefPtr<RTCRtpScriptTransform>&& internal)
 {
     if (!internal)
         return nullptr;
-    return makeUnique<RTCRtpTransform>(WTF::move(*internal));
+    return makeUnique<RTCRtpTransform>(internal.releaseNonNull());
 }
 
 RTCRtpTransform::RTCRtpTransform(Internal&& transform)
@@ -55,14 +55,7 @@ RTCRtpTransform::~RTCRtpTransform()
 
 bool RTCRtpTransform::isAttached() const
 {
-    return WTF::switchOn(m_transform,
-        [&](const Ref<RTCRtpSFrameTransform>& sframeTransform) {
-            return sframeTransform->isAttached();
-        },
-        [&](const Ref<RTCRtpScriptTransform>& scriptTransform) {
-            return scriptTransform->isAttached();
-        }
-    );
+    return m_transform->isAttached();
 }
 
 void RTCRtpTransform::attachToReceiver(RTCRtpReceiver& receiver, RTCRtpTransform* previousTransform)
@@ -74,17 +67,11 @@ void RTCRtpTransform::attachToReceiver(RTCRtpReceiver& receiver, RTCRtpTransform
     else
         m_backend = receiver.rtcRtpTransformBackend();
 
-    if (!m_backend)
+    RefPtr backend = m_backend;
+    if (!backend)
         return;
 
-    switchOn(m_transform,
-        [&](Ref<RTCRtpSFrameTransform>& sframeTransform) {
-            sframeTransform->initializeBackendForReceiver(protect(*m_backend));
-        },
-        [&](Ref<RTCRtpScriptTransform>& scriptTransform) {
-            scriptTransform->initializeBackendForReceiver(protect(*m_backend));
-        }
-    );
+    m_transform->initializeBackendForReceiver(*backend);
 }
 
 void RTCRtpTransform::attachToSender(RTCRtpSender& sender, RTCRtpTransform* previousTransform)
@@ -96,45 +83,27 @@ void RTCRtpTransform::attachToSender(RTCRtpSender& sender, RTCRtpTransform* prev
     else
         m_backend = sender.rtcRtpTransformBackend();
 
-    if (!m_backend)
+    RefPtr backend = m_backend;
+    if (!backend)
         return;
 
-    switchOn(m_transform,
-        [&](Ref<RTCRtpSFrameTransform>& sframeTransform) {
-            sframeTransform->initializeBackendForSender(protect(*m_backend));
-        },
-        [&](Ref<RTCRtpScriptTransform>& scriptTransform) {
-            scriptTransform->initializeBackendForSender(protect(*m_backend));
-            if (previousTransform)
-                previousTransform->backendTransferedToNewTransform();
-        }
-    );
+    m_transform->initializeBackendForSender(*backend);
+        if (previousTransform)
+            previousTransform->backendTransferedToNewTransform();
 }
 
 void RTCRtpTransform::backendTransferedToNewTransform()
 {
-    switchOn(m_transform,
-        [&](Ref<RTCRtpSFrameTransform>&) { },
-        [&](Ref<RTCRtpScriptTransform>& scriptTransform) {
-            scriptTransform->backendTransferedToNewTransform();
-        }
-    );
+    m_transform->backendTransferedToNewTransform();
 }
 
 void RTCRtpTransform::clearBackend()
 {
-    if (!m_backend)
+    RefPtr backend = m_backend;
+    if (!backend)
         return;
 
-    switchOn(m_transform,
-        [&](Ref<RTCRtpSFrameTransform>& sframeTransform) {
-            sframeTransform->willClearBackend(protect(*m_backend));
-        },
-        [&](Ref<RTCRtpScriptTransform>& scriptTransform) {
-            scriptTransform->willClearBackend(protect(*m_backend));
-        }
-    );
-
+    m_transform->willClearBackend(*backend);
     m_backend = nullptr;
 }
 
@@ -150,28 +119,7 @@ void RTCRtpTransform::detachFromSender(RTCRtpSender&)
 
 bool operator==(const RTCRtpTransform& a, const RTCRtpTransform& b)
 {
-    return WTF::switchOn(a.m_transform,
-        [&](const Ref<RTCRtpSFrameTransform>& sframeTransformA) {
-            return WTF::switchOn(b.m_transform,
-                [&](const Ref<RTCRtpSFrameTransform>& sframeTransformB) {
-                    return sframeTransformA.ptr() == sframeTransformB.ptr();
-                },
-                [&](const Ref<RTCRtpScriptTransform>&) {
-                    return false;
-                }
-            );
-        },
-        [&](const Ref<RTCRtpScriptTransform>& scriptTransformA) {
-            return WTF::switchOn(b.m_transform,
-                [&](const Ref<RTCRtpSFrameTransform>&) {
-                    return false;
-                },
-                [&](const Ref<RTCRtpScriptTransform>& scriptTransformB) {
-                    return scriptTransformA.ptr() == scriptTransformB.ptr();
-                }
-            );
-        }
-    );
+    return a.m_transform.ptr() == b.m_transform.ptr();
 }
 
 } // namespace WebCore

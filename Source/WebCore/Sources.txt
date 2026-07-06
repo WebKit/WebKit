@@ -283,9 +283,7 @@ Modules/mediastream/RTCPeerConnection.cpp @cost:5
 Modules/mediastream/RTCPeerConnectionIceErrorEvent.cpp
 Modules/mediastream/RTCPeerConnectionIceEvent.cpp
 Modules/mediastream/RTCRtpReceiver.cpp @cost:3
-Modules/mediastream/RTCRtpSFrameTransform.cpp @cost:3
 Modules/mediastream/RTCRtpSFrameTransformErrorEvent.cpp
-Modules/mediastream/RTCRtpSFrameTransformer.cpp
 Modules/mediastream/RTCRtpScriptTransform.cpp
 Modules/mediastream/RTCRtpScriptTransformer.cpp @cost:3
 Modules/mediastream/RTCRtpSender.cpp @cost:3
@@ -775,7 +773,6 @@ bindings/js/JSPerformanceObserverCustom.cpp
 bindings/js/JSPluginElementFunctions.cpp @cost:3
 bindings/js/JSPopStateEventCustom.cpp
 bindings/js/JSPromiseRejectionEventCustom.cpp
-bindings/js/JSRTCRtpSFrameTransformCustom.cpp
 bindings/js/JSRangeCustom.cpp
 bindings/js/JSReadableStreamSourceCustom.cpp
 bindings/js/JSReportBodyCustom.cpp
@@ -4851,7 +4848,6 @@ JSRTCRtpEncodingParameters.cpp
 JSRTCRtpHeaderExtensionParameters.cpp
 JSRTCRtpParameters.cpp
 JSRTCRtpReceiver.cpp
-JSRTCRtpSFrameTransform.cpp
 JSRTCRtpSFrameTransformErrorEvent.cpp
 JSRTCRtpScriptTransform.cpp
 JSRTCRtpScriptTransformer.cpp

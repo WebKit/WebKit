@@ -528,7 +528,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/RTCRtpSendParameters.idl \
     $(WebCore)/Modules/mediastream/RTCRtpSender.idl \
     $(WebCore)/Modules/mediastream/RTCRtpSender+Transform.idl \
-    $(WebCore)/Modules/mediastream/RTCRtpSFrameTransform.idl \
     $(WebCore)/Modules/mediastream/RTCRtpSFrameTransformErrorEvent.idl \
     $(WebCore)/Modules/mediastream/RTCRtpScriptTransform.idl \
     $(WebCore)/Modules/mediastream/RTCRtpScriptTransformProvider.idl \

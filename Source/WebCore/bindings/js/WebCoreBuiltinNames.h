@@ -429,7 +429,6 @@ namespace WebCore {
     macro(RemotePlayback) \
     macro(Request) \
     macro(Response) \
-    macro(SFrameTransform) \
     macro(SFrameTransformErrorEvent) \
     macro(SQLError) \
     macro(SQLResultSet) \

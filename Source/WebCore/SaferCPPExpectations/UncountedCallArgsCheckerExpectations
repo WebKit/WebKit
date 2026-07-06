@@ -7,7 +7,6 @@ Modules/filesystem/FileSystemFileHandle.cpp
 Modules/mediastream/RTCEncodedFrame.cpp
 Modules/mediastream/RTCPeerConnection.cpp
 Modules/mediastream/RTCRtpReceiver.cpp
-Modules/mediastream/RTCRtpSFrameTransform.cpp
 Modules/mediastream/RTCRtpSender.cpp
 Modules/mediastream/libwebrtc/LibWebRTCObservers.h
 Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp
@@ -84,7 +83,6 @@ bindings/js/JSNodeCustom.cpp
 bindings/js/JSObservableArray.h
 bindings/js/JSOffscreenCanvasRenderingContext2DCustom.cpp
 bindings/js/JSPopStateEventCustom.cpp
-bindings/js/JSRTCRtpSFrameTransformCustom.cpp
 bindings/js/JSRangeCustom.cpp
 bindings/js/JSSVGViewSpecCustom.cpp
 bindings/js/JSStaticRangeCustom.cpp

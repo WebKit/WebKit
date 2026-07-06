@@ -38,8 +38,9 @@ template<typename> class ExceptionOr;
 
 ExceptionOr<Vector<uint8_t>> transformAESCTR(CCOperation, const Vector<uint8_t>& counter, size_t counterLength, const Vector<uint8_t>& key, std::span<const uint8_t> data);
 CCStatus keyDerivationHMAC(CCDigestAlgorithm, std::span<const uint8_t> keyDerivationKey, std::span<const uint8_t> context, std::span<const uint8_t> salt, Vector<uint8_t>& derivedKey);
-ExceptionOr<Vector<uint8_t>> deriveHDKFBits(CCDigestAlgorithm, std::span<const uint8_t> key, std::span<const uint8_t> salt, std::span<const uint8_t> info, size_t length);
-ExceptionOr<Vector<uint8_t>> deriveHDKFSHA256Bits(std::span<const uint8_t> key, std::span<const uint8_t> salt, std::span<const uint8_t> info, size_t length);
+// FIXME: Decide whether to remove these two derive methods.
+WEBCORE_EXPORT ExceptionOr<Vector<uint8_t>> deriveHDKFBits(CCDigestAlgorithm, std::span<const uint8_t> key, std::span<const uint8_t> salt, std::span<const uint8_t> info, size_t length);
+WEBCORE_EXPORT ExceptionOr<Vector<uint8_t>> deriveHDKFSHA256Bits(std::span<const uint8_t> key, std::span<const uint8_t> salt, std::span<const uint8_t> info, size_t length);
 Vector<uint8_t> calculateHMACSignature(CCHmacAlgorithm, const Vector<uint8_t>& key, std::span<const uint8_t> data);
 Vector<uint8_t> calculateSHA256Signature(const Vector<uint8_t>& key, std::span<const uint8_t> data);
 

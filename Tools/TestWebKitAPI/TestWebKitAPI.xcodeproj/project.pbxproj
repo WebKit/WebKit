@@ -184,6 +184,7 @@
 				"",
 				"",
 				"",
+				"",
 			);
 		};
 /* End PBXBuildRule section */
@@ -785,7 +786,6 @@
 				WebCore/RegionTests.cpp,
 				WebCore/RegistrableDomain.cpp,
 				WebCore/RenderStyleChange.cpp,
-				WebCore/RTCRtpSFrameTransformerTests.cpp,
 				WebCore/SampleMap.cpp,
 				WebCore/SecurityOrigin.cpp,
 				WebCore/SerializedScriptValue.cpp,

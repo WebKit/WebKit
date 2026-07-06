@@ -121,7 +121,6 @@ Modules/async-clipboard/ios/ClipboardImageReaderIOS.mm @nonARC
 Modules/async-clipboard/mac/ClipboardImageReaderMac.mm @nonARC
 Modules/compression/cocoa/CompressionStreamEncoderCocoa.mm @nonARC
 Modules/compression/cocoa/DecompressionStreamDecoderCocoa.mm @nonARC
-Modules/mediastream/RTCRtpSFrameTransformerCocoa.cpp
 Modules/notifications/NotificationDataCocoa.mm @nonARC
 Modules/notifications/NotificationOptionsPayloadCocoa.mm @nonARC
 Modules/notifications/NotificationPayloadCocoa.mm @nonARC

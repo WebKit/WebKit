@@ -38,7 +38,6 @@ Modules/mediastream/gstreamer/GStreamerRtpTransformBackend.cpp
 Modules/mediastream/gstreamer/GStreamerSctpTransportBackend.cpp
 Modules/mediastream/gstreamer/GStreamerStatsCollector.cpp
 Modules/mediastream/gstreamer/GStreamerWebRTCUtils.cpp
-Modules/mediastream/RTCRtpSFrameTransformerOpenSSL.cpp
 
 Modules/webaudio/MediaStreamAudioSourceGStreamer.cpp
 

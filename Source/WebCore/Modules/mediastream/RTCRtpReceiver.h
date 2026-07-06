@@ -82,7 +82,7 @@ public:
     Ref<RTCRtpTransformBackend> rtcRtpTransformBackend();
     void getStats(Ref<DeferredPromise>&&);
 
-    std::optional<RTCRtpTransform::Internal> transform();
+    RefPtr<RTCRtpScriptTransform> transform();
     ExceptionOr<void> setTransform(std::unique_ptr<RTCRtpTransform>&&);
 
     ExceptionOr<RTCEncodedStreams> createEncodedStreams(ScriptExecutionContext&);

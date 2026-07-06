@@ -118,10 +118,10 @@ ExceptionOr<void> RTCRtpReceiver::setTransform(std::unique_ptr<RTCRtpTransform>&
     return { };
 }
 
-std::optional<RTCRtpTransform::Internal> RTCRtpReceiver::transform()
+RefPtr<RTCRtpScriptTransform> RTCRtpReceiver::transform()
 {
     if (!m_transform)
-        return { };
+        return nullptr;
     return m_transform->internalTransform();
 }
 

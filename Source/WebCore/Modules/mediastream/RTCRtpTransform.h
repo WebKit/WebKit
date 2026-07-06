@@ -27,7 +27,6 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "RTCRtpSFrameTransform.h"
 #include "RTCRtpScriptTransform.h"
 #include "RTCRtpTransformBackend.h"
 #include <wtf/TZoneMalloc.h>
@@ -40,8 +39,8 @@ class RTCRtpSender;
 class RTCRtpTransform  {
     WTF_MAKE_TZONE_ALLOCATED(RTCRtpTransform);
 public:
-    using Internal = Variant<Ref<RTCRtpSFrameTransform>, Ref<RTCRtpScriptTransform>>;
-    static std::unique_ptr<RTCRtpTransform> from(std::optional<Internal>&&);
+    using Internal = Ref<RTCRtpScriptTransform>;
+    static std::unique_ptr<RTCRtpTransform> from(RefPtr<RTCRtpScriptTransform>&&);
 
     explicit RTCRtpTransform(Internal&&);
     ~RTCRtpTransform();
@@ -62,7 +61,7 @@ private:
     void backendTransferedToNewTransform();
 
     RefPtr<RTCRtpTransformBackend> m_backend;
-    Internal m_transform;
+    const Internal m_transform;
 };
 
 bool operator==(const RTCRtpTransform&, const RTCRtpTransform&);

@@ -100,7 +100,7 @@ public:
     RTCDTMFSender* dtmf();
     std::optional<RTCRtpTransceiverDirection> currentTransceiverDirection() const;
 
-    std::optional<RTCRtpTransform::Internal> transform();
+    RefPtr<RTCRtpScriptTransform> transform();
     ExceptionOr<void> setTransform(std::unique_ptr<RTCRtpTransform>&&);
 
     ExceptionOr<RTCEncodedStreams> createEncodedStreams(ScriptExecutionContext&);
