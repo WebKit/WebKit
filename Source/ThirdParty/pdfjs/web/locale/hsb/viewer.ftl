@@ -51,12 +51,6 @@ pdfjs-download-button-label = Sćahnyć
 pdfjs-bookmark-button =
     .title = Aktualna strona (URL z aktualneje strony pokazać)
 pdfjs-bookmark-button-label = Aktualna strona
-# Used in Firefox for Android.
-pdfjs-open-in-app-button =
-    .title = W nałoženju wočinić
-# Used in Firefox for Android.
-# Length of the translation matters since we are in a mobile context, with limited screen estate.
-pdfjs-open-in-app-button-label = W nałoženju wočinić
 
 ##  Secondary toolbar and context menu
 
@@ -111,13 +105,13 @@ pdfjs-document-properties-button-label = Dokumentowe kajkosće…
 pdfjs-document-properties-file-name = Mjeno dataje:
 pdfjs-document-properties-file-size = Wulkosć dataje:
 # Variables:
-#   $size_kb (Number) - the PDF file size in kilobytes
-#   $size_b (Number) - the PDF file size in bytes
-pdfjs-document-properties-kb = { $size_kb } KB ({ $size_b } bajtow)
+#   $kb (Number) - the PDF file size in kilobytes
+#   $b (Number) - the PDF file size in bytes
+pdfjs-document-properties-size-kb = { NUMBER($kb, maximumSignificantDigits: 3) } KB ({ $b } bajtow)
 # Variables:
-#   $size_mb (Number) - the PDF file size in megabytes
-#   $size_b (Number) - the PDF file size in bytes
-pdfjs-document-properties-mb = { $size_mb } MB ({ $size_b } bajtow)
+#   $mb (Number) - the PDF file size in megabytes
+#   $b (Number) - the PDF file size in bytes
+pdfjs-document-properties-size-mb = { NUMBER($mb, maximumSignificantDigits: 3) } MB ({ $b } bajtow)
 pdfjs-document-properties-title = Titul:
 pdfjs-document-properties-author = Awtor:
 pdfjs-document-properties-subject = Předmjet:
@@ -125,9 +119,8 @@ pdfjs-document-properties-keywords = Klučowe słowa:
 pdfjs-document-properties-creation-date = Datum wutworjenja:
 pdfjs-document-properties-modification-date = Datum změny:
 # Variables:
-#   $date (Date) - the creation/modification date of the PDF file
-#   $time (Time) - the creation/modification time of the PDF file
-pdfjs-document-properties-date-string = { $date }, { $time }
+#   $dateObj (Date) - the creation/modification date and time of the PDF file
+pdfjs-document-properties-date-time-string = { DATETIME($dateObj, dateStyle: "short", timeStyle: "medium") }
 pdfjs-document-properties-creator = Awtor:
 pdfjs-document-properties-producer = PDF-zhotowjer:
 pdfjs-document-properties-version = PDF-wersija:
@@ -208,6 +201,15 @@ pdfjs-thumb-page-title =
 #   $page (Number) - the page number
 pdfjs-thumb-page-canvas =
     .aria-label = Miniatura strony { $page }
+# Variables:
+#   $page (Number) - the page number
+pdfjs-thumb-page-checkbox1 =
+    .title = Stronu { $page } wubrać
+# Variables:
+#   $page (Number) - the page number
+#   $total (Number) - the number of pages
+pdfjs-thumb-page-title1 =
+    .title = Strona { $page } z { $total }
 
 ## Find panel button title and messages
 
@@ -274,10 +276,6 @@ pdfjs-rendering-error = Při zwobraznjenju strony je zmylk wustupił.
 
 ## Annotations
 
-# Variables:
-#   $date (Date) - the modification date of the annotation
-#   $time (Time) - the modification time of the annotation
-pdfjs-annotation-date-string = { $date }, { $time }
 # .alt: This is used as a tooltip.
 # Variables:
 #   $type (String) - an annotation type from a list defined in the PDF spec
@@ -285,6 +283,9 @@ pdfjs-annotation-date-string = { $date }, { $time }
 # Some common types are e.g.: "Check", "Text", "Comment", "Note"
 pdfjs-text-annotation-type =
     .alt = [Typ přispomnjenki: { $type }]
+# Variables:
+#   $dateObj (Date) - the modification date and time of the annotation
+pdfjs-annotation-date-time-string = { DATETIME($dateObj, dateStyle: "short", timeStyle: "medium") }
 
 ## Password
 
@@ -298,9 +299,13 @@ pdfjs-web-fonts-disabled = Webpisma su znjemóžnjene: njeje móžno, zasadźene
 
 pdfjs-editor-free-text-button =
     .title = Tekst
+pdfjs-editor-color-picker-free-text-input =
+    .title = Tekstowu barbu změnić
 pdfjs-editor-free-text-button-label = Tekst
 pdfjs-editor-ink-button =
     .title = Rysować
+pdfjs-editor-color-picker-ink-input =
+    .title = Rysowansku barbu změnić
 pdfjs-editor-ink-button-label = Rysować
 pdfjs-editor-stamp-button =
     .title = Wobrazy přidać abo wobdźěłać
@@ -308,12 +313,37 @@ pdfjs-editor-stamp-button-label = Wobrazy přidać abo wobdźěłać
 pdfjs-editor-highlight-button =
     .title = Wuzběhnyć
 pdfjs-editor-highlight-button-label = Wuzběhnyć
-pdfjs-highlight-floating-button =
-    .title = Wuzběhnyć
 pdfjs-highlight-floating-button1 =
     .title = Wuzběhnjenje
     .aria-label = Wuzběhnjenje
 pdfjs-highlight-floating-button-label = Wuzběhnjenje
+pdfjs-comment-floating-button =
+    .title = Komentować
+    .aria-label = Komentować
+pdfjs-comment-floating-button-label = Komentować
+pdfjs-editor-comment-button =
+    .title = Komentować
+    .aria-label = Komentować
+pdfjs-editor-comment-button-label = Komentować
+pdfjs-editor-signature-button =
+    .title = Signaturu přidać
+pdfjs-editor-signature-button-label = Signaturu přidać
+
+## Default editor aria labels
+
+# “Highlight” is a noun, the string is used on the editor for highlights.
+pdfjs-editor-highlight-editor =
+    .aria-label = Wuzběhowanski editor
+# “Drawing” is a noun, the string is used on the editor for drawings.
+pdfjs-editor-ink-editor =
+    .aria-label = Rysowanski editor
+# Used when a signature editor is selected/hovered.
+# Variables:
+#   $description (String) - a string describing/labeling the signature.
+pdfjs-editor-signature-editor1 =
+    .aria-description = Signaturowy editor: { $description }
+pdfjs-editor-stamp-editor =
+    .aria-label = Wobrazowy editor
 
 ## Remove button for the various kind of editor.
 
@@ -325,6 +355,8 @@ pdfjs-editor-remove-stamp-button =
     .title = Wobraz wotstronić
 pdfjs-editor-remove-highlight-button =
     .title = Wuzběhnjenje wotstronić
+pdfjs-editor-remove-signature-button =
+    .title = Signaturu wotstronić
 
 ##
 
@@ -341,19 +373,43 @@ pdfjs-editor-stamp-add-image-button-label = Wobraz přidać
 pdfjs-editor-free-highlight-thickness-input = Tołstosć
 pdfjs-editor-free-highlight-thickness-title =
     .title = Tołstosć změnić, hdyž so zapiski wuzběhuja, kotrež tekst njejsu
-pdfjs-free-text =
+pdfjs-editor-add-signature-container =
+    .aria-label = Wodźenske elementy signaturow a składowane signatury
+pdfjs-editor-signature-add-signature-button =
+    .title = Nowu signaturu přidać
+pdfjs-editor-signature-add-signature-button-label = Nowu signaturu přidać
+# Used on the button to use an already saved signature.
+# Variables:
+#   $description (String) - a string describing/labeling the signature.
+pdfjs-editor-add-saved-signature-button =
+    .title = Składowana signatura: { $description }
+# .default-content is used as a placeholder in an empty text editor.
+pdfjs-free-text2 =
     .aria-label = Tekstowy editor
-pdfjs-free-text-default-content = Započńće pisać…
-pdfjs-ink =
-    .aria-label = Rysowanski editor
-pdfjs-ink-canvas =
-    .aria-label = Wobraz wutworjeny wot wužiwarja
+    .default-content = Započńće pisać …
+# Used to show how many comments are present in the pdf file.
+# Variables:
+#   $count (Number) - the number of comments.
+pdfjs-editor-comments-sidebar-title =
+    { $count ->
+        [one] { $count } komentar
+        [two] { $count } komentaraj
+        [few] { $count } komentary
+       *[other] { $count } komentarow
+    }
+pdfjs-editor-comments-sidebar-close-button =
+    .title = Bóčnicu začinić
+    .aria-label = Bóčnicu začinić
+pdfjs-editor-comments-sidebar-close-button-label = Bóčnicu začinić
+# Instructional copy to add a comment by selecting text or an annotations.
+pdfjs-editor-comments-sidebar-no-comments1 = Widźiće něšto přispomnjenja hódneho? Wuzběhńće to a zawostajće komentar.
+pdfjs-editor-comments-sidebar-no-comments-link = Dalše informacije
 
 ## Alt-text dialog
 
-# Alternative text (alt text) helps when people can't see the image.
 pdfjs-editor-alt-text-button-label = Alternatiwny tekst
-pdfjs-editor-alt-text-edit-button-label = Alternatiwny tekst wobdźěłać
+pdfjs-editor-alt-text-edit-button =
+    .aria-label = Alternatiwny tekst wobdźěłać
 pdfjs-editor-alt-text-dialog-label = Nastajenje wubrać
 pdfjs-editor-alt-text-dialog-description = Alternatiwny tekst pomha, hdyž ludźo njemóža wobraz widźeć abo hdyž so wobraz njezačita.
 pdfjs-editor-alt-text-add-description-label = Wopisanje přidać
@@ -366,18 +422,29 @@ pdfjs-editor-alt-text-decorative-tooltip = Jako dekoratiwny markěrowany
 # .placeholder: This is a placeholder for the alt text input area
 pdfjs-editor-alt-text-textarea =
     .placeholder = Na přikład, „Młody muž za blidom sedźi, zo by jědź jědł“
+# Alternative text (alt text) helps when people can't see the image.
+pdfjs-editor-alt-text-button =
+    .aria-label = Alternatiwny tekst
 
 ## Editor resizers
 ## This is used in an aria label to help to understand the role of the resizer.
 
-pdfjs-editor-resizer-label-top-left = Horjeka nalěwo – wulkosć změnić
-pdfjs-editor-resizer-label-top-middle = Horjeka wosrjedź – wulkosć změnić
-pdfjs-editor-resizer-label-top-right = Horjeka naprawo – wulkosć změnić
-pdfjs-editor-resizer-label-middle-right = Wosrjedź naprawo – wulkosć změnić
-pdfjs-editor-resizer-label-bottom-right = Deleka naprawo – wulkosć změnić
-pdfjs-editor-resizer-label-bottom-middle = Deleka wosrjedź – wulkosć změnić
-pdfjs-editor-resizer-label-bottom-left = Deleka nalěwo – wulkosć změnić
-pdfjs-editor-resizer-label-middle-left = Wosrjedź nalěwo – wulkosć změnić
+pdfjs-editor-resizer-top-left =
+    .aria-label = Horjeka nalěwo – wulkosć změnić
+pdfjs-editor-resizer-top-middle =
+    .aria-label = Horjeka wosrjedź – wulkosć změnić
+pdfjs-editor-resizer-top-right =
+    .aria-label = Horjeka naprawo – wulkosć změnić
+pdfjs-editor-resizer-middle-right =
+    .aria-label = Wosrjedź naprawo – wulkosć změnić
+pdfjs-editor-resizer-bottom-right =
+    .aria-label = Deleka naprawo – wulkosć změnić
+pdfjs-editor-resizer-bottom-middle =
+    .aria-label = Deleka wosrjedź – wulkosć změnić
+pdfjs-editor-resizer-bottom-left =
+    .aria-label = Deleka nalěwo – wulkosć změnić
+pdfjs-editor-resizer-middle-left =
+    .aria-label = Wosrjedź nalěwo – wulkosć změnić
 
 ## Color picker
 
@@ -404,3 +471,293 @@ pdfjs-editor-colorpicker-red =
 pdfjs-editor-highlight-show-all-button-label = Wšě pokazać
 pdfjs-editor-highlight-show-all-button =
     .title = Wšě pokazać
+
+## New alt-text dialog
+## Group note for entire feature: Alternative text (alt text) helps when people can't see the image. This feature includes a tool to create alt text automatically using an AI model that works locally on the user's device to preserve privacy.
+
+# Modal header positioned above a text box where users can edit the alt text.
+pdfjs-editor-new-alt-text-dialog-edit-label = Alternatiwny tekst wobdźěłać (wobrazowe wopisanje)
+# Modal header positioned above a text box where users can add the alt text.
+pdfjs-editor-new-alt-text-dialog-add-label = Alternatiwny tekst přidać (wobrazowe wopisanje)
+pdfjs-editor-new-alt-text-textarea =
+    .placeholder = Pisajće tu swoje wopisanje…
+# This text refers to the alt text box above this description. It offers a definition of alt text.
+pdfjs-editor-new-alt-text-description = Krótke wopisanje za ludźi, kotřiž njemóžeće wobraz widźeć abo hdyž so wobraz njezačita.
+# This is a required legal disclaimer that refers to the automatically created text inside the alt text box above this text. It disappears if the text is edited by a human.
+pdfjs-editor-new-alt-text-disclaimer1 = Tutón alternatiwny tekst je so awtomatisce wutworił a je snano njedokładny.
+pdfjs-editor-new-alt-text-disclaimer-learn-more-url = Dalše informacije
+pdfjs-editor-new-alt-text-create-automatically-button-label = Alternatiwny tekst awtomatisce wutworić
+pdfjs-editor-new-alt-text-not-now-button = Nic nětko
+pdfjs-editor-new-alt-text-error-title = Alternatiwny tekst njeda so awtomatisce wutworić
+pdfjs-editor-new-alt-text-error-description = Prošu pisajće swój alternatiwny tekst abo spytajće pozdźišo hišće raz.
+pdfjs-editor-new-alt-text-error-close-button = Začinić
+# Variables:
+#   $totalSize (Number) - the total size (in MB) of the AI model.
+#   $downloadedSize (Number) - the downloaded size (in MB) of the AI model.
+pdfjs-editor-new-alt-text-ai-model-downloading-progress = Model KI za alternatiwny tekst so sćahuje ({ $downloadedSize } z { $totalSize } MB)
+    .aria-valuetext = Model KI za alternatiwny tekst so sćahuje ({ $downloadedSize } z { $totalSize } MB)
+# This is a button that users can click to edit the alt text they have already added.
+pdfjs-editor-new-alt-text-added-button =
+    .aria-label = Alternatiwny tekst je so přidał
+pdfjs-editor-new-alt-text-added-button-label = Alternatiwny tekst je so přidał
+# This is a button that users can click to open the alt text editor and add alt text when it is not present.
+pdfjs-editor-new-alt-text-missing-button =
+    .aria-label = Alternatiwny tekst faluje
+pdfjs-editor-new-alt-text-missing-button-label = Alternatiwny tekst faluje
+# This is a button that opens up the alt text modal where users should review the alt text that was automatically generated.
+pdfjs-editor-new-alt-text-to-review-button =
+    .aria-label = Alternatiwny tekst přepruwować
+pdfjs-editor-new-alt-text-to-review-button-label = Alternatiwny tekst přepruwować
+# "Created automatically" is a prefix that will be added to the beginning of any alt text that has been automatically generated. After the colon, the user will see/hear the actual alt text description. If the alt text has been edited by a human, this prefix will not appear.
+# Variables:
+#   $generatedAltText (String) - the generated alt-text.
+pdfjs-editor-new-alt-text-generated-alt-text-with-disclaimer = Awtomatisce wutworjeny: { $generatedAltText }
+
+## Image alt-text settings
+
+pdfjs-image-alt-text-settings-button =
+    .title = Nastajenja alternatiwneho wobrazoweho teksta
+pdfjs-image-alt-text-settings-button-label = Nastajenja alternatiwneho wobrazoweho teksta
+pdfjs-editor-alt-text-settings-dialog-label = Nastajenja alternatiwneho wobrazoweho teksta
+pdfjs-editor-alt-text-settings-automatic-title = Awtomatiski alternatiwny tekst
+pdfjs-editor-alt-text-settings-create-model-button-label = Alternatiwny tekst awtomatisce wutworić
+pdfjs-editor-alt-text-settings-create-model-description = Namjetuje wopisanja, zo by ludźom pomhał, kotřiž njemóžeće wobraz widźeć abo hdyž so wobraz njezačita.
+# Variables:
+#   $totalSize (Number) - the total size (in MB) of the AI model.
+pdfjs-editor-alt-text-settings-download-model-label = Model KI alternatiwneho teksta ({ $totalSize } MB)
+pdfjs-editor-alt-text-settings-ai-model-description = Běži lokalnje na wašim graće, zo bychu waše daty priwatne wostali. Za awtomatiski alternatiwny tekst trěbny.
+pdfjs-editor-alt-text-settings-delete-model-button = Zhašeć
+pdfjs-editor-alt-text-settings-download-model-button = Sćahnyć
+pdfjs-editor-alt-text-settings-downloading-model-button = Sćahuje so…
+pdfjs-editor-alt-text-settings-editor-title = Editor za alternatiwny tekst
+pdfjs-editor-alt-text-settings-show-dialog-button-label = Editor alternatiwneho teksta hnydom pokazać, hdyž so wobraz přidawa
+pdfjs-editor-alt-text-settings-show-dialog-description = Pomha, wam wšěm swojim wobrazam alternatiwny tekst přidać.
+pdfjs-editor-alt-text-settings-close-button = Začinić
+
+## Accessibility labels (announced by screen readers) for objects added to the editor.
+
+pdfjs-editor-highlight-added-alert = Wuzběhnjenje přidate
+pdfjs-editor-freetext-added-alert = Tekst přidaty
+pdfjs-editor-ink-added-alert = Rysowanka přidata
+pdfjs-editor-stamp-added-alert = Wobraz přidaty
+pdfjs-editor-signature-added-alert = Signatura přidata
+
+## "Annotations removed" bar
+
+pdfjs-editor-undo-bar-message-highlight = Wotstronjene wuzběhnyć
+pdfjs-editor-undo-bar-message-freetext = Tekst je so wotstronił
+pdfjs-editor-undo-bar-message-ink = Rysowanka je so wotstroniła
+pdfjs-editor-undo-bar-message-stamp = Wobraz je so wotstronił
+pdfjs-editor-undo-bar-message-signature = Signatura je so wotstroniła
+pdfjs-editor-undo-bar-message-comment = Komentar je so wotstronił
+# Variables:
+#   $count (Number) - the number of removed annotations.
+pdfjs-editor-undo-bar-message-multiple =
+    { $count ->
+        [one] { $count } přispomnjenka je so wotstroniła
+        [two] { $count } přispomnjence stej so wotstroniłoj
+        [few] { $count } přispomnjenki su so wotstronili
+       *[other] { $count } přispomnjenkow je so wotstroniło
+    }
+pdfjs-editor-undo-bar-undo-button =
+    .title = Cofnyć
+pdfjs-editor-undo-bar-undo-button-label = Cofnyć
+pdfjs-editor-undo-bar-close-button =
+    .title = Začinić
+pdfjs-editor-undo-bar-close-button-label = Začinić
+
+## Add a signature dialog
+
+pdfjs-editor-add-signature-dialog-label = Tutón modalny dialog wužiwarjej zmóžnja, signaturu wutworić, zo by PDF-dokument přidał. Wužiwar móže mjeno wobdźěłać (kotrež tež jako alternatiwny tekst słuži) a po přeću signaturu za wospjetne wužiwanje składować.
+pdfjs-editor-add-signature-dialog-title = Signaturu přidać
+
+## Tab names
+
+# Type is a verb (you can type your name as signature)
+pdfjs-editor-add-signature-type-button = Typ
+    .title = Typ
+# Draw is a verb (you can draw your signature)
+pdfjs-editor-add-signature-draw-button = Rysować
+    .title = Rysować
+pdfjs-editor-add-signature-image-button = Wobraz
+    .title = Wobraz
+
+## Tab panels
+
+pdfjs-editor-add-signature-type-input =
+    .aria-label = Zapodajće swoju signaturu
+    .placeholder = Zapodajće swoju signaturu
+pdfjs-editor-add-signature-draw-placeholder = Rysujće swoju signaturu
+pdfjs-editor-add-signature-draw-thickness-range-label = Tołstosć
+# Variables:
+#   $thickness (Number) - the thickness (in pixels) of the line used to draw a signature.
+pdfjs-editor-add-signature-draw-thickness-range =
+    .title = Tołstosć rysowanki: { $thickness }
+pdfjs-editor-add-signature-image-placeholder = Ćehńće dataju sem, zo byšće ju nahrał
+pdfjs-editor-add-signature-image-browse-link =
+    { PLATFORM() ->
+        [macos] Abo přepytajće wobrazowe dataje
+       *[other] Abo přepytajće wobrazowe dataje
+    }
+
+## Controls
+
+pdfjs-editor-add-signature-description-label = Wopisanje (alternatiwny tekst)
+pdfjs-editor-add-signature-description-input =
+    .title = Wopisanje (alternatiwny tekst)
+pdfjs-editor-add-signature-description-default-when-drawing = Signatura
+pdfjs-editor-add-signature-clear-button-label = Signaturu zhašeć
+pdfjs-editor-add-signature-clear-button =
+    .title = Signaturu zhašeć
+pdfjs-editor-add-signature-save-checkbox = Signaturu składować
+pdfjs-editor-add-signature-save-warning-message = Sće limit 5 składowanych signaturow docpěł. Wotstrońće jednu, zo byšće wjace składował.
+pdfjs-editor-add-signature-image-upload-error-title = Wobraz njeda so nahrać
+pdfjs-editor-add-signature-image-upload-error-description = Přepruwujće swój syćowy zwisk abo spytajće druhi wobraz.
+pdfjs-editor-add-signature-image-no-data-error-title = Tutón wobraz njeda so do signatury přetworić
+pdfjs-editor-add-signature-image-no-data-error-description = Spytajće prošu druhi wobraz nahrać.
+pdfjs-editor-add-signature-error-close-button = Začinić
+
+## Dialog buttons
+
+pdfjs-editor-add-signature-cancel-button = Přetorhnyć
+pdfjs-editor-add-signature-add-button = Přidać
+pdfjs-editor-edit-signature-update-button = Aktualizować
+
+## Comment popup
+
+pdfjs-editor-edit-comment-popup-button-label = Komentar wobdźěłać
+pdfjs-editor-edit-comment-popup-button =
+    .title = Komentar wobdźěłać
+pdfjs-editor-delete-comment-popup-button-label = Komentar wotstronić
+pdfjs-editor-delete-comment-popup-button =
+    .title = Komentar wotstronić
+pdfjs-show-comment-button =
+    .title = Komentar pokazać
+
+##  Edit a comment dialog
+
+# An existing comment is edited
+pdfjs-editor-edit-comment-dialog-title-when-editing = Komentar wobdźěłać
+pdfjs-editor-edit-comment-dialog-save-button-when-editing = Aktualizować
+# No existing comment
+pdfjs-editor-edit-comment-dialog-title-when-adding = Komentar přidać
+pdfjs-editor-edit-comment-dialog-save-button-when-adding = Přidać
+pdfjs-editor-edit-comment-dialog-text-input =
+    .placeholder = Započńće pisać…
+pdfjs-editor-edit-comment-dialog-cancel-button = Přetorhnyć
+
+## Edit a comment button in the editor toolbar
+
+pdfjs-editor-add-comment-button =
+    .title = Komentar přidać
+
+## The view manager is a sidebar displaying different views:
+##  - thumbnails;
+##  - outline;
+##  - attachments;
+##  - layers.
+## The thumbnails view is used to edit the pdf: remove/insert pages, ...
+
+pdfjs-toggle-views-manager-notification-button =
+    .title = Bóčnicu přepinać (dokument miniatury/rozrjad/přiwěški/woršty wobsahuje)
+pdfjs-toggle-views-manager-button1-label = Strony rjadować
+pdfjs-views-manager-sidebar =
+    .aria-label = Bóčnica
+pdfjs-views-manager-sidebar-resizer =
+    .aria-label = Přiměrjenje wulkosće bóčnicy
+pdfjs-views-manager-view-selector-button =
+    .title = Napohlady
+pdfjs-views-manager-view-selector-button-label = Napohlady
+pdfjs-views-manager-pages-title = Strony
+pdfjs-views-manager-outlines-title1 = Dokumentowa struktura
+    .title = Dokumentowa struktura (klikńće dwójce, zo byšće wšě zapiski pokazał/schował)
+pdfjs-views-manager-attachments-title = Přiwěški
+pdfjs-views-manager-layers-title1 = Runiny
+    .title = Runiny (klikńće dwójce, zo byšće wšě runiny na standardny status wróćo stajił)
+pdfjs-views-manager-pages-option-label = Strony
+pdfjs-views-manager-outlines-option-label = Dokumentowa struktura
+pdfjs-views-manager-attachments-option-label = Přiwěški
+pdfjs-views-manager-layers-option-label = Runiny
+pdfjs-views-manager-add-file-button =
+    .title = Dataju přidać
+pdfjs-views-manager-add-file-button-label = Dataju přidać
+# Variables:
+#   $count (Number) - the number of selected pages.
+pdfjs-views-manager-pages-status-action-label =
+    { $count ->
+        [one] { $count } wubrany
+        [two] { $count } wubranej
+        [few] { $count } wubrane
+       *[other] { $count } wubranych
+    }
+pdfjs-views-manager-pages-status-none-action-label = Strony wubrać
+pdfjs-views-manager-pages-status-action-button-label = Rjadować
+pdfjs-views-manager-pages-status-copy-button-label = Kopěrować
+pdfjs-views-manager-pages-status-cut-button-label = Wutřihać
+pdfjs-views-manager-pages-status-delete-button-label = Zhašeć
+pdfjs-views-manager-pages-status-export-selected-button-label = Wubrane eksportować…
+# Variables:
+#   $count (Number) - the number of selected pages to be cut.
+pdfjs-views-manager-status-undo-cut-label =
+    { $count ->
+        [one] { $count } strona wutřihana
+        [two] { $count } stronje wutřihanej
+        [few] { $count } strony wutřihane
+       *[other] { $count } stronow wutřihane
+    }
+# Variables:
+#   $count (Number) - the number of selected pages to be copied.
+pdfjs-views-manager-pages-status-undo-copy-label =
+    { $count ->
+        [one] { $count } strona kopěrowana
+        [two] { $count } strona kopěrowanej
+        [few] { $count } strona kopěrowane
+       *[other] { $count } strona kopěrowane
+    }
+# Variables:
+#   $count (Number) - the number of selected pages to be deleted.
+pdfjs-views-manager-pages-status-undo-delete-label =
+    { $count ->
+        [one] { $count } strona zhašana
+        [two] { $count } strona zhašanej
+        [few] { $count } strona zhašane
+       *[other] { $count } strona zhašane
+    }
+pdfjs-views-manager-pages-status-waiting-ready-label = Waša dataja so přihotuje…
+pdfjs-views-manager-pages-status-waiting-uploading-label = Dataja so nahrawa…
+pdfjs-views-manager-status-warning-cut-label = Njeda so wutřihać. Aktualizujće stronu a spytajće hišće raz.
+pdfjs-views-manager-status-warning-copy-label = Njeda so kopěrować. Aktualizujće stronu a spytajće hišće raz.
+pdfjs-views-manager-status-warning-delete-label = Njeda so zhašeć. Aktualizujće stronu a spytajće hišće raz.
+pdfjs-views-manager-status-warning-save-label = Njeda so składować. Aktualizujće stronu a spytajće hišće raz.
+pdfjs-views-manager-status-undo-button-label = Cofnyć
+pdfjs-views-manager-status-done-button-label = Dokónčeny
+pdfjs-views-manager-status-close-button =
+    .title = Začinić
+pdfjs-views-manager-status-close-button-label = Začinić
+pdfjs-views-manager-paste-button-label = Zasadźić
+pdfjs-views-manager-paste-button-before =
+    .title = Před prěnjej stronu zasadźić
+# Variables:
+#   $page (Number) - the page number after which the paste button is.
+pdfjs-views-manager-paste-button-after =
+    .title = Za stronu { $page } zasadźić
+# Badge used to promote a new feature in the UI, keep it as short as possible.
+# It's spelled uppercase for English, but it can be translated as usual.
+pdfjs-new-badge-content = NOWY
+pdfjs-views-manager-waiting-for-file = Dataja so nahrawa…
+pdfjs-toggle-views-manager-button1 =
+    .title = Strony rjadować
+
+## Main menu for adding/removing signatures
+
+pdfjs-editor-delete-signature-button1 =
+    .title = Składowanu signaturu wotstronić
+pdfjs-editor-delete-signature-button-label1 = Składowanu signaturu wotstronić
+
+## Editor toolbar
+
+pdfjs-editor-add-signature-edit-button-label = Wopisanje wobdźěłać
+
+## Edit signature description dialog
+
+pdfjs-editor-edit-signature-dialog-title = Wopisanje wobdźěłać

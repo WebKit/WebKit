@@ -176,8 +176,12 @@ set(PdfJSFiles
     ${THIRDPARTY_DIR}/pdfjs/web/cmaps/UniKS-UTF8-V.bcmap
     ${THIRDPARTY_DIR}/pdfjs/web/cmaps/V.bcmap
     ${THIRDPARTY_DIR}/pdfjs/web/cmaps/WP-Symbol.bcmap
+    ${THIRDPARTY_DIR}/pdfjs/web/iccs/CGATS001Compat-v2-micro.icc
     ${THIRDPARTY_DIR}/pdfjs/web/images/altText_add.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/altText_disclaimer.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/altText_done.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/altText_spinner.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/altText_warning.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-check.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-comment.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-help.svg
@@ -189,16 +193,29 @@ set(PdfJSFiles
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-paperclip.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-paragraph.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-pushpin.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/checkmark.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/comment-actionsButton.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/comment-closeButton.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/comment-editButton.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/comment-popup-editButton.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/cursor-editorFreeHighlight.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/cursor-editorFreeText.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/cursor-editorInk.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/cursor-editorTextHighlight.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/editor-toolbar-delete.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/editor-toolbar-edit.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/findbarButton-next.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/findbarButton-previous.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/gv-toolbarButton-download.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/loading-icon.gif
     ${THIRDPARTY_DIR}/pdfjs/web/images/loading.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/messageBar_closingButton.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/messageBar_info.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/messageBar_warning.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/pages_closeButton.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/pages_selected.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/pages_viewArrow.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/pages_viewButton.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/secondaryToolbarButton-documentProperties.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/secondaryToolbarButton-firstPage.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/secondaryToolbarButton-handTool.svg
@@ -219,6 +236,7 @@ set(PdfJSFiles
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-editorFreeText.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-editorHighlight.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-editorInk.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-editorSignature.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-editorStamp.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-menuArrow.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-openFile.svg
@@ -228,11 +246,11 @@ set(PdfJSFiles
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-print.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-search.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-secondaryToolbarToggle.svg
-    ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-sidebarToggle.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-viewAttachments.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-viewLayers.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-viewOutline.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-viewThumbnail.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-viewsManagerToggle.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-zoomIn.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-zoomOut.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/treeitem-collapsed.svg
@@ -248,6 +266,7 @@ set(PdfJSFiles
     ${THIRDPARTY_DIR}/pdfjs/web/locale/bg/viewer.ftl
     ${THIRDPARTY_DIR}/pdfjs/web/locale/bn/viewer.ftl
     ${THIRDPARTY_DIR}/pdfjs/web/locale/bo/viewer.ftl
+    ${THIRDPARTY_DIR}/pdfjs/web/locale/bqi/viewer.ftl
     ${THIRDPARTY_DIR}/pdfjs/web/locale/br/viewer.ftl
     ${THIRDPARTY_DIR}/pdfjs/web/locale/brx/viewer.ftl
     ${THIRDPARTY_DIR}/pdfjs/web/locale/bs/viewer.ftl
@@ -306,6 +325,7 @@ set(PdfJSFiles
     ${THIRDPARTY_DIR}/pdfjs/web/locale/lv/viewer.ftl
     ${THIRDPARTY_DIR}/pdfjs/web/locale/meh/viewer.ftl
     ${THIRDPARTY_DIR}/pdfjs/web/locale/mk/viewer.ftl
+    ${THIRDPARTY_DIR}/pdfjs/web/locale/ml/viewer.ftl
     ${THIRDPARTY_DIR}/pdfjs/web/locale/mr/viewer.ftl
     ${THIRDPARTY_DIR}/pdfjs/web/locale/ms/viewer.ftl
     ${THIRDPARTY_DIR}/pdfjs/web/locale/my/viewer.ftl
@@ -363,4 +383,7 @@ set(PdfJSFiles
     ${THIRDPARTY_DIR}/pdfjs/web/standard_fonts/LiberationSans-BoldItalic.ttf
     ${THIRDPARTY_DIR}/pdfjs/web/standard_fonts/LiberationSans-Italic.ttf
     ${THIRDPARTY_DIR}/pdfjs/web/standard_fonts/LiberationSans-Regular.ttf
+    ${THIRDPARTY_DIR}/pdfjs/web/wasm/jbig2_nowasm_fallback.js
+    ${THIRDPARTY_DIR}/pdfjs/web/wasm/openjpeg_nowasm_fallback.js
+    ${THIRDPARTY_DIR}/pdfjs/web/wasm/quickjs-eval.js
 )

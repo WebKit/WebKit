@@ -39,12 +39,6 @@ pdfjs-open-file-button-label = खोलें
 pdfjs-print-button =
     .title = छापें
 pdfjs-print-button-label = छापें
-# Used in Firefox for Android.
-pdfjs-open-in-app-button =
-    .title = ऐप में खोलें
-# Used in Firefox for Android.
-# Length of the translation matters since we are in a mobile context, with limited screen estate.
-pdfjs-open-in-app-button-label = ऐप में खोलें
 
 ##  Secondary toolbar and context menu
 
@@ -89,24 +83,12 @@ pdfjs-document-properties-button =
 pdfjs-document-properties-button-label = दस्तावेज़ विशेषता...
 pdfjs-document-properties-file-name = फ़ाइल नाम:
 pdfjs-document-properties-file-size = फाइल आकारः
-# Variables:
-#   $size_kb (Number) - the PDF file size in kilobytes
-#   $size_b (Number) - the PDF file size in bytes
-pdfjs-document-properties-kb = { $size_kb } KB ({ $size_b } bytes)
-# Variables:
-#   $size_mb (Number) - the PDF file size in megabytes
-#   $size_b (Number) - the PDF file size in bytes
-pdfjs-document-properties-mb = { $size_mb } MB ({ $size_b } bytes)
 pdfjs-document-properties-title = शीर्षक:
 pdfjs-document-properties-author = लेखकः
 pdfjs-document-properties-subject = विषय:
 pdfjs-document-properties-keywords = कुंजी-शब्द:
 pdfjs-document-properties-creation-date = निर्माण दिनांक:
 pdfjs-document-properties-modification-date = संशोधन दिनांक:
-# Variables:
-#   $date (Date) - the creation/modification date of the PDF file
-#   $time (Time) - the creation/modification time of the PDF file
-pdfjs-document-properties-date-string = { $date }, { $time }
 pdfjs-document-properties-creator = निर्माता:
 pdfjs-document-properties-producer = PDF उत्पादक:
 pdfjs-document-properties-version = PDF संस्करण:
@@ -207,9 +189,6 @@ pdfjs-page-scale-actual = वास्तविक आकार
 #   $scale (Number) - percent value for page scale
 pdfjs-page-scale-percent = { $scale }%
 
-## PDF page
-
-
 ## Loading indicator messages
 
 pdfjs-loading-error = PDF लोड करते समय एक त्रुटि हुई.
@@ -220,10 +199,6 @@ pdfjs-rendering-error = पृष्ठ रेंडरिंग के दौ�
 
 ## Annotations
 
-# Variables:
-#   $date (Date) - the modification date of the annotation
-#   $time (Time) - the modification time of the annotation
-pdfjs-annotation-date-string = { $date }, { $time }
 # .alt: This is used as a tooltip.
 # Variables:
 #   $type (String) - an annotation type from a list defined in the PDF spec
@@ -240,14 +215,7 @@ pdfjs-password-ok-button = OK
 pdfjs-password-cancel-button = रद्द करें
 pdfjs-web-fonts-disabled = वेब फॉन्ट्स निष्क्रिय हैं: अंतःस्थापित PDF फॉन्टस के उपयोग में असमर्थ.
 
-## Editing
+##
 
 # Editor Parameters
 pdfjs-editor-free-text-color-input = रंग
-
-## Alt-text dialog
-
-
-## Editor resizers
-## This is used in an aria label to help to understand the role of the resizer.
-

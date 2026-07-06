@@ -51,12 +51,6 @@ pdfjs-download-button-label = Stáhnout
 pdfjs-bookmark-button =
     .title = Aktuální stránka (zobrazit URL od aktuální stránky)
 pdfjs-bookmark-button-label = Aktuální stránka
-# Used in Firefox for Android.
-pdfjs-open-in-app-button =
-    .title = Otevřít v aplikaci
-# Used in Firefox for Android.
-# Length of the translation matters since we are in a mobile context, with limited screen estate.
-pdfjs-open-in-app-button-label = Otevřít v aplikaci
 
 ##  Secondary toolbar and context menu
 
@@ -111,13 +105,13 @@ pdfjs-document-properties-button-label = Vlastnosti dokumentu…
 pdfjs-document-properties-file-name = Název souboru:
 pdfjs-document-properties-file-size = Velikost souboru:
 # Variables:
-#   $size_kb (Number) - the PDF file size in kilobytes
-#   $size_b (Number) - the PDF file size in bytes
-pdfjs-document-properties-kb = { $size_kb } KB ({ $size_b } bajtů)
+#   $kb (Number) - the PDF file size in kilobytes
+#   $b (Number) - the PDF file size in bytes
+pdfjs-document-properties-size-kb = { NUMBER($kb, maximumSignificantDigits: 3) } kB ({ $b } bajtů)
 # Variables:
-#   $size_mb (Number) - the PDF file size in megabytes
-#   $size_b (Number) - the PDF file size in bytes
-pdfjs-document-properties-mb = { $size_mb } MB ({ $size_b } bajtů)
+#   $mb (Number) - the PDF file size in megabytes
+#   $b (Number) - the PDF file size in bytes
+pdfjs-document-properties-size-mb = { NUMBER($mb, maximumSignificantDigits: 3) } MB ({ $b } bajtů)
 pdfjs-document-properties-title = Název stránky:
 pdfjs-document-properties-author = Autor:
 pdfjs-document-properties-subject = Předmět:
@@ -125,9 +119,8 @@ pdfjs-document-properties-keywords = Klíčová slova:
 pdfjs-document-properties-creation-date = Datum vytvoření:
 pdfjs-document-properties-modification-date = Datum úpravy:
 # Variables:
-#   $date (Date) - the creation/modification date of the PDF file
-#   $time (Time) - the creation/modification time of the PDF file
-pdfjs-document-properties-date-string = { $date }, { $time }
+#   $dateObj (Date) - the creation/modification date and time of the PDF file
+pdfjs-document-properties-date-time-string = { DATETIME($dateObj, dateStyle: "short", timeStyle: "medium") }
 pdfjs-document-properties-creator = Vytvořil:
 pdfjs-document-properties-producer = Tvůrce PDF:
 pdfjs-document-properties-version = Verze PDF:
@@ -208,6 +201,15 @@ pdfjs-thumb-page-title =
 #   $page (Number) - the page number
 pdfjs-thumb-page-canvas =
     .aria-label = Náhled strany { $page }
+# Variables:
+#   $page (Number) - the page number
+pdfjs-thumb-page-checkbox1 =
+    .title = Vybrat stranu { $page }
+# Variables:
+#   $page (Number) - the page number
+#   $total (Number) - the number of pages
+pdfjs-thumb-page-title1 =
+    .title = Strana { $page } z { $total }
 
 ## Find panel button title and messages
 
@@ -250,7 +252,7 @@ pdfjs-find-not-found = Hledaný text nenalezen
 ## Predefined zoom values
 
 pdfjs-page-scale-width = Podle šířky
-pdfjs-page-scale-fit = Podle výšky
+pdfjs-page-scale-fit = Podle stránky
 pdfjs-page-scale-auto = Automatická velikost
 pdfjs-page-scale-actual = Skutečná velikost
 # Variables:
@@ -274,10 +276,6 @@ pdfjs-rendering-error = Při vykreslování stránky nastala chyba.
 
 ## Annotations
 
-# Variables:
-#   $date (Date) - the modification date of the annotation
-#   $time (Time) - the modification time of the annotation
-pdfjs-annotation-date-string = { $date }, { $time }
 # .alt: This is used as a tooltip.
 # Variables:
 #   $type (String) - an annotation type from a list defined in the PDF spec
@@ -285,6 +283,9 @@ pdfjs-annotation-date-string = { $date }, { $time }
 # Some common types are e.g.: "Check", "Text", "Comment", "Note"
 pdfjs-text-annotation-type =
     .alt = [Anotace typu { $type }]
+# Variables:
+#   $dateObj (Date) - the modification date and time of the annotation
+pdfjs-annotation-date-time-string = { DATETIME($dateObj, dateStyle: "short", timeStyle: "medium") }
 
 ## Password
 
@@ -298,9 +299,13 @@ pdfjs-web-fonts-disabled = Webová písma jsou zakázána, proto není možné p
 
 pdfjs-editor-free-text-button =
     .title = Text
+pdfjs-editor-color-picker-free-text-input =
+    .title = Změna barvy textu
 pdfjs-editor-free-text-button-label = Text
 pdfjs-editor-ink-button =
     .title = Kreslení
+pdfjs-editor-color-picker-ink-input =
+    .title = Změna barvy kresby
 pdfjs-editor-ink-button-label = Kreslení
 pdfjs-editor-stamp-button =
     .title = Přidání či úprava obrázků
@@ -308,12 +313,37 @@ pdfjs-editor-stamp-button-label = Přidání či úprava obrázků
 pdfjs-editor-highlight-button =
     .title = Zvýraznění
 pdfjs-editor-highlight-button-label = Zvýraznění
-pdfjs-highlight-floating-button =
-    .title = Zvýraznit
 pdfjs-highlight-floating-button1 =
     .title = Zvýraznit
     .aria-label = Zvýraznit
 pdfjs-highlight-floating-button-label = Zvýraznit
+pdfjs-comment-floating-button =
+    .title = Komentář
+    .aria-label = Komentář
+pdfjs-comment-floating-button-label = Komentář
+pdfjs-editor-comment-button =
+    .title = Komentář
+    .aria-label = Komentář
+pdfjs-editor-comment-button-label = Komentář
+pdfjs-editor-signature-button =
+    .title = Přidat podpis
+pdfjs-editor-signature-button-label = Přidat podpis
+
+## Default editor aria labels
+
+# “Highlight” is a noun, the string is used on the editor for highlights.
+pdfjs-editor-highlight-editor =
+    .aria-label = Editor zvýraznění
+# “Drawing” is a noun, the string is used on the editor for drawings.
+pdfjs-editor-ink-editor =
+    .aria-label = Editor kresby
+# Used when a signature editor is selected/hovered.
+# Variables:
+#   $description (String) - a string describing/labeling the signature.
+pdfjs-editor-signature-editor1 =
+    .aria-description = Editor podpisu: { $description }
+pdfjs-editor-stamp-editor =
+    .aria-label = Editor obrázků
 
 ## Remove button for the various kind of editor.
 
@@ -325,6 +355,8 @@ pdfjs-editor-remove-stamp-button =
     .title = Odebrat obrázek
 pdfjs-editor-remove-highlight-button =
     .title = Odebrat zvýraznění
+pdfjs-editor-remove-signature-button =
+    .title = Odebrat podpis
 
 ##
 
@@ -341,19 +373,43 @@ pdfjs-editor-stamp-add-image-button-label = Přidat obrázek
 pdfjs-editor-free-highlight-thickness-input = Tloušťka
 pdfjs-editor-free-highlight-thickness-title =
     .title = Změna tloušťky při zvýrazňování jiných položek než textu
-pdfjs-free-text =
+pdfjs-editor-add-signature-container =
+    .aria-label = Ovládací prvky pro podpisy a uložené podpisy
+pdfjs-editor-signature-add-signature-button =
+    .title = Přidat nový podpis
+pdfjs-editor-signature-add-signature-button-label = Přidat nový podpis
+# Used on the button to use an already saved signature.
+# Variables:
+#   $description (String) - a string describing/labeling the signature.
+pdfjs-editor-add-saved-signature-button =
+    .title = Uložený podpis: { $description }
+# .default-content is used as a placeholder in an empty text editor.
+pdfjs-free-text2 =
     .aria-label = Textový editor
-pdfjs-free-text-default-content = Začněte psát…
-pdfjs-ink =
-    .aria-label = Editor kreslení
-pdfjs-ink-canvas =
-    .aria-label = Uživatelem vytvořený obrázek
+    .default-content = Začněte psát...
+# Used to show how many comments are present in the pdf file.
+# Variables:
+#   $count (Number) - the number of comments.
+pdfjs-editor-comments-sidebar-title =
+    { $count ->
+        [one] Komentář
+        [few] Komentáře
+        [many] Komentáře
+       *[other] Komentáře
+    }
+pdfjs-editor-comments-sidebar-close-button =
+    .title = Zavřít postranní lištu
+    .aria-label = Zavřít postranní lištu
+pdfjs-editor-comments-sidebar-close-button-label = Zavřít postranní lištu
+# Instructional copy to add a comment by selecting text or an annotations.
+pdfjs-editor-comments-sidebar-no-comments1 = Vidíte něco pozoruhodného? Zvýrazněte to a zanechte komentář.
+pdfjs-editor-comments-sidebar-no-comments-link = Zjistit více
 
 ## Alt-text dialog
 
-# Alternative text (alt text) helps when people can't see the image.
 pdfjs-editor-alt-text-button-label = Náhradní popis
-pdfjs-editor-alt-text-edit-button-label = Upravit náhradní popis
+pdfjs-editor-alt-text-edit-button =
+    .aria-label = Upravit alternativní text
 pdfjs-editor-alt-text-dialog-label = Vyberte možnost
 pdfjs-editor-alt-text-dialog-description = Náhradní popis pomáhá, když lidé obrázek nevidí nebo když se nenačítá.
 pdfjs-editor-alt-text-add-description-label = Přidat popis
@@ -366,18 +422,29 @@ pdfjs-editor-alt-text-decorative-tooltip = Označen jako dekorativní
 # .placeholder: This is a placeholder for the alt text input area
 pdfjs-editor-alt-text-textarea =
     .placeholder = Například: “Mladý muž si sedá ke stolu, aby se najedl.”
+# Alternative text (alt text) helps when people can't see the image.
+pdfjs-editor-alt-text-button =
+    .aria-label = Alternativní text
 
 ## Editor resizers
 ## This is used in an aria label to help to understand the role of the resizer.
 
-pdfjs-editor-resizer-label-top-left = Levý horní roh — změna velikosti
-pdfjs-editor-resizer-label-top-middle = Horní střed — změna velikosti
-pdfjs-editor-resizer-label-top-right = Pravý horní roh — změna velikosti
-pdfjs-editor-resizer-label-middle-right = Vpravo uprostřed — změna velikosti
-pdfjs-editor-resizer-label-bottom-right = Pravý dolní roh — změna velikosti
-pdfjs-editor-resizer-label-bottom-middle = Střed dole — změna velikosti
-pdfjs-editor-resizer-label-bottom-left = Levý dolní roh — změna velikosti
-pdfjs-editor-resizer-label-middle-left = Vlevo uprostřed — změna velikosti
+pdfjs-editor-resizer-top-left =
+    .aria-label = Levý horní roh — změna velikosti
+pdfjs-editor-resizer-top-middle =
+    .aria-label = Horní střed — změna velikosti
+pdfjs-editor-resizer-top-right =
+    .aria-label = Pravý horní roh — změna velikosti
+pdfjs-editor-resizer-middle-right =
+    .aria-label = Vpravo uprostřed — změna velikosti
+pdfjs-editor-resizer-bottom-right =
+    .aria-label = Pravý dolní roh — změna velikosti
+pdfjs-editor-resizer-bottom-middle =
+    .aria-label = Střed dole — změna velikosti
+pdfjs-editor-resizer-bottom-left =
+    .aria-label = Levý dolní roh — změna velikosti
+pdfjs-editor-resizer-middle-left =
+    .aria-label = Vlevo uprostřed — změna velikosti
 
 ## Color picker
 
@@ -404,3 +471,293 @@ pdfjs-editor-colorpicker-red =
 pdfjs-editor-highlight-show-all-button-label = Zobrazit vše
 pdfjs-editor-highlight-show-all-button =
     .title = Zobrazit vše
+
+## New alt-text dialog
+## Group note for entire feature: Alternative text (alt text) helps when people can't see the image. This feature includes a tool to create alt text automatically using an AI model that works locally on the user's device to preserve privacy.
+
+# Modal header positioned above a text box where users can edit the alt text.
+pdfjs-editor-new-alt-text-dialog-edit-label = Upravit alternativní text (popis obrázku)
+# Modal header positioned above a text box where users can add the alt text.
+pdfjs-editor-new-alt-text-dialog-add-label = Přidat alternativní text (popis obrázku)
+pdfjs-editor-new-alt-text-textarea =
+    .placeholder = Sem napište svůj popis…
+# This text refers to the alt text box above this description. It offers a definition of alt text.
+pdfjs-editor-new-alt-text-description = Krátký popis pro lidi, kteří neuvidí obrázek nebo když se obrázek nenačítá.
+# This is a required legal disclaimer that refers to the automatically created text inside the alt text box above this text. It disappears if the text is edited by a human.
+pdfjs-editor-new-alt-text-disclaimer1 = Tento alternativní text byl vytvořen automaticky a může být nepřesný.
+pdfjs-editor-new-alt-text-disclaimer-learn-more-url = Více informací
+pdfjs-editor-new-alt-text-create-automatically-button-label = Vytvořit alternativní text automaticky
+pdfjs-editor-new-alt-text-not-now-button = Teď ne
+pdfjs-editor-new-alt-text-error-title = Nepodařilo se automaticky vytvořit alternativní text
+pdfjs-editor-new-alt-text-error-description = Napište prosím vlastní alternativní text nebo to zkuste znovu později.
+pdfjs-editor-new-alt-text-error-close-button = Zavřít
+# Variables:
+#   $totalSize (Number) - the total size (in MB) of the AI model.
+#   $downloadedSize (Number) - the downloaded size (in MB) of the AI model.
+pdfjs-editor-new-alt-text-ai-model-downloading-progress = Stahuje se model AI pro alternativní texty ({ $downloadedSize } z { $totalSize } MB)
+    .aria-valuetext = Stahuje se model AI pro alternativní texty ({ $downloadedSize } z { $totalSize } MB)
+# This is a button that users can click to edit the alt text they have already added.
+pdfjs-editor-new-alt-text-added-button =
+    .aria-label = Alternativní text byl přidán
+pdfjs-editor-new-alt-text-added-button-label = Alternativní text byl přidán
+# This is a button that users can click to open the alt text editor and add alt text when it is not present.
+pdfjs-editor-new-alt-text-missing-button =
+    .aria-label = Chybí alternativní text
+pdfjs-editor-new-alt-text-missing-button-label = Chybí alternativní text
+# This is a button that opens up the alt text modal where users should review the alt text that was automatically generated.
+pdfjs-editor-new-alt-text-to-review-button =
+    .aria-label = Zkontrolovat alternativní text
+pdfjs-editor-new-alt-text-to-review-button-label = Zkontrolovat alternativní text
+# "Created automatically" is a prefix that will be added to the beginning of any alt text that has been automatically generated. After the colon, the user will see/hear the actual alt text description. If the alt text has been edited by a human, this prefix will not appear.
+# Variables:
+#   $generatedAltText (String) - the generated alt-text.
+pdfjs-editor-new-alt-text-generated-alt-text-with-disclaimer = Vytvořeno automaticky: { $generatedAltText }
+
+## Image alt-text settings
+
+pdfjs-image-alt-text-settings-button =
+    .title = Nastavení alternativního textu obrázku
+pdfjs-image-alt-text-settings-button-label = Nastavení alternativního textu obrázku
+pdfjs-editor-alt-text-settings-dialog-label = Nastavení alternativního textu obrázku
+pdfjs-editor-alt-text-settings-automatic-title = Automatický alternativní text
+pdfjs-editor-alt-text-settings-create-model-button-label = Vytvořit alternativní text automaticky
+pdfjs-editor-alt-text-settings-create-model-description = Navrhuje popisy, které pomohou lidem, kteří nevidí obrázek nebo když se obrázek nenačte.
+# Variables:
+#   $totalSize (Number) - the total size (in MB) of the AI model.
+pdfjs-editor-alt-text-settings-download-model-label = Model AI pro alternativní text ({ $totalSize } MB)
+pdfjs-editor-alt-text-settings-ai-model-description = Běží lokálně na vašem zařízení, takže vaše data zůstávají v bezpečí. Vyžadováno pro automatický alternativní text.
+pdfjs-editor-alt-text-settings-delete-model-button = Smazat
+pdfjs-editor-alt-text-settings-download-model-button = Stáhnout
+pdfjs-editor-alt-text-settings-downloading-model-button = Probíhá stahování...
+pdfjs-editor-alt-text-settings-editor-title = Editor alternativního textu
+pdfjs-editor-alt-text-settings-show-dialog-button-label = Při přidávání obrázku hned zobrazit editor alternativního textu
+pdfjs-editor-alt-text-settings-show-dialog-description = Pomůže vám zajistit, aby všechny vaše obrázky obsahovaly alternativní text.
+pdfjs-editor-alt-text-settings-close-button = Zavřít
+
+## Accessibility labels (announced by screen readers) for objects added to the editor.
+
+pdfjs-editor-highlight-added-alert = Přidáno zvýraznění
+pdfjs-editor-freetext-added-alert = Text přidán
+pdfjs-editor-ink-added-alert = Kresba byla přidána
+pdfjs-editor-stamp-added-alert = Obrázek byl přidán
+pdfjs-editor-signature-added-alert = Byl přidán podpis
+
+## "Annotations removed" bar
+
+pdfjs-editor-undo-bar-message-highlight = Zvýraznění odebráno
+pdfjs-editor-undo-bar-message-freetext = Text odstraněn
+pdfjs-editor-undo-bar-message-ink = Kresba odstraněna
+pdfjs-editor-undo-bar-message-stamp = Obrázek odebrán
+pdfjs-editor-undo-bar-message-signature = Podpis odebrán
+pdfjs-editor-undo-bar-message-comment = Komentář odebrán
+# Variables:
+#   $count (Number) - the number of removed annotations.
+pdfjs-editor-undo-bar-message-multiple =
+    { $count ->
+        [one] { $count } anotace odebrána
+        [few] { $count } anotace odebrány
+        [many] { $count } anotací odebráno
+       *[other] { $count } anotací odebráno
+    }
+pdfjs-editor-undo-bar-undo-button =
+    .title = Zpět
+pdfjs-editor-undo-bar-undo-button-label = Zpět
+pdfjs-editor-undo-bar-close-button =
+    .title = Zavřít
+pdfjs-editor-undo-bar-close-button-label = Zavřít
+
+## Add a signature dialog
+
+pdfjs-editor-add-signature-dialog-label = Tento způsob umožňuje uživateli vytvořit podpis, který se přidá do dokumentu PDF. Uživatel může upravit jméno (které slouží zároveň jako alternativní text) a podpis uložit pro pozdější použití.
+pdfjs-editor-add-signature-dialog-title = Přidat podpis
+
+## Tab names
+
+# Type is a verb (you can type your name as signature)
+pdfjs-editor-add-signature-type-button = Psát
+    .title = Psát
+# Draw is a verb (you can draw your signature)
+pdfjs-editor-add-signature-draw-button = Kreslit
+    .title = Kreslit
+pdfjs-editor-add-signature-image-button = Obrázek
+    .title = Obrázek
+
+## Tab panels
+
+pdfjs-editor-add-signature-type-input =
+    .aria-label = Zadejte svůj podpis
+    .placeholder = Zadejte svůj podpis
+pdfjs-editor-add-signature-draw-placeholder = Nakreslete svůj podpis
+pdfjs-editor-add-signature-draw-thickness-range-label = Tloušťka
+# Variables:
+#   $thickness (Number) - the thickness (in pixels) of the line used to draw a signature.
+pdfjs-editor-add-signature-draw-thickness-range =
+    .title = Tloušťka kresby: { $thickness }
+pdfjs-editor-add-signature-image-placeholder = Přetáhněte sem soubor, který chcete nahrát
+pdfjs-editor-add-signature-image-browse-link =
+    { PLATFORM() ->
+        [macos] Nebo vyberte soubory obrazu
+       *[other] Nebo vyberte soubory obrazu
+    }
+
+## Controls
+
+pdfjs-editor-add-signature-description-label = Popis (alternativní text)
+pdfjs-editor-add-signature-description-input =
+    .title = Popis (alternativní text)
+pdfjs-editor-add-signature-description-default-when-drawing = Podpis
+pdfjs-editor-add-signature-clear-button-label = Vymazání podpisu
+pdfjs-editor-add-signature-clear-button =
+    .title = Vymazání podpisu
+pdfjs-editor-add-signature-save-checkbox = Uložit podpis
+pdfjs-editor-add-signature-save-warning-message = Dosáhli jste limitu 5 uložených podpisů. Chcete-li uložit další, jeden odstraňte.
+pdfjs-editor-add-signature-image-upload-error-title = Obrázek se nepodařilo nahrát
+pdfjs-editor-add-signature-image-upload-error-description = Zkontrolujte připojení k síti nebo zkuste jiný obrázek.
+pdfjs-editor-add-signature-image-no-data-error-title = Nelze převést tento obrázek na podpis
+pdfjs-editor-add-signature-image-no-data-error-description = Zkuste nahrát jiný obrázek.
+pdfjs-editor-add-signature-error-close-button = Zavřít
+
+## Dialog buttons
+
+pdfjs-editor-add-signature-cancel-button = Zrušit
+pdfjs-editor-add-signature-add-button = Přidat
+pdfjs-editor-edit-signature-update-button = Aktualizovat
+
+## Comment popup
+
+pdfjs-editor-edit-comment-popup-button-label = Upravit komentář
+pdfjs-editor-edit-comment-popup-button =
+    .title = Upravit komentář
+pdfjs-editor-delete-comment-popup-button-label = Odebrat komentář
+pdfjs-editor-delete-comment-popup-button =
+    .title = Odebrat komentář
+pdfjs-show-comment-button =
+    .title = Zobrazit komentář
+
+##  Edit a comment dialog
+
+# An existing comment is edited
+pdfjs-editor-edit-comment-dialog-title-when-editing = Upravit komentář
+pdfjs-editor-edit-comment-dialog-save-button-when-editing = Aktualizovat
+# No existing comment
+pdfjs-editor-edit-comment-dialog-title-when-adding = Přidání komentáře
+pdfjs-editor-edit-comment-dialog-save-button-when-adding = Přidat
+pdfjs-editor-edit-comment-dialog-text-input =
+    .placeholder = Začněte psát…
+pdfjs-editor-edit-comment-dialog-cancel-button = Zrušit
+
+## Edit a comment button in the editor toolbar
+
+pdfjs-editor-add-comment-button =
+    .title = Přidání komentáře
+
+## The view manager is a sidebar displaying different views:
+##  - thumbnails;
+##  - outline;
+##  - attachments;
+##  - layers.
+## The thumbnails view is used to edit the pdf: remove/insert pages, ...
+
+pdfjs-toggle-views-manager-notification-button =
+    .title = Přepnout postranní lištu (dokument obsahuje náhledy/osnovu/přílohy/vrstvy)
+pdfjs-toggle-views-manager-button1-label = Spravovat strany
+pdfjs-views-manager-sidebar =
+    .aria-label = Postranní lišta
+pdfjs-views-manager-sidebar-resizer =
+    .aria-label = Změna velikosti v postranní liště
+pdfjs-views-manager-view-selector-button =
+    .title = Zobrazení
+pdfjs-views-manager-view-selector-button-label = Zobrazení
+pdfjs-views-manager-pages-title = Stránky
+pdfjs-views-manager-outlines-title1 = Osnova dokumentu
+    .title = Osnova dokumentu (dvojité klepnutí rozbalí/sbalí všechny položky)
+pdfjs-views-manager-attachments-title = Přílohy
+pdfjs-views-manager-layers-title1 = Vrstvy
+    .title = Vrstvy (dvojité klepnutí obnoví všechny vrstvy do výchozího stavu)
+pdfjs-views-manager-pages-option-label = Stránky
+pdfjs-views-manager-outlines-option-label = Osnova dokumentu
+pdfjs-views-manager-attachments-option-label = Přílohy
+pdfjs-views-manager-layers-option-label = Vrstvy
+pdfjs-views-manager-add-file-button =
+    .title = Přidat soubor
+pdfjs-views-manager-add-file-button-label = Přidat soubor
+# Variables:
+#   $count (Number) - the number of selected pages.
+pdfjs-views-manager-pages-status-action-label =
+    { $count ->
+        [one] { $count } vybrána
+        [few] { $count } vybrány
+        [many] { $count } vybráno
+       *[other] { $count } vybráno
+    }
+pdfjs-views-manager-pages-status-none-action-label = Výběr stránek
+pdfjs-views-manager-pages-status-action-button-label = Správa
+pdfjs-views-manager-pages-status-copy-button-label = Kopírovat
+pdfjs-views-manager-pages-status-cut-button-label = Vyjmout
+pdfjs-views-manager-pages-status-delete-button-label = Smazat
+pdfjs-views-manager-pages-status-export-selected-button-label = Exportovat vybrané…
+# Variables:
+#   $count (Number) - the number of selected pages to be cut.
+pdfjs-views-manager-status-undo-cut-label =
+    { $count ->
+        [one] 1 stránka vyjmuta
+        [few] { $count } stránky vyjmuty
+        [many] { $count } stránek vyjmuto
+       *[other] { $count } stránek vyjmuto
+    }
+# Variables:
+#   $count (Number) - the number of selected pages to be copied.
+pdfjs-views-manager-pages-status-undo-copy-label =
+    { $count ->
+        [one] 1 stránka zkopírována
+        [few] { $count } stránky zkopírovány
+        [many] { $count } stránek zkopírováno
+       *[other] { $count } stránek zkopírováno
+    }
+# Variables:
+#   $count (Number) - the number of selected pages to be deleted.
+pdfjs-views-manager-pages-status-undo-delete-label =
+    { $count ->
+        [one] 1 stránka smazána
+        [few] { $count } stránky smazány
+        [many] { $count } stránek smazáno
+       *[other] { $count } stránek smazáno
+    }
+pdfjs-views-manager-pages-status-waiting-ready-label = Příprava vašeho souboru…
+pdfjs-views-manager-pages-status-waiting-uploading-label = Nahrávání souboru…
+pdfjs-views-manager-status-warning-cut-label = Nelze vyjmout. Obnovte stránku a zkuste to znovu.
+pdfjs-views-manager-status-warning-copy-label = Kopírování se nezdařilo. Obnovte stránku a zkuste to znovu.
+pdfjs-views-manager-status-warning-delete-label = Smazání se nezdařilo. Obnovte stránku a zkuste to znovu.
+pdfjs-views-manager-status-warning-save-label = Nepodařilo se uložit. Obnovte stránku a zkuste to znovu.
+pdfjs-views-manager-status-undo-button-label = Zpět
+pdfjs-views-manager-status-done-button-label = Hotovo
+pdfjs-views-manager-status-close-button =
+    .title = Zavřít
+pdfjs-views-manager-status-close-button-label = Zavřít
+pdfjs-views-manager-paste-button-label = Vložit
+pdfjs-views-manager-paste-button-before =
+    .title = Vloží před první stránku
+# Variables:
+#   $page (Number) - the page number after which the paste button is.
+pdfjs-views-manager-paste-button-after =
+    .title = Vložit za stránku { $page }
+# Badge used to promote a new feature in the UI, keep it as short as possible.
+# It's spelled uppercase for English, but it can be translated as usual.
+pdfjs-new-badge-content = NOVÉ
+pdfjs-views-manager-waiting-for-file = Nahrávání souboru…
+pdfjs-toggle-views-manager-button1 =
+    .title = Spravovat strany
+
+## Main menu for adding/removing signatures
+
+pdfjs-editor-delete-signature-button1 =
+    .title = Odebrat uložený podpis
+pdfjs-editor-delete-signature-button-label1 = Odebrat uložený podpis
+
+## Editor toolbar
+
+pdfjs-editor-add-signature-edit-button-label = Upravit popis
+
+## Edit signature description dialog
+
+pdfjs-editor-edit-signature-dialog-title = Upravit popis

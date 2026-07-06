@@ -20,7 +20,7 @@ import argparse
 import os
 import sys
 
-VALID_EXTENSIONS = {'.html', '.js', '.mjs', '.css', '.svg', '.json', '.ftl', '.png', '.gif', '.cur', '.bcmap', '.properties', '.pfb', '.ttf'}
+VALID_EXTENSIONS = {'.html', '.js', '.mjs', '.css', '.svg', '.json', '.ftl', '.png', '.gif', '.cur', '.bcmap', '.properties', '.pfb', '.ttf', '.icc'}
 COMPRESSIBLE_EXTENSIONS = {'.html', '.js', '.mjs', '.css', '.svg', '.json', '.ftl', '.properties'}
 BASE_DIRS = {'pdfjs/', 'pdfjs-extras/'}
 
@@ -29,8 +29,15 @@ IGNORE = {'LICENSE',
           'PdfJSFiles.cmake',
           'README.webkit',
           'web/cmaps/LICENSE',
+          'web/iccs/LICENSE',
           'web/standard_fonts/LICENSE_FOXIT',
-          'web/standard_fonts/LICENSE_LIBERATION'}
+          'web/standard_fonts/LICENSE_LIBERATION',
+          'web/wasm/LICENSE_JBIG2',
+          'web/wasm/LICENSE_OPENJPEG',
+          'web/wasm/LICENSE_PDFJS_JBIG2',
+          'web/wasm/LICENSE_PDFJS_OPENJPEG',
+          'web/wasm/LICENSE_PDFJS_QCMS',
+          'web/wasm/LICENSE_QCMS'}
 
 
 def get_filenames(directory):

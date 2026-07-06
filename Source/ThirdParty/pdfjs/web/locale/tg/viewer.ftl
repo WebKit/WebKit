@@ -51,12 +51,6 @@ pdfjs-download-button-label = Боргирӣ кардан
 pdfjs-bookmark-button =
     .title = Саҳифаи ҷорӣ (Дидани нишонии URL аз саҳифаи ҷорӣ)
 pdfjs-bookmark-button-label = Саҳифаи ҷорӣ
-# Used in Firefox for Android.
-pdfjs-open-in-app-button =
-    .title = Кушодан дар барнома
-# Used in Firefox for Android.
-# Length of the translation matters since we are in a mobile context, with limited screen estate.
-pdfjs-open-in-app-button-label = Кушодан дар барнома
 
 ##  Secondary toolbar and context menu
 
@@ -111,13 +105,13 @@ pdfjs-document-properties-button-label = Хусусиятҳои ҳуҷҷат…
 pdfjs-document-properties-file-name = Номи файл:
 pdfjs-document-properties-file-size = Андозаи файл:
 # Variables:
-#   $size_kb (Number) - the PDF file size in kilobytes
-#   $size_b (Number) - the PDF file size in bytes
-pdfjs-document-properties-kb = { $size_kb } КБ ({ $size_b } байт)
+#   $kb (Number) - the PDF file size in kilobytes
+#   $b (Number) - the PDF file size in bytes
+pdfjs-document-properties-size-kb = { NUMBER($kb, maximumSignificantDigits: 3) } КБ ({ $b } байт)
 # Variables:
-#   $size_mb (Number) - the PDF file size in megabytes
-#   $size_b (Number) - the PDF file size in bytes
-pdfjs-document-properties-mb = { $size_mb } МБ ({ $size_b } байт)
+#   $mb (Number) - the PDF file size in megabytes
+#   $b (Number) - the PDF file size in bytes
+pdfjs-document-properties-size-mb = { NUMBER($mb, maximumSignificantDigits: 3) } МБ ({ $b } байт)
 pdfjs-document-properties-title = Сарлавҳа:
 pdfjs-document-properties-author = Муаллиф:
 pdfjs-document-properties-subject = Мавзуъ:
@@ -125,9 +119,8 @@ pdfjs-document-properties-keywords = Калимаҳои калидӣ:
 pdfjs-document-properties-creation-date = Санаи эҷод:
 pdfjs-document-properties-modification-date = Санаи тағйирот:
 # Variables:
-#   $date (Date) - the creation/modification date of the PDF file
-#   $time (Time) - the creation/modification time of the PDF file
-pdfjs-document-properties-date-string = { $date }, { $time }
+#   $dateObj (Date) - the creation/modification date and time of the PDF file
+pdfjs-document-properties-date-time-string = { DATETIME($dateObj, dateStyle: "short", timeStyle: "medium") }
 pdfjs-document-properties-creator = Эҷодкунанда:
 pdfjs-document-properties-producer = Таҳиякунандаи «PDF»:
 pdfjs-document-properties-version = Версияи «PDF»:
@@ -208,6 +201,15 @@ pdfjs-thumb-page-title =
 #   $page (Number) - the page number
 pdfjs-thumb-page-canvas =
     .aria-label = Тасвирчаи саҳифаи { $page }
+# Variables:
+#   $page (Number) - the page number
+pdfjs-thumb-page-checkbox1 =
+    .title = Интихоби саҳифаи { $page }
+# Variables:
+#   $page (Number) - the page number
+#   $total (Number) - the number of pages
+pdfjs-thumb-page-title1 =
+    .title = Саҳифаи { $page } аз { $total }
 
 ## Find panel button title and messages
 
@@ -270,10 +272,6 @@ pdfjs-rendering-error = Ҳангоми шаклсозии саҳифа хато 
 
 ## Annotations
 
-# Variables:
-#   $date (Date) - the modification date of the annotation
-#   $time (Time) - the modification time of the annotation
-pdfjs-annotation-date-string = { $date }, { $time }
 # .alt: This is used as a tooltip.
 # Variables:
 #   $type (String) - an annotation type from a list defined in the PDF spec
@@ -281,6 +279,9 @@ pdfjs-annotation-date-string = { $date }, { $time }
 # Some common types are e.g.: "Check", "Text", "Comment", "Note"
 pdfjs-text-annotation-type =
     .alt = [Ҳошиянависӣ - { $type }]
+# Variables:
+#   $dateObj (Date) - the modification date and time of the annotation
+pdfjs-annotation-date-time-string = { DATETIME($dateObj, dateStyle: "short", timeStyle: "medium") }
 
 ## Password
 
@@ -294,13 +295,51 @@ pdfjs-web-fonts-disabled = Шрифтҳои интернетӣ ғайрифаъ�
 
 pdfjs-editor-free-text-button =
     .title = Матн
+pdfjs-editor-color-picker-free-text-input =
+    .title = Иваз кардани ранги матн
 pdfjs-editor-free-text-button-label = Матн
 pdfjs-editor-ink-button =
     .title = Расмкашӣ
+pdfjs-editor-color-picker-ink-input =
+    .title = Иваз кардани ранги расмкашӣ
 pdfjs-editor-ink-button-label = Расмкашӣ
 pdfjs-editor-stamp-button =
     .title = Илова ё таҳрир кардани тасвирҳо
 pdfjs-editor-stamp-button-label = Илова ё таҳрир кардани тасвирҳо
+pdfjs-editor-highlight-button =
+    .title = Ҷудокунӣ
+pdfjs-editor-highlight-button-label = Ҷудокунӣ
+pdfjs-highlight-floating-button1 =
+    .title = Ҷудокунӣ
+    .aria-label = Ҷудокунӣ
+pdfjs-highlight-floating-button-label = Ҷудокунӣ
+pdfjs-comment-floating-button =
+    .title = Шарҳ
+    .aria-label = Шарҳ
+pdfjs-comment-floating-button-label = Шарҳ
+pdfjs-editor-comment-button =
+    .title = Шарҳ
+    .aria-label = Шарҳ
+pdfjs-editor-comment-button-label = Шарҳ
+pdfjs-editor-signature-button =
+    .title = Илова кардани имзо
+pdfjs-editor-signature-button-label = Илова кардани имзо
+
+## Default editor aria labels
+
+# “Highlight” is a noun, the string is used on the editor for highlights.
+pdfjs-editor-highlight-editor =
+    .aria-label = Муҳаррири ҷудокунӣ
+# “Drawing” is a noun, the string is used on the editor for drawings.
+pdfjs-editor-ink-editor =
+    .aria-label = Муҳаррири расмкашӣ
+# Used when a signature editor is selected/hovered.
+# Variables:
+#   $description (String) - a string describing/labeling the signature.
+pdfjs-editor-signature-editor1 =
+    .aria-description = Муҳаррири имзо: { $description }
+pdfjs-editor-stamp-editor =
+    .aria-label = Муҳаррири тасвир
 
 ## Remove button for the various kind of editor.
 
@@ -312,6 +351,8 @@ pdfjs-editor-remove-stamp-button =
     .title = Тоза кардани тасвир
 pdfjs-editor-remove-highlight-button =
     .title = Тоза кардани ҷудокунӣ
+pdfjs-editor-remove-signature-button =
+    .title = Тоза кардани имзо
 
 ##
 
@@ -324,19 +365,45 @@ pdfjs-editor-ink-opacity-input = Шаффофӣ
 pdfjs-editor-stamp-add-image-button =
     .title = Илова кардани тасвир
 pdfjs-editor-stamp-add-image-button-label = Илова кардани тасвир
-pdfjs-free-text =
+# This refers to the thickness of the line used for free highlighting (not bound to text)
+pdfjs-editor-free-highlight-thickness-input = Ғафсӣ
+pdfjs-editor-free-highlight-thickness-title =
+    .title = Иваз кардани ғафсӣ ҳангоми ҷудокунии унсурҳо ба ғайр аз матн
+pdfjs-editor-add-signature-container =
+    .aria-label = Идоракунии имзоҳо ва имзоҳои гузошташуда
+pdfjs-editor-signature-add-signature-button =
+    .title = Илова кардани имзои нав
+pdfjs-editor-signature-add-signature-button-label = Илова кардани имзои нав
+# Used on the button to use an already saved signature.
+# Variables:
+#   $description (String) - a string describing/labeling the signature.
+pdfjs-editor-add-saved-signature-button =
+    .title = Имзои гузошташуда: { $description }
+# .default-content is used as a placeholder in an empty text editor.
+pdfjs-free-text2 =
     .aria-label = Муҳаррири матн
-pdfjs-free-text-default-content = Нависед…
-pdfjs-ink =
-    .aria-label = Муҳаррири расмкашӣ
-pdfjs-ink-canvas =
-    .aria-label = Тасвири эҷодкардаи корбар
+    .default-content = Матнро ворид кунед…
+# Used to show how many comments are present in the pdf file.
+# Variables:
+#   $count (Number) - the number of comments.
+pdfjs-editor-comments-sidebar-title =
+    { $count ->
+        [one] Шарҳ
+       *[other] Шарҳҳо
+    }
+pdfjs-editor-comments-sidebar-close-button =
+    .title = Пӯшидани навори ҷонибӣ
+    .aria-label = Пӯшидани навори ҷонибӣ
+pdfjs-editor-comments-sidebar-close-button-label = Пӯшидани навори ҷонибӣ
+# Instructional copy to add a comment by selecting text or an annotations.
+pdfjs-editor-comments-sidebar-no-comments1 = Чизи диққатангезро мушоҳида кардед? Онро қайд кунед ва ба он шарҳ гузоред.
+pdfjs-editor-comments-sidebar-no-comments-link = Маълумоти бештар
 
 ## Alt-text dialog
 
-# Alternative text (alt text) helps when people can't see the image.
-pdfjs-editor-alt-text-button-label = Матни ивазкунанда
-pdfjs-editor-alt-text-edit-button-label = Таҳрир кардани матни ивазкунанда
+pdfjs-editor-alt-text-button-label = Матни иловагӣ
+pdfjs-editor-alt-text-edit-button =
+    .aria-label = Таҳрир кардани матни ивазкунанда
 pdfjs-editor-alt-text-dialog-label = Имконеро интихоб намоед
 pdfjs-editor-alt-text-dialog-description = Вақте ки одамон тасвирро дида наметавонанд ё вақте ки тасвир бор карда намешавад, матни иловагӣ (Alt text) кумак мерасонад.
 pdfjs-editor-alt-text-add-description-label = Илова кардани тавсиф
@@ -349,18 +416,29 @@ pdfjs-editor-alt-text-decorative-tooltip = Ҳамчун матни ороишӣ 
 # .placeholder: This is a placeholder for the alt text input area
 pdfjs-editor-alt-text-textarea =
     .placeholder = Барои мисол, «Ман забони тоҷикиро дӯст медорам»
+# Alternative text (alt text) helps when people can't see the image.
+pdfjs-editor-alt-text-button =
+    .aria-label = Матни ивазкунанда
 
 ## Editor resizers
 ## This is used in an aria label to help to understand the role of the resizer.
 
-pdfjs-editor-resizer-label-top-left = Кунҷи чапи боло — тағйир додани андоза
-pdfjs-editor-resizer-label-top-middle = Канори миёнаи боло — тағйир додани андоза
-pdfjs-editor-resizer-label-top-right = Кунҷи рости боло — тағйир додани андоза
-pdfjs-editor-resizer-label-middle-right = Канори миёнаи рост — тағйир додани андоза
-pdfjs-editor-resizer-label-bottom-right = Кунҷи рости поён — тағйир додани андоза
-pdfjs-editor-resizer-label-bottom-middle = Канори миёнаи поён — тағйир додани андоза
-pdfjs-editor-resizer-label-bottom-left = Кунҷи чапи поён — тағйир додани андоза
-pdfjs-editor-resizer-label-middle-left = Канори миёнаи чап — тағйир додани андоза
+pdfjs-editor-resizer-top-left =
+    .aria-label = Кунҷи чапи боло — тағйир додани андоза
+pdfjs-editor-resizer-top-middle =
+    .aria-label = Канори миёнаи боло — тағйир додани андоза
+pdfjs-editor-resizer-top-right =
+    .aria-label = Кунҷи рости боло — тағйир додани андоза
+pdfjs-editor-resizer-middle-right =
+    .aria-label = Канори миёнаи рост — тағйир додани андоза
+pdfjs-editor-resizer-bottom-right =
+    .aria-label = Кунҷи рости поён — тағйир додани андоза
+pdfjs-editor-resizer-bottom-middle =
+    .aria-label = Канори миёнаи поён — тағйир додани андоза
+pdfjs-editor-resizer-bottom-left =
+    .aria-label = Кунҷи чапи поён — тағйир додани андоза
+pdfjs-editor-resizer-middle-left =
+    .aria-label = Канори миёнаи чап — тағйир додани андоза
 
 ## Color picker
 
@@ -387,3 +465,277 @@ pdfjs-editor-colorpicker-red =
 pdfjs-editor-highlight-show-all-button-label = Ҳамаро намоиш додан
 pdfjs-editor-highlight-show-all-button =
     .title = Ҳамаро намоиш додан
+
+## New alt-text dialog
+## Group note for entire feature: Alternative text (alt text) helps when people can't see the image. This feature includes a tool to create alt text automatically using an AI model that works locally on the user's device to preserve privacy.
+
+# Modal header positioned above a text box where users can edit the alt text.
+pdfjs-editor-new-alt-text-dialog-edit-label = Таҳрир кардани матни иловагӣ (тафсири тасвир)
+# Modal header positioned above a text box where users can add the alt text.
+pdfjs-editor-new-alt-text-dialog-add-label = Илова кардани матни иловагӣ (тафсири тасвир)
+pdfjs-editor-new-alt-text-textarea =
+    .placeholder = Тафсири худро дар ин ҷо нависед…
+# This text refers to the alt text box above this description. It offers a definition of alt text.
+pdfjs-editor-new-alt-text-description = Тавсифи мухтасар барои одамоне, ки аксҳоро дида наметавонанд ё вақте ки аксҳо кушода намешаванд.
+# This is a required legal disclaimer that refers to the automatically created text inside the alt text box above this text. It disappears if the text is edited by a human.
+pdfjs-editor-new-alt-text-disclaimer1 = Ин матни ивазкунанда ба таври худкор сохта шудааст ва шояд нодуруст бошад.
+pdfjs-editor-new-alt-text-disclaimer-learn-more-url = Маълумоти бештар
+pdfjs-editor-new-alt-text-create-automatically-button-label = Ба таври худкор эҷод кардани матни иловагӣ
+pdfjs-editor-new-alt-text-not-now-button = Ҳоло не
+pdfjs-editor-new-alt-text-error-title = Матни иловагӣ ба таври худкор эҷод карда нашуд
+pdfjs-editor-new-alt-text-error-description = Лутфан, матни иловагии худро ворид кунед ё баъдтар аз нав кӯшиш кунед.
+pdfjs-editor-new-alt-text-error-close-button = Пӯшидан
+# Variables:
+#   $totalSize (Number) - the total size (in MB) of the AI model.
+#   $downloadedSize (Number) - the downloaded size (in MB) of the AI model.
+pdfjs-editor-new-alt-text-ai-model-downloading-progress = Боргирии модели зеҳни сунъӣ (AI) барои матни ивазкунанда ({ $downloadedSize } аз { $totalSize } МБ)
+    .aria-valuetext = Боргирии модели зеҳни сунъӣ (AI) барои матни ивазкунанда ({ $downloadedSize } аз { $totalSize } МБ)
+# This is a button that users can click to edit the alt text they have already added.
+pdfjs-editor-new-alt-text-added-button =
+    .aria-label = Матни иловагӣ илова карда шуд
+pdfjs-editor-new-alt-text-added-button-label = Матни иловагӣ илова карда шуд
+# This is a button that users can click to open the alt text editor and add alt text when it is not present.
+pdfjs-editor-new-alt-text-missing-button =
+    .aria-label = Матни иловагӣ вуҷуд надорад
+pdfjs-editor-new-alt-text-missing-button-label = Матни иловагӣ вуҷуд надорад
+# This is a button that opens up the alt text modal where users should review the alt text that was automatically generated.
+pdfjs-editor-new-alt-text-to-review-button =
+    .aria-label = Бознигарӣ кардани матни иловагӣ
+pdfjs-editor-new-alt-text-to-review-button-label = Бознигарӣ кардани матни иловагӣ
+# "Created automatically" is a prefix that will be added to the beginning of any alt text that has been automatically generated. After the colon, the user will see/hear the actual alt text description. If the alt text has been edited by a human, this prefix will not appear.
+# Variables:
+#   $generatedAltText (String) - the generated alt-text.
+pdfjs-editor-new-alt-text-generated-alt-text-with-disclaimer = Ба таври худкор сохта шудааст: «{ $generatedAltText }»
+
+## Image alt-text settings
+
+pdfjs-image-alt-text-settings-button =
+    .title = Танзимоти матни иловагии тасвир
+pdfjs-image-alt-text-settings-button-label = Танзимоти матни иловагии тасвир
+pdfjs-editor-alt-text-settings-dialog-label = Танзимоти матни иловагии тасвир
+pdfjs-editor-alt-text-settings-automatic-title = Матни иловагии худкор
+pdfjs-editor-alt-text-settings-create-model-button-label = Ба таври худкор эҷод кардани матни иловагӣ
+pdfjs-editor-alt-text-settings-create-model-description = Ин имкон барои расонидани кумак ба одамоне, ки аксҳоро дида наметавонанд ё вақте ки аксҳо кушода намешаванд, тавсифи аксҳоро пешниҳод мекунад.
+# Variables:
+#   $totalSize (Number) - the total size (in MB) of the AI model.
+pdfjs-editor-alt-text-settings-download-model-label = Модели зеҳни сунъӣ «AI» барои матни ивазкунанда ({ $totalSize } МБ)
+pdfjs-editor-alt-text-settings-ai-model-description = Дар дастгоҳи шумо ба таври маҳаллӣ кор мекунад, бинобар ин махфияти маълумоти шахсии шумо нигоҳ дошта мешавад. Барои матни ивазкунандаи худкор лозим аст.
+pdfjs-editor-alt-text-settings-delete-model-button = Нест кардан
+pdfjs-editor-alt-text-settings-download-model-button = Боргирӣ кардан
+pdfjs-editor-alt-text-settings-downloading-model-button = Дар ҳоли боргирӣ…
+pdfjs-editor-alt-text-settings-editor-title = Муҳаррири матни иловагӣ
+pdfjs-editor-alt-text-settings-show-dialog-button-label = Дарҳол нишон додани муҳаррири матни ивазкунанда ҳангоми иловакунии тасвир
+pdfjs-editor-alt-text-settings-show-dialog-description = Ба шумо кумак мекунад, ки боварӣ ҳосил кунед, ки ҳамаи тасвирҳои шумо дорои матни ивазкунанда мебошанд.
+pdfjs-editor-alt-text-settings-close-button = Пӯшидан
+
+## Accessibility labels (announced by screen readers) for objects added to the editor.
+
+pdfjs-editor-highlight-added-alert = Ҷудокунӣ илова карда шуд
+pdfjs-editor-freetext-added-alert = Матн илова карда шуд
+pdfjs-editor-ink-added-alert = Расм илова карда шуд
+pdfjs-editor-stamp-added-alert = Тасвир илова карда шуд
+pdfjs-editor-signature-added-alert = Имзо илова карда шуд
+
+## "Annotations removed" bar
+
+pdfjs-editor-undo-bar-message-highlight = Ҷудосозӣ тоза карда шуд
+pdfjs-editor-undo-bar-message-freetext = Матн тоза карда шуд
+pdfjs-editor-undo-bar-message-ink = Расм тоза карда шуд
+pdfjs-editor-undo-bar-message-stamp = Тасвир тоза карда шуд
+pdfjs-editor-undo-bar-message-signature = Имзо тоза карда шуд
+pdfjs-editor-undo-bar-message-comment = Шарҳ тоза карда шуд
+# Variables:
+#   $count (Number) - the number of removed annotations.
+pdfjs-editor-undo-bar-message-multiple =
+    { $count ->
+        [one] { $count } ҳошиянависӣ тоза карда шуд
+       *[other] { $count } ҳошиянависӣ тоза карда шуданд
+    }
+pdfjs-editor-undo-bar-undo-button =
+    .title = Бекор кардан
+pdfjs-editor-undo-bar-undo-button-label = Бекор кардан
+pdfjs-editor-undo-bar-close-button =
+    .title = Пӯшидан
+pdfjs-editor-undo-bar-close-button-label = Пӯшидан
+
+## Add a signature dialog
+
+pdfjs-editor-add-signature-dialog-label = Ин равзанаи зоҳирӣ ба корбар имкон медиҳад, ки тавонад имзоеро эҷод карда, ба ҳуҷҷати «PDF» илова намояд. Корбар метавонад номро таҳрир кунад (ном, инчунин, ҳамчун матни иловагӣ хизмат мекунад), ва ихтиёран имзоро барои истифодаи такрорӣ нигоҳ медорад.
+pdfjs-editor-add-signature-dialog-title = Илова кардани имзо
+
+## Tab names
+
+# Type is a verb (you can type your name as signature)
+pdfjs-editor-add-signature-type-button = Нависед
+    .title = Нависед
+# Draw is a verb (you can draw your signature)
+pdfjs-editor-add-signature-draw-button = Имзо гузоред
+    .title = Имзо гузоред
+pdfjs-editor-add-signature-image-button = Тасвир
+    .title = Тасвир
+
+## Tab panels
+
+pdfjs-editor-add-signature-type-input =
+    .aria-label = Имзои худро бо ном нависед
+    .placeholder = Имзои худро бо ном нависед
+pdfjs-editor-add-signature-draw-placeholder = Имзои худро кашида, гузоред
+pdfjs-editor-add-signature-draw-thickness-range-label = Ғафсӣ
+# Variables:
+#   $thickness (Number) - the thickness (in pixels) of the line used to draw a signature.
+pdfjs-editor-add-signature-draw-thickness-range =
+    .title = Ғафсии имзо: { $thickness }
+pdfjs-editor-add-signature-image-placeholder = Барои бор кардани файл, онро дар ин ҷой кашида, гузоред
+pdfjs-editor-add-signature-image-browse-link =
+    { PLATFORM() ->
+        [macos] Ё файлҳои тасвириро интихоб кунед
+       *[other] Ё файлҳои тасвириро интихоб кунед
+    }
+
+## Controls
+
+pdfjs-editor-add-signature-description-label = Тавсиф (матни иловагӣ)
+pdfjs-editor-add-signature-description-input =
+    .title = Тавсиф (матни иловагӣ)
+pdfjs-editor-add-signature-description-default-when-drawing = Имзо
+pdfjs-editor-add-signature-clear-button-label = Пок кардани имзо
+pdfjs-editor-add-signature-clear-button =
+    .title = Пок кардани имзо
+pdfjs-editor-add-signature-save-checkbox = Нигоҳ доштани имзо
+pdfjs-editor-add-signature-save-warning-message = Шумо ба ҳадди 5 имзои нигоҳдошташуда расидед. Барои нигоҳ доштани имзои нав, яке аз имзоҳои нигоҳдошташударо тоза намоед.
+pdfjs-editor-add-signature-image-upload-error-title = Тасвир бор карда нашуд
+pdfjs-editor-add-signature-image-upload-error-description = Пайвастшавии шабакаи худро санҷед ё тасвири дигареро кӯшиш кунед.
+pdfjs-editor-add-signature-image-no-data-error-title = Ин тасвир ба имзо табдил дода нашуд
+pdfjs-editor-add-signature-image-no-data-error-description = Лутфан, кӯшиш кунед, ки тасвири дигареро бор намоед.
+pdfjs-editor-add-signature-error-close-button = Пӯшидан
+
+## Dialog buttons
+
+pdfjs-editor-add-signature-cancel-button = Бекор кардан
+pdfjs-editor-add-signature-add-button = Илова кардан
+pdfjs-editor-edit-signature-update-button = Навсозӣ кардан
+
+## Comment popup
+
+pdfjs-editor-edit-comment-popup-button-label = Таҳрир кардани шарҳ
+pdfjs-editor-edit-comment-popup-button =
+    .title = Таҳрир кардани шарҳ
+pdfjs-editor-delete-comment-popup-button-label = Тоза кардани шарҳ
+pdfjs-editor-delete-comment-popup-button =
+    .title = Тоза кардани шарҳ
+pdfjs-show-comment-button =
+    .title = Нишон додани шарҳ
+
+##  Edit a comment dialog
+
+# An existing comment is edited
+pdfjs-editor-edit-comment-dialog-title-when-editing = Таҳрир кардани шарҳ
+pdfjs-editor-edit-comment-dialog-save-button-when-editing = Навсозӣ кардан
+# No existing comment
+pdfjs-editor-edit-comment-dialog-title-when-adding = Илова кардани шарҳ
+pdfjs-editor-edit-comment-dialog-save-button-when-adding = Илова кардан
+pdfjs-editor-edit-comment-dialog-text-input =
+    .placeholder = Нависед…
+pdfjs-editor-edit-comment-dialog-cancel-button = Бекор кардан
+
+## Edit a comment button in the editor toolbar
+
+pdfjs-editor-add-comment-button =
+    .title = Илова кардани шарҳ
+
+## The view manager is a sidebar displaying different views:
+##  - thumbnails;
+##  - outline;
+##  - attachments;
+##  - layers.
+## The thumbnails view is used to edit the pdf: remove/insert pages, ...
+
+pdfjs-toggle-views-manager-notification-button =
+    .title = Фаъол кардани навори ҷонибӣ (ҳуҷҷат дорои тасвирчаҳо/сохтор/замимаҳо/қабатҳо мебошад)
+pdfjs-toggle-views-manager-button1-label = Идоракунии саҳифаҳо
+pdfjs-views-manager-sidebar =
+    .aria-label = Навори ҷонибӣ
+pdfjs-views-manager-sidebar-resizer =
+    .aria-label = Тағйири андозаи навори ҷонибӣ
+pdfjs-views-manager-view-selector-button =
+    .title = Намудҳо
+pdfjs-views-manager-view-selector-button-label = Намудҳо
+pdfjs-views-manager-pages-title = Саҳифаҳо
+pdfjs-views-manager-attachments-title = Замимаҳо
+pdfjs-views-manager-pages-option-label = Саҳифаҳо
+pdfjs-views-manager-outlines-option-label = Сохтори ҳуҷҷат
+pdfjs-views-manager-attachments-option-label = Замимаҳо
+pdfjs-views-manager-layers-option-label = Қабатҳо
+pdfjs-views-manager-add-file-button =
+    .title = Илова кардани файл
+pdfjs-views-manager-add-file-button-label = Илова кардани файл
+# Variables:
+#   $count (Number) - the number of selected pages.
+pdfjs-views-manager-pages-status-action-label =
+    { $count ->
+        [one] { $count } интихоб шуд
+       *[other] { $count } интихоб шуданд
+    }
+pdfjs-views-manager-pages-status-none-action-label = Саҳифаҳоро интихоб намоед
+pdfjs-views-manager-pages-status-action-button-label = Идора кардан
+pdfjs-views-manager-pages-status-copy-button-label = Нусха бардоштан
+pdfjs-views-manager-pages-status-cut-button-label = Буридан
+pdfjs-views-manager-pages-status-delete-button-label = Нест кардан
+# Variables:
+#   $count (Number) - the number of selected pages to be cut.
+pdfjs-views-manager-status-undo-cut-label =
+    { $count ->
+        [one] 1 саҳифа бурида шуд
+       *[other] { $count } саҳифа бурида шуданд
+    }
+# Variables:
+#   $count (Number) - the number of selected pages to be copied.
+pdfjs-views-manager-pages-status-undo-copy-label =
+    { $count ->
+        [one] 1 саҳифа нусха бардошта шуд
+       *[other] { $count } саҳифа нусха бардошта шуданд
+    }
+# Variables:
+#   $count (Number) - the number of selected pages to be deleted.
+pdfjs-views-manager-pages-status-undo-delete-label =
+    { $count ->
+        [one] 1 саҳифа нест карда шуд
+       *[other] { $count } саҳифа нест карда шуданд
+    }
+pdfjs-views-manager-pages-status-waiting-ready-label = Файли шумо омода мешавад…
+pdfjs-views-manager-pages-status-waiting-uploading-label = Дар ҳоли боркунии файл…
+pdfjs-views-manager-status-warning-cut-label = Бурида нашуд. Саҳифаро навсозӣ кунед ва аз нав кӯшиш намоед.
+pdfjs-views-manager-status-warning-copy-label = Нусха бардошта нашуд. Саҳифаро навсозӣ кунед ва аз нав кӯшиш намоед.
+pdfjs-views-manager-status-warning-delete-label = Нест карда нашуд. Саҳифаро навсозӣ кунед ва аз нав кӯшиш намоед.
+pdfjs-views-manager-status-warning-save-label = Нигоҳ дошта нашуд. Саҳифаро навсозӣ кунед ва аз нав кӯшиш намоед.
+pdfjs-views-manager-status-undo-button-label = Бекор кардан
+pdfjs-views-manager-status-done-button-label = Тайёр
+pdfjs-views-manager-status-close-button =
+    .title = Пӯшидан
+pdfjs-views-manager-status-close-button-label = Пӯшидан
+pdfjs-views-manager-paste-button-label = Гузоштан
+pdfjs-views-manager-paste-button-before =
+    .title = Гузоштан пеш аз саҳифаи аввалин
+# Variables:
+#   $page (Number) - the page number after which the paste button is.
+pdfjs-views-manager-paste-button-after =
+    .title = Гузоштан пас аз саҳифаи { $page }
+# Badge used to promote a new feature in the UI, keep it as short as possible.
+# It's spelled uppercase for English, but it can be translated as usual.
+pdfjs-new-badge-content = НАВ
+pdfjs-toggle-views-manager-button1 =
+    .title = Идоракунии саҳифаҳо
+
+## Main menu for adding/removing signatures
+
+pdfjs-editor-delete-signature-button1 =
+    .title = Тоза кардани имзои гузошташуда
+pdfjs-editor-delete-signature-button-label1 = Тоза кардани имзои гузошташуда
+
+## Editor toolbar
+
+pdfjs-editor-add-signature-edit-button-label = Таҳрир кардани тавсиф
+
+## Edit signature description dialog
+
+pdfjs-editor-edit-signature-dialog-title = Таҳрир кардани тавсиф
