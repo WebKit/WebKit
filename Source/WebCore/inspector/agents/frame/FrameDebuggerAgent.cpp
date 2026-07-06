@@ -183,14 +183,18 @@ InjectedScript FrameDebuggerAgent::injectedScriptForEval(Inspector::Protocol::Er
 
 void FrameDebuggerAgent::didClearWindowObjectInWorld(DOMWrapperWorld& world)
 {
-    if (&world != &mainThreadNormalWorldSingleton())
-        return;
-
     RefPtr frame = m_inspectedFrame.get();
     if (!frame)
         return;
 
-    // Reattach the debugger to the new globalObject after navigation.
+    if (&world != &mainThreadNormalWorldSingleton()) {
+        CheckedRef script = frame->script();
+        auto* globalObject = script->globalObject(world);
+        if (globalObject && !globalObject->debugger())
+            debugger().attach(globalObject);
+        return;
+    }
+
     Ref normalWorld = mainThreadNormalWorldSingleton();
     CheckedRef script = frame->script();
     auto* globalObject = script->globalObject(normalWorld);
@@ -199,9 +203,6 @@ void FrameDebuggerAgent::didClearWindowObjectInWorld(DOMWrapperWorld& world)
         return;
     }
 
-    // The globalObject may already have a debugger attached (e.g., by initScriptForWindowProxy
-    // in non-site-isolation configurations). Under site isolation, FrameDebugger is the sole
-    // debugger, but detach any stale debugger as defense-in-depth.
     if (auto* existingDebugger = globalObject->debugger()) {
         if (existingDebugger == &debugger()) {
             didClearGlobalObject();

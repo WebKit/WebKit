@@ -32,10 +32,12 @@
 #include "Document.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWindowCustom.h"
+#include "JSWindowProxy.h"
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
 #include "ScriptController.h"
 #include "Timer.h"
+#include "WindowProxy.h"
 #include <JavaScriptCore/JSLock.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
@@ -64,13 +66,12 @@ void FrameDebugger::attachDebugger()
     if (!frame)
         return;
 
-    Ref world = mainThreadNormalWorldSingleton();
-    CheckedRef script = frame->script();
-    auto* globalObject = script->globalObject(world);
-    // globalObject() may lazily create the JSWindowProxy, which fires didClearWindowObjectInWorld
-    // and attaches us via FrameDebuggerAgent::didClearWindowObjectInWorld. Guard against double-attach.
-    if (globalObject && !globalObject->debugger())
-        attach(globalObject);
+    Ref windowProxy = frame->windowProxy();
+    for (auto& jsWindowProxy : windowProxy->jsWindowProxiesAsVector()) {
+        auto* globalObject = jsWindowProxy->window();
+        if (globalObject && !globalObject->debugger())
+            attach(globalObject);
+    }
 }
 
 void FrameDebugger::detachDebugger(bool isBeingDestroyed)
