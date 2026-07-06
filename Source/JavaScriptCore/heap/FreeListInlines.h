@@ -35,44 +35,32 @@ namespace JSC {
 template<typename Func>
 ALWAYS_INLINE HeapCell* FreeList::allocateWithCellSize(const Func& slowPath, size_t cellSize)
 {
-    if (m_intervalStart < m_intervalEnd) [[likely]] {
+    ASSERT(cellSize == m_cellSize);
+    if (m_intervalStart < m_intervalEnd) {
         char* result = m_intervalStart;
         m_intervalStart += cellSize;
         return std::bit_cast<HeapCell*>(result);
     }
-    
-    FreeCell* cell = nextInterval();
-    if (isSentinel(cell)) [[unlikely]]
-        return slowPath();
-
-    FreeCell::advance(m_secret, m_nextInterval, m_intervalStart, m_intervalEnd);
-    
-    // It's an invariant of our allocator that we don't create empty intervals, so there 
-    // should always be enough space remaining to allocate a cell.
-    char* result = m_intervalStart;
-    m_intervalStart += cellSize;
-    return std::bit_cast<HeapCell*>(result);
+    if (m_block && findNextInterval(cellSize)) {
+        char* result = m_intervalStart;
+        m_intervalStart += cellSize;
+        return std::bit_cast<HeapCell*>(result);
+    }
+    return slowPath();
 }
 
 template<typename Func>
-void FreeList::forEach(const Func& func) const
+void FreeList::consumeRemaining(const Func& func)
 {
-    FreeCell* cell = nextInterval();
-    char* intervalStart = m_intervalStart;
-    char* intervalEnd = m_intervalEnd;
-    ASSERT(intervalEnd - intervalStart < (ptrdiff_t)MarkedBlock::blockSize);
-
     while (true) {
-        for (; intervalStart < intervalEnd; intervalStart += m_cellSize)
-            func(std::bit_cast<HeapCell*>(intervalStart));
-
-        // If we explore the whole interval and the cell is the sentinel value, though, we should
-        // immediately exit so we don't decode anything out of bounds.
-        if (isSentinel(cell))
+        while (m_intervalStart < m_intervalEnd) {
+            func(std::bit_cast<HeapCell*>(m_intervalStart));
+            m_intervalStart += m_cellSize;
+        }
+        if (!(m_block && findNextInterval(m_cellSize)))
             break;
-
-        FreeCell::advance(m_secret, cell, intervalStart, intervalEnd);
     }
+    clear();
 }
 
 } // namespace JSC

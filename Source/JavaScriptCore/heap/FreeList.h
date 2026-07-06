@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/JSExportMacros.h>
+#include <JavaScriptCore/MarkedBlock.h>
 #include <wtf/Compiler.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
@@ -36,90 +37,80 @@ namespace JSC {
 
 class HeapCell;
 
-struct FreeCell {
-    static ALWAYS_INLINE uint64_t scramble(int32_t offsetToNext, uint32_t lengthInBytes, uint64_t secret)
-    {
-        ASSERT(static_cast<uint64_t>(lengthInBytes) << 32 | offsetToNext);
-        return (static_cast<uint64_t>(lengthInBytes) << 32 | offsetToNext) ^ secret;
-    }
-
-    static ALWAYS_INLINE std::tuple<int32_t, uint32_t> descramble(uint64_t scrambledBits, uint64_t secret)
-    {
-        static_assert(isPowerOfTwo(sizeof(FreeCell))); // Make sure this division isn't super costly.
-        uint64_t descrambledBits = scrambledBits ^ secret;
-        return { static_cast<int32_t>(static_cast<uint32_t>(descrambledBits)), static_cast<uint32_t>(descrambledBits >> 32u) };
-    }
-
-    ALWAYS_INLINE void makeLast(uint32_t lengthInBytes, uint64_t secret)
-    {
-        scrambledBits = scramble(1, lengthInBytes, secret); // We use a set LSB to indicate a sentinel pointer.
-    }
-
-    ALWAYS_INLINE void setNext(FreeCell* next, uint32_t lengthInBytes, uint64_t secret)
-    {
-        scrambledBits = scramble((next - this) * sizeof(FreeCell), lengthInBytes, secret);
-    }
-
-    ALWAYS_INLINE std::tuple<int32_t, uint32_t> decode(uint64_t secret)
-    {
-        return descramble(scrambledBits, secret);
-    }
-
-    static ALWAYS_INLINE void advance(uint64_t secret, FreeCell*& interval, char*& intervalStart, char*& intervalEnd)
-    {
-        auto [offsetToNext, lengthInBytes] = interval->decode(secret);
-        intervalStart = std::bit_cast<char*>(interval);
-        intervalEnd = intervalStart + lengthInBytes;
-        interval = std::bit_cast<FreeCell*>(intervalStart + offsetToNext);
-    }
-
-    static constexpr ptrdiff_t offsetOfScrambledBits() { return OBJECT_OFFSETOF(FreeCell, scrambledBits); }
-
-    uint64_t preservedBitsForCrashAnalysis;
-    uint64_t scrambledBits;
-};
-
 class FreeList {
 public:
     FreeList(unsigned cellSize);
     ~FreeList();
-    
+
     void NODELETE clear();
-    
-    JS_EXPORT_PRIVATE void initialize(FreeCell* head, uint64_t secret, unsigned bytes);
-    
-    bool allocationWillFail() const { return m_intervalStart >= m_intervalEnd && isSentinel(nextInterval()); }
-    bool allocationWillSucceed() const { return !allocationWillFail(); }
-    
+
+    JS_EXPORT_PRIVATE void initialize(MarkedBlock::Handle*, const WTF::BitSet<MarkedBlock::atomsPerBlock>& live, unsigned startIndex, unsigned bytes);
+    JS_EXPORT_PRIVATE void initializeEmpty(char* intervalStart, char* intervalEnd);
+
+    bool allocationWillSucceed()
+    {
+        if (m_intervalStart < m_intervalEnd)
+            return true;
+        // findNextInterval may only be called once the current interval is exhausted.
+        if (m_block && findNextInterval(m_cellSize))
+            return true;
+        return false;
+    }
+    bool allocationWillFail() { return !allocationWillSucceed(); }
+
     template<typename Func>
     HeapCell* allocateWithCellSize(const Func& slowPath, size_t cellSize);
-    
+
+    // Empties the FreeList, invoking func on each remaining free cell along the way.
     template<typename Func>
-    void forEach(const Func&) const;
-    
+    void consumeRemaining(const Func&);
+
     unsigned originalSize() const { return m_originalSize; }
 
-    static bool isSentinel(FreeCell* cell) { return std::bit_cast<uintptr_t>(cell) & 1; }
-    static constexpr ptrdiff_t offsetOfNextInterval() { return OBJECT_OFFSETOF(FreeList, m_nextInterval); }
-    static constexpr ptrdiff_t offsetOfSecret() { return OBJECT_OFFSETOF(FreeList, m_secret); }
     static constexpr ptrdiff_t offsetOfIntervalStart() { return OBJECT_OFFSETOF(FreeList, m_intervalStart); }
     static constexpr ptrdiff_t offsetOfIntervalEnd() { return OBJECT_OFFSETOF(FreeList, m_intervalEnd); }
     static constexpr ptrdiff_t offsetOfOriginalSize() { return OBJECT_OFFSETOF(FreeList, m_originalSize); }
     static constexpr ptrdiff_t offsetOfCellSize() { return OBJECT_OFFSETOF(FreeList, m_cellSize); }
-    
+
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
 
     unsigned cellSize() const { return m_cellSize; }
-    
+
 private:
-    FreeCell* nextInterval() const { return m_nextInterval; }
-    
+    ALWAYS_INLINE bool findNextInterval(unsigned cellSize)
+    {
+        ASSERT(m_block);
+        unsigned atomsPerCell = cellSize / MarkedBlock::atomSize;
+        size_t startAtom = m_live.findBitInStride(m_startIndex, false, atomsPerCell, m_strideMask);
+        if (startAtom >= MarkedBlock::atomsPerBlock) {
+            m_startIndex = MarkedBlock::atomsPerBlock;
+            return false;
+        }
+        size_t endAtom = m_live.findBitInStride(startAtom, true, atomsPerCell, m_strideMask);
+        ASSERT(endAtom <= MarkedBlock::atomsPerBlock);
+        m_intervalStart = std::bit_cast<char*>(m_block->atomAt(startAtom));
+        m_intervalEnd = std::bit_cast<char*>(m_block->atomAt(endAtom));
+        m_startIndex = endAtom;
+        return true;
+    }
+
+    // m_intervalStart and m_intervalEnd store an interval to bump allocate from (bumping by m_cellSize)
     char* m_intervalStart { nullptr };
     char* m_intervalEnd { nullptr };
-    FreeCell* m_nextInterval { std::bit_cast<FreeCell*>(static_cast<uintptr_t>(1)) };
-    uint64_t m_secret { 0 };
-    unsigned m_originalSize { 0 };
+
     unsigned m_cellSize { 0 };
+
+    unsigned m_originalSize { 0 };
+
+    // When allocating from a block that wasn't empty, we also store m_block, m_live, and m_startIndex.
+    // Otherwise, we set m_block to null to quickly indicate that the block was empty.
+    // So, we should check m_block before accessing m_live or m_startIndex.
+    MarkedBlock::Handle* m_block { nullptr };
+    WTF::BitSet<MarkedBlock::atomsPerBlock> m_live;
+    // m_strideMask caches the bit mask to avoid reconstructing frequently
+    typename WTF::BitSet<MarkedBlock::atomsPerBlock>::WordType m_strideMask { 0 };
+    // m_startIndex remembers where we are in m_live
+    unsigned m_startIndex { MarkedBlock::atomsPerBlock };
 };
 
 } // namespace JSC

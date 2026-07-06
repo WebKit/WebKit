@@ -971,30 +971,21 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
     // - We *can not* use RegisterSet::macroScratchRegisters on x86.
     // - We *can* use RegisterSet::macroScratchRegisters on ARM.
 
-    Jump popPath;
     Jump zeroPath;
     Jump done;
 
     if (allocator.isConstant())
         move(TrustedImmPtr(allocator.allocator().localAllocator()), allocatorGPR);
 
-#if CPU(ARM) || CPU(ARM64)
-    auto dataTempRegister = getCachedDataTempRegisterIDAndInvalidate();
-#endif
-
 #if CPU(ARM64)
     // On ARM64, we can leverage instructions like load-pair and shifted-add to make loading from the free list
     // and extracting interval information use less instructions.
 
-    // Assert that we can use loadPairPtr for the interval bounds and nextInterval/secret.
     static_assert(FreeList::offsetOfIntervalEnd() - FreeList::offsetOfIntervalStart() == sizeof(uintptr_t));
-    static_assert(FreeList::offsetOfNextInterval() - FreeList::offsetOfIntervalEnd() == sizeof(uintptr_t));
-    static_assert(FreeList::offsetOfSecret() - FreeList::offsetOfNextInterval() == sizeof(uintptr_t));
 
     JIT_COMMENT(*this, "Bump allocation (fast path)");
     loadPairPtr(allocatorGPR, TrustedImm32(LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()), resultGPR, scratchGPR);
-    popPath = branchPtr(RelationalCondition::AboveOrEqual, resultGPR, scratchGPR);
-    auto bumpLabel = label();
+    zeroPath = branchPtr(RelationalCondition::AboveOrEqual, resultGPR, scratchGPR);
     if (allocator.isConstant())
         addPtr(TrustedImm32(allocator.allocator().cellSize()), resultGPR, scratchGPR);
     else {
@@ -1003,24 +994,13 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
     }
     storePtr(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()));
     done = jump();
-
-    JIT_COMMENT(*this, "Get next interval (slower path)");
-    popPath.link(this);
-    loadPairPtr(allocatorGPR, TrustedImm32(LocalAllocator::offsetOfFreeList() + FreeList::offsetOfNextInterval()), resultGPR, scratchGPR);
-    zeroPath = branchTestPtr(ResultCondition::NonZero, resultGPR, TrustedImm32(1));
-    xor64(Address(resultGPR, FreeCell::offsetOfScrambledBits()), scratchGPR);
-    addSignExtend64(resultGPR, scratchGPR, dataTempRegister);
-    addUnsignedRightShift64(resultGPR, scratchGPR, TrustedImm32(32), scratchGPR);
-    storePairPtr(scratchGPR, dataTempRegister, allocatorGPR, TrustedImm32(LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalEnd()));
-    jump(bumpLabel);
 #elif CPU(X86_64)
-    // On x86_64, we can leverage better support for memory operands to directly interact with the free 
+    // On x86_64, we can leverage better support for memory operands to directly interact with the free
     // list instead of relying on registers as much.
 
     JIT_COMMENT(*this, "Bump allocation (fast path)");
     loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()), resultGPR);
-    popPath = branchPtr(RelationalCondition::AboveOrEqual, resultGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalEnd()));
-    auto bumpLabel = label();
+    zeroPath = branchPtr(RelationalCondition::AboveOrEqual, resultGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalEnd()));
     if (allocator.isConstant())
         add64(TrustedImm32(allocator.allocator().cellSize()), Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()));
     else {
@@ -1028,28 +1008,13 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
         add64(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()));
     }
     done = jump();
-
-    JIT_COMMENT(*this, "Get next interval (slower path)");
-    popPath.link(this);
-    loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfNextInterval()), resultGPR);
-    zeroPath = branchTestPtr(ResultCondition::NonZero, resultGPR, TrustedImm32(1));
-    load32(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret()), scratchGPR);
-    xor32(Address(resultGPR, FreeCell::offsetOfScrambledBits()), scratchGPR); // Lower 32 bits -> offset to next interval
-    add64(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfNextInterval()));
-    load32(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret() + 4), scratchGPR);
-    xor32(Address(resultGPR, FreeCell::offsetOfScrambledBits() + 4), scratchGPR); // Upper 32 bits -> size of interval
-    storePtr(resultGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()));
-    addPtr(resultGPR, scratchGPR);
-    storePtr(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalEnd()));
-    jump(bumpLabel);
 #else
     // Otherwise, we have a fairly general case for all other architectures here.
 
     // Bump allocation (fast path)
     loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()), resultGPR);
     loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalEnd()), scratchGPR);
-    popPath = branchPtr(RelationalCondition::AboveOrEqual, resultGPR, scratchGPR);
-    auto bumpLabel = label();
+    zeroPath = branchPtr(RelationalCondition::AboveOrEqual, resultGPR, scratchGPR);
     if (allocator.isConstant()) {
         move(resultGPR, scratchGPR);
         addPtr(TrustedImm32(allocator.allocator().cellSize()), scratchGPR);
@@ -1059,21 +1024,6 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
     }
     storePtr(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()));
     done = jump();
-
-    // Get next interval (slower path)
-    popPath.link(this);
-    loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfNextInterval()), resultGPR);
-    zeroPath = branchTestPtr(ResultCondition::NonZero, resultGPR, TrustedImm32(1));
-    load32(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret()), scratchGPR);
-    xor32(Address(resultGPR, FreeCell::offsetOfScrambledBits()), scratchGPR); // Lower 32 bits -> offset to next interval
-    loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfNextInterval()), dataTempRegister);
-    addPtr(scratchGPR, dataTempRegister);
-    storePtr(dataTempRegister, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfNextInterval()));
-    load32(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret() + 4), scratchGPR);
-    xor32(Address(resultGPR, FreeCell::offsetOfScrambledBits() + 4), scratchGPR); // Upper 32 bits -> size of interval
-    addPtr(resultGPR, scratchGPR);
-    storePtr(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalEnd()));
-    jump(bumpLabel);
 #endif
 
     if (slowAllocationResult == SlowAllocationResult::ClearToNull) {

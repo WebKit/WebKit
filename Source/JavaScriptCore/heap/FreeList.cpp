@@ -25,12 +25,16 @@
 
 #include "config.h"
 #include "FreeList.h"
+#include "BlockDirectory.h"
+#include <wtf/Assertions.h>
 
 namespace JSC {
 
 FreeList::FreeList(unsigned cellSize)
     : m_cellSize(cellSize)
+    , m_strideMask(WTF::BitSet<MarkedBlock::atomsPerBlock>::strideMask(cellSize / MarkedBlock::atomSize))
 {
+    ASSERT(!(cellSize % MarkedBlock::atomSize));
 }
 
 FreeList::~FreeList() = default;
@@ -39,27 +43,34 @@ void FreeList::clear()
 {
     m_intervalStart = nullptr;
     m_intervalEnd = nullptr;
-    m_nextInterval = std::bit_cast<FreeCell*>(static_cast<uintptr_t>(1));
-    m_secret = 0;
+    m_startIndex = MarkedBlock::atomsPerBlock;
     m_originalSize = 0;
 }
 
-void FreeList::initialize(FreeCell* start, uint64_t secret, unsigned bytes)
+void FreeList::initialize(MarkedBlock::Handle* block, const WTF::BitSet<MarkedBlock::atomsPerBlock>& live, unsigned startIndex, unsigned bytes)
 {
-    if (!start) [[unlikely]] {
-        clear();
-        return;
-    }
-    m_secret = secret;
-    m_nextInterval = start;
-    FreeCell::advance(m_secret, m_nextInterval, m_intervalStart, m_intervalEnd);
+    ASSERT(block);
+    ASSERT(block->directory()->cellSize() == m_cellSize);
+    // m_intervalStart and m_intervalEnd are set by findNextInterval
     m_originalSize = bytes;
+    m_block = block;
+    m_live = live;
+    m_startIndex = startIndex;
+    findNextInterval(m_cellSize);
+}
+
+void FreeList::initializeEmpty(char* intervalStart, char* intervalEnd)
+{
+    m_intervalStart = intervalStart;
+    m_intervalEnd = intervalEnd;
+    m_originalSize = intervalEnd - intervalStart;
+    m_block = nullptr;
+    // m_live and m_startIndex should not be read if m_block is null
 }
 
 void FreeList::dump(PrintStream& out) const
 {
-    out.print("{nextInterval = ", RawPointer(nextInterval()), ", secret = ", m_secret, ", intervalStart = ", RawPointer(m_intervalStart), ", intervalEnd = ", RawPointer(m_intervalEnd), ", originalSize = ", m_originalSize, "}");
+    out.print("{intervalStart = ", RawPointer(m_intervalStart), ", intervalEnd = ", RawPointer(m_intervalEnd), ", originalSize = ", m_originalSize, "}");
 }
 
 } // namespace JSC
-
