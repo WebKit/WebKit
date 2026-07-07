@@ -1,0 +1,5 @@
+
+PASS style(10px < --foo): changing the bound custom property re-evaluates
+PASS style(--a > --b): changing the right operand re-evaluates
+PASS style(var(--x) > 10px): changing the var()-referenced property re-evaluates
+

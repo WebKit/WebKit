@@ -445,8 +445,7 @@ const HashSet<AtomString>& ScopeRuleSets::customPropertyNamesInStyleContainerQue
                 return;
             for (auto query : ruleSet->containerQueryRules()) {
                 traverseFeatures(query->containerQuery().condition, [&](auto& containerFeature) {
-                    if (isCustomPropertyName(containerFeature.name))
-                        propertyNames.add(containerFeature.name);
+                    CQ::collectCustomPropertyNames(containerFeature, propertyNames);
                 });
             }
         };

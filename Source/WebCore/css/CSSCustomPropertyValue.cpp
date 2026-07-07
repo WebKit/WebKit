@@ -120,9 +120,8 @@ const Vector<CSSParserToken>& CSSCustomPropertyValue::tokens() const
     static NeverDestroyed<Vector<CSSParserToken>> emptyTokens;
 
     return WTF::switchOn(m_value,
-        [&](const Ref<CSSSubstitutionValue>&) -> const Vector<CSSParserToken>& {
-            ASSERT_NOT_REACHED();
-            return emptyTokens;
+        [&](const Ref<CSSSubstitutionValue>& value) -> const Vector<CSSParserToken>& {
+            return value->data().tokens();
         },
         [&](const Ref<CSSVariableData>& value) -> const Vector<CSSParserToken>& {
             return value->tokens();

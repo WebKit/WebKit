@@ -27,15 +27,30 @@
 
 #include "BoxSides.h"
 #include "CSSCustomPropertyValue.h"
+#include "CSSParserContext.h"
+#include "CSSParserIdioms.h"
+#include "CSSParserTokenRange.h"
 #include "CSSPrimitiveNumericCategory.h"
+#include "CSSPropertyParserConsumer+AngleDefinitions.h"
+#include "CSSPropertyParserConsumer+FrequencyDefinitions.h"
+#include "CSSPropertyParserConsumer+LengthDefinitions.h"
+#include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSPropertyParserConsumer+NumberDefinitions.h"
+#include "CSSPropertyParserConsumer+PercentageDefinitions.h"
+#include "CSSPropertyParserConsumer+ResolutionDefinitions.h"
+#include "CSSPropertyParserConsumer+TimeDefinitions.h"
+#include "CSSPropertyParserState.h"
 #include "ComputedStyleDependencies.h"
 #include "ContainerQueryEvaluator.h"
+#include "GenericMediaQueryParser.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
 #include "StyleBuilder.h"
 #include "StyleCustomProperty.h"
 #include "StyleCustomPropertyRegistry.h"
+#include "StylePrimitiveNumericTypes+Conversions.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore::CQ {
@@ -177,9 +192,99 @@ struct OrientationFeatureSchema : public SizeFeatureSchema {
     }
 };
 
+// https://drafts.csswg.org/css-conditional-5/#typedef-style-range
+enum class StyleRangeCategory : uint8_t { Number, Length, Percentage, Angle, Time, Frequency, Resolution };
+
+struct StyleRangeValue {
+    StyleRangeCategory category;
+    double value; // In the canonical unit of the category.
+    bool isUnitlessZero { false };
+};
+
+// Evaluates the (already substituted) computed value of a <style-range-value> into one of
+// <number>, <length>, <percentage>, <angle>, <time>, <frequency> or <resolution>, computed
+// with respect to the query container. Returns nullopt if it doesn't parse as a single value.
+static std::optional<StyleRangeValue> evaluateStyleRangeValue(const Vector<CSSParserToken>& tokens, const FeatureEvaluationContext& context)
+{
+    using namespace CSSPropertyParserHelpers;
+
+    CSSParserTokenRange range { tokens };
+    range.consumeWhitespace();
+    if (range.atEnd())
+        return { };
+
+    auto& conversionData = context.conversionData;
+    auto parserState = CSS::PropertyParserState { .context = protect(context.document.get())->cssParserContext() };
+
+    auto isFullyConsumed = [](CSSParserTokenRange consumed) {
+        consumed.consumeWhitespace();
+        return consumed.atEnd();
+    };
+
+    // <number> is tried first so that a unitless zero is categorized as a number (and can act as a
+    // zero <length> when compared against a length).
+    if (auto subrange = range; auto value = MetaConsumer<CSS::Number<>>::consume(subrange, parserState)) {
+        if (isFullyConsumed(subrange)) {
+            auto number = Style::evaluate<double>(Style::toStyle(*value, conversionData));
+            return StyleRangeValue { StyleRangeCategory::Number, number, !number };
+        }
+    }
+    // overrideParserMode matches MQ::consumeValue's <length> parsing so quirky/quirks-mode lengths behave
+    // identically here. See the FIXME there.
+    if (auto subrange = range; auto value = MetaConsumer<CSS::Length<>>::consume(subrange, parserState, { .overrideParserMode = HTMLStandardMode })) {
+        if (isFullyConsumed(subrange))
+            return StyleRangeValue { StyleRangeCategory::Length, Style::evaluate<double>(Style::toStyle(*value, conversionData), Style::ZoomNeeded { }) };
+    }
+    if (auto subrange = range; auto value = MetaConsumer<CSS::Percentage<>>::consume(subrange, parserState)) {
+        if (isFullyConsumed(subrange))
+            return StyleRangeValue { StyleRangeCategory::Percentage, Style::evaluate<double>(Style::toStyle(*value, conversionData)) };
+    }
+    if (auto subrange = range; auto value = MetaConsumer<CSS::Angle<>>::consume(subrange, parserState)) {
+        if (isFullyConsumed(subrange))
+            return StyleRangeValue { StyleRangeCategory::Angle, Style::evaluate<double>(Style::toStyle(*value, conversionData)) };
+    }
+    if (auto subrange = range; auto value = MetaConsumer<CSS::Time<>>::consume(subrange, parserState)) {
+        if (isFullyConsumed(subrange))
+            return StyleRangeValue { StyleRangeCategory::Time, Style::evaluate<double>(Style::toStyle(*value, conversionData)) };
+    }
+    if (auto subrange = range; auto value = MetaConsumer<CSS::Frequency<>>::consume(subrange, parserState)) {
+        if (isFullyConsumed(subrange))
+            return StyleRangeValue { StyleRangeCategory::Frequency, Style::evaluate<double>(Style::toStyle(*value, conversionData)) };
+    }
+    if (auto subrange = range; auto value = MetaConsumer<CSS::Resolution<>>::consume(subrange, parserState)) {
+        if (isFullyConsumed(subrange))
+            return StyleRangeValue { StyleRangeCategory::Resolution, Style::evaluate<double>(Style::toStyle(*value, conversionData)) };
+    }
+
+    return { };
+}
+
+// "If each <style-range-value> from the range have the same type" — a unitless zero is treated as a
+// zero <length> when compared against a <length>.
+static bool styleRangeValuesShareCategory(std::initializer_list<const std::optional<StyleRangeValue>*> operands)
+{
+    std::optional<StyleRangeCategory> category;
+    bool hasUnitlessZero = false;
+    for (auto* operand : operands) {
+        if (!*operand)
+            continue;
+        if ((*operand)->isUnitlessZero) {
+            hasUnitlessZero = true;
+            continue;
+        }
+        if (!category)
+            category = (*operand)->category;
+        else if (*category != (*operand)->category)
+            return false;
+    }
+    if (hasUnitlessZero && category && *category != StyleRangeCategory::Number && *category != StyleRangeCategory::Length)
+        return false;
+    return true;
+}
+
 struct StyleFeatureSchema : public FeatureSchema {
     StyleFeatureSchema()
-        : FeatureSchema("style"_s, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::CustomProperty, { })
+        : FeatureSchema("style"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::CustomProperty, { })
     {
     }
 
@@ -190,6 +295,9 @@ struct StyleFeatureSchema : public FeatureSchema {
         CheckedPtr style = context.conversionData.style();
         if (!style || !context.conversionData.parentStyle())
             return EvaluationResult::False;
+
+        if (feature.syntax == Syntax::Range)
+            return evaluateRange(feature, context, *style);
 
         RefPtr customPropertyValue = style->customPropertyValue(feature.name);
         if (!feature.rightComparison)
@@ -223,6 +331,85 @@ struct StyleFeatureSchema : public FeatureSchema {
 
         ASSERT(feature.rightComparison->op == ComparisonOperator::Equal);
         return toEvaluationResult(customPropertyValue && customPropertyValue->valueEquals(*resolvedFeatureValue));
+    }
+
+    // https://drafts.csswg.org/css-conditional-5/#ref-for-typedef-style-range
+    EvaluationResult evaluateRange(const MQ::Feature& feature, const FeatureEvaluationContext& context, const Style::ComputedStyle& style) const
+    {
+        // A builder is only needed to resolve var()/attr() substitutions and css-wide keywords against
+        // the container. It is created lazily so literal-only ranges like style(10px < 10em) skip it.
+        std::optional<Style::ComputedStyle> dummyStyle;
+        RefPtr<Style::MatchResult> dummyMatchResult;
+        std::optional<Style::Builder> styleBuilder;
+        auto ensureBuilder = [&]() -> Style::Builder& {
+            if (!styleBuilder) {
+                auto builderContext = Style::BuilderContext {
+                    context.document.get(),
+                    context.conversionData.parentStyle(),
+                    context.conversionData.rootStyle(),
+                    context.conversionData.elementForContainerUnitResolution()
+                };
+                dummyStyle = Style::ComputedStyle::clone(protect(style));
+                dummyMatchResult = Style::MatchResult::create();
+                styleBuilder.emplace(protect(*dummyStyle), WTF::move(builderContext), *dummyMatchResult);
+            }
+            return *styleBuilder;
+        };
+
+        auto resolveValue = [&](const CSSCustomPropertyValue& value) -> RefPtr<const Style::CustomProperty> {
+            // A bare <custom-property-name> is substituted as if wrapped in var(): read it from the container.
+            if (auto name = MQ::bareCustomPropertyName(value.tokens().span()); !name.isNull())
+                return style.customPropertyValue(name);
+            // Plain values (literals, calc()) are already final; only var()/attr()/css-wide keywords need resolution.
+            if (auto* data = std::get_if<Ref<CSSVariableData>>(&value.value()))
+                return Style::CustomProperty::createForVariableData(value.name(), data->copyRef());
+            return ensureBuilder().resolveCustomPropertyForContainerQueries(value);
+        };
+
+        auto resolveOperand = [&](const std::optional<Value>& operandValue, const AtomString& centerName) -> std::optional<StyleRangeValue> {
+            RefPtr<const Style::CustomProperty> customProperty;
+            if (!centerName.isNull())
+                customProperty = style.customPropertyValue(centerName);
+            else {
+                if (!operandValue)
+                    return { };
+                auto* value = std::get_if<Ref<CSSCustomPropertyValue>>(&*operandValue);
+                if (!value)
+                    return { };
+                customProperty = resolveValue(value->get());
+            }
+            if (!customProperty || customProperty->isGuaranteedInvalid())
+                return { };
+            return evaluateStyleRangeValue(customProperty->tokens(), context);
+        };
+
+        auto center = resolveOperand(feature.subject, feature.name);
+        if (!center)
+            return EvaluationResult::False;
+
+        std::optional<StyleRangeValue> leftValue;
+        if (feature.leftComparison) {
+            leftValue = resolveOperand(feature.leftComparison->value, nullAtom());
+            if (!leftValue)
+                return EvaluationResult::False;
+        }
+
+        std::optional<StyleRangeValue> rightValue;
+        if (feature.rightComparison) {
+            rightValue = resolveOperand(feature.rightComparison->value, nullAtom());
+            if (!rightValue)
+                return EvaluationResult::False;
+        }
+
+        if (!styleRangeValuesShareCategory({ &center, &leftValue, &rightValue }))
+            return EvaluationResult::False;
+
+        if (feature.leftComparison && !compare(feature.leftComparison->op, leftValue->value, center->value))
+            return EvaluationResult::False;
+        if (feature.rightComparison && !compare(feature.rightComparison->op, center->value, rightValue->value))
+            return EvaluationResult::False;
+
+        return EvaluationResult::True;
     }
 };
 

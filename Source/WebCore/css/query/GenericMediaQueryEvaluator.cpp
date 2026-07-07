@@ -125,24 +125,6 @@ static CSSValueID resolveIdent(const Value& value)
     );
 }
 
-template<typename T>
-bool NODELETE compare(ComparisonOperator op, T left, T right)
-{
-    switch (op) {
-    case ComparisonOperator::LessThan:
-        return left < right;
-    case ComparisonOperator::GreaterThan:
-        return left > right;
-    case ComparisonOperator::LessThanOrEqual:
-        return left <= right;
-    case ComparisonOperator::GreaterThanOrEqual:
-        return left >= right;
-    case ComparisonOperator::Equal:
-        return left == right;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-};
-
 enum class Side : uint8_t { Left, Right };
 static EvaluationResult evaluateLengthComparison(LayoutUnit size, const std::optional<Comparison>& comparison, Side side, const CSSToLengthConversionData& conversionData)
 {

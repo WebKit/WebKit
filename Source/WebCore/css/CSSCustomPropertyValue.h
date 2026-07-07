@@ -61,6 +61,9 @@ public:
 
     std::optional<CSSWideKeyword> tryCSSWideKeyword() const;
 
+    // The value's tokens (empty for a CSS-wide keyword).
+    const Vector<CSSParserToken>& tokens() const;
+
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSCustomPropertyValue&) const;
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
@@ -72,8 +75,6 @@ private:
         , m_value(WTF::move(value))
     {
     }
-
-    const Vector<CSSParserToken>& tokens() const;
 
     const AtomString m_name;
     const VariantValue m_value;
