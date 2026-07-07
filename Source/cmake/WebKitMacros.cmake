@@ -683,7 +683,7 @@ endfunction()
 function(WEBKIT_COPY_FILES target_name)
     set(options FLATTENED NO_SYMLINK PRUNE_STALE)
     set(oneValueArgs DESTINATION)
-    set(multiValueArgs FILES)
+    set(multiValueArgs FILES COMMAND)
     cmake_parse_arguments(opt "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     set(files ${opt_FILES})
     set(dst_files)
@@ -709,19 +709,18 @@ function(WEBKIT_COPY_FILES target_name)
         # On macOS, symlink instead of copy so #import deduplicates headers reachable
         # via both forwarded (<WebKit/X.h>) and source-tree paths.
         # NO_SYMLINK for destinations post-processed in-place (e.g. ANGLE headers).
-        if (APPLE AND NOT opt_NO_SYMLINK)
-            add_custom_command(OUTPUT ${dst_file}
-                COMMAND ${CMAKE_COMMAND} -E create_symlink ${src_file} ${dst_file}
-                MAIN_DEPENDENCY ${src_file}
-                VERBATIM
-            )
+        if (opt_COMMAND)
+            set(command ${opt_COMMAND})
+        elseif (APPLE AND NOT opt_NO_SYMLINK)
+            set(command ${CMAKE_COMMAND} -E create_symlink)
         else ()
-            add_custom_command(OUTPUT ${dst_file}
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${src_file} ${dst_file}
-                MAIN_DEPENDENCY ${src_file}
-                VERBATIM
-            )
+            set(command ${CMAKE_COMMAND} -E copy_if_different)
         endif ()
+        add_custom_command(OUTPUT ${dst_file}
+            COMMAND ${command} ${src_file} ${dst_file}
+            MAIN_DEPENDENCY ${src_file}
+            VERBATIM
+        )
         list(APPEND dst_files ${dst_file})
     endforeach ()
     add_custom_target(${target_name} ALL DEPENDS ${dst_files})

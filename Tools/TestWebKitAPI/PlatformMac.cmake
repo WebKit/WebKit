@@ -173,7 +173,6 @@ list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
     ${bmalloc_FRAMEWORK_HEADERS_DIR}
     ${WebKit_FRAMEWORK_HEADERS_DIR}
     ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}
-    ${WEBKITLEGACY_DIR}
     ${TOOLS_DIR}/TestRunnerShared/cocoa
     ${TOOLS_DIR}/TestRunnerShared/spi
     ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCoreTestSupport
