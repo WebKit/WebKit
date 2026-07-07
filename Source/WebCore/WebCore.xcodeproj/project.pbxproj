@@ -3654,6 +3654,7 @@
 		8D8AB55246EA6D3E46D7E2EF /* UnifiedSource38-header-RenderStyleGetters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFF63713748594F7E1BE330 /* UnifiedSource38-header-RenderStyleGetters.cpp */; };
 		8E4C96DD1AD4483500365A50 /* JSFetchResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E4C96D91AD4483500365A50 /* JSFetchResponse.h */; };
 		8E595FF95A93134A1B3ADBB4 /* ISOBMFFPreParser.h in Headers */ = {isa = PBXBuildFile; fileRef = B588D917E3A23CFD5275BDE9 /* ISOBMFFPreParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8E595FFA5A93134A1B3ADBB5 /* ISOBMFFTrackInfoParser.h in Headers */ = {isa = PBXBuildFile; fileRef = B588D930E3A23CFD5275BDE9 /* ISOBMFFTrackInfoParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8F9B85867BCC1EE38784EE83 /* UnifiedSource71-header-RenderStyleGetters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB591C358F2E176568F6C0AA /* UnifiedSource71-header-RenderStyleGetters.cpp */; };
 		9001774112E0347800648462 /* OESStandardDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 9001773E12E0347800648462 /* OESStandardDerivatives.h */; };
 		9001788112E0370700648462 /* JSOESStandardDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 9001787F12E0370700648462 /* JSOESStandardDerivatives.h */; };
@@ -18928,6 +18929,8 @@
 		B56579B41824D12A00E79F23 /* RenderChildIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderChildIterator.h; sourceTree = "<group>"; };
 		B588D917E3A23CFD5275BDE9 /* ISOBMFFPreParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISOBMFFPreParser.h; sourceTree = "<group>"; };
 		B588D918E3A23CFD5275BDE9 /* ISOBMFFPreParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ISOBMFFPreParser.cpp; sourceTree = "<group>"; };
+		B588D930E3A23CFD5275BDE9 /* ISOBMFFTrackInfoParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISOBMFFTrackInfoParser.h; sourceTree = "<group>"; };
+		B588D931E3A23CFD5275BDE9 /* ISOBMFFTrackInfoParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ISOBMFFTrackInfoParser.cpp; sourceTree = "<group>"; };
 		B595FF461824CEE300FF51CD /* RenderIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderIterator.h; sourceTree = "<group>"; };
 		B59CA59AF170D8FAA5B8C9AD /* MathMLScriptsElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLScriptsElement.cpp; sourceTree = "<group>"; };
 		B59CA59AF170D8FAA5B8CABE /* MathMLPaddedElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLPaddedElement.cpp; sourceTree = "<group>"; };
@@ -37123,6 +37126,8 @@
 				AD9FF6E01908391D003B61E0 /* IOSurfacePoolCocoa.mm */,
 				B588D918E3A23CFD5275BDE9 /* ISOBMFFPreParser.cpp */,
 				B588D917E3A23CFD5275BDE9 /* ISOBMFFPreParser.h */,
+				B588D931E3A23CFD5275BDE9 /* ISOBMFFTrackInfoParser.cpp */,
+				B588D930E3A23CFD5275BDE9 /* ISOBMFFTrackInfoParser.h */,
 				A1DD618F2B7EBD8200075A92 /* MediaPlayerCocoa.mm */,
 				CD3578AC2A28F5AA0059D97D /* MediaPlayerEnumsCocoa.h */,
 				CD3578AD2A28F5AA0059D97D /* MediaPlayerEnumsCocoa.mm */,
@@ -46121,6 +46126,7 @@
 				E86097D52D84403B00A4E526 /* ISO18013ElementInfo.h in Headers */,
 				E86097D32D84403B00A4E526 /* ISO18013PresentmentRequest.h in Headers */,
 				8E595FF95A93134A1B3ADBB4 /* ISOBMFFPreParser.h in Headers */,
+				8E595FFA5A93134A1B3ADBB5 /* ISOBMFFTrackInfoParser.h in Headers */,
 				CD5FF4992162E2BE004BD86F /* ISOBox.h in Headers */,
 				CD720B4F2268B51300047FDE /* ISOFairPlayStreamingPsshBox.h in Headers */,
 				CD5FF49E2162E4E8004BD86F /* ISOOriginalFormatBox.h in Headers */,

@@ -1,3 +1,0 @@
-
-PASS Test removing coded frames during playback doesn't regress currentTime
-

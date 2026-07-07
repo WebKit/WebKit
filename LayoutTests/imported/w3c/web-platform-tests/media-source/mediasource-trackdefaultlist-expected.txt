@@ -1,4 +1,4 @@
 
-PASS Test track default list construction, length, and indexed property getter
-PASS Test empty track default list construction with and without optional trackDefaults parameter
+FAIL Test track default list construction, length, and indexed property getter Can't find variable: TrackDefault
+FAIL Test empty track default list construction with and without optional trackDefaults parameter Can't find variable: TrackDefaultList
 

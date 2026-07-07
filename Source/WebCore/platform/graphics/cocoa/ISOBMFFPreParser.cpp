@@ -40,8 +40,13 @@ static constexpr auto moovBox = FourCC(std::span { "moov" });
 static constexpr auto stypBox = FourCC(std::span { "styp" });
 static constexpr auto moofBox = FourCC(std::span { "moof" });
 
-ISOBMFFPreParser::ISOBMFFPreParser(ForwardDataCallback&& callback)
-    : m_forwardDataCallback(WTF::move(callback))
+// Sanity cap for buffered moov-body capture. Past this we abandon capture
+// for the current init segment; ingestion proceeds normally.
+static constexpr size_t maxMoovBodyCaptureBytes = 8 * 1024 * 1024;
+
+ISOBMFFPreParser::ISOBMFFPreParser(ForwardDataCallback&& forwardCallback, TrackInfoCallback&& trackInfoCallback)
+    : m_forwardDataCallback(WTF::move(forwardCallback))
+    , m_trackInfoCallback(WTF::move(trackInfoCallback))
 {
 }
 
@@ -95,6 +100,8 @@ void ISOBMFFPreParser::reset()
     m_state = State::WaitingForSegment;
     m_pendingHeaderBytes.clear();
     m_remainingBytesInCurrentBox = 0;
+    m_moovBuffer.clear();
+    m_capturingMoovBody = false;
 }
 
 void ISOBMFFPreParser::setPendingInitializationSegmentForChangeType()
@@ -165,6 +172,24 @@ Expected<void, PlatformMediaError> ISOBMFFPreParser::appendData(
             m_pendingHeaderBytes.append(inputSpan.subspan(offset - pendingSize));
     };
 
+    // Append the conceptual range [start, end) to m_moovBuffer, splicing across
+    // the pending/segment boundary the same way `forward` does.
+    auto captureMoovRange = [&](size_t start, size_t end) {
+        if (start >= end)
+            return;
+        if (start >= pendingSize) {
+            m_moovBuffer.append(inputSpan.subspan(start - pendingSize, end - start));
+            return;
+        }
+        if (end <= pendingSize) {
+            m_moovBuffer.append(pendingBytes.subspan(start, end - start));
+            return;
+        }
+        auto pendingPart = pendingSize - start;
+        m_moovBuffer.append(pendingBytes.subspan(start, pendingPart));
+        m_moovBuffer.append(inputSpan.first(end - pendingSize));
+    };
+
     AppendFlags nextChunkFlags = callerFlags;
     size_t offset = 0;
     size_t forwardStart = 0;
@@ -172,8 +197,21 @@ Expected<void, PlatformMediaError> ISOBMFFPreParser::appendData(
     while (offset < totalSize) {
         if (m_remainingBytesInCurrentBox > 0) {
             auto toConsume = std::min<uint64_t>(totalSize - offset, m_remainingBytesInCurrentBox);
+            if (m_capturingMoovBody) {
+                if (m_moovBuffer.size() + toConsume > maxMoovBodyCaptureBytes) {
+                    m_moovBuffer.clear();
+                    m_capturingMoovBody = false;
+                } else
+                    captureMoovRange(offset, offset + static_cast<size_t>(toConsume));
+            }
             m_remainingBytesInCurrentBox -= toConsume;
             offset += static_cast<size_t>(toConsume);
+            if (m_capturingMoovBody && !m_remainingBytesInCurrentBox) {
+                if (m_trackInfoCallback)
+                    m_trackInfoCallback(ISOBMFFTrackInfoParser::parseMoovBody(m_moovBuffer.span()));
+                m_moovBuffer.clear();
+                m_capturingMoovBody = false;
+            }
             continue;
         }
 
@@ -218,6 +256,8 @@ Expected<void, PlatformMediaError> ISOBMFFPreParser::appendData(
                 }
                 forwardStart = offset;
                 m_state = State::ParsingInitSegment;
+                m_moovBuffer.clear();
+                m_capturingMoovBody = false;
                 break;
             }
             if (isMediaSegmentStartBox(boxType)) {
@@ -232,6 +272,11 @@ Expected<void, PlatformMediaError> ISOBMFFPreParser::appendData(
                 m_firstInitializationSegmentReceived = true;
                 m_pendingInitializationSegmentForChangeType = false;
                 m_state = State::WaitingForSegment;
+                if (m_trackInfoCallback && boxBodySize > 0) {
+                    m_capturingMoovBody = true;
+                    m_moovBuffer.clear();
+                    m_moovBuffer.reserveCapacity(std::min<uint64_t>(boxBodySize, maxMoovBodyCaptureBytes));
+                }
                 break;
             }
             if (isMediaSegmentStartBox(boxType))

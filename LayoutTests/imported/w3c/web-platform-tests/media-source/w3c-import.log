@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/media-source/META.yml
@@ -19,12 +17,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-removed.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-updating.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/SourceBuffer-abort.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/SourceBuffer-appendWindowEnd-rounding.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/SourceBuffer-short-frame-endOfStream.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/URL-createObjectURL-null.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/URL-createObjectURL-revoke.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/URL-createObjectURL.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/media-source/generate-config-change-tests.py
 /LayoutTests/imported/w3c/web-platform-tests/media-source/idlharness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/media-source/import_tests.sh
+/LayoutTests/imported/w3c/web-platform-tests/media-source/invalid-third-block.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/last-frame-dimensions.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/manifest.txt
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-mode.html
@@ -34,6 +37,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-appendwindow.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-attach-stops-delaying-load-event.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-buffered-seek.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-buffered.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html
@@ -66,6 +70,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-endofstream.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-errors.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-h264-play-starved.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-invalid-codec.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-is-type-supported.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-liveseekable.html
@@ -89,3 +94,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-trackdefault.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-trackdefaultlist.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-util.js
+/LayoutTests/imported/w3c/web-platform-tests/media-source/waiting-for-audio.html

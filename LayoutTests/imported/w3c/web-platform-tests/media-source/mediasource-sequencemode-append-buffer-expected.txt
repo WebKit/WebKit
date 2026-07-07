@@ -1,5 +1,5 @@
 
 PASS Test sequence AppendMode appendBuffer(first media segment)
 PASS Test sequence AppendMode appendBuffer(second media segment)
-PASS Test sequence AppendMode appendBuffer(second media segment, then first media segment)
+FAIL Test sequence AppendMode appendBuffer(second media segment, then first media segment) assert_equals: sourceBuffer.buffered after EOS expected "{ [0.014, 1.711) }" but got "{ [0.014, 0.814) [0.909, 1.711) }"
 
