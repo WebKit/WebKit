@@ -113,17 +113,14 @@ angle::Result TextureNULL::copySubTexture(const gl::Context *context,
 
 angle::Result TextureNULL::copyRenderbufferSubData(const gl::Context *context,
                                                    const gl::Renderbuffer *srcBuffer,
-                                                   GLint srcLevel,
                                                    GLint srcX,
                                                    GLint srcY,
-                                                   GLint srcZ,
                                                    GLint dstLevel,
                                                    GLint dstX,
                                                    GLint dstY,
                                                    GLint dstZ,
                                                    GLsizei srcWidth,
-                                                   GLsizei srcHeight,
-                                                   GLsizei srcDepth)
+                                                   GLsizei srcHeight)
 {
     return angle::Result::Continue;
 }

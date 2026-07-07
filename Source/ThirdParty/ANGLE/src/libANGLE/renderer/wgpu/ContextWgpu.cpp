@@ -1112,7 +1112,7 @@ FenceNVImpl *ContextWgpu::createFenceNV()
     return new FenceNVWgpu();
 }
 
-SyncImpl *ContextWgpu::createSync(const gl::Context *)
+SyncImpl *ContextWgpu::createSync()
 {
     return new SyncWgpu();
 }

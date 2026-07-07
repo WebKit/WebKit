@@ -199,6 +199,7 @@ egl::Error DisplayEGL::initializeContext(EGLContext shareContext,
 
             attribsWithRobustness.insert(EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY,
                                          EGL_LOSE_CONTEXT_ON_RESET);
+            attribsWithRobustness.insert(EGL_CONTEXT_OPENGL_ROBUST_ACCESS_EXT, EGL_TRUE);
             if (mHasNVRobustnessVideoMemoryPurge)
             {
                 attribsWithRobustness.insert(EGL_GENERATE_RESET_ON_VIDEO_MEMORY_PURGE_NV, GL_TRUE);

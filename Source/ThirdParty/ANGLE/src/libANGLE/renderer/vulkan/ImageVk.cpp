@@ -161,38 +161,16 @@ bool ImageVk::isFixedRatedCompression(const gl::Context *context)
     ASSERT(mImage != nullptr && mImage->valid());
     ASSERT(renderer->getFeatures().supportsImageCompressionControl.enabled);
 
-    VkImageSubresource2EXT imageSubresource2      = {};
-    imageSubresource2.sType                       = VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_EXT;
-    imageSubresource2.imageSubresource.aspectMask = mImage->getAspectFlags();
-
     VkImageCompressionPropertiesEXT compressionProperties = {};
     compressionProperties.sType               = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_PROPERTIES_EXT;
-    VkSubresourceLayout2EXT subresourceLayout = {};
+    VkSubresourceLayout2 subresourceLayout    = {};
     subresourceLayout.sType                   = VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_EXT;
     subresourceLayout.pNext                   = &compressionProperties;
 
-    vkGetImageSubresourceLayout2EXT(renderer->getDevice(), mImage->getImage().getHandle(),
-                                    &imageSubresource2, &subresourceLayout);
+    mImage->getImageSubresourceLayout(renderer, &subresourceLayout);
 
     return compressionProperties.imageCompressionFixedRateFlags >
-                   VK_IMAGE_COMPRESSION_FIXED_RATE_NONE_EXT
-               ? true
-               : false;
-}
-
-gl::TextureType ImageVk::getImageTextureType() const
-{
-    return mState.imageIndex.getType();
-}
-
-gl::LevelIndex ImageVk::getImageLevel() const
-{
-    return gl::LevelIndex(mState.imageIndex.getLevelIndex());
-}
-
-uint32_t ImageVk::getImageLayer() const
-{
-    return mState.imageIndex.hasLayer() ? mState.imageIndex.getLayerIndex() : 0;
+           VK_IMAGE_COMPRESSION_FIXED_RATE_NONE_EXT;
 }
 
 }  // namespace rx

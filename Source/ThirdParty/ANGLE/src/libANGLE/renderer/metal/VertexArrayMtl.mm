@@ -665,10 +665,10 @@ angle::Result VertexArrayMtl::syncDirtyAttrib(const gl::Context *glContext,
 }
 
 template <size_t indexRewind>
-void AppendDrawCommands(std::vector<DrawCommandRange> &drawCommands,
-                        size_t count,
-                        size_t firstIndex,
-                        size_t indexSize)
+static void AppendDrawCommandsTemplate(std::vector<DrawCommandRange> &drawCommands,
+                                       size_t count,
+                                       size_t firstIndex,
+                                       size_t indexSize)
 {
     // Break the draw into hunks of 100'663'290 to avoid overflowing index count uint32_t.
     // Preserves primitive boundaries as the limit is divisible by all the possible per primitive
@@ -684,12 +684,12 @@ void AppendDrawCommands(std::vector<DrawCommandRange> &drawCommands,
     }
 }
 
-void AppendDrawCommands(std::vector<DrawCommandRange> &drawCommands,
-                        gl::PrimitiveMode mode,
-                        size_t count,
-                        size_t firstIndex,
-                        gl::PrimitiveMode drawMode,
-                        gl::DrawElementsType type)
+static void AppendDrawCommands(std::vector<DrawCommandRange> &drawCommands,
+                               gl::PrimitiveMode mode,
+                               size_t count,
+                               size_t firstIndex,
+                               gl::PrimitiveMode drawMode,
+                               gl::DrawElementsType type)
 {
     size_t elementSize = gl::GetDrawElementsTypeSize(type);
     uint32_t perPrimitiveIndexCount;
@@ -722,19 +722,19 @@ void AppendDrawCommands(std::vector<DrawCommandRange> &drawCommands,
     switch (drawMode)
     {
         case gl::PrimitiveMode::Points:
-            AppendDrawCommands<0>(drawCommands, count, firstIndex, elementSize);
+            AppendDrawCommandsTemplate<0>(drawCommands, count, firstIndex, elementSize);
             break;
         case gl::PrimitiveMode::Lines:
-            AppendDrawCommands<0>(drawCommands, count, firstIndex, elementSize);
+            AppendDrawCommandsTemplate<0>(drawCommands, count, firstIndex, elementSize);
             break;
         case gl::PrimitiveMode::LineStrip:
-            AppendDrawCommands<1>(drawCommands, count, firstIndex, elementSize);
+            AppendDrawCommandsTemplate<1>(drawCommands, count, firstIndex, elementSize);
             break;
         case gl::PrimitiveMode::Triangles:
-            AppendDrawCommands<0>(drawCommands, count, firstIndex, elementSize);
+            AppendDrawCommandsTemplate<0>(drawCommands, count, firstIndex, elementSize);
             break;
         case gl::PrimitiveMode::TriangleStrip:
-            AppendDrawCommands<2>(drawCommands, count, firstIndex, elementSize);
+            AppendDrawCommandsTemplate<2>(drawCommands, count, firstIndex, elementSize);
             break;
         default:
             UNREACHABLE();
@@ -784,10 +784,6 @@ void AppendSimpleDrawCommandRanges(std::vector<DrawCommandRange> &drawCommands,
     const size_t drawIndexSize = gl::GetDrawElementsTypeSize(indexBufferType);
     const size_t lastIndex     = firstIndex + count - 1;
 
-    // For simple types (mode == drawMode), source and draw indices are 1:1.
-    // For strips/fans/loops (mode != drawMode), the provoking vertex helper expands the buffer:
-    //   TriangleStrip/Fan -> Triangles: N source -> (N-2)*3 draw indices.
-    //   LineStrip/Loop -> Lines: N source -> (N-1)*2 draw indices.
     for (const auto &range : drawIndexRanges)
     {
         if (range.end < firstIndex)
@@ -811,7 +807,6 @@ void AppendSimpleDrawCommandRanges(std::vector<DrawCommandRange> &drawCommands,
         size_t drawBeginIndex;
         if (mode == drawMode)
         {
-            // Simple types: 1:1 mapping, round down to complete primitives.
             drawIndexCount = indexCount - (indexCount % perPrimitiveIndexCount);
             drawBeginIndex = clippedRange.begin;
         }
@@ -822,7 +817,7 @@ void AppendSimpleDrawCommandRanges(std::vector<DrawCommandRange> &drawCommands,
             drawIndexCount = (indexCount - perPrimitiveIndexCount + 1) * perPrimitiveIndexCount;
             drawBeginIndex = clippedRange.begin * perPrimitiveIndexCount;
         }
-        AppendDrawCommands<0>(drawCommands, drawIndexCount, drawBeginIndex, drawIndexSize);
+        AppendDrawCommandsTemplate<0>(drawCommands, drawIndexCount, drawBeginIndex, drawIndexSize);
     }
 }
 
@@ -836,8 +831,7 @@ angle::Result VertexArrayMtl::resolveDrawElementsDraw(
     bool isPrimitiveRestartEnabled,
     gl::PrimitiveMode *outNewMode,
     std::vector<DrawCommandRange> *outDrawCommands,
-    mtl::BufferRef *outIndexBuffer,
-    size_t *outIndexBufferOffset,
+    mtl::BufferSlice *outIndexBuffer,
     gl::DrawElementsType *outIndexBufferType)
 {
     ContextMtl *contextMtl = mtl::GetImpl(glContext);
@@ -868,8 +862,7 @@ angle::Result VertexArrayMtl::resolveDrawElementsDraw(
     }
 
     size_t firstIndex;
-    mtl::BufferRef indexBuffer;
-    size_t indexBufferOffset;
+    mtl::BufferSlice indexBuffer;
 
     // Step 1: Get the index buffer of supported type and resolve the first index to
     // process.
@@ -877,10 +870,7 @@ angle::Result VertexArrayMtl::resolveDrawElementsDraw(
     if (glElementArrayBuffer == nullptr)
     {
         firstIndex = 0;
-        mtl::BufferSlice idxSlice;
-        ANGLE_TRY(streamIndexBufferFromClient(glContext, type, count, indices, &idxSlice));
-        indexBuffer       = idxSlice.buffer();
-        indexBufferOffset = idxSlice.offset();
+        ANGLE_TRY(streamIndexBufferFromClient(glContext, type, count, indices, &indexBuffer));
     }
     else
     {
@@ -888,16 +878,12 @@ angle::Result VertexArrayMtl::resolveDrawElementsDraw(
                      gl::GetDrawElementsTypeSize(type);
         if (type != indexBufferType)
         {
-            mtl::BufferSlice idxSlice;
-            ANGLE_TRY(convertIndexBuffer(glContext, type, 0, &idxSlice));
-            indexBuffer       = idxSlice.buffer();
-            indexBufferOffset = idxSlice.offset();
+            ANGLE_TRY(convertIndexBuffer(glContext, type, 0, &indexBuffer));
         }
         else
         {
             BufferMtl *bufferMtl = mtl::GetImpl(glElementArrayBuffer);
-            indexBuffer          = bufferMtl->getCurrentBuffer();
-            indexBufferOffset    = 0;
+            indexBuffer          = mtl::BufferSlice(bufferMtl->getCurrentBuffer());
         }
     }
 
@@ -926,7 +912,7 @@ angle::Result VertexArrayMtl::resolveDrawElementsDraw(
     }
     else
     {
-        // No primitive restart splitting — inject a single full range.
+        // No primitive restart splitting. Inject a single full range.
         indexRangesStorage.emplace_back(firstIndex, firstIndex + count - 1);
         indexRanges = &indexRangesStorage;
     }
@@ -936,14 +922,9 @@ angle::Result VertexArrayMtl::resolveDrawElementsDraw(
     // processes the non-restart runs (not the full buffer).
     if (rewriteProvokingVertex)
     {
-        mtl::BufferRef newIndexBuffer;
-        size_t newIndexBufferOffset;
         ANGLE_TRY(contextMtl->getProvokingVertexHelper().preconditionIndexBuffer(
             contextMtl, count, mode, firstIndex, isPrimitiveRestartEnabled, *indexRanges,
-            indexBuffer, indexBufferOffset, indexBufferType, &newIndexBuffer,
-            &newIndexBufferOffset));
-        indexBuffer       = std::move(newIndexBuffer);
-        indexBufferOffset = newIndexBufferOffset;
+            std::move(indexBuffer), indexBufferType, &indexBuffer));
     }
 
     // Step 4: Compute draw command ranges (handles primitive restart splitting and large draw
@@ -961,11 +942,10 @@ angle::Result VertexArrayMtl::resolveDrawElementsDraw(
                            indexBufferType);
     }
 
-    *outNewMode           = newMode;
-    *outDrawCommands      = std::move(drawCommands);
-    *outIndexBuffer       = indexBuffer;
-    *outIndexBufferOffset = indexBufferOffset;
-    *outIndexBufferType   = indexBufferType;
+    *outNewMode         = newMode;
+    *outDrawCommands    = std::move(drawCommands);
+    *outIndexBuffer     = std::move(indexBuffer);
+    *outIndexBufferType = indexBufferType;
 
     return angle::Result::Continue;
 }
@@ -1161,7 +1141,7 @@ angle::Result VertexArrayMtl::convertVertexBufferCPU(ContextMtl *contextMtl,
 {
     VertexConversionBufferMtl *vertexConverison =
         static_cast<VertexConversionBufferMtl *>(conversion);
-    size_t srcOffset = MIN(binding.getOffset(), static_cast<GLintptr>(vertexConverison->offset));
+    size_t srcOffset = MIN(binding.getOffset(), static_cast<uintptr_t>(vertexConverison->offset));
     angle::Span<const uint8_t> srcBytes = srcBuffer->getBufferDataReadOnly(contextMtl, srcOffset);
     ANGLE_CHECK_GL_ALLOC(contextMtl, !srcBytes.empty());
     mtl::BufferSlice convertedBuffer;

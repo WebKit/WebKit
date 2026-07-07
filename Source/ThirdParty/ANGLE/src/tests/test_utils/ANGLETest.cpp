@@ -424,6 +424,18 @@ EGLenum GetEglPlatform()
     return eglPlatform;
 }
 
+EGLenum GetPbufferOnlyDefaultPlatformType()
+{
+    // Some tests only need a pbuffer.  On Wayland, EGL configs don't advertise pbuffers, so default
+    // to X11 if enabled so the tests can run.  The value returned by this function should be passed
+    // as the EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE attribute.
+#if defined(ANGLE_USE_X11)
+    return EGL_PLATFORM_X11_EXT;
+#else
+    // Using 0 means the default is chosen.
+    return 0;
+#endif
+}
 }  // namespace angle
 
 using namespace angle;

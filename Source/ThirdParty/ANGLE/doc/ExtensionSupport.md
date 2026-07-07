@@ -245,7 +245,6 @@ using data from registry_xml.py and gl.xml.
 | [GL_ANGLE_get_tex_level_parameter](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_get_tex_level_parameter.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_logic_op](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_logic_op.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; |  |  |  |
 | [GL_CHROMIUM_lose_context](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_lose_context.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| [GL_ANGLE_lossy_etc_decode](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_lossy_etc_decode.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_memory_object_flags](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_memory_object_flags.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_memory_object_fuchsia](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_memory_object_fuchsia.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_memory_size](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_memory_size.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |

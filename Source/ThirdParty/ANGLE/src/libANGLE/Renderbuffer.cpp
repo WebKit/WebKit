@@ -204,21 +204,15 @@ angle::Result Renderbuffer::setStorageEGLImageTarget(const Context *context, egl
 
 angle::Result Renderbuffer::copyRenderbufferSubData(Context *context,
                                                     const gl::Renderbuffer *srcBuffer,
-                                                    GLint srcLevel,
                                                     GLint srcX,
                                                     GLint srcY,
-                                                    GLint srcZ,
-                                                    GLint dstLevel,
                                                     GLint dstX,
                                                     GLint dstY,
-                                                    GLint dstZ,
                                                     GLsizei srcWidth,
-                                                    GLsizei srcHeight,
-                                                    GLsizei srcDepth)
+                                                    GLsizei srcHeight)
 {
-    ANGLE_TRY(mImplementation->copyRenderbufferSubData(context, srcBuffer, srcLevel, srcX, srcY,
-                                                       srcZ, dstLevel, dstX, dstY, dstZ, srcWidth,
-                                                       srcHeight, srcDepth));
+    ANGLE_TRY(mImplementation->copyRenderbufferSubData(context, srcBuffer, srcX, srcY, dstX, dstY,
+                                                       srcWidth, srcHeight));
 
     return angle::Result::Continue;
 }
@@ -229,17 +223,13 @@ angle::Result Renderbuffer::copyTextureSubData(Context *context,
                                                GLint srcX,
                                                GLint srcY,
                                                GLint srcZ,
-                                               GLint dstLevel,
                                                GLint dstX,
                                                GLint dstY,
-                                               GLint dstZ,
                                                GLsizei srcWidth,
-                                               GLsizei srcHeight,
-                                               GLsizei srcDepth)
+                                               GLsizei srcHeight)
 {
     ANGLE_TRY(mImplementation->copyTextureSubData(context, srcTexture, srcLevel, srcX, srcY, srcZ,
-                                                  dstLevel, dstX, dstY, dstZ, srcWidth, srcHeight,
-                                                  srcDepth));
+                                                  dstX, dstY, srcWidth, srcHeight));
 
     return angle::Result::Continue;
 }
@@ -426,6 +416,11 @@ angle::Result Renderbuffer::getRenderbufferImage(const Context *context,
 
 void Renderbuffer::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message)
 {
+    if (message == angle::SubjectMessage::ObjectReallocated)
+    {
+        onStateChange(angle::SubjectMessage::ObjectReallocated);
+        return;
+    }
     ASSERT(message == angle::SubjectMessage::SubjectChanged);
     onStateChange(angle::SubjectMessage::ContentsChanged);
 }

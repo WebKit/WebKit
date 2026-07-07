@@ -1627,13 +1627,6 @@ bool ValidateBindProgramPipelineBase(const Context *context,
     return true;
 }
 
-bool ValidateIsProgramPipelineBase(const Context *context,
-                                   angle::EntryPoint entryPoint,
-                                   ProgramPipelineID pipeline)
-{
-    return true;
-}
-
 bool ValidateUseProgramStagesBase(const Context *context,
                                   angle::EntryPoint entryPoint,
                                   ProgramPipelineID pipeline,
@@ -1940,13 +1933,6 @@ bool ValidateGetProgramPipelineiv(const Context *context,
                                   const GLint *params)
 {
     return ValidateGetProgramPipelineivBase(context, entryPoint, pipelinePacked, pname, params);
-}
-
-bool ValidateIsProgramPipeline(const Context *context,
-                               angle::EntryPoint entryPoint,
-                               ProgramPipelineID pipelinePacked)
-{
-    return ValidateIsProgramPipelineBase(context, entryPoint, pipelinePacked);
 }
 
 bool ValidateProgramUniform1f(const Context *context,
@@ -2397,14 +2383,6 @@ bool ValidateSampleMaski(const PrivateState &state,
                          GLbitfield mask)
 {
     return ValidateSampleMaskiBase(state, errors, entryPoint, maskNumber, mask);
-}
-
-bool ValidateMinSampleShadingOES(const PrivateState &state,
-                                 ErrorSet *errors,
-                                 angle::EntryPoint entryPoint,
-                                 GLfloat value)
-{
-    return true;
 }
 
 bool ValidateFramebufferTextureCommon(const Context *context,

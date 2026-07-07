@@ -153,6 +153,8 @@ class EGLDirectCompositionTest : public ANGLETest<>
         const EGLAttrib defaultDisplayAttributes[] = {
             EGL_PLATFORM_ANGLE_TYPE_ANGLE,
             EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
+            EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE,
+            static_cast<EGLAttrib>(mOSWindow->getNativeDisplayPlatformType()),
             EGL_NONE,
         };
 

@@ -33,15 +33,13 @@ class ProvokingVertexHelper : angle::NonCopyable
                                           size_t firstIndex,
                                           bool primitiveRestartEnabled,
                                           const std::vector<DrawIndexRange> &drawIndexRanges,
-                                          mtl::BufferRef indexBuffer,
-                                          size_t indexBufferOffset,
+                                          mtl::BufferSlice indexBuffer,
                                           gl::DrawElementsType indexBufferType,
-                                          mtl::BufferRef *outNewIndexBuffer,
-                                          size_t *outIndexBufferOffset);
+                                          mtl::BufferSlice *outNewIndexBuffer);
 
     angle::Result generateIndexBuffer(ContextMtl *context,
-                                      GLsizei first,
-                                      GLsizei count,
+                                      size_t first,
+                                      GLsizei glCount,
                                       gl::PrimitiveMode primitiveMode,
                                       gl::DrawElementsType elementsType,
                                       uint32_t &outIndexCount,

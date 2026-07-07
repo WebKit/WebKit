@@ -64,8 +64,7 @@ class VertexArrayMtl : public VertexArrayImpl
                                           bool isPrimitiveRestartEnabled,
                                           gl::PrimitiveMode *outNewMode,
                                           std::vector<DrawCommandRange> *outDrawCommands,
-                                          mtl::BufferRef *outIndexBuffer,
-                                          size_t *outIndexBufferOffset,
+                                          mtl::BufferSlice *outIndexBuffer,
                                           gl::DrawElementsType *outIndexBufferType);
 
   private:

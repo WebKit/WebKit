@@ -210,12 +210,6 @@ bool TextureStorage11::isMultiplanar(const gl::Context *context)
     return false;
 }
 
-angle::Result TextureStorage11::getMippedResource(const gl::Context *context,
-                                                  const TextureHelper11 **outResource)
-{
-    return getResource(context, outResource);
-}
-
 angle::Result TextureStorage11::getSubresourceIndex(const gl::Context *context,
                                                     const gl::ImageIndex &index,
                                                     UINT *outSubresourceIndex) const
@@ -250,12 +244,6 @@ angle::Result TextureStorage11::getSRVForSampler(const gl::Context *context,
     {
         ASSERT(!swizzleRequired);
         ASSERT(mipLevels == 1 || mipLevels == mMipLevels);
-    }
-
-    if (mRenderer->getFeatures().zeroMaxLodWorkaround.enabled)
-    {
-        // We must ensure that the level zero texture is in sync with mipped texture.
-        ANGLE_TRY(useLevelZeroWorkaroundTexture(context, mipLevels == 1));
     }
 
     if (swizzleRequired)
@@ -420,12 +408,6 @@ angle::Result TextureStorage11::getSRVLevels(const gl::Context *context,
         ASSERT(mipLevels == 1 || mipLevels == mMipLevels);
     }
 
-    if (mRenderer->getFeatures().zeroMaxLodWorkaround.enabled)
-    {
-        // We must ensure that the level zero texture is in sync with mipped texture.
-        ANGLE_TRY(useLevelZeroWorkaroundTexture(context, mipLevels == 1));
-    }
-
     // TODO(jmadill): Assert we don't need to drop stencil.
 
     SamplerKey key(baseLevel, mipLevels, false, false, forceLinearSampler);
@@ -579,17 +561,7 @@ angle::Result TextureStorage11::updateSubresourceLevel(const gl::Context *contex
     bool fullCopy = copyArea.coversSameExtent(texSize);
 
     const TextureHelper11 *dstTexture = nullptr;
-
-    // If the zero-LOD workaround is active and we want to update a level greater than zero,
-    // then we should update the mipmapped texture, even if mapmaps are currently disabled.
-    if (level > 0 && mRenderer->getFeatures().zeroMaxLodWorkaround.enabled)
-    {
-        ANGLE_TRY(getMippedResource(context, &dstTexture));
-    }
-    else
-    {
-        ANGLE_TRY(getResource(context, &dstTexture));
-    }
+    ANGLE_TRY(getResource(context, &dstTexture));
 
     unsigned int dstSubresource = 0;
     ANGLE_TRY(getSubresourceIndex(context, index, &dstSubresource));
@@ -711,17 +683,7 @@ angle::Result TextureStorage11::copySubresourceLevel(const gl::Context *context,
     ASSERT(dstTexture.valid());
 
     const TextureHelper11 *srcTexture = nullptr;
-
-    // If the zero-LOD workaround is active and we want to update a level greater than zero, then we
-    // should update the mipmapped texture, even if mapmaps are currently disabled.
-    if (index.getLevelIndex() > 0 && mRenderer->getFeatures().zeroMaxLodWorkaround.enabled)
-    {
-        ANGLE_TRY(getMippedResource(context, &srcTexture));
-    }
-    else
-    {
-        ANGLE_TRY(getResource(context, &srcTexture));
-    }
+    ANGLE_TRY(getResource(context, &srcTexture));
 
     ASSERT(srcTexture->valid());
 
@@ -1010,9 +972,6 @@ TextureStorage11_2D::TextureStorage11_2D(Renderer11 *renderer,
                        swapchain->getRenderTargetInternalFormat(),
                        label),
       mTexture(swapchain->getOffscreenTexture()),
-      mLevelZeroTexture(),
-      mLevelZeroRenderTarget(nullptr),
-      mUseLevelZeroTexture(false),
       mSwizzleTexture()
 {
     for (unsigned int i = 0; i < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS; i++)
@@ -1036,8 +995,7 @@ TextureStorage11_2D::TextureStorage11_2D(Renderer11 *renderer,
                                          GLsizei width,
                                          GLsizei height,
                                          int levels,
-                                         const std::string &label,
-                                         bool hintLevelZeroOnly)
+                                         const std::string &label)
     : TextureStorage11(
           renderer,
           GetTextureBindFlags(internalformat, renderer->getRenderer11DeviceCaps(), bindFlags),
@@ -1049,9 +1007,6 @@ TextureStorage11_2D::TextureStorage11_2D(Renderer11 *renderer,
           label),
       mTexture(),
       mHasKeyedMutex(false),
-      mLevelZeroTexture(),
-      mLevelZeroRenderTarget(nullptr),
-      mUseLevelZeroTexture(hintLevelZeroOnly && levels > 1),
       mSwizzleTexture()
 {
     for (unsigned int i = 0; i < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS; i++)
@@ -1065,9 +1020,6 @@ TextureStorage11_2D::TextureStorage11_2D(Renderer11 *renderer,
     mTextureWidth  = width;
     mTextureHeight = height;
     mTextureDepth  = 1;
-
-    // The LevelZeroOnly hint should only be true if the zero max LOD workaround is active.
-    ASSERT(!mUseLevelZeroTexture || mRenderer->getFeatures().zeroMaxLodWorkaround.enabled);
 }
 
 void TextureStorage11_2D::onLabelUpdate()
@@ -1075,10 +1027,6 @@ void TextureStorage11_2D::onLabelUpdate()
     if (mTexture.valid())
     {
         mTexture.setKHRDebugLabel(&mKHRDebugLabel);
-    }
-    if (mLevelZeroTexture.valid())
-    {
-        mLevelZeroTexture.setKHRDebugLabel(&mKHRDebugLabel);
     }
     if (mSwizzleTexture.valid())
     {
@@ -1088,6 +1036,7 @@ void TextureStorage11_2D::onLabelUpdate()
 
 angle::Result TextureStorage11_2D::onDestroy(const gl::Context *context)
 {
+    angle::Result result = angle::Result::Continue;
     for (unsigned i = 0; i < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS; i++)
     {
         if (mAssociatedImages[i] != nullptr)
@@ -1096,9 +1045,13 @@ angle::Result TextureStorage11_2D::onDestroy(const gl::Context *context)
 
             // We must let the Images recover their data before we delete it from the
             // TextureStorage.
-            ANGLE_TRY(mAssociatedImages[i]->recoverFromAssociatedStorage(context));
+            if (IsError(mAssociatedImages[i]->recoverFromAssociatedStorage(context)))
+            {
+                result = angle::Result::Stop;
+            }
         }
     }
+    ANGLE_TRY(result);
 
     if (mHasKeyedMutex)
     {
@@ -1120,33 +1073,6 @@ angle::Result TextureStorage11_2D::copyToStorage(const gl::Context *context,
     TextureStorage11_2D *dest11           = GetAs<TextureStorage11_2D>(destStorage);
     ID3D11DeviceContext *immediateContext = mRenderer->getDeviceContext();
 
-    if (mRenderer->getFeatures().zeroMaxLodWorkaround.enabled)
-    {
-        // If either mTexture or mLevelZeroTexture exist, then we need to copy them into the
-        // corresponding textures in destStorage.
-        if (mTexture.valid())
-        {
-            ANGLE_TRY(dest11->useLevelZeroWorkaroundTexture(context, false));
-
-            const TextureHelper11 *destResource = nullptr;
-            ANGLE_TRY(dest11->getResource(context, &destResource));
-
-            immediateContext->CopyResource(destResource->get(), mTexture.get());
-        }
-
-        if (mLevelZeroTexture.valid())
-        {
-            ANGLE_TRY(dest11->useLevelZeroWorkaroundTexture(context, true));
-
-            const TextureHelper11 *destResource = nullptr;
-            ANGLE_TRY(dest11->getResource(context, &destResource));
-
-            immediateContext->CopyResource(destResource->get(), mLevelZeroTexture.get());
-        }
-
-        return angle::Result::Continue;
-    }
-
     const TextureHelper11 *sourceResouce = nullptr;
     ANGLE_TRY(getResource(context, &sourceResouce));
 
@@ -1155,43 +1081,6 @@ angle::Result TextureStorage11_2D::copyToStorage(const gl::Context *context,
 
     immediateContext->CopyResource(destResource->get(), sourceResouce->get());
     dest11->markDirty();
-
-    return angle::Result::Continue;
-}
-
-angle::Result TextureStorage11_2D::useLevelZeroWorkaroundTexture(const gl::Context *context,
-                                                                 bool useLevelZeroTexture)
-{
-    if (useLevelZeroTexture && mMipLevels > 1)
-    {
-        if (!mUseLevelZeroTexture && mTexture.valid())
-        {
-            ANGLE_TRY(ensureTextureExists(context, 1));
-
-            // Pull data back from the mipped texture if necessary.
-            ASSERT(mLevelZeroTexture.valid());
-            ID3D11DeviceContext *deviceContext = mRenderer->getDeviceContext();
-            deviceContext->CopySubresourceRegion(mLevelZeroTexture.get(), 0, 0, 0, 0,
-                                                 mTexture.get(), 0, nullptr);
-        }
-
-        mUseLevelZeroTexture = true;
-    }
-    else
-    {
-        if (mUseLevelZeroTexture && mLevelZeroTexture.valid())
-        {
-            ANGLE_TRY(ensureTextureExists(context, mMipLevels));
-
-            // Pull data back from the level zero texture if necessary.
-            ASSERT(mTexture.valid());
-            ID3D11DeviceContext *deviceContext = mRenderer->getDeviceContext();
-            deviceContext->CopySubresourceRegion(mTexture.get(), 0, 0, 0, 0,
-                                                 mLevelZeroTexture.get(), 0, nullptr);
-        }
-
-        mUseLevelZeroTexture = false;
-    }
 
     return angle::Result::Continue;
 }
@@ -1258,26 +1147,6 @@ angle::Result TextureStorage11_2D::releaseAssociatedImage(const gl::Context *con
 angle::Result TextureStorage11_2D::getResource(const gl::Context *context,
                                                const TextureHelper11 **outResource)
 {
-    if (mUseLevelZeroTexture && mMipLevels > 1)
-    {
-        ANGLE_TRY(ensureTextureExists(context, 1));
-
-        *outResource = &mLevelZeroTexture;
-        return angle::Result::Continue;
-    }
-
-    ANGLE_TRY(ensureTextureExists(context, mMipLevels));
-
-    *outResource = &mTexture;
-    return angle::Result::Continue;
-}
-
-angle::Result TextureStorage11_2D::getMippedResource(const gl::Context *context,
-                                                     const TextureHelper11 **outResource)
-{
-    // This shouldn't be called unless the zero max LOD workaround is active.
-    ASSERT(mRenderer->getFeatures().zeroMaxLodWorkaround.enabled);
-
     ANGLE_TRY(ensureTextureExists(context, mMipLevels));
 
     *outResource = &mTexture;
@@ -1286,11 +1155,7 @@ angle::Result TextureStorage11_2D::getMippedResource(const gl::Context *context,
 
 angle::Result TextureStorage11_2D::ensureTextureExists(const gl::Context *context, int mipLevels)
 {
-    // If mMipLevels = 1 then always use mTexture rather than mLevelZeroTexture.
-    bool useLevelZeroTexture       = mRenderer->getFeatures().zeroMaxLodWorkaround.enabled
-                                         ? (mipLevels == 1) && (mMipLevels > 1)
-                                         : false;
-    TextureHelper11 *outputTexture = useLevelZeroTexture ? &mLevelZeroTexture : &mTexture;
+    TextureHelper11 *outputTexture = &mTexture;
 
     // if the width or height is not positive this should be treated as an incomplete texture
     // we handle that here by skipping the d3d texture creation
@@ -1314,15 +1179,7 @@ angle::Result TextureStorage11_2D::ensureTextureExists(const gl::Context *contex
 
         ANGLE_TRY(mRenderer->allocateTexture(GetImplAs<Context11>(context), desc, mFormatInfo,
                                              outputTexture));
-
-        if (useLevelZeroTexture)
-        {
-            outputTexture->setLabels("TexStorage2D.Level0", &mKHRDebugLabel);
-        }
-        else
-        {
-            outputTexture->setLabels("TexStorage2D", &mKHRDebugLabel);
-        }
+        outputTexture->setLabels("TexStorage2D", &mKHRDebugLabel);
     }
 
     return angle::Result::Continue;
@@ -1344,13 +1201,6 @@ angle::Result TextureStorage11_2D::findRenderTarget(const gl::Context *context,
         return angle::Result::Continue;
     }
 
-    if (mUseLevelZeroTexture)
-    {
-        ASSERT(level == 0);
-        *outRT = mLevelZeroRenderTarget.get();
-        return angle::Result::Continue;
-    }
-
     *outRT = nullptr;
     return angle::Result::Continue;
 }
@@ -1363,7 +1213,6 @@ angle::Result TextureStorage11_2D::getRenderTarget(const gl::Context *context,
 
     const int level = index.getLevelIndex();
     ASSERT(level >= 0 && level < getLevelCount());
-
 
     // In GL ES 2.0, the application can only render to level zero of the texture (Section 4.4.3 of
     // the GLES 2.0 spec, page 113 of version 2.0.25). Other parts of TextureStorage11_2D could
@@ -1381,12 +1230,6 @@ angle::Result TextureStorage11_2D::getRenderTarget(const gl::Context *context,
         return angle::Result::Continue;
     }
 
-    if (mRenderer->getFeatures().zeroMaxLodWorkaround.enabled)
-    {
-        ASSERT(level == 0);
-        ANGLE_TRY(useLevelZeroWorkaroundTexture(context, true));
-    }
-
     const TextureHelper11 *texture = nullptr;
     ANGLE_TRY(getResource(context, &texture));
 
@@ -1397,30 +1240,6 @@ angle::Result TextureStorage11_2D::getRenderTarget(const gl::Context *context,
     ANGLE_TRY(getSRVLevel(context, level, SRVType::Blit, &blitSRV));
 
     Context11 *context11 = GetImplAs<Context11>(context);
-
-    if (mUseLevelZeroTexture)
-    {
-        if (!mLevelZeroRenderTarget)
-        {
-            D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
-            rtvDesc.Format             = mFormatInfo.rtvFormat;
-            rtvDesc.ViewDimension      = D3D11_RTV_DIMENSION_TEXTURE2D;
-            rtvDesc.Texture2D.MipSlice = mTopLevel + level;
-
-            d3d11::RenderTargetView rtv;
-            ANGLE_TRY(
-                mRenderer->allocateResource(context11, rtvDesc, mLevelZeroTexture.get(), &rtv));
-            rtv.setLabels("TexStorage2D.Level0RTV", &mKHRDebugLabel);
-
-            mLevelZeroRenderTarget.reset(new TextureRenderTarget11(
-                std::move(rtv), mLevelZeroTexture, d3d11::SharedSRV(), d3d11::SharedSRV(),
-                mFormatInfo.internalFormat, getFormatSet(), getLevelWidth(level),
-                getLevelHeight(level), 1, 0));
-        }
-
-        *outRT = mLevelZeroRenderTarget.get();
-        return angle::Result::Continue;
-    }
 
     if (mFormatInfo.rtvFormat != DXGI_FORMAT_UNKNOWN)
     {
@@ -1477,27 +1296,6 @@ angle::Result TextureStorage11_2D::createSRVForSampler(const gl::Context *contex
     srvDesc.Texture2D.MipLevels       = mipLevels;
 
     const TextureHelper11 *srvTexture = &texture;
-
-    if (mRenderer->getFeatures().zeroMaxLodWorkaround.enabled)
-    {
-        ASSERT(mTopLevel == 0);
-        ASSERT(baseLevel == 0);
-        // This code also assumes that the incoming texture equals either mLevelZeroTexture or
-        // mTexture.
-
-        if (mipLevels == 1 && mMipLevels > 1)
-        {
-            // We must use a SRV on the level-zero-only texture.
-            ANGLE_TRY(ensureTextureExists(context, 1));
-            srvTexture = &mLevelZeroTexture;
-        }
-        else
-        {
-            ASSERT(mipLevels == static_cast<int>(mMipLevels));
-            ASSERT(mTexture.valid() && texture == mTexture);
-            srvTexture = &mTexture;
-        }
-    }
 
     ANGLE_TRY(mRenderer->allocateResource(GetImplAs<Context11>(context), srvDesc, srvTexture->get(),
                                           outSRV));
@@ -1729,13 +1527,6 @@ angle::Result TextureStorage11_External::getResource(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-angle::Result TextureStorage11_External::getMippedResource(const gl::Context *context,
-                                                           const TextureHelper11 **outResource)
-{
-    *outResource = &mTexture;
-    return angle::Result::Continue;
-}
-
 angle::Result TextureStorage11_External::findRenderTarget(const gl::Context *context,
                                                           const gl::ImageIndex &index,
                                                           RenderTargetD3D **outRT) const
@@ -1939,15 +1730,6 @@ angle::Result TextureStorage11_EGLImage::getSRVForSampler(const gl::Context *con
     return TextureStorage11::getSRVForSampler(context, textureState, sampler, outSRV);
 }
 
-angle::Result TextureStorage11_EGLImage::getMippedResource(const gl::Context *context,
-                                                           const TextureHelper11 **)
-{
-    // This shouldn't be called unless the zero max LOD workaround is active.
-    // EGL images are unavailable in this configuration.
-    ANGLE_HR_UNREACHABLE(GetImplAs<Context11>(context));
-    return angle::Result::Stop;
-}
-
 angle::Result TextureStorage11_EGLImage::findRenderTarget(const gl::Context *context,
                                                           const gl::ImageIndex &index,
                                                           RenderTargetD3D **outRT) const
@@ -1987,13 +1769,6 @@ angle::Result TextureStorage11_EGLImage::copyToStorage(const gl::Context *contex
     dest11->markDirty();
 
     return angle::Result::Continue;
-}
-
-angle::Result TextureStorage11_EGLImage::useLevelZeroWorkaroundTexture(const gl::Context *context,
-                                                                       bool)
-{
-    ANGLE_HR_UNREACHABLE(GetImplAs<Context11>(context));
-    return angle::Result::Stop;
 }
 
 angle::Result TextureStorage11_EGLImage::getSwizzleTexture(const gl::Context *context,
@@ -2168,7 +1943,6 @@ TextureStorage11_Cube::TextureStorage11_Cube(Renderer11 *renderer,
                                              BindFlags bindFlags,
                                              int size,
                                              int levels,
-                                             bool hintLevelZeroOnly,
                                              const std::string &label)
     : TextureStorage11(
           renderer,
@@ -2180,8 +1954,6 @@ TextureStorage11_Cube::TextureStorage11_Cube(Renderer11 *renderer,
           internalformat,
           label),
       mTexture(),
-      mLevelZeroTexture(),
-      mUseLevelZeroTexture(hintLevelZeroOnly && levels > 1),
       mSwizzleTexture()
 {
     for (unsigned int level = 0; level < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS; level++)
@@ -2193,11 +1965,6 @@ TextureStorage11_Cube::TextureStorage11_Cube(Renderer11 *renderer,
         }
     }
 
-    for (unsigned int face = 0; face < gl::kCubeFaceCount; face++)
-    {
-        mLevelZeroRenderTarget[face] = nullptr;
-    }
-
     // adjust size if needed for compressed textures
     int height = size;
     d3d11::MakeValidSize(false, mFormatInfo.texFormat, &size, &height, &mTopLevel);
@@ -2206,13 +1973,11 @@ TextureStorage11_Cube::TextureStorage11_Cube(Renderer11 *renderer,
     mTextureWidth  = size;
     mTextureHeight = size;
     mTextureDepth  = 1;
-
-    // The LevelZeroOnly hint should only be true if the zero max LOD workaround is active.
-    ASSERT(!mUseLevelZeroTexture || mRenderer->getFeatures().zeroMaxLodWorkaround.enabled);
 }
 
 angle::Result TextureStorage11_Cube::onDestroy(const gl::Context *context)
 {
+    angle::Result result = angle::Result::Continue;
     for (unsigned int level = 0; level < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS; level++)
     {
         for (unsigned int face = 0; face < gl::kCubeFaceCount; face++)
@@ -2223,12 +1988,15 @@ angle::Result TextureStorage11_Cube::onDestroy(const gl::Context *context)
 
                 // We must let the Images recover their data before we delete it from the
                 // TextureStorage.
-                ANGLE_TRY(mAssociatedImages[face][level]->recoverFromAssociatedStorage(context));
+                if (IsError(mAssociatedImages[face][level]->recoverFromAssociatedStorage(context)))
+                {
+                    result = angle::Result::Stop;
+                }
             }
         }
     }
 
-    return angle::Result::Continue;
+    return result;
 }
 
 TextureStorage11_Cube::~TextureStorage11_Cube() {}
@@ -2237,21 +2005,11 @@ angle::Result TextureStorage11_Cube::getSubresourceIndex(const gl::Context *cont
                                                          const gl::ImageIndex &index,
                                                          UINT *outSubresourceIndex) const
 {
-    UINT arraySlice = index.cubeMapFaceIndex();
-    if (mRenderer->getFeatures().zeroMaxLodWorkaround.enabled && mUseLevelZeroTexture &&
-        index.getLevelIndex() == 0)
-    {
-        UINT subresource = D3D11CalcSubresource(0, arraySlice, 1);
-        ASSERT(subresource != std::numeric_limits<UINT>::max());
-        *outSubresourceIndex = subresource;
-    }
-    else
-    {
-        UINT mipSlice    = static_cast<UINT>(index.getLevelIndex() + mTopLevel);
-        UINT subresource = D3D11CalcSubresource(mipSlice, arraySlice, mMipLevels);
-        ASSERT(subresource != std::numeric_limits<UINT>::max());
-        *outSubresourceIndex = subresource;
-    }
+    UINT arraySlice  = index.cubeMapFaceIndex();
+    UINT mipSlice    = static_cast<UINT>(index.getLevelIndex() + mTopLevel);
+    UINT subresource = D3D11CalcSubresource(mipSlice, arraySlice, mMipLevels);
+    ASSERT(subresource != std::numeric_limits<UINT>::max());
+    *outSubresourceIndex = subresource;
     return angle::Result::Continue;
 }
 
@@ -2262,92 +2020,16 @@ angle::Result TextureStorage11_Cube::copyToStorage(const gl::Context *context,
 
     TextureStorage11_Cube *dest11 = GetAs<TextureStorage11_Cube>(destStorage);
 
-    if (mRenderer->getFeatures().zeroMaxLodWorkaround.enabled)
-    {
-        ID3D11DeviceContext *immediateContext = mRenderer->getDeviceContext();
+    const TextureHelper11 *sourceResouce = nullptr;
+    ANGLE_TRY(getResource(context, &sourceResouce));
 
-        // If either mTexture or mLevelZeroTexture exist, then we need to copy them into the
-        // corresponding textures in destStorage.
-        if (mTexture.valid())
-        {
-            ANGLE_TRY(dest11->useLevelZeroWorkaroundTexture(context, false));
+    const TextureHelper11 *destResource = nullptr;
+    ANGLE_TRY(dest11->getResource(context, &destResource));
 
-            const TextureHelper11 *destResource = nullptr;
-            ANGLE_TRY(dest11->getResource(context, &destResource));
-
-            immediateContext->CopyResource(destResource->get(), mTexture.get());
-        }
-
-        if (mLevelZeroTexture.valid())
-        {
-            ANGLE_TRY(dest11->useLevelZeroWorkaroundTexture(context, true));
-
-            const TextureHelper11 *destResource = nullptr;
-            ANGLE_TRY(dest11->getResource(context, &destResource));
-
-            immediateContext->CopyResource(destResource->get(), mLevelZeroTexture.get());
-        }
-    }
-    else
-    {
-        const TextureHelper11 *sourceResouce = nullptr;
-        ANGLE_TRY(getResource(context, &sourceResouce));
-
-        const TextureHelper11 *destResource = nullptr;
-        ANGLE_TRY(dest11->getResource(context, &destResource));
-
-        ID3D11DeviceContext *immediateContext = mRenderer->getDeviceContext();
-        immediateContext->CopyResource(destResource->get(), sourceResouce->get());
-    }
+    ID3D11DeviceContext *immediateContext = mRenderer->getDeviceContext();
+    immediateContext->CopyResource(destResource->get(), sourceResouce->get());
 
     dest11->markDirty();
-
-    return angle::Result::Continue;
-}
-
-angle::Result TextureStorage11_Cube::useLevelZeroWorkaroundTexture(const gl::Context *context,
-                                                                   bool useLevelZeroTexture)
-{
-    if (useLevelZeroTexture && mMipLevels > 1)
-    {
-        if (!mUseLevelZeroTexture && mTexture.valid())
-        {
-            ANGLE_TRY(ensureTextureExists(context, 1));
-
-            // Pull data back from the mipped texture if necessary.
-            ASSERT(mLevelZeroTexture.valid());
-            ID3D11DeviceContext *deviceContext = mRenderer->getDeviceContext();
-
-            for (int face = 0; face < 6; face++)
-            {
-                deviceContext->CopySubresourceRegion(mLevelZeroTexture.get(),
-                                                     D3D11CalcSubresource(0, face, 1), 0, 0, 0,
-                                                     mTexture.get(), face * mMipLevels, nullptr);
-            }
-        }
-
-        mUseLevelZeroTexture = true;
-    }
-    else
-    {
-        if (mUseLevelZeroTexture && mLevelZeroTexture.valid())
-        {
-            ANGLE_TRY(ensureTextureExists(context, mMipLevels));
-
-            // Pull data back from the level zero texture if necessary.
-            ASSERT(mTexture.valid());
-            ID3D11DeviceContext *deviceContext = mRenderer->getDeviceContext();
-
-            for (int face = 0; face < 6; face++)
-            {
-                deviceContext->CopySubresourceRegion(mTexture.get(),
-                                                     D3D11CalcSubresource(0, face, mMipLevels), 0,
-                                                     0, 0, mLevelZeroTexture.get(), face, nullptr);
-            }
-        }
-
-        mUseLevelZeroTexture = false;
-    }
 
     return angle::Result::Continue;
 }
@@ -2431,25 +2113,6 @@ angle::Result TextureStorage11_Cube::releaseAssociatedImage(const gl::Context *c
 angle::Result TextureStorage11_Cube::getResource(const gl::Context *context,
                                                  const TextureHelper11 **outResource)
 {
-    if (mUseLevelZeroTexture && mMipLevels > 1)
-    {
-        ANGLE_TRY(ensureTextureExists(context, 1));
-        *outResource = &mLevelZeroTexture;
-    }
-    else
-    {
-        ANGLE_TRY(ensureTextureExists(context, mMipLevels));
-        *outResource = &mTexture;
-    }
-    return angle::Result::Continue;
-}
-
-angle::Result TextureStorage11_Cube::getMippedResource(const gl::Context *context,
-                                                       const TextureHelper11 **outResource)
-{
-    // This shouldn't be called unless the zero max LOD workaround is active.
-    ASSERT(mRenderer->getFeatures().zeroMaxLodWorkaround.enabled);
-
     ANGLE_TRY(ensureTextureExists(context, mMipLevels));
     *outResource = &mTexture;
     return angle::Result::Continue;
@@ -2457,11 +2120,7 @@ angle::Result TextureStorage11_Cube::getMippedResource(const gl::Context *contex
 
 angle::Result TextureStorage11_Cube::ensureTextureExists(const gl::Context *context, int mipLevels)
 {
-    // If mMipLevels = 1 then always use mTexture rather than mLevelZeroTexture.
-    bool useLevelZeroTexture       = mRenderer->getFeatures().zeroMaxLodWorkaround.enabled
-                                         ? (mipLevels == 1) && (mMipLevels > 1)
-                                         : false;
-    TextureHelper11 *outputTexture = useLevelZeroTexture ? &mLevelZeroTexture : &mTexture;
+    TextureHelper11 *outputTexture = &mTexture;
 
     // if the size is not positive this should be treated as an incomplete texture
     // we handle that here by skipping the d3d texture creation
@@ -2500,17 +2159,6 @@ angle::Result TextureStorage11_Cube::findRenderTarget(const gl::Context *context
 
     ASSERT(level >= 0 && level < getLevelCount());
     ASSERT(faceIndex >= 0 && faceIndex < static_cast<GLint>(gl::kCubeFaceCount));
-
-    if (!mRenderTarget[faceIndex][level])
-    {
-        if (mUseLevelZeroTexture)
-        {
-            ASSERT(index.getLevelIndex() == 0);
-            ASSERT(outRT);
-            *outRT = mLevelZeroRenderTarget[faceIndex].get();
-            return angle::Result::Continue;
-        }
-    }
 
     ASSERT(outRT);
     *outRT = mRenderTarget[faceIndex][level].get();
@@ -2555,45 +2203,12 @@ angle::Result TextureStorage11_Cube::getRenderTarget(const gl::Context *context,
     ASSERT(level >= 0 && level < getLevelCount());
     ASSERT(faceIndex >= 0 && faceIndex < static_cast<GLint>(gl::kCubeFaceCount));
 
-
     Context11 *context11 = GetImplAs<Context11>(context);
 
     if (!mRenderTarget[faceIndex][level])
     {
-        if (mRenderer->getFeatures().zeroMaxLodWorkaround.enabled)
-        {
-            ASSERT(index.getLevelIndex() == 0);
-            ANGLE_TRY(useLevelZeroWorkaroundTexture(context, true));
-        }
-
         const TextureHelper11 *texture = nullptr;
         ANGLE_TRY(getResource(context, &texture));
-
-        if (mUseLevelZeroTexture)
-        {
-            if (!mLevelZeroRenderTarget[faceIndex])
-            {
-                D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
-                rtvDesc.Format                         = mFormatInfo.rtvFormat;
-                rtvDesc.ViewDimension                  = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
-                rtvDesc.Texture2DArray.MipSlice        = mTopLevel + level;
-                rtvDesc.Texture2DArray.FirstArraySlice = faceIndex;
-                rtvDesc.Texture2DArray.ArraySize       = 1;
-
-                d3d11::RenderTargetView rtv;
-                ANGLE_TRY(
-                    mRenderer->allocateResource(context11, rtvDesc, mLevelZeroTexture.get(), &rtv));
-
-                mLevelZeroRenderTarget[faceIndex].reset(new TextureRenderTarget11(
-                    std::move(rtv), mLevelZeroTexture, d3d11::SharedSRV(), d3d11::SharedSRV(),
-                    mFormatInfo.internalFormat, getFormatSet(), getLevelWidth(level),
-                    getLevelHeight(level), 1, 0));
-            }
-
-            ASSERT(outRT);
-            *outRT = mLevelZeroRenderTarget[faceIndex].get();
-            return angle::Result::Continue;
-        }
 
         d3d11::SharedSRV srv;
         ANGLE_TRY(createRenderTargetSRV(context, *texture, index, mFormatInfo.srvFormat, &srv));
@@ -2687,27 +2302,6 @@ angle::Result TextureStorage11_Cube::createSRVForSampler(const gl::Context *cont
     }
 
     const TextureHelper11 *srvTexture = &texture;
-
-    if (mRenderer->getFeatures().zeroMaxLodWorkaround.enabled)
-    {
-        ASSERT(mTopLevel == 0);
-        ASSERT(baseLevel == 0);
-        // This code also assumes that the incoming texture equals either mLevelZeroTexture or
-        // mTexture.
-
-        if (mipLevels == 1 && mMipLevels > 1)
-        {
-            // We must use a SRV on the level-zero-only texture.
-            ANGLE_TRY(ensureTextureExists(context, 1));
-            srvTexture = &mLevelZeroTexture;
-        }
-        else
-        {
-            ASSERT(mipLevels == static_cast<int>(mMipLevels));
-            ASSERT(mTexture.valid() && texture == mTexture);
-            srvTexture = &mTexture;
-        }
-    }
 
     ANGLE_TRY(mRenderer->allocateResource(GetImplAs<Context11>(context), srvDesc, srvTexture->get(),
                                           outSRV));
@@ -2855,10 +2449,6 @@ void TextureStorage11_Cube::onLabelUpdate()
     {
         mTexture.setKHRDebugLabel(&mKHRDebugLabel);
     }
-    if (mLevelZeroTexture.valid())
-    {
-        mLevelZeroTexture.setKHRDebugLabel(&mKHRDebugLabel);
-    }
     if (mSwizzleTexture.valid())
     {
         mSwizzleTexture.setKHRDebugLabel(&mKHRDebugLabel);
@@ -2900,6 +2490,7 @@ TextureStorage11_3D::TextureStorage11_3D(Renderer11 *renderer,
 
 angle::Result TextureStorage11_3D::onDestroy(const gl::Context *context)
 {
+    angle::Result result = angle::Result::Continue;
     for (unsigned i = 0; i < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS; i++)
     {
         if (mAssociatedImages[i] != nullptr)
@@ -2908,11 +2499,14 @@ angle::Result TextureStorage11_3D::onDestroy(const gl::Context *context)
 
             // We must let the Images recover their data before we delete it from the
             // TextureStorage.
-            ANGLE_TRY(mAssociatedImages[i]->recoverFromAssociatedStorage(context));
+            if (IsError(mAssociatedImages[i]->recoverFromAssociatedStorage(context)))
+            {
+                result = angle::Result::Stop;
+            }
         }
     }
 
-    return angle::Result::Continue;
+    return result;
 }
 
 TextureStorage11_3D::~TextureStorage11_3D() {}
@@ -3276,6 +2870,7 @@ TextureStorage11_2DArray::TextureStorage11_2DArray(Renderer11 *renderer,
 
 angle::Result TextureStorage11_2DArray::onDestroy(const gl::Context *context)
 {
+    angle::Result result = angle::Result::Continue;
     for (auto iter : mAssociatedImages)
     {
         if (iter.second)
@@ -3284,12 +2879,15 @@ angle::Result TextureStorage11_2DArray::onDestroy(const gl::Context *context)
 
             // We must let the Images recover their data before we delete it from the
             // TextureStorage.
-            ANGLE_TRY(iter.second->recoverFromAssociatedStorage(context));
+            if (IsError(iter.second->recoverFromAssociatedStorage(context)))
+            {
+                result = angle::Result::Stop;
+            }
         }
     }
     mAssociatedImages.clear();
 
-    return angle::Result::Continue;
+    return result;
 }
 
 TextureStorage11_2DArray::~TextureStorage11_2DArray() {}
@@ -4228,13 +3826,6 @@ angle::Result TextureStorage11_Buffer::getResource(const gl::Context *context,
     ANGLE_TRY(initTexture(context));
     *outResource = &mTexture;
     return angle::Result::Continue;
-}
-
-angle::Result TextureStorage11_Buffer::getMippedResource(const gl::Context *context,
-                                                         const TextureHelper11 **)
-{
-    ANGLE_HR_UNREACHABLE(GetImplAs<Context11>(context));
-    return angle::Result::Stop;
 }
 
 angle::Result TextureStorage11_Buffer::findRenderTarget(const gl::Context *context,

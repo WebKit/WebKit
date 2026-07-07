@@ -170,6 +170,53 @@ void main()
     EXPECT_GL_NO_ERROR();
 }
 
+TEST_P(TransformFeedbackTest, QueryVaryingZeroBufferSize)
+{
+    constexpr char kFS[] = R"(#version 300 es
+out mediump vec4 color;
+void main()
+{
+  color = vec4(0.6, 0.0, 0.0, 1.0);
+})";
+
+    std::string captureVarying = "gl_Position";
+
+    // Set the program's transform feedback varyings (just gl_Position)
+    std::vector<std::string> tfVaryings;
+    tfVaryings.push_back(captureVarying);
+    ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(program, essl3_shaders::vs::Simple(), kFS, tfVaryings,
+                                        GL_INTERLEAVED_ATTRIBS);
+
+    {
+        // Typical case, query the varying with a large-enough buffer.
+        GLsizei length  = 0;
+        GLsizei size    = 0;
+        GLenum type     = GL_NONE;
+        GLchar name[16] = {0};
+        glGetTransformFeedbackVarying(program, 0, sizeof(name), &length, &size, &type, name);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_EQ(static_cast<GLsizei>(captureVarying.length()), length);
+        EXPECT_EQ(1, size);
+        EXPECT_GLENUM_EQ(GL_FLOAT_VEC4, type);
+        EXPECT_EQ(captureVarying, std::string(name));
+    }
+
+    {
+        // Query the varying with a zero-sized buffer. Nothing should be written to the output
+        GLsizei length = 0;
+        GLsizei size   = 0;
+        GLenum type    = GL_NONE;
+        GLchar name[1] = {'a'};
+        glGetTransformFeedbackVarying(program, 0, 0, &length, &size, &type, name);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_EQ(0, length);
+        EXPECT_EQ(1, size);
+        EXPECT_GLENUM_EQ(GL_FLOAT_VEC4, type);
+        // Verify the output is unchanged
+        EXPECT_EQ(name[0], 'a');
+    }
+}
+
 TEST_P(TransformFeedbackTest, ZeroSizedViewport)
 {
     // http://anglebug.com/42263715
@@ -5516,11 +5563,12 @@ TEST_P(TransformFeedbackTest, InstancedOverflowIncompletePrimitive)
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTest);
-ANGLE_INSTANTIATE_TEST_ES3_AND(TransformFeedbackTest,
-                               ES3_VULKAN().disable(Feature::SupportsTransformFeedbackExtension),
-                               ES3_VULKAN()
-                                   .disable(Feature::SupportsTransformFeedbackExtension)
-                                   .disable(Feature::SupportsSPIRV14));
+ANGLE_INSTANTIATE_TEST_ES3_AND_ES31_AND_ES32_AND(
+    TransformFeedbackTest,
+    ES3_VULKAN().disable(Feature::SupportsTransformFeedbackExtension),
+    ES3_VULKAN()
+        .disable(Feature::SupportsTransformFeedbackExtension)
+        .disable(Feature::SupportsSPIRV14));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackLifetimeTest);
 ANGLE_INSTANTIATE_TEST_ES3_AND(TransformFeedbackLifetimeTest,

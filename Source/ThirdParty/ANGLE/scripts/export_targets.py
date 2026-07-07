@@ -292,6 +292,7 @@ IGNORED_DIRECTORIES = {
     '//third_party/dawn',
     '//third_party/wayland',
     '//third_party/wayland-protocols',
+    '//third_party/partition_alloc',
 }
 
 def has_all_includes(target_name: str, descs: dict) -> bool:

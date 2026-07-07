@@ -46,10 +46,6 @@ namespace rx
 {
 namespace
 {
-// Pick an arbitrary value to initialize non-zero memory for sanitization.  Note that 0x3F3F3F3F
-// as float is about 0.75.
-constexpr int kNonZeroInitValue = 0x3F;
-
 VkImageUsageFlags GetStagingBufferUsageFlags(vk::StagingUsage usage)
 {
     switch (usage)
@@ -520,7 +516,10 @@ void StagingBuffer::destroy(Renderer *renderer)
     mSize = 0;
 }
 
-angle::Result StagingBuffer::init(ErrorContext *context, VkDeviceSize size, StagingUsage usage)
+angle::Result StagingBuffer::init(ErrorContext *context,
+                                  VkDeviceSize size,
+                                  StagingUsage usage,
+                                  const int initValue)
 {
     VkBufferCreateInfo createInfo    = {};
     createInfo.sType                 = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -545,15 +544,7 @@ angle::Result StagingBuffer::init(ErrorContext *context, VkDeviceSize size, Stag
                                         &memoryTypeIndex, &mBuffer, &mAllocation));
     mSize = static_cast<size_t>(size);
 
-    // Wipe memory to an invalid value when the 'allocateNonZeroMemory' feature is enabled. The
-    // invalid values ensures our testing doesn't assume zero-initialized memory.
-    if (renderer->getFeatures().allocateNonZeroMemory.enabled)
-    {
-        ANGLE_TRY(InitMappableAllocation(context, allocator, &mAllocation, size, kNonZeroInitValue,
-                                         requiredFlags));
-    }
-
-    return angle::Result::Continue;
+    return InitMappableAllocation(context, allocator, &mAllocation, size, initValue, requiredFlags);
 }
 
 void StagingBuffer::release(ContextVk *contextVk)
@@ -1160,6 +1151,7 @@ PFN_vkBindImageMemory2KHR vkBindImageMemory2KHR   = nullptr;
 
 // VK_KHR_maintenance5
 PFN_vkCmdBindIndexBuffer2KHR vkCmdBindIndexBuffer2KHR = nullptr;
+PFN_vkGetImageSubresourceLayout2KHR vkGetImageSubresourceLayout2KHR = nullptr;
 
 // VK_QCOM_tile_memory_heap
 PFN_vkCmdBindTileMemoryQCOM vkCmdBindTileMemoryQCOM = nullptr;
@@ -1402,6 +1394,7 @@ void InitFragmentShadingRateKHRDeviceFunction(VkDevice device)
 void InitMaintenance5Functions(VkDevice device)
 {
     GET_DEVICE_FUNC(vkCmdBindIndexBuffer2KHR);
+    GET_DEVICE_FUNC(vkGetImageSubresourceLayout2KHR);
 }
 
 // VK_QCOM_tile_memory_heap
@@ -1503,6 +1496,21 @@ void InitBindMemory2KHRFunctionsFromCore()
 }
 
 #undef ASSIGN_FROM_CORE
+
+#define ASSIGN_EXT_FROM_KHR(vkName)               \
+    do                                            \
+    {                                             \
+        /* The KHR entry point must be present */ \
+        ASSERT(vkName##KHR != nullptr);           \
+        vkName##EXT = vkName##KHR;                \
+    } while (0)
+
+void InitGetImageSubresourceLayoutEXTFunctionFromKHR()
+{
+    ASSIGN_EXT_FROM_KHR(vkGetImageSubresourceLayout2);
+}
+
+#undef ASSIGN_EXT_FROM_KHR
 
 GLenum CalculateGenerateMipmapFilter(ContextVk *contextVk, angle::FormatID formatID)
 {

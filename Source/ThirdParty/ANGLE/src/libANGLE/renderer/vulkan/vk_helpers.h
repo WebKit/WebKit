@@ -1021,6 +1021,10 @@ class BufferHelper : public ReadWriteResource
         mDescriptorSetCacheManager.addKey(sharedCacheKey);
     }
 
+    angle::Result initializeRobustMemory(ErrorContext *context,
+                                         VkBufferUsageFlags usage,
+                                         VkDeviceSize size);
+
     angle::Result initializeNonZeroMemory(ErrorContext *context,
                                           VkBufferUsageFlags usage,
                                           VkDeviceSize size);
@@ -1081,6 +1085,11 @@ class BufferHelper : public ReadWriteResource
     const Buffer &getBufferForVertexArrayImpl(ContextVk *contextVk,
                                               VkDeviceSize actualDataSize,
                                               VkDeviceSize *offsetOut);
+
+    angle::Result initializeMemoryWithValueImpl(ErrorContext *context,
+                                                VkBufferUsageFlags usage,
+                                                VkDeviceSize size,
+                                                const int value);
 
     // Suballocation object.
     BufferSuballocation mSuballocation;
@@ -2378,7 +2387,6 @@ class ImageHelper final : public Resource, public angle::Subject
     // rendering.  If LAZILY_ALLOCATED memory is available, it will prefer that.
     angle::Result initImplicitMultisampledRenderToTexture(ErrorContext *context,
                                                           bool hasProtectedContent,
-                                                          gl::TextureType textureType,
                                                           GLint samples,
                                                           const ImageHelper &resolveImage,
                                                           const VkExtent3D &multisampleImageExtents,
@@ -2589,6 +2597,13 @@ class ImageHelper final : public Resource, public angle::Subject
     void removeStagedUpdates(ErrorContext *context,
                              gl::LevelIndex levelGLStart,
                              gl::LevelIndex levelGLEnd);
+    void redefineLevels(ErrorContext *context,
+                        gl::LevelIndex levelGLStart,
+                        gl::LevelIndex levelGLEnd);
+    void redefineSingleSubresource(ContextVk *contextVk,
+                                   gl::LevelIndex levelIndexGL,
+                                   uint32_t layerIndex,
+                                   uint32_t layerCount);
 
     angle::Result stagePartialClear(ContextVk *contextVk,
                                     const gl::Box &clearArea,
@@ -2603,32 +2618,18 @@ class ImageHelper final : public Resource, public angle::Subject
                                     ImageFormatSupport formatSupport,
                                     const uint8_t *data);
 
-    angle::Result stageSubresourceUpdateImpl(ContextVk *contextVk,
-                                             const gl::ImageIndex &index,
-                                             const gl::Extents &glExtents,
-                                             const gl::Offset &offset,
-                                             const gl::InternalFormat &formatInfo,
-                                             const gl::PixelUnpackState &unpack,
-                                             GLenum type,
-                                             const uint8_t *pixels,
-                                             const Format &vkFormat,
-                                             ImageFormatSupport formatSupport,
-                                             const GLuint inputRowPitch,
-                                             const GLuint inputDepthPitch,
-                                             const GLuint inputSkipBytes,
-                                             ApplyImageUpdate applyUpdate,
-                                             bool *updateAppliedImmediatelyOut);
-
     angle::Result stageSubresourceUpdate(ContextVk *contextVk,
                                          const gl::ImageIndex &index,
                                          const gl::Extents &glExtents,
                                          const gl::Offset &offset,
                                          const gl::InternalFormat &formatInfo,
-                                         const gl::PixelUnpackState &unpack,
                                          GLenum type,
                                          const uint8_t *pixels,
                                          const Format &vkFormat,
                                          ImageFormatSupport formatSupport,
+                                         const GLuint inputRowPitch,
+                                         const GLuint inputDepthPitch,
+                                         const GLuint inputSkipBytes,
                                          ApplyImageUpdate applyUpdate,
                                          bool *updateAppliedImmediatelyOut);
 
@@ -3018,6 +3019,8 @@ class ImageHelper final : public Resource, public angle::Subject
     bool useTileMemory() const { return mUseTileMemory; }
     angle::Result fallbackFromTileMemory(ContextVk *contextVk);
 
+    void getImageSubresourceLayout(Renderer *renderer, VkSubresourceLayout2 *subresourceLayout);
+
   private:
     ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
     struct ClearUpdate
@@ -3156,7 +3159,7 @@ class ImageHelper final : public Resource, public angle::Subject
     // Called from flushStagedUpdates, removes updates that are later superseded by another.  This
     // cannot be done at the time the updates were staged, as the image is not created (and thus the
     // extents are not known).
-    void removeSupersededUpdates(ContextVk *contextVk, const gl::TexLevelMask skipLevelsAllFaces);
+    void removeSupersededUpdates(ContextVk *contextVk, const gl::TexLevelMask skipLevels);
 
     void initImageMemoryBarrierStruct(Renderer *renderer,
                                       VkImageAspectFlags aspectMask,
@@ -3268,7 +3271,7 @@ class ImageHelper final : public Resource, public angle::Subject
                                          gl::LevelIndex levelGLEnd,
                                          uint32_t layerStart,
                                          uint32_t layerEnd,
-                                         const gl::TexLevelMask &skipLevelsAllFaces);
+                                         const gl::TexLevelMask &skipLevels);
 
     // Limit the input level to the number of levels in subresource update list.
     void clipLevelToUpdateListUpperLimit(gl::LevelIndex *level) const;

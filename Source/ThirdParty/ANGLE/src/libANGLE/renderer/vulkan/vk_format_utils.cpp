@@ -220,7 +220,6 @@ size_t Format::getVertexInputAlignment() const
 
 LoadFunctionMap Format::GetRGB565TextureLoadFunction(const Renderer *renderer)
 {
-    ASSERT(renderer->getFeatures().preferBGR565ToRGB565.enabled);
     return GetLoadFunctionsMap(GL_RGB565, angle::FormatID::R5G6B5_UNORM);
 }
 

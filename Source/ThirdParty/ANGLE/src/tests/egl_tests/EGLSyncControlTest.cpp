@@ -94,15 +94,18 @@ class EGLSyncControlTest : public testing::Test
 
     void InitializeDisplay()
     {
-        EGLAttrib displayAttribs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE,
-                                      EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
-                                      EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE,
-                                      EGL_DONT_CARE,
-                                      EGL_PLATFORM_ANGLE_MAX_VERSION_MINOR_ANGLE,
-                                      EGL_DONT_CARE,
-                                      EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE,
-                                      EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE,
-                                      EGL_NONE};
+        EGLAttrib displayAttribs[] = {
+            EGL_PLATFORM_ANGLE_TYPE_ANGLE,
+            EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
+            EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE,
+            static_cast<EGLAttrib>(mOSWindow->getNativeDisplayPlatformType()),
+            EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE,
+            EGL_DONT_CARE,
+            EGL_PLATFORM_ANGLE_MAX_VERSION_MINOR_ANGLE,
+            EGL_DONT_CARE,
+            EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE,
+            EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE,
+            EGL_NONE};
 
         // Create an OS Window
         mOSWindow = OSWindow::New();

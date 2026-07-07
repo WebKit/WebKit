@@ -192,10 +192,12 @@ declare_args() {
   angle_is_msvc = is_win && !is_clang
 
   # Default to using "_angle" suffix on Android
-  if (is_android) {
-    angle_libs_suffix = "_angle"
-  } else {
-    angle_libs_suffix = ""
+  if (!defined(angle_libs_suffix)) {
+    if (is_android) {
+      angle_libs_suffix = "_angle"
+    } else {
+      angle_libs_suffix = ""
+    }
   }
 
   # Currently Windows on Arm doesn't support OpenGL or Vulkan.
@@ -254,6 +256,44 @@ declare_args() {
       !is_official_build && !(is_android || is_fuchsia || angle_is_winuwp) &&
       (!is_win || is_clang) && (!is_linux || angle_use_x11) &&
       defined(angle_dawn_dir) && checkout_angle_dawn_deps
+}
+
+declare_args() {
+  # PartitionAlloc is Chrome's memory allocator.
+  #
+  # Enabling it allows ANGLE to use the same allocator as Chrome, which can
+  # provide security benefits by turning most UAFs in Angle's internal
+  # pointers into safe crashes. Additionally, it can help align tests/benchmark
+  # results closer with in-browser behavior, providing more accurate
+  # performance metrics that reflect real-world usage in Chrome.
+  angle_use_partition_alloc =
+      # Only for Angle CQ and local development. Not for arbitrary embedders.
+      angle_standalone &&
+      # Only enable PartitionAlloc in assert-enabled builds to avoid performance
+      # penalties in pure release standalone builds.
+      angle_assert_always_on &&
+      # Angle CQ enables `checkout_angle_partition_alloc` by default so that it
+      # can be used in tests/benchmarks. For local development, you can enable
+      # it by adding
+      # ```
+      #    "custom_vars": {
+      #      "checkout_angle_partition_alloc": True,
+      #    },
+      # ```
+      # to your .gclient config.
+      checkout_angle_partition_alloc &&
+      # While GCC is supported, it still lacks CI coverage to catch regressions.
+      # Therefore, we disable it by default on GCC builds for now.
+      is_clang &&
+      # TODO(b/503180635): Enable PartitionAlloc on Windows standalone builds.
+      # Currently it is disabled because it leads to heap mismatch crashes in
+      # trace tests (DLLs vs EXE).
+      !is_win &&
+      # TODO(b/503180635): Enable PartitionAlloc on Android standalone builds.
+      # Currently it is disabled because it leads to systematic test failures
+      # (likely startup crashes) on 'angle-cq-android-arm64-rel' bot across
+      # almost all test suites (unittests, end2end_tests, deqp, etc.).
+      !is_android
 }
 
 declare_args() {

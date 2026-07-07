@@ -25,6 +25,9 @@ class WebGLCompressedTextureAvailabilityTest : public ANGLETest<>
     }
 };
 
+class WebGL2CompressedTextureAvailabilityTest : public WebGLCompressedTextureAvailabilityTest
+{};
+
 const char kDXT1[]     = "GL_EXT_texture_compression_dxt1";
 const char kDXT3[]     = "GL_ANGLE_texture_compression_dxt3";
 const char kDXT5[]     = "GL_ANGLE_texture_compression_dxt5";
@@ -154,6 +157,23 @@ TEST_P(WebGLCompressedTextureAvailabilityTest, EmulatedEtc1Test)
     }
 }
 
+// Test that either BC1-BC5 or ETC2 formats are always available on WebGL 2.0.
+TEST_P(WebGL2CompressedTextureAvailabilityTest, RequiredFormats)
+{
+    const bool hasBC = EnsureGLExtensionEnabled(kDXT1) /* BC1 */ &&
+                       EnsureGLExtensionEnabled(kDXT3) /* BC2 */ &&
+                       EnsureGLExtensionEnabled(kDXT5) /* BC3 */ &&
+                       EnsureGLExtensionEnabled(kS3TCSRGB) /* BC1-3 sRGB */ &&
+                       EnsureGLExtensionEnabled(kRGTC) /* BC4, BC5 */;
+
+    const bool hasETC2 = EnsureGLExtensionEnabled(kETC2);
+
+    EXPECT_TRUE(hasBC || hasETC2);
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLCompressedTextureAvailabilityTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(WebGL2CompressedTextureAvailabilityTest);
+ANGLE_INSTANTIATE_TEST_ES3(WebGL2CompressedTextureAvailabilityTest);
 
 }  // namespace

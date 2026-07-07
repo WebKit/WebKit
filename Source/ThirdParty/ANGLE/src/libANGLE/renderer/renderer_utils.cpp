@@ -871,7 +871,8 @@ angle::Result IncompleteTextureSet::getIncompleteTexture(
             mutableContext, gl::BufferBinding::Texture, &kBufferInitData, sizeof(kBufferInitData),
             gl::BufferUsage::StaticDraw));
     }
-    else if (createType == gl::TextureType::_2DMultisample)
+    else if (createType == gl::TextureType::_2DMultisample ||
+             createType == gl::TextureType::_2DMultisampleArray)
     {
         ANGLE_TRY(t->setStorageMultisample(mutableContext, createType, 1,
                                            incompleteTextureParam.sizedInternalFormat, colorSize,
@@ -910,7 +911,8 @@ angle::Result IncompleteTextureSet::getIncompleteTexture(
                                  incompleteTextureParam.format, incompleteTextureParam.type,
                                  *incompleteCubeArrayPixels));
     }
-    else if (type == gl::TextureType::_2DMultisample)
+    else if (type == gl::TextureType::_2DMultisample ||
+             type == gl::TextureType::_2DMultisampleArray)
     {
         // Call a specialized clear function to init a multisample texture.
         ANGLE_TRY(multisampleInitializer->initializeMultisampleTextureToBlack(context, t.get()));

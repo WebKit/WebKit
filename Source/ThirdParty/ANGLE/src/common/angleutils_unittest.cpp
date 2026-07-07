@@ -29,4 +29,14 @@ TEST(ArrayIndexString, MultipleArrayIndices)
     EXPECT_EQ("[56][34][12]", ArrayIndexString(indices));
 }
 
+// Test that ArraySize works for C-style arrays and std::array.
+TEST(ArraySize, StandardUsage)
+{
+    int cArray[5] = {0};
+    EXPECT_EQ(size_t(5), ArraySize(cArray));
+
+    std::array<int, 10> stdArray = {0};
+    EXPECT_EQ(size_t(10), ArraySize(stdArray));
+}
+
 }  // anonymous namespace

@@ -38,12 +38,6 @@ struct FeaturesD3D : FeatureSetBase
         &members,
     };
 
-    FeatureInfo zeroMaxLodWorkaround = {
-        "zeroMaxLodWorkaround",
-        FeatureCategory::D3DWorkarounds,
-        &members,
-    };
-
     FeatureInfo depthStencilBlitExtraCopy = {
         "depthStencilBlitExtraCopy",
         FeatureCategory::D3DWorkarounds,
