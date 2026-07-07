@@ -162,6 +162,8 @@ list(APPEND TestWebKit_SOURCES
 
     Tests/WebCore/ASN1Utilities.cpp
 
+    Tests/WebCore/cocoa/ISOBMFFTrackInfoParserTests.cpp
+
     Tests/WebKit/WKWebView/WKBackForwardListTests.mm
 )
 
