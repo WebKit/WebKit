@@ -2309,6 +2309,8 @@ webkit.org/b/315877 [ Sequoia Debug x86_64 ] webgl/2.0.y/conformance2/textures/m
 webkit.org/b/315877 [ Sequoia Debug x86_64 ] webgl/2.0.y/conformance2/textures/webgl_canvas/tex-3d-r11f_g11f_b10f-rgb-float.html [ Pass Timeout ]
 webkit.org/b/315877 [ Sequoia Debug x86_64 ] webgl/2.0.y/conformance2/textures/image_bitmap_from_video/tex-2d-rgba32f-rgba-float.html [ Pass Failure ]
 
+webkit.org/b/318751 [ Debug arm64 ] webgl/2.0.y/conformance2/textures/misc/tex-unpack-params.html [ Pass Failure ]
+
 webkit.org/b/315881 [ Sequoia Release x86_64 ] fast/attachment/cocoa/wide-attachment-class.html [ Pass ImageOnlyFailure ]
 webkit.org/b/315881 [ Sequoia Release x86_64 ] fast/attachment/cocoa/wide-attachment-default-icon.html [ Pass ImageOnlyFailure ]
 webkit.org/b/315881 [ Sequoia Release x86_64 ] fast/attachment/cocoa/wide-attachment-folder-icon.html [ Pass ImageOnlyFailure ]

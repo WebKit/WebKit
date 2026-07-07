@@ -1823,7 +1823,7 @@ void ContextMtl::endEncoding(bool forceSaveRenderPassContent)
             mRenderEncoder.setStoreAction(MTLStoreActionStore);
         }
 
-        disableActiveOcclusionQueryInRenderPass();
+        disableOcclusionQueryInRenderPass();
 
         mOcclusionQueryPool.prepareRenderPassVisibilityPoolBuffer(this);
 
@@ -2281,84 +2281,67 @@ void ContextMtl::onBackbufferResized(const gl::Context *context, WindowSurfaceMt
     onDrawFrameBufferChangedState(context, framebuffer, true);
 }
 
-angle::Result ContextMtl::onOcclusionQueryBegin(const gl::Context *context, QueryMtl *query)
+angle::Result ContextMtl::onOcclusionQueryBegin(QueryMtl &query)
 {
-    ASSERT(mOcclusionQuery == nullptr);
-    mOcclusionQuery = query;
-
+    ASSERT(!mOcclusionQueryResultBuffer);  // Frontend guarantees none active at the time.
+    const mtl::BufferRef &resultBuffer = query.getVisibilityResultBuffer();
+    bool isEnabledInRenderPass;
     if (mRenderEncoder.valid())
     {
-        // if render pass has started, start the query in the encoder
-        return startOcclusionQueryInRenderPass(query, true);
+        size_t resultOffset;
+        ANGLE_TRY(mOcclusionQueryPool.beginQuery(this, resultBuffer, &resultOffset));
+        mRenderEncoder.setVisibilityResultMode(MTLVisibilityResultModeBoolean, resultOffset);
+        // Result is available after flush.
+        mCmdBuffer.setWriteDependency(resultBuffer, /*isRenderCommand=*/true);
+        isEnabledInRenderPass = true;
     }
     else
     {
-        query->resetVisibilityResult(this);
+        // Reset the occlusion query result stored in buffer to zero.
+        // Later draws will use continueQuery() to enable the visibility buffer writes.
+        auto blitEncoder = getBlitCommandEncoder();
+        blitEncoder->fillBuffer(resultBuffer, NSMakeRange(0, mtl::kOcclusionQueryResultSize), 0);
+        resultBuffer->syncContent(this, blitEncoder);
+        isEnabledInRenderPass = false;
     }
-
+    mOcclusionQueryResultBuffer          = resultBuffer;
+    mOcclusionQueryIsEnabledInRenderPass = isEnabledInRenderPass;
     return angle::Result::Continue;
 }
-void ContextMtl::onOcclusionQueryEnd(const gl::Context *context, QueryMtl *query)
-{
-    ASSERT(mOcclusionQuery == query);
 
-    if (mRenderEncoder.valid())
-    {
-        // if render pass has started, end the query in the encoder
-        disableActiveOcclusionQueryInRenderPass();
-    }
-
-    mOcclusionQuery = nullptr;
-}
-void ContextMtl::onOcclusionQueryDestroy(const gl::Context *context, QueryMtl *query)
+void ContextMtl::onOcclusionQueryEnd()
 {
-    if (query->getAllocatedVisibilityOffsets().empty())
-    {
-        return;
-    }
-    if (mOcclusionQuery == query)
-    {
-        onOcclusionQueryEnd(context, query);
-    }
-    mOcclusionQueryPool.deallocateQueryOffset(this, query);
+    ASSERT(mOcclusionQueryResultBuffer);  // Frontend guarantees one active at the time.
+    disableOcclusionQueryInRenderPass();
+    mOcclusionQueryResultBuffer = nullptr;
 }
 
-void ContextMtl::disableActiveOcclusionQueryInRenderPass()
+void ContextMtl::onOcclusionQueryDestroy(QueryMtl &query)
 {
-    if (!mOcclusionQuery || mOcclusionQuery->getAllocatedVisibilityOffsets().empty())
-    {
-        return;
-    }
-
-    ASSERT(mRenderEncoder.valid());
-    mRenderEncoder.setVisibilityResultMode(MTLVisibilityResultModeDisabled,
-                                           mOcclusionQuery->getAllocatedVisibilityOffsets().back());
+    // On normal operation frontend guaraantees that end is called before destroy.
+    // On context destruction, active query is destroyed without end.
+    // Discard is valid for both.
+    mOcclusionQueryPool.discardQuery(query.getVisibilityResultBuffer());
 }
 
-angle::Result ContextMtl::restartActiveOcclusionQueryInRenderPass()
+void ContextMtl::disableOcclusionQueryInRenderPass()
 {
-    if (!mOcclusionQuery || mOcclusionQuery->getAllocatedVisibilityOffsets().empty())
+    if (mOcclusionQueryResultBuffer && mOcclusionQueryIsEnabledInRenderPass)
     {
-        return angle::Result::Continue;
+        ASSERT(mRenderEncoder.valid());
+        mRenderEncoder.setVisibilityResultMode(MTLVisibilityResultModeDisabled, 0);
+        mOcclusionQueryIsEnabledInRenderPass = false;
     }
-
-    return startOcclusionQueryInRenderPass(mOcclusionQuery, false);
 }
 
-angle::Result ContextMtl::startOcclusionQueryInRenderPass(QueryMtl *query, bool clearOldValue)
+angle::Result ContextMtl::enableOcclusionQueryInRenderPass()
 {
     ASSERT(mRenderEncoder.valid());
-
-    ANGLE_TRY(mOcclusionQueryPool.allocateQueryOffset(this, query, clearOldValue));
-
-    mRenderEncoder.setVisibilityResultMode(MTLVisibilityResultModeBoolean,
-                                           query->getAllocatedVisibilityOffsets().back());
-
-    // We need to mark the query's buffer as being written in this command buffer now. Since the
-    // actual writing is deferred until the render pass ends and user could try to read the query
-    // result before the render pass ends.
-    mCmdBuffer.setWriteDependency(query->getVisibilityResultBuffer(), /*isRenderCommand=*/true);
-
+    size_t resultOffset;
+    ANGLE_TRY(mOcclusionQueryPool.continueQuery(this, mOcclusionQueryResultBuffer, &resultOffset));
+    mRenderEncoder.setVisibilityResultMode(MTLVisibilityResultModeBoolean, resultOffset);
+    mCmdBuffer.setWriteDependency(mOcclusionQueryResultBuffer, /*isRenderCommand=*/true);
+    mOcclusionQueryIsEnabledInRenderPass = true;
     return angle::Result::Continue;
 }
 
@@ -2586,11 +2569,11 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
         ANGLE_TRY(handleDirtyRenderPass(context));
     }
 
-    if (mOcclusionQuery && mOcclusionQueryPool.getNumRenderPassAllocatedQueries() == 0)
+    if (mOcclusionQueryResultBuffer && !mOcclusionQueryIsEnabledInRenderPass)
     {
         // The occlusion query is still active, and a new render pass has started.
         // We need to continue the querying process in the new render encoder.
-        ANGLE_TRY(startOcclusionQueryInRenderPass(mOcclusionQuery, false));
+        ANGLE_TRY(enableOcclusionQueryInRenderPass());
     }
 
     bool isPipelineDescChanged;
