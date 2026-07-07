@@ -79,7 +79,7 @@ public:
     void markPagesForCaptionPreferencesChanged();
 #endif
 
-    bool NODELETE isInBackForwardCache(BackForwardFrameItemIdentifier) const;
+    WEBCORE_EXPORT bool NODELETE isInBackForwardCache(BackForwardFrameItemIdentifier) const;
     bool hasCachedPageExpired(BackForwardFrameItemIdentifier) const;
 
 private:

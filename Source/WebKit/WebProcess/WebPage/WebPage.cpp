@@ -8909,7 +8909,7 @@ void WebPage::setIsSuspended(bool suspended, CompletionHandler<void(std::optiona
 void WebPage::suspendWithFrameItem(BackForwardFrameItemIdentifier identifier, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (m_isSuspended)
-        return completionHandler(true);
+        return completionHandler(BackForwardCache::singleton().isInBackForwardCache(identifier));
 
     RefPtr page = corePage();
     if (!page) {

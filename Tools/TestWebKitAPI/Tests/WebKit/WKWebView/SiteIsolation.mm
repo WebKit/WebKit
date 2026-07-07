@@ -9386,6 +9386,48 @@ TEST(SiteIsolation, MultiProcessBFCacheSameSiteWithCrossSiteIframe)
     checkFrameTreesInProcesses(webView.get(), WTF::move(expectedAfterGoBack));
 }
 
+TEST(SiteIsolation, MultiProcessBFCacheGoBackToIntermediateEntryDoesNotHang)
+{
+    // Same-site main-frame chain a -> b -> c, each hosting the same cross-site iframe. The iframe
+    // process is suspended when the first entry (a) is cached, so it cannot also cache the
+    // intermediate entry (b): its single live page is already suspended. Going back to b must
+    // therefore fall back to a normal load instead of attempting a back/forward-cache restore of
+    // iframe children that were never cached — which used to hang on a reload that never fired
+    // didFinishNavigation.
+    HTTPServer server({
+        { "/a"_s, { "<iframe src='https://b.com/frame'></iframe>"_s } },
+        { "/b"_s, { "<iframe src='https://b.com/frame'></iframe>"_s } },
+        { "/c"_s, { "<iframe src='https://b.com/frame'></iframe>"_s } },
+        { "/frame"_s, { "iframe content"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/b"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/c"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    EXPECT_EQ([webView backForwardList].backList.count, (NSUInteger)2);
+
+    // Back to the intermediate entry b. Must complete (not hang) and land on b.
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ(@"https://a.com/b", [webView URL].absoluteString);
+
+    // The cross-site iframe subtree must be reconstructed after the fallback load — a regression
+    // that completed the main-frame navigation but dropped the iframe would otherwise pass.
+    Vector<ExpectedFrameTree> expectedAfterGoBack = {
+        { "https://a.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://b.com"_s } } },
+    };
+    while (!frameTreesMatch(frameTrees(webView.get()).get(), Vector<ExpectedFrameTree> { expectedAfterGoBack }))
+        TestWebKitAPI::Util::spinRunLoop();
+    checkFrameTreesInProcesses(webView.get(), WTF::move(expectedAfterGoBack));
+}
+
 TEST(SiteIsolation, MultiProcessBFCacheSameSiteWithCrossSiteIframeMultipleCycles)
 {
     HTTPServer server({
