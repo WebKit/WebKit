@@ -277,12 +277,11 @@ void WebProcessProxy::forWebPagesWithOrigin(PAL::SessionID sessionID, const Secu
     }
 }
 
-Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> WebProcessProxy::allowedFirstPartiesForCookies()
+void WebProcessProxy::addAllowedFirstPartyForCookies(const WebCore::RegistrableDomain& domain, LoadedWebArchive loadedWebArchive)
 {
-    Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> result;
-    for (Ref page : globalPages())
-        result.append(std::make_pair(page->legacyMainFrameProcess().coreProcessIdentifier(), RegistrableDomain(URL(page->currentURL()))));
-    return result;
+    m_allowedFirstPartiesForCookies.second.add(domain);
+    if (loadedWebArchive == LoadedWebArchive::Yes)
+        m_allowedFirstPartiesForCookies.first = LoadedWebArchive::Yes;
 }
 
 Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode, ShouldLaunchProcess shouldLaunchProcess)

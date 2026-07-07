@@ -224,7 +224,6 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
 #if PLATFORM(COCOA)
     parameters.enableModernDownloadProgress = CFPreferencesGetAppBooleanValue(CFSTR("EnableModernDownloadProgress"), CFSTR("com.apple.WebKit"), nullptr);
 #endif
-    parameters.allowedFirstPartiesForCookies = WebProcessProxy::allowedFirstPartiesForCookies();
     for (auto it = m_allowedFilePathsByProcess.begin(); it != m_allowedFilePathsByProcess.end(); ++it)
         parameters.allowedFilePaths.add(it->key.coreProcessIdentifier(), copyToVector(it->value));
 
@@ -332,6 +331,9 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
         if (page->configuration().shouldRelaxThirdPartyCookieBlocking() == ShouldRelaxThirdPartyCookieBlocking::Yes)
             parameters.pagesWithRelaxedThirdPartyCookieBlocking.append(page->identifier());
     }
+    auto& cookiesData = webProcessProxy.allowedFirstPartiesForCookiesData();
+    parameters.loadedWebArchive = cookiesData.first;
+    parameters.allowedFirstPartiesForCookies = cookiesData.second;
     sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), parameters }, [weakThis = WeakPtr { *this }, reply = WTF::move(reply)](auto&& identifier, auto cookieAcceptPolicy) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
@@ -1988,6 +1990,8 @@ void NetworkProcessProxy::reloadExecutionContextsForOrigin(const WebCore::Client
 
 void NetworkProcessProxy::addAllowedFirstPartyForCookies(WebProcessProxy& webProcessProxy, const WebCore::RegistrableDomain& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
 {
+    webProcessProxy.addAllowedFirstPartyForCookies(firstPartyForCookies, loadedWebArchive);
+
     auto& pair = m_allowedFirstPartiesForCookies.ensure(webProcessProxy, [] {
         return std::make_pair(LoadedWebArchive::No, HashSet<RegistrableDomain> { });
     }).iterator->value;

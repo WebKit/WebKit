@@ -1,0 +1,5 @@
+Tests that a cross-origin iframe can still perform fetches after the network process crashes and restarts.
+
+Cross-origin iframe fetch succeeded before network process crash.
+PASS: Cross-origin iframe fetch succeeded after network process crash.
+

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<script>
+function report(message) {
+    parent.postMessage(message, "*");
+}
+
+window.addEventListener("message", event => {
+    if (event.data === "fetch-after-crash") {
+        fetch("cross-origin-iframe-fetch-after-crash-iframe.html").then(() => {
+            report("post-crash-ok");
+        }).catch(e => {
+            report("post-crash fetch failed: " + e);
+        });
+    }
+});
+
+fetch("cross-origin-iframe-fetch-after-crash-iframe.html").then(() => {
+    report("pre-crash-ok");
+}).catch(e => {
+    report("pre-crash fetch failed: " + e);
+});
+</script>
