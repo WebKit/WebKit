@@ -52,7 +52,7 @@
 #include "common/mathutil.h"
 #include "common/span.h"
 #ifdef ANGLE_PLATFORM_APPLE
-#    if __has_include(<WebKitAdditions/ANGLEAllocProfile.h>)
+#    if __has_include(<CoreFoundation/CFPriv.h>) // Matches USE_APPLE_INTERNAL_SDK in WTF.
 #        include <WebKitAdditions/ANGLEAllocProfile.h>
 #    endif
 #endif
