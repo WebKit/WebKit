@@ -10887,6 +10887,17 @@ void WebPageProxy::setIsResizable(bool isResizable)
     m_uiClient->setIsResizable(*this, isResizable);
 }
 
+void WebPageProxy::setWindowFrameIPC(IPC::Connection& connection, const FloatRect& newWindowFrame)
+{
+    // A well-behaved web process clamps the rect to the screen via adjustWindowRect, so a
+    // NaN, infinite, or out-of-int-range rect would crash AppKit in -[NSWindow setFrame:].
+    MESSAGE_CHECK_BASE(isWithinIntRange(newWindowFrame.x()) && isWithinIntRange(newWindowFrame.y())
+        && isWithinIntRange(newWindowFrame.width()) && isWithinIntRange(newWindowFrame.height())
+        && isWithinIntRange(newWindowFrame.maxX()) && isWithinIntRange(newWindowFrame.maxY()), connection);
+
+    setWindowFrame(newWindowFrame);
+}
+
 void WebPageProxy::setWindowFrame(const FloatRect& newWindowFrame)
 {
     if (RefPtr pageClient = this->pageClient())
