@@ -951,9 +951,10 @@ TEST_P(WebGLCompatibilityTest, EnablePackReverseRowOrderExtension)
 {
     EXPECT_FALSE(IsGLExtensionEnabled("GL_ANGLE_pack_reverse_row_order"));
 
-    GLint result = 0;
+    GLint result = 2;
     glGetIntegerv(GL_PACK_REVERSE_ROW_ORDER_ANGLE, &result);
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
+    EXPECT_EQ(result, 2);
 
     glPixelStorei(GL_PACK_REVERSE_ROW_ORDER_ANGLE, GL_TRUE);
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
@@ -964,8 +965,25 @@ TEST_P(WebGLCompatibilityTest, EnablePackReverseRowOrderExtension)
         EXPECT_GL_NO_ERROR();
 
         glGetIntegerv(GL_PACK_REVERSE_ROW_ORDER_ANGLE, &result);
+        EXPECT_EQ(result, 0);
+
         glPixelStorei(GL_PACK_REVERSE_ROW_ORDER_ANGLE, GL_TRUE);
         EXPECT_GL_NO_ERROR();
+
+        glGetIntegerv(GL_PACK_REVERSE_ROW_ORDER_ANGLE, &result);
+        EXPECT_EQ(result, 1);
+
+        glPixelStorei(GL_PACK_REVERSE_ROW_ORDER_ANGLE, 0);
+        EXPECT_GL_NO_ERROR();
+
+        glGetIntegerv(GL_PACK_REVERSE_ROW_ORDER_ANGLE, &result);
+        EXPECT_EQ(result, 0);
+
+        glPixelStorei(GL_PACK_REVERSE_ROW_ORDER_ANGLE, -1);
+        EXPECT_GL_NO_ERROR();
+
+        glGetIntegerv(GL_PACK_REVERSE_ROW_ORDER_ANGLE, &result);
+        EXPECT_EQ(result, 1);
     }
 }
 
@@ -4828,6 +4846,235 @@ void main() {
     EXPECT_GL_ERROR(GL_INVALID_OPERATION) << "Stencil test disabled should still fail";
 }
 
+// This test covers detection of rendering feedback loops between the FBO and a depth Texture.
+// Read-only depth/stencil feedback loops are allowed in hardened contexts and
+// should not generate an error.
+TEST_P(HardenedContextTest, RenderingFeedbackLoopWithDepthStencil)
+{
+    constexpr char kVS[] =
+        R"(#version 300 es
+in vec4 aPosition;
+out vec2 texCoord;
+void main() {
+    gl_Position = aPosition;
+    texCoord = (aPosition.xy * 0.5) + 0.5;
+})";
+
+    constexpr char kFS[] =
+        R"(#version 300 es
+precision mediump float;
+uniform sampler2D tex;
+in vec2 texCoord;
+out vec4 oColor;
+void main() {
+    oColor = texture(tex, texCoord);
+})";
+
+    GLsizei width  = 8;
+    GLsizei height = 8;
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    glViewport(0, 0, width, height);
+
+    GLint texLoc = glGetUniformLocation(program, "tex");
+    glUniform1i(texLoc, 0);
+
+    // Create textures and allocate storage
+    GLTexture tex0;
+    GLTexture tex1;
+    FillTexture2D(tex0, width, height, GLColor::black, 0, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+    FillTexture2D(tex1, width, height, 0x80, 0, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT,
+                  GL_UNSIGNED_INT);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex0, 0);
+
+    // Test rendering and sampling feedback loop for depth buffer
+    glBindTexture(GL_TEXTURE_2D, tex1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, tex1, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // The same image is used as depth buffer during rendering.
+    // This should be an error in hardened contexts.
+    glEnable(GL_DEPTH_TEST);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION) << "Same image as depth buffer should fail";
+
+    // The same image is used as depth buffer. But depth mask is false.
+    glDepthMask(GL_FALSE);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_NO_ERROR();
+
+    // The same image is used as depth buffer. But depth test is not enabled during rendering.
+    glDepthMask(GL_TRUE);
+    glDisable(GL_DEPTH_TEST);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_NO_ERROR();
+}
+
+// This test covers detection of rendering feedback loops between the FBO and a stencil texture with
+// GL_OES_texture_stencil8. Read-only stencil feedback loops are allowed in hardened contexts and
+// should not generate an error.
+TEST_P(HardenedContextTest, RenderingFeedbackLoopWithStencilOnlyStencil8)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_OES_texture_stencil8"));
+
+    constexpr char kVS[] =
+        R"(#version 300 es
+in vec4 aPosition;
+out vec2 texCoord;
+void main() {
+    gl_Position = aPosition;
+    texCoord = (aPosition.xy * 0.5) + 0.5;
+})";
+
+    constexpr char kFS[] =
+        R"(#version 300 es
+precision mediump float;
+precision mediump usampler2D;
+uniform usampler2D tex;
+in vec2 texCoord;
+out vec4 oColor;
+void main() {
+    oColor = vec4(texture(tex, texCoord)) / 256.0;
+})";
+
+    GLsizei width  = 8;
+    GLsizei height = 8;
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    glViewport(0, 0, width, height);
+
+    GLint texLoc = glGetUniformLocation(program, "tex");
+    glUniform1i(texLoc, 0);
+
+    // Create textures and allocate storage
+    GLTexture tex0;
+    GLTexture tex1;
+    FillTexture2D(tex0, width, height, GLColor::black, 0, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+    FillTexture2D(tex1, width, height, 0x40, 0, GL_STENCIL_INDEX8, GL_STENCIL_INDEX,
+                  GL_UNSIGNED_BYTE);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex0, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, tex1, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glBindTexture(GL_TEXTURE_2D, tex1);
+
+    // The same image is used as stencil buffer during rendering.
+    // Ensure that the stencil func and op are not no-ops, so that there can
+    // be stencil writes.
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_GREATER, 0x0000, 0xFFFFFFFF);
+    glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION) << "Same image as stencil buffer should fail";
+
+    // The same image is used as stencil buffer. But stencil mask is zero.
+    glStencilMask(0x0);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_NO_ERROR();
+
+    // The same image is used as stencil buffer. But stencil test is not enabled during rendering.
+    glStencilMask(0xffff);
+    glDisable(GL_STENCIL_TEST);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_NO_ERROR();
+}
+
+// This test covers detection of rendering feedback loops between the FBO and a stencil texture with
+// GL_ANGLE_stencil_texturing. Read-only stencil feedback loops are allowed in hardened contexts and
+// should not generate an error.
+TEST_P(HardenedContextTest, RenderingFeedbackLoopWithStencilOnlyANGLE)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_stencil_texturing"));
+
+    constexpr char kVS[] =
+        R"(#version 300 es
+in vec4 aPosition;
+out vec2 texCoord;
+void main() {
+    gl_Position = aPosition;
+    texCoord = (aPosition.xy * 0.5) + 0.5;
+})";
+
+    constexpr char kFS[] =
+        R"(#version 300 es
+precision mediump float;
+precision mediump usampler2D;
+uniform usampler2D tex;
+in vec2 texCoord;
+out vec4 oColor;
+void main() {
+    oColor = vec4(texture(tex, texCoord)) / 256.0;
+})";
+
+    GLsizei width  = 8;
+    GLsizei height = 8;
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    glViewport(0, 0, width, height);
+
+    GLint texLoc = glGetUniformLocation(program, "tex");
+    glUniform1i(texLoc, 0);
+
+    // Create textures and allocate storage
+    GLTexture tex0;
+    GLTexture tex1;
+    FillTexture2D(tex0, width, height, GLColor::black, 0, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+    FillTexture2D(tex1, width, height, 0x40, 0, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL,
+                  GL_UNSIGNED_INT_24_8);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex0, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, tex1, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glBindTexture(GL_TEXTURE_2D, tex1);
+    glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_INDEX);
+
+    // The same image is used as stencil buffer during rendering.
+    // Ensure that the stencil func and op are not no-ops, so that there can
+    // be stencil writes.
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_GREATER, 0x0000, 0xFFFFFFFF);
+    glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION) << "Same image as stencil buffer should fail";
+
+    // The same image is used as stencil buffer. But stencil mask is zero.
+    glStencilMask(0x0);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_NO_ERROR();
+
+    // The same image is used as stencil buffer. But stencil test is not enabled during rendering.
+    glStencilMask(0xffff);
+    glDisable(GL_STENCIL_TEST);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_NO_ERROR();
+
+    // The same image is used as stencil buffer. But only the depth component of the texture is
+    // being read.
+    glStencilMask(0xffff);
+    glEnable(GL_STENCIL_TEST);
+    glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_NO_ERROR();
+}
+
 // The source and the target for CopyTexSubImage3D are the same 3D texture.
 // But the level of the 3D texture != the level of the read attachment.
 TEST_P(WebGL2CompatibilityTest, NoTextureCopyingFeedbackLoopBetween3DLevels)
@@ -5830,13 +6077,6 @@ TEST_P(WebGLCompatibilityTest, EnableCompressedTextureExtensionETC1)
     validateCompressedTexImageExtensionFormat(
         GL_ETC1_RGB8_OES, 4, 4, 8, "GL_OES_compressed_ETC1_RGB8_texture",
         IsGLExtensionEnabled("GL_EXT_compressed_ETC1_RGB8_sub_texture"));
-}
-
-// Test enabling GL_ANGLE_lossy_etc_decode
-TEST_P(WebGLCompatibilityTest, EnableCompressedTextureExtensionLossyDecode)
-{
-    validateCompressedTexImageExtensionFormat(GL_ETC1_RGB8_LOSSY_DECODE_ANGLE, 4, 4, 8,
-                                              "GL_ANGLE_lossy_etc_decode", true);
 }
 
 // Reject attempts to allocate too-large arrays in shaders.
@@ -7821,6 +8061,210 @@ void main()
 
     drawQuad(program, "a_position", 0.5f, 1.0f, true);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Tests that WebGL-specific unpack state validation is implemented.
+TEST_P(WebGL2CompatibilityTest, UnpackStateValidation)
+{
+    // Either of these must be supported on WebGL 2.0
+    const bool hasBC1  = EnsureGLExtensionEnabled("GL_EXT_texture_compression_dxt1");
+    const bool hasETC2 = EnsureGLExtensionEnabled("GL_ANGLE_compressed_texture_etc");
+    ASSERT(hasBC1 || hasETC2);
+    const GLenum compressedFormat =
+        hasBC1 ? GL_COMPRESSED_RGB_S3TC_DXT1_EXT : GL_COMPRESSED_RGB8_ETC2;
+
+    auto test = [=](GLenum target, GLint skipPixels, GLint rowLength, GLint skipRows,
+                    GLint imageHeight, GLenum error) {
+        ASSERT(target == GL_TEXTURE_2D || target == GL_TEXTURE_2D_ARRAY);
+        ASSERT(skipPixels >= 0 && rowLength >= 0 && skipRows >= 0 && imageHeight >= 0);
+        ASSERT(error == GL_NO_ERROR || error == GL_INVALID_OPERATION);
+
+        constexpr size_t kPixelCount = 8 * 8 * 2;
+
+        GLBuffer buf;
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buf);
+        glBufferData(GL_PIXEL_UNPACK_BUFFER, kPixelCount * 4, nullptr, GL_STATIC_READ);
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+        ASSERT_GL_NO_ERROR();
+
+        GLTexture tex;
+        std::vector<GLColor> data(kPixelCount);
+
+        for (size_t i = 0; i < 4; ++i)
+        {
+            const bool usePixelUnpackBuffer = i & 1;
+            const bool isCompressed         = i & 2;
+
+            glBindBuffer(GL_PIXEL_UNPACK_BUFFER, usePixelUnpackBuffer ? buf.get() : 0);
+            ASSERT_GL_NO_ERROR();
+
+            glBindTexture(target, tex);
+            ASSERT_GL_NO_ERROR();
+
+            glPixelStorei(GL_UNPACK_ROW_LENGTH, rowLength);
+            glPixelStorei(GL_UNPACK_SKIP_ROWS, skipRows);
+            glPixelStorei(GL_UNPACK_SKIP_PIXELS, skipPixels);
+            glPixelStorei(GL_UNPACK_IMAGE_HEIGHT, imageHeight);
+            if (isCompressed)
+            {
+                if (target == GL_TEXTURE_2D)
+                {
+                    glCompressedTexImage2D(target, 0, compressedFormat, 4, 4, 0, 8,
+                                           usePixelUnpackBuffer ? nullptr : data.data());
+                }
+                else
+                {
+                    glCompressedTexImage3D(target, 0, compressedFormat, 4, 4, 2, 0, 16,
+                                           usePixelUnpackBuffer ? nullptr : data.data());
+                }
+                EXPECT_GL_NO_ERROR();  // Pixel unpack state must be ignored for compressed formats
+            }
+            else
+            {
+                if (target == GL_TEXTURE_2D)
+                {
+                    glTexImage2D(target, 0, GL_RGBA8, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+                }
+                else
+                {
+                    glTexImage3D(target, 0, GL_RGBA8, 4, 4, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                                 nullptr);
+                }
+                // When using client memory and passing no data, validation must always succeed
+                EXPECT_GL_ERROR(usePixelUnpackBuffer ? error : GL_NO_ERROR);
+
+                if (!usePixelUnpackBuffer)
+                {
+                    if (target == GL_TEXTURE_2D)
+                    {
+                        glTexImage2D(target, 0, GL_RGBA8, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                                     data.data());
+                    }
+                    else
+                    {
+                        glTexImage3D(target, 0, GL_RGBA8, 4, 4, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                                     data.data());
+                    }
+                    EXPECT_GL_ERROR(error);
+                }
+            }
+
+            // Reset the unpack state so that the texture is created successfully
+            glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+            glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+            glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+            glPixelStorei(GL_UNPACK_IMAGE_HEIGHT, 0);
+            if (!isCompressed)
+            {
+                if (target == GL_TEXTURE_2D)
+                {
+                    glTexImage2D(target, 0, GL_RGBA8, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                                 usePixelUnpackBuffer ? nullptr : data.data());
+                }
+                else
+                {
+                    glTexImage3D(target, 0, GL_RGBA8, 4, 4, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                                 usePixelUnpackBuffer ? nullptr : data.data());
+                }
+                EXPECT_GL_NO_ERROR();
+            }
+
+            // Try subimage update with the provided unpack state
+            glPixelStorei(GL_UNPACK_ROW_LENGTH, rowLength);
+            glPixelStorei(GL_UNPACK_SKIP_ROWS, skipRows);
+            glPixelStorei(GL_UNPACK_SKIP_PIXELS, skipPixels);
+            glPixelStorei(GL_UNPACK_IMAGE_HEIGHT, imageHeight);
+            if (isCompressed)
+            {
+                if (target == GL_TEXTURE_2D)
+                {
+                    glCompressedTexSubImage2D(target, 0, 0, 0, 4, 4, compressedFormat, 8,
+                                              usePixelUnpackBuffer ? nullptr : data.data());
+                }
+                else
+                {
+                    glCompressedTexSubImage3D(target, 0, 0, 0, 0, 4, 4, 2, compressedFormat, 16,
+                                              usePixelUnpackBuffer ? nullptr : data.data());
+                }
+                EXPECT_GL_NO_ERROR();  // Pixel unpack state must be ignored for compressed formats
+            }
+            else
+            {
+                if (target == GL_TEXTURE_2D)
+                {
+                    glTexSubImage2D(target, 0, 0, 0, 4, 4, GL_RGBA, GL_UNSIGNED_BYTE,
+                                    usePixelUnpackBuffer ? nullptr : data.data());
+                }
+                else
+                {
+                    glTexSubImage3D(target, 0, 0, 0, 0, 4, 4, 2, GL_RGBA, GL_UNSIGNED_BYTE,
+                                    usePixelUnpackBuffer ? nullptr : data.data());
+                }
+                EXPECT_GL_ERROR(error);
+            }
+        }
+    };
+
+    // For all targets: if GL_UNPACK_ROW_LENGTH is set, the sum of GL_UNPACK_SKIP_PIXELS and
+    // width must be less than or equal to GL_UNPACK_ROW_LENGTH. If GL_UNPACK_ROW_LENGTH is
+    // not set, GL_UNPACK_SKIP_PIXELS must be zero.
+
+    // For 3D targets only: if GL_UNPACK_IMAGE_HEIGHT is set, the sum of GL_UNPACK_SKIP_ROWS and
+    // height must be less than or equal to GL_UNPACK_IMAGE_HEIGHT. If GL_UNPACK_IMAGE_HEIGHT is
+    // not set, GL_UNPACK_SKIP_ROWS must be zero.
+
+    // Test params: (target, skipPixels, rowLength, skipRows, imageHeight, error)
+
+    // 2D texture, default
+    test(GL_TEXTURE_2D, 0, 0, 0, 0, GL_NO_ERROR);
+
+    // 2D texture, validated pixel skip and row length
+    test(GL_TEXTURE_2D, 0, 4, 0, 0, GL_NO_ERROR);           // 0 + 4 <= 4
+    test(GL_TEXTURE_2D, 0, 5, 0, 0, GL_NO_ERROR);           // 0 + 4 <= 5
+    test(GL_TEXTURE_2D, 1, 5, 0, 0, GL_NO_ERROR);           // 1 + 4 <= 5
+    test(GL_TEXTURE_2D, 1, 6, 0, 0, GL_NO_ERROR);           // 1 + 4 <= 6
+    test(GL_TEXTURE_2D, 0, 3, 0, 0, GL_INVALID_OPERATION);  // 0 + 4 > 3
+    test(GL_TEXTURE_2D, 1, 0, 0, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+    test(GL_TEXTURE_2D, 1, 4, 0, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+
+    // 2D texture, ignored row skip and image height
+    test(GL_TEXTURE_2D, 0, 0, 0, 4, GL_NO_ERROR);
+    test(GL_TEXTURE_2D, 0, 0, 0, 5, GL_NO_ERROR);
+    test(GL_TEXTURE_2D, 0, 0, 1, 5, GL_NO_ERROR);
+    test(GL_TEXTURE_2D, 0, 0, 1, 6, GL_NO_ERROR);
+    test(GL_TEXTURE_2D, 0, 0, 0, 3, GL_NO_ERROR);
+    test(GL_TEXTURE_2D, 0, 0, 1, 0, GL_NO_ERROR);
+    test(GL_TEXTURE_2D, 0, 0, 1, 4, GL_NO_ERROR);
+
+    // 2D array texture, default
+    test(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, GL_NO_ERROR);
+
+    // 2D array texture, validated pixel skip and row length
+    test(GL_TEXTURE_2D_ARRAY, 0, 4, 0, 0, GL_NO_ERROR);           // 0 + 4 <= 4
+    test(GL_TEXTURE_2D_ARRAY, 0, 5, 0, 0, GL_NO_ERROR);           // 0 + 4 <= 5
+    test(GL_TEXTURE_2D_ARRAY, 1, 5, 0, 0, GL_NO_ERROR);           // 1 + 4 <= 5
+    test(GL_TEXTURE_2D_ARRAY, 1, 6, 0, 0, GL_NO_ERROR);           // 1 + 4 <= 6
+    test(GL_TEXTURE_2D_ARRAY, 0, 3, 0, 0, GL_INVALID_OPERATION);  // 0 + 4 > 3
+    test(GL_TEXTURE_2D_ARRAY, 1, 0, 0, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+    test(GL_TEXTURE_2D_ARRAY, 1, 4, 0, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+
+    // 2D array texture, validated row skip and image height
+    test(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 4, GL_NO_ERROR);           // 0 + 4 <= 4
+    test(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 5, GL_NO_ERROR);           // 0 + 4 <= 5
+    test(GL_TEXTURE_2D_ARRAY, 0, 0, 1, 5, GL_NO_ERROR);           // 1 + 4 <= 5
+    test(GL_TEXTURE_2D_ARRAY, 0, 0, 1, 6, GL_NO_ERROR);           // 1 + 4 <= 6
+    test(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 3, GL_INVALID_OPERATION);  // 0 + 4 > 3
+    test(GL_TEXTURE_2D_ARRAY, 0, 0, 1, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+    test(GL_TEXTURE_2D_ARRAY, 0, 0, 1, 4, GL_INVALID_OPERATION);  // 1 + 4 > 4
+
+    // 2D array texture, validated all params
+    test(GL_TEXTURE_2D_ARRAY, 0, 4, 0, 4, GL_NO_ERROR);           // 0 + 4 <= 4
+    test(GL_TEXTURE_2D_ARRAY, 0, 5, 0, 5, GL_NO_ERROR);           // 0 + 4 <= 5
+    test(GL_TEXTURE_2D_ARRAY, 1, 5, 1, 5, GL_NO_ERROR);           // 1 + 4 <= 5
+    test(GL_TEXTURE_2D_ARRAY, 1, 6, 1, 6, GL_NO_ERROR);           // 1 + 4 <= 6
+    test(GL_TEXTURE_2D_ARRAY, 0, 3, 0, 3, GL_INVALID_OPERATION);  // 0 + 4 > 3
+    test(GL_TEXTURE_2D_ARRAY, 1, 0, 1, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+    test(GL_TEXTURE_2D_ARRAY, 1, 4, 1, 4, GL_INVALID_OPERATION);  // 1 + 4 > 4
 }
 
 // Test that drawing GL_POINTS without setting gl_PointSize in the vertex shader

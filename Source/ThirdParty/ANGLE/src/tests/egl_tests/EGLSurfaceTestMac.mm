@@ -30,8 +30,14 @@ class EGLSurfaceTestMac : public ANGLETest<>
   protected:
     void testSetUp() override
     {
+        mOSWindow = OSWindow::New();
+        mOSWindow->initialize("EGLSurfaceTestMac", kWindowWidth, kWindowHeight);
+        setWindowVisible(mOSWindow, shouldShowWindow());
+
         // Get display.
-        EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
+        EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(),
+                                 EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE,
+                                 mOSWindow->getNativeDisplayPlatformType(), EGL_NONE};
         mDisplay              = eglGetPlatformDisplay(GetEglPlatform(),
                                                       reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
         ASSERT_TRUE(mDisplay != EGL_NO_DISPLAY);
@@ -51,11 +57,6 @@ class EGLSurfaceTestMac : public ANGLETest<>
         {
             return;
         }
-
-        // Create a window, context and surface if multisampling is possible.
-        mOSWindow = OSWindow::New();
-        mOSWindow->initialize("EGLSurfaceTestMac", kWindowWidth, kWindowHeight);
-        setWindowVisible(mOSWindow, shouldShowWindow());
 
         EGLint contextAttributes[] = {
             EGL_CONTEXT_MAJOR_VERSION_KHR,

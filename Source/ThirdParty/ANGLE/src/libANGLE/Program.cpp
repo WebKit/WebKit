@@ -873,7 +873,14 @@ void Program::bindFragmentOutputIndex(const Context *context, GLuint index, cons
 
 void Program::makeNewExecutable(const Context *context)
 {
-    ASSERT(!mLinkingState);
+    // A previous asynchronous link may still be in flight when this is reached
+    // from a no-error / skip-validation context (Context::linkProgram uses
+    // getProgramNoResolveLink). Join it before tearing down mLinkingState and
+    // mState.mExecutable, which the worker thread is concurrently using.
+    if (mLinkingState)
+    {
+        resolveLinkImpl(context);
+    }
     waitForPostLinkTasks(context);
 
     // Unlink the program, but do not clear the validation-related caching yet, since we can still

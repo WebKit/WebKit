@@ -138,7 +138,15 @@ angle::Result VertexBuffer11::storeVertexAttributes(const gl::Context *context,
     const D3D_FEATURE_LEVEL featureLevel = mRenderer->getRenderer11DeviceCaps().featureLevel;
     const d3d11::VertexFormat &vertexFormatInfo =
         d3d11::GetVertexFormatInfo(vertexFormatID, featureLevel);
-    ASSERT(vertexFormatInfo.copyFunction != nullptr);
+    const d3d11::DXGIFormatSize &dxgiFormatInfo =
+        d3d11::GetDXGIFormatSizeInfo(vertexFormatInfo.nativeFormat);
+    unsigned int elementSize = dxgiFormatInfo.pixelBytes;
+
+    angle::CheckedNumeric<size_t> checkedSpaceRequired = count;
+    checkedSpaceRequired *= elementSize;
+    checkedSpaceRequired += offset;
+    ASSERT(checkedSpaceRequired.IsValid() && checkedSpaceRequired.ValueOrDie() <= mBufferSize);
+
     vertexFormatInfo.copyFunction(input, inputStride, count, output);
 
     return angle::Result::Continue;

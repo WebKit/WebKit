@@ -151,6 +151,14 @@ enum
 
     // CL requires a min of 64 maximum write images as kernel arguments
     IMPLEMENATION_MAX_WRITE_IMAGES = 64,
+
+    // The below are some typical numbers for device info query attributes, for which there is no
+    // appropriate Vulkan query
+
+    // A decent default minimum that should be supported by devices
+    IMPLEMENATION_PREFERRED_WORKGROUP_SIZE_MULTIPLE = 16,
+    // There must at least be one compute unit to support OpenCL
+    IMPLEMENATION_NUM_COMPUTE_UNITS = 1,
 };
 }
 

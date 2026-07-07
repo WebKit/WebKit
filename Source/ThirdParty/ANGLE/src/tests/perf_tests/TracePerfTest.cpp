@@ -880,6 +880,7 @@ void TracePerfTest::initializeConfigParams(GPUTestConfig::API api)
     configParams.alphaBits         = mParams->traceInfo.configAlphaBits;
     configParams.depthBits         = mParams->traceInfo.configDepthBits;
     configParams.stencilBits       = mParams->traceInfo.configStencilBits;
+    configParams.robustAccess      = mParams->traceInfo.isRobustAccessEnabled;
     configParams.colorSpace        = mParams->traceInfo.drawSurfaceColorSpace;
 
     // TODO (b/423680521): App traces shouldn't be relying on these extensions anyway, since they

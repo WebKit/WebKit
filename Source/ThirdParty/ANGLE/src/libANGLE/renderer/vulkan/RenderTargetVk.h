@@ -19,7 +19,6 @@ namespace rx
 {
 namespace vk
 {
-class FramebufferHelper;
 class ImageHelper;
 class ImageView;
 class Resource;

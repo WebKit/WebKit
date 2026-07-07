@@ -187,17 +187,9 @@ angle::Result StreamingVertexBufferInterface::storeDynamicAttribute(
 
     mReservedSpace = 0;
 
-    angle::CheckedNumeric<size_t> checkedCount = count;
-    GLuint divisor                             = binding.getDivisor();
-
-    if (instances != 0 && divisor != 0)
-    {
-        // The attribute is an instanced attribute and it's an draw instance call
-        // Extra number of elements are copied at the beginning to make sure
-        // the driver is referencing the correct data with non-zero baseInstance
-        checkedCount += UnsignedCeilDivide64(static_cast<uint64_t>(baseInstance),
-                                             static_cast<uint64_t>(divisor));
-    }
+    GLuint divisor = binding.getDivisor();
+    angle::CheckedNumeric<size_t> checkedCount =
+        gl::ComputeVertexBindingElementCount(divisor, count, instances, baseInstance);
 
     ANGLE_CHECK(GetImplAs<ContextD3D>(context), checkedCount.IsValid(),
                 "New vertex buffer size would result in an overflow.", GL_OUT_OF_MEMORY);
@@ -257,7 +249,7 @@ bool StaticVertexBufferInterface::AttributeSignature::matchesAttribute(
     }
 
     size_t attribOffset =
-        (static_cast<size_t>(ComputeVertexAttributeOffset(attrib, binding)) % attribStride);
+        static_cast<size_t>(ComputeVertexAttributeOffset(attrib, binding) % attribStride);
     return (offset == attribOffset);
 }
 
@@ -265,9 +257,9 @@ void StaticVertexBufferInterface::AttributeSignature::set(const gl::VertexAttrib
                                                           const gl::VertexBinding &binding)
 {
     formatID = attrib.format->id;
-    offset = stride = static_cast<GLuint>(ComputeVertexAttributeStride(attrib, binding));
-    offset          = static_cast<size_t>(ComputeVertexAttributeOffset(attrib, binding)) %
-             ComputeVertexAttributeStride(attrib, binding);
+    stride   = static_cast<GLuint>(ComputeVertexAttributeStride(attrib, binding));
+    offset   = static_cast<size_t>(ComputeVertexAttributeOffset(attrib, binding) %
+                                   ComputeVertexAttributeStride(attrib, binding));
 }
 
 StaticVertexBufferInterface::StaticVertexBufferInterface(BufferFactoryD3D *factory)

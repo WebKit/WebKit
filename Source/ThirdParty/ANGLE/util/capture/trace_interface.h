@@ -45,6 +45,7 @@ struct TraceInfo
     int configAlphaBits;
     int configDepthBits;
     int configStencilBits;
+    bool isRobustAccessEnabled;
     bool isBinaryDataCompressed;
     uint32_t binaryVersion;
     uint32_t binaryBlockCount;

@@ -630,7 +630,7 @@ def wait_for_test_warmup(done_event):
             return
 
 
-def collect_cpu_inst(done_event, test_fixedtime, results):
+def collect_cpu_inst(done_event, test_fixedtime, target_cpu_inst, results):
     try:
         tmp_data_file = run_adb_shell_command('mktemp /data/local/tmp/tmp.XXXXXX').strip()
 
@@ -638,18 +638,25 @@ def collect_cpu_inst(done_event, test_fixedtime, results):
         wait_for_test_warmup(done_event)
 
         if done_event.is_set():
-            logging.debug('Test finished earlier than expected by collect_cpu_inst')
+            logging.warning('Test finished earlier than expected by collect_cpu_inst')
             return
 
         # Start simpleperf record right after warmup is done
         logging.debug('Starting cpu instruction count')
 
+        event = "instructions"
+        if target_cpu_inst == 'user':
+            event += ":u"
+        else:
+            assert target_cpu_inst == 'user_and_kernel', 'Unrecognized target_cpu_inst option: %s' % target_cpu_inst
+
         # Collect cpu instructions of "com.android.angle.test:test_process"
         run_adb_shell_command(f'''simpleperf record \
             -o {tmp_data_file} \
-            -e instructions:u \
+            -e {event} \
             -f 4000 \
-            --app com.android.angle.test''')
+            -g \
+            -p $(pidof com.android.angle.test:test_process)''')
 
         # Get the start time of simple perf to filter simpleperf data file
         start_ns = run_adb_shell_command(f'''simpleperf report-sample \
@@ -681,26 +688,30 @@ def collect_cpu_inst(done_event, test_fixedtime, results):
         perf_output = run_adb_shell_command(f'''simpleperf report \
             --sort dso \
             --print-event-count \
+            --children \
+            -g \
             --filter-file {temp_filter_file} \
             -i {tmp_data_file}''')
 
         perf_output = perf_output.split('\n')
-
         for line in perf_output:
             if 'Event count:' in line:
                 results['Total'] = safe_cast_float(line.split()[-1].strip())
 
             if re.search('libGLES.*_.*\.so', line):
-                if ('angle' in line):
-                    results['angle_lib'] = safe_cast_float(line.split()[-2].strip())
-                else:
-                    results['gles_lib'] = safe_cast_float(line.split()[-2].strip())
+                if 'angle' in line:
+                    results['angle_lib'] = safe_cast_float(line.split()[-3].strip())
+
+                # Consider only the user mode GPU drivers
+                elif '/system/lib64/libGLESv1_CM.so' not in line and \
+                     '/system/lib64/libGLESv2.so' not in line:
+                    results['gles_lib'] = safe_cast_float(line.split()[-3].strip())
 
             if re.search('vulkan\..*\.so', line):
-                results['vulkan_lib'] = safe_cast_float(line.split()[-2].strip())
+                results['vulkan_lib'] = safe_cast_float(line.split()[-3].strip())
 
             if 'libc.so' in line:
-                results['libc_lib'] = safe_cast_float(line.split()[-2].strip())
+                results['libc_lib'] = safe_cast_float(line.split()[-3].strip())
     finally:
         run_adb_shell_command(f'rm -f {tmp_data_file}')
         run_adb_shell_command(f'rm -f {temp_filter_file}')
@@ -1150,7 +1161,7 @@ def run_traces(args):
                     }  # output arg
                     cpu_inst_thread = threading.Thread(
                         target=collect_cpu_inst,
-                        args=(done_event, float(args.fixedtime), cpu_inst_results))
+                        args=(done_event, float(args.fixedtime), args.cpu_inst, cpu_inst_results))
                     cpu_inst_thread.daemon = True
                     cpu_inst_thread.start()
 
@@ -1886,9 +1897,8 @@ def main():
         '--power', help='Include CPU/GPU power used per trace', action='store_true', default=False)
     parser.add_argument(
         '--cpu-inst',
-        help='Include cpu instruction count of gpu user mode driver per trace',
-        action='store_true',
-        default=False)
+        help='Include cpu instruction count of process: [\'user\', \'user_and_kernel\']',
+        default=None)
     parser.add_argument(
         '--memory',
         help='Include CPU/GPU memory used per trace',

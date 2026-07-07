@@ -75,8 +75,6 @@ std::vector<DrawIndexRange> MakeDrawIndexRanges(const std::vector<uint8_t> &indi
         gl::DrawElementsType::UnsignedByte, static_cast<GLint>(indices.size()), indices.data());
 }
 
-// ===================== Simple types (mode == drawMode, no expansion) =====================
-
 TEST(ComputeDrawCommandRangesTest, Triangles_NoRestart)
 {
     auto ranges = MakeDrawIndexRanges({0, 1, 2, 3, 4, 5});
@@ -91,7 +89,7 @@ TEST(ComputeDrawCommandRangesTest, Triangles_NoRestart)
 
 TEST(ComputeDrawCommandRangesTest, Triangles_SingleRestartMiddle)
 {
-    // Buffer: 0 1 2 ff 3 4 5 → DrawIndexRanges: (0,2), (4,6)
+    // Buffer: 0 1 2 ff 3 4 5 -> DrawIndexRanges: (0,2), (4,6)
     auto ranges = MakeDrawIndexRanges({0, 1, 2, 0xff, 3, 4, 5});
     ASSERT_EQ(2u, ranges.size());
     auto cmds =
@@ -106,7 +104,7 @@ TEST(ComputeDrawCommandRangesTest, Triangles_SingleRestartMiddle)
 
 TEST(ComputeDrawCommandRangesTest, Triangles_RestartAtBegin)
 {
-    // Buffer: ff 0 1 2 → DrawIndexRanges: (1,3)
+    // Buffer: ff 0 1 2 -> DrawIndexRanges: (1,3)
     auto ranges = MakeDrawIndexRanges({0xff, 0, 1, 2});
     ASSERT_EQ(1u, ranges.size());
     auto cmds =
@@ -119,7 +117,7 @@ TEST(ComputeDrawCommandRangesTest, Triangles_RestartAtBegin)
 
 TEST(ComputeDrawCommandRangesTest, Triangles_RestartAtEnd)
 {
-    // Buffer: 0 1 2 ff → DrawIndexRanges: (0,2)
+    // Buffer: 0 1 2 ff -> DrawIndexRanges: (0,2)
     auto ranges = MakeDrawIndexRanges({0, 1, 2, 0xff});
     ASSERT_EQ(1u, ranges.size());
     auto cmds =
@@ -293,7 +291,7 @@ TEST(ComputeDrawCommandRangesTest, Triangles_WithAddOffsetDegenerateAndRestartAt
 
 TEST(ComputeDrawCommandRangesTest, TriangleStrip_NoRestart)
 {
-    // 4 source → (4-2)*3 = 6 draw indices
+    // 4 source -> (4-2)*3 = 6 draw indices
     auto ranges = MakeDrawIndexRanges({0, 1, 2, 3});
     ASSERT_EQ(1u, ranges.size());
     auto cmds =

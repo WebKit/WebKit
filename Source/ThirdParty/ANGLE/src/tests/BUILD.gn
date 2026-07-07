@@ -288,6 +288,9 @@ if (is_win || is_linux || is_chromeos || is_android || is_fuchsia || is_apple) {
     }
     libs = []
     defines = []
+    if (angle_use_partition_alloc) {
+      defines += [ "ANGLE_USE_PARTITION_ALLOC" ]
+    }
     configs += [ "${angle_root}:libANGLE_config" ]
 
     if (is_ios) {

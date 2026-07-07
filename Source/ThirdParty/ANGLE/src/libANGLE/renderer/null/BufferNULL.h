@@ -31,13 +31,15 @@ class BufferNULL : public BufferImpl
                                         gl::BufferUsage usage,
                                         GLbitfield flags,
                                         gl::BufferStorage bufferStorage,
-                                        BufferFeedback *feedback) override;
+                                        BufferFeedback *feedback,
+                                        gl::ZeroFillRequired zeroFillRequired) override;
     angle::Result setData(const gl::Context *context,
                           gl::BufferBinding target,
                           const void *data,
                           size_t size,
                           gl::BufferUsage usage,
-                          BufferFeedback *feedback) override;
+                          BufferFeedback *feedback,
+                          gl::ZeroFillRequired zeroFillRequired) override;
     angle::Result setSubData(const gl::Context *context,
                              gl::BufferBinding target,
                              const void *data,

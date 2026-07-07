@@ -140,10 +140,15 @@ constexpr angle::PackedEnumMap<QueueSubmitReason, const char *> kQueueSubmitReas
     {QueueSubmitReason::ForceSubmitStagedTexture,
      "Queue submission imminent due to staged texture updates"},
     {QueueSubmitReason::DrawOverlay, "Queue submission imminent due to drawing overlay"},
-    {QueueSubmitReason::InitNonZeroMemory,
-     "Queue submission imminent due to initializing non-zero memory"},
+    {QueueSubmitReason::InitializeMemory, "Queue submission imminent due to initializing memory"},
 }};
 }  // namespace
+
+std::ostream &operator<<(std::ostream &os, const QueueSubmitReason reason)
+{
+    os << kQueueSubmitReason[reason];
+    return os;
+}
 
 namespace vk
 {
@@ -2178,8 +2183,8 @@ void Renderer::onDestroy(vk::ErrorContext *context)
     cleanupGarbage(nullptr);
     ASSERT(!hasSharedGarbage());
     ASSERT(mOrphanedBufferBlockList.empty());
-    ASSERT(mOrphanedSamplers.empty());
-    ASSERT(mOrphanedSamplerYcbcrConversions.empty());
+    mSamplerCache.destroy(this);
+    mYuvConversionCache.destroy(this);
 
     mRefCountedEventRecycler.destroy(mDevice);
 
@@ -2980,6 +2985,7 @@ angle::Result Renderer::initializeMemoryAllocator(vk::ErrorContext *context)
 // - VK_QCOM_tile_memory_heap                          tileMemoryHeapFeatures (feature)
 //                                                     tileMemoryHeapProperties (property)
 // - VK_EXT_texture_compression_astc_3d                textureCompressionASTC_3D (feature)
+// - VK_AMD_shader_core_properties
 //
 
 void Renderer::appendDeviceExtensionFeaturesNotPromoted(
@@ -3195,6 +3201,11 @@ void Renderer::appendDeviceExtensionFeaturesNotPromoted(
     {
         vk::AddToPNextChain(deviceFeatures, &mTileMemoryHeapFeatures);
         vk::AddToPNextChain(deviceProperties, &mTileMemoryHeapProperties);
+    }
+
+    if (ExtensionFound(VK_AMD_SHADER_CORE_PROPERTIES_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(deviceProperties, &mShaderCorePropertiesAMD);
     }
 }
 
@@ -3677,6 +3688,9 @@ void Renderer::queryDeviceExtensionFeatures(const vk::ExtensionNameList &deviceE
     mTileMemoryHeapProperties.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_MEMORY_HEAP_PROPERTIES_QCOM;
 
+    mShaderCorePropertiesAMD       = {};
+    mShaderCorePropertiesAMD.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CORE_PROPERTIES_AMD;
+
     // Query features and properties.
     VkPhysicalDeviceFeatures2KHR deviceFeatures = {};
     deviceFeatures.sType                        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
@@ -3770,6 +3784,7 @@ void Renderer::queryDeviceExtensionFeatures(const vk::ExtensionNameList &deviceE
 #endif
     mTileMemoryHeapFeatures.pNext   = nullptr;
     mTileMemoryHeapProperties.pNext = nullptr;
+    mShaderCorePropertiesAMD.pNext  = nullptr;
 }
 
 // See comment above appendDeviceExtensionFeaturesNotPromoted.  Additional extensions are enabled
@@ -3796,6 +3811,7 @@ void Renderer::queryDeviceExtensionFeatures(const vk::ExtensionNameList &deviceE
 // - VK_EXT_full_screen_exclusive
 // - VK_EXT_image_compression_control
 // - VK_EXT_image_compression_control_swapchain
+// - VK_AMD_shader_core_properties
 //
 void Renderer::enableDeviceExtensionsNotPromoted(const vk::ExtensionNameList &deviceExtensionNames)
 {
@@ -4156,6 +4172,11 @@ void Renderer::enableDeviceExtensionsNotPromoted(const vk::ExtensionNameList &de
     {
         mEnabledDeviceExtensions.push_back(VK_QCOM_TILE_MEMORY_HEAP_EXTENSION_NAME);
         vk::AddToPNextChain(&mEnabledFeatures, &mTileMemoryHeapFeatures);
+    }
+
+    if (getFeatures().supportsAmdShaderCoreProperties.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_AMD_SHADER_CORE_PROPERTIES_EXTENSION_NAME);
     }
 }
 
@@ -6830,9 +6851,8 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
             IsAndroid());
 
     // There are use cases where synchronization is not performed properly when texture is modified
-    // between different contexts. To avoid rendering artifacts, force submit staged updates for
-    // Samsung.
-    ANGLE_FEATURE_CONDITION(&mFeatures, forceSubmitImmutableTextureUpdates, isSamsung);
+    // between different contexts. To avoid rendering artifacts, force submit staged updates.
+    ANGLE_FEATURE_CONDITION(&mFeatures, forceSubmitImmutableTextureUpdates, true);
 
     // Don't expose these 2 extensions on Samsung devices -
     // 1. GL_ANGLE_shader_pixel_local_storage
@@ -6966,6 +6986,10 @@ void Renderer::initOpenCLFeatures(const vk::ExtensionNameList &deviceExtensionNa
     ANGLE_FEATURE_CONDITION(&mFeatures, usesNativeBuiltinClKernel, isSamsung);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, debugClDumpCommandStream, false);
+
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsAmdShaderCoreProperties,
+        ExtensionFound(VK_AMD_SHADER_CORE_PROPERTIES_EXTENSION_NAME, deviceExtensionNames));
 
     // Set limits to expose to OpenCL.
     // This information cannot yet be queried from the Vulkan device.
@@ -7462,57 +7486,10 @@ void Renderer::cleanupGarbage(bool *anyGarbageCleanedOut)
     // Clean up RefCountedEvent that are done resetting
     anyCleaned = mRefCountedEventRecycler.cleanupResettingEvents(this) > 0 || anyCleaned;
 
-    // Clean up samplers that couldn't be destroyed when the share group was.
-    anyCleaned = cleanupOrphanedSamplers() || anyCleaned;
-
     if (anyGarbageCleanedOut != nullptr)
     {
         *anyGarbageCleanedOut = anyCleaned;
     }
-}
-
-bool Renderer::cleanupOrphanedSamplers()
-{
-    std::unique_lock<angle::SimpleMutex> lock(mOrphanedSamplerMutex);
-
-    if (mOrphanedSamplers.empty() && mOrphanedSamplerYcbcrConversions.empty())
-    {
-        return false;
-    }
-
-    // Destroy any sampler that is no longer referenced.
-    const size_t samplerCountBefore = mOrphanedSamplers.size();
-    // Using remove_if to avoid unnecessary reference counter updates.
-    mOrphanedSamplers.erase(
-        std::remove_if(mOrphanedSamplers.begin(), mOrphanedSamplers.end(),
-                       [](SharedSamplerPtr &sampler) { return sampler.unique(); }),
-        mOrphanedSamplers.end());
-    const size_t destroyedSamplerCount = samplerCountBefore - mOrphanedSamplers.size();
-
-    bool anyCleaned = destroyedSamplerCount > 0;
-
-    if (anyCleaned)
-    {
-        onDeallocateHandle(vk::HandleType::Sampler, static_cast<uint32_t>(destroyedSamplerCount));
-    }
-
-    // If all samplers are gone, destroy all the ycbcr conversion objects too.  We don't track which
-    // samplers use which ycbcr conversion objects, so they are destroyed conservatively.
-    if (mOrphanedSamplers.empty() && !mOrphanedSamplerYcbcrConversions.empty())
-    {
-        anyCleaned = true;
-        for (VkSamplerYcbcrConversion handle : mOrphanedSamplerYcbcrConversions)
-        {
-            vk::SamplerYcbcrConversion conversion;
-            conversion.setHandle(handle);
-            conversion.destroy(mDevice);
-        }
-        onDeallocateHandle(vk::HandleType::SamplerYcbcrConversion,
-                           static_cast<uint32_t>(mOrphanedSamplerYcbcrConversions.size()));
-        mOrphanedSamplerYcbcrConversions.clear();
-    }
-
-    return anyCleaned;
 }
 
 void Renderer::cleanupPendingSubmissionGarbage()
@@ -7642,6 +7619,10 @@ void Renderer::initializeDeviceExtensionEntryPointsFromCore() const
     if (mFeatures.supportsYUVSamplerConversion.enabled)
     {
         InitSamplerYcbcrKHRFunctionsFromCore();
+    }
+    if (mFeatures.supportsMaintenance5.enabled)
+    {
+        InitGetImageSubresourceLayoutEXTFunctionFromKHR();
     }
 }
 
@@ -7959,18 +7940,6 @@ void Renderer::releaseQueueSerialIndex(SerialIndex index)
 angle::Result Renderer::cleanupSomeGarbage(ErrorContext *context, bool *anyGarbageCleanedOut)
 {
     return mCommandQueue.cleanupSomeGarbage(context, 0, anyGarbageCleanedOut);
-}
-
-void Renderer::addSamplerToOrphanList(SharedSamplerPtr sampler)
-{
-    std::unique_lock<angle::SimpleMutex> lock(mOrphanedSamplerMutex);
-    mOrphanedSamplers.push_back(sampler);
-}
-
-void Renderer::addSamplerYcbcrConversionToOrphanList(VkSamplerYcbcrConversion conversion)
-{
-    std::unique_lock<angle::SimpleMutex> lock(mOrphanedSamplerMutex);
-    mOrphanedSamplerYcbcrConversions.push_back(conversion);
 }
 
 void Renderer::logFeatures() const

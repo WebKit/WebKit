@@ -2972,9 +2972,18 @@ void State::setReadFramebufferBinding(Framebuffer *framebuffer)
     mReadFramebuffer = framebuffer;
     mDirtyBits.set(state::DIRTY_BIT_READ_FRAMEBUFFER_BINDING);
 
-    if (mReadFramebuffer && mReadFramebuffer->hasAnyDirtyBit())
+    if (mReadFramebuffer)
     {
-        mDirtyObjects.set(state::DIRTY_OBJECT_READ_FRAMEBUFFER);
+        if (mReadFramebuffer->hasAnyDirtyBit())
+        {
+            mDirtyObjects.set(state::DIRTY_OBJECT_READ_FRAMEBUFFER);
+        }
+
+        if (isRobustResourceInitEnabled() && mReadFramebuffer->hasResourceThatNeedsInit())
+        {
+            mDirtyObjects.set(state::DIRTY_OBJECT_READ_ATTACHMENTS);
+            mDirtyObjects.set(state::DIRTY_OBJECT_READ_FRAMEBUFFER);
+        }
     }
 }
 
@@ -4066,13 +4075,13 @@ void State::setObjectDirty(GLenum target)
     switch (target)
     {
         case GL_READ_FRAMEBUFFER:
-            mDirtyObjects.set(state::DIRTY_OBJECT_READ_FRAMEBUFFER);
+            setReadFramebufferDirty();
             break;
         case GL_DRAW_FRAMEBUFFER:
             setDrawFramebufferDirty();
             break;
         case GL_FRAMEBUFFER:
-            mDirtyObjects.set(state::DIRTY_OBJECT_READ_FRAMEBUFFER);
+            setReadFramebufferDirty();
             setDrawFramebufferDirty();
             break;
         case GL_VERTEX_ARRAY:

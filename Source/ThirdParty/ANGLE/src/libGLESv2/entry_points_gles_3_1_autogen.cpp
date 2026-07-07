@@ -1220,8 +1220,7 @@ GLboolean GL_APIENTRY GL_IsProgramPipeline(GLuint pipeline)
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidateIsProgramPipeline(
-                    context, angle::EntryPoint::GLIsProgramPipeline, pipelinePacked);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif

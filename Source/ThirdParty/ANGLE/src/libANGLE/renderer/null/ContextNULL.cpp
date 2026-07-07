@@ -101,7 +101,6 @@ ContextNULL::ContextNULL(const gl::State &state,
     mExtensions.textureCompressionAstcOES       = true;
     mExtensions.compressedETC1RGB8TextureOES    = true;
     mExtensions.compressedETC1RGB8SubTextureEXT = true;
-    mExtensions.lossyEtcDecodeANGLE             = true;
     mExtensions.geometryShaderEXT               = true;
     mExtensions.geometryShaderOES               = true;
     mExtensions.multiDrawIndirectEXT            = true;
@@ -482,7 +481,7 @@ FenceNVImpl *ContextNULL::createFenceNV()
     return new FenceNVNULL();
 }
 
-SyncImpl *ContextNULL::createSync(const gl::Context *)
+SyncImpl *ContextNULL::createSync()
 {
     return new SyncNULL();
 }

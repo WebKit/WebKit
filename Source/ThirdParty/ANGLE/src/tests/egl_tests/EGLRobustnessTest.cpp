@@ -42,6 +42,8 @@ class EGLRobustnessTest : public ANGLETest<>
         std::vector<EGLAttrib> displayAttributes;
         displayAttributes.push_back(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
         displayAttributes.push_back(platform.renderer);
+        displayAttributes.push_back(EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE);
+        displayAttributes.push_back(mOSWindow->getNativeDisplayPlatformType());
         displayAttributes.push_back(EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE);
         displayAttributes.push_back(platform.majorVersion);
         displayAttributes.push_back(EGL_PLATFORM_ANGLE_MAX_VERSION_MINOR_ANGLE);
@@ -865,6 +867,44 @@ void main() {
     }
 }
 
+// Test drawing with an out-of-bounds index in an index buffer.
+// Under robust access, we only expect that the draw call doesn't crash.
+TEST_P(EGLRobustnessTestES3, DrawElementsWithOutOfBoundsIndex)
+{
+    ANGLE_SKIP_TEST_IF(!mInitialized);
+
+    ANGLE_SKIP_TEST_IF(
+        !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_KHR_create_context") ||
+        !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_EXT_create_context_robustness"));
+
+    createRobustContext(EGL_NO_RESET_NOTIFICATION_EXT, EGL_NO_CONTEXT);
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    glUseProgram(program);
+
+    // Provide only 3 vertices (indices 0, 1, 2)
+    const GLfloat vertices[] = {
+        -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+    };
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    GLint posLocation = glGetAttribLocation(program, essl3_shaders::PositionAttrib());
+    ASSERT_NE(-1, posLocation);
+    glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(posLocation);
+
+    // Index buffer containing an OOB index (e.g. 100)
+    const GLushort indices[] = {0, 1, 100};
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    // Draw. Under robustness, this must not crash the GPU/driver.
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, nullptr);
+}
+
 // Test context destruction after recovering from a long running task.
 TEST_P(EGLRobustnessTest, DISABLED_LongRunningTaskVulkanShutdown)
 {
@@ -880,6 +920,7 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLRobustnessTestES3);
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLRobustnessTestES31);
 ANGLE_INSTANTIATE_TEST(EGLRobustnessTest,
                        WithNoFixture(ES2_VULKAN()),
+                       WithNoFixture(ES2_METAL()),
                        WithNoFixture(ES2_D3D9()),
                        WithNoFixture(ES2_D3D11()),
                        WithNoFixture(ES2_OPENGL()),
@@ -887,6 +928,7 @@ ANGLE_INSTANTIATE_TEST(EGLRobustnessTest,
                        WithNoFixture(ES2_VULKAN_SWIFTSHADER()));
 ANGLE_INSTANTIATE_TEST(EGLRobustnessTestES3,
                        WithNoFixture(ES3_VULKAN()),
+                       WithNoFixture(ES3_METAL()),
                        WithNoFixture(ES3_D3D11()),
                        WithNoFixture(ES3_OPENGL()),
                        WithNoFixture(ES3_OPENGLES()),

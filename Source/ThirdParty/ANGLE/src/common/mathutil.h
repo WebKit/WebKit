@@ -1584,12 +1584,8 @@ inline uint16_t RotR16(uint16_t x, int8_t r)
 #    define ANGLE_ROTL64(x, y) ::rx::RotL64(x, y)
 #    define ANGLE_ROTR16(x, y) ::rx::RotR16(x, y)
 
-#endif  // namespace rx
+#endif  // defined(_MSC_VER)
 
-constexpr unsigned int Log2(unsigned int bytes)
-{
-    return bytes == 1 ? 0 : (1 + Log2(bytes / 2));
-}
 }  // namespace rx
 
 #endif  // COMMON_MATHUTIL_H_

@@ -50,13 +50,6 @@ bool ValidateBindTexture(const Context *context,
                          angle::EntryPoint entryPoint,
                          TextureType targetPacked,
                          TextureID texturePacked);
-bool ValidateBlendColor(const PrivateState &state,
-                        ErrorSet *errors,
-                        angle::EntryPoint entryPoint,
-                        GLfloat red,
-                        GLfloat green,
-                        GLfloat blue,
-                        GLfloat alpha);
 bool ValidateBlendEquation(const PrivateState &state,
                            ErrorSet *errors,
                            angle::EntryPoint entryPoint,
@@ -94,28 +87,6 @@ bool ValidateCheckFramebufferStatus(const Context *context,
                                     angle::EntryPoint entryPoint,
                                     GLenum target);
 bool ValidateClear(const Context *context, angle::EntryPoint entryPoint, GLbitfield mask);
-bool ValidateClearColor(const PrivateState &state,
-                        ErrorSet *errors,
-                        angle::EntryPoint entryPoint,
-                        GLfloat red,
-                        GLfloat green,
-                        GLfloat blue,
-                        GLfloat alpha);
-bool ValidateClearDepthf(const PrivateState &state,
-                         ErrorSet *errors,
-                         angle::EntryPoint entryPoint,
-                         GLfloat d);
-bool ValidateClearStencil(const PrivateState &state,
-                          ErrorSet *errors,
-                          angle::EntryPoint entryPoint,
-                          GLint s);
-bool ValidateColorMask(const PrivateState &state,
-                       ErrorSet *errors,
-                       angle::EntryPoint entryPoint,
-                       GLboolean red,
-                       GLboolean green,
-                       GLboolean blue,
-                       GLboolean alpha);
 bool ValidateCompileShader(const Context *context,
                            angle::EntryPoint entryPoint,
                            ShaderProgramID shaderPacked);
@@ -160,7 +131,6 @@ bool ValidateCopyTexSubImage2D(const Context *context,
                                GLint y,
                                GLsizei width,
                                GLsizei height);
-bool ValidateCreateProgram(const Context *context, angle::EntryPoint entryPoint);
 bool ValidateCreateShader(const Context *context,
                           angle::EntryPoint entryPoint,
                           ShaderType typePacked);
@@ -194,10 +164,6 @@ bool ValidateDepthFunc(const PrivateState &state,
                        ErrorSet *errors,
                        angle::EntryPoint entryPoint,
                        GLenum func);
-bool ValidateDepthMask(const PrivateState &state,
-                       ErrorSet *errors,
-                       angle::EntryPoint entryPoint,
-                       GLboolean flag);
 bool ValidateDepthRangef(const PrivateState &state,
                          ErrorSet *errors,
                          angle::EntryPoint entryPoint,
@@ -234,8 +200,6 @@ bool ValidateEnableVertexAttribArray(const PrivateState &state,
                                      ErrorSet *errors,
                                      angle::EntryPoint entryPoint,
                                      GLuint index);
-bool ValidateFinish(const Context *context, angle::EntryPoint entryPoint);
-bool ValidateFlush(const Context *context, angle::EntryPoint entryPoint);
 bool ValidateFramebufferRenderbuffer(const Context *context,
                                      angle::EntryPoint entryPoint,
                                      GLenum target,
@@ -309,7 +273,6 @@ bool ValidateGetBufferParameteriv(const Context *context,
                                   BufferBinding targetPacked,
                                   BufferParam pnamePacked,
                                   const GLint *params);
-bool ValidateGetError(const Context *context, angle::EntryPoint entryPoint);
 bool ValidateGetFloatv(const Context *context,
                        angle::EntryPoint entryPoint,
                        GLenum pname,
@@ -408,26 +371,10 @@ bool ValidateHint(const PrivateState &state,
                   angle::EntryPoint entryPoint,
                   GLenum target,
                   GLenum mode);
-bool ValidateIsBuffer(const Context *context, angle::EntryPoint entryPoint, BufferID bufferPacked);
 bool ValidateIsEnabled(const PrivateState &state,
                        ErrorSet *errors,
                        angle::EntryPoint entryPoint,
                        GLenum cap);
-bool ValidateIsFramebuffer(const Context *context,
-                           angle::EntryPoint entryPoint,
-                           FramebufferID framebufferPacked);
-bool ValidateIsProgram(const Context *context,
-                       angle::EntryPoint entryPoint,
-                       ShaderProgramID programPacked);
-bool ValidateIsRenderbuffer(const Context *context,
-                            angle::EntryPoint entryPoint,
-                            RenderbufferID renderbufferPacked);
-bool ValidateIsShader(const Context *context,
-                      angle::EntryPoint entryPoint,
-                      ShaderProgramID shaderPacked);
-bool ValidateIsTexture(const Context *context,
-                       angle::EntryPoint entryPoint,
-                       TextureID texturePacked);
 bool ValidateLineWidth(const PrivateState &state,
                        ErrorSet *errors,
                        angle::EntryPoint entryPoint,
@@ -438,13 +385,8 @@ bool ValidateLinkProgram(const Context *context,
 bool ValidatePixelStorei(const PrivateState &state,
                          ErrorSet *errors,
                          angle::EntryPoint entryPoint,
-                         GLenum pname,
+                         PackUnpackParameter pnamePacked,
                          GLint param);
-bool ValidatePolygonOffset(const PrivateState &state,
-                           ErrorSet *errors,
-                           angle::EntryPoint entryPoint,
-                           GLfloat factor,
-                           GLfloat units);
 bool ValidateReadPixels(const Context *context,
                         angle::EntryPoint entryPoint,
                         GLint x,
@@ -454,18 +396,12 @@ bool ValidateReadPixels(const Context *context,
                         GLenum format,
                         GLenum type,
                         const void *pixels);
-bool ValidateReleaseShaderCompiler(const Context *context, angle::EntryPoint entryPoint);
 bool ValidateRenderbufferStorage(const Context *context,
                                  angle::EntryPoint entryPoint,
                                  GLenum target,
                                  GLenum internalformat,
                                  GLsizei width,
                                  GLsizei height);
-bool ValidateSampleCoverage(const PrivateState &state,
-                            ErrorSet *errors,
-                            angle::EntryPoint entryPoint,
-                            GLfloat value,
-                            GLboolean invert);
 bool ValidateScissor(const PrivateState &state,
                      ErrorSet *errors,
                      angle::EntryPoint entryPoint,
@@ -499,10 +435,6 @@ bool ValidateStencilFuncSeparate(const PrivateState &state,
                                  GLenum func,
                                  GLint ref,
                                  GLuint mask);
-bool ValidateStencilMask(const PrivateState &state,
-                         ErrorSet *errors,
-                         angle::EntryPoint entryPoint,
-                         GLuint mask);
 bool ValidateStencilMaskSeparate(const PrivateState &state,
                                  ErrorSet *errors,
                                  angle::EntryPoint entryPoint,

@@ -334,7 +334,7 @@ class FramebufferVk : public FramebufferImpl
 
     void insertCache(ContextVk *contextVk,
                      const vk::FramebufferDesc &desc,
-                     vk::FramebufferHelper &&newFramebuffer);
+                     vk::Framebuffer &&newFramebuffer);
 
     WindowSurfaceVk *mBackbuffer;
 

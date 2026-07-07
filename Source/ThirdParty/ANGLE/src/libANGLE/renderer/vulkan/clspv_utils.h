@@ -52,6 +52,11 @@ struct ClspvConstantDataBufferInfo
     std::vector<uint8_t> bufferData;
 };
 
+struct ClspvWorkgroupVariableSize
+{
+    uint32_t size = 0;
+};
+
 namespace clspv_cl
 {
 

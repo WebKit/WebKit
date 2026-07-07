@@ -42,17 +42,28 @@ angle::Result Buffer9::setData(const gl::Context *context,
                                const void *data,
                                size_t size,
                                gl::BufferUsage usage,
-                               BufferFeedback *feedback)
+                               BufferFeedback *feedback,
+                               gl::ZeroFillRequired zeroFillRequired)
 {
     if (size > mMemory.size())
     {
         ANGLE_CHECK_GL_ALLOC(GetImplAs<Context9>(context), mMemory.resize(size));
     }
 
-    mSize = size;
-    if (data && size > 0)
+    const void *dataForImpl = data;
+    if (zeroFillRequired == gl::ZeroFillRequired::Yes)
     {
-        memcpy(mMemory.data(), data, size);
+        const angle::MemoryBuffer *scratchBuffer = nullptr;
+        ANGLE_CHECK_GL_ALLOC(
+            GetImplAs<Context9>(context),
+            context->getZeroFilledBuffer(static_cast<size_t>(size), &scratchBuffer));
+        dataForImpl = scratchBuffer->data();
+    }
+
+    mSize = size;
+    if (dataForImpl && size > 0)
+    {
+        memcpy(mMemory.data(), dataForImpl, size);
     }
 
     updateD3DBufferUsage(context, usage, feedback);

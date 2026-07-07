@@ -1620,11 +1620,15 @@ cl_int ValidateSetKernelArg(cl_kernel kernel,
                             size_t arg_size,
                             const void *arg_value)
 {
+    static_assert(sizeof(cl_mem) == sizeof(cl_sampler), "api object size check failed");
+    static_assert(sizeof(cl_mem) == sizeof(cl_command_queue), "api object size check failed");
+
     // CL_INVALID_KERNEL if kernel is not a valid kernel object.
     if (!Kernel::IsValid(kernel))
     {
         return CL_INVALID_KERNEL;
     }
+
     const Kernel &krnl = kernel->cast<Kernel>();
 
     // CL_INVALID_ARG_INDEX if arg_index is not a valid argument index.
@@ -1633,84 +1637,187 @@ cl_int ValidateSetKernelArg(cl_kernel kernel,
         return CL_INVALID_ARG_INDEX;
     }
 
-    if (arg_size == sizeof(cl_mem) && arg_value != nullptr)
-    {
-        const std::string &typeName = krnl.getInfo().args[arg_index].typeName;
+    const std::string &typeName = krnl.getInfo().args[arg_index].typeName;
 
-        // CL_INVALID_MEM_OBJECT for an argument declared to be a memory object
-        // when the specified arg_value is not a valid memory object.
-        if (typeName == "image1d_t")
+    // [1/6] Checking for special case for sampler type, on invalid sampler arguments possible error
+    // codes are CL_INVALID_SAMPLER and CL_INVALID_ARG_SIZE.
+    if (typeName == "sampler_t")
+    {
+
+        if (arg_size != sizeof(cl_sampler))
+        {
+            //  If the argument is of type sampler_t, the arg_size value must be equal to
+            //  sizeof(cl_sampler)
+            return CL_INVALID_ARG_SIZE;
+        }
+
+        if ((arg_value == nullptr) ||
+            (!Sampler::IsValid(*static_cast<const cl_sampler *>(arg_value))))
+        {
+            // CL_INVALID_SAMPLER for an argument declared to be of type sampler_t when the
+            // specified arg_value is not a valid sampler object.
+            return CL_INVALID_SAMPLER;
+        }
+    }
+
+    // [2/6] Checking for special case for queue type
+    if (typeName == "queue_t")
+    {
+
+        if (arg_size != sizeof(cl_command_queue))
+        {
+            //  If the argument is of type queue_t, the arg_size value must be equal to
+            //  sizeof(cl_command_queue)
+            return CL_INVALID_ARG_SIZE;
+        }
+
+        const cl_command_queue queue = *static_cast<const cl_command_queue *>(arg_value);
+        if (!CommandQueue::IsValid(queue) || !queue->cast<CommandQueue>().isOnDevice())
+        {
+            // CL_INVALID_DEVICE_QUEUE for an argument declared to be of type queue_t when the
+            // specified arg_value is not a valid device queue object. This error code is missing
+            // before version 2.0. For versions before, it will be CL_INVALID_ARG_VALUE if arg_value
+            // specified is not a valid value.
+            return krnl.getProgram().getContext().getPlatform().isVersionOrNewer(2u, 0u)
+                       ? CL_INVALID_DEVICE_QUEUE
+                       : CL_INVALID_ARG_VALUE;
+        }
+    }
+
+    // [3/6] Checking for memory objects (image/buffer) types
+    static constexpr std::pair<std::string_view, MemObjectType> imageTypes[] = {
+        {"image1d_t", MemObjectType::Image1D},
+        {"image2d_t", MemObjectType::Image2D},
+        {"image3d_t", MemObjectType::Image3D},
+        {"image1d_array_t", MemObjectType::Image1D_Array},
+        {"image2d_array_t", MemObjectType::Image2D_Array},
+        {"image1d_buffer_t", MemObjectType::Image1D_Buffer},
+    };
+
+    for (const auto &entry : imageTypes)
+    {
+        if (typeName == entry.first)
         {
             const cl_mem image = *static_cast<const cl_mem *>(arg_value);
-            if (!Image::IsValid(image) || image->cast<Image>().getType() != MemObjectType::Image1D)
+            if (!Image::IsValid(image) || image->cast<Image>().getType() != entry.second)
             {
+                // CL_INVALID_MEM_OBJECT for an argument declared to be a memory object
+                // when the specified arg_value is not a valid memory object.
                 return CL_INVALID_MEM_OBJECT;
             }
-        }
-        else if (typeName == "image2d_t")
-        {
-            const cl_mem image = *static_cast<const cl_mem *>(arg_value);
-            if (!Image::IsValid(image) || image->cast<Image>().getType() != MemObjectType::Image2D)
+
+            if (arg_size != sizeof(cl_mem))
             {
-                return CL_INVALID_MEM_OBJECT;
+                // if the argument is a memory object and arg_size != sizeof(cl_mem)
+                return CL_INVALID_ARG_SIZE;
+            }
+
+            break;
+        }
+    }
+
+    // [4/6] Now check when argument is declared with the local qualifier
+    if (krnl.getInfo().args[arg_index].addressQualifier == CL_KERNEL_ARG_ADDRESS_LOCAL)
+    {
+        // CL_INVALID_ARG_SIZE if arg_size is zero and the argument is declared with the
+        // local qualifier
+        if (arg_size == 0)
+        {
+            return CL_INVALID_ARG_SIZE;
+        }
+
+        // the arg_value entry must be NULL
+        if (arg_value != nullptr)
+        {
+            return CL_INVALID_ARG_VALUE;
+        }
+
+        // CL_MAX_SIZE_RESTRICTION_EXCEEDED if the size in bytes of the memory object (if the
+        // argument is a memory object) or arg_size (if the argument is declared with local
+        // qualifier) exceeds a language- specified maximum size restriction for this argument, such
+        // as the MaxByteOffset SPIR-V decoration. This error code is missing before version 2.2.
+        for (const auto &device : krnl.getProgram().getDevices())
+        {
+            cl_ulong maxLocalMemSize      = 0;
+            cl_ulong compiledLocalMemSize = krnl.getImpl().getCompiledLocalMemSize(*device);
+            if (ANGLE_UNLIKELY(IsError(device->getImpl<rx::CLDeviceImpl>().getInfoULong(
+                    cl::DeviceInfo::LocalMemSize, &maxLocalMemSize))))
+            {
+                // The implementation shouldn't come this far if device query can report errors.
+                ASSERT(false);
+            }
+            if (arg_size + compiledLocalMemSize > maxLocalMemSize)
+            {
+                if (krnl.getProgram().getContext().getPlatform().getVersion() >
+                    CL_MAKE_VERSION(2, 1, 0))
+                {
+                    return CL_MAX_SIZE_RESTRICTION_EXCEEDED;
+                }
+                else
+                {
+                    return CL_OUT_OF_RESOURCES;
+                }
             }
         }
-        else if (typeName == "image3d_t")
+    }
+    else
+    {
+        // [5/6] If arg is not local qualifier, checking for pointer type
+        if (typeName.ends_with('*'))
         {
-            const cl_mem image = *static_cast<const cl_mem *>(arg_value);
-            if (!Image::IsValid(image) || image->cast<Image>().getType() != MemObjectType::Image3D)
+            if (arg_size != sizeof(cl_mem *))
             {
-                return CL_INVALID_MEM_OBJECT;
+                // The arg_size must be exactly the size of the host-side memory object reference,
+                // which is the size of the cl_mem handle itself.
+                return CL_INVALID_ARG_SIZE;
             }
         }
-        else if (typeName == "image1d_array_t")
+    }
+
+    // [6/6] Finally check for non-memory objects, now only POD left.
+    static constexpr std::pair<std::string_view, size_t> baseTypeSizes[] = {
+        {"bool", sizeof(cl_bool)},   {"char", sizeof(cl_char)},     {"uchar", sizeof(cl_uchar)},
+        {"short", sizeof(cl_short)}, {"ushort", sizeof(cl_ushort)}, {"int", sizeof(cl_int)},
+        {"uint", sizeof(cl_uint)},   {"long", sizeof(cl_long)},     {"ulong", sizeof(cl_ulong)},
+        {"half", sizeof(cl_half)},   {"float", sizeof(cl_float)},   {"double", sizeof(cl_double)},
+    };
+
+    // Parse vector suffix (e.g., float4)
+    size_t vecWidth     = 1;
+    std::string base    = typeName;
+    size_t vecSuffixIdx = base.size();
+    while (vecSuffixIdx > 0 && std::isdigit(base[vecSuffixIdx - 1]))
+    {
+        --vecSuffixIdx;
+    }
+
+    if (vecSuffixIdx < base.size())
+    {
+        vecWidth = std::stoul(base.substr(vecSuffixIdx));
+        base.resize(vecSuffixIdx);
+    }
+
+    // Find the size of this basic data type
+    const auto it =
+        std::ranges::find_if(baseTypeSizes, [&](const auto &entry) { return entry.first == base; });
+
+    if (it != std::end(baseTypeSizes))
+    {
+        size_t baseSize = it->second;
+
+        // OpenCL vec3 is padded as vec4
+        if (vecWidth == 3)
         {
-            const cl_mem image = *static_cast<const cl_mem *>(arg_value);
-            if (!Image::IsValid(image) ||
-                image->cast<Image>().getType() != MemObjectType::Image1D_Array)
-            {
-                return CL_INVALID_MEM_OBJECT;
-            }
+            vecWidth = 4;
         }
-        else if (typeName == "image2d_array_t")
+
+        const size_t destStride = baseSize * vecWidth;
+
+        if (arg_size != destStride)
         {
-            const cl_mem image = *static_cast<const cl_mem *>(arg_value);
-            if (!Image::IsValid(image) ||
-                image->cast<Image>().getType() != MemObjectType::Image2D_Array)
-            {
-                return CL_INVALID_MEM_OBJECT;
-            }
-        }
-        else if (typeName == "image1d_buffer_t")
-        {
-            const cl_mem image = *static_cast<const cl_mem *>(arg_value);
-            if (!Image::IsValid(image) ||
-                image->cast<Image>().getType() != MemObjectType::Image1D_Buffer)
-            {
-                return CL_INVALID_MEM_OBJECT;
-            }
-        }
-        // CL_INVALID_SAMPLER for an argument declared to be of type sampler_t
-        // when the specified arg_value is not a valid sampler object.
-        else if (typeName == "sampler_t")
-        {
-            static_assert(sizeof(cl_mem) == sizeof(cl_sampler), "api object size check failed");
-            if (!Sampler::IsValid(*static_cast<const cl_sampler *>(arg_value)))
-            {
-                return CL_INVALID_SAMPLER;
-            }
-        }
-        // CL_INVALID_DEVICE_QUEUE for an argument declared to be of type queue_t
-        // when the specified arg_value is not a valid device queue object.
-        else if (typeName == "queue_t")
-        {
-            static_assert(sizeof(cl_mem) == sizeof(cl_command_queue),
-                          "api object size check failed");
-            const cl_command_queue queue = *static_cast<const cl_command_queue *>(arg_value);
-            if (!CommandQueue::IsValid(queue) || !queue->cast<CommandQueue>().isOnDevice())
-            {
-                return CL_INVALID_DEVICE_QUEUE;
-            }
+            // CL_INVALID_ARG_SIZE if arg_size does not match the size of the data type for
+            // an argument that is not a memory object
+            return CL_INVALID_ARG_SIZE;
         }
     }
 
@@ -2531,13 +2638,19 @@ cl_int ValidateEnqueueNDRangeKernel(cl_command_queue command_queue,
         }
     }
 
+    cl_ulong localMemSize    = 0;
     cl_ulong maxLocalMemSize = 0;
-    if (IsError(queue.getDevice().getInfo(cl::DeviceInfo::LocalMemSize, sizeof(maxLocalMemSize),
-                                          &maxLocalMemSize, nullptr)))
+    if (ANGLE_UNLIKELY(
+            IsError(krnl.getWorkGroupInfo(const_cast<cl_device_id>(device.getNative()),
+                                          cl::KernelWorkGroupInfo::LocalMemSize,
+                                          sizeof(localMemSize), &localMemSize, nullptr)) ||
+            IsError(device.getImpl<rx::CLDeviceImpl>().getInfoULong(cl::DeviceInfo::LocalMemSize,
+                                                                    &maxLocalMemSize))))
     {
-        return CL_INVALID_VALUE;
+        // The implementation shouldn't come this far if device query can report errors.
+        ASSERT(false);
     }
-    if (krnl.getImpl().getLocalMemSizeUsed(queue.getDevice()) > maxLocalMemSize)
+    if (localMemSize > maxLocalMemSize)
     {
         ERR() << "Kernel exceeds the maximum local mem size capability";
         return CL_OUT_OF_RESOURCES;

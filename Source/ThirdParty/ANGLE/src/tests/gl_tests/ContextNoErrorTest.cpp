@@ -592,6 +592,57 @@ void main()
     }
 }
 
+// Regression test for a parallel-link race when validation is skipped.
+//
+// With GL_KHR_no_error, GL_LinkProgram does not call ValidateLinkProgram and therefore a
+// previously in-flight asynchronous link is not necessarily resolved before the front-end
+// processes a relink.
+TEST_P(ContextNoErrorTest, ParallelLinkRelinkRace)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_KHR_parallel_shader_compile"));
+
+    // Unique source so the in-memory program cache cannot short-circuit the
+    // link to a synchronous cache hit.
+    constexpr char kVS[] = R"(// ParallelLinkRelinkRace
+attribute vec4 a_position;
+varying vec4 v;
+void main() { v = a_position; gl_Position = a_position; })";
+    constexpr char kFS[] = R"(// ParallelLinkRelinkRace
+precision mediump float;
+varying vec4 v;
+uniform vec4 u;
+void main() { gl_FragColor = v + u; })";
+
+    GLuint vs       = glCreateShader(GL_VERTEX_SHADER);
+    const char *vsp = kVS;
+    glShaderSource(vs, 1, &vsp, nullptr);
+    glCompileShader(vs);
+
+    GLuint fs       = glCreateShader(GL_FRAGMENT_SHADER);
+    const char *fsp = kFS;
+    glShaderSource(fs, 1, &fsp, nullptr);
+    glCompileShader(fs);
+
+    GLuint prog = glCreateProgram();
+    glAttachShader(prog, vs);
+    glAttachShader(prog, fs);
+
+    // Link once, it may spawn an asynchronous link job.
+    glLinkProgram(prog);
+
+    // Linking again without resolving the ongoing link should work.
+    glLinkProgram(prog);
+
+    // Ensure link succeeded
+    GLint linked = 0;
+    glGetProgramiv(prog, GL_LINK_STATUS, &linked);
+    EXPECT_NE(linked, 0);
+
+    glDeleteProgram(prog);
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ContextNoErrorTest);
 
 #define ANGLE_ALL_MULTIDRAW_TEST_PLATFORMS_ES3                                             \
