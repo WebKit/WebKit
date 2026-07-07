@@ -124,15 +124,25 @@ angle::Result BufferMtl::setData(const gl::Context *context,
                                  const void *data,
                                  size_t intendedSize,
                                  gl::BufferUsage usage,
-                                 BufferFeedback *feedback)
+                                 BufferFeedback *feedback,
+                                 gl::ZeroFillRequired zeroFillRequired)
 {
+    const void *dataForImpl = data;
+    if (zeroFillRequired == gl::ZeroFillRequired::Yes)
+    {
+        const angle::MemoryBuffer *scratchBuffer = nullptr;
+        ANGLE_CHECK_GL_ALLOC(mtl::GetImpl(context),
+                             context->getZeroFilledBuffer(intendedSize, &scratchBuffer));
+        dataForImpl = scratchBuffer->data();
+    }
+
     ANGLE_TRY(setDataImpl(context, target, intendedSize, usage, feedback));
-    if (data == nullptr || intendedSize == 0)
+    if (dataForImpl == nullptr || intendedSize == 0)
     {
         return angle::Result::Continue;
     }
-    ANGLE_UNSAFE_BUFFERS(
-        angle::Span<const uint8_t> dataSpan(static_cast<const uint8_t *>(data), intendedSize));
+    ANGLE_UNSAFE_BUFFERS(angle::Span<const uint8_t> dataSpan(
+        static_cast<const uint8_t *>(dataForImpl), intendedSize));
     return setSubDataImpl(context, dataSpan, 0, feedback);
 }
 
@@ -465,13 +475,14 @@ void BufferMtl::clearConversionBuffers()
 }
 
 template <typename T>
-static std::vector<DrawIndexRange> CalculateDrawIndexRanges(angle::Span<const T> bufferData)
+static std::vector<DrawIndexRange> CalculateDrawIndexRanges(angle::Span<const uint8_t> data)
 {
     std::vector<DrawIndexRange> result;
-    constexpr T restartMarker = std::numeric_limits<T>::max();
-    const auto begin          = bufferData.begin();
-    const auto end            = bufferData.end();
-    auto it                   = begin;
+    angle::Span<const T> elements = angle::reinterpret_span<const T>(data);
+    constexpr T restartMarker     = std::numeric_limits<T>::max();
+    const auto begin              = elements.cbegin();
+    const auto end                = elements.cend();
+    auto it                       = begin;
     while (it != end)
     {
         if (*it == restartMarker)
@@ -484,7 +495,8 @@ static std::vector<DrawIndexRange> CalculateDrawIndexRanges(angle::Span<const T>
         {
             ++it;
         } while (it != end && *it != restartMarker);
-        result.emplace_back(std::distance(begin, rangeBegin), std::distance(begin, it) - 1);
+        result.emplace_back(static_cast<size_t>(std::distance(begin, rangeBegin)),
+                            static_cast<size_t>(std::distance(begin, it)) - 1);
     }
     return result;
 }
@@ -495,24 +507,18 @@ const std::vector<DrawIndexRange> &BufferMtl::getDrawIndexRanges(ContextMtl *ctx
     if (!mDrawIndexRangeCache || mDrawIndexRangeCache->indexType != indexType)
     {
         mDrawIndexRangeCache.reset();
-        mtl::BufferRef idxBuffer = getCurrentBuffer();
-        angle::Span<const uint8_t> data = idxBuffer->mapReadOnly(ctx);
-        const void *indices      = data.data();
-        size_t size              = this->size();
+        angle::Span<const uint8_t> data = getBufferDataReadOnly(ctx, 0);
         std::vector<DrawIndexRange> ranges;
         switch (indexType)
         {
             case gl::DrawElementsType::UnsignedByte:
-                ranges = CalculateDrawIndexRanges<uint8_t>(
-                    {static_cast<const uint8_t *>(indices), size});
+                ranges = CalculateDrawIndexRanges<uint8_t>(data);
                 break;
             case gl::DrawElementsType::UnsignedShort:
-                ranges = CalculateDrawIndexRanges<uint16_t>(
-                    {static_cast<const uint16_t *>(indices), size / 2});
+                ranges = CalculateDrawIndexRanges<uint16_t>(data);
                 break;
             case gl::DrawElementsType::UnsignedInt:
-                ranges = CalculateDrawIndexRanges<uint32_t>(
-                    {static_cast<const uint32_t *>(indices), size / 4});
+                ranges = CalculateDrawIndexRanges<uint32_t>(data);
                 break;
             default:
                 ASSERT(false);
@@ -527,20 +533,19 @@ const std::vector<DrawIndexRange> BufferMtl::GetDrawIndexRangesFromClientData(
     GLint count,
     const void *indices)
 {
+    angle::Span<const uint8_t> data(static_cast<const uint8_t *>(indices),
+                                    static_cast<size_t>(count) * gl::GetDrawElementsTypeSize(type));
     std::vector<DrawIndexRange> ranges;
     switch (type)
     {
         case gl::DrawElementsType::UnsignedByte:
-            ranges = CalculateDrawIndexRanges<uint8_t>(
-                {static_cast<const uint8_t *>(indices), static_cast<size_t>(count)});
+            ranges = CalculateDrawIndexRanges<uint8_t>(data);
             break;
         case gl::DrawElementsType::UnsignedShort:
-            ranges = CalculateDrawIndexRanges<uint16_t>(
-                {static_cast<const uint16_t *>(indices), static_cast<size_t>(count)});
+            ranges = CalculateDrawIndexRanges<uint16_t>(data);
             break;
         case gl::DrawElementsType::UnsignedInt:
-            ranges = CalculateDrawIndexRanges<uint32_t>(
-                {static_cast<const uint32_t *>(indices), static_cast<size_t>(count)});
+            ranges = CalculateDrawIndexRanges<uint32_t>(data);
             break;
         default:
             ASSERT(false);

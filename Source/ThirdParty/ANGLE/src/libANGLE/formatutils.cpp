@@ -41,7 +41,7 @@ constexpr uint32_t PackTypeInfo(GLuint bytes, bool specialized)
 {
     // static_assert within constexpr requires c++17
     // static_assert(isPow2(bytes));
-    return bytes | (rx::Log2(bytes) << 8) | (specialized << 16);
+    return bytes | (log2(bytes) << 8) | (specialized << 16);
 }
 
 }  // anonymous namespace
@@ -1339,14 +1339,6 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     //                         | Internal format  |sized|D |S |X | Format          | Type            | Component type        | Texture supported                                    | Filterable    | Texture attachment                                   | Renderbuffer   | Blend
     AddDepthStencilFormat(&map, GL_STENCIL_INDEX8, true, 0, 8, 0, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, GL_UNSIGNED_NORMALIZED, RequireESOrExt<3, 2, &Extensions::textureStencil8OES>, NeverSupported, RequireESOrExt<3, 2, &Extensions::textureStencil8OES>, RequireES<1, 0>, NeverSupported);
 
-    // From GL_ANGLE_lossy_etc_decode
-    //                       | Internal format                                                |W |H |D |BS |CC| SRGB | Texture supported                      | Filterable     | Texture attachment | Renderbuffer  | Blend
-    AddCompressedFormat(&map, GL_ETC1_RGB8_LOSSY_DECODE_ANGLE,                                 4, 4, 1, 64, 3, false, RequireExt<&Extensions::lossyEtcDecodeANGLE>, AlwaysSupported, NeverSupported,      NeverSupported, NeverSupported);
-    AddCompressedFormat(&map, GL_COMPRESSED_RGB8_LOSSY_DECODE_ETC2_ANGLE,                      4, 4, 1, 64, 3, false, RequireExt<&Extensions::lossyEtcDecodeANGLE>, AlwaysSupported, NeverSupported,      NeverSupported, NeverSupported);
-    AddCompressedFormat(&map, GL_COMPRESSED_SRGB8_LOSSY_DECODE_ETC2_ANGLE,                     4, 4, 1, 64, 3, true,  RequireExt<&Extensions::lossyEtcDecodeANGLE>, AlwaysSupported, NeverSupported,      NeverSupported, NeverSupported);
-    AddCompressedFormat(&map, GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE,  4, 4, 1, 64, 3, false, RequireExt<&Extensions::lossyEtcDecodeANGLE>, AlwaysSupported, NeverSupported,      NeverSupported, NeverSupported);
-    AddCompressedFormat(&map, GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE, 4, 4, 1, 64, 3, true,  RequireExt<&Extensions::lossyEtcDecodeANGLE>, AlwaysSupported, NeverSupported,      NeverSupported, NeverSupported);
-
     // From GL_EXT_texture_norm16
     //                 | Internal format    |sized| R | G | B | A |S | Format | Type             | Component type        | SRGB | Texture supported                        | Filterable     | Texture attachment                                                          | Renderbuffer                                                                | Blend
     AddRGBAFormat(&map, GL_R16_EXT,          true, 16,  0,  0,  0, 0, GL_RED,  GL_UNSIGNED_SHORT, GL_UNSIGNED_NORMALIZED, false, RequireExt<&Extensions::textureNorm16EXT>, AlwaysSupported, RequireExt<&Extensions::textureNorm16EXT>,                                    RequireExt<&Extensions::textureNorm16EXT>,                                    RequireExt<&Extensions::textureNorm16EXT>);
@@ -2088,6 +2080,11 @@ bool InternalFormat::computeSkipBytes(GLenum formatType,
                                       GLuint skipImages,
                                       GLuint *resultOut) const
 {
+    if (compressed || paletted)
+    {
+        *resultOut = 0;
+        return true;
+    }
     auto skipBytes = CheckedNumeric<GLuint>{skipImages} * depthPitch +
                      CheckedNumeric<GLuint>{skipRows} * rowPitch +
                      CheckedNumeric<GLuint>{skipPixels} * computePixelBytes(formatType);

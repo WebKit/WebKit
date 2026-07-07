@@ -2662,7 +2662,7 @@ angle::Result TextureMtl::copySubImageWithDraw(const gl::Context *context,
 
     blitParams.srcNormalizedCoords = mtl::NormalizedCoords(
         clippedSourceArea, colorReadRT->getTexture()->size(blitParams.srcLevel));
-    blitParams.srcYFlipped  = source->flipY();
+    blitParams.srcYFlipped  = source->getFlipY();
     blitParams.dstLuminance = internalFormat.isLUMA();
 
     return displayMtl->getUtils().blitColorWithDraw(

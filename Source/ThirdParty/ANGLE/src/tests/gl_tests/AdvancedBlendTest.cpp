@@ -34,6 +34,129 @@ class AdvancedBlendTest : public ANGLETest<>
 class AdvancedBlendTestES32 : public AdvancedBlendTest
 {};
 
+// Test that advanced blend cannot be used when a non-zero draw buffer is enabled.
+TEST_P(AdvancedBlendTest, NonZeroDrawBufferDisallowed)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_KHR_blend_equation_advanced"));
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    std::array<GLRenderbuffer, 4> rbo;
+    for (uint32_t i = 0; i < 4; ++i)
+    {
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo[i]);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 1, 1);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER,
+                                  rbo[i]);
+    }
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    GLenum enabled[4] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2,
+                         GL_COLOR_ATTACHMENT3};
+    glDrawBuffers(4, enabled);
+
+    constexpr char kVS[] = R"(#version 300 es
+precision highp float;
+void main()
+{
+    switch (gl_VertexID)
+    {
+        case 0:  gl_Position = vec4(-1, -1, 0, 1); break;
+        case 1:  gl_Position = vec4( 3, -1, 0, 1); break;
+        default: gl_Position = vec4(-1, 3, 0, 1); break;
+    }
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+#extension GL_KHR_blend_equation_advanced : require
+layout (blend_support_multiply) out;
+precision mediump float;
+out vec4 fragColor;
+void main()
+{
+    fragColor = vec4(1., 0., 0., 1.);
+})";
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    glEnable(GL_BLEND);
+    glBlendEquation(GL_MULTIPLY_KHR);
+
+    // Invalid draw because all 4 draw buffers are enabled.
+    ASSERT_GL_NO_ERROR();
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    enabled[1] = GL_NONE;
+    enabled[2] = GL_NONE;
+    glDrawBuffers(4, enabled);
+
+    // Still invalid because draw buffer #3 is enabled.
+    ASSERT_GL_NO_ERROR();
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    enabled[0] = GL_NONE;
+    enabled[1] = GL_COLOR_ATTACHMENT1;
+    enabled[3] = GL_NONE;
+    glDrawBuffers(4, enabled);
+
+    // Even though a single draw buffer is enabled, it's not index 0 so it's still invalid
+    ASSERT_GL_NO_ERROR();
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    enabled[0] = GL_COLOR_ATTACHMENT0;
+    enabled[1] = GL_NONE;
+    glDrawBuffers(4, enabled);
+
+    // When only color attachment 0 is enabled, the draw is valid.
+    glClearColor(1, 1, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // It's also ok to render to multiple attachments if blend is not enabled on the attachment that
+    // has advanced blend..
+    if (EnsureGLExtensionEnabled("GL_OES_draw_buffers_indexed"))
+    {
+        // Enable two attachments
+        enabled[1] = GL_COLOR_ATTACHMENT1;
+        glDrawBuffers(4, enabled);
+
+        // Enable blend only on attachment 0
+        glDisable(GL_BLEND);
+        glEnableiOES(GL_BLEND, 0);
+        glDisableiOES(GL_BLEND, 1);
+
+        // Set advanced blend on the attachment that has blend disabled.  Set a non-advanced blend
+        // on the one that has blend enabled.
+        glBlendEquationiOES(0, GL_FUNC_ADD);
+        glBlendFunciOES(0, GL_ONE, GL_ONE);
+        glBlendEquationiOES(1, GL_MULTIPLY_KHR);
+
+        glClearColor(0, 1, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+
+        // If advanced blend is enabled on a NONE attachment, that's also ok.
+        enabled[1] = GL_NONE;
+        glDrawBuffers(4, enabled);
+        glEnableiOES(GL_BLEND, 1);
+
+        glClearColor(0, 0, 1, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+    }
+}
+
 void AdvancedBlendTest::callBlendBarrier(APIExtensionVersion usedExtension)
 {
     ASSERT(usedExtension == APIExtensionVersion::Core || usedExtension == APIExtensionVersion::KHR);

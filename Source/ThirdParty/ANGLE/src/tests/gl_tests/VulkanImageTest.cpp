@@ -1027,7 +1027,7 @@ TEST_P(VulkanMemoryTest, AllocateBufferAfterFreeing2DGarbageWhenDeviceOOM)
 // Test importing VkImage with VK_FORMAT_R5G6B5_UNORM_PACK16 when ForceFallbackFormat is enabled.
 // This forces ANGLE to use a fallback format (RGBA8) for internal GLES RGB565 textures,
 // but the imported sibling must still use the actual RGB565 format.
-TEST_P(VulkanImageTest, ImportRGB565)
+TEST_P(VulkanRGB565Test, ImportRGB565)
 {
     EGLWindow *window  = getEGLWindow();
     EGLDisplay display = window->getDisplay();
@@ -1137,6 +1137,7 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(VulkanImageTest,
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     VulkanRGB565Test,
     ES3_VULKAN_SWIFTSHADER().enable(Feature::PreferBGR565ToRGB565),
+    ES3_VULKAN().enable(Feature::ForceFallbackFormat),
     ES3_VULKAN().enable(Feature::PreferBGR565ToRGB565).enable(Feature::ForceFallbackFormat));
 ANGLE_INSTANTIATE_TEST_ES3(VulkanMemoryTest);
 

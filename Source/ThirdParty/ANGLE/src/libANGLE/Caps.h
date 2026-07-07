@@ -145,9 +145,6 @@ struct Limitations
     // http://anglebug.com/42266263
     bool noRasterOrderGroupWithoutAttachmentZero = false;
 
-    // PVRTC1 textures must be squares.
-    bool squarePvrtc1 = false;
-
     // ETC1 texture support is emulated.
     bool emulatedEtc1 = false;
 

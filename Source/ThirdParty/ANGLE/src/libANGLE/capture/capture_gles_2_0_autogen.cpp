@@ -1910,11 +1910,14 @@ CallCapture CaptureLinkProgram(const State &glState,
     return CallCapture(angle::EntryPoint::GLLinkProgram, std::move(paramBuffer));
 }
 
-CallCapture CapturePixelStorei(const State &glState, bool isCallValid, GLenum pname, GLint param)
+CallCapture CapturePixelStorei(const State &glState,
+                               bool isCallValid,
+                               PackUnpackParameter pnamePacked,
+                               GLint param)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("pname", GLESEnum::PixelStoreParameter, ParamType::TGLenum, pname);
+    paramBuffer.addValueParam("pnamePacked", ParamType::TPackUnpackParameter, pnamePacked);
     paramBuffer.addValueParam("param", ParamType::TGLint, param);
 
     return CallCapture(angle::EntryPoint::GLPixelStorei, std::move(paramBuffer));

@@ -55,8 +55,8 @@ if (metal_internal_shader_compilation_supported) {
         ]
       } else {
         # Hermetic Xcode: at least for now, the Metal toolchain is
-        # “spliced” into the location in the hermetic toolchain where it lived
-        # before Xcode 26.0, so it can be run directly from there.
+        # “spliced” into the location in the hermetic toolchain where it
+        # lived before Xcode 26.0, so it can be run directly from there.
         args = [ mac_bin_path + metal_tool ]
       }
 

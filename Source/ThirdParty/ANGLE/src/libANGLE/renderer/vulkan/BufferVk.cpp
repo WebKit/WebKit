@@ -450,7 +450,8 @@ angle::Result BufferVk::setDataWithUsageFlags(const gl::Context *context,
                                               gl::BufferUsage usage,
                                               GLbitfield flags,
                                               gl::BufferStorage bufferStorage,
-                                              BufferFeedback *feedback)
+                                              BufferFeedback *feedback,
+                                              gl::ZeroFillRequired zeroFillRequired)
 {
     ContextVk *contextVk                      = vk::GetImpl(context);
     VkMemoryPropertyFlags memoryPropertyFlags = 0;
@@ -492,13 +493,13 @@ angle::Result BufferVk::setData(const gl::Context *context,
                                 const void *data,
                                 size_t size,
                                 gl::BufferUsage usage,
-                                BufferFeedback *feedback)
+                                BufferFeedback *feedback,
+                                gl::ZeroFillRequired zeroFillRequired)
 {
-    ContextVk *contextVk = vk::GetImpl(context);
-    // Assume host visible/coherent memory available.
-    VkMemoryPropertyFlags memoryPropertyFlags =
-        GetPreferredMemoryType(contextVk->getRenderer(), target, usage);
-    return setDataWithMemoryType(context, target, data, size, memoryPropertyFlags, usage, feedback);
+    // setDataWithUsageFlags() is always called for the Vulkan backend, and the setData() callback
+    // is not used.
+    UNREACHABLE();
+    return angle::Result::Continue;
 }
 
 angle::Result BufferVk::setDataWithMemoryType(const gl::Context *context,
@@ -542,15 +543,28 @@ angle::Result BufferVk::setDataWithMemoryType(const gl::Context *context,
         ANGLE_TRY(GetMemoryTypeIndex(contextVk, size, memoryPropertyFlags, &mMemoryTypeIndex));
         ANGLE_TRY(acquireBufferHelper(contextVk, size, mUsageType, feedback));
     }
-    else if (size != static_cast<size_t>(mState.getSize()))
+    else
     {
-        if (mBuffer.onBufferUserSizeChange(renderer))
+        if (data == nullptr && context->isRobustResourceInitEnabled())
+        {
+            // In case of redefining an existing buffer with no input data and enabled robust
+            // resource init, the new range of the buffer is cleared to zero.
+            // In case of no input data and the buffer being in use, the expected buffer update type
+            // is StorageRedefined. Therefore, since there is no input data and the update type in
+            // this path is not StorageRedefined, it is expected that the buffer not be in use.
+            ASSERT(!isCurrentlyInUse(renderer));
+            ANGLE_TRY(mBuffer.initializeRobustMemory(contextVk,
+                                                     GetDefaultBufferUsageFlags(renderer), size));
+        }
+
+        if (size != static_cast<size_t>(mState.getSize()) &&
+            mBuffer.onBufferUserSizeChange(renderer))
         {
             // If we have a dedicated VkBuffer created with user size, even if the storage is
             // reused, we have to recreate that VkBuffer with user size when user size changes.
             // When this happens, we must notify other objects that observing this buffer, such as
             // vertex array. The reason vertex array is observing the buffer's storage change is
-            // because they uses VkBuffer. Now VkBuffer have changed, vertex array needs to
+            // because they use VkBuffer. Now since VkBuffer has changed, the vertex array needs to
             // re-process it just like storage has been reallocated.
             internalMemoryAllocationChanged(feedback);
         }

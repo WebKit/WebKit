@@ -803,7 +803,7 @@ bool ValidateES3TexImageParametersBase(const Context *context,
         }
     }
 
-    if (context->getExtensions().webglCompatibilityANGLE)
+    if (!isCompressed && (context->isWebGL() || context->isHardenedContext()))
     {
         // Define:
         //   DataStoreWidth  = (GL_UNPACK_ROW_LENGTH ? GL_UNPACK_ROW_LENGTH : width)
@@ -2033,14 +2033,6 @@ bool ValidateBindVertexArray(const Context *context,
                              VertexArrayID array)
 {
     return ValidateBindVertexArrayBase(context, entryPoint, array);
-}
-
-bool ValidateIsVertexArray(const PrivateState &state,
-                           ErrorSet *errors,
-                           angle::EntryPoint entryPoint,
-                           VertexArrayID array)
-{
-    return true;
 }
 
 static bool ValidateBindBufferCommon(const Context *context,
@@ -3953,11 +3945,6 @@ bool ValidateUniform4uiv(const Context *context,
     return ValidateUniform(context, entryPoint, GL_UNSIGNED_INT_VEC4, location, count);
 }
 
-bool ValidateIsQuery(const Context *context, angle::EntryPoint entryPoint, QueryID id)
-{
-    return true;
-}
-
 bool ValidateUniformMatrix2x3fv(const Context *context,
                                 angle::EntryPoint entryPoint,
                                 UniformLocation location,
@@ -4139,13 +4126,6 @@ bool ValidateBindTransformFeedback(const Context *context,
             return false;
     }
 
-    return true;
-}
-
-bool ValidateIsTransformFeedback(const Context *context,
-                                 angle::EntryPoint entryPoint,
-                                 TransformFeedbackID id)
-{
     return true;
 }
 
@@ -4538,11 +4518,6 @@ bool ValidateFenceSync(const Context *context,
     return true;
 }
 
-bool ValidateIsSync(const Context *context, angle::EntryPoint entryPoint, SyncID syncPacked)
-{
-    return true;
-}
-
 bool ValidateDeleteSync(const Context *context, angle::EntryPoint entryPoint, SyncID syncPacked)
 {
     if (syncPacked.value != 0 && !context->getSync(syncPacked))
@@ -4610,11 +4585,6 @@ bool ValidateGetInteger64v(const Context *context,
                            const GLint64 *data)
 {
     return ValidateStateQuery(context, entryPoint, pname, data, nullptr);
-}
-
-bool ValidateIsSampler(const Context *context, angle::EntryPoint entryPoint, SamplerID sampler)
-{
-    return true;
 }
 
 bool ValidateBindSampler(const Context *context,

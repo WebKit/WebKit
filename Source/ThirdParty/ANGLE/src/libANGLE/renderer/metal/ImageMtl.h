@@ -71,13 +71,9 @@ class ImageMtl : public ImageImpl
 
     const mtl::TextureRef &getTexture() const { return mNativeTexture; }
     gl::TextureType getImageTextureType() const { return mImageTextureType; }
-    uint32_t getImageLevel() const { return mImageLevel; }
-    uint32_t getImageLayer() const { return mImageLayer; }
 
   private:
     gl::TextureType mImageTextureType;
-    uint32_t mImageLevel = 0;
-    uint32_t mImageLayer = 0;
 
     mtl::TextureRef mNativeTexture;
 };

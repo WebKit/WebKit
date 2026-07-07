@@ -39,17 +39,12 @@ class RenderbufferVk : public RenderbufferImpl, public angle::ObserverInterface
 
     angle::Result copyRenderbufferSubData(const gl::Context *context,
                                           const gl::Renderbuffer *srcBuffer,
-                                          GLint srcLevel,
                                           GLint srcX,
                                           GLint srcY,
-                                          GLint srcZ,
-                                          GLint dstLevel,
                                           GLint dstX,
                                           GLint dstY,
-                                          GLint dstZ,
                                           GLsizei srcWidth,
-                                          GLsizei srcHeight,
-                                          GLsizei srcDepth) override;
+                                          GLsizei srcHeight) override;
 
     angle::Result copyTextureSubData(const gl::Context *context,
                                      const gl::Texture *srcTexture,
@@ -57,13 +52,10 @@ class RenderbufferVk : public RenderbufferImpl, public angle::ObserverInterface
                                      GLint srcX,
                                      GLint srcY,
                                      GLint srcZ,
-                                     GLint dstLevel,
                                      GLint dstX,
                                      GLint dstY,
-                                     GLint dstZ,
                                      GLsizei srcWidth,
-                                     GLsizei srcHeight,
-                                     GLsizei srcDepth) override;
+                                     GLsizei srcHeight) override;
 
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,

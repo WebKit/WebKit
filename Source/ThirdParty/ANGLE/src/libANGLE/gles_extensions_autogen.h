@@ -732,9 +732,6 @@ struct Extensions
     // GL_CHROMIUM_lose_context
     bool loseContextCHROMIUM = false;
 
-    // GL_ANGLE_lossy_etc_decode
-    bool lossyEtcDecodeANGLE = false;
-
     // GL_ANGLE_memory_object_flags
     bool memoryObjectFlagsANGLE = false;
 

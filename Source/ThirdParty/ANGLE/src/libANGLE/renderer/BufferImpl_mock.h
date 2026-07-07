@@ -22,13 +22,14 @@ class MockBufferImpl : public BufferImpl
     MockBufferImpl() : BufferImpl(mMockState) {}
     ~MockBufferImpl() { destructor(); }
 
-    MOCK_METHOD6(setData,
+    MOCK_METHOD7(setData,
                  angle::Result(const gl::Context *,
                                gl::BufferBinding,
                                const void *,
                                size_t,
                                gl::BufferUsage,
-                               BufferFeedback *));
+                               BufferFeedback *,
+                               gl::ZeroFillRequired));
     MOCK_METHOD6(setSubData,
                  angle::Result(const gl::Context *,
                                gl::BufferBinding,

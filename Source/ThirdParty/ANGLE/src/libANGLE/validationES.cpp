@@ -560,37 +560,6 @@ bool IsBlitSameResource(const FramebufferAttachment *read, const FramebufferAtta
     return false;
 }
 
-const char *ValidateProgramDrawAdvancedBlendState(const Context *context,
-                                                  const ProgramExecutable &executable)
-{
-    const State &state                                 = context->getState();
-    const BlendEquationBitSet &supportedBlendEquations = executable.getAdvancedBlendEquations();
-    const DrawBufferMask &enabledDrawBufferMask        = state.getBlendStateExt().getEnabledMask();
-
-    // Zero (default) means everything is BlendEquationType::Add, so check can be skipped
-    if (ANGLE_UNLIKELY(state.getBlendStateExt().getEquationColorBits() != 0))
-    {
-        for (size_t blendEnabledBufferIndex : enabledDrawBufferMask)
-        {
-            const gl::BlendEquationType enabledBlendEquation =
-                state.getBlendStateExt().getEquationColorIndexed(blendEnabledBufferIndex);
-
-            if (enabledBlendEquation < gl::BlendEquationType::Multiply ||
-                enabledBlendEquation > gl::BlendEquationType::HslLuminosity)
-            {
-                continue;
-            }
-
-            if (!supportedBlendEquations.test(enabledBlendEquation))
-            {
-                return gl::err::kBlendEquationNotEnabled;
-            }
-        }
-    }
-
-    return nullptr;
-}
-
 ANGLE_INLINE GLenum ShPixelLocalStorageFormatToGLenum(ShPixelLocalStorageFormat format)
 {
     switch (format)
@@ -748,15 +717,21 @@ ANGLE_INLINE const char *ValidateProgramDrawStates(const Context *context,
         }
     }
 
-    // Enabled blend equation validation
-    const char *errorString = nullptr;
-
-    if (extensions.blendEquationAdvancedKHR || context->getClientVersion() >= ES_3_2)
+    // Validate that executable is compatible with the advanced blending equation.
+    if (ANGLE_UNLIKELY(state.getBlendStateExt().getUsesAdvancedBlendEquationMask()[0] &&
+                       state.getBlendStateExt().getEnabledMask()[0]))
     {
-        errorString = ValidateProgramDrawAdvancedBlendState(context, executable);
+        const BlendEquationType equation = state.getBlendStateExt().getEquationColorIndexed(0);
+        ASSERT(equation >= BlendEquationType::Multiply &&
+               equation <= BlendEquationType::HslLuminosity);
+
+        if (!executable.getAdvancedBlendEquations().test(equation))
+        {
+            return kAdvancedBlendEquationNotEnabled;
+        }
     }
 
-    return errorString;
+    return nullptr;
 }
 }  // anonymous namespace
 
@@ -1201,8 +1176,8 @@ bool ValidCompressedImageSize(const Context *context,
             return false;
         }
 
-        // Some platforms support only square PVRTC1 textures.
-        if (width != height && context->getLimitations().squarePvrtc1)
+        // Supported platforms (Apple silicon) accept only square PVRTC1 textures.
+        if (width != height)
         {
             return false;
         }
@@ -1446,12 +1421,21 @@ bool ValidateDrawArraysTransformFeedbackBufferSize(const Context *context,
                                                    const GLsizei *primcounts,
                                                    GLsizei drawcount)
 {
-    if (ANGLE_UNLIKELY(context->getStateCache().isTransformFeedbackActiveUnpaused()) &&
-        ANGLE_UNLIKELY(!context->supportsGeometryOrTesselation()))
+    if (ANGLE_UNLIKELY(context->getStateCache().isTransformFeedbackActiveUnpaused()))
     {
-        const State &state                      = context->getState();
+        const State &state                  = context->getState();
+        const ProgramExecutable *executable = state.getProgramExecutable();
+        // When a Geometry or Tessellation Shader is active in the pipeline, the
+        // number of vertices emitted is determined dynamically by the GPU
+        // during shader execution. The CPU cannot predict how many vertices
+        // will be produced nor the corresponding amount of space required, so
+        // the buffer space check must be skipped.
+        bool hasGSorTS =
+            executable && (executable->hasLinkedShaderStage(ShaderType::Geometry) ||
+                           executable->hasLinkedShaderStage(ShaderType::TessEvaluation));
         TransformFeedback *curTransformFeedback = state.getCurrentTransformFeedback();
-        if (!curTransformFeedback->checkBufferSpaceForDraw(context, counts, primcounts, drawcount))
+        if (!hasGSorTS &&
+            !curTransformFeedback->checkBufferSpaceForDraw(context, counts, primcounts, drawcount))
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, err::kTransformFeedbackBufferTooSmall);
             return false;
@@ -2328,11 +2312,6 @@ bool ValidateDeleteQueriesEXT(const Context *context,
     return ValidateGenOrDelete(context->getMutableErrorSetForValidation(), entryPoint, n, ids);
 }
 
-bool ValidateIsQueryEXT(const Context *context, angle::EntryPoint entryPoint, QueryID id)
-{
-    return true;
-}
-
 bool ValidateBeginQueryBase(const Context *context,
                             angle::EntryPoint entryPoint,
                             QueryType target,
@@ -3081,7 +3060,8 @@ bool ValidateCopyImageSubDataTargetRegion(const Context *context,
         // INVALID_VALUE is generated if the dimensions of the either subregion exceeds the
         // boundaries of the corresponding image object
         Renderbuffer *buffer = context->getRenderbuffer(PackParam<RenderbufferID>(name));
-        if ((buffer->getWidth() - offsetX < width) || (buffer->getHeight() - offsetY < height))
+        if (buffer->getWidth() - offsetX < width || buffer->getHeight() - offsetY < height ||
+            offsetZ != 0 || depth > 1)
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kSourceTextureTooSmall);
             return false;
@@ -4096,27 +4076,26 @@ const char *ValidateDrawStates(const Context *context, GLenum *outErrorCode)
         }
     }
 
-    // Advanced blend equation can only be enabled for a single render target.
+    // Advanced blend equation can only be enabled for color attachment zero and with only that
+    // attachment enabled.
     const BlendStateExt &blendStateExt = state.getBlendStateExt();
-    if (ANGLE_UNLIKELY(blendStateExt.getUsesAdvancedBlendEquationMask().any()))
+    const gl::DrawBufferMask drawBuffersWithAdvancedBlend =
+        blendStateExt.getUsesAdvancedBlendEquationMask() & blendStateExt.getEnabledMask();
+    if (ANGLE_UNLIKELY(drawBuffersWithAdvancedBlend.any()))
     {
+        // Note: Framebuffer::getDrawBufferMask() excludes non-existing draw buffers.  But if
+        // glDrawBuffers sets them to non-NONE, draw with advanced blend is still expected to fail.
+        // So we can't do a quick check with getDrawBufferMask() alone.
         const size_t drawBufferCount            = framebuffer->getDrawbufferStateCount();
-        uint32_t advancedBlendRenderTargetCount = 0;
-
-        for (size_t drawBufferIndex : blendStateExt.getUsesAdvancedBlendEquationMask())
+        const bool advancedBlendOnDrawBufferZero =
+            drawBuffersWithAdvancedBlend[0] && framebuffer->getDrawBufferState(0) != GL_NONE;
+        for (size_t drawBufferIndex = 1; drawBufferIndex < drawBufferCount; ++drawBufferIndex)
         {
-            if (drawBufferIndex < drawBufferCount &&
-                framebuffer->getDrawBufferState(drawBufferIndex) != GL_NONE &&
-                blendStateExt.getEnabledMask().test(drawBufferIndex) &&
-                blendStateExt.getUsesAdvancedBlendEquationMask().test(drawBufferIndex))
+            if (framebuffer->getDrawBufferState(drawBufferIndex) != GL_NONE &&
+                (advancedBlendOnDrawBufferZero || drawBuffersWithAdvancedBlend[drawBufferIndex]))
             {
-                ++advancedBlendRenderTargetCount;
+                return kAdvancedBlendEquationWithMRT;
             }
-        }
-
-        if (advancedBlendRenderTargetCount > 1)
-        {
-            return kAdvancedBlendEquationWithMRT;
         }
     }
 
@@ -4286,7 +4265,10 @@ const char *ValidateDrawStates(const Context *context, GLenum *outErrorCode)
         if (ANGLE_UNLIKELY(context->isWebGL() || context->isHardenedContext()))
         {
             // UB: Detect rendering feedback loops for WebGL or hardened context.
-            if (framebuffer->formsRenderingFeedbackLoopWith(context))
+            if (framebuffer->formsRenderingFeedbackLoopWith(
+                    context, context->isWebGL()
+                                 ? Framebuffer::AllowedFeedbackLoop::NoneAllowed
+                                 : Framebuffer::AllowedFeedbackLoop::ReadOnlyDepthStencil))
             {
                 return kFeedbackLoop;
             }
@@ -4729,14 +4711,6 @@ bool ValidateDiscardFramebufferBase(const Context *context,
         }
     }
 
-    return true;
-}
-
-bool ValidateInsertEventMarkerEXT(const Context *context,
-                                  angle::EntryPoint entryPoint,
-                                  GLsizei length,
-                                  const char *marker)
-{
     return true;
 }
 

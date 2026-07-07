@@ -1680,11 +1680,11 @@ DestT Int4Array_Get(const uint8_t *arrayBytes, uint32_t arrayIndex)
 }
 
 // When converting a byte number to a transition bit index we can shift instead of divide.
-constexpr size_t kTransitionByteShift = Log2(kGraphicsPipelineDirtyBitBytes);
+constexpr size_t kTransitionByteShift = gl::log2(kGraphicsPipelineDirtyBitBytes);
 
 // When converting a number of bits offset to a transition bit index we can also shift.
 constexpr size_t kBitsPerByte        = 8;
-constexpr size_t kTransitionBitShift = kTransitionByteShift + Log2(kBitsPerByte);
+constexpr size_t kTransitionBitShift = kTransitionByteShift + gl::log2(kBitsPerByte);
 
 // Helper macro to map from a PipelineDesc struct and field to a dirty bit index.
 // Uses the 'offsetof' macro to compute the offset 'Member' within the PipelineDesc.
@@ -5245,40 +5245,6 @@ void PipelineHelper::retainInRenderPass(RenderPassCommandBufferHelper *renderPas
     }
 }
 
-// FramebufferHelper implementation.
-FramebufferHelper::FramebufferHelper() = default;
-
-FramebufferHelper::~FramebufferHelper() = default;
-
-FramebufferHelper::FramebufferHelper(FramebufferHelper &&other) : Resource(std::move(other))
-{
-    mFramebuffer = std::move(other.mFramebuffer);
-}
-
-FramebufferHelper &FramebufferHelper::operator=(FramebufferHelper &&other)
-{
-    Resource::operator=(std::move(other));
-    std::swap(mFramebuffer, other.mFramebuffer);
-    return *this;
-}
-
-angle::Result FramebufferHelper::init(ErrorContext *context,
-                                      const VkFramebufferCreateInfo &createInfo)
-{
-    ANGLE_VK_TRY(context, mFramebuffer.init(context->getDevice(), createInfo));
-    return angle::Result::Continue;
-}
-
-void FramebufferHelper::destroy(Renderer *renderer)
-{
-    mFramebuffer.destroy(renderer->getDevice());
-}
-
-void FramebufferHelper::release(ContextVk *contextVk)
-{
-    contextVk->addGarbage(&mFramebuffer);
-}
-
 // DescriptorSetDesc implementation.
 size_t DescriptorSetDesc::hash() const
 {
@@ -5428,7 +5394,7 @@ void FramebufferDesc::destroyCachedObject(Renderer *renderer)
 void FramebufferDesc::releaseCachedObject(ContextVk *contextVk)
 {
     ASSERT(valid());
-    contextVk->getShareGroup()->getFramebufferCache().erase(contextVk, *this);
+    contextVk->getFramebufferCache().erase(contextVk, *this);
     SetBitField(mIsValid, 0);
 }
 
@@ -5436,7 +5402,7 @@ bool FramebufferDesc::hasValidCachedObject(ContextVk *contextVk) const
 {
     ASSERT(valid());
     Framebuffer framebuffer;
-    return contextVk->getShareGroup()->getFramebufferCache().get(contextVk, *this, framebuffer);
+    return contextVk->getFramebufferCache().get(contextVk, *this, framebuffer);
 }
 
 // YcbcrConversionDesc implementation
@@ -5797,7 +5763,7 @@ angle::Result SamplerDesc::init(ContextVk *contextVk, Sampler *sampler) const
         ASSERT((contextVk->getFeatures().supportsYUVSamplerConversion.enabled));
         samplerYcbcrConversionInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO;
         samplerYcbcrConversionInfo.pNext = nullptr;
-        ANGLE_TRY(contextVk->getShareGroup()->getYuvConversionCache().getSamplerYcbcrConversion(
+        ANGLE_TRY(contextVk->getYuvConversionCache().getSamplerYcbcrConversion(
             contextVk, mYcbcrConversionDesc, &samplerYcbcrConversionInfo.conversion));
         AddToPNextChain(&createInfo, &samplerYcbcrConversionInfo);
 
@@ -7376,11 +7342,12 @@ void UpdateDescriptorSetsBuilder::updateWriteDescriptorSet(
 // FramebufferCache implementation.
 void FramebufferCache::destroy(vk::Renderer *renderer)
 {
+    VkDevice device = renderer->getDevice();
     renderer->accumulateCacheStats(VulkanCacheType::Framebuffer, mCacheStats);
     for (auto &entry : mPayload)
     {
-        vk::FramebufferHelper &tmpFB = entry.second;
-        tmpFB.destroy(renderer);
+        vk::Framebuffer &tmpFB = entry.second;
+        tmpFB.destroy(device);
     }
     mPayload.clear();
 }
@@ -7394,7 +7361,7 @@ bool FramebufferCache::get(ContextVk *contextVk,
     auto iter = mPayload.find(desc);
     if (iter != mPayload.end())
     {
-        framebuffer.setHandle(iter->second.getFramebuffer().getHandle());
+        framebuffer.setHandle(iter->second.getHandle());
         mCacheStats.hit();
         return true;
     }
@@ -7405,11 +7372,11 @@ bool FramebufferCache::get(ContextVk *contextVk,
 
 void FramebufferCache::insert(ContextVk *contextVk,
                               const vk::FramebufferDesc &desc,
-                              vk::FramebufferHelper &&framebufferHelper)
+                              vk::Framebuffer &&framebuffer)
 {
     ASSERT(!contextVk->getFeatures().supportsImagelessFramebuffer.enabled);
 
-    mPayload.emplace(desc, std::move(framebufferHelper));
+    mPayload.emplace(desc, std::move(framebuffer));
 }
 
 void FramebufferCache::erase(ContextVk *contextVk, const vk::FramebufferDesc &desc)
@@ -7419,8 +7386,8 @@ void FramebufferCache::erase(ContextVk *contextVk, const vk::FramebufferDesc &de
     auto iter = mPayload.find(desc);
     if (iter != mPayload.end())
     {
-        vk::FramebufferHelper &tmpFB = iter->second;
-        tmpFB.release(contextVk);
+        vk::Framebuffer &tmpFB = iter->second;
+        contextVk->addGarbage(&tmpFB);
         mPayload.erase(desc);
     }
 }
@@ -8556,44 +8523,27 @@ SamplerYcbcrConversionCache::~SamplerYcbcrConversionCache()
     ASSERT(mExternalFormatPayload.empty() && mVkFormatPayload.empty());
 }
 
-void SamplerYcbcrConversionCache::destroy(vk::Renderer *renderer, bool orphanConversionInfo)
+void SamplerYcbcrConversionCache::destroy(vk::Renderer *renderer)
 {
     renderer->accumulateCacheStats(VulkanCacheType::SamplerYcbcrConversion, mCacheStats);
 
-    // If the EGL_ANGLE_display_texture_share_group extension is causing some samplers to
-    // stay alive, there is no way to know which conversion info object needs to stay alive.
-    // stash them all in the renderer to be destroyed when possible.
-    if (orphanConversionInfo)
-    {
-        for (auto &iter : mExternalFormatPayload)
-        {
-            renderer->addSamplerYcbcrConversionToOrphanList(iter.second.release());
-        }
-        for (auto &iter : mVkFormatPayload)
-        {
-            renderer->addSamplerYcbcrConversionToOrphanList(iter.second.release());
-        }
-    }
-    else
-    {
-        VkDevice device = renderer->getDevice();
+    VkDevice device = renderer->getDevice();
 
-        uint32_t count = static_cast<uint32_t>(mExternalFormatPayload.size());
-        for (auto &iter : mExternalFormatPayload)
-        {
-            vk::SamplerYcbcrConversion &samplerYcbcrConversion = iter.second;
-            samplerYcbcrConversion.destroy(device);
-        }
-        renderer->onDeallocateHandle(vk::HandleType::SamplerYcbcrConversion, count);
-
-        count = static_cast<uint32_t>(mExternalFormatPayload.size());
-        for (auto &iter : mVkFormatPayload)
-        {
-            vk::SamplerYcbcrConversion &samplerYcbcrConversion = iter.second;
-            samplerYcbcrConversion.destroy(device);
-        }
-        renderer->onDeallocateHandle(vk::HandleType::SamplerYcbcrConversion, count);
+    uint32_t count = static_cast<uint32_t>(mExternalFormatPayload.size());
+    for (auto &iter : mExternalFormatPayload)
+    {
+        vk::SamplerYcbcrConversion &samplerYcbcrConversion = iter.second;
+        samplerYcbcrConversion.destroy(device);
     }
+    renderer->onDeallocateHandle(vk::HandleType::SamplerYcbcrConversion, count);
+
+    count = static_cast<uint32_t>(mVkFormatPayload.size());
+    for (auto &iter : mVkFormatPayload)
+    {
+        vk::SamplerYcbcrConversion &samplerYcbcrConversion = iter.second;
+        samplerYcbcrConversion.destroy(device);
+    }
+    renderer->onDeallocateHandle(vk::HandleType::SamplerYcbcrConversion, count);
 
     mExternalFormatPayload.clear();
     mVkFormatPayload.clear();
@@ -8642,33 +8592,18 @@ SamplerCache::~SamplerCache()
     ASSERT(mPayload.empty());
 }
 
-void SamplerCache::destroy(vk::Renderer *renderer, bool orphanReferencedSamplers)
+void SamplerCache::destroy(vk::Renderer *renderer)
 {
     renderer->accumulateCacheStats(VulkanCacheType::Sampler, mCacheStats);
 
     uint32_t count = static_cast<uint32_t>(mPayload.size());
 
-    if (orphanReferencedSamplers)
+    for (auto &iter : mPayload)
     {
-        for (auto &iter : mPayload)
-        {
-            // If the EGL_ANGLE_display_texture_share_group extension is causing some samplers to
-            // stay alive, stash them in the renderer to be destroyed when possible.
-            if (!iter.second.unique())
-            {
-                renderer->addSamplerToOrphanList(iter.second);
-            }
-            else
-            {
-                renderer->onDeallocateHandle(vk::HandleType::Sampler, 1);
-            }
-        }
+        ASSERT(iter.second.unique());
     }
-    else
-    {
-        ASSERT(AllCacheEntriesHaveUniqueReference(mPayload));
-        renderer->onDeallocateHandle(vk::HandleType::Sampler, count);
-    }
+
+    renderer->onDeallocateHandle(vk::HandleType::Sampler, count);
     mPayload.clear();
 }
 

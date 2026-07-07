@@ -243,6 +243,7 @@ GPUTestConfig::API GetTestConfigAPIFromRenderer(angle::GLESDriverType driverType
                                                 EGLenum deviceType);
 
 EGLenum GetEglPlatform();
+EGLenum GetPbufferOnlyDefaultPlatformType();
 }  // namespace angle
 
 #define EXPECT_PIXEL_EQ(x, y, r, g, b, a) \

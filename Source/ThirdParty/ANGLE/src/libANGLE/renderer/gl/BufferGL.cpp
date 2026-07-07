@@ -89,7 +89,8 @@ angle::Result BufferGL::setData(const gl::Context *context,
                                 const void *data,
                                 size_t size,
                                 gl::BufferUsage usage,
-                                BufferFeedback *feedback)
+                                BufferFeedback *feedback,
+                                gl::ZeroFillRequired zeroFillRequired)
 {
     ContextGL *contextGL         = GetImplAs<ContextGL>(context);
     const FunctionsGL *functions = GetFunctionsGL(context);
@@ -106,14 +107,21 @@ angle::Result BufferGL::setData(const gl::Context *context,
     stateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
 
     const void *uploadData = data;
+    if (zeroFillRequired == gl::ZeroFillRequired::Yes)
+    {
+        const angle::MemoryBuffer *scratchBuffer = nullptr;
+        ANGLE_CHECK_GL_ALLOC(
+            contextGL, context->getZeroFilledBuffer(static_cast<size_t>(size), &scratchBuffer));
+        uploadData = scratchBuffer->data();
+    }
 
     if (mShadowCopy.has_value())
     {
         ANGLE_CHECK_GL_ALLOC(contextGL, mShadowCopy->resize(size));
 
-        if (size > 0 && data != nullptr)
+        if (size > 0 && uploadData != nullptr)
         {
-            memcpy(mShadowCopy->data(), data, size);
+            memcpy(mShadowCopy->data(), uploadData, size);
             uploadData = mShadowCopy->data();
         }
     }

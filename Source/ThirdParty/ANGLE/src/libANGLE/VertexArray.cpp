@@ -475,7 +475,7 @@ void VertexArray::bindElementBuffer(const Context *context, Buffer *boundBuffer)
 ANGLE_INLINE VertexArray::DirtyBindingBits VertexArray::bindVertexBufferImpl(const Context *context,
                                                                              size_t bindingIndex,
                                                                              Buffer *boundBuffer,
-                                                                             GLintptr offset,
+                                                                             uintptr_t offset,
                                                                              GLsizei stride)
 {
     ASSERT(bindingIndex < getMaxBindings());
@@ -556,8 +556,10 @@ void VertexArray::bindVertexBuffer(const Context *context,
                                    GLintptr offset,
                                    GLsizei stride)
 {
-    const VertexArray::DirtyBindingBits dirtyBindingBits =
-        bindVertexBufferImpl(context, bindingIndex, boundBuffer, offset, stride);
+    // |offset| must be non-negative per validation rules of glBindVertexBuffer.
+    ASSERT(offset >= 0);
+    const VertexArray::DirtyBindingBits dirtyBindingBits = bindVertexBufferImpl(
+        context, bindingIndex, boundBuffer, static_cast<uintptr_t>(offset), stride);
 
     if (!dirtyBindingBits.test(DIRTY_BINDING_BUFFER) && context->isSharedContext() &&
         boundBuffer != nullptr)
@@ -627,7 +629,7 @@ ANGLE_INLINE void VertexArray::setVertexAttribPointerImpl(const Context *context
     // Change of attrib.pointer is not part of attribDirty. Pointer is actually the buffer offset
     // which is handled within bindVertexBufferImpl and reflected in bufferDirty.
     attrib.pointer  = pointer;
-    GLintptr offset = boundBuffer ? reinterpret_cast<GLintptr>(pointer) : 0;
+    uintptr_t offset = boundBuffer ? reinterpret_cast<uintptr_t>(pointer) : 0;
     const VertexArray::DirtyBindingBits dirtyBindingBits =
         bindVertexBufferImpl(context, attribIndex, boundBuffer, offset, effectiveStride);
 

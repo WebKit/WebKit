@@ -5377,6 +5377,9 @@ void Context::copyImageSubData(GLuint srcName,
         return;
     }
 
+    ASSERT(srcTarget != GL_RENDERER || (srcLevel == 0 && srcZ == 0 && srcDepth == 1));
+    ASSERT(dstTarget != GL_RENDERER || (dstLevel == 0 && dstZ == 0 && srcDepth == 1));
+
     if (srcTarget == GL_RENDERBUFFER)
     {
         // Source target is a Renderbuffer
@@ -5388,8 +5391,7 @@ void Context::copyImageSubData(GLuint srcName,
 
             // Copy Renderbuffer to Renderbuffer
             ANGLE_CONTEXT_TRY(writeBuffer->copyRenderbufferSubData(
-                this, readBuffer, srcLevel, srcX, srcY, srcZ, dstLevel, dstX, dstY, dstZ, srcWidth,
-                srcHeight, srcDepth));
+                this, readBuffer, srcX, srcY, dstX, dstY, srcWidth, srcHeight));
         }
         else
         {
@@ -5403,8 +5405,7 @@ void Context::copyImageSubData(GLuint srcName,
 
             // Copy Renderbuffer to Texture
             ANGLE_CONTEXT_TRY(writeTexture->copyRenderbufferSubData(
-                this, readBuffer, srcLevel, srcX, srcY, srcZ, dstLevel, dstX, dstY, dstZ, srcWidth,
-                srcHeight, srcDepth));
+                this, readBuffer, srcX, srcY, dstLevel, dstX, dstY, dstZ, srcWidth, srcHeight));
         }
     }
     else
@@ -5425,9 +5426,8 @@ void Context::copyImageSubData(GLuint srcName,
             Renderbuffer *writeBuffer = getRenderbuffer(PackParam<RenderbufferID>(dstName));
 
             // Copy Texture to Renderbuffer
-            ANGLE_CONTEXT_TRY(writeBuffer->copyTextureSubData(this, readTexture, srcLevel, srcX,
-                                                              srcY, srcZ, dstLevel, dstX, dstY,
-                                                              dstZ, srcWidth, srcHeight, srcDepth));
+            ANGLE_CONTEXT_TRY(writeBuffer->copyTextureSubData(
+                this, readTexture, srcLevel, srcX, srcY, srcZ, dstX, dstY, srcWidth, srcHeight));
         }
         else
         {
@@ -7119,11 +7119,8 @@ GLenum Context::checkFramebufferStatus(GLenum target)
 
 void Context::compileShader(ShaderProgramID shader)
 {
-    Shader *shaderObject = GetValidShader(this, angle::EntryPoint::GLCompileShader, shader);
-    if (!shaderObject)
-    {
-        return;
-    }
+    Shader *shaderObject = getShaderNoResolveCompile(shader);
+    ASSERT(shaderObject != nullptr);
     shaderObject->compile(this, angle::JobResultExpectancy::Future);
 }
 
@@ -8124,7 +8121,7 @@ void Context::uniformBlockBinding(ShaderProgramID program,
 GLsync Context::fenceSync(GLenum condition, GLbitfield flags)
 {
     SyncID syncHandle;
-    if (!mState.mSyncManager->createSync(mImplementation.get(), this, &syncHandle))
+    if (!mState.mSyncManager->createSync(mImplementation.get(), &syncHandle))
     {
         handleExhaustionError(angle::EntryPoint::GLFenceSync);
         return nullptr;

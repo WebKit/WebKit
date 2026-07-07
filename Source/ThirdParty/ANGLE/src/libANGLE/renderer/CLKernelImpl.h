@@ -90,7 +90,9 @@ class CLKernelImpl : angle::NonCopyable
 
     virtual angle::Result createInfo(Info *infoOut) const = 0;
 
-    virtual size_t getLocalMemSizeUsed(const cl::Device &device) const { return 0; }
+    virtual cl_ulong getLocalMemSizeUsed(const cl::Device &device) const { return 0; }
+    virtual cl_ulong getAllArgLocalMemSize() const { return 0; }
+    virtual cl_ulong getCompiledLocalMemSize(const cl::Device &device) const { return 0; }
 
   protected:
     const cl::Kernel &mKernel;

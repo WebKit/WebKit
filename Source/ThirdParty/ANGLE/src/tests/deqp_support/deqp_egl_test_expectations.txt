@@ -293,6 +293,10 @@
 // New crash since VK-GL-CTS roller on 2023-05-03
 42266606 MAC METAL : dEQP-EGL.functional.fence_sync.valid.egl_fence_persistent_buffer = SKIP
 
+// On Metal, these OOB draws will simply throw GL_INVALID_OPERATION instead of causing context loss or being ignored silently
+519942256 METAL : dEQP-EGL.functional.robustness.reset_context.fixed_function_pipeline.reset_status.index_buffer_out_of_bounds = SKIP
+519942256 METAL : dEQP-EGL.functional.robustness.reset_context.fixed_function_pipeline.reset_status.vertex_buffer_out_of_bounds = SKIP
+
 42265027 PIXEL4ORXL GLES : dEQP-EGL.functional.get_frame_timestamps.* = FAIL
 42265027 PIXEL4ORXL GLES : dEQP-EGL.functional.wide_color.* = FAIL
 42265027 PIXEL4ORXL GLES : dEQP-EGL.functional.choose_config.simple.selection_only.transparent_red_value = FAIL

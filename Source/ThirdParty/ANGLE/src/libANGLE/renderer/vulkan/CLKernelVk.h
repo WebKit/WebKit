@@ -147,7 +147,9 @@ class CLKernelVk : public CLKernelImpl
     // Initialize the descriptor pools for this kernel resources
     angle::Result initializeDescriptorPools();
 
-    size_t getLocalMemSizeUsed(const cl::Device &device) const override;
+    cl_ulong getLocalMemSizeUsed(const cl::Device &device) const override;
+    cl_ulong getAllArgLocalMemSize() const override;
+    cl_ulong getCompiledLocalMemSize(const cl::Device &device) const override;
 
   private:
     CLProgramVk *mProgram;

@@ -74,11 +74,6 @@ class TextureStorage : public angle::Subject
                                   const gl::PixelUnpackState &unpack,
                                   const uint8_t *pixelData)          = 0;
 
-    // This is a no-op for most implementations of TextureStorage. Some (e.g. TextureStorage11_2D)
-    // might override it.
-    virtual angle::Result useLevelZeroWorkaroundTexture(const gl::Context *context,
-                                                        bool useLevelZeroTexture);
-
     virtual void invalidateTextures() {}
 
     // Called by outer object when label has changed via KHR_debug extension
@@ -92,12 +87,6 @@ class TextureStorage : public angle::Subject
 };
 
 inline angle::Result TextureStorage::onDestroy(const gl::Context *context)
-{
-    return angle::Result::Continue;
-}
-
-inline angle::Result TextureStorage::useLevelZeroWorkaroundTexture(const gl::Context *context,
-                                                                   bool useLevelZeroTexture)
 {
     return angle::Result::Continue;
 }

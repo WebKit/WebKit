@@ -3865,10 +3865,10 @@ void FormatTable::initNativeFormatCapsAutogen(const DisplayMtl *display)
     const angle::FeaturesMtl &featuresMtl = display->getFeatures();
     // Skip auto resolve if either hasDepth/StencilAutoResolve or allowMultisampleStoreAndResolve
     // feature are disabled.
-    bool supportDepthAutoResolve = featuresMtl.hasDepthAutoResolve.enabled &&
-                                   featuresMtl.allowMultisampleStoreAndResolve.enabled;
-    bool supportStencilAutoResolve = featuresMtl.hasStencilAutoResolve.enabled &&
-                                     featuresMtl.allowMultisampleStoreAndResolve.enabled;
+    bool supportDepthAutoResolve        = featuresMtl.hasDepthAutoResolve.enabled &&
+                                          featuresMtl.allowMultisampleStoreAndResolve.enabled;
+    bool supportStencilAutoResolve      = featuresMtl.hasStencilAutoResolve.enabled &&
+                                          featuresMtl.allowMultisampleStoreAndResolve.enabled;
     bool supportDepthStencilAutoResolve = supportDepthAutoResolve && supportStencilAutoResolve;
 
     // Source: https://developer.apple.com/metal/Metal-Feature-Set-Tables.pdf

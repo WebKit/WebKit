@@ -2962,7 +2962,8 @@ void CaptureVertexArrayState(std::vector<CallCapture> *setupCalls,
             }
             else if (attrib.bindingIndex == attribIndex &&
                      VertexBindingMatchesAttribStride(attrib, binding) &&
-                     (!buffer || binding.getOffset() == reinterpret_cast<GLintptr>(attrib.pointer)))
+                     (!buffer ||
+                      binding.getOffset() == reinterpret_cast<uintptr_t>(attrib.pointer)))
             {
                 // Check if we can use strictly ES2 semantics, and track indexes that do.
                 vertexPointerBindings.set(attribIndex);
@@ -3058,9 +3059,10 @@ void CaptureVertexArrayState(std::vector<CallCapture> *setupCalls,
 
         if (buffer)
         {
-            Capture(setupCalls, CaptureBindVertexBuffer(
-                                    *replayState, true, static_cast<GLuint>(bindingIndex),
-                                    buffer->id(), binding.getOffset(), binding.getStride()));
+            Capture(setupCalls,
+                    CaptureBindVertexBuffer(
+                        *replayState, true, static_cast<GLuint>(bindingIndex), buffer->id(),
+                        static_cast<GLintptr>(binding.getOffset()), binding.getStride()));
         }
 
         if (binding.getDivisor() != 0)
@@ -3957,7 +3959,7 @@ void CaptureShareGroupMidExecutionSetup(
     gl::PixelUnpackState &currentUnpackState = replayState.getUnpackState();
     if (currentUnpackState.alignment != 1)
     {
-        cap(CapturePixelStorei(replayState, true, GL_UNPACK_ALIGNMENT, 1));
+        cap(CapturePixelStorei(replayState, true, gl::PackUnpackParameter::UnpackAlignment, 1));
         replayState.getMutablePrivateStateForCapture()->setUnpackAlignment(1);
     }
 
@@ -4774,7 +4776,8 @@ void CaptureShareGroupMidExecutionSetup(
     GLint contextUnpackAlignment = context->getState().getUnpackState().alignment;
     if (currentUnpackState.alignment != contextUnpackAlignment)
     {
-        cap(CapturePixelStorei(replayState, true, GL_UNPACK_ALIGNMENT, contextUnpackAlignment));
+        cap(CapturePixelStorei(replayState, true, gl::PackUnpackParameter::UnpackAlignment,
+                               contextUnpackAlignment));
         replayState.getMutablePrivateStateForCapture()->setUnpackAlignment(contextUnpackAlignment);
     }
 }
@@ -4949,7 +4952,7 @@ void CaptureMidExecutionSetup(const gl::Context *context,
     gl::PixelUnpackState &currentUnpackState = replayState.getUnpackState();
     if (currentUnpackState.alignment != 1)
     {
-        cap(CapturePixelStorei(replayState, true, GL_UNPACK_ALIGNMENT, 1));
+        cap(CapturePixelStorei(replayState, true, gl::PackUnpackParameter::UnpackAlignment, 1));
         replayState.getMutablePrivateStateForCapture()->setUnpackAlignment(1);
     }
 
@@ -5835,25 +5838,28 @@ void CaptureMidExecutionSetup(const gl::Context *context,
     gl::PixelPackState &currentPackState = replayState.getPackState();
     if (currentPackState.alignment != apiState.getPackAlignment())
     {
-        cap(CapturePixelStorei(replayState, true, GL_PACK_ALIGNMENT, apiState.getPackAlignment()));
+        cap(CapturePixelStorei(replayState, true, gl::PackUnpackParameter::PackAlignment,
+                               apiState.getPackAlignment()));
         currentPackState.alignment = apiState.getPackAlignment();
     }
 
     if (currentPackState.rowLength != apiState.getPackRowLength())
     {
-        cap(CapturePixelStorei(replayState, true, GL_PACK_ROW_LENGTH, apiState.getPackRowLength()));
+        cap(CapturePixelStorei(replayState, true, gl::PackUnpackParameter::PackRowLength,
+                               apiState.getPackRowLength()));
         currentPackState.rowLength = apiState.getPackRowLength();
     }
 
     if (currentPackState.skipRows != apiState.getPackSkipRows())
     {
-        cap(CapturePixelStorei(replayState, true, GL_PACK_SKIP_ROWS, apiState.getPackSkipRows()));
+        cap(CapturePixelStorei(replayState, true, gl::PackUnpackParameter::PackSkipRows,
+                               apiState.getPackSkipRows()));
         currentPackState.skipRows = apiState.getPackSkipRows();
     }
 
     if (currentPackState.skipPixels != apiState.getPackSkipPixels())
     {
-        cap(CapturePixelStorei(replayState, true, GL_PACK_SKIP_PIXELS,
+        cap(CapturePixelStorei(replayState, true, gl::PackUnpackParameter::PackSkipPixels,
                                apiState.getPackSkipPixels()));
         currentPackState.skipPixels = apiState.getPackSkipPixels();
     }
@@ -5862,35 +5868,35 @@ void CaptureMidExecutionSetup(const gl::Context *context,
     ASSERT(currentUnpackState.alignment == 1);
     if (currentUnpackState.rowLength != apiState.getUnpackRowLength())
     {
-        cap(CapturePixelStorei(replayState, true, GL_UNPACK_ROW_LENGTH,
+        cap(CapturePixelStorei(replayState, true, gl::PackUnpackParameter::UnpackRowLength,
                                apiState.getUnpackRowLength()));
         currentUnpackState.rowLength = apiState.getUnpackRowLength();
     }
 
     if (currentUnpackState.skipRows != apiState.getUnpackSkipRows())
     {
-        cap(CapturePixelStorei(replayState, true, GL_UNPACK_SKIP_ROWS,
+        cap(CapturePixelStorei(replayState, true, gl::PackUnpackParameter::UnpackSkipRows,
                                apiState.getUnpackSkipRows()));
         currentUnpackState.skipRows = apiState.getUnpackSkipRows();
     }
 
     if (currentUnpackState.skipPixels != apiState.getUnpackSkipPixels())
     {
-        cap(CapturePixelStorei(replayState, true, GL_UNPACK_SKIP_PIXELS,
+        cap(CapturePixelStorei(replayState, true, gl::PackUnpackParameter::UnpackSkipPixels,
                                apiState.getUnpackSkipPixels()));
         currentUnpackState.skipPixels = apiState.getUnpackSkipPixels();
     }
 
     if (currentUnpackState.imageHeight != apiState.getUnpackImageHeight())
     {
-        cap(CapturePixelStorei(replayState, true, GL_UNPACK_IMAGE_HEIGHT,
+        cap(CapturePixelStorei(replayState, true, gl::PackUnpackParameter::UnpackImageHeight,
                                apiState.getUnpackImageHeight()));
         currentUnpackState.imageHeight = apiState.getUnpackImageHeight();
     }
 
     if (currentUnpackState.skipImages != apiState.getUnpackSkipImages())
     {
-        cap(CapturePixelStorei(replayState, true, GL_UNPACK_SKIP_IMAGES,
+        cap(CapturePixelStorei(replayState, true, gl::PackUnpackParameter::UnpackSkipImages,
                                apiState.getUnpackSkipImages()));
         currentUnpackState.skipImages = apiState.getUnpackSkipImages();
     }
@@ -5955,7 +5961,8 @@ void CaptureMidExecutionSetup(const gl::Context *context,
     GLint contextUnpackAlignment = context->getState().getUnpackState().alignment;
     if (currentUnpackState.alignment != contextUnpackAlignment)
     {
-        cap(CapturePixelStorei(replayState, true, GL_UNPACK_ALIGNMENT, contextUnpackAlignment));
+        cap(CapturePixelStorei(replayState, true, gl::PackUnpackParameter::UnpackAlignment,
+                               contextUnpackAlignment));
         replayState.getMutablePrivateStateForCapture()->setUnpackAlignment(contextUnpackAlignment);
     }
 
@@ -9435,6 +9442,7 @@ void FrameCaptureShared::writeJSON(const gl::Context *context)
         json.addScalar("ConfigDepthBits", EGL_DONT_CARE);
         json.addScalar("ConfigStencilBits", EGL_DONT_CARE);
     }
+    json.addBool("IsRobustAccessEnabled", context->isRobustnessEnabled());
     json.addBool("IsBinaryDataCompressed", mCompression);
     json.addBool("AreClientArraysEnabled", glState.areClientArraysEnabled());
     json.addBool("IsBindGeneratesResourcesEnabled", glState.isBindGeneratesResourceEnabled());

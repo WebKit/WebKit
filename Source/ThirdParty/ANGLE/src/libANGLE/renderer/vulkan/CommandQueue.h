@@ -242,19 +242,22 @@ class CommandsState : angle::NonCopyable
         return (*renderPassCommands)->reset(context, &mSecondaryCommands);
     }
 
-    void flushImagesTransitionToForeign(
+    angle::Result flushImagesTransitionToForeign(
+        Context *context,
         std::vector<VkImageMemoryBarrier> &&imagesToTransitionToForeign)
     {
         std::lock_guard<angle::SimpleMutex> lock(mCmdPoolMutex);
-        // If we have foreign images to transit, we must have already issued some barrier, which
-        // means command buffer can't be empty.
-        ASSERT(mPrimaryCommands.valid());
+        // Usually we have foreign images to transit, we must have already issued some barrier,
+        // which means command buffer can't be empty. But if we flush and submit outsideRPCommands
+        // only, we may still end up with invalid primary command buffer.
+        ANGLE_TRY(ensurePrimaryCommandBufferValidLocked(context));
 
         mPrimaryCommands.pipelineBarrier(
             VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, nullptr, 0,
             nullptr, static_cast<uint32_t>(imagesToTransitionToForeign.size()),
             imagesToTransitionToForeign.data());
         imagesToTransitionToForeign.clear();
+        return angle::Result::Continue;
     }
 
     angle::Result getCommandsAndWaitSemaphores(
