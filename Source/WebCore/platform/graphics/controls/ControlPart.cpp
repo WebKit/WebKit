@@ -41,6 +41,16 @@ ControlFactory& ControlPart::controlFactory() const
     return m_overrideControlFactory ? *m_overrideControlFactory : ControlFactory::singleton();
 }
 
+void ControlPart::setOverrideControlFactory(RefPtr<ControlFactory>&& controlFactory)
+{
+    if (m_overrideControlFactory == controlFactory)
+        return;
+
+    m_overrideControlFactory = WTF::move(controlFactory);
+
+    m_platformControl = nullptr;
+}
+
 PlatformControl* ControlPart::platformControl() const
 {
     if (!m_platformControl)

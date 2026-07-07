@@ -44,7 +44,7 @@ public:
     StyleAppearance type() const { return m_type; }
 
     WEBCORE_EXPORT ControlFactory& controlFactory() const;
-    void setOverrideControlFactory(RefPtr<ControlFactory>&& controlFactory) { m_overrideControlFactory = WTF::move(controlFactory); }
+    WEBCORE_EXPORT void setOverrideControlFactory(RefPtr<ControlFactory>&&);
 
     FloatSize sizeForBounds(const FloatRect& bounds, const ControlStyle&);
     FloatRect rectForBounds(const FloatRect& bounds, const ControlStyle&);

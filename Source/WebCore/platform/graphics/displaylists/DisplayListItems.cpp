@@ -318,9 +318,9 @@ Ref<const DisplayList> DrawDisplayList::displayList() const
     return m_displayList;
 }
 
-void DrawDisplayList::apply(GraphicsContext& context) const
+void DrawDisplayList::apply(GraphicsContext& context, ControlFactory& controlFactory) const
 {
-    return context.drawDisplayList(m_displayList);
+    return context.drawDisplayList(m_displayList, controlFactory);
 }
 
 void DrawDisplayList::dump(TextStream& ts, OptionSet<AsTextFlag>) const

@@ -41,6 +41,8 @@ void applyItem(GraphicsContext& context, const AffineTransform& baseTransform, C
             item.apply(context, controlFactory);
         }, [&](const SetCTM& item) {
             item.apply(context, baseTransform);
+        }, [&](const DrawDisplayList& item) {
+            item.apply(context, controlFactory);
         }, [&](const auto& item) {
             item.apply(context);
         }
