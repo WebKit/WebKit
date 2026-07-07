@@ -90,14 +90,13 @@ static inline Key makeSubresourcesKey(const Key& resourceKey, const Salt& salt)
 static inline ResourceRequest constructRevalidationRequest(const Key& key, const SubresourceInfo& subResourceInfo, const Entry* entry)
 {
     ResourceRequest revalidationRequest(URL { key.identifier() });
+    revalidationRequest.setShouldBlockThirdPartyStorage(!key.partition().isEmpty());
     revalidationRequest.setHTTPHeaderFields(subResourceInfo.requestHeaders());
     revalidationRequest.setFirstPartyForCookies(subResourceInfo.firstPartyForCookies());
     revalidationRequest.setIsSameSite(subResourceInfo.isSameSite());
     revalidationRequest.setIsTopSite(subResourceInfo.isTopSite());
     revalidationRequest.setIsAppInitiated(subResourceInfo.isAppInitiated());
 
-    if (!key.partition().isEmpty())
-        revalidationRequest.setCachePartition(key.partition());
     ASSERT_WITH_MESSAGE(key.range().isEmpty(), "range is not supported");
     
     revalidationRequest.makeUnconditional();

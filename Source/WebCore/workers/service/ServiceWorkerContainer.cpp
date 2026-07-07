@@ -238,7 +238,7 @@ void ServiceWorkerContainer::addRegistration(Variant<RefPtr<TrustedScriptURL>, S
     jobData.topOrigin = context->topOrigin().data();
     jobData.workerType = options.type;
     jobData.type = ServiceWorkerJobType::Register;
-    jobData.domainForCachePartition = context->domainForCachePartition();
+    jobData.shouldBlockThirdPartyStorage = context->shouldBlockThirdPartyStorage();
     jobData.registrationOptions = options;
 
     scheduleJob(ServiceWorkerJob::create(*this, WTF::move(promise), WTF::move(jobData)));
@@ -293,7 +293,7 @@ void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& 
     jobData.topOrigin = context->topOrigin().data();
     jobData.workerType = workerType;
     jobData.type = ServiceWorkerJobType::Update;
-    jobData.domainForCachePartition = context->domainForCachePartition();
+    jobData.shouldBlockThirdPartyStorage = context->shouldBlockThirdPartyStorage();
     jobData.scopeURL = scopeURL;
     jobData.scriptURL = scriptURL;
 
