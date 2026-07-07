@@ -1214,6 +1214,7 @@ webkit.org/b/304278 inspector/worker/debugger-pause-subworker.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-fonts/generic-family-lang-attr-cascade.html [ ImageOnlyFailure ]
 
 webkit.org/b/213202 fast/mediastream/getUserMedia-grant-persistency3.html [ Failure Pass ]
+webkit.org/b/318758 fast/mediastream/delete-audio-unit.html [ Pass Timeout ]
 
 webkit.org/b/305509 fast/css/max-content-img-sizing-1.html [ ImageOnlyFailure Pass ]
 webkit.org/b/305509 fast/css/max-content-img-sizing-2.html [ ImageOnlyFailure Pass ]
