@@ -36,9 +36,9 @@
 
 namespace WebCore {
 
-std::unique_ptr<CoordinatedPlatformLayerBufferHolePunch> CoordinatedPlatformLayerBufferHolePunch::create(const IntSize& size)
+Ref<CoordinatedPlatformLayerBufferHolePunch> CoordinatedPlatformLayerBufferHolePunch::create(const IntSize& size)
 {
-    return makeUnique<CoordinatedPlatformLayerBufferHolePunch>(size);
+    return adoptRef(*new CoordinatedPlatformLayerBufferHolePunch(size));
 }
 
 CoordinatedPlatformLayerBufferHolePunch::CoordinatedPlatformLayerBufferHolePunch(const IntSize& size)
@@ -47,10 +47,10 @@ CoordinatedPlatformLayerBufferHolePunch::CoordinatedPlatformLayerBufferHolePunch
 }
 
 #if USE(GSTREAMER)
-std::unique_ptr<CoordinatedPlatformLayerBufferHolePunch> CoordinatedPlatformLayerBufferHolePunch::create(const IntSize& size, GstElement* videoSink, RefPtr<GStreamerQuirksManager>&& quirksManager)
+Ref<CoordinatedPlatformLayerBufferHolePunch> CoordinatedPlatformLayerBufferHolePunch::create(const IntSize& size, GstElement* videoSink, RefPtr<GStreamerQuirksManager>&& quirksManager)
 {
     ASSERT(videoSink && quirksManager);
-    return makeUnique<CoordinatedPlatformLayerBufferHolePunch>(size, videoSink, WTF::move(quirksManager));
+    return adoptRef(*new CoordinatedPlatformLayerBufferHolePunch(size, videoSink, WTF::move(quirksManager)));
 }
 
 CoordinatedPlatformLayerBufferHolePunch::CoordinatedPlatformLayerBufferHolePunch(const IntSize& size, GstElement* videoSink, RefPtr<GStreamerQuirksManager>&& quirksManager)

@@ -36,7 +36,7 @@ GraphicsLayerContentsDisplayDelegateCoordinated::GraphicsLayerContentsDisplayDel
 
 GraphicsLayerContentsDisplayDelegateCoordinated::~GraphicsLayerContentsDisplayDelegateCoordinated() = default;
 
-void GraphicsLayerContentsDisplayDelegateCoordinated::setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& displayBuffer)
+void GraphicsLayerContentsDisplayDelegateCoordinated::setDisplayBuffer(RefPtr<CoordinatedPlatformLayerBuffer>&& displayBuffer)
 {
     m_displayBuffer = WTF::move(displayBuffer);
 }

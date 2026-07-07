@@ -36,11 +36,11 @@ using DMABufFormat = std::pair<uint32_t, uint64_t>;
 
 class CoordinatedPlatformLayerBufferVideo final : public CoordinatedPlatformLayerBuffer {
 public:
-    static std::unique_ptr<CoordinatedPlatformLayerBufferVideo> create(Ref<VideoFrameGStreamer>&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
+    static Ref<CoordinatedPlatformLayerBufferVideo> create(Ref<VideoFrameGStreamer>&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
     CoordinatedPlatformLayerBufferVideo(Ref<VideoFrameGStreamer>&&, IntSize&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
     virtual ~CoordinatedPlatformLayerBufferVideo();
 
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> copyBuffer() const;
+    RefPtr<CoordinatedPlatformLayerBuffer> copyBuffer() const;
 
 private:
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
@@ -49,19 +49,19 @@ private:
     sk_sp<SkImage> skiaImage() override;
 #endif
 
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferIfNeeded(bool gstGLEnabled);
+    RefPtr<CoordinatedPlatformLayerBuffer> createBufferIfNeeded(bool gstGLEnabled);
 #if USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromDMABufMemory();
+    Ref<CoordinatedPlatformLayerBuffer> createBufferFromDMABufMemory();
 #endif
 #if USE(GSTREAMER_GL)
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromGLMemory();
+    RefPtr<CoordinatedPlatformLayerBuffer> createBufferFromGLMemory();
 #endif
     void createBufferFromMappedFrameIfNeeded();
 
     Ref<VideoFrameGStreamer> m_videoFrame;
     std::optional<GstMappedFrame> m_mappedVideoFrame;
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
+    RefPtr<CoordinatedPlatformLayerBuffer> m_buffer;
 };
 
 } // namespace WebCore

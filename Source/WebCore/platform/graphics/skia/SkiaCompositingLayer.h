@@ -101,7 +101,7 @@ public:
     bool hasPendingBackingStoreTileUpdates() const;
     void processPendingTileUpdates();
     void setImageBackingStore(CoordinatedImageBackingStore*);
-    void setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&);
+    void setContentsBuffer(RefPtr<CoordinatedPlatformLayerBuffer>&&);
     CoordinatedPlatformLayerBuffer* contentsBuffer() const { return m_contentsBuffer.get(); }
     void setContentsSolidColor(const Color&);
 
@@ -250,7 +250,7 @@ private:
     std::unique_ptr<SkiaBackingStore> m_backingStore;
     RefPtr<CoordinatedAnimatedBackingStoreClient> m_animatedBackingStoreClient;
     RefPtr<CoordinatedImageBackingStore> m_imageBackingStore;
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_contentsBuffer;
+    RefPtr<CoordinatedPlatformLayerBuffer> m_contentsBuffer;
     Color m_contentsSolidColor;
     std::optional<DebugBorder> m_debugBorder;
     std::optional<unsigned> m_repaintCount;

@@ -36,8 +36,8 @@ class DMABufBufferAttributes;
 
 class CoordinatedPlatformLayerBufferDMABuf final : public CoordinatedPlatformLayerBuffer {
 public:
-    static std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> create(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
-    static std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> create(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, WTF::UnixFileDescriptor&&);
+    static Ref<CoordinatedPlatformLayerBufferDMABuf> create(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
+    static Ref<CoordinatedPlatformLayerBufferDMABuf> create(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, WTF::UnixFileDescriptor&&);
     CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
     CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, WTF::UnixFileDescriptor&&);
     virtual ~CoordinatedPlatformLayerBufferDMABuf();
@@ -49,8 +49,8 @@ private:
     sk_sp<SkImage> skiaImage() override;
 #endif
 
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> importDMABuf() const;
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> importYUV() const;
+    RefPtr<CoordinatedPlatformLayerBuffer> importDMABuf() const;
+    RefPtr<CoordinatedPlatformLayerBuffer> importYUV() const;
 
     const Ref<DMABufBuffer> m_dmabuf;
     WTF::UnixFileDescriptor m_fenceFD;

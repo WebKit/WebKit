@@ -62,7 +62,7 @@ DMABufBuffer::DMABufBuffer(uint64_t id, Attributes&& attributes)
 
 DMABufBuffer::~DMABufBuffer() = default;
 
-void DMABufBuffer::setBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer)
+void DMABufBuffer::setBuffer(RefPtr<CoordinatedPlatformLayerBuffer>&& buffer)
 {
     m_buffer = WTF::move(buffer);
 }
