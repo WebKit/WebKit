@@ -106,8 +106,8 @@ private:
     friend class Procedure;
     friend class Value;
 
-    inline bool isLegalOffsetImpl(int32_t offset) const;
-    bool isLegalOffsetImpl(int64_t offset) const;
+    inline bool NODELETE isLegalOffsetImpl(int32_t offset) const;
+    bool NODELETE isLegalOffsetImpl(int64_t offset) const;
 
     enum MemoryValueLoad { MemoryValueLoadTag };
     enum MemoryValueLoadImplied { MemoryValueLoadImpliedTag };

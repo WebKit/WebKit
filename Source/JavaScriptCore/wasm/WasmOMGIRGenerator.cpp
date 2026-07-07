@@ -3677,6 +3677,7 @@ auto OMGIRGenerator::addArrayNew(TypeSignatureIndex typeIndex, ExpressionType si
 
     Ref<const RTT> rtt = m_info.rtt(typeIndex);
     int32_t allocatorsBaseOffset = safeCast<int32_t>(JSWebAssemblyInstance::offsetOfAllocatorForGCObject(m_info, 0));
+    m_proc.setUsesWasmGCArrayAllocations();
 
     auto* array = m_currentBlock->appendNew<WasmArrayNewValue>(m_proc, origin(), wasmRefType(), Ref { rtt }, typeIndex.rawIndex(), allocatorsBaseOffset, instanceValue(), structureID, sizeValue, initValue);
 
@@ -3717,6 +3718,7 @@ auto OMGIRGenerator::addArrayNewDefault(TypeSignatureIndex typeIndex, Expression
 
     Ref<const RTT> rtt = m_info.rtt(typeIndex);
     int32_t allocatorsBaseOffset = safeCast<int32_t>(JSWebAssemblyInstance::offsetOfAllocatorForGCObject(m_info, 0));
+    m_proc.setUsesWasmGCArrayAllocations();
 
     auto* array = m_currentBlock->appendNew<WasmArrayNewValue>(m_proc, origin(), wasmRefType(), Ref { rtt }, typeIndex.rawIndex(), allocatorsBaseOffset, instanceValue(), structureID, sizeValue, initValue);
 
@@ -3749,6 +3751,7 @@ auto OMGIRGenerator::addArrayNewFixed(TypeSignatureIndex typeIndex, ArgumentList
 
     Ref<const RTT> rtt = m_info.rtt(typeIndex);
     int32_t allocatorsBaseOffset = safeCast<int32_t>(JSWebAssemblyInstance::offsetOfAllocatorForGCObject(m_info, 0));
+    m_proc.setUsesWasmGCArrayAllocations();
 
     auto* object = m_currentBlock->appendNew<WasmArrayNewValue>(m_proc, origin(), wasmRefType(), Ref { rtt }, typeIndex.rawIndex(), allocatorsBaseOffset, instanceValue(), structureID, size);
 
@@ -4038,6 +4041,7 @@ auto OMGIRGenerator::addStructNew(TypeSignatureIndex typeIndex, ArgumentList& ar
     auto* structureID = loadGCObjectStructureID(typeIndex);
 
     int32_t allocatorsBaseOffset = safeCast<int32_t>(JSWebAssemblyInstance::offsetOfAllocatorForGCObject(m_info, 0));
+    m_proc.setUsesWasmGCStructAllocations();
 
     auto* structNew = m_currentBlock->appendNew<WasmStructNewValue>(m_proc, origin(), wasmRefType(), Ref { rtt }, typeIndex.rawIndex(), allocatorsBaseOffset, instanceValue(), structureID);
 
@@ -4057,6 +4061,7 @@ auto OMGIRGenerator::addStructNewDefault(TypeSignatureIndex typeIndex, Expressio
     auto* structureID = loadGCObjectStructureID(typeIndex);
 
     int32_t allocatorsBaseOffset = safeCast<int32_t>(JSWebAssemblyInstance::offsetOfAllocatorForGCObject(m_info, 0));
+    m_proc.setUsesWasmGCStructAllocations();
 
     auto* structNew = m_currentBlock->appendNew<WasmStructNewValue>(m_proc, origin(), wasmRefType(), Ref { rtt }, typeIndex.rawIndex(), allocatorsBaseOffset, instanceValue(), structureID);
 

@@ -968,6 +968,7 @@
 		31770C5827B94CE600308091 /* TemporalPlainDate.h in Headers */ = {isa = PBXBuildFile; fileRef = 31770C5227B94CE500308091 /* TemporalPlainDate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33111B8B2397256500AA34CE /* Scribble.h in Headers */ = {isa = PBXBuildFile; fileRef = 33111B8A2397256500AA34CE /* Scribble.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3395C70722555F6D00BDBFAD /* B3EliminateDeadCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3395C70522555F6D00BDBFAD /* B3EliminateDeadCode.h */; };
+		0378445DC7A9472E81DD9A6A /* B3EliminateWasmGCAllocations.h in Headers */ = {isa = PBXBuildFile; fileRef = BE117353BAB446559D01F3D2 /* B3EliminateWasmGCAllocations.h */; };
 		33A920BD23DA2C6D000EBAF0 /* CommonSlowPathsInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 33A920BC23DA2C6D000EBAF0 /* CommonSlowPathsInlines.h */; };
 		33B2A54722653481005A0F79 /* B3ValueInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84FB1BDACDAC0080FF74 /* B3ValueInlines.h */; };
 		33B2A548226543BF005A0F79 /* FTLLowerDFGToB3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A04170513DB00BB722C /* FTLLowerDFGToB3.cpp */; };
@@ -4305,6 +4306,8 @@
 		3374364A224D79EF00C8C227 /* B3OptimizeAssociativeExpressionTrees.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = B3OptimizeAssociativeExpressionTrees.h; path = b3/B3OptimizeAssociativeExpressionTrees.h; sourceTree = "<group>"; };
 		3395C70422555F6C00BDBFAD /* B3EliminateDeadCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3EliminateDeadCode.cpp; path = b3/B3EliminateDeadCode.cpp; sourceTree = "<group>"; };
 		3395C70522555F6D00BDBFAD /* B3EliminateDeadCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3EliminateDeadCode.h; path = b3/B3EliminateDeadCode.h; sourceTree = "<group>"; };
+		A064075875F64769B8C0A842 /* B3EliminateWasmGCAllocations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3EliminateWasmGCAllocations.cpp; path = b3/B3EliminateWasmGCAllocations.cpp; sourceTree = "<group>"; };
+		BE117353BAB446559D01F3D2 /* B3EliminateWasmGCAllocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3EliminateWasmGCAllocations.h; path = b3/B3EliminateWasmGCAllocations.h; sourceTree = "<group>"; };
 		33A920BC23DA2C6D000EBAF0 /* CommonSlowPathsInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonSlowPathsInlines.h; sourceTree = "<group>"; };
 		33B2A54522651D53005A0F79 /* MarkedSpace.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MarkedSpace.cpp; sourceTree = "<group>"; };
 		36A7683254F6484D925EA7FE /* B3WasmArrayLengthValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = B3WasmArrayLengthValue.h; path = b3/B3WasmArrayLengthValue.h; sourceTree = "<group>"; };
@@ -7059,6 +7062,8 @@
 				0F725CA41C503DED00AD943A /* B3EliminateCommonSubexpressions.h */,
 				3395C70422555F6C00BDBFAD /* B3EliminateDeadCode.cpp */,
 				3395C70522555F6D00BDBFAD /* B3EliminateDeadCode.h */,
+				A064075875F64769B8C0A842 /* B3EliminateWasmGCAllocations.cpp */,
+				BE117353BAB446559D01F3D2 /* B3EliminateWasmGCAllocations.h */,
 				0F5BF16E1F23A5A10029D91D /* B3EnsureLoopPreHeaders.cpp */,
 				0F5BF16F1F23A5A10029D91D /* B3EnsureLoopPreHeaders.h */,
 				52E65A1A27682760002B4C0A /* B3EstimateStaticExecutionCounts.cpp */,
@@ -11232,6 +11237,7 @@
 				0FEC85C11BE167A00080FF74 /* B3Effects.h in Headers */,
 				0F725CA81C503DED00AD943A /* B3EliminateCommonSubexpressions.h in Headers */,
 				3395C70722555F6D00BDBFAD /* B3EliminateDeadCode.h in Headers */,
+				0378445DC7A9472E81DD9A6A /* B3EliminateWasmGCAllocations.h in Headers */,
 				0F5BF1711F23A5A10029D91D /* B3EnsureLoopPreHeaders.h in Headers */,
 				52E65A1E27682771002B4C0A /* B3EstimateStaticExecutionCounts.h in Headers */,
 				5318045C22EAAC4B004A7342 /* B3ExtractValue.h in Headers */,
