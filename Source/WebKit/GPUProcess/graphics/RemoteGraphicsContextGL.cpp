@@ -365,7 +365,7 @@ void RemoteGraphicsContextGL::readPixelsSharedMemory(WebCore::IntRect rect, uint
     completionHandler(readArea);
 }
 
-void RemoteGraphicsContextGL::multiDrawArraysANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t>&& firstsAndCounts)
+void RemoteGraphicsContextGL::multiDrawArraysANGLE(uint32_t mode, IPC::UnsafeArrayReferenceTuple<int32_t, int32_t>&& firstsAndCounts)
 {
     assertIsCurrent(workQueue());
     // Copy the arrays. The contents are to be verified. The data might be in memory region shared by the caller.
@@ -374,7 +374,7 @@ void RemoteGraphicsContextGL::multiDrawArraysANGLE(uint32_t mode, IPC::ArrayRefe
     protect(m_context)->multiDrawArraysANGLE(mode, GCGLSpanTuple { firsts, counts });
 }
 
-void RemoteGraphicsContextGL::multiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t>&& firstsCountsAndInstanceCounts)
+void RemoteGraphicsContextGL::multiDrawArraysInstancedANGLE(uint32_t mode, IPC::UnsafeArrayReferenceTuple<int32_t, int32_t, int32_t>&& firstsCountsAndInstanceCounts)
 {
     assertIsCurrent(workQueue());
     // Copy the arrays. The contents are to be verified. The data might be in memory region shared by the caller.
@@ -384,7 +384,7 @@ void RemoteGraphicsContextGL::multiDrawArraysInstancedANGLE(uint32_t mode, IPC::
     protect(m_context)->multiDrawArraysInstancedANGLE(mode, GCGLSpanTuple { firsts, counts, instanceCounts });
 }
 
-void RemoteGraphicsContextGL::multiDrawElementsANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t>&& countsAndOffsets, uint32_t type)
+void RemoteGraphicsContextGL::multiDrawElementsANGLE(uint32_t mode, IPC::UnsafeArrayReferenceTuple<int32_t, int32_t>&& countsAndOffsets, uint32_t type)
 {
     assertIsCurrent(workQueue());
     // Copy the arrays. The contents are to be verified. The data might be in memory region shared by the caller.
@@ -394,7 +394,7 @@ void RemoteGraphicsContextGL::multiDrawElementsANGLE(uint32_t mode, IPC::ArrayRe
     protect(m_context)->multiDrawElementsANGLE(mode, GCGLSpanTuple { counts.span().data(), offsets, counts.size() }, type);
 }
 
-void RemoteGraphicsContextGL::multiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t>&& countsOffsetsAndInstanceCounts, uint32_t type)
+void RemoteGraphicsContextGL::multiDrawElementsInstancedANGLE(uint32_t mode, IPC::UnsafeArrayReferenceTuple<int32_t, int32_t, int32_t>&& countsOffsetsAndInstanceCounts, uint32_t type)
 {
     assertIsCurrent(workQueue());
     // Copy the arrays. The contents are to be verified. The data might be in memory region shared by the caller.
@@ -405,7 +405,7 @@ void RemoteGraphicsContextGL::multiDrawElementsInstancedANGLE(uint32_t mode, IPC
     protect(m_context)->multiDrawElementsInstancedANGLE(mode, GCGLSpanTuple { counts.span().data(), offsets, instanceCounts.span().data(), counts.size() }, type);
 }
 
-void RemoteGraphicsContextGL::multiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t>&& firstsCountsInstanceCountsAndBaseInstances)
+void RemoteGraphicsContextGL::multiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::UnsafeArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t>&& firstsCountsInstanceCountsAndBaseInstances)
 {
     assertIsCurrent(workQueue());
     // Copy the arrays. The contents are to be verified. The data might be in memory region shared by the caller.
@@ -416,7 +416,7 @@ void RemoteGraphicsContextGL::multiDrawArraysInstancedBaseInstanceANGLE(uint32_t
     protect(m_context)->multiDrawArraysInstancedBaseInstanceANGLE(mode, GCGLSpanTuple { firsts, counts, instanceCounts, baseInstances });
 }
 
-void RemoteGraphicsContextGL::multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t>&& countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
+void RemoteGraphicsContextGL::multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::UnsafeArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t>&& countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
 {
     assertIsCurrent(workQueue());
     // Copy the arrays. The contents are to be verified. The data might be in memory region shared by the caller.

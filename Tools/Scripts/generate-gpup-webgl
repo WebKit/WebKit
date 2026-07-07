@@ -147,12 +147,12 @@ messages -> RemoteGraphicsContextGL Stream {{
     void GetBufferSubDataSharedMemory(uint32_t target, uint64_t offset, uint64_t dataSize, WebCore::SharedMemory::Handle handle) -> (bool valid) Synchronous NotStreamEncodable
     void ReadPixelsInline(WebCore::IntRect rect, uint32_t format, uint32_t type, bool packReverseRowOrder) -> (std::optional<WebCore::IntSize> readArea, IPC::UnsafeSpan<uint8_t> data) Synchronous
     void ReadPixelsSharedMemory(WebCore::IntRect rect, uint32_t format, uint32_t type, bool packReverseRowOrder, WebCore::SharedMemory::Handle handle) -> (std::optional<WebCore::IntSize> readArea) Synchronous NotStreamEncodable
-    void MultiDrawArraysANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> firstsAndCounts)
-    void MultiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> firstsCountsAandInstanceCounts)
-    void MultiDrawElementsANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> countsAndOffsets, uint32_t type)
-    void MultiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> countsOffsetsAndInstanceCounts, uint32_t type)
-    void MultiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t> firstsCountsInstanceCountsAndBaseInstances)
-    void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
+    void MultiDrawArraysANGLE(uint32_t mode, IPC::UnsafeArrayReferenceTuple<int32_t, int32_t> firstsAndCounts)
+    void MultiDrawArraysInstancedANGLE(uint32_t mode, IPC::UnsafeArrayReferenceTuple<int32_t, int32_t, int32_t> firstsCountsAandInstanceCounts)
+    void MultiDrawElementsANGLE(uint32_t mode, IPC::UnsafeArrayReferenceTuple<int32_t, int32_t> countsAndOffsets, uint32_t type)
+    void MultiDrawElementsInstancedANGLE(uint32_t mode, IPC::UnsafeArrayReferenceTuple<int32_t, int32_t, int32_t> countsOffsetsAndInstanceCounts, uint32_t type)
+    void MultiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::UnsafeArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t> firstsCountsInstanceCountsAndBaseInstances)
+    void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::UnsafeArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
     void DrawBuffers(IPC::UnsafeSpan<uint32_t> bufs) StreamBatched
     void DrawBuffersEXT(IPC::UnsafeSpan<uint32_t> bufs) StreamBatched
     void InvalidateFramebuffer(uint32_t target, IPC::UnsafeSpan<uint32_t> attachments)

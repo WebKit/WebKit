@@ -75,7 +75,7 @@ messages -> RemoteGraphicsContext Stream {
     ClipPath(WebCore::Path path, enum:bool WebCore::WindRule windRule) StreamBatched
     ClipCachedPath(WebKit::RemotePathImplIdentifier identifier, enum:bool WebCore::WindRule windRule)
     ResetClip() StreamBatched
-    DrawGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<WebCore::GlyphBufferGlyph, WebCore::FloatSize> glyphsAdvances, WebCore::FloatPoint localAnchor, enum:uint8_t WebCore::FontSmoothingMode smoothingMode) StreamBatched
+    DrawGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, IPC::UnsafeArrayReferenceTuple<WebCore::GlyphBufferGlyph, WebCore::FloatSize> glyphsAdvances, WebCore::FloatPoint localAnchor, enum:uint8_t WebCore::FontSmoothingMode smoothingMode) StreamBatched
     DrawDisplayList(WebKit::RemoteDisplayListIdentifier identifier) StreamBatched
     DrawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, WebCore::FloatRect sourceImageRect, Ref<WebCore::Filter> filter) StreamBatched
     DrawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::FloatRect destinationRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options) StreamBatched
@@ -88,7 +88,7 @@ messages -> RemoteGraphicsContext Stream {
     EndTransparencyLayer() StreamBatched
     DrawRect(WebCore::FloatRect rect, float borderThickness) StreamBatched
     DrawLine(WebCore::FloatPoint point1, WebCore::FloatPoint point2) StreamBatched
-    DrawLinesForText(WebCore::FloatPoint point, float thickness, std::span<const WebCore::FloatSegment> lineSegments, bool printing, bool doubleLines, enum:uint8_t WebCore::StrokeStyle strokeStyle) StreamBatched
+    DrawLinesForText(WebCore::FloatPoint point, float thickness, IPC::UnsafeSpan<WebCore::FloatSegment> lineSegments, bool printing, bool doubleLines, enum:uint8_t WebCore::StrokeStyle strokeStyle) StreamBatched
     DrawDotsForDocumentMarker(WebCore::FloatRect rect, struct WebCore::DocumentMarkerLineStyle style) StreamBatched
     DrawEllipse(WebCore::FloatRect rect) StreamBatched
     DrawPath(WebCore::Path path) StreamBatched
@@ -112,7 +112,7 @@ messages -> RemoteGraphicsContext Stream {
     FillEllipse(WebCore::FloatRect rect)
     StrokeRect(WebCore::FloatRect rect, float lineWidth)
     StrokeLine(struct WebCore::PathDataLine line) StreamBatched
-    StrokeLinesWithColorAndThickness(std::span<const WebCore::PathDataLineColorThickness> lines) StreamBatched
+    StrokeLinesWithColorAndThickness(IPC::UnsafeSpan<WebCore::PathDataLineColorThickness> lines) StreamBatched
     StrokeArc(struct WebCore::PathArc arc) StreamBatched
     StrokeClosedArc(struct WebCore::PathClosedArc closedArc) StreamBatched
     StrokeQuadCurve(struct WebCore::PathDataQuadCurve curve) StreamBatched
