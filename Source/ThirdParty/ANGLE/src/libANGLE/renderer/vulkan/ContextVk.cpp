@@ -7085,6 +7085,9 @@ void ContextVk::handleError(VkResult errorCode,
     }
     collector.releaseCommandBuffers();
 
+    mGraphicsDirtyBits |= mNewRenderPassDirtyBits;
+    mComputeDirtyBits |= mNewComputeCommandBufferDirtyBits;
+
     mOutsideRenderPassSerialFactory.reset();
     generateOutsideRenderPassCommandsQueueSerial();
 

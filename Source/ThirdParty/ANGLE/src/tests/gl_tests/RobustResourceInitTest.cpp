@@ -3004,6 +3004,107 @@ TEST_P(RobustResourceInitTestES3, Texture2DArrayRedefine)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that robust init is done correctly for array textures when updates pruning threshold is met.
+TEST_P(RobustResourceInitTestES3, Texture2DArrayPrunedSupersededUpdatesLeak)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    // We rely on AllocateNonZeroMemory configuration to verify this bug. This configuration
+    // overrides all new allocations with non-zero values, which allows us to catch if
+    // robust resource initialization Clear is bypassed.
+    constexpr int kLocalWidth  = 512;
+    constexpr int kLocalHeight = 512;
+    constexpr int kLayers      = 4;
+
+    GLFramebuffer fb;
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA8, kLocalWidth, kLocalHeight, kLayers, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Perform multiple sub-image updates to layer 0.
+    // Each update is 512 * 512 * 4 = 1 MiB.
+    // We do 17 updates (17 MiB staged), which exceeds the 16 MiB pruning threshold.
+    constexpr int kUpdateCount = 17;
+    std::vector<GLColor> zeroData(kLocalWidth * kLocalHeight, GLColor::transparentBlack);
+    for (int i = 0; i < kUpdateCount; ++i)
+    {
+        glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, kLocalWidth, kLocalHeight, 1, GL_RGBA,
+                        GL_UNSIGNED_BYTE, zeroData.data());
+    }
+
+    for (int layer = 1; layer < kLayers; ++layer)
+    {
+        glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0, layer);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        checkCustomFramebufferNonZeroPixels(kLocalWidth, kLocalHeight, 0, 0, 0, 0,
+                                            GLColor::transparentBlack);
+    }
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that robust init is done correctly when an array texture is redefined to a larger layer
+// count
+TEST_P(RobustResourceInitTestES3, Texture2DArrayRedefinePrunedSupersededUpdatesLeak)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    constexpr int kLocalWidth  = 512;
+    constexpr int kLocalHeight = 512;
+    constexpr int kLayers1     = 2;
+    constexpr int kLayers2     = 4;
+
+    GLFramebuffer fb;
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
+
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA8, kLocalWidth, kLocalHeight, kLayers1, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, kLocalWidth / 2, kLocalHeight / 2, kLayers1, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA8, kLocalWidth, kLocalHeight, kLayers2, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+
+    // Perform multiple sub-image updates to layers 0 and 1 to trigger pruning.
+    // Each update is 512 * 512 * 4 = 1 MB. Staging 17 updates (17 MB) exceeds the 16 MB
+    // pruning threshold and triggers staging-time updates pruning.
+    constexpr int kUpdateCount = 17;
+    std::vector<GLColor> zeroData(kLocalWidth * kLocalHeight, GLColor::transparentBlack);
+    for (int i = 0; i < kUpdateCount; ++i)
+    {
+        int layer = i % kLayers1;
+        glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, layer, kLocalWidth, kLocalHeight, 1, GL_RGBA,
+                        GL_UNSIGNED_BYTE, zeroData.data());
+    }
+
+    for (int layer = kLayers1; layer < kLayers2; ++layer)
+    {
+        glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0, layer);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        checkCustomFramebufferNonZeroPixels(kLocalWidth, kLocalHeight, 0, 0, 0, 0,
+                                            GLColor::transparentBlack);
+    }
+
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that redefining a 2D array texture to a compatible size (same size)
 // doesn't bypass robust resource initialization.
 TEST_P(RobustResourceInitTestES3, Texture2DArrayRedefineCompatible)
