@@ -2048,6 +2048,13 @@ angle::Result Texture::bindTexImageFromSurface(Context *context, egl::Surface *s
 {
     ASSERT(surface);
     ASSERT(!mBoundSurface);
+
+    // Release from previous calls to eglBindTexImage, to avoid calling the Impl after
+    ANGLE_TRY(releaseTexImageInternal(context));
+
+    egl::RefCountObjectReleaser<egl::Image> releaseImage;
+    ANGLE_TRY(orphanImages(context, &releaseImage));
+
     mBoundSurface = surface;
 
     // Set the image info to the size and format of the surface
@@ -2356,21 +2363,25 @@ GLenum Texture::getGenerateMipmapHint() const
     return mState.getGenerateMipmapHint();
 }
 
-angle::Result Texture::setBuffer(const gl::Context *context,
-                                 gl::Buffer *buffer,
-                                 GLenum internalFormat)
+angle::Result Texture::setBuffer(gl::Context *context, gl::Buffer *buffer, GLenum internalFormat)
 {
     // Use 0 to indicate that the size is taken from whatever size the buffer has when the texture
     // buffer is used.
     return setBufferRange(context, buffer, internalFormat, 0, 0);
 }
 
-angle::Result Texture::setBufferRange(const gl::Context *context,
+angle::Result Texture::setBufferRange(gl::Context *context,
                                       gl::Buffer *buffer,
                                       GLenum internalFormat,
                                       GLintptr offset,
                                       GLsizeiptr size)
 {
+    // Release from previous calls to eglBindTexImage, to avoid calling the Impl after
+    ANGLE_TRY(releaseTexImageInternal(context));
+
+    egl::RefCountObjectReleaser<egl::Image> releaseImage;
+    ANGLE_TRY(orphanImages(context, &releaseImage));
+
     mState.mImmutableFormat = true;
     mState.mBuffer.set(context, buffer, offset, size);
     ANGLE_TRY(mTexture->setBuffer(context, internalFormat));
