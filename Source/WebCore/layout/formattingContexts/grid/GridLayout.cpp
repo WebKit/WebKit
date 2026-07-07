@@ -268,6 +268,10 @@ BorderBoxPositions GridLayout::performInlineAxisSelfAlignment(const PlacedGridIt
         // Stretching should be handled by GridLayout::layoutGridItems.
         auto marginBoxPosition = StyleSelfAlignmentData::adjustmentFromStartEdge(remainingSpace, gridItem.inlineAxisAlignment().position(), LogicalBoxAxis::Inline, formattingContextWritingMode, gridItem.writingMode());
 
+        // Safe alignment must never overflow the start edge, so clamp any negative start-edge offset back to the start.
+        if (gridItem.inlineAxisAlignment().overflow() == OverflowAlignment::Safe)
+            marginBoxPosition = std::max(0_lu, marginBoxPosition);
+
         borderBoxPositions.append(marginBoxPosition + inlineMargins[gridItemIndex].marginStart);
     }
 
@@ -295,6 +299,10 @@ BorderBoxPositions GridLayout::performBlockAxisSelfAlignment(const PlacedGridIte
         //
         // Stretching should be handled by GridLayout::layoutGridItems.
         auto marginBoxPosition = StyleSelfAlignmentData::adjustmentFromStartEdge(remainingSpace, gridItem.blockAxisAlignment().position(), LogicalBoxAxis::Block, formattingContextWritingMode, gridItem.writingMode());
+
+        // Safe alignment must never overflow the start edge, so clamp any negative start-edge offset back to the start.
+        if (gridItem.blockAxisAlignment().overflow() == OverflowAlignment::Safe)
+            marginBoxPosition = std::max(0_lu, marginBoxPosition);
 
         borderBoxPositions.append(marginBoxPosition + blockMargins[gridItemIndex].marginStart);
     }
