@@ -48,7 +48,6 @@
 #import <wtf/text/StringBuilder.h>
 
 SOFT_LINK_FRAMEWORK(Network)
-SOFT_LINK_MAY_FAIL(Network, nw_webtransport_options_set_allow_joining_before_ready, void, (nw_protocol_options_t options, bool allow), (options, allow))
 SOFT_LINK_MAY_FAIL(Network, nw_webtransport_metadata_set_local_draining, void, (nw_protocol_metadata_t metadata), (metadata))
 SOFT_LINK_MAY_FAIL(Network, nw_webtransport_metadata_get_session_closed, bool, (nw_protocol_metadata_t metadata), (metadata))
 SOFT_LINK_MAY_FAIL(Network, nw_webtransport_metadata_get_transport_mode, nw_webtransport_transport_mode_t, (nw_protocol_metadata_t metadata), (metadata))
@@ -510,7 +509,6 @@ TEST(WebTransport, Worker)
         "async function test() {"
         "  try {"
         "    let t = new WebTransport('https://127.0.0.1:%d/');"
-        "    %s"
         "    let c = await t.createBidirectionalStream();"
         "    let w = c.writable.getWriter();"
         "    await w.write(new TextEncoder().encode('abc'));"
@@ -520,7 +518,7 @@ TEST(WebTransport, Worker)
         "    const { value, done } = await r.read();"
         "    self.postMessage('successfully read ' + new TextDecoder().decode(value));"
         "  } catch (e) { self.postMessage('caught ' + e); }"
-        "}; test();", transportServer.port(), canLoadnw_webtransport_options_set_allow_joining_before_ready() ? "" : "await t.ready;"];
+        "}; test();", transportServer.port()];
 
     HTTPServer loadingServer({
         { "/"_s, { mainHTML } },
@@ -600,8 +598,6 @@ TEST(WebTransport, ServiceWorker)
 {
     if (!WebTransportServer::isAvailable())
         return;
-    if (!canLoadnw_webtransport_options_set_allow_joining_before_ready())
-        return;
 
     WebTransportServer datagramServer([](ConnectionGroup group) -> ConnectionTask {
         auto datagramConnection = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Datagram);
@@ -673,8 +669,6 @@ TEST(WebTransport, ServiceWorker)
 TEST(WebTransport, CreateStreamsBeforeReady)
 {
     if (!WebTransportServer::isAvailable())
-        return;
-    if (!canLoadnw_webtransport_options_set_allow_joining_before_ready())
         return;
 
     WebTransportServer datagramServer([](ConnectionGroup group) -> ConnectionTask {

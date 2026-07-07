@@ -137,11 +137,16 @@ void nw_webtransport_metadata_set_remote_send_error_handler(nw_protocol_metadata
 void nw_connection_abort_reads(nw_connection_t, uint64_t);
 void nw_connection_abort_writes(nw_connection_t, uint64_t);
 
-#ifndef NS_NOESCAPE
-#define NS_NOESCAPE
+#ifndef NW_NOESCAPE
+#if __has_attribute(noescape)
+#define NW_NOESCAPE __attribute__((__noescape__))
+#else
+#define NW_NOESCAPE
+#endif
 #endif
 
-void nw_http_fields_access_value_by_name(nw_http_fields_t, const char*, NS_NOESCAPE nw_http_optional_string_accessor_t);
+
+void nw_http_fields_access_value_by_name(nw_http_fields_t, const char*, NW_NOESCAPE nw_http_optional_string_accessor_t);
 
 WTF_EXTERN_C_END
 
