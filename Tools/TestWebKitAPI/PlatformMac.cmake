@@ -1,15 +1,81 @@
 find_library(CARBON_LIBRARY Carbon)
 find_library(QUARTZCORE_LIBRARY QuartzCore)
 
-set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+execute_process(
+    COMMAND xcrun --sdk macosx --show-sdk-platform-path
+    OUTPUT_VARIABLE _platform_dir
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
 
-# Mirrors Runner/TestWebKitAPI.swift (the Xcode @main). Drop and switch to the
-# Swift runner once the CMake port supports Swift + Swift Testing.
-set(_test_main_SOURCES generic/main.mm)
+# Mirror Xcode's "Embed Testing.framework" phase
+set(_testing_staged)
+foreach (_fw Testing _Testing_AppKit _Testing_CoreGraphics _Testing_CoreImage
+        _Testing_CoreTransferable _Testing_Foundation _Testing_UIKit)
+    set(_src "${_platform_dir}/Developer/Library/Frameworks/${_fw}.framework")
+    set(_dst "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${_fw}.framework")
+
+    if (EXISTS "${_src}")
+        add_custom_command(OUTPUT "${_dst}"
+            COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+            COMMAND ditto "${_src}" "${_dst}"
+            COMMENT "Staging ${_fw}.framework"
+            VERBATIM
+        )
+        list(APPEND _testing_staged "${_dst}")
+    endif ()
+endforeach ()
+if (EXISTS "${_platform_dir}/Developer/usr/lib/lib_TestingInterop.dylib")
+    add_custom_command(OUTPUT "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/lib_TestingInterop.dylib"
+        COMMAND ditto "${_platform_dir}/Developer/usr/lib/lib_TestingInterop.dylib"
+            "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/lib_TestingInterop.dylib"
+        VERBATIM
+    )
+    list(APPEND _testing_staged "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/lib_TestingInterop.dylib")
+endif ()
+add_custom_target(TestWebKitAPIStageTesting DEPENDS ${_testing_staged})
+
+# WTF feature defines
+set(_test_swift_resp "${CMAKE_BINARY_DIR}/DerivedSources/TestWebKitAPI/platform-swift-args.resp")
+_webkit_generate_platform_swift_args(TestWebKitAPI "${_test_swift_resp}" "") # FIXME: Is it correct to have an empty last argument here?
+add_custom_target(TestWebKitAPISwiftArgs DEPENDS "${_test_swift_resp}")
+
+# Swift flags for all Test* targets
+_WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS(_test_swift_cc_flags)
+set(_testwebkitapi_swiftmodule_dir "${CMAKE_BINARY_DIR}/TestWebKitAPI/SwiftModules")
+set(TESTWEBKITAPI_SWIFT_FLAGS
+    "$<$<COMPILE_LANGUAGE:Swift>:-cxx-interoperability-mode=default>"
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -std=c++2b>"
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-swift-version 6>"
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-module-cache-path ${CMAKE_BINARY_DIR}/SwiftModuleCache>"
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:@${_test_swift_resp}>"
+    "$<$<COMPILE_LANGUAGE:Swift>:-F${CMAKE_LIBRARY_OUTPUT_DIRECTORY}>"
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${CMAKE_BINARY_DIR}>"
+)
+foreach (_f IN LISTS _test_swift_cc_flags)
+    list(APPEND TESTWEBKITAPI_SWIFT_FLAGS "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc ${_f}>")
+endforeach ()
+
+macro(WEBKIT_TEST_ENABLE_SWIFT _target)
+    target_sources(${_target} PRIVATE
+        ${TESTWEBKITAPI_DIR}/Runner/TestWebKitAPI.swift
+        ${TESTWEBKITAPI_DIR}/Runner/TestRunner.swift
+        ${TESTWEBKITAPI_DIR}/Runner/GoogleTestsController.swift
+        ${TESTWEBKITAPI_DIR}/Runner/SwiftTestsController.swift
+        ${TESTWEBKITAPI_DIR}/Runner/SwiftTestingABI.swift
+        ${TESTWEBKITAPI_DIR}/Runner/TestWebKitAPISupport.mm
+    )
+    set_target_properties(${_target} PROPERTIES Swift_MODULE_NAME ${_target})
+    target_compile_options(${_target} PRIVATE ${TESTWEBKITAPI_SWIFT_FLAGS}
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-import-objc-header ${TESTWEBKITAPI_DIR}/Runner/TestWebKitAPI-Bridging-Header.h>"
+    )
+    add_dependencies(${_target} TestWebKitAPIStageTesting TestWebKitAPISwiftArgs)
+    target_link_libraries(${_target} PRIVATE "-F${CMAKE_LIBRARY_OUTPUT_DIRECTORY}" "-framework Testing")
+endmacro()
+
+set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 # TestWTF
 list(APPEND TestWTF_SOURCES
-    ${_test_main_SOURCES}
     Helpers/cocoa/UtilitiesCocoa.mm
 )
 
@@ -21,12 +87,10 @@ list(APPEND TestWTF_LIBRARIES
 
 # TestJavaScriptCore
 list(APPEND TestJavaScriptCore_SOURCES
-    ${_test_main_SOURCES}
 )
 
 # TestWebCore
 list(APPEND TestWebCore_SOURCES
-    ${_test_main_SOURCES}
     Helpers/cocoa/TestNSBundleExtras.m
     Helpers/cocoa/UtilitiesCocoa.mm
 )
@@ -37,7 +101,6 @@ list(APPEND TestWebCore_LIBRARIES
 
 # TestWebKitLegacy
 list(APPEND TestWebKitLegacy_SOURCES
-    ${_test_main_SOURCES}
     Helpers/cocoa/TestNSBundleExtras.m
 )
 
@@ -67,7 +130,6 @@ set(TestWebKit_UNIFIED_SOURCE_EXCLUDES
 
 # Files compiled outside unified sources (Xcode membershipExceptions).
 list(APPEND TestWebKit_SOURCES
-    ${_test_main_SOURCES}
     Helpers/Counters.cpp
     Helpers/DeprecatedGlobalValues.cpp
     Helpers/GraphicsTestUtilities.cpp
@@ -186,7 +248,6 @@ file(GLOB _ipc_core_sources
     "${WEBKIT_DIR}/Platform/IPC/darwin/MachPort.mm"
 )
 list(APPEND TestIPC_SOURCES
-    ${_test_main_SOURCES}
     Helpers/cocoa/UtilitiesCocoa.mm
 
     Tests/IPC/IPCSerialization.mm
@@ -233,7 +294,6 @@ WEBKIT_ADD_TARGET_CXX_FLAGS(TestIPC -Wno-deprecated-declarations)
 # TestWGSL
 if (ENABLE_WEBGPU)
     list(APPEND TestWGSL_SOURCES
-        ${_test_main_SOURCES}
         Tests/WGSL/MetalCompilationTests.mm
         Tests/WGSL/TypeCheckingTests.mm
     )
@@ -260,6 +320,10 @@ set(_testapi_framework_headers
     ${WebKit_FRAMEWORK_HEADERS_DIR}
     ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}
 )
+
+foreach (_dir IN LISTS _testapi_framework_headers)
+    list(APPEND TESTWEBKITAPI_SWIFT_FLAGS "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${_dir}>")
+endforeach ()
 
 # TestWebKitAPIBase needs framework headers for config.h includes.
 target_include_directories(TestWebKitAPIBase PRIVATE ${_testapi_framework_headers})

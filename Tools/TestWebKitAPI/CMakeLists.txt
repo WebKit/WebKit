@@ -22,6 +22,10 @@ macro(WEBKIT_TEST _target)
     if (COMPILER_IS_GCC_OR_CLANG)
         WEBKIT_ADD_TARGET_CXX_FLAGS(${_target} ${TestWebKitAPI_DISABLED_WARNINGS})
     endif ()
+
+    if (COMMAND WEBKIT_TEST_ENABLE_SWIFT)
+        WEBKIT_TEST_ENABLE_SWIFT(${_target})
+    endif ()
 endmacro()
 
 # TestWTF definitions
