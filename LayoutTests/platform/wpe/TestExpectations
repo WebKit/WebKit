@@ -1348,3 +1348,6 @@ webkit.org/b/318349 [ arm64 ] imported/w3c/web-platform-tests/largest-contentful
 webkit.org/b/318350 [ arm64 ] http/tests/websocket/tests/hybi/inspector/handshake-error.html [ Failure Pass ]
 
 webkit.org/b/318638 http/tests/misc/iframe-shadow-realm.html [ Crash Pass ]
+
+webkit.org/b/318757 webgl/1.0.x/conformance/textures/misc/video-rotation.html [ Failure Timeout ]
+webkit.org/b/318757 webgl/2.0.y/conformance/textures/misc/video-rotation.html [ Failure Timeout ]
