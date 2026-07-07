@@ -93,6 +93,18 @@ Callee::Callee(Wasm::CompilationMode compilationMode, FunctionSpaceIndex index, 
 {
 }
 
+void Callee::setIndexOrName(IndexOrName&& indexOrName)
+{
+#if ASSERT_ENABLED
+    // Racy once the callee is registered, since the profiler and stack walker then read it.
+    {
+        Locker locker { NativeCalleeRegistry::singleton().getLock() };
+        ASSERT(!NativeCalleeRegistry::singleton().isValidCallee(this));
+    }
+#endif
+    m_indexOrName = WTF::move(indexOrName);
+}
+
 void Callee::reportToVMsForDestruction()
 {
     // We don't know which VMs a Module has ever run on so we just report to all of them.

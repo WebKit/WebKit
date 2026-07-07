@@ -109,7 +109,7 @@ void IPIntPlan::compileFunction(FunctionCodeIndex functionIndex)
     m_wasmInternalFunctions[functionIndex] = WTF::move(*parseAndCompileResult);
 
     {
-        auto callee = IPIntCallee::create(*m_wasmInternalFunctions[functionIndex], functionIndexSpace, signature, m_moduleInformation->nameSection().get(functionIndexSpace));
+        auto callee = IPIntCallee::create(*m_wasmInternalFunctions[functionIndex], functionIndexSpace, signature, { });
         ASSERT(!callee->entrypoint());
         bool usesSIMD = m_moduleInformation->usesSIMD(functionIndex);
         // Immediately tier up to BBQ for SIMD, if necesary.
@@ -141,6 +141,12 @@ void IPIntPlan::didCompleteCompilation()
 
     unsigned functionCount = m_wasmInternalFunctions.size();
     if (!m_calleesAlreadyRegistered && functionCount) {
+        // Set names here rather than at IPIntCallee creation: during streaming the name section
+        // (which follows the code section) has not been parsed yet when a function is compiled.
+        auto& nameSection = m_moduleInformation->nameSection();
+        for (auto& callee : *m_ipintCallees)
+            callee->setName(nameSection.get(callee->index()));
+
         NativeCalleeRegistry::singleton().registerCallees(*m_ipintCallees);
         if (Options::useWasmTailCalls())
             RestoreFrameCallee::singleton();
