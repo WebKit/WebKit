@@ -734,6 +734,20 @@ public:
         return *this;
     }
 
+    template<typename U> Checked& operator|=(U rhs)
+    {
+        // Bitwise operators can't overflow.
+        m_value |= rhs;
+        return *this;
+    }
+
+    template<typename U> Checked& operator&=(U rhs)
+    {
+        // Bitwise operators can't overflow.
+        m_value &= rhs;
+        return *this;
+    }
+
     template<typename U> Checked& operator/=(U rhs)
     {
         if (!safeDivide<OverflowHandler>(m_value, rhs, m_value))
@@ -760,6 +774,20 @@ public:
         if (rhs.hasOverflowed())
             this->overflowed();
         return *this *= rhs.m_value;
+    }
+
+    template<typename U, typename V> Checked& operator|=(Checked<U, V> rhs)
+    {
+        if (rhs.hasOverflowed())
+            this->overflowed();
+        return *this |= rhs.m_value;
+    }
+
+    template<typename U, typename V> Checked& operator&=(Checked<U, V> rhs)
+    {
+        if (rhs.hasOverflowed())
+            this->overflowed();
+        return *this &= rhs.m_value;
     }
 
     // Equality comparisons

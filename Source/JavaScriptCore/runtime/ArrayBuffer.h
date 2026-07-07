@@ -282,8 +282,10 @@ public:
     inline void pin();
     inline void unpin();
     inline bool isDetachable() const;
+    // Calling this prevents the backing buffer from ever being detached. This can happen when an
+    // API user fetched m_contents directly from a TypedArray object, the buffer is backed by a
+    // WebAssembly.Memory, or is a SharedArrayBuffer.
     inline void pinAndLock();
-    inline bool isLocked();
 
     void NODELETE makeWasmMemory();
     inline bool isWasmMemory();
@@ -327,11 +329,9 @@ private:
 public:
     Weak<JSArrayBuffer> m_wrapper;
 private:
+    static constexpr unsigned s_lockedFlag = INT32_MIN;
     Checked<unsigned> m_pinCount { 0 };
     bool m_isWasmMemory { false };
-    // m_locked == true means that some API user fetched m_contents directly from a TypedArray object,
-    // the buffer is backed by a WebAssembly.Memory, or is a SharedArrayBuffer.
-    bool m_locked { false };
 };
 
 void* ArrayBuffer::data() LIFETIME_BOUND
@@ -382,22 +382,19 @@ void ArrayBuffer::pin()
 
 void ArrayBuffer::unpin()
 {
+    unsigned old = m_pinCount;
     m_pinCount--;
+    m_pinCount |= (old & s_lockedFlag);
 }
 
 bool ArrayBuffer::isDetachable() const
 {
-    return !m_pinCount && !m_locked && !isShared();
+    return !m_pinCount && !isShared();
 }
 
 void ArrayBuffer::pinAndLock()
 {
-    m_locked = true;
-}
-
-bool ArrayBuffer::isLocked()
-{
-    return m_locked;
+    m_pinCount |= s_lockedFlag;
 }
 
 bool ArrayBuffer::isWasmMemory()
