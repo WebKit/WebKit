@@ -43,10 +43,10 @@ TransformFunctionSizeDependencies Translate::computeSizeDependencies() const
     return { };
 }
 
-void Translate::apply(TransformationMatrix& transform, const FloatSize& size) const
+void Translate::apply(TransformationMatrix& transform, const FloatSize& size, ZoomFactor zoom) const
 {
     if (RefPtr protectedValue = value)
-        protectedValue->apply(transform, size);
+        protectedValue->apply(transform, size, zoom);
 }
 
 // MARK: - Conversion
@@ -71,9 +71,9 @@ auto CSSValueConversion<Translate>::operator()(BuilderState& state, const CSSVal
         return CSS::Keyword::None { };
 
     auto type = list->size() > 2 ? TransformFunctionType::Translate3D : TransformFunctionType::Translate;
-    auto tx = toStyleFromCSSValue<TranslateTransformFunction::LengthPercentage>(state, protect(list->item(0)));
-    auto ty = list->size() > 1 ? toStyleFromCSSValue<TranslateTransformFunction::LengthPercentage>(state, protect(list->item(1))) : TranslateTransformFunction::LengthPercentage { 0_css_px };
-    auto tz = list->size() > 2 ? toStyleFromCSSValue<TranslateTransformFunction::Length>(state, protect(list->item(2))) : TranslateTransformFunction::Length { 0_css_px };
+    auto tx = toStyleFromCSSValue<TranslateTransformFunction::X>(state, protect(list->item(0)));
+    auto ty = list->size() > 1 ? toStyleFromCSSValue<TranslateTransformFunction::Y>(state, protect(list->item(1))) : TranslateTransformFunction::Y { 0_css_px };
+    auto tz = list->size() > 2 ? toStyleFromCSSValue<TranslateTransformFunction::Z>(state, protect(list->item(2))) : TranslateTransformFunction::Z { 0_css_px };
 
     return TranslateTransformFunction::create(WTF::move(tx), WTF::move(ty), WTF::move(tz), type);
 }
@@ -117,10 +117,10 @@ auto Blending<Translate>::blend(const Translate& from, const Translate& to, cons
 
 // MARK: - Platform
 
-auto ToPlatform<Translate>::operator()(const Translate& value, const FloatSize& size) -> RefPtr<TransformOperation>
+auto ToPlatform<Translate>::operator()(const Translate& value, const FloatSize& size, ZoomFactor zoom) -> RefPtr<TransformOperation>
 {
     if (RefPtr function = value.value)
-        return function->toPlatform(size);
+        return function->toPlatform(size, zoom);
     return nullptr;
 }
 

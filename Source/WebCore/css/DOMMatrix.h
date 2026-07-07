@@ -62,7 +62,7 @@ public:
     Ref<DOMMatrix> skewYSelf(double sy = 0); // Angle is in degrees.
     Ref<DOMMatrix> invertSelf();
 
-    ExceptionOr<Ref<DOMMatrix>> setMatrixValueForBindings(const String&);
+    ExceptionOr<Ref<DOMMatrix>> setMatrixValueForBindings(Document&, const String&);
 
     void setA(double f) { m_matrix.setA(f); }
     void setB(double f) { m_matrix.setB(f); }

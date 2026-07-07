@@ -1020,8 +1020,8 @@ int RenderBox::reflectionOffset() const
     if (!reflection)
         return 0;
     if (reflection->direction == ReflectionDirection::Left || reflection->direction == ReflectionDirection::Right)
-        return Style::evaluate<int>(reflection->offset, borderBoxWidth(), Style::ZoomNeeded { });
-    return Style::evaluate<int>(reflection->offset, borderBoxHeight(), Style::ZoomNeeded { });
+        return Style::evaluate<int>(reflection->offset, borderBoxWidth(), style().usedZoomForLength());
+    return Style::evaluate<int>(reflection->offset, borderBoxHeight(), style().usedZoomForLength());
 }
 
 LayoutRect RenderBox::reflectedRect(const LayoutRect& r) const

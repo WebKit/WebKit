@@ -68,9 +68,16 @@ Ref<const TransformFunctionBase> MatrixTransformFunction::clone() const
     return adoptRef(*new MatrixTransformFunction(m_a, m_b, m_c, m_d, m_e, m_f));
 }
 
-Ref<TransformOperation> MatrixTransformFunction::toPlatform(const FloatSize&) const
+Ref<TransformOperation> MatrixTransformFunction::toPlatform(const FloatSize&, ZoomFactor zoom) const
 {
-    return MatrixTransformOperation::create(m_a.value, m_b.value, m_c.value, m_d.value, m_e.value, m_f.value);
+    return MatrixTransformOperation::create(
+        m_a.value,
+        m_b.value,
+        m_c.value,
+        m_d.value,
+        m_e.value * zoom.value,
+        m_f.value * zoom.value
+    );
 }
 
 bool MatrixTransformFunction::operator==(const TransformFunctionBase& other) const
@@ -87,14 +94,23 @@ bool MatrixTransformFunction::operator==(const TransformFunctionBase& other) con
         && m_f == otherMatrix.m_f;
 }
 
-void MatrixTransformFunction::apply(TransformationMatrix& transform, const FloatSize&) const
+void MatrixTransformFunction::apply(TransformationMatrix& transform, const FloatSize&, ZoomFactor zoom) const
 {
-    transform.multiply(matrix());
+    transform.multiply(
+        TransformationMatrix(
+            m_a.value,
+            m_b.value,
+            m_c.value,
+            m_d.value,
+            m_e.value * zoom.value,
+            m_f.value * zoom.value
+        )
+    );
 }
 
 Ref<const TransformFunctionBase> MatrixTransformFunction::blend(const TransformFunctionBase* from, const BlendingContext& context, bool blendToIdentity) const
 {
-    auto createOperation = [] (TransformationMatrix& to, TransformationMatrix& from, const BlendingContext& context) {
+    auto createOperation = [](TransformationMatrix& to, TransformationMatrix& from, const BlendingContext& context) {
         to.blend(from, context.progress, context.compositeOperation);
         return MatrixTransformFunction::create(to);
     };

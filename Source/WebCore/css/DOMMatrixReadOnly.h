@@ -39,6 +39,7 @@ namespace WebCore {
 
 class DOMMatrix;
 class DOMPoint;
+class Document;
 class ScriptExecutionContext;
 struct DOMPointInit;
 
@@ -95,8 +96,7 @@ public:
     bool is2D() const { return m_is2D; }
     bool NODELETE isIdentity() const;
 
-    ExceptionOr<void> setMatrixValue(const String&);
-    ExceptionOr<void> setMatrixValue(const Vector<double>&);
+    ExceptionOr<void> setMatrixValue(Document&, const String&);
 
     Ref<DOMMatrix> NODELETE translate(double tx = 0, double ty = 0, double tz = 0);
     ExceptionOr<Ref<DOMMatrix>> multiply(DOMMatrixInit&& other) const;
@@ -133,7 +133,7 @@ protected:
         bool is2D { true };
     };
 
-    static ExceptionOr<AbstractMatrix> parseStringIntoAbstractMatrix(const String&);
+    static ExceptionOr<AbstractMatrix> parseStringIntoAbstractMatrix(Document&, const String&);
 
     template <typename T>
     static ExceptionOr<Ref<T>> fromMatrixHelper(DOMMatrixInit&&);

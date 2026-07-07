@@ -41,7 +41,7 @@ public:
     static Ref<const PerspectiveTransformFunction> create(Perspective);
 
     Ref<const TransformFunctionBase> clone() const override;
-    Ref<TransformOperation> toPlatform(const FloatSize&) const override;
+    Ref<TransformOperation> toPlatform(const FloatSize&, ZoomFactor) const override;
 
     Perspective perspective() const { return m_p; }
 
@@ -52,7 +52,7 @@ public:
     bool operator==(const PerspectiveTransformFunction& other) const { return operator==(static_cast<const TransformFunctionBase&>(other)); }
     bool operator==(const TransformFunctionBase&) const override;
 
-    void apply(TransformationMatrix&, const FloatSize& borderBoxSize) const override;
+    void apply(TransformationMatrix&, const FloatSize& borderBoxSize, ZoomFactor) const override;
 
     Ref<const TransformFunctionBase> blend(const TransformFunctionBase* from, const BlendingContext&, bool blendToIdentity = false) const override;
 

@@ -975,6 +975,11 @@ void ViewTransition::copyElementBaseProperties(RenderLayerModelObject& renderer,
         transform.translate(output.size.width() / 2, output.size.height() / 2);
         transform.translateRight(-output.size.width() / 2, -output.size.height() / 2);
 
+        // Factor out the zoom from the nearest common ancestor of the captured element and the view transition
+        // pseudo tree (the document element), so that it doesn't get applied a second time when rendering the
+        // snapshots.
+        transform.unzoom(documentElementRenderer->style().usedZoom());
+
         Ref transformListValue = CSSTransformListValue::create(Style::createCSSValue(CSSValuePool::singleton(), documentElementRenderer->style(), transform));
         protect(output.properties)->setProperty(CSSPropertyTransform, WTF::move(transformListValue));
     }

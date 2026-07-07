@@ -30,11 +30,9 @@ namespace WebCore::Style {
 
 // <'perspective'> = none | <length [0,∞]>
 // https://drafts.csswg.org/css-transforms-2/#propdef-perspective
-struct Perspective : ValueOrKeyword<Length<CSS::Nonnegative, float>, CSS::Keyword::None> {
+struct Perspective : ValueOrKeyword<Length<CSS::NonnegativeUnzoomed, float>, CSS::Keyword::None> {
     using Base::Base;
     using Length = typename Base::Value;
-
-    float usedPerspective() const { return std::max(1.0f, tryValue().value_or(1.0f).resolveZoom(Style::ZoomNeeded { })); }
 
     bool isNone() const { return isKeyword(); }
     bool isLength() const { return isValue(); }
@@ -44,6 +42,15 @@ static_assert(sizeof(Perspective) == sizeof(float));
 // MARK: - Conversion
 
 template<> struct CSSValueConversion<Perspective> { auto operator()(BuilderState&, const CSSValue&) -> Perspective; };
+
+// MARK: - Evaluation
+
+template<typename Result> struct Evaluation<Perspective, Result> {
+    constexpr auto operator()(const Perspective& perspective, ZoomFactor zoom) -> Result
+    {
+        return Result(std::max(1.0f, perspective.tryValue().value_or(1.0f).resolveZoom(zoom)));
+    }
+};
 
 } // namespace WebCore::Style
 

@@ -93,10 +93,10 @@ auto Blending<Transform>::blend(const Transform& from, const Transform& to, cons
 
 // MARK: - Platform
 
-auto ToPlatform<Transform>::operator()(const Transform& value, const FloatSize& size) -> TransformOperations
+auto ToPlatform<Transform>::operator()(const Transform& value, const FloatSize& size, ZoomFactor zoom) -> TransformOperations
 {
     return TransformOperations { WTF::map(value, [&](auto& transformFunction) {
-        return Style::toPlatform(transformFunction, size);
+        return Style::toPlatform(transformFunction, size, zoom);
     }) };
 }
 

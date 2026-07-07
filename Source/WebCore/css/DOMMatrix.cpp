@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DOMMatrix.h"
 
-#include "ScriptExecutionContext.h"
+#include "Document.h"
 #include <JavaScriptCore/Float32Array.h>
 #include <cmath>
 #include <limits>
@@ -41,10 +41,11 @@ ExceptionOr<Ref<DOMMatrix>> DOMMatrix::create(ScriptExecutionContext& scriptExec
 
     return WTF::switchOn(init.value(),
         [&scriptExecutionContext](const String& init) -> ExceptionOr<Ref<DOMMatrix>> {
-            if (!scriptExecutionContext.isDocument())
+            RefPtr document = dynamicDowncast<Document>(scriptExecutionContext);
+            if (!document)
                 return Exception { ExceptionCode::TypeError };
 
-            auto parseResult = parseStringIntoAbstractMatrix(init);
+            auto parseResult = parseStringIntoAbstractMatrix(*document, init);
             if (parseResult.hasException())
                 return parseResult.releaseException();
             
@@ -244,9 +245,9 @@ Ref<DOMMatrix> DOMMatrix::invertSelf()
     return Ref<DOMMatrix> { *this };
 }
 
-ExceptionOr<Ref<DOMMatrix>> DOMMatrix::setMatrixValueForBindings(const String& string)
+ExceptionOr<Ref<DOMMatrix>> DOMMatrix::setMatrixValueForBindings(Document& document, const String& string)
 {
-    auto result = setMatrixValue(string);
+    auto result = setMatrixValue(document, string);
     if (result.hasException())
         return result.releaseException();
     return Ref<DOMMatrix> { *this };

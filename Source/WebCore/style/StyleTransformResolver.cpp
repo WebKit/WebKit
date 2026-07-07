@@ -92,7 +92,7 @@ void TransformResolver::applyPerspective(const FloatPoint& originTranslate)
     m_transform.translate(originTranslate.x(), originTranslate.y());
 
     // 3. Multiply by the matrix that would be obtained from the perspective() transform function, where the length is provided by the value of the perspective property
-    m_transform.applyPerspective(m_style->perspective().usedPerspective());
+    m_transform.applyPerspective(Style::evaluate<float>(m_style->perspective(), m_style->usedZoomForLength()));
 
     // 4. Translate by the negated computed X and Y values of perspective-origin
     m_transform.translate(-originTranslate.x(), -originTranslate.y());
@@ -119,25 +119,26 @@ void TransformResolver::applyCSSTransform(const TransformOperationData& transfor
     // 2. Translate by the computed X, Y, and Z values of transform-origin.
     // (implemented in applyTransformOrigin)
     auto& boundingBox = transformData.boundingBox;
+    auto zoom = m_style->usedZoomForLength();
 
     // 3. Translate by the computed X, Y, and Z values of translate.
     if (options.contains(Option::Translate))
-        m_style->translate().apply(m_transform, boundingBox.size());
+        m_style->translate().apply(m_transform, boundingBox.size(), zoom);
 
     // 4. Rotate by the computed <angle> about the specified axis of rotate.
     if (options.contains(Option::Rotate))
-        m_style->rotate().apply(m_transform, boundingBox.size());
+        m_style->rotate().apply(m_transform, boundingBox.size(), zoom);
 
     // 5. Scale by the computed X, Y, and Z values of scale.
     if (options.contains(Option::Scale))
-        m_style->scale().apply(m_transform, boundingBox.size());
+        m_style->scale().apply(m_transform, boundingBox.size(), zoom);
 
     // 6. Translate and rotate by the transform specified by offset.
     if (options.contains(Option::Offset))
-        applyMotionPathTransform(transformData, m_style->usedZoomForLength());
+        applyMotionPathTransform(transformData, zoom);
 
     // 7. Multiply by each of the transform functions in transform from left to right.
-    m_style->transform().apply(m_transform, boundingBox.size());
+    m_style->transform().apply(m_transform, boundingBox.size(), zoom);
 
     // 8. Translate by the negated computed X, Y and Z values of transform-origin.
     // (implemented in unapplyTransformOrigin)

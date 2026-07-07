@@ -52,9 +52,10 @@ Ref<const TransformFunctionBase> Matrix3DTransformFunction::clone() const
     return adoptRef(*new Matrix3DTransformFunction(m_matrix));
 }
 
-Ref<TransformOperation> Matrix3DTransformFunction::toPlatform(const FloatSize&) const
+Ref<TransformOperation> Matrix3DTransformFunction::toPlatform(const FloatSize&, ZoomFactor zoom) const
 {
-    return Matrix3DTransformOperation::create(m_matrix);
+    auto copy = m_matrix;
+    return Matrix3DTransformOperation::create(copy.zoom(zoom.value));
 }
 
 bool Matrix3DTransformFunction::operator==(const TransformFunctionBase& other) const
@@ -66,9 +67,10 @@ bool Matrix3DTransformFunction::operator==(const TransformFunctionBase& other) c
     return m_matrix == otherMatrix3D.m_matrix;
 }
 
-void Matrix3DTransformFunction::apply(TransformationMatrix& transform, const FloatSize&) const
+void Matrix3DTransformFunction::apply(TransformationMatrix& transform, const FloatSize&, ZoomFactor zoom) const
 {
-    transform.multiply(m_matrix);
+    auto copy = m_matrix;
+    transform.multiply(copy.zoom(zoom.value));
 }
 
 Ref<const TransformFunctionBase> Matrix3DTransformFunction::blend(const TransformFunctionBase* from, const BlendingContext& context, bool blendToIdentity) const

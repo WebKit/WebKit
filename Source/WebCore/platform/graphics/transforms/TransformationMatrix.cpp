@@ -1282,6 +1282,17 @@ TransformationMatrix& TransformationMatrix::zoom(double zoomFactor)
     return *this;
 }
 
+TransformationMatrix& TransformationMatrix::unzoom(double zoomFactor)
+{
+    m_matrix[0][3] *= zoomFactor;
+    m_matrix[1][3] *= zoomFactor;
+    m_matrix[2][3] *= zoomFactor;
+    m_matrix[3][0] /= zoomFactor;
+    m_matrix[3][1] /= zoomFactor;
+    m_matrix[3][2] /= zoomFactor;
+    return *this;
+}
+
 // this = mat * this.
 TransformationMatrix& TransformationMatrix::multiply(const TransformationMatrix& mat)
 {

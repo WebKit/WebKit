@@ -41,9 +41,7 @@ public:
     static Ref<const MatrixTransformFunction> create(const TransformationMatrix&);
 
     Ref<const TransformFunctionBase> clone() const override;
-    Ref<TransformOperation> toPlatform(const FloatSize&) const override;
-
-    TransformationMatrix matrix() const { return TransformationMatrix(m_a.value, m_b.value, m_c.value, m_d.value, m_e.value, m_f.value); }
+    Ref<TransformOperation> toPlatform(const FloatSize&, ZoomFactor) const override;
 
     bool isIdentity() const override { return m_a == 1 && m_b == 0 && m_c == 0 && m_d == 1 && m_e == 0 && m_f == 0; }
     bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
@@ -51,7 +49,7 @@ public:
     bool operator==(const MatrixTransformFunction& other) const { return operator==(static_cast<const TransformFunctionBase&>(other)); }
     bool operator==(const TransformFunctionBase&) const override;
 
-    void apply(TransformationMatrix&, const FloatSize& borderBoxSize) const override;
+    void apply(TransformationMatrix&, const FloatSize& borderBoxSize, ZoomFactor) const override;
 
     Ref<const TransformFunctionBase> blend(const TransformFunctionBase* from, const BlendingContext&, bool blendToIdentity = false) const override;
 
@@ -60,6 +58,8 @@ public:
 private:
     MatrixTransformFunction(Number<>, Number<>, Number<>, Number<>, Number<>, Number<>);
     MatrixTransformFunction(const TransformationMatrix&);
+
+    TransformationMatrix matrix() const { return TransformationMatrix(m_a.value, m_b.value, m_c.value, m_d.value, m_e.value, m_f.value); }
 
     Number<> m_a;
     Number<> m_b;

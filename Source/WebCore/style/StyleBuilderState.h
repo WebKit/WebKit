@@ -93,7 +93,7 @@ struct RegisteredSubstitutionAttribute {
 };
 
 struct BuilderContext {
-    const RefPtr<const Document> document { };
+    const Ref<const Document> document;
     const Style::ComputedStyle* parentStyle { };
     const Style::ComputedStyle* rootElementStyle { };
     RefPtr<const Element> element { };
@@ -112,14 +112,9 @@ class BuilderState : public CanMakeCheckedPtr<BuilderState> {
 public:
     template<typename T, class... Args> friend WTF::UniqueRef<T> WTF::makeUniqueRefWithoutFastMallocCheck(Args&&...);
 
-    static UniqueRef<BuilderState> create(Style::ComputedStyle& renderStyle)
+    static UniqueRef<BuilderState> create(ComputedStyle& style, BuilderContext&& builderContext)
     {
-        return makeUniqueRefWithoutRefCountedCheck<BuilderState>(renderStyle);
-    }
-
-    static UniqueRef<BuilderState> create(Style::ComputedStyle& renderStyle, BuilderContext&& builderContext)
-    {
-        return makeUniqueRefWithoutRefCountedCheck<BuilderState>(renderStyle, WTF::move(builderContext));
+        return makeUniqueRefWithoutRefCountedCheck<BuilderState>(style, WTF::move(builderContext));
     }
 
     ComputedStyle& style() { return m_style; }
@@ -136,7 +131,7 @@ public:
     const ComputedStyle* rootElementStyle() const { return m_context.rootElementStyle; }
     const Style::ComputedStyle* rootElementRenderStyle() const LIFETIME_BOUND { return m_context.rootElementStyle; }
 
-    const Document& document() const { return *m_context.document; }
+    const Document& document() const { return m_context.document; }
     const Element* element() const { return m_context.element.get(); }
 
     const CSSRegisteredCustomProperty* registeredProperty(const AtomString&) const;
@@ -254,8 +249,7 @@ private:
     friend class Builder;
     friend class SubstitutionResolver;
 
-    BuilderState(Style::ComputedStyle&);
-    BuilderState(Style::ComputedStyle&, BuilderContext&&);
+    BuilderState(ComputedStyle&, BuilderContext&&);
 
     void NODELETE adjustStyleForInterCharacterRuby();
 

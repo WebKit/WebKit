@@ -77,7 +77,7 @@ struct TransformList {
     template<TransformFunctionType>
     bool hasTransformOfType() const;
 
-    void apply(TransformationMatrix&, const FloatSize&, unsigned start = 0) const;
+    void apply(TransformationMatrix&, const FloatSize&, ZoomFactor, unsigned start = 0) const;
 
     // Return true if any of the operation types are 3D operation types (even if the
     // values describe affine transforms)

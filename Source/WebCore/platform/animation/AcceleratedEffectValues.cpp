@@ -119,10 +119,10 @@ AcceleratedEffectValues::AcceleratedEffectValues(const Style::ComputedStyle& sty
 
     opacity = Style::evaluate<AcceleratedEffectOpacity>(style.opacity());
     transformBox = toAcceleratedEffectTransformBox(style.transformBox());
-    transform = Style::toPlatform(style.transform(), borderBoxSize);
-    translate = Style::toPlatform(style.translate(), borderBoxSize);
-    scale = Style::toPlatform(style.scale(), borderBoxSize);
-    rotate = Style::toPlatform(style.rotate(), borderBoxSize);
+    transform = Style::toPlatform(style.transform(), borderBoxSize, zoom);
+    translate = Style::toPlatform(style.translate(), borderBoxSize, zoom);
+    scale = Style::toPlatform(style.scale(), borderBoxSize, zoom);
+    rotate = Style::toPlatform(style.rotate(), borderBoxSize, zoom);
 
     if (transformOperationData && transformOperationData->motionPathData && !style.offsetPath().isNone()) {
         auto evaluatedOffsetPath = Style::evaluate<AcceleratedEffectOffsetPath>(style.offsetPath(), *transformOperationData, zoom);

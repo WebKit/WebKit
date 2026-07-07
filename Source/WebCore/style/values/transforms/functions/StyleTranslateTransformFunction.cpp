@@ -36,7 +36,7 @@ namespace Style {
 
 using namespace CSS::Literals;
 
-TranslateTransformFunction::TranslateTransformFunction(const LengthPercentage& x, const LengthPercentage& y, const Length& z, TransformFunctionBase::Type type)
+TranslateTransformFunction::TranslateTransformFunction(const X& x, const Y& y, const Z& z, TransformFunctionBase::Type type)
     : TransformFunctionBase(type)
     , m_x(x)
     , m_y(y)
@@ -45,12 +45,12 @@ TranslateTransformFunction::TranslateTransformFunction(const LengthPercentage& x
     RELEASE_ASSERT(isTranslateTransformFunctionType(type));
 }
 
-Ref<const TranslateTransformFunction> TranslateTransformFunction::create(const LengthPercentage& x, const LengthPercentage& y, TransformFunctionBase::Type type)
+Ref<const TranslateTransformFunction> TranslateTransformFunction::create(const X& x, const Y& y, TransformFunctionBase::Type type)
 {
     return adoptRef(*new TranslateTransformFunction(x, y, 0_css_px, type));
 }
 
-Ref<const TranslateTransformFunction> TranslateTransformFunction::create(const LengthPercentage& x, const LengthPercentage& y, const Length& z, TransformFunctionBase::Type type)
+Ref<const TranslateTransformFunction> TranslateTransformFunction::create(const X& x, const Y& y, const Z& z, TransformFunctionBase::Type type)
 {
     return adoptRef(*new TranslateTransformFunction(x, y, z, type));
 }
@@ -60,12 +60,12 @@ Ref<const TransformFunctionBase> TranslateTransformFunction::clone() const
     return adoptRef(*new TranslateTransformFunction(m_x, m_y, m_z, type()));
 }
 
-Ref<TransformOperation> TranslateTransformFunction::toPlatform(const FloatSize& borderBoxSize) const
+Ref<TransformOperation> TranslateTransformFunction::toPlatform(const FloatSize& borderBoxSize, ZoomFactor zoom) const
 {
     return TranslateTransformOperation::create(
-        evaluate<float>(m_x, borderBoxSize.width(), ZoomNeeded { }),
-        evaluate<float>(m_y, borderBoxSize.height(), ZoomNeeded { }),
-        evaluate<float>(m_z, ZoomNeeded { }),
+        evaluate<float>(m_x, borderBoxSize.width(), zoom),
+        evaluate<float>(m_y, borderBoxSize.height(), zoom),
+        evaluate<float>(m_z, zoom),
         Style::toPlatform(type())
     );
 }
@@ -87,12 +87,12 @@ bool TranslateTransformFunction::operator==(const TransformFunctionBase& other) 
     return m_x == otherTranslate.m_x && m_y == otherTranslate.m_y && m_z == otherTranslate.m_z;
 }
 
-void TranslateTransformFunction::apply(TransformationMatrix& transform, const FloatSize& borderBoxSize) const
+void TranslateTransformFunction::apply(TransformationMatrix& transform, const FloatSize& borderBoxSize, ZoomFactor zoom) const
 {
     transform.translate3d(
-        evaluate<float>(m_x, borderBoxSize.width(), ZoomNeeded { }),
-        evaluate<float>(m_y, borderBoxSize.height(), ZoomNeeded { }),
-        evaluate<float>(m_z, ZoomNeeded { })
+        evaluate<float>(m_x, borderBoxSize.width(), zoom),
+        evaluate<float>(m_y, borderBoxSize.height(), zoom),
+        evaluate<float>(m_z, zoom)
     );
 }
 
@@ -100,9 +100,9 @@ Ref<const TransformFunctionBase> TranslateTransformFunction::blend(const Transfo
 {
     if (blendToIdentity) {
         return TranslateTransformFunction::create(
-            Style::blend(m_x, LengthPercentage { 0_css_px }, context),
-            Style::blend(m_y, LengthPercentage { 0_css_px }, context),
-            Style::blend(m_z, Length { 0_css_px }, context),
+            Style::blend(m_x, X { 0_css_px }, context),
+            Style::blend(m_y, Y { 0_css_px }, context),
+            Style::blend(m_z, Z { 0_css_px }, context),
             type()
         );
     }
@@ -112,9 +112,9 @@ Ref<const TransformFunctionBase> TranslateTransformFunction::blend(const Transfo
         return *this;
 
     RefPtr fromOp = downcast<TranslateTransformFunction>(from);
-    auto fromX = fromOp ? fromOp->m_x : LengthPercentage { 0_css_px };
-    auto fromY = fromOp ? fromOp->m_y : LengthPercentage { 0_css_px };
-    auto fromZ = fromOp ? fromOp->m_z : Length { 0_css_px };
+    auto fromX = fromOp ? fromOp->m_x : X { 0_css_px };
+    auto fromY = fromOp ? fromOp->m_y : Y { 0_css_px };
+    auto fromZ = fromOp ? fromOp->m_z : Z { 0_css_px };
 
     return TranslateTransformFunction::create(
         Style::blend(fromX, x(), context),

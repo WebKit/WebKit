@@ -35,10 +35,10 @@
 namespace WebCore {
 namespace Style {
 
-void TransformList::apply(TransformationMatrix& matrix, const FloatSize& size, unsigned start) const
+void TransformList::apply(TransformationMatrix& matrix, const FloatSize& size, ZoomFactor zoom, unsigned start) const
 {
     for (unsigned i = start; i < m_value.size(); ++i)
-        m_value[i]->apply(matrix, size);
+        m_value[i]->apply(matrix, size, zoom);
 }
 
 bool TransformList::has3DOperation() const
@@ -59,7 +59,7 @@ bool TransformList::affectedByTransformOrigin() const
 bool TransformList::isInvertible(const LayoutSize& size) const
 {
     TransformationMatrix transform;
-    apply(transform, size);
+    apply(transform, size, ZoomFactor::none());
     return transform.isInvertible();
 }
 
@@ -118,10 +118,10 @@ auto Blending<TransformList>::blend(const TransformList& from, const TransformLi
 
     auto createBlendedMatrixFunctionFromOperationsSuffix = [&](unsigned i) -> TransformFunction {
         TransformationMatrix fromTransform;
-        from.apply(fromTransform, boxSize, i);
+        from.apply(fromTransform, boxSize, ZoomFactor::none(), i);
 
         TransformationMatrix toTransform;
-        to.apply(toTransform, boxSize, i);
+        to.apply(toTransform, boxSize, ZoomFactor::none(), i);
 
         auto progress = context.progress;
         auto compositeOperation = context.compositeOperation;

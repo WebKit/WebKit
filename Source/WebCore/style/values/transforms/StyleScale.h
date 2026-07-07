@@ -47,7 +47,7 @@ struct Scale {
     bool isRepresentableIn2D() const { return !value || value->isRepresentableIn2D(); }
     bool is3DOperation() const { return value && value->is3DOperation(); }
 
-    void apply(TransformationMatrix&, const FloatSize&) const;
+    void apply(TransformationMatrix&, const FloatSize&, ZoomFactor) const;
 
     bool isNone() const { return !value; }
     bool isFunction() const { return !!value; }
@@ -110,7 +110,7 @@ template<> struct Blending<Scale> {
 
 // MARK: - Platform
 
-template<> struct ToPlatform<Scale> { auto operator()(const Scale&, const FloatSize&) -> RefPtr<TransformOperation>; };
+template<> struct ToPlatform<Scale> { auto operator()(const Scale&, const FloatSize&, ZoomFactor) -> RefPtr<TransformOperation>; };
 
 } // namespace Style
 } // namespace WebCore

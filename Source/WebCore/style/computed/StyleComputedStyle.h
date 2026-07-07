@@ -159,7 +159,6 @@ public:
     WEBCORE_EXPORT UserSelect NODELETE usedUserSelect() const;
     Style::Contain usedContain() const;
     inline TransformStyle3D usedTransformStyle3D() const;
-    inline float usedPerspective() const;
     WebCore::Color usedScrollbarThumbColor() const;
     WebCore::Color usedScrollbarTrackColor() const;
     WebCore::Color usedAccentColor(OptionSet<StyleColorOptions>) const;

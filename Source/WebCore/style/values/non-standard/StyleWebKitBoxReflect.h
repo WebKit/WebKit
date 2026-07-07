@@ -39,7 +39,7 @@ namespace Style {
 
 struct WebkitBoxReflection {
     using Direction = ReflectionDirection;
-    using Offset = LengthPercentage<>;
+    using Offset = LengthPercentage<CSS::AllUnzoomed>;
     using Mask = MaskBorder;
 
     Direction direction { Direction::Below };

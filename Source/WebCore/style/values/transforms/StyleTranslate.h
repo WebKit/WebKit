@@ -48,7 +48,7 @@ struct Translate {
 
     TransformFunctionSizeDependencies computeSizeDependencies() const;
 
-    void apply(TransformationMatrix&, const FloatSize&) const;
+    void apply(TransformationMatrix&, const FloatSize&, ZoomFactor) const;
 
     bool isNone() const { return !value; }
     bool isFunction() const { return !!value; }
@@ -111,7 +111,7 @@ template<> struct Blending<Translate> {
 
 // MARK: - Platform
 
-template<> struct ToPlatform<Translate> { auto operator()(const Translate&, const FloatSize&) -> RefPtr<TransformOperation>; };
+template<> struct ToPlatform<Translate> { auto operator()(const Translate&, const FloatSize&, ZoomFactor) -> RefPtr<TransformOperation>; };
 
 } // namespace Style
 } // namespace WebCore

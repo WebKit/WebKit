@@ -36,10 +36,10 @@ namespace Style {
 
 using namespace CSS::Literals;
 
-void Rotate::apply(TransformationMatrix& transform, const FloatSize& size) const
+void Rotate::apply(TransformationMatrix& transform, const FloatSize& size, ZoomFactor zoom) const
 {
     if (RefPtr protectedValue = value)
-        protectedValue->apply(transform, size);
+        protectedValue->apply(transform, size, zoom);
 }
 
 // MARK: - Conversion
@@ -138,10 +138,10 @@ auto Blending<Rotate>::blend(const Rotate& from, const Rotate& to, const Blendin
 
 // MARK: - Platform
 
-auto ToPlatform<Rotate>::operator()(const Rotate& value, const FloatSize& size) -> RefPtr<TransformOperation>
+auto ToPlatform<Rotate>::operator()(const Rotate& value, const FloatSize& size, ZoomFactor zoom) -> RefPtr<TransformOperation>
 {
     if (RefPtr function = value.value)
-        return function->toPlatform(size);
+        return function->toPlatform(size, zoom);
     return nullptr;
 }
 

@@ -48,7 +48,7 @@ public:
     static Ref<const RotateTransformFunction> create(Number<>, Number<>, Number<>, Angle<>, TransformFunctionBase::Type);
 
     Ref<const TransformFunctionBase> clone() const override;
-    Ref<TransformOperation> toPlatform(const FloatSize&) const override;
+    Ref<TransformOperation> toPlatform(const FloatSize&, ZoomFactor) const override;
 
     Number<> x() const { return m_x; }
     Number<> y() const { return m_y; }
@@ -64,7 +64,7 @@ public:
     bool isRepresentableIn2D() const override { return (m_x.isZero() && m_y.isZero()) || m_angle.isZero(); }
     bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
 
-    void apply(TransformationMatrix&, const FloatSize& borderBoxSize) const override;
+    void apply(TransformationMatrix&, const FloatSize& borderBoxSize, ZoomFactor) const override;
 
     Ref<const TransformFunctionBase> blend(const TransformFunctionBase* from, const BlendingContext&, bool blendToIdentity = false) const override;
 

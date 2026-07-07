@@ -4804,33 +4804,34 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const GraphicsLayerAn
 
     for (auto& currentKeyframe : keyframes) {
         const Style::ComputedStyle* keyframeStyle = currentKeyframe.style();
-        double offset = currentKeyframe.offset();
-
         if (!keyframeStyle)
             continue;
 
-        RefPtr tf = currentKeyframe.timingFunction();
+        auto zoom = keyframeStyle->usedZoomForLength();
+
+        double offset = currentKeyframe.offset();
+        RefPtr timingFunction = currentKeyframe.timingFunction();
 
         if (currentKeyframe.animatesProperty(CSSPropertyRotate))
-            rotateVector.insert(makeUnique<GraphicsLayerTransformAnimationValue>(offset, Style::toPlatform(keyframeStyle->rotate(), referenceBoxRect.size()).get(), tf));
+            rotateVector.insert(makeUnique<GraphicsLayerTransformAnimationValue>(offset, Style::toPlatform(keyframeStyle->rotate(), referenceBoxRect.size(), zoom).get(), timingFunction));
 
         if (currentKeyframe.animatesProperty(CSSPropertyScale))
-            scaleVector.insert(makeUnique<GraphicsLayerTransformAnimationValue>(offset, Style::toPlatform(keyframeStyle->scale(), referenceBoxRect.size()).get(), tf));
+            scaleVector.insert(makeUnique<GraphicsLayerTransformAnimationValue>(offset, Style::toPlatform(keyframeStyle->scale(), referenceBoxRect.size(), zoom).get(), timingFunction));
 
         if (currentKeyframe.animatesProperty(CSSPropertyTranslate))
-            translateVector.insert(makeUnique<GraphicsLayerTransformAnimationValue>(offset, Style::toPlatform(keyframeStyle->translate(), referenceBoxRect.size()).get(), tf));
+            translateVector.insert(makeUnique<GraphicsLayerTransformAnimationValue>(offset, Style::toPlatform(keyframeStyle->translate(), referenceBoxRect.size(), zoom).get(), timingFunction));
 
         if (currentKeyframe.animatesProperty(CSSPropertyTransform))
-            transformVector.insert(makeUnique<GraphicsLayerTransformAnimationValue>(offset, Style::toPlatform(keyframeStyle->transform(), referenceBoxRect.size()), tf));
+            transformVector.insert(makeUnique<GraphicsLayerTransformAnimationValue>(offset, Style::toPlatform(keyframeStyle->transform(), referenceBoxRect.size(), zoom), timingFunction));
 
         if (currentKeyframe.animatesProperty(CSSPropertyOpacity))
-            opacityVector.insert(makeUnique<GraphicsLayerFloatAnimationValue>(offset, Style::evaluate<float>(keyframeStyle->opacity()), tf));
+            opacityVector.insert(makeUnique<GraphicsLayerFloatAnimationValue>(offset, Style::evaluate<float>(keyframeStyle->opacity()), timingFunction));
 
         if (currentKeyframe.animatesProperty(CSSPropertyFilter))
-            filterVector.insert(makeUnique<GraphicsLayerFilterAnimationValue>(offset, Style::toPlatform(keyframeStyle->filter(), renderer().style()), tf));
+            filterVector.insert(makeUnique<GraphicsLayerFilterAnimationValue>(offset, Style::toPlatform(keyframeStyle->filter(), renderer().style()), timingFunction));
 
         if (currentKeyframe.animatesProperty(CSSPropertyWebkitBackdropFilter) || currentKeyframe.animatesProperty(CSSPropertyBackdropFilter))
-            backdropFilterVector.insert(makeUnique<GraphicsLayerFilterAnimationValue>(offset, Style::toPlatform(keyframeStyle->backdropFilter(), renderer().style()), tf));
+            backdropFilterVector.insert(makeUnique<GraphicsLayerFilterAnimationValue>(offset, Style::toPlatform(keyframeStyle->backdropFilter(), renderer().style()), timingFunction));
     }
 
     bool didAnimate = false;
@@ -5257,7 +5258,7 @@ TransformationMatrix RenderLayerBacking::transformMatrixForProperty(AnimatedProp
     TransformationMatrix matrix;
 
     auto applyTransformOperation = [&](const auto& operation) {
-        operation.apply(matrix, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size());
+        operation.apply(matrix, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size(), renderer().style().usedZoomForLength());
     };
 
     if (property == AnimatedProperty::Translate)

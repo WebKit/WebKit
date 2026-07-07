@@ -50,7 +50,7 @@ Ref<const TransformFunctionBase> SkewTransformFunction::clone() const
     return adoptRef(*new SkewTransformFunction(m_angleX, m_angleY, type()));
 }
 
-Ref<TransformOperation> SkewTransformFunction::toPlatform(const FloatSize&) const
+Ref<TransformOperation> SkewTransformFunction::toPlatform(const FloatSize&, ZoomFactor) const
 {
     return SkewTransformOperation::create(m_angleX.value, m_angleY.value, Style::toPlatform(type()));
 }
@@ -64,7 +64,7 @@ bool SkewTransformFunction::operator==(const TransformFunctionBase& other) const
     return m_angleX == otherSkew.m_angleX && m_angleY == otherSkew.m_angleY;
 }
 
-void SkewTransformFunction::apply(TransformationMatrix& transform, const FloatSize&) const
+void SkewTransformFunction::apply(TransformationMatrix& transform, const FloatSize&, ZoomFactor) const
 {
     transform.skew(m_angleX.value, m_angleY.value);
 }

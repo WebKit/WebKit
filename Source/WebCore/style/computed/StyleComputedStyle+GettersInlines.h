@@ -137,11 +137,6 @@ inline TransformStyle3D ComputedStyle::usedTransformStyle3D() const
     return transformStyleForcedToFlat() ? TransformStyle3D::Flat : transformStyle3D();
 }
 
-inline float ComputedStyle::usedPerspective() const
-{
-    return perspective().usedPerspective();
-}
-
 inline Visibility ComputedStyle::usedVisibility() const
 {
     if (isForceHidden()) [[unlikely]]

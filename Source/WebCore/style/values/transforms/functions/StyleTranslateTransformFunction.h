@@ -44,20 +44,21 @@ namespace Style {
 
 class TranslateTransformFunction final : public TransformFunctionBase {
 public:
-    using LengthPercentage = Style::LengthPercentage<>;
-    using Length = Style::Length<>;
+    using X = Style::LengthPercentage<CSS::AllUnzoomed>;
+    using Y = Style::LengthPercentage<CSS::AllUnzoomed>;
+    using Z = Style::Length<CSS::AllUnzoomed>;
 
-    static Ref<const TranslateTransformFunction> create(const LengthPercentage&, const LengthPercentage&, TransformFunctionBase::Type);
-    static Ref<const TranslateTransformFunction> create(const LengthPercentage&, const LengthPercentage&, const Length&, TransformFunctionBase::Type);
+    static Ref<const TranslateTransformFunction> create(const X&, const Y&, TransformFunctionBase::Type);
+    static Ref<const TranslateTransformFunction> create(const X&, const Y&, const Z&, TransformFunctionBase::Type);
 
     Ref<const TransformFunctionBase> clone() const override;
-    Ref<TransformOperation> toPlatform(const FloatSize&) const override;
+    Ref<TransformOperation> toPlatform(const FloatSize&, ZoomFactor) const override;
 
     TransformFunctionBase::Type primitiveType() const override { return isRepresentableIn2D() ? Type::Translate : Type::Translate3D; }
 
-    const LengthPercentage& x() const LIFETIME_BOUND { return m_x; }
-    const LengthPercentage& y() const LIFETIME_BOUND { return m_y; }
-    Length z() const { return m_z; }
+    const X& x() const LIFETIME_BOUND { return m_x; }
+    const Y& y() const LIFETIME_BOUND { return m_y; }
+    Z z() const { return m_z; }
 
     bool isIdentity() const override { return m_x.isKnownZero() && m_y.isKnownZero() && m_z.isZero(); }
     bool isRepresentableIn2D() const override { return m_z.isZero(); }
@@ -67,18 +68,18 @@ public:
     bool operator==(const TranslateTransformFunction& other) const { return operator==(static_cast<const TransformFunctionBase&>(other)); }
     bool operator==(const TransformFunctionBase&) const override;
 
-    void apply(TransformationMatrix&, const FloatSize& borderBoxSize) const override;
+    void apply(TransformationMatrix&, const FloatSize& borderBoxSize, ZoomFactor) const override;
 
     Ref<const TransformFunctionBase> blend(const TransformFunctionBase* from, const BlendingContext&, bool blendToIdentity = false) const override;
 
     void dump(WTF::TextStream&) const override;
 
 private:
-    TranslateTransformFunction(const LengthPercentage&, const LengthPercentage&, const Length&, TransformFunctionBase::Type);
+    TranslateTransformFunction(const X&, const Y&, const Z&, TransformFunctionBase::Type);
 
-    LengthPercentage m_x;
-    LengthPercentage m_y;
-    Length m_z;
+    X m_x;
+    Y m_y;
+    Z m_z;
 };
 
 } // namespace Style

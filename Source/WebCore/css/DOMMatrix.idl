@@ -92,5 +92,5 @@
     DOMMatrix skewYSelf(optional unrestricted double sy = 0); // Angle is in degrees.
     DOMMatrix invertSelf();
 
-    [Exposed=Window, ImplementedAs=setMatrixValueForBindings] DOMMatrix setMatrixValue(DOMString transformList);
+    [Exposed=Window, CallWith=CurrentDocument, ImplementedAs=setMatrixValueForBindings] DOMMatrix setMatrixValue(DOMString transformList);
 };

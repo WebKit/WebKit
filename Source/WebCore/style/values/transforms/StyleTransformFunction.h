@@ -64,7 +64,7 @@ template<> struct Blending<TransformFunction> {
 
 // MARK: - Platform
 
-template<> struct ToPlatform<TransformFunction> { auto operator()(const TransformFunction&, const FloatSize&) -> Ref<TransformOperation>; };
+template<> struct ToPlatform<TransformFunction> { auto operator()(const TransformFunction&, const FloatSize&, ZoomFactor) -> Ref<TransformOperation>; };
 
 // MARK: - Logging
 
