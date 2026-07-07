@@ -583,7 +583,6 @@ bool RenderGrid::layoutUsingGridFormattingContext()
     gridLayout.updateFormattingContextGeometries();
 
     gridLayout.layout();
-    updateLogicalHeight();
     return true;
 }
 

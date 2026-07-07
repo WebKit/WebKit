@@ -213,6 +213,30 @@ void GridLayout::layout()
     updateGridItemRenderers();
     updateFormattingContextRootRenderer(gridLayoutConstraints, usedTrackSizes);
     layoutOutOfFlowBoxes(usedTrackSizes);
+
+    CheckedRef renderGrid = gridBoxRenderer();
+    renderGrid->updateLogicalHeight();
+    updateOverflow(renderGrid);
+}
+
+void GridLayout::updateOverflow(RenderGrid& renderGrid)
+{
+    ASSERT(renderGrid.style().isOverflowVisible());
+    renderGrid.clearOverflow();
+
+    CheckedRef layoutState = this->layoutState();
+    auto& gridBoxGeometry = layoutState->geometryForBox(gridBox());
+    auto contentBoxOffset = LayoutSize { gridBoxGeometry.contentBoxLeft(), gridBoxGeometry.contentBoxTop() };
+
+    auto gridItemsOverflowRect = LayoutRect { };
+    for (CheckedRef layoutBox : formattingContextBoxes(gridBox())) {
+        LayoutRect gridItemBorderBoxRect = Layout::BoxGeometry::borderBoxRect(layoutState->geometryForBox(layoutBox));
+        gridItemBorderBoxRect.move(contentBoxOffset);
+        gridItemsOverflowRect.unite(gridItemBorderBoxRect);
+    }
+
+    if (!renderGrid.borderBoxRect().contains(gridItemsOverflowRect))
+        renderGrid.addVisualOverflow(gridItemsOverflowRect);
 }
 
 void GridLayout::layoutOutOfFlowBoxes(const Layout::UsedTrackSizes& usedTrackSizes)
