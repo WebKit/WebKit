@@ -27,6 +27,7 @@
 
 #include "GridTypeAliases.h"
 #include "LayoutUnit.h"
+#include <optional>
 
 namespace WebCore {
 
@@ -36,6 +37,7 @@ struct PreferredSize;
 
 namespace Layout {
 
+class ElementBox;
 class GridFormattingContext;
 class IntegrationUtils;
 class PlacedGridItem;
@@ -67,6 +69,8 @@ LayoutUnit blockAxisMaxContentContribution(const PlacedGridItem&, LayoutUnit inl
 
 bool preferredSizeBehavesAsAuto(const Style::PreferredSize&);
 bool NODELETE preferredSizeDependsOnContainingBlockSize(const Style::PreferredSize&);
+
+std::optional<double> preferredAspectRatio(const ElementBox&);
 
 } // namespace GridLayoutUtils
 } // namespace Layout

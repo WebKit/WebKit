@@ -69,7 +69,6 @@ public:
 
     const WritingMode& writingMode() const LIFETIME_BOUND { return m_writingMode; }
 
-    std::optional<double> preferredAspectRatio() const;
     bool isReplacedElement() const { return m_layoutBox->isReplacedBox(); }
 
     const GridAreaLines& gridAreaLines() const LIFETIME_BOUND { return m_gridAreaLines; }

@@ -28,6 +28,7 @@
 
 #include "GridFormattingContext.h"
 #include "GridSizeTypes.h"
+#include "LayoutElementBox.h"
 #include "LayoutIntegrationUtils.h"
 #include "NotImplemented.h"
 #include "PlacedGridItem.h"
@@ -45,6 +46,48 @@ LayoutUnit totalGuttersSize(size_t tracksCount, LayoutUnit gapsSize)
 {
     ASSERT(tracksCount);
     return gapsSize * (tracksCount - 1);
+}
+
+// https://drafts.csswg.org/css-sizing-4/#aspect-ratio
+std::optional<double> preferredAspectRatio(const ElementBox& gridItem)
+{
+    ASSERT(gridItem.isGridItem());
+
+    auto& computedAspectRatio = gridItem.style().aspectRatio();
+
+    auto isDegenerateRatio = [&] {
+        auto ratio = computedAspectRatio.tryRatio();
+        return !ratio || !ratio->numerator.value || !ratio->denominator.value;
+    };
+
+    // "If the <ratio> is degenerate, the property instead behaves as auto."
+    //
+    // auto: "Replaced elements with a natural aspect ratio use that aspect ratio;
+    // otherwise the box has no preferred aspect ratio."
+    if (computedAspectRatio.isAuto() || isDegenerateRatio()) {
+        if (gridItem.isReplacedBox() && gridItem.hasIntrinsicRatio())
+            return gridItem.intrinsicRatio();
+        return { };
+    }
+
+    // <ratio>: "The box's preferred aspect ratio is the specified ratio of width / height."
+    if (computedAspectRatio.isRatio()) {
+        auto ratio = *computedAspectRatio.tryRatio();
+        return ratio.numerator.value / ratio.denominator.value;
+    }
+
+    // auto && <ratio>: "The preferred aspect ratio is the specified ratio of width / height
+    // unless it is a replaced element with a natural aspect ratio, in which case that aspect
+    // ratio is used instead."
+    if (computedAspectRatio.isAutoAndRatio()) {
+        if (gridItem.isReplacedBox() && gridItem.hasIntrinsicRatio())
+            return gridItem.intrinsicRatio();
+        auto ratio = *computedAspectRatio.tryRatio();
+        return ratio.numerator.value / ratio.denominator.value;
+    }
+
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 static bool NODELETE spansAutoMinTrackSizingFunction(WTF::Range<size_t> spannedTrackIndexes, const TrackSizingFunctionsList& trackSizingFunctions)
@@ -86,7 +129,7 @@ static std::optional<LayoutUnit> NODELETE inlineTransferredSizeSuggestion(const 
 
 static BorderBoxSize inlineContentSizeSuggestion(const PlacedGridItem& gridItem, LayoutUnit borderAndPadding, const IntegrationUtils& integrationUtils)
 {
-    ASSERT(!gridItem.preferredAspectRatio(), "Grid items with preferred aspect ratio not supported yet.");
+    ASSERT(!preferredAspectRatio(gridItem.layoutBox()), "Grid items with preferred aspect ratio not supported yet.");
     return BorderBoxSize { ContentBoxSize { integrationUtils.minContentWidth(gridItem.layoutBox()) }, borderAndPadding };
 }
 
@@ -117,7 +160,7 @@ static std::optional<BorderBoxSize> NODELETE blockTransferredSizeSuggestion(cons
 static BorderBoxSize blockContentSizeSuggestion(const PlacedGridItem& gridItem, LayoutUnit inlineAxisConstraint, const GridFormattingContext& formattingContext)
 {
     // FIXME: Clamp by opposite-axis min/max sizes converted through the aspect ratio.
-    ASSERT(!gridItem.preferredAspectRatio(), "Grid items with preferred aspect ratio not supported yet.");
+    ASSERT(!preferredAspectRatio(gridItem.layoutBox()), "Grid items with preferred aspect ratio not supported yet.");
     return BorderBoxSize::fromIntegrationFunction(formattingContext.integrationUtils().minContentHeightForGridItem(gridItem.layoutBox(), inlineAxisConstraint));
 }
 
@@ -159,7 +202,7 @@ LayoutUnit inlinePreferredSize(const PlacedGridItem& placedGridItem, LayoutUnit 
         // necessary to make its outer size as close to filling the alignment container as possible.
         auto& marginStart = inlineAxisSizes.marginStart;
         auto& marginEnd = inlineAxisSizes.marginEnd;
-        if ((alignmentPosition == ItemPosition::Normal) && !placedGridItem.preferredAspectRatio() && !placedGridItem.isReplacedElement()
+        if ((alignmentPosition == ItemPosition::Normal) && !preferredAspectRatio(placedGridItem.layoutBox()) && !placedGridItem.isReplacedElement()
             && !marginStart.isAuto() && !marginEnd.isAuto()) {
             auto& usedZoom = placedGridItem.usedZoom();
             auto usedMarginStart = LayoutUnit { marginStart.tryFixed()->resolveZoom(usedZoom) };
@@ -287,7 +330,7 @@ bool hasStretchedBlockSize(const PlacedGridItem& placedGridItem)
 {
     if (!placedGridItem.blockAxisSizes().preferredSize.isAuto())
         return false;
-    if (placedGridItem.preferredAspectRatio() || placedGridItem.isReplacedElement())
+    if (preferredAspectRatio(placedGridItem.layoutBox()) || placedGridItem.isReplacedElement())
         return false;
     auto& marginStart = placedGridItem.blockAxisSizes().marginStart;
     auto& marginEnd = placedGridItem.blockAxisSizes().marginEnd;
