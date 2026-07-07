@@ -199,7 +199,9 @@ std::unique_ptr<OpenXRSwapchain> OpenXRCoordinator::createSwapchain(uint32_t wid
     // Single-sampled, deliberately ignoring the view configuration's recommendedSwapchainSampleCount. Antialiasing is applied and
     // resolved in the web process before the content reaches us.
     info.sampleCount = 1;
-    info.usageFlags = XR_SWAPCHAIN_USAGE_SAMPLED_BIT | XR_SWAPCHAIN_USAGE_COLOR_ATTACHMENT_BIT;
+    // Both bindings copy the web process' content into the swapchain image at commit time (vkCmdBlitImage for Vulkan,
+    // an FBO blit for OpenGLES), which requires TRANSFER_DST; without it the copy is invalid usage.
+    info.usageFlags = XR_SWAPCHAIN_USAGE_SAMPLED_BIT | XR_SWAPCHAIN_USAGE_COLOR_ATTACHMENT_BIT | XR_SWAPCHAIN_USAGE_TRANSFER_DST_BIT;
 
     return OpenXRSwapchain::create(m_session, info, alpha ? OpenXRSwapchain::HasAlpha::Yes : OpenXRSwapchain::HasAlpha::No, *m_graphicsBinding);
 }
