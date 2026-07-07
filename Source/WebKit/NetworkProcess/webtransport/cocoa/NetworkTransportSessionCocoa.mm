@@ -206,7 +206,8 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
         softLink_Network_nw_webtransport_options_set_is_unidirectional(options, false);
         softLink_Network_nw_webtransport_options_set_is_datagram(options, true);
         softLink_Network_nw_webtransport_options_add_connect_request_header(options, "origin", clientOrigin.utf8().data());
-        softLink_Network_nw_webtransport_options_set_allow_joining_before_ready(options, true);
+        if (canLoad_Network_nw_webtransport_options_set_allow_joining_before_ready())
+            softLink_Network_nw_webtransport_options_set_allow_joining_before_ready(options, true);
         if (canLoad_Network_nw_webtransport_options_set_initial_max_streams_uni())
             softLink_Network_nw_webtransport_options_set_initial_max_streams_uni(options, maxStreamsUni);
         if (canLoad_Network_nw_webtransport_options_set_initial_max_streams_bidi())
@@ -258,8 +259,7 @@ RefPtr<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectio
     if (!canLoad_Network_nw_parameters_create_webtransport_http()
         || !canLoad_Network_nw_webtransport_options_set_is_unidirectional()
         || !canLoad_Network_nw_webtransport_options_set_is_datagram()
-        || !canLoad_Network_nw_webtransport_options_add_connect_request_header()
-        || !canLoad_Network_nw_webtransport_options_set_allow_joining_before_ready())
+        || !canLoad_Network_nw_webtransport_options_add_connect_request_header())
         return nullptr;
 
     RetainPtr endpoint = adoptNS(nw_endpoint_create_url(url.string().utf8().data()));
@@ -296,10 +296,17 @@ void NetworkTransportSession::initialize(CompletionHandler<void(std::optional<We
         return;
     }
 
-    auto creationCompletionHandler = [completionHandler = WTF::move(completionHandler)] (std::optional<WebCore::WebTransportConnectionInfo>&& connectionInfo) mutable {
+    auto creationCompletionHandler = [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] (std::optional<WebCore::WebTransportConnectionInfo>&& connectionInfo) mutable {
         if (!completionHandler)
             return;
-        return completionHandler(WTF::move(connectionInfo));
+        if (canLoad_Network_nw_webtransport_options_set_allow_joining_before_ready())
+            return completionHandler(WTF::move(connectionInfo));
+        if (!connectionInfo)
+            return completionHandler(std::nullopt);
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return completionHandler(std::nullopt);
+        protectedThis->setupDatagramConnection(WTF::move(completionHandler));
     };
 
     nw_connection_group_set_state_changed_handler(m_connectionGroup.get(), makeBlockPtr([creationCompletionHandler = WTF::move(creationCompletionHandler), weakThis = WeakPtr { *this }] (nw_connection_group_state_t state, nw_error_t error) mutable {
@@ -370,7 +377,8 @@ void NetworkTransportSession::initialize(CompletionHandler<void(std::optional<We
     nw_connection_group_set_queue(m_connectionGroup.get(), RetainPtr { mainDispatchQueueSingleton() }.get());
     nw_connection_group_start(m_connectionGroup.get());
 
-    setupDatagramConnection([](std::optional<WebCore::WebTransportConnectionInfo>&&) { });
+    if (canLoad_Network_nw_webtransport_options_set_allow_joining_before_ready())
+        setupDatagramConnection([](std::optional<WebCore::WebTransportConnectionInfo>&&) { });
 }
 
 void NetworkTransportSession::createBidirectionalStream(CompletionHandler<void(std::optional<WebCore::WebTransportStreamIdentifier>)>&& completionHandler)
@@ -405,7 +413,8 @@ void NetworkTransportSession::setupDatagramConnection(CompletionHandler<void(std
     }
     softLink_Network_nw_webtransport_options_set_is_unidirectional(webtransportOptions.get(), false);
     softLink_Network_nw_webtransport_options_set_is_datagram(webtransportOptions.get(), true);
-    softLink_Network_nw_webtransport_options_set_allow_joining_before_ready(webtransportOptions.get(), true);
+    if (canLoad_Network_nw_webtransport_options_set_allow_joining_before_ready())
+        softLink_Network_nw_webtransport_options_set_allow_joining_before_ready(webtransportOptions.get(), true);
 
     m_datagramConnection = adoptNS(nw_connection_group_extract_connection(m_connectionGroup.get(), nil, webtransportOptions.get()));
     if (!m_datagramConnection) {
@@ -432,6 +441,8 @@ void NetworkTransportSession::setupDatagramConnection(CompletionHandler<void(std
         case nw_connection_state_preparing:
             return; // We will get another callback with another state change.
         case nw_connection_state_ready:
+            if (!canLoad_Network_nw_webtransport_options_set_allow_joining_before_ready())
+                protectedThis->receiveDatagramLoop();
             return creationCompletionHandler(true);
         case nw_connection_state_failed:
         case nw_connection_state_cancelled:
@@ -442,7 +453,8 @@ void NetworkTransportSession::setupDatagramConnection(CompletionHandler<void(std
     nw_connection_set_queue(m_datagramConnection.get(), mainDispatchQueueSingleton());
     nw_connection_start(m_datagramConnection.get());
 
-    receiveDatagramLoop();
+    if (canLoad_Network_nw_webtransport_options_set_allow_joining_before_ready())
+        receiveDatagramLoop();
 }
 
 void NetworkTransportSession::sendDatagram(std::optional<WebCore::WebTransportSendGroupIdentifier> identifier, std::span<const uint8_t> data, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
@@ -508,7 +520,8 @@ void NetworkTransportSession::createStream(NetworkTransportStreamType streamType
     }
     softLink_Network_nw_webtransport_options_set_is_unidirectional(webtransportOptions.get(), streamType != NetworkTransportStreamType::Bidirectional);
     softLink_Network_nw_webtransport_options_set_is_datagram(webtransportOptions.get(), false);
-    softLink_Network_nw_webtransport_options_set_allow_joining_before_ready(webtransportOptions.get(), true);
+    if (canLoad_Network_nw_webtransport_options_set_allow_joining_before_ready())
+        softLink_Network_nw_webtransport_options_set_allow_joining_before_ready(webtransportOptions.get(), true);
     RetainPtr connection = adoptNS(nw_connection_group_extract_connection(m_connectionGroup.get(), nil, webtransportOptions.get()));
     if (!connection) {
         ASSERT_NOT_REACHED();

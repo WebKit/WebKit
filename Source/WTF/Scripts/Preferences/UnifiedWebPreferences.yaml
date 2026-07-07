@@ -10124,7 +10124,7 @@ WebSocketEnabled:
 
 WebTransportEnabled:
   type: bool
-  status: developer
+  status: Web_transport_status
   category: networking
   humanReadableName: "WebTransport"
   humanReadableDescription: "Enable WebTransport"
@@ -10132,9 +10132,9 @@ WebTransportEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: WebKit::defaultWebTransportEnabled()
+      default: true
     WebCore:
-      default: false
+      default: true
   sharedPreferenceForWebProcess: true
   richJavaScript: true
   disableInLockdownMode: true

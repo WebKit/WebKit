@@ -76,6 +76,8 @@
 #define Modelelement_feature_status Testable
 #endif
 
+#define Web_transport_status Stable
+
 namespace WebKit {
 
 #if HAVE(LIQUID_GLASS)
@@ -239,7 +241,5 @@ bool defaultContentChangeObserverEnabled();
 #if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
 bool NODELETE defaultWebContentRestrictionsAskToEnabled();
 #endif
-
-bool defaultWebTransportEnabled();
 
 } // namespace WebKit

@@ -30,7 +30,6 @@
 
 #if PLATFORM(COCOA)
 #include "DefaultWebBrowserChecks.h"
-#include "NetworkSoftLink.h"
 #include <wtf/NumberOfCores.h>
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #if PLATFORM(IOS_FAMILY)
@@ -525,14 +524,5 @@ bool defaultShouldEnableScreenCapture()
     return false;
 }
 #endif
-
-bool defaultWebTransportEnabled()
-{
-#if PLATFORM(COCOA)
-    return canLoad_Network_nw_webtransport_options_set_allow_joining_before_ready();
-#else
-    return false;
-#endif
-}
 
 } // namespace WebKit
