@@ -1,0 +1,2 @@
+PASS: file:// rejected by MESSAGE_CHECK
+
