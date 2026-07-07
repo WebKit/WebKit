@@ -97,8 +97,6 @@ public:
 #if ENABLE(CONTENT_EXTENSIONS)
     void applyResults(ContentRuleListResults&&, Page*);
 #endif
-    void setDomainForCachePartition(Document&);
-    void setDomainForCachePartition(const String&);
     bool isLinkPreload() const { return m_isLinkPreload; }
     void setIsLinkPreload() { m_isLinkPreload = true; }
 
