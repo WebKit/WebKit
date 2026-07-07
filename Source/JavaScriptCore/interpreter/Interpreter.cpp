@@ -56,6 +56,7 @@
 #include "JSBoundFunctionInlines.h"
 #include "JSCInlines.h"
 #include "JSCellButterfly.h"
+#include "JSGenericTypedArrayViewInlines.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleRecord.h"
@@ -311,6 +312,32 @@ unsigned sizeFrameForVarargs(JSGlobalObject* globalObject, CallFrame* callFrame,
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
+static bool NEVER_INLINE loadTypedArrayVarargs(JSCell* cell, JSValue* firstElementDest, uint32_t offset, uint32_t length)
+{
+    switch (cell->type()) {
+#define JSC_LOAD_VARARGS_TYPED_ARRAY_CASE(name) \
+    case name##ArrayType: { \
+        if constexpr (!JS##name##Array::Adaptor::canConvertToJSQuickly) \
+            return false; \
+        else { \
+            auto* typedArray = uncheckedDowncast<JS##name##Array>(cell); \
+            uint64_t arrayLength = typedArray->length(); \
+            uint64_t inBounds = arrayLength > offset ? std::min<uint64_t>(length, arrayLength - offset) : 0; \
+            uint64_t i = 0; \
+            for (; i < inBounds; ++i) \
+                firstElementDest[i] = typedArray->getIndexQuickly(i + offset); \
+            for (; i < length; ++i) \
+                firstElementDest[i] = jsUndefined(); \
+            return true; \
+        } \
+    }
+        FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_LOAD_VARARGS_TYPED_ARRAY_CASE)
+#undef JSC_LOAD_VARARGS_TYPED_ARRAY_CASE
+    default:
+        return false;
+    }
+}
+
 void loadVarargs(JSGlobalObject* globalObject, JSValue* firstElementDest, JSValue arguments, uint32_t offset, uint32_t length)
 {
     if (!arguments.isCell()) [[unlikely]]
@@ -347,6 +374,8 @@ void loadVarargs(JSGlobalObject* globalObject, JSValue* firstElementDest, JSValu
             uncheckedDowncast<JSArray>(object)->copyToArguments(globalObject, firstElementDest, offset, length);
             return;
         }
+        if (loadTypedArrayVarargs(cell, firstElementDest, offset, length))
+            return;
         unsigned i;
         for (i = 0; i < length && object->canGetIndexQuickly(i + offset); ++i)
             firstElementDest[i] = object->getIndexQuickly(i + offset);
