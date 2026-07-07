@@ -1540,7 +1540,7 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
     // This must happen before any branch below that may store a redirect in the disk cache, otherwise a
     // compromised WebContent process could poison the cache for an arbitrary partition.
     newRequest.setCachePolicy(originalRequest().cachePolicy());
-    newRequest.setCachePartition(originalRequest().cachePartition());
+    newRequest.setShouldBlockThirdPartyStorage(originalRequest().shouldBlockThirdPartyStorage());
 
     if (m_redirectionForCurrentNavigation) {
         LOADER_RELEASE_LOG("continueWillSendRequest: using stored redirect response");
