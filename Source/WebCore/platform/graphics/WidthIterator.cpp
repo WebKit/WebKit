@@ -467,18 +467,20 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
             continue;
         }
 
-        width = Ref { * advanceInternalState.nextRangeFont }->widthForGlyph(glyph, Font::SyntheticBoldInclusion::Exclude); // We apply synthetic bold after shaping, in applyCSSVisibilityRules().
+        Ref currentRangeFont = *advanceInternalState.nextRangeFont;
+
+        width = currentRangeFont->widthForGlyph(glyph, Font::SyntheticBoldInclusion::Exclude); // We apply synthetic bold after shaping, in applyCSSVisibilityRules().
         advanceInternalState.widthOfCurrentFontRange += width;
 
         if (FontCascade::treatAsSpace(characterToWrite))
-            advanceInternalState.charactersTreatedAsSpace.constructAndAppend(advanceInternalState.currentCharacterIndex, characterToWrite == space, characterToWrite == tabCharacter ? width : advanceInternalState.nextRangeFont->spaceWidth(Font::SyntheticBoldInclusion::Exclude));
+            advanceInternalState.charactersTreatedAsSpace.constructAndAppend(advanceInternalState.currentCharacterIndex, characterToWrite == space, characterToWrite == tabCharacter ? width : currentRangeFont->spaceWidth(Font::SyntheticBoldInclusion::Exclude));
 
-        m_glyphBounds.computeIfNeeded(glyph, Ref { *advanceInternalState.nextRangeFont }, advanceInternalState.currentCharacterIndex, width);
+        m_glyphBounds.computeIfNeeded(glyph, currentRangeFont, advanceInternalState.currentCharacterIndex, width);
 
         if (m_forTextEmphasis && !FontCascade::canReceiveTextEmphasis(characterToWrite))
             glyph = deletedGlyph;
 
-        addToGlyphBuffer(glyphBuffer, glyph,  Ref { *advanceInternalState.nextRangeFont }, width, advanceInternalState.currentCharacterIndex, characterToWrite);
+        addToGlyphBuffer(glyphBuffer, glyph, currentRangeFont, width, advanceInternalState.currentCharacterIndex, characterToWrite);
 
         advanceToNextCharacter();
 
