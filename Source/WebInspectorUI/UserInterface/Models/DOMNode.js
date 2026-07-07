@@ -153,13 +153,12 @@ WI.DOMNode = class DOMNode extends WI.Object
                 this.ownerDocument.documentElement = this;
             if (this.ownerDocument && !this.ownerDocument.body && this._nodeName === "BODY")
                 this.ownerDocument.body = this;
-            if (payload.documentURL)
-                this.documentURL = payload.documentURL;
         } else if (this._nodeType === Node.DOCUMENT_TYPE_NODE) {
             this.publicId = payload.publicId;
             this.systemId = payload.systemId;
         } else if (this._nodeType === Node.DOCUMENT_NODE) {
             this.documentURL = payload.documentURL;
+            this.baseURL = payload.baseURL;
             this.xmlVersion = payload.xmlVersion;
         } else if (this._nodeType === Node.ATTRIBUTE_NODE) {
             this.name = payload.name;

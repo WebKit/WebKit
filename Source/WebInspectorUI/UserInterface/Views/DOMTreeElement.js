@@ -1459,7 +1459,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             attrSpanElement.append("=\u200B", quote);
 
         if (name === "src" || /\bhref\b/.test(name)) {
-            let baseURL = node.frame ? node.frame.url : null;
+            let baseURL = node.ownerDocument?.baseURL || node.frame?.url || null;
             let rewrittenURL = absoluteURL(value, baseURL);
             value = value.insertWordBreakCharacters();
             if (!rewrittenURL) {
@@ -1475,7 +1475,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
                 attrSpanElement.appendChild(attrValueElement);
             }
         } else if (name === "srcset") {
-            let baseURL = node.frame ? node.frame.url : null;
+            let baseURL = node.ownerDocument?.baseURL || node.frame?.url || null;
             attrValueElement = attrSpanElement.createChild("span", "html-attribute-value");
 
             // Leading whitespace.
