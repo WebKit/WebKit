@@ -37,20 +37,21 @@ For example:
 */
 WK_SWIFT_UI_ACTOR
 NS_SWIFT_SENDABLE
+NS_SWIFT_NAME(WKContentWorld.Configuration)
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 @interface WKContentWorldConfiguration : NSObject<NSCopying, NSSecureCoding>
 
 /*! @abstract A boolean value indicating whether every shadow root should be treated as open mode shadow root or not. */
-@property (nonatomic) BOOL openClosedShadowRootsEnabled;
+@property (nonatomic) BOOL allowAccessingClosedShadowRoots;
 
 /*! @abstract A boolean value indicating whether the capability to trigger autofill is exposed to scripts or not. */
-@property (nonatomic) BOOL autofillScriptingEnabled;
+@property (nonatomic, getter=isAutofillScriptingEnabled) BOOL autofillScriptingEnabled NS_SWIFT_NAME(autofillScriptingEnabled);
 
 /*! @abstract A boolean value indicating whether the ability to attach user info on an element is exposed to scripts or not. */
-@property (nonatomic) BOOL elementUserInfoEnabled;
+@property (nonatomic, getter=isElementUserInfoEnabled) BOOL elementUserInfoEnabled NS_SWIFT_NAME(elementUserInfoEnabled);
 
 /*! @abstract A boolean value indicating whether the behavior that elements with a name attribute overrides builtin methods on document object should be enabled or not. */
-@property (nonatomic) BOOL legacyBuiltinOverridesEnabled;
+@property (nonatomic, getter=isLegacyBuiltinOverridesEnabled) BOOL legacyBuiltinOverridesEnabled NS_SWIFT_NAME(legacyBuiltinOverridesEnabled);
 
 /*! @abstract A boolean indicating whether or not `window.webkit.serializeNode` is available.
  @discussion JavaScript can call `window.webkit.serializeNode` with a return value to create a `WKJSSerializedNode`
@@ -63,7 +64,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 @property (nonatomic, setter=setJSHandleCreationEnabled:) BOOL jsHandleCreationEnabled;
 
 /*! @abstract A boolean indicating whether the JavaScript in this world is visible to the Web Inspector. */
-@property (nonatomic, getter=isInspectable) BOOL inspectable;
+@property (nonatomic, getter=isInspectable) BOOL inspectable NS_SWIFT_NAME(inspectable);
 
 @end
 

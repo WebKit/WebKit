@@ -27,7 +27,17 @@ extension WKContentWorld {
     // SPI factory to keep others building for now
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     @_spi(APIAdoptionStaging)
-    public static func world(with configuration: WKContentWorldConfiguration) -> WKContentWorld {
-        world(configuration: configuration)
+    public static func world(with configuration: WKContentWorld.Configuration) -> WKContentWorld {
+        WKContentWorld(configuration: configuration)
+    }
+}
+
+extension WKContentWorld.Configuration {
+    // SPI property declaration to keep others building for now
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    @_spi(_)
+    public var isInspectable: Bool {
+        get { inspectable }
+        set { inspectable = newValue }
     }
 }
