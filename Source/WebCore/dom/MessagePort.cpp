@@ -111,10 +111,9 @@ void MessagePort::notifyAllConnectionsClosed()
     for (auto& [contextIdentifier, weakPort] : entries) {
         ScriptExecutionContext::ensureOnContextThread(contextIdentifier, [weakPort = WTF::move(weakPort)](auto&) {
             RefPtr port = weakPort.get();
-            if (!port || port->m_isDetached)
+            if (!port || port->isDetached())
                 return;
-            port->m_isDetached = true;
-            port->m_entangled = false;
+            port->m_state = State::Disentangled;
             port->removeAllEventListeners();
         });
     }
@@ -162,7 +161,7 @@ MessagePort::~MessagePort()
         }
     }
 
-    if (m_entangled)
+    if (!isDetached())
         close();
 
     if (RefPtr context = scriptExecutionContext())
@@ -183,7 +182,7 @@ ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& globalObject, JS
     if (messageData.hasException())
         return messageData.releaseException();
 
-    if (!isEntangled())
+    if (isDetached())
         return { };
     ASSERT(scriptExecutionContext());
 
@@ -208,7 +207,7 @@ ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& globalObject, JS
     if (RefPtr partner = m_localPartner) {
         partner->m_localQueue.append(WTF::move(message));
         ++partner->m_newLocalMessages;
-        if (partner->started()) {
+        if (partner->isStarted()) {
             queueTaskKeepingObjectAlive(*partner, TaskSource::PostedMessageQueue, [](auto& port) mutable {
                 port.dispatchMessages();
             });
@@ -227,8 +226,13 @@ ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& globalObject, JS
 
 TransferredMessagePort MessagePort::disentangle()
 {
-    ASSERT(m_entangled);
-    m_entangled = false;
+    ASSERT(!isDetached());
+    return lenientDisentangle();
+}
+
+TransferredMessagePort MessagePort::lenientDisentangle()
+{
+    m_state = State::Disentangled;
 
     Ref context = *scriptExecutionContext();
     if (RefPtr localSibling = m_localPartner) {
@@ -269,15 +273,11 @@ void MessagePort::messageAvailable()
 
 void MessagePort::start()
 {
-    // Do nothing if we've been cloned or closed.
-    if (!isEntangled())
+    if (m_state != State::NotStartedYet)
         return;
 
     ASSERT(scriptExecutionContext());
-    if (m_started)
-        return;
-
-    m_started = true;
+    m_state = State::Started;
 
     if (m_localPartner.get() && m_localQueue.isEmpty())
         return;
@@ -287,9 +287,9 @@ void MessagePort::start()
 
 void MessagePort::close()
 {
-    if (m_isDetached)
+    if (isDetached())
         return;
-    m_isDetached = true;
+    m_state = State::Disentangled;
 
     m_localQueue.clear();
     m_newLocalMessages = 0;
@@ -315,12 +315,12 @@ void MessagePort::contextDestroyed()
 
 void MessagePort::dispatchMessages()
 {
+    ASSERT(m_state != State::NotStartedYet);
+
     // Messages for contexts that are not fully active get dispatched too, but JSAbstractEventListener::handleEvent() doesn't call handlers for these.
     // The HTML5 spec specifies that any messages sent to a document that is not fully active should be dropped, so this behavior is OK.
-    ASSERT(started());
-
     RefPtr context = scriptExecutionContext();
-    if (!context || context->activeDOMObjectsAreSuspended() || !isEntangled())
+    if (!context || context->activeDOMObjectsAreSuspended() || isDetached())
         return;
 
     LOG(MessagePorts, "Dispatching messages on MessagePort %s (%p)", m_identifier.logString().utf8().data(), this);
@@ -384,7 +384,7 @@ void MessagePort::dispatchMessages()
 void MessagePort::drainOneLocalMessage()
 {
     RefPtr context = scriptExecutionContext();
-    if (!context || !context->globalObject() || context->activeDOMObjectsAreSuspended() || !isEntangled())
+    if (!context || !context->globalObject() || context->activeDOMObjectsAreSuspended() || isDetached())
         return;
 
     ASSERT(context->isContextThread());
@@ -417,7 +417,7 @@ void MessagePort::drainOneLocalMessage()
 
 void MessagePort::dispatchEvent(Event& event)
 {
-    if (!isEntangled())
+    if (isDetached())
         return;
 
     if (RefPtr globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext())) {
@@ -432,14 +432,14 @@ void MessagePort::dispatchEvent(Event& event)
 bool MessagePort::virtualHasPendingActivity() const
 {
     // If the ScriptExecutionContext has been shut down on this object close()'ed, we can GC.
-    if (!scriptExecutionContext() || m_isDetached)
+    if (!scriptExecutionContext() || isDetached())
         return false;
 
     // If this MessagePort has no message event handler then there is no point in keeping it alive.
     if (!m_hasMessageEventListener)
         return false;
 
-    return m_entangled;
+    return true;
 }
 
 MessagePort* MessagePort::locallyEntangledPort() const
@@ -457,7 +457,7 @@ ExceptionOr<Vector<TransferredMessagePort>> MessagePort::disentanglePorts(Vector
     // Walk the incoming array - if there are any duplicate ports, or null ports or cloned ports, throw an error (per section 8.3.3 of the HTML5 spec).
     HashSet<Ref<MessagePort>> portSet;
     for (auto& port : ports) {
-        if (!port->m_entangled || !portSet.add(port).isNewEntry)
+        if (port->isDetached() || !portSet.add(port).isNewEntry)
             return Exception { ExceptionCode::DataCloneError };
     }
 

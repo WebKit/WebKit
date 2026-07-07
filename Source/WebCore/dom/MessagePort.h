@@ -85,8 +85,8 @@ public:
     WEBCORE_EXPORT static void notifyAllConnectionsClosed();
 
     WEBCORE_EXPORT void messageAvailable();
-    bool started() const { return m_started; }
-    bool isDetached() const { return m_isDetached; }
+    bool isStarted() const { return m_state == State::Started; }
+    bool isDetached() const { return m_state == State::Disentangled; }
 
     void dispatchMessages();
 
@@ -107,6 +107,9 @@ public:
     void dispatchEvent(Event&) final;
 
     TransferredMessagePort disentangle();
+    // FIXME: remove lenientDisentangle() after fixing its call sites - it only exists to
+    // avoid tripping an assert when trying to disentangle an already closed port
+    TransferredMessagePort lenientDisentangle();
     static Ref<MessagePort> entangle(ScriptExecutionContext&, TransferredMessagePort&&);
 
     // Short-circuits message delivery for same-context ports. Should only be used for
@@ -126,12 +129,12 @@ private:
     void stop() final { close(); }
     bool virtualHasPendingActivity() const final;
 
-    // A port starts out its life entangled, and remains entangled until it is detached or is cloned.
-    bool isEntangled() const { return !m_isDetached && m_entangled; }
-
-    bool m_started { false };
-    bool m_isDetached { false };
-    bool m_entangled { true };
+    // A port starts out its life entangled, and remains entangled until it is closed or transferred.
+    // The spec implies an intermediate "detached, still entangled" state while the port is
+    // in flight, but we don't do this - the original port is disentangled immediately when sent,
+    // and the channel is re-attached later, upon reception, to the new port. See https://github.com/whatwg/html/issues/12490
+    enum class State : uint8_t { NotStartedYet, Started, Disentangled };
+    State m_state { State::NotStartedYet };
     bool m_hasMessageEventListener { false };
 
     MessagePortIdentifier m_identifier;

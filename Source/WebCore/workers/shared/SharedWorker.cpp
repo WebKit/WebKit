@@ -107,7 +107,7 @@ ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, Variant<
     }
 
     auto channel = MessageChannel::create(document);
-    auto transferredPort = protect(channel->port2())->disentangle();
+    auto transferredPort = protect(channel->port2())->lenientDisentangle();
 
     ClientOrigin clientOrigin { document.topOrigin().data(), document.securityOrigin().data() };
     SharedWorkerKey key { clientOrigin, url, options.name };

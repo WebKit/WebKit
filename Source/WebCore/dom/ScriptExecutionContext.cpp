@@ -281,13 +281,13 @@ void ScriptExecutionContext::dispatchMessagePortEvents()
 
     if (dispatchAll) {
         m_messagePorts.forEach([](auto& messagePort) {
-            if (messagePort.started())
+            if (messagePort.isStarted())
                 messagePort.dispatchMessages();
         });
     } else {
         for (auto& portIdentifier : portsToDispatch) {
             m_messagePorts.forEach([&portIdentifier](auto& messagePort) {
-                if (messagePort.identifier() == portIdentifier && messagePort.started())
+                if (messagePort.identifier() == portIdentifier && messagePort.isStarted())
                     messagePort.dispatchMessages();
             });
         }

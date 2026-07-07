@@ -119,7 +119,7 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject&
     if (node->numberOfOutputs() > 0)
         context.sourceNodeWillBeginPlayback(node);
 
-    context.audioWorklet().createProcessor(name, processorMessagePort.disentangle(), serializedOptions.releaseNonNull(), node);
+    context.audioWorklet().createProcessor(name, processorMessagePort.lenientDisentangle(), serializedOptions.releaseNonNull(), node);
 
     {
         // The node should be manually added to the automatic pull node list, even without a connect() call.
