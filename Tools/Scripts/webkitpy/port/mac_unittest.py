@@ -188,14 +188,14 @@ class MacTest(darwin_testcase.DarwinTest):
         self.assertEqual(search_path[5], '/mock-checkout/LayoutTests/platform/mac-mountainlion-wk2')
 
     def test_latest_baseline_search_path(self):
-        search_path = self.make_port(port_name='macos-tahoe').default_baseline_search_path()
+        search_path = self.make_port(port_name='macos-golden-gate').default_baseline_search_path()
         self.assertEqual(search_path[0], '/mock-checkout/LayoutTests/platform/mac-wk2')
         self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/mac')
 
     def test_downlevel_baseline_search_path(self):
-        search_path = self.make_port(port_name='macos-sequoia').default_baseline_search_path()
-        self.assertEqual(search_path[0], '/mock-checkout/LayoutTests/platform/mac-sequoia-wk2')
-        self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/mac-sequoia')
+        search_path = self.make_port(port_name='macos-tahoe').default_baseline_search_path()
+        self.assertEqual(search_path[0], '/mock-checkout/LayoutTests/platform/mac-tahoe-wk2')
+        self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/mac-tahoe')
         self.assertEqual(search_path[2], '/mock-checkout/LayoutTests/platform/mac-wk2')
         self.assertEqual(search_path[3], '/mock-checkout/LayoutTests/platform/mac')
 

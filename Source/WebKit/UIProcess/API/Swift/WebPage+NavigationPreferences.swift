@@ -130,13 +130,13 @@ extension WebPage {
         }
 
         /// Used to make changes to the network request that will be used for this navigation's main resource load.
-        @available(TBA, *)
+        @available(anyAppleOSAndDownlevels 27.0, *)
         @available(watchOS, unavailable)
         @available(tvOS, unavailable)
         public var alternateRequest: URLRequest? = nil
 
         /// Used to apply a custom `referer` header to all resource loads in the frame of this navigation.
-        @available(TBA, *)
+        @available(anyAppleOSAndDownlevels 27.0, *)
         @available(watchOS, unavailable)
         @available(tvOS, unavailable)
         public var overrideReferrer: Swift.String? = nil
@@ -145,7 +145,7 @@ extension WebPage {
         ///
         /// The default value of this property is `false`. When enabled, both `navigator.globalPrivacyControl`
         /// and the `Sec-GPC: 1` request header are active for the main frame, its subframes, and their subresources.
-        @available(TBA, *)
+        @available(anyAppleOSAndDownlevels 27.0, *)
         @available(watchOS, unavailable)
         @available(tvOS, unavailable)
         public var globalPrivacyControlStatus: Bool = false

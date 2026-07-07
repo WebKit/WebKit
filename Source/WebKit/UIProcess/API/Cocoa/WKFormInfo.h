@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 
 NS_SWIFT_UI_ACTOR
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_CLASS_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0))
 @interface WKFormInfo : NSObject
 
 /*! @abstract The frame where the form is being submitted will cause a navigation.

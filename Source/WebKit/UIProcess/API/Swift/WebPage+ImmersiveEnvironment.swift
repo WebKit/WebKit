@@ -28,7 +28,7 @@ public import Foundation
 extension WebPage {
     /// An object representing a website-provided immersive environment that is ready for presentation.
     @MainActor
-    @available(TBA, *)
+    @available(anyAppleOSAndDownlevels 27.0, *)
     @available(iOS, unavailable)
     @available(macOS, unavailable)
     @available(watchOS, unavailable)

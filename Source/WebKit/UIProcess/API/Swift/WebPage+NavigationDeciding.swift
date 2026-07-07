@@ -149,7 +149,7 @@ extension WebPage {
         /// The form submission will not actually proceed until after this callback asynchronously resolves.
         ///
         /// - Parameter formInfo: The form values that will be submitted for this navigation
-        @available(TBA, *)
+        @available(anyAppleOSAndDownlevels 27.0, *)
         @MainActor
         mutating func willSubmit(formInfo: WebPage.FormInfo) async
     }
@@ -185,7 +185,7 @@ extension WebPage.NavigationDeciding {
     }
 
     /// By default, this method does nothing.
-    @available(TBA, *)
+    @available(anyAppleOSAndDownlevels 27.0, *)
     @MainActor
     public func willSubmit(formInfo: WebPage.FormInfo) async {
     }

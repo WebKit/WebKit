@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
  to a live JavaScript object, and it can be used as an argument to a JavaScript program running in any context.
  e.g. In a different frame, or after a navigation.
  */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_CLASS_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0))
 @interface WKJSSerializedNode : NSObject
 
 + (instancetype)new NS_UNAVAILABLE;

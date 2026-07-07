@@ -213,7 +213,7 @@ WK_SWIFT_UI_ACTOR
  @param formInfo Information about the form submission that will take place.
  @param submissionHandler A block to call once the application has done any asynchronous work it needs to for this form submission, indicating that the form submission can continue.
 */
-- (void)webView:(WKWebView *)webView willSubmitForm:(WKFormInfo *)formInfo submissionHandler:(NS_SWIFT_UI_ACTOR void (^)(void))submissionHandler WK_SWIFT_ASYNC(3) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)webView:(WKWebView *)webView willSubmitForm:(WKFormInfo *)formInfo submissionHandler:(NS_SWIFT_UI_ACTOR void (^)(void))submissionHandler WK_SWIFT_ASYNC(3) WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 @end
 
 NS_ASSUME_NONNULL_END

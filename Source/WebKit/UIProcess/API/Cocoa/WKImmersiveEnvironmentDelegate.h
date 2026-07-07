@@ -37,7 +37,7 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
  and dismissal of immersive environments requested by websites.
  */
 NS_SWIFT_UI_ACTOR
-WK_API_AVAILABLE(visionos(WK_XROS_TBA))
+WK_API_AVAILABLE(visionos(27.0))
 WK_API_UNAVAILABLE(macos, ios)
 @protocol WKImmersiveEnvironmentDelegate <NSObject>
 
@@ -47,7 +47,7 @@ WK_API_UNAVAILABLE(macos, ios)
  @param completionHandler The completion handler you must invoke with the request's answer. `YES` to allow
  the environment presentation, or `NO` to deny it.
  */
-- (void)webView:(WKWebView *)webView shouldAllowImmersiveEnvironmentFromFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL allow))completionHandler NS_SWIFT_ASYNC_NAME(webView(_:shouldAllowImmersiveEnvironmentFrom:)) WK_API_AVAILABLE(visionos(WK_XROS_TBA));
+- (void)webView:(WKWebView *)webView shouldAllowImmersiveEnvironmentFromFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL allow))completionHandler NS_SWIFT_ASYNC_NAME(webView(_:shouldAllowImmersiveEnvironmentFrom:)) WK_API_AVAILABLE(visionos(27.0));
 
 /*! @abstract Asks the delegate to present an immersive environment.
  @param webView The web view requesting presentation.
@@ -55,14 +55,14 @@ WK_API_UNAVAILABLE(macos, ios)
  @param completionHandler The completion handler you must invoke once the presentation transition has completed.
  The error argument should be used in case the presentation failed and the environment couldn't be presented.
  */
-- (void)webView:(WKWebView *)webView presentImmersiveEnvironment:(WKImmersiveEnvironment *)environment completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_ASYNC_NAME(webView(_:presentImmersiveEnvironment:)) WK_API_AVAILABLE(visionos(WK_XROS_TBA));
+- (void)webView:(WKWebView *)webView presentImmersiveEnvironment:(WKImmersiveEnvironment *)environment completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_ASYNC_NAME(webView(_:presentImmersiveEnvironment:)) WK_API_AVAILABLE(visionos(27.0));
 
 /*! @abstract Asks the delegate to dismiss an immersive environment.
  @param webView The web view requesting dismissal.
  @param environment The immersive environment to dismiss.
  @param completionHandler The completion handler you must invoke once the dismissal transition has completed.
  */
-- (void)webView:(WKWebView *)webView dismissImmersiveEnvironment:(WKImmersiveEnvironment *)environment completionHandler:(void (^)(void))completionHandler NS_SWIFT_ASYNC_NAME(webView(_:dismissImmersiveEnvironment:)) WK_API_AVAILABLE(visionos(WK_XROS_TBA));
+- (void)webView:(WKWebView *)webView dismissImmersiveEnvironment:(WKImmersiveEnvironment *)environment completionHandler:(void (^)(void))completionHandler NS_SWIFT_ASYNC_NAME(webView(_:dismissImmersiveEnvironment:)) WK_API_AVAILABLE(visionos(27.0));
 
 @end
 

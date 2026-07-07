@@ -28,7 +28,7 @@ public import Foundation
 extension WebPage {
     /// A type that contains information about a form submission from a webpage.
     @MainActor
-    @available(TBA, *)
+    @available(anyAppleOSAndDownlevels 27.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct FormInfo {

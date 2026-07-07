@@ -89,7 +89,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 /*! @abstract The most recent main frame navigation that took place that encompasses this navigation action.
 @discussion If this WKNavigationAction represents a request to open a new WKWebView or it represents a frame load that is not in the main frame of an existing WKWebView, then mainFrameNavigation will be nil.
  */
-@property (nonatomic, readonly, nullable) WKNavigation *mainFrameNavigation WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, readonly, nullable) WKNavigation *mainFrameNavigation WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 #if TARGET_OS_IPHONE
 

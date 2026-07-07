@@ -191,8 +191,8 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView didChangeFontAttributes:(NSDictionary<NSString *, id> *)fontAttributes WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 
 - (void)_webView:(WKWebView *)webView takeFocus:(_WKFocusDirection)direction WK_API_AVAILABLE(macos(10.13.4), ios(12.2));
-- (void)_focusWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
-- (void)_unfocusWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
+- (void)_focusWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4), ios(27.0));
+- (void)_unfocusWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4), ios(27.0));
 
 - (void)_webView:(WKWebView *)webView requestWebAuthenticationConditionalMediationRegistrationForUser:(NSString *)user completionHandler:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
