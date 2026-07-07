@@ -1202,17 +1202,17 @@ CSSFontVariantEmojiEnabled:
 
 CSSFunctionAtRuleEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS @function"
   humanReadableDescription: "Enable CSS @function rule"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSIdentFunctionEnabled:
   type: bool
