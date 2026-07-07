@@ -2,6 +2,7 @@
 <script>
     function splitTypeFromList(container, list) {
         const firstTypeOnly = container == "std::span"
+            || container == "IPC::UnsafeSpan"
             || container == "Vector"
             || container == "std::array"
             || container == "HashSet"
@@ -50,6 +51,7 @@
             "std::pair",
             "IPC::ArrayReferenceTuple",
             "std::span",
+            "IPC::UnsafeSpan",
             "std::array",
             "std::tuple",
             "Variant",
