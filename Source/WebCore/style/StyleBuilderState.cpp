@@ -318,9 +318,9 @@ void BuilderState::setUsesViewportUnits()
     m_style.setUsesViewportUnits();
 }
 
-void BuilderState::setUsesContainerUnits()
+void BuilderState::setIsContainerDependent()
 {
-    m_style.setUsesContainerUnits();
+    m_style.setIsContainerDependent();
 }
 
 double BuilderState::lookupCSSRandomBaseValue(const CSSCalc::RandomCachingKey& key, std::optional<CSS::Keyword::ElementScoped> elementScoped) const

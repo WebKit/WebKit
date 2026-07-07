@@ -188,7 +188,7 @@ public:
     void NODELETE setCurrentPropertyInvalidAtComputedValueTime();
 
     void NODELETE setUsesViewportUnits();
-    void NODELETE setUsesContainerUnits();
+    void NODELETE setIsContainerDependent();
 
     double lookupCSSRandomBaseValue(const CSSCalc::RandomCachingKey&, std::optional<CSS::Keyword::ElementScoped>) const;
 

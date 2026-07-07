@@ -282,7 +282,7 @@ bool BlendingKeyframes::containsDirectionAwareProperty() const
 bool BlendingKeyframes::usesContainerUnits() const
 {
     for (auto& keyframe : m_keyframes) {
-        if (keyframe.style()->usesContainerUnits())
+        if (keyframe.style()->isContainerDependent())
             return true;
     }
     return false;
