@@ -58,7 +58,7 @@ keyframes:
   {
     "offset": 1,
     "easing": "ease",
-    "style": "--customProperty: 0 0 -4;"
+    "style": "--customProperty: 0 1 -4;"
   }
 ]
 
