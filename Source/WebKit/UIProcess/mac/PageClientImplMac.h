@@ -231,6 +231,7 @@ private:
     void exitFullScreen(CompletionHandler<void()>&&) override;
     void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void(bool)>&&) override;
     void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void()>&&) override;
+    WebCore::IntRect convertMainFrameCoordinatesInFullscreenPlaceholderViewToScreen(WebPageProxy&, WebCore::IntRect) const override;
 #endif
 
     void navigationGestureDidBegin() override;

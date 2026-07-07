@@ -105,8 +105,8 @@ protected:
     void setFullscreenInsets(const WebCore::FloatBoxExtent&);
     void setFullscreenAutoHideDuration(Seconds);
 
-    WebCore::IntRect m_initialFrame;
-    WebCore::IntRect m_finalFrame;
+    WebCore::IntRect m_initialFrameInRootViewCoordinates;
+    WebCore::IntRect m_finalFrameInRootViewCoordinates;
     WebCore::IntPoint m_scrollPosition;
     const Ref<WebPage> m_page;
     RefPtr<WebCore::Element> m_element;

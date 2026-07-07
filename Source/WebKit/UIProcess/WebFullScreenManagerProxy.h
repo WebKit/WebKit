@@ -71,6 +71,7 @@ public:
     virtual void exitFullScreen(CompletionHandler<void()>&&) = 0;
     virtual void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void(bool)>&&) = 0;
     virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void()>&&) = 0;
+    virtual WebCore::IntRect convertMainFrameCoordinatesInFullscreenPlaceholderViewToScreen(WebPageProxy&, WebCore::IntRect) const;
 
     virtual bool lockFullscreenOrientation(WebCore::ScreenOrientationType) { return false; }
     virtual void unlockFullscreenOrientation() { }
@@ -104,7 +105,8 @@ public:
     void detachFromClient();
     void NODELETE attachToNewClient(WebFullScreenManagerProxyClient&);
 
-    void enterFullScreenForOwnerElementsInOtherProcesses(WebCore::FrameIdentifier, CompletionHandler<void()>&&);
+    enum class NeedsPresentationUpdate : bool { No, Yes };
+    void enterFullScreenForOwnerElementsInOtherProcesses(WebCore::FrameIdentifier, CompletionHandler<void(NeedsPresentationUpdate)>&&);
     void exitFullScreenInOtherProcesses(WebCore::FrameIdentifier, CompletionHandler<void()>&&);
 
     enum class FullscreenState : uint8_t {
@@ -134,10 +136,12 @@ private:
     void updateImageSource(FullScreenMediaDetails&&);
 #endif
     Awaitable<void> exitFullScreen();
-    Awaitable<bool> beganEnterFullScreen(WebCore::IntRect initialFrame, WebCore::IntRect finalFrame);
-    Awaitable<void> beganExitFullScreen(WebCore::FrameIdentifier, WebCore::IntRect initialFrame, WebCore::IntRect finalFrame);
+    Awaitable<bool> beganEnterFullScreen(WebCore::FrameIdentifier, WebCore::IntRect initialFrameInRootViewCoordinates, WebCore::IntRect finalFrameInRootViewCoordinates);
+    Awaitable<void> beganExitFullScreen(WebCore::FrameIdentifier, WebCore::IntRect initialFrameInRootViewCoordinates, WebCore::IntRect finalFrameInRootViewCoordinates);
     void callCloseCompletionHandlers();
     template<typename M> void sendToWebProcess(M&&);
+
+    std::optional<std::pair<WebCore::IntRect, WebCore::IntRect>> convertFromRootViewToScreenCoordinates(std::pair<WebCore::IntRect, WebCore::IntRect> rectsInRootViewCoordinates);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
@@ -159,6 +163,7 @@ private:
 #endif // QUICKLOOK_FULLSCREEN
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
     WeakPtr<WebProcessProxy> m_fullScreenProcess;
+    WebCore::IntPoint m_rootFrameOriginInMainFrameCoordinates;
 
 #if !RELEASE_LOG_DISABLED
     const Ref<const Logger> m_logger;

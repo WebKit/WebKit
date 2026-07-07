@@ -4,6 +4,7 @@
         testRunner.waitUntilDone();
         testRunner.dumpAsText()
         testRunner.dumpFullScreenCallbacks();
+        testRunner.dumpFullScreenOrigin();
     }
     addEventListener("message", (event) => {
         document.getElementById("mylog").innerHTML += event.data + "<br>";

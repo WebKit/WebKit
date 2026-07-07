@@ -15387,6 +15387,13 @@ void WebPageProxy::convertRectsToMainFrameCoordinates(Vector<WebCore::FloatRect>
     });
 }
 
+Awaitable<std::optional<WebCore::FloatPoint>> WebPageProxy::convertPointToMainFrameCoordinates(WebCore::FloatPoint point, std::optional<WebCore::FrameIdentifier> frameID)
+{
+    co_return co_await AwaitableFromCompletionHandler<std::optional<WebCore::FloatPoint>> { [protectedThis = Ref { *this }, point, frameID] (auto completionHandler) {
+        protectedThis->convertPointToMainFrameCoordinates(point, frameID, WTF::move(completionHandler));
+    } };
+}
+
 Awaitable<std::optional<WebCore::FloatRect>> WebPageProxy::convertRectToMainFrameCoordinates(WebCore::FloatRect rect, std::optional<WebCore::FrameIdentifier> frameID)
 {
     co_return co_await AwaitableFromCompletionHandler<std::optional<WebCore::FloatRect>> { [protectedThis = Ref { *this }, rect, frameID] (auto completionHandler) {

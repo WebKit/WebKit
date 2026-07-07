@@ -636,6 +636,28 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         manager->requestExitFullScreen();
 }
 
+- (std::optional<WebCore::IntRect>)convertMainFrameCoordinatesInFullscreenPlaceholderViewToScreen:(WebCore::IntRect)mainFrameCoordinates
+{
+    // This is like PageClientImpl::rootViewToScreen but with two important differences:
+    // 1. We use _webViewPlaceholder instead of the WKWebView because at this point the
+    //    WKWebView has been put at the screen origin, which can't be used for coordinate
+    //    transformations.
+    // 2. _webViewPlaceholder is non-flipped so we need to flip the Y coordinate before
+    //    converting to window coordinates.
+
+    NSRect tempRect = mainFrameCoordinates;
+    RetainPtr view = _webViewPlaceholder;
+    if (![view window])
+        return std::nullopt;
+
+    tempRect.origin.y = NSHeight([view bounds]) - NSMaxY(tempRect);
+
+    tempRect = [view convertRect:tempRect toView:nil];
+    tempRect.origin = [retainPtr([view window]) convertPointToScreen:tempRect.origin];
+
+    return WebCore::enclosingIntRect(tempRect);
+}
+
 - (void)beganExitFullScreenWithInitialFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame completionHandler:(CompletionHandler<void()>&&)completionHandler
 {
     if (_fullScreenState != WaitingToExitFullScreen)

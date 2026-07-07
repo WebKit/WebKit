@@ -86,6 +86,7 @@ typedef enum FullScreenState : NSInteger FullScreenState;
 - (void)close;
 - (void)beganEnterFullScreenWithInitialFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame completionHandler:(CompletionHandler<void(bool)>&&)completionHandler;
 - (void)beganExitFullScreenWithInitialFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame completionHandler:(CompletionHandler<void()>&&)completionHandler;
+- (std::optional<WebCore::IntRect>)convertMainFrameCoordinatesInFullscreenPlaceholderViewToScreen:(WebCore::IntRect)mainFrameCoordinates;
 
 - (void)videoControlsManagerDidChange;
 

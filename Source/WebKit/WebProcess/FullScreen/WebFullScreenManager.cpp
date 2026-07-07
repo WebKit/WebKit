@@ -81,7 +81,7 @@ using namespace WebCore;
 
 using WebCore::FloatSize;
 
-static WebCore::IntRect screenRectOfContents(WebCore::Element& element)
+static WebCore::IntRect rootViewRectOfContents(WebCore::Element& element)
 {
     CheckedPtr renderer = element.renderer();
     if (!renderer)
@@ -103,7 +103,7 @@ static WebCore::IntRect screenRectOfContents(WebCore::Element& element)
     auto viewportRect = snappedIntRect(frameView->layoutViewportRect());
     contentsRect.intersect(viewportRect);
 
-    return frameView->contentsToScreen(contentsRect);
+    return frameView->contentsToRootView(contentsRect);
 }
 
 Ref<WebFullScreenManager> WebFullScreenManager::create(WebPage& page)
@@ -447,7 +447,7 @@ void WebFullScreenManager::performEnterFullScreen()
     }
 #endif
 
-    m_initialFrame = screenRectOfContents(*element);
+    m_initialFrameInRootViewCoordinates = rootViewRectOfContents(*element);
 
 #if ENABLE(VIDEO)
     updateMainVideoElement();
@@ -573,9 +573,20 @@ void WebFullScreenManager::willEnterFullScreen(Element& element, CompletionHandl
     m_page->hidePageBanners();
 #endif
     protect(element.document())->updateLayout();
-    m_finalFrame = screenRectOfContents(element);
+    m_finalFrameInRootViewCoordinates = rootViewRectOfContents(element);
 
-    m_page->sendWithAsyncReply(Messages::WebFullScreenManagerProxy::BeganEnterFullScreen(m_initialFrame, m_finalFrame), [this, protectedThis = Ref { *this }, mode, completionHandler = WTF::move(didEnterFullscreenCallback)] (bool success) mutable {
+    RefPtr frame = element.document().frame();
+    if (!frame) {
+        didEnterFullscreenCallback(false);
+        return;
+    }
+
+    m_page->sendWithAsyncReply(Messages::WebFullScreenManagerProxy::BeganEnterFullScreen(frame->frameID(), m_initialFrameInRootViewCoordinates, m_finalFrameInRootViewCoordinates), [
+        this,
+        protectedThis = Ref { *this },
+        mode,
+        completionHandler = WTF::move(didEnterFullscreenCallback)
+    ] (bool success) mutable {
         if (!success && mode != WebCore::HTMLMediaElementEnums::VideoFullscreenModeInWindow) {
             completionHandler(false);
             return;
@@ -654,7 +665,7 @@ void WebFullScreenManager::willExitFullScreen(CompletionHandler<void()>&& comple
     setPIPStandbyElement(nullptr);
 #endif
 
-    m_finalFrame = screenRectOfContents(*element);
+    m_finalFrameInRootViewCoordinates = rootViewRectOfContents(*element);
     if (!protect(protect(element->document())->fullscreen())->willExitFullscreen()) {
         close();
         return completionHandler();
@@ -664,7 +675,7 @@ void WebFullScreenManager::willExitFullScreen(CompletionHandler<void()>&& comple
 #endif
     // FIXME: The order of these frames is switched, but that is kept for historical reasons.
     // It should probably be fixed to be consistent at some point.
-    m_page->sendWithAsyncReply(Messages::WebFullScreenManagerProxy::BeganExitFullScreen(*m_elementFrameIdentifier, m_finalFrame, m_initialFrame), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] mutable {
+    m_page->sendWithAsyncReply(Messages::WebFullScreenManagerProxy::BeganExitFullScreen(*m_elementFrameIdentifier, m_finalFrameInRootViewCoordinates, m_initialFrameInRootViewCoordinates), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] mutable {
         didExitFullScreen(WTF::move(completionHandler));
     });
 }
