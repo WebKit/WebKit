@@ -1156,6 +1156,36 @@ bool ValidImageSizeParameters(const Context *context,
     return true;
 }
 
+bool ValidCompressedFormatForTexture2DArray(GLenum format, const Extensions &extensions)
+{
+    if ((IsETC1Format(format) && !extensions.compressedETC1RGB8SubTextureEXT) ||
+        IsPVRTC1Format(format))
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool ValidCompressedFormatForTexture3D(GLenum format, const Extensions &extensions)
+{
+    if (IsASTC2DFormat(format))
+    {
+        return extensions.textureCompressionAstcHdrKHR ||
+               extensions.textureCompressionAstcSliced3dKHR;
+    }
+
+    if (IsASTC3DFormat(format) || IsBPTCFormat(format))
+    {
+        return true;
+    }
+
+    // All other compressed formats are specified to not support 3D textures.
+    ASSERT((IsS3TCFormat(format) || IsRGTCFormat(format)) ||
+           (IsETC1Format(format) || IsETC2EACFormat(format)) || IsPVRTC1Format(format));
+    return false;
+}
+
 bool ValidCompressedImageSize(const Context *context,
                               GLenum internalFormat,
                               GLint level,

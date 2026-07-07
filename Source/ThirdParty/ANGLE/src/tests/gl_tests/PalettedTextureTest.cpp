@@ -40,6 +40,9 @@ class PalettedTextureTestES2 : public PalettedTextureTest
 class PalettedTextureTestES3 : public PalettedTextureTest
 {};
 
+class PalettedTextureTestES31 : public PalettedTextureTest
+{};
+
 struct TestImage
 {
     GLColor palette[16];
@@ -145,21 +148,123 @@ TEST_P(PalettedTextureTest, PalettedTextureSampling)
     }
 }
 
-// Check that validation for paletted formats is correct.
-TEST_P(PalettedTextureTestES2, PalettedFormatsValidation)
+// Check that validation for paletted formats is correct in ES 1.0 contexts.
+TEST_P(PalettedTextureTest, Validation)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_compressed_paletted_texture"));
 
-    GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D, texture);
+    {
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        ASSERT_GL_NO_ERROR();
 
-    glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_PALETTE4_RGBA8_OES, 2, 2, 0, sizeof testImage,
-                           &testImage);
-    EXPECT_GL_NO_ERROR();
+        glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_PALETTE4_RGBA8_OES, 2, 2, 0, sizeof testImage,
+                               &testImage);
+        EXPECT_GL_NO_ERROR();
 
-    // Generate GL_INVALID_OPERATION, paletted formats cannot be used for glCompressedTexSubImage2D
-    glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, GL_PALETTE4_RGBA8_OES, 0, nullptr);
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+        // Generate GL_INVALID_OPERATION, paletted formats cannot be used for
+        // glCompressedTexSubImage2D
+        glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 2, 2, GL_PALETTE4_RGBA8_OES,
+                                  sizeof testImage, &testImage);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+
+    if (IsGLExtensionEnabled("GL_OES_texture_cube_map"))
+    {
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_CUBE_MAP_OES, texture);
+        ASSERT_GL_NO_ERROR();
+
+        glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X_OES, 0, GL_PALETTE4_RGBA8_OES, 2, 2,
+                               0, sizeof testImage, &testImage);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+}
+
+// Check that validation for paletted formats is correct in ES 2.0+ contexts.
+TEST_P(PalettedTextureTestES2, Validation)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_compressed_paletted_texture"));
+
+    {
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        ASSERT_GL_NO_ERROR();
+
+        glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_PALETTE4_RGBA8_OES, 2, 2, 0, sizeof testImage,
+                               &testImage);
+        EXPECT_GL_NO_ERROR();
+
+        // Generate GL_INVALID_OPERATION, paletted formats cannot be used for
+        // glCompressedTexSubImage2D
+        glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 2, 2, GL_PALETTE4_RGBA8_OES,
+                                  sizeof testImage, &testImage);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+
+    {
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+        ASSERT_GL_NO_ERROR();
+
+        glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_PALETTE4_RGBA8_OES, 2, 2, 0,
+                               sizeof testImage, &testImage);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+
+    if (IsGLExtensionEnabled("GL_OES_texture_3D"))
+    {
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_3D_OES, texture);
+        ASSERT_GL_NO_ERROR();
+
+        glCompressedTexImage3DOES(GL_TEXTURE_3D_OES, 0, GL_PALETTE4_RGBA8_OES, 2, 2, 1, 0,
+                                  sizeof testImage, &testImage);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+}
+
+// Check that validation for paletted formats is correct in ES 3.0 contexts.
+TEST_P(PalettedTextureTestES3, Validation)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_compressed_paletted_texture"));
+
+    {
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_3D, texture);
+        ASSERT_GL_NO_ERROR();
+
+        glCompressedTexImage3D(GL_TEXTURE_3D, 0, GL_PALETTE4_RGBA8_OES, 2, 2, 1, 0,
+                               sizeof testImage, &testImage);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+
+    {
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
+        ASSERT_GL_NO_ERROR();
+
+        glCompressedTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_PALETTE4_RGBA8_OES, 2, 2, 1, 0,
+                               sizeof testImage, &testImage);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+}
+
+// Check that validation for paletted formats is correct in ES 3.1 contexts.
+TEST_P(PalettedTextureTestES31, Validation)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_compressed_paletted_texture"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_cube_map_array"));
+
+    {
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY_OES, texture);
+        ASSERT_GL_NO_ERROR();
+
+        glCompressedTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY_OES, 0, GL_PALETTE4_RGBA8_OES, 2, 2, 6, 0,
+                               sizeof testImage, &testImage);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
 }
 
 // Check that rendering using paletted texture works in GLES2 context.
@@ -209,16 +314,53 @@ TEST_P(PalettedTextureTestES2, PalettedTextureDraw)
     EXPECT_PIXEL_COLOR_EQ(31, 31, GLColor::red);
 }
 
-// glTexStorage2D with paletted formats should fail.
-TEST_P(PalettedTextureTestES3, TexStorage2DShouldFail)
+// glTexStorage2DEXT with paletted formats should fail.
+TEST_P(PalettedTextureTestES2, TexStorageShouldFail)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_storage"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_compressed_paletted_texture"));
+
+    {
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        ASSERT_GL_NO_ERROR();
+
+        glTexStorage2DEXT(GL_TEXTURE_2D, 1, GL_PALETTE4_RGBA8_OES, 2, 2);
+        EXPECT_GL_ERROR(GL_INVALID_ENUM);
+    }
+}
+
+// glTexStorage2D/3D with paletted formats should fail.
+TEST_P(PalettedTextureTestES3, TexStorageShouldFail)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_compressed_paletted_texture"));
 
-    GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D, texture);
+    {
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        ASSERT_GL_NO_ERROR();
 
-    glTexStorage2D(GL_TEXTURE_2D, 1, GL_PALETTE4_RGBA8_OES, 2, 2);
-    EXPECT_GL_ERROR(GL_INVALID_ENUM);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_PALETTE4_RGBA8_OES, 2, 2);
+        EXPECT_GL_ERROR(GL_INVALID_ENUM);
+    }
+
+    {
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
+        ASSERT_GL_NO_ERROR();
+
+        glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_PALETTE4_RGBA8_OES, 2, 2, 1);
+        EXPECT_GL_ERROR(GL_INVALID_ENUM);
+    }
+
+    {
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_3D, texture);
+        ASSERT_GL_NO_ERROR();
+
+        glTexStorage3D(GL_TEXTURE_3D, 1, GL_PALETTE4_RGBA8_OES, 2, 2, 1);
+        EXPECT_GL_ERROR(GL_INVALID_ENUM);
+    }
 }
 
 // glCopyTexImage2D with paletted formats should fail.
@@ -254,6 +396,10 @@ TEST_P(PalettedTextureTestES2, CopyTexImageShouldFail)
 
 ANGLE_INSTANTIATE_TEST_ES1(PalettedTextureTest);
 
-ANGLE_INSTANTIATE_TEST_ES2(PalettedTextureTestES2);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(PalettedTextureTestES2);
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PalettedTextureTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(PalettedTextureTestES3);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PalettedTextureTestES31);
+ANGLE_INSTANTIATE_TEST_ES31(PalettedTextureTestES31);
