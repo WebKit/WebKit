@@ -95,9 +95,8 @@ inline Structure* JSArray::createStructure(VM& vm, JSGlobalObject* globalObject,
     return Structure::create(vm, globalObject, prototype, TypeInfo(ArrayType, StructureFlags), info(), indexingType);
 }
 
-inline IndexingType JSArray::mergeIndexingTypeForCopying(IndexingType other, bool allowPromotion)
+inline IndexingType mergeIndexingTypesForCopying(IndexingType type, IndexingType other, bool allowPromotion)
 {
-    IndexingType type = indexingType();
     if (!(type & IsArray && other & IsArray))
         return NonArray;
 
@@ -131,6 +130,11 @@ inline IndexingType JSArray::mergeIndexingTypeForCopying(IndexingType other, boo
         return NonArray;
 
     return type;
+}
+
+inline IndexingType JSArray::mergeIndexingTypeForCopying(IndexingType other, bool allowPromotion)
+{
+    return mergeIndexingTypesForCopying(indexingType(), other, allowPromotion);
 }
 
 ALWAYS_INLINE bool JSArray::holesMustForwardToPrototype() const

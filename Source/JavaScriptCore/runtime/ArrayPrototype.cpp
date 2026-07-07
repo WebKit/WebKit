@@ -1627,6 +1627,106 @@ JSArray* tryConcatOneArgFast(JSGlobalObject* globalObject, VM& vm, JSArray* firs
     RELEASE_AND_RETURN(scope, tryConcatAppendArrayFastWithWatchpoints(globalObject, vm, firstArray, secondArray));
 }
 
+static JSArray* tryConcatMultipleArraysFast(JSGlobalObject* globalObject, VM& vm, JSArray* firstArray, CallFrame* callFrame)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(!globalObject->isHavingABadTime());
+    ASSERT(callFrame->argumentCount() >= 2);
+
+    unsigned argumentCount = callFrame->argumentCount();
+
+    if (firstArray->holesMustForwardToPrototype()) [[unlikely]]
+        return nullptr;
+
+    IndexingType type = firstArray->indexingType();
+    CheckedUint32 checkedResultSize = firstArray->butterfly()->publicLength();
+    for (unsigned i = 0; i < argumentCount; ++i) {
+        JSValue argumentValue = callFrame->uncheckedArgument(i);
+        if (argumentValue.isObject()) {
+            JSObject* argumentObject = asObject(argumentValue);
+            if (!arrayMissingIsConcatSpreadable(vm, argumentObject)) [[unlikely]]
+                return nullptr;
+            if (isJSArray(argumentObject)) [[likely]] {
+                JSArray* array = uncheckedDowncast<JSArray>(argumentObject);
+                if (array->holesMustForwardToPrototype()) [[unlikely]]
+                    return nullptr;
+                type = mergeIndexingTypesForCopying(type, array->indexingType(), /* allowPromotion */ true);
+                if (type == NonArray) [[unlikely]]
+                    return nullptr;
+                checkedResultSize += array->butterfly()->publicLength();
+                continue;
+            }
+            JSType objectType = argumentObject->type();
+            if (objectType == ProxyObjectType || objectType == DerivedArrayType) [[unlikely]]
+                return nullptr;
+        }
+        type = mergeIndexingTypesForCopying(type, indexingTypeForValue(argumentValue) | IsArray, /* allowPromotion */ true);
+        if (type == NonArray) [[unlikely]]
+            return nullptr;
+        checkedResultSize += 1;
+    }
+
+    if (checkedResultSize.hasOverflowed() || checkedResultSize.value() >= MIN_SPARSE_ARRAY_INDEX) [[unlikely]]
+        return nullptr;
+
+    unsigned resultSize = checkedResultSize;
+    if (!resultSize)
+        RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, nullptr));
+
+    Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(type);
+    ASSERT(!hasAnyArrayStorage(resultStructure->indexingType()));
+
+    auto vectorLength = Butterfly::optimalContiguousVectorLength(resultStructure, resultSize);
+    if (vectorLength > MAX_STORAGE_VECTOR_LENGTH) [[unlikely]]
+        return nullptr;
+
+    ASSERT(!resultStructure->outOfLineCapacity());
+    void* memory = vm.auxiliarySpace().allocate(vm, Butterfly::totalSize(0, 0, true, vectorLength * sizeof(EncodedJSValue)), nullptr, AllocationFailureMode::ReturnNull);
+    if (!memory) [[unlikely]] {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+    auto* butterfly = Butterfly::fromBase(memory, 0, 0);
+    butterfly->setVectorLength(vectorLength);
+    butterfly->setPublicLength(resultSize);
+
+    unsigned offset = 0;
+    auto copySource = [&](JSArray* array) {
+        Butterfly* sourceButterfly = array->butterfly();
+        unsigned sourceSize = sourceButterfly->publicLength();
+        IndexingType sourceType = array->indexingType();
+        if (type == ArrayWithDouble) {
+            double* buffer = butterfly->contiguousDouble().data();
+            if (sourceType == ArrayWithDouble)
+                copyArrayElements<ArrayFillMode::Empty, NeedsGCSafeOps::No>(buffer, offset, sourceButterfly->contiguousDouble().data(), 0, sourceSize, sourceType);
+            else
+                copyArrayElements<ArrayFillMode::Empty, NeedsGCSafeOps::No>(buffer, offset, sourceButterfly->contiguous().data(), 0, sourceSize, sourceType);
+        } else if (type != ArrayWithUndecided) {
+            WriteBarrier<Unknown>* buffer = butterfly->contiguous().data();
+            copyArrayElements<ArrayFillMode::Empty, NeedsGCSafeOps::No>(buffer, offset, sourceButterfly->contiguous().data(), 0, sourceSize, sourceType);
+        }
+        offset += sourceSize;
+    };
+    copySource(firstArray);
+    for (unsigned i = 0; i < argumentCount; ++i) {
+        JSValue argumentValue = callFrame->uncheckedArgument(i);
+        if (argumentValue.isObject() && isJSArray(asObject(argumentValue))) [[likely]] {
+            copySource(uncheckedDowncast<JSArray>(asObject(argumentValue)));
+            continue;
+        }
+        if (type == ArrayWithDouble)
+            butterfly->contiguousDouble().data()[offset] = argumentValue.asNumber();
+        else
+            butterfly->contiguous().data()[offset].setWithoutWriteBarrier(argumentValue);
+        ++offset;
+    }
+    ASSERT(offset == resultSize);
+
+    Butterfly::clearRange(type, butterfly, resultSize, vectorLength);
+    return JSArray::createWithButterfly(vm, nullptr, resultStructure, butterfly);
+}
+
 JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncConcat, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -1644,19 +1744,18 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncConcat, (JSGlobalObject* globalObject, Ca
                     return JSValue::encode(result);
             }
         }
-    } else if (callFrame->argumentCount() == 1) {
-        JSValue argumentValue = callFrame->uncheckedArgument(0);
-        if (isJSArray(thisValue)) [[likely]] {
-            auto* firstArray = uncheckedDowncast<JSArray>(thisValue);
-            if (!globalObject->isHavingABadTime() && arrayMissingIsConcatSpreadable(vm, firstArray) && arraySpeciesWatchpointIsValid(vm, firstArray) && !firstArray->mayInterceptIndexedAccesses()) [[likely]] {
-                // This code assumes that neither array has set Symbol.isConcatSpreadable. If the first array
-                // has indexed accessors then one of those accessors might change the value of Symbol.isConcatSpreadable
-                // on the second argument.
-                JSArray* result = tryConcatOneArgFast(globalObject, vm, firstArray, argumentValue);
-                RETURN_IF_EXCEPTION(scope, { });
-                if (result) [[likely]]
-                    return JSValue::encode(result);
-            }
+    } else if (isJSArray(thisValue)) [[likely]] {
+        auto* firstArray = uncheckedDowncast<JSArray>(thisValue);
+        if (!globalObject->isHavingABadTime() && arrayMissingIsConcatSpreadable(vm, firstArray) && arraySpeciesWatchpointIsValid(vm, firstArray) && !firstArray->mayInterceptIndexedAccesses()) [[likely]] {
+            // This code assumes that neither array has set Symbol.isConcatSpreadable. If the first array
+            // has indexed accessors then one of those accessors might change the value of Symbol.isConcatSpreadable
+            // on the second argument.
+            JSArray* result = callFrame->argumentCount() == 1
+                ? tryConcatOneArgFast(globalObject, vm, firstArray, callFrame->uncheckedArgument(0))
+                : tryConcatMultipleArraysFast(globalObject, vm, firstArray, callFrame);
+            RETURN_IF_EXCEPTION(scope, { });
+            if (result) [[likely]]
+                return JSValue::encode(result);
         }
     }
 
