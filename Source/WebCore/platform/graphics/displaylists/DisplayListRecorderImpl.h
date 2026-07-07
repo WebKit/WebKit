@@ -76,7 +76,7 @@ public:
     void drawSystemImage(SystemImage&, const FloatRect&) final;
     void drawRect(const FloatRect&, float) final;
     void drawLine(const FloatPoint& point1, const FloatPoint& point2) final;
-    void drawLinesForText(const FloatPoint&, float thickness, std::span<const FloatSegment>, bool isPrinting, bool doubleLines, StrokeStyle) final;
+    void drawLinesForText(const FloatPoint&, float thickness, std::span<const FloatSegment>, bool isPrinting, bool doubleLines, StrokeStyle, std::optional<float> phaseOriginX = std::nullopt) final;
     void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) final;
     void drawEllipse(const FloatRect&) final;
     void drawPath(const Path&) final;

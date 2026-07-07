@@ -831,7 +831,7 @@ class DrawLinesForText {
 public:
     static constexpr char name[] = "draw-lines-for-text";
 
-    WEBCORE_EXPORT DrawLinesForText(const FloatPoint&, std::span<const FloatSegment> lineSegments, float thickness, bool printing, bool doubleLines, StrokeStyle);
+    WEBCORE_EXPORT DrawLinesForText(const FloatPoint&, std::span<const FloatSegment> lineSegments, float thickness, bool printing, bool doubleLines, StrokeStyle, std::optional<float> phaseOriginX = std::nullopt);
 
     FloatPoint point() const { return m_point; }
     float thickness() const { return m_thickness; }
@@ -839,6 +839,7 @@ public:
     bool isPrinting() const { return m_printing; }
     bool doubleLines() const { return m_doubleLines; }
     StrokeStyle style() const { return m_style; }
+    std::optional<float> phaseOriginX() const { return m_phaseOriginX; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -850,6 +851,7 @@ private:
     bool m_printing;
     bool m_doubleLines;
     StrokeStyle m_style;
+    std::optional<float> m_phaseOriginX;
 };
 
 class DrawDotsForDocumentMarker {

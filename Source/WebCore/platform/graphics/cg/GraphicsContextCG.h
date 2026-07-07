@@ -122,7 +122,7 @@ public:
     void drawFocusRing(const Path&, float outlineWidth, const Color&, float zoomFactor) final;
     void drawFocusRing(const Vector<FloatRect>&, float outlineWidth, const Color&, float zoomFactor) final;
 
-    void drawLinesForText(const FloatPoint&, float thickness, std::span<const FloatSegment>, bool isPrinting, bool doubleLines, StrokeStyle) final;
+    void drawLinesForText(const FloatPoint&, float thickness, std::span<const FloatSegment>, bool isPrinting, bool doubleLines, StrokeStyle, std::optional<float> phaseOriginX = std::nullopt) final;
 
     void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) final;
 

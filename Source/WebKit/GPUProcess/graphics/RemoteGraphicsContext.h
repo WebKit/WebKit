@@ -114,7 +114,7 @@ public:
     void endTransparencyLayer();
     void drawRect(const WebCore::FloatRect&, float borderThickness);
     void drawLine(const WebCore::FloatPoint& point1, const WebCore::FloatPoint& point2);
-    void drawLinesForText(const WebCore::FloatPoint&, float thickness, std::span<const WebCore::FloatSegment> lineSegments, bool printing, bool doubleLines, WebCore::StrokeStyle);
+    void drawLinesForText(const WebCore::FloatPoint&, float thickness, std::span<const WebCore::FloatSegment> lineSegments, bool printing, bool doubleLines, WebCore::StrokeStyle, std::optional<float> phaseOriginX);
     void drawDotsForDocumentMarker(const WebCore::FloatRect&, const WebCore::DocumentMarkerLineStyle&);
     void drawEllipse(const WebCore::FloatRect&);
     void drawPath(const WebCore::Path&);

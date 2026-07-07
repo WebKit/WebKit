@@ -735,9 +735,9 @@ void GraphicsContextSkia::drawFocusRing(const Vector<FloatRect>& rects, float, c
 #endif
 }
 
-void GraphicsContextSkia::drawLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool printing, bool doubleUnderlines, StrokeStyle strokeStyle)
+void GraphicsContextSkia::drawLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool printing, bool doubleUnderlines, StrokeStyle strokeStyle, std::optional<float> phaseOriginX)
 {
-    auto [rects, strokeColor] = computeRectsAndStrokeColorForLinesForText(point, thickness, lineSegments, printing, doubleUnderlines, strokeStyle);
+    auto [rects, strokeColor] = computeRectsAndStrokeColorForLinesForText(point, thickness, lineSegments, printing, doubleUnderlines, strokeStyle, phaseOriginX);
     if (rects.isEmpty())
         return;
     for (auto& rect : rects)

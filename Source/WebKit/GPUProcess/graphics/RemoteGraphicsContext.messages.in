@@ -88,7 +88,7 @@ messages -> RemoteGraphicsContext Stream {
     EndTransparencyLayer() StreamBatched
     DrawRect(WebCore::FloatRect rect, float borderThickness) StreamBatched
     DrawLine(WebCore::FloatPoint point1, WebCore::FloatPoint point2) StreamBatched
-    DrawLinesForText(WebCore::FloatPoint point, float thickness, std::span<const WebCore::FloatSegment> lineSegments, bool printing, bool doubleLines, enum:uint8_t WebCore::StrokeStyle strokeStyle) StreamBatched
+    DrawLinesForText(WebCore::FloatPoint point, float thickness, std::span<const WebCore::FloatSegment> lineSegments, bool printing, bool doubleLines, enum:uint8_t WebCore::StrokeStyle strokeStyle, std::optional<float> phaseOriginX) StreamBatched
     DrawDotsForDocumentMarker(WebCore::FloatRect rect, struct WebCore::DocumentMarkerLineStyle style) StreamBatched
     DrawEllipse(WebCore::FloatRect rect) StreamBatched
     DrawPath(WebCore::Path path) StreamBatched

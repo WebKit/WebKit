@@ -212,13 +212,13 @@ void TextDecorationPainter::paintBackgroundDecorations(const Style::ComputedStyl
                         auto dilationAmount = std::min(underlineBoundingBox.height(), style.metricsOfPrimaryFont().height() / 5);
                         auto boundaries = differenceWithDilation({ 0, paintRect.width() }, WTF::move(intersections), dilationAmount);
                         // We don't use underlineBoundingBox here because drawLinesForText() will run computeUnderlineBoundsForText() internally.
-                        m_context.drawLinesForText(paintRect.location(), paintRect.height(), boundaries.span(), m_isPrinting, underlineStyle == TextDecorationStyle::Double, strokeStyle);
+                        m_context.drawLinesForText(paintRect.location(), paintRect.height(), boundaries.span(), m_isPrinting, underlineStyle == TextDecorationStyle::Double, strokeStyle, decorationGeometry.phaseOriginX);
                     } else
-                    m_context.drawLineForText(paintRect, m_isPrinting, underlineStyle == TextDecorationStyle::Double, strokeStyle);
+                    m_context.drawLineForText(paintRect, m_isPrinting, underlineStyle == TextDecorationStyle::Double, strokeStyle, decorationGeometry.phaseOriginX);
                 }
             } else {
                 // FIXME: Need to support text-decoration-skip: none.
-                m_context.drawLineForText(paintRect, m_isPrinting, underlineStyle == TextDecorationStyle::Double, strokeStyle);
+                m_context.drawLineForText(paintRect, m_isPrinting, underlineStyle == TextDecorationStyle::Double, strokeStyle, decorationGeometry.phaseOriginX);
             }
         } else
             ASSERT_NOT_REACHED();
@@ -266,7 +266,7 @@ void TextDecorationPainter::paintBackgroundDecorations(const Style::ComputedStyl
         // which will be painted in paintForegroundDecorations().
         if (shadow && decorationType.hasLineThrough()) {
             auto paintOrigin = roundPointToDevicePixels(LayoutPoint { boxOrigin }, deviceScaleFactor, textRun.ltr());
-            paintLineThrough({ paintOrigin, decorationGeometry.width, decorationGeometry.textDecorationThickness, decorationGeometry.linethroughCenter, decorationGeometry.wavyStrokeParameters }, Color::transparentBlack, decorationStyle);
+            paintLineThrough({ paintOrigin, decorationGeometry.width, decorationGeometry.textDecorationThickness, decorationGeometry.linethroughCenter, decorationGeometry.wavyStrokeParameters, decorationGeometry.phaseOriginX }, Color::transparentBlack, decorationStyle);
         }
     };
 
@@ -317,7 +317,7 @@ void TextDecorationPainter::paintLineThrough(const ForegroundDecorationGeometry&
     if (style == TextDecorationStyle::Wavy)
         strokeWavyTextDecoration(m_context, rect, m_isPrinting, foregroundDecorationGeometry.wavyStrokeParameters, strokeStyle);
     else
-        m_context.drawLineForText(rect, m_isPrinting, style == TextDecorationStyle::Double, strokeStyle);
+        m_context.drawLineForText(rect, m_isPrinting, style == TextDecorationStyle::Double, strokeStyle, foregroundDecorationGeometry.phaseOriginX);
 }
 
 static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, Style::TextDecorationLine remainingDecorations, bool firstLineStyle, OptionSet<PaintBehavior> paintBehavior, std::optional<PseudoElementType> pseudoElementType)

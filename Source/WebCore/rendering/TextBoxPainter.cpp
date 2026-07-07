@@ -939,6 +939,14 @@ void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decoratio
                 auto wavyOffset = decoratingBox.textDecorationStyles.overline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffsetFromDecoration() : 0.f;
                 return baseOffset - wavyOffset;
             };
+            auto phaseOriginX = [&]() -> std::optional<float> {
+                // Anchor phase to the line's visual content-left so text-boxes from one decorating box share a continuous phase (CSS Text Decoration 4 §line-decoration). Horizontal only; vertical is a follow-up.
+                if (!writingMode().isHorizontal())
+                    return std::nullopt;
+                if (auto lineBox = textBox->lineBox())
+                    return m_paintOffset.x() + lineBox->contentLogicalLeft();
+                return std::nullopt;
+            };
 
             return TextDecorationPainter::BackgroundDecorationGeometry {
                 textOriginFromPaintRect(textBoxPaintRect),
@@ -949,7 +957,8 @@ void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decoratio
                 overlineOffset(),
                 computedLinethroughCenter(decoratingBox.style.get(), textDecorationThickness, autoTextDecorationThickness),
                 snap(decoratingBox.style->metricsOfPrimaryFont().ascent(), m_renderer) + 2.f,
-                wavyStrokeParameters(decoratingBox.style->computedFontSize())
+                wavyStrokeParameters(decoratingBox.style->computedFontSize()),
+                phaseOriginX()
             };
         };
 
@@ -1019,6 +1028,14 @@ void TextBoxPainter::paintForegroundDecorations(TextDecorationPainter& decoratio
         m_paintInfo.context().concatCTM(rotation(m_paintRect, RotationDirection::Clockwise));
 
     auto deviceScaleFactor = m_document->deviceScaleFactor();
+    auto phaseOriginX = [&]() -> std::optional<float> {
+        // Anchor phase to the line's visual content-left so text-boxes from one decorating box share a continuous phase (CSS Text Decoration 4 §line-decoration). Horizontal only; vertical is a follow-up.
+        if (!writingMode().isHorizontal())
+            return std::nullopt;
+        if (auto lineBox = textBox->lineBox())
+            return m_paintOffset.x() + lineBox->contentLogicalLeft();
+        return std::nullopt;
+    }();
     for (auto& decoratingBox : decoratingBoxList | std::views::reverse) {
         if (!WebCore::computedTextDecorationType(decoratingBox.style.get(), decoratingBox.textDecorationStyles).hasLineThrough())
             continue;
@@ -1029,7 +1046,8 @@ void TextBoxPainter::paintForegroundDecorations(TextDecorationPainter& decoratio
             , decoratingBox.contentWidth
             , textDecorationThickness
             , linethroughCenter
-            , wavyStrokeParameters(decoratingBox.style->computedFontSize()) }, decoratingBox.textDecorationStyles);
+            , wavyStrokeParameters(decoratingBox.style->computedFontSize())
+            , phaseOriginX }, decoratingBox.textDecorationStyles);
     }
 
     if (m_isCombinedText)

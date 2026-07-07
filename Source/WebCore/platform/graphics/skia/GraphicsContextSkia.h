@@ -87,7 +87,7 @@ public:
     void drawPattern(const NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions) final;
     void drawRect(const FloatRect&, float) final;
     void drawLine(const FloatPoint&, const FloatPoint&) final;
-    void drawLinesForText(const FloatPoint&, float thickness, std::span<const FloatSegment>, bool isPrinting, bool doubleLines, StrokeStyle) final;
+    void drawLinesForText(const FloatPoint&, float thickness, std::span<const FloatSegment>, bool isPrinting, bool doubleLines, StrokeStyle, std::optional<float> phaseOriginX = std::nullopt) final;
     void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) final;
     void drawEllipse(const FloatRect&) final;
 

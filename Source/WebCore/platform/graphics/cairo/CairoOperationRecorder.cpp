@@ -699,7 +699,7 @@ void OperationRecorder::drawLine(const FloatPoint& point1, const FloatPoint& poi
     append(createCommand<DrawLine>(point1, point2, state.strokeStyle(), state.strokeBrush().color(), state.strokeThickness(), state.shouldAntialias()));
 }
 
-void OperationRecorder::drawLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool printing, bool doubleUnderlines, StrokeStyle)
+void OperationRecorder::drawLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool printing, bool doubleUnderlines, StrokeStyle, std::optional<float>)
 {
     struct DrawLinesForText final : PaintingOperation, OperationData<FloatPoint, float, Vector<FloatSegment>, bool, bool, Color> {
         virtual ~DrawLinesForText() = default;

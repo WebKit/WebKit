@@ -491,9 +491,9 @@ void RemoteGraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint&
     context().drawLine(point1, point2);
 }
 
-void RemoteGraphicsContext::drawLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool printing, bool doubleLines, StrokeStyle strokeStyle)
+void RemoteGraphicsContext::drawLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool printing, bool doubleLines, StrokeStyle strokeStyle, std::optional<float> phaseOriginX)
 {
-    context().drawLinesForText(point, thickness, Vector(lineSegments), printing, doubleLines, strokeStyle);
+    context().drawLinesForText(point, thickness, Vector(lineSegments), printing, doubleLines, strokeStyle, phaseOriginX);
 }
 
 void RemoteGraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect, const DocumentMarkerLineStyle& style)

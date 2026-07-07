@@ -246,7 +246,7 @@ void GraphicsContextCairo::drawFocusRing(const Vector<FloatRect>& rects, float o
 #endif
 }
 
-void GraphicsContextCairo::drawLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool printing, bool doubleUnderlines, StrokeStyle)
+void GraphicsContextCairo::drawLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool printing, bool doubleUnderlines, StrokeStyle, std::optional<float>)
 {
     if (lineSegments.empty())
         return;
