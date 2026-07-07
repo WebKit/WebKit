@@ -71,13 +71,13 @@ LayoutUnit GridBaselineAlignment::ascentForGridItem(const RenderBox& gridItem, S
 
         if (!isParallelToAlignmentAxisForGridItem(gridItem, alignmentContextType)) {
             auto gridWritingMode = gridStyle->writingMode();
-            return gridItemMargin + BaselineAlignmentState::synthesizedBaseline(gridItem, BaselineAlignmentState::dominantBaseline(gridWritingMode),
+            return gridItemMargin + BaselineAlignment::synthesizedBaseline(gridItem, BaselineAlignment::dominantBaseline(gridWritingMode),
                 gridWritingMode, alignmentContextDirection(), BaselineSynthesisEdge::BorderBox);
         }
         auto ascent = position == ItemPosition::Baseline ? gridItem.firstLineBaseline() : gridItem.lastLineBaseline();
         if (!ascent) {
             auto gridWritingMode = gridStyle->writingMode();
-            return gridItemMargin + BaselineAlignmentState::synthesizedBaseline(gridItem, BaselineAlignmentState::dominantBaseline(gridWritingMode),
+            return gridItemMargin + BaselineAlignment::synthesizedBaseline(gridItem, BaselineAlignment::dominantBaseline(gridWritingMode),
                 gridWritingMode, alignmentContextDirection(), BaselineSynthesisEdge::BorderBox);
         }
         baseline = *ascent;
@@ -92,7 +92,7 @@ LayoutUnit GridBaselineAlignment::ascentForGridItem(const RenderBox& gridItem, S
             if (isVerticalAlignmentContext(alignmentContextType))
                 return m_writingMode.isBlockFlipped() ? gridItemMargin + gridItem.borderBoxSize().width().toInt() : gridItemMargin;
             auto gridWritingMode = gridStyle->writingMode();
-            return gridItemMargin + BaselineAlignmentState::synthesizedBaseline(gridItem, BaselineAlignmentState::dominantBaseline(gridWritingMode),
+            return gridItemMargin + BaselineAlignment::synthesizedBaseline(gridItem, BaselineAlignment::dominantBaseline(gridWritingMode),
                 gridWritingMode, LineDirection::Horizontal, BaselineSynthesisEdge::BorderBox);
         }
         baseline = *firstOrLastLineBaseline;

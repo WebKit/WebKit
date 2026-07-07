@@ -37,6 +37,15 @@ enum class FontBaseline : uint8_t;
 enum class LineDirection : bool;
 class RenderBox;
 
+// Stateless CSS Box Alignment baseline helpers, used both while building baseline-sharing groups and by
+// flex/grid to query a box's baseline outside any alignment context. They keep no per-context state, so
+// they live apart from the BaselineAlignmentState grouping machinery.
+struct BaselineAlignment {
+    static FontBaseline NODELETE dominantBaseline(WritingMode);
+    static WritingMode usedWritingModeForBaselineAlignment(LogicalBoxAxis alignmentContextAxis, WritingMode alignmentContainerWritingMode, WritingMode alignmentSubjectWritingMode);
+    static LayoutUnit synthesizedBaseline(const RenderBox&, FontBaseline baselineType, WritingMode writingModeForSynthesis, LineDirection, BaselineSynthesisEdge);
+};
+
 // These classes are used to implement the Baseline Alignment logic, as described in the CSS Box Alignment
 // specification.
 // https://drafts.csswg.org/css-align/#baseline-terms
@@ -107,10 +116,6 @@ public:
 
     void updateSharedGroup(const RenderBox& alignmentSubject, WritingMode alignmentSubjectWritingMode, ItemPosition preference, LayoutUnit ascent);
     Vector<BaselineGroup>& NODELETE sharedGroups();
-
-    static FontBaseline NODELETE dominantBaseline(WritingMode);
-    static WritingMode usedWritingModeForBaselineAlignment(LogicalBoxAxis alignmentContextAxis, WritingMode alignmentContainerWritingMode, WritingMode alignmentSubjectWritingMode);
-    static LayoutUnit synthesizedBaseline(const RenderBox&, FontBaseline baselineType, WritingMode writingModeForSynthesis, LineDirection, BaselineSynthesisEdge);
 
 private:
     BaselineGroup& findCompatibleSharedGroup(WritingMode alignmentSubjectWritingMode, ItemPosition preference);

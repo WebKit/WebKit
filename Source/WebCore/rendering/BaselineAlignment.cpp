@@ -113,14 +113,14 @@ void BaselineAlignmentState::updateSharedGroup(const RenderBox& alignmentSubject
     group.update(alignmentSubject, ascent);
 }
 
-FontBaseline BaselineAlignmentState::dominantBaseline(WritingMode writingMode)
+FontBaseline BaselineAlignment::dominantBaseline(WritingMode writingMode)
 {
     // https://drafts.csswg.org/css-inline-3/#alignment-baseline-property
     // https://drafts.csswg.org/css-inline-3/#dominant-baseline-property
     return writingMode.prefersCentralBaseline() ? FontBaseline::Central : FontBaseline::Alphabetic;
 }
 
-LayoutUnit BaselineAlignmentState::synthesizedBaseline(const RenderBox& box, FontBaseline baselineType, WritingMode writingModeForSynthesis, LineDirection lineDirection, BaselineSynthesisEdge edge)
+LayoutUnit BaselineAlignment::synthesizedBaseline(const RenderBox& box, FontBaseline baselineType, WritingMode writingModeForSynthesis, LineDirection lineDirection, BaselineSynthesisEdge edge)
 {
     auto boxSize = lineDirection == LineDirection::Horizontal ? box.borderBoxHeight() : box.borderBoxWidth();
     if (edge == BaselineSynthesisEdge::ContentBox)
@@ -139,7 +139,7 @@ LayoutUnit BaselineAlignmentState::synthesizedBaseline(const RenderBox& box, Fon
     return boxSize / 2;
 }
 
-WritingMode BaselineAlignmentState::usedWritingModeForBaselineAlignment(LogicalBoxAxis alignmentContextAxis,
+WritingMode BaselineAlignment::usedWritingModeForBaselineAlignment(LogicalBoxAxis alignmentContextAxis,
     WritingMode alignmentContainerWritingMode, WritingMode aligmentSubjectWritingMode)
 {
 
@@ -176,7 +176,7 @@ WritingMode BaselineAlignmentState::usedWritingModeForBaselineAlignment(LogicalB
 
 BaselineGroup& BaselineAlignmentState::findCompatibleSharedGroup(WritingMode alignmentSubjectWritingMode, ItemPosition preference)
 {
-    auto usedWritingModeForBaselineAlignment = this->usedWritingModeForBaselineAlignment(m_alignmentContextAxis, m_alignmentContainerWritingMode, alignmentSubjectWritingMode);
+    auto usedWritingModeForBaselineAlignment = BaselineAlignment::usedWritingModeForBaselineAlignment(m_alignmentContextAxis, m_alignmentContainerWritingMode, alignmentSubjectWritingMode);
     auto blockFlowDirection = usedWritingModeForBaselineAlignment.blockDirection();
     for (auto& group : m_sharedGroups) {
         if (group.isCompatible(blockFlowDirection, preference))
