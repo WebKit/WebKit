@@ -498,12 +498,8 @@ void ScrollableArea::invalidateScrollbars()
 
 bool ScrollableArea::useDarkAppearanceForScrollbars() const
 {
-    if (useDarkAppearance())
-        return true;
-    // The overlay style adapts scrollbar colors to the page background. This only
-    // applies to overlay scrollbars (always-on scrollbars have their own opaque
-    // track and should use the system appearance).
-    return hasOverlayScrollbars() && scrollbarOverlayStyle() == WebCore::ScrollbarOverlayStyle::Light;
+    // If dark appearance is used or the overlay style is light (because of a dark page background), set the dark appearance.
+    return useDarkAppearance() || scrollbarOverlayStyle() == WebCore::ScrollbarOverlayStyle::Light;
 }
 
 void ScrollableArea::invalidateScrollbar(Scrollbar& scrollbar, const IntRect& rect)

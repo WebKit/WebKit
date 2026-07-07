@@ -2281,8 +2281,6 @@ webkit.org/b/212202 css3/scroll-snap/scroll-snap-wheel-event.html [ Skip ]
 css3/scroll-snap/scroll-snap-discrete-wheel-event-in-mainframe.html [ Skip ]
 css3/scroll-snap/scroll-snap-discrete-wheel-events-with-layout.html [ Skip ]
 
-webkit.org/b/313804 fast/scrolling/always-on-scrollbar-dark-appearance.html [ ImageOnlyFailure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Scrolling-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
