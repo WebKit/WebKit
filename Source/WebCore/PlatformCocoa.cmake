@@ -1209,6 +1209,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cocoa/HEVCUtilitiesCocoa.h
     platform/graphics/cocoa/IOSurface.h
     platform/graphics/cocoa/IOSurfaceDrawingBuffer.h
+    platform/graphics/cocoa/ISOBMFFTrackInfoParser.h
     platform/graphics/cocoa/MediaPlayerEnumsCocoa.h
     platform/graphics/cocoa/NullPlaybackSessionInterface.h
     platform/graphics/cocoa/NullVideoPresentationInterface.h
