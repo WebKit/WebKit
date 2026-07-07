@@ -193,7 +193,7 @@ extension View {
     ///     the immersive environment. It receives the `WebPage.ImmersiveEnvironment` to dismiss.
     ///     This closure should return after the dismissal transition completes.
     /// - Returns: A modified view that manages immersive environment lifecycle.
-    @available(TBA, *)
+    @available(anyAppleOSAndDownlevels 27.0, *)
     @available(iOS, unavailable)
     @available(macOS, unavailable)
     @available(watchOS, unavailable)

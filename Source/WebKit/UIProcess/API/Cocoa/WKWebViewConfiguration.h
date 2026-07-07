@@ -255,7 +255,7 @@ on the system setting.
  If NO, requests to present immersive environments are ignored. If YES, requests are routed to your `WKImmersiveEnvironmentDelegate`.
  The default value is NO.
  */
-@property (nonatomic) BOOL allowsImmersiveEnvironments WK_API_AVAILABLE(visionos(WK_XROS_TBA));
+@property (nonatomic) BOOL allowsImmersiveEnvironments WK_API_AVAILABLE(visionos(27.0));
 #endif
 
 @end

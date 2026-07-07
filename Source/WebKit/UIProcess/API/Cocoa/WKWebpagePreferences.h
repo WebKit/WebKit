@@ -130,21 +130,21 @@ WK_CLASS_AVAILABLE(macos(10.15), ios(13.0))
 
 /* @abstract Used to make changes to the network request that will be used for this navigation's main resource load.
 */
-@property (nonatomic, copy, nullable) NSURLRequest *alternateRequest WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, copy, nullable) NSURLRequest *alternateRequest WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 /* @abstract Used to apply a custom `referer` header to all resource loads in the frame for this navigation.
 */
-@property (nonatomic, copy, nullable) NSString *overrideReferrer WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, copy, nullable) NSString *overrideReferrer WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 /*! @abstract A boolean indicating whether `window.webkit.createJSHandle` will be available in `[WKContentWorld pageWorld]`
  @discussion The default value is false.
  */
-@property (nonatomic) BOOL allowsJSHandleCreationInPageWorld WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic) BOOL allowsJSHandleCreationInPageWorld WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 /*! @abstract Whether the Global Privacy Control (GPC) signal is enabled for the navigation.
  @discussion The default value is NO. When enabled, both navigator.globalPrivacyControl and the
  Sec-GPC: 1 request header are active for the main frame, its subframes, and their subresources.
  */
-@property (nonatomic) BOOL globalPrivacyControlStatus WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic) BOOL globalPrivacyControlStatus WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 @end

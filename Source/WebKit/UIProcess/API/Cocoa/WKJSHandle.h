@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
  Whatever JavaScript object the `WKJSHandle` represents, it will be protected from garbage collection for the lifetime of the `WKJSHandle`
  The `WKJSHandle` can also be used as an argument to future JavaScript run via `[WKWebView callAsyncJavaScript:...]`
  */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_CLASS_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0))
 @interface WKJSHandle : NSObject<NSCopying>
 
 + (instancetype)new NS_UNAVAILABLE;

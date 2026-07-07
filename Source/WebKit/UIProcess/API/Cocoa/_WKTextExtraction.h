@@ -55,7 +55,7 @@ typedef NS_ENUM(NSInteger, _WKTextExtractionOutputFormat) {
     _WKTextExtractionOutputFormatHTML,
     _WKTextExtractionOutputFormatMarkdown,
     _WKTextExtractionOutputFormatJSON,
-    _WKTextExtractionOutputFormatPlainText WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)),
+    _WKTextExtractionOutputFormatPlainText WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0)),
 } WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 
 #define WK_TEXT_EXTRACTION_HAS_EVENT_LISTENER_CATEGORIES 1
@@ -68,7 +68,7 @@ typedef NS_OPTIONS(NSUInteger, _WKTextExtractionEventListenerCategory) {
     _WKTextExtractionEventListenerCategoryWheel         = 1 << 3,
     _WKTextExtractionEventListenerCategoryKeyboard      = 1 << 4,
     _WKTextExtractionEventListenerCategoryAll           = NSUIntegerMax
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+} WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 #define WK_TEXT_EXTRACTION_HAS_DATA_DETECTOR_TYPES 1
 
@@ -79,17 +79,17 @@ typedef NS_OPTIONS(NSUInteger, _WKTextExtractionDataDetectorTypes) {
     _WKTextExtractionDataDetectorCalendarEvent      = 1 << 2,
     _WKTextExtractionDataDetectorTrackingNumber     = 1 << 3,
     _WKTextExtractionDataDetectorAll                = NSUIntegerMax,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+} WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 typedef NS_ENUM(NSInteger, _WKTextExtractionWordLimitPolicy) {
     _WKTextExtractionWordLimitPolicyAlways,
     _WKTextExtractionWordLimitPolicyDiscretionary,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+} WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 WK_CLASS_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4))
 @interface _WKTextExtractionConfiguration : NSObject
 
-@property (nonatomic, class, copy, readonly) _WKTextExtractionConfiguration *configurationForVisibleTextOnly WK_API_DEPRECATED_WITH_REPLACEMENT("_WKTextExtractionOutputFormatPlainText", macos(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA), visionos(WK_XROS_TBA, WK_XROS_TBA)) NS_SWIFT_NAME(visibleTextOnly);
+@property (nonatomic, class, copy, readonly) _WKTextExtractionConfiguration *configurationForVisibleTextOnly WK_API_DEPRECATED_WITH_REPLACEMENT("_WKTextExtractionOutputFormatPlainText", macos(27.0, 27.0), ios(27.0, 27.0), visionos(27.0, 27.0)) NS_SWIFT_NAME(visibleTextOnly);
 
 /*!
  Disables all optional metadata in the extraction output: URLs, bounding rects,
@@ -191,7 +191,7 @@ WK_CLASS_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4))
  The default value is `nil`.
  */
 @property (nonatomic, copy, nullable) _WKJSHandle *targetNode;
-@property (nonatomic, copy, nullable) WKJSHandle *targetNodeHandle WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, copy, nullable) WKJSHandle *targetNodeHandle WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 /*!
  If specified, these DOM nodes and their subtrees will be skipped during extraction.
@@ -272,7 +272,7 @@ WK_CLASS_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4))
  At least one of `nodeIdentifier` or `searchText` must be specified.
  */
 - (void)requestJSHandleForNodeIdentifier:(nullable NSString *)nodeIdentifier searchText:(nullable NSString *)searchText completionHandler:(void (^)(_WKJSHandle * _Nullable))completionHandler;
-- (void)requestHandleForNodeIdentifier:(nullable NSString *)nodeIdentifier searchText:(nullable NSString *)searchText completionHandler:(void (^)(WKJSHandle * _Nullable))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)requestHandleForNodeIdentifier:(nullable NSString *)nodeIdentifier searchText:(nullable NSString *)searchText completionHandler:(void (^)(WKJSHandle * _Nullable))completionHandler WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 /*!
  Asynchronously map a node identifier string (corresponding to a `uid` in
@@ -285,7 +285,7 @@ WK_CLASS_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4))
  At least one of `nodeIdentifier` or `searchText` must be specified.
  */
 - (void)requestContainerJSHandleForNodeIdentifier:(nullable NSString *)nodeIdentifier searchText:(nullable NSString *)searchText completionHandler:(void (^)(_WKJSHandle * _Nullable))completionHandler;
-- (void)requestContainerHandleForNodeIdentifier:(nullable NSString *)nodeIdentifier searchText:(nullable NSString *)searchText completionHandler:(void (^)(WKJSHandle * _Nullable))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)requestContainerHandleForNodeIdentifier:(nullable NSString *)nodeIdentifier searchText:(nullable NSString *)searchText completionHandler:(void (^)(WKJSHandle * _Nullable))completionHandler WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 /*!
  Asynchronously find the smallest appropriately-sized container element that
@@ -298,7 +298,7 @@ WK_CLASS_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4))
  At least one search text or a non-null node identifier must be specified.
  */
 - (void)requestContainerJSHandleForSearchTexts:(NSArray<NSString *> *)searchTexts nodeIdentifier:(nullable NSString *)nodeIdentifier completionHandler:(void (^)(_WKJSHandle * _Nullable))completionHandler;
-- (void)requestContainerHandleForSearchTexts:(NSArray<NSString *> *)searchTexts nodeIdentifier:(nullable NSString *)nodeIdentifier completionHandler:(void (^)(WKJSHandle * _Nullable))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)requestContainerHandleForSearchTexts:(NSArray<NSString *> *)searchTexts nodeIdentifier:(nullable NSString *)nodeIdentifier completionHandler:(void (^)(WKJSHandle * _Nullable))completionHandler WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 @end
 
@@ -309,9 +309,9 @@ typedef NS_ENUM(NSInteger, _WKTextExtractionAction) {
     _WKTextExtractionActionTextInput,
     _WKTextExtractionActionKeyPress,
     _WKTextExtractionActionHighlightText,
-    _WKTextExtractionActionScroll WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)),
+    _WKTextExtractionActionScroll WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0)),
     _WKTextExtractionActionScrollBy = _WKTextExtractionActionScroll,
-    _WKTextExtractionActionHover WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)),
+    _WKTextExtractionActionHover WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0)),
 } WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 
 WK_CLASS_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4))
@@ -344,8 +344,8 @@ NS_REQUIRES_PROPERTY_DEFINITIONS
 @interface _WKTextExtractionInteractionResult : NSObject
 
 @property (nonatomic, readonly, nullable) NSError *error;
-@property (nonatomic, readonly, nullable) NSString *summary WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
-@property (nonatomic, readonly) CGRect interactedElementBounds WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, readonly, nullable) NSString *summary WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
+@property (nonatomic, readonly) CGRect interactedElementBounds WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 @end
 

@@ -30,7 +30,7 @@ from webkitpy.common.memoized import memoized
 # class attribute; IOSPort/WatchPort/VisionOSPort inherit it. The constant lives here so
 # version_name_map can read it without importing the (heavy) port chain. If the WebKit
 # Darwin OSes ever diverge in version, split this into per-OS constants.
-DARWIN_CURRENT_VERSION = Version(26)
+DARWIN_CURRENT_VERSION = Version(27)
 
 
 PUBLIC_TABLE = 'public'
@@ -73,7 +73,8 @@ class VersionNameMap(object):
                 'Ventura': Version(13, 0),
                 'Sonoma': Version(14, 0),
                 'Sequoia': Version(15, 0),
-                'Tahoe': Version(26, 0)
+                'Tahoe': Version(26, 0),
+                'Golden Gate': Version(27, 0)
             },
             'ios': self._automap_to_major_version('iOS', minimum=Version(10), maximum=DARWIN_CURRENT_VERSION),
             'tvos': self._automap_to_major_version('tvOS', minimum=Version(10), maximum=DARWIN_CURRENT_VERSION),

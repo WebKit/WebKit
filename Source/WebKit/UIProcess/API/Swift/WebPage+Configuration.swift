@@ -107,7 +107,7 @@ extension WebPage {
         /// If `true`, requests are routed through the `onWebViewImmersiveEnvironmentRequest` view modifier callbacks.
         ///
         /// The default value is `false`.
-        @available(WK_XROS_TBA, *)
+        @available(visionOS 27.0, *)
         @available(iOS, unavailable)
         @available(macOS, unavailable)
         @available(watchOS, unavailable)

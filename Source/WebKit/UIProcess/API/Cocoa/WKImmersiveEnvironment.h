@@ -34,7 +34,7 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
  */
 NS_SWIFT_UI_ACTOR
 NS_SWIFT_SENDABLE
-WK_CLASS_AVAILABLE(visionos(WK_XROS_TBA))
+WK_CLASS_AVAILABLE(visionos(27.0))
 WK_API_UNAVAILABLE(macos, ios)
 @interface WKImmersiveEnvironment : NSObject
 
@@ -43,7 +43,7 @@ WK_API_UNAVAILABLE(macos, ios)
 
 /*! @abstract The frame information of the website that provided this immersive environment.
  */
-@property (nonatomic, readonly) WKFrameInfo *sourceFrame WK_API_AVAILABLE(visionos(WK_XROS_TBA));
+@property (nonatomic, readonly) WKFrameInfo *sourceFrame WK_API_AVAILABLE(visionos(27.0));
 
 @end
 

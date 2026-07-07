@@ -38,7 +38,7 @@ For example:
 WK_SWIFT_UI_ACTOR
 NS_SWIFT_SENDABLE
 NS_SWIFT_NAME(WKContentWorld.Configuration)
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_CLASS_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0))
 @interface WKContentWorldConfiguration : NSObject<NSCopying, NSSecureCoding>
 
 /*! @abstract A boolean value indicating whether every shadow root should be treated as open mode shadow root or not. */

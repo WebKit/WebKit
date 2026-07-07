@@ -203,7 +203,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 #endif
 - (void)_getInformationFromImageData:(NSData *)imageData completionHandler:(void (^)(NSString *typeIdentifier, NSArray<NSValue *> *availableSizes, NSError *error))completionHandler WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 
-- (void)_getImageMetadata:(NSData *)imageData completionHandler:(void (^)(NSDictionary<NSString *, id> *metadata, NSError *error))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)_getImageMetadata:(NSData *)imageData completionHandler:(void (^)(NSDictionary<NSString *, id> *metadata, NSError *error))completionHandler WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 - (void)_createIconDataFromImageData:(NSData *)imageData withLengths:(NSArray<NSNumber *> *)lengths completionHandler:(void (^)(NSData *, NSError *))completionHandler WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 #if TARGET_OS_OSX
@@ -240,7 +240,7 @@ for this property.
 
 - (void)_frames:(void (^)(_WKFrameTreeNode *))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 - (void)_frameTrees:(void (^)(NSSet<_WKFrameTreeNode *> *))completionHandler WK_API_AVAILABLE(macos(14.0), ios(17.0));
-- (void)_frameTreesInBackForwardCacheAtIndex:(NSInteger)relativeIndex completionHandler:(void (^)(NSSet<_WKFrameTreeNode *> *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_frameTreesInBackForwardCacheAtIndex:(NSInteger)relativeIndex completionHandler:(void (^)(NSSet<_WKFrameTreeNode *> *))completionHandler WK_API_AVAILABLE(macos(27.0), ios(27.0));
 - (void)_frameInfoFromHandle:(_WKFrameHandle *)handle completionHandler:(void (^)(WKFrameInfo *))completionHandler WK_API_AVAILABLE(macos(15.4), ios(18.4));
 
 // FIXME: Remove these once nobody is using them.
@@ -284,7 +284,7 @@ for this property.
 - (void)_evaluateJavaScript:(NSString *)javaScriptString withSourceURL:(NSURL *)url inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld withUserGesture:(BOOL)withUserGesture completionHandler:(void (^)(id, NSError *error))completionHandler WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 - (void)_callAsyncJavaScript:(NSString *)functionBody arguments:(NSDictionary<NSString *, id> *)arguments inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 - (void)_callAsyncJavaScript:(NSString *)functionBody arguments:(NSDictionary<NSString *, id> *)arguments inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld withUserGesture:(BOOL)withUserGesture completionHandler:(void (^)(id, NSError *error))completionHandler WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
-- (void)_clearContentWorld:(WKContentWorld *)contentWorld completionHandler:(NS_SWIFT_UI_ACTOR void (^)(void))completionHandler NS_SWIFT_ASYNC_NAME(_clearContentWorld(_:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)_clearContentWorld:(WKContentWorld *)contentWorld completionHandler:(NS_SWIFT_UI_ACTOR void (^)(void))completionHandler NS_SWIFT_ASYNC_NAME(_clearContentWorld(_:)) WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 - (BOOL)_allMediaPresentationsClosed WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
@@ -636,14 +636,14 @@ typedef NS_OPTIONS(NSUInteger, _WKWebViewDataType) {
     _WKWebViewDataTypeSessionStorage = 1 << 0
 } WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 
-- (void)_fetchDataOfTypes:(_WKWebViewDataType)dataTypes completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData *))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("-fetchDataOfTypes:completionHandler:", macos(15.4, WK_MAC_TBA), ios(18.4, WK_IOS_TBA), visionos(2.4, WK_XROS_TBA));
-- (void)_restoreData:(NSData *)data completionHandler:(WK_SWIFT_UI_ACTOR void(^)(BOOL))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("-restoreData:completionHandler:", macos(15.4, WK_MAC_TBA), ios(18.4, WK_IOS_TBA), visionos(2.4, WK_XROS_TBA));
+- (void)_fetchDataOfTypes:(_WKWebViewDataType)dataTypes completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData *))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("-fetchDataOfTypes:completionHandler:", macos(15.4, 27.0), ios(18.4, 27.0), visionos(2.4, 27.0));
+- (void)_restoreData:(NSData *)data completionHandler:(WK_SWIFT_UI_ACTOR void(^)(BOOL))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("-restoreData:completionHandler:", macos(15.4, 27.0), ios(18.4, 27.0), visionos(2.4, 27.0));
 
 @property (nonatomic) audit_token_t presentingApplicationAuditToken WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 
 @property (nonatomic, setter=_setShouldSuppressTopColorExtensionView:) BOOL _shouldSuppressTopColorExtensionView WK_API_AVAILABLE(macos(26.0), ios(26.0));
 
-@property (nonatomic, setter=_setShouldSuppressFormValidationBubble:) BOOL _shouldSuppressFormValidationBubble WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, setter=_setShouldSuppressFormValidationBubble:) BOOL _shouldSuppressFormValidationBubble WK_API_AVAILABLE(ios(27.0), visionos(27.0));
 
 #if TARGET_OS_OSX
 - (NSUInteger)accessibilityRemoteChildTokenHash;
@@ -660,20 +660,20 @@ typedef NS_OPTIONS(NSUInteger, _WKWebViewDataType) {
 #endif
 
 - (void)_getSelectorPathDataForNode:(_WKJSHandle *)node completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData *))completionHandler WK_SWIFT_ASYNC_NAME(_getSelectorPathDataForNode(_:)) WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
-- (void)_getSelectorPathData:(WKJSHandle *)node completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData *))completionHandler WK_SWIFT_ASYNC_NAME(_getSelectorPathData(_:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)_getSelectorPathData:(WKJSHandle *)node completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData *))completionHandler WK_SWIFT_ASYNC_NAME(_getSelectorPathData(_:)) WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 - (void)_getNodeForSelectorPathData:(NSData *)data completionHandler:(WK_SWIFT_UI_ACTOR void (^)(_WKJSHandle *))completionHandler WK_SWIFT_ASYNC_NAME(_getNodeForSelectorPathData(_:)) WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 
 - (void)_debugTextWithConfiguration:(_WKTextExtractionConfiguration *)configuration completionHandler:(WK_SWIFT_UI_ACTOR void(^)(NSString *))completionHandler WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4)) NS_SWIFT_NAME(_debugText(with:completionHandler:));
 - (void)_extractDebugTextWithConfiguration:(_WKTextExtractionConfiguration *)configuration completionHandler:(WK_SWIFT_UI_ACTOR void(^)(_WKTextExtractionResult *))completionHandler WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4)) NS_SWIFT_NAME(_extractDebugText(with:completionHandler:));
 - (void)_performInteraction:(_WKTextExtractionInteraction *)interaction completionHandler:(WK_SWIFT_UI_ACTOR void(^)(_WKTextExtractionInteractionResult *))completionHandler WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4)) NS_SWIFT_NAME(_performInteraction(_:completionHandler:));
 
-- (void)_addWritingToolsPreservedNodes:(NSArray<_WKJSHandle *> *)nodes WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)_addWritingToolsPreservedNodes:(NSArray<_WKJSHandle *> *)nodes WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 #if !TARGET_OS_TV && !TARGET_OS_WATCH
-@property (nonatomic, strong, setter=_setPlatformRefreshControl:) id _platformRefreshControl WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, strong, setter=_setPlatformRefreshControl:) id _platformRefreshControl WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 #endif
 
-- (void)_filterExtractedString:(NSString *)string options:(_WKTextExtractionFilterOptions)options completionHandler:(void(^)(NSString *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)_filterExtractedString:(NSString *)string options:(_WKTextExtractionFilterOptions)options completionHandler:(void(^)(NSString *))completionHandler WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 @end
 

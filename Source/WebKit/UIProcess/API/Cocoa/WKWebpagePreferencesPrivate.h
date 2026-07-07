@@ -131,12 +131,12 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteNetworkConnectionIntegrityPolicy) {
 
 @property (nonatomic, setter=_setPushAndNotificationAPIEnabled:) BOOL _pushAndNotificationAPIEnabled;
 
-@property (nonatomic, setter=setAlternateRequest:) NSURLRequest *_alternateRequest WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, setter=setAlternateRequest:) NSURLRequest *_alternateRequest WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 @property (nonatomic, setter=_setAllowsJSHandleCreationInPageWorld:) BOOL _allowsJSHandleCreationInPageWorld WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 
 @property (nonatomic, setter=_setEnhancedSecurityEnabled:) BOOL _enhancedSecurityEnabled WK_API_DEPRECATED_WITH_REPLACEMENT("securityRestrictionMode", macos(26.4, 26.4), ios(26.4, 26.4), visionos(26.4, 26.4));
 
-@property (nonatomic, setter=setOverrideReferrer:) NSString *_overrideReferrerForAllRequests WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, setter=setOverrideReferrer:) NSString *_overrideReferrerForAllRequests WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 @end
