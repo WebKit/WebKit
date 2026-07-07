@@ -784,16 +784,15 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
                                     baseInstance);
     }
 
-    mtl::BufferRef idxBuffer;
-    size_t idxBufferOffset;
+    mtl::BufferSlice idxBuffer;
     gl::PrimitiveMode newMode          = mode;
     gl::DrawElementsType idxBufferType = type;
     std::vector<DrawCommandRange> drawCommands;
 
     ANGLE_TRY(mVertexArray->resolveDrawElementsDraw(
         context, mode, type, count, indices, requiresIndexRewrite(context->getState(), mode),
-        mState.isPrimitiveRestartEnabled(), &newMode, &drawCommands, &idxBuffer, &idxBufferOffset,
-        &idxBufferType));
+        mState.isPrimitiveRestartEnabled(), &newMode, &drawCommands, &idxBuffer, &idxBufferType));
+
     bool isNoOp = false;
     ANGLE_TRY(
         setupDraw(context, 0, count, instances, baseInstance, type, indices, false, &isNoOp));
@@ -808,8 +807,8 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
             // Normal draw
             for (auto &command : drawCommands)
             {
-                mRenderEncoder.drawIndexed(mtlType, command.count, mtlIdxType, idxBuffer,
-                                           command.offset + idxBufferOffset);
+                mRenderEncoder.drawIndexed(mtlType, command.count, mtlIdxType, idxBuffer.buffer(),
+                                           command.offset + idxBuffer.offset());
             }
         }
         else
@@ -819,9 +818,9 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
             {
                 for (auto &command : drawCommands)
                 {
-                    mRenderEncoder.drawIndexedInstanced(mtlType, command.count, mtlIdxType,
-                                                        idxBuffer, command.offset + idxBufferOffset,
-                                                        instanceCount);
+                    mRenderEncoder.drawIndexedInstanced(
+                        mtlType, command.count, mtlIdxType, idxBuffer.buffer(),
+                        command.offset + idxBuffer.offset(), instanceCount);
                 }
             }
             else
@@ -829,8 +828,9 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
                 for (auto &command : drawCommands)
                 {
                     mRenderEncoder.drawIndexedInstancedBaseVertexBaseInstance(
-                        mtlType, command.count, mtlIdxType, idxBuffer,
-                        command.offset + idxBufferOffset, instanceCount, baseVertex, baseInstance);
+                        mtlType, command.count, mtlIdxType, idxBuffer.buffer(),
+                        command.offset + idxBuffer.offset(), instanceCount, baseVertex,
+                        baseInstance);
                 }
             }
         }
@@ -1519,7 +1519,7 @@ FenceNVImpl *ContextMtl::createFenceNV()
 {
     return new FenceNVMtl();
 }
-SyncImpl *ContextMtl::createSync(const gl::Context *)
+SyncImpl *ContextMtl::createSync()
 {
     return new SyncMtl();
 }
@@ -2103,7 +2103,7 @@ void ContextMtl::updateViewport(FramebufferMtl *framebufferMtl,
                                 float farPlane)
 {
     mViewport = mtl::GetViewport(viewport, framebufferMtl->getState().getDimensions().height,
-                                 framebufferMtl->flipY(), nearPlane, farPlane);
+                                 framebufferMtl->getFlipY(), nearPlane, farPlane);
     mDirtyBits.set(DIRTY_BIT_VIEWPORT);
 
     invalidateDriverUniforms();
@@ -2163,7 +2163,7 @@ void ContextMtl::updateScissor(const gl::State &glState)
     }
 
     gl::Rectangle scissoredArea = ClipRectToScissor(getState(), viewportClippedRenderArea, false);
-    if (framebufferMtl->flipY())
+    if (framebufferMtl->getFlipY())
     {
         scissoredArea.y = renderArea.height - scissoredArea.y - scissoredArea.height;
     }
@@ -2211,7 +2211,7 @@ void ContextMtl::updateFrontFace(const gl::State &glState)
     FramebufferMtl *framebufferMtl = mtl::GetImpl(glState.getDrawFramebuffer());
     const bool upperLeftOrigin     = mState.getClipOrigin() == gl::ClipOrigin::UpperLeft;
     mWinding = mtl::GetFrontfaceWinding(glState.getRasterizerState().frontFace,
-                                        framebufferMtl->flipY() == upperLeftOrigin);
+                                        framebufferMtl->getFlipY() == upperLeftOrigin);
     mDirtyBits.set(DIRTY_BIT_WINDING);
 }
 
@@ -2808,7 +2808,7 @@ angle::Result ContextMtl::handleDirtyDriverUniforms(const gl::Context *context,
                                  mDrawFramebuffer->getState().getDimensions().width;
 
     const float flipX      = 1.0;
-    const float flipY      = mDrawFramebuffer->flipY() ? -1.0f : 1.0f;
+    const float flipY      = mDrawFramebuffer->getFlipY() ? -1.0f : 1.0f;
     mDriverUniforms.flipXY = gl::PackSnorm4x8(
         flipX, flipY, flipX, mState.getClipOrigin() == gl::ClipOrigin::LowerLeft ? -flipY : flipY);
 

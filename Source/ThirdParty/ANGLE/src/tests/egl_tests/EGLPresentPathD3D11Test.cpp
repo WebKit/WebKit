@@ -43,16 +43,19 @@ class EGLPresentPathD3D11 : public ANGLETest<>
         int clientVersion = GetParam().majorVersion;
 
         // Set up EGL Display
-        EGLAttrib displayAttribs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE,
-                                      GetParam().getRenderer(),
-                                      EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE,
-                                      GetParam().eglParameters.majorVersion,
-                                      EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE,
-                                      GetParam().eglParameters.majorVersion,
-                                      EGL_EXPERIMENTAL_PRESENT_PATH_ANGLE,
-                                      usePresentPathFast ? EGL_EXPERIMENTAL_PRESENT_PATH_FAST_ANGLE
-                                                         : EGL_EXPERIMENTAL_PRESENT_PATH_COPY_ANGLE,
-                                      EGL_NONE};
+        EGLAttrib displayAttribs[] = {
+            EGL_PLATFORM_ANGLE_TYPE_ANGLE,
+            GetParam().getRenderer(),
+            EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE,
+            static_cast<EGLAttrib>(mOSWindow->getNativeDisplayPlatformType()),
+            EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE,
+            GetParam().eglParameters.majorVersion,
+            EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE,
+            GetParam().eglParameters.majorVersion,
+            EGL_EXPERIMENTAL_PRESENT_PATH_ANGLE,
+            usePresentPathFast ? EGL_EXPERIMENTAL_PRESENT_PATH_FAST_ANGLE
+                               : EGL_EXPERIMENTAL_PRESENT_PATH_COPY_ANGLE,
+            EGL_NONE};
         mDisplay = eglGetPlatformDisplay(GetEglPlatform(), EGL_DEFAULT_DISPLAY, displayAttribs);
         ASSERT_TRUE(EGL_NO_DISPLAY != mDisplay);
         ASSERT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));

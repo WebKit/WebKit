@@ -76,9 +76,6 @@ bool ValidateGetProgramPipelineivBase(const Context *context,
                                       ProgramPipelineID pipelinePacked,
                                       GLenum pname,
                                       const GLint *params);
-bool ValidateIsProgramPipelineBase(const Context *context,
-                                   angle::EntryPoint entryPoint,
-                                   ProgramPipelineID pipelinePacked);
 bool ValidateProgramUniform1fBase(const Context *context,
                                   angle::EntryPoint entryPoint,
                                   ShaderProgramID programPacked,

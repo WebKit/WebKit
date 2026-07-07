@@ -42,7 +42,6 @@ class ShareGroupVk : public ShareGroupImpl
 
     void onContextAdd() override;
 
-    FramebufferCache &getFramebufferCache() { return mFramebufferCache; }
     SamplerCache &getSamplerCache() { return mSamplerCache; }
     SamplerYcbcrConversionCache &getYuvConversionCache() { return mYuvConversionCache; }
 
@@ -119,8 +118,6 @@ class ShareGroupVk : public ShareGroupImpl
     // Tracks the total number of frames rendered.
     uint32_t mCurrentFrameCount;
 
-    // VkFramebuffer caches
-    FramebufferCache mFramebufferCache;
 
     // VkSampler and VkSamplerYcbcrConversion caches
     SamplerCache mSamplerCache;

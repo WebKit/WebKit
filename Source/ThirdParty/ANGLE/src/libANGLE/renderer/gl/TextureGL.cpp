@@ -257,6 +257,11 @@ angle::Result TextureGL::setImageHelper(const gl::Context *context,
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
 
+    if (features.reattachFboDepthStencilOnReallocation.enabled)
+    {
+        onStateChange(angle::SubjectMessage::ObjectReallocated);
+    }
+
     const gl::InternalFormat &originalInternalFormatInfo =
         gl::GetInternalFormatInfo(internalFormat, type);
     nativegl::TexImageFormat texImageFormat =
@@ -1189,6 +1194,11 @@ angle::Result TextureGL::setStorage(const gl::Context *context,
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
 
+    if (features.reattachFboDepthStencilOnReallocation.enabled)
+    {
+        onStateChange(angle::SubjectMessage::ObjectReallocated);
+    }
+
     const gl::InternalFormat &originalInternalFormatInfo =
         gl::GetSizedInternalFormatInfo(internalFormat);
     nativegl::TexStorageFormat texStorageFormat =
@@ -1371,6 +1381,11 @@ angle::Result TextureGL::setStorageMultisample(const gl::Context *context,
     const FunctionsGL *functions      = GetFunctionsGL(context);
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
+
+    if (features.reattachFboDepthStencilOnReallocation.enabled)
+    {
+        onStateChange(angle::SubjectMessage::ObjectReallocated);
+    }
 
     const gl::InternalFormat &originalInternalFormatInfo =
         gl::GetSizedInternalFormatInfo(internalformat);

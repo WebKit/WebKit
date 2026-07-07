@@ -185,6 +185,8 @@ struct ANGLEPlatformDisplay
                          EGLAttrib deviceIdHigh,
                          EGLAttrib deviceIdLow,
                          EGLAttrib displayKey,
+                         EGLAttrib nativePlatformType,
+                         EGLAttrib x11VisualID,
                          EGLAttrib enabledFeatureOverrides,
                          EGLAttrib disabledFeatureOverrides,
                          EGLAttrib disableAllNonOverriddenFeatures)
@@ -194,6 +196,8 @@ struct ANGLEPlatformDisplay
           deviceIdHigh(deviceIdHigh),
           deviceIdLow(deviceIdLow),
           displayKey(displayKey),
+          nativePlatformType(nativePlatformType),
+          x11VisualID(x11VisualID),
           disableAllNonOverriddenFeatures(static_cast<bool>(disableAllNonOverriddenFeatures))
     {
         enabledFeatureOverridesHash =
@@ -205,8 +209,9 @@ struct ANGLEPlatformDisplay
     auto tie() const
     {
         return std::tie(nativeDisplayType, powerPreference, platformANGLEType, deviceIdHigh,
-                        deviceIdLow, displayKey, enabledFeatureOverridesHash,
-                        disabledFeatureOverridesHash, disableAllNonOverriddenFeatures);
+                        deviceIdLow, displayKey, nativePlatformType, x11VisualID,
+                        enabledFeatureOverridesHash, disabledFeatureOverridesHash,
+                        disableAllNonOverriddenFeatures);
     }
 
     EGLNativeDisplayType nativeDisplayType{EGL_DEFAULT_DISPLAY};
@@ -215,6 +220,8 @@ struct ANGLEPlatformDisplay
     EGLAttrib deviceIdHigh{0};
     EGLAttrib deviceIdLow{0};
     EGLAttrib displayKey{0};
+    EGLAttrib nativePlatformType{0};
+    EGLAttrib x11VisualID{0};
     size_t enabledFeatureOverridesHash;
     size_t disabledFeatureOverridesHash;
     bool disableAllNonOverriddenFeatures;
@@ -398,6 +405,15 @@ EGLAttrib GetPlatformTypeFromEnvironment()
 #else
     return 0;
 #endif  // defined(ANGLE_USE_OZONE)
+}
+
+EGLAttrib GetPlatformTypeFromAttribs(EGLenum platform, const AttributeMap &attribMap)
+{
+    if (platform == EGL_PLATFORM_ANGLE_ANGLE)
+    {
+        return attribMap.get(EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE, 0);
+    }
+    return platform;
 }
 
 rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
@@ -809,22 +825,25 @@ Display *Display::GetDisplayFromNativeDisplay(EGLenum platform,
     AttributeMap updatedAttribMap(attribMap);
     UpdateAttribsFromEnvironment(updatedAttribMap);
 
-    EGLAttrib powerPreference =
+    const EGLAttrib powerPreference =
         updatedAttribMap.get(EGL_POWER_PREFERENCE_ANGLE, EGL_LOW_POWER_ANGLE);
-    EGLAttrib platformANGLEType =
+    const EGLAttrib platformANGLEType =
         updatedAttribMap.get(EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE);
-    EGLAttrib deviceIdHigh = updatedAttribMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0);
-    EGLAttrib deviceIdLow  = updatedAttribMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0);
-    EGLAttrib displayKey   = updatedAttribMap.get(EGL_PLATFORM_ANGLE_DISPLAY_KEY_ANGLE, 0);
-    EGLAttrib enabledFeatureOverrides =
+    const EGLAttrib deviceIdHigh = updatedAttribMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0);
+    const EGLAttrib deviceIdLow  = updatedAttribMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0);
+    const EGLAttrib displayKey   = updatedAttribMap.get(EGL_PLATFORM_ANGLE_DISPLAY_KEY_ANGLE, 0);
+    const EGLAttrib enabledFeatureOverrides =
         updatedAttribMap.get(EGL_FEATURE_OVERRIDES_ENABLED_ANGLE, 0);
-    EGLAttrib disabledFeatureOverrides =
+    const EGLAttrib disabledFeatureOverrides =
         updatedAttribMap.get(EGL_FEATURE_OVERRIDES_DISABLED_ANGLE, 0);
-    EGLAttrib disableAllNonOverriddenFeatures =
+    const EGLAttrib disableAllNonOverriddenFeatures =
         updatedAttribMap.get(EGL_FEATURE_ALL_DISABLED_ANGLE, 0);
-    ANGLEPlatformDisplay combinedDisplayKey(
+    const EGLAttrib nativePlatformType = GetPlatformTypeFromAttribs(platform, updatedAttribMap);
+    const EGLAttrib x11VisualID        = updatedAttribMap.get(EGL_X11_VISUAL_ID_ANGLE, 0);
+    const ANGLEPlatformDisplay combinedDisplayKey(
         nativeDisplay, powerPreference, platformANGLEType, deviceIdHigh, deviceIdLow, displayKey,
-        enabledFeatureOverrides, disabledFeatureOverrides, disableAllNonOverriddenFeatures);
+        nativePlatformType, x11VisualID, enabledFeatureOverrides, disabledFeatureOverrides,
+        disableAllNonOverriddenFeatures);
 
     {
         std::lock_guard<angle::SimpleMutex> lock(*ANGLEPlatformDisplayMapMutex());
@@ -856,14 +875,8 @@ Display *Display::GetDisplayFromNativeDisplay(EGLenum platform,
 
         EGLAttrib displayType  = display->mAttributeMap.get(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
         EGLAttrib deviceType   = display->mAttributeMap.get(EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE);
-        EGLAttrib platformType = platform;
-        if (platform == EGL_PLATFORM_ANGLE_ANGLE)
-        {
-            platformType =
-                display->mAttributeMap.get(EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE);
-        }
-        rx::DisplayImpl *impl =
-            CreateDisplayFromAttribs(displayType, deviceType, platformType, display->getState());
+        rx::DisplayImpl *impl  = CreateDisplayFromAttribs(displayType, deviceType,
+                                                          nativePlatformType, display->getState());
         if (impl == nullptr)
         {
             // No valid display implementation for these attributes
@@ -1003,6 +1016,8 @@ Display::~Display()
                 mAttributeMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0),
                 mAttributeMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0),
                 mAttributeMap.get(EGL_PLATFORM_ANGLE_DISPLAY_KEY_ANGLE, 0),
+                GetPlatformTypeFromAttribs(mPlatform, mAttributeMap),
+                mAttributeMap.get(EGL_X11_VISUAL_ID_ANGLE, 0),
                 mAttributeMap.get(EGL_FEATURE_OVERRIDES_ENABLED_ANGLE, 0),
                 mAttributeMap.get(EGL_FEATURE_OVERRIDES_DISABLED_ANGLE, 0),
                 mAttributeMap.get(EGL_FEATURE_ALL_DISABLED_ANGLE, 0)));

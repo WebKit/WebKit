@@ -482,6 +482,7 @@ egl::Error DisplayMtl::makeCurrent(egl::Display *display,
 
 void DisplayMtl::generateExtensions(egl::DisplayExtensions *outExtensions) const
 {
+    outExtensions->createContextRobustness    = true;
     outExtensions->iosurfaceClientBuffer      = true;
     outExtensions->surfacelessContext         = true;
     outExtensions->noConfigContext            = true;
@@ -903,9 +904,6 @@ void DisplayMtl::ensureCapsInitialized() const
     // Metal doesn't support GL_TEXTURE_COMPARE_MODE=GL_NONE for shadow samplers
     mNativeLimitations.noShadowSamplerCompareModeNone = true;
 
-    // Apple platforms require PVRTC1 textures to be squares.
-    mNativeLimitations.squarePvrtc1 = true;
-
     // MSL `uint32 instance_id = baseInstance + count`, so GLES baseinstance + primcount
     // must not overflow GLuint.
     mNativeLimitations.instanceIdMayOverflow = true;
@@ -1056,6 +1054,8 @@ void DisplayMtl::initializeExtensions() const
     mNativeExtensions.pixelBufferObjectNV = true;
 
     mNativeExtensions.packReverseRowOrderANGLE = true;
+
+    mNativeExtensions.framebufferFlipYMESA = true;
 
     if (mFeatures.hasEvents.enabled)
     {

@@ -485,7 +485,7 @@ TEST_P(BlitFramebufferANGLETest, BlitColorToDefault)
 // Blit color to/from default framebuffer with Flip-X/Flip-Y.
 TEST_P(BlitFramebufferANGLETest, BlitColorWithFlip)
 {
-    // OpenGL ES 3.0 / GL_NV_framebuffer_blit required for flip.
+    // OpenGL ES 3.0 or GL_NV_framebuffer_blit required for flip.
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
                        !IsGLExtensionEnabled("GL_NV_framebuffer_blit"));
 
@@ -604,10 +604,10 @@ TEST_P(BlitFramebufferANGLETest, BlitColorWithFlip)
 // Blit color to default framebuffer from another framebuffer with GL_MESA_framebuffer_flip_y.
 TEST_P(BlitFramebufferANGLETest, BlitColorWithMesaYFlipSrc)
 {
-    // OpenGL ES 3.0 / GL_NV_framebuffer_blit required for flip.
-    ANGLE_SKIP_TEST_IF(
-        (getClientMajorVersion() < 3 && !IsGLExtensionEnabled("GL_NV_framebuffer_blit")) ||
-        !IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y"));
+    // OpenGL ES 3.0 or GL_NV_framebuffer_blit required for flip.
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
+                       !IsGLExtensionEnabled("GL_NV_framebuffer_blit"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y"));
 
     glBindFramebuffer(GL_FRAMEBUFFER, mUserFBO);
 
@@ -655,10 +655,10 @@ TEST_P(BlitFramebufferANGLETest, BlitColorWithMesaYFlipSrc)
 // Blit color to y-flipped with GL_MESA_framebuffer_flip_y framebuffer from normal framebuffer.
 TEST_P(BlitFramebufferANGLETest, BlitColorWithMesaYFlipDst)
 {
-    // OpenGL ES 3.0 / GL_NV_framebuffer_blit required for flip.
-    ANGLE_SKIP_TEST_IF(
-        (getClientMajorVersion() < 3 && !IsGLExtensionEnabled("GL_NV_framebuffer_blit")) ||
-        !IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y"));
+    // OpenGL ES 3.0 or GL_NV_framebuffer_blit required for flip.
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
+                       !IsGLExtensionEnabled("GL_NV_framebuffer_blit"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y"));
 
     glBindFramebuffer(GL_FRAMEBUFFER, mOriginalFBO);
 
@@ -723,10 +723,10 @@ TEST_P(BlitFramebufferANGLETest, BlitColorWithMesaYFlipDst)
 // have different size.
 TEST_P(BlitFramebufferANGLETest, BlitColorWithMesaYFlipSrcDst)
 {
-    // OpenGL ES 3.0 / GL_NV_framebuffer_blit required for flip.
-    ANGLE_SKIP_TEST_IF(
-        (getClientMajorVersion() < 3 && !IsGLExtensionEnabled("GL_NV_framebuffer_blit")) ||
-        !IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y"));
+    // OpenGL ES 3.0 or GL_NV_framebuffer_blit required for flip.
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
+                       !IsGLExtensionEnabled("GL_NV_framebuffer_blit"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y"));
 
     // Create a custom framebuffer as the default one cannot be flipped.
     GLTexture tex0;
@@ -802,10 +802,8 @@ TEST_P(BlitFramebufferANGLETest, BlitColorWithMesaYFlipSrcDst)
 // Same as BlitColorWithMesaYFlip but uses an integer buffer format.
 TEST_P(BlitFramebufferANGLETest, BlitColorWithMesaYFlipInteger)
 {
-    // OpenGL ES 3.0 / GL_NV_framebuffer_blit required for flip.
-    ANGLE_SKIP_TEST_IF(
-        (getClientMajorVersion() < 3 || !IsGLExtensionEnabled("GL_NV_framebuffer_blit")) ||
-        !IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y"));
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y"));
 
     GLTexture tex0;
     glBindTexture(GL_TEXTURE_2D, tex0);
@@ -844,16 +842,8 @@ TEST_P(BlitFramebufferANGLETest, BlitColorWithMesaYFlipInteger)
     glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    if (getClientMajorVersion() < 3)
-    {
-        glBlitFramebufferNV(0, 0, getWindowWidth(), getWindowHeight(), 0, 0, fb1_target_width,
-                            fb1_target_height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-    }
-    else
-    {
-        glBlitFramebuffer(0, 0, getWindowWidth(), getWindowHeight(), 0, 0, fb1_target_width,
-                          fb1_target_height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-    }
+    glBlitFramebuffer(0, 0, getWindowWidth(), getWindowHeight(), 0, 0, fb1_target_width,
+                      fb1_target_height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
     EXPECT_GL_NO_ERROR();
 
@@ -884,16 +874,8 @@ TEST_P(BlitFramebufferANGLETest, BlitColorWithMesaYFlipInteger)
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    if (getClientMajorVersion() < 3)
-    {
-        glBlitFramebufferNV(0, 0, fb1_target_width, fb1_target_height, 0, 0, getWindowWidth(),
-                            getWindowHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
-    }
-    else
-    {
-        glBlitFramebuffer(0, 0, fb1_target_width, fb1_target_height, 0, 0, getWindowWidth(),
-                          getWindowHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
-    }
+    glBlitFramebuffer(0, 0, fb1_target_width, fb1_target_height, 0, 0, getWindowWidth(),
+                      getWindowHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
     // And explicitly disable y-flip so that read does not implicitly use this flag.
     glFramebufferParameteriMESA(GL_DRAW_FRAMEBUFFER_ANGLE, GL_FRAMEBUFFER_FLIP_Y_MESA, 0);

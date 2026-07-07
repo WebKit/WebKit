@@ -64,6 +64,7 @@ class CLProgramVk : public CLProgramImpl
         angle::HashMap<uint32_t, ClspvPrintfInfo> printfInfoMap;
         std::vector<ClspvLiteralSampler> literalSamplers;
         ClspvConstantDataBufferInfo constantDataBufferInfo;
+        ClspvWorkgroupVariableSize workgroupVariableSize;
     };
 
     // Output binary structure (for CL_PROGRAM_BINARIES query)

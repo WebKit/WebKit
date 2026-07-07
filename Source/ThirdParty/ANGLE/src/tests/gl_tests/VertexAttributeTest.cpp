@@ -5284,7 +5284,7 @@ TEST_P(VertexAttributeTestES3, InvalidAttribPointer)
 }
 
 // Test maxinum attribs full of Client buffers and then switch to mixed.
-TEST_P(VertexAttributeTestES3, fullClientBuffersSwitchToMixed)
+TEST_P(VertexAttributeTestES3, FullClientBuffersSwitchToMixed)
 {
     GLint maxAttribs;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttribs);
@@ -5403,16 +5403,16 @@ TEST_P(VertexAttributeTestES3, fullClientBuffersSwitchToMixed)
 }
 
 // Test bind an empty buffer for vertex attribute does not crash
-TEST_P(VertexAttributeTestES3, emptyBuffer)
+TEST_P(VertexAttributeTestES3, EmptyBuffer)
 {
-    constexpr char vs2[] =
+    constexpr char kVS[] =
         R"(#version 300 es
             in uvec4 attr0;
             void main()
             {
                 gl_Position = vec4(attr0.x, 0.0, 0.0, 0.0);
             })";
-    constexpr char fs[] =
+    constexpr char kFS[] =
         R"(#version 300 es
             precision highp float;
             out vec4 color;
@@ -5420,13 +5420,13 @@ TEST_P(VertexAttributeTestES3, emptyBuffer)
             {
                 color = vec4(1.0, 0.0, 0.0, 1.0);
             })";
-    GLuint program2 = CompileProgram(vs2, fs);
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
     GLBuffer buf;
     glBindBuffer(GL_ARRAY_BUFFER, buf);
     glEnableVertexAttribArray(0);
     glVertexAttribIPointer(0, 4, GL_UNSIGNED_BYTE, 0, 0);
     glVertexAttribDivisor(0, 2);
-    glUseProgram(program2);
+    glUseProgram(program);
     glDrawArrays(GL_POINTS, 0, 1);
 
     swapBuffers();
@@ -5434,16 +5434,16 @@ TEST_P(VertexAttributeTestES3, emptyBuffer)
 
 // Test that setting a large offset on glVertexAttribPointer doesn't OOB when going
 // through StoreStaticAttrib. See http://crbug.com/489369089
-TEST_P(VertexAttributeTestES3, storeStaticAttribWithLargeOffset)
+TEST_P(VertexAttributeTestES3, StoreStaticAttribWithLargeOffset)
 {
-    constexpr char vs2[] =
+    constexpr char kVS[] =
         R"(#version 300 es
             layout(location = 0) in vec3 a;
             void main() {
                 gl_Position = vec4(a, 1.0);
                 gl_PointSize = 1.0;
             })";
-    constexpr char fs[] =
+    constexpr char kFS[] =
         R"(#version 300 es
             precision mediump float;
             layout(location = 0) out vec4 FragColor;
@@ -5451,7 +5451,7 @@ TEST_P(VertexAttributeTestES3, storeStaticAttribWithLargeOffset)
                 FragColor = vec4(1.0, 0.0, 0.0, 1.0);
             })";
 
-    GLuint program2 = CompileProgram(vs2, fs);
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
     GLBuffer buf;
     glBindBuffer(GL_ARRAY_BUFFER, buf);
     std::array<uint8_t, 256> data;
@@ -5466,7 +5466,7 @@ TEST_P(VertexAttributeTestES3, storeStaticAttribWithLargeOffset)
     glVertexAttribPointer(0, 3, GL_BYTE, GL_TRUE, 3, reinterpret_cast<void *>(0x80000000));
     glEnableVertexAttribArray(0);
 
-    glUseProgram(program2);
+    glUseProgram(program);
     glDrawArrays(GL_POINTS, 0, 1);
 
     swapBuffers();
@@ -6446,6 +6446,95 @@ TEST_P(VertexAttributeTest, StoreVertexAttributesIntegerOverflow)
     }
 }
 
+// Tests that a large buffer update with format conversion doesn't cause
+// memory corruption due to 32-bit integer overflow/truncation.
+//
+// 32-bit systems:
+//      - If the 4 GB size overflows size_t to 0, a 0-byte allocation will succeed
+//        and GPU will perform OOB write which will trigger undefined behavior.
+//      - Note: This test is skipped on 32-bit platforms at runtime because allocating
+//        the large contiguous buffer is highly unstable in 32-bit virtual address spaces.
+// 64-bit systems:
+//      - The 4 GB allocation is blocked by ANGLE's 1 GB cap or the driver's maxMemoryAllocationSize
+//        (smaller than 4GB on all tested GPUs so far), returning OOM, and test will pass.
+//      - If these allocation limits are ever raised, the pixel check ensures that any offset
+//        truncation/wrap to 0 will fail the test.
+TEST_P(VertexAttributeTest, VertexBufferConversionOverflow)
+{
+    // Skip 32-bit platforms because allocating a contiguous 512MB buffer is highly unstable
+    ANGLE_SKIP_TEST_IF(sizeof(void *) == 4);
+
+    const char *kVS = R"(attribute vec4 a_position;
+void main() {
+    gl_Position = a_position;
+    gl_PointSize = 5.0;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, essl1_shaders::fs::Red());
+    glUseProgram(program);
+
+    // We update at offset 536,870,912 (512MB) by writing a 4-byte uint32_t.
+    // To allow this modify the vertex at index 536,870,912 (which spans bytes 536,870,912 to
+    // 536,870,915), the buffer size must be at least 536,870,916. We allocate 536,870,920
+    // bytes (512MB + 8) to keep the buffer size 8-byte aligned.
+    //
+    // When converted to 8 bytes/vertex (dstStride = 8), the destination offset is
+    // 536870912 * 8 = 4294967296 (exactly 2^32), which is the minimum value to
+    // trigger a 32-bit unsigned integer overflow/truncation.
+    const GLsizeiptr bufferSize = 536870920;
+
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
+
+    GLenum err = glGetError();
+    ANGLE_SKIP_TEST_IF(err == GL_OUT_OF_MEMORY);
+    ASSERT_GLENUM_EQ(GL_NO_ERROR, err);
+
+    // Initialize the first vertex (at offset 0) to draw at the center of the screen.
+    // Signed byte [0, 0, 0, 1] with GL_FALSE normalization converts to float [0, 0, 0, 1].
+    // After perspective division, this is [0, 0, 0] (at the center).
+    std::vector<GLbyte> initialData = {0, 0, 0, 1};
+    glBufferSubData(GL_ARRAY_BUFFER, 0, initialData.size(), initialData.data());
+
+    GLint positionLocation = glGetAttribLocation(program, "a_position");
+    ASSERT_NE(-1, positionLocation);
+    glEnableVertexAttribArray(positionLocation);
+    glVertexAttribPointer(positionLocation, 4, GL_BYTE, GL_FALSE, 1, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_POINTS, 0, 1);
+
+    err = glGetError();
+    ANGLE_SKIP_TEST_IF(err == GL_OUT_OF_MEMORY);
+    ASSERT_GLENUM_EQ(GL_NO_ERROR, err);
+
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::red);
+
+    // Update the buffer at offset 536,870,912 (512MB).
+    // If there is any 32-bit overflow, this update will incorrectly overwrite Vertex 0 at offset 0.
+    // We write a position [1, 0, 0, 1] which corresponds to NDC [1, 0, 0] (right edge of the
+    // screen).
+    const GLintptr subDataOffset   = 536870912;
+    std::vector<GLbyte> updateData = {1, 0, 0, 1};
+    glBufferSubData(GL_ARRAY_BUFFER, subDataOffset, updateData.size(), updateData.data());
+    ASSERT_GL_NO_ERROR();
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_POINTS, 0, 1);
+
+    err = glGetError();
+    ANGLE_SKIP_TEST_IF(err == GL_OUT_OF_MEMORY);
+    ASSERT_GLENUM_EQ(GL_NO_ERROR, err);
+
+    // Verify that the center pixel is still red.
+    // If overflow is happening, the first vertex is corrupted/overwritten by the update at the end,
+    // so the point moves to the right edge and the center pixel becomes black.
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::red);
+}
+
 // Regression test for a bug in emulation of 8-bit indices, when the end of
 // the index buffer is used.
 TEST_P(VertexAttributeUint8Test, ConvertUint8IndexAtEndOfBuffer)
@@ -6690,6 +6779,31 @@ TEST_P(VertexAttributeResizeDefaultTest, ResizeAndSwitchWithNoDefaultAttribsActi
     glDrawArrays(GL_POINTS, 0, 1);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(54, 54, GLColor::green);
+}
+
+// Ensure a large offset is not interpreted as negative.
+TEST_P(VertexAttributeTestES3, LargeAttribPointerOffsetNoCrash)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    glUseProgram(program);
+
+    GLBuffer position;
+    constexpr std::array<float, 6> kTriangle = {-1, -1, 3, -1, -1, 3};
+    glBindBuffer(GL_ARRAY_BUFFER, position);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(kTriangle), kTriangle.data(), GL_STATIC_DRAW);
+
+    GLint posLoc = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+    ASSERT_NE(-1, posLoc);
+    glEnableVertexAttribArray(posLoc);
+    glVertexAttribPointer(posLoc, 2, GL_FLOAT, GL_FALSE, 0,
+                          reinterpret_cast<const void *>(0x80000000));
+    glVertexAttribDivisor(posLoc, 256);
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    // Nothing that can be validated.  The test shouldn't crash.
+    ASSERT_GL_NO_ERROR();
+
+    swapBuffers();
 }
 
 ANGLE_INSTANTIATE_TEST_ES3(VertexAttributeResizeDefaultTest);

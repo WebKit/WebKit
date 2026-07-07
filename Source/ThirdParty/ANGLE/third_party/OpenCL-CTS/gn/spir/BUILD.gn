@@ -5,8 +5,9 @@
 import("//third_party/OpenCL-CTS/gn/angle_ocl_cts.gni")
 
 ocl_cts_source_set("spir") {
-  # TODO: The main.cpp file #includes ../math_brute_force/function_list.cpp, which is not easily
-  # allowed.  It's best to change this file to .h upstream, create a target with that include and
+  # TODO: The main.cpp file #includes ../math_brute_force/function_list.cpp,
+  # which is not easily allowed. It's best to change this file to .h upstream,
+  # create a target with that include and
   # add it to deps.  In the meantime, make gn not complain about this.  http://anglebug.com/42266967
   check_includes = false
 

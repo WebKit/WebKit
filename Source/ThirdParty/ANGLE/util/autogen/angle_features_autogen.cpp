@@ -294,7 +294,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
     {Feature::QueryCounterBitsGeneratesErrors, "queryCounterBitsGeneratesErrors"},
     {Feature::ReadPixelsUsingImplementationColorReadFormatForNorm16, "readPixelsUsingImplementationColorReadFormatForNorm16"},
     {Feature::ReapplyUBOBindingsAfterUsingBinaryProgram, "reapplyUBOBindingsAfterUsingBinaryProgram"},
-    {Feature::RecreateFboUponFlush, "recreateFboUponFlush"},
+    {Feature::ReattachFboDepthStencilOnReallocation, "reattachFboDepthStencilOnReallocation"},
     {Feature::RecreateMipmapLevelsBeforeGenerate, "recreateMipmapLevelsBeforeGenerate"},
     {Feature::RecycleVkEvent, "recycleVkEvent"},
     {Feature::RegenerateStructNames, "regenerateStructNames"},
@@ -334,6 +334,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
     {Feature::Supports8BitPushConstant, "supports8BitPushConstant"},
     {Feature::Supports8BitStorageBuffer, "supports8BitStorageBuffer"},
     {Feature::Supports8BitUniformAndStorageBuffer, "supports8BitUniformAndStorageBuffer"},
+    {Feature::SupportsAmdShaderCoreProperties, "supportsAmdShaderCoreProperties"},
     {Feature::SupportsAndroidHardwareBuffer, "supportsAndroidHardwareBuffer"},
     {Feature::SupportsAndroidNativeFenceSync, "supportsAndroidNativeFenceSync"},
     {Feature::SupportsAngleRgbxInternalFormat, "supportsAngleRgbxInternalFormat"},
@@ -521,7 +522,6 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
     {Feature::WarmUpPipelineCacheAtLink, "warmUpPipelineCacheAtLink"},
     {Feature::WrapSwitchInIfTrue, "wrapSwitchInIfTrue"},
     {Feature::WriteHelperSampleMask, "writeHelperSampleMask"},
-    {Feature::ZeroMaxLodWorkaround, "zeroMaxLodWorkaround"},
 }};
 }  // anonymous namespace
 

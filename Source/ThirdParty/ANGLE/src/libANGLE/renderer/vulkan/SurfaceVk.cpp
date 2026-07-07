@@ -3902,19 +3902,13 @@ egl::Error WindowSurfaceVk::getCompressionRate(const egl::Display *display,
         }
     }
 
-    VkImageSubresource2EXT imageSubresource2      = {};
-    imageSubresource2.sType                       = VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_EXT;
-    imageSubresource2.imageSubresource.aspectMask = mSwapchainImages[0].image->getAspectFlags();
     VkImageCompressionPropertiesEXT compressionProperties = {};
     compressionProperties.sType = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_PROPERTIES_EXT;
-
-    VkSubresourceLayout2EXT subresourceLayout = {};
+    VkSubresourceLayout2 subresourceLayout    = {};
     subresourceLayout.sType                   = VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_EXT;
     subresourceLayout.pNext                   = &compressionProperties;
 
-    vkGetImageSubresourceLayout2EXT(displayVk->getDevice(),
-                                    mSwapchainImages[0].image->getImage().getHandle(),
-                                    &imageSubresource2, &subresourceLayout);
+    mSwapchainImages[0].image->getImageSubresourceLayout(renderer, &subresourceLayout);
 
     std::vector<EGLint> eglFixedRates = vk_gl::ConvertCompressionFlagsToEGLFixedRate(
         compressionProperties.imageCompressionFixedRateFlags, 1);

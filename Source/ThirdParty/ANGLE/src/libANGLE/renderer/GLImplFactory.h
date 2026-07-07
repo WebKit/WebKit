@@ -87,7 +87,7 @@ class GLImplFactory : angle::NonCopyable
     // Query and Fence creation
     virtual QueryImpl *createQuery(gl::QueryType type) = 0;
     virtual FenceNVImpl *createFenceNV()               = 0;
-    virtual SyncImpl *createSync(const gl::Context *context) = 0;
+    virtual SyncImpl *createSync()                     = 0;
 
     // Transform Feedback creation
     virtual TransformFeedbackImpl *createTransformFeedback(

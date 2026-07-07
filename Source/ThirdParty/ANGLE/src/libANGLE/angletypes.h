@@ -266,6 +266,9 @@ struct Box
     size_t volume() const;
     void extend(const Box &other);
 
+    Offset getOffset() const { return Offset(x, y, z); }
+    Extents getExtents() const { return Extents(width, height, depth); }
+
     int x;
     int y;
     int z;
@@ -1629,6 +1632,14 @@ enum class BufferStorage : bool
     Mutable,
     // The buffer storage is immutable
     Immutable,
+};
+
+enum class ZeroFillRequired : bool
+{
+    // The buffer should remain unchanged after initialization if there is no specified data.
+    No,
+    // The buffer should be zero-filled after initialization if there is no specified data.
+    Yes,
 };
 
 }  // namespace gl

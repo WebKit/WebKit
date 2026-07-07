@@ -408,7 +408,6 @@ TextureStorage9_Cube::TextureStorage9_Cube(Renderer9 *renderer,
                                            bool renderTarget,
                                            int size,
                                            int levels,
-                                           bool hintLevelZeroOnly,
                                            const std::string &label)
     : TextureStorage9(renderer, GetTextureUsage(internalformat, renderTarget), label)
 {

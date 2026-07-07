@@ -28,7 +28,8 @@ if (current_os == "linux") {
     llvm_current_triple = "host"
   }
 } else {
-  # Default to host arch for llvm's target output for all other platforms for now (win32/macOS)
+  # Default to host arch for llvm's target output for all other platforms for
+  # now (win32/macOS)
   llvm_current_triple = "host"
 }
 

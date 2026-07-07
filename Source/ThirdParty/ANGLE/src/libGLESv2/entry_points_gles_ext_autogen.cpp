@@ -1628,8 +1628,6 @@ void GL_APIENTRY GL_LogicOpANGLE(GLenum opcode)
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
-// GL_ANGLE_lossy_etc_decode
-
 // GL_ANGLE_memory_object_flags
 void GL_APIENTRY GL_TexStorageMemFlags2DANGLE(GLenum target,
                                               GLsizei levels,
@@ -5596,8 +5594,7 @@ void GL_APIENTRY GL_EndPixelLocalStorageImplicitANGLE()
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidateEndPixelLocalStorageImplicitANGLE(
-                    context, angle::EntryPoint::GLEndPixelLocalStorageImplicitANGLE);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -7456,8 +7453,7 @@ void GL_APIENTRY GL_InsertEventMarkerEXT(GLsizei length, const GLchar *marker)
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidateInsertEventMarkerEXT(
-                    context, angle::EntryPoint::GLInsertEventMarkerEXT, length, marker);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -7499,8 +7495,7 @@ void GL_APIENTRY GL_PopGroupMarkerEXT()
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid =
-                    ValidatePopGroupMarkerEXT(context, angle::EntryPoint::GLPopGroupMarkerEXT);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -8101,8 +8096,7 @@ GLboolean GL_APIENTRY GL_IsQueryEXT(GLuint id)
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid =
-                    ValidateIsQueryEXT(context, angle::EntryPoint::GLIsQueryEXT, idPacked);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -9722,8 +9716,7 @@ GLboolean GL_APIENTRY GL_IsMemoryObjectEXT(GLuint memoryObject)
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidateIsMemoryObjectEXT(
-                    context, angle::EntryPoint::GLIsMemoryObjectEXT, memoryObjectPacked);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -10463,9 +10456,7 @@ void GL_APIENTRY GL_PolygonOffsetClampEXT(GLfloat factor, GLfloat units, GLfloat
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidatePolygonOffsetClampEXT(
-                    context->getPrivateState(), context->getMutableErrorSetForValidation(),
-                    angle::EntryPoint::GLPolygonOffsetClampEXT, factor, units, clamp);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
 #endif
@@ -10517,10 +10508,7 @@ void GL_APIENTRY GL_PrimitiveBoundingBoxEXT(GLfloat minX,
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidatePrimitiveBoundingBoxEXT(
-                    context->getPrivateState(), context->getMutableErrorSetForValidation(),
-                    angle::EntryPoint::GLPrimitiveBoundingBoxEXT, minX, minY, minZ, minW, maxX,
-                    maxY, maxZ, maxW);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
 #endif
@@ -10574,8 +10562,7 @@ GLenum GL_APIENTRY GL_GetGraphicsResetStatusEXT()
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidateGetGraphicsResetStatusEXT(
-                    context, angle::EntryPoint::GLGetGraphicsResetStatusEXT);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -10926,8 +10913,7 @@ GLboolean GL_APIENTRY GL_IsSemaphoreEXT(GLuint semaphore)
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidateIsSemaphoreEXT(context, angle::EntryPoint::GLIsSemaphoreEXT,
-                                                     semaphorePacked);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -11535,8 +11521,7 @@ GLboolean GL_APIENTRY GL_IsProgramPipelineEXT(GLuint pipeline)
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidateIsProgramPipelineEXT(
-                    context, angle::EntryPoint::GLIsProgramPipelineEXT, pipelinePacked);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -13407,8 +13392,7 @@ void GL_APIENTRY GL_FramebufferFetchBarrierEXT()
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidateFramebufferFetchBarrierEXT(
-                    context, angle::EntryPoint::GLFramebufferFetchBarrierEXT);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -14254,8 +14238,7 @@ void GL_APIENTRY GL_BlendBarrierKHR()
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid =
-                    ValidateBlendBarrierKHR(context, angle::EntryPoint::GLBlendBarrierKHR);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -14301,8 +14284,7 @@ void GL_APIENTRY GL_DebugMessageCallbackKHR(GLDEBUGPROCKHR callback, const void 
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidateDebugMessageCallbackKHR(
-                    context, angle::EntryPoint::GLDebugMessageCallbackKHR, callback, userParam);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -14846,8 +14828,7 @@ void GL_APIENTRY GL_MaxShaderCompilerThreadsKHR(GLuint count)
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidateMaxShaderCompilerThreadsKHR(
-                    context, angle::EntryPoint::GLMaxShaderCompilerThreadsKHR, count);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -14892,8 +14873,7 @@ GLenum GL_APIENTRY GL_GetGraphicsResetStatusKHR()
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidateGetGraphicsResetStatusKHR(
-                    context, angle::EntryPoint::GLGetGraphicsResetStatusKHR);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -15433,8 +15413,7 @@ GLboolean GL_APIENTRY GL_IsFenceNV(GLuint fence)
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid =
-                    ValidateIsFenceNV(context, angle::EntryPoint::GLIsFenceNV, fencePacked);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -17391,8 +17370,7 @@ GLboolean GL_APIENTRY GL_IsFramebufferOES(GLuint framebuffer)
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidateIsFramebufferOES(
-                    context, angle::EntryPoint::GLIsFramebufferOES, framebufferPacked);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -17441,8 +17419,7 @@ GLboolean GL_APIENTRY GL_IsRenderbufferOES(GLuint renderbuffer)
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidateIsRenderbufferOES(
-                    context, angle::EntryPoint::GLIsRenderbufferOES, renderbufferPacked);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -17895,8 +17872,7 @@ void GL_APIENTRY GL_LoadPaletteFromModelViewMatrixOES()
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidateLoadPaletteFromModelViewMatrixOES(
-                    context, angle::EntryPoint::GLLoadPaletteFromModelViewMatrixOES);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -18090,10 +18066,7 @@ void GL_APIENTRY GL_PrimitiveBoundingBoxOES(GLfloat minX,
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidatePrimitiveBoundingBoxOES(
-                    context->getPrivateState(), context->getMutableErrorSetForValidation(),
-                    angle::EntryPoint::GLPrimitiveBoundingBoxOES, minX, minY, minZ, minW, maxX,
-                    maxY, maxZ, maxW);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
 #endif
@@ -18142,8 +18115,7 @@ GLbitfield GL_APIENTRY GL_QueryMatrixxOES(GLfixed *mantissa, GLint *exponent)
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidateQueryMatrixxOES(context, angle::EntryPoint::GLQueryMatrixxOES,
-                                                      mantissa, exponent);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -18194,9 +18166,7 @@ void GL_APIENTRY GL_MinSampleShadingOES(GLfloat value)
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidateMinSampleShadingOES(
-                    context->getPrivateState(), context->getMutableErrorSetForValidation(),
-                    angle::EntryPoint::GLMinSampleShadingOES, value);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
 #endif
@@ -19756,9 +19726,7 @@ GLboolean GL_APIENTRY GL_IsVertexArrayOES(GLuint array)
 #if defined(ANGLE_ENABLE_ASSERTS)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
-                isCallValid = ValidateIsVertexArrayOES(
-                    context->getPrivateState(), context->getMutableErrorSetForValidation(),
-                    angle::EntryPoint::GLIsVertexArrayOES, arrayPacked);
+                isCallValid = true;
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
 #endif

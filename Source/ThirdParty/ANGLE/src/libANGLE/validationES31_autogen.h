@@ -150,9 +150,6 @@ bool ValidateGetTexLevelParameteriv(const Context *context,
                                     GLint level,
                                     TextureImageParameter pnamePacked,
                                     const GLint *params);
-bool ValidateIsProgramPipeline(const Context *context,
-                               angle::EntryPoint entryPoint,
-                               ProgramPipelineID pipelinePacked);
 bool ValidateMemoryBarrier(const Context *context,
                            angle::EntryPoint entryPoint,
                            GLbitfield barriers);

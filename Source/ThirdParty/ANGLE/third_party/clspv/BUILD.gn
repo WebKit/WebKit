@@ -72,13 +72,14 @@ action("clspv-builtins") {
   args = [ "--output-file=" + rebase_path(outputs[0], root_build_dir) ]
 }
 
-# The *.bc files are prebuilt binaries in the clspv. If these need to be regenerated, please refer
-# to the clspv README.md file for instructions.
+# The *.bc files are prebuilt binaries in the clspv. If these need to be
+# regenerated, please refer to the clspv README.md file for instructions.
 action("clspv_builtin_library") {
   script = "src/cmake/bake_file.py"
 
   #  TODO(hoonee.cho): fix the GN script to build libclc libraries with clspv
-  # The recent CLSPV's commit changed a way to get clspv--.bc and clspv64--.bc when building CLSPV.
+  # The recent CLSPV's commit changed a way to get clspv--.bc and clspv64--.bc
+  # when building CLSPV.
   # https://github.com/google/clspv/commit/769daac0f9b7ace2d6fb9839f18ba82f9751aefd
   # Before: use prebuilt clspv--.bc and clspv64--.bc
   # After: build clang/libclc with target set to clspv--.bc and clspv64--.bc

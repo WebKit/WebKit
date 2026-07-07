@@ -94,17 +94,12 @@ class Renderbuffer final : public RefCountObject<RenderbufferID>,
 
     angle::Result copyRenderbufferSubData(Context *context,
                                           const gl::Renderbuffer *srcBuffer,
-                                          GLint srcLevel,
                                           GLint srcX,
                                           GLint srcY,
-                                          GLint srcZ,
-                                          GLint dstLevel,
                                           GLint dstX,
                                           GLint dstY,
-                                          GLint dstZ,
                                           GLsizei srcWidth,
-                                          GLsizei srcHeight,
-                                          GLsizei srcDepth);
+                                          GLsizei srcHeight);
 
     angle::Result copyTextureSubData(Context *context,
                                      const gl::Texture *srcTexture,
@@ -112,13 +107,10 @@ class Renderbuffer final : public RefCountObject<RenderbufferID>,
                                      GLint srcX,
                                      GLint srcY,
                                      GLint srcZ,
-                                     GLint dstLevel,
                                      GLint dstX,
                                      GLint dstY,
-                                     GLint dstZ,
                                      GLsizei srcWidth,
-                                     GLsizei srcHeight,
-                                     GLsizei srcDepth);
+                                     GLsizei srcHeight);
 
     rx::RenderbufferImpl *getImplementation() const;
 

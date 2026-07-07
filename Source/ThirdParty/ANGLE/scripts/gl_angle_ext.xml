@@ -1226,21 +1226,6 @@
         </extension>
         <!-- NOTE: GL_ANGLE_texture_compression_dxt3 is defined in the upstream Khronos gl.xml and should not be defined here. -->
         <!-- NOTE: GL_ANGLE_texture_compression_dxt5 is defined in the upstream Khronos gl.xml and should not be defined here. -->
-        <extension name="GL_ANGLE_lossy_etc_decode" supported='gles2'>
-            <require>
-                <enum name="GL_ETC1_RGB8_LOSSY_DECODE_ANGLE"/>
-                <enum name="GL_COMPRESSED_R11_LOSSY_DECODE_EAC_ANGLE"/>
-                <enum name="GL_COMPRESSED_SIGNED_R11_LOSSY_DECODE_EAC_ANGLE"/>
-                <enum name="GL_COMPRESSED_RG11_LOSSY_DECODE_EAC_ANGLE"/>
-                <enum name="GL_COMPRESSED_SIGNED_RG11_LOSSY_DECODE_EAC_ANGLE"/>
-                <enum name="GL_COMPRESSED_RGB8_LOSSY_DECODE_ETC2_ANGLE"/>
-                <enum name="GL_COMPRESSED_SRGB8_LOSSY_DECODE_ETC2_ANGLE"/>
-                <enum name="GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE"/>
-                <enum name="GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE"/>
-                <enum name="GL_COMPRESSED_RGBA8_LOSSY_DECODE_ETC2_EAC_ANGLE"/>
-                <enum name="GL_COMPRESSED_SRGB8_ALPHA8_LOSSY_DECODE_ETC2_EAC_ANGLE"/>
-            </require>
-        </extension>
         <extension name="GL_ANGLE_yuv_internal_format" supported='gles2'>
             <require>
                 <enum name="GL_G8_B8R8_2PLANE_420_UNORM_ANGLE"/>
@@ -1356,17 +1341,6 @@
     <enums namespace="GL" vendor="ANGLE">
         <enum value="0x83F0" name="GL_COMPRESSED_RGB_S3TC_DXT1_ANGLE" group="InternalFormat,SizedInternalFormat"/>
         <enum value="0x83F1" name="GL_COMPRESSED_RGBA_S3TC_DXT1_ANGLE" group="InternalFormat,SizedInternalFormat"/>
-        <enum value="0x9690" name="GL_ETC1_RGB8_LOSSY_DECODE_ANGLE" group="InternalFormat,SizedInternalFormat"/>
-        <enum value="0x9691" name="GL_COMPRESSED_R11_LOSSY_DECODE_EAC_ANGLE" group="InternalFormat,SizedInternalFormat"/>
-        <enum value="0x9692" name="GL_COMPRESSED_SIGNED_R11_LOSSY_DECODE_EAC_ANGLE" group="InternalFormat,SizedInternalFormat"/>
-        <enum value="0x9693" name="GL_COMPRESSED_RG11_LOSSY_DECODE_EAC_ANGLE" group="InternalFormat,SizedInternalFormat"/>
-        <enum value="0x9694" name="GL_COMPRESSED_SIGNED_RG11_LOSSY_DECODE_EAC_ANGLE" group="InternalFormat,SizedInternalFormat"/>
-        <enum value="0x9695" name="GL_COMPRESSED_RGB8_LOSSY_DECODE_ETC2_ANGLE" group="InternalFormat,SizedInternalFormat"/>
-        <enum value="0x9696" name="GL_COMPRESSED_SRGB8_LOSSY_DECODE_ETC2_ANGLE" group="InternalFormat,SizedInternalFormat"/>
-        <enum value="0x9697" name="GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE" group="InternalFormat,SizedInternalFormat"/>
-        <enum value="0x9698" name="GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE" group="InternalFormat,SizedInternalFormat"/>
-        <enum value="0x9699" name="GL_COMPRESSED_RGBA8_LOSSY_DECODE_ETC2_EAC_ANGLE" group="InternalFormat,SizedInternalFormat"/>
-        <enum value="0x969A" name="GL_COMPRESSED_SRGB8_ALPHA8_LOSSY_DECODE_ETC2_EAC_ANGLE" group="InternalFormat,SizedInternalFormat"/>
         <enum value="0x96B1" name="GL_G8_B8R8_2PLANE_420_UNORM_ANGLE"/>
         <enum value="0x96B2" name="GL_G8_B8_R8_3PLANE_420_UNORM_ANGLE"/>
         <enum value="0x96B3" name="GL_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16_ANGLE"/>

@@ -2994,8 +2994,6 @@ void GL_APIENTRY glLogicOpANGLE(GLenum opcode)
     return GL_LogicOpANGLE(opcode);
 }
 
-// GL_ANGLE_lossy_etc_decode
-
 // GL_ANGLE_memory_object_flags
 void GL_APIENTRY glTexStorageMemFlags2DANGLE(GLenum target,
                                              GLsizei levels,

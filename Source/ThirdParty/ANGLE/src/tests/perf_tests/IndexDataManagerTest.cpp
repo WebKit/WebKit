@@ -91,7 +91,8 @@ class MockBufferD3D : public rx::BufferD3D
                           const void *data,
                           size_t size,
                           gl::BufferUsage,
-                          rx::BufferFeedback *feedback) override
+                          rx::BufferFeedback *feedback,
+                          gl::ZeroFillRequired zeroFillRequired) override
     {
         mData.resize(size);
         if (data && size > 0)

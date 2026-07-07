@@ -1644,21 +1644,17 @@ angle::Result Texture::copySubImage(Context *context,
 
 angle::Result Texture::copyRenderbufferSubData(Context *context,
                                                const gl::Renderbuffer *srcBuffer,
-                                               GLint srcLevel,
                                                GLint srcX,
                                                GLint srcY,
-                                               GLint srcZ,
                                                GLint dstLevel,
                                                GLint dstX,
                                                GLint dstY,
                                                GLint dstZ,
                                                GLsizei srcWidth,
-                                               GLsizei srcHeight,
-                                               GLsizei srcDepth)
+                                               GLsizei srcHeight)
 {
-    ANGLE_TRY(mTexture->copyRenderbufferSubData(context, srcBuffer, srcLevel, srcX, srcY, srcZ,
-                                                dstLevel, dstX, dstY, dstZ, srcWidth, srcHeight,
-                                                srcDepth));
+    ANGLE_TRY(mTexture->copyRenderbufferSubData(context, srcBuffer, srcX, srcY, dstLevel, dstX,
+                                                dstY, dstZ, srcWidth, srcHeight));
 
     // Incorrect: must set initialized only if the entire subresource is covered, and only for the
     // corresponding ImageDesc.  Image must be initialized before copy if not writing to entire
@@ -2059,6 +2055,7 @@ angle::Result Texture::bindTexImageFromSurface(Context *context, egl::Surface *s
     ImageDesc desc(surface->getSize(), surface->getBindTexImageFormat(), InitState::Initialized);
     mState.setImageDesc(NonCubeTextureTypeToTarget(mState.mType), 0, desc);
     mState.mHasProtectedContent = surface->hasProtectedContent();
+    mState.mEGLImageSourceIndex = ImageIndex{};
 
     ANGLE_TRY(mTexture->bindTexImage(context, surface));
 
@@ -2150,6 +2147,14 @@ angle::Result Texture::releaseTexImageInternal(Context *context)
     return angle::Result::Continue;
 }
 
+angle::Result Texture::orphanImages(const gl::Context *context,
+                                    egl::RefCountObjectReleaser<egl::Image> *outReleaseImage)
+{
+    ANGLE_TRY(ImageSibling::orphanImages(context, outReleaseImage));
+    mState.mEGLImageSourceIndex = ImageIndex{};
+    return angle::Result::Continue;
+}
+
 angle::Result Texture::setEGLImageTargetImpl(Context *context,
                                              TextureType type,
                                              GLuint levels,
@@ -2171,6 +2176,7 @@ angle::Result Texture::setEGLImageTargetImpl(Context *context,
     mState.setImageDescChain(0, levels - 1, imageTarget->getExtents(), imageTarget->getFormat(),
                              initState);
     mState.mHasProtectedContent = imageTarget->hasProtectedContent();
+    mState.mEGLImageSourceIndex = imageTarget->getSourceImageIndex();
 
     ANGLE_TRY(mTexture->setEGLImageTarget(context, type, imageTarget));
 
@@ -2370,6 +2376,7 @@ angle::Result Texture::setBufferRange(const gl::Context *context,
     ANGLE_TRY(mTexture->setBuffer(context, internalFormat));
 
     mState.clearImageDescs();
+    mState.mEGLImageSourceIndex = ImageIndex{};
     if (buffer == nullptr)
     {
         mBufferObserver.reset();
@@ -2672,6 +2679,9 @@ void Texture::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMess
 {
     switch (message)
     {
+        case angle::SubjectMessage::ObjectReallocated:
+            onStateChange(angle::SubjectMessage::ObjectReallocated);
+            break;
         case angle::SubjectMessage::DirtyBitsFlagged:
             signalDirtyState(DIRTY_BIT_IMPLEMENTATION);
 

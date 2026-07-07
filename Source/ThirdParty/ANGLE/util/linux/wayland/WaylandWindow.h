@@ -19,12 +19,12 @@
 #include "util/OSWindow.h"
 #include "util/util_export.h"
 
-bool IsWaylandWindowAvailable();
+ANGLE_UTIL_EXPORT bool IsWaylandWindowAvailable();
 
 class ANGLE_UTIL_EXPORT WaylandWindow : public OSWindow
 {
   public:
-    WaylandWindow(void *nativeDisplay = nullptr);
+    WaylandWindow(void *nativeDisplay);
     ~WaylandWindow() override;
 
     void disableErrorMessageDialog() override;
@@ -254,5 +254,7 @@ class ANGLE_UTIL_EXPORT WaylandWindow : public OSWindow
                                       int32_t discrete);
     static const struct wl_pointer_listener pointer_listener;
 };
+
+ANGLE_UTIL_EXPORT OSWindow *CreateWaylandWindow(void *nativeDisplay);
 
 #endif  // UTIL_WAYLAND_WINDOW_H

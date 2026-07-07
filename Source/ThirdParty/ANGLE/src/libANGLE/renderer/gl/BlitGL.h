@@ -146,6 +146,10 @@ class BlitGL : angle::NonCopyable
                                          const gl::ImageIndex &imageIndex,
                                          bool *clearSucceededOut);
 
+    angle::Result clearAttachment(const gl::Context *context,
+                                  GLenum attachment,
+                                  GLenum sizedInternalFormat);
+
     angle::Result clearRenderbuffer(const gl::Context *context,
                                     RenderbufferGL *source,
                                     GLenum sizedInternalFormat);

@@ -336,9 +336,9 @@ angle::Result CLKernelVk::createInfo(CLKernelImpl::Info *info) const
 
         // TODO: http://anglebug.com/42267004
         workGroup.privateMemSize = 0;
-        workGroup.localMemSize   = 0;
 
-        workGroup.prefWorkGroupSizeMultiple = 16u;
+        workGroup.localMemSize = deviceProgramData->reflectionData.workgroupVariableSize.size;
+        workGroup.prefWorkGroupSizeMultiple = deviceVk->getWorkGroupSizeMultiple();
         workGroup.globalWorkSize            = {0, 0, 0};
         if (deviceProgramData->reflectionData.kernelCompileWorkgroupSize.contains(mName))
         {
@@ -513,17 +513,21 @@ angle::Result CLKernelVk::allocateDescriptorSet(
     return angle::Result::Continue;
 }
 
-size_t CLKernelVk::getLocalMemSizeUsed(const cl::Device &device) const
+cl_ulong CLKernelVk::getLocalMemSizeUsed(const cl::Device &device) const
 {
-    size_t compiledLocalMemSize = 0;
-    if (ANGLE_UNLIKELY(IsError(mKernel.getWorkGroupInfo(
-            const_cast<cl_device_id>(device.getNative()), cl::KernelWorkGroupInfo::LocalMemSize,
-            sizeof(compiledLocalMemSize), &compiledLocalMemSize, nullptr))))
-    {  // TODO (http://anglebug.com/506923958) move to validationCL
-        ASSERT(false);
-    }
-    return compiledLocalMemSize + std::reduce(mLocalMemoryArgSizes.begin(),
-                                              mLocalMemoryArgSizes.end(), 0, std::plus<size_t>());
+    return getAllArgLocalMemSize() + getCompiledLocalMemSize(device);
+}
+
+cl_ulong CLKernelVk::getAllArgLocalMemSize() const
+{
+    return std::reduce(mLocalMemoryArgSizes.begin(), mLocalMemoryArgSizes.end(), 0,
+                       std::plus<size_t>());
+}
+
+cl_ulong CLKernelVk::getCompiledLocalMemSize(const cl::Device &device) const
+{
+    return mProgram->getDeviceProgramData(const_cast<cl_device_id>(device.getNative()))
+        ->reflectionData.workgroupVariableSize.size;
 }
 
 }  // namespace rx
