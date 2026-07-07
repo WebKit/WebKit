@@ -657,7 +657,22 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
         auto absoluteQuad = localToAbsoluteQuad(FloatRect(rect), MapCoordinatesMode::UseTransforms, &isFixed);
         bool boxIsHorizontal = !is<InlineIterator::SVGTextBoxIterator>(textBox) ? textBox->isHorizontal() : !writingMode().isVertical();
 
-        auto selectionGeometry = SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(protect(textNode())), textBox->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, textBox->isLineBreak(), isFirstOnLine, isLastOnLine, containsStart, containsEnd, boxIsHorizontal, isFixed, view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x()));
+        auto selectionGeometry = SelectionGeometry(absoluteQuad, {
+            .behavior = HTMLElement::selectionRenderingBehavior(protect(textNode())),
+            .direction = textBox->direction(),
+            .minX = extentsRect.x(),
+            .maxX = extentsRect.maxX(),
+            .maxY = extentsRect.maxY(),
+            .lineNumber = 0,
+            .isLineBreak = textBox->isLineBreak(),
+            .isFirstOnLine = isFirstOnLine,
+            .isLastOnLine = isLastOnLine,
+            .containsStart = containsStart,
+            .containsEnd = containsEnd,
+            .isHorizontal = boxIsHorizontal,
+            .isInFixedPosition = isFixed,
+            .pageNumber = static_cast<int>(view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x()))
+        });
         selectionGeometry.setSeparateFromPreviousLine(separateLines);
         rects.append(selectionGeometry);
     }

@@ -145,9 +145,23 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
     if (!containingBlock->isHorizontalWritingMode())
         lineExtentBounds = lineExtentBounds.transposedRect();
 
-    // FIXME: We should consider either making SelectionGeometry a struct or better organize its optional fields into
-    // an auxiliary struct to simplify its initialization.
-    geometries.append(SelectionGeometry(absoluteQuad, SelectionRenderingBehavior::CoalesceBoundingRects, containingBlock->writingMode().bidiDirection(), lineExtentBounds.x(), lineExtentBounds.maxX(), lineExtentBounds.maxY(), 0, false /* line break */, isFirstOnLine, isLastOnLine, false /* contains start */, false /* contains end */, containingBlock->writingMode().isHorizontal(), isFixed, view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
+    geometries.append(SelectionGeometry(absoluteQuad, {
+        .behavior = SelectionRenderingBehavior::CoalesceBoundingRects,
+        .direction = containingBlock->writingMode().bidiDirection(),
+        .minX = lineExtentBounds.x(),
+        .maxX = lineExtentBounds.maxX(),
+        .maxY = lineExtentBounds.maxY(),
+        .lineNumber = 0,
+        .isLineBreak = false,
+        .isFirstOnLine = isFirstOnLine,
+        .isLastOnLine = isLastOnLine,
+        .containsStart = false,
+        .containsEnd = false,
+        .isHorizontal = containingBlock->writingMode().isHorizontal(),
+        .isInFixedPosition = isFixed,
+        .pageNumber = static_cast<int>(view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x()))
+    }));
+
 }
 
 using namespace HTMLNames;

@@ -4673,19 +4673,22 @@ bool UnifiedPDFPlugin::platformPopulateEditorStateIfNeeded(EditorState& state) c
 
     auto selectionGeometries = selectionRects.map([](auto& rectInRootView) {
         return SelectionGeometry {
-            rectInRootView,
-            SelectionRenderingBehavior::CoalesceBoundingRects,
-            TextDirection::LTR,
-            0, // minX
-            0, // maxX
-            0, // maxY
-            0, // lineNumber
-            false, // isLineBreak
-            false, // isFirstOnLine
-            false, // isLastOnLine
-            false, // containsStart
-            false, // containsEnd
-            true, // isHorizontal
+            rectInRootView, {
+                .behavior = SelectionRenderingBehavior::CoalesceBoundingRects,
+                .direction = TextDirection::LTR,
+                .minX = 0,
+                .maxX = 0,
+                .maxY = 0,
+                .lineNumber = 0,
+                .isLineBreak = false,
+                .isFirstOnLine = false,
+                .isLastOnLine = false,
+                .containsStart = false,
+                .containsEnd = false,
+                .isHorizontal = true,
+                .isInFixedPosition = false,
+                .pageNumber = 0
+            }
         };
     });
 
