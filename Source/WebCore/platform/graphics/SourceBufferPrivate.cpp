@@ -1079,6 +1079,106 @@ Ref<MediaPromise> SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
     return m_currentSourceBufferOperation.get();
 }
 
+auto SourceBufferPrivate::findPrioritySample(const SamplesVector& samples) const -> PrioritySample
+{
+    assertIsCurrent(m_dispatcher.get());
+
+    // In sequence mode, the spec's coded frame processing algorithm step 1.3
+    // sets timestampOffset = group_start_timestamp − presentation_timestamp
+    // on the first sample to enter the loop. Across multiple tracks the
+    // right "first" sample is the one carrying the smallest presentation
+    // timestamp in the segment, so all of the segment's coded frames land
+    // at or after group_start_timestamp. Step 1.3 fires both on the initial
+    // batch (m_groupStartTimestamp valid here) and after a discontinuity in
+    // step 1.6 retries it on the regressing sample, so the priority sample
+    // must be at position 0 in either case. The look-ahead per track is
+    // bounded by the H.264 / H.265 max reorder window (16); non-video
+    // tracks have no reordering, so 1 arrival suffices. Samples whose
+    // trackID is not in m_trackBufferMap (text / metadata) are dropped by
+    // isMediaSampleAllowed before step 1.3 and don't influence the choice.
+    if (m_appendMode != SourceBufferAppendMode::Sequence
+        || samples.size() <= 1
+        || m_trackBufferMap.size() <= 1)
+        return { };
+
+    static constexpr unsigned maxVideoReorderWindow = 16;
+    StdUnorderedMap<TrackID, std::pair<MediaTime, size_t>> minPresentationTimePerTrack;
+    StdUnorderedMap<TrackID, unsigned> scannedPerTrack;
+    unsigned saturatedTracks = 0;
+    for (size_t i = 0; i < samples.size(); ++i) {
+        if (saturatedTracks == m_trackBufferMap.size())
+            break;
+        Ref sample = samples[i];
+        auto trackID = sample->trackID();
+        auto trackBufferIter = m_trackBufferMap.find(trackID);
+        if (trackBufferIter == m_trackBufferMap.end())
+            continue;
+        auto description = trackBufferIter->second->description();
+        unsigned trackCap = (description && description->isVideo()) ? maxVideoReorderWindow : 1u;
+        auto& scanned = scannedPerTrack[trackID];
+        if (scanned >= trackCap)
+            continue;
+        if (++scanned == trackCap)
+            ++saturatedTracks;
+        auto pts = sample->presentationTime();
+        auto [iter, inserted] = minPresentationTimePerTrack.try_emplace(trackID, std::make_pair(pts, i));
+        if (!inserted && pts < iter->second.first)
+            iter->second = std::make_pair(pts, i);
+    }
+
+    if (minPresentationTimePerTrack.size() <= 1)
+        return { };
+
+    PrioritySample priority;
+    MediaTime priorityPresentationTime = MediaTime::positiveInfiniteTime();
+    for (auto& [trackID, ptsAndIndex] : minPresentationTimePerTrack) {
+        if (ptsAndIndex.first < priorityPresentationTime) {
+            priorityPresentationTime = ptsAndIndex.first;
+            priority.trackID = trackID;
+            priority.index = ptsAndIndex.second;
+        }
+    }
+    return priority;
+}
+
+Ref<MediaPromise> SourceBufferPrivate::processNewMediaSamples(SamplesVector&& samples, PresentationTailMap&& presentationTailPerTrack)
+{
+    assertIsCurrent(m_dispatcher.get());
+
+    RefPtr client = this->client();
+    if (!client)
+        return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
+
+    auto [priorityTrackID, priorityIndex] = findPrioritySample(samples);
+
+    // Drain the priority-track samples in [0, priorityIndex] first so step 1.3
+    // fires on the cross-track-min-PTS sample (parser arrival order need not put
+    // it at position 0).
+    if (priorityIndex) {
+        ASSERT(priorityIndex < samples.size());
+        for (size_t i = 0; i <= priorityIndex; ++i) {
+            Ref sample = samples[i];
+            if (sample->trackID() != priorityTrackID)
+                continue;
+            auto it = presentationTailPerTrack.find(sample->trackID());
+            bool isPresentationTail = it != presentationTailPerTrack.end() && sample.ptr() == it->second;
+            if (!processMediaSample(*client, WTF::move(sample), isPresentationTail))
+                return MediaPromise::createAndReject(PlatformMediaError::ParsingError);
+        }
+    }
+
+    for (size_t i = 0; i < samples.size(); ++i) {
+        Ref sample = samples[i];
+        if (priorityIndex && i <= priorityIndex && sample->trackID() == priorityTrackID)
+            continue;
+        auto it = presentationTailPerTrack.find(sample->trackID());
+        bool isPresentationTail = it != presentationTailPerTrack.end() && sample.ptr() == it->second;
+        if (!processMediaSample(*client, WTF::move(sample), isPresentationTail))
+            return MediaPromise::createAndReject(PlatformMediaError::ParsingError);
+    }
+    return MediaPromise::createAndResolve();
+}
+
 void SourceBufferPrivate::processPendingMediaSamples()
 {
     assertIsCurrent(m_dispatcher.get());
@@ -1093,18 +1193,7 @@ void SourceBufferPrivate::processPendingMediaSamples()
             return MediaPromise::createAndReject(!result ? result.error() : PlatformMediaError::BufferRemoved);
         if (abortCount != protectedThis->m_abortCount)
             return MediaPromise::createAndResolve();
-
-        RefPtr client = protectedThis->client();
-        if (!client)
-            return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
-
-        for (auto& sample : samples) {
-            auto it = presentationTailPerTrack.find(sample->trackID());
-            bool isPresentationTail = it != presentationTailPerTrack.end() && sample.ptr() == it->second;
-            if (!protectedThis->processMediaSample(*client, WTF::move(sample), isPresentationTail))
-                return MediaPromise::createAndReject(PlatformMediaError::ParsingError);
-        }
-        return MediaPromise::createAndResolve();
+        return protectedThis->processNewMediaSamples(WTF::move(samples), WTF::move(presentationTailPerTrack));
     });
 }
 

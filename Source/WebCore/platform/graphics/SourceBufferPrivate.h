@@ -292,6 +292,23 @@ private:
     void computeEvictionData(ComputeEvictionDataRule = ComputeEvictionDataRule::Default);
 
     using SamplesVector = Vector<Ref<MediaSample>>;
+
+    // In sequence mode with multiple tracks, finds the sample carrying the
+    // smallest presentation timestamp across tracks, using a bounded per-track
+    // look-ahead. Its index in the batch selects which sample step 1.3 of coded
+    // frame processing fires on. Returns { 0, 0 } when no reordering is needed.
+    struct PrioritySample {
+        TrackID trackID { 0 };
+        size_t index { 0 };
+    };
+    PrioritySample findPrioritySample(const SamplesVector&) const;
+
+    // Runs coded frame processing over a settled append batch: fetches the
+    // client, orders the batch around the priority sample, and feeds each
+    // sample to processMediaSample.
+    using PresentationTailMap = StdUnorderedMap<TrackID, MediaSample*>;
+    Ref<MediaPromise> processNewMediaSamples(SamplesVector&&, PresentationTailMap&&);
+
     SamplesVector m_pendingSamples WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
     // Per video track, the pending sample with the highest presentationEndTime. Maintained
     // incrementally in didReceiveSample and drained in lockstep with m_pendingSamples so

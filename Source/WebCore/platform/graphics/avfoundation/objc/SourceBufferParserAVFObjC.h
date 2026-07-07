@@ -27,11 +27,14 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "ISOBMFFTrackInfoParser.h"
 #include "Logging.h"
 #include "MediaSourceConfiguration.h"
 #include "SourceBufferParser.h"
 #include <wtf/Box.h>
+#include <wtf/HashMap.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/MediaTime.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -76,6 +79,8 @@ public:
     void didProvideContentKeyRequestInitializationDataForTrackID(NSData*, uint64_t trackID);
     void didProvideContentKeyRequestSpecifierForTrackID(NSData*, uint64_t trackID);
 
+    void setEmptyEditOffsetsFromInitSegment(Vector<ISOBMFFTrackInfoParser::TrackEditInfo>&&);
+
 private:
 #if !RELEASE_LOG_DISABLED
     const Logger* loggerPtr() const { return m_logger.get(); }
@@ -89,6 +94,7 @@ private:
     RetainPtr<WebAVStreamDataParserListener> m_delegate;
     const MediaSourceConfiguration m_configuration;
     const std::unique_ptr<ISOBMFFPreParser> m_preParser;
+    HashMap<uint64_t, MediaTime, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_emptyEditOffsetForTrackID;
     bool m_parserStateWasReset { false };
     std::optional<int> m_lastErrorCode;
 
