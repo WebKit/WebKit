@@ -180,8 +180,14 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
         function forEachMatch(lineContent, callback)
         {
             var lineMatch;
-            while ((searchRegex.lastIndex < lineContent.length) && (lineMatch = searchRegex.exec(lineContent)))
+            while ((searchRegex.lastIndex < lineContent.length) && (lineMatch = searchRegex.exec(lineContent))) {
+                if (lineMatch.index === searchRegex.lastIndex) {
+                    ++searchRegex.lastIndex;
+                    continue;
+                }
+
                 callback(lineMatch, searchRegex.lastIndex);
+            }
         }
 
         let resourceCallback = (frameId, url, {result}) => {
@@ -196,15 +202,17 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
             if (!resource)
                 return;
 
-            let resourceTreeElement = this._searchTreeElementForResource(resource);
             let searchMatchObjects = [];
-            this._pendingSearchMatchObjectsForResourceTreeElement.set(resourceTreeElement, searchMatchObjects);
-
             for (let match of result) {
                 forEachMatch(match.lineContent, (lineMatch, lastIndex) => {
                     searchMatchObjects.push(new WI.SourceCodeSearchMatchObject(resource, match.lineContent, searchQuery, new WI.TextRange(match.lineNumber, lineMatch.index, match.lineNumber, lastIndex)));
                 });
             }
+            if (!searchMatchObjects.length)
+                return;
+
+            let resourceTreeElement = this._searchTreeElementForResource(resource);
+            this._pendingSearchMatchObjectsForResourceTreeElement.set(resourceTreeElement, searchMatchObjects);
 
             let remainingSearchResults = this._renderResultsForSourceCodeTreeElement(resourceTreeElement, WI.SearchSidebarPanel._resultsIncrementCount);
             this._createSearchResultsPlaceholderTreeElementIfNeeded(resourceTreeElement, remainingSearchResults);
@@ -239,15 +247,17 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
             if (!result || !result.length)
                 return;
 
-            let scriptTreeElement = this._searchTreeElementForScript(script);
             let searchMatchObjects = [];
-            this._pendingSearchMatchObjectsForResourceTreeElement.set(scriptTreeElement, searchMatchObjects);
-
             for (let match of result) {
                 forEachMatch(match.lineContent, (lineMatch, lastIndex) => {
                     searchMatchObjects.push(new WI.SourceCodeSearchMatchObject(script, match.lineContent, searchQuery, new WI.TextRange(match.lineNumber, lineMatch.index, match.lineNumber, lastIndex)));
                 });
             }
+            if (!searchMatchObjects.length)
+                return;
+
+            let scriptTreeElement = this._searchTreeElementForScript(script);
+            this._pendingSearchMatchObjectsForResourceTreeElement.set(scriptTreeElement, searchMatchObjects);
 
             let remainingSearchResults = this._renderResultsForSourceCodeTreeElement(scriptTreeElement, WI.SearchSidebarPanel._resultsIncrementCount);
             this._createSearchResultsPlaceholderTreeElementIfNeeded(scriptTreeElement, remainingSearchResults);
