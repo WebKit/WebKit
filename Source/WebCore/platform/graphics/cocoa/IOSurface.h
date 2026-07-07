@@ -166,11 +166,16 @@ public:
 
     WEBCORE_EXPORT WTF::MachSendRight createSendRight() const;
 
+    // Controls how the alpha channel is interpreted when creating a native image.
+    // Only meaningful for RGBA16F surfaces, whose format (unlike RGBA/RGBX or
+    // BGRA/BGRX) cannot itself encode whether the contents are opaque.
+    enum class ShouldForceOpaque : bool { No, Yes };
+
     // Any images created from a surface need to be released before releasing
     // the context, or an expensive GPU readback can result.
     // Passed in context is the context through which the contents was drawn.
     WEBCORE_EXPORT RetainPtr<CGImageRef> createImage(CGContextRef);
-    WEBCORE_EXPORT RefPtr<NativeImage> createNativeImage();
+    WEBCORE_EXPORT RefPtr<NativeImage> createNativeImage(ShouldForceOpaque = ShouldForceOpaque::Yes);
     // Passed in context is the context through which the contents was drawn.
     WEBCORE_EXPORT static RetainPtr<CGImageRef> sinkIntoImage(std::unique_ptr<IOSurface>, RetainPtr<CGContextRef> = nullptr);
 

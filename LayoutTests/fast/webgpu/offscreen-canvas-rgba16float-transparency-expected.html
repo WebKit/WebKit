@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>OffscreenCanvas WebGPU rgba16float premultiplied alpha composites transparently</title>
+<style>
+  body { margin: 0; }
+  #backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
+    background: rgb(0, 128, 0);
+  }
+</style>
+</head>
+<body>
+  <!-- A transparent rgba16float canvas over the backdrop must render identically
+       to the backdrop alone. -->
+  <div id="backdrop"></div>
+</body>
+</html>
