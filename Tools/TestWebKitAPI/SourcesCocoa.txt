@@ -67,6 +67,7 @@ Resources/cocoa/MessagePortSecurity.mm @nonARC
 
 Tests/WTF/cocoa/URLExtras.mm @nonARC
 
+Tests/WebCore/cocoa/ISOBMFFTrackInfoParserTests.cpp
 Tests/WebCore/cocoa/WebAVPlayerControllerLeakTests.mm @nonARC
 
 Tests/WebKit/WKWebView/AVFoundationPreference.mm @nonARC
