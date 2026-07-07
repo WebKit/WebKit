@@ -2683,9 +2683,9 @@ RenderFlexibleBox::FlexLineResult RenderFlexibleBox::layoutAndPlaceFlexItems(Lay
 
             if (!baselineAlignmentState) {
                 auto alignmentContextAxis = style().isRowFlexDirection() ? LogicalBoxAxis::Inline : LogicalBoxAxis::Block;
-                baselineAlignmentState = { flexItem, alignment, ascent, alignmentContextAxis, style().writingMode() };
+                baselineAlignmentState = { flexItem, flexItem.writingMode(), alignment, ascent, alignmentContextAxis, style().writingMode() };
             } else
-                baselineAlignmentState->updateSharedGroup(flexItem, alignment, ascent);
+                baselineAlignmentState->updateSharedGroup(flexItem, flexItem.writingMode(), alignment, ascent);
 
             if (alignment == ItemPosition::Baseline) {
                 maxAscent =  std::max(maxAscent, ascent);

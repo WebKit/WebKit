@@ -102,10 +102,10 @@ private:
 class BaselineAlignmentState {
     WTF_MAKE_TZONE_ALLOCATED(BaselineAlignmentState);
 public:
-    BaselineAlignmentState(const RenderBox& alignmentSubject, ItemPosition preference, LayoutUnit ascent, LogicalBoxAxis alignmentContextAxis, WritingMode alignmentContainerWritingMode);
-    const BaselineGroup& sharedGroup(const RenderBox& alignmentSubject, ItemPosition preference) const;
+    BaselineAlignmentState(const RenderBox& alignmentSubject, WritingMode alignmentSubjectWritingMode, ItemPosition preference, LayoutUnit ascent, LogicalBoxAxis alignmentContextAxis, WritingMode alignmentContainerWritingMode);
+    const BaselineGroup& sharedGroup(WritingMode alignmentSubjectWritingMode, ItemPosition preference) const;
 
-    void updateSharedGroup(const RenderBox& alignmentSubject, ItemPosition preference, LayoutUnit ascent);
+    void updateSharedGroup(const RenderBox& alignmentSubject, WritingMode alignmentSubjectWritingMode, ItemPosition preference, LayoutUnit ascent);
     Vector<BaselineGroup>& NODELETE sharedGroups();
 
     static FontBaseline NODELETE dominantBaseline(WritingMode);
@@ -113,7 +113,7 @@ public:
     static LayoutUnit synthesizedBaseline(const RenderBox&, FontBaseline baselineType, WritingMode writingModeForSynthesis, LineDirection, BaselineSynthesisEdge);
 
 private:
-    BaselineGroup& findCompatibleSharedGroup(const RenderBox& alignmentSubject, ItemPosition preference);
+    BaselineGroup& findCompatibleSharedGroup(WritingMode alignmentSubjectWritingMode, ItemPosition preference);
 
     Vector<BaselineGroup> m_sharedGroups;
     WritingMode m_alignmentContainerWritingMode;

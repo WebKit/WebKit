@@ -137,7 +137,7 @@ const BaselineGroup& GridBaselineAlignment::baselineGroupForGridItem(ItemPositio
     auto& baselineAlignmentStateMap = alignmentContextType == Style::GridTrackSizingDirection::Rows ? m_rowAlignmentContextStates : m_columnAlignmentContextStates;
     auto* baselineAlignmentState = baselineAlignmentStateMap.get(sharedContext);
     ASSERT(baselineAlignmentState);
-    return baselineAlignmentState->sharedGroup(gridItem, preference);
+    return baselineAlignmentState->sharedGroup(gridItem.writingMode(), preference);
 }
 
 void GridBaselineAlignment::updateBaselineAlignmentContext(ItemPosition preference, unsigned sharedContext, const RenderBox& gridItem, Style::GridTrackSizingDirection alignmentContextType)
@@ -154,8 +154,8 @@ void GridBaselineAlignment::updateBaselineAlignmentContext(ItemPosition preferen
     // Looking for a compatible baseline-sharing group.
     baselineAlignmentStateMap.ensure(sharedContext, [&] {
         auto alignmentAxis = alignmentContextType == Style::GridTrackSizingDirection::Columns ? LogicalBoxAxis::Block : LogicalBoxAxis::Inline;
-        return makeUnique<BaselineAlignmentState>(gridItem, preference, ascent, alignmentAxis, m_writingMode);
-    }).iterator->value->updateSharedGroup(gridItem, preference, ascent);
+        return makeUnique<BaselineAlignmentState>(gridItem, gridItem.writingMode(), preference, ascent, alignmentAxis, m_writingMode);
+    }).iterator->value->updateSharedGroup(gridItem, gridItem.writingMode(), preference, ascent);
 }
 
 LayoutUnit GridBaselineAlignment::baselineOffsetForGridItem(ItemPosition preference, unsigned sharedContext, const RenderBox& gridItem, Style::GridTrackSizingDirection alignmentContextType) const
