@@ -161,6 +161,8 @@ void LegacyRenderSVGShape::layout()
         updateCachedBoundariesInParents = true;
     }
 
+    setHasScalingAncestor(SVGRenderSupport::computeHasScalingAncestor(*this));
+
     // Invalidate all resources of this client if our layout changed.
     if (everHadLayout() && selfNeedsLayout())
         SVGResourcesCache::clientLayoutChanged(*this);
@@ -491,6 +493,9 @@ FloatRect LegacyRenderSVGShape::repaintRectInLocalCoordinates(RepaintRectCalcula
 {
     // During initial layout the path may not exist yet, so check path before calculating.
     if (hasNonScalingStroke() && hasPath()) {
+        if (!hasScalingAncestor() && m_localTransform.isIdentityOrTranslation())
+            return m_repaintBoundingBox;
+
         FloatRect repaintBoundingBox = SVGRenderSupport::calculateApproximateStrokeBoundingBox(*this);
         SVGRenderSupport::intersectRepaintRectWithResources(*this, repaintBoundingBox, repaintRectCalculation);
         return repaintBoundingBox;

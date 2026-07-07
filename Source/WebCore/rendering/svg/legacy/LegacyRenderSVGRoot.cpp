@@ -530,6 +530,9 @@ FloatRect LegacyRenderSVGRoot::strokeBoundingBox() const
 FloatRect LegacyRenderSVGRoot::repaintRectInLocalCoordinates(RepaintRectCalculation repaintRectCalculation) const
 {
     if (hasNonScalingStrokeDescendant()) {
+        if (m_localToBorderBoxTransform.isIdentityOrTranslation())
+            return m_repaintBoundingBox;
+
         auto boundingBoxes = SVGRenderSupport::computeContainerBoundingBoxes(*this, repaintRectCalculation);
         FloatRect repaintBoundingBox = boundingBoxes.repaintBoundingBox;
         SVGRenderSupport::intersectRepaintRectWithResources(*this, repaintBoundingBox, repaintRectCalculation);

@@ -97,6 +97,8 @@ public:
 
     static void NODELETE updateAncestorNonScalingStrokeCounts(RenderElement&, int delta);
 
+    static bool computeHasScalingAncestor(const RenderElement&);
+
     static void NODELETE elementInsertedIntoTree(RenderElement&);
     static void NODELETE elementWillBeRemovedFromTree(RenderElement&);
 

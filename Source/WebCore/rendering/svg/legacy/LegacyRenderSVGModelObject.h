@@ -70,6 +70,9 @@ public:
 
     virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = nullptr) const;
 
+    bool hasScalingAncestor() const { return m_hasScalingAncestor; }
+    void setHasScalingAncestor(bool value) { m_hasScalingAncestor = value; }
+
 protected:
     LegacyRenderSVGModelObject(Type, SVGElement&, Style::ComputedStyle&&, OptionSet<SVGModelObjectFlag> = { });
 
@@ -80,6 +83,8 @@ private:
     // This method should never be called, SVG uses a different nodeAtPoint method
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
     void absoluteFocusRingQuads(Vector<FloatQuad>&) final;
+
+    bool m_hasScalingAncestor : 1 { false };
 };
 
 } // namespace WebCore

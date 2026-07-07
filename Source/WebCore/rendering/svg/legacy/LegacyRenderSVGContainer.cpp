@@ -90,6 +90,8 @@ void LegacyRenderSVGContainer::layout()
     // Allow LegacyRenderSVGTransformableContainer to update its transform.
     bool updatedTransform = calculateLocalTransform();
 
+    setHasScalingAncestor(SVGRenderSupport::computeHasScalingAncestor(*this));
+
     // LegacyRenderSVGViewportContainer needs to set the 'layout size changed' flag.
     determineIfLayoutSizeChanged();
 
@@ -210,6 +212,9 @@ FloatRect LegacyRenderSVGContainer::strokeBoundingBox() const
 FloatRect LegacyRenderSVGContainer::repaintRectInLocalCoordinates(RepaintRectCalculation repaintRectCalculation) const
 {
     if (hasNonScalingStrokeDescendant()) {
+        if (!hasScalingAncestor() && localToParentTransform().isIdentityOrTranslation())
+            return m_repaintBoundingBox;
+
         auto boundingBoxes = SVGRenderSupport::computeContainerBoundingBoxes(*this, repaintRectCalculation);
         FloatRect repaintBoundingBox = boundingBoxes.repaintBoundingBox;
         SVGRenderSupport::intersectRepaintRectWithResources(*this, repaintBoundingBox, repaintRectCalculation);

@@ -590,6 +590,16 @@ void SVGRenderSupport::updateAncestorNonScalingStrokeCounts(RenderElement& rende
     }
 }
 
+bool SVGRenderSupport::computeHasScalingAncestor(const RenderElement& renderer)
+{
+    auto* parent = renderer.parent();
+    if (auto* svgModelObject = dynamicDowncast<LegacyRenderSVGModelObject>(parent))
+        return svgModelObject->hasScalingAncestor() || !svgModelObject->localToParentTransform().isIdentityOrTranslation();
+    if (auto* root = dynamicDowncast<LegacyRenderSVGRoot>(parent))
+        return !root->localToBorderBoxTransform().isIdentityOrTranslation();
+    return false;
+}
+
 void SVGRenderSupport::elementInsertedIntoTree(RenderElement& renderer)
 {
     if (renderer.style().vectorEffect() == VectorEffect::NonScalingStroke)
