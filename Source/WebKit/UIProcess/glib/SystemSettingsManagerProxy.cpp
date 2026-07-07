@@ -104,14 +104,9 @@ bool SystemSettingsManagerProxy::overlayScrolling() const
     return true;
 }
 
-bool SystemSettingsManagerProxy::reducedMotion() const
+bool SystemSettingsManagerProxy::enableAnimations() const
 {
-    return false;
-}
-
-WebCore::InterfaceContrastPreference SystemSettingsManagerProxy::interfaceContrast() const
-{
-    return WebCore::InterfaceContrastPreference::NoPreference;
+    return true;
 }
 
 #endif // !PLATFORM(GTK) && (!PLATFORM(WPE) || !ENABLE(WPE_PLATFORM))
@@ -185,13 +180,9 @@ void SystemSettingsManagerProxy::settingsDidChange()
     if (oldState.overlayScrolling != overlayScrolling)
         changedState.overlayScrolling = overlayScrolling;
 
-    auto reducedMotion = this->reducedMotion();
-    if (oldState.reducedMotion != reducedMotion)
-        changedState.reducedMotion = reducedMotion;
-
-    auto interfaceContrast = this->interfaceContrast();
-    if (oldState.interfaceContrast != interfaceContrast)
-        changedState.interfaceContrast = interfaceContrast;
+    auto enableAnimations = this->enableAnimations();
+    if (oldState.enableAnimations != enableAnimations)
+        changedState.enableAnimations = enableAnimations;
 
     for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->sendToAllProcesses(Messages::SystemSettingsManager::DidChange(changedState));

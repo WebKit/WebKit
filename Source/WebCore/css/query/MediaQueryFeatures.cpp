@@ -548,28 +548,20 @@ static const IdentifierSchema& prefersContrastFeatureSchema()
         FixedVector { CSSValueNoPreference, CSSValueMore, CSSValueLess, CSSValueCustom },
         MediaQueryDynamicDependency::Accessibility,
         [](auto& context) {
-            InterfaceContrastPreference userPreferredContrast = [&] {
+            bool userPrefersContrast = [&] {
                 Ref frame = *context.document->frame();
                 switch (frame->settings().forcedPrefersContrastAccessibilityValue()) {
                 case ForcedAccessibilityValue::On:
-                    return InterfaceContrastPreference::MoreContrast;
+                    return true;
                 case ForcedAccessibilityValue::Off:
-                    return InterfaceContrastPreference::NoPreference;
+                    return false;
                 case ForcedAccessibilityValue::System:
-                    return Theme::singleton().userPreferredContrast();
+                    return Theme::singleton().userPrefersContrast();
                 }
-                return InterfaceContrastPreference::NoPreference;
+                return false;
             }();
 
-            switch (userPreferredContrast) {
-            case InterfaceContrastPreference::NoPreference:
-                return MatchingIdentifiers { CSSValueNoPreference };
-            case InterfaceContrastPreference::MoreContrast:
-                return MatchingIdentifiers { CSSValueMore };
-            case InterfaceContrastPreference::LessContrast:
-                return MatchingIdentifiers { CSSValueLess };
-            }
-            RELEASE_ASSERT_NOT_REACHED();
+            return MatchingIdentifiers { userPrefersContrast ? CSSValueMore : CSSValueNoPreference };
         }
     };
     return schema;

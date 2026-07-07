@@ -28,7 +28,6 @@
 
 #if ENABLE(WPE_PLATFORM)
 
-#include <WebCore/Theme.h>
 #include <wpe/WPEDisplay.h>
 #include <wpe/WPESettings.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -182,23 +181,9 @@ bool SystemSettingsManagerProxy::overlayScrolling() const
     return getBool(m_settings, WPE_SETTING_OVERLAY_SCROLLBARS, true);
 }
 
-bool SystemSettingsManagerProxy::reducedMotion() const
+bool SystemSettingsManagerProxy::enableAnimations() const
 {
-    return !getBool(m_settings, WPE_SETTING_REDUCED_MOTION, false);
-}
-
-InterfaceContrastPreference SystemSettingsManagerProxy::interfaceContrast() const
-{
-    switch (getUint8(m_settings, WPE_SETTING_INTERFACE_CONTRAST, WPE_SETTINGS_INTERFACE_CONTRAST_NO_PREFERENCE)) {
-    case WPE_SETTINGS_INTERFACE_CONTRAST_NO_PREFERENCE:
-        return InterfaceContrastPreference::NoPreference;
-    case WPE_SETTINGS_INTERFACE_CONTRAST_MORE:
-        return InterfaceContrastPreference::MoreContrast;
-    case WPE_SETTINGS_INTERFACE_CONTRAST_LESS:
-        return InterfaceContrastPreference::LessContrast;
-    }
-    ASSERT_NOT_REACHED();
-    return InterfaceContrastPreference::NoPreference;
+    return !getBool(m_settings, WPE_SETTING_DISABLE_ANIMATIONS, false);
 }
 
 SystemSettingsManagerProxy::SystemSettingsManagerProxy()

@@ -740,7 +740,7 @@ void InspectorPageAgent::defaultUserPreferencesDidChange()
 
     defaultUserPreferences->addItem(WTF::move(prefersReducedMotionUserPreference));
 
-    bool prefersContrast = Theme::singleton().userPreferredContrast() == InterfaceContrastPreference::MoreContrast;
+    bool prefersContrast = Theme::singleton().userPrefersContrast();
 
     auto prefersContrastUserPreference = Inspector::Protocol::Page::UserPreference::create()
         .setName(Inspector::Protocol::Page::UserPreferenceName::PrefersContrast)

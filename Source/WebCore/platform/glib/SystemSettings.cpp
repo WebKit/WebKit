@@ -83,11 +83,8 @@ void SystemSettings::updateSettings(const SystemSettings::State& state)
     if (state.overlayScrolling)
         m_state.overlayScrolling = state.overlayScrolling;
 
-    if (state.reducedMotion)
-        m_state.reducedMotion = state.reducedMotion;
-
-    if (state.interfaceContrast)
-        m_state.interfaceContrast = state.interfaceContrast;
+    if (state.enableAnimations)
+        m_state.enableAnimations = state.enableAnimations;
 
     for (auto* context : copyToVector(m_observers.keys())) {
         const auto it = m_observers.find(context);

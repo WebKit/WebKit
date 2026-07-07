@@ -20,13 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-enum class WebCore::InterfaceContrastPreference : uint8_t {
-    NoPreference,
-    MoreContrast,
-    LessContrast
-};
-
-headers: <WebCore/SystemSettings.h> <WebCore/Theme.h>
+headers: <WebCore/SystemSettings.h>
 [CustomHeader] struct WebCore::SystemSettingsState {
     std::optional<String> themeName;
     std::optional<bool> darkMode;
@@ -44,6 +38,5 @@ headers: <WebCore/SystemSettings.h> <WebCore/Theme.h>
     std::optional<int> cursorBlinkTime;
     std::optional<bool> primaryButtonWarpsSlider;
     std::optional<bool> overlayScrolling;
-    std::optional<bool> reducedMotion;
-    std::optional<WebCore::InterfaceContrastPreference> interfaceContrast;
+    std::optional<bool> enableAnimations;
 }
