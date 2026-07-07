@@ -549,6 +549,23 @@ class TestRunner(object):
 
         return number_of_failed_tests
 
+    def run_glib_companion_e2e_tests(self):
+        # Non-gtest companion tests for the GLib ports. Each script must exit 0
+        # on success; run them after the gtest suite so a failure surfaces in
+        # the same CI step. Returns the first non-zero exit code, or 0.
+        if self._options.list_tests:
+            return 0
+        testwtf = os.path.join(self._test_programs_base_dir(), "TestWTF")
+        scripts = [
+            os.path.join(common.top_level_path(), "Tools", "Scripts", "run-timezone-glib-e2e-test"),
+        ]
+        result = 0
+        for script in scripts:
+            rc = subprocess.call([sys.executable, script, "--testwtf", testwtf])
+            if rc and not result:
+                result = rc
+        return result
+
 
 def check_environment(port):
     if jhbuildutils.should_use_jhbuild():

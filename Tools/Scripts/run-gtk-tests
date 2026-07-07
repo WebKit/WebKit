@@ -109,4 +109,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     runner = GtkTestRunner(options, args)
-    sys.exit(runner.run_tests())
+    api_test_rc = runner.run_tests()
+    e2e_rc = runner.run_glib_companion_e2e_tests()
+    # Both suites report their own results; exit non-zero if either failed.
+    sys.exit(0 if api_test_rc == 0 and e2e_rc == 0 else 1)

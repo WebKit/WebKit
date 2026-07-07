@@ -161,6 +161,10 @@ function(GLib_HandleComponent name)
         return()
     endif ()
 
+    if (name STREQUAL "GLib")
+        message(FATAL_ERROR "glib-2.0 is required")
+    endif ()
+
     set(module "${GLib_${name}__module}")
     set(library "${GLib_${name}__library}")
     set(dependencies "${GLib_${name}__dependencies}")

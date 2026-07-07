@@ -80,6 +80,9 @@
 		1C2BA32628E6C19B00FA6E17 /* TextBreakIteratorCFCharacterCluster.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C2BA32528E6C19500FA6E17 /* TextBreakIteratorCFCharacterCluster.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C2BA32828E6C24900FA6E17 /* TextBreakIteratorCFStringTokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C2BA32728E6C24400FA6E17 /* TextBreakIteratorCFStringTokenizer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C503BE623AAE0AE0072E66B /* LanguageCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C503BE523AAE0AE0072E66B /* LanguageCocoa.mm */; };
+		1A2B3C4D5E6F7A8B9C0D1E21 /* TimeZone.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F7A8B9C0D1E20 /* TimeZone.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A2B3C4D5E6F7A8B9C0D1E23 /* TimeZone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F7A8B9C0D1E22 /* TimeZone.cpp */; };
+		1A2B3C4D5E6F7A8B9C0D1E25 /* TimeZoneCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F7A8B9C0D1E24 /* TimeZoneCocoa.cpp */; };
 		1C867D772A254F08000DE93D /* ContextualizedCFString.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C867D752A254F08000DE93D /* ContextualizedCFString.mm */; };
 		1C867D782A254F08000DE93D /* ContextualizedCFString.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C867D762A254F08000DE93D /* ContextualizedCFString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C96836426BE74DF00A2A2F9 /* LogInitialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C96836226BE74DF00A2A2F9 /* LogInitialization.cpp */; };
@@ -1311,6 +1314,9 @@
 		1C2BA32528E6C19500FA6E17 /* TextBreakIteratorCFCharacterCluster.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextBreakIteratorCFCharacterCluster.h; sourceTree = "<group>"; };
 		1C2BA32728E6C24400FA6E17 /* TextBreakIteratorCFStringTokenizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextBreakIteratorCFStringTokenizer.h; sourceTree = "<group>"; };
 		1C503BE523AAE0AE0072E66B /* LanguageCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LanguageCocoa.mm; sourceTree = "<group>"; };
+		1A2B3C4D5E6F7A8B9C0D1E20 /* TimeZone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeZone.h; sourceTree = "<group>"; };
+		1A2B3C4D5E6F7A8B9C0D1E22 /* TimeZone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimeZone.cpp; sourceTree = "<group>"; };
+		1A2B3C4D5E6F7A8B9C0D1E24 /* TimeZoneCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimeZoneCocoa.cpp; sourceTree = "<group>"; };
 		1C867D752A254F08000DE93D /* ContextualizedCFString.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextualizedCFString.mm; sourceTree = "<group>"; };
 		1C867D762A254F08000DE93D /* ContextualizedCFString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContextualizedCFString.h; sourceTree = "<group>"; };
 		1C96836226BE74DF00A2A2F9 /* LogInitialization.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LogInitialization.cpp; sourceTree = "<group>"; };
@@ -2844,6 +2850,8 @@
 				A8A4733F151A825B004123FF /* ThreadSpecific.h */,
 				0F66B2861DC97BAB004A1D3F /* TimeWithDynamicClockType.cpp */,
 				0F66B2871DC97BAB004A1D3F /* TimeWithDynamicClockType.h */,
+				1A2B3C4D5E6F7A8B9C0D1E22 /* TimeZone.cpp */,
+				1A2B3C4D5E6F7A8B9C0D1E20 /* TimeZone.h */,
 				0F7075F41FBF537A00489AF0 /* TimingScope.cpp */,
 				0F7075F31FBF537A00489AF0 /* TimingScope.h */,
 				553071C91C40427200384898 /* TinyLRUCache.h */,
@@ -3472,6 +3480,7 @@
 				466D69102BA4E433005D43F4 /* SpanCocoa.h */,
 				46CEA3F92CC2D39B00FE325C /* SpanCocoa.mm */,
 				EB61EDC62409CCC0001EFE36 /* SystemTracingCocoa.cpp */,
+				1A2B3C4D5E6F7A8B9C0D1E24 /* TimeZoneCocoa.cpp */,
 				4434F91B27948A65007E3E8A /* TollFreeBridging.h */,
 				44CDE4D226EE6CDA009F6ACB /* TypeCastsCocoa.h */,
 				5CC0EE862162BC2200A1A842 /* URLCocoa.mm */,
@@ -4031,6 +4040,7 @@
 				DD3DC90F27A4BF8E007E5B61 /* ThreadSanitizerSupport.h in Headers */,
 				DD3DC99327A4BF8E007E5B61 /* ThreadSpecific.h in Headers */,
 				DD3DC8CE27A4BF8E007E5B61 /* TimeWithDynamicClockType.h in Headers */,
+				1A2B3C4D5E6F7A8B9C0D1E21 /* TimeZone.h in Headers */,
 				DD3DC8F227A4BF8E007E5B61 /* TimingScope.h in Headers */,
 				DD3DC95A27A4BF8E007E5B61 /* TinyLRUCache.h in Headers */,
 				DD3DC98F27A4BF8E007E5B61 /* TinyPtrSet.h in Headers */,
@@ -4723,6 +4733,8 @@
 				A32D8FA521FFFAB400780662 /* ThreadingPOSIX.cpp in Sources */,
 				5311BD5C1EA822F900525281 /* ThreadMessage.cpp in Sources */,
 				0F66B2901DC97BAB004A1D3F /* TimeWithDynamicClockType.cpp in Sources */,
+				1A2B3C4D5E6F7A8B9C0D1E23 /* TimeZone.cpp in Sources */,
+				1A2B3C4D5E6F7A8B9C0D1E25 /* TimeZoneCocoa.cpp in Sources */,
 				0F7075F51FBF53CD00489AF0 /* TimingScope.cpp in Sources */,
 				521CC6B424A27809004377D6 /* TranslatedProcess.cpp in Sources */,
 				FE69838E2F9F1FD0004EA0A7 /* UnbarrieredMonotonicTime.cpp in Sources */,

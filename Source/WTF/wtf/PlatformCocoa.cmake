@@ -39,6 +39,7 @@ list(APPEND WTF_SOURCES
     cocoa/SchedulePairCocoa.mm
     cocoa/SpanCocoa.mm
     cocoa/SystemTracingCocoa.cpp
+    cocoa/TimeZoneCocoa.cpp
     cocoa/URLCocoa.mm
     cocoa/UUIDCocoa.mm
     cocoa/WorkQueueCocoa.cpp

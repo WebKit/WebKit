@@ -1,0 +1,175 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2026 Igalia S.L.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+"""End-to-end driver for WTF/glib/TimeZoneGLib.cpp: spawns a private bus,
+owns timedate1 on it, and drives WTF_TimeZoneGLib_External.* across a real
+process boundary. See TEST_FILTER."""
+
+import argparse
+import os
+import shutil
+import subprocess
+import sys
+import time
+
+import gi
+gi.require_version('Gio', '2.0')
+from gi.repository import Gio, GLib  # noqa: E402
+
+
+TIMEDATE1_NAME = 'org.freedesktop.timedate1'
+TIMEDATE1_PATH = '/org/freedesktop/timedate1'
+PROPERTIES_IFACE = 'org.freedesktop.DBus.Properties'
+
+TEST_FILTER = 'WTF_TimeZoneGLib_External.*'
+EMIT_INTERVAL_SECONDS = 0.2
+# Keep below the gtest-side timeout (30s) so the test's own deadline is the
+# one reported on failure.
+OVERALL_TIMEOUT_SECONDS = 60
+
+
+def find_testwtf(explicit_path):
+    if explicit_path:
+        if not os.path.isfile(explicit_path):
+            sys.exit(f'TestWTF not found at {explicit_path}')
+        return explicit_path
+
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    webkit_root = os.path.abspath(os.path.join(script_dir, '..', '..'))
+    candidates = [
+        os.path.join(webkit_root, 'WebKitBuild', 'GTK', 'Release', 'bin', 'TestWebKitAPI', 'TestWTF'),
+        os.path.join(webkit_root, 'WebKitBuild', 'GTK', 'Debug', 'bin', 'TestWebKitAPI', 'TestWTF'),
+        os.path.join(webkit_root, 'WebKitBuild', 'WPE', 'Release', 'bin', 'TestWebKitAPI', 'TestWTF'),
+        os.path.join(webkit_root, 'WebKitBuild', 'WPE', 'Debug', 'bin', 'TestWebKitAPI', 'TestWTF'),
+    ]
+    for c in candidates:
+        if os.path.isfile(c):
+            return c
+    sys.exit('Could not locate TestWTF; pass --testwtf <path> or build the GTK/WPE port first.\n'
+             'Searched:\n  ' + '\n  '.join(candidates))
+
+
+def spawn_private_bus():
+    if not shutil.which('dbus-daemon'):
+        sys.exit('dbus-daemon not found in PATH; install dbus or run inside the wkdev-sdk container.')
+
+    daemon = subprocess.Popen(
+        ['dbus-daemon', '--session', '--nofork', '--print-address'],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE)
+    line = daemon.stdout.readline()
+    if not line:
+        stderr = daemon.stderr.read().decode(errors='replace') if daemon.stderr else ''
+        daemon.kill()
+        sys.exit(f'dbus-daemon failed to print bus address. stderr:\n{stderr}')
+    return daemon, line.decode().strip()
+
+
+def own_timedate1(address):
+    flags = Gio.DBusConnectionFlags.AUTHENTICATION_CLIENT | Gio.DBusConnectionFlags.MESSAGE_BUS_CONNECTION
+    connection = Gio.DBusConnection.new_for_address_sync(address, flags, None, None)
+    reply = connection.call_sync(
+        'org.freedesktop.DBus',
+        '/org/freedesktop/DBus',
+        'org.freedesktop.DBus',
+        'RequestName',
+        GLib.Variant('(su)', (TIMEDATE1_NAME, 0)),
+        GLib.VariantType('(u)'),
+        Gio.DBusCallFlags.NONE,
+        -1,
+        None)
+    code = reply.unpack()[0]
+    # DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER == 1; any other value on a fresh
+    # private bus means our setup is wrong, not a flake worth retrying.
+    if code != 1:
+        sys.exit(f'RequestName({TIMEDATE1_NAME}) returned {code}, expected 1 (PRIMARY_OWNER)')
+    return connection
+
+
+def emit_timezone_changed(connection, timezone):
+    # The '@' format placeholder is C-only; PyGObject auto-wraps a Python
+    # dict/list into a{sv}/as as long as dict values are already GLib.Variant.
+    params = GLib.Variant(
+        '(sa{sv}as)',
+        (TIMEDATE1_NAME, {'Timezone': GLib.Variant('s', timezone)}, []))
+    connection.emit_signal(None, TIMEDATE1_PATH, PROPERTIES_IFACE, 'PropertiesChanged', params)
+    connection.flush_sync(None)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--testwtf', help='Path to the TestWTF binary')
+    parser.add_argument('--timezone', default='Europe/Madrid',
+                        help='Timezone value to send in PropertiesChanged (default: Europe/Madrid)')
+    parser.add_argument('--verbose', action='store_true')
+    args = parser.parse_args()
+
+    testwtf = find_testwtf(args.testwtf)
+    if args.verbose:
+        print(f'[driver] TestWTF: {testwtf}')
+
+    daemon, bus_address = spawn_private_bus()
+    if args.verbose:
+        print(f'[driver] bus address: {bus_address}')
+
+    try:
+        owner_connection = own_timedate1(bus_address)
+        if args.verbose:
+            print(f'[driver] owning {TIMEDATE1_NAME}')
+
+        env = os.environ.copy()
+        env['WEBKIT_TIMEDATE1_TEST_BUS'] = bus_address
+        child = subprocess.Popen(
+            [testwtf, f'--gtest_filter={TEST_FILTER}'],
+            env=env)
+
+        deadline = time.monotonic() + OVERALL_TIMEOUT_SECONDS
+        while True:
+            rc = child.poll()
+            if rc is not None:
+                if args.verbose:
+                    print(f'[driver] TestWTF exited rc={rc}')
+                return rc
+            if time.monotonic() > deadline:
+                print(f'[driver] timed out after {OVERALL_TIMEOUT_SECONDS}s; killing TestWTF', file=sys.stderr)
+                child.kill()
+                child.wait()
+                return 1
+
+            # The child's subscription becomes live only after g_bus_get +
+            # signal_subscribe finish asynchronously; emits before then are
+            # silently dropped. Re-emit on every tick until the child observes
+            # the bump and exits PASS.
+            emit_timezone_changed(owner_connection, args.timezone)
+            time.sleep(EMIT_INTERVAL_SECONDS)
+    finally:
+        daemon.terminate()
+        try:
+            daemon.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            daemon.kill()
+
+
+if __name__ == '__main__':
+    sys.exit(main())

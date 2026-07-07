@@ -51,6 +51,7 @@
 #include <wtf/GregorianDateTime.h>
 #include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/TimeZone.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -62,10 +63,6 @@ class OpaqueICUTimeZone;
 class VM;
 
 static constexpr double minECMAScriptTime = -8.64E15;
-
-#if PLATFORM(COCOA)
-extern JS_EXPORT_PRIVATE std::atomic<uint64_t> lastTimeZoneID;
-#endif
 
 // We do not expose icu::TimeZone in this header file. And we cannot use icu::TimeZone forward declaration
 // because icu namespace can be an alias to icu$verNum namespace.
@@ -93,24 +90,10 @@ public:
 
     bool hasTimeZoneChange()
     {
-#if PLATFORM(COCOA)
-        return m_cachedTimezoneID != lastTimeZoneID;
-#else
-        return true; // always force a time zone check.
-#endif
+        return m_cachedTimeZoneID != WTF::lastTimeZoneID();
     }
 
-    void resetIfNecessary()
-    {
-#if PLATFORM(COCOA)
-        if (!hasTimeZoneChange()) [[likely]]
-            return;
-        m_cachedTimezoneID = lastTimeZoneID;
-#endif
-        resetIfNecessarySlow();
-    }
-
-    JS_EXPORT_PRIVATE void resetIfNecessarySlow();
+    JS_EXPORT_PRIVATE void clearForTimeZoneChange();
 
     TimeZone defaultTimeZone();
     String timeZoneDisplayName(bool isDST);
@@ -121,8 +104,6 @@ public:
     double localTimeToMS(double milliseconds, TimeType);
     JS_EXPORT_PRIVATE double parseDate(JSGlobalObject*, VM&, const WTF::String&);
     std::tuple<int32_t, int32_t, int32_t> yearMonthDayFromDaysWithCache(int32_t days);
-
-    static void timeZoneChanged();
 
 private:
     class DSTCache {
@@ -188,7 +169,7 @@ private:
     String m_cachedDateString;
     double m_cachedDateStringValue;
     DateInstanceCache m_dateInstanceCache;
-    uint64_t m_cachedTimezoneID { 0 };
+    uint64_t m_cachedTimeZoneID { 0 };
     String m_timeZoneStandardDisplayNameCache;
     String m_timeZoneDSTDisplayNameCache;
 };
