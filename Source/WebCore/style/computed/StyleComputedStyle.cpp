@@ -597,7 +597,7 @@ Style::LineWidth ComputedStyle::usedColumnRuleWidth() const
 Style::Length<CSS::AllUnzoomed> ComputedStyle::usedOutlineOffset() const
 {
     auto& outline = this->outline();
-    if (outline.outlineOffset.isInternalInset())
+    if (outline.outlineOffset.isInset())
         return Style::Length<CSS::AllUnzoomed> { -usedOutlineWidth().unresolvedValue() };
     return *outline.outlineOffset.tryLength();
 }

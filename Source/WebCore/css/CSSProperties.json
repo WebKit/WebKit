@@ -7186,10 +7186,7 @@
             "animation-type": "by computed value",
             "initial": "0px",
             "values": [
-                {
-                	"value": "-internal-inset",
-                	"status": "internal"
-                }
+                "inset"
             ],
             "codegen-properties": {
                 "computed-style-storage-path": ["m_nonInheritedData", "backgroundData", "outline"],

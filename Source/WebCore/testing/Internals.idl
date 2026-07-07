@@ -557,6 +557,8 @@ enum ContentsFormat {
 
     CSSStyleDeclaration computedStyleIncludingVisitedInfo(Element element);
 
+    float usedOutlineOffset(Element element);
+
     Node ensureUserAgentShadowRoot(Element host);
     Node? shadowRoot(Element host);
 

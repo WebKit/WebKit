@@ -3,9 +3,9 @@ Tests that option elements in a base-select have a negative outline-offset equal
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS outlineOffset == "-3px" || outlineOffset == "-2px" is true
-PASS getComputedStyle(opt1).outlineOffset is "0px"
-PASS getComputedStyle(opt1).outlineOffset is "0px"
+PASS outlineOffset == -3 || outlineOffset == -2 is true
+PASS internals.usedOutlineOffset(opt1) is 0
+PASS internals.usedOutlineOffset(opt1) is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

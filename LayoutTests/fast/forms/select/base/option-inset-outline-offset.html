@@ -24,7 +24,7 @@ select, ::picker(select) {
 </style>
 
 <script>
-description("Tests that -internal-inset outline-offset resolves correctly with various outline widths, styles, and zoom.");
+description("Tests that inset outline-offset used value equals the negative of the outline-width.");
 
 jsTestIsAsync = true;
 
@@ -36,9 +36,9 @@ async function openAndCheck(selectId, optId, expectedOffset) {
     await UIHelper.keyDown(" ");
     await UIHelper.animationFrame();
 
-    window.actualOffset = getComputedStyle(opt).outlineOffset;
+    window.usedOffset = internals.usedOutlineOffset(opt);
     window.expectedOffset = expectedOffset;
-    shouldBeEqualToString('actualOffset', expectedOffset);
+    shouldBeEqualToNumber('usedOffset', expectedOffset);
 
     await UIHelper.keyDown("\x1B");
     await UIHelper.animationFrame();
@@ -50,29 +50,29 @@ async function openAndCheck(selectId, optId, expectedOffset) {
     document.getElementById("default").focus();
     await UIHelper.keyDown(" ");
     await UIHelper.animationFrame();
-    window.defaultOffset = getComputedStyle(defaultOpt).outlineOffset;
-    shouldBeTrue('defaultOffset == "-3px" || defaultOffset == "-2px"');
+    window.defaultOffset = internals.usedOutlineOffset(defaultOpt);
+    shouldBeTrue('defaultOffset == -3 || defaultOffset == -2');
     await UIHelper.keyDown("\x1B");
     await UIHelper.animationFrame();
 
     // Solid 2px: offset should be -2px.
-    await openAndCheck("solid", "solid-opt", "-2px");
+    await openAndCheck("solid", "solid-opt", -2);
 
     // Solid 10px: offset should be -10px.
-    await openAndCheck("wide", "wide-opt", "-10px");
+    await openAndCheck("wide", "wide-opt", -10);
 
-    // Auto with zoom: 2, computed value is pre-zoom.
+    // Auto with zoom: 2, used value is pre-zoom.
     const zoomedOpt = document.getElementById("zoomed-opt");
     document.getElementById("zoomed").focus();
     await UIHelper.keyDown(" ");
     await UIHelper.animationFrame();
-    window.zoomedOffset = getComputedStyle(zoomedOpt).outlineOffset;
-    shouldBeTrue('zoomedOffset == "-3px" || zoomedOffset == "-2px"');
+    window.zoomedOffset = internals.usedOutlineOffset(zoomedOpt);
+    shouldBeTrue('zoomedOffset == -6 || zoomedOffset == -4');
     await UIHelper.keyDown("\x1B");
     await UIHelper.animationFrame();
 
-    // Solid 5px with zoom: 2, computed value is pre-zoom.
-    await openAndCheck("solid-zoomed", "solid-zoomed-opt", "-5px");
+    // Solid 5px with zoom: 2, used value is pre-zoom.
+    await openAndCheck("solid-zoomed", "solid-zoomed-opt", -10);
 
     finishJSTest();
 })();

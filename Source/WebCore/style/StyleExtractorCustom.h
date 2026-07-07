@@ -2534,12 +2534,12 @@ inline void ExtractorCustom::extractCaretColorSerialization(ExtractorState& stat
 
 inline RefPtr<CSSValue> ExtractorCustom::extractOutlineOffset(ExtractorState& state)
 {
-    return createCSSValue(state.pool, state.style, state.style.usedOutlineOffset());
+    return createCSSValue(state.pool, state.style, state.style.outline().outlineOffset);
 }
 
 inline void ExtractorCustom::extractOutlineOffsetSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
-    serializationForCSS(builder, context, state.style, state.style.usedOutlineOffset());
+    serializationForCSS(builder, context, state.style, state.style.outline().outlineOffset);
 }
 
 // MARK: - Shorthands

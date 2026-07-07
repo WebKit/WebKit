@@ -29,20 +29,20 @@ jsTestIsAsync = true;
     await UIHelper.keyDown(" ");
     await UIHelper.animationFrame();
 
-    window.outlineOffset = getComputedStyle(opt1).outlineOffset;
-    shouldBeTrue('outlineOffset == "-3px" || outlineOffset == "-2px"');
+    window.outlineOffset = internals.usedOutlineOffset(opt1);
+    shouldBeTrue('outlineOffset == -3 || outlineOffset == -2');
 
     // Close the picker — option should not have focus-visible outline.
     await UIHelper.keyDown("\x1B");
     await UIHelper.animationFrame();
 
-    shouldBe('getComputedStyle(opt1).outlineOffset', '"0px"');
+    shouldBeEqualToNumber('internals.usedOutlineOffset(opt1)', 0);
 
     // Open via mouse click — option should not have focus-visible outline.
     await UIHelper.activateElement(select);
     await UIHelper.animationFrame();
 
-    shouldBe('getComputedStyle(opt1).outlineOffset', '"0px"');
+    shouldBeEqualToNumber('internals.usedOutlineOffset(opt1)', 0);
 
     finishJSTest();
 })();

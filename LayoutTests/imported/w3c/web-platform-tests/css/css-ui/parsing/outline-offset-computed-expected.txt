@@ -4,5 +4,6 @@ PASS Property outline-offset value '10px'
 PASS Property outline-offset value '0.5em'
 PASS Property outline-offset value 'calc(10px + 0.5em)'
 PASS Property outline-offset value 'calc(10px - 0.5em)'
+PASS Property outline-offset value 'inset'
 PASS outline-offset is independent of the value of outline-style
 

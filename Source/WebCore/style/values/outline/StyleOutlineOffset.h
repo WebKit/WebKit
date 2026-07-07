@@ -29,13 +29,13 @@
 
 namespace WebCore::Style {
 
-// <'outline-offset'> = <length> | -internal-inset
-struct OutlineOffset : ValueOrKeyword<Length<CSS::AllUnzoomed>, CSS::Keyword::InternalInset> {
+// <'outline-offset'> = <length> | inset
+struct OutlineOffset : ValueOrKeyword<Length<CSS::AllUnzoomed>, CSS::Keyword::Inset> {
     using Base::Base;
 
     OutlineOffset(CSS::ValueLiteral<CSS::LengthUnit::Px> literal) : Base(Length<CSS::AllUnzoomed> { literal }) { }
 
-    bool isInternalInset() const { return isKeyword(); }
+    bool isInset() const { return isKeyword(); }
     std::optional<Length<CSS::AllUnzoomed>> tryLength() const { return tryValue(); }
 };
 

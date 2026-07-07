@@ -1,0 +1,14 @@
+Tests that inset outline-offset used value equals the negative of the outline-width.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS defaultOffset == -3 || defaultOffset == -2 is true
+PASS usedOffset is -2
+PASS usedOffset is -10
+PASS zoomedOffset == -6 || zoomedOffset == -4 is true
+PASS usedOffset is -10
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1859,7 +1859,7 @@ allow-discrete
 -internal-textarea-auto
 
 // outline-offset
--internal-inset
+// inset
 
 // CSS Anchor Positioning
 anchor

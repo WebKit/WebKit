@@ -2,4 +2,6 @@
 PASS e.style['outline-offset'] = "auto" should not set the property value
 PASS e.style['outline-offset'] = "1%" should not set the property value
 PASS e.style['outline-offset'] = "2px 3px" should not set the property value
+PASS e.style['outline-offset'] = "inset 3px" should not set the property value
+PASS e.style['outline-offset'] = "3px inset" should not set the property value
 

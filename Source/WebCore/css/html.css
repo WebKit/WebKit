@@ -1158,7 +1158,7 @@ select option:disabled {
 }
 
 select option:focus-visible {
-    outline-offset: -internal-inset;
+    outline-offset: inset;
 }
 
 select option::checkmark {
