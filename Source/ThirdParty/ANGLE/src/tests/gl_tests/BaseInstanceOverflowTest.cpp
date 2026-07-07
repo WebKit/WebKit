@@ -25,12 +25,25 @@ class BaseInstanceOverflowTest : public ANGLETest<>
     }
 };
 
+class RobustBaseInstanceOverflowTest : public ANGLETest<>
+{
+  protected:
+    RobustBaseInstanceOverflowTest()
+    {
+        if (!IsMac() && !IsIOS())
+        {
+            setRobustAccess(true);
+        }
+    }
+};
 // Regression Test (crbug.com/489791424)
 // Reproduces integer overflow in vertex buffer streaming path.
 // The bug occurs when baseInstance is large, causing a wrap-around in reservation
 // while the copy path uses 64-bit math.
-TEST_P(BaseInstanceOverflowTest, BaseInstanceOverflow)
+TEST_P(RobustBaseInstanceOverflowTest, BaseInstanceOverflow)
 {
+    // Note: this test does a large buffer overflow read from heap.
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_KHR_robust_buffer_access_behavior"));
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_base_vertex_base_instance"));
 
     // We need a dynamic vertex attribute to trigger the streaming path.
@@ -166,7 +179,14 @@ TEST_P(BaseInstanceOverflowTest, BaseInstanceOverflow2)
         GLBuffer instBuffer;
         glBindBuffer(GL_ARRAY_BUFFER, instBuffer);
         glBufferData(GL_ARRAY_BUFFER, bufSize, nullptr, GL_DYNAMIC_DRAW);
-        ANGLE_SKIP_TEST_IF(glGetError() == GL_OUT_OF_MEMORY);
+        GLenum error = glGetError();
+        ANGLE_SKIP_TEST_IF(error == static_cast<GLenum>(GL_OUT_OF_MEMORY));
+        const bool largeBuffersMayBeInvalid = !isMetalRenderer();
+        if (largeBuffersMayBeInvalid)
+        {
+            ANGLE_SKIP_TEST_IF(error == static_cast<GLenum>(GL_INVALID_OPERATION));
+        }
+        EXPECT_EQ(error, static_cast<GLenum>(GL_NO_ERROR));
 
         // Write 1.0f at element index baseInstance.
         GLfloat one = 1.0f;
@@ -184,7 +204,7 @@ TEST_P(BaseInstanceOverflowTest, BaseInstanceOverflow2)
         const bool expectOverflow =
             static_cast<uint64_t>(subcase.primcount - 1) + subcase.baseInstance >
             std::numeric_limits<GLuint>::max();
-        GLenum error = glGetError();
+        error = glGetError();
         if (error == GL_INVALID_OPERATION)
         {
             EXPECT_TRUE(expectOverflow);
@@ -203,6 +223,14 @@ TEST_P(BaseInstanceOverflowTest, BaseInstanceOverflow2)
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BaseInstanceOverflowTest);
 ANGLE_INSTANTIATE_TEST(BaseInstanceOverflowTest,
+                       ES3_D3D11().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),
+                       ES3_OPENGL().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),
+                       ES3_OPENGLES().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),
+                       ES3_VULKAN().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),
+                       ES3_METAL().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions));
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(RobustBaseInstanceOverflowTest);
+ANGLE_INSTANTIATE_TEST(RobustBaseInstanceOverflowTest,
                        ES3_D3D11().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),
                        ES3_OPENGL().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),
                        ES3_OPENGLES().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),

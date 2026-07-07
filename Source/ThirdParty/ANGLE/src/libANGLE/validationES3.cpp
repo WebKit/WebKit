@@ -354,39 +354,6 @@ bool ValidateTexImageFormatCombination(const Context *context,
     return true;
 }
 
-static bool ValidateES3CompressedFormatForTexture2DArray(const Context *context,
-                                                         angle::EntryPoint entryPoint,
-                                                         GLenum format)
-{
-    if ((IsETC1Format(format) && !context->getExtensions().compressedETC1RGB8SubTextureEXT) ||
-        IsPVRTC1Format(format))
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInternalFormatRequiresTexture2D);
-        return false;
-    }
-
-    return true;
-}
-
-static bool ValidCompressedFormatForTexture3D(GLenum format, const Extensions &extensions)
-{
-    if (IsASTC2DFormat(format))
-    {
-        return extensions.textureCompressionAstcHdrKHR ||
-               extensions.textureCompressionAstcSliced3dKHR;
-    }
-
-    if (IsASTC3DFormat(format) || IsBPTCFormat(format))
-    {
-        return true;
-    }
-
-    // All other compressed formats are specified to not support 3D textures.
-    ASSERT((IsS3TCFormat(format) || IsRGTCFormat(format)) ||
-           (IsETC1Format(format) || IsETC2EACFormat(format)) || IsPVRTC1Format(format));
-    return false;
-}
-
 bool ValidateES3TexImageParametersBase(const Context *context,
                                        angle::EntryPoint entryPoint,
                                        TextureTarget target,
@@ -615,13 +582,13 @@ bool ValidateES3TexImageParametersBase(const Context *context,
             }
         }
 
-        if (texType == TextureType::_2DArray)
+        if (texType == TextureType::_2DArray || texType == TextureType::CubeMapArray)
         {
             GLenum compressedDataFormat = isSubImage ? format : internalformat;
-            if (!ValidateES3CompressedFormatForTexture2DArray(context, entryPoint,
-                                                              compressedDataFormat))
+            if (!ValidCompressedFormatForTexture2DArray(compressedDataFormat,
+                                                        context->getExtensions()))
             {
-                // Error already generated.
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInternalFormatRequiresTexture2D);
                 return false;
             }
         }
@@ -675,6 +642,12 @@ bool ValidateES3TexImageParametersBase(const Context *context,
             else
             {
                 ASSERT(actualFormatInfo.paletted);
+                if (texType != TextureType::_2D)
+                {
+                    ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidTextureTarget);
+                    return false;
+                }
+
                 // TODO(http://anglebug.com/42266155): multi-level paletted images
                 if (level != 0)
                 {
@@ -836,6 +809,7 @@ bool ValidateES3TexImageParametersBase(const Context *context,
             }
             if (target == TextureTarget::_3D || target == TextureTarget::_2DArray)
             {
+                // Note that CubeMapArray is not supported as a texture target in WebGL.
                 GLint dataStoreHeight = unpack.imageHeight ? unpack.imageHeight : height;
                 if (unpack.skipRows + height > dataStoreHeight)
                 {
@@ -1512,12 +1486,12 @@ bool ValidateES3TexStorageParametersFormat(const Context *context,
             return false;
         }
 
-        if (target == TextureType::_2DArray)
+        if (target == TextureType::_2DArray || target == TextureType::CubeMapArray)
         {
-            if (!ValidateES3CompressedFormatForTexture2DArray(context, entryPoint,
-                                                              formatInfo.internalFormat))
+            if (!ValidCompressedFormatForTexture2DArray(formatInfo.internalFormat,
+                                                        context->getExtensions()))
             {
-                // Error already generated.
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInternalFormatRequiresTexture2D);
                 return false;
             }
         }
@@ -1990,6 +1964,11 @@ bool ValidateCompressedTexImage3D(const Context *context,
     const InternalFormat &formatInfo = GetSizedInternalFormatInfo(internalformat);
     if (!formatInfo.compressed)
     {
+        if (formatInfo.paletted)
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidTextureTarget);
+            return false;
+        }
         ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidCompressedFormat);
         return false;
     }

@@ -274,6 +274,7 @@ class FramebufferVk : public FramebufferImpl
     void restageDeferredClearsImpl(ContextVk *contextVk);
     angle::Result flushDeferredClears(ContextVk *contextVk);
     void clearWithCommand(ContextVk *contextVk,
+                          const bool scissoredClear,
                           const gl::Rectangle &scissoredRenderArea,
                           ClearWithCommand behavior,
                           vk::ClearValuesArray *clears);

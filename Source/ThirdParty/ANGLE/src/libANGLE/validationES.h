@@ -59,6 +59,8 @@ bool ValidImageSizeParameters(const Context *context,
                               GLsizei height,
                               GLsizei depth,
                               bool isSubImage);
+bool ValidCompressedFormatForTexture2DArray(GLenum format, const Extensions &extensions);
+bool ValidCompressedFormatForTexture3D(GLenum format, const Extensions &extensions);
 bool ValidCompressedImageSize(const Context *context,
                               GLenum internalFormat,
                               GLint level,
@@ -966,7 +968,7 @@ ANGLE_INLINE bool ValidateDrawInstancedCounts(const Context *context,
                                               GLsizei primcount,
                                               GLuint baseinstance)
 {
-    if (ANGLE_UNLIKELY(!context->getLimitations().instanceIdMayOverflow))
+    if (!context->getLimitations().instanceIdMayOverflow)
     {
         return true;
     }
