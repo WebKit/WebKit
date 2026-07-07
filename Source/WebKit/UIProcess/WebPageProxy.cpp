@@ -12282,14 +12282,23 @@ void WebPageProxy::showContextMenuFromFrame(FrameInfoData&& frameInfo, ContextMe
     if (!frame)
         return;
 
-    auto menuLocation = contextMenuContextData.menuLocation();
-    convertPointToMainFrameCoordinates(menuLocation, frame->rootFrame()->frameID(), [weakThis = WeakPtr { *this }, contextMenuContextData = WTF::move(contextMenuContextData), userData = WTF::move(userData), frameInfo = WTF::move(frameInfo)] (std::optional<FloatPoint> result) mutable {
+    Vector<FloatRect> rectsToConvert { FloatRect { FloatPoint { contextMenuContextData.menuLocation() }, FloatSize { } } };
+#if ENABLE(SERVICE_CONTROLS)
+    if (!contextMenuContextData.controlledImageBounds().isEmpty())
+        rectsToConvert.append(FloatRect { contextMenuContextData.controlledImageBounds() });
+#endif
+
+    auto rootFrameID = frame->rootFrame()->frameID();
+    convertRectsToMainFrameCoordinates(WTF::move(rectsToConvert), rootFrameID, [weakThis = WeakPtr { *this }, contextMenuContextData = WTF::move(contextMenuContextData), userData = WTF::move(userData), frameInfo = WTF::move(frameInfo)] (std::optional<Vector<FloatRect>> convertedRects) mutable {
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
+        if (!protectedThis || !convertedRects || convertedRects->isEmpty())
             return;
-        if (!result)
-            return;
-        contextMenuContextData.setMenuLocation(IntPoint(*result));
+
+        contextMenuContextData.setMenuLocation(IntPoint(convertedRects->first().location()));
+#if ENABLE(SERVICE_CONTROLS)
+        if (convertedRects->size() > 1)
+            contextMenuContextData.setControlledImageBounds(IntRect(convertedRects->last()));
+#endif
         protectedThis->showContextMenu(WTF::move(frameInfo), WTF::move(contextMenuContextData), userData);
     });
 }

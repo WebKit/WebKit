@@ -8472,6 +8472,91 @@ TEST(SiteIsolation, IframeImageTranslationIfIframeIsAddedAfterTranslationCall)
     gDidProcessRequestCount = 0;
 }
 
+#if ENABLE(SERVICE_CONTROLS)
+
+TEST(SiteIsolation, ImageServiceControlledImageBoundsInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'><img style='margin: 50px; width: 100px; height: 100px;' src='https://webkit.org/image.png'></body>"_s } },
+        { "/image.png"_s, { [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"large-red-square" withExtension:@"png"]] } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = createWebViewConfigurationWithTextRecognitionEnhancements();
+
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    enableSiteIsolation(configuration.get());
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [[webView window] orderFrontRegardless];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    // Capture the screen-space rect that controlledImageBounds is converted to in setupServicesMenu().
+    __block bool sourceFrameSet = false;
+    __block NSRect capturedSourceFrame = NSZeroRect;
+    InstanceMethodSwizzler sourceFrameSwizzler {
+        NSClassFromString(@"WKSharingServicePickerDelegate"),
+        NSSelectorFromString(@"setSourceFrame:"),
+        imp_implementationWithBlock(^(id, NSRect frame) {
+            capturedSourceFrame = frame;
+            sourceFrameSet = true;
+        })
+    };
+
+    // getAttachmentIdentifier triggers setImageMenuEnabled(true), which causes the
+    // image-controls button to appear in the shadow root.
+    NSString *clickScript =
+        @"const img = document.querySelector('img');"
+        @"HTMLAttachmentElement.getAttachmentIdentifier(img);"
+        @"let button;"
+        @"do {"
+        @"    await new Promise(requestAnimationFrame);"
+        @"    const root = internals.shadowRoot(img);"
+        @"    button = root && root.getElementById('image-controls-button');"
+        @"} while (!button);"
+        @"button.click();";
+    [webView callAsyncJavaScript:clickScript arguments:nil inFrame:[webView firstChildFrame] inContentWorld:WKContentWorld.pageWorld completionHandler:^(id, NSError *error) {
+        EXPECT_NULL(error);
+    }];
+
+    // If the picker menu pops up (machines with registered image sharing services), dismiss it
+    // so we don't block in event-tracking mode.
+    RetainPtr cancelMenuTimer = [NSTimer timerWithTimeInterval:0.1 repeats:YES block:^(NSTimer *) {
+        if (NSMenu *menu = [webView _activeMenu])
+            [menu cancelTracking];
+    }];
+    [NSRunLoop.mainRunLoop addTimer:cancelMenuTimer.get() forMode:NSEventTrackingRunLoopMode];
+
+    // setSourceFrame: is called before popUpMenuPositioningItem:, so capturing it is sufficient.
+    bool *sourceFrameSetPtr = &sourceFrameSet;
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([sourceFrameSetPtr] {
+        return *sourceFrameSetPtr;
+    }, 100));
+    [cancelMenuTimer invalidate];
+
+    // Image at (50, 50) in iframe coords + iframe at (100, 100) → (150, 150) in main frame.
+    NSRect expectedInWebView = NSMakeRect(150, 150, 100, 100);
+    NSRect expectedInWindow = [webView convertRect:expectedInWebView toView:nil];
+    NSRect expectedOnScreen = [[webView window] convertRectToScreen:expectedInWindow];
+    // Use a tolerance rather than exact equality: the coordinates round-trip through cross-process
+    // ContentsToRootViewRect IPC and window→screen conversion, which can introduce sub-pixel error.
+    EXPECT_NEAR(capturedSourceFrame.origin.x, expectedOnScreen.origin.x, 1);
+    EXPECT_NEAR(capturedSourceFrame.origin.y, expectedOnScreen.origin.y, 1);
+    EXPECT_NEAR(capturedSourceFrame.size.width, expectedOnScreen.size.width, 1);
+    EXPECT_NEAR(capturedSourceFrame.size.height, expectedOnScreen.size.height, 1);
+}
+
+#endif // ENABLE(SERVICE_CONTROLS)
+
 #endif // ENABLE(IMAGE_ANALYSIS)
 
 #if PLATFORM(MAC)

@@ -126,6 +126,7 @@ public:
     bool isServicesMenu() const { return m_type == ContextMenuContextData::Type::ServicesMenu; }
     bool NODELETE controlledDataIsEditable() const;
     WebCore::IntRect controlledImageBounds() const { return m_controlledImageBounds; };
+    void setControlledImageBounds(WebCore::IntRect bounds) { m_controlledImageBounds = bounds; }
     String controlledImageAttachmentID() const { return m_controlledImageAttachmentID; };
     std::optional<WebCore::ElementContext> controlledImageElementContext() const { return m_controlledImageElementContext; }
     String controlledImageMIMEType() const { return m_controlledImageMIMEType; }
