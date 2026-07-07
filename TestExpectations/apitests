@@ -358,3 +358,14 @@ webkit.org/b/318502 TestWebKitAPI.ParentalControlsContentFilteringTests.BlockedU
 webkit.org/b/318586 [ Tahoe X86_64 ] TestIPC.IPCSerialization.SecTrustRef [ Failure ]
 
 webkit.org/b/318713 [ Debug x86_64 ] TestWebKitAPI.EvaluateJavaScript.Serialization [ Timeout ]
+
+# webkit.org/b/318739 [iOS DEBUG] 9x TestWebKitAPI.WebKitLegacy.* (api-tests) are constant crashes.
+[ iOS Debug ] TestWebKitAPI.WebKitLegacy.DateInputAccessoryViewTest [ Crash ]
+[ iOS Debug ] TestWebKitAPI.WebKitLegacy.DateTimeLocalInputAccessoryViewTest [ Crash ]
+[ iOS Debug ] TestWebKitAPI.WebKitLegacy.MonthInputAccessoryViewTest [ Crash ]
+[ iOS Debug ] TestWebKitAPI.WebKitLegacy.RenderInContextSnapshot [ Crash ]
+[ iOS Debug ] TestWebKitAPI.WebKitLegacy.ScrollToRevealSelection [ Crash ]
+[ iOS Debug ] TestWebKitAPI.WebKitLegacy.SetTimeoutFunction [ Crash ]
+[ iOS Debug ] TestWebKitAPI.WebKitLegacy.TimeInputAccessoryViewTest [ Crash ]
+[ iOS Debug ] TestWebKitAPI.WebKitLegacy.WebGLNoCrashOnOtherThreadAccess [ Crash ]
+[ iOS Debug ] TestWebKitAPI.WebKitLegacy.WebGLPrepareDisplayOnWebThread [ Crash ]
