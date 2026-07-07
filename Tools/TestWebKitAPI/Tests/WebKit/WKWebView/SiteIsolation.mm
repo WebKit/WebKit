@@ -76,6 +76,9 @@
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPIForTesting.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <WebCore/DOMPasteAccess.h>
+#import <WebCore/FrameIdentifier.h>
+#import <WebCore/IntRect.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -8304,6 +8307,61 @@ TEST(SiteIsolation, SelectMultiplePickerLocationInCrossOriginIframe)
     // The iframe is at (100, 100) in main frame coordinates (margin: 100px, border: none).
     // After conversion, the focused element's interaction rect should be (150, 150, 100, 50) in main frame coordinates.
     EXPECT_EQ([webView _focusedElementInteractionRect], CGRectMake(150, 150, 100, 50));
+}
+
+} // namespace TestWebKitAPI
+
+namespace SiteIsolationDOMPaste {
+
+static CGRect capturedElementRect;
+static bool receivedRequest;
+
+static void swizzledRequestDOMPasteAccess(id, SEL,
+    WebCore::DOMPasteAccessCategory,
+    WebCore::DOMPasteRequiresInteraction,
+    WebCore::FrameIdentifier,
+    const WebCore::IntRect& elementRect,
+    const String&,
+    CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
+{
+    capturedElementRect = CGRectMake(elementRect.x(), elementRect.y(), elementRect.width(), elementRect.height());
+    receivedRequest = true;
+    completionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
+}
+
+}
+
+namespace TestWebKitAPI {
+
+TEST(SiteIsolation, DOMPasteAccessRectInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'><textarea style='margin: 50px; width: 100px; height: 50px; border: none; padding: 0;'></textarea></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    SiteIsolationDOMPaste::capturedElementRect = CGRectZero;
+    SiteIsolationDOMPaste::receivedRequest = false;
+
+    InstanceMethodSwizzler pasteSwizzler {
+        NSClassFromString(@"WKContentView"),
+        NSSelectorFromString(@"_requestDOMPasteAccessForCategory:requiresInteraction:frameID:elementRect:originIdentifier:completionHandler:"),
+        reinterpret_cast<IMP>(SiteIsolationDOMPaste::swizzledRequestDOMPasteAccess)
+    };
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    [webView evaluateJavaScript:@"document.querySelector('textarea').focus(); document.execCommand('paste')" inFrame:[webView firstChildFrame] completionHandler:nil];
+
+    Util::run(&SiteIsolationDOMPaste::receivedRequest);
+
+    // The iframe is at (100, 100) in main-frame coordinates, so the rect should be converted from subframe coords.
+    EXPECT_EQ(SiteIsolationDOMPaste::capturedElementRect.origin.x, 100);
+    EXPECT_EQ(SiteIsolationDOMPaste::capturedElementRect.origin.y, 100);
 }
 
 #endif // PLATFORM(IOS_FAMILY)
