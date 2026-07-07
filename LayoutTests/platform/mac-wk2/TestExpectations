@@ -2414,6 +2414,4 @@ fast/animation/css-animation-throttling.html [ Pass Failure ]
 fast/animation/request-animation-frame-throttle-inside-overflow-scroll.html [ Pass Failure ]
 fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Pass Failure ]
 
-webkit.org/b/318382 [ Debug ] ipc/networksessioncocoa-empty-resource-request.html [ Failure ]
-
 webkit.org/b/318732 http/tests/site-isolation/page-zoom.html [ Pass ImageOnlyFailure ]

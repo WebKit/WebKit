@@ -8603,5 +8603,3 @@ webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-c
 webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.any.sharedworker.html [ Failure ]
 
 webkit.org/b/318375 imported/w3c/web-platform-tests/css/css-anchor-position/scroll-to-anchored-fixed-001.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/318382 [ Debug ] ipc/networksessioncocoa-empty-resource-request.html [ Failure ]
