@@ -240,12 +240,16 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             break;
         }
 
-        this._clearFocusableChildren();
+        function clearFocusableChildren() {
+            for (let focusableElement of messageView.element.querySelectorAll("[tabindex]"))
+                focusableElement.removeAttribute("tabindex");
+        }
+        clearFocusableChildren();
 
         // Some results don't populate until further backend dispatches occur (like the DOM tree).
         // We want to remove focusable children after those pending dispatches too.
         let target = messageView.message ? messageView.message.target : WI.runtimeManager.activeExecutionContext.target;
-        target.connection.runAfterPendingDispatches(this._clearFocusableChildren.bind(this));
+        target.connection.runAfterPendingDispatches(clearFocusableChildren);
 
         if (!this._scopeBar.item(WI.LogContentView.Scopes.All).selected) {
             if (messageView instanceof WI.ConsoleCommandView || messageView.message instanceof WI.ConsoleCommandResultMessage)
@@ -1150,13 +1154,6 @@ WI.LogContentView = class LogContentView extends WI.ContentView
                 return messages[i];
         }
         return null;
-    }
-
-    _clearFocusableChildren()
-    {
-        var focusableElements = this.messagesElement.querySelectorAll("[tabindex]");
-        for (var i = 0, count = focusableElements.length; i < count; ++i)
-            focusableElements[i].removeAttribute("tabindex");
     }
 
     findBannerPerformSearch(findBanner, searchQuery)
