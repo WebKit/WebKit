@@ -125,16 +125,6 @@ void CachedResourceRequest::upgradeInsecureRequestIfNeeded(Document& document, C
     upgradeInsecureResourceRequestIfNeeded(m_resourceRequest, document, alwaysUpgradeRequest);
 }
 
-void CachedResourceRequest::setDomainForCachePartition(Document& document)
-{
-    m_resourceRequest.setDomainForCachePartition(document.domainForCachePartition());
-}
-
-void CachedResourceRequest::setDomainForCachePartition(const String& domain)
-{
-    m_resourceRequest.setDomainForCachePartition(domain);
-}
-
 static inline void appendAdditionalSupportedImageMIMETypes(StringBuilder& acceptHeader)
 {
     for (const auto& additionalSupportedImageMIMEType : MIMETypeRegistry::additionalSupportedImageMIMETypes()) {

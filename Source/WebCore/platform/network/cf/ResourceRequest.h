@@ -78,16 +78,16 @@ public:
     
     WEBCORE_EXPORT ResourceRequest(NSURLRequest *);
 
-    ResourceRequest(ResourceRequestBase&& base, String&& cachePartition, bool hiddenFromInspector)
+    ResourceRequest(ResourceRequestBase&& base, bool shouldBlockThirdPartyStorage, bool hiddenFromInspector)
         : ResourceRequestBase(WTF::move(base))
     {
-        m_cachePartition = WTF::move(cachePartition);
+        m_shouldBlockThirdPartyStorage = shouldBlockThirdPartyStorage;
         m_hiddenFromInspector = hiddenFromInspector;
     }
 
-    ResourceRequest(ResourceRequestPlatformData&&, const String& cachePartition, bool hiddenFromInspector);
+    ResourceRequest(ResourceRequestPlatformData&&, bool shouldBlockThirdPartyStorage, bool hiddenFromInspector);
 
-    WEBCORE_EXPORT static ResourceRequest fromResourceRequestData(ResourceRequestData&&, String&& cachePartition, bool hiddenFromInspector);
+    WEBCORE_EXPORT static ResourceRequest fromResourceRequestData(ResourceRequestData&&, bool shouldBlockThirdPartyStorage, bool hiddenFromInspector);
 
     WEBCORE_EXPORT void updateFromDelegatePreservingOldProperties(const ResourceRequest&);
     

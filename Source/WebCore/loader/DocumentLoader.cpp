@@ -2293,17 +2293,10 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
     }
 
     CachedResourceRequest mainResourceRequest(WTF::move(request), mainResourceLoadOptions);
-    if (!frame->isMainFrame() && frame->document()) {
-        // If we are loading the main resource of a subframe, use the cache partition of the main document.
-        mainResourceRequest.setDomainForCachePartition(*frame->protectedDocument());
-    } else {
-        if (protectedFrameLoader()->frame().settings().storageBlockingPolicy() != StorageBlockingPolicy::BlockThirdParty)
-            mainResourceRequest.setDomainForCachePartition(emptyString());
-        else {
-            auto origin = SecurityOrigin::create(mainResourceRequest.resourceRequest().url());
-            mainResourceRequest.setDomainForCachePartition(origin->domainForCachePartition());
-        }
-    }
+    if (!frame->isMainFrame() && frame->document())
+        mainResourceRequest.resourceRequest().setShouldBlockThirdPartyStorage(protect(frame->document())->shouldBlockThirdPartyStorage());
+    else
+        mainResourceRequest.resourceRequest().setShouldBlockThirdPartyStorage(frameLoader()->frame().settings().storageBlockingPolicy() == StorageBlockingPolicy::BlockThirdParty);
 
     auto mainResourceOrError = m_cachedResourceLoader->requestMainResource(WTF::move(mainResourceRequest));
 

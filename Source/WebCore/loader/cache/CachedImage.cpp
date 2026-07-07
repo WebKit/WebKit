@@ -87,23 +87,6 @@ CachedImage::CachedImage(Image* image, PAL::SessionID sessionID, const CookieJar
 {
 }
 
-CachedImage::CachedImage(const URL& url, Image* image, PAL::SessionID sessionID, const CookieJar* cookieJar, const String& domainForCachePartition)
-    : CachedResource(url, Type::ImageResource, sessionID, cookieJar)
-    , m_image(image)
-    , m_updateImageDataCount(0)
-    , m_isManuallyCached(true)
-    , m_shouldPaintBrokenImage(true)
-    , m_forceUpdateImageDataEnabledForTesting(false)
-{
-    m_resourceRequest.setDomainForCachePartition(domainForCachePartition);
-
-    // Use the incoming URL in the response field. This ensures that code using the response directly,
-    // such as origin checks for security, actually see something.
-    mutableResponse().setURL(URL { url });
-
-    setAllowsOrientationOverride(isCORSSameOrigin() || m_image->sourceURL().protocolIsData());
-}
-
 CachedImage::~CachedImage()
 {
     clearImage();
