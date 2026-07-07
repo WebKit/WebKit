@@ -62,7 +62,10 @@ enum class WordBounded : bool { No, Yes };
 // https://wicg.github.io/scroll-to-text-fragment/#search-invisible
 static bool NODELETE isSearchInvisible(const Node& node)
 {
-    if (!node.renderStyle() || node.renderStyle()->display() == Style::DisplayType::None)
+    // display:contents has no RenderStyle but its subtree is rendered; the element type checks below still apply.
+    RefPtr element = dynamicDowncast<Element>(node);
+    bool isDisplayContents = element && element->hasDisplayContents();
+    if (!isDisplayContents && (!node.renderStyle() || node.renderStyle()->display() == Style::DisplayType::None))
         return true;
     
     // FIXME: If the node serializes as void.
