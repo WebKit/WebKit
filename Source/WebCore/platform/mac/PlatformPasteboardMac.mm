@@ -43,20 +43,56 @@
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringHash.h>
+#import <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
-static bool isFilePasteboardType(const String& type)
+static NSString * const pasteboardTypeTagClass = @"com.apple.nspboard-type";
+static NSString * const osTypeTagClass = @"com.apple.ostype";
+
+static bool typeConformsToFilePasteboardType(UTType *utType)
 {
+    if (!utType)
+        return false;
+    if ([utType conformsToType:UTTypeFileURL])
+        return true;
+    NSArray<NSString *> *pasteboardTypeTags = [utType.tags objectForKey:pasteboardTypeTagClass];
+    return [pasteboardTypeTags containsObject:legacyFilenamesPasteboardTypeSingleton()]
+        || [pasteboardTypeTags containsObject:legacyFilesPromisePasteboardTypeSingleton()];
+}
+
+bool PlatformPasteboard::isFilePasteboardType(const String& type)
+{
+    if (type.isEmpty())
+        return false;
+
     RetainPtr nsType = type.createNSString();
-    return [legacyFilenamesPasteboardTypeSingleton() isEqualToString:nsType.get()]
-        || [legacyFilesPromisePasteboardTypeSingleton() isEqualToString:nsType.get()]
-        || [UTTypeFileURL.identifier isEqualToString:nsType.get()];
+    if (![legacyFilenamesPasteboardTypeSingleton() caseInsensitiveCompare:nsType.get()]
+        || ![legacyFilesPromisePasteboardTypeSingleton() caseInsensitiveCompare:nsType.get()]
+        || ![UTTypeFileURL.identifier caseInsensitiveCompare:nsType.get()])
+        return true;
+
+    if (typeConformsToFilePasteboardType([UTType typeWithIdentifier:nsType.get()]))
+        return true;
+
+    if (typeConformsToFilePasteboardType([UTType typeWithTag:nsType.get() tagClass:pasteboardTypeTagClass conformingToType:nil]))
+        return true;
+
+    static constexpr auto osTypePrefix = "CorePasteboardFlavorType 0x"_s;
+    if (type.length() == osTypePrefix.length() + 8 && type.startsWithIgnoringASCIICase(osTypePrefix)) {
+        if (auto osTypeCode = parseInteger<uint32_t>(StringView { type }.substring(osTypePrefix.length()), 16)) {
+            std::array<uint8_t, 4> bytes { static_cast<uint8_t>(*osTypeCode >> 24), static_cast<uint8_t>(*osTypeCode >> 16), static_cast<uint8_t>(*osTypeCode >> 8), static_cast<uint8_t>(*osTypeCode) };
+            if (RetainPtr osTypeTag = adoptNS([[NSString alloc] initWithBytes:bytes.data() length:bytes.size() encoding:NSMacOSRomanStringEncoding]))
+                return typeConformsToFilePasteboardType([UTType typeWithTag:osTypeTag.get() tagClass:osTypeTagClass conformingToType:nil]);
+        }
+    }
+
+    return false;
 }
 
 static bool canWritePasteboardType(const String& type)
 {
-    if (isFilePasteboardType(type))
+    if (PlatformPasteboard::isFilePasteboardType(type))
         return false;
 
     RetainPtr nsString = type.createNSString();
@@ -452,12 +488,6 @@ int64_t PlatformPasteboard::setStringForType(const String& string, const String&
 
         if ([retainPtr([m_pasteboard types]) containsObject:UTTypeURL.identifier]) {
             didWriteData = [m_pasteboard setString:retainPtr([url absoluteString]).get() forType:UTTypeURL.identifier];
-            if (!didWriteData)
-                return 0;
-        }
-
-        if ([retainPtr([m_pasteboard types]) containsObject:UTTypeFileURL.identifier] && [url isFileURL]) {
-            didWriteData = [m_pasteboard setString:retainPtr([url absoluteString]).get() forType:UTTypeFileURL.identifier];
             if (!didWriteData)
                 return 0;
         }
