@@ -621,14 +621,7 @@ void Value::dump(PrintStream& out) const
     }, [&](const String& string) {
         StringBuilder builder;
         builder.appendQuotedJSONString(string);
-        // PrintStream truncates >5 MB CStrings for log readability, which would corrupt JSON. Bypass via const char*.
-        // FIXME: needs a systematic fix in PrintStream — log-output truncation
-        // should not apply to file persistence. Every site that prints large
-        // Strings to disk (this JSON dumper, SamplingProfiler reports, future
-        // text dumps, ...) is silently exposed to the same corruption; this
-        // patch only covers the JSON path.
-        auto utf8 = builder.toString().utf8();
-        out.print(utf8.data());
+        out.print(builder.toString());
     }, [&](ObjectTypeTag) {
         // Safety: This lambda runs synchronously so it is safe to capture `this` without refing.
         SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE auto& object = *static_cast<const ObjectBase*>(this);

@@ -104,7 +104,7 @@ void printInternal(PrintStream& out, StringView string)
 
 void printInternal(PrintStream& out, const CString& string)
 {
-    if (string.length() > stringLengthThresholdToTriggerTruncation) [[unlikely]] {
+    if (out.truncatesLongStrings() && string.length() > stringLengthThresholdToTriggerTruncation) [[unlikely]] {
         size_t lengthNotPrinted = string.length() - stringLengthToTruncateToForPrinting;
         auto subString = makeString(string.span().first(stringLengthToTruncateToForPrinting), "...["_s, lengthNotPrinted, " characters not shown]"_s);
         printInternal(out, subString.utf8().data());

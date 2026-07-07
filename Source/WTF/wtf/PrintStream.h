@@ -66,7 +66,9 @@ public:
     // Typically a no-op for many subclasses of PrintStream, this is a hint that
     // the implementation should flush its buffers if it had not done so already.
     WTF_EXPORT_PRIVATE virtual void flush();
-    
+
+    virtual bool truncatesLongStrings() const { return true; }
+
     template<typename Func>
     void atomically(NOESCAPE const Func& func)
     {

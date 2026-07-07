@@ -47,6 +47,8 @@ public:
     void vprintf(const char* format, va_list) final WTF_ATTRIBUTE_PRINTF(2, 0);
     void flush() final;
 
+    bool truncatesLongStrings() const final { return false; }
+
 private:
     FILE* m_file;
     AdoptionMode m_adoptionMode;

@@ -51,6 +51,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+    bool truncatesLongStrings() const final { return m_out.truncatesLongStrings(); }
+
     void reset() { m_buffer.reset(); }
 
 private:
