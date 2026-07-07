@@ -283,7 +283,7 @@ IndexValueStore::Iterator IndexValueStore::find(const IDBKeyData& key, const IDB
 
     // If we didn't find a primary key iterator in this entry,
     // we need to move on to start of the next record.
-    iterator++;
+    ++iterator;
     if (iterator == m_orderedKeys.end())
         return { };
 
@@ -339,7 +339,7 @@ IndexValueStore::Iterator IndexValueStore::reverseFind(const IDBKeyData& key, co
 
     // If we didn't find a primary key iterator in this entry,
     // we need to move on to start of the next record.
-    iterator++;
+    ++iterator;
     if (iterator == m_orderedKeys.rend())
         return { };
 
