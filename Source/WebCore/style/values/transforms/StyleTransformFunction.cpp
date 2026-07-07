@@ -528,7 +528,7 @@ auto CSSValueCreation<TransformFunction>::operator()(CSSValuePool& pool, const S
 {
     auto translateLength = [&](const auto& length) -> Ref<CSSValue> {
         if (length.isKnownZero())
-            return createCSSValue(pool, style, Length<> { 0_css_px });
+            return createCSSValue(pool, style, Length<CSS::AllUnzoomed> { 0_css_px });
         else
             return createCSSValue(pool, style, length);
     };
@@ -688,7 +688,7 @@ void Serialize<TransformFunction>::operator()(StringBuilder& builder, const CSS:
 {
     auto translateLength = [&](const auto& length) {
         if (length.isKnownZero())
-            serializationForCSS(builder, context, style, Length<> { 0_css_px });
+            serializationForCSS(builder, context, style, Length<CSS::AllUnzoomed> { 0_css_px });
         else
             serializationForCSS(builder, context, style, length);
     };

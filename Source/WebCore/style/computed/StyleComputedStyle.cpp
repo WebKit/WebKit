@@ -627,7 +627,7 @@ static LayoutUnit computeOutset(const OutsetValue& outsetValue, const Style::Lin
             return LayoutUnit(Style::evaluate<LayoutUnit>(borderWidth, zoom, deviceScaleFactor) * number.value);
         },
         [&](const typename OutsetValue::Length& length) {
-            return Style::evaluate<LayoutUnit>(length, Style::ZoomNeeded { });
+            return Style::evaluate<LayoutUnit>(length, zoom);
         }
     );
 }

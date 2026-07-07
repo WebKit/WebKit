@@ -74,14 +74,14 @@ auto Blending<TabSize>::blend(const TabSize& a, const TabSize& b, const Blending
 
 // MARK: - Platform
 
-auto ToPlatform<TabSize>::operator()(const TabSize& value) -> WebCore::TabSize
+auto ToPlatform<TabSize>::operator()(const TabSize& value, ZoomFactor zoom) -> WebCore::TabSize
 {
     return WTF::switchOn(value,
         [](const TabSize::Spaces& spaces) {
             return WebCore::TabSize { spaces.value, SpaceValueType };
         },
-        [](const TabSize::Length& length) {
-            return WebCore::TabSize { evaluate<float>(length, ZoomNeeded { }), LengthValueType };
+        [&](const TabSize::Length& length) {
+            return WebCore::TabSize { evaluate<float>(length, zoom), LengthValueType };
         }
     );
 }

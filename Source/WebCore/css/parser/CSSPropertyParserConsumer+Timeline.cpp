@@ -186,14 +186,14 @@ RefPtr<CSSValue> consumeSingleAnimationRange(CSSParserTokenRange& range, CSS::Pr
         return normal;
 
     if (auto name = consumeTimelineRangeName(range)) {
-        if (auto offset = CSSPrimitiveValueResolver<CSS::LengthPercentage<>>::consumeAndResolve(range, state)) {
+        if (auto offset = CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::AllUnzoomed>>::consumeAndResolve(range, state)) {
             if (isDefault(*offset, type))
                 return name;
             return CSSValuePair::createNoncoalescing(name.releaseNonNull(), offset.releaseNonNull());
         }
         return name;
     }
-    return CSSPrimitiveValueResolver<CSS::LengthPercentage<>>::consumeAndResolve(range, state);
+    return CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::AllUnzoomed>>::consumeAndResolve(range, state);
 }
 
 RefPtr<CSSValue> consumeSingleAnimationRangeStart(CSSParserTokenRange& range, CSS::PropertyParserState& state)

@@ -101,14 +101,14 @@ public:
     // FIXME: This is only here because the integration code needs to know the
     // row gap to update RenderGrid. We should figure out a way to do that and remove
     // this from the public API.
-    static LayoutUnit usedGapValue(const Style::GapGutter& gap)
+    static LayoutUnit usedGapValue(const Style::GapGutter& gap, const Style::ComputedStyle& style)
     {
         if (gap.isNormal())
             return { };
 
         // Only handle fixed length gaps for now
         if (auto fixedGap = gap.tryFixed())
-            return Style::evaluate<LayoutUnit>(*fixedGap, 0_lu, Style::ZoomNeeded { });
+            return Style::evaluate<LayoutUnit>(*fixedGap, 0_lu, style.usedZoomForLength());
 
         ASSERT_NOT_REACHED();
         return { };

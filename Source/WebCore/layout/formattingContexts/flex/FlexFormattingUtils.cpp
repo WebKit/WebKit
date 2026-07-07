@@ -95,7 +95,7 @@ LayoutUnit FlexFormattingUtils::mainAxisGapValue(const ElementBox& flexContainer
     auto flexDirection = flexContainer.style().flexDirection();
     auto isMainAxisInlineAxis = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
     auto& gap = isMainAxisInlineAxis ? flexContainer.style().columnGap() : flexContainer.style().rowGap();
-    return Style::evaluateMinimum<LayoutUnit>(gap, flexContainerContentBoxWidth, Style::ZoomNeeded { });
+    return Style::evaluateMinimum<LayoutUnit>(gap, flexContainerContentBoxWidth, flexContainer.style().usedZoomForLength());
 }
 
 LayoutUnit FlexFormattingUtils::crossAxisGapValue(const ElementBox& flexContainer, LayoutUnit flexContainerContentBoxHeight)
@@ -104,7 +104,7 @@ LayoutUnit FlexFormattingUtils::crossAxisGapValue(const ElementBox& flexContaine
     auto flexDirection = flexContainer.style().flexDirection();
     auto isMainAxisInlineAxis = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
     auto& gap = isMainAxisInlineAxis ? flexContainer.style().rowGap() : flexContainer.style().columnGap();
-    return Style::evaluateMinimum<LayoutUnit>(gap, flexContainerContentBoxHeight, Style::ZoomNeeded { });
+    return Style::evaluateMinimum<LayoutUnit>(gap, flexContainerContentBoxHeight, flexContainer.style().usedZoomForLength());
 }
 
 // flex container  direction  flex item    main axis size

@@ -797,7 +797,7 @@ template<typename Layer> BackgroundImageGeometry BackgroundPainter::calculateFil
     return BackgroundImageGeometry(destinationRect, tileSizeWithoutPixelSnapping, tileSize, phase, spaceSize, fixedAttachment);
 }
 
-template<typename Layer> LayoutSize BackgroundPainter::calculateFillTileSize(const RenderBoxModelObject& renderer, const Layer& fillLayer, Style::ZoomFactor, const LayoutSize& positioningAreaSize)
+template<typename Layer> LayoutSize BackgroundPainter::calculateFillTileSize(const RenderBoxModelObject& renderer, const Layer& fillLayer, Style::ZoomFactor zoom, const LayoutSize& positioningAreaSize)
 {
     RefPtr image = fillLayer.image().tryStyleImage();
     auto devicePixelSize = LayoutUnit { 1.0 / protect(renderer)->document().deviceScaleFactor() };
@@ -838,17 +838,17 @@ template<typename Layer> LayoutSize BackgroundPainter::calculateFillTileSize(con
             auto& layerHeight = size.height();
 
             if (auto fixed = layerWidth.tryFixed())
-                tileSize.setWidth(Style::evaluate<LayoutUnit>(*fixed, Style::ZoomNeeded { }));
+                tileSize.setWidth(Style::evaluate<LayoutUnit>(*fixed, zoom));
             else if (layerWidth.isPercentOrCalculated()) {
-                auto resolvedWidth = Style::evaluate<LayoutUnit>(layerWidth, positioningAreaSize.width(), Style::ZoomNeeded { });
+                auto resolvedWidth = Style::evaluate<LayoutUnit>(layerWidth, positioningAreaSize.width(), zoom);
                 // Non-zero resolved value should always produce some content.
                 tileSize.setWidth(!resolvedWidth ? resolvedWidth : std::max(devicePixelSize, resolvedWidth));
             }
 
             if (auto fixed = layerHeight.tryFixed())
-                tileSize.setHeight(Style::evaluate<LayoutUnit>(*fixed, Style::ZoomNeeded { }));
+                tileSize.setHeight(Style::evaluate<LayoutUnit>(*fixed, zoom));
             else if (layerHeight.isPercentOrCalculated()) {
-                auto resolvedHeight = Style::evaluate<LayoutUnit>(layerHeight, positioningAreaSize.height(), Style::ZoomNeeded { });
+                auto resolvedHeight = Style::evaluate<LayoutUnit>(layerHeight, positioningAreaSize.height(), zoom);
                 // Non-zero resolved value should always produce some content.
                 tileSize.setHeight(!resolvedHeight ? resolvedHeight : std::max(devicePixelSize, resolvedHeight));
             }

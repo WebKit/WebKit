@@ -37,7 +37,7 @@ namespace Style {
 
 // <mask-border-outset-value> = <length [0,∞]> | <number [0,∞]>
 struct MaskBorderOutsetValue {
-    using Length = Style::Length<CSS::Nonnegative, float>;
+    using Length = Style::Length<CSS::NonnegativeUnzoomed, float>;
     using Number = Style::Number<CSS::Nonnegative, float>;
 
     constexpr MaskBorderOutsetValue(Length length)

@@ -194,7 +194,7 @@ UsedTrackSizes GridFormattingContext::layout(GridLayoutConstraints layoutConstra
     auto usedJustifyContent = gridStyle->justifyContent().resolve();
     auto usedAlignContent = gridStyle->alignContent().resolve();
 
-    GridLayoutState layoutState { layoutConstraints, gridDefinition, usedJustifyContent, usedAlignContent, usedGapValue(gridStyle->columnGap()), usedGapValue(gridStyle->rowGap()) };
+    GridLayoutState layoutState { layoutConstraints, gridDefinition, usedJustifyContent, usedAlignContent, usedGapValue(gridStyle->columnGap(), gridStyle), usedGapValue(gridStyle->rowGap(), gridStyle) };
 
     auto [ usedTrackSizes, gridItemRects ] = GridLayout { *this }.layout(unplacedGridItems, layoutState);
 
@@ -289,8 +289,8 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
     auto usedJustifyContent = gridStyle->justifyContent().resolve();
     auto usedAlignContent = gridStyle->alignContent().resolve();
 
-    auto usedColumnGap = usedGapValue(gridStyle->columnGap());
-    auto usedRowGap = usedGapValue(gridStyle->rowGap());
+    auto usedColumnGap = usedGapValue(gridStyle->columnGap(), gridStyle);
+    auto usedRowGap = usedGapValue(gridStyle->rowGap(), gridStyle);
 
     // Compute min-content width by running the full grid sizing algorithm with MinContent scenario
     GridLayoutConstraints minContentConstraints {

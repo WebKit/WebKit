@@ -38,6 +38,7 @@
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleDocumentScope.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleResolver.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -429,7 +430,11 @@ String PrintContext::pageProperty(LocalFrame* frame, const String& propertyName,
                 return "portrait"_s;
             },
             [&](const Style::PageSize::Lengths& lengths) {
-                return makeString(lengths.width().resolveZoom(Style::ZoomNeeded { }), ' ', lengths.height().resolveZoom(Style::ZoomNeeded { }));
+                return makeString(
+                    Style::evaluate<float>(lengths.width(), Style::ZoomFactor::none()),
+                    ' ',
+                    Style::evaluate<float>(lengths.height(), Style::ZoomFactor::none())
+                );
             }
         );
     }

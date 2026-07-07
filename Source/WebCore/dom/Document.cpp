@@ -3439,9 +3439,10 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
             return pageSize;
         },
         [&](const Style::PageSize::Lengths& lengths) -> IntSize {
+            // FIXME: Document why <length> `page-size` ignores `zoom`.
             return {
-                static_cast<int>(lengths.width().resolveZoom(Style::ZoomNeeded { })),
-                static_cast<int>(lengths.height().resolveZoom(Style::ZoomNeeded { })),
+                Style::evaluate<int>(lengths.width(), Style::ZoomFactor::none()),
+                Style::evaluate<int>(lengths.height(), Style::ZoomFactor::none()),
             };
         }
     );

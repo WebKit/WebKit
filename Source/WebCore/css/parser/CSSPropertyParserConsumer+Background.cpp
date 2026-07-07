@@ -79,12 +79,12 @@ template<SupportWebKitBorderRadiusQuirk supportQuirk> static std::optional<CSS::
     // <'border-radius'> = <length-percentage [0,∞]>{1,4} [ / <length-percentage [0,∞]>{1,4} ]?
     // https://drafts.csswg.org/css-backgrounds/#propdef-border-radius
 
-    using OptionalRadiiForAxis = std::array<std::optional<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>, 4>;
+    using OptionalRadiiForAxis = std::array<std::optional<CSS::BorderRadius::LengthPercentage>, 4>;
 
     OptionalRadiiForAxis horizontalRadii;
     unsigned i = 0;
     for (; i < 4 && !range.atEnd() && range.peek().type() != DelimiterToken; ++i) {
-        horizontalRadii[i] = MetaConsumer<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consume(range, state);
+        horizontalRadii[i] = MetaConsumer<CSS::BorderRadius::LengthPercentage>::consume(range, state);
         if (!horizontalRadii[i])
             return { };
     }
@@ -120,7 +120,7 @@ template<SupportWebKitBorderRadiusQuirk supportQuirk> static std::optional<CSS::
 
     OptionalRadiiForAxis verticalRadii;
     for (unsigned i = 0; i < 4 && !range.atEnd(); ++i) {
-        verticalRadii[i] = MetaConsumer<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consume(range, state);
+        verticalRadii[i] = MetaConsumer<CSS::BorderRadius::LengthPercentage>::consume(range, state);
         if (!verticalRadii[i])
             return { };
     }
@@ -299,10 +299,10 @@ std::optional<CSS::BorderImageWidth> consumeUnresolvedBorderImageWidth(CSSParser
 
         if (auto lengthPercentage = MetaConsumer<CSS::BorderImageWidth::Value::LengthPercentage>::consume(range, state, { .overrideParserMode = HTMLStandardMode })) {
             hasLength = WTF::switchOn(*lengthPercentage,
-                [](const CSS::LengthPercentage<CSS::Nonnegative>::Calc& calc) {
+                [](const CSS::BorderImageWidth::Value::LengthPercentage::Calc& calc) {
                     return calc.primitiveType() == CSSUnitType::CSS_PX;
                 },
-                [](const CSS::LengthPercentage<CSS::Nonnegative>::Raw& raw) {
+                [](const CSS::BorderImageWidth::Value::LengthPercentage::Raw& raw) {
                     return raw.unit != CSS::PercentageUnit::Percentage;
                 }
             );
@@ -402,7 +402,7 @@ template<CSSPropertyID property> static RefPtr<CSSValue> consumeBackgroundSize(C
     bool shouldCoalesce = true;
     RefPtr<CSSValue> horizontal = consumeIdent<CSSValueAuto>(range);
     if (!horizontal) {
-        horizontal = CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::Nonnegative>>::consumeAndResolve(range, state);
+        horizontal = CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consumeAndResolve(range, state);
         if (!horizontal)
             return nullptr;
         shouldCoalesce = false;
@@ -412,7 +412,7 @@ template<CSSPropertyID property> static RefPtr<CSSValue> consumeBackgroundSize(C
     if (!range.atEnd()) {
         vertical = consumeIdent<CSSValueAuto>(range);
         if (!vertical)
-            vertical = CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::Nonnegative>>::consumeAndResolve(range, state);
+            vertical = CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consumeAndResolve(range, state);
     }
     if (!vertical) {
         if constexpr (property == CSSPropertyWebkitBackgroundSize) {

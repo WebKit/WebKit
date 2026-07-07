@@ -32,7 +32,7 @@ namespace Style {
 // <'stroke-dashoffset'> = <length-percentage> | <number>@(converted-to-px)
 // https://svgwg.org/svg2-draft/painting.html#StrokeDashoffsetProperty
 struct SVGStrokeDashoffset {
-    using LengthPercentage = Style::LengthPercentage<>;
+    using LengthPercentage = Style::LengthPercentage<CSS::AllUnzoomed>;
     using Fixed = LengthPercentage::Fixed;
     using Percentage = LengthPercentage::Percentage;
     using Calc = LengthPercentage::Calc;

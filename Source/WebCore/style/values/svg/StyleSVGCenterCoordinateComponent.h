@@ -32,7 +32,7 @@ namespace Style {
 // <'cx'/'cy'> = <length-percentage>
 // https://svgwg.org/svg2-draft/geometry.html#CX
 // https://svgwg.org/svg2-draft/geometry.html#CY
-DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(SVGCenterCoordinateComponent, LengthPercentage<>);
+DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(SVGCenterCoordinateComponent, LengthPercentage<CSS::AllUnzoomed>);
 
 } // namespace Style
 } // namespace WebCore

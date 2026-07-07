@@ -729,7 +729,7 @@ LayoutUnit RenderGrid::gridGap(Style::GridTrackSizingDirection direction, std::o
         return downcast<RenderGrid>(parent())->gridGap(parentDirection);
     }
 
-    return Style::evaluate<LayoutUnit>(gap, availableSize.value_or(0_lu), Style::ZoomNeeded { });
+    return Style::evaluate<LayoutUnit>(gap, availableSize.value_or(0_lu), style().usedZoomForLength());
 }
 
 LayoutUnit RenderGrid::gridGap(Style::GridTrackSizingDirection direction) const
