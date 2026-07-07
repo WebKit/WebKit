@@ -724,25 +724,25 @@ void RenderBox::constrainLogicalMinMaxSizesByAspectRatio(LayoutUnit& computedMin
     if (logicalSize.isSpecified())
         return;
 
-    // Sizing constraints in either axis (the origin axis) should be transferred through the preferred aspect ratio. See https://www.w3.org/TR/css-sizing-4/#aspect-ratio-size-transfers
-    bool shouldCheckTransferredMinSize = dimension == ConstrainDimension::Width ? !styleToUse.logicalMinWidth().isSpecified() : !styleToUse.logicalMinHeight().isSpecified();
-    bool shouldCheckTransferredMaxSize = dimension == ConstrainDimension::Width ? !styleToUse.logicalMaxWidth().isSpecified() : !styleToUse.logicalMaxHeight().isSpecified();
-    if (!shouldCheckTransferredMaxSize && !shouldCheckTransferredMinSize)
-        return;
-
+    // Sizing constraints in the opposite (origin) axis are transferred through the preferred aspect ratio and
+    // applied to this (destination) axis. Per spec the transfer happens whenever the preferred size in this axis
+    // is indefinite (guaranteed by the early return above); an explicit min or max size in this axis does not
+    // suppress the transfer, it only bounds it. See https://www.w3.org/TR/css-sizing-4/#aspect-ratio-size-transfers
     auto [transferredLogicalMinSize, transferredLogicalMaxSize] = dimension == ConstrainDimension::Width ? computeMinMaxLogicalWidthFromAspectRatio() : computeMinMaxLogicalHeightFromAspectRatio();
-    if (shouldCheckTransferredMaxSize && transferredLogicalMaxSize != LayoutUnit::max()) {
-        // The transferred max size should be floored by the definite minimum size.
-        if (!shouldCheckTransferredMinSize && minimumSizeType == MinimumSizeIsAutomaticContentBased::No)
-            transferredLogicalMaxSize = std::max(transferredLogicalMaxSize, computedMinSize);
-        computedMaxSize = std::min(computedMaxSize, transferredLogicalMaxSize);
+
+    // "First, any definite minimum size is converted and transferred from the origin to destination axis. This
+    //  transferred minimum is capped by any definite preferred or maximum size in the destination axis."
+    if (transferredLogicalMinSize > LayoutUnit()) {
+        transferredLogicalMinSize = std::min(transferredLogicalMinSize, computedMaxSize);
+        computedMinSize = std::max(computedMinSize, transferredLogicalMinSize);
     }
 
-    if (shouldCheckTransferredMinSize && transferredLogicalMinSize > LayoutUnit()) {
-        // The transferred min size should be capped by the definite maximum size.
-        if (!shouldCheckTransferredMaxSize)
-            transferredLogicalMinSize = std::min(transferredLogicalMinSize, computedMaxSize);
-        computedMinSize = std::max(computedMinSize, transferredLogicalMinSize);
+    // "Then, any definite maximum size is converted and transferred from the origin to destination. This
+    //  transferred maximum is floored by any definite preferred or minimum size in the destination axis as well
+    //  as by the transferred minimum, if any." (computedMinSize already folds in the transferred minimum above.)
+    if (transferredLogicalMaxSize != LayoutUnit::max()) {
+        transferredLogicalMaxSize = std::max(transferredLogicalMaxSize, computedMinSize);
+        computedMaxSize = std::min(computedMaxSize, transferredLogicalMaxSize);
     }
 }
 
