@@ -33,12 +33,18 @@
 #include <array>
 #include <bit>
 #include <cstring>
-#include <drm_fourcc.h>
 #include <utility>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/unix/UnixFileDescriptor.h>
+
+#if USE(GBM)
+#include <drm_fourcc.h>
+#endif
+#if OS(ANDROID)
+#include <android/hardware_buffer.h>
+#endif
 
 namespace WebKit {
 
@@ -175,17 +181,22 @@ bool OpenXRGraphicsBindingVulkan::initializeForSession(XrInstance instance, XrSy
     }
     m_queueFamilyIndex = *graphicsFamily;
 
-    // Extensions required to export our own images as dma-bufs to the web process, to import the web process' frame fence as a
-    // semaphore, and to acquire/release queue-family ownership of the externally-written image (VK_QUEUE_FAMILY_FOREIGN_EXT).
-    // The OpenXR runtime appends its own required extensions on top of these. If the device cannot provide them,
-    // xrCreateVulkanDeviceKHR fails below and no session is created, which is intended: the binding has no usable path without
-    // them.
-    static constexpr std::array<const char*, 4> deviceExtensions { {
-        VK_KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME,
-        VK_EXT_EXTERNAL_MEMORY_DMA_BUF_EXTENSION_NAME,
+    // Extensions to hand our own images to the web process, to import the web process' frame fence as a semaphore, and to
+    // acquire/release queue-family ownership of the externally-written image (VK_QUEUE_FAMILY_FOREIGN_EXT). The external-memory
+    // extension differs per platform: a dma-buf on Linux/GBM, an AHardwareBuffer on Android (its other dependencies — YCbCr
+    // conversion, bind-memory2, dedicated allocation — are core from Vulkan 1.1, which we always request). The OpenXR runtime
+    // appends its own required extensions on top. If the device cannot provide these, xrCreateVulkanDeviceKHR fails below and no
+    // session is created, which is intended: the binding has no usable path without them.
+    Vector<const char*> requiredExtensions {
         VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME,
         VK_EXT_QUEUE_FAMILY_FOREIGN_EXTENSION_NAME,
-    } };
+    };
+#if USE(GBM)
+    requiredExtensions.append(VK_KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME);
+    requiredExtensions.append(VK_EXT_EXTERNAL_MEMORY_DMA_BUF_EXTENSION_NAME);
+#elif OS(ANDROID)
+    requiredExtensions.append(VK_ANDROID_EXTERNAL_MEMORY_ANDROID_HARDWARE_BUFFER_EXTENSION_NAME);
+#endif
 
     // Report which device the runtime selected and whether it advertises the extensions we need, so a
     // VK_ERROR_EXTENSION_NOT_PRESENT from xrCreateVulkanDeviceKHR below points at the actual cause (e.g. the runtime picked a
@@ -197,13 +208,28 @@ bool OpenXRGraphicsBindingVulkan::initializeForSession(XrInstance instance, XrSy
     m_instanceTable.vkEnumerateDeviceExtensionProperties(m_vkPhysicalDevice, nullptr, &availableExtensionCount, nullptr);
     Vector<VkExtensionProperties> availableExtensions(availableExtensionCount);
     m_instanceTable.vkEnumerateDeviceExtensionProperties(m_vkPhysicalDevice, nullptr, &availableExtensionCount, availableExtensions.mutableSpan().data());
-    for (auto* required : deviceExtensions) {
-        bool available = availableExtensions.containsIf([&](const auto& extension) {
-            return StringView::fromLatin1(extension.extensionName) == StringView::fromLatin1(required);
+    auto isExtensionAvailable = [&](const char* name) {
+        return availableExtensions.containsIf([&](const auto& extension) {
+            return StringView::fromLatin1(extension.extensionName) == StringView::fromLatin1(name);
         });
-        if (!available)
+    };
+
+    Vector<const char*> enabledExtensions;
+    for (auto* required : requiredExtensions) {
+        if (!isExtensionAvailable(required))
             LOG(XR, "OpenXR Vulkan: required device extension %s not supported by '%s'", required, physicalDeviceProperties.deviceName);
+        enabledExtensions.append(required);
     }
+#if USE(GBM)
+    // VK_EXT_image_drm_format_modifier is optional (exportImageAsDMABuf falls back to a linear image without it); its
+    // VK_KHR_image_format_list dependency is core from Vulkan 1.2 but must be enabled explicitly on 1.1.
+    if (isExtensionAvailable(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME)) {
+        enabledExtensions.append(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME);
+        if (isExtensionAvailable(VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME))
+            enabledExtensions.append(VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME);
+        m_supportsDRMModifiers = true;
+    }
+#endif // USE(GBM)
 
     const float queuePriority = 1.0f;
     VkDeviceQueueCreateInfo queueCreateInfo { };
@@ -216,8 +242,8 @@ bool OpenXRGraphicsBindingVulkan::initializeForSession(XrInstance instance, XrSy
     vkDeviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     vkDeviceCreateInfo.queueCreateInfoCount = 1;
     vkDeviceCreateInfo.pQueueCreateInfos = &queueCreateInfo;
-    vkDeviceCreateInfo.enabledExtensionCount = deviceExtensions.size();
-    vkDeviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
+    vkDeviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(enabledExtensions.size());
+    vkDeviceCreateInfo.ppEnabledExtensionNames = enabledExtensions.span().data();
 
     auto xrDeviceCreateInfo = createOpenXRStruct<XrVulkanDeviceCreateInfoKHR, XR_TYPE_VULKAN_DEVICE_CREATE_INFO_KHR>();
     xrDeviceCreateInfo.systemId = systemId;
@@ -354,6 +380,7 @@ void OpenXRGraphicsBindingVulkan::destroyExportedImage(ExportedImage& exportedIm
     exportedImage = { };
 }
 
+#if USE(GBM) || OS(ANDROID)
 static std::optional<uint32_t> findMemoryType(const VolkInstanceTable& instanceTable, VkPhysicalDevice physicalDevice, uint32_t memoryTypeBits, VkMemoryPropertyFlags properties)
 {
     VkPhysicalDeviceMemoryProperties memoryProperties;
@@ -367,7 +394,9 @@ static std::optional<uint32_t> findMemoryType(const VolkInstanceTable& instanceT
     }
     return std::nullopt;
 }
+#endif // USE(GBM) || OS(ANDROID)
 
+#if USE(GBM)
 static uint32_t drmFourCCForVkFormat(VkFormat format)
 {
     switch (format) {
@@ -381,22 +410,113 @@ static uint32_t drmFourCCForVkFormat(VkFormat format)
         return DRM_FORMAT_INVALID;
     }
 }
+#endif // USE(GBM)
+
+bool OpenXRGraphicsBindingVulkan::createExportedImageSyncObjects(ExportedImage& exportedImage)
+{
+    // The fence starts signaled so the first commitFrame() that reuses this image waits on it without a special case.
+    VkFenceCreateInfo fenceCreateInfo { };
+    fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+    if (m_deviceTable.vkCreateFence(m_vkDevice, &fenceCreateInfo, nullptr, &exportedImage.inFlightFence) != VK_SUCCESS) {
+        RELEASE_LOG(XR, "OpenXR Vulkan: vkCreateFence failed for exported texture");
+        return false;
+    }
+
+    VkSemaphoreCreateInfo semaphoreCreateInfo { };
+    semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    if (m_deviceTable.vkCreateSemaphore(m_vkDevice, &semaphoreCreateInfo, nullptr, &exportedImage.acquireSemaphore) != VK_SUCCESS) {
+        RELEASE_LOG(XR, "OpenXR Vulkan: vkCreateSemaphore failed for exported texture");
+        return false;
+    }
+    return true;
+}
 
 std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingVulkan::exportTexture(uint64_t image, const OpenXRSwapchain& swapchain, TextureType type, uint32_t width, uint32_t height)
 {
     ASSERT(m_vkDevice != VK_NULL_HANDLE);
 
-    switch (type) {
-    case TextureType::Texture2D:
-        return exportTexture2D(image, swapchain, width, height);
-    case TextureType::Cubemap:
+    if (type != TextureType::Texture2D) {
         // FIXME: cube layers are not implemented yet for the Vulkan binding.
-        break;
+        return std::nullopt;
     }
+
+#if USE(GBM)
+    return exportImageAsDMABuf(image, swapchain, width, height);
+#elif OS(ANDROID)
+    // Android shares the buffer as an AHardwareBuffer instead of a DMABuf.
+    return exportImageAsAHardwareBuffer(image, swapchain, width, height);
+#else
+    // No external-texture path without GBM (DMABuf) or Android (AHardwareBuffer), so nothing is exported.
+    UNUSED_PARAM(image);
+    UNUSED_PARAM(swapchain);
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
     return std::nullopt;
+#endif
 }
 
-std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingVulkan::exportTexture2D(uint64_t swapchainImage, const OpenXRSwapchain& swapchain, uint32_t width, uint32_t height)
+#if USE(GBM)
+Vector<VkDrmFormatModifierPropertiesEXT> OpenXRGraphicsBindingVulkan::supportedExportDRMModifiers(VkFormat format, VkImageUsageFlags usage) const
+{
+    VkDrmFormatModifierPropertiesListEXT modifierList { };
+    modifierList.sType = VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT;
+    VkFormatProperties2 formatProperties { };
+    formatProperties.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
+    formatProperties.pNext = &modifierList;
+    m_instanceTable.vkGetPhysicalDeviceFormatProperties2(m_vkPhysicalDevice, format, &formatProperties);
+    Vector<VkDrmFormatModifierPropertiesEXT> allModifiers(modifierList.drmFormatModifierCount);
+    modifierList.pDrmFormatModifierProperties = allModifiers.mutableSpan().data();
+    m_instanceTable.vkGetPhysicalDeviceFormatProperties2(m_vkPhysicalDevice, format, &formatProperties);
+
+    VkFormatFeatureFlags requiredFeatures = 0;
+    if (usage & VK_IMAGE_USAGE_TRANSFER_SRC_BIT)
+        requiredFeatures |= VK_FORMAT_FEATURE_TRANSFER_SRC_BIT;
+    if (usage & VK_IMAGE_USAGE_TRANSFER_DST_BIT)
+        requiredFeatures |= VK_FORMAT_FEATURE_TRANSFER_DST_BIT;
+    if (usage & VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
+        requiredFeatures |= VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT;
+    if (usage & VK_IMAGE_USAGE_SAMPLED_BIT)
+        requiredFeatures |= VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT;
+    Vector<VkDrmFormatModifierPropertiesEXT> result;
+    for (const auto& properties : allModifiers) {
+        if ((properties.drmFormatModifierTilingFeatures & requiredFeatures) != requiredFeatures)
+            continue;
+
+        VkPhysicalDeviceImageDrmFormatModifierInfoEXT modifierInfo { };
+        modifierInfo.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT;
+        modifierInfo.drmFormatModifier = properties.drmFormatModifier;
+        modifierInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+        VkPhysicalDeviceExternalImageFormatInfo externalInfo { };
+        externalInfo.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO;
+        externalInfo.handleType = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT;
+        externalInfo.pNext = &modifierInfo;
+
+        VkPhysicalDeviceImageFormatInfo2 imageFormatInfo { };
+        imageFormatInfo.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2;
+        imageFormatInfo.pNext = &externalInfo;
+        imageFormatInfo.format = format;
+        imageFormatInfo.type = VK_IMAGE_TYPE_2D;
+        imageFormatInfo.tiling = VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT;
+        imageFormatInfo.usage = usage;
+
+        VkExternalImageFormatProperties externalFormatProperties { };
+        externalFormatProperties.sType = VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES;
+        VkImageFormatProperties2 imageFormatProperties { };
+        imageFormatProperties.sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2;
+        imageFormatProperties.pNext = &externalFormatProperties;
+        if (m_instanceTable.vkGetPhysicalDeviceImageFormatProperties2(m_vkPhysicalDevice, &imageFormatInfo, &imageFormatProperties) != VK_SUCCESS)
+            continue;
+        if (!(externalFormatProperties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT))
+            continue;
+        result.append(properties);
+    }
+    return result;
+}
+
+std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingVulkan::exportImageAsDMABuf(uint64_t swapchainImage, const OpenXRSwapchain& swapchain, uint32_t width, uint32_t height)
 {
     auto format = static_cast<VkFormat>(swapchain.format());
     auto fourcc = drmFourCCForVkFormat(format);
@@ -405,37 +525,40 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingVulka
         return std::nullopt;
     }
 
+    // Only TRANSFER_SRC, not COLOR_ATTACHMENT: Vulkan merely transfer-reads this image for the commit blit, while the web
+    // process renders into the exported DMABuf via GL/EGL, and linear-tiled images generally do not support COLOR_ATTACHMENT.
+    // The tiled DRM-modifier path is the validation-clean way to export a DMABuf; the linear fallback is tolerated but not
+    // advertised where the modifier extension is missing, so it renders but emits VUID-VkImageCreateInfo-pNext-00990.
+    // FIXME: the chosen modifier is one our device supports; it is not yet intersected with the modifiers the web process' EGL
+    // import can consume (that needs the consumer's list plumbed across IPC). On a single GPU the sets overlap in practice.
+    static constexpr VkImageUsageFlags usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+    auto modifierProperties = m_supportsDRMModifiers ? supportedExportDRMModifiers(format, usage) : Vector<VkDrmFormatModifierPropertiesEXT> { };
+    Vector<uint64_t> modifiers = modifierProperties.map([](const auto& properties) {
+        return properties.drmFormatModifier;
+    });
+    bool useModifiers = !modifiers.isEmpty();
+
     VkExternalMemoryImageCreateInfo externalMemoryImageInfo { };
     externalMemoryImageInfo.sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
     externalMemoryImageInfo.handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT;
 
-    // Linear tiling, exported as a DRM_FORMAT_MOD_LINEAR dma-buf. This avoids depending on VK_EXT_image_drm_format_modifier,
-    // which not every driver advertises, and is the most widely importable layout on the web process side. We only ever read
-    // this image as a transfer source (the web process renders into it via the dma-buf), so TRANSFER_SRC is enough.
-    //
-    // FIXME: prefer VK_EXT_image_drm_format_modifier when it is available, falling back to linear otherwise. This image is a
-    // render target the web process draws into every frame (per swapchain image, at the headset's refresh rate), so a tiled
-    // or otherwise optimal layout is worth the added complexity:
-    //   a) Performance: linear is the slowest layout for the GPU to render into and sample/copy from; a vendor-tiled modifier
-    //      has far better cache locality for those per-frame operations.
-    //   b) Bandwidth: some modifiers enable framebuffer compression (e.g. AMD DCC), cutting the memory traffic of both the
-    //      web process' rendering and our commitFrame copy.
-    //   c) Explicit layout negotiation: producer and consumer agree on the exact memory layout instead of relying on linear
-    //      being universally importable.
-    // Doing this correctly means creating the image with the intersection of the modifiers our device supports and the ones
-    // the consumer (the web process' dma-buf import) can handle, which requires plumbing the consumer's supported-modifier
-    // list here; linear stays as the fallback.
+    VkImageDrmFormatModifierListCreateInfoEXT modifierListInfo { };
+    modifierListInfo.sType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT;
+    modifierListInfo.pNext = &externalMemoryImageInfo;
+    modifierListInfo.drmFormatModifierCount = static_cast<uint32_t>(modifiers.size());
+    modifierListInfo.pDrmFormatModifiers = modifiers.span().data();
+
     VkImageCreateInfo imageCreateInfo { };
     imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-    imageCreateInfo.pNext = &externalMemoryImageInfo;
+    imageCreateInfo.pNext = useModifiers ? static_cast<const void*>(&modifierListInfo) : static_cast<const void*>(&externalMemoryImageInfo);
     imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
     imageCreateInfo.format = format;
     imageCreateInfo.extent = { width, height, 1 };
     imageCreateInfo.mipLevels = 1;
     imageCreateInfo.arrayLayers = 1;
     imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-    imageCreateInfo.tiling = VK_IMAGE_TILING_LINEAR;
-    imageCreateInfo.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+    imageCreateInfo.tiling = useModifiers ? VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT : VK_IMAGE_TILING_LINEAR;
+    imageCreateInfo.usage = usage;
     imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
@@ -445,7 +568,7 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingVulka
     exportedImage.format = format;
 
     if (m_deviceTable.vkCreateImage(m_vkDevice, &imageCreateInfo, nullptr, &exportedImage.image) != VK_SUCCESS) {
-        RELEASE_LOG(XR, "OpenXR Vulkan: vkCreateImage failed for exported texture");
+        RELEASE_LOG(XR, "OpenXR Vulkan: vkCreateImage failed for exported texture (useModifiers=%d)", useModifiers);
         return std::nullopt;
     }
 
@@ -486,52 +609,189 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingVulka
         return std::nullopt;
     }
 
-    // Single-plane linear layout: the row pitch and offset of the colour plane fully describe it.
-    VkImageSubresource subresource { };
-    subresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    VkSubresourceLayout layout { };
-    m_deviceTable.vkGetImageSubresourceLayout(m_vkDevice, exportedImage.image, &subresource, &layout);
+    uint64_t modifier = DRM_FORMAT_MOD_LINEAR;
+    uint32_t planeCount = 1;
+    if (useModifiers) {
+        VkImageDrmFormatModifierPropertiesEXT chosenModifier { };
+        chosenModifier.sType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT;
+        if (m_deviceTable.vkGetImageDrmFormatModifierPropertiesEXT(m_vkDevice, exportedImage.image, &chosenModifier) != VK_SUCCESS) {
+            RELEASE_LOG(XR, "OpenXR Vulkan: vkGetImageDrmFormatModifierPropertiesEXT failed for exported texture");
+            return std::nullopt;
+        }
+        modifier = chosenModifier.drmFormatModifier;
+        for (const auto& properties : modifierProperties) {
+            if (properties.drmFormatModifier == modifier) {
+                planeCount = properties.drmFormatModifierPlaneCount;
+                break;
+            }
+        }
+        if (!planeCount || planeCount > 4) {
+            RELEASE_LOG(XR, "OpenXR Vulkan: unexpected plane count %u for exported texture", planeCount);
+            return std::nullopt;
+        }
+    }
 
+    // All planes share the single dedicated allocation, so one exported fd is duplicated per plane. The planes differ only by offset and stride.
     VkMemoryGetFdInfoKHR getFdInfo { };
     getFdInfo.sType = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
     getFdInfo.memory = exportedImage.memory;
     getFdInfo.handleType = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT;
-
     int dmaBufFd = -1;
     if (m_deviceTable.vkGetMemoryFdKHR(m_vkDevice, &getFdInfo, &dmaBufFd) != VK_SUCCESS || dmaBufFd < 0) {
         RELEASE_LOG(XR, "OpenXR Vulkan: vkGetMemoryFdKHR failed for exported texture");
         return std::nullopt;
     }
+    WTF::UnixFileDescriptor primaryDescriptor { dmaBufFd, WTF::UnixFileDescriptor::Adopt };
 
-    // Per-image synchronization objects. The fence starts signaled so the first commitFrame() that reuses this image waits on
-    // it without a special case. (On failure cleanupOnError destroys whatever was created.)
-    VkFenceCreateInfo fenceCreateInfo { };
-    fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-    if (m_deviceTable.vkCreateFence(m_vkDevice, &fenceCreateInfo, nullptr, &exportedImage.inFlightFence) != VK_SUCCESS) {
-        RELEASE_LOG(XR, "OpenXR Vulkan: vkCreateFence failed for exported texture");
-        return std::nullopt;
+    Vector<WTF::UnixFileDescriptor> fds;
+    Vector<uint32_t> strides;
+    Vector<uint32_t> offsets;
+    for (uint32_t plane = 0; plane < planeCount; ++plane) {
+        // A modifier image exposes each plane via a MEMORY_PLANE aspect (bits run consecutively from MEMORY_PLANE_0); a linear image has a single colour plane.
+        VkImageSubresource subresource { };
+        subresource.aspectMask = useModifiers ? static_cast<VkImageAspectFlagBits>(VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT << plane) : VK_IMAGE_ASPECT_COLOR_BIT;
+        VkSubresourceLayout layout { };
+        m_deviceTable.vkGetImageSubresourceLayout(m_vkDevice, exportedImage.image, &subresource, &layout);
+        auto duplicated = primaryDescriptor.duplicate();
+        if (!duplicated) {
+            RELEASE_LOG(XR, "OpenXR Vulkan: failed to duplicate DMABuf fd for plane %u", plane);
+            return std::nullopt;
+        }
+        fds.append(WTF::move(duplicated));
+        strides.append(static_cast<uint32_t>(layout.rowPitch));
+        offsets.append(static_cast<uint32_t>(layout.offset));
     }
 
-    VkSemaphoreCreateInfo semaphoreCreateInfo { };
-    semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-    if (m_deviceTable.vkCreateSemaphore(m_vkDevice, &semaphoreCreateInfo, nullptr, &exportedImage.acquireSemaphore) != VK_SUCCESS) {
-        RELEASE_LOG(XR, "OpenXR Vulkan: vkCreateSemaphore failed for exported texture");
+    if (!createExportedImageSyncObjects(exportedImage))
         return std::nullopt;
-    }
 
     cleanupOnError.release();
     m_exportedImages.set(swapchainImage, WTF::move(exportedImage));
 
-    Vector<WTF::UnixFileDescriptor> fds;
-    fds.append(WTF::UnixFileDescriptor { dmaBufFd, WTF::UnixFileDescriptor::Adopt });
     return PlatformXR::FrameData::ExternalTexture {
         .fds = WTF::move(fds),
-        .strides = { static_cast<uint32_t>(layout.rowPitch) },
-        .offsets = { static_cast<uint32_t>(layout.offset) },
+        .strides = WTF::move(strides),
+        .offsets = WTF::move(offsets),
         .fourcc = fourcc,
-        .modifier = DRM_FORMAT_MOD_LINEAR,
+        .modifier = modifier,
     };
+}
+#endif // USE(GBM)
+
+#if OS(ANDROID)
+std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingVulkan::exportImageAsAHardwareBuffer(uint64_t swapchainImage, const OpenXRSwapchain& swapchain, uint32_t width, uint32_t height)
+{
+    auto format = static_cast<VkFormat>(swapchain.format());
+
+    // The WebProcess renders into the AHardwareBuffer as a colour target and we transfer read it at commit, so it needs
+    // COLOR_ATTACHMENT | TRANSFER_SRC. COLOR_ATTACHMENT is what makes the exported buffer carry the GPU_FRAMEBUFFER usage
+    // that the GL consumer needs.
+    static constexpr VkImageUsageFlags usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+
+    VkExternalMemoryImageCreateInfo externalMemoryImageInfo { };
+    externalMemoryImageInfo.sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
+    externalMemoryImageInfo.handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_ANDROID_HARDWARE_BUFFER_BIT_ANDROID;
+
+    VkImageCreateInfo imageCreateInfo { };
+    imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    imageCreateInfo.pNext = &externalMemoryImageInfo;
+    imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
+    imageCreateInfo.format = format;
+    imageCreateInfo.extent = { width, height, 1 };
+    imageCreateInfo.mipLevels = 1;
+    imageCreateInfo.arrayLayers = 1;
+    imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+    imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+    imageCreateInfo.usage = usage;
+    imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
+    ExportedImage exportedImage;
+    exportedImage.width = width;
+    exportedImage.height = height;
+    exportedImage.format = format;
+    if (m_deviceTable.vkCreateImage(m_vkDevice, &imageCreateInfo, nullptr, &exportedImage.image) != VK_SUCCESS) {
+        RELEASE_LOG(XR, "OpenXR Vulkan: vkCreateImage failed for exported AHardwareBuffer texture");
+        return std::nullopt;
+    }
+
+    auto cleanupOnError = makeScopeExit([&] {
+        destroyExportedImage(exportedImage);
+    });
+
+    VkMemoryRequirements memoryRequirements;
+    m_deviceTable.vkGetImageMemoryRequirements(m_vkDevice, exportedImage.image, &memoryRequirements);
+    auto memoryTypeIndex = findMemoryType(m_instanceTable, m_vkPhysicalDevice, memoryRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    if (!memoryTypeIndex) {
+        RELEASE_LOG(XR, "OpenXR Vulkan: no suitable memory type for exported AHardwareBuffer texture");
+        return std::nullopt;
+    }
+
+    // AHardwareBuffer export requires a dedicated allocation.
+    VkMemoryDedicatedAllocateInfo dedicatedAllocateInfo { };
+    dedicatedAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO;
+    dedicatedAllocateInfo.image = exportedImage.image;
+
+    VkExportMemoryAllocateInfo exportAllocateInfo { };
+    exportAllocateInfo.sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO;
+    exportAllocateInfo.pNext = &dedicatedAllocateInfo;
+    exportAllocateInfo.handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_ANDROID_HARDWARE_BUFFER_BIT_ANDROID;
+
+    VkMemoryAllocateInfo memoryAllocateInfo { };
+    memoryAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    memoryAllocateInfo.pNext = &exportAllocateInfo;
+    memoryAllocateInfo.allocationSize = memoryRequirements.size;
+    memoryAllocateInfo.memoryTypeIndex = *memoryTypeIndex;
+    if (m_deviceTable.vkAllocateMemory(m_vkDevice, &memoryAllocateInfo, nullptr, &exportedImage.memory) != VK_SUCCESS) {
+        RELEASE_LOG(XR, "OpenXR Vulkan: vkAllocateMemory failed for exported AHardwareBuffer texture");
+        return std::nullopt;
+    }
+    if (m_deviceTable.vkBindImageMemory(m_vkDevice, exportedImage.image, exportedImage.memory, 0) != VK_SUCCESS) {
+        RELEASE_LOG(XR, "OpenXR Vulkan: vkBindImageMemory failed for exported AHardwareBuffer texture");
+        return std::nullopt;
+    }
+
+    // Pull the AHardwareBuffer out of the memory; it comes with one acquired reference that adoptRef transfers to the caller.
+    // Resolve the function via vkGetDeviceProcAddr rather than the device table so this does not depend on volk having been built
+    // with VK_USE_PLATFORM_ANDROID_KHR.
+    auto vkGetMemoryAndroidHardwareBuffer = reinterpret_cast<PFN_vkGetMemoryAndroidHardwareBufferANDROID>(m_instanceTable.vkGetDeviceProcAddr(m_vkDevice, "vkGetMemoryAndroidHardwareBufferANDROID"));
+    if (!vkGetMemoryAndroidHardwareBuffer) {
+        RELEASE_LOG(XR, "OpenXR Vulkan: vkGetMemoryAndroidHardwareBufferANDROID is not available");
+        return std::nullopt;
+    }
+    VkMemoryGetAndroidHardwareBufferInfoANDROID getInfo { };
+    getInfo.sType = VK_STRUCTURE_TYPE_MEMORY_GET_ANDROID_HARDWARE_BUFFER_INFO_ANDROID;
+    getInfo.memory = exportedImage.memory;
+    AHardwareBuffer* buffer = nullptr;
+    if (vkGetMemoryAndroidHardwareBuffer(m_vkDevice, &getInfo, &buffer) != VK_SUCCESS || !buffer) {
+        RELEASE_LOG(XR, "OpenXR Vulkan: vkGetMemoryAndroidHardwareBufferANDROID failed for exported texture");
+        return std::nullopt;
+    }
+    // Adopt the acquired reference now so it is released automatically on any early return below.
+    RefPtr<AHardwareBuffer> hardwareBuffer = adoptRef(buffer);
+
+    if (!createExportedImageSyncObjects(exportedImage))
+        return std::nullopt;
+
+    cleanupOnError.release();
+    m_exportedImages.set(swapchainImage, WTF::move(exportedImage));
+    return hardwareBuffer;
+}
+#endif // OS(ANDROID)
+
+static VkImageMemoryBarrier makeImageBarrier(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout, VkAccessFlags srcAccess, VkAccessFlags dstAccess, uint32_t srcQueueFamily = VK_QUEUE_FAMILY_IGNORED, uint32_t dstQueueFamily = VK_QUEUE_FAMILY_IGNORED, uint32_t layerCount = 1)
+{
+    VkImageMemoryBarrier barrier { };
+    barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    barrier.oldLayout = oldLayout;
+    barrier.newLayout = newLayout;
+    barrier.srcQueueFamilyIndex = srcQueueFamily;
+    barrier.dstQueueFamilyIndex = dstQueueFamily;
+    barrier.image = image;
+    barrier.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, layerCount };
+    barrier.srcAccessMask = srcAccess;
+    barrier.dstAccessMask = dstAccess;
+    return barrier;
 }
 
 bool OpenXRGraphicsBindingVulkan::recordBlitCommandBuffer(ExportedImage& exportedImage, VkImage swapchainImage)
@@ -548,20 +808,6 @@ bool OpenXRGraphicsBindingVulkan::recordBlitCommandBuffer(ExportedImage& exporte
         return false;
     }
 
-    auto makeBarrier = [](VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout, VkAccessFlags srcAccess, VkAccessFlags dstAccess, uint32_t srcQueueFamily = VK_QUEUE_FAMILY_IGNORED, uint32_t dstQueueFamily = VK_QUEUE_FAMILY_IGNORED) {
-        VkImageMemoryBarrier barrier { };
-        barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-        barrier.oldLayout = oldLayout;
-        barrier.newLayout = newLayout;
-        barrier.srcQueueFamilyIndex = srcQueueFamily;
-        barrier.dstQueueFamilyIndex = dstQueueFamily;
-        barrier.image = image;
-        barrier.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
-        barrier.srcAccessMask = srcAccess;
-        barrier.dstAccessMask = dstAccess;
-        return barrier;
-    };
-
     VkCommandBufferBeginInfo beginInfo { };
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     // No VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: this buffer is recorded once and resubmitted on every commit.
@@ -573,8 +819,8 @@ bool OpenXRGraphicsBindingVulkan::recordBlitCommandBuffer(ExportedImage& exporte
     // matches the externally-written linear DMABuf. The swapchain image is owned by our own device and fully overwritten by the
     // blit, so it can start from UNDEFINED with no ownership transfer.
     std::array<VkImageMemoryBarrier, 2> preBlitBarriers { {
-        makeBarrier(exportedImage.image, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_GENERAL, 0, VK_ACCESS_TRANSFER_READ_BIT, VK_QUEUE_FAMILY_FOREIGN_EXT, m_queueFamilyIndex),
-        makeBarrier(swapchainImage, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 0, VK_ACCESS_TRANSFER_WRITE_BIT),
+        makeImageBarrier(exportedImage.image, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_GENERAL, 0, VK_ACCESS_TRANSFER_READ_BIT, VK_QUEUE_FAMILY_FOREIGN_EXT, m_queueFamilyIndex),
+        makeImageBarrier(swapchainImage, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 0, VK_ACCESS_TRANSFER_WRITE_BIT),
     } };
     m_deviceTable.vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0, nullptr, preBlitBarriers.size(), preBlitBarriers.data());
 
@@ -582,20 +828,19 @@ bool OpenXRGraphicsBindingVulkan::recordBlitCommandBuffer(ExportedImage& exporte
     // Vulkan (and therefore the runtime's swapchain image) uses the top left. We blit rather than copy so the destination's
     // Y offsets can be inverted, correcting the flip in the same pass (vkCmdCopyImage cannot flip). The transfer is 1:1 in
     // size and format so NEAREST adds no filtering, and the Y inversion itself costs nothing beyond the blit.
-    VkImageBlit blitRegion { };
-    blitRegion.srcSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1 };
-    blitRegion.srcOffsets[0] = { 0, 0, 0 };
-    blitRegion.srcOffsets[1] = { static_cast<int32_t>(exportedImage.width), static_cast<int32_t>(exportedImage.height), 1 };
-    blitRegion.dstSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1 };
-    blitRegion.dstOffsets[0] = { 0, static_cast<int32_t>(exportedImage.height), 0 };
-    blitRegion.dstOffsets[1] = { static_cast<int32_t>(exportedImage.width), 0, 1 };
+    VkImageBlit blitRegion {
+        .srcSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1 },
+        .srcOffsets = { { 0, 0, 0 }, { static_cast<int32_t>(exportedImage.width), static_cast<int32_t>(exportedImage.height), 1 } },
+        .dstSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1 },
+        .dstOffsets = { { 0, static_cast<int32_t>(exportedImage.height), 0 }, { static_cast<int32_t>(exportedImage.width), 0, 1 } },
+    };
     m_deviceTable.vkCmdBlitImage(commandBuffer, exportedImage.image, VK_IMAGE_LAYOUT_GENERAL, swapchainImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &blitRegion, VK_FILTER_NEAREST);
 
     // Transition the swapchain image to COLOR_ATTACHMENT_OPTIMAL, which the runtime expects when it is released, and release
     // ownership of the exported image back to the foreign (OpenGL) producer so it can render into it again next frame.
     std::array<VkImageMemoryBarrier, 2> postBlitBarriers { {
-        makeBarrier(swapchainImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT),
-        makeBarrier(exportedImage.image, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_GENERAL, VK_ACCESS_TRANSFER_READ_BIT, 0, m_queueFamilyIndex, VK_QUEUE_FAMILY_FOREIGN_EXT),
+        makeImageBarrier(swapchainImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT),
+        makeImageBarrier(exportedImage.image, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_GENERAL, VK_ACCESS_TRANSFER_READ_BIT, 0, m_queueFamilyIndex, VK_QUEUE_FAMILY_FOREIGN_EXT),
     } };
     m_deviceTable.vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, nullptr, 0, nullptr, postBlitBarriers.size(), postBlitBarriers.data());
 
@@ -635,7 +880,7 @@ void OpenXRGraphicsBindingVulkan::commitFrame(uint64_t keyImage, const OpenXRSwa
     m_deviceTable.vkWaitForFences(m_vkDevice, 1, &exportedImage.inFlightFence, VK_TRUE, UINT64_MAX);
     m_deviceTable.vkResetFences(m_vkDevice, 1, &exportedImage.inFlightFence);
 
-    // Import the web process' render-completion fence (stashed by waitFrameFence()) into this image's semaphore so the blit can
+    // Import the WebProcess render-completion fence (stashed by waitFrameFence()) into this image's semaphore so the copy can
     // wait on it on the GPU. SYNC_FD payloads are temporary and consumed by the wait, and the fence wait above guarantees the
     // previous wait on this semaphore has already executed, so re-importing here is safe.
     bool waitOnAcquireFence = false;
@@ -666,7 +911,8 @@ void OpenXRGraphicsBindingVulkan::commitFrame(uint64_t keyImage, const OpenXRSwa
     }
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &exportedImage.commandBuffer;
-    m_deviceTable.vkQueueSubmit(m_vkQueue, 1, &submitInfo, exportedImage.inFlightFence);
+    if (auto submitResult = m_deviceTable.vkQueueSubmit(m_vkQueue, 1, &submitInfo, exportedImage.inFlightFence); submitResult != VK_SUCCESS)
+        RELEASE_LOG(XR, "OpenXR Vulkan: vkQueueSubmit failed (%d)", submitResult);
 }
 
 void OpenXRGraphicsBindingVulkan::waitFrameFence(WTF::UnixFileDescriptor&& fenceFD)

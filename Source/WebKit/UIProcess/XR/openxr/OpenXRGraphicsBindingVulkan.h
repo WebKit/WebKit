@@ -41,6 +41,9 @@ typedef void (*(*PFNEGLGETPROCADDRESSPROC)(const char *))(void);
 
 #if OS(ANDROID)
 #include <jni.h>
+#ifndef VK_USE_PLATFORM_ANDROID_KHR
+#define VK_USE_PLATFORM_ANDROID_KHR 1
+#endif
 #endif
 
 #if defined(XR_USE_GRAPHICS_API_VULKAN)
@@ -94,7 +97,14 @@ private:
         VkSemaphore acquireSemaphore { VK_NULL_HANDLE };
     };
 
-    std::optional<PlatformXR::FrameData::ExternalTexture> exportTexture2D(uint64_t swapchainImage, const OpenXRSwapchain&, uint32_t width, uint32_t height);
+#if USE(GBM)
+    std::optional<PlatformXR::FrameData::ExternalTexture> exportImageAsDMABuf(uint64_t image, const OpenXRSwapchain&, uint32_t width, uint32_t height);
+    Vector<VkDrmFormatModifierPropertiesEXT> supportedExportDRMModifiers(VkFormat, VkImageUsageFlags) const;
+#endif
+#if OS(ANDROID)
+    std::optional<PlatformXR::FrameData::ExternalTexture> exportImageAsAHardwareBuffer(uint64_t image, const OpenXRSwapchain&, uint32_t width, uint32_t height);
+#endif
+    bool createExportedImageSyncObjects(ExportedImage&);
     bool recordBlitCommandBuffer(ExportedImage&, VkImage swapchainImage);
     void destroyExportedImage(ExportedImage&);
 
@@ -118,6 +128,10 @@ private:
     uint32_t m_queueFamilyIndex { 0 };
     VkQueue m_vkQueue { VK_NULL_HANDLE };
     VkCommandPool m_commandPool { VK_NULL_HANDLE };
+
+#if USE(GBM)
+    bool m_supportsDRMModifiers { false };
+#endif
 
     // The WebProcess render completion fence, stashed by waitFrameFence() and consumed by the next
     // commitFrame(), which imports it into the just acquired image's acquireSemaphore. waitFrameFence() does not know which
