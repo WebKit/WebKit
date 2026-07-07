@@ -141,6 +141,32 @@ Test2 [ Skip ]''')
         self.assertTrue(exp.skip)
         self.assertIn(FAIL, exp.expected)
 
+    def test_fix_reorders_alphabetically(self):
+        manager = ExpectationsManager()
+        manager.load_content('exp.txt', 'TestZ [ Fail ]\nTestA [ Fail ]')
+
+        fixed = manager.fix()
+        lines = [line for line in fixed['exp.txt'].split('\n') if line.strip()]
+        self.assertIn('TestA', lines[0])
+        self.assertIn('TestZ', lines[1])
+
+    def test_fix_normalizes_configuration_order(self):
+        manager = ExpectationsManager()
+        manager.load_content('exp.txt', '[ arm64 mac ] TestWebKitAPI.WTF.Test [ Fail ]')
+
+        fixed = manager.fix()
+        self.assertIn('[ mac arm64 ]', fixed['exp.txt'])
+
+    def test_fix_is_idempotent(self):
+        manager = ExpectationsManager()
+        manager.load_content('exp.txt', 'TestZ [ Fail ]\nTestA [ Fail ]')
+        once = manager.fix()['exp.txt']
+
+        manager_again = ExpectationsManager()
+        manager_again.load_content('exp.txt', once)
+        twice = manager_again.fix()['exp.txt']
+        self.assertEqual(once, twice)
+
 
 class ExpectationsManagerMultiSuiteTest(unittest.TestCase):
 

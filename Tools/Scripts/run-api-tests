@@ -61,7 +61,7 @@ def main(argv, stdout, stderr):
         print('{} cannot run API tests'.format(port.operating_system()), file=stderr)
         return EXCEPTIONAL_EXIT_STATUS
 
-    if options.lint_test_files:
+    if options.lint_test_files or options.fix_expectations:
         return lint_expectations(port, options, args, stderr)
 
     if options.print_expectations:
@@ -85,11 +85,18 @@ def main(argv, stdout, stderr):
 
 
 def lint_expectations(port, options, args, logging_stream):
-    print('Linting API test expectations...', file=logging_stream)
-
     expectations = APITestExpectations(port)
     expectations.parse_all_expectations()
 
+    if options.fix_expectations:
+        print('Fixing API test expectations...', file=logging_stream)
+        changed = expectations.fix()
+        for filepath in changed:
+            print('  Fixed {}'.format(filepath), file=logging_stream)
+        print('\n{} file(s) fixed.'.format(len(changed)) if changed else 'No fixes needed.', file=logging_stream)
+        return 0
+
+    print('Linting API test expectations...', file=logging_stream)
     warnings = expectations.lint()
 
     if warnings:
@@ -241,6 +248,8 @@ def parse_args(args):
                                   "'always' == always skip, even if listed on the command line."),
         optparse.make_option('--lint-test-files', action='store_true', default=False,
                              help='Validate expectations files. Does not run any tests.'),
+        optparse.make_option('--fix-expectations', action='store_true', default=False,
+                             help='Reorganize and reformat API test expectations files (sections, alphabetical order). Does not run any tests.'),
         optparse.make_option('--print-expectations', action='store_true', default=False,
                              help='Print expected outcomes for given tests. Does not run any tests.'),
     ]))

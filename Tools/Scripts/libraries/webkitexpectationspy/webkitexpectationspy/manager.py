@@ -169,6 +169,23 @@ class ExpectationsManager:
 
         return lint_warnings
 
+    def fix(self) -> Dict[str, str]:
+        """Return {filename: fixed_content} for each loaded file.
+
+        Applies in-line fixes (e.g. configuration token order), then reorders
+        entries into the canonical sections sorted alphabetically.
+        """
+        fixed = {}
+        for filename, content in self._loaded_files:
+            linter = ExpectationsLinter(content, filename, self._suite)
+            linter.lint()
+            content = linter.apply_fixes()
+
+            linter = ExpectationsLinter(content, filename, self._suite)
+            linter.lint()
+            fixed[filename] = linter.generate_sorted_content()
+        return fixed
+
     def all_expectations(self):
         return self._model.all_expectations()
 

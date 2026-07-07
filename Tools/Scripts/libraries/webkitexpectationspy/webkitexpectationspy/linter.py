@@ -23,8 +23,9 @@
 """Linter for test expectations files with 3-section sorting and auto-fix support.
 
 Sections are ordered:
-  0 - Unannotated: no bug IDs and no inline comment
-  1 - Commented:   has an inline ``# comment`` but no bug IDs
+  0 - Unannotated: no bug IDs and no comment
+  1 - Commented:   has a comment (an inline ``# comment`` or a header comment
+                   line directly above it) but no bug IDs
   2 - Bug-tracked: has ANY bug ID (rdar://, webkit.org/b/, Bug())
 
 Within each section, entries are sorted by:
@@ -86,10 +87,10 @@ def _line_has_inline_comment(line: str) -> bool:
     return len(line[:idx].strip()) > 0
 
 
-def _classify_section(line: str) -> int:
-    if _line_has_bug_id(line):
+def _entry_section(entry) -> int:
+    if _line_has_bug_id(entry['raw_line']):
         return 2
-    if _line_has_inline_comment(line):
+    if entry['has_header_comment'] or _line_has_inline_comment(entry['raw_line']):
         return 1
     return 0
 
@@ -174,8 +175,7 @@ class SectionOrderingRule(LintRule):
         prev_key = None
         prev_entry = None
         for entry in entries:
-            raw_line = entry['raw_line']
-            section = _classify_section(raw_line)
+            section = _entry_section(entry)
             is_wildcard = entry['test_pattern'].endswith('*')
             key = (section, 0 if is_wildcard else 1, entry['test_pattern'].lower())
 
@@ -405,61 +405,109 @@ class ExpectationsLinter:
     def generate_sorted_content(self) -> str:
         """Generate a full-file reorder producing correct 3-section ordering.
 
-        The file prologue (license/format header at the top of the file) is
-        preserved in place. Only consecutive comment lines immediately above
-        an entry — with no blank line between them — are treated as attached
-        to that entry and travel with it during sorting.
+        The file prologue (license/format header) is preserved and normalized
+        to end with a single blank line. A run of comment lines followed by one
+        or more contiguous entries forms a comment-headed group whose members
+        travel together during sorting, so a shared header is never split from
+        its entries. A header that only restates a bug ID already present on
+        every entry it heads is dropped as redundant. Sections and comment
+        groups are separated by a single blank line, and the file always ends
+        with a trailing newline.
         """
-        groups = []
-        attached_comments = []
-        entry_index = 0
+        if not self._parsed_entries:
+            return self._content if self._content.endswith('\n') else self._content + '\n'
 
-        prologue_end = 0
-        first_entry_line = self._parsed_entries[0]['line_number'] if self._parsed_entries else None
-        if first_entry_line is not None:
-            i = first_entry_line - 2  # index of line immediately above the first entry
-            while i >= 0 and self._lines[i].strip().startswith('#'):
-                i -= 1
-            prologue_end = i + 1  # everything up to (but not including) the attached-comment block stays as prologue
-
-        prologue_lines = self._lines[:prologue_end]
-
-        for idx in range(prologue_end, len(self._lines)):
-            line = self._lines[idx]
-            line_num = idx + 1
-            is_entry = any(e['line_number'] == line_num for e in self._parsed_entries)
-            if is_entry:
-                entry = self._parsed_entries[entry_index]
-                entry_index += 1
-                groups.append((list(attached_comments), line, entry))
-                attached_comments = []
-            elif line.strip().startswith('#'):
-                attached_comments.append(line)
-            else:
-                # Blank or non-comment line breaks the attached-comment chain.
-                attached_comments = []
-
-        def sort_key(group):
-            _, raw_line, entry = group
-            section = _classify_section(raw_line)
+        def entry_key(pair):
+            _, entry = pair
+            section = _entry_section(entry)
             is_wildcard = entry['test_pattern'].endswith('*')
             return (section, 0 if is_wildcard else 1, entry['test_pattern'].lower())
 
-        sorted_groups = sorted(groups, key=sort_key)
+        ordered_items = []
+        for item in self._group_into_items():
+            item['entries'].sort(key=entry_key)
+            if item['comments'] and all(_line_has_bug_id(raw) for raw, _ in item['entries']):
+                item['comments'] = [c for c in item['comments'] if not _line_has_bug_id(c)]
+            if item['comments']:
+                ordered_items.append(item)
+            else:
+                ordered_items.extend({'comments': [], 'entries': [pair]} for pair in item['entries'])
 
-        result_lines = list(prologue_lines)
-        if result_lines and result_lines[-1].strip():
-            result_lines.append('')
-        for header, entry_line, _ in sorted_groups:
-            result_lines.extend(header)
-            result_lines.append(entry_line)
+        ordered_items.sort(key=lambda item: entry_key(item['entries'][0]))
 
-        return '\n'.join(result_lines)
+        result_lines = self._sorted_content_prologue()
+        prev_section = None
+        prev_had_comments = False
+        for position, item in enumerate(ordered_items):
+            section = _entry_section(item['entries'][0][1])
+            has_comments = bool(item['comments'])
+            if position and (has_comments or prev_had_comments or section != prev_section):
+                result_lines.append('')
+            result_lines.extend(item['comments'])
+            result_lines.extend(raw for raw, _ in item['entries'])
+            prev_section = section
+            prev_had_comments = has_comments
+
+        content = '\n'.join(result_lines)
+        return content if content.endswith('\n') else content + '\n'
+
+    def _prologue_length(self) -> int:
+        """Count of leading header lines (license/format block) before the first group."""
+        index = self._parsed_entries[0]['line_number'] - 2
+        while index >= 0 and self._lines[index].strip().startswith('#'):
+            index -= 1
+        return index + 1
+
+    def _sorted_content_prologue(self) -> List[str]:
+        prologue = self._lines[:self._prologue_length()]
+        while prologue and not prologue[-1].strip():
+            prologue.pop()
+        if prologue:
+            prologue.append('')
+        return prologue
+
+    def _group_into_items(self) -> List[dict]:
+        """Partition post-prologue lines into orderable items.
+
+        Each item is a dict with 'comments' (header lines) and 'entries' (a list
+        of ``(raw_line, parsed_entry)``). A comment run plus the contiguous
+        entries beneath it becomes one group so the header travels with them;
+        entries with no header become individual items. A blank line ends the
+        current group.
+        """
+        entries_by_line = {entry['line_number']: entry for entry in self._parsed_entries}
+        items = []
+        pending_comments = []
+        open_group = None
+        for index in range(self._prologue_length(), len(self._lines)):
+            line = self._lines[index]
+            entry = entries_by_line.get(index + 1)
+            if entry is not None:
+                if pending_comments:
+                    open_group = {'comments': pending_comments, 'entries': [(line, entry)]}
+                    items.append(open_group)
+                    pending_comments = []
+                elif open_group is not None:
+                    open_group['entries'].append((line, entry))
+                else:
+                    items.append({'comments': [], 'entries': [(line, entry)]})
+            elif line.strip().startswith('#'):
+                pending_comments.append(line)
+                open_group = None
+            else:
+                pending_comments = []
+                open_group = None
+        return items
 
     def _parse_all_lines(self):
+        under_header_comment = False
         for line_num, line in enumerate(self._lines, 1):
             stripped = line.strip()
-            if not stripped or stripped.startswith('#'):
+            if not stripped:
+                under_header_comment = False
+                continue
+            if stripped.startswith('#'):
+                under_header_comment = True
                 continue
 
             config_tokens = []
@@ -513,4 +561,5 @@ class ExpectationsLinter:
                     'test_pattern': test_pattern,
                     'expectations': expectations,
                     'inline_comment': inline_comment,
+                    'has_header_comment': under_header_comment,
                 })

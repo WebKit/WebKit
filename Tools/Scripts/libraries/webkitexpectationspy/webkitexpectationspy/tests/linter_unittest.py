@@ -182,5 +182,93 @@ TestA [ Fail ]'''
         self.assertTrue(any('section' in w.message or 'unannotated' in w.message for w in warnings))
 
 
+class SortedContentFormattingTest(unittest.TestCase):
+    """Formatting rules for generate_sorted_content: newline, blank lines, comment groups."""
+
+    def _sorted(self, content):
+        linter = ExpectationsLinter(content, 'test.txt')
+        linter.lint()
+        return linter.generate_sorted_content()
+
+    def test_output_ends_with_newline(self):
+        self.assertTrue(self._sorted('TestA [ Fail ]').endswith('\n'))
+
+    def test_blank_line_between_sections(self):
+        lines = self._sorted('webkit.org/b/1 TestZ [ Fail ]\nTestA [ Fail ]').split('\n')
+        a_index = next(i for i, line in enumerate(lines) if 'TestA' in line)
+        z_index = next(i for i, line in enumerate(lines) if 'TestZ' in line)
+        self.assertLess(a_index, z_index)
+        self.assertTrue(any(not lines[i].strip() for i in range(a_index + 1, z_index)))
+
+    def test_group_comment_stays_with_its_entries(self):
+        content = '''# webkit.org/b/1 [ iOS ] Foo.* are flaky
+[ ios ] Foo.BbbTest [ Crash ]
+[ ios ] Foo.AaaTest [ Crash ]'''
+        non_empty = [line for line in self._sorted(content).split('\n') if line.strip()]
+        self.assertEqual(non_empty[0], '# webkit.org/b/1 [ iOS ] Foo.* are flaky')
+        self.assertIn('Foo.AaaTest', non_empty[1])
+        self.assertIn('Foo.BbbTest', non_empty[2])
+
+    def test_removes_redundant_bug_group_comment(self):
+        content = '''# webkit.org/b/2 Grp.* are constant timeouts
+webkit.org/b/2 [ mac ] Grp.Bbb [ Timeout ]
+webkit.org/b/2 [ mac ] Grp.Aaa [ Timeout ]'''
+        non_empty = [line for line in self._sorted(content).split('\n') if line.strip()]
+        self.assertFalse(any(line.startswith('#') for line in non_empty))
+        self.assertIn('Grp.Aaa', non_empty[0])
+        self.assertIn('Grp.Bbb', non_empty[1])
+
+    def test_keeps_group_comment_when_entries_lack_bug_id(self):
+        content = '''# webkit.org/b/3 Grp.* are flaky
+[ mac ] Grp.Aaa [ Crash ]'''
+        non_empty = [line for line in self._sorted(content).split('\n') if line.strip()]
+        self.assertEqual(non_empty[0], '# webkit.org/b/3 Grp.* are flaky')
+        self.assertIn('Grp.Aaa', non_empty[1])
+
+    def test_blank_line_around_comment_group(self):
+        content = '''# note about group
+[ mac ] Grp.One [ Skip ]
+
+TestZebra [ Fail ]'''
+        lines = self._sorted(content).split('\n')
+        zebra_index = next(i for i, line in enumerate(lines) if 'TestZebra' in line)
+        one_index = next(i for i, line in enumerate(lines) if 'Grp.One' in line)
+        self.assertLess(zebra_index, one_index)
+        self.assertTrue(any(not lines[i].strip() for i in range(zebra_index + 1, one_index)))
+
+    def test_uncommented_entry_precedes_commented_group(self):
+        content = '''# webkit.org/b/1 Grp.* are flaky
+[ mac ] Grp.Aaa [ Crash ]
+
+TestZebra [ Fail ]'''
+        non_empty = [line for line in self._sorted(content).split('\n') if line.strip()]
+        self.assertIn('TestZebra', non_empty[0])
+        self.assertEqual(non_empty[1], '# webkit.org/b/1 Grp.* are flaky')
+        self.assertIn('Grp.Aaa', non_empty[2])
+
+    def test_prologue_blank_lines_normalized(self):
+        content = '''# License header
+
+
+
+TestA [ Fail ]'''
+        lines = self._sorted(content).split('\n')
+        self.assertEqual(lines[0], '# License header')
+        self.assertEqual(lines[1], '')
+        self.assertTrue(lines[2].startswith('TestA'))
+
+    def test_generate_sorted_content_is_idempotent(self):
+        content = '''# webkit.org/b/1 Grp.* are flaky
+[ mac ] Grp.Bbb [ Crash ]
+[ mac ] Grp.Aaa [ Crash ]
+
+webkit.org/b/9 TestZzz [ Failure ]
+rdar://5 TestAaa [ Skip ]'''
+        once = self._sorted(content)
+        relinter = ExpectationsLinter(once, 'test.txt')
+        relinter.lint()
+        self.assertEqual(once, relinter.generate_sorted_content())
+
+
 if __name__ == '__main__':
     unittest.main()
