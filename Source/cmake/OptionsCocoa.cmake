@@ -60,31 +60,33 @@ find_package(Threads REQUIRED)
 
 # Replace the SDK's availability headers with stubs that defuse availability
 # checks.
-set(_availability_overlay_dir "${CMAKE_SOURCE_DIR}/WebKitLibraries/AvailabilityOverlay")
-set(_availability_overlay_yaml "${CMAKE_BINARY_DIR}/availability-overlay.yaml")
-file(WRITE "${_availability_overlay_yaml}.tmp"
-"{
-  \"version\": 0,
-  \"case-sensitive\": false,
-  \"roots\": [
-    {
-      \"name\": \"${CMAKE_OSX_SYSROOT}/usr/include/os/availability.h\",
-      \"type\": \"file\",
-      \"external-contents\": \"${_availability_overlay_dir}/usr/include/os/availability.h\"
-    },
-    {
-      \"name\": \"${CMAKE_OSX_SYSROOT}/usr/include/Availability.h\",
-      \"type\": \"file\",
-      \"external-contents\": \"${_availability_overlay_dir}/usr/include/Availability.h\"
+if (NOT USE_APPLE_INTERNAL_SDK)
+    set(_availability_overlay_dir "${CMAKE_SOURCE_DIR}/WebKitLibraries/AvailabilityOverlay")
+    set(_availability_overlay_yaml "${CMAKE_BINARY_DIR}/availability-overlay.yaml")
+    file(WRITE "${_availability_overlay_yaml}.tmp"
+    "{
+      \"version\": 0,
+      \"case-sensitive\": false,
+      \"roots\": [
+        {
+          \"name\": \"${CMAKE_OSX_SYSROOT}/usr/include/os/availability.h\",
+          \"type\": \"file\",
+          \"external-contents\": \"${_availability_overlay_dir}/usr/include/os/availability.h\"
+        },
+        {
+          \"name\": \"${CMAKE_OSX_SYSROOT}/usr/include/Availability.h\",
+          \"type\": \"file\",
+          \"external-contents\": \"${_availability_overlay_dir}/usr/include/Availability.h\"
+        }
+      ]
     }
-  ]
-}
-")
-file(COPY_FILE "${_availability_overlay_yaml}.tmp" ${_availability_overlay_yaml} ONLY_IF_DIFFERENT)
-add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:SHELL:-ivfsoverlay ${_availability_overlay_yaml}>")
-add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-vfsoverlay ${_availability_overlay_yaml}>")
-unset(_availability_overlay_dir)
-unset(_availability_overlay_yaml)
+    ")
+    file(COPY_FILE "${_availability_overlay_yaml}.tmp" ${_availability_overlay_yaml} ONLY_IF_DIFFERENT)
+    add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:SHELL:-ivfsoverlay ${_availability_overlay_yaml}>")
+    add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-vfsoverlay ${_availability_overlay_yaml}>")
+    unset(_availability_overlay_dir)
+    unset(_availability_overlay_yaml)
+endif ()
 
 if (EXISTS "/usr/local/include/WebKitAdditions" AND NOT EXISTS "/usr/local/include/AppleFeatures/AppleFeatures.h")
     set(_apple_features_stub "${CMAKE_BINARY_DIR}/generated-stubs/AppleFeatures")
