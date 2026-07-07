@@ -407,11 +407,14 @@ void RemoteGraphicsContext::drawFilteredImageBuffer(std::optional<RenderingResou
     drawFilteredImageBufferInternal(sourceImageIdentifier, sourceImageRect, *cachedSVGFilter, results);
 }
 
-void RemoteGraphicsContext::drawGlyphs(RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<GlyphBufferGlyph, FloatSize> glyphsAdvances, FloatPoint localAnchor, FontSmoothingMode fontSmoothingMode)
+void RemoteGraphicsContext::drawGlyphs(RenderingResourceIdentifier fontIdentifier, IPC::UnsafeSpanTuple<GlyphBufferGlyph, FloatSize> glyphsAdvances, FloatPoint localAnchor, FontSmoothingMode fontSmoothingMode)
 {
     RefPtr font = resourceCache().cachedFont(fontIdentifier);
     MESSAGE_CHECK(font);
     Vector<GlyphBufferGlyph, 128> glyphs { glyphsAdvances.span<0>() };
+    // Needed FloatSize -> GlyphBufferAdvance, copy here.
+    // After adding correct GlyphBufferAdvance serializer, make the argument
+    // IPC::SpanTuple<GlyphBufferGlyph, GlyphBufferAdvance>.
     Vector<GlyphBufferAdvance, 128> advances { glyphsAdvances.span<1>() };
     context().drawGlyphs(*font, glyphs.span(), advances.span(), localAnchor, fontSmoothingMode);
 }

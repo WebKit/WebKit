@@ -529,7 +529,7 @@
 
 #include "APIObject.h"
 #include "ArgumentCoders.h"
-#include "ArrayReferenceTuple.h"
+#include "UnsafeSpanTuple.h"
 #include "Attachment.h"
 #if PLATFORM(COCOA)
 #include "ClassStructPtr.h"

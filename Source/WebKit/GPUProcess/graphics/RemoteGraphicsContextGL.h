@@ -142,12 +142,12 @@ protected:
     void getBufferSubDataSharedMemory(uint32_t target, uint64_t offset, uint64_t dataSize, WebCore::SharedMemory::Handle, CompletionHandler<void(bool)>&&);
     void readPixelsInline(WebCore::IntRect, uint32_t format, uint32_t type, bool packReverseRowOrder, CompletionHandler<void(std::optional<WebCore::IntSize>, std::span<const uint8_t>)>&&);
     void readPixelsSharedMemory(WebCore::IntRect, uint32_t format, uint32_t type, bool packReverseRowOrder, WebCore::SharedMemory::Handle, CompletionHandler<void(std::optional<WebCore::IntSize>)>&&);
-    void multiDrawArraysANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t>&& firstsAndCounts);
-    void multiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t>&& firstsCountsAndInstanceCounts);
-    void multiDrawElementsANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t>&& countsAndOffsets, uint32_t type);
-    void multiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t>&& countsOffsetsAndInstanceCounts, uint32_t type);
-    void multiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t>&& firstsCountsInstanceCountsAndBaseInstances);
-    void multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t>&& countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type);
+    void multiDrawArraysANGLE(uint32_t mode, IPC::SpanTuple<int32_t, int32_t>&& firstsAndCounts);
+    void multiDrawArraysInstancedANGLE(uint32_t mode, IPC::SpanTuple<int32_t, int32_t, int32_t>&& firstsCountsAndInstanceCounts);
+    void multiDrawElementsANGLE(uint32_t mode, IPC::SpanTuple<int32_t, int32_t>&& countsAndOffsets, uint32_t type);
+    void multiDrawElementsInstancedANGLE(uint32_t mode, IPC::SpanTuple<int32_t, int32_t, int32_t>&& countsOffsetsAndInstanceCounts, uint32_t type);
+    void multiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::SpanTuple<int32_t, int32_t, int32_t, uint32_t>&& firstsCountsInstanceCountsAndBaseInstances);
+    void multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::SpanTuple<int32_t, int32_t, int32_t, int32_t, uint32_t>&& countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type);
     void drawBuffers(std::span<const uint32_t>);
     void drawBuffersEXT(std::span<const uint32_t>);
     void invalidateFramebuffer(uint32_t target, std::span<const uint32_t> attachments);

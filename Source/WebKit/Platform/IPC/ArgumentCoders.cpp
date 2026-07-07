@@ -60,8 +60,8 @@ void ArgumentCoder<String>::encode<StreamConnectionEncoder>(StreamConnectionEnco
 template<typename CharacterType, typename Decoder>
 static inline std::optional<String> decodeStringText(Decoder& decoder, unsigned length)
 {
-    auto data = decoder.template decodeSpan<CharacterType>(length);
-    if (!data.data())
+    auto data = decoder.template decodeSpanInPlace<CharacterType>(length);
+    if (!decoder.isValid())
         return std::nullopt;
     return std::make_optional<String>(data);
 }

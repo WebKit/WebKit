@@ -96,7 +96,8 @@ TRANSPARENT_CONTAINERS = {
     "std::tuple": {"check_params": "all", "propagate_context": False},
     "KeyValuePair": {"check_params": "all", "propagate_context": False},
     "OptionalTuple": {"check_params": "all", "propagate_context": False},
-    "IPC::ArrayReferenceTuple": {"check_params": "all", "propagate_context": False},
+    "IPC::UnsafeSpanTuple": {"check_params": "all", "propagate_context": False},
+    "IPC::SpanTuple": {"check_params": "all", "propagate_context": False},
 
     "std::unique_ptr": {"check_params": "first", "propagate_context": False},
     "UniqueRef": {"check_params": "first", "propagate_context": False},

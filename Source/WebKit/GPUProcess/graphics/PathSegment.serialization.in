@@ -93,7 +93,7 @@ header: <WebCore/PathSegmentData.h>
 };
 
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathDataLine {
-    std::span<const float, 4> span();
+    IPC::UnsafeSpan<const float, 4> span();
 };
 
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathDataLineColorThickness {

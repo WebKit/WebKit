@@ -59,6 +59,10 @@ public:
     template<typename T, size_t Extent>
     bool encodeSpan(std::span<T, Extent> span)
     {
+        // An empty span encodes nothing, not even alignment padding, to match the decoder side
+        // (Decoder::decodeSpanInPlace returns early for size 0 without consuming/aligning).
+        if (span.empty())
+            return true;
         auto bytes = asBytes(span);
         size_t alignAdvance = distanceToMultipleOf<alignof(T)>(reinterpret_cast<uintptr_t>(m_buffer.data()));
         auto requiredSize = alignAdvance + bytes.size();

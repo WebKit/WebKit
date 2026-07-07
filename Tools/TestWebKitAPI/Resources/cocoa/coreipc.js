@@ -386,7 +386,7 @@ class ArgumentSerializer {
         throw new SerializationError('argument of vector-type is not an array');
     }
 
-    static serializeArrayReferenceTuple(innerType, argument) {
+    static serializeUnsafeSpanTuple(innerType, argument) {
         const innerTypes = ArgumentSerializer.splitTemplateType(innerType);
         if (Array.isArray(argument)) {
             if (argument.length != innerTypes.length) {
@@ -395,7 +395,7 @@ class ArgumentSerializer {
             let allOfSameSize = argument.every((element) => argument[0].length == element.length);
             if (!allOfSameSize) {
                 let sizes = argument.map(element => element.length);
-                throw new SerializationError(`ArrayReferenceTuple array elements must be have the same size: ${ sizes }`);
+                throw new SerializationError(`UnsafeSpanTuple array elements must be have the same size: ${ sizes }`);
             }
             const result = [];
             for(let i=0; i<innerTypes.length; i++) {
@@ -409,7 +409,7 @@ class ArgumentSerializer {
             }
             return [{value: argument[0].length, type: 'uint64_t'}, result]
         }
-        throw new SerializationError('argument of ArrayReferenceTuple is not an array');
+        throw new SerializationError('argument of UnsafeSpanTuple is not an array');
     }
 
     static serializeHashSet(innerType, argument) {
@@ -560,8 +560,8 @@ class ArgumentSerializer {
                     return ArgumentSerializer.serializeVector(innerType, argument, false);
                 case 'std::span':
                     return ArgumentSerializer.serializeVector(innerType, argument, true);
-                case 'IPC::ArrayReferenceTuple':
-                    return ArgumentSerializer.serializeArrayReferenceTuple(innerType, argument);
+                case 'IPC::UnsafeSpanTuple':
+                    return ArgumentSerializer.serializeUnsafeSpanTuple(innerType, argument);
                 case 'std::array':
                     return ArgumentSerializer.serializeStdArray(innerType, argument);
                 case 'HashSet':

@@ -71,7 +71,7 @@ enum class WebCore::ScrollbarRevealBehavior : bool;
 }
 
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::AffineTransform {
-    std::span<const double, 6> span();
+    IPC::UnsafeSpan<const double, 6> span();
 }
 
 [WebKitPlatform] class WebCore::DoublePoint {
@@ -2409,7 +2409,7 @@ header: <WebCore/PixelBuffer.h>
 [AdditionalEncoder=StreamConnectionEncoder, CreateUsing=create, CustomHeader] class WebCore::PixelBufferSourceView {
     WebCore::PixelBufferFormat format();
     WebCore::IntSize size();
-    std::span<const uint8_t> bytes();
+    IPC::UnsafeSpan<const uint8_t> bytes();
 };
 
 [AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::SystemImage subclasses {

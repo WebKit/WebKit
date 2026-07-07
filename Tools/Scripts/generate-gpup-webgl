@@ -147,12 +147,12 @@ messages -> RemoteGraphicsContextGL Stream {{
     void GetBufferSubDataSharedMemory(uint32_t target, uint64_t offset, uint64_t dataSize, WebCore::SharedMemory::Handle handle) -> (bool valid) Synchronous NotStreamEncodable
     void ReadPixelsInline(WebCore::IntRect rect, uint32_t format, uint32_t type, bool packReverseRowOrder) -> (std::optional<WebCore::IntSize> readArea, std::span<const uint8_t> data) Synchronous
     void ReadPixelsSharedMemory(WebCore::IntRect rect, uint32_t format, uint32_t type, bool packReverseRowOrder, WebCore::SharedMemory::Handle handle) -> (std::optional<WebCore::IntSize> readArea) Synchronous NotStreamEncodable
-    void MultiDrawArraysANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> firstsAndCounts)
-    void MultiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> firstsCountsAandInstanceCounts)
-    void MultiDrawElementsANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> countsAndOffsets, uint32_t type)
-    void MultiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> countsOffsetsAndInstanceCounts, uint32_t type)
-    void MultiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t> firstsCountsInstanceCountsAndBaseInstances)
-    void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
+    void MultiDrawArraysANGLE(uint32_t mode, IPC::SpanTuple<int32_t, int32_t> firstsAndCounts)
+    void MultiDrawArraysInstancedANGLE(uint32_t mode, IPC::SpanTuple<int32_t, int32_t, int32_t> firstsCountsAandInstanceCounts)
+    void MultiDrawElementsANGLE(uint32_t mode, IPC::SpanTuple<int32_t, int32_t> countsAndOffsets, uint32_t type)
+    void MultiDrawElementsInstancedANGLE(uint32_t mode, IPC::SpanTuple<int32_t, int32_t, int32_t> countsOffsetsAndInstanceCounts, uint32_t type)
+    void MultiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::SpanTuple<int32_t, int32_t, int32_t, uint32_t> firstsCountsInstanceCountsAndBaseInstances)
+    void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::SpanTuple<int32_t, int32_t, int32_t, int32_t, uint32_t> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
     void DrawBuffers(std::span<const uint32_t> bufs) StreamBatched
     void DrawBuffersEXT(std::span<const uint32_t> bufs) StreamBatched
     void InvalidateFramebuffer(uint32_t target, std::span<const uint32_t> attachments)
@@ -600,9 +600,11 @@ def webkit_ipc_get_span_transfer_type(type: cpp_type_container) -> cpp_type:
     element_type = type.get_contained_type().get_decay_type()
     arity = type.get_arity()
     webkit_ipc_element_type = webkit_ipc_types[element_type] if not element_type.is_void() else get_cpp_type("uint8_t")
+    # UnsafeSpan is decoded in place (no stream copy). The receiver obtains the std::span with an
+    # explicit .span() call.
     if arity is not None:
-        return get_cpp_type(f"std::span<const {str(webkit_ipc_element_type)}, {arity}>")
-    return get_cpp_type(f"std::span<const {str(webkit_ipc_element_type)}>")
+        return get_cpp_type(f"IPC::UnsafeSpan<const {str(webkit_ipc_element_type)}, {arity}>")
+    return get_cpp_type(f"IPC::UnsafeSpan<const {str(webkit_ipc_element_type)}>")
 
 
 def webkit_ipc_get_span_store_type(type: cpp_type_container) -> cpp_type:
@@ -956,7 +958,7 @@ class webkit_ipc_cpp_proxy_impl(object):
                 self.out_exprs += [cpp_expr(v.type, v.name)]
                 if o.type.is_dynamic_span():
                     self.in_exprs += [cpp_expr(get_cpp_type("size_t"), f"{o.name}.size()")]
-                self.post_call_stmts += [f"memcpySpan({o.name}, {v.name});"]
+                self.post_call_stmts += [f"memcpySpan({o.name}, {v.name}.span());"]
             else:
                 self.out_exprs += [cpp_expr(o.type, o.name)]
 
@@ -1423,6 +1425,9 @@ def main():
             webkit_ipc_types[cpp_type] = transfer_type.get_value_type()
             store_type = webkit_ipc_get_span_store_type(cpp_type)
             webkit_ipc_types_converters[(store_type, transfer_type)] = cpp_array_reinterpret_cast_conversion
+            # Receiver obtains the ANGLE span from the decoded UnsafeSpan via an explicit .span()
+            # (cpp_array_reinterpret_cast_conversion's non-array branch), reinterpreting the element.
+            webkit_ipc_types_converters[(transfer_type.get_value_type(), cpp_type)] = cpp_array_reinterpret_cast_conversion
         elif cpp_type.is_reference() or cpp_type.is_const_reference() or cpp_type.is_container():
             value_type = cpp_type.get_value_type() if not cpp_type.is_container() else cpp_type
             if value_type.is_container():
