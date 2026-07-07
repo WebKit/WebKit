@@ -49,18 +49,6 @@ test/built-ins/Uint8Array/prototype/setFromBase64/trailing-garbage-empty.js:
 test/built-ins/Uint8Array/prototype/setFromBase64/trailing-garbage.js:
   default: 'SyntaxError: Uint8Array.prototype.setFromBase64 requires a valid base64 string'
   strict mode: 'SyntaxError: Uint8Array.prototype.setFromBase64 requires a valid base64 string'
-test/intl402/NumberFormat/prototype/format/unit-ja-JP.js:
-  default: 'Test262Error: Expected SameValue(«"時速-987キロメートル"», «"時速 -987 キロメートル"») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«"時速-987キロメートル"», «"時速 -987 キロメートル"») to be true'
-test/intl402/NumberFormat/prototype/format/unit-zh-TW.js:
-  default: 'Test262Error: Expected SameValue(«"-987公里/小時"», «"-987 公里/小時"») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«"-987公里/小時"», «"-987 公里/小時"») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/unit-ja-JP.js:
-  default: 'Test262Error: undefined: length Expected SameValue(«4», «6») to be true'
-  strict mode: 'Test262Error: undefined: length Expected SameValue(«4», «6») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/unit-zh-TW.js:
-  default: 'Test262Error: undefined: length Expected SameValue(«3», «4») to be true'
-  strict mode: 'Test262Error: undefined: length Expected SameValue(«3», «4») to be true'
 test/language/destructuring/binding/keyed-destructuring-property-reference-target-evaluation-order-with-bindings.js:
   default: 'Test262Error: Actual [binding::source, binding::sourceKey, sourceKey, get source, binding::defaultValue, binding::varTarget] and expected [binding::source, binding::sourceKey, sourceKey, binding::varTarget, get source, binding::defaultValue] should have the same contents. '
 test/language/eval-code/direct/arrow-fn-body-cntns-arguments-func-decl-arrow-func-declare-arguments-assign-incl-def-param-arrow-arguments.js:
@@ -162,15 +150,6 @@ test/staging/sm/ArrayBuffer/slice-species.js:
 test/staging/sm/Date/two-digit-years.js:
   default: 'Test262Error: Expected SameValue(«NaN», «957164400000») to be true'
   strict mode: 'Test262Error: Expected SameValue(«NaN», «957164400000») to be true'
-test/staging/sm/Error/constructor-proto.js:
-  default: 'Test262Error: Expected SameValue(«function () {'
-  strict mode: 'Test262Error: Expected SameValue(«function () {'
-test/staging/sm/Error/prototype-properties.js:
-  default: 'Test262Error: Expected SameValue(«"constructor,message,name,toString"», «"constructor,message,name"») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«"constructor,message,name,toString"», «"constructor,message,name"») to be true'
-test/staging/sm/Error/prototype.js:
-  default: 'Test262Error: Expected SameValue(«[object Object]», «Error») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object Object]», «Error») to be true'
 test/staging/sm/Function/arguments-parameter-shadowing.js:
   default: 'Test262Error: Expected SameValue(«true», «false») to be true'
 test/staging/sm/Function/function-name-assignment.js:
