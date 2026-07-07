@@ -1,4 +1,4 @@
-// @requireOptions("--useConcurrentJIT=0", "--useZombieMode=1", "--slowPathAllocsBetweenGCs=16")
+//@ requireOptions("--useConcurrentJIT=0", "--useZombieMode=1", "--slowPathAllocsBetweenGCs=16")
 
 function opt(s) {
     const o = {};
