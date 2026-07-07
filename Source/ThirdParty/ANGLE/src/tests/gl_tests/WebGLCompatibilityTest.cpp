@@ -5897,57 +5897,78 @@ void WebGLCompatibilityTest::testCompressedTexLevelDimension(GLenum format,
                                                              GLenum expectedError,
                                                              const char *explanation)
 {
+    const bool isBPTC = format == GL_COMPRESSED_RGBA_BPTC_UNORM_EXT ||
+                        format == GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT ||
+                        format == GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT ||
+                        format == GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT;
+
     std::vector<uint8_t> tempVector(expectedByteLength, 0);
 
     EXPECT_GL_NO_ERROR();
 
-    GLTexture sourceTexture;
-    glBindTexture(GL_TEXTURE_2D, sourceTexture);
-    glCompressedTexImage2D(GL_TEXTURE_2D, level, format, width, height, 0, expectedByteLength,
-                           tempVector.data());
-    if (expectedError == 0)
     {
-        EXPECT_GL_NO_ERROR() << explanation;
+        GLTexture sourceTexture;
+        glBindTexture(GL_TEXTURE_2D, sourceTexture);
+        glCompressedTexImage2D(GL_TEXTURE_2D, level, format, width, height, 0, expectedByteLength,
+                               tempVector.data());
+        EXPECT_GL_ERROR(expectedError) << explanation << " (glCompressedTexImage2D)";
     }
-    else
+
+    if (getClientMajorVersion() >= 3)
     {
-        EXPECT_GL_ERROR(expectedError) << explanation;
+        GLTexture sourceTexture;
+        glBindTexture(GL_TEXTURE_2D_ARRAY, sourceTexture);
+        glCompressedTexImage3D(GL_TEXTURE_2D_ARRAY, level, format, width, height, 3, 0,
+                               expectedByteLength * 3, nullptr);
+        EXPECT_GL_ERROR(expectedError) << explanation << "(glCompressedTexImage3D array)";
+    }
+
+    if (isBPTC && getClientMajorVersion() >= 3)
+    {
+        GLTexture sourceTexture;
+        glBindTexture(GL_TEXTURE_3D, sourceTexture);
+        glCompressedTexImage3D(GL_TEXTURE_3D, level, format, width, height, 3, 0,
+                               expectedByteLength * 3, nullptr);
+        EXPECT_GL_ERROR(expectedError) << explanation << "(glCompressedTexImage3D volume)";
     }
 
     if (level == 0 && width > 0)
     {
-        GLTexture sourceTextureStorage;
-        glBindTexture(GL_TEXTURE_2D, sourceTextureStorage);
-
-        if (getClientMajorVersion() >= 3)
         {
-            glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
-            if (expectedError == 0)
+            GLTexture sourceTextureStorage;
+            glBindTexture(GL_TEXTURE_2D, sourceTextureStorage);
+
+            if (getClientMajorVersion() >= 3)
             {
-                EXPECT_GL_NO_ERROR() << explanation << " (texStorage2D)";
+                glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
+                EXPECT_GL_ERROR(expectedError) << explanation << " (texStorage2D)";
             }
             else
             {
-                EXPECT_GL_ERROR(expectedError) << explanation << " (texStorage2D)";
-            }
-        }
-        else
-        {
-            if (IsGLExtensionRequestable("GL_EXT_texture_storage"))
-            {
-                glRequestExtensionANGLE("GL_EXT_texture_storage");
-                ASSERT_TRUE(IsGLExtensionEnabled("GL_EXT_texture_storage"));
-
-                glTexStorage2DEXT(GL_TEXTURE_2D, 1, format, width, height);
-                if (expectedError == 0)
+                if (EnsureGLExtensionEnabled("GL_EXT_texture_storage"))
                 {
-                    EXPECT_GL_NO_ERROR() << explanation << " (texStorage2DEXT)";
-                }
-                else
-                {
+                    glTexStorage2DEXT(GL_TEXTURE_2D, 1, format, width, height);
                     EXPECT_GL_ERROR(expectedError) << explanation << " (texStorage2DEXT)";
                 }
             }
+        }
+
+        if (getClientMajorVersion() >= 3)
+        {
+            GLTexture sourceTextureStorage;
+            glBindTexture(GL_TEXTURE_2D_ARRAY, sourceTextureStorage);
+
+            glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, format, width, height, 3);
+            EXPECT_GL_ERROR(expectedError) << explanation << " (texStorage3D, array)";
+        }
+
+        if (isBPTC && getClientMajorVersion() >= 3)
+        {
+            GLTexture sourceTextureStorage;
+            glBindTexture(GL_TEXTURE_3D, sourceTextureStorage);
+
+            glTexStorage3D(GL_TEXTURE_3D, 1, format, width, height, 3);
+            EXPECT_GL_ERROR(expectedError) << explanation << " (texStorage3D, volume)";
         }
     }
 }
@@ -8070,35 +8091,73 @@ TEST_P(WebGL2CompatibilityTest, UnpackStateValidation)
     const bool hasBC1  = EnsureGLExtensionEnabled("GL_EXT_texture_compression_dxt1");
     const bool hasETC2 = EnsureGLExtensionEnabled("GL_ANGLE_compressed_texture_etc");
     ASSERT(hasBC1 || hasETC2);
-    const GLenum compressedFormat =
+    const GLenum compressed2DFormat =
         hasBC1 ? GL_COMPRESSED_RGB_S3TC_DXT1_EXT : GL_COMPRESSED_RGB8_ETC2;
+
+    // BPTC is used for 3D textures.
+    const bool hasBPTC              = EnsureGLExtensionEnabled("GL_EXT_texture_compression_bptc");
+    const GLenum compressed3DFormat = GL_COMPRESSED_RGBA_BPTC_UNORM_EXT;
 
     auto test = [=](GLenum target, GLint skipPixels, GLint rowLength, GLint skipRows,
                     GLint imageHeight, GLenum error) {
-        ASSERT(target == GL_TEXTURE_2D || target == GL_TEXTURE_2D_ARRAY);
+        ASSERT(target == GL_TEXTURE_2D || target == GL_TEXTURE_3D || target == GL_TEXTURE_2D_ARRAY);
         ASSERT(skipPixels >= 0 && rowLength >= 0 && skipRows >= 0 && imageHeight >= 0);
         ASSERT(error == GL_NO_ERROR || error == GL_INVALID_OPERATION);
 
         constexpr size_t kPixelCount = 8 * 8 * 2;
+        std::vector<GLColor> data(kPixelCount);
 
+        // Settings for compressed tests
+        bool isCompressedSupported = true;
+        GLenum compressedFormat;
+        GLsizei compressedSize;
+        if (target == GL_TEXTURE_2D)
+        {
+            compressedFormat = compressed2DFormat;
+            // For 4x4 BC1/ETC2 texture
+            compressedSize = 8;
+        }
+        else if (target == GL_TEXTURE_2D_ARRAY)
+        {
+            compressedFormat = compressed2DFormat;
+            // For 4x4x2 BC1/ETC2 texture
+            compressedSize = 16;
+        }
+        else
+        {
+            ASSERT(target == GL_TEXTURE_3D);
+            isCompressedSupported = hasBPTC;
+            compressedFormat      = compressed3DFormat;
+            // For 4x4x2 BPTC texture
+            compressedSize = 32;
+        }
+
+        // Set up PBO and texture, and run tests with combinations of PBO/client data and
+        // compressed/uncompressed formats.
         GLBuffer buf;
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buf);
-        glBufferData(GL_PIXEL_UNPACK_BUFFER, kPixelCount * 4, nullptr, GL_STATIC_READ);
+        glBufferData(GL_PIXEL_UNPACK_BUFFER, kPixelCount * 4, data.data(), GL_STATIC_READ);
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
         ASSERT_GL_NO_ERROR();
 
         GLTexture tex;
-        std::vector<GLColor> data(kPixelCount);
+        glBindTexture(target, tex);
+        ASSERT_GL_NO_ERROR();
 
         for (size_t i = 0; i < 4; ++i)
         {
             const bool usePixelUnpackBuffer = i & 1;
             const bool isCompressed         = i & 2;
 
-            glBindBuffer(GL_PIXEL_UNPACK_BUFFER, usePixelUnpackBuffer ? buf.get() : 0);
-            ASSERT_GL_NO_ERROR();
+            if (isCompressed && !isCompressedSupported)
+            {
+                continue;
+            }
 
-            glBindTexture(target, tex);
+            const void *dataPtr =
+                usePixelUnpackBuffer ? nullptr : reinterpret_cast<const void *>(data.data());
+
+            glBindBuffer(GL_PIXEL_UNPACK_BUFFER, usePixelUnpackBuffer ? buf.get() : 0);
             ASSERT_GL_NO_ERROR();
 
             glPixelStorei(GL_UNPACK_ROW_LENGTH, rowLength);
@@ -8109,13 +8168,13 @@ TEST_P(WebGL2CompatibilityTest, UnpackStateValidation)
             {
                 if (target == GL_TEXTURE_2D)
                 {
-                    glCompressedTexImage2D(target, 0, compressedFormat, 4, 4, 0, 8,
-                                           usePixelUnpackBuffer ? nullptr : data.data());
+                    glCompressedTexImage2D(target, 0, compressedFormat, 4, 4, 0, compressedSize,
+                                           dataPtr);
                 }
                 else
                 {
-                    glCompressedTexImage3D(target, 0, compressedFormat, 4, 4, 2, 0, 16,
-                                           usePixelUnpackBuffer ? nullptr : data.data());
+                    glCompressedTexImage3D(target, 0, compressedFormat, 4, 4, 2, 0, compressedSize,
+                                           dataPtr);
                 }
                 EXPECT_GL_NO_ERROR();  // Pixel unpack state must be ignored for compressed formats
             }
@@ -8130,20 +8189,22 @@ TEST_P(WebGL2CompatibilityTest, UnpackStateValidation)
                     glTexImage3D(target, 0, GL_RGBA8, 4, 4, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                                  nullptr);
                 }
-                // When using client memory and passing no data, validation must always succeed
+                // When using client memory and passing no data to TexImage calls, validation must
+                // always succeed.
                 EXPECT_GL_ERROR(usePixelUnpackBuffer ? error : GL_NO_ERROR);
 
                 if (!usePixelUnpackBuffer)
                 {
+                    ASSERT(dataPtr != nullptr);
                     if (target == GL_TEXTURE_2D)
                     {
                         glTexImage2D(target, 0, GL_RGBA8, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                                     data.data());
+                                     dataPtr);
                     }
                     else
                     {
                         glTexImage3D(target, 0, GL_RGBA8, 4, 4, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                                     data.data());
+                                     dataPtr);
                     }
                     EXPECT_GL_ERROR(error);
                 }
@@ -8158,13 +8219,12 @@ TEST_P(WebGL2CompatibilityTest, UnpackStateValidation)
             {
                 if (target == GL_TEXTURE_2D)
                 {
-                    glTexImage2D(target, 0, GL_RGBA8, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                                 usePixelUnpackBuffer ? nullptr : data.data());
+                    glTexImage2D(target, 0, GL_RGBA8, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, dataPtr);
                 }
                 else
                 {
                     glTexImage3D(target, 0, GL_RGBA8, 4, 4, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                                 usePixelUnpackBuffer ? nullptr : data.data());
+                                 dataPtr);
                 }
                 EXPECT_GL_NO_ERROR();
             }
@@ -8178,13 +8238,13 @@ TEST_P(WebGL2CompatibilityTest, UnpackStateValidation)
             {
                 if (target == GL_TEXTURE_2D)
                 {
-                    glCompressedTexSubImage2D(target, 0, 0, 0, 4, 4, compressedFormat, 8,
-                                              usePixelUnpackBuffer ? nullptr : data.data());
+                    glCompressedTexSubImage2D(target, 0, 0, 0, 4, 4, compressedFormat,
+                                              compressedSize, dataPtr);
                 }
                 else
                 {
-                    glCompressedTexSubImage3D(target, 0, 0, 0, 0, 4, 4, 2, compressedFormat, 16,
-                                              usePixelUnpackBuffer ? nullptr : data.data());
+                    glCompressedTexSubImage3D(target, 0, 0, 0, 0, 4, 4, 2, compressedFormat,
+                                              compressedSize, dataPtr);
                 }
                 EXPECT_GL_NO_ERROR();  // Pixel unpack state must be ignored for compressed formats
             }
@@ -8192,13 +8252,12 @@ TEST_P(WebGL2CompatibilityTest, UnpackStateValidation)
             {
                 if (target == GL_TEXTURE_2D)
                 {
-                    glTexSubImage2D(target, 0, 0, 0, 4, 4, GL_RGBA, GL_UNSIGNED_BYTE,
-                                    usePixelUnpackBuffer ? nullptr : data.data());
+                    glTexSubImage2D(target, 0, 0, 0, 4, 4, GL_RGBA, GL_UNSIGNED_BYTE, dataPtr);
                 }
                 else
                 {
                     glTexSubImage3D(target, 0, 0, 0, 0, 4, 4, 2, GL_RGBA, GL_UNSIGNED_BYTE,
-                                    usePixelUnpackBuffer ? nullptr : data.data());
+                                    dataPtr);
                 }
                 EXPECT_GL_ERROR(error);
             }
@@ -8209,9 +8268,9 @@ TEST_P(WebGL2CompatibilityTest, UnpackStateValidation)
     // width must be less than or equal to GL_UNPACK_ROW_LENGTH. If GL_UNPACK_ROW_LENGTH is
     // not set, GL_UNPACK_SKIP_PIXELS must be zero.
 
-    // For 3D targets only: if GL_UNPACK_IMAGE_HEIGHT is set, the sum of GL_UNPACK_SKIP_ROWS and
-    // height must be less than or equal to GL_UNPACK_IMAGE_HEIGHT. If GL_UNPACK_IMAGE_HEIGHT is
-    // not set, GL_UNPACK_SKIP_ROWS must be zero.
+    // For 3D/2D array targets: if GL_UNPACK_IMAGE_HEIGHT is set, the sum of GL_UNPACK_SKIP_ROWS and
+    // height must be less than or equal to GL_UNPACK_IMAGE_HEIGHT. If GL_UNPACK_IMAGE_HEIGHT is not
+    // set, GL_UNPACK_SKIP_ROWS must be zero.
 
     // Test params: (target, skipPixels, rowLength, skipRows, imageHeight, error)
 
@@ -8265,6 +8324,44 @@ TEST_P(WebGL2CompatibilityTest, UnpackStateValidation)
     test(GL_TEXTURE_2D_ARRAY, 0, 3, 0, 3, GL_INVALID_OPERATION);  // 0 + 4 > 3
     test(GL_TEXTURE_2D_ARRAY, 1, 0, 1, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
     test(GL_TEXTURE_2D_ARRAY, 1, 4, 1, 4, GL_INVALID_OPERATION);  // 1 + 4 > 4
+
+    // 3D texture, default
+    test(GL_TEXTURE_3D, 0, 0, 0, 0, GL_NO_ERROR);
+
+    // 3D texture, validated pixel skip and row length
+    test(GL_TEXTURE_3D, 0, 4, 0, 0, GL_NO_ERROR);           // 0 + 4 <= 4
+    test(GL_TEXTURE_3D, 0, 5, 0, 0, GL_NO_ERROR);           // 0 + 4 <= 5
+    test(GL_TEXTURE_3D, 1, 5, 0, 0, GL_NO_ERROR);           // 1 + 4 <= 5
+    test(GL_TEXTURE_3D, 1, 6, 0, 0, GL_NO_ERROR);           // 1 + 4 <= 6
+    test(GL_TEXTURE_3D, 0, 3, 0, 0, GL_INVALID_OPERATION);  // 0 + 4 > 3
+    test(GL_TEXTURE_3D, 1, 0, 0, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+    test(GL_TEXTURE_3D, 1, 4, 0, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+
+    // 3D texture, validated row skip and image height
+    test(GL_TEXTURE_3D, 0, 0, 0, 4, GL_NO_ERROR);           // 0 + 4 <= 4
+    test(GL_TEXTURE_3D, 0, 0, 0, 5, GL_NO_ERROR);           // 0 + 4 <= 5
+    test(GL_TEXTURE_3D, 0, 0, 1, 5, GL_NO_ERROR);           // 1 + 4 <= 5
+    test(GL_TEXTURE_3D, 0, 0, 1, 6, GL_NO_ERROR);           // 1 + 4 <= 6
+    test(GL_TEXTURE_3D, 0, 0, 0, 3, GL_INVALID_OPERATION);  // 0 + 4 > 3
+    test(GL_TEXTURE_3D, 0, 0, 1, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+    test(GL_TEXTURE_3D, 0, 0, 1, 4, GL_INVALID_OPERATION);  // 1 + 4 > 4
+
+    // 3D texture, validated all params
+    test(GL_TEXTURE_3D, 0, 4, 0, 4, GL_NO_ERROR);           // 0 + 4 <= 4
+    test(GL_TEXTURE_3D, 0, 5, 0, 5, GL_NO_ERROR);           // 0 + 4 <= 5
+    test(GL_TEXTURE_3D, 1, 5, 1, 5, GL_NO_ERROR);           // 1 + 4 <= 5
+    test(GL_TEXTURE_3D, 1, 6, 1, 6, GL_NO_ERROR);           // 1 + 4 <= 6
+    test(GL_TEXTURE_3D, 0, 3, 0, 3, GL_INVALID_OPERATION);  // 0 + 4 > 3
+    test(GL_TEXTURE_3D, 1, 0, 1, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+    test(GL_TEXTURE_3D, 1, 4, 1, 4, GL_INVALID_OPERATION);  // 1 + 4 > 4
+}
+
+// Tests that using cube map arrays is not supported in WebGL.
+TEST_P(WebGL2CompatibilityTest, CubeMapArrayNotSupported)
+{
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, texture);
+    EXPECT_GL_ERROR(GL_INVALID_ENUM);
 }
 
 // Test that drawing GL_POINTS without setting gl_PointSize in the vertex shader

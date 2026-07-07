@@ -1952,12 +1952,12 @@ bool InternalFormat::computeCompressedImageRowPitch(GLsizei width, GLuint *resul
 
     CheckedNumeric<GLuint> checkedWidth(width);
     CheckedNumeric<GLuint> checkedBlockWidth(compressedBlockWidth);
-    const GLuint minBlockWidth = getCompressedImageMinBlocks().first;
+    const GLuint minBlocks = getCompressedImageMinBlocks();
 
     auto numBlocksWide = (checkedWidth + checkedBlockWidth - 1u) / checkedBlockWidth;
-    if (numBlocksWide.IsValid() && numBlocksWide.ValueOrDie() < minBlockWidth)
+    if (numBlocksWide.IsValid() && numBlocksWide.ValueOrDie() < minBlocks)
     {
-        numBlocksWide = minBlockWidth;
+        numBlocksWide = minBlocks;
     }
     return CheckedMathResult(numBlocksWide * pixelBytes, resultOut);
 }
@@ -1967,17 +1967,17 @@ bool InternalFormat::computeCompressedImageDepthPitch(GLsizei height,
                                                       GLuint *resultOut) const
 {
     ASSERT(compressed);
-    ASSERT(rowPitch > 0 && rowPitch % pixelBytes == 0);
+    ASSERT(rowPitch % pixelBytes == 0);
 
     CheckedNumeric<GLuint> checkedHeight(height);
     CheckedNumeric<GLuint> checkedRowPitch(rowPitch);
     CheckedNumeric<GLuint> checkedBlockHeight(compressedBlockHeight);
-    const GLuint minBlockHeight = getCompressedImageMinBlocks().second;
+    const GLuint minBlocks = getCompressedImageMinBlocks();
 
     auto numBlocksHigh = (checkedHeight + checkedBlockHeight - 1u) / checkedBlockHeight;
-    if (numBlocksHigh.IsValid() && numBlocksHigh.ValueOrDie() < minBlockHeight)
+    if (numBlocksHigh.IsValid() && numBlocksHigh.ValueOrDie() < minBlocks)
     {
-        numBlocksHigh = minBlockHeight;
+        numBlocksHigh = minBlocks;
     }
     return CheckedMathResult(numBlocksHigh * checkedRowPitch, resultOut);
 }
@@ -2015,20 +2015,19 @@ bool InternalFormat::computeCompressedImageSize(const Extents &size, GLuint *res
     CheckedNumeric<GLuint> checkedBlockWidth(compressedBlockWidth);
     CheckedNumeric<GLuint> checkedBlockHeight(compressedBlockHeight);
     CheckedNumeric<GLuint> checkedBlockDepth(compressedBlockDepth);
-    GLuint minBlockWidth, minBlockHeight;
-    std::tie(minBlockWidth, minBlockHeight) = getCompressedImageMinBlocks();
+    const GLuint minBlocks = getCompressedImageMinBlocks();
 
     ASSERT(compressed);
     auto numBlocksWide = (checkedWidth + checkedBlockWidth - 1u) / checkedBlockWidth;
     auto numBlocksHigh = (checkedHeight + checkedBlockHeight - 1u) / checkedBlockHeight;
     auto numBlocksDeep = (checkedDepth + checkedBlockDepth - 1u) / checkedBlockDepth;
-    if (numBlocksWide.IsValid() && numBlocksWide.ValueOrDie() < minBlockWidth)
+    if (numBlocksWide.IsValid() && numBlocksWide.ValueOrDie() < minBlocks)
     {
-        numBlocksWide = minBlockWidth;
+        numBlocksWide = minBlocks;
     }
-    if (numBlocksHigh.IsValid() && numBlocksHigh.ValueOrDie() < minBlockHeight)
+    if (numBlocksHigh.IsValid() && numBlocksHigh.ValueOrDie() < minBlocks)
     {
-        numBlocksHigh = minBlockHeight;
+        numBlocksHigh = minBlocks;
     }
     auto bytes = numBlocksWide * numBlocksHigh * numBlocksDeep * pixelBytes;
     return CheckedMathResult(bytes, resultOut);
@@ -2053,23 +2052,15 @@ bool InternalFormat::computeImageSize(const Extents &size, GLsizei samples, GLui
     }
 }
 
-std::pair<GLuint, GLuint> InternalFormat::getCompressedImageMinBlocks() const
+GLuint InternalFormat::getCompressedImageMinBlocks() const
 {
-    GLuint minBlockWidth  = 0;
-    GLuint minBlockHeight = 0;
-
     // Per the specification, a PVRTC block needs information from the 3 nearest blocks.
     // GL_IMG_texture_compression_pvrtc specifies the minimum size requirement in pixels, but
     // ANGLE's texture tables are written in terms of blocks. The 4BPP formats use 4x4 blocks, and
     // the 2BPP formats, 8x4 blocks. Therefore, both kinds of formats require a minimum of 2x2
     // blocks.
-    if (IsPVRTC1Format(internalFormat))
-    {
-        minBlockWidth  = 2;
-        minBlockHeight = 2;
-    }
 
-    return std::make_pair(minBlockWidth, minBlockHeight);
+    return IsPVRTC1Format(internalFormat) ? 2 : 0;
 }
 
 bool InternalFormat::computeSkipBytes(GLenum formatType,

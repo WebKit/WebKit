@@ -104,23 +104,28 @@ enum class IndicesMode
     ClientSideArray,
 };
 
+enum class RestartOption
+{
+    None,
+    AtBegin,
+    AtEnd,
+    Degenerate,
+};
+
 using DrawElementsVariantsTestParams = std::tuple<angle::PlatformParameters,
                                                   GLenum,                // type
                                                   bool,                  // useFlat
                                                   PrimitiveRestartMode,  // primitiveRestartMode
                                                   bool,                  // drawStrip
                                                   IndicesMode,           // indicesMode
-                                                  bool,                  // addRestartAtBegin
-                                                  bool,                  // addRestartAtEnd
-                                                  bool,                  // addRestartDegenerate
+                                                  RestartOption,         // restartOption
                                                   bool>;                 // useProvokingVertexFirst
 
 std::string DrawElementsVariantsTestPrint(
     const ::testing::TestParamInfo<DrawElementsVariantsTestParams> &paramsInfo)
 {
     const auto &[platform, type, useFlat, primitiveRestartMode, drawStrip, indicesMode,
-                 addRestartAtBegin, addRestartAtEnd, addRestartDegenerate,
-                 useProvokingVertexFirst] = paramsInfo.param;
+                 restartOption, useProvokingVertexFirst] = paramsInfo.param;
     std::ostringstream out;
     out << platform << "__"
         << (type == GL_UNSIGNED_BYTE ? "B" : (type == GL_UNSIGNED_SHORT ? "S" : "I"))
@@ -148,8 +153,21 @@ std::string DrawElementsVariantsTestPrint(
             out << "_Client";
             break;
     }
-    out << (addRestartAtBegin ? "_AtBegin" : "") << (addRestartAtEnd ? "_AtEnd" : "")
-        << (addRestartDegenerate ? "_Degen" : "") << (useProvokingVertexFirst ? "_First" : "");
+    switch (restartOption)
+    {
+        case RestartOption::None:
+            break;
+        case RestartOption::AtBegin:
+            out << "_AtBegin";
+            break;
+        case RestartOption::AtEnd:
+            out << "_AtEnd";
+            break;
+        case RestartOption::Degenerate:
+            out << "_Degen";
+            break;
+    }
+    out << (useProvokingVertexFirst ? "_First" : "");
     return out.str();
 }
 
@@ -171,10 +189,11 @@ class DrawElementsVariantsTest : public ANGLETest<DrawElementsVariantsTestParams
     PrimitiveRestartMode primitiveRestartMode() const { return std::get<3>(GetParam()); }
     bool drawStrip() const { return std::get<4>(GetParam()); }
     IndicesMode indicesMode() const { return std::get<5>(GetParam()); }
-    bool addRestartAtBegin() const { return std::get<6>(GetParam()); }
-    bool addRestartAtEnd() const { return std::get<7>(GetParam()); }
-    bool addRestartDegenerate() const { return std::get<8>(GetParam()); }
-    bool useProvokingVertexFirst() const { return std::get<9>(GetParam()); }
+    RestartOption restartOption() const { return std::get<6>(GetParam()); }
+    bool addRestartAtBegin() const { return restartOption() == RestartOption::AtBegin; }
+    bool addRestartAtEnd() const { return restartOption() == RestartOption::AtEnd; }
+    bool addRestartDegenerate() const { return restartOption() == RestartOption::Degenerate; }
+    bool useProvokingVertexFirst() const { return std::get<7>(GetParam()); }
 
     bool usePrimitiveRestart() const
     {
@@ -1388,7 +1407,7 @@ ANGLE_INSTANTIATE_TEST_ES3(DrawElementsTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawElementsVariantsTest);
 
-ANGLE_INSTANTIATE_TEST_VARIANTS_COMBINE_9(
+ANGLE_INSTANTIATE_TEST_VARIANTS_COMBINE_7(
     NoRestart,
     DrawElementsVariantsTest,
     DrawElementsVariantsTestPrint,
@@ -1399,13 +1418,11 @@ ANGLE_INSTANTIATE_TEST_VARIANTS_COMBINE_9(
     testing::Values(IndicesMode::Buffer,
                     IndicesMode::BufferAndOffset,
                     IndicesMode::ClientSideArray),
-    testing::Values(false),  // addRestartAtBegin
-    testing::Values(false),  // addRestartAtEnd
-    testing::Values(false),  // addRestartDegenerate
-    testing::Bool(),         // useProvokingVertexFirst
+    testing::Values(RestartOption::None),  // restartOption
+    testing::Bool(),                       // useProvokingVertexFirst
     ANGLE_ALL_TEST_PLATFORMS_ES3);
 
-ANGLE_INSTANTIATE_TEST_VARIANTS_COMBINE_9(
+ANGLE_INSTANTIATE_TEST_VARIANTS_COMBINE_7(
     Restart,
     DrawElementsVariantsTest,
     DrawElementsVariantsTestPrint,
@@ -1416,9 +1433,10 @@ ANGLE_INSTANTIATE_TEST_VARIANTS_COMBINE_9(
     testing::Values(IndicesMode::Buffer,
                     IndicesMode::BufferAndOffset,
                     IndicesMode::ClientSideArray),
-    testing::Bool(),  // addRestartAtBegin
-    testing::Bool(),  // addRestartAtEnd
-    testing::Bool(),  // addRestartDegenerate
+    testing::Values(RestartOption::None,
+                    RestartOption::AtBegin,
+                    RestartOption::AtEnd,
+                    RestartOption::Degenerate),
     testing::Bool(),  // useProvokingVertexFirst
     ANGLE_ALL_TEST_PLATFORMS_ES3);
 

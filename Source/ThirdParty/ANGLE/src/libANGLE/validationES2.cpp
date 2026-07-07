@@ -1093,6 +1093,12 @@ bool ValidateES2TexImageParameters(const Context *context,
             else
             {
                 ASSERT(internalFormatInfo.paletted);
+                if (texType != TextureType::_2D)
+                {
+                    ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidTextureTarget);
+                    return false;
+                }
+
                 // TODO(http://anglebug.com/42266155): multi-level paletted images
                 if (level != 0)
                 {
@@ -1803,6 +1809,12 @@ bool ValidateES2TexStorageParametersBase(const Context *context,
     if (!formatInfo.textureSupport(context->getClientVersion(), context->getExtensions()))
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidFormat);
+        return false;
+    }
+
+    if (formatInfo.paletted)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidInternalFormat);
         return false;
     }
 
