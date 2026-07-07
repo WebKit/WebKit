@@ -127,8 +127,8 @@ class PullRequest(Command):
         )
         parser.add_argument(
             '--update-title', '--no-update-title',
-            dest='update_title', default=True,
-            help="When updating a pull request, update (or do not update) its title with the commits' common prefix.",
+            dest='update_title', default=None,
+            help="When updating a pull request, update (or don't update) its title with the commits' common prefix (also configurable via webkitscmpy.update-title).",
             action=arguments.NoAction,
         )
         parser.add_argument(
@@ -735,6 +735,8 @@ class PullRequest(Command):
             sys.stderr.write("'{}' does not support draft pull requests, aborting\n".format(remote_repo.url))
             return 1
 
+        if args.update_title is None:
+            args.update_title = repository.config().get('webkitscmpy.update-title', 'true') == 'true'
 
         if existing_pr:
             log.info("Updating pull-request for '{}'...".format(repository.branch))

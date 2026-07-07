@@ -320,6 +320,7 @@ class Git(Scm):
         'webkitscmpy.auto-prune': ['only-source', 'true', 'false'],
         'webkitscmpy.cc-radar': ['true', 'false'],
         'webkitscmpy.set-upstream-on-push': ['false', 'true'],
+        'webkitscmpy.update-title': ['true', 'false'],
     }
     CONFIG_LOCATIONS = ['global', 'repository', 'project']
     MERGE_BASE_SHARD_SIZE = 512  # Windows has a maximum of ~32K characters in a single command

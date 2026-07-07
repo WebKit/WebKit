@@ -603,6 +603,64 @@ No pre-PR checks to run""")
                 "https://github.example.com/WebKit/WebKit/pull/1\n",
             )
 
+    def test_github_sticky_no_update_title(self):
+        with mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path,
+            remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            with OutputCapture():
+                repo.staged['added.txt'] = 'added'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-i', 'pr-branch'),
+                    path=self.path,
+                ))
+
+            repo.edit_config('webkitscmpy.update-title', 'false')
+
+            with OutputCapture(level=logging.INFO) as captured:
+                repo.staged['added.txt'] = 'diff'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-v', '--no-history'),
+                    path=self.path,
+                ))
+
+            self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).title, '[Testing] Creating commits')
+            self.assertEqual(
+                captured.stdout.getvalue(),
+                "Updated 'PR 1 | [Testing] Creating commits'!\n"
+                "https://github.example.com/WebKit/WebKit/pull/1\n",
+            )
+
+    def test_github_sticky_update_title_override(self):
+        with mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path,
+            remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            with OutputCapture():
+                repo.staged['added.txt'] = 'added'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-i', 'pr-branch'),
+                    path=self.path,
+                ))
+
+            repo.edit_config('webkitscmpy.update-title', 'false')
+
+            with OutputCapture(level=logging.INFO) as captured:
+                repo.staged['added.txt'] = 'diff'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-v', '--no-history', '--update-title'),
+                    path=self.path,
+                ))
+
+            self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).title, '[Testing] Amending commits')
+            self.assertEqual(
+                captured.stdout.getvalue(),
+                "Updated 'PR 1 | [Testing] Amending commits'!\n"
+                "https://github.example.com/WebKit/WebKit/pull/1\n",
+            )
+
     def test_github_sticky_remote(self):
         with mocks.remote.GitHub(remote='github.example.com/WebKit/WebKit-security') as remote, mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
