@@ -2844,6 +2844,9 @@ webkit.org/b/251107 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure
 # WebRTC-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# Specific to apple ports.
+webkit.org/b/318758 fast/mediastream/delete-audio-unit.html [ Skip ]
+
 # Fails when using two textures.
 webkit.org/b/258296 webrtc/canvas-to-peer-connection.html [ Failure Timeout ]
 
