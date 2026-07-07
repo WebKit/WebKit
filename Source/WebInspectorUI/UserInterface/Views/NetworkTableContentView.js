@@ -839,6 +839,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _populateInitiatorCell(cell, entry)
     {
+        cell.removeChildren();
+
         let domNode = entry.domNode;
         if (domNode) {
             cell.textContent = emDash;
