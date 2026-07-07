@@ -152,6 +152,14 @@ body:is(.window-inactive, .window-docked-inactive) .content-view.dom-tree.deemph
     unicode-bidi: isolate;
 }
 
+.tree-outline.dom .html-entity-value {
+    padding: 0 2px;
+    color: var(--text-color-secondary);
+    background-color: hsla(0, 0%, 50%, 0.15);
+    border-radius: 3px;
+    unicode-bidi: isolate;
+}
+
 .tree-outline.dom li .pseudo-class-indicator {
     display: inline-block;
     position: absolute;
