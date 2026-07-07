@@ -7698,6 +7698,15 @@
    },
    {
       "emails" : [
+         "s_krigel@apple.com",
+         "sasha.krigel@gmail.com",
+         "skrigel@mit.edu"
+      ],
+      "github" : "skrigel",
+      "name" : "Sasha Krigel"
+   },
+   {
+      "emails" : [
          "satish@chromium.org"
       ],
       "name" : "Satish Sampath"
