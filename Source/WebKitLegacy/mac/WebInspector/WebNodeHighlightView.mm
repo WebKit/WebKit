@@ -131,9 +131,10 @@ using WebCore::findIntersection;
 static bool findIntersectionOnLineBetweenPoints(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& d1, const FloatPoint& d2, FloatPoint& intersection) 
 {
     // Do the lines intersect?
-    FloatPoint temporaryIntersectionPoint;
-    if (!findIntersection(p1, p2, d1, d2, temporaryIntersectionPoint))
+    auto intersectionPoint = findIntersection(p1, p2, d1, d2);
+    if (!intersectionPoint)
         return false;
+    FloatPoint temporaryIntersectionPoint = *intersectionPoint;
 
     // Is the intersection between the two points on the line?
     if (p1.x() >= p2.x()) {

@@ -74,9 +74,10 @@
 static bool findIntersectionOnLineBetweenPoints(const WebCore::FloatPoint& p1, const WebCore::FloatPoint& p2, const WebCore::FloatPoint& d1, const WebCore::FloatPoint& d2, WebCore::FloatPoint& intersection) 
 {
     // Do the lines intersect?
-    WebCore::FloatPoint temporaryIntersectionPoint;
-    if (!findIntersection(p1, p2, d1, d2, temporaryIntersectionPoint))
+    auto intersectionPoint = findIntersection(p1, p2, d1, d2);
+    if (!intersectionPoint)
         return false;
+    WebCore::FloatPoint temporaryIntersectionPoint = *intersectionPoint;
 
     // Is the intersection between the two points on the line?
     if (p1.x() >= p2.x()) {

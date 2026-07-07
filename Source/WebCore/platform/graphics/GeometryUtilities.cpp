@@ -45,7 +45,7 @@ float euclidianDistance(const FloatPoint& p1, const FloatPoint& p2)
     return euclidianDistance(p1 - p2);
 }
 
-bool findIntersection(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& d1, const FloatPoint& d2, FloatPoint& intersection) 
+std::optional<FloatPoint> findIntersection(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& d1, const FloatPoint& d2)
 {
     float pxLength = p2.x() - p1.x();
     float pyLength = p2.y() - p1.y();
@@ -55,13 +55,11 @@ bool findIntersection(const FloatPoint& p1, const FloatPoint& p2, const FloatPoi
 
     float denom = pxLength * dyLength - pyLength * dxLength;
     if (!denom)
-        return false;
-    
+        return std::nullopt;
+
     float param = ((d1.x() - p1.x()) * dyLength - (d1.y() - p1.y()) * dxLength) / denom;
 
-    intersection.setX(p1.x() + param * pxLength);
-    intersection.setY(p1.y() + param * pyLength);
-    return true;
+    return FloatPoint(p1.x() + param * pxLength, p1.y() + param * pyLength);
 }
 
 IntRect unionRect(const Vector<IntRect>& rects)
