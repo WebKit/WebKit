@@ -91,7 +91,8 @@ struct _WPESettingsPrivate {
         static const std::vector<Setting> defaultSettings = {
             { WPE_SETTING_FONT_NAME, G_VARIANT_TYPE_STRING, g_variant_ref_sink(g_variant_new_string("Sans 10")) },
             { WPE_SETTING_DARK_MODE, G_VARIANT_TYPE_BOOLEAN, g_variant_ref_sink(g_variant_new_boolean(false)) },
-            { WPE_SETTING_DISABLE_ANIMATIONS, G_VARIANT_TYPE_BOOLEAN, g_variant_ref_sink(g_variant_new_boolean(false)) },
+            { WPE_SETTING_REDUCED_MOTION, G_VARIANT_TYPE_BOOLEAN, g_variant_ref_sink(g_variant_new_boolean(false)) },
+            { WPE_SETTING_INTERFACE_CONTRAST, G_VARIANT_TYPE_BYTE, g_variant_ref_sink(g_variant_new_byte(WPE_SETTINGS_INTERFACE_CONTRAST_NO_PREFERENCE)) },
             { WPE_SETTING_FONT_ANTIALIAS, G_VARIANT_TYPE_BOOLEAN, g_variant_ref_sink(g_variant_new_boolean(true)) },
             { WPE_SETTING_FONT_HINTING_STYLE, G_VARIANT_TYPE_BYTE, g_variant_ref_sink(g_variant_new_byte(WPE_SETTINGS_HINTING_STYLE_SLIGHT)) },
             { WPE_SETTING_FONT_SUBPIXEL_LAYOUT, G_VARIANT_TYPE_BYTE, g_variant_ref_sink(g_variant_new_byte(WPE_SETTINGS_SUBPIXEL_LAYOUT_RGB)) },

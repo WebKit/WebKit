@@ -39,9 +39,11 @@ Theme& Theme::singleton()
     return theme;
 }
 
-bool ThemeIOS::userPrefersContrast() const
+InterfaceContrastPreference ThemeIOS::userPreferredContrast() const
 {
-    return PAL::softLink_UIKit_UIAccessibilityDarkerSystemColorsEnabled();
+    if (PAL::softLink_UIKit_UIAccessibilityDarkerSystemColorsEnabled())
+        return InterfaceContrastPreference::MoreContrast;
+    return InterfaceContrastPreference::NoPreference;
 }
 
 bool ThemeIOS::userPrefersReducedMotion() const

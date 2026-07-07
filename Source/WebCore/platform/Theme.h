@@ -32,13 +32,19 @@ namespace WebCore {
 class FloatSize;
 class GraphicsContext;
 
+enum class InterfaceContrastPreference : uint8_t {
+    NoPreference,
+    MoreContrast,
+    LessContrast
+};
+
 class Theme {
 public:
     static Theme& NODELETE singleton();
 
     virtual void drawNamedImage(const String&, GraphicsContext&, const FloatSize&) const;
 
-    virtual bool userPrefersContrast() const { return false; }
+    virtual InterfaceContrastPreference userPreferredContrast() const { return InterfaceContrastPreference::NoPreference; }
     virtual bool userPrefersReducedMotion() const { return false; }
     virtual bool userPrefersOnOffLabels() const { return false; }
     virtual bool userPrefersDifferentiationWithoutColor() const { return false; }

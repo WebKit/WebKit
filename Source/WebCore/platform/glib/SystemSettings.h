@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+enum class InterfaceContrastPreference : uint8_t;
+
 struct SystemSettingsState {
     std::optional<String> themeName;
     std::optional<bool> darkMode;
@@ -52,7 +54,8 @@ struct SystemSettingsState {
     std::optional<int> cursorBlinkTime;
     std::optional<bool> primaryButtonWarpsSlider;
     std::optional<bool> overlayScrolling;
-    std::optional<bool> enableAnimations;
+    std::optional<bool> reducedMotion;
+    std::optional<InterfaceContrastPreference> interfaceContrast;
 };
 
 class SystemSettings {
@@ -82,7 +85,8 @@ public:
     std::optional<bool> followFontSystemSettings() const { return m_state.followFontSystemSettings; }
     std::optional<bool> overlayScrolling() const { return m_state.overlayScrolling; }
     std::optional<bool> primaryButtonWarpsSlider() const { return m_state.primaryButtonWarpsSlider; }
-    std::optional<bool> enableAnimations() const { return m_state.enableAnimations; }
+    std::optional<bool> reducedMotion() const { return m_state.reducedMotion; }
+    std::optional<InterfaceContrastPreference> interfaceContrast() const { return m_state.interfaceContrast; };
 
     std::optional<FontRenderOptions::Hinting> hintStyle() const;
     std::optional<FontRenderOptions::SubpixelOrder> subpixelOrder() const;

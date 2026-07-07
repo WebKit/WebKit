@@ -39,7 +39,7 @@ public:
 
     virtual void platformColorsDidChange() { };
 
-    bool userPrefersContrast() const final;
+    InterfaceContrastPreference userPreferredContrast() const final;
     bool userPrefersReducedMotion() const final;
 
     void setAccentColor(const Color&);
@@ -52,9 +52,7 @@ private:
     Color m_accentColor { SRGBA<uint8_t> { 52, 132, 228 } };
 
     bool m_prefersReducedMotion { false };
-#if !USE(GTK4)
-    bool m_prefersContrast { false };
-#endif
+    InterfaceContrastPreference m_preferredContrast { InterfaceContrastPreference::NoPreference };
 };
 
 } // namespace WebCore

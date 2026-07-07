@@ -33,7 +33,7 @@ namespace WebCore {
 
 class ThemeIOS final : public ThemeCocoa {
 private:
-    bool userPrefersContrast() const final;
+    InterfaceContrastPreference userPreferredContrast() const final;
     bool userPrefersReducedMotion() const final;
     bool userPrefersOnOffLabels() const final;
 };

@@ -41,9 +41,11 @@ Theme& Theme::singleton()
 
 // Theme overrides
 
-bool ThemeMac::userPrefersContrast() const
+InterfaceContrastPreference ThemeMac::userPreferredContrast() const
 {
-    return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldIncreaseContrast];
+    if ([[NSWorkspace sharedWorkspace] accessibilityDisplayShouldIncreaseContrast])
+        return InterfaceContrastPreference::MoreContrast;
+    return InterfaceContrastPreference::NoPreference;
 }
 
 bool ThemeMac::userPrefersDifferentiationWithoutColor() const
