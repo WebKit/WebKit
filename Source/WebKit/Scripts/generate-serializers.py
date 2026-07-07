@@ -1553,9 +1553,19 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
         result.append(f'template<> bool {enum.function_name()}<{enum.namespace_and_name()}>({enum.parameter()} value)')
         result.append('{')
         if enum.is_option_set():
+            result.append('    // Empty switch to catch missing values.')
+            result.append(f'    switch (static_cast<{enum.namespace_and_name()}>(value.toRaw())) {{')
+            for valid_value in enum.valid_values:
+                if valid_value.condition is not None:
+                    result.append(f'#if {valid_value.condition}')
+                result.append(f'    case {enum.namespace_and_name()}::{valid_value.name}:')
+                if valid_value.condition is not None:
+                    result.append('#endif')
+            result.append('        (void)0;')
+            result.append('    }')
+            result.append('')
             result.append(f'    constexpr {enum.underlying_type} allValidBitsValue = 0')
-            for i in range(0, len(enum.valid_values)):
-                valid_value = enum.valid_values[i]
+            for valid_value in enum.valid_values:
                 if valid_value.condition is not None:
                     result.append(f'#if {valid_value.condition}')
                 result.append(f'        | static_cast<{enum.underlying_type}>({enum.namespace_and_name()}::{valid_value.name})')

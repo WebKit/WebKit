@@ -108,7 +108,7 @@ AcceleratedEffect::Keyframe AcceleratedEffect::Keyframe::clone() const
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AcceleratedEffect);
 
-static AcceleratedEffectProperty acceleratedPropertyFromCSSProperty(AnimatableCSSProperty property, const Settings& settings)
+static OptionSet<AcceleratedEffectProperty> acceleratedPropertyFromCSSProperty(AnimatableCSSProperty property, const Settings& settings)
 {
 #if ASSERT_ENABLED
     ASSERT(Style::Interpolation::isAccelerated(property, settings));
@@ -145,7 +145,7 @@ static AcceleratedEffectProperty acceleratedPropertyFromCSSProperty(AnimatableCS
         return AcceleratedEffectProperty::BackdropFilter;
     default:
         ASSERT_NOT_REACHED();
-        return AcceleratedEffectProperty::Invalid;
+        return { };
     }
 }
 
@@ -257,7 +257,7 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect
         for (auto animatedCSSProperty : srcKeyframe.properties()) {
             if (Style::Interpolation::isAccelerated(animatedCSSProperty, settings)) {
                 auto acceleratedProperty = acceleratedPropertyFromCSSProperty(animatedCSSProperty, settings);
-                if (disallowedProperties.contains(acceleratedProperty))
+                if (disallowedProperties.containsAny(acceleratedProperty))
                     continue;
                 animatedProperties.add(acceleratedProperty);
                 m_animatedProperties.add(acceleratedProperty);
@@ -412,9 +412,6 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
         break;
     case AcceleratedEffectProperty::BackdropFilter:
         output.backdropFilter = from.backdropFilter.blend(to.backdropFilter, blendingContext);
-        break;
-    case AcceleratedEffectProperty::Invalid:
-        ASSERT_NOT_REACHED();
         break;
     }
 }

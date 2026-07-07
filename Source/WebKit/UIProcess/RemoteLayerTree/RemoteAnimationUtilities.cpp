@@ -54,8 +54,6 @@ namespace WebKit {
 String toStringForTesting(WebCore::AcceleratedEffectProperty property)
 {
     switch (property) {
-    case WebCore::AcceleratedEffectProperty::Invalid:
-        return "invalid"_s;
     case WebCore::AcceleratedEffectProperty::Opacity:
         return "opacity"_s;
     case WebCore::AcceleratedEffectProperty::Transform:

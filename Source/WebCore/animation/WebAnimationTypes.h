@@ -66,7 +66,6 @@ using AnimatableCSSProperty = Variant<CSSPropertyID, AtomString>;
 using AnimatableCSSPropertyToTransitionMap = HashMap<AnimatableCSSProperty, Ref<CSSTransition>>;
 
 enum class AcceleratedEffectProperty : uint16_t {
-    Invalid = 1 << 0,
     Opacity = 1 << 1,
     Transform = 1 << 2,
     Translate = 1 << 3,

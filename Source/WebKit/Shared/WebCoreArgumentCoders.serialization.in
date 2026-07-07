@@ -1574,15 +1574,18 @@ header: <WebCore/ScrollingStateNode.h>
     MinLayoutViewportOrigin
     MaxLayoutViewportOrigin
     OverrideVisualViewportSize
-    RelatedOverflowScrollingNodes
-    LayoutConstraintData
-    ViewportConstraints
-    ViewportAnchorLayer
-    OverflowScrollingNode
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    ScrollbarOpacity
+#endif
+#    RelatedOverflowScrollingNodes - Duplicate value
+#    LayoutConstraintData - Duplicate value
+#    ViewportConstraints - Duplicate value
+#    ViewportAnchorLayer - Duplicate value
+#    OverflowScrollingNode - Duplicate value
     KeyboardScrollData
     OverlayScrollbarsEnabled
     ChildNodes
-    LayerHostingContextIdentifier
+#    LayerHostingContextIdentifier - Duplicate value
 };
 #endif
 
