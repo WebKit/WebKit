@@ -369,3 +369,7 @@ webkit.org/b/318713 [ Debug x86_64 ] TestWebKitAPI.EvaluateJavaScript.Serializat
 [ iOS Debug ] TestWebKitAPI.WebKitLegacy.TimeInputAccessoryViewTest [ Crash ]
 [ iOS Debug ] TestWebKitAPI.WebKitLegacy.WebGLNoCrashOnOtherThreadAccess [ Crash ]
 [ iOS Debug ] TestWebKitAPI.WebKitLegacy.WebGLPrepareDisplayOnWebThread [ Crash ]
+
+# webkit.org/b/318742 [ iOS DEBUG ] 2x TestWebKitAPI.WKWebExtensionAPICookies.* (api-tests) are constant crashes.
+[ iOS Debug ] TestWebKitAPI.WKWebExtensionAPICookies.RemoveCookieNotFound [ Crash ]
+[ iOS Debug ] TestWebKitAPI.WKWebExtensionAPICookies.RemoveCookie [ Crash ]
