@@ -324,6 +324,25 @@ TEST(URLExtras, URLExtras_InvalidACELabel)
     EXPECT_NULL([@"xn--8i7caa.example" _wk_decodeHostName]);
 }
 
+TEST(URLExtras, IsUserVisibleURL)
+{
+    // No escapes or "xn--": userVisibleString leaves these untouched, so the fast path returns YES.
+    EXPECT_TRUE(WTF::isUserVisibleURL(@"http://site.com/"));
+
+    // A %-escape that expands to a non-ASCII byte must be flagged, since userVisibleString decodes it
+    // (see the %C3%B7 case above). The look-ahead has to test the two hex digits *after* '%', not a
+    // fixed offset from the start of the buffer.
+    EXPECT_FALSE(WTF::isUserVisibleURL(@"http://site.com%C3%B7other.org"));
+
+    // An "xn--" label may require the IDN algorithm, so the fast path must conservatively return NO.
+    EXPECT_FALSE(WTF::isUserVisibleURL(@"http://xn--8i7caa.example/"));
+
+    // Short inputs whose '%'/'x' look-ahead would run past the string end must stay in bounds
+    // (regression coverage for the out-of-range read; benign result on a non-ASan build).
+    EXPECT_TRUE(WTF::isUserVisibleURL(@"x"));
+    EXPECT_TRUE(WTF::isUserVisibleURL(@"%"));
+}
+
 TEST(URLExtras, URLExtras_IPv6)
 {
     // IPv6 hosts pass through unchanged.
