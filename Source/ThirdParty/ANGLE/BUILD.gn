@@ -133,6 +133,7 @@ if (angle_build_all) {
     if (angle_build_mesa) {
       deps += [ "$angle_root/third_party/mesa" ]
     }
+    data_deps = [ "$angle_root/infra/orchestrator:orchestrator_all" ]
   }
 }
 
@@ -568,6 +569,9 @@ template("angle_common_lib") {
     ]
 
     deps = [ ":xxhash" ]
+    if (angle_use_partition_alloc) {
+      deps += [ "${angle_partition_alloc_dir}" ]
+    }
 
     public_deps = [
       ":angle_abseil",
@@ -1475,17 +1479,11 @@ template("angle_libGLESv2") {
   }
 }
 
-if (angle_use_static_angle) {
-  group("libGLESv2") {
-    public_deps = [ ":libGLESv2_static" ]
-  }
-} else {
-  angle_libGLESv2("libGLESv2") {
-    if (angle_with_capture_by_default) {
-      deps = [ ":libANGLE_with_capture" ]
-    } else {
-      deps = [ ":libANGLE" ]
-    }
+angle_libGLESv2("libGLESv2") {
+  if (angle_with_capture_by_default) {
+    deps = [ ":libANGLE_with_capture" ]
+  } else {
+    deps = [ ":libANGLE" ]
   }
 }
 
@@ -1530,31 +1528,26 @@ angle_static_library("libGLESv2_static") {
   public_deps = [ ":libGLESv2_thin_static" ]
 }
 
-if (angle_use_static_angle) {
-  group("libGLESv1_CM") {
-  }
-} else {
-  angle_shared_library("libGLESv1_CM") {
-    sources = libglesv1_cm_sources
-    output_name = "libGLESv1_CM${angle_libs_suffix}"
+angle_shared_library("libGLESv1_CM") {
+  sources = libglesv1_cm_sources
+  output_name = "libGLESv1_CM${angle_libs_suffix}"
 
-    configs += [
-      ":angle_gl_visibility_config",
-      ":debug_annotations_config",
-      ":gl_prototypes",
-    ]
+  configs += [
+    ":angle_gl_visibility_config",
+    ":debug_annotations_config",
+    ":gl_prototypes",
+  ]
 
-    defines = []
+  defines = []
 
-    deps = [
-      ":includes",
-      ":libGLESv2",
-    ]
+  deps = [
+    ":includes",
+    ":libGLESv2",
+  ]
 
-    if (is_win) {
-      sources += [ "src/libGLESv1_CM/libGLESv1_CM.def" ]
-      deps += [ ":angle_version" ]
-    }
+  if (is_win) {
+    sources += [ "src/libGLESv1_CM/libGLESv1_CM.def" ]
+    deps += [ ":angle_version" ]
   }
 }
 
@@ -1625,19 +1618,13 @@ template("libEGL_shared_template") {
   }
 }
 
-if (angle_use_static_angle) {
-  group("libEGL") {
-    public_deps = [ ":libEGL_static" ]
-  }
-} else {
-  libEGL_shared_template("libEGL") {
-    defines = [ "ANGLE_DISPATCH_LIBRARY=\"${_angle_glesv2_library_name}\"" ]
-    output_name = "libEGL"
-    gles_library = "libGLESv2"
-    sources = []
-    if (is_win) {
-      sources += [ "src/libEGL/libEGL_autogen.def" ]
-    }
+libEGL_shared_template("libEGL") {
+  defines = [ "ANGLE_DISPATCH_LIBRARY=\"${_angle_glesv2_library_name}\"" ]
+  output_name = "libEGL"
+  gles_library = "libGLESv2"
+  sources = []
+  if (is_win) {
+    sources += [ "src/libEGL/libEGL_autogen.def" ]
   }
 }
 
@@ -1708,7 +1695,7 @@ if (angle_standalone || build_with_chromium ||
     if (is_apple && !is_component_build) {
       ldflags = [
         "-install_name",
-        "@rpath/${target_name}.dylib",
+        "@rpath/${output_name}.dylib",
       ]
     }
 
@@ -1886,24 +1873,21 @@ if (install_prefix != "") {
 }
 
 group("angle") {
-  if (defined(angle_use_static_angle) && angle_use_static_angle) {
-    public_deps = [ ":angle_static" ]
-  } else {
-    data_deps = [
-      ":libEGL",
-      ":libGLESv1_CM",
-      ":libGLESv2",
+  # Always use shared libraries for the "angle" group, which is used by tests.
+  data_deps = [
+    ":libEGL",
+    ":libGLESv1_CM",
+    ":libGLESv2",
+  ]
+  if (angle_enable_vulkan) {
+    data_deps += [
+      ":libEGL_vulkan_secondaries",
+      ":libGLESv2_vulkan_secondaries",
     ]
-    if (angle_enable_vulkan) {
-      data_deps += [
-        ":libEGL_vulkan_secondaries",
-        ":libGLESv2_vulkan_secondaries",
-      ]
-    }
-    if (is_ios) {
-      # Need to bundle the libraries inside the .app.
-      deps = data_deps
-    }
+  }
+  if (is_ios) {
+    # Need to bundle the libraries inside the .app.
+    deps = data_deps
   }
 }
 

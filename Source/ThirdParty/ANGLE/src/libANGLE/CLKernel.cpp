@@ -113,6 +113,7 @@ angle::Result Kernel::getWorkGroupInfo(cl_device_id device,
 
     const void *copyValue = nullptr;
     size_t copySize       = 0u;
+    cl_ulong valueHelper;
 
     switch (name)
     {
@@ -129,8 +130,9 @@ angle::Result Kernel::getWorkGroupInfo(cl_device_id device,
             copySize  = sizeof(info.compileWorkGroupSize);
             break;
         case KernelWorkGroupInfo::LocalMemSize:
-            copyValue = &info.localMemSize;
-            copySize  = sizeof(info.localMemSize);
+            valueHelper = info.localMemSize + mImpl->getAllArgLocalMemSize();
+            copyValue   = &valueHelper;
+            copySize    = sizeof(valueHelper);
             break;
         case KernelWorkGroupInfo::PreferredWorkGroupSizeMultiple:
             copyValue = &info.prefWorkGroupSizeMultiple;

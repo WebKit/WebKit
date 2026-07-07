@@ -21,7 +21,8 @@ declare_args() {
 }
 
 declare_args() {
-  # Enable custom secondary command buffers for outside render pass commands only
+  # Enable custom secondary command buffers for outside render pass commands
+  # only
   angle_enable_custom_vulkan_outside_render_pass_cmd_buffers =
       angle_enable_custom_vulkan_cmd_buffers
 
@@ -67,7 +68,8 @@ config("angle_vulkan_backend_config") {
     defines += [ "ANGLE_ENABLE_VULKAN_API_DUMP_LAYER" ]
   }
 
-  # Ensures that the memory allocation logging can only be enabled with debug layers.
+  # Ensures that the memory allocation logging can only be enabled with debug
+  # layers.
   assert(angle_debug_layers_enabled || !angle_enable_memory_alloc_logging)
   if (angle_enable_memory_alloc_logging) {
     defines += [ "ANGLE_ENABLE_MEMORY_ALLOC_LOGGING=1" ]
@@ -79,8 +81,8 @@ config("angle_vulkan_backend_config") {
 }
 
 if (is_android) {
-  # Used only in generated Android.bp file for DMA-BUF-enabled builds on Android.
-  # See b/353262025 for details.
+  # Used only in generated Android.bp file for DMA-BUF-enabled builds on
+  # Android. See b/353262025 for details.
   angle_source_set("angle_android_vulkan_dma_buf") {
     sources = vulkan_backend_dma_buf_sources
     deps = [

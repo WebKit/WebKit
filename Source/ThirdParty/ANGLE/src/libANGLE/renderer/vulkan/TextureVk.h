@@ -97,17 +97,14 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
 
     angle::Result copyRenderbufferSubData(const gl::Context *context,
                                           const gl::Renderbuffer *srcBuffer,
-                                          GLint srcLevel,
                                           GLint srcX,
                                           GLint srcY,
-                                          GLint srcZ,
                                           GLint dstLevel,
                                           GLint dstX,
                                           GLint dstY,
                                           GLint dstZ,
                                           GLsizei srcWidth,
-                                          GLsizei srcHeight,
-                                          GLsizei srcDepth) override;
+                                          GLsizei srcHeight) override;
 
     angle::Result copyTextureSubData(const gl::Context *context,
                                      const gl::Texture *srcTexture,
@@ -390,9 +387,6 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     angle::Result ensureImageAllocated(ContextVk *contextVk, const vk::Format &format);
     void setImageHelper(ContextVk *contextVk,
                         vk::ImageHelper *imageHelper,
-                        gl::TextureType imageType,
-                        uint32_t imageLevelOffset,
-                        uint32_t imageLayerOffset,
                         bool selfOwned);
     angle::Result syncAsAttachmentRenderTarget(const gl::Context *context,
                                                const gl::ImageIndex &imageIndex,
@@ -657,12 +651,15 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     vk::ImageFormatSupport mRequiredFormatSupport;
     bool mImmutableSamplerDirty;
 
-    // Only valid if this texture is an "EGLImage target" and the associated EGL Image was
-    // originally sourced from an OpenGL texture. Such EGL Images can be a slice of the underlying
-    // resource. The layer and level offsets are used to track the location of the slice.
-    gl::TextureType mEGLImageNativeType;
-    uint32_t mEGLImageLayerOffset;
-    uint32_t mEGLImageLevelOffset;
+    // Temporarily track the previous EGL image's image index to detect redundant setEGLImageTarget
+    // calls.  This is necessary currently because the front-end sets its tracked state before
+    // making the backend call.  That is in turn necessary because the backend creates the image
+    // views right away in that call and needs the up-to-date state.
+    //
+    // TODO(http://crbug.com/498372331): Once the backend lazily creates views, the front-end can
+    // set the state after the backend setEGLImageTarget call, at which point this tracking becomes
+    // unnecessary.
+    gl::ImageIndex mPreviousEGLImageIndex;
 
     // If multisampled rendering to texture, an intermediate multisampled image is created for use
     // as renderpass color attachment. A map of an array of images and image views are used where -

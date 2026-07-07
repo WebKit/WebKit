@@ -42,15 +42,27 @@ angle::Result BufferNULL::setDataWithUsageFlags(const gl::Context *context,
                                                 gl::BufferUsage usage,
                                                 GLbitfield flags,
                                                 gl::BufferStorage bufferStorage,
-                                                BufferFeedback *feedback)
+                                                BufferFeedback *feedback,
+                                                gl::ZeroFillRequired zeroFillRequired)
 {
     ANGLE_CHECK_GL_ALLOC(GetImplAs<ContextNULL>(context),
                          mAllocationTracker->updateMemoryAllocation(mData.size(), size));
 
     mData.resize(size, 0);
-    if (size > 0 && data != nullptr)
+
+    const void *dataForImpl = data;
+    if (zeroFillRequired == gl::ZeroFillRequired::Yes)
     {
-        memcpy(mData.data(), data, size);
+        const angle::MemoryBuffer *scratchBuffer = nullptr;
+        ANGLE_CHECK_GL_ALLOC(
+            GetImplAs<ContextNULL>(context),
+            context->getZeroFilledBuffer(static_cast<size_t>(size), &scratchBuffer));
+        dataForImpl = scratchBuffer->data();
+    }
+
+    if (size > 0 && dataForImpl != nullptr)
+    {
+        memcpy(mData.data(), dataForImpl, size);
     }
     return angle::Result::Continue;
 }
@@ -60,7 +72,8 @@ angle::Result BufferNULL::setData(const gl::Context *context,
                                   const void *data,
                                   size_t size,
                                   gl::BufferUsage usage,
-                                  BufferFeedback *feedback)
+                                  BufferFeedback *feedback,
+                                  gl::ZeroFillRequired zeroFillRequired)
 {
     ANGLE_CHECK_GL_ALLOC(GetImplAs<ContextNULL>(context),
                          mAllocationTracker->updateMemoryAllocation(mData.size(), size));

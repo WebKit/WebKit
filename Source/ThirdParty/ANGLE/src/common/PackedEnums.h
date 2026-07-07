@@ -535,6 +535,103 @@ ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, OneMinusSrc1Alpha, GL_ONE_MINUS_SRC1
 
 std::ostream &operator<<(std::ostream &os, BlendFactorType value);
 
+enum class PackUnpackParameter : uint8_t
+{
+    UnpackRowLength     = 0,   // GLenum == 0x0CF2
+    UnpackSkipRows      = 1,   // GLenum == 0x0CF3
+    UnpackSkipPixels    = 2,   // GLenum == 0x0CF4
+    UnpackAlignment     = 3,   // GLenum == 0x0CF5
+    PackRowLength       = 4,   // GLenum == 0x0D02
+    PackSkipRows        = 5,   // GLenum == 0x0D03
+    PackSkipPixels      = 6,   // GLenum == 0x0D04
+    PackAlignment       = 7,   // GLenum == 0x0D05
+    UnpackSkipImages    = 8,   // GLenum == 0x806D
+    UnpackImageHeight   = 9,   // GLenum == 0x806E
+    PackReverseRowOrder = 10,  // GLenum == 0x93A4
+
+    InvalidEnum = 11,
+    EnumCount   = 11,
+};
+
+template <>
+constexpr PackUnpackParameter FromGLenum<PackUnpackParameter>(GLenum from)
+{
+    if (from >= GL_UNPACK_ROW_LENGTH && from <= GL_UNPACK_ALIGNMENT)
+    {
+        return static_cast<PackUnpackParameter>(
+            from - GL_UNPACK_ROW_LENGTH +
+            static_cast<GLenum>(PackUnpackParameter::UnpackRowLength));
+    }
+
+    if (from >= GL_PACK_ROW_LENGTH && from <= GL_PACK_ALIGNMENT)
+    {
+        return static_cast<PackUnpackParameter>(
+            from - GL_PACK_ROW_LENGTH + static_cast<GLenum>(PackUnpackParameter::PackRowLength));
+    }
+
+    if (from >= GL_UNPACK_SKIP_IMAGES && from <= GL_UNPACK_IMAGE_HEIGHT)
+    {
+        return static_cast<PackUnpackParameter>(
+            from - GL_UNPACK_SKIP_IMAGES +
+            static_cast<GLenum>(PackUnpackParameter::UnpackSkipImages));
+    }
+
+    if (from == GL_PACK_REVERSE_ROW_ORDER_ANGLE)
+    {
+        return PackUnpackParameter::PackReverseRowOrder;
+    }
+
+    return PackUnpackParameter::InvalidEnum;
+}
+
+constexpr GLenum ToGLenum(PackUnpackParameter from)
+{
+    switch (from)
+    {
+        case PackUnpackParameter::UnpackRowLength:
+            return GL_UNPACK_ROW_LENGTH;
+        case PackUnpackParameter::UnpackSkipRows:
+            return GL_UNPACK_SKIP_ROWS;
+        case PackUnpackParameter::UnpackSkipPixels:
+            return GL_UNPACK_SKIP_PIXELS;
+        case PackUnpackParameter::UnpackAlignment:
+            return GL_UNPACK_ALIGNMENT;
+        case PackUnpackParameter::PackRowLength:
+            return GL_PACK_ROW_LENGTH;
+        case PackUnpackParameter::PackSkipRows:
+            return GL_PACK_SKIP_ROWS;
+        case PackUnpackParameter::PackSkipPixels:
+            return GL_PACK_SKIP_PIXELS;
+        case PackUnpackParameter::PackAlignment:
+            return GL_PACK_ALIGNMENT;
+        case PackUnpackParameter::UnpackSkipImages:
+            return GL_UNPACK_SKIP_IMAGES;
+        case PackUnpackParameter::UnpackImageHeight:
+            return GL_UNPACK_IMAGE_HEIGHT;
+        case PackUnpackParameter::PackReverseRowOrder:
+            return GL_PACK_REVERSE_ROW_ORDER_ANGLE;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+ANGLE_VALIDATE_PACKED_ENUM(PackUnpackParameter, UnpackRowLength, GL_UNPACK_ROW_LENGTH);
+ANGLE_VALIDATE_PACKED_ENUM(PackUnpackParameter, UnpackSkipRows, GL_UNPACK_SKIP_ROWS);
+ANGLE_VALIDATE_PACKED_ENUM(PackUnpackParameter, UnpackSkipPixels, GL_UNPACK_SKIP_PIXELS);
+ANGLE_VALIDATE_PACKED_ENUM(PackUnpackParameter, UnpackAlignment, GL_UNPACK_ALIGNMENT);
+ANGLE_VALIDATE_PACKED_ENUM(PackUnpackParameter, PackRowLength, GL_PACK_ROW_LENGTH);
+ANGLE_VALIDATE_PACKED_ENUM(PackUnpackParameter, PackSkipRows, GL_PACK_SKIP_ROWS);
+ANGLE_VALIDATE_PACKED_ENUM(PackUnpackParameter, PackSkipPixels, GL_PACK_SKIP_PIXELS);
+ANGLE_VALIDATE_PACKED_ENUM(PackUnpackParameter, PackAlignment, GL_PACK_ALIGNMENT);
+ANGLE_VALIDATE_PACKED_ENUM(PackUnpackParameter, UnpackSkipImages, GL_UNPACK_SKIP_IMAGES);
+ANGLE_VALIDATE_PACKED_ENUM(PackUnpackParameter, UnpackImageHeight, GL_UNPACK_IMAGE_HEIGHT);
+ANGLE_VALIDATE_PACKED_ENUM(PackUnpackParameter,
+                           PackReverseRowOrder,
+                           GL_PACK_REVERSE_ROW_ORDER_ANGLE);
+
+std::ostream &operator<<(std::ostream &os, PackUnpackParameter value);
+
 enum class VertexAttribType
 {
     Byte               = 0,   // GLenum == 0x1400

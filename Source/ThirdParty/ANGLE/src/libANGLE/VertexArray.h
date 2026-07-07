@@ -413,7 +413,7 @@ class VertexArray final : public VertexArrayPrivate, public LabeledObject, publi
     DirtyBindingBits bindVertexBufferImpl(const Context *context,
                                           size_t bindingIndex,
                                           Buffer *boundBuffer,
-                                          GLintptr offset,
+                                          uintptr_t offset,
                                           GLsizei stride);
 
     void onBind(const Context *context);

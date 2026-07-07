@@ -348,18 +348,6 @@ bool ValidateInvalidateSubFramebuffer(const Context *context,
                                       GLint y,
                                       GLsizei width,
                                       GLsizei height);
-bool ValidateIsQuery(const Context *context, angle::EntryPoint entryPoint, QueryID idPacked);
-bool ValidateIsSampler(const Context *context,
-                       angle::EntryPoint entryPoint,
-                       SamplerID samplerPacked);
-bool ValidateIsSync(const Context *context, angle::EntryPoint entryPoint, SyncID syncPacked);
-bool ValidateIsTransformFeedback(const Context *context,
-                                 angle::EntryPoint entryPoint,
-                                 TransformFeedbackID idPacked);
-bool ValidateIsVertexArray(const PrivateState &state,
-                           ErrorSet *errors,
-                           angle::EntryPoint entryPoint,
-                           VertexArrayID arrayPacked);
 bool ValidateMapBufferRange(const Context *context,
                             angle::EntryPoint entryPoint,
                             BufferBinding targetPacked,

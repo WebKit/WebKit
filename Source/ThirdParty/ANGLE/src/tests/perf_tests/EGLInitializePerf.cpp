@@ -83,9 +83,15 @@ EGLInitializePerfTest::EGLInitializePerfTest()
 {
     auto platform = GetParam().eglParameters;
 
+    mOSWindow = OSWindow::New();
+    mOSWindow->initialize("EGLInitialize Test", 64, 64);
+    const EGLenum platformType = mOSWindow->getNativeDisplayPlatformType();
+
     std::vector<EGLAttrib> displayAttributes;
     displayAttributes.push_back(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
     displayAttributes.push_back(platform.renderer);
+    displayAttributes.push_back(EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE);
+    displayAttributes.push_back(platformType);
     displayAttributes.push_back(EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE);
     displayAttributes.push_back(platform.majorVersion);
     displayAttributes.push_back(EGL_PLATFORM_ANGLE_MAX_VERSION_MINOR_ANGLE);
@@ -98,9 +104,6 @@ EGLInitializePerfTest::EGLInitializePerfTest()
         displayAttributes.push_back(platform.deviceType);
     }
     displayAttributes.push_back(EGL_NONE);
-
-    mOSWindow = OSWindow::New();
-    mOSWindow->initialize("EGLInitialize Test", 64, 64);
 
     auto eglGetPlatformDisplay =
         reinterpret_cast<PFNEGLGETPLATFORMDISPLAYPROC>(eglGetProcAddress("eglGetPlatformDisplay"));

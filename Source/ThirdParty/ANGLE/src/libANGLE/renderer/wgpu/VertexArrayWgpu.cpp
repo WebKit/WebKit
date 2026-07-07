@@ -341,7 +341,7 @@ angle::Result VertexArrayWgpu::syncClientArrays(
         const gl::Buffer *buffer          = getVertexArrayBuffer(attrib.bindingIndex);
 
         size_t streamedVertexCount = gl::ComputeVertexBindingElementCount(
-            binding.getDivisor(), indexRange->vertexCount(), instanceCount);
+            binding.getDivisor(), indexRange->vertexCount(), std::max(instanceCount, 1), 0);
 
         const size_t sourceStride   = ComputeVertexAttributeStride(attrib, binding);
         const size_t sourceTypeSize = gl::ComputeVertexAttributeTypeSize(attrib);
@@ -604,7 +604,7 @@ angle::Result VertexArrayWgpu::calculateStagingBufferSize(
             const gl::VertexBinding &binding  = bindings[attrib.bindingIndex];
 
             size_t elementCount = gl::ComputeVertexBindingElementCount(
-                binding.getDivisor(), indexRange->vertexCount(), instanceCount);
+                binding.getDivisor(), indexRange->vertexCount(), std::max(instanceCount, 1), 0);
 
             const webgpu::Format &vertexFormat =
                 contextWgpu->getFormat(attrib.format->glInternalFormat);

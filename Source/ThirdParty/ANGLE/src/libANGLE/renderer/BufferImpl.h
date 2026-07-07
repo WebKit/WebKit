@@ -53,13 +53,15 @@ class BufferImpl : public angle::Subject
                                                 gl::BufferUsage usage,
                                                 GLbitfield flags,
                                                 gl::BufferStorage bufferStorage,
-                                                BufferFeedback *feedback);
+                                                BufferFeedback *feedback,
+                                                gl::ZeroFillRequired zeroFillRequired);
     virtual angle::Result setData(const gl::Context *context,
                                   gl::BufferBinding target,
                                   const void *data,
                                   size_t size,
                                   gl::BufferUsage usage,
-                                  BufferFeedback *feedback)     = 0;
+                                  BufferFeedback *feedback,
+                                  gl::ZeroFillRequired zeroFillRequired) = 0;
     virtual angle::Result setSubData(const gl::Context *context,
                                      gl::BufferBinding target,
                                      const void *data,

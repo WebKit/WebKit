@@ -25,8 +25,6 @@ using namespace std::chrono_literals;
 
 using namespace angle;
 
-GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLLockSurface3Test);
-
 class EGLLockSurface3Test : public ANGLETest<>
 {
   public:
@@ -36,12 +34,16 @@ class EGLLockSurface3Test : public ANGLETest<>
     {
         mMajorVersion = GetParam().majorVersion;
 
-        EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
+        EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(),
+                                 EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE,
+                                 static_cast<EGLAttrib>(getNativePlatformType()), EGL_NONE};
         mDisplay              = eglGetPlatformDisplay(GetEglPlatform(),
                                                       reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
         EXPECT_NE(mDisplay, EGL_NO_DISPLAY);
         EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
     }
+
+    virtual EGLenum getNativePlatformType() { return GetPbufferOnlyDefaultPlatformType(); }
 
     bool supportsLockSurface3Extension()
     {
@@ -50,6 +52,12 @@ class EGLLockSurface3Test : public ANGLETest<>
 
     void testTearDown() override
     {
+        if (mOSWindow != nullptr)
+        {
+            mOSWindow->destroy();
+            OSWindow::Delete(&mOSWindow);
+        }
+
         if (mDisplay != EGL_NO_DISPLAY)
         {
             eglTerminate(mDisplay);
@@ -182,10 +190,21 @@ class EGLLockSurface3Test : public ANGLETest<>
     }
 
     int mMajorVersion   = 2;
+    OSWindow *mOSWindow = nullptr;
     EGLDisplay mDisplay = EGL_NO_DISPLAY;
 
     static constexpr EGLint kWidth  = 5;
     static constexpr EGLint kHeight = 5;
+};
+
+class EGLLockSurface3WindowTest : public EGLLockSurface3Test
+{
+  public:
+    EGLenum getNativePlatformType() override
+    {
+        mOSWindow = OSWindow::New();
+        return mOSWindow->getNativeDisplayPlatformType();
+    }
 };
 
 // Create parity between eglQuerySurface and eglQuerySurface64KHR
@@ -512,7 +531,7 @@ TEST_P(EGLLockSurface3Test, PbufferSurfaceReadWriteDeferredCleaarTest)
 
 // Create WindowSurface, Clear Color to GREEN, draw red quad, Lock with PRESERVE_PIXELS,
 // read/check pixels, Unlock.
-TEST_P(EGLLockSurface3Test, WindowSurfaceReadTest)
+TEST_P(EGLLockSurface3WindowTest, WindowSurfaceReadTest)
 {
     ANGLE_SKIP_TEST_IF(!supportsLockSurface3Extension());
 
@@ -535,11 +554,10 @@ TEST_P(EGLLockSurface3Test, WindowSurfaceReadTest)
     ANGLE_SKIP_TEST_IF(config == EGL_NO_CONFIG_KHR);
     EXPECT_GT(count, 0);
 
-    OSWindow *osWindow = OSWindow::New();
-    osWindow->initialize("LockSurfaceTest", kWidth, kHeight);
+    mOSWindow->initialize("LockSurfaceTest", kWidth, kHeight);
     EGLint winAttribs[] = {EGL_NONE};
     EGLSurface windowSurface =
-        eglCreateWindowSurface(mDisplay, config, osWindow->getNativeWindow(), winAttribs);
+        eglCreateWindowSurface(mDisplay, config, mOSWindow->getNativeWindow(), winAttribs);
     EXPECT_NE(windowSurface, EGL_NO_SURFACE);
 
     EGLint ctxAttribs[] = {EGL_CONTEXT_MAJOR_VERSION, mMajorVersion, EGL_NONE};
@@ -587,12 +605,10 @@ TEST_P(EGLLockSurface3Test, WindowSurfaceReadTest)
     EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
     EXPECT_EGL_TRUE(eglDestroySurface(mDisplay, windowSurface));
     EXPECT_EGL_TRUE(eglDestroyContext(mDisplay, context));
-    osWindow->destroy();
-    OSWindow::Delete(&osWindow);
 }
 
 // Test default msaa surface resolve path.
-TEST_P(EGLLockSurface3Test, WindowMsaaSurfaceReadTest)
+TEST_P(EGLLockSurface3WindowTest, WindowMsaaSurfaceReadTest)
 {
     ANGLE_SKIP_TEST_IF(!supportsLockSurface3Extension());
 
@@ -619,11 +635,10 @@ TEST_P(EGLLockSurface3Test, WindowMsaaSurfaceReadTest)
     ANGLE_SKIP_TEST_IF(config == EGL_NO_CONFIG_KHR);
     EXPECT_GT(count, 0);
 
-    OSWindow *osWindow = OSWindow::New();
-    osWindow->initialize("LockSurfaceTest", kWidth, kHeight);
+    mOSWindow->initialize("LockSurfaceTest", kWidth, kHeight);
     EGLint winAttribs[] = {EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER, EGL_NONE};
     EGLSurface windowSurface =
-        eglCreateWindowSurface(mDisplay, config, osWindow->getNativeWindow(), winAttribs);
+        eglCreateWindowSurface(mDisplay, config, mOSWindow->getNativeWindow(), winAttribs);
     EXPECT_NE(windowSurface, EGL_NO_SURFACE);
 
     EGLint ctxAttribs[] = {EGL_CONTEXT_MAJOR_VERSION, mMajorVersion, EGL_NONE};
@@ -681,14 +696,12 @@ TEST_P(EGLLockSurface3Test, WindowMsaaSurfaceReadTest)
     EXPECT_EGL_TRUE(eglDestroySurface(mDisplay, windowSurface));
     EXPECT_EGL_TRUE(eglDestroyContext(mDisplay, context));
 
-    osWindow->destroy();
-    OSWindow::Delete(&osWindow);
     ANGLE_SKIP_TEST_IF(buffer != EGL_SINGLE_BUFFER);
 }
 
 // Create WindowSurface, Lock surface, Write pixels red, Unlock, check pixels,
 //  then swapbuffers to visually check.
-TEST_P(EGLLockSurface3Test, WindowSurfaceWritePreserveTest)
+TEST_P(EGLLockSurface3WindowTest, WindowSurfaceWritePreserveTest)
 {
     ANGLE_SKIP_TEST_IF(!supportsLockSurface3Extension());
 
@@ -711,11 +724,10 @@ TEST_P(EGLLockSurface3Test, WindowSurfaceWritePreserveTest)
     ANGLE_SKIP_TEST_IF(config == EGL_NO_CONFIG_KHR);
     EXPECT_GT(count, 0);
 
-    OSWindow *osWindow = OSWindow::New();
-    osWindow->initialize("LockSurfaceTest", kWidth, kHeight);
+    mOSWindow->initialize("LockSurfaceTest", kWidth, kHeight);
     EGLint winAttribs[] = {EGL_NONE};
     EGLSurface windowSurface =
-        eglCreateWindowSurface(mDisplay, config, osWindow->getNativeWindow(), winAttribs);
+        eglCreateWindowSurface(mDisplay, config, mOSWindow->getNativeWindow(), winAttribs);
     EXPECT_NE(windowSurface, EGL_NO_SURFACE);
 
     EGLint ctxAttribs[] = {EGL_CONTEXT_MAJOR_VERSION, mMajorVersion, EGL_NONE};
@@ -745,10 +757,14 @@ TEST_P(EGLLockSurface3Test, WindowSurfaceWritePreserveTest)
     EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
     EXPECT_EGL_TRUE(eglDestroySurface(mDisplay, windowSurface));
     EXPECT_EGL_TRUE(eglDestroyContext(mDisplay, context));
-    osWindow->destroy();
-    OSWindow::Delete(&osWindow);
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLLockSurface3Test);
 ANGLE_INSTANTIATE_TEST(EGLLockSurface3Test,
+                       WithNoFixture(ES2_VULKAN()),
+                       WithNoFixture(ES3_VULKAN()));
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLLockSurface3WindowTest);
+ANGLE_INSTANTIATE_TEST(EGLLockSurface3WindowTest,
                        WithNoFixture(ES2_VULKAN()),
                        WithNoFixture(ES3_VULKAN()));

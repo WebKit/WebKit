@@ -21,6 +21,7 @@
         "IsBinaryDataCompressed": false,
         "IsBindGeneratesResourcesEnabled": true,
         "IsHardenedContextEnabled": false,
+        "IsRobustAccessEnabled": false,
         "IsRobustResourceInitEnabled": false,
         "IsWebGLCompatibilityEnabled": false
     },

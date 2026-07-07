@@ -7,6 +7,7 @@
 //
 
 #include "libANGLE/VertexAttribute.h"
+#include "common/mathutil.h"
 
 namespace gl
 {
@@ -134,12 +135,15 @@ size_t ComputeVertexAttributeStride(const VertexAttribute &attrib, const VertexB
 }
 
 // Warning: you should ensure binding really matches attrib.bindingIndex before using this function.
-GLintptr ComputeVertexAttributeOffset(const VertexAttribute &attrib, const VertexBinding &binding)
+uintptr_t ComputeVertexAttributeOffset(const VertexAttribute &attrib, const VertexBinding &binding)
 {
     return attrib.relativeOffset + binding.getOffset();
 }
 
-size_t ComputeVertexBindingElementCount(GLuint divisor, uint64_t drawCount, size_t instanceCount)
+size_t ComputeVertexBindingElementCount(GLuint divisor,
+                                        uint64_t drawCount,
+                                        size_t instanceCount,
+                                        uint64_t baseInstance)
 {
     // For instanced rendering, we draw "instanceDrawCount" sets of "vertexDrawCount" vertices.
     //
@@ -148,10 +152,13 @@ size_t ComputeVertexBindingElementCount(GLuint divisor, uint64_t drawCount, size
     // instances.
     if (instanceCount > 0 && divisor > 0)
     {
-        // When instanceDrawCount is not a multiple attrib.divisor, the division must round up.
+        // When instanceDrawCount is not a multiple of divisor, the division must round up.
         // For instance, with 5 non-instanced vertices and a divisor equal to 3, we need 2 instanced
         // vertices.
-        return (instanceCount + divisor - 1u) / divisor;
+        angle::CheckedNumeric<size_t> checkedElementCount = baseInstance;
+        checkedElementCount += static_cast<size_t>(rx::UnsignedCeilDivide64(
+            static_cast<uint64_t>(instanceCount), static_cast<uint64_t>(divisor)));
+        return checkedElementCount.ValueOrDie();
     }
 
     // Ensure that drawCount can always fit into a size_t. This should also be validated by

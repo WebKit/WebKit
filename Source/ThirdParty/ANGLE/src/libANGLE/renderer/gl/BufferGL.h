@@ -33,7 +33,8 @@ class BufferGL : public BufferImpl
                           const void *data,
                           size_t size,
                           gl::BufferUsage usage,
-                          BufferFeedback *feedback) override;
+                          BufferFeedback *feedback,
+                          gl::ZeroFillRequired zeroFillRequired) override;
     angle::Result setSubData(const gl::Context *context,
                              gl::BufferBinding target,
                              const void *data,

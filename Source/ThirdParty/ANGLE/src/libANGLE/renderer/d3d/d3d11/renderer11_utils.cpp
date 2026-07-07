@@ -1607,7 +1607,6 @@ void GenerateCaps(ID3D11Device *device,
     extensions->EGLStreamConsumerExternalNV         = true;
     extensions->unpackSubimageEXT                   = true;
     extensions->packSubimageNV                      = true;
-    extensions->lossyEtcDecodeANGLE                 = true;
     extensions->copyTextureCHROMIUM                 = true;
     extensions->copyCompressedTextureCHROMIUM       = true;
     extensions->textureStorageMultisample2dArrayOES = true;
@@ -2409,14 +2408,14 @@ void InitializeFeatures(const Renderer11DeviceCaps &deviceCaps,
                         const DXGI_ADAPTER_DESC &adapterDesc,
                         angle::FeaturesD3D *features)
 {
-    bool isNvidia          = IsNvidia(adapterDesc.VendorId);
-    bool isIntel           = IsIntel(adapterDesc.VendorId);
-    bool isSkylake         = false;
-    bool isBroadwell       = false;
-    bool isHaswell         = false;
-    bool isIvyBridge       = false;
-    bool isAMD             = IsAMD(adapterDesc.VendorId);
-    bool isFeatureLevel9_3 = deviceCaps.featureLevel <= D3D_FEATURE_LEVEL_9_3;
+    bool isNvidia    = IsNvidia(adapterDesc.VendorId);
+    bool isIntel     = IsIntel(adapterDesc.VendorId);
+    bool isSkylake   = false;
+    bool isBroadwell = false;
+    bool isHaswell   = false;
+    bool isIvyBridge = false;
+    bool isAMD       = IsAMD(adapterDesc.VendorId);
+    bool isQualcomm  = IsQualcomm(adapterDesc.VendorId);
 
     angle::VersionTriple capsVersion;
     if (isIntel)
@@ -2451,7 +2450,6 @@ void InitializeFeatures(const Renderer11DeviceCaps &deviceCaps,
     }
 
     ANGLE_FEATURE_CONDITION(features, mrtPerfWorkaround, true);
-    ANGLE_FEATURE_CONDITION(features, zeroMaxLodWorkaround, isFeatureLevel9_3);
     ANGLE_FEATURE_CONDITION(features, allowES3OnFL100, false);
 
     // TODO(jmadill): Disable workaround when we have a fixed compiler DLL.
@@ -2504,17 +2502,16 @@ void InitializeFeatures(const Renderer11DeviceCaps &deviceCaps,
     // NVidia drivers have no trouble clearing textures without showing corruption.
     // Intel and AMD drivers that have trouble have been blocklisted by Chromium. In the case of
     // Intel, they've been blocklisted to the DX9 runtime.
-    ANGLE_FEATURE_CONDITION(features, allowClearForRobustResourceInit, true);
+    // Qualcomm D3D11 drivers have trouble clearing textures when robust resource initialization
+    // uses ClearRenderTargetView, so use the upload path instead.
+    ANGLE_FEATURE_CONDITION(features, allowClearForRobustResourceInit, !isQualcomm);
 
     // Allow translating uniform block to StructuredBuffer on Windows 10. This is targeted
     // to work around a slow fxc compile performance issue with dynamic uniform indexing.
     ANGLE_FEATURE_CONDITION(features, allowTranslateUniformBlockToStructuredBuffer,
                             IsWindows10OrLater());
 
-    // D3D11 Feature Levels 9_3 and below do not support non-constant loop indexing and require
-    // additional
-    // pre-validation of the shader at compile time to produce a better error message.
-    ANGLE_FEATURE_CONDITION(features, supportsNonConstantLoopIndexing, !isFeatureLevel9_3);
+    ANGLE_FEATURE_CONDITION(features, supportsNonConstantLoopIndexing, true);
 }
 
 void InitializeFrontendFeatures(const DXGI_ADAPTER_DESC &adapterDesc,
@@ -2527,6 +2524,8 @@ void InitializeFrontendFeatures(const DXGI_ADAPTER_DESC &adapterDesc,
     // The D3D backend's handling of compile and link is thread-safe
     ANGLE_FEATURE_CONDITION(features, compileJobIsThreadSafe, true);
     ANGLE_FEATURE_CONDITION(features, linkJobIsThreadSafe, true);
+
+    ANGLE_FEATURE_CONDITION(features, setNeedInitOnInvalidation, true);
 }
 
 void InitConstantBufferDesc(D3D11_BUFFER_DESC *constantBufferDescription, size_t byteWidth)

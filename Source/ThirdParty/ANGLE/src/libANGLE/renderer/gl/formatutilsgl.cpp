@@ -407,20 +407,6 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     InsertFormatMapping(&map, GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6x5_OES, NeverSupported(), NeverSupported(), NeverSupported(), ExtsOnly("GL_OES_texture_compression_astc"),     AlwaysSupported(), NeverSupported(), NeverSupported());
     InsertFormatMapping(&map, GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6x6_OES, NeverSupported(), NeverSupported(), NeverSupported(), ExtsOnly("GL_OES_texture_compression_astc"),     AlwaysSupported(), NeverSupported(), NeverSupported());
 
-    // From GL_IMG_texture_compression_pvrtc
-    //                       | Format                               | OpenGL texture support                         | Filter           | Render          | OpenGL ES texture support                      | Filter           | OpenGL ES texture attachment support | OpenGL ES renderbuffer support |
-    InsertFormatMapping(&map, GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG,    ExtsOnly("GL_IMG_texture_compression_pvrtc"),     AlwaysSupported(), NeverSupported(), ExtsOnly("GL_IMG_texture_compression_pvrtc"),   AlwaysSupported(), NeverSupported(),                      NeverSupported()                );
-    InsertFormatMapping(&map, GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG,    ExtsOnly("GL_IMG_texture_compression_pvrtc"),     AlwaysSupported(), NeverSupported(), ExtsOnly("GL_IMG_texture_compression_pvrtc"),   AlwaysSupported(), NeverSupported(),                      NeverSupported()                );
-    InsertFormatMapping(&map, GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG,   ExtsOnly("GL_IMG_texture_compression_pvrtc"),     AlwaysSupported(), NeverSupported(), ExtsOnly("GL_IMG_texture_compression_pvrtc"),   AlwaysSupported(), NeverSupported(),                      NeverSupported()                );
-    InsertFormatMapping(&map, GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG,   ExtsOnly("GL_IMG_texture_compression_pvrtc"),     AlwaysSupported(), NeverSupported(), ExtsOnly("GL_IMG_texture_compression_pvrtc"),   AlwaysSupported(), NeverSupported(),                      NeverSupported()                );
-
-    // From GL_EXT_pvrtc_sRGB
-    //                       | Format                                      | OpenGL texture support  | Filter          | Render          | OpenGL ES texture support                                      | Filter           | OpenGL ES texture attachment support | OpenGL ES renderbuffer support |
-    InsertFormatMapping(&map, GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT,          NeverSupported(),         NeverSupported(), NeverSupported(), ExtsOnly("GL_IMG_texture_compression_pvrtc GL_EXT_pvrtc_sRGB"),   AlwaysSupported(), NeverSupported(),                      NeverSupported()                );
-    InsertFormatMapping(&map, GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT,          NeverSupported(),         NeverSupported(), NeverSupported(), ExtsOnly("GL_IMG_texture_compression_pvrtc GL_EXT_pvrtc_sRGB"),   AlwaysSupported(), NeverSupported(),                      NeverSupported()                );
-    InsertFormatMapping(&map, GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT,    NeverSupported(),         NeverSupported(), NeverSupported(), ExtsOnly("GL_IMG_texture_compression_pvrtc GL_EXT_pvrtc_sRGB"),   AlwaysSupported(), NeverSupported(),                      NeverSupported()                );
-    InsertFormatMapping(&map, GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV1_EXT,    NeverSupported(),         NeverSupported(), NeverSupported(), ExtsOnly("GL_IMG_texture_compression_pvrtc GL_EXT_pvrtc_sRGB"),   AlwaysSupported(), NeverSupported(),                      NeverSupported()                );
-
     // clang-format on
 
     return map;

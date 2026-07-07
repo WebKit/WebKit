@@ -29,13 +29,6 @@
             ]
         },
         {
-            "name": "zero_max_lod_workaround",
-            "category": "Workarounds",
-            "description": [
-                "Missing an option to disable mipmaps on a mipmapped texture"
-            ]
-        },
-        {
             "name": "depth_stencil_blit_extra_copy",
             "category": "Workarounds",
             "description": [

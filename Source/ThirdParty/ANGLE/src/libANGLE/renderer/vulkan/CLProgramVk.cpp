@@ -351,6 +351,12 @@ spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
                                                               .filterMode       = filterMode});
                     break;
                 }
+                case NonSemanticClspvReflectionWorkgroupVariableSize:
+                {
+                    uint32_t size = reflectionData.spvIntLookup[spvInstr.words[6]];
+                    reflectionData.workgroupVariableSize.size += size;
+                    break;
+                }
                 default:
                     break;
             }

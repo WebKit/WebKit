@@ -830,6 +830,9 @@
 449120558 PIXEL10 GLES : dEQP-GLES3.functional.shaders.struct.local.nested_struct_array_dynamic_index_vertex = FAIL
 449120558 PIXEL10 GLES : dEQP-GLES3.functional.shaders.struct.local.nested_struct_array_fragment = FAIL
 449120558 PIXEL10 GLES : dEQP-GLES3.functional.shaders.struct.local.nested_struct_array_vertex = FAIL
+523128541 PIXEL10 GLES : dEQP-GLES3.functional.ubo.random.all_shared_buffer.21 = FAIL
+523128541 PIXEL10 GLES : dEQP-GLES3.functional.ubo.random.all_shared_buffer.40 = FAIL
+523128541 PIXEL10 GLES : dEQP-GLES3.functional.ubo.random.nested_structs_arrays.9 = FAIL
 
 42265203 LINUX NVIDIA GTX1660 VULKAN : dEQP-GLES3.functional.shaders.random.all_features.fragment.26 = FAIL
 42265203 LINUX NVIDIA GTX1660 VULKAN : dEQP-GLES3.functional.shaders.random.all_features.fragment.31 = FAIL

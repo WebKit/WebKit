@@ -487,7 +487,14 @@ class Framebuffer final : public angle::ObserverInterface,
     // Observer implementation
     void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
 
-    bool formsRenderingFeedbackLoopWith(const Context *context) const;
+    enum class AllowedFeedbackLoop : bool
+    {
+        NoneAllowed,
+        ReadOnlyDepthStencil,
+    };
+
+    bool formsRenderingFeedbackLoopWith(const Context *context,
+                                        AllowedFeedbackLoop allowedFeedbackLoop) const;
     bool formsCopyingFeedbackLoopWith(TextureID destTextureId,
                                       const gl::ImageIndex &destImageIndex) const;
 

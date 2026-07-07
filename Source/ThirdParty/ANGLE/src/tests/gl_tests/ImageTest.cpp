@@ -8661,6 +8661,95 @@ TEST_P(ImageTest, AHBUpdatedExternalTexture)
     destroyAndroidHardwareBuffer(source);
 }
 
+// Similar to AHBUpdatedExternalTexture but with shared contexts
+TEST_P(ImageTest, AHBUpdatedExternalTextureWithSharedContext)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+    ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+
+    EGLDisplay display = getEGLWindow()->getDisplay();
+    EGLConfig config   = getEGLWindow()->getConfig();
+    EGLSurface surface = getEGLWindow()->getSurface();
+    EGLContext context = eglGetCurrentContext();
+
+    const EGLint contextAttribs[] = {EGL_CONTEXT_CLIENT_VERSION, window->getClientMajorVersion(),
+                                     EGL_NONE};
+    EGLint pbufferAttributes[]    = {EGL_WIDTH, 128, EGL_HEIGHT, 128, EGL_NONE, EGL_NONE};
+
+    EGLContext pBufferContext = eglCreateContext(display, config, context, contextAttribs);
+    EGLSurface pBufferSurface = eglCreatePbufferSurface(display, config, pbufferAttributes);
+    ASSERT_EGL_SUCCESS();
+    ASSERT_TRUE(pBufferContext != EGL_NO_CONTEXT);
+    ASSERT_EGL_TRUE(eglMakeCurrent(display, pBufferSurface, pBufferSurface, pBufferContext));
+    EXPECT_EGL_TRUE(eglMakeCurrent(display, surface, surface, context));
+
+    GLubyte originalData[4]      = {255, 0, 255, 255};
+    GLubyte updateData[4]        = {0, 255, 0, 255};
+    const uint32_t bytesPerPixel = 4;
+    ASSERT_GL_NO_ERROR();
+
+    // Create the Image
+    AHardwareBuffer *source;
+    EGLImageKHR image;
+    createEGLImageAndroidHardwareBufferSource(1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
+                                              kDefaultAHBUsage, kDefaultAttribs,
+                                              {{originalData, bytesPerPixel}}, &source, &image);
+    ASSERT_GL_NO_ERROR();
+
+    // Create target
+    GLTexture targetTexture;
+    createEGLImageTargetTexture2D(image, targetTexture);
+    ASSERT_GL_NO_ERROR();
+
+    // Expect that both the target have the original data
+    verifyResults2D(targetTexture, originalData);
+    // Update the data of the source
+    glBindTexture(GL_TEXTURE_2D, targetTexture);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, updateData);
+
+    // Set sync object and flush the GL commands
+    EGLSyncKHR fence = eglCreateSyncKHR(window->getDisplay(), EGL_SYNC_FENCE_KHR, nullptr);
+    ASSERT_NE(fence, EGL_NO_SYNC_KHR);
+    glFlush();
+
+    // Delete the target texture
+    targetTexture.reset();
+
+    // Wait that the flush command is finished
+    EGLint result = eglClientWaitSyncKHR(window->getDisplay(), fence, 0, 1000000000);
+    ASSERT_EQ(result, EGL_CONDITION_SATISFIED_KHR);
+    ASSERT_EGL_TRUE(eglDestroySyncKHR(window->getDisplay(), fence));
+
+    // Delete the EGL image
+    eglDestroyImageKHR(window->getDisplay(), image);
+
+    // Access the android hardware buffer directly to check the data is updated
+    verifyResultAHB(source, {{updateData, bytesPerPixel}});
+
+    // Create the EGL image again
+    image =
+        eglCreateImageKHR(window->getDisplay(), EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
+                          angle::android::AHardwareBufferToClientBuffer(source), kDefaultAttribs);
+    ASSERT_EGL_SUCCESS();
+
+    // Create the target texture again
+    GLTexture targetTexture2;
+    createEGLImageTargetTexture2D(image, targetTexture2);
+
+    // Expect that the target have the update data
+    verifyResults2D(targetTexture2, updateData);
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+    destroyAndroidHardwareBuffer(source);
+
+    ASSERT_EGL_TRUE(eglDestroyContext(display, pBufferContext));
+    ASSERT_EGL_TRUE(eglDestroySurface(display, pBufferSurface));
+}
+
 // Check that the texture is successfully updated using PBO.
 TEST_P(ImageTest, AHBUpdatedUnpackBuffer)
 {

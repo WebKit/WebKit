@@ -282,6 +282,12 @@ std::vector<eglw::EGLAttrib> ANGLEPlatform::initAttribs(eglw::EGLAttrib type,
     attribs.push_back(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
     attribs.push_back(type);
 
+#if (DE_OS == DE_OS_UNIX)
+    // Currently, the window is always X11, so make that explicit
+    attribs.push_back(EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE);
+    attribs.push_back(EGL_PLATFORM_X11_EXT);
+#endif
+
     if (deviceType != EGL_DONT_CARE)
     {
         attribs.push_back(EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE);

@@ -531,8 +531,7 @@ egl::Error WindowSurfaceMtl::attachToFramebuffer(const gl::Context *context,
 {
     FramebufferMtl *framebufferMtl = GetImplAs<FramebufferMtl>(framebuffer);
     ASSERT(!framebufferMtl->getBackbuffer());
-    framebufferMtl->setBackbuffer(this);
-    framebufferMtl->setFlipY(true);
+    framebufferMtl->setBackbuffer(this, true);
     return egl::NoError();
 }
 
@@ -541,8 +540,7 @@ egl::Error WindowSurfaceMtl::detachFromFramebuffer(const gl::Context *context,
 {
     FramebufferMtl *framebufferMtl = GetImplAs<FramebufferMtl>(framebuffer);
     ASSERT(framebufferMtl->getBackbuffer() == this);
-    framebufferMtl->setBackbuffer(nullptr);
-    framebufferMtl->setFlipY(false);
+    framebufferMtl->setBackbuffer(nullptr, false);
     return egl::NoError();
 }
 

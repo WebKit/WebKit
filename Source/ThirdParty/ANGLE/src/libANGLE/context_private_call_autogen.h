@@ -99,7 +99,7 @@ void ContextPrivateLineWidth(PrivateState *privateState,
                              GLfloat width);
 void ContextPrivatePixelStorei(PrivateState *privateState,
                                PrivateStateCache *privateStateCache,
-                               GLenum pname,
+                               PackUnpackParameter pnamePacked,
                                GLint param);
 void ContextPrivatePolygonOffset(PrivateState *privateState,
                                  PrivateStateCache *privateStateCache,

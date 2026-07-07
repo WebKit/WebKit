@@ -4498,6 +4498,65 @@ TEST_P(MSRTTES3Test, RenderToTextureMidRenderPassDepthClear)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that MSRTT rendering to cubemap faces work.
+TEST_P(MSRTTES3Test, CubeMap)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+
+    constexpr char kFS[] = R"(#version 300 es
+#extension GL_OES_sample_variables : enable
+precision mediump float;
+out vec4 color;
+void main()
+{
+    switch (gl_SampleID % 4)
+    {
+    case 0:
+        color = vec4(1.0, 0.9, 0.8, 0.7);
+        break;
+    case 1:
+        color = vec4(0.0, 0.1, 0.2, 0.3);
+        break;
+    case 2:
+        color = vec4(0.5, 0.25, 0.75, 1.0);
+        break;
+    case 3:
+        color = vec4(0.4, 0.6, 0.2, 0.8);
+        break;
+    }
+})";
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+
+    constexpr GLsizei kSize = 6;
+
+    // Create multisampled framebuffer to draw into, with both color and depth attachments.
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, color);
+    for (GLenum face = 0; face < 6; face++)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, nullptr);
+        ASSERT_GL_NO_ERROR();
+    }
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    for (GLenum face = 0; face < 6; face++)
+    {
+        glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                             GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, color, 0, 4);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+
+        // The result should be the average of the four colors written by the shader.
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(121, 118, 124, 178), 1);
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
 class MSRTTSRGBES3Test : public MSRTTES3Test
 {};
 
@@ -4717,6 +4776,193 @@ TEST_P(MSRTTES3Test, UnresolveWithAndWithoutStencil)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
 }
 
+// Test that drawing with the color attachment disabled works.
+TEST_P(MSRTTES3Test, DrawDisabled)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+
+    const bool hasAtomicCounters = getClientMajorVersion() == 3 && getClientMinorVersion() >= 1;
+    constexpr char kFS[]         = R"(#version 310 es
+precision mediump float;
+uniform vec4 c;
+layout(binding = 0) uniform atomic_uint ac;
+out vec4 color;
+
+void main()
+{
+    atomicCounterIncrement(ac);
+    color = c;
+})";
+
+    ANGLE_GL_PROGRAM(program,
+                     hasAtomicCounters ? essl31_shaders::vs::Simple() : essl1_shaders::vs::Simple(),
+                     hasAtomicCounters ? kFS : essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+    GLint colorLocation =
+        glGetUniformLocation(program, hasAtomicCounters ? "c" : essl1_shaders::ColorUniform());
+    ASSERT_NE(-1, colorLocation);
+
+    GLRenderbuffer color;
+    glBindRenderbuffer(GL_RENDERBUFFER, color);
+    glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER, mTestSampleCount, GL_RGBA8, 1, 1);
+
+    GLFramebuffer FBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glClearColor(0, 0, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    GLBuffer ac;
+    constexpr GLuint kInitialData = 20;
+    if (hasAtomicCounters)
+    {
+        glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, ac);
+        glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(kInitialData), &kInitialData, GL_STATIC_DRAW);
+        glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, ac);
+    }
+
+    // Draw once to create a render pass, then close it.
+    constexpr GLenum kDisable = GL_NONE;
+    glDrawBuffers(1, &kDisable);
+
+    glUniform4fv(colorLocation, 1, GLColor::red.toNormalizedVector().data());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0);
+    // Attachment should remain blue (the clear color)
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    if (hasAtomicCounters)
+    {
+        // Verify that draw actually happened by looking at the atomic counter.
+        glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+        const GLuint value = *static_cast<const GLuint *>(
+            glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint), GL_MAP_READ_BIT));
+        glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
+
+        EXPECT_EQ(value, kInitialData + 1);
+    }
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that drawing with the color attachment disabled after drawing with it enabled works.
+TEST_P(MSRTTES3Test, DrawThenDrawDisabled)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+
+    const bool hasAtomicCounters = getClientMajorVersion() == 3 && getClientMinorVersion() >= 1;
+    constexpr char kFS[]         = R"(#version 310 es
+precision mediump float;
+uniform vec4 c;
+layout(binding = 0) uniform atomic_uint ac;
+out vec4 color;
+
+void main()
+{
+    atomicCounterIncrement(ac);
+    color = c;
+})";
+
+    ANGLE_GL_PROGRAM(program,
+                     hasAtomicCounters ? essl31_shaders::vs::Simple() : essl1_shaders::vs::Simple(),
+                     hasAtomicCounters ? kFS : essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+    GLint colorLocation =
+        glGetUniformLocation(program, hasAtomicCounters ? "c" : essl1_shaders::ColorUniform());
+    ASSERT_NE(-1, colorLocation);
+
+    GLRenderbuffer color;
+    glBindRenderbuffer(GL_RENDERBUFFER, color);
+    glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER, mTestSampleCount, GL_RGBA8, 1, 1);
+
+    GLFramebuffer FBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLBuffer ac;
+    constexpr GLuint kInitialData = 20;
+    if (hasAtomicCounters)
+    {
+        glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, ac);
+        glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(kInitialData), &kInitialData, GL_STATIC_DRAW);
+        glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, ac);
+    }
+
+    // Draw once to create a render pass, then close it.
+    glUniform4fv(colorLocation, 1, GLColor::red.toNormalizedVector().data());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    if (hasAtomicCounters)
+    {
+        glMemoryBarrier(GL_ATOMIC_COUNTER_BARRIER_BIT);
+    }
+
+    // Disable the draw buffer and draw again.
+    constexpr GLenum kDisable = GL_NONE;
+    glDrawBuffers(1, &kDisable);
+
+    glUniform4fv(colorLocation, 1, GLColor::green.toNormalizedVector().data());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0);
+
+    // Attachment should still be red.
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    if (hasAtomicCounters)
+    {
+        // Verify that both draws actually happened by looking at the atomic counter.
+        glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+        const GLuint value = *static_cast<const GLuint *>(
+            glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint), GL_MAP_READ_BIT));
+        glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
+
+        EXPECT_EQ(value, kInitialData + 2);
+    }
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that drawing with the color attachment disabled then drawing with it enabled works.
+TEST_P(MSRTTES3Test, DrawDisabledThenDraw)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+    GLint colorLocation = glGetUniformLocation(program, essl1_shaders::ColorUniform());
+    ASSERT_NE(-1, colorLocation);
+
+    GLRenderbuffer color;
+    glBindRenderbuffer(GL_RENDERBUFFER, color);
+    glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER, mTestSampleCount, GL_RGBA8, 1, 1);
+
+    GLFramebuffer FBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Draw once with color attachment 0 disabled.
+    constexpr GLenum kDisable = GL_NONE;
+    glDrawBuffers(1, &kDisable);
+
+    glUniform4fv(colorLocation, 1, GLColor::red.toNormalizedVector().data());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0);
+
+    // Enable the draw buffer and draw again.
+    constexpr GLenum kEnable = GL_COLOR_ATTACHMENT0;
+    glDrawBuffers(1, &kEnable);
+
+    glUniform4fv(colorLocation, 1, GLColor::green.toNormalizedVector().data());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0);
+
+    // Verify results
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 ANGLE_INSTANTIATE_TEST_COMBINE_1(
     MSRTTTest,
     PrintToStringParamName,
@@ -4750,7 +4996,8 @@ ANGLE_INSTANTIATE_TEST_COMBINE_1(
         .disable(Feature::SupportsExtendedDynamicState2),
     ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
     ES3_VULKAN().disable(Feature::SupportsSPIRV14),
-    ES3_VULKAN_SWIFTSHADER().enable(Feature::EnableMultisampledRenderToTexture));
+    ES3_VULKAN_SWIFTSHADER().enable(Feature::EnableMultisampledRenderToTexture),
+    ES31_VULKAN_SWIFTSHADER().enable(Feature::EnableMultisampledRenderToTexture));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MSRTTSRGBES3Test);
 ANGLE_INSTANTIATE_TEST_COMBINE_1(
