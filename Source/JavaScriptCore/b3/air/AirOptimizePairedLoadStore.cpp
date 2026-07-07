@@ -60,12 +60,29 @@ static inline Width NODELETE accessWidth(Opcode opcode)
     }
 }
 
-static bool tryStorePair(Code& code, BasicBlock* block, unsigned current, Inst& inst)
+enum class PairDirection : uint8_t { Store, Load };
+
+static bool tryMergePair(Code& code, BasicBlock* block, unsigned current, Inst& inst, PairDirection direction)
 {
+    // For a store: inst = "Move Tmp/ZeroReg, Addr" — args[0] is source value, args[1] is destination memory.
+    // For a load:  inst = "Move Addr, Tmp"         — args[0] is source memory,  args[1] is destination register.
+    // In both cases the "other" instruction we try to fuse with must be of the same kind and shape,
+    // and the Addr operands must share a base register with offsets differing by exactly the element width.
+    //
+    // We merge at the earlier (target) position and drop the later (inst) instruction. For stores this
+    // effectively moves the later store earlier; the existing interference/clobber checks cover that.
+    // For loads this effectively moves the later load earlier, so we additionally require that the later
+    // load's destination register is neither used nor defined between the two loads — otherwise those
+    // intervening uses would incorrectly observe the post-ldp value.
+    const bool isLoad = direction == PairDirection::Load;
+    const unsigned addrIndex = isLoad ? 0 : 1;
+    const unsigned valueIndex = isLoad ? 1 : 0;
+
     Width instWidth = accessWidth(inst.kind.opcode);
-    int64_t instOffset = static_cast<int64_t>(inst.args[1].offset());
+    int64_t instOffset = static_cast<int64_t>(inst.args[addrIndex].offset());
     unsigned limit = std::min(current, AirOptimizePairedLoadStoreInternal::scanInstructions);
     RegisterSet clobbered;
+    RegisterSet intermediateUses;
     for (unsigned count = 1; count <= limit; ++count) {
         unsigned index = current - count;
         Inst& target = block->at(index);
@@ -108,9 +125,28 @@ static bool tryStorePair(Code& code, BasicBlock* block, unsigned current, Inst& 
             [&] (const Tmp& arg, Arg::Role, Bank, Width, PreservedWidth) {
                 clobbered.add(arg.reg(), IgnoreVectors);
             });
-        if (clobbered.contains(inst.args[1].base().reg(), IgnoreVectors) || (inst.args[0].isTmp() && clobbered.contains(inst.args[0].reg(), IgnoreVectors))) {
+        if (clobbered.contains(inst.args[addrIndex].base().reg(), IgnoreVectors)) {
             logFailed();
             return false;
+        }
+        if (!isLoad && inst.args[valueIndex].isTmp() && clobbered.contains(inst.args[valueIndex].reg(), IgnoreVectors)) {
+            logFailed();
+            return false;
+        }
+        if (isLoad) {
+            // Moving the later load earlier is only safe if nothing between the target and inst positions
+            // reads or writes the later load's destination register. We already tracked defs in `clobbered`;
+            // now also accumulate uses so we can bail if the destination is observed between.
+            Inst::forEachUse<Tmp>(
+                &block->at(index), &block->at(index + 1),
+                [&] (const Tmp& arg, Arg::Role, Bank, Width) {
+                    intermediateUses.add(arg.reg(), IgnoreVectors);
+                });
+            if (clobbered.contains(inst.args[valueIndex].reg(), IgnoreVectors)
+                || intermediateUses.contains(inst.args[valueIndex].reg(), IgnoreVectors)) {
+                logFailed();
+                return false;
+            }
         }
 
         {
@@ -122,15 +158,15 @@ static bool tryStorePair(Code& code, BasicBlock* block, unsigned current, Inst& 
             bool interfere = false;
 
             auto clobberMemory = [&](const Tmp& argBase, int64_t argOffset, Width argWidth) {
-                if (argBase == inst.args[1].base()) {
+                if (argBase == inst.args[addrIndex].base()) {
                     Range<int64_t> argRange(argOffset, argOffset + bytesForWidth(argWidth));
                     Range<int64_t> instRange(instOffset, instOffset + bytesForWidth(instWidth));
                     return argRange.overlaps(instRange);
                 }
 
-                if ((argBase == Tmp(CCallHelpers::stackPointerRegister) || argBase == Tmp(GPRInfo::callFrameRegister)) && (inst.args[1].base() == Tmp(CCallHelpers::stackPointerRegister) || inst.args[1].base() == Tmp(GPRInfo::callFrameRegister))) {
+                if ((argBase == Tmp(CCallHelpers::stackPointerRegister) || argBase == Tmp(GPRInfo::callFrameRegister)) && (inst.args[addrIndex].base() == Tmp(CCallHelpers::stackPointerRegister) || inst.args[addrIndex].base() == Tmp(GPRInfo::callFrameRegister))) {
                     int64_t instOffsetFromFP = instOffset;
-                    if (inst.args[1].base() == Tmp(CCallHelpers::stackPointerRegister))
+                    if (inst.args[addrIndex].base() == Tmp(CCallHelpers::stackPointerRegister))
                         instOffsetFromFP = instOffset - code.frameSize();
 
                     int64_t argOffsetFromFP = argOffset;
@@ -159,10 +195,14 @@ static bool tryStorePair(Code& code, BasicBlock* block, unsigned current, Inst& 
                 interfere = true;
             };
 
-            Inst::forEachUse<Arg>(&block->at(index), &block->at(index + 1), checkInterfere);
-            if (interfere) {
-                logFailed();
-                return false;
+            // For load merging we only need to worry about intervening memory writes (loads do not
+            // change memory), whereas for store merging any aliasing load or store between matters.
+            if (!isLoad) {
+                Inst::forEachUse<Arg>(&block->at(index), &block->at(index + 1), checkInterfere);
+                if (interfere) {
+                    logFailed();
+                    return false;
+                }
             }
             Inst::forEachDef<Arg>(&block->at(index), &block->at(index + 1), checkInterfere);
             if (interfere) {
@@ -177,25 +217,36 @@ static bool tryStorePair(Code& code, BasicBlock* block, unsigned current, Inst& 
         if (target.args.size() != 2)
             continue;
 
-        if ((!target.args[0].isTmp() && !target.args[0].isZeroReg()) || !target.args[1].isAddr())
+        if (isLoad) {
+            if (!target.args[addrIndex].isAddr() || !target.args[valueIndex].isTmp())
+                continue;
+        } else {
+            if ((!target.args[valueIndex].isTmp() && !target.args[valueIndex].isZeroReg()) || !target.args[addrIndex].isAddr())
+                continue;
+        }
+
+        if (target.args[addrIndex].base() != inst.args[addrIndex].base())
             continue;
 
-        if (target.args[1].base() != inst.args[1].base())
+        // When we fuse two loads into an ldp we would produce `ldp Rn, Rn, [base]`, which is an
+        // illegal instruction on ARM64. (Two stp sources to the same register are legal.)
+        if (isLoad && target.args[valueIndex].isTmp() && inst.args[valueIndex].isTmp()
+            && target.args[valueIndex].tmp() == inst.args[valueIndex].tmp())
             continue;
 
         Opcode pairOpcode = StorePair32;
         switch (inst.kind.opcode) {
         case Move32:
-            pairOpcode = StorePair32;
+            pairOpcode = isLoad ? LoadPair32 : StorePair32;
             break;
         case Move:
-            pairOpcode = StorePair64;
+            pairOpcode = isLoad ? LoadPair64 : StorePair64;
             break;
         case MoveDouble:
-            pairOpcode = StorePairDouble;
+            pairOpcode = isLoad ? LoadPairDouble : StorePairDouble;
             break;
         case MoveFloat:
-            pairOpcode = StorePairFloat;
+            pairOpcode = isLoad ? LoadPairFloat : StorePairFloat;
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -205,50 +256,59 @@ static bool tryStorePair(Code& code, BasicBlock* block, unsigned current, Inst& 
         auto isValidOffset = [&](auto offset) {
             switch (inst.kind.opcode) {
             case Move32:
-                return ARM64Assembler::isValidSTPImm<32>(offset);
+                return isLoad ? ARM64Assembler::isValidLDPImm<32>(offset) : ARM64Assembler::isValidSTPImm<32>(offset);
             case Move:
-                return ARM64Assembler::isValidSTPImm<64>(offset);
+                return isLoad ? ARM64Assembler::isValidLDPImm<64>(offset) : ARM64Assembler::isValidSTPImm<64>(offset);
             case MoveDouble:
-                return ARM64Assembler::isValidSTPFPImm<64>(offset);
+                return isLoad ? ARM64Assembler::isValidLDPFPImm<64>(offset) : ARM64Assembler::isValidSTPFPImm<64>(offset);
             case MoveFloat:
-                return ARM64Assembler::isValidSTPFPImm<32>(offset);
+                return isLoad ? ARM64Assembler::isValidLDPFPImm<32>(offset) : ARM64Assembler::isValidSTPFPImm<32>(offset);
             default:
                 RELEASE_ASSERT_NOT_REACHED();
                 return false;
             }
         };
 
-        int64_t targetOffset = static_cast<int64_t>(target.args[1].offset());
+        int64_t targetOffset = static_cast<int64_t>(target.args[addrIndex].offset());
+
+        // Produce the merged instruction with the same operand ordering used by the pair opcodes:
+        //   Store pair: (srcLow, srcHigh, Addr)
+        //   Load  pair: (Addr, destLow, destHigh)
+        auto makeInst = [&](Arg lowValue, Arg highValue, Arg addr) {
+            if (isLoad)
+                return Inst(pairOpcode, target.origin, addr, lowValue, highValue);
+            return Inst(pairOpcode, target.origin, lowValue, highValue, addr);
+        };
 
         if (isValidOffset(instOffset) && targetOffset == (instOffset + bytesForWidth(instWidth))) {
-            Inst newInst(pairOpcode, target.origin, inst.args[0], target.args[0], inst.args[1]);
+            Inst newInst = makeInst(inst.args[valueIndex], target.args[valueIndex], inst.args[addrIndex]);
             logFound(newInst);
             target = newInst;
             return true;
         }
 
         if (isValidOffset(targetOffset) && (targetOffset + bytesForWidth(instWidth)) == instOffset) {
-            Inst newInst(pairOpcode, target.origin, target.args[0], inst.args[0], target.args[1]);
+            Inst newInst = makeInst(target.args[valueIndex], inst.args[valueIndex], target.args[addrIndex]);
             logFound(newInst);
             target = newInst;
             return true;
         }
 
-        // Because str pimm only takes unsigned offset, we tend to pick stackPointerRegister based offsetting.
+        // Because str/ldr pimm only takes unsigned offset, we tend to pick stackPointerRegister based offsetting.
         // But it is possible that framePointerRegister based offsetting can offer a benefit here.
-        if (target.args[1].base() == Tmp(CCallHelpers::stackPointerRegister)) {
+        if (target.args[addrIndex].base() == Tmp(CCallHelpers::stackPointerRegister)) {
             int64_t instOffsetFromFP = instOffset - code.frameSize();
             int64_t targetOffsetFromFP = targetOffset - code.frameSize();
 
             if (isValidOffset(instOffsetFromFP) && targetOffsetFromFP == (instOffsetFromFP + bytesForWidth(instWidth))) {
-                Inst newInst(pairOpcode, target.origin, inst.args[0], target.args[0], Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), static_cast<int32_t>(instOffsetFromFP)));
+                Inst newInst = makeInst(inst.args[valueIndex], target.args[valueIndex], Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), static_cast<int32_t>(instOffsetFromFP)));
                 logFound(newInst);
                 target = newInst;
                 return true;
             }
 
             if (isValidOffset(targetOffsetFromFP) && (targetOffsetFromFP + bytesForWidth(instWidth)) == instOffsetFromFP) {
-                Inst newInst(pairOpcode, target.origin, target.args[0], inst.args[0], Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), static_cast<int32_t>(targetOffsetFromFP)));
+                Inst newInst = makeInst(target.args[valueIndex], inst.args[valueIndex], Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), static_cast<int32_t>(targetOffsetFromFP)));
                 logFound(newInst);
                 target = newInst;
                 return true;
@@ -257,6 +317,16 @@ static bool tryStorePair(Code& code, BasicBlock* block, unsigned current, Inst& 
     }
 
     return false;
+}
+
+static bool tryStorePair(Code& code, BasicBlock* block, unsigned current, Inst& inst)
+{
+    return tryMergePair(code, block, current, inst, PairDirection::Store);
+}
+
+static bool tryLoadPair(Code& code, BasicBlock* block, unsigned current, Inst& inst)
+{
+    return tryMergePair(code, block, current, inst, PairDirection::Load);
 }
 
 bool optimizePairedLoadStore(Code& code)
@@ -278,27 +348,51 @@ bool optimizePairedLoadStore(Code& code)
             if (inst.hasNonArgEffects())
                 continue;
 
-            switch (inst.kind.opcode) {
-            case Move:
-            case Move32: {
-                if (inst.args.size() != 2)
-                    continue;
-
-                if ((inst.args[0].isGPTmp() || inst.args[0].isZeroReg()) && inst.args[1].isAddr()) {
-                    // sp & fp slot usage is, in particular, different for call args and spills.
-                    // We would like to do stp merging only for spills.
-                    if ((inst.args[1].base() == Tmp(CCallHelpers::stackPointerRegister) || inst.args[1].base() == Tmp(CCallHelpers::framePointerRegister)) && !inst.kind.spill)
-                        continue;
-                    if (tryStorePair(code, block, index, inst)) {
-                        block->insts().removeAt(index);
-                        changed = true;
-                    }
-                    continue;
+            auto isPairableKind = [&] {
+                switch (inst.kind.opcode) {
+                case Move:
+                case Move32:
+                case MoveFloat:
+                case MoveDouble:
+                    return true;
+                default:
+                    return false;
                 }
-                break;
+            };
+
+            if (!isPairableKind())
+                continue;
+
+            if (inst.args.size() != 2)
+                continue;
+
+            const bool valueIsTmp = inst.args[0].isTmp();
+            const bool valueIsZeroReg = inst.args[0].isZeroReg();
+            const bool destIsAddr = inst.args[1].isAddr();
+            const bool addrFirst = inst.args[0].isAddr();
+            const bool destIsTmp = inst.args[1].isTmp();
+
+            if ((valueIsTmp || valueIsZeroReg) && destIsAddr) {
+                // Store shape: Tmp/ZeroReg -> Addr.
+                // sp & fp slot usage is, in particular, different for call args and spills.
+                // We would like to do stp merging only for spills.
+                if ((inst.args[1].base() == Tmp(CCallHelpers::stackPointerRegister) || inst.args[1].base() == Tmp(CCallHelpers::framePointerRegister)) && !inst.kind.spill)
+                    continue;
+                if (tryStorePair(code, block, index, inst)) {
+                    block->insts().removeAt(index);
+                    changed = true;
+                }
+                continue;
             }
 
-            default:
+            if (addrFirst && destIsTmp) {
+                // Load shape: Addr -> Tmp. Apply the same sp/fp-vs-spill heuristic as for stores.
+                if ((inst.args[0].base() == Tmp(CCallHelpers::stackPointerRegister) || inst.args[0].base() == Tmp(CCallHelpers::framePointerRegister)) && !inst.kind.spill)
+                    continue;
+                if (tryLoadPair(code, block, index, inst)) {
+                    block->insts().removeAt(index);
+                    changed = true;
+                }
                 continue;
             }
         }
