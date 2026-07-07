@@ -547,7 +547,6 @@ class RemoteScrollingCoordinatorProxy;
 class RevealItem;
 class SandboxExtensionHandle;
 class SecKeyProxyStore;
-class SessionHistoryTraversalQueue;
 class SpeechRecognitionPermissionManager;
 class SuspendedPageProxy;
 class SystemPreviewController;
@@ -1010,8 +1009,7 @@ public:
     void didChangeBackForwardList(WebBackForwardListItem* addedItem, Vector<Ref<WebBackForwardListItem>>&& removed);
     void shouldGoToBackForwardListItem(WebCore::BackForwardItemIdentifier, bool inBackForwardCache, CompletionHandler<void(WebCore::ShouldGoToHistoryItem)>&&);
     void shouldGoToBackForwardListItemSync(WebCore::BackForwardItemIdentifier, CompletionHandler<void(WebCore::ShouldGoToHistoryItem)>&&);
-    void goToBackForwardItemAtIndex(int32_t steps);
-    void enqueueHistoryTraversalDelta(int32_t delta);
+    void goToBackForwardItemAtIndex(int32_t steps, WebCore::FrameLoadType);
 
     bool shouldKeepCurrentBackForwardListItemInList(WebBackForwardListItem&);
 
@@ -3768,8 +3766,6 @@ private:
     std::unique_ptr<WebPageLoadTiming> m_pageLoadTimingPendingCommit;
     HashSet<WebCore::FrameIdentifier> m_framesWithSubresourceLoadingForPageLoadTiming;
     RunLoop::Timer m_generatePageLoadTimingTimer;
-
-    const UniqueRef<SessionHistoryTraversalQueue> m_sessionHistoryTraversalQueue;
 
 #if PLATFORM(COCOA)
     RunLoop::Timer m_textIndicatorFadeTimer;

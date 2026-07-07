@@ -163,8 +163,7 @@ private:
     bool supportsAsyncShouldGoToHistoryItem() const final;
     void shouldGoToHistoryItemAsync(WebCore::HistoryItem&, CompletionHandler<void(WebCore::ShouldGoToHistoryItem)>&&) const final;
 
-    void dispatchGoToBackForwardItemAtIndex(int steps) final;
-    void dispatchEnqueueHistoryTraversalDelta(int delta) final;
+    void dispatchGoToBackForwardItemAtIndex(int steps, WebCore::FrameLoadType) final;
 
     void loadStorageAccessQuirksIfNeeded() final { }
 
