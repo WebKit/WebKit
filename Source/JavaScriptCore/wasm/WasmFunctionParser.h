@@ -219,6 +219,7 @@ private:
     };
 
     WARN_UNUSED_RETURN PartialResult checkBlockFallthrough(const ControlType&, FallThroughStateTag);
+    WARN_UNUSED_RETURN PartialResult endBlockAndCheckResultTypes(ControlEntry&);
 
     enum BranchConditionalityTag {
         Unconditional,
@@ -1829,6 +1830,19 @@ auto FunctionParser<Context>::checkBlockFallthrough(const ControlType& controlDa
             m_expressionStack[i].setType(expectedType);
     }
 
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::endBlockAndCheckResultTypes(ControlEntry& entry) -> PartialResult
+{
+    // Widen each result to the block signature type before ending the block.
+    // FIXME: mutating the expression stack for the block result is effectful, but there's no
+    // better API yet. See https://bugs.webkit.org/show_bug.cgi?id=164353
+    WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(entry.controlData, MergePoint));
+    // We should avoid adding other callsites of endBlock. Since a new block is a sign of a
+    // merge point and it would be a security bug to fail to widen the types.
+    WASM_TRY_ADD_TO_CONTEXT(endBlock(entry, m_expressionStack));
     return { };
 }
 
@@ -3592,8 +3606,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_VALIDATOR_FAIL_IF(!ControlType::isTry(targetData) && !ControlType::isTopLevel(targetData), "delegate target isn't a try or the top level block");
 
         WASM_TRY_ADD_TO_CONTEXT(addDelegate(targetData, controlEntry.controlData));
-        WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(controlEntry.controlData, NewSiblingBlock));
-        WASM_TRY_ADD_TO_CONTEXT(endBlock(controlEntry, m_expressionStack));
+        // Unlike the sibling catch/catch_all arms, delegate ends the try block, so it widens results.
+        WASM_FAIL_IF_HELPER_FAILS(endBlockAndCheckResultTypes(controlEntry));
         m_expressionStack.swap(controlEntry.enclosedExpressionStack);
         resetLocalInitStackToHeight(controlEntry.localInitStackHeight);
         return { };
@@ -3728,11 +3742,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_ADD_TO_CONTEXT(addElse(data.controlData, m_expressionStack));
             m_expressionStack = WTF::move(data.elseBlockStack);
         }
-        // FIXME: This is a little weird in that it will modify the expressionStack for the result of the block.
-        // That's a little too effectful for me but I don't have a better API right now.
-        // see: https://bugs.webkit.org/show_bug.cgi?id=164353
-        WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(data.controlData, MergePoint));
-        WASM_TRY_ADD_TO_CONTEXT(endBlock(data, m_expressionStack));
+        WASM_FAIL_IF_HELPER_FAILS(endBlockAndCheckResultTypes(data));
         m_expressionStack.swap(data.enclosedExpressionStack);
         if (!ControlType::isTopLevel(data.controlData))
             resetLocalInitStackToHeight(data.localInitStackHeight);
@@ -3921,8 +3931,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             if (ControlType::isIf(data.controlData)) {
                 WASM_TRY_ADD_TO_CONTEXT(addElseToUnreachable(data.controlData));
                 m_expressionStack = WTF::move(data.elseBlockStack);
-                WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(data.controlData, MergePoint));
-                WASM_TRY_ADD_TO_CONTEXT(endBlock(data, m_expressionStack));
+                WASM_FAIL_IF_HELPER_FAILS(endBlockAndCheckResultTypes(data));
             } else {
                 Stack emptyStack;
                 WASM_TRY_ADD_TO_CONTEXT(addEndToUnreachable(data, emptyStack));
