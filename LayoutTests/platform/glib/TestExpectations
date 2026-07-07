@@ -5568,6 +5568,7 @@ webkit.org/b/315934 fast/dom/lazy-image-loading-document-leak.html [ Crash Pass 
 webkit.org/b/316158 fullscreen/full-screen-enter-while-exiting-mid-completion-handler.html [ Crash Pass ]
 
 webkit.org/b/316192 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html [ Crash Pass ]
+webkit.org/b/316192 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/cors-check.https.html [ Crash Failure Pass ]
 
 webkit.org/b/316197 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-mode.html [ Crash Pass ]
 
@@ -5620,10 +5621,6 @@ webkit.org/b/317968 [ x86_64 ] imported/w3c/web-platform-tests/navigation-timing
 webkit.org/b/318434 ipc/send-gpu-GetShareableBitmap-RemoteRenderingBackend.html [ Crash Pass ]
 
 webkit.org/b/318634 ipc/loadping-firstpartyforcookies-message-check.html [ Failure ]
-
-webkit.org/b/318635 fast/mediastream/mediastreamtrack-clone-muted.html [ Crash Timeout Pass ]
-
-webkit.org/b/318637 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/cors-check.https.html [ Crash Failure Pass ]
 
 # End: Common failures between GTK and WPE.
 

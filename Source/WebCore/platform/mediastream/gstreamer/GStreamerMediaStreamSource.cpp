@@ -405,10 +405,14 @@ public:
 
     void trackEnded(MediaStreamTrackPrivate&) final
     {
-        GST_INFO_OBJECT(m_src.get(), "Track ended, parent: %" GST_PTR_FORMAT, m_parent);
+        auto parent = m_parent.get();
+        if (!parent)
+            return;
+
+        GST_INFO_OBJECT(m_src.get(), "Track ended, parent: %" GST_PTR_FORMAT, parent.get());
         sourceStopped();
         m_isEnded = true;
-        webkitMediaStreamSrcEnsureStreamCollectionPosted(WEBKIT_MEDIA_STREAM_SRC(m_parent));
+        webkitMediaStreamSrcEnsureStreamCollectionPosted(WEBKIT_MEDIA_STREAM_SRC(parent.get()));
     }
 
     void sourceStopped() final
@@ -434,7 +438,8 @@ public:
         GST_INFO_OBJECT(m_src.get(), "Track enabled: %s, resetting stream", boolForPrinting(track.enabled()));
 
         createGstStream();
-        webkitMediaStreamSrcEnsureStreamCollectionPosted(WEBKIT_MEDIA_STREAM_SRC(m_parent));
+        if (auto parent = m_parent.get())
+            webkitMediaStreamSrcEnsureStreamCollectionPosted(WEBKIT_MEDIA_STREAM_SRC(parent.get()));
 
         if (track.isVideo()) {
             m_enoughData = false;
@@ -446,7 +451,8 @@ public:
 
     void videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata) final
     {
-        if (!m_parent || !m_isObserving)
+        auto parent = m_parent.get();
+        if (!parent || !m_isObserving)
             return;
 
         updateFirstVideoSampleSeenFlag();
@@ -507,7 +513,8 @@ public:
 
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData& audioData, const AudioStreamDescription&, size_t) final
     {
-        if (!m_parent || !m_isObserving)
+        auto parent = m_parent.get();
+        if (!parent || !m_isObserving)
             return;
 
         if (!m_track)
@@ -835,7 +842,7 @@ private:
             "total-audio-energy", G_TYPE_DOUBLE, m_totalAudioEnergy, "audio-level", G_TYPE_DOUBLE, m_audioLevel, nullptr);
     }
 
-    GstElement* m_parent { nullptr };
+    GThreadSafeWeakPtr<GstElement> m_parent { nullptr };
     RefPtr<MediaStreamTrackPrivate> m_track;
     RefPtr<RealtimeMediaSource> m_trackSource;
     GRefPtr<GstElement> m_src;
@@ -928,14 +935,21 @@ enum {
 
 void InternalSource::updateFirstVideoSampleSeenFlag()
 {
-    auto src = WEBKIT_MEDIA_STREAM_SRC_CAST(m_parent);
+    auto parent = m_parent.get();
+    if (!parent)
+        return;
+
+    auto src = WEBKIT_MEDIA_STREAM_SRC_CAST(parent.get());
     src->priv->firstVideoSampleSeen = true;
 }
 
 bool InternalSource::receivedAudioSampleBeforeVideo()
 {
-    auto src = WEBKIT_MEDIA_STREAM_SRC_CAST(m_parent);
+    auto parent = m_parent.get();
+    if (!parent)
+        return false;
 
+    auto src = WEBKIT_MEDIA_STREAM_SRC_CAST(parent.get());
     if (src->priv->firstVideoSampleSeen)
         return false;
 
