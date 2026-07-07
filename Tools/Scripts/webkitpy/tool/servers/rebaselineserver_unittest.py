@@ -97,7 +97,6 @@ class RebaselineTestTest(unittest.TestCase):
         self._assertRebaseline(
             test_files=(
                 'fast/text-expected.txt',
-                'platform/mac/fast/text-expected.checksum',
             ),
             results_files=(
                 'fast/text-actual.txt',
@@ -108,8 +107,6 @@ class RebaselineTestTest(unittest.TestCase):
             expected_success=True,
             expected_log=[
                 'Rebaselining fast/text...',
-                '  Moving current mac baselines to mac-leopard',
-                '    No current baselines to move',
                 '  Updating baselines for mac',
                 '    Updated text-expected.txt',
             ])
@@ -141,11 +138,9 @@ class RebaselineTestTest(unittest.TestCase):
                 'fast/image-expected.txt',
                 'platform/mac/fast/image-expected.txt',
                 'platform/mac/fast/image-expected.png',
-                'platform/mac/fast/image-expected.checksum',
             ),
             results_files=(
                 'fast/image-actual.png',
-                'fast/image-actual.checksum',
             ),
             test_name='fast/image.html',
             baseline_target='mac',
@@ -154,10 +149,8 @@ class RebaselineTestTest(unittest.TestCase):
             expected_log=[
                 'Rebaselining fast/image...',
                 '  Moving current mac baselines to mac-leopard',
-                '    Moved image-expected.checksum',
                 '    Moved image-expected.png',
                 '  Updating baselines for mac',
-                '    Updated image-expected.checksum',
                 '    Updated image-expected.png',
             ])
 
@@ -186,11 +179,9 @@ class RebaselineTestTest(unittest.TestCase):
             test_files=(
                 'fast/image-expected.txt',
                 'platform/mac/fast/image-expected.png',
-                'platform/mac/fast/image-expected.checksum',
             ),
             results_files=(
                 'fast/image-actual.png',
-                'fast/image-actual.checksum',
             ),
             test_name='fast/image.html',
             baseline_target='mac',
@@ -199,7 +190,6 @@ class RebaselineTestTest(unittest.TestCase):
             expected_log=[
                 'Rebaselining fast/image...',
                 '  Updating baselines for mac',
-                '    Updated image-expected.checksum',
                 '    Updated image-expected.png',
             ])
 
@@ -263,15 +253,13 @@ class GetBaselinesTest(unittest.TestCase):
             test_files=(
                 'fast/image-expected.txt',
                 'platform/mac/fast/image-expected.png',
-                'platform/mac/fast/image-expected.checksum',
                 'platform/win/fast/image-expected.png',
-                'platform/win/fast/image-expected.checksum',
             ),
             test_name='fast/image.html',
             expected_baselines={
                 'base': {'.txt': True},
-                'mac': {'.checksum': True, '.png': True},
-                'win': {'.checksum': False, '.png': False},
+                'mac': {'.png': True},
+                'win': {'.png': False},
             })
 
     def test_extra_baselines(self):

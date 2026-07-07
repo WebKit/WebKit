@@ -183,7 +183,7 @@ def get_test_baselines(test_file, test_config):
     all_platforms_port = AllPlatformsPort(host)
 
     all_test_baselines = {}
-    for baseline_extension in ('.txt', '.checksum', '.png'):
+    for baseline_extension in ('.txt', '.png'):
         test_baselines = test_config.test_port.expected_baselines(test_file, baseline_extension)
         baselines = all_platforms_port.expected_baselines(test_file, baseline_extension, all_baselines=True)
         for platform_directory, expected_filename in baselines:
@@ -266,13 +266,9 @@ class RebaselineHTTPRequestHandler(ReflectionHandler):
             file_name = test_name + '-expected.png'
         elif mode == 'actual-image':
             file_name = test_name + '-actual.png'
-        if mode == 'expected-checksum':
-            file_name = test_name + '-expected.checksum'
-        elif mode == 'actual-checksum':
-            file_name = test_name + '-actual.checksum'
         elif mode == 'diff-image':
             file_name = test_name + '-diff.png'
-        if mode == 'expected-text':
+        elif mode == 'expected-text':
             file_name = test_name + '-expected.txt'
         elif mode == 'actual-text':
             file_name = test_name + '-actual.txt'

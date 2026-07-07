@@ -38,7 +38,6 @@ class Test(object):
     test_path = attr.ib(type=str)
     expected_text_path = attr.ib(default=None, type=str)
     expected_image_path = attr.ib(default=None, type=str)
-    expected_checksum_path = attr.ib(default=None, type=str)
     expected_audio_path = attr.ib(default=None, type=str)
     reference_files = attr.ib(default=None, type=list)
     is_http_test = attr.ib(default=False, type=bool)
