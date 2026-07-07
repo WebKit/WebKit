@@ -7686,9 +7686,6 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-multicol
 imported/w3c/web-platform-tests/css/css-anchor-position/container-queries/anchored-fallback-color-change.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/container-queries/anchored-fallback-style-containment.html [ ImageOnlyFailure ]
 
-# This is passing only on mac-wk2
-webkit.org/b/299561 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-chained-003.html [ ImageOnlyFailure ]
-
 # timeouts
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-ident-function.html [ Skip ]
 
@@ -8240,3 +8237,7 @@ webkit.org/b/317017 imported/w3c/web-platform-tests/largest-contentful-paint/mul
 
 imported/w3c/web-platform-tests/preload/preload-csp.sub.html [ Skip ] # Different hash generated on each run
 imported/w3c/web-platform-tests/preload/modulepreload-multiple.html [ Failure Pass ]
+
+webkit.org/b/318777 fast/block/out-of-flow-intrinsic-height.html [ Timeout Pass ]
+
+webkit.org/b/318779 fast/css/has-lang-jit-crash.html [ Failure Pass ]

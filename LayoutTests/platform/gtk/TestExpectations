@@ -325,9 +325,6 @@ webkit.org/b/305558 fast/text/non-integral-initial-letter-simple.html [ ImageOnl
 # @font-face: missing integration between size-adjust and optical-size
 webkit.org/b/256457 imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz-size-adjust.html [ ImageOnlyFailure ]
 
-# webkit.org/b/315568 Image-only failures from css-fonts WPT resync
-webkit.org/b/315568 imported/w3c/web-platform-tests/css/css-fonts/variations/variable-avar2-warp.html [ ImageOnlyFailure ]
-
 # We render the focus ring differently
 fast/images/image-map-outline-with-scale-transform.html [ ImageOnlyFailure ]
 
@@ -614,6 +611,17 @@ webkit.org/b/252878 inspector/css/modify-css-property.html [ Failure ]
 webkit.org/b/252878 inspector/debugger/breakpoints/resolved-dump-all-pause-locations.html [ Failure Timeout Pass ]
 webkit.org/b/252878 inspector/debugger/breakpoints/resolved-dump-each-line.html [ Failure Timeout Pass ]
 webkit.org/b/252878 webaudio/audioworket-out-of-memory.html [ Pass Failure ]
+
+webkit.org/b/318781 media/media-fragments/TC0011.html [ Failure Pass ]
+webkit.org/b/318781 media/media-fragments/TC0035.html [ Failure Pass ]
+webkit.org/b/318781 media/media-fragments/TC0036.html [ Failure Pass ]
+webkit.org/b/318781 media/media-fragments/TC0072.html [ Failure Pass ]
+webkit.org/b/318781 media/media-fragments/TC0078.html [ Failure Pass ]
+webkit.org/b/318781 media/media-fragments/TC0079.html [ Failure Pass ]
+webkit.org/b/318781 media/media-fragments/TC0086.html [ Failure Pass ]
+webkit.org/b/318781 media/media-fragments/TC0088.html [ Failure Pass ]
+webkit.org/b/318781 media/media-fragments/TC0089.html [ Failure Pass ]
+webkit.org/b/318781 media/media-fragments/TC0090.html [ Failure Pass ]
 
 # Uncomment when webkit.org/b/267992 is fixed
 #webkit.org/b/257624 http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Failure Pass ]
