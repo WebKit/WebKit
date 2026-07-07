@@ -244,8 +244,14 @@ void IOSurfacePool::tryEvictOldestCachedSurface()
     if (m_sizesInPruneOrder.isEmpty())
         return;
 
-    CachedSurfaceMap::iterator surfaceQueueIter = m_cachedSurfaces.find(m_sizesInPruneOrder.first());
-    ASSERT(!surfaceQueueIter->value.isEmpty());
+    auto surfaceQueueIter = m_cachedSurfaces.find(m_sizesInPruneOrder.first());
+    if (surfaceQueueIter == m_cachedSurfaces.end() || surfaceQueueIter->value.isEmpty()) {
+        // Crashes indicate that m_sizesInPruneOrder can contain a value not in m_cachedSurfaces. (rdar://177969354).
+        ASSERT_NOT_REACHED();
+        m_sizesInPruneOrder.removeAt(0);
+        return;
+    }
+
     auto surface = surfaceQueueIter->value.takeLast();
     didRemoveSurface(*surface, false);
 
