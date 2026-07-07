@@ -1095,6 +1095,9 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
             return;
         }
         if (auto replyHandlerWithDispatcher = takeAsyncReplyHandlerWithDispatcherWithLockHeld(AtomicObjectIdentifier<AsyncReplyIDType>(message->destinationID()))) {
+            incomingMessagesLocker.unlockEarly();
+            waitForMessagesLocker.unlockEarly();
+
             replyHandlerWithDispatcher(this, message.moveToUniquePtr());
             return;
         }

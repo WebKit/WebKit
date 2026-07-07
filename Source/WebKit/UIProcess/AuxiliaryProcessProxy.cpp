@@ -68,6 +68,28 @@
 
 namespace WebKit {
 
+// This class wraps a ProcessThrottlerActivity - which is not thread safe - to guarantee its destruction
+// is run on the main thread no matter which thread the wrapper is destroyed on.
+class MainThreadActivityReleaser {
+public:
+    explicit MainThreadActivityReleaser(Ref<ProcessThrottler::Activity>&& activity)
+        : m_activity(WTF::move(activity)) { }
+    MainThreadActivityReleaser(MainThreadActivityReleaser&&) = default;
+    MainThreadActivityReleaser& operator=(MainThreadActivityReleaser&&) = default;
+    MainThreadActivityReleaser(const MainThreadActivityReleaser&) = delete;
+    MainThreadActivityReleaser& operator=(const MainThreadActivityReleaser&) = delete;
+
+    ~MainThreadActivityReleaser()
+    {
+        if (!m_activity || isMainRunLoop())
+            return;
+        RunLoop::mainSingleton().dispatch([activity = WTF::move(m_activity)] { });
+    }
+
+private:
+    RefPtr<ProcessThrottler::Activity> m_activity;
+};
+
 static HashMap<IPC::Connection::UniqueID, WeakPtr<AuxiliaryProcessProxy>>& NODELETE connectionToProcessMap()
 {
     static MainRunLoopNeverDestroyed<HashMap<IPC::Connection::UniqueID, WeakPtr<AuxiliaryProcessProxy>>> map;
@@ -286,11 +308,11 @@ bool AuxiliaryProcessProxy::sendMessageImpl(UniqueRef<IPC::Encoder>&& encoder, O
                 };
             },
             [&](IPC::Connection::AsyncReplyHandlerWithDispatcher& handler) {
-                // The handler runs on the dispatcher, so the activity must be released on the main thread separately.
+                // Wrap the activity in a MainThreadActivityReleaser so the activity destruction can be scheduled
+                // on the main thread whether or not the completion handler is actually called.
                 auto inner = WTF::move(handler.completionHandler);
-                handler.completionHandler = { [activity = WTF::move(activity), inner = WTF::move(inner)](IPC::Connection* connection, std::unique_ptr<IPC::Decoder>&& decoder) mutable {
+                handler.completionHandler = { [activityReleaser = MainThreadActivityReleaser { WTF::move(activity) }, inner = WTF::move(inner)](IPC::Connection* connection, std::unique_ptr<IPC::Decoder>&& decoder) mutable {
                     inner(connection, WTF::move(decoder));
-                    RunLoop::mainSingleton().dispatch([activity = WTF::move(activity)] { });
                 }, CompletionHandlerCallThread::AnyThread };
             });
     }
