@@ -1166,12 +1166,14 @@ WI.Table = class Table extends WI.View
         // If there are an odd number of rows hidden, the first visible row must be an even row.
         this._listElement.classList.toggle("even-first-zebra-stripe", !!(topHiddenRowCount % 2));
 
+        let listElementFragment = document.createDocumentFragment();
         for (let i = this._visibleRowIndexStart; i < this._visibleRowIndexEnd && i < numberOfRows; ++i) {
             let row = this._getOrCreateRow(i);
-            this._listElement.appendChild(row);
+            listElementFragment.appendChild(row);
         }
 
-        this._listElement.appendChild(this._fillerRow);
+        listElementFragment.appendChild(this._fillerRow);
+        this._listElement.appendChild(listElementFragment);
     }
 
     _updateFillerRowWithNewHeight()

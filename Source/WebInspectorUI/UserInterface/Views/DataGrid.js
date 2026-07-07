@@ -1201,14 +1201,16 @@ WI.DataGrid = class DataGrid extends WI.View
 
         this.dataTableBodyElement.removeChildren();
 
+        let dataTableBodyElementFragment = document.createDocumentFragment();
         for (let i = topHiddenRowCount; i < topHiddenRowCount + visibleRowCount; ++i) {
             let rowDataGridNode = revealedRows[i];
             if (!rowDataGridNode)
                 continue;
-            this.dataTableBodyElement.appendChild(rowDataGridNode.element);
+            dataTableBodyElementFragment.appendChild(rowDataGridNode.element);
         }
 
-        this.dataTableBodyElement.appendChild(this._fillerRowElement);
+        dataTableBodyElementFragment.appendChild(this._fillerRowElement);
+        this.dataTableBodyElement.appendChild(dataTableBodyElementFragment);
     }
 
     addPlaceholderNode()
