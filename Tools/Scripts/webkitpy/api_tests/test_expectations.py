@@ -78,7 +78,7 @@ class APITestExpectations:
         config = set()
         port_config = self._port.api_test_current_configuration()
 
-        for key in ('platform', 'version', 'style', 'architecture', 'hardware', 'hardware_type'):
+        for key in ('platform', 'version', 'style', 'architecture', 'hardware', 'hardware_type', 'flavor'):
             value = port_config.get(key)
             if value:
                 config.add(value.lower())

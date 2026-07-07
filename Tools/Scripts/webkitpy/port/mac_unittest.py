@@ -32,6 +32,7 @@ import logging
 from webkitcorepy import Version, OutputCapture
 
 from webkitpy.port.mac import MacPort
+from webkitpy.api_tests.test_expectations import APITestExpectations
 from webkitpy.port import darwin_testcase
 from webkitpy.port import port_testcase
 from webkitpy.tool.mocktool import MockOptions
@@ -271,6 +272,16 @@ class MacTest(darwin_testcase.DarwinTest):
             ),
             port.configuration_for_upload(),
         )
+
+    def test_api_test_current_configuration_omits_flavor_without_site_isolation(self):
+        port = self.make_port(options=MockOptions(configuration='Release'))
+        self.assertNotIn('flavor', port.api_test_current_configuration())
+        self.assertNotIn('siteisolation', APITestExpectations(port).get_current_configuration())
+
+    def test_api_test_current_configuration_adds_site_isolation_flavor(self):
+        port = self.make_port(options=MockOptions(configuration='Release', site_isolation_enabled_by_default=True))
+        self.assertEqual('siteisolation', port.api_test_current_configuration().get('flavor'))
+        self.assertIn('siteisolation', APITestExpectations(port).get_current_configuration())
 
     def test_rosetta_expectations(self):
         mock_host = MockSystemHost()

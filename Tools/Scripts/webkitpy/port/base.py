@@ -1347,6 +1347,10 @@ class Port(object):
         if hasattr(self, 'architecture') and self.architecture():
             config['architecture'] = self.architecture()
 
+        if self.get_option('site_isolation_enabled_by_default'):
+            # No hyphen: an interior '-' would be parsed as a version specifier rather than a flavor.
+            config['flavor'] = 'siteisolation'
+
         return config
 
     def _api_test_platform_cascade(self):
