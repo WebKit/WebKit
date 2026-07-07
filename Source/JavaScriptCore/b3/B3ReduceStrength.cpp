@@ -49,6 +49,7 @@
 #include "B3WasmRefTypeCheckValue.h"
 #include "B3WasmStructGetValue.h"
 #include "B3WasmStructSetValue.h"
+#include "JSCJSValueInlines.h"
 #include "Options.h"
 #include "SIMDShuffle.h"
 #include <wtf/HashMap.h>
@@ -60,6 +61,25 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace JSC { namespace B3 {
 
 namespace {
+
+ALWAYS_INLINE bool areDistinctWasmGCReferences(Value* a, Value* b)
+{
+    auto isFreshWasmGCReference = [](Value* value) {
+        return value->opcode() == WasmStructNew || value->opcode() == WasmArrayNew;
+    };
+
+    auto isWasmGCNull = [](Value* value) {
+        return value->isInt64(JSValue::encode(jsNull()));
+    };
+
+    if (isFreshWasmGCReference(a) && isFreshWasmGCReference(b))
+        return a != b;
+    if (isFreshWasmGCReference(a) && isWasmGCNull(b))
+        return true;
+    if (isFreshWasmGCReference(b) && isWasmGCNull(a))
+        return true;
+    return false;
+}
 
 // The goal of this phase is to:
 //
@@ -2850,6 +2870,13 @@ private:
                 break;
             }
 
+            // Two distinct freshly-allocated wasm-GC references, or a fresh reference and
+            // null, are never the same object.
+            if (areDistinctWasmGCReferences(m_value->child(0), m_value->child(1))) {
+                replaceWithNewValue(m_proc.addBoolConstant(m_value->origin(), TriState::False));
+                break;
+            }
+
             // Turn this: Equal(const1, const2)
             // Into this: const1 == const2
             replaceWithNewValue(
@@ -2883,6 +2910,13 @@ private:
                 auto* constant = m_proc.addBoolConstant(m_value->origin(), TriState::False);
                 ASSERT(constant);
                 replaceWithNewValue(constant);
+                break;
+            }
+
+            // Two distinct freshly-allocated wasm-GC references, or a fresh reference and
+            // null, are never the same object.
+            if (areDistinctWasmGCReferences(m_value->child(0), m_value->child(1))) {
+                replaceWithNewValue(m_proc.addBoolConstant(m_value->origin(), TriState::True));
                 break;
             }
 
