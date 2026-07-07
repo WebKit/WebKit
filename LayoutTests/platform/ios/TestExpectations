@@ -8477,8 +8477,6 @@ webkit.org/b/316830 fast/forms/datalist/datalist-textinput-suggestions-order.htm
 
 webkit.org/b/317753 imported/w3c/web-platform-tests/content-security-policy/sandbox/meta-element.sub.html [ Skip ]
 
-webkit.org/b/317756 imported/w3c/web-platform-tests/css/selectors/user-valid.html [ Skip ]
-
 webkit.org/b/295419 loader/navigation-policy/should-open-external-urls/subframe-navigated-programatically-by-main-frame.html [ Pass Failure ]
 
 # webkit.org/b/317882 [iOS] Multiple wpt tests are flaky in text diff
