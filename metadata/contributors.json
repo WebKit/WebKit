@@ -5610,7 +5610,8 @@
          "lilly_le@apple.com"
       ],
       "github" : "codedbycupidity",
-      "name" : "Lilly Le"
+      "name" : "Lilly Le",
+      "status" : "committer"
    },
    {
       "emails" : [
