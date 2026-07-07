@@ -456,4 +456,43 @@ TEST(WebKit, LoadAndDecodeImageInvalidURL)
     EXPECT_EQ(pid, [webView _webProcessIdentifier]);
 }
 
+TEST(WebKit, LoadAndDecodeImageNilMainDocumentURLAfterNavigation)
+{
+    auto pngData = makeVector([NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]]);
+
+    HTTPServer server {
+        { "/"_s, { "<html></html>"_s } },
+        { "/image.png"_s, { WTF::move(pngData) } },
+    };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] init]);
+    [webView synchronouslyLoadRequest:server.request()];
+
+    __block bool completionHandlerCalled { false };
+    __block RetainPtr<Util::PlatformImage> resultImage;
+    __block RetainPtr<NSError> resultError;
+    __block bool processTerminated { false };
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *, _WKProcessTerminationReason) {
+        processTerminated = true;
+    }];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    // This request has a nil mainDocumentURL.
+    [webView _loadAndDecodeImage:server.request("/image.png"_s) constrainedToSize:CGSizeZero maximumBytesFromNetwork:std::numeric_limits<size_t>::max() completionHandler:^(Util::PlatformImage *image, NSError *error) {
+        resultImage = image;
+        resultError = error;
+        completionHandlerCalled = true;
+    }];
+
+    Util::run(&completionHandlerCalled);
+    // Give webContentProcessDidTerminate enough time to get called before checking processTerminated.
+    Util::spinRunLoop(10);
+
+    EXPECT_NOT_NULL(resultImage);
+    EXPECT_NULL(resultError);
+    EXPECT_FALSE(processTerminated);
+}
+
 }
