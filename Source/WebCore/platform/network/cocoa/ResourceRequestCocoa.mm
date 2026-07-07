@@ -60,7 +60,7 @@ ResourceRequest::ResourceRequest(NSURLRequest *nsRequest)
 #endif
 }
 
-ResourceRequest::ResourceRequest(ResourceRequestPlatformData&& platformData, const String& cachePartition, bool hiddenFromInspector)
+ResourceRequest::ResourceRequest(ResourceRequestPlatformData&& platformData, bool shouldBlockThirdPartyStorage, bool hiddenFromInspector)
 {
     if (platformData.m_urlRequest) {
         if (platformData.m_requester)
@@ -75,7 +75,7 @@ ResourceRequest::ResourceRequest(ResourceRequestPlatformData&& platformData, con
         setWasSchemeOptimisticallyUpgraded(platformData.m_wasSchemeOptimisticallyUpgraded);
     }
 
-    setCachePartition(cachePartition);
+    setShouldBlockThirdPartyStorage(shouldBlockThirdPartyStorage);
     setHiddenFromInspector(hiddenFromInspector);
 }
 
@@ -86,11 +86,11 @@ ResourceRequestData ResourceRequest::getRequestDataToSerialize() const
     return m_requestData;
 }
 
-ResourceRequest ResourceRequest::fromResourceRequestData(ResourceRequestData&& requestData, String&& cachePartition, bool hiddenFromInspector)
+ResourceRequest ResourceRequest::fromResourceRequestData(ResourceRequestData&& requestData, bool shouldBlockThirdPartyStorage, bool hiddenFromInspector)
 {
     if (std::holds_alternative<RequestData>(requestData))
-        return ResourceRequest(WTF::move(std::get<RequestData>(requestData)), WTF::move(cachePartition), hiddenFromInspector);
-    return ResourceRequest(WTF::move(std::get<ResourceRequestPlatformData>(requestData)), WTF::move(cachePartition), hiddenFromInspector);
+        return ResourceRequest(WTF::move(std::get<RequestData>(requestData)), shouldBlockThirdPartyStorage, hiddenFromInspector);
+    return ResourceRequest(WTF::move(std::get<ResourceRequestPlatformData>(requestData)), shouldBlockThirdPartyStorage, hiddenFromInspector);
 }
 
 NSURLRequest *ResourceRequest::nsURLRequest(HTTPBodyUpdatePolicy bodyPolicy) const
@@ -209,9 +209,8 @@ void ResourceRequest::doUpdateResourceRequest()
     }
 
     if (m_nsRequest) {
-        RetainPtr<NSString> cachePartition = [NSURLProtocol propertyForKey:bridge_cast(_kCFURLCachePartitionKey) inRequest:m_nsRequest.get()];
-        if (cachePartition)
-            m_cachePartition = cachePartition.get();
+        RetainPtr cachePartition = dynamic_objc_cast<NSString>([NSURLProtocol propertyForKey:bridge_cast(_kCFURLCachePartitionKey) inRequest:m_nsRequest.get()]);
+        m_shouldBlockThirdPartyStorage = !![cachePartition length];
     }
 }
 

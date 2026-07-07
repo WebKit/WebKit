@@ -109,7 +109,7 @@ std::optional<ResourceRequest> ThreadableWebSocketChannel::webSocketConnectReque
     auto userAgent = document.userAgent(validatedURL->url);
     ResourceRequest request { WTF::move(validatedURL->url) };
     request.setHTTPUserAgent(userAgent);
-    request.setDomainForCachePartition(document.domainForCachePartition());
+    request.setShouldBlockThirdPartyStorage(document.shouldBlockThirdPartyStorage());
     request.setAllowCookies(validatedURL->areCookiesAllowed);
     request.setFirstPartyForCookies(document.firstPartyForCookies());
     request.setHTTPHeaderField(HTTPHeaderName::Origin, document.protectedSecurityOrigin()->toString());

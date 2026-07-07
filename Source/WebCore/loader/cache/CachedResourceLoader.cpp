@@ -314,7 +314,7 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
 
     ASSERT(document());
     if (RefPtr document = this->document())
-        request.setDomainForCachePartition(*document);
+        request.resourceRequest().setShouldBlockThirdPartyStorage(document->shouldBlockThirdPartyStorage());
 
     Ref memoryCache = MemoryCache::singleton();
     if (request.allowsCaching()) {
@@ -1314,7 +1314,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     CachedResourceHandle<CachedResource> resource;
     CheckedPtr<ContentSecurityPolicy> contentSecurityPolicy;
     if (document) {
-        request.setDomainForCachePartition(*document);
+        request.resourceRequest().setShouldBlockThirdPartyStorage(document->shouldBlockThirdPartyStorage());
         request.resourceRequest().setFirstPartyForCookies(document->firstPartyForCookies());
         contentSecurityPolicy = document->contentSecurityPolicy();
     }

@@ -239,10 +239,9 @@ public:
     WEBCORE_EXPORT ResourceLoadPriority priority() const;
     WEBCORE_EXPORT void setPriority(ResourceLoadPriority);
 
-    WEBCORE_EXPORT static String partitionName(const String& domain);
-    const String& cachePartition() const { return m_cachePartition; }
-    WEBCORE_EXPORT void setCachePartition(const String&);
-    void setDomainForCachePartition(const String& domain) { setCachePartition(partitionName(domain)); }
+    WEBCORE_EXPORT String cachePartition() const;
+    bool shouldBlockThirdPartyStorage() const { return m_shouldBlockThirdPartyStorage; }
+    void setShouldBlockThirdPartyStorage(bool value) { m_shouldBlockThirdPartyStorage = value; }
 
     WEBCORE_EXPORT bool isConditional() const;
     WEBCORE_EXPORT void makeUnconditional();
@@ -328,13 +327,13 @@ protected:
     
     RequestData m_requestData;
     String m_initiatorIdentifier;
-    String m_cachePartition { emptyString() };
     RefPtr<FormData> m_httpBody;
     std::optional<int> m_inspectorInitiatorNodeIdentifier;
     mutable bool m_resourceRequestUpdated : 1;
     mutable bool m_platformRequestUpdated : 1;
     mutable bool m_resourceRequestBodyUpdated : 1;
     mutable bool m_platformRequestBodyUpdated : 1;
+    bool m_shouldBlockThirdPartyStorage : 1 { true };
     bool m_hiddenFromInspector : 1;
 
 private:

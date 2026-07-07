@@ -35,7 +35,7 @@
 #include "Image.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
-#include "PublicSuffixStore.h"
+#include "RegistrableDomain.h"
 #include "SharedBuffer.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
@@ -565,14 +565,16 @@ void MemoryCache::removeResourcesWithOrigin(const SecurityOrigin& origin, const 
 void MemoryCache::removeResourcesWithOrigin(const SecurityOrigin& origin)
 {
     RELEASE_ASSERT(isMainThread());
-    String originPartition = ResourceRequest::partitionName(origin.host());
+    RegistrableDomain domain = RegistrableDomain::uncheckedCreateFromHost(origin.host());
+    String originPartition = domain.isEmpty() ? emptyString() : domain.string();
     removeResourcesWithOrigin(origin, originPartition);
 }
 
 void MemoryCache::removeResourcesWithOrigin(const ClientOrigin& origin)
 {
     RELEASE_ASSERT(isMainThread());
-    auto cachePartition = origin.topOrigin == origin.clientOrigin ? emptyString() : ResourceRequest::partitionName(origin.topOrigin.host());
+    RegistrableDomain topDomain = RegistrableDomain::uncheckedCreateFromHost(origin.topOrigin.host());
+    auto cachePartition = origin.topOrigin == origin.clientOrigin ? emptyString() : (topDomain.isEmpty() ? emptyString() : topDomain.string());
     removeResourcesWithOrigin(origin.clientOrigin.securityOrigin(), cachePartition);
 }
 
@@ -585,8 +587,10 @@ void MemoryCache::removeResourcesWithOrigins(PAL::SessionID sessionID, const Has
 
     HashSet<String> originPartitions;
 
-    for (auto& origin : origins)
-        originPartitions.add(ResourceRequest::partitionName(origin->host()));
+    for (auto& origin : origins) {
+        RegistrableDomain domain = RegistrableDomain::uncheckedCreateFromHost(origin->host());
+        originPartitions.add(domain.isEmpty() ? emptyString() : domain.string());
+    }
 
     Vector<WeakPtr<CachedResource>> resourcesToRemove;
     for (auto& keyValuePair : *resourceMap) {

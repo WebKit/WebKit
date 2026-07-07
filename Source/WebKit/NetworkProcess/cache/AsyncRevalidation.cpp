@@ -36,8 +36,6 @@ namespace NetworkCache {
 static inline WebCore::ResourceRequest constructRevalidationRequest(const Key& key, const WebCore::ResourceRequest& request, const Entry& entry)
 {
     WebCore::ResourceRequest revalidationRequest = request;
-    if (!key.partition().isEmpty())
-        revalidationRequest.setCachePartition(key.partition());
     ASSERT_WITH_MESSAGE(key.range().isEmpty(), "range is not supported");
 
     revalidationRequest.makeUnconditional();

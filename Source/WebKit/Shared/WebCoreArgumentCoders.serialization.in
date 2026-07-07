@@ -2021,7 +2021,7 @@ header: <WebCore/ResourceRequest.h>
 #if PLATFORM(COCOA)
 [CreateUsing=fromResourceRequestData] class WebCore::ResourceRequest {
     Variant<WebCore::ResourceRequest::RequestData, WebCore::ResourceRequestPlatformData> getRequestDataToSerialize();
-    String cachePartition();
+    bool shouldBlockThirdPartyStorage();
     bool hiddenFromInspector();
 };
 #endif
@@ -4925,7 +4925,7 @@ struct WebCore::ServiceWorkerJobData {
 
     WebCore::ServiceWorkerJobType type;
 
-    String domainForCachePartition;
+    bool shouldBlockThirdPartyStorage;
     bool isFromServiceWorkerPage;
 
     [Validator='( type == WebCore::ServiceWorkerJobType::Register && registrationOptions->has_value()) || (type != WebCore::ServiceWorkerJobType::Register && !registrationOptions->has_value() )'] std::optional<WebCore::ServiceWorkerRegistrationOptions> registrationOptions;
