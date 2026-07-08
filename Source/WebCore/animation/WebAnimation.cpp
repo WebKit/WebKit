@@ -1236,10 +1236,13 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
         m_holdTime = zeroTime();
     }
 
-    // 7. If has finite timeline and previous current time is unresolved:
+    // 7. If has finite timeline and auto-rewind is true:
     // Set the flag auto align start time to true.
-    if (hasFiniteTimeline && !previousCurrentTime)
+    // Set hold time to previous current time.
+    if (hasFiniteTimeline && autoRewind == AutoRewind::Yes) {
         m_autoAlignStartTime = true;
+        m_holdTime = previousCurrentTime;
+    }
 
     // 8. If animation’s hold time is resolved, let its start time be unresolved.
     if (m_holdTime)
