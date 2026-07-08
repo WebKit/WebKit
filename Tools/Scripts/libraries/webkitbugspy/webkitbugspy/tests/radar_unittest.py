@@ -28,6 +28,35 @@ from webkitcorepy import mocks as wkmocks, OutputCapture
 
 RELATED_BLANK = {'related-to': [], 'blocked-by': [], 'blocking': [], 'parent-of': [], 'subtask-of': [], 'cause-of': [], 'caused-by': [], 'duplicate-of': [], 'original-of': [], 'clone-of': [], 'cloned-to': []}
 
+ATTACHMENT_ISSUES = [
+    dict(
+        id=1,
+        title='Issue with attachments',
+        timestamp=1639536160,
+        modified=1710884407,
+        opened=True,
+        creator=mocks.USERS['Felix Filer'],
+        assignee=mocks.USERS['Tim Contributor'],
+        description='An example issue with attachments',
+        attachments=[
+            dict(fileName='triage-revert.patch', data=b'REVERT PATCH BYTES'),
+            dict(fileName='triage-fix.patch', data=b'FIX PATCH BYTES'),
+            dict(fileName='build-log.txt', data=b'not a patch'),
+            dict(fileName='cve.diff', data=b'DIFF BYTES'),
+            dict(fileName='locked.patch', data=b'SECRET', locked=True),
+        ],
+    ), dict(
+        id=2,
+        title='Issue without attachments',
+        timestamp=1639540010,
+        modified=1710884407,
+        opened=True,
+        creator=mocks.USERS['Felix Filer'],
+        assignee=mocks.USERS['Tim Contributor'],
+        description='An example issue without attachments',
+    ),
+]
+
 
 class TestRadar(unittest.TestCase):
     def test_encoding(self):
@@ -131,6 +160,38 @@ class TestRadar(unittest.TestCase):
                 User.Encoder().default(comments[0].user),
                 dict(name='Felix Filer', username=809, emails=['ffiler@example.com']),
             )
+
+    def test_attachments(self):
+        with mocks.Radar(issues=ATTACHMENT_ISSUES):
+            attachments = radar.Tracker().issue(1).attachments
+            self.assertEqual(
+                [attachment.name for attachment in attachments],
+                ['triage-revert.patch', 'triage-fix.patch', 'build-log.txt', 'cve.diff', 'locked.patch'],
+            )
+
+    def test_patches(self):
+        with mocks.Radar(issues=ATTACHMENT_ISSUES):
+            self.assertEqual(
+                [patch.name for patch in radar.Tracker().issue(1).patches],
+                ['triage-revert.patch', 'triage-fix.patch', 'cve.diff', 'locked.patch'],
+            )
+
+    def test_patch_contents(self):
+        with mocks.Radar(issues=ATTACHMENT_ISSUES):
+            patches = {patch.name: patch for patch in radar.Tracker().issue(1).patches}
+            self.assertEqual(patches['triage-fix.patch'].contents(), b'FIX PATCH BYTES')
+            self.assertEqual(patches['cve.diff'].contents(), b'DIFF BYTES')
+
+    def test_locked_attachment(self):
+        with mocks.Radar(issues=ATTACHMENT_ISSUES), OutputCapture() as captured:
+            patches = {patch.name: patch for patch in radar.Tracker().issue(1).patches}
+            self.assertIsNone(patches['locked.patch'].contents())
+        self.assertIn('is locked', captured.stderr.getvalue())
+
+    def test_no_attachments(self):
+        with mocks.Radar(issues=ATTACHMENT_ISSUES):
+            self.assertEqual(radar.Tracker().issue(2).attachments, [])
+            self.assertEqual(radar.Tracker().issue(2).patches, [])
 
     def test_watchers(self):
         with mocks.Radar(issues=mocks.ISSUES):

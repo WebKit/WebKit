@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import base64
 import json
 import re
 import time
@@ -29,7 +30,7 @@ from .base import Base
 
 from webkitbugspy import User, Issue
 from webkitbugspy.mocks.radar import Radar as RadarMock
-from webkitcorepy import mocks
+from webkitcorepy import mocks, string_utils
 
 
 class Bugzilla(Base, mocks.Requests):
@@ -269,6 +270,57 @@ class Bugzilla(Base, mocks.Requests):
             )],
         ), url=url)
 
+    def _attachment_records(self):
+        records = []
+        global_id = 0
+        for bug_id in sorted(self.issues.keys()):
+            for attachment in self.issues[bug_id].get('attachments', []):
+                global_id += 1
+                records.append((global_id, bug_id, attachment))
+        return records
+
+    def _attachment_json(self, attachment_id, bug_id, attachment, include_data=True):
+        result = dict(
+            id=attachment_id,
+            bug_id=bug_id,
+            file_name=attachment['fileName'],
+            content_type=attachment.get('content_type', 'text/plain'),
+            is_patch=1 if attachment.get('is_patch') else 0,
+            is_obsolete=1 if attachment.get('is_obsolete') else 0,
+        )
+        if include_data:
+            result['data'] = base64.b64encode(string_utils.encode(attachment.get('data', b''))).decode('ascii')
+        return result
+
+    def _attachments(self, url, id, query=None):
+        if id not in self.issues:
+            return mocks.Response(
+                url=url,
+                headers={'Content-Type': 'text/json'},
+                status_code=404,
+                text=json.dumps(dict(
+                    code=101,
+                    error=True,
+                    message="Bug #{} does not exist.".format(id),
+                )),
+            )
+
+        include_data = 'exclude_fields=data' not in (query or '')
+        return mocks.Response.fromJson(dict(
+            bugs={str(id): [
+                self._attachment_json(attachment_id, bug_id, attachment, include_data=include_data)
+                for attachment_id, bug_id, attachment in self._attachment_records() if bug_id == id
+            ]},
+        ), url=url)
+
+    def _attachment(self, url, attachment_id):
+        for record_id, bug_id, attachment in self._attachment_records():
+            if record_id == attachment_id:
+                return mocks.Response.fromJson(dict(
+                    attachments={str(attachment_id): self._attachment_json(attachment_id, bug_id, attachment)},
+                ), url=url)
+        return mocks.Response.create404(url)
+
     def _comments(self, url, id):
         if id not in self.issues:
             return mocks.Response(
@@ -462,6 +514,14 @@ class Bugzilla(Base, mocks.Requests):
             return self._comments(url, int(match.group('id')))
         if match and method == 'POST':
             return self._post_comment(url, int(match.group('id')), match.group('credentials'), json)
+
+        match = re.match(r'{}/rest/bug/attachment/(?P<id>\d+)(?:\?(?P<query>\S*))?$'.format(self.hosts[0]), stripped_url)
+        if match and method == 'GET':
+            return self._attachment(url, int(match.group('id')))
+
+        match = re.match(r'{}/rest/bug/(?P<id>\d+)/attachment(?:\?(?P<query>\S*))?$'.format(self.hosts[0]), stripped_url)
+        if match and method == 'GET':
+            return self._attachments(url, int(match.group('id')), query=match.group('query'))
 
         match = re.match(r'{}/rest/product_enterable(?P<credentials>\?login=\S+\&password=\S+)?$'.format(self.hosts[0]), stripped_url)
         if match and method == 'GET':

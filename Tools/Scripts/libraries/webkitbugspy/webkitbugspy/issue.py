@@ -53,6 +53,30 @@ class Issue(object):
                 self.content,
             )
 
+    class Attachment(object):
+        PATCH_SUFFIXES = ('.patch', '.diff')
+
+        def __init__(self, name, content_type=None, contents=None):
+            self.name = name
+            self.content_type = content_type
+            self._contents = contents
+
+        def __repr__(self):
+            return self.name or '<unnamed attachment>'
+
+        @property
+        def is_patch(self):
+            return bool(self.name) and self.name.lower().endswith(self.PATCH_SUFFIXES)
+
+        def contents(self):
+            '''The attachment's bytes, retrieved and cached on first access. `contents` passed to the
+            constructor may be the bytes themselves or a zero-argument callable that fetches them, so
+            that a tracker can defer downloading until a caller actually wants the data. Returns None
+            if the content could not be retrieved (for example, a locked radar attachment).'''
+            if callable(self._contents):
+                self._contents = self._contents()
+            return self._contents
+
     def __init__(self, id, tracker):
         self.id = int(id)
         self.tracker = tracker
@@ -84,6 +108,8 @@ class Issue(object):
         self._classification = None
 
         self._source_changes = None
+
+        self._attachments = None
 
         self.tracker.populate(self, None)
 
@@ -273,6 +299,22 @@ class Issue(object):
         if self._source_changes is None:
             self.tracker.populate(self, 'source_changes')
         return self._source_changes
+
+    @property
+    def attachments(self):
+        '''The issue's attachments, or None if the tracker has no concept of attachments.'''
+        if self._attachments is None:
+            self.tracker.populate(self, 'attachments')
+        return self._attachments
+
+    @property
+    def patches(self):
+        '''The subset of `attachments` that look like patches, or None if the tracker has no concept
+        of attachments.'''
+        attachments = self.attachments
+        if attachments is None:
+            return None
+        return [attachment for attachment in attachments if attachment.is_patch]
 
     def add_source_change(self, line):
         parts = line.split(', ')

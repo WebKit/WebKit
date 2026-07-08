@@ -27,6 +27,7 @@ import re
 import sys
 import traceback
 
+from .apply import Apply
 from .blame import Blame
 from .branch import Branch
 from .canonicalize import Canonicalize
@@ -98,7 +99,7 @@ def main(
     subparser.set_defaults(main=lambda *args, **kwargs: parser.print_help())
 
     programs = [
-        Blame, Branch, Canonicalize, Checkout,
+        Apply, Blame, Branch, Canonicalize, Checkout,
         Clean, Clone, Conflict, CreateBug, Diff, Find, Info, Land, Log, Pull,
         PullRequest, Revert, Review, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,

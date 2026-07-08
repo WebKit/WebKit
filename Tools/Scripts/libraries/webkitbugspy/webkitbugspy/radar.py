@@ -285,6 +285,8 @@ class Tracker(GenericTracker):
         issue._link = 'rdar://{}'.format(issue.id)
         issue._labels = []
         issue._related_links = []  # We don't yet have a defined idiom for "related links" in radar
+        if member == 'attachments':
+            issue._attachments = []
         if (not self.client or not self.library) and member:
             sys.stderr.write('radarclient inaccessible on this machine\n')
             return issue
@@ -325,6 +327,13 @@ class Tracker(GenericTracker):
             issue._source_changes = []
             if radar.sourceChanges is not None:
                 issue._source_changes = radar.sourceChanges.splitlines()
+
+        if member == 'attachments':
+            for attachment in radar.attachments.items():
+                issue._attachments.append(Issue.Attachment(
+                    name=attachment.fileName,
+                    contents=lambda attachment=attachment: self._attachment_contents(attachment),
+                ))
 
         if member == 'keywords':
             issue._keywords = [kw.name for kw in (radar.keywords() or [])]
@@ -395,6 +404,14 @@ class Tracker(GenericTracker):
                 issue._related[r.type].append(self.issue(r.related_radar_id))
 
         return issue
+
+    def _attachment_contents(self, attachment):
+        '''Download an attachment's bytes, or None if it is locked.'''
+        try:
+            return attachment.content(client=self.client)
+        except self.radarclient().exceptions.AttachmentLockedException:
+            sys.stderr.write("'{}' is locked and cannot be downloaded\n".format(attachment.fileName))
+            return None
 
     @handle_access_exception
     def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, original=None, keywords=None, source_changes=None, state=None, substate=None, resolution=None, see_also=None, **properties):

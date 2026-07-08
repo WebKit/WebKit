@@ -145,6 +145,17 @@ class RadarModel(object):
         def __init__(self, name):
             self.name = name
 
+    class Attachment(object):
+        def __init__(self, file_name, data=b'', locked=False):
+            self.fileName = file_name
+            self._data = data if isinstance(data, bytes) else string_utils.encode(data)
+            self.locked = locked
+
+        def content(self, client=None):
+            if self.locked:
+                raise Radar.exceptions.AttachmentLockedException("'{}' is locked".format(self.fileName))
+            return self._data
+
     def __init__(self, client, issue, additional_fields=None):
         from datetime import datetime, timedelta, timezone
 
@@ -181,6 +192,13 @@ class RadarModel(object):
         ])
         self.cc_memberships = self.CollectionProperty(self, *[
             self.CCMembership(Radar.transform_user(watcher)) for watcher in issue.get('watchers', [])
+        ])
+        self.attachments = self.CollectionProperty(self, *[
+            RadarModel.Attachment(
+                attachment['fileName'],
+                data=attachment.get('data', b''),
+                locked=attachment.get('locked', False),
+            ) for attachment in issue.get('attachments', [])
         ])
 
         self.milestone = Radar.Milestone(issue.get('milestone', '?'))
@@ -551,6 +569,9 @@ class Radar(Base, ContextStack):
             pass
 
         class RadarAccessDeniedResponseException(Exception):
+            pass
+
+        class AttachmentLockedException(Exception):
             pass
 
     class RetryPolicy(object):
