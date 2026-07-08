@@ -15,6 +15,7 @@ set(WebCore_POST_BUILD_COMMAND
 
 make_directory("${CMAKE_BINARY_DIR}/WebCore/Modules")
 configure_file(${WEBCORE_DIR}/WebCore.modulemap ${CMAKE_BINARY_DIR}/WebCore/Modules/module.modulemap COPYONLY)
+configure_file(${WEBCORE_DIR}/WebCore_Private.modulemap ${CMAKE_BINARY_DIR}/WebCore/Modules/module.private.modulemap COPYONLY)
 set(_webcore_fw "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebCore.framework")
 if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
     make_directory("${_webcore_fw}")
