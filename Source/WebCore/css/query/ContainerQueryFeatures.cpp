@@ -338,7 +338,7 @@ struct StyleFeatureSchema : public FeatureSchema {
     {
         // A builder is only needed to resolve var()/attr() substitutions and css-wide keywords against
         // the container. It is created lazily so literal-only ranges like style(10px < 10em) skip it.
-        std::optional<Style::ComputedStyle> dummyStyle;
+        std::unique_ptr<Style::ComputedStyle> dummyStyle;
         RefPtr<Style::MatchResult> dummyMatchResult;
         std::optional<Style::Builder> styleBuilder;
         auto ensureBuilder = [&]() -> Style::Builder& {
@@ -349,7 +349,7 @@ struct StyleFeatureSchema : public FeatureSchema {
                     context.conversionData.rootStyle(),
                     context.conversionData.elementForContainerUnitResolution()
                 };
-                dummyStyle = Style::ComputedStyle::clone(protect(style));
+                dummyStyle = Style::ComputedStyle::clonePtr(style);
                 dummyMatchResult = Style::MatchResult::create();
                 styleBuilder.emplace(protect(*dummyStyle), WTF::move(builderContext), *dummyMatchResult);
             }
