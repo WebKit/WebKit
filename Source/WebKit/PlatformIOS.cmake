@@ -480,6 +480,36 @@ set_target_properties(WebKit PROPERTIES
     OBJCXX_VISIBILITY_PRESET hidden
     VISIBILITY_INLINES_HIDDEN ON
 )
+
+set(_swift_tba_resp "${CMAKE_CURRENT_BINARY_DIR}/swift-tba-availability-macros.resp")
+if (CMAKE_IOS_SIMULATOR OR CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
+    set(_swift_tba_platform "iphonesimulator")
+else ()
+    set(_swift_tba_platform "iphoneos")
+endif ()
+execute_process(
+    COMMAND ${CMAKE_COMMAND} -E env
+        WK_PLATFORM_NAME=${_swift_tba_platform}
+        IPHONEOS_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
+        MACOSX_DEPLOYMENT_TARGET=9999
+        XROS_DEPLOYMENT_TARGET=9999
+        BUILT_PRODUCTS_DIR=${CMAKE_BINARY_DIR}
+        SDKROOT=${CMAKE_OSX_SYSROOT}
+        SCRIPT_OUTPUT_FILE_0=${_swift_tba_resp}
+        WK_LIBRARY_HEADERS_FOLDER_PATH=/usr/local/include
+        WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH=${CMAKE_OSX_SYSROOT}/usr/local/include/WebKitAdditions
+        bash ${WEBKIT_DIR}/Scripts/generate-swift-availability-macros
+    RESULT_VARIABLE _swift_tba_resp_result
+    OUTPUT_VARIABLE _swift_tba_resp_stdout
+    ERROR_VARIABLE _swift_tba_resp_stderr)
+if (NOT _swift_tba_resp_result EQUAL 0 OR NOT EXISTS "${_swift_tba_resp}")
+    message(FATAL_ERROR "generate-swift-availability-macros failed (exit ${_swift_tba_resp_result}).\nstdout:\n${_swift_tba_resp_stdout}\nstderr:\n${_swiftui_resp_stderr}")
+endif ()
+unset(_swift_tba_platform)
+unset(_swift_tba_resp_stdout)
+unset(_swift_tba_resp_stderr)
+unset(_swift_tba_resp_result)
+
 target_compile_options(WebKit PRIVATE
     "$<$<COMPILE_LANGUAGE:Swift>:-DENABLE_SWIFTUI>"
     "$<$<COMPILE_LANGUAGE:Swift>:-DHAVE_MATERIAL_HOSTING>"
@@ -525,16 +555,7 @@ target_compile_options(WebKit PRIVATE
     # clang module-loader cycles in the Swift dep scan).
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -fmodule-map-file=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Modules/module.private.modulemap>"
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -ivfsoverlay -Xcc ${CMAKE_BINARY_DIR}/swift-vfs-overlay.yaml>"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"WK_IOS_TBA:iOS ${CMAKE_OSX_DEPLOYMENT_TARGET}\">"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"WK_MAC_TBA:macOS 9999\">"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"WK_XROS_TBA:visionOS 9999\">"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"TBA:macOS 9999, iOS ${CMAKE_OSX_DEPLOYMENT_TARGET}, visionOS 9999\">"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"anyAppleOSAndDownlevels 14.0:macOS 10.16, iOS 14.0\">"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"anyAppleOSAndDownlevels 15.0:macOS 12.0, iOS 15.0\">"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"anyAppleOSAndDownlevels 17.0:macOS 14.0, iOS 17.0, visionOS 1.0\">"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"anyAppleOSAndDownlevels 18.4:macOS 15.4, iOS 18.4, visionOS 2.4\">"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"anyAppleOSAndDownlevels 26.0:macOS 26.0, iOS 26.0, visionOS 26.0\">"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"anyAppleOSAndDownlevels 26.4:macOS 26.4, iOS 26.4, visionOS 26.4\">"
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:@${_swift_tba_resp}>"
     "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/Cocoa>"
     "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/Cocoa/Modules>"
     "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/ios>"
@@ -1620,16 +1641,7 @@ target_compile_options(WebKitSwift PRIVATE
     "$<$<COMPILE_LANGUAGE:Swift>:-DHAVE_MARKETPLACE_KIT>"
     "$<$<COMPILE_LANGUAGE:Swift>:-DHAVE_CREDENTIAL_UPDATE_API>"
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -disable-cross-import-overlays>"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"WK_IOS_TBA:iOS ${CMAKE_OSX_DEPLOYMENT_TARGET}\">"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"WK_MAC_TBA:macOS 9999\">"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"WK_XROS_TBA:visionOS 9999\">"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"TBA:macOS 9999, iOS ${CMAKE_OSX_DEPLOYMENT_TARGET}, visionOS 9999\">"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"anyAppleOSAndDownlevels 14.0:macOS 10.16, iOS 14.0\">"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"anyAppleOSAndDownlevels 15.0:macOS 12.0, iOS 15.0\">"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"anyAppleOSAndDownlevels 17.0:macOS 14.0, iOS 17.0, visionOS 1.0\">"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"anyAppleOSAndDownlevels 18.4:macOS 15.4, iOS 18.4, visionOS 2.4\">"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"anyAppleOSAndDownlevels 26.0:macOS 26.0, iOS 26.0, visionOS 26.0\">"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -define-availability -Xfrontend \"anyAppleOSAndDownlevels 26.4:macOS 26.4, iOS 26.4, visionOS 26.4\">"
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:@${_swift_tba_resp}>"
     "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/Cocoa>"
     "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/Cocoa/Modules>"
     "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/ios>"
@@ -1670,35 +1682,6 @@ unset(_wks_dir)
 # _WebKit_SwiftUI
 
 set(_swiftui_dir "${WEBKIT_DIR}/_WebKit_SwiftUI")
-
-set(_swiftui_resp "${CMAKE_CURRENT_BINARY_DIR}/swift-tba-availability-macros.resp")
-if (CMAKE_IOS_SIMULATOR OR CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
-    set(_swiftui_platform "iphonesimulator")
-else ()
-    set(_swiftui_platform "iphoneos")
-endif ()
-execute_process(
-    COMMAND ${CMAKE_COMMAND} -E env
-        WK_PLATFORM_NAME=${_swiftui_platform}
-        IPHONEOS_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
-        MACOSX_DEPLOYMENT_TARGET=9999
-        XROS_DEPLOYMENT_TARGET=9999
-        BUILT_PRODUCTS_DIR=${CMAKE_BINARY_DIR}
-        SDKROOT=${CMAKE_OSX_SYSROOT}
-        SCRIPT_OUTPUT_FILE_0=${_swiftui_resp}
-        WK_LIBRARY_HEADERS_FOLDER_PATH=/usr/local/include
-        WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH=${CMAKE_OSX_SYSROOT}/usr/local/include/WebKitAdditions
-        bash ${WEBKIT_DIR}/Scripts/generate-swift-availability-macros
-    RESULT_VARIABLE _swiftui_resp_result
-    OUTPUT_VARIABLE _swiftui_resp_stdout
-    ERROR_VARIABLE _swiftui_resp_stderr)
-if (NOT _swiftui_resp_result EQUAL 0 OR NOT EXISTS "${_swiftui_resp}")
-    message(FATAL_ERROR "generate-swift-availability-macros failed (exit ${_swiftui_resp_result}).\nstdout:\n${_swiftui_resp_stdout}\nstderr:\n${_swiftui_resp_stderr}")
-endif ()
-unset(_swiftui_platform)
-unset(_swiftui_resp_stdout)
-unset(_swiftui_resp_stderr)
-unset(_swiftui_resp_result)
 
 add_library(_WebKit_SwiftUI SHARED
     ${_swiftui_dir}/CrossImportOverlay.swift
@@ -1748,7 +1731,7 @@ target_compile_options(_WebKit_SwiftUI PRIVATE
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-upcoming-feature InternalImportsByDefault>"
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -experimental-spi-only-imports>"
     "$<$<COMPILE_LANGUAGE:Swift>:-DENABLE_SWIFTUI>"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:@${_swiftui_resp}>"
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:@${_swift_tba_resp}>"
     "$<$<COMPILE_LANGUAGE:Swift>:-F${CMAKE_LIBRARY_OUTPUT_DIRECTORY}>"
     "$<$<COMPILE_LANGUAGE:Swift>:-F${CMAKE_OSX_SYSROOT}/System/Cryptexes/OS/System/Library/Frameworks>"
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -DHAVE_CONFIG_H=1>"
