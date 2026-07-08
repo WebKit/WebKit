@@ -98,19 +98,15 @@ BaselineAlignmentState::BaselineAlignmentState(const RenderBox& alignmentSubject
 const BaselineGroup& BaselineAlignmentState::sharedGroup(WritingMode alignmentSubjectWritingMode, ItemPosition preference) const
 {
     ASSERT(isBaselinePosition(preference));
-    return const_cast<BaselineAlignmentState*>(this)->findCompatibleSharedGroup(alignmentSubjectWritingMode, preference);
+    return m_sharedGroups[const_cast<BaselineAlignmentState*>(this)->findCompatibleSharedGroup(alignmentSubjectWritingMode, preference)];
 }
 
-Vector<BaselineGroup>& BaselineAlignmentState::sharedGroups()
-{
-    return m_sharedGroups;
-}
-
-void BaselineAlignmentState::updateSharedGroup(const RenderBox& alignmentSubject, WritingMode alignmentSubjectWritingMode, ItemPosition preference, LayoutUnit ascent)
+size_t BaselineAlignmentState::updateSharedGroup(const RenderBox& alignmentSubject, WritingMode alignmentSubjectWritingMode, ItemPosition preference, LayoutUnit ascent)
 {
     ASSERT(isBaselinePosition(preference));
-    BaselineGroup& group = findCompatibleSharedGroup(alignmentSubjectWritingMode, preference);
-    group.update(alignmentSubject, ascent);
+    auto index = findCompatibleSharedGroup(alignmentSubjectWritingMode, preference);
+    m_sharedGroups[index].update(alignmentSubject, ascent);
+    return index;
 }
 
 FontBaseline BaselineAlignment::dominantBaseline(WritingMode writingMode)
@@ -174,16 +170,16 @@ WritingMode BaselineAlignment::usedWritingModeForBaselineAlignment(LogicalBoxAxi
     return { styleWritingMode, TextDirection::LTR, TextOrientation::Mixed };
 }
 
-BaselineGroup& BaselineAlignmentState::findCompatibleSharedGroup(WritingMode alignmentSubjectWritingMode, ItemPosition preference)
+size_t BaselineAlignmentState::findCompatibleSharedGroup(WritingMode alignmentSubjectWritingMode, ItemPosition preference)
 {
     auto usedWritingModeForBaselineAlignment = BaselineAlignment::usedWritingModeForBaselineAlignment(m_alignmentContextAxis, m_alignmentContainerWritingMode, alignmentSubjectWritingMode);
     auto blockFlowDirection = usedWritingModeForBaselineAlignment.blockDirection();
-    for (auto& group : m_sharedGroups) {
-        if (group.isCompatible(blockFlowDirection, preference))
-            return group;
+    for (size_t index = 0; index < m_sharedGroups.size(); ++index) {
+        if (m_sharedGroups[index].isCompatible(blockFlowDirection, preference))
+            return index;
     }
-    m_sharedGroups.insert(0, BaselineGroup(blockFlowDirection, preference));
-    return m_sharedGroups[0];
+    m_sharedGroups.append(BaselineGroup(blockFlowDirection, preference));
+    return m_sharedGroups.size() - 1;
 }
 
 } // namespace WebCore

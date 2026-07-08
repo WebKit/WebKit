@@ -114,11 +114,11 @@ public:
     BaselineAlignmentState(const RenderBox& alignmentSubject, WritingMode alignmentSubjectWritingMode, ItemPosition preference, LayoutUnit ascent, LogicalBoxAxis alignmentContextAxis, WritingMode alignmentContainerWritingMode);
     const BaselineGroup& sharedGroup(WritingMode alignmentSubjectWritingMode, ItemPosition preference) const;
 
-    void updateSharedGroup(const RenderBox& alignmentSubject, WritingMode alignmentSubjectWritingMode, ItemPosition preference, LayoutUnit ascent);
-    Vector<BaselineGroup>& NODELETE sharedGroups();
+    // Returns the index (into the shared-group list) of the group the subject joined, creating one if needed.
+    size_t updateSharedGroup(const RenderBox& alignmentSubject, WritingMode alignmentSubjectWritingMode, ItemPosition preference, LayoutUnit ascent);
 
 private:
-    BaselineGroup& findCompatibleSharedGroup(WritingMode alignmentSubjectWritingMode, ItemPosition preference);
+    size_t findCompatibleSharedGroup(WritingMode alignmentSubjectWritingMode, ItemPosition preference);
 
     Vector<BaselineGroup> m_sharedGroups;
     WritingMode m_alignmentContainerWritingMode;

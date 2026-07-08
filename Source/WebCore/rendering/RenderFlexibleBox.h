@@ -311,10 +311,19 @@ private:
     void setOverridingMainSizeForFlexItem(RenderBox&, LayoutUnit);
     void prepareFlexItemForPositionedLayout(RenderBox& flexItem);
 
+    // A baseline-sharing group's flex items and the ascent they align to. Flex owns this because it
+    // positions each member within the group; the shared BaselineAlignmentState only decides grouping.
+    struct BaselineSharingGroup {
+        LayoutUnit maxAscent;
+        Vector<CheckedRef<RenderBox>> items;
+    };
+    // A line almost always has a single baseline-sharing group (at most 3 can exist), so keep one inline.
+    using BaselineSharingGroups = Vector<BaselineSharingGroup, 1>;
+
     struct FlexLineResult {
         LayoutUnit crossAxisOffsetForNextLine;
         LayoutUnit crossAxisExtent;
-        std::optional<BaselineAlignmentState> baselineAlignmentState;
+        BaselineSharingGroups baselineSharingGroups;
     };
     FlexLineResult layoutAndPlaceFlexItems(LayoutUnit crossAxisOffset, FlexLayoutItems&, LayoutUnit availableFreeSpace, RelayoutChildren, LayoutUnit gapBetweenItems);
     void layoutFlexItemAfterMainSizing(FlexLayoutItem&, RelayoutChildren);
