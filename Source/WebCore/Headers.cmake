@@ -600,6 +600,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/mediastream/RTCRtpTransformableFrame.h
     Modules/mediastream/RTCSessionDescription.h
     Modules/mediastream/RTCStatsReport.h
+    Modules/mediastream/SFrameUtils.h
     Modules/mediastream/STUNMessageParsing.h
     Modules/mediastream/UserMediaClient.h
     Modules/mediastream/UserMediaController.h
