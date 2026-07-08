@@ -181,7 +181,7 @@ void ScrollingTreeCoordinated::hasNodeWithAnimatedScrollChanged(bool hasNodeWith
 static OptionSet<EventListenerRegionType> findEventListenerRegionTypes(const Ref<CoordinatedPlatformLayer>& parent, const FloatPoint& point)
 {
     bool existsOnLayer = parent->bounds().contains(point) && parent->eventRegion().contains(roundedIntPoint(point));
-    for (auto& child : parent->children()) {
+    for (auto& child : parent->children() | std::views::reverse) {
         Locker childLocker { child->lock() };
         FloatPoint transformedPoint(point);
         if (child->transform().isInvertible()) {
