@@ -1573,7 +1573,6 @@
 		41B82E0F28FD52F8001D89CC /* WebCodecsEncodedVideoChunkData.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B82E0E28FD52F5001D89CC /* WebCodecsEncodedVideoChunkData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41B8776223DE1045003638B8 /* RealtimeMediaSourceIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B8776023DE1042003638B8 /* RealtimeMediaSourceIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41B8826B2C87050600DD614D /* CoreAudioCaptureInternalUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B8826A2C87050600DD614D /* CoreAudioCaptureInternalUnit.h */; };
-		41BBA866257E373B00AC7F6D /* SFrameUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 41209E24257A2FBB00120ACA /* SFrameUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41BDAB352C7CE1280005C965 /* VideoCodecType.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BDAB342C7CE1280005C965 /* VideoCodecType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41C14BC626DE6DE800685BF5 /* RTCNetworkManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 41C14BC426DE6DE800685BF5 /* RTCNetworkManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41C14BC726DE858400685BF5 /* LibWebRTCUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D1A04C213EDDFF0063FB6B /* LibWebRTCUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10989,8 +10988,6 @@
 		411945A72D3E3D4F00C40F6B /* InstallEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InstallEvent.cpp; sourceTree = "<group>"; };
 		411945A82D3E3D4F00C40F6B /* InstallEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = InstallEvent.idl; sourceTree = "<group>"; };
 		41201F3627F2F74600D56CC2 /* NotificationEventType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationEventType.h; sourceTree = "<group>"; };
-		41209E24257A2FBB00120ACA /* SFrameUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFrameUtils.h; sourceTree = "<group>"; };
-		41209E26257A2FBB00120ACA /* SFrameUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SFrameUtils.cpp; sourceTree = "<group>"; };
 		41209E91216D593C00A73A12 /* RTCCertificate.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCCertificate.idl; sourceTree = "<group>"; };
 		41209E93216D5C7900A73A12 /* RTCCertificate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCCertificate.h; sourceTree = "<group>"; };
 		41209E94216EA69A00A73A12 /* RTCCertificate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCCertificate.cpp; sourceTree = "<group>"; };
@@ -24277,8 +24274,6 @@
 				41BCE87625F7A67A0046C2E5 /* RTCTransformEvent.cpp */,
 				41BCE87725F7A67A0046C2E5 /* RTCTransformEvent.h */,
 				41BCE87525F7A6790046C2E5 /* RTCTransformEvent.idl */,
-				41209E26257A2FBB00120ACA /* SFrameUtils.cpp */,
-				41209E24257A2FBB00120ACA /* SFrameUtils.h */,
 				41E67A7F25D16846007B0A4C /* STUNMessageParsing.cpp */,
 				41E67A8125D16847007B0A4C /* STUNMessageParsing.h */,
 				07221B8D17CEC32700848E51 /* UserMediaClient.h */,
@@ -48569,7 +48564,6 @@
 				B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */,
 				7CD58DFB1F9565A500112791 /* Settings.h in Headers */,
 				7CC9722E1F93E3360004D4CF /* SettingsBase.h in Headers */,
-				41BBA866257E373B00AC7F6D /* SFrameUtils.h in Headers */,
 				0F3DD45012F5EA1B000D9190 /* ShadowBlur.h in Headers */,
 				4683DF412767E91A007D00C8 /* ShadowRealmGlobalScope.h in Headers */,
 				A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */,
