@@ -2682,12 +2682,11 @@ RenderFlexibleBox::FlexLineResult RenderFlexibleBox::layoutAndPlaceFlexItems(Lay
             LayoutUnit descent = (crossAxisMarginExtentForFlexItem(flexItem) + crossAxisExtentForFlexItem(flexItem)) - ascent;
             maxDescent = std::max(maxDescent, descent);
 
-            size_t baselineSharingGroupIndex = 0;
             if (!baselineAlignmentState) {
                 auto alignmentContextAxis = style().isRowFlexDirection() ? LogicalBoxAxis::Inline : LogicalBoxAxis::Block;
-                baselineAlignmentState = { flexItem, flexItem.writingMode(), alignment, ascent, alignmentContextAxis, style().writingMode() };
-            } else
-                baselineSharingGroupIndex = baselineAlignmentState->updateSharedGroup(flexItem, flexItem.writingMode(), alignment, ascent);
+                baselineAlignmentState = BaselineAlignmentState { alignmentContextAxis, style().writingMode() };
+            }
+            auto baselineSharingGroupIndex = baselineAlignmentState->sharedGroupIndex(flexItem.writingMode(), alignment);
 
             if (baselineSharingGroupIndex == baselineSharingGroups.size())
                 baselineSharingGroups.append({ });

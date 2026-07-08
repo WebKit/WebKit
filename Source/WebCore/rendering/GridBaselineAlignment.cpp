@@ -131,40 +131,38 @@ bool GridBaselineAlignment::isParallelToAlignmentAxisForGridItem(const RenderBox
     return alignmentContextType == Style::GridTrackSizingDirection::Rows ? !isOrthogonalGridItemForBaseline(gridItem) : isOrthogonalGridItemForBaseline(gridItem);
 }
 
-const BaselineGroup& GridBaselineAlignment::baselineGroupForGridItem(ItemPosition preference, unsigned sharedContext, const RenderBox& gridItem, Style::GridTrackSizingDirection alignmentContextType) const
-{
-    ASSERT(isBaselinePosition(preference));
-    auto& baselineAlignmentStateMap = alignmentContextType == Style::GridTrackSizingDirection::Rows ? m_rowAlignmentContextStates : m_columnAlignmentContextStates;
-    auto* baselineAlignmentState = baselineAlignmentStateMap.get(sharedContext);
-    ASSERT(baselineAlignmentState);
-    return baselineAlignmentState->sharedGroup(gridItem.writingMode(), preference);
-}
-
 void GridBaselineAlignment::updateBaselineAlignmentContext(ItemPosition preference, unsigned sharedContext, const RenderBox& gridItem, Style::GridTrackSizingDirection alignmentContextType)
 {
     ASSERT(isBaselinePosition(preference));
     ASSERT(!gridItem.needsLayout());
 
-    // Determine Ascent and Descent values of this grid item with respect to
-    // its grid container.
+    // Determine this grid item's ascent with respect to its grid container.
     LayoutUnit ascent = logicalAscentForGridItem(gridItem, alignmentContextType, preference);
-    // Looking up for a shared alignment context perpendicular to the
-    // alignment axis.
-    auto& baselineAlignmentStateMap = alignmentContextType == Style::GridTrackSizingDirection::Rows ? m_rowAlignmentContextStates : m_columnAlignmentContextStates;
-    // Looking for a compatible baseline-sharing group.
-    baselineAlignmentStateMap.ensure(sharedContext, [&] {
+    // Find (or create) the baseline alignment-context perpendicular to the alignment axis, then fold this
+    // item's ascent into the max ascent of the baseline-sharing group it belongs to.
+    auto& contextMap = alignmentContextType == Style::GridTrackSizingDirection::Rows ? m_rowAlignmentContextStates : m_columnAlignmentContextStates;
+    auto& context = contextMap.ensure(sharedContext, [&] {
         auto alignmentAxis = alignmentContextType == Style::GridTrackSizingDirection::Columns ? LogicalBoxAxis::Block : LogicalBoxAxis::Inline;
-        return makeUnique<BaselineAlignmentState>(gridItem, gridItem.writingMode(), preference, ascent, alignmentAxis, m_writingMode);
-    }).iterator->value->updateSharedGroup(gridItem, gridItem.writingMode(), preference, ascent);
+        return AlignmentContext { makeUnique<BaselineAlignmentState>(alignmentAxis, m_writingMode), { } };
+    }).iterator->value;
+    auto groupIndex = context.sharedGroups->sharedGroupIndex(gridItem.writingMode(), preference);
+    if (groupIndex == context.maxAscents.size())
+        context.maxAscents.append(LayoutUnit());
+    context.maxAscents[groupIndex] = std::max(context.maxAscents[groupIndex], ascent);
 }
 
 LayoutUnit GridBaselineAlignment::baselineOffsetForGridItem(ItemPosition preference, unsigned sharedContext, const RenderBox& gridItem, Style::GridTrackSizingDirection alignmentContextType) const
 {
     ASSERT(isBaselinePosition(preference));
-    auto& group = baselineGroupForGridItem(preference, sharedContext, gridItem, alignmentContextType);
-    if (group.computeSize() > 1)
-        return group.maxAscent() - logicalAscentForGridItem(gridItem, alignmentContextType, preference);
-    return LayoutUnit();
+    auto& contextMap = alignmentContextType == Style::GridTrackSizingDirection::Rows ? m_rowAlignmentContextStates : m_columnAlignmentContextStates;
+    auto it = contextMap.find(sharedContext);
+    ASSERT(it != contextMap.end());
+    auto& context = it->value;
+    auto groupIndex = context.sharedGroups->sharedGroupIndex(gridItem.writingMode(), preference);
+    // No recorded ascent means a lone participant (its own ascent is the max), so there is no baseline shim.
+    if (groupIndex >= context.maxAscents.size())
+        return { };
+    return context.maxAscents[groupIndex] - logicalAscentForGridItem(gridItem, alignmentContextType, preference);
 }
 
 void GridBaselineAlignment::clear(Style::GridTrackSizingDirection alignmentContextType)

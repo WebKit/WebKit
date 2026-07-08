@@ -37,17 +37,10 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BaselineGroup);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BaselineAlignmentState);
 
-BaselineGroup::BaselineGroup(FlowDirection blockFlow, ItemPosition alignmentSubjectPreference)
-    : m_maxAscent(0), m_alignmentSubjects()
+BaselineGroup::BaselineGroup(FlowDirection blockFlow, ItemPosition preference)
+    : m_blockFlow(blockFlow)
+    , m_preference(preference)
 {
-    m_blockFlow = blockFlow;
-    m_preference = alignmentSubjectPreference;
-}
-
-void BaselineGroup::update(const RenderBox& alignmentSubject, LayoutUnit ascent)
-{
-    if (m_alignmentSubjects.add(alignmentSubject).isNewEntry)
-        m_maxAscent = std::max(m_maxAscent, ascent);
 }
 
 bool BaselineGroup::isOppositeBlockFlow(FlowDirection blockFlow) const
@@ -82,31 +75,20 @@ bool BaselineGroup::isOrthogonalBlockFlow(FlowDirection blockFlow) const
 bool BaselineGroup::isCompatible(FlowDirection alignmentSubjectBlockFlow, ItemPosition alignmentSubjectPreference) const
 {
     ASSERT(isBaselinePosition(alignmentSubjectPreference));
-    ASSERT(computeSize() > 0);
     return ((m_blockFlow == alignmentSubjectBlockFlow || isOrthogonalBlockFlow(alignmentSubjectBlockFlow)) && m_preference == alignmentSubjectPreference)
         || (isOppositeBlockFlow(alignmentSubjectBlockFlow) && m_preference != alignmentSubjectPreference);
 }
 
-BaselineAlignmentState::BaselineAlignmentState(const RenderBox& alignmentSubject, WritingMode alignmentSubjectWritingMode, ItemPosition preference, LayoutUnit ascent, LogicalBoxAxis alignmentContextAxis, WritingMode alignmentContainerWritingMode)
+BaselineAlignmentState::BaselineAlignmentState(LogicalBoxAxis alignmentContextAxis, WritingMode alignmentContainerWritingMode)
     : m_alignmentContainerWritingMode(alignmentContainerWritingMode)
     , m_alignmentContextAxis(alignmentContextAxis)
 {
-    ASSERT(isBaselinePosition(preference));
-    updateSharedGroup(alignmentSubject, alignmentSubjectWritingMode, preference, ascent);
 }
 
-const BaselineGroup& BaselineAlignmentState::sharedGroup(WritingMode alignmentSubjectWritingMode, ItemPosition preference) const
+size_t BaselineAlignmentState::sharedGroupIndex(WritingMode alignmentSubjectWritingMode, ItemPosition preference) const
 {
     ASSERT(isBaselinePosition(preference));
-    return m_sharedGroups[const_cast<BaselineAlignmentState*>(this)->findCompatibleSharedGroup(alignmentSubjectWritingMode, preference)];
-}
-
-size_t BaselineAlignmentState::updateSharedGroup(const RenderBox& alignmentSubject, WritingMode alignmentSubjectWritingMode, ItemPosition preference, LayoutUnit ascent)
-{
-    ASSERT(isBaselinePosition(preference));
-    auto index = findCompatibleSharedGroup(alignmentSubjectWritingMode, preference);
-    m_sharedGroups[index].update(alignmentSubject, ascent);
-    return index;
+    return const_cast<BaselineAlignmentState*>(this)->findCompatibleSharedGroup(alignmentSubjectWritingMode, preference);
 }
 
 FontBaseline BaselineAlignment::dominantBaseline(WritingMode writingMode)
