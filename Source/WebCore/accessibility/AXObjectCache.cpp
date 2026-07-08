@@ -819,15 +819,22 @@ AccessibilityObject* AXObjectCache::focusedObjectForLocalFrame()
         return nullptr;
 
     RefPtr page = document->page();
-#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
-    RefPtr focusedOrMainFrame = page ? page->focusController().focusedOrMainFrame() : nullptr;
-    if (!focusedOrMainFrame || focusedOrMainFrame->document() != document.get()) {
-        // Return null if focus is in a different local frame (which would have a different AXObjectCache).
+    if (!page)
         return nullptr;
-    }
+
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    // If focus is in a different local (in-process) frame, return the AXLocalFrame proxying the direct
+    // child frame leading toward it (or nullptr if it isn't a descendant of this cache's frame), so this
+    // tree's focus chains into the focused subframe and assistive technologies can descend cross-frame to
+    // the real focused element (see AXIsolatedObject::focusedUIElementInAnyLocalFrame()). A null
+    // localFocusedFrame means focus is in a remote (site-isolated) frame or nowhere; fall through to the
+    // RemoteFrame branch below.
+    RefPtr localFocusedFrame = page->focusController().localFocusedFrame();
+    if (localFocusedFrame && localFocusedFrame->document() != document.get())
+        return localFrameLeadingToFocusedFrame();
 #endif // ENABLE(ACCESSIBILITY_LOCAL_FRAME)
 
-    if (RefPtr remoteFrame = page ? dynamicDowncast<RemoteFrame>(page->focusController().focusedFrame()) : nullptr) {
+    if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(page->focusController().focusedFrame())) {
         // Check if focus is in a site-isolated sub-frame. If so, return the AXRemoteFrame
         // so ATs can follow it to the remote process to get the actual focused element.
         if (RefPtr remoteFrameView = remoteFrame->view()) {
@@ -841,6 +848,52 @@ AccessibilityObject* AXObjectCache::focusedObjectForLocalFrame()
         return focusedObjectForNode(focusedElement.get());
     return focusedObjectForNode(document.get());
 }
+
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+AccessibilityObject* AXObjectCache::localFrameLeadingToFocusedFrame()
+{
+    AX_ASSERT(isMainThread());
+
+    RefPtr document = this->document();
+    if (!document)
+        return nullptr;
+
+    // focusedElementInScope() (the resolution behind Document::activeElement()) returns the frame owner
+    // element (the <iframe>) in this document on the path toward the focused subframe, walking the frame
+    // tree via focusedFrameOwnerElement(). Map that element to the AXLocalFrame proxying the child frame's
+    // content, so this cache's tree chains its focus into the focused subframe. Anything that is not a
+    // local frame owner (focus is in this document, or in a remote/non-descendant frame) yields nullptr.
+    RefPtr owner = dynamicDowncast<HTMLFrameOwnerElement>(document->focusedElementInScope());
+    RefPtr childLocalFrame = dynamicDowncast<LocalFrame>(owner ? owner->contentFrame() : nullptr);
+    RefPtr childFrameView = childLocalFrame ? childLocalFrame->view() : nullptr;
+    if (!childFrameView)
+        return nullptr;
+
+    // The AXLocalFrame lives on this (parent) cache's FrameHost scroll view for the child frame view.
+    RefPtr scrollView = dynamicDowncast<AccessibilityScrollView>(getOrCreate(childFrameView.get()));
+    return scrollView ? scrollView->localFrame() : nullptr;
+}
+#endif // ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE) && ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+void AXObjectCache::updateAncestorFramesFocusedObject()
+{
+    AX_ASSERT(isMainThread());
+
+    RefPtr document = this->document();
+    RefPtr frame = document ? document->frame() : nullptr;
+    for (RefPtr<Frame> ancestor = frame ? frame->tree().parent() : nullptr; ancestor; ancestor = ancestor->tree().parent()) {
+        RefPtr localAncestorFrame = dynamicDowncast<LocalFrame>(ancestor.get());
+        RefPtr ancestorDocument = localAncestorFrame ? localAncestorFrame->document() : nullptr;
+        // focusedObjectForLocalFrame() returns the AXLocalFrame leading toward the focused subframe
+        // for an ancestor cache, so this points each ancestor tree's focus at the correct child frame.
+        if (CheckedPtr ancestorCache = ancestorDocument ? ancestorDocument->existingAXObjectCache() : nullptr) {
+            RefPtr ancestorFocus = ancestorCache->focusedObjectForLocalFrame();
+            ancestorCache->setIsolatedTreeFocusedObject(ancestorFocus.get());
+        }
+    }
+}
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE) && ENABLE(ACCESSIBILITY_LOCAL_FRAME)
 
 AccessibilityObject* AXObjectCache::focusedObjectForNode(Node* focusedNode)
 {
@@ -2465,6 +2518,14 @@ void AXObjectCache::handleFocusedUIElementChanged(Element* oldElement, Element* 
     // Use focusedObjectForLocalFrame() instead of focusedObjectForNode() to properly handle
     // the case where focus is in a site-isolated sub-frame (returns the AXRemoteFrame).
     setIsolatedTreeFocusedObject(focusedObjectForLocalFrame());
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    // Only the focused frame's own cache runs this handler, so also refresh the isolated-tree focus
+    // of each ancestor local frame. This keeps an ancestor tree (e.g. the main frame's, which
+    // VoiceOver queries for the focused element) pointed at the AXLocalFrame leading toward the
+    // focused subframe, so AXIsolatedObject::focusedUIElementInAnyLocalFrame() can descend
+    // cross-frame to the real focused element.
+    updateAncestorFramesFocusedObject();
+#endif
 #endif
     platformHandleFocusedUIElementChanged(protect(getOrCreate(oldElement)), protect(getOrCreate(newElement)));
 

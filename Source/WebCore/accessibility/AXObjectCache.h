@@ -805,6 +805,13 @@ private:
     // Propagates the root of the isolated tree back into the Core and WebKit.
     void setIsolatedTree(Ref<AXIsolatedTree>);
     void setIsolatedTreeFocusedObject(AccessibilityObject*);
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    // Refreshes the isolated-tree focused object of each ancestor local frame, keeping an ancestor
+    // tree (e.g. the main frame's, which VoiceOver queries) pointed at the AXLocalFrame leading
+    // toward the focused subframe. Only the focused frame's own cache handles its focus change, so
+    // ancestor trees would otherwise never learn focus moved into a descendant local frame.
+    void updateAncestorFramesFocusedObject();
+#endif
     void buildIsolatedTree();
     void updateIsolatedTree(AccessibilityObject&, AXNotification);
     void updateIsolatedTree(AccessibilityObject*, AXNotification);
@@ -934,6 +941,12 @@ private:
     enum class UpdateModal : bool { No, Yes };
     void handleFocusedUIElementChanged(Element* oldFocus, Element* newFocus, UpdateModal = UpdateModal::Yes);
     void handleRemoteFrameGainedFocus(RemoteFrame&, Element* oldFocusedElement);
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    // Returns the AXLocalFrame in this cache's tree that proxies the direct child frame leading toward
+    // the focused subframe, or nullptr if focus is not in a descendant local frame. Resolves the frame
+    // owner element via TreeScope::focusedElementInScope() (as Document::activeElement() does).
+    AccessibilityObject* localFrameLeadingToFocusedFrame();
+#endif
     void handleMenuListValueChanged(Element&);
     void handleTextChanged(AccessibilityObject*);
     void handleRecomputeCellSlots(AccessibilityNodeObject&);

@@ -2288,6 +2288,36 @@ bool AXIsolatedObject::isFrameGeometryInitialized() const
 
 #endif // ENABLE_ACCESSIBILITY_LOCAL_FRAME
 
+AXIsolatedObject* AXIsolatedObject::focusedUIElementInAnyLocalFrame() const
+{
+#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+    // Each frame's isolated tree tracks focus independently in its own focusedNodeID. Follow the
+    // focus down through local-frame boundaries: when a tree's focused node proxies a child local
+    // frame (an AXLocalFrame, for which crossFrameChildObject() is non-null), the real focus lives
+    // inside that child frame, so descend into the child tree's focused node. Returning the deepest
+    // focused node yields the actual focused element (e.g. a text field inside an iframe). This
+    // mirrors the cross-frame walk in AccessibilityObject::focusedUIElementInAnyLocalFrame().
+    RefPtr<AXIsolatedTree> focusTree = &tree();
+    RefPtr focus = focusTree->focusedNode();
+    while (focus) {
+        RefPtr crossFrameChild = focus->crossFrameChildObject();
+        if (!crossFrameChild)
+            break;
+        RefPtr childTree = &crossFrameChild->tree();
+        RefPtr childFocus = childTree->focusedNode();
+        if (!childFocus)
+            break;
+        focusTree = WTF::move(childTree);
+        focus = WTF::move(childFocus);
+    }
+    // focusTree now holds the deepest focused node; return it via objectForID (a raw, non-lifetime-bound
+    // accessor, as parentObject() uses) so we neither leak an uncounted raw pointer nor need unsafeGet().
+    return focusTree->objectForID(focusTree->focusedNodeID());
+#else
+    return tree().objectForID(tree().focusedNodeID());
+#endif
+}
+
 Element* AXIsolatedObject::element() const
 {
     AX_ASSERT_NOT_REACHED();
