@@ -1,4 +1,4 @@
-Popover 1 Popover 1 Outside all popovers  Next control after popover1  Popover 3 - button 3   Popover8 invoker (no action)  Open convoluted popover  Example 2  Open popover 29   Open popover 30 Non-invoker
+Popover 1 Popover 1 Outside all popovers  Next control after popover1  Popover 3 - button 3 Popover8 invoker (no action)  Open convoluted popover  Example 2  Open popover 29   Open popover 30 Non-invoker
 
 Harness Error (FAIL), message = Error: assert_throws_dom: function "() => p28.showPopover()" did not throw
 

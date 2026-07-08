@@ -27,6 +27,7 @@ PASS ToggleEventInit properties set value 2
 PASS ToggleEventInit properties set value 3
 PASS ToggleEventInit properties set value 4
 PASS ToggleEventInit with source.
+PASS ToggleEvent doesn't expose relatedTarget property.
 PASS newState set to 'sample'
 PASS newState set to undefined
 PASS newState set to null

@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/WEB_FEATURES.yml
@@ -74,6 +72,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-inside-shadow-dom.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-inside-slot.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-overflow-visible.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-previous-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-slotted.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-tabindex.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus.html
@@ -83,6 +82,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hidden-display-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hidden-display.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hint-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hint-hierarchy.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hint-reentrant-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-iframe-backdrop-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-iframe-backdrop.html
@@ -95,11 +95,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-invoker-reset.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-invoking-attribute-hint.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-invoking-attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-command-edge-cases.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-command.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-contextmenu.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-disabled-button.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-flat-tree-nested.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-flat-tree.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-hint.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-input-button.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-input-text.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-on-scroll.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-scroll-within.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-touch-scroll.html
@@ -135,6 +139,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-stacking-context-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-stacking-context.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-stacking.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-synthetic-keydown.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-target-element-disabled.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-textarea-backdrop-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-textarea-backdrop.html

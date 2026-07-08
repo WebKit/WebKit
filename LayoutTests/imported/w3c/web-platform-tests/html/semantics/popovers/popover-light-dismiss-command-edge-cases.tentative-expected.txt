@@ -1,0 +1,21 @@
+show-popover  toggle-popover   hide-popover  show-modal   request-close   custom command
+submit
+reset
+auto type
+not a popover
+points to non-popover
+type=button in form
+Outside all popovers
+
+PASS commandfor with show-popover does not light dismiss an already-open popover
+PASS commandfor with toggle-popover hides popover exactly once, not twice
+PASS commandfor with hide-popover hides popover exactly once, not twice
+PASS commandfor with type=button in form and valid command does not light dismiss
+FAIL commandfor with command=show-modal light dismisses the popover assert_false: popover should light dismiss expected false got true
+FAIL commandfor with command=request-close light dismisses the popover assert_false: popover should light dismiss expected false got true
+FAIL commandfor with custom command light dismisses the popover assert_false: popover should light dismiss expected false got true
+FAIL commandfor on submit button with form owner light dismisses the popover assert_false: popover should light dismiss expected false got true
+FAIL commandfor on reset button with form owner light dismisses the popover assert_false: popover should light dismiss expected false got true
+FAIL commandfor on auto-type button with form owner light dismisses the popover assert_false: popover should light dismiss expected false got true
+PASS commandfor pointing to non-popover element light dismisses the popover
+

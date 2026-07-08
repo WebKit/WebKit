@@ -4,5 +4,5 @@ PASS The "beforetoggle" event (attribute) get properly dispatched for popovers
 PASS The "beforetoggle" event is cancelable for the "opening" transition
 PASS The "beforetoggle" event is not fired for element removal
 PASS The "toggle" event is coalesced
-FAIL The toggle event is still fired if the popover is removed during focus/blur assert_array_equals: lengths differ, expected array ["beforetoggle closed -> open", "button blur", "focusElement focus", "toggle closed -> open"] length 4, got ["beforetoggle closed -> open", "button blur", "focusElement focus"] length 3
+FAIL The toggle event is still fired if the popover is removed during focus/blur assert_array_equals: lengths differ, expected array ["beforetoggle closed -> open", "button blur", "beforetoggle open -> closed", "focusElement focus", "toggle open -> closed", "toggle closed -> open"] length 6, got ["beforetoggle closed -> open", "button blur", "focusElement focus"] length 3
 
