@@ -508,20 +508,20 @@ Ref<NodeList> Node::childNodes()
     return ensureRareData().ensureNodeLists().ensureEmptyChildNodeList(*this);
 }
 
-Node *Node::lastDescendant() const
+Node* Node::lastDescendant() const
 {
-    Node *n = const_cast<Node *>(this);
-    while (n && n->lastChild())
-        n = n->lastChild();
-    return n;
+    Node* node = const_cast<Node*>(this);
+    while (auto* child = node->lastChild())
+        node = child;
+    return node;
 }
 
 Node* Node::firstDescendant() const
 {
-    Node *n = const_cast<Node *>(this);
-    while (n && n->firstChild())
-        n = n->firstChild();
-    return n;
+    Node* node = const_cast<Node*>(this);
+    while (auto* child = node->firstChild())
+        node = child;
+    return node;
 }
 
 Element* Node::previousElementSibling() const
