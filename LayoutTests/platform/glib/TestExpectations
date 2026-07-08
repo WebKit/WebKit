@@ -2054,6 +2054,8 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/p
 
 imported/w3c/web-platform-tests/html/anonymous-iframe/local-storage.tentative.https.window.html [ Failure Pass ]
 
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/javascript-url-return-value-handling-dynamic.html [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of HTML-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

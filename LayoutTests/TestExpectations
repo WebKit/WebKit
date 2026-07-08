@@ -1407,6 +1407,8 @@ imported/w3c/web-platform-tests/fetch/orb/tentative/status.sub.html [ Skip ]
 
 webkit.org/b/315147 imported/w3c/web-platform-tests/fetch/http-cache/freshness.any.worker.html [ Failure Pass ]
 
+webkit.org/b/318817 imported/w3c/web-platform-tests/fetch/local-network-access/iframe.tentative.https.window.html [ Failure Pass ]
+
 # These fetch tests are non-deterministic.
 imported/w3c/web-platform-tests/fetch/http-cache/pragma-no-cache-with-cache-control.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/preload.https.sub.html [ Skip ]
@@ -8243,3 +8245,5 @@ imported/w3c/web-platform-tests/preload/modulepreload-multiple.html [ Failure Pa
 webkit.org/b/318777 fast/block/out-of-flow-intrinsic-height.html [ Timeout Pass ]
 
 webkit.org/b/318779 fast/css/has-lang-jit-crash.html [ Failure Pass ]
+
+webkit.org/b/315806 imported/w3c/web-platform-tests/gpc/sec-gpc.https.html [ Failure Pass ]
