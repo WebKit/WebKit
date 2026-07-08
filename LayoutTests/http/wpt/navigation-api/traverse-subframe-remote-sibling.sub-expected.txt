@@ -1,0 +1,4 @@
+
+
+PASS Subframe traversal re-navigates a same-origin LocalFrame even when a cross-origin RemoteFrame sibling precedes it (Site Isolation)
+

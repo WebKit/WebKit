@@ -1,0 +1,13 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Navigation API subframe traversal victim frame</title>
+<!--
+  Child document for traverse-subframe-remote-sibling.sub.html.
+  Served from both the primary origin (as the same-origin LocalFrame victim) and
+  from {{hosts[alt][]}} (as the cross-origin RemoteFrame sibling). It only needs
+  to be a distinct cross-document URL per ?p= value so the parent can build
+  back/forward entries; the parent reads this frame's navigation state directly
+  when it is same-origin.
+-->
+<body>
+</body>

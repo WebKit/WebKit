@@ -500,7 +500,7 @@ void HistoryController::recursiveGatherFramesToNavigate(LocalFrame& frame, Vecto
 
         RefPtr subframe = dynamicDowncast<LocalFrame>(frame.tree().descendantByFrameID(*frameID));
         if (!subframe)
-            return;
+            continue;
 
         recursiveGatherFramesToNavigate(*subframe, framesToNavigate, childItem, fromChildItem.get());
     }
