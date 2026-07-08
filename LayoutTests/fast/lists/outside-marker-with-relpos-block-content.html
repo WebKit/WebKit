@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="match" href="outside-marker-with-relpos-block-content-expected.html">
+<meta name="assert" content="Outside list markers must not overlap when the list and its block-level item content are relatively positioned.">
+<style>
+.list {
+    position: relative;
+    margin: 0;
+    padding-inline-start: 20px;
+    font: 16px/1.4 monospace;
+}
+
+.itemContent {
+    position: relative;
+    margin: 0;
+}
+</style>
+</head>
+<body>
+<ol class="list">
+    <li class="item"><p class="itemContent">Item A</p></li>
+    <li class="item"><p class="itemContent">Item B</p></li>
+    <li class="item"><p class="itemContent">Item C</p></li>
+</ol>
+</body>
+</html>

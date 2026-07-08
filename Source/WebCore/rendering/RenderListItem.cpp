@@ -95,14 +95,16 @@ bool isHTMLListElement(const Node& node)
 
 static LayoutPoint NODELETE paintOffsetForMarkerFromAssociatedListItem(const RenderListMarker& marker, const RenderListItem& listItem, const LayoutPoint& listItemPaintOffset)
 {
-    auto markerParentPaintOffset = listItemPaintOffset;
+    // listItemPaintOffset is the list item's containing block origin, so add the list item's own
+    // location() to reach its border box, mirroring RenderBlock::paint (auto adjustedPaintOffset = paintOffset + location();).
+    auto adjustedPaintOffset = listItemPaintOffset + listItem.location();
     for (auto* ancestor = marker.parent(); ancestor && ancestor != &listItem; ancestor = ancestor->parent()) {
         auto* box = dynamicDowncast<RenderBox>(*ancestor);
         if (!box)
             break;
-        markerParentPaintOffset.moveBy(box->location());
+        adjustedPaintOffset.moveBy(box->location());
     }
-    return markerParentPaintOffset;
+    return adjustedPaintOffset;
 }
 
 // Returns the enclosing list with respect to the DOM order.
