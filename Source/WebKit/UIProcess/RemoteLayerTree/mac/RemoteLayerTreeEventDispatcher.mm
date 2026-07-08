@@ -128,6 +128,8 @@ RemoteLayerTreeEventDispatcher::~RemoteLayerTreeEventDispatcher()
 // This must be called to break the cycle between RemoteLayerTreeEventDispatcherDisplayLinkClient and this.
 void RemoteLayerTreeEventDispatcher::invalidate()
 {
+    ASSERT(isMainRunLoop());
+
     checkedDisplayLinkClient()->invalidate();
 
     removeDisplayLinkClient();
@@ -145,7 +147,10 @@ void RemoteLayerTreeEventDispatcher::invalidate()
     });
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-    m_momentumEventDispatcher = nullptr;
+    {
+        Locker locker { m_momentumEventDispatcherLock };
+        m_momentumEventDispatcher = nullptr;
+    }
 #endif
 
     m_displayLinkClient = nullptr;
@@ -203,7 +208,12 @@ void RemoteLayerTreeEventDispatcher::cacheWheelEventScrollingAccelerationCurve(c
         });
         return curve;
     });
-    m_momentumEventDispatcher->setScrollingAccelerationCurve(m_pageIdentifier, WTF::move(curve));
+
+    {
+        Locker locker { m_momentumEventDispatcherLock };
+        if (m_momentumEventDispatcher)
+            m_momentumEventDispatcher->setScrollingAccelerationCurve(m_pageIdentifier, WTF::move(curve));
+    }
 #endif
 }
 
@@ -265,9 +275,12 @@ void RemoteLayerTreeEventDispatcher::scrollingThreadHandleWheelEvent(const WebWh
     }
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-    if (m_momentumEventDispatcher->handleWheelEvent(m_pageIdentifier, webWheelEvent, rubberBandableEdges)) {
-        continueEventHandlingOnMainThread(WheelEventHandlingResult::handled(processingSteps));
-        return;
+    {
+        Locker locker { m_momentumEventDispatcherLock };
+        if (m_momentumEventDispatcher && m_momentumEventDispatcher->handleWheelEvent(m_pageIdentifier, webWheelEvent, rubberBandableEdges)) {
+            continueEventHandlingOnMainThread(WheelEventHandlingResult::handled(processingSteps));
+            return;
+        }
     }
 #endif
 
@@ -482,7 +495,9 @@ void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID display
     {
         // Make sure the lock is held for the handleSyntheticWheelEvent callback.
         auto locker = RemoteLayerTreeHitTestLocker { *scrollingTree };
-        m_momentumEventDispatcher->displayDidRefresh(displayID);
+        Locker momentumEventDispatcherLocker { m_momentumEventDispatcherLock };
+        if (m_momentumEventDispatcher)
+            m_momentumEventDispatcher->displayDidRefresh(displayID);
     }
 #endif
 
@@ -753,7 +768,11 @@ void RemoteLayerTreeEventDispatcher::windowScreenWillChange()
 void RemoteLayerTreeEventDispatcher::windowScreenDidChange(PlatformDisplayID displayID, std::optional<FramesPerSecond> nominalFramesPerSecond)
 {
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-    m_momentumEventDispatcher->pageScreenDidChange(m_pageIdentifier, displayID, nominalFramesPerSecond);
+    {
+        Locker locker { m_momentumEventDispatcherLock };
+        if (m_momentumEventDispatcher)
+            m_momentumEventDispatcher->pageScreenDidChange(m_pageIdentifier, displayID, nominalFramesPerSecond);
+    }
 #else
     UNUSED_PARAM(displayID);
     UNUSED_PARAM(nominalFramesPerSecond);
@@ -835,15 +854,16 @@ void RemoteLayerTreeEventDispatcher::stopDisplayDidRefreshCallbacks(PlatformDisp
 {
     ASSERT(m_momentumEventDispatcherNeedsDisplayLink);
     m_momentumEventDispatcherNeedsDisplayLink = false;
-    if (m_momentumEventDispatcher)
-        startOrStopDisplayLink();
+    startOrStopDisplayLink();
 }
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
 void RemoteLayerTreeEventDispatcher::flushMomentumEventLoggingSoon()
 {
     RunLoop::currentSingleton().dispatchAfter(1_s, [protectedThis = Ref { *this }] {
-        protectedThis->m_momentumEventDispatcher->flushLog();
+        Lock locker { protectedThis->m_momentumEventDispatcherLock };
+        if (protectedThis->m_momentumEventDispatcher)
+            protectedThis->m_momentumEventDispatcher->flushLog();
     });
 }
 #endif // ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
