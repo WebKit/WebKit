@@ -7540,8 +7540,6 @@ document.getElementById("div2").addEventListener("focus", (event) => {
 </script>
 )FOCUSRESOURCE"_s;
 
-// FIXME: To enable, need `typeCharacter:` support for TestWKWebView on iOS
-#if PLATFORM(MAC)
 TEST(SiteIsolation, AdvanceFocusAcrossFrames)
 {
     HTTPServer server({
@@ -7571,8 +7569,12 @@ TEST(SiteIsolation, AdvanceFocusAcrossFrames)
     [navigationDelegate waitForDidFinishNavigation];
 
     [[webView window] makeKeyWindow];
+#if PLATFORM(MAC)
     [NSApp _setKeyWindow:[webView window]];
     [[webView window] makeFirstResponder:webView.get()];
+#else
+    [webView becomeFirstResponder];
+#endif
     [webView waitForNextPresentationUpdate];
 
     NSArray *expectedMessages = @[
@@ -7608,7 +7610,6 @@ TEST(SiteIsolation, AdvanceFocusAcrossFrames)
     Util::run(&messageReceived);
     EXPECT_TRUE([mostRecentMessage isEqualToString:expectedMessages[currentExpected++]]);
 }
-#endif // PLATFORM(MAC)
 
 TEST(SiteIsolation, HitTesting)
 {
