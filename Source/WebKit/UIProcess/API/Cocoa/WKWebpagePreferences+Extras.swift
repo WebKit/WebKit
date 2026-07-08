@@ -60,9 +60,14 @@ extension WKWebpagePreferences {
             self.isLockdownModeEnabled = isLockdownModeEnabled
         }
 
+        // FIXME: These WKWebpagePreferences properties are annotated as iOS 27.0
+        // in the Objective-C headers, which does not downlevel on Mac Catalyst.
+        // Skip them on Catalyst until the headers support downlevels.
+        #if !targetEnvironment(macCatalyst)
         self.alternateRequest = wrapped.alternateRequest
         self.overrideReferrer = wrapped.overrideReferrer
         self.globalPrivacyControlStatus = wrapped.globalPrivacyControlStatus
+        #endif
     }
 }
 
