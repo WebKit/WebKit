@@ -86,8 +86,8 @@ public:
     void getResourceTree(Ref<GetResourceTreeCallback>&&);
     Inspector::Protocol::ErrorStringOr<std::tuple<String, bool /* base64Encoded */>> getResourceContent(const Inspector::Protocol::Network::FrameId&, const String& url);
     Inspector::Protocol::ErrorStringOr<void> setBootstrapScript(const String& source);
-    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>> searchInResource(const Inspector::Protocol::Network::FrameId&, const String& url, const String& query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, const Inspector::Protocol::Network::RequestId&);
-    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>> searchInResources(const String&, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex);
+    void searchInResource(const Inspector::Protocol::Network::FrameId&, const String& url, const String& query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, const Inspector::Protocol::Network::RequestId&, Ref<SearchInResourceCallback>&&);
+    void searchInResources(const String&, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<SearchInResourcesCallback>&&);
 #if !PLATFORM(IOS_FAMILY)
     Inspector::Protocol::ErrorStringOr<void> setShowRulers(bool);
 #endif

@@ -136,6 +136,37 @@ public:
         };
     }
 
+    // Reverse-parse a protocol frameId string back into its components (hosting process, frame).
+    // Returns nullopt if the string doesn't match the expected "frame-processID.frameID" format.
+    // The 2-arg protocolFrameId(frameID, processID) is the inverse.
+    static inline std::optional<std::pair<WebCore::ProcessIdentifier, WebCore::FrameIdentifier>> parseProtocolFrameId(const String& frameId)
+    {
+        // Format: "frame-processID.frameID"
+        if (!frameId.startsWith("frame-"_s))
+            return std::nullopt;
+
+        auto rest = StringView(frameId).substring(6); // skip "frame-"
+        auto dotIndex = rest.find('.');
+        if (dotIndex == notFound)
+            return std::nullopt;
+
+        auto pidPart = rest.left(dotIndex);
+        auto framePart = rest.substring(dotIndex + 1);
+
+        auto pidValue = parseInteger<uint64_t>(pidPart);
+        if (!pidValue)
+            return std::nullopt;
+
+        auto frameValue = parseInteger<uint64_t>(framePart);
+        if (!frameValue)
+            return std::nullopt;
+
+        return std::pair {
+            ObjectIdentifier<WebCore::ProcessIdentifierType>(*pidValue),
+            WebCore::FrameIdentifier(*frameValue)
+        };
+    }
+
     static inline String protocolLoaderId(WebCore::ScriptExecutionContextIdentifier contextID)
     {
         return makeString("loader-"_s, contextID.processIdentifier().toUInt64(), '.', contextID.object().toString());

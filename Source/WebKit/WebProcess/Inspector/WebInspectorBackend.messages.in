@@ -56,4 +56,13 @@ messages -> WebInspectorBackend {
     GetFrameResourceData(Vector<WebCore::FrameIdentifier> frameIDs) -> (Vector<std::pair<WebCore::FrameIdentifier, Inspector::FrameResourceData>> resourcesByFrame) Async
 
     GetResponseBody(WebCore::ResourceLoaderIdentifier resourceID) -> (String content, bool base64Encoded, String errorString) Async
+
+    # Page.searchInResource (requestId branch): search one XHR/Fetch body in this process's store.
+    SearchInRequest(WebCore::ResourceLoaderIdentifier resourceID, String query, bool caseSensitive, bool isRegex) -> (Vector<Inspector::SearchMatch> matches, String errorString) Async
+
+    # Page.searchInResource (frame+URL branch): search one cached resource in a frame local to this process.
+    SearchInFrameResource(WebCore::FrameIdentifier frameID, String url, String query, bool caseSensitive, bool isRegex) -> (Vector<Inspector::SearchMatch> matches, String errorString) Async
+
+    # Page.searchInResources: search each requested local frame's cached resources plus this process's XHR/Fetch bodies.
+    SearchInFramesAndRequests(Vector<WebCore::FrameIdentifier> frameIDs, String query, bool caseSensitive, bool isRegex) -> (Vector<Inspector::SearchResult> results) Async
 }

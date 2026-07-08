@@ -165,10 +165,12 @@ bool BackendResourceDataStore::ensureFreeSpace(size_t size)
     return true;
 }
 
-void BackendResourceDataStore::resourceCreated(ResourceLoaderIdentifier resourceID, Inspector::ResourceType type)
+void BackendResourceDataStore::resourceCreated(ResourceLoaderIdentifier resourceID, FrameIdentifier frameID, Inspector::ResourceType type)
 {
     ensureNoDataForId(resourceID);
-    m_resourceDataMap.set(resourceID, makeUniqueRef<ResourceData>(resourceID, type));
+    auto entry = makeUniqueRef<ResourceData>(resourceID, type);
+    entry->setFrameID(frameID);
+    m_resourceDataMap.set(resourceID, WTF::move(entry));
 }
 
 void BackendResourceDataStore::responseReceived(ResourceLoaderIdentifier resourceID, const ResourceResponse& response, Inspector::ResourceType type)

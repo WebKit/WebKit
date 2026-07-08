@@ -34,8 +34,13 @@
 #include "WebInspectorUIMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <JavaScriptCore/ContentSearchUtilities.h>
+#include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <JavaScriptCore/RegularExpression.h>
+#include <WebCore/CachedResource.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/Document.h>
+#include <WebCore/DocumentLoader.h>
 #include <WebCore/DocumentView.h>
 #include <WebCore/FrameInspectorController.h>
 #include <WebCore/FrameLoadRequest.h>
@@ -56,6 +61,9 @@
 #include <WebCore/WebInjectedScriptManager.h>
 #include <WebCore/WindowFeatures.h>
 #include <wtf/Borrow.h>
+#include <wtf/HashSet.h>
+#include <wtf/URL.h>
+#include <wtf/text/StringHash.h>
 
 static const float minimumAttachedHeight = 250;
 static const float maximumAttachedHeightRatio = 0.75;
@@ -407,6 +415,163 @@ void WebInspectorBackend::getResponseBody(ResourceLoaderIdentifier resourceID, C
         completionHandler(content, base64Encoded, String());
     } else
         completionHandler(String(), false, result.error());
+}
+
+// Convert the JSON protocol matches from ContentSearchUtilities::searchInTextByLines into the plain
+// typed-IPC mirror, so the UIProcess rebuilds the protocol objects on its side (as with FrameResource).
+static Vector<Inspector::SearchMatch> convertSearchMatches(JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>& matches)
+{
+    Vector<Inspector::SearchMatch> result;
+    auto length = matches.length();
+    result.reserveInitialCapacity(length);
+    for (size_t i = 0; i < length; ++i) {
+        RefPtr object = matches.get(i)->asObject();
+        if (!object)
+            continue;
+        Inspector::SearchMatch match;
+        if (auto lineNumber = object->getInteger("lineNumber"_s))
+            match.lineNumber = *lineNumber;
+        match.lineContent = object->getString("lineContent"_s);
+        result.append(WTF::move(match));
+    }
+    return result;
+}
+
+void WebInspectorBackend::searchInRequest(WebCore::ResourceLoaderIdentifier resourceID, const String& query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchMatch>&&, String errorString)>&& completionHandler)
+{
+    // Mirrors InspectorNetworkAgent::searchInRequest, reading from this process's
+    // BackendResourceDataStore (the Site Isolation analog of NetworkResourcesData).
+    CheckedRef resourceDataStore = m_resourceDataStore.get();
+    auto const* resourceData = resourceDataStore->data(resourceID);
+    if (!resourceData) {
+        completionHandler({ }, "Missing resource for given requestId"_s);
+        return;
+    }
+
+    if (!resourceData->hasContent()) {
+        completionHandler({ }, "Missing content of resource for given requestId"_s);
+        return;
+    }
+
+    if (resourceData->base64Encoded()) {
+        completionHandler({ }, "Search not supported on base64-encoded resource"_s);
+        return;
+    }
+
+    auto matches = Inspector::ContentSearchUtilities::searchInTextByLines(resourceData->content(), query, caseSensitive, isRegex);
+    completionHandler(convertSearchMatches(matches.get()), String());
+}
+
+void WebInspectorBackend::searchInFrameResource(WebCore::FrameIdentifier frameID, const String& url, const String& query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchMatch>&&, String errorString)>&& completionHandler)
+{
+    // Mirrors the frame+URL half of InspectorPageAgent::searchInResource: find the resource by URL
+    // (main resource vs. cached resource) in this process's copy of the frame, then search its text.
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+    if (!webFrame) {
+        completionHandler({ }, "Frame not found in this process"_s);
+        return;
+    }
+    RefPtr localFrame = webFrame->coreLocalFrame();
+    if (!localFrame) {
+        completionHandler({ }, "Frame is not local to this process"_s);
+        return;
+    }
+
+    RefPtr loader = localFrame->loader().documentLoader();
+    if (!loader) {
+        completionHandler({ }, "No document loader for frame"_s);
+        return;
+    }
+
+    URL parsedURL({ }, url);
+
+    String content;
+    bool success = false;
+    if (equalIgnoringFragmentIdentifier(parsedURL, loader->url()))
+        success = Inspector::ResourceUtilities::mainResourceContent(localFrame.get(), false, &content);
+
+    if (!success) {
+        if (RefPtr resource = Inspector::ResourceUtilities::cachedResource(localFrame.get(), parsedURL)) {
+            if (auto textContent = Inspector::ResourceUtilities::textContentForCachedResource(*resource)) {
+                content = *textContent;
+                success = true;
+            }
+        }
+    }
+
+    if (!success) {
+        completionHandler({ }, String());
+        return;
+    }
+
+    auto matches = Inspector::ContentSearchUtilities::searchInTextByLines(content, query, caseSensitive, isRegex);
+    completionHandler(convertSearchMatches(matches.get()), String());
+}
+
+void WebInspectorBackend::searchInFramesAndRequests(Vector<WebCore::FrameIdentifier>&& frameIDs, const String& query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchResult>&&)>&& completionHandler)
+{
+    // Combines both halves of InspectorPageAgent::searchInResources for the frames this process
+    // hosts: match each frame's cached subresources, and also this process's BackendResourceDataStore
+    // (XHR/Fetch bodies). Consolidating them here collapses the legacy Page->Network cross-agent call.
+    Vector<Inspector::SearchResult> results;
+
+    // Track URLs seen in the cached-resource walk so the data-store walk can skip them: a resource
+    // that is both a CachedResource and a tracked request is reported once. This intentionally
+    // diverges from the legacy path, which double-counts it.
+    // Caveat: the join key is a URL string, and a redirected resource has different URLs in the two
+    // walks (request vs. final URL), so it can still be counted twice.
+    HashSet<String> cachedResourceURLs;
+
+    auto searchType = isRegex ? Inspector::ContentSearchUtilities::SearchType::Regex : Inspector::ContentSearchUtilities::SearchType::ContainsString;
+    auto searchCaseSensitive = caseSensitive ? Inspector::ContentSearchUtilities::SearchCaseSensitive::Yes : Inspector::ContentSearchUtilities::SearchCaseSensitive::No;
+    auto regex = Inspector::ContentSearchUtilities::createRegularExpressionForString(query, searchType, searchCaseSensitive);
+
+    for (auto frameID : frameIDs) {
+        RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+        if (!webFrame)
+            continue;
+        RefPtr localFrame = webFrame->coreLocalFrame();
+        if (!localFrame)
+            continue;
+
+        for (RefPtr cachedResource : Inspector::ResourceUtilities::cachedResourcesForFrame(localFrame.get())) {
+            auto textContent = Inspector::ResourceUtilities::textContentForCachedResource(*cachedResource);
+            if (!textContent)
+                continue;
+            auto urlString = cachedResource->url().string();
+            cachedResourceURLs.add(urlString);
+            int matchesCount = Inspector::ContentSearchUtilities::countRegularExpressionMatches(regex, *textContent);
+            if (!matchesCount)
+                continue;
+            Inspector::SearchResult result;
+            result.url = urlString;
+            result.frameID = frameID;
+            result.matchesCount = matchesCount;
+            results.append(WTF::move(result));
+        }
+    }
+
+    CheckedRef resourceDataStore = m_resourceDataStore.get();
+    resourceDataStore->forEach([&](const BackendResourceDataStore::ResourceData& entry) {
+        if (!entry.hasContent() || entry.base64Encoded())
+            return;
+        // Skip entries already emitted by the cached-resource walk to avoid double-counting
+        // (e.g. a stylesheet is both a CachedResource and a buffered data-store entry).
+        if (cachedResourceURLs.contains(entry.url()))
+            return;
+        int matchesCount = Inspector::ContentSearchUtilities::countRegularExpressionMatches(regex, entry.content());
+        if (!matchesCount)
+            return;
+        Inspector::SearchResult result;
+        result.url = entry.url();
+        if (auto frameID = entry.frameID())
+            result.frameID = *frameID;
+        result.matchesCount = matchesCount;
+        result.resourceID = entry.resourceID();
+        results.append(WTF::move(result));
+    });
+
+    completionHandler(WTF::move(results));
 }
 
 void WebInspectorBackend::ensurePageInstrumentationForFrame(LocalFrame& frame)

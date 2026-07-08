@@ -175,7 +175,7 @@ void FrameNetworkAgentProxy::willSendRequest(ResourceLoaderIdentifier resourceID
     if (!frameID)
         return;
 
-    m_resourcesData->resourceCreated(resourceID, resourceType);
+    m_resourcesData->resourceCreated(resourceID, *frameID, resourceType);
 
     auto timestamp = MonotonicTime::now().secondsSinceEpoch().value();
     auto walltime = WallTime::now().secondsSinceEpoch().value();
@@ -208,7 +208,7 @@ void FrameNetworkAgentProxy::willSendRequestOfType(ResourceLoaderIdentifier reso
 
     // FIXME: Map from UncachedLoadType to a more specific ResourceType.
     // https://webkit.org/b/312828
-    m_resourcesData->resourceCreated(resourceID, ResourceType::Other);
+    m_resourcesData->resourceCreated(resourceID, *frameID, ResourceType::Other);
 
     auto timestamp = MonotonicTime::now().secondsSinceEpoch().value();
     auto walltime = WallTime::now().secondsSinceEpoch().value();
@@ -338,7 +338,7 @@ void FrameNetworkAgentProxy::didLoadResourceFromMemoryCache(DocumentLoader* load
     if (!frameID)
         return;
 
-    m_resourcesData->resourceCreated(resourceID, resourceType);
+    m_resourcesData->resourceCreated(resourceID, *frameID, resourceType);
 
     // Copy content from the CachedResource now, since the store does not hold
     // CachedResource references. This is the only chance to capture the content

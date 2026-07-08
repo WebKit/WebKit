@@ -87,8 +87,8 @@ public:
     void getResourceTree(Ref<GetResourceTreeCallback>&&) final;
     CommandResultOf<String, bool /* base64Encoded */> getResourceContent(const Protocol::Network::FrameId&, const String& url) final;
     CommandResult<void> setBootstrapScript(const String& source) final;
-    CommandResult<Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>> searchInResource(const Protocol::Network::FrameId&, const String& url, const String& query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, const Protocol::Network::RequestId&) final;
-    CommandResult<Ref<JSON::ArrayOf<Protocol::Page::SearchResult>>> searchInResources(const String&, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
+    void searchInResource(const Protocol::Network::FrameId&, const String& url, const String& query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, const Protocol::Network::RequestId&, Ref<SearchInResourceCallback>&&) final;
+    void searchInResources(const String&, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<SearchInResourcesCallback>&&) final;
 #if !PLATFORM(IOS_FAMILY)
     CommandResult<void> setShowRulers(bool) final;
 #endif

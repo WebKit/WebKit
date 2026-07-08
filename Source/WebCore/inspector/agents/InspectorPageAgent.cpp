@@ -570,7 +570,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setBootstrapScript(
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>> InspectorPageAgent::searchInResource(const Inspector::Protocol::Network::FrameId& frameId, const String& url, const String& query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, const Inspector::Protocol::Network::RequestId& requestId)
+void InspectorPageAgent::searchInResource(const Inspector::Protocol::Network::FrameId& frameId, const String& url, const String& query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, const Inspector::Protocol::Network::RequestId& requestId, Ref<SearchInResourceCallback>&& callback)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -578,29 +578,36 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Generi
         if (CheckedPtr networkAgent = Ref { m_instrumentingAgents.get() }->enabledNetworkAgent()) {
             RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>> result;
             networkAgent->searchInRequest(errorString, requestId, query, caseSensitive && *caseSensitive, isRegex && *isRegex, result);
-            if (!result)
-                return makeUnexpected(errorString);
-            return result.releaseNonNull();
+            if (!result) {
+                callback->sendFailure(errorString);
+                return;
+            }
+            callback->sendSuccess(result.releaseNonNull());
+            return;
         }
     }
 
     RefPtr frame = assertFrame(errorString, frameId);
-    if (!frame)
-        return makeUnexpected(errorString);
+    if (!frame) {
+        callback->sendFailure(errorString);
+        return;
+    }
 
-    RefPtr loader = ResourceUtilities::assertDocumentLoader(errorString, frame);
-    if (!loader)
-        return makeUnexpected(errorString);
+    RefPtr loader = ResourceUtilities::assertDocumentLoader(errorString, frame.get());
+    if (!loader) {
+        callback->sendFailure(errorString);
+        return;
+    }
 
     URL kurl({ }, url);
 
     String content;
     bool success = false;
     if (equalIgnoringFragmentIdentifier(kurl, loader->url()))
-        success = ResourceUtilities::mainResourceContent(frame, false, &content);
+        success = ResourceUtilities::mainResourceContent(frame.get(), false, &content);
 
     if (!success) {
-        if (RefPtr resource = ResourceUtilities::cachedResource(frame, kurl)) {
+        if (RefPtr resource = ResourceUtilities::cachedResource(frame.get(), kurl)) {
             if (auto textContent = ResourceUtilities::textContentForCachedResource(*resource)) {
                 content = *textContent;
                 success = true;
@@ -608,10 +615,12 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Generi
         }
     }
 
-    if (!success)
-        return JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>::create();
+    if (!success) {
+        callback->sendSuccess(JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>::create());
+        return;
+    }
 
-    return ContentSearchUtilities::searchInTextByLines(content, query, caseSensitive && *caseSensitive, isRegex && *isRegex);
+    callback->sendSuccess(ContentSearchUtilities::searchInTextByLines(content, query, caseSensitive && *caseSensitive, isRegex && *isRegex));
 }
 
 static Ref<Inspector::Protocol::Page::SearchResult> buildObjectForSearchResult(const Inspector::Protocol::Network::FrameId& frameId, const String& url, int matchesCount)
@@ -623,7 +632,7 @@ static Ref<Inspector::Protocol::Page::SearchResult> buildObjectForSearchResult(c
         .release();
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>> InspectorPageAgent::searchInResources(const String& text, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
+void InspectorPageAgent::searchInResources(const String& text, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<SearchInResourcesCallback>&& callback)
 {
     auto result = JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>::create();
 
@@ -636,11 +645,11 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Page::
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        for (RefPtr cachedResource : ResourceUtilities::cachedResourcesForFrame(localFrame)) {
+        for (RefPtr cachedResource : ResourceUtilities::cachedResourcesForFrame(localFrame.get())) {
             if (auto textContent = ResourceUtilities::textContentForCachedResource(*cachedResource)) {
                 int matchesCount = ContentSearchUtilities::countRegularExpressionMatches(regex, *textContent);
                 if (matchesCount)
-                    result->addItem(buildObjectForSearchResult(frameId(localFrame), cachedResource->url().string(), matchesCount));
+                    result->addItem(buildObjectForSearchResult(frameId(localFrame.get()), cachedResource->url().string(), matchesCount));
             }
         }
     }
@@ -648,7 +657,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Page::
     if (CheckedPtr networkAgent = Ref { m_instrumentingAgents.get() }->enabledNetworkAgent())
         networkAgent->searchOtherRequests(regex, result);
 
-    return result;
+    callback->sendSuccess(WTF::move(result));
 }
 
 #if !PLATFORM(IOS_FAMILY)

@@ -227,7 +227,8 @@
         {
             "name": "searchInResource",
             "description": "Searches for given string in resource content.",
-            "targetTypes": ["page"],
+            "async": true,
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame id for resource to search in." },
                 { "name": "url", "type": "string", "description": "URL of the resource to search in." },
@@ -243,7 +244,8 @@
         {
             "name": "searchInResources",
             "description": "Searches for given string in frame / resource tree structure.",
-            "targetTypes": ["page"],
+            "async": true,
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "text", "type": "string", "description": "String to search for." },
                 { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If true, search is case sensitive." },

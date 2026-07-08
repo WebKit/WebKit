@@ -36,3 +36,15 @@ header: <WebCore/InspectorResourceUtilities.h>
     std::optional<WebCore::ScriptExecutionContextIdentifier> loaderId;
     Vector<Inspector::FrameResource> resources;
 };
+
+[CustomHeader] struct Inspector::SearchMatch {
+    int lineNumber;
+    String lineContent;
+};
+
+[CustomHeader] struct Inspector::SearchResult {
+    String url;
+    std::optional<WebCore::FrameIdentifier> frameID;
+    int matchesCount;
+    std::optional<WebCore::ResourceLoaderIdentifier> resourceID;
+};

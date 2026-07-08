@@ -38,6 +38,8 @@
 
 namespace Inspector {
 struct FrameResourceData;
+struct SearchMatch;
+struct SearchResult;
 }
 
 namespace WebKit {
@@ -101,6 +103,10 @@ public:
     void enablePageInstrumentation();
     void disablePageInstrumentation();
     void getFrameResourceData(Vector<WebCore::FrameIdentifier>&& frameIDs, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Inspector::FrameResourceData>>&&)>&&);
+
+    void searchInRequest(WebCore::ResourceLoaderIdentifier, const String& query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchMatch>&&, String errorString)>&&);
+    void searchInFrameResource(WebCore::FrameIdentifier, const String& url, const String& query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchMatch>&&, String errorString)>&&);
+    void searchInFramesAndRequests(Vector<WebCore::FrameIdentifier>&& frameIDs, const String& query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchResult>&&)>&&);
 
     // Set up / tear down every per-frame instrumentation agent for a frame. Callers
     // don't need to know which agents are frame-scoped; each helper no-ops unless its

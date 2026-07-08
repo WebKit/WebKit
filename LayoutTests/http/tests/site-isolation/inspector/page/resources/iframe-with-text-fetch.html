@@ -1,0 +1,22 @@
+<p>Cross-origin iframe that fetches a text resource (served as text/plain) on demand.</p>
+<script>
+// Fetch a .txt resource so the response body is stored as decoded text (not base64) in the
+// WebProcess's BackendResourceDataStore. The layout-test server has no .json MIME mapping, so a
+// data.json fetch would be stored base64 and Page.searchInResource(requestId) could not search it.
+function triggerFetch() {
+    let url = "fetch-body-with-json-string.txt?" + Math.random();
+    fetch(url).then((response) => {
+        window.parent.postMessage({type: "FetchComplete", statusCode: response.status}, "*");
+    });
+}
+
+// Fetch a binary (PNG) resource same-origin. image/png is never treated as text, so its response
+// body is stored base64 in the WebProcess's BackendResourceDataStore -- this exercises the base64
+// rejection path of Page.searchInResource(requestId).
+function triggerImageFetch() {
+    let url = "http://localhost:8000/resources/square100.png?" + Math.random();
+    fetch(url).then((response) => {
+        window.parent.postMessage({type: "FetchComplete", statusCode: response.status}, "*");
+    });
+}
+</script>

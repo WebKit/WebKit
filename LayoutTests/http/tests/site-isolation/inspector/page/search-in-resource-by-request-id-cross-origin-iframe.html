@@ -1,0 +1,104 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SearchInResource.ByRequestId");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SearchInResource.ByRequestId.RoutesToOwningProcess",
+        description: "searchInResource(requestId) should route to the WebProcess hosting the resource and search its response body in BackendResourceDataStore.",
+        async test() {
+            let frameTarget = await frameTargetForURLContaining("iframe-with-text-fetch.html");
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin fetch iframe frame target should exist.");
+            await waitForExpressionInTarget(frameTarget, "typeof triggerFetch === 'function'");
+
+            // Trigger the fetch and wait for the resource to land + finish.
+            let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+            await frameTarget.RuntimeAgent.evaluate.invoke({expression: "triggerFetch()", objectGroup: "test"});
+            let resource = (await resourceAddedPromise).data.resource;
+            if (!resource.finished)
+                await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+
+            // The frontend identifies network resources by the process-qualified protocol requestId
+            // (see InspectorIdentifierRegistry::protocolRequestId). Passing that requestId without
+            // a frameId exercises the requestId branch of Page.searchInResource, which is what we
+            // care about under SI.
+            let requestId = resource.requestIdentifier;
+            InspectorTest.expectThat(!!requestId, "Resource should have a non-empty requestIdentifier.");
+
+            let { result } = await WI.backendTarget.PageAgent.searchInResource.invoke({
+                frameId: "",
+                url: "",
+                query: "json",
+                requestId,
+            });
+            InspectorTest.expectThat(Array.isArray(result), "Result should be an array.");
+            InspectorTest.expectThat(result.length >= 1, "Should report at least one matching line in the response body.");
+            if (result.length >= 1)
+                InspectorTest.expectThat(result[0].lineContent.includes("json"), "Match's lineContent should include the query.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SearchInResource.ByRequestId.MalformedRequestIdFails",
+        description: "searchInResource with a requestId that isn't a process-qualified protocol id should fail.",
+        async test() {
+            let failed = false;
+            try {
+                await WI.backendTarget.PageAgent.searchInResource.invoke({
+                    frameId: "",
+                    url: "",
+                    query: "json",
+                    requestId: "not-a-request-id",
+                });
+            } catch (e) {
+                failed = true;
+            }
+            InspectorTest.expectThat(failed, "searchInResource should fail for a malformed requestId.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SearchInResource.ByRequestId.RejectsBase64Body",
+        description: "searchInResource(requestId) should fail for a base64-encoded (non-text) response body rather than search it.",
+        async test() {
+            let frameTarget = await frameTargetForURLContaining("iframe-with-text-fetch.html");
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin fetch iframe frame target should exist.");
+            await waitForExpressionInTarget(frameTarget, "typeof triggerImageFetch === 'function'");
+
+            // Fetch a PNG so its body is stored base64 in BackendResourceDataStore.
+            let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+            await frameTarget.RuntimeAgent.evaluate.invoke({expression: "triggerImageFetch()", objectGroup: "test"});
+            let resource = (await resourceAddedPromise).data.resource;
+            if (!resource.finished)
+                await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+
+            let requestId = resource.requestIdentifier;
+            InspectorTest.expectThat(!!requestId, "Base64 resource should have a non-empty requestIdentifier.");
+
+            // The query deliberately can't match binary content; the point is that the backend
+            // rejects the search up front because the body is base64-encoded.
+            let failed = false;
+            try {
+                await WI.backendTarget.PageAgent.searchInResource.invoke({
+                    frameId: "",
+                    url: "",
+                    query: "PNG",
+                    requestId,
+                });
+            } catch (e) {
+                failed = true;
+            }
+            InspectorTest.expectThat(failed, "searchInResource(requestId) should fail on a base64-encoded response body.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that Page.searchInResource(requestId) routes to the WebProcess owning the resource and searches BackendResourceDataStore under site isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/page/resources/iframe-with-text-fetch.html"></iframe>
+</body>
