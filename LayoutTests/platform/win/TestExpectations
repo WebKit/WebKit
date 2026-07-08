@@ -4716,6 +4716,7 @@ http/tests/security/no-javascript-location-percent-escaped.html [ Skip ] # Crash
 http/tests/security/no-javascript-location.html [ Skip ] # Crash
 http/tests/security/no-javascript-refresh-percent-escaped.py [ Skip ] # Crash
 http/tests/security/no-javascript-refresh-spaces.py [ Skip ] # Crash
+http/tests/security/no-javascript-refresh-static-percent-escaped.html [ Skip ] # Crash
 
 webkit.org/b/315806 imported/w3c/web-platform-tests/gpc/sec-gpc.https.html [ Pass Failure ] # Flaky harness timeout after serviceworker subtests were added in 314317@main
 
@@ -4739,3 +4740,36 @@ fast/message-channel/transfer-mediastreamtrack.html [ Skip ]
 # tests for the same reason (see webkit.org/b/268068).
 imported/w3c/web-platform-tests/wasm/serialization/memory/messageport-via-sharedworker-success.tentative.https.html [ Skip ]
 imported/w3c/web-platform-tests/wasm/serialization/memory/window-success.tentative.https.html [ Skip ]
+
+# Gardening: unexpected failures on Win-Tests-EWS (316637@main), recording current
+# behavior to restore a green Windows queue.
+
+# Text failures
+editing/smart-lists/backspace-after-typing-in-smart-list-does-not-undo-list.html [ Failure ]
+editing/smart-lists/backspace-immediately-after-smart-list-creation-undoes-list.html [ Failure ]
+editing/smart-lists/backspace-immediately-after-third-list-item-does-not-undo-list.html [ Failure ]
+editing/smart-lists/smart-list-trigger-requires-marker-only-line.html [ Failure ]
+fast/canvas/canvas-getContext-reentrant.html [ Failure ]
+fast/webcodecs/video-frame-zero-display-size.html [ Failure ]
+http/tests/broadcastchannel/postmessage-audiodata.html [ Failure ]
+http/tests/broadcastchannel/postmessage-encodedaudiochunk.html [ Failure ]
+http/tests/broadcastchannel/postmessage-encodedvideochunk.html [ Failure ]
+http/tests/broadcastchannel/postmessage-imagebitmap.html [ Failure ]
+http/tests/broadcastchannel/postmessage-videoframe.html [ Failure ]
+http/tests/inspector/network/resource-certificate-subject-format.html [ Failure ]
+http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party-from-worker.html [ Failure ]
+imported/w3c/web-platform-tests/focus/focus-already-focused-iframe-deep-same-site.html [ Failure ]
+imported/w3c/web-platform-tests/focus/focus-already-focused-iframe-same-site.html [ Failure ]
+
+# Timeouts
+fast/canvas/offscreen-worker-unsafe-isPointInStroke-call.html [ Skip ] # Timeout
+fast/webcodecs/audio-data-close-during-gc-crash.html [ Skip ] # Timeout
+
+# Crashes
+http/tests/cookies/document-cookie-during-iframe-parsing.html [ Skip ] # Crash
+http/wpt/site-isolation/overlapping-navigations-and-traversals/cross-document-traversal-cross-document-traversal.html [ Skip ] # Crash
+http/wpt/site-isolation/overlapping-navigations-and-traversals/cross-document-traversal-same-document-traversal.html [ Skip ] # Crash
+http/wpt/site-isolation/the-history-interface/001.html [ Skip ] # Crash
+
+# Flaky WebProcess crash (see the no-javascript-* crash family above)
+fast/dom/window-opener-setter-throws-if-defineownproperty-fails-1.html [ Skip ] # Crash
