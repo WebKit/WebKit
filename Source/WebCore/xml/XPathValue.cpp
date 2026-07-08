@@ -126,7 +126,7 @@ String Value::toString() const
         [](const NodeSet& nodeSet) -> String {
             if (nodeSet.isEmpty())
                 return emptyString();
-            return stringValue(Ref { *nodeSet.firstNode() });
+            return stringValue(protect(*nodeSet.firstNode()));
         }
     );
 }

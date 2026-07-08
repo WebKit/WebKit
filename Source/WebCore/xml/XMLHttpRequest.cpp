@@ -539,7 +539,7 @@ ExceptionOr<void> XMLHttpRequest::send(Ref<Blob>&& body)
         }
 
         m_requestEntityBody = FormData::create();
-        Ref { *m_requestEntityBody }->appendBlob(body->url());
+        protect(*m_requestEntityBody)->appendBlob(body->url());
     }
 
     return createRequest();
@@ -1091,7 +1091,7 @@ void XMLHttpRequest::didReceiveData(const SharedBuffer& buffer)
         return;
 
     if (useDecoder)
-        m_responseBuilder.append(Ref { *m_decoder }->decode(buffer.span()));
+        m_responseBuilder.append(protect(*m_decoder)->decode(buffer.span()));
     else {
         // Buffer binary data.
         m_binaryResponseBuilder.append(buffer);
