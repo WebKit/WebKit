@@ -123,6 +123,7 @@ static constexpr bool traceHandlerChains = false;
     macro(GetByIdCustomAccessorHandler) \
     macro(GetByIdCustomValueHandler) \
     macro(GetByIdGetterHandler) \
+    macro(GetByIdMegamorphicGetterHandler) \
     macro(GetByIdProxyObjectLoadHandler) \
     macro(GetByIdModuleNamespaceLoadHandler) \
     /* PutById handlers */ \
