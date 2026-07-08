@@ -33,4 +33,17 @@ window.fetchDocumentURLsForTargets = async function fetchDocumentURLsForTargets(
     return new Map(entries);
 };
 
+// Find the frame target whose document URL contains `substring`. Useful for
+// picking a specific cross-origin iframe's frame target by its resource path (e.g. when a
+// page hosts several static cross-origin iframes). Returns null if none match.
+window.frameTargetForURLContaining = async function frameTargetForURLContaining(substring) {
+    let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+    let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+    for (let [url, target] of urlTargetMap) {
+        if (url.includes(substring))
+            return target;
+    }
+    return null;
+};
+
 });
