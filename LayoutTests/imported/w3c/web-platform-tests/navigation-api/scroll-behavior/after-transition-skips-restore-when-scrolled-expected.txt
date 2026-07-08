@@ -1,0 +1,3 @@
+
+FAIL scroll: after-transition should not restore scroll if the document was scrolled during the navigation assert_equals: scroll restoration must be skipped when the page was scrolled during the navigation expected 50 but got 0
+

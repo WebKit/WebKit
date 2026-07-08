@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-after-bfcache-cross-origin-clears-from.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-after-bfcache-cross-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-after-bfcache.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-history-pushState.html

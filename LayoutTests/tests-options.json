@@ -5330,6 +5330,9 @@
     "imported/w3c/web-platform-tests/navigation-api/navigate-event/dangling-navigate-event-after-bfcache-restore.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/navigation-api/navigate-event/defer/tentative/restore-after-bfcache.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/navigation-timing/nav2-test-response-end-and-duration-before-during-and-after-load-event.html": [
         "slow"
     ],

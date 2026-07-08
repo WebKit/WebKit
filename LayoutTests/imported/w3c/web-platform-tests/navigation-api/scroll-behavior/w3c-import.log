@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-basic.html
@@ -23,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-reload-no-scroll-anchoring.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-reload.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-replace.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-skips-restore-when-scrolled.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-timing.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-immediate-scroll.html

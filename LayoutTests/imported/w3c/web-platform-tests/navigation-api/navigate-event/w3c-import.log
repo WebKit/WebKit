@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/abort-in-nested-navigations.html
@@ -55,6 +53,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-destination-after-detach.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-destination-dynamic-index.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-destination-getState-back-forward.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-destination-getState-fragment-via-href.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-destination-getState-fragment-via-navigate.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-destination-getState-navigate.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-destination-getState-reload.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-event-canintercept-cross-port.html
@@ -101,6 +101,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigation-traverseTo-same-document-preventDefault-multiple-windows.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigation-traverseTo-top-cancels-cross-document-child.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/potentially-reset-focus-no-document-element-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/reentry-from-focus-reset-navigate-api-tracker.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/replaceState-inside-back-handler-infinite.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/replaceState-inside-back-handler.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/same-url-replace-cross-document.html
@@ -108,6 +109,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-detach-in-onnavigate.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-intercept.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-preventDefault.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-reentry-navigate-api-tracker.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-replaceState-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-window-stop-after-intercept.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-window-stop-in-onnavigate.html

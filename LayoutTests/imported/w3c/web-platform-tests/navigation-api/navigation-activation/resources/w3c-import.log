@@ -12,4 +12,4 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/navigation-api/state/resources/helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/resources/bfcache-seed.html
