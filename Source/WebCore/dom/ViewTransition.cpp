@@ -472,9 +472,14 @@ static RefPtr<ImageBuffer> snapshotElementVisualOverflowClippedToViewport(LocalF
     RefPtr frameView = frame.document()->view();
     if (!frameView)
         return nullptr;
-    auto hostWindow = frameView->root() ? protect(frameView->root())->hostWindow() : nullptr;
 
-    auto buffer = ImageBuffer::create(paintRect.size(), RenderingMode::Accelerated, RenderingPurpose::Snapshot, scaleFactor, screenColorSpace(frameView), PixelFormat::BGRA8, hostWindow);
+    auto hostWindow = frameView->root() ? protect(frameView->root())->hostWindow() : nullptr;
+    auto colorSpace = screenColorSpace(frameView);
+#if PLATFORM(IOS_FAMILY)
+    colorSpace = DestinationColorSpace::SRGB(); // FIXME: We should use the screen colorspace on iOS too, but that has blending issues: webkit.org/b/318764.
+#endif
+
+    auto buffer = ImageBuffer::create(paintRect.size(), RenderingMode::Accelerated, RenderingPurpose::Snapshot, scaleFactor, colorSpace, PixelFormat::BGRA8, hostWindow);
     if (!buffer)
         return nullptr;
 
