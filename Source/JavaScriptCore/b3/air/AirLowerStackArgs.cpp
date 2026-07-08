@@ -178,7 +178,7 @@ void lowerStackArgs(Code& code)
                     Arg scratch = inst.args[2];
                     ASSERT(scratch.isReg());
                     // Insert Mov src, scratchReg
-                    insertionSet.insert(instIndex, inst.kind.opcode, inst.origin, src, scratch);
+                    insertionSet.insert(instIndex, static_cast<Opcode>(inst.kind.opcode), inst.origin, src, scratch);
                     extendedOffsetAddrRegInUse = false; // Used by the inserted instruction; no longer needed.
                     // Modify inst to be 'Move scratch, dest'.
                     src = scratch;

@@ -99,48 +99,50 @@ unsigned Arg::jsHash() const
     case SIMDInfo:
         break;
     case Tmp:
-        result += m_base.internalValue();
+        result += m_tmps.base.internalValue();
         break;
     case Imm:
     case BitImm:
     case FPImm32:
     case ZeroReg:
-    case CallArg:
     case RelCond:
     case ResCond:
     case DoubleCond:
     case StatusCond:
     case WidthArg:
+        result += static_cast<unsigned>(m_value);
+        break;
+    case CallArg:
         result += static_cast<unsigned>(m_offset);
         break;
     case BigImm:
     case BitImm64:
     case FPImm64:
     case FPImm128:
-        result += static_cast<unsigned>(m_offset);
-        result += static_cast<unsigned>(m_offset >> 32);
+        result += static_cast<unsigned>(m_value);
+        result += static_cast<unsigned>(m_value >> 32);
         break;
     case SimpleAddr:
-        result += m_base.internalValue();
+        result += m_tmps.base.internalValue();
         break;
     case Addr:
     case ExtendedOffsetAddr:
         result += m_offset;
-        result += m_base.internalValue();
+        result += m_tmps.base.internalValue();
         break;
     case Index:
         result += static_cast<unsigned>(m_offset);
-        result += m_scale;
-        result += m_base.internalValue();
-        result += m_index.internalValue();
+        result += m_logScale;
+        result += m_tmps.base.internalValue();
+        result += m_tmps.index.internalValue();
         break;
     case PreIndex:
     case PostIndex:
         result += m_offset;
-        result += m_base.internalValue();
+        result += m_tmps.base.internalValue();
         break;
     case Stack:
-        result += static_cast<unsigned>(m_scale);
+        result += static_cast<unsigned>(m_offset);
         result += stackSlot()->index();
         break;
     }
@@ -158,22 +160,22 @@ void Arg::dump(PrintStream& out) const
         out.print(tmp());
         return;
     case Imm:
-        out.print("$", m_offset);
+        out.print("$", m_value);
         return;
     case BigImm:
-        out.printf("$0x%llx", static_cast<long long unsigned>(m_offset));
+        out.printf("$0x%llx", static_cast<long long unsigned>(m_value));
         return;
     case BitImm:
-        out.print("$", m_offset);
+        out.print("$", m_value);
         return;
     case BitImm64:
-        out.printf("$0x%llx", static_cast<long long unsigned>(m_offset));
+        out.printf("$0x%llx", static_cast<long long unsigned>(m_value));
         return;
     case FPImm32:
-        out.print("$", m_offset);
+        out.print("$", m_value);
         return;
     case FPImm64:
-        out.printf("$0x%llx", static_cast<long long unsigned>(m_offset));
+        out.printf("$0x%llx", static_cast<long long unsigned>(m_value));
         return;
     case FPImm128:
         out.print(asV128());
