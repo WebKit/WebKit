@@ -4022,8 +4022,11 @@ void WebPageProxy::executeEditCommand(const String& commandName, const String& a
     };
 
     if (auto pasteAccessCategory = pasteAccessCategoryForCommand(commandName)) {
-        if (auto replyID = willPerformPasteCommand(*pasteAccessCategory, WTF::move(completionHandler), frameID))
-            protect(protect(protect(websiteDataStore())->networkProcess())->connection())->waitForAsyncReplyAndDispatchImmediately<Messages::NetworkProcess::AllowFilesAccessFromWebProcess>(*replyID, 100_ms);
+        if (auto replyID = willPerformPasteCommand(*pasteAccessCategory, WTF::move(completionHandler), frameID)) {
+            Ref networkProcess = protect(websiteDataStore())->networkProcess();
+            if (networkProcess->hasConnection())
+                protect(networkProcess->connection())->waitForAsyncReplyAndDispatchImmediately<Messages::NetworkProcess::AllowFilesAccessFromWebProcess>(*replyID, 100_ms);
+        }
     } else
         completionHandler();
 }

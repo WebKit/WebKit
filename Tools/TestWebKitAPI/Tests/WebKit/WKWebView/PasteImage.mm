@@ -30,6 +30,7 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
@@ -343,6 +344,30 @@ TEST(PasteImage, PasteTIFFImage)
     [webView waitForMessage:@"loaded" afterEvaluatingScript:@"insertFileAsImage(pngItem.file)"];
     EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"url = new URL(imageElement.src); url.protocol"]);
     EXPECT_WK_STREQ("100", [webView stringByEvaluatingJavaScript:@"imageElement.width"]);
+}
+
+TEST(PasteImage, PasteFileWhileNetworkProcessIsLaunching)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadTestPageNamed:@"paste-image"];
+
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"sunset-in-cupertino-200px" withExtension:@"png"];
+    writeBundleFileToPasteboard(url);
+
+    // Terminating existing network process, so network process will be relaunched for paste.
+    [[webView configuration].websiteDataStore _terminateNetworkProcess];
+
+    [webView paste:nil];
+
+    unsigned fileCount = 0;
+    bool receivedFile = TestWebKitAPI::Util::waitFor([&] {
+        fileCount = [webView stringByEvaluatingJavaScript:@"dataTransfer.files ? dataTransfer.files.length : 0"].integerValue;
+        return !!fileCount;
+    });
+
+    EXPECT_TRUE(receivedFile);
+    EXPECT_EQ(1U, fileCount);
+    EXPECT_WK_STREQ("image/png", [webView stringByEvaluatingJavaScript:@"dataTransfer.files[0].type"]);
 }
 #endif
 
