@@ -259,9 +259,6 @@ http/tests/security/frameNavigation/not-opener.html [ Failure ]
 # stored and run separately at http/tests/site-isolation/inspector/unit-tests/target-manager.html.
 inspector/unit-tests/target-manager.html [ Skip ]
 
-# Intersection Observer x Site Isolation is not fully implemented.
-imported/w3c/web-platform-tests/intersection-observer/scroll-margin-propagation.html [ Failure ]
-
 # Inspector protocol commands (e.g. CSS.getMatchedStylesForNode) return
 # "Not yet implemented for frame targets" under site isolation.
 inspector/css/getMatchedStylesForNodeAdoptedStyleSheet.html [ Skip ]
