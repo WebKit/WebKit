@@ -42,7 +42,7 @@ ServiceWorkerJobData::ServiceWorkerJobData(Identifier identifier, const ServiceW
 {
 }
 
-ServiceWorkerJobData::ServiceWorkerJobData(WebCore::ServiceWorkerJobDataIdentifier&& identifier, URL&& scriptURL, URL&& clientCreationURL, WebCore::SecurityOriginData&& topOrigin, URL&& scopeURL, WebCore::ServiceWorkerOrClientIdentifier&& sourceContext, WebCore::WorkerType workerType, WebCore::ServiceWorkerJobType type, String&& domainForCachePartition, bool isFromServiceWorkerPage, std::optional<WebCore::ServiceWorkerRegistrationOptions>&& registrationOptions)
+ServiceWorkerJobData::ServiceWorkerJobData(WebCore::ServiceWorkerJobDataIdentifier&& identifier, URL&& scriptURL, URL&& clientCreationURL, WebCore::SecurityOriginData&& topOrigin, URL&& scopeURL, WebCore::ServiceWorkerOrClientIdentifier&& sourceContext, WebCore::WorkerType workerType, WebCore::ServiceWorkerJobType type, bool shouldBlockThirdPartyStorage, bool isFromServiceWorkerPage, std::optional<WebCore::ServiceWorkerRegistrationOptions>&& registrationOptions)
     : scriptURL(WTF::move(scriptURL))
     , clientCreationURL(WTF::move(clientCreationURL))
     , topOrigin(WTF::move(topOrigin))
@@ -50,7 +50,7 @@ ServiceWorkerJobData::ServiceWorkerJobData(WebCore::ServiceWorkerJobDataIdentifi
     , sourceContext(WTF::move(sourceContext))
     , workerType(workerType)
     , type(type)
-    , domainForCachePartition(WTF::move(domainForCachePartition))
+    , shouldBlockThirdPartyStorage(shouldBlockThirdPartyStorage)
     , isFromServiceWorkerPage(isFromServiceWorkerPage)
     , registrationOptions(WTF::move(registrationOptions))
     , m_identifier(WTF::move(identifier))
@@ -82,7 +82,7 @@ ServiceWorkerJobData ServiceWorkerJobData::isolatedCopy() const
     result.clientCreationURL = clientCreationURL.isolatedCopy();
     result.topOrigin = topOrigin.isolatedCopy();
     result.scopeURL = scopeURL.isolatedCopy();
-    result.domainForCachePartition = domainForCachePartition.isolatedCopy();
+    result.shouldBlockThirdPartyStorage = shouldBlockThirdPartyStorage;
     if (registrationOptions) {
         ASSERT(type == ServiceWorkerJobType::Register);
         result.registrationOptions = crossThreadCopy(registrationOptions);

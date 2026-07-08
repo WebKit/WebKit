@@ -673,13 +673,15 @@ JSC::JSGlobalObject* ScriptExecutionContext::globalObject() const
 
 String ScriptExecutionContext::domainForCachePartition() const
 {
-    if (!m_domainForCachePartition.isNull())
-        return m_domainForCachePartition;
-
     if (m_storageBlockingPolicy != StorageBlockingPolicy::BlockThirdParty)
         return emptyString();
 
     return protectedTopOrigin()->domainForCachePartition();
+}
+
+bool ScriptExecutionContext::shouldBlockThirdPartyStorage() const
+{
+    return m_storageBlockingPolicy == StorageBlockingPolicy::BlockThirdParty;
 }
 
 bool ScriptExecutionContext::allowsMediaDevices() const

@@ -147,7 +147,7 @@ public:
 
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
     const URL& url() const { return m_resourceRequest.url();}
-    const String& cachePartition() const { return m_resourceRequest.cachePartition(); }
+    String cachePartition() const { return m_resourceRequest.cachePartition(); }
     PAL::SessionID sessionID() const { return m_sessionID; }
     const CookieJar* cookieJar() const { return m_cookieJar.get(); }
     RefPtr<const CookieJar> protectedCookieJar() const;
