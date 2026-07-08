@@ -183,6 +183,7 @@ class Port(object):
             self._filesystem,
             self.port_name,
             use_cmake=bool(getattr(self._options, 'use_cmake', False)),
+            asan=bool(getattr(self._options, 'asan', False)),
         )
         self.pretty_patch = PrettyPatch(self._executive, self.path_from_webkit_base(), self._filesystem)
 

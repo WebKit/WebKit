@@ -51,6 +51,7 @@ Usage: $programName [options]
   -h|--help             Show this help message
   --top-level           Show the top-level build directory
 
+  --asan                Select the ASan (AddressSanitizer) build tree (with --cmake: WebKitBuild/cmake-mac/ASan)
   --gtk                 Find the build directory for the GTK+ port
   --win                 Find the build directory for Windows port
 

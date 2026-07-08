@@ -718,14 +718,15 @@ sub determineASanIsEnabled
 {
     return if defined $asanIsEnabled;
     determineBaseProductDir();
-    $asanIsEnabled = readSanitizerConfiguration("ASan");
+    # Honor an explicit --asan (like --cmake) in addition to the marker file.
+    $asanIsEnabled = checkForArgumentAndRemoveFromARGV("--asan") || readSanitizerConfiguration("ASan");
 }
 
 sub determineTSanIsEnabled
 {
     return if defined $tsanIsEnabled;
     determineBaseProductDir();
-    $tsanIsEnabled = readSanitizerConfiguration("TSan");
+    $tsanIsEnabled = checkForArgumentAndRemoveFromARGV("--tsan") || readSanitizerConfiguration("TSan");
 }
 
 sub determineUBSanIsEnabled
@@ -1195,7 +1196,11 @@ sub determineConfigurationProductDir
             if (isGtk() or isWPE() or isJSCOnly() or shouldBuildForCrossTarget() or inCrossTargetEnvironment()) {
                 $configurationProductDir = "$baseProductDir/$portName/$configuration";
             } elsif (isAppleCocoaWebKit() && isCMakeBuild()) {
-                $configurationProductDir = "$baseProductDir/cmake-mac/$configuration";
+                # Sanitizer presets build into a dedicated dir, e.g. cmake-mac/ASan.
+                my $cmakeConfiguration = $configuration;
+                $cmakeConfiguration = "ASan" if asanIsEnabled();
+                $cmakeConfiguration = "TSan" if tsanIsEnabled();
+                $configurationProductDir = "$baseProductDir/cmake-mac/$cmakeConfiguration";
             } else {
                 $configurationProductDir = "$baseProductDir/$configuration";
             }

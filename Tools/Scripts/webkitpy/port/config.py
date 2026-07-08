@@ -58,13 +58,14 @@ class Config(object):
     # perl invocation whose result is invariant for given inputs within a run.
     _build_directories = {}
 
-    def __init__(self, executive, filesystem, port_implementation=None, use_cmake=False):
+    def __init__(self, executive, filesystem, port_implementation=None, use_cmake=False, asan=False):
         self._executive = executive
         self._filesystem = filesystem
         self._webkit_finder = webkit_finder.WebKitFinder(self._filesystem)
         self._default_configuration = None
         self._port_implementation = port_implementation
         self._use_cmake = use_cmake
+        self._asan = asan
 
     @classmethod
     def _clear_cache_for_testing(cls):
@@ -73,7 +74,7 @@ class Config(object):
     def build_directory(self, configuration, for_host=False):
         """Returns the path to the build directory for the configuration."""
         port_impl = self._port_implementation if not for_host else None
-        cache_key = (port_impl, configuration or "", for_host, self._use_cmake)
+        cache_key = (port_impl, configuration or "", for_host, self._use_cmake, self._asan)
         if self._build_directories.get(cache_key):
             return self._build_directories[cache_key]
 
@@ -85,6 +86,8 @@ class Config(object):
             flags.append('--' + port_impl)
         if self._use_cmake:
             flags.append('--cmake')
+        if self._asan:
+            flags.append('--asan')
 
         args = ["perl", self._webkit_finder.path_to_script("webkit-build-directory")] + flags
         output = self._executive.run_command(args, cwd=self._webkit_finder.webkit_base(), return_stderr=False).rstrip()
@@ -97,7 +100,7 @@ class Config(object):
             default_configuration = parts[1][len(parts[0]):]
             if default_configuration.startswith("/"):
                 default_configuration = default_configuration[1:]
-            self._build_directories[(port_impl, default_configuration, for_host, self._use_cmake)] = parts[1]
+            self._build_directories[(port_impl, default_configuration, for_host, self._use_cmake, self._asan)] = parts[1]
 
         return self._build_directories[cache_key]
 
@@ -145,6 +148,9 @@ class Config(object):
     @property
     @memoized
     def asan(self):
+        # --asan forces asan on; otherwise fall back to the marker file.
+        if self._asan:
+            return True
         try:
             return self._filesystem.exists(self._filesystem.join(self.build_directory(None), "ASan"))
         except:

@@ -86,6 +86,8 @@ def configuration_options():
                              help='Set the configuration to Release'),
         optparse.make_option('--cmake', action='store_true', default=False, dest='use_cmake',
                              help='Use the CMake build tree (e.g. WebKitBuild/cmake-mac/<configuration>) instead of the default Xcode/Make tree'),
+        optparse.make_option('--asan', action='store_true', default=False, dest='asan',
+                             help='Use the ASan (AddressSanitizer) build tree (with --cmake: WebKitBuild/cmake-mac/ASan). Does not require --debug/--release.'),
         optparse.make_option('--64-bit', action='store_const', const='x86_64', default=None, dest="architecture",
                              help='use 64-bit binaries by default (x86_64 instead of x86)'),
         optparse.make_option('--32-bit', action='store_const', const='x86', default=None, dest="architecture",

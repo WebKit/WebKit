@@ -45,10 +45,10 @@ class ConfigTest(unittest.TestCase):
     def setUp(self):
         config.Config._clear_cache_for_testing()
 
-    def make_config(self, output='', files=None, exit_code=0, exception=None, run_command_fn=None, stderr='', port_implementation=None, use_cmake=False):
+    def make_config(self, output='', files=None, exit_code=0, exception=None, run_command_fn=None, stderr='', port_implementation=None, use_cmake=False, asan=False):
         e = MockExecutive2(output=output, exit_code=exit_code, exception=exception, run_command_fn=run_command_fn, stderr=stderr)
         fs = MockFileSystem(files)
-        return config.Config(e, fs, port_implementation=port_implementation, use_cmake=use_cmake)
+        return config.Config(e, fs, port_implementation=port_implementation, use_cmake=use_cmake, asan=asan)
 
     def assert_configuration(self, contents, expected):
         # This tests that a configuration file containing
@@ -118,6 +118,44 @@ class ConfigTest(unittest.TestCase):
         c_cmake.build_directory('Release')
         self.assertIn('--cmake', seen[-1])
 
+    def test_build_directory_passes_asan_flag(self):
+        seen = []
+
+        def mock_run_command(arg_list):
+            seen.append(list(arg_list))
+            if '--asan' in arg_list:
+                return '/WebKitBuild/cmake-mac/ASan'
+            return '/WebKitBuild/cmake-mac/Release'
+
+        # --asan selects the sanitizer tree regardless of Debug/Release.
+        c_asan = self.make_config(run_command_fn=mock_run_command, port_implementation='mac', use_cmake=True, asan=True)
+        self.assertEqual(c_asan.build_directory('Release'), '/WebKitBuild/cmake-mac/ASan')
+        self.assertIn('--asan', seen[-1])
+        self.assertIn('--cmake', seen[-1])
+
+        c_plain = self.make_config(run_command_fn=mock_run_command, port_implementation='mac', use_cmake=True, asan=False)
+        self.assertEqual(c_plain.build_directory('Release'), '/WebKitBuild/cmake-mac/Release')
+        self.assertNotIn('--asan', seen[-1])
+
+        # --asan is forwarded independently of --cmake; don't invent --cmake.
+        c_asan_no_cmake = self.make_config(run_command_fn=mock_run_command, port_implementation='mac', use_cmake=False, asan=True)
+        c_asan_no_cmake.build_directory('Release')
+        self.assertIn('--asan', seen[-1])
+        self.assertNotIn('--cmake', seen[-1])
+
+    def test_asan_marker_without_flag_is_unchanged(self):
+        # Regression: Xcode users enable ASan via the marker file, not --asan.
+        seen = []
+
+        def mock_run_command(arg_list):
+            seen.append(list(arg_list))
+            return 'foo\nfoo/Release'
+
+        c = self.make_config(run_command_fn=mock_run_command, files={'foo/ASan': 'YES'})
+        self.assertTrue(c.asan)
+        self.assertNotIn('--asan', seen[-1])
+        self.assertNotIn('--cmake', seen[-1])
+
     def test_default_configuration__release(self):
         self.assert_configuration('Release', 'Release')
 
@@ -179,3 +217,6 @@ class ConfigTest(unittest.TestCase):
         self.assertEqual(config.asan, True)
         config = self.make_config(output='foo\nfoo/Release', files={'foo/Configuration': 'Release'})
         self.assertEqual(config.asan, False)
+        # An explicit --asan forces asan on even without the marker file.
+        config = self.make_config(output='foo\nfoo/cmake-mac/ASan', files={}, asan=True)
+        self.assertEqual(config.asan, True)
