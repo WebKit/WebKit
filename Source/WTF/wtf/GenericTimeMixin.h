@@ -49,6 +49,9 @@ public:
 
     constexpr Seconds secondsSinceEpoch() const { return Seconds(m_value); }
 
+    // Newer versions of Swift's C++ interop importer fail to synthesize a `bool`
+    // conversion for an `operator bool` inherited from a dependent template base,
+    // so each `DerivedTime` subclass re-declares this with `using` (rdar://181622867).
     explicit constexpr operator bool() const { return !!m_value; }
 
     constexpr DerivedTime operator+(Seconds other) const

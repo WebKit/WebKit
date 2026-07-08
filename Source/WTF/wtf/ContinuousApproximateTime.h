@@ -40,6 +40,10 @@ class ContinuousApproximateTime final : public GenericTimeMixin<ContinuousApprox
 public:
     static constexpr ClockType clockType = ClockType::ContinuousApproximate;
 
+    // Re-declare so Swift's C++ interop importer synthesizes a `bool`
+    // conversion; it mishandles the inherited operator (rdar://181622867).
+    using GenericTimeMixin<ContinuousApproximateTime>::operator bool;
+
     // This is the epoch. So, x.secondsSinceEpoch() should be the same as x - ContinuousApproximateTime().
     constexpr ContinuousApproximateTime() = default;
 

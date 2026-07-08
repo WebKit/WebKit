@@ -39,6 +39,10 @@ class ContinuousTime final : public GenericTimeMixin<ContinuousTime> {
 public:
     static constexpr ClockType clockType = ClockType::Continuous;
 
+    // Re-declare so Swift's C++ interop importer synthesizes a `bool`
+    // conversion; it mishandles the inherited operator (rdar://181622867).
+    using GenericTimeMixin<ContinuousTime>::operator bool;
+
     // This is the epoch. So, x.secondsSinceEpoch() should be the same as x - ContinuousTime().
     constexpr ContinuousTime() = default;
 

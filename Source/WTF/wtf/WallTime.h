@@ -42,6 +42,10 @@ class PrintStream;
 class WallTime final : public GenericTimeMixin<WallTime> {
 public:
     static constexpr ClockType clockType = ClockType::Wall;
+
+    // Re-declare so Swift's C++ interop importer synthesizes a `bool`
+    // conversion; it mishandles the inherited operator (rdar://181622867).
+    using GenericTimeMixin<WallTime>::operator bool;
     
     // This is the epoch. So, x.secondsSinceEpoch() should be the same as x - WallTime().
     constexpr WallTime() = default;
