@@ -50,12 +50,6 @@ public:
     
     void paintIntoRect(GraphicsContext&, const LayoutPoint&, const LayoutRect&);
 
-    // Scrollbar parts needs to be rendered at device pixel boundaries.
-    LayoutUnit marginTop() const override { ASSERT(isIntegerValue(m_marginBox.top())); return m_marginBox.top(); }
-    LayoutUnit marginBottom() const override { ASSERT(isIntegerValue(m_marginBox.bottom())); return m_marginBox.bottom(); }
-    LayoutUnit marginLeft() const override { ASSERT(isIntegerValue(m_marginBox.left())); return m_marginBox.left(); }
-    LayoutUnit marginRight() const override { ASSERT(isIntegerValue(m_marginBox.right())); return m_marginBox.right(); }
-
     RenderBox* rendererOwningScrollbar() const;
 
 private:
