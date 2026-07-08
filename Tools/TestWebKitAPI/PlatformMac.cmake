@@ -426,8 +426,10 @@ foreach (_dual_src
     InjectedBundleNodeHandleIsTextField
     TestAwakener
 )
-    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/WebProcessPlugIn-${_dual_src}.mm"
-        "#include \"${TESTWEBKITAPI_DIR}/Tests/WebKit/WKWebView/${_dual_src}.mm\"\n")
+    file(CONFIGURE
+        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/WebProcessPlugIn-${_dual_src}.mm"
+        CONTENT "#include \"${TESTWEBKITAPI_DIR}/Tests/WebKit/WKWebView/${_dual_src}.mm\"\n"
+        @ONLY)
 endforeach ()
 
 target_include_directories(TestWebKitAPIWebProcessPlugIn PRIVATE
