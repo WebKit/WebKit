@@ -1,6 +1,6 @@
 
-FAIL random() should not be allowed in if() style() condition assert_equals: expected "false" but got "if(style(random(1, 10) < random(11, 30)): true; else: false;)"
-FAIL random() in var() should not be allowed in if() style() condition assert_equals: expected "false" but got "if(style(random(1, 10) < random(11, 30)): true; else: false;)"
+PASS random() should not be allowed in if() style() condition
+PASS random() in var() should not be allowed in if() style() condition
 FAIL random() with different property names should not be shared in if() declaration value assert_false: expected false got true
 FAIL random() with same property name on different elements in if() declaration value should be equal assert_false: expected false got true
 

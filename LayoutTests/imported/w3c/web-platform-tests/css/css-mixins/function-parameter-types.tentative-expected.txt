@@ -1,9 +1,9 @@
 
-FAIL A parameter retains its type assert_equals: expected "PASS" but got "if(\n        style(--c:red): PASS;\n        else: FAIL)"
-FAIL A parameter type acts as a local registration assert_equals: expected "PASS" but got "if(\n        style(--c:blue): PASS;\n        else: FAIL)"
-FAIL A parameter retains its type (parent stack frame) assert_equals: expected "PASS" but got "if(\n        style(--c:red): PASS;\n        else: FAIL)"
-FAIL A parameter type acts as a local registration (parent stack frame) assert_equals: expected "PASS" but got "if(\n        style(--c:blue): PASS;\n        else: FAIL)"
-FAIL Universally typed parameter can shadow other parameters assert_equals: expected "PASS" but got "if(\n        style(--c:red): FAIL1;\n        style(--c:#f00): FAIL2;\n        style(--c:lime): FAIL3;\n        style(--c:#0f0): PASS;\n        else: FAIL4)"
+FAIL A parameter retains its type assert_equals: expected "PASS" but got "FAIL"
+FAIL A parameter type acts as a local registration assert_equals: expected "PASS" but got "FAIL"
+FAIL A parameter retains its type (parent stack frame) assert_equals: expected "PASS" but got "FAIL"
+FAIL A parameter type acts as a local registration (parent stack frame) assert_equals: expected "PASS" but got "FAIL"
+PASS Universally typed parameter can shadow other parameters
 FAIL Invalid value for typed local becomes IACVT assert_equals: expected "PASS" but got "3"
-FAIL if() within @function can query registered custom property assert_equals: expected "PASS" but got "if(style(--c:#f00): PASS; else: FAIL)"
+PASS if() within @function can query registered custom property
 

@@ -5,83 +5,46 @@ PASS CSS Values and Units Test: CSS if() function cycles 2
 PASS CSS Values and Units Test: CSS if() function cycles 3
 PASS CSS Values and Units Test: CSS if() function cycles 4
 PASS CSS Values and Units Test: CSS if() function cycles 5
-FAIL CSS Values and Units Test: CSS if() function cycles 6 assert_equals: "if(style(--prop: 3): true_value;
-          else: false_value)" should be substituted to "". expected "" but got "if(style(--prop: 3): true_value;\n          else: false_value)"
-FAIL CSS Values and Units Test: CSS if() function cycles 7 assert_equals: "if(style(--x: 3): true_value;
-          else: false_value)" should be substituted to "". expected "" but got "if(style(--x: 3): true_value;\n          else: false_value)"
-FAIL CSS Values and Units Test: CSS if() function cycles 8 assert_equals: "if(style(not (--prop)): true_value;
-          else: false_value)" should be substituted to "". expected "" but got "if(style(not (--prop)): true_value;\n          else: false_value)"
+PASS CSS Values and Units Test: CSS if() function cycles 6
+PASS CSS Values and Units Test: CSS if() function cycles 7
+PASS CSS Values and Units Test: CSS if() function cycles 8
 PASS CSS Values and Units Test: CSS if() function cycles 9
-FAIL CSS Values and Units Test: CSS if() function cycles 10 assert_equals: "if(style((--prop) or (--y)): true_value;
-          else: false_value)" should be substituted to "". expected "" but got "if(style((--prop) or (--y)): true_value;\n          else: false_value)"
-FAIL CSS Values and Units Test: CSS if() function cycles 11 assert_equals: "if(style((--prop) and (--y)): true_value;
-          else: false_value)" should be substituted to "". expected "" but got "if(style((--prop) and (--y)): true_value;\n          else: false_value)"
+PASS CSS Values and Units Test: CSS if() function cycles 10
+PASS CSS Values and Units Test: CSS if() function cycles 11
 PASS CSS Values and Units Test: CSS if() function cycles 12
 PASS CSS Values and Units Test: CSS if() function cycles 13
-FAIL CSS Values and Units Test: CSS if() function cycles 14 assert_equals: "if(style(--x: 3): true_value;
-          else: false_value)" should be substituted to "". expected "" but got "if(style(--x: 3): true_value;\n          else: false_value)"
-FAIL CSS Values and Units Test: CSS if() function cycles 15 assert_equals: "if(style(--x: 3): true_value;
-          else: false_value)" should be substituted to "". expected "" but got "if(style(--x: 3): true_value;\n          else: false_value)"
+PASS CSS Values and Units Test: CSS if() function cycles 14
+PASS CSS Values and Units Test: CSS if() function cycles 15
 PASS CSS Values and Units Test: CSS if() function cycles 16
-FAIL CSS Values and Units Test: CSS if() function cycles 17 assert_equals: "if(style(--y): true_value;
-          else: false_value)" should be substituted to "false_value". expected "false_value" but got "if(style(--y): true_value;\n          else: false_value)"
+PASS CSS Values and Units Test: CSS if() function cycles 17
 FAIL CSS Values and Units Test: CSS if() function cycles 18 assert_equals: "if(style(not (--x: var(--y))): true_value;
-          else: false_value)" should be substituted to "true_value". expected "true_value" but got ""
+          else: false_value)" should be substituted to "true_value". expected "true_value" but got "false_value"
 FAIL CSS Values and Units Test: CSS if() function cycles 19 assert_equals: "if(style(not (--x: var(--y))): true_value;
-          else: false_value)" should be substituted to "true_value". expected "true_value" but got ""
-FAIL CSS Values and Units Test: CSS if() function cycles 20 assert_equals: "if(style((--x) or (--y)): true_value;
-          else: false_value)" should be substituted to "true_value". expected "true_value" but got "if(style((--x) or (--y)): true_value;\n          else: false_value)"
-FAIL CSS Values and Units Test: CSS if() function cycles 21 assert_equals: "if(style((--x) and (--y)): true_value;
-          else: false_value)" should be substituted to "false_value". expected "false_value" but got "if(style((--x) and (--y)): true_value;\n          else: false_value)"
-FAIL CSS Values and Units Test: CSS if() function cycles 22 assert_equals: "if(style((not (--z)) or (--y)): true_value;
-          else: false_value)" should be substituted to "true_value". expected "true_value" but got "if(style((not (--z)) or (--y)): true_value;\n          else: false_value)"
-FAIL CSS Values and Units Test: CSS if() function cycles 23 assert_equals: "if(style((not (--z)) and (--y)): true_value;
-          else: false_value)" should be substituted to "true_value". expected "true_value" but got "if(style((not (--z)) and (--y)): true_value;\n          else: false_value)"
-FAIL CSS Values and Units Test: CSS if() function cycles 24 assert_equals: "if(style(--x: 3): true_value;
-          else: false_value)" should be substituted to "false_value". expected "false_value" but got "if(style(--x: 3): true_value;\n          else: false_value)"
-FAIL CSS Values and Units Test: CSS if() function cycles 25 assert_equals: "if(style(--x: 3): true_value;
-          else: false_value)" should be substituted to "false_value". expected "false_value" but got "if(style(--x: 3): true_value;\n          else: false_value)"
-FAIL CSS Values and Units Test: CSS if() function cycles 26 assert_equals: "if(style(--x: var(--y)): true_value;
-          else: false_value)" should be substituted to "false_value". expected "false_value" but got ""
-FAIL CSS Values and Units Test: CSS if() function cycles 27 assert_equals: "if(style(--x: var(--y)): true_value;
-          else: false_value)" should be substituted to "false_value". expected "false_value" but got ""
-FAIL CSS Values and Units Test: CSS if() function cycles 28 assert_equals: "if(style(--x: attr(data-foo type(*))): true_value;
-          else: false_value)" should be substituted to "false_value". expected "false_value" but got ""
-FAIL CSS Values and Units Test: CSS if() function cycles 29 assert_equals: "if(style(--x: attr(data-foo, var(--y))): true_value;
-          else: false_value)" should be substituted to "true_value". expected "true_value" but got "if(style(--x: \"30px\"): true_value;\n          else: false_value)"
-FAIL CSS Values and Units Test: CSS if() function cycles 30 assert_equals: "if(style(--x: 0): value1; style(--prop): value2)" should be substituted to "value1". expected "value1" but got "if(style(--x: 0): value1; style(--prop): value2)"
-FAIL CSS Values and Units Test: CSS if() function cycles 31 assert_equals: "if(style(--x: 3): value1;
-          style(--y: 3): value2;
-          else: value3)" should be substituted to "value1". expected "value1" but got "if(style(--x: 3): value1;\n          style(--y: 3): value2;\n          else: value3)"
-FAIL CSS Values and Units Test: CSS if() function cycles 32 assert_equals: "if(style(--x: 0): value1; style(--y): value2)" should be substituted to "value1". expected "value1" but got "if(style(--x: 0): value1; style(--y): value2)"
-FAIL CSS Values and Units Test: CSS if() function cycles 33 assert_equals: "if(style(--x: 3): value1;
-          style(--y: 3): value2;
-          else: value3)" should be substituted to "value1". expected "value1" but got "if(style(--x: 3): value1;\n          style(--y: 3): value2;\n          else: value3)"
-FAIL CSS Values and Units Test: CSS if() function cycles 34 assert_equals: "if(style(--x: 0): var(--prop); else: value)" should be substituted to "value". expected "value" but got ""
-FAIL CSS Values and Units Test: CSS if() function cycles 35 assert_equals: "if(style(--x: 0): value; else: var(--prop))" should be substituted to "value". expected "value" but got ""
-FAIL CSS Values and Units Test: CSS if() function cycles 36 assert_equals: "if(style(--x: 3): value1;
-          style(--y: 3): var(--prop);
-          else: value3)" should be substituted to "value1". expected "value1" but got ""
-FAIL CSS Values and Units Test: CSS if() function cycles 37 assert_equals: "if(style(--x: 3): var(--prop);
-          style(--y: 3): var(--prop);
-          else: value3)" should be substituted to "value3". expected "value3" but got ""
-FAIL CSS Values and Units Test: CSS if() function cycles 38 assert_equals: "if(style(--x: 3): var(--x);
-          else: value)" should be substituted to "3". expected "3" but got "if(style(--x: 3): 3;\n          else: value)"
-FAIL CSS Values and Units Test: CSS if() function cycles 39 assert_equals: "if(style(--x: var(--y)): var(--y);
-          else: value)" should be substituted to "3". expected "3" but got "if(style(--x: 3): 3;\n          else: value)"
-FAIL CSS Values and Units Test: CSS if() function cycles 40 assert_equals: "if(style(--x: var(--x)): true_value;
-          else: false_value)" should be substituted to "true_value". expected "true_value" but got "if(style(--x: 3): true_value;\n          else: false_value)"
-FAIL CSS Values and Units Test: CSS if() function cycles 41 assert_equals: "if(style(--non-existent: var(--non-existent)): true_value;
-          else: false_value)" should be substituted to "false_value". expected "false_value" but got ""
-FAIL CSS Values and Units Test: CSS if() function cycles 42 assert_equals: "if(style(--x: 3): true_value;
-          else: var(--x))" should be substituted to "1". expected "1" but got "if(style(--x: 3): true_value;\n          else: 1)"
-FAIL CSS Values and Units Test: CSS if() function cycles 43 assert_equals: "if(style(--x: var(--x)): value1;
-          style(--x: 3): value2;
-          else: value3;)" should be substituted to "value1". expected "value1" but got "if(style(--x: 3): value1;\n          style(--x: 3): value2;\n          else: value3;)"
-FAIL CSS Values and Units Test: CSS if() function cycles 44 assert_equals: "if(style(--x: var(--y)): value1;
-          style(--z: 3): value2;
-          else: value3;)" should be substituted to "value2". expected "value2" but got ""
-FAIL CSS Values and Units Test: CSS if() function cycles 45 assert_equals: "if(style(--z: var(--y)): value1;
-          style(--z: 3): value2;
-          else: value3;)" should be substituted to "value2". expected "value2" but got ""
+          else: false_value)" should be substituted to "true_value". expected "true_value" but got "false_value"
+PASS CSS Values and Units Test: CSS if() function cycles 20
+PASS CSS Values and Units Test: CSS if() function cycles 21
+PASS CSS Values and Units Test: CSS if() function cycles 22
+PASS CSS Values and Units Test: CSS if() function cycles 23
+PASS CSS Values and Units Test: CSS if() function cycles 24
+PASS CSS Values and Units Test: CSS if() function cycles 25
+PASS CSS Values and Units Test: CSS if() function cycles 26
+PASS CSS Values and Units Test: CSS if() function cycles 27
+PASS CSS Values and Units Test: CSS if() function cycles 28
+PASS CSS Values and Units Test: CSS if() function cycles 29
+PASS CSS Values and Units Test: CSS if() function cycles 30
+PASS CSS Values and Units Test: CSS if() function cycles 31
+PASS CSS Values and Units Test: CSS if() function cycles 32
+PASS CSS Values and Units Test: CSS if() function cycles 33
+PASS CSS Values and Units Test: CSS if() function cycles 34
+PASS CSS Values and Units Test: CSS if() function cycles 35
+PASS CSS Values and Units Test: CSS if() function cycles 36
+PASS CSS Values and Units Test: CSS if() function cycles 37
+PASS CSS Values and Units Test: CSS if() function cycles 38
+PASS CSS Values and Units Test: CSS if() function cycles 39
+PASS CSS Values and Units Test: CSS if() function cycles 40
+PASS CSS Values and Units Test: CSS if() function cycles 41
+PASS CSS Values and Units Test: CSS if() function cycles 42
+PASS CSS Values and Units Test: CSS if() function cycles 43
+PASS CSS Values and Units Test: CSS if() function cycles 44
+PASS CSS Values and Units Test: CSS if() function cycles 45
 

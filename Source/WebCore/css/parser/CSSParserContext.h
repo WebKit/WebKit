@@ -94,6 +94,7 @@ struct CSSParserContext {
     bool cssScrollStateContainerQueriesEnabled : 1 { false };
     bool cssCalcMixEnabled : 1 { false };
     bool cssIdentFunctionEnabled : 1 { false };
+    bool cssIfFunctionEnabled : 1 { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;

@@ -29,12 +29,12 @@
 
 #pragma once
 
+#include "CSSParser.h"
 #include "CSSParserEnum.h"
 #include "CSSParserToken.h"
 
 namespace WebCore {
 
-class CSSParser;
 class CSSParserTokenRange;
 struct CSSParserContext;
 

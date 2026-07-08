@@ -1,22 +1,22 @@
 
-FAIL var() in if() condition's custom property value substitutes locally assert_equals: expected "PASS" but got "if(style(--x: 3px): PASS; else: FAIL;)"
-FAIL var() in if() condition's specified value substitutes locally assert_equals: expected "PASS" but got "if(style(--y: 3px): PASS; else: FAIL;)"
-FAIL var() in if() declaration value substitutes locally assert_equals: expected "PASS" but got "if(style(--true): PASS; else: FAIL;)"
-FAIL var() in if() condition's custom property value substitutes locally, argument assert_equals: expected "PASS" but got "if(style(--x: 3px): PASS; else: FAIL;)"
-FAIL var() in if() condition's specified value substitutes locally, argument assert_equals: expected "PASS" but got "if(style(--y: 3px): PASS; else: FAIL;)"
-FAIL var() in if() declaration value substitutes locally, argument assert_equals: expected "PASS" but got "if(style(--true): PASS; else: FAIL;)"
-FAIL dashed function in if() declaration value assert_equals: expected "PASS" but got "if(style(--true): PASS; else: FAIL;)"
-FAIL dashed function with argument in if() declaration value assert_equals: expected "PASS" but got "if(style(--true): PASS; else: FAIL;)"
+PASS var() in if() condition's custom property value substitutes locally
+PASS var() in if() condition's specified value substitutes locally
+PASS var() in if() declaration value substitutes locally
+PASS var() in if() condition's custom property value substitutes locally, argument
+PASS var() in if() condition's specified value substitutes locally, argument
+PASS var() in if() declaration value substitutes locally, argument
+PASS dashed function in if() declaration value
+PASS dashed function with argument in if() declaration value
 PASS if() cycle through local
-FAIL if() cycle in condition custom property through local assert_equals: expected "PASS" but got "if(style(--x): FAIL1; else: FAIL2;)"
+PASS if() cycle in condition custom property through local
 PASS if() cycle in condition specified value through local
 PASS if() cycle through function
-FAIL if() no cycle in overridden local assert_equals: expected "PASS" but got "if(style(--x): PASS; else: FAIL)"
-FAIL if() no cycle in overridden argument assert_equals: expected "PASS" but got "if(style(--x): PASS; else: FAIL)"
-FAIL CSS-wide keywords are interpreted locally (initial) assert_equals: expected "PASS" but got "if(style(--c: initial): PASS; else: FAIL)"
-FAIL CSS-wide keywords are interpreted locally (inherit) assert_equals: expected "PASS" but got "if(style(--c: inherit): PASS; else: FAIL)"
-FAIL CSS-wide keywords are interpreted locally (guaranteed-invalid, initial) assert_equals: expected "PASS" but got "if(style(--c: initial): PASS; else: FAIL)"
-FAIL CSS-wide keywords are interpreted locally (guaranteed-invalid, unset) assert_equals: expected "PASS" but got "if(style(--c: unset): PASS; else: FAIL)"
-FAIL CSS-wide keywords are interpreted locally (revert) assert_equals: expected "PASS" but got "if(style(--c: revert): FAIL; else: PASS)"
-FAIL CSS-wide keywords are interpreted locally (revert-layer) assert_equals: expected "PASS" but got "if(style(--c: revert-layer): FAIL; else: PASS)"
+PASS if() no cycle in overridden local
+PASS if() no cycle in overridden argument
+FAIL CSS-wide keywords are interpreted locally (initial) assert_equals: expected "PASS" but got "FAIL"
+PASS CSS-wide keywords are interpreted locally (inherit)
+PASS CSS-wide keywords are interpreted locally (guaranteed-invalid, initial)
+PASS CSS-wide keywords are interpreted locally (guaranteed-invalid, unset)
+PASS CSS-wide keywords are interpreted locally (revert)
+PASS CSS-wide keywords are interpreted locally (revert-layer)
 

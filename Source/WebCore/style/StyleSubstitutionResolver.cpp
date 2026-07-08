@@ -54,6 +54,7 @@
 #include "Element.h"
 #include "ElementInlines.h"
 #include "HTMLSelectElement.h"
+#include "IfConditionEvaluator.h"
 #include "MatchResult.h"
 #include "MutableStyleProperties.h"
 #include "SelectPopoverElement.h"
@@ -909,6 +910,99 @@ std::optional<double> SubstitutionResolver::randomItemBaseValue(Vector<CSSParser
     return m_styleBuilder.state().lookupCSSRandomBaseValue(CSSCalc::RandomCachingKey { autoKey }, elementScoped);
 }
 
+auto SubstitutionResolver::substituteIfArgumentGrammar(CSSParserTokenRange range, const CSSParserContext& context) -> std::optional<Vector<IfBranch>>
+{
+    // https://drafts.csswg.org/css-values-5/#argument-grammars
+    // <if-args> = if( [ <if-args-branch>; ]* <if-args-branch> ;? )
+    // <if-args-branch> = <declaration-value> : <declaration-value>?
+    // The condition excludes top-level colons, so the first top-level colon separates it from the
+    // value and top-level semicolons separate branches. A single pass consumes both in source order.
+
+    range.consumeWhitespace();
+
+    Vector<IfBranch> branches;
+    while (!range.atEnd()) {
+        auto conditionStart = range;
+        while (!range.atEnd() && range.peek().type() != ColonToken && range.peek().type() != SemicolonToken)
+            range.consumeComponentValue();
+        auto conditionRange = conditionStart.rangeUntil(range);
+
+        // A branch without a colon is invalid, but an empty segment (from a doubled or trailing
+        // semicolon) is skipped.
+        if (range.atEnd() || range.peek().type() == SemicolonToken) {
+            conditionRange.consumeWhitespace();
+            if (!conditionRange.atEnd())
+                return { };
+            if (!range.atEnd())
+                range.consumeIncludingWhitespace(); // semicolon
+            continue;
+        }
+
+        range.consume(); // colon
+
+        auto valueStart = range;
+        while (!range.atEnd() && range.peek().type() != SemicolonToken)
+            range.consumeComponentValue();
+        auto valueRange = valueStart.rangeUntil(range);
+        valueRange.consumeWhitespace();
+
+        if (!range.atEnd())
+            range.consumeIncludingWhitespace(); // semicolon
+
+        auto substitutedCondition = substituteTokenRange(conditionRange, context);
+        if (!substitutedCondition)
+            continue;
+
+        // <if-condition> = <boolean-expr[ <if-test> ]> | else. The else keyword is recognized after
+        // substitution (it may come from a var()), and always matches, so it is stored as a null
+        // condition. Other conditions are evaluated later.
+        auto substitutedRange = CSSParserTokenRange { *substitutedCondition };
+        substitutedRange.consumeWhitespace();
+        if (CSSPropertyParserHelpers::consumeIdentRaw<CSSValueElse>(substitutedRange) && substitutedRange.atEnd()) {
+            branches.append({ std::nullopt, valueRange });
+            continue;
+        }
+
+        branches.append({ WTF::move(*substitutedCondition), valueRange });
+    }
+
+    return branches;
+}
+
+bool SubstitutionResolver::substituteIfFunction(CSSParserTokenRange argumentsRange, Vector<CSSParserToken>& tokens, const CSSParserContext& context)
+{
+    // https://drafts.csswg.org/css-values-5/#funcdef-if
+    auto branches = substituteIfArgumentGrammar(argumentsRange, context);
+    if (!branches)
+        return false;
+
+    for (auto& branch : *branches) {
+        auto conditionResult = branch.condition
+            ? IfConditionEvaluator { m_styleBuilder, context }.evaluate(*branch.condition)
+            : IfConditionEvaluator::Result::True;
+
+        // An invalid condition makes the whole if() IACVT. This matches the imported WPT but not the
+        // spec algorithm, which continues to the next branch on a condition parse failure.
+        // FIXME: Revisit once the spec/WPT discrepancy is resolved upstream.
+        if (conditionResult == IfConditionEvaluator::Result::Invalid)
+            return false;
+
+        if (conditionResult != IfConditionEvaluator::Result::True)
+            continue;
+
+        // Substitute the value part and return.
+        auto substitutedValue = substituteTokenRange(branch.valueRange, context);
+        if (!substitutedValue)
+            return false;
+
+        tokens.appendVector(*substitutedValue);
+        return true;
+    }
+
+    // No condition matched. Empty token stream.
+    return true;
+}
+
 std::optional<Vector<CSSParserToken>> SubstitutionResolver::substituteTokenRange(CSSParserTokenRange range, const CSSParserContext& context)
 {
     Vector<CSSParserToken> tokens;
@@ -928,6 +1022,11 @@ std::optional<Vector<CSSParserToken>> SubstitutionResolver::substituteTokenRange
                 if (substituteAttrFunction(range.consumeBlock(), tokens, context))
                     propagateAttrTaint(IsAttrTainted::Yes, std::span(tokens).subspan(startIndex));
                 else
+                    success = false;
+                continue;
+            }
+            if (functionId == CSSValueIf) {
+                if (!substituteIfFunction(range.consumeBlock(), tokens, context))
                     success = false;
                 continue;
             }

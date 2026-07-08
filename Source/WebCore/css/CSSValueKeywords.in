@@ -986,6 +986,7 @@ exclude
 var
 env
 random-item
+if
 -internal-auto-base
 
 //
@@ -1821,6 +1822,9 @@ and
 or
 not
 only
+
+// for if()
+else
 
 // overflow-anchor
 // none

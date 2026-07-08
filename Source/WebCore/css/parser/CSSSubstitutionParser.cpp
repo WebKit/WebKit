@@ -66,6 +66,7 @@ static bool isValidConstantReference(CSSParserTokenRange, const CSSParserContext
 static bool isValidDashedFunction(CSSParserTokenRange, const CSSParserContext&);
 static bool isValidAttrReference(CSSParserTokenRange, const CSSParserContext&);
 static bool isValidRandomItemReference(CSSParserTokenRange, const CSSParserContext&);
+static bool isValidIfReference(CSSParserTokenRange, const CSSParserContext&);
 
 struct ClassifyBlockResult {
     bool hasSubstitutionFunctions { false };
@@ -142,6 +143,12 @@ static std::optional<ClassifyBlockResult> classifyBlock(CSSParserTokenRange rang
             }
             if (token.functionId() == CSSValueRandomItem && parserContext.cssRandomItemFunctionEnabled) {
                 if (!isValidRandomItemReference(block, parserContext))
+                    return { };
+                result.hasSubstitutionFunctions = true;
+                continue;
+            }
+            if (token.functionId() == CSSValueIf && parserContext.cssIfFunctionEnabled) {
+                if (!isValidIfReference(block, parserContext))
                     return { };
                 result.hasSubstitutionFunctions = true;
                 continue;
@@ -325,6 +332,37 @@ bool isValidRandomItemReference(CSSParserTokenRange range, const CSSParserContex
     } while (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range));
 
     return range.atEnd();
+}
+
+// https://drafts.csswg.org/css-values-5/#funcdef-if
+// <if-args> = if( [ <if-args-branch>; ]* <if-args-branch> ;? )
+// <if-args-branch> = <declaration-value> : <declaration-value>?
+// Validate using the argument grammar. Condition parsing happens at substitution time.
+bool isValidIfReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
+{
+    range.consumeWhitespace();
+    if (range.atEnd())
+        return false;
+
+    // Validate semicolon-separated branches. classifyBlock rejects top-level semicolons,
+    // but they are valid branch separators in if(), so validate each branch separately.
+    while (!range.atEnd()) {
+        auto branchStart = range;
+        while (!range.atEnd() && range.peek().type() != SemicolonToken)
+            range.consumeComponentValue();
+        auto branchRange = branchStart.rangeUntil(range);
+
+        if (!range.atEnd())
+            range.consume(); // semicolon
+        range.consumeWhitespace();
+
+        if (branchRange.atEnd())
+            continue;
+
+        if (!classifyBlock(branchRange, parserContext))
+            return false;
+    }
+    return true;
 }
 
 struct VariableType {
