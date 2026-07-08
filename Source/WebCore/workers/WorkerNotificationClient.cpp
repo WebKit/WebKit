@@ -32,8 +32,8 @@
 #include "NotificationResources.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
-#include "WorkerSTWParticipation.h"
 #include "WorkerThread.h"
+#include <JavaScriptCore/VMManager.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
@@ -106,7 +106,10 @@ auto WorkerNotificationClient::checkPermission(ScriptExecutionContext*) -> Permi
             permission = client->checkPermission(&context);
         semaphore.signal();
     });
-    waitWithSTWParticipation(semaphore, Ref { m_workerScope.get() }->vm());
+    {
+        JSC::VMBlockingScope blockingScope(Ref { m_workerScope.get() }->vm());
+        semaphore.wait();
+    }
     return permission;
 }
 

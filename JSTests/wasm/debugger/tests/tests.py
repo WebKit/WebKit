@@ -1363,6 +1363,20 @@ class MemoryAtomicWaitTestCase:
             ],
         )
 
+        self.session.cmd("thread select 2", patterns=["frame #0: 0x8000000000000000"])
+
+        self.session.cmd("thread select 2", patterns=["frame #0: 0x8000000000000000"])
+
+        self.session.cmd("thread select 1", patterns=["->  0x4000000000000030: memory.atomic.wait32 0"])
+
+        self.session.cmd("thread select 1", patterns=["->  0x4000000000000030: memory.atomic.wait32 0"])
+
+        self.session.cmd("si", patterns=["->  0x4000000000000034: end"])
+
+        self.session.cmd("thread select 2", patterns=["frame #0: 0x8000000000000000"])
+
+        self.session.cmd("thread select 2", patterns=["frame #0: 0x8000000000000000"])
+
         self.session.cmd("br del -f", patterns=["All breakpoints removed. (1 breakpoint)"])
 
 
@@ -1373,6 +1387,14 @@ class MemoryAtomicWaitNoTimeoutTestCase:
     def execute(self):
         self.session.cmd("th list", patterns=["thread #1", "thread #2"])
         self.session.cmd("dis", patterns=["->  0x4000000000000030: memory.atomic.wait32 0"])
+
+        self.session.cmd("thread select 2", patterns=["frame #0: 0x8000000000000000"])
+
+        self.session.cmd("thread select 2", patterns=["frame #0: 0x8000000000000000"])
+
+        self.session.cmd("thread select 1", patterns=["->  0x4000000000000030: memory.atomic.wait32 0"])
+
+        self.session.cmd("thread select 1", patterns=["->  0x4000000000000030: memory.atomic.wait32 0"])
 
 
 class DoCatchThrowTestCase:

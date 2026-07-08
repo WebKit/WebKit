@@ -125,7 +125,9 @@ void VMManager::Info::dump(PrintStream& out) const
     out.print("VMManager::Info(numberOfVMs:", numberOfVMs);
     out.print(", numberOfActiveVMs:", numberOfActiveVMs);
     out.print(", numberOfStoppedVMs:", numberOfStoppedVMs);
+    out.print(", numberOfBlockedVMs:", numberOfBlockedVMs);
     out.print(", worldMode:", worldMode);
+    out.print(", servingVM:", RawPointer(servingVM));
     out.print(", targetVM:", RawPointer(targetVM), ")");
 }
 
@@ -140,7 +142,9 @@ auto VMManager::info() -> Info
     info.numberOfVMs = manager.m_numberOfVMs;
     info.numberOfActiveVMs = manager.m_numberOfActiveVMs;
     info.numberOfStoppedVMs = manager.m_numberOfStoppedVMs;
+    info.numberOfBlockedVMs = manager.m_numberOfBlockedVMs;
     info.worldMode = manager.m_worldMode;
+    info.servingVM = manager.m_servingVM;
     info.targetVM = manager.m_targetVM;
     return info;
 }
@@ -188,30 +192,14 @@ void VMManager::decrementActiveVMs(VM& vm) WTF_REQUIRES_LOCK(m_worldLock)
         if (m_worldMode != Mode::RunAll && !m_numberOfActiveVMs)
             return true;
         if (m_worldMode == Mode::RunOne) {
-            RELEASE_ASSERT(m_targetVM == &vm);
+            RELEASE_ASSERT(m_servingVM == &vm && m_servingVM == m_targetVM);
             return true;
         }
         return false;
     };
 
-    if (shouldResumeAll()) {
-        if (m_targetVM) {
-            // There's a designated targetVM thread to continue in, but we don't have the
-            // ability to just wake the desired one up. So, wake up all the threads and let
-            // them sort themselves out.
-            //
-            // But if the targetVM thread is this thread, then pass the control to another
-            // thread, any thread. That's because this thread is dying imminently.
-            if (m_targetVM == &vm) {
-                m_targetVM = nullptr;
-                m_useRunOneMode = false;
-            }
-            m_worldConditionVariable.notifyAll();
-        } else {
-            // There's no designated targetVM thread. So, just waking up any one thread will do.
-            m_worldConditionVariable.notifyOne();
-        }
-    }
+    if (shouldResumeAll())
+        handleVMExit(vm);
 }
 
 CONCURRENT_SAFE void VMManager::requestStopAllInternal(StopReason reason)
@@ -330,10 +318,110 @@ void VMManager::resumeTheWorld() WTF_REQUIRES_LOCK(m_worldLock)
         return IterationStatus::Continue;
     }));
 
+    m_servingVM = nullptr;
     m_targetVM = nullptr;
     m_numberOfActiveVMs = invalidNumberOfActiveVMs; // invalid when not Stopped.
     m_worldMode = Mode::RunAll;
     m_worldConditionVariable.notifyAll();
+}
+
+void VMManager::handleVMExit(VM& vm) WTF_REQUIRES_LOCK(m_worldLock)
+{
+    if (m_servingVM) {
+        // There's a designated servicing VM to continue in, but we don't have the
+        // ability to just wake the desired one up. So, wake up all the threads and let
+        // them sort themselves out.
+        //
+        // But if the servicing VM is this thread, then pass the control to another
+        // thread, any thread. That's because this thread is dying imminently.
+        if (m_servingVM == &vm) {
+            m_servingVM = nullptr;
+            m_useRunOneMode = false;
+        }
+
+        // Also drop a dangling reference if the exiting VM was the callback target: the next
+        // VM to pick up serving below will self-assign as target when it finds this null.
+        if (m_targetVM == &vm)
+            m_targetVM = nullptr;
+
+        m_worldConditionVariable.notifyAll();
+    } else {
+        // There's no designated servicing VM. So, just waking up any one thread will do.
+        m_worldConditionVariable.notifyOne();
+    }
+}
+
+VMBlockingScope::VMBlockingScope(VM& vm, StopTheWorldEvent exitEvent)
+    : m_vm(vm)
+    , m_event(vm.isEntered() ? std::optional(exitEvent) : std::nullopt)
+{
+    if (m_event)
+        VMManager::singleton().notifyVMBlocking(m_vm);
+}
+
+VMBlockingScope::~VMBlockingScope()
+{
+    if (m_event)
+        VMManager::singleton().notifyVMUnblocking(m_vm, *m_event);
+}
+
+static void notifyDebuggerOfVMStopping(VM& vm)
+{
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+    if (auto* state = vm.debugStateIfExists()) [[unlikely]]
+        state->setStopped();
+#else
+    UNUSED_PARAM(vm);
+#endif
+}
+
+static void notifyDebuggerOfVMResuming(VM& vm)
+{
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+    if (auto* state = vm.debugStateIfExists()) [[unlikely]]
+        state->clearStop();
+#else
+    UNUSED_PARAM(vm);
+#endif
+}
+
+void VMManager::notifyVMBlocking(VM& vm)
+{
+    Locker lock { m_worldLock };
+
+    ASSERT(vm.isEntered());
+    RELEASE_ASSERT(!std::exchange(vm.traps().m_isInBlockingScope, true));
+    ++m_numberOfBlockedVMs;
+    notifyDebuggerOfVMStopping(vm);
+    if (m_worldMode != Mode::RunAll && allActiveVMsHaveReachedStoppingPoint()) {
+        // We assume the main thread VM is never blocked while entered, so at least one VM
+        // is always fully stopped in enterStopTheWorldParticipation when this fires. Wake it
+        // to service the STW callback.
+        RELEASE_ASSERT(m_numberOfStoppedVMs);
+        m_worldConditionVariable.notifyOne();
+    }
+}
+
+void VMManager::notifyVMUnblocking(VM& vm, StopTheWorldEvent exitEvent)
+{
+    {
+        Locker lock { m_worldLock };
+
+        ASSERT(vm.isEntered());
+        RELEASE_ASSERT(std::exchange(vm.traps().m_isInBlockingScope, false));
+        --m_numberOfBlockedVMs;
+        if (m_worldMode == Mode::RunAll) {
+            notifyDebuggerOfVMResuming(vm);
+            return;
+        }
+        // We're still in some form of stoppage (RunOne / Stopping / Stopped), so this VM is not
+        // the servingVM and must not be allowed to run unattended. Count it as stopped instead of
+        // blocked, then let enterStopTheWorldParticipation() below actually park it (or otherwise
+        // fold it back into servicing the current request).
+        ++m_numberOfStoppedVMs;
+    }
+
+    enterStopTheWorldParticipation(vm, exitEvent);
 }
 
 void VMManager::notifyVMStop(VM& vm, StopTheWorldEvent event)
@@ -358,12 +446,14 @@ void VMManager::notifyVMStop(VM& vm, StopTheWorldEvent event)
         // the STW callback fires and the debugger assumes isStopped() on every VM.
         // A VM preempted between releasing this lock and calling setStopped() would
         // cause isStopped() to return false after the STW callback fires.
-#if ENABLE(WEBASSEMBLY_DEBUGGER)
-        if (Options::enableWasmDebugger()) [[unlikely]]
-            vm.debugState()->setStopped();
-#endif
+        notifyDebuggerOfVMStopping(vm);
     }
 
+    enterStopTheWorldParticipation(vm, event);
+}
+
+void VMManager::enterStopTheWorldParticipation(VM& vm, StopTheWorldEvent event)
+{
     // Due to races, we may end up calling notifyVMStop() even when there is no stop to be serviced.
     // It should always be safe to call notifyVMStop() as many times as we like. The only cost is
     // is performance.
@@ -373,14 +463,14 @@ void VMManager::notifyVMStop(VM& vm, StopTheWorldEvent event)
     // since Mode::RunOne is only used by debuggers, and peek performance is not a concern.
     // We need to ensure that StopTheWorld VMTraps remained installed and that notifyVMStop() gets
     // called when in Mode::RunOne because new VM thread can be started, and we want those new
-    // threads to also stop since they aren't the targetVM thread.
+    // threads to also stop since they aren't the servicing VM.
 
 
     for (;;) {
         {
             Locker lock { m_worldLock };
 
-            RELEASE_ASSERT(m_numberOfStoppedVMs <= m_numberOfActiveVMs);
+            RELEASE_ASSERT(m_numberOfStoppedVMs + m_numberOfBlockedVMs <= m_numberOfActiveVMs);
 
             auto fetchTopPriorityStopReason = [&] {
                 auto pendingRequests = m_pendingStopRequestBits.loadRelaxed();
@@ -400,16 +490,16 @@ void VMManager::notifyVMStop(VM& vm, StopTheWorldEvent event)
                 m_currentStopReason = fetchTopPriorityStopReason();
                 // We cannot break out early here even if m_currentStopReason is None. That's
                 // because we may be in RunOne mode, and the current thread may not be the
-                // targetVM thead. So, we must flow thru to the target VM check and wait loop
+                // servicing VM. So, we must flow thru to the servicing VM check and wait loop
                 // below.
             }
 
             auto shouldStop = [&] WTF_REQUIRES_LOCK(m_worldLock) {
-                // 1. If the targetVM is already selected, and we're not the targetVM, then stop.
+                // 1. If the servicing VM is already selected, and we're not it, then stop.
                 //    We need to check this first because in RunOne mode, even if there is no more
-                //    STW request to service, any VM that is not the targetVM still needs to stop.
-                if (m_targetVM)
-                    return m_targetVM != &vm;
+                //    STW request to service, any VM that is not the servicing VM still needs to stop.
+                if (m_servingVM)
+                    return m_servingVM != &vm;
 
                 // 2. If there's no more STW requests, then we don't need to stop.
                 //    This is superseded by the condition above during RunOne mode.
@@ -419,35 +509,37 @@ void VMManager::notifyVMStop(VM& vm, StopTheWorldEvent event)
                 // 3. We have a STW request. If not all active VMs are at the stopping point yet,
                 //    then stop and wait for the last VM to stop.
                 //    FIXME: rdar://173360944 Any VM may serve the STW callback, not just the last to stop,
-                //    since once the counter lock above is released, any VM can observe m_numberOfStoppedVMs == m_numberOfActiveVMs.
-                return m_numberOfStoppedVMs != m_numberOfActiveVMs;
+                //    since once the counter lock above is released, any VM can observe the condition.
+                return !allActiveVMsHaveReachedStoppingPoint();
             };
 
             while (shouldStop())
                 m_worldConditionVariable.wait(m_worldLock);
 
             // We can only get here under one the following possible circumstance:
-            // 1. No targetVM thread was specified (therefore, any thread may service this stop)
+            // 1. No servicing VM was specified (therefore, any thread may service this stop)
             //    and this is the last thread that stopped. Or ...
             // 2. This is a subsequent iteration through this loop after context switches (see the
             //    m_worldConditionVariable.notifyAll() at the bottom of the loop). In which case,
-            //    the targetVM thread is the only one that can get past the wait() above. Or ...
+            //    the servicing VM is the only one that can get past the wait() above. Or ...
             // 3. We're executing in RunOne mode and entering this function due to a subsequent
             //    stop request. In that case, all other threads remained stopped, and only the
-            //    targetVM thread is allowed to run.
-            RELEASE_ASSERT(!m_targetVM || m_targetVM == &vm);
+            //    servicing VM is allowed to run.
+            RELEASE_ASSERT(!m_servingVM || m_servingVM == &vm);
 
             // Now we can break out of the handler loop is there are no more requests.
             if (m_currentStopReason == StopReason::None) {
                 if (m_useRunOneMode) {
                     m_worldMode = Mode::RunOne;
-                    RELEASE_ASSERT(m_targetVM);
+                    RELEASE_ASSERT(m_servingVM == &vm && m_servingVM == m_targetVM);
                 } else if (m_worldMode != Mode::RunAll)
                     resumeTheWorld(); // Sets m_worldMode = Mode::RunAll.
                 break; // Exit this loop.
             }
 
-            m_targetVM = &vm;
+            m_servingVM = &vm;
+            if (!m_targetVM)
+                m_targetVM = &vm;
             m_worldMode = Mode::Stopped;
         }
 
@@ -456,7 +548,7 @@ void VMManager::notifyVMStop(VM& vm, StopTheWorldEvent event)
         case StopReason::GC:
             RELEASE_ASSERT_NOT_REACHED();
         case StopReason::WasmDebugger:
-            status = g_jscConfig.wasmDebuggerOnStop(vm, event);
+            status = g_jscConfig.wasmDebuggerOnStop(*m_targetVM, event);
             break;
         case StopReason::MemoryDebugger:
             status = g_jscConfig.memoryDebuggerStopTheWorld(vm, event);
@@ -478,15 +570,19 @@ void VMManager::notifyVMStop(VM& vm, StopTheWorldEvent event)
                 m_needsWasmDebuggerOnResume.store(true);
             m_currentStopReason = StopReason::None;
 
-            // targetVM not being specified means that we should not change m_useRunOneMode.
+            // No new callback target being specified means that we should not change m_useRunOneMode.
             if (status.second)
                 m_useRunOneMode = status.second != STW_RESUME_ALL_TOKEN;
         }
 
         if (status.second && status.second != STW_RESUME_ALL_TOKEN && status.second != m_targetVM) {
             // A context switch was requested. Wake all so that a context switch can occur, and
-            // continue on the targetVM thread.
+            // continue on the serving thread.
             Locker lock { m_worldLock };
+            // m_targetVM always tracks the new callback target. m_servingVM only follows if that
+            // VM can drive the loop itself; otherwise the current proxy keeps servicing on its behalf.
+            if (!status.second->traps().isInBlockingScope())
+                m_servingVM = status.second;
             m_targetVM = status.second;
             m_worldConditionVariable.notifyAll();
         }
@@ -498,19 +594,11 @@ void VMManager::notifyVMStop(VM& vm, StopTheWorldEvent event)
         Locker lock { m_worldLock };
 
         // If we get here, we're either transitioning to RunOne or Running mode.
-        RELEASE_ASSERT(!m_targetVM || m_targetVM == &vm);
+        RELEASE_ASSERT(!m_servingVM || m_servingVM == &vm);
 
         numberOfStoppedVMs = --m_numberOfStoppedVMs;
 
-#if ENABLE(WEBASSEMBLY_DEBUGGER)
-        if (Options::enableWasmDebugger()) [[unlikely]] {
-            // WasmAtomicsWaitBlocked: thread is still sleeping inside memory.atomic.wait and
-            // may participate in multiple STW cycles. Keep stopData so each cycle shows the
-            // correct state; waitForSync() calls clearStop() when the wait ends.
-            if (event != StopTheWorldEvent::WasmAtomicsWaitBlocked)
-                vm.debugState()->clearStop();
-        }
-#endif
+        notifyDebuggerOfVMResuming(vm);
     }
 
     // Call post-resume callback once when last VM exits and all VMs are running.
@@ -599,22 +687,7 @@ void VMManager::handleVMDestructionWhileWorldStopped(VM& vm)
     // If we get here, then the world is either in Stopping / Stopped / RunOne state,
     // and there's at least one other VM thread in play out there. Wake them up so
     // that the right thread can take next step.
-    if (m_targetVM) {
-        // There's a designated targetVM thread to continue in, but we don't have the
-        // ability to just wake the desired one up. So, wake up all the threads and let
-        // them sort themselves out.
-        //
-        // But if the targetVM thread is this thread, then pass the control to another
-        // thread, any thread. That's because this thread is dying imminently.
-        if (m_targetVM == &vm) {
-            m_targetVM = nullptr;
-            m_useRunOneMode = false;
-        }
-        m_worldConditionVariable.notifyAll();
-    } else {
-        // There's no designated targetVM thread. So, just waking up any one thread will do.
-        m_worldConditionVariable.notifyOne();
-    }
+    handleVMExit(vm);
 }
 
 } // namespace JSC

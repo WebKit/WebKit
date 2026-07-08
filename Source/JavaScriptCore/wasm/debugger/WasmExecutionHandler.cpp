@@ -112,7 +112,7 @@ void ExecutionHandler::stopTheWorld(VM& debuggee, StopTheWorldEvent event)
 
         switch (event) {
         case StopTheWorldEvent::WasmStepIntoSiteReached:
-            RELEASE_ASSERT(m_debuggee == info.targetVM && info.worldMode == VMManager::Mode::RunOne);
+            RELEASE_ASSERT(m_debuggee == info.targetVM && info.targetVM == info.servingVM && info.worldMode == VMManager::Mode::RunOne);
             break;
         case StopTheWorldEvent::WasmProgramStop:
             RELEASE_ASSERT(info.worldMode != VMManager::Mode::Stopped);
@@ -183,7 +183,7 @@ ExecutionHandler::ResumeMode ExecutionHandler::stopCode(Locker<Lock>& locker, St
     case StopTheWorldEvent::VMStopped:
     case StopTheWorldEvent::VMCreated:
     case StopTheWorldEvent::VMActivated:
-    case StopTheWorldEvent::WasmAtomicsWaitBlocked:
+    case StopTheWorldEvent::AtomicsWaitBlocked:
         RELEASE_ASSERT(m_debuggerState == DebuggerState::InterruptRequested || m_debuggerState == DebuggerState::SwitchRequested);
         m_breakpointManager->clearAllOneTimeBreakpoints();
         notifyDebuggerOfStop();
@@ -260,11 +260,12 @@ void ExecutionHandler::selectDebuggeeIfNeeded(VM& fallbackVM) WTF_REQUIRES_LOCK(
         return;
     }
 
-    // Prefer VM at prologue, otherwise use the triggered VM
+    // Prefer any non-system call.
+    // FIXME: We should prioritize with WASM traps > non-system calls > system calls.
     VM* selectedVM = nullptr;
     VMManager::forEachVM([&](VM& vm) {
         auto* debugState = vm.debugState();
-        if (vm.debugState()->isStopped && debugState->isStoppedAtPrologue()) {
+        if (vm.debugState()->isStopped && !debugState->isStoppedAtSystemCall()) {
             selectedVM = &vm;
             return IterationStatus::Done;
         }

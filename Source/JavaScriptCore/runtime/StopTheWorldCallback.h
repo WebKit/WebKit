@@ -65,10 +65,10 @@ enum class StopTheWorldEvent : uint8_t {
     //
     // The WASM program itself triggered a stop (breakpoint hit, trap, or dynamic module load).
     WasmProgramStop,
-    // A thread blocked in memory.atomic.wait32/64 cooperatively participating in STW.
-    // Unlike WasmProgramStop, clearStop() is skipped on resume so the stop data persists
-    // across multiple STW cycles while the wait is still in progress.
-    WasmAtomicsWaitBlocked,
+    // A thread blocked in Atomics.wait/memory.atomic.wait32/64 (JS or WASM) cooperatively
+    // participating in STW. Unlike WasmProgramStop, clearStop() is skipped on resume so the
+    // stop data persists across multiple STW cycles while the wait is still in progress.
+    AtomicsWaitBlocked,
     // Not a real stop: fired when the mutator reaches a call/throw site during step-into.
     // Signals the debugger thread to check whether a callee entry breakpoint was installed;
     // the mutator does not pause and wait for a debugger command.

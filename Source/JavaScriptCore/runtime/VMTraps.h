@@ -229,6 +229,9 @@ public:
         BitField maskedBits = event & mask;
         return m_trapBits.loadRelaxed() & maskedBits;
     }
+
+    bool isInBlockingScope() const { return m_isInBlockingScope; }
+
     ALWAYS_INLINE CONCURRENT_SAFE bool clearTrap(Event event)
     {
         ASSERT(!(event & ~AllEvents));
@@ -325,6 +328,8 @@ private:
     // Protects against a race between VMManager::requestResumeAll() and VMManager::notifyVMActivation()
     // to increment their m_numberOfActiveVMs.
     bool m_hasBeenCountedAsActive { false };
+
+    bool m_isInBlockingScope { false };
 
     // Prevents dispatching multiple idle stop handlers for a single stop cycle.
     Atomic<bool> m_hasDispatchedIdleStopHandler { false };

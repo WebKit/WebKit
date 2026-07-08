@@ -1121,6 +1121,7 @@ public:
     int64_t incrementModuleAsyncEvaluationCount() { return m_moduleAsyncEvaluationCount++; }
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
+    Wasm::DebugState* debugStateIfExists() { return m_debugState.get(); }
     JS_EXPORT_PRIVATE Wasm::DebugState* NODELETE debugState();
 #endif
 

@@ -88,7 +88,6 @@
 #include "WebCodecsEncodedAudioChunk.h"
 #include "WebCodecsEncodedVideoChunk.h"
 #include "WebCoreJSClientData.h"
-#include "WorkerSTWParticipation.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/ArrayConventions.h>
 #include <JavaScriptCore/BigIntObject.h>
@@ -127,6 +126,7 @@
 #include <JavaScriptCore/TopExceptionScope.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <JavaScriptCore/TypedArrays.h>
+#include <JavaScriptCore/VMManager.h>
 #include <JavaScriptCore/WasmModule.h>
 #include <JavaScriptCore/YarrFlags.h>
 #include <limits>
@@ -5657,7 +5657,10 @@ IDBValue SerializedScriptValue::writeBlobsToDiskForIndexedDBSynchronously(bool i
             semaphore.signal();
         });
     });
-    waitWithSTWParticipation(semaphore, vm);
+    {
+        JSC::VMBlockingScope blockingScope(vm);
+        semaphore.wait();
+    }
 
     return value;
 }

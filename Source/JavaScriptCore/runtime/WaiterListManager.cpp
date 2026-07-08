@@ -31,17 +31,11 @@
 #include "JSLock.h"
 #include "JSObjectInlines.h"
 #include "ObjectConstructor.h"
-#include "Options.h"
 #include "VMManager.h"
-#include "VMTraps.h"
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RawPointer.h>
 #include <wtf/TZoneMallocInlines.h>
-
-#if ENABLE(WEBASSEMBLY_DEBUGGER)
-#include "WasmDebugServerUtilities.h"
-#endif
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -79,39 +73,6 @@ WaiterListManager& WaiterListManager::singleton()
     return manager;
 }
 
-static void waitForSync(Locker<Lock>& listLocker, VM& vm, Ref<Waiter>& syncWaiter, Ref<WaiterList>& list, MonotonicTime time)
-{
-    listLocker.assertIsHolding(list->lock);
-    while (syncWaiter->isOnList() && time.now() < time && !vm.hasTerminationRequest()) {
-#if ENABLE(WEBASSEMBLY_DEBUGGER)
-        // FIXME: rdar://176407534 This is a workaround. Ideally VMManager would maintain a registry of all
-        // blocking operations (atomics.wait, futex, etc.) and signal them directly on STW
-        // instead of relying on each site to poll NeedStopTheWorld at a fixed interval.
-        // Implementing that correctly is non-trivial due to registration races, lock ordering
-        // between VMManager and each waiter's list lock, and unregistration races on wait
-        // completion — worth a dedicated follow-up patch.
-        if (Options::enableWasmDebugger()) [[unlikely]] {
-            if (vm.traps().hasTrapBit(VMTraps::NeedStopTheWorld)) {
-                // Unlock to participate in STW. The waiter stays on the list —
-                // isOnList() and time guards handle all outcomes on the next iteration.
-                list->lock.unlock();
-                VMManager::singleton().notifyVMStop(vm, StopTheWorldEvent::WasmAtomicsWaitBlocked);
-                list->lock.lock();
-            }
-            auto cap = MonotonicTime::now() + DebuggerSTWCheckInterval;
-            syncWaiter->condition().waitUntil(list->lock, std::min(time, cap).approximate<WallTime>());
-            continue;
-        }
-#endif
-        syncWaiter->condition().waitUntil(list->lock, time.approximate<WallTime>());
-    }
-
-#if ENABLE(WEBASSEMBLY_DEBUGGER)
-    if (Options::enableWasmDebugger()) [[unlikely]]
-        vm.debugState()->clearStop();
-#endif
-}
-
 template <typename ValueType>
 WaiterListManager::WaitSyncResult WaiterListManager::waitSyncImpl(VM& vm, ValueType* ptr, ValueType expectedValue, Seconds timeout)
 {
@@ -122,6 +83,8 @@ WaiterListManager::WaitSyncResult WaiterListManager::waitSyncImpl(VM& vm, ValueT
     MonotonicTime time = MonotonicTime::timePointFromNow(timeout);
 
     {
+        VMBlockingScope waitScope(vm, StopTheWorldEvent::AtomicsWaitBlocked);
+
         Locker listLocker { list->lock };
         if (WTF::atomicLoad(ptr) != expectedValue)
             return WaitSyncResult::NotEqual;
@@ -129,7 +92,8 @@ WaiterListManager::WaitSyncResult WaiterListManager::waitSyncImpl(VM& vm, ValueT
         list->addLast(listLocker, syncWaiter);
         dataLogLnIf(WaiterListsManagerInternal::verbose, "<WaiterListManager> <Thread:", Thread::currentSingleton(), "> added a new SyncWaiter=", syncWaiter.get(), " to a waiterList for ptr ", RawPointer(ptr));
 
-        waitForSync(listLocker, vm, syncWaiter, list, time);
+        while (syncWaiter->isOnList() && time.now() < time && !vm.hasTerminationRequest())
+            syncWaiter->condition().waitUntil(list->lock, time.approximate<WallTime>());
 
         // At this point, syncWaiter should be either notified (dequeued) or timeout (not dequeued).
         bool didGetDequeued = !syncWaiter->isOnList();

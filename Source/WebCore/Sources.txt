@@ -3686,7 +3686,6 @@ workers/WorkerOrWorkletGlobalScope.cpp
 workers/WorkerOrWorkletScriptController.cpp @cost:6
 workers/WorkerOrWorkletThread.cpp
 workers/WorkerRunLoop.cpp
-workers/WorkerSTWParticipation.cpp
 workers/WorkerScriptLoader.cpp
 workers/WorkerThread.cpp
 workers/service/ExtendableEvent.cpp

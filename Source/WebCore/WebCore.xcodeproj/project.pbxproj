@@ -7501,7 +7501,6 @@
 		FEB5079D8E50CAD92E49CE04 /* UnifiedSource54-header-RenderStyleGetters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73C6E6F635A4B4C36B107EAE /* UnifiedSource54-header-RenderStyleGetters.cpp */; };
 		FED13D520CEA949700D89466 /* RenderThemeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = FED13D500CEA949700D89466 /* RenderThemeIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEE1811416C319E800084849 /* SQLTransactionBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = FEE1811216C319E800084849 /* SQLTransactionBackend.h */; };
-		FF6A572B2FA64F1100386D4F /* WorkerSTWParticipation.h in Headers */ = {isa = PBXBuildFile; fileRef = FF6A572A2FA64F1100386D4F /* WorkerSTWParticipation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FF945ECC161F7F3600971BC8 /* PseudoElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FF945ECA161F7F3600971BC8 /* PseudoElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFAC30FE184FB145008C4F1E /* TrailingObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = FFAC30FC184FB145008C4F1E /* TrailingObjects.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFDBC047183D27B700407109 /* LineWidth.h in Headers */ = {isa = PBXBuildFile; fileRef = FFDBC045183D27B700407109 /* LineWidth.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -23931,8 +23930,6 @@
 		FED13D500CEA949700D89466 /* RenderThemeIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderThemeIOS.h; sourceTree = "<group>"; };
 		FEE1811116C319E800084849 /* SQLTransactionBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransactionBackend.cpp; sourceTree = "<group>"; };
 		FEE1811216C319E800084849 /* SQLTransactionBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionBackend.h; sourceTree = "<group>"; };
-		FF6A572A2FA64F1100386D4F /* WorkerSTWParticipation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WorkerSTWParticipation.h; sourceTree = "<group>"; };
-		FF8B5B282FAC142000AD63FC /* WorkerSTWParticipation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerSTWParticipation.cpp; sourceTree = "<group>"; };
 		FF945EC9161F7F3600971BC8 /* PseudoElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PseudoElement.cpp; sourceTree = "<group>"; };
 		FF945ECA161F7F3600971BC8 /* PseudoElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PseudoElement.h; sourceTree = "<group>"; };
 		FFAC30FC184FB145008C4F1E /* TrailingObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrailingObjects.h; sourceTree = "<group>"; };
@@ -27068,8 +27065,6 @@
 				A7D6B3480F61104500B79FD1 /* WorkerScriptLoader.cpp */,
 				A7D6B3470F61104500B79FD1 /* WorkerScriptLoader.h */,
 				2EA768030FE7126400AB9C8A /* WorkerScriptLoaderClient.h */,
-				FF8B5B282FAC142000AD63FC /* WorkerSTWParticipation.cpp */,
-				FF6A572A2FA64F1100386D4F /* WorkerSTWParticipation.h */,
 				2E4346420F546A8200B0F1BA /* WorkerThread.cpp */,
 				2E4346430F546A8200B0F1BA /* WorkerThread.h */,
 				4650AD1726FCCA5A0047F7AD /* WorkerThreadMode.h */,
@@ -50157,7 +50152,6 @@
 				A7D6B3490F61104500B79FD1 /* WorkerScriptLoader.h in Headers */,
 				2EA768040FE7126400AB9C8A /* WorkerScriptLoaderClient.h in Headers */,
 				932199FA2702162500B1FAF9 /* WorkerStorageConnection.h in Headers */,
-				FF6A572B2FA64F1100386D4F /* WorkerSTWParticipation.h in Headers */,
 				2E4346550F546A8200B0F1BA /* WorkerThread.h in Headers */,
 				0B9056F90F2685F30095FF6A /* WorkerThreadableLoader.h in Headers */,
 				97AABD2D14FA09D5007457AE /* WorkerThreadableWebSocketChannel.h in Headers */,

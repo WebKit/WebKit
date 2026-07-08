@@ -32,8 +32,8 @@
 #include "FileSystemSyncAccessHandle.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
-#include "WorkerSTWParticipation.h"
 #include "WorkerThread.h"
+#include <JavaScriptCore/VMManager.h>
 #include <wtf/Scope.h>
 
 namespace WebCore {
@@ -305,7 +305,10 @@ void WorkerFileSystemStorageConnection::closeSyncAccessHandle(FileSystemHandleId
             semaphore.signal();
         });
     });
-    waitWithSTWParticipation(semaphore, scope->vm());
+    {
+        JSC::VMBlockingScope blockingScope(scope->vm());
+        semaphore.wait();
+    }
 }
 
 void WorkerFileSystemStorageConnection::closeSyncAccessHandle(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, EmptyCallback&&)
@@ -492,7 +495,10 @@ std::optional<uint64_t> WorkerFileSystemStorageConnection::requestNewCapacityFor
         };
         mainThreadConnection->requestNewCapacityForSyncAccessHandle(identifier, accessHandleIdentifier, newCapacity, WTF::move(mainThreadCallback));
     });
-    waitWithSTWParticipation(semaphore, scope->vm());
+    {
+        JSC::VMBlockingScope blockingScope(scope->vm());
+        semaphore.wait();
+    }
     return grantedCapacity;
 }
 
