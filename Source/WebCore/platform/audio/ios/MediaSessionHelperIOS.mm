@@ -263,7 +263,9 @@ void MediaSessionHelper::activeRoutesDidChange(MediaDeviceRouteController& route
 
     if (RefPtr mostRecentActiveRoute = routeController.mostRecentActiveRoute()) {
 #if HAVE(AVROUTING_FRAMEWORK)
-        if (!target->hasAirPlayDevice())
+        bool hasAirPlayDevice = target->hasAirPlayDevice();
+        RELEASE_LOG(Media, "MediaSessionHelper::activeRoutesDidChange: hasAirPlayDevice = %d", hasAirPlayDevice);
+        if (!hasAirPlayDevice)
             return;
 
         auto wirelessPlaybackTarget = dynamicDowncast<MediaPlaybackTargetWirelessPlayback>(m_playbackTarget.get());
@@ -604,7 +606,9 @@ void MediaSessionHelperIOS::externalOutputDeviceAvailableDidChange()
         Ref target = MediaPlaybackTargetCocoa::create();
 
 #if HAVE(AVROUTING_FRAMEWORK)
-        if (target->hasAirPlayDevice()) {
+        bool hasAirPlayDevice = target->hasAirPlayDevice();
+        RELEASE_LOG(Media, "-[WebMediaSessionHelper activeOutputDeviceDidChange:]: hasAirPlayDevice = %d", hasAirPlayDevice);
+        if (hasAirPlayDevice) {
             RefPtr mostRecentActiveRoute = MediaDeviceRouteController::singleton().mostRecentActiveRoute();
             auto wirelessPlaybackTarget = dynamicDowncast<MediaPlaybackTargetWirelessPlayback>(callback->playbackTarget());
             if (!wirelessPlaybackTarget || wirelessPlaybackTarget->route() != mostRecentActiveRoute.get())
