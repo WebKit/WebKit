@@ -42,6 +42,7 @@
 #include "WebAutomationSession.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
+#include <JavaScriptCore/MathCommon.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -86,6 +87,37 @@ void WebDriverBidiProcessor::processBidiMessage(const String& message)
     LOG(Automation, "%s", message.utf8().data());
 
     m_backendDispatcher->dispatch(message);
+}
+
+Inspector::CommandResult<void> WebDriverBidiProcessor::validateSerializationOptions(const JSON::Object& serializationOptions)
+{
+    RefPtr<JSON::Value> maxDomDepthValue;
+    if (serializationOptions.getValue("maxDomDepth"_s, maxDomDepthValue)) {
+        if (auto maxDomDepth = maxDomDepthValue->asDouble()) {
+            if (*maxDomDepth < 0)
+                return makeUnexpected("serializationOptions.maxDomDepth must be non-negative"_s);
+            if (std::floor(*maxDomDepth) != *maxDomDepth)
+                return makeUnexpected("serializationOptions.maxDomDepth must be an integer"_s);
+            if (*maxDomDepth > JSC::maxSafeInteger())
+                return makeUnexpected("serializationOptions.maxDomDepth exceeds maximum safe integer"_s);
+        }
+    }
+
+    RefPtr<JSON::Value> maxObjectDepthValue;
+    if (serializationOptions.getValue("maxObjectDepth"_s, maxObjectDepthValue)) {
+        if (auto maxObjectDepth = maxObjectDepthValue->asDouble()) {
+            if (*maxObjectDepth < 0)
+                return makeUnexpected("serializationOptions.maxObjectDepth must be non-negative"_s);
+            if (std::floor(*maxObjectDepth) != *maxObjectDepth)
+                return makeUnexpected("serializationOptions.maxObjectDepth must be an integer"_s);
+            if (*maxObjectDepth > JSC::maxSafeInteger())
+                return makeUnexpected("serializationOptions.maxObjectDepth exceeds maximum safe integer"_s);
+        }
+    }
+
+    // Note: includeShadowTree validation is handled by the protocol enum definition in BidiScript.json
+
+    return { };
 }
 
 // Translate internal error messages that come from the inspector protocol payload.

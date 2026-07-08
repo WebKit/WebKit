@@ -35,6 +35,7 @@
 #include "PageLoadState.h"
 #include "WebAutomationSession.h"
 #include "WebAutomationSessionMacros.h"
+#include "WebDriverBidiProcessor.h"
 #include "WebDriverBidiProtocolObjects.h"
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
@@ -57,6 +58,84 @@ using UserPromptType = Inspector::Protocol::BidiBrowsingContext::UserPromptType;
 using UserPromptHandlerType = Inspector::Protocol::BidiSession::UserPromptHandlerType;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BidiBrowsingContextAgent);
+
+// Helper function to extract node handle and metadata from a [node, metadata] tuple
+// Expected result format: array of [serializedNode, metadata] tuples where serializedNode
+// contains a property like "session-node-XXX" with the handle value
+static std::optional<Ref<Inspector::Protocol::BidiScript::RemoteValue>> extractNodeFromLocateResult(RefPtr<JSON::Value> tupleValue)
+{
+    if (!tupleValue)
+        return std::nullopt;
+
+    auto tuple = tupleValue->asArray();
+    if (!tuple || tuple->length() != 2)
+        return std::nullopt;
+
+    // Extract the serialized node (index 0) - has session-node property with real handle
+    auto serializedNode = tuple->get(0);
+    if (!serializedNode)
+        return std::nullopt;
+
+    auto nodeObject = serializedNode->asObject();
+    if (!nodeObject)
+        return std::nullopt;
+
+    // Extract the handle from session-node property
+    RefPtr<JSON::Value> sessionNodeValue;
+    String nodeHandle;
+    for (auto& key : nodeObject->keys()) {
+        if (key.startsWith("session-node-"_s)) {
+            if (nodeObject->getValue(key, sessionNodeValue) && sessionNodeValue) {
+                nodeHandle = sessionNodeValue->asString();
+                break;
+            }
+        }
+    }
+
+    // Extract metadata (index 1)
+    RefPtr<JSON::Value> metadata = tuple->get(1);
+    if (!metadata)
+        return std::nullopt;
+
+    // Create RemoteValue for this node
+    auto remoteValue = Inspector::Protocol::BidiScript::RemoteValue::create()
+        .setType(Inspector::Protocol::BidiScript::RemoteValueType::Node)
+        .release();
+
+    if (!nodeHandle.isEmpty())
+        remoteValue->setHandle(nodeHandle);
+
+    // Set the metadata as the value object
+    remoteValue->setValue(metadata.releaseNonNull());
+
+    return remoteValue;
+}
+
+static CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RemoteValue>>> parseLocateNodesResult(const String& resultString)
+{
+    auto parsedValue = JSON::Value::parseJSON(resultString);
+    if (!parsedValue)
+        return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError));
+
+    auto resultArray = parsedValue->asArray();
+    if (!resultArray)
+        return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError));
+
+    auto nodesArray = JSON::ArrayOf<Inspector::Protocol::BidiScript::RemoteValue>::create();
+    for (unsigned i = 0; i < resultArray->length(); i++) {
+        RefPtr<JSON::Value> tupleValue = resultArray->get(i);
+        if (!tupleValue)
+            return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError));
+
+        auto remoteValue = extractNodeFromLocateResult(tupleValue);
+        if (!remoteValue)
+            return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError));
+
+        nodesArray->addItem(WTF::move(remoteValue.value()));
+    }
+
+    return nodesArray;
+}
 
 BidiBrowsingContextAgent::BidiBrowsingContextAgent(WebAutomationSession& session, BackendDispatcher& backendDispatcher)
     : m_session(session)
@@ -278,6 +357,120 @@ void BidiBrowsingContextAgent::handleUserPrompt(const BrowsingContext& browsingC
 
     // FIXME: this should consider the session's user prompt handler. <https://webkit.org/b/291666>
     callback(session->dismissCurrentJavaScriptDialog(browsingContext));
+}
+
+void BidiBrowsingContextAgent::locateNodes(const BrowsingContext& browsingContext, Ref<JSON::Object>&& locator, std::optional<double>&& optionalMaxNodeCount, RefPtr<JSON::Object>&& optionalSerializationOptions, RefPtr<JSON::Array>&&, CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RemoteValue>>>&& callback)
+{
+    // https://w3c.github.io/webdriver-bidi/#command-browsingContext-locateNodes
+    RefPtr session = m_session.get();
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
+
+    String locatorType;
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!locator->getString("type"_s, locatorType), InvalidParameter);
+
+    RefPtr<JSON::Value> locatorValue;
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!locator->getValue("value"_s, locatorValue), InvalidParameter);
+
+    std::optional<uint64_t> maxNodeCount;
+    if (optionalMaxNodeCount) {
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(*optionalMaxNodeCount <= 0, InvalidParameter);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(std::floor(*optionalMaxNodeCount) != *optionalMaxNodeCount, InvalidParameter);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(*optionalMaxNodeCount > JSC::maxSafeInteger(), InvalidParameter);
+        maxNodeCount = static_cast<uint64_t>(*optionalMaxNodeCount);
+    }
+
+    if (optionalSerializationOptions) {
+        auto result = WebDriverBidiProcessor::validateSerializationOptions(*optionalSerializationOptions);
+        if (!result)
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, result.error());
+        // FIXME: Implement serializationOptions support. https://bugs.webkit.org/show_bug.cgi?id=288329
+    }
+
+    if (locatorType.isEmpty())
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Locator type cannot be empty"_s);
+
+    bool isKnownType = locatorType == "css"_s || locatorType == "xpath"_s
+        || locatorType == "innerText"_s || locatorType == "accessibility"_s;
+    if (!isKnownType) {
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter,
+            makeString("Invalid locator type: '"_s, locatorType, "'"_s));
+    }
+
+    if (locatorType == "css"_s || locatorType == "xpath"_s || locatorType == "innerText"_s) {
+        if (auto stringValue = locatorValue->asString(); stringValue.isNull()) {
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter,
+                makeString(locatorType, " locator value must be a string"_s));
+        }
+    }
+
+    // FIXME: Implement other locator types (XPath, innerText, accessibility). https://bugs.webkit.org/show_bug.cgi?id=288329
+    if (locatorType != "css"_s) {
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented,
+            makeString("Locator type '"_s, locatorType, "' is not yet implemented. See https://bugs.webkit.org/show_bug.cgi?id=288329"_s));
+    }
+
+    String selectorString;
+    if (auto stringValue = locatorValue->asString(); !stringValue.isNull())
+        selectorString = stringValue;
+    else
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "CSS locator value must be a string"_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(selectorString.isEmpty(), InvalidParameter);
+
+    auto pageAndFrameHandles = session->extractBrowsingContextHandles(browsingContext);
+    ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
+    auto& [topLevelContextHandle, frameHandle] = pageAndFrameHandles.value();
+
+    Ref arguments = JSON::Array::create();
+    arguments->pushString(JSON::Value::create(selectorString)->toJSONString());
+    if (maxNodeCount)
+        arguments->pushString(JSON::Value::create(static_cast<double>(*maxNodeCount))->toJSONString());
+
+    // FIXME: Implement startNodes support. https://bugs.webkit.org/show_bug.cgi?id=288329
+    // Inline JavaScript for CSS selector logic. Since _execute uses .apply(null, ...), this wrapper has this=null,
+    // so we cannot access proxy methods. Instead, we inline the complete logic here.
+    session->evaluateJavaScriptFunction(topLevelContextHandle, frameHandle,
+        "function(selector, maxCount) { \
+            try { \
+                const elements = document.querySelectorAll(selector); \
+                const count = maxCount === undefined ? elements.length : Math.min(elements.length, maxCount); \
+                const results = []; \
+                for (let i = 0; i < count; i++) { \
+                    const elem = elements[i]; \
+                    const metadata = { \
+                        nodeType: elem.nodeType, \
+                        localName: elem.localName, \
+                        namespaceURI: elem.namespaceURI || null, \
+                        childNodeCount: elem.childNodes.length, \
+                        attributes: { } \
+                    }; \
+                    if (elem.attributes) { \
+                        for (let j = 0; j < elem.attributes.length; j++) { \
+                            const attr = elem.attributes[j]; \
+                            metadata.attributes[attr.name] = attr.value; \
+                        } \
+                    } \
+                    results.push([elem, metadata]); \
+                } \
+                return results; \
+            } catch(e) { \
+                const error = new Error('Invalid CSS selector: ' + e.message); \
+                error.name = 'InvalidSelector'; \
+                throw error; \
+            } \
+        }"_s, WTF::move(arguments), false, false, std::nullopt, [callback = WTF::move(callback)](Inspector::CommandResult<String>&& result) mutable {
+        if (!result) {
+            callback(makeUnexpected(result.error()));
+            return;
+        }
+
+        auto nodes = parseLocateNodesResult(result.value());
+        if (!nodes) {
+            callback(makeUnexpected(nodes.error()));
+            return;
+        }
+
+        callback(WTF::move(nodes.value()));
+    });
 }
 
 

@@ -72,6 +72,9 @@ public:
     bool eventIsEnabled(const String& eventName, const HashSet<String>& contexts);
     void emitEventIfEnabled(const String& eventName, const HashSet<String>& browsingContexts, NOESCAPE const Function<void()>&);
 
+    // Shared validation helpers for BiDi protocol
+    static Inspector::CommandResult<void> validateSerializationOptions(const JSON::Object&);
+
 private:
     WeakPtr<WebAutomationSession> m_session;
 

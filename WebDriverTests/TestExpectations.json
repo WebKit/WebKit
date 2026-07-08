@@ -3150,7 +3150,27 @@
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/locate_nodes/invalid.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}
+        "expected": { "all": { "status": ["PASS"] }},
+        "subtests": {
+            "test_params_locator_context_value_invalid_context[]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}},
+            "test_params_locator_context_value_invalid_context[non_existing_context]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}},
+            "test_params_locator_value_invalid_value[xpath-]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}},
+            "test_params_locator_value_invalid_value[innerText-]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}},
+            "test_params_locator_value_invalid_value[accessibility-value3]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}},
+            "test_params_locator_xpath_unknown_error": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}},
+            "test_params_start_nodes_empty_list": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}},
+            "test_params_start_nodes_not_dom_node[value0]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}},
+            "test_params_start_nodes_not_dom_node[value1]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}},
+            "test_params_start_nodes_not_dom_node[value2]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}},
+            "test_params_start_nodes_not_dom_node[value3]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}},
+            "test_params_start_nodes_dom_node_not_element[document.querySelector('input#button').attributes[0]]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}},
+            "test_params_start_nodes_dom_node_not_element[document.querySelector('#with-text-node').childNodes[0]]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}},
+            "test_params_start_nodes_dom_node_not_element[document.createProcessingInstruction(\"xml-stylesheet\", \"href='foo.css'\")]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}},
+            "test_params_start_nodes_dom_node_not_element[document.querySelector('#with-comment').childNodes[0]]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}},
+            "test_params_start_nodes_dom_node_not_element[document.doctype]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}},
+            "test_params_start_nodes_dom_node_not_element[document.getElementsByTagName('div')]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}},
+            "test_params_start_nodes_dom_node_not_element[document.querySelectorAll('div')]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}}
+        }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/locate_nodes/locator.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288329"}}

@@ -67,6 +67,24 @@
             "enum": [ "alert", "beforeunload", "confirm", "prompt" ]
         },
         {
+            "id": "Locator",
+            "description": "Defines a strategy for locating nodes within a document.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-browsingContext-Locator",
+            "type": "object",
+            "properties": [
+                { "name": "type", "$ref": "BidiBrowsingContext.LocatorType" },
+                { "name": "value", "type": "any" }
+            ]
+        },
+        {
+            "id": "LocatorType",
+            "description": "The type of locator strategy to use for finding nodes.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-browsingContext-Locator",
+            "bug": "https://bugs.webkit.org/show_bug.cgi?id=288329",
+            "type": "string",
+            "enum": [ "css" ]
+        },
+        {
             "id": "Viewport",
             "description": "Represents viewport dimensions.",
             "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-setViewport",
@@ -125,6 +143,23 @@
                 { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context in which to handle a user prompt.  It is an error to pass a non-top level traversable." },
                 { "name": "accept", "type": "boolean", "optional": true },
                 { "name": "userText", "type": "string", "optional": true }
+            ]
+        },
+        {
+            "name": "locateNodes",
+            "description": "Locates nodes within a browsing context using the provided locator strategy.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-locateNodes",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/locate_nodes",
+            "async": true,
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context to search within." },
+                { "name": "locator", "$ref": "BidiBrowsingContext.Locator", "description": "The locator strategy and value to use for finding nodes." },
+                { "name": "maxNodeCount", "type": "number", "optional": true, "description": "Maximum number of nodes to return. If not specified, all matching nodes are returned." },
+                { "name": "serializationOptions", "$ref": "BidiScript.SerializationOptions", "optional": true, "description": "Options for controlling how nodes are serialized in the response." },
+                { "name": "startNodes", "type": "array", "items": { "$ref": "BidiScript.RemoteValue" }, "optional": true, "description": "Optional array of node references to start the search from." }
+            ],
+            "returns": [
+                { "name": "nodes", "type": "array", "items": { "$ref": "BidiScript.RemoteValue" }, "description": "Array of nodes matching the locator." }
             ]
         },
         {
