@@ -46,6 +46,7 @@ dictionary ReadableStreamIteratorOptions {
 typedef (ReadableStreamDefaultReader or ReadableStreamBYOBReader) ReadableStreamReader;
 
 [
+    ActiveDOMObject,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=*,
     GenerateIsReachable=Impl,

@@ -69,14 +69,19 @@ Ref<DOMPromise> getAlgorithmPromise(JSDOMGlobalObject& globalObject, RefPtr<Algo
     return algorithmPromise.releaseNonNull();
 }
 
-ReadableByteStreamController::ReadableByteStreamController(ReadableStream& stream, JSC::JSValue underlyingSource, RefPtr<UnderlyingSourcePullCallback>&& pullAlgorithm, RefPtr<UnderlyingSourceCancelCallback>&& cancelAlgorithm, double highWaterMark, size_t autoAllocateChunkSize)
+ReadableByteStreamController::ReadableByteStreamController(JSDOMGlobalObject& globalObject, ReadableStream& stream, JSC::JSValue underlyingSource, RefPtr<UnderlyingSourcePullCallback>&& pullAlgorithm, RefPtr<UnderlyingSourceCancelCallback>&& cancelAlgorithm, double highWaterMark, size_t autoAllocateChunkSize)
     : m_stream(stream)
     , m_strategyHWM(highWaterMark)
-    , m_pullAlgorithm(WTF::move(pullAlgorithm))
-    , m_cancelAlgorithm(WTF::move(cancelAlgorithm))
     , m_autoAllocateChunkSize(autoAllocateChunkSize)
-    , m_underlyingSource(underlyingSource)
 {
+    {
+        Locker lock(m_gcLock);
+        m_pullAlgorithm = WTF::move(pullAlgorithm);
+        m_cancelAlgorithm = WTF::move(cancelAlgorithm);
+    }
+
+    m_underlyingSource.set(globalObject.vm(), &globalObject, underlyingSource);
+
     m_pullAlgorithmWrapper =  [](auto& globalObject, auto& controller) {
         return getAlgorithmPromise(globalObject, controller.m_pullAlgorithm, controller.m_underlyingSource.getValue(), controller);
     };
@@ -105,6 +110,12 @@ void ReadableByteStreamController::ref()
 void ReadableByteStreamController::deref()
 {
     m_stream->deref();
+}
+
+void ReadableByteStreamController::stop()
+{
+    m_storedError.clear();
+    clearAlgorithms();
 }
 
 ReadableStream& ReadableByteStreamController::stream()
@@ -666,6 +677,9 @@ void ReadableByteStreamController::clearPendingPullIntos()
 // https://streams.spec.whatwg.org/#readable-byte-stream-controller-clear-algorithms
 void ReadableByteStreamController::clearAlgorithms()
 {
+    m_underlyingSource.clear();
+
+    Locker lock(m_gcLock);
     m_pullAlgorithm = nullptr;
     m_cancelAlgorithm = nullptr;
 }
@@ -999,6 +1013,19 @@ void ReadableByteStreamController::handleSourcePromise(JSDOMGlobalObject& global
             break;
         }
     }, thisValue.getObject());
+}
+
+template<typename Visitor>
+void ReadableByteStreamController::visitDirectChildren(Visitor& visitor)
+{
+    m_underlyingSource.visit(visitor);
+    m_storedError.visit(visitor);
+
+    Locker lock(m_gcLock);
+    if (m_pullAlgorithm)
+        SUPPRESS_UNCOUNTED_ARG m_pullAlgorithm->visitJSFunction(visitor);
+    if (m_cancelAlgorithm)
+        SUPPRESS_UNCOUNTED_ARG m_cancelAlgorithm->visitJSFunction(visitor);
 }
 
 template<typename Visitor>

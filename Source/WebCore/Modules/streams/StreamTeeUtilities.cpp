@@ -39,10 +39,11 @@
 #include "ReadableStreamBYOBRequest.h"
 #include "ReadableStreamDefaultReader.h"
 #include "ScriptExecutionContextInlines.h"
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 
-class StreamTeeState final : public ReadableStream::DependencyToVisit, public RefCounted<StreamTeeState>, public ContextDestructionObserver {
+class StreamTeeState final : public ReadableStream::DependencyToVisit, public RefCountedAndCanMakeWeakPtr<StreamTeeState> {
 public:
     template<typename Reader>
     static Ref<StreamTeeState> create(JSDOMGlobalObject& globalObject, Ref<ReadableStream>&& stream, Ref<Reader>&& reader)
@@ -53,7 +54,7 @@ public:
 
     ~StreamTeeState();
 
-    // ContextDestructionObserver.
+    // AbstractRefCounted.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
@@ -154,13 +155,12 @@ public:
 
     JSDOMGlobalObject* globalObject()
     {
-        RefPtr context = scriptExecutionContext();
-        return context ? JSC::jsCast<JSDOMGlobalObject*>(context->globalObject()) : nullptr;
+        return m_context ? JSC::jsCast<JSDOMGlobalObject*>(RefPtr { m_context }->globalObject()) : nullptr;
     }
 
     void queueMicrotaskWithValue(JSC::JSValue value, Function<void(JSC::JSValue)>&& task)
     {
-        RefPtr context = scriptExecutionContext();
+        RefPtr context = m_context;
         if (!context)
             return;
 
@@ -170,18 +170,9 @@ public:
         });
     }
 
-    void contextDestroyed() final
-    {
-        m_defaultReader = nullptr;
-        m_byobReader = nullptr;
-        m_branch1 = nullptr;
-        m_branch2 = nullptr;
-        clearReasons();
-    }
-
 private:
     StreamTeeState(ScriptExecutionContext* context, Ref<ReadableStream>&& stream, Ref<ReadableStreamDefaultReader>&& reader, Ref<DeferredPromise>&& cancelDeferred, Ref<DOMPromise>&& cancelPromise)
-        : ContextDestructionObserver(context)
+        : m_context(context)
         , m_stream(WTF::move(stream))
         , m_defaultReader(WTF::move(reader))
         , m_cancelDeferredPromise(WTF::move(cancelDeferred))
@@ -190,7 +181,7 @@ private:
     }
 
     StreamTeeState(ScriptExecutionContext* context, Ref<ReadableStream>&& stream, Ref<ReadableStreamBYOBReader>&& reader, Ref<DeferredPromise>&& cancelDeferred, Ref<DOMPromise>&& cancelPromise)
-        : ContextDestructionObserver(context)
+        : m_context(context)
         , m_stream(WTF::move(stream))
         , m_byobReader(WTF::move(reader))
         , m_cancelDeferredPromise(WTF::move(cancelDeferred))
@@ -198,6 +189,16 @@ private:
     {
     }
 
+    void stop() final
+    {
+        m_defaultReader = nullptr;
+        m_byobReader = nullptr;
+        m_branch1 = nullptr;
+        m_branch2 = nullptr;
+        clearReasons();
+    }
+
+    WeakPtr<ScriptExecutionContext> m_context;
     const Ref<ReadableStream> m_stream;
     RefPtr<ReadableStreamDefaultReader> m_defaultReader;
     RefPtr<ReadableStreamBYOBReader> m_byobReader;

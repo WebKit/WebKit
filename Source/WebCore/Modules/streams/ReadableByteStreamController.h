@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include "JSDOMGuardedObject.h"
 #include "JSValueInWrappedObject.h"
 #include "ReadableStreamReadRequest.h"
 #include <wtf/Deque.h>
@@ -87,6 +88,7 @@ public:
 
     void ref();
     void deref();
+    void stop();
 
     void error(JSDOMGlobalObject&, const Exception&);
     void error(JSDOMGlobalObject&, JSC::JSValue);
@@ -101,16 +103,14 @@ public:
     bool isPulling() const { return m_pulling; }
 
     template<typename Visitor> void visitAdditionalChildren(Visitor&);
-
-    JSValueInWrappedObject& underlyingSourceConcurrently() { return m_underlyingSource; }
-    JSValueInWrappedObject& storedErrorConcurrently() { return m_storedError; }
+    template<typename Visitor> void visitDirectChildren(Visitor&);
 
     using PullAlgorithm = Function<Ref<DOMPromise>(JSDOMGlobalObject&, ReadableByteStreamController&)>;
     using CancelAlgorithm = Function<Ref<DOMPromise>(JSDOMGlobalObject&, ReadableByteStreamController&, std::optional<JSC::JSValue>&&)>;
 
 private:
     friend ReadableStream;
-    ReadableByteStreamController(ReadableStream&, JSC::JSValue, RefPtr<UnderlyingSourcePullCallback>&&, RefPtr<UnderlyingSourceCancelCallback>&&, double highWaterMark, size_t autoAllocateChunkSize);
+    ReadableByteStreamController(JSDOMGlobalObject&, ReadableStream&, JSC::JSValue, RefPtr<UnderlyingSourcePullCallback>&&, RefPtr<UnderlyingSourceCancelCallback>&&, double highWaterMark, size_t autoAllocateChunkSize);
 
     ExceptionOr<void> enqueue(JSDOMGlobalObject&, JSC::ArrayBuffer&, size_t byteOffset, size_t byteLength);
 
@@ -183,6 +183,7 @@ private:
     JSValueInWrappedObject m_underlyingSource;
     JSValueInWrappedObject m_storedError;
 
+    Lock m_gcLock;
     PullAlgorithm m_pullAlgorithmWrapper;
     CancelAlgorithm m_cancelAlgorithmWrapper;
 };

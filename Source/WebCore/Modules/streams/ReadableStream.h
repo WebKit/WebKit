@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ContextDestructionObserver.h"
+#include "ActiveDOMObject.h"
 #include "ExceptionOr.h"
 #include "InternalReadableStream.h"
 #include "JSValueInWrappedObject.h"
@@ -57,7 +57,7 @@ struct UnderlyingSource;
 
 using ReadableStreamReader = Variant<RefPtr<ReadableStreamDefaultReader>, RefPtr<ReadableStreamBYOBReader>>;
 
-class ReadableStream : public RefCounted<ReadableStream>, public ContextDestructionObserver {
+class ReadableStream : public RefCounted<ReadableStream>, public ActiveDOMObject {
 public:
     enum class ReaderMode { Byob };
     struct GetReaderOptions {
@@ -78,9 +78,10 @@ public:
 
     virtual ~ReadableStream();
 
-    // ContextDestructionObserver.
+    // ActiveDOMObject.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
+    void stop() final;
 
     Ref<DOMPromise> cancelForBindings(JSDOMGlobalObject&, JSC::JSValue);
     ExceptionOr<ReadableStreamReader> getReader(JSDOMGlobalObject&, const GetReaderOptions&);
@@ -136,6 +137,7 @@ public:
     public:
         virtual ~DependencyToVisit() = default;
         virtual void visit(JSC::AbstractSlotVisitor&) = 0;
+        virtual void stop() = 0;
     };
     enum class StartSynchronously : bool { No, Yes };
     enum class IsSourceReachableFromOpaqueRoot : bool { No, Yes };
