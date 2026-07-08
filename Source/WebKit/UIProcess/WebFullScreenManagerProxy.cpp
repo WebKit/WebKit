@@ -224,8 +224,7 @@ Awaitable<bool> WebFullScreenManagerProxy::enterFullScreen(IPC::Connection& conn
 #endif // ENABLE(QUICKLOOK_FULLSCREEN)
 #endif // PLATFORM(IOS_FAMILY)
 
-    CheckedPtr client = m_client;
-    if (!client)
+    if (!m_client)
         co_return false;
 
     RefPtr page = m_page.get();
@@ -238,6 +237,10 @@ Awaitable<bool> WebFullScreenManagerProxy::enterFullScreen(IPC::Connection& conn
 
     if (auto coordinates = co_await page->convertPointToMainFrameCoordinates({ 0, 0 }, webFrame->rootFrame()->frameID()))
         m_rootFrameOriginInMainFrameCoordinates = IntPoint(*coordinates);
+
+    CheckedPtr client = m_client;
+    if (!client)
+        co_return false;
 
     bool success = co_await AwaitableFromCompletionHandler<bool> { [=] (auto completionHandler) {
         client->enterFullScreen(mediaDetails.mediaDimensions, WTF::move(completionHandler));
@@ -412,8 +415,7 @@ Awaitable<bool> WebFullScreenManagerProxy::beganEnterFullScreen(FrameIdentifier 
     if (!page)
         co_return false;
 
-    CheckedPtr client = m_client;
-    if (!client)
+    if (!m_client)
         co_return false;
 
     auto rectsInScreenCoordinates = convertFromRootViewToScreenCoordinates({ initialFrameInRootViewCoordinates, finalFrameInRootViewCoordinates });
@@ -422,6 +424,10 @@ Awaitable<bool> WebFullScreenManagerProxy::beganEnterFullScreen(FrameIdentifier 
     auto [initialFrameInScreenCoordinates, finalFrameInScreenCoordinates] = *rectsInScreenCoordinates;
 
     co_await page->nextPresentationUpdate();
+
+    CheckedPtr client = m_client;
+    if (!client)
+        co_return false;
 
     bool success = co_await AwaitableFromCompletionHandler<bool> { [=] (auto completionHandler) {
         client->beganEnterFullScreen(initialFrameInScreenCoordinates, finalFrameInScreenCoordinates, WTF::move(completionHandler));
