@@ -42,6 +42,7 @@ using PlatformSettings = void;
 
 namespace WebCore {
 struct SystemSettingsState;
+enum class InterfaceContrastPreference : uint8_t;
 }
 
 namespace WebKit {
@@ -72,7 +73,8 @@ private:
     int cursorBlinkTime() const;
     bool primaryButtonWarpsSlider() const;
     bool overlayScrolling() const;
-    bool enableAnimations() const;
+    bool reducedMotion() const;
+    WebCore::InterfaceContrastPreference interfaceContrast() const;
 
     PlatformSettings* m_settings { nullptr };
 };

@@ -77,15 +77,40 @@ WPE_API GQuark wpe_settings_error_quark(void);
 #define WPE_SETTING_DARK_MODE "/wpe-platform/dark-mode"
 
 /**
- * WPE_SETTING_DISABLE_ANIMATIONS:
+ * WPE_SETTING_REDUCED_MOTION:
  *
- * Disables animations on websites.
+ * Whether the user prefers reduced animations.
  *
  * VariantType: boolean
  *
  * Default: false
  */
-#define WPE_SETTING_DISABLE_ANIMATIONS "/wpe-platform/disable-animations"
+#define WPE_SETTING_REDUCED_MOTION "/wpe-platform/reduced-motion"
+
+/**
+ * WPESettingsInterfaceContrast:
+ * @WPE_SETTINGS_INTERFACE_CONTRAST_NO_PREFERENCE: the user prefers normal contrast
+ * @WPE_SETTINGS_INTERFACE_CONTRAST_MORE: the user prefers high contrast
+ * @WPE_SETTINGS_INTERFACE_CONTRAST_LESS: the user prefers less contrast
+ *
+ * The user's preference for high contrast, low contrast, or normal contrast.
+ */
+typedef enum {
+    WPE_SETTINGS_INTERFACE_CONTRAST_NO_PREFERENCE,
+    WPE_SETTINGS_INTERFACE_CONTRAST_MORE,
+    WPE_SETTINGS_INTERFACE_CONTRAST_LESS
+} WPESettingsInterfaceContrast;
+
+/**
+ * WPE_SETTING_INTERFACE_CONTRAST:
+ *
+ * Whether the user prefers high contrast, low contrast, or normal contrast.
+ *
+ * VariantType: byte (WPESettingsInterfaceContrast)
+ *
+ * Default: WPE_SETTINGS_INTERFACE_CONTRAST_NO_PREFERENCE
+ */
+#define WPE_SETTING_INTERFACE_CONTRAST "/wpe-platform/interface-contrast"
 
 /**
  * WPE_SETTING_FONT_ANTIALIAS:

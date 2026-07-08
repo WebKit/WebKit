@@ -37,7 +37,7 @@ private:
     friend NeverDestroyed<ThemeMac>;
     ThemeMac() = default;
 
-    bool userPrefersContrast() const final;
+    InterfaceContrastPreference userPreferredContrast() const final;
     bool userPrefersDifferentiationWithoutColor() const final;
     bool userPrefersReducedMotion() const final;
 };
