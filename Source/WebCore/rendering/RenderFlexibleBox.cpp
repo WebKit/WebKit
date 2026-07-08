@@ -1558,6 +1558,30 @@ void RenderFlexibleBox::performFlexLayout(RelayoutChildren relayoutChildren)
     if (layoutUsingFlexFormattingContext())
         return;
 
+    auto allItems = collectFlexItems(relayoutChildren);
+    if (allItems.isEmpty()) {
+        adjustLogicalHeightForLineIfEmpty();
+        updateLogicalHeight();
+        return;
+    }
+
+    LayoutUnit gapBetweenItems = computeGap(GapType::BetweenItems);
+    LayoutUnit gapBetweenLines = computeGap(GapType::BetweenLines);
+
+    auto lineStates = layoutFlexLines(allItems, relayoutChildren, gapBetweenItems);
+    setFlexItemCountsForFirstAndLastLine(lineStates);
+    adjustLogicalHeightForLineIfEmpty();
+
+    if (!isColumnFlow() && lineStates.size() > 1)
+        setLogicalHeight(logicalHeight() + gapBetweenLines * (lineStates.size() - 1));
+
+    updateLogicalHeight();
+    distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(lineStates, gapBetweenItems);
+    repositionLogicalHeightDependentFlexItems(lineStates, gapBetweenLines);
+}
+
+RenderFlexibleBox::FlexLayoutItems RenderFlexibleBox::collectFlexItems(RelayoutChildren relayoutChildren)
+{
     // Set up our master list of flex items. All of the rest of the algorithm
     // should work off this list of a subset.
     // FIXME: That second part is not yet true.
@@ -1585,27 +1609,17 @@ void RenderFlexibleBox::performFlexLayout(RelayoutChildren relayoutChildren)
         // flexBaseAndHypotheticalMainSize might set the override containing block height so any value cached for definiteness might be incorrect.
         resetHasDefiniteHeight();
     }
+    return allItems;
+}
 
-    if (allItems.isEmpty()) {
-        if (hasLineIfEmpty()) {
-            auto minHeight = borderAndPaddingLogicalHeight() + lineHeight() + scrollbarLogicalHeight();
-            if (borderBoxHeight() < minHeight)
-                setLogicalHeight(minHeight);
-        }
-        updateLogicalHeight();
-        return;
-    }
-
+RenderFlexibleBox::FlexLineStates RenderFlexibleBox::layoutFlexLines(const FlexLayoutItems& allItems, RelayoutChildren relayoutChildren, LayoutUnit gapBetweenItems)
+{
     FlexLineStates lineStates;
     auto mainAxisAvailableSpace = this->mainAxisAvailableSpace();
-    LayoutUnit gapBetweenItems = computeGap(GapType::BetweenItems);
-    LayoutUnit gapBetweenLines = computeGap(GapType::BetweenLines);
     LayoutUnit crossAxisOffset = flowAwareBorderBefore() + flowAwarePaddingBefore();
     size_t nextIndex = 0;
-    size_t numLines = 0;
     InspectorInstrumentation::flexibleBoxRendererBeganLayout(*this);
     while (auto lineData = computeNextFlexLine(nextIndex, allItems, mainAxisAvailableSpace, gapBetweenItems)) {
-        ++numLines;
         InspectorInstrumentation::flexibleBoxRendererWrappedToNextLine(*this, nextIndex);
 
         auto& lineItems = lineData->lineItems;
@@ -1638,32 +1652,34 @@ void RenderFlexibleBox::performFlexLayout(RelayoutChildren relayoutChildren)
         lineStates.append(LineState(crossAxisOffset, lineResult.crossAxisExtent, WTF::move(lineResult.baselineSharingGroups), WTF::move(lineItems)));
         crossAxisOffset = lineResult.crossAxisOffsetForNextLine;
     }
+    return lineStates;
+}
 
-    if (!lineStates.isEmpty()) {
-        auto isWrapReverse = this->isWrapReverse();
-        auto firstLineItemsCountInOriginalOrder = lineStates.first().flexLayoutItems.size();
-        auto lastLineItemsCountInOriginalOrder = lineStates.last().flexLayoutItems.size();
+void RenderFlexibleBox::setFlexItemCountsForFirstAndLastLine(const FlexLineStates& lineStates)
+{
+    if (lineStates.isEmpty())
+        return;
 
-        m_numberOfFlexItemsOnFirstLine = !isWrapReverse ? firstLineItemsCountInOriginalOrder : lastLineItemsCountInOriginalOrder;
-        m_numberOfFlexItemsOnLastLine = !isWrapReverse ? lastLineItemsCountInOriginalOrder : firstLineItemsCountInOriginalOrder;
-    }
+    auto isWrapReverse = this->isWrapReverse();
+    auto firstLineItemsCountInOriginalOrder = lineStates.first().flexLayoutItems.size();
+    auto lastLineItemsCountInOriginalOrder = lineStates.last().flexLayoutItems.size();
 
-    if (hasLineIfEmpty()) {
-        // Even if computeNextFlexLine returns true, the flexbox might not have
-        // a line because all our children might be out of flow positioned.
-        // Instead of just checking if we have a line, make sure the flexbox
-        // has at least a line's worth of height to cover this case.
-        LayoutUnit minHeight = borderAndPaddingLogicalHeight() + lineHeight() + scrollbarLogicalHeight();
-        if (borderBoxSize().height() < minHeight)
-            setLogicalHeight(minHeight);
-    }
+    m_numberOfFlexItemsOnFirstLine = !isWrapReverse ? firstLineItemsCountInOriginalOrder : lastLineItemsCountInOriginalOrder;
+    m_numberOfFlexItemsOnLastLine = !isWrapReverse ? lastLineItemsCountInOriginalOrder : firstLineItemsCountInOriginalOrder;
+}
 
-    if (!isColumnFlow() && numLines > 1)
-        setLogicalHeight(logicalHeight() + computeGap(GapType::BetweenLines) * (numLines - 1));
+void RenderFlexibleBox::adjustLogicalHeightForLineIfEmpty()
+{
+    if (!hasLineIfEmpty())
+        return;
 
-    updateLogicalHeight();
-    distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(lineStates, gapBetweenItems);
-    repositionLogicalHeightDependentFlexItems(lineStates, gapBetweenLines);
+    // Even if computeNextFlexLine returns true, the flexbox might not have
+    // a line because all our children might be out of flow positioned.
+    // Instead of just checking if we have a line, make sure the flexbox
+    // has at least a line's worth of height to cover this case.
+    LayoutUnit minHeight = borderAndPaddingLogicalHeight() + lineHeight() + scrollbarLogicalHeight();
+    if (borderBoxHeight() < minHeight)
+        setLogicalHeight(minHeight);
 }
 
 std::optional<RenderFlexibleBox::FlexingLineData> RenderFlexibleBox::computeNextFlexLine(size_t& nextIndex, const FlexLayoutItems& allItems, LayoutUnit mainAxisAvailableSpace, LayoutUnit gapBetweenItems)

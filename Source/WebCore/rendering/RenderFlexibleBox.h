@@ -255,6 +255,10 @@ private:
     Overflow NODELETE crossAxisOverflowForFlexItem(const RenderBox& flexItem) const;
 
     void performFlexLayout(RelayoutChildren);
+    FlexLayoutItems collectFlexItems(RelayoutChildren);
+    FlexLineStates layoutFlexLines(const FlexLayoutItems& allItems, RelayoutChildren, LayoutUnit gapBetweenItems);
+    void setFlexItemCountsForFirstAndLastLine(const FlexLineStates&);
+    void adjustLogicalHeightForLineIfEmpty();
 
     struct FlexingLineData {
         FlexLayoutItems lineItems;
