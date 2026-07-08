@@ -23,6 +23,7 @@
 
 #include "GRefPtrGStreamer.h"
 #include "GUniquePtrGStreamer.h"
+#include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -48,7 +49,7 @@ public:
     unsigned currentSequenceNumberOffset() const;
     void setSequenceNumberOffset(unsigned);
 
-    std::optional<std::pair<unsigned, GstStructure*>> stats() const;
+    bool appendStatsTo(GstStructure*) const;
     void startUpdatingStats();
     void stopUpdatingStats();
 
@@ -68,6 +69,7 @@ protected:
     GRefPtr<GstElement> m_valve;
 
     GUniquePtr<GstStructure> m_encodingParameters;
+    mutable Lock m_statsLock;
     GUniquePtr<GstStructure> m_stats;
 
 private:

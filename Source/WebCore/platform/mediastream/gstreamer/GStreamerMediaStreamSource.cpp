@@ -570,7 +570,17 @@ public:
     void updateFirstVideoSampleSeenFlag();
     bool receivedAudioSampleBeforeVideo();
 
-    const GstStructure* stats() const { return m_stats.get(); }
+    bool mergeStatsInto(GstStructure* destination) const
+    {
+        Locker locker { m_statsLock };
+        if (!m_stats)
+            return false;
+        gstStructureForeach(m_stats.get(), [&](auto id, const auto* value) {
+            gstStructureIdSetValue(destination, id, value);
+            return true;
+        });
+        return true;
+    }
 
 private:
     InternalSource(GstElement* parent, MediaStreamTrackPrivate& track, const String& padName, bool consumerIsVideoPlayer)
@@ -660,14 +670,8 @@ private:
             case GST_QUERY_CUSTOM: {
                 auto structure = gst_query_writable_structure(query);
                 if (gst_structure_has_name(structure, "webkit-media-source-stats")) {
-                    const auto stats = self->stats();
-                    if (!stats)
+                    if (!self->mergeStatsInto(structure))
                         return GST_PAD_PROBE_OK;
-
-                    gstStructureForeach(stats, [&](auto id, const auto* value) {
-                        gstStructureIdSetValue(structure, id, value);
-                        return true;
-                    });
                     return GST_PAD_PROBE_HANDLED;
                 }
                 break;
@@ -786,6 +790,7 @@ private:
         if (!m_trackSource)
             return;
 
+        Locker locker { m_statsLock };
         if (m_isVideoTrack) {
             if (!m_stats)
                 m_stats.reset(gst_structure_new_empty("video-stats"));
@@ -875,6 +880,7 @@ private:
     double m_totalAudioSamplesDuration { 0 };
     double m_totalAudioEnergy { 0 };
     unsigned m_audioSamplesCountSinceLastTotalEnergyCalculation { 0 };
+    mutable Lock m_statsLock;
     GUniquePtr<GstStructure> m_stats;
 #if USE(GSTREAMER_WEBRTC)
     RefPtr<PadProbeHandle<RealtimeIncomingSourceGStreamer>> m_incomingPadProbeHandle;

@@ -242,19 +242,22 @@ int GStreamerRTPPacketizer::findLastExtensionId(const GstCaps* caps)
     return result;
 }
 
-std::optional<std::pair<unsigned, GstStructure*>> GStreamerRTPPacketizer::stats() const
+bool GStreamerRTPPacketizer::appendStatsTo(GstStructure* destination) const
 {
     GRefPtr<GstCaps> caps;
     g_object_get(m_capsFilter.get(), "caps", &caps.outPtr(), nullptr);
     if (!caps || gst_caps_is_empty(caps.get()) || gst_caps_is_any(caps.get()))
-        return std::nullopt;
+        return false;
 
     auto structure = gst_caps_get_structure(caps.get(), 0);
     auto ssrc = gstStructureGet<unsigned>(structure, "ssrc"_s);
     if (!ssrc)
-        return std::nullopt;
+        return false;
 
-    return { { *ssrc, m_stats.get() } };
+    auto ssrcString = makeString(*ssrc);
+    Locker locker { m_statsLock };
+    gst_structure_set(destination, ssrcString.ascii().data(), GST_TYPE_STRUCTURE, m_stats.get(), nullptr);
+    return true;
 }
 
 struct RTPPacketizerHolder {
@@ -270,6 +273,7 @@ void GStreamerRTPPacketizer::startUpdatingStats()
     GRefPtr pad = adoptGRef(gst_element_get_static_pad(m_encoder.get(), "src"));
     m_statsPadProbeId = gst_pad_add_probe(pad.get(), GST_PAD_PROBE_TYPE_BUFFER, [](GstPad*, GstPadProbeInfo*, gpointer userData) -> GstPadProbeReturn {
         auto packetizer = static_cast<RTPPacketizerHolder*>(userData)->packetizer;
+        Locker locker { packetizer->m_statsLock };
         packetizer->updateStats();
         packetizer->updateStatsFromRTPExtensions();
         return GST_PAD_PROBE_OK;

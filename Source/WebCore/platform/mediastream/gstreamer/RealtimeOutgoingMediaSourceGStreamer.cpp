@@ -687,15 +687,8 @@ RealtimeOutgoingMediaSourceGStreamer::ExtensionLookupResults RealtimeOutgoingMed
 GUniquePtr<GstStructure> RealtimeOutgoingMediaSourceGStreamer::stats()
 {
     GUniquePtr<GstStructure> stats(gst_structure_new_empty("outgoing-media-stats"));
-    for (auto& packetizer : m_packetizers) {
-        auto packetizerStats = packetizer->stats();
-        if (!packetizerStats)
-            continue;
-
-        auto [ssrc, structure] = *packetizerStats;
-        auto ssrcString = makeString(ssrc);
-        gst_structure_set(stats.get(), ssrcString.ascii().data(), GST_TYPE_STRUCTURE, structure, nullptr);
-    }
+    for (auto& packetizer : m_packetizers)
+        packetizer->appendStatsTo(stats.get());
     return stats;
 }
 
