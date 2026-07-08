@@ -160,6 +160,16 @@ list(APPEND TestWebKit_SOURCES
     Helpers/mac/WKWebViewForTestingImmediateActions.mm
     Helpers/mac/WebKitAgnosticTest.mm
 
+    Helpers/mac/GamepadMappings/GoogleStadia.mm
+    Helpers/mac/GamepadMappings/LogitechF310.mm
+    Helpers/mac/GamepadMappings/LogitechF710.mm
+    Helpers/mac/GamepadMappings/MicrosoftXboxOne.mm
+    Helpers/mac/GamepadMappings/ShenzhenLongshengweiTechnologyGamepad.mm
+    Helpers/mac/GamepadMappings/SonyDualShock3.mm
+    Helpers/mac/GamepadMappings/SonyDualShock4.mm
+    Helpers/mac/GamepadMappings/SteelSeriesNimbus.mm
+    Helpers/mac/GamepadMappings/SunLightApplicationGenericNES.mm
+
     Tests/WebCore/ASN1Utilities.cpp
 
     Tests/WebCore/cocoa/ISOBMFFTrackInfoParserTests.cpp
@@ -196,6 +206,7 @@ list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
 
 list(APPEND TestWebKit_LIBRARIES
     "-framework AuthenticationServices"
+    "-framework HID"
     "-framework LocalAuthentication"
     "-framework Network"
     "-framework QuartzCore"
