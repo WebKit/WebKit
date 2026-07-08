@@ -4206,6 +4206,52 @@ TEST(SiteIsolation, NavigateIframeCrossOriginBackForwardAfterSessionRestoreToNew
     testNavigateIframeBackForward(@"https://apple.com/destination", SessionRestoreMethod::NewWebView);
 }
 
+static void testCrossSiteIframeBackForwardEntryThenMainFrameBack(bool siteIsolationEnabled)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/form'></iframe>"_s } },
+        { "/form"_s, { "<script>alert('form')</script><form method='GET' action='https://webkit.org/form'><input name='q' value='hello'></form>"_s } },
+        { "/form?q=hello"_s, { "<script>alert('result')</script><p>result q=hello</p>"_s } },
+        { "/page2"_s, { "<script>alert('page2')</script><p>page2</p>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolationEnabled ? siteIsolatedViewAndDelegate(server) : viewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ("form", [webView _test_waitForAlert]);
+
+    // The cross-site iframe submits a GET form, creating a back/forward entry in the iframe's process.
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView evaluateJavaScript:@"document.forms[0].submit()" inFrame:childFrame.get() completionHandler:nil];
+    EXPECT_WK_STREQ("result", [webView _test_waitForAlert]);
+    EXPECT_WK_STREQ("https://webkit.org/form?q=hello", [webView objectByEvaluatingJavaScript:@"location.href" inFrame:[webView firstChildFrame]]);
+
+    // The main frame navigates away, stacking a main-frame entry on top of the iframe entry.
+    [webView evaluateJavaScript:@"location.href = 'https://example.com/page2'" completionHandler:nil];
+    EXPECT_WK_STREQ("page2", [webView _test_waitForAlert]);
+    EXPECT_WK_STREQ("https://example.com/page2", [webView objectByEvaluatingJavaScript:@"location.href"]);
+
+    // Poll instead of waiting for an alert so the bug (a no-op Back) fails fast rather than hanging.
+    [webView goBack];
+    RetainPtr<NSString> mainURL;
+    for (int i = 0; i < 50; i++) {
+        mainURL = [webView objectByEvaluatingJavaScript:@"location.href"];
+        if ([mainURL isEqualToString:@"https://example.com/example"])
+            break;
+        Util::runFor(0.1_s);
+    }
+    EXPECT_WK_STREQ("https://example.com/example", mainURL.get());
+    EXPECT_WK_STREQ("https://webkit.org/form?q=hello", [webView objectByEvaluatingJavaScript:@"location.href" inFrame:[webView firstChildFrame]]);
+}
+
+TEST(SiteIsolation, CrossSiteIframeBackForwardEntryThenMainFrameBackTraverses)
+{
+    testCrossSiteIframeBackForwardEntryThenMainFrameBack(true);
+}
+
+TEST(SiteIsolation, CrossSiteIframeBackForwardEntryThenMainFrameBackTraversesWithoutSiteIsolation)
+{
+    testCrossSiteIframeBackForwardEntryThenMainFrameBack(false);
+}
+
 TEST(SiteIsolation, CancelledChildAsyncBackForwardNotifiesParent)
 {
     HTTPServer server({

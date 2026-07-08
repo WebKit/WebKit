@@ -18990,6 +18990,16 @@ void WebPageProxy::didCacheBackForwardItem(BackForwardItemIdentifier itemID, Com
         return completionHandler(false);
     }
 
+    // Under Site Isolation, a cross-site subframe navigation can add a new current item that
+    // clones the main frame's state from an older one. If the main frame then caches itself
+    // against that stale item, re-home the entry onto the current item: it describes the same
+    // main-frame document and is what a subsequent Back will actually traverse.
+    if (RefPtr currentItem = backForwardList().currentItem(); currentItem && currentItem != item && item->hasSameMainFrameHistoryEntry(*currentItem)) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "didCacheBackForwardItem: redirecting cache from stale itemID %" PUBLIC_LOG_STRING " to current itemID %" PUBLIC_LOG_STRING, itemID.toString().utf8().data(), currentItem->identifier().toString().utf8().data());
+        item = WTF::move(currentItem);
+        itemID = item->identifier();
+    }
+
     // Race guard: skip when the item is the target of a pending API navigation
     // (e.g. an in-flight back/forward to the same item).
     if (auto& pendingURL = internals().pageLoadState.pendingAPIRequestURL(); pendingURL.isValid() && pendingURL == item->url()) {

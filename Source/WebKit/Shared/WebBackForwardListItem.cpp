@@ -121,6 +121,14 @@ bool WebBackForwardListItem::itemIsClone(const WebBackForwardListItem& other)
     return hasSameFrames(mainFrameState, otherMainFrameState);
 }
 
+bool WebBackForwardListItem::hasSameMainFrameHistoryEntry(const WebBackForwardListItem& other) const
+{
+    auto& mainFrameState = this->mainFrameState();
+    auto& otherMainFrameState = other.mainFrameState();
+    return mainFrameState.itemSequenceNumber == otherMainFrameState.itemSequenceNumber
+        && mainFrameState.documentSequenceNumber == otherMainFrameState.documentSequenceNumber;
+}
+
 void WebBackForwardListItem::wasRemovedFromBackForwardList()
 {
     removeFromBackForwardCache();

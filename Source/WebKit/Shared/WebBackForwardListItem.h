@@ -76,6 +76,7 @@ public:
     void setDataStoreForWebArchive(WebsiteDataStore* dataStore) { m_dataStoreForWebArchive = dataStore; }
 
     bool itemIsClone(const WebBackForwardListItem&);
+    bool hasSameMainFrameHistoryEntry(const WebBackForwardListItem&) const;
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     ViewSnapshot* snapshot() const { return m_snapshot.get(); }
