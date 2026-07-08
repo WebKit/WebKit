@@ -58,7 +58,7 @@ function macOS {
 }
 
 function iOS {
-    minVersion=$(printf '%s\n' $1 ${IPHONEOS_DEPLOYMENT_TARGET} | sort -V | head -1)
+    minVersion=$(printf '%s\n' $1 ${LLVM_TARGET_TRIPLE_OS_VERSION#ios} | sort -V | head -1)
     echo iOS ${minVersion}
 }
 
