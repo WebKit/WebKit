@@ -150,6 +150,7 @@ void RenderSVGShape::layout()
     }
 
     updateLayerTransform();
+    updateCachedVisualOverflowRect();
 
     repainter.repaintAfterLayout();
     clearNeedsLayout();

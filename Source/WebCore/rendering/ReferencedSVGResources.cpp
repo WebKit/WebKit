@@ -102,6 +102,13 @@ void CSSSVGResourceElementClient::resourceChanged(SVGElement& element)
 
     // Invalidate cached visual overflow rect since resource bounds may have changed.
     if (CheckedPtr layerModelObject = dynamicDowncast<RenderLayerModelObject>(m_clientRenderer.get())) {
+        // A marker change (markerUnits, orient) can resize the client, but a layer-less client has no
+        // post-layout position update, so the repaint below only covers its current bounds. Repaint the old
+        // bounds now, while the cached visual overflow still holds them, so a shrinking marker erases the area
+        // it used to cover. Gradients and patterns leave the bounds unchanged, so one repaint below suffices.
+        if (is<SVGMarkerElement>(element) && !layerModelObject->hasLayer() && !m_clientRenderer->document().view()->layoutContext().isInLayout())
+            m_clientRenderer->repaint();
+
         layerModelObject->invalidateCachedVisualOverflowRect();
         // Ensure the post-layout recursiveUpdateLayerPositions() processes this client layer
         // and generates repaint rects, even if the client's own geometry didn't change.

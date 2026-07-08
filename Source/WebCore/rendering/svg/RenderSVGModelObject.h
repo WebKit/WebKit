@@ -83,6 +83,8 @@ public:
             m_cachedVisualOverflowRect = SVGBoundingBoxComputation::computeVisualOverflowRect(*this);
         return *m_cachedVisualOverflowRect;
     }
+
+    void updateCachedVisualOverflowRect() { m_cachedVisualOverflowRect = SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }
     LayoutSize locationOffsetEquivalent() const { return toLayoutSize(currentSVGLayoutLocation()); }
 
     bool hasVisualOverflow() const { return !borderBoxRectEquivalent().contains(visualOverflowRectEquivalent()); }
