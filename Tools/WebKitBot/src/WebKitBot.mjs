@@ -270,9 +270,10 @@ e.g. \`dry-revert 260220 Ensure it is working after refactoring\`
     {
         let {revisions, reason} = extractRevisionsAndReason(args);
 
-        // For revert-with-pr, check if the "reason" is actually a bug URL
+        // For PR-based reverts (revert-with-pr, or revert/rollout when the
+        // git-webkit flag is on), check if the "reason" is actually a bug URL.
         let issueUrl = null;
-        if (usePR && reason) {
+        if ((usePR || process.env.USE_GIT_WEBKIT_REVERT === "true") && reason) {
             let bugId = parseBugId(reason);
             if (bugId) {
                 issueUrl = `https://bugs.webkit.org/show_bug.cgi?id=${bugId}`;
@@ -698,6 +699,9 @@ Type \`help COMMAND\` for help on my individual commands.`,
 
     async generateRevertingPatch(revisions, reason, issueUrl = null)
     {
+        if (process.env.USE_GIT_WEBKIT_REVERT === "true")
+            return this.generateRevertingPatchWithGitWebkit(revisions, reason, issueUrl);
+
         dataLogLn("Reverting ", revisions, reason);
         let revisionsArgument = revisions.join(" ");
 
@@ -762,8 +766,8 @@ Type \`help COMMAND\` for help on my individual commands.`,
         dataLogLn(task);
         switch (task.command) {
         case "revert": {
-            let {revisions, reason} = task;
-            return this.generateRevertingPatch(revisions, reason);
+            let {revisions, reason, issueUrl} = task;
+            return this.generateRevertingPatch(revisions, reason, issueUrl);
         }
         case "revert-with-pr": {
             let {revisions, reason, issueUrl} = task;
