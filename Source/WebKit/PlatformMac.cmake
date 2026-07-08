@@ -377,3 +377,9 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
     add_custom_target(WebKitTextExtractionFilterModel ALL DEPENDS ${WebKit_RESOURCES_DIR}/TextExtractionFilter.mlmodel)
     add_dependencies(WebKit WebKitTextExtractionFilterModel)
 endfunction()
+
+target_link_options(WebKit PRIVATE
+    "SHELL:-Xlinker -weak_library -Xlinker ${CMAKE_OSX_SYSROOT}/usr/lib/libAccessibility.tbd"
+    "SHELL:-Xlinker -weak_library -Xlinker ${CMAKE_OSX_SYSROOT}/usr/lib/libnetworkextension.tbd"
+    "SHELL:-Xlinker -weak_library -Xlinker ${CMAKE_OSX_SYSROOT}/usr/lib/libbsm.tbd"
+)
