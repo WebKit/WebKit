@@ -198,7 +198,6 @@ class TestFactory(Factory):
 
 class StressTestFactory(TestFactory):
     findModifiedLayoutTests = True
-    skipBuildIfNoResult = True
 
     def __init__(self, platform, configuration=None, architectures=None, triggered_by=None, additionalArguments=None, checkRelevance=False, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggered_by=triggered_by, additionalArguments=additionalArguments, checkRelevance=checkRelevance)
