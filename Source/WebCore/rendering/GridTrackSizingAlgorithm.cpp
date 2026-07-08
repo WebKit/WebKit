@@ -1193,12 +1193,17 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minContributionForGridItem(RenderBo
     auto& gridItemSize = isRowAxis ? gridItem.style().logicalWidth() : gridItem.style().logicalHeight();
 
     auto behavesAsAuto = [&gridItemSize] {
-        // FIXME: fully implement behavesAsAuto.
         // https://www.w3.org/TR/css-sizing-3/#behave-as-auto
+        // "Behaves as auto" also covers a block-axis percentage size
+        // resolving against an indefinite containing block (CSS2§10.5),
+        // but that is a subset of dependsOnContainingBlockSize() below, so
+        // only the literal 'auto' case needs testing here.
         return gridItemSize.isAuto();
     };
 
     auto dependsOnContainingBlockSize = [&gridItemSize] {
+        // The spec's "depends on the size of its containing block":
+        // percentages resolve against it, and stretch fills it.
         return gridItemSize.isPercentOrCalculated()
             || gridItemSize.isStretch();
     };
