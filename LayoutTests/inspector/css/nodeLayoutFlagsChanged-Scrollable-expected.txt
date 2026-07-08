@@ -18,6 +18,12 @@ PASS: Should have become scrollable
 Changing content length
 PASS: Should have become non-scrollable
 
+-- Running test case: CSS.nodeLayoutFlagsChanged.Scrollable.SingleLineTextInput
+PASS: A single-line text input should not be scrollable.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Scrollable.TextArea
+PASS: A textarea with overflowing content should be scrollable.
+
 -- Running test case: CSS.nodeLayoutFlagsChanged.Scrollable.IFrameContents
 PASS: iframe element should not be scrollable.
 PASS: iframe's #document node should not be scrollable

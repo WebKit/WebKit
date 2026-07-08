@@ -114,6 +114,24 @@ function test()
     });
 
     addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Scrollable.SingleLineTextInput",
+        description: "Test that a single-line text input with overflowing inner text is not treated as a scrollable container.",
+        selector: "#text-input",
+        async domNodeHandler(domNode) {
+            InspectorTest.expectFalse(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Scrollable), "A single-line text input should not be scrollable.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Scrollable.TextArea",
+        description: "Test that a textarea with overflowing content is still treated as a scrollable container.",
+        selector: "#text-area",
+        async domNodeHandler(domNode) {
+            InspectorTest.expectTrue(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Scrollable), "A textarea with overflowing content should be scrollable.");
+        },
+    });
+
+    addTestCase({
         name: "CSS.nodeLayoutFlagsChanged.Scrollable.IFrameContents",
         description: "Test scrollability of document nodes in an iframe",
         selector: "#iframe",
@@ -174,6 +192,10 @@ function test()
     <div class="scroller" id="content-shrinking">
         <div class="contents"></div>
     </div>
+
+    <input id="text-input" style="width: 50px;" value="a very long value that overflows the width of this narrow input to force horizontal scrolling of the inner text">
+
+    <textarea id="text-area" style="width: 50px; height: 50px;">a very long value that overflows the textarea both horizontally and vertically to force it to become scrollable so that it keeps the scrollable badge</textarea>
 
     <iframe id="iframe" srcdoc="
     <html><style>body { height: 3000px; }</style><body>iframe document</body></html>

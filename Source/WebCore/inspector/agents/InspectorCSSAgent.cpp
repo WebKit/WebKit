@@ -68,6 +68,7 @@
 #include "RenderFlexibleBox.h"
 #include "RenderGrid.h"
 #include "RenderStyleConstants.h"
+#include "RenderTextControlSingleLine.h"
 #include "SVGStyleElement.h"
 #include "SelectorChecker.h"
 #include "ShadowRoot.h"
@@ -918,8 +919,10 @@ OptionSet<InspectorCSSAgent::LayoutFlag> InspectorCSSAgent::layoutFlagsForNode(N
                 if (frameView->isScrollable())
                     layoutFlags.add(InspectorCSSAgent::LayoutFlag::Scrollable);
             }
-        } else if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*renderer); renderBox && renderBox->canBeScrolledAndHasScrollableArea())
-            layoutFlags.add(InspectorCSSAgent::LayoutFlag::Scrollable);
+        } else if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*renderer)) {
+            if (renderBox->canBeScrolledAndHasScrollableArea() && !is<RenderTextControlSingleLine>(*renderBox))
+                layoutFlags.add(InspectorCSSAgent::LayoutFlag::Scrollable);
+        }
     }
 
     if (auto contextType = layoutFlagContextType(renderer))
