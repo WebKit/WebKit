@@ -550,6 +550,20 @@ AnimatedImageAsyncDecodingEnabled:
     WebCore:
       default: true
 
+AnimationTriggersEnabled:
+  type: bool
+  status: testable
+  category: animation
+  humanReadableName: "Animation Triggers"
+  humanReadableDescription: "Support for the timeline-trigger, animation-trigger and event-trigger CSS properties"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AnonymousBlockGenerationDisabled:
   type: bool
   status: unstable
