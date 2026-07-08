@@ -200,9 +200,6 @@ set(WebKitLegacy_FORWARDED_PUBLIC_HEADERS
     mac/WebView/WebView.h
 )
 
-# Make the above also available from <WebKitLegacy/X.h> imports.
-set(WebKitLegacy_PRIVATE_FRAMEWORK_HEADERS ${WebKitLegacy_FORWARDED_PUBLIC_HEADERS})
-
 set(WebKitLegacy_FORWARDED_PRIVATE_HEADERS
     mac/DOM/DOMDocumentFragmentPrivate.h
     mac/DOM/DOMDocumentPrivate.h
@@ -295,6 +292,11 @@ set(WebKitLegacy_FORWARDED_PRIVATE_HEADERS
     mac/WebView/WebViewPrivate.h
 )
 
+# Make the above also available from <WebKitLegacy/X.h> imports.
+set(WebKitLegacy_PRIVATE_FRAMEWORK_HEADERS
+    ${WebKitLegacy_FORWARDED_PUBLIC_HEADERS}
+    ${WebKitLegacy_FORWARDED_PRIVATE_HEADERS})
+
 list(APPEND WebKitLegacy_INTERFACE_DEPENDENCIES WebKitLegacy_ForwardHeaders WebKitLegacy_ForwardPrivateHeaders)
 
 WEBKIT_COPY_FILES(WebKitLegacy_ForwardHeaders
@@ -308,6 +310,193 @@ WEBKIT_COPY_FILES(WebKitLegacy_ForwardPrivateHeaders
     FILES ${WebKitLegacy_FORWARDED_PRIVATE_HEADERS}
     COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/forward-headers-cmake.pl
     FLATTENED
+)
+
+# FIXME: Eventually add all non-installed headers to this list, so that the
+# per-directory -I paths can be removed.
+set(WebKitLegacy_PROJECT_HEADERS
+    Storage/InProcessIDBServer.h
+    Storage/StorageAreaImpl.h
+    Storage/StorageAreaSync.h
+    Storage/StorageNamespaceImpl.h
+    Storage/StorageSyncManager.h
+    Storage/StorageThread.h
+    Storage/StorageTracker.h
+    Storage/StorageTrackerClient.h
+    Storage/WebDatabaseProvider.h
+    Storage/WebStorageNamespaceProvider.h
+
+    mac/DOM/DOMAbstractViewFrame.h
+    mac/DOM/DOMAbstractViewInternal.h
+    mac/DOM/DOMAttrInternal.h
+    mac/DOM/DOMBlobInternal.h
+    mac/DOM/DOMCDATASectionInternal.h
+    mac/DOM/DOMCSSPrimitiveValueInternal.h
+    mac/DOM/DOMCSSRuleInternal.h
+    mac/DOM/DOMCSSRuleListInternal.h
+    mac/DOM/DOMCSSStyleDeclarationInternal.h
+    mac/DOM/DOMCSSStyleSheetInternal.h
+    mac/DOM/DOMCSSValueInternal.h
+    mac/DOM/DOMCommentInternal.h
+    mac/DOM/DOMCounterInternal.h
+    mac/DOM/DOMCustomXPathNSResolver.h
+    mac/DOM/DOMDocumentFragmentInternal.h
+    mac/DOM/DOMDocumentInternal.h
+    mac/DOM/DOMDocumentTypeInternal.h
+    mac/DOM/DOMElementInternal.h
+    mac/DOM/DOMEventInternal.h
+    mac/DOM/DOMFileInternal.h
+    mac/DOM/DOMFileListInternal.h
+    mac/DOM/DOMHTMLAreaElementInternal.h
+    mac/DOM/DOMHTMLCollectionInternal.h
+    mac/DOM/DOMHTMLDocumentInternal.h
+    mac/DOM/DOMHTMLElementInternal.h
+    mac/DOM/DOMHTMLFormElementInternal.h
+    mac/DOM/DOMHTMLHeadElementInternal.h
+    mac/DOM/DOMHTMLImageElementInternal.h
+    mac/DOM/DOMHTMLInputElementInternal.h
+    mac/DOM/DOMHTMLLinkElementInternal.h
+    mac/DOM/DOMHTMLOptionElementInternal.h
+    mac/DOM/DOMHTMLOptionsCollectionInternal.h
+    mac/DOM/DOMHTMLScriptElementInternal.h
+    mac/DOM/DOMHTMLSelectElementInternal.h
+    mac/DOM/DOMHTMLStyleElementInternal.h
+    mac/DOM/DOMHTMLTableCaptionElementInternal.h
+    mac/DOM/DOMHTMLTableCellElementInternal.h
+    mac/DOM/DOMHTMLTableColElementInternal.h
+    mac/DOM/DOMHTMLTableSectionElementInternal.h
+    mac/DOM/DOMHTMLTextAreaElementInternal.h
+    mac/DOM/DOMImplementationInternal.h
+    mac/DOM/DOMInternal.h
+    mac/DOM/DOMMediaErrorInternal.h
+    mac/DOM/DOMMediaListInternal.h
+    mac/DOM/DOMNamedNodeMapInternal.h
+    mac/DOM/DOMNodeInternal.h
+    mac/DOM/DOMNodeIteratorInternal.h
+    mac/DOM/DOMNodeListInternal.h
+    mac/DOM/DOMProcessingInstructionInternal.h
+    mac/DOM/DOMRGBColorInternal.h
+    mac/DOM/DOMRangeInternal.h
+    mac/DOM/DOMRectInternal.h
+    mac/DOM/DOMStyleSheetInternal.h
+    mac/DOM/DOMStyleSheetListInternal.h
+    mac/DOM/DOMTextInternal.h
+    mac/DOM/DOMTimeRangesInternal.h
+    mac/DOM/DOMTokenList.h
+    mac/DOM/DOMTokenListInternal.h
+    mac/DOM/DOMTreeWalkerInternal.h
+    mac/DOM/DOMWheelEventInternal.h
+    mac/DOM/DOMXPathExpressionInternal.h
+    mac/DOM/DOMXPathResultInternal.h
+    mac/DOM/ExceptionHandlers.h
+    mac/DOM/ObjCEventListener.h
+    mac/DOM/ObjCNodeFilterCondition.h
+    mac/DOM/WebDOMOperationsInternal.h
+
+    mac/DefaultDelegates/WebDefaultContextMenuDelegate.h
+    mac/DefaultDelegates/WebDefaultEditingDelegate.h
+    mac/DefaultDelegates/WebDefaultUIDelegate.h
+
+    mac/History/BackForwardList.h
+    mac/History/BinaryPropertyList.h
+    mac/History/HistoryPropertyList.h
+    mac/History/WebBackForwardListInternal.h
+    mac/History/WebHistoryInternal.h
+    mac/History/WebHistoryItemInternal.h
+
+    mac/Misc/WebElementDictionary.h
+    mac/Misc/WebKitLogging.h
+    mac/Misc/WebKitStatisticsPrivate.h
+    mac/Misc/WebKitVersionChecks.h
+    mac/Misc/WebLocalizableStringsInternal.h
+    mac/Misc/WebNSControlExtras.h
+    mac/Misc/WebNSDataExtras.h
+    mac/Misc/WebNSDictionaryExtras.h
+    mac/Misc/WebNSImageExtras.h
+    mac/Misc/WebNSObjectExtras.h
+    mac/Misc/WebNSPrintOperationExtras.h
+    mac/Misc/WebNSURLRequestExtras.h
+    mac/Misc/WebSharingServicePickerController.h
+
+    mac/Panels/WebAuthenticationPanel.h
+
+    mac/Plugins/WebBasePluginPackage.h
+    mac/Plugins/WebPluginContainerCheck.h
+    mac/Plugins/WebPluginController.h
+    mac/Plugins/WebPluginPackage.h
+
+    mac/Storage/WebDatabaseManagerClient.h
+    mac/Storage/WebDatabaseManagerInternal.h
+    mac/Storage/WebStorageManagerInternal.h
+    mac/Storage/WebStorageTrackerClient.h
+
+    mac/WebCoreSupport/CorrectionPanel.h
+    mac/WebCoreSupport/LegacyHistoryItemClient.h
+    mac/WebCoreSupport/PopupMenuMac.h
+    mac/WebCoreSupport/SearchPopupMenuMac.h
+    mac/WebCoreSupport/TextIndicatorWindow.h
+    mac/WebCoreSupport/WebAlternativeTextClient.h
+    mac/WebCoreSupport/WebCachedFramePlatformData.h
+    mac/WebCoreSupport/WebChromeClient.h
+    mac/WebCoreSupport/WebContextMenuClient.h
+    mac/WebCoreSupport/WebDragClient.h
+    mac/WebCoreSupport/WebEditorClient.h
+    mac/WebCoreSupport/WebFrameLoaderClient.h
+    mac/WebCoreSupport/WebFrameNetworkingContext.h
+    mac/WebCoreSupport/WebGeolocationClient.h
+    mac/WebCoreSupport/WebInspectorClient.h
+    mac/WebCoreSupport/WebKitFullScreenListener.h
+    mac/WebCoreSupport/WebMediaKeySystemClient.h
+    mac/WebCoreSupport/WebNotificationClient.h
+    mac/WebCoreSupport/WebOpenPanelResultListener.h
+    mac/WebCoreSupport/WebPaymentCoordinatorClient.h
+    mac/WebCoreSupport/WebPlatformStrategies.h
+    mac/WebCoreSupport/WebPluginInfoProvider.h
+    mac/WebCoreSupport/WebProgressTrackerClient.h
+    mac/WebCoreSupport/WebSecurityOriginInternal.h
+    mac/WebCoreSupport/WebSelectionServiceController.h
+    mac/WebCoreSupport/WebValidationMessageClient.h
+    mac/WebCoreSupport/WebVisitedLinkStore.h
+
+    mac/WebInspector/WebInspectorFrontend.h
+    mac/WebInspector/WebNodeHighlight.h
+    mac/WebInspector/WebNodeHighlightView.h
+    mac/WebInspector/WebNodeHighlighter.h
+
+    mac/WebView/WebArchiveInternal.h
+    mac/WebView/WebClipView.h
+    mac/WebView/WebDataSourceInternal.h
+    mac/WebView/WebDelegateImplementationCaching.h
+    mac/WebView/WebDeviceOrientationInternal.h
+    mac/WebView/WebDeviceOrientationProviderMockInternal.h
+    mac/WebView/WebDocumentInternal.h
+    mac/WebView/WebDocumentLoaderMac.h
+    mac/WebView/WebDynamicScrollBarsViewInternal.h
+    mac/WebView/WebFeatureInternal.h
+    mac/WebView/WebFrameInternal.h
+    mac/WebView/WebFrameViewInternal.h
+    mac/WebView/WebFullScreenController.h
+    mac/WebView/WebGeolocationPositionInternal.h
+    mac/WebView/WebHTMLViewForTestingMac.h
+    mac/WebView/WebHTMLViewInternal.h
+    mac/WebView/WebHistoryDelegate.h
+    mac/WebView/WebImmediateActionController.h
+    mac/WebView/WebIndicateLayer.h
+    mac/WebView/WebJSPDFDoc.h
+    mac/WebView/WebMediaPlaybackTargetPicker.h
+    mac/WebView/WebNotificationInternal.h
+    mac/WebView/WebPDFDocumentExtras.h
+    mac/WebView/WebPDFRepresentation.h
+    mac/WebView/WebPDFView.h
+    mac/WebView/WebPreferencesDefaultValues.h
+    mac/WebView/WebPreferencesInternal.h
+    mac/WebView/WebResourceInternal.h
+    mac/WebView/WebScriptDebugger.h
+    mac/WebView/WebScriptWorldInternal.h
+    mac/WebView/WebTextCompletionController.h
+    mac/WebView/WebViewData.h
+    mac/WebView/WebViewInternal.h
+    mac/WebView/WebViewRenderingUpdateScheduler.h
 )
 
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION} -framework SecurityInterface")
