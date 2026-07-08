@@ -32,7 +32,6 @@
 #include "RenderBoxInlines.h"
 #include "RenderMathMLBlock.h"
 #include "RenderTableInlines.h"
-#include "Settings.h"
 
 namespace WebCore {
 
@@ -45,7 +44,7 @@ inline RenderMathMLTable::RenderMathMLTable(MathMLElement& element, Style::Compu
 
 inline LayoutUnit RenderMathMLBlock::ascentForChild(const RenderBox& child)
 {
-    auto logicalHeight = child.settings().subpixelInlineLayoutEnabled() ? child.logicalHeight() : LayoutUnit(child.logicalHeight().toInt());
+    auto logicalHeight = child.logicalHeight();
     return child.firstLineBaseline().value_or(logicalHeight);
 }
 

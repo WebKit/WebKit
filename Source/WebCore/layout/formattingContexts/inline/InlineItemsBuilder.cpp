@@ -32,7 +32,6 @@
 #include "FontCascadeInlines.h"
 #include "InlineSoftLineBreakItem.h"
 #include "RenderObjectInlines.h"
-#include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleResolver.h"
 #include "TextBreakingPositionCache.h"
@@ -107,8 +106,8 @@ static inline WidthAndGlyphOverflow nonWhitespaceContentWidth(const auto& inline
     auto width = TextUtil::width(inlineTextBox, fontCascade, startPosition, endPosition, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::Yes, { }, &glyphOverflow);
 
     auto& fontMetrics = fontCascade->metricsOfPrimaryFont();
-    glyphOverflow.top = std::max(0.f, InlineFormattingUtils::snapToInt(glyphOverflow.top, inlineTextBox) - InlineFormattingUtils::ascent(fontMetrics, FontBaseline::Alphabetic, inlineTextBox));
-    glyphOverflow.bottom = std::max(0.f, InlineFormattingUtils::snapToInt(glyphOverflow.bottom, inlineTextBox) - InlineFormattingUtils::descent(fontMetrics, FontBaseline::Alphabetic, inlineTextBox));
+    glyphOverflow.top = std::max(0.f, glyphOverflow.top - fontMetrics.ascent(FontBaseline::Alphabetic));
+    glyphOverflow.bottom = std::max(0.f, glyphOverflow.bottom - fontMetrics.descent(FontBaseline::Alphabetic));
     return { width, std::pair<LayoutUnit, LayoutUnit> { std::clamp(glyphOverflow.top, 0_lu, 31_lu), std::clamp(glyphOverflow.bottom, 0_lu, 7_lu) } };
 }
 

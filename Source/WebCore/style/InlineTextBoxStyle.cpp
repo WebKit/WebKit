@@ -36,15 +36,8 @@
 #include "RenderElementInlines.h"
 #include "RenderInline.h"
 #include "RenderObjectInlines.h"
-#include "Settings.h"
 
 namespace WebCore {
-
-// This is temporary and will be removed when subpixel inline layout is enabled.
-static float snap(float value, const RenderObject& renderer)
-{
-    return renderer.settings().subpixelInlineLayoutEnabled() ? value : roundf(value);
-}
 
 struct UnderlineOffsetArguments {
     const Style::ComputedStyle& lineStyle;
@@ -130,7 +123,7 @@ static float computedUnderlineOffset(const UnderlineOffsetArguments& context, co
     auto& fontMetrics = styleToUse.metricsOfPrimaryFont();
     auto ascent = [&]() -> float {
         if (renderer)
-            return snap(fontMetrics.ascent(), *renderer);
+            return fontMetrics.ascent();
         // This is temporary until after subpixel layout in enabled -used only for ink overflow.
         return fontMetrics.intAscent();
     };
@@ -322,7 +315,7 @@ float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineB
         underlineOffset = computedUnderlineOffset({ style, TextUnderlinePositionUnder { inlineBoxContentBoxHeight(inlineBox), textRunOffset } }, &renderer);
     }
 
-    return underlineOffset - (!inlineBox.isRootInlineBox() ? snap(textBoxEdgeAdjustmentForUnderline(style), inlineBox.renderer()) : 0.f);
+    return underlineOffset - (!inlineBox.isRootInlineBox() ? textBoxEdgeAdjustmentForUnderline(style) : 0.f);
 }
 
 float overlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBox, const Style::ComputedStyle& style)

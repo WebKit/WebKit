@@ -38,7 +38,6 @@
 #include "LayoutElementBox.h"
 #include "RenderObjectDocument.h"
 #include "RubyFormattingContext.h"
-#include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <ranges>
@@ -635,48 +634,6 @@ bool InlineFormattingUtils::shouldDiscardRemainingContentInBlockDirection() cons
         return false;
     ASSERT(!lineClamp->isLegacy);
     return lineClamp->maximumLines == inlineLayoutState.lineCountWithInlineContentIncludingNestedBlocks();
-}
-
-InlineLayoutUnit InlineFormattingUtils::ascent(const FontMetrics& fontMetrics, FontBaseline fontBaseline, const InlineLevelBox& inlineLevelBox)
-{
-    return ascent(fontMetrics, fontBaseline, inlineLevelBox.layoutBox());
-}
-
-InlineLayoutUnit InlineFormattingUtils::descent(const FontMetrics& fontMetrics, FontBaseline fontBaseline, const InlineLevelBox& inlineLevelBox)
-{
-    return descent(fontMetrics, fontBaseline, inlineLevelBox.layoutBox());
-}
-
-InlineLayoutUnit InlineFormattingUtils::ascent(const FontMetrics& fontMetrics, FontBaseline fontBaseline, const Box& layoutBox)
-{
-    return layoutBox.rendererForIntegration()->settings().subpixelInlineLayoutEnabled() ? fontMetrics.ascent(fontBaseline) : fontMetrics.intAscent(fontBaseline);
-}
-
-InlineLayoutUnit InlineFormattingUtils::descent(const FontMetrics& fontMetrics, FontBaseline fontBaseline, const Box& layoutBox)
-{
-    return layoutBox.rendererForIntegration()->settings().subpixelInlineLayoutEnabled() ? fontMetrics.descent(fontBaseline) : fontMetrics.intDescent(fontBaseline);
-}
-
-InlineLayoutUnit InlineFormattingUtils::snapToInt(InlineLayoutUnit value, const InlineLevelBox& inlineLevelBox, SnapDirection direction)
-{
-    return snapToInt(value, inlineLevelBox.layoutBox(), direction);
-}
-
-InlineLayoutUnit InlineFormattingUtils::snapToInt(InlineLayoutUnit value, const Box& layoutBox, SnapDirection direction)
-{
-    if (layoutBox.rendererForIntegration()->settings().subpixelInlineLayoutEnabled())
-        return value;
-
-    switch (direction) {
-    case SnapDirection::Floor:
-        return floorf(value);
-    case SnapDirection::Ceil:
-        return ceilf(value);
-    case SnapDirection::Round:
-        return roundf(value);
-    }
-    ASSERT_NOT_REACHED();
-    return { };
 }
 
 }

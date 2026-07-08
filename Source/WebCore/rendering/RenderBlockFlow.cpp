@@ -3476,11 +3476,11 @@ void RenderBlockFlow::addOverflowFromInFlowChildren(OptionSet<ComputeOverflowOpt
         RenderBlock::addOverflowFromInFlowChildren(options);
 }
 
-static float lineHeightForEmptyContent(auto& style, auto shouldNotRoundToIntegral)
+static float lineHeightForEmptyContent(auto& style)
 {
     auto& fontMetrics = style.metricsOfPrimaryFont();
-    auto ascent = shouldNotRoundToIntegral ? fontMetrics.ascent() : fontMetrics.intAscent();
-    auto fontHeight = shouldNotRoundToIntegral ? fontMetrics.height() : fontMetrics.intHeight();
+    auto ascent = fontMetrics.ascent();
+    auto fontHeight = fontMetrics.height();
     return ascent + (style.computedLineHeight() - fontHeight) / 2.f;
 }
 
@@ -3499,7 +3499,7 @@ std::optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
         return lineLayout->firstLineBaseline();
 
     if (hasLineIfEmpty())
-        return LayoutUnit { borderAndPaddingBefore() + lineHeightForEmptyContent(firstLineStyle(), settings().subpixelInlineLayoutEnabled()) };
+        return LayoutUnit { borderAndPaddingBefore() + lineHeightForEmptyContent(firstLineStyle()) };
 
     return { };
 }
@@ -3519,7 +3519,7 @@ std::optional<LayoutUnit> RenderBlockFlow::lastLineBaseline() const
         return lineLayout->lastLineBaseline();
 
     if (hasLineIfEmpty())
-        return LayoutUnit { borderAndPaddingBefore() + lineHeightForEmptyContent(style(), settings().subpixelInlineLayoutEnabled()) };
+        return LayoutUnit { borderAndPaddingBefore() + lineHeightForEmptyContent(style()) };
 
     return { };
 }

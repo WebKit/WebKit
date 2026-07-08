@@ -79,7 +79,7 @@ std::optional<LayoutUnit> RenderMathMLRow::firstLineBaseline() const
     if (!baselineChild)
         return { };
 
-    auto baseline = settings().subpixelInlineLayoutEnabled() ? baselineChild->marginBefore() + baselineChild->logicalTop() + ascentForChild(*baselineChild) : LayoutUnit(roundf(baselineChild->marginBefore() + baselineChild->logicalTop() + ascentForChild(*baselineChild)));
+    auto baseline = baselineChild->marginBefore() + baselineChild->logicalTop() + ascentForChild(*baselineChild);
     return { baseline };
 }
 

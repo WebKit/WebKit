@@ -66,12 +66,6 @@
 
 namespace WebCore {
 
-// This is temporary and will be removed when subpixel inline layout is enabled.
-static float snap(float value, const RenderText& renderer)
-{
-    return renderer.settings().subpixelInlineLayoutEnabled() ? value : roundf(value);
-}
-
 static FloatRect calculateDocumentMarkerBounds(const InlineIterator::TextBoxIterator&, const MarkedText&);
 
 static std::optional<bool> emphasisMarkExistsAndIsAbove(const RenderText& renderer, const Style::ComputedStyle& style)
@@ -663,7 +657,7 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
     auto emphasisExistsAndIsAbove = emphasisMarkExistsAndIsAbove(m_renderer, m_style);
     auto& emphasisMark = emphasisExistsAndIsAbove ? m_style->textEmphasisStyle().markString() : nullAtom();
     if (!emphasisMark.isEmpty())
-        emphasisMarkOffset = *emphasisExistsAndIsAbove ? -snap(font.metricsOfPrimaryFont().ascent(), m_renderer)  - font.emphasisMarkDescent(emphasisMark) : snap(font.metricsOfPrimaryFont().descent(), m_renderer) + font.emphasisMarkAscent(emphasisMark);
+        emphasisMarkOffset = *emphasisExistsAndIsAbove ? -font.metricsOfPrimaryFont().ascent()  - font.emphasisMarkDescent(emphasisMark) : font.metricsOfPrimaryFont().descent() + font.emphasisMarkAscent(emphasisMark);
 
     TextPainter textPainter {
         context,
@@ -866,9 +860,9 @@ void TextBoxPainter::collectDecoratingBoxesForBackgroundPainting(DecoratingBoxLi
         if (&inlineBox->renderer() != &parentInlineBox->renderer()) {
             auto decoratingBoxContentBoxTop = inlineBox->logicalTop() + (!inlineBox->isRootInlineBox() ? inlineBox->renderer().borderAndPaddingBefore() : LayoutUnit(0_lu));
             auto parentInlineBoxContentBoxTop = parentInlineBox->logicalTop() + (!parentInlineBox->isRootInlineBox() ? parentInlineBox->renderer().borderAndPaddingBefore() : LayoutUnit(0_lu));
-            decoratingBoxLocation.moveBy(FloatPoint { 0.f, decoratingBoxContentBoxTop - parentInlineBoxContentBoxTop + snap(textBoxEdgeAdjustmentForUnderline(parentInlineBox->style()), m_renderer) });
+            decoratingBoxLocation.moveBy(FloatPoint { 0.f, decoratingBoxContentBoxTop - parentInlineBoxContentBoxTop + textBoxEdgeAdjustmentForUnderline(parentInlineBox->style()) });
         } else
-            decoratingBoxLocation.moveBy(FloatPoint { 0.f, snap(textBoxEdgeAdjustmentForUnderline(inlineBox->style()), m_renderer) });
+            decoratingBoxLocation.moveBy(FloatPoint { 0.f, textBoxEdgeAdjustmentForUnderline(inlineBox->style()) });
 
         auto decorationStyles = [&] {
             auto styles = isParentInlineBox ? overrideDecorationStyle : computedDecorationStyle;
@@ -948,7 +942,7 @@ void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decoratio
                 underlineOffset(),
                 overlineOffset(),
                 computedLinethroughCenter(decoratingBox.style.get(), textDecorationThickness, autoTextDecorationThickness),
-                snap(decoratingBox.style->metricsOfPrimaryFont().ascent(), m_renderer) + 2.f,
+                decoratingBox.style->metricsOfPrimaryFont().ascent() + 2.f,
                 wavyStrokeParameters(decoratingBox.style->computedFontSize())
             };
         };
@@ -1120,7 +1114,7 @@ void TextBoxPainter::fillCompositionUnderline(float start, float width, const Co
         // All other marked text underlines are 1px thick.
         // If there's not enough space the underline will touch or overlap characters.
         int lineThickness = 1;
-        int baseline = snap(m_style->metricsOfPrimaryFont().ascent(), m_renderer);
+        int baseline = m_style->metricsOfPrimaryFont().ascent();
         if (underline.thick && m_logicalRect.height() - baseline >= 2)
             lineThickness = 2;
 
@@ -1148,7 +1142,7 @@ void TextBoxPainter::fillCompositionUnderline(float start, float width, const Co
     // All other marked text underlines are 1px thick.
     // If there's not enough space the underline will touch or overlap characters.
     int lineThickness = 1;
-    int baseline = snap(m_style->metricsOfPrimaryFont().ascent(), m_renderer);
+    int baseline = m_style->metricsOfPrimaryFont().ascent();
     if (m_logicalRect.height() - baseline >= 2)
         lineThickness = 2;
 
@@ -1524,7 +1518,7 @@ const FontCascade& TextBoxPainter::fontCascade() const
 
 FloatPoint TextBoxPainter::textOriginFromPaintRect(const FloatRect& paintRect) const
 {
-    auto ascent = snap(m_style->metricsOfPrimaryFont().ascent(), m_renderer);
+    auto ascent = m_style->metricsOfPrimaryFont().ascent();
     if (writingMode().isVertical()) {
         // FIXME: This is required by the CTM rotation logic. We should eventually (re)move it though.
         ascent = roundToDevicePixel(LayoutUnit { ascent }, m_document->deviceScaleFactor());

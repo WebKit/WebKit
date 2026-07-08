@@ -34,7 +34,6 @@
 #include "LegacyInlineTextBox.h"
 #include "RenderCombineText.h"
 #include "RenderLayer.h"
-#include "Settings.h"
 #include "StyleAppleColorFilter.h"
 #include "StyleColorResolver.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -226,7 +225,7 @@ void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, cons
     auto emphasisMarkTextOrigin = textOrigin;
 
     if (m_combinedText) {
-        auto ascent = m_combinedText->settings().subpixelInlineLayoutEnabled() ? LayoutUnit(m_font->metricsOfPrimaryFont().ascent()) : LayoutUnit(m_font->metricsOfPrimaryFont().intAscent());
+        auto ascent = LayoutUnit(m_font->metricsOfPrimaryFont().ascent());
         emphasisMarkTextOrigin = { boxOrigin.x() + boxRect.width() / 2, boxOrigin.y() + ascent };
         m_context.concatCTM(rotation(boxRect, RotationDirection::Clockwise));
     }

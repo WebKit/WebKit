@@ -340,7 +340,7 @@ std::optional<LayoutUnit> RenderMathMLOperator::firstLineBaseline() const
             // https://w3c.github.io/mathml-core/#layout-of-operators
             shift = (m_mathOperator.ascent() - m_mathOperator.descent() - 2 * mathAxisHeight()) / 2;
         }
-        auto baseline = settings().subpixelInlineLayoutEnabled() ? m_mathOperator.ascent() - shift : LayoutUnit(roundf(m_mathOperator.ascent() - shift));
+        auto baseline = m_mathOperator.ascent() - shift;
         return { borderAndPaddingBefore() + baseline };
     }
     return RenderMathMLToken::firstLineBaseline();

@@ -8204,20 +8204,6 @@ StorageBlockingPolicy:
       default: StorageBlockingPolicy::AllowAll
   sharedPreferenceForWebProcess: true
 
-SubpixelInlineLayoutEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "Subpixels in inline layout (in block direction)"
-  humanReadableDescription: "Subpixels in line layout (in block direction)"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 SupportHDRCompositorTonemappingEnabled:
   type: bool
   status: testable

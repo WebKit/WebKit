@@ -1924,7 +1924,7 @@ std::optional<LayoutUnit> RenderGrid::firstLineBaseline() const
         auto direction = isHorizontalWritingMode() ? LineDirection::Horizontal : LineDirection::Vertical;
         baseline = BaselineAlignment::synthesizedBaseline(*baselineGridItem, dominantBaseline, gridWritingMode, direction, BaselineSynthesisEdge::BorderBox);
     }
-    return (settings().subpixelInlineLayoutEnabled() ? LayoutUnit(logicalTopForChild(*baselineGridItem)) : LayoutUnit(logicalTopForChild(*baselineGridItem).toInt())) + *baseline;
+    return logicalTopForChild(*baselineGridItem) + *baseline;
 }
 
 std::optional<LayoutUnit> RenderGrid::lastLineBaseline() const
@@ -1946,7 +1946,7 @@ std::optional<LayoutUnit> RenderGrid::lastLineBaseline() const
         auto dominantBaseline = BaselineAlignment::dominantBaseline(gridWritingMode);
         baseline = BaselineAlignment::synthesizedBaseline(*baselineGridItem, dominantBaseline, gridWritingMode, direction, BaselineSynthesisEdge::BorderBox);
     }
-    return (settings().subpixelInlineLayoutEnabled() ? LayoutUnit(logicalTopForChild(*baselineGridItem)) : LayoutUnit(logicalTopForChild(*baselineGridItem).toInt())) + *baseline;
+    return logicalTopForChild(*baselineGridItem) + *baseline;
 }
 
 const RenderBox* RenderGrid::baselineGridItem(ItemPosition alignment) const

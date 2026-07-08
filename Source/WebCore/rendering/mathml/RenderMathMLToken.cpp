@@ -152,7 +152,7 @@ std::optional<LayoutUnit> RenderMathMLToken::firstLineBaseline() const
     if (m_mathVariantCodePoint) {
         auto mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
         if (mathVariantGlyph.font) {
-            auto baseline = settings().subpixelInlineLayoutEnabled() ? LayoutUnit(-protect(mathVariantGlyph.font)->boundsForGlyph(mathVariantGlyph.glyph).y()) : LayoutUnit(roundf(-protect(mathVariantGlyph.font)->boundsForGlyph(mathVariantGlyph.glyph).y()));
+            auto baseline = LayoutUnit(-protect(mathVariantGlyph.font)->boundsForGlyph(mathVariantGlyph.glyph).y());
             return { borderAndPaddingBefore() + baseline };
         }
     }
@@ -207,7 +207,7 @@ void RenderMathMLToken::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     GraphicsContextStateSaver stateSaver(info.context());
     info.context().setFillColor(style().visitedDependentTextFillColorApplyingColorFilter());
 
-    auto glyphAscent = settings().subpixelInlineLayoutEnabled() ? -protect(mathVariantGlyph.font)->boundsForGlyph(mathVariantGlyph.glyph).y() : roundf(-protect(mathVariantGlyph.font)->boundsForGlyph(mathVariantGlyph.glyph).y());
+    auto glyphAscent = -protect(mathVariantGlyph.font)->boundsForGlyph(mathVariantGlyph.glyph).y();
     // FIXME: If we're just drawing a single glyph, why do we need to compute an advance?
     auto advance = makeGlyphBufferAdvance(protect(mathVariantGlyph.font)->widthForGlyph(mathVariantGlyph.glyph));
     auto location = paintOffset + this->location() + LayoutPoint { borderLeft() + paddingLeft(), glyphAscent + borderAndPaddingBefore() };

@@ -196,15 +196,15 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
 
                         if (!isHorizontalWritingMode) {
                             if (isBlockFlipped)
-                                return textVisualRect.x() - (settings().subpixelInlineLayoutEnabled() ? metrics.ascent() : metrics.intAscent());
+                                return textVisualRect.x() - metrics.ascent();
 
-                            return textVisualRect.x() + (settings().subpixelInlineLayoutEnabled() ? metrics.descent() : metrics.intDescent());
+                            return textVisualRect.x() + metrics.descent();
                         }
 
                         if (isBlockFlipped)
-                            return textVisualRect.y() - (settings().subpixelInlineLayoutEnabled() ? metrics.descent() : metrics.intDescent());
+                            return textVisualRect.y() - metrics.descent();
 
-                        return textVisualRect.y() + (settings().subpixelInlineLayoutEnabled() ? metrics.ascent() : metrics.intAscent());
+                        return textVisualRect.y() + metrics.ascent();
                     }
                 }
             }
@@ -220,7 +220,7 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
 
             if (writingMode().isLineOverLeft()) {
                 textLogicalLeft += font.width(textRun);
-                textLogicalTop += (settings().subpixelInlineLayoutEnabled() ? font.metricsOfPrimaryFont().ascent() : font.metricsOfPrimaryFont().intAscent());
+                textLogicalTop += font.metricsOfPrimaryFont().ascent();
             }
 
             auto textOrigin = roundPointToDevicePixels({ textLogicalLeft, textLogicalTop }, protect(document())->deviceScaleFactor());

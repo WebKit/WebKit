@@ -334,7 +334,7 @@ void RubyFormattingContext::adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox
         auto extraSpaceForAnnotation = InlineLayoutUnit { };
         if (!isFirstFormattedLine) {
             // Note that annotation may leak into the half leading space (gap between lines).
-            auto lineGap = InlineFormattingUtils::snapToInt(rubyBaseLayoutBox->style().metricsOfPrimaryFont().lineSpacing(), rubyBaseLayoutBox);
+            auto lineGap = rubyBaseLayoutBox->style().metricsOfPrimaryFont().lineSpacing();
             extraSpaceForAnnotation = std::max(0.f, (lineGap - (ascent + descent)) / 2);
         }
         auto ascentWithAnnotation = (ascent + over) - extraSpaceForAnnotation;

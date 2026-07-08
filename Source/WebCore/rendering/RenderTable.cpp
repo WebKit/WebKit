@@ -61,7 +61,6 @@
 #include "RenderTableSectionInlines.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
-#include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
@@ -1698,7 +1697,7 @@ std::optional<LayoutUnit> RenderTable::firstLineBaseline() const
         // The baseline of an empty row isn't specified by CSS 2.1.
         baseline = 0_lu;
     }
-    return baseline ? std::optional((settings().subpixelInlineLayoutEnabled() ? LayoutUnit(topNonEmptySection->logicalTop()) : LayoutUnit(topNonEmptySection->logicalTop().toInt())) + *baseline) : std::nullopt;
+    return baseline ? std::optional(topNonEmptySection->logicalTop() + *baseline) : std::nullopt;
 }
 
 std::optional<LayoutUnit> RenderTable::lastLineBaseline() const
@@ -1713,7 +1712,7 @@ std::optional<LayoutUnit> RenderTable::lastLineBaseline() const
         return { };
 
     if (auto lastLineBaseline = tableSection->lastLineBaseline())
-        return (settings().subpixelInlineLayoutEnabled() ? LayoutUnit(tableSection->logicalTop()) : LayoutUnit(tableSection->logicalTop().toInt())) + *lastLineBaseline;
+        return tableSection->logicalTop() + *lastLineBaseline;
     return { };
 }
 

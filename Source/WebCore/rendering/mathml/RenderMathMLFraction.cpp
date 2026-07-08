@@ -316,7 +316,7 @@ void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset
 std::optional<LayoutUnit> RenderMathMLFraction::firstLineBaseline() const
 {
     if (isValid()) {
-        auto baseline = settings().subpixelInlineLayoutEnabled() ? borderAndPaddingBefore() + fractionAscent() : LayoutUnit(roundf(borderAndPaddingBefore() + fractionAscent()));
+        auto baseline = borderAndPaddingBefore() + fractionAscent();
         return { baseline };
     }
     return RenderMathMLRow::firstLineBaseline();

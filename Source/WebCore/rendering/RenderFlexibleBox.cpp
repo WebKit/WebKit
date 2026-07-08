@@ -323,7 +323,7 @@ std::optional<LayoutUnit> RenderFlexibleBox::firstLineBaseline() const
         auto dominantBaseline = BaselineAlignment::dominantBaseline(flexboxWritingMode);
         baseline = BaselineAlignment::synthesizedBaseline(*baselineFlexItem, dominantBaseline, flexboxWritingMode, direction, BaselineSynthesisEdge::BorderBox);
     }
-    auto result = (settings().subpixelInlineLayoutEnabled() ? LayoutUnit(baselineFlexItem->logicalTop()) : LayoutUnit(baselineFlexItem->logicalTop().toInt())) + *baseline;
+    auto result = baselineFlexItem->logicalTop() + *baseline;
     // CSS Align §9.1: if a scroll container's baseline is outside its border edge, clamp to the border edge.
     if (isHorizontalFlow() ? isScrollContainerY() : isScrollContainerX())
         return std::max(0_lu, std::min(result, logicalHeight()));
@@ -354,7 +354,7 @@ std::optional <LayoutUnit> RenderFlexibleBox::lastLineBaseline() const
         auto dominantBaseline = BaselineAlignment::dominantBaseline(flexboxWritingMode);
         baseline = BaselineAlignment::synthesizedBaseline(*baselineFlexItem, dominantBaseline, flexboxWritingMode, direction, BaselineSynthesisEdge::BorderBox);
     }
-    auto result = (settings().subpixelInlineLayoutEnabled() ? LayoutUnit(baselineFlexItem->logicalTop()) : LayoutUnit(baselineFlexItem->logicalTop().toInt())) + *baseline;
+    auto result = baselineFlexItem->logicalTop() + *baseline;
     // CSS Align §9.1: if a scroll container's baseline is outside its border edge, clamp to the border edge.
     if (isHorizontalFlow() ? isScrollContainerY() : isScrollContainerX())
         return std::max(0_lu, std::min(result, logicalHeight()));

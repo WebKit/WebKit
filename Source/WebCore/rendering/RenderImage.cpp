@@ -588,7 +588,7 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
         if (availableLogicalWidth < textWidth)
             return false;
         auto availableLogicalHeight = isHorizontal ? (errorPictureDrawn ? imageOffset.height() : usableSize.height()) : usableSize.width();
-        return availableLogicalHeight >= (settings().subpixelInlineLayoutEnabled() ? fontMetrics.height() : fontMetrics.intHeight());
+        return availableLogicalHeight >= fontMetrics.height();
     };
 
     if (!hasRoomForAltText())
@@ -598,7 +598,7 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
     if (isHorizontal) {
         auto altTextLocation = [&]() -> LayoutPoint {
             auto contentHorizontalOffset = LayoutUnit { borderWidths.left() + padding.left() + (paddingWidth / 2) - missingImageBorderWidth };
-            auto contentVerticalOffset = LayoutUnit { borderWidths.top() + padding.top() + (settings().subpixelInlineLayoutEnabled() ? fontMetrics.ascent() : fontMetrics.intAscent()) + (paddingHeight / 2) - missingImageBorderWidth };
+            auto contentVerticalOffset = LayoutUnit { borderWidths.top() + padding.top() + fontMetrics.ascent() + (paddingHeight / 2) - missingImageBorderWidth };
             if (!style.writingMode().isInlineLeftToRight())
                 contentHorizontalOffset += contentSize.width() - textWidth;
             return paintOffset + LayoutPoint { contentHorizontalOffset, contentVerticalOffset };
@@ -608,7 +608,7 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
         context.drawBidiText(fontCascade, textRun, textOrigin);
     } else {
         // FIXME: TextBoxPainter has this logic already, maybe we should transition to some painter class.
-        auto contentLogicalHeight = settings().subpixelInlineLayoutEnabled() ? fontMetrics.height() : fontMetrics.intHeight();
+        auto contentLogicalHeight = fontMetrics.height();
         auto adjustedPaintOffset = LayoutPoint { paintOffset.x(), paintOffset.y() - contentLogicalHeight };
 
         auto visualLeft = borderBoxSize().width() / 2 - contentLogicalHeight / 2;
@@ -622,7 +622,7 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
 
         auto rotationRect = LayoutRect { visualLeft, adjustedPaintOffset.y(), textWidth, contentLogicalHeight };
         context.concatCTM(rotation(rotationRect, RotationDirection::Clockwise));
-        auto textOrigin = LayoutPoint { visualLeft, adjustedPaintOffset.y() + (settings().subpixelInlineLayoutEnabled() ? fontCascade.metricsOfPrimaryFont().ascent() : fontCascade.metricsOfPrimaryFont().intAscent()) };
+        auto textOrigin = LayoutPoint { visualLeft, adjustedPaintOffset.y() + fontCascade.metricsOfPrimaryFont().ascent() };
         context.drawBidiText(fontCascade, textRun, roundPointToDevicePixels(textOrigin, protect(document())->deviceScaleFactor()));
         context.concatCTM(rotation(rotationRect, RotationDirection::Counterclockwise));
     }

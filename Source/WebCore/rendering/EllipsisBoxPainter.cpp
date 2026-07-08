@@ -31,7 +31,6 @@
 #include "PaintInfo.h"
 #include "RenderObjectDocument.h"
 #include "RenderView.h"
-#include "Settings.h"
 #include "StyleColorResolver.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTextShadow.h"
@@ -93,7 +92,7 @@ void EllipsisBoxPainter::paint()
 
     auto visualRect = m_lineBox.ellipsisVisualRect();
     auto textOrigin = visualRect.location();
-    auto ascent = m_lineBox.formattingContextRoot().settings().subpixelInlineLayoutEnabled() ? LayoutUnit(style->metricsOfPrimaryFont().ascent()) : LayoutUnit(style->metricsOfPrimaryFont().intAscent());
+    auto ascent = LayoutUnit(style->metricsOfPrimaryFont().ascent());
     textOrigin.move(m_paintOffset.x(), m_paintOffset.y() + ascent);
 
     if (style->writingMode().isHorizontal())

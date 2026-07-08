@@ -917,10 +917,10 @@ static float baselineForEmptyContent(const RenderBlockFlow& rootRenderer)
     }
 
     auto& fontMetrics = rootRenderer.style().metricsOfPrimaryFont();
-    auto ascent = Layout::InlineFormattingUtils::snapToInt(fontMetrics.ascent(), *rootLayoutBox);
-    auto descent = Layout::InlineFormattingUtils::snapToInt(fontMetrics.descent(), *rootLayoutBox);
+    auto ascent = fontMetrics.ascent();
+    auto descent = fontMetrics.descent();
     auto baseline = ascent + (rootLayoutBox->firstLineStyle().computedLineHeight() - (ascent + descent)) / 2;
-    return Layout::InlineFormattingUtils::snapToInt(rootRenderer.borderAndPaddingBefore() + baseline, *rootLayoutBox, Layout::InlineFormattingUtils::SnapDirection::Floor);
+    return rootRenderer.borderAndPaddingBefore() + baseline;
 }
 
 std::optional<LayoutUnit> LineLayout::firstLineBaseline() const
@@ -940,7 +940,7 @@ std::optional<LayoutUnit> LineLayout::firstLineBaseline() const
             CheckedRef blockRenderer = downcast<RenderBox>(*blockLevelBox->layoutBox().rendererForIntegration());
             return blockRenderer->firstLineBaseline();
         }
-        return LayoutUnit { Layout::InlineFormattingUtils::snapToInt(baselineForLine(line), rootLayoutBox(), Layout::InlineFormattingUtils::SnapDirection::Floor) };
+        return LayoutUnit { baselineForLine(line) };
     };
 
     for (auto& line : m_inlineContent->displayContent().lines) {
@@ -968,7 +968,7 @@ std::optional<LayoutUnit> LineLayout::lastLineBaseline() const
             CheckedRef blockRenderer = downcast<RenderBox>(*blockLevelBox->layoutBox().rendererForIntegration());
             return blockRenderer->lastLineBaseline();
         }
-        return LayoutUnit { Layout::InlineFormattingUtils::snapToInt(baselineForLine(line), rootLayoutBox(), Layout::InlineFormattingUtils::SnapDirection::Floor) };
+        return LayoutUnit { baselineForLine(line) };
     };
 
     for (auto& line : m_inlineContent->displayContent().lines | std::views::reverse) {
