@@ -31,9 +31,7 @@
 #include "Logging.h"
 #include "NotImplemented.h"
 #include <wtf/LoggerHelper.h>
-#include <wtf/NativePromise.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(MAC)
@@ -131,24 +129,27 @@ void AudioSession::addAudioSessionChangedObserver(const ChangedObserver& observe
         observer(Ref { *sharedAudioSession() });
 }
 
-Ref<AudioSession::SetActivePromise> AudioSession::tryToSetActive(bool active)
+bool AudioSession::tryToSetActive(bool active)
 {
     bool previousIsActive = isActive();
-    bool previousIsInterrupted = m_isInterrupted;
-    auto logSiteIdentifier = LOGIDENTIFIER;
-    return tryToSetActiveInternal(active)->whenSettled(RunLoop::mainSingleton(),
-        [this, protectedThis = Ref { *this }, active, previousIsActive, previousIsInterrupted, logSiteIdentifier](auto&& result) mutable -> Ref<SetActivePromise> {
-            if (!result)
-                return SetActivePromise::createAndReject();
-            ALWAYS_LOG(logSiteIdentifier, "is active = ", active, ", previousIsActive = ", previousIsActive);
-            bool hasActiveChanged = previousIsActive != active;
-            m_active = active;
-            if (m_isInterrupted && m_active && previousIsInterrupted)
-                endInterruption(MayResume::Yes);
+    if (!tryToSetActiveInternal(active))
+        return false;
+
+    ALWAYS_LOG(LOGIDENTIFIER, "is active = ", active, ", previousIsActive = ", previousIsActive);
+
+    bool hasActiveChanged = previousIsActive != active;
+    setActive(active);
+    if (m_isInterrupted && m_active) {
+        callOnMainThread([hasActiveChanged] {
+            if (singleton().m_isInterrupted && singleton().m_active)
+                singleton().endInterruption(MayResume::Yes);
             if (hasActiveChanged)
-                activeStateChanged();
-            return SetActivePromise::createAndResolve();
+                singleton().activeStateChanged();
         });
+    } else if (hasActiveChanged)
+        activeStateChanged();
+
+    return true;
 }
 
 void AudioSession::setActive(bool active)
@@ -261,10 +262,10 @@ size_t AudioSession::maximumNumberOfOutputChannels() const
     return 0;
 }
 
-Ref<AudioSession::SetActivePromise> AudioSession::tryToSetActiveInternal(bool)
+bool AudioSession::tryToSetActiveInternal(bool)
 {
     notImplemented();
-    return SetActivePromise::createAndResolve();
+    return true;
 }
 
 size_t AudioSession::preferredBufferSize() const

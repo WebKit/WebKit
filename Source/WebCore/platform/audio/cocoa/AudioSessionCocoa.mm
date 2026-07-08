@@ -93,7 +93,7 @@ void AudioSessionCocoa::setEligibleForSmartRouting(bool isEligible, ForceUpdate 
     });
 }
 
-Ref<AudioSession::SetActivePromise> AudioSessionCocoa::tryToSetActiveInternal(bool active)
+bool AudioSessionCocoa::tryToSetActiveInternal(bool active)
 {
     // FIXME: This is a safer cpp false positive (160259918).
     SUPPRESS_UNRETAINED_ARG static bool supportsSharedInstance = [PAL::getAVAudioSessionClassSingleton() respondsToSelector:@selector(sharedInstance)];
@@ -101,7 +101,7 @@ Ref<AudioSession::SetActivePromise> AudioSessionCocoa::tryToSetActiveInternal(bo
     SUPPRESS_UNRETAINED_ARG static bool supportsSetActive = [PAL::getAVAudioSessionClassSingleton() instancesRespondToSelector:@selector(setActive:withOptions:error:)];
 
     if (!supportsSharedInstance)
-        return SetActivePromise::createAndResolve();
+        return true;
 
     // We need to deactivate the session on another queue because the AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation option
     // means that AVAudioSession may synchronously unduck previously ducked clients. Activation needs to complete before this method
@@ -123,7 +123,7 @@ Ref<AudioSession::SetActivePromise> AudioSessionCocoa::tryToSetActiveInternal(bo
                 RELEASE_LOG_ERROR(Media, "failed to activate audio session, error: %@", error.localizedDescription);
             success = !error;
         });
-        return success ? SetActivePromise::createAndResolve() : SetActivePromise::createAndReject();
+        return success;
     }
 
     m_workQueue->dispatch([] {
@@ -136,7 +136,7 @@ Ref<AudioSession::SetActivePromise> AudioSessionCocoa::tryToSetActiveInternal(bo
             RELEASE_LOG_ERROR(Media, "failed to deactivate audio session, error: %@", error.localizedDescription);
     });
     setEligibleForSmartRouting(false);
-    return SetActivePromise::createAndResolve();
+    return true;
 }
 
 void AudioSessionCocoa::setCategory(CategoryType newCategory, Mode, RouteSharingPolicy)

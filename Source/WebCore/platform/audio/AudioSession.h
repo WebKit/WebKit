@@ -31,7 +31,6 @@
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/AbstractThreadSafeRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/NativePromise.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Observer.h>
@@ -105,7 +104,6 @@ public:
 
     static bool NODELETE enableMediaPlayback();
 
-    using SetActivePromise = GenericPromise;
     using ChangedObserver = WTF::Observer<void(AudioSession&)>;
     static void addAudioSessionChangedObserver(const ChangedObserver&);
 
@@ -128,7 +126,7 @@ public:
     virtual size_t numberOfOutputChannels() const;
     virtual size_t maximumNumberOfOutputChannels() const;
 
-    Ref<SetActivePromise> tryToSetActive(bool);
+    bool tryToSetActive(bool);
 
     virtual size_t preferredBufferSize() const;
     virtual void setPreferredBufferSize(size_t);
@@ -178,7 +176,7 @@ protected:
     friend class NeverDestroyed<AudioSession>;
     AudioSession();
 
-    virtual Ref<SetActivePromise> tryToSetActiveInternal(bool);
+    virtual bool tryToSetActiveInternal(bool);
     void setActive(bool);
     void activeStateChanged();
 

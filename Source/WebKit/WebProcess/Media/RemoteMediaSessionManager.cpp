@@ -235,7 +235,7 @@ void RemoteMediaSessionManager::setAudioSessionPreferredBufferSize(uint64_t pref
 
 void RemoteMediaSessionManager::tryToSetAudioSessionActive(bool active)
 {
-    WebCore::AudioSession::singleton().tryToSetActive(active)->whenSettled(RunLoop::mainSingleton(), [](auto&&) { });
+    WebCore::AudioSession::singleton().tryToSetActive(active);
 }
 #endif
 

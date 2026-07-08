@@ -3858,9 +3858,6 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix ]
 webkit.org/b/136224 fast/speechrecognition [ Skip ]
 http/tests/media/media-stream/speech-recognition-iframe-allow-attribute.html [ Skip ]
 fast/mediastream/audio-session-stays-active-when-removing-session-during-speech-recognition.html [ Skip ]
-fast/mediastream/audio-session-active-when-capture-starts-and-stops.html [ Skip ]
-fast/mediastream/audio-session-stays-active-during-capture.html [ Skip ]
-fast/mediastream/audio-session-stays-active-when-removing-session-during-capture.html [ Skip ]
 
 # Depends on HTTP Live Streaming (non-supported in non-Apple ports).
 fast/url/data-url-mediatype.html [ Skip ]

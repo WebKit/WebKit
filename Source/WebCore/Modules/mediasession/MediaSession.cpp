@@ -651,7 +651,6 @@ void MediaSession::updateCaptureState(bool isActive, DOMPromiseDeferred<void>&& 
                 promise.reject(WTF::move(*exception));
                 return;
             }
-
             promise.resolve();
         });
     });
