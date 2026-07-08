@@ -70,7 +70,7 @@ class OSXChromeCanaryDriver(OSXChromeDriverBase):
         set_binary_location_impl(options, browser_build_path, self.app_name, self.process_name)
 
     def launch_args_with_url(self, url):
-        return super(OSXChromeCanaryDriver, self).launch_args_with_url(url) + ['--enable-field-trial-config']
+        return super(OSXChromeCanaryDriver, self).launch_args_with_url(url) + ['--enable-field-trial-config', '--disable-features=ThrottleConsecutiveNoDamageMainFrames']
 
 
 class OSXChromeBetaDriver(OSXChromeDriverBase):
@@ -83,7 +83,7 @@ class OSXChromeBetaDriver(OSXChromeDriverBase):
         set_binary_location_impl(options, browser_build_path, self.app_name, self.process_name)
 
     def launch_args_with_url(self, url):
-        return super(OSXChromeBetaDriver, self).launch_args_with_url(url) + ['--enable-field-trial-config']
+        return super(OSXChromeBetaDriver, self).launch_args_with_url(url) + ['--enable-field-trial-config', '--disable-features=ThrottleConsecutiveNoDamageMainFrames']
 
 
 class OSXChromeDevDriver(OSXChromeDriverBase):
@@ -96,7 +96,7 @@ class OSXChromeDevDriver(OSXChromeDriverBase):
         set_binary_location_impl(options, browser_build_path, self.app_name, self.process_name)
 
     def launch_args_with_url(self, url):
-        return super(OSXChromeDevDriver, self).launch_args_with_url(url) + ['--enable-field-trial-config']
+        return super(OSXChromeDevDriver, self).launch_args_with_url(url) + ['--enable-field-trial-config', '--disable-features=ThrottleConsecutiveNoDamageMainFrames']
 
 
 class OSXChromeForTestingDriver(OSXChromeDriverBase):
@@ -109,7 +109,7 @@ class OSXChromeForTestingDriver(OSXChromeDriverBase):
         set_binary_location_impl(options, browser_build_path, self.app_name, self.process_name)
 
     def launch_args_with_url(self, url):
-        return super(OSXChromeForTestingDriver, self).launch_args_with_url(url) + ['--enable-field-trial-config']
+        return super(OSXChromeForTestingDriver, self).launch_args_with_url(url) + ['--enable-field-trial-config', '--disable-features=ThrottleConsecutiveNoDamageMainFrames']
 
 
 class OSXChromiumDriver(OSXChromeDriverBase):
