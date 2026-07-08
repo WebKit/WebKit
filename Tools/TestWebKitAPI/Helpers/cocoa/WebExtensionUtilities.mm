@@ -458,7 +458,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
         auto *configuration = [[WKWebViewConfiguration alloc] init];
         configuration.webExtensionController = extensionController;
-        configuration.websiteDataStore = usingPrivateBrowsing ? WKWebsiteDataStore.nonPersistentDataStore : WKWebsiteDataStore.defaultDataStore;
+        configuration.websiteDataStore = usingPrivateBrowsing ? WKWebsiteDataStore.nonPersistentDataStore : extensionController.configuration.defaultWebsiteDataStore;
         configuration.userContentController = userContentController(usingPrivateBrowsing);
 
         auto *preferences = configuration.preferences;
@@ -516,9 +516,11 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     if ([_webView.URL.scheme isEqualToString:url.scheme])
         return;
 
-    auto *configuration = [url.scheme hasPrefix:@"http"] ? [[WKWebViewConfiguration alloc] init] : context.webViewConfiguration;
+    BOOL isHTTPFamilyURL = [url.scheme hasPrefix:@"http"];
+    auto *configuration = isHTTPFamilyURL ? [[WKWebViewConfiguration alloc] init] : context.webViewConfiguration;
     configuration.webExtensionController = _extensionController;
-    configuration.websiteDataStore = usingPrivateBrowsing ? WKWebsiteDataStore.nonPersistentDataStore : WKWebsiteDataStore.defaultDataStore;
+    if (isHTTPFamilyURL)
+        configuration.websiteDataStore = usingPrivateBrowsing ? WKWebsiteDataStore.nonPersistentDataStore : _extensionController.configuration.defaultWebsiteDataStore;
     configuration.userContentController = userContentController(usingPrivateBrowsing);
 
     auto *preferences = configuration.preferences;

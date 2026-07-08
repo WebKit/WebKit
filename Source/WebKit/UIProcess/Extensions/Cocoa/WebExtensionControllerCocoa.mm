@@ -385,7 +385,8 @@ void WebExtensionController::addPage(WebPageProxy& page)
     addWebsiteDataStore(dataStore);
 
     Ref controller = page.userContentController();
-    addUserContentController(controller, dataStore->isPersistent() ? ForPrivateBrowsing::No : ForPrivateBrowsing::Yes);
+    bool isOwnStore = !dataStore->isPersistent() && (&dataStore.get() == &m_configuration->defaultWebsiteDataStore());
+    addUserContentController(controller, (dataStore->isPersistent() || isOwnStore) ? ForPrivateBrowsing::No : ForPrivateBrowsing::Yes);
 }
 
 void WebExtensionController::removePage(WebPageProxy& page)

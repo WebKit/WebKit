@@ -198,7 +198,7 @@ TEST(WKWebExtensionAPICookies, GetAll)
     auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
-    auto *cookieStore = WKWebsiteDataStore.defaultDataStore.httpCookieStore;
+    auto *cookieStore = manager.get().controller.configuration.defaultWebsiteDataStore.httpCookieStore;
 
     auto *cookie1 = [NSHTTPCookie cookieWithProperties:@{
         NSHTTPCookieName: @"testCookie1",
@@ -241,18 +241,9 @@ TEST(WKWebExtensionAPICookies, GetAllIncognito)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"const allCookieStores = await browser.test.assertSafeResolve(() => browser.cookies.getAllCookieStores())",
+        @"browser.test.assertEq(allCookieStores?.length, 1, 'Should have one cookie store')",
         @"const incognitoStore = allCookieStores.find(store => store.incognito)",
         @"browser.test.assertEq(incognitoStore, undefined, 'Incognito store should not be found')",
-
-        @"await browser.test.assertRejects(browser.cookies.getAll({ storeId: 'ephemeral-1' }), /cookie store not found/i)",
-        @"await browser.test.assertRejects(browser.cookies.getAll({ storeId: 'ephemeral-2' }), /cookie store not found/i)",
-        @"await browser.test.assertRejects(browser.cookies.getAll({ storeId: 'ephemeral-3' }), /cookie store not found/i)",
-        @"await browser.test.assertRejects(browser.cookies.getAll({ storeId: 'ephemeral-4' }), /cookie store not found/i)",
-        @"await browser.test.assertRejects(browser.cookies.getAll({ storeId: 'ephemeral-5' }), /cookie store not found/i)",
-        @"await browser.test.assertRejects(browser.cookies.getAll({ storeId: 'ephemeral-6' }), /cookie store not found/i)",
-        @"await browser.test.assertRejects(browser.cookies.getAll({ storeId: 'ephemeral-7' }), /cookie store not found/i)",
-        @"await browser.test.assertRejects(browser.cookies.getAll({ storeId: 'ephemeral-8' }), /cookie store not found/i)",
-        @"await browser.test.assertRejects(browser.cookies.getAll({ storeId: 'ephemeral-9' }), /cookie store not found/i)",
 
         @"browser.test.notifyPass()"
     ]);
@@ -425,7 +416,7 @@ TEST(WKWebExtensionAPICookies, GetAllWithFilters)
     auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
-    auto *cookieStore = WKWebsiteDataStore.defaultDataStore.httpCookieStore;
+    auto *cookieStore = manager.get().controller.configuration.defaultWebsiteDataStore.httpCookieStore;
 
     auto *nameCookie = [NSHTTPCookie cookieWithProperties:@{
         NSHTTPCookieName: @"nameCookie",
@@ -514,7 +505,7 @@ TEST(WKWebExtensionAPICookies, RemoveCookie)
     auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
-    auto *cookieStore = WKWebsiteDataStore.defaultDataStore.httpCookieStore;
+    auto *cookieStore = manager.get().controller.configuration.defaultWebsiteDataStore.httpCookieStore;
 
     auto *testCookie = [NSHTTPCookie cookieWithProperties:@{
         NSHTTPCookieName: @"testCookie",
@@ -551,7 +542,7 @@ TEST(WKWebExtensionAPICookies, RemoveCookieNotFound)
     auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
-    auto *cookieStore = WKWebsiteDataStore.defaultDataStore.httpCookieStore;
+    auto *cookieStore = manager.get().controller.configuration.defaultWebsiteDataStore.httpCookieStore;
 
     auto *testCookie = [NSHTTPCookie cookieWithProperties:@{
         NSHTTPCookieName: @"testCookie",
@@ -598,7 +589,7 @@ TEST(WKWebExtensionAPICookies, SetCookie)
     auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
-    auto *cookieStore = WKWebsiteDataStore.defaultDataStore.httpCookieStore;
+    auto *cookieStore = manager.get().controller.configuration.defaultWebsiteDataStore.httpCookieStore;
 
     auto *testCookie = [NSHTTPCookie cookieWithProperties:@{
         NSHTTPCookieName: @"replacedCookie",
@@ -681,7 +672,7 @@ TEST(WKWebExtensionAPICookies, GetCookie)
     auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
-    auto *cookieStore = WKWebsiteDataStore.defaultDataStore.httpCookieStore;
+    auto *cookieStore = manager.get().controller.configuration.defaultWebsiteDataStore.httpCookieStore;
 
     auto *testCookie = [NSHTTPCookie cookieWithProperties:@{
         NSHTTPCookieName: @"testGetCookie",
@@ -729,12 +720,12 @@ TEST(WKWebExtensionAPICookies, GetAllAfterNetworkProcessTermination)
         @"browser.test.notifyPass()"
     ]);
 
-    auto manager = Util::loadExtension(cookiesManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(cookiesManifest, @{ @"background.js": backgroundScript }, WKWebExtensionControllerConfiguration.defaultConfiguration);
 
     auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
-    auto *cookieStore = WKWebsiteDataStore.defaultDataStore.httpCookieStore;
+    auto *cookieStore = manager.get().controller.configuration.defaultWebsiteDataStore.httpCookieStore;
     auto *cookie = [NSHTTPCookie cookieWithProperties:@{
         NSHTTPCookieName: @"testCookie",
         NSHTTPCookieValue: @"testValue",

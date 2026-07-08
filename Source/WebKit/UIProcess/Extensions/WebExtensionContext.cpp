@@ -1686,6 +1686,7 @@ WebExtensionContextParameters WebExtensionContext::parameters(IncludePrivilegedI
         extension->serializeManifest(),
         extension->manifestVersion(),
         isSessionStorageAllowedInContentScripts(),
+        extensionController()->configuration().defaultWebsiteDataStore().sessionID(),
         backgroundPageIdentifier(),
 #if ENABLE(INSPECTOR_EXTENSIONS)
         inspectorPageIdentifiers(),
@@ -1737,8 +1738,10 @@ WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(EventList
                 if (!page)
                     continue;
 
-                if (!hasAccessToPrivateData() && page->sessionID().isEphemeral())
-                    continue;
+                if (!hasAccessToPrivateData() && page->sessionID().isEphemeral()) {
+                    if (RefPtr controller = extensionController(); !controller || page->sessionID() != controller->configuration().defaultWebsiteDataStore().sessionID())
+                        continue;
+                }
 
                 Ref webProcess = frame->process();
                 if (predicate && !predicate(webProcess, *page, frame))
