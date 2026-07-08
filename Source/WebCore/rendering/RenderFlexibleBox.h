@@ -280,6 +280,8 @@ private:
         Vector<LayoutUnit> hypotheticalMainSizes;
     };
     FlexLines computeFlexLines(FlexLayoutItems& allItems, LayoutUnit gapBetweenItems);
+    // Resolves each flex item's flexed main size (spec 9.7) for every line, and returns the resulting main-axis free space per line.
+    Vector<LayoutUnit> computeMainSizeForFlexItems(FlexLayoutItems& allItems, const FlexLines&, LayoutUnit gapBetweenItems);
 
     LayoutUnit NODELETE autoMarginOffsetInMainAxis(std::span<const FlexLayoutItem>, LayoutUnit& availableFreeSpace);
     void NODELETE updateAutoMarginsInMainAxis(RenderBox& flexItem, LayoutUnit autoMarginOffset);
