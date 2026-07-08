@@ -1,4 +1,4 @@
 
 PASS Style query on #target should query parent element
-FAIL Style query on ::before should query originating element assert_equals: expected "C" but got "D"
+PASS Style query on ::before should query originating element
 

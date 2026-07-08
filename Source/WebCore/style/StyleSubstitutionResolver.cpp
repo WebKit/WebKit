@@ -410,7 +410,11 @@ bool SubstitutionResolver::substituteDashedFunction(StringView functionName, CSS
         if (blocks.size() == 1 && blocks.first().containerQueries.isEmpty())
             return blocks.first().properties;
 
-        ContainerQueryEvaluator evaluator(*element, ContainerQueryEvaluator::SelectionMode::Element, foundScopeOrdinal, nullptr);
+        // A pseudo-element's queries select containers from its originating element inclusive.
+        auto selectionMode = m_styleBuilder.state().style().pseudoElementIdentifier()
+            ? ContainerQueryEvaluator::SelectionMode::PseudoElement
+            : ContainerQueryEvaluator::SelectionMode::Element;
+        ContainerQueryEvaluator evaluator(*element, selectionMode, foundScopeOrdinal, nullptr);
         auto containerQueriesMatch = [&](const auto& chain) {
             for (auto& containerRule : chain) {
                 if (!evaluator.evaluate(containerRule->containerQuery()))
