@@ -862,6 +862,7 @@ imported/w3c/web-platform-tests/css/css-masking/clip/clip-rect-scroll.html [ Ima
 imported/w3c/web-platform-tests/css/css-position/position-fixed-scroll-nested-fixed.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-combine-emphasis.html [ ImageOnlyFailure ]
 webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic-negcoord.html [ ImageOnlyFailure ]
+webkit.org/b/273396 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic-opacity.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/text-shadow-orientation-upright-001.html [ ImageOnlyFailure ]
@@ -1314,7 +1315,7 @@ webkit.org/b/316574 fast/parser/entities-in-html.html [ Pass Timeout ]
 webkit.org/b/316709 scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
 
 webkit.org/b/309744 [ arm64 ] fast/events/monotonic-event-time.html [ Pass Failure ]
-webkit.org/b/311654 [ arm64 ] imported/w3c/web-platform-tests/event-timing/gap-keydown-keyup.html [ Pass Failure ]
+webkit.org/b/311654 imported/w3c/web-platform-tests/event-timing/gap-keydown-keyup.html [ Pass Failure ]
 webkit.org/b/317020 [ arm64 ] fast/events/site-isolation/event-timing-back-forward-cache-duration.html [ Pass Failure ]
 webkit.org/b/252878 [ arm64 ] fast/frames/lots-of-objects.html [ Pass Timeout ]
 webkit.org/b/317021 [ arm64 ] fast/parser/elementstack-nesting-depth.html [ Pass Timeout ]
@@ -1350,6 +1351,10 @@ webkit.org/b/318345 [ x86_64 ] media/track/video-track-configuration-mp4-default
 
 webkit.org/b/318349 [ arm64 ] imported/w3c/web-platform-tests/largest-contentful-paint/image-TAO.sub.html [ Failure Pass ]
 webkit.org/b/318350 [ arm64 ] http/tests/websocket/tests/hybi/inspector/handshake-error.html [ Failure Pass ]
+
+webkit.org/b/318887 [ Release ] media/video-seek-pause.html [ Pass Failure ]
+webkit.org/b/318889 [ arm64 ] fast/block/out-of-flow-becomes-in-flow-with-auto-width.html [ Pass Timeout ]
+webkit.org/b/318891 [ arm64 ] imported/w3c/web-platform-tests/webrtc/RTCDataChannel-send-close-string-negotiated.window.html [ Pass Failure ]
 
 webkit.org/b/318638 http/tests/misc/iframe-shadow-realm.html [ Crash Pass ]
 

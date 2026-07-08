@@ -2369,7 +2369,6 @@ svg/text/tspan-outline.html [ ImageOnlyFailure ]
 svg/zoom/page/text-with-non-scaling-stroke.html [ ImageOnlyFailure ]
 
 # Test failing only with swrast
-webkit.org/b/273396 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 webkit.org/b/273396 fast/block/float/floats-offset-image-quirk-lineheight.html [ ImageOnlyFailure ]
 webkit.org/b/273396 fast/block/float/floats-offset-image-quirk.html [ ImageOnlyFailure ]
 webkit.org/b/273396 fast/block/float/floats-offset-image-strict-lineheight.html [ ImageOnlyFailure ]
@@ -5293,6 +5292,7 @@ webkit.org/b/306455 http/tests/xmlhttprequest/logout.html [ Failure Pass ]
 
 webkit.org/b/306458 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-bitrate.html [ Failure Pass ]
 webkit.org/b/308368 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-a-bitrate.html [ Pass Failure ]
+webkit.org/b/308368 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-bitrate.html [ Pass Failure ]
 
 webkit.org/b/308368 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-audio-bitrate.html [ Pass Failure ]
 webkit.org/b/308368 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Pass Failure ]
@@ -5610,6 +5610,10 @@ webkit.org/b/317010 [ x86_64 ] imported/w3c/web-platform-tests/largest-contentfu
 webkit.org/b/317119 fast/repaint/align-content-center-in-composited-layer.html [ Pass ImageOnlyFailure ]
 webkit.org/b/317119 fast/repaint/layer-repaint-with-layout-delta-1.html [ Pass ImageOnlyFailure ]
 webkit.org/b/317119 fast/repaint/layer-repaint-with-layout-delta-2.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/318872 fullscreen/full-screen-request-removed.html [ Pass Crash ]
+webkit.org/b/318872 fullscreen/full-screen-restrictions.html [ Pass Crash ]
+webkit.org/b/318872 fullscreen/full-screen-disables-viewport-clipping.html [ Pass Crash ]
 
 [ Release ] imported/w3c/web-platform-tests/preload/prefetch-document.html [ Failure Pass ]
 fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Pass Failure ]

@@ -612,10 +612,15 @@ webkit.org/b/252878 inspector/debugger/breakpoints/resolved-dump-all-pause-locat
 webkit.org/b/252878 inspector/debugger/breakpoints/resolved-dump-each-line.html [ Failure Timeout Pass ]
 webkit.org/b/252878 webaudio/audioworket-out-of-memory.html [ Pass Failure ]
 
+webkit.org/b/318781 media/media-fragments/TC0005.html [ Failure Pass ]
 webkit.org/b/318781 media/media-fragments/TC0011.html [ Failure Pass ]
 webkit.org/b/318781 media/media-fragments/TC0035.html [ Failure Pass ]
 webkit.org/b/318781 media/media-fragments/TC0036.html [ Failure Pass ]
+webkit.org/b/318781 media/media-fragments/TC0037.html [ Failure Pass ]
+webkit.org/b/318781 media/media-fragments/TC0039.html [ Failure Pass ]
 webkit.org/b/318781 media/media-fragments/TC0052.html [ Failure Pass ]
+webkit.org/b/318781 media/media-fragments/TC0053.html [ Failure Pass ]
+webkit.org/b/318781 media/media-fragments/TC0055.html [ Failure Pass ]
 webkit.org/b/318781 media/media-fragments/TC0072.html [ Failure Pass ]
 webkit.org/b/318781 media/media-fragments/TC0078.html [ Failure Pass ]
 webkit.org/b/318781 media/media-fragments/TC0079.html [ Failure Pass ]
@@ -1340,7 +1345,7 @@ webkit.org/b/318026 fast/canvas/canvas-layer-drawing.html [ Pass ImageOnlyFailur
 webkit.org/b/318027 fast/events/mouse-focus-imagemap.html [ Pass Failure ]
 webkit.org/b/318028 fast/parser/entity-end-xmp-tag.html [ Pass Timeout ]
 webkit.org/b/318029 media/media-source/media-source-seek-twice.html [ Pass Timeout ]
-webkit.org/b/318030 inspector/canvas/create-context-2d.html [ Crash Pass ]
+webkit.org/b/318030 inspector/canvas/create-context-2d.html [ Crash Pass Failure ]
 webkit.org/b/318031 imported/w3c/web-platform-tests/css/filter-effects/filtered-inline-applies-to-block.html [ Pass ImageOnlyFailure ]
 webkit.org/b/318032 svg/filters/feImage-element-primitive-subregion.svg [ Pass ImageOnlyFailure ]
 webkit.org/b/318033 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-corner-shape.html [ ImageOnlyFailure ]
@@ -1350,6 +1355,8 @@ webkit.org/b/318035 imported/w3c/web-platform-tests/css/css-view-transitions/ifr
 webkit.org/b/318035 imported/w3c/web-platform-tests/css/css-view-transitions/iframe-and-main-frame-transition-old-main-new-iframe.html [ Pass ImageOnlyFailure ]
 webkit.org/b/318035 imported/w3c/web-platform-tests/css/css-view-transitions/iframe-and-main-frame-transition-old-main-old-iframe.html [ Pass ImageOnlyFailure ]
 webkit.org/b/318035 imported/w3c/web-platform-tests/css/css-view-transitions/iframe-and-main-frame-transition-old-main.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/318894 fast/mediastream/audio-unit-reconfigure.html [ Pass Timeout ]
 
 webkit.org/b/318339 fast/parser/entity-comment-in-script-tricky.html [ Pass Timeout ]
 webkit.org/b/318340 accessibility/list/list-active-element-selected-children.html [ Pass Timeout ]

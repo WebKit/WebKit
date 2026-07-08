@@ -184,6 +184,9 @@
             },
             "/webkit/WebKitWebView/is-playing-audio": {
                 "expected": {"all": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/274344"}}
+            },
+            "/webkit/WebKitWebView/save": {
+                "expected": {"wpe": {"status": ["CRASH"], "bug": "webkit.org/b/318884"}}
             }
         }
     },
@@ -457,6 +460,13 @@
         "subtests": {
             "/webkit/WebKitWebsiteData/configuration": {
                 "expected": {"all" : { "status": ["PASS", "FAIL", "TIMEOUT"], "bug": "webkit.org/b/301570"}}
+            }
+        }
+    },
+    "TestInputMethodContext": {
+        "subtests": {
+            "/webkit/WebKitInputMethodContext/simple": {
+                "expected": {"gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/318892"}}
             }
         }
     }
