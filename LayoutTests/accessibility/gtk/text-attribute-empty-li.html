@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<ul>
+<li id="option" role="option">option</li>
+</ul>
+<div id="console"></div>
+<script>
+ description("Retrieving text attributes for a list item with role='option' should not crash.");
+
+ if (window.accessibilityController) {
+     var option = accessibilityController.accessibleElementById("option");
+     var optionRuns = option.attributedStringForRange(0, 6);
+ }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
