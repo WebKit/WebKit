@@ -96,8 +96,6 @@ private:
 
     void didChangeViewExposedRect() override;
 
-    void setDisplayLinkWantsFullSpeedUpdates(bool) override;
-
     void removeObserver(std::optional<DisplayLinkObserverID>&);
 
     WTF::MachSendRight createFence() override;

@@ -521,24 +521,6 @@ void RemoteLayerTreeDrawingAreaProxyMac::setPreferredFramesPerSecond(IPC::Connec
         displayLink->setObserverPreferredFramesPerSecond(m_displayLinkClient, *m_displayRefreshObserverID, preferredFramesPerSecond);
 }
 
-void RemoteLayerTreeDrawingAreaProxyMac::setDisplayLinkWantsFullSpeedUpdates(bool wantsFullSpeedUpdates)
-{
-    if (!m_displayID)
-        return;
-
-    auto& displayLink = this->displayLink();
-
-    // Use a second observer for full-speed updates (used to drive scroll animations).
-    if (wantsFullSpeedUpdates) {
-        if (m_fullSpeedUpdateObserverID)
-            return;
-
-        m_fullSpeedUpdateObserverID = DisplayLinkObserverID::generate();
-        displayLink.addObserver(m_displayLinkClient, *m_fullSpeedUpdateObserverID, displayLink.nominalFramesPerSecond());
-    } else if (m_fullSpeedUpdateObserverID)
-        removeObserver(m_fullSpeedUpdateObserverID);
-}
-
 void RemoteLayerTreeDrawingAreaProxyMac::windowScreenDidChange(PlatformDisplayID displayID)
 {
     if (displayID == m_displayID)

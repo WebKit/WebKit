@@ -128,7 +128,6 @@ public:
     TransactionID NODELETE lastCommittedMainFrameLayerTreeTransactionID() const;
 
     virtual void didRefreshDisplay();
-    virtual void setDisplayLinkWantsFullSpeedUpdates(bool) { }
     virtual bool displayLinkWantsHighFrameRateForTesting() const { return false; };
 
     bool hasDebugIndicator() const { return !!m_debugIndicatorLayerTreeHost; }
