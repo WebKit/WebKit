@@ -1,4 +1,5 @@
 //@ requireOptions("--useConcurrentJIT=0", "--useZombieMode=1", "--slowPathAllocsBetweenGCs=16")
+//@ skip if $memoryLimited
 
 function opt(s) {
     const o = {};
