@@ -319,6 +319,7 @@ pre, .text {
 
         if self.block is None:
             self.block = False
+        self.accepted = True
 
         self._file_handle = None
         self._div = []
@@ -508,7 +509,8 @@ pre, .text {
 
             def _wait_for_enter():
                 try:
-                    sys.stdin.readline()
+                    if sys.stdin.readline().strip().lower() in ('n', 'no'):
+                        self.accepted = False
                 finally:
                     finished.set()
 

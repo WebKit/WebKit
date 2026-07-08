@@ -49,7 +49,10 @@ class DiffBase(object, metaclass=DiffMeta):
 
         commit_match = self.FROM_COMMIT_RE.match(line)
         if commit_match and self.repository:
-            commit = self.repository.commit(hash=commit_match.group(1), include_log=False)
+            try:
+                commit = self.repository.commit(hash=commit_match.group(1), include_log=False)
+            except self.repository.Exception:
+                return line
             return 'From {} ({})\n'.format(commit, commit_match.group(1)[:Commit.HASH_LABEL_SIZE])
         author_match = self.FROM_AUTHOR_RE.match(line)
         if author_match:
