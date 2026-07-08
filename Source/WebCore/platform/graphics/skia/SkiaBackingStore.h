@@ -76,6 +76,9 @@ private:
         const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
         sk_sp<SkImage> image() const;
 
+        // Logical region to sample from image() - smaller than the image for padded super-tiled textures.
+        SkRect imageSourceRect() const;
+
     private:
         void ensureTexture(const IntSize&, CoordinatedTileBuffer&);
         void update(const IntRect& dirtyRect, const IntRect& tileRect, CoordinatedTileBuffer&);

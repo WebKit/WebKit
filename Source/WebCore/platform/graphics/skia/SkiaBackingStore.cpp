@@ -100,7 +100,7 @@ void SkiaBackingStore::paintToCanvas(SkCanvas& canvas, const SkPaint& paint)
             continue;
 
         tilePaint.setAntiAlias(paint.isAntiAlias() && allTileEdgesExposed(layerRect, tile.rect()));
-        canvas.drawImageRect(image, SkRect::MakeWH(image->width(), image->height()), tile.rect(), SkSamplingOptions(SkFilterMode::kNearest, SkMipmapMode::kNone), &tilePaint, SkCanvas::kFast_SrcRectConstraint);
+        canvas.drawImageRect(image, tile.imageSourceRect(), tile.rect(), SkSamplingOptions(SkFilterMode::kNearest, SkMipmapMode::kNone), &tilePaint, SkCanvas::kFast_SrcRectConstraint);
     }
 }
 
@@ -125,7 +125,7 @@ Vector<SkCanvas::ImageSetEntry> SkiaBackingStore::buildImageSet(SkCanvas& canvas
 
         // FIXME: implement per edge antialiasing.
         unsigned aaFlags = enableAntialias && allTileEdgesExposed(layerRect, tile.rect()) ? SkCanvas::kAll_QuadAAFlags : SkCanvas::kNone_QuadAAFlags;
-        images.append(SkCanvas::ImageSetEntry(image, SkRect::MakeWH(image->width(), image->height()), SkRect(tile.rect()), matrixIndex, opacity, aaFlags, false));
+        images.append(SkCanvas::ImageSetEntry(image, tile.imageSourceRect(), SkRect(tile.rect()), matrixIndex, opacity, aaFlags, false));
     }
     return images;
 }
@@ -243,10 +243,33 @@ sk_sp<SkImage> SkiaBackingStore::Tile::image() const
         externalTexture.fTarget = GL_TEXTURE_2D;
         externalTexture.fID = m_texture->id();
         externalTexture.fFormat = colorType == kBGRA_8888_SkColorType ? GL_BGRA8_EXT : GL_RGBA8;
-        auto backendTexture = GrBackendTextures::MakeGL(m_texture->size().width(), m_texture->size().height(), skgpu::Mipmapped::kNo, externalTexture);
+        // Use the physical allocatedSize(): super-tiled textures are padded past the logical
+        // size(), and sizing the image to size() would map u=1.0 to the padded edge, stretching
+        // content and bleeding in padding. imageSourceRect() then restricts sampling to the
+        // logical region, mirroring the uvMax clamp on the TextureMapper path.
+        auto allocatedSize = m_texture->allocatedSize();
+        auto backendTexture = GrBackendTextures::MakeGL(allocatedSize.width(), allocatedSize.height(), skgpu::Mipmapped::kNo, externalTexture);
         m_cachedImage = SkImages::BorrowTextureFrom(grContext, backendTexture, kTopLeft_GrSurfaceOrigin, colorType, kPremul_SkAlphaType, SkColorSpace::MakeSRGB());
     }
     return m_cachedImage;
+}
+
+SkRect SkiaBackingStore::Tile::imageSourceRect() const
+{
+    // The surface snapshot is sized to the logical tile, so all of it is valid.
+    if (m_surface)
+        return SkRect::MakeWH(m_surface->width(), m_surface->height());
+
+    // The texture image spans allocatedSize() - only the top-left size() region is real content.
+    if (m_texture) {
+        auto size = m_texture->size();
+        return SkRect::MakeWH(size.width(), size.height());
+    }
+
+    // Callers only reach imageSourceRect() after image() returned a valid image, which requires
+    // one of m_surface or m_texture to be set, so this fallback is never taken in practice.
+    ASSERT_NOT_REACHED();
+    return SkRect::MakeEmpty();
 }
 
 } // namespace WebCore
