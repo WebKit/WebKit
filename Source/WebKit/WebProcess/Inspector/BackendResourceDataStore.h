@@ -81,6 +81,9 @@ public:
         const String& textEncodingName() const LIFETIME_BOUND { return m_textEncodingName; }
         void setTextEncodingName(const String& textEncodingName) { m_textEncodingName = textEncodingName; }
 
+        const String& sourceMapURL() const LIFETIME_BOUND { return m_sourceMapURL; }
+        void setSourceMapURL(const String& sourceMapURL) { m_sourceMapURL = sourceMapURL; }
+
         int httpStatusCode() const { return m_httpStatusCode; }
         void setHTTPStatusCode(int code) { m_httpStatusCode = code; }
 
@@ -120,6 +123,7 @@ public:
         String m_url;
         String m_mimeType;
         String m_textEncodingName;
+        String m_sourceMapURL;
         String m_content;
         String m_httpStatusText;
         RefPtr<WebCore::TextResourceDecoder> m_decoder;

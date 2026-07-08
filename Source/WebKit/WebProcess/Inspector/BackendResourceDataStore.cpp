@@ -27,6 +27,7 @@
 #include "BackendResourceDataStore.h"
 
 #include <WebCore/CertificateInfo.h>
+#include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/InspectorResourceUtilities.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -182,6 +183,12 @@ void BackendResourceDataStore::responseReceived(ResourceLoaderIdentifier resourc
     resourceData->setType(type);
     resourceData->setMIMEType(response.mimeType());
     resourceData->m_responseTimestamp = WallTime::now();
+
+    // Capture the source map URL header now, since the response is not retained.
+    String sourceMapURL = response.httpHeaderField(HTTPHeaderName::SourceMap);
+    if (sourceMapURL.isEmpty())
+        sourceMapURL = response.httpHeaderField(HTTPHeaderName::XSourceMap);
+    resourceData->setSourceMapURL(sourceMapURL);
 
     if (ResourceUtilities::shouldTreatAsText(response.mimeType()))
         resourceData->setDecoder(ResourceUtilities::createTextDecoder(response.mimeType(), response.textEncodingName()));

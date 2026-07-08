@@ -1,0 +1,62 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrameSourceMapURL");
+
+    // Spy on downloadSourceMap to capture the sourceMapURL that Network.loadingFinished
+    // forwards, without performing the (flaky, network-dependent) source map download.
+    InspectorTest.log("Installing hook for downloadSourceMap.");
+    let capturedSourceMapURL;
+    WI.networkManager.downloadSourceMap = function(sourceMapURL) {
+        capturedSourceMapURL = sourceMapURL;
+    };
+
+    // Load a stylesheet in the cross-origin iframe and return the resource plus the
+    // sourceMapURL captured from Network.loadingFinished.
+    async function loadStylesheet(href) {
+        let frameTarget = await frameTargetForURLContaining("iframe-with-stylesheet.html");
+        InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin stylesheet iframe frame target should exist.");
+        await waitForExpressionInTarget(frameTarget, "typeof loadStylesheet === 'function'");
+
+        capturedSourceMapURL = undefined;
+        let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+        await frameTarget.RuntimeAgent.evaluate.invoke({expression: `loadStylesheet(${JSON.stringify(href)})`, objectGroup: "test"});
+        let resourceEvent = await resourceAddedPromise;
+        let resource = resourceEvent.data.resource;
+        if (!resource.finished)
+            await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+        return {resource, sourceMapURL: capturedSourceMapURL};
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.SourceMapURLFromHeader",
+        description: "loadingFinished for a cross-origin iframe stylesheet should carry the SourceMap response header value.",
+        async test() {
+            let {resource, sourceMapURL} = await loadStylesheet("stylesheet-with-source-map-header.py?" + Math.random());
+            InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
+            InspectorTest.expectEqual(resource.type, WI.Resource.Type.StyleSheet, "Resource should be a stylesheet.");
+            InspectorTest.expectEqual(sourceMapURL, "stylesheet-header.css.map", "loadingFinished should carry the SourceMap header value.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.SourceMapURLFromInlineComment",
+        description: "loadingFinished for a cross-origin iframe stylesheet with no header should carry the inline sourceMappingURL comment value.",
+        async test() {
+            let {resource, sourceMapURL} = await loadStylesheet("stylesheet-with-inline-source-map.css?" + Math.random());
+            InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
+            InspectorTest.expectEqual(resource.type, WI.Resource.Type.StyleSheet, "Resource should be a stylesheet.");
+            InspectorTest.expectEqual(sourceMapURL, "stylesheet-inline.css.map", "loadingFinished should carry the inline sourceMappingURL comment value.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that Network.loadingFinished forwards the sourceMapURL for cross-origin iframe stylesheets under Site Isolation, from both the SourceMap response header and an inline sourceMappingURL comment.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-stylesheet.html"></iframe>
+</body>

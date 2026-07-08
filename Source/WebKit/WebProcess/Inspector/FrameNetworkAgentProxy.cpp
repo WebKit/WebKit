@@ -35,6 +35,7 @@
 #include "ProxyingNetworkAgentMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <JavaScriptCore/ContentSearchUtilities.h>
 #include <WebCore/CachedResource.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentInlines.h>
@@ -286,10 +287,21 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
     if (!page)
         return;
 
+    // The Network domain's sourceMapURL is CSS-only by design; scripts flow through
+    // the Debugger domain. Mirror ResourceUtilities::sourceMapURLForResource: prefer the
+    // SourceMap/X-SourceMap response header (captured at response time), then fall back to
+    // a "/*# sourceMappingURL=... */" comment in the decoded stylesheet text.
+    String sourceMapURL;
+    if (auto* resourceData = m_resourcesData->data(resourceID); resourceData && resourceData->type() == ResourceType::StyleSheet) {
+        sourceMapURL = resourceData->sourceMapURL();
+        if (sourceMapURL.isEmpty() && resourceData->hasContent() && !resourceData->base64Encoded())
+            sourceMapURL = ContentSearchUtilities::findStylesheetSourceMapURL(resourceData->content());
+    }
+
     auto timestamp = MonotonicTime::now().secondsSinceEpoch().value();
 
     protect(WebProcess::singleton().parentProcessConnection())->send(
-        Messages::ProxyingNetworkAgent::LoadingFinished(qualifyResourceID(resourceID), timestamp, String()),
+        Messages::ProxyingNetworkAgent::LoadingFinished(qualifyResourceID(resourceID), timestamp, sourceMapURL),
         page->identifier());
 }
 
@@ -336,6 +348,9 @@ void FrameNetworkAgentProxy::didLoadResourceFromMemoryCache(DocumentLoader* load
     if (ResourceUtilities::cachedResourceContent(cachedResource, &content, &base64Encoded))
         m_resourcesData->setResourceContent(resourceID, content, base64Encoded);
 
+    // FIXME: Unlike the network path (didFinishLoading), the CSS sourceMappingURL is not
+    // forwarded for memory-cached stylesheets: it is neither computed from the CachedResource
+    // here nor carried by the RequestServedFromMemoryCache message. Tracked in webkit.org/b/??????.
     auto timestamp = MonotonicTime::now().secondsSinceEpoch().value();
     auto documentURL = protectedLoader->url().string();
 
