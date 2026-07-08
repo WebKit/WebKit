@@ -302,13 +302,13 @@ list(APPEND WebKitLegacy_INTERFACE_DEPENDENCIES WebKitLegacy_ForwardHeaders WebK
 WEBKIT_COPY_FILES(WebKitLegacy_ForwardHeaders
     DESTINATION ${WebKit_FRAMEWORK_HEADERS_DIR}/WebKit
     FILES ${WebKitLegacy_FORWARDED_PUBLIC_HEADERS}
-    COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/forward-headers-cmake.pl
+    COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/forward-headers-cmake.pl
     FLATTENED
 )
 WEBKIT_COPY_FILES(WebKitLegacy_ForwardPrivateHeaders
     DESTINATION ${WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebKit
     FILES ${WebKitLegacy_FORWARDED_PRIVATE_HEADERS}
-    COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/forward-headers-cmake.pl
+    COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/forward-headers-cmake.pl
     FLATTENED
 )
 
