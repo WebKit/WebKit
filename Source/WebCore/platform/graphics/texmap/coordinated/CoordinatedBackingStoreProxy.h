@@ -89,9 +89,8 @@ public:
 private:
     struct Tile {
         Tile() = default;
-        Tile(uint32_t id, const IntPoint& position, IntRect&& tileRect)
+        Tile(uint32_t id, IntRect&& tileRect)
             : id(id)
-            , position(position)
             , rect(WTF::move(tileRect))
             , dirtyRect(rect)
         {
@@ -125,7 +124,6 @@ private:
         }
 
         uint32_t id { 0 };
-        IntPoint position;
         IntRect rect;
         IntRect dirtyRect;
     };

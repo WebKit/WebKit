@@ -283,7 +283,7 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(const IntRect& unscaledV
     if (contentsRectChanged) {
         m_tiles.removeIf([&](auto& iter) {
             auto& tile = iter.value;
-            auto expectedTileRect = tileRectForPosition(tile.position);
+            auto expectedTileRect = tileRectForPosition(iter.key);
             if (expectedTileRect.isEmpty()) {
                 tilesToRemove.append(tile.id);
                 return true;
@@ -331,7 +331,7 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(const IntRect& unscaledV
         requiredTileCount -= tilePositionsToCreate.size();
 
         for (const auto& position : tilePositionsToCreate) {
-            auto tile = Tile(generateTileID(), position, tileRectForPosition(position));
+            auto tile = Tile(generateTileID(), tileRectForPosition(position));
 #if ENABLE(DAMAGE_TRACKING)
             IntRect unscaledDirtyRect = tile.dirtyRect;
             unscaledDirtyRect.scale(1 / contentsScale);
