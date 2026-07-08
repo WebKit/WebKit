@@ -3066,7 +3066,11 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun
 {
     Ref<TextMetrics> metrics = TextMetrics::create();
 
-    auto& font = *fontProxy();
+    auto* fontProxy = this->fontProxy();
+    if (!fontProxy->realized())
+        return metrics;
+
+    auto& font = *fontProxy;
     auto& fontMetrics = font.metricsOfPrimaryFont();
 
     GlyphOverflow glyphOverflow;
