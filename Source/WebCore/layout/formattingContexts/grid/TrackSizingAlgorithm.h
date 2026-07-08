@@ -51,7 +51,7 @@ struct TrackSizingItem {
 
 class TrackSizingAlgorithm {
 public:
-    static TrackSizes sizeTracks(const TrackSizingItemList&, const TrackSizingFunctionsList&,
+    static GridLineGeometryList sizeTracks(const TrackSizingItemList&, const TrackSizingFunctionsList&,
         const AxisConstraint&, const GridItemSizingFunctions&,
         LayoutUnit gapSize, const StyleContentAlignmentData& usedContentAlignment);
 

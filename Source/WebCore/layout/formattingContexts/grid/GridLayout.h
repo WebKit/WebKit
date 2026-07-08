@@ -43,7 +43,7 @@ class ImplicitGrid;
 
 struct GridAreaSizes;
 struct GridLayoutState;
-struct UsedTrackSizes;
+struct UsedGridGeometry;
 struct UsedMargins;
 
 struct GridDimensions {
@@ -57,7 +57,7 @@ class GridLayout {
 public:
     GridLayout(const GridFormattingContext&);
 
-    std::pair<UsedTrackSizes, GridItemRects> layout(UnplacedGridItems&, const GridLayoutState&);
+    std::pair<UsedGridGeometry, GridItemRects> layout(UnplacedGridItems&, const GridLayoutState&);
 
 private:
 
@@ -71,9 +71,9 @@ private:
     static TrackSizingFunctionsList generateImplicitTrackSizingFunctions(size_t explicitTracksCount, size_t totalTracksCount, const Style::GridTrackSizes& gridAutoTrackSizes);
     static TrackSizingFunctionsList trackSizingFunctions(size_t totalTracksCount, const Vector<Style::GridTrackSize>& gridTemplateTrackSizes, const Style::GridTrackSizes& gridAutoTrackSizes);
 
-    UsedTrackSizes performGridSizingAlgorithm(const GridLayoutState&, const PlacedGridItems&, const TrackSizingFunctionsList&, const TrackSizingFunctionsList&) const;
-    TrackSizes sizeColumnTracks(const PlacedGridItems&, const TrackSizingFunctionsList& columnTrackSizingFunctions, const TrackSizingFunctionsList& rowTrackSizingFunctions, const GridLayoutState&) const;
-    TrackSizes sizeRowTracks(const PlacedGridItems&, const TrackSizes& columnSizes, const TrackSizingFunctionsList& rowTrackSizingFunctions, const GridLayoutState&) const;
+    UsedGridGeometry performGridSizingAlgorithm(const GridLayoutState&, const PlacedGridItems&, const TrackSizingFunctionsList&, const TrackSizingFunctionsList&) const;
+    GridLineGeometryList sizeColumnTracks(const PlacedGridItems&, const TrackSizingFunctionsList& columnTrackSizingFunctions, const TrackSizingFunctionsList& rowTrackSizingFunctions, const GridLayoutState&) const;
+    GridLineGeometryList sizeRowTracks(const PlacedGridItems&, const GridLineGeometryList& columnLines, const TrackSizingFunctionsList& rowTrackSizingFunctions, const GridLayoutState&) const;
 
     std::pair<UsedInlineSizes, UsedBlockSizes> layoutGridItems(const PlacedGridItems&, const GridAreaSizes&,
         const TrackSizingFunctionsList& columnTrackSizingFunctions, const TrackSizingFunctionsList& rowTrackSizingFunctions) const;

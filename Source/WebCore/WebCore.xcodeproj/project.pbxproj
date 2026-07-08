@@ -4460,7 +4460,8 @@
 		A5AC7CAE2F4E9AC700981859 /* AxisConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AC7CAB2F4E9AC700981859 /* AxisConstraint.h */; };
 		A5AFABC32E8C5D5000485152 /* GridLayoutUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFABC12E8C5D4900485152 /* GridLayoutUtils.h */; };
 		A5AFABD72E8D932300485152 /* GridItemRect.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFABD62E8D931F00485152 /* GridItemRect.h */; };
-		A5AFABD92E8D97F600485152 /* UsedTrackSizes.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFABD82E8D97F100485152 /* UsedTrackSizes.h */; };
+		A5AFABD92E8D97F600485152 /* UsedGridGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFABD82E8D97F100485152 /* UsedGridGeometry.h */; };
+		A5AFABDB2E8D97F600485152 /* GridLineGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFABDA2E8D97F100485152 /* GridLineGeometry.h */; };
 		A5AFB350115151A700B045CB /* StepRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFB34E115151A700B045CB /* StepRange.h */; };
 		A5AFB350115151A700B045CC /* SwitchTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFB34E115151A700B045CC /* SwitchTrigger.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5B342862E77F75A009BFF3F /* PlacedGridItem.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B342842E77F755009BFF3F /* PlacedGridItem.h */; };
@@ -17614,7 +17615,8 @@
 		A5AFABC12E8C5D4900485152 /* GridLayoutUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridLayoutUtils.h; sourceTree = "<group>"; };
 		A5AFABC22E8C5D4900485152 /* GridLayoutUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GridLayoutUtils.cpp; sourceTree = "<group>"; };
 		A5AFABD62E8D931F00485152 /* GridItemRect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridItemRect.h; sourceTree = "<group>"; };
-		A5AFABD82E8D97F100485152 /* UsedTrackSizes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsedTrackSizes.h; sourceTree = "<group>"; };
+		A5AFABD82E8D97F100485152 /* UsedGridGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsedGridGeometry.h; sourceTree = "<group>"; };
+		A5AFABDA2E8D97F100485152 /* GridLineGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridLineGeometry.h; sourceTree = "<group>"; };
 		A5AFB34D115151A700B045CB /* StepRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StepRange.cpp; sourceTree = "<group>"; };
 		A5AFB34E115151A700B045CB /* StepRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StepRange.h; sourceTree = "<group>"; };
 		A5AFB34E115151A700B045CC /* SwitchTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwitchTrigger.h; sourceTree = "<group>"; };
@@ -34358,6 +34360,7 @@
 				A5CE23262F35106900179F07 /* GridLayoutState.h */,
 				A5AFABC22E8C5D4900485152 /* GridLayoutUtils.cpp */,
 				A5AFABC12E8C5D4900485152 /* GridLayoutUtils.h */,
+				A5AFABDA2E8D97F100485152 /* GridLineGeometry.h */,
 				A52460C02FF48CE4003567A5 /* GridSizeTypes.h */,
 				A5FA576D2E85F8A400EF058F /* GridTypeAliases.h */,
 				A532262E2E7492C100DDFA5E /* ImplicitGrid.cpp */,
@@ -34369,7 +34372,7 @@
 				A5FA579D2E86FF5F00EF058F /* TrackSizingFunctions.h */,
 				A5582D612E72254700F97055 /* UnplacedGridItem.cpp */,
 				A5582D602E72254700F97055 /* UnplacedGridItem.h */,
-				A5AFABD82E8D97F100485152 /* UsedTrackSizes.h */,
+				A5AFABD82E8D97F100485152 /* UsedGridGeometry.h */,
 			);
 			path = grid;
 			sourceTree = "<group>";
@@ -45651,6 +45654,7 @@
 				A5AC7CAD2F4E9AC700981859 /* GridLayoutConstraints.h in Headers */,
 				A5CE23272F35106E00179F07 /* GridLayoutState.h in Headers */,
 				A5AFABC32E8C5D5000485152 /* GridLayoutUtils.h in Headers */,
+				A5AFABDB2E8D97F600485152 /* GridLineGeometry.h in Headers */,
 				A52460C22FF48CE4003567A5 /* GridSizeTypes.h in Headers */,
 				A51432582DE0CE6E0059FFA1 /* GridSpan.h in Headers */,
 				E12DE7181E4B74A600F9ACCF /* GridTrackSizingAlgorithm.h in Headers */,
@@ -49588,7 +49592,7 @@
 				900C20872CAF8243002C79C5 /* URLPatternResult.h in Headers */,
 				903C7E222CC246DA00245C29 /* URLPatternTokenizer.h in Headers */,
 				7CC289DF1AA0FE5D009A9CE3 /* URLRegistry.h in Headers */,
-				A5AFABD92E8D97F600485152 /* UsedTrackSizes.h in Headers */,
+				A5AFABD92E8D97F600485152 /* UsedGridGeometry.h in Headers */,
 				A72763BF16689BFB002FCACB /* UserActionElementSet.h in Headers */,
 				868160D618766A130021E79D /* UserActivity.h in Headers */,
 				A3AF9D8620326861006CAD06 /* UserAgent.h in Headers */,

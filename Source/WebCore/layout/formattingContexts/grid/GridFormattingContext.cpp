@@ -30,6 +30,7 @@
 #include "GridLayout.h"
 #include "GridLayoutState.h"
 #include "GridLayoutUtils.h"
+#include "GridLineGeometry.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
 #include "NotImplemented.h"
@@ -38,7 +39,7 @@
 #include "StyleGapGutter.h"
 #include "StylePrimitiveNumeric.h"
 #include "UnplacedGridItem.h"
-#include "UsedTrackSizes.h"
+#include "UsedGridGeometry.h"
 
 #include <wtf/Vector.h>
 
@@ -166,7 +167,7 @@ static Style::GridTemplateList gridTemplateListWithPercentagesConvertedToAuto(co
     return Style::GridTemplateList { WTF::move(transformedList) };
 }
 
-UsedTrackSizes GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
+UsedGridGeometry GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
 {
     auto unplacedGridItems = constructUnplacedGridItems();
     CheckedRef gridStyle = root().style();
@@ -196,7 +197,7 @@ UsedTrackSizes GridFormattingContext::layout(GridLayoutConstraints layoutConstra
 
     GridLayoutState layoutState { layoutConstraints, gridDefinition, usedJustifyContent, usedAlignContent, usedGapValue(gridStyle->columnGap()), usedGapValue(gridStyle->rowGap()) };
 
-    auto [ usedTrackSizes, gridItemRects ] = GridLayout { *this }.layout(unplacedGridItems, layoutState);
+    auto [ usedGridGeometry, gridItemRects ] = GridLayout { *this }.layout(unplacedGridItems, layoutState);
 
     // Grid layout positions each item within its containing block which is the grid area.
     // Here we translate it to the coordinate space of the grid.
@@ -204,15 +205,17 @@ UsedTrackSizes GridFormattingContext::layout(GridLayoutConstraints layoutConstra
 
         for (auto& gridItemRect : gridItemRects) {
             auto& lineNumbersForGridArea = gridItemRect.lineNumbersForGridArea;
-            auto columnPosition = GridLayoutUtils::computeGridLinePosition(lineNumbersForGridArea.columnStartLine, usedTrackSizes.columnSizes, layoutState.usedColumnGap);
-            auto rowPosition = GridLayoutUtils::computeGridLinePosition(lineNumbersForGridArea.rowStartLine, usedTrackSizes.rowSizes, layoutState.usedRowGap);
+            auto columnStartLine = lineNumbersForGridArea.columnStartLine;
+            auto rowStartLine = lineNumbersForGridArea.rowStartLine;
+            auto columnPosition = usedGridGeometry.columnLines[columnStartLine].end;
+            auto rowPosition = usedGridGeometry.rowLines[rowStartLine].end;
 
             gridItemRect.borderBoxRect.moveBy({ columnPosition, rowPosition });
         }
     };
     mapGridItemLocationsToGrid();
     setGridItemGeometries(gridItemRects);
-    return usedTrackSizes;
+    return usedGridGeometry;
 }
 
 PlacedGridItems GridFormattingContext::constructPlacedGridItems(const GridAreas& gridAreas) const
@@ -298,7 +301,7 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
         .blockAxis = AxisConstraint::minContent()
     };
     GridLayoutState minContentLayoutState { minContentConstraints, gridDefinition, usedJustifyContent, usedAlignContent, usedColumnGap, usedRowGap };
-    auto [minContentTrackSizes, minContentGridItemRects] = GridLayout { *this }.layout(unplacedGridItems, minContentLayoutState);
+    auto [minContentGeometry, minContentGridItemRects] = GridLayout { *this }.layout(unplacedGridItems, minContentLayoutState);
     UNUSED_PARAM(minContentGridItemRects);
 
     // Compute max-content width by running the full grid sizing algorithm with MaxContent scenario
@@ -307,21 +310,18 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
         .blockAxis = AxisConstraint::maxContent()
     };
     GridLayoutState maxContentLayoutState { maxContentConstraints, gridDefinition, usedJustifyContent, usedAlignContent, usedColumnGap, usedRowGap };
-    auto [maxContentTrackSizes, maxContentGridItemRects] = GridLayout { *this }.layout(unplacedGridItemsForMaxContent, maxContentLayoutState);
+    auto [maxContentGeometry, maxContentGridItemRects] = GridLayout { *this }.layout(unplacedGridItemsForMaxContent, maxContentLayoutState);
     UNUSED_PARAM(maxContentGridItemRects);
 
-    // Sum track sizes and add gaps
-    auto computeIntrinsicWidth = [&](const TrackSizes& trackSizes) -> LayoutUnit {
-        auto sumOfTrackSizes = 0_lu;
-        for (auto trackSize : trackSizes)
-            sumOfTrackSizes += trackSize;
-        auto totalGutters = trackSizes.size() > 1 ? usedColumnGap * LayoutUnit(trackSizes.size() - 1) : 0_lu;
-        return sumOfTrackSizes + totalGutters;
+    // The total size of all column tracks including the gutters between them is the start
+    // of the last grid line (gutters follow every track except the last).
+    auto computeIntrinsicWidth = [&](const GridLineGeometryList& columnLines) -> LayoutUnit {
+        return columnLines.last().start;
     };
 
     return IntrinsicWidths {
-        .minimum = computeIntrinsicWidth(minContentTrackSizes.columnSizes),
-        .maximum = computeIntrinsicWidth(maxContentTrackSizes.columnSizes)
+        .minimum = computeIntrinsicWidth(minContentGeometry.columnLines),
+        .maximum = computeIntrinsicWidth(maxContentGeometry.columnLines)
     };
 }
 

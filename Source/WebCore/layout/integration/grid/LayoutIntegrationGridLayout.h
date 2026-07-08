@@ -39,7 +39,7 @@ class RenderGrid;
 namespace Layout {
 class ElementBox;
 struct GridLayoutConstraints;
-struct UsedTrackSizes;
+struct UsedGridGeometry;
 }
 
 namespace LayoutIntegration {
@@ -64,10 +64,10 @@ public:
 
 private:
     void updateGridItemRenderers();
-    void updateFormattingContextRootRenderer(const Layout::GridLayoutConstraints&, const Layout::UsedTrackSizes&);
-    void layoutOutOfFlowBoxes(const Layout::UsedTrackSizes&);
+    void updateFormattingContextRootRenderer(const Layout::GridLayoutConstraints&, const Layout::UsedGridGeometry&);
+    void layoutOutOfFlowBoxes(const Layout::UsedGridGeometry&);
     void updateOverflow(RenderGrid&);
-    void populateGridPositionsForOutOfFlowLayout(const Layout::UsedTrackSizes&);
+    void populateGridPositionsForOutOfFlowLayout(const Layout::UsedGridGeometry&);
 
     const Layout::ElementBox& gridBox() const { return *m_gridBox; }
     Layout::ElementBox& gridBox() { return *m_gridBox; }
