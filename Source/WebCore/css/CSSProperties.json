@@ -13167,6 +13167,25 @@
                 "url": "https://drafts.csswg.org/scroll-animations-1/#view-timeline-name"
             }
         },
+        "trigger-scope": {
+            "animation-type": "not animatable",
+            "initial": "none",
+            "values": [
+                "none",
+                "all"
+            ],
+            "codegen-properties": {
+                "settings-flag": "animationTriggersEnabled",
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
+                "computed-style-storage-kind": "reference",
+                "computed-style-type": "Style::NameScope",
+                "parser-grammar": "none | all | <dashed-ident>#"
+            },
+            "specification": {
+                "category": "animation-triggers",
+                "url": "https://drafts.csswg.org/animation-triggers-1/#trigger-scope"
+            }
+        },
         "view-transition-class": {
             "animation-type": "discrete",
             "initial": "none",
@@ -13961,6 +13980,11 @@
         }
     },
     "categories": {
+        "animation-triggers": {
+            "shortname": "Animation Triggers",
+            "longname": "Animation Triggers",
+            "url": "https://drafts.csswg.org/animation-triggers-1"
+        },
         "css-22": {
             "shortname": "CSS 2.2",
             "longname": "CSS 2.2",

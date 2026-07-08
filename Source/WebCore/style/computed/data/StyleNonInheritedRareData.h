@@ -188,6 +188,8 @@ public:
 
     NameScope timelineScope;
 
+    NameScope triggerScope;
+
     ScrollbarGutter scrollbarGutter;
     Style::ContainerType containerType;
 
