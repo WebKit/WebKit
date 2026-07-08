@@ -34,10 +34,13 @@
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
+#include "IntSize.h"
 #include "SkiaCompositingLayerImageSetBatch.h"
 #include "SkiaCompositingLayerOverlapRegions.h"
+#include "SkiaDamageRestriction.h"
 #include "TextureMapperAnimation.h"
 #include "TransformationMatrix.h"
+#include <functional>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkColorFilter.h>
@@ -45,6 +48,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkPath.h>
 #include <skia/effects/SkImageFilters.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#include <wtf/Function.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -92,7 +96,7 @@ public:
     void setChildren(Vector<Ref<SkiaCompositingLayer>>&&);
 
 #if ENABLE(DAMAGE_TRACKING)
-    void setSharedFrameDamage(std::shared_ptr<Damage> frameDamage) { m_sharedFrameDamage = WTF::move(frameDamage); }
+    void setDamagePropagationEnabled(bool enabled) { m_damagePropagationEnabled = enabled; }
     void addDamage(Damage&&);
 #endif
 
@@ -110,9 +114,18 @@ public:
     const TransformationMatrix& toSurfaceTransform() const { return m_transforms.combined; }
     FloatRect effectiveLayerRect() const { return FloatRect({ }, m_size); }
 
-    bool paint(SkCanvas&, std::optional<Damage>&);
+#if ENABLE(DAMAGE_TRACKING)
+    // Walks the tree without drawing to gather the frame damage that paint() limits itself to. Being
+    // the frame's first walk, it also applies animations and computes transforms.
+    void collectDamage(const IntSize& surfaceSize, Damage& frameDamage);
+#endif
 
-    bool hasDebugIndicators() const { return m_debugBorder.has_value() || m_repaintCount.has_value(); }
+    // No region paints everything. An empty region paints nothing, since the buffer is already current.
+    // Otherwise draw only the region's rects. Prepares transforms first unless collectDamage() did.
+    void paint(SkCanvas&, std::optional<DamageRegion>&& = std::nullopt);
+
+    // Whether the scene had running animations this frame. Valid after collectDamage() or paint().
+    bool hasRunningAnimations() const { return m_hadRunningAnimations; }
 
 private:
     using ScopedFlush = SkiaCompositingLayerImageSetBatch::ScopedFlush;
@@ -124,21 +137,26 @@ private:
     bool isLeafOf3DRenderingContext() const { return !m_preserves3D && (m_parent && m_parent->m_preserves3D); }
     bool isReplica() const { return !!m_replicatedLayer; }
     bool hasVisualContent() const;
+    bool hasVisiblePaintableContent() const { return !m_size.isEmpty() && m_visible && m_contentsVisible && hasVisualContent(); }
     Ref<SkiaCompositingLayer> backdropRoot();
 
     bool computeTransformsAndAnimations(const TransformationMatrix& parentTransform, const TransformationMatrix& futureParentTransform, MonotonicTime);
 
-    enum class PaintMode : bool {
-        Paint,
+    // Applies animations and computes transforms. The frame's first walk does the work, later ones
+    // do nothing. paint() clears the flag when it ends.
+    void ensurePrepared();
+
+    enum class PaintMode : uint8_t {
+        CollectDamage,
+        Paint
     };
 
     struct PaintContext {
-        explicit PaintContext(std::optional<Damage>& damage)
-            : frameDamage(damage)
-        {
-        }
+        bool shouldDraw() const { return mode == PaintMode::Paint; }
+        bool collectsDamage() const { return mode == PaintMode::CollectDamage; }
 
         PaintMode mode { PaintMode::Paint };
+        std::optional<DamageRegion> compositingDamageRegion;
         float opacity { 1 };
         std::optional<SkBlendMode> blendMode;
         IntSize offset;
@@ -146,7 +164,7 @@ private:
         TransformationMatrix accumulatedReplicaTransform;
         RefPtr<SkiaCompositingLayer> paintingBackdropForLayer;
         bool skipAfterBackdrop { false };
-        std::optional<Damage>& frameDamage;
+        std::optional<std::reference_wrapper<Damage>> frameDamage; // Set for the CollectDamage walk only.
         SkiaCompositingLayerImageSetBatch imageSetBatch;
     };
 
@@ -164,7 +182,9 @@ private:
     void paintWithFilterAndMask(SkCanvas&, PaintContext&);
     void paintSelf(SkCanvas&, PaintContext&);
     void paintContents(SkCanvas&, PaintContext&);
-    void paintDebugIndicators(SkCanvas&, PaintContext&);
+    void paintDebugBorder(SkCanvas&, PaintContext&);
+    void paintRepaintCounter(SkCanvas&, PaintContext&);
+    TransformationMatrix combinedTransform(const PaintContext&) const;
 #if ENABLE(DAMAGE_TRACKING)
     void collectFrameDamage(SkCanvas&, PaintContext&);
 #endif
@@ -185,7 +205,7 @@ private:
     void computeOverlapRegions(ComputeOverlapRegionData&, const TransformationMatrix& accumulatedReplicaTransform, IncludesReplica = IncludesReplica::Yes);
 
 #if ENABLE(DAMAGE_TRACKING)
-    bool frameDamagePropagationEnabled() const { return !!m_sharedFrameDamage; }
+    bool frameDamagePropagationEnabled() const { return m_damagePropagationEnabled; }
     void damageWholeLayer()
     {
         m_accumulatedOverlapRegionFrameDamage = { };
@@ -197,8 +217,10 @@ private:
         else
             m_layerDamage->makeFull();
     }
-    void addPreviousRectToSharedFrameDamage();
-    void recursiveAddPreviousRectToSharedFrameDamage(Ref<SkiaCompositingLayer>);
+    // Repaint the layer's last painted position once it moves, hides, or leaves the tree.
+    void consumePreviousLayerRect(Damage& frameDamage) { frameDamage.add(std::exchange(m_previousLayerRectInFrameCoordinates, { })); }
+    void recursiveConsumePreviousLayerRects(Damage&);
+    void recursiveMoveOrphanedPreviousLayerRects(Vector<FloatRect, 1>&);
 #endif
 
     struct AnimationsState {
@@ -275,12 +297,17 @@ private:
     bool m_shouldBlend { false };
     TextureMapperAnimations m_animations;
     std::optional<AnimationsState> m_animationsState;
+    bool m_preparedThisFrame { false };
+    bool m_hadRunningAnimations { false };
     struct {
         TransformationMatrix combined;
         TransformationMatrix futureCombined;
     } m_transforms;
 #if ENABLE(DAMAGE_TRACKING)
-    std::shared_ptr<Damage> m_sharedFrameDamage;
+    bool m_damagePropagationEnabled { false };
+    // Last positions of layers removed since the last collect. They still need a repaint even though
+    // the walk no longer visits them.
+    Vector<FloatRect, 1> m_orphanedPreviousLayerRects;
     std::optional<Damage> m_layerDamage;
     FloatRect m_previousLayerRectInFrameCoordinates;
     FloatRect m_accumulatedOverlapRegionFrameDamage;

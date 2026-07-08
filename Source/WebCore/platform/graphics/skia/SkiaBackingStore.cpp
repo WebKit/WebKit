@@ -31,6 +31,7 @@
 #include "CoordinatedTileBuffer.h"
 #include "FontRenderOptions.h"
 #include "PlatformDisplay.h"
+#include "SkiaDamageRestriction.h"
 #include "SkiaPaintingEngine.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkColorSpace.h>
@@ -90,6 +91,7 @@ void SkiaBackingStore::paintToCanvas(SkCanvas& canvas, const SkPaint& paint)
 
     FloatRect layerRect = { { }, m_size };
 
+    const auto sampling = SkSamplingOptions(SkFilterMode::kNearest, SkMipmapMode::kNone);
     auto tilePaint = paint;
     for (auto& tile : m_tiles.values()) {
         if (canvas.quickReject(tile.rect()))
@@ -100,16 +102,19 @@ void SkiaBackingStore::paintToCanvas(SkCanvas& canvas, const SkPaint& paint)
             continue;
 
         tilePaint.setAntiAlias(paint.isAntiAlias() && allTileEdgesExposed(layerRect, tile.rect()));
-        canvas.drawImageRect(image, SkRect::MakeWH(image->width(), image->height()), tile.rect(), SkSamplingOptions(SkFilterMode::kNearest, SkMipmapMode::kNone), &tilePaint, SkCanvas::kFast_SrcRectConstraint);
+        canvas.drawImageRect(image, SkRect::MakeWH(image->width(), image->height()), tile.rect(), sampling, &tilePaint, SkCanvas::kFast_SrcRectConstraint);
     }
 }
 
-Vector<SkCanvas::ImageSetEntry> SkiaBackingStore::buildImageSet(SkCanvas& canvas, const SkMatrix& ctm, size_t matrixIndex, float opacity, bool enableAntialias) const
+Vector<SkCanvas::ImageSetEntry> SkiaBackingStore::buildImageSet(SkCanvas& canvas, const SkMatrix& ctm, size_t matrixIndex, float opacity, bool enableAntialias, std::optional<TilingDamageRestriction> restrictedToDamage) const
 {
     if (m_tiles.isEmpty())
         return { };
 
     FloatRect layerRect = { { }, m_size };
+
+    // Restricting to single rects needs an axis-aligned CTM, which turns antialiasing off.
+    ASSERT(!restrictedToDamage || !enableAntialias);
 
     SkAutoCanvasRestore autoRestore(&canvas, true);
     canvas.concat(ctm);
@@ -124,8 +129,24 @@ Vector<SkCanvas::ImageSetEntry> SkiaBackingStore::buildImageSet(SkCanvas& canvas
             continue;
 
         // FIXME: implement per edge antialiasing.
-        unsigned aaFlags = enableAntialias && allTileEdgesExposed(layerRect, tile.rect()) ? SkCanvas::kAll_QuadAAFlags : SkCanvas::kNone_QuadAAFlags;
-        images.append(SkCanvas::ImageSetEntry(image, SkRect::MakeWH(image->width(), image->height()), SkRect(tile.rect()), matrixIndex, opacity, aaFlags, false));
+        const unsigned aaFlags = enableAntialias && allTileEdgesExposed(layerRect, tile.rect()) ? SkCanvas::kAll_QuadAAFlags : SkCanvas::kNone_QuadAAFlags;
+        const SkRect srcRectFull = SkRect::MakeWH(image->width(), image->height());
+        const SkRect dstRectFull = tile.rect();
+
+        if (!restrictedToDamage) {
+            images.append(SkCanvas::ImageSetEntry(image, srcRectFull, dstRectFull, matrixIndex, opacity, aaFlags, false));
+            continue;
+        }
+
+        SkRect deviceRect;
+        restrictedToDamage->ctm.mapRect(&deviceRect, dstRectFull);
+
+        // Emit one entry per damaged part of the tile, so the batch draws only those parts. The damage
+        // rects never overlap, so the parts don't overlap either - translucent tiles composite once, and
+        // a tile fully outside the damage draws nothing.
+        forEachDamagedSubRect(deviceRect, dstRectFull, srcRectFull, restrictedToDamage->inverse, restrictedToDamage->rects, [&](const SkRect& srcSubRect, const SkRect& dstSubRect) {
+            images.append(SkCanvas::ImageSetEntry(image, srcSubRect, dstSubRect, matrixIndex, opacity, aaFlags, false));
+        });
     }
     return images;
 }

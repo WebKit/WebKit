@@ -98,6 +98,9 @@ public:
         NonComposited,
     };
 
+    enum class FramePainted : bool { No, Yes };
+    enum class DamageUsedForCompositing : bool { No, Yes };
+
     static Ref<AcceleratedSurface> create(WebPage&, Function<void()>&& frameCompleteHandler, RenderingPurpose, bool useSkia);
     ~AcceleratedSurface();
 
@@ -127,12 +130,13 @@ public:
 
     void willDestroyGLContext();
     void willRenderFrame(const WebCore::IntSize&);
-    void didRenderFrame();
+    void didRenderFrame(FramePainted = FramePainted::Yes, DamageUsedForCompositing = DamageUsedForCompositing::No);
     void sendFrame();
     void clear(const OptionSet<WebCore::CompositionReason>&);
 
 #if ENABLE(DAMAGE_TRACKING)
-    void setFrameDamage(WebCore::Damage&& damage) { m_damageTracker.recordFrameDamage(WTF::move(damage)); }
+    enum class AccumulateIntoSwapChain : bool { No, Yes };
+    void setFrameDamage(WebCore::Damage&& damage, AccumulateIntoSwapChain accumulate = AccumulateIntoSwapChain::No) { m_damageTracker.recordFrameDamage(WTF::move(damage), accumulate); }
     void setFrameDamageRectangleThreshold(unsigned threshold) { m_damageTracker.setRectangleThreshold(threshold); }
     const std::optional<WebCore::Damage>& frameDamage() const LIFETIME_BOUND { return m_damageTracker.frameDamage(); }
     const std::optional<WebCore::Damage>& renderTargetDamage();
@@ -184,9 +188,13 @@ private:
         SkSurface* skiaSurface() const { return m_skiaSurface.get(); }
 
 #if ENABLE(DAMAGE_TRACKING)
-        void setDamage(WebCore::Damage&& damage) { m_damage = WTF::move(damage); }
+        void setDamage(std::optional<WebCore::Damage>&& damage) { m_damage = WTF::move(damage); }
         const std::optional<WebCore::Damage>& damage() LIFETIME_BOUND { return m_damage; }
-        void addDamage(const std::optional<WebCore::Damage>&);
+        void addDamage(const WebCore::Damage& damage)
+        {
+            if (m_damage)
+                m_damage->add(damage);
+        }
 #endif
 
     protected:
@@ -417,23 +425,32 @@ private:
         }
 
         void setRectangleThreshold(unsigned threshold) { m_rectangleThreshold = threshold; }
-        unsigned rectangleThreshold() const { return m_rectangleThreshold; }
 
-        // This frame's content change vs the last presented frame - propagated to the platform.
-        void recordFrameDamage(WebCore::Damage&& damage) { m_frameDamage = WTF::move(damage); }
+        // What changed in this frame compared to the last presented frame, sent to the platform.
+        // Accumulate adds the damage to every buffer right away, for callers that drive compositing
+        // from damage but never read renderTargetDamage this frame.
+        void recordFrameDamage(WebCore::Damage&&, AccumulateIntoSwapChain = AccumulateIntoSwapChain::No);
         const std::optional<WebCore::Damage>& frameDamage() const LIFETIME_BOUND { return m_frameDamage; }
         Vector<WebCore::IntRect, 1> takeFrameDamageRects();
 
-        // Propagates this frame's damage into every buffer and returns the given buffer's accumulated damage.
+        // What the given buffer must redraw to become current, including this frame's damage.
         const std::optional<WebCore::Damage>& damageForTarget(RenderTarget&);
+
+        enum class FineGrainedDamage : bool { No, Yes };
+        void didPresent(RenderTarget&, FramePainted, FineGrainedDamage);
 
         // Discards the pending frame damage, e.g. when the swap chain is resized.
         void reset() { m_frameDamage = std::nullopt; }
 
     private:
+        void accumulateFrameDamageIntoSwapChain();
+
         SwapChain& m_swapChain;
         std::optional<WebCore::Damage> m_frameDamage;
+        // Most rects sent to the platform before they merge into their bounding box. This bounds only
+        // takeFrameDamageRects(). The per-buffer compositing damage stays fine-grained.
         unsigned m_rectangleThreshold { 4 };
+        bool m_frameDamageAccumulatedIntoSwapChain { false };
     };
 #endif
 

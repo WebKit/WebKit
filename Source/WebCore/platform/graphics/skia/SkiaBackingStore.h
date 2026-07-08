@@ -28,6 +28,7 @@
 #if USE(COORDINATED_GRAPHICS) && USE(SKIA)
 #include "CoordinatedBackingStoreProxy.h"
 #include "FloatRect.h"
+#include "SkiaDamageRestriction.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkSurface.h>
@@ -47,12 +48,21 @@ public:
 
     float scale() const { return m_scale; }
     bool hasPendingTileUpdates() const { return m_hasPendingTileUpdates; }
+    const FloatSize& size() const LIFETIME_BOUND { return m_size; }
+
+    // Limits a tile set to its layer's damage rects. rects are the damage rects that touch the layer,
+    // inverse maps device rects back to layer coordinates.
+    struct TilingDamageRestriction {
+        const SkMatrix& ctm;
+        const SkMatrix& inverse;
+        std::span<const IntRect> rects;
+    };
 
     void update(const FloatSize&, float scale, CoordinatedBackingStoreProxy::Update&&);
     void processPendingTileUpdates();
 
     void paintToCanvas(SkCanvas&, const SkPaint&);
-    Vector<SkCanvas::ImageSetEntry> buildImageSet(SkCanvas&, const SkMatrix&, size_t matrixIndex, float opacity, bool enableAntialias) const;
+    Vector<SkCanvas::ImageSetEntry> buildImageSet(SkCanvas&, const SkMatrix&, size_t matrixIndex, float opacity, bool enableAntialias, std::optional<TilingDamageRestriction> restrictedToDamage = std::nullopt) const;
     void drawDebugBorders(SkCanvas&, const SkPaint&);
 
 private:

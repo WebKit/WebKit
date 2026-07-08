@@ -38,6 +38,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 class FloatRect;
+class IntRect;
 class SkiaBackingStore;
 
 class SkiaCompositingLayerImageSetBatch {
@@ -50,7 +51,9 @@ public:
     void updatePaintProperties(SkCanvas&, const sk_sp<SkColorFilter>&, const std::optional<SkBlendMode>&);
     void updateSamplingOptions(SkCanvas&, SkSamplingOptions);
     void addImageSet(SkCanvas&, SkiaBackingStore&, const SkMatrix&, float opacity, bool enableAntialias);
+    bool addImageSetRestrictedToDamage(SkCanvas&, SkiaBackingStore&, const SkMatrix&, float opacity, const Vector<IntRect>& damageRects);
     void addImage(SkCanvas&, const sk_sp<SkImage>&, const FloatRect&, const FloatRect& clip, const SkMatrix&, float opacity, bool enableAntialias);
+    bool addImageRestrictedToDamage(SkCanvas&, const sk_sp<SkImage>&, const FloatRect&, const SkMatrix&, float opacity, const Vector<IntRect>& damageRects);
     void flushIfNeeded(SkCanvas&);
 
     class ScopedFlush {
@@ -72,6 +75,9 @@ public:
     };
 
 private:
+    size_t matrixIndexForDraw(SkCanvas&, const SkMatrix& ctm, const SkSamplingOptions&);
+    void appendImageSet(Vector<SkCanvas::ImageSetEntry>&&);
+
     Vector<SkCanvas::ImageSetEntry> m_imageSet;
     Vector<SkPoint> m_dstClips;
     Vector<SkMatrix> m_preViewMatrices;

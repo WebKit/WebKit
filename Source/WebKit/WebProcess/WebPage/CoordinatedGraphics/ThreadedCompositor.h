@@ -26,6 +26,7 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS)
+#include "AcceleratedSurface.h"
 #include <WebCore/CoordinatedCompositionReason.h>
 #include <WebCore/Damage.h>
 #include <WebCore/DisplayUpdate.h>
@@ -60,7 +61,6 @@ enum class Critical : bool;
 }
 
 namespace WebKit {
-class AcceleratedSurface;
 class CoordinatedSceneState;
 class LayerTreeHost;
 class WebPage;
@@ -102,6 +102,7 @@ public:
         UseForCompositing = 1 << 1
     };
     void setDamagePropagationSettings(std::optional<OptionSet<DamagePropagationFlags>>, unsigned rectangleThreshold);
+    void setDebugIndicatorsEnabled(bool enabled) { m_damage.debugIndicatorsEnabled = enabled; }
     void enableFrameDamageNotificationForTesting();
 #endif
 
@@ -122,9 +123,9 @@ private:
     void scheduleUpdateLocked();
     void flushCompositingState(const OptionSet<WebCore::CompositionReason>&);
     void renderLayerTree();
-    void paintToCurrentGLContext(const WebCore::TransformationMatrix&, const WebCore::IntSize&, const OptionSet<WebCore::CompositionReason>&);
+    bool paintToCurrentGLContext(const WebCore::TransformationMatrix&, const WebCore::IntSize&, const OptionSet<WebCore::CompositionReason>&);
     void paintToTextureMapper(const WebCore::TransformationMatrix&, const WebCore::IntSize&, const OptionSet<WebCore::CompositionReason>&);
-    void paintToSkiaCanvas(const WebCore::TransformationMatrix&, const WebCore::IntSize&, const OptionSet<WebCore::CompositionReason>&);
+    bool paintToSkiaCanvas(const WebCore::TransformationMatrix&, const WebCore::IntSize&, const OptionSet<WebCore::CompositionReason>&);
     void frameComplete();
 
     void didCompositeRunLoopObserverFired();
@@ -135,7 +136,10 @@ private:
     void updateFPSCounter();
     void drawFPSCounter(SkCanvas&);
 #if ENABLE(DAMAGE_TRACKING)
-    void drawSkiaDamage(SkCanvas&, const std::optional<WebCore::Damage>&);
+    enum class DebugOverlays : bool { No, Yes };
+    void recordFrameDamage(WebCore::Damage&&, DebugOverlays, AcceleratedSurface::AccumulateIntoSwapChain);
+    void recordDamageStats(const WebCore::IntSize& viewport, bool compositingUsesDamage);
+    void dumpDamageStats();
 #endif
 
     const Ref<WorkQueue> m_workQueue;
@@ -175,6 +179,9 @@ private:
     } m_attributes;
 
     RunLoop::Timer m_renderTimer;
+#if ENABLE(DAMAGE_TRACKING)
+    RunLoop::Timer m_damageStatsTimer;
+#endif
     std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
 
     struct {
@@ -195,16 +202,40 @@ private:
     } m_fpsCounter;
 
 #if ENABLE(DAMAGE_TRACKING)
+    // WEBKIT_DAMAGE_DEBUG modes that show Skia frame damage.
+    enum class DamageDebugMode : uint8_t {
+        None, // 0: nothing shown
+        CurrentFrame, // 1: this frame's damage as a translucent blue overlay
+        Accumulated, // 2: the buffer's whole accumulated damage as a translucent green overlay
+        RedrawDamagedOnly, // 3: clear the scene to black and redraw only the current damage
+    };
+
     struct {
         std::optional<OptionSet<DamagePropagationFlags>> flags;
         unsigned rectangleThreshold { 4 };
         std::unique_ptr<WebCore::TextureMapperDamageVisualizer> visualizer;
 
-        bool showSkiaDamage { false };
-        unsigned skiaDamageMargin { 0 };
+        DamageDebugMode debugMode { DamageDebugMode::None };
 
         std::atomic<bool> shouldNotifyFrameDamageForTesting { false };
+        std::atomic<bool> debugIndicatorsEnabled { false };
     } m_damage;
+
+    // WEBKIT_DAMAGE_STATS. recordDamageStats() sums per-frame metrics and m_damageStatsTimer dumps the
+    // averages every window, on a wall clock so a window is reported even when no frame is drawn.
+    struct {
+        bool enabled { false };
+        Seconds window { 1_s };
+        MonotonicTime lastDump;
+        unsigned frames { 0 };
+        uint64_t frameRects { 0 };
+        uint64_t frameArea { 0 };
+        uint64_t viewportArea { 0 };
+        unsigned repaintFrames { 0 };
+        uint64_t repaintRects { 0 };
+        uint64_t repaintArea { 0 };
+        uint64_t repaintViewportArea { 0 };
+    } m_damageStats;
 #endif
 
     std::unique_ptr<WebCore::RunLoopObserver> m_didCompositeRunLoopObserver;

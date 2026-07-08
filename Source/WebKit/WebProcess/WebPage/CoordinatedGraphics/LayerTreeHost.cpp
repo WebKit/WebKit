@@ -191,6 +191,11 @@ void LayerTreeHost::updateRendering()
     if (RefPtr drawingArea = page->drawingArea())
         drawingArea->dispatchPendingCallbacksAfterEnsuringDrawing();
 
+#if ENABLE(DAMAGE_TRACKING)
+    const auto& settings = page->corePage()->settings();
+    m_compositor->setDebugIndicatorsEnabled(settings.showDebugBorders() || settings.showRepaintCounter());
+#endif
+
     bool didChangeSceneState = m_sceneState->flush();
     if (m_compositionRequired || m_pendingResize || m_forceFrameSync || didChangeSceneState)
         requestCompositionForRenderingUpdate();

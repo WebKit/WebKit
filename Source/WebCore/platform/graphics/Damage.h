@@ -307,6 +307,27 @@ public:
         return result;
     }
 
+    // Rects to paint that never overlap, unlike rects(). At most one bounding rect per grid cell,
+    // clipped to its cell.
+    Rects rectsForPainting() const
+    {
+        if (size() <= 1 || m_mode != Mode::Rectangles)
+            return rects();
+
+        Rects result;
+        for (int row = 0; row < m_rects.gridCells.height(); ++row) {
+            for (int col = 0; col < m_rects.gridCells.width(); ++col) {
+                const IntRect cellRect = { { m_rect.x() + col * m_rects.cellSize.width(), m_rect.y() + row * m_rects.cellSize.height() }, m_rects.cellSize };
+                IntRect cellBounds;
+                for (const auto& rect : *this)
+                    cellBounds.unite(intersection(cellRect, rect));
+                if (!cellBounds.isEmpty())
+                    result.append(cellBounds);
+            }
+        }
+        return result;
+    }
+
     void makeFull()
     {
         if (m_mode == Mode::Full)

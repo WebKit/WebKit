@@ -147,18 +147,6 @@ AcceleratedSurface::RenderTarget::RenderTarget(AcceleratedSurface& surface)
 
 AcceleratedSurface::RenderTarget::~RenderTarget() = default;
 
-#if ENABLE(DAMAGE_TRACKING)
-void AcceleratedSurface::RenderTarget::addDamage(const std::optional<Damage>& damage)
-{
-    if (!m_damage)
-        return;
-
-    if (damage)
-        m_damage->add(*damage);
-    else
-        m_damage = std::nullopt;
-}
-#endif
 
 void AcceleratedSurface::RenderTarget::createSkiaSurfaceForTexture(const BitmapTexture& texture)
 {
@@ -899,6 +887,17 @@ uint64_t AcceleratedSurface::SwapChain::window()
 #endif
 
 #if ENABLE(DAMAGE_TRACKING)
+void AcceleratedSurface::SwapChainDamageTracker::recordFrameDamage(Damage&& damage, AccumulateIntoSwapChain accumulate)
+{
+    m_frameDamage = WTF::move(damage);
+    m_frameDamageAccumulatedIntoSwapChain = false;
+
+    // When the caller drives compositing from damage, accumulate right away so a later frame that
+    // reuses a buffer without reading renderTargetDamage still repaints what changed this frame.
+    if (accumulate == AccumulateIntoSwapChain::Yes)
+        accumulateFrameDamageIntoSwapChain();
+}
+
 Vector<IntRect, 1> AcceleratedSurface::SwapChainDamageTracker::takeFrameDamageRects()
 {
     if (!m_frameDamage)
@@ -907,12 +906,40 @@ Vector<IntRect, 1> AcceleratedSurface::SwapChainDamageTracker::takeFrameDamageRe
     return std::exchange(m_frameDamage, std::nullopt)->rects();
 }
 
+void AcceleratedSurface::SwapChainDamageTracker::accumulateFrameDamageIntoSwapChain()
+{
+    // Add this frame's damage to every buffer so each repaints what changed since it was last
+    // rendered. The flag makes this run at most once per frame. No m_frameDamage means nothing changed.
+    if (m_frameDamageAccumulatedIntoSwapChain || !m_frameDamage)
+        return;
+
+    m_swapChain.forEachTarget([&](RenderTarget& target) {
+        target.addDamage(*m_frameDamage);
+    });
+    m_frameDamageAccumulatedIntoSwapChain = true;
+}
+
 const std::optional<Damage>& AcceleratedSurface::SwapChainDamageTracker::damageForTarget(RenderTarget& target)
 {
-    m_swapChain.forEachTarget([&](RenderTarget& candidate) {
-        candidate.addDamage(m_frameDamage);
-    });
+    // Accumulate on read so the result always includes this frame's damage, whatever the caller order.
+    accumulateFrameDamageIntoSwapChain();
     return target.damage();
+}
+
+void AcceleratedSurface::SwapChainDamageTracker::didPresent(RenderTarget& target, FramePainted framePainted, FineGrainedDamage fineGrainedDamage)
+{
+    if (framePainted == FramePainted::No) {
+        // Nothing was drawn, so drop the record and let the buffer's next use repaint it fully.
+        target.setDamage(std::nullopt);
+        return;
+    }
+
+    // The buffer is now current, so start a fresh, empty record. This damage drives compositing
+    // restriction, so it must stay small. Use Damage's default fine-grained grid (NoMaxRectangles)
+    // rather than the rectangle threshold, which on a wide, short surface would collapse into a few
+    // full-height cells. The threshold only bounds how many rects reach the platform, and is applied
+    // in takeFrameDamageRects().
+    target.setDamage(Damage(m_swapChain.size(), fineGrainedDamage == FineGrainedDamage::Yes ? Damage::Mode::Rectangles : Damage::Mode::BoundingBox, Damage::NoMaxRectangles));
 }
 #endif
 
@@ -1099,7 +1126,7 @@ void AcceleratedSurface::clear(const OptionSet<WebCore::CompositionReason>& reas
     }
 }
 
-void AcceleratedSurface::didRenderFrame()
+void AcceleratedSurface::didRenderFrame(FramePainted framePainted, DamageUsedForCompositing damageUsedForCompositing)
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
     TraceScope traceScope(WaitForCompositionCompletionStart, WaitForCompositionCompletionEnd);
@@ -1113,11 +1140,10 @@ void AcceleratedSurface::didRenderFrame()
 
     Vector<IntRect, 1> damageRects;
 #if ENABLE(DAMAGE_TRACKING)
-    // For GL targets we use bounding box damage for render target damage, as its only 2 consumers so far
-    // (CoordinatedBackingStore & ThreadedCompositor) only fetch bounds. Thus having damage with
-    // better resolution is pointless as the bounds are the same in such case.
-    // FIXME: If we start to consume fine-grained damage in the Skia compositor, we will need to relax the usesGL condition.
-    m_target->setDamage(Damage(m_swapChain.size(), usesGL() ? Damage::Mode::BoundingBox : Damage::Mode::Rectangles, m_damageTracker.rectangleThreshold()));
+    // GL consumers only read the damage bounds, so a bounding box is enough. Rectangles are needed
+    // when the Skia compositor draws only the rects, and for CPU rendering to limit GPU uploads.
+    const bool needsFineGrainedDamage = damageUsedForCompositing == DamageUsedForCompositing::Yes || !usesGL();
+    m_damageTracker.didPresent(*m_target, framePainted, needsFineGrainedDamage ? SwapChainDamageTracker::FineGrainedDamage::Yes : SwapChainDamageTracker::FineGrainedDamage::No);
     damageRects = m_damageTracker.takeFrameDamageRects();
 #endif
 

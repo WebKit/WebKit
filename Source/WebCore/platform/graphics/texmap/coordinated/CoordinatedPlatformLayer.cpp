@@ -119,8 +119,7 @@ SkiaCompositingLayer& CoordinatedPlatformLayer::ensureSkiaTarget()
     if (!m_skiaTarget)
         m_skiaTarget = SkiaCompositingLayer::create();
 #if ENABLE(DAMAGE_TRACKING)
-    if (m_damagePropagationEnabled)
-        m_skiaTarget->setSharedFrameDamage(m_damageInGlobalCoordinateSpace);
+    m_skiaTarget->setDamagePropagationEnabled(m_damagePropagationEnabled);
 #endif
     return *m_skiaTarget;
 }
