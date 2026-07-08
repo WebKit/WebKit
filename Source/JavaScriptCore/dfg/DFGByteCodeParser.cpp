@@ -3519,11 +3519,11 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
 
             insertChecks();
             Node* thisNode = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
-            addToGraph(Check, Edge(thisNode, StringUse));
 
             unsigned numArguments = argumentCountIncludingThis - 1;
 
             if (!numArguments) {
+                addToGraph(Check, Edge(thisNode, StringUse));
                 setResult(addToGraph(ToString, thisNode));
                 return CallOptimizationResult::Inlined;
             }
@@ -3536,19 +3536,17 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
 
             for (unsigned i = 0; i < numArguments; ++i) {
                 if (indexInOperands == maxStrCatArguments) {
-                    operands[0] = addToGraph(StrCat, operands[0], operands[1], operands[2]);
+                    operands[0] = addToGraph(StrCat, OpInfo(StringPrototypeConcatIntrinsic), operands[0], operands[1], operands[2]);
                     for (unsigned j = 1; j < AdjacencyList::Size; ++j)
                         operands[j] = nullptr;
                     indexInOperands = 1;
                 }
                 ASSERT(indexInOperands < AdjacencyList::Size);
                 ASSERT(indexInOperands < maxStrCatArguments);
-                Node* arg = get(virtualRegisterForArgumentIncludingThis(i + 1, registerOffset));
-                addToGraph(Check, Edge(arg, StringUse));
-                operands[indexInOperands++] = arg;
+                operands[indexInOperands++] = get(virtualRegisterForArgumentIncludingThis(i + 1, registerOffset));
             }
 
-            setResult(addToGraph(StrCat, operands[0], operands[1], operands[2]));
+            setResult(addToGraph(StrCat, OpInfo(StringPrototypeConcatIntrinsic), operands[0], operands[1], operands[2]));
             return CallOptimizationResult::Inlined;
         }
 

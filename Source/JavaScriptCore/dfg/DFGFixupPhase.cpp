@@ -591,6 +591,26 @@ private:
             if (attemptToMakeFastStringAdd(node))
                 break;
 
+            if (node->intrinsic() == StringPrototypeConcatIntrinsic) {
+                auto speculateChild = [&] (Edge& edge, UseKind useKind) {
+                    m_insertionSet.insertNode(m_indexInBlock, SpecNone, Check, node->origin, Edge(edge.node(), useKind));
+                    fixEdge<KnownPrimitiveUse>(edge);
+                };
+                auto useKindForArgument = [&] (Edge& edge) {
+                    if (edge->shouldSpeculateNotCell())
+                        return NotCellUse;
+                    if (edge->shouldSpeculateStringOrOther())
+                        return StringOrOtherUse;
+                    return StringUse;
+                };
+
+                speculateChild(node->child1(), StringUse);
+                speculateChild(node->child2(), useKindForArgument(node->child2()));
+                if (node->child3())
+                    speculateChild(node->child3(), useKindForArgument(node->child3()));
+                break;
+            }
+
             // FIXME: Remove empty string arguments and possibly turn this into a ToString operation. That
             // would require a form of ToString that takes a KnownPrimitiveUse. This is necessary because
             // the implementation of StrCat doesn't dynamically optimize for empty strings.

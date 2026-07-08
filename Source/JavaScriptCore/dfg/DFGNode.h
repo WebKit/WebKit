@@ -1972,6 +1972,7 @@ public:
         case DateGetTime:
         case DateGetInt32OrNaN:
         case StringTrim:
+        case StrCat:
             return true;
         default:
             return false;
