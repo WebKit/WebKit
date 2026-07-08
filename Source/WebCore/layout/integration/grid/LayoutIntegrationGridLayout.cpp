@@ -30,12 +30,13 @@
 #include "GridFormattingContext.h"
 #include "GridLayoutConstraints.h"
 #include "GridLayoutUtils.h"
+#include "GridLineGeometry.h"
 #include "LayoutIntegrationBoxGeometryUpdater.h"
 #include "LayoutIntegrationBoxTreeUpdater.h"
 #include "RenderGrid.h"
 #include "RenderView.h"
 #include "StyleKeyword+Logging.h"
-#include "UsedTrackSizes.h"
+#include "UsedGridGeometry.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/text/TextStream.h>
@@ -171,7 +172,7 @@ void GridLayout::updateGridItemRenderers()
     }
 }
 
-void GridLayout::updateFormattingContextRootRenderer(const Layout::GridLayoutConstraints& layoutConstraints, const Layout::UsedTrackSizes& usedTrackSizes)
+void GridLayout::updateFormattingContextRootRenderer(const Layout::GridLayoutConstraints& layoutConstraints, const Layout::UsedGridGeometry& usedGridGeometry)
 {
     CheckedRef renderGrid = gridBoxRenderer();
     auto& currentGrid = renderGrid->currentGrid();
@@ -179,9 +180,9 @@ void GridLayout::updateFormattingContextRootRenderer(const Layout::GridLayoutCon
     OrderIteratorPopulator orderIteratorPopulator(currentGrid.orderIterator());
 
     if (layoutConstraints.blockAxis.scenario() != Layout::AxisConstraint::FreeSpaceScenario::Definite) {
-        auto& rowSizes = usedTrackSizes.rowSizes;
-        auto usedRowGutter = Layout::GridFormattingContext::usedGapValue(renderGrid->style().rowGap());
-        auto blockContentSize = std::reduce(rowSizes.begin(), rowSizes.end()) + Layout::GridLayoutUtils::totalGuttersSize(rowSizes.size(), usedRowGutter);
+        // The block content size is the total size of all row tracks including the gutters
+        // between them, which is the start of the last grid line.
+        auto blockContentSize = usedGridGeometry.rowLines.last().start;
         renderGrid->setBorderBoxHeight(blockContentSize + renderGrid->borderAndPaddingLogicalHeight());
     } else
         renderGrid->setBorderBoxHeight(layoutConstraints.blockAxis.availableSpace() + renderGrid->borderAndPaddingLogicalHeight());
@@ -209,10 +210,10 @@ std::pair<LayoutUnit, LayoutUnit> GridLayout::computeIntrinsicWidths()
 void GridLayout::layout()
 {
     auto gridLayoutConstraints = constraintsForGridContent(gridBox());
-    auto usedTrackSizes = Layout::GridFormattingContext { gridBox(), layoutState() }.layout(gridLayoutConstraints);
+    auto usedGridGeometry = Layout::GridFormattingContext { gridBox(), layoutState() }.layout(gridLayoutConstraints);
     updateGridItemRenderers();
-    updateFormattingContextRootRenderer(gridLayoutConstraints, usedTrackSizes);
-    layoutOutOfFlowBoxes(usedTrackSizes);
+    updateFormattingContextRootRenderer(gridLayoutConstraints, usedGridGeometry);
+    layoutOutOfFlowBoxes(usedGridGeometry);
 
     CheckedRef renderGrid = gridBoxRenderer();
     renderGrid->updateLogicalHeight();
@@ -239,7 +240,7 @@ void GridLayout::updateOverflow(RenderGrid& renderGrid)
         renderGrid.addVisualOverflow(gridItemsOverflowRect);
 }
 
-void GridLayout::layoutOutOfFlowBoxes(const Layout::UsedTrackSizes& usedTrackSizes)
+void GridLayout::layoutOutOfFlowBoxes(const Layout::UsedGridGeometry& usedGridGeometry)
 {
     CheckedRef renderGrid = gridBoxRenderer();
     auto* outOfFlowDescendants = renderGrid->outOfFlowBoxes();
@@ -249,7 +250,7 @@ void GridLayout::layoutOutOfFlowBoxes(const Layout::UsedTrackSizes& usedTrackSiz
     // Populate grid positions so that gridAreaRangeForOutOfFlow (called from
     // PositionedLayoutConstraints::captureGridArea during positioned layout)
     // can resolve grid lines to their positions in the grid.
-    populateGridPositionsForOutOfFlowLayout(usedTrackSizes);
+    populateGridPositionsForOutOfFlowLayout(usedGridGeometry);
 
     // FIXME: Determine whether we should conditionally use RelayoutChildren::No
     // based on whether the grid container size changed, matching the legacy path's
@@ -257,29 +258,22 @@ void GridLayout::layoutOutOfFlowBoxes(const Layout::UsedTrackSizes& usedTrackSiz
     renderGrid->layoutOutOfFlowBoxes(RelayoutChildren::Yes);
 }
 
-void GridLayout::populateGridPositionsForOutOfFlowLayout(const Layout::UsedTrackSizes& usedTrackSizes)
+void GridLayout::populateGridPositionsForOutOfFlowLayout(const Layout::UsedGridGeometry& usedGridGeometry)
 {
     CheckedRef renderGrid = gridBoxRenderer();
 
     // Ensure numTracks() returns the correct value for each direction.
-    renderGrid->currentGrid().ensureGridSize(usedTrackSizes.rowSizes.size(), usedTrackSizes.columnSizes.size());
+    renderGrid->currentGrid().ensureGridSize(Layout::GridLineGeometry::trackCount(usedGridGeometry.rowLines), Layout::GridLineGeometry::trackCount(usedGridGeometry.columnLines));
 
     auto populate = [&](Style::GridTrackSizingDirection direction) {
         bool isColumns = direction == Style::GridTrackSizingDirection::Columns;
-        auto& trackSizes = isColumns ? usedTrackSizes.columnSizes : usedTrackSizes.rowSizes;
-        auto gap = Layout::GridFormattingContext::usedGapValue(isColumns ? renderGrid->style().columnGap() : renderGrid->style().rowGap());
+        auto& lines = isColumns ? usedGridGeometry.columnLines : usedGridGeometry.rowLines;
         auto borderAndPadding = isColumns ? renderGrid->borderAndPaddingStart() : renderGrid->borderAndPaddingBefore();
-        auto numberOfTracks = trackSizes.size();
-        bool hasMultipleTracks = numberOfTracks > 1;
 
         auto& positions = renderGrid->positions(direction);
-        positions.resize(numberOfTracks + 1);
-        positions[0] = borderAndPadding;
-        for (auto [trackIndex, trackSize] : WTF::indexedRange(trackSizes)) {
-            bool isLastTrack = trackIndex == numberOfTracks - 1;
-            auto gapAfterTrack = (!isLastTrack && hasMultipleTracks) ? gap : 0_lu;
-            positions[trackIndex + 1] = positions[trackIndex] + trackSize + gapAfterTrack;
-        }
+        positions.resize(lines.size());
+        for (auto [lineIndex, line] : WTF::indexedRange(lines))
+            positions[lineIndex] = borderAndPadding + line.end;
     };
 
     populate(Style::GridTrackSizingDirection::Columns);

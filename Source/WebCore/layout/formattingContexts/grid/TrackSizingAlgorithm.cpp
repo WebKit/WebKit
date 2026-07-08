@@ -27,6 +27,7 @@
 #include "TrackSizingAlgorithm.h"
 
 #include "GridLayoutUtils.h"
+#include "GridLineGeometry.h"
 #include "LayoutIntegrationUtils.h"
 #include "NotImplemented.h"
 #include "PlacedGridItem.h"
@@ -740,7 +741,7 @@ static std::optional<LayoutUnit> freeSpaceForStretchAutoTracks(const AxisConstra
 }
 
 // https://drafts.csswg.org/css-grid-1/#algo-track-sizing
-TrackSizes TrackSizingAlgorithm::sizeTracks(const TrackSizingItemList& trackSizingItems, const TrackSizingFunctionsList& trackSizingFunctions,
+GridLineGeometryList TrackSizingAlgorithm::sizeTracks(const TrackSizingItemList& trackSizingItems, const TrackSizingFunctionsList& trackSizingFunctions,
     const AxisConstraint& axisConstraint, const GridItemSizingFunctions& gridItemSizingFunctions,
     LayoutUnit gapSize, const StyleContentAlignmentData& usedContentAlignment)
 {
@@ -769,9 +770,10 @@ TrackSizes TrackSizingAlgorithm::sizeTracks(const TrackSizingItemList& trackSizi
 
     // Each track has a base size, a <length> which grows throughout the algorithm and
     // which will eventually be the track’s final size...
-    return unsizedTracks.map([](const UnsizedTrack& unsizedTrack) {
+    auto trackSizes = unsizedTracks.map([](const UnsizedTrack& unsizedTrack) {
         return unsizedTrack.baseSize;
     });
+    return GridLineGeometry::listFromTrackSizes(trackSizes, gapSize);
 }
 
 } // namespace Layout

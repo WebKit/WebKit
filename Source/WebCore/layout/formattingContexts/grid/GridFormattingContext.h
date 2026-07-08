@@ -45,7 +45,7 @@ class UnplacedGridItem;
 struct GridAreaLines;
 struct GridLayoutConstraints;
 struct UnplacedGridItems;
-struct UsedTrackSizes;
+struct UsedGridGeometry;
 
 enum class PackingStrategy : bool {
     Sparse,
@@ -77,7 +77,7 @@ public:
 
     GridFormattingContext(const ElementBox& gridBox, LayoutState&);
 
-    UsedTrackSizes layout(GridLayoutConstraints);
+    UsedGridGeometry layout(GridLayoutConstraints);
 
     struct IntrinsicWidths {
         LayoutUnit minimum;

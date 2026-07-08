@@ -462,35 +462,6 @@ LayoutUnit blockUsedSize(const PlacedGridItem& gridItem, const TrackSizingFuncti
     return std::max(minimumSize, std::min(maximumSize, preferredSize));
 }
 
-LayoutUnit computeGridLinePosition(size_t gridLineIndex, const TrackSizes& trackSizes, LayoutUnit gap)
-{
-    auto trackSizesBefore = trackSizes.subspan(0, gridLineIndex);
-    auto sumOfTrackSizes = std::reduce(trackSizesBefore.begin(), trackSizesBefore.end());
-
-    // https://drafts.csswg.org/css-grid-1/#gutters
-    // A grid line used as an item's start edge is preceded by gridLineIndex tracks, and a
-    // gutter follows each of those tracks. So the line is offset by gridLineIndex gutters.
-    auto numberOfGaps = gridLineIndex;
-
-    return sumOfTrackSizes + (numberOfGaps * gap);
-}
-
-LayoutUnit gridAreaDimensionSize(size_t startLine, size_t endLine, const TrackSizes& trackSizes, LayoutUnit gap)
-{
-    ASSERT(endLine > startLine);
-
-    // https://drafts.csswg.org/css-grid-1/#gutters
-    // The size of a grid area is the sum of the sizes of the tracks it spans, plus the gutters
-    // *between* those tracks. A span of N tracks contains only N - 1 interior gutters — the
-    // gutter that follows the area's last track belongs to the space between grid areas, not
-    // to the area itself.
-    auto spannedTrackSizes = trackSizes.subspan(startLine, endLine - startLine);
-
-    auto sumOfTrackSizes = std::reduce(spannedTrackSizes.begin(), spannedTrackSizes.end());
-    auto numberOfInteriorGaps = spannedTrackSizes.size() - 1;
-    return sumOfTrackSizes + (numberOfInteriorGaps * gap);
-}
-
 LayoutUnit inlineAxisMinContentContribution(const PlacedGridItem& gridItem, LayoutUnit blockAxisConstraint, const IntegrationUtils& integrationUtils)
 {
     UNUSED_PARAM(blockAxisConstraint);
