@@ -126,14 +126,18 @@ Protocol::Network::LoaderId BackendIdentifierRegistry::loaderId(WebCore::Documen
 {
     if (!loader)
         return emptyString();
-    return m_loaderToIdentifier.ensure(loader, [protectedLoader = RefPtr { loader }] {
-        if (RefPtr frame = protectedLoader->frame()) {
-            if (RefPtr document = frame->document())
-                return protocolLoaderId(document->identifier());
-        }
-        // FIXME: Fallback for early instrumentation before document exists.
-        // This produces a legacy-format ID; deterministic ID will be assigned
-        // once the document is available. rdar://170087346
+
+    // Compute fresh from the current document rather than memoizing by raw DocumentLoader* which can go stale.
+    // protocolLoaderId() is deterministic in the document's ScriptExecutionContextIdentifier, so this matches
+    // the id network events report.
+    if (RefPtr frame = loader->frame()) {
+        if (RefPtr document = frame->document())
+            return protocolLoaderId(document->identifier());
+    }
+
+    // Fallback only when no document exists yet (early instrumentation): keep a stable per-loader
+    // id. This produces a legacy-format ID; a deterministic one is used once the document exists.
+    return m_loaderToIdentifier.ensure(loader, [] {
         return IdentifiersFactory::createIdentifier();
     }).iterator->value;
 }

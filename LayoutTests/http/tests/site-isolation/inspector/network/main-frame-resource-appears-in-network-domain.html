@@ -1,0 +1,39 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function triggerMainFrameFetch() {
+    let url = "resources/data.json?" + Math.random();
+    fetch(url);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.MainFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.MainFrame.ResourceAddedForFetch",
+        description: "A fetch triggered in the top-level main frame should produce a WI.Resource attributed to the main frame under Site Isolation (rdar://169739511).",
+        async test() {
+            // Listen for a resource to be added to any frame.
+            let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+
+            // Trigger the fetch from the main frame. Under Site Isolation the main frame runs in
+            // its own WebContent process; this asserts that its FrameNetworkAgentProxy is
+            // instrumented and its events route through ProxyingNetworkAgent to the frontend.
+            InspectorTest.evaluateInPage("triggerMainFrameFetch()");
+
+            let resourceEvent = await resourceAddedPromise;
+            let resource = resourceEvent.data.resource;
+
+            InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
+            InspectorTest.expectThat(resource.url.includes("data.json"), "Resource URL should contain 'data.json'.");
+            InspectorTest.expectEqual(resource.parentFrame, WI.networkManager.mainFrame, "Resource's parent frame should be the main frame.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a fetch triggered in the top-level main frame produces a WI.Resource attributed to the main frame under Site Isolation.</p>
+</body>
