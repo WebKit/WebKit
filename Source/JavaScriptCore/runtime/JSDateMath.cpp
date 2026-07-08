@@ -471,7 +471,12 @@ static TimeZone retrieveTimeZoneInformation()
     static NeverDestroyed<CachedHostTimeZone> globalCache;
 
     uint64_t currentID = WTF::lastTimeZoneID();
-    if (globalCache->timeZoneID != currentID) {
+#if USE(TIME_ZONE_CHANGE_NOTIFICATIONS)
+    bool isCacheStale = globalCache->timeZoneID != currentID;
+#else
+    bool isCacheStale = true;
+#endif
+    if (isCacheStale) {
         Vector<char16_t, 32> timeZoneID;
         getTimeZoneOverride(timeZoneID);
         TimeZone canonical;

@@ -90,7 +90,11 @@ public:
 
     bool hasTimeZoneChange()
     {
+#if USE(TIME_ZONE_CHANGE_NOTIFICATIONS)
         return m_cachedTimeZoneID != WTF::lastTimeZoneID();
+#else
+        return true;
+#endif
     }
 
     JS_EXPORT_PRIVATE void clearForTimeZoneChange();

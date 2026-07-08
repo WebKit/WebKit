@@ -44,7 +44,7 @@ void timeZoneDidChange()
     g_lastTimeZoneID.fetch_add(1, std::memory_order_relaxed);
 }
 
-#if !PLATFORM(COCOA) && !USE(GLIB)
+#if !USE(TIME_ZONE_CHANGE_NOTIFICATIONS)
 void listenForTimeZoneChangeNotifications() { }
 #endif
 
