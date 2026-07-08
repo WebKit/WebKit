@@ -30,7 +30,17 @@
 #if !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
 #import "ExtractedNodeInfo.h"
 #import <wtf/Expected.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
+
+@class _WKTextExtractionResult;
+
+namespace WebKit {
+
+NSString *_Nonnull nameForTextExtractionAction(_WKTextExtractionAction);
+RetainPtr<_WKTextExtractionResult> createEmptyTextExtractionResult();
+
+} // namespace WebKit
 #endif
 
 @class _WKJSHandle;

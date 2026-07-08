@@ -625,8 +625,6 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 - (void)_playPredominantOrNowPlayingMediaSession:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 - (void)_pauseNowPlayingMediaSession:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
-- (void)_simulateClickOverFirstMatchingTextInViewportWithUserInteraction:(NSString *)targetText completionHandler:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(15.2), ios(18.2), visionos(2.2));
-
 @property (nonatomic, setter=_setDontResetTransientActivationAfterRunJavaScript:) BOOL _dontResetTransientActivationAfterRunJavaScript WK_API_AVAILABLE(macos(15.2), ios(18.2), visionos(2.2));
 
 // This property is KVO compliant.
@@ -653,16 +651,6 @@ typedef NS_OPTIONS(NSUInteger, _WKWebViewDataType) {
 - (NSData *)_remoteAccessibilityChildToken;
 #endif
 
-#if TARGET_OS_IPHONE
-- (void)_takeSnapshotOfNode:(_WKJSHandle *)node completionHandler:(WK_SWIFT_UI_ACTOR void (^)(UIImage *, NSError *))completionHandler WK_SWIFT_ASYNC_NAME(_takeSnapshotOfNode(_:)) WK_API_AVAILABLE(ios(26.4), visionos(26.4));
-#else
-- (void)_takeSnapshotOfNode:(_WKJSHandle *)node completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSImage *, NSError *))completionHandler WK_SWIFT_ASYNC_NAME(_takeSnapshotOfNode(_:)) WK_API_AVAILABLE(macos(26.4));
-#endif
-
-- (void)_getSelectorPathDataForNode:(_WKJSHandle *)node completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData *))completionHandler WK_SWIFT_ASYNC_NAME(_getSelectorPathDataForNode(_:)) WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
-- (void)_getSelectorPathData:(WKJSHandle *)node completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData *))completionHandler WK_SWIFT_ASYNC_NAME(_getSelectorPathData(_:)) WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
-- (void)_getNodeForSelectorPathData:(NSData *)data completionHandler:(WK_SWIFT_UI_ACTOR void (^)(_WKJSHandle *))completionHandler WK_SWIFT_ASYNC_NAME(_getNodeForSelectorPathData(_:)) WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
-
 - (void)_debugTextWithConfiguration:(_WKTextExtractionConfiguration *)configuration completionHandler:(WK_SWIFT_UI_ACTOR void(^)(NSString *))completionHandler WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4)) NS_SWIFT_NAME(_debugText(with:completionHandler:));
 - (void)_extractDebugTextWithConfiguration:(_WKTextExtractionConfiguration *)configuration completionHandler:(WK_SWIFT_UI_ACTOR void(^)(_WKTextExtractionResult *))completionHandler WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4)) NS_SWIFT_NAME(_extractDebugText(with:completionHandler:));
 - (void)_performInteraction:(_WKTextExtractionInteraction *)interaction completionHandler:(WK_SWIFT_UI_ACTOR void(^)(_WKTextExtractionInteractionResult *))completionHandler WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4)) NS_SWIFT_NAME(_performInteraction(_:completionHandler:));
@@ -674,6 +662,22 @@ typedef NS_OPTIONS(NSUInteger, _WKWebViewDataType) {
 #endif
 
 - (void)_filterExtractedString:(NSString *)string options:(_WKTextExtractionFilterOptions)options completionHandler:(void(^)(NSString *))completionHandler WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
+
+@end
+
+@interface WKWebView (WKTextExtractionPrivate)
+
+- (void)_simulateClickOverFirstMatchingTextInViewportWithUserInteraction:(NSString *)targetText completionHandler:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(15.2), ios(18.2), visionos(2.2));
+
+#if TARGET_OS_IPHONE
+- (void)_takeSnapshotOfNode:(_WKJSHandle *)node completionHandler:(WK_SWIFT_UI_ACTOR void (^)(UIImage *, NSError *))completionHandler WK_SWIFT_ASYNC_NAME(_takeSnapshotOfNode(_:)) WK_API_AVAILABLE(ios(26.4), visionos(26.4));
+#else
+- (void)_takeSnapshotOfNode:(_WKJSHandle *)node completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSImage *, NSError *))completionHandler WK_SWIFT_ASYNC_NAME(_takeSnapshotOfNode(_:)) WK_API_AVAILABLE(macos(26.4));
+#endif
+
+- (void)_getSelectorPathDataForNode:(_WKJSHandle *)node completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData *))completionHandler WK_SWIFT_ASYNC_NAME(_getSelectorPathDataForNode(_:)) WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
+- (void)_getSelectorPathData:(WKJSHandle *)node completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData *))completionHandler WK_SWIFT_ASYNC_NAME(_getSelectorPathData(_:)) WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
+- (void)_getNodeForSelectorPathData:(NSData *)data completionHandler:(WK_SWIFT_UI_ACTOR void (^)(_WKJSHandle *))completionHandler WK_SWIFT_ASYNC_NAME(_getNodeForSelectorPathData(_:)) WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 
 @end
 
