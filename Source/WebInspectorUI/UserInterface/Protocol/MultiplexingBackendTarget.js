@@ -33,13 +33,8 @@ WI.MultiplexingBackendTarget = class MultiplexingBackendTarget extends WI.Target
         const targetId = "multi";
         super(parentTarget, targetId, WI.UIString("Web Page"), WI.TargetType.WebPage, InspectorBackend.backendConnection);
 
-        // Browser and Target are the only domains always present on the multiplexing
-        // target. Network and Page are optional: Network only appears under Site
-        // Isolation (ProxyingNetworkAgent), and both may be absent when inspecting an
-        // older device whose protocol predates them. The proxying Page domain, when
-        // present, lets the UIProcess PageAgent aggregate the frame tree across
-        // WebContent processes under Site Isolation. See NetworkManager.initializeTarget().
-        console.assert(Array.shallowEqual(Object.keys(this._agents).sort(), ["Browser", "Target"]));
+        console.assert(this.hasDomain("Browser"));
+        console.assert(this.hasDomain("Target"));
     }
 
     // Target
