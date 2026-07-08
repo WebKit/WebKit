@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/range-mappings.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SourceMapRangeMappings");
+
+    const sourceMappingURL = "range-mappings.js.map";
+
+    async function getSourceMap() {
+        for (let sourceMap of WI.SourceMap.instances) {
+            if (sourceMap.sourceMappingURL.endsWith(sourceMappingURL))
+                return sourceMap;
+        }
+
+        while (true) {
+            let sourceMapAddedEvent = await WI.SourceCode.awaitEvent(WI.SourceCode.Event.SourceMapAdded);
+            let {sourceMap} = sourceMapAddedEvent.data;
+            if (sourceMap.sourceMappingURL.endsWith(sourceMappingURL))
+                return sourceMap;
+        }
+    }
+
+    async function getResources() {
+        let sourceMap = await getSourceMap();
+
+        let inner = sourceMap.resources.find((resource) => resource.url.endsWith("inner.js"));
+        let middle = sourceMap.resources.find((resource) => resource.url.endsWith("middle.js"));
+        let outer = sourceMap.resources.find((resource) => resource.url.endsWith("outer.js"));
+        InspectorTest.assert(inner && middle && outer, "All resources should exist when the WI.SourceMap is added.");
+        return {inner, middle, outer};
+    }
+
+    suite.addTestCase({
+        name: "SourceMapRangeMappings.findOriginalPosition",
+        async test() {
+            InspectorTest.log("Fetching source map...");
+            let sourceMap = await getSourceMap();
+            let {inner, middle, outer} = await getResources();
+
+            function checkPos(line, col, expectedSource, expectedLine, expectedCol) {
+                let pos = sourceMap.findOriginalPosition(line, col);
+                InspectorTest.expectEqual(pos[0], expectedSource);
+                InspectorTest.expectEqual(pos[1], expectedLine, "Original line for (" + line + ", " + col + ")");
+                InspectorTest.expectEqual(pos[2], expectedCol, "Original column for (" + line + ", " + col + ")");
+            }
+
+            checkPos(1, 0, inner, 0, 7);
+            checkPos(1, 3, inner, 0, 10);
+            checkPos(2, 3, inner, 1, 3);
+            checkPos(3, 0, inner, 2, 0);
+
+            checkPos(4, 2, middle, 2, 7);
+            checkPos(4, 8, middle, 2, 13);
+            checkPos(5, 7, middle, 3, 7);
+            checkPos(8, 0, middle, 6, 0);
+            checkPos(9, 0, middle, 6, 0);
+
+            checkPos(9, 3, outer, 2, 0);
+            checkPos(9, 5, outer, 2, 2);
+            checkPos(10, 6, outer, 3, 3);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SourceMapRangeMappings.findGeneratedPosition",
+        async test() {
+            InspectorTest.log("Fetching source map...");
+            let sourceMap = await getSourceMap();
+            let {inner, middle, outer} = await getResources();
+
+            function checkPos(source, line, expectedLine, expectedCol) {
+                let pos = sourceMap.findGeneratedPosition(source, line);
+                let name = WI.displayNameForURL(source);
+                InspectorTest.expectEqual(pos[0], expectedLine, "Generated line for " + name + ":" + line);
+                InspectorTest.expectEqual(pos[1], expectedCol, "Generated column for " + name + ":" + line);
+            }
+
+            let innerURL = inner.url;
+            let middleURL = middle.url;
+            let outerURL = outer.url;
+
+            checkPos(innerURL, 0, 1, 0);
+            checkPos(innerURL, 1, 2, 0);
+            checkPos(innerURL, 2, 3, 0);
+
+            checkPos(middleURL, 2, 4, 2);
+            checkPos(middleURL, 3, 5, 0);
+            checkPos(middleURL, 4, 6, 0);
+            checkPos(middleURL, 5, 7, 0);
+            checkPos(middleURL, 6, 8, 0);
+
+            checkPos(outerURL, 2, 9, 3);
+            checkPos(outerURL, 3, 10, 3);
+            checkPos(outerURL, 4, 11, 3);
+            checkPos(outerURL, 5, 12, 3);
+            checkPos(outerURL, 6, 13, 3);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests SourceMapRangeMappings.</p>
+</body>
+</html>

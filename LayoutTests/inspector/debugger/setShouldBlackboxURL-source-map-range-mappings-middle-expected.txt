@@ -1,0 +1,95 @@
+Tests Debugger.setShouldBlackboxURL.
+
+
+== Running test suite: Debugger.setShouldBlackboxURL
+-- Running test case: Debugger.setShouldBlackboxURL.SourceMapRangeMappings.Pause.middle.Blackbox.inner
+Fetching scripts...
+Blackboxing script...
+Finding pause location...
+Creating breakpoint...
+Adding breakpoint...
+Triggering pause...
+PAUSE AT <anonymous>:6:5
+      2    globalThis.outer = function(x) {
+      3        let y = "outer";
+      4        y += middle(x);
+ ->   5        |return y;
+      6    };
+      7
+
+PAUSE AT <anonymous>:7:1
+      3        let y = "outer";
+      4        y += middle(x);
+      5        return y;
+ ->   6    |};
+      7
+
+PAUSE AT Global Code:1:10
+--- Source Unavailable ---
+
+Removing breakpoint...
+Unblackboxing script...
+
+-- Running test case: Debugger.setShouldBlackboxURL.SourceMapRangeMappings.Pause.middle.Blackbox.middle
+Fetching scripts...
+Finding pause location...
+Creating breakpoint...
+Adding breakpoint...
+Triggering pause...
+PAUSE AT inner:2:5
+      0    export function inner(x) {
+ ->   1        |return "inner" + x;
+      2    }
+      3
+
+PAUSE AT inner:3:1
+      0    export function inner(x) {
+      1        return "inner" + x;
+ ->   2    |}
+      3
+
+PAUSE AT <anonymous>:6:5
+      2    globalThis.outer = function(x) {
+      3        let y = "outer";
+      4        y += middle(x);
+ ->   5        |return y;
+      6    };
+      7
+
+PAUSE AT <anonymous>:7:1
+      3        let y = "outer";
+      4        y += middle(x);
+      5        return y;
+ ->   6    |};
+      7
+
+PAUSE AT Global Code:1:10
+--- Source Unavailable ---
+
+Removing breakpoint...
+
+-- Running test case: Debugger.setShouldBlackboxURL.SourceMapRangeMappings.Pause.middle.Blackbox.outer
+Fetching scripts...
+Blackboxing script...
+Finding pause location...
+Creating breakpoint...
+Adding breakpoint...
+Triggering pause...
+PAUSE AT inner:2:5
+      0    export function inner(x) {
+ ->   1        |return "inner" + x;
+      2    }
+      3
+
+PAUSE AT inner:3:1
+      0    export function inner(x) {
+      1        return "inner" + x;
+ ->   2    |}
+      3
+
+PAUSE AT Global Code:1:10
+--- Source Unavailable ---
+
+Removing breakpoint...
+Unblackboxing script...
+

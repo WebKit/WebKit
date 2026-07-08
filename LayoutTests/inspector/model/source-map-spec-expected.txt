@@ -2,393 +2,745 @@ Run source map specification consumer test cases.
 
 
 == Running test suite: SourceMapSpec
--- Running test case: versionValid
-PASS: Resource should have loaded 1 SourceMap.
+-- Running test case: rangeMappingsWrongType1
+Resource was added: wrong-type-1.js
+WARN: Source Map "wrong-type-1.js.map" has invalid "rangeMappings"
+PASS: Expected SourceMapParseFailed event to trigger.
+PASS: Expected that there is an associated failed source map URL
+PASS: Expected no source map resource loaded
+
+-- Running test case: rangeMappingsWrongType2
+Resource was added: wrong-type-2.js
+WARN: Source Map "wrong-type-2.js.map" has invalid "rangeMappings"
+PASS: Expected SourceMapParseFailed event to trigger.
+PASS: Expected that there is an associated failed source map URL
+PASS: Expected no source map resource loaded
+
+-- Running test case: rangeMappingsWrongType3
+Resource was added: wrong-type-3.js
+WARN: Source Map "wrong-type-3.js.map" has invalid "rangeMappings"
+PASS: Expected SourceMapParseFailed event to trigger.
+PASS: Expected that there is an associated failed source map URL
+PASS: Expected no source map resource loaded
+
+-- Running test case: rangeMappingsInvalidBase64Char1
+Resource was added: invalid-base64-char-1.js
+WARN: Source Map "invalid-base64-char-1.js.map" has invalid "rangeMappings"
+PASS: Expected SourceMapParseFailed event to trigger.
+PASS: Expected that there is an associated failed source map URL
+PASS: Expected no source map resource loaded
+
+-- Running test case: rangeMappingsInvalidBase64Char2
+Resource was added: invalid-base64-char-2.js
+WARN: Source Map "invalid-base64-char-2.js.map" has invalid "rangeMappings"
+PASS: Expected SourceMapParseFailed event to trigger.
+PASS: Expected that there is an associated failed source map URL
+PASS: Expected no source map resource loaded
+
+-- Running test case: rangeMappingsInvalidVLQZero
+Resource was added: invalid-vlq-zero.js
+WARN: Source Map "invalid-vlq-zero.js.map" has invalid "rangeMappings"
+PASS: Expected SourceMapParseFailed event to trigger.
+PASS: Expected that there is an associated failed source map URL
+PASS: Expected no source map resource loaded
+
+-- Running test case: rangeMappingsInvalidMappingForRange
+Resource was added: invalid-mapping-for-range.js
+WARN: Source Map "invalid-mapping-for-range.js.map" has invalid "rangeMappings"
+PASS: Expected SourceMapParseFailed event to trigger.
+PASS: Expected that there is an associated failed source map URL
+PASS: Expected no source map resource loaded
+
+-- Running test case: rangeMappingsOutOfRange
+Resource was added: out-of-range.js
+WARN: Source Map "out-of-range.js.map" has invalid "rangeMappings"
+PASS: Expected SourceMapParseFailed event to trigger.
+PASS: Expected that there is an associated failed source map URL
+PASS: Expected no source map resource loaded
+
+-- Running test case: rangeMappingsOutOfRange2
+Resource was added: out-of-range-2.js
+WARN: Source Map "out-of-range-2.js.map" has invalid "rangeMappings"
+PASS: Expected SourceMapParseFailed event to trigger.
+PASS: Expected that there is an associated failed source map URL
+PASS: Expected no source map resource loaded
+
+-- Running test case: rangeMappingsOutOfRange3
+Resource was added: out-of-range-3.js
+WARN: Source Map "out-of-range-3.js.map" has invalid "rangeMappings"
+PASS: Expected SourceMapParseFailed event to trigger.
+PASS: Expected that there is an associated failed source map URL
+PASS: Expected no source map resource loaded
+
+-- Running test case: rangeMappingsEmpty
+Resource was added: empty-string.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
+
+-- Running test case: rangeMappingsExtraLinesInRangeMappings
+Resource was added: extra-lines-in-range-mappings.js
+PASS: Expected SourceMapAdded event to trigger.
+PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
+
+-- Running test case: rangeMappingsNonFullLineCoverage
+Resource was added: non-full-line-coverage.js
+PASS: Expected SourceMapAdded event to trigger.
+PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
+
+-- Running test case: rangeMappingsVLQContinuationBit
+Resource was added: vlq-continuation-bit.js
+PASS: Expected SourceMapAdded event to trigger.
+PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
+PASS: Test location (0, 0) should be mapped.
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 0.
+PASS: Mapped source should be 'vlq-continuation-bit-original.js'.
+PASS: Test location (0, 1) should be mapped.
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 1.
+PASS: Mapped source should be 'vlq-continuation-bit-original.js'.
+PASS: Test location (0, 3) should be mapped.
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 2.
+PASS: Mapped source should be 'vlq-continuation-bit-original.js'.
+PASS: Test location (0, 196) should be mapped.
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 195.
+PASS: Mapped source should be 'vlq-continuation-bit-original.js'.
+PASS: Test location (0, 199) should be mapped.
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 199.
+PASS: Mapped source should be 'vlq-continuation-bit-original.js'.
+
+-- Running test case: rangeMappingsSimple
+Resource was added: simple.js
+PASS: Expected SourceMapAdded event to trigger.
+PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
+PASS: Test location (1, 1) should be mapped.
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 0.
+PASS: Mapped source should be 'simple-original.js'.
+PASS: Test location (1, 2) should be mapped.
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 1.
+PASS: Mapped source should be 'simple-original.js'.
+PASS: Test location (1, 3) should be mapped.
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 2.
+PASS: Mapped source should be 'simple-original.js'.
+
+-- Running test case: rangeMappingsMultipleMappings
+Resource was added: multiple-mappings.js
+PASS: Expected SourceMapAdded event to trigger.
+PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
+PASS: Test location (1, 1) should be mapped.
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 0.
+PASS: Mapped source should be 'multiple-mappings-original.js'.
+PASS: Test location (1, 2) should be mapped.
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 1.
+PASS: Mapped source should be 'multiple-mappings-original.js'.
+PASS: Test location (1, 16) should be mapped.
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 17.
+PASS: Mapped source should be 'multiple-mappings-original.js'.
+PASS: Test location (1, 18) should be mapped.
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 19.
+PASS: Mapped source should be 'multiple-mappings-original.js'.
+PASS: Test location (1, 30) should be mapped.
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 31.
+PASS: Mapped source should be 'multiple-mappings-original.js'.
+PASS: Test location (1, 34) should be mapped.
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 35.
+PASS: Mapped source should be 'multiple-mappings-original.js'.
+PASS: Test location (1, 35) should be mapped.
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 35.
+PASS: Mapped source should be 'multiple-mappings-original.js'.
+PASS: Test location (1, 36) should be mapped.
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 38.
+PASS: Mapped source should be 'multiple-mappings-original.js'.
+
+-- Running test case: rangeMappingsNewline
+Resource was added: newline-semantics.js
+PASS: Expected SourceMapAdded event to trigger.
+PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
+PASS: Test location (0, 1) should be mapped.
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 0.
+PASS: Mapped source should be 'newline-semantics-original.js'.
+PASS: Test location (0, 7) should be mapped.
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 6.
+PASS: Mapped source should be 'newline-semantics-original.js'.
+PASS: Test location (1, 0) should be mapped.
+PASS: Mapped line should be 1.
+PASS: Mapped column should be 0.
+PASS: Mapped source should be 'newline-semantics-original.js'.
+PASS: Test location (1, 2) should be mapped.
+PASS: Mapped line should be 1.
+PASS: Mapped column should be 2.
+PASS: Mapped source should be 'newline-semantics-original.js'.
+
+-- Running test case: versionValid
+Resource was added: version-valid.js
+PASS: Expected SourceMapAdded event to trigger.
+PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 
 -- Running test case: versionMissing
+Resource was added: version-missing.js
 WARN: Source Map "version-missing.js.map" has invalid "version"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: versionNotANumber
+Resource was added: version-not-a-number.js
 WARN: Source Map "version-not-a-number.js.map" has invalid "version"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: versionNumericString
+Resource was added: version-numeric-string.js
 WARN: Source Map "version-numeric-string.js.map" has invalid "version"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: versionTooHigh
+Resource was added: version-too-high.js
 WARN: Source Map "version-too-high.js.map" has invalid "version"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: versionTooLow
+Resource was added: version-too-low.js
 WARN: Source Map "version-too-low.js.map" has invalid "version"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: mappingsMissing
+Resource was added: mappings-missing.js
 WARN: Source Map "mappings-missing.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: sourcesMissing
+Resource was added: sources-missing.js
 WARN: Source Map "sources-missing.js.map" has invalid "sources"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: sourcesNotAList1
+Resource was added: sources-not-a-list-1.js
 WARN: Source Map "sources-not-a-list-1.js.map" has invalid "sources"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: sourcesNotAList2
+Resource was added: sources-not-a-list-2.js
 WARN: Source Map "sources-not-a-list-2.js.map" has invalid "sources"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: sourcesNotStringOrNull
+Resource was added: sources-not-string-or-null.js
 WARN: Source Map "sources-not-string-or-null.js.map" has invalid "sources"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: sourcesContentMissing
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: sources-content-missing.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 
 -- Running test case: sourcesContentNotAList1
+Resource was added: sources-content-not-a-list-1.js
 WARN: Source Map "sources-content-not-a-list-1.js.map" has invalid "sourcesContent"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: sourcesContentNotAList2
+Resource was added: sources-content-not-a-list-2.js
 WARN: Source Map "sources-content-not-a-list-2.js.map" has invalid "sourcesContent"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: sourcesContentNotStringOrNull
+Resource was added: sources-content-not-string-or-null.js
 WARN: Source Map "sources-content-not-string-or-null.js.map" has invalid "sourcesContent"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: sourcesAndSourcesContentBothNull
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: sources-and-sources-content-both-null.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 
 -- Running test case: fileNotAString1
+Resource was added: file-not-a-string-1.js
 WARN: Source Map "file-not-a-string-1.js.map" has invalid "file"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: fileNotAString2
+Resource was added: file-not-a-string-2.js
 WARN: Source Map "file-not-a-string-2.js.map" has invalid "file"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: sourceRootNotAString1
+Resource was added: source-root-not-a-string-1.js
 WARN: Source Map "source-root-not-a-string-1.js.map" has invalid "sourceRoot"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: sourceRootNotAString2
+Resource was added: source-root-not-a-string-2.js
 WARN: Source Map "source-root-not-a-string-2.js.map" has invalid "sourceRoot"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: namesMissing
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: names-missing.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 
 -- Running test case: namesNotAList1
+Resource was added: names-not-a-list-1.js
 WARN: Source Map "names-not-a-list-1.js.map" has invalid "names"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: namesNotAList2
+Resource was added: names-not-a-list-2.js
 WARN: Source Map "names-not-a-list-2.js.map" has invalid "names"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: namesNotString
+Resource was added: names-not-string.js
 WARN: Source Map "names-not-string.js.map" has invalid "names"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: ignoreListEmpty
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: ignore-list-empty.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 
 -- Running test case: ignoreListValid1
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: ignore-list-valid-1.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Should have resource 'empty-original.js'.
 
 -- Running test case: ignoreListWrongType1
+Resource was added: ignore-list-wrong-type-1.js
 WARN: Source Map "ignore-list-wrong-type-1.js.map" has invalid "ignoreList"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: ignoreListWrongType2
+Resource was added: ignore-list-wrong-type-2.js
 WARN: Source Map "ignore-list-wrong-type-2.js.map" has invalid "ignoreList"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: ignoreListWrongType3
+Resource was added: ignore-list-wrong-type-3.js
 WARN: Source Map "ignore-list-wrong-type-3.js.map" has invalid "ignoreList"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: ignoreListWrongType4
+Resource was added: ignore-list-wrong-type-4.js
 WARN: Source Map "ignore-list-wrong-type-4.js.map" has invalid "ignoreList"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: ignoreListOutOfBounds1
+Resource was added: ignore-list-out-of-bounds-1.js
 WARN: Source Map "ignore-list-out-of-bounds-1.js.map" has invalid "ignoreList"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: ignoreListOutOfBounds2
+Resource was added: ignore-list-out-of-bounds-2.js
 WARN: Source Map "ignore-list-out-of-bounds-2.js.map" has invalid "ignoreList"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: unrecognizedProperty
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: unrecognized-property.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 
 -- Running test case: invalidVLQDueToNonBase64Character
+Resource was added: invalid-vlq-non-base64-char.js
 WARN: Source Map "invalid-vlq-non-base64-char.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidVLQDueToNonBase64CharacterPadding
+Resource was added: invalid-vlq-non-base64-char-padding.js
 WARN: Source Map "invalid-vlq-non-base64-char-padding.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidVLQDueToMissingContinuationDigits
+Resource was added: invalid-vlq-missing-continuation.js
 WARN: Source Map "invalid-vlq-missing-continuation.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingNotAString1
+Resource was added: invalid-mapping-not-a-string-1.js
 WARN: Source Map "invalid-mapping-not-a-string-1.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingNotAString2
+Resource was added: invalid-mapping-not-a-string-2.js
 WARN: Source Map "invalid-mapping-not-a-string-2.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentBadSeparator
+Resource was added: invalid-mapping-bad-separator.js
 WARN: Source Map "invalid-mapping-bad-separator.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithZeroFields
+Resource was added: invalid-mapping-segment-with-zero-fields.js
 WARN: Source Map "invalid-mapping-segment-with-zero-fields.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithTwoFields
+Resource was added: invalid-mapping-segment-with-two-fields.js
 WARN: Source Map "invalid-mapping-segment-with-two-fields.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithThreeFields
+Resource was added: invalid-mapping-segment-with-three-fields.js
 WARN: Source Map "invalid-mapping-segment-with-three-fields.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithSourceIndexOutOfBounds
+Resource was added: invalid-mapping-segment-source-index-out-of-bounds.js
 WARN: Source Map "invalid-mapping-segment-source-index-out-of-bounds.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithNameIndexOutOfBounds
+Resource was added: invalid-mapping-segment-name-index-out-of-bounds.js
 WARN: Source Map "invalid-mapping-segment-name-index-out-of-bounds.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithNegativeColumn
+Resource was added: invalid-mapping-segment-negative-column.js
 WARN: Source Map "invalid-mapping-segment-negative-column.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithNegativeSourceIndex
+Resource was added: invalid-mapping-segment-negative-source-index.js
 WARN: Source Map "invalid-mapping-segment-negative-source-index.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithNegativeOriginalLine
+Resource was added: invalid-mapping-segment-negative-original-line.js
 WARN: Source Map "invalid-mapping-segment-negative-original-line.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithNegativeOriginalColumn
+Resource was added: invalid-mapping-segment-negative-original-column.js
 WARN: Source Map "invalid-mapping-segment-negative-original-column.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithNegativeNameIndex
+Resource was added: invalid-mapping-segment-negative-name-index.js
 WARN: Source Map "invalid-mapping-segment-negative-name-index.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithNegativeRelativeColumn
+Resource was added: invalid-mapping-segment-negative-relative-column.js
 WARN: Source Map "invalid-mapping-segment-negative-relative-column.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithNegativeRelativeSourceIndex
+Resource was added: invalid-mapping-segment-negative-relative-source-index.js
 WARN: Source Map "invalid-mapping-segment-negative-relative-source-index.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithNegativeRelativeOriginalLine
+Resource was added: invalid-mapping-segment-negative-relative-original-line.js
 WARN: Source Map "invalid-mapping-segment-negative-relative-original-line.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithNegativeRelativeOriginalColumn
+Resource was added: invalid-mapping-segment-negative-relative-original-column.js
 WARN: Source Map "invalid-mapping-segment-negative-relative-original-column.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithNegativeRelativeNameIndex
+Resource was added: invalid-mapping-segment-negative-relative-name-index.js
 WARN: Source Map "invalid-mapping-segment-negative-relative-name-index.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithColumnExceeding32Bits
+Resource was added: invalid-mapping-segment-column-too-large.js
 WARN: Source Map "invalid-mapping-segment-column-too-large.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithSourceIndexExceeding32Bits
+Resource was added: invalid-mapping-segment-source-index-too-large.js
 WARN: Source Map "invalid-mapping-segment-source-index-too-large.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithOriginalLineExceeding32Bits
+Resource was added: invalid-mapping-segment-original-line-too-large.js
 WARN: Source Map "invalid-mapping-segment-original-line-too-large.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithOriginalColumnExceeding32Bits
+Resource was added: invalid-mapping-segment-original-column-too-large.js
 WARN: Source Map "invalid-mapping-segment-original-column-too-large.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: invalidMappingSegmentWithNameIndexExceeding32Bits
+Resource was added: invalid-mapping-segment-name-index-too-large.js
 WARN: Source Map "invalid-mapping-segment-name-index-too-large.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: validMappingFieldsWith32BitMaxValues
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: valid-mapping-boundary-values.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 
 -- Running test case: validMappingLargeVLQ
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: valid-mapping-large-vlq.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 
 -- Running test case: validMappingEmptyGroups
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: valid-mapping-empty-groups.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 
 -- Running test case: validMappingEmptyString
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: valid-mapping-empty-string.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 
 -- Running test case: indexMapWrongTypeSections
+Resource was added: index-map-wrong-type-sections.js
 WARN: Source Map "index-map-wrong-type-sections.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: indexMapWrongTypeOffset
+Resource was added: index-map-wrong-type-offset.js
 WARN: Source Map "index-map-wrong-type-offset.js.map" has invalid "offset"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: indexMapWrongTypeMap
+Resource was added: index-map-wrong-type-map.js
 WARN: Source Map "index-map-wrong-type-map.js.map" has invalid "map"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: indexMapInvalidBaseMappings
+Resource was added: index-map-invalid-base-mappings.js
 WARN: Source Map "index-map-invalid-base-mappings.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: indexMapInvalidOverlap
+Resource was added: index-map-invalid-overlap.js
 WARN: Source Map "index-map-invalid-overlap.js.map" has invalid "offset.column"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: indexMapInvalidOrder
+Resource was added: index-map-invalid-order.js
 WARN: Source Map "index-map-invalid-order.js.map" has invalid "offset.line"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: indexMapMissingMap
+Resource was added: index-map-missing-map.js
 WARN: Source Map "index-map-missing-map.js.map" has invalid "map"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: indexMapInvalidSubMap
+Resource was added: index-map-invalid-sub-map.js
 WARN: Source Map "index-map-invalid-sub-map.js.map" has invalid "mappings"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: indexMapMissingOffset
+Resource was added: index-map-missing-offset.js
 WARN: Source Map "index-map-missing-offset.js.map" has invalid "offset"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: indexMapMissingOffsetLine
+Resource was added: index-map-missing-offset-line.js
 WARN: Source Map "index-map-missing-offset-line.js.map" has invalid "offset.line"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: indexMapMissingOffsetColumn
+Resource was added: index-map-missing-offset-column.js
 WARN: Source Map "index-map-missing-offset-column.js.map" has invalid "offset.column"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: indexMapOffsetLineWrongType
+Resource was added: index-map-offset-line-wrong-type.js
 WARN: Source Map "index-map-offset-line-wrong-type.js.map" has invalid "offset.line"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: indexMapOffsetColumnWrongType
+Resource was added: index-map-offset-column-wrong-type.js
 WARN: Source Map "index-map-offset-column-wrong-type.js.map" has invalid "offset.column"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: indexMapEmptySections
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: index-map-empty-sections.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 
 -- Running test case: indexMapFileWrongType1
+Resource was added: index-map-file-wrong-type-1.js
 WARN: Source Map "index-map-file-wrong-type-1.js.map" has invalid "file"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: indexMapFileWrongType2
+Resource was added: index-map-file-wrong-type-2.js
 WARN: Source Map "index-map-file-wrong-type-2.js.map" has invalid "file"
+PASS: Expected SourceMapParseFailed event to trigger.
 PASS: Expected that there is an associated failed source map URL
 PASS: Expected no source map resource loaded
 
 -- Running test case: basicMapping
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: basic-mapping.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Test location (0, 0) should be mapped.
 PASS: Mapped line should be 0.
 PASS: Mapped column should be 0.
@@ -439,8 +791,10 @@ PASS: Mapped column should be 0.
 PASS: Mapped source should be 'basic-mapping-original.js'.
 
 -- Running test case: sourceRootResolution
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: source-root-resolution.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Test location (0, 0) should be mapped.
 PASS: Mapped line should be 0.
 PASS: Mapped column should be 0.
@@ -451,8 +805,10 @@ PASS: Mapped column should be 9.
 PASS: Mapped source should be 'theroot/basic-mapping-original.js'.
 
 -- Running test case: sourceResolutionAbsoluteURL
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: source-resolution-absolute-url.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Test location (0, 0) should be mapped.
 PASS: Mapped line should be 0.
 PASS: Mapped column should be 0.
@@ -463,8 +819,10 @@ PASS: Mapped column should be 9.
 PASS: Mapped source should be '/baz/quux/basic-mapping-original.js'.
 
 -- Running test case: basicMappingWithIndexMap
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: basic-mapping-as-index-map.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Test location (0, 0) should be mapped.
 PASS: Mapped line should be 0.
 PASS: Mapped column should be 0.
@@ -515,8 +873,10 @@ PASS: Mapped column should be 0.
 PASS: Mapped source should be 'basic-mapping-original.js'.
 
 -- Running test case: indexMapWithMissingFile
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: index-map-missing-file.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Test location (0, 0) should be mapped.
 PASS: Mapped line should be 0.
 PASS: Mapped column should be 0.
@@ -567,8 +927,10 @@ PASS: Mapped column should be 0.
 PASS: Mapped source should be 'basic-mapping-original.js'.
 
 -- Running test case: indexMapWithTwoConcatenatedSources
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: index-map-two-concatenated-sources.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Test location (0, 0) should be mapped.
 PASS: Mapped line should be 0.
 PASS: Mapped column should be 0.
@@ -643,8 +1005,10 @@ PASS: Mapped column should be 0.
 PASS: Mapped source should be 'second-source-original.js'.
 
 -- Running test case: sourcesNullSourcesContentNonNull
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: sources-null-sources-content-non-null.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Test location (0, 0) should be mapped.
 PASS: Mapped line should be 0.
 PASS: Mapped column should be 0.
@@ -655,8 +1019,10 @@ PASS: Mapped column should be 9.
 PASS: Mapped source should be 'null'.
 
 -- Running test case: sourcesNonNullSourcesContentNull
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: sources-non-null-sources-content-null.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Test location (0, 0) should be mapped.
 PASS: Mapped line should be 0.
 PASS: Mapped column should be 0.
@@ -667,8 +1033,10 @@ PASS: Mapped column should be 9.
 PASS: Mapped source should be 'basic-mapping-original.js'.
 
 -- Running test case: transitiveMapping
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: transitive-mapping.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 Transitive mapping test ignored
 Transitive mapping test ignored
 Transitive mapping test ignored
@@ -679,8 +1047,10 @@ Transitive mapping test ignored
 Transitive mapping test ignored
 
 -- Running test case: transitiveMappingWithThreeSteps
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: transitive-mapping-three-steps.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 Transitive mapping test ignored
 Transitive mapping test ignored
 Transitive mapping test ignored
@@ -691,16 +1061,20 @@ Transitive mapping test ignored
 Transitive mapping test ignored
 
 -- Running test case: vlqValidSingleDigit
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: vlq-valid-single-digit.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Test location (0, 15) should be mapped.
 PASS: Mapped line should be 0.
 PASS: Mapped column should be 0.
 PASS: Mapped source should be 'vlq-valid-single-digit-original.js'.
 
 -- Running test case: vlqValidNegativeDigit
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: vlq-valid-negative-digit.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Test location (2, 15) should be mapped.
 PASS: Mapped line should be 1.
 PASS: Mapped column should be 3.
@@ -711,24 +1085,30 @@ PASS: Mapped column should be 1.
 PASS: Mapped source should be 'vlq-valid-negative-digit-original.js'.
 
 -- Running test case: vlqValidContinuationBitPresent1
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: vlq-valid-continuation-bit-present-1.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Test location (0, 15) should be mapped.
 PASS: Mapped line should be 0.
 PASS: Mapped column should be 1.
 PASS: Mapped source should be 'vlq-valid-continuation-bit-present-1-original.js'.
 
 -- Running test case: vlqValidContinuationBitPresent2
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: vlq-valid-continuation-bit-present-2.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Test location (2, 16) should be mapped.
 PASS: Mapped line should be 1.
 PASS: Mapped column should be 1.
 PASS: Mapped source should be 'vlq-valid-continuation-bit-present-2-original.js'.
 
 -- Running test case: mappingSemanticsSingleFieldSegment
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: mapping-semantics-single-field-segment.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Test location (0, 0) should be mapped.
 PASS: Mapped line should be 0.
 PASS: Mapped column should be 1.
@@ -739,24 +1119,30 @@ PASS: Generated column should be 2.
 PASS: Generated path should be 'mapping-semantics-single-field-segment.js'.
 
 -- Running test case: mappingSemanticsFourFieldSegment
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: mapping-semantics-four-field-segment.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Test location (0, 1) should be mapped.
 PASS: Mapped line should be 2.
 PASS: Mapped column should be 2.
 PASS: Mapped source should be 'mapping-semantics-four-field-segment-original.js'.
 
 -- Running test case: mappingSemanticsFiveFieldSegment
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: mapping-semantics-five-field-segment.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Test location (0, 1) should be mapped.
 PASS: Mapped line should be 2.
 PASS: Mapped column should be 2.
 PASS: Mapped source should be 'mapping-semantics-five-field-segment-original.js'.
 
 -- Running test case: mappingSemanticsColumnReset
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: mapping-semantics-column-reset.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Test location (0, 1) should be mapped.
 PASS: Mapped line should be 0.
 PASS: Mapped column should be 0.
@@ -767,8 +1153,10 @@ PASS: Mapped column should be 0.
 PASS: Mapped source should be 'mapping-semantics-column-reset-original.js'.
 
 -- Running test case: mappingSemanticsRelative1
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: mapping-semantics-relative-1.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Test location (0, 1) should be mapped.
 PASS: Mapped line should be 0.
 PASS: Mapped column should be 0.
@@ -779,8 +1167,10 @@ PASS: Mapped column should be 4.
 PASS: Mapped source should be 'mapping-semantics-relative-1-original.js'.
 
 -- Running test case: mappingSemanticsRelative2
-PASS: Resource should have loaded 1 SourceMap.
+Resource was added: mapping-semantics-relative-2.js
+PASS: Expected SourceMapAdded event to trigger.
 PASS: SourceMap should be a WI.SourceMap instance.
+PASS: Expected SourceMap URL to match test specification.
 PASS: Test location (0, 1) should be mapped.
 PASS: Mapped line should be 0.
 PASS: Mapped column should be 2.

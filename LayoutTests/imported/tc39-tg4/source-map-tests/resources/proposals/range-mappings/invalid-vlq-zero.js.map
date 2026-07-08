@@ -1,9 +1,9 @@
 {
   "version": 3,
   "names": [],
-  "file": "wrong-type-2.js",
+  "file": "invalid-vlq-zero.js",
   "sources": ["empty-original.js"],
   "sourcesContent": [""],
-  "mappings": "",
-  "rangeMappings": { "x": "foo" }
+  "mappings": "A,A",
+  "rangeMappings": "AA"
 }

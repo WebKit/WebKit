@@ -1,0 +1,72 @@
+Tests SourceMapRangeMappings.
+
+
+== Running test suite: SourceMapRangeMappings
+-- Running test case: SourceMapRangeMappings.findOriginalPosition
+Fetching source map...
+PASS: expectEqual(SourceMapResource instance #1, SourceMapResource instance #1)
+PASS: Original line for (1, 0)
+PASS: Original column for (1, 0)
+PASS: expectEqual(SourceMapResource instance #1, SourceMapResource instance #1)
+PASS: Original line for (1, 3)
+PASS: Original column for (1, 3)
+PASS: expectEqual(SourceMapResource instance #1, SourceMapResource instance #1)
+PASS: Original line for (2, 3)
+PASS: Original column for (2, 3)
+PASS: expectEqual(SourceMapResource instance #1, SourceMapResource instance #1)
+PASS: Original line for (3, 0)
+PASS: Original column for (3, 0)
+PASS: expectEqual(SourceMapResource instance #2, SourceMapResource instance #2)
+PASS: Original line for (4, 2)
+PASS: Original column for (4, 2)
+PASS: expectEqual(SourceMapResource instance #2, SourceMapResource instance #2)
+PASS: Original line for (4, 8)
+PASS: Original column for (4, 8)
+PASS: expectEqual(SourceMapResource instance #2, SourceMapResource instance #2)
+PASS: Original line for (5, 7)
+PASS: Original column for (5, 7)
+PASS: expectEqual(SourceMapResource instance #2, SourceMapResource instance #2)
+PASS: Original line for (8, 0)
+PASS: Original column for (8, 0)
+PASS: expectEqual(SourceMapResource instance #2, SourceMapResource instance #2)
+PASS: Original line for (9, 0)
+PASS: Original column for (9, 0)
+PASS: expectEqual(SourceMapResource instance #3, SourceMapResource instance #3)
+PASS: Original line for (9, 3)
+PASS: Original column for (9, 3)
+PASS: expectEqual(SourceMapResource instance #3, SourceMapResource instance #3)
+PASS: Original line for (9, 5)
+PASS: Original column for (9, 5)
+PASS: expectEqual(SourceMapResource instance #3, SourceMapResource instance #3)
+PASS: Original line for (10, 6)
+PASS: Original column for (10, 6)
+
+-- Running test case: SourceMapRangeMappings.findGeneratedPosition
+Fetching source map...
+PASS: Generated line for inner.js:0
+PASS: Generated column for inner.js:0
+PASS: Generated line for inner.js:1
+PASS: Generated column for inner.js:1
+PASS: Generated line for inner.js:2
+PASS: Generated column for inner.js:2
+PASS: Generated line for middle.js:2
+PASS: Generated column for middle.js:2
+PASS: Generated line for middle.js:3
+PASS: Generated column for middle.js:3
+PASS: Generated line for middle.js:4
+PASS: Generated column for middle.js:4
+PASS: Generated line for middle.js:5
+PASS: Generated column for middle.js:5
+PASS: Generated line for middle.js:6
+PASS: Generated column for middle.js:6
+PASS: Generated line for outer.js:2
+PASS: Generated column for outer.js:2
+PASS: Generated line for outer.js:3
+PASS: Generated column for outer.js:3
+PASS: Generated line for outer.js:4
+PASS: Generated column for outer.js:4
+PASS: Generated line for outer.js:5
+PASS: Generated column for outer.js:5
+PASS: Generated line for outer.js:6
+PASS: Generated column for outer.js:6
+

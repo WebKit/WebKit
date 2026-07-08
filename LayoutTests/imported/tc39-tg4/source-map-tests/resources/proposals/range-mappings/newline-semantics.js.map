@@ -3,7 +3,7 @@
   "names": [],
   "file": "empty-string.js",
   "sources": ["newline-semantics-original.js"],
-  "sourcesContent": ["\"Hello World\""],
-  "mappings": "CAAA;A",
-  "rangeMappings": "B;"
+  "sourcesContent": ["1234\n5678"],
+  "mappings": "CAAA;GACG",
+  "rangeMappings": "A;"
 }

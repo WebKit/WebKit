@@ -1,0 +1,16 @@
+{
+    "version": 3,
+    "sources": [
+        "inner.js",
+        "middle.js",
+        "outer.js"
+    ],
+    "sourcesContent": [
+        "export function inner(x) {\n    return \"inner\" + x;\n}\n",
+        "import { inner } from \"./inner.js\"\n\nexport function middle(x) {\n    let y = \"middle\";\n    y += inner(x);\n    return y;\n}\n",
+        "import { middle } from \"./middle.js\"\n\nglobalThis.outer = function(x) {\n    let y = \"outer\";\n    y += middle(x);\n    return y;\n};\n"
+    ],
+    "mappings": ";AAAO;;AAEP;ACAO;;;;AAIP;ACJA;;;;AAIA",
+    "rangeMappings": ";A;;;A;;;;;A;;;;",
+    "ignoreList": [1]
+}

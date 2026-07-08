@@ -33,11 +33,15 @@ WI.SourceMap = class SourceMap
         this._mappings = mappings;
 
         this._generatedPositionForOriginalLineForURL = new Map;
-        for (let [generatedLine, generatedColumn, sourceURL, originalLine, originalColumn] of this._mappings) {
+        for (let [index, [generatedLine, generatedColumn, sourceURL, originalLine, originalColumn, isRangeMapping]] of this._mappings.entries()) {
             if (!sourceURL)
                 continue;
             let generatedPositionForOriginalLine = this._generatedPositionForOriginalLineForURL.getOrInsert(sourceURL, new Map);
-            generatedPositionForOriginalLine.getOrInsert(originalLine, [generatedLine, generatedColumn]);
+            // For range mappings we need to compute the line span of the range here, because it is difficult to compute later.
+            let rangeMappingSpan = 0;
+            if (isRangeMapping && (index + 1 < this._mappings.length))
+                rangeMappingSpan = this._mappings[index + 1][0] - generatedLine;
+            generatedPositionForOriginalLine.getOrInsert(originalLine, [generatedLine, generatedColumn, rangeMappingSpan]);
         }
 
         this._sourceMapResourceForURL = new Map;
@@ -146,6 +150,13 @@ WI.SourceMap = class SourceMap
                 });
             }
 
+            let rangeMappings = null;
+            if (map.rangeMappings) {
+                if (typeof map.rangeMappings !== "string")
+                    throw WI.SourceMap._invalidPropertyError(WI.unlocalizedString("rangeMappings"));
+                rangeMappings = new WI.SourceMap._RangeMappings(map.rangeMappings);
+            }
+
             // https://tc39.es/ecma426/#sec-mappings
 
             let originalLine = 0;
@@ -154,6 +165,8 @@ WI.SourceMap = class SourceMap
             let nameIndex = 0;
             let generatedLine = offsetLineNumber;
             let generatedColumn = offsetColumnNumber;
+            let lineIndex = 0;
+            let nextRangeMapping = NaN;
             let vlq = new WI.SourceMap._VLQ(WI.SourceMap._invalidPropertyError("mappings"), map.mappings);
 
             const workInterval = 10;
@@ -165,10 +178,25 @@ WI.SourceMap = class SourceMap
                     while (vlq.peekNextCharacter() === ";") {
                         ++generatedLine;
                         generatedColumn = 0;
+                        if (rangeMappings) {
+                            // It's an error if a range mapping pointed past the mappings on a line.
+                            if (!isNaN(nextRangeMapping) && nextRangeMapping >= lineIndex)
+                                throw WI.SourceMap._invalidPropertyError(WI.unlocalizedString("rangeMappings"));
+                            rangeMappings.nextLine();
+                            nextRangeMapping = NaN;
+                        }
+                        lineIndex = 0;
                         vlq.takeNextCharacter();
                     }
                     if (!vlq.hasNextCharacter())
                         break;
+                }
+
+                let isRangeMapping = false;
+                if (rangeMappings) {
+                    if (isNaN(nextRangeMapping) || lineIndex > nextRangeMapping)
+                        nextRangeMapping = rangeMappings.decodeNextEntry();
+                    isRangeMapping = nextRangeMapping === lineIndex;
                 }
 
                 let relativeGeneratedColumn = vlq.decode();
@@ -200,13 +228,19 @@ WI.SourceMap = class SourceMap
                     if (vlq.hasNextCharacter() && !vlq.atSeparator())
                         throw WI.SourceMap._invalidPropertyError(WI.unlocalizedString("mappings"));
 
-                    mappings.push([generatedLine, generatedColumn, sourceURLs[sourceURLIndex], originalLine, originalColumn]);
+                    mappings.push([generatedLine, generatedColumn, sourceURLs[sourceURLIndex], originalLine, originalColumn, isRangeMapping]);
+                    ++lineIndex;
                 } else {
                     if (relativeSourceURLIndex !== WI.SourceMap._VLQ.AtSeparator)
                         throw WI.SourceMap._invalidPropertyError(WI.unlocalizedString("mappings"));
 
+                    // A mapping without an original position cannot be a range mapping.
+                    if (rangeMappings && isRangeMapping)
+                        throw WI.SourceMap._invalidPropertyError(WI.unlocalizedString("rangeMappings"));
+
                     console.assert(relativeOriginalLine === WI.SourceMap._VLQ.AtSeparator, relativeOriginalLine);
                     mappings.push([generatedLine, generatedColumn]);
+                    ++lineIndex;
                 }
 
                 if (Date.now() - startTime > workInterval) {
@@ -214,6 +248,12 @@ WI.SourceMap = class SourceMap
 
                     startTime = Date.now();
                 }
+            }
+
+            if (rangeMappings) {
+                if (nextRangeMapping !== null && nextRangeMapping >= lineIndex)
+                    throw WI.SourceMap._invalidPropertyError(WI.unlocalizedString("rangeMappings"));
+                rangeMappings.endMappings();
             }
 
             lastLineNumber = offsetLineNumber;
@@ -324,20 +364,42 @@ WI.SourceMap = class SourceMap
                 count -= step;
             }
         }
-        var entry = this._mappings[first];
-        if (!entry || entry.length !== 5)
+
+        let [generatedLine, generatedColumn, sourceURL, originalLine, originalColumn, isRangeMapping] = this._mappings[first] || [];
+        if (isNaN(originalLine) || isNaN(originalColumn))
             return null;
-        if (!first && (lineNumber < entry[0] || (lineNumber === entry[0] && columnNumber < entry[1])))
+        if (!first && (lineNumber < generatedLine || (lineNumber === generatedLine && columnNumber < generatedColumn)))
             return null;
-        let sourceMapResource = this._sourceMapResourceForURL.get(entry[2]);
+        let sourceMapResource = this._sourceMapResourceForURL.get(sourceURL);
         if (!sourceMapResource)
             return null;
-        return [sourceMapResource, entry[3], entry[4]];
+        if (isRangeMapping) {
+            originalLine += lineNumber - generatedLine;
+            if (lineNumber === generatedLine)
+                originalColumn += columnNumber - generatedColumn;
+            else
+                originalColumn = columnNumber;
+        }
+        return [sourceMapResource, originalLine, originalColumn];
     }
 
     findGeneratedPosition(sourceURL, lineNumber)
     {
         let generatedPositionForOriginalLine = this._generatedPositionForOriginalLineForURL.get(sourceURL);
+        // Search backwards in case the queried line is in the span of a range mapping.
+        for (let currentLine = lineNumber; currentLine >= 0; --currentLine) {
+            let generatedPosition = generatedPositionForOriginalLine.get(currentLine);
+            if (!generatedPosition)
+                continue;
+
+            let rangeMappingSpan = generatedPosition[2];
+            let offset = lineNumber - currentLine;
+            if (!rangeMappingSpan || offset >= rangeMappingSpan)
+                break;
+
+            let generatedColumn = (offset === 0) ? generatedPosition[1] : 0;
+            return [generatedPosition[0] + offset, generatedColumn];
+        }
         for (let lastLineNumber = generatedPositionForOriginalLine.lastKey; lineNumber <= lastLineNumber; ++lineNumber) {
             let generatedPosition = generatedPositionForOriginalLine.get(lineNumber);
             if (generatedPosition)
@@ -387,7 +449,7 @@ WI.SourceMap._VLQ = class VLQ
         return char === "," || char === ";";;
     }
 
-    decode()
+    decode({unsigned} = {})
     {
         // https://tc39.es/ecma426/#sec-base64-vlq
 
@@ -401,9 +463,10 @@ WI.SourceMap._VLQ = class VLQ
             throw this._context;
 
         let byte = base64Map[char];
-        let sign = byte & 0x01 ? -1 : 1;
-        let value = (byte >> 1) & 0x0F;
-        let shift = 16;
+        let sign = (!unsigned && (byte & 0x01)) ? -1 : 1;
+        let signMask = unsigned ? 0x1F : 0x0F;
+        let value = (byte >> !unsigned) & signMask;
+        let shift = unsigned ? 32 : 16;
         while (byte & 0x20) {
             if (!this.hasNextCharacter() || this.atSeparator())
                 throw this._context;
@@ -428,3 +491,53 @@ WI.SourceMap._VLQ = class VLQ
 };
 
 WI.SourceMap._VLQ.AtSeparator = Symbol("separator");
+
+WI.SourceMap._RangeMappings = class RangeMappings
+{
+    constructor(string)
+    {
+        this._context = WI.SourceMap._invalidPropertyError("rangeMappings");
+        this._string = string;
+        this._decoder = new WI.SourceMap._VLQ(this._context, string);
+        this._currentIndexIntoMappings = NaN;
+    }
+
+    decodeNextEntry()
+    {
+        if (!this._decoder.hasNextCharacter())
+            return null;
+
+        if (this._decoder.peekNextCharacter() === ";")
+            return null;
+
+        let vlq = this._decoder.decode({unsigned: true});
+        if ((!isNaN(this._currentIndexIntoMappings) && vlq === 0) || vlq === WI.SourceMap._VLQ.AtSeparator)
+            throw this._context;
+        if (isNaN(this._currentIndexIntoMappings))
+           this._currentIndexIntoMappings = vlq;
+        else
+           this._currentIndexIntoMappings += vlq;
+        return this._currentIndexIntoMappings;
+    }
+
+    nextLine()
+    {
+        if (!this._decoder.hasNextCharacter())
+          return;
+        if (this._decoder.peekNextCharacter() !== ";")
+            throw this._context;
+
+        this._decoder.takeNextCharacter();
+        this._currentIndexIntoMappings = NaN;
+    }
+
+    endMappings()
+    {
+        // If we finish consuming mappings, then we should have either trailing lines or nothing.
+        while (this._decoder.hasNextCharacter()) {
+            if (this._decoder.peekNextCharacter() !== ";")
+                throw this._context;
+            this._decoder.takeNextCharacter();
+        }
+    }
+}
