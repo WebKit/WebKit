@@ -27,4 +27,7 @@
 
 @_exported public import JavaScriptCore
 
+// `@_spiOnly` is used instead of `@_exported` because JSC is public and wtf is private.
+@_spiOnly public import wtf
+
 #endif

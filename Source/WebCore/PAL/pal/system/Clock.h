@@ -26,6 +26,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <memory>
 
 namespace PAL {
@@ -51,3 +53,5 @@ protected:
 };
 
 }
+
+#endif // __cplusplus

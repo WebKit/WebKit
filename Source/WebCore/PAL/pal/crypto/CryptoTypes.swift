@@ -22,7 +22,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
-import pal.Core.crypto.CryptoTypes
+import pal.crypto.CryptoTypes
 
 // FIXME: (rdar://164560176) resolve the many 'unsafe' statements here
 

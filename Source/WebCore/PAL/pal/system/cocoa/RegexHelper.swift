@@ -22,7 +22,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
-import pal.Core.system.cocoa.RegexHelper
+import pal.system.cocoa.RegexHelper
 
 @objc
 @implementation

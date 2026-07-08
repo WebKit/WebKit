@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #if PLATFORM(IOS_FAMILY)
 
 namespace PAL {
@@ -48,3 +50,5 @@ PAL_EXPORT bool updateCurrentUserInterfaceIdiom();
 }
 
 #endif
+
+#endif // __cplusplus

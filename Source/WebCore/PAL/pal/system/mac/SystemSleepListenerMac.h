@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #if PLATFORM(MAC)
 
 #include <pal/system/SystemSleepListener.h>
@@ -51,3 +53,5 @@ protected:
 } // namespace PAL
 
 #endif // PLATFORM(MAC)
+
+#endif // __cplusplus

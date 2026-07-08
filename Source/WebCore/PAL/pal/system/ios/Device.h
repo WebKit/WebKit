@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #if PLATFORM(IOS_FAMILY)
 
 #include <wtf/Forward.h>
@@ -48,3 +50,5 @@ PAL_EXPORT bool deviceHasIPadCapability();
 }
 
 #endif // PLATFORM(IOS_FAMILY)
+
+#endif // __cplusplus

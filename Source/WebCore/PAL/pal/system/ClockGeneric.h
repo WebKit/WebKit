@@ -27,6 +27,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include "Clock.h"
 #include <wtf/MonotonicTime.h>
 
@@ -59,3 +61,5 @@ private:
 };
 
 }
+
+#endif // __cplusplus

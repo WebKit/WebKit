@@ -23,6 +23,7 @@
 
 private import CxxStdlib
 import WebGPU_Internal.Buffer
+private import wtf
 
 extension WebGPU.Buffer {
     func copy(from source: Span<UInt8>, offset: Int) {
