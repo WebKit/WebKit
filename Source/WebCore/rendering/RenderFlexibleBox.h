@@ -177,6 +177,7 @@ private:
         LayoutUnit flexedContentSize;
         bool frozen { false };
         bool everHadLayout { false };
+        LayoutPoint flowAwareLocation;
     };
 
     enum class FlexSign : uint8_t {
@@ -243,6 +244,7 @@ private:
     LayoutUnit innerCrossSizeForFlexItem(const RenderBox& flexItem) const;
     template<typename SizeType> LayoutUnit computeMainSizeFromAspectRatioUsing(const RenderBox& flexItem, const SizeType& crossSizeLength) const;
     void NODELETE setFlowAwareLocationForFlexItem(RenderBox& flexItem, const LayoutPoint&);
+    void setFlexItemGeometry(FlexLayoutItem&);
     LayoutUnit flexBaseSizeForFlexItem(RenderBox& flexItem);
     void ensureBlockAxisContentSizeForFlexItemIfNeeded(RenderBox& flexItem);
     void NODELETE adjustAlignmentForFlexItem(RenderBox& flexItem, LayoutUnit);
@@ -324,11 +326,12 @@ private:
     void setOverridingMainSizeForFlexItem(RenderBox&, LayoutUnit);
     void prepareFlexItemForPositionedLayout(RenderBox& flexItem);
 
-    // A baseline-sharing group's flex items and the ascent they align to. Flex owns this because it
-    // positions each member within the group; the shared BaselineAlignmentState only decides grouping.
+    // A baseline-sharing group's members (indices into the owning line's items) and the ascent they align
+    // to. Flex owns this because it positions each member within the group; the shared BaselineAlignmentState
+    // only decides grouping.
     struct BaselineSharingGroup {
         LayoutUnit maxAscent;
-        Vector<CheckedRef<RenderBox>> items;
+        Vector<size_t> items;
     };
     // A line almost always has a single baseline-sharing group (at most 3 can exist), so keep one inline.
     using BaselineSharingGroups = Vector<BaselineSharingGroup, 1>;

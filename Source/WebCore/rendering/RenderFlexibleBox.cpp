@@ -1344,6 +1344,11 @@ void RenderFlexibleBox::setFlowAwareLocationForFlexItem(RenderBox& flexItem, con
         flexItem.setLocation(location.transposedPoint());
 }
 
+void RenderFlexibleBox::setFlexItemGeometry(FlexLayoutItem& flexLayoutItem)
+{
+    setFlowAwareLocationForFlexItem(flexLayoutItem.renderer, flexLayoutItem.flowAwareLocation);
+}
+
 template<typename SizeType> bool RenderFlexibleBox::canComputePercentageFlexBasis(const RenderBox& flexItem, const SizeType& flexBasis, UpdatePercentageHeightDescendants updateDescendants)
 {
     if (!isColumnFlow() || m_hasDefiniteHeight == SizeDefiniteness::Definite)
@@ -2726,7 +2731,7 @@ RenderFlexibleBox::FlexLineResult RenderFlexibleBox::layoutAndPlaceFlexItems(Lay
                 baselineSharingGroups.append({ });
             auto& baselineSharingGroup = baselineSharingGroups[baselineSharingGroupIndex];
             baselineSharingGroup.maxAscent = std::max(baselineSharingGroup.maxAscent, ascent);
-            baselineSharingGroup.items.append(flexItem);
+            baselineSharingGroup.items.append(i);
 
             if (alignment == ItemPosition::Baseline) {
                 maxAscent =  std::max(maxAscent, ascent);
@@ -2750,7 +2755,8 @@ RenderFlexibleBox::FlexLineResult RenderFlexibleBox::layoutAndPlaceFlexItems(Lay
         // on the left. This will be fixed later in flipForRightToLeftColumn.
         auto leadingScrollbarSize = writingMode().isInlineFlipped() && writingMode().isVertical() ? mainAxisScrollbarExtent() : LayoutUnit();
         LayoutPoint location(shouldFlipMainAxis ? totalMainExtent - mainAxisOffset - flexItemMainExtent - leadingScrollbarSize : mainAxisOffset, crossAxisOffset + flowAwareMarginBeforeForFlexItem(flexItem));
-        setFlowAwareLocationForFlexItem(flexItem, location);
+        flexLayoutItems[i].flowAwareLocation = location;
+        setFlexItemGeometry(flexLayoutItems[i]);
         mainAxisOffset += flexItemMainExtent + flowAwareMarginEndForFlexItem(flexItem);
 
         if (i != flexLayoutItems.size() - 1) {
@@ -2987,8 +2993,8 @@ void RenderFlexibleBox::performBaselineAlignment(LineState& lineState)
 
     for (auto& baselineSharingGroup : lineState.baselineSharingGroups) {
         LayoutUnit minMarginAfterBaseline = LayoutUnit::max();
-        for (auto& item : baselineSharingGroup.items) {
-            auto& flexItem = item.get();
+        for (auto itemIndex : baselineSharingGroup.items) {
+            auto& flexItem = lineState.flexLayoutItems[itemIndex].renderer.get();
             auto position = alignmentForFlexItem(flexItem);
             ASSERT(position == ItemPosition::Baseline || position == ItemPosition::LastBaseline);
             auto offset = alignmentOffset(availableAlignmentSpaceForFlexItem(lineCrossAxisExtent, flexItem), position, marginBoxAscentForFlexItem(flexItem), baselineSharingGroup.maxAscent, containerHasWrapReverse);
@@ -3002,8 +3008,8 @@ void RenderFlexibleBox::performBaselineAlignment(LineState& lineState)
         // fallback alignment. The fallback alignment of a baseline-sharing group is the fallback alignment
         // of its items as resolved to physical directions.
         if (minMarginAfterBaseline) {
-            for (auto& item : baselineSharingGroup.items) {
-                auto& flexItem = item.get();
+            for (auto itemIndex : baselineSharingGroup.items) {
+                auto& flexItem = lineState.flexLayoutItems[itemIndex].renderer.get();
                 if (shouldAdjustItemTowardsCrossAxisEnd(flexItemWritingModeForBaselineAlignment(flexItem).blockDirection(), alignmentForFlexItem(flexItem)) && !hasAutoMarginsInCrossAxis(flexItem))
                     adjustAlignmentForFlexItem(flexItem, minMarginAfterBaseline);
             }
