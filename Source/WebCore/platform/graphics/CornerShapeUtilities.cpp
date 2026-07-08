@@ -27,9 +27,11 @@
 
 #include "FloatPoint.h"
 #include "FloatSize.h"
+#include "GeometryUtilities.h"
 #include "Path.h"
 
 #include <cmath>
+#include <utility>
 
 namespace WebCore {
 
@@ -43,13 +45,13 @@ struct Corner {
     double curvature { 1.0 };
 };
 
+static bool isBevel(const Corner& corner) { return corner.curvature == 0.0; }
+static bool isNotch(const Corner& corner) { return std::isinf(corner.curvature) && corner.curvature < 0.0; }
 static bool isEmpty(const Corner& corner)
 {
     return (corner.outer - corner.start).diagonalLength() < 1e-6f
         || (corner.end - corner.outer).diagonalLength() < 1e-6f;
 }
-
-static bool isNotch(const Corner& corner) { return std::isinf(corner.curvature) && corner.curvature < 0.0; }
 
 static Corner makeCorner(const CornerInput& input)
 {
@@ -75,17 +77,36 @@ static Corner makeCorner(const CornerInput& input)
         input.curvature
     };
 }
+static std::pair<FloatPoint, FloatPoint> bevelAxisAlignedCorners(const Corner& original, double startInset, double endInset)
+{
+    auto inwardNormal = (original.end - original.start).perpendicular().normalized();
+    auto outerToCenter = original.center - original.outer;
+    if (inwardNormal.width() * outerToCenter.width() + inwardNormal.height() * outerToCenter.height() < 0)
+        inwardNormal = inwardNormal.scaled(-1);
+    auto innerStart = original.start + inwardNormal * float(startInset);
+    auto innerEnd = original.end + inwardNormal * float(endInset);
+
+    auto extendStart = (original.center - original.start).directionScaledBy(float(startInset));
+    auto extendEnd = (original.center - original.end).directionScaledBy(float(endInset));
+    auto clipStart = original.start + extendStart;
+    auto clipEnd = original.end + extendEnd;
+    auto clipOuter = original.outer + extendStart + extendEnd;
+
+    auto axisAlignedCornerStart = findIntersection(innerStart, innerEnd, clipStart, clipOuter).value_or(innerStart);
+    auto axisAlignedCornerEnd = findIntersection(innerEnd, innerStart, clipEnd, clipOuter).value_or(innerEnd);
+
+    return { axisAlignedCornerStart, axisAlignedCornerEnd };
+}
 
 static Corner adjustCornerForInset(const Corner& original, double startInset, double endInset)
 {
     if (isEmpty(original) || (startInset == 0.0 && endInset == 0.0))
         return original;
 
-    FloatSize startToOuter = (original.outer - original.start).normalized();
-    FloatSize outerToEnd = (original.end - original.outer).normalized();
-    FloatSize endToCenter = (original.center - original.end).normalized();
-    FloatSize centerToStart = (original.start - original.center).normalized();
-
+    if (isBevel(original)) {
+        auto [cutStart, cutEnd] = bevelAxisAlignedCorners(original, startInset, endInset);
+        return { cutStart, original.outer, cutEnd, original.center, original.curvature };
+    }
     double strokeA = 0, strokeB = 0;
     if (isNotch(original)) {
         strokeA = -1;
@@ -93,10 +114,10 @@ static Corner adjustCornerForInset(const Corner& original, double startInset, do
     }
     // TODO: implement inset for bevel, scoop, round, squircle, square (§3.9.4.2 hull direction).
 
-    FloatSize offset1 = startToOuter * float(startInset * strokeA);
-    FloatSize offset2 = outerToEnd * float(startInset * strokeB);
-    FloatSize offset3 = endToCenter * float(endInset * strokeB);
-    FloatSize offset4 = centerToStart * float(endInset * strokeA);
+    auto offset1 = (original.outer - original.start).directionScaledBy(float(startInset * strokeA));
+    auto offset2 = (original.end - original.outer).directionScaledBy(float(startInset * strokeB));
+    auto offset3 = (original.center - original.end).directionScaledBy(float(endInset * strokeB));
+    auto offset4 = (original.start - original.center).directionScaledBy(float(endInset * strokeA));
 
     return {
         original.start + offset1 + offset2,
@@ -109,13 +130,18 @@ static Corner adjustCornerForInset(const Corner& original, double startInset, do
 
 static void addCurvedCorner(Path& path, const Corner& corner)
 {
+    if (isBevel(corner)) {
+        path.addLineTo(corner.start);
+        path.addLineTo(corner.end);
+        return;
+    }
     if (isNotch(corner)) {
         path.addLineTo(corner.start);
         path.addLineTo(corner.center);
         path.addLineTo(corner.end);
         return;
     }
-    // TODO: bevel, round, squircle, square, and the general superellipse curve.
+    // TODO: round, squircle, square, and the general superellipse curve.
     path.addLineTo(corner.start);
     path.addLineTo(corner.outer);
     path.addLineTo(corner.end);
@@ -123,8 +149,12 @@ static void addCurvedCorner(Path& path, const Corner& corner)
 
 static void buildCorners(RectCorners<Corner>& corners, const RectCorners<CornerInput>& cornerRects)
 {
-    for (auto key : { BoxCorner::TopLeft, BoxCorner::TopRight, BoxCorner::BottomLeft, BoxCorner::BottomRight })
-        corners[key] = adjustCornerForInset(makeCorner(cornerRects[key]), cornerRects[key].startInset, cornerRects[key].endInset);
+    for (auto key : { BoxCorner::TopLeft, BoxCorner::TopRight, BoxCorner::BottomLeft, BoxCorner::BottomRight }) {
+        auto& input = cornerRects[key];
+        auto original = makeCorner(input);
+        auto corner = adjustCornerForInset(original, input.startInset, input.endInset);
+        corners[key] = corner;
+    }
 }
 
 } // namespace

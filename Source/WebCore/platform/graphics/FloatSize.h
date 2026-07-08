@@ -130,6 +130,11 @@ public:
         return !length ? *this : scaled(1.0f / length);
     }
 
+    FloatSize directionScaledBy(float length) const
+    {
+        return normalized().scaled(length);
+    }
+
     constexpr FloatSize perpendicular() const
     {
         return { -m_height, m_width };
