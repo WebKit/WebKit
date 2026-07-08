@@ -295,7 +295,7 @@ RefPtr<WebCore::PlatformMediaSessionInterface> RemoteMediaSessionManagerProxy::f
 
 IPC::Connection* RemoteMediaSessionManagerProxy::messageSenderConnection() const
 {
-    return &m_process->connection();
+    return m_process->hasConnection() ? &m_process->connection() : nullptr;
 }
 
 uint64_t RemoteMediaSessionManagerProxy::messageSenderDestinationID() const
