@@ -541,7 +541,7 @@ void FocusController::setFocused(bool focused)
     protect(m_page)->setActivityState(focused ? m_activityState | ActivityState::IsFocused : m_activityState - ActivityState::IsFocused);
 }
 
-void FocusController::setFocusedInternal(bool focused)
+void FocusController::setFocusedInternal()
 {
     if (!isFocused()) {
         if (RefPtr focusedOrMainFrame = this->focusedOrMainFrame())
@@ -552,10 +552,8 @@ void FocusController::setFocusedInternal(bool focused)
         setFocusedFrame(protect(m_page->mainFrame()).ptr());
 
     RefPtr focusedFrame = localFocusedFrame();
-    if (focusedFrame && focusedFrame->view()) {
-        protect(focusedFrame->selection())->setFocused(focused);
-        dispatchEventsOnWindowAndFocusedElement(protect(focusedFrame->document()).get(), focused);
-    }
+    if (focusedFrame && focusedFrame->view())
+        protect(focusedFrame->selection())->setFocused(isFocused());
 }
 
 FocusableElementSearchResult FocusController::findFocusableElementStartingWithLocalFrame(FocusDirection direction, const FocusEventData& focusEventData, LocalFrame& frame, ShouldFocusElement shouldFocusElement)
@@ -1237,16 +1235,24 @@ bool FocusController::setFocusedElement(Element* element, Frame* newFocusedFrame
 
 void FocusController::setActivityState(OptionSet<ActivityState> activityState)
 {
+    static constexpr OptionSet activeAndFocused { ActivityState::IsFocused, ActivityState::WindowIsActive };
+    bool wasActiveAndFocused = m_activityState.containsAll(activeAndFocused);
     auto changed = m_activityState ^ activityState;
     m_activityState = activityState;
+    bool isActiveAndFocused = m_activityState.containsAll(activeAndFocused);
+    bool shouldDispatchEvent = wasActiveAndFocused != isActiveAndFocused;
 
     if (changed & ActivityState::IsFocused)
-        setFocusedInternal(activityState.contains(ActivityState::IsFocused));
+        setFocusedInternal();
     if (changed & ActivityState::WindowIsActive) {
-        setActiveInternal(activityState.contains(ActivityState::WindowIsActive));
+        setActiveInternal();
         if (changed & ActivityState::IsVisible)
             setIsVisibleAndActiveInternal(activityState.contains(ActivityState::WindowIsActive));
     }
+
+    RefPtr focusedFrame = localFocusedFrame();
+    if (focusedFrame && shouldDispatchEvent)
+        dispatchEventsOnWindowAndFocusedElement(protect(focusedFrame->document()), isActiveAndFocused);
 }
 
 void FocusController::setActive(bool active)
@@ -1254,7 +1260,7 @@ void FocusController::setActive(bool active)
     protect(m_page)->setActivityState(active ? m_activityState | ActivityState::WindowIsActive : m_activityState - ActivityState::WindowIsActive);
 }
 
-void FocusController::setActiveInternal(bool active)
+void FocusController::setActiveInternal()
 {
     RefPtr localMainFrame = m_page->localMainFrame();
     if (!localMainFrame)
@@ -1268,10 +1274,6 @@ void FocusController::setActiveInternal(bool active)
 
     if (RefPtr focusedOrMainFrame = this->focusedOrMainFrame())
         focusedOrMainFrame->selection().pageActivationChanged();
-
-    RefPtr focusedFrame = localFocusedFrame();
-    if (focusedFrame && isFocused())
-        dispatchEventsOnWindowAndFocusedElement(protect(focusedFrame->document()).get(), active);
 }
 
 static void contentAreaDidShowOrHide(ScrollableArea* scrollableArea, bool didShow)
