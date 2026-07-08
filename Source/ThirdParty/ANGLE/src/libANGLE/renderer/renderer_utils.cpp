@@ -922,7 +922,7 @@ angle::Result IncompleteTextureSet::getIncompleteTexture(
     else if (type == gl::TextureType::Buffer)
     {
         ASSERT(incompleteTextureBufferAttachment != nullptr);
-        ANGLE_TRY(t->setBuffer(context, incompleteTextureBufferAttachment,
+        ANGLE_TRY(t->setBuffer(mutableContext, incompleteTextureBufferAttachment,
                                incompleteTextureParam.sizedInternalFormat));
     }
     else

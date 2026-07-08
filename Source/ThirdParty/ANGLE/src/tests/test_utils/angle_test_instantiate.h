@@ -343,6 +343,16 @@ struct CombinedPrintToStringParamName
 // Variants of ANGLE_INSTANTIATE_TEST_COMBINE_N that take a variantName used as
 // the INSTANTIATE_TEST_SUITE_P prefix.  This allows the same test class to be
 // instantiated multiple times with different parameter combinations.
+#define ANGLE_INSTANTIATE_TEST_VARIANTS_COMBINE_7(variantName, testName, print, combine1,   \
+                                                  combine2, combine3, combine4, combine5,   \
+                                                  combine6, combine7, first, ...)           \
+    const std::remove_reference<decltype(first)>::type testName##variantName##params[] = {  \
+        first, ##__VA_ARGS__};                                                              \
+    INSTANTIATE_TEST_SUITE_P(                                                               \
+        variantName, testName,                                                              \
+        testing::Combine(ANGLE_INSTANTIATE_TEST_PLATFORMS(testName, variantName), combine1, \
+                         combine2, combine3, combine4, combine5, combine6, combine7),       \
+        print)
 #define ANGLE_INSTANTIATE_TEST_VARIANTS_COMBINE_9(                                             \
     variantName, testName, print, combine1, combine2, combine3, combine4, combine5, combine6,  \
     combine7, combine8, combine9, first, ...)                                                  \

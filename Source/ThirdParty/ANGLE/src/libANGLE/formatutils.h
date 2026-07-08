@@ -211,7 +211,7 @@ struct InternalFormat
                                         GLsizei samples,
                                         GLuint *resultOut) const;
 
-    [[nodiscard]] std::pair<GLuint, GLuint> getCompressedImageMinBlocks() const;
+    [[nodiscard]] GLuint getCompressedImageMinBlocks() const;
 
     [[nodiscard]] bool computeRowDepthSkipBytes(GLenum formatType,
                                                 GLsizei width,

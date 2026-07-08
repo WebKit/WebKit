@@ -96,6 +96,8 @@
 42264913 : Texture2DTestES3.TexStorage2DLargeYuvTextureCount/* = SKIP_FOR_CAPTURE
 42264854 DEBUG : VulkanExternalImageTest.ShouldImportSemaphoreOpaqueFd/* = SKIP_FOR_CAPTURE
 
+524775154 : PbufferTestES3.ImportImageThenBindTexImageShouldOrphan/* = SKIP_FOR_CAPTURE
+524775154 : PbufferTestES3.ImportImageThenBindTexImageSourceShouldOrphan/* = SKIP_FOR_CAPTURE
 
 # Skip because Timeout
 

@@ -9357,6 +9357,716 @@ TEST_P(VulkanPerformanceCounterTest, DrawThenBlitThenDrawWithSameProgram)
     EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::green);
 }
 
+// Tests that back-to-back clear calls on color attachment with the same value are optimized
+// (skipped).
+TEST_P(VulkanPerformanceCounterTest, RedundantColorClearWithCommand)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    setupForColorOpsTest(&framebuffer, &texture);
+
+    // Initial clear
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw something
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear color (first clear, mid-RP)
+    uint32_t colorClearsBefore = getPerfCounters().colorClearAttachments;
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Clear color again with the same value, should be skipped!
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // The counter colorClearAttachments should only increase by 1.
+    EXPECT_EQ(getPerfCounters().colorClearAttachments, colorClearsBefore + 1);
+    // red + blue
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+}
+
+// Tests that back-to-back clear calls on color attachment of fbo with gaped attachments with the
+// same value are optimized (skipped).
+TEST_P(VulkanPerformanceCounterTest, RedundantColorClearOnFBOWithGapedAttachments)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    GLFramebuffer framebuffer;
+    GLTexture texture0, texture2;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glBindTexture(GL_TEXTURE_2D, texture0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kOpsTestSize, kOpsTestSize, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture0, 0);
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kOpsTestSize, kOpsTestSize, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, texture2, 0);
+    glViewport(0, 0, kOpsTestSize, kOpsTestSize);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Initial clear of all targets to black
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw something
+    GLenum drawBuffers[3] = {GL_COLOR_ATTACHMENT0, GL_NONE, GL_COLOR_ATTACHMENT2};
+    glDrawBuffers(3, drawBuffers);
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear color (first clear, mid-RP)
+    uint32_t colorClearsBefore              = getPerfCounters().colorClearAttachments;
+    const std::array<GLfloat, 4> clearColor = {1.0f, 0.0f, 0.0f, 1.0f};
+    glClearBufferfv(GL_COLOR, 2, clearColor.data());
+
+    // Clear color again with the same value, should be skipped!
+    glClearBufferfv(GL_COLOR, 2, clearColor.data());
+
+    // Draw
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // The counter colorClearAttachments should only increase by 1.
+    EXPECT_EQ(getPerfCounters().colorClearAttachments, colorClearsBefore + 1);
+    // red
+    glReadBuffer(GL_COLOR_ATTACHMENT2);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test sequence of draw, clear, read, draw, clear, read. Clear should not skip.
+TEST_P(VulkanPerformanceCounterTest, ColorDrawClearReadDrawClearRead)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    setupForColorOpsTest(&framebuffer, &texture);
+
+    // Initial clear
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw something
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear color (first clear, mid-RP)
+    uint32_t colorClearsBefore = getPerfCounters().colorClearAttachments;
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    // red
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Draw
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    // Clear color again with the same value, should not be skipped!
+    glClear(GL_COLOR_BUFFER_BIT);
+    ASSERT_GL_NO_ERROR();
+
+    // The counter colorClearAttachments should increase by 2.
+    EXPECT_EQ(getPerfCounters().colorClearAttachments, colorClearsBefore + 2);
+    // red
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test sequence of draw, clear, read, draw, draw, clear, read. Clear should not skip.
+TEST_P(VulkanPerformanceCounterTest, ColorDrawClearReadDrawDrawClearRead)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    setupForColorOpsTest(&framebuffer, &texture);
+
+    // Initial clear
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw something
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear color (first clear, mid-RP)
+    uint32_t colorClearsBefore = getPerfCounters().colorClearAttachments;
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    // red
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Draw twice
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    // Clear color again with the same value, should not be skipped!
+    glClear(GL_COLOR_BUFFER_BIT);
+    ASSERT_GL_NO_ERROR();
+
+    // The counter colorClearAttachments should increase by 2.
+    EXPECT_EQ(getPerfCounters().colorClearAttachments, colorClearsBefore + 2);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Tests that back-to-back clear calls on color attachment with mask are NOT skipped.
+TEST_P(VulkanPerformanceCounterTest, NonRedundantColorClearWithDifferentMask)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    setupForColorOpsTest(&framebuffer, &texture);
+
+    // Initial clear
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw something
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear color with mask set to red only (first clear, mid-RP, should be using draw)
+    uint32_t colorClearsBefore = getPerfCounters().colorClearAttachments;
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_FALSE);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Clear color again with the same value with mask set to all enabled, should not be skipped!
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // The counter colorClearAttachments should increase by 1.
+    EXPECT_EQ(getPerfCounters().colorClearAttachments, colorClearsBefore + 1);
+    // red + blue
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+}
+
+// Tests that back-to-back clear calls on color attachment with different values are NOT skipped.
+TEST_P(VulkanPerformanceCounterTest, NonRedundantColorClearWithCommand)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    setupForColorOpsTest(&framebuffer, &texture);
+
+    // Initial clear
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw something
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear color (first clear)
+    uint32_t colorClearsBefore = getPerfCounters().colorClearAttachments;
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Clear color again with different value, should NOT be skipped!
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // The counter colorClearAttachments should increase by 2.
+    EXPECT_EQ(getPerfCounters().colorClearAttachments, colorClearsBefore + 2);
+    // red + blue
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+}
+
+// With scissor enabled for the first clear
+TEST_P(VulkanPerformanceCounterTest, NonRedundantColorClearWithScissor1)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    setupForColorOpsTest(&framebuffer, &texture);
+
+    // Initial clear
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw something
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear color with scissor (first clear)
+    uint32_t colorClearsBefore = getPerfCounters().colorClearAttachments;
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Clear color again with the same value with scissor disabled, should NOT be skipped!
+    glDisable(GL_SCISSOR_TEST);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // The counter colorClearAttachments should increase by 2.
+    EXPECT_EQ(getPerfCounters().colorClearAttachments, colorClearsBefore + 2);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+}
+
+// With scissor enabled for the second clear
+TEST_P(VulkanPerformanceCounterTest, NonRedundantColorClearWithScissor2)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    setupForColorOpsTest(&framebuffer, &texture);
+
+    // Initial clear
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw something
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear color without scissor (first clear)
+    uint32_t colorClearsBefore = getPerfCounters().colorClearAttachments;
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glDisable(GL_SCISSOR_TEST);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Clear color again with different value with scissor enabled, should NOT be skipped!
+    glScissor(0, 0, 1, 1);
+    glEnable(GL_SCISSOR_TEST);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // The counter colorClearAttachments should increase by 2.
+    EXPECT_EQ(getPerfCounters().colorClearAttachments, colorClearsBefore + 2);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+}
+
+// Tests that back-to-back clear calls on depth attachment with the same value are optimized
+// (skipped).
+TEST_P(VulkanPerformanceCounterTest, RedundantDepthClearWithCommand)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    GLProgram drawRed, drawGreen;
+    drawRed.makeRaster(essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawGreen.makeRaster(essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    GLRenderbuffer renderbuffer;
+    setupForDepthStencilOpsTest(&framebuffer, &texture, &renderbuffer);
+
+    GLfloat zValue = 0.0f;
+    glDepthFunc(GL_LESS);
+    glEnable(GL_DEPTH_TEST);
+
+    // Initial clear
+    glClearDepthf(1.0f);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    // Draw something. Depth test should pass.
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(program, essl1_shaders::PositionAttrib(), zValue + 0.2f);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear depth (first clear, mid-RP)
+    uint32_t depthClearsBefore = getPerfCounters().depthClearAttachments;
+    glClearDepthf(zValue * 0.5f + 0.5f);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    // Clear depth again with the same value, should be skipped!
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    // Draw. Depth test should fail.
+    drawQuad(program, essl1_shaders::PositionAttrib(), zValue + 0.1f);
+    ASSERT_GL_NO_ERROR();
+
+    // The counter depthClearAttachments should only increase by 1.
+    EXPECT_EQ(getPerfCounters().depthClearAttachments, depthClearsBefore + 1);
+    // Verify depth buffer value contains cleared depth value
+    drawQuadToVerifyDepthValue(drawGreen, drawRed, zValue);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kOpsTestSize, kOpsTestSize, GLColor::green);
+}
+
+// Same as RedundantDepthClearWithCommand but with depth test disabled
+TEST_P(VulkanPerformanceCounterTest, RedundantDepthClearWithDepthDisabled)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    GLProgram drawRed, drawGreen;
+    drawRed.makeRaster(essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawGreen.makeRaster(essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    GLRenderbuffer renderbuffer;
+    setupForDepthStencilOpsTest(&framebuffer, &texture, &renderbuffer);
+
+    GLfloat zValue = 0.0f;
+    glDepthFunc(GL_LESS);
+    glEnable(GL_DEPTH_TEST);
+
+    // Initial clear
+    glClearDepthf(1.0f);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    // Draw something. Depth test should pass.
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(program, essl1_shaders::PositionAttrib(), zValue + 0.2f);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear depth (first clear, mid-RP).
+    uint32_t depthClearsBefore = getPerfCounters().depthClearAttachments;
+    glClearDepthf(zValue * 0.5f + 0.5f);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    // Draw with depth disabled
+    glDisable(GL_DEPTH_TEST);
+    drawQuad(program, essl1_shaders::PositionAttrib(), zValue - 0.1f);
+
+    // Clear depth again with the same value, should be skipped!
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    // Draw. Depth test should fail.
+    glEnable(GL_DEPTH_TEST);
+    drawQuad(program, essl1_shaders::PositionAttrib(), zValue + 0.2f);
+    ASSERT_GL_NO_ERROR();
+
+    // In theory we could optimize out second clear as well, but we dont track draws with depth
+    // disabled, so there is no optimization for this usage case yet.
+    EXPECT_EQ(getPerfCounters().depthClearAttachments, depthClearsBefore + 2);
+    // Verify depth buffer value contains cleared depth value
+    drawQuadToVerifyDepthValue(drawGreen, drawRed, zValue);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kOpsTestSize, kOpsTestSize, GLColor::green);
+}
+
+// Tests that back-to-back clear calls on depth attachment with different values are NOT skipped.
+TEST_P(VulkanPerformanceCounterTest, NonRedundantDepthClearWithCommand)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    GLProgram drawRed, drawGreen;
+    drawRed.makeRaster(essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawGreen.makeRaster(essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    GLRenderbuffer renderbuffer;
+    setupForDepthStencilOpsTest(&framebuffer, &texture, &renderbuffer);
+
+    GLfloat zValue = 0.0f;
+    glDepthFunc(GL_LESS);
+    glEnable(GL_DEPTH_TEST);
+
+    // Initial clear
+    glClearDepthf(1.0f);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    // Draw
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(program, essl1_shaders::PositionAttrib(), zValue + 0.2f);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear depth (first clear)
+    uint32_t depthClearsBefore = getPerfCounters().depthClearAttachments;
+    glClearDepthf(zValue * 0.5f + 0.6f);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    // Clear depth again with different value, should NOT be skipped!
+    glClearDepthf(zValue * 0.5f + 0.5f);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    // Draw. Should fail depth test
+    drawQuad(program, essl1_shaders::PositionAttrib(), zValue + 0.1f);
+    ASSERT_GL_NO_ERROR();
+
+    // The counter depthClearAttachments should increase by 2.
+    EXPECT_EQ(getPerfCounters().depthClearAttachments, depthClearsBefore + 2);
+    // Verify depth buffer value contains cleared depth value
+    drawQuadToVerifyDepthValue(drawGreen, drawRed, zValue);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kOpsTestSize, kOpsTestSize, GLColor::green);
+}
+
+// Tests that back-to-back clear calls on stencil attachment with the same value are optimized
+// (skipped).
+TEST_P(VulkanPerformanceCounterTest, RedundantStencilClearWithCommand)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    GLProgram drawGreen;
+    drawGreen.makeRaster(essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    GLRenderbuffer renderbuffer;
+    setupForDepthStencilOpsTest(&framebuffer, &texture, &renderbuffer);
+
+    // Initial clear
+    glClearStencil(0xAA);
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    // Draw something
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear stencil (first clear, mid-RP)
+    uint32_t stencilClearsBefore = getPerfCounters().stencilClearAttachments;
+    glClearStencil(0x55);
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    // Clear stencil again with the same value, should be skipped!
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    // Draw
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // The counter stencilClearAttachments should only increase by 1.
+    EXPECT_EQ(getPerfCounters().stencilClearAttachments, stencilClearsBefore + 1);
+    drawQuadToVerifyStencilValue(drawGreen, 0x55);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kOpsTestSize, kOpsTestSize, GLColor::green);
+}
+
+// Tests that back-to-back clear calls on stencil attachment with different values are NOT skipped.
+TEST_P(VulkanPerformanceCounterTest, NonRedundantMaskedStencilClear)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    GLProgram drawGreen;
+    drawGreen.makeRaster(essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    GLRenderbuffer renderbuffer;
+    setupForDepthStencilOpsTest(&framebuffer, &texture, &renderbuffer);
+
+    // Initial clear
+    glClearStencil(0x00);
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    // Draw
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear stencil (first clear)
+    uint32_t stencilClearsBefore = getPerfCounters().stencilClearAttachments;
+    glClearStencil(0x55);
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    // Clear stencil again with same value but mask, it should NOT be skipped but will not use
+    // clearAttachments either.
+    glStencilMask(0x0F);
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    // Draw
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_EQ(getPerfCounters().stencilClearAttachments, stencilClearsBefore + 1);
+    drawQuadToVerifyStencilValue(drawGreen, 0x55);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kOpsTestSize, kOpsTestSize, GLColor::green);
+}
+
+// Tests that back-to-back clear calls on stencil attachment with different values are NOT skipped.
+TEST_P(VulkanPerformanceCounterTest, NonRedundantStencilClearWithCommand)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    GLProgram drawGreen;
+    drawGreen.makeRaster(essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    GLRenderbuffer renderbuffer;
+    setupForDepthStencilOpsTest(&framebuffer, &texture, &renderbuffer);
+
+    // Initial clear
+    glClearStencil(0x00);
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    // Draw
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear stencil (first clear)
+    uint32_t stencilClearsBefore = getPerfCounters().stencilClearAttachments;
+    glClearStencil(0x55);
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    // Clear stencil again with different value, should NOT be skipped!
+    glClearStencil(0xAA);
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    // Draw
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // The counter stencilClearAttachments should increase by 2.
+    EXPECT_EQ(getPerfCounters().stencilClearAttachments, stencilClearsBefore + 2);
+    drawQuadToVerifyStencilValue(drawGreen, 0xAA);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kOpsTestSize, kOpsTestSize, GLColor::green);
+}
+
+// clear all buffers back to back
+TEST_P(VulkanPerformanceCounterTest, RedundantAllAttachmentsClear)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    GLProgram drawRed, drawGreen;
+    drawRed.makeRaster(essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawGreen.makeRaster(essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    GLRenderbuffer renderbuffer;
+    setupForDepthStencilOpsTest(&framebuffer, &texture, &renderbuffer);
+
+    // Initial clear
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearDepthf(1.0f);
+    glClearStencil(0xAA);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // Draw something with depth and stencil test passing, color should be blue
+    GLfloat zValue = 0.0f;
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    glDepthFunc(GL_LESS);
+    glEnable(GL_DEPTH_TEST);
+    glStencilMask(0xFF);
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_EQUAL, 0xAA, 0xFF);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear all attachments (first clear, mid-RP) with red/0.5f/0x55
+    uint32_t colorClearsBefore   = getPerfCounters().colorClearAttachments;
+    uint32_t depthClearsBefore   = getPerfCounters().depthClearAttachments;
+    uint32_t stencilClearsBefore = getPerfCounters().stencilClearAttachments;
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClearDepthf(zValue * 0.5f + 0.5f);
+    glClearStencil(0x55);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // Clear stencil again with the same value, should be skipped!
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // Draw, Depth and stencil test should all fail.
+    glStencilFunc(GL_EQUAL, 0xAA, 0xFF);
+    drawQuad(program, essl1_shaders::PositionAttrib(), zValue + 0.1f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kOpsTestSize, kOpsTestSize, GLColor::red);
+
+    // The counter *ClearAttachments should only increase by 1.
+    EXPECT_EQ(getPerfCounters().colorClearAttachments, colorClearsBefore + 1);
+    EXPECT_EQ(getPerfCounters().depthClearAttachments, depthClearsBefore + 1);
+    EXPECT_EQ(getPerfCounters().stencilClearAttachments, stencilClearsBefore + 1);
+    drawQuadToVerifyDepthValue(drawGreen, drawRed, zValue);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kOpsTestSize, kOpsTestSize, GLColor::green);
+    drawQuadToVerifyStencilValue(drawGreen, 0x55);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kOpsTestSize, kOpsTestSize, GLColor::green);
+}
+
+// Similar to RedundantAllAttachmentsClear but with depth mask off
+TEST_P(VulkanPerformanceCounterTest, RedundantAllAttachmentsClearDepthMaskOff)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    GLProgram drawGreen;
+    drawGreen.makeRaster(essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    GLRenderbuffer renderbuffer;
+    setupForDepthStencilOpsTest(&framebuffer, &texture, &renderbuffer);
+
+    // Initial clear
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearDepthf(1.0f);
+    glClearStencil(0xAA);
+    glDepthMask(GL_FALSE);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // Draw something with depth and stencil test passing, color should be blue
+    GLfloat zValue = 0.0f;
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    glDepthFunc(GL_LESS);
+    glEnable(GL_DEPTH_TEST);
+    glStencilMask(0xFF);
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_EQUAL, 0xAA, 0xFF);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear all attachments (first clear, mid-RP) with red/0.5f/0x55
+    uint32_t colorClearsBefore   = getPerfCounters().colorClearAttachments;
+    uint32_t depthClearsBefore   = getPerfCounters().depthClearAttachments;
+    uint32_t stencilClearsBefore = getPerfCounters().stencilClearAttachments;
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClearDepthf(zValue * 0.5f + 0.5f);
+    glClearStencil(0x55);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // Clear stencil again with the same value, should be skipped!
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // Draw, Depth and stencil test should all fail.
+    glStencilFunc(GL_EQUAL, 0xAA, 0xFF);
+    drawQuad(program, essl1_shaders::PositionAttrib(), zValue + 0.1f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kOpsTestSize, kOpsTestSize, GLColor::red);
+
+    // The counter color/stencil clearAttachments should only increase by 1. No depth clear is
+    // performed due to mask disabled.
+    EXPECT_EQ(getPerfCounters().colorClearAttachments, colorClearsBefore + 1);
+    EXPECT_EQ(getPerfCounters().depthClearAttachments, depthClearsBefore);
+    EXPECT_EQ(getPerfCounters().stencilClearAttachments, stencilClearsBefore + 1);
+    drawQuadToVerifyStencilValue(drawGreen, 0x55);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kOpsTestSize, kOpsTestSize, GLColor::green);
+}
+
 // Verifies whether, when GL_RASTERIZER_DISCARD is enabled and no glClear is issued,
 // the Vulkan color attachment uses VK_ATTACHMENT_LOAD_OP_NONE and VK_ATTACHMENT_STORE_OP_NONE,
 // as no actual rendering or clearing is expected.
