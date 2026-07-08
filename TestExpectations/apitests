@@ -54,6 +54,10 @@
 
 TestWebKitAPI.WebPageTransferableTests/exportToImage(type:) [ Skip ]
 
+# webkit.org/b/318834 [ iOS DEBUG ] 2x TestWebKitAPI.ContentRuleList.* (api-tests) are flaky timeouts.
+[ iOS Debug ] TestWebKitAPI.ContentRuleList.RequestMethods [ Pass Timeout ]
+[ iOS Debug ] TestWebKitAPI.ContentRuleList.ResourceTypes [ Pass Timeout ]
+
 # webkit.org/b/318739 [iOS DEBUG] 9x TestWebKitAPI.WebKitLegacy.* (api-tests) are constant crashes.
 [ iOS Debug ] TestWebKitAPI.WebKitLegacy.DateInputAccessoryViewTest [ Crash ]
 [ iOS Debug ] TestWebKitAPI.WebKitLegacy.DateTimeLocalInputAccessoryViewTest [ Crash ]
