@@ -214,7 +214,7 @@ ExceptionOr<Ref<TimeRanges>> SourceBuffer::buffered()
     // Handled by sourceBufferPrivateBufferedChanged().
 
     // 6. Return the current value of this attribute.
-    return Ref { m_buffered };
+    return protect(m_buffered);
 }
 
 double SourceBuffer::timestampOffset() const
@@ -349,7 +349,7 @@ ExceptionOr<void> SourceBuffer::abort()
     //    then throw an InvalidStateError exception and abort these steps.
     // 2. If the readyState attribute of the parent media source is not in the "open" state
     //    then throw an InvalidStateError exception and abort these steps.
-    if (isRemoved() || !Ref { *m_source }->isOpen())
+    if (isRemoved() || !protect(*m_source)->isOpen())
         return Exception { ExceptionCode::InvalidStateError };
 
     // 3. If the range removal algorithm is running, then throw an InvalidStateError exception and abort these steps.
@@ -815,53 +815,56 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
         // 3.2 Add the appropriate track descriptions from this initialization segment to each of the track buffers.
         ASSERT(segment.audioTracks.size() == audioTracks->length());
         for (auto& audioTrackInfo : segment.audioTracks) {
+            Ref audioTrackPrivate { *audioTrackInfo.track };
             if (audioTracks->length() == 1) {
                 RefPtr track = audioTracks->item(0);
                 auto oldId = track->trackId();
-                auto newId = RefPtr { audioTrackInfo.track }->id();
-                track->setPrivate(Ref { *audioTrackInfo.track });
+                auto newId = audioTrackPrivate->id();
+                track->setPrivate(audioTrackPrivate);
                 if (newId != oldId)
                     trackIdPairs.append(std::make_pair(oldId, newId));
                 break;
             }
 
-            auto audioTrack = audioTracks->getTrackById(RefPtr { audioTrackInfo.track }->id());
+            auto audioTrack = audioTracks->getTrackById(audioTrackPrivate->id());
             ASSERT(audioTrack);
-            audioTrack->setPrivate(Ref { *audioTrackInfo.track });
+            audioTrack->setPrivate(audioTrackPrivate);
         }
 
         ASSERT(segment.videoTracks.size() == videoTracks->length());
         for (auto& videoTrackInfo : segment.videoTracks) {
+            Ref videoTrackPrivate { *videoTrackInfo.track };
             if (videoTracks->length() == 1) {
                 RefPtr track = videoTracks->item(0);
                 auto oldId = track->trackId();
-                auto newId = RefPtr { videoTrackInfo.track }->id();
-                track->setPrivate(Ref { *videoTrackInfo.track });
+                auto newId = videoTrackPrivate->id();
+                track->setPrivate(videoTrackPrivate);
                 if (newId != oldId)
                     trackIdPairs.append(std::make_pair(oldId, newId));
                 break;
             }
 
-            auto videoTrack = videoTracks->getTrackById(RefPtr { videoTrackInfo.track }->id());
+            auto videoTrack = videoTracks->getTrackById(videoTrackPrivate->id());
             ASSERT(videoTrack);
-            videoTrack->setPrivate(Ref { *videoTrackInfo.track });
+            videoTrack->setPrivate(videoTrackPrivate);
         }
 
         ASSERT(segment.textTracks.size() == textTracks->length());
         for (auto& textTrackInfo : segment.textTracks) {
+            Ref textTrackPrivate { *textTrackInfo.track };
             if (textTracks->length() == 1) {
                 RefPtr track = downcast<InbandTextTrack>(textTracks->item(0));
                 auto oldId = track->trackId();
-                auto newId = RefPtr { textTrackInfo.track }->id();
-                track->setPrivate(Ref { *textTrackInfo.track });
+                auto newId = textTrackPrivate->id();
+                track->setPrivate(textTrackPrivate);
                 if (newId != oldId)
                     trackIdPairs.append(std::make_pair(oldId, newId));
                 break;
             }
 
-            auto textTrack = textTracks->getTrackById(RefPtr { textTrackInfo.track }->id());
+            auto textTrack = textTracks->getTrackById(textTrackPrivate->id());
             ASSERT(textTrack);
-            downcast<InbandTextTrack>(*textTrack).setPrivate(Ref { *textTrackInfo.track });
+            downcast<InbandTextTrack>(*textTrack).setPrivate(textTrackPrivate);
         }
 
         if (!trackIdPairs.isEmpty())
@@ -900,10 +903,12 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
 
         // 5.2 For each audio track in the initialization segment, run following steps:
         for (auto& audioTrackInfo : segment.audioTracks) {
+            Ref audioTrackPrivate { *audioTrackInfo.track };
+
             // FIXME: Implement steps 5.2.1-5.2.8.1 as per Editor's Draft 09 January 2015, and reorder this
             // 5.2.1 Let new audio track be a new AudioTrack object.
             // 5.2.2 Generate a unique ID and assign it to the id property on new video track.
-            Ref newAudioTrack = AudioTrack::create(protect(scriptExecutionContext()).get(), Ref { *audioTrackInfo.track });
+            Ref newAudioTrack = AudioTrack::create(protect(scriptExecutionContext()).get(), audioTrackPrivate);
             newAudioTrack->addClient(*this);
             newAudioTrack->setSourceBuffer(this);
 
@@ -936,21 +941,23 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
                 // Let mirrored audio track be a new AudioTrack object.
                 // Assign the same property values to mirrored audio track as were determined for new audio track.
                 // Add mirrored audio track to the audioTracks attribute on the HTMLMediaElement.
-                source->addAudioTrackMirrorToElement(*audioTrackInfo.track, enabled);
+                source->addAudioTrackMirrorToElement(audioTrackPrivate.get(), enabled);
             }
 
             m_audioCodecs.append(audioTrackInfo.description->codec().toAtomString());
 
             // 5.2.8 Create a new track buffer to store coded frames for this track.
-            m_private->addTrackBuffer(RefPtr { audioTrackInfo.track }->id(), WTF::move(audioTrackInfo.description));
+            m_private->addTrackBuffer(audioTrackPrivate->id(), WTF::move(audioTrackInfo.description));
         }
 
         // 5.3 For each video track in the initialization segment, run following steps:
         for (auto& videoTrackInfo : segment.videoTracks) {
+            Ref videoTrackPrivate { *videoTrackInfo.track };
+
             // FIXME: Implement steps 5.3.1-5.3.8.1 as per Editor's Draft 09 January 2015, and reorder this
             // 5.3.1 Let new video track be a new VideoTrack object.
             // 5.3.2 Generate a unique ID and assign it to the id property on new video track.
-            Ref newVideoTrack = VideoTrack::create(protect(scriptExecutionContext()).get(), Ref { *videoTrackInfo.track });
+            Ref newVideoTrack = VideoTrack::create(protect(scriptExecutionContext()).get(), videoTrackPrivate);
             newVideoTrack->addClient(*this);
             newVideoTrack->setSourceBuffer(this);
 
@@ -983,13 +990,13 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
                 // Let mirrored audio track be a new VideoTrack object.
                 // Assign the same property values to mirrored video track as were determined for new video track.
                 // Add mirrored video track to the videoTracks attribute on the HTMLMediaElement.
-                source->addVideoTrackMirrorToElement(*videoTrackInfo.track, selected);
+                source->addVideoTrackMirrorToElement(videoTrackPrivate.get(), selected);
             }
 
             m_videoCodecs.append(videoTrackInfo.description->codec().toAtomString());
 
             // 5.3.8 Create a new track buffer to store coded frames for this track.
-            m_private->addTrackBuffer(RefPtr { videoTrackInfo.track }->id(), WTF::move(videoTrackInfo.description));
+            m_private->addTrackBuffer(videoTrackPrivate->id(), WTF::move(videoTrackInfo.description));
         }
 
         // 5.4 For each text track in the initialization segment, run following steps:
@@ -1494,9 +1501,10 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidAttach(SourceBufferPrivate
     // 3.2 Add the appropriate track descriptions from this initialization segment to each of the track buffers.
     ASSERT(segment.audioTracks.size() == protect(audioTracksIfExists())->length());
     for (auto& audioTrackInfo : segment.audioTracks) {
-        auto audioTrack = protect(audioTracksIfExists())->getTrackById(RefPtr { audioTrackInfo.track }->id());
+        Ref audioTrackPrivate { *audioTrackInfo.track };
+        auto audioTrack = protect(audioTracksIfExists())->getTrackById(audioTrackPrivate->id());
         ASSERT(audioTrack);
-        audioTrack->setPrivate(Ref { *audioTrackInfo.track });
+        audioTrack->setPrivate(audioTrackPrivate);
         if (isMainThread())
             source->addAudioTrackToElement(*audioTrack);
         else {
@@ -1505,16 +1513,17 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidAttach(SourceBufferPrivate
             // Let mirrored audio track be a new AudioTrack object.
             // Assign the same property values to mirrored audio track as were determined for new audio track.
             // Add mirrored audio track to the audioTracks attribute on the HTMLMediaElement.
-            source->addAudioTrackMirrorToElement(*audioTrackInfo.track, audioTrack->enabled());
+            source->addAudioTrackMirrorToElement(audioTrackPrivate.get(), audioTrack->enabled());
         }
     }
 
     Ref videoTracks = this->videoTracks();
     ASSERT(segment.videoTracks.size() == videoTracks->length());
     for (auto& videoTrackInfo : segment.videoTracks) {
-        auto videoTrack = videoTracks->getTrackById(RefPtr { videoTrackInfo.track }->id());
+        Ref videoTrackPrivate { *videoTrackInfo.track };
+        auto videoTrack = videoTracks->getTrackById(videoTrackPrivate->id());
         ASSERT(videoTrack);
-        videoTrack->setPrivate(Ref { *videoTrackInfo.track });
+        videoTrack->setPrivate(videoTrackPrivate);
         // 5.3.6 Add new video track to the videoTracks attribute on the HTMLMediaElement.
         // 5.3.7 Queue a task to fire a trusted event named addtrack, that does not bubble and is
         // not cancelable, and that uses the TrackEvent interface, at the VideoTrackList object
@@ -1527,16 +1536,17 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidAttach(SourceBufferPrivate
             // Let mirrored audio track be a new VideoTrack object.
             // Assign the same property values to mirrored video track as were determined for new video track.
             // Add mirrored video track to the videoTracks attribute on the HTMLMediaElement.
-            source->addVideoTrackMirrorToElement(*videoTrackInfo.track, videoTrack->selected());
+            source->addVideoTrackMirrorToElement(videoTrackPrivate.get(), videoTrack->selected());
         }
     }
 
     Ref textTracks = this->textTracks();
     ASSERT(segment.textTracks.size() == textTracks->length());
     for (auto& textTrackInfo : segment.textTracks) {
-        auto textTrack = textTracks->getTrackById(RefPtr { textTrackInfo.track }->id());
+        Ref textTrackPrivate { *textTrackInfo.track };
+        auto textTrack = textTracks->getTrackById(textTrackPrivate->id());
         ASSERT(textTrack);
-        downcast<InbandTextTrack>(*textTrack).setPrivate(Ref { *textTrackInfo.track });
+        downcast<InbandTextTrack>(*textTrack).setPrivate(textTrackPrivate);
         // 5.4.5 Add new text track to the textTracks attribute on the HTMLMediaElement.
         // 5.4.6 Queue a task to fire a trusted event named addtrack, that does not bubble and is
         // not cancelable, and that uses the TrackEvent interface, at the TextTrackList object
@@ -1549,7 +1559,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidAttach(SourceBufferPrivate
             // Let mirrored text track be a new TextTrack object.
             // Assign the same property values to mirrored text track as were determined for new text track.
             // Add mirrored text track to the textTracks attribute on the HTMLMediaElement.
-            source->addTextTrackMirrorToElement(*textTrackInfo.track);
+            source->addTextTrackMirrorToElement(textTrackPrivate.get());
         }
     }
 

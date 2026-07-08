@@ -69,7 +69,7 @@ void SourceBufferList::add(Ref<SourceBuffer>&& buffer)
 
 bool SourceBufferList::contains(SourceBuffer& buffer) const
 {
-    return m_list.find(Ref { buffer } ) != notFound;
+    return m_list.find(protect(buffer)) != notFound;
 }
 
 RefPtr<SourceBuffer> SourceBufferList::item(unsigned index) const
@@ -81,7 +81,7 @@ RefPtr<SourceBuffer> SourceBufferList::item(unsigned index) const
 
 void SourceBufferList::remove(SourceBuffer& buffer)
 {
-    size_t index = m_list.find(Ref { buffer });
+    size_t index = m_list.find(protect(buffer));
     if (index == notFound)
         return;
     m_list.removeAt(index);

@@ -300,7 +300,7 @@ void MediaSource::open()
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
     if (RefPtr handle = m_handle) {
         handle->setHasEverBeenAssignedAsSrcObject();
-        handle->mediaSourceDidOpen(Ref { *m_private });
+        handle->mediaSourceDidOpen(protect(*m_private));
     }
 #endif
 
