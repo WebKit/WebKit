@@ -3242,7 +3242,8 @@ TEST(SiteIsolation, FindStringSelectionMultipleMatchesInChildFrame)
 TEST(SiteIsolation, FindStringSelectionSameOriginFrameBeforeWrap)
 {
     auto mainframeHTML = "<p>Hello world</p>"
-        "<iframe src='https://domain2.com/subframe'></iframe>"_s;
+        "<iframe src='https://domain2.com/subframe'></iframe>"
+        "<iframe src='https://domain1.com/subframe'></iframe>"_s;
     HTTPServer server({
         { "/mainframe"_s, { mainframeHTML } },
         { "/subframe"_s, { "<p>Hello world</p>"_s } }
@@ -3250,16 +3251,6 @@ TEST(SiteIsolation, FindStringSelectionSameOriginFrameBeforeWrap)
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigation];
-
-    // FIXME(267907): If the iframe is not added like this the UI process and web processes may have mismatched frame trees.
-    auto addFrameToBody = @"let frame = document.createElement('iframe');"
-    "frame.setAttribute('src', 'https://domain1.com/subframe');"
-    "document.body.appendChild(frame);";
-    __block bool done = false;
-    [webView evaluateJavaScript:addFrameToBody completionHandler:^(id _Nullable, NSError * _Nullable error) {
-        done = true;
-    }];
-    Util::run(&done);
 
     RetainPtr findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
     using SelectionOffsets = std::array<std::pair<int, int>, 3>;
