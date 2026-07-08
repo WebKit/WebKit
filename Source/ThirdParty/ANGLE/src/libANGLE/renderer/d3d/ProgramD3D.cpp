@@ -396,7 +396,7 @@ class ProgramD3D::GetGeometryExecutableTask : public GetExecutableTask
     }
 
   private:
-    const gl::Caps &mCaps;
+    const gl::Caps mCaps;
     gl::ProvokingVertexConvention mProvokingVertex;
 };
 

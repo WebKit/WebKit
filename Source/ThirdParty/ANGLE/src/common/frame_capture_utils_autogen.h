@@ -165,6 +165,7 @@ enum class ParamType
     TMemoryObjectIDConstPointer,
     TMemoryObjectIDPointer,
     TObjectType,
+    TPackUnpackParameter,
     TPipeInfo,
     TPlaneParameter,
     TPlatformInfo,
@@ -283,7 +284,7 @@ enum class ParamType
     TvoidPointerPointer,
 };
 
-constexpr uint32_t kParamTypeCount = 246;
+constexpr uint32_t kParamTypeCount = 247;
 
 union ParamValue
 {
@@ -400,6 +401,7 @@ union ParamValue
     const gl::MemoryObjectID *MemoryObjectIDConstPointerVal;
     gl::MemoryObjectID *MemoryObjectIDPointerVal;
     egl::ObjectType ObjectTypeVal;
+    gl::PackUnpackParameter PackUnpackParameterVal;
     gl::PlaneParameter PlaneParameterVal;
     gl::PointParameter PointParameterVal;
     gl::PolygonMode PolygonModeVal;
@@ -1260,6 +1262,13 @@ template <>
 inline egl::ObjectType GetParamVal<ParamType::TObjectType, egl::ObjectType>(const ParamValue &value)
 {
     return value.ObjectTypeVal;
+}
+
+template <>
+inline gl::PackUnpackParameter
+GetParamVal<ParamType::TPackUnpackParameter, gl::PackUnpackParameter>(const ParamValue &value)
+{
+    return value.PackUnpackParameterVal;
 }
 
 template <>
@@ -2450,6 +2459,8 @@ T AccessParamValue(ParamType paramType, const ParamValue &value)
             return GetParamVal<ParamType::TMemoryObjectIDPointer, T>(value);
         case ParamType::TObjectType:
             return GetParamVal<ParamType::TObjectType, T>(value);
+        case ParamType::TPackUnpackParameter:
+            return GetParamVal<ParamType::TPackUnpackParameter, T>(value);
         case ParamType::TPipeInfo:
             return GetParamVal<ParamType::TPipeInfo, T>(value);
         case ParamType::TPlaneParameter:
@@ -3390,6 +3401,13 @@ template <>
 inline void SetParamVal<ParamType::TObjectType>(egl::ObjectType valueIn, ParamValue *valueOut)
 {
     valueOut->ObjectTypeVal = valueIn;
+}
+
+template <>
+inline void SetParamVal<ParamType::TPackUnpackParameter>(gl::PackUnpackParameter valueIn,
+                                                         ParamValue *valueOut)
+{
+    valueOut->PackUnpackParameterVal = valueIn;
 }
 
 template <>
@@ -4686,6 +4704,9 @@ void InitParamValue(ParamType paramType, T valueIn, ParamValue *valueOut)
             break;
         case ParamType::TObjectType:
             SetParamVal<ParamType::TObjectType>(valueIn, valueOut);
+            break;
+        case ParamType::TPackUnpackParameter:
+            SetParamVal<ParamType::TPackUnpackParameter>(valueIn, valueOut);
             break;
         case ParamType::TPipeInfo:
             SetParamVal<ParamType::TPipeInfo>(valueIn, valueOut);

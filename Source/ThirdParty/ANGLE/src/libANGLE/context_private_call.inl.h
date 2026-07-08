@@ -703,70 +703,44 @@ inline void ContextPrivateStencilOpSeparate(PrivateState *privateState,
 
 inline void ContextPrivatePixelStorei(PrivateState *privateState,
                                       PrivateStateCache *privateStateCache,
-                                      GLenum pname,
+                                      PackUnpackParameter pnamePacked,
                                       GLint param)
 {
-    switch (pname)
+    switch (pnamePacked)
     {
-        case GL_UNPACK_ALIGNMENT:
-            privateState->setUnpackAlignment(param);
-            break;
-
-        case GL_PACK_ALIGNMENT:
-            privateState->setPackAlignment(param);
-            break;
-
-        case GL_PACK_REVERSE_ROW_ORDER_ANGLE:
-            ASSERT(privateState->getExtensions().packReverseRowOrderANGLE);
-            privateState->setPackReverseRowOrder(param != 0);
-            break;
-
-        case GL_UNPACK_ROW_LENGTH:
-            ASSERT(privateState->getClientVersion() >= ES_3_0 ||
-                   privateState->getExtensions().unpackSubimageEXT);
+        case PackUnpackParameter::UnpackRowLength:
             privateState->setUnpackRowLength(param);
             break;
-
-        case GL_UNPACK_IMAGE_HEIGHT:
-            ASSERT(privateState->getClientVersion() >= ES_3_0);
-            privateState->setUnpackImageHeight(param);
-            break;
-
-        case GL_UNPACK_SKIP_IMAGES:
-            ASSERT(privateState->getClientVersion() >= ES_3_0);
-            privateState->setUnpackSkipImages(param);
-            break;
-
-        case GL_UNPACK_SKIP_ROWS:
-            ASSERT((privateState->getClientVersion() >= ES_3_0) ||
-                   privateState->getExtensions().unpackSubimageEXT);
+        case PackUnpackParameter::UnpackSkipRows:
             privateState->setUnpackSkipRows(param);
             break;
-
-        case GL_UNPACK_SKIP_PIXELS:
-            ASSERT((privateState->getClientVersion() >= ES_3_0) ||
-                   privateState->getExtensions().unpackSubimageEXT);
+        case PackUnpackParameter::UnpackSkipPixels:
             privateState->setUnpackSkipPixels(param);
             break;
-
-        case GL_PACK_ROW_LENGTH:
-            ASSERT((privateState->getClientVersion() >= ES_3_0) ||
-                   privateState->getExtensions().packSubimageNV);
+        case PackUnpackParameter::UnpackAlignment:
+            privateState->setUnpackAlignment(param);
+            break;
+        case PackUnpackParameter::PackRowLength:
             privateState->setPackRowLength(param);
             break;
-
-        case GL_PACK_SKIP_ROWS:
-            ASSERT((privateState->getClientVersion() >= ES_3_0) ||
-                   privateState->getExtensions().packSubimageNV);
+        case PackUnpackParameter::PackSkipRows:
             privateState->setPackSkipRows(param);
             break;
-
-        case GL_PACK_SKIP_PIXELS:
-            ASSERT((privateState->getClientVersion() >= ES_3_0) ||
-                   privateState->getExtensions().packSubimageNV);
+        case PackUnpackParameter::PackSkipPixels:
             privateState->setPackSkipPixels(param);
             break;
-
+        case PackUnpackParameter::PackAlignment:
+            privateState->setPackAlignment(param);
+            break;
+        case PackUnpackParameter::UnpackSkipImages:
+            privateState->setUnpackSkipImages(param);
+            break;
+        case PackUnpackParameter::UnpackImageHeight:
+            privateState->setUnpackImageHeight(param);
+            break;
+        case PackUnpackParameter::PackReverseRowOrder:
+            privateState->setPackReverseRowOrder(param != 0);
+            break;
         default:
             UNREACHABLE();
             return;

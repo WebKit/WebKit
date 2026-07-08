@@ -1259,6 +1259,9 @@
     "glPointAlongPath": {
         "path": "PathID"
     },
+    "glPixelStorei": {
+        "pname": "PackUnpackParameter"
+    },
     "glPointParameterf": {
         "pname": "PointParameter"
     },

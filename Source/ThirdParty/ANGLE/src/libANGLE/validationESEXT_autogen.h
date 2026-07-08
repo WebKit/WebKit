@@ -255,8 +255,6 @@ bool ValidateLogicOpANGLE(const PrivateState &state,
                           angle::EntryPoint entryPoint,
                           LogicalOperation opcodePacked);
 
-// GL_ANGLE_lossy_etc_decode
-
 // GL_ANGLE_memory_object_flags
 bool ValidateTexStorageMemFlags2DANGLE(const Context *context,
                                        angle::EntryPoint entryPoint,
@@ -784,8 +782,6 @@ bool ValidateEndPixelLocalStorageANGLE(const Context *context,
                                        angle::EntryPoint entryPoint,
                                        GLsizei n,
                                        const GLenum *storeops);
-bool ValidateEndPixelLocalStorageImplicitANGLE(const Context *context,
-                                               angle::EntryPoint entryPoint);
 bool ValidatePixelLocalStorageBarrierANGLE(const Context *context, angle::EntryPoint entryPoint);
 bool ValidateFramebufferPixelLocalStorageInterruptANGLE(const Context *context,
                                                         angle::EntryPoint entryPoint);
@@ -1071,11 +1067,6 @@ bool ValidateLabelObjectEXT(const Context *context,
                             const GLchar *label);
 
 // GL_EXT_debug_marker
-bool ValidateInsertEventMarkerEXT(const Context *context,
-                                  angle::EntryPoint entryPoint,
-                                  GLsizei length,
-                                  const GLchar *marker);
-bool ValidatePopGroupMarkerEXT(const Context *context, angle::EntryPoint entryPoint);
 bool ValidatePushGroupMarkerEXT(const Context *context,
                                 angle::EntryPoint entryPoint,
                                 GLsizei length,
@@ -1135,7 +1126,6 @@ bool ValidateGetQueryivEXT(const Context *context,
                            QueryType targetPacked,
                            QueryParameter pnamePacked,
                            const GLint *params);
-bool ValidateIsQueryEXT(const Context *context, angle::EntryPoint entryPoint, QueryID idPacked);
 bool ValidateQueryCounterEXT(const Context *context,
                              angle::EntryPoint entryPoint,
                              QueryID idPacked,
@@ -1342,9 +1332,6 @@ bool ValidateGetUnsignedBytei_vEXT(const Context *context,
                                    GLenum target,
                                    GLuint index,
                                    const GLubyte *data);
-bool ValidateIsMemoryObjectEXT(const Context *context,
-                               angle::EntryPoint entryPoint,
-                               MemoryObjectID memoryObjectPacked);
 bool ValidateMemoryObjectParameterivEXT(const Context *context,
                                         angle::EntryPoint entryPoint,
                                         MemoryObjectID memoryObjectPacked,
@@ -1451,25 +1438,8 @@ bool ValidateRenderbufferStorageMultisampleEXT(const Context *context,
 // GL_EXT_occlusion_query_boolean
 
 // GL_EXT_polygon_offset_clamp
-bool ValidatePolygonOffsetClampEXT(const PrivateState &state,
-                                   ErrorSet *errors,
-                                   angle::EntryPoint entryPoint,
-                                   GLfloat factor,
-                                   GLfloat units,
-                                   GLfloat clamp);
 
 // GL_EXT_primitive_bounding_box
-bool ValidatePrimitiveBoundingBoxEXT(const PrivateState &state,
-                                     ErrorSet *errors,
-                                     angle::EntryPoint entryPoint,
-                                     GLfloat minX,
-                                     GLfloat minY,
-                                     GLfloat minZ,
-                                     GLfloat minW,
-                                     GLfloat maxX,
-                                     GLfloat maxY,
-                                     GLfloat maxZ,
-                                     GLfloat maxW);
 
 // GL_EXT_protected_textures
 
@@ -1480,7 +1450,6 @@ bool ValidatePrimitiveBoundingBoxEXT(const PrivateState &state,
 // GL_EXT_render_snorm
 
 // GL_EXT_robustness
-bool ValidateGetGraphicsResetStatusEXT(const Context *context, angle::EntryPoint entryPoint);
 bool ValidateGetnUniformfvEXT(const Context *context,
                               angle::EntryPoint entryPoint,
                               ShaderProgramID programPacked,
@@ -1522,9 +1491,6 @@ bool ValidateGetSemaphoreParameterui64vEXT(const Context *context,
                                            SemaphoreID semaphorePacked,
                                            GLenum pname,
                                            const GLuint64 *params);
-bool ValidateIsSemaphoreEXT(const Context *context,
-                            angle::EntryPoint entryPoint,
-                            SemaphoreID semaphorePacked);
 bool ValidateSemaphoreParameterui64vEXT(const Context *context,
                                         angle::EntryPoint entryPoint,
                                         SemaphoreID semaphorePacked,
@@ -1588,9 +1554,6 @@ bool ValidateGetProgramPipelineivEXT(const Context *context,
                                      ProgramPipelineID pipelinePacked,
                                      GLenum pname,
                                      const GLint *params);
-bool ValidateIsProgramPipelineEXT(const Context *context,
-                                  angle::EntryPoint entryPoint,
-                                  ProgramPipelineID pipelinePacked);
 bool ValidateProgramParameteriEXT(const Context *context,
                                   angle::EntryPoint entryPoint,
                                   ShaderProgramID programPacked,
@@ -1821,7 +1784,6 @@ bool ValidateValidateProgramPipelineEXT(const Context *context,
 // GL_EXT_shader_framebuffer_fetch
 
 // GL_EXT_shader_framebuffer_fetch_non_coherent
-bool ValidateFramebufferFetchBarrierEXT(const Context *context, angle::EntryPoint entryPoint);
 
 // GL_EXT_shader_io_blocks
 
@@ -1981,15 +1943,10 @@ bool ValidateTexStorageAttribs3DEXT(const Context *context,
 // GL_IMG_texture_compression_pvrtc2
 
 // GL_KHR_blend_equation_advanced
-bool ValidateBlendBarrierKHR(const Context *context, angle::EntryPoint entryPoint);
 
 // GL_KHR_blend_equation_advanced_coherent
 
 // GL_KHR_debug
-bool ValidateDebugMessageCallbackKHR(const Context *context,
-                                     angle::EntryPoint entryPoint,
-                                     GLDEBUGPROCKHR callback,
-                                     const void *userParam);
 bool ValidateDebugMessageControlKHR(const Context *context,
                                     angle::EntryPoint entryPoint,
                                     GLenum source,
@@ -2055,14 +2012,10 @@ bool ValidatePushDebugGroupKHR(const Context *context,
 // GL_KHR_no_error
 
 // GL_KHR_parallel_shader_compile
-bool ValidateMaxShaderCompilerThreadsKHR(const Context *context,
-                                         angle::EntryPoint entryPoint,
-                                         GLuint count);
 
 // GL_KHR_robust_buffer_access_behavior
 
 // GL_KHR_robustness
-bool ValidateGetGraphicsResetStatusKHR(const Context *context, angle::EntryPoint entryPoint);
 bool ValidateGetnUniformfvKHR(const Context *context,
                               angle::EntryPoint entryPoint,
                               ShaderProgramID programPacked,
@@ -2127,7 +2080,6 @@ bool ValidateGetFenceivNV(const Context *context,
                           FenceNVID fencePacked,
                           GLenum pname,
                           const GLint *params);
-bool ValidateIsFenceNV(const Context *context, angle::EntryPoint entryPoint, FenceNVID fencePacked);
 bool ValidateSetFenceNV(const Context *context,
                         angle::EntryPoint entryPoint,
                         FenceNVID fencePacked,
@@ -2397,12 +2349,6 @@ bool ValidateGetRenderbufferParameterivOES(const Context *context,
                                            GLenum target,
                                            GLenum pname,
                                            const GLint *params);
-bool ValidateIsFramebufferOES(const Context *context,
-                              angle::EntryPoint entryPoint,
-                              FramebufferID framebufferPacked);
-bool ValidateIsRenderbufferOES(const Context *context,
-                               angle::EntryPoint entryPoint,
-                               RenderbufferID renderbufferPacked);
 bool ValidateRenderbufferStorageOES(const Context *context,
                                     angle::EntryPoint entryPoint,
                                     GLenum target,
@@ -2453,8 +2399,6 @@ bool ValidateUnmapBufferOES(const Context *context,
 bool ValidateCurrentPaletteMatrixOES(const Context *context,
                                      angle::EntryPoint entryPoint,
                                      GLuint matrixpaletteindex);
-bool ValidateLoadPaletteFromModelViewMatrixOES(const Context *context,
-                                               angle::EntryPoint entryPoint);
 bool ValidateMatrixIndexPointerOES(const Context *context,
                                    angle::EntryPoint entryPoint,
                                    GLint size,
@@ -2480,33 +2424,14 @@ bool ValidatePointSizePointerOES(const Context *context,
 // GL_OES_point_sprite
 
 // GL_OES_primitive_bounding_box
-bool ValidatePrimitiveBoundingBoxOES(const PrivateState &state,
-                                     ErrorSet *errors,
-                                     angle::EntryPoint entryPoint,
-                                     GLfloat minX,
-                                     GLfloat minY,
-                                     GLfloat minZ,
-                                     GLfloat minW,
-                                     GLfloat maxX,
-                                     GLfloat maxY,
-                                     GLfloat maxZ,
-                                     GLfloat maxW);
 
 // GL_OES_query_matrix
-bool ValidateQueryMatrixxOES(const Context *context,
-                             angle::EntryPoint entryPoint,
-                             const GLfixed *mantissa,
-                             const GLint *exponent);
 
 // GL_OES_required_internalformat
 
 // GL_OES_rgb8_rgba8
 
 // GL_OES_sample_shading
-bool ValidateMinSampleShadingOES(const PrivateState &state,
-                                 ErrorSet *errors,
-                                 angle::EntryPoint entryPoint,
-                                 GLfloat value);
 
 // GL_OES_sample_variables
 
@@ -2741,10 +2666,6 @@ bool ValidateGenVertexArraysOES(const Context *context,
                                 angle::EntryPoint entryPoint,
                                 GLsizei n,
                                 const VertexArrayID *arraysPacked);
-bool ValidateIsVertexArrayOES(const PrivateState &state,
-                              ErrorSet *errors,
-                              angle::EntryPoint entryPoint,
-                              VertexArrayID arrayPacked);
 
 // GL_OES_vertex_half_float
 

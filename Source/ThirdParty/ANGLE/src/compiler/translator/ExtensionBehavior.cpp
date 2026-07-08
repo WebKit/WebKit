@@ -44,6 +44,8 @@
     OP(EXT_frag_depth,                                 100, 100) \
     OP(EXT_fragment_shading_rate,                      310, 320) \
     OP(EXT_fragment_shading_rate_primitive,            310, 320) \
+    OP(EXT_geometry_point_size,                        310, 320) \
+    OP(OES_geometry_point_size,                        310, 320) \
     OP(EXT_geometry_shader,                            310, 320) \
     OP(OES_geometry_shader,                            310, 320) \
     OP(OES_shader_io_blocks,                           310, 320) \
@@ -58,6 +60,8 @@
     OP(EXT_shader_non_constant_global_initializers,    100, 320) \
     OP(EXT_shader_texture_lod,                         100, 100) \
     OP(EXT_shadow_samplers,                            100, 100) \
+    OP(EXT_tessellation_point_size,                    310, 320) \
+    OP(OES_tessellation_point_size,                    310, 320) \
     OP(EXT_tessellation_shader,                        310, 320) \
     OP(OES_tessellation_shader,                        310, 320) \
     OP(EXT_texture_buffer,                             310, 320) \

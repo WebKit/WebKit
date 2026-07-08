@@ -365,23 +365,6 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>);
             return info;
         }
-        case GL_COMPRESSED_RGB8_LOSSY_DECODE_ETC2_ANGLE:
-        {
-            static constexpr Format info(GL_COMPRESSED_RGB8_LOSSY_DECODE_ETC2_ANGLE,
-                                         angle::FormatID::BC1_RGB_UNORM_BLOCK,
-                                         DXGI_FORMAT_BC1_UNORM,
-                                         DXGI_FORMAT_BC1_UNORM,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_BC1_UNORM,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_RGBA8,
-                                         nullptr);
-            return info;
-        }
         case GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2:
         {
             static constexpr Format info(GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2,
@@ -397,23 +380,6 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          DXGI_FORMAT_R8G8B8A8_TYPELESS,
                                          GL_RGBA8,
                                          Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>);
-            return info;
-        }
-        case GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE:
-        {
-            static constexpr Format info(GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE,
-                                         angle::FormatID::BC1_RGBA_UNORM_BLOCK,
-                                         DXGI_FORMAT_BC1_UNORM,
-                                         DXGI_FORMAT_BC1_UNORM,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_BC1_UNORM,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_RGBA8,
-                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA8_ETC2_EAC:
@@ -1538,23 +1504,6 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>);
             return info;
         }
-        case GL_COMPRESSED_SRGB8_LOSSY_DECODE_ETC2_ANGLE:
-        {
-            static constexpr Format info(GL_COMPRESSED_SRGB8_LOSSY_DECODE_ETC2_ANGLE,
-                                         angle::FormatID::BC1_RGB_UNORM_SRGB_BLOCK,
-                                         DXGI_FORMAT_BC1_UNORM_SRGB,
-                                         DXGI_FORMAT_BC1_UNORM_SRGB,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_BC1_UNORM_SRGB,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_BC1_UNORM,
-                                         DXGI_FORMAT_BC1_TYPELESS,
-                                         GL_RGBA8,
-                                         nullptr);
-            return info;
-        }
         case GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2:
         {
             static constexpr Format info(GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2,
@@ -1570,23 +1519,6 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          DXGI_FORMAT_R8G8B8A8_TYPELESS,
                                          GL_SRGB8_ALPHA8,
                                          Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>);
-            return info;
-        }
-        case GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE:
-        {
-            static constexpr Format info(GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE,
-                                         angle::FormatID::BC1_RGBA_UNORM_SRGB_BLOCK,
-                                         DXGI_FORMAT_BC1_UNORM_SRGB,
-                                         DXGI_FORMAT_BC1_UNORM_SRGB,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_BC1_UNORM_SRGB,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_BC1_UNORM,
-                                         DXGI_FORMAT_BC1_TYPELESS,
-                                         GL_RGBA8,
-                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT:
@@ -1923,23 +1855,6 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                              nullptr);
                 return info;
             }
-        }
-        case GL_ETC1_RGB8_LOSSY_DECODE_ANGLE:
-        {
-            static constexpr Format info(GL_ETC1_RGB8_LOSSY_DECODE_ANGLE,
-                                         angle::FormatID::BC1_RGB_UNORM_BLOCK,
-                                         DXGI_FORMAT_BC1_UNORM,
-                                         DXGI_FORMAT_BC1_UNORM,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_BC1_UNORM,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_RGBA8,
-                                         nullptr);
-            return info;
         }
         case GL_ETC1_RGB8_OES:
         {

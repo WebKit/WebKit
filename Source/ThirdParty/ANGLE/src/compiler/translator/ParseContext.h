@@ -915,6 +915,8 @@ class TParseContext : angle::NonCopyable
     // Keeps track of the total size of shader-private variables, if validating that this size
     // should not exceed a sensible threshold.
     angle::base::CheckedNumeric<size_t> mTotalPrivateVariablesSize;
+    // Tracks if a type has been validated as safe in checkVariableSize.
+    TMap<TType, bool> mValidatedVariableTypeSizes;
 
     // Track state related to control flow, used for various validation:
     //

@@ -404,7 +404,7 @@ angle::CallCapture CaptureLinkProgram(const State &glState,
                                       ShaderProgramID programPacked);
 angle::CallCapture CapturePixelStorei(const State &glState,
                                       bool isCallValid,
-                                      GLenum pname,
+                                      PackUnpackParameter pnamePacked,
                                       GLint param);
 angle::CallCapture CapturePolygonOffset(const State &glState,
                                         bool isCallValid,

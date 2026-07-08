@@ -83,6 +83,7 @@
 42264831 : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithBeyondMaxLevel/* = SKIP_FOR_CAPTURE
 490170083 : CopyTextureTestES3.SRGBWithPackParameters/* = SKIP_FOR_CAPTURE
 498904293 : CopyTextureTestES3.PBOSynchronization/* = SKIP_FOR_CAPTURE
+42264706 : VertexAttributeTestES3.LargeAttribPointerOffsetNoCrash/* = SKIP_FOR_CAPTURE
 
 # The following tests fail with forceRobustResourceInit
 # They were accidentally passing until http://crrev/c/5588816
@@ -270,6 +271,9 @@
 454830637 : WebGLGLSLValidation*Test* = SKIP_FOR_CAPTURE
 454830637 : WebGL2GLSLValidation*Test* = SKIP_FOR_CAPTURE
 454830637 : GLSLOutput*Test* = SKIP_FOR_CAPTURE
+
+# Missing support for glGetTransformFeedbackVarying
+522887762 : TransformFeedbackTest.QueryVaryingZeroBufferSize/* = SKIP_FOR_CAPTURE
 
 # Crashes on win and linux trace bots
 372059358 : MultisampleTestES3.CopyTexImage2DFromMsaaDefaultFbo/* = SKIP_FOR_CAPTURE

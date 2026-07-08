@@ -2764,28 +2764,6 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_BASE_VIEW_INDEX_OVR";
                 case 0x9633:
                     return "GL_FRAMEBUFFER_INCOMPLETE_VIEW_TARGETS_OVR";
-                case 0x9690:
-                    return "GL_ETC1_RGB8_LOSSY_DECODE_ANGLE";
-                case 0x9691:
-                    return "GL_COMPRESSED_R11_LOSSY_DECODE_EAC_ANGLE";
-                case 0x9692:
-                    return "GL_COMPRESSED_SIGNED_R11_LOSSY_DECODE_EAC_ANGLE";
-                case 0x9693:
-                    return "GL_COMPRESSED_RG11_LOSSY_DECODE_EAC_ANGLE";
-                case 0x9694:
-                    return "GL_COMPRESSED_SIGNED_RG11_LOSSY_DECODE_EAC_ANGLE";
-                case 0x9695:
-                    return "GL_COMPRESSED_RGB8_LOSSY_DECODE_ETC2_ANGLE";
-                case 0x9696:
-                    return "GL_COMPRESSED_SRGB8_LOSSY_DECODE_ETC2_ANGLE";
-                case 0x9697:
-                    return "GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE";
-                case 0x9698:
-                    return "GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE";
-                case 0x9699:
-                    return "GL_COMPRESSED_RGBA8_LOSSY_DECODE_ETC2_EAC_ANGLE";
-                case 0x969A:
-                    return "GL_COMPRESSED_SRGB8_ALPHA8_LOSSY_DECODE_ETC2_EAC_ANGLE";
                 case 0x969F:
                     return "GL_RESOURCE_INITIALIZED_ANGLE";
                 case 0x96A4:
@@ -5843,28 +5821,6 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV2_IMG";
                 case 0x93F1:
                     return "GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV2_IMG";
-                case 0x9690:
-                    return "GL_ETC1_RGB8_LOSSY_DECODE_ANGLE";
-                case 0x9691:
-                    return "GL_COMPRESSED_R11_LOSSY_DECODE_EAC_ANGLE";
-                case 0x9692:
-                    return "GL_COMPRESSED_SIGNED_R11_LOSSY_DECODE_EAC_ANGLE";
-                case 0x9693:
-                    return "GL_COMPRESSED_RG11_LOSSY_DECODE_EAC_ANGLE";
-                case 0x9694:
-                    return "GL_COMPRESSED_SIGNED_RG11_LOSSY_DECODE_EAC_ANGLE";
-                case 0x9695:
-                    return "GL_COMPRESSED_RGB8_LOSSY_DECODE_ETC2_ANGLE";
-                case 0x9696:
-                    return "GL_COMPRESSED_SRGB8_LOSSY_DECODE_ETC2_ANGLE";
-                case 0x9697:
-                    return "GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE";
-                case 0x9698:
-                    return "GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE";
-                case 0x9699:
-                    return "GL_COMPRESSED_RGBA8_LOSSY_DECODE_ETC2_EAC_ANGLE";
-                case 0x969A:
-                    return "GL_COMPRESSED_SRGB8_ALPHA8_LOSSY_DECODE_ETC2_EAC_ANGLE";
                 case 0x96BA:
                     return "GL_RGBX8_ANGLE";
                 default:
@@ -7519,28 +7475,6 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV2_IMG";
                 case 0x93F1:
                     return "GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV2_IMG";
-                case 0x9690:
-                    return "GL_ETC1_RGB8_LOSSY_DECODE_ANGLE";
-                case 0x9691:
-                    return "GL_COMPRESSED_R11_LOSSY_DECODE_EAC_ANGLE";
-                case 0x9692:
-                    return "GL_COMPRESSED_SIGNED_R11_LOSSY_DECODE_EAC_ANGLE";
-                case 0x9693:
-                    return "GL_COMPRESSED_RG11_LOSSY_DECODE_EAC_ANGLE";
-                case 0x9694:
-                    return "GL_COMPRESSED_SIGNED_RG11_LOSSY_DECODE_EAC_ANGLE";
-                case 0x9695:
-                    return "GL_COMPRESSED_RGB8_LOSSY_DECODE_ETC2_ANGLE";
-                case 0x9696:
-                    return "GL_COMPRESSED_SRGB8_LOSSY_DECODE_ETC2_ANGLE";
-                case 0x9697:
-                    return "GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE";
-                case 0x9698:
-                    return "GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE";
-                case 0x9699:
-                    return "GL_COMPRESSED_RGBA8_LOSSY_DECODE_ETC2_EAC_ANGLE";
-                case 0x969A:
-                    return "GL_COMPRESSED_SRGB8_ALPHA8_LOSSY_DECODE_ETC2_EAC_ANGLE";
                 case 0x96BA:
                     return "GL_RGBX8_ANGLE";
                 default:
@@ -9373,7 +9307,6 @@ static StringEnumEntry g_stringEnumTable[] = {
     {"GL_COMPRESSED_LUMINANCE_LATC1_EXT", 0x8C70},
     {"GL_COMPRESSED_R11_EAC", 0x9270},
     {"GL_COMPRESSED_R11_EAC_OES", 0x9270},
-    {"GL_COMPRESSED_R11_LOSSY_DECODE_EAC_ANGLE", 0x9691},
     {"GL_COMPRESSED_RED", 0x8225},
     {"GL_COMPRESSED_RED_GREEN_RGTC2_EXT", 0x8DBD},
     {"GL_COMPRESSED_RED_RGTC1", 0x8DBB},
@@ -9381,18 +9314,14 @@ static StringEnumEntry g_stringEnumTable[] = {
     {"GL_COMPRESSED_RG", 0x8226},
     {"GL_COMPRESSED_RG11_EAC", 0x9272},
     {"GL_COMPRESSED_RG11_EAC_OES", 0x9272},
-    {"GL_COMPRESSED_RG11_LOSSY_DECODE_EAC_ANGLE", 0x9693},
     {"GL_COMPRESSED_RGB", 0x84ED},
     {"GL_COMPRESSED_RGB8_ETC2", 0x9274},
     {"GL_COMPRESSED_RGB8_ETC2_OES", 0x9274},
-    {"GL_COMPRESSED_RGB8_LOSSY_DECODE_ETC2_ANGLE", 0x9695},
     {"GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2", 0x9276},
     {"GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2_OES", 0x9276},
-    {"GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE", 0x9697},
     {"GL_COMPRESSED_RGBA", 0x84EE},
     {"GL_COMPRESSED_RGBA8_ETC2_EAC", 0x9278},
     {"GL_COMPRESSED_RGBA8_ETC2_EAC_OES", 0x9278},
-    {"GL_COMPRESSED_RGBA8_LOSSY_DECODE_ETC2_EAC_ANGLE", 0x9699},
     {"GL_COMPRESSED_RGBA_ARB", 0x84EE},
     {"GL_COMPRESSED_RGBA_ASTC_10x10", 0x93BB},
     {"GL_COMPRESSED_RGBA_ASTC_10x10_KHR", 0x93BB},
@@ -9463,13 +9392,11 @@ static StringEnumEntry g_stringEnumTable[] = {
     {"GL_COMPRESSED_SIGNED_LUMINANCE_LATC1_EXT", 0x8C71},
     {"GL_COMPRESSED_SIGNED_R11_EAC", 0x9271},
     {"GL_COMPRESSED_SIGNED_R11_EAC_OES", 0x9271},
-    {"GL_COMPRESSED_SIGNED_R11_LOSSY_DECODE_EAC_ANGLE", 0x9692},
     {"GL_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT", 0x8DBE},
     {"GL_COMPRESSED_SIGNED_RED_RGTC1", 0x8DBC},
     {"GL_COMPRESSED_SIGNED_RED_RGTC1_EXT", 0x8DBC},
     {"GL_COMPRESSED_SIGNED_RG11_EAC", 0x9273},
     {"GL_COMPRESSED_SIGNED_RG11_EAC_OES", 0x9273},
-    {"GL_COMPRESSED_SIGNED_RG11_LOSSY_DECODE_EAC_ANGLE", 0x9694},
     {"GL_COMPRESSED_SIGNED_RG_RGTC2", 0x8DBE},
     {"GL_COMPRESSED_SLUMINANCE", 0x8C4A},
     {"GL_COMPRESSED_SLUMINANCE_ALPHA", 0x8C4B},
@@ -9516,13 +9443,10 @@ static StringEnumEntry g_stringEnumTable[] = {
     {"GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR", 0x93D7},
     {"GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC", 0x9279},
     {"GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC_OES", 0x9279},
-    {"GL_COMPRESSED_SRGB8_ALPHA8_LOSSY_DECODE_ETC2_EAC_ANGLE", 0x969A},
     {"GL_COMPRESSED_SRGB8_ETC2", 0x9275},
     {"GL_COMPRESSED_SRGB8_ETC2_OES", 0x9275},
-    {"GL_COMPRESSED_SRGB8_LOSSY_DECODE_ETC2_ANGLE", 0x9696},
     {"GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2", 0x9277},
     {"GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2_OES", 0x9277},
-    {"GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE", 0x9698},
     {"GL_COMPRESSED_SRGB_ALPHA", 0x8C49},
     {"GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM", 0x8E8D},
     {"GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_ARB", 0x8E8D},
@@ -10206,7 +10130,6 @@ static StringEnumEntry g_stringEnumTable[] = {
     {"GL_ENABLE_BIT", 0x2000},
     {"GL_EQUAL", 0x0202},
     {"GL_EQUIV", 0x1509},
-    {"GL_ETC1_RGB8_LOSSY_DECODE_ANGLE", 0x9690},
     {"GL_ETC1_RGB8_OES", 0x8D64},
     {"GL_ETC1_SRGB8_NV", 0x88EE},
     {"GL_EVAL_2D_NV", 0x86C0},

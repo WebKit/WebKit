@@ -128,7 +128,7 @@ class VertexArrayGL : public VertexArrayImpl
                                           GLuint attribIndex,
                                           const gl::VertexAttribute &attrib,
                                           GLsizei stride,
-                                          GLintptr offset) const;
+                                          uintptr_t offset) const;
 
     angle::Result recoverForcedStreamingAttributesForDrawArraysInstanced(
         const gl::Context *context,

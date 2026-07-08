@@ -2046,6 +2046,126 @@ void main()
     EXPECT_PIXEL_RECT_EQ(w / 2 + 1, 0, w - (w / 2 + 1), h / 2, kData[kBaseInstance + 3]);
 }
 
+// Test that drawing with baseInstance and divisor where (instances mod divisor != 0) and
+// (baseInstance mod divisor != 0) works.
+TEST_P(DrawBaseVertexBaseInstanceTest_ES3, DivisorDoesNotDivideBaseInstance)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_base_vertex_base_instance"));
+
+    // The test divides the screen horizontally into 4 columns/strips for the first 4 instances
+    // Draw within viewport only for instances 0, 1, 2, 3, other instances are discarded.
+    // Each of the 4 instances is drawn as a vertical strip in the viewport.
+    constexpr char kVS[] = R"(#version 300 es
+in vec4 a_position;
+in vec4 a_color;
+out vec4 v_color;
+void main()
+{
+    if (gl_InstanceID >= 4)
+    {
+        gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
+    }
+    else
+    {
+        gl_Position = a_position;
+        gl_Position.x = (float(gl_InstanceID) * 0.5) - 0.75 + a_position.x * 0.25;
+    }
+    v_color = a_color;
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+in vec4 v_color;
+out vec4 o_color;
+void main()
+{
+    o_color = v_color;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    GLint posLoc = glGetAttribLocation(program, "a_position");
+    GLint colLoc = glGetAttribLocation(program, "a_color");
+    ASSERT_NE(-1, posLoc);
+    ASSERT_NE(-1, colLoc);
+
+    const float positions[] = {
+        -1.0f, -1.0f, 0.0f, 1.0f, 1.0f, -1.0f, 0.0f, 1.0f,
+        -1.0f, 1.0f,  0.0f, 1.0f, 1.0f, 1.0f,  0.0f, 1.0f,
+    };
+    GLBuffer posBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, posBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(posLoc);
+    glVertexAttribPointer(posLoc, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    // Use GL_FLOAT 4-components (16 bytes per element).
+    // Both kInstances and kBaseInstance are chosen to be odd numbers so
+    // they are not multiples of the divisor
+    // kInstances is kept small to prevent tsan timeouts on slow software renderers (SwiftShader).
+    // kBaseInstance is chosen to be large to force the D3D11 backend to resize the buffer,
+    constexpr GLsizei kInstances   = 5;
+    constexpr GLuint kBaseInstance = 131071;
+    constexpr GLuint kDivisor      = 2;
+    constexpr size_t kCopyCount =
+        kBaseInstance + rx::UnsignedCeilDivide(static_cast<unsigned int>(kInstances), kDivisor);
+    constexpr size_t kComponents = 4;
+
+    std::vector<float> colors(kCopyCount * kComponents);
+    for (size_t i = 0; i < kCopyCount; ++i)
+    {
+        colors[i * kComponents + 0] = 1.0f;  // R
+        colors[i * kComponents + 1] = 1.0f;  // G
+        colors[i * kComponents + 2] = 1.0f;  // B
+        colors[i * kComponents + 3] = 1.0f;  // A
+    }
+    // Index kBaseInstance: Yellow
+    colors[kBaseInstance * kComponents + 0] = 1.0f;
+    colors[kBaseInstance * kComponents + 1] = 1.0f;
+    colors[kBaseInstance * kComponents + 2] = 0.0f;
+    colors[kBaseInstance * kComponents + 3] = 1.0f;
+    // Index kBaseInstance + 1: Cyan
+    colors[(kBaseInstance + 1) * kComponents + 0] = 0.0f;
+    colors[(kBaseInstance + 1) * kComponents + 1] = 1.0f;
+    colors[(kBaseInstance + 1) * kComponents + 2] = 1.0f;
+    colors[(kBaseInstance + 1) * kComponents + 3] = 1.0f;
+
+    GLBuffer colBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, colBuffer);
+    glBufferData(GL_ARRAY_BUFFER, colors.size() * sizeof(float), colors.data(), GL_DYNAMIC_DRAW);
+    glEnableVertexAttribArray(colLoc);
+    glVertexAttribPointer(colLoc, kComponents, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glVertexAttribDivisor(colLoc, kDivisor);
+
+    const GLushort indices[] = {0, 1, 2, 1, 2, 3};
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glDrawElementsInstancedBaseVertexBaseInstanceANGLE(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr,
+                                                       kInstances, 0, kBaseInstance);
+    ASSERT_GL_NO_ERROR();
+
+    const int w        = getWindowWidth();
+    const int h        = getWindowHeight();
+    const int y        = h / 2;
+    const int colWidth = w / 8;
+
+    // Verify each of the 4 columns
+    // Column 0 (Instance 0): index = 3 + 0/2 = 3 (Yellow)
+    EXPECT_PIXEL_COLOR_EQ(colWidth, y, GLColor::yellow);
+    // Column 1 (Instance 1): index = 3 + 1/2 = 3 (Yellow)
+    EXPECT_PIXEL_COLOR_EQ(3 * colWidth, y, GLColor::yellow);
+    // Column 2 (Instance 2): index = 3 + 2/2 = 4 (Cyan)
+    EXPECT_PIXEL_COLOR_EQ(5 * colWidth, y, GLColor::cyan);
+    // Column 3 (Instance 3): index = 3 + 3/2 = 4 (Cyan)
+    EXPECT_PIXEL_COLOR_EQ(7 * colWidth, y, GLColor::cyan);
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawBaseVertexBaseInstanceTest);
 
 #define ANGLE_ALL_BASEVERTEXBASEINTANCE_TEST_PLATFORMS_ES3                                 \

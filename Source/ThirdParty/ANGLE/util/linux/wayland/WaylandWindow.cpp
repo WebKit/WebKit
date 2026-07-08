@@ -1254,3 +1254,8 @@ bool IsWaylandWindowAvailable()
     }
     return true;
 }
+
+OSWindow *CreateWaylandWindow(void *nativeDisplay)
+{
+    return new WaylandWindow(nativeDisplay);
+}

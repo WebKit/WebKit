@@ -91,8 +91,6 @@ class FramebufferGL : public FramebufferImpl
                             const gl::Framebuffer::DirtyBits &dirtyBits,
                             gl::Command command) override;
 
-    angle::Result recreateFbo(const gl::Context *context);
-
     void updateDefaultFramebufferID(GLuint framebufferID);
     bool isDefault() const { return mState.isDefault(); }
 

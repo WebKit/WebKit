@@ -2238,6 +2238,13 @@
             "description": [
                 "Avoid ghosting the image if it is not used in an active render pass."
             ]
+        },
+        {
+            "name": "supports_amd_shader_core_properties",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_AMD_shader_core_properties extension"
+            ]
         }
     ]
 }

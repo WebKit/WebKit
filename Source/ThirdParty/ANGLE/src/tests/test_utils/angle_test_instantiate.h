@@ -284,6 +284,13 @@ struct CombinedPrintToStringParamName
     INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName),            \
                              testing::PrintToStringParamName())
 
+#define ANGLE_INSTANTIATE_TEST_ES3_AND_ES31_AND_ES32_AND(testName, ...)                         \
+    const PlatformParameters testName##params[] = {ANGLE_ALL_TEST_PLATFORMS_ES3,                \
+                                                   ANGLE_ALL_TEST_PLATFORMS_ES31,               \
+                                                   ANGLE_ALL_TEST_PLATFORMS_ES32, __VA_ARGS__}; \
+    INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName),            \
+                             testing::PrintToStringParamName())
+
 // Instantiate the test for a combination of N parameters and the
 // enumeration of platforms in the extra args, similar to
 // ANGLE_INSTANTIATE_TEST.  The macros are defined only for the Ns
@@ -331,6 +338,21 @@ struct CombinedPrintToStringParamName
         , testName,                                                                                \
         testing::Combine(ANGLE_INSTANTIATE_TEST_PLATFORMS(testName), combine1, combine2, combine3, \
                          combine4, combine5, combine6),                                            \
+        print)
+
+// Variants of ANGLE_INSTANTIATE_TEST_COMBINE_N that take a variantName used as
+// the INSTANTIATE_TEST_SUITE_P prefix.  This allows the same test class to be
+// instantiated multiple times with different parameter combinations.
+#define ANGLE_INSTANTIATE_TEST_VARIANTS_COMBINE_9(                                             \
+    variantName, testName, print, combine1, combine2, combine3, combine4, combine5, combine6,  \
+    combine7, combine8, combine9, first, ...)                                                  \
+    const std::remove_reference<decltype(first)>::type testName##variantName##params[] = {     \
+        first, ##__VA_ARGS__};                                                                 \
+    INSTANTIATE_TEST_SUITE_P(                                                                  \
+        variantName, testName,                                                                 \
+        testing::Combine(ANGLE_INSTANTIATE_TEST_PLATFORMS(testName, variantName), combine1,    \
+                         combine2, combine3, combine4, combine5, combine6, combine7, combine8, \
+                         combine9),                                                            \
         print)
 
 // Checks if a config is expected to be supported by checking a system-based allow list.

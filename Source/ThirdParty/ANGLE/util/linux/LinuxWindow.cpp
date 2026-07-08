@@ -31,7 +31,7 @@ OSWindow *OSWindow::New(void *nativeDisplay)
 #    if defined(ANGLE_USE_WAYLAND)
     if (IsWaylandWindowAvailable())
     {
-        return new WaylandWindow(nativeDisplay);
+        return CreateWaylandWindow(nativeDisplay);
     }
 #    endif
 
