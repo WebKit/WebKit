@@ -1,3 +1,4 @@
+//@ memoryHog!
 //@ runDefault("--useConcurrentJIT=false")
 const memories = [];
 
