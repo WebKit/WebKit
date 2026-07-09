@@ -1410,6 +1410,16 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
         apiMethodTracker->info().clear();
 
     Ref event = NavigateEvent::create(WTF::move(world), eventNames().navigateEvent, WTF::move(init), abortController.get());
+
+    // A navigateerror handler run by the abort above can synchronously start another navigation, installing a
+    // new ongoing navigate event; supersede it (firing its navigateerror) rather than dropping it by overwriting below.
+    // https://html.spec.whatwg.org/multipage/nav-history-apis.html#abort-the-ongoing-navigation
+    while (RefPtr reentrantOngoingNavigateEvent = m_ongoingNavigateEvent) {
+        abortOngoingNavigation(*reentrantOngoingNavigateEvent);
+        if (m_ongoingNavigateEvent == reentrantOngoingNavigateEvent)
+            break; // abortOngoingNavigation left it set (no global object); avoid spinning.
+    }
+
     m_ongoingNavigateEvent = event.ptr();
     m_focusChangedDuringOngoingNavigation = FocusDidChange::No;
     m_suppressNormalScrollRestorationDuringOngoingNavigation = false;

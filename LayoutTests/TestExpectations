@@ -7126,8 +7126,6 @@ imported/w3c/web-platform-tests/navigation-api/navigate-event/dangling-navigate-
 
 # Out of target of Interop 2025.
 imported/w3c/web-platform-tests/navigation-api/navigate-event/replaceState-inside-back-handler-infinite.optional.html [ Skip ]
-imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-multiple-history-pushState.html [ Skip ]
-imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-multiple-location.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-intercept-precommitHandler-redirect.html?currententrychange [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-intercept-precommitHandler-redirect.html?no-currententrychange [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-intercept-precommitHandler-reject.tentative.html?currententrychange [ Skip ]
