@@ -1,7 +1,7 @@
 {
     "imported/selenium/py/test/selenium/webdriver/common/alerts_tests.py": {
         "subtests": {
-            "testShouldHandleAlertOnPageBeforeUnload": {
+            "test_should_handle_alert_on_page_before_unload": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
             },
             "test_unexpected_alert_present_exception_contains_alert_text": {
@@ -229,116 +229,113 @@
             },
             "test_selecting_multiple_items": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_sending_keys_to_active_element_with_modifier": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/279342"}}
             }
         }
     },
     "imported/selenium/py/test/selenium/webdriver/common/page_load_timeout_tests.py": {
         "subtests": {
-            "testClickShouldTimeout": {
+            "test_click_should_timeout": {
                 "expected": {
                         "gtk": {"status": ["SKIP"], "bug": "webkit.org/b/188118"},
-                        "wpe": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}
+                        "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}
                 }
             }
         }
     },
     "imported/selenium/py/test/selenium/webdriver/common/position_and_size_tests.py": {
         "subtests": {
-            "testShouldGetCoordinatesOfAnElementInAFrame": {
+            "test_should_get_coordinates_of_an_element_in_aframe": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181735"}}
             },
-            "testShouldGetCoordinatesOfAnElementInANestedFrame": {
+            "test_should_get_coordinates_of_an_element_in_anested_frame": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181735"}}
             },
-            "testShouldGetCoordinatesOfAnElementWithFixedPosition": {
+            "test_should_get_coordinates_of_an_element_with_fixed_position": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213139"}}
             },
-            "testShouldGetCoordinatesOfAnElement[hidden]": {
+            "test_should_get_coordinates_of_an_element[hidden]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/211492"}}
             },
-            "testShouldGetCoordinatesOfAnInvisibleElement": {
+            "test_should_get_coordinates_of_an_invisible_element": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/211492"}}
             },
-            "testShouldScrollPageAndGetCoordinatesOfAnElementThatIsOutOfViewPort": {
+            "test_should_scroll_page_and_get_coordinates_of_an_element_that_is_out_of_view_port": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213139"}}
             }
         }
     },
     "imported/selenium/py/test/selenium/webdriver/common/select_class_tests.py": {
         "subtests": {
-            "testSelectByIndexMultiple": {
+            "test_select_by_index_multiple": {
                 "expected": {"all": {"slow": true}}
             },
-            "testSelectByValueMultiple": {
+            "test_select_by_value_multiple": {
                 "expected": {"all": {"slow": true}}
             },
-            "testSelectByVisibleTextMultiple": {
+            "test_select_by_visible_text_multiple": {
                 "expected": {"all": {"slow": true}}
             }
         }
     },
     "imported/selenium/py/test/selenium/webdriver/common/text_handling_tests.py": {
         "subtests": {
-            "testShouldBeAbleToSetMoreThanOneLineOfTextInATextArea": {
+            "test_should_be_able_to_set_more_than_one_line_of_text_in_atext_area": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/174617"}}
             },
-            "testShouldHandleSiblingBlockLevelElements": {
+            "test_should_handle_sibling_block_level_elements": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/174617"}}
             }
         }
     },
     "imported/selenium/py/test/selenium/webdriver/common/typing_tests.py": {
         "subtests": {
-            "testNumericShiftKeys": {
+            "test_numeric_shift_keys": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182333"}}
             },
-            "testUppercaseAlphaKeys": {
+            "test_uppercase_alpha_keys": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182333"}}
             },
-            "testAllPrintableKeys": {
+            "test_all_printable_keys": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182333"}}
             },
-            "testArrowKeysAndPageUpAndDown": {
+            "test_arrow_keys_and_page_up_and_down": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/213961"}}
+            },
+            "test_numberpad_and_function_keys": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213961"}}
             },
-            "testNumberpadAndFunctionKeys": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213961"}}
-            },
-            "testShouldFireKeyPressEvents": {
+            "test_should_fire_key_press_events": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
             },
-            "testWillSimulateAKeyPressWhenEnteringTextIntoInputElements" : {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            "test_will_simulate_akey_press_when_entering_text_into_input_elements" : {
+                "expected": {
+                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"},
+                    "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}
+                }
             },
-            "testWillSimulateAKeyPressWhenEnteringTextIntoTextAreas" : {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            "test_will_simulate_akey_press_when_entering_text_into_text_areas" : {
+                "expected": {
+                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"},
+                    "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}
+                }
             }
         }
     },
     "imported/selenium/py/test/selenium/webdriver/common/w3c_interaction_tests.py": {
         "subtests": {
-            "testSendingKeysToActiveElementWithModifier": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212953"}}
-            }
 
         }
     },
     "imported/selenium/py/test/selenium/webdriver/common/window_switching_tests.py": {
         "subtests": {
-            "testCanCallGetWindowHandlesAfterClosingAWindow": {
+            "test_can_call_get_window_handles_after_closing_awindow": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184963"}}
             },
-            "testClickingOnAButtonThatClosesAnOpenWindowDoesNotCauseTheBrowserToHang": {
+            "test_clicking_on_abutton_that_closes_an_open_window_does_not_cause_the_browser_to_hang": {
                 "expected": {
                     "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/184963"},
                     "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/188509"}
                 }
-            },
-            "testShouldBeAbleToCreateANewWindow": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212949"}}
             }
         }
     },
@@ -348,11 +345,6 @@
             "test_should_fullscreen_the_current_window": {
                 "expected": {
                     "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"},
-                    "wpe": {"status": ["SKIP"], "bug": "webkit.org/b/212950"}
-                }
-            },
-            "testShouldMaximizeTheWindow": {
-                "expected": {
                     "wpe": {"status": ["SKIP"], "bug": "webkit.org/b/212950"}
                 }
             },
