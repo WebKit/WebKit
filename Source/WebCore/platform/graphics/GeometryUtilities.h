@@ -38,6 +38,8 @@ class FloatQuad;
 float NODELETE euclidianDistance(const FloatSize&);
 WEBCORE_EXPORT float euclidianDistance(const FloatPoint&, const FloatPoint&);
 
+float NODELETE dotProduct(const FloatSize&, const FloatSize&);
+
 // Find point where lines through the two pairs of points intersect. Returns std::nullopt if the lines are parallel.
 WEBCORE_EXPORT std::optional<FloatPoint> NODELETE findIntersection(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& d1, const FloatPoint& d2);
 

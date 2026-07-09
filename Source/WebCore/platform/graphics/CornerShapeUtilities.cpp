@@ -124,7 +124,8 @@ static std::pair<FloatPoint, FloatPoint> buildBevelCorners(const Corner& origina
 {
     auto inwardNormal = (original.end - original.start).perpendicular().normalized();
     auto outerToCenter = original.center - original.outer;
-    if (inwardNormal.width() * outerToCenter.width() + inwardNormal.height() * outerToCenter.height() < 0)
+    // Ensure the inward normal points toward the center of the corner
+    if (dotProduct(inwardNormal, outerToCenter) < 0)
         inwardNormal = inwardNormal.scaled(-1);
     auto innerStart = original.start + inwardNormal * float(startInset);
     auto innerEnd = original.end + inwardNormal * float(endInset);

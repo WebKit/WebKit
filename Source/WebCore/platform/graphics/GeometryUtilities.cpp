@@ -205,7 +205,7 @@ FloatPoint midPoint(const FloatPoint& first, const FloatPoint& second)
     return { std::midpoint(first.x(), second.x()), std::midpoint(first.y(), second.y()) };
 }
 
-static float NODELETE dotProduct(const FloatSize& u, const FloatSize& v)
+float dotProduct(const FloatSize& u, const FloatSize& v)
 {
     return u.width() * v.width() + u.height() * v.height();
 }
