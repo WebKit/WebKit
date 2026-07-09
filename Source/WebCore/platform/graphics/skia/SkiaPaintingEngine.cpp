@@ -48,6 +48,7 @@
 #include "MemoryMappedGPUBuffer.h"
 #endif
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkBBHFactory.h>
 #include <skia/core/SkColorSpace.h>
 #include <skia/core/SkPictureRecorder.h>
 #include <skia/core/SkSurface.h>
@@ -214,7 +215,7 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::paint(const GraphicsLayerCoordina
     return buffer;
 }
 
-Ref<SkiaRecordingResult> SkiaPaintingEngine::record(const GraphicsLayerCoordinated& layer, const IntRect& recordRect, bool contentsOpaque, float contentsScale)
+Ref<SkiaRecordingResult> SkiaPaintingEngine::record(const GraphicsLayerCoordinated& layer, const IntRect& recordRect, bool contentsOpaque, float contentsScale, unsigned dirtyTilesCount)
 {
     // ### Asynchronous rendering on worker threads ###
     ASSERT(useThreadedRendering());
@@ -224,7 +225,10 @@ Ref<SkiaRecordingResult> SkiaPaintingEngine::record(const GraphicsLayerCoordinat
 
     WTFBeginSignpost(this, RecordTile);
     SkPictureRecorder pictureRecorder;
-    auto* recordingCanvas = pictureRecorder.beginRecording(recordRect.width(), recordRect.height());
+    // Use a bounding box hierarchy factory when the picture is going be replayed more than once,
+    // so that every playback uses only the operations intersecting the dirty rect.
+    SkRTreeFactory rtreeFactory;
+    auto* recordingCanvas = pictureRecorder.beginRecording(recordRect.width(), recordRect.height(), dirtyTilesCount > 1 ? &rtreeFactory : nullptr);
     GraphicsContextSkia recordingContext(*recordingCanvas, renderingMode, RenderingPurpose::LayerBacking);
     recordingContext.beginRecording(GraphicsContextSkia::RecordingMode::Tile, canUseDDL() ? m_threadSafeGrContext : nullptr);
     paintIntoGraphicsContext(layer, recordingContext, recordRect, contentsOpaque, contentsScale);

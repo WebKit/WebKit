@@ -934,14 +934,14 @@ sk_sp<GrContextThreadSafeProxy> CoordinatedPlatformLayer::threadSafeGrContext() 
     return m_client->paintingEngine().threadSafeGrContext();
 }
 
-Ref<SkiaRecordingResult> CoordinatedPlatformLayer::record(const IntRect& recordRect)
+Ref<SkiaRecordingResult> CoordinatedPlatformLayer::record(const IntRect& recordRect, unsigned dirtyTilesCount)
 {
     ASSERT(m_lock.isHeld());
     ASSERT(m_client);
     ASSERT(m_owner);
     auto& paintingEngine = m_client->paintingEngine();
     ASSERT(paintingEngine.useThreadedRendering());
-    return paintingEngine.record(*m_owner, recordRect, m_contentsOpaque, m_contentsScale);
+    return paintingEngine.record(*m_owner, recordRect, m_contentsOpaque, m_contentsScale, dirtyTilesCount);
 }
 
 Ref<CoordinatedTileBuffer> CoordinatedPlatformLayer::replay(Ref<SkiaRecordingResult>&& recording, const IntRect& tileRect, const IntRect& dirtyRect)

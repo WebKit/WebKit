@@ -130,7 +130,7 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
         // Record only once the whole layer.
         RefPtr<SkiaRecordingResult> recording;
         if (layer.client().paintingEngine().useThreadedRendering()) [[likely]]
-            recording = layer.record(tileDirtyRectUnion);
+            recording = layer.record(tileDirtyRectUnion, dirtyTilesCount);
 #endif
 
         unsigned dirtyTileIndex = 0;

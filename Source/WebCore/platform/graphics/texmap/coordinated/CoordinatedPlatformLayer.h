@@ -208,7 +208,7 @@ public:
 
     Ref<CoordinatedTileBuffer> paint(const IntRect&);
 #if USE(SKIA)
-    Ref<SkiaRecordingResult> record(const IntRect&);
+    Ref<SkiaRecordingResult> record(const IntRect&, unsigned dirtyTilesCount);
     Ref<CoordinatedTileBuffer> replay(Ref<SkiaRecordingResult>&&, const IntRect&, const IntRect&);
 #endif
     void willPaintTile();
