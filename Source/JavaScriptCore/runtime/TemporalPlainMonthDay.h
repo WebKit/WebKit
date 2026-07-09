@@ -59,11 +59,8 @@ public:
     JSC_TEMPORAL_PLAIN_MONTH_DAY_UNITS(JSC_DEFINE_TEMPORAL_PLAIN_MONTH_DAY_FIELD);
 #undef JSC_DEFINE_TEMPORAL_PLAIN_MONTH_DAY_FIELD
 
-    ISO8601::PlainDate with(JSGlobalObject*, JSObject*, JSValue);
-
     String monthCode() const { return ISO8601::monthCode(m_plainMonthDay.month()); }
 
-    String toString(JSGlobalObject*, JSValue options) const;
     String toString() const
     {
         return ISO8601::temporalMonthDayToString(m_plainMonthDay, "auto"_s, m_calendarID);

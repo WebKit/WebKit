@@ -77,8 +77,6 @@ TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE plainYearMonthToPlainDate
 
 TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE plainYearMonthFromISODate(CalendarID, const ISO8601::PlainDate& fullISODate);
 
-TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE plainMonthDayToPlainDate(CalendarID, const ISO8601::PlainDate& pmdISODate, int32_t year);
-
 TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE plainMonthDayFromISODate(CalendarID, const ISO8601::PlainDate& fullISODate, TemporalOverflow);
 
 } // namespace TemporalCore

@@ -497,31 +497,6 @@ TemporalPlainDate::mergeDateFields(JSGlobalObject* globalObject, JSObject* tempo
     return { yearToUse, monthToUse, dayToUse, otherMonth, overflow, any };
 }
 
-std::optional<int32_t> TemporalPlainDate::toYear(JSGlobalObject* globalObject, JSObject* temporalDateLike)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    std::optional<int32_t> year;
-    JSValue yearProperty = temporalDateLike->get(globalObject, vm.propertyNames->year);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (!yearProperty.isUndefined()) {
-        double doubleYear = yearProperty.toIntegerWithTruncation(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        if (!std::isfinite(doubleYear)) [[unlikely]] {
-            throwRangeError(globalObject, scope, "year property must be finite"_s);
-            return { };
-        }
-
-        if (!ISO8601::isYearWithinLimits(doubleYear)) [[unlikely]]
-            year = ISO8601::outOfRangeYear;
-        else
-            year = static_cast<int32_t>(doubleYear);
-    }
-    return year;
-}
-
 // https://tc39.es/proposal-temporal/#sec-temporal-differencetemporalplaindate
 // Step 1 (ToTemporalDate) done by the prototype host fn via TemporalPlainDate::from().
 // Uses spec's flip-mode + negate-at-end pattern for Since (unlike PlainTime's operand-swap).

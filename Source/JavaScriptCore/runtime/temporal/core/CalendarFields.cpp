@@ -171,6 +171,15 @@ TemporalResult<ResolvedCalendarDate> dateFromFields(CalendarID calendarId, const
     if (fields.monthCode && fields.monthCode->isLeapMonth && !calendarIsLunisolar(calendarId))
         return makeUnexpected(rangeError("Leap month codes are not valid for this calendar"_s));
 
+    // Reject month/monthCode conflicts on non-ISO non-lunisolar calendars. Lunisolar
+    // (chinese/dangi/hebrew) is skipped because a leap slot pushes ordinals up (Chinese M02L has
+    // ord=3), making numeric comparison meaningless.
+    if (fields.month && fields.monthCode && !calendarIsLunisolar(calendarId)) {
+        uint8_t codeMonth = static_cast<uint8_t>(fields.monthCode->monthNumber);
+        if (clampTo<uint8_t>(*fields.month) != codeMonth)
+            return makeUnexpected(rangeError("month does not match monthCode"_s));
+    }
+
     bool hasEraYear = fields.era.has_value() && fields.eraYear.has_value();
     if (!fields.year && !hasEraYear)
         return makeUnexpected(typeError("year property must be present"_s));
@@ -230,6 +239,15 @@ TemporalResult<ResolvedCalendarDate> yearMonthFromFields(CalendarID calendarId, 
     // Non-lunisolar calendars have no leap months — reject leap month codes.
     if (fields.monthCode && fields.monthCode->isLeapMonth && !calendarIsLunisolar(calendarId))
         return makeUnexpected(rangeError("Leap month codes are not valid for this calendar"_s));
+
+    // Reject month/monthCode conflicts on non-ISO non-lunisolar calendars. Lunisolar
+    // (chinese/dangi/hebrew) is skipped because a leap slot pushes ordinals up (Chinese M02L has
+    // ord=3), making numeric comparison meaningless.
+    if (fields.month && fields.monthCode && !calendarIsLunisolar(calendarId)) {
+        uint8_t codeMonth = static_cast<uint8_t>(fields.monthCode->monthNumber);
+        if (clampTo<uint8_t>(*fields.month) != codeMonth)
+            return makeUnexpected(rangeError("month does not match monthCode"_s));
+    }
 
     bool hasEraYear = fields.era.has_value() && fields.eraYear.has_value();
     if (!fields.year && !hasEraYear)
@@ -308,11 +326,20 @@ TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID calendarId, c
     if (fields.monthCode && fields.monthCode->isLeapMonth && !calendarIsLunisolar(calendarId))
         return makeUnexpected(rangeError("Leap month codes are not valid for this calendar"_s));
 
+    // Reject month/monthCode conflicts on non-ISO non-lunisolar calendars (see analog check in dateFromFields).
+    if (fields.month && fields.monthCode && !calendarIsLunisolar(calendarId)) {
+        uint8_t codeMonth = static_cast<uint8_t>(fields.monthCode->monthNumber);
+        if (clampTo<uint8_t>(*fields.month) != codeMonth)
+            return makeUnexpected(rangeError("month does not match monthCode"_s));
+    }
+
     if (!fields.day)
         return makeUnexpected(typeError("day property must be present"_s));
 
-    // Non-ISO MonthDay requires monthCode (not just month).
-    if (!fields.monthCode && !fields.year)
+    // Non-ISO MonthDay requires monthCode OR a year identifier (year / era+eraYear). test262
+    // `intl402/Temporal/PlainMonthDay/from/fields-missing-properties.js` pins the TypeError.
+    bool hasEraYear = fields.era.has_value() && fields.eraYear.has_value();
+    if (!fields.monthCode && !fields.year && !hasEraYear)
         return makeUnexpected(typeError("monthCode is required for non-ISO calendar MonthDay"_s));
 
     uint8_t month = 1;
@@ -321,34 +348,34 @@ TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID calendarId, c
     else if (fields.monthCode)
         month = static_cast<uint8_t>(fields.monthCode->monthNumber);
 
-    // Default year: use ecmaReferenceYear (ported from icu4x) for non-ISO MonthDay.
-    int32_t year;
+    // Reference year for ICU. Unset on the era+eraYear path (ICU uses UCAL_ERA+UCAL_YEAR).
+    std::optional<int32_t> localYear;
     bool usedRegularMonthFallback = false;
     if (fields.year)
-        year = *fields.year;
+        localYear = *fields.year;
     else if (fields.monthCode) {
-        year = ecmaReferenceYear(calendarId, fields.monthCode->monthNumber, fields.monthCode->isLeapMonth, fields.day ? *fields.day : 1);
+        int32_t refYear = ecmaReferenceYear(calendarId, fields.monthCode->monthNumber, fields.monthCode->isLeapMonth, fields.day ? *fields.day : 1);
         // icu4x: UseRegularIfConstrain — leap month has no reference year near 1972.
         // Constrain: fall back to the non-leap version's reference year AND strip the leap flag.
         // Reject: throw RangeError (this leap month configuration doesn't exist).
-        if (year == ecmaRefYearNotInCalendar)
+        if (refYear == ecmaRefYearNotInCalendar)
             return makeUnexpected(rangeError("This month code does not exist in this calendar"_s));
-        if (year == ecmaRefYearUseRegular) {
+        if (refYear == ecmaRefYearUseRegular) {
             if (overflow == TemporalOverflow::Constrain) {
-                year = ecmaReferenceYear(calendarId, fields.monthCode->monthNumber, false, fields.day ? *fields.day : 1);
+                refYear = ecmaReferenceYear(calendarId, fields.monthCode->monthNumber, false, fields.day ? *fields.day : 1);
                 usedRegularMonthFallback = true;
             } else
                 return makeUnexpected(rangeError("This leap month does not exist in this calendar near the reference year"_s));
         }
-    } else
-        RELEASE_ASSERT_NOT_REACHED();
+        localYear = refYear;
+    }
 
     // ecmaReferenceYear returns ISO proleptic years. On older Apple ICU, UCAL_EXTENDED_YEAR
     // uses epoch-based counting for lunisolar calendars; probe the offset per calendar.
     auto calStr = calendarIDToString(calendarId);
     bool isChineseOrDangi = (calStr == "chinese"_s || calStr == "dangi"_s);
-    if (!fields.year && isChineseOrDangi)
-        year += lunarCalendarExtendedYearFor1972(calendarId) - 1972;
+    if (localYear && !fields.year && isChineseOrDangi)
+        *localYear += lunarCalendarExtendedYearFor1972(calendarId) - 1972;
     std::optional<StringView> era;
     if (fields.era)
         era = StringView(*fields.era);
@@ -364,8 +391,8 @@ TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID calendarId, c
 
     // Era+eraYear path: ICU ignores the year param (uses UCAL_ERA+UCAL_YEAR instead), so pass
     // fields.year (optional) to enable the year-consistency check in calendarDateFromFields.
-    // Non-era path: pass ecmaReferenceYear for correct ICU month resolution.
-    std::optional<int32_t> yearArg = (era && fields.eraYear) ? fields.year : std::optional<int32_t>(year);
+    // Non-era path: pass the computed reference year for correct ICU month resolution.
+    std::optional<int32_t> yearArg = (era && fields.eraYear) ? fields.year : localYear;
     auto result = calendarDateFromFields(calendarId, yearArg, month, *fields.day, era, fields.eraYear, *effectiveMonthCode, overflow);
     if (!result)
         return makeUnexpected(result.error());
@@ -724,39 +751,6 @@ TemporalResult<ResolvedCalendarDate> plainYearMonthFromISODate(CalendarID calend
     fields.monthCode = ISO8601::parseMonthCode(*monthCodeStr);
     // Step 12: CalendarYearMonthFromFields(~constrain~) per spec note.
     return yearMonthFromFields(calendarId, fields, TemporalOverflow::Constrain);
-}
-
-// plainMonthDayToPlainDate — temporal_rs: PlainMonthDay::to_plain_date (src/builtins/core/plain_month_day.rs)
-// https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.prototype.toplaindate
-// Implements steps 5, 7, 8; steps 1-4, 6, 9 done by JS-layer caller.
-TemporalResult<ResolvedCalendarDate> plainMonthDayToPlainDate(CalendarID calendarId, const ISO8601::PlainDate& pmdISODate, int32_t year)
-{
-    bool isISO = calendarIsISO(calendarId);
-
-    if (isISO) {
-        // Steps 5+7: ISO ISODateToFields gives month directly; merge year.
-        CalendarFieldsIn fields;
-        fields.year = year;
-        fields.month = pmdISODate.month();
-        fields.day = pmdISODate.day();
-        // Step 8: CalendarDateFromFields(~constrain~).
-        return dateFromFields(calendarId, fields, TemporalOverflow::Constrain);
-    }
-
-    // Steps 5+7 (non-ISO): ISODateToFields via ICU bridge, then merge year.
-    auto monthCodeStr = calendarMonthCode(calendarId, pmdISODate);
-    if (!monthCodeStr)
-        return makeUnexpected(monthCodeStr.error());
-    auto dayResult = calendarDay(calendarId, pmdISODate);
-    if (!dayResult)
-        return makeUnexpected(dayResult.error());
-
-    CalendarFieldsIn fields;
-    fields.year = year;
-    fields.monthCode = ISO8601::parseMonthCode(*monthCodeStr);
-    fields.day = static_cast<uint8_t>(*dayResult);
-    // Step 8: CalendarDateFromFields(~constrain~).
-    return dateFromFields(calendarId, fields, TemporalOverflow::Constrain);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporalmonthday (string parse path)

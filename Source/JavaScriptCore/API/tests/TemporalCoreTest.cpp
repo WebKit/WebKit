@@ -2585,10 +2585,6 @@ static void testCalendarFieldsFunctions()
     auto rMDFrom = plainMonthDayFromISODate(id("iso8601"_s), { 2020, 6, 15 }, TemporalOverflow::Reject);
     TCHECK_TRUE(rMDFrom.has_value() && rMDFrom->isoDate.month() == 6 && rMDFrom->isoDate.day() == 15, "plainMonthDayFromISODate: month=6 day=15");
 
-    // --- plainMonthDayToPlainDate ---
-    auto rMDToD = plainMonthDayToPlainDate(id("iso8601"_s), { 1972, 6, 15 }, 2020);
-    TCHECK_TRUE(rMDToD.has_value() && rMDToD->isoDate.year() == 2020 && rMDToD->isoDate.month() == 6 && rMDToD->isoDate.day() == 15, "plainMonthDayToPlainDate: day=15 year=2020");
-
     // --- plainYearMonthWith ---
     // temporal_rs: test_plain_year_month_with — override year only
     CalendarFieldsIn partialYear;
@@ -2606,6 +2602,62 @@ static void testCalendarFieldsFunctions()
     CalendarFieldsIn emptyPartial;
     auto rWithEmpty = plainYearMonthWith(id("iso8601"_s), { 2025, 3, 1 }, emptyPartial, TemporalOverflow::Constrain);
     TCHECK_TRUE(!rWithEmpty.has_value(), "plainYearMonthWith: empty partial -> TypeError (temporal_rs: fields.is_empty())");
+
+    f = { };
+    f.year = 275761; // one past maxYear
+    f.month = 1;
+    auto rYMOver = yearMonthFromFields(id("iso8601"_s), f, TemporalOverflow::Reject);
+    TCHECK_TRUE(!rYMOver.has_value(), "yearMonthFromFields ISO: year=275761 -> RangeError (Bug #2)");
+
+    f = { };
+    f.year = 275761;
+    f.month = 1;
+    f.day = 1;
+    auto rDOver = dateFromFields(id("iso8601"_s), f, TemporalOverflow::Reject);
+    TCHECK_TRUE(!rDOver.has_value(), "dateFromFields ISO: year=275761 -> RangeError (Bug #3)");
+
+    f = { };
+    f.era = "ce"_s;
+    f.eraYear = 2024;
+    auto rYMNoMonth = yearMonthFromFields(id("gregory"_s), f, TemporalOverflow::Constrain);
+    TCHECK_TRUE(!rYMNoMonth.has_value(), "yearMonthFromFields non-ISO: era+eraYear without month -> TypeError (Bug #5)");
+
+    f = { };
+    f.year = 2023;
+    f.month = 3;
+    f.monthCode = MC { 4, false }; // M04, disagrees with month=3
+    f.day = 15;
+    auto rDConflict = dateFromFields(id("japanese"_s), f, TemporalOverflow::Constrain);
+    TCHECK_TRUE(!rDConflict.has_value(), "dateFromFields japanese: month=3 vs monthCode=M04 -> RangeError (Bug #7)");
+
+    f = { };
+    f.year = 2023;
+    f.month = 3;
+    f.monthCode = MC { 4, false };
+    auto rYMConflict = yearMonthFromFields(id("japanese"_s), f, TemporalOverflow::Constrain);
+    TCHECK_TRUE(!rYMConflict.has_value(), "yearMonthFromFields japanese: month=3 vs monthCode=M04 -> RangeError (Bug #7)");
+
+    f = { };
+    f.year = 2023;
+    f.month = 3;
+    f.monthCode = MC { 4, false };
+    f.day = 15;
+    auto rMDConflict = monthDayFromFields(id("japanese"_s), f, TemporalOverflow::Constrain);
+    TCHECK_TRUE(!rMDConflict.has_value(), "monthDayFromFields japanese: month=3 vs monthCode=M04 -> RangeError (Bug #7)");
+
+    f = { };
+    f.era = "reiwa"_s;
+    f.eraYear = 5;
+    f.month = 3;
+    f.day = 15;
+    auto rMDEra = monthDayFromFields(id("japanese"_s), f, TemporalOverflow::Constrain);
+    TCHECK_TRUE(rMDEra.has_value(), "monthDayFromFields japanese: era+eraYear+month+day -> ok (Bug #10)");
+
+    f = { };
+    f.month = 11;
+    f.day = 18;
+    auto rMDNoYear = monthDayFromFields(id("gregory"_s), f, TemporalOverflow::Constrain);
+    TCHECK_TRUE(!rMDNoYear.has_value(), "monthDayFromFields gregory: {month,day} without year identifier -> TypeError");
 
     // --- plainDateWith ---
     // temporal_rs: basic_date_with — ISO override year/month/monthCode/day
