@@ -264,9 +264,13 @@ ISO8601::PlainDate TemporalPlainMonthDay::with(JSGlobalObject* globalObject, JSO
 
     // Steps 1-2: RequireInternalSlot + type check done by prototype caller.
 
-    // Step 3: IsPartialTemporalObject.
-    rejectObjectWithCalendarOrTimeZone(globalObject, temporalMonthDayLike);
+    // Step 3: If ? IsPartialTemporalObject(temporalMonthDayLike) is false, throw TypeError.
+    bool isPartial = isPartialTemporalObject(globalObject, JSValue(temporalMonthDayLike));
     RETURN_IF_EXCEPTION(scope, { });
+    if (!isPartial) [[unlikely]] {
+        throwTypeError(globalObject, scope, "argument must be a partial Temporal object"_s);
+        return { };
+    }
 
     // Step 4: calendar = this.[[Calendar]] — m_calendarID.
     auto calID = m_calendarID;

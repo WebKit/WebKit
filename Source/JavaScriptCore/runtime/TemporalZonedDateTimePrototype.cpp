@@ -632,11 +632,11 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWith, (JSGlobalObject
 
     // Step 3: If ? IsPartialTemporalObject(temporalZonedDateTimeLike) is false, throw TypeError.
     JSValue fieldsArg = callFrame->argument(0);
-    if (!fieldsArg.isObject()) [[unlikely]]
-        return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.with requires a plain object of field overrides"_s);
-    JSObject* fields = asObject(fieldsArg);
-    rejectObjectWithCalendarOrTimeZone(globalObject, fields);
+    bool isPartial = isPartialTemporalObject(globalObject, fieldsArg);
     RETURN_IF_EXCEPTION(scope, { });
+    if (!isPartial) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.with requires a partial Temporal object of field overrides"_s);
+    JSObject* fields = asObject(fieldsArg);
 
     // Steps 4-6: epochNs, timeZone, calendar from this ZDT.
     // Steps 7-8: offsetNanoseconds = GetOffsetNanosecondsFor(timeZone, epochNs);

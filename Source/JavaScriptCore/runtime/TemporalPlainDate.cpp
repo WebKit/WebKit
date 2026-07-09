@@ -497,32 +497,6 @@ TemporalPlainDate::mergeDateFields(JSGlobalObject* globalObject, JSObject* tempo
     return { yearToUse, monthToUse, dayToUse, otherMonth, overflow, any };
 }
 
-std::optional<int32_t> TemporalPlainDate::toDay(JSGlobalObject* globalObject, JSObject* temporalDateLike)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    std::optional<int32_t> day;
-    JSValue dayProperty = temporalDateLike->get(globalObject, vm.propertyNames->day);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (!dayProperty.isUndefined()) {
-        double doubleDay = dayProperty.toIntegerWithTruncation(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        if (!std::isfinite(doubleDay)) [[unlikely]] {
-            throwRangeError(globalObject, scope, "day property must be finite"_s);
-            return { };
-        }
-
-        if (!isInBounds<int32_t>(doubleDay)) [[unlikely]] {
-            // Later checks will report error
-            day = ISO8601::outOfRangeYear;
-        } else
-            day = static_cast<int32_t>(doubleDay);
-    }
-    return day;
-}
-
 std::optional<int32_t> TemporalPlainDate::toYear(JSGlobalObject* globalObject, JSObject* temporalDateLike)
 {
     VM& vm = globalObject->vm();
@@ -548,111 +522,6 @@ std::optional<int32_t> TemporalPlainDate::toYear(JSGlobalObject* globalObject, J
     return year;
 }
 
-std::tuple<std::optional<int32_t>, std::optional<ParsedMonthCode>, std::optional<int32_t>>
-TemporalPlainDate::toYearMonth(JSGlobalObject* globalObject, JSObject* temporalDateLike)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    std::optional<int32_t> month;
-    JSValue monthProperty = temporalDateLike->get(globalObject, vm.propertyNames->month);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (!monthProperty.isUndefined()) {
-        double doubleMonth = monthProperty.toIntegerWithTruncation(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        if (!std::isfinite(doubleMonth)) [[unlikely]] {
-            throwRangeError(globalObject, scope, "month property must be finite"_s);
-            return { };
-        }
-
-        // See step 9(c)(iv) of PrepareCalendarFields
-        // https://tc39.es/proposal-temporal/#sec-temporal-preparecalendarfields
-        if (doubleMonth <= 0) [[unlikely]] {
-            throwRangeError(globalObject, scope, "month property must be a positive integer"_s);
-            return { };
-        }
-
-        if (!isInBounds<int32_t>(doubleMonth)) [[unlikely]] {
-            // Later checks will report error
-            month = ISO8601::outOfRangeYear;
-        } else
-            month = static_cast<int32_t>(doubleMonth);
-    }
-
-    std::optional<ParsedMonthCode> monthCode;
-    JSValue monthCodeProperty = temporalDateLike->get(globalObject, vm.propertyNames->monthCode);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (!monthCodeProperty.isUndefined()) {
-        monthCode = parseMonthCode(globalObject, monthCodeProperty);
-        RETURN_IF_EXCEPTION(scope, { });
-    }
-
-    scope.release();
-    auto year = toYear(globalObject, temporalDateLike);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    return { month, monthCode, year };
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal.plaindate.prototype.with
-ISO8601::PlainDate TemporalPlainDate::with(JSGlobalObject* globalObject, JSObject* temporalDateLike, JSValue optionsValue)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    // Steps 1-4: RequireInternalSlot, IsPartialTemporalObject, calendar — done by caller.
-    // Step 3 continued: rejectObjectWithCalendarOrTimeZone enforces the "no calendar/timeZone" constraint.
-    rejectObjectWithCalendarOrTimeZone(globalObject, temporalDateLike);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    bool isNonISO = !TemporalCore::calendarIsISO(m_calendarID);
-
-    if (isNonISO) {
-        // Step 6: PrepareCalendarFields(calendar, temporalDateLike, «year,month,month-code,day», «», ~partial~).
-        // CalendarRead::Skip — calendar already known from m_calendarID; step 3 ensures no calendar property.
-        CalendarID unusedCalId = m_calendarID;
-        auto partialFields = readCalendarFieldsFromObject<FieldSetType::Date, CalendarRead::Skip>(globalObject, temporalDateLike, unusedCalId);
-        RETURN_IF_EXCEPTION(scope, { });
-        if (!partialFields.day && !partialFields.era && !partialFields.eraYear && !partialFields.month && !partialFields.monthCode && !partialFields.year) [[unlikely]] {
-            throwTypeError(globalObject, scope, "Object must contain at least one Temporal date property"_s);
-            return { };
-        }
-
-        // Steps 8-9: GetOptionsObject + GetTemporalOverflowOption.
-        TemporalOverflow overflow = toTemporalOverflow(globalObject, optionsValue);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        // Steps 5, 7, 10, 11: ISODateToFields + CalendarMergeFields + CalendarDateFromFields
-        // + CreateTemporalDate — fused into plainDateWith.
-        auto result = TemporalCore::plainDateWith(m_calendarID, m_plainDate, partialFields, overflow);
-        if (!result) [[unlikely]] {
-            if (result.error().kind == TemporalErrorKind::TypeError)
-                throwTypeError(globalObject, scope, String(result.error().message));
-            else
-                throwRangeError(globalObject, scope, String(result.error().message));
-            return { };
-        }
-        return result->isoDate;
-    }
-
-    // ISO path: use existing mergeDateFields.
-    auto [y, m, d, optionalMonthCode, overflow, any] = mergeDateFields(globalObject, temporalDateLike, optionsValue, year(), month(), day());
-    RETURN_IF_EXCEPTION(scope, { });
-    if (any == TemporalAnyProperties::None) [[unlikely]] {
-        throwTypeError(globalObject, scope, "Object must contain at least one Temporal date property"_s);
-        return { };
-    }
-
-    RELEASE_AND_RETURN(scope, isoDateFromFields(globalObject, TemporalDateFormat::Date, y, m, d, optionalMonthCode, overflow, m_calendarID));
-}
-
-// https://tc39.es/proposal-temporal/#sec-getutcepochnanoseconds
-static Int128 getUTCEpochNanoseconds(ISO8601::PlainDate isoDate)
-{
-    return TemporalCore::getUTCEpochNanoseconds(isoDate, ISO8601::PlainTime());
-}
-
 // https://tc39.es/proposal-temporal/#sec-temporal-differencetemporalplaindate
 // Step 1 (ToTemporalDate) done by the prototype host fn via TemporalPlainDate::from().
 // Uses spec's flip-mode + negate-at-end pattern for Since (unlike PlainTime's operand-swap).
@@ -668,30 +537,31 @@ ISO8601::Duration TemporalPlainDate::differenceTemporalPlainDate(JSGlobalObject*
         return { };
     }
 
-    // Step 3: settings = ? GetDifferenceSettings(operation, options, ~date~, «», ~day~, ~day~).
+    // Steps 3-4: resolvedOptions = ? GetOptionsObject(options); settings = ? GetDifferenceSettings(operation, resolvedOptions, ~date~, «», ~day~, ~day~).
     auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue, UnitGroup::Date, TemporalUnit::Day, TemporalUnit::Day, op);
     RETURN_IF_EXCEPTION(scope, { });
 
-    // Step 4: If CompareISODate = 0, return zero duration.
+    // Step 5: If CompareISODate = 0, return zero duration.
     if (!TemporalCore::isoDateCompare(plainDate(), other->plainDate()))
         return ISO8601::Duration();
 
-    // Step 5: dateDifference = CalendarDateUntil(calendar, this, other, largestUnit).
+    // Step 6: dateDifference = CalendarDateUntil(calendar, this, other, largestUnit).
     ISO8601::Duration dateDiff;
     if (!TemporalCore::calendarIsISO(m_calendarID))
         dateDiff = calendarDateUntil(m_calendarID, plainDate(), other->plainDate(), largestUnit);
     else
         dateDiff = TemporalCore::calendarDateUntil(plainDate(), other->plainDate(), largestUnit);
 
-    // Step 6: duration = CombineDateAndTimeDuration(dateDifference, 0).
+    // Step 7: duration = CombineDateAndTimeDuration(dateDifference, 0).
     ISO8601::InternalDuration duration = ISO8601::InternalDuration::combineDateAndTimeDuration(dateDiff, 0);
 
-    // Step 7: If smallestUnit ≠ ~day~ or increment ≠ 1, RoundRelativeDuration.
+    // Step 8: If smallestUnit ≠ ~day~ or increment ≠ 1, RoundRelativeDuration
+    // (spec sub-steps 8.a-e build isoDateTime + originEpochNs + destEpochNs).
     if (smallestUnit != TemporalUnit::Day || increment != 1) {
         auto isoDate = plainDate();
-        Int128 originEpochNs = getUTCEpochNanoseconds(isoDate);
+        Int128 originEpochNs = TemporalCore::getUTCEpochNanoseconds(isoDate, ISO8601::PlainTime());
         auto isoDateOther = other->plainDate();
-        Int128 destEpochNs = getUTCEpochNanoseconds(isoDateOther);
+        Int128 destEpochNs = TemporalCore::getUTCEpochNanoseconds(isoDateOther, ISO8601::PlainTime());
         auto roundResult = TemporalCore::roundRelativeDuration(
             duration, originEpochNs, destEpochNs, isoDate, ISO8601::PlainTime(),
             largestUnit, increment, smallestUnit, roundingMode, nullptr, m_calendarID);
@@ -701,7 +571,7 @@ ISO8601::Duration TemporalPlainDate::differenceTemporalPlainDate(JSGlobalObject*
         }
     }
 
-    // Step 8: result = ! TemporalDurationFromInternal(duration, ~day~).
+    // Step 9: result = ! TemporalDurationFromInternal(duration, ~day~).
     auto durResult = TemporalCore::temporalDurationFromInternal(duration, TemporalUnit::Day);
     if (!durResult) [[unlikely]] {
         throwTemporalError(globalObject, scope, durResult.error());
@@ -709,7 +579,7 @@ ISO8601::Duration TemporalPlainDate::differenceTemporalPlainDate(JSGlobalObject*
     }
     ISO8601::Duration result = *durResult;
 
-    // Step 9: If since, negate result. Step 10: Return result.
+    // Step 10: If since, negate result. Step 11: Return result.
     if constexpr (op == DifferenceOperation::Since)
         result = -result;
     return result;

@@ -54,9 +54,7 @@ public:
     static ISO8601::PlainDate validateAndCreateISODateRecord(JSGlobalObject*, const ISO8601::Duration&);
     static std::tuple<int32_t, unsigned, unsigned, std::optional<ParsedMonthCode>, TemporalOverflow, TemporalAnyProperties>
     mergeDateFields(JSGlobalObject*, JSObject*, JSValue, int32_t, uint32_t, uint32_t);
-    static std::optional<int32_t> toDay(JSGlobalObject*, JSObject*);
     static std::optional<int32_t> toYear(JSGlobalObject*, JSObject*);
-    std::tuple<std::optional<int32_t>, std::optional<ParsedMonthCode>, std::optional<int32_t>> static toYearMonth(JSGlobalObject*, JSObject*);
     static TemporalPlainDate* from(JSGlobalObject*, JSValue item, JSValue options);
 
     ISO8601::PlainDate plainDate() const { return m_plainDate; }
@@ -69,8 +67,6 @@ public:
     decltype(auto) name() const { return m_plainDate.name(); }
     JSC_TEMPORAL_PLAIN_DATE_UNITS(JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD);
 #undef JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD
-
-    ISO8601::PlainDate with(JSGlobalObject*, JSObject* temporalDateLike, JSValue options);
 
     String monthCode() const { return ISO8601::monthCode(m_plainDate.month()); }
     uint8_t dayOfWeek() const { return ISO8601::dayOfWeek(m_plainDate); }

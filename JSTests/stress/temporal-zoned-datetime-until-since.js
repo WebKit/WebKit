@@ -113,5 +113,3 @@ function shouldThrow(fn, errorType, msg) {
     shouldThrow(() => iso.until(heb),  RangeError, "Step 2: different calendars → RangeError");
     shouldThrow(() => heb.since(iso), RangeError, "Step 2: different calendars (since) → RangeError");
 }
-
-print("PASS");

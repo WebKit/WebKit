@@ -869,6 +869,16 @@ static std::optional<int> setCalendarToMonthCode(UCalendar* cal, CalendarID cale
             return std::nullopt;
         if (*curCode == monthCode)
             return 1; // exact match
+        // If we've walked past the target monthCode lexicographically, the requested code
+        // (a leap month) doesn't exist in this year — constrain to the base month by
+        // reverting one step (Chinese/Dangi convention, matches temporal_rs).
+        // Without this early-stop, walking to year-end would incorrectly land on M12.
+        if (codePointCompare(*curCode, monthCode) > 0) {
+            ucal_add(cal, UCAL_MONTH, -1, &status);
+            if (U_FAILURE(status)) [[unlikely]]
+                return std::nullopt;
+            return 0; // constrained to base month
+        }
         ucal_add(cal, UCAL_MONTH, 1, &status);
         if (U_FAILURE(status)) [[unlikely]]
             return std::nullopt;
@@ -876,7 +886,7 @@ static std::optional<int> setCalendarToMonthCode(UCalendar* cal, CalendarID cale
         if (U_FAILURE(status)) [[unlikely]]
             return std::nullopt;
         if (curYear != savedYear) {
-            // Month code doesn't exist in this year — constrain to last month.
+            // Month code sorts after every month in the year (e.g., "M99") — constrain to last month.
             ucal_add(cal, UCAL_MONTH, -1, &status);
             if (U_FAILURE(status)) [[unlikely]]
                 return std::nullopt;

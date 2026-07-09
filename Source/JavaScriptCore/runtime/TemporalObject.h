@@ -113,7 +113,7 @@ void formatSecondsStringFraction(StringBuilder&, unsigned fraction, std::tuple<P
 void formatSecondsStringPart(StringBuilder&, unsigned second, unsigned fraction, PrecisionData);
 double temporalRoundingIncrement(JSGlobalObject*, JSObject* options);
 double roundNumberToIncrement(double, double increment, RoundingMode);
-void rejectObjectWithCalendarOrTimeZone(JSGlobalObject*, JSObject*);
+bool isPartialTemporalObject(JSGlobalObject*, JSValue);
 
 TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSObject*);
 TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSValue);

@@ -153,12 +153,12 @@ TemporalResult<ResolvedCalendarDate> dateFromFields(CalendarID calendarId, const
         if (!resolved)
             return makeUnexpected(resolved.error());
 
-        auto isoDate = ISO8601::PlainDate(resolved->year, resolved->month, resolved->day);
         // Step 3: If ISODateWithinLimits(result) is false, throw RangeError.
-        if (!ISO8601::isDateTimeWithinLimits(isoDate.year(), isoDate.month(), isoDate.day(), 12, 0, 0, 0, 0, 0))
+        if (!ISO8601::isDateTimeWithinLimits(resolved->year, resolved->month, resolved->day, 12, 0, 0, 0, 0, 0))
             return makeUnexpected(rangeError("Date is not within representable range"_s));
 
         // Step 4: Return result.
+        auto isoDate = ISO8601::PlainDate(resolved->year, resolved->month, resolved->day);
         return ResolvedCalendarDate { isoDate, iso8601CalendarID() };
     }
 
@@ -213,12 +213,12 @@ TemporalResult<ResolvedCalendarDate> yearMonthFromFields(CalendarID calendarId, 
         if (!resolved)
             return makeUnexpected(resolved.error());
 
-        auto isoDate = ISO8601::PlainDate(resolved->year, resolved->month, resolved->day);
         // Step 4: If ISOYearMonthWithinLimits(result) is false, throw RangeError.
-        if (!ISO8601::isYearMonthWithinLimits(isoDate.year(), isoDate.month()))
+        if (!ISO8601::isYearMonthWithinLimits(resolved->year, resolved->month))
             return makeUnexpected(rangeError("YearMonth is not within representable range"_s));
 
         // Step 5: Return result.
+        auto isoDate = ISO8601::PlainDate(resolved->year, resolved->month, resolved->day);
         return ResolvedCalendarDate { isoDate, iso8601CalendarID() };
     }
 
@@ -234,6 +234,8 @@ TemporalResult<ResolvedCalendarDate> yearMonthFromFields(CalendarID calendarId, 
     bool hasEraYear = fields.era.has_value() && fields.eraYear.has_value();
     if (!fields.year && !hasEraYear)
         return makeUnexpected(typeError("year property must be present"_s));
+    if (!fields.month && !fields.monthCode)
+        return makeUnexpected(typeError("month or monthCode property must be present"_s));
 
     uint8_t month = 1;
     if (fields.month)
@@ -581,7 +583,9 @@ TemporalResult<ISO8601::Duration> differenceYearMonth(CalendarID calendarId, con
 
 // plainYearMonthAdd — temporal_rs: PlainYearMonth::add_duration (src/builtins/core/plain_year_month.rs)
 // https://tc39.es/proposal-temporal/#sec-temporal-adddurationtoyearmonth
-// Implements steps 9-15; steps 1-8 done by JS-layer caller.
+// Implements steps 9-14 (ISODateToFields → CalendarDateFromFields → CalendarDateAdd →
+// ISODateToFields → CalendarYearMonthFromFields). Steps 1-8 (duration prep + calendar lookup)
+// and step 15 (CreateTemporalYearMonth wrap) are done by the JS-layer caller.
 TemporalResult<ResolvedCalendarDate> plainYearMonthAdd(CalendarID calendarId, const ISO8601::PlainDate& currentISODate, const ISO8601::Duration& duration, TemporalOverflow overflow)
 {
     bool isISO = calendarIsISO(calendarId);

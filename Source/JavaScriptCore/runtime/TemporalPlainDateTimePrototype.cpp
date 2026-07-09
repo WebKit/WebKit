@@ -237,13 +237,13 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncWith, (JSGlobalObject
     if (!plainDateTime) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.with called on value that's not a PlainDateTime"_s);
 
-    // Step 3: IsPartialTemporalObject.
+    // Step 3: If ? IsPartialTemporalObject(temporalDateTimeLike) is false, throw TypeError.
     JSValue fieldsArg = callFrame->argument(0);
-    if (!fieldsArg.isObject()) [[unlikely]]
-        return throwVMTypeError(globalObject, scope, "First argument to Temporal.PlainDateTime.prototype.with must be an object"_s);
-    JSObject* fields = asObject(fieldsArg);
-    rejectObjectWithCalendarOrTimeZone(globalObject, fields);
+    bool isPartial = isPartialTemporalObject(globalObject, fieldsArg);
     RETURN_IF_EXCEPTION(scope, { });
+    if (!isPartial) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "First argument to Temporal.PlainDateTime.prototype.with must be a partial Temporal object"_s);
+    JSObject* fields = asObject(fieldsArg);
 
     // Step 4: calendar = plainDateTime.[[Calendar]].
     CalendarID calendarId = plainDateTime->calendarID();
