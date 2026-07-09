@@ -61,6 +61,7 @@ FloatSize NODELETE sizeWithAreaAndAspectRatio(float area, float aspectRatio);
 FloatRect boundsOfRotatingRect(const FloatRect&);
 
 bool NODELETE ellipseContainsPoint(const FloatPoint& center, const FloatSize& radii, const FloatPoint&);
+float eccentricAngle(FloatPoint, FloatPoint center, float radiusX, float radiusY);
 
 FloatPoint NODELETE midPoint(const FloatPoint&, const FloatPoint&);
 
