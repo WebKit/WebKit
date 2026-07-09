@@ -386,6 +386,17 @@ bool defaultIFrameResourceMonitoringEnabled()
 }
 #endif
 
+bool defaultSearchInputResultsAttributeEnabled()
+{
+#if PLATFORM(COCOA)
+    static bool result = !isFullWebBrowserOrRunningTest()
+        && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DisableNonStandardSearchInputResultsAttribute);
+    return result;
+#else
+    return false;
+#endif
+}
+
 #if HAVE(SPATIAL_AUDIO_EXPERIENCE)
 bool defaultPreferSpatialAudioExperience()
 {

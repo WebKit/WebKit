@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,52) size 784x45
         RenderTextControl {INPUT} at (0,0) size 192x45 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
           RenderFlexibleBox {DIV} at (3,3) size 186x39
-            RenderBlock {DIV} at (16,10) size 154x19
+            RenderBlock {DIV} at (0,10) size 170x19
         RenderText {#text} at (192,14) size 4x17
           text run at (192,14) width 4: " "
         RenderTextControl {INPUT} at (196,0) size 192x45 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,113) size 784x18
         RenderTextControl {INPUT} at (0,1) size 192x17 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
           RenderFlexibleBox {DIV} at (3,0) size 186x16
-            RenderBlock {DIV} at (16,3) size 154x10
+            RenderBlock {DIV} at (0,3) size 170x10
         RenderText {#text} at (192,0) size 4x18
           text run at (192,0) width 4: " "
         RenderTextControl {INPUT} at (196,1) size 192x16 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
@@ -29,44 +29,38 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,147) size 784x18
         RenderTextControl {INPUT} at (0,5) size 192x13 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
           RenderFlexibleBox {DIV} at (3,0) size 186x12
-            RenderBlock {DIV} at (16,3) size 154x6
+            RenderBlock {DIV} at (0,3) size 170x6
         RenderText {#text} at (192,0) size 4x18
           text run at (192,0) width 4: " "
         RenderTextControl {INPUT} at (196,3) size 192x12 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderText {#text} at (0,0) size 0x0
-layer at (27,74) size 154x18
-  RenderBlock {DIV} at (0,0) size 154x18
+layer at (11,74) size 170x18
+  RenderBlock {DIV} at (0,0) size 170x18
     RenderText {#text} at (0,0) size 30x18
       text run at (0,0) width 30: "Text"
 layer at (207,74) size 186x18
   RenderBlock {DIV} at (3,13) size 186x19
     RenderText {#text} at (0,0) size 30x18
       text run at (0,0) width 30: "Text"
-layer at (27,126) size 154x10 scrollHeight 18
-  RenderBlock {DIV} at (0,0) size 154x10
+layer at (11,126) size 170x10 scrollHeight 18
+  RenderBlock {DIV} at (0,0) size 170x10
     RenderText {#text} at (0,0) size 30x18
       text run at (0,0) width 30: "Text"
 layer at (207,121) size 186x18
   RenderBlock {DIV} at (3,-1) size 186x18
     RenderText {#text} at (0,0) size 30x18
       text run at (0,0) width 30: "Text"
-layer at (27,164) size 154x6 scrollHeight 18
-  RenderBlock {DIV} at (0,0) size 154x6
+layer at (11,164) size 170x6 scrollHeight 18
+  RenderBlock {DIV} at (0,0) size 170x6
     RenderText {#text} at (0,0) size 30x18
       text run at (0,0) width 30: "Text"
 layer at (207,155) size 186x18
   RenderBlock {DIV} at (3,-3) size 186x18
     RenderText {#text} at (0,0) size 30x18
       text run at (0,0) width 30: "Text"
-layer at (11,75) size 16x16
-  RenderBlock {DIV} at (0,11) size 16x17 [bgcolor=#000000]
 layer at (181,75) size 16x16
   RenderBlock {DIV} at (170,11) size 16x17 [bgcolor=#000000]
-layer at (11,123) size 16x16
-  RenderBlock {DIV} at (0,0) size 16x16 [bgcolor=#000000]
 layer at (181,123) size 16x16
   RenderBlock {DIV} at (170,0) size 16x16 [bgcolor=#000000]
-layer at (11,161) size 16x16
-  RenderBlock {DIV} at (0,0) size 16x16 [bgcolor=#000000]
 layer at (181,161) size 16x16
   RenderBlock {DIV} at (170,0) size 16x16 [bgcolor=#000000]

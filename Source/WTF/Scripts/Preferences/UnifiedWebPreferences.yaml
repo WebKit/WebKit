@@ -7383,6 +7383,20 @@ ScrollingPerformanceTestingEnabled:
     WebCore:
       default: false
 
+SearchInputResultsAttributeEnabled:
+  type: bool
+  status: embedder
+  humanReadableName: "<input type=search> results=N attribute"
+  humanReadableDescription: "Enable the legacy WebKit-only ::-webkit-search-results-button saved-searches dropdown opt-in"
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(COCOA)" : WebKit::defaultSearchInputResultsAttributeEnabled()
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 SecureContextChecksEnabled:
   type: bool
   status: internal

@@ -153,6 +153,8 @@ void WebPreferences::platformInitializeStore()
         m_store.setBoolValueForKey(WebPreferencesKey::iFrameResourceMonitoringEnabledKey(), defaultIFrameResourceMonitoringEnabled());
 #endif
 
+        m_store.setBoolValueForKey(WebPreferencesKey::searchInputResultsAttributeEnabledKey(), defaultSearchInputResultsAttributeEnabled());
+
 #define INITIALIZE_DEFAULT_OVERRIDABLE_PREFERENCE_FROM_NSUSERDEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
         setDebug##TypeName##ValueIfInUserDefaults(m_identifier, m_keyPrefix, m_globalDebugKeyPrefix, WebPreferencesKey::KeyLower##Key(), m_store);
 
