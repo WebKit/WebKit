@@ -49,6 +49,8 @@ NS_ASSUME_NONNULL_BEGIN
  Whatever JavaScript object the `WKJSHandle` represents, it will be protected from garbage collection for the lifetime of the `WKJSHandle`
  The `WKJSHandle` can also be used as an argument to future JavaScript run via `[WKWebView callAsyncJavaScript:...]`
  */
+WK_SWIFT_UI_ACTOR
+NS_SWIFT_SENDABLE
 WK_CLASS_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0))
 @interface WKJSHandle : NSObject<NSCopying>
 
@@ -64,14 +66,14 @@ WK_CLASS_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0))
 /*! @abstract The world in which the `WKJSHandle` can be used.
  @discussion If the `WKJSHandle` is used in another world it will be interpreted as the JavaScript value `undefined`.
  */
-@property (nonatomic, readonly, weak) WKContentWorld *world;
+@property (nonatomic, readonly, weak) WKContentWorld *contentWorld;
 
 /*! @abstract The frame represented by the JavaScript value.
  @discussion If the `WKJSHandle` represents a JavaScript Window proxy object, the result of this method will be a snapshot of the
  frame represented by that Window object.
  Otherwise the result of this method will be `nil`
  */
-- (void)windowProxyFrameInfo:(void (^)(WKFrameInfo * _Nullable))completionHandler;
+- (void)getWindowProxyFrameWithCompletionHandler:(void (^)(WKFrameInfo * _Nullable))completionHandler WK_SWIFT_ASYNC_NAME(getter:windowProxyFrame());
 
 @end
 

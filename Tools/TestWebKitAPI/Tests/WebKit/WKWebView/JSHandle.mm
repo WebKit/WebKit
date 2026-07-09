@@ -46,7 +46,7 @@ static WKFrameInfo *getWindowFrameInfo(RetainPtr<WKJSHandle> node)
     EXPECT_TRUE([node isKindOfClass:WKJSHandle.class]);
     __block RetainPtr<WKFrameInfo> frame;
     __block bool done { false };
-    [node windowProxyFrameInfo:^(WKFrameInfo *info) {
+    [node getWindowProxyFrameWithCompletionHandler:^(WKFrameInfo *info) {
         frame = info;
         done = true;
     }];
