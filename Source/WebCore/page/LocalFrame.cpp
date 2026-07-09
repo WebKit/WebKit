@@ -1314,7 +1314,7 @@ void LocalFrame::documentURLOrOriginDidChange()
     RefPtr page = this->page();
     RefPtr document = this->document();
     if (page && document)
-        page->setMainFrameURLAndOrigin(document->url(), protect(document->securityOrigin()));
+        page->localTopDocumentURLOrOriginDidChange(document->url(), protect(document->securityOrigin()));
 }
 
 void LocalFrame::dispatchLoadEventToParent()

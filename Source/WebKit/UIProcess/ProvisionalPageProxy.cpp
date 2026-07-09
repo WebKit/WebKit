@@ -292,7 +292,7 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
     auto creationParameters = page->creationParametersForProvisionalPage(process, *drawingArea, mainFrame->frameID());
     if (preferences->siteIsolationEnabled() && !isRestoringFromBFCache) {
         creationParameters.remotePageParameters = RemotePageParameters {
-            m_request.url(),
+            page->topDocumentSyncData(),
             mainFrame->frameTreeCreationParameters(),
             websitePolicies ? std::optional(websitePolicies->dataForProcess(process)) : std::nullopt
         };
@@ -728,12 +728,20 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
 #endif
         || decoder.messageName() == Messages::WebPageProxy::AddMessageToConsoleForTesting::name()
         || decoder.messageName() == Messages::WebPageProxy::HandleMessage::name()
-        || decoder.messageName() == Messages::WebPageProxy::BroadcastDocumentSyncData::name()
-        || decoder.messageName() == Messages::WebPageProxy::BroadcastAllDocumentSyncData::name()
         )
     {
         if (RefPtr page = m_page.get())
             page->didReceiveMessage(connection, decoder);
+        return;
+    }
+
+    if (decoder.messageName() == Messages::WebPageProxy::BroadcastDocumentSyncData::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::BroadcastDocumentSyncData>(connection, decoder, this, &ProvisionalPageProxy::broadcastDocumentSyncData);
+        return;
+    }
+
+    if (decoder.messageName() == Messages::WebPageProxy::BroadcastAllDocumentSyncData::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::BroadcastAllDocumentSyncData>(connection, decoder, this, &ProvisionalPageProxy::broadcastAllDocumentSyncData);
         return;
     }
 
@@ -917,6 +925,22 @@ void ProvisionalPageProxy::updateFrameProcess()
 {
     if (auto mainFrame = m_mainFrame)
         m_frameProcess = mainFrame->frameProcess();
+}
+
+RefPtr<DocumentSyncData> ProvisionalPageProxy::topDocumentSyncData() const
+{
+    return m_topDocumentSyncData;
+}
+
+void ProvisionalPageProxy::broadcastDocumentSyncData(IPC::Connection&, const DocumentSyncSerializationData& data)
+{
+    if (RefPtr topDocumentSyncData = m_topDocumentSyncData)
+        topDocumentSyncData->update(data);
+}
+
+void ProvisionalPageProxy::broadcastAllDocumentSyncData(IPC::Connection&, Ref<DocumentSyncData>&& data)
+{
+    m_topDocumentSyncData = WTF::move(data);
 }
 
 } // namespace WebKit

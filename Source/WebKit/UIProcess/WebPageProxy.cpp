@@ -926,6 +926,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #endif
     , m_visitedLinkStore(configuration->visitedLinkStore())
     , m_websiteDataStore(configuration->websiteDataStore())
+    , m_topDocumentSyncData(WebCore::DocumentSyncData::create())
     , m_userAgent(standardUserAgent())
     , m_overrideContentSecurityPolicy { configuration->overrideContentSecurityPolicy() }
     , m_openedMainFrameName { configuration->openedMainFrameName() }
@@ -1627,6 +1628,9 @@ void WebPageProxy::swapToProvisionalPage(Ref<ProvisionalPageProxy>&& provisional
     m_mainFrame = provisionalPage->mainFrame();
     ASSERT(!m_drawingArea);
     setDrawingArea(provisionalPage->takeDrawingArea());
+
+    if (RefPtr provisionalTopData = provisionalPage->topDocumentSyncData())
+        m_topDocumentSyncData = provisionalTopData.releaseNonNull();
 
     // FIXME: Think about what to do if the provisional page didn't get its browsing context group from the SuspendedPageProxy.
     // We do need to clear it at some point for navigations that aren't from back/forward navigations. Probably in the same place as PSON?
@@ -6042,11 +6046,14 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
     // frozen in the cache, not transitioning to "remote."
     if (!didSuspendPreviousPage && provisionalPage->deferredRemoteTransitionSite()) {
         ASSERT(oldMainFrameID);
-        auto topDocumentSyncData = DocumentSyncData::create();
-        topDocumentSyncData->documentURL = request.url();
-        topDocumentSyncData->documentSecurityOrigin = SecurityOrigin::create(request.url());
-        setTopDocumentSyncData(topDocumentSyncData.copyRef());
-        protect(legacyMainFrameProcess())->send(Messages::WebPage::LoadDidCommitInAnotherProcess(*oldMainFrameID, provisionalPage->process().coreProcessIdentifier(), std::nullopt, WTF::move(topDocumentSyncData)), webPageIDInMainFrameProcess());
+        RefPtr<DocumentSyncData> topDocumentSyncData = provisionalPage->topDocumentSyncData();
+        if (!topDocumentSyncData) {
+            auto fallback = DocumentSyncData::create();
+            fallback->documentURL = request.url();
+            fallback->documentSecurityOrigin = SecurityOrigin::create(request.url());
+            topDocumentSyncData = WTF::move(fallback);
+        }
+        protect(legacyMainFrameProcess())->send(Messages::WebPage::LoadDidCommitInAnotherProcess(*oldMainFrameID, provisionalPage->process().coreProcessIdentifier(), std::nullopt, topDocumentSyncData.releaseNonNull()), webPageIDInMainFrameProcess());
         protect(m_browsingContextGroup)->transitionPageToRemotePage(*this, *provisionalPage->deferredRemoteTransitionSite());
     }
 
@@ -8705,14 +8712,18 @@ void WebPageProxy::setTopDocumentSyncData(Ref<WebCore::DocumentSyncData>&& data)
     m_topDocumentSyncData = WTF::move(data);
 }
 
+Ref<WebCore::DocumentSyncData> WebPageProxy::topDocumentSyncData() const
+{
+    return m_topDocumentSyncData.copyRef();
+}
+
 void WebPageProxy::broadcastDocumentSyncData(IPC::Connection& connection, const WebCore::DocumentSyncSerializationData& data)
 {
     Ref process = WebProcessProxy::fromConnection(connection);
     if (process.ptr() != &legacyMainFrameProcess())
         return;
 
-    if (RefPtr topDocumentSyncData = m_topDocumentSyncData)
-        topDocumentSyncData->update(data);
+    m_topDocumentSyncData->update(data);
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (webProcess == process)
             return;
