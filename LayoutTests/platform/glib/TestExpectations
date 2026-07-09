@@ -2442,6 +2442,9 @@ webkit.org/b/251106 webgl/1.0.x/conformance/offscreencanvas/context-lost-worker.
 webkit.org/b/251106 webgl/1.0.x/conformance/offscreencanvas/methods-worker.html [ Failure Pass ]
 webkit.org/b/251106 webgl/1.0.x/conformance/offscreencanvas/offscreencanvas-timer-query.html [ Pass Timeout ]
 webkit.org/b/251106 webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-query.html [ Failure Pass Timeout ]
+webkit.org/b/308025 [ x86_64 ] webgl/2.0.y/conformance2/query/occlusion-query-scissor.html [ Failure ]
+webkit.org/b/308025 [ arm64 ] webgl/2.0.y/conformance2/query/occlusion-query-scissor.html [ Pass ]
+webkit.org/b/251107 webgl/2.0.y/conformance2/extensions/ext-render-snorm.html [ Failure ]
 webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/context-lost-restored-worker.html [ Pass Timeout ]
 webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/context-lost-worker.html [ Pass Timeout ]
 webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/methods-worker.html [ Failure Pass ]
@@ -3485,7 +3488,6 @@ webkit.org/b/310178 fast/canvas/fill-text-with-font-features.html [ ImageOnlyFai
 webkit.org/b/304002 fast/inline/missing-content-on-autofill-with-out-of-flow-input-descendant.html [ Skip ]
 webkit.org/b/298925 fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Timeout ]
 webkit.org/b/312138 fast/mediastream/mediastreamtrack-video-frameRate-clone-decreasing.html [ Failure ]
-webkit.org/b/306384 [ arm64 ] imported/w3c/web-platform-tests/css/filter-effects/root-element-with-opacity-filter-001.html [ ImageOnlyFailure ]
 webkit.org/b/309373 [ x86_64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-denormals.https.window.html [ Failure ]
 webkit.org/b/306463 imported/w3c/web-platform-tests/import-maps/bare-specifiers.sub.html [ Failure Pass ]
 webkit.org/b/306463 imported/w3c/web-platform-tests/import-maps/data-url-specifiers.sub.html [ Failure Pass ]
@@ -4502,6 +4504,11 @@ imported/w3c/web-platform-tests/wasm/core/data.wast.js.html [ Failure Pass ]
 imported/w3c/web-platform-tests/wasm/core/elem.wast.js.html [ Failure Pass ]
 imported/w3c/web-platform-tests/wasm/core/global.wast.js.html [ Failure Pass ]
 imported/w3c/web-platform-tests/wasm/core/unreached-invalid.wast.js.html [ Failure Pass ]
+
+# WASM IPInt SIMD extmul is missing its metadata length; fix pending in https://bugs.webkit.org/show_bug.cgi?id=318381
+webkit.org/b/318381 imported/w3c/web-platform-tests/wasm/core/simd/simd_i16x8_extmul_i8x16.wast.js.html [ Failure ]
+webkit.org/b/318381 imported/w3c/web-platform-tests/wasm/core/simd/simd_i32x4_extmul_i16x8.wast.js.html [ Failure ]
+webkit.org/b/318381 imported/w3c/web-platform-tests/wasm/core/simd/simd_i64x2_extmul_i32x4.wast.js.html [ Failure ]
 
 # CSS image-orientation is not yet enabled.
 webkit.org/b/89052 fast/css/image-orientation/image-orientation.html [ Failure ]

@@ -133,6 +133,9 @@ webkit.org/b/303925 webrtc/audio-replace-track.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/protocol/ice-state.https.html [ Failure ]
 
 webkit.org/b/305553 fast/selectors/selection-window-inactive-stroke-color.html [ ImageOnlyFailure ]
+webkit.org/b/306384 imported/w3c/web-platform-tests/quirks/line-height-in-list-item.html [ ImageOnlyFailure ]
+webkit.org/b/306384 scrollbars/corner-resizer-window-inactive.html [ Pass ImageOnlyFailure ]
+fast/selectors/selection-window-inactive-text-shadow.html [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations

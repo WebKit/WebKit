@@ -875,9 +875,7 @@ webkit.org/b/251107 webgl/2.0.y/conformance2/reading/read-pixels-from-fbo-test.h
 webkit.org/b/251107 webgl/2.0.y/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Failure ]
 webkit.org/b/251107 webgl/2.0.y/conformance2/rendering/blitframebuffer-filter-srgb.html [ Failure ]
 webkit.org/b/251107 webgl/2.0.y/conformance/context/premultiplyalpha-test.html [ Failure ]
-webkit.org/b/251107 webgl/2.0.y/conformance2/extensions/ext-render-snorm.html [ Failure ]
 webkit.org/b/251107 webgl/2.0.y/conformance2/extensions/ext-texture-norm16.html [ Failure ]
-webkit.org/b/251107 webgl/2.0.y/conformance2/extensions/webgl-clip-cull-distance.html [ Failure ]
 
 # WEBGL2 flakies
 webkit.org/b/251107 webgl/2.0.y/conformance2/rendering/blitframebuffer-test.html [ Pass Failure ]
@@ -1009,6 +1007,7 @@ webkit.org/b/261024 js/cached-window-properties.html [ Pass Timeout ]
 webrtc/vp8-then-h264.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter.html [ ImageOnlyFailure ]
+webkit.org/b/306384 imported/w3c/web-platform-tests/css/filter-effects/root-element-with-opacity-filter-001.html [ ImageOnlyFailure ]
 
 # Flaky tests Nov2023
 webkit.org/b/264680 fast/dom/access-key-iframe.html [ Failure Pass ]
