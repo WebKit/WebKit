@@ -1747,6 +1747,8 @@ void NetworkResourceLoader::didReceiveMainResourceResponse(const WebCore::Resour
     LOADER_RELEASE_LOG("didReceiveMainResourceResponse:");
     if (CheckedPtr speculativeLoadManager = m_cache ? m_cache->speculativeLoadManager() : nullptr)
         speculativeLoadManager->registerMainResourceLoadResponse(globalFrameID(), originalRequest(), response);
+    if (auto& certificateInfo = response.certificateInfo(); certificateInfo && !certificateInfo->isEmpty())
+        connectionToWebProcess().networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ReceivedMainResourceResponseWithCertificateInfo(frameID(), response.url().hostAndPort(), *certificateInfo), 0);
 }
 
 void NetworkResourceLoader::initializeReportingEndpoints(const ResourceResponse& response)

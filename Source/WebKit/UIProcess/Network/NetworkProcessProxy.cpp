@@ -1943,6 +1943,12 @@ void NetworkProcessProxy::navigateServiceWorkerClient(WebCore::FrameIdentifier f
     callback({ }, { });
 }
 
+void NetworkProcessProxy::receivedMainResourceResponseWithCertificateInfo(WebCore::FrameIdentifier frameID, String&& hostAndPort, WebCore::CertificateInfo&& certificateInfo)
+{
+    if (RefPtr frame = WebFrameProxy::webFrame(frameID))
+        frame->receivedMainResourceResponseWithCertificateInfo(WTF::move(hostAndPort), WTF::move(certificateInfo));
+}
+
 void NetworkProcessProxy::applicationDidEnterBackground()
 {
     send(Messages::NetworkProcess::ApplicationDidEnterBackground(), 0);

@@ -26,10 +26,67 @@
 #import "config.h"
 
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import <wtf/RetainPtr.h>
+
+@interface TrustObserver : NSObject
+- (void)waitUntilServerTrustChanged;
+@end
+
+@implementation TrustObserver {
+    bool _observedServerTrust;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    EXPECT_WK_STREQ(keyPath, "serverTrust");
+    _observedServerTrust = true;
+}
+
+- (void)waitUntilServerTrustChanged
+{
+    _observedServerTrust = false;
+    while (!_observedServerTrust)
+        TestWebKitAPI::Util::spinRunLoop();
+}
+
+@end
 
 TEST(WKWebView, ServerTrustKVC)
 {
-    RetainPtr webView = adoptNS([[WKWebView alloc] init]);
+    using namespace TestWebKitAPI;
+    HTTPServer server({ { "/"_s, { "hi"_s } } }, HTTPServer::Protocol::Https);
+    HTTPServer plaintextServer({ { "/"_s, { "hi"_s } } });
+    RetainPtr webView = adoptNS([WKWebView new]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    webView.get().navigationDelegate = delegate.get();
+    [delegate allowAnyTLSCertificate];
     EXPECT_NULL([webView valueForKey:@"serverTrust"]);
+
+    RetainPtr observer = adoptNS([TrustObserver new]);
+    [webView addObserver:observer.get() forKeyPath:@"serverTrust" options:NSKeyValueObservingOptionNew context:nil];
+    [webView loadRequest:server.request()];
+    [observer waitUntilServerTrustChanged];
+    EXPECT_NOT_NULL([webView serverTrust]);
+
+    [webView loadRequest:plaintextServer.request()];
+    [observer waitUntilServerTrustChanged];
+    EXPECT_NULL([webView serverTrust]);
+
+    [webView goBack];
+    [observer waitUntilServerTrustChanged];
+    EXPECT_NOT_NULL([webView serverTrust]);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://localhost:%d/", server.port()]]]];
+    [observer waitUntilServerTrustChanged];
+    EXPECT_NOT_NULL([webView serverTrust]);
+
+    [webView goBack];
+    [observer waitUntilServerTrustChanged];
+    EXPECT_NOT_NULL([webView serverTrust]);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+    [observer waitUntilServerTrustChanged];
+    EXPECT_NULL([webView serverTrust]);
 }
