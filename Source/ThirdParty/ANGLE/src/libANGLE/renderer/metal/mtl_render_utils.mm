@@ -1190,7 +1190,7 @@ angle::Result ClearUtils::clearWithDraw(const gl::Context *context,
     ContextMtl *contextMtl = GetImpl(context);
     ANGLE_TRY(setupClearWithDraw(context, cmdEncoder, overridedParams));
 
-    angle::Result result;
+    angle::Result result = angle::Result::Continue;
     {
         // Need to disable occlusion query, otherwise clearing will affect the occlusion counting
         ScopedDisableOcclusionQuery disableOcclusionQuery(contextMtl, cmdEncoder, &result);
@@ -1336,7 +1336,7 @@ angle::Result ColorBlitUtils::blitColorWithDraw(const gl::Context *context,
     ContextMtl *contextMtl = GetImpl(context);
     ANGLE_TRY(setupColorBlitWithDraw(context, cmdEncoder, params));
 
-    angle::Result result;
+    angle::Result result = angle::Result::Continue;
     {
         // Need to disable occlusion query, otherwise blitting will affect the occlusion counting
         ScopedDisableOcclusionQuery disableOcclusionQuery(contextMtl, cmdEncoder, &result);
@@ -1544,7 +1544,7 @@ angle::Result DepthStencilBlitUtils::blitDepthStencilWithDraw(const gl::Context 
 
     ANGLE_TRY(setupDepthStencilBlitWithDraw(context, cmdEncoder, params));
 
-    angle::Result result;
+    angle::Result result = angle::Result::Continue;
     {
         // Need to disable occlusion query, otherwise blitting will affect the occlusion counting
         ScopedDisableOcclusionQuery disableOcclusionQuery(contextMtl, cmdEncoder, &result);
@@ -2518,7 +2518,7 @@ angle::Result CopyPixelsUtils::unpackPixelsWithDraw(const gl::Context *context,
     options.textureOffset[1]  = params.textureArea.y;
     cmdEncoder->setFragmentData(options, 0);
 
-    angle::Result result;
+    angle::Result result = angle::Result::Continue;
     {
         // Need to disable occlusion query, otherwise blitting will affect the occlusion counting
         ScopedDisableOcclusionQuery disableOcclusionQuery(contextMtl, cmdEncoder, &result);
