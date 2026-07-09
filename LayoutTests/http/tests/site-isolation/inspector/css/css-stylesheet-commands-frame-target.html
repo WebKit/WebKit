@@ -32,6 +32,16 @@
         });
 
         suite.addTestCase({
+            name: "SiteIsolation.CSS.StyleSheetCommands.FrameTarget.GetStyleSheet",
+            description: "getStyleSheet should return stylesheet details.",
+            async test() {
+                let { styleSheet } = await childFrameTarget.CSSAgent.getStyleSheet(stylesheetId);
+                InspectorTest.expectNotNull(styleSheet, "Should get stylesheet body.");
+                InspectorTest.expectEqual(styleSheet.styleSheetId, stylesheetId, "Returned stylesheet id should match.");
+            }
+        });
+
+        suite.addTestCase({
             name: "SiteIsolation.CSS.StyleSheetCommands.FrameTarget.GetStyleSheetText",
             description: "getStyleSheetText should return the stylesheet source text.",
             async test() {

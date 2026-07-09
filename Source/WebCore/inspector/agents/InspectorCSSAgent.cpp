@@ -487,6 +487,21 @@ void InspectorCSSAgent::collectStyleSheets(CSSStyleSheet* styleSheet, Vector<CSS
     }
 }
 
+Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSStyleSheetBody>> InspectorCSSAgent::getStyleSheet(const Inspector::Protocol::CSS::StyleSheetId& styleSheetId)
+{
+    Inspector::Protocol::ErrorString errorString;
+
+    RefPtr inspectorStyleSheet = assertStyleSheetForId(errorString, styleSheetId);
+    if (!inspectorStyleSheet)
+        return makeUnexpected(errorString);
+
+    auto styleSheet = inspectorStyleSheet->buildObjectForStyleSheet();
+    if (!styleSheet)
+        return makeUnexpected("Internal error: missing style sheet"_s);
+
+    return styleSheet.releaseNonNull();
+}
+
 Inspector::Protocol::ErrorStringOr<String> InspectorCSSAgent::getStyleSheetText(const Inspector::Protocol::CSS::StyleSheetId& styleSheetId)
 {
     Inspector::Protocol::ErrorString errorString;

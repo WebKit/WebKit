@@ -111,6 +111,11 @@ Inspector::CommandResult<void> FrameDOMAgent::hideHighlight()
     return makeUnexpected("Not supported for frame targets"_s);
 }
 
+Inspector::CommandResult<void> FrameDOMAgent::highlightFrame(const String&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&)
+{
+    return makeUnexpected("Not supported for frame targets"_s);
+}
+
 Inspector::CommandResult<void> FrameDOMAgent::showGridOverlay(int, Ref<JSON::Object>&&)
 {
     return makeUnexpected("Not supported for frame targets"_s);
@@ -127,6 +132,11 @@ Inspector::CommandResult<void> FrameDOMAgent::showFlexOverlay(int, Ref<JSON::Obj
 }
 
 Inspector::CommandResult<void> FrameDOMAgent::hideFlexOverlay(std::optional<int>&&)
+{
+    return makeUnexpected("Not supported for frame targets"_s);
+}
+
+Inspector::CommandResult<void> FrameDOMAgent::focus(int)
 {
     return makeUnexpected("Not supported for frame targets"_s);
 }

@@ -11,6 +11,10 @@ PASS: Child frame target should have a CSSAgent.
 PASS: Should have at least one stylesheet.
 PASS: Stylesheet should have an id.
 
+-- Running test case: SiteIsolation.CSS.StyleSheetCommands.FrameTarget.GetStyleSheet
+PASS: Should get stylesheet body.
+PASS: Returned stylesheet id should match.
+
 -- Running test case: SiteIsolation.CSS.StyleSheetCommands.FrameTarget.GetStyleSheetText
 PASS: Stylesheet text should contain the .test-class rule.
 PASS: Stylesheet text should contain 'color: red'.

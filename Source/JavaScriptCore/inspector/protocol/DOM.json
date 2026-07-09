@@ -690,6 +690,16 @@
             "description": "Hides DOM node highlight."
         },
         {
+            "name": "highlightFrame",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of the frame to highlight." },
+                { "name": "contentColor", "$ref": "RGBAColor", "optional": true, "description": "The content box highlight fill color (default: transparent)." },
+                { "name": "contentOutlineColor", "$ref": "RGBAColor", "optional": true, "description": "The content box highlight outline color (default: transparent)." }
+            ],
+            "description": "Highlights owner element of the frame with given id."
+        },
+        {
             "name": "showGridOverlay",
             "description": "Shows a grid overlay for a node that begins a 'grid' layout context. The command has no effect if <code>nodeId</code> is invalid or the associated node does not begin a 'grid' layout context. A node can only have one grid overlay at a time; subsequent calls with the same <code>nodeId</code> will override earlier calls.",
             "targetTypes": ["page"],
@@ -783,6 +793,14 @@
             "name": "markUndoableState",
             "description": "Marks last undoable state.",
             "targetTypes": ["frame", "page"]
+        },
+        {
+            "name": "focus",
+            "description": "Focuses the given element.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to focus." }
+            ]
         },
         {
             "name": "setInspectedNode",
