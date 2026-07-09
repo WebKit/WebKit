@@ -838,6 +838,21 @@ AzimuthAngleEnabled:
       "PLATFORM(COCOA)": true
       default: false
 
+BackForwardCacheWithMediaEnabled:
+  type: bool
+  status: stable
+  category: media
+  humanReadableName: "Back/Forward Cache with Media"
+  humanReadableDescription: "Enable back/forward cache for pages with media"
+  condition: PLATFORM(WPE)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 BackgroundFetchAPIEnabled:
   type: bool
   status: testable
