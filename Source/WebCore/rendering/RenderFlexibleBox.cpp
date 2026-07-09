@@ -1687,26 +1687,36 @@ void RenderFlexibleBox::layoutFlexItems(std::span<FlexLayoutItem> flexLayoutItem
         layoutFlexItemAfterMainSizing(flexLayoutItem, relayoutChildren);
 }
 
-RenderFlexibleBox::FlexLineStates RenderFlexibleBox::layoutFlexLines(FlexLayoutItems& allItems, RelayoutChildren relayoutChildren, LayoutUnit gapBetweenItems)
+RenderFlexibleBox::FlexLineStates RenderFlexibleBox::computeCrossSizeForFlexLines(FlexLayoutItems& allItems, const FlexLines& flexLines)
 {
     FlexLineStates lineStates;
     LayoutUnit crossAxisOffset = flowAwareBorderBefore() + flowAwarePaddingBefore();
-    InspectorInstrumentation::flexibleBoxRendererBeganLayout(*this);
-
-    auto flexLines = computeFlexLines(allItems, gapBetweenItems);
-    auto remainingFreeSpaces = computeMainSizeForFlexItems(allItems, flexLines, gapBetweenItems);
-    trimCrossAxisMarginsForFlexItems(allItems, flexLines);
-    layoutFlexItems(allItems.mutableSpan(), relayoutChildren);
-
     for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
         auto lineRange = flexLines.ranges[lineIndex];
         auto lineItems = allItems.mutableSpan().subspan(lineRange.begin(), lineRange.distance());
 
         InspectorInstrumentation::flexibleBoxRendererWrappedToNextLine(*this, lineRange.end());
 
-        auto lineResult = placeFlexItems(crossAxisOffset, lineItems, remainingFreeSpaces[lineIndex], gapBetweenItems);
+        auto lineResult = hypotheticalCrossSizeForFlexItems(lineItems, crossAxisOffset);
         lineStates.append(LineState(crossAxisOffset, lineResult.crossAxisExtent, WTF::move(lineResult.baselineSharingGroups), lineItems));
         crossAxisOffset = lineResult.crossAxisOffsetForNextLine;
+    }
+    return lineStates;
+}
+
+RenderFlexibleBox::FlexLineStates RenderFlexibleBox::layoutFlexLines(FlexLayoutItems& allItems, RelayoutChildren relayoutChildren, LayoutUnit gapBetweenItems)
+{
+    InspectorInstrumentation::flexibleBoxRendererBeganLayout(*this);
+
+    auto flexLines = computeFlexLines(allItems, gapBetweenItems);
+    auto remainingFreeSpaces = computeMainSizeForFlexItems(allItems, flexLines, gapBetweenItems);
+    trimCrossAxisMarginsForFlexItems(allItems, flexLines);
+    layoutFlexItems(allItems.mutableSpan(), relayoutChildren);
+    auto lineStates = computeCrossSizeForFlexLines(allItems, flexLines);
+
+    for (size_t lineIndex = 0; lineIndex < lineStates.size(); ++lineIndex) {
+        auto& lineState = lineStates[lineIndex];
+        placeFlexItems(lineState.crossAxisOffset, lineState.flexLayoutItems, remainingFreeSpaces[lineIndex], gapBetweenItems);
     }
     return lineStates;
 }
@@ -2762,7 +2772,7 @@ RenderFlexibleBox::FlexLineResult RenderFlexibleBox::hypotheticalCrossSizeForFle
     return { crossAxisOffset + maxFlexItemCrossAxisExtent, maxFlexItemCrossAxisExtent, WTF::move(baselineSharingGroups) };
 }
 
-RenderFlexibleBox::FlexLineResult RenderFlexibleBox::placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayoutItem> flexLayoutItems, LayoutUnit availableFreeSpace, LayoutUnit gapBetweenItems)
+void RenderFlexibleBox::placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayoutItem> flexLayoutItems, LayoutUnit availableFreeSpace, LayoutUnit gapBetweenItems)
 {
     LayoutUnit autoMarginOffset = autoMarginOffsetInMainAxis(flexLayoutItems, availableFreeSpace);
     LayoutUnit mainAxisOffset = flowAwareBorderStart() + flowAwarePaddingStart();
@@ -2780,8 +2790,6 @@ RenderFlexibleBox::FlexLineResult RenderFlexibleBox::placeFlexItems(LayoutUnit c
     }
 
     LayoutUnit totalMainExtent = mainAxisExtent();
-
-    auto lineResult = hypotheticalCrossSizeForFlexItems(flexLayoutItems, crossAxisOffset);
 
     auto resolvedJustifyContent = style().justifyContent().resolve(contentAlignmentNormalBehavior());
     auto distribution = resolvedJustifyContent.distribution();
@@ -2822,8 +2830,6 @@ RenderFlexibleBox::FlexLineResult RenderFlexibleBox::placeFlexItems(LayoutUnit c
         updateLogicalHeight();
         layoutColumnReverse(flexLayoutItems, crossAxisOffset, availableFreeSpace, gapBetweenItems);
     }
-
-    return lineResult;
 }
 
 void RenderFlexibleBox::layoutFlexItemAfterMainSizing(FlexLayoutItem& flexLayoutItem, RelayoutChildren relayoutChildren)
