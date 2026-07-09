@@ -209,3 +209,27 @@ const char* webkit_navigation_action_get_frame_name(WebKitNavigationAction* navi
     }
     return navigation->frameName->data();
 }
+
+/**
+ * webkit_navigation_action_is_for_main_frame:
+ * @navigation: a #WebKitNavigationAction
+ *
+ * Returns whether the @navigation targets the main frame.
+ *
+ * Returns %TRUE for navigations that create a new top-level browsing
+ * context (such as a link with target="_blank"), since the new context
+ * is a main frame, and for navigations targeting the existing main
+ * frame. Returns %FALSE for navigations targeting a sub-frame, such
+ * as an iframe loading its document.
+ *
+ * Returns: %TRUE if the navigation targets the main frame, %FALSE if
+ *   it targets a sub-frame.
+ *
+ * Since: 2.54
+ */
+gboolean webkit_navigation_action_is_for_main_frame(WebKitNavigationAction* navigation)
+{
+    g_return_val_if_fail(navigation, FALSE);
+    auto* targetFrame = navigation->action->targetFrame();
+    return !targetFrame || targetFrame->isMainFrame();
+}
