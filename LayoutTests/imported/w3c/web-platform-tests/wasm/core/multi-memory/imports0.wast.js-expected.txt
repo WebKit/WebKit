@@ -1,0 +1,45 @@
+
+PASS #1 Reinitialize the default imports
+FAIL #2 Test that WebAssembly compilation succeeds (imports0.wast:1) assert_equals: expected false but got true
+PASS #3 Test that WebAssembly compilation succeeds (imports0.wast:21)
+PASS #4 Test that WebAssembly compilation succeeds (imports0.wast:25)
+PASS #5 Test that WebAssembly compilation succeeds (imports0.wast:30)
+PASS #6 Test that WebAssembly compilation succeeds (imports0.wast:34)
+PASS #7 Test that WebAssembly compilation succeeds (imports0.wast:39)
+PASS #8 Test that WebAssembly compilation succeeds (imports0.wast:43)
+PASS #9 Reinitialize the default imports
+FAIL #10 Test that WebAssembly compilation succeeds (imports0.wast:1) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 79: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+FAIL #11 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+imports0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/imports0.wast.js:7:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/imports0.wast.js:48:3 expected true got false
+PASS #12 Test that WebAssembly compilation succeeds (imports0.wast:21)
+PASS #13 Test that WebAssembly instantiation fails (imports0.wast:21)
+FAIL #14 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: import test:memory-2-inf must be an object assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+imports0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/imports0.wast.js:16:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/imports0.wast.js:48:3 expected true got false
+PASS #15 Test that WebAssembly compilation succeeds (imports0.wast:25)
+PASS #16 Test that WebAssembly instantiation fails (imports0.wast:25)
+FAIL #17 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: import test:memory-2-4 must be an object assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+imports0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/imports0.wast.js:22:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/imports0.wast.js:48:3 expected true got false
+PASS #18 Test that WebAssembly compilation succeeds (imports0.wast:30)
+PASS #19 Test that WebAssembly instantiation fails (imports0.wast:30)
+FAIL #20 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: import test:memory-2-inf must be an object assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+imports0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/imports0.wast.js:28:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/imports0.wast.js:48:3 expected true got false
+PASS #21 Test that WebAssembly compilation succeeds (imports0.wast:34)
+PASS #22 Test that WebAssembly instantiation fails (imports0.wast:34)
+FAIL #23 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: import test:memory-2-4 must be an object assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+imports0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/imports0.wast.js:34:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/imports0.wast.js:48:3 expected true got false
+PASS #24 Test that WebAssembly compilation succeeds (imports0.wast:39)
+PASS #25 Test that WebAssembly instantiation fails (imports0.wast:39)
+FAIL #26 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: import test:memory-2-inf must be an object assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+imports0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/imports0.wast.js:40:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/imports0.wast.js:48:3 expected true got false
+PASS #27 Test that WebAssembly compilation succeeds (imports0.wast:43)
+PASS #28 Test that WebAssembly instantiation fails (imports0.wast:43)
+FAIL #29 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: import test:memory-2-4 must be an object assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+imports0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/imports0.wast.js:46:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/imports0.wast.js:48:3 expected true got false
+

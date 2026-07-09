@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/global/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/global/toString.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/global/type.tentative.any.js

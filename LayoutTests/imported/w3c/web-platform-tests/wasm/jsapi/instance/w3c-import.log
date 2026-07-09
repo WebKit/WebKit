@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/instance/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor-caching.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor.any.js

@@ -1,0 +1,86 @@
+
+PASS #1 Reinitialize the default imports
+FAIL #2 Test that WebAssembly compilation succeeds (data1.wast:4) assert_equals: expected false but got true
+FAIL #3 Test that WebAssembly compilation succeeds (data1.wast:14) assert_equals: expected false but got true
+FAIL #4 Test that WebAssembly compilation succeeds (data1.wast:24) assert_equals: expected false but got true
+FAIL #5 Test that WebAssembly compilation succeeds (data1.wast:33) assert_equals: expected false but got true
+FAIL #6 Test that WebAssembly compilation succeeds (data1.wast:42) assert_equals: expected false but got true
+FAIL #7 Test that WebAssembly compilation succeeds (data1.wast:61) assert_equals: expected false but got true
+FAIL #8 Test that WebAssembly compilation succeeds (data1.wast:72) assert_equals: expected false but got true
+PASS #9 Test that WebAssembly compilation succeeds (data1.wast:81)
+FAIL #10 Test that WebAssembly compilation succeeds (data1.wast:89) assert_equals: expected false but got true
+FAIL #11 Test that WebAssembly compilation succeeds (data1.wast:99) assert_equals: expected false but got true
+FAIL #12 Test that WebAssembly compilation succeeds (data1.wast:109) assert_equals: expected false but got true
+FAIL #13 Test that WebAssembly compilation succeeds (data1.wast:118) assert_equals: expected false but got true
+FAIL #14 Test that WebAssembly compilation succeeds (data1.wast:128) assert_equals: expected false but got true
+FAIL #15 Test that WebAssembly compilation succeeds (data1.wast:137) assert_equals: expected false but got true
+PASS #16 Reinitialize the default imports
+FAIL #17 Test that WebAssembly compilation succeeds (data1.wast:4) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 15: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+PASS #18 Test that WebAssembly instantiation fails
+FAIL #19 Test that a WebAssembly module is uninstantiable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_uninstantiable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:433:24
+data1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:7:22
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:87:3 expected true got false
+FAIL #20 Test that WebAssembly compilation succeeds (data1.wast:14) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 15: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+PASS #21 Test that WebAssembly instantiation fails
+FAIL #22 Test that a WebAssembly module is uninstantiable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_uninstantiable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:433:24
+data1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:13:22
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:87:3 expected true got false
+FAIL #23 Test that WebAssembly compilation succeeds (data1.wast:24) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 15: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+PASS #24 Test that WebAssembly instantiation fails
+FAIL #25 Test that a WebAssembly module is uninstantiable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_uninstantiable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:433:24
+data1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:19:22
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:87:3 expected true got false
+FAIL #26 Test that WebAssembly compilation succeeds (data1.wast:33) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 15: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+PASS #27 Test that WebAssembly instantiation fails
+FAIL #28 Test that a WebAssembly module is uninstantiable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_uninstantiable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:433:24
+data1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:25:22
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:87:3 expected true got false
+FAIL #29 Test that WebAssembly compilation succeeds (data1.wast:42) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 15: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+PASS #30 Test that WebAssembly instantiation fails
+FAIL #31 Test that a WebAssembly module is uninstantiable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_uninstantiable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:433:24
+data1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:31:22
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:87:3 expected true got false
+FAIL #32 Test that WebAssembly compilation succeeds (data1.wast:61) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 45: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+PASS #33 Test that WebAssembly instantiation fails
+FAIL #34 Test that a WebAssembly module is uninstantiable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_uninstantiable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:433:24
+data1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:37:22
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:87:3 expected true got false
+FAIL #35 Test that WebAssembly compilation succeeds (data1.wast:72) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 15: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+PASS #36 Test that WebAssembly instantiation fails
+FAIL #37 Test that a WebAssembly module is uninstantiable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_uninstantiable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:433:24
+data1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:43:22
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:87:3 expected true got false
+PASS #38 Test that WebAssembly compilation succeeds (data1.wast:81)
+PASS #39 Test that WebAssembly instantiation fails (data1.wast:81)
+PASS #40 Test that a WebAssembly module is uninstantiable
+FAIL #41 Test that WebAssembly compilation succeeds (data1.wast:89) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 15: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+PASS #42 Test that WebAssembly instantiation fails
+FAIL #43 Test that a WebAssembly module is uninstantiable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_uninstantiable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:433:24
+data1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:55:22
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:87:3 expected true got false
+FAIL #44 Test that WebAssembly compilation succeeds (data1.wast:99) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 15: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+PASS #45 Test that WebAssembly instantiation fails
+FAIL #46 Test that a WebAssembly module is uninstantiable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_uninstantiable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:433:24
+data1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:61:22
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:87:3 expected true got false
+FAIL #47 Test that WebAssembly compilation succeeds (data1.wast:109) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 15: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+PASS #48 Test that WebAssembly instantiation fails
+FAIL #49 Test that a WebAssembly module is uninstantiable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_uninstantiable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:433:24
+data1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:67:22
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:87:3 expected true got false
+FAIL #50 Test that WebAssembly compilation succeeds (data1.wast:118) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 51: there can at most be one Memory section for now at {loc} expected true got false
+PASS #51 Test that WebAssembly instantiation fails
+FAIL #52 Test that a WebAssembly module is uninstantiable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_uninstantiable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:433:24
+data1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:73:22
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:87:3 expected true got false
+FAIL #53 Test that WebAssembly compilation succeeds (data1.wast:128) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 15: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+PASS #54 Test that WebAssembly instantiation fails
+FAIL #55 Test that a WebAssembly module is uninstantiable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_uninstantiable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:433:24
+data1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:79:22
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:87:3 expected true got false
+FAIL #56 Test that WebAssembly compilation succeeds (data1.wast:137) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 51: there can at most be one Memory section for now at {loc} expected true got false
+PASS #57 Test that WebAssembly instantiation fails
+FAIL #58 Test that a WebAssembly module is uninstantiable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_uninstantiable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:433:24
+data1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:85:22
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data1.wast.js:87:3 expected true got false
+

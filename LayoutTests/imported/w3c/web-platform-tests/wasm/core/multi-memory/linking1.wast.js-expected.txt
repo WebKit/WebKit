@@ -1,0 +1,57 @@
+
+PASS #1 Reinitialize the default imports
+FAIL #2 Test that WebAssembly compilation succeeds (linking1.wast:1) assert_equals: expected false but got true
+FAIL #3 Test that WebAssembly compilation succeeds (linking1.wast:14) assert_equals: expected false but got true
+PASS #4 Test that WebAssembly compilation succeeds (linking1.wast:31)
+PASS #5 Test that WebAssembly compilation succeeds (linking1.wast:45)
+PASS #6 Test that WebAssembly compilation succeeds (linking1.wast:51)
+PASS #7 Test that WebAssembly compilation succeeds (linking1.wast:59)
+PASS #8 Reinitialize the default imports
+FAIL #9 Test that WebAssembly compilation succeeds (linking1.wast:1) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 35: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+FAIL #10 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+linking1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:8:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:69:3 expected true got false
+FAIL #11 Test that WebAssembly compilation succeeds (linking1.wast:14) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 63: there can at most be one Memory section for now at {loc} expected true got false
+FAIL #12 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+linking1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:19:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:69:3 expected true got false
+FAIL #13 Test that a WebAssembly code returns a specific result (linking1.wast:27) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+linking1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:23:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:69:3 expected true got false
+FAIL #14 Test that a WebAssembly code returns a specific result (linking1.wast:28) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+linking1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:26:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:69:3 expected true got false
+FAIL #15 Test that a WebAssembly code returns a specific result (linking1.wast:29) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+linking1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:29:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:69:3 expected true got false
+PASS #16 Test that WebAssembly compilation succeeds (linking1.wast:31)
+FAIL #17 Test that WebAssembly instantiation succeeds (linking1.wast:31) assert_true: unexpected instantiation error, observed TypeError: import Mm:mem1 must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+linking1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:36:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:69:3 expected true got false
+FAIL #18 Test that a WebAssembly code returns a specific result (linking1.wast:40) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+linking1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:40:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:69:3 expected true got false
+FAIL #19 Test that a WebAssembly code returns a specific result (linking1.wast:41) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+linking1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:43:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:69:3 expected true got false
+FAIL #20 Test that a WebAssembly code returns a specific result (linking1.wast:42) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+linking1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:46:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:69:3 expected true got false
+FAIL #21 Test that a WebAssembly code returns a specific result (linking1.wast:43) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+linking1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:49:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:69:3 expected true got false
+PASS #22 Test that WebAssembly compilation succeeds (linking1.wast:45)
+FAIL #23 Test that WebAssembly instantiation succeeds (linking1.wast:45) assert_true: unexpected instantiation error, observed TypeError: import Mm:mem1 must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+linking1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:55:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:69:3 expected true got false
+PASS #24 Test that WebAssembly compilation succeeds (linking1.wast:51)
+PASS #25 Test that WebAssembly instantiation fails (linking1.wast:51)
+FAIL #26 Test that a WebAssembly module is uninstantiable assert_true: expected link error, observed TypeError: import Mm:mem0 must be an object assert_uninstantiable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:433:24
+linking1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:61:22
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:69:3 expected true got false
+PASS #27 Test that WebAssembly compilation succeeds (linking1.wast:59)
+PASS #28 Test that WebAssembly instantiation fails (linking1.wast:59)
+FAIL #29 Test that a WebAssembly module is uninstantiable assert_true: expected link error, observed TypeError: import Mm:mem1 must be an object assert_uninstantiable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:433:24
+linking1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:67:22
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking1.wast.js:69:3 expected true got false
+

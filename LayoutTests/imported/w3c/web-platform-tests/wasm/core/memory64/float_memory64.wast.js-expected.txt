@@ -1,196 +1,496 @@
 
 PASS #1 Reinitialize the default imports
-PASS #2 Test that WebAssembly compilation succeeds (float_memory64.wast:5)
+FAIL #2 Test that WebAssembly compilation succeeds (float_memory64.wast:5) assert_equals: expected false but got true
 PASS #3 Test that WebAssembly compilation succeeds (wrapper)
 PASS #4 Test that WebAssembly compilation succeeds (wrapper)
 PASS #5 Test that WebAssembly compilation succeeds (wrapper)
 PASS #6 Test that WebAssembly compilation succeeds (wrapper)
 PASS #7 Test that WebAssembly compilation succeeds (wrapper)
-PASS #8 Test that WebAssembly compilation succeeds (float_memory64.wast:30)
+FAIL #8 Test that WebAssembly compilation succeeds (float_memory64.wast:30) assert_equals: expected false but got true
 PASS #9 Test that WebAssembly compilation succeeds (wrapper)
 PASS #10 Test that WebAssembly compilation succeeds (wrapper)
 PASS #11 Test that WebAssembly compilation succeeds (wrapper)
 PASS #12 Test that WebAssembly compilation succeeds (wrapper)
 PASS #13 Test that WebAssembly compilation succeeds (wrapper)
-PASS #14 Test that WebAssembly compilation succeeds (float_memory64.wast:57)
+FAIL #14 Test that WebAssembly compilation succeeds (float_memory64.wast:57) assert_equals: expected false but got true
 PASS #15 Test that WebAssembly compilation succeeds (wrapper)
 PASS #16 Test that WebAssembly compilation succeeds (wrapper)
 PASS #17 Test that WebAssembly compilation succeeds (wrapper)
 PASS #18 Test that WebAssembly compilation succeeds (wrapper)
 PASS #19 Test that WebAssembly compilation succeeds (wrapper)
-PASS #20 Test that WebAssembly compilation succeeds (float_memory64.wast:82)
+FAIL #20 Test that WebAssembly compilation succeeds (float_memory64.wast:82) assert_equals: expected false but got true
 PASS #21 Test that WebAssembly compilation succeeds (wrapper)
 PASS #22 Test that WebAssembly compilation succeeds (wrapper)
 PASS #23 Test that WebAssembly compilation succeeds (wrapper)
 PASS #24 Test that WebAssembly compilation succeeds (wrapper)
 PASS #25 Test that WebAssembly compilation succeeds (wrapper)
-PASS #26 Test that WebAssembly compilation succeeds (float_memory64.wast:109)
+FAIL #26 Test that WebAssembly compilation succeeds (float_memory64.wast:109) assert_equals: expected false but got true
 PASS #27 Test that WebAssembly compilation succeeds (wrapper)
 PASS #28 Test that WebAssembly compilation succeeds (wrapper)
 PASS #29 Test that WebAssembly compilation succeeds (wrapper)
 PASS #30 Test that WebAssembly compilation succeeds (wrapper)
 PASS #31 Test that WebAssembly compilation succeeds (wrapper)
-PASS #32 Test that WebAssembly compilation succeeds (float_memory64.wast:134)
+FAIL #32 Test that WebAssembly compilation succeeds (float_memory64.wast:134) assert_equals: expected false but got true
 PASS #33 Test that WebAssembly compilation succeeds (wrapper)
 PASS #34 Test that WebAssembly compilation succeeds (wrapper)
 PASS #35 Test that WebAssembly compilation succeeds (wrapper)
 PASS #36 Test that WebAssembly compilation succeeds (wrapper)
 PASS #37 Test that WebAssembly compilation succeeds (wrapper)
 PASS #38 Reinitialize the default imports
-PASS #39 Test that WebAssembly compilation succeeds (float_memory64.wast:5)
-PASS #40 Test that WebAssembly instantiation succeeds (float_memory64.wast:5)
-PASS #41 Test that a WebAssembly code returns a specific result (float_memory64.wast:15)
+FAIL #39 Test that WebAssembly compilation succeeds (float_memory64.wast:5) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 46: Memory64 is not enabled at {loc} expected true got false
+FAIL #40 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:7:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #41 Test that a WebAssembly code returns a specific result (float_memory64.wast:15) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:10:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #42 Test that WebAssembly compilation succeeds (wrapper)
-PASS #43 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #44 Run a WebAssembly test without special assertions (float_memory64.wast:16)
-PASS #45 Run a WebAssembly test without special assertions (float_memory64.wast:17)
-PASS #46 Test that a WebAssembly code returns a specific result (float_memory64.wast:18)
+FAIL #43 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:13:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:13:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #44 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:13:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #45 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:16:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #46 Test that a WebAssembly code returns a specific result (float_memory64.wast:18) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:19:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #47 Test that WebAssembly compilation succeeds (wrapper)
-PASS #48 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #49 Run a WebAssembly test without special assertions (float_memory64.wast:19)
-PASS #50 Run a WebAssembly test without special assertions (float_memory64.wast:20)
-PASS #51 Test that a WebAssembly code returns a specific result (float_memory64.wast:21)
+FAIL #48 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:22:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:22:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #49 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:22:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #50 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:25:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #51 Test that a WebAssembly code returns a specific result (float_memory64.wast:21) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:28:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #52 Test that WebAssembly compilation succeeds (wrapper)
-PASS #53 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #54 Run a WebAssembly test without special assertions (float_memory64.wast:22)
-PASS #55 Run a WebAssembly test without special assertions (float_memory64.wast:23)
-PASS #56 Test that a WebAssembly code returns a specific result (float_memory64.wast:24)
+FAIL #53 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:31:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:31:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #54 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:31:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #55 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:34:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #56 Test that a WebAssembly code returns a specific result (float_memory64.wast:24) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:37:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #57 Test that WebAssembly compilation succeeds (wrapper)
-PASS #58 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #59 Run a WebAssembly test without special assertions (float_memory64.wast:25)
-PASS #60 Run a WebAssembly test without special assertions (float_memory64.wast:26)
-PASS #61 Test that a WebAssembly code returns a specific result (float_memory64.wast:27)
+FAIL #58 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:40:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:40:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #59 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:40:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #60 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:43:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #61 Test that a WebAssembly code returns a specific result (float_memory64.wast:27) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:46:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #62 Test that WebAssembly compilation succeeds (wrapper)
-PASS #63 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #64 Run a WebAssembly test without special assertions (float_memory64.wast:28)
-PASS #65 Test that WebAssembly compilation succeeds (float_memory64.wast:30)
-PASS #66 Test that WebAssembly instantiation succeeds (float_memory64.wast:30)
-PASS #67 Test that a WebAssembly code returns a specific result (float_memory64.wast:40)
+FAIL #63 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:49:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:49:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #64 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:49:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #65 Test that WebAssembly compilation succeeds (float_memory64.wast:30) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 46: Memory64 is not enabled at {loc} expected true got false
+FAIL #66 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:55:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #67 Test that a WebAssembly code returns a specific result (float_memory64.wast:40) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:58:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #68 Test that WebAssembly compilation succeeds (wrapper)
-PASS #69 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #70 Run a WebAssembly test without special assertions (float_memory64.wast:41)
-PASS #71 Run a WebAssembly test without special assertions (float_memory64.wast:42)
-PASS #72 Test that a WebAssembly code returns a specific result (float_memory64.wast:43)
+FAIL #69 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:61:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:61:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #70 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:61:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #71 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:64:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #72 Test that a WebAssembly code returns a specific result (float_memory64.wast:43) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:67:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #73 Test that WebAssembly compilation succeeds (wrapper)
-PASS #74 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #75 Run a WebAssembly test without special assertions (float_memory64.wast:44)
-PASS #76 Run a WebAssembly test without special assertions (float_memory64.wast:45)
-PASS #77 Test that a WebAssembly code returns a specific result (float_memory64.wast:46)
+FAIL #74 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:70:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:70:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #75 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:70:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #76 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:73:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #77 Test that a WebAssembly code returns a specific result (float_memory64.wast:46) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:76:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #78 Test that WebAssembly compilation succeeds (wrapper)
-PASS #79 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #80 Run a WebAssembly test without special assertions (float_memory64.wast:47)
-PASS #81 Run a WebAssembly test without special assertions (float_memory64.wast:48)
-PASS #82 Test that a WebAssembly code returns a specific result (float_memory64.wast:49)
+FAIL #79 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:79:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:79:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #80 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:79:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #81 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:82:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #82 Test that a WebAssembly code returns a specific result (float_memory64.wast:49) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:85:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #83 Test that WebAssembly compilation succeeds (wrapper)
-PASS #84 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #85 Run a WebAssembly test without special assertions (float_memory64.wast:50)
-PASS #86 Run a WebAssembly test without special assertions (float_memory64.wast:51)
-PASS #87 Test that a WebAssembly code returns a specific result (float_memory64.wast:52)
+FAIL #84 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:88:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:88:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #85 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:88:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #86 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:91:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #87 Test that a WebAssembly code returns a specific result (float_memory64.wast:52) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:94:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #88 Test that WebAssembly compilation succeeds (wrapper)
-PASS #89 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #90 Run a WebAssembly test without special assertions (float_memory64.wast:53)
-PASS #91 Test that WebAssembly compilation succeeds (float_memory64.wast:57)
-PASS #92 Test that WebAssembly instantiation succeeds (float_memory64.wast:57)
-PASS #93 Test that a WebAssembly code returns a specific result (float_memory64.wast:67)
+FAIL #89 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:97:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:97:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #90 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:97:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #91 Test that WebAssembly compilation succeeds (float_memory64.wast:57) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 46: Memory64 is not enabled at {loc} expected true got false
+FAIL #92 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:103:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #93 Test that a WebAssembly code returns a specific result (float_memory64.wast:67) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:106:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #94 Test that WebAssembly compilation succeeds (wrapper)
-PASS #95 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #96 Run a WebAssembly test without special assertions (float_memory64.wast:68)
-PASS #97 Run a WebAssembly test without special assertions (float_memory64.wast:69)
-PASS #98 Test that a WebAssembly code returns a specific result (float_memory64.wast:70)
+FAIL #95 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:109:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:109:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #96 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:109:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #97 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:112:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #98 Test that a WebAssembly code returns a specific result (float_memory64.wast:70) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:115:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #99 Test that WebAssembly compilation succeeds (wrapper)
-PASS #100 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #101 Run a WebAssembly test without special assertions (float_memory64.wast:71)
-PASS #102 Run a WebAssembly test without special assertions (float_memory64.wast:72)
-PASS #103 Test that a WebAssembly code returns a specific result (float_memory64.wast:73)
+FAIL #100 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:118:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:118:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #101 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:118:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #102 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:121:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #103 Test that a WebAssembly code returns a specific result (float_memory64.wast:73) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:124:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #104 Test that WebAssembly compilation succeeds (wrapper)
-PASS #105 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #106 Run a WebAssembly test without special assertions (float_memory64.wast:74)
-PASS #107 Run a WebAssembly test without special assertions (float_memory64.wast:75)
-PASS #108 Test that a WebAssembly code returns a specific result (float_memory64.wast:76)
+FAIL #105 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:127:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:127:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #106 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:127:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #107 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:130:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #108 Test that a WebAssembly code returns a specific result (float_memory64.wast:76) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:133:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #109 Test that WebAssembly compilation succeeds (wrapper)
-PASS #110 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #111 Run a WebAssembly test without special assertions (float_memory64.wast:77)
-PASS #112 Run a WebAssembly test without special assertions (float_memory64.wast:78)
-PASS #113 Test that a WebAssembly code returns a specific result (float_memory64.wast:79)
+FAIL #110 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:136:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:136:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #111 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:136:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #112 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:139:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #113 Test that a WebAssembly code returns a specific result (float_memory64.wast:79) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:142:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #114 Test that WebAssembly compilation succeeds (wrapper)
-PASS #115 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #116 Run a WebAssembly test without special assertions (float_memory64.wast:80)
-PASS #117 Test that WebAssembly compilation succeeds (float_memory64.wast:82)
-PASS #118 Test that WebAssembly instantiation succeeds (float_memory64.wast:82)
-PASS #119 Test that a WebAssembly code returns a specific result (float_memory64.wast:92)
+FAIL #115 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:145:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:145:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #116 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:145:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #117 Test that WebAssembly compilation succeeds (float_memory64.wast:82) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 46: Memory64 is not enabled at {loc} expected true got false
+FAIL #118 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:151:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #119 Test that a WebAssembly code returns a specific result (float_memory64.wast:92) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:154:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #120 Test that WebAssembly compilation succeeds (wrapper)
-PASS #121 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #122 Run a WebAssembly test without special assertions (float_memory64.wast:93)
-PASS #123 Run a WebAssembly test without special assertions (float_memory64.wast:94)
-PASS #124 Test that a WebAssembly code returns a specific result (float_memory64.wast:95)
+FAIL #121 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:157:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:157:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #122 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:157:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #123 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:160:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #124 Test that a WebAssembly code returns a specific result (float_memory64.wast:95) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:163:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #125 Test that WebAssembly compilation succeeds (wrapper)
-PASS #126 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #127 Run a WebAssembly test without special assertions (float_memory64.wast:96)
-PASS #128 Run a WebAssembly test without special assertions (float_memory64.wast:97)
-PASS #129 Test that a WebAssembly code returns a specific result (float_memory64.wast:98)
+FAIL #126 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:166:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:166:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #127 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:166:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #128 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:169:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #129 Test that a WebAssembly code returns a specific result (float_memory64.wast:98) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:172:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #130 Test that WebAssembly compilation succeeds (wrapper)
-PASS #131 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #132 Run a WebAssembly test without special assertions (float_memory64.wast:99)
-PASS #133 Run a WebAssembly test without special assertions (float_memory64.wast:100)
-PASS #134 Test that a WebAssembly code returns a specific result (float_memory64.wast:101)
+FAIL #131 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:175:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:175:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #132 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:175:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #133 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:178:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #134 Test that a WebAssembly code returns a specific result (float_memory64.wast:101) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:181:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #135 Test that WebAssembly compilation succeeds (wrapper)
-PASS #136 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #137 Run a WebAssembly test without special assertions (float_memory64.wast:102)
-PASS #138 Run a WebAssembly test without special assertions (float_memory64.wast:103)
-PASS #139 Test that a WebAssembly code returns a specific result (float_memory64.wast:104)
+FAIL #136 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:184:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:184:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #137 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:184:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #138 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:187:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #139 Test that a WebAssembly code returns a specific result (float_memory64.wast:104) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:190:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #140 Test that WebAssembly compilation succeeds (wrapper)
-PASS #141 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #142 Run a WebAssembly test without special assertions (float_memory64.wast:105)
-PASS #143 Test that WebAssembly compilation succeeds (float_memory64.wast:109)
-PASS #144 Test that WebAssembly instantiation succeeds (float_memory64.wast:109)
-PASS #145 Test that a WebAssembly code returns a specific result (float_memory64.wast:119)
+FAIL #141 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:193:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:193:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #142 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:193:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #143 Test that WebAssembly compilation succeeds (float_memory64.wast:109) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 46: Memory64 is not enabled at {loc} expected true got false
+FAIL #144 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:199:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #145 Test that a WebAssembly code returns a specific result (float_memory64.wast:119) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:202:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #146 Test that WebAssembly compilation succeeds (wrapper)
-PASS #147 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #148 Run a WebAssembly test without special assertions (float_memory64.wast:120)
-PASS #149 Run a WebAssembly test without special assertions (float_memory64.wast:121)
-PASS #150 Test that a WebAssembly code returns a specific result (float_memory64.wast:122)
+FAIL #147 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:205:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:205:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #148 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:205:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #149 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:208:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #150 Test that a WebAssembly code returns a specific result (float_memory64.wast:122) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:211:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #151 Test that WebAssembly compilation succeeds (wrapper)
-PASS #152 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #153 Run a WebAssembly test without special assertions (float_memory64.wast:123)
-PASS #154 Run a WebAssembly test without special assertions (float_memory64.wast:124)
-PASS #155 Test that a WebAssembly code returns a specific result (float_memory64.wast:125)
+FAIL #152 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:214:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:214:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #153 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:214:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #154 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:217:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #155 Test that a WebAssembly code returns a specific result (float_memory64.wast:125) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:220:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #156 Test that WebAssembly compilation succeeds (wrapper)
-PASS #157 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #158 Run a WebAssembly test without special assertions (float_memory64.wast:126)
-PASS #159 Run a WebAssembly test without special assertions (float_memory64.wast:127)
-PASS #160 Test that a WebAssembly code returns a specific result (float_memory64.wast:128)
+FAIL #157 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:223:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:223:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #158 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:223:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #159 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:226:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #160 Test that a WebAssembly code returns a specific result (float_memory64.wast:128) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:229:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #161 Test that WebAssembly compilation succeeds (wrapper)
-PASS #162 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #163 Run a WebAssembly test without special assertions (float_memory64.wast:129)
-PASS #164 Run a WebAssembly test without special assertions (float_memory64.wast:130)
-PASS #165 Test that a WebAssembly code returns a specific result (float_memory64.wast:131)
+FAIL #162 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:232:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:232:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #163 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:232:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #164 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:235:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #165 Test that a WebAssembly code returns a specific result (float_memory64.wast:131) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:238:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #166 Test that WebAssembly compilation succeeds (wrapper)
-PASS #167 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #168 Run a WebAssembly test without special assertions (float_memory64.wast:132)
-PASS #169 Test that WebAssembly compilation succeeds (float_memory64.wast:134)
-PASS #170 Test that WebAssembly instantiation succeeds (float_memory64.wast:134)
-PASS #171 Test that a WebAssembly code returns a specific result (float_memory64.wast:144)
+FAIL #167 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:241:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:241:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #168 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:241:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #169 Test that WebAssembly compilation succeeds (float_memory64.wast:134) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 46: Memory64 is not enabled at {loc} expected true got false
+FAIL #170 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:247:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #171 Test that a WebAssembly code returns a specific result (float_memory64.wast:144) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:250:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #172 Test that WebAssembly compilation succeeds (wrapper)
-PASS #173 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #174 Run a WebAssembly test without special assertions (float_memory64.wast:145)
-PASS #175 Run a WebAssembly test without special assertions (float_memory64.wast:146)
-PASS #176 Test that a WebAssembly code returns a specific result (float_memory64.wast:147)
+FAIL #173 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:253:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:253:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #174 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:253:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #175 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:256:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #176 Test that a WebAssembly code returns a specific result (float_memory64.wast:147) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:259:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #177 Test that WebAssembly compilation succeeds (wrapper)
-PASS #178 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #179 Run a WebAssembly test without special assertions (float_memory64.wast:148)
-PASS #180 Run a WebAssembly test without special assertions (float_memory64.wast:149)
-PASS #181 Test that a WebAssembly code returns a specific result (float_memory64.wast:150)
+FAIL #178 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:262:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:262:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #179 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:262:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #180 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:265:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #181 Test that a WebAssembly code returns a specific result (float_memory64.wast:150) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:268:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #182 Test that WebAssembly compilation succeeds (wrapper)
-PASS #183 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #184 Run a WebAssembly test without special assertions (float_memory64.wast:151)
-PASS #185 Run a WebAssembly test without special assertions (float_memory64.wast:152)
-PASS #186 Test that a WebAssembly code returns a specific result (float_memory64.wast:153)
+FAIL #183 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:271:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:271:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #184 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:271:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #185 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:274:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #186 Test that a WebAssembly code returns a specific result (float_memory64.wast:153) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:277:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #187 Test that WebAssembly compilation succeeds (wrapper)
-PASS #188 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #189 Run a WebAssembly test without special assertions (float_memory64.wast:154)
-PASS #190 Run a WebAssembly test without special assertions (float_memory64.wast:155)
-PASS #191 Test that a WebAssembly code returns a specific result (float_memory64.wast:156)
+FAIL #188 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:280:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:280:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #189 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:280:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #190 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:283:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #191 Test that a WebAssembly code returns a specific result (float_memory64.wast:156) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:286:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 PASS #192 Test that WebAssembly compilation succeeds (wrapper)
-PASS #193 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #194 Run a WebAssembly test without special assertions (float_memory64.wast:157)
+FAIL #193 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:289:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:289:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
+FAIL #194 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+float_memory64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:289:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/float_memory64.wast.js:291:3 expected true got false
 

@@ -1,0 +1,387 @@
+
+PASS #1 Reinitialize the default imports
+FAIL #2 Test that WebAssembly compilation succeeds (address1.wast:3) assert_equals: expected false but got true
+PASS #3 Reinitialize the default imports
+FAIL #4 Test that WebAssembly compilation succeeds (address1.wast:3) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 80: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+FAIL #5 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:7:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #6 Test that a WebAssembly code returns a specific result (address1.wast:146) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:10:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #7 Test that a WebAssembly code returns a specific result (address1.wast:147) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:13:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #8 Test that a WebAssembly code returns a specific result (address1.wast:148) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:16:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #9 Test that a WebAssembly code returns a specific result (address1.wast:149) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:19:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #10 Test that a WebAssembly code returns a specific result (address1.wast:150) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:22:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #11 Test that a WebAssembly code returns a specific result (address1.wast:152) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:25:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #12 Test that a WebAssembly code returns a specific result (address1.wast:153) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:28:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #13 Test that a WebAssembly code returns a specific result (address1.wast:154) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:31:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #14 Test that a WebAssembly code returns a specific result (address1.wast:155) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:34:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #15 Test that a WebAssembly code returns a specific result (address1.wast:156) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:37:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #16 Test that a WebAssembly code returns a specific result (address1.wast:158) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:40:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #17 Test that a WebAssembly code returns a specific result (address1.wast:159) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:43:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #18 Test that a WebAssembly code returns a specific result (address1.wast:160) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:46:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #19 Test that a WebAssembly code returns a specific result (address1.wast:161) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:49:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #20 Test that a WebAssembly code returns a specific result (address1.wast:162) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:52:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #21 Test that a WebAssembly code returns a specific result (address1.wast:164) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:55:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #22 Test that a WebAssembly code returns a specific result (address1.wast:165) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:58:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #23 Test that a WebAssembly code returns a specific result (address1.wast:166) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:61:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #24 Test that a WebAssembly code returns a specific result (address1.wast:167) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:64:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #25 Test that a WebAssembly code returns a specific result (address1.wast:168) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:67:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #26 Test that a WebAssembly code returns a specific result (address1.wast:170) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:70:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #27 Test that a WebAssembly code returns a specific result (address1.wast:171) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:73:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #28 Test that a WebAssembly code returns a specific result (address1.wast:172) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:76:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #29 Test that a WebAssembly code returns a specific result (address1.wast:173) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:79:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #30 Test that a WebAssembly code returns a specific result (address1.wast:174) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:82:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #31 Test that a WebAssembly code returns a specific result (address1.wast:176) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:85:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #32 Test that a WebAssembly code returns a specific result (address1.wast:177) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:88:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #33 Test that a WebAssembly code returns a specific result (address1.wast:178) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:91:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #34 Test that a WebAssembly code returns a specific result (address1.wast:179) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:94:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #35 Test that a WebAssembly code returns a specific result (address1.wast:180) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:97:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #36 Test that a WebAssembly code returns a specific result (address1.wast:182) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:100:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #37 Test that a WebAssembly code returns a specific result (address1.wast:183) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:103:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #38 Test that a WebAssembly code returns a specific result (address1.wast:184) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:106:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #39 Test that a WebAssembly code returns a specific result (address1.wast:185) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:109:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #40 Test that a WebAssembly code returns a specific result (address1.wast:186) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:112:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #41 Test that a WebAssembly code returns a specific result (address1.wast:188) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:115:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #42 Test that a WebAssembly code returns a specific result (address1.wast:189) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:118:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #43 Test that a WebAssembly code returns a specific result (address1.wast:190) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:121:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #44 Test that a WebAssembly code returns a specific result (address1.wast:191) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:124:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #45 Test that a WebAssembly code returns a specific result (address1.wast:192) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:127:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #46 Test that a WebAssembly code returns a specific result (address1.wast:194) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:130:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #47 Test that a WebAssembly code returns a specific result (address1.wast:195) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:133:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #48 Test that a WebAssembly code returns a specific result (address1.wast:196) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:136:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #49 Test that a WebAssembly code returns a specific result (address1.wast:197) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:139:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #50 Test that a WebAssembly code returns a specific result (address1.wast:198) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:142:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #51 Test that a WebAssembly code returns a specific result (address1.wast:200) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:145:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #52 Test that a WebAssembly code returns a specific result (address1.wast:201) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:148:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #53 Test that a WebAssembly code returns a specific result (address1.wast:202) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:151:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #54 Test that a WebAssembly code returns a specific result (address1.wast:203) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:154:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #55 Test that a WebAssembly code returns a specific result (address1.wast:204) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:157:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #56 Test that a WebAssembly code returns a specific result (address1.wast:206) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:160:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #57 Test that a WebAssembly code returns a specific result (address1.wast:207) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:163:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #58 Test that a WebAssembly code returns a specific result (address1.wast:208) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:166:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #59 Test that a WebAssembly code returns a specific result (address1.wast:209) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:169:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #60 Test that a WebAssembly code returns a specific result (address1.wast:210) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:172:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #61 Test that a WebAssembly code returns a specific result (address1.wast:212) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:175:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #62 Test that a WebAssembly code returns a specific result (address1.wast:213) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:178:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #63 Test that a WebAssembly code returns a specific result (address1.wast:214) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:181:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #64 Test that a WebAssembly code returns a specific result (address1.wast:215) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:184:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #65 Test that a WebAssembly code returns a specific result (address1.wast:216) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:187:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #66 Test that a WebAssembly code returns a specific result (address1.wast:218) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:190:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #67 Test that a WebAssembly code returns a specific result (address1.wast:219) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:193:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #68 Test that a WebAssembly code returns a specific result (address1.wast:220) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:196:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #69 Test that a WebAssembly code returns a specific result (address1.wast:221) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:199:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #70 Test that a WebAssembly code returns a specific result (address1.wast:222) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:202:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #71 Test that a WebAssembly code returns a specific result (address1.wast:224) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:205:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #72 Test that a WebAssembly code returns a specific result (address1.wast:225) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:208:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #73 Test that a WebAssembly code returns a specific result (address1.wast:226) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:211:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #74 Test that a WebAssembly code returns a specific result (address1.wast:227) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:214:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #75 Test that a WebAssembly code returns a specific result (address1.wast:228) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:217:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #76 Test that a WebAssembly code returns a specific result (address1.wast:230) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:220:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #77 Test that a WebAssembly code returns a specific result (address1.wast:231) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:223:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #78 Test that a WebAssembly code returns a specific result (address1.wast:232) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:226:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #79 Test that a WebAssembly code returns a specific result (address1.wast:233) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:229:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #80 Test that a WebAssembly code returns a specific result (address1.wast:234) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:232:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #81 Test that a WebAssembly code returns a specific result (address1.wast:236) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:235:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #82 Test that a WebAssembly code returns a specific result (address1.wast:237) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:238:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #83 Test that a WebAssembly code returns a specific result (address1.wast:238) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:241:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #84 Test that a WebAssembly code returns a specific result (address1.wast:239) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:244:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #85 Test that a WebAssembly code returns a specific result (address1.wast:240) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:247:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #86 Test that a WebAssembly code returns a specific result (address1.wast:242) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:250:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #87 Test that a WebAssembly code returns a specific result (address1.wast:243) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:253:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #88 Test that a WebAssembly code returns a specific result (address1.wast:244) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:256:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #89 Test that a WebAssembly code returns a specific result (address1.wast:245) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:259:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #90 Test that a WebAssembly code returns a specific result (address1.wast:246) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:262:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #91 Test that a WebAssembly code returns a specific result (address1.wast:248) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:265:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #92 Test that a WebAssembly code returns a specific result (address1.wast:249) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:268:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #93 Test that a WebAssembly code returns a specific result (address1.wast:250) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:271:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #94 Test that a WebAssembly code returns a specific result (address1.wast:251) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:274:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #95 Test that a WebAssembly code returns a specific result (address1.wast:252) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:277:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #96 Test that a WebAssembly code returns a specific result (address1.wast:254) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:280:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #97 Test that a WebAssembly code returns a specific result (address1.wast:255) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:283:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #98 Test that a WebAssembly code returns a specific result (address1.wast:256) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:286:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #99 Test that a WebAssembly code returns a specific result (address1.wast:257) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:289:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #100 Test that a WebAssembly code returns a specific result (address1.wast:258) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:292:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #101 Test that a WebAssembly code returns a specific result (address1.wast:260) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:295:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #102 Test that a WebAssembly code returns a specific result (address1.wast:261) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:298:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #103 Test that a WebAssembly code returns a specific result (address1.wast:262) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:301:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #104 Test that a WebAssembly code returns a specific result (address1.wast:263) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:304:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #105 Test that a WebAssembly code returns a specific result (address1.wast:264) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:307:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #106 Test that a WebAssembly code returns a specific result (address1.wast:266) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:310:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #107 Test that a WebAssembly code returns a specific result (address1.wast:267) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:313:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #108 Test that a WebAssembly code returns a specific result (address1.wast:268) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:316:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #109 Test that a WebAssembly code returns a specific result (address1.wast:269) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:319:14
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #110 Test that a WebAssembly code traps (address1.wast:270) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:322:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #111 Test that a WebAssembly code traps (address1.wast:272) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:325:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #112 Test that a WebAssembly code traps (address1.wast:273) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:328:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #113 Test that a WebAssembly code traps (address1.wast:274) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:331:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #114 Test that a WebAssembly code traps (address1.wast:275) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:334:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #115 Test that a WebAssembly code traps (address1.wast:276) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:337:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #116 Test that a WebAssembly code traps (address1.wast:277) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:340:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #117 Test that a WebAssembly code traps (address1.wast:278) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:343:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #118 Test that a WebAssembly code traps (address1.wast:280) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:346:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #119 Test that a WebAssembly code traps (address1.wast:281) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:349:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #120 Test that a WebAssembly code traps (address1.wast:282) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:352:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #121 Test that a WebAssembly code traps (address1.wast:283) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:355:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #122 Test that a WebAssembly code traps (address1.wast:284) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:358:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #123 Test that a WebAssembly code traps (address1.wast:285) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:361:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #124 Test that a WebAssembly code traps (address1.wast:286) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:364:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #125 Test that a WebAssembly code traps (address1.wast:288) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:367:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #126 Test that a WebAssembly code traps (address1.wast:289) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:370:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #127 Test that a WebAssembly code traps (address1.wast:290) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:373:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #128 Test that a WebAssembly code traps (address1.wast:291) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:376:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #129 Test that a WebAssembly code traps (address1.wast:292) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:379:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #130 Test that a WebAssembly code traps (address1.wast:293) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:382:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+FAIL #131 Test that a WebAssembly code traps (address1.wast:294) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+address1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:385:12
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/address1.wast.js:387:3 expected true got false
+

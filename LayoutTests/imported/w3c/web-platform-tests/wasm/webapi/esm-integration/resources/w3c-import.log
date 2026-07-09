@@ -10,14 +10,16 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/audio-worklet-source-phase.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/cross-origin-wasm-dynamic-source-phase-import.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/cross-origin-wasm-static-source-phase-import.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/execute-start.wasm
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/exported-names.wasm
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/invalid-bytecode.wasm
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/invalid-module.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/js-string-module.wasm
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-function-error.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-function-error.wasm
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-global.js
@@ -31,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle.wasm
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/log.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/non-UTF8.wasm
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/resolve-export.wasm
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-export-i64-global.wasm
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-export-to-wasm.wasm

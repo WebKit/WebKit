@@ -1,0 +1,4 @@
+
+Harness Error (FAIL), message = SyntaxError: Unexpected identifier 'nonUtf8'. Expected 'from' before imported module name.
+
+

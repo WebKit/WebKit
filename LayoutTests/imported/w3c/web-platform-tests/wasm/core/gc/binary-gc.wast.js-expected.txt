@@ -1,0 +1,6 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation fails (binary-gc.wast:1)
+PASS #3 Reinitialize the default imports
+PASS #4 Test that WebAssembly compilation fails (binary-gc.wast:1)
+

@@ -1,6 +1,6 @@
 
 PASS name
-PASS length
+FAIL length assert_equals: WebAssembly.Exception length should be 2 expected 2 but got 1
 PASS No arguments
 PASS Calling
 PASS Invalid descriptor argument

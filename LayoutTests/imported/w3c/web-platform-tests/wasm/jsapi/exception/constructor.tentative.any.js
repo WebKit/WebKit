@@ -1,4 +1,4 @@
-// META: global=window,dedicatedworker,jsshell,shadowrealm
+// META: global=window,dedicatedworker,jsshell
 // META: script=/wasm/jsapi/assertions.js
 
 test(() => {
@@ -10,7 +10,7 @@ test(() => {
 }, "name");
 
 test(() => {
-  assert_function_length(WebAssembly.Exception, 1, "WebAssembly.Exception");
+  assert_function_length(WebAssembly.Exception, 2, "WebAssembly.Exception");
 }, "length");
 
 test(() => {

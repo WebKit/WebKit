@@ -65,6 +65,6 @@ PASS Mutable f64 (one)
 PASS Mutable f64 (string)
 PASS Mutable f64 (true on prototype)
 PASS i64 mutability
-PASS Calling setter without argument
+FAIL Calling setter without argument Not enough arguments
 PASS Stray argument
 

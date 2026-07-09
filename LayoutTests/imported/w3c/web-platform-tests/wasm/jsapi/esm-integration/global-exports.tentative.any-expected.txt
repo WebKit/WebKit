@@ -1,0 +1,7 @@
+
+FAIL WebAssembly module global values should be unwrapped when importing in ESM integration assert_equals: expected (number) 42 but got (object) object "[object WebAssembly.Global]"
+FAIL WebAssembly mutable global values should be unwrapped when importing in ESM integration assert_equals: expected (number) 100 but got (object) object "[object WebAssembly.Global]"
+FAIL WebAssembly local global values should be unwrapped when exporting in ESM integration assert_equals: expected (number) 42 but got (object) object "[object WebAssembly.Global]"
+FAIL WebAssembly module globals from imported WebAssembly modules should be unwrapped assert_equals: expected (number) 1001 but got (object) object "[object WebAssembly.Global]"
+FAIL WebAssembly should properly handle all global types assert_equals: expected (number) 42 but got (object) object "[object WebAssembly.Global]"
+

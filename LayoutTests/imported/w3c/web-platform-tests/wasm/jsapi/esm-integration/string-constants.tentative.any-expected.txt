@@ -1,0 +1,3 @@
+
+FAIL String constants from wasm:js/string-constants should be supported in ESM integration promise_test: Unhandled rejection with value: object "TypeError: Importing a module script failed."
+

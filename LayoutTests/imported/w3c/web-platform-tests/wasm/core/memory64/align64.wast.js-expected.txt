@@ -1,28 +1,28 @@
 
 PASS #1 Reinitialize the default imports
-PASS #2 Test that WebAssembly compilation succeeds (align64.wast:3)
-PASS #3 Test that WebAssembly compilation succeeds (align64.wast:4)
-PASS #4 Test that WebAssembly compilation succeeds (align64.wast:5)
-PASS #5 Test that WebAssembly compilation succeeds (align64.wast:6)
-PASS #6 Test that WebAssembly compilation succeeds (align64.wast:7)
-PASS #7 Test that WebAssembly compilation succeeds (align64.wast:8)
-PASS #8 Test that WebAssembly compilation succeeds (align64.wast:9)
-PASS #9 Test that WebAssembly compilation succeeds (align64.wast:10)
-PASS #10 Test that WebAssembly compilation succeeds (align64.wast:11)
-PASS #11 Test that WebAssembly compilation succeeds (align64.wast:12)
-PASS #12 Test that WebAssembly compilation succeeds (align64.wast:13)
-PASS #13 Test that WebAssembly compilation succeeds (align64.wast:14)
-PASS #14 Test that WebAssembly compilation succeeds (align64.wast:15)
-PASS #15 Test that WebAssembly compilation succeeds (align64.wast:16)
-PASS #16 Test that WebAssembly compilation succeeds (align64.wast:17)
-PASS #17 Test that WebAssembly compilation succeeds (align64.wast:18)
-PASS #18 Test that WebAssembly compilation succeeds (align64.wast:19)
-PASS #19 Test that WebAssembly compilation succeeds (align64.wast:20)
-PASS #20 Test that WebAssembly compilation succeeds (align64.wast:21)
-PASS #21 Test that WebAssembly compilation succeeds (align64.wast:22)
-PASS #22 Test that WebAssembly compilation succeeds (align64.wast:23)
-PASS #23 Test that WebAssembly compilation succeeds (align64.wast:24)
-PASS #24 Test that WebAssembly compilation succeeds (align64.wast:25)
+FAIL #2 Test that WebAssembly compilation succeeds (align64.wast:3) assert_equals: expected false but got true
+FAIL #3 Test that WebAssembly compilation succeeds (align64.wast:4) assert_equals: expected false but got true
+FAIL #4 Test that WebAssembly compilation succeeds (align64.wast:5) assert_equals: expected false but got true
+FAIL #5 Test that WebAssembly compilation succeeds (align64.wast:6) assert_equals: expected false but got true
+FAIL #6 Test that WebAssembly compilation succeeds (align64.wast:7) assert_equals: expected false but got true
+FAIL #7 Test that WebAssembly compilation succeeds (align64.wast:8) assert_equals: expected false but got true
+FAIL #8 Test that WebAssembly compilation succeeds (align64.wast:9) assert_equals: expected false but got true
+FAIL #9 Test that WebAssembly compilation succeeds (align64.wast:10) assert_equals: expected false but got true
+FAIL #10 Test that WebAssembly compilation succeeds (align64.wast:11) assert_equals: expected false but got true
+FAIL #11 Test that WebAssembly compilation succeeds (align64.wast:12) assert_equals: expected false but got true
+FAIL #12 Test that WebAssembly compilation succeeds (align64.wast:13) assert_equals: expected false but got true
+FAIL #13 Test that WebAssembly compilation succeeds (align64.wast:14) assert_equals: expected false but got true
+FAIL #14 Test that WebAssembly compilation succeeds (align64.wast:15) assert_equals: expected false but got true
+FAIL #15 Test that WebAssembly compilation succeeds (align64.wast:16) assert_equals: expected false but got true
+FAIL #16 Test that WebAssembly compilation succeeds (align64.wast:17) assert_equals: expected false but got true
+FAIL #17 Test that WebAssembly compilation succeeds (align64.wast:18) assert_equals: expected false but got true
+FAIL #18 Test that WebAssembly compilation succeeds (align64.wast:19) assert_equals: expected false but got true
+FAIL #19 Test that WebAssembly compilation succeeds (align64.wast:20) assert_equals: expected false but got true
+FAIL #20 Test that WebAssembly compilation succeeds (align64.wast:21) assert_equals: expected false but got true
+FAIL #21 Test that WebAssembly compilation succeeds (align64.wast:22) assert_equals: expected false but got true
+FAIL #22 Test that WebAssembly compilation succeeds (align64.wast:23) assert_equals: expected false but got true
+FAIL #23 Test that WebAssembly compilation succeeds (align64.wast:24) assert_equals: expected false but got true
+FAIL #24 Test that WebAssembly compilation succeeds (align64.wast:25) assert_equals: expected false but got true
 PASS #25 Test that WebAssembly compilation fails (align64.wast:27)
 PASS #26 Test that WebAssembly compilation fails (align64.wast:33)
 PASS #27 Test that WebAssembly compilation fails (align64.wast:39)
@@ -106,7 +106,7 @@ PASS #104 Test that WebAssembly compilation fails (align64.wast:439)
 PASS #105 Test that WebAssembly compilation fails (align64.wast:443)
 PASS #106 Test that WebAssembly compilation fails (align64.wast:447)
 PASS #107 Test that WebAssembly compilation fails (align64.wast:451)
-PASS #108 Test that WebAssembly compilation succeeds (align64.wast:458)
+FAIL #108 Test that WebAssembly compilation succeeds (align64.wast:458) assert_equals: expected false but got true
 PASS #109 Test that WebAssembly compilation succeeds (wrapper)
 PASS #110 Test that WebAssembly compilation succeeds (wrapper)
 PASS #111 Test that WebAssembly compilation succeeds (wrapper)
@@ -116,55 +116,101 @@ PASS #114 Test that WebAssembly compilation succeeds (wrapper)
 PASS #115 Test that WebAssembly compilation succeeds (wrapper)
 PASS #116 Test that WebAssembly compilation succeeds (wrapper)
 PASS #117 Test that WebAssembly compilation succeeds (wrapper)
-PASS #118 Test that WebAssembly compilation succeeds (align64.wast:854)
-PASS #119 Test that WebAssembly compilation succeeds (align64.wast:869)
+FAIL #118 Test that WebAssembly compilation succeeds (align64.wast:854) assert_equals: expected false but got true
+FAIL #119 Test that WebAssembly compilation succeeds (align64.wast:869) assert_equals: expected false but got true
 PASS #120 Reinitialize the default imports
-PASS #121 Test that WebAssembly compilation succeeds (align64.wast:3)
-PASS #122 Test that WebAssembly instantiation succeeds (align64.wast:3)
-PASS #123 Test that WebAssembly compilation succeeds (align64.wast:4)
-PASS #124 Test that WebAssembly instantiation succeeds (align64.wast:4)
-PASS #125 Test that WebAssembly compilation succeeds (align64.wast:5)
-PASS #126 Test that WebAssembly instantiation succeeds (align64.wast:5)
-PASS #127 Test that WebAssembly compilation succeeds (align64.wast:6)
-PASS #128 Test that WebAssembly instantiation succeeds (align64.wast:6)
-PASS #129 Test that WebAssembly compilation succeeds (align64.wast:7)
-PASS #130 Test that WebAssembly instantiation succeeds (align64.wast:7)
-PASS #131 Test that WebAssembly compilation succeeds (align64.wast:8)
-PASS #132 Test that WebAssembly instantiation succeeds (align64.wast:8)
-PASS #133 Test that WebAssembly compilation succeeds (align64.wast:9)
-PASS #134 Test that WebAssembly instantiation succeeds (align64.wast:9)
-PASS #135 Test that WebAssembly compilation succeeds (align64.wast:10)
-PASS #136 Test that WebAssembly instantiation succeeds (align64.wast:10)
-PASS #137 Test that WebAssembly compilation succeeds (align64.wast:11)
-PASS #138 Test that WebAssembly instantiation succeeds (align64.wast:11)
-PASS #139 Test that WebAssembly compilation succeeds (align64.wast:12)
-PASS #140 Test that WebAssembly instantiation succeeds (align64.wast:12)
-PASS #141 Test that WebAssembly compilation succeeds (align64.wast:13)
-PASS #142 Test that WebAssembly instantiation succeeds (align64.wast:13)
-PASS #143 Test that WebAssembly compilation succeeds (align64.wast:14)
-PASS #144 Test that WebAssembly instantiation succeeds (align64.wast:14)
-PASS #145 Test that WebAssembly compilation succeeds (align64.wast:15)
-PASS #146 Test that WebAssembly instantiation succeeds (align64.wast:15)
-PASS #147 Test that WebAssembly compilation succeeds (align64.wast:16)
-PASS #148 Test that WebAssembly instantiation succeeds (align64.wast:16)
-PASS #149 Test that WebAssembly compilation succeeds (align64.wast:17)
-PASS #150 Test that WebAssembly instantiation succeeds (align64.wast:17)
-PASS #151 Test that WebAssembly compilation succeeds (align64.wast:18)
-PASS #152 Test that WebAssembly instantiation succeeds (align64.wast:18)
-PASS #153 Test that WebAssembly compilation succeeds (align64.wast:19)
-PASS #154 Test that WebAssembly instantiation succeeds (align64.wast:19)
-PASS #155 Test that WebAssembly compilation succeeds (align64.wast:20)
-PASS #156 Test that WebAssembly instantiation succeeds (align64.wast:20)
-PASS #157 Test that WebAssembly compilation succeeds (align64.wast:21)
-PASS #158 Test that WebAssembly instantiation succeeds (align64.wast:21)
-PASS #159 Test that WebAssembly compilation succeeds (align64.wast:22)
-PASS #160 Test that WebAssembly instantiation succeeds (align64.wast:22)
-PASS #161 Test that WebAssembly compilation succeeds (align64.wast:23)
-PASS #162 Test that WebAssembly instantiation succeeds (align64.wast:23)
-PASS #163 Test that WebAssembly compilation succeeds (align64.wast:24)
-PASS #164 Test that WebAssembly instantiation succeeds (align64.wast:24)
-PASS #165 Test that WebAssembly compilation succeeds (align64.wast:25)
-PASS #166 Test that WebAssembly instantiation succeeds (align64.wast:25)
+FAIL #121 Test that WebAssembly compilation succeeds (align64.wast:3) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #122 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:7:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #123 Test that WebAssembly compilation succeeds (align64.wast:4) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #124 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:13:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #125 Test that WebAssembly compilation succeeds (align64.wast:5) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #126 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:19:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #127 Test that WebAssembly compilation succeeds (align64.wast:6) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #128 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:25:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #129 Test that WebAssembly compilation succeeds (align64.wast:7) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #130 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:31:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #131 Test that WebAssembly compilation succeeds (align64.wast:8) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #132 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:37:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #133 Test that WebAssembly compilation succeeds (align64.wast:9) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #134 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:43:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #135 Test that WebAssembly compilation succeeds (align64.wast:10) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #136 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:49:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #137 Test that WebAssembly compilation succeeds (align64.wast:11) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #138 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:55:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #139 Test that WebAssembly compilation succeeds (align64.wast:12) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #140 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:61:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #141 Test that WebAssembly compilation succeeds (align64.wast:13) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #142 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:67:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #143 Test that WebAssembly compilation succeeds (align64.wast:14) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #144 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:73:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #145 Test that WebAssembly compilation succeeds (align64.wast:15) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #146 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:79:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #147 Test that WebAssembly compilation succeeds (align64.wast:16) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #148 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:85:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #149 Test that WebAssembly compilation succeeds (align64.wast:17) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #150 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:91:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #151 Test that WebAssembly compilation succeeds (align64.wast:18) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #152 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:97:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #153 Test that WebAssembly compilation succeeds (align64.wast:19) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #154 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:103:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #155 Test that WebAssembly compilation succeeds (align64.wast:20) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #156 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:109:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #157 Test that WebAssembly compilation succeeds (align64.wast:21) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #158 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:115:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #159 Test that WebAssembly compilation succeeds (align64.wast:22) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #160 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:121:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #161 Test that WebAssembly compilation succeeds (align64.wast:23) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #162 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:127:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #163 Test that WebAssembly compilation succeeds (align64.wast:24) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #164 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:133:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #165 Test that WebAssembly compilation succeeds (align64.wast:25) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #166 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:139:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
 PASS #167 Test that WebAssembly compilation fails (align64.wast:27)
 PASS #168 Test that WebAssembly compilation fails (align64.wast:33)
 PASS #169 Test that WebAssembly compilation fails (align64.wast:39)
@@ -248,76 +294,214 @@ PASS #246 Test that WebAssembly compilation fails (align64.wast:439)
 PASS #247 Test that WebAssembly compilation fails (align64.wast:443)
 PASS #248 Test that WebAssembly compilation fails (align64.wast:447)
 PASS #249 Test that WebAssembly compilation fails (align64.wast:451)
-PASS #250 Test that WebAssembly compilation succeeds (align64.wast:458)
-PASS #251 Test that WebAssembly instantiation succeeds (align64.wast:458)
+FAIL #250 Test that WebAssembly compilation succeeds (align64.wast:458) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 56: Memory64 is not enabled at {loc} expected true got false
+FAIL #251 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:394:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
 PASS #252 Test that WebAssembly compilation succeeds (wrapper)
-PASS #253 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #254 Run a WebAssembly test without special assertions (align64.wast:802)
+FAIL #253 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32_align_switch must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:397:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:397:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #254 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:397:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
 PASS #255 Test that WebAssembly compilation succeeds (wrapper)
-PASS #256 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #257 Run a WebAssembly test without special assertions (align64.wast:803)
+FAIL #256 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32_align_switch must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:400:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:400:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #257 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:400:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
 PASS #258 Test that WebAssembly compilation succeeds (wrapper)
-PASS #259 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #260 Run a WebAssembly test without special assertions (align64.wast:804)
+FAIL #259 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32_align_switch must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:403:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:403:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #260 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:403:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
 PASS #261 Test that WebAssembly compilation succeeds (wrapper)
-PASS #262 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #263 Run a WebAssembly test without special assertions (align64.wast:805)
+FAIL #262 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32_align_switch must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:406:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:406:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #263 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:406:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
 PASS #264 Test that WebAssembly compilation succeeds (wrapper)
-PASS #265 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #266 Run a WebAssembly test without special assertions (align64.wast:807)
+FAIL #265 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64_align_switch must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:409:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:409:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #266 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:409:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
 PASS #267 Test that WebAssembly compilation succeeds (wrapper)
-PASS #268 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #269 Run a WebAssembly test without special assertions (align64.wast:808)
+FAIL #268 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64_align_switch must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:412:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:412:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #269 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:412:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
 PASS #270 Test that WebAssembly compilation succeeds (wrapper)
-PASS #271 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #272 Run a WebAssembly test without special assertions (align64.wast:809)
+FAIL #271 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64_align_switch must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:415:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:415:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #272 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:415:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
 PASS #273 Test that WebAssembly compilation succeeds (wrapper)
-PASS #274 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #275 Run a WebAssembly test without special assertions (align64.wast:810)
+FAIL #274 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64_align_switch must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:418:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:418:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #275 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:418:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
 PASS #276 Test that WebAssembly compilation succeeds (wrapper)
-PASS #277 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #278 Run a WebAssembly test without special assertions (align64.wast:811)
-PASS #279 Test that a WebAssembly code returns a specific result (align64.wast:813)
-PASS #280 Test that a WebAssembly code returns a specific result (align64.wast:814)
-PASS #281 Test that a WebAssembly code returns a specific result (align64.wast:815)
-PASS #282 Test that a WebAssembly code returns a specific result (align64.wast:816)
-PASS #283 Test that a WebAssembly code returns a specific result (align64.wast:817)
-PASS #284 Test that a WebAssembly code returns a specific result (align64.wast:818)
-PASS #285 Test that a WebAssembly code returns a specific result (align64.wast:819)
-PASS #286 Test that a WebAssembly code returns a specific result (align64.wast:820)
-PASS #287 Test that a WebAssembly code returns a specific result (align64.wast:821)
-PASS #288 Test that a WebAssembly code returns a specific result (align64.wast:822)
-PASS #289 Test that a WebAssembly code returns a specific result (align64.wast:823)
-PASS #290 Test that a WebAssembly code returns a specific result (align64.wast:824)
-PASS #291 Test that a WebAssembly code returns a specific result (align64.wast:825)
-PASS #292 Test that a WebAssembly code returns a specific result (align64.wast:826)
-PASS #293 Test that a WebAssembly code returns a specific result (align64.wast:828)
-PASS #294 Test that a WebAssembly code returns a specific result (align64.wast:829)
-PASS #295 Test that a WebAssembly code returns a specific result (align64.wast:830)
-PASS #296 Test that a WebAssembly code returns a specific result (align64.wast:831)
-PASS #297 Test that a WebAssembly code returns a specific result (align64.wast:832)
-PASS #298 Test that a WebAssembly code returns a specific result (align64.wast:833)
-PASS #299 Test that a WebAssembly code returns a specific result (align64.wast:834)
-PASS #300 Test that a WebAssembly code returns a specific result (align64.wast:835)
-PASS #301 Test that a WebAssembly code returns a specific result (align64.wast:836)
-PASS #302 Test that a WebAssembly code returns a specific result (align64.wast:837)
-PASS #303 Test that a WebAssembly code returns a specific result (align64.wast:838)
-PASS #304 Test that a WebAssembly code returns a specific result (align64.wast:839)
-PASS #305 Test that a WebAssembly code returns a specific result (align64.wast:840)
-PASS #306 Test that a WebAssembly code returns a specific result (align64.wast:841)
-PASS #307 Test that a WebAssembly code returns a specific result (align64.wast:842)
-PASS #308 Test that a WebAssembly code returns a specific result (align64.wast:843)
-PASS #309 Test that a WebAssembly code returns a specific result (align64.wast:844)
-PASS #310 Test that a WebAssembly code returns a specific result (align64.wast:845)
-PASS #311 Test that a WebAssembly code returns a specific result (align64.wast:846)
-PASS #312 Test that a WebAssembly code returns a specific result (align64.wast:847)
-PASS #313 Test that a WebAssembly code returns a specific result (align64.wast:848)
-PASS #314 Test that a WebAssembly code returns a specific result (align64.wast:849)
-PASS #315 Test that a WebAssembly code returns a specific result (align64.wast:850)
-PASS #316 Test that WebAssembly compilation succeeds (align64.wast:854)
-PASS #317 Test that WebAssembly instantiation succeeds (align64.wast:854)
-PASS #318 Test that a WebAssembly code traps (align64.wast:864)
-PASS #319 Test that a WebAssembly code returns a specific result (align64.wast:866)
-PASS #320 Test that WebAssembly compilation succeeds (align64.wast:869)
-PASS #321 Test that WebAssembly instantiation succeeds (align64.wast:869)
+FAIL #277 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64_align_switch must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:421:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:421:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #278 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:421:4
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #279 Test that a WebAssembly code returns a specific result (align64.wast:813) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:424:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #280 Test that a WebAssembly code returns a specific result (align64.wast:814) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:427:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #281 Test that a WebAssembly code returns a specific result (align64.wast:815) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:430:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #282 Test that a WebAssembly code returns a specific result (align64.wast:816) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:433:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #283 Test that a WebAssembly code returns a specific result (align64.wast:817) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:436:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #284 Test that a WebAssembly code returns a specific result (align64.wast:818) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:439:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #285 Test that a WebAssembly code returns a specific result (align64.wast:819) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:442:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #286 Test that a WebAssembly code returns a specific result (align64.wast:820) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:445:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #287 Test that a WebAssembly code returns a specific result (align64.wast:821) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:448:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #288 Test that a WebAssembly code returns a specific result (align64.wast:822) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:451:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #289 Test that a WebAssembly code returns a specific result (align64.wast:823) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:454:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #290 Test that a WebAssembly code returns a specific result (align64.wast:824) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:457:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #291 Test that a WebAssembly code returns a specific result (align64.wast:825) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:460:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #292 Test that a WebAssembly code returns a specific result (align64.wast:826) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:463:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #293 Test that a WebAssembly code returns a specific result (align64.wast:828) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:466:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #294 Test that a WebAssembly code returns a specific result (align64.wast:829) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:469:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #295 Test that a WebAssembly code returns a specific result (align64.wast:830) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:472:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #296 Test that a WebAssembly code returns a specific result (align64.wast:831) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:475:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #297 Test that a WebAssembly code returns a specific result (align64.wast:832) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:478:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #298 Test that a WebAssembly code returns a specific result (align64.wast:833) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:481:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #299 Test that a WebAssembly code returns a specific result (align64.wast:834) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:484:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #300 Test that a WebAssembly code returns a specific result (align64.wast:835) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:487:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #301 Test that a WebAssembly code returns a specific result (align64.wast:836) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:490:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #302 Test that a WebAssembly code returns a specific result (align64.wast:837) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:493:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #303 Test that a WebAssembly code returns a specific result (align64.wast:838) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:496:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #304 Test that a WebAssembly code returns a specific result (align64.wast:839) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:499:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #305 Test that a WebAssembly code returns a specific result (align64.wast:840) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:502:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #306 Test that a WebAssembly code returns a specific result (align64.wast:841) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:505:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #307 Test that a WebAssembly code returns a specific result (align64.wast:842) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:508:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #308 Test that a WebAssembly code returns a specific result (align64.wast:843) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:511:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #309 Test that a WebAssembly code returns a specific result (align64.wast:844) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:514:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #310 Test that a WebAssembly code returns a specific result (align64.wast:845) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:517:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #311 Test that a WebAssembly code returns a specific result (align64.wast:846) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:520:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #312 Test that a WebAssembly code returns a specific result (align64.wast:847) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:523:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #313 Test that a WebAssembly code returns a specific result (align64.wast:848) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:526:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #314 Test that a WebAssembly code returns a specific result (align64.wast:849) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:529:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #315 Test that a WebAssembly code returns a specific result (align64.wast:850) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:532:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #316 Test that WebAssembly compilation succeeds (align64.wast:854) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 42: Memory64 is not enabled at {loc} expected true got false
+FAIL #317 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:538:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #318 Test that a WebAssembly code traps (align64.wast:864) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:541:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #319 Test that a WebAssembly code returns a specific result (align64.wast:866) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:544:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
+FAIL #320 Test that WebAssembly compilation succeeds (align64.wast:869) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 34: Memory64 is not enabled at {loc} expected true got false
+FAIL #321 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+align64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:550:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/align64.wast.js:552:3 expected true got false
 

@@ -1,0 +1,29 @@
+
+PASS #1 Reinitialize the default imports
+FAIL #2 Test that WebAssembly compilation succeeds (data0.wast:5) assert_equals: expected false but got true
+PASS #3 Test that WebAssembly compilation succeeds (data0.wast:39)
+FAIL #4 Test that WebAssembly compilation succeeds (data0.wast:43) assert_equals: expected false but got true
+PASS #5 Test that WebAssembly compilation succeeds (data0.wast:52)
+PASS #6 Test that WebAssembly compilation succeeds (data0.wast:57)
+PASS #7 Test that WebAssembly compilation succeeds (data0.wast:63)
+PASS #8 Test that WebAssembly compilation succeeds (data0.wast:68)
+PASS #9 Reinitialize the default imports
+FAIL #10 Test that WebAssembly compilation succeeds (data0.wast:5) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 15: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+FAIL #11 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+data0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data0.wast.js:7:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data0.wast.js:45:3 expected true got false
+PASS #12 Test that WebAssembly compilation succeeds (data0.wast:39)
+PASS #13 Test that WebAssembly instantiation succeeds (data0.wast:39)
+FAIL #14 Test that WebAssembly compilation succeeds (data0.wast:43) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 51: there can at most be one Memory section for now at {loc} expected true got false
+FAIL #15 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+data0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data0.wast.js:19:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data0.wast.js:45:3 expected true got false
+PASS #16 Test that WebAssembly compilation succeeds (data0.wast:52)
+PASS #17 Test that WebAssembly instantiation succeeds (data0.wast:52)
+PASS #18 Test that WebAssembly compilation succeeds (data0.wast:57)
+PASS #19 Test that WebAssembly instantiation succeeds (data0.wast:57)
+PASS #20 Test that WebAssembly compilation succeeds (data0.wast:63)
+PASS #21 Test that WebAssembly instantiation succeeds (data0.wast:63)
+PASS #22 Test that WebAssembly compilation succeeds (data0.wast:68)
+PASS #23 Test that WebAssembly instantiation succeeds (data0.wast:68)
+

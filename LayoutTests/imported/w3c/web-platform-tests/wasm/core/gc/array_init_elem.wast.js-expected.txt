@@ -1,0 +1,53 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation fails (array_init_elem.wast:5)
+PASS #3 Test that WebAssembly compilation fails (array_init_elem.wast:18)
+PASS #4 Test that WebAssembly compilation fails (array_init_elem.wast:31)
+PASS #5 Test that WebAssembly compilation succeeds (array_init_elem.wast:44)
+PASS #6 Test that WebAssembly compilation succeeds (array_init_elem.wast:117)
+PASS #7 Test that WebAssembly compilation succeeds (array_init_elem.wast:160)
+PASS #8 Reinitialize the default imports
+PASS #9 Test that WebAssembly compilation fails (array_init_elem.wast:5)
+PASS #10 Test that WebAssembly compilation fails (array_init_elem.wast:18)
+PASS #11 Test that WebAssembly compilation fails (array_init_elem.wast:31)
+PASS #12 Test that WebAssembly compilation succeeds (array_init_elem.wast:44)
+PASS #13 Test that WebAssembly instantiation succeeds (array_init_elem.wast:44)
+PASS #14 Test that a WebAssembly code traps (array_init_elem.wast:85)
+PASS #15 Test that a WebAssembly code traps (array_init_elem.wast:88)
+PASS #16 Test that a WebAssembly code traps (array_init_elem.wast:89)
+PASS #17 Test that a WebAssembly code traps (array_init_elem.wast:92)
+PASS #18 Test that a WebAssembly code traps (array_init_elem.wast:93)
+PASS #19 Test that a WebAssembly code returns a specific result (array_init_elem.wast:96)
+PASS #20 Test that a WebAssembly code returns a specific result (array_init_elem.wast:97)
+PASS #21 Test that a WebAssembly code traps (array_init_elem.wast:100)
+PASS #22 Test that a WebAssembly code traps (array_init_elem.wast:101)
+PASS #23 Test that a WebAssembly code traps (array_init_elem.wast:102)
+PASS #24 Test that a WebAssembly code traps (array_init_elem.wast:103)
+PASS #25 Test that a WebAssembly code returns a specific result (array_init_elem.wast:106)
+PASS #26 Test that a WebAssembly code traps (array_init_elem.wast:107)
+PASS #27 Test that a WebAssembly code returns a specific result (array_init_elem.wast:108)
+PASS #28 Test that a WebAssembly code returns a specific result (array_init_elem.wast:109)
+PASS #29 Test that a WebAssembly code traps (array_init_elem.wast:110)
+PASS #30 Test that a WebAssembly code returns a specific result (array_init_elem.wast:113)
+PASS #31 Test that a WebAssembly code returns a specific result (array_init_elem.wast:114)
+PASS #32 Test that a WebAssembly code traps (array_init_elem.wast:115)
+PASS #33 Test that WebAssembly compilation succeeds (array_init_elem.wast:117)
+PASS #34 Test that WebAssembly instantiation succeeds (array_init_elem.wast:117)
+PASS #35 Test that a WebAssembly code traps (array_init_elem.wast:144)
+PASS #36 Test that a WebAssembly code traps (array_init_elem.wast:145)
+PASS #37 Test that a WebAssembly code returns a specific result (array_init_elem.wast:148)
+PASS #38 Test that a WebAssembly code returns a specific result (array_init_elem.wast:149)
+PASS #39 Test that a WebAssembly code returns a specific result (array_init_elem.wast:150)
+PASS #40 Test that a WebAssembly code returns a specific result (array_init_elem.wast:151)
+PASS #41 Test that a WebAssembly code returns a specific result (array_init_elem.wast:154)
+PASS #42 Test that a WebAssembly code returns a specific result (array_init_elem.wast:155)
+PASS #43 Test that a WebAssembly code returns a specific result (array_init_elem.wast:156)
+FAIL #44 Test that a WebAssembly code returns a specific result (array_init_elem.wast:157) assert_equals: assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+array_init_elem_wast_js@http://web-platform.test:8800/wasm/core/js/gc/array_init_elem.wast.js:109:14
+global code@http://web-platform.test:8800/wasm/core/js/gc/array_init_elem.wast.js:120:3 expected 1 but got 0
+PASS #45 Test that WebAssembly compilation succeeds (array_init_elem.wast:160)
+PASS #46 Test that WebAssembly instantiation succeeds (array_init_elem.wast:160)
+FAIL #47 Test that a WebAssembly code returns a specific result (array_init_elem.wast:178) assert_equals: assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+array_init_elem_wast_js@http://web-platform.test:8800/wasm/core/js/gc/array_init_elem.wast.js:118:14
+global code@http://web-platform.test:8800/wasm/core/js/gc/array_init_elem.wast.js:120:3 expected 1 but got 0
+

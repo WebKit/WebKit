@@ -1,7 +1,7 @@
 
 PASS #1 Reinitialize the default imports
-PASS #2 Test that WebAssembly compilation succeeds (memory_trap64.wast:1)
-PASS #3 Test that WebAssembly compilation succeeds (memory_trap64.wast:34)
+FAIL #2 Test that WebAssembly compilation succeeds (memory_trap64.wast:1) assert_equals: expected false but got true
+FAIL #3 Test that WebAssembly compilation succeeds (memory_trap64.wast:34) assert_equals: expected false but got true
 PASS #4 Test that WebAssembly compilation succeeds (wrapper)
 PASS #5 Test that WebAssembly compilation succeeds (wrapper)
 PASS #6 Test that WebAssembly compilation succeeds (wrapper)
@@ -51,274 +51,810 @@ PASS #49 Test that WebAssembly compilation succeeds (wrapper)
 PASS #50 Test that WebAssembly compilation succeeds (wrapper)
 PASS #51 Test that WebAssembly compilation succeeds (wrapper)
 PASS #52 Reinitialize the default imports
-PASS #53 Test that WebAssembly compilation succeeds (memory_trap64.wast:1)
-PASS #54 Test that WebAssembly instantiation succeeds (memory_trap64.wast:1)
-PASS #55 Test that a WebAssembly code returns a specific result (memory_trap64.wast:21)
-PASS #56 Test that a WebAssembly code returns a specific result (memory_trap64.wast:22)
-PASS #57 Test that a WebAssembly code traps (memory_trap64.wast:23)
-PASS #58 Test that a WebAssembly code traps (memory_trap64.wast:24)
-PASS #59 Test that a WebAssembly code traps (memory_trap64.wast:25)
-PASS #60 Test that a WebAssembly code traps (memory_trap64.wast:26)
-PASS #61 Test that a WebAssembly code traps (memory_trap64.wast:27)
-PASS #62 Test that a WebAssembly code traps (memory_trap64.wast:28)
-PASS #63 Test that a WebAssembly code traps (memory_trap64.wast:29)
-PASS #64 Test that a WebAssembly code traps (memory_trap64.wast:30)
-PASS #65 Test that a WebAssembly code traps (memory_trap64.wast:31)
-PASS #66 Test that a WebAssembly code traps (memory_trap64.wast:32)
-PASS #67 Test that WebAssembly compilation succeeds (memory_trap64.wast:34)
-PASS #68 Test that WebAssembly instantiation succeeds (memory_trap64.wast:34)
-PASS #69 Test that a WebAssembly code traps (memory_trap64.wast:110)
-PASS #70 Test that a WebAssembly code traps (memory_trap64.wast:111)
-PASS #71 Test that a WebAssembly code traps (memory_trap64.wast:112)
-PASS #72 Test that a WebAssembly code traps (memory_trap64.wast:113)
-PASS #73 Test that a WebAssembly code traps (memory_trap64.wast:114)
-PASS #74 Test that a WebAssembly code traps (memory_trap64.wast:115)
-PASS #75 Test that a WebAssembly code traps (memory_trap64.wast:116)
-PASS #76 Test that a WebAssembly code traps (memory_trap64.wast:117)
-PASS #77 Test that a WebAssembly code traps (memory_trap64.wast:118)
-PASS #78 Test that a WebAssembly code traps (memory_trap64.wast:119)
-PASS #79 Test that a WebAssembly code traps (memory_trap64.wast:120)
-PASS #80 Test that a WebAssembly code traps (memory_trap64.wast:121)
-PASS #81 Test that a WebAssembly code traps (memory_trap64.wast:122)
-PASS #82 Test that a WebAssembly code traps (memory_trap64.wast:123)
-PASS #83 Test that a WebAssembly code traps (memory_trap64.wast:124)
-PASS #84 Test that a WebAssembly code traps (memory_trap64.wast:125)
-PASS #85 Test that a WebAssembly code traps (memory_trap64.wast:126)
-PASS #86 Test that a WebAssembly code traps (memory_trap64.wast:127)
-PASS #87 Test that a WebAssembly code traps (memory_trap64.wast:128)
-PASS #88 Test that a WebAssembly code traps (memory_trap64.wast:129)
-PASS #89 Test that a WebAssembly code traps (memory_trap64.wast:130)
-PASS #90 Test that a WebAssembly code traps (memory_trap64.wast:131)
-PASS #91 Test that a WebAssembly code traps (memory_trap64.wast:132)
-PASS #92 Test that a WebAssembly code traps (memory_trap64.wast:133)
+FAIL #53 Test that WebAssembly compilation succeeds (memory_trap64.wast:1) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 53: Memory64 is not enabled at {loc} expected true got false
+FAIL #54 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:7:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #55 Test that a WebAssembly code returns a specific result (memory_trap64.wast:21) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:10:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #56 Test that a WebAssembly code returns a specific result (memory_trap64.wast:22) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:13:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #57 Test that a WebAssembly code traps (memory_trap64.wast:23) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:16:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #58 Test that a WebAssembly code traps (memory_trap64.wast:24) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:19:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #59 Test that a WebAssembly code traps (memory_trap64.wast:25) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:22:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #60 Test that a WebAssembly code traps (memory_trap64.wast:26) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:25:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #61 Test that a WebAssembly code traps (memory_trap64.wast:27) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:28:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #62 Test that a WebAssembly code traps (memory_trap64.wast:28) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:31:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #63 Test that a WebAssembly code traps (memory_trap64.wast:29) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:34:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #64 Test that a WebAssembly code traps (memory_trap64.wast:30) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:37:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #65 Test that a WebAssembly code traps (memory_trap64.wast:31) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:40:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #66 Test that a WebAssembly code traps (memory_trap64.wast:32) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:43:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #67 Test that WebAssembly compilation succeeds (memory_trap64.wast:34) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 93: Memory64 is not enabled at {loc} expected true got false
+FAIL #68 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:49:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #69 Test that a WebAssembly code traps (memory_trap64.wast:110) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:52:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #70 Test that a WebAssembly code traps (memory_trap64.wast:111) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:55:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #71 Test that a WebAssembly code traps (memory_trap64.wast:112) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:58:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #72 Test that a WebAssembly code traps (memory_trap64.wast:113) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:61:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #73 Test that a WebAssembly code traps (memory_trap64.wast:114) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:64:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #74 Test that a WebAssembly code traps (memory_trap64.wast:115) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:67:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #75 Test that a WebAssembly code traps (memory_trap64.wast:116) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:70:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #76 Test that a WebAssembly code traps (memory_trap64.wast:117) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:73:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #77 Test that a WebAssembly code traps (memory_trap64.wast:118) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:76:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #78 Test that a WebAssembly code traps (memory_trap64.wast:119) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:79:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #79 Test that a WebAssembly code traps (memory_trap64.wast:120) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:82:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #80 Test that a WebAssembly code traps (memory_trap64.wast:121) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:85:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #81 Test that a WebAssembly code traps (memory_trap64.wast:122) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:88:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #82 Test that a WebAssembly code traps (memory_trap64.wast:123) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:91:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #83 Test that a WebAssembly code traps (memory_trap64.wast:124) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:94:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #84 Test that a WebAssembly code traps (memory_trap64.wast:125) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:97:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #85 Test that a WebAssembly code traps (memory_trap64.wast:126) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:100:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #86 Test that a WebAssembly code traps (memory_trap64.wast:127) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:103:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #87 Test that a WebAssembly code traps (memory_trap64.wast:128) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:106:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #88 Test that a WebAssembly code traps (memory_trap64.wast:129) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:109:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #89 Test that a WebAssembly code traps (memory_trap64.wast:130) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:112:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #90 Test that a WebAssembly code traps (memory_trap64.wast:131) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:115:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #91 Test that a WebAssembly code traps (memory_trap64.wast:132) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:118:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #92 Test that a WebAssembly code traps (memory_trap64.wast:133) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:121:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #93 Test that WebAssembly compilation succeeds (wrapper)
-PASS #94 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #95 Test that a WebAssembly code traps (memory_trap64.wast:134)
+FAIL #94 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:124:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:124:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #95 Test that a WebAssembly code traps (memory_trap64.wast:134) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:124:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #96 Test that WebAssembly compilation succeeds (wrapper)
-PASS #97 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #98 Test that a WebAssembly code traps (memory_trap64.wast:135)
+FAIL #97 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:127:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:127:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #98 Test that a WebAssembly code traps (memory_trap64.wast:135) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:127:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #99 Test that WebAssembly compilation succeeds (wrapper)
-PASS #100 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #101 Test that a WebAssembly code traps (memory_trap64.wast:136)
+FAIL #100 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:130:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:130:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #101 Test that a WebAssembly code traps (memory_trap64.wast:136) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:130:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #102 Test that WebAssembly compilation succeeds (wrapper)
-PASS #103 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #104 Test that a WebAssembly code traps (memory_trap64.wast:137)
+FAIL #103 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:133:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:133:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #104 Test that a WebAssembly code traps (memory_trap64.wast:137) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:133:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #105 Test that WebAssembly compilation succeeds (wrapper)
-PASS #106 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #107 Test that a WebAssembly code traps (memory_trap64.wast:138)
+FAIL #106 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:136:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:136:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #107 Test that a WebAssembly code traps (memory_trap64.wast:138) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:136:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #108 Test that WebAssembly compilation succeeds (wrapper)
-PASS #109 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #110 Test that a WebAssembly code traps (memory_trap64.wast:139)
+FAIL #109 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:139:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:139:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #110 Test that a WebAssembly code traps (memory_trap64.wast:139) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:139:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #111 Test that WebAssembly compilation succeeds (wrapper)
-PASS #112 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #113 Test that a WebAssembly code traps (memory_trap64.wast:140)
+FAIL #112 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:142:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:142:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #113 Test that a WebAssembly code traps (memory_trap64.wast:140) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:142:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #114 Test that WebAssembly compilation succeeds (wrapper)
-PASS #115 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #116 Test that a WebAssembly code traps (memory_trap64.wast:141)
+FAIL #115 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:145:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:145:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #116 Test that a WebAssembly code traps (memory_trap64.wast:141) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:145:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #117 Test that WebAssembly compilation succeeds (wrapper)
-PASS #118 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #119 Test that a WebAssembly code traps (memory_trap64.wast:142)
+FAIL #118 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:148:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:148:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #119 Test that a WebAssembly code traps (memory_trap64.wast:142) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:148:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #120 Test that WebAssembly compilation succeeds (wrapper)
-PASS #121 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #122 Test that a WebAssembly code traps (memory_trap64.wast:143)
+FAIL #121 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:151:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:151:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #122 Test that a WebAssembly code traps (memory_trap64.wast:143) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:151:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #123 Test that WebAssembly compilation succeeds (wrapper)
-PASS #124 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #125 Test that a WebAssembly code traps (memory_trap64.wast:144)
+FAIL #124 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:154:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:154:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #125 Test that a WebAssembly code traps (memory_trap64.wast:144) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:154:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #126 Test that WebAssembly compilation succeeds (wrapper)
-PASS #127 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #128 Test that a WebAssembly code traps (memory_trap64.wast:145)
+FAIL #127 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:157:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:157:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #128 Test that a WebAssembly code traps (memory_trap64.wast:145) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:157:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #129 Test that WebAssembly compilation succeeds (wrapper)
-PASS #130 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #131 Test that a WebAssembly code traps (memory_trap64.wast:146)
+FAIL #130 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:160:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:160:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #131 Test that a WebAssembly code traps (memory_trap64.wast:146) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:160:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #132 Test that WebAssembly compilation succeeds (wrapper)
-PASS #133 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #134 Test that a WebAssembly code traps (memory_trap64.wast:147)
+FAIL #133 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:163:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:163:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #134 Test that a WebAssembly code traps (memory_trap64.wast:147) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:163:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #135 Test that WebAssembly compilation succeeds (wrapper)
-PASS #136 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #137 Test that a WebAssembly code traps (memory_trap64.wast:148)
+FAIL #136 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:166:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:166:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #137 Test that a WebAssembly code traps (memory_trap64.wast:148) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:166:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #138 Test that WebAssembly compilation succeeds (wrapper)
-PASS #139 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #140 Test that a WebAssembly code traps (memory_trap64.wast:149)
+FAIL #139 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:169:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:169:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #140 Test that a WebAssembly code traps (memory_trap64.wast:149) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:169:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #141 Test that WebAssembly compilation succeeds (wrapper)
-PASS #142 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #143 Test that a WebAssembly code traps (memory_trap64.wast:150)
+FAIL #142 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:172:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:172:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #143 Test that a WebAssembly code traps (memory_trap64.wast:150) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:172:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #144 Test that WebAssembly compilation succeeds (wrapper)
-PASS #145 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #146 Test that a WebAssembly code traps (memory_trap64.wast:151)
+FAIL #145 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:175:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:175:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #146 Test that a WebAssembly code traps (memory_trap64.wast:151) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:175:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #147 Test that WebAssembly compilation succeeds (wrapper)
-PASS #148 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #149 Test that a WebAssembly code traps (memory_trap64.wast:152)
+FAIL #148 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:178:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:178:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #149 Test that a WebAssembly code traps (memory_trap64.wast:152) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:178:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #150 Test that WebAssembly compilation succeeds (wrapper)
-PASS #151 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #152 Test that a WebAssembly code traps (memory_trap64.wast:153)
+FAIL #151 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:181:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:181:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #152 Test that a WebAssembly code traps (memory_trap64.wast:153) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:181:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #153 Test that WebAssembly compilation succeeds (wrapper)
-PASS #154 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #155 Test that a WebAssembly code traps (memory_trap64.wast:154)
+FAIL #154 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:184:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:184:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #155 Test that a WebAssembly code traps (memory_trap64.wast:154) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:184:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #156 Test that WebAssembly compilation succeeds (wrapper)
-PASS #157 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #158 Test that a WebAssembly code traps (memory_trap64.wast:155)
+FAIL #157 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:187:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:187:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #158 Test that a WebAssembly code traps (memory_trap64.wast:155) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:187:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #159 Test that WebAssembly compilation succeeds (wrapper)
-PASS #160 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #161 Test that a WebAssembly code traps (memory_trap64.wast:156)
+FAIL #160 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:190:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:190:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #161 Test that a WebAssembly code traps (memory_trap64.wast:156) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:190:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #162 Test that WebAssembly compilation succeeds (wrapper)
-PASS #163 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #164 Test that a WebAssembly code traps (memory_trap64.wast:157)
-PASS #165 Test that a WebAssembly code traps (memory_trap64.wast:158)
-PASS #166 Test that a WebAssembly code traps (memory_trap64.wast:159)
-PASS #167 Test that a WebAssembly code traps (memory_trap64.wast:160)
-PASS #168 Test that a WebAssembly code traps (memory_trap64.wast:161)
-PASS #169 Test that a WebAssembly code traps (memory_trap64.wast:162)
-PASS #170 Test that a WebAssembly code traps (memory_trap64.wast:163)
-PASS #171 Test that a WebAssembly code traps (memory_trap64.wast:164)
-PASS #172 Test that a WebAssembly code traps (memory_trap64.wast:165)
-PASS #173 Test that a WebAssembly code traps (memory_trap64.wast:166)
-PASS #174 Test that a WebAssembly code traps (memory_trap64.wast:167)
-PASS #175 Test that a WebAssembly code traps (memory_trap64.wast:168)
-PASS #176 Test that a WebAssembly code traps (memory_trap64.wast:169)
-PASS #177 Test that a WebAssembly code traps (memory_trap64.wast:170)
-PASS #178 Test that a WebAssembly code traps (memory_trap64.wast:171)
-PASS #179 Test that a WebAssembly code traps (memory_trap64.wast:172)
-PASS #180 Test that a WebAssembly code traps (memory_trap64.wast:173)
-PASS #181 Test that a WebAssembly code traps (memory_trap64.wast:174)
-PASS #182 Test that a WebAssembly code traps (memory_trap64.wast:175)
-PASS #183 Test that a WebAssembly code traps (memory_trap64.wast:176)
-PASS #184 Test that a WebAssembly code traps (memory_trap64.wast:177)
-PASS #185 Test that a WebAssembly code traps (memory_trap64.wast:178)
-PASS #186 Test that a WebAssembly code traps (memory_trap64.wast:179)
-PASS #187 Test that a WebAssembly code traps (memory_trap64.wast:180)
-PASS #188 Test that a WebAssembly code traps (memory_trap64.wast:181)
-PASS #189 Test that a WebAssembly code traps (memory_trap64.wast:182)
-PASS #190 Test that a WebAssembly code traps (memory_trap64.wast:183)
-PASS #191 Test that a WebAssembly code traps (memory_trap64.wast:184)
-PASS #192 Test that a WebAssembly code traps (memory_trap64.wast:185)
-PASS #193 Test that a WebAssembly code traps (memory_trap64.wast:186)
-PASS #194 Test that a WebAssembly code traps (memory_trap64.wast:187)
-PASS #195 Test that a WebAssembly code traps (memory_trap64.wast:188)
-PASS #196 Test that a WebAssembly code traps (memory_trap64.wast:189)
-PASS #197 Test that a WebAssembly code traps (memory_trap64.wast:190)
-PASS #198 Test that a WebAssembly code traps (memory_trap64.wast:191)
-PASS #199 Test that a WebAssembly code traps (memory_trap64.wast:192)
-PASS #200 Test that a WebAssembly code traps (memory_trap64.wast:193)
-PASS #201 Test that a WebAssembly code traps (memory_trap64.wast:194)
-PASS #202 Test that a WebAssembly code traps (memory_trap64.wast:195)
-PASS #203 Test that a WebAssembly code traps (memory_trap64.wast:196)
-PASS #204 Test that a WebAssembly code traps (memory_trap64.wast:197)
-PASS #205 Test that a WebAssembly code traps (memory_trap64.wast:198)
-PASS #206 Test that a WebAssembly code traps (memory_trap64.wast:199)
-PASS #207 Test that a WebAssembly code traps (memory_trap64.wast:200)
-PASS #208 Test that a WebAssembly code traps (memory_trap64.wast:201)
+FAIL #163 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:193:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:193:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #164 Test that a WebAssembly code traps (memory_trap64.wast:157) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:193:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #165 Test that a WebAssembly code traps (memory_trap64.wast:158) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:196:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #166 Test that a WebAssembly code traps (memory_trap64.wast:159) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:199:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #167 Test that a WebAssembly code traps (memory_trap64.wast:160) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:202:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #168 Test that a WebAssembly code traps (memory_trap64.wast:161) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:205:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #169 Test that a WebAssembly code traps (memory_trap64.wast:162) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:208:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #170 Test that a WebAssembly code traps (memory_trap64.wast:163) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:211:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #171 Test that a WebAssembly code traps (memory_trap64.wast:164) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:214:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #172 Test that a WebAssembly code traps (memory_trap64.wast:165) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:217:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #173 Test that a WebAssembly code traps (memory_trap64.wast:166) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:220:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #174 Test that a WebAssembly code traps (memory_trap64.wast:167) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:223:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #175 Test that a WebAssembly code traps (memory_trap64.wast:168) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:226:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #176 Test that a WebAssembly code traps (memory_trap64.wast:169) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:229:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #177 Test that a WebAssembly code traps (memory_trap64.wast:170) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:232:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #178 Test that a WebAssembly code traps (memory_trap64.wast:171) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:235:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #179 Test that a WebAssembly code traps (memory_trap64.wast:172) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:238:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #180 Test that a WebAssembly code traps (memory_trap64.wast:173) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:241:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #181 Test that a WebAssembly code traps (memory_trap64.wast:174) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:244:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #182 Test that a WebAssembly code traps (memory_trap64.wast:175) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:247:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #183 Test that a WebAssembly code traps (memory_trap64.wast:176) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:250:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #184 Test that a WebAssembly code traps (memory_trap64.wast:177) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:253:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #185 Test that a WebAssembly code traps (memory_trap64.wast:178) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:256:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #186 Test that a WebAssembly code traps (memory_trap64.wast:179) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:259:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #187 Test that a WebAssembly code traps (memory_trap64.wast:180) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:262:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #188 Test that a WebAssembly code traps (memory_trap64.wast:181) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:265:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #189 Test that a WebAssembly code traps (memory_trap64.wast:182) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:268:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #190 Test that a WebAssembly code traps (memory_trap64.wast:183) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:271:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #191 Test that a WebAssembly code traps (memory_trap64.wast:184) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:274:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #192 Test that a WebAssembly code traps (memory_trap64.wast:185) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:277:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #193 Test that a WebAssembly code traps (memory_trap64.wast:186) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:280:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #194 Test that a WebAssembly code traps (memory_trap64.wast:187) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:283:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #195 Test that a WebAssembly code traps (memory_trap64.wast:188) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:286:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #196 Test that a WebAssembly code traps (memory_trap64.wast:189) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:289:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #197 Test that a WebAssembly code traps (memory_trap64.wast:190) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:292:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #198 Test that a WebAssembly code traps (memory_trap64.wast:191) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:295:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #199 Test that a WebAssembly code traps (memory_trap64.wast:192) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:298:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #200 Test that a WebAssembly code traps (memory_trap64.wast:193) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:301:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #201 Test that a WebAssembly code traps (memory_trap64.wast:194) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:304:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #202 Test that a WebAssembly code traps (memory_trap64.wast:195) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:307:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #203 Test that a WebAssembly code traps (memory_trap64.wast:196) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:310:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #204 Test that a WebAssembly code traps (memory_trap64.wast:197) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:313:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #205 Test that a WebAssembly code traps (memory_trap64.wast:198) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:316:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #206 Test that a WebAssembly code traps (memory_trap64.wast:199) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:319:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #207 Test that a WebAssembly code traps (memory_trap64.wast:200) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:322:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #208 Test that a WebAssembly code traps (memory_trap64.wast:201) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:325:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #209 Test that WebAssembly compilation succeeds (wrapper)
-PASS #210 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #211 Test that a WebAssembly code traps (memory_trap64.wast:202)
+FAIL #210 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:328:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:328:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #211 Test that a WebAssembly code traps (memory_trap64.wast:202) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:328:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #212 Test that WebAssembly compilation succeeds (wrapper)
-PASS #213 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #214 Test that a WebAssembly code traps (memory_trap64.wast:203)
+FAIL #213 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:331:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:331:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #214 Test that a WebAssembly code traps (memory_trap64.wast:203) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:331:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #215 Test that WebAssembly compilation succeeds (wrapper)
-PASS #216 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #217 Test that a WebAssembly code traps (memory_trap64.wast:204)
+FAIL #216 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:334:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:334:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #217 Test that a WebAssembly code traps (memory_trap64.wast:204) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:334:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #218 Test that WebAssembly compilation succeeds (wrapper)
-PASS #219 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #220 Test that a WebAssembly code traps (memory_trap64.wast:205)
+FAIL #219 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:337:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:337:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #220 Test that a WebAssembly code traps (memory_trap64.wast:205) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:337:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #221 Test that WebAssembly compilation succeeds (wrapper)
-PASS #222 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #223 Test that a WebAssembly code traps (memory_trap64.wast:206)
+FAIL #222 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:340:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:340:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #223 Test that a WebAssembly code traps (memory_trap64.wast:206) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:340:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #224 Test that WebAssembly compilation succeeds (wrapper)
-PASS #225 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #226 Test that a WebAssembly code traps (memory_trap64.wast:207)
+FAIL #225 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:343:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:343:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #226 Test that a WebAssembly code traps (memory_trap64.wast:207) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:343:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #227 Test that WebAssembly compilation succeeds (wrapper)
-PASS #228 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #229 Test that a WebAssembly code traps (memory_trap64.wast:208)
+FAIL #228 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:346:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:346:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #229 Test that a WebAssembly code traps (memory_trap64.wast:208) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:346:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #230 Test that WebAssembly compilation succeeds (wrapper)
-PASS #231 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #232 Test that a WebAssembly code traps (memory_trap64.wast:209)
+FAIL #231 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:349:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:349:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #232 Test that a WebAssembly code traps (memory_trap64.wast:209) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:349:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #233 Test that WebAssembly compilation succeeds (wrapper)
-PASS #234 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #235 Test that a WebAssembly code traps (memory_trap64.wast:210)
+FAIL #234 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:352:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:352:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #235 Test that a WebAssembly code traps (memory_trap64.wast:210) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:352:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #236 Test that WebAssembly compilation succeeds (wrapper)
-PASS #237 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #238 Test that a WebAssembly code traps (memory_trap64.wast:211)
+FAIL #237 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:355:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:355:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #238 Test that a WebAssembly code traps (memory_trap64.wast:211) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:355:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #239 Test that WebAssembly compilation succeeds (wrapper)
-PASS #240 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #241 Test that a WebAssembly code traps (memory_trap64.wast:212)
+FAIL #240 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:358:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:358:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #241 Test that a WebAssembly code traps (memory_trap64.wast:212) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:358:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #242 Test that WebAssembly compilation succeeds (wrapper)
-PASS #243 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #244 Test that a WebAssembly code traps (memory_trap64.wast:213)
+FAIL #243 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:361:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:361:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #244 Test that a WebAssembly code traps (memory_trap64.wast:213) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:361:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #245 Test that WebAssembly compilation succeeds (wrapper)
-PASS #246 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #247 Test that a WebAssembly code traps (memory_trap64.wast:214)
+FAIL #246 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:364:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:364:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #247 Test that a WebAssembly code traps (memory_trap64.wast:214) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:364:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #248 Test that WebAssembly compilation succeeds (wrapper)
-PASS #249 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #250 Test that a WebAssembly code traps (memory_trap64.wast:215)
+FAIL #249 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:367:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:367:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #250 Test that a WebAssembly code traps (memory_trap64.wast:215) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:367:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #251 Test that WebAssembly compilation succeeds (wrapper)
-PASS #252 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #253 Test that a WebAssembly code traps (memory_trap64.wast:216)
+FAIL #252 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:370:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:370:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #253 Test that a WebAssembly code traps (memory_trap64.wast:216) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:370:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #254 Test that WebAssembly compilation succeeds (wrapper)
-PASS #255 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #256 Test that a WebAssembly code traps (memory_trap64.wast:217)
+FAIL #255 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:373:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:373:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #256 Test that a WebAssembly code traps (memory_trap64.wast:217) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:373:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #257 Test that WebAssembly compilation succeeds (wrapper)
-PASS #258 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #259 Test that a WebAssembly code traps (memory_trap64.wast:218)
+FAIL #258 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:376:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:376:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #259 Test that a WebAssembly code traps (memory_trap64.wast:218) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:376:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #260 Test that WebAssembly compilation succeeds (wrapper)
-PASS #261 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #262 Test that a WebAssembly code traps (memory_trap64.wast:219)
+FAIL #261 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:379:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:379:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #262 Test that a WebAssembly code traps (memory_trap64.wast:219) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:379:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #263 Test that WebAssembly compilation succeeds (wrapper)
-PASS #264 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #265 Test that a WebAssembly code traps (memory_trap64.wast:220)
+FAIL #264 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:382:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:382:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #265 Test that a WebAssembly code traps (memory_trap64.wast:220) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:382:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #266 Test that WebAssembly compilation succeeds (wrapper)
-PASS #267 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #268 Test that a WebAssembly code traps (memory_trap64.wast:221)
+FAIL #267 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:385:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:385:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #268 Test that a WebAssembly code traps (memory_trap64.wast:221) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:385:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #269 Test that WebAssembly compilation succeeds (wrapper)
-PASS #270 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #271 Test that a WebAssembly code traps (memory_trap64.wast:222)
+FAIL #270 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:388:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:388:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #271 Test that a WebAssembly code traps (memory_trap64.wast:222) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:388:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #272 Test that WebAssembly compilation succeeds (wrapper)
-PASS #273 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #274 Test that a WebAssembly code traps (memory_trap64.wast:223)
+FAIL #273 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:391:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:391:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #274 Test that a WebAssembly code traps (memory_trap64.wast:223) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:391:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #275 Test that WebAssembly compilation succeeds (wrapper)
-PASS #276 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #277 Test that a WebAssembly code traps (memory_trap64.wast:224)
+FAIL #276 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:394:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:394:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #277 Test that a WebAssembly code traps (memory_trap64.wast:224) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:394:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 PASS #278 Test that WebAssembly compilation succeeds (wrapper)
-PASS #279 Test that WebAssembly instantiation succeeds (wrapper)
-PASS #280 Test that a WebAssembly code traps (memory_trap64.wast:225)
-PASS #281 Test that a WebAssembly code traps (memory_trap64.wast:226)
-PASS #282 Test that a WebAssembly code traps (memory_trap64.wast:227)
-PASS #283 Test that a WebAssembly code traps (memory_trap64.wast:228)
-PASS #284 Test that a WebAssembly code traps (memory_trap64.wast:229)
-PASS #285 Test that a WebAssembly code traps (memory_trap64.wast:230)
-PASS #286 Test that a WebAssembly code traps (memory_trap64.wast:231)
-PASS #287 Test that a WebAssembly code traps (memory_trap64.wast:232)
-PASS #288 Test that a WebAssembly code traps (memory_trap64.wast:233)
-PASS #289 Test that a WebAssembly code traps (memory_trap64.wast:234)
-PASS #290 Test that a WebAssembly code traps (memory_trap64.wast:235)
-PASS #291 Test that a WebAssembly code traps (memory_trap64.wast:236)
-PASS #292 Test that a WebAssembly code traps (memory_trap64.wast:237)
-PASS #293 Test that a WebAssembly code traps (memory_trap64.wast:238)
-PASS #294 Test that a WebAssembly code traps (memory_trap64.wast:239)
-PASS #295 Test that a WebAssembly code traps (memory_trap64.wast:240)
-PASS #296 Test that a WebAssembly code traps (memory_trap64.wast:241)
-PASS #297 Test that a WebAssembly code traps (memory_trap64.wast:242)
-PASS #298 Test that a WebAssembly code traps (memory_trap64.wast:243)
-PASS #299 Test that a WebAssembly code traps (memory_trap64.wast:244)
-PASS #300 Test that a WebAssembly code traps (memory_trap64.wast:245)
-PASS #301 Test that a WebAssembly code traps (memory_trap64.wast:246)
-PASS #302 Test that a WebAssembly code traps (memory_trap64.wast:247)
-PASS #303 Test that a WebAssembly code traps (memory_trap64.wast:248)
-PASS #304 Test that a WebAssembly code traps (memory_trap64.wast:249)
-PASS #305 Test that a WebAssembly code traps (memory_trap64.wast:250)
-PASS #306 Test that a WebAssembly code traps (memory_trap64.wast:251)
-PASS #307 Test that a WebAssembly code traps (memory_trap64.wast:252)
-PASS #308 Test that a WebAssembly code traps (memory_trap64.wast:253)
-PASS #309 Test that a WebAssembly code traps (memory_trap64.wast:254)
-PASS #310 Test that a WebAssembly code traps (memory_trap64.wast:255)
-PASS #311 Test that a WebAssembly code traps (memory_trap64.wast:256)
-PASS #312 Test that a WebAssembly code traps (memory_trap64.wast:257)
-PASS #313 Test that a WebAssembly code traps (memory_trap64.wast:258)
-PASS #314 Test that a WebAssembly code traps (memory_trap64.wast:259)
-PASS #315 Test that a WebAssembly code traps (memory_trap64.wast:260)
-PASS #316 Test that a WebAssembly code traps (memory_trap64.wast:261)
-PASS #317 Test that a WebAssembly code traps (memory_trap64.wast:262)
-PASS #318 Test that a WebAssembly code traps (memory_trap64.wast:263)
-PASS #319 Test that a WebAssembly code traps (memory_trap64.wast:264)
-PASS #320 Test that a WebAssembly code traps (memory_trap64.wast:265)
-PASS #321 Test that a WebAssembly code returns a specific result (memory_trap64.wast:268)
-PASS #322 Test that a WebAssembly code returns a specific result (memory_trap64.wast:269)
+FAIL #279 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64.load must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:397:32
+assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:270:37
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:397:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #280 Test that a WebAssembly code traps (memory_trap64.wast:225) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:397:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #281 Test that a WebAssembly code traps (memory_trap64.wast:226) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:400:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #282 Test that a WebAssembly code traps (memory_trap64.wast:227) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:403:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #283 Test that a WebAssembly code traps (memory_trap64.wast:228) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:406:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #284 Test that a WebAssembly code traps (memory_trap64.wast:229) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:409:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #285 Test that a WebAssembly code traps (memory_trap64.wast:230) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:412:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #286 Test that a WebAssembly code traps (memory_trap64.wast:231) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:415:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #287 Test that a WebAssembly code traps (memory_trap64.wast:232) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:418:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #288 Test that a WebAssembly code traps (memory_trap64.wast:233) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:421:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #289 Test that a WebAssembly code traps (memory_trap64.wast:234) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:424:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #290 Test that a WebAssembly code traps (memory_trap64.wast:235) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:427:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #291 Test that a WebAssembly code traps (memory_trap64.wast:236) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:430:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #292 Test that a WebAssembly code traps (memory_trap64.wast:237) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:433:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #293 Test that a WebAssembly code traps (memory_trap64.wast:238) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:436:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #294 Test that a WebAssembly code traps (memory_trap64.wast:239) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:439:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #295 Test that a WebAssembly code traps (memory_trap64.wast:240) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:442:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #296 Test that a WebAssembly code traps (memory_trap64.wast:241) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:445:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #297 Test that a WebAssembly code traps (memory_trap64.wast:242) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:448:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #298 Test that a WebAssembly code traps (memory_trap64.wast:243) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:451:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #299 Test that a WebAssembly code traps (memory_trap64.wast:244) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:454:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #300 Test that a WebAssembly code traps (memory_trap64.wast:245) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:457:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #301 Test that a WebAssembly code traps (memory_trap64.wast:246) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:460:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #302 Test that a WebAssembly code traps (memory_trap64.wast:247) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:463:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #303 Test that a WebAssembly code traps (memory_trap64.wast:248) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:466:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #304 Test that a WebAssembly code traps (memory_trap64.wast:249) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:469:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #305 Test that a WebAssembly code traps (memory_trap64.wast:250) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:472:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #306 Test that a WebAssembly code traps (memory_trap64.wast:251) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:475:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #307 Test that a WebAssembly code traps (memory_trap64.wast:252) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:478:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #308 Test that a WebAssembly code traps (memory_trap64.wast:253) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:481:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #309 Test that a WebAssembly code traps (memory_trap64.wast:254) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:484:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #310 Test that a WebAssembly code traps (memory_trap64.wast:255) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:487:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #311 Test that a WebAssembly code traps (memory_trap64.wast:256) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:490:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #312 Test that a WebAssembly code traps (memory_trap64.wast:257) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:493:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #313 Test that a WebAssembly code traps (memory_trap64.wast:258) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:496:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #314 Test that a WebAssembly code traps (memory_trap64.wast:259) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:499:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #315 Test that a WebAssembly code traps (memory_trap64.wast:260) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:502:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #316 Test that a WebAssembly code traps (memory_trap64.wast:261) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:505:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #317 Test that a WebAssembly code traps (memory_trap64.wast:262) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:508:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #318 Test that a WebAssembly code traps (memory_trap64.wast:263) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:511:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #319 Test that a WebAssembly code traps (memory_trap64.wast:264) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:514:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #320 Test that a WebAssembly code traps (memory_trap64.wast:265) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:517:12
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #321 Test that a WebAssembly code returns a specific result (memory_trap64.wast:268) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:520:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
+FAIL #322 Test that a WebAssembly code returns a specific result (memory_trap64.wast:269) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+memory_trap64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:523:14
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_trap64.wast.js:525:3 expected true got false
 

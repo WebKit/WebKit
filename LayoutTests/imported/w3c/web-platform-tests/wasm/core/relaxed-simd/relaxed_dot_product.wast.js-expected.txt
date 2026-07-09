@@ -1,0 +1,109 @@
+
+PASS #1 Reinitialize the default imports
+FAIL #2 Test that WebAssembly compilation succeeds (relaxed_dot_product.wast:3) assert_equals: expected false but got true
+PASS #3 Test that WebAssembly compilation succeeds (wrapper)
+PASS #4 Test that WebAssembly compilation succeeds (wrapper)
+PASS #5 Test that WebAssembly compilation succeeds (wrapper)
+PASS #6 Test that WebAssembly compilation succeeds (wrapper)
+PASS #7 Test that WebAssembly compilation succeeds (wrapper)
+PASS #8 Test that WebAssembly compilation succeeds (wrapper)
+PASS #9 Test that WebAssembly compilation succeeds (wrapper)
+PASS #10 Test that WebAssembly compilation succeeds (wrapper)
+PASS #11 Test that WebAssembly compilation succeeds (wrapper)
+PASS #12 Test that WebAssembly compilation succeeds (wrapper)
+PASS #13 Reinitialize the default imports
+FAIL #14 Test that WebAssembly compilation succeeds (relaxed_dot_product.wast:3) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 8: relaxed simd instructions not supported, in function at index 0 at {loc} expected true got false
+FAIL #15 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:7:18
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+PASS #16 Test that WebAssembly compilation succeeds (wrapper)
+FAIL #17 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:i16x8.relaxed_dot_i8x16_i7x16_s must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:10:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:10:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+FAIL #18 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:10:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+PASS #19 Test that WebAssembly compilation succeeds (wrapper)
+FAIL #20 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:i16x8.relaxed_dot_i8x16_i7x16_s must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:13:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:13:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+FAIL #21 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:13:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+PASS #22 Test that WebAssembly compilation succeeds (wrapper)
+FAIL #23 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:i16x8.relaxed_dot_i8x16_i7x16_s must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:16:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:16:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+FAIL #24 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:16:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+PASS #25 Test that WebAssembly compilation succeeds (wrapper)
+FAIL #26 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:i32x4.relaxed_dot_i8x16_i7x16_add_s must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:19:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:19:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+FAIL #27 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:19:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+PASS #28 Test that WebAssembly compilation succeeds (wrapper)
+FAIL #29 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:i32x4.relaxed_dot_i8x16_i7x16_add_s must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:22:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:22:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+FAIL #30 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:22:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+PASS #31 Test that WebAssembly compilation succeeds (wrapper)
+FAIL #32 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:i32x4.relaxed_dot_i8x16_i7x16_add_s must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:25:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:25:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+FAIL #33 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:25:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+PASS #34 Test that WebAssembly compilation succeeds (wrapper)
+FAIL #35 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:i16x8.relaxed_dot_i8x16_i7x16_s_cmp must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:28:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:28:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+FAIL #36 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:28:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+PASS #37 Test that WebAssembly compilation succeeds (wrapper)
+FAIL #38 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:i32x4.relaxed_dot_i8x16_i7x16_add_s_cmp must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:31:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:31:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+FAIL #39 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:31:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+PASS #40 Test that WebAssembly compilation succeeds (wrapper)
+FAIL #41 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:i16x8.relaxed_dot_i8x16_i7x16_s_cmp must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:34:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:34:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+FAIL #42 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:34:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+PASS #43 Test that WebAssembly compilation succeeds (wrapper)
+FAIL #44 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:i32x4.relaxed_dot_i8x16_i7x16_add_s_cmp must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:37:24
+run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:37:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+FAIL #45 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
+relaxed_dot_product_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:37:4
+global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_dot_product.wast.js:39:3 expected true got false
+

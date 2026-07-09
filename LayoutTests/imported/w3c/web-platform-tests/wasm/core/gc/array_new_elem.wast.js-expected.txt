@@ -1,0 +1,40 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (array_new_elem.wast:3)
+PASS #3 Test that WebAssembly compilation succeeds (array_new_elem.wast:29)
+PASS #4 Test that WebAssembly compilation succeeds (array_new_elem.wast:51)
+PASS #5 Test that WebAssembly compilation succeeds (array_new_elem.wast:77)
+PASS #6 Test that WebAssembly compilation succeeds (array_new_elem.wast:106)
+PASS #7 Reinitialize the default imports
+PASS #8 Test that WebAssembly compilation succeeds (array_new_elem.wast:3)
+PASS #9 Test that WebAssembly instantiation succeeds (array_new_elem.wast:3)
+PASS #10 Test that a WebAssembly code returns a specific result (array_new_elem.wast:18)
+PASS #11 Test that a WebAssembly code returns a specific result (array_new_elem.wast:19)
+PASS #12 Test that a WebAssembly code returns a specific result (array_new_elem.wast:20)
+PASS #13 Test that a WebAssembly code returns a specific result (array_new_elem.wast:21)
+PASS #14 Test that a WebAssembly code traps (array_new_elem.wast:24)
+PASS #15 Test that a WebAssembly code traps (array_new_elem.wast:25)
+PASS #16 Test that a WebAssembly code traps (array_new_elem.wast:26)
+PASS #17 Test that a WebAssembly code traps (array_new_elem.wast:27)
+PASS #18 Test that WebAssembly compilation succeeds (array_new_elem.wast:29)
+PASS #19 Test that WebAssembly instantiation succeeds (array_new_elem.wast:29)
+PASS #20 Test that a WebAssembly code returns a specific result (array_new_elem.wast:47)
+PASS #21 Test that WebAssembly compilation succeeds (array_new_elem.wast:51)
+PASS #22 Test that WebAssembly instantiation succeeds (array_new_elem.wast:51)
+PASS #23 Test that a WebAssembly code returns a specific result (array_new_elem.wast:66)
+PASS #24 Test that a WebAssembly code returns a specific result (array_new_elem.wast:67)
+PASS #25 Test that a WebAssembly code returns a specific result (array_new_elem.wast:68)
+PASS #26 Test that a WebAssembly code returns a specific result (array_new_elem.wast:69)
+PASS #27 Test that a WebAssembly code traps (array_new_elem.wast:72)
+PASS #28 Test that a WebAssembly code traps (array_new_elem.wast:73)
+PASS #29 Test that a WebAssembly code traps (array_new_elem.wast:74)
+PASS #30 Test that a WebAssembly code traps (array_new_elem.wast:75)
+PASS #31 Test that WebAssembly compilation succeeds (array_new_elem.wast:77)
+PASS #32 Test that WebAssembly instantiation succeeds (array_new_elem.wast:77)
+PASS #33 Test that a WebAssembly code returns a specific result (array_new_elem.wast:103)
+PASS #34 Test that WebAssembly compilation succeeds (array_new_elem.wast:106)
+PASS #35 Test that WebAssembly instantiation succeeds (array_new_elem.wast:106)
+FAIL #36 Test that a WebAssembly code returns a specific result (array_new_elem.wast:121) assert_equals: assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
+array_new_elem_wast_js@http://web-platform.test:8800/wasm/core/js/gc/array_new_elem.wast.js:88:14
+global code@http://web-platform.test:8800/wasm/core/js/gc/array_new_elem.wast.js:90:3 expected 1 but got 0
+

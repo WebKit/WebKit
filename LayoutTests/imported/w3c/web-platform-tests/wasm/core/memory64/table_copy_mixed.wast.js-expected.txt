@@ -2,17 +2,14 @@
 PASS #1 Reinitialize the default imports
 FAIL #2 Test that WebAssembly compilation succeeds (table_copy_mixed.wast:2) assert_equals: expected false but got true
 PASS #3 Test that WebAssembly compilation fails (table_copy_mixed.wast:20)
-FAIL #4 Test that WebAssembly compilation fails (table_copy_mixed.wast:30) assert_equals: expected true but got false
+PASS #4 Test that WebAssembly compilation fails (table_copy_mixed.wast:30)
 PASS #5 Test that WebAssembly compilation fails (table_copy_mixed.wast:40)
 PASS #6 Reinitialize the default imports
-FAIL #7 Test that WebAssembly compilation succeeds (table_copy_mixed.wast:2) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't validate: table.copy dst_offset to type I64 expected I32, in function at index 1 at {loc} expected true got false
-FAIL #8 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:201:24
+FAIL #7 Test that WebAssembly compilation succeeds (table_copy_mixed.wast:2) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 42: Memory64 is not enabled at {loc} expected true got false
+FAIL #8 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
 table_copy_mixed_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/table_copy_mixed.wast.js:7:18
 global code@http://web-platform.test:8800/wasm/core/js/memory64/table_copy_mixed.wast.js:18:3 expected true got false
 PASS #9 Test that WebAssembly compilation fails (table_copy_mixed.wast:20)
-FAIL #10 Test that WebAssembly compilation fails (table_copy_mixed.wast:30) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:157:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:186:9
-table_copy_mixed_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/table_copy_mixed.wast.js:13:15
-global code@http://web-platform.test:8800/wasm/core/js/memory64/table_copy_mixed.wast.js:18:3 expected true got false
+PASS #10 Test that WebAssembly compilation fails (table_copy_mixed.wast:30)
 PASS #11 Test that WebAssembly compilation fails (table_copy_mixed.wast:40)
 

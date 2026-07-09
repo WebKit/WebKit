@@ -1,0 +1,15 @@
+
+PASS compileStreaming using resolved response
+PASS compileStreaming using resolved response and check instantiate
+PASS compileStreaming using promise response from fetch and check instantiate
+PASS compileStreaming raise error if wrong mime type
+PASS compileStreaming raise error if no mime type
+PASS compileStreaming raise error if 404 status
+PASS compileStreaming check CORS
+PASS compileStreaming raise error if no-cors
+PASS compileStreaming receive promise with response created from ArrayBuffer
+PASS compileStreaming using ReadableStream with Uint8Array chunks
+PASS compileStreaming using ReadableStream with ArrayBuffer chunk
+PASS compileStreaming using blob
+PASS compileStreaming using FormData
+

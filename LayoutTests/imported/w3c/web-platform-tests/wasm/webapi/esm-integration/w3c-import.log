@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/execute-start.tentative.html
@@ -22,8 +20,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/module-parse-error.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resolve-export.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resolve-export.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/reuse-wasm-loaded-as-classic-script.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/script-src-allows-source-phase-wasm.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/script-src-allows-wasm.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/script-src-blocks-wasm.tentative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/source-phase-blocked-by-csp.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/source-phase-import-non-UTF8.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/source-phase-js-string.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/source-phase-preload.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/source-phase.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/wasm-import-wasm-export.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/wasm-import.tentative.html
@@ -32,3 +36,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/worker-import-source-phase.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/worker-import.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/worker.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/worklet-import-source-phase.tentative.https.html

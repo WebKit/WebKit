@@ -1,0 +1,33 @@
+
+PASS #1 Reinitialize the default imports
+FAIL #2 Test that WebAssembly compilation succeeds (binary0.wast:2) assert_equals: expected false but got true
+FAIL #3 Test that WebAssembly compilation succeeds (binary0.wast:8) assert_equals: expected false but got true
+FAIL #4 Test that WebAssembly compilation succeeds (binary0.wast:16) assert_equals: expected false but got true
+FAIL #5 Test that WebAssembly compilation succeeds (binary0.wast:26) assert_equals: expected false but got true
+FAIL #6 Test that WebAssembly compilation succeeds (binary0.wast:36) assert_equals: expected false but got true
+PASS #7 Test that WebAssembly compilation fails (binary0.wast:47)
+PASS #8 Test that WebAssembly compilation fails (binary0.wast:58)
+PASS #9 Reinitialize the default imports
+FAIL #10 Test that WebAssembly compilation succeeds (binary0.wast:2) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 11: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+FAIL #11 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+binary0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/binary0.wast.js:7:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/binary0.wast.js:39:3 expected true got false
+FAIL #12 Test that WebAssembly compilation succeeds (binary0.wast:8) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 11: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+FAIL #13 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+binary0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/binary0.wast.js:13:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/binary0.wast.js:39:3 expected true got false
+FAIL #14 Test that WebAssembly compilation succeeds (binary0.wast:16) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 11: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+FAIL #15 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+binary0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/binary0.wast.js:19:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/binary0.wast.js:39:3 expected true got false
+FAIL #16 Test that WebAssembly compilation succeeds (binary0.wast:26) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 11: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+FAIL #17 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+binary0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/binary0.wast.js:25:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/binary0.wast.js:39:3 expected true got false
+FAIL #18 Test that WebAssembly compilation succeeds (binary0.wast:36) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 11: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
+FAIL #19 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+binary0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/binary0.wast.js:31:18
+global code@http://web-platform.test:8800/wasm/core/js/multi-memory/binary0.wast.js:39:3 expected true got false
+PASS #20 Test that WebAssembly compilation fails (binary0.wast:47)
+PASS #21 Test that WebAssembly compilation fails (binary0.wast:58)
+

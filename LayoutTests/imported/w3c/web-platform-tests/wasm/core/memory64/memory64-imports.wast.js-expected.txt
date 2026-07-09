@@ -4,71 +4,71 @@ PASS #2 Test that WebAssembly compilation succeeds (memory64-imports.wast:1)
 PASS #3 Test that WebAssembly compilation succeeds (memory64-imports.wast:3)
 PASS #4 Test that WebAssembly compilation succeeds (memory64-imports.wast:5)
 PASS #5 Test that WebAssembly compilation succeeds (memory64-imports.wast:7)
-PASS #6 Test that WebAssembly compilation succeeds (memory64-imports.wast:10)
-PASS #7 Test that WebAssembly compilation succeeds (memory64-imports.wast:12)
-PASS #8 Test that WebAssembly compilation succeeds (memory64-imports.wast:14)
-PASS #9 Test that WebAssembly compilation succeeds (memory64-imports.wast:16)
-PASS #10 Test that WebAssembly compilation succeeds (memory64-imports.wast:18)
-PASS #11 Test that WebAssembly compilation succeeds (memory64-imports.wast:19)
-PASS #12 Test that WebAssembly compilation succeeds (memory64-imports.wast:20)
-PASS #13 Test that WebAssembly compilation succeeds (memory64-imports.wast:21)
-PASS #14 Test that WebAssembly compilation succeeds (memory64-imports.wast:22)
-PASS #15 Test that WebAssembly compilation succeeds (memory64-imports.wast:23)
-PASS #16 Test that WebAssembly compilation succeeds (memory64-imports.wast:24)
-PASS #17 Test that WebAssembly compilation succeeds (memory64-imports.wast:25)
-PASS #18 Test that WebAssembly compilation succeeds (memory64-imports.wast:26)
-PASS #19 Test that WebAssembly compilation succeeds (memory64-imports.wast:27)
-PASS #20 Test that WebAssembly compilation succeeds (memory64-imports.wast:28)
-PASS #21 Test that WebAssembly compilation succeeds (memory64-imports.wast:29)
-PASS #22 Test that WebAssembly compilation succeeds (memory64-imports.wast:30)
-PASS #23 Test that WebAssembly compilation succeeds (memory64-imports.wast:31)
-PASS #24 Test that WebAssembly compilation succeeds (memory64-imports.wast:32)
-PASS #25 Test that WebAssembly compilation succeeds (memory64-imports.wast:33)
-PASS #26 Test that WebAssembly compilation succeeds (memory64-imports.wast:34)
-PASS #27 Test that WebAssembly compilation succeeds (memory64-imports.wast:35)
-PASS #28 Test that WebAssembly compilation succeeds (memory64-imports.wast:37)
-PASS #29 Test that WebAssembly compilation succeeds (memory64-imports.wast:41)
-PASS #30 Test that WebAssembly compilation succeeds (memory64-imports.wast:45)
-PASS #31 Test that WebAssembly compilation succeeds (memory64-imports.wast:49)
-PASS #32 Test that WebAssembly compilation succeeds (memory64-imports.wast:53)
+FAIL #6 Test that WebAssembly compilation succeeds (memory64-imports.wast:10) assert_equals: expected false but got true
+FAIL #7 Test that WebAssembly compilation succeeds (memory64-imports.wast:12) assert_equals: expected false but got true
+FAIL #8 Test that WebAssembly compilation succeeds (memory64-imports.wast:14) assert_equals: expected false but got true
+FAIL #9 Test that WebAssembly compilation succeeds (memory64-imports.wast:16) assert_equals: expected false but got true
+FAIL #10 Test that WebAssembly compilation succeeds (memory64-imports.wast:18) assert_equals: expected false but got true
+FAIL #11 Test that WebAssembly compilation succeeds (memory64-imports.wast:19) assert_equals: expected false but got true
+FAIL #12 Test that WebAssembly compilation succeeds (memory64-imports.wast:20) assert_equals: expected false but got true
+FAIL #13 Test that WebAssembly compilation succeeds (memory64-imports.wast:21) assert_equals: expected false but got true
+FAIL #14 Test that WebAssembly compilation succeeds (memory64-imports.wast:22) assert_equals: expected false but got true
+FAIL #15 Test that WebAssembly compilation succeeds (memory64-imports.wast:23) assert_equals: expected false but got true
+FAIL #16 Test that WebAssembly compilation succeeds (memory64-imports.wast:24) assert_equals: expected false but got true
+FAIL #17 Test that WebAssembly compilation succeeds (memory64-imports.wast:25) assert_equals: expected false but got true
+FAIL #18 Test that WebAssembly compilation succeeds (memory64-imports.wast:26) assert_equals: expected false but got true
+FAIL #19 Test that WebAssembly compilation succeeds (memory64-imports.wast:27) assert_equals: expected false but got true
+FAIL #20 Test that WebAssembly compilation succeeds (memory64-imports.wast:28) assert_equals: expected false but got true
+FAIL #21 Test that WebAssembly compilation succeeds (memory64-imports.wast:29) assert_equals: expected false but got true
+FAIL #22 Test that WebAssembly compilation succeeds (memory64-imports.wast:30) assert_equals: expected false but got true
+FAIL #23 Test that WebAssembly compilation succeeds (memory64-imports.wast:31) assert_equals: expected false but got true
+FAIL #24 Test that WebAssembly compilation succeeds (memory64-imports.wast:32) assert_equals: expected false but got true
+FAIL #25 Test that WebAssembly compilation succeeds (memory64-imports.wast:33) assert_equals: expected false but got true
+FAIL #26 Test that WebAssembly compilation succeeds (memory64-imports.wast:34) assert_equals: expected false but got true
+FAIL #27 Test that WebAssembly compilation succeeds (memory64-imports.wast:35) assert_equals: expected false but got true
+FAIL #28 Test that WebAssembly compilation succeeds (memory64-imports.wast:37) assert_equals: expected false but got true
+FAIL #29 Test that WebAssembly compilation succeeds (memory64-imports.wast:41) assert_equals: expected false but got true
+FAIL #30 Test that WebAssembly compilation succeeds (memory64-imports.wast:45) assert_equals: expected false but got true
+FAIL #31 Test that WebAssembly compilation succeeds (memory64-imports.wast:49) assert_equals: expected false but got true
+FAIL #32 Test that WebAssembly compilation succeeds (memory64-imports.wast:53) assert_equals: expected false but got true
 PASS #33 Test that WebAssembly compilation succeeds (memory64-imports.wast:57)
-PASS #34 Test that WebAssembly compilation succeeds (memory64-imports.wast:61)
+FAIL #34 Test that WebAssembly compilation succeeds (memory64-imports.wast:61) assert_equals: expected false but got true
 PASS #35 Test that WebAssembly compilation succeeds (memory64-imports.wast:65)
-PASS #36 Test that WebAssembly compilation succeeds (memory64-imports.wast:68)
-PASS #37 Test that WebAssembly compilation succeeds (memory64-imports.wast:69)
-PASS #38 Test that WebAssembly compilation succeeds (memory64-imports.wast:70)
-PASS #39 Test that WebAssembly compilation succeeds (memory64-imports.wast:71)
-PASS #40 Test that WebAssembly compilation succeeds (memory64-imports.wast:72)
-PASS #41 Test that WebAssembly compilation succeeds (memory64-imports.wast:73)
-PASS #42 Test that WebAssembly compilation succeeds (memory64-imports.wast:74)
-PASS #43 Test that WebAssembly compilation succeeds (memory64-imports.wast:75)
-PASS #44 Test that WebAssembly compilation succeeds (memory64-imports.wast:76)
-PASS #45 Test that WebAssembly compilation succeeds (memory64-imports.wast:77)
-PASS #46 Test that WebAssembly compilation succeeds (memory64-imports.wast:78)
-PASS #47 Test that WebAssembly compilation succeeds (memory64-imports.wast:79)
-PASS #48 Test that WebAssembly compilation succeeds (memory64-imports.wast:80)
-PASS #49 Test that WebAssembly compilation succeeds (memory64-imports.wast:81)
-PASS #50 Test that WebAssembly compilation succeeds (memory64-imports.wast:83)
-PASS #51 Test that WebAssembly compilation succeeds (memory64-imports.wast:87)
-PASS #52 Test that WebAssembly compilation succeeds (memory64-imports.wast:91)
-PASS #53 Test that WebAssembly compilation succeeds (memory64-imports.wast:95)
-PASS #54 Test that WebAssembly compilation succeeds (memory64-imports.wast:99)
-PASS #55 Test that WebAssembly compilation succeeds (memory64-imports.wast:103)
-PASS #56 Test that WebAssembly compilation succeeds (memory64-imports.wast:107)
-PASS #57 Test that WebAssembly compilation succeeds (memory64-imports.wast:111)
-PASS #58 Test that WebAssembly compilation succeeds (memory64-imports.wast:115)
-PASS #59 Test that WebAssembly compilation succeeds (memory64-imports.wast:119)
-PASS #60 Test that WebAssembly compilation succeeds (memory64-imports.wast:123)
-PASS #61 Test that WebAssembly compilation succeeds (memory64-imports.wast:127)
-PASS #62 Test that WebAssembly compilation succeeds (memory64-imports.wast:131)
-PASS #63 Test that WebAssembly compilation succeeds (memory64-imports.wast:135)
-PASS #64 Test that WebAssembly compilation succeeds (memory64-imports.wast:139)
-PASS #65 Test that WebAssembly compilation succeeds (memory64-imports.wast:143)
-PASS #66 Test that WebAssembly compilation succeeds (memory64-imports.wast:147)
-PASS #67 Test that WebAssembly compilation succeeds (memory64-imports.wast:151)
-PASS #68 Test that WebAssembly compilation succeeds (memory64-imports.wast:155)
+FAIL #36 Test that WebAssembly compilation succeeds (memory64-imports.wast:68) assert_equals: expected false but got true
+FAIL #37 Test that WebAssembly compilation succeeds (memory64-imports.wast:69) assert_equals: expected false but got true
+FAIL #38 Test that WebAssembly compilation succeeds (memory64-imports.wast:70) assert_equals: expected false but got true
+FAIL #39 Test that WebAssembly compilation succeeds (memory64-imports.wast:71) assert_equals: expected false but got true
+FAIL #40 Test that WebAssembly compilation succeeds (memory64-imports.wast:72) assert_equals: expected false but got true
+FAIL #41 Test that WebAssembly compilation succeeds (memory64-imports.wast:73) assert_equals: expected false but got true
+FAIL #42 Test that WebAssembly compilation succeeds (memory64-imports.wast:74) assert_equals: expected false but got true
+FAIL #43 Test that WebAssembly compilation succeeds (memory64-imports.wast:75) assert_equals: expected false but got true
+FAIL #44 Test that WebAssembly compilation succeeds (memory64-imports.wast:76) assert_equals: expected false but got true
+FAIL #45 Test that WebAssembly compilation succeeds (memory64-imports.wast:77) assert_equals: expected false but got true
+FAIL #46 Test that WebAssembly compilation succeeds (memory64-imports.wast:78) assert_equals: expected false but got true
+FAIL #47 Test that WebAssembly compilation succeeds (memory64-imports.wast:79) assert_equals: expected false but got true
+FAIL #48 Test that WebAssembly compilation succeeds (memory64-imports.wast:80) assert_equals: expected false but got true
+FAIL #49 Test that WebAssembly compilation succeeds (memory64-imports.wast:81) assert_equals: expected false but got true
+FAIL #50 Test that WebAssembly compilation succeeds (memory64-imports.wast:83) assert_equals: expected false but got true
+FAIL #51 Test that WebAssembly compilation succeeds (memory64-imports.wast:87) assert_equals: expected false but got true
+FAIL #52 Test that WebAssembly compilation succeeds (memory64-imports.wast:91) assert_equals: expected false but got true
+FAIL #53 Test that WebAssembly compilation succeeds (memory64-imports.wast:95) assert_equals: expected false but got true
+FAIL #54 Test that WebAssembly compilation succeeds (memory64-imports.wast:99) assert_equals: expected false but got true
+FAIL #55 Test that WebAssembly compilation succeeds (memory64-imports.wast:103) assert_equals: expected false but got true
+FAIL #56 Test that WebAssembly compilation succeeds (memory64-imports.wast:107) assert_equals: expected false but got true
+FAIL #57 Test that WebAssembly compilation succeeds (memory64-imports.wast:111) assert_equals: expected false but got true
+FAIL #58 Test that WebAssembly compilation succeeds (memory64-imports.wast:115) assert_equals: expected false but got true
+FAIL #59 Test that WebAssembly compilation succeeds (memory64-imports.wast:119) assert_equals: expected false but got true
+FAIL #60 Test that WebAssembly compilation succeeds (memory64-imports.wast:123) assert_equals: expected false but got true
+FAIL #61 Test that WebAssembly compilation succeeds (memory64-imports.wast:127) assert_equals: expected false but got true
+FAIL #62 Test that WebAssembly compilation succeeds (memory64-imports.wast:131) assert_equals: expected false but got true
+FAIL #63 Test that WebAssembly compilation succeeds (memory64-imports.wast:135) assert_equals: expected false but got true
+FAIL #64 Test that WebAssembly compilation succeeds (memory64-imports.wast:139) assert_equals: expected false but got true
+FAIL #65 Test that WebAssembly compilation succeeds (memory64-imports.wast:143) assert_equals: expected false but got true
+FAIL #66 Test that WebAssembly compilation succeeds (memory64-imports.wast:147) assert_equals: expected false but got true
+FAIL #67 Test that WebAssembly compilation succeeds (memory64-imports.wast:151) assert_equals: expected false but got true
+FAIL #68 Test that WebAssembly compilation succeeds (memory64-imports.wast:155) assert_equals: expected false but got true
 PASS #69 Test that WebAssembly compilation succeeds (memory64-imports.wast:159)
-PASS #70 Test that WebAssembly compilation succeeds (memory64-imports.wast:163)
+FAIL #70 Test that WebAssembly compilation succeeds (memory64-imports.wast:163) assert_equals: expected false but got true
 PASS #71 Test that WebAssembly compilation succeeds (memory64-imports.wast:167)
 PASS #72 Reinitialize the default imports
 PASS #73 Test that WebAssembly compilation succeeds (memory64-imports.wast:1)
@@ -79,186 +79,298 @@ PASS #77 Test that WebAssembly compilation succeeds (memory64-imports.wast:5)
 PASS #78 Test that WebAssembly instantiation succeeds (memory64-imports.wast:5)
 PASS #79 Test that WebAssembly compilation succeeds (memory64-imports.wast:7)
 PASS #80 Test that WebAssembly instantiation succeeds (memory64-imports.wast:7)
-PASS #81 Test that WebAssembly compilation succeeds (memory64-imports.wast:10)
-PASS #82 Test that WebAssembly instantiation succeeds (memory64-imports.wast:10)
-PASS #83 Test that WebAssembly compilation succeeds (memory64-imports.wast:12)
-PASS #84 Test that WebAssembly instantiation succeeds (memory64-imports.wast:12)
-PASS #85 Test that WebAssembly compilation succeeds (memory64-imports.wast:14)
-PASS #86 Test that WebAssembly instantiation succeeds (memory64-imports.wast:14)
-PASS #87 Test that WebAssembly compilation succeeds (memory64-imports.wast:16)
-PASS #88 Test that WebAssembly instantiation succeeds (memory64-imports.wast:16)
-PASS #89 Test that WebAssembly compilation succeeds (memory64-imports.wast:18)
-PASS #90 Test that WebAssembly instantiation succeeds (memory64-imports.wast:18)
-PASS #91 Test that WebAssembly compilation succeeds (memory64-imports.wast:19)
-PASS #92 Test that WebAssembly instantiation succeeds (memory64-imports.wast:19)
-PASS #93 Test that WebAssembly compilation succeeds (memory64-imports.wast:20)
-PASS #94 Test that WebAssembly instantiation succeeds (memory64-imports.wast:20)
-PASS #95 Test that WebAssembly compilation succeeds (memory64-imports.wast:21)
-PASS #96 Test that WebAssembly instantiation succeeds (memory64-imports.wast:21)
-PASS #97 Test that WebAssembly compilation succeeds (memory64-imports.wast:22)
-PASS #98 Test that WebAssembly instantiation succeeds (memory64-imports.wast:22)
-PASS #99 Test that WebAssembly compilation succeeds (memory64-imports.wast:23)
-PASS #100 Test that WebAssembly instantiation succeeds (memory64-imports.wast:23)
-PASS #101 Test that WebAssembly compilation succeeds (memory64-imports.wast:24)
-PASS #102 Test that WebAssembly instantiation succeeds (memory64-imports.wast:24)
-PASS #103 Test that WebAssembly compilation succeeds (memory64-imports.wast:25)
-PASS #104 Test that WebAssembly instantiation succeeds (memory64-imports.wast:25)
-PASS #105 Test that WebAssembly compilation succeeds (memory64-imports.wast:26)
-PASS #106 Test that WebAssembly instantiation succeeds (memory64-imports.wast:26)
-PASS #107 Test that WebAssembly compilation succeeds (memory64-imports.wast:27)
-PASS #108 Test that WebAssembly instantiation succeeds (memory64-imports.wast:27)
-PASS #109 Test that WebAssembly compilation succeeds (memory64-imports.wast:28)
-PASS #110 Test that WebAssembly instantiation succeeds (memory64-imports.wast:28)
-PASS #111 Test that WebAssembly compilation succeeds (memory64-imports.wast:29)
-PASS #112 Test that WebAssembly instantiation succeeds (memory64-imports.wast:29)
-PASS #113 Test that WebAssembly compilation succeeds (memory64-imports.wast:30)
-PASS #114 Test that WebAssembly instantiation succeeds (memory64-imports.wast:30)
-PASS #115 Test that WebAssembly compilation succeeds (memory64-imports.wast:31)
-PASS #116 Test that WebAssembly instantiation succeeds (memory64-imports.wast:31)
-PASS #117 Test that WebAssembly compilation succeeds (memory64-imports.wast:32)
-PASS #118 Test that WebAssembly instantiation succeeds (memory64-imports.wast:32)
-PASS #119 Test that WebAssembly compilation succeeds (memory64-imports.wast:33)
-PASS #120 Test that WebAssembly instantiation succeeds (memory64-imports.wast:33)
-PASS #121 Test that WebAssembly compilation succeeds (memory64-imports.wast:34)
-PASS #122 Test that WebAssembly instantiation succeeds (memory64-imports.wast:34)
-PASS #123 Test that WebAssembly compilation succeeds (memory64-imports.wast:35)
-PASS #124 Test that WebAssembly instantiation succeeds (memory64-imports.wast:35)
-PASS #125 Test that WebAssembly compilation succeeds (memory64-imports.wast:37)
-PASS #126 Test that WebAssembly instantiation fails (memory64-imports.wast:37)
-PASS #127 Test that a WebAssembly module is unlinkable
-PASS #128 Test that WebAssembly compilation succeeds (memory64-imports.wast:41)
-PASS #129 Test that WebAssembly instantiation fails (memory64-imports.wast:41)
-PASS #130 Test that a WebAssembly module is unlinkable
-PASS #131 Test that WebAssembly compilation succeeds (memory64-imports.wast:45)
-PASS #132 Test that WebAssembly instantiation fails (memory64-imports.wast:45)
-PASS #133 Test that a WebAssembly module is unlinkable
-PASS #134 Test that WebAssembly compilation succeeds (memory64-imports.wast:49)
-PASS #135 Test that WebAssembly instantiation fails (memory64-imports.wast:49)
-PASS #136 Test that a WebAssembly module is unlinkable
-PASS #137 Test that WebAssembly compilation succeeds (memory64-imports.wast:53)
-FAIL #138 Test that WebAssembly instantiation fails (memory64-imports.wast:53) assert_true: instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:201:24
-assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:405:11
-memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:211:18
+FAIL #81 Test that WebAssembly compilation succeeds (memory64-imports.wast:10) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 17: Memory64 is not enabled at {loc} expected true got false
+FAIL #82 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:43:18
 global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
-FAIL #139 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed [object WebAssembly.Instance] assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:404:24
+FAIL #83 Test that WebAssembly compilation succeeds (memory64-imports.wast:12) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 17: Memory64 is not enabled at {loc} expected true got false
+FAIL #84 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:52:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #85 Test that WebAssembly compilation succeeds (memory64-imports.wast:14) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 16: Memory64 is not enabled at {loc} expected true got false
+FAIL #86 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:61:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #87 Test that WebAssembly compilation succeeds (memory64-imports.wast:16) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 16: Memory64 is not enabled at {loc} expected true got false
+FAIL #88 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:70:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #89 Test that WebAssembly compilation succeeds (memory64-imports.wast:18) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 53: Memory64 is not enabled at {loc} expected true got false
+FAIL #90 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:79:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #91 Test that WebAssembly compilation succeeds (memory64-imports.wast:19) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 53: Memory64 is not enabled at {loc} expected true got false
+FAIL #92 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:85:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #93 Test that WebAssembly compilation succeeds (memory64-imports.wast:20) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 53: Memory64 is not enabled at {loc} expected true got false
+FAIL #94 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:91:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #95 Test that WebAssembly compilation succeeds (memory64-imports.wast:21) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 53: Memory64 is not enabled at {loc} expected true got false
+FAIL #96 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:97:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #97 Test that WebAssembly compilation succeeds (memory64-imports.wast:22) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 17: Memory64 is not enabled at {loc} expected true got false
+FAIL #98 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:103:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #99 Test that WebAssembly compilation succeeds (memory64-imports.wast:23) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 17: Memory64 is not enabled at {loc} expected true got false
+FAIL #100 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:109:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #101 Test that WebAssembly compilation succeeds (memory64-imports.wast:24) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 53: Memory64 is not enabled at {loc} expected true got false
+FAIL #102 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:115:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #103 Test that WebAssembly compilation succeeds (memory64-imports.wast:25) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 53: Memory64 is not enabled at {loc} expected true got false
+FAIL #104 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:121:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #105 Test that WebAssembly compilation succeeds (memory64-imports.wast:26) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 53: Memory64 is not enabled at {loc} expected true got false
+FAIL #106 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:127:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #107 Test that WebAssembly compilation succeeds (memory64-imports.wast:27) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 51: Memory64 is not enabled at {loc} expected true got false
+FAIL #108 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:133:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #109 Test that WebAssembly compilation succeeds (memory64-imports.wast:28) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 51: Memory64 is not enabled at {loc} expected true got false
+FAIL #110 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:139:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #111 Test that WebAssembly compilation succeeds (memory64-imports.wast:29) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 51: Memory64 is not enabled at {loc} expected true got false
+FAIL #112 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:145:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #113 Test that WebAssembly compilation succeeds (memory64-imports.wast:30) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 51: Memory64 is not enabled at {loc} expected true got false
+FAIL #114 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:151:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #115 Test that WebAssembly compilation succeeds (memory64-imports.wast:31) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 51: Memory64 is not enabled at {loc} expected true got false
+FAIL #116 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:157:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #117 Test that WebAssembly compilation succeeds (memory64-imports.wast:32) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 51: Memory64 is not enabled at {loc} expected true got false
+FAIL #118 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:163:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #119 Test that WebAssembly compilation succeeds (memory64-imports.wast:33) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 51: Memory64 is not enabled at {loc} expected true got false
+FAIL #120 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:169:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #121 Test that WebAssembly compilation succeeds (memory64-imports.wast:34) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 51: Memory64 is not enabled at {loc} expected true got false
+FAIL #122 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:175:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #123 Test that WebAssembly compilation succeeds (memory64-imports.wast:35) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 51: Memory64 is not enabled at {loc} expected true got false
+FAIL #124 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:181:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #125 Test that WebAssembly compilation succeeds (memory64-imports.wast:37) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 53: Memory64 is not enabled at {loc} expected true got false
+PASS #126 Test that WebAssembly instantiation fails
+FAIL #127 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:187:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #128 Test that WebAssembly compilation succeeds (memory64-imports.wast:41) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 53: Memory64 is not enabled at {loc} expected true got false
+PASS #129 Test that WebAssembly instantiation fails
+FAIL #130 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:193:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #131 Test that WebAssembly compilation succeeds (memory64-imports.wast:45) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 51: Memory64 is not enabled at {loc} expected true got false
+PASS #132 Test that WebAssembly instantiation fails
+FAIL #133 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:199:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #134 Test that WebAssembly compilation succeeds (memory64-imports.wast:49) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 51: Memory64 is not enabled at {loc} expected true got false
+PASS #135 Test that WebAssembly instantiation fails
+FAIL #136 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:205:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #137 Test that WebAssembly compilation succeeds (memory64-imports.wast:53) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 49: Memory64 is not enabled at {loc} expected true got false
+PASS #138 Test that WebAssembly instantiation fails
+FAIL #139 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
 memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:211:18
 global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
 PASS #140 Test that WebAssembly compilation succeeds (memory64-imports.wast:57)
-FAIL #141 Test that WebAssembly instantiation fails (memory64-imports.wast:57) assert_true: instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:201:24
-assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:405:11
+PASS #141 Test that WebAssembly instantiation fails (memory64-imports.wast:57)
+FAIL #142 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: import test-table64-10-inf:table64-10-inf must be an object assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
 memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:217:18
 global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
-FAIL #142 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed [object WebAssembly.Instance] assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:404:24
-memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:217:18
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
-PASS #143 Test that WebAssembly compilation succeeds (memory64-imports.wast:61)
-FAIL #144 Test that WebAssembly instantiation fails (memory64-imports.wast:61) assert_true: instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:201:24
-assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:405:11
-memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:223:18
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
-FAIL #145 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed [object WebAssembly.Instance] assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:404:24
+FAIL #143 Test that WebAssembly compilation succeeds (memory64-imports.wast:61) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 47: Memory64 is not enabled at {loc} expected true got false
+PASS #144 Test that WebAssembly instantiation fails
+FAIL #145 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
 memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:223:18
 global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
 PASS #146 Test that WebAssembly compilation succeeds (memory64-imports.wast:65)
-FAIL #147 Test that WebAssembly instantiation fails (memory64-imports.wast:65) assert_true: instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:201:24
-assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:405:11
+PASS #147 Test that WebAssembly instantiation fails (memory64-imports.wast:65)
+FAIL #148 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: import test-table64-10-20:table64-10-20 must be an object assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
 memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:229:18
 global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
-FAIL #148 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed [object WebAssembly.Instance] assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:404:24
-memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:229:18
+FAIL #149 Test that WebAssembly compilation succeeds (memory64-imports.wast:68) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 52: Memory64 is not enabled at {loc} expected true got false
+FAIL #150 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:235:19
 global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
-PASS #149 Test that WebAssembly compilation succeeds (memory64-imports.wast:68)
-PASS #150 Test that WebAssembly instantiation succeeds (memory64-imports.wast:68)
-PASS #151 Test that WebAssembly compilation succeeds (memory64-imports.wast:69)
-PASS #152 Test that WebAssembly instantiation succeeds (memory64-imports.wast:69)
-PASS #153 Test that WebAssembly compilation succeeds (memory64-imports.wast:70)
-PASS #154 Test that WebAssembly instantiation succeeds (memory64-imports.wast:70)
-PASS #155 Test that WebAssembly compilation succeeds (memory64-imports.wast:71)
-PASS #156 Test that WebAssembly instantiation succeeds (memory64-imports.wast:71)
-PASS #157 Test that WebAssembly compilation succeeds (memory64-imports.wast:72)
-PASS #158 Test that WebAssembly instantiation succeeds (memory64-imports.wast:72)
-PASS #159 Test that WebAssembly compilation succeeds (memory64-imports.wast:73)
-PASS #160 Test that WebAssembly instantiation succeeds (memory64-imports.wast:73)
-PASS #161 Test that WebAssembly compilation succeeds (memory64-imports.wast:74)
-PASS #162 Test that WebAssembly instantiation succeeds (memory64-imports.wast:74)
-PASS #163 Test that WebAssembly compilation succeeds (memory64-imports.wast:75)
-PASS #164 Test that WebAssembly instantiation succeeds (memory64-imports.wast:75)
-PASS #165 Test that WebAssembly compilation succeeds (memory64-imports.wast:76)
-PASS #166 Test that WebAssembly instantiation succeeds (memory64-imports.wast:76)
-PASS #167 Test that WebAssembly compilation succeeds (memory64-imports.wast:77)
-PASS #168 Test that WebAssembly instantiation succeeds (memory64-imports.wast:77)
-PASS #169 Test that WebAssembly compilation succeeds (memory64-imports.wast:78)
-PASS #170 Test that WebAssembly instantiation succeeds (memory64-imports.wast:78)
-PASS #171 Test that WebAssembly compilation succeeds (memory64-imports.wast:79)
-PASS #172 Test that WebAssembly instantiation succeeds (memory64-imports.wast:79)
-PASS #173 Test that WebAssembly compilation succeeds (memory64-imports.wast:80)
-PASS #174 Test that WebAssembly instantiation succeeds (memory64-imports.wast:80)
-PASS #175 Test that WebAssembly compilation succeeds (memory64-imports.wast:81)
-PASS #176 Test that WebAssembly instantiation succeeds (memory64-imports.wast:81)
-PASS #177 Test that WebAssembly compilation succeeds (memory64-imports.wast:83)
-PASS #178 Test that WebAssembly instantiation fails (memory64-imports.wast:83)
-PASS #179 Test that a WebAssembly module is unlinkable
-PASS #180 Test that WebAssembly compilation succeeds (memory64-imports.wast:87)
-PASS #181 Test that WebAssembly instantiation fails (memory64-imports.wast:87)
-PASS #182 Test that a WebAssembly module is unlinkable
-PASS #183 Test that WebAssembly compilation succeeds (memory64-imports.wast:91)
-PASS #184 Test that WebAssembly instantiation fails (memory64-imports.wast:91)
-PASS #185 Test that a WebAssembly module is unlinkable
-PASS #186 Test that WebAssembly compilation succeeds (memory64-imports.wast:95)
-PASS #187 Test that WebAssembly instantiation fails (memory64-imports.wast:95)
-PASS #188 Test that a WebAssembly module is unlinkable
-PASS #189 Test that WebAssembly compilation succeeds (memory64-imports.wast:99)
-PASS #190 Test that WebAssembly instantiation fails (memory64-imports.wast:99)
-PASS #191 Test that a WebAssembly module is unlinkable
-PASS #192 Test that WebAssembly compilation succeeds (memory64-imports.wast:103)
-PASS #193 Test that WebAssembly instantiation fails (memory64-imports.wast:103)
-PASS #194 Test that a WebAssembly module is unlinkable
-PASS #195 Test that WebAssembly compilation succeeds (memory64-imports.wast:107)
-PASS #196 Test that WebAssembly instantiation fails (memory64-imports.wast:107)
-PASS #197 Test that a WebAssembly module is unlinkable
-PASS #198 Test that WebAssembly compilation succeeds (memory64-imports.wast:111)
-PASS #199 Test that WebAssembly instantiation fails (memory64-imports.wast:111)
-PASS #200 Test that a WebAssembly module is unlinkable
-PASS #201 Test that WebAssembly compilation succeeds (memory64-imports.wast:115)
-PASS #202 Test that WebAssembly instantiation fails (memory64-imports.wast:115)
-PASS #203 Test that a WebAssembly module is unlinkable
-PASS #204 Test that WebAssembly compilation succeeds (memory64-imports.wast:119)
-PASS #205 Test that WebAssembly instantiation fails (memory64-imports.wast:119)
-PASS #206 Test that a WebAssembly module is unlinkable
-PASS #207 Test that WebAssembly compilation succeeds (memory64-imports.wast:123)
-PASS #208 Test that WebAssembly instantiation fails (memory64-imports.wast:123)
-PASS #209 Test that a WebAssembly module is unlinkable
-PASS #210 Test that WebAssembly compilation succeeds (memory64-imports.wast:127)
-PASS #211 Test that WebAssembly instantiation fails (memory64-imports.wast:127)
-PASS #212 Test that a WebAssembly module is unlinkable
-PASS #213 Test that WebAssembly compilation succeeds (memory64-imports.wast:131)
-PASS #214 Test that WebAssembly instantiation fails (memory64-imports.wast:131)
-PASS #215 Test that a WebAssembly module is unlinkable
-PASS #216 Test that WebAssembly compilation succeeds (memory64-imports.wast:135)
-PASS #217 Test that WebAssembly instantiation fails (memory64-imports.wast:135)
-PASS #218 Test that a WebAssembly module is unlinkable
-PASS #219 Test that WebAssembly compilation succeeds (memory64-imports.wast:139)
-PASS #220 Test that WebAssembly instantiation fails (memory64-imports.wast:139)
-PASS #221 Test that a WebAssembly module is unlinkable
-PASS #222 Test that WebAssembly compilation succeeds (memory64-imports.wast:143)
-PASS #223 Test that WebAssembly instantiation fails (memory64-imports.wast:143)
-PASS #224 Test that a WebAssembly module is unlinkable
-PASS #225 Test that WebAssembly compilation succeeds (memory64-imports.wast:147)
-PASS #226 Test that WebAssembly instantiation fails (memory64-imports.wast:147)
-PASS #227 Test that a WebAssembly module is unlinkable
-PASS #228 Test that WebAssembly compilation succeeds (memory64-imports.wast:151)
-PASS #229 Test that WebAssembly instantiation fails (memory64-imports.wast:151)
-PASS #230 Test that a WebAssembly module is unlinkable
-PASS #231 Test that WebAssembly compilation succeeds (memory64-imports.wast:155)
-PASS #232 Test that WebAssembly instantiation fails (memory64-imports.wast:155)
-PASS #233 Test that a WebAssembly module is unlinkable
+FAIL #151 Test that WebAssembly compilation succeeds (memory64-imports.wast:69) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 52: Memory64 is not enabled at {loc} expected true got false
+FAIL #152 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:241:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #153 Test that WebAssembly compilation succeeds (memory64-imports.wast:70) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 52: Memory64 is not enabled at {loc} expected true got false
+FAIL #154 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:247:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #155 Test that WebAssembly compilation succeeds (memory64-imports.wast:71) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 52: Memory64 is not enabled at {loc} expected true got false
+FAIL #156 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:253:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #157 Test that WebAssembly compilation succeeds (memory64-imports.wast:72) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 52: Memory64 is not enabled at {loc} expected true got false
+FAIL #158 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:259:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #159 Test that WebAssembly compilation succeeds (memory64-imports.wast:73) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+FAIL #160 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:265:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #161 Test that WebAssembly compilation succeeds (memory64-imports.wast:74) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+FAIL #162 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:271:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #163 Test that WebAssembly compilation succeeds (memory64-imports.wast:75) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+FAIL #164 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:277:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #165 Test that WebAssembly compilation succeeds (memory64-imports.wast:76) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+FAIL #166 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:283:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #167 Test that WebAssembly compilation succeeds (memory64-imports.wast:77) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+FAIL #168 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:289:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #169 Test that WebAssembly compilation succeeds (memory64-imports.wast:78) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+FAIL #170 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:295:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #171 Test that WebAssembly compilation succeeds (memory64-imports.wast:79) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+FAIL #172 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:301:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #173 Test that WebAssembly compilation succeeds (memory64-imports.wast:80) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+FAIL #174 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:307:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #175 Test that WebAssembly compilation succeeds (memory64-imports.wast:81) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+FAIL #176 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:313:19
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #177 Test that WebAssembly compilation succeeds (memory64-imports.wast:83) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 52: Memory64 is not enabled at {loc} expected true got false
+PASS #178 Test that WebAssembly instantiation fails
+FAIL #179 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:319:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #180 Test that WebAssembly compilation succeeds (memory64-imports.wast:87) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 52: Memory64 is not enabled at {loc} expected true got false
+PASS #181 Test that WebAssembly instantiation fails
+FAIL #182 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:325:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #183 Test that WebAssembly compilation succeeds (memory64-imports.wast:91) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 52: Memory64 is not enabled at {loc} expected true got false
+PASS #184 Test that WebAssembly instantiation fails
+FAIL #185 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:331:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #186 Test that WebAssembly compilation succeeds (memory64-imports.wast:95) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 52: Memory64 is not enabled at {loc} expected true got false
+PASS #187 Test that WebAssembly instantiation fails
+FAIL #188 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:337:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #189 Test that WebAssembly compilation succeeds (memory64-imports.wast:99) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 52: Memory64 is not enabled at {loc} expected true got false
+PASS #190 Test that WebAssembly instantiation fails
+FAIL #191 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:343:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #192 Test that WebAssembly compilation succeeds (memory64-imports.wast:103) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+PASS #193 Test that WebAssembly instantiation fails
+FAIL #194 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:349:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #195 Test that WebAssembly compilation succeeds (memory64-imports.wast:107) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+PASS #196 Test that WebAssembly instantiation fails
+FAIL #197 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:355:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #198 Test that WebAssembly compilation succeeds (memory64-imports.wast:111) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+PASS #199 Test that WebAssembly instantiation fails
+FAIL #200 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:361:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #201 Test that WebAssembly compilation succeeds (memory64-imports.wast:115) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+PASS #202 Test that WebAssembly instantiation fails
+FAIL #203 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:367:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #204 Test that WebAssembly compilation succeeds (memory64-imports.wast:119) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+PASS #205 Test that WebAssembly instantiation fails
+FAIL #206 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:373:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #207 Test that WebAssembly compilation succeeds (memory64-imports.wast:123) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+PASS #208 Test that WebAssembly instantiation fails
+FAIL #209 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:379:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #210 Test that WebAssembly compilation succeeds (memory64-imports.wast:127) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+PASS #211 Test that WebAssembly instantiation fails
+FAIL #212 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:385:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #213 Test that WebAssembly compilation succeeds (memory64-imports.wast:131) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+PASS #214 Test that WebAssembly instantiation fails
+FAIL #215 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:391:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #216 Test that WebAssembly compilation succeeds (memory64-imports.wast:135) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+PASS #217 Test that WebAssembly instantiation fails
+FAIL #218 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:397:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #219 Test that WebAssembly compilation succeeds (memory64-imports.wast:139) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+PASS #220 Test that WebAssembly instantiation fails
+FAIL #221 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:403:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #222 Test that WebAssembly compilation succeeds (memory64-imports.wast:143) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+PASS #223 Test that WebAssembly instantiation fails
+FAIL #224 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:409:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #225 Test that WebAssembly compilation succeeds (memory64-imports.wast:147) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+PASS #226 Test that WebAssembly instantiation fails
+FAIL #227 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:415:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #228 Test that WebAssembly compilation succeeds (memory64-imports.wast:151) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+PASS #229 Test that WebAssembly instantiation fails
+FAIL #230 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:421:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #231 Test that WebAssembly compilation succeeds (memory64-imports.wast:155) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 48: Memory64 is not enabled at {loc} expected true got false
+PASS #232 Test that WebAssembly instantiation fails
+FAIL #233 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:427:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
 PASS #234 Test that WebAssembly compilation succeeds (memory64-imports.wast:159)
 PASS #235 Test that WebAssembly instantiation fails (memory64-imports.wast:159)
-PASS #236 Test that a WebAssembly module is unlinkable
-PASS #237 Test that WebAssembly compilation succeeds (memory64-imports.wast:163)
-PASS #238 Test that WebAssembly instantiation fails (memory64-imports.wast:163)
-PASS #239 Test that a WebAssembly module is unlinkable
+FAIL #236 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: import test-memory64-2-inf:memory64-2-inf must be an object assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:433:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+FAIL #237 Test that WebAssembly compilation succeeds (memory64-imports.wast:163) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 44: Memory64 is not enabled at {loc} expected true got false
+PASS #238 Test that WebAssembly instantiation fails
+FAIL #239 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: undefined is not an object (evaluating 'values[0].source') assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:439:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
 PASS #240 Test that WebAssembly compilation succeeds (memory64-imports.wast:167)
 PASS #241 Test that WebAssembly instantiation fails (memory64-imports.wast:167)
-PASS #242 Test that a WebAssembly module is unlinkable
+FAIL #242 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed TypeError: import test-memory64-2-4:memory64-2-4 must be an object assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:410:24
+memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:445:18
+global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
 
