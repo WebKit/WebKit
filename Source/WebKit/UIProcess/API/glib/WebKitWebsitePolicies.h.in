@@ -74,4 +74,7 @@ webkit_website_policies_new_with_policies                     (const gchar      
 WEBKIT_API WebKitAutoplayPolicy
 webkit_website_policies_get_autoplay_policy                   (WebKitWebsitePolicies *policies);
 
+WEBKIT_API const gchar *
+webkit_website_policies_get_custom_user_agent                 (WebKitWebsitePolicies *policies);
+
 G_END_DECLS

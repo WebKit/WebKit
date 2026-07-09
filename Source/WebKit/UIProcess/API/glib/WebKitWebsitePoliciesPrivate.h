@@ -21,7 +21,5 @@
 
 #include "APIWebsitePolicies.h"
 #include "WebKitWebsitePolicies.h"
-#include "WebsitePoliciesData.h"
 
 API::WebsitePolicies* webkitWebsitePoliciesGetWebsitePolicies(WebKitWebsitePolicies*);
-WebKit::WebsitePoliciesData webkitWebsitePoliciesGetPoliciesData(WebKitWebsitePolicies*);

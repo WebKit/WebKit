@@ -22,7 +22,6 @@
 
 #include "APIWebsitePolicies.h"
 #include "WebKitEnumTypes.h"
-#include "WebsitePoliciesData.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -35,7 +34,7 @@ using namespace WebKit;
  * View specific website policies.
  *
  * WebKitWebsitePolicies allows you to configure per-page policies,
- * currently only autoplay policies are supported.
+ * currently only autoplay and custom user agent policies are supported.
  *
  * Since: 2.30
  */
@@ -45,7 +44,8 @@ using namespace WebKit;
 enum {
     PROP_0,
 
-    PROP_AUTOPLAY_POLICY
+    PROP_AUTOPLAY_POLICY,
+    PROP_CUSTOM_USER_AGENT,
 };
 
 struct _WebKitWebsitePoliciesPrivate {
@@ -54,6 +54,7 @@ struct _WebKitWebsitePoliciesPrivate {
     {
     }
     RefPtr<API::WebsitePolicies> websitePolicies;
+    CString customUserAgent;
 };
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitWebsitePolicies, webkit_website_policies, G_TYPE_OBJECT, GObject)
@@ -63,27 +64,6 @@ API::WebsitePolicies& webkitWebsitePoliciesGetWebsitePolicies(WebKitWebsitePolic
     return *policies->priv->websitePolicies.get();
 }
 
-WebsitePoliciesData webkitWebsitePoliciesGetPoliciesData(WebKitWebsitePolicies* policies)
-{
-    WebsitePoliciesData policiesData;
-
-    switch (webkit_website_policies_get_autoplay_policy(policies)) {
-    case WEBKIT_AUTOPLAY_ALLOW:
-        policiesData.autoplayPolicy = WebsiteAutoplayPolicy::Allow;
-        break;
-    case WEBKIT_AUTOPLAY_ALLOW_WITHOUT_SOUND:
-        policiesData.autoplayPolicy = WebsiteAutoplayPolicy::AllowWithoutSound;
-        break;
-    case WEBKIT_AUTOPLAY_DENY:
-        policiesData.autoplayPolicy = WebsiteAutoplayPolicy::Deny;
-        break;
-    default:
-        policiesData.autoplayPolicy = WebsiteAutoplayPolicy::Default;
-    }
-
-    return policiesData;
-}
-
 static void webkitWebsitePoliciesGetProperty(GObject* object, guint propID, GValue* value, GParamSpec* paramSpec)
 {
     WebKitWebsitePolicies* policies = WEBKIT_WEBSITE_POLICIES(object);
@@ -91,6 +71,9 @@ static void webkitWebsitePoliciesGetProperty(GObject* object, guint propID, GVal
     switch (propID) {
     case PROP_AUTOPLAY_POLICY:
         g_value_set_enum(value, webkit_website_policies_get_autoplay_policy(policies));
+        break;
+    case PROP_CUSTOM_USER_AGENT:
+        g_value_set_string(value, webkit_website_policies_get_custom_user_agent(policies));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
@@ -122,6 +105,10 @@ static void webkitWebsitePoliciesSetProperty(GObject* object, guint propID, cons
     case PROP_AUTOPLAY_POLICY:
         webkitWebsitePoliciesSetAutoplayPolicy(policies, static_cast<WebKitAutoplayPolicy>(g_value_get_enum(value)));
         break;
+    case PROP_CUSTOM_USER_AGENT:
+        if (const auto* customUserAgent = g_value_get_string(value))
+            policies->priv->websitePolicies->setCustomUserAgent(String::fromUTF8(customUserAgent));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
     }
@@ -149,6 +136,23 @@ static void webkit_website_policies_class_init(WebKitWebsitePoliciesClass* findC
             nullptr, nullptr,
             WEBKIT_TYPE_AUTOPLAY_POLICY,
             WEBKIT_AUTOPLAY_ALLOW_WITHOUT_SOUND,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
+     * WebKitWebsitePolicies:custom-user-agent: (getter get_custom_user_agent) (attributes org.gtk.Property.get=webkit_website_policies_get_custom_user_agent):
+     *
+     * The custom user agent string to send for navigations governed by these
+     * #WebKitWebsitePolicies, or %NULL to use the default user agent.
+     *
+     * Since: 2.54
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_CUSTOM_USER_AGENT,
+        g_param_spec_string(
+            "custom-user-agent",
+            nullptr, nullptr,
+            nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 }
 
@@ -181,6 +185,7 @@ WebKitWebsitePolicies* webkit_website_policies_new(void)
  * ```c
  * WebKitWebsitePolicies *default_website_policies = webkit_website_policies_new_with_policies(
  *     "autoplay", WEBKIT_AUTOPLAY_DENY,
+ *     "custom-user-agent", "Foo/1.0 (custom)",
  *     NULL);
  *
  * // ...
@@ -234,3 +239,24 @@ WebKitAutoplayPolicy webkit_website_policies_get_autoplay_policy(WebKitWebsitePo
     }
 }
 
+/**
+ * webkit_website_policies_get_custom_user_agent: (get-property custom-user-agent):
+ * @policies: a #WebKitWebsitePolicies
+ *
+ * Get the #WebKitWebsitePolicies:custom-user-agent property.
+ *
+ * Returns: (transfer none) (nullable): the custom user agent string, or %NULL if the default
+ *    user agent is used
+ *
+ * Since: 2.54
+ */
+const gchar* webkit_website_policies_get_custom_user_agent(WebKitWebsitePolicies* policies)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEBSITE_POLICIES(policies), nullptr);
+
+    if (policies->priv->customUserAgent.isNull()) {
+        const auto& newCustomUserAgent = policies->priv->websitePolicies->customUserAgent();
+        policies->priv->customUserAgent = newCustomUserAgent.isEmpty() ? CString() : newCustomUserAgent.utf8();
+    }
+    return policies->priv->customUserAgent.data();
+}

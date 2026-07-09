@@ -24,9 +24,12 @@
 #include "WebKitTestServer.h"
 #include "WebKitWebsitePolicies.h"
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 static WebKitTestServer* kServer;
+
+static GUniquePtr<char> gLastRequestUserAgent;
 
 class PolicyClientTest: public LoadTrackingTest {
 public:
@@ -143,6 +146,17 @@ public:
             g_main_loop_run(m_mainLoop);
 
         return *m_autoplayed;
+    }
+
+    // Load a URI (responding to the navigation policy decision with whatever
+    // m_policyDecisionResponse/m_websitePolicies are currently set to) and return
+    // the User-Agent the server received for the main resource request.
+    CString loadAndGetServerUserAgent(const char* uri)
+    {
+        gLastRequestUserAgent = nullptr;
+        loadURI(uri);
+        waitUntilLoadFinished();
+        return CString(gLastRequestUserAgent ? gLastRequestUserAgent.get() : "");
     }
 
     PolicyDecisionResponse m_policyDecisionResponse { None };
@@ -317,6 +331,15 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
     } else if (g_str_equal(path, "/redirect")) {
         soup_server_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY, nullptr);
         soup_message_headers_append(soup_server_message_get_response_headers(message), "Location", "/");
+    } else if (g_str_equal(path, "/echo-user-agent")) {
+        const char* userAgent = soup_message_headers_get_one(soup_server_message_get_request_headers(message), "User-Agent");
+        gLastRequestUserAgent.reset(g_strdup(userAgent ? userAgent : ""));
+        GUniquePtr<char> responseString(g_strdup_printf("<html><body>%s</body></html>", gLastRequestUserAgent.get()));
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+        auto* responseBody = soup_server_message_get_response_body(message);
+        auto responseLength = strlen(responseString.get());
+        soup_message_body_append(responseBody, SOUP_MEMORY_TAKE, responseString.release(), responseLength);
+        soup_message_body_complete(responseBody);
     } else
         soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
 }
@@ -356,6 +379,46 @@ static void testAutoplayPolicy(PolicyClientTest* test, gconstpointer)
     g_assert_true(test->loadURIAndWaitForAutoPlayed(resourceURL.get(), WEBKIT_AUTOPLAY_ALLOW_WITHOUT_SOUND));
 }
 
+static void testCustomUserAgentPolicy(PolicyClientTest* test, gconstpointer)
+{
+    test->m_policyDecisionTypeFilter = WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION;
+
+    static const char* kSiteYUserAgent = "MyLauncher/1.0 (custom UA for site Y)";
+    static const char* kSiteZUserAgent = "MyLauncher/1.0 (different UA for site Z)";
+
+    GRefPtr<WebKitWebsitePolicies> defaultPolicies = adoptGRef(webkit_website_policies_new());
+    g_assert_null(webkit_website_policies_get_custom_user_agent(defaultPolicies.get()));
+
+    // (1) Navigate with a per-navigation custom UA attached to the policy decision.
+    test->m_websitePolicies = adoptGRef(webkit_website_policies_new_with_policies("custom-user-agent", kSiteYUserAgent, nullptr));
+
+    const char* customUserAgent = webkit_website_policies_get_custom_user_agent(test->m_websitePolicies.get());
+    g_assert_cmpstr(customUserAgent, ==, kSiteYUserAgent);
+    g_assert_true(webkit_website_policies_get_custom_user_agent(test->m_websitePolicies.get()) == customUserAgent);
+
+    test->m_policyDecisionResponse = PolicyClientTest::UseWithPolicy;
+    CString seenUserAgent = test->loadAndGetServerUserAgent(kServer->getURIForPath("/echo-user-agent").data());
+
+    g_assert_cmpstr(seenUserAgent.data(), ==, kSiteYUserAgent);
+
+    GUniquePtr<char> navigatorUserAgent(WebViewTest::javascriptResultToCString(test->runJavaScriptAndWaitUntilFinished("navigator.userAgent", nullptr)));
+    g_assert_cmpstr(navigatorUserAgent.get(), ==, kSiteYUserAgent);
+
+    // (2) Reusing the SAME web view, navigate again WITHOUT policies: the override
+    //     must not persist (the UA is bound to the navigation, not to the view).
+    test->m_websitePolicies = nullptr;
+    test->m_policyDecisionResponse = PolicyClientTest::Use;
+    CString defaultUserAgent = test->loadAndGetServerUserAgent(kServer->getURIForPath("/echo-user-agent").data());
+    g_assert_cmpstr(defaultUserAgent.data(), !=, kSiteYUserAgent);
+    g_assert_nonnull(g_strstr_len(defaultUserAgent.data(), -1, "AppleWebKit"));
+
+    // (3) Navigate once more with a DIFFERENT custom UA: the new value is used.
+    test->m_websitePolicies = adoptGRef(webkit_website_policies_new_with_policies("custom-user-agent", kSiteZUserAgent, nullptr));
+    test->m_policyDecisionResponse = PolicyClientTest::UseWithPolicy;
+    CString secondSeenUserAgent = test->loadAndGetServerUserAgent(kServer->getURIForPath("/echo-user-agent").data());
+    g_assert_cmpstr(secondSeenUserAgent.data(), ==, kSiteZUserAgent);
+}
+
 void beforeAll()
 {
     kServer = new WebKitTestServer();
@@ -364,6 +427,7 @@ void beforeAll()
     PolicyClientTest::add("WebKitPolicyClient", "navigation-policy", testNavigationPolicy);
     PolicyClientTest::add("WebKitPolicyClient", "response-policy", testResponsePolicy);
     PolicyClientTest::add("WebKitPolicyClient", "autoplay-policy", testAutoplayPolicy);
+    PolicyClientTest::add("WebKitPolicyClient", "custom-user-agent-policy", testCustomUserAgentPolicy);
     // WARNING: This test must come last, it uses racey constructs that
     // interfere nondeterminisically with any test running after it.
     // https://bugs.webkit.org/show_bug.cgi?id=213190
