@@ -200,6 +200,10 @@ if ($useCCache == 1) {
 
 $ENV{'EXPORT_COMPILE_COMMANDS'} = "YES" if $exportCompileCommands;
 
+# Build driver: build the tree named by --cmake/--xcode (Xcode by default), not an
+# auto-detected one. Must precede the first isCMakeBuild()/productDir() query below.
+disableCMakeAutoDetection();
+
 my $productDir = productDir();
 
 if ((isAppleWebKit() || isPlayStation()) && !-d "WebKitLibraries") {

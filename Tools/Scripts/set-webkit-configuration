@@ -92,6 +92,10 @@ if (checkForArgumentAndRemoveFromARGV("-h") || checkForArgumentAndRemoveFromARGV
     exit 1;
 }
 
+# Build driver: configure the tree named by --cmake/--xcode (Xcode by default), not
+# an auto-detected one. Must precede the first isCMakeBuild() query below.
+disableCMakeAutoDetection();
+
 my $baseProductDir = baseProductDir();
 if (isAppleCocoaWebKit() && !isCMakeBuild()) {
     markBaseProductDirectoryAsCreatedByXcodeBuildSystem();

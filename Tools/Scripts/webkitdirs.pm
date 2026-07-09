@@ -104,6 +104,7 @@ BEGIN {
        &determineCurrentSVNRevision
        &determineCrossTarget
        &determineXcodeSDK
+       &disableCMakeAutoDetection
        &enableLastBuiltTiebreaker
        &executableProductDir
        &exitStatus
@@ -281,6 +282,7 @@ my $iosVersion;
 my $generateDsym;
 my $isCMakeBuild;
 my $shouldPickLastBuilt = 0;
+my $cmakeAutoDetectionDisabled = 0;
 my $isGenerateProjectOnly;
 my $shouldBuild32Bit;
 my $isInspectorFrontend;
@@ -1396,6 +1398,8 @@ sub overrideConfiguredXcodeWorkspace($)
 
 sub XcodeOptions
 {
+    # This is an Xcode build; don't let an on-disk CMake tree flip the arch/destination.
+    disableCMakeAutoDetection();
     determineBaseProductDir();
     determineConfiguration();
     determineArchitecture();
@@ -3118,6 +3122,10 @@ sub determineIsCMakeBuild()
         return;
     }
 
+    # Build drivers opt out so they never auto-flip to an on-disk CMake tree;
+    # only read-only path resolvers auto-detect. Explicit --cmake/--xcode win above.
+    return if $cmakeAutoDetectionDisabled;
+
     # Auto-detect a CMake macOS build. The CMake presets place artifacts under
     # WebKitBuild/cmake-mac/<Configuration>; when both trees exist, Xcode wins
     # by default unless a caller opts into the last-built tiebreaker via
@@ -3168,6 +3176,15 @@ sub determineIsCMakeBuild()
 sub enableLastBuiltTiebreaker
 {
     $shouldPickLastBuilt = 1;
+}
+
+# Opt a build driver out of CMake auto-detection in determineIsCMakeBuild(), so it
+# builds/configures the tree named by --cmake/--xcode (Xcode by default) rather than
+# whichever exists on disk. Must be called before the first isCMakeBuild() query,
+# since the result is cached.
+sub disableCMakeAutoDetection
+{
+    $cmakeAutoDetectionDisabled = 1;
 }
 
 sub isCMakeBuild()
