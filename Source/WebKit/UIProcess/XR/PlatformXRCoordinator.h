@@ -81,6 +81,8 @@ public:
     virtual void startSession(WebPageProxy&, WeakPtr<PlatformXRCoordinatorSessionEventClient>&&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&, std::optional<WebCore::XRCanvasConfiguration>&&) = 0;
     virtual void endSessionIfExists(WebPageProxy&) = 0;
 
+    virtual void stopWhenIdle() { }
+
     // Session display loop.
     virtual void scheduleAnimationFrame(WebPageProxy&, std::optional<PlatformXR::RequestData>&&, PlatformXR::Device::RequestFrameCallback&&) = 0;
 #if USE(OPENXR)

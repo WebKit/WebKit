@@ -64,6 +64,7 @@ public:
 
     void startSession(WebPageProxy&, WeakPtr<PlatformXRCoordinatorSessionEventClient>&&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&, std::optional<WebCore::XRCanvasConfiguration>&&) override;
     void endSessionIfExists(WebPageProxy&) override;
+    void stopWhenIdle() override;
 
     void scheduleAnimationFrame(WebPageProxy&, std::optional<PlatformXR::RequestData>&&, PlatformXR::Device::RequestFrameCallback&& onFrameUpdateCallback) override;
     void submitFrame(WebPageProxy&, Vector<PlatformXR::DeviceLayer>&&) override;

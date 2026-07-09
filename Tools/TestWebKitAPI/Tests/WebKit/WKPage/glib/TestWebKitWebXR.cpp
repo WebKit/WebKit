@@ -21,6 +21,7 @@
 
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
+#include "WebXRTestHelpers.h"
 #include <wtf/text/MakeString.h>
 
 static WebKitTestServer* kHttpsServer = nullptr;
@@ -38,24 +39,6 @@ static const char indexHTML[] =
 "  }).catch(err => console.error(`XR session failed to start: ${err}`));"
 "});"
 "</script></body></html>";
-
-static WebKitFeature* findFeature(WebKitFeatureList *featureList, const char *identifier)
-{
-    for (gsize i = 0; i < webkit_feature_list_get_length(featureList); i++) {
-        WebKitFeature* feature = webkit_feature_list_get(featureList, i);
-        if (!g_ascii_strcasecmp(identifier, webkit_feature_get_identifier(feature)))
-            return feature;
-    }
-    return nullptr;
-}
-
-static void relaxDMABufRequirement(WebKitSettings* settings)
-{
-    g_autoptr(WebKitFeatureList) featureList = webkit_settings_get_development_features();
-    WebKitFeature* feature = findFeature(featureList, "OpenXRDMABufRelaxedForTesting");
-    g_assert_nonnull(feature);
-    webkit_settings_set_feature_enabled(settings, feature, true);
-}
 
 class WebXRTest : public WebViewTest {
 public:
@@ -272,7 +255,7 @@ static void testWebKitXRHitTest(WebXRTest* test, gconstpointer)
 
     // Enable WebXRHitTestModule
     g_autoptr(WebKitFeatureList) featureList = webkit_settings_get_experimental_features();
-    WebKitFeature* feature = findFeature(featureList, "WebXRHitTestModule");
+    WebKitFeature* feature = webkit_feature_list_find(featureList, "WebXRHitTestModule");
     g_assert_nonnull(feature);
     auto settings = webkit_web_view_get_settings(test->webView());
     webkit_settings_set_feature_enabled(settings, feature, true);

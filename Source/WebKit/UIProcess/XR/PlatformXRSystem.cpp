@@ -74,8 +74,14 @@ void PlatformXRSystem::invalidate(InvalidationReason reason)
     if (!page)
         return;
 
-    if (m_immersiveSessionState == ImmersiveSessionState::Idle)
+    // Multi-view case is handled: if two views have enumerated devices (so the coordinator is Idle), when one view is torn down, the
+    // instance would be destroyed for the other view. This is not a problem, as the remaining view will re-create an instance either
+    // in getPrmiaryDeviceInfo() or in startSession().
+    if (m_immersiveSessionState == ImmersiveSessionState::Idle) {
+        if (reason == InvalidationReason::State && xrCoordinator())
+            xrCoordinator()->stopWhenIdle();
         return;
+    }
 
     if (xrCoordinator())
         xrCoordinator()->endSessionIfExists(*page);
