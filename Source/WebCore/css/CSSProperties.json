@@ -13844,6 +13844,36 @@
                     "url": "https://drafts.csswg.org/css-fonts-4/#descdef-font-face-src"
                 }
             },
+            "ascent-override": {
+                "codegen-properties": {
+                    "parser-grammar": "normal | <percentage [0,inf]>",
+                    "settings-flag": "cssFontFaceMetricOverrideDescriptorsEnabled"
+                },
+                "specification": {
+                    "category": "css-fonts-4",
+                    "url": "https://drafts.csswg.org/css-fonts-4/#descdef-font-face-ascent-override"
+                }
+            },
+            "descent-override": {
+                "codegen-properties": {
+                    "parser-grammar": "normal | <percentage [0,inf]>",
+                    "settings-flag": "cssFontFaceMetricOverrideDescriptorsEnabled"
+                },
+                "specification": {
+                    "category": "css-fonts-4",
+                    "url": "https://drafts.csswg.org/css-fonts-4/#descdef-font-face-descent-override"
+                }
+            },
+            "line-gap-override": {
+                "codegen-properties": {
+                    "parser-grammar": "normal | <percentage [0,inf]>",
+                    "settings-flag": "cssFontFaceMetricOverrideDescriptorsEnabled"
+                },
+                "specification": {
+                    "category": "css-fonts-4",
+                    "url": "https://drafts.csswg.org/css-fonts-4/#descdef-font-face-line-gap-override"
+                }
+            },
             "size-adjust": {
                 "codegen-properties": {
                     "parser-grammar": "<percentage [0,inf]>",
