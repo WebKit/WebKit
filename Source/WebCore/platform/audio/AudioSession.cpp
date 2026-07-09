@@ -218,7 +218,7 @@ void AudioSession::setCategoryOverride(CategoryType category)
 
     m_categoryOverride = category;
     if (category != CategoryType::None)
-        setCategory(category, Mode::Default, RouteSharingPolicy::Default);
+        setCategory(category, category == AudioSessionCategory::PlayAndRecord ? Mode::VideoChat : Mode::Default, RouteSharingPolicy::Default);
 }
 
 AudioSession::CategoryType AudioSession::categoryOverride() const
