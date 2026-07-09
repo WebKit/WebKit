@@ -7976,6 +7976,16 @@ sub GetBaseIDLType
         my $promiseType = $type->extendedAttributes->{BypassDocumentFullyActiveCheck} ? "IDLPromiseIgnoringSuspension" : "IDLPromise";
         return "${promiseType}<" . GetIDLType($interface, @{$type->subtypes}[0]) . ">";
     }
+    # Detect BufferSource union pattern: (ArrayBufferView or ArrayBuffer)
+    if ($type->isUnion) {
+        my @subtypes = @{$type->subtypes};
+        if (scalar(@subtypes) == 2) {
+            my %names = map { $_->name => 1 } @subtypes;
+            if ($names{"ArrayBufferView"} && $names{"ArrayBuffer"}) {
+                return "IDLBufferSource";
+            }
+        }
+    }
     return "IDLUnion<" . join(", ", GetIDLUnionMemberTypes($interface, $type)) . ">" if $type->isUnion;
     return "IDLCallbackFunction<" . GetCallbackClassName($type->name) . ">" if $codeGenerator->IsCallbackFunction($type);
     return "IDLCallbackInterface<" . GetCallbackClassName($type->name) . ">" if $codeGenerator->IsCallbackInterface($type);

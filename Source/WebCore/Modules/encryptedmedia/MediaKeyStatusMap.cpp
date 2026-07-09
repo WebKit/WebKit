@@ -93,7 +93,7 @@ MediaKeyStatusMap::Iterator::Iterator(MediaKeyStatusMap& map)
 {
 }
 
-std::optional<KeyValuePair<BufferSource::VariantType, MediaKeyStatus>> MediaKeyStatusMap::Iterator::next()
+std::optional<KeyValuePair<BufferSource, MediaKeyStatus>> MediaKeyStatusMap::Iterator::next()
 {
     if (!m_map->m_session)
         return std::nullopt;
@@ -104,7 +104,7 @@ std::optional<KeyValuePair<BufferSource::VariantType, MediaKeyStatus>> MediaKeyS
 
     auto& pair = statuses[m_index++];
     Ref buffer = ArrayBuffer::create(Ref { pair.first }->makeContiguous()->span());
-    return KeyValuePair<BufferSource::VariantType, MediaKeyStatus> { WTF::move(buffer), pair.second };
+    return KeyValuePair<BufferSource, MediaKeyStatus> { BufferSource(WTF::move(buffer)), pair.second };
 }
 
 } // namespace WebCore

@@ -69,7 +69,7 @@ static AudioDecoder::Config createAudioDecoderConfig(const WebCodecsAudioDecoder
 {
     Vector<uint8_t> description;
     if (config.description) {
-        auto data = WTF::switchOn(*config.description, [](auto& buffer) { return buffer->span(); });
+        auto data = config.description->span();
         if (!data.empty())
             description = data;
     }
@@ -89,7 +89,7 @@ static bool isValidDecoderConfig(const WebCodecsAudioDecoderConfig& config)
         return false;
 
     // 2. If description is [detached], return false.
-    if (config.description && WTF::visit([](auto& view) { return view->isDetached(); }, *config.description))
+    if (config.description && switchOn(*config.description, [](auto& buffer) { return buffer->isDetached(); }))
         return false;
 
     // FIXME: Not yet per spec https://github.com/w3c/webcodecs/issues/878

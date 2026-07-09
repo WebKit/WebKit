@@ -895,7 +895,7 @@ static Vector<WebCore::PublicKeyCredentialDescriptor> publicKeyCredentialDescrip
         RetainPtr<_WKPublicKeyCredentialDescriptor> credential = credentials[i];
         return WebCore::PublicKeyCredentialDescriptor {
             WebCore::PublicKeyCredentialType::PublicKey,
-            WebCore::toBufferSource(retainPtr(credential.get().identifier).get()).variant(),
+            WebCore::toBufferSource(retainPtr(credential.get().identifier).get()),
             authenticatorTransports(retainPtr(credential.get().transports).get()) };
     });
 }

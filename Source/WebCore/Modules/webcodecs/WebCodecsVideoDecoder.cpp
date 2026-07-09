@@ -111,7 +111,7 @@ static bool isValidDecoderConfig(const WebCodecsVideoDecoderConfig& config)
         return false;
 
     // 6. If description is [detached], return false.
-    if (config.description && WTF::visit([](auto& view) { return view->isDetached(); }, *config.description))
+    if (config.description && switchOn(*config.description, [](auto& buffer) { return buffer->isDetached(); }))
         return false;
 
     // 7. Return true.
@@ -122,7 +122,7 @@ static VideoDecoder::Config createVideoDecoderConfig(const WebCodecsVideoDecoder
 {
     Vector<uint8_t> description;
     if (config.description) {
-        auto data = WTF::switchOn(*config.description, [](auto& buffer) { return buffer->span(); });
+        auto data = config.description->span();
         if (!data.empty())
             description = data;
     }

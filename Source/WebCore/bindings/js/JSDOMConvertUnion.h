@@ -441,27 +441,16 @@ template<typename... T> struct JSConverter<IDLUnion<T...>> {
 
 // BufferSource specialization. In WebKit, BufferSource is defined as IDLUnion<IDLArrayBufferView, IDLArrayBuffer> as a hack, and it is not compatible to
 // annotation described in WebIDL.
-template<> struct Converter<IDLAllowSharedAdaptor<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>> : DefaultConverter<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>> {
-    static decltype(auto) convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
-    {
-        return WebCore::convert<IDLUnion<IDLAllowSharedAdaptor<IDLArrayBufferView>, IDLAllowSharedAdaptor<IDLArrayBuffer>>>(lexicalGlobalObject, value);
-    }
-};
-
-template<>
-struct JSConverter<IDLAllowSharedAdaptor<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>> {
-    static constexpr bool needsState = true;
-    static constexpr bool needsGlobalObject = true;
-
-    template<typename U>
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
-    {
-        return toJS<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(lexicalGlobalObject, globalObject, value);
-    }
-};
-
-
 template<> struct Converter<IDLBufferSource> : DefaultConverter<IDLBufferSource> {
+    using Result = ConversionResult<IDLBufferSource>;
+
+    static Result convert(JSC::JSGlobalObject& globalObject, JSC::JSValue value)
+    {
+        return WebCore::convert<IDLUnion<IDLAllowSharedAdaptor<IDLArrayBufferView>, IDLAllowSharedAdaptor<IDLArrayBuffer>>>(globalObject, value);
+    }
+};
+
+template<> struct Converter<IDLAllowSharedAdaptor<IDLBufferSource>> : DefaultConverter<IDLBufferSource> {
     using Result = ConversionResult<IDLBufferSource>;
 
     static Result convert(JSC::JSGlobalObject& globalObject, JSC::JSValue value)

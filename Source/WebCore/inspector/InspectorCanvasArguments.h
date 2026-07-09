@@ -359,11 +359,6 @@ using IDLTexImageSourceUnion = IDLUnion<
 #endif
 >;
 
-using IDLBufferDataSourceUnion = IDLUnion<
-    IDLAllowSharedAdaptor<IDLArrayBuffer>,
-    IDLAllowSharedAdaptor<IDLArrayBufferView>
->;
-
 using IDLFloat32ListUnion = IDLUnion<
     IDLAllowSharedAdaptor<IDLFloat32Array>,
     IDLSequence<IDLUnrestrictedFloat>
@@ -383,8 +378,24 @@ template<> struct InspectorCanvasArgumentProcessor<IDLTexImageSourceUnion> {
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const WebGLRenderingContextBase::TexImageSource&);
 };
 
-template<> struct InspectorCanvasArgumentProcessor<IDLBufferDataSourceUnion> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const WebGLRenderingContextBase::BufferDataSource&);
+template<> struct InspectorCanvasArgumentProcessor<IDLBufferSource> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const BufferSource&);
+};
+
+template<> struct InspectorCanvasArgumentProcessor<IDLAllowSharedAdaptor<IDLBufferSource>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const BufferSource& value)
+    {
+        return InspectorCanvasArgumentProcessor<IDLBufferSource>{}(context, value);
+    }
+};
+
+template<> struct InspectorCanvasArgumentProcessor<IDLNullable<IDLAllowSharedAdaptor<IDLBufferSource>>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const std::optional<BufferSource>& value)
+    {
+        if (!value)
+            return std::nullopt;
+        return InspectorCanvasArgumentProcessor<IDLBufferSource>{}(context, *value);
+    }
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLFloat32ListUnion> {
