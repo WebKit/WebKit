@@ -4034,7 +4034,8 @@ IncrementalRenderingSuppressionTimeout:
 
 IndexedDBAPIEnabled:
   type: bool
-  status: embedder
+  category: dom
+  status: stable
   humanReadableName: "IndexedDB API"
   humanReadableDescription: "IndexedDB API"
   defaultValue:
