@@ -747,9 +747,6 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::buildObjectForStyle()
     if (auto styleId = m_styleId.asProtocolValue<Inspector::Protocol::CSS::CSSStyleId>())
         result->setStyleId(styleId.releaseNonNull());
 
-    result->setWidth(m_style->getPropertyValue("width"_s));
-    result->setHeight(m_style->getPropertyValue("height"_s));
-
     if (auto sourceData = extractSourceData()) {
         if (auto range = buildSourceRangeObject(sourceData->ruleBodyRange, protect(m_parentStyleSheet)->lineEndings()))
             result->setRange(range.releaseNonNull());
@@ -845,9 +842,7 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties()
     auto properties = collectProperties(false);
 
     auto propertiesObject = JSON::ArrayOf<Inspector::Protocol::CSS::CSSProperty>::create();
-    auto shorthandEntries = ArrayOf<Inspector::Protocol::CSS::ShorthandEntry>::create();
     HashMap<String, Ref<Inspector::Protocol::CSS::CSSProperty>> propertyNameToPreviousActiveProperty;
-    HashSet<String> foundShorthands;
     String previousPriority;
     String previousStatus;
     Vector<size_t> lineEndings = m_parentStyleSheet ? protect(m_parentStyleSheet)->lineEndings() : Vector<size_t> { };
@@ -941,18 +936,6 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties()
                 if (implicit)
                     property->setImplicit(true);
                 status = Inspector::Protocol::CSS::CSSPropertyStatus::Style;
-
-                String shorthand = m_style->getPropertyShorthand(name);
-                if (!shorthand.isEmpty()) {
-                    if (!foundShorthands.contains(shorthand)) {
-                        foundShorthands.add(shorthand);
-                        auto entry = Inspector::Protocol::CSS::ShorthandEntry::create()
-                            .setName(shorthand)
-                            .setValue(shorthandValue(shorthand))
-                            .release();
-                        shorthandEntries->addItem(WTF::move(entry));
-                    }
-                }
             }
         }
 
@@ -963,7 +946,6 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties()
 
     return Inspector::Protocol::CSS::CSSStyle::create()
         .setCssProperties(WTF::move(propertiesObject))
-        .setShorthandEntries(WTF::move(shorthandEntries))
         .release();
 }
 
@@ -972,28 +954,6 @@ RefPtr<CSSRuleSourceData> InspectorStyle::extractSourceData() const
     if (!m_parentStyleSheet || !protect(m_parentStyleSheet)->ensureParsedDataReady())
         return nullptr;
     return protect(m_parentStyleSheet)->ruleSourceDataFor(m_style.ptr());
-}
-
-String InspectorStyle::shorthandValue(const String& shorthandProperty) const
-{
-    String value = m_style->getPropertyValue(shorthandProperty);
-    if (!value.isEmpty())
-        return value;
-    StringBuilder builder;
-    for (unsigned i = 0; i < m_style->length(); ++i) {
-        String individualProperty = m_style->item(i);
-        if (m_style->getPropertyShorthand(individualProperty) != shorthandProperty)
-            continue;
-        if (m_style->isPropertyImplicit(individualProperty))
-            continue;
-        String individualValue = m_style->getPropertyValue(individualProperty);
-        if (individualValue == "initial"_s)
-            continue;
-        if (!builder.isEmpty())
-            builder.append(' ');
-        builder.append(individualValue);
-    }
-    return builder.toString();
 }
 
 String InspectorStyle::shorthandPriority(const String& shorthandProperty) const
@@ -1245,26 +1205,6 @@ CSSRule* InspectorStyleSheet::ruleForId(const InspectorCSSId& id) const
     return id.ordinal() >= m_flatRules.size() ? nullptr : m_flatRules.at(id.ordinal()).get();
 }
 
-RefPtr<Inspector::Protocol::CSS::CSSStyleSheetBody> InspectorStyleSheet::buildObjectForStyleSheet()
-{
-    RefPtr styleSheet = pageStyleSheet();
-    if (!styleSheet)
-        return nullptr;
-
-    RefPtr<CSSRuleList> cssRuleList = asCSSRuleList(styleSheet.get());
-
-    auto result = Inspector::Protocol::CSS::CSSStyleSheetBody::create()
-        .setStyleSheetId(id())
-        .setRules(buildArrayForRuleList(cssRuleList.get()))
-        .release();
-
-    auto styleSheetText = text();
-    if (!styleSheetText.hasException())
-        result->setText(styleSheetText.releaseReturnValue());
-
-    return result;
-}
-
 RefPtr<Inspector::Protocol::CSS::CSSStyleSheetHeader> InspectorStyleSheet::buildObjectForStyleSheetInfo()
 {
     RefPtr styleSheet = pageStyleSheet();
@@ -1276,9 +1216,7 @@ RefPtr<Inspector::Protocol::CSS::CSSStyleSheetHeader> InspectorStyleSheet::build
     return Inspector::Protocol::CSS::CSSStyleSheetHeader::create()
         .setStyleSheetId(id())
         .setOrigin(m_origin)
-        .setDisabled(styleSheet->disabled())
         .setSourceURL(finalURL())
-        .setTitle(styleSheet->title())
         .setFrameId(m_identifierRegistry->frameId(frame.get()))
         .setIsInline(styleSheet->isInline() && styleSheet->startPosition() != TextPosition())
         .setStartLine(styleSheet->startPosition().m_line.zeroBasedInt())
@@ -1454,7 +1392,6 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyleSheet::buildObjectForStyle
     if (id.isEmpty()) {
         return Inspector::Protocol::CSS::CSSStyle::create()
             .setCssProperties(ArrayOf<Inspector::Protocol::CSS::CSSProperty>::create())
-            .setShorthandEntries(ArrayOf<Inspector::Protocol::CSS::ShorthandEntry>::create())
             .release();
     }
 
@@ -1789,26 +1726,6 @@ bool InspectorStyleSheet::styleSheetTextFromCSSRuleSerialization(String* result)
     }
     *result = text.toString();
     return true;
-}
-
-Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSRule>> InspectorStyleSheet::buildArrayForRuleList(CSSRuleList* ruleList)
-{
-    auto result = JSON::ArrayOf<Inspector::Protocol::CSS::CSSRule>::create();
-    if (!ruleList)
-        return result;
-
-    RefPtr<CSSRuleList> refRuleList = ruleList;
-    Vector<RefPtr<CSSRule>> rules;
-    collectFlatRules(WTF::move(refRuleList), &rules);
-
-    for (auto& rule : rules) {
-        if (RefPtr styleRule = dynamicDowncast<CSSStyleRule>(rule.get())) {
-            if (auto ruleObject = buildObjectForRule(styleRule.get()))
-                result->addItem(ruleObject.releaseNonNull());
-        }
-    }
-
-    return result;
 }
 
 void InspectorStyleSheet::collectFlatRules(RefPtr<CSSRuleList>&& ruleList, Vector<RefPtr<CSSRule>>* result)

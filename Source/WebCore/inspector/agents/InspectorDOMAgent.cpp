@@ -1683,25 +1683,6 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNodeList(Re
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightFrame(const Inspector::Protocol::Network::FrameId& frameId, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor)
-{
-    Inspector::Protocol::ErrorString errorString;
-
-    RefPtr frame = m_inspectedPage->inspectorController().identifierRegistry().assertFrame(errorString, frameId);
-    if (!frame)
-        return makeUnexpected(errorString);
-
-    if (RefPtr ownerElement = frame->ownerElement()) {
-        auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
-        highlightConfig->showInfo = true; // Always show tooltips for frames.
-        highlightConfig->content = parseColor(WTF::move(color)).value_or(Color::transparentBlack);
-        highlightConfig->contentOutline = parseColor(WTF::move(outlineColor)).value_or(Color::transparentBlack);
-        protect(overlay())->highlightNode(ownerElement.get(), *highlightConfig);
-    }
-
-    return { };
-}
-
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::hideHighlight()
 {
     protect(overlay())->hideHighlight();
@@ -1821,21 +1802,6 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::redo()
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::markUndoableState()
 {
     m_history->markUndoableState();
-
-    return { };
-}
-
-Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::focus(Inspector::Protocol::DOM::NodeId nodeId)
-{
-    Inspector::Protocol::ErrorString errorString;
-
-    RefPtr element = assertElement(errorString, nodeId);
-    if (!element)
-        return makeUnexpected(errorString);
-    if (!element->isFocusable())
-        return makeUnexpected("Element for given nodeId is not focusable"_s);
-
-    element->focus();
 
     return { };
 }

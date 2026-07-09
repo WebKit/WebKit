@@ -150,7 +150,6 @@ private:
     Vector<InspectorStyleProperty> collectProperties(bool includeAll);
     Ref<Inspector::Protocol::CSS::CSSStyle> styleWithProperties();
     RefPtr<CSSRuleSourceData> extractSourceData() const;
-    String shorthandValue(const String& shorthandProperty) const;
     String shorthandPriority(const String& shorthandProperty) const;
     Vector<String> longhandProperties(const String& shorthandProperty) const;
 
@@ -185,7 +184,6 @@ public:
     ExceptionOr<CSSStyleRule*> addRule(const String& selector);
     ExceptionOr<void> deleteRule(const InspectorCSSId&);
     CSSRule* ruleForId(const InspectorCSSId&) const;
-    RefPtr<Inspector::Protocol::CSS::CSSStyleSheetBody> buildObjectForStyleSheet();
     RefPtr<Inspector::Protocol::CSS::CSSStyleSheetHeader> buildObjectForStyleSheetInfo();
     RefPtr<Inspector::Protocol::CSS::CSSRule> buildObjectForRule(CSSStyleRule*);
     Ref<Inspector::Protocol::CSS::CSSStyle> buildObjectForStyle(CSSStyleDeclaration*);
@@ -227,7 +225,6 @@ private:
     bool extensionStyleSheetText(String* result) const;
     bool styleSheetTextFromCSSRuleSerialization(String* result) const;
     Ref<JSON::ArrayOf<Inspector::Protocol::CSS::Grouping>> buildArrayForGroupings(CSSRule&);
-    Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSRule>> buildArrayForRuleList(CSSRuleList*);
     Ref<Inspector::Protocol::CSS::CSSSelector> buildObjectForSelector(const CSSSelector*);
     Ref<Inspector::Protocol::CSS::SelectorList> buildObjectForSelectorList(CSSStyleRule*, int& endingLine);
 

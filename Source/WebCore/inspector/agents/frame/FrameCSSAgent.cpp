@@ -344,21 +344,6 @@ Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSStyleShe
     return headers;
 }
 
-Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSStyleSheetBody>> FrameCSSAgent::getStyleSheet(const Inspector::Protocol::CSS::StyleSheetId& styleSheetId)
-{
-    Inspector::Protocol::ErrorString errorString;
-
-    RefPtr inspectorStyleSheet = assertStyleSheetForId(errorString, styleSheetId);
-    if (!inspectorStyleSheet)
-        return makeUnexpected(errorString);
-
-    auto styleSheet = inspectorStyleSheet->buildObjectForStyleSheet();
-    if (!styleSheet)
-        return makeUnexpected("Internal error: missing style sheet"_s);
-
-    return styleSheet.releaseNonNull();
-}
-
 Inspector::CommandResult<String> FrameCSSAgent::getStyleSheetText(const Inspector::Protocol::CSS::StyleSheetId& styleSheetId)
 {
     Inspector::Protocol::ErrorString errorString;

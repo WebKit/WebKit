@@ -56,10 +56,7 @@ After modifying a style rule in place:
           "status": "active"
         }
       ],
-      "shorthandEntries": [],
       "styleId": "<filtered>",
-      "width": "",
-      "height": "",
       "range": {
         "startLine": 0,
         "startColumn": 6,
@@ -114,10 +111,7 @@ After adding a style rule:
           "status": "active"
         }
       ],
-      "shorthandEntries": [],
       "styleId": "<filtered>",
-      "width": "",
-      "height": "",
       "range": {
         "startLine": 0,
         "startColumn": 6,
@@ -181,10 +175,7 @@ After adding a style rule:
           "status": "active"
         }
       ],
-      "shorthandEntries": [],
       "styleId": "<filtered>",
-      "width": "",
-      "height": "",
       "range": {
         "startLine": 1,
         "startColumn": 6,
@@ -239,10 +230,7 @@ After removing a style rule:
           "status": "active"
         }
       ],
-      "shorthandEntries": [],
       "styleId": "<filtered>",
-      "width": "",
-      "height": "",
       "range": {
         "startLine": 0,
         "startColumn": 6,

@@ -115,7 +115,6 @@ public:
     Inspector::CommandResult<void> highlightNodeList(Ref<JSON::Array>&& nodeIds, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers) override;
 #endif
     Inspector::CommandResult<void> hideHighlight() override;
-    Inspector::CommandResult<void> highlightFrame(const String& frameId, RefPtr<JSON::Object>&& contentColor, RefPtr<JSON::Object>&& contentOutlineColor) override;
     Inspector::CommandResult<void> showGridOverlay(int nodeId, Ref<JSON::Object>&& gridOverlayConfig) override;
     Inspector::CommandResult<void> hideGridOverlay(std::optional<int>&& nodeId) override;
     Inspector::CommandResult<void> showFlexOverlay(int nodeId, Ref<JSON::Object>&& flexOverlayConfig) override;
@@ -126,7 +125,6 @@ public:
     Inspector::CommandResult<void> undo() override;
     Inspector::CommandResult<void> redo() override;
     Inspector::CommandResult<void> markUndoableState() override;
-    Inspector::CommandResult<void> focus(int nodeId) override;
     Inspector::CommandResult<void> setInspectedNode(int nodeId) override;
     Inspector::CommandResult<void> setAllowEditingUserAgentShadowTrees(bool) override;
     Inspector::CommandResult<Ref<Inspector::Protocol::DOM::MediaStats>> getMediaStats(int nodeId) override;
