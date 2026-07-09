@@ -32,8 +32,14 @@
     uint64_t endOffset;
 };
 
+[Nested] struct WebKit::WebFoundTextRange::CueData {
+    WebCore::MediaPlayerClientIdentifier mediaElementIdentifier;
+    uint64_t documentOffset;
+    uint64_t seekTimeMilliseconds;
+};
+
 struct WebKit::WebFoundTextRange {
-    Variant<WebKit::WebFoundTextRange::DOMData, WebKit::WebFoundTextRange::PDFData> data;
+    Variant<WebKit::WebFoundTextRange::DOMData, WebKit::WebFoundTextRange::PDFData, WebKit::WebFoundTextRange::CueData> data;
     Vector<uint64_t> pathToFrame;
     uint64_t order;
 }

@@ -614,12 +614,29 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 
 @end
 
+@interface WKFoundCueTextRange : WKFoundTextRange
+
+@property (nonatomic) uint64_t mediaElementIdentifier;
+@property (nonatomic) uint64_t documentOffset;
+@property (nonatomic) uint64_t seekTimeMilliseconds;
+
+@end
+
 @interface WKFoundPDFTextPosition : WKFoundTextPosition
 
 @property (nonatomic) NSUInteger page;
 @property (nonatomic) NSUInteger offset;
 
 + (WKFoundPDFTextPosition *)textPositionWithPage:(NSUInteger)page offset:(NSUInteger)offset;
+
+@end
+
+@interface WKFoundCueTextPosition : WKFoundTextPosition
+
+@property (nonatomic) uint64_t documentOffset;
+@property (nonatomic) uint64_t seekTimeMilliseconds;
+
++ (WKFoundCueTextPosition *)textPositionWithDocumentOffset:(uint64_t)documentOffset seekTimeMilliseconds:(uint64_t)seekTimeMilliseconds order:(NSUInteger)order;
 
 @end
 
@@ -6934,16 +6951,6 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
 - (NSInteger)offsetFromPosition:(UITextPosition *)from toPosition:(UITextPosition *)to
 {
 #if HAVE(UIFINDINTERACTION)
-    if ([from isKindOfClass:[WKFoundDOMTextPosition class]] && [to isKindOfClass:[WKFoundDOMTextPosition class]]) {
-        WKFoundDOMTextPosition *fromPosition = (WKFoundDOMTextPosition *)from;
-        WKFoundDOMTextPosition *toPosition = (WKFoundDOMTextPosition *)to;
-
-        if (fromPosition.order != toPosition.order)
-            return fromPosition.order - toPosition.order;
-
-        return fromPosition.offset - toPosition.offset;
-    }
-
     if ([from isKindOfClass:[WKFoundPDFTextPosition class]] && [to isKindOfClass:[WKFoundPDFTextPosition class]]) {
         WKFoundPDFTextPosition *fromPosition = (WKFoundPDFTextPosition *)from;
         WKFoundPDFTextPosition *toPosition = (WKFoundPDFTextPosition *)to;
@@ -6954,6 +6961,26 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
         if (fromPosition.page == toPosition.page)
             return fromPosition.offset - toPosition.offset;
         return fromPosition.page - toPosition.page;
+    }
+
+    BOOL fromIsDocumentPosition = [from isKindOfClass:[WKFoundDOMTextPosition class]] || [from isKindOfClass:[WKFoundCueTextPosition class]];
+    BOOL toIsDocumentPosition = [to isKindOfClass:[WKFoundDOMTextPosition class]] || [to isKindOfClass:[WKFoundCueTextPosition class]];
+    if (fromIsDocumentPosition && toIsDocumentPosition) {
+        auto keyForPosition = [](UITextPosition *position) -> std::tuple<NSUInteger, uint64_t, uint64_t> {
+            if (RetainPtr domPosition = dynamic_objc_cast<WKFoundDOMTextPosition>(position))
+                return { [domPosition order], [domPosition offset], 0 };
+            RetainPtr cuePosition = checked_objc_cast<WKFoundCueTextPosition>(position);
+            return { [cuePosition order], [cuePosition documentOffset], [cuePosition seekTimeMilliseconds] };
+        };
+
+        auto [fromOrder, fromOffset, fromSecondary] = keyForPosition(from);
+        auto [toOrder, toOffset, toSecondary] = keyForPosition(to);
+
+        if (fromOrder != toOrder)
+            return fromOrder - toOrder;
+        if (fromOffset != toOffset)
+            return fromOffset - toOffset;
+        return fromSecondary - toSecondary;
     }
 
     if ([from isKindOfClass:[WKFoundTextPosition class]] && [to isKindOfClass:[WKFoundTextPosition class]]) {
@@ -16275,6 +16302,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             [foundPDFTextRange setEndPage:pdfData.endPage];
             [foundPDFTextRange setEndPageOffset:pdfData.endOffset];
             return foundPDFTextRange;
+        },
+        [] (const WebKit::WebFoundTextRange::CueData& cueData) -> RetainPtr<WKFoundTextRange> {
+            RetainPtr foundCueTextRange = adoptNS([[WKFoundCueTextRange alloc] init]);
+            [foundCueTextRange setMediaElementIdentifier:cueData.mediaElementIdentifier.toRawValue()];
+            [foundCueTextRange setDocumentOffset:cueData.documentOffset];
+            [foundCueTextRange setSeekTimeMilliseconds:cueData.seekTimeMilliseconds];
+            return foundCueTextRange;
         }
     );
 
@@ -16374,6 +16408,42 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr pos = adoptNS([[WKFoundPDFTextPosition alloc] init]);
     [pos setPage:page];
     [pos setOffset:offset];
+    return pos.autorelease();
+}
+
+@end
+
+@implementation WKFoundCueTextRange
+
+- (WKFoundCueTextPosition *)start
+{
+    return [WKFoundCueTextPosition textPositionWithDocumentOffset:self.documentOffset seekTimeMilliseconds:self.seekTimeMilliseconds order:self.order];
+}
+
+- (WKFoundCueTextPosition *)end
+{
+    return [WKFoundCueTextPosition textPositionWithDocumentOffset:self.documentOffset seekTimeMilliseconds:self.seekTimeMilliseconds order:self.order];
+}
+
+- (WebKit::WebFoundTextRange)webFoundTextRange
+{
+    WebKit::WebFoundTextRange::CueData data { WebCore::MediaPlayerClientIdentifier(self.mediaElementIdentifier), self.documentOffset, self.seekTimeMilliseconds };
+    auto pathToFrameVector = makeVector(self.pathToFrame, [](id number) -> std::optional<uint64_t> {
+        return [number unsignedLongValue];
+    });
+    return { data, WTF::move(pathToFrameVector), self.order };
+}
+
+@end
+
+@implementation WKFoundCueTextPosition
+
++ (WKFoundCueTextPosition *)textPositionWithDocumentOffset:(uint64_t)documentOffset seekTimeMilliseconds:(uint64_t)seekTimeMilliseconds order:(NSUInteger)order
+{
+    RetainPtr pos = adoptNS([[WKFoundCueTextPosition alloc] init]);
+    [pos setDocumentOffset:documentOffset];
+    [pos setSeekTimeMilliseconds:seekTimeMilliseconds];
+    [pos setOrder:order];
     return pos.autorelease();
 }
 

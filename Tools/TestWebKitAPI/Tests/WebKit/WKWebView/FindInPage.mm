@@ -33,7 +33,9 @@
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKFindDelegate.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
@@ -660,6 +662,113 @@ TEST(WebKit, FindInPageFullWord)
     testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birthday", searchOptions.get(), 360UL);
     testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birth", searchOptions.get(), 0UL);
 }
+
+#if ENABLE(VIDEO)
+
+static RetainPtr<WKWebViewConfiguration> configurationWithFindInVideoEnabled()
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"FindInVideoEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+    return configuration;
+}
+
+TEST(WebKit, FindInPageVideoCaptionCues)
+{
+    RetainPtr webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configurationWithFindInVideoEnabled()]);
+    [webView loadTestPageNamed:@"lots-of-text-and-video"];
+    [webView _test_waitForDidFinishNavigation];
+
+    // Return the page-text matches and the caption cues together.
+    RetainPtr searchOptions = adoptNS([[UITextSearchOptions alloc] init]);
+    testPerformTextSearchWithQueryStringInWebView(webView, @"Birthday", searchOptions, 375UL);
+    testPerformTextSearchWithQueryStringInWebView(webView, @"day", searchOptions, 375UL);
+}
+
+static double currentTimeAfterHighlighting(TestWKWebView *webView, UITextRange *range, double expectedTime)
+{
+    [webView decorateFoundTextRange:range inDocument:nil usingStyle:(UITextSearchFoundTextStyle)_UIFoundTextStyleHighlighted];
+
+    // Highlighting a cue seeks the video asynchronously. Poll until it reaches the expected time.
+    double currentTime = 0;
+    for (unsigned attempt = 0; attempt < 100; ++attempt) {
+        currentTime = [[webView objectByEvaluatingJavaScript:@"document.querySelector('video').currentTime"] doubleValue];
+        if (currentTime > expectedTime - 0.1 && currentTime < expectedTime + 0.1)
+            break;
+        [webView waitForNextPresentationUpdate];
+    }
+    return currentTime;
+}
+
+TEST(WebKit, FindInPageVideoCaptionCueSeeksVideo)
+{
+    RetainPtr configuration = configurationWithFindInVideoEnabled();
+    [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
+    [configuration setAllowsInlineMediaPlayback:YES];
+    RetainPtr webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
+    [webView addToTestWindow];
+
+    [webView loadTestPageNamed:@"video-with-caption-cues"];
+    [webView _test_waitForDidFinishNavigation];
+
+    // Start playback under a user gesture so iOS loads the media, then pause and rewind to 0.
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"const video = document.querySelector('video'); video.muted = true; video.play(); true" inFrame:nil];
+
+    __block bool ready = false;
+    [webView callAsyncJavaScript:@"const video = document.querySelector('video'); const start = Date.now(); while (video.readyState < HTMLMediaElement.HAVE_METADATA && Date.now() - start < 8000) await new Promise(resolve => setTimeout(resolve, 50)); video.pause(); video.currentTime = 0;" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id, NSError *error) {
+        EXPECT_NULL(error);
+        ready = true;
+    }];
+    TestWebKitAPI::Util::run(&ready);
+    __block bool finishedSearching = false;
+    RetainPtr aggregator = adoptNS([[TestSearchAggregator alloc] initWithCompletionHandler:^{
+        finishedSearching = true;
+    }]);
+    [webView performTextSearchWithQueryString:@"Birthday" usingOptions:adoptNS([[UITextSearchOptions alloc] init]) resultAggregator:aggregator];
+    TestWebKitAPI::Util::run(&finishedSearching);
+
+    EXPECT_EQ([aggregator count], 5UL);
+    // Matches arrive in report order (DOM, then cues). Sort into document order like UIFindInteraction does.
+    RetainPtr ranges = [[[aggregator allFoundRanges] array] sortedArrayUsingComparator:^NSComparisonResult(UITextRange *a, UITextRange *b) {
+        return [webView compareFoundRange:a toRange:b inDocument:nil];
+    }];
+
+    [webView didBeginTextSearchOperation];
+
+    // Navigating to a caption cue seeks the video to its start time and text matches don't seek
+    EXPECT_NEAR(currentTimeAfterHighlighting(webView, [ranges objectAtIndex:0], 0.0), 0.0, 0.1);
+    EXPECT_NEAR(currentTimeAfterHighlighting(webView, [ranges objectAtIndex:1], 1.0), 1.0, 0.1);
+    EXPECT_NEAR(currentTimeAfterHighlighting(webView, [ranges objectAtIndex:2], 2.0), 2.0, 0.1);
+    EXPECT_NEAR(currentTimeAfterHighlighting(webView, [ranges objectAtIndex:3], 3.0), 3.0, 0.1);
+    EXPECT_NEAR(currentTimeAfterHighlighting(webView, [ranges objectAtIndex:4], 3.0), 3.0, 0.1);
+}
+
+TEST(WebKit, FindInPageVideoCaptionCuesInSubframe)
+{
+    RetainPtr webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configurationWithFindInVideoEnabled()]);
+
+    // Interleave main-frame text and videos with a same-origin subframe that also holds a video
+    NSString *markup = @"Birthday"
+        "<video src='test.mp4'></video>"
+        "Birthday"
+        "<iframe srcdoc=\"<video src='test.mp4'></video>"
+        "<script>const track = document.querySelector('video').addTextTrack('captions', 'English', 'en'); track.mode = 'showing'; track.addCue(new VTTCue(1, 2, 'Happy Birthday'));</script>\"></iframe>"
+        "Birthday"
+        "<video src='test.mp4'></video>"
+        "Birthday"
+        "<script>for (const video of document.querySelectorAll('video')) { const track = video.addTextTrack('captions', 'English', 'en'); track.mode = 'showing'; track.addCue(new VTTCue(1, 2, 'Happy Birthday')); }</script>";
+    [webView loadHTMLString:markup baseURL:[NSBundle.test_resourcesBundle resourceURL]];
+    [webView _test_waitForDidFinishNavigation];
+
+    RetainPtr searchOptions = adoptNS([[UITextSearchOptions alloc] init]);
+    testPerformTextSearchWithQueryStringInWebView(webView, @"Birthday", searchOptions, 7UL);
+}
+
+#endif // ENABLE(VIDEO)
 
 TEST(WebKit, FindInPageDoNotCrashWhenUsingMutableString)
 {

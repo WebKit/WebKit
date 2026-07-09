@@ -36,6 +36,11 @@ unsigned WebFoundTextRange::PDFData::hash() const
     return pairIntHash(pairIntHash(pairIntHash(startPage, endPage), startOffset), endOffset);
 }
 
+unsigned WebFoundTextRange::CueData::hash() const
+{
+    return pairIntHash(pairIntHash(mediaElementIdentifier.toRawValue(), documentOffset), seekTimeMilliseconds);
+}
+
 unsigned WebFoundTextRange::hash() const
 {
     return WTF::switchOn(data,
@@ -44,6 +49,9 @@ unsigned WebFoundTextRange::hash() const
         },
         [] (const WebFoundTextRange::PDFData& pdfData) {
             return pdfData.hash();
+        },
+        [] (const WebFoundTextRange::CueData& cueData) {
+            return cueData.hash();
         }
     );
 }
@@ -70,6 +78,10 @@ TextStream& operator<<(TextStream& ts, const WebFoundTextRange& range)
         [&] (const WebFoundTextRange::PDFData& pdfData) {
             ts << "WebFoundTextRange"_s;
             ts.dumpProperty("PDFData"_s, pdfData);
+        },
+        [&] (const WebFoundTextRange::CueData& cueData) {
+            ts << "WebFoundTextRange"_s;
+            ts.dumpProperty("CueData"_s, cueData);
         }
     );
     ts.dumpProperty("order"_s, range.order);
@@ -86,6 +98,12 @@ TextStream& operator<<(TextStream& ts, const WebFoundTextRange::DOMData& data)
 TextStream& operator<<(TextStream& ts, const WebFoundTextRange::PDFData& data)
 {
     ts << "[start page: " << data.startPage << ", start offset: " << data.startOffset << ", end page: " << data.endPage << ", end offset: " << data.endOffset << "]";
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const WebFoundTextRange::CueData& data)
+{
+    ts << "[media element: " << data.mediaElementIdentifier.toRawValue() << ", document offset: " << data.documentOffset << ", seek time (ms): " << data.seekTimeMilliseconds << "]";
     return ts;
 }
 
