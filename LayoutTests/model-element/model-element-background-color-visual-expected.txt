@@ -1,0 +1,9 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x305
+  RenderBlock {HTML} at (0,0) size 800x305
+    RenderBody {BODY} at (0,0) size 800x305
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (0,0) size 300x300
+  RenderModel {MODEL} at (0,0) size 300x300 [bgcolor=#FF000080]
