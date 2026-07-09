@@ -260,6 +260,10 @@ void AnchorScrollAdjuster::removeMatchingSnapshots(const AnchorScrollAdjuster& c
 {
     if (m_adjustmentForViewport != containerAdjuster.m_adjustmentForViewport)
         return;
+    if (containerAdjuster.m_adjustmentForViewport) {
+        ASSERT(!containerAdjuster.m_scrollSnapshots.first().m_scroller && !m_scrollSnapshots.first().m_scroller);
+        m_adjustmentForViewport = 0;
+    }
     for (auto containerSnapshot : containerAdjuster.m_scrollSnapshots) {
         m_scrollSnapshots.removeFirstMatching([containerSnapshot](const auto& selfSnapshot) {
             return selfSnapshot.m_scroller.get() == containerSnapshot.m_scroller.get();

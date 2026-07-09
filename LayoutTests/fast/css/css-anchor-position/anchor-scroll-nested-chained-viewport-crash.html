@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<title>Tests that recapturing scroll snapshots of a fixedpos anchor-positioned box nested in another
+scroll-adjusted fixedpos box, whose default anchor is itself anchor-positioned, does not crash</title>
+<link rel="help" href="https://bugs.webkit.org/show_bug.cgi?id=318909">
+
+<style>
+body {
+  margin: 0;
+  width: 1000px;
+  height: 1000px;
+}
+
+div {
+  width: 50px;
+  height: 50px;
+}
+
+#anchor1 {
+  position: absolute;
+  left: 150px;
+  top: 150px;
+  anchor-name: --a1;
+}
+
+#anchor3 {
+  position: absolute;
+  left: 350px;
+  top: 350px;
+  anchor-name: --a3;
+}
+
+/* #anchor2 is itself anchor-positioned (chained to #anchor3), which is what makes
+   #f2's AnchorScrollAdjuster have a chained anchor and therefore stay registered
+   even after its viewport snapshot is (incorrectly) removed below. */
+#anchor2 {
+  position: absolute;
+  position-anchor: --a3;
+  position-area: bottom right;
+  anchor-name: --a2;
+}
+
+#f1 {
+  position: fixed;
+  position-anchor: --a1;
+  position-area: bottom right;
+}
+
+/* #f2 is fixed-positioned and nested inside #f1, which is also fixed-positioned and
+   scroll-adjusted for the viewport, so #f2 unwinds the shared viewport adjustment. */
+#f2 {
+  position: fixed;
+  position-anchor: --a2;
+  position-area: bottom right;
+}
+</style>
+
+<script src="../../../resources/ui-helper.js"></script>
+
+<p>This test passes if it does not crash.</p>
+
+<div id="anchor1"></div>
+<div id="anchor3"></div>
+<div id="anchor2"></div>
+<div id="f1">
+  <div id="wrapper">
+    <div id="f2"></div>
+  </div>
+</div>
+
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+
+  async function doTest() {
+    // Let #f1 acquire its viewport scroll adjustment first.
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+
+    // Force #f2 to be laid out again (recapturing its scroll snapshots) now that
+    // #f1 is already tagged with a viewport scroll adjustment, so #f2 unwinds it.
+    f2.style.width = '51px';
+
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+
+    if (window.testRunner)
+      testRunner.notifyDone();
+  }
+  window.addEventListener('load', doTest, false);
+</script>
