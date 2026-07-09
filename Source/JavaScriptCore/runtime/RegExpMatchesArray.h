@@ -76,7 +76,8 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
 
     result.start = position;
     result.end = subpatternResults[1];
-    
+    RELEASE_ASSERT(result.end >= result.start);
+
     JSArray* array;
     JSArray* indicesArray = nullptr;
 
