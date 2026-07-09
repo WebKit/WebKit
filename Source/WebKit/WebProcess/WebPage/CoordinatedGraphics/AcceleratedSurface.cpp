@@ -44,11 +44,14 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#include <WebCore/FontRenderOptions.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkCanvas.h>
+#include <skia/core/SkColorSpace.h>
 #include <skia/gpu/ganesh/GrBackendSurface.h>
 #include <skia/gpu/ganesh/SkSurfaceGanesh.h>
 #include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
+#include <skia/gpu/ganesh/gl/GrGLTypes.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
@@ -175,15 +178,18 @@ AcceleratedSurface::RenderTargetShareableBuffer::RenderTargetShareableBuffer(Acc
     : RenderTarget(surface)
     , m_initialSize(size)
 {
-    if (m_surface->useSkia())
-        return;
+    if (!m_surface->useSkia())
+        createFramebuffer();
+}
 
+void AcceleratedSurface::RenderTargetShareableBuffer::createFramebuffer()
+{
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
     glGenRenderbuffers(1, &m_depthStencilBuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, size.width(), size.height());
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, m_initialSize.width(), m_initialSize.height());
 
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
@@ -191,10 +197,15 @@ AcceleratedSurface::RenderTargetShareableBuffer::RenderTargetShareableBuffer(Acc
 
 AcceleratedSurface::RenderTargetShareableBuffer::~RenderTargetShareableBuffer()
 {
-    if (!m_surface->useSkia()) {
+    if (m_fbo || m_depthStencilBuffer) {
+        std::optional<GLContext::ScopedGLContextCurrent> scopedCurrent;
+        if (m_surface->useSkia()) {
+            ASSERT(!RunLoop::isMain());
+            scopedCurrent.emplace(*PlatformDisplay::sharedDisplay().skiaGLContext());
+        }
+
         if (m_fbo)
             glDeleteFramebuffers(1, &m_fbo);
-
         if (m_depthStencilBuffer)
             glDeleteRenderbuffers(1, &m_depthStencilBuffer);
     }
@@ -304,11 +315,7 @@ AcceleratedSurface::RenderTargetEGLImage::RenderTargetEGLImage(AcceleratedSurfac
     : RenderTargetShareableBuffer(surface, size)
     , m_image(image)
 {
-    if (m_surface->useSkia()) {
-        m_texture = BitmapTexture::create(m_image, size);
-        createSkiaSurfaceForTexture(*m_texture);
-    } else
-        initializeColorBuffer();
+    initializeColorBuffer();
     WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStore::DidCreateDMABufBuffer(m_id, WTF::move(dmaBufAttributes), usage), m_surface->surfaceID());
 }
 #endif // USE(GBM)
@@ -377,11 +384,7 @@ AcceleratedSurface::RenderTargetEGLImage::RenderTargetEGLImage(AcceleratedSurfac
     : RenderTargetShareableBuffer(surface, size)
     , m_image(image)
 {
-    if (m_surface->useSkia()) {
-        m_texture = BitmapTexture::create(m_image, size);
-        createSkiaSurfaceForTexture(*m_texture);
-    } else
-        initializeColorBuffer();
+    initializeColorBuffer();
     WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStore::DidCreateAndroidBuffer(m_id, WTF::move(hardwareBuffer)), m_surface->surfaceID());
 }
 #endif // OS(ANDROID)
@@ -389,19 +392,51 @@ AcceleratedSurface::RenderTargetEGLImage::RenderTargetEGLImage(AcceleratedSurfac
 #if USE(GBM) || OS(ANDROID)
 void AcceleratedSurface::RenderTargetEGLImage::initializeColorBuffer()
 {
-    ASSERT(!m_surface->useSkia());
+    bool useSkia = m_surface->useSkia();
+    auto& display = PlatformDisplay::sharedDisplay();
+
+    std::optional<GLContext::ScopedGLContextCurrent> scopedCurrent;
+    if (useSkia) {
+        scopedCurrent.emplace(*display.skiaGLContext());
+        createFramebuffer();
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glGenRenderbuffers(1, &m_colorBuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, m_colorBuffer);
     glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, m_image);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_colorBuffer);
+
+    if (!useSkia)
+        return;
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        LOG_ERROR("AcceleratedSurface was unable to construct a complete framebuffer for the Skia render target");
+        return;
+    }
+
+    GrGLFramebufferInfo framebufferInfo;
+    framebufferInfo.fFBOID = m_fbo;
+    framebufferInfo.fFormat = GL_RGBA8;
+    static constexpr int stencilBits = 8;
+    auto backendRenderTarget = GrBackendRenderTargets::MakeGL(m_initialSize.width(), m_initialSize.height(), 0, stencilBits, framebufferInfo);
+
+    auto origin = m_surface->shouldPaintMirrored() ? kBottomLeft_GrSurfaceOrigin : kTopLeft_GrSurfaceOrigin;
+    auto properties = FontRenderOptions::singleton().createSurfaceProps();
+    m_skiaSurface = SkSurfaces::WrapBackendRenderTarget(display.skiaGrContext(), backendRenderTarget, origin, kRGBA_8888_SkColorType, SkColorSpace::MakeSRGB(), &properties);
 }
 
 AcceleratedSurface::RenderTargetEGLImage::~RenderTargetEGLImage()
 {
-    if (!m_surface->useSkia()) {
-        if (m_colorBuffer)
-            glDeleteRenderbuffers(1, &m_colorBuffer);
+    std::optional<GLContext::ScopedGLContextCurrent> scopedCurrent;
+    if (m_surface->useSkia()) {
+        ASSERT(!RunLoop::isMain());
+        scopedCurrent.emplace(*PlatformDisplay::sharedDisplay().skiaGLContext());
+        m_skiaSurface = nullptr;
     }
+
+    if (m_colorBuffer)
+        glDeleteRenderbuffers(1, &m_colorBuffer);
 
     if (m_image)
         PlatformDisplay::sharedDisplay().destroyEGLImage(m_image);

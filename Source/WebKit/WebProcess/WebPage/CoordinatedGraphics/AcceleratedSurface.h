@@ -221,6 +221,8 @@ private:
         void sync(bool) override;
         void setReleaseFenceFD(UnixFileDescriptor&&) override;
 
+        void createFramebuffer();
+
         unsigned m_fbo { 0 };
         unsigned m_depthStencilBuffer { 0 };
         UnixFileDescriptor m_renderingFenceFD;
@@ -286,7 +288,6 @@ private:
 
         unsigned m_colorBuffer { 0 };
         EGLImage m_image { nullptr };
-        RefPtr<WebCore::BitmapTexture> m_texture;
     };
 #endif // USE(GBM) || OS(ANDROID)
 
