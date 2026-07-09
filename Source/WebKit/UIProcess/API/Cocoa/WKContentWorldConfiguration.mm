@@ -147,7 +147,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     _worldConfiguration->setDisableLegacyBuiltinOverrides(!enabled);
 }
 
-- (BOOL)jsHandleCreationEnabled
+- (BOOL)isJSHandleCreationEnabled
 {
     return _worldConfiguration->allowJSHandleCreation();
 }
@@ -167,7 +167,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     _worldConfiguration->setInspectable(inspectable);
 }
 
-- (BOOL)nodeSerializationEnabled
+- (BOOL)isNodeSerializationEnabled
 {
     return _worldConfiguration->allowNodeSerialization();
 }
@@ -253,7 +253,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (BOOL)allowNodeSerialization
 {
-    return [self nodeSerializationEnabled];
+    return [self isNodeSerializationEnabled];
 }
 
 - (void)setAllowNodeSerialization:(BOOL)allow

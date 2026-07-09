@@ -232,7 +232,7 @@ private:
     protect(*_userContentControllerProxy)->removeAllUserMessageHandlers();
 }
 
-- (void)addBuffer:(NSData *)buffer name:(NSString *)name contentWorld:(WKContentWorld *)world
+- (void)_addBuffer:(NSData *)buffer dataSpan:(std::span<const uint8_t>)dataSpan name:(NSString *)name contentWorld:(WKContentWorld *)world
 {
     auto isInReadOnlyRegion = [] (std::span<const uint8_t> span) {
         if (span.empty())
@@ -259,17 +259,34 @@ private:
     };
 
     RefPtr<WebCore::SharedMemory> sharedMemory;
-    auto dataSpan = span(buffer);
     if (isInReadOnlyRegion(dataSpan))
         sharedMemory = WebCore::SharedMemory::wrapMap(dataSpan, WebCore::SharedMemoryProtection::ReadOnly);
-    if (!sharedMemory)
-        sharedMemory = WebCore::SharedMemory::copyBuffer(WebCore::SharedBuffer::create(buffer));
+
+    if (!sharedMemory) {
+        // If we have a Data, wrapping it can possibly give us a memory usage win.
+        // Otherwise, it's fine to fallback to the dataSpan version.
+        if (buffer)
+            sharedMemory = WebCore::SharedMemory::copyBuffer(WebCore::SharedBuffer::create(buffer));
+        else
+            sharedMemory = WebCore::SharedMemory::copyBuffer(WebCore::SharedBuffer::create(dataSpan));
+    }
+
     if (!sharedMemory) {
         ASSERT_NOT_REACHED();
         return;
     }
 
     protect(*_userContentControllerProxy)->addJSBuffer(sharedMemory.releaseNonNull(), Ref { *world->_contentWorld }, name);
+}
+
+- (void)addBuffer:(NSData *)buffer name:(NSString *)name contentWorld:(WKContentWorld *)world
+{
+    [self _addBuffer:buffer dataSpan:span(buffer) name:name contentWorld:world];
+}
+
+- (void)_addDataSpan:(std::span<const uint8_t>)dataSpan name:(NSString *)name contentWorld:(WKContentWorld *)world
+{
+    [self _addBuffer:nil dataSpan:dataSpan name:name contentWorld:world];
 }
 
 - (void)removeBufferWithName:(NSString *)name contentWorld:(WKContentWorld *)world

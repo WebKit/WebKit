@@ -52,12 +52,12 @@
     return wrapper(API::FrameInfo::create(WebKit::FrameInfoData { _ref->info().frameInfo })).autorelease();
 }
 
-- (WKContentWorld *)world
+- (WKContentWorld *)contentWorld
 {
     return wrapper(API::ContentWorld::worldForIdentifier(_ref->info().worldIdentifier));
 }
 
-- (void)windowProxyFrameInfo:(void (^)(WKFrameInfo *))completionHandler
+- (void)getWindowProxyFrameWithCompletionHandler:(void (^)(WKFrameInfo *))completionHandler
 {
     RefPtr webFrame = WebKit::WebFrameProxy::webFrame(_ref->info().windowProxyFrameIdentifier);
     if (!webFrame)
@@ -100,9 +100,14 @@
 
 @implementation _WKJSHandle
 
+- (WKContentWorld *)world
+{
+    return [self contentWorld];
+}
+
 - (void)windowFrameInfo:(void (^)(WKFrameInfo * _Nullable))completionHandler
 {
-    [self windowProxyFrameInfo:completionHandler];
+    [self getWindowProxyFrameWithCompletionHandler:completionHandler];
 }
 
 @end

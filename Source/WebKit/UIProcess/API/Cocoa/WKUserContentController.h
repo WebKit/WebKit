@@ -149,13 +149,13 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  @param contentWorld The WKContentWorld to add the buffer to.
         The buffer will only be visible to JavaScript executing in that content world.
  */
-- (void)addBuffer:(NSData *)buffer name:(NSString *)name contentWorld:(WKContentWorld *)world WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
+- (void)addBuffer:(NSData *)buffer name:(NSString *)name contentWorld:(WKContentWorld *)world NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 /*! @abstract Removes a previously added data buffer from the given `WKContentWorld
  @param name The name of the buffer to remove.
  @param contentWorld The WKContentWorld from which to remove the buffer.
  */
-- (void)removeBufferWithName:(NSString *)name contentWorld:(WKContentWorld *)world WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
+- (void)removeBufferWithName:(NSString *)name contentWorld:(WKContentWorld *)world NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
 @end
 

@@ -386,6 +386,12 @@ module WebKit_Internal [system] {
         export *
     }
 
+    module WKUserContentControllerInternal {
+        requires cplusplus20,objc
+        header "../../UIProcess/API/Cocoa/WKUserContentControllerInternal.h"
+        export *
+    }
+
     // FIXME: These parts of the module map needs work as discussed in https://github.com/WebKit/WebKit/pull/54322
 
     module WebKit_Internal_Cxx {

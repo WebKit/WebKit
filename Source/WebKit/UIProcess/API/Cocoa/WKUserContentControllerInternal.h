@@ -27,6 +27,8 @@
 
 #import "WKObject.h"
 #import "WebUserContentControllerProxy.h"
+#import <cstdint>
+#import <span>
 #import <wtf/AlignedStorage.h>
 
 namespace WebKit {
@@ -43,5 +45,6 @@ class WebScriptMessageHandler;
 }
 
 - (void)_addScriptMessageHandler:(WebKit::WebScriptMessageHandler&)scriptMessageHandler;
+- (void)_addDataSpan:(std::span<const uint8_t>)dataSpan name:(NSString *)name contentWorld:(WKContentWorld *)world;
 
 @end
