@@ -56,7 +56,7 @@ protected:
     static void setEligibleForSmartRoutingInternal(bool);
 
     // AudioSession
-    Ref<AudioSession::SetActivePromise> tryToSetActiveInternal(bool) final;
+    bool tryToSetActiveInternal(bool) final;
     void setCategory(CategoryType, Mode, RouteSharingPolicy) override;
 
     bool m_isEligibleForSmartRouting { false };

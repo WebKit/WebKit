@@ -224,20 +224,24 @@ void RemoteMediaSessionManagerProxy::setCategory(CategoryType type, Mode mode, W
 #endif
 }
 
-Ref<WebCore::AudioSession::SetActivePromise> RemoteMediaSessionManagerProxy::tryToSetActiveInternal(bool active)
+bool RemoteMediaSessionManagerProxy::tryToSetActiveInternal(bool active)
 {
     if (active && m_isInterruptedForTesting)
-        return SetActivePromise::createAndReject();
+        return false;
 
 /*
     FIXME: A call to `AudioSession::singleton().tryToSetActive` in the WebProcess ends up in
-    FIXME: `RemoteAudioSession::tryToSetActiveInternal`, which sends async IPC to the GPU process.
-    FIXME: Now that the chain is async, we could restructure to send async IPC from the UI process
-    FIXME: to the WebProcess as well.
+    FIXME: `RemoteAudioSession::tryToSetActiveInternal`, which sends sync IPC to the GPU process.
+    FIXME: This is necessary because the return value, whether or not the audio session was activated,
+    FIXME: is used by `MediaSessionManagerInterface::sessionWillBeginPlayback` to know whether to
+    FIXME: allow playback to begin. Sync IPC from the UI process isn't a good idea generally, but
+    FIXME: sync IPC from the UI to the WebProcess and then to the GPU process is a terrible idea,
+    FIXME: so figure out how to restructure the logic to not require it.
     auto sendResult = sendSync(Messages::RemoteMediaSessionManager::TryToSetAudioSessionActive(active), { });
     auto [succeeded] = sendResult.takeReplyOr(false);
  */
-    return SetActivePromise::createAndResolve();
+    bool succeeded = true;
+    return succeeded;
 }
 
 void RemoteMediaSessionManagerProxy::setPreferredBufferSize(size_t size)

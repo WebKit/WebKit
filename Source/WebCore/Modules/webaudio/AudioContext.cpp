@@ -236,7 +236,7 @@ void AudioContext::close(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
-    if (isClosed()) {
+    if (state() == State::Closed) {
         promise.resolve();
         return;
     }
@@ -254,7 +254,7 @@ void AudioContext::close(DOMPromiseDeferred<void>&& promise)
 
 void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
 {
-    if (isStopped() || isClosed()) {
+    if (isStopped() || state() == State::Closed) {
         promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
         return;
     }
@@ -280,7 +280,7 @@ void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
 
 void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
 {
-    if (isStopped() || isClosed()) {
+    if (isStopped() || state() == State::Closed) {
         promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
         return;
     }
@@ -297,19 +297,9 @@ void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
             return;
         }
 
-        if (protectedThis->isStopped() || protectedThis->isClosed()) {
-            promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
-            return;
-        }
-
         protectedThis->lazyInitialize();
-        Ref destination = protectedThis->destination();
-        if (!destination->isInitialized()) {
-            promise.reject(Exception { ExceptionCode::InvalidStateError, "AudioDestinationNode is not initialized"_s });
-            return;
-        }
 
-        destination->resume([activity = protectedThis->makePendingActivity(*protectedThis), promise = WTF::move(promise)](std::optional<Exception>&& exception) mutable {
+        protect(protectedThis->destination())->resume([activity = protectedThis->makePendingActivity(*protectedThis), promise = WTF::move(promise)](std::optional<Exception>&& exception) mutable {
             if (exception) {
                 promise.reject(WTF::move(*exception));
                 return;
@@ -354,15 +344,8 @@ void AudioContext::startRendering()
         if (!protectedThis || !willBegin)
             return;
 
-        if (protectedThis->isStopped() || protectedThis->m_wasSuspendedByScript || protectedThis->isClosed())
-            return;
-
         protectedThis->lazyInitialize();
-        Ref destination = protectedThis->destination();
-        if (!destination->isInitialized())
-            return;
-
-        destination->startRendering([pendingActivity = protectedThis->makePendingActivity(*protectedThis), protectedThis = WTF::move(protectedThis)](std::optional<Exception>&& exception) {
+        protect(protectedThis->destination())->startRendering([pendingActivity = protectedThis->makePendingActivity(*protectedThis), protectedThis = WTF::move(protectedThis)](std::optional<Exception>&& exception) {
             if (!exception)
                 protectedThis->setState(State::Running);
         });
@@ -376,7 +359,7 @@ void AudioContext::lazyInitialize()
 
     BaseAudioContext::lazyInitialize();
     if (isInitialized()) {
-        if (!isRunning()) {
+        if (state() != State::Running) {
             // This starts the audio thread. The destination node's provideInput() method will now be called repeatedly to render audio.
             // Each time provideInput() is called, a portion of the audio stream is rendered. Let's call this time period a "render quantum".
             // NOTE: for now default AudioContext does not need an explicit startRendering() call from JavaScript.
@@ -425,7 +408,7 @@ bool AudioContext::isAudible() const
 
 void AudioContext::mayResumePlayback(bool shouldResume)
 {
-    if (isClosed() || !isInitialized() || isRunning())
+    if (state() == State::Closed || !isInitialized() || state() == State::Running)
         return;
 
     if (!shouldResume) {
@@ -441,15 +424,9 @@ void AudioContext::mayResumePlayback(bool shouldResume)
         if (!protectedThis || !willBegin)
             return;
 
-        if (protectedThis->isClosed() || !protectedThis->isInitialized() || protectedThis->isRunning() || protectedThis->m_wasSuspendedByScript)
-            return;
-
         protectedThis->lazyInitialize();
-        Ref destination = protectedThis->destination();
-        if (!destination->isInitialized())
-            return;
 
-        destination->resume([pendingActivity = protectedThis->makePendingActivity(*protectedThis), protectedThis = WTF::move(protectedThis)](std::optional<Exception>&& exception) {
+        protect(protectedThis->destination())->resume([pendingActivity = protectedThis->makePendingActivity(*protectedThis), protectedThis = WTF::move(protectedThis)](std::optional<Exception>&& exception) {
             protectedThis->setState(exception ? State::Suspended : State::Running);
         });
     });
@@ -518,7 +495,7 @@ void AudioContext::resume()
 
 void AudioContext::suspendPlayback()
 {
-    if (isClosed() || !isInitialized())
+    if (state() == State::Closed || !isInitialized())
         return;
 
     lazyInitialize();

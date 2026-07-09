@@ -19,10 +19,7 @@
                 run('video.src = findMediaFile("video", "../content/test")');
 
                 await waitFor(video, 'canplaythrough');
-                // Catch the play() promise so the System interruption below doesn't
-                // produce an unhandled-rejection AbortError when it pauses the video
-                // before the promise settles.
-                run('video.play().catch(() => { })');
+                run('video.play()');
                 await waitFor(video, 'playing');
                 testExpected('video.paused', false);
 
