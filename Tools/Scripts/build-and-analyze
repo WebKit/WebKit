@@ -193,8 +193,8 @@ def main(args):
     # on) then collides in the module cache with the toolchain's own Swift
     # interface compiles (`Cxx`, `_StringProcessing`; late-parse off)
     if args.enable_experimental_late_parse_attributes:
-        make_command.append('OTHER_CFLAGS=-fexperimental-late-parse-attributes')
-        make_command.append('OTHER_SWIFT_FLAGS=-Xcc -fexperimental-late-parse-attributes')
+        make_command.append('OTHER_CFLAGS=-fexperimental-late-parse-attributes -fexperimental-bounds-safety-attributes -Wno-error=unsafe-buffer-usage')
+        make_command.append('OTHER_SWIFT_FLAGS=-Xcc -fexperimental-late-parse-attributes -Xcc -fexperimental-bounds-safety-attributes -Xcc -Wno-error=unsafe-buffer-usage')
 
     commands = [
         [set_webkit_config_path, '--{}'.format(args.configuration)],
