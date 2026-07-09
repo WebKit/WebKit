@@ -1736,9 +1736,10 @@ private:
     {
         auto printList = Printer::makePrintRecordList(arguments...);
         auto printSpecial = static_cast<Air::PrintSpecial*>(m_code.addSpecial(makeUnique<Air::PrintSpecial>(printList)));
-        Inst inst(Air::Patch, origin, Arg::special(printSpecial));
-        Printer::appendAirArgs(inst, std::forward<Arguments>(arguments)...);
-        append(WTF::move(inst));
+        Vector<Arg> args;
+        args.append(Arg::special(printSpecial));
+        Printer::appendAirArgs(args, std::forward<Arguments>(arguments)...);
+        append(Inst(Air::Patch, origin, WTF::move(args)));
     }
 
     template<typename... Arguments>
@@ -1814,7 +1815,8 @@ private:
         return ensureSpecial(result.iterator->value, key);
     }
 
-    void fillStackmap(Inst& inst, StackmapValue* stackmap, unsigned numSkipped)
+    template<size_t argsInlineCapacity>
+    void fillStackmap(Vector<Arg, argsInlineCapacity>& args, StackmapValue* stackmap, unsigned numSkipped)
     {
         for (unsigned i = numSkipped; i < stackmap->numChildren(); ++i) {
             ConstrainedValue value = stackmap->constrainedChild(i);
@@ -1863,7 +1865,7 @@ private:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             }
-            inst.args.append(arg);
+            args.append(arg);
         }
     }
     
@@ -6047,7 +6049,8 @@ private:
             if (deferToAfterRegAlloc) {
                 m_procedure.setUsesColdCCall(true);
 
-                Inst inst(Air::ColdCCall, cCall, Arg::special(m_code.cCallSpecial()));
+                Vector<Arg, 8> args;
+                args.append(Arg::special(m_code.cCallSpecial()));
 
                 // We have a ton of flexibility regarding the callee argument, but currently, we don't
                 // use it yet. It gets weird for reasons:
@@ -6058,18 +6061,18 @@ private:
                 // 4) We don't have an isValidForm() for the CCallSpecial so we have no smart way to
                 //    decide.
                 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=151052
-                inst.args.append(tmp(cCall->child(0)));
+                args.append(tmp(cCall->child(0)));
 
                 if (cCall->type() != Void) {
                     forEachImmOrTmp(cCall, [&](Arg arg, Type, unsigned) {
-                        inst.args.append(arg.tmp());
+                        args.append(arg.tmp());
                     });
                 }
 
                 for (unsigned i = 1; i < cCall->numChildren(); ++i)
-                    inst.args.append(immOrTmp(cCall->child(i)));
+                    args.append(immOrTmp(cCall->child(i)));
 
-                append(WTF::move(inst));
+                append(Inst(Air::ColdCCall, cCall, WTF::move(args)));
                 return;
             }
 
@@ -6171,7 +6174,8 @@ private:
             PatchpointValue* patchpointValue = m_value->as<PatchpointValue>();
             ensureSpecial(m_patchpointSpecial);
             
-            Inst inst(Patch, patchpointValue, Arg::special(m_patchpointSpecial));
+            Vector<Arg, 8> args;
+            args.append(Arg::special(m_patchpointSpecial));
 
             Vector<Inst> after;
             auto generateResultOperand = [&] (Type type, ValueRep rep, Tmp tmp) {
@@ -6182,17 +6186,17 @@ private:
                 case ValueRep::SomeRegister:
                 case ValueRep::SomeEarlyRegister:
                 case ValueRep::SomeLateRegister:
-                    inst.args.append(tmp);
+                    args.append(tmp);
                     return;
                 case ValueRep::Register: {
                     Tmp reg = Tmp(rep.reg());
-                    inst.args.append(reg);
+                    args.append(reg);
                     after.append(Inst(relaxedMoveForType(type), m_value, reg, tmp));
                     return;
                 }
                 case ValueRep::StackArgument: {
                     Arg arg = Arg::callArg(rep.offsetFromSP());
-                    inst.args.append(arg);
+                    args.append(arg);
                     after.append(Inst(moveForType(type), m_value, arg, tmp));
                     return;
                 }
@@ -6207,19 +6211,19 @@ private:
                     generateResultOperand(type, patchpointValue->resultConstraints[index], arg.tmp());
                 });
             }
-            
-            fillStackmap(inst, patchpointValue, 0);
+
+            fillStackmap(args, patchpointValue, 0);
             for (auto& constraint : patchpointValue->resultConstraints) {
                 if (constraint.isReg())
                     patchpointValue->lateClobbered().remove(constraint.reg());
             }
 
             for (unsigned i = patchpointValue->numGPScratchRegisters; i--;)
-                inst.args.append(m_code.newTmp(GP));
+                args.append(m_code.newTmp(GP));
             for (unsigned i = patchpointValue->numFPScratchRegisters; i--;)
-                inst.args.append(m_code.newTmp(FP));
-            
-            m_insts.last().append(WTF::move(inst));
+                args.append(m_code.newTmp(FP));
+
+            m_insts.last().append(Inst(Patch, patchpointValue, WTF::move(args)));
             m_insts.last().appendVector(after);
             return;
         }
@@ -6251,13 +6255,14 @@ private:
                     opcodeForType(BranchNeg32, BranchNeg64, checkValue->type());
                 CheckSpecial* special = ensureCheckSpecial(opcode, 2);
 
-                Inst inst(Patch, checkValue, Arg::special(special));
-                inst.args.append(Arg::resCond(MacroAssembler::Overflow));
-                inst.args.append(result);
+                Vector<Arg, 8> args;
+                args.append(Arg::special(special));
+                args.append(Arg::resCond(MacroAssembler::Overflow));
+                args.append(result);
 
-                fillStackmap(inst, checkValue, 2);
+                fillStackmap(args, checkValue, 2);
 
-                m_insts.last().append(WTF::move(inst));
+                m_insts.last().append(Inst(Patch, checkValue, WTF::move(args)));
                 return;
             }
 
@@ -6336,16 +6341,17 @@ private:
             
             CheckSpecial* special = ensureCheckSpecial(opcode, 2 + sources.size(), stackmapRole);
             
-            Inst inst(Patch, checkValue, Arg::special(special));
+            Vector<Arg, 8> args;
+            args.append(Arg::special(special));
 
-            inst.args.append(Arg::resCond(MacroAssembler::Overflow));
+            args.append(Arg::resCond(MacroAssembler::Overflow));
 
-            inst.args.appendVector(sources);
-            inst.args.append(result);
+            args.appendVector(sources);
+            args.append(result);
 
-            fillStackmap(inst, checkValue, 2);
+            fillStackmap(args, checkValue, 2);
 
-            m_insts.last().append(WTF::move(inst));
+            m_insts.last().append(Inst(Patch, checkValue, WTF::move(args)));
             return;
         }
 
@@ -6353,15 +6359,17 @@ private:
             Inst branch = createBranch(m_value->child(0));
 
             CheckSpecial* special = ensureCheckSpecial(branch);
-            
+
             CheckValue* checkValue = m_value->as<CheckValue>();
-            
-            Inst inst(Patch, checkValue, Arg::special(special));
-            inst.args.appendVector(branch.args);
-            
-            fillStackmap(inst, checkValue, 1);
-            
-            m_insts.last().append(WTF::move(inst));
+
+            Vector<Arg, 8> args;
+            args.append(Arg::special(special));
+            for (const Arg& arg : branch.args())
+                args.append(arg);
+
+            fillStackmap(args, checkValue, 1);
+
+            m_insts.last().append(Inst(Patch, checkValue, WTF::move(args)));
             return;
         }
 

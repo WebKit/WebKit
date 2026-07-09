@@ -2392,9 +2392,9 @@ void testBranchBitAndImmFusion(
     // The first basic block must end in a BranchTest64(resCond, tmp, bitImm).
     Air::Inst terminal = proc.code()[0]->last();
     CHECK_EQ(terminal.kind.opcode, expectedOpcode);
-    CHECK_EQ(terminal.args[0].kind(), Air::Arg::ResCond);
-    CHECK_EQ(terminal.args[1].kind(), firstKind);
-    CHECK(terminal.args[2].kind() == Air::Arg::BitImm || terminal.args[2].kind() == Air::Arg::BitImm64);
+    CHECK_EQ(terminal.args()[0].kind(), Air::Arg::ResCond);
+    CHECK_EQ(terminal.args()[1].kind(), firstKind);
+    CHECK(terminal.args()[2].kind() == Air::Arg::BitImm || terminal.args()[2].kind() == Air::Arg::BitImm64);
 }
 
 void testTerminalPatchpointThatNeedsToBeSpilled()

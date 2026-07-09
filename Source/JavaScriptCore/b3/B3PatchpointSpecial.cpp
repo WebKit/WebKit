@@ -58,16 +58,16 @@ void PatchpointSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgC
             role = Arg::Def;
 
         Type argType = type.isTuple() ? procedure.extractFromTuple(type, argIndex - 1) : type;
-        callback(inst.args[argIndex], role, bankForType(argType), widthForType(argType));
+        callback(inst.args()[argIndex], role, bankForType(argType), widthForType(argType));
     }
 
     forEachArgImpl(0, argIndex, inst, SameAsRep, std::nullopt, callback, std::nullopt);
     argIndex += inst.origin->numChildren();
 
     for (unsigned i = patchpoint->numGPScratchRegisters; i--;)
-        callback(inst.args[argIndex++], Arg::Scratch, GP, conservativeWidth(GP));
+        callback(inst.args()[argIndex++], Arg::Scratch, GP, conservativeWidth(GP));
     for (unsigned i = patchpoint->numFPScratchRegisters; i--;)
-        callback(inst.args[argIndex++], Arg::Scratch, FP, procedure.usesSIMD() ? conservativeWidth(FP) : conservativeWidthWithoutVectors(FP));
+        callback(inst.args()[argIndex++], Arg::Scratch, FP, procedure.usesSIMD() ? conservativeWidth(FP) : conservativeWidthWithoutVectors(FP));
 }
 
 bool PatchpointSpecial::isValid(Inst& inst)
@@ -78,12 +78,12 @@ bool PatchpointSpecial::isValid(Inst& inst)
 
     Type type = patchpoint->type();
     for (; argIndex <= procedure.resultCount(type); ++argIndex) {
-        if (argIndex >= inst.args.size())
+        if (argIndex >= inst.args().size())
             return false;
         
-        if (!isArgValidForType(inst.args[argIndex], type.isTuple() ? procedure.extractFromTuple(type, argIndex - 1) : type))
+        if (!isArgValidForType(inst.args()[argIndex], type.isTuple() ? procedure.extractFromTuple(type, argIndex - 1) : type))
             return false;
-        if (!isArgValidForRep(code(), inst.args[argIndex], patchpoint->resultConstraints[argIndex - 1]))
+        if (!isArgValidForRep(code(), inst.args()[argIndex], patchpoint->resultConstraints[argIndex - 1]))
             return false;
     }
 
@@ -92,16 +92,16 @@ bool PatchpointSpecial::isValid(Inst& inst)
     argIndex += patchpoint->numChildren();
 
     if (argIndex + patchpoint->numGPScratchRegisters + patchpoint->numFPScratchRegisters
-        != inst.args.size())
+        != inst.args().size())
         return false;
 
     for (unsigned i = patchpoint->numGPScratchRegisters; i--;) {
-        Arg arg = inst.args[argIndex++];
+        Arg arg = inst.args()[argIndex++];
         if (!arg.isGPTmp())
             return false;
     }
     for (unsigned i = patchpoint->numFPScratchRegisters; i--;) {
-        Arg arg = inst.args[argIndex++];
+        Arg arg = inst.args()[argIndex++];
         if (!arg.isFPTmp())
             return false;
     }
@@ -156,16 +156,16 @@ MacroAssembler::Jump PatchpointSpecial::generate(Inst& inst, CCallHelpers& jit, 
 
     Type type = value->type();
     while (offset <= procedure.resultCount(type))
-        reps.append(repForArg(*context.code, inst.args[offset++]));
+        reps.append(repForArg(*context.code, inst.args()[offset++]));
     reps.appendVector(repsImpl(context, 0, offset, inst));
     offset += value->numChildren();
 
     StackmapGenerationParams params(value, reps, context);
 
     for (unsigned i = value->numGPScratchRegisters; i--;)
-        params.m_gpScratch.append(inst.args[offset++].gpr());
+        params.m_gpScratch.append(inst.args()[offset++].gpr());
     for (unsigned i = value->numFPScratchRegisters; i--;)
-        params.m_fpScratch.append(inst.args[offset++].fpr());
+        params.m_fpScratch.append(inst.args()[offset++].fpr());
     
     value->m_generator->run(jit, params);
 

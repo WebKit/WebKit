@@ -42,7 +42,7 @@ void lowerStackArgs(Code& code)
     // Now we need to deduce how much argument area we need.
     for (BasicBlock* block : code) {
         for (Inst& inst : *block) {
-            for (Arg& arg : inst.args) {
+            for (Arg& arg : inst.args()) {
                 if (arg.isCallArg()) {
                     ASSERT(arg.offset() >= 0);
                     // We always check the conservative register bytes for Bank::FP because
@@ -133,29 +133,29 @@ void lowerStackArgs(Code& code)
                 // taking into account the Width to see if we can compute the immediate
                 // is wrong.
                 auto lowerArmLea = [&] (Value::OffsetType offset, Tmp base) {
-                    ASSERT(inst.args[1].isTmp());
+                    ASSERT(inst.args()[1].isTmp());
 
                     if (Arg::isValidImmForm(offset))
-                        inst = Inst(inst.kind.opcode == Lea32 ? Add32 : Add64, inst.origin, Arg::imm(offset), base, inst.args[1]);
+                        inst = Inst(inst.kind.opcode == Lea32 ? Add32 : Add64, inst.origin, Arg::imm(offset), base, inst.args()[1]);
                     else {
                         Air::Tmp tmp = Air::Tmp(extendedOffsetAddrRegister());
                         Arg offsetArg = Arg::bigImm(offset);
                         insertionSet.insert(instIndex, Move, inst.origin, offsetArg, tmp);
-                        inst = Inst(inst.kind.opcode == Lea32 ? Add32 : Add64, inst.origin, tmp, base, inst.args[1]);
+                        inst = Inst(inst.kind.opcode == Lea32 ? Add32 : Add64, inst.origin, tmp, base, inst.args()[1]);
                     }
                 };
 
-                switch (inst.args[0].kind()) {
+                switch (inst.args()[0].kind()) {
                 case Arg::Stack: {
-                    StackSlot* slot = inst.args[0].stackSlot();
-                    lowerArmLea(inst.args[0].offset() + slot->offsetFromFP(), Tmp(GPRInfo::callFrameRegister));
+                    StackSlot* slot = inst.args()[0].stackSlot();
+                    lowerArmLea(inst.args()[0].offset() + slot->offsetFromFP(), Tmp(GPRInfo::callFrameRegister));
                     break;
                 }
                 case Arg::CallArg:
-                    lowerArmLea(inst.args[0].offset() - code.frameSize(), Tmp(GPRInfo::callFrameRegister));
+                    lowerArmLea(inst.args()[0].offset() - code.frameSize(), Tmp(GPRInfo::callFrameRegister));
                     break;
                 case Arg::Addr:
-                    lowerArmLea(inst.args[0].offset(), inst.args[0].base());
+                    lowerArmLea(inst.args()[0].offset(), inst.args()[0].base());
                     break;
                 case Arg::ExtendedOffsetAddr:
                     ASSERT_NOT_REACHED();
@@ -171,18 +171,17 @@ void lowerStackArgs(Code& code)
             // In that case, split the move into separate load and store instructions so that the extendedOffsetReg can
             // be used for each address, one at a time.
             std::optional<Width> moveWidth = isMove(inst);
-            if (isARM64() && moveWidth && inst.args.size() == 3 && inst.args[0].isStack()) {
-                Arg& src = inst.args[0];
+            if (isARM64() && moveWidth && inst.args().size() == 3 && inst.args()[0].isStack()) {
+                Arg& src = inst.args()[0];
                 src = stackAddr(instIndex, src, *moveWidth, src.offset() + src.stackSlot()->offsetFromFP());
                 if (extendedOffsetAddrRegInUse) {
-                    Arg scratch = inst.args[2];
+                    Arg scratch = inst.args()[2];
                     ASSERT(scratch.isReg());
                     // Insert Mov src, scratchReg
                     insertionSet.insert(instIndex, static_cast<Opcode>(inst.kind.opcode), inst.origin, src, scratch);
                     extendedOffsetAddrRegInUse = false; // Used by the inserted instruction; no longer needed.
                     // Modify inst to be 'Move scratch, dest'.
-                    src = scratch;
-                    inst.args.resize(2);
+                    inst.setArgs(scratch, inst.args()[1]);
                 }
                 // Fall through to handle remainder of the original or modified inst, including potential ZDef handling.
             }

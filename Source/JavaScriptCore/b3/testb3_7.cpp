@@ -1011,7 +1011,7 @@ void testOptimizeMaterialization()
         for (Air::Inst& inst : *block) {
             if (inst.kind.opcode != Air::Add64)
                 continue;
-            if (inst.args[0] != Air::Arg::imm(35))
+            if (inst.args()[0] != Air::Arg::imm(35))
                 continue;
             found = true;
         }

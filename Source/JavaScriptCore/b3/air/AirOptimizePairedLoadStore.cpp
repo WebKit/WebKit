@@ -63,7 +63,7 @@ static inline Width NODELETE accessWidth(Opcode opcode)
 static bool tryStorePair(Code& code, BasicBlock* block, unsigned current, Inst& inst)
 {
     Width instWidth = accessWidth(inst.kind.opcode);
-    int64_t instOffset = static_cast<int64_t>(inst.args[1].offset());
+    int64_t instOffset = static_cast<int64_t>(inst.args()[1].offset());
     unsigned limit = std::min(current, AirOptimizePairedLoadStoreInternal::scanInstructions);
     RegisterSet clobbered;
     for (unsigned count = 1; count <= limit; ++count) {
@@ -108,7 +108,7 @@ static bool tryStorePair(Code& code, BasicBlock* block, unsigned current, Inst& 
             [&] (const Tmp& arg, Arg::Role, Bank, Width, PreservedWidth) {
                 clobbered.add(arg.reg(), IgnoreVectors);
             });
-        if (clobbered.contains(inst.args[1].base().reg(), IgnoreVectors) || (inst.args[0].isTmp() && clobbered.contains(inst.args[0].reg(), IgnoreVectors))) {
+        if (clobbered.contains(inst.args()[1].base().reg(), IgnoreVectors) || (inst.args()[0].isTmp() && clobbered.contains(inst.args()[0].reg(), IgnoreVectors))) {
             logFailed();
             return false;
         }
@@ -122,15 +122,15 @@ static bool tryStorePair(Code& code, BasicBlock* block, unsigned current, Inst& 
             bool interfere = false;
 
             auto clobberMemory = [&](const Tmp& argBase, int64_t argOffset, Width argWidth) {
-                if (argBase == inst.args[1].base()) {
+                if (argBase == inst.args()[1].base()) {
                     Range<int64_t> argRange(argOffset, argOffset + bytesForWidth(argWidth));
                     Range<int64_t> instRange(instOffset, instOffset + bytesForWidth(instWidth));
                     return argRange.overlaps(instRange);
                 }
 
-                if ((argBase == Tmp(CCallHelpers::stackPointerRegister) || argBase == Tmp(GPRInfo::callFrameRegister)) && (inst.args[1].base() == Tmp(CCallHelpers::stackPointerRegister) || inst.args[1].base() == Tmp(GPRInfo::callFrameRegister))) {
+                if ((argBase == Tmp(CCallHelpers::stackPointerRegister) || argBase == Tmp(GPRInfo::callFrameRegister)) && (inst.args()[1].base() == Tmp(CCallHelpers::stackPointerRegister) || inst.args()[1].base() == Tmp(GPRInfo::callFrameRegister))) {
                     int64_t instOffsetFromFP = instOffset;
-                    if (inst.args[1].base() == Tmp(CCallHelpers::stackPointerRegister))
+                    if (inst.args()[1].base() == Tmp(CCallHelpers::stackPointerRegister))
                         instOffsetFromFP = instOffset - code.frameSize();
 
                     int64_t argOffsetFromFP = argOffset;
@@ -174,13 +174,13 @@ static bool tryStorePair(Code& code, BasicBlock* block, unsigned current, Inst& 
         if (target.kind != inst.kind)
             continue;
 
-        if (target.args.size() != 2)
+        if (target.args().size() != 2)
             continue;
 
-        if ((!target.args[0].isTmp() && !target.args[0].isZeroReg()) || !target.args[1].isAddr())
+        if ((!target.args()[0].isTmp() && !target.args()[0].isZeroReg()) || !target.args()[1].isAddr())
             continue;
 
-        if (target.args[1].base() != inst.args[1].base())
+        if (target.args()[1].base() != inst.args()[1].base())
             continue;
 
         Opcode pairOpcode = StorePair32;
@@ -218,17 +218,17 @@ static bool tryStorePair(Code& code, BasicBlock* block, unsigned current, Inst& 
             }
         };
 
-        int64_t targetOffset = static_cast<int64_t>(target.args[1].offset());
+        int64_t targetOffset = static_cast<int64_t>(target.args()[1].offset());
 
         if (isValidOffset(instOffset) && targetOffset == (instOffset + bytesForWidth(instWidth))) {
-            Inst newInst(pairOpcode, target.origin, inst.args[0], target.args[0], inst.args[1]);
+            Inst newInst(pairOpcode, target.origin, inst.args()[0], target.args()[0], inst.args()[1]);
             logFound(newInst);
             target = newInst;
             return true;
         }
 
         if (isValidOffset(targetOffset) && (targetOffset + bytesForWidth(instWidth)) == instOffset) {
-            Inst newInst(pairOpcode, target.origin, target.args[0], inst.args[0], target.args[1]);
+            Inst newInst(pairOpcode, target.origin, target.args()[0], inst.args()[0], target.args()[1]);
             logFound(newInst);
             target = newInst;
             return true;
@@ -236,19 +236,19 @@ static bool tryStorePair(Code& code, BasicBlock* block, unsigned current, Inst& 
 
         // Because str pimm only takes unsigned offset, we tend to pick stackPointerRegister based offsetting.
         // But it is possible that framePointerRegister based offsetting can offer a benefit here.
-        if (target.args[1].base() == Tmp(CCallHelpers::stackPointerRegister)) {
+        if (target.args()[1].base() == Tmp(CCallHelpers::stackPointerRegister)) {
             int64_t instOffsetFromFP = instOffset - code.frameSize();
             int64_t targetOffsetFromFP = targetOffset - code.frameSize();
 
             if (isValidOffset(instOffsetFromFP) && targetOffsetFromFP == (instOffsetFromFP + bytesForWidth(instWidth))) {
-                Inst newInst(pairOpcode, target.origin, inst.args[0], target.args[0], Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), static_cast<int32_t>(instOffsetFromFP)));
+                Inst newInst(pairOpcode, target.origin, inst.args()[0], target.args()[0], Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), static_cast<int32_t>(instOffsetFromFP)));
                 logFound(newInst);
                 target = newInst;
                 return true;
             }
 
             if (isValidOffset(targetOffsetFromFP) && (targetOffsetFromFP + bytesForWidth(instWidth)) == instOffsetFromFP) {
-                Inst newInst(pairOpcode, target.origin, target.args[0], inst.args[0], Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), static_cast<int32_t>(targetOffsetFromFP)));
+                Inst newInst(pairOpcode, target.origin, target.args()[0], inst.args()[0], Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), static_cast<int32_t>(targetOffsetFromFP)));
                 logFound(newInst);
                 target = newInst;
                 return true;
@@ -281,13 +281,13 @@ bool optimizePairedLoadStore(Code& code)
             switch (inst.kind.opcode) {
             case Move:
             case Move32: {
-                if (inst.args.size() != 2)
+                if (inst.args().size() != 2)
                     continue;
 
-                if ((inst.args[0].isGPTmp() || inst.args[0].isZeroReg()) && inst.args[1].isAddr()) {
+                if ((inst.args()[0].isGPTmp() || inst.args()[0].isZeroReg()) && inst.args()[1].isAddr()) {
                     // sp & fp slot usage is, in particular, different for call args and spills.
                     // We would like to do stp merging only for spills.
-                    if ((inst.args[1].base() == Tmp(CCallHelpers::stackPointerRegister) || inst.args[1].base() == Tmp(CCallHelpers::framePointerRegister)) && !inst.kind.spill)
+                    if ((inst.args()[1].base() == Tmp(CCallHelpers::stackPointerRegister) || inst.args()[1].base() == Tmp(CCallHelpers::framePointerRegister)) && !inst.kind.spill)
                         continue;
                     if (tryStorePair(code, block, index, inst)) {
                         block->insts().removeAt(index);

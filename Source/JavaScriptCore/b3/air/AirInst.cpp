@@ -80,7 +80,7 @@ unsigned Inst::jsHash() const
     // https://bugs.webkit.org/show_bug.cgi?id=162751
     unsigned result = static_cast<unsigned>(kind.opcode);
     
-    for (const Arg& arg : args)
+    for (const Arg& arg : args())
         result += arg.jsHash();
     
     return result;
@@ -88,7 +88,7 @@ unsigned Inst::jsHash() const
 
 void Inst::dump(PrintStream& out) const
 {
-    out.print(kind, " ", listDump(args));
+    out.print(kind, " ", listDump(args()));
 }
 
 } } } // namespace JSC::B3::Air

@@ -71,7 +71,7 @@ MacroAssembler::Jump PrintSpecial::generate(Inst& inst, CCallHelpers& jit, Gener
     size_t currentArg = 1; // Skip the PrintSpecial arg.
     for (auto& term : *m_printRecordList) {
         if (term.printer == Printer::printAirArg) {
-            const Arg& arg = inst.args[currentArg++];
+            const Arg& arg = inst.args()[currentArg++];
             switch (arg.kind()) {
             case Arg::Tmp:
                 term = Printer::Printer<MacroAssembler::RegisterID>(arg.gpr());

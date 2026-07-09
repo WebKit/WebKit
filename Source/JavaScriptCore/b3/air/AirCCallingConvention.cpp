@@ -205,17 +205,18 @@ Tmp cCallResult(Code& code, CCallValue* value, unsigned index)
 
 Inst buildCCall(Code& code, Value* origin, const Vector<Arg>& arguments)
 {
-    Inst inst(Patch, origin, Arg::special(code.cCallSpecial()));
-    inst.args.append(arguments[0]);
-    inst.args.append(Tmp(GPRInfo::returnValueGPR));
-    inst.args.append(Tmp(GPRInfo::returnValueGPR2));
-    inst.args.append(Tmp(FPRInfo::returnValueFPR));
+    Vector<Arg, 8> args;
+    args.append(Arg::special(code.cCallSpecial()));
+    args.append(arguments[0]);
+    args.append(Tmp(GPRInfo::returnValueGPR));
+    args.append(Tmp(GPRInfo::returnValueGPR2));
+    args.append(Tmp(FPRInfo::returnValueFPR));
     for (unsigned i = 1; i < arguments.size(); ++i) {
         Arg arg = arguments[i];
         if (arg.isTmp())
-            inst.args.append(arg);
+            args.append(arg);
     }
-    return inst;
+    return Inst(Patch, origin, WTF::move(args));
 }
 
 #if CPU(ARM_THUMB2)

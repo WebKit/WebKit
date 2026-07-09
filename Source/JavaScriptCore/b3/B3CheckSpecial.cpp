@@ -75,7 +75,7 @@ unsigned NODELETE numB3Args(Inst& inst)
 CheckSpecial::Key::Key(const Inst& inst)
 {
     m_kind = inst.kind;
-    m_numArgs = inst.args.size();
+    m_numArgs = inst.args().size();
     m_stackmapRole = SameAsRep;
 }
 
@@ -101,10 +101,11 @@ CheckSpecial::~CheckSpecial() = default;
 
 Inst CheckSpecial::hiddenBranch(const Inst& inst) const
 {
-    Inst hiddenBranch(m_checkKind, inst.origin);
-    hiddenBranch.args.appendUsingFunctor(m_numCheckArgs, [&](size_t i) {
-        return inst.args[i + 1];
+    Vector<Arg, 8> args;
+    args.appendUsingFunctor(m_numCheckArgs, [&](size_t i) {
+        return inst.args()[i + 1];
     });
+    Inst hiddenBranch(m_checkKind, inst.origin, WTF::move(args));
     ASSERT(hiddenBranch.isTerminal());
     return hiddenBranch;
 }
@@ -120,8 +121,8 @@ void CheckSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallba
                 ASSERT(!optionalDefArgWidth); // There can only be one Def'ed arg.
                 optionalDefArgWidth = width;
             }
-            unsigned index = &arg - &hidden.args[0];
-            callback(inst.args[1 + index], role, bank, width);
+            unsigned index = &arg - &hidden.args()[0];
+            callback(inst.args()[1 + index], role, bank, width);
         });
 
     std::optional<unsigned> firstRecoverableIndex;
@@ -140,7 +141,7 @@ bool CheckSpecial::isValid(Inst& inst)
 {
     return hiddenBranch(inst).isValidForm()
         && isValidImpl(numB3Args(inst), m_numCheckArgs + 1, inst)
-        && inst.args.size() - m_numCheckArgs - 1 == inst.origin->numChildren() - numB3Args(inst);
+        && inst.args().size() - m_numCheckArgs - 1 == inst.origin->numChildren() - numB3Args(inst);
 }
 
 bool CheckSpecial::admitsStack(Inst& inst, unsigned argIndex)
@@ -179,7 +180,7 @@ CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
     // capture all of inst in the closure below.
     Vector<Arg, 3> args;
     for (unsigned i = 0; i < m_numCheckArgs; ++i)
-        args.append(inst.args[1 + i]);
+        args.append(inst.args()[1 + i]);
 
     context.latePaths.append(std::tuple {
         inst.origin->origin(),

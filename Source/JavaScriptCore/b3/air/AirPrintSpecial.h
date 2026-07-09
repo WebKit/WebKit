@@ -46,22 +46,22 @@ concept IsSameOrReference = std::same_as<T, U> || std::same_as<T, U&>;
     
 template<typename T, typename... Arguments>
     requires (IsSameOrReference<T, B3::Air::Tmp> || IsSameOrReference<T, Reg>)
-inline void appendAirArg(B3::Air::Inst& inst, T&& arg)
+inline void appendAirArg(Vector<B3::Air::Arg>& args, T&& arg)
 {
-    inst.args.append(std::forward<T>(arg));
+    args.append(std::forward<T>(arg));
 }
 
 template<typename T, typename... Arguments>
     requires (!IsSameOrReference<T, B3::Air::Tmp> && !IsSameOrReference<T, Reg>)
-inline void appendAirArg(B3::Air::Inst&, T&&, int = 0) { }
+inline void appendAirArg(Vector<B3::Air::Arg>&, T&&, int = 0) { }
 
-inline void appendAirArgs(B3::Air::Inst&) { }
+inline void appendAirArgs(Vector<B3::Air::Arg>&) { }
 
 template<typename T, typename... Arguments>
-inline void appendAirArgs(B3::Air::Inst& inst, T&& t, Arguments&&... others)
+inline void appendAirArgs(Vector<B3::Air::Arg>& args, T&& t, Arguments&&... others)
 {
-    appendAirArg(inst, std::forward<T>(t));
-    appendAirArgs(inst, std::forward<Arguments>(others)...);
+    appendAirArg(args, std::forward<T>(t));
+    appendAirArgs(args, std::forward<Arguments>(others)...);
 }
 
 [[noreturn]] void NODELETE printAirArg(PrintStream&, Context&);
