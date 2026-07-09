@@ -16,15 +16,23 @@ PASS supports(text/html) returns true
 PASS supports(image/png) returns true
 PASS supports(text/uri-list) returns true
 FAIL supports(image/svg+xml) returns true assert_equals: expected true but got false
-FAIL supports(web foo/bar) returns true assert_equals: expected true but got false
-FAIL supports(web text/html) returns true assert_equals: expected true but got false
+PASS supports(web foo/bar) returns true
+PASS supports(web text/html) returns true
 PASS supports(web ) returns false
 PASS supports(web) returns false
+PASS supports(w eb) returns false
 PASS supports(web foo) returns false
+PASS supports(web foo/) returns false
+PASS supports(web /bar) returns false
 PASS supports(foo/bar) returns false
 PASS supports(weB text/html) returns false
 PASS supports( web text/html) returns false
 PASS supports(not a/real type) returns false
 PASS supports() returns false
 PASS supports( ) returns false
+PASS supports(web foo//bar) returns false
+PASS supports(web foo/bar/baz) returns false
+PASS supports(web foo/ bar) returns false
+PASS supports(web f oo/bar) returns false
+PASS supports(web f oo/ bar) returns false
 

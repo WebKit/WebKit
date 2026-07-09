@@ -109,13 +109,21 @@ promise_test(async () => {
   // invalid types
   ['web ',            false],
   ['web',             false],
+  ['w eb',            false],
   ['web foo',         false],
+  ['web foo/',        false],
+  ['web /bar',        false],
   ['foo/bar',         false],
   ['weB text/html',   false],
   [' web text/html',  false],
   ['not a/real type', false],
   ['',                false],
   [' ',               false],
+  ['web foo//bar',    false],
+  ['web foo/bar/baz', false],
+  ['web foo/ bar',    false],
+  ['web f oo/bar',    false],
+  ['web f oo/ bar',   false],
 ].forEach(([type, result]) => {
   promise_test(async () => {
     assert_equals(ClipboardItem.supports(type), result);

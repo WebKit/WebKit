@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,10 +61,6 @@ static ClipboardItem::PresentationStyle NODELETE clipboardItemPresentationStyle(
     return ClipboardItem::PresentationStyle::Unspecified;
 }
 
-// FIXME: Custom format starts with `"web "`("web" followed by U+0020 SPACE) prefix
-// and suffix (after stripping out `"web "`) passes the parsing a MIME type check.
-// https://w3c.github.io/clipboard-apis/#optional-data-types
-// https://webkit.org/b/280664
 ClipboardItem::ClipboardItem(Vector<KeyValuePair<String, Ref<DOMPromise>>>&& items, const Options& options)
     : m_dataSource(makeUniqueRef<ClipboardItemBindingsDataSource>(*this, WTF::move(items)))
     , m_presentationStyle(options.presentationStyle)
@@ -101,19 +97,42 @@ void ClipboardItem::getType(const String& type, Ref<DeferredPromise>&& promise)
     m_dataSource->getType(type, WTF::move(promise));
 }
 
+// https://w3c.github.io/clipboard-apis/#optional-data-types-x
 bool ClipboardItem::supports(const String& type)
 {
-    // FIXME: Custom format starts with `"web "`("web" followed by U+0020 SPACE) prefix
-    // and suffix (after stripping out `"web "`) passes the parsing a MIME type check.
-    // https://webkit.org/b/280664
-    // FIXME: add type == "image/svg+xml"_s when we have sanitized copy/paste for SVG data
+    // FIXME: add type == "image/svg+xml"_s when sanitized copy/paste for SVG is supported.
     // https://webkit.org/b/280726
     if (type == textPlainContentTypeAtom()
         || type == textHTMLContentTypeAtom()
         || type == "image/png"_s
         || type == "text/uri-list"_s) {
         return true;
-        }
+    }
+
+    // Custom format starts with `"web "`("web" followed by U+0020 SPACE) prefix
+    // and suffix (after stripping out `"web "`) passes the parsing a MIME type check.
+    constexpr auto webPrefix = "web "_s;
+    if (type.startsWith(webPrefix)) {
+        String webFormat = type.substring(webPrefix.length());
+
+        // Must contain exactly one '/' in the middle.
+        size_t slashIndex = webFormat.find('/');
+        if (slashIndex == notFound || !slashIndex || slashIndex + 1 == webFormat.length())
+            return false;
+
+        // Check that top-level and subtype have no spaces.
+        String topLevel = webFormat.substring(0, slashIndex);
+        String subType = webFormat.substring(slashIndex + 1);
+        if (topLevel.contains(' ') || subType.contains(' '))
+            return false;
+
+        // No additional slashes in subtype.
+        if (subType.contains('/'))
+            return false;
+
+        return true;
+    }
+
     return false;
 }
 
