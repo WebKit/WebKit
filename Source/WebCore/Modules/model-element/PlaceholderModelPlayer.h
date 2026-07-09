@@ -89,15 +89,16 @@ private:
     void NODELETE handleMouseDown(const LayoutPoint&, MonotonicTime) final;
     void NODELETE handleMouseMove(const LayoutPoint&, MonotonicTime) final;
     void NODELETE handleMouseUp(const LayoutPoint&, MonotonicTime) final;
-    void NODELETE getCamera(CompletionHandler<void(std::optional<WebCore::HTMLModelElementCamera>&&)>&&) final;
-    void NODELETE setCamera(WebCore::HTMLModelElementCamera, CompletionHandler<void(bool success)>&&) final;
-    void NODELETE isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) final;
-    void NODELETE setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&) final;
-    void NODELETE isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) final;
-    void NODELETE setIsLoopingAnimation(bool, CompletionHandler<void(bool success)>&&) final;
-    void NODELETE animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
-    void NODELETE animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
-    void NODELETE setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&) final;
+
+    void getCamera(CompletionHandler<void(std::optional<WebCore::HTMLModelElementCamera>&&)>&&) final;
+    void setCamera(WebCore::HTMLModelElementCamera, CompletionHandler<void(bool success)>&&) final;
+    void isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) final;
+    void setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&) final;
+    void isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) final;
+    void setIsLoopingAnimation(bool, CompletionHandler<void(bool success)>&&) final;
+    void animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
+    void animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
+    void setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&) final;
 #if ENABLE(MODEL_ELEMENT_ACCESSIBILITY)
     ModelPlayerAccessibilityChildren accessibilityChildren() final;
 #endif

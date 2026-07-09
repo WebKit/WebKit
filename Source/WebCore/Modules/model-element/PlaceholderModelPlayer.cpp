@@ -229,40 +229,49 @@ void PlaceholderModelPlayer::handleMouseUp(const LayoutPoint&, MonotonicTime)
 {
 }
 
-void PlaceholderModelPlayer::getCamera(CompletionHandler<void(std::optional<WebCore::HTMLModelElementCamera>&&)>&&)
+void PlaceholderModelPlayer::getCamera(CompletionHandler<void(std::optional<WebCore::HTMLModelElementCamera>&&)>&& completionHandler)
 {
+    completionHandler(std::nullopt);
 }
 
-void PlaceholderModelPlayer::setCamera(WebCore::HTMLModelElementCamera, CompletionHandler<void(bool success)>&&)
+void PlaceholderModelPlayer::setCamera(WebCore::HTMLModelElementCamera, CompletionHandler<void(bool success)>&& completionHandler)
 {
+    completionHandler(false);
 }
 
-void PlaceholderModelPlayer::isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&)
+void PlaceholderModelPlayer::isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
 {
+    completionHandler(std::nullopt);
 }
 
-void PlaceholderModelPlayer::setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&)
+void PlaceholderModelPlayer::setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&& completionHandler)
 {
+    completionHandler(false);
 }
 
-void PlaceholderModelPlayer::isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&)
+void PlaceholderModelPlayer::isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
 {
+    completionHandler(std::nullopt);
 }
 
-void PlaceholderModelPlayer::setIsLoopingAnimation(bool, CompletionHandler<void(bool success)>&&)
+void PlaceholderModelPlayer::setIsLoopingAnimation(bool, CompletionHandler<void(bool success)>&& completionHandler)
 {
+    completionHandler(false);
 }
 
-void PlaceholderModelPlayer::animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&&)
+void PlaceholderModelPlayer::animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&& completionHandler)
 {
+    completionHandler(std::nullopt);
 }
 
-void PlaceholderModelPlayer::animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&)
+void PlaceholderModelPlayer::animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&& completionHandler)
 {
+    completionHandler(std::nullopt);
 }
 
-void PlaceholderModelPlayer::setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&)
+void PlaceholderModelPlayer::setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&& completionHandler)
 {
+    completionHandler(false);
 }
 
 #if ENABLE(MODEL_ELEMENT_ACCESSIBILITY)
