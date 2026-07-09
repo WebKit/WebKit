@@ -52,6 +52,8 @@
 #     Bug(identifier)       - Other bug tracker
 #
 
+webkit.org/b/318967 [ ios ] TestWebKitAPI.DownloadProgress.PublishProgressOnPartialDownload [ Pass Failure ]
+
 # webkit.org/b/318893 [ iOS DEBUG ] 2x TestWebKitAPI.IPCTestingAPI.* (api-tests) are constant fails.
 [ iOS Debug ] TestWebKitAPI.IPCTestingAPI.LockdownModeDetection [ Failure ]
 [ iOS Debug ] TestWebKitAPI.IPCTestingAPI.LockdownModeDisabledAllowsWebGL [ Failure ]
