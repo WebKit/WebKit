@@ -158,6 +158,10 @@ public:
     WEBCORE_EXPORT static RefPtr<ShareableBitmap> create(const ShareableBitmapConfiguration&, Ref<SharedMemory>&&);
 
     // Create a shareable bitmap from a NativeImage.
+    // By default, the returned ShareableBitmap color space is the source image color space.
+    // Uses fallbackColorSpace if the transfer must be done by a draw and the source image color space is not
+    // a output color space.
+    WEBCORE_EXPORT static RefPtr<ShareableBitmap> createFromNativeImage(NativeImage&, const DestinationColorSpace& fallbackColorSpace, std::optional<IntSize> overrideDestinationSize = std::nullopt, std::optional<IntSize> overrideSourceSize = std::nullopt);
 #if USE(CG)
     WEBCORE_EXPORT static RefPtr<ShareableBitmap> createFromImagePixels(const NativeImage&);
 #endif

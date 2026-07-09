@@ -60,17 +60,12 @@ void WebTextTrackRepresentationCocoa::update()
     if (!m_mediaElement || !is<WebCore::HTMLVideoElement>(m_mediaElement))
         return;
     
-    auto image = m_client.createTextTrackRepresentationImage();
+    RefPtr image = m_client.createTextTrackRepresentationImage();
     if (!image)
         return;
-    auto imageSize = image->size();
-    RefPtr bitmap = WebCore::ShareableBitmap::create({ image->size(), image->colorSpace() });
+    RefPtr bitmap = WebCore::ShareableBitmap::createFromNativeImage(*image, WebCore::DestinationColorSpace::SRGB());
     if (!bitmap)
         return;
-    auto context = bitmap->createGraphicsContext();
-    if (!context)
-        return;
-    context->drawNativeImage(*image, WebCore::FloatRect({ }, imageSize), WebCore::FloatRect({ }, imageSize), { WebCore::CompositeOperator::Copy });
     auto handle = bitmap->createHandle();
     if (!handle)
         return;

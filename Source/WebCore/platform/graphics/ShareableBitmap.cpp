@@ -114,6 +114,24 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const ShareableBitmapConfigurati
     return adoptRef(new ShareableBitmap(configuration, WTF::move(sharedMemory)));
 }
 
+RefPtr<ShareableBitmap> ShareableBitmap::createFromNativeImage(NativeImage& image, const DestinationColorSpace& fallbackColorSpace, std::optional<IntSize> overrideDestinationSize, std::optional<IntSize> overrideSourceSize)
+{
+    ASSERT(fallbackColorSpace.supportsOutput());
+    auto imageSize = image.size();
+    auto destinationSize = overrideDestinationSize.value_or(imageSize);
+    auto sourceSize = overrideSourceSize.value_or(imageSize);
+#if USE(CG)
+    if (destinationSize == imageSize && sourceSize == imageSize) {
+        if (RefPtr bitmap = createFromImagePixels(image))
+            return bitmap;
+    }
+#endif
+    auto colorSpace = image.colorSpace();
+    if (!colorSpace.supportsOutput())
+        colorSpace = fallbackColorSpace;
+    return createFromImageDraw(image, colorSpace, destinationSize, sourceSize);
+}
+
 RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(const NativeImage& image, const DestinationColorSpace& colorSpace)
 {
     return createFromImageDraw(image, colorSpace, image.size());
@@ -129,12 +147,10 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(const NativeImage& 
     auto bitmap = ShareableBitmap::create({ destinationSize, colorSpace });
     if (!bitmap)
         return nullptr;
-
     auto context = bitmap->createGraphicsContext();
     if (!context)
         return nullptr;
-
-    context->drawNativeImage(image, FloatRect({ }, destinationSize), FloatRect({ }, sourceSize), { CompositeOperator::Copy });
+    context->drawNativeImage(image, FloatRect { { }, destinationSize }, FloatRect { { }, sourceSize }, { CompositeOperator::Copy });
     return bitmap;
 }
 

@@ -258,11 +258,10 @@ static void tryCreateNativeImageFromData(std::span<const uint8_t> data, std::opt
 static Vector<Ref<ShareableBitmap>> createBitmapsFromNativeImage(NativeImage& image, std::span<const unsigned> lengths)
 {
     Vector<Ref<ShareableBitmap>> bitmaps;
-    auto sourceColorSpace = image.colorSpace();
     // The conversion could lead to loss of HDR contents.
-    auto destinationColorSpace = sourceColorSpace.supportsOutput() ? sourceColorSpace : DestinationColorSpace::SRGB();
+    auto fallbackColorSpace = DestinationColorSpace::SRGB();
     for (auto length : lengths) {
-        RefPtr bitmap = ShareableBitmap::createFromImageDraw(image, destinationColorSpace, { (int)length, (int)length }, image.size());
+        RefPtr bitmap = ShareableBitmap::createFromNativeImage(image, fallbackColorSpace, IntSize { static_cast<int>(length), static_cast<int>(length) }, image.size());
         if (!bitmap)
             return { };
 
@@ -293,7 +292,7 @@ static Vector<Ref<ShareableBitmap>> createBitmapsFromSVGImage(SVGImage& image, s
         if (!nativeImage)
             return { };
 
-        RefPtr bitmap = ShareableBitmap::createFromImageDraw(*nativeImage, DestinationColorSpace::SRGB());
+        RefPtr bitmap = ShareableBitmap::createFromNativeImage(*nativeImage, DestinationColorSpace::SRGB());
         if (!bitmap)
             return { };
 
@@ -349,29 +348,13 @@ RefPtr<SharedBuffer> createIconDataFromBitmaps(Vector<Ref<ShareableBitmap>>&& bi
 // FIXME: This does not implement preferredSize for SVG at the moment as there are no callers that pass preferredSize.
 void decodeImageWithSize(std::span<const uint8_t> data, std::optional<FloatSize> preferredSize, CompletionHandler<void(RefPtr<ShareableBitmap>&&)>&& completionHandler)
 {
-    tryCreateNativeImageFromData(data, preferredSize, [completionHandler = WTF::move(completionHandler)](auto nativeImage) mutable {
+    tryCreateNativeImageFromData(data, preferredSize, [completionHandler = WTF::move(completionHandler)](RefPtr<NativeImage>&& nativeImage) mutable {
         if (!nativeImage) {
             completionHandler(nullptr);
             return;
         }
-
-        auto sourceColorSpace = nativeImage->colorSpace();
-        auto destinationColorSpace = sourceColorSpace.supportsOutput() ? sourceColorSpace : DestinationColorSpace::SRGB();
-        RefPtr bitmap = ShareableBitmap::create({ nativeImage->size(), destinationColorSpace });
-        if (!bitmap) {
-            completionHandler(nullptr);
-            return;
-        }
-
-        auto context = bitmap->createGraphicsContext();
-        if (!context) {
-            completionHandler(nullptr);
-            return;
-        }
-
-        FloatRect rect { { }, nativeImage->size() };
-        context->drawNativeImage(*nativeImage, rect, rect, { CompositeOperator::Copy });
-        completionHandler(WTF::move(bitmap));
+        auto fallbackColorSpace = DestinationColorSpace::SRGB();
+        completionHandler(ShareableBitmap::createFromNativeImage(*nativeImage, fallbackColorSpace));
     });
 }
 
