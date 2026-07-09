@@ -275,7 +275,11 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
                         continue;
                     }
                     FontPlatformData runFontPlatformData(runCTFont.get(), CTFontGetSize(runCTFont.get()));
-                    runFont = protect(FontCache::forCurrentThread())->fontForPlatformData(runFontPlatformData).ptr();
+                    Ref systemFallbackFont = protect(FontCache::forCurrentThread())->fontForPlatformData(runFontPlatformData);
+                    // Keep this system fallback alive. The cached shaped buffer references it only weakly (mirrors glyphDataForSystemFallback()).
+                    RefPtr fonts = m_fontCascade->fonts();
+                    fonts->addSystemFallbackFont(systemFallbackFont.copyRef());
+                    runFont = systemFallbackFont.ptr();
                 }
                 if (m_fallbackFonts && runFont != &m_fontCascade->primaryFont())
                     m_fallbackFonts->add(*runFont);

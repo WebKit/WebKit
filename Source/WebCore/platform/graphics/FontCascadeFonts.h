@@ -155,6 +155,8 @@ public:
 
     void pruneSystemFallbacks();
 
+    void addSystemFallbackFont(Ref<Font>&&);
+
 private:
     FontCascadeFonts();
     FontCascadeFonts(const FontPlatformData&);
