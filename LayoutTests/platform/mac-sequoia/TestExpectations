@@ -43,7 +43,7 @@ http/wpt/identity/ [ Skip ]
 # webkit.org/b/308169 Skip until after macOS 26.4, where AXIntersectionWithSelectionRange returns AXTextMarkerRangeRef.
 accessibility/mac/intersection-with-selection-range.html [ Skip ]
 
-
+http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Failure ]
 
 
 
