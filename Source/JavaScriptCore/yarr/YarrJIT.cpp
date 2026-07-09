@@ -5897,42 +5897,43 @@ class YarrGenerator final : public YarrJITInfo {
         case PatternTerm::Type::CharacterClass: {
             if (term.quantityType != QuantifierType::FixedCount && term.quantityType != QuantifierType::Greedy)
                 return std::nullopt;
-            if (term.quantityMaxCount != 1)
+            if (term.quantityMaxCount != 1 && term.quantityType != QuantifierType::FixedCount)
                 return std::nullopt;
             if (term.inputPosition != cursor)
                 return std::nullopt;
             auto& characterClass = *term.characterClass;
-            if (term.invert() || characterClass.m_anyCharacter) {
-                bmInfo.setAll(cursor);
-                // If this is greedy one-character pattern "a?", we should not increase cursor.
-                // If we see greedy pattern, then we cut bmInfo here to avoid possibility explosion.
-                if (term.quantityType == QuantifierType::FixedCount)
-                    ++cursor;
-                else
-                    bmInfo.shortenLength(cursor + 1);
+            auto addCharacterClass = [&](unsigned index) {
+                if (term.invert() || characterClass.m_anyCharacter) {
+                    bmInfo.setAll(index);
+                    return;
+                }
+                if (!characterClass.m_ranges32.isEmpty())
+                    bmInfo.addRanges(index, characterClass.m_ranges32);
+                if (!characterClass.m_matches32.isEmpty())
+                    bmInfo.addCharacters(index, characterClass.m_matches32);
+                if (!characterClass.m_ranges8.isEmpty())
+                    bmInfo.addRanges(index, characterClass.m_ranges8);
+                if (!characterClass.m_matches8.isEmpty())
+                    bmInfo.addCharacters(index, characterClass.m_matches8);
+            };
+
+            if (term.quantityType == QuantifierType::FixedCount) {
+                unsigned count = term.quantityMaxCount;
+                for (unsigned i = 0; i < count && cursor < bmInfo.length(); ++i)
+                    addCharacterClass(cursor++);
                 return cursor;
             }
-            if (!characterClass.m_ranges32.isEmpty())
-                bmInfo.addRanges(cursor, characterClass.m_ranges32);
-            if (!characterClass.m_matches32.isEmpty())
-                bmInfo.addCharacters(cursor, characterClass.m_matches32);
-            if (!characterClass.m_ranges8.isEmpty())
-                bmInfo.addRanges(cursor, characterClass.m_ranges8);
-            if (!characterClass.m_matches8.isEmpty())
-                bmInfo.addCharacters(cursor, characterClass.m_matches8);
 
             // If this is greedy one-character pattern "a?", we should not increase cursor.
             // If we see greedy pattern, then we cut bmInfo here to avoid possibility explosion.
-            if (term.quantityType == QuantifierType::FixedCount)
-                ++cursor;
-            else
-                bmInfo.shortenLength(cursor + 1);
+            addCharacterClass(cursor);
+            bmInfo.shortenLength(cursor + 1);
             return cursor;
         }
         case PatternTerm::Type::PatternCharacter: {
             if (term.quantityType != QuantifierType::FixedCount && term.quantityType != QuantifierType::Greedy)
                 return std::nullopt;
-            if (term.quantityMaxCount != 1)
+            if (term.quantityMaxCount != 1 && term.quantityType != QuantifierType::FixedCount)
                 return std::nullopt;
             if (term.inputPosition != cursor)
                 return std::nullopt;
@@ -5941,18 +5942,25 @@ class YarrGenerator final : public YarrJITInfo {
             // For case-insesitive compares, non-ascii characters that have different
             // upper & lower case representations are already converted to a character class.
             ASSERT(!term.ignoreCase() || isASCIIAlpha(term.patternCharacter) || isCanonicallyUnique(term.patternCharacter, m_canonicalMode));
-            if (term.ignoreCase() && isASCIIAlpha(term.patternCharacter)) {
-                bmInfo.set(cursor, toASCIIUpper(term.patternCharacter));
-                bmInfo.set(cursor, toASCIILower(term.patternCharacter));
-            } else
-                bmInfo.set(cursor, term.patternCharacter);
+            auto addCharacter = [&](unsigned index) {
+                if (term.ignoreCase() && isASCIIAlpha(term.patternCharacter)) {
+                    bmInfo.set(index, toASCIIUpper(term.patternCharacter));
+                    bmInfo.set(index, toASCIILower(term.patternCharacter));
+                } else
+                    bmInfo.set(index, term.patternCharacter);
+            };
+
+            if (term.quantityType == QuantifierType::FixedCount) {
+                unsigned count = term.quantityMaxCount;
+                for (unsigned i = 0; i < count && cursor < bmInfo.length(); ++i)
+                    addCharacter(cursor++);
+                return cursor;
+            }
 
             // If this is greedy one-character pattern "a?", we should not increase cursor.
             // If we see greedy pattern, then we cut bmInfo here to avoid possibility explosion.
-            if (term.quantityType == QuantifierType::FixedCount)
-                ++cursor;
-            else
-                bmInfo.shortenLength(cursor + 1);
+            addCharacter(cursor);
+            bmInfo.shortenLength(cursor + 1);
             return cursor;
         }
         }
