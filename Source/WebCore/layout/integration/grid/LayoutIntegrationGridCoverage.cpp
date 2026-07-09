@@ -75,6 +75,7 @@ enum class GridAvoidanceReason : uint8_t {
     GridItemHasUnsupportedBlockAxisAlignment,
     GridItemHasNonVisibleOverflow,
     GridItemHasContainsSize,
+    GridItemNeedsSecondColumnSizingPass,
 
     GridItemColumnStartHasLineName,
     GridItemColumnStartHasNegativeLineNumber,
@@ -581,6 +582,27 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
         if (gridItemStyle->usedContain().contains(Style::ContainValue::Size))
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasContainsSize, reasons, reasonCollectionMode);
+
+        auto gridItemIsStretchedInBlockAxis = [&] {
+            return gridItemHeight.isAuto() && usedAlignSelf.isStretchy(ItemPosition::Stretch);
+        };
+
+        auto gridItemHasChildWithInlineSizeComputedFromAspectRatio = [&] {
+            for (CheckedRef gridItemChild : childrenOfType<RenderBox>(gridItem.get())) {
+                CheckedRef gridItemChildStyle = gridItemChild->style();
+                RefPtr gridItemChildElement = gridItemChild->element();
+                bool hasAspectRatio = (gridItemChildElement && gridItemChildElement->isReplaced()) || gridItemChildStyle->aspectRatio().hasRatio();
+                if (hasAspectRatio && gridItemChildStyle->width().isAuto() && gridItemChildStyle->height().isPercent())
+                    return true;
+            }
+            return false;
+        };
+
+        // A stretched item's child can resolve its inline size from its aspect ratio against the item's
+        // stretched block size, changing the item's inline contribution. This requires a second column
+        // sizing pass, which GFC does not yet support.
+        if (gridItemIsStretchedInBlockAxis() && gridItemHasChildWithInlineSizeComputedFromAspectRatio())
+            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemNeedsSecondColumnSizingPass, reasons, reasonCollectionMode);
     }
     return reasons;
 }
@@ -724,6 +746,9 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridItemHasContainsSize:
         stream << "grid item has contains: size";
+        break;
+    case GridAvoidanceReason::GridItemNeedsSecondColumnSizingPass:
+        stream << "grid item needs second column sizing support";
         break;
     case GridAvoidanceReason::GridItemColumnStartHasLineName:
         stream << "grid item column start has line name";
