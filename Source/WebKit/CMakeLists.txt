@@ -558,7 +558,6 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebCoreArgumentCodersMedia.serialization.in
     Shared/WebCoreArgumentCodersNetwork.serialization.in
     Shared/WebCoreArgumentCodersPayment.serialization.in
-    Shared/WebCoreArgumentCodersPlatform.serialization.in
     Shared/WebCoreArgumentCodersStorage.serialization.in
     Shared/WebCoreFont.serialization.in
     Shared/WebCompiledContentRuleListData.serialization.in
@@ -1138,28 +1137,14 @@ list(APPEND WebKit_SERIALIZATION_DEPENDENCIES "${WebKit_DERIVED_SOURCES_DIR}/Sha
 
 list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.h
-    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersExtra.h
-    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersShared0.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersShared1.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedAPI.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedCocoa.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedEditorState.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
+    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersShared.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedExtensions.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedModel.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedRemoteLayerTree.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
+    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedWebGPU.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedWebCoreArgumentCodersAuth.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedWebCoreArgumentCodersMedia.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedWebCoreArgumentCodersNetwork.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedWebCoreArgumentCodersPayment.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedWebCoreArgumentCodersPlatform.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedWebCoreArgumentCodersStorage.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedWebCoreFont.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedWebEvent.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedWebGL.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedWebGPU.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedWebPageCreationParameters.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedWebProcessCreationParameters.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedXR.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersWebProcess.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersGPUProcess.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersNetworkProcess.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
@@ -1174,28 +1159,14 @@ list(APPEND WebKit_DERIVED_SOURCES
 set(_serializers_stage_dir ${WebKit_DERIVED_SOURCES_DIR}/.serializers-stage)
 set(_serializers_outputs
     GeneratedSerializers.h
-    GeneratedSerializersExtra.h
-    GeneratedSerializersShared0.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    GeneratedSerializersShared1.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    GeneratedSerializersSharedAPI.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    GeneratedSerializersSharedCocoa.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    GeneratedSerializersSharedEditorState.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
+    GeneratedSerializersShared.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     GeneratedSerializersSharedExtensions.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    GeneratedSerializersSharedModel.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    GeneratedSerializersSharedRemoteLayerTree.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
+    GeneratedSerializersSharedWebGPU.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     GeneratedSerializersSharedWebCoreArgumentCodersAuth.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     GeneratedSerializersSharedWebCoreArgumentCodersMedia.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     GeneratedSerializersSharedWebCoreArgumentCodersNetwork.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     GeneratedSerializersSharedWebCoreArgumentCodersPayment.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    GeneratedSerializersSharedWebCoreArgumentCodersPlatform.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     GeneratedSerializersSharedWebCoreArgumentCodersStorage.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    GeneratedSerializersSharedWebCoreFont.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    GeneratedSerializersSharedWebEvent.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    GeneratedSerializersSharedWebGL.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    GeneratedSerializersSharedWebGPU.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    GeneratedSerializersSharedWebPageCreationParameters.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    GeneratedSerializersSharedWebProcessCreationParameters.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    GeneratedSerializersSharedXR.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     GeneratedSerializersWebProcess.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     GeneratedSerializersGPUProcess.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     GeneratedSerializersNetworkProcess.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
@@ -1235,27 +1206,14 @@ add_custom_command(
 if (WTF_CPU_ARM AND NOT CMAKE_CROSSCOMPILING)
     set(GeneratedSerializers_COMPILE_OPTIONS -O0 -DRELEASE_WITHOUT_OPTIMIZATIONS=ON)
     foreach (GeneratedSerializers_BASENAME
-        GeneratedSerializersShared0
-        GeneratedSerializersShared1
-        GeneratedSerializersSharedAPI
-        GeneratedSerializersSharedCocoa
-        GeneratedSerializersSharedEditorState
+        GeneratedSerializersShared
         GeneratedSerializersSharedExtensions
-        GeneratedSerializersSharedModel
-        GeneratedSerializersSharedRemoteLayerTree
+        GeneratedSerializersSharedWebGPU
         GeneratedSerializersSharedWebCoreArgumentCodersAuth
         GeneratedSerializersSharedWebCoreArgumentCodersMedia
         GeneratedSerializersSharedWebCoreArgumentCodersNetwork
         GeneratedSerializersSharedWebCoreArgumentCodersPayment
-        GeneratedSerializersSharedWebCoreArgumentCodersPlatform
         GeneratedSerializersSharedWebCoreArgumentCodersStorage
-        GeneratedSerializersSharedWebCoreFont
-        GeneratedSerializersSharedWebEvent
-        GeneratedSerializersSharedWebGL
-        GeneratedSerializersSharedWebGPU
-        GeneratedSerializersSharedWebPageCreationParameters
-        GeneratedSerializersSharedWebProcessCreationParameters
-        GeneratedSerializersSharedXR
         GeneratedSerializersWebProcess
         GeneratedSerializersGPUProcess
         GeneratedSerializersNetworkProcess

@@ -421,7 +421,6 @@ $(PROJECT_DIR)/Shared/WebCoreArgumentCodersAuth.serialization.in
 $(PROJECT_DIR)/Shared/WebCoreArgumentCodersMedia.serialization.in
 $(PROJECT_DIR)/Shared/WebCoreArgumentCodersNetwork.serialization.in
 $(PROJECT_DIR)/Shared/WebCoreArgumentCodersPayment.serialization.in
-$(PROJECT_DIR)/Shared/WebCoreArgumentCodersPlatform.serialization.in
 $(PROJECT_DIR)/Shared/WebCoreArgumentCodersStorage.serialization.in
 $(PROJECT_DIR)/Shared/WebCoreFont.serialization.in
 $(PROJECT_DIR)/Shared/WebEvent.serialization.in

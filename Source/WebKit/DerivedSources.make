@@ -828,7 +828,6 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebCoreArgumentCodersMedia.serialization.in \
 	Shared/WebCoreArgumentCodersNetwork.serialization.in \
 	Shared/WebCoreArgumentCodersPayment.serialization.in \
-	Shared/WebCoreArgumentCodersPlatform.serialization.in \
 	Shared/WebCoreArgumentCodersStorage.serialization.in \
 	Shared/WebCoreFont.serialization.in \
 	Shared/WebEvent.serialization.in \
@@ -999,32 +998,18 @@ WEBCORE_SERIALIZATION_DESCRIPTION_FILES = \
 
 WEBCORE_SERIALIZATION_DESCRIPTION_FILES_FULLPATH := $(foreach I,$(WEBCORE_SERIALIZATION_DESCRIPTION_FILES),$(WebCorePrivateHeaders)/$I)
 
-all : IPC/GeneratedSerializers.h IPC/GeneratedSerializersExtra.h IPC/GeneratedSerializersShared0.mm IPC/GeneratedSerializersShared1.mm IPC/GeneratedSerializersSharedAPI.mm IPC/GeneratedSerializersSharedCocoa.mm IPC/GeneratedSerializersSharedEditorState.mm IPC/GeneratedSerializersSharedExtensions.mm IPC/GeneratedSerializersSharedModel.mm IPC/GeneratedSerializersSharedRemoteLayerTree.mm IPC/GeneratedSerializersSharedWebCoreArgumentCodersAuth.mm IPC/GeneratedSerializersSharedWebCoreArgumentCodersMedia.mm IPC/GeneratedSerializersSharedWebCoreArgumentCodersNetwork.mm IPC/GeneratedSerializersSharedWebCoreArgumentCodersPayment.mm IPC/GeneratedSerializersSharedWebCoreArgumentCodersPlatform.mm IPC/GeneratedSerializersSharedWebCoreArgumentCodersStorage.mm IPC/GeneratedSerializersSharedWebCoreFont.mm IPC/GeneratedSerializersSharedWebEvent.mm IPC/GeneratedSerializersSharedWebGL.mm IPC/GeneratedSerializersSharedWebGPU.mm IPC/GeneratedSerializersSharedWebPageCreationParameters.mm IPC/GeneratedSerializersSharedWebProcessCreationParameters.mm IPC/GeneratedSerializersSharedXR.mm IPC/GeneratedSerializersWebProcess.mm IPC/GeneratedSerializersGPUProcess.mm IPC/GeneratedSerializersNetworkProcess.mm IPC/GeneratedSerializersPlatform.mm IPC/GeneratedSerializersModelProcess.mm IPC/GeneratedSerializersUIProcess.mm IPC/GeneratedSerializersCommon.mm IPC/GeneratedWebKitSecureCoding.h IPC/GeneratedWebKitSecureCoding.mm IPC/SerializedTypeInfo.mm IPC/WebKitPlatformGeneratedSerializers.mm
+all : IPC/GeneratedSerializers.h IPC/GeneratedSerializersShared.mm IPC/GeneratedSerializersSharedExtensions.mm IPC/GeneratedSerializersSharedWebGPU.mm IPC/GeneratedSerializersSharedWebCoreArgumentCodersAuth.mm IPC/GeneratedSerializersSharedWebCoreArgumentCodersMedia.mm IPC/GeneratedSerializersSharedWebCoreArgumentCodersNetwork.mm IPC/GeneratedSerializersSharedWebCoreArgumentCodersPayment.mm IPC/GeneratedSerializersSharedWebCoreArgumentCodersStorage.mm IPC/GeneratedSerializersWebProcess.mm IPC/GeneratedSerializersGPUProcess.mm IPC/GeneratedSerializersNetworkProcess.mm IPC/GeneratedSerializersPlatform.mm IPC/GeneratedSerializersModelProcess.mm IPC/GeneratedSerializersUIProcess.mm IPC/GeneratedSerializersCommon.mm IPC/GeneratedWebKitSecureCoding.h IPC/GeneratedWebKitSecureCoding.mm IPC/SerializedTypeInfo.mm IPC/WebKitPlatformGeneratedSerializers.mm
 
 GENERATED_SERIALIZERS_OUTPUT_FILES = \
     IPC/GeneratedSerializers.h \
-    IPC/GeneratedSerializersExtra.h \
-    IPC/GeneratedSerializersShared0.mm \
-    IPC/GeneratedSerializersShared1.mm \
-    IPC/GeneratedSerializersSharedAPI.mm \
-    IPC/GeneratedSerializersSharedCocoa.mm \
-    IPC/GeneratedSerializersSharedEditorState.mm \
+    IPC/GeneratedSerializersShared.mm \
     IPC/GeneratedSerializersSharedExtensions.mm \
-    IPC/GeneratedSerializersSharedModel.mm \
-    IPC/GeneratedSerializersSharedRemoteLayerTree.mm \
+    IPC/GeneratedSerializersSharedWebGPU.mm \
     IPC/GeneratedSerializersSharedWebCoreArgumentCodersAuth.mm \
     IPC/GeneratedSerializersSharedWebCoreArgumentCodersMedia.mm \
     IPC/GeneratedSerializersSharedWebCoreArgumentCodersNetwork.mm \
     IPC/GeneratedSerializersSharedWebCoreArgumentCodersPayment.mm \
-    IPC/GeneratedSerializersSharedWebCoreArgumentCodersPlatform.mm \
     IPC/GeneratedSerializersSharedWebCoreArgumentCodersStorage.mm \
-    IPC/GeneratedSerializersSharedWebCoreFont.mm \
-    IPC/GeneratedSerializersSharedWebEvent.mm \
-    IPC/GeneratedSerializersSharedWebGL.mm \
-    IPC/GeneratedSerializersSharedWebGPU.mm \
-    IPC/GeneratedSerializersSharedWebPageCreationParameters.mm \
-    IPC/GeneratedSerializersSharedWebProcessCreationParameters.mm \
-    IPC/GeneratedSerializersSharedXR.mm \
     IPC/GeneratedSerializersWebProcess.mm \
     IPC/GeneratedSerializersGPUProcess.mm \
     IPC/GeneratedSerializersNetworkProcess.mm \
