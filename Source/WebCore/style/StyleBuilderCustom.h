@@ -186,6 +186,7 @@ inline URL forwardInheritedValue(const URL& value) { auto copy = value; return c
 inline FixedVector<PositionTryFallback> forwardInheritedValue(const FixedVector<PositionTryFallback>& value) { auto copy = value; return copy; }
 inline ProgressTimelineName forwardInheritedValue(const ProgressTimelineName& value) { auto copy = value; return copy; }
 inline ScrollTimelines forwardInheritedValue(const ScrollTimelines& value) { auto copy = value; return copy; }
+inline TimelineTriggerName forwardInheritedValue(const TimelineTriggerName& value) { auto copy = value; return copy; }
 inline Transform forwardInheritedValue(const Transform& value) { auto copy = value; return copy; }
 inline VerticalAlign forwardInheritedValue(const VerticalAlign& value) { auto copy = value; return copy; }
 inline ViewTimelineInsetItem forwardInheritedValue(const ViewTimelineInsetItem& value) { auto copy = value; return copy; }

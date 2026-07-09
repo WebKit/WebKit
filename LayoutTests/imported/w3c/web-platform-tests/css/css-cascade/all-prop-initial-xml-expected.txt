@@ -372,6 +372,8 @@ PASS text-underline-position
 PASS text-wrap-mode
 PASS text-wrap-style
 PASS timeline-scope
+PASS timeline-trigger-name
+PASS timeline-trigger-source
 PASS top
 PASS touch-action
 PASS transform

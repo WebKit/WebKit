@@ -84,6 +84,7 @@ NonInheritedRareData::NonInheritedRareData()
     , viewTimelines { CSS::Keyword::None { } }
     , timelineScope(ComputedStyle::initialTimelineScope())
     , triggerScope(ComputedStyle::initialTriggerScope())
+    , timelineTriggers { CSS::Keyword::None { } }
     , scrollbarGutter(ComputedStyle::initialScrollbarGutter())
     , containerType(ComputedStyle::initialContainerType())
     , scrollSnapType(ComputedStyle::initialScrollSnapType())
@@ -191,6 +192,7 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , viewTimelines(o.viewTimelines)
     , timelineScope(o.timelineScope)
     , triggerScope(o.triggerScope)
+    , timelineTriggers(o.timelineTriggers)
     , scrollbarGutter(o.scrollbarGutter)
     , containerType(o.containerType)
     , scrollSnapType(o.scrollSnapType)
@@ -303,6 +305,7 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
         && viewTimelines == o.viewTimelines
         && timelineScope == o.timelineScope
         && triggerScope == o.triggerScope
+        && timelineTriggers == o.timelineTriggers
         && scrollbarGutter == o.scrollbarGutter
         && containerType == o.containerType
         && scrollSnapType == o.scrollSnapType
@@ -447,6 +450,7 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
 
     LOG_IF_DIFFERENT(timelineScope);
     LOG_IF_DIFFERENT(triggerScope);
+    LOG_IF_DIFFERENT(timelineTriggers);
 
     LOG_IF_DIFFERENT(scrollbarGutter);
     LOG_IF_DIFFERENT(containerType);

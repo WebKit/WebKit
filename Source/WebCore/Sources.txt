@@ -3305,6 +3305,7 @@ style/values/anchor-position/StylePositionAreaSpan.cpp
 style/values/anchor-position/StylePositionAreaTrack.cpp
 style/values/anchor-position/StylePositionArea.cpp
 style/values/anchor-position/StylePositionTryFallback.cpp
+style/values/animation-triggers/StyleTimelineTrigger.cpp
 style/values/animations/StyleAnimation.cpp
 style/values/animations/StyleSingleAnimationName.cpp
 style/values/animations/StyleSingleAnimationRangeName.cpp

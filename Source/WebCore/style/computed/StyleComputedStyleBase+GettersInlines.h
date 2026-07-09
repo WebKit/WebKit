@@ -391,6 +391,11 @@ inline const ViewTimelines& ComputedStyleBase::viewTimelines() const
     return m_nonInheritedData->rareData->viewTimelines;
 }
 
+inline const TimelineTriggers& ComputedStyleBase::timelineTriggers() const
+{
+    return m_nonInheritedData->rareData->timelineTriggers;
+}
+
 inline const Animations& ComputedStyleBase::animations() const
 {
     return m_nonInheritedData->miscData->animations;

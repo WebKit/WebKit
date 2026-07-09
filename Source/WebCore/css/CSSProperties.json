@@ -13175,15 +13175,56 @@
                 "all"
             ],
             "codegen-properties": {
-                "settings-flag": "animationTriggersEnabled",
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::NameScope",
-                "parser-grammar": "none | all | <dashed-ident>#"
+                "parser-grammar": "none | all | <dashed-ident>#",
+                "settings-flag": "animationTriggersEnabled"
             },
             "specification": {
                 "category": "animation-triggers",
                 "url": "https://drafts.csswg.org/animation-triggers-1/#trigger-scope"
+            }
+        },
+        "timeline-trigger-name": {
+            "animation-type": "not animatable",
+            "initial": "none",
+            "values": [
+                "none"
+            ],
+            "codegen-properties": {
+                "coordinated-value-list-property": true,
+                "coordinated-value-list-property-name-for-methods": "Name",
+                "coordinated-value-list-property-item-type": "Style::TimelineTriggerName",
+                "computed-style-storage-container": "opaque",
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData", "timelineTriggers"],
+                "parser-grammar": "<single-timeline-trigger-name>#",
+                "settings-flag": "animationTriggersEnabled"
+            },
+            "specification": {
+                "category": "animation-triggers",
+                "url": "https://drafts.csswg.org/animation-triggers-1/#timeline-trigger-name"
+            }
+        },
+        "timeline-trigger-source": {
+            "animation-type": "not animatable",
+            "initial": "auto",
+            "values": [
+                "auto",
+                "none"
+            ],
+            "codegen-properties": {
+                "coordinated-value-list-property": true,
+                "coordinated-value-list-property-name-for-methods": "Source",
+                "coordinated-value-list-property-item-type": "Style::SingleAnimationTimeline",
+                "computed-style-storage-container": "opaque",
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData", "timelineTriggers"],
+                "parser-grammar": "<single-animation-timeline>#",
+                "settings-flag": "animationTriggersEnabled"
+            },
+            "specification": {
+                "category": "animation-triggers",
+                "url": "https://drafts.csswg.org/animation-triggers-1/#timeline-trigger-source"
             }
         },
         "view-transition-class": {
@@ -15384,6 +15425,14 @@
             "specification": {
                 "category": "css-animations",
                 "url": "https://drafts.csswg.org/css-animations-2/#typedef-single-animation-timeline"
+            }
+        },
+        "<single-timeline-trigger-name>": {
+            "grammar": "none | <dashed-ident>",
+            "exported": true,
+            "specification": {
+                "category": "animation-triggers",
+                "url": "https://drafts.csswg.org/animation-triggers-1/#timeline-trigger-name"
             }
         },
         "<single-container-name>": {

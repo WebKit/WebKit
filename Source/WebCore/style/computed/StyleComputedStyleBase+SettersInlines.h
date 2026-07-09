@@ -288,6 +288,11 @@ inline ViewTimelines& ComputedStyleBase::ensureViewTimelines()
     return m_nonInheritedData.access().rareData.access().viewTimelines.access();
 }
 
+inline TimelineTriggers& ComputedStyleBase::ensureTimelineTriggers()
+{
+    return m_nonInheritedData.access().rareData.access().timelineTriggers.access();
+}
+
 inline void ComputedStyleBase::setBackgroundLayers(BackgroundLayers&& layers)
 {
     SET_NESTED(m_nonInheritedData, backgroundData, background, WTF::move(layers));

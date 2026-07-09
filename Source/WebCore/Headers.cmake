@@ -3211,6 +3211,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/anchor-position/StylePositionTryFallbacks.h
     style/values/anchor-position/StylePositionVisibility.h
 
+    style/values/animation-triggers/StyleTimelineTrigger.h
+    style/values/animation-triggers/StyleTimelineTriggerName.h
+    style/values/animation-triggers/StyleTimelineTriggers.h
+
     style/values/animations/StyleAnimation.h
     style/values/animations/StyleAnimations.h
     style/values/animations/StyleSingleAnimationDelay.h

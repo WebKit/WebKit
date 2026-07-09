@@ -1108,6 +1108,8 @@ class StyleProperty:
             return "ensureMaskLayers"
         if "scroll-timeline-" in self.name:
             return "ensureScrollTimelines"
+        if "timeline-trigger-" in self.name:
+            return "ensureTimelineTriggers"
         if "view-timeline-" in self.name:
             return "ensureViewTimelines"
         raise Exception(f"Unrecognized coordinated list value property name: '{self.name}")
@@ -1124,6 +1126,8 @@ class StyleProperty:
             return "maskLayers"
         if "scroll-timeline-" in self.name:
             return "scrollTimelines"
+        if "timeline-trigger-" in self.name:
+            return "timelineTriggers"
         if "view-timeline-" in self.name:
             return "viewTimelines"
         raise Exception(f"Unrecognized coordinated list value property name: '{self.name}")
@@ -1140,6 +1144,8 @@ class StyleProperty:
             return "setMaskLayers"
         if "scroll-timeline-" in self.name:
             return "setScrollTimelines"
+        if "timeline-trigger-" in self.name:
+            return "setTimelineTriggers"
         if "view-timeline-" in self.name:
             return "setViewTimelines"
         raise Exception(f"Unrecognized coordinated list value property name: '{self.name}")
@@ -1156,6 +1162,8 @@ class StyleProperty:
             return "initialMaskLayers"
         if "scroll-timeline-" in self.name:
             return "initialScrollTimelines"
+        if "timeline-trigger-" in self.name:
+            return "initialTimelineTriggers"
         if "view-timeline-" in self.name:
             return "initialViewTimelines"
         raise Exception(f"Unrecognized coordinated list value property name: '{self.name}")
@@ -1172,6 +1180,8 @@ class StyleProperty:
             return "MaskLayers"
         if "scroll-timeline-" in self.name:
             return "ScrollTimelines"
+        if "timeline-trigger-" in self.name:
+            return "TimelineTriggers"
         if "view-timeline-" in self.name:
             return "ViewTimelines"
         raise Exception(f"Unrecognized coordinated list value property name: '{self.name}")
