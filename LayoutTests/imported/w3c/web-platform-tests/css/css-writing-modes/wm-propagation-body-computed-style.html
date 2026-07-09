@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Propagating writing-mode/direction from body does not change the document element's computed style</title>
+<link rel="help" href="https://drafts.csswg.org/css-writing-modes-4/#principal-flow">
+<meta name="assert" content="Propagation of writing-mode and direction from the body to the document element only affects used values, not computed values, so getComputedStyle reports the document element's own values, and a pseudo-element of the document element keeps its own values.">
+<style>
+/* A pseudo-element on the document element that sets its own values. The
+   propagation from <body> must not leak into the pseudo-element's computed
+   style. */
+html::before {
+    content: "x";
+    writing-mode: sideways-rl;
+    direction: rtl;
+}
+</style>
+</head>
+<body>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+const html = document.documentElement;
+const body = document.body;
+
+function cleanup() {
+    html.style.removeProperty("writing-mode");
+    html.style.removeProperty("direction");
+    body.style.removeProperty("writing-mode");
+    body.style.removeProperty("direction");
+}
+
+test(function(t) {
+    t.add_cleanup(cleanup);
+    // The body's value is propagated to the document element's used value, but the
+    // computed value reported by getComputedStyle must stay the document element's own.
+    html.style.writingMode = "vertical-lr";
+    body.style.writingMode = "horizontal-tb";
+    assert_equals(getComputedStyle(html).writingMode, "vertical-lr",
+        "document element keeps its own computed writing-mode");
+    assert_equals(getComputedStyle(body).writingMode, "horizontal-tb",
+        "body keeps its own computed writing-mode");
+}, "Body writing-mode propagation does not change the document element's computed writing-mode");
+
+test(function(t) {
+    t.add_cleanup(cleanup);
+    html.style.direction = "ltr";
+    body.style.direction = "rtl";
+    assert_equals(getComputedStyle(html).direction, "ltr",
+        "document element keeps its own computed direction");
+    assert_equals(getComputedStyle(body).direction, "rtl",
+        "body keeps its own computed direction");
+}, "Body direction propagation does not change the document element's computed direction");
+
+test(function(t) {
+    t.add_cleanup(cleanup);
+    // Regression guard: the document-element special case must not capture the
+    // document element's pseudo-elements, which carry their own values.
+    html.style.writingMode = "vertical-lr";
+    html.style.direction = "ltr";
+    body.style.writingMode = "vertical-rl";
+    body.style.direction = "rtl";
+    const before = getComputedStyle(html, "::before");
+    assert_equals(before.writingMode, "sideways-rl",
+        "::before on the document element reports its own writing-mode");
+    assert_equals(before.direction, "rtl",
+        "::before on the document element reports its own direction");
+}, "Document element pseudo-element computed style is unaffected by body propagation");
+</script>
+</body>
+</html>

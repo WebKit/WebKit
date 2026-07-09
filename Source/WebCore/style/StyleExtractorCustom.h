@@ -686,8 +686,10 @@ template<CSSPropertyID> struct PropertyExtractorAdaptor;
 template<> struct PropertyExtractorAdaptor<CSSPropertyDirection> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
     {
-        if (state.element.ptr() == state.element->document().documentElement() && !state.style.hasExplicitlySetDirection())
-            return functor(Style::ComputedStyle::initialDirection());
+        // Propagation from the body affects only the used value of direction on the document element, so report
+        // its computed value here. https://drafts.csswg.org/css-writing-modes-4/#principal-flow
+        if (!state.pseudoElementIdentifier && state.element.ptr() == state.element->document().documentElement())
+            return functor(state.element->document().documentElementComputedTextDirection());
         return functor(state.style.writingMode().computedTextDirection());
     }
 };
@@ -695,8 +697,10 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyDirection> {
 template<> struct PropertyExtractorAdaptor<CSSPropertyWritingMode> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
     {
-        if (state.element.ptr() == state.element->document().documentElement() && !state.style.hasExplicitlySetWritingMode())
-            return functor(Style::ComputedStyle::initialWritingMode());
+        // Propagation from the body affects only the used value of writing-mode on the document element, so
+        // report its computed value here. https://drafts.csswg.org/css-writing-modes-4/#principal-flow
+        if (!state.pseudoElementIdentifier && state.element.ptr() == state.element->document().documentElement())
+            return functor(state.element->document().documentElementComputedWritingMode());
         return functor(state.style.writingMode().computedWritingMode());
     }
 };

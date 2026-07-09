@@ -1,0 +1,5 @@
+
+PASS Body writing-mode propagation does not change the document element's computed writing-mode
+PASS Body direction propagation does not change the document element's computed direction
+PASS Document element pseudo-element computed style is unaffected by body propagation
+
