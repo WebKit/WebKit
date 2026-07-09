@@ -78,6 +78,8 @@ TestWebKitAPI.WebPageTransferableTests/exportToImage(type:) [ Skip ]
 [ iOS Debug ] TestWebKitAPI.WebKitLegacy.WebGLNoCrashOnOtherThreadAccess [ Crash ]
 [ iOS Debug ] TestWebKitAPI.WebKitLegacy.WebGLPrepareDisplayOnWebThread [ Crash ]
 
+webkit.org/b/319000 [ ios ] TestWebKitAPI.WKHTTPCookieStore.ObserveCookiesReceivedFromHTTP [ Pass Failure ]
+
 # webkit.org/b/318742 [ iOS DEBUG ] 3x TestWebKitAPI.WKWebExtensionAPICookies.* (api-tests) are constant crashes/timeout.
 [ iOS Debug ] TestWebKitAPI.WKWebExtensionAPICookies.GetAllAfterNetworkProcessTermination [ Timeout ]
 [ iOS Debug ] TestWebKitAPI.WKWebExtensionAPICookies.RemoveCookie [ Crash ]
