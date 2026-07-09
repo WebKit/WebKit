@@ -35,6 +35,7 @@
 #include "CachedImage.h"
 #include "CanvasRenderingContext2DBase.h"
 #include "Chrome.h"
+#include "ColorBlending.h"
 #include "ContainerNodeInlines.h"
 #include "CornerRadii.h"
 #include "DebugOverlayRegions.h"
@@ -1356,15 +1357,9 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     }
 #if ENABLE(MODEL_ELEMENT)
     else if (is<RenderModel>(renderer())) {
-        auto modelBackgroundColor = rendererBackgroundColor();
-#if ENABLE(GPU_PROCESS_MODEL)
-        // Model expects opaque colors but we don't make the IOSurface of the model opaque, rather we make
-        // it transparent and composite it with the user's chosen background color.
-        modelBackgroundColor = modelBackgroundColor.isValid() ? modelBackgroundColor.opaqueColor() : Color::black;
-        m_graphicsLayer->setBackgroundColor(modelBackgroundColor);
-#endif
         RefPtr element = downcast<HTMLModelElement>(renderer().element());
 
+        auto modelBackgroundColor = blendSourceOver(renderer().theme().systemColor(CSSValueCanvas, renderer().styleColorOptions()), rendererBackgroundColor());
         element->configureGraphicsLayer(*m_graphicsLayer, modelBackgroundColor);
         element->sizeMayHaveChanged();
 
