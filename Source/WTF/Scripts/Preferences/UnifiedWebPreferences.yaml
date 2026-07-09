@@ -4065,16 +4065,16 @@ IndexedDBAPIEnabled:
 IndexedDBGetAllRecordsAndGetAllOptionsEnabled:
   type: bool
   category: dom
-  status: preview
+  status: stable
   humanReadableName: "IndexedDB getAllRecords() API and IDBGetAllOptions"
   humanReadableDescription: "Enable the getAllRecords() API on IDBObjectStore/IDBIndex and enable getAll()/getAllKeys() to accept IDBGetAllOptions and support direction"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 IndexedDBSQLiteMemoryBackingStoreEnabled:
   type: bool
