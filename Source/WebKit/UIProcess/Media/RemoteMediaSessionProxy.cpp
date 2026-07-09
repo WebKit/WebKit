@@ -38,8 +38,14 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionProxy);
 
-RemoteMediaSessionProxy::RemoteMediaSessionProxy(const RemoteMediaSessionState& state, RemoteMediaSessionManagerProxy& manager)
-    : PlatformMediaSession(*new RemoteMediaSessionClientProxy(state, manager))
+Ref<RemoteMediaSessionProxy> RemoteMediaSessionProxy::create(RemoteMediaSessionState& state, RemoteMediaSessionManagerProxy& manager)
+{
+    return adoptRef(*new RemoteMediaSessionProxy(RemoteMediaSessionClientProxy::create(state, manager), state, manager));
+}
+
+RemoteMediaSessionProxy::RemoteMediaSessionProxy(Ref<RemoteMediaSessionClientProxy>&& client, const RemoteMediaSessionState& state, RemoteMediaSessionManagerProxy& manager)
+    : PlatformMediaSession(client)
+    , m_client(WTF::move(client))
     , m_manager(manager)
     , m_sessionState(state)
 #if !RELEASE_LOG_DISABLED
@@ -49,7 +55,10 @@ RemoteMediaSessionProxy::RemoteMediaSessionProxy(const RemoteMediaSessionState& 
     setMediaSessionIdentifier(state.sessionIdentifier);
 }
 
-RemoteMediaSessionProxy::~RemoteMediaSessionProxy() = default;
+RemoteMediaSessionProxy::~RemoteMediaSessionProxy()
+{
+    invalidateClient();
+}
 
 void RemoteMediaSessionProxy::updateState(const RemoteMediaSessionState& remoteState)
 {

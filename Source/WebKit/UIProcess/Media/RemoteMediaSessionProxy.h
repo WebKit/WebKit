@@ -25,26 +25,21 @@
 
 #pragma once
 
-#include "UIProcess/Media/RemoteMediaSessionManagerProxy.h"
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 
-#include "RemoteMediaSessionClientProxy.h"
 #include "RemoteMediaSessionManagerProxy.h"
 #include "RemoteMediaSessionState.h"
 #include <WebCore/PlatformMediaSession.h>
 
 namespace WebKit {
+class RemoteMediaSessionClientProxy;
 class RemoteMediaSessionManagerProxy;
 
 class RemoteMediaSessionProxy final
     : public WebCore::PlatformMediaSession {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaSessionProxy);
 public:
-    static Ref<RemoteMediaSessionProxy> create(RemoteMediaSessionState& state, RemoteMediaSessionManagerProxy& manager)
-    {
-        return adoptRef(*new RemoteMediaSessionProxy(state, manager));
-    }
-
+    static Ref<RemoteMediaSessionProxy> create(RemoteMediaSessionState&, RemoteMediaSessionManagerProxy&);
     ~RemoteMediaSessionProxy();
 
     void updateState(const RemoteMediaSessionState&);
@@ -55,7 +50,7 @@ public:
     WeakPtr<RemoteMediaSessionManagerProxy> manager() const { return m_manager; }
 
 private:
-    RemoteMediaSessionProxy(const RemoteMediaSessionState&, RemoteMediaSessionManagerProxy&);
+    RemoteMediaSessionProxy(Ref<RemoteMediaSessionClientProxy>&&, const RemoteMediaSessionState&, RemoteMediaSessionManagerProxy&);
 
     WebCore::PlatformMediaSessionState state() const  final { return m_sessionState.state; }
     void setState(WebCore::PlatformMediaSessionState) final;
@@ -86,6 +81,7 @@ private:
     uint64_t logIdentifier() const { return m_sessionState.logIdentifier; }
 #endif
 
+    const Ref<RemoteMediaSessionClientProxy> m_client;
     WeakPtr<RemoteMediaSessionManagerProxy> m_manager;
     RemoteMediaSessionState m_sessionState;
 #if !RELEASE_LOG_DISABLED

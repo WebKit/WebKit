@@ -41,8 +41,10 @@ class RemoteMediaSessionClientProxy final
     : public WebCore::PlatformMediaSessionClient
     , public RefCounted<RemoteMediaSessionClientProxy> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaSessionClientProxy);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteMediaSessionClientProxy);
 public:
-    RemoteMediaSessionClientProxy(const RemoteMediaSessionState&, RemoteMediaSessionManagerProxy&);
+    static Ref<RemoteMediaSessionClientProxy> create(const RemoteMediaSessionState& state, RemoteMediaSessionManagerProxy& manager) { return adoptRef(*new RemoteMediaSessionClientProxy(state, manager)); }
+
     virtual ~RemoteMediaSessionClientProxy();
 
     WebCore::MediaSessionIdentifier sessionIdentifier() const { return m_state.sessionIdentifier; }
@@ -58,6 +60,7 @@ public:
     bool isRemoteSessionClientProxy() const final { return true; }
 
 protected:
+    RemoteMediaSessionClientProxy(const RemoteMediaSessionState&, RemoteMediaSessionManagerProxy&);
 
     RefPtr<WebCore::MediaSessionManagerInterface> sessionManager() const final;
 
