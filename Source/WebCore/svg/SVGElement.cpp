@@ -1033,7 +1033,7 @@ CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& 
 
 bool SVGElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
-    if (cssPropertyIdForSVGAttributeName(name) > 0)
+    if (cssPropertyIdForSVGAttributeName(name) != CSSPropertyInvalid)
         return true;
     if (name.matches(XMLNames::langAttr) || name.matches(HTMLNames::langAttr))
         return true;
@@ -1043,7 +1043,7 @@ bool SVGElement::hasPresentationalHintsForAttribute(const QualifiedName& name) c
 void SVGElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(name);
-    if (propertyID > 0)
+    if (propertyID != CSSPropertyInvalid)
         addPropertyToPresentationalHintStyle(style, propertyID, value);
     else if (name.matches(XMLNames::langAttr) || (name.matches(HTMLNames::langAttr) && !hasAttributeWithoutSynchronization(XMLNames::langAttr)))
         mapLanguageAttributeToLocale(value, style);
@@ -1057,8 +1057,8 @@ void SVGElement::updateSVGRendererForElementChange(Style::SVGRendererUpdateType 
 
 void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    CSSPropertyID propId = cssPropertyIdForSVGAttributeName(attrName);
-    if (propId > 0) {
+    CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(attrName);
+    if (propertyID != CSSPropertyInvalid) {
         invalidateInstances();
         return;
     }
