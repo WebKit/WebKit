@@ -65,9 +65,9 @@ class UnbarrieredMonotonicTime final : public GenericTimeMixin<UnbarrieredMonoto
 public:
     static constexpr ClockType clockType = ClockType::UnbarrieredMonotonic;
 
-    // Re-declare so Swift's C++ interop importer synthesizes a `bool`
-    // conversion; it mishandles the inherited operator (rdar://181622867).
-    using GenericTimeMixin<UnbarrieredMonotonicTime>::operator bool;
+    // Declared here, not inherited: Swift's C++ interop importer mishandles
+    // an `operator bool` inherited from a template base (rdar://181622867).
+    explicit constexpr operator bool() const { return !!m_value; }
 
     // This is the epoch. So, x.secondsSinceEpoch() should be the same as x - UnbarrieredMonotonicTime().
     constexpr UnbarrieredMonotonicTime() = default;
