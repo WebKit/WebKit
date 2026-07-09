@@ -104,7 +104,7 @@ WEBCORE_EXPORT Ref<Inspector::Protocol::Page::FrameResource> buildResourceObject
 void resourceContent(Inspector::Protocol::ErrorString&, WebCore::LocalFrame*, const URL&, String* result, bool* base64Encoded);
 WEBCORE_EXPORT bool mainResourceContent(WebCore::LocalFrame*, bool withBase64Encode, String* result);
 
-String sourceMapURLForResource(WebCore::CachedResource*);
+WEBCORE_EXPORT String sourceMapURLForResource(WebCore::CachedResource*);
 RefPtr<WebCore::CachedResource> WEBCORE_EXPORT cachedResource(const WebCore::LocalFrame*, const URL&);
 Inspector::ResourceType WEBCORE_EXPORT inspectorResourceType(WebCore::CachedResource::Type);
 Inspector::ResourceType WEBCORE_EXPORT inspectorResourceType(const WebCore::CachedResource&);

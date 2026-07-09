@@ -36,5 +36,5 @@ messages -> Inspector::ProxyingNetworkAgent {
 
     LoadingFailed(WebCore::ScopedResourceLoaderIdentifier resourceID, double timestamp, String errorText, bool canceled)
 
-    RequestServedFromMemoryCache(WebCore::ScopedResourceLoaderIdentifier resourceID, WebCore::FrameIdentifier frameID, WebCore::ScriptExecutionContextIdentifier contextID, String documentURL, WebCore::ResourceRequest request, WebCore::ResourceResponse response, Inspector::ResourceType resourceType, double timestamp)
+    RequestServedFromMemoryCache(WebCore::ScopedResourceLoaderIdentifier resourceID, WebCore::FrameIdentifier frameID, WebCore::ScriptExecutionContextIdentifier contextID, String documentURL, WebCore::ResourceResponse response, Inspector::ResourceType resourceType, String sourceMapURL, uint64_t bodySize, double timestamp)
 }

@@ -474,7 +474,7 @@ void ProxyingNetworkAgent::loadingFailed(ResourceID resourceID, double timestamp
     m_frontendDispatcher->loadingFailed(requestId, timestamp, errorText, canceled);
 }
 
-void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, FrameID frameID, ContextID contextID, const String& documentURL, const ResourceRequest& request, const ResourceResponse& response, ResourceType resourceType, double timestamp)
+void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, FrameID frameID, ContextID contextID, const String& documentURL, const ResourceResponse& response, ResourceType resourceType, const String& sourceMapURL, uint64_t bodySize, double timestamp)
 {
     if (!m_enabled)
         return;
@@ -482,17 +482,24 @@ void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, F
     auto requestId = IdentifierRegistry::protocolRequestId(resourceID.processIdentifier(), resourceID.object());
     auto frameIdString = IdentifierRegistry::protocolFrameId(frameID, resourceID.processIdentifier());
     auto loaderId = IdentifierRegistry::protocolLoaderId(contextID);
-    auto requestObject = buildObjectForResourceRequest(request);
-    auto responseObject = buildObjectForResourceResponse(response);
+
+    auto cachedResourceObject = Protocol::Network::CachedResource::create()
+        .setUrl(response.url().string())
+        .setType(toProtocolResourceType(resourceType))
+        .setBodySize(bodySize)
+        .release();
+
+    if (auto responseObject = buildObjectForResourceResponse(response))
+        cachedResourceObject->setResponse(responseObject.releaseNonNull());
+
+    if (!sourceMapURL.isEmpty())
+        cachedResourceObject->setSourceMapURL(sourceMapURL);
 
     auto initiatorObject = Protocol::Network::Initiator::create()
         .setType(Protocol::Network::Initiator::Type::Other)
         .release();
 
-    m_frontendDispatcher->requestWillBeSent(requestId, frameIdString, loaderId, documentURL, WTF::move(requestObject), timestamp, timestamp, WTF::move(initiatorObject), nullptr, toProtocolResourceType(resourceType), String());
-
-    if (responseObject)
-        m_frontendDispatcher->responseReceived(requestId, frameIdString, loaderId, timestamp, toProtocolResourceType(resourceType), responseObject.releaseNonNull());
+    m_frontendDispatcher->requestServedFromMemoryCache(requestId, frameIdString, loaderId, documentURL, timestamp, WTF::move(initiatorObject), WTF::move(cachedResourceObject));
 }
 
 } // namespace Inspector

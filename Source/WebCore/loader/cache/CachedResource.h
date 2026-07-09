@@ -180,7 +180,7 @@ public:
     }
 
     unsigned size() const { return encodedSize() + decodedSize() + overheadSize(); }
-    unsigned NODELETE encodedSize() const;
+    WEBCORE_EXPORT unsigned NODELETE encodedSize() const;
     unsigned NODELETE decodedSize() const;
     unsigned overheadSize() const;
 

@@ -106,7 +106,7 @@ private:
     void dataReceived(ResourceID, int dataLength, int encodedDataLength, double timestamp);
     void loadingFinished(ResourceID, double timestamp, const String& sourceMapURL);
     void loadingFailed(ResourceID, double timestamp, const String& errorText, bool canceled);
-    void requestServedFromMemoryCache(ResourceID, FrameID, ContextID, const String& documentURL, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, ResourceType, double timestamp);
+    void requestServedFromMemoryCache(ResourceID, FrameID, ContextID, const String& documentURL, const WebCore::ResourceResponse&, ResourceType, const String& sourceMapURL, uint64_t bodySize, double timestamp);
 
     void removeAllRegisteredReceivers();
 

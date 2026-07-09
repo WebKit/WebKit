@@ -348,16 +348,19 @@ void FrameNetworkAgentProxy::didLoadResourceFromMemoryCache(DocumentLoader* load
     if (ResourceUtilities::cachedResourceContent(cachedResource, &content, &base64Encoded))
         m_resourcesData->setResourceContent(resourceID, content, base64Encoded);
 
-    // FIXME: Unlike the network path (didFinishLoading), the CSS sourceMappingURL is not
-    // forwarded for memory-cached stylesheets: it is neither computed from the CachedResource
-    // here nor carried by the RequestServedFromMemoryCache message. Tracked in webkit.org/b/??????.
+    // Compute the CSS sourceMappingURL and body size directly from the CachedResource (we hold
+    // it here, unlike the network path), so the UIProcess can build the Network.CachedResource
+    // protocol object. sourceMapURLForResource is CSS-only, matching the legacy Network agent.
+    auto sourceMapURL = ResourceUtilities::sourceMapURLForResource(&cachedResource);
+    auto bodySize = cachedResource.encodedSize();
+
     auto timestamp = MonotonicTime::now().secondsSinceEpoch().value();
     auto documentURL = protectedLoader->url().string();
 
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::RequestServedFromMemoryCache(
-            qualifyResourceID(resourceID), *frameID, contextID, documentURL, cachedResource.resourceRequest(),
-            cachedResource.response(), resourceType, timestamp),
+            qualifyResourceID(resourceID), *frameID, contextID, documentURL,
+            cachedResource.response(), resourceType, sourceMapURL, bodySize, timestamp),
         page->identifier());
 }
 

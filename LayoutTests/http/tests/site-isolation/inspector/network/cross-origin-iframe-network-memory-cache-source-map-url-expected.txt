@@ -1,0 +1,11 @@
+Test that Network.requestServedFromMemoryCache forwards the sourceMapURL for a cross-origin iframe stylesheet served from the in-memory cache under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrameMemoryCacheSourceMapURL
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.MemoryCacheSourceMapURLFromHeader
+Cold load in frame A finished; loading the same URL in frame B.
+PASS: Resource should be a stylesheet.
+PASS: Resource should be served from the memory cache.
+PASS: requestServedFromMemoryCache should carry the SourceMap header value.
+
