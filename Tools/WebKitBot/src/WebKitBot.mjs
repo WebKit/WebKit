@@ -90,7 +90,6 @@ export function buildGitWebkitRevertCommand(gitWebkitPath, revisions, reason, is
         "revert",
         ...revisions,
         "--pr",
-        "--draft",
         "--defaults",
     ];
 
@@ -181,32 +180,24 @@ export default class WebKitBot {
         this._commands = new Map;
 
         let revertCommand = {
-            description: "Opens a bug to revert the specified revision, CCing author + reviewer, and attaching the reverse-diff of the given revisions marked as commit-queue=?.",
-            usage: `\`revert SVN_REVISION [SVN_REVISIONS] REASON\`
-e.g. \`revert 260220 Ensure it is working after refactoring\`
-\`revert 260220,260221 Ensure it is working after refactoring\``,
+            description: "Reverts the specified revision(s) by creating a GitHub pull request. Optionally reuse an existing bug by passing its URL in place of a reason.",
+            usage: `\`revert REVISION [REVISIONS] REASON\` or \`revert REVISION [REVISIONS] BUG_URL\`
+    Examples:
+    • \`revert 260220@main Ensure it is working after refactoring\`
+    • \`revert 260220@main,260221@main Ensure it is working after refactoring\`
+    • \`revert 308300@main https://bugs.webkit.org/show_bug.cgi?id=308859\``,
             operation: this.revertCommand.bind(this),
         };
         this._commands.set("rollout", revertCommand);
         this._commands.set("revert", revertCommand);
         this._commands.set("dry-revert", {
             description: "Parse revert message, but do not revert actually.",
-            usage: `\`dry-revert SVN_REVISION [SVN_REVISIONS] REASON\`
-e.g. \`dry-revert 260220 Ensure it is working after refactoring\`
-\`dry-revert 260220,260221 Ensure it is working after refactoring\``,
+            usage: `\`dry-revert REVISION [REVISIONS] REASON\` or \`dry-revert REVISION [REVISIONS] BUG_URL\`
+    Examples:
+    • \`dry-revert 260220@main Ensure it is working after refactoring\`
+    • \`dry-revert 308300@main https://bugs.webkit.org/show_bug.cgi?id=308859\``,
             operation: this.dryRevertCommand.bind(this),
         });
-        if (process.env.USE_GIT_WEBKIT_REVERT === "true") {
-            this._commands.set("revert-with-pr", {
-                description: "Creates a GitHub PR to revert the specified revision.",
-                usage: `\`revert-with-pr REVISION [REVISIONS] REASON\` or \`revert-with-pr REVISION [REVISIONS] BUG_URL\`
-    Examples:
-    • \`revert-with-pr 260220 Ensure it is working after refactoring\`
-    • \`revert-with-pr 260220,260221 Ensure it is working after refactoring\`
-    • \`revert-with-pr 308300@main https://bugs.webkit.org/show_bug.cgi?id=308859\``,
-                operation: this.revertWithPRCommand.bind(this),
-            });
-        }
         this._commands.set("ping", {
             description: "Responds with pong to check if WebKitBot is alive/working",
             usage: "`ping`",
@@ -266,14 +257,16 @@ e.g. \`dry-revert 260220 Ensure it is working after refactoring\`
         }, defaultPullPeriod);
     }
 
-    async revertCommand(event, command, args, usePR = false)
+    async revertCommand(event, command, args)
     {
         let {revisions, reason} = extractRevisionsAndReason(args);
 
-        // For PR-based reverts (revert-with-pr, or revert/rollout when the
-        // git-webkit flag is on), check if the "reason" is actually a bug URL.
+        const usingGitWebkit = process.env.USE_GIT_WEBKIT_REVERT === "true";
+
+        // When routing through git-webkit, check if the "reason" is actually a
+        // bug URL to reuse as the tracking issue.
         let issueUrl = null;
-        if ((usePR || process.env.USE_GIT_WEBKIT_REVERT === "true") && reason) {
+        if (usingGitWebkit && reason) {
             let bugId = parseBugId(reason);
             if (bugId) {
                 issueUrl = `https://bugs.webkit.org/show_bug.cgi?id=${bugId}`;
@@ -289,7 +282,7 @@ e.g. \`dry-revert 260220 Ensure it is working after refactoring\`
             return;
         }
 
-        if (usePR && !reason && !issueUrl) {
+        if (usingGitWebkit && !reason && !issueUrl) {
             await this.postMessage({
                 channel: event.channel,
                 text: `<@${event.user}> Please provide a reason or a bug URL.`,
@@ -310,7 +303,7 @@ e.g. \`dry-revert 260220 Ensure it is working after refactoring\`
                     }).join(" ")} ...`,
                 });
                 let result = await this._taskQueue.postOrFailWhenExceedingLimit({
-                    command: usePR ? "revert-with-pr" : "revert",
+                    command: "revert",
                     revisions,
                     reason,
                     issueUrl,
@@ -332,7 +325,7 @@ e.g. \`dry-revert 260220 Ensure it is working after refactoring\`
                 let stdout = error.stdout;
                 console.error("STDERR ", stderr);
                 if (typeof stderr === "string") {
-                    if (usePR && stderr.indexOf("CONFLICT") !== -1) {
+                    if (usingGitWebkit && stderr.indexOf("CONFLICT") !== -1) {
                         let conflictFiles = [];
                         for (let line of stderr.split("\n")) {
                             let match = line.match(/CONFLICT.*Merge conflict in (.+)/);
@@ -352,7 +345,7 @@ e.g. \`dry-revert 260220 Ensure it is working after refactoring\`
                         });
                         return;
                     }
-                    if (usePR && stderr.indexOf("already be reverted") !== -1) {
+                    if (usingGitWebkit && stderr.indexOf("already be reverted") !== -1) {
                         await this.postMessage({
                             channel: event.channel,
                             text: `<@${event.user}> The commit(s) appear to already be reverted.`,
@@ -463,11 +456,6 @@ ${escapeForSlackText(stderr)}\`\`\`` : ""),
             channel: event.channel,
             text: `<@${event.user}> ${message}`,
         });
-    }
-
-    async revertWithPRCommand(event, command, args)
-    {
-        return this.revertCommand(event, command, args, true);
     }
 
     async pullCommand(event, command, args)
@@ -768,10 +756,6 @@ Type \`help COMMAND\` for help on my individual commands.`,
         case "revert": {
             let {revisions, reason, issueUrl} = task;
             return this.generateRevertingPatch(revisions, reason, issueUrl);
-        }
-        case "revert-with-pr": {
-            let {revisions, reason, issueUrl} = task;
-            return this.generateRevertingPatchWithGitWebkit(revisions, reason, issueUrl);
         }
         case "pull":
             return this.cleanUpWorkingCopy();
