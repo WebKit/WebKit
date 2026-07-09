@@ -48,7 +48,7 @@ struct WKWebViewSwiftOverlayTests {
     func wkUserContentControllerRefinements() async throws {
         let controller = WKUserContentController()
         let testData: [UInt8] = [0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x1A, 0x00, 0x00]
-        controller.addBuffer(testData.span, name: "Test", to: WKContentWorld.defaultClient)
+        controller.addBuffer(unsafe testData.span.bytes, name: "Test", to: WKContentWorld.defaultClient)
         controller.removeBuffer(named:"Test", from: WKContentWorld.defaultClient)
     }
 #endif // #if compiler(>=6.4)
