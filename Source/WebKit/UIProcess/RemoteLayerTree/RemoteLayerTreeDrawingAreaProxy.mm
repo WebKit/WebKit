@@ -451,6 +451,15 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
     scheduleDisplayRefreshCallbacks();
 }
 
+void RemoteLayerTreeDrawingAreaProxy::dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection& connection, Vector<IPC::AsyncReplyID>&& callbackIDs)
+{
+    for (auto& callbackID : callbackIDs) {
+        removeOutstandingPresentationUpdateCallback(connection, callbackID);
+        if (auto callback = connection.takeAsyncReplyHandler(callbackID))
+            callback(nullptr, nullptr);
+    }
+}
+
 #if ENABLE(TOUCH_EVENT_REGIONS)
 WebCore::TrackingType RemoteLayerTreeDrawingAreaProxy::eventTrackingTypeForPoint(WebCore::EventTrackingRegions::EventType eventType, IntPoint location)
 {

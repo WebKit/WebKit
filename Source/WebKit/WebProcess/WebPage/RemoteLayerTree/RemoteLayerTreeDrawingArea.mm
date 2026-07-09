@@ -40,6 +40,7 @@
 #import "WebFrame.h"
 #import "WebPage.h"
 #import "WebPageCreationParameters.h"
+#import "WebPageInlines.h"
 #import "WebPageProxyMessages.h"
 #import "WebPreferencesKeys.h"
 #import "WebProcess.h"
@@ -323,7 +324,11 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         return;
     }
 
+    Ref webPage = m_webPage.get();
+
     if (m_waitingForBackingStoreSwap) {
+        if (!webPage->isVisible() && !m_pendingCallbackIDs.isEmpty())
+            send(Messages::DrawingAreaProxy::DispatchPresentationCallbacksAfterFlushingLayers(std::exchange(m_pendingCallbackIDs, { })));
         m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = true;
         return;
     }
@@ -335,7 +340,6 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     if (!m_updateStartTime)
         m_updateStartTime = MonotonicTime::now();
 
-    Ref webPage = m_webPage.get();
     if (!webPage->hasRootFrames())
         return;
 

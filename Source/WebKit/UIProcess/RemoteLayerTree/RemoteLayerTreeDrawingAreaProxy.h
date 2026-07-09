@@ -223,6 +223,7 @@ private:
     void notifyPendingCommitLayerTree(IPC::Connection&, std::optional<TransactionID>);
     void notifyFlushingLayerTree(IPC::Connection&, TransactionID);
     void commitLayerTree(IPC::Connection&, const RemoteLayerTreeCommitBundle&, HashMap<ImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&&);
+    void dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection&, Vector<IPC::AsyncReplyID>&&) override;
     void commitLayerTreeTransaction(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>&, const PageData&, const TransactionID&);
     virtual void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>&, const TransactionID&) { }
 
