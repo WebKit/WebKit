@@ -152,7 +152,6 @@ fast/media/mq-prefers-contrast.html [ Pass ]
 fast/media/mq-prefers-contrast-live-update.html [ Pass ]
 
 fast/repaint/background-attachment-local-scroll.html [ Pass ]
-# fast/repaint/placeholder-after-caps-lock-hidden.html [ Pass ] # TODO: commented to avoid duplicate below, uncomment when resolved
 
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html [ Pass ]
@@ -3106,7 +3105,6 @@ media/modern-media-controls/seek-backward-support [ Skip ]
 media/modern-media-controls/seek-forward-support [ Skip ]
 media/modern-media-controls/start-support/start-support-aggressiveThermalMitigation.html [ Skip ]
 media/modern-media-controls/start-support/start-support-click-to-start.html [ Skip ]
-media/modern-media-controls/start-support/start-support-disable-controls-and-re-enable-post-play.html [ Skip ]
 media/modern-media-controls/start-support/start-support-lowPowerMode.html [ Skip ]
 media/modern-media-controls/tracks-support [ Skip ]
 
@@ -3206,7 +3204,6 @@ fast/block/basic/quirk-mode-percent-height.html [ Failure ]
 # Datalist
 webkit.org/b/186714 fast/forms/datalist/datalist-textinput-keydown.html [ Skip ]
 webkit.org/b/190613 fast/forms/datalist/update-range-with-datalist.html [ Skip ]
-webkit.org/b/312010 fast/forms/datalist/datalist-textinput-type-custom-value.html [ Skip ]
 
 # Audio session does not have a "none" category on iOS [ Skip ]
 webkit.org/b/188285 platform/mac/media/audio-session-category-video-paused.html [ Skip ]
@@ -4717,7 +4714,6 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosour
 
 # rdar://110491039 (Master Bug for iOS17 constant test failures)
 editing/find/ios/find-interaction-adjusts-scroll-view-insets.html [ Timeout ]
-fast/repaint/placeholder-after-caps-lock-hidden.html [ Pass Failure ] # TODO: Pass expectation commented above. Uncomment when resolved.
 editing/input/composition-underline-color.html [ ImageOnlyFailure ]
 fast/borders/hidpi-border-painting-groove.html [ ImageOnlyFailure ]
 fast/borders/hidpi-border-painting-ridge.html [ ImageOnlyFailure ]
@@ -6695,8 +6691,6 @@ js/dom/Promise-reject-large-string.html [ DumpJSConsoleLogInStdErr ]
 # The Notifications API is not supported on iOS
 imported/w3c/web-platform-tests/permissions/all-permissions.html [ Failure ]
 
-webkit.org/b/229656 fast/forms/ios/ipad/open-picker-using-keyboard.html [ Pass Timeout ]
-
 # rdar://92887847 ([ iOS16 ] 7x editing/selection/ios/* test are flaky timeouts)
 editing/selection/ios/avoid-showing-callout-menu-over-controls.html [ Pass Timeout ]
 editing/selection/ios/dispatch-mouse-events-when-modifying-selection-quirk.html [ Pass Timeout ]
@@ -8591,7 +8585,6 @@ fast/forms/ios/zoom-to-reveal-focused-element-after-delay.html [ Timeout ] # web
 editing/caret/ios/place-caret-after-autocorrected-word.html [ Failure ] # webkit.org/b/318253
 editing/input/ios/typing-with-inline-predictions.html [ Pass Timeout ] # webkit.org/b/318254
 imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure ] # webkit.org/b/318255
-http/wpt/identity/formats/ISO18013/mixed-requests.https.html [ Failure ] # webkit.org/b/318256
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/number-constraint-validation.html [ Pass Failure ] # webkit.org/b/318257
 ipc/fecolormatrix-type-values-mismatch-crash.html [ Failure ] # webkit.org/b/318258
 
@@ -8605,3 +8598,37 @@ webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-c
 webkit.org/b/318375 imported/w3c/web-platform-tests/css/css-anchor-position/scroll-to-anchored-fixed-001.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/318382 [ Debug ] ipc/networksessioncocoa-empty-resource-request.html [ Failure ]
+
+# rdar://181628561 (Set exisiting test expectation baseline on safari-7625-branch)
+http/tests/IndexedDB/transaction-stop-during-request-dispatch.html [ Failure ]
+http/tests/websocket/tests/hybi/network-process-crash-error.html [ Failure ]
+webgl/1.0.x/deqp/data/gles2/shaders/functions.html [ Failure Crash ]
+webgl/2.0.y/conformance2/glsl3/vector-dynamic-indexing.html [ Failure Crash ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/same-document-traversal-cross-document-nav.html [ Failure ]
+imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/utf-8.html?include=loading [ Failure ]
+imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=loading [ Failure ]
+imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1252.html?include=loading [ Failure ]
+imported/w3c/web-platform-tests/svg/types/SameObject-identity.html [ Failure ]
+imported/w3c/web-platform-tests/websockets/constructor/013.html?default [ Failure ]
+imported/w3c/web-platform-tests/websockets/constructor/013.html?wss [ Failure ]
+fast/mediastream/audio-session-active-when-capture-starts-and-stops.html [ Failure ]
+http/tests/ipc/createnewpage-file-body-sandbox-extension.html [ Failure ]
+ipc/ios/pasteboard-read-disallowed-uikit-type.html [ Failure ]
+ipc/load-image-for-decoding-file-url.html [ Failure ]
+ipc/loadping-firstpartyforcookies-message-check.html [ Failure ]
+http/tests/security/contentSecurityPolicy/blob-url-inherits-multiple-csp-policies.html [ Failure ]
+fast/forms/call-text-did-change-in-text-field-when-typing.html [ Timeout ]
+fast/forms/datalist/datalist-textinput-type-custom-value.html [ Timeout ]
+fast/forms/ios/ipad/open-picker-using-keyboard.html [ Timeout ]
+fast/forms/ios/ipad/select-should-not-bring-up-software-keyboard.html [ Timeout ]
+http/tests/navigation/https-in-page-cache.html [ Timeout ]
+http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-open-window-upgrades-UpgradeMixedContent.html [ Timeout ]
+http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-uir-on-navigation.html [ Timeout ]
+http/tests/security/credentials-from-different-domains.html [ Timeout ]
+http/tests/security/credentials-iframes.html [ Timeout ]
+media/modern-media-controls/start-support/start-support-disable-controls-and-re-enable-post-play.html [ Timeout ]
+fast/block/out-of-flow-intrinsic-height.html [ Timeout ]
+ipc/legacy-cdm-session-avcontentkeysession-destruction-race.html [ Crash ]
+ipc/send-gpu-GetShareableBitmap-RemoteRenderingBackend.html [ Crash ]
+webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Crash ]
+http/wpt/identity/formats/ISO18013/mixed-requests.https.html [ Crash ]
