@@ -498,7 +498,7 @@ std::optional<InlineDisplay::Line::Ellipsis> InlineDisplayLineBuilder::applyElli
             return TextUtil::ellipsisTextInInlineDirection(displayLine.isHorizontal());
         }
         return WTF::switchOn(displayBoxes[0].layoutBox().style().blockEllipsis(),
-            [&](const CSS::Keyword::None&) -> AtomString {
+            [&](const CSS::Keyword::NoEllipsis&) -> AtomString {
                 return nullAtom();
             },
             [&](const CSS::Keyword::Auto&) -> AtomString {

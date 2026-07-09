@@ -38,13 +38,13 @@ auto CSSValueConversion<BlockEllipsis>::operator()(BuilderState& state, const CS
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNone:
-            return CSS::Keyword::None { };
+        case CSSValueNoEllipsis:
+            return CSS::Keyword::NoEllipsis { };
         case CSSValueAuto:
             return CSS::Keyword::Auto { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
-            return CSS::Keyword::None { };
+            return CSS::Keyword::NoEllipsis { };
         }
     }
 

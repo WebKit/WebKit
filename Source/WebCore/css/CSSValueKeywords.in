@@ -1956,3 +1956,6 @@ unsafe-url
 
 // <will-change>
 will-change
+
+// block-ellipsis
+no-ellipsis

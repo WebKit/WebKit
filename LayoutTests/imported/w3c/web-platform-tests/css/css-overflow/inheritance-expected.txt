@@ -1,5 +1,5 @@
 
-FAIL Property block-ellipsis has initial value no-ellipsis assert_equals: expected "no-ellipsis" but got "none"
+PASS Property block-ellipsis has initial value no-ellipsis
 PASS Property block-ellipsis inherits
 PASS Property continue has initial value auto
 FAIL Property continue does not inherit assert_equals: expected "collapse" but got "auto"
