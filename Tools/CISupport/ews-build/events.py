@@ -54,7 +54,7 @@ class Events(service.BuildbotService):
     MAX_GITHUB_DESCRIPTION = 140
     STEPS_TO_REPORT = [
         'analyze-api-tests-results', 'analyze-compile-webkit-results', 'analyze-jsc-tests-results',
-        'analyze-layout-tests-results', 'configuration', 'checkout-pull-request', 'apply-patch',
+        'analyze-layout-tests-results', 'configuration', 'checkout-pull-request',
         'compile-webkit', 'compile-webkit-without-change', 'compile-jsc', 'compile-jsc-without-change',
         'layout-tests', 'layout-tests-repeat-failures', 're-run-layout-tests',
         'run-layout-tests-without-change', 'layout-tests-repeat-failures-without-change',
@@ -62,7 +62,7 @@ class Events(service.BuildbotService):
         'run-api-tests', 'run-api-tests-without-change', 're-run-api-tests',
         'scan-build', 'find-unexpected-results', 'display-safer-cpp-results',
         'jscore-test', 'jscore-test-without-change',
-        'add-reviewer-to-commit-message', 'commit-patch', 'push-commit-to-webkit-repo', 'canonicalize-commit',
+        'add-reviewer-to-commit-message', 'push-commit-to-webkit-repo', 'canonicalize-commit',
         'build-webkit-org-unit-tests', 'buildbot-check-config', 'buildbot-check-config-for-build-webkit', 'buildbot-check-config-for-ews',
         'ews-unit-tests', 'resultsdbpy-unit-tests',
         'upload-built-product', 'upload-test-results',
