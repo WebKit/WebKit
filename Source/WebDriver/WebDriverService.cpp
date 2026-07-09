@@ -33,7 +33,9 @@
 #include <cmath>
 #include <ranges>
 #include <wtf/Compiler.h>
+#include <wtf/FileSystem.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -95,6 +97,9 @@ static void printUsageStatement(const char* programName)
     SAFE_PRINTF("               --bidi-port=<port>        Port number to use for BiDi's WebSocket connections\n");
 #endif
     SAFE_PRINTF("               --replace-on-new-session  Replace the existing session on new session request\n");
+    SAFE_PRINTF("\nEnvironment variables:\n");
+    SAFE_PRINTF("  WEBKIT_DEBUG=<channel>[,<channel>...]    Enable verbose logging for the given channels.\n");
+    SAFE_PRINTF("                                           Useful channels include: SessionHost, WebDriverClassic, and WebDriverBiDi (when enabled).\n");
 }
 
 int WebDriverService::run(int argc, char** argv)
@@ -179,6 +184,7 @@ int WebDriverService::run(int argc, char** argv)
 
     auto port = parseInteger<uint16_t>(portString);
     if (!port) {
+        RELEASE_LOG_ERROR(WebDriverClassic, "Invalid port %s provided", portString.utf8().data());
         fprintf(stderr, "Invalid port %s provided\n", portString.utf8().data());
         return EXIT_FAILURE;
     }
@@ -188,6 +194,7 @@ int WebDriverService::run(int argc, char** argv)
     if (!bidiPort) {
         const int16_t bidiPortIncrement = *port == std::numeric_limits<uint16_t>::max() ? -1 : 1;
         bidiPort = { *port + bidiPortIncrement };
+        RELEASE_LOG_INFO(WebDriverBiDi, "Invalid WebSocket BiDi port %s provided. Defaulting to %d.", bidiPortString.utf8().data(), *bidiPort);
         fprintf(stderr, "Invalid WebSocket BiDi port %s provided. Defaulting to %d.\n", bidiPortString.utf8().data(), *bidiPort);
     }
 #endif
@@ -195,18 +202,37 @@ int WebDriverService::run(int argc, char** argv)
     WTF::initializeMainThread();
 
     CString hostStr = host && !host->isNull() ? host->utf8() : "local";
+    auto programName = FileSystem::lastComponentOfPathIgnoringTrailingSlash(String::fromLatin1(argv[0]));
+    if (programName.isEmpty())
+        programName = "WebDriver"_s;
+    auto programNameStr = programName.utf8();
+
+#if ENABLE(WEBDRIVER_BIDI)
+    if (m_targetAddress.isEmpty())
+        RELEASE_LOG_INFO(WebDriverClassic, "%s starting: http=%s:%d bidi=%d", programNameStr.data(), hostStr.data(), *port, *bidiPort);
+    else
+        RELEASE_LOG_INFO(WebDriverClassic, "%s starting: http=%s:%d bidi=%d target=%s:%d", programNameStr.data(), hostStr.data(), *port, *bidiPort, m_targetAddress.utf8().data(), m_targetPort);
+#else
+    if (m_targetAddress.isEmpty())
+        RELEASE_LOG_INFO(WebDriverClassic, "%s starting: http=%s:%d", programNameStr.data(), hostStr.data(), *port);
+    else
+        RELEASE_LOG_INFO(WebDriverClassic, "%s starting: http=%s:%d target=%s:%d", programNameStr.data(), hostStr.data(), *port, m_targetAddress.utf8().data(), m_targetPort);
+#endif
+
 #if ENABLE(WEBDRIVER_BIDI)
     if (!m_bidiServer->listen(host ? *host : nullString(), *bidiPort)) {
+        RELEASE_LOG_ERROR(WebDriverBiDi, "Unable to listen for WebSocket BiDi server at host %s and port %d", hostStr.data(), *bidiPort);
         fprintf(stderr, "FATAL: Unable to listen for WebSocket BiDi server at host %s and port %d.\n", hostStr.data(), *bidiPort);
         return EXIT_FAILURE;
     }
-    RELEASE_LOG(WebDriverBiDi, "Started WebSocket BiDi server with host %s and port %d", hostStr.data(), *bidiPort);
+    RELEASE_LOG_INFO(WebDriverBiDi, "Started WebSocket BiDi server with host %s and port %d", hostStr.data(), *bidiPort);
 #endif // ENABLE(WEBDRIVER_BIDI)
     if (!m_server.listen(host, *port)) {
+        RELEASE_LOG_ERROR(WebDriverClassic, "Unable to listen for HTTP server at host %s and port %d", hostStr.data(), *port);
         fprintf(stderr, "FATAL: Unable to listen for HTTP server at host %s and port %d.\n", hostStr.data(), *port);
         return EXIT_FAILURE;
     }
-    RELEASE_LOG(WebDriverClassic, "Started HTTP server with host %s and port %d", hostStr.data(), *port);
+    RELEASE_LOG_INFO(WebDriverClassic, "Started HTTP server with host %s and port %d", hostStr.data(), *port);
 
     RunLoop::run();
 
@@ -347,15 +373,24 @@ bool WebDriverService::findCommand(HTTPMethod method, const String& path, Comman
 
 void WebDriverService::handleRequest(HTTPRequestHandler::Request&& request, Function<void (HTTPRequestHandler::Response&&)>&& replyHandler)
 {
+    Function<void (HTTPRequestHandler::Response&&)> actualReplyHandler = WTF::move(replyHandler);
+    if (LOG_CHANNEL(WebDriverClassic).state != WTFLogChannelState::Off) {
+        RELEASE_LOG_INFO(WebDriverClassic, "HTTP request %s %s (body=%zu bytes)", request.method.utf8().data(), request.path.utf8().data(), request.dataLength);
+        actualReplyHandler = [startTime = MonotonicTime::now(), replyHandler = WTF::move(actualReplyHandler)](HTTPRequestHandler::Response&& response) mutable {
+            RELEASE_LOG_INFO(WebDriverClassic, "HTTP response %u in %.0fms", response.statusCode, (MonotonicTime::now() - startTime).milliseconds());
+            replyHandler(WTF::move(response));
+        };
+    }
+
     auto method = toCommandHTTPMethod(request.method);
     if (!method) {
-        sendResponse(WTF::move(replyHandler), CommandResult::fail(CommandResult::ErrorCode::UnknownCommand, makeString("Unknown method: "_s, request.method)));
+        sendResponse(WTF::move(actualReplyHandler), CommandResult::fail(CommandResult::ErrorCode::UnknownCommand, makeString("Unknown method: "_s, request.method)));
         return;
     }
     CommandHandler handler;
     HashMap<String, String> parameters;
     if (!findCommand(method.value(), request.path, &handler, parameters)) {
-        sendResponse(WTF::move(replyHandler), CommandResult::fail(CommandResult::ErrorCode::UnknownCommand, makeString("Unknown command: "_s, request.path)));
+        sendResponse(WTF::move(actualReplyHandler), CommandResult::fail(CommandResult::ErrorCode::UnknownCommand, makeString("Unknown command: "_s, request.path)));
         return;
     }
 
@@ -363,13 +398,13 @@ void WebDriverService::handleRequest(HTTPRequestHandler::Request&& request, Func
     if (method.value() == HTTPMethod::Post) {
         auto messageValue = JSON::Value::parseJSON(String::fromUTF8({ request.data, request.dataLength }));
         if (!messageValue) {
-            sendResponse(WTF::move(replyHandler), CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Invalid JSON in request body"_s));
+            sendResponse(WTF::move(actualReplyHandler), CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Invalid JSON in request body"_s));
             return;
         }
 
         parametersObject = messageValue->asObject();
         if (!parametersObject) {
-            sendResponse(WTF::move(replyHandler), CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Expected JSON object in request body"_s));
+            sendResponse(WTF::move(actualReplyHandler), CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Expected JSON object in request body"_s));
             return;
         }
     } else
@@ -377,8 +412,8 @@ void WebDriverService::handleRequest(HTTPRequestHandler::Request&& request, Func
     for (const auto& parameter : parameters)
         parametersObject->setString(parameter.key, parameter.value);
 
-    ((*this).*handler)(WTF::move(parametersObject), [this, replyHandler = WTF::move(replyHandler)](CommandResult&& result) mutable {
-        sendResponse(WTF::move(replyHandler), WTF::move(result));
+    ((*this).*handler)(WTF::move(parametersObject), [this, actualReplyHandler = WTF::move(actualReplyHandler)](CommandResult&& result) mutable {
+        sendResponse(WTF::move(actualReplyHandler), WTF::move(result));
     });
 }
 
