@@ -224,10 +224,6 @@ Awaitable<bool> WebFullScreenManagerProxy::enterFullScreen(IPC::Connection& conn
 #endif // ENABLE(QUICKLOOK_FULLSCREEN)
 #endif // PLATFORM(IOS_FAMILY)
 
-    CheckedPtr client = m_client;
-    if (!client)
-        co_return false;
-
     RefPtr page = m_page.get();
     if (!page)
         co_return false;
@@ -239,13 +235,18 @@ Awaitable<bool> WebFullScreenManagerProxy::enterFullScreen(IPC::Connection& conn
     if (auto coordinates = co_await page->convertPointToMainFrameCoordinates({ 0, 0 }, webFrame->rootFrame()->frameID()))
         m_rootFrameOriginInMainFrameCoordinates = IntPoint(*coordinates);
 
-    bool success = co_await AwaitableFromCompletionHandler<bool> { [=] (auto completionHandler) {
-        client->enterFullScreen(mediaDetails.mediaDimensions, WTF::move(completionHandler));
-    } };
+    {
+        CheckedPtr client = m_client;
+        if (!client)
+            co_return false;
+        bool success = co_await AwaitableFromCompletionHandler<bool> { [=] (auto completionHandler) {
+            client->enterFullScreen(mediaDetails.mediaDimensions, WTF::move(completionHandler));
+        } };
+        ALWAYS_LOG(LOGIDENTIFIER);
+        if (!success)
+            co_return false;
+    }
 
-    ALWAYS_LOG(LOGIDENTIFIER);
-    if (!success)
-        co_return false;
     m_fullscreenState = FullscreenState::EnteringFullscreen;
     page->fullscreenClient().willEnterFullscreen(page.get());
 
@@ -317,13 +318,15 @@ Awaitable<void> WebFullScreenManagerProxy::exitFullScreen()
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     m_mediaDetails = std::nullopt;
 #endif
-    CheckedPtr client = m_client;
-    if (!client)
-        co_return;
 
-    co_await AwaitableFromCompletionHandler<void> { [=] (auto completionHandler) {
-        client->exitFullScreen(WTF::move(completionHandler));
-    } };
+    {
+        CheckedPtr client = m_client;
+        if (!client)
+            co_return;
+        co_await AwaitableFromCompletionHandler<void> { [=] (auto completionHandler) {
+            client->exitFullScreen(WTF::move(completionHandler));
+        } };
+    }
 
     m_fullscreenState = FullscreenState::ExitingFullscreen;
     if (RefPtr page = m_page.get())
@@ -389,10 +392,6 @@ void WebFullScreenManagerProxy::prepareQuickLookImageURL(CompletionHandler<void(
 
 std::optional<std::pair<IntRect, IntRect>> WebFullScreenManagerProxy::convertFromRootViewToScreenCoordinates(std::pair<IntRect, IntRect> rectsInRootViewCoordinates)
 {
-    CheckedPtr client = m_client;
-    if (!client)
-        return std::nullopt;
-
     RefPtr page = m_page.get();
     if (!page)
         return std::nullopt;
@@ -400,6 +399,9 @@ std::optional<std::pair<IntRect, IntRect>> WebFullScreenManagerProxy::convertFro
     auto rectsInMainFrameCoordinates = rectsInRootViewCoordinates;
     rectsInMainFrameCoordinates.first.moveBy(m_rootFrameOriginInMainFrameCoordinates);
 
+    CheckedPtr client = m_client;
+    if (!client)
+        return std::nullopt;
     return { {
         IntRect(client->convertMainFrameCoordinatesInFullscreenPlaceholderViewToScreen(*page, IntRect(rectsInMainFrameCoordinates.first))),
         IntRect(page->syncRootViewToScreen(IntRect(rectsInMainFrameCoordinates.second)))
@@ -412,10 +414,6 @@ Awaitable<bool> WebFullScreenManagerProxy::beganEnterFullScreen(FrameIdentifier 
     if (!page)
         co_return false;
 
-    CheckedPtr client = m_client;
-    if (!client)
-        co_return false;
-
     auto rectsInScreenCoordinates = convertFromRootViewToScreenCoordinates({ initialFrameInRootViewCoordinates, finalFrameInRootViewCoordinates });
     if (!rectsInScreenCoordinates)
         co_return false;
@@ -423,11 +421,16 @@ Awaitable<bool> WebFullScreenManagerProxy::beganEnterFullScreen(FrameIdentifier 
 
     co_await page->nextPresentationUpdate();
 
-    bool success = co_await AwaitableFromCompletionHandler<bool> { [=] (auto completionHandler) {
-        client->beganEnterFullScreen(initialFrameInScreenCoordinates, finalFrameInScreenCoordinates, WTF::move(completionHandler));
-    } };
-    if (!success)
-        co_return false;
+    {
+        CheckedPtr client = m_client;
+        if (!client)
+            co_return false;
+        bool success = co_await AwaitableFromCompletionHandler<bool> { [=] (auto completionHandler) {
+            client->beganEnterFullScreen(initialFrameInScreenCoordinates, finalFrameInScreenCoordinates, WTF::move(completionHandler));
+        } };
+        if (!success)
+            co_return false;
+    }
 
     co_return co_await AwaitableFromCompletionHandler<bool> { [this, protectedThis = Ref { *this }] (auto completionHandler) {
         didEnterFullScreen(WTF::move(completionHandler));
@@ -436,18 +439,19 @@ Awaitable<bool> WebFullScreenManagerProxy::beganEnterFullScreen(FrameIdentifier 
 
 Awaitable<void> WebFullScreenManagerProxy::beganExitFullScreen(FrameIdentifier frameID, IntRect initialFrameInRootViewCoordinates, IntRect finalFrameInRootViewCoordinates)
 {
-    CheckedPtr client = m_client;
-    if (!client)
-        co_return;
-
     auto rectsInScreenCoordinates = convertFromRootViewToScreenCoordinates({ finalFrameInRootViewCoordinates, initialFrameInRootViewCoordinates });
     if (!rectsInScreenCoordinates)
         co_return;
     auto [finalFrameInScreenCoordinates, initialFrameInScreenCoordinates] = *rectsInScreenCoordinates;
 
-    co_await AwaitableFromCompletionHandler<void> { [=] (auto completionHandler) {
-        client->beganExitFullScreen(initialFrameInScreenCoordinates, finalFrameInScreenCoordinates, WTF::move(completionHandler));
-    } };
+    {
+        CheckedPtr client = m_client;
+        if (!client)
+            co_return;
+        co_await AwaitableFromCompletionHandler<void> { [=] (auto completionHandler) {
+            client->beganExitFullScreen(initialFrameInScreenCoordinates, finalFrameInScreenCoordinates, WTF::move(completionHandler));
+        } };
+    }
 
     m_fullscreenState = FullscreenState::NotInFullscreen;
     RefPtr page = m_page.get();

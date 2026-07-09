@@ -184,9 +184,6 @@
             },
             "/webkit/WebKitWebView/is-playing-audio": {
                 "expected": {"all": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/274344"}}
-            },
-            "/webkit/WebKitWebView/save": {
-                "expected": {"wpe": {"status": ["CRASH"], "bug": "webkit.org/b/318884"}}
             }
         }
     },

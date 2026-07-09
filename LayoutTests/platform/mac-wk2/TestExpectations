@@ -2452,5 +2452,3 @@ webkit.org/b/318732 http/tests/site-isolation/page-zoom.html [ Pass ImageOnlyFai
 [ x86_64 ] webgl/2.0.y/conformance2/textures/webgl_canvas/tex-2d-r11f_g11f_b10f-rgb-float.html [ Skip ]
 [ x86_64 ] webgl/2.0.y/conformance2/textures/webgl_canvas/tex-2d-r11f_g11f_b10f-rgb-half_float.html [ Skip ]
 [ x86_64 ] webgl/pending/conformance/context/context-attributes-alpha-depth-stencil-antialias.html [ Skip ]
-
-webkit.org/b/318910 [ Release ] fast/css/getComputedStyle-font-variant-shorthand-crash.html [ Skip ]
