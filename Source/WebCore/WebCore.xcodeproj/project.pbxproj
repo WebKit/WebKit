@@ -7504,6 +7504,9 @@
 		FF945ECC161F7F3600971BC8 /* PseudoElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FF945ECA161F7F3600971BC8 /* PseudoElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFAC30FE184FB145008C4F1E /* TrailingObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = FFAC30FC184FB145008C4F1E /* TrailingObjects.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFDBC047183D27B700407109 /* LineWidth.h in Headers */ = {isa = PBXBuildFile; fileRef = FFDBC045183D27B700407109 /* LineWidth.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DA69AE00FB124F0397328462 /* NavigationAPIMethodTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 9276F3C29F624D608E556033 /* NavigationAPIMethodTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		68C536C636794BB08A6183C9 /* NavigationRateLimiter.h in Headers */ = {isa = PBXBuildFile; fileRef = E35267326FA04829827317FD /* NavigationRateLimiter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8D71E8E5BA6A40B49B126AB3 /* PromiseSettlementObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C0E37387E52644308D7FD0CC /* PromiseSettlementObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -23970,6 +23973,11 @@
 		FFEFAB2D183BCC6F00514565 /* MapperCallback.h */ = {isa = PBXFileReference; lastKnownFileType = text; path = MapperCallback.h; sourceTree = "<group>"; };
 		FFEFAB2D183BCC6F00514566 /* InternalObserverMap.h */ = {isa = PBXFileReference; lastKnownFileType = text; path = InternalObserverMap.h; sourceTree = "<group>"; };
 		FFEFAB2D183BCC6F00514567 /* InternalObserverMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = text; path = InternalObserverMap.cpp; sourceTree = "<group>"; };
+		9276F3C29F624D608E556033 /* NavigationAPIMethodTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationAPIMethodTracker.h; sourceTree = "<group>"; };
+		4982BF7ACDB0457FB0991A61 /* NavigationAPIMethodTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationAPIMethodTracker.cpp; sourceTree = "<group>"; };
+		E35267326FA04829827317FD /* NavigationRateLimiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationRateLimiter.h; sourceTree = "<group>"; };
+		C0E37387E52644308D7FD0CC /* PromiseSettlementObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PromiseSettlementObserver.h; sourceTree = "<group>"; };
+		A4E8A923F0834D17BD86212B /* PromiseSettlementObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PromiseSettlementObserver.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31133,6 +31141,8 @@
 				DFD9B92F2C29D16300E10B53 /* NavigationActivation.cpp */,
 				DFD9B92D2C29D16200E10B53 /* NavigationActivation.h */,
 				DFD9B92E2C29D16200E10B53 /* NavigationActivation.idl */,
+				4982BF7ACDB0457FB0991A61 /* NavigationAPIMethodTracker.cpp */,
+				9276F3C29F624D608E556033 /* NavigationAPIMethodTracker.h */,
 				A9C6E65D0D74F694006442E9 /* NavigationCurrentEntryChangeEvent.cpp */,
 				A9C6E65D0D740A94006442E9 /* NavigationCurrentEntryChangeEvent.h */,
 				A9C6E65D0D740B94006442E9 /* NavigationCurrentEntryChangeEvent.idl */,
@@ -31146,6 +31156,7 @@
 				A9C6E65D0D7400F4006442E9 /* NavigationInterceptHandler.idl */,
 				A9C6E65D0D74000A006442E9 /* NavigationNavigationType.h */,
 				A9C6E65D0D74000E006442E9 /* NavigationNavigationType.idl */,
+				E35267326FA04829827317FD /* NavigationRateLimiter.h */,
 				A9C6E65D0D74000B006442E9 /* NavigationTransition.cpp */,
 				A9C6E65D0D74000C006442E9 /* NavigationTransition.h */,
 				A9C6E65D0D74000D006442E9 /* NavigationTransition.idl */,
@@ -42952,6 +42963,8 @@
 				A578F4321DE00ED6003DFC6A /* PromiseRejectionEvent.cpp */,
 				A578F4331DE00ED6003DFC6A /* PromiseRejectionEvent.h */,
 				A578F4341DE00ED6003DFC6A /* PromiseRejectionEvent.idl */,
+				A4E8A923F0834D17BD86212B /* PromiseSettlementObserver.cpp */,
+				C0E37387E52644308D7FD0CC /* PromiseSettlementObserver.h */,
 				FF945EC9161F7F3600971BC8 /* PseudoElement.cpp */,
 				FF945ECA161F7F3600971BC8 /* PseudoElement.h */,
 				550A0BC7085F6039007353D6 /* QualifiedName.cpp */,
@@ -47482,10 +47495,12 @@
 				E10B9B6C0B747599003ED890 /* NativeXPathNSResolver.h in Headers */,
 				93CCF0270AF6C52900018E89 /* NavigationAction.h in Headers */,
 				EE1A93AA2F2AE00A0054FAE4 /* NavigationActivation.h in Headers */,
+				DA69AE00FB124F0397328462 /* NavigationAPIMethodTracker.h in Headers */,
 				EE1A93AB2F2AE7D20054FAE4 /* NavigationHistoryEntry.h in Headers */,
 				4607DC652C6AC0AC00AB00D4 /* NavigationIdentifier.h in Headers */,
 				41E2F199274FAECF00A089EE /* NavigationPreloadManager.h in Headers */,
 				41503793274FDC9B00354ABC /* NavigationPreloadState.h in Headers */,
+				68C536C636794BB08A6183C9 /* NavigationRateLimiter.h in Headers */,
 				469D77B82701625100142FA6 /* NavigationRequester.h in Headers */,
 				979F43D41075E44A0000F83B /* NavigationScheduler.h in Headers */,
 				A9C6E5A60D746458006442E9 /* Navigator.h in Headers */,
@@ -47917,6 +47932,7 @@
 				1ACADD791880D91C00D8B71D /* ProgressTrackerClient.h in Headers */,
 				F47A633D1FF6FD500081B3CC /* PromisedAttachmentInfo.h in Headers */,
 				A578F4351DE00EEB003DFC6A /* PromiseRejectionEvent.h in Headers */,
+				8D71E8E5BA6A40B49B126AB3 /* PromiseSettlementObserver.h in Headers */,
 				7128CB3F271EE58A00A13DA6 /* PropertyAllowlist.h in Headers */,
 				E4ABABE42361A32900FA4345 /* PropertyCascade.h in Headers */,
 				BC2388912D8C816C00698102 /* PropertySetCSSDescriptors.h in Headers */,
