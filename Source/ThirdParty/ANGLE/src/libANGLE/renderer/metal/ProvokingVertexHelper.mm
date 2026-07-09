@@ -223,11 +223,22 @@ angle::Result ProvokingVertexHelper::preconditionIndexBuffer(
             return angle::Result::Stop;
     }
 
-    // Maximum primitive/index count needed for buffer allocation, based on the full draw window.
-    uint32_t totalPrimCount     = primCountForIndexCount(indexBufferKey, count);
-    uint32_t totalNewIndexCount = 0;
-    ANGLE_CHECK_GL_MATH(
-        context, indexCountForPrimCount(indexBufferKey, totalPrimCount, &totalNewIndexCount));
+    // Same mode (mode == newMode): indices are rewritten at their source positions, so the buffer
+    // must span the full source window, firstIndex + count (firstIndex added below). The
+    // compacted count under-allocates when a leading restart pushes a range past firstIndex.
+    // The else branch keeps the existing expanded-mode sizing.
+    uint32_t totalNewIndexCount;
+    if (mode == newMode)
+    {
+        totalNewIndexCount = static_cast<uint32_t>(count);
+    }
+    else
+    {
+        uint32_t totalPrimCount = primCountForIndexCount(indexBufferKey, count);
+        ANGLE_CHECK_GL_MATH(
+            context, indexCountForPrimCount(indexBufferKey, totalPrimCount, &totalNewIndexCount));
+    }
+
     const size_t indexTypeShift = gl::GetDrawElementsTypeShift(indexBufferType);
     size_t firstIndexOffset     = firstIndex << indexTypeShift;
     size_t newFirstIndexOffset  = firstIndexOffset;

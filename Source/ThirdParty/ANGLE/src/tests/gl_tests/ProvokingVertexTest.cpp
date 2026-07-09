@@ -943,6 +943,92 @@ TEST_P(ProvokingVertexTestMetal, PrimitiveRestartWithTriangleStrip)
     EXPECT_EQ(vertexData[2], pixelValue[0]);  // Flat shading with provoking vertex last (index 2)
 }
 
+// Regression test: GL_TRIANGLES with primitive restart must not overrun the rewritten index
+// buffer when a leading restart and count % 3 != 0 push the rewrite past its allocation.
+TEST_P(ProvokingVertexTestMetal, PrimitiveRestartWithTrianglesOutOfBounds)
+{
+    glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+
+    // Viewport-covering triangle.
+    GLint vertexData[]     = {1, 2, 3};
+    GLfloat positionData[] = {-1.0f, -1.0f, 3.0f, -1.0f, -1.0f, 3.0f};
+
+    glVertexAttribIPointer(mIntAttribLocation, 1, GL_INT, 0, vertexData);
+
+    GLint positionLocation = glGetAttribLocation(mProgram, "position");
+    glEnableVertexAttribArray(positionLocation);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, positionData);
+
+    // [0, R, 0, 1, 2, 0...]: drawn range (2, kCount - 1) begins past firstIndex; the rest are
+    // degenerate. kCount is not a multiple of 3 (leaves indices the compacted allocation drops)
+    // and exceeds the 64 KiB pool, so the buffer is exactly sized: no padding hides the overrun.
+    constexpr GLsizei kCount = 32771;
+    const GLuint R           = 0xFFFFFFFF;
+    std::vector<GLuint> indexData(kCount, 0);
+    indexData[1] = R;
+    indexData[3] = 1;
+    indexData[4] = 2;
+
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, kCount * sizeof(GLuint), indexData.data(),
+                 GL_STATIC_DRAW);
+
+    glUseProgram(mProgram);
+    glDrawElements(GL_TRIANGLES, kCount, GL_UNSIGNED_INT, 0);
+
+    ASSERT_GL_NO_ERROR();
+
+    // Verify the first triangle rendered correctly.
+    GLint pixelValue[4] = {0};
+    glReadPixels(0, 0, 1, 1, GL_RGBA_INTEGER, GL_INT, &pixelValue);
+    EXPECT_EQ(vertexData[2], pixelValue[0]);  // Flat shading with provoking vertex last (index 2)
+}
+
+// Regression test: GL_LINES with primitive restart must not overrun the rewritten index buffer
+// when a leading restart and an odd count push the rewrite past its allocation.
+TEST_P(ProvokingVertexTestMetal, PrimitiveRestartWithLinesOutOfBounds)
+{
+    glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+
+    GLfloat halfPixel = 1.0f / static_cast<GLfloat>(getWindowWidth());
+
+    // Vertical line down the left column.
+    GLint vertexData[]     = {1, 2};
+    GLfloat positionData[] = {-1.0f + halfPixel, -1.0f, -1.0f + halfPixel, 1.0f};
+
+    glVertexAttribIPointer(mIntAttribLocation, 1, GL_INT, 0, vertexData);
+
+    GLint positionLocation = glGetAttribLocation(mProgram, "position");
+    glEnableVertexAttribArray(positionLocation);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, positionData);
+
+    // [R, 0, 1, 1...]: drawn range (1, kCount - 1) begins one (odd) element past firstIndex; the
+    // filler 1s keep the degenerate lines off pixel (0,0). kCount is odd (leaves an index the
+    // compacted allocation drops) and exceeds the 64 KiB pool, so the buffer is exactly sized:
+    // no padding hides the overrun.
+    constexpr GLsizei kCount = 32771;
+    const GLuint R           = 0xFFFFFFFF;
+    std::vector<GLuint> indexData(kCount, 1);
+    indexData[0] = R;
+    indexData[1] = 0;
+
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, kCount * sizeof(GLuint), indexData.data(),
+                 GL_STATIC_DRAW);
+
+    glUseProgram(mProgram);
+    glDrawElements(GL_LINES, kCount, GL_UNSIGNED_INT, 0);
+
+    ASSERT_GL_NO_ERROR();
+
+    // Verify the first line rendered correctly.
+    GLint pixelValue[4] = {0};
+    glReadPixels(0, 0, 1, 1, GL_RGBA_INTEGER, GL_INT, &pixelValue);
+    EXPECT_EQ(vertexData[1], pixelValue[0]);  // Flat shading with provoking vertex last (index 1)
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProvokingVertexTest);
 ANGLE_INSTANTIATE_TEST_ES3(ProvokingVertexTest);
 
