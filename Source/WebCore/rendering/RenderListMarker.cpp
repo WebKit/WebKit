@@ -100,10 +100,13 @@ bool RenderListMarker::shouldPaintInAssociatedListItemLayer() const
     }
 
     for (auto* ancestor = parent(); ancestor && ancestor != associatedListItem; ancestor = ancestor->parent()) {
-        if (!ancestor->hasSelfPaintingLayer())
-            continue;
         if (ancestor->isRenderFragmentedFlow())
             return false;
+    }
+
+    for (auto* ancestor = parent(); ancestor && ancestor != associatedListItem; ancestor = ancestor->parent()) {
+        if (!ancestor->hasSelfPaintingLayer())
+            continue;
         return ancestor->isPositioned();
     }
 
