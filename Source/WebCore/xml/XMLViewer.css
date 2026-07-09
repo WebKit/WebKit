@@ -26,12 +26,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+:root {
+    color-scheme: light dark;
+}
+
 body {
     margin: 0
 }
 
 div.header {
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid light-dark(black, white);
     padding-bottom: 5px;
     margin: 10px;
 }
@@ -53,23 +57,23 @@ div.collapsible > div.hidden {
 
 .comment {
     /* Keep this in sync with inspector.css (.webkit-html-comment) */
-    color: rgb(35, 110, 37);
+    color: light-dark(rgb(35, 110, 37), hsl(119, 40%, 72%));
     white-space: pre;
 }
 
 .tag {
     /* Keep this in sync with inspector.css (.tag-name) */
-    color: rgb(136, 18, 128);
+    color: light-dark(rgb(136, 18, 128), hsl(299, 71%, 80%));
 }
 
 .attribute-name {
     /* Keep this in sync with inspector.css (.webkit-html-attribute-name) */
-    color: rgb(153, 69, 0);
+    color: light-dark(rgb(153, 69, 0), hsl(27, 100%, 80%));
 }
 
 .attribute-value {
     /* Keep this in sync with inspector.css (.webkit-html-attribute-value) */
-    color: rgb(26, 26, 166);
+    color: light-dark(rgb(26, 26, 166), hsl(28, 84%, 63%));
 }
 
 .button {
