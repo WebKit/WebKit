@@ -78,7 +78,6 @@ using WebCore::SystemSettings::State = WebCore::SystemSettingsState;
     bool hasStylusDevice;
 #endif
     bool memoryCacheDisabled;
-    bool attrStyleEnabled;
     bool shouldThrowExceptionForGlobalConstantRedeclaration;
     WebCore::CrossOriginMode crossOriginMode;
 

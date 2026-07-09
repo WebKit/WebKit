@@ -2235,6 +2235,20 @@ CustomPasteboardDataEnabled:
       "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)": true
       default: false
 
+DOMAttrStyleEnabled:
+  type: bool
+  status: internal
+  category: dom
+  humanReadableName: "Attr.style"
+  humanReadableDescription: "Expose style property on Attr nodes"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DOMAudioSessionEnabled:
   type: bool
   status: mature

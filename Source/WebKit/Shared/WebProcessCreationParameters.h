@@ -136,7 +136,6 @@ struct WebProcessCreationParameters {
     bool hasStylusDevice { false };
 #endif
     bool memoryCacheDisabled { false };
-    bool attrStyleEnabled { false };
     bool shouldThrowExceptionForGlobalConstantRedeclaration { true };
     WebCore::CrossOriginMode crossOriginMode { WebCore::CrossOriginMode::Shared }; // Cross-origin isolation via COOP+COEP headers.
 
