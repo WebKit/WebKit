@@ -36,7 +36,7 @@ namespace Style {
 // https://drafts.csswg.org/css-text-3/#propdef-tab-size
 struct TabSize {
     using Spaces = Style::Number<CSS::Nonnegative, float>;
-    using Length = Style::Length<CSS::Nonnegative, float>;
+    using Length = Style::Length<CSS::NonnegativeUnzoomed, float>;
 
     constexpr TabSize(CSS::ValueLiteral<CSS::NumberUnit::Number> literal)
         : m_value { Spaces { literal } }
@@ -97,7 +97,7 @@ template<> struct Blending<TabSize> {
 
 // MARK: - Platform
 
-template<> struct ToPlatform<TabSize> { auto operator()(const TabSize&) -> WebCore::TabSize; };
+template<> struct ToPlatform<TabSize> { auto operator()(const TabSize&, ZoomFactor) -> WebCore::TabSize; };
 
 } // namespace Style
 } // namespace WebCore

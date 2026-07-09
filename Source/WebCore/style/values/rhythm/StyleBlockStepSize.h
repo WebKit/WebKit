@@ -32,7 +32,7 @@ namespace Style {
 
 // <'block-step-size'> = none | <length [0,∞]>
 // https://www.w3.org/TR/css-rhythm-1/#propdef-block-step-size
-struct BlockStepSize : ValueOrKeyword<Length<CSS::Nonnegative, float>, CSS::Keyword::None> {
+struct BlockStepSize : ValueOrKeyword<Length<CSS::NonnegativeUnzoomed, float>, CSS::Keyword::None> {
     using Base::Base;
     using Length = typename Base::Value;
 

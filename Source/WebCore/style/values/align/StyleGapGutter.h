@@ -31,7 +31,7 @@ namespace Style {
 
 // <'row-gap/column-gap'> = normal | <length-percentage [0,∞]>
 // https://drafts.csswg.org/css-align/#column-row-gap
-struct GapGutter : PrimitiveNumericOrKeyword<LengthPercentage<CSS::Nonnegative>, CSS::Keyword::Normal> {
+struct GapGutter : PrimitiveNumericOrKeyword<LengthPercentage<CSS::NonnegativeUnzoomed>, CSS::Keyword::Normal> {
     using Base::Base;
 
     ALWAYS_INLINE bool isNormal() const { return holdsAlternative<CSS::Keyword::Normal>(); }

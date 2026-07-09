@@ -75,11 +75,11 @@ static bool NODELETE isVerticalPiece(ImagePiece piece)
 }
 
 template<typename WidthValue>
-static LayoutUnit computeSlice(const WidthValue& length, LayoutUnit width, LayoutUnit slice, LayoutUnit extent, const Style::ZoomFactor&)
+static LayoutUnit computeSlice(const WidthValue& length, LayoutUnit width, LayoutUnit slice, LayoutUnit extent, const Style::ZoomFactor& zoom)
 {
     return WTF::switchOn(length,
         [&](const typename WidthValue::LengthPercentage& value) {
-            return Style::evaluate<LayoutUnit>(value, extent, Style::ZoomNeeded { });
+            return Style::evaluate<LayoutUnit>(value, extent, zoom);
         },
         [&](const typename WidthValue::Number& value) {
             return LayoutUnit { value.value * width };

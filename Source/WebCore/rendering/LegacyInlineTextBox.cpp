@@ -239,7 +239,7 @@ TextRun LegacyInlineTextBox::createTextRun() const
 {
     CheckedRef style = lineStyle();
     TextRun textRun { text(), textPos(), 0, ExpansionBehavior::forbidAll(), direction(), style->rtlOrdering() == Order::Visual, !renderer().canUseSimpleFontCodePath() };
-    textRun.setTabSize(!style->collapseWhiteSpace(), Style::toPlatform(style->tabSize()));
+    textRun.setTabSize(!style->collapseWhiteSpace(), Style::toPlatform(style->tabSize(), style->usedZoomForLength()));
     return textRun;
 }
 

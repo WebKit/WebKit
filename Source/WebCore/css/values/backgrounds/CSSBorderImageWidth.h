@@ -30,8 +30,8 @@ namespace WebCore {
 namespace CSS {
 
 struct BorderImageWidthValue {
-    using LengthPercentage = CSS::LengthPercentage<CSS::Nonnegative, float>;
-    using Number = CSS::Number<CSS::Nonnegative, float>;
+    using LengthPercentage = CSS::LengthPercentage<NonnegativeUnzoomed, float>;
+    using Number = CSS::Number<Nonnegative, float>;
 
     BorderImageWidthValue(Keyword::Auto value) : m_value { value } { }
     BorderImageWidthValue(LengthPercentage&& value) : m_value { WTF::move(value) } { }

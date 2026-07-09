@@ -43,7 +43,7 @@ struct ZoomFactor;
 // blur() = blur( <length [0,∞]>?@(default=0px) )
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-blur
 struct Blur {
-    using Parameter = Length<CSS::Nonnegative>;
+    using Parameter = Length<CSS::NonnegativeUnzoomed>;
 
     Parameter value;
 

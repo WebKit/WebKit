@@ -90,7 +90,7 @@ static std::optional<CSS::BlurFunction> consumeFilterBlur(CSSParserTokenRange& r
     if (args.atEnd())
         return { CSS::BlurFunction { .parameters = { } } };
 
-    auto parsedValue = MetaConsumer<CSS::Length<CSS::Nonnegative>>::consume(args, state);
+    auto parsedValue = MetaConsumer<CSS::Length<CSS::NonnegativeUnzoomed>>::consume(args, state);
     if (!parsedValue || !args.atEnd())
         return { };
 

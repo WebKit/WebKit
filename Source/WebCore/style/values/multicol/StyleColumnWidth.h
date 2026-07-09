@@ -30,7 +30,7 @@ namespace WebCore::Style {
 
 // <'column-width'> = auto | <length [0,∞]>
 // https://www.w3.org/TR/css-multicol-1/#propdef-column-width
-struct ColumnWidth : ValueOrKeyword<Length<CSS::Nonnegative, float>, CSS::Keyword::Auto> {
+struct ColumnWidth : ValueOrKeyword<Length<CSS::NonnegativeUnzoomed, float>, CSS::Keyword::Auto> {
     using Base::Base;
     using Length = typename Base::Value;
 

@@ -37,7 +37,7 @@ namespace Style {
 
 // <border-image-width-value> = <length-percentage [0,∞]> | <number [0,∞]> | auto
 struct BorderImageWidthValue {
-    using LengthPercentage = Style::LengthPercentage<CSS::Nonnegative>;
+    using LengthPercentage = Style::LengthPercentage<CSS::NonnegativeUnzoomed>;
     using Number = Style::Number<CSS::Nonnegative, float>;
 
     BorderImageWidthValue(CSS::Keyword::Auto keyword)

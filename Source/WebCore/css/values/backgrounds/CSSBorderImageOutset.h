@@ -32,7 +32,7 @@ namespace CSS {
 
 // <border-image-outset-value> = <length [0,∞]> | <number [0,∞]>
 struct BorderImageOutsetValue {
-    using Length = CSS::Length<CSS::Nonnegative, float>;
+    using Length = CSS::Length<CSS::NonnegativeUnzoomed, float>;
     using Number = CSS::Number<CSS::Nonnegative, float>;
 
     BorderImageOutsetValue(Length length) : m_value { length } { }

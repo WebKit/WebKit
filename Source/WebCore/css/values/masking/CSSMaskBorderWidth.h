@@ -32,7 +32,7 @@ namespace CSS {
 
 // <mask-border-width-value> = <length-percentage [0,∞]> | <number [0,∞]> | auto
 struct MaskBorderWidthValue {
-    using LengthPercentage = CSS::LengthPercentage<CSS::Nonnegative, float>;
+    using LengthPercentage = CSS::LengthPercentage<CSS::NonnegativeUnzoomed, float>;
     using Number = CSS::Number<CSS::Nonnegative, float>;
 
     MaskBorderWidthValue(Keyword::Auto value) : m_value { value } { }

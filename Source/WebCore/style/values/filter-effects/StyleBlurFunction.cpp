@@ -29,6 +29,7 @@
 #include "CSSFilterFunctionDescriptor.h"
 #include "FEGaussianBlur.h"
 #include "FilterOperation.h"
+#include "StyleComputedStyleBase+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
@@ -40,9 +41,9 @@ Blur Blur::passthroughForInterpolation()
     return { .value = CSSFilterFunctionDescriptor<CSSValueBlur>::initialValueForInterpolation };
 }
 
-IntOutsets Blur::calculateOutsets(ZoomFactor) const
+IntOutsets Blur::calculateOutsets(ZoomFactor zoom) const
 {
-    auto stdDeviation = evaluate<float>(value, ZoomNeeded { });
+    auto stdDeviation = evaluate<float>(value, zoom);
     return FEGaussianBlur::calculateOutsets({ stdDeviation, stdDeviation });
 }
 
@@ -62,17 +63,17 @@ auto ToStyle<CSS::Blur>::operator()(const CSS::Blur& value, const BuilderState& 
 
 // MARK: - Evaluation
 
-auto Evaluation<Blur, Ref<FilterEffect>>::operator()(const Blur& value, const Style::ComputedStyle&) -> Ref<FilterEffect>
+auto Evaluation<Blur, Ref<FilterEffect>>::operator()(const Blur& value, const Style::ComputedStyle& style) -> Ref<FilterEffect>
 {
-    auto stdDeviation = evaluate<float>(value, ZoomNeeded { });
+    auto stdDeviation = evaluate<float>(value, style.usedZoomForLength());
     return FEGaussianBlur::create(stdDeviation, stdDeviation, EdgeModeType::None);
 }
 
 // MARK: - Platform
 
-auto ToPlatform<Blur>::operator()(const Blur& value, const Style::ComputedStyle&) -> Ref<FilterOperation>
+auto ToPlatform<Blur>::operator()(const Blur& value, const Style::ComputedStyle& style) -> Ref<FilterOperation>
 {
-    return BlurFilterOperation::create(Style::evaluate<float>(value, ZoomNeeded { }));
+    return BlurFilterOperation::create(Style::evaluate<float>(value, style.usedZoomForLength()));
 }
 
 } // namespace Style

@@ -36,7 +36,7 @@ namespace Style {
 // https://drafts.csswg.org/css-inline/#propdef-vertical-align
 
 struct VerticalAlign {
-    using LengthPercentage = Style::LengthPercentage<>;
+    using LengthPercentage = Style::LengthPercentage<CSS::AllUnzoomed>;
 
     VerticalAlign(CSS::Keyword::Baseline keyword) : m_value { keyword } { }
     VerticalAlign(CSS::Keyword::Sub keyword) : m_value { keyword } { }
