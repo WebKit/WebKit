@@ -103,7 +103,7 @@ public:
     friend class RenderView;
 
     WEBCORE_EXPORT static Ref<LocalFrameView> create(LocalFrame&);
-    static Ref<LocalFrameView> create(LocalFrame&, const IntSize& initialSize);
+    WEBCORE_EXPORT static Ref<LocalFrameView> create(LocalFrame&, const IntSize& initialSize);
 
     virtual ~LocalFrameView();
 

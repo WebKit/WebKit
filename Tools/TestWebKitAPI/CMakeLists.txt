@@ -216,6 +216,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/AudioSampleFormat.cpp
         Tests/WebCore/CSSParser.cpp
         Tests/WebCore/CSSTokenizerTests.cpp
+        Tests/WebCore/CachedMatchFinder.cpp
         Tests/WebCore/ColorTests.cpp
         Tests/WebCore/ComplexTextController.cpp
         Tests/WebCore/ContextMenuAction.cpp
@@ -257,6 +258,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/SharedBuffer.cpp
         Tests/WebCore/SharedBufferTest.cpp
         Tests/WebCore/StyleGradient.cpp
+        Tests/WebCore/TestPlatformStrategies.cpp
         Tests/WebCore/TextIterator.cpp
         Tests/WebCore/TimeRanges.cpp
         Tests/WebCore/TransformationMatrix.cpp
@@ -272,6 +274,7 @@ if (ENABLE_WEBCORE)
     endif ()
 
     set(TestWebCore_LIBRARIES
+        WebKit::WebCoreTestSupport
         WebKit::gtest
     )
     set(TestWebCore_FRAMEWORKS

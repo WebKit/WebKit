@@ -1462,7 +1462,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/messageports/MessageWithMessagePorts.h
     dom/messageports/TransferredMessagePort.h
 
-
+    editing/CachedMatchFinder.h
     editing/CharacterRange.h
     editing/ClipboardAccessPolicy.h
     editing/CompositionHighlight.h
@@ -3579,7 +3579,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     testing/MockGamepadProvider.h
     testing/MockParentalControlsURLFilter.h
     testing/MockWebAuthenticationConfiguration.h
-
     testing/js/WebCoreTestSupport.h
 
     workers/FetchingWorkerIdentifier.h

@@ -274,6 +274,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/svg/graphics"
     "${WEBCORE_DIR}/svg/graphics/filters"
     "${WEBCORE_DIR}/svg/properties"
+    "${WEBCORE_DIR}/testing"
     "${WEBCORE_DIR}/websockets"
     "${WEBCORE_DIR}/workers"
     "${WEBCORE_DIR}/workers/service"
@@ -2277,7 +2278,11 @@ endif ()
 
 set(WebCoreTestSupport_FRAMEWORKS ${WebCore_FRAMEWORKS})
 set(WebCoreTestSupport_DEPENDENCIES WebCoreTestSupportBindings)
-set(WebCoreTestSupport_PRIVATE_HEADERS testing/js/WebCoreTestSupport.h)
+set(WebCoreTestSupport_PRIVATE_HEADERS
+    testing/TestPage.h
+
+    testing/js/WebCoreTestSupport.h
+)
 
 if (ENABLE_LEGACY_ENCRYPTED_MEDIA)
     list(APPEND WebCore_SOURCES
@@ -2613,6 +2618,7 @@ list(APPEND WebCoreTestSupport_SOURCES
     testing/MockPageOverlay.cpp
     testing/MockPageOverlayClient.cpp
     testing/ServiceWorkerInternals.cpp
+    testing/TestPage.cpp
     testing/js/WebCoreTestSupport.cpp
 )
 

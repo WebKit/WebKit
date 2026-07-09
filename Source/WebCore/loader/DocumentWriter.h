@@ -48,10 +48,10 @@ public:
 
     void replaceDocumentWithResultOfExecutingJavascriptURL(const String&, Document* ownerDocument);
 
-    bool begin();
+    WEBCORE_EXPORT bool begin();
     bool begin(const URL&, bool dispatchWindowObjectAvailable = true, Document* ownerDocument = nullptr, std::optional<ScriptExecutionContextIdentifier> = std::nullopt, const NavigationAction* triggeringAction = nullptr);
     void addData(const SharedBuffer&);
-    void insertDataSynchronously(const String&); // For an internal use only to prevent the parser from yielding.
+    WEBCORE_EXPORT void insertDataSynchronously(const String&); // For an internal use only to prevent the parser from yielding.
     WEBCORE_EXPORT void end();
 
     void NODELETE setFrame(LocalFrame&);

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FindOptions.h"
-#include "SimpleRange.h"
+#include <WebCore/FindOptions.h>
+#include <WebCore/SimpleRange.h>
 #include <wtf/Expected.h>
 #include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>
@@ -42,13 +42,13 @@ class ShadowRoot;
 class CachedMatchFinder {
     WTF_MAKE_TZONE_ALLOCATED(CachedMatchFinder);
 public:
-    explicit CachedMatchFinder(Document&);
+    WEBCORE_EXPORT explicit CachedMatchFinder(Document&);
 
     enum class CacheUnusable : bool { Oversized };
 
     Expected<std::optional<SimpleRange>, CacheUnusable> findMatchFrom(const std::optional<SimpleRange>&, const String& target, FindOptions);
     Expected<Vector<SimpleRange>, CacheUnusable> findMatches(const std::optional<SimpleRange>&, const String& target, FindOptions, std::optional<unsigned> limit = std::nullopt);
-    Expected<unsigned, CacheUnusable> countMatches(const std::optional<SimpleRange>&, const String& target, FindOptions, std::optional<unsigned> limit = std::nullopt);
+    WEBCORE_EXPORT Expected<unsigned, CacheUnusable> countMatches(const std::optional<SimpleRange>&, const String& target, FindOptions, std::optional<unsigned> limit = std::nullopt);
 
     WEBCORE_EXPORT static void setMaximumRunCountForTesting(std::optional<unsigned>);
 

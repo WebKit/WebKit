@@ -16,15 +16,6 @@
 			name = "Derived Sources";
 			productName = "Derived Sources";
 		};
-		537CF84322EFD64100C6EBB3 /* Apply Configuration to XCFileLists */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 537CF84622EFD64100C6EBB3 /* Build configuration list for PBXAggregateTarget "Apply Configuration to XCFileLists" */;
-			buildPhases = (
-				537CF84722EFD65000C6EBB3 /* Run Sublaunch Script */,
-			);
-			name = "Apply Configuration to XCFileLists";
-			productName = "Apply Configuration to XCFileLists";
-		};
 		07A11A5702F9C0FE00000001 /* Testing.framework Overlays */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 07A11A5702F9C0FE00000002 /* Build configuration list for PBXAggregateTarget "Testing.framework Overlays" */;
@@ -33,6 +24,15 @@
 			);
 			name = "Testing.framework Overlays";
 			productName = "Testing.framework Overlays";
+		};
+		537CF84322EFD64100C6EBB3 /* Apply Configuration to XCFileLists */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 537CF84622EFD64100C6EBB3 /* Build configuration list for PBXAggregateTarget "Apply Configuration to XCFileLists" */;
+			buildPhases = (
+				537CF84722EFD65000C6EBB3 /* Run Sublaunch Script */,
+			);
+			name = "Apply Configuration to XCFileLists";
+			productName = "Apply Configuration to XCFileLists";
 		};
 		5C9D921422D7DA02008E9266 /* Generate Unified Sources */ = {
 			isa = PBXAggregateTarget;
@@ -197,20 +197,6 @@
 			remoteGlobalIDString = 0723A7492F80357300CB96E7;
 			remoteInfo = "Derived Sources";
 		};
-		07A11A5702F9C0FE00000005 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 07A11A5702F9C0FE00000001;
-			remoteInfo = "Testing.framework Overlays";
-		};
-		07A11A5702F9C0FE00000006 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 07A11A5702F9C0FE00000001;
-			remoteInfo = "Testing.framework Overlays";
-		};
 		0723A7562F80359900CB96E7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -245,6 +231,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 0723A7492F80357300CB96E7;
 			remoteInfo = "Derived Sources";
+		};
+		07A11A5702F9C0FE00000005 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07A11A5702F9C0FE00000001;
+			remoteInfo = "Testing.framework Overlays";
+		};
+		07A11A5702F9C0FE00000006 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07A11A5702F9C0FE00000001;
+			remoteInfo = "Testing.framework Overlays";
 		};
 		3A5DDAFB28D3F2A7004DA950 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -689,6 +689,7 @@
 				WebCore/ApplicationManifestParser.cpp,
 				WebCore/ASN1Utilities.cpp,
 				WebCore/AudioSampleFormat.cpp,
+				WebCore/CachedMatchFinder.cpp,
 				WebCore/CARingBufferTest.cpp,
 				WebCore/CBORReaderTest.cpp,
 				WebCore/CBORValueTest.cpp,
@@ -802,6 +803,7 @@
 				WebCore/STUNMessageParsingTest.cpp,
 				WebCore/StyleGradient.cpp,
 				WebCore/SVGImageCasts.cpp,
+				WebCore/TestPlatformStrategies.cpp,
 				WebCore/TextBoundaries.cpp,
 				WebCore/TextCodec.cpp,
 				WebCore/TextIterator.cpp,
@@ -2506,16 +2508,6 @@
 			target = 0723A7492F80357300CB96E7 /* Derived Sources */;
 			targetProxy = 0723A7542F80358F00CB96E7 /* PBXContainerItemProxy */;
 		};
-		07A11A5702F9C0FE00000007 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 07A11A5702F9C0FE00000001 /* Testing.framework Overlays */;
-			targetProxy = 07A11A5702F9C0FE00000005 /* PBXContainerItemProxy */;
-		};
-		07A11A5702F9C0FE00000008 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 07A11A5702F9C0FE00000001 /* Testing.framework Overlays */;
-			targetProxy = 07A11A5702F9C0FE00000006 /* PBXContainerItemProxy */;
-		};
 		0723A7572F80359900CB96E7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0723A7492F80357300CB96E7 /* Derived Sources */;
@@ -2540,6 +2532,16 @@
 			isa = PBXTargetDependency;
 			target = 0723A7492F80357300CB96E7 /* Derived Sources */;
 			targetProxy = 0723A75E2F8035B400CB96E7 /* PBXContainerItemProxy */;
+		};
+		07A11A5702F9C0FE00000007 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07A11A5702F9C0FE00000001 /* Testing.framework Overlays */;
+			targetProxy = 07A11A5702F9C0FE00000005 /* PBXContainerItemProxy */;
+		};
+		07A11A5702F9C0FE00000008 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07A11A5702F9C0FE00000001 /* Testing.framework Overlays */;
+			targetProxy = 07A11A5702F9C0FE00000006 /* PBXContainerItemProxy */;
 		};
 		3A5DDAFC28D3F2A7004DA950 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2617,6 +2619,14 @@
 			};
 			name = Debug;
 		};
+		0723A74B2F80357300CB96E7 /* Release configuration for PBXAggregateTarget "Derived Sources" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		07A11A5702F9C0FE00000003 /* Debug configuration for PBXAggregateTarget "Testing.framework Overlays" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2626,14 +2636,6 @@
 			name = Debug;
 		};
 		07A11A5702F9C0FE00000004 /* Release configuration for PBXAggregateTarget "Testing.framework Overlays" */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		0723A74B2F80357300CB96E7 /* Release configuration for PBXAggregateTarget "Derived Sources" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;

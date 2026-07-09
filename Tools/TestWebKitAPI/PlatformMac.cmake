@@ -183,6 +183,8 @@ list(APPEND TestWebKit_SOURCES
     Helpers/mac/GamepadMappings/SunLightApplicationGenericNES.mm
 
     Tests/WebCore/ASN1Utilities.cpp
+    Tests/WebCore/CachedMatchFinder.cpp
+    Tests/WebCore/TestPlatformStrategies.cpp
 
     Tests/WebCore/cocoa/ISOBMFFTrackInfoParserTests.cpp
 
