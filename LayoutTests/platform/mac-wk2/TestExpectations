@@ -2412,3 +2412,4 @@ fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Pas
 webkit.org/b/318732 http/tests/site-isolation/page-zoom.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/318879 [ x86_64 Release ] webgl/ [ Skip ]
+webkit.org/b/319003 fast/mediastream/microphone-interruption-and-audio-session.html [ Failure ]
