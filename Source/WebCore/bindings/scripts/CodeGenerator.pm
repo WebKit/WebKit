@@ -987,6 +987,15 @@ sub IsFrozenArrayType
     return $type->name eq "FrozenArray";
 }
 
+sub IsAsyncSequenceType
+{
+    my ($object, $type) = @_;
+
+    assert("Not a type") if ref($type) ne "IDLType";
+
+    return $type->name eq "async_sequence";
+}
+
 sub IsSequenceOrFrozenArrayType
 {
     my ($object, $type) = @_;
@@ -1290,6 +1299,7 @@ sub IsBuiltinType
 
     return 1 if $object->IsPrimitiveType($type);
     return 1 if $object->IsSequenceOrFrozenArrayType($type);
+    return 1 if $object->IsAsyncSequenceType($type);
     return 1 if $object->IsRecordType($type);
     return 1 if $object->IsStringType($type);
     return 1 if $object->IsBufferSourceType($type);

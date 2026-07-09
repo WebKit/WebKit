@@ -30,9 +30,9 @@
 
 namespace WebCore {
 
-class DOMAsyncIterator final : public DOMGuardedObject {
+class AsyncSequence final : public DOMGuardedObject {
 public:
-    WEBCORE_EXPORT static ExceptionOr<Ref<DOMAsyncIterator>> create(JSDOMGlobalObject&, JSC::JSValue /* iterable */);
+    WEBCORE_EXPORT static ExceptionOr<Ref<AsyncSequence>> create(JSDOMGlobalObject&, JSC::JSValue /* iterable */);
     using Callback = Function<void(JSDOMGlobalObject*, bool, JSC::JSValue)>;
     WEBCORE_EXPORT void callNext(Callback&&);
     WEBCORE_EXPORT void callReturn(JSC::JSValue reason, Callback&&);
@@ -51,7 +51,7 @@ private:
         }
     };
 
-    DOMAsyncIterator(JSDOMGlobalObject& globalObject, JSC::JSObject& iteratorObject, JSC::JSCell& method)
+    AsyncSequence(JSDOMGlobalObject& globalObject, JSC::JSObject& iteratorObject, JSC::JSCell& method)
         : DOMGuardedObject(globalObject, method)
         , m_iterator(IteratorObject::create(globalObject, iteratorObject))
     {

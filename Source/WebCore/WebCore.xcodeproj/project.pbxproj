@@ -1458,7 +1458,7 @@
 		4150F9F112B6E0E70008C860 /* SliderThumbElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */; };
 		41514FDB2E92DC40002074EA /* StreamPipeToUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41E616F92E8427DD00662181 /* StreamPipeToUtilities.cpp */; };
 		41519CB81FD1F02E007F623C /* ServiceWorkerClientQueryOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 413FC4CD1FD1DD8C00541C4B /* ServiceWorkerClientQueryOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		4151AAE52F22426700E99C91 /* DOMAsyncIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4151AAE32F22425B00E99C91 /* DOMAsyncIterator.h */; };
+		4151AAE52F22426700E99C91 /* AsyncSequence.h in Headers */ = {isa = PBXBuildFile; fileRef = 4151AAE32F22425B00E99C91 /* AsyncSequence.h */; };
 		4151E5BB1FBA4C7A00E47E2D /* SWOriginStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 4151E5B71FBA4C7500E47E2D /* SWOriginStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		415747471E3869A400E914D8 /* LibWebRTCMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 415747431E38699E00E914D8 /* LibWebRTCMacros.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		415747481E3869A700E914D8 /* LibWebRTCProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 415747441E38699E00E914D8 /* LibWebRTCProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6854,6 +6854,7 @@
 		E3150EA71DA7219300194012 /* DOMJITHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = E3150EA51DA7218D00194012 /* DOMJITHelpers.h */; };
 		E3201C1A1F8E82130076A032 /* ModuleFetchParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E38D06091F8E811900649CF2 /* ModuleFetchParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E323CFFA1E5AF6AF00F0B4A0 /* JSDOMConvertPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = E323CFF91E5AF6A500F0B4A0 /* JSDOMConvertPromise.h */; };
+		1A5E0000000000000000B001 /* JSDOMConvertAsyncSequence.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5E0000000000000000B002 /* JSDOMConvertAsyncSequence.h */; };
 		E33D0CBE2672E1B60074E183 /* JSDOMGlobalObjectInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E33D0CBC2672E1B30074E183 /* JSDOMGlobalObjectInlines.h */; };
 		E3432DE425D377E30058E612 /* WorkerModuleScriptLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = E3432DE025D377E20058E612 /* WorkerModuleScriptLoader.h */; };
 		E347E5FA25D4F00000F17A5C /* WorkerScriptFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E347E5F825D4F00000F17A5C /* WorkerScriptFetcher.h */; };
@@ -11126,8 +11127,8 @@
 		415080351E3F00AA0051D75D /* LibWebRTCAudioModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCAudioModule.h; path = libwebrtc/LibWebRTCAudioModule.h; sourceTree = "<group>"; };
 		4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SliderThumbElement.h; sourceTree = "<group>"; };
 		4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SliderThumbElement.cpp; sourceTree = "<group>"; };
-		4151AAE32F22425B00E99C91 /* DOMAsyncIterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMAsyncIterator.h; sourceTree = "<group>"; };
-		4151AAE42F22425B00E99C91 /* DOMAsyncIterator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DOMAsyncIterator.cpp; sourceTree = "<group>"; };
+		4151AAE32F22425B00E99C91 /* AsyncSequence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AsyncSequence.h; sourceTree = "<group>"; };
+		4151AAE42F22425B00E99C91 /* AsyncSequence.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncSequence.cpp; sourceTree = "<group>"; };
 		4151E5B71FBA4C7500E47E2D /* SWOriginStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWOriginStore.h; sourceTree = "<group>"; };
 		4151E5B91FBA4C7600E47E2D /* SWOriginStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWOriginStore.cpp; sourceTree = "<group>"; };
 		415747431E38699E00E914D8 /* LibWebRTCMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCMacros.h; path = libwebrtc/LibWebRTCMacros.h; sourceTree = "<group>"; };
@@ -22631,6 +22632,7 @@
 		E3150EA51DA7218D00194012 /* DOMJITHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITHelpers.h; sourceTree = "<group>"; };
 		E31CD750229F749500FBDA19 /* TableLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TableLayout.cpp; sourceTree = "<group>"; };
 		E323CFF91E5AF6A500F0B4A0 /* JSDOMConvertPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertPromise.h; sourceTree = "<group>"; };
+		1A5E0000000000000000B002 /* JSDOMConvertAsyncSequence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertAsyncSequence.h; sourceTree = "<group>"; };
 		E329275E22543F5700308A9A /* CSSStyleValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSStyleValue.cpp; sourceTree = "<group>"; };
 		E329276022543F5800308A9A /* CSSStyleImageValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSStyleImageValue.cpp; sourceTree = "<group>"; };
 		E329276122543F5800308A9A /* CSSUnparsedValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSUnparsedValue.cpp; sourceTree = "<group>"; };
@@ -32461,6 +32463,7 @@
 				7C8E34A31E4A338E0054CE23 /* JSDOMConvertObject.h */,
 				BC4C22332C010112003F561F /* JSDOMConvertOptional.h */,
 				E323CFF91E5AF6A500F0B4A0 /* JSDOMConvertPromise.h */,
+				1A5E0000000000000000B002 /* JSDOMConvertAsyncSequence.h */,
 				7C8E34A41E4A338E0054CE23 /* JSDOMConvertRecord.h */,
 				BC4C222C2C00F312003F561F /* JSDOMConvertResult.h */,
 				7C1F5D581F22FF7300A8874F /* JSDOMConvertScheduledAction.h */,
@@ -37409,8 +37412,8 @@
 				BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */,
 				0F60F3291DFBB10400416D6C /* CommonVM.cpp */,
 				0F60F32A1DFBB10400416D6C /* CommonVM.h */,
-				4151AAE42F22425B00E99C91 /* DOMAsyncIterator.cpp */,
-				4151AAE32F22425B00E99C91 /* DOMAsyncIterator.h */,
+				4151AAE42F22425B00E99C91 /* AsyncSequence.cpp */,
+				4151AAE32F22425B00E99C91 /* AsyncSequence.h */,
 				0F9DAA0C1FD1C6630079C5B2 /* DOMGCOutputConstraint.cpp */,
 				0F9DAA0E1FD1C6640079C5B2 /* DOMGCOutputConstraint.h */,
 				7C516AD21F3525200034B6BF /* DOMPromiseProxy.h */,
@@ -45132,7 +45135,7 @@
 				CDFFB2122E8A52E20045D9F2 /* DocumentView.h in Headers */,
 				CD6115FC2E8B0E39002A1FBD /* DocumentWindow.h in Headers */,
 				973889A1116EA9DC00ADF313 /* DocumentWriter.h in Headers */,
-				4151AAE52F22426700E99C91 /* DOMAsyncIterator.h in Headers */,
+				4151AAE52F22426700E99C91 /* AsyncSequence.h in Headers */,
 				412752D2294C7F2B00387637 /* DOMAudioSession.h in Headers */,
 				41380C271F3436AC00155FDA /* DOMCache.h in Headers */,
 				41FABD2D1F4DFE4A006A6C97 /* DOMCacheEngine.h in Headers */,
@@ -46345,6 +46348,7 @@
 				7C8E34BD1E4A33B00054CE23 /* JSDOMConvertNumbers.h in Headers */,
 				7C8E34BE1E4A33B00054CE23 /* JSDOMConvertObject.h in Headers */,
 				E323CFFA1E5AF6AF00F0B4A0 /* JSDOMConvertPromise.h in Headers */,
+				1A5E0000000000000000B001 /* JSDOMConvertAsyncSequence.h in Headers */,
 				7C8E34BF1E4A33B00054CE23 /* JSDOMConvertRecord.h in Headers */,
 				BC4C223A2C01052A003F561F /* JSDOMConvertResult.h in Headers */,
 				7C1F5D591F22FF7300A8874F /* JSDOMConvertScheduledAction.h in Headers */,

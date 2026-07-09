@@ -16,6 +16,7 @@ SharedWorkerGlobalScopeConstructors.idl:
 JSTestAsyncIterable.h: 
 JSTestAsyncIterableWithoutFlags.h: 
 JSTestAsyncKeyValueIterable.h: 
+JSTestAsyncSequence.h: 
 JSTestCEReactions.h: 
 JSTestCEReactionsStringifier.h: 
 JSTestCallTracer.h: 

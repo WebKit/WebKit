@@ -42,6 +42,7 @@ class AbstractSlotVisitor;
 
 namespace WebCore {
 
+template<typename T> class AsyncSequenceValue;
 class DOMPromise;
 class DeferredPromise;
 class InternalReadableStream;
@@ -53,6 +54,7 @@ class ReadableStreamReadRequest;
 class ReadableStreamSource;
 class WritableStream;
 
+struct IDLAny;
 struct StreamPipeOptions;
 struct UnderlyingSource;
 
@@ -81,7 +83,7 @@ public:
     static ExceptionOr<Ref<ReadableStream>> createFromByteUnderlyingSource(JSDOMGlobalObject&, JSC::JSValue underlyingSource, UnderlyingSource&&, double highWaterMark);
     static Ref<ReadableStream> create(Ref<InternalReadableStream>&&);
 
-    static ExceptionOr<Ref<ReadableStream>> from(JSDOMGlobalObject&, JSC::JSValue);
+    static ExceptionOr<Ref<ReadableStream>> from(JSDOMGlobalObject&, Ref<AsyncSequenceValue<IDLAny>>&&);
 
     virtual ~ReadableStream();
 

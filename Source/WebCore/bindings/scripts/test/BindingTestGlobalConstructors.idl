@@ -2,6 +2,7 @@ partial interface TestGlobalObject {
     attribute TestAsyncIterableConstructor TestAsyncIterable;
     attribute TestAsyncIterableWithoutFlagsConstructor TestAsyncIterableWithoutFlags;
     attribute TestAsyncKeyValueIterableConstructor TestAsyncKeyValueIterable;
+    attribute TestAsyncSequenceConstructor TestAsyncSequence;
     attribute TestCEReactionsConstructor TestCEReactions;
     attribute TestCEReactionsStringifierConstructor TestCEReactionsStringifier;
     attribute TestCallTracerConstructor TestCallTracer;
