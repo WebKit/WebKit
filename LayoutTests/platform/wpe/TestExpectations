@@ -1066,7 +1066,6 @@ imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-bl
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-element-overflow-scroll.html [ ImageOnlyFailure ]
 
 
-webkit.org/b/272224 imported/w3c/web-platform-tests/selection/textcontrols/selectionchange.html [ Failure ]
 
 webkit.org/b/272225 media/media-source/media-managedmse-resume-after-stall.html [ Failure ]
 
@@ -1258,12 +1257,29 @@ webkit.org/b/298727 css3/text-decoration/text-decoration-line-grammar-error-3.ht
 
 webkit.org/b/299944 http/wpt/mediarecorder/record-96KHz-long-mp4.html [ Skip ]
 
-webkit.org/b/303551 media/media-vp8-webm-seek-to-start.html [ Pass Timeout ]
+webkit.org/b/303551 media/media-vp8-webm-seek-to-start.html [ ImageOnlyFailure Pass Timeout ]
 
 webkit.org/b/304265 fast/events/mouse-click-events.html [ Failure ]
 webkit.org/b/304265 fast/events/mouse-event-buttons.html [ Failure ]
 
 webkit.org/b/303859 imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.disconnected.html [ Pass ImageOnlyFailure ]
+
+# Flaky tests, expectations matching main's gardening, trimmed to results seen on this bot.
+webkit.org/b/310415 fast/canvas/canvas-createPattern-fillRect-shadow.html [ Failure Pass ]
+webkit.org/b/313055 fast/canvas/image-buffer-backend-variants.html [ Pass Failure ]
+webkit.org/b/308144 imported/w3c/web-platform-tests/css/selectors/user-invalid-form-submission-invalidation.html [ Pass ImageOnlyFailure ]
+webkit.org/b/308479 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-text-to-the-canvas/canvas.2d.disconnected-font-size-math.html [ ImageOnlyFailure Pass ]
+webkit.org/b/307098 imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.condensed.html [ ImageOnlyFailure Pass ]
+webkit.org/b/307098 imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.extra-condensed.html [ ImageOnlyFailure Pass ]
+webkit.org/b/307139 imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.normal.html [ Pass ImageOnlyFailure ]
+webkit.org/b/307098 imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.semi-condensed.html [ ImageOnlyFailure Pass ]
+webkit.org/b/307098 imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.semi-expanded.html [ ImageOnlyFailure Pass ]
+webkit.org/b/307098 imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.ultra-condensed.html [ ImageOnlyFailure Pass ]
+webkit.org/b/307098 imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.ultra-expanded.html [ ImageOnlyFailure Pass ]
+webkit.org/b/307098 imported/w3c/web-platform-tests/html/canvas/offscreen/text/canvas.2d.fontStretch.extra-expanded.html [ ImageOnlyFailure Pass ]
+webkit.org/b/307098 imported/w3c/web-platform-tests/html/canvas/offscreen/text/canvas.2d.fontStretch.semi-expanded.html [ ImageOnlyFailure Pass ]
+webkit.org/b/307143 imported/w3c/web-platform-tests/preload/preload-in-data-doc.html [ Pass ImageOnlyFailure ]
+webkit.org/b/309863 [ arm64 ] media/video-seek-have-nothing.html [ Pass Failure ]
 webkit.org/b/303861 imported/w3c/web-platform-tests/svg/path/property/mpath.svg [ Pass ImageOnlyFailure ]
 webkit.org/b/303866 imported/w3c/web-platform-tests/css/css-anchor-position/scroll-to-anchored-fixed-004.html [ Pass ImageOnlyFailure ]
 
