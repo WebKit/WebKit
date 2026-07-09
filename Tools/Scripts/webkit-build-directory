@@ -37,6 +37,11 @@ use Getopt::Long;
 use lib $FindBin::Bin;
 use webkitdirs;
 
+# Opt this read-only path resolver into the last-built tiebreaker. Build
+# drivers (build-webkit, set-webkit-configuration) never call this, so they
+# keep the "Xcode wins when both trees exist" default.
+enableLastBuiltTiebreaker();
+
 my $showConfigurationDirectory = 0;
 my $showExecutablePath = 0;
 my $showHelp = 0;
