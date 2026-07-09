@@ -10,7 +10,7 @@ layer at (8,16) size 760x440
         text run at (0,1) width 666: "This is a spanning element at the beginning of the columns block."
     RenderMultiColumnSet at (5,74) size 750x361
 layer at (13,21) size 367x700
-  RenderMultiColumnFlowThread at (5,5) size 367x700
+  RenderMultiColumnFlow at (5,5) size 367x700
     RenderMultiColumnSpannerPlaceholder at (0,0) size 0x0
     RenderBlock (anonymous) at (0,0) size 367x700
       RenderText {#text} at (0,0) size 367x700
@@ -60,7 +60,7 @@ layer at (8,472) size 760x440
         text run at (0,1) width 602: "This is a spanning element at the end of the columns block."
     RenderMultiColumnSet at (5,434) size 750x0
 layer at (13,477) size 367x700
-  RenderMultiColumnFlowThread at (5,5) size 367x700
+  RenderMultiColumnFlow at (5,5) size 367x700
     RenderBlock (anonymous) at (0,0) size 367x700
       RenderText {#text} at (0,0) size 367x700
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
@@ -110,7 +110,7 @@ layer at (8,928) size 760x439
         text run at (0,1) width 635: "This is a spanning element in the middle of the columns block."
     RenderMultiColumnSet at (5,214) size 750x221
 layer at (13,933) size 367x700
-  RenderMultiColumnFlowThread at (5,5) size 367x700
+  RenderMultiColumnFlow at (5,5) size 367x700
     RenderBlock (anonymous) at (0,0) size 367x260
       RenderText {#text} at (0,0) size 367x260
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
@@ -157,7 +157,7 @@ layer at (8,1383) size 760x400
   RenderBlock {DIV} at (0,1367) size 760x401 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x390
 layer at (13,1388) size 367x770
-  RenderMultiColumnFlowThread at (5,5) size 367x770
+  RenderMultiColumnFlow at (5,5) size 367x770
     RenderText {#text} at (0,0) size 367x267
       text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
       text run at (0,20) width 362: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
@@ -206,7 +206,7 @@ layer at (8,1799) size 760x420
   RenderBlock {DIV} at (0,1783) size 760x421 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x410
 layer at (13,1804) size 367x810
-  RenderMultiColumnFlowThread at (5,5) size 367x810
+  RenderMultiColumnFlow at (5,5) size 367x810
     RenderText {#text} at (0,0) size 367x260
       text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
       text run at (0,20) width 362: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
@@ -258,7 +258,7 @@ layer at (8,2235) size 760x482
         text run at (0,31) width 146: "block siblings."
     RenderMultiColumnSet at (5,104) size 750x373
 layer at (13,2240) size 367x724
-  RenderMultiColumnFlowThread at (5,5) size 367x724
+  RenderMultiColumnFlow at (5,5) size 367x724
     RenderMultiColumnSpannerPlaceholder at (0,0) size 0x0
     RenderBlock {P} at (0,16) size 367x220
       RenderText {#text} at (0,0) size 367x220
@@ -308,7 +308,7 @@ layer at (8,2733) size 760x472
         text run at (0,31) width 84: "siblings."
     RenderMultiColumnSet at (5,466) size 750x0
 layer at (13,2738) size 367x724
-  RenderMultiColumnFlowThread at (5,5) size 367x724
+  RenderMultiColumnFlow at (5,5) size 367x724
     RenderBlock {P} at (0,16) size 367x220
       RenderText {#text} at (0,0) size 367x220
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
@@ -358,7 +358,7 @@ layer at (8,3221) size 760x490
         text run at (0,31) width 84: "siblings."
     RenderMultiColumnSet at (5,348) size 750x137
 layer at (13,3226) size 367x732 backgroundClip at (0,0) size 800x3727 clip at (0,0) size 800x3727
-  RenderMultiColumnFlowThread at (5,5) size 367x732
+  RenderMultiColumnFlow at (5,5) size 367x732
     RenderBlock {P} at (0,16) size 367x220
       RenderText {#text} at (0,0) size 367x220
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."

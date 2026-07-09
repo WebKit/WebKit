@@ -15,7 +15,7 @@ layer at (8,16) size 760x504
         text run at (0,0) width 218: "This is a second span."
     RenderMultiColumnSet at (5,378) size 750x121
 layer at (13,21) size 367x680
-  RenderMultiColumnFlowThread at (5,5) size 367x680
+  RenderMultiColumnFlow at (5,5) size 367x680
     RenderBlock (anonymous) at (0,0) size 367x420
       RenderText {#text} at (0,0) size 367x419
         text run at (0,0) width 337: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
@@ -72,7 +72,7 @@ layer at (8,536) size 760x515
         text run at (0,0) width 218: "This is a second span."
     RenderMultiColumnSet at (5,390) size 750x121
 layer at (13,541) size 367x744
-  RenderMultiColumnFlowThread at (5,5) size 367x744
+  RenderMultiColumnFlow at (5,5) size 367x744
     RenderBlock {P} at (0,16) size 367x230
       RenderText {#text} at (0,0) size 367x229
         text run at (0,0) width 337: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
@@ -128,7 +128,7 @@ layer at (8,1067) size 760x510
         text run at (0,0) width 218: "This is a second span."
     RenderMultiColumnSet at (5,384) size 750x121
 layer at (13,1072) size 367x712 backgroundClip at (0,0) size 785x1593 clip at (0,0) size 785x1593
-  RenderMultiColumnFlowThread at (5,5) size 367x712
+  RenderMultiColumnFlow at (5,5) size 367x712
     RenderBlock (anonymous) at (0,0) size 367x0
       RenderInline {SPAN} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

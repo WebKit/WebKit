@@ -10,7 +10,7 @@ layer at (8,16) size 760x402
         text run at (0,0) width 277: "This is a spanning element."
     RenderMultiColumnSet at (5,72) size 750x325
 layer at (13,21) size 367x630
-  RenderMultiColumnFlowThread at (5,5) size 367x630
+  RenderMultiColumnFlow at (5,5) size 367x630
     RenderMultiColumnSpannerPlaceholder at (0,0) size 0x0
     RenderBlock (anonymous) at (0,0) size 367x630
       RenderText {#text} at (0,0) size 367x630
@@ -60,7 +60,7 @@ layer at (8,434) size 760x402
         text run at (0,0) width 277: "This is a spanning element."
     RenderMultiColumnSet at (5,396) size 750x0
 layer at (13,439) size 367x630
-  RenderMultiColumnFlowThread at (5,5) size 367x630
+  RenderMultiColumnFlow at (5,5) size 367x630
     RenderBlock (anonymous) at (0,0) size 367x630
       RenderText {#text} at (0,0) size 367x630
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
@@ -110,7 +110,7 @@ layer at (8,852) size 760x424
         text run at (0,0) width 277: "This is a spanning element."
     RenderMultiColumnSet at (5,205) size 750x215
 layer at (13,857) size 367x694
-  RenderMultiColumnFlowThread at (5,5) size 367x694
+  RenderMultiColumnFlow at (5,5) size 367x694
     RenderBlock {P} at (0,16) size 367x243
       RenderText {#text} at (0,0) size 367x243
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
@@ -161,7 +161,7 @@ layer at (8,1292) size 760x418
         text run at (0,0) width 277: "This is a spanning element."
     RenderMultiColumnSet at (5,198) size 750x215
 layer at (13,1297) size 367x662
-  RenderMultiColumnFlowThread at (5,5) size 367x662
+  RenderMultiColumnFlow at (5,5) size 367x662
     RenderBlock (anonymous) at (0,0) size 367x234
       RenderText {#text} at (0,0) size 367x234
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
@@ -216,7 +216,7 @@ layer at (8,1726) size 760x418
         text run at (0,0) width 277: "This is a spanning element."
     RenderMultiColumnSet at (5,288) size 750x125
 layer at (13,1731) size 367x662
-  RenderMultiColumnFlowThread at (5,5) size 367x662
+  RenderMultiColumnFlow at (5,5) size 367x662
     RenderBlock (anonymous) at (0,0) size 367x432
       RenderInline {SPAN} at (0,0) size 367x252
         RenderText {#text} at (0,0) size 367x198
@@ -271,7 +271,7 @@ layer at (8,2160) size 760x434
         text run at (0,0) width 277: "This is a spanning element."
     RenderMultiColumnSet at (5,320) size 750x109
 layer at (13,2165) size 367x712 backgroundClip at (0,0) size 785x2610 clip at (0,0) size 785x2610
-  RenderMultiColumnFlowThread at (5,5) size 367x712
+  RenderMultiColumnFlow at (5,5) size 367x712
     RenderBlock {P} at (0,16) size 367x198
       RenderText {#text} at (0,0) size 367x198
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."

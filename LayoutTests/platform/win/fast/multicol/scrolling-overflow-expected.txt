@@ -7,7 +7,7 @@ layer at (8,8) size 784x300
   RenderBlock {DIV} at (0,0) size 784x300
     RenderMultiColumnSet at (0,0) size 784x300
 layer at (8,8) size 251x5316 backgroundClip at (0,0) size 4792x585 clip at (0,0) size 4792x585
-  RenderMultiColumnFlowThread at (0,0) size 251x5316
+  RenderMultiColumnFlow at (0,0) size 251x5316
     RenderBlock {P} at (0,16) size 251x564
       RenderText {#text} at (0,0) size 250x563
         text run at (0,0) width 242: "Lorem ipsum dolor sit amet, consectetur"

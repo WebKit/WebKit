@@ -2,7 +2,7 @@ layer at (0,0) size 785x1580
   RenderView at (0,0) size 785x600
     RenderMultiColumnSet at (0,0) size 785x600
 layer at (0,0) size 785x1356
-  RenderMultiColumnFlowThread at (0,0) size 785x1356
+  RenderMultiColumnFlow at (0,0) size 785x1356
 layer at (0,0) size 785x1356
   RenderBlock {HTML} at (0,0) size 785x1356
     RenderBody {BODY} at (8,8) size 769x1332

@@ -7,7 +7,7 @@ layer at (8,8) size 402x102
   RenderBlock {DIV} at (0,0) size 402x102 [border: (1px solid #000000)]
     RenderMultiColumnSet at (1,1) size 400x100
 layer at (9,9) size 175x158
-  RenderMultiColumnFlowThread at (1,1) size 175x158
+  RenderMultiColumnFlow at (1,1) size 175x158
     RenderText {#text} at (0,1) size 13x56
       text run at (0,1) width 13: " "
     RenderBR {BR} at (13,1) size 0x56

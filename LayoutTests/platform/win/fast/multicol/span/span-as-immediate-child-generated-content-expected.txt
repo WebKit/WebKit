@@ -11,7 +11,7 @@ layer at (8,16) size 760x437
         text run at (0,0) width 274: "This is a spanning element."
     RenderMultiColumnSet at (5,91) size 750x341
 layer at (13,21) size 367x680
-  RenderMultiColumnFlowThread at (5,5) size 367x680
+  RenderMultiColumnFlow at (5,5) size 367x680
     RenderBlock (generated) at (0,0) size 367x20 [bgcolor=#FFFF00]
       RenderText at (0,0) size 160x19
         text run at (0,0) width 160: "Before Generated Content"
@@ -64,7 +64,7 @@ layer at (8,469) size 760x437
         text run at (0,0) width 274: "This is a spanning element."
     RenderMultiColumnSet at (5,411) size 750x21
 layer at (13,474) size 367x680
-  RenderMultiColumnFlowThread at (5,5) size 367x680
+  RenderMultiColumnFlow at (5,5) size 367x680
     RenderBlock (generated) at (0,0) size 367x20 [bgcolor=#FFFF00]
       RenderText at (0,0) size 160x19
         text run at (0,0) width 160: "Before Generated Content"
@@ -117,7 +117,7 @@ layer at (8,922) size 760x458
         text run at (0,0) width 274: "This is a spanning element."
     RenderMultiColumnSet at (5,217) size 750x237
 layer at (13,927) size 367x764
-  RenderMultiColumnFlowThread at (5,5) size 367x764
+  RenderMultiColumnFlow at (5,5) size 367x764
     RenderBlock (generated) at (0,0) size 367x20 [bgcolor=#FFFF00]
       RenderText at (0,0) size 160x19
         text run at (0,0) width 160: "Before Generated Content"
@@ -172,7 +172,7 @@ layer at (8,1396) size 760x473
         text run at (0,0) width 274: "This is a spanning element."
     RenderMultiColumnSet at (5,211) size 750x257
 layer at (13,1401) size 367x752
-  RenderMultiColumnFlowThread at (5,5) size 367x752
+  RenderMultiColumnFlow at (5,5) size 367x752
     RenderBlock (generated) at (0,0) size 367x20 [bgcolor=#FFFF00]
       RenderText at (0,0) size 160x19
         text run at (0,0) width 160: "Before Generated Content"
@@ -232,7 +232,7 @@ layer at (8,1885) size 760x473
         text run at (0,0) width 274: "This is a spanning element."
     RenderMultiColumnSet at (5,331) size 750x137
 layer at (13,1890) size 367x772
-  RenderMultiColumnFlowThread at (5,5) size 367x772
+  RenderMultiColumnFlow at (5,5) size 367x772
     RenderBlock (generated) at (0,0) size 367x20 [bgcolor=#FFFF00]
       RenderText at (0,0) size 160x19
         text run at (0,0) width 160: "Before Generated Content"
@@ -296,7 +296,7 @@ layer at (8,2374) size 760x479
         text run at (0,0) width 274: "This is a spanning element."
     RenderMultiColumnSet at (5,353) size 750x121
 layer at (13,2379) size 367x804 backgroundClip at (0,0) size 785x2869 clip at (0,0) size 785x2869
-  RenderMultiColumnFlowThread at (5,5) size 367x804
+  RenderMultiColumnFlow at (5,5) size 367x804
     RenderBlock (generated) at (0,0) size 367x20 [bgcolor=#FFFF00]
       RenderText at (0,0) size 160x19
         text run at (0,0) width 160: "Before Generated Content"

@@ -10,7 +10,7 @@ layer at (8,52) size 784x100
   RenderBlock {DIV} at (0,36) size 784x100
     RenderMultiColumnSet at (0,0) size 784x100
 layer at (8,52) size 384x150
-  RenderMultiColumnFlowThread at (0,0) size 384x150
+  RenderMultiColumnFlow at (0,0) size 384x150
 layer at (8,52) size 384x150
   RenderBlock (relative positioned) {DIV} at (0,0) size 384x150
     RenderBlock {DIV} at (0,0) size 384x150

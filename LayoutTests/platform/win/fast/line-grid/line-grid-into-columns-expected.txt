@@ -51,7 +51,7 @@ layer at (0,0) size 800x540
   RenderBlock {DIV} at (0,0) size 800x540
     RenderMultiColumnSet at (20,20) size 760x500
 layer at (20,20) size 362x977 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderMultiColumnFlowThread at (20,20) size 362x977
+  RenderMultiColumnFlow at (20,20) size 362x977
     RenderBlock {DIV} at (0,0) size 362x395
       RenderText {#text} at (0,41) size 352x101
         text run at (0,41) width 350: "All of this text even though it's smaller should be on the"

@@ -7,7 +7,7 @@ layer at (360,20) size 170x200
   RenderBlock {DIV} at (360,0) size 170x200 [border: none (20px solid #C0C0C0) none]
     RenderMultiColumnSet at (20,0) size 150x200
 layer at (66,20) size 444x200
-  RenderMultiColumnFlowThread at (20,0) size 444x200
+  RenderMultiColumnFlow at (20,0) size 444x200
     RenderText {#text} at (0,0) size 90x190
       text run at (0,0) width 182: "Lorem ipsum dolor sit amet,"
       text run at (18,0) width 77: "consectetur "
