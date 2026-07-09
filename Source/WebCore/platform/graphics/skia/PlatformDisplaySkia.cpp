@@ -332,6 +332,11 @@ private:
         // FIXME: Add shader cache.
         GrContextOptions options;
         options.fAllowMSAAOnNewIntel = shouldAllowMSAAOnNewIntel();
+        // Skia defaults this to true, which alters the texture2D() calls in all generated shaders,
+        // applying a so-called negative LOD bias, forcing texture2D() sampling into a LOD-computing
+        // lookup which is a slow-path in certain tiled GPUs (such as Vivante/etnaviv). Since we
+        // don't use any mipmapping, it's safe to disable that, and avoid performance hits.
+        options.fSharpenMipmappedTextures = false;
         thread_local std::unique_ptr<SkExecutor> s_executor = SkExecutor::MakeFIFOThreadPool(2);
         options.fExecutor = s_executor.get();
         if (auto bytes = glyphCacheTextureMaximumBytes())
