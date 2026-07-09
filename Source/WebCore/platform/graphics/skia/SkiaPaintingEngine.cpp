@@ -40,6 +40,7 @@
 #include "RenderingMode.h"
 #include "SkiaGPUAtlas.h"
 #include "SkiaImageAtlasLayout.h"
+#include "SkiaRecordCanvas.h"
 #include "SkiaRecordingResult.h"
 #include "SkiaReplayCanvas.h"
 #include "SkiaUtilities.h"
@@ -116,11 +117,11 @@ void SkiaPaintingEngine::paintIntoGraphicsContext(const GraphicsLayer& layer, Gr
     layer.paintGraphicsLayerContents(context, clipRect);
 }
 
-Ref<CoordinatedTileBuffer> SkiaPaintingEngine::createBuffer(RenderingMode renderingMode, const IntSize& size, bool contentsOpaque) const
+Ref<CoordinatedTileBuffer> SkiaPaintingEngine::createBuffer(RenderingMode renderingMode, const IntSize& size, bool contentsOpaque, unsigned msaaSampleCount) const
 {
     if (renderingMode == RenderingMode::Accelerated) {
         if (useThreadedRendering() && canUseDDL())
-            return CoordinatedAcceleratedTileBuffer::create(m_threadSafeGrContext, size, contentsOpaque ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha);
+            return CoordinatedAcceleratedTileBuffer::create(m_threadSafeGrContext, size, contentsOpaque ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha, msaaSampleCount);
 
         PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent();
 
@@ -214,7 +215,7 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::paint(const GraphicsLayerCoordina
     return buffer;
 }
 
-Ref<SkiaRecordingResult> SkiaPaintingEngine::record(const GraphicsLayerCoordinated& layer, const IntRect& recordRect, bool contentsOpaque, float contentsScale)
+Ref<SkiaRecordingResult> SkiaPaintingEngine::record(const GraphicsLayerCoordinated& layer, const IntRect& recordRect, bool contentsOpaque, float contentsScale, unsigned msaaSampleCount)
 {
     // ### Asynchronous rendering on worker threads ###
     ASSERT(useThreadedRendering());
@@ -222,18 +223,35 @@ Ref<SkiaRecordingResult> SkiaPaintingEngine::record(const GraphicsLayerCoordinat
 
     auto renderingMode = canPerformAcceleratedRendering() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
 
+    auto recordLayer = [&](SkCanvas& canvas) -> SkiaRecordingData {
+        GraphicsContextSkia recordingContext(canvas, renderingMode, RenderingPurpose::LayerBacking);
+        recordingContext.beginRecording(GraphicsContextSkia::RecordingMode::Tile, renderingMode == RenderingMode::Accelerated && canUseDDL() ? m_threadSafeGrContext : nullptr);
+        paintIntoGraphicsContext(layer, recordingContext, recordRect, contentsOpaque, contentsScale);
+        return recordingContext.endRecording();
+    };
+
     WTFBeginSignpost(this, RecordTile);
     SkPictureRecorder pictureRecorder;
     auto* recordingCanvas = pictureRecorder.beginRecording(recordRect.width(), recordRect.height());
-    GraphicsContextSkia recordingContext(*recordingCanvas, renderingMode, RenderingPurpose::LayerBacking);
-    recordingContext.beginRecording(GraphicsContextSkia::RecordingMode::Tile, canUseDDL() ? m_threadSafeGrContext : nullptr);
-    paintIntoGraphicsContext(layer, recordingContext, recordRect, contentsOpaque, contentsScale);
-    auto recordingData = recordingContext.endRecording();
+    SkiaRecordingData recordingData;
+    if (renderingMode == RenderingMode::Accelerated && canUseDDL() && !msaaSampleCount && PlatformDisplay::sharedDisplay().msaaSampleCount()) {
+        SkiaRecordCanvas recordCanvas(recordRect.size());
+        recordCanvas.addCanvas(recordingCanvas);
+        recordingData = recordLayer(recordCanvas);
+        recordCanvas.removeCanvas(recordingCanvas);
+        if (recordCanvas.shouldEnableMSAA()) {
+            msaaSampleCount = PlatformDisplay::sharedDisplay().msaaSampleCount();
+            // Use 4 samples on HiDPI.
+            if (msaaSampleCount && contentsScale >= 2)
+                msaaSampleCount = 4;
+        }
+    } else
+        recordingData = recordLayer(*recordingCanvas);
 
     auto picture = pictureRecorder.finishRecordingAsPicture();
     WTFEndSignpost(this, RecordTile);
 
-    auto result = SkiaRecordingResult::create(WTF::move(picture), WTF::move(recordingData), recordRect, renderingMode, contentsOpaque, contentsScale);
+    auto result = SkiaRecordingResult::create(WTF::move(picture), WTF::move(recordingData), recordRect, renderingMode, contentsOpaque, contentsScale, msaaSampleCount);
 
     // Prepare GPU atlases on main thread before dispatching to workers.
     if (result->hasAtlasLayouts()) {
@@ -277,7 +295,7 @@ Ref<SkiaRecordingResult> SkiaPaintingEngine::record(const GraphicsLayerCoordinat
     return result;
 }
 
-Ref<CoordinatedTileBuffer> SkiaPaintingEngine::replay(const GraphicsLayerCoordinated& layer, Ref<SkiaRecordingResult>&& recording, const IntRect& tileRect, const IntRect& dirtyRect)
+Ref<CoordinatedTileBuffer> SkiaPaintingEngine::replay(const GraphicsLayerCoordinated& layer, Ref<SkiaRecordingResult>&& recording, const IntRect& tileRect, const IntRect& dirtyRect, unsigned msaaSampleCount)
 {
     // ### Asynchronous rendering on worker threads ###
     ASSERT(useThreadedRendering());
@@ -290,7 +308,7 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::replay(const GraphicsLayerCoordin
         threadSafeGrContext = m_threadSafeGrContext;
     auto renderingMode = recording->renderingMode();
     auto bufferSize = renderingMode == RenderingMode::Accelerated && useThreadedRendering() && threadSafeGrContext ? tileRect.size() : dirtyRect.size();
-    auto buffer = createBuffer(renderingMode, bufferSize, recording->contentsOpaque());
+    auto buffer = createBuffer(renderingMode, bufferSize, recording->contentsOpaque(), msaaSampleCount);
     buffer->beginPainting();
 
     m_paintingWorkerPool->postTask([platformLayer = WTF::move(platformLayer), buffer = Ref { buffer }, tileRect, dirtyRect, recording = WTF::move(recording), threadSafeGrContext = WTF::move(threadSafeGrContext)]() mutable {

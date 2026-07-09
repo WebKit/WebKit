@@ -54,7 +54,7 @@ struct SkiaRecordingData {
 class SkiaRecordingResult final : public ThreadSafeRefCounted<SkiaRecordingResult, WTF::DestructionThread::Main> {
 public:
     ~SkiaRecordingResult();
-    static Ref<SkiaRecordingResult> create(sk_sp<SkPicture>&&, SkiaRecordingData&&, const IntRect& recordRect, RenderingMode, bool contentsOpaque, float contentsScale);
+    static Ref<SkiaRecordingResult> create(sk_sp<SkPicture>&&, SkiaRecordingData&&, const IntRect& recordRect, RenderingMode, bool contentsOpaque, float contentsScale, unsigned msaaSampleCount = 0);
 
     void waitForFenceIfNeeded(const SkImage&);
     bool hasFences();
@@ -64,6 +64,7 @@ public:
     RenderingMode renderingMode() const { return m_renderingMode; }
     bool contentsOpaque() const { return m_contentsOpaque; }
     float contentsScale() const { return m_contentsScale; }
+    unsigned msaaSampleCount() const { return m_msaaSampleCount; }
 
     // Atlas layouts for batched raster image uploads.
     bool hasAtlasLayouts() const { return !m_atlasLayouts.isEmpty(); }
@@ -80,7 +81,7 @@ public:
     const Vector<Ref<SkiaGPUAtlas>>& gpuAtlases() const LIFETIME_BOUND { return m_gpuAtlases; }
 
 private:
-    SkiaRecordingResult(sk_sp<SkPicture>&&, SkiaRecordingData&&, const IntRect& recordRect, RenderingMode, bool contentsOpaque, float contentsScale);
+    SkiaRecordingResult(sk_sp<SkPicture>&&, SkiaRecordingData&&, const IntRect& recordRect, RenderingMode, bool contentsOpaque, float contentsScale, unsigned msaaSampleCount);
 
     sk_sp<SkPicture> m_picture;
     SkiaImageToFenceMap m_imageToFenceMap WTF_GUARDED_BY_LOCK(m_imageToFenceMapLock);
@@ -92,6 +93,7 @@ private:
     RenderingMode m_renderingMode { RenderingMode::Unaccelerated };
     bool m_contentsOpaque : 1 { true };
     float m_contentsScale { 0 };
+    unsigned m_msaaSampleCount { 0 };
 };
 
 } // namespace WebCore

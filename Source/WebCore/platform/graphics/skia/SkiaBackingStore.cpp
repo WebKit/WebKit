@@ -199,12 +199,13 @@ void SkiaBackingStore::Tile::update(const IntRect& dirtyRect, const IntRect& til
             auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
             ASSERT(grContext);
 
-            if (!m_surface) {
-                const auto& characterization = displayList->characterization();
+            const auto& characterization = displayList->characterization();
+            if (!m_surface || !m_surface->isCompatible(characterization))
                 m_surface = SkSurfaces::RenderTarget(grContext, skgpu::Budgeted::kYes, characterization.imageInfo(), characterization.sampleCount(), characterization.origin(), &characterization.surfaceProps());
-            }
 
             skgpu::ganesh::DrawDDL(m_surface.get(), displayList);
+            if (characterization.sampleCount())
+                grContext->flush(m_surface.get());
         } else if (auto texture = acceleratedBuffer.texture()) {
             ASSERT(!m_surface);
 
