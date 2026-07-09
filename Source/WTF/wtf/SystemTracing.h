@@ -180,6 +180,8 @@ enum TracePointCode {
     WebXRCPFrameEndSubmissionEnd,
     TextExtractionStart,
     TextExtractionEnd,
+    UpdateThreadedAnimationsStart,
+    UpdateThreadedAnimationsEnd,
 
     GPUProcessRange = 16000,
     WakeUpAndApplyDisplayListStart,

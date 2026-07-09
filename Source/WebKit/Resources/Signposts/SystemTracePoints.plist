@@ -996,6 +996,18 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>Threaded Animations</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>14015</string>
+                 <key>CodeEnd</key>
+                 <string>14016</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Wake up and apply display list</string>
                  <key>Type</key>
                  <string>Interval</string>
