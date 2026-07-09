@@ -1,4 +1,16 @@
 ================
+WebKitGTK 2.52.5
+================
+
+What's new in WebKitGTK 2.52.5?
+
+  - Fire scrollend event for instant programmatic scrolls.
+  - Increase network idle connection timeout to 115 seconds.
+  - Add User-Agent quirk for HBO Max.
+  - Fix the build with system malloc.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.52.4
 ================
 
