@@ -390,7 +390,7 @@ file(WRITE "${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap"
 
     module WKWebView {
         requires objc
-        header \"${WebKit_FRAMEWORK_HEADERS_DIR}/WebKit/WKWebView.h\"
+        header \"${WebKit_HEADERS_DIR}/WKWebView.h\"
         export *
     }
 

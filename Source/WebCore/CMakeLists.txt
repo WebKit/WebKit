@@ -2166,10 +2166,10 @@ if (USE_APPLE_INTERNAL_SDK)
         dom/Document+Touch.idl
     )
     list(APPEND WebCore_NON_SVG_IDL_FILES
-        ${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions/GestureEvent.idl
-        ${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions/Touch.idl
-        ${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions/TouchEvent.idl
-        ${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions/TouchList.idl
+        ${WebKitAdditions_HEADERS_DIR}/GestureEvent.idl
+        ${WebKitAdditions_HEADERS_DIR}/Touch.idl
+        ${WebKitAdditions_HEADERS_DIR}/TouchEvent.idl
+        ${WebKitAdditions_HEADERS_DIR}/TouchList.idl
     )
     list(APPEND WebCore_SUPPLEMENTAL_IDL_FILES
         ${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions/DocumentTouch.idl
@@ -2234,7 +2234,7 @@ set(WebCore_FRAMEWORKS
 )
 if (USE_APPLE_INTERNAL_SDK)
     list(APPEND WebCore_FRAMEWORKS WebKitAdditions)
-    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES "${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions")
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES ${WebKitAdditions_HEADERS_DIR})
 endif ()
 
 if (ENABLE_XSLT)
@@ -2812,7 +2812,9 @@ set(PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE ${WebCore_DERIVED_SOURCES_DIR}/Pai
 set(AUDIOWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE ${WebCore_DERIVED_SOURCES_DIR}/AudioWorkletGlobalScopeConstructors.idl)
 
 set(WebCore_INTERFACE_LIBRARIES WebCore)
-set(WebCore_INTERFACE_INCLUDE_DIRECTORIES ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR})
+if (NOT USE_FRAMEWORK_BUNDLES)
+    set(WebCore_INTERFACE_INCLUDE_DIRECTORIES ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR})
+endif ()
 
 set(WebCoreTestSupport_INTERFACE_LIBRARIES WebCoreTestSupport)
 set(WebCoreTestSupport_INTERFACE_INCLUDE_DIRECTORIES
@@ -3231,7 +3233,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
 WEBKIT_SYMLINK_FILES(WebCore_CopyPrivateHeaders
     PRUNE_STALE
-    DESTINATION ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore
+    DESTINATION ${WebCore_PRIVATE_HEADERS_DIR}
     FILES ${WebCore_PRIVATE_FRAMEWORK_HEADERS}
     FLATTENED
 )

@@ -47,6 +47,8 @@ set(TestRunnerShared_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/TestRunnerShared/D
 set(DumpRenderTree_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DumpRenderTree/DerivedSources")
 set(WebKitTestRunner_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/WebKitTestRunner/DerivedSources")
 
+# FRAMEWORK_HEADERS_DIR variables include the name of the framework as a child
+# directory, and are suitable for use as include paths.
 set(bmalloc_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/bmalloc/Headers")
 set(bmalloc_PRIVATE_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/bmalloc/PrivateHeaders")
 set(ANGLE_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/ANGLE/Headers")
@@ -61,5 +63,38 @@ set(WebKit_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebKit/Headers")
 set(WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebKit/PrivateHeaders")
 set(WebKitAdditions_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebKitAdditions/Headers")
 
+# HEADER_DIR variables are the directory that a framework's headers are
+# actually copied into.
+set(bmalloc_HEADERS_DIR "${bmalloc_FRAMEWORK_HEADERS_DIR}/bmalloc")
+set(bmalloc_PRIVATE_HEADERS_DIR "${bmalloc_PRIVATE_FRAMEWORK_HEADERS_DIR}/bmalloc")
+set(ANGLE_HEADERS_DIR "${ANGLE_FRAMEWORK_HEADERS_DIR}/ANGLE")
+set(WTF_HEADERS_DIR "${WTF_FRAMEWORK_HEADERS_DIR}/wtf")
+set(JavaScriptCore_HEADERS_DIR "${JavaScriptCore_FRAMEWORK_HEADERS_DIR}/JavaScriptCore")
+set(JavaScriptCore_PRIVATE_HEADERS_DIR "${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/JavaScriptCore")
+set(PAL_HEADERS_DIR "${PAL_FRAMEWORK_HEADERS_DIR}/pal")
+set(WebCore_PRIVATE_HEADERS_DIR "${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore")
+set(WebKitLeagcy_HEADERS_DIR "${WebKitLegacy_FRAMEWORK_HEADERS_DIR}/WebKitLegacy")
+set(WebKit_HEADERS_DIR "${WebKit_FRAMEWORK_HEADERS_DIR}/WebKit")
+set(WebKit_PRIVATE_HEADERS_DIR "${WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebKit")
+set(WebKitAdditions_HEADERS_DIR "${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions")
+
 set(WTF_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/WTF/Scripts")
 set(JavaScriptCore_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/JavaScriptCore/Scripts")
+
+# On Apple platforms, some targets build as framework bundles. Point their
+# HEADERS variables to the inside of the framework bundle.
+set(USE_FRAMEWORK_BUNDLES OFF)
+if (APPLE)
+    set(USE_FRAMEWORK_BUNDLES ON)
+    if (PORT STREQUAL Mac)
+        set(_version "Versions/A/")
+    endif ()
+
+    set(JavaScriptCore_HEADERS_DIR         "${CMAKE_BINARY_DIR}/JavaScriptCore.framework/${_version}Headers")
+    set(JavaScriptCore_PRIVATE_HEADERS_DIR "${CMAKE_BINARY_DIR}/JavaScriptCore.framework/${_version}PrivateHeaders")
+    set(WebCore_PRIVATE_HEADERS_DIR        "${CMAKE_BINARY_DIR}/WebCore.framework/${_version}PrivateHeaders")
+    set(WebKitLegacy_HEADERS_DIR           "${CMAKE_BINARY_DIR}/WebKitLegacy.framework/${_version}PrivateHeaders")
+    set(WebKit_HEADERS_DIR                 "${CMAKE_BINARY_DIR}/WebKit.framework/${_version}Headers")
+    set(WebKit_PRIVATE_HEADERS_DIR         "${CMAKE_BINARY_DIR}/WebKit.framework/${_version}PrivateHeaders")
+    unset(_version)
+endif ()

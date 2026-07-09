@@ -155,20 +155,6 @@ configure_file(${JAVASCRIPTCORE_DIR}/JavaScriptCore.modulemap ${CMAKE_BINARY_DIR
 
 make_directory("${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/JavaScriptCore.framework")
 configure_file(${JAVASCRIPTCORE_DIR}/framework.sb ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/JavaScriptCore.framework/framework.sb COPYONLY)
-set(_jsc_fw "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/JavaScriptCore.framework")
-if (NOT EXISTS "${_jsc_fw}/Headers")
-    file(CREATE_LINK "${JavaScriptCore_FRAMEWORK_HEADERS_DIR}/JavaScriptCore"
-                     "${_jsc_fw}/Headers" SYMBOLIC)
-endif ()
-if (NOT EXISTS "${_jsc_fw}/PrivateHeaders")
-    file(CREATE_LINK "${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/JavaScriptCore"
-                     "${_jsc_fw}/PrivateHeaders" SYMBOLIC)
-endif ()
-if (NOT EXISTS "${_jsc_fw}/Modules")
-    file(CREATE_LINK "${CMAKE_BINARY_DIR}/JavaScriptCore/Modules"
-                     "${_jsc_fw}/Modules" SYMBOLIC)
-endif ()
 
 configure_file("${JAVASCRIPTCORE_DIR}/JavaScriptCore_Private.modulemap"
                "${CMAKE_BINARY_DIR}/JavaScriptCore/Modules/module.private.modulemap" COPYONLY)
-unset(_jsc_fw)

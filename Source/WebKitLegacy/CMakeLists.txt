@@ -33,11 +33,13 @@ set(WebKitLegacy_FRAMEWORKS
 )
 if (USE_APPLE_INTERNAL_SDK)
     list(APPEND WebKitLegacy_FRAMEWORKS WebKitAdditions)
-    list(APPEND WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES "${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions")
+    list(APPEND WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES ${WebKitAdditions_HEADERS_DIR})
 endif ()
 
 set(WebKitLegacy_INTERFACE_LIBRARIES WebKitLegacy)
-set(WebKitLegacy_INTERFACE_INCLUDE_DIRECTORIES ${WebKitLegacy_FRAMEWORK_HEADERS_DIR})
+if (NOT USE_HEADER_MAPS)
+    set(WebKitLegacy_INTERFACE_INCLUDE_DIRECTORIES ${WebKitLegacy_FRAMEWORK_HEADERS_DIR})
+endif ()
 set(WebKitLegacy_INTERFACE_DEPENDENCIES WebKitLegacy_CopyHeaders)
 
 WEBKIT_FRAMEWORK_DECLARE(WebKitLegacy)
@@ -49,7 +51,7 @@ set_target_properties(WebKitLegacy PROPERTIES LINKER_LANGUAGE CXX)
 # file(WRITE) forwarding-header loop, and WebKitLegacy_PUBLIC_FRAMEWORK_HEADERS
 # is empty there, so pruning wipes the entire staged header set.
 WEBKIT_COPY_FILES(WebKitLegacy_CopyHeaders
-    DESTINATION ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}/WebKitLegacy
+    DESTINATION ${WebKitLegacy_HEADERS_DIR}
     FILES ${WebKitLegacy_PUBLIC_FRAMEWORK_HEADERS}
     FLATTENED
 )

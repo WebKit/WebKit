@@ -232,7 +232,7 @@ if (ENABLE_WEBGL)
     )
 
     WEBKIT_COPY_FILES(LibGLESv2EntryPointsHeaders
-        DESTINATION ${ANGLE_FRAMEWORK_HEADERS_DIR}/ANGLE
+        DESTINATION ${ANGLE_HEADERS_DIR}
         FILES ${libglesv2_entry_points_headers}
         FLATTENED NO_SYMLINK  # adjust-angle-include-paths.py rewrites these in-place
     )

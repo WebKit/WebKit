@@ -708,7 +708,7 @@ WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 WEBKIT_COPY_FILES(bmalloc_CopyHeaders
     PRUNE_STALE
-    DESTINATION ${bmalloc_FRAMEWORK_HEADERS_DIR}/bmalloc
+    DESTINATION ${bmalloc_HEADERS_DIR}
     FILES ${bmalloc_PUBLIC_HEADERS}
     FLATTENED
 )
@@ -716,7 +716,7 @@ WEBKIT_COPY_FILES(bmalloc_CopyHeaders
 if (bmalloc_PRIVATE_FRAMEWORK_HEADERS_DIR)
     WEBKIT_COPY_FILES(bmalloc_CopyPrivateHeaders
         PRUNE_STALE
-        DESTINATION ${bmalloc_PRIVATE_FRAMEWORK_HEADERS_DIR}/bmalloc
+        DESTINATION ${bmalloc_PRIVATE_HEADERS_DIR}
         FILES ${bmalloc_PRIVATE_HEADERS}
         FLATTENED
     )

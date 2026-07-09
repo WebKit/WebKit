@@ -38,15 +38,6 @@ add_custom_command(TARGET WebCore POST_BUILD
         "${_wc_fw}/Info.plist"
     COMMENT "Installing WebCore.framework resources (flat iOS layout)")
 
-# Stage WebCore.framework with proper PrivateHeaders/Modules layout so
-# `<WebCore/X.h>` from Swift's Clang importer (and from cmake's other targets)
-# resolves to our just-built WebCore via -F precedence over the SDK's
-# WebCore.framework. Mirrors what BUILT_PRODUCTS_DIR provides under Xcode.
-if (NOT EXISTS "${_wc_fw}/PrivateHeaders")
-    file(CREATE_LINK "${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore"
-                     "${_wc_fw}/PrivateHeaders" SYMBOLIC)
-endif ()
-file(MAKE_DIRECTORY "${_wc_fw}/Modules")
 configure_file("${WEBCORE_DIR}/WebCore_Private.modulemap"
                "${_wc_fw}/Modules/module.private.modulemap" COPYONLY)
 

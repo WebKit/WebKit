@@ -573,10 +573,15 @@ macro(_WEBKIT_LIBRARY_LINK_FRAMEWORK _target)
     else ()
         # Include the framework headers but don't try and link the frameworks
         foreach (framework IN LISTS ${_target}_FRAMEWORKS)
-            list(APPEND ${_target}_INCLUDE_DIRECTORIES
-                ${${framework}_FRAMEWORK_HEADERS_DIR}
-                ${${framework}_PRIVATE_FRAMEWORK_HEADERS_DIR}
-            )
+            get_target_property(_is_framework ${framework} FRAMEWORK)
+            if (_is_framework)
+                target_compile_options(${_target} PRIVATE -F${CMAKE_BINARY_DIR})
+            else ()
+                list(APPEND ${_target}_INCLUDE_DIRECTORIES
+                    ${${framework}_FRAMEWORK_HEADERS_DIR}
+                    ${${framework}_PRIVATE_FRAMEWORK_HEADERS_DIR}
+                )
+            endif ()
         endforeach ()
     endif ()
 endmacro()
@@ -622,9 +627,11 @@ macro(WEBKIT_FRAMEWORK _target)
         add_custom_command(TARGET ${_target} POST_BUILD COMMAND ${${_target}_POST_BUILD_COMMAND} VERBATIM)
     endif ()
 
-    if (APPLE AND NOT PORT STREQUAL "GTK" AND NOT ${${_target}_LIBRARY_TYPE} MATCHES STATIC)
+    if (APPLE AND NOT PORT STREQUAL "GTK" AND ${${_target}_LIBRARY_TYPE} MATCHES SHARED)
         set_target_properties(${_target} PROPERTIES FRAMEWORK TRUE)
+        target_compile_options(${_target} BEFORE PUBLIC -F${CMAKE_BINARY_DIR})
         install(TARGETS ${_target} FRAMEWORK DESTINATION ${LIB_INSTALL_DIR})
+        _WEBKIT_CREATE_FRAMEWORK_BUNDLE_STRUCTURE(${_target})
     endif ()
 
     _WEBKIT_TARGET_INTERFACE(${_target})
@@ -676,6 +683,25 @@ function(WEBKIT_PRUNE_STALE_DESTINATION destination flattened)
     foreach (_entry IN LISTS _existing)
         if (NOT _entry IN_LIST _expected)
             file(REMOVE ${destination}/${_entry})
+        endif ()
+    endforeach ()
+endfunction()
+
+function(_WEBKIT_CREATE_FRAMEWORK_BUNDLE_STRUCTURE _target)
+    if (PORT STREQUAL Mac)
+        set(_version "Versions/A/")
+        file(MAKE_DIRECTORY
+            "${CMAKE_BINARY_DIR}/${_target}.framework/Versions/A")
+        file(CREATE_LINK "A"
+            "${CMAKE_BINARY_DIR}/${_target}.framework/Versions/Current" SYMBOLIC)
+    endif ()
+
+    foreach (_name Headers Modules PrivateHeaders)
+        file(MAKE_DIRECTORY
+            "${CMAKE_BINARY_DIR}/${_target}.framework/${_version}${_name}")
+        if (PORT STREQUAL Mac)
+            file(CREATE_LINK "Versions/Current/${_name}"
+                "${CMAKE_BINARY_DIR}/${_target}.framework/${_name}" SYMBOLIC)
         endif ()
     endforeach ()
 endfunction()

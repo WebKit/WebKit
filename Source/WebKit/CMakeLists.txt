@@ -775,7 +775,7 @@ if (APPLE)
 endif ()
 if (USE_APPLE_INTERNAL_SDK)
     list(APPEND WebKit_FRAMEWORKS WebKitAdditions)
-    list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES "${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions")
+    list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES ${WebKitAdditions_HEADERS_DIR})
 endif ()
 
 set(WebProcess_LIBRARIES WebKit)
@@ -824,7 +824,7 @@ endif ()
 set(WebKit_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS)
 
 set(WebKit_INTERFACE_LIBRARIES WebKit)
-if (NOT USE_HEADER_MAPS)
+if (NOT USE_HEADER_MAPS AND NOT USE_FRAMEWORK_BUNDLES)
     set(WebKit_INTERFACE_INCLUDE_DIRECTORIES
         ${WebKit_FRAMEWORK_HEADERS_DIR}
         ${WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR}
@@ -865,8 +865,8 @@ if (ENABLE_BACK_FORWARD_LIST_SWIFT)
     file(CONFIGURE OUTPUT "${WebCore_Private_SWIFT_MODULEMAP_DIR}/module.modulemap" CONTENT
 "module WebCore_Private [system] {
     requires cplusplus
-    header \"${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore/DiagnosticLoggingKeys.h\"
-    header \"${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore/DiagnosticLoggingClient.h\"
+    header \"${WebCore_PRIVATE_HEADERS_DIR}/DiagnosticLoggingKeys.h\"
+    header \"${WebCore_PRIVATE_HEADERS_DIR}/DiagnosticLoggingClient.h\"
     export *
 }
 ")
@@ -883,18 +883,22 @@ WEBKIT_ADD_TARGET_UNSAFE_BUFFER_WARNINGS(WebKit)
 # project's prefix header has already defined ENABLE()/HAVE() values.
 set(WebKit_SWIFT_CLANG_INCLUDE_DIRS
     ${CMAKE_BINARY_DIR}
-    ${WebKit_FRAMEWORK_HEADERS_DIR}
     ${WebKit_DERIVED_SOURCES_DIR}
-    ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
-    ${JavaScriptCore_FRAMEWORK_HEADERS_DIR}
-    ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
     ${WTF_FRAMEWORK_HEADERS_DIR}
     ${bmalloc_FRAMEWORK_HEADERS_DIR}
     ${PAL_FRAMEWORK_HEADERS_DIR}
     ${ICU_INCLUDE_DIRS}
     ${WebCore_Private_SWIFT_MODULEMAP_DIR}
-    ${WebKit_PRIVATE_INCLUDE_DIRECTORIES}
 )
+if (NOT USE_FRAMEWORK_BUNDLES)
+    list(APPEND WebKit_SWIFT_CLANG_INCLUDE_DIRS
+        ${WebKit_FRAMEWORK_HEADERS_DIR}
+        ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
+        ${JavaScriptCore_FRAMEWORK_HEADERS_DIR}
+        ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
+        ${WebKit_PRIVATE_INCLUDE_DIRECTORIES}
+    )
+endif ()
 
 if (NOT APPLE AND SWIFT_REQUIRED)
     # Export-macro stubs, NODELETE=, WK_SUPPORTS_SWIFT_OBJCXX_INTEROP and the
@@ -909,7 +913,7 @@ if (NOT APPLE AND SWIFT_REQUIRED)
         # the flag ensures the PCM gets the right feature-test value.
         # rdar://175928621
         "-Xcc -D__glibcxx_want_coroutine=1"
-        "-Xcc -fmodule-map-file=${WTF_FRAMEWORK_HEADERS_DIR}/wtf/module.modulemap"
+        "-Xcc -fmodule-map-file=${WTF_HEADERS_DIR}/module.modulemap"
     )
     foreach (_dir IN LISTS WebKit_SWIFT_CLANG_INCLUDE_DIRS)
         list(APPEND WebKit_SWIFT_CLANG_FLAG_PAIRS "-Xcc -I${_dir}")
@@ -981,7 +985,7 @@ WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WebKit WebKit
 if (WebKit_PUBLIC_FRAMEWORK_HEADERS)
     WEBKIT_COPY_FILES(WebKit_CopyHeaders
         PRUNE_STALE
-        DESTINATION ${WebKit_FRAMEWORK_HEADERS_DIR}/WebKit
+        DESTINATION ${WebKit_HEADERS_DIR}
         FILES ${WebKit_PUBLIC_FRAMEWORK_HEADERS}
         FLATTENED
     )
@@ -991,7 +995,7 @@ endif ()
 if (WebKit_PRIVATE_FRAMEWORK_HEADERS)
     WEBKIT_COPY_FILES(WebKit_CopyPrivateHeaders
         PRUNE_STALE
-        DESTINATION ${WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebKit
+        DESTINATION ${WebKit_PRIVATE_HEADERS_DIR}
         FILES ${WebKit_PRIVATE_FRAMEWORK_HEADERS}
         FLATTENED
     )
@@ -1131,7 +1135,7 @@ foreach (in_file ${WebCore_GENERATED_SERIALIZATION_IN_FILES})
     list(APPEND WebKit_SERIALIZATION_DEPENDENCIES "${WebCore_DERIVED_SOURCES_DIR}/${in_file}")
 endforeach ()
 foreach (in_file ${WebCore_SERIALIZATION_IN_FILES})
-    list(APPEND WebKit_SERIALIZATION_DEPENDENCIES "${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore/${in_file}")
+    list(APPEND WebKit_SERIALIZATION_DEPENDENCIES "${WebCore_PRIVATE_HEADERS_DIR}/${in_file}")
 endforeach ()
 list(APPEND WebKit_SERIALIZATION_DEPENDENCIES "${WebKit_DERIVED_SOURCES_DIR}/SharedPreferencesForWebProcess.serialization.in")
 
@@ -1315,9 +1319,9 @@ list(APPEND WebKit_HEADERS
 add_custom_command(
     OUTPUT ${WebKit_DERIVED_SOURCES_DIR}/WebKitLogDefinitions.h
     MAIN_DEPENDENCY ${WEBKIT_DIR}/Platform/LogMessages.in
-    DEPENDS ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore/generate-log-declarations.py
+    DEPENDS ${WebCore_PRIVATE_HEADERS_DIR}/generate-log-declarations.py
     WORKING_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR}
-    COMMAND ${PYTHON_EXECUTABLE} ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore/generate-log-declarations.py ${WEBKIT_DIR}/Platform/LogMessages.in ${WebKit_DERIVED_SOURCES_DIR}/WebKitLogDefinitions.h
+    COMMAND ${PYTHON_EXECUTABLE} ${WebCore_PRIVATE_HEADERS_DIR}/generate-log-declarations.py ${WEBKIT_DIR}/Platform/LogMessages.in ${WebKit_DERIVED_SOURCES_DIR}/WebKitLogDefinitions.h
     VERBATIM)
 list(APPEND WebKit_HEADERS ${WebKit_DERIVED_SOURCES_DIR}/WebKitLogDefinitions.h)
 
