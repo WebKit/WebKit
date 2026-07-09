@@ -42,10 +42,6 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ResourceRequestCocoaAdditions.mm>)
-#import <WebKitAdditions/ResourceRequestCocoaAdditions.mm>
-#endif
-
 namespace WebCore {
 
 ResourceRequest::ResourceRequest(NSURLRequest *nsRequest)
