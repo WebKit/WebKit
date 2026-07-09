@@ -70,6 +70,18 @@ macro(WEBKIT_TEST_ENABLE_SWIFT _target)
     )
     add_dependencies(${_target} TestWebKitAPIStageTesting TestWebKitAPISwiftArgs)
     target_link_libraries(${_target} PRIVATE "-F${CMAKE_LIBRARY_OUTPUT_DIRECTORY}" "-framework Testing")
+    # CMake's Swift executable link ignores CMAKE_EXE_LINKER_FLAGS, so
+    # -fsanitize=address never reaches the link line. C++ object files get
+    # instrumented but the ASan runtime isn't linked so it doesn't work.
+    foreach (_sanitizer IN LISTS ENABLE_SANITIZERS)
+        target_compile_options(${_target} PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:-sanitize=${_sanitizer}>")
+        target_link_options(${_target} PRIVATE "-sanitize=${_sanitizer}")
+        if (_sanitizer STREQUAL "address")
+            target_compile_options(${_target} PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -D__SANITIZE_ADDRESS__>")
+        elseif (_sanitizer STREQUAL "thread")
+            target_compile_options(${_target} PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -D__SANITIZE_THREAD__>")
+        endif ()
+    endforeach ()
 endmacro()
 
 set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
