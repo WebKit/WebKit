@@ -360,7 +360,7 @@ void WebInspectorBackend::ensureNetworkInstrumentationForFrame(LocalFrame& frame
     };
 
     CheckedRef resourceDataStore = m_resourceDataStore.get();
-    auto proxy = makeUnique<FrameNetworkAgentProxy>(webContext, *page, resourceDataStore.get());
+    auto proxy = makeUnique<FrameNetworkAgentProxy>(webContext, *page, resourceDataStore.get(), m_extraRequestHeaders);
     proxy->enable();
     m_frameNetworkAgentProxies.add(frameID, WTF::move(proxy));
 }
@@ -393,11 +393,19 @@ void WebInspectorBackend::disableNetworkInstrumentation()
     m_frameNetworkAgentProxies.clear();
     m_networkInstrumentationEnabled = false;
 
+    // Reset latched Network overrides so nothing persists past inspection. The caching flag lives
+    // on the Page and would otherwise stay disabled with no inspector attached. Mirrors
+    // InspectorNetworkAgent::disable().
+    m_extraRequestHeaders.clear();
+    m_resourceCachingDisabled = false;
+
     if (!m_page)
         return;
 
-    if (RefPtr corePage = m_page->corePage())
+    if (RefPtr corePage = m_page->corePage()) {
+        corePage->setResourceCachingDisabledByWebInspector(false);
         corePage->inspectorController().disconnectRemoteInstrumentation();
+    }
 }
 
 void WebInspectorBackend::removeInstrumentationForFrame(FrameIdentifier frameID)
@@ -572,6 +580,23 @@ void WebInspectorBackend::searchInFramesAndRequests(Vector<WebCore::FrameIdentif
     });
 
     completionHandler(WTF::move(results));
+}
+
+void WebInspectorBackend::setExtraHTTPHeaders(WebCore::HTTPHeaderMap&& headers)
+{
+    // Each FrameNetworkAgentProxy reads this in willSendRequest, so frames created after this
+    // arrives also apply it.
+    m_extraRequestHeaders = WTF::move(headers);
+}
+
+void WebInspectorBackend::setResourceCachingDisabled(bool disabled)
+{
+    m_resourceCachingDisabled = disabled;
+
+    // The flag lives on the Page, so one application covers every frame in this process.
+    RefPtr page = m_page.get();
+    if (RefPtr corePage = page ? page->corePage() : nullptr)
+        corePage->setResourceCachingDisabledByWebInspector(disabled);
 }
 
 void WebInspectorBackend::ensurePageInstrumentationForFrame(LocalFrame& frame)

@@ -1,0 +1,60 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.SetExtraHTTPHeaders");
+
+    // HTTP header names are case-insensitive; the request headers reported by the Network domain may
+    // not preserve the exact casing the inspector supplied.
+    function headerValueIgnoringCase(headers, name) {
+        let lowered = name.toLowerCase();
+        for (let key in headers) {
+            if (key.toLowerCase() === lowered)
+                return headers[key];
+        }
+        return undefined;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.SetExtraHTTPHeaders.AppliedToCrossOriginIFrameRequest",
+        description: "Network.setExtraHTTPHeaders should be forwarded to the WebContent process and applied to requests made from a cross-origin iframe.",
+        async test() {
+            let frameTarget = await frameTargetForURLContaining("iframe-with-fetch.html");
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+            await waitForExpressionInTarget(frameTarget, "typeof triggerFetch === 'function'");
+
+            const headerName = "X-WebKit-Inspector-Test";
+            const headerValue = "site-isolation-header-value";
+
+            // setExtraHTTPHeaders is a Network-domain command hosted by ProxyingNetworkAgent on the
+            // web-page (backend) target under Site Isolation, not on the per-frame target.
+            InspectorTest.assert(WI.backendTarget.hasCommand("Network.setExtraHTTPHeaders"), "Backend target should expose Network.setExtraHTTPHeaders.");
+            await WI.backendTarget.NetworkAgent.setExtraHTTPHeaders({[headerName]: headerValue});
+
+            // The command completes in the UIProcess after dispatching the header map to each
+            // WebContent process; that dispatch is asynchronous relative to the frame target's own
+            // command channel, so poll by triggering fetches from the iframe until a request carries
+            // the header. Each request's headers are reported (post-application) via requestWillBeSent.
+            let observedValue;
+            for (let attempt = 0; attempt < 20 && observedValue !== headerValue; ++attempt) {
+                let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+                await frameTarget.RuntimeAgent.evaluate.invoke({expression: "triggerFetch()", objectGroup: "test"});
+                let resource = (await resourceAddedPromise).data.resource;
+                observedValue = headerValueIgnoringCase(resource.requestHeaders, headerName);
+                if (observedValue !== headerValue)
+                    await new Promise((resolve) => setTimeout(resolve, 100));
+            }
+
+            InspectorTest.expectEqual(observedValue, headerValue, "The cross-origin iframe's request should carry the inspector's extra HTTP header.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that Network.setExtraHTTPHeaders is forwarded to the WebContent process and applied to requests from a cross-origin iframe under Site Isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-fetch.html"></iframe>
+</body>

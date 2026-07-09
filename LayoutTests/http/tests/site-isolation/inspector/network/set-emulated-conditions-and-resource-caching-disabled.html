@@ -1,0 +1,97 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.SetEmulatedConditionsAndResourceCachingDisabled");
+
+    // Load a resource inside the cross-origin iframe and resolve to the resulting resource's
+    // responseSource, so we can observe whether it was served from the cache.
+    async function fetchResponseSource(frameTarget, url) {
+        let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+        await frameTarget.RuntimeAgent.evaluate.invoke({
+            expression: `fetch("${url}").then((response) => response.text())`,
+            objectGroup: "test",
+            awaitPromise: true,
+        });
+        let resource = (await resourceAddedPromise).data.resource;
+        if (!resource.finished && !resource.failed)
+            await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+        return resource.responseSource;
+    }
+
+    function isFromCache(responseSource) {
+        return responseSource === WI.Resource.ResponseSource.MemoryCache
+            || responseSource === WI.Resource.ResponseSource.DiskCache;
+    }
+
+    // Give each phase a unique cache key so its first load is guaranteed to miss any entry left by a
+    // previous test run; only a repeat within the same phase (same key) can be a genuine cache hit.
+    function uniqueCacheableURL() {
+        return `cacheable-resource.py?key=${Math.random()}`;
+    }
+
+    // FIXME: Network.setEmulatedConditions is gated on ENABLE_INSPECTOR_NETWORK_THROTTLING, which is
+    // disabled by default (rdar://122224142), so the command is not generated on current builds.
+    // Guarded on hasCommand so this case self-enables once network throttling ships.
+    if (InspectorBackend.hasCommand("Network.setEmulatedConditions")) {
+        suite.addTestCase({
+            name: "SiteIsolation.Network.SetEmulatedConditions.SucceedsUnderSiteIsolation",
+            description: "Network.setEmulatedConditions should succeed under Site Isolation (previously returned \"Not supported\").",
+            async test() {
+                // setEmulatedConditions is hosted by ProxyingNetworkAgent on the web-page (backend)
+                // target; it drives the throttle session-wide via the WebsiteDataStore.
+                await WI.backendTarget.NetworkAgent.setEmulatedConditions(1024);
+                InspectorTest.pass("setEmulatedConditions with a byte limit should succeed under Site Isolation.");
+
+                // Reset so we don't throttle the resource loads in the next test case.
+                await WI.backendTarget.NetworkAgent.setEmulatedConditions();
+                InspectorTest.pass("setEmulatedConditions reset should succeed under Site Isolation.");
+            }
+        });
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.SetResourceCachingDisabled.CrossOriginIFrameBypassesCache",
+        description: "Network.setResourceCachingDisabled should be forwarded to the WebContent process so a cross-origin iframe's repeated load is not served from the cache.",
+        async test() {
+            let frameTarget = await frameTargetForURLContaining("iframe-with-fetch.html");
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+            await waitForExpressionInTarget(frameTarget, "typeof triggerFetch === 'function'");
+
+            InspectorTest.assert(WI.backendTarget.hasCommand("Network.setResourceCachingDisabled"), "Backend target should expose Network.setResourceCachingDisabled.");
+
+            // Control: with caching enabled, a repeated load of a cacheable resource is served from
+            // the cache. This establishes that the resource is cacheable in the first place.
+            const enabledURL = uniqueCacheableURL();
+            await WI.backendTarget.NetworkAgent.setResourceCachingDisabled(false);
+            await frameTarget.RuntimeAgent.evaluate.invoke({expression: "internals.clearMemoryCache()", objectGroup: "test"});
+
+            let firstEnabledSource = await fetchResponseSource(frameTarget, enabledURL);
+            InspectorTest.expectEqual(firstEnabledSource, WI.Resource.ResponseSource.Network, "With caching enabled, the first load should come from the network.");
+            let secondEnabledSource = await fetchResponseSource(frameTarget, enabledURL);
+            InspectorTest.expectThat(isFromCache(secondEnabledSource), "With caching enabled, the second load should be served from the cache.");
+
+            // Treatment: with caching disabled, the same repeated load must go to the network.
+            const disabledURL = uniqueCacheableURL();
+            await WI.backendTarget.NetworkAgent.setResourceCachingDisabled(true);
+            await frameTarget.RuntimeAgent.evaluate.invoke({expression: "internals.clearMemoryCache()", objectGroup: "test"});
+
+            let firstDisabledSource = await fetchResponseSource(frameTarget, disabledURL);
+            InspectorTest.expectEqual(firstDisabledSource, WI.Resource.ResponseSource.Network, "With caching disabled, the first load should come from the network.");
+            let secondDisabledSource = await fetchResponseSource(frameTarget, disabledURL);
+            InspectorTest.expectFalse(isFromCache(secondDisabledSource), "With caching disabled, the second load should NOT be served from the cache.");
+
+            // Reset.
+            await WI.backendTarget.NetworkAgent.setResourceCachingDisabled(false);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that Network.setEmulatedConditions and Network.setResourceCachingDisabled are forwarded to the WebContent process(es) under Site Isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-fetch.html"></iframe>
+</body>

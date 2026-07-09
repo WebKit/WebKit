@@ -195,7 +195,7 @@
         {
             "name": "setExtraHTTPHeaders",
             "description": "Specifies whether to always send extra HTTP headers with the requests from this page.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "headers", "$ref": "Headers", "description": "Map with extra HTTP headers." }
             ]
@@ -356,7 +356,7 @@
         {
             "name": "setEmulatedConditions",
             "description": "Emulate various network conditions (e.g. bytes per second, latency, etc.).",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "condition": "defined(ENABLE_INSPECTOR_NETWORK_THROTTLING) && ENABLE_INSPECTOR_NETWORK_THROTTLING",
             "parameters": [
                 { "name": "bytesPerSecondLimit", "type": "integer", "optional": true, "description": "Limits the bytes per second of requests if positive. Removes any limits if zero or not provided." }

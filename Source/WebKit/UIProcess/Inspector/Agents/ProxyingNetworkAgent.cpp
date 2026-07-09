@@ -37,7 +37,9 @@
 #include "WebInspectorBackendMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include "WebsiteDataStore.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
 #include <WebCore/ProcessQualified.h>
 
@@ -203,6 +205,12 @@ void ProxyingNetworkAgent::enableInstrumentationForProcess(WebKit::WebProcessPro
     });
     webProcess.addMessageReceiver(Messages::ProxyingNetworkAgent::messageReceiverName(), pageID, *this);
     webProcess.send(Messages::WebInspectorBackend::EnableNetworkInstrumentation { }, pageID);
+
+    // Catch a newly-instrumented process up to the latched network overrides.
+    if (!m_extraRequestHeaders.isEmpty())
+        webProcess.send(Messages::WebInspectorBackend::SetExtraHTTPHeaders { m_extraRequestHeaders }, pageID);
+    if (m_resourceCachingDisabled)
+        webProcess.send(Messages::WebInspectorBackend::SetResourceCachingDisabled { m_resourceCachingDisabled }, pageID);
 }
 
 void ProxyingNetworkAgent::disableInstrumentationForProcess(WebKit::WebProcessProxy& webProcess, WebCore::PageIdentifier pageID)
@@ -279,12 +287,37 @@ CommandResult<void> ProxyingNetworkAgent::disable()
     }
     removeAllRegisteredReceivers();
 
+    // Reset latched Network overrides. This agent outlives frontend disconnect/reconnect, so a
+    // future frontend must not inherit stale state; the WebProcess side is undone by the
+    // DisableNetworkInstrumentation messages above. Mirrors InspectorNetworkAgent::disable().
+    m_extraRequestHeaders = { };
+    m_resourceCachingDisabled = false;
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    if (RefPtr inspectedPage = m_inspectedPage.get())
+        inspectedPage->websiteDataStore().setEmulatedConditions(std::nullopt);
+#endif
+
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::setExtraHTTPHeaders(Ref<JSON::Object>&&)
+CommandResult<void> ProxyingNetworkAgent::setExtraHTTPHeaders(Ref<JSON::Object>&& headers)
 {
-    // FIXME: Forward to all WebContent processes.
+    HTTPHeaderMap headerMap;
+    for (auto& entry : headers.get()) {
+        Ref value = entry.value;
+        if (auto stringValue = value->asString(); !!stringValue)
+            headerMap.set(entry.key, stringValue);
+    }
+    m_extraRequestHeaders = WTF::move(headerMap);
+
+    RefPtr inspectedPage = m_inspectedPage.get();
+    if (!inspectedPage)
+        return { };
+
+    inspectedPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebInspectorBackend::SetExtraHTTPHeaders { m_extraRequestHeaders }, pageID);
+    });
+
     return { };
 }
 
@@ -330,9 +363,18 @@ void ProxyingNetworkAgent::getResponseBody(const Protocol::Network::RequestId& r
         *targetPageID);
 }
 
-CommandResult<void> ProxyingNetworkAgent::setResourceCachingDisabled(bool)
+CommandResult<void> ProxyingNetworkAgent::setResourceCachingDisabled(bool disabled)
 {
-    // FIXME: Forward to all WebContent processes.
+    m_resourceCachingDisabled = disabled;
+
+    RefPtr inspectedPage = m_inspectedPage.get();
+    if (!inspectedPage)
+        return { };
+
+    inspectedPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebInspectorBackend::SetResourceCachingDisabled { disabled }, pageID);
+    });
+
     return { };
 }
 
@@ -401,9 +443,18 @@ CommandResult<void> ProxyingNetworkAgent::interceptRequestWithError(const Protoc
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-CommandResult<void> ProxyingNetworkAgent::setEmulatedConditions(std::optional<int>&&)
+CommandResult<void> ProxyingNetworkAgent::setEmulatedConditions(std::optional<int>&& bytesPerSecondLimit)
 {
-    return makeUnexpected("Not supported"_s);
+    RefPtr inspectedPage = m_inspectedPage.get();
+    if (!inspectedPage)
+        return makeUnexpected("Inspected page is gone"_s);
+
+    std::optional<int64_t> limit;
+    if (bytesPerSecondLimit)
+        limit = *bytesPerSecondLimit;
+
+    inspectedPage->websiteDataStore().setEmulatedConditions(WTF::move(limit));
+    return { };
 }
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)

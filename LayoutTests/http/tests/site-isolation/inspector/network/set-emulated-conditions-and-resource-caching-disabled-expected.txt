@@ -1,0 +1,11 @@
+Test that Network.setEmulatedConditions and Network.setResourceCachingDisabled are forwarded to the WebContent process(es) under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Network.SetEmulatedConditionsAndResourceCachingDisabled
+-- Running test case: SiteIsolation.Network.SetResourceCachingDisabled.CrossOriginIFrameBypassesCache
+PASS: With caching enabled, the first load should come from the network.
+PASS: With caching enabled, the second load should be served from the cache.
+PASS: With caching disabled, the first load should come from the network.
+PASS: With caching disabled, the second load should NOT be served from the cache.
+

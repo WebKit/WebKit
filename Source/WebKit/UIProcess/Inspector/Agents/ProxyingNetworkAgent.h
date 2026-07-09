@@ -30,6 +30,7 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorResourceType.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
@@ -116,6 +117,9 @@ private:
 
     bool m_enabled { false };
     HashMap<std::pair<WebCore::ProcessIdentifier, WebCore::PageIdentifier>, unsigned> m_instrumentedProcessPageCounts;
+
+    WebCore::HTTPHeaderMap m_extraRequestHeaders;
+    bool m_resourceCachingDisabled { false };
 
     // Pin each instrumented WebProcessProxy alive while we hold an IPC message
     // receiver registration on it. Without this, the process can be destructed

@@ -29,6 +29,7 @@
 #include "Connection.h"
 #include "MessageReceiver.h"
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorBackendClient.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <wtf/HashMap.h>
@@ -100,6 +101,9 @@ public:
     void disableNetworkInstrumentation();
     void getResponseBody(WebCore::ResourceLoaderIdentifier, CompletionHandler<void(String content, bool base64Encoded, String errorString)>&&);
 
+    void setExtraHTTPHeaders(WebCore::HTTPHeaderMap&&);
+    void setResourceCachingDisabled(bool);
+
     void enablePageInstrumentation();
     void disablePageInstrumentation();
     void getFrameResourceData(Vector<WebCore::FrameIdentifier>&& frameIDs, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Inspector::FrameResourceData>>&&)>&&);
@@ -143,6 +147,11 @@ private:
 
     bool m_attached { false };
     bool m_previousCanAttach { false };
+
+    // Must outlive m_frameNetworkAgentProxies below: each proxy holds a reference to
+    // m_extraRequestHeaders and reads it in willSendRequest.
+    WebCore::HTTPHeaderMap m_extraRequestHeaders;
+    bool m_resourceCachingDisabled { false };
 
     HashMap<WebCore::FrameIdentifier, std::unique_ptr<FrameNetworkAgentProxy>> m_frameNetworkAgentProxies;
     UniqueRef<BackendResourceDataStore> m_resourceDataStore;

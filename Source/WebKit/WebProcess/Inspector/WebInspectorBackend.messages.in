@@ -46,6 +46,10 @@ messages -> WebInspectorBackend {
     EnableNetworkInstrumentation()
     DisableNetworkInstrumentation()
 
+    # Network overrides forwarded from the UIProcess ProxyingNetworkAgent. See rdar://181060656.
+    SetExtraHTTPHeaders(WebCore::HTTPHeaderMap headers)
+    SetResourceCachingDisabled(bool disabled)
+
     EnablePageInstrumentation()
     DisablePageInstrumentation()
 

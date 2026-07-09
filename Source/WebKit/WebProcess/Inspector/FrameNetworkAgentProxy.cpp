@@ -42,6 +42,7 @@
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorResourceType.h>
 #include <WebCore/InspectorResourceUtilities.h>
 #include <WebCore/InstrumentingAgents.h>
@@ -64,10 +65,11 @@ static ScopedResourceLoaderIdentifier qualifyResourceID(ResourceLoaderIdentifier
     return { resourceID, Process::identifier() };
 }
 
-FrameNetworkAgentProxy::FrameNetworkAgentProxy(WebAgentContext& context, WebPage& page, BackendResourceDataStore& store)
+FrameNetworkAgentProxy::FrameNetworkAgentProxy(WebAgentContext& context, WebPage& page, BackendResourceDataStore& store, const HTTPHeaderMap& extraRequestHeaders)
     : NetworkAgentInstrumentation(context)
     , m_page(page)
     , m_resourcesData(store)
+    , m_extraRequestHeaders(extraRequestHeaders)
 {
 }
 
@@ -164,6 +166,11 @@ void FrameNetworkAgentProxy::willSendRequest(ResourceLoaderIdentifier resourceID
     if (!loader || !loader->frame() || !loader->frame()->document())
         return;
 
+    // Apply the inspector's extra request headers to the mutable outgoing request, like the legacy
+    // InspectorNetworkAgent::willSendRequest.
+    for (auto& header : m_extraRequestHeaders)
+        request.setHTTPHeaderField(header.key, header.value);
+
     RefPtr protectedLoader = loader;
     RefPtr page = m_page.get();
     if (!page)
@@ -195,6 +202,11 @@ void FrameNetworkAgentProxy::willSendRequestOfType(ResourceLoaderIdentifier reso
 {
     if (!loader || !loader->frame() || !loader->frame()->document())
         return;
+
+    // Apply the inspector's extra request headers here too, so Ping/Beacon loads carry them like
+    // the legacy path (InspectorNetworkAgent funnels both willSendRequest paths through one core).
+    for (auto& header : m_extraRequestHeaders)
+        request.setHTTPHeaderField(header.key, header.value);
 
     RefPtr protectedLoader = loader;
     RefPtr page = m_page.get();

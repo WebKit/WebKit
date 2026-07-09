@@ -44,6 +44,7 @@ class CachedResource;
 class Document;
 class DocumentLoader;
 class DocumentThreadableLoader;
+class HTTPHeaderMap;
 class LocalFrame;
 class NetworkLoadMetrics;
 class ResourceError;
@@ -65,7 +66,7 @@ class FrameNetworkAgentProxy : public Inspector::NetworkAgentInstrumentation, pu
     WTF_MAKE_NONCOPYABLE(FrameNetworkAgentProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameNetworkAgentProxy);
 public:
-    FrameNetworkAgentProxy(WebCore::WebAgentContext&, WebPage&, BackendResourceDataStore&);
+    FrameNetworkAgentProxy(WebCore::WebAgentContext&, WebPage&, BackendResourceDataStore&, const WebCore::HTTPHeaderMap& extraRequestHeaders);
     ~FrameNetworkAgentProxy() override;
 
     // AbstractCanMakeCheckedPtr overrides
@@ -100,6 +101,9 @@ public:
 private:
     WeakRef<WebPage> m_page;
     CheckedRef<BackendResourceDataStore> const m_resourcesData;
+
+    // Owned by the WebInspectorBackend that owns this proxy; applied in willSendRequest.
+    const WebCore::HTTPHeaderMap& m_extraRequestHeaders;
 
     bool m_enabled { false };
 };
