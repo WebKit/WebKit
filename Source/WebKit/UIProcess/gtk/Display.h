@@ -45,6 +45,7 @@ public:
     static Display& singleton();
     ~Display();
 
+    GdkDisplay* gdkDisplay() const { return m_gdkDisplay.get(); }
     WebCore::GLDisplay* glDisplay() const;
     bool glDisplayIsSharedWithGtk() const { return glDisplay() && !m_glDisplayOwned; }
 

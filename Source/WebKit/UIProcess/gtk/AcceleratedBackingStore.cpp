@@ -178,12 +178,29 @@ Vector<RendererBufferFormat> AcceleratedBackingStore::preferredBufferFormats()
 
     RELEASE_ASSERT(display.glDisplay());
 
+    const auto& glDisplayFormats = display.glDisplay()->bufferFormats();
+    Vector<RendererBufferFormat::Format> formats;
+#if GTK_CHECK_VERSION(4, 13, 4)
+    auto* gdkFormats = gdk_display_get_dmabuf_formats(display.gdkDisplay());
+    for (const auto& format : glDisplayFormats) {
+        Vector<uint64_t, 1> modifiers;
+        for (auto modifier : format.modifiers) {
+            if (gdk_dmabuf_formats_contains(gdkFormats, format.fourcc.value, modifier))
+                modifiers.append(modifier);
+        }
+        if (!modifiers.isEmpty())
+            formats.append({ format.fourcc.value, WTF::move(modifiers) });
+    }
+#else
+    formats = glDisplayFormats.map([](const auto& format) -> RendererBufferFormat::Format {
+        return { format.fourcc.value, format.modifiers };
+    });
+#endif
+
     RendererBufferFormat format;
     format.usage = RendererBufferFormat::Usage::Rendering;
     format.drmDevice = drmMainDevice();
-    format.formats = display.glDisplay()->bufferFormats().map([](const auto& format) -> RendererBufferFormat::Format {
-        return { format.fourcc.value, format.modifiers };
-    });
+    format.formats = WTF::move(formats);
     return { WTF::move(format) };
 }
 #endif
