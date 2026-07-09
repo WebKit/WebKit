@@ -243,13 +243,12 @@ add_custom_command(
         MAIN_DEPENDENCY "${WEBKIT_DIR}/Modules/SwiftUI.swiftoverlay"
         VERBATIM)
 
-add_custom_target(WebKit_StageModules ALL DEPENDS
-        ${_wk_swiftmodule_outputs}
+add_custom_target(WebKit_CopyModules ALL DEPENDS
         "${_wk_modules_dir}/module.modulemap"
         "${_wk_modules_dir}/module.private.modulemap"
         "${_wk_modules_dir}/WebKit.swiftcrossimport/SwiftUI.swiftoverlay")
 
-add_dependencies(WebKit_StageModules WebKit)
+list(APPEND WebKit_DEPENDENCIES WebKit_CopyModules)
 
 set(WebKit_OUTPUT_NAME WebKit)
 

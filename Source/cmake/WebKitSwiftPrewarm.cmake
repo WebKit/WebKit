@@ -10,7 +10,7 @@ function(WEBKIT_ADD_SWIFT_PREWARM _consumer _swift_source)
     add_library(${_prewarm} OBJECT "${_swift_source}")
 
     get_target_property(_opts ${_consumer} COMPILE_OPTIONS)
-    list(FILTER _opts EXCLUDE REGEX "-emit-clang-header-path")
+    list(FILTER _opts EXCLUDE REGEX "(-emit-clang-header-path|-import-underlying-module)")
     target_compile_options(${_prewarm} PRIVATE ${_opts})
 
     get_target_property(_consumer_bindir ${_consumer} BINARY_DIR)

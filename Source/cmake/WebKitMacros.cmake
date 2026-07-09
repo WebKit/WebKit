@@ -1107,6 +1107,10 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # apinotes version is keyed off the effective Swift language mode, so
         # this also keeps PAL/WebGPU/WebKit on the same module-cache hash.
         list(APPEND _swift_options "-swift-version" "6")
+        if (APPLE)
+            # Swift modules extend their underlying ObjC++ module.
+            list(APPEND _swift_options "-import-underlying-module")
+        endif ()
         if (${_target}_SWIFT_INTEROP_MODULE_PATH_SWIFT_ONLY)
             list(APPEND _swift_options "-I${_interop_module_path}")
         else ()
