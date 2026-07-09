@@ -1574,7 +1574,8 @@ void RenderFlexibleBox::performFlexLayout(RelayoutChildren relayoutChildren)
     LayoutUnit gapBetweenItems = computeGap(GapType::BetweenItems);
     LayoutUnit gapBetweenLines = computeGap(GapType::BetweenLines);
 
-    auto lineStates = layoutFlexLines(allItems, relayoutChildren, gapBetweenItems);
+    auto [lineStates, remainingFreeSpaces] = layoutFlexLines(allItems, relayoutChildren, gapBetweenItems);
+    handleMainAxisAlignment(lineStates, remainingFreeSpaces, gapBetweenItems);
     setFlexItemCountsForFirstAndLastLine(lineStates);
     adjustLogicalHeightForLineIfEmpty();
 
@@ -1704,7 +1705,7 @@ RenderFlexibleBox::FlexLineStates RenderFlexibleBox::computeCrossSizeForFlexLine
     return lineStates;
 }
 
-RenderFlexibleBox::FlexLineStates RenderFlexibleBox::layoutFlexLines(FlexLayoutItems& allItems, RelayoutChildren relayoutChildren, LayoutUnit gapBetweenItems)
+std::pair<RenderFlexibleBox::FlexLineStates, Vector<LayoutUnit>> RenderFlexibleBox::layoutFlexLines(FlexLayoutItems& allItems, RelayoutChildren relayoutChildren, LayoutUnit gapBetweenItems)
 {
     InspectorInstrumentation::flexibleBoxRendererBeganLayout(*this);
 
@@ -1713,12 +1714,15 @@ RenderFlexibleBox::FlexLineStates RenderFlexibleBox::layoutFlexLines(FlexLayoutI
     trimCrossAxisMarginsForFlexItems(allItems, flexLines);
     layoutFlexItems(allItems.mutableSpan(), relayoutChildren);
     auto lineStates = computeCrossSizeForFlexLines(allItems, flexLines);
+    return { WTF::move(lineStates), WTF::move(remainingFreeSpaces) };
+}
 
+void RenderFlexibleBox::handleMainAxisAlignment(FlexLineStates& lineStates, const Vector<LayoutUnit>& remainingFreeSpaces, LayoutUnit gapBetweenItems)
+{
     for (size_t lineIndex = 0; lineIndex < lineStates.size(); ++lineIndex) {
         auto& lineState = lineStates[lineIndex];
         placeFlexItems(lineState.crossAxisOffset, lineState.flexLayoutItems, remainingFreeSpaces[lineIndex], gapBetweenItems);
     }
-    return lineStates;
 }
 
 void RenderFlexibleBox::setFlexItemCountsForFirstAndLastLine(const FlexLineStates& lineStates)

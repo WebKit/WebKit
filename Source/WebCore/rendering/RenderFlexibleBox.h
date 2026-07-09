@@ -259,7 +259,10 @@ private:
 
     void performFlexLayout(RelayoutChildren);
     FlexLayoutItems collectFlexItems(RelayoutChildren);
-    FlexLineStates layoutFlexLines(FlexLayoutItems& allItems, RelayoutChildren, LayoutUnit gapBetweenItems);
+    // Sizes every flex line and lays out its items, returning the line states together with each line's remaining main-axis free space.
+    std::pair<FlexLineStates, Vector<LayoutUnit>> layoutFlexLines(FlexLayoutItems& allItems, RelayoutChildren, LayoutUnit gapBetweenItems);
+    // Positions each line's items along the main axis (justify-content + auto margins).
+    void handleMainAxisAlignment(FlexLineStates&, const Vector<LayoutUnit>& remainingFreeSpaces, LayoutUnit gapBetweenItems);
     void setFlexItemCountsForFirstAndLastLine(const FlexLineStates&);
     void adjustLogicalHeightForLineIfEmpty();
 
