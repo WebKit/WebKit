@@ -1152,7 +1152,7 @@ WI.Table = class Table extends WI.View
             this._topSpacerElement.style.height = marginTop + "px";
         }
 
-        if (this._bottomDataTableMarginElement !== marginBottom) {
+        if (this._bottomSpacerHeight !== marginBottom) {
             this._bottomSpacerHeight = marginBottom;
             this._bottomSpacerElement.style.height = marginBottom + "px";
         }

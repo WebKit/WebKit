@@ -1186,7 +1186,7 @@ WI.DataGrid = class DataGrid extends WI.View
             this._topDataTableMarginElement.style.height = marginTop + "px";
         }
 
-        if (this._bottomDataTableMarginElement !== marginBottom) {
+        if (this._bottomDataTableMarginHeight !== marginBottom) {
             this._bottomDataTableMarginHeight = marginBottom;
             this._bottomDataTableMarginElement.style.height = marginBottom + "px";
         }
