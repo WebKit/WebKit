@@ -1266,6 +1266,7 @@ enum ContentsFormat {
     undefined updateQuotaBasedOnSpaceUsage();
 
     undefined setConsoleMessageListener(StringCallback? callback);
+    undefined configureLoggingChannel(DOMString channelName, boolean enabled);
 
     readonly attribute boolean supportsAudioSession;
     AudioSessionCategory audioSessionCategory();
