@@ -46,8 +46,8 @@ public:
 
     enum class CacheUnusable : bool { Oversized };
 
-    Expected<std::optional<SimpleRange>, CacheUnusable> findMatchFrom(const std::optional<SimpleRange>&, const String& target, FindOptions);
-    Expected<Vector<SimpleRange>, CacheUnusable> findMatches(const std::optional<SimpleRange>&, const String& target, FindOptions, std::optional<unsigned> limit = std::nullopt);
+    WEBCORE_EXPORT Expected<std::optional<SimpleRange>, CacheUnusable> findMatchFrom(const std::optional<SimpleRange>&, const String& target, FindOptions);
+    WEBCORE_EXPORT Expected<Vector<SimpleRange>, CacheUnusable> findMatches(const std::optional<SimpleRange>&, const String& target, FindOptions, std::optional<unsigned> limit = std::nullopt);
     WEBCORE_EXPORT Expected<unsigned, CacheUnusable> countMatches(const std::optional<SimpleRange>&, const String& target, FindOptions, std::optional<unsigned> limit = std::nullopt);
 
     WEBCORE_EXPORT static void setMaximumRunCountForTesting(std::optional<unsigned>);

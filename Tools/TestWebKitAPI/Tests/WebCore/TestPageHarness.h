@@ -28,6 +28,7 @@
 #include "TestPlatformStrategies.h"
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/Document.h>
+#include <WebCore/Element.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCoreTestSupport/TestPage.h>
@@ -51,6 +52,8 @@ public:
     WebCore::Document& document() { return *m_page->localTopDocument(); }
 
     void loadHTML(const String& html) { WebCore::loadHTMLIntoTestPage(frame(), html); }
+
+    RefPtr<WebCore::Element> getElementById(const String& id) { return document().getElementById(id); }
 
 private:
     explicit TestPageHarness(Ref<WebCore::Page>&& page)
