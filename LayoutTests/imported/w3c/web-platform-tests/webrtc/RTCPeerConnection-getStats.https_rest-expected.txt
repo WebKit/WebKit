@@ -4,9 +4,9 @@ PASS getStats(null) should succeed
 PASS getStats() with track not added to connection should reject with InvalidAccessError
 PASS getStats() with track added via addTrack should succeed
 PASS getStats() with track added via addTransceiver should succeed
-FAIL getStats() with track associated with both sender and receiver should reject with InvalidAccessError assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS getStats() with track associated with both sender and receiver should reject with InvalidAccessError
 PASS getStats() audio contains inbound-rtp stats
-FAIL getStats(track) should not work if multiple senders have the same track assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS getStats(track) should not work if multiple senders have the same track
 PASS RTCStats.timestamp increases with time passing
 PASS getStats succeeds on a closed peerconnection
 

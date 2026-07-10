@@ -656,18 +656,36 @@ ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configu
 void RTCPeerConnection::getStats(MediaStreamTrack* selector, Ref<DeferredPromise>&& promise)
 {
     if (selector) {
+        auto invalidSelectorCall = [&] {
+            promise->reject(Exception { ExceptionCode::InvalidAccessError, "Selector is invalid"_s });
+        };
+
+        RefPtr<RTCRtpSender> sender;
+        RefPtr<RTCRtpReceiver> receiver;
         for (auto& transceiver : m_transceiverSet.list()) {
             if (transceiver->sender().track() == selector) {
-                protect(*m_backend)->getStats(transceiver->sender(), WTF::move(promise));
-                return;
+                if (sender || receiver)
+                    return invalidSelectorCall();
+                sender = &transceiver->sender();
             }
             if (&transceiver->receiver().track() == selector) {
-                protect(*m_backend)->getStats(transceiver->receiver(), WTF::move(promise));
-                return;
+                if (sender || receiver)
+                    return invalidSelectorCall();
+                receiver = &transceiver->receiver();
             }
         }
-        promise->reject(Exception { ExceptionCode::InvalidAccessError, "Selector is invalid"_s });
-        return;
+
+        if (sender) {
+            protect(*m_backend)->getStats(*sender, WTF::move(promise));
+            return;
+        }
+
+        if (receiver) {
+            protect(*m_backend)->getStats(*receiver, WTF::move(promise));
+            return;
+        }
+
+        return invalidSelectorCall();
     }
 
     promise->whenSettled([pendingActivity = makePendingActivity(*this)] { });
