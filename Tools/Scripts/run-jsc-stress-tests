@@ -3156,6 +3156,9 @@ if !$numChildProcesses
     if ENV["WEBKIT_TEST_CHILD_PROCESSES"]
         $numChildProcesses = ENV["WEBKIT_TEST_CHILD_PROCESSES"].to_i
         $numChildProcessesSetByUser = true
+    elsif ENV["NUMBER_OF_PROCESSORS"]
+        $numChildProcesses = ENV["NUMBER_OF_PROCESSORS"].to_i
+        $numChildProcessesSetByUser = true
     else
         $numChildProcesses = numberOfProcessors
     end
