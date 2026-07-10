@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/META.yml
@@ -23,16 +21,19 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/back-forward-cache-with-open-webtransport-connection.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/bidirectional-cancel-crash.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/close.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/congestion-control.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/connect.https.any.js
-/LayoutTests/imported/w3c/web-platform-tests/webtransport/constructor.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/constructor.https.sub.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/csp-fail.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/csp-pass.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/datagram-bad-chunk.https.any.js
-/LayoutTests/imported/w3c/web-platform-tests/webtransport/datagram-cancel-crash.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/datagram-cancel-crash.https.sub.window.js
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/datagrams.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/echo-large-bidirectional-streams.https.any.js
-/LayoutTests/imported/w3c/web-platform-tests/webtransport/idlharness.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/historical.https.sub.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/in-removed-iframe.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/incoming-multiple-streams.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/sendorder.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/sendstream-bad-chunk.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/server-certificate-hashes.https.any.js

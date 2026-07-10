@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/abort-stream-from-server.py
@@ -24,5 +22,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/sendorder.py
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/server-close.py
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/server-connection-close.py
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/server-create-multiple-streams.py
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/server-read-then-close.py
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/token-count.py
