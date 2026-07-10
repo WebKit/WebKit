@@ -72,6 +72,7 @@
 #include "HTMLDataListElement.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLFormControlElement.h"
+#include "HTMLHeadingElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLModelElement.h"
 #include "HTMLNames.h"
@@ -1663,6 +1664,13 @@ RenderView* AccessibilityObject::topRenderer() const
 unsigned AccessibilityObject::ariaLevel() const
 {
     return std::max(0, integralAttribute(aria_levelAttr));
+}
+
+unsigned AccessibilityObject::computedHeadingLevel() const
+{
+    if (RefPtr heading = dynamicDowncast<HTMLHeadingElement>(node()))
+        return heading->level();
+    return 0;
 }
 
 String AccessibilityObject::language() const

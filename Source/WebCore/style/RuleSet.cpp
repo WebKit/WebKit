@@ -472,20 +472,16 @@ void RuleSet::addRuleToBucket(RuleData& ruleData)
     }
 
     if (headingPseudoClassSelector) {
-        std::array<bool, 7> wantedLevel { };
+        unsigned highestMatchableBase = 0;
         if (auto* integerList = headingPseudoClassSelector->integerList()) {
             for (int level : *integerList) {
-                if (level >= 1 && level <= 6)
-                    wantedLevel[level] = true;
+                if (level >= 1 && level <= 9)
+                    highestMatchableBase = std::max(highestMatchableBase, std::min<unsigned>(level, 6));
             }
-        } else {
-            for (unsigned level = 1; level <= 6; ++level)
-                wantedLevel[level] = true;
-        }
-        bool addedToAnyBucket = false;
-        for (unsigned level = 1; level <= 6; ++level) {
-            if (!wantedLevel[level])
-                continue;
+        } else
+            highestMatchableBase = 6;
+
+        for (unsigned level = 1; level <= highestMatchableBase; ++level) {
             auto& tag = [&] -> const HTMLQualifiedName& {
                 switch (level) {
                 case 1: return HTMLNames::h1Tag;
@@ -498,9 +494,8 @@ void RuleSet::addRuleToBucket(RuleData& ruleData)
             }();
             addToRuleSet(tag.localName(), m_tagLocalNameRules, ruleData);
             addToRuleSet(tag.localName(), m_tagLowercaseLocalNameRules, ruleData);
-            addedToAnyBucket = true;
         }
-        if (addedToAnyBucket)
+        if (highestMatchableBase)
             return;
     }
 

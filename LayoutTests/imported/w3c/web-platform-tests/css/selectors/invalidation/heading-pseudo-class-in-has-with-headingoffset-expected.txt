@@ -1,0 +1,58 @@
+
+PASS Initial colors: #has_heading_1
+PASS Initial colors: #has_heading_2
+PASS Initial colors: #has_heading_3
+PASS Initial colors: #has_heading_1_2
+PASS h1[headingoffset=1]: #has_heading_1
+PASS h1[headingoffset=1]: #has_heading_2
+PASS h1[headingoffset=1]: #has_heading_3
+PASS h1[headingoffset=1]: #has_heading_1_2
+PASS h1[headingoffset=2]: #has_heading_1
+PASS h1[headingoffset=2]: #has_heading_2
+PASS h1[headingoffset=2]: #has_heading_3
+PASS h1[headingoffset=2]: #has_heading_1_2
+PASS h1 with headingoffset removed: #has_heading_1
+PASS h1 with headingoffset removed: #has_heading_2
+PASS h1 with headingoffset removed: #has_heading_3
+PASS h1 with headingoffset removed: #has_heading_1_2
+PASS ancestor[headingoffset=1]: #has_heading_1
+PASS ancestor[headingoffset=1]: #has_heading_2
+PASS ancestor[headingoffset=1]: #has_heading_3
+PASS ancestor[headingoffset=1]: #has_heading_1_2
+PASS ancestor[headingoffset=2]: #has_heading_1
+PASS ancestor[headingoffset=2]: #has_heading_2
+PASS ancestor[headingoffset=2]: #has_heading_3
+PASS ancestor[headingoffset=2]: #has_heading_1_2
+PASS h1[headingreset] (cuts ancestor offset): #has_heading_1
+PASS h1[headingreset] (cuts ancestor offset): #has_heading_2
+PASS h1[headingreset] (cuts ancestor offset): #has_heading_3
+PASS h1[headingreset] (cuts ancestor offset): #has_heading_1_2
+PASS h1 with headingreset removed: #has_heading_1
+PASS h1 with headingreset removed: #has_heading_2
+PASS h1 with headingreset removed: #has_heading_3
+PASS h1 with headingreset removed: #has_heading_1_2
+PASS ancestor with headingoffset removed: #has_heading_1
+PASS ancestor with headingoffset removed: #has_heading_2
+PASS ancestor with headingoffset removed: #has_heading_3
+PASS ancestor with headingoffset removed: #has_heading_1_2
+PASS h1.headingOffset = 1: #has_heading_1
+PASS h1.headingOffset = 1: #has_heading_2
+PASS h1.headingOffset = 1: #has_heading_3
+PASS h1.headingOffset = 1: #has_heading_1_2
+PASS h1.headingOffset = 0: #has_heading_1
+PASS h1.headingOffset = 0: #has_heading_2
+PASS h1.headingOffset = 0: #has_heading_3
+PASS h1.headingOffset = 0: #has_heading_1_2
+PASS ancestor[headingoffset=2] again: #has_heading_1
+PASS ancestor[headingoffset=2] again: #has_heading_2
+PASS ancestor[headingoffset=2] again: #has_heading_3
+PASS ancestor[headingoffset=2] again: #has_heading_1_2
+PASS h1.headingReset = true: #has_heading_1
+PASS h1.headingReset = true: #has_heading_2
+PASS h1.headingReset = true: #has_heading_3
+PASS h1.headingReset = true: #has_heading_1_2
+PASS h1.headingReset = false: #has_heading_1
+PASS h1.headingReset = false: #has_heading_2
+PASS h1.headingReset = false: #has_heading_3
+PASS h1.headingReset = false: #has_heading_1_2
+

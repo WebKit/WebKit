@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,11 +34,23 @@ public:
 
     ~HTMLHeadingElement();
 
-    unsigned NODELETE level() const;
+    unsigned level() const;
+
+    unsigned effectiveHeadingOffset() const { return m_effectiveHeadingOffset; }
+    void setEffectiveHeadingOffset(unsigned offset) { m_effectiveHeadingOffset = std::min<unsigned>(9, offset); }
+
+    static constexpr ptrdiff_t effectiveHeadingOffsetMemoryOffset() { return OBJECT_OFFSETOF(HTMLHeadingElement, m_effectiveHeadingOffset); }
 
 private:
     HTMLHeadingElement(const QualifiedName&, Document&);
+
+    Node::NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode& parentOfInsertedTree) final;
+
+    uint8_t m_effectiveHeadingOffset { 0 };
 };
+
+unsigned computedHeadingOffset(const Element&);
+void updateEffectiveHeadingOffsetForElementAndDescendants(Element& root, unsigned rootOffset);
 
 } // namespace WebCore
 

@@ -40,6 +40,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-css-nesting-shared.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-in-adjacent-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-in-ancestor-position.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-in-is-non-subject-compound.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-in-parent-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-in-sibling-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-invalidation-after-removing-non-first-element.html
@@ -63,6 +64,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-with-nth-child-sibling-remove.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-with-nth-child.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-with-pseudo-class.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/heading-pseudo-class-in-has-with-headingoffset.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/heading-pseudo-class-in-has-with-slot-reassignment.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/heading-pseudo-class-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/host-context-pseudo-class-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/host-has-shadow-tree-element-at-nonsubject-position.html
@@ -230,6 +233,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/nth-last-child-when-sibling-changes.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/nth-of-namespace-class-invalidation-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/open-pseudo-class-in-has.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/option-disabled-when-ancestor-changes.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/part-dir.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/part-lang.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/part-pseudo-expected.html

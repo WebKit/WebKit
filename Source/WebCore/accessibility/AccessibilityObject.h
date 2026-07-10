@@ -553,6 +553,7 @@ public:
     RenderView* topRenderer() const;
     virtual ScrollView* scrollView() const { return nullptr; }
     unsigned ariaLevel() const final;
+    unsigned computedHeadingLevel() const final;
     String language() const final;
     // 1-based, to match the aria-level spec.
     bool isInlineText() const final;

@@ -860,6 +860,9 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
     case AXProperty::HasRemoteFrameChild:
         stream << "HasRemoteFrameChild";
         break;
+    case AXProperty::HeadingLevel:
+        stream << "HeadingLevel";
+        break;
     case AXProperty::IsARIAHidden:
         stream << "IsARIAHidden";
         break;

@@ -190,6 +190,7 @@ enum class AXProperty : uint16_t {
     HasApplePDFAnnotationAttribute,
     HasLinethrough,
     HasRemoteFrameChild,
+    HeadingLevel,
     InputType,
     IsEditableWebArea,
     IsSubscript,

@@ -53,6 +53,10 @@
 
     [CEReactions=Needed, Reflect] attribute boolean inert;
 
+    // The headingoffset & headingreset attributes
+    [CEReactions=Needed, EnabledBySetting=HeadingOffsetEnabled, Reflect] attribute unsigned long headingOffset;
+    [CEReactions=Needed, EnabledBySetting=HeadingOffsetEnabled, Reflect] attribute boolean headingReset;
+
     // The popover API
     [EnabledBySetting=PopoverAttributeEnabled] undefined showPopover(optional ShowPopoverOptions options = {});
     [EnabledBySetting=PopoverAttributeEnabled] undefined hidePopover();

@@ -1653,21 +1653,7 @@ unsigned AXCoreObject::headingLevel() const
         if (level > 0)
             return level;
     }
-
-    auto elementName = this->elementName();
-    if (elementName == ElementName::HTML_h1)
-        return 1;
-    if (elementName == ElementName::HTML_h2)
-        return 2;
-    if (elementName == ElementName::HTML_h3)
-        return 3;
-    if (elementName == ElementName::HTML_h4)
-        return 4;
-    if (elementName == ElementName::HTML_h5)
-        return 5;
-    if (elementName == ElementName::HTML_h6)
-        return 6;
-    return 0;
+    return computedHeadingLevel();
 }
 
 unsigned AXCoreObject::hierarchicalLevel() const

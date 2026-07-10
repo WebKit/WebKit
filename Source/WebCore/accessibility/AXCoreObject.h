@@ -762,6 +762,7 @@ public:
 
     unsigned blockquoteLevel() const;
     unsigned headingLevel() const;
+    virtual unsigned computedHeadingLevel() const { return 0; }
     virtual AccessibilityButtonState checkboxOrRadioValue() const = 0;
     virtual String valueDescription() const = 0;
     virtual float valueForRange() const = 0;

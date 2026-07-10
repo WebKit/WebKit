@@ -3727,6 +3727,20 @@ HardwareAccelerationEnabled:
     WebCore:
       default: true
 
+HeadingOffsetEnabled:
+  type: bool
+  status: preview
+  category: html
+  humanReadableName: "HTML headingoffset & headingreset attributes"
+  humanReadableDescription: "Enable HTML headingoffset & headingreset attribute support"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 HiddenPageCSSAnimationSuspensionEnabled:
   type: bool
   status: embedder

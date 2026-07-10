@@ -39,6 +39,7 @@
 #include "ElementRareData.h"
 #include "FunctionCall.h"
 #include "HTMLDocument.h"
+#include "HTMLHeadingElement.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
 #include "Namespace.h"
@@ -3946,8 +3947,6 @@ void SelectorCodeGenerator::generateElementMatchesHeading(Assembler::JumpList& f
 
 void SelectorCodeGenerator::generateElementMatchesHeading(Assembler::JumpList& failureCases, const FixedVector<int>* integerList)
 {
-    // FIXME: When HTMLHeadingElement caches an effective offset (headingoffset/headingreset),
-    // load that byte here, add it to the base, and saturate at 9.
     LocalRegister nodeName(m_registerAllocator);
     {
         LocalRegister qualifiedNameImpl(m_registerAllocator);
@@ -3963,10 +3962,16 @@ void SelectorCodeGenerator::generateElementMatchesHeading(Assembler::JumpList& f
     if (!integerList)
         return;
 
-    uint8_t levelMask = 0;
+    LocalRegister offset(m_registerAllocator);
+    m_assembler.load8(Assembler::Address(elementAddressRegister, HTMLHeadingElement::effectiveHeadingOffsetMemoryOffset()), offset);
+    m_assembler.add32(offset, nodeName);
+    m_assembler.add32(Assembler::TrustedImm32(1), nodeName);
+    m_assembler.moveConditionally32(Assembler::Above, nodeName, Assembler::TrustedImm32(9), Assembler::TrustedImm32(9), nodeName, nodeName);
+
+    uint16_t levelMask = 0;
     for (int level : *integerList) {
-        if (level >= 1 && level <= 6)
-            levelMask |= 1u << (level - 1);
+        if (level >= 1 && level <= 9)
+            levelMask |= 1u << level;
     }
     if (!levelMask) {
         failureCases.append(m_assembler.jump());

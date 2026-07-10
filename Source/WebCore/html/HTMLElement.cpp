@@ -64,6 +64,7 @@
 #include "HTMLElementFactory.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormElement.h"
+#include "HTMLHeadingElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLMaybeFormAssociatedCustomElement.h"
 #include "HTMLNames.h"
@@ -392,6 +393,13 @@ void HTMLElement::attributeChanged(const QualifiedName& name, const AtomString& 
             setTabIndexExplicitly(optionalTabIndex.value());
         else
             setTabIndexExplicitly(std::nullopt);
+        return;
+    case AttributeNames::headingoffsetAttr:
+    case AttributeNames::headingresetAttr:
+        if (document().settings().headingOffsetEnabled()) {
+            document().setUsesHeadingOffsetAttribute();
+            updateEffectiveHeadingOffsetForElementAndDescendants(*this, computedHeadingOffset(*this));
+        }
         return;
     case AttributeNames::inertAttr:
         invalidateStyle();
