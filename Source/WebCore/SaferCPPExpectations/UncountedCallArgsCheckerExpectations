@@ -25,6 +25,7 @@ Modules/webaudio/AudioSummingJunction.cpp
 Modules/webaudio/AudioWorkletMessagingProxy.cpp
 Modules/webaudio/AudioWorkletNode.cpp
 Modules/webaudio/BaseAudioContext.h
+Modules/webaudio/ChannelMergerNode.cpp
 Modules/webaudio/ConvolverNode.cpp
 Modules/webaudio/DefaultAudioDestinationNode.cpp
 Modules/webaudio/DynamicsCompressorNode.cpp
@@ -155,6 +156,7 @@ editing/ApplyStyleCommand.cpp
 editing/BreakBlockquoteCommand.cpp
 editing/CompositeEditCommand.cpp
 editing/DeleteSelectionCommand.cpp
+editing/EditCommand.cpp
 editing/Editor.cpp
 editing/FrameSelection.cpp
 editing/ReplaceSelectionCommand.cpp
@@ -170,6 +172,7 @@ html/CachedHTMLCollection.h
 html/CachedHTMLCollectionInlines.h
 html/CollectionTraversalInlines.h
 html/CustomPaintCanvas.cpp
+html/FileInputType.cpp
 html/HTMLCanvasElement.cpp
 [ macOS ] html/HTMLFormElement.cpp
 html/HTMLInputElement.cpp
@@ -214,6 +217,7 @@ inspector/agents/InspectorPageAgent.cpp
 inspector/agents/InspectorTimelineAgent.cpp
 inspector/agents/InspectorWorkerAgent.cpp
 inspector/agents/page/PageConsoleAgent.cpp
+inspector/agents/page/PageDOMDebuggerAgent.cpp
 inspector/agents/page/PageNetworkAgent.cpp
 inspector/agents/page/PageRuntimeAgent.cpp
 inspector/agents/worker/ServiceWorkerAgent.cpp
@@ -314,7 +318,6 @@ rendering/LegacyLineLayout.cpp
 rendering/MarkedText.cpp
 rendering/RenderBlock.cpp
 rendering/RenderBox.cpp
-rendering/RenderBoxModelObject.cpp
 rendering/RenderElement.cpp
 rendering/RenderEmbeddedObject.cpp
 rendering/RenderFragmentContainer.cpp

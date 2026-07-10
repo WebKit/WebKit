@@ -1,2 +1,8 @@
-[ macOS ] Buffer.mm
+BindGroup.mm
+Buffer.mm
+CommandEncoder.mm
+CommandsMixin.mm
 [ macOS ] HardwareCapabilities.mm
+PipelineLayout.mm
+Texture.mm
+WGSL/UniformityAnalysis.cpp

@@ -1,2 +1,3 @@
 heap/HeapSnapshotBuilder.cpp
+inspector/JSGlobalObjectInspectorController.cpp
 inspector/agents/InspectorConsoleAgent.cpp

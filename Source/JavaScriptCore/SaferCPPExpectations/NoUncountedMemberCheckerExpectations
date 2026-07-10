@@ -43,4 +43,3 @@ wasm/WasmFunctionParser.h
 wasm/WasmIPIntGenerator.cpp
 wasm/WasmNameSectionParser.h
 wasm/WasmOMGIRGenerator.cpp
-wasm/WasmStreamingCompiler.h

@@ -1,7 +1,6 @@
 Modules/WebGPU/Implementation/WebGPUDeviceImpl.cpp
 Modules/cache/DOMCache.cpp
 Modules/cache/DOMCacheStorage.cpp
-Modules/mediasession/MediaMetadata.cpp
 Modules/mediastream/PeerConnectionBackend.cpp
 Modules/mediastream/RTCDataChannel.cpp
 Modules/mediastream/RTCPeerConnection.cpp
