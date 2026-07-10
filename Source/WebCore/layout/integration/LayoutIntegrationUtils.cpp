@@ -26,7 +26,10 @@
 #include "config.h"
 #include "LayoutIntegrationUtils.h"
 
+#include "GridLayoutUtils.h"
 #include "LayoutBox.h"
+#include "LayoutChildIterator.h"
+#include "LayoutElementBox.h"
 #include "LayoutIntegrationFormattingContextLayout.h"
 #include "LayoutState.h"
 #include "RenderObject.h"
@@ -116,6 +119,58 @@ LayoutUnit IntegrationUtils::maxContentLogicalWidthContribution(const ElementBox
 {
     ASSERT(box.isGridItem());
     return m_globalLayoutState->logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MaxContentContribution);
+}
+
+// https://www.w3.org/TR/css-grid-1/#algo-grid-sizing — step 3.
+// A stretched grid item's block-size-dependent inline contribution is measured with its block size
+// fixed to the stretched (row) size computed in step 2.
+LayoutUnit IntegrationUtils::minContentLogicalWidthContributionForStretchedGridItem(const ElementBox& box, LayoutUnit stretchedBlockSize) const
+{
+    ASSERT(box.isGridItem());
+    CheckedRef renderer = downcast<RenderBox>(*box.rendererForIntegration());
+
+    renderer->setOverridingBorderBoxLogicalHeight(stretchedBlockSize);
+    renderer->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
+
+    // The item's cached inline contribution is derived from its children's, so any child with an
+    // inline size computed from an aspect ratio must be invalidated too for it to be remeasured
+    // against the overridden block size.
+    for (auto& child : childrenOfType<ElementBox>(box)) {
+        if (GridLayoutUtils::gridItemChildHasInlineSizeComputedFromAspectRatio(child))
+            downcast<RenderBox>(*child.rendererForIntegration()).invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
+    }
+
+    auto contribution = m_globalLayoutState->logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MinContentContribution);
+
+    renderer->clearOverridingBorderBoxLogicalHeight();
+
+    return contribution;
+}
+
+// https://www.w3.org/TR/css-grid-1/#algo-grid-sizing — step 3.
+// A stretched grid item's block-size-dependent inline contribution is measured with its block size
+// fixed to the stretched (row) size computed in step 2.
+LayoutUnit IntegrationUtils::maxContentLogicalWidthContributionForStretchedGridItem(const ElementBox& box, LayoutUnit stretchedBlockSize) const
+{
+    ASSERT(box.isGridItem());
+    CheckedRef renderer = downcast<RenderBox>(*box.rendererForIntegration());
+
+    renderer->setOverridingBorderBoxLogicalHeight(stretchedBlockSize);
+    renderer->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
+
+    // The item's cached inline contribution is derived from its children's, so any child with an
+    // inline size computed from an aspect ratio must be invalidated too for it to be remeasured
+    // against the overridden block size.
+    for (auto& child : childrenOfType<ElementBox>(box)) {
+        if (GridLayoutUtils::gridItemChildHasInlineSizeComputedFromAspectRatio(child))
+            downcast<RenderBox>(*child.rendererForIntegration()).invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
+    }
+
+    auto contribution = m_globalLayoutState->logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MaxContentContribution);
+
+    renderer->clearOverridingBorderBoxLogicalHeight();
+
+    return contribution;
 }
 
 void IntegrationUtils::layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLineLogicalTopLeft, const InlineLayoutState& inlineLayoutState) const

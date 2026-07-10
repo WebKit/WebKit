@@ -47,6 +47,8 @@ struct TrackSizingItem {
     LayoutUnit borderAndPadding;
     WTF::Range<size_t> spannedLines;
     LayoutUnit oppositeAxisConstraint;
+    // Only needed during the second pass of track sizing.
+    std::optional<LayoutUnit> oppositeAxisStretchedSize;
 };
 
 class TrackSizingAlgorithm {

@@ -90,6 +90,16 @@ std::optional<double> preferredAspectRatio(const ElementBox& gridItem)
     return { };
 }
 
+// https://www.w3.org/TR/css-grid-1/#algo-grid-sizing — step 3.
+// Used to find grid items that need the second column pass, and to pick which children to re-measure
+// when running it.
+bool gridItemChildHasInlineSizeComputedFromAspectRatio(const ElementBox& gridItemChild)
+{
+    ASSERT(gridItemChild.parent().isGridItem());
+    bool hasAspectRatio = (gridItemChild.isReplacedBox() && gridItemChild.intrinsicRatio()) || gridItemChild.style().aspectRatio().hasRatio();
+    return hasAspectRatio && gridItemChild.style().width().isAuto() && gridItemChild.style().height().isPercent();
+}
+
 static bool NODELETE spansAutoMinTrackSizingFunction(WTF::Range<size_t> spannedTrackIndexes, const TrackSizingFunctionsList& trackSizingFunctions)
 {
     for (auto trackIndex : std::views::iota(spannedTrackIndexes.begin(), spannedTrackIndexes.end())) {
@@ -491,15 +501,19 @@ LayoutUnit gridAreaDimensionSize(size_t startLine, size_t endLine, const TrackSi
     return sumOfTrackSizes + (numberOfInteriorGaps * gap);
 }
 
-LayoutUnit inlineAxisMinContentContribution(const PlacedGridItem& gridItem, LayoutUnit blockAxisConstraint, const IntegrationUtils& integrationUtils)
+LayoutUnit inlineAxisMinContentContribution(const PlacedGridItem& gridItem, LayoutUnit blockAxisConstraint, std::optional<LayoutUnit> stretchedBlockSize, const IntegrationUtils& integrationUtils)
 {
     UNUSED_PARAM(blockAxisConstraint);
+    if (stretchedBlockSize)
+        return BorderBoxSize::fromIntegrationFunction(integrationUtils.minContentLogicalWidthContributionForStretchedGridItem(gridItem.layoutBox(), *stretchedBlockSize)).value;
     return BorderBoxSize::fromIntegrationFunction(integrationUtils.minContentLogicalWidthContribution(gridItem.layoutBox())).value;
 }
 
-LayoutUnit inlineAxisMaxContentContribution(const PlacedGridItem& gridItem, LayoutUnit blockAxisConstraint, const IntegrationUtils& integrationUtils)
+LayoutUnit inlineAxisMaxContentContribution(const PlacedGridItem& gridItem, LayoutUnit blockAxisConstraint, std::optional<LayoutUnit> stretchedBlockSize, const IntegrationUtils& integrationUtils)
 {
     UNUSED_PARAM(blockAxisConstraint);
+    if (stretchedBlockSize)
+        return BorderBoxSize::fromIntegrationFunction(integrationUtils.maxContentLogicalWidthContributionForStretchedGridItem(gridItem.layoutBox(), *stretchedBlockSize)).value;
     return BorderBoxSize::fromIntegrationFunction(integrationUtils.maxContentLogicalWidthContribution(gridItem.layoutBox())).value;
 }
 

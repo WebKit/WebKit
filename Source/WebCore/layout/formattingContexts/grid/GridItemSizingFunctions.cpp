@@ -34,11 +34,11 @@ namespace Layout {
 GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUtils& integrationUtils)
 {
     return {
-        [&integrationUtils](const PlacedGridItem& gridItem, LayoutUnit blockAxisConstraint) {
-            return GridLayoutUtils::inlineAxisMinContentContribution(gridItem, blockAxisConstraint, integrationUtils);
+        [&integrationUtils](const PlacedGridItem& gridItem, LayoutUnit blockAxisConstraint, std::optional<LayoutUnit> stretchedBlockSize) {
+            return GridLayoutUtils::inlineAxisMinContentContribution(gridItem, blockAxisConstraint, stretchedBlockSize, integrationUtils);
         },
-        [&integrationUtils](const PlacedGridItem& gridItem, LayoutUnit blockAxisConstraint) {
-            return GridLayoutUtils::inlineAxisMaxContentContribution(gridItem, blockAxisConstraint, integrationUtils);
+        [&integrationUtils](const PlacedGridItem& gridItem, LayoutUnit blockAxisConstraint, std::optional<LayoutUnit> stretchedBlockSize) {
+            return GridLayoutUtils::inlineAxisMaxContentContribution(gridItem, blockAxisConstraint, stretchedBlockSize, integrationUtils);
         },
         [&integrationUtils](const PlacedGridItem& gridItem, const TrackSizingFunctionsList& trackSizingFunctions, LayoutUnit borderAndPadding, LayoutUnit availableSpace, LayoutUnit blockAxisConstraint) {
             UNUSED_PARAM(blockAxisConstraint);
@@ -50,10 +50,12 @@ GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUti
 GridItemSizingFunctions GridItemSizingFunctions::blockAxis(const GridFormattingContext& formattingContext)
 {
     return {
-        [&formattingContext](const PlacedGridItem& gridItem, LayoutUnit inlineAxisConstraint) {
+        [&formattingContext](const PlacedGridItem& gridItem, LayoutUnit inlineAxisConstraint, std::optional<LayoutUnit> stretchedInlineSize) {
+            UNUSED_PARAM(stretchedInlineSize);
             return GridLayoutUtils::blockAxisMinContentContribution(gridItem, inlineAxisConstraint, formattingContext);
         },
-        [&formattingContext](const PlacedGridItem& gridItem, LayoutUnit inlineAxisConstraint) {
+        [&formattingContext](const PlacedGridItem& gridItem, LayoutUnit inlineAxisConstraint, std::optional<LayoutUnit> stretchedInlineSize) {
+            UNUSED_PARAM(stretchedInlineSize);
             return GridLayoutUtils::blockAxisMaxContentContribution(gridItem, inlineAxisConstraint, formattingContext);
         },
         [&formattingContext](const PlacedGridItem& gridItem, const TrackSizingFunctionsList& trackSizingFunctions, LayoutUnit borderAndPadding, LayoutUnit availableSpace, LayoutUnit inlineAxisConstraint) {
