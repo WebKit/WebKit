@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("SourceCodeLocation");
+
+    function makeFormatterSourceMap() {
+        return WI.FormatterSourceMap.fromSourceMapData({
+            originalLineEndings: [1, 3, 5, 7],
+            formattedLineEndings: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19],
+            mapping: {original: [0], formatted: [10]},
+        });
+    }
+
+    suite.addTestCase({
+        name: "SourceCodeLocation.AddingChangeListenerInitializesLocation",
+        test() {
+            let sourceCode = WI.networkManager.mainFrame.mainResource;
+            InspectorTest.assert(sourceCode instanceof WI.SourceCode, "The main resource should be a WI.SourceCode.");
+            InspectorTest.assert(!sourceCode.formatterSourceMap, "The source code should not already be formatted.");
+
+            let location = sourceCode.createSourceCodeLocation(2, 0);
+
+            let locationChanges = 0;
+            location.addEventListener(WI.SourceCodeLocation.Event.LocationChanged, function(event) {
+                ++locationChanges;
+            });
+
+            let displayLocationChanges = 0;
+            location.addEventListener(WI.SourceCodeLocation.Event.DisplayLocationChanged, function(event) {
+                ++displayLocationChanges;
+            });
+
+            sourceCode.formatterSourceMap = makeFormatterSourceMap();
+
+            InspectorTest.expectEqual(locationChanges, 1, "LocationChanged should fire once when the source code is formatted.");
+            InspectorTest.expectEqual(displayLocationChanges, 1, "DisplayLocationChanged should fire once when the source code is formatted.");
+            InspectorTest.expectTrue(location.hasFormattedLocation(), "The location should report a formatted location.");
+            InspectorTest.expectEqual(location.formattedLineNumber, 7, "The formatted line should reflect the applied formatter.");
+            InspectorTest.expectEqual(location.displayLineNumber, 7, "The display line should reflect the applied formatter.");
+            InspectorTest.expectEqual(location.lineNumber, 2, "The raw line should be unchanged.");
+
+            sourceCode.formatterSourceMap = null;
+        },
+    });
+
+    suite.addTestCase({
+        name: "SourceCodeLocation.InitializationAndReadsDoNotDispatch",
+        test() {
+            let sourceCode = WI.networkManager.mainFrame.mainResource;
+            InspectorTest.assert(!sourceCode.formatterSourceMap, "The source code should not be formatted.");
+
+            let location = sourceCode.createSourceCodeLocation(3, 0);
+
+            let changes = 0;
+            location.addEventListener(WI.SourceCodeLocation.Event.LocationChanged, function(event) {
+                ++changes;
+            });
+            location.addEventListener(WI.SourceCodeLocation.Event.DisplayLocationChanged, function(event) {
+                ++changes;
+            });
+
+            location.formattedLineNumber;
+            location.displayLineNumber;
+            location.hasFormattedLocation();
+            location.hasMappedLocation();
+
+            InspectorTest.expectEqual(changes, 0, "No change event should be dispatched by initialization or reads.");
+            InspectorTest.expectFalse(location.hasFormattedLocation(), "The location should have no formatted location without a formatter.");
+            InspectorTest.expectEqual(location.formattedLineNumber, location.lineNumber, "The formatted line should equal the raw line without a formatter.");
+            InspectorTest.expectEqual(location.displayLineNumber, location.lineNumber, "The display line should equal the raw line without a mapping or formatter.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for WI.SourceCodeLocation.</p>
+</body>
+</html>
