@@ -329,8 +329,6 @@ webkit.org/b/315119 [ ios ] TestWebKitAPI.WKAttachmentTestsIOS.InsertPastedFiles
 webkit.org/b/314846 [ ios ] TestWebKitAPI.WKAttachmentTestsIOS.InsertPastedMapItemAsAttachment [ Skip ]
 webkit.org/b/314846 [ ios ] TestWebKitAPI.WKAttachmentTestsIOS.PasteRichTextCopiedFromNotes [ Skip ]
 rdar://95391568 [ release arm64 ] TestWebKitAPI.WKContentRuleListStoreTest.CrossOriginCookieBlocking [ Skip ]
-webkit.org/b/317144 TestWebKitAPI.WKHTTPCookieStore.WebSocketCookiesFromRedirect [ Skip ]
-webkit.org/b/317144 TestWebKitAPI.WKHTTPCookieStore.WebSocketCookiesThroughRedirect [ Skip ]
 rdar://137088246 [ mac debug ] TestWebKitAPI.WKInspectorExtension.EvaluateScriptOnPage [ Skip ]
 rdar://137088246 [ mac debug ] TestWebKitAPI.WKInspectorExtension.ExtensionTabIsPersistent [ Skip ]
 webkit.org/b/257332 [ mac ] TestWebKitAPI.WKInspectorExtensionDelegate.ExtensionTabNavigatedCallbacks [ Skip ]
