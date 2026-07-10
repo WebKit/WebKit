@@ -278,6 +278,10 @@ void WritingToolsController::willBeginWritingToolsSession(const std::optional<Wr
 
     switch (session->type) {
     case WritingTools::Session::Type::Proofreading:
+        if (session->isForProofreadingReview != WritingTools::IsForProofreadingReview::Yes) {
+            document->markers().removeMarkers(*contextRange, { DocumentMarkerType::Grammar, DocumentMarkerType::WritingToolsTextSuggestion });
+            m_page->chrome().client().clearAnimationsForActiveWritingToolsSession();
+        }
         m_state = ProofreadingState::create(createLiveRange(*contextRange), *session, 0).moveToUniquePtr();
         break;
 
