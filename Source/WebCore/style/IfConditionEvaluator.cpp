@@ -37,6 +37,7 @@
 #include "MediaQueryParser.h"
 #include "RenderElement.h"
 #include "StyleBuilder.h"
+#include "StyleCustomProperty.h"
 
 namespace WebCore {
 namespace Style {
@@ -109,8 +110,14 @@ MQ::EvaluationResult IfConditionEvaluator::evaluateFeature(const MQ::Feature& fe
 
     // Force resolution of the queried custom property. Range queries comparing
     // literals (e.g. style(5 > 3)) have no custom-property name to resolve.
-    if (!feature.name.isNull())
+    if (!feature.name.isNull()) {
         m_styleBuilder.applyCustomProperty(feature.name);
+
+        // A tainted queried property taints the whole if() substitution value (CSS Values 5 §8.7.2).
+        RefPtr resolved = protect(m_styleBuilder.state().style())->customPropertyValue(feature.name);
+        if (resolved && resolved->isAttrTainted() == IsAttrTainted::Yes)
+            m_referencedAttrTaintedValue = true;
+    }
 
     return feature.schema->evaluate(feature, context);
 }

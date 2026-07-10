@@ -49,6 +49,10 @@ public:
     enum class Result : uint8_t { True, False, Invalid };
     Result evaluate(CSSParserTokenRange branchCondition);
 
+    // True if evaluating the condition read an attr()-tainted custom property. Per CSS Values 5 §8.7.2
+    // that taints the whole if() substitution value, since the tainted value was involved in producing it.
+    bool referencedAttrTaintedValue() const { return m_referencedAttrTaintedValue; }
+
 private:
     friend class MQ::GenericMediaQueryEvaluator<IfConditionEvaluator>;
 
@@ -57,6 +61,7 @@ private:
 
     Builder& m_styleBuilder;
     const CSSParserContext& m_context;
+    mutable bool m_referencedAttrTaintedValue { false };
 };
 
 } // namespace Style

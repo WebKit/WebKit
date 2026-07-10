@@ -981,8 +981,9 @@ bool SubstitutionResolver::substituteIfFunction(CSSParserTokenRange argumentsRan
         return false;
 
     for (auto& branch : *branches) {
+        IfConditionEvaluator conditionEvaluator { m_styleBuilder, context };
         auto conditionResult = branch.condition
-            ? IfConditionEvaluator { m_styleBuilder, context }.evaluate(*branch.condition)
+            ? conditionEvaluator.evaluate(*branch.condition)
             : IfConditionEvaluator::Result::True;
 
         // An invalid condition makes the whole if() IACVT. This matches the imported WPT but not the
@@ -995,11 +996,17 @@ bool SubstitutionResolver::substituteIfFunction(CSSParserTokenRange argumentsRan
             continue;
 
         // Substitute the value part and return.
+        auto startIndex = tokens.size();
         auto substitutedValue = substituteTokenRange(branch.valueRange, context);
         if (!substitutedValue)
             return false;
 
         tokens.appendVector(*substitutedValue);
+
+        // A condition that read an attr()-tainted property taints the whole substitution value.
+        if (conditionEvaluator.referencedAttrTaintedValue())
+            propagateAttrTaint(IsAttrTainted::Yes, std::span(tokens).subspan(startIndex));
+
         return true;
     }
 
