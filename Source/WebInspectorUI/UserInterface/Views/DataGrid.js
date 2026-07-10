@@ -592,15 +592,10 @@ WI.DataGrid = class DataGrid extends WI.View
             return;
 
         let node = this.dataGridNodeFromNode(target);
-        if (!node.editable)
+        if (!node?.editable)
             return;
 
         this._editingNode = node;
-        if (!this._editingNode) {
-            if (!this.placeholderNode)
-                return;
-            this._editingNode = this.placeholderNode;
-        }
 
         // Force editing the 1st column when editing the placeholder node
         if (this._editingNode.isPlaceholderNode)
