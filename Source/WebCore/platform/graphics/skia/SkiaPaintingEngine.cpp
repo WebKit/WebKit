@@ -65,13 +65,6 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SkiaPaintingEngine);
 
-// Note:
-// If WEBKIT_SKIA_ENABLE_CPU_RENDERING is unset, we will allocate a GPU-only worker pool with WEBKIT_SKIA_GPU_PAINTING_THREADS threads.
-// If WEBKIT_SKIA_ENABLE_CPU_RENDERING is unset, and WEBKIT_SKIA_GPU_PAINTING_THREADS is set to 0, we will use GPU rendering on main thread.
-//
-// If WEBKIT_SKIA_ENABLE_CPU_RENDERING=1 is set, we will allocate a CPU-only worker pool with WEBKIT_SKIA_CPU_PAINTING_THREADS threads.
-// if WEBKIT_SKIA_ENABLE_CPU_RENDERING=1 is set, and WEBKIT_SKIA_CPU_PAINTING_THREADS is set to 0, we will use CPU rendering on main thread.
-
 static bool canPerformAcceleratedRendering()
 {
     return ProcessCapabilities::canUseAcceleratedBuffers() && PlatformDisplay::sharedDisplay().skiaGLContext();
@@ -120,7 +113,7 @@ void SkiaPaintingEngine::paintIntoGraphicsContext(const GraphicsLayer& layer, Gr
 Ref<CoordinatedTileBuffer> SkiaPaintingEngine::createBuffer(RenderingMode renderingMode, const IntSize& size, bool contentsOpaque) const
 {
     if (renderingMode == RenderingMode::Accelerated) {
-        if (useThreadedRendering() && canUseDDL())
+        if (canUseDDL())
             return CoordinatedAcceleratedTileBuffer::create(m_threadSafeGrContext, size, contentsOpaque ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha);
 
         PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent();
@@ -185,40 +178,9 @@ bool SkiaPaintingEngine::tryReuseCachedAtlases(SkiaRecordingResult& result, unsi
     return true;
 }
 
-Ref<CoordinatedTileBuffer> SkiaPaintingEngine::paint(const GraphicsLayerCoordinated& layer, const IntRect& dirtyRect, bool contentsOpaque, float contentsScale)
-{
-    // ### Synchronous rendering on main thread ###
-    ASSERT(!useThreadedRendering());
-
-    Ref platformLayer = layer.coordinatedPlatformLayer();
-    platformLayer->willPaintTile();
-
-    auto renderingMode = canPerformAcceleratedRendering() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
-    auto buffer = createBuffer(renderingMode, dirtyRect.size(), contentsOpaque);
-    buffer->beginPainting();
-
-    if (auto* canvas = buffer->canvas()) {
-        WTFBeginSignpost(canvas, PaintTile, "Skia/%s, dirty region %ix%i+%i+%i", buffer->isBackedByOpenGL() ? "GPU" : "CPU", dirtyRect.x(), dirtyRect.y(), dirtyRect.width(), dirtyRect.height());
-        canvas->save();
-        canvas->clear(SkColors::kTransparent);
-
-        GraphicsContextSkia context(*canvas, renderingMode, RenderingPurpose::LayerBacking);
-        paintIntoGraphicsContext(layer, context, dirtyRect, contentsOpaque, contentsScale);
-
-        canvas->restore();
-        WTFEndSignpost(canvas, PaintTile);
-    }
-
-    buffer->completePainting();
-    platformLayer->didPaintTile();
-
-    return buffer;
-}
-
 Ref<SkiaRecordingResult> SkiaPaintingEngine::record(const GraphicsLayerCoordinated& layer, const IntRect& recordRect, bool contentsOpaque, float contentsScale, unsigned dirtyTilesCount)
 {
     // ### Asynchronous rendering on worker threads ###
-    ASSERT(useThreadedRendering());
     ASSERT(m_paintingWorkerPool);
 
     auto renderingMode = canPerformAcceleratedRendering() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
@@ -284,8 +246,6 @@ Ref<SkiaRecordingResult> SkiaPaintingEngine::record(const GraphicsLayerCoordinat
 Ref<CoordinatedTileBuffer> SkiaPaintingEngine::replay(const GraphicsLayerCoordinated& layer, Ref<SkiaRecordingResult>&& recording, const IntRect& tileRect, const IntRect& dirtyRect)
 {
     // ### Asynchronous rendering on worker threads ###
-    ASSERT(useThreadedRendering());
-
     Ref platformLayer = layer.coordinatedPlatformLayer();
     platformLayer->willPaintTile();
 
@@ -293,7 +253,7 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::replay(const GraphicsLayerCoordin
     if (canUseDDL())
         threadSafeGrContext = m_threadSafeGrContext;
     auto renderingMode = recording->renderingMode();
-    auto bufferSize = renderingMode == RenderingMode::Accelerated && useThreadedRendering() && threadSafeGrContext ? tileRect.size() : dirtyRect.size();
+    auto bufferSize = renderingMode == RenderingMode::Accelerated && threadSafeGrContext ? tileRect.size() : dirtyRect.size();
     auto buffer = createBuffer(renderingMode, bufferSize, recording->contentsOpaque());
     buffer->beginPainting();
 
@@ -343,10 +303,10 @@ unsigned SkiaPaintingEngine::numberOfCPUPaintingThreads()
 
         if (const char* envString = getenv("WEBKIT_SKIA_CPU_PAINTING_THREADS")) {
             auto newValue = parseInteger<unsigned>(StringView::fromLatin1(envString));
-            if (newValue && *newValue <= 8)
+            if (newValue && *newValue >= 1 && *newValue <= 8)
                 numberOfThreads = *newValue;
             else
-                WTFLogAlways("The number of Skia painting threads is not between 0 and 8. Using the default value %u\n", numberOfThreads);
+                WTFLogAlways("The number of Skia painting threads is not between 1 and 8. Using the default value %u\n", numberOfThreads);
         }
     });
 
@@ -364,10 +324,10 @@ unsigned SkiaPaintingEngine::numberOfGPUPaintingThreads()
 
         if (const char* envString = getenv("WEBKIT_SKIA_GPU_PAINTING_THREADS")) {
             auto newValue = parseInteger<unsigned>(StringView::fromLatin1(envString));
-            if (newValue && *newValue <= 4)
+            if (newValue && *newValue >= 1 && *newValue <= 4)
                 numberOfThreads = *newValue;
             else
-                WTFLogAlways("The number of Skia/GPU painting threads is not between 0 and 4. Using the default value %u\n", numberOfThreads);
+                WTFLogAlways("The number of Skia/GPU painting threads is not between 1 and 4. Using the default value %u\n", numberOfThreads);
         }
     });
 

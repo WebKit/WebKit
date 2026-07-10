@@ -128,9 +128,7 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
 
 #if USE(SKIA)
         // Record only once the whole layer.
-        RefPtr<SkiaRecordingResult> recording;
-        if (layer.client().paintingEngine().useThreadedRendering()) [[likely]]
-            recording = layer.record(tileDirtyRectUnion, dirtyTilesCount);
+        auto recording = layer.record(tileDirtyRectUnion, dirtyTilesCount);
 #endif
 
         unsigned dirtyTileIndex = 0;
@@ -142,7 +140,7 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
                 tile.rect.x(), tile.rect.y(), tile.rect.width(), tile.rect.height(), tile.dirtyRect.x(), tile.dirtyRect.y(), tile.dirtyRect.width(), tile.dirtyRect.height());
 
 #if USE(SKIA)
-            auto buffer = recording ? layer.replay(Ref { *recording }, tile.rect, tile.dirtyRect) : layer.paint(tile.dirtyRect);
+            auto buffer = layer.replay(recording.copyRef(), tile.rect, tile.dirtyRect);
 #else
             auto buffer = layer.paint(tile.dirtyRect);
 #endif
