@@ -416,8 +416,12 @@ class GitHubEWS(GitHub):
             hover_over_text = 'Build is being retried. Recent messages:' + self._steps_messages(build)
             icon = GitHubEWS.ICON_BUILD_ONGOING
         elif build.result == Buildbot.EXCEPTION:
-            hover_over_text = 'An unexpected error occured. Recent messages:' + self._steps_messages(build)
             icon = GitHubEWS.ICON_BUILD_ERROR
+            exception_message = self._most_recent_exception_message(build)
+            if exception_message:
+                hover_over_text = 'An unexpected error occured in step: ' + exception_message
+            else:
+                hover_over_text = 'An unexpected error occured. Recent messages:' + self._steps_messages(build)
         else:
             icon = GitHubEWS.ICON_BUILD_ERROR
             hover_over_text = 'An unexpected error occured. Recent messages:' + self._steps_messages(build)
@@ -482,5 +486,11 @@ class GitHubEWS(GitHub):
             if step.result == Buildbot.SUCCESS and 'retrying build' in step.state_string:
                 return step.state_string
             if step.result == Buildbot.FAILURE:
+                return step.state_string
+        return ''
+
+    def _most_recent_exception_message(self, build):
+        for step in build.step_set.all().order_by('-uid'):
+            if step.result == Buildbot.EXCEPTION:
                 return step.state_string
         return ''
