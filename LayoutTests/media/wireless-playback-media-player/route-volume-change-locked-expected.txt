@@ -1,0 +1,16 @@
+
+Test that a MediaDeviceRoute volume change does not propagate to the video element when its volume is locked.
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+RUN(video.src = findMediaFile('video', '../content/test'))
+RUN(video.play())
+RUN(route.ready = true)
+EVENT(canplaythrough)
+RUN(internals.setPageMediaVolume(1))
+RUN(internals.setMediaElementVolumeLocked(video, true))
+RUN(route.volume = 0.25)
+RUN(route.muted = true)
+EXPECTED (video.muted == 'true') OK
+EXPECTED (video.volume == '1') OK
+END OF TEST
+

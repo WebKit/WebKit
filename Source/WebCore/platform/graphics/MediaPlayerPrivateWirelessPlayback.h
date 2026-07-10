@@ -119,10 +119,11 @@ private:
     bool setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&&) final;
     void setRate(float) final;
     double rate() const final;
+    double effectiveRate() const final;
     void setVolumeLocked(bool) final;
     void setVolume(float) final;
     float volume() const final;
-    void setMuted(bool) final { }
+    void setMuted(bool) final;
     String engineDescription() const final;
 
     // MediaDeviceRouteClient
@@ -131,6 +132,10 @@ private:
     void errorDidChange(MediaDeviceRoute&) final;
     void audioOptionsDidChange(MediaDeviceRoute&) final;
     void playbackPositionDidChange(MediaDeviceRoute&) final;
+    void playingDidChange(MediaDeviceRoute&) final;
+    void playbackSpeedDidChange(MediaDeviceRoute&) final;
+    void mutedDidChange(MediaDeviceRoute&) final;
+    void volumeDidChange(MediaDeviceRoute&) final;
 
     CMTimebaseRef ensureTimebase();
     void destroyTimebase();

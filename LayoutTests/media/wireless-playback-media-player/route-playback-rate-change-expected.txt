@@ -1,0 +1,14 @@
+
+Test that a MediaDeviceRoute playback rate change propagates to the video element's effective playback rate.
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+RUN(video.src = findMediaFile('video', '../content/test'))
+RUN(route.playbackRate = 1)
+RUN(route.timeRange = { start: 0, duration: 60 })
+RUN(video.play())
+RUN(route.ready = true)
+EVENT(canplaythrough)
+RUN(route.playbackRate = 2)
+EXPECTED (internals.elementEffectivePlaybackRate(video) == '2') OK
+END OF TEST
+

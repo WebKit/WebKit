@@ -86,6 +86,9 @@ public:
     float volume() const;
     void setVolume(float);
 
+    bool muted() const;
+    void setMuted(bool);
+
 private:
     MockMediaDeviceRoute();
 

@@ -167,6 +167,16 @@ void MockMediaDeviceRoute::setVolume(float volume)
     [m_platformRoute setVolume:volume];
 }
 
+bool MockMediaDeviceRoute::muted() const
+{
+    return [m_platformRoute isMuted];
+}
+
+void MockMediaDeviceRoute::setMuted(bool muted)
+{
+    [m_platformRoute setMuted:muted];
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
