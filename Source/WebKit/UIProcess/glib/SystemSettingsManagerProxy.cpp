@@ -31,6 +31,7 @@
 #include "SystemSettingsManagerMessages.h"
 #include "WebProcessPool.h"
 #include <WebCore/SystemSettings.h>
+#include <WebCore/Theme.h>
 
 namespace WebKit {
 using namespace WebCore;
