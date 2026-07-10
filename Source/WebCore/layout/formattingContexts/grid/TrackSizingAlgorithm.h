@@ -43,10 +43,10 @@ class IntegrationUtils;
 
 struct TrackSizingItem {
     const PlacedGridItem& gridItem;
-    ComputedSizes computedSizes;
-    LayoutUnit borderAndPadding;
-    WTF::Range<size_t> spannedLines;
-    LayoutUnit oppositeAxisConstraint;
+    const ComputedSizes computedSizes;
+    const LayoutUnit borderAndPadding;
+    const WTF::Range<size_t> spannedLines;
+    const LayoutUnit oppositeAxisConstraint;
 };
 
 class TrackSizingAlgorithm {
