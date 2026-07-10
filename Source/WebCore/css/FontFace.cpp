@@ -140,6 +140,23 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const AtomString
         result->setErrorState();
         return result;
     }
+    if (context.settingsValues().cssFontFaceMetricOverrideDescriptorsEnabled) {
+        auto setAscentOverrideResult = result->setAscentOverride(context, descriptors.ascentOverride.isEmpty() ? "normal"_s : descriptors.ascentOverride);
+        if (setAscentOverrideResult.hasException()) {
+            result->setErrorState();
+            return result;
+        }
+        auto setDescentOverrideResult = result->setDescentOverride(context, descriptors.descentOverride.isEmpty() ? "normal"_s : descriptors.descentOverride);
+        if (setDescentOverrideResult.hasException()) {
+            result->setErrorState();
+            return result;
+        }
+        auto setLineGapOverrideResult = result->setLineGapOverride(context, descriptors.lineGapOverride.isEmpty() ? "normal"_s : descriptors.lineGapOverride);
+        if (setLineGapOverrideResult.hasException()) {
+            result->setErrorState();
+            return result;
+        }
+    }
     auto setSizeAdjustResult = result->setSizeAdjust(context, descriptors.sizeAdjust.isEmpty() ? "100%"_s : descriptors.sizeAdjust);
     if (setSizeAdjustResult.hasException()) {
         result->setErrorState();
@@ -252,6 +269,33 @@ ExceptionOr<void> FontFace::setSizeAdjust(ScriptExecutionContext& context, const
     return Exception { ExceptionCode::SyntaxError };
 }
 
+ExceptionOr<void> FontFace::setAscentOverride(ScriptExecutionContext& context, const String& ascentOverride)
+{
+    if (auto value = CSSPropertyParserHelpers::parseFontFaceAscentOverride(ascentOverride, context)) {
+        protect(m_backing)->setAscentOverride(*value);
+        return { };
+    }
+    return Exception { ExceptionCode::SyntaxError };
+}
+
+ExceptionOr<void> FontFace::setDescentOverride(ScriptExecutionContext& context, const String& descentOverride)
+{
+    if (auto value = CSSPropertyParserHelpers::parseFontFaceDescentOverride(descentOverride, context)) {
+        protect(m_backing)->setDescentOverride(*value);
+        return { };
+    }
+    return Exception { ExceptionCode::SyntaxError };
+}
+
+ExceptionOr<void> FontFace::setLineGapOverride(ScriptExecutionContext& context, const String& lineGapOverride)
+{
+    if (auto value = CSSPropertyParserHelpers::parseFontFaceLineGapOverride(lineGapOverride, context)) {
+        protect(m_backing)->setLineGapOverride(*value);
+        return { };
+    }
+    return Exception { ExceptionCode::SyntaxError };
+}
+
 AtomString FontFace::family() const
 {
     if (auto value = protect(m_backing)->family(); !value.isNull())
@@ -299,6 +343,27 @@ String FontFace::sizeAdjust() const
     if (auto value = protect(m_backing)->sizeAdjust(); !value.isNull())
         return value;
     return "100%"_s;
+}
+
+String FontFace::ascentOverride() const
+{
+    if (auto value = protect(m_backing)->ascentOverride(); !value.isNull())
+        return value;
+    return "normal"_s;
+}
+
+String FontFace::descentOverride() const
+{
+    if (auto value = protect(m_backing)->descentOverride(); !value.isNull())
+        return value;
+    return "normal"_s;
+}
+
+String FontFace::lineGapOverride() const
+{
+    if (auto value = protect(m_backing)->lineGapOverride(); !value.isNull())
+        return value;
+    return "normal"_s;
 }
 
 String FontFace::display() const

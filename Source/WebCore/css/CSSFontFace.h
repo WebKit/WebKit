@@ -75,6 +75,9 @@ public:
     void setUnicodeRange(CSSValueList&);
     void setFeatureSettings(CSSValue&);
     void setDisplay(CSSValue&);
+    void setAscentOverride(CSSValue&);
+    void setDescentOverride(CSSValue&);
+    void setLineGapOverride(CSSValue&);
 
     AtomString family() const;
     String style() const;
@@ -83,6 +86,9 @@ public:
     String unicodeRange() const;
     String featureSettings() const;
     String display() const;
+    String ascentOverride() const;
+    String descentOverride() const;
+    String lineGapOverride() const;
     String sizeAdjust() const;
 
     // Pending => Loading  => TimedOut

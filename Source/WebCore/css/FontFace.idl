@@ -49,12 +49,12 @@ dictionary FontFaceDescriptors {
     // CSSOMString variationSettings = "normal";
     // FIXME: `display` should be of type `CSSOMString`.
     DOMString display = "auto";
-    // FIXME: Add support for `ascentOverride`.
-    // CSSOMString ascentOverride = "normal";
-    // FIXME: Add support for `descentOverride`.
-    // CSSOMString descentOverride = "normal";
-    // FIXME: Add support for `lineGapOverride`.
-    // CSSOMString lineGapOverride = "normal";
+    // FIXME: `ascentOverride` should be of type `CSSOMString`.
+    [EnabledBySetting=CSSFontFaceMetricOverrideDescriptorsEnabled] DOMString ascentOverride = "normal";
+    // FIXME: `descentOverride` should be of type `CSSOMString`.
+    [EnabledBySetting=CSSFontFaceMetricOverrideDescriptorsEnabled] DOMString descentOverride = "normal";
+    // FIXME: `lineGapOverride` should be of type `CSSOMString`.
+    [EnabledBySetting=CSSFontFaceMetricOverrideDescriptorsEnabled] DOMString lineGapOverride = "normal";
     // FIXME: `sizeAdjust` should be of type `CSSOMString`.
     DOMString sizeAdjust = "100%";
 };
@@ -74,6 +74,9 @@ dictionary FontFaceDescriptors {
     [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString unicodeRange;
     [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString featureSettings;
     [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString display;
+    [EnabledBySetting=CSSFontFaceMetricOverrideDescriptorsEnabled, SetterCallWith=CurrentScriptExecutionContext] attribute DOMString ascentOverride;
+    [EnabledBySetting=CSSFontFaceMetricOverrideDescriptorsEnabled, SetterCallWith=CurrentScriptExecutionContext] attribute DOMString descentOverride;
+    [EnabledBySetting=CSSFontFaceMetricOverrideDescriptorsEnabled, SetterCallWith=CurrentScriptExecutionContext] attribute DOMString lineGapOverride;
     [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString sizeAdjust;
 
     readonly attribute FontFaceLoadStatus status;

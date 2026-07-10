@@ -358,6 +358,33 @@ void CSSFontFace::setDisplay(CSSValue& loadingBehaviorValue)
     });
 }
 
+void CSSFontFace::setAscentOverride(CSSValue& value)
+{
+    protect(mutableProperties())->setProperty(CSSPropertyAscentOverride, value);
+
+    iterateClients(m_clients, [&](CSSFontFaceClient& client) {
+        client.fontPropertyChanged(*this);
+    });
+}
+
+void CSSFontFace::setDescentOverride(CSSValue& value)
+{
+    protect(mutableProperties())->setProperty(CSSPropertyDescentOverride, value);
+
+    iterateClients(m_clients, [&](CSSFontFaceClient& client) {
+        client.fontPropertyChanged(*this);
+    });
+}
+
+void CSSFontFace::setLineGapOverride(CSSValue& value)
+{
+    protect(mutableProperties())->setProperty(CSSPropertyLineGapOverride, value);
+
+    iterateClients(m_clients, [&](CSSFontFaceClient& client) {
+        client.fontPropertyChanged(*this);
+    });
+}
+
 AtomString CSSFontFace::family() const
 {
     RefPtr value = dynamicDowncast<CSSFontFamilyNameValue>(properties().getPropertyCSSValue(CSSPropertyFontFamily));
@@ -394,6 +421,21 @@ String CSSFontFace::featureSettings() const
 String CSSFontFace::sizeAdjust() const
 {
     return properties().getPropertyValue(CSSPropertySizeAdjust);
+}
+
+String CSSFontFace::ascentOverride() const
+{
+    return properties().getPropertyValue(CSSPropertyAscentOverride);
+}
+
+String CSSFontFace::descentOverride() const
+{
+    return properties().getPropertyValue(CSSPropertyDescentOverride);
+}
+
+String CSSFontFace::lineGapOverride() const
+{
+    return properties().getPropertyValue(CSSPropertyLineGapOverride);
 }
 
 String CSSFontFace::display() const

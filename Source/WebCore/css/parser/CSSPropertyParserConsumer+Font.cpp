@@ -62,6 +62,7 @@
 #include "FontFace.h"
 #include "StyleKeyword+Mappings.h"
 #include "WebKitFontFamilyNames.h"
+#include <wtf/Function.h>
 #include <wtf/text/ParsingUtilities.h>
 
 #if ENABLE(VARIATION_FONTS)
@@ -672,6 +673,44 @@ RefPtr<CSSValue> parseFontFaceSizeAdjust(const String& string, ScriptExecutionCo
         return nullptr;
 
     return parsedValue;
+}
+
+static RefPtr<CSSValue> parseFontFaceMetricOverride(const String& string, ScriptExecutionContext& context,
+    NOESCAPE const Function<RefPtr<CSSValue>(CSSParserTokenRange&, CSS::PropertyParserState&)>& consumeMetricOverride)
+{
+    // <font-metrics-override> = normal | <percentage [0,∞]>
+    // https://drafts.csswg.org/css-fonts-4/#font-metrics-override-desc
+
+    CSSParserContext parserContext(parserMode(context));
+    CSSParser parser(parserContext, string);
+    CSSParserTokenRange range = parser.tokenizer()->tokenRange();
+
+    range.consumeWhitespace();
+
+    if (range.atEnd())
+        return nullptr;
+
+    auto state = CSS::PropertyParserState { .context = parserContext, .pool = context.cssValuePool() };
+    auto parsedValue = consumeMetricOverride(range, state);
+    if (!parsedValue || !range.atEnd())
+        return nullptr;
+
+    return parsedValue;
+}
+
+RefPtr<CSSValue> parseFontFaceAscentOverride(const String& string, ScriptExecutionContext& context)
+{
+    return parseFontFaceMetricOverride(string, context, CSSPropertyParsing::consumeFontFaceAscentOverride);
+}
+
+RefPtr<CSSValue> parseFontFaceDescentOverride(const String& string, ScriptExecutionContext& context)
+{
+    return parseFontFaceMetricOverride(string, context, CSSPropertyParsing::consumeFontFaceDescentOverride);
+}
+
+RefPtr<CSSValue> parseFontFaceLineGapOverride(const String& string, ScriptExecutionContext& context)
+{
+    return parseFontFaceMetricOverride(string, context, CSSPropertyParsing::consumeFontFaceLineGapOverride);
 }
 
 // MARK: @font-face 'unicode-range'

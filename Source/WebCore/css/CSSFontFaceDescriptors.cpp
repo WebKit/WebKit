@@ -157,4 +157,37 @@ ExceptionOr<void> CSSFontFaceDescriptors::setFontDisplay(const String& value)
     return setPropertyInternal(CSSPropertyFontDisplay, value, IsImportant::No);
 }
 
+// @font-face 'ascent-override'
+String CSSFontFaceDescriptors::ascentOverride() const
+{
+    return getPropertyValueInternal(CSSPropertyAscentOverride);
+}
+
+ExceptionOr<void> CSSFontFaceDescriptors::setAscentOverride(const String& value)
+{
+    return setPropertyInternal(CSSPropertyAscentOverride, value, IsImportant::No);
+}
+
+// @font-face 'descent-override'
+String CSSFontFaceDescriptors::descentOverride() const
+{
+    return getPropertyValueInternal(CSSPropertyDescentOverride);
+}
+
+ExceptionOr<void> CSSFontFaceDescriptors::setDescentOverride(const String& value)
+{
+    return setPropertyInternal(CSSPropertyDescentOverride, value, IsImportant::No);
+}
+
+// @font-face 'line-gap-override'
+String CSSFontFaceDescriptors::lineGapOverride() const
+{
+    return getPropertyValueInternal(CSSPropertyLineGapOverride);
+}
+
+ExceptionOr<void> CSSFontFaceDescriptors::setLineGapOverride(const String& value)
+{
+    return setPropertyInternal(CSSPropertyLineGapOverride, value, IsImportant::No);
+}
+
 } // namespace WebCore

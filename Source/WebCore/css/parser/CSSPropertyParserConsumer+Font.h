@@ -146,6 +146,12 @@ RefPtr<CSSValueList> parseFontFaceUnicodeRange(const String&, ScriptExecutionCon
 // https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-display
 RefPtr<CSSValue> parseFontFaceDisplay(const String&, ScriptExecutionContext&);
 
+// MARK: @font-face metric override descriptors
+// https://drafts.csswg.org/css-fonts-4/#font-metrics-override-desc
+RefPtr<CSSValue> parseFontFaceAscentOverride(const String&, ScriptExecutionContext&);
+RefPtr<CSSValue> parseFontFaceDescentOverride(const String&, ScriptExecutionContext&);
+RefPtr<CSSValue> parseFontFaceLineGapOverride(const String&, ScriptExecutionContext&);
+
 // MARK: @font-face 'font-style'
 // https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-style
 RefPtr<CSSValue> parseFontFaceFontStyle(const String&, ScriptExecutionContext&);

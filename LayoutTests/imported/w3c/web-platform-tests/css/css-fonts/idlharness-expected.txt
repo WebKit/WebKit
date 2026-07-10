@@ -36,12 +36,12 @@ PASS CSSFontFaceDescriptors interface: attribute fontDisplay
 PASS CSSFontFaceDescriptors interface: attribute font-display
 FAIL CSSFontFaceDescriptors interface: attribute fontLanguageOverride assert_true: The prototype object must have a property "fontLanguageOverride" expected true got false
 FAIL CSSFontFaceDescriptors interface: attribute font-language-override assert_true: The prototype object must have a property "font-language-override" expected true got false
-FAIL CSSFontFaceDescriptors interface: attribute ascentOverride assert_true: The prototype object must have a property "ascentOverride" expected true got false
-FAIL CSSFontFaceDescriptors interface: attribute ascent-override assert_true: The prototype object must have a property "ascent-override" expected true got false
-FAIL CSSFontFaceDescriptors interface: attribute descentOverride assert_true: The prototype object must have a property "descentOverride" expected true got false
-FAIL CSSFontFaceDescriptors interface: attribute descent-override assert_true: The prototype object must have a property "descent-override" expected true got false
-FAIL CSSFontFaceDescriptors interface: attribute lineGapOverride assert_true: The prototype object must have a property "lineGapOverride" expected true got false
-FAIL CSSFontFaceDescriptors interface: attribute line-gap-override assert_true: The prototype object must have a property "line-gap-override" expected true got false
+PASS CSSFontFaceDescriptors interface: attribute ascentOverride
+PASS CSSFontFaceDescriptors interface: attribute ascent-override
+PASS CSSFontFaceDescriptors interface: attribute descentOverride
+PASS CSSFontFaceDescriptors interface: attribute descent-override
+PASS CSSFontFaceDescriptors interface: attribute lineGapOverride
+PASS CSSFontFaceDescriptors interface: attribute line-gap-override
 FAIL CSSFontFaceDescriptors interface: attribute superscriptPositionOverride assert_true: The prototype object must have a property "superscriptPositionOverride" expected true got false
 FAIL CSSFontFaceDescriptors interface: attribute superscript-position-override assert_true: The prototype object must have a property "superscript-position-override" expected true got false
 FAIL CSSFontFaceDescriptors interface: attribute subscriptPositionOverride assert_true: The prototype object must have a property "subscriptPositionOverride" expected true got false

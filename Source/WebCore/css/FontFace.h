@@ -51,6 +51,9 @@ public:
         String unicodeRange;
         String featureSettings;
         String display;
+        String ascentOverride;
+        String descentOverride;
+        String lineGapOverride;
         String sizeAdjust;
     };
     
@@ -71,6 +74,9 @@ public:
     ExceptionOr<void> setUnicodeRange(ScriptExecutionContext&, const String&);
     ExceptionOr<void> setFeatureSettings(ScriptExecutionContext&, const String&);
     ExceptionOr<void> setDisplay(ScriptExecutionContext&, const String&);
+    ExceptionOr<void> setAscentOverride(ScriptExecutionContext&, const String&);
+    ExceptionOr<void> setDescentOverride(ScriptExecutionContext&, const String&);
+    ExceptionOr<void> setLineGapOverride(ScriptExecutionContext&, const String&);
     ExceptionOr<void> setSizeAdjust(ScriptExecutionContext&, const String&);
 
     AtomString family() const;
@@ -80,6 +86,9 @@ public:
     String unicodeRange() const;
     String featureSettings() const;
     String display() const;
+    String ascentOverride() const;
+    String descentOverride() const;
+    String lineGapOverride() const;
     String sizeAdjust() const;
 
     enum class LoadStatus { Unloaded, Loading, Loaded, Error };

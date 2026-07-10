@@ -13888,6 +13888,7 @@
             "ascent-override": {
                 "codegen-properties": {
                     "parser-grammar": "normal | <percentage [0,inf]>",
+                    "parser-exported": true,
                     "settings-flag": "cssFontFaceMetricOverrideDescriptorsEnabled"
                 },
                 "specification": {
@@ -13898,6 +13899,7 @@
             "descent-override": {
                 "codegen-properties": {
                     "parser-grammar": "normal | <percentage [0,inf]>",
+                    "parser-exported": true,
                     "settings-flag": "cssFontFaceMetricOverrideDescriptorsEnabled"
                 },
                 "specification": {
@@ -13908,6 +13910,7 @@
             "line-gap-override": {
                 "codegen-properties": {
                     "parser-grammar": "normal | <percentage [0,inf]>",
+                    "parser-exported": true,
                     "settings-flag": "cssFontFaceMetricOverrideDescriptorsEnabled"
                 },
                 "specification": {

@@ -188,6 +188,9 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     RefPtr rangeList = downcast<CSSValueList>(unicodeRange.get());
     RefPtr featureSettings = style->getPropertyCSSValue(CSSPropertyFontFeatureSettings);
     RefPtr display = style->getPropertyCSSValue(CSSPropertyFontDisplay);
+    RefPtr ascentOverride = style->getPropertyCSSValue(CSSPropertyAscentOverride);
+    RefPtr descentOverride = style->getPropertyCSSValue(CSSPropertyDescentOverride);
+    RefPtr lineGapOverride = style->getPropertyCSSValue(CSSPropertyLineGapOverride);
     RefPtr sizeAdjust = style->getPropertyCSSValue(CSSPropertySizeAdjust);
     if (!fontFamily || !srcList || (unicodeRange && !rangeList))
         return;
@@ -211,6 +214,12 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
         fontFace->setFeatureSettings(*featureSettings);
     if (display)
         fontFace->setDisplay(*display);
+    if (ascentOverride)
+        fontFace->setAscentOverride(*ascentOverride);
+    if (descentOverride)
+        fontFace->setDescentOverride(*descentOverride);
+    if (lineGapOverride)
+        fontFace->setLineGapOverride(*lineGapOverride);
     if (sizeAdjust)
         fontFace->setSizeAdjust(*sizeAdjust);
 
