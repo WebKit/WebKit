@@ -10,7 +10,7 @@ function test()
         const target = null, url = null;
         let sourceType = isModule ? WI.Script.SourceType.Module : WI.Script.SourceType.Program;
         let script = new WI.Script(target, 1, new WI.TextRange(0, text.length), url, sourceType);
-        let scriptSyntaxTree = new WI.ScriptSyntaxTree(text, script);
+        let scriptSyntaxTree = new WI.ScriptSyntaxTree(script, text);
         let syntaxTree = scriptSyntaxTree._syntaxTree;
 
         InspectorTest.assert(scriptSyntaxTree.parsedSuccessfully, "ScriptSyntaxTree should be able to parse: \"" + text + "\"");

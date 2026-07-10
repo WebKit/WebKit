@@ -808,6 +808,7 @@ localizedStrings["Flexbox @ Elements details sidebar"] = "Flexbox";
 localizedStrings["Flows"] = "Flows";
 localizedStrings["Focus on Subtree"] = "Focus on Subtree";
 localizedStrings["Focused"] = "Focused";
+localizedStrings["Follow source maps when stepping"] = "Follow source maps when stepping";
 localizedStrings["Font"] = "Font";
 /* Title for the Font details sidebar. */
 localizedStrings["Font @ Font Details Sidebar Title"] = "Font";

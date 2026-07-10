@@ -1,0 +1,2 @@
+function a(){return 1}function b(){return 2}function c(){return 3}function stepThrough(){debugger;a()&&b()&&c()}function coalesce(){debugger;Math.max(a(),b(),c())}function stepInAndOut(){debugger;a(),b()}function loop(){debugger;for(let i=0;i<2;i++)c()}window.stepThrough=stepThrough;window.coalesce=coalesce;window.stepInAndOut=stepInAndOut;window.loop=loop;
+//# sourceMappingURL=source-map-stepping.js.map

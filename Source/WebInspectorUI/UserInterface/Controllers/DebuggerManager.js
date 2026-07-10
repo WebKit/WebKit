@@ -102,6 +102,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         this._blackboxedCallFrameGroupsToAutoExpand = [];
 
         this._activeCallFrame = null;
+        this._activeSourceMapStep = null;
 
         this._internalWebKitScripts = [];
         this._targetDebuggerDataMap = new Map;
@@ -705,10 +706,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (!this.paused || !this._activeCallFrame)
             return Promise.reject(new Error("Cannot step next because debugger is not paused."));
 
-        return Promise.all([
-            this.awaitEvent(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this),
-            this._activeCallFrame.target.DebuggerAgent.stepNext(),
-        ]);
+        let step = (debuggerAgent) => debuggerAgent.stepNext();
+        return this._stepUsingSourceMap(step) || this._step(step);
     }
 
     stepOver()
@@ -716,10 +715,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (!this.paused || !this._activeCallFrame)
             return Promise.reject(new Error("Cannot step over because debugger is not paused."));
 
-        return Promise.all([
-            this.awaitEvent(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this),
-            this._activeCallFrame.target.DebuggerAgent.stepOver(),
-        ]);
+        // When following a source map, "step over" repeats "step next" (see `_stepUsingSourceMap`) so
+        // stepping tracks original statements even when several were compiled into one generated statement.
+        return this._stepUsingSourceMap((debuggerAgent) => debuggerAgent.stepNext()) || this._step((debuggerAgent) => debuggerAgent.stepOver());
     }
 
     stepInto()
@@ -727,10 +725,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (!this.paused || !this._activeCallFrame)
             return Promise.reject(new Error("Cannot step into because debugger is not paused."));
 
-        return Promise.all([
-            this.awaitEvent(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this),
-            this._activeCallFrame.target.DebuggerAgent.stepInto(),
-        ]);
+        let step = (debuggerAgent) => debuggerAgent.stepInto();
+        return this._stepUsingSourceMap(step) || this._step(step);
     }
 
     stepOut()
@@ -738,10 +734,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (!this.paused || !this._activeCallFrame)
             return Promise.reject(new Error("Cannot step out because debugger is not paused."));
 
-        return Promise.all([
-            this.awaitEvent(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this),
-            this._activeCallFrame.target.DebuggerAgent.stepOut(),
-        ]);
+        let step = (debuggerAgent) => debuggerAgent.stepOut();
+        return this._stepUsingSourceMap(step) || this._step(step);
     }
 
     continueUntilNextRunLoop(target)
@@ -1053,6 +1047,15 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         let stackTrace = new WI.StackTrace(callFrames, {
             parentStackTrace: WI.StackTrace.fromPayload(target, asyncStackTracePayload),
         });
+
+        if (this._activeSourceMapStep?.target === target) {
+            if (this._shouldContinueSteppingUsingSourceMap(pauseReason, activeCallFrame, callFrames.length)) {
+                this._activeSourceMapStep.command(target.DebuggerAgent);
+                return;
+            }
+            this._activeSourceMapStep = null;
+        }
+
         targetData.updateForPause(stackTrace, pauseReason, pauseData);
 
         // Pause other targets because at least one target has paused.
@@ -1787,6 +1790,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     _didResumeInternal(target)
     {
+        if (this._activeSourceMapStep?.target === target)
+            this._activeSourceMapStep = null;
+
         if (!this.paused)
             return;
 
@@ -1833,6 +1839,91 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             this.dispatchEventToListeners(WI.DebuggerManager.Event.ProbeSetAdded, {probeSet});
         }
         return probeSet;
+    }
+
+    _step(command)
+    {
+        return Promise.all([
+            this.awaitEvent(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this),
+            command(this._activeCallFrame.target.DebuggerAgent),
+        ]);
+    }
+
+    _stepUsingSourceMap(command)
+    {
+        if (!WI.settings.experimentalSourceMapStepping.value)
+            return null;
+
+        // COMPATIBILITY (iOS 13.4): Debugger.stepNext did not exist yet.
+        if (!InspectorBackend.hasCommand("Debugger.stepNext"))
+            return null;
+
+        let callFrames = this.dataForTarget(this._activeCallFrame.target).stackTrace?.callFrames;
+        let sourceCodeLocation = callFrames?.[0]?.sourceCodeLocation;
+        if (!sourceCodeLocation?.hasMappedLocation())
+            return null;
+
+        sourceCodeLocation.displaySourceCode.updateStatementBoundaryPositionsIfNeeded();
+
+        this._activeSourceMapStep = {
+            target: this._activeCallFrame.target,
+            command,
+            sourceCodeLocation,
+            callFrameCount: callFrames.length,
+            stepCount: 0,
+        };
+
+        return this._step(command);
+    }
+
+    _shouldContinueSteppingUsingSourceMap(pauseReason, callFrame, callFrameCount)
+    {
+        if (!this._activeSourceMapStep)
+            return false;
+
+        // Never skip a real pause (i.e. only skip pauses from stepping).
+        if (pauseReason !== WI.DebuggerManager.PauseReason.Other)
+            return false;
+
+        // Prevent loops (or a pathological source map) from infinitely stepping.
+        if (this._activeSourceMapStep.stepCount >= 500)
+            return false;
+
+        if (callFrameCount !== this._activeSourceMapStep.callFrameCount)
+            return false;
+
+        let startSourceCodeLocation = this._activeSourceMapStep.sourceCodeLocation;
+        let currentSourceCodeLocation = callFrame.sourceCodeLocation;
+
+        if (!currentSourceCodeLocation.hasMappedLocation())
+            return false;
+
+        if (currentSourceCodeLocation.displaySourceCode !== startSourceCodeLocation.displaySourceCode)
+            return false;
+
+        // Skip generated pauses (e.g. sub-expression calls) that map to the same original statement.
+        if (this._findClosestSourceMapStatementBoundary(currentSourceCodeLocation).equals(this._findClosestSourceMapStatementBoundary(startSourceCodeLocation))) {
+            ++this._activeSourceMapStep.stepCount;
+            return true;
+        }
+
+        if (currentSourceCodeLocation.displayIsAfter(startSourceCodeLocation))
+            return false;
+
+        // Only pause when the generated location also moved backwards if the mapped
+        // location also moved backwards (e.g. a loop revisiting an earlier statement).
+        if (currentSourceCodeLocation.isBefore(startSourceCodeLocation))
+            return false;
+
+        ++this._activeSourceMapStep.stepCount;
+        return true;
+    }
+
+    _findClosestSourceMapStatementBoundary(sourceCodeLocation)
+    {
+        let boundaries = sourceCodeLocation.displaySourceCode.statementBoundaryPositions;
+        let index = (boundaries?.upperBound(sourceCodeLocation.displayPosition(), WI.SourceCodePosition.compare) || 0) - 1;
+        return boundaries?.[index] || new WI.SourceCodePosition(sourceCodeLocation.displayLineNumber, 0);
     }
 
     *#allSupportedTargets() {

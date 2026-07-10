@@ -1,0 +1,2 @@
+const RATE=10;function helper(n){return n+1}function inlined(n){debugger;let e=helper(n),i=helper(e);return e+i}function constants(n){debugger;return n*10}function sequencing(n){debugger;step(n),step(n),step(n)}function conditional(n){debugger;return n&&step(n),n}function step(n){window.sink=n}globalThis.inlined=inlined,globalThis.constants=constants,globalThis.sequencing=sequencing,globalThis.conditional=conditional;
+//# sourceMappingURL=source-map-stepping-minified.js.map
