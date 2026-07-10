@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- Stays in the document. Setting a relation attribute on it marks accessibility relations dirty. -->
+<div id="dirtier"></div>
+
+<!-- Container whose subtree (built below via innerHTML) holds the relation-bearing elements we destroy. -->
+<div id="container"></div>
+
+<script>
+var output = "This test ensures we don't crash when accessibility relations are rebuilt while nodes that participate in relations are being removed.\n\n";
+
+if (window.accessibilityController && window.testRunner) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        var container = document.getElementById("container");
+
+        // Build a subtree of cross-referencing, relation-bearing elements.
+        container.innerHTML =
+            '<div id="d-root" role="group" aria-owns="d-fieldset">' +
+                '<fieldset id="d-fieldset" aria-labelledby="d-label" aria-owns="d-anchor d-button" aria-describedby="d-desc">' +
+                    '<legend id="d-legend" aria-labelledby="d-label">legend</legend>' +
+                    '<div id="d-wrap" aria-describedby="d-desc" aria-owns="d-inner">' +
+                        '<a id="d-anchor" href="#" aria-labelledby="d-label" aria-owns="d-button">link</a>' +
+                        '<button id="d-button" aria-labelledby="d-label" aria-describedby="d-anchor">button</button>' +
+                        '<div id="d-inner" aria-owns="d-anchor" aria-labelledby="d-legend">' +
+                            '<a id="d-inner-anchor" href="#" aria-describedby="d-label" aria-labelledby="d-legend">inner link</a>' +
+                            '<button id="d-inner-button" aria-labelledby="d-desc" aria-describedby="d-inner-anchor">inner button</button>' +
+                        '</div>' +
+                        '<div id="d-label">doomed label</div>' +
+                        '<div id="d-desc">doomed description</div>' +
+                    '</div>' +
+                '</fieldset>' +
+            '</div>';
+
+        await waitFor(() => {
+            // Wait for the new objects to enter the tree.
+            return accessibilityController.accessibleElementById("d-anchor")
+                && accessibilityController.accessibleElementById("d-inner-button");
+        });
+
+        // Dirty accessibility relations.
+        document.getElementById("dirtier").setAttribute("aria-owns", "no-such-target-xyz");
+
+        // With relations dirty, destroy the relation-bearing subtree. This triggers the node-removal
+        // machinery with dirty relations.
+        container.innerHTML = "";
+        gc();
+
+        output += "PASS: No crash.";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

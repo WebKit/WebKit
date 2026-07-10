@@ -1123,6 +1123,8 @@ private:
 #endif
     bool m_isSynchronizingSelection { false };
     bool m_performingDeferredCacheUpdate { false };
+    // True while remove(AXID) is tearing down an object.
+    bool m_isRemovingNode { false };
     double m_loadingProgress { 0 };
 
     // Tracks focus landing inside an aria-hidden region. After one rendering update
