@@ -3118,15 +3118,21 @@ sub determineIsCMakeBuild()
         return;
     }
 
-    # Auto-detect a CMake macOS build. The CMake presets place artifacts under
-    # WebKitBuild/cmake-mac/<Configuration>; when both trees exist, Xcode wins
-    # by default unless a caller opts into the last-built tiebreaker via
-    # enableLastBuiltTiebreaker() (read-only path resolvers do; build drivers
-    # like build-webkit do not, so they are never auto-flipped).
+    # CMake macOS presets build into WebKitBuild/cmake-mac/<Configuration>. When
+    # both trees exist, Xcode wins unless a caller opts into the last-built
+    # tiebreaker via enableLastBuiltTiebreaker() (build drivers do not, so they
+    # never auto-flip).
     if (isAppleCocoaWebKit()) {
         determineBaseProductDir();
         determineConfiguration();
-        my $cmakeMacBuild = File::Spec->catdir($baseProductDir, "cmake-mac", $configuration);
+
+        # CMake sanitizer presets build into cmake-mac/ASan or cmake-mac/TSan, so
+        # resolve the tree the way determineConfigurationProductDir() does. Xcode
+        # toggles ASan within Debug/Release, so its path is unchanged.
+        my $cmakeConfiguration = $configuration;
+        $cmakeConfiguration = "ASan" if asanIsEnabled();
+        $cmakeConfiguration = "TSan" if tsanIsEnabled();
+        my $cmakeMacBuild = File::Spec->catdir($baseProductDir, "cmake-mac", $cmakeConfiguration);
         my $xcodeBuild = File::Spec->catdir($baseProductDir, $configuration);
 
         if (-f File::Spec->catfile($cmakeMacBuild, "CMakeCache.txt") && !-d $xcodeBuild) {
@@ -3134,19 +3140,11 @@ sub determineIsCMakeBuild()
             return;
         }
 
-        # Heuristic: prefer whichever tree the developer built most recently,
-        # comparing each build system's own build log rather than a specific
-        # product binary. A product like WebKit.framework only relinks when
-        # WebKit itself changes, so a JSC-only (or WTF-only, tool-only) build
-        # would leave it stale and flip the choice to the wrong tree. Both build
-        # systems instead touch a log on every build of any target:
-        #   - CMake/Ninja:   cmake-mac/<Configuration>/.ninja_log
-        #   - Xcode/XCBuild: WebKitBuild/XCBuildData/build.db
-        # A missing log resolves to mtime 0, so an absent log degrades to the
-        # pre-existing "Xcode wins when both exist" default. Note build.db lives
-        # at the WebKitBuild root and is shared across Xcode configurations, so
-        # with two Xcode configs it reflects the most recent Xcode build of any
-        # of them rather than this specific configuration.
+        # Prefer whichever tree was built most recently, comparing each build
+        # system's log rather than a product binary (which goes stale after a
+        # partial build like JSC-only): cmake-mac's .ninja_log vs Xcode's
+        # XCBuildData/build.db. A missing log is mtime 0, degrading to the
+        # Xcode-wins default. build.db is shared across Xcode configurations.
         if ($shouldPickLastBuilt && -d $cmakeMacBuild && -d $xcodeBuild) {
             my $cmakeMarker = File::Spec->catfile($cmakeMacBuild, ".ninja_log");
             my $xcodeMarker = File::Spec->catfile($baseProductDir, "XCBuildData", "build.db");
@@ -3154,7 +3152,7 @@ sub determineIsCMakeBuild()
             my $xcodeMtime = -f $xcodeMarker ? stat($xcodeMarker)->mtime : 0;
             if ($cmakeMtime > $xcodeMtime) {
                 $isCMakeBuild = 1;
-                print STDERR "Using last-built tree: cmake-mac/$configuration (CMake)\n";
+                print STDERR "Using last-built tree: cmake-mac/$cmakeConfiguration (CMake)\n";
             } elsif ($xcodeMtime && $cmakeMtime) {
                 print STDERR "Using last-built tree: $configuration (Xcode)\n";
             }
