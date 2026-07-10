@@ -50,9 +50,7 @@ public:
     {
         if (!count)
             return;
-        typename HashMap<T, CounterType>::AddResult result = m_map.add(key, count);
-        if (!result.isNewEntry)
-            result.iterator->value += count;
+        m_map.add(key, CounterType { }).iterator->value += count;
     }
     
     template<typename U>
