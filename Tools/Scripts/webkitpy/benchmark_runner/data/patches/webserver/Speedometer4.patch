@@ -1,0 +1,58 @@
+--- a/resources/main.mjs
++++ b/resources/main.mjs
+@@ -489,3 +489,55 @@
+     document.addEventListener("DOMContentLoaded", init);
+ else
+     init();
++
++window.onload = function () {
++    const benchmarkClient = globalThis.benchmarkClient;
++    const originalDidFinishLastIteration = benchmarkClient.didFinishLastIteration;
++    benchmarkClient.didFinishLastIteration = function (...args) {
++        originalDidFinishLastIteration.apply(this, args);
++
++        const scores = [];
++        const resultsSuites = {};
++        const results = {'Speedometer-4.0': {
++            'metrics': {
++                'Score': {'current': [scores]},
++                'Time': ['Total', 'Geometric']},
++                'tests': resultsSuites}};
++
++        for (const measuredValues of this._measuredValuesList) {
++            scores.push(measuredValues.score);
++            for (const suiteName in measuredValues.tests) {
++                const measuredTests = measuredValues.tests[suiteName].tests;
++                if (!(suiteName in resultsSuites))
++                    resultsSuites[suiteName] = {'metrics': {'Time': ['Total']}, 'tests': {}};
++                const resultsTests = resultsSuites[suiteName].tests;
++                for (const testName in measuredTests) {
++                    const measuredSubtests = measuredTests[testName].tests;
++                    if (!(testName in resultsTests))
++                        resultsTests[testName] = {'metrics': {'Time': ['Total']}, 'tests': {}};
++                    const resultsSubtests = resultsTests[testName].tests;
++                    for (const subtestName in measuredSubtests) {
++                        if (!(subtestName in resultsSubtests))
++                            resultsSubtests[subtestName] = {'metrics': {'Time': {'current': [[]]}}};
++                        resultsSubtests[subtestName].metrics.Time.current[0].push(measuredSubtests[subtestName]);
++                    }
++                }
++            }
++        }
++
++        const xhr = new XMLHttpRequest();
++        xhr.open("POST", "/report");
++
++        xhr.setRequestHeader("Content-type", "application/json");
++        xhr.onreadystatechange = function() {
++            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
++                const closeRequest = new XMLHttpRequest();
++                closeRequest.open("GET", "/shutdown");
++                closeRequest.send();
++            }
++        }
++        console.log(results);
++        xhr.send(JSON.stringify(results));
++    }
++    document.querySelector(".start-tests-button").click();
++};
