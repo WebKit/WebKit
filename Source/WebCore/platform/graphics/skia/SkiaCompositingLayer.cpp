@@ -492,7 +492,18 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
     auto ctm = SkM44(transform).asM33();
     bool enableAntialias = !ctm.preservesAxisAlignment() && !ctm.preservesRightAngles();
 
-    context.imageSetBatch.updatePaintProperties(canvas, context.colorFilter, context.blendMode);
+    // When the layer contents are fully opaque and composited at full opacity with the default
+    // (source-over) blend mode, drawing the batched tiles/images with source-over needlessly keeps
+    // GL_BLEND enabled for every draw. Compositing with source (kSrc) instead lets Skia's blend
+    // formula collapse to (kOne, kZero) so GL_BLEND is disabled -- mirroring TextureMapper's per-draw
+    // ShouldBlend decision and saving substantial bandwidth on tiled GPUs (e.g. Vivante/etnaviv).
+    // FIXME: a color filter forces source-over conservatively -- it may turn opaque contents
+    // translucent, and kSrc would then write those pixels without blending. We could inspect the
+    // filter and still use kSrc when it provably keeps the contents opaque.
+    auto batchBlendMode = context.blendMode;
+    if (!batchBlendMode && !context.colorFilter && m_contentsOpaque && context.opacity == 1)
+        batchBlendMode = SkBlendMode::kSrc;
+    context.imageSetBatch.updatePaintProperties(canvas, context.colorFilter, batchBlendMode);
 
     auto setupPaint = [&] -> SkPaint {
         SkPaint paint;

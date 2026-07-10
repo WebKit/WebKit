@@ -74,6 +74,7 @@ public:
     void setPreserves3D(bool preserves3D) { m_preserves3D = preserves3D; }
     void setBackfaceVisibility(bool visible) { m_backfaceVisibility = visible; }
     void setContentsVisible(bool visible) { m_contentsVisible = visible; }
+    void setContentsOpaque(bool opaque) { m_contentsOpaque = opaque; }
     void setMasksToBounds(bool masksToBounds) { m_masksToBounds = masksToBounds; }
     void setContentsClippingRect(const FloatRoundedRect& rect) { m_contentsClippingRect = rect; }
     void setContentsRectClipsDescendants(bool clips) { m_contentsRectClipsDescendants = clips; }
@@ -236,6 +237,7 @@ private:
     bool m_preserves3D { false };
     bool m_backfaceVisibility { true };
     bool m_contentsVisible { true };
+    bool m_contentsOpaque { false };
     bool m_visible { true };
     bool m_masksToBounds { false };
     bool m_contentsRectClipsDescendants { false };

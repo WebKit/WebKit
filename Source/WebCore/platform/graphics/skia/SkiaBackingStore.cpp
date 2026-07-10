@@ -199,10 +199,12 @@ void SkiaBackingStore::Tile::update(const IntRect& dirtyRect, const IntRect& til
             auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
             ASSERT(grContext);
 
-            if (!m_surface) {
-                const auto& characterization = displayList->characterization();
+            // isCompatible() does not compare alpha type, so check it separately -- a layer's
+            // opaqueness can flip without any other characterization change, and reusing the old
+            // surface would then carry the wrong alpha type into its image snapshot.
+            const auto& characterization = displayList->characterization();
+            if (!m_surface || !m_surface->isCompatible(characterization) || m_surface->imageInfo().alphaType() != characterization.imageInfo().alphaType())
                 m_surface = SkSurfaces::RenderTarget(grContext, skgpu::Budgeted::kYes, characterization.imageInfo(), characterization.sampleCount(), characterization.origin(), &characterization.surfaceProps());
-            }
 
             skgpu::ganesh::DrawDDL(m_surface.get(), displayList);
         } else if (auto texture = acceleratedBuffer.texture()) {
@@ -249,7 +251,8 @@ sk_sp<SkImage> SkiaBackingStore::Tile::image() const
         // logical region, mirroring the uvMax clamp on the TextureMapper path.
         auto allocatedSize = m_texture->allocatedSize();
         auto backendTexture = GrBackendTextures::MakeGL(allocatedSize.width(), allocatedSize.height(), skgpu::Mipmapped::kNo, externalTexture);
-        m_cachedImage = SkImages::BorrowTextureFrom(grContext, backendTexture, kTopLeft_GrSurfaceOrigin, colorType, kPremul_SkAlphaType, SkColorSpace::MakeSRGB());
+        auto alphaType = m_texture->isOpaque() ? kOpaque_SkAlphaType : kPremul_SkAlphaType;
+        m_cachedImage = SkImages::BorrowTextureFrom(grContext, backendTexture, kTopLeft_GrSurfaceOrigin, colorType, alphaType, SkColorSpace::MakeSRGB());
     }
     return m_cachedImage;
 }

@@ -38,7 +38,6 @@
 #include "GraphicsContext.h"
 #include "GraphicsLayerCoordinated.h"
 #include "NativeImage.h"
-#include "NotImplemented.h"
 #include "TextureMapperLayer.h"
 #include <wtf/MainThread.h>
 
@@ -1296,8 +1295,7 @@ void CoordinatedPlatformLayer::flushCompositingStateOnSkiaTarget(const OptionSet
         }
 
         if (m_pendingChanges.contains(Change::ContentsOpaque)) {
-            // FIXME: do we need this in SkiaCompositingLayer?
-            notImplemented();
+            layer.setContentsOpaque(m_contentsOpaque);
             m_pendingChanges.remove(Change::ContentsOpaque);
         }
 
