@@ -57,10 +57,7 @@ private:
     {
     }
 
-    void handleCallbackWithPromise(JSDOMGlobalObject&, Callback&&, JSC::JSPromise&);
-
     const Ref<IteratorObject> m_iterator;
-    Callback m_callback;
 };
 
 } // namespace WebCore
