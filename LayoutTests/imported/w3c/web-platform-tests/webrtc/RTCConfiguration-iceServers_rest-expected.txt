@@ -50,18 +50,8 @@ PASS new RTCPeerConnection(config) - with relative url should throw SyntaxError
 PASS setConfiguration(config) - with relative url should throw SyntaxError
 PASS new RTCPeerConnection(config) - with http url should throw SyntaxError
 PASS setConfiguration(config) - with http url should throw SyntaxError
-FAIL new RTCPeerConnection(config) - with invalid turn url should throw SyntaxError assert_throws_dom: function "() =>
-      makePc({ iceServers: [{
-        urls: 'turn://example.org/foo?x=y'
-        // `username` and `credential` are not passed because the invalid url
-        // should be rejected before the check for those arguments.
-      }] })" threw object "InvalidAccessError: TURN/TURNS server requires both username and credential" that is not a DOMException SyntaxError: property "code" is equal to 15, expected 12
-FAIL setConfiguration(config) - with invalid turn url should throw SyntaxError assert_throws_dom: function "() =>
-      makePc({ iceServers: [{
-        urls: 'turn://example.org/foo?x=y'
-        // `username` and `credential` are not passed because the invalid url
-        // should be rejected before the check for those arguments.
-      }] })" threw object "InvalidAccessError: TURN/TURNS server requires both username and credential" that is not a DOMException SyntaxError: property "code" is equal to 15, expected 12
+PASS new RTCPeerConnection(config) - with invalid turn url should throw SyntaxError
+PASS setConfiguration(config) - with invalid turn url should throw SyntaxError
 PASS new RTCPeerConnection(config) - with empty urls should throw SyntaxError
 PASS setConfiguration(config) - with empty urls should throw SyntaxError
 PASS setConfiguration(config) - without iceServers removes ice servers
