@@ -3722,9 +3722,6 @@ void Document::willBeRemovedFromFrame()
     if (!m_wheelEventTargets.isEmptyIgnoringNullReferences() && parentDocument())
         protect(parentDocument())->didRemoveEventTargetNode(*this);
 
-    if (RefPtr mediaQueryMatcher = m_mediaQueryMatcher)
-        mediaQueryMatcher->documentDestroyed();
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (!m_idToClientMap.isEmpty() && page()) {
         for (WeakPtr weakClient : copyToVector(m_idToClientMap.values())) {
