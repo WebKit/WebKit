@@ -23,11 +23,16 @@
 
 import Foundation
 
+// SPI typealias to keep others building for now
+// swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+@_spi(_)
+public typealias WKContentWorldConfiguration = WKContentWorld.Configuration
+
 extension WKContentWorld {
     // SPI factory to keep others building for now
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     @_spi(APIAdoptionStaging)
-    public static func world(with configuration: WKContentWorld.Configuration) -> WKContentWorld {
+    public static func world(with configuration: WKContentWorldConfiguration) -> WKContentWorld {
         WKContentWorld(configuration: configuration)
     }
 }
