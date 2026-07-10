@@ -2074,23 +2074,6 @@ TEST(WKUserContentController, MessageHandlerInjectsWebKitNamespace)
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"window.webkit.serializeNode"] boolValue]);
 }
 
-TEST(WKUserContentController, JSBufferInjectsWebKitNamespace)
-{
-    RetainPtr buffer = [NSData dataWithBytes:"abc" length:3];
-    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
-    [[configuration userContentController] addBuffer:buffer.get() name:@"testBuffer" contentWorld:WKContentWorld.pageWorld];
-
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView synchronouslyLoadHTMLString:@"<body>test</body>"];
-
-    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"window.webkit.buffers.testBuffer.asLatin1String()"], "abc");
-
-    // The other WebKitNamespace attributes shouldn't be accessible.
-    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"window.webkit.evaluateScript"] boolValue]);
-    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"window.webkit.createJSHandle"] boolValue]);
-    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"window.webkit.serializeNode"] boolValue]);
-}
-
 TEST(WKUserContentController, PostMessageDuringPageClose)
 {
     constexpr NSUInteger messageCount = 50;

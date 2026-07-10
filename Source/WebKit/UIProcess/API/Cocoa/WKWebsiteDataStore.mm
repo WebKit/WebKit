@@ -790,6 +790,11 @@ struct WKWebsiteData {
     return self;
 }
 
++ (instancetype)_storeWithConfiguration:(_WKWebsiteDataStoreConfiguration *)configuration
+{
+    return adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:configuration]).autorelease();
+}
+
 - (void)_fetchDataRecordsOfTypes:(NSSet<NSString *> *)dataTypes withOptions:(_WKWebsiteDataStoreFetchOptions)options completionHandler:(void (^)(NSArray<WKWebsiteDataRecord *> *))completionHandler
 {
     auto completionHandlerCopy = makeBlockPtr(completionHandler);

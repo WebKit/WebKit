@@ -34,6 +34,7 @@ extension WebPage {
     public struct FrameInfo {
         // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
         @_spi(CrossImportOverlay)
+        @_spi(Testing)
         public init(_ wrapped: WKFrameInfo) {
             self.wrapped = wrapped
         }
