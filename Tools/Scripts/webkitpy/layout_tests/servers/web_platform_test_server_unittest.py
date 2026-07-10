@@ -22,11 +22,9 @@
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import optparse
-import socket
 import sys
 import time
 import unittest
-from unittest import mock
 
 from webkitcorepy import OutputCapture
 
@@ -40,16 +38,6 @@ from webkitpy.layout_tests.servers.web_platform_test_server import WebPlatformTe
 
 
 class TestWebPlatformTestServer(unittest.TestCase):
-    def setUp(self):
-        # WebPlatformTestServer.__init__ triggers a real aioquic autoinstall (import + possible network
-        # download) to provision the WebTransport-over-HTTP/3 server. Stub it out so these construction-based
-        # tests stay hermetic; None means "aioquic unavailable", exercising the graceful-degrade path.
-        patcher = mock.patch(
-            "webkitpy.layout_tests.servers.web_platform_test_server._aioquic_autoinstall_directory",
-            return_value=None)
-        patcher.start()
-        self.addCleanup(patcher.stop)
-
     def test_previously_spawned_instance(self):
         with OutputCapture():
             host = MockHost()
@@ -130,24 +118,3 @@ class TestWebPlatformTestServer(unittest.TestCase):
             server.stop()
             server._process.poll = lambda: 1
             self.assertRaises(ServerError, server.start)
-
-    def test_is_udp_port_listening(self):
-        # A free UDP port reports not-listening; a port held by a live UDP socket reports listening.
-        # This mirrors how the WebTransport-over-HTTP/3 server holds its UDP port bound while running.
-        held = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        try:
-            try:
-                held.bind(('127.0.0.1', 0))
-            except (PermissionError, OSError) as e:
-                self.skipTest("Environment does not permit binding a UDP socket: %s" % e)
-            held_port = held.getsockname()[1]
-
-            probe = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            probe.bind(('127.0.0.1', 0))
-            free_port = probe.getsockname()[1]
-            probe.close()
-
-            self.assertFalse(WebPlatformTestServer._is_udp_port_listening(free_port))
-            self.assertTrue(WebPlatformTestServer._is_udp_port_listening(held_port))
-        finally:
-            held.close()

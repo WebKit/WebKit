@@ -21,11 +21,8 @@
 #  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import errno
 import json
 import logging
-import os
-import socket
 import sys
 import time
 
@@ -126,32 +123,6 @@ def is_wpt_server_running(port_obj):
 def suppress_dns_resolver_logs(log_string):
     return
 
-
-def _aioquic_autoinstall_directory():
-    # aioquic is provisioned through webkitpy's AutoInstall (see autoinstalled/aioquic.py), which unpacks
-    # it into AutoInstall.directory and adds that directory to *this* process's sys.path only. The wpt
-    # server runs in a separate subprocess with PYTHONPATH unset, so it would not see the package. Import
-    # the autoinstalled module here to trigger provisioning, then return AutoInstall.directory so callers
-    # can append it to the subprocess PYTHONPATH. Any failure (offline, missing wheel, autoinstall error)
-    # must not take down non-webtransport WPT runs: swallow it and let the aioquic probe degrade gracefully.
-    try:
-        import webkitpy.autoinstalled.aioquic  # noqa: F401
-        from webkitcorepy import AutoInstall
-        return AutoInstall.directory
-    except BaseException as e:
-        _log.warning("aioquic autoinstall unavailable (%s); WebTransport-over-HTTP/3 server will be disabled.", e)
-        return None
-
-
-def _env_with_pythonpath_appended(directory):
-    # Append (never prepend) so the autoinstall directory cannot shadow wpt's own vendored packages.
-    env = os.environ.copy()
-    if directory:
-        existing = env.get('PYTHONPATH')
-        env['PYTHONPATH'] = os.pathsep.join([existing, directory]) if existing else directory
-    return env
-
-
 class WebPlatformTestServer(http_server_base.HttpServerBase):
     def __init__(self, port_obj, name, pidfile=None):
         http_server_base.HttpServerBase.__init__(self, port_obj)
@@ -203,78 +174,19 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         wpt_file = self._filesystem.join(self._doc_root_path, "wpt.py")
         self._start_cmd = [python_interp, wpt_file, "serve", "--config", self._config_filename]
 
-        # The WebTransport-over-HTTP/3 server is opt-in upstream (tools/serve/serve.py) and depends on aioquic.
-        # aioquic must live in the wpt subprocess's interpreter, not webkitpy's, so probe python_interp directly.
-        # If it is missing, upstream's start_webtransport_h3_server catches the ImportError and sys.exit(0)s only
-        # its own daemon child; the tracked main wpt process survives, so a fatal h3 liveness check would spin and
-        # then abort the entire layout-test run. Degrade gracefully: enable h3 only when aioquic is importable.
-        # aioquic is provisioned via AutoInstall, which lands it outside the subprocess's default sys.path, so its
-        # directory must be injected into the subprocess PYTHONPATH for both the probe and the serve launch below.
-        self._server_env = _env_with_pythonpath_appended(_aioquic_autoinstall_directory())
-        # _aioquic_autoinstall_directory() provisions/verifies aioquic in webkitpy's interpreter; this probe
-        # re-checks it in the serve interpreter (python_interp), which can differ, and is what gates --webtransport-h3.
-        h3_available = self._executive.run_command([python_interp, "-c", "import aioquic"], env=self._server_env, return_exit_code=True) == 0
-        if h3_available:
-            self._start_cmd.append("--webtransport-h3")
-        else:
-            _log.warning("aioquic not available; WebTransport-over-HTTP/3 server disabled -- webtransport/ tests "
-                         "will not run. See Phase 1b provisioning.")
-
         self._mappings = []
         config = wpt_config_json(port_obj)
         if config:
             ports = config["ports"]
             for key in ports:
-                # Without aioquic the h3 server never starts, so it must not be part of the liveness/forward set.
-                if key == "webtransport-h3" and not h3_available:
-                    continue
                 for value in ports[key]:
                     port = {"port": value}
                     if key == "https" or key == "wss":
                         port["sslcert"] = True
-                    # webtransport-h3 is QUIC over UDP, not TCP; flag it so it is not forwarded as a TCP port.
-                    if key == "webtransport-h3":
-                        port["udp"] = True
                     self._mappings.append(port)
 
     def ports_to_forward(self):
-        # Device port-forwarding is TCP-only; UDP ports (e.g. the QUIC/HTTP/3 WebTransport port) must not be
-        # forwarded here, since forwarding them as TCP would silently break the h3 server on devices.
-        return [mapping['port'] for mapping in self._mappings if not mapping.get('udp')]
-
-    @staticmethod
-    def _is_udp_port_listening(port):
-        # QUIC/HTTP/3 is UDP, so the inherited TCP connect() liveness check never sees it. A dead h3 server
-        # otherwise surfaces as mass connect timeouts in the tests, which is exactly what we want to catch
-        # here instead. The running server holds the UDP port bound, so a bind attempt fails with EADDRINUSE.
-        # Bind to 127.0.0.1 (the address the h3 server binds) rather than 'localhost' to avoid a false negative
-        # from an IPv6 localhost resolution. Match EADDRINUSE only: EACCES means the probe itself was denied
-        # (sandbox/firewall), not that the server is up, so it must not be read as "running".
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        try:
-            s.bind(('127.0.0.1', port))
-        except OSError as e:
-            if e.errno == errno.EADDRINUSE:
-                return True
-            raise
-        finally:
-            s.close()
-        return False
-
-    def _is_server_running_on_all_ports(self):
-        if not self._port_obj.host.platform.is_win() and not self._executive.check_running_pid(self._pid):
-            _log.debug("Server isn't running at all")
-            raise http_server_base.ServerError("Server exited")
-
-        for mapping in self._mappings:
-            if mapping.get('udp'):
-                if not self._is_udp_port_listening(mapping['port']):
-                    _log.debug("UDP server NOT running on %d" % mapping['port'])
-                    return False
-                _log.debug("UDP server running on %d" % mapping['port'])
-            elif not self._is_running_on_port(mapping['port']):
-                return False
-        return True
+        return [mapping['port'] for mapping in self._mappings]
 
     def first_port(self, port_obj):
         config = wpt_config_json(port_obj)
@@ -293,7 +205,7 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
             self._filesystem.write_text_file(self._config_filename, json.dumps(config))
 
     def _spawn_process(self):
-        self._process = self._executive.popen(self._start_cmd, cwd=self._doc_root_path, env=self._server_env, shell=False, stdin=self._executive.PIPE, stdout=self._wsout, stderr=self._wsout)
+        self._process = self._executive.popen(self._start_cmd, cwd=self._doc_root_path, shell=False, stdin=self._executive.PIPE, stdout=self._wsout, stderr=self._wsout)
         self._filesystem.write_text_file(self._pid_file, str(self._process.pid))
 
         if self._dns_server:

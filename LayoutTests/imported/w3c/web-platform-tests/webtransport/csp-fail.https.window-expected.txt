@@ -1,3 +1,5 @@
 
-PASS WebTransport connection should fail when CSP connect-src is set to none and reject the promises
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT WebTransport connection should fail when CSP connect-src is set to none and reject the promises Test timed out
 
