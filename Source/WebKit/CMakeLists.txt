@@ -859,10 +859,13 @@ set(WebKit_SWIFT_INTEROP_MODULE_PATH_SWIFT_ONLY TRUE)
 # whose own dependencies aren't on the Swift Clang importer's search path.
 # Expose only what WebBackForwardList.swift names directly; the rest of the
 # WebCore:: types it uses are reachable transitively via WebKit_Internal headers.
-if (ENABLE_BACK_FORWARD_LIST_SWIFT)
-    set(WebCore_Private_SWIFT_MODULEMAP_DIR "${CMAKE_BINARY_DIR}/WebKit/SwiftModules/WebCorePrivate")
-    file(MAKE_DIRECTORY "${WebCore_Private_SWIFT_MODULEMAP_DIR}")
-    file(CONFIGURE OUTPUT "${WebCore_Private_SWIFT_MODULEMAP_DIR}/module.modulemap" CONTENT
+set(WebKit_CMAKE_MODULEMAP_DIR "${CMAKE_BINARY_DIR}/WebKit/SwiftModules")
+# Stale leftover from before 319039@main moved the modulemap up a directory:
+# a build tree that still has this nested copy makes Clang see two distinct
+# 'WebCore_Private' modules and fail with a redefinition error.
+file(REMOVE_RECURSE "${WebKit_CMAKE_MODULEMAP_DIR}/WebCorePrivate")
+file(MAKE_DIRECTORY "${WebKit_CMAKE_MODULEMAP_DIR}")
+file(CONFIGURE OUTPUT "${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap" CONTENT
 "module WebCore_Private [system] {
     requires cplusplus
     header \"${WebCore_PRIVATE_HEADERS_DIR}/DiagnosticLoggingKeys.h\"
@@ -870,7 +873,6 @@ if (ENABLE_BACK_FORWARD_LIST_SWIFT)
     export *
 }
 ")
-endif ()
 
 WEBKIT_FRAMEWORK_DECLARE(WebKit)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
@@ -888,7 +890,7 @@ set(WebKit_SWIFT_CLANG_INCLUDE_DIRS
     ${bmalloc_FRAMEWORK_HEADERS_DIR}
     ${PAL_FRAMEWORK_HEADERS_DIR}
     ${ICU_INCLUDE_DIRS}
-    ${WebCore_Private_SWIFT_MODULEMAP_DIR}
+    ${WebKit_CMAKE_MODULEMAP_DIR}
 )
 if (NOT USE_FRAMEWORK_BUNDLES)
     list(APPEND WebKit_SWIFT_CLANG_INCLUDE_DIRS
