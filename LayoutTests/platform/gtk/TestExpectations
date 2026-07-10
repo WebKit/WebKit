@@ -612,22 +612,7 @@ webkit.org/b/252878 inspector/debugger/breakpoints/resolved-dump-all-pause-locat
 webkit.org/b/252878 inspector/debugger/breakpoints/resolved-dump-each-line.html [ Failure Timeout Pass ]
 webkit.org/b/252878 webaudio/audioworket-out-of-memory.html [ Pass Failure ]
 
-webkit.org/b/318781 media/media-fragments/TC0005.html [ Failure Pass ]
-webkit.org/b/318781 media/media-fragments/TC0011.html [ Failure Pass ]
-webkit.org/b/318781 media/media-fragments/TC0035.html [ Failure Pass ]
-webkit.org/b/318781 media/media-fragments/TC0036.html [ Failure Pass ]
-webkit.org/b/318781 media/media-fragments/TC0037.html [ Failure Pass ]
-webkit.org/b/318781 media/media-fragments/TC0039.html [ Failure Pass ]
-webkit.org/b/318781 media/media-fragments/TC0052.html [ Failure Pass ]
-webkit.org/b/318781 media/media-fragments/TC0053.html [ Failure Pass ]
-webkit.org/b/318781 media/media-fragments/TC0055.html [ Failure Pass ]
-webkit.org/b/318781 media/media-fragments/TC0072.html [ Failure Pass ]
-webkit.org/b/318781 media/media-fragments/TC0078.html [ Failure Pass ]
-webkit.org/b/318781 media/media-fragments/TC0079.html [ Failure Pass ]
-webkit.org/b/318781 media/media-fragments/TC0086.html [ Failure Pass ]
-webkit.org/b/318781 media/media-fragments/TC0088.html [ Failure Pass ]
-webkit.org/b/318781 media/media-fragments/TC0089.html [ Failure Pass ]
-webkit.org/b/318781 media/media-fragments/TC0090.html [ Failure Pass ]
+webkit.org/b/318781 media/media-fragments [ Failure Pass ]
 
 # Uncomment when webkit.org/b/267992 is fixed
 #webkit.org/b/257624 http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Failure Pass ]
@@ -1381,9 +1366,3 @@ webkit.org/b/319066 [ Debug ] imported/w3c/web-platform-tests/css/css-view-trans
 
 webkit.org/b/319072 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio-loading-lazy-window-onload.html [ Failure Pass ]
 webkit.org/b/319073 inspector/canvas/create-context-bitmaprenderer.html [ Crash Failure Pass ]
-webkit.org/b/319074 media/media-fragments/TC0006.html [ Failure Pass ]
-webkit.org/b/319075 media/media-fragments/TC0024.html [ Failure Pass ]
-webkit.org/b/319076 media/media-fragments/TC0051.html [ Failure Pass ]
-webkit.org/b/319077 media/media-fragments/TC0054.html [ Failure Pass ]
-webkit.org/b/319078 media/media-fragments/TC0059.html [ Failure Pass ]
-webkit.org/b/319079 media/media-fragments/TC0085.html [ Failure Pass ]
