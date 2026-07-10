@@ -2417,3 +2417,5 @@ webkit.org/b/319003 fast/mediastream/microphone-interruption-and-audio-session.h
 # webkit.org/b/319018 2x media/media-source/* (layout-tests) are flaky timeouts.
 media/media-source/media-source-real-play-after-eos.html [ Pass ImageOnlyFailure Timeout ]
 media/media-source/media-managedmse-webvtt-track.html [ Pass Timeout ]
+
+webkit.org/b/319121 [ Release ] imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-corner-shape-change.html [ Pass ImageOnlyFailure ]
