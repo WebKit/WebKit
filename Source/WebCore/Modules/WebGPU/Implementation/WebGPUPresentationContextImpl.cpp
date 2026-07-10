@@ -32,7 +32,6 @@
 #include "WebGPUCanvasConfiguration.h"
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUDeviceImpl.h"
-#include "WebGPUTextureDescriptor.h"
 #include "WebGPUTextureImpl.h"
 #include <WebGPU/WebGPUExt.h>
 
