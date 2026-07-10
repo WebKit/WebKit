@@ -5717,23 +5717,27 @@ bool Document::canAcceptChild(const Node& newChild, const Node* refChild, Accept
     }
     case NodeType::DocumentType: {
         auto* existingDocType = childrenOfType<DocumentType>(*this).first();
+        if (operation == AcceptChildOperation::ReplaceAll)
+            break;
         if (operation == AcceptChildOperation::Replace) {
             //  parent has a doctype child that is not child, or an element is preceding child.
             if (existingDocType && existingDocType != refChild)
                 return false;
             if (refChild->previousElementSibling())
                 return false;
-        } else {
-            ASSERT(operation == AcceptChildOperation::InsertOrAdd);
-            if (existingDocType)
-                return false;
-            if ((refChild && refChild->previousElementSibling()) || (!refChild && firstElementChild()))
-                return false;
+            break;
         }
+        ASSERT(operation == AcceptChildOperation::InsertOrAdd);
+        if (existingDocType)
+            return false;
+        if ((refChild && refChild->previousElementSibling()) || (!refChild && firstElementChild()))
+            return false;
         break;
     }
     case NodeType::Element: {
         auto* existingElementChild = firstElementChild();
+        if (operation == AcceptChildOperation::ReplaceAll)
+            break;
         if (operation == AcceptChildOperation::Replace) {
             if (existingElementChild && existingElementChild != refChild)
                 return false;
@@ -5741,14 +5745,14 @@ bool Document::canAcceptChild(const Node& newChild, const Node* refChild, Accept
                 if (is<DocumentType>(*child))
                     return false;
             }
-        } else {
-            ASSERT(operation == AcceptChildOperation::InsertOrAdd);
-            if (existingElementChild)
+            break;
+        }
+        ASSERT(operation == AcceptChildOperation::InsertOrAdd);
+        if (existingElementChild)
+            return false;
+        for (auto* child = refChild; child; child = child->nextSibling()) {
+            if (is<DocumentType>(*child))
                 return false;
-            for (auto* child = refChild; child; child = child->nextSibling()) {
-                if (is<DocumentType>(*child))
-                    return false;
-            }
         }
         break;
     }

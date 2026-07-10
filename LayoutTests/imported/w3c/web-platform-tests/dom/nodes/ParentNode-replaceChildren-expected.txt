@@ -4,10 +4,6 @@ PASS If node is not a DocumentFragment, DocumentType, Element, Text, ProcessingI
 PASS If node is a Text node and parent is a document, then throw a HierarchyRequestError DOMException.
 PASS If node is a doctype and parent is not a document, then throw a HierarchyRequestError DOMException.
 PASS If node is a DocumentFragment with multiple elements and parent is a document, then throw a HierarchyRequestError DOMException.
-PASS If node is a DocumentFragment with an element and parent is a document with another element, then throw a HierarchyRequestError DOMException.
-PASS If node is an Element and parent is a document with another element, then throw a HierarchyRequestError DOMException.
-PASS If node is a doctype and parent is a document with another doctype, then throw a HierarchyRequestError DOMException.
-PASS If node is a doctype and parent is a document with an element, then throw a HierarchyRequestError DOMException.
 PASS Element.replaceChildren() without any argument, on a parent having no child.
 PASS Element.replaceChildren() with null as an argument, on a parent having no child.
 PASS Element.replaceChildren() with undefined as an argument, on a parent having no child.
@@ -26,6 +22,12 @@ PASS DocumentFragment.replaceChildren() without any argument, on a parent having
 PASS DocumentFragment.replaceChildren() with null as an argument, on a parent having a child.
 PASS DocumentFragment.replaceChildren() with one element and text as argument, on a parent having a child.
 PASS DocumentFragment.replaceChildren() should move nodes in the right order
+PASS Document.replaceChildren() with an element, replacing an existing doctype and element.
+PASS Document.replaceChildren() with a DocumentFragment containing a single element, replacing an existing doctype and element.
+PASS Document.replaceChildren() with a doctype, replacing an existing doctype and element.
+PASS Document.replaceChildren() without any argument, removing an existing doctype and element.
+PASS Document.replaceChildren() with two elements throws a HierarchyRequestError.
+PASS Document.replaceChildren() with text throws a HierarchyRequestError.
 PASS There should be a MutationRecord for the node removed from another parent node.
 PASS There should be MutationRecords for the nodes removed from another parent node.
 

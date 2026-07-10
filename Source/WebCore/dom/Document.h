@@ -1069,7 +1069,6 @@ public:
     void nodeWillBeMoved(Node&);
     void parentlessNodeMovedToNewDocument(Node&);
 
-    enum class AcceptChildOperation : bool { Replace, InsertOrAdd };
     bool NODELETE canAcceptChild(const Node& newChild, const Node* refChild, AcceptChildOperation) const;
 
     void textInserted(Node&, unsigned offset, unsigned length);

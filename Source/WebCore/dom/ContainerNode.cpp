@@ -562,7 +562,7 @@ static bool containsIncludingHostElements(const Node& possibleAncestor, const No
 }
 
 enum class ShouldValidateChildParent : bool { No, Yes };
-static inline ExceptionOr<void> checkAcceptChild(ContainerNode& newParent, Node& newChild, const Node* refChild, Document::AcceptChildOperation operation, ShouldValidateChildParent shouldValidateChildParent)
+static inline ExceptionOr<void> checkAcceptChild(ContainerNode& newParent, Node& newChild, const Node* refChild, AcceptChildOperation operation, ShouldValidateChildParent shouldValidateChildParent)
 {
     if (containsIncludingHostElements(newChild, newParent))
         return Exception { ExceptionCode::HierarchyRequestError };
@@ -605,11 +605,11 @@ static inline ExceptionOr<void> checkAcceptChildGuaranteedNodeTypes(ContainerNod
 // https://dom.spec.whatwg.org/#concept-node-ensure-pre-insertion-validity
 ExceptionOr<void> ContainerNode::ensurePreInsertionValidity(Node& newChild, Node* refChild)
 {
-    return checkAcceptChild(*this, newChild, refChild, Document::AcceptChildOperation::InsertOrAdd, ShouldValidateChildParent::Yes);
+    return checkAcceptChild(*this, newChild, refChild, AcceptChildOperation::InsertOrAdd, ShouldValidateChildParent::Yes);
 }
 
 // https://dom.spec.whatwg.org/#concept-node-ensure-pre-insertion-validity when node is a new DocumentFragment created in "converting nodes into a node"
-ExceptionOr<void> ContainerNode::ensurePreInsertionValidityForPhantomDocumentFragment(NodeVector& newChildren, Node* refChild)
+ExceptionOr<void> ContainerNode::ensurePreInsertionValidityForPhantomDocumentFragment(NodeVector& newChildren, Node* refChild, AcceptChildOperation operation)
 {
     if (is<Document>(*this)) [[unlikely]] {
         bool hasSeenElement = false;
@@ -622,7 +622,7 @@ ExceptionOr<void> ContainerNode::ensurePreInsertionValidityForPhantomDocumentFra
         }
     }
     for (auto& child : newChildren) {
-        if (auto result = checkAcceptChild(*this, child, refChild, Document::AcceptChildOperation::InsertOrAdd, ShouldValidateChildParent::Yes); result.hasException())
+        if (auto result = checkAcceptChild(*this, child, refChild, operation, ShouldValidateChildParent::Yes); result.hasException())
             return result;
     }
     return { };
@@ -631,7 +631,7 @@ ExceptionOr<void> ContainerNode::ensurePreInsertionValidityForPhantomDocumentFra
 // https://dom.spec.whatwg.org/#concept-node-replace
 static inline ExceptionOr<void> checkPreReplacementValidity(ContainerNode& newParent, Node& newChild, Node& oldChild, ShouldValidateChildParent shouldValidateChildParent)
 {
-    return checkAcceptChild(newParent, newChild, &oldChild, Document::AcceptChildOperation::Replace, shouldValidateChildParent);
+    return checkAcceptChild(newParent, newChild, &oldChild, AcceptChildOperation::Replace, shouldValidateChildParent);
 }
 
 ExceptionOr<void> ContainerNode::insertBefore(Node& newChild, RefPtr<Node>&& refChild)
@@ -1404,7 +1404,7 @@ ExceptionOr<void> ContainerNode::replaceChildren(FixedVector<NodeOrString>&& vec
         return result.releaseException();
     auto newChildren = result.releaseReturnValue();
 
-    if (auto checkResult = ensurePreInsertionValidityForPhantomDocumentFragment(newChildren); checkResult.hasException())
+    if (auto checkResult = ensurePreInsertionValidityForPhantomDocumentFragment(newChildren, nullptr, AcceptChildOperation::ReplaceAll); checkResult.hasException())
         return checkResult;
 
     Ref protectedThis { *this };

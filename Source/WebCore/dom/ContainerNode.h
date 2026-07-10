@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include <WebCore/DocumentEnums.h>
 #include <WebCore/Node.h>
 
 namespace WebCore {
@@ -150,7 +151,7 @@ public:
     ExceptionOr<void> moveBefore(Node&, RefPtr<Node>&& refChild);
 
     ExceptionOr<void> ensurePreInsertionValidity(Node& newChild, Node* refChild);
-    ExceptionOr<void> ensurePreInsertionValidityForPhantomDocumentFragment(NodeVector& newChildren, Node* refChild = nullptr);
+    ExceptionOr<void> ensurePreInsertionValidityForPhantomDocumentFragment(NodeVector& newChildren, Node* refChild = nullptr, AcceptChildOperation = AcceptChildOperation::InsertOrAdd);
     ExceptionOr<void> insertChildrenBeforeWithoutPreInsertionValidityCheck(NodeVector&&, Node* nextChild = nullptr);
 
 protected:
