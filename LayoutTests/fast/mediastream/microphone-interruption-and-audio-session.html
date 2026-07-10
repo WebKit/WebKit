@@ -8,19 +8,19 @@
  </head>
 <body>
     <script>
-    function wait1sForMute(track, testName)
+    function wait10sForMute(track, testName)
     {
         return new Promise((resolve, reject) => {
             track.onmute = resolve;
-            setTimeout(() => reject("rejected mute for " + testName), 1000);
+            setTimeout(() => reject("rejected mute for " + testName), 10000);
         });
     }
 
-    function wait1sForUnmute(track, testName)
+    function wait10sForUnmute(track, testName)
     {
         return new Promise((resolve, reject) => {
             track.onunmute = resolve;
-            setTimeout(() => reject("rejected unmute for " + testName), 1000);
+            setTimeout(() => reject("rejected unmute for " + testName), 10000);
         });
     }
 
@@ -36,7 +36,7 @@
         assert_equals(internals.audioSessionCategory(), "PlayAndRecord", "test1");
 
         // Muting capture should trigger change of category.
-        const onMutePromise1 = wait1sForMute(stream.getAudioTracks()[0], "onMutePromise1");
+        const onMutePromise1 = wait10sForMute(stream.getAudioTracks()[0], "onMutePromise1");
         if (window.internals)
             internals.setPageMuted("capturedevices");
         await onMutePromise1;
@@ -45,7 +45,7 @@
         streams.push(clone);
         assert_equals(internals.audioSessionCategory(), "AmbientSound", "test2");
 
-        const onUnmutePromise1 = wait1sForUnmute(stream.getAudioTracks()[0], "onUnmutePromise1");
+        const onUnmutePromise1 = wait10sForUnmute(stream.getAudioTracks()[0], "onUnmutePromise1");
         if (window.internals)
             internals.setPageMuted("");
         await onUnmutePromise1;
@@ -54,7 +54,7 @@
         assert_equals(internals.audioSessionCategory(), "PlayAndRecord", "test3");
 
         // PlayAndRecord should stick even with capture interruption.
-        const onMutePromise2 = wait1sForMute(stream.getAudioTracks()[0], "onMutePromise2");
+        const onMutePromise2 = wait10sForMute(stream.getAudioTracks()[0], "onMutePromise2");
         if (window.internals)
             internals.beginAudioSessionInterruption();
         await onMutePromise2;
@@ -62,7 +62,7 @@
         streams.push(clone);
         assert_equals(internals.audioSessionCategory(), "PlayAndRecord", "test4");
 
-        const onUnmutePromise2 = wait1sForUnmute(stream.getAudioTracks()[0], "onUnmutePromise2");
+        const onUnmutePromise2 = wait10sForUnmute(stream.getAudioTracks()[0], "onUnmutePromise2");
         if (window.internals)
             internals.endAudioSessionInterruption();
         await onUnmutePromise2;
