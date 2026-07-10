@@ -135,8 +135,8 @@ static constexpr std::array<Entry, dictionarySize> dictionary {
     Entry { 0x302, Postfix, 0, 0, Accent | Stretchy }, // COMBINING CIRCUMFLEX ACCENT
     Entry { 0x311, Postfix, 0, 0, Accent }, // COMBINING INVERTED BREVE
     Entry { 0x3F6, Infix, 5, 5, 0 }, // GREEK REVERSED LUNATE EPSILON SYMBOL
-    Entry { 0x2016, Prefix, 0, 0, Fence | Stretchy }, // DOUBLE VERTICAL LINE
-    Entry { 0x2016, Postfix, 0, 0, Fence | Stretchy }, // DOUBLE VERTICAL LINE
+    Entry { 0x2016, Prefix, 0, 0, Fence | Stretchy | Symmetric }, // DOUBLE VERTICAL LINE
+    Entry { 0x2016, Postfix, 0, 0, Fence | Stretchy | Symmetric }, // DOUBLE VERTICAL LINE
     Entry { 0x2018, Prefix, 0, 0, Fence }, // LEFT SINGLE QUOTATION MARK
     Entry { 0x2019, Postfix, 0, 0, Fence }, // RIGHT SINGLE QUOTATION MARK
     Entry { 0x201A, Postfix, 0, 0, Accent }, // SINGLE LOW-9 QUOTATION MARK

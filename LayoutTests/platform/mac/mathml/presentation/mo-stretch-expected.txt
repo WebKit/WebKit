@@ -53,7 +53,7 @@ layer at (0,0) size 800x271
             RenderBlock (anonymous) at (0,0) size 5x15
               RenderText {#text} at (0,-1) size 5x17
                 text run at (0,0) width 5: "|"
-          RenderMathMLOperator {mo} at (90,7) size 8x16
+          RenderMathMLOperator {mo} at (90,11) size 8x16
             RenderBlock (anonymous) at (0,0) size 7x15
               RenderText {#text} at (0,-1) size 7x17
                 text run at (0,0) width 7: "\x{2016}"
@@ -113,7 +113,7 @@ layer at (0,0) size 800x271
             RenderBlock (anonymous) at (0,0) size 5x15
               RenderText {#text} at (0,-1) size 5x17
                 text run at (0,0) width 5: "|"
-          RenderMathMLOperator {mo} at (111,0) size 8x76
+          RenderMathMLOperator {mo} at (111,0) size 8x142
             RenderBlock (anonymous) at (0,0) size 7x15
               RenderText {#text} at (0,-1) size 7x17
                 text run at (0,0) width 7: "\x{2016}"
@@ -174,7 +174,7 @@ layer at (0,0) size 800x271
             RenderBlock (anonymous) at (0,0) size 5x15
               RenderText {#text} at (0,-1) size 5x17
                 text run at (0,0) width 5: "|"
-          RenderMathMLOperator {mo} at (111,0) size 8x51
+          RenderMathMLOperator {mo} at (111,0) size 8x92
             RenderBlock (anonymous) at (0,0) size 7x15
               RenderText {#text} at (0,-1) size 7x17
                 text run at (0,0) width 7: "\x{2016}"
@@ -235,7 +235,7 @@ layer at (0,0) size 800x271
             RenderBlock (anonymous) at (0,0) size 5x15
               RenderText {#text} at (0,-1) size 5x17
                 text run at (0,0) width 5: "|"
-          RenderMathMLOperator {mo} at (97,6) size 8x15
+          RenderMathMLOperator {mo} at (97,2) size 8x33
             RenderBlock (anonymous) at (0,0) size 7x15
               RenderText {#text} at (0,-1) size 7x17
                 text run at (0,0) width 7: "\x{2016}"
@@ -296,7 +296,7 @@ layer at (0,0) size 800x271
             RenderBlock (anonymous) at (0,0) size 5x15
               RenderText {#text} at (0,-1) size 5x17
                 text run at (0,0) width 5: "|"
-          RenderMathMLOperator {mo} at (130,3) size 8x42
+          RenderMathMLOperator {mo} at (130,3) size 8x73
             RenderBlock (anonymous) at (0,0) size 7x15
               RenderText {#text} at (0,-1) size 7x17
                 text run at (0,0) width 7: "\x{2016}"
