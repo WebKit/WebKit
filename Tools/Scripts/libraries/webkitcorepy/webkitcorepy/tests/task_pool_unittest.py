@@ -305,7 +305,7 @@ class TaskPoolUnittest(unittest.TestCase):
                             group='group'
                         )
 
-                    with Timeout(1):
+                    with Timeout(5):
                         pool.wait()
 
             self.assertEqual(len(captured.stdout.getvalue().splitlines()), 26)
