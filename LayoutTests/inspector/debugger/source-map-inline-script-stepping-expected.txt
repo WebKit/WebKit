@@ -1,0 +1,58 @@
+Tests that stepping through a source-mapped inline script displays the correct original location and that stepping out to a document location is not incorrectly mapped through the source map.
+
+
+== Running test suite: Debugger.Stepping.InlineScript.SourceMap
+-- Running test case: Debugger.Stepping.InlineScript.SourceMap.OverIntoOut
+EXPRESSION: setTimeout(driver)
+STEPS: over, in, out, out, resume
+PAUSED (debugger-statement)
+PAUSE AT entry:2:5
+      0    function entry() {
+ ->   1        |debugger;
+      2        helper();
+      3        done();
+      4    }
+
+ACTION: step-over
+PAUSE AT entry:3:5
+      0    function entry() {
+      1        debugger;
+ ->   2        |helper();
+      3        done();
+      4    }
+      5    function helper() {
+
+ACTION: step-in
+PAUSE AT helper:7:5
+      3        done();
+      4    }
+      5    function helper() {
+ ->   6        |leaf();
+      7    }
+      8    function leaf() { }
+      9    function done() { }
+
+ACTION: step-out
+PAUSE AT entry:4:5
+      0    function entry() {
+      1        debugger;
+      2        helper();
+ ->   3        |done();
+      4    }
+      5    function helper() {
+      6        leaf();
+
+ACTION: step-out
+PAUSE AT driver:12:30
+      8    </script>
+      9    <script>
+     10    // This comments prevents the inlined source map from being in the results.
+ ->  11    function driver() { entry(); |afterEntry(); }
+     12    function afterEntry() { }
+     13    </script>
+     14    <script>
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+

@@ -183,7 +183,7 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
         // SourceCodeLocations are always constructed with raw resources and raw locations. Lookup the raw location.
         let [generatedLine, generatedColumn] = this._sourceMap.findGeneratedPosition(this.url, lineNumber);
 
-        // If the raw location is an inline script we need to include that offset.
+        // Keep in sync with `WI.SourceCodeLocation.prototype.resolveMappedLocation`.
         var originalSourceCode = this._sourceMap.originalSourceCode;
         if (originalSourceCode instanceof WI.Script) {
             if (!generatedLine)
