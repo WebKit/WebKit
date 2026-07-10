@@ -20678,7 +20678,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ] || [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names WK _WK _TtC6WebKit _TtCC6WebKit || exit $?\nfi\n";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names WK _WK _TtC6WebKit _TtCC6WebKit || exit $?\nfi\n";
 		};
 		3AB34B6228D4F01C009DAAB6 /* Update Info.plist for RunningBoard management */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -20851,7 +20851,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ]; then touch \"${SCRIPT_OUTPUT_FILE_0}\"; exit 0; fi\nScripts/check-xcfilelists.sh && touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "Scripts/check-xcfilelists.sh && touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 		58E7CD6F2E78561D00338ED0 /* Process entitlements */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -21008,7 +21008,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ] || [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../Tools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi\n";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../Tools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi\n";
 		};
 		5DF408C6131DD49700130071 /* Check For Framework Include Consistency */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -21025,7 +21025,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ] || [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-webkit-framework-include-consistency ]; then\n    ../../Tools/Scripts/check-for-webkit-framework-include-consistency || exit $?\nfi\n";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-webkit-framework-include-consistency ]; then\n    ../../Tools/Scripts/check-for-webkit-framework-include-consistency || exit $?\nfi\n";
 		};
 		6508960F28482C6A00A91844 /* Copy launchd plist and create symlink */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -21349,7 +21349,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ] || [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers ]; then\n    ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers Headers PrivateHeaders || exit $?\nfi\n";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers ]; then\n    ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers Headers PrivateHeaders || exit $?\nfi\n";
 		};
 		C0CE72841247E66800BC0EC4 /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -21546,7 +21546,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ] || [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    touch \"${SCRIPT_OUTPUT_FILE_0}\"\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    export PRODUCT_NAME=WebKit\n    if [ -z \"${WK_FRAMEWORK_VERSION_PREFIX}\" ]; then\n        export SHALLOW_BUNDLE=YES\n    fi\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n\ntouch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    touch \"${SCRIPT_OUTPUT_FILE_0}\"\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    export PRODUCT_NAME=WebKit\n    if [ -z \"${WK_FRAMEWORK_VERSION_PREFIX}\" ]; then\n        export SHALLOW_BUNDLE=YES\n    fi\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n\ntouch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 		DDFE17020000000000000001 /* Generate Header Postprocess Config */ = {
 			isa = PBXShellScriptBuildPhase;
