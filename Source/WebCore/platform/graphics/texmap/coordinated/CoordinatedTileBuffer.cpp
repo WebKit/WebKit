@@ -198,7 +198,7 @@ SkCanvas* CoordinatedAcceleratedTileBuffer::canvas()
     }
 
     if (!m_recorder)
-        m_recorder = std::make_unique<GrDeferredDisplayListRecorder>(m_characterization);
+        m_recorder.emplace(m_characterization);
     return m_recorder->getCanvas();
 }
 

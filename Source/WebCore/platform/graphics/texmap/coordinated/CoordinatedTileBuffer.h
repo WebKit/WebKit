@@ -167,7 +167,7 @@ private:
     RefPtr<BitmapTexture> m_texture;
     std::unique_ptr<GLFence> m_fence;
     GrSurfaceCharacterization m_characterization;
-    std::unique_ptr<GrDeferredDisplayListRecorder> m_recorder;
+    std::optional<GrDeferredDisplayListRecorder> m_recorder;
     sk_sp<GrDeferredDisplayList> m_displayList;
 };
 #endif
