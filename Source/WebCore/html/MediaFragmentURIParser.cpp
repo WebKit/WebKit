@@ -267,17 +267,12 @@ bool MediaFragmentURIParser::parseNPTTime(std::span<const Latin1Character> timeS
 
     MediaTime fraction;
     if (timeString[offset] == '.') {
-        if (offset == timeString.size())
-            return true;
         auto digits = collectFraction(timeString, offset);
         bool isValid;
         fraction = MediaTime::createWithDouble(digits.toDouble(isValid));
         time = MediaTime::createWithDouble(value1) + fraction;
         return true;
     }
-    
-    if (digits1.length() < 1)
-        return false;
 
     // Collect the next sequence of 0-9 after ':'
     if (offset >= timeString.size() || timeString[offset++] != ':')
