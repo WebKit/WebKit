@@ -5440,6 +5440,13 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
             handleMenuOpened(*element);
             handleLiveRegionCreated(*element);
 
+            if (element->hasID() && m_unresolvedRelationTargetIds.contains(element->getIdAttribute())) {
+                // A previously-unresolved relation target (e.g. an aria-labelledby target that didn't
+                // exist when relations were last built) was just inserted, so dirty relations to
+                // re-resolve them.
+                markRelationsDirty();
+            }
+
             if (RefPtr label = dynamicDowncast<HTMLLabelElement>(*element)) {
                 // A label was added or removed. Update its LabelFor relationships.
                 m_elementsWithRelationAttributes.add(*label);
@@ -6651,6 +6658,7 @@ void AXObjectCache::updateRelationsIfNeeded()
     m_relations.clear();
     m_recentlyRemovedRelations.clear();
     m_relationTargets.clear();
+    m_unresolvedRelationTargetIds.clear();
     m_hasAriaOwnsRelations = false;
 
     if (!m_doneInitialRelationsBuild) {
@@ -6723,6 +6731,17 @@ bool AXObjectCache::addRelation(Element& origin, const QualifiedName& attribute)
     auto relation = attributeToRelationType(attribute);
     if (!m_document)
         return false;
+
+    // Remember any referenced ids whose target doesn't exist yet, so that if an element with one of
+    // these ids is inserted later, we know to dirty relations and re-resolve it
+    if (const auto& value = origin.attributeWithoutSynchronization(attribute); !value.isNull()) {
+        Ref treeScope = origin.treeScope();
+        for (auto& id : SpaceSplitString(value, SpaceSplitString::ShouldFoldCase::No)) {
+            if (!treeScope->elementByIdResolvingReferenceTarget(id))
+                m_unresolvedRelationTargetIds.add(id);
+        }
+    }
+
     if (Element::isElementReflectionAttribute(m_document->settings(), attribute)) {
         if (auto reflectedElement = origin.elementForAttributeInternal(attribute))
             return addRelation(origin, *reflectedElement, relation);
