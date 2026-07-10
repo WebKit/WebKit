@@ -1035,6 +1035,16 @@ static WebCore::EditableLinkBehavior NODELETE toEditableLinkBehavior(_WKEditable
     return protect(*_preferences)->usesBackForwardCache();
 }
 
+- (void)_setStandardFontFamily:(NSString *)family
+{
+    protect(*_preferences)->setStandardFontFamily(family);
+}
+
+- (NSString *)_standardFontFamily
+{
+    return protect(*_preferences)->standardFontFamily().createNSString().autorelease();
+}
+
 #if PLATFORM(MAC)
 - (void)_setCanvasUsesAcceleratedDrawing:(BOOL)enabled
 {
@@ -1164,16 +1174,6 @@ static WebCore::EditableLinkBehavior NODELETE toEditableLinkBehavior(_WKEditable
 - (BOOL)_viewGestureDebuggingEnabled
 {
     return protect(*_preferences)->viewGestureDebuggingEnabled();
-}
-
-- (void)_setStandardFontFamily:(NSString *)family
-{
-    protect(*_preferences)->setStandardFontFamily(family);
-}
-
-- (NSString *)_standardFontFamily
-{
-    return protect(*_preferences)->standardFontFamily().createNSString().autorelease();
 }
 
 - (void)_setBackspaceKeyNavigationEnabled:(BOOL)enabled

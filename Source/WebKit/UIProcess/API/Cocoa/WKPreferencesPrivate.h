@@ -215,6 +215,7 @@ typedef NS_ENUM(NSInteger, _WKNavigatorWebDriverActivePolicy) {
 @property (nonatomic, setter=_setRequiresPageVisibilityForVideoToBeNowPlayingForTesting:) BOOL _requiresPageVisibilityForVideoToBeNowPlayingForTesting WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 @property (nonatomic, setter=_setSiteIsolationEnabled:) BOOL _siteIsolationEnabled WK_API_AVAILABLE(macos(26.0), ios(26.0), visionos(26.0));
 @property (nonatomic, setter=_setUsesPageCache:) BOOL _usesPageCache WK_API_AVAILABLE(macos(10.13.4), ios(27.0), visionos(27.0));
+@property (nonatomic, setter=_setStandardFontFamily:) NSString *_standardFontFamily WK_API_AVAILABLE(macos(10.13.4), ios(27.0), visionos(27.0));
 
 #if !TARGET_OS_IPHONE
 @property (nonatomic, setter=_setWebGLEnabled:) BOOL _webGLEnabled WK_API_AVAILABLE(macos(10.13.4));
@@ -231,7 +232,6 @@ typedef NS_ENUM(NSInteger, _WKNavigatorWebDriverActivePolicy) {
 @property (nonatomic, setter=_setSuppressesIncrementalRendering:) BOOL _suppressesIncrementalRendering WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setCookieEnabled:) BOOL _cookieEnabled WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setViewGestureDebuggingEnabled:) BOOL _viewGestureDebuggingEnabled WK_API_AVAILABLE(macos(10.13.4));
-@property (nonatomic, setter=_setStandardFontFamily:) NSString *_standardFontFamily WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setBackspaceKeyNavigationEnabled:) BOOL _backspaceKeyNavigationEnabled WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setAllowsInlineMediaPlayback:) BOOL _allowsInlineMediaPlayback WK_API_AVAILABLE(macos(10.14));
 @property (nonatomic, setter=_setApplePayEnabled:) BOOL _applePayEnabled WK_API_AVAILABLE(macos(10.14));
