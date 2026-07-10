@@ -28,6 +28,7 @@
 #include "GridFormattingContext.h"
 #include "GridTypeAliases.h"
 #include "StyleGridTrackBreadth.h"
+#include "UsedTrackSizes.h"
 
 namespace WebCore {
 
@@ -43,7 +44,6 @@ class ImplicitGrid;
 
 struct GridAreaSizes;
 struct GridLayoutState;
-struct UsedTrackSizes;
 struct UsedMargins;
 
 struct GridDimensions {
@@ -53,11 +53,16 @@ struct GridDimensions {
     size_t totalRows { 0 };
 };
 
+struct GridLayoutResult {
+    UsedTrackSizes usedTrackSizes;
+    GridItemRects gridItemRects;
+};
+
 class GridLayout {
 public:
     GridLayout(const GridFormattingContext&);
 
-    std::pair<UsedTrackSizes, GridItemRects> layout(UnplacedGridItems&, const GridLayoutState&);
+    GridLayoutResult layout(UnplacedGridItems&, const GridLayoutState&);
 
 private:
 
