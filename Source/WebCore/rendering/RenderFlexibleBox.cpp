@@ -613,11 +613,11 @@ void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(FlexLineStates
     if (!isMultiline() && !lineStates.isEmpty())
         lineStates[0].crossAxisExtent = crossAxisContentExtent();
 
-    alignFlexLines(lineStates, gapBetweenLines);
+    handleCrossAxisAlignmentForFlexLines(lineStates, gapBetweenLines);
 
     computeCrossSizeForFlexItems(lineStates);
 
-    alignFlexItems(lineStates);
+    handleCrossAxisAlignmentForFlexItems(lineStates);
     
     if (isWrapReverse())
         flipForWrapReverse(lineStates, crossAxisStartEdge);
@@ -2946,7 +2946,7 @@ static LayoutUnit NODELETE alignContentSpaceBetweenFlexItems(LayoutUnit availabl
     return 0_lu;
 }
 
-void RenderFlexibleBox::alignFlexLines(FlexLineStates& lineStates, LayoutUnit gapBetweenLines)
+void RenderFlexibleBox::handleCrossAxisAlignmentForFlexLines(FlexLineStates& lineStates, LayoutUnit gapBetweenLines)
 {
     if (lineStates.isEmpty() || !isMultiline())
         return;
@@ -3001,7 +3001,7 @@ void RenderFlexibleBox::computeCrossSizeForFlexItems(FlexLineStates& lineStates)
     }
 }
 
-void RenderFlexibleBox::alignFlexItems(FlexLineStates& lineStates)
+void RenderFlexibleBox::handleCrossAxisAlignmentForFlexItems(FlexLineStates& lineStates)
 {
     for (LineState& lineState : lineStates) {
         LayoutUnit lineCrossAxisExtent = lineState.crossAxisExtent;
