@@ -25,8 +25,15 @@
 
 #include <cstring>
 #include <openxr/openxr.h>
-#include <openxr/openxr_loader_negotiation.h>
 #include <string_view>
+
+// The loader negotiation structs live in openxr_loader_negotiation.h since OpenXR 1.1.x,
+// but older SDKs (still used on some bots) expose them via loader_interfaces.h.
+#if __has_include(<openxr/openxr_loader_negotiation.h>)
+#include <openxr/openxr_loader_negotiation.h>
+#else
+#include <openxr/loader_interfaces.h>
+#endif
 
 namespace {
 
