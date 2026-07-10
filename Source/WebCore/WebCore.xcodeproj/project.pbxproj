@@ -50443,7 +50443,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names Web || exit $?\nfi\n\ntouch \"${TARGET_TEMP_DIR}/CheckForInappropriateObjCClassNames.txt\"\n";
+			shellScript = "if [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ] || [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names Web || exit $?\nfi\n\ntouch \"${TARGET_TEMP_DIR}/CheckForInappropriateObjCClassNames.txt\"\n";
 		};
 		446EE4E7255DF00D00454463 /* Concatenate and Copy Localizable.strings */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -50527,7 +50527,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "Scripts/check-xcfilelists.sh && touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "if [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ]; then touch \"${SCRIPT_OUTPUT_FILE_0}\"; exit 0; fi\nScripts/check-xcfilelists.sh && touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 		5D0D540D0E9862F60029E223 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -50546,7 +50546,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../Tools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi\n\ntouch \"${TARGET_TEMP_DIR}/CheckForWeakVTablesAndExternals.txt\"\n";
+			shellScript = "if [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ] || [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../Tools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi\n\ntouch \"${TARGET_TEMP_DIR}/CheckForWeakVTablesAndExternals.txt\"\n";
 		};
 		5DF50887116F3077005202AB /* Check For Inappropriate Files In Framework */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -50563,7 +50563,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    touch \"${SCRIPT_OUTPUT_FILE_0}\"\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n\ntouch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "if [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ] || [ \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    touch \"${SCRIPT_OUTPUT_FILE_0}\"\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n\ntouch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 		6577FFC7276AC9AD0011AEC8 /* Create Symlink to Cryptex Path */ = {
 			isa = PBXShellScriptBuildPhase;

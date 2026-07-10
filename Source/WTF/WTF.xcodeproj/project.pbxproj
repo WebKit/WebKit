@@ -4434,7 +4434,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\ndepfile=\"${SCRIPT_OUTPUT_FILE_0/%.timestamp/.d}\"\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    echo \"dependencies: \" > \"${depfile}\"\n    touch \"${SCRIPT_OUTPUT_FILE_0}\"\n    exit 0;\nfi\n\nif [ ${DEPLOYMENT_LOCATION} != YES ]; then\n    \"${SCRIPT_INPUT_FILE_0}\" --depfile \"${depfile}\" --relative-to=\"${BUILT_PRODUCTS_DIR}${WTF_INSTALL_PATH_PREFIX}${WK_LIBRARY_HEADERS_FOLDER_PATH}\" \"${SCRIPT_INPUT_FILE_1}\"\nelse\n    \"${SCRIPT_INPUT_FILE_0}\" --depfile \"${depfile}\" --relative-to=\"<SDKROOT>${WK_LIBRARY_HEADERS_FOLDER_PATH}\" \"${DSTROOT}/${PRIVATE_HEADERS_FOLDER_PATH}/WTF.json\"\nfi\n\ntouch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "set -e\n\ndepfile=\"${SCRIPT_OUTPUT_FILE_0/%.timestamp/.d}\"\n\nif [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ] || [ \"${ACTION}\" = \"installhdrs\" ]; then\n    echo \"dependencies: \" > \"${depfile}\"\n    touch \"${SCRIPT_OUTPUT_FILE_0}\"\n    exit 0;\nfi\n\nif [ ${DEPLOYMENT_LOCATION} != YES ]; then\n    \"${SCRIPT_INPUT_FILE_0}\" --depfile \"${depfile}\" --relative-to=\"${BUILT_PRODUCTS_DIR}${WTF_INSTALL_PATH_PREFIX}${WK_LIBRARY_HEADERS_FOLDER_PATH}\" \"${SCRIPT_INPUT_FILE_1}\"\nelse\n    \"${SCRIPT_INPUT_FILE_0}\" --depfile \"${depfile}\" --relative-to=\"<SDKROOT>${WK_LIBRARY_HEADERS_FOLDER_PATH}\" \"${DSTROOT}/${PRIVATE_HEADERS_FOLDER_PATH}/WTF.json\"\nfi\n\ntouch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 		520CF9492BDA9B4800C27FD2 /* Generate clangd configuration file */ = {
 			isa = PBXShellScriptBuildPhase;

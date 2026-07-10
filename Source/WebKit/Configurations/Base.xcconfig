@@ -28,7 +28,7 @@ ENABLE_DAEMON_SYMLINKS[sdk=embedded*] = NO
 
 ALWAYS_SEARCH_USER_PATHS = NO;
 ENABLE_USER_SCRIPT_SANDBOXING = YES;
-EXCLUDED_USER_SCRIPT_SANDBOXING_PHASE_NAMES = $(inherited) "Generate Unified Sources" "Generate Derived Sources" "Generate Swift platform args" "Generate Swift TBA availability macros" "Check For Inappropriate Files In Framework" "Check For Inappropriate Macros in External Headers" "Check For Framework Include Consistency" "Check .xcfilelists" "Migrate WebCore and WebKitLegacy Headers" "Copy Custom WebContent Resources to Framework Private Headers" "Copy Profiling Data" "Process WebContent entitlements" "Process Network entitlements" "Process GPU entitlements" "Process Model entitlements" "Process webpushd Entitlements" "Process adattributiond Entitlements" "Process entitlements" "Audit SPI use" "Update Info.plist for RunningBoard management" "Create symlinks to XPC services and dylibs";
+EXCLUDED_USER_SCRIPT_SANDBOXING_PHASE_NAMES = $(inherited) "Generate Unified Sources" "Generate Derived Sources" "Generate Swift platform args" "Generate Swift TBA availability macros" "Check For Inappropriate Files In Framework" "Check For Inappropriate Macros in External Headers" "Check For Framework Include Consistency" "Check .xcfilelists" "Migrate WebCore and WebKitLegacy Headers" "Copy Custom WebContent Resources to Framework Private Headers" "Copy Profiling Data" "Process WebContent entitlements" "Process Network entitlements" "Process GPU entitlements" "Process Model entitlements" "Process webpushd Entitlements" "Process adattributiond Entitlements" "Process entitlements" "Audit SPI use" "Update Info.plist for RunningBoard management" "Create symlinks to XPC services and dylibs" "Work around rdar://109484516";
 
 CLANG_CXX_LANGUAGE_STANDARD = c++2b;
 CLANG_CXX_LIBRARY = libc++;
@@ -123,11 +123,15 @@ WK_ENABLE_SWIFTUI = YES;
 WK_ENABLE_SWIFTUI[sdk=watch*] = NO;
 WK_ENABLE_SWIFTUI[sdk=appletv*] = NO;
 
-SUPPORTS_TEXT_BASED_API = $(OVERRIDE_SUPPORTS_TEXT_BASED_API:default=YES);
+SUPPORTS_TEXT_BASED_API = $(WK_ENABLE_SLOW_BUILD_VERIFICATION);
+// Override to enable SPI checking at desk. Remove once audit-spi works in
+// production builds (https://bugs.webkit.org/show_bug.cgi?id=299573).
+SUPPORTS_TEXT_BASED_API[sdk=iphoneos.internal] = YES;
 
 OTHER_TAPI_FLAGS = $(inherited) -DRELEASE_WITHOUT_OPTIMIZATIONS;
 TAPI_USE_SRCROOT = YES;
-TAPI_VERIFY_MODE = Pedantic;
+TAPI_VERIFY_MODE = $(TAPI_VERIFY_MODE_$(WK_ENABLE_SLOW_BUILD_VERIFICATION));
+TAPI_VERIFY_MODE_YES = Pedantic;
 
 // This is required to make LLVM_TARGET_TRIPLE_SUFFIX propagate into scripts.
 LLVM_TARGET_TRIPLE_SUFFIX = $(inherited);

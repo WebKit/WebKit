@@ -1866,7 +1866,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\ndepfile=\"${SCRIPT_OUTPUT_FILE_0/%.timestamp/.d}\"\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    echo \"dependencies: \" > \"${depfile}\"\n    touch \"${SCRIPT_OUTPUT_FILE_0}\"\n    exit 0;\nfi\n\nif [ ${DEPLOYMENT_LOCATION} != YES ]; then\n    \"${SCRIPT_INPUT_FILE_0}\" --depfile \"${depfile}\" --relative-to=\"${BUILT_PRODUCTS_DIR}${PAL_INSTALL_PATH_PREFIX}${WK_LIBRARY_HEADERS_FOLDER_PATH}\" \"${SCRIPT_INPUT_FILE_1}\"\nelse\n    \"${WTF_BUILD_SCRIPTS_DIR}/modules-verifier/library-modules-verifier.py\" --depfile \"${depfile}\" --relative-to=\"<SDKROOT>${WK_LIBRARY_HEADERS_FOLDER_PATH}\" \"${DSTROOT}/${PRIVATE_HEADERS_FOLDER_PATH}/PAL.json\"\nfi\n\ntouch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "set -e\n\ndepfile=\"${SCRIPT_OUTPUT_FILE_0/%.timestamp/.d}\"\n\nif [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ] || [ \"${ACTION}\" = \"installhdrs\" ]; then\n    echo \"dependencies: \" > \"${depfile}\"\n    touch \"${SCRIPT_OUTPUT_FILE_0}\"\n    exit 0;\nfi\n\nif [ ${DEPLOYMENT_LOCATION} != YES ]; then\n    \"${SCRIPT_INPUT_FILE_0}\" --depfile \"${depfile}\" --relative-to=\"${BUILT_PRODUCTS_DIR}${PAL_INSTALL_PATH_PREFIX}${WK_LIBRARY_HEADERS_FOLDER_PATH}\" \"${SCRIPT_INPUT_FILE_1}\"\nelse\n    \"${WTF_BUILD_SCRIPTS_DIR}/modules-verifier/library-modules-verifier.py\" --depfile \"${depfile}\" --relative-to=\"<SDKROOT>${WK_LIBRARY_HEADERS_FOLDER_PATH}\" \"${DSTROOT}/${PRIVATE_HEADERS_FOLDER_PATH}/PAL.json\"\nfi\n\ntouch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

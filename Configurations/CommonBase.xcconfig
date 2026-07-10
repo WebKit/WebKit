@@ -86,7 +86,7 @@ OTHER_LDFLAGS = $(inherited) $(WK_COMMON_OTHER_LDFLAGS);
 WK_COMMON_OTHER_TAPI_FLAGS = -x objective-c++ -std=c++2b -fno-rtti $(WK_SANITIZER_OTHER_TAPI_FLAGS) $(WK_AVAILABILITY_OVERLAY_FLAGS);
 OTHER_TAPI_FLAGS = $(inherited) $(WK_COMMON_OTHER_TAPI_FLAGS);
 
-WK_DEFAULT_WK_AUDIT_SPI[sdk=iphoneos*] = $(WK_AND_$(WK_NOT_$(WK_ANY_SANITIZER_ENABLED))_$(OVERRIDE_SUPPORTS_TEXT_BASED_API:default=YES));
+WK_DEFAULT_WK_AUDIT_SPI[sdk=iphoneos*] = $(WK_AND_$(WK_NOT_$(WK_ANY_SANITIZER_ENABLED))_$(SUPPORTS_TEXT_BASED_API));
 // Explicitly disable auditing on other embedded platforms, because some SDKs
 // fall back to reading settings for iOS.
 WK_DEFAULT_WK_AUDIT_SPI[sdk=appletvos*] = ;

@@ -13440,7 +13440,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names JS WTF\nfi\n";
+			shellScript = "if [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ]; then\n    exit 0;\nfi\n\nset -e\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names JS WTF\nfi\n";
 		};
 		5325BDC521DFF2BA00A0DEE1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -13478,7 +13478,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "Scripts/check-xcfilelists.sh && touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "if [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ]; then touch \"${SCRIPT_OUTPUT_FILE_0}\"; exit 0; fi\nScripts/check-xcfilelists.sh && touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 		539966E3237CD6740033B0D2 /* Create Versions/Current/Helpers symlink */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -13537,7 +13537,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nif [ -f ../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../Tools/Scripts/check-for-weak-vtables-and-externals\nfi\n";
+			shellScript = "if [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ]; then\n    exit 0;\nfi\n\nset -e\n\nif [ -f ../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../Tools/Scripts/check-for-weak-vtables-and-externals\nfi\n";
 		};
 		5D5D8ABF0E0D0B0300F9C692 /* Create /usr/local/bin/jsc symlink */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -13627,7 +13627,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers ]; then\n    ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers Headers PrivateHeaders/JSBasePrivate.h\nfi\n";
+			shellScript = "if [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ]; then\n    exit 0;\nfi\n\nset -e\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers ]; then\n    ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers Headers PrivateHeaders/JSBasePrivate.h\nfi\n";
 		};
 		DD0450302E062A3300DACD93 /* Audit SPI use */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -13741,7 +13741,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    touch \"${SCRIPT_OUTPUT_FILE_0}\"\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    export PRODUCT_NAME=JavaScriptCore\n    if [ -z \"${WK_FRAMEWORK_VERSION_PREFIX}\" ]; then\n        export SHALLOW_BUNDLE=YES\n    fi\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n\ntouch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "if [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ] || [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    touch \"${SCRIPT_OUTPUT_FILE_0}\"\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    export PRODUCT_NAME=JavaScriptCore\n    if [ -z \"${WK_FRAMEWORK_VERSION_PREFIX}\" ]; then\n        export SHALLOW_BUNDLE=YES\n    fi\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n\ntouch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 		DDFE17010000000000000001 /* Generate Header Postprocess Config */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -24983,7 +24983,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    touch \"${DERIVED_FILE_DIR}/check-objc-class-names.stamp\"\n    exit 0;\nfi\n\nif [ -f ../../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../../Tools/Scripts/check-for-inappropriate-objc-class-names WK_RTC || exit $?\nfi\ntouch \"${DERIVED_FILE_DIR}/check-objc-class-names.stamp\"\n";
+			shellScript = "if [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ] || [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    touch \"${DERIVED_FILE_DIR}/check-objc-class-names.stamp\"\n    exit 0;\nfi\n\nif [ -f ../../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../../Tools/Scripts/check-for-inappropriate-objc-class-names WK_RTC || exit $?\nfi\ntouch \"${DERIVED_FILE_DIR}/check-objc-class-names.stamp\"\n";
 		};
 		44C229C02A0AF12E0008308E /* Generate Export Files */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -25022,7 +25022,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ \"${ENABLE_LIBFUZZER}\" = \"YES\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../../Tools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi\n";
+			shellScript = "if [ \"${WK_ENABLE_SLOW_BUILD_VERIFICATION}\" != \"YES\" ] || [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ \"${ENABLE_LIBFUZZER}\" = \"YES\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../../Tools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi\n";
 		};
 		659A86EA279796F800AC37B6 /* Create Symlink to Cryptex Path */ = {
 			isa = PBXShellScriptBuildPhase;
