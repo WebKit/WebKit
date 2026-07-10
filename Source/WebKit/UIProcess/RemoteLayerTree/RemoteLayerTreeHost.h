@@ -63,13 +63,10 @@ public:
     ~RemoteLayerTreeHost();
 
     RemoteLayerTreeNode* nodeForID(std::optional<WebCore::PlatformLayerIdentifier>) const;
-    RemoteLayerTreeNode* rootNode() const { return m_rootNode.get(); }
-    RefPtr<RemoteLayerTreeNode> protectedRootNode() const { return m_rootNode.get(); }
+    RefPtr<RemoteLayerTreeNode> rootNode() const { return m_rootNode.get(); }
 
-    CALayer *layerForID(std::optional<WebCore::PlatformLayerIdentifier>) const;
-    RetainPtr<CALayer> protectedLayerForID(std::optional<WebCore::PlatformLayerIdentifier>) const;
-    CALayer *rootLayer() const;
-    RetainPtr<CALayer> protectedRootLayer() const;
+    RetainPtr<CALayer> layerForID(std::optional<WebCore::PlatformLayerIdentifier>) const;
+    RetainPtr<CALayer> rootLayer() const;
 
     RemoteLayerTreeDrawingAreaProxy& drawingArea() const;
 
@@ -99,7 +96,7 @@ public:
     // Detach the root layer; it will be reattached upon the next incoming commit.
     void detachRootLayer();
 
-    CALayer *layerWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
+    RetainPtr<CALayer> layerWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
 
     bool replayDynamicContentScalingDisplayListsIntoBackingStore() const;
     bool threadedAnimationsEnabled() const;
@@ -119,7 +116,7 @@ private:
     void layerWillBeRemoved(WebCore::ProcessIdentifier, WebCore::PlatformLayerIdentifier);
 
     WeakPtr<RemoteLayerTreeDrawingAreaProxy> m_drawingArea;
-    WeakPtr<RemoteLayerTreeNode> m_rootNode;
+    ThreadSafeWeakPtr<RemoteLayerTreeNode> m_rootNode;
     HashMap<WebCore::PlatformLayerIdentifier, Ref<RemoteLayerTreeNode>> m_nodes;
     HashMap<WebCore::LayerHostingContextIdentifier, WebCore::PlatformLayerIdentifier> m_hostingLayers;
     HashMap<WebCore::LayerHostingContextIdentifier, WebCore::PlatformLayerIdentifier> m_hostedLayers;

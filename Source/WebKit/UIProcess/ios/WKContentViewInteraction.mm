@@ -14304,7 +14304,7 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
     if (!drawingArea)
         return nil;
 
-    WeakPtr layerTreeNode = drawingArea->remoteLayerTreeHost().nodeForID(layerID);
+    RefPtr layerTreeNode = drawingArea->remoteLayerTreeHost().nodeForID(layerID);
     if (!layerTreeNode)
         return nil;
 

@@ -1252,9 +1252,9 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     }
 
     if (_perProcessState.pendingFindLayerID) {
-        CALayer *layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).remoteLayerTreeHost().layerForID(*_perProcessState.pendingFindLayerID);
-        if (layer.superlayer)
-            [self _didAddLayerForFindOverlay:layer];
+        RetainPtr layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).remoteLayerTreeHost().layerForID(*_perProcessState.pendingFindLayerID);
+        if (layer.get().superlayer)
+            [self _didAddLayerForFindOverlay:layer.get()];
     }
 
 }
@@ -4906,8 +4906,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (!_page || !_perProcessState.committedFindLayerID)
         return nil;
 
-    if (RefPtr drawingArea = _page->drawingArea())
-        return downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).remoteLayerTreeHost().layerForID(*_perProcessState.committedFindLayerID);
+    if (RefPtr drawingArea = _page->drawingArea()) {
+        RetainPtr layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).remoteLayerTreeHost().layerForID(*_perProcessState.committedFindLayerID);
+        return layer.autorelease();
+    }
 
     return nil;
 }

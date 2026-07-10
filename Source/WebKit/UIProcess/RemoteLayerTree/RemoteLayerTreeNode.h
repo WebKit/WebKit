@@ -33,9 +33,9 @@
 #include <WebCore/PlatformLayerIdentifier.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/ScrollTypes.h>
-#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Vector.h>
 
 OBJC_CLASS CALayer;
@@ -49,7 +49,7 @@ namespace WebKit {
 class RemoteLayerTreeHost;
 class RemoteLayerTreeScrollbars;
 
-class RemoteLayerTreeNode final : public RefCountedAndCanMakeWeakPtr<RemoteLayerTreeNode> {
+class RemoteLayerTreeNode final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteLayerTreeNode, WTF::DestructionThread::MainRunLoop> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeNode);
 public:
     static Ref<RemoteLayerTreeNode> create(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<CALayer>);
@@ -60,7 +60,7 @@ public:
 
     static Ref<RemoteLayerTreeNode> createWithPlainLayer(WebCore::PlatformLayerIdentifier);
 
-    CALayer *layer() const { return m_layer.get(); }
+    CALayer *layer() const LIFETIME_BOUND { return m_layer.get(); }
     RetainPtr<CALayer> protectedLayer() const;
 #if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     const Markable<WebCore::FloatRect> visibleRect() const { return m_visibleRect; }
