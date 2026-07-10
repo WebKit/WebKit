@@ -336,6 +336,7 @@ private:
 
     // Remote layer support
     WebCore::HostingContext hostingContext() const final;
+    void requestHostingContext(LayerHostingContextCallback&&) final;
     void setVideoLayerSizeFenced(const WebCore::FloatSize&, WTF::MachSendRightAnnotated&&) final;
     std::optional<MediaPlayerIdentifier> identifier() const final { return m_playerIdentifier; }
 
