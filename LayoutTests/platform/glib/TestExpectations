@@ -5629,6 +5629,18 @@ webkit.org/b/318434 ipc/send-gpu-GetShareableBitmap-RemoteRenderingBackend.html 
 
 webkit.org/b/318634 ipc/loadping-firstpartyforcookies-message-check.html [ Failure ]
 
+webkit.org/b/319043 http/wpt/navigation-api/traverse-subframe-remote-sibling.sub.html [ Crash ]
+webkit.org/b/319044 imported/w3c/web-platform-tests/html/rendering/widgets/shadow-dom.html [ Failure ]
+webkit.org/b/319045 [ Debug ] accessibility/button-in-deep-dom.html [ Timeout ]
+webkit.org/b/319046 [ Debug ] fast/mediastream/applyConstraints-with-takePhoto.html [ Crash Timeout ]
+webkit.org/b/319047 [ Debug ] imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-033.html [ Crash ]
+webkit.org/b/319048 [ Debug ] imported/w3c/web-platform-tests/css/css-anchor-position/long-anchor-chain-crash.html [ Timeout ]
+webkit.org/b/319049 [ Debug ] http/tests/cache/cancel-multiple-post-xhrs.html [ Failure ]
+webkit.org/b/319050 [ Debug ] imported/w3c/web-platform-tests/fetch/local-network-access/iframe.tentative.https.window.html [ Failure ]
+webkit.org/b/319051 [ Debug ] imported/w3c/web-platform-tests/uievents/mouse/mouse_boundary_events_after_removing_last_over_element.html [ Failure ]
+webkit.org/b/319052 [ Debug ] http/tests/websocket/tests/hybi/inspector/handshake-error.html [ Failure ]
+webkit.org/b/319053 [ Debug ] media/video-playback-restriction-play-before-load.html [ Failure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
