@@ -28,6 +28,7 @@ import Foundation
 import WebKit_Private.WKPreferencesPrivate
 import WebKit_Private.WKWebViewPrivateForTesting
 import WebKit_Private.WKWebViewPrivate
+public import WebKit_Private._WKFrameTreeNode
 public import struct Swift.String
 private import TestWebKitAPILibrary.Helpers.cocoa.TestWKWebView
 
@@ -83,6 +84,13 @@ extension WebPage {
         backingWebView.textInputContentView.insertText(text)
         #endif
         await waitForNextPresentationUpdate()
+    }
+
+    /// The main frame tree node of this page.
+    public var mainFrame: _WKFrameTreeNode? {
+        get async {
+            await backingWebView._frames()
+        }
     }
 
     /// Perform the specified edit command on the webpage, optionally with an argument provided to the command.

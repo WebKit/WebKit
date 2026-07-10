@@ -45,8 +45,8 @@ extension WKUserContentController {
         let typedSpan = unsafe Span<UInt8>(_bytes: buffer)
 
         // This use of unsafe is necessary to wrap the RawSpan for immediate processing by WebKit,
-        // unknowledging that the safety of the RawSpan passed in by the client cannot be guaranteed.
-        // This is fine becuase WebKit is going to immediately make a copy of the passed-in bytes
+        // acknowledging that the safety of the RawSpan passed in by the client cannot be guaranteed.
+        // This is fine because WebKit is going to immediately make a copy of the passed-in bytes
         // into a safely managed object.
         // rdar://181746505
         unsafe _addDataSpan(.init(typedSpan), name: name, contentWorld: contentWorld)

@@ -24,6 +24,9 @@
 import Testing
 import WebKit
 
+// This file should only be used to test WKWebView-specific API that differs between Swift and Objective-C,
+// and nothing else.
+
 @MainActor
 struct WKWebViewSwiftOverlayTests {
     @Test
@@ -41,55 +44,4 @@ struct WKWebViewSwiftOverlayTests {
         let response: Any? = try await webView.evaluateJavaScript("console.log('hello')")
         #expect(response == nil)
     }
-
-#if os(macOS) || os(iOS) || os(visionOS)
-#if compiler(>=6.4)
-    @Test
-    func wkUserContentControllerRefinements() async throws {
-        let controller = WKUserContentController()
-        let testData: [UInt8] = [0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x1A, 0x00, 0x00]
-        controller.addBuffer(unsafe testData.span.bytes, name: "Test", to: WKContentWorld.defaultClient)
-        controller.removeBuffer(named:"Test", from: WKContentWorld.defaultClient)
-    }
-#endif // #if compiler(>=6.4)
-
-    @Test
-    func wkJSHandleRefinements() async throws {
-        let webView = WKWebView()
-        let configuration = WKContentWorld.Configuration()
-        configuration.nodeSerializationEnabled = true
-        configuration.jsHandleCreationEnabled = true
-        let contentWorld = WKContentWorld.init(configuration:configuration)
-
-        // Make a JSHandle to the window object, which also lets us exercise the windowProxyFrame property
-        let jsHandle = try await webView.callAsyncJavaScript(
-            "return webkit.createJSHandle(window)",
-            arguments: [:],
-            in: nil,
-            contentWorld: contentWorld
-        ) as? WKJSHandle
-        #expect(jsHandle != nil)
-
-        let frame = await jsHandle?.windowProxyFrame
-        #expect(frame != nil)
-
-        // Make a DOM node and add some standard custom properties to it.
-        let node = try await webView.callAsyncJavaScript(
-            "let node = document.createElement('div'); node.setAttribute('data-foo', '42'); return webkit.serializeNode(node)",
-            arguments: [:],
-            in: nil,
-            contentWorld: contentWorld
-        ) as? WKJSSerializedNode
-        #expect(node != nil)
-
-        // That serialized node should round trip back into JS.
-        let result = try await webView.callAsyncJavaScript(
-            "return parseInt(theNode.getAttribute('data-foo'))",
-            arguments: ["theNode": node!],
-            in: nil,
-            contentWorld: contentWorld
-        ) as! Int
-        #expect(result == 42)
-    }
-#endif // #if os(macOS) || os(iOS) || os(visionOS)
 }

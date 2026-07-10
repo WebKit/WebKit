@@ -288,8 +288,6 @@ HTTPServer::HTTPServer(UseCoroutines, Function<ConnectionTask(Connection)>&& con
     Util::run(&done);
 }
 
-HTTPServer::~HTTPServer() = default;
-
 void HTTPServer::addResponse(String&& path, HTTPResponse&& response)
 {
     RELEASE_ASSERT(!m_requestData->requestMap.contains(path));

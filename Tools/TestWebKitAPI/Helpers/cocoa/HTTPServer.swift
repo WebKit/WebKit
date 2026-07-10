@@ -99,7 +99,6 @@ public struct RouteBuilder {
 
 /// A type used to simulate an HTTP server with a set of predefined responses for different types of requests.
 @MainActor
-@safe
 public struct HTTPServer: ~Copyable {
     /// A protocol describing how an HTTP connection handles requests.
     public enum `Protocol`: Sendable {
@@ -122,7 +121,7 @@ public struct HTTPServer: ~Copyable {
         case httpsProxyWithAuthentication
     }
 
-    private var storage: TestWebKitAPI.__CxxHTTPServer
+    private var storage: TestWebKitAPI.RefCountedHTTPServer
 
     /// Create a server from a group of routes.
     ///
@@ -168,7 +167,7 @@ public struct HTTPServer: ~Copyable {
             unsafe hashMapSet(&entries, consuming: .init(path), consuming: response)
         }
 
-        unsafe self.storage = .init(consuming: entries, .init(`protocol`), consuming: .init(), nil, .init(), .Yes)
+        unsafe self.storage = .init(consuming: .init(consuming: entries, .init(`protocol`), consuming: .init(), nil, .init(), .Yes))
     }
 
     /// Calls the given closure after starting the server, and then closes the server once finished.
@@ -177,10 +176,10 @@ public struct HTTPServer: ~Copyable {
     /// - Returns: The return value, if any, of the `body` closure parameter.
     /// - Throws: Any error thrown by `body`.
     public mutating func run<Result, E>(
-        _ body: () async throws(E) -> sending Result
+        _ body: (Configuration) async throws(E) -> sending Result
     ) async throws(E) -> sending Result where E: Error, Result: ~Copyable {
         await withCheckedContinuation { continuation in
-            unsafe self.storage.startListening(
+            unsafe self.storage.pointee.startListening(
                 consuming: .init(
                     {
                         continuation.resume()
@@ -190,10 +189,13 @@ public struct HTTPServer: ~Copyable {
             )
         }
 
-        let result = try await body()
+        let port = unsafe Int(storage.pointee.port())
+        let configuration = Configuration(port: port)
+
+        let result = try await body(configuration)
 
         await withCheckedContinuation { continuation in
-            unsafe self.storage.cancel(
+            unsafe self.storage.pointee.cancel(
                 consuming: .init(
                     {
                         continuation.resume()
@@ -218,6 +220,19 @@ extension TestWebKitAPI.__CxxHTTPServer.`Protocol` {
             case .httpsProxy: .HttpsProxy
             case .httpsProxyWithAuthentication: .HttpsProxyWithAuthentication
             }
+    }
+}
+
+extension HTTPServer {
+    /// A collection of information about the properties of an `HTTPServer`.
+    public struct Configuration: Sendable {
+        /// The port of the server.
+        public let port: Int
+
+        /// The URL representing the HTTPS proxy for the server.
+        public var httpsProxy: Foundation.URL? {
+            Foundation.URL(string: "https://127.0.0.1:\(port)/")
+        }
     }
 }
 

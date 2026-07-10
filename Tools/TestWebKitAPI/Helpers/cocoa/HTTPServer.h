@@ -33,6 +33,7 @@
 #import <wtf/CompletionHandler.h>
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
+#import <wtf/RefCountable.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/ThreadSafeRefCounted.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -71,7 +72,7 @@ public:
     HTTPServer(UseCoroutines, Function<ConnectionTask(Connection)>&&, Protocol = Protocol::Http);
     HTTPServer(HTTPServer&&) = default;
     HTTPServer& operator=(HTTPServer&&) = default;
-    ~HTTPServer();
+    ~HTTPServer() = default;
     uint16_t port() const;
     String origin() const;
     NSURLRequest *request(StringView path = "/"_s) const;
@@ -155,6 +156,8 @@ struct HTTPResponse {
     bool shouldRespondWith304ToConditionalRequests { false };
     HashMap<String, String> headerFieldsFor304;
 };
+
+using RefCountedHTTPServer = WTF::RefCountable<HTTPServer>;
 
 namespace H2 {
 
