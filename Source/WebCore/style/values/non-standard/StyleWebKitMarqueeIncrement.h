@@ -34,7 +34,7 @@ namespace Style {
 // NOTE: There is no standard associated with this property. It exists to model the "marquee scroll distance" concept derived from the <marquee> element's `scrollamount` attribute.
 // https://html.spec.whatwg.org/multipage/obsolete.html#marquee-scroll-distance
 // FIXME: Consider changing this type (and the associated internal property `-webkit-marquee-increment`) to be named after the spec term "marquee scroll distance".
-DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(WebkitMarqueeIncrement, LengthPercentage<>);
+DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(WebkitMarqueeIncrement, LengthPercentage<CSS::AllUnzoomed>);
 
 } // namespace Style
 } // namespace WebCore

@@ -32,7 +32,7 @@ namespace Style {
 // <'size'> (for @page) = <length [0,∞]>{1,2} | auto | [ <page-size> || [ portrait | landscape ] ]
 // https://drafts.csswg.org/css-page-3/#descdef-page-size
 struct PageSize {
-    using Lengths = MinimallySerializingSpaceSeparatedSize<Length<CSS::Nonnegative>>;
+    using Lengths = MinimallySerializingSpaceSeparatedSize<Length<CSS::NonnegativeUnzoomed>>;
 
     PageSize(Lengths&& lengths) : m_value { WTF::move(lengths) } { }
     PageSize(CSS::Keyword::Auto keyword) : m_value { keyword } { }

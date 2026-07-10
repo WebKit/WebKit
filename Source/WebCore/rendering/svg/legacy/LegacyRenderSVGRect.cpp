@@ -69,8 +69,8 @@ void LegacyRenderSVGRect::updateShapeFromElement()
     if (boundingBoxSize.isEmpty())
         return;
 
-    if (lengthContext.valueForLength(style->rx(), Style::ZoomNeeded { }, SVGLengthMode::Width) > 0
-        || lengthContext.valueForLength(style->ry(), Style::ZoomNeeded { }, SVGLengthMode::Height) > 0)
+    if (lengthContext.valueForLength(style->rx(), usedZoom, SVGLengthMode::Width) > 0
+        || lengthContext.valueForLength(style->ry(), usedZoom, SVGLengthMode::Height) > 0)
         m_shapeType = ShapeType::RoundedRectangle;
     else
         m_shapeType = ShapeType::Rectangle;
@@ -81,8 +81,8 @@ void LegacyRenderSVGRect::updateShapeFromElement()
         return;
     }
 
-    m_fillBoundingBox = FloatRect(FloatPoint(lengthContext.valueForLength(style->x(), Style::ZoomNeeded { }, SVGLengthMode::Width),
-        lengthContext.valueForLength(style->y(),  Style::ZoomNeeded { }, SVGLengthMode::Height)),
+    m_fillBoundingBox = FloatRect(FloatPoint(lengthContext.valueForLength(style->x(), usedZoom, SVGLengthMode::Width),
+        lengthContext.valueForLength(style->y(),  usedZoom, SVGLengthMode::Height)),
         boundingBoxSize);
 
     auto strokeBoundingBox = m_fillBoundingBox;

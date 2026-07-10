@@ -30,7 +30,7 @@ namespace WebCore {
 namespace CSS {
 
 // <clip-edge> = <length> | auto
-struct ClipEdge : ValueOrKeyword<Length<>, Keyword::Auto> {
+struct ClipEdge : ValueOrKeyword<Length<CSS::AllUnzoomed>, Keyword::Auto> {
     using Base::Base;
     using Length = typename Base::Value;
 

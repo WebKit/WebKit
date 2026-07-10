@@ -84,12 +84,13 @@ void RenderSVGEllipse::updateShapeFromElement()
 void RenderSVGEllipse::calculateRadiiAndCenter()
 {
     Ref graphicsElement = this->graphicsElement();
+    auto usedZoom = style().usedZoomForLength();
     SVGLengthContext lengthContext(graphicsElement.ptr());
     m_center = FloatPoint(
-        lengthContext.valueForLength(style().cx(), Style::ZoomNeeded { }, SVGLengthMode::Width),
-        lengthContext.valueForLength(style().cy(), Style::ZoomNeeded { }, SVGLengthMode::Height));
+        lengthContext.valueForLength(style().cx(), usedZoom, SVGLengthMode::Width),
+        lengthContext.valueForLength(style().cy(), usedZoom, SVGLengthMode::Height));
     if (is<SVGCircleElement>(graphicsElement)) {
-        float radius = lengthContext.valueForLength(style().r(), Style::ZoomNeeded { });
+        float radius = lengthContext.valueForLength(style().r(), usedZoom);
         m_radii = FloatSize(radius, radius);
         return;
     }
@@ -99,8 +100,8 @@ void RenderSVGEllipse::calculateRadiiAndCenter()
     auto& rx = style().rx();
     auto& ry = style().ry();
     m_radii = FloatSize(
-        lengthContext.valueForLength(rx.isAuto() ? ry : rx, Style::ZoomNeeded { }, SVGLengthMode::Width),
-        lengthContext.valueForLength(ry.isAuto() ? rx : ry, Style::ZoomNeeded { }, SVGLengthMode::Height));
+        lengthContext.valueForLength(rx.isAuto() ? ry : rx, usedZoom, SVGLengthMode::Width),
+        lengthContext.valueForLength(ry.isAuto() ? rx : ry, usedZoom, SVGLengthMode::Height));
     if (rx.isAuto())
         m_radii.setWidth(m_radii.height());
     else if (ry.isAuto())

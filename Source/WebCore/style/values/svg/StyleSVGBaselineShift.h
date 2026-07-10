@@ -31,7 +31,7 @@ namespace Style {
 
 // <'baseline-shift'> = baseline | sub | super | <length-percentage>
 struct SVGBaselineShift {
-    using LengthPercentage = Style::LengthPercentage<>;
+    using LengthPercentage = Style::LengthPercentage<CSS::AllUnzoomed>;
 
     SVGBaselineShift(CSS::Keyword::Baseline keyword)
         : m_value { keyword }

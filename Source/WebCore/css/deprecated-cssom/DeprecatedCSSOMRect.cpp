@@ -36,7 +36,7 @@ static Ref<DeprecatedCSSOMPrimitiveValue> makeDeprecatedCSSOMPrimitiveValueForCl
         [&](CSS::Keyword::Auto keyword) {
             return DeprecatedCSSOMPrimitiveValue::create(CSS::Keyword { keyword.value }, owner);
         },
-        [&](const CSS::Length<>& length) {
+        [&](const CSS::Length<CSS::AllUnzoomed>& length) {
             return CSS::makeDeprecatedCSSOMPrimitiveValueForNumeric(length, owner);
         }
     );

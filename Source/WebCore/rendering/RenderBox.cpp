@@ -2362,7 +2362,7 @@ LayoutRect RenderBox::clipRect(const LayoutPoint& location) const
         },
         [&](const Style::ClipRect& rect) {
             if (auto clipLeft = rect.value->left().tryLength()) {
-                auto c = LayoutUnit { clipLeft->resolveZoom(Style::ZoomNeeded { }) };
+                auto c = LayoutUnit { clipLeft->resolveZoom(style().usedZoomForLength()) };
                 clipRect.move(c, 0_lu);
                 clipRect.contract(c, 0_lu);
             }
@@ -2371,16 +2371,16 @@ LayoutRect RenderBox::clipRect(const LayoutPoint& location) const
             // from the left and top edges. Therefore it's better to avoid constraining to smaller widths and heights.
 
             if (auto clipRight = rect.value->right().tryLength())
-                clipRect.contract(borderBoxWidth() - LayoutUnit { clipRight->resolveZoom(Style::ZoomNeeded { }) }, 0_lu);
+                clipRect.contract(borderBoxWidth() - LayoutUnit { clipRight->resolveZoom(style().usedZoomForLength()) }, 0_lu);
 
             if (auto clipTop = rect.value->top().tryLength()) {
-                auto c = LayoutUnit { clipTop->resolveZoom(Style::ZoomNeeded { }) };
+                auto c = LayoutUnit { clipTop->resolveZoom(style().usedZoomForLength()) };
                 clipRect.move(0_lu, c);
                 clipRect.contract(0_lu, c);
             }
 
             if (auto clipBottom = rect.value->bottom().tryLength())
-                clipRect.contract(0_lu, borderBoxHeight() - LayoutUnit { clipBottom->resolveZoom(Style::ZoomNeeded { }) });
+                clipRect.contract(0_lu, borderBoxHeight() - LayoutUnit { clipBottom->resolveZoom(style().usedZoomForLength()) });
 
             return clipRect;
         }

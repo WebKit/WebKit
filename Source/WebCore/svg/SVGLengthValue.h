@@ -95,7 +95,7 @@ public:
     friend bool operator==(SVGLengthValue, SVGLengthValue) = default;
 
 private:
-    Variant<CSS::Number<>, CSS::LengthPercentage<>> m_value;
+    Variant<CSS::Number<>, CSS::LengthPercentage<CSS::AllUnzoomed>> m_value;
     SVGLengthMode m_lengthMode { SVGLengthMode::Other };
 };
 

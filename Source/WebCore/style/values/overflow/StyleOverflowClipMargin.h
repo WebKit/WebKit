@@ -37,7 +37,7 @@ namespace Style {
 // <'overflow-clip-margin'> = <visual-box> || <length [0,∞]>
 // https://drafts.csswg.org/css-overflow/#overflow-clip-margin
 struct OverflowClipMargin {
-    using Length = Style::Length<CSS::Nonnegative, float>;
+    using Length = Style::Length<CSS::NonnegativeUnzoomed, float>;
 
     OverflowClipMargin(CSS::ValueLiteral<CSS::LengthUnit::Px> length)
         : m_value { length }
