@@ -381,3 +381,5 @@ webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtension.ContentScriptNotInj
 webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtensionController.WebAccessibleResourceInSubframeFromAboutBlank [ Pass Timeout ]
 webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtension.MultipleContentScriptsInjectedWhenMatched [ Pass Timeout ]
 webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtension.MultipleContentScriptsNotInjectedWhenNotMatched [ Pass Timeout ]
+
+webkit.org/b/319127 [ mac ] TestWebKitAPI.WKWebView.InputChangeFiresOnWindowBlur [ Pass Failure ]
