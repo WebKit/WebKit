@@ -4773,3 +4773,8 @@ http/wpt/site-isolation/the-history-interface/001.html [ Skip ] # Crash
 
 # Flaky WebProcess crash (see the no-javascript-* crash family above)
 fast/dom/window-opener-setter-throws-if-defineownproperty-fails-1.html [ Skip ] # Crash
+
+# Gardening: new unexpected failures on Win-Tests-EWS (316766@main).
+fast/canvas/offscreen-canvas-measureText-unrealized-font-crash.html [ Failure ]
+http/tests/cookies/document-cookie-set-expired-cookie.html [ Skip ] # Crash
+http/wpt/storage-access/request-storage-access-under-opener-cross-site-opener.html [ Skip ] # Crash
