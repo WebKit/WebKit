@@ -6040,6 +6040,77 @@ Ran 1296 tests of 1298 with 1293 successful
         return self.run_step()
 
 
+class TestAnalyzeAPITestsResults(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self, first_run, second_run, clean_tree):
+        self.setup_step(AnalyzeAPITestsResults())
+        self.setProperty('platform', 'ios')
+        self.setProperty('configuration', 'release')
+        self.setProperty('identifier', '316168@main')
+
+        results_by_step = {
+            RunAPITests.name: {'Failed': [{'name': test} for test in first_run]},
+            ReRunAPITests.name: {'Failed': [{'name': test} for test in second_run]},
+            RunAPITestsWithoutChange.name: {'Failed': [{'name': test} for test in clean_tree]},
+        }
+
+        def fake_get_tests_results(step, name):
+            step.results[name] = results_by_step.get(name)
+            return defer.succeed(step.results[name])
+
+        self.patch(AnalyzeAPITestsResults, 'getTestsResults', fake_get_tests_results)
+
+    def mock_results_db(self, pass_rates=None, request_failed=None):
+        pass_rates = pass_rates or {}
+        request_failed = request_failed or set()
+
+        def is_test_pre_existing_failure(test, configuration=None, commit=None, suite=None):
+            pass_rate = pass_rates.get(test, 100)
+            return defer.succeed({
+                'is_existing_failure': pass_rate <= ResultsDatabase.PERCENT_SUCCESS_RATE_FOR_PRE_EXISTING_FAILURE,
+                'pass_rate': pass_rate,
+                'raw_data': {'pass': pass_rate},
+                'logs': '',
+                'request_failed': test in request_failed,
+            })
+
+        self.patch(ResultsDatabase, 'is_test_pre_existing_failure', is_test_pre_existing_failure)
+        self.patch(ResultsDatabase, 'has_commit', lambda commit, logger=None: defer.succeed(True))
+
+    def test_flaky_pre_existing_failure_not_blamed(self):
+        # Bug 318816: a flaky test fails both runs with the change, passes the single clean-tree run,
+        # but the Results DB knows it is pre-existing/flaky, so the change must not be blamed.
+        self.mock_results_db(pass_rates={'MultipleAccounts': 49})
+        self.configureStep(first_run=['MultipleAccounts'], second_run=['MultipleAccounts'], clean_tree=[])
+        self.expect_outcome(result=SUCCESS, state_string='Passed API tests')
+        return self.run_step()
+
+    def test_true_regression_still_blamed(self):
+        self.mock_results_db(pass_rates={'RegressedTest': 100})
+        self.configureStep(first_run=['RegressedTest'], second_run=['RegressedTest'], clean_tree=[])
+        self.expect_outcome(result=FAILURE, state_string='Found 1 new API test failure: RegressedTest (failure)')
+        return self.run_step()
+
+    def test_mixed_failures_blame_only_genuine(self):
+        self.mock_results_db(pass_rates={'FlakyTest': 49, 'RegressedTest': 100})
+        self.configureStep(first_run=['FlakyTest', 'RegressedTest'], second_run=['FlakyTest', 'RegressedTest'], clean_tree=[])
+        self.expect_outcome(result=FAILURE, state_string='Found 1 new API test failure: RegressedTest (failure)')
+        return self.run_step()
+
+    def test_results_db_request_failure_fails_closed(self):
+        # If the Results DB is unreachable we must keep blaming the change to avoid a false negative.
+        self.mock_results_db(pass_rates={'FlakyTest': 49}, request_failed={'FlakyTest'})
+        self.configureStep(first_run=['FlakyTest'], second_run=['FlakyTest'], clean_tree=[])
+        self.expect_outcome(result=FAILURE, state_string='Found 1 new API test failure: FlakyTest (failure)')
+        return self.run_step()
+
+
 class TestRunAPITestsParallelSafety(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True

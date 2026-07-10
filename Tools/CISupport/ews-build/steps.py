@@ -6233,13 +6233,21 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
         flaky_failures = list(flaky_failures)[:self.NUM_FAILURES_TO_DISPLAY]
         flaky_failures_string = ', '.join(flaky_failures)
         new_failures = failures_with_patch - clean_tree_failures
-        new_failures_to_display = list(new_failures)[:self.NUM_FAILURES_TO_DISPLAY]
-        new_failures_string = ', '.join(new_failures_to_display)
 
         yield self._addToLog('stderr', '\nFailures in API Test first run: {}'.format(list(first_run_failures)[:self.NUM_FAILURES_TO_DISPLAY]))
         yield self._addToLog('stderr', '\nFailures in API Test second run: {}'.format(list(second_run_failures)[:self.NUM_FAILURES_TO_DISPLAY]))
         yield self._addToLog('stderr', '\nFlaky Tests: {}'.format(flaky_failures_string))
         yield self._addToLog('stderr', '\nFailures in API Test on clean tree: {}'.format(clean_tree_failures_string))
+
+        # A flaky test can fail on both runs with the change and still pass on the single clean-tree
+        # run, which would otherwise be misattributed to the change. Consult the Results Database and
+        # drop failures that are already flaky/pre-existing at tip-of-tree.
+        results_db_pre_existing = set()
+        if new_failures:
+            new_failures, results_db_pre_existing = yield self.filter_pre_existing_failures(new_failures)
+
+        new_failures_to_display = list(new_failures)[:self.NUM_FAILURES_TO_DISPLAY]
+        new_failures_string = ', '.join(new_failures_to_display)
 
         if new_failures:
             yield self._addToLog('stderr', '\nNew failures: {}\n'.format(new_failures_string))
@@ -6255,13 +6263,16 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
             yield self._addToLog('stderr', '\nNo new failures\n')
             self.build.results = SUCCESS
             self.descriptionDone = 'Passed API tests'
-            pluralSuffix = 's' if len(clean_tree_failures) > 1 else ''
+            pre_existing_failures = clean_tree_failures.union(results_db_pre_existing)
+            pre_existing_failures_to_display = list(pre_existing_failures)[:self.NUM_FAILURES_TO_DISPLAY]
+            pre_existing_failures_string = ', '.join(pre_existing_failures_to_display)
+            pluralSuffix = 's' if len(pre_existing_failures) > 1 else ''
             message = ''
-            if clean_tree_failures:
-                message = 'Found {} pre-existing API test failure{}: {}'.format(len(clean_tree_failures), pluralSuffix, clean_tree_failures_string)
-                for clean_tree_failure in clean_tree_failures_to_display:
-                    self.send_email_for_pre_existing_failure(clean_tree_failure)
-            if len(clean_tree_failures) > self.NUM_FAILURES_TO_DISPLAY:
+            if pre_existing_failures:
+                message = 'Found {} pre-existing API test failure{}: {}'.format(len(pre_existing_failures), pluralSuffix, pre_existing_failures_string)
+                for pre_existing_failure in pre_existing_failures_to_display:
+                    self.send_email_for_pre_existing_failure(pre_existing_failure)
+            if len(pre_existing_failures) > self.NUM_FAILURES_TO_DISPLAY:
                 message += ' ...'
             if flaky_failures:
                 message += ' Found flaky tests: {}'.format(flaky_failures_string)
@@ -6269,6 +6280,41 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
                     self.send_email_for_flaky_failure(flaky_failure)
             self.build.buildFinished([message], SUCCESS)
             defer.returnValue(SUCCESS)
+
+    @defer.inlineCallbacks
+    def filter_pre_existing_failures(self, tests):
+        still_new = set()
+        pre_existing = set()
+
+        identifier = self.getProperty('identifier', None)
+        platform = self.getProperty('platform', None)
+        configuration = {}
+        if platform:
+            configuration['platform'] = platform
+        style = self.getProperty('configuration', None)
+        if style and style in ['debug', 'release']:
+            configuration['style'] = style
+
+        yield self._addToLog('results-db', f'Checking Results database for new failures. Identifier: {identifier}, configuration: {configuration}')
+        has_commit = False
+        if identifier:
+            has_commit = yield ResultsDatabase.has_commit(commit=identifier)
+            if not has_commit:
+                yield self._addToLog('results-db', f"'{identifier}' could not be found on the results database, falling back to tip-of-tree\n")
+
+        for test in sorted(tests):
+            data = yield ResultsDatabase.is_test_pre_existing_failure(
+                test, configuration=configuration,
+                commit=identifier if has_commit else None,
+                suite='api-tests',
+            )
+            yield self._addToLog('results-db', f"\n{test}: pass_rate: {data['pass_rate']}, pre-existing-failure={data['is_existing_failure']}\nResponse from results-db: {data['raw_data']}\n{data['logs']}")
+            if data['is_existing_failure'] and not data['request_failed']:
+                pre_existing.add(test)
+            else:
+                still_new.add(test)
+
+        defer.returnValue((still_new, pre_existing))
 
     def getBuildStepByName(self, name):
         for step in self.build.executedSteps:
