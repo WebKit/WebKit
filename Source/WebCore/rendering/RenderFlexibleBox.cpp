@@ -615,6 +615,8 @@ void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(FlexLineStates
 
     alignFlexLines(lineStates, gapBetweenLines);
 
+    computeCrossSizeForFlexItems(lineStates);
+
     alignFlexItems(lineStates);
     
     if (isWrapReverse())
@@ -2985,6 +2987,20 @@ void RenderFlexibleBox::adjustAlignmentForFlexItem(RenderBox& flexItem, LayoutUn
     setFlowAwareLocationForFlexItem(flexItem, flowAwareLocationForFlexItem(flexItem) + LayoutSize(0_lu, delta));
 }
     
+void RenderFlexibleBox::computeCrossSizeForFlexItems(FlexLineStates& lineStates)
+{
+    for (auto& lineState : lineStates) {
+        for (auto& flexLayoutItem : lineState.flexLayoutItems) {
+            auto& flexItem = flexLayoutItem.renderer.get();
+            ASSERT(!flexItem.isOutOfFlowPositioned());
+            // If a flex item has align-self: stretch, its computed cross size property is auto, and neither of its cross-axis margins are auto, the used outer cross size is the used cross size
+            // of its flex line, clamped according to the item's used min and max cross sizes. Otherwise, the used cross size is the item's hypothetical cross size.
+            if (alignmentForFlexItem(flexItem) == ItemPosition::Stretch && !hasAutoMarginsInCrossAxis(flexItem))
+                applyStretchAlignmentToFlexItem(flexItem, lineState.crossAxisExtent);
+        }
+    }
+}
+
 void RenderFlexibleBox::alignFlexItems(FlexLineStates& lineStates)
 {
     for (LineState& lineState : lineStates) {
@@ -3000,9 +3016,7 @@ void RenderFlexibleBox::alignFlexItems(FlexLineStates& lineStates)
             auto position = alignmentForFlexItem(flexLayoutItem.renderer);
             if (updateAutoMarginsInCrossAxis(flexLayoutItem.renderer, std::max(0_lu, availableAlignmentSpaceForFlexItem(lineCrossAxisExtent, flexLayoutItem.renderer))) || position == ItemPosition::Baseline || position == ItemPosition::LastBaseline)
                 continue;
-            
-            if (position == ItemPosition::Stretch)
-                applyStretchAlignmentToFlexItem(flexLayoutItem.renderer, lineCrossAxisExtent);
+
             LayoutUnit availableSpace = availableAlignmentSpaceForFlexItem(lineCrossAxisExtent, flexLayoutItem.renderer);
             if (availableSpace < 0 && safety == OverflowAlignment::Safe)
                 position = ItemPosition::FlexStart; // See Start == FlexStart assumption in alignmentForFlexItem().

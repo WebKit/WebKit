@@ -356,6 +356,7 @@ private:
     void layoutFlexItemAfterMainSizing(FlexLayoutItem&, RelayoutChildren);
     void layoutColumnReverse(std::span<const FlexLayoutItem>, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit gapBetweenItems);
     void alignFlexLines(FlexLineStates&, LayoutUnit gapBetweenLines);
+    void computeCrossSizeForFlexItems(FlexLineStates&);
     void alignFlexItems(FlexLineStates&);
     void applyStretchAlignmentToFlexItem(RenderBox& flexItem, LayoutUnit lineCrossAxisExtent);
     void applyStretchMinMaxCrossSize(RenderBox& flexItem, LayoutUnit lineCrossAxisExtent, LogicalBoxAxis);
