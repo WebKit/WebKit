@@ -117,10 +117,6 @@ bool GraphicsContextGLTextureMapperAndroid::enableRequiredWebXRExtensionsImpl()
     return enableExtensionsImpl({
         "GL_OES_EGL_image"_s,
         "GL_OES_EGL_image_external"_s,
-        "EGL_KHR_image_base"_s,
-        "EGL_KHR_surfaceless_context"_s,
-        "EGL_ANDROID_get_native_client_buffer"_s,
-        "EGL_ANDROID_image_native_buffer"_s,
     });
 }
 #endif // ENABLE(WEBXR)
