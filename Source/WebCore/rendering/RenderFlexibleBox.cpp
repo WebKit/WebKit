@@ -1217,11 +1217,6 @@ LayoutUnit RenderFlexibleBox::mainAxisScrollbarExtent() const
     return isHorizontalFlow() ? verticalScrollbarWidth() : horizontalScrollbarHeight();
 }
 
-LayoutPoint RenderFlexibleBox::flowAwareLocationForFlexItem(const RenderBox& flexItem) const
-{
-    return isHorizontalFlow() ? flexItem.location() : flexItem.location().transposedPoint();
-}
-
 const Style::PreferredSize& RenderFlexibleBox::preferredCrossSizeLengthForFlexItem(const RenderBox& flexItem) const
 {
     return isHorizontalFlow() ? flexItem.style().height() : flexItem.style().width();
@@ -3227,13 +3222,14 @@ void RenderFlexibleBox::flipForRightToLeftColumn(const FlexLineStates& lineState
         for (auto& flexLayoutItem : lineState.flexLayoutItems) {
             ASSERT(!flexLayoutItem.renderer->isOutOfFlowPositioned());
             
-            LayoutPoint location = flowAwareLocationForFlexItem(flexLayoutItem.renderer);
+            auto location = flexLayoutItem.flowAwareLocation;
             // For vertical flows, setFlowAwareLocationForFlexItem will transpose x and
             // y, so using the y axis for a column cross axis extent is correct.
             location.setY(crossExtent - crossAxisExtentForFlexItem(flexLayoutItem.renderer) - location.y());
             if (!isHorizontalWritingMode())
                 location.move(LayoutSize(0, -horizontalScrollbarHeight()));
-            setFlowAwareLocationForFlexItem(flexLayoutItem.renderer, location);
+            flexLayoutItem.flowAwareLocation = location;
+            setFlexItemGeometry(flexLayoutItem);
         }
     }
 }
