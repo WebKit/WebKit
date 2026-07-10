@@ -478,8 +478,11 @@ void RemoteLayerTreeDrawingAreaProxyMac::scheduleDisplayRefreshCallbacks()
     if (m_displayRefreshObserverID)
         return;
 
+    // FIXME: as stated in the header, we should make m_displayID non-optional. An empty display ID
+    // can cause presentation update callbacks for the page to be stuck forever.
     if (!m_displayID) {
-        RELEASE_LOG(DisplayLink, "RemoteLayerTreeDrawingAreaProxyMac::scheduleDisplayLink(): page has no displayID");
+        RefPtr webPageProxy = page();
+        RELEASE_LOG_ERROR(DisplayLink, "%p [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", PID=%i] RemoteLayerTreeDrawingAreaProxyMac::scheduleDisplayRefreshCallbacks(): page has no display ID", this, webPageProxy ? webPageProxy->identifier().toUInt64() : 0, webPageProxy ? webPageProxy->webPageIDInMainFrameProcess().toUInt64() : 0, webPageProxy ? webPageProxy->legacyMainFrameProcessID() : 0);
         return;
     }
 
