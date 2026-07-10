@@ -235,20 +235,22 @@ add_custom_command(
         "${_wk_modules_dir}/module.private.modulemap"
         MAIN_DEPENDENCY "${WEBKIT_DIR}/Modules/OSX_Private.modulemap"
         VERBATIM)
-add_custom_command(
-        OUTPUT "${_wk_modules_dir}/WebKit.swiftcrossimport/SwiftUI.swiftoverlay"
-        COMMAND ${CMAKE_COMMAND} -E make_directory "${_wk_modules_dir}/WebKit.swiftcrossimport"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${WEBKIT_DIR}/Modules/SwiftUI.swiftoverlay"
-        "${_wk_modules_dir}/WebKit.swiftcrossimport/SwiftUI.swiftoverlay"
-        MAIN_DEPENDENCY "${WEBKIT_DIR}/Modules/SwiftUI.swiftoverlay"
-        VERBATIM)
 
 add_custom_target(WebKit_CopyModules ALL DEPENDS
         "${_wk_modules_dir}/module.modulemap"
-        "${_wk_modules_dir}/module.private.modulemap"
-        "${_wk_modules_dir}/WebKit.swiftcrossimport/SwiftUI.swiftoverlay")
-
+        "${_wk_modules_dir}/module.private.modulemap")
 list(APPEND WebKit_DEPENDENCIES WebKit_CopyModules)
+
+add_custom_command(
+    OUTPUT "${_wk_modules_dir}/WebKit.swiftcrossimport/SwiftUI.swiftoverlay"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${_wk_modules_dir}/WebKit.swiftcrossimport"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${WEBKIT_DIR}/Modules/SwiftUI.swiftoverlay"
+    "${_wk_modules_dir}/WebKit.swiftcrossimport/SwiftUI.swiftoverlay"
+    MAIN_DEPENDENCY "${WEBKIT_DIR}/Modules/SwiftUI.swiftoverlay"
+    VERBATIM)
+add_custom_target(WebKit_SwiftCrossImport ALL DEPENDS
+    "${_wk_modules_dir}/WebKit.swiftcrossimport/SwiftUI.swiftoverlay")
+add_dependencies(WebKit WebKit_SwiftCrossImport)
 
 set(WebKit_OUTPUT_NAME WebKit)
 
