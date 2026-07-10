@@ -32,6 +32,13 @@ use webkitdirs;
 
 plan(tests => 2);
 
+# isCMakeBuild() short-circuits to true on non-Cocoa ports, so force
+# isAppleCocoaWebKit() on to keep the --xcode assertion platform-independent
+# (webkitperl runs on non-Cocoa bots too).
+no warnings qw(redefine prototype);
+*webkitdirs::isAppleCocoaWebKit = sub () { 1 };
+use warnings qw(redefine prototype);
+
 @ARGV = ("--xcode", "leftover");
 webkitdirs::determineIsCMakeBuild();
 
