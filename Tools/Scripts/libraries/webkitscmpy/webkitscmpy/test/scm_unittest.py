@@ -70,8 +70,12 @@ class TestScm(testing.PathTestCase):
         self.assertTrue(local.Scm.PROD_BRANCHES.match('safari-610-branch'))
         self.assertTrue(local.Scm.PROD_BRANCHES.match('safari-610.1-branch'))
         self.assertTrue(local.Scm.PROD_BRANCHES.match('rapid/safari-7624.1.16.110-branch'))
+        self.assertTrue(local.Scm.PROD_BRANCHES.match('webkitglib/2.52'))
+        self.assertTrue(local.Scm.PROD_BRANCHES.match('webkitglib/2.52-security'))
 
         self.assertFalse(local.Scm.PROD_BRANCHES.match('main'))
         self.assertFalse(local.Scm.PROD_BRANCHES.match('eng/1234'))
+        self.assertFalse(local.Scm.PROD_BRANCHES.match('eng/2.52'))
+        self.assertFalse(local.Scm.PROD_BRANCHES.match('webkitglib/main'))
         self.assertFalse(local.Scm.PROD_BRANCHES.match('integration/ci/stuff/safari-606-branch'))
         self.assertFalse(local.Scm.PROD_BRANCHES.match('clone/1234'))

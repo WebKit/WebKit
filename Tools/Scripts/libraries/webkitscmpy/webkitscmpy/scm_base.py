@@ -37,7 +37,7 @@ class ScmBase(object):
     # Projects can define for themselves what constitutes a development vs a production branch,
     # the following idioms seem common enough to be shared.
     DEV_BRANCHES = re.compile(r'^(.+/)?((eng)|(dev)|(bug)|(integration)|(clone))/.+')
-    PROD_BRANCHES = re.compile(r'^(rapid/)?[^-/]+-[\d+\.]+-branch')
+    PROD_BRANCHES = re.compile(r'^(rapid/)?([^-/]+-[\d+\.]+-branch|webkitglib/\d+\.\d+)')
     GIT_SVN_REVISION = re.compile(r'^git-svn-id: \S+:\/\/.+@(?P<revision>\d+) .+-.+-.+-.+', flags=re.MULTILINE)
     DEFAULT_BRANCHES = ['main', 'master', 'trunk']
 
