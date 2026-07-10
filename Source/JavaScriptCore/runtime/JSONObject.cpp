@@ -1420,10 +1420,21 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
             recordFastPropertyEnumerationFailure(object);
             return;
         }
+        // A non-reified static table can hold a toJSON that is not in the property table yet.
+        if (structure.hasNonReifiedStaticProperties()) [[unlikely]] {
+            recordFailure("object has non-reified static properties"_s);
+            return;
+        }
         if constexpr (hasGap == HasGap::Yes)
             ++m_depth;
         const unsigned newLineAndIndent = hasGap == HasGap::Yes ? newLineAndIndentSize() : 0;
         structure.forEachProperty(m_vm, [&](const auto& entry) -> bool {
+            // https://tc39.es/ecma262/#sec-serializejsonproperty
+            // Step 2.a's GetV finds an own toJSON regardless of enumerability.
+            if (entry.key() == m_vm.propertyNames->toJSON) [[unlikely]] {
+                recordFailure("object has toJSON"_s);
+                return false;
+            }
             if (entry.attributes() & PropertyAttribute::DontEnum)
                 return true;
             auto& name = *entry.key();
@@ -1538,6 +1549,14 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
         }
         auto& structure = *array.structure();
         if (!m_globalObject.isOriginalArrayStructure(&structure)) [[unlikely]] {
+            if (structure.hasPolyProto()) [[unlikely]] {
+                recordFailure("hasPolyProto"_s);
+                return;
+            }
+            if (structure.storedPrototype() != m_globalObject.arrayPrototype()) [[unlikely]] {
+                recordFailure("non-standard array prototype"_s);
+                return;
+            }
             structure.forEachProperty(m_vm, [&](const PropertyTableEntry& entry) -> bool {
                 if (entry.key() == m_vm.propertyNames->toJSON) [[unlikely]] {
                     recordFailure("array has toJSON"_s);
