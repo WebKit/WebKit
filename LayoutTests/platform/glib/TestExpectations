@@ -2143,6 +2143,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 
 fast/mediastream/camera-powerEfficient-track.html [ Failure ]
 fast/mediastream/multi-microphone.html [ Skip ]
+webkit.org/b/256768 fast/mediastream/captureStream/canvas3d.html [ Pass Failure ]
 
 webkit.org/b/208182 fast/repaint/backgroundSizeRepaint.html [ ImageOnlyFailure Pass ]
 
@@ -4867,3 +4868,24 @@ webkit.org/b/313511 media/media-source/media-source-real-overlapping-dts.html [ 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of NEEDS TRIAGING. Don't put expectations below this section.
 #////////////////////////////////////////////////////////////////////////////////////////
+
+# Flaky tests, expectations matching main's gardening, trimmed to results seen on this bot.
+webkit.org/b/308103 fast/repaint/svg-image-object-fit-animation-repaint.html [ ImageOnlyFailure Pass ]
+webkit.org/b/306341 fast/scrolling/rtl-scrollbars-sticky-document-2.html [ ImageOnlyFailure Pass Timeout ]
+webkit.org/b/310418 http/wpt/mediastream/getUserMedia-odd-size.html [ Failure Pass ]
+[ Release ] imported/w3c/web-platform-tests/preload/prefetch-document.html [ Failure Pass ]
+webkit.org/b/116277 media/video-buffered.html [ Pass Failure ]
+webkit.org/b/306342 http/wpt/service-workers/fetch-service-worker-navigation-preload.https.html [ Pass Failure ]
+webkit.org/b/313056 fullscreen/full-screen-enter-while-exiting-fully.html [ Pass Timeout ]
+webkit.org/b/306017 imported/w3c/web-platform-tests/css/css-view-transitions/content-smaller-than-box-size.html [ ImageOnlyFailure Pass ]
+
+# Flaky tests, expectations matching main's gardening (results from GTK/WPE WK2 asserts EWS).
+webkit.org/b/310543 css3/color-filters/color-filter-caret-color.html [ ImageOnlyFailure Pass ]
+webkit.org/b/307368 fast/repaint/iframe-from-display-none-repaint.html [ ImageOnlyFailure Pass ]
+webkit.org/b/307087 http/tests/workers/service/postmessage-after-terminate.https.html [ Timeout Pass ]
+webkit.org/b/307095 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_X25519.https.any.html [ Failure Pass ]
+webkit.org/b/306019 imported/w3c/web-platform-tests/resource-timing/resource_timing.worker.html [ Failure Pass ]
+webkit.org/b/307886 js/dom/promise-stack-overflow.html [ Failure Pass ]
+webkit.org/b/312138 media/media-source/media-source-webm-configuration-change.html [ Failure Pass ]
+webkit.org/b/313419 media/track/audio-track-configuration-webm.html [ Failure Pass ]
+webkit.org/b/313419 media/track/audio-track-configuration.html [ Failure Pass ]

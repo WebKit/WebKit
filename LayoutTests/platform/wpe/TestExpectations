@@ -76,6 +76,7 @@ imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/cho
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-shadow-and-properties-blur.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-shadow-and-properties.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-shadow.html [ Pass ]
+webkit.org/b/309377 [ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-video-resize.html [ Failure Pass ]
 
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-EN.html [ Pass ]
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-41.html [ Pass ]
@@ -1323,3 +1324,17 @@ webkit.org/b/309633 [ arm64 ] fast/text/hyphenate-locale.html [ Failure ]
 webkit.org/b/309377 [ arm64 ] http/wpt/webcodecs/videoFrame-video-element-compressed.html [ Failure Pass ]
 webkit.org/b/309636 [ arm64 ] webgl/tex-2d-video-no-change-wrap.html [ Pass Failure ]
 webkit.org/b/309376 [ arm64 ] compositing/animation/animation-backing.html [ Failure Pass ]
+
+# Flaky tests, expectations matching main's gardening, trimmed to results seen on this bot.
+webkit.org/b/310413 [ arm64 ] compositing/backing/animate-into-view.html [ Failure Pass ]
+[ arm64 ] imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-none-block.html [ Failure Pass ]
+webkit.org/b/228311 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-dynamic-remove-style-detached.html [ Pass Failure ]
+webkit.org/b/307139 imported/w3c/web-platform-tests/html/canvas/offscreen/text/canvas.2d.fontStretch.normal.html [ ImageOnlyFailure Pass ]
+webkit.org/b/306758 media/event-attributes.html [ Pass Failure ]
+webkit.org/b/306466 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-arabic-002.html [ ImageOnlyFailure Pass ]
+webkit.org/b/316574 fast/parser/entities-in-html.html [ Pass Timeout ]
+
+# Flaky tests, expectations matching main's gardening (results from GTK/WPE WK2 asserts EWS).
+webkit.org/b/303866 imported/w3c/web-platform-tests/css/css-anchor-position/scroll-to-anchored-fixed-003.html [ ImageOnlyFailure Pass ]
+webkit.org/b/316426 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_loadstart.html [ Failure Pass ]
+webkit.org/b/318345 [ x86_64 ] media/track/video-track-configuration-mp4-default-colorspace.html [ Failure Pass ]

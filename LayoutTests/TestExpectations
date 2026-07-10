@@ -8201,3 +8201,14 @@ webkit.org/b/301250 ipc/dictionary-callbacks.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/security/dangling-markup/dangling-markup-mitigation.tentative.https.html [ Skip ]
 
 webkit.org/b/305054 [ Debug ] ipc/serialized-type-info.html [ Failure ]
+
+# Flaky tests, expectations matching main's gardening, trimmed to results seen on this bot.
+webkit.org/b/307136 http/tests/canvas/ctx.2d-canvas-style-pattern-no-document-leak.html [ Crash Failure Pass ]
+webkit.org/b/288546 imported/w3c/web-platform-tests/fullscreen/api/element-ready-allowed.html [ Pass Failure ]
+webkit.org/b/307086 http/tests/geolocation/geolocation-watch-position-does-not-leak.https.html [ Pass Failure ]
+webkit.org/b/311465 webanimations/simultaneous-animations-removed-separately.html [ Failure Pass ]
+webkit.org/b/311930 fonts/font-cache-memory-pressure-crash.html [ Failure Pass ]
+
+# Flaky tests, expectations matching main's gardening (results from GTK/WPE WK2 asserts EWS).
+imported/w3c/web-platform-tests/editing/other/insertparagraph-in-child-of-html.tentative.html?designMode=on&white-space=normal [ Failure Pass ]
+webkit.org/b/281267 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-summary-element/interactive-content.html [ Failure Pass ]

@@ -132,6 +132,7 @@ webkit.org/b/303924 webrtc/peer-connection-audio-mute2.html [ Failure ]
 webkit.org/b/303925 webrtc/audio-replace-track.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/protocol/ice-state.https.html [ Failure ]
 
+webkit.org/b/305553 fast/selectors/selection-window-inactive.html [ ImageOnlyFailure Pass ]
 webkit.org/b/305553 fast/selectors/selection-window-inactive-stroke-color.html [ ImageOnlyFailure ]
 webkit.org/b/306384 imported/w3c/web-platform-tests/quirks/line-height-in-list-item.html [ ImageOnlyFailure ]
 webkit.org/b/306384 scrollbars/corner-resizer-window-inactive.html [ Pass ImageOnlyFailure ]
@@ -1448,8 +1449,6 @@ webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/
 
 webkit.org/b/245900 [ Debug ] fast/inline/inline-box-adjust-position-crash2.html [ Skip ]
 
-webkit.org/b/256768 fast/mediastream/captureStream/canvas3d.html [ Failure Pass ]
-
 webkit.org/b/249477 media/audioSession/audioSessionType.html [ Skip ]
 
 media/media-source/media-detachablemse-append.html [ Skip ]
@@ -1653,3 +1652,7 @@ webkit.org/b/305509 imported/w3c/web-platform-tests/css/css-pseudo/marker-animat
 webkit.org/b/305509 imported/w3c/web-platform-tests/css/css-view-transitions/start-view-transtion-skips-active.html [ Failure Pass ]
 webkit.org/b/305509 imported/w3c/web-platform-tests/event-timing/interactionid-orphan-pointerup.html [ Failure Pass ]
 webkit.org/b/305509 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-pause-on-exit.html [ Failure Pass ]
+
+# Flaky tests, expectations matching main's gardening (results from GTK/WPE WK2 asserts EWS).
+webkit.org/b/309266 css3/scroll-snap/scroll-snap-drag-scrollbar-thumb.html [ Failure Pass ]
+webkit.org/b/309264 http/tests/xmlhttprequest/redirect-cross-origin-post.html [ Failure Pass ]
