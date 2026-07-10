@@ -111,10 +111,12 @@ protected:
     template<typename Func>
     void runWithDowncast(const Func&) const;
 
+    void setIndexOrName(IndexOrName&&);
+
 private:
     const CompilationMode m_compilationMode;
     const FunctionSpaceIndex m_index;
-    const IndexOrName m_indexOrName;
+    IndexOrName m_indexOrName;
 
 protected:
     FixedVector<HandlerInfo> m_exceptionHandlers;
@@ -467,6 +469,7 @@ private:
 
 
 class IPIntCallee final : public Callee {
+    using Base = Callee;
     WTF_MAKE_COMPACT_TZONE_ALLOCATED(IPIntCallee);
     friend class JSC::LLIntOffsetsExtractor;
     friend class Callee;
@@ -479,6 +482,7 @@ public:
     FunctionCodeIndex functionIndex() const { return m_functionIndex; }
     void setEntrypoint(CodePtr<WasmEntryPtrTag>);
     void setEntrypointWithoutRegistration(CodePtr<WasmEntryPtrTag>);
+    void setName(std::pair<const Name*, RefPtr<NameSection>>&& name) { setIndexOrName(IndexOrName(index(), WTF::move(name))); }
     const uint8_t* bytecode() const { return m_bytecode; }
     const uint8_t* bytecodeEnd() const { return m_bytecodeEnd; }
     const uint8_t* metadata() const LIFETIME_BOUND { return m_metadata.span().data(); }
