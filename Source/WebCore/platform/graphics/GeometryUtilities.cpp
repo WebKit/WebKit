@@ -197,7 +197,7 @@ bool ellipseContainsPoint(const FloatPoint& center, const FloatSize& radii, cons
 
 float eccentricAngle(FloatPoint point, FloatPoint center, float radiusX, float radiusY)
 {
-    return std::atan2((point.y() - center.y()) / radiusY, (point.x() - center.x()) / radiusX);
+    return atan2((point.y() - center.y()) / radiusY, (point.x() - center.x()) / radiusX);
 }
 
 FloatPoint midPoint(const FloatPoint& first, const FloatPoint& second)
