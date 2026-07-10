@@ -37,6 +37,7 @@ template<> struct WrapperTraits<WebUserContentControllerProxy> {
 };
 
 class WebScriptMessageHandler;
+void _addDataSpanForSwift(WKUserContentController *, NOESCAPE std::span<const uint8_t>, NSString *, WKContentWorld *);
 }
 
 @interface WKUserContentController () <WKObject> {
