@@ -1592,6 +1592,10 @@ void RenderFlexibleBox::performFlexLayout(RelayoutChildren relayoutChildren)
 
     // 9.6. (#13 - #16) Cross-Axis Alignment.
     repositionLogicalHeightDependentFlexItems(lineStates, gapBetweenLines);
+
+    // Write each flex item's final flow-aware location to its renderer (cf. FlexLayout::computeFlexItemRects).
+    for (auto& flexLayoutItem : allItems)
+        setFlexItemGeometry(flexLayoutItem);
 }
 
 RenderFlexibleBox::FlexLayoutItems RenderFlexibleBox::collectFlexItems(RelayoutChildren relayoutChildren)
@@ -2995,7 +2999,6 @@ void RenderFlexibleBox::adjustAlignmentForFlexItem(FlexLayoutItem& flexLayoutIte
 {
     ASSERT(!flexLayoutItem.renderer->isOutOfFlowPositioned());
     flexLayoutItem.flowAwareLocation.move(0_lu, delta);
-    setFlexItemGeometry(flexLayoutItem);
 }
     
 void RenderFlexibleBox::computeCrossSizeForFlexItems(FlexLineStates& lineStates)
@@ -3229,7 +3232,6 @@ void RenderFlexibleBox::flipForRightToLeftColumn(const FlexLineStates& lineState
             if (!isHorizontalWritingMode())
                 location.move(LayoutSize(0, -horizontalScrollbarHeight()));
             flexLayoutItem.flowAwareLocation = location;
-            setFlexItemGeometry(flexLayoutItem);
         }
     }
 }
