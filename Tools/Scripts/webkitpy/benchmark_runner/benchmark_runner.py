@@ -61,6 +61,7 @@ class BenchmarkRunner(object):
         if device_id:
             self._config['device_id'] = device_id
         self._config['enable_signposts'] = True if self._profile_output_dir else False
+        self._config['diagnose_dir'] = self._diagnose_dir
 
     @staticmethod
     def _find_plan_file(plan_file):
