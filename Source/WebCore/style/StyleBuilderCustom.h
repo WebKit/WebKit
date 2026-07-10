@@ -543,8 +543,7 @@ inline void BuilderCustom::applyValueWebkitTextZoom(BuilderState& builderState, 
 
 inline void BuilderCustom::applyInitialFontFamily(BuilderState& builderState)
 {
-    auto& fontDescription = builderState.fontDescription();
-    auto initialDesc = FontCascadeDescription();
+    auto fontDescription = builderState.fontDescription();
 
     // We need to adjust the size to account for the generic family change from monospace to non-monospace.
     if (fontDescription.useFixedDefaultSize()) {
@@ -552,8 +551,7 @@ inline void BuilderCustom::applyInitialFontFamily(BuilderState& builderState)
             builderState.setFontDescriptionFontSize(Style::fontSizeForKeyword(sizeIdentifier, false, builderState.document()));
     }
 
-    if (!initialDesc.firstFamily().name.isEmpty())
-        builderState.setFontDescriptionFamilies(FontFamilies { initialDesc.families(), fontDescription.hasAuthorSpecifiedNonGenericPrimaryFont() });
+    builderState.setFontDescriptionFamilies(FontFamilies { WebKitFontFamilyNames::standardFamily, FontFamilyKind::Generic });
 }
 
 inline void BuilderCustom::applyInheritFontFamily(BuilderState& builderState)
