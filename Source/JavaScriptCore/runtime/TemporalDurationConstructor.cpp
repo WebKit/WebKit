@@ -77,7 +77,6 @@ void TemporalDurationConstructor::finishCreation(VM& vm, TemporalDurationPrototy
 {
     Base::finishCreation(vm, 0, "Duration"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, durationPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    durationPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.duration

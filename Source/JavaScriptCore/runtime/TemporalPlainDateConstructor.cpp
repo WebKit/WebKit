@@ -78,7 +78,6 @@ void TemporalPlainDateConstructor::finishCreation(VM& vm, TemporalPlainDateProto
 {
     Base::finishCreation(vm, 3, "PlainDate"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, plainDatePrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    plainDatePrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindate

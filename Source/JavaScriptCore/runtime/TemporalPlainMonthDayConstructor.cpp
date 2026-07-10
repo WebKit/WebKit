@@ -76,7 +76,6 @@ void TemporalPlainMonthDayConstructor::finishCreation(VM& vm, TemporalPlainMonth
 {
     Base::finishCreation(vm, 2, "PlainMonthDay"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, plainMonthDayPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    plainMonthDayPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday

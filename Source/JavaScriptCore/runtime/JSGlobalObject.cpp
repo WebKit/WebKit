@@ -268,21 +268,29 @@
 #include "SyntheticModuleRecord.h"
 #include "TemporalCalendar.h"
 #include "TemporalDuration.h"
+#include "TemporalDurationConstructor.h"
 #include "TemporalDurationPrototype.h"
 #include "TemporalInstant.h"
+#include "TemporalInstantConstructor.h"
 #include "TemporalInstantPrototype.h"
 #include "TemporalObject.h"
 #include "TemporalPlainDate.h"
+#include "TemporalPlainDateConstructor.h"
 #include "TemporalPlainDatePrototype.h"
 #include "TemporalPlainDateTime.h"
+#include "TemporalPlainDateTimeConstructor.h"
 #include "TemporalPlainDateTimePrototype.h"
 #include "TemporalPlainMonthDay.h"
+#include "TemporalPlainMonthDayConstructor.h"
 #include "TemporalPlainMonthDayPrototype.h"
 #include "TemporalPlainTime.h"
+#include "TemporalPlainTimeConstructor.h"
 #include "TemporalPlainTimePrototype.h"
 #include "TemporalPlainYearMonth.h"
+#include "TemporalPlainYearMonthConstructor.h"
 #include "TemporalPlainYearMonthPrototype.h"
 #include "TemporalZonedDateTime.h"
+#include "TemporalZonedDateTimeConstructor.h"
 #include "TemporalZonedDateTimePrototype.h"
 #include "TopExceptionScope.h"
 #include "VMTrapsInlines.h"
@@ -1772,59 +1780,67 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
     if (Options::useTemporal()) {
         m_durationStructure.initLater(
-            [] (const Initializer<Structure>& init) {
-                JSGlobalObject* globalObject = init.owner;
-                TemporalDurationPrototype* durationPrototype = TemporalDurationPrototype::create(init.vm, TemporalDurationPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
-                init.set(TemporalDuration::createStructure(init.vm, globalObject, durationPrototype));
+            [] (LazyClassStructure::Initializer& init) {
+                auto* prototype = TemporalDurationPrototype::create(init.vm, TemporalDurationPrototype::createStructure(init.vm, init.global, init.global->objectPrototype()));
+                init.setPrototype(prototype);
+                init.setStructure(TemporalDuration::createStructure(init.vm, init.global, prototype));
+                init.setConstructor(TemporalDurationConstructor::create(init.vm, TemporalDurationConstructor::createStructure(init.vm, init.global, init.global->functionPrototype()), prototype));
             });
 
         m_instantStructure.initLater(
-            [] (const Initializer<Structure>& init) {
-                JSGlobalObject* globalObject = init.owner;
-                TemporalInstantPrototype* instantPrototype = TemporalInstantPrototype::create(init.vm, TemporalInstantPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
-                init.set(TemporalInstant::createStructure(init.vm, globalObject, instantPrototype));
+            [] (LazyClassStructure::Initializer& init) {
+                auto* prototype = TemporalInstantPrototype::create(init.vm, TemporalInstantPrototype::createStructure(init.vm, init.global, init.global->objectPrototype()));
+                init.setPrototype(prototype);
+                init.setStructure(TemporalInstant::createStructure(init.vm, init.global, prototype));
+                init.setConstructor(TemporalInstantConstructor::create(init.vm, TemporalInstantConstructor::createStructure(init.vm, init.global, init.global->functionPrototype()), prototype));
             });
 
         m_plainDateStructure.initLater(
-            [] (const Initializer<Structure>& init) {
-                auto* globalObject = init.owner;
-                auto* plainDatePrototype = TemporalPlainDatePrototype::create(init.vm, globalObject, TemporalPlainDatePrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
-                init.set(TemporalPlainDate::createStructure(init.vm, globalObject, plainDatePrototype));
+            [] (LazyClassStructure::Initializer& init) {
+                auto* prototype = TemporalPlainDatePrototype::create(init.vm, init.global, TemporalPlainDatePrototype::createStructure(init.vm, init.global, init.global->objectPrototype()));
+                init.setPrototype(prototype);
+                init.setStructure(TemporalPlainDate::createStructure(init.vm, init.global, prototype));
+                init.setConstructor(TemporalPlainDateConstructor::create(init.vm, TemporalPlainDateConstructor::createStructure(init.vm, init.global, init.global->functionPrototype()), prototype));
             });
 
         m_plainDateTimeStructure.initLater(
-            [] (const Initializer<Structure>& init) {
-                auto* globalObject = init.owner;
-                auto* plainDateTimePrototype = TemporalPlainDateTimePrototype::create(init.vm, globalObject, TemporalPlainDateTimePrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
-                init.set(TemporalPlainDateTime::createStructure(init.vm, globalObject, plainDateTimePrototype));
+            [] (LazyClassStructure::Initializer& init) {
+                auto* prototype = TemporalPlainDateTimePrototype::create(init.vm, init.global, TemporalPlainDateTimePrototype::createStructure(init.vm, init.global, init.global->objectPrototype()));
+                init.setPrototype(prototype);
+                init.setStructure(TemporalPlainDateTime::createStructure(init.vm, init.global, prototype));
+                init.setConstructor(TemporalPlainDateTimeConstructor::create(init.vm, TemporalPlainDateTimeConstructor::createStructure(init.vm, init.global, init.global->functionPrototype()), prototype));
             });
 
         m_plainMonthDayStructure.initLater(
-            [] (const Initializer<Structure>& init) {
-                auto* globalObject = init.owner;
-                auto* plainMonthDayPrototype = TemporalPlainMonthDayPrototype::create(init.vm, globalObject, TemporalPlainMonthDayPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
-                init.set(TemporalPlainMonthDay::createStructure(init.vm, globalObject, plainMonthDayPrototype));
+            [] (LazyClassStructure::Initializer& init) {
+                auto* prototype = TemporalPlainMonthDayPrototype::create(init.vm, init.global, TemporalPlainMonthDayPrototype::createStructure(init.vm, init.global, init.global->objectPrototype()));
+                init.setPrototype(prototype);
+                init.setStructure(TemporalPlainMonthDay::createStructure(init.vm, init.global, prototype));
+                init.setConstructor(TemporalPlainMonthDayConstructor::create(init.vm, TemporalPlainMonthDayConstructor::createStructure(init.vm, init.global, init.global->functionPrototype()), prototype));
             });
 
         m_plainTimeStructure.initLater(
-            [] (const Initializer<Structure>& init) {
-                auto* globalObject = init.owner;
-                auto* plainTimePrototype = TemporalPlainTimePrototype::create(init.vm, globalObject, TemporalPlainTimePrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
-                init.set(TemporalPlainTime::createStructure(init.vm, globalObject, plainTimePrototype));
+            [] (LazyClassStructure::Initializer& init) {
+                auto* prototype = TemporalPlainTimePrototype::create(init.vm, init.global, TemporalPlainTimePrototype::createStructure(init.vm, init.global, init.global->objectPrototype()));
+                init.setPrototype(prototype);
+                init.setStructure(TemporalPlainTime::createStructure(init.vm, init.global, prototype));
+                init.setConstructor(TemporalPlainTimeConstructor::create(init.vm, TemporalPlainTimeConstructor::createStructure(init.vm, init.global, init.global->functionPrototype()), prototype));
             });
 
         m_plainYearMonthStructure.initLater(
-            [] (const Initializer<Structure>& init) {
-                auto* globalObject = init.owner;
-                auto* plainYearMonthPrototype = TemporalPlainYearMonthPrototype::create(init.vm, globalObject, TemporalPlainYearMonthPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
-                init.set(TemporalPlainYearMonth::createStructure(init.vm, globalObject, plainYearMonthPrototype));
+            [] (LazyClassStructure::Initializer& init) {
+                auto* prototype = TemporalPlainYearMonthPrototype::create(init.vm, init.global, TemporalPlainYearMonthPrototype::createStructure(init.vm, init.global, init.global->objectPrototype()));
+                init.setPrototype(prototype);
+                init.setStructure(TemporalPlainYearMonth::createStructure(init.vm, init.global, prototype));
+                init.setConstructor(TemporalPlainYearMonthConstructor::create(init.vm, TemporalPlainYearMonthConstructor::createStructure(init.vm, init.global, init.global->functionPrototype()), prototype));
             });
 
         m_zonedDateTimeStructure.initLater(
-            [] (const Initializer<Structure>& init) {
-                auto* globalObject = init.owner;
-                auto* zonedDateTimePrototype = TemporalZonedDateTimePrototype::create(init.vm, globalObject, TemporalZonedDateTimePrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
-                init.set(TemporalZonedDateTime::createStructure(init.vm, globalObject, zonedDateTimePrototype));
+            [] (LazyClassStructure::Initializer& init) {
+                auto* prototype = TemporalZonedDateTimePrototype::create(init.vm, init.global, TemporalZonedDateTimePrototype::createStructure(init.vm, init.global, init.global->objectPrototype()));
+                init.setPrototype(prototype);
+                init.setStructure(TemporalZonedDateTime::createStructure(init.vm, init.global, prototype));
+                init.setConstructor(TemporalZonedDateTimeConstructor::create(init.vm, TemporalZonedDateTimeConstructor::createStructure(init.vm, init.global, init.global->functionPrototype()), prototype));
             });
 
         TemporalObject* temporal = TemporalObject::create(vm, TemporalObject::createStructure(vm, this));

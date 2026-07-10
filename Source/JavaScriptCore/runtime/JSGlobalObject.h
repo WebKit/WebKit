@@ -299,14 +299,14 @@ public:
     LazyClassStructure m_dateTimeFormatStructure;
     LazyClassStructure m_numberFormatStructure;
 
-    LazyProperty<JSGlobalObject, Structure> m_durationStructure;
-    LazyProperty<JSGlobalObject, Structure> m_instantStructure;
-    LazyProperty<JSGlobalObject, Structure> m_plainDateStructure;
-    LazyProperty<JSGlobalObject, Structure> m_plainDateTimeStructure;
-    LazyProperty<JSGlobalObject, Structure> m_plainMonthDayStructure;
-    LazyProperty<JSGlobalObject, Structure> m_plainTimeStructure;
-    LazyProperty<JSGlobalObject, Structure> m_plainYearMonthStructure;
-    LazyProperty<JSGlobalObject, Structure> m_zonedDateTimeStructure;
+    LazyClassStructure m_durationStructure;
+    LazyClassStructure m_instantStructure;
+    LazyClassStructure m_plainDateStructure;
+    LazyClassStructure m_plainDateTimeStructure;
+    LazyClassStructure m_plainMonthDayStructure;
+    LazyClassStructure m_plainTimeStructure;
+    LazyClassStructure m_plainYearMonthStructure;
+    LazyClassStructure m_zonedDateTimeStructure;
 
     WriteBarrier<NullGetterFunction> m_nullGetterFunction;
     WriteBarrier<NullSetterFunction> m_nullSetterFunction;
@@ -1045,6 +1045,15 @@ public:
     Structure* plainTimeStructure() { return m_plainTimeStructure.get(this); }
     Structure* plainYearMonthStructure() { return m_plainYearMonthStructure.get(this); }
     Structure* zonedDateTimeStructure() { return m_zonedDateTimeStructure.get(this); }
+
+    JSObject* durationConstructor() { return m_durationStructure.constructor(this); }
+    JSObject* instantConstructor() { return m_instantStructure.constructor(this); }
+    JSObject* plainDateConstructor() { return m_plainDateStructure.constructor(this); }
+    JSObject* plainDateTimeConstructor() { return m_plainDateTimeStructure.constructor(this); }
+    JSObject* plainMonthDayConstructor() { return m_plainMonthDayStructure.constructor(this); }
+    JSObject* plainTimeConstructor() { return m_plainTimeStructure.constructor(this); }
+    JSObject* plainYearMonthConstructor() { return m_plainYearMonthStructure.constructor(this); }
+    JSObject* zonedDateTimeConstructor() { return m_zonedDateTimeStructure.constructor(this); }
 
     JS_EXPORT_PRIVATE void setInspectable(bool);
     JS_EXPORT_PRIVATE bool inspectable() const;
