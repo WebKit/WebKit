@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true useHardwareKeyboardMode=true ] -->
 <html>
 <head>
 <meta name="viewport" content="initial-scale=1.0">
@@ -16,7 +16,7 @@ async function runTest()
 {
     let testElement = document.getElementById("test");
     if (window.testRunner)
-        await UIHelper.activateElementAndWaitForInputSession(testElement);
+        await UIHelper.activateElementAndWaitForInputSessionStart(testElement);
     else
         await UIHelper.callFunctionAndWaitForEvent(() => testElement.focus(), testElement, "focus");
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true useHardwareKeyboardMode=true ] -->
 
 <html>
 <head>
@@ -27,7 +27,7 @@
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
 
-        await UIHelper.activateElementAndWaitForInputSession(document.getElementById('input'));
+        await UIHelper.activateElementAndWaitForInputSessionStart(document.getElementById('input'));
         await UIHelper.waitForZoomingOrScrollingToEnd();
         await dumpScaleAndVisibleRect('After focus first field');
 

@@ -1336,6 +1336,16 @@ void UIScriptControllerIOS::setWillStartInputSessionCallback(JSValueRef callback
     }).get();
 }
 
+void UIScriptControllerIOS::setDidStartInputSessionCallback(JSValueRef callback)
+{
+    UIScriptController::setDidStartInputSessionCallback(callback);
+    webView().didStartInputSessionCallback = makeBlockPtr([this, protectedThis = Ref { *this }] {
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeDidStartInputSession);
+    }).get();
+}
+
 void UIScriptControllerIOS::chooseMenuAction(JSStringRef jsAction, JSValueRef callback)
 {
     auto action = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsAction));

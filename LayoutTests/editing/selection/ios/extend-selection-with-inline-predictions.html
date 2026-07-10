@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true allowsInlinePredictions=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true allowsInlinePredictions=true useHardwareKeyboardMode=true ] -->
 <html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8">
@@ -28,7 +28,7 @@ jsTestIsAsync = true;
 addEventListener("load", async () => {
     description("This test verifies that selecting backwards after typing with inline predictions does not cause a crash. This test requires WebKitTestRunner.");
 
-    await UIHelper.activateElementAndWaitForInputSession(document.getElementById("target"));
+    await UIHelper.activateElementAndWaitForInputSessionStart(document.getElementById("target"));
     await UIHelper.typeCharacters("i want to c", "keyup", document.body);
     await UIHelper.setInlinePrediction("elebrate");
     await UIHelper.ensurePresentationUpdate();

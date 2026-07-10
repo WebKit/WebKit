@@ -711,6 +711,40 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static async activateAndWaitForInputSessionStartAt(x, y)
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return this.activateAt(x, y);
+
+        if (testRunner.isKeyboardImmediatelyAvailable) {
+            await new Promise(resolve => {
+                testRunner.runUIScript(`
+                    (function() {
+                        uiController.singleTapAtPoint(${x}, ${y}, function() { });
+                        uiController.uiScriptComplete();
+                    })()`, resolve);
+            });
+            await this.ensureStablePresentationUpdate();
+            return;
+        }
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    function clearCallbacksAndScriptComplete() {
+                        uiController.didShowContextMenuCallback = null;
+                        uiController.didStartInputSessionCallback = null;
+                        uiController.willPresentPopoverCallback = null;
+                        uiController.uiScriptComplete();
+                    }
+                    uiController.didShowContextMenuCallback = clearCallbacksAndScriptComplete;
+                    uiController.didStartInputSessionCallback = clearCallbacksAndScriptComplete;
+                    uiController.willPresentPopoverCallback = clearCallbacksAndScriptComplete;
+                    uiController.singleTapAtPoint(${x}, ${y}, function() { });
+                })()`, resolve);
+        });
+    }
+
     static waitForInputSessionToDismiss()
     {
         if (!this.isWebKit2() || !this.isIOSFamily())
@@ -753,6 +787,13 @@ window.UIHelper = class UIHelper {
         const x = element.offsetLeft + element.offsetWidth / 2;
         const y = element.offsetTop + element.offsetHeight / 2;
         return this.activateAndWaitForInputSessionAt(x, y);
+    }
+
+    static activateElementAndWaitForInputSessionStart(element)
+    {
+        const x = element.offsetLeft + element.offsetWidth / 2;
+        const y = element.offsetTop + element.offsetHeight / 2;
+        return this.activateAndWaitForInputSessionStartAt(x, y);
     }
 
     static activateFormControl(element)

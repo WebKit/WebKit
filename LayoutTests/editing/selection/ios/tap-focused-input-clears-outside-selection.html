@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true useHardwareKeyboardMode=true ] -->
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,13 +28,13 @@ addEventListener("load", async () => {
     // Set up: focus the input (keyboard up), then long-press outside to pull focus away
     // and create a non-editable selection. After this, the input is blurred and 'Hello' is selected.
     const inputRect = input.getBoundingClientRect();
-    await UIHelper.activateAndWaitForInputSessionAt(inputRect.left + inputRect.width / 2, inputRect.top + inputRect.height / 2);
+    await UIHelper.activateAndWaitForInputSessionStartAt(inputRect.left + inputRect.width / 2, inputRect.top + inputRect.height / 2);
     await UIHelper.longPressElement(document.querySelector(".target"));
     await shouldBecomeEqual("getSelection().toString()", "'Hello'");
 
     // Now tap the (currently blurred) input. UIKit's behavior: the field becomes first responder again,
     // and the standalone selection is discarded.
-    await UIHelper.activateElementAndWaitForInputSession(input);
+    await UIHelper.activateElementAndWaitForInputSessionStart(input);
 
     window.focusedElementIsInput = document.activeElement === input;
     shouldBeTrue("focusedElementIsInput");

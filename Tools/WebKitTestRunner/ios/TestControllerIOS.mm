@@ -393,7 +393,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         CFPreferencesSetAppValue((__bridge CFStringRef)dictationKeyboardShortcutPreferenceKey, (__bridge CFNumberRef)dictationKeyboardShortcutValueForTesting, CFSTR("com.apple.Preferences"));
     }
 
-    GSEventSetHardwareKeyboardAttached(true, 0);
+    GSEventSetHardwareKeyboardAttached(options.useHardwareKeyboardMode(), 0);
 
     // Ignore calls to inform the keyboard daemon that we accepted autocorrection candidates.
     // This prevents the device from learning misspelled words in between layout tests.
@@ -402,7 +402,6 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     // Override the implementation of +[UIKeyboard isInHardwareKeyboardMode] to ensure that test runs are deterministic
     // regardless of whether a hardware keyboard is attached. We intentionally never restore the original implementation.
     // FIXME: Investigate whether we can change the default value for `useHardwareKeyboardMode` to `true`.
-    // The swizzled return value is inconsistent with the default value of GSEventSetHardwareKeyboardAttached above.
     setIsInHardwareKeyboardMode(options.useHardwareKeyboardMode());
 
     if (m_overriddenKeyboardInputMode) {

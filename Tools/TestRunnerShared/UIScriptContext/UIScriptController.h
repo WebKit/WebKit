@@ -448,6 +448,9 @@ public:
     virtual void setWillStartInputSessionCallback(JSValueRef);
     JSValueRef willStartInputSessionCallback() const;
 
+    virtual void setDidStartInputSessionCallback(JSValueRef);
+    JSValueRef didStartInputSessionCallback() const;
+
     virtual void setDidHideMenuCallback(JSValueRef);
     JSValueRef didHideMenuCallback() const;
     virtual void setDidShowMenuCallback(JSValueRef);

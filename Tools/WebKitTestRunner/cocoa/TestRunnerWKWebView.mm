@@ -326,6 +326,7 @@ IGNORE_WARNINGS_END
     self.didShowKeyboardCallback = nil;
     self.didHideKeyboardCallback = nil;
     self.willStartInputSessionCallback = nil;
+    self.didStartInputSessionCallback = nil;
     self.willPresentPopoverCallback = nil;
     self.didDismissPopoverCallback = nil;
     self.didPresentViewControllerCallback = nil;
@@ -714,6 +715,12 @@ static bool isQuickboardViewController(UIViewController *viewController)
     if (self.willStartInputSessionCallback)
         self.willStartInputSessionCallback();
     inputSession.accessoryViewShouldNotShow = self.suppressInputAccessoryView;
+}
+
+- (void)_webView:(WKWebView *)webView didStartInputSession:(id<_WKFormInputSession>)inputSession
+{
+    if (self.didStartInputSessionCallback)
+        self.didStartInputSessionCallback();
 }
 
 - (_WKFocusStartsInputSessionPolicy)_webView:(WKWebView *)webView decidePolicyForFocusedElement:(id<_WKFocusedElementInfo>)info

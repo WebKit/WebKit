@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true useHardwareKeyboardMode=true ] -->
 <html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -47,7 +47,7 @@ addEventListener("load", async () => {
     getSelection().setPosition(document.body, 0);
 
     console.log("1. Focusing editor");
-    await UIHelper.activateElementAndWaitForInputSession(document.getElementById("start"));
+    await UIHelper.activateElementAndWaitForInputSessionStart(document.getElementById("start"));
 
     console.log("2. Typing in editor");
     for (let character of [..."i want to c"]) {

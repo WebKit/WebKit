@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true useHardwareKeyboardMode=true ] -->
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
@@ -38,7 +38,7 @@
         async function runTest()
         {
             let container = document.getElementById('editable');
-            await UIHelper.activateAndWaitForInputSessionAt(25, 25);
+            await UIHelper.activateAndWaitForInputSessionStartAt(25, 25);
             document.querySelector("#selection-before").textContent = selectionToString(container);
 
             await UIHelper.tapAt(25, 400);

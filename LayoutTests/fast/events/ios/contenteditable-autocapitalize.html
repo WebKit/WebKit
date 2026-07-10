@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true useHardwareKeyboardMode=true ] -->
 <html>
 <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
             for (const [autocapitalizeType, expectedTextContent] of [["none", "to"], ["sentences", "To"], ["characters", "TO"]]) {
                 editable.autocapitalize = autocapitalizeType;
 
-                await UIHelper.activateElementAndWaitForInputSession(editable);
+                await UIHelper.activateElementAndWaitForInputSessionStart(editable);
                 await UIHelper.typeCharacters("to");
 
                 if (expectedTextContent === editable.textContent)

@@ -270,6 +270,16 @@ JSValueRef UIScriptController::willStartInputSessionCallback() const
     return m_context->callbackWithID(CallbackTypeWillStartInputSession);
 }
 
+void UIScriptController::setDidStartInputSessionCallback(JSValueRef callback)
+{
+    m_context->registerCallback(callback, CallbackTypeDidStartInputSession);
+}
+
+JSValueRef UIScriptController::didStartInputSessionCallback() const
+{
+    return m_context->callbackWithID(CallbackTypeDidStartInputSession);
+}
+
 void UIScriptController::setDidShowMenuCallback(JSValueRef callback)
 {
     m_context->registerCallback(callback, CallbackTypeDidShowMenu);

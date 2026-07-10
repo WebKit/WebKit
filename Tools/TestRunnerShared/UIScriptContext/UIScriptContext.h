@@ -68,6 +68,7 @@ typedef enum  {
     CallbackTypeDidShowContactPicker,
     CallbackTypeDidHideContactPicker,
     CallbackTypeWillStartInputSession,
+    CallbackTypeDidStartInputSession,
     CallbackTypeDidPresentViewController,
     CallbackTypeNonPersistent = firstNonPersistentCallbackID
 } CallbackType;

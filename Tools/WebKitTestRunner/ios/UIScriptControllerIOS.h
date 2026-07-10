@@ -179,6 +179,7 @@ private:
     void setDidShowKeyboardCallback(JSValueRef) override;
     void setDidHideKeyboardCallback(JSValueRef) override;
     void setWillStartInputSessionCallback(JSValueRef) override;
+    void setDidStartInputSessionCallback(JSValueRef) override;
     void setWillPresentPopoverCallback(JSValueRef) override;
     void setDidDismissPopoverCallback(JSValueRef) override;
     void setDidPresentViewControllerCallback(JSValueRef) override;
