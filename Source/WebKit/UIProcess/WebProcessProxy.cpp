@@ -91,6 +91,7 @@
 #include "WebsiteDataFetchOption.h"
 #include <WebCore/AudioSession.h>
 #include <WebCore/CryptoKey.h>
+#include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/MediaProducer.h>
 #include <WebCore/PermissionName.h>

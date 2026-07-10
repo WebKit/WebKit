@@ -41,6 +41,7 @@
 #include "ContextMenuItem.h"
 #include "ContextMenuProvider.h"
 #include "DOMWrapperWorld.h"
+#include "DiagnosticLoggingClient.h"
 #include "DocumentPage.h"
 #include "DocumentView.h"
 #include "Editor.h"

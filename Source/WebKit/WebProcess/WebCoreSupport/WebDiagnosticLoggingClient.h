@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebDiagnosticLoggingClient_h
-#define WebDiagnosticLoggingClient_h
+#pragma once
 
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <wtf/TZoneMalloc.h>
@@ -53,5 +52,3 @@ private:
 };
 
 }
-
-#endif

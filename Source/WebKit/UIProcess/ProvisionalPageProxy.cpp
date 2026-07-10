@@ -60,6 +60,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
+#include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DocumentSyncData.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>

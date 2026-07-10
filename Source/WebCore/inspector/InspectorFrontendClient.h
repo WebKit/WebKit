@@ -33,7 +33,6 @@
 
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/Color.h>
-#include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/InspectorDebuggableType.h>
 #include <WebCore/InspectorFrontendAPIDispatcher.h>
@@ -51,6 +50,7 @@ using ExtensionTabID = String;
 
 namespace WebCore {
 class InspectorFrontendClient;
+struct DiagnosticLoggingDictionary;
 }
 
 namespace WTF {
@@ -156,7 +156,7 @@ public:
 #if ENABLE(INSPECTOR_TELEMETRY)
     virtual bool supportsDiagnosticLogging() { return false; }
     virtual bool diagnosticLoggingAvailable() { return false; }
-    virtual void logDiagnosticEvent(const String& /* eventName */, const DiagnosticLoggingClient::ValueDictionary&) { }
+    virtual void logDiagnosticEvent(const String& /* eventName */, const DiagnosticLoggingDictionary&) { }
 #endif
 
 #if ENABLE(INSPECTOR_EXTENSIONS)

@@ -52,6 +52,7 @@ class CertificateInfo;
 class LocalFrame;
 class Page;
 class PageInspectorController;
+struct DiagnosticLoggingDictionary;
 }
 
 class WebInspectorFrontendClient;
@@ -151,7 +152,7 @@ public:
 
 #if ENABLE(INSPECTOR_TELEMETRY)
     bool supportsDiagnosticLogging() override;
-    void logDiagnosticEvent(const String& eventName, const WebCore::DiagnosticLoggingClient::ValueDictionary&) override;
+    void logDiagnosticEvent(const String& eventName, const WebCore::DiagnosticLoggingDictionary&) override;
 #endif
 
     void sendMessageToBackend(const String& message) final;

@@ -64,6 +64,7 @@
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/CrossOriginEmbedderPolicy.h>
+#include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/HTTPStatusCodes.h>

@@ -47,6 +47,7 @@
 #import <SecurityInterface/SFCertificatePanel.h>
 #import <SecurityInterface/SFCertificateView.h>
 #import <WebCore/CertificateInfo.h>
+#import <WebCore/DiagnosticLoggingClient.h>
 #import <WebCore/InspectorFrontendClient.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/Page.h>

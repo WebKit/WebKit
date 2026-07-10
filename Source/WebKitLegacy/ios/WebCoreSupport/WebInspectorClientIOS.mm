@@ -36,6 +36,7 @@
 #import "WebNodeHighlighter.h"
 #import "WebViewInternal.h"
 #import <WebCore/CertificateInfo.h>
+#import <WebCore/DiagnosticLoggingClient.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>

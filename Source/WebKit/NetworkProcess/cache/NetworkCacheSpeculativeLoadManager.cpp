@@ -34,6 +34,7 @@
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
 #include "PreconnectTask.h"
+#include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/HTTPStatusCodes.h>
 #include <pal/HysteresisActivity.h>
