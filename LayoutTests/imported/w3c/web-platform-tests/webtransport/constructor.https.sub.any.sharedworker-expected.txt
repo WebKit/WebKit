@@ -1,0 +1,24 @@
+
+PASS WebTransport constructor should reject URL 'null'
+PASS WebTransport constructor should reject URL ''
+PASS WebTransport constructor should reject URL 'no-scheme'
+PASS WebTransport constructor should reject URL 'http://nonexistent.web-platform.test/'
+PASS WebTransport constructor should reject URL 'quic-transport://nonexistent.web-platform.test/'
+PASS WebTransport constructor should reject URL 'https:///'
+PASS WebTransport constructor should reject URL 'https://nonexistent.web-platform.test/#failing'
+PASS WebTransport constructor should reject URL 'https://web-platform.test:999999/'
+PASS WebTransport constructor should reject protocol list ''
+PASS WebTransport constructor should reject protocol list '誤'
+PASS WebTransport constructor should reject protocol list 'test,test'
+PASS WebTransport constructor should reject protocol list 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+PASS WebTransport constructor should allow options {"allowPooling":true}
+PASS WebTransport constructor should allow options {"requireUnreliable":true}
+PASS WebTransport constructor should allow options {"allowPooling":true,"requireUnreliable":true}
+PASS WebTransport constructor should allow options {"congestionControl":"default"}
+PASS WebTransport constructor should allow options {"congestionControl":"throughput"}
+PASS WebTransport constructor should allow options {"congestionControl":"low-latency"}
+PASS WebTransport constructor should allow options {"protocols":["test"]}
+PASS WebTransport constructor should allow options {"protocols":["a","b","c"]}
+PASS WebTransport constructor should allow options {"allowPooling":true,"requireUnreliable":true,"congestionControl":"low-latency"}
+PASS Connection to port 0 should fail
+
