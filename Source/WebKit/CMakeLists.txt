@@ -953,6 +953,7 @@ if (SWIFT_REQUIRED)
         UIProcess/Automation/WebAutomationSession.cpp
         WebProcess/WebPage/IPCTestingAPI.cpp
         ${WebKit_DERIVED_SOURCES_DIR}/UIProcess/WebBackForwardListMessageReceiver.cpp
+        ${WebKit_DERIVED_SOURCES_DIR}/Shared/IPCTesterReceiverMessageReceiver.cpp
     )
     if (APPLE)
         list(APPEND WebKit_SWIFT_INTEROP_SOURCES
@@ -1385,8 +1386,13 @@ if (ENABLE_BACK_FORWARD_LIST_SWIFT)
 endif ()
 
 if (SWIFT_REQUIRED)
+    set_source_files_properties(
+        ${WebKit_DERIVED_SOURCES_DIR}/IPCTesterReceiverMessageReceiver.swift
+        PROPERTIES GENERATED TRUE)
     list(APPEND WebKit_SOURCES
         ${WEBKIT_DIR}/Shared/Foundation+Extras.swift
+        ${WEBKIT_DIR}/Shared/IPCTesterReceiver.swift
+        ${WebKit_DERIVED_SOURCES_DIR}/IPCTesterReceiverMessageReceiver.swift
     )
 endif ()
 
