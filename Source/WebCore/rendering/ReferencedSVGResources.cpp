@@ -89,10 +89,12 @@ void CSSSVGResourceElementClient::resourceChanged(SVGElement& element)
         return;
     }
 
+    bool resourceIsPaintServer = is<RenderSVGResourceGradient>(element.renderer()) || is<RenderSVGResourcePattern>(element.renderer());
+
     // A gradient or pattern change can leave the cached fill or stroke paint server stale, so drop
     // it before the needsLayout() return below, because layout never touches the cache. Other
     // resource types are not paint servers, so they leave it alone.
-    if (is<RenderSVGResourceGradient>(element.renderer()) || is<RenderSVGResourcePattern>(element.renderer())) {
+    if (resourceIsPaintServer) {
         if (CheckedPtr layerModelObject = dynamicDowncast<RenderLayerModelObject>(m_clientRenderer.get()))
             layerModelObject->invalidateSVGPaintServerCache();
     }
@@ -100,13 +102,15 @@ void CSSSVGResourceElementClient::resourceChanged(SVGElement& element)
     if (m_clientRenderer->needsLayout())
         return;
 
+    RefPtr frameView = m_clientRenderer->document().view();
+
     // Invalidate cached visual overflow rect since resource bounds may have changed.
     if (CheckedPtr layerModelObject = dynamicDowncast<RenderLayerModelObject>(m_clientRenderer.get())) {
-        // A marker change (markerUnits, orient) can resize the client, but a layer-less client has no
-        // post-layout position update, so the repaint below only covers its current bounds. Repaint the old
-        // bounds now, while the cached visual overflow still holds them, so a shrinking marker erases the area
-        // it used to cover. Gradients and patterns leave the bounds unchanged, so one repaint below suffices.
-        if (is<SVGMarkerElement>(element) && !layerModelObject->hasLayer() && !m_clientRenderer->document().view()->layoutContext().isInLayout())
+        // A marker or clip-path change can resize the client, but a layer-less client gets no post-layout
+        // position update, so repaint the old bounds now while the cached visual overflow still holds
+        // them, letting a shrunk client erase the area it used to cover. Paint servers (gradient,
+        // pattern) leave bounds unchanged, so they skip this.
+        if (!resourceIsPaintServer && !layerModelObject->hasLayer() && !(frameView && frameView->layoutContext().isInLayout()))
             m_clientRenderer->repaint();
 
         layerModelObject->invalidateCachedVisualOverflowRect();
@@ -127,7 +131,7 @@ void CSSSVGResourceElementClient::resourceChanged(SVGElement& element)
 
     // During layout, clients with layers are handled by the post-layout
     // recursiveUpdateLayerPositions() phase. Clients without layers need a direct repaint.
-    if (m_clientRenderer->document().view()->layoutContext().isInLayout()) {
+    if (frameView && frameView->layoutContext().isInLayout()) {
         if (auto* layerModelObject = dynamicDowncast<RenderLayerModelObject>(m_clientRenderer.get()); layerModelObject && layerModelObject->hasLayer())
             return;
     }

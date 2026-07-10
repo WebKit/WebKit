@@ -51,6 +51,7 @@
 #include "RenderLayerCompositor.h"
 #include "RenderLayerModelObject.h"
 #include "RenderLayoutState.h"
+#include "RenderSVGModelObject.h"
 #include "RenderSVGText.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
@@ -481,90 +482,156 @@ void LocalFrameViewLayoutContext::flushPendingSVGTransformAttributeUpdatesIfNeed
     if (m_pendingSVGTransformAttributeUpdates.isEmpty())
         return;
 
-    // Drain queue and dedup flags up front so re-enqueues during the flush land in the
-    // now-empty queue.
+    // Drain the queue and clear flags up front so re-enqueues during the flush land in the now-empty
+    // queue, recording which renderers moved. The fast path below skips a child whose parent also moved,
+    // since mapping the child's old rect through the parent's updated transform would misplace it. Such
+    // a child takes the exact slow path instead.
     auto pending = std::exchange(m_pendingSVGTransformAttributeUpdates, { });
+    HashSet<const RenderObject*> pendingSet;
+    pendingSet.reserveInitialCapacity(pending.size());
     for (auto& weakRenderer : pending) {
-        if (CheckedPtr renderer = weakRenderer.get())
+        if (CheckedPtr renderer = weakRenderer.get()) {
             renderer->setIsInPendingSVGTransformAttributeUpdates(false);
+            pendingSet.add(renderer.get());
+        }
     }
 
-    // Pass 1: record each non-layered renderer's repaint rect before its transform changes.
-    // Pass 3 then uses this old rect to emit a delta repaint (just the corner and edge strips
-    // that moved) via repaintAfterLayoutIfNeeded(), rather than repainting the full old rect plus
-    // the full new one. This mirrors the legacy engine's LayoutRepainter, except the old and new
-    // rects span the deferred flush instead of a single layout.
-    //
-    // Three kinds of renderer are skipped here:
-    //   - Layered renderers, handled instead by Pass 2's cached-rect diff.
-    //   - RenderSVGText, whose rect depends on text metrics computed during relayout. A snapshot
-    //     taken now would already hold the new rect, not the old one.
-    //   - Renderers that already need layout, covered by the upcoming layout's own LayoutRepainter.
-    struct NonLayeredSnapshot {
+    // Map a child's local rect into its parent's coordinate space: apply the SVG transform, then the
+    // location offset. This is the whole per-child cost on the fast path. The walk to the repaint
+    // container happens once per parent in Pass 3, not once per child.
+    auto childRectInParentSpace = [](const RenderSVGModelObject& shape) -> LayoutRect {
+        auto localRect = shape.visualOverflowRectEquivalent();
+        auto transform = shape.localTransform();
+        auto rect = transform.isIdentity() ? localRect : enclosingLayoutRect(transform.mapRect(FloatRect { localRect }));
+        rect.move(shape.locationOffsetEquivalent());
+        return rect;
+    };
+
+    // Pass 1: record each renderer's old (pre-mutation) repaint rect. Fast path (the common case):
+    // record the rect cheaply in the parent's space. Slow path (everything else): record the exact
+    // rect in the repaint container's space.
+    // Skipped: layered renderers and RenderSVGText (they invalidate themselves) and renderers already
+    // needing layout (the layout pass repaints them).
+    struct FastRecord {
+        SingleThreadWeakPtr<RenderSVGModelObject> renderer;
+        SingleThreadWeakPtr<const RenderLayerModelObject> parent;
+        LayoutRect oldParentRect;
+    };
+    struct SlowRecord {
         SingleThreadWeakPtr<RenderLayerModelObject> renderer;
         SingleThreadWeakPtr<const RenderLayerModelObject> repaintContainer;
-        RenderObject::RepaintRects oldRects;
+        LayoutRect oldRect;
     };
-    Vector<NonLayeredSnapshot> nonLayeredSnapshots;
-    nonLayeredSnapshots.reserveInitialCapacity(pending.size());
+    Vector<FastRecord> fastRecords;
+    Vector<SlowRecord> slowRecords;
+    fastRecords.reserveInitialCapacity(pending.size());
     for (auto& weakRenderer : pending) {
         CheckedPtr renderer = weakRenderer.get();
         if (!renderer || renderer->renderTreeBeingDestroyed())
             continue;
         if (renderer->hasLayer() || is<RenderSVGText>(*renderer) || renderer->needsLayout())
             continue;
-        CheckedPtr repaintContainer = renderer->containerForRepaint().renderer;
-        nonLayeredSnapshots.append({
-            SingleThreadWeakPtr<RenderLayerModelObject> { *renderer },
-            SingleThreadWeakPtr<const RenderLayerModelObject> { repaintContainer.get() },
-            renderer->rectsForRepaintingAfterLayout(repaintContainer.get(), RepaintOutlineBounds::Yes)
-        });
+        CheckedPtr svgRenderer = dynamicDowncast<RenderSVGModelObject>(*renderer);
+        CheckedPtr svgParent = dynamicDowncast<RenderLayerModelObject>(renderer->parent());
+        // The fast path takes a RenderSVGModelObject whose parent is a RenderLayerModelObject that does
+        // not clip overflow and did not move this flush. Everything else falls to the slow path,
+        // including content inside an entirely hidden layer (clipPath/mask/pattern), which must not
+        // repaint directly. The repaint container is resolved once per parent in Pass 3, not here.
+        if (svgRenderer && svgParent && !renderer->isInsideEntirelyHiddenLayer() && !svgParent->hasNonVisibleOverflow() && !pendingSet.contains(svgParent.get())) {
+            fastRecords.append({
+                SingleThreadWeakPtr<RenderSVGModelObject> { *svgRenderer },
+                SingleThreadWeakPtr<const RenderLayerModelObject> { svgParent.get() },
+                childRectInParentSpace(*svgRenderer)
+            });
+        } else {
+            CheckedPtr repaintContainer = renderer->containerForRepaint().renderer;
+            slowRecords.append({
+                SingleThreadWeakPtr<RenderLayerModelObject> { *renderer },
+                SingleThreadWeakPtr<const RenderLayerModelObject> { repaintContainer.get() },
+                renderer->rectsForRepaintingAfterLayout(repaintContainer.get(), RepaintOutlineBounds::No).clippedOverflowRect
+            });
+        }
     }
 
+    // Pass 2: apply the queued transform change to each renderer.
     bool anyWorkDone = false;
     for (auto& weakRenderer : pending) {
         CheckedPtr renderer = weakRenderer.get();
         if (!renderer || renderer->renderTreeBeingDestroyed())
             continue;
-        // Layered and text renderers issue their own post-mutation invalidation. Non-layered
-        // renderers defer it; Pass 3 emits the delta repaint using the Pass 1 snapshot.
+        // Layered and text renderers repaint themselves, non-layered ones defer to Pass 3.
+        // updateTransformAndRepaintForSVGAfterAttributeChange also invalidates the moved renderer's
+        // ancestor bounding-box and visual-overflow caches, which fold in this descendant's transform.
         auto repaintMode = (renderer->hasLayer() || is<RenderSVGText>(*renderer))
             ? RenderLayerModelObject::SVGAttributeChangeRepaintMode::Issue
             : RenderLayerModelObject::SVGAttributeChangeRepaintMode::Defer;
         renderer->updateTransformAndRepaintForSVGAfterAttributeChange(repaintMode);
         anyWorkDone = true;
-
-        // A container/root ancestor's objectBoundingBox()/strokeBoundingBox() folds in its
-        // descendants' transforms but is only refreshed at layout, which this path skips. Mark
-        // the container ancestor chain dirty so getBBox()/objectBoundingBox-units resources
-        // recompute lazily. Walking parent() covers layered and non-layered alike. Re-marking an
-        // already-dirty ancestor is a cheap idempotent bool write, so shared chains just re-touch.
-        for (CheckedPtr ancestor = renderer->parent(); ancestor; ancestor = ancestor->parent()) {
-            if (CheckedPtr svgAncestor = dynamicDowncast<RenderLayerModelObject>(ancestor.get()))
-                svgAncestor->invalidateCachedSVGTransformDependentBoundingBoxes();
-            if (ancestor->isRenderSVGRoot())
-                break;
-        }
     }
 
-    // Pass 3: delta repaint per non-layered renderer. Pass 2 mutated every queued renderer's
-    // transform, so the post-mutation rect we capture here reflects the final state - even
-    // for descendants of other mutated entries.
-    for (auto& snapshot : nonLayeredSnapshots) {
-        CheckedPtr renderer = snapshot.renderer.get();
+    // Pass 3: build one union repaint rect per repaint container, then issue a single
+    // repaintUsingContainer() per container. This keeps the repaint region tight while collapsing the
+    // N per-shape backing invalidations into one per container, the dominant per-frame cost when many
+    // shapes move in the same update.
+    CheckedPtr view = renderView();
+    HashMap<const RenderLayerModelObject*, LayoutRect> unionByContainer;
+    auto addToContainer = [&](const RenderLayerModelObject* container, const LayoutRect& rect) {
+        if (rect.isEmpty())
+            return;
+        const RenderLayerModelObject* key = container ? container : view.get();
+        if (!key)
+            return;
+        auto addResult = unionByContainer.add(key, rect);
+        if (!addResult.isNewEntry)
+            addResult.iterator->value.unite(rect);
+    };
+
+    // Fast path: union each moved child's old and new rect in its parent's space, grouped by parent,
+    // then map each parent's single union to its repaint container once (the only walk on this path).
+    HashMap<const RenderLayerModelObject*, std::pair<const RenderLayerModelObject*, LayoutRect>> unionByParent;
+    for (auto& record : fastRecords) {
+        CheckedPtr renderer = record.renderer.get();
         if (!renderer || renderer->renderTreeBeingDestroyed())
             continue;
-        CheckedPtr repaintContainer = snapshot.repaintContainer.get();
-        auto newRects = renderer->rectsForRepaintingAfterLayout(repaintContainer.get(), RepaintOutlineBounds::Yes);
-        renderer->repaintAfterLayoutIfNeeded(WTF::move(snapshot.repaintContainer), RequiresFullRepaint::No, snapshot.oldRects, newRects);
+        CheckedPtr parent = record.parent.get();
+        if (!parent)
+            continue;
+        auto rect = record.oldParentRect;
+        rect.unite(childRectInParentSpace(*renderer));
+        if (rect.isEmpty())
+            continue;
+        // ensure() runs the functor only when inserting, so the repaint container is resolved once per
+        // parent (all children of a parent share it), never once per child.
+        auto addResult = unionByParent.ensure(parent.get(), [&] {
+            return std::make_pair(renderer->containerForRepaint().renderer.get(), rect);
+        });
+        if (!addResult.isNewEntry)
+            addResult.iterator->value.second.unite(rect);
     }
+    // Map each parent-space union to its repaint container, once per parent.
+    for (auto& [parent, containerAndRect] : unionByParent)
+        addToContainer(containerAndRect.first, parent->computeRectForRepaint(containerAndRect.second, containerAndRect.first));
+
+    // Slow path: exact per-renderer mapping for the cases the fast path skipped.
+    for (auto& record : slowRecords) {
+        CheckedPtr renderer = record.renderer.get();
+        if (!renderer || renderer->renderTreeBeingDestroyed())
+            continue;
+        CheckedPtr repaintContainer = record.repaintContainer.get();
+        auto rect = record.oldRect;
+        rect.unite(renderer->rectsForRepaintingAfterLayout(repaintContainer.get(), RepaintOutlineBounds::No).clippedOverflowRect);
+        addToContainer(repaintContainer.get(), rect);
+    }
+
+    for (auto& [container, unionRect] : unionByContainer)
+        container->repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerModelObject> { container }, unionRect);
 
     if (!anyWorkDone)
         return;
 
-    // Defer the position-update walk to the upcoming layout pass if style/layout is already
-    // dirty - walking against stale geometry would emit incorrect intermediate repaints.
-    // The hot path (clean style/layout) runs the walk inline and skips the layout phase.
+    // Defer the position-update walk to the upcoming layout pass when style or layout is already dirty,
+    // since walking against stale geometry would emit incorrect intermediate repaints. The hot path
+    // (clean style and layout) runs the walk inline and skips the layout phase.
     bool deferToLayoutPass = needsLayout() || isInLayout();
     requestUpdateLayerPositions();
     if (!deferToLayoutPass)

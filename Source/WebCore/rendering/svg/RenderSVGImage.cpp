@@ -116,9 +116,9 @@ void RenderSVGImage::layout()
 
     // Refresh the layout-rect size only. SVGContainerLayout assigns the container-relative location.
     setCurrentSVGLayoutRect({ currentSVGLayoutLocation(), enclosingLayoutRect(m_objectBoundingBox).size() });
-    m_cachedVisualOverflowRect = std::nullopt;
 
     updateLayerTransform();
+    updateCachedVisualOverflowRect();
 
     repainter.repaintAfterLayout();
     clearNeedsLayout();
