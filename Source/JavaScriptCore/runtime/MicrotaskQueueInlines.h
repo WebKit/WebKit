@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/JSCellInlines.h>
+#include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSMicrotaskDispatcher.h>
 #include <JavaScriptCore/MicrotaskQueue.h>
 #include <JavaScriptCore/TopExceptionScope.h>
@@ -71,6 +72,25 @@ inline void MicrotaskQueue::enqueue(QueuedTask&& task)
     m_queue.enqueue(WTF::move(task));
     if (!m_isScheduledToRun) [[unlikely]]
         scheduleToRunIfNeeded();
+}
+
+inline MicrotaskQueue& JSGlobalObject::microtaskQueue() const
+{
+    return m_microtaskQueue.get();
+}
+
+inline void JSGlobalObject::queueMicrotask(VM& vm, QueuedTask&& task)
+{
+    if (!m_canFastQueueMicrotask || vm.crossTaskToken()) [[unlikely]] {
+        queueMicrotaskSlow(vm, WTF::move(task));
+        return;
+    }
+    SUPPRESS_UNCOUNTED_ARG m_microtaskQueue->enqueue(WTF::move(task));
+}
+
+inline void JSGlobalObject::queueMicrotask(VM& vm, InternalMicrotask job, uint8_t payload, JSValue argument0, JSValue argument1, JSValue argument2)
+{
+    queueMicrotask(vm, QueuedTask { nullptr, job, payload, this, argument0, argument1, argument2 });
 }
 
 template<bool useCallOnEachMicrotask>

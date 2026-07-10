@@ -41,6 +41,7 @@
 #include "JSPromiseCombinatorsGlobalContext.h"
 #include "JSPromisePrototype.h"
 #include "Microtask.h"
+#include "MicrotaskQueueInlines.h"
 #include "ObjectConstructor.h"
 #include "VMInlines.h"
 
