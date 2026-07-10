@@ -98,6 +98,10 @@ bool isInitialValueForLonghand(CSSPropertyID longhand, const CSSValue& value)
     if (value.isImplicitInitialValue())
         return true;
     switch (longhand) {
+    case CSSPropertyColumnRuleStyle:
+        if (isValueID(value, CSSValueNone))
+            return true;
+        break;
     case CSSPropertyBackgroundSize:
     case CSSPropertyMaskSize:
         if (isValueIDPair(value, CSSValueAuto))

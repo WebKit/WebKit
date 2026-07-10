@@ -10020,7 +10020,8 @@
                     "column-rule-style",
                     "column-rule-color"
                 ],
-                "shorthand-pattern": "StandardSpaceSeparated",
+                "shorthand-parser-pattern": "StandardSpaceSeparated",
+                "shorthand-style-extractor-pattern": "StandardSpaceSeparatedOmittingInitialValues",
                 "parser-grammar-unused": "<'column-rule-width'> || <'column-rule-style'> || <'column-rule-color'>",
                 "parser-grammar-unused-reason": "Needs support for shorthand grammars."
             },

@@ -40,6 +40,7 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
+#include "CSSPropertyInitialValues.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserConsumer+Anchor.h"
 #include "CSSRegisteredCustomProperty.h"
@@ -1619,6 +1620,30 @@ inline void extractStandardSpaceSeparatedShorthandSerialization(ExtractorState& 
     builder.append(interleave(shorthand, [&](auto& builder, const auto& longhand) {
         ExtractorGenerated::extractValueSerialization(state, builder, context, longhand);
     }, ' '));
+}
+
+inline Ref<CSSValue> extractStandardSpaceSeparatedOmittingInitialValuesShorthand(ExtractorState& state, const StylePropertyShorthand& shorthand)
+{
+    Vector<Ref<CSSValue>> values;
+    values.reserveInitialCapacity(shorthand.length());
+    for (auto longhand : shorthand)
+        values.append(ExtractorGenerated::extractValue(state, longhand).releaseNonNull());
+
+    CSSValueListBuilder list;
+    for (size_t i = 0; i < shorthand.length(); ++i) {
+        if (!isInitialValueForLonghand(shorthand.properties()[i], values[i]))
+            list.append(values[i].copyRef());
+    }
+    if (list.isEmpty()) {
+        for (auto& value : values)
+            list.append(WTF::move(value));
+    }
+    return CSSValueList::createSpaceSeparated(WTF::move(list));
+}
+
+inline void extractStandardSpaceSeparatedOmittingInitialValuesShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const StylePropertyShorthand& shorthand)
+{
+    builder.append(extractStandardSpaceSeparatedOmittingInitialValuesShorthand(state, shorthand)->cssText(context));
 }
 
 inline Ref<CSSValue> extractStandardSlashSeparatedShorthand(ExtractorState& state, const StylePropertyShorthand& shorthand)
