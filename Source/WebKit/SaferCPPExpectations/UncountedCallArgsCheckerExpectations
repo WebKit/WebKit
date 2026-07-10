@@ -4,4 +4,4 @@ Shared/WebBackForwardListFrameItem.cpp
 UIProcess/WebFrameProxy.cpp
 UIProcess/WebProcessPool.cpp
 WebProcess/WebPage/Cocoa/WebPageCocoa.mm
-WebProcess/WebPage/ios/WebPageIOS.mm
+[ iOS ] WebProcess/WebPage/ios/WebPageIOS.mm

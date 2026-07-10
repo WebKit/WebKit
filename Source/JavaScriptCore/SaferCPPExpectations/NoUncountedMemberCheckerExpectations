@@ -36,7 +36,6 @@ runtime/PropertyName.h
 runtime/PropertySlot.h
 runtime/Structure.h
 wasm/WasmBBQJIT.h
-[ macOS ] wasm/WasmConstExprGenerator.cpp
 wasm/WasmEntryPlan.cpp
 wasm/WasmFormat.h
 wasm/WasmFunctionParser.h

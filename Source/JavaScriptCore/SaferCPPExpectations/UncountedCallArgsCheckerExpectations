@@ -163,6 +163,7 @@ wasm/WasmStreamingCompiler.cpp
 wasm/WasmStreamingParser.cpp
 wasm/WasmTypeDefinition.cpp
 wasm/WasmWorklist.cpp
+[ macOS ] wasm/debugger/WasmModuleDebugInfo.cpp
 wasm/js/JSWebAssembly.cpp
 wasm/js/JSWebAssemblyHelpers.h
 wasm/js/JSWebAssemblyInstance.cpp

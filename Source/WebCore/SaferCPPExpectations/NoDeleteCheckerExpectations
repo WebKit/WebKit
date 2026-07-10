@@ -1,4 +1,5 @@
 Modules/WebGPU/Implementation/WebGPUAdapterImpl.cpp
+[ macOS ] Modules/airplay/WebMediaSessionManager.mm
 Modules/indexeddb/server/IndexValueStore.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp
 Modules/notifications/NotificationPayload.cpp
@@ -120,6 +121,7 @@ platform/audio/HRTFElevation.cpp
 platform/audio/Reverb.cpp
 platform/audio/cocoa/CARingBuffer.cpp
 platform/gamepad/cocoa/GameControllerGamepadProvider.mm
+[ macOS ] platform/gamepad/mac/HIDGamepadProvider.mm
 platform/graphics/AV1Utilities.cpp
 platform/graphics/ComplexTextController.cpp
 platform/graphics/FloatPointGraph.cpp

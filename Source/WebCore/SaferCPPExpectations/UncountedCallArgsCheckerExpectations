@@ -174,7 +174,6 @@ html/CollectionTraversalInlines.h
 html/CustomPaintCanvas.cpp
 html/FileInputType.cpp
 html/HTMLCanvasElement.cpp
-[ macOS ] html/HTMLFormElement.cpp
 html/HTMLInputElement.cpp
 html/HTMLLinkElement.cpp
 html/HTMLMaybeFormAssociatedCustomElement.cpp

@@ -60,7 +60,7 @@ loader/cache/CachedSVGFont.cpp
 page/DragController.cpp
 page/EventHandler.cpp
 page/IntersectionObserver.cpp
-[ iOS ] page/LocalFrameView.cpp
+page/LocalFrameView.cpp
 [ iOS ] page/Quirks.cpp
 [ iOS ] page/ios/FrameIOS.mm
 [ Mac ] page/mac/ServicesOverlayController.mm
@@ -73,7 +73,7 @@ rendering/RenderCounter.cpp
 rendering/RenderElement.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerBackingSVGAdditions.cpp
-[ iOS ] rendering/RenderLayerCompositor.cpp
+rendering/RenderLayerCompositor.cpp
 rendering/RenderTreeAsText.cpp
 style/ElementRuleCollector.cpp
 style/PseudoElementUtilities.cpp
