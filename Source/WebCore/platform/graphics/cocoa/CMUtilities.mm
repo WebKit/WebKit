@@ -1229,7 +1229,11 @@ bool isCMSampleBufferRandomAccess(CMSampleBufferRef sample)
     if (!attachments || CFArrayGetCount(attachments.get()) < 1)
         return true;
     RetainPtr firstAttachment = checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachments.get(), 0));
-    return !CFDictionaryContainsKey(firstAttachment.get(), PAL::kCMSampleAttachmentKey_NotSync);
+    const void* notSync = nullptr;
+    if (!CFDictionaryGetValueIfPresent(firstAttachment.get(), PAL::kCMSampleAttachmentKey_NotSync, &notSync))
+        return true;
+
+    return !notSync || !CFBooleanGetValue(static_cast<CFBooleanRef>(notSync));
 }
 
 } // namespace WebCore
