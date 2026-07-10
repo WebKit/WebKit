@@ -4778,3 +4778,6 @@ fast/dom/window-opener-setter-throws-if-defineownproperty-fails-1.html [ Skip ] 
 fast/canvas/offscreen-canvas-measureText-unrealized-font-crash.html [ Failure ]
 http/tests/cookies/document-cookie-set-expired-cookie.html [ Skip ] # Crash
 http/wpt/storage-access/request-storage-access-under-opener-cross-site-opener.html [ Skip ] # Crash
+
+# Gardening: new unexpected failure on Win-Tests-EWS (316896@main).
+fast/css/content-visibility-zoom.html [ Failure ]
