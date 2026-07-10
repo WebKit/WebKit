@@ -412,8 +412,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
 
     RenderElement* textParent = text.parent();
     ASSERT(textParent);
-    RefPtr lengthContext = downcast<SVGElement>(textParent->element());
-    
+
     bool definesTextLength = parentDefinesTextLength(textParent);
 
     m_visualMetricsListOffset = 0;
