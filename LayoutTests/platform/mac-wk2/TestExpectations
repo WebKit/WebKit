@@ -2413,3 +2413,7 @@ webkit.org/b/318732 http/tests/site-isolation/page-zoom.html [ Pass ImageOnlyFai
 
 webkit.org/b/318879 [ x86_64 Release ] webgl/ [ Skip ]
 webkit.org/b/319003 fast/mediastream/microphone-interruption-and-audio-session.html [ Failure ]
+
+# webkit.org/b/319018 2x media/media-source/* (layout-tests) are flaky timeouts.
+media/media-source/media-source-real-play-after-eos.html [ Pass ImageOnlyFailure Timeout ]
+media/media-source/media-managedmse-webvtt-track.html [ Pass Timeout ]
