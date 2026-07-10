@@ -35,7 +35,7 @@ Example: `/dev/dri/card0`
 Specifies the render device that WebKit will use for buffer allocation, this is the one used for allocating general gpu buffers. You need to specify a file path.
 Example: `/dev/dri/renderD128`
 
-- `WPE_DMABUF_BUFFER_FORMAT`:
+- `WPE_BUFFER_FORMAT`:
 You can ask WebKit to try to use a format instead the one that is recommended by the underlying system (wayland, drm, etc.), when you define this variable then no other data is going to be used from wayland so it is recommended to also define the drm devices. The value must follow the following format: `pixel_format:memory_layout:usage`:
     - Pixel format, specifies the pixel format as a fourcc code, example: `AR24`
     - Memory layout, defines the memory layout of the buffer, 0 for linear layout
