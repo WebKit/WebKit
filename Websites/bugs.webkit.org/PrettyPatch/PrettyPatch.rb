@@ -1,10 +1,14 @@
 require 'cgi'
+require 'digest'
 require 'diff'
+require 'fileutils'
 require 'open3'
 require 'open-uri'
 require 'pp'
 require 'set'
 require 'tempfile'
+require 'tmpdir'
+require 'zlib'
 
 module PrettyPatch
 
@@ -847,6 +851,7 @@ EOF
         end
 
         def self.read_checksum_from_png(png_bytes)
+            return nil if png_bytes.nil?
             # Ruby 1.9 added the concept of string encodings, so to avoid treating binary data as UTF-8,
             # we can force the encoding to binary at this point.
             if RUBY_VERSION >= "1.9"
@@ -856,16 +861,89 @@ EOF
             match ? match[1] : nil
         end
 
-        def self.git_new_file_binary_patch(filename, encoded_chunk, git_index)
-            return <<END
-diff --git a/#{filename} b/#{filename}
-new file mode 100644
-index 0000000000000000000000000000000000000000..#{git_index}
-GIT binary patch
-#{encoded_chunk.join("")}literal 0
-HcmV?d00001
+        MAX_GIT_BINARY_SIZE = 50 * 1024 * 1024
 
-END
+        GIT_BASE85_ALPHABET =
+            "0123456789" \
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ" \
+            "abcdefghijklmnopqrstuvwxyz" \
+            "!#$%&()*+-;<=>?@^_`{|}~"
+
+        GIT_BASE85_DECODE = begin
+            table = Array.new(256, -1)
+            GIT_BASE85_ALPHABET.each_char.with_index { |c, i| table[c.ord] = i }
+            table
+        end
+
+        def self.decode_git_base85(buffer, out_len)
+            out = "".force_encoding("BINARY")
+            pos = 0
+            remaining = out_len
+            while remaining > 0
+                acc = 0
+                4.times do
+                    de = GIT_BASE85_DECODE[buffer[pos].ord]
+                    raise "invalid base85 alphabet #{buffer[pos].inspect}" if de < 0
+                    acc = acc * 85 + de
+                    pos += 1
+                end
+                de = GIT_BASE85_DECODE[buffer[pos].ord]
+                raise "invalid base85 alphabet #{buffer[pos].inspect}" if de < 0
+                pos += 1
+                raise "invalid base85 sequence" if (0xffffffff / 85) < acc
+                acc *= 85
+                raise "invalid base85 sequence" if (0xffffffff - de) < acc
+                acc += de
+                cnt = remaining < 4 ? remaining : 4
+                remaining -= cnt
+                cnt.times do
+                    acc = ((acc << 8) | (acc >> 24)) & 0xffffffff
+                    out << (acc & 0xff).chr
+                end
+            end
+            out
+        end
+
+        def self.decode_git_binary_lines(lines)
+            deflated = "".force_encoding("BINARY")
+            (lines || []).each do |raw|
+                line = raw.chomp.force_encoding("BINARY")
+                break if line.empty?
+                lb = line[0].ord
+                if lb >= 65 && lb <= 90        # 'A'..'Z' => 1..26
+                    byte_length = lb - 65 + 1
+                elsif lb >= 97 && lb <= 122    # 'a'..'z' => 27..52
+                    byte_length = lb - 97 + 27
+                else
+                    raise "corrupt git binary patch: bad length byte"
+                end
+                payload = line[1..-1] || ""
+                raise "corrupt git binary patch: base85 length not a multiple of 5" unless payload.length % 5 == 0
+                max_byte_length = payload.length / 5 * 4
+                if byte_length > max_byte_length || byte_length <= max_byte_length - 4
+                    raise "corrupt git binary patch: inconsistent line length"
+                end
+                deflated << decode_git_base85(payload, byte_length)
+            end
+            deflated
+        end
+
+        def self.inflate_within_limit(deflated, limit)
+            inflater = Zlib::Inflate.new
+            out = "".force_encoding("BINARY")
+            begin
+                offset = 0
+                while offset < deflated.bytesize
+                    out << inflater.inflate(deflated.byteslice(offset, 65536))
+                    raise "Error: git binary literal exceeds #{limit} bytes" if out.bytesize > limit
+                    offset += 65536
+                end
+                out << inflater.finish
+                raise "Error: git binary literal exceeds #{limit} bytes" if out.bytesize > limit
+            ensure
+                inflater.close
+            end
+            out
         end
 
         def self.git_changed_file_binary_patch(to_filename, from_filename, encoded_chunk, to_git_index, from_git_index)
@@ -901,39 +979,56 @@ END
             return filepath
         end
 
-        def self.run_git_apply_on_patch(output_filepath, patch)
-            # Apply the git binary patch using git-apply.
-            cmd = GIT_PATH + " apply"
-            # Check if we need to pass --unsafe-paths (git >= 2.3.3)
-            helpcmd = GIT_PATH + " help apply"
-            stdin, stdout, stderr = *Open3.popen3(helpcmd)
-            begin
-                if stdout.read().include? "--unsafe-paths"
-                    cmd += " --unsafe-paths"
+        def self.run_git_apply_on_patch(output_filepath, patch, source_filepath = nil)
+            target_name = File.basename(output_filepath)
+            Dir.mktmpdir("PrettyPatchApply") do |work_dir|
+                if source_filepath && File.exist?(source_filepath)
+                    FileUtils.cp(source_filepath, File.join(work_dir, File.basename(source_filepath)))
                 end
-            end
-            cmd += " --directory=" + File.dirname(output_filepath)
-            stdin, stdout, stderr = *Open3.popen3(cmd)
-            begin
-                stdin.puts(patch)
-                stdin.close
+                cmd = [GIT_PATH, "apply"]
+                stdin, stdout, stderr, wait_thr = *Open3.popen3(*cmd, :chdir => work_dir)
+                begin
+                    stdin.puts(patch)
+                    stdin.close
 
-                error = stderr.read
-                if error != ""
-                    error = "Error running " + cmd + "\n" + "with patch:\n" + patch[0..500] + "...\n" + error
+                    error = stderr.read
+                    if error != ""
+                        error = "Error running " + cmd.join(" ") + "\n" + "with patch:\n" + patch[0..500] + "...\n" + error
+                    end
+                    raise error if error != ""
+                ensure
+                    stdin.close unless stdin.closed?
+                    stdout.close
+                    stderr.close
+                    wait_thr.join if wait_thr
                 end
-                raise error if error != ""
-            ensure
-                stdin.close unless stdin.closed?
-                stdout.close
-                stderr.close
+
+                produced = File.join(work_dir, target_name)
+                raise "Error: git apply did not produce #{target_name}" unless File.exist?(produced)
+                FileUtils.mv(produced, output_filepath)
             end
         end
 
         def self.extract_contents_from_git_binary_literal_chunk(encoded_chunk, git_index)
-            filepath, filename = get_new_temp_filepath_and_name
-            patch = FileDiff.git_new_file_binary_patch(filename, encoded_chunk, git_index)
-            run_git_apply_on_patch(filepath, patch)
+            raise "Error: empty git binary chunk" if encoded_chunk.nil? || encoded_chunk.empty?
+            raise "Error: expected a git binary 'literal' chunk" unless GIT_LITERAL_FORMAT.match(encoded_chunk[0])
+            expected_size = encoded_chunk[0][/^literal (\d+)/, 1].to_i
+            raise "Error: git binary literal size #{expected_size} exceeds #{MAX_GIT_BINARY_SIZE} bytes" if expected_size > MAX_GIT_BINARY_SIZE
+
+            deflated = decode_git_binary_lines(encoded_chunk[1..-1])
+            contents = (expected_size.zero? && deflated.empty?) ? "".force_encoding("BINARY") : inflate_within_limit(deflated, MAX_GIT_BINARY_SIZE)
+
+            if contents.bytesize != expected_size
+                raise "Error: git binary literal size mismatch (expected #{expected_size}, got #{contents.bytesize})"
+            end
+
+            if git_index && git_index =~ /\A[0-9a-f]{40}\z/ && git_index != "0" * 40
+                blob_sha = Digest::SHA1.hexdigest("blob #{contents.bytesize}\0".force_encoding("BINARY") + contents)
+                raise "Error: git binary content does not match index #{git_index}" unless blob_sha == git_index
+            end
+
+            filepath, _filename = get_new_temp_filepath_and_name
+            File.open(filepath, "wb") { |f| f.write(contents) }
             return filepath
         end
 
@@ -941,7 +1036,7 @@ END
             to_filepath, to_filename = get_new_temp_filepath_and_name
             from_filename = File.basename(from_filepath)
             patch = FileDiff.git_changed_file_binary_patch(to_filename, from_filename, encoded_chunk, to_git_index, from_git_index)
-            run_git_apply_on_patch(to_filepath, patch)
+            run_git_apply_on_patch(to_filepath, patch, from_filepath)
             return to_filepath
         end
 
@@ -1188,3 +1283,4 @@ END
         end
     end
 end
+
