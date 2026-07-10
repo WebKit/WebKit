@@ -53,9 +53,6 @@ protected:
     void svgAttributeChanged(const QualifiedName&) override;
 
 private:
-    bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
-
     bool isSVGTextPositioningElement() const override { return true; }
 
     const Ref<SVGAnimatedLengthList> m_x { SVGAnimatedLengthList::create(this, SVGLengthMode::Width) };

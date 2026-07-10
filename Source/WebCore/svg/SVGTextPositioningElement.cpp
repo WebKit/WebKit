@@ -80,20 +80,6 @@ void SVGTextPositioningElement::attributeChanged(const QualifiedName& name, cons
     SVGTextContentElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
-void SVGTextPositioningElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
-{
-    if (name == SVGNames::xAttr || name == SVGNames::yAttr)
-        return;
-    SVGTextContentElement::collectPresentationalHintsForAttribute(name, value, style);
-}
-
-bool SVGTextPositioningElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
-{
-    if (name == SVGNames::xAttr || name == SVGNames::yAttr)
-        return false;
-    return SVGTextContentElement::hasPresentationalHintsForAttribute(name);
-}
-
 void SVGTextPositioningElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {
