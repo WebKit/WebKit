@@ -67,7 +67,7 @@ public:
 private:
     TextTrackCueGeneric(Document&, const MediaTime& start, const MediaTime& end, const String&);
 
-    bool isOrderedBefore(const TextTrackCue*) const final;
+    WEBCORE_EXPORT bool isOrderedBefore(const TextTrackCue*) const final;
     bool isPositionedAbove(const TextTrackCue*) const final;
 
     RefPtr<VTTCueBox> createDisplayTree() final;
