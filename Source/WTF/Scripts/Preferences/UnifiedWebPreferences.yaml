@@ -3554,6 +3554,14 @@ LinkPrefetchEnabled:
   humanReadableDescription: "Enable LinkedPrefetch"
   defaultValue: false
 
+LinkPreloadEarlyHintsEnabled:
+  type: bool
+  status: testable
+  category: networking
+  humanReadableName: "Link rel=preload via HTTP early hints"
+  humanReadableDescription: "Enable link rel=preload via early hints"
+  defaultValue: false
+
 LinkPreloadEnabled:
   type: bool
   status: embedder

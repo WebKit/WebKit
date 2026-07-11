@@ -41,11 +41,13 @@
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
 #include "EventNames.h"
+#include "FetchRequestDestination.h"
 #include "FormData.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "InspectorInstrumentation.h"
 #include "JSExecState.h"
+#include "JSFetchRequestDestination.h"
 #include "JSWindowProxy.h"
 #include "LegacySchemeRegistry.h"
 #include "LocalFrame.h"
@@ -758,6 +760,37 @@ bool ContentSecurityPolicy::allowConnectToSource(const URL& url, std::optional<T
         checkedThis->reportViolation(violatedDirective, url.string(), consoleMessage, sourceURL, StringView(), WTF::move(sourcePosition), preRedirectURL);
     };
     return allPoliciesAllow(handleViolatedDirective, &ContentSecurityPolicyDirectiveList::violatedDirectiveForConnectSource, url, redirectResponseReceived == RedirectResponseReceived::Yes);
+}
+
+std::optional<bool> ContentSecurityPolicy::decisionForSupportedPreload(const String& as, const URL& url) const
+{
+    // `as=fetch` corresponds to the empty (fetch) destination; check it against connect-src.
+    if (equalLettersIgnoringASCIICase(as, "fetch"_s))
+        return allowConnectToSource(url, { });
+
+    // Otherwise map the `as` keyword to its fetch destination and check the matching directive. Only
+    // a subset of destinations is speculatively loaded; media is excluded because range requests
+    // complicate speculative buffering. nullopt means an `as` value we don't preload.
+    switch (parseEnumerationFromString<FetchRequestDestination>(as.convertToASCIILowercase()).value_or(FetchRequestDestination::EmptyString)) {
+    case FetchRequestDestination::Script:
+        // Under strict-dynamic allowScriptFromSource allows everything here, deferring to a check that
+        // needs the nonce and parser state only the web process has. Don't speculatively fetch a
+        // script we cannot clear.
+        // FIXME: This gives up on script preloads entirely for sites using strict-dynamic. Plumb the
+        // nonce and parser-inserted state to the network process so allowScriptForStrictDynamic can be
+        // evaluated here instead.
+        if (shouldPerformEarlyCSPCheck())
+            return false;
+        return allowScriptFromSource(url, { });
+    case FetchRequestDestination::Style:
+        return allowStyleFromSource(url, { });
+    case FetchRequestDestination::Font:
+        return allowFontFromSource(url, { });
+    case FetchRequestDestination::Image:
+        return allowImageFromSource(url, { });
+    default:
+        return std::nullopt;
+    }
 }
 
 bool ContentSecurityPolicy::allowFormAction(const URL& url, std::optional<TextPosition>&& sourcePosition, RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL) const

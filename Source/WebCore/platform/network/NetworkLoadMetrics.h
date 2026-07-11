@@ -65,7 +65,7 @@ class NetworkLoadMetrics {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NetworkLoadMetrics);
 public:
     WEBCORE_EXPORT NetworkLoadMetrics();
-    WEBCORE_EXPORT NetworkLoadMetrics(MonotonicTime&& redirectStart, MonotonicTime&& fetchStart, MonotonicTime&& domainLookupStart, MonotonicTime&& domainLookupEnd, MonotonicTime&& connectStart, MonotonicTime&& secureConnectionStart, MonotonicTime&& connectEnd, MonotonicTime&& requestStart, MonotonicTime&& responseStart, MonotonicTime&& responseEnd, MonotonicTime&& workerStart, MonotonicTime&& firstInterimResponseStart, String&& protocol, uint16_t redirectCount, bool complete, bool cellular, bool expensive, bool constrained, bool multipath, bool isReusedConnection, bool failsTAOCheck, bool hasCrossOriginRedirect, bool fromPrefetch, bool fromCache, PrivacyStance, uint64_t responseBodyBytesReceived, uint64_t responseBodyDecodedSize, RefPtr<AdditionalNetworkLoadMetricsForWebInspector>&&);
+    WEBCORE_EXPORT NetworkLoadMetrics(MonotonicTime&& redirectStart, MonotonicTime&& fetchStart, MonotonicTime&& domainLookupStart, MonotonicTime&& domainLookupEnd, MonotonicTime&& connectStart, MonotonicTime&& secureConnectionStart, MonotonicTime&& connectEnd, MonotonicTime&& requestStart, MonotonicTime&& responseStart, MonotonicTime&& responseEnd, MonotonicTime&& workerStart, MonotonicTime&& firstInterimResponseStart, String&& protocol, uint16_t redirectCount, bool complete, bool cellular, bool expensive, bool constrained, bool multipath, bool isReusedConnection, bool failsTAOCheck, bool hasCrossOriginRedirect, bool fromPrefetch, bool fromCache, bool fromEarlyHints, PrivacyStance, uint64_t responseBodyBytesReceived, uint64_t responseBodyDecodedSize, RefPtr<AdditionalNetworkLoadMetricsForWebInspector>&&);
 
     WEBCORE_EXPORT static const NetworkLoadMetrics& NODELETE emptyMetrics();
 
@@ -79,6 +79,7 @@ public:
     bool reusedConnection() const { return isReusedConnection; }
     bool doesFailTAOCheck() const { return failsTAOCheck; }
     bool crossOriginRedirect() const { return hasCrossOriginRedirect; }
+    bool isEarlyHints() const { return fromEarlyHints; }
     void markComplete() { complete = true; }
 
     void updateFromFinalMetrics(const NetworkLoadMetrics&);
@@ -119,6 +120,7 @@ public:
     bool hasCrossOriginRedirect : 1 { false };
     bool fromPrefetch : 1 { false };
     bool fromCache : 1 { false };
+    bool fromEarlyHints : 1 { false };
 
     PrivacyStance privacyStance { PrivacyStance::Unknown };
 

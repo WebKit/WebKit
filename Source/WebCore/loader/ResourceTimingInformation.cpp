@@ -84,7 +84,12 @@ void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Docu
     if (!initiatorWindow)
         return;
 
-    resourceTiming.overrideInitiatorType(info.type);
+    // A resource served from an Early Hints preload reports "early-hints" regardless of the element
+    // that ultimately requested it.
+    if (resourceTiming.networkLoadMetrics().isEarlyHints())
+        resourceTiming.overrideInitiatorType("early-hints"_s);
+    else
+        resourceTiming.overrideInitiatorType(info.type);
 
     protect(initiatorWindow->performance())->addResourceTiming(WTF::move(resourceTiming));
 
