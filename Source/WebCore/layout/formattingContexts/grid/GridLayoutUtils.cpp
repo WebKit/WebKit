@@ -90,6 +90,35 @@ std::optional<double> preferredAspectRatio(const ElementBox& gridItem)
     return { };
 }
 
+// https://drafts.csswg.org/css-grid-1/#grid-item-sizing
+// A grid item with an automatic preferred size fills its grid area (i.e. is sized as for
+// align-self: stretch) in two cases:
+//
+// normal:
+// If the grid item has no preferred aspect ratio, and no natural size in the relevant axis
+// (if it is a replaced element), the grid item is sized as for align-self: stretch.
+//
+// stretch:
+// Always uses the stretch-fit size. Unlike the normal case this applies even to replaced
+// items or items with a preferred aspect ratio (which can distort the ratio).
+//
+// In both cases the stretch keyword only takes effect when the box's size in the axis is auto
+// and neither of its margins in the axis are auto.
+// https://drafts.csswg.org/css-align-3/#valdef-justify-self-stretch
+static bool isStretchedForAutomaticSize(const PlacedGridItem& placedGridItem, const ComputedSizes& axisSizes, const StyleSelfAlignmentData& axisAlignment)
+{
+    ASSERT(axisSizes.preferredSize.isAuto());
+
+    if (axisSizes.marginStart.isAuto() || axisSizes.marginEnd.isAuto())
+        return false;
+
+    auto alignmentPosition = axisAlignment.position();
+    if (alignmentPosition == ItemPosition::Normal)
+        return !preferredAspectRatio(placedGridItem.layoutBox()) && !placedGridItem.isReplacedElement();
+
+    return alignmentPosition == ItemPosition::Stretch;
+}
+
 static bool NODELETE spansAutoMinTrackSizingFunction(WTF::Range<size_t> spannedTrackIndexes, const TrackSizingFunctionsList& trackSizingFunctions)
 {
     for (auto trackIndex : std::views::iota(spannedTrackIndexes.begin(), spannedTrackIndexes.end())) {
@@ -189,8 +218,6 @@ LayoutUnit inlinePreferredSize(const PlacedGridItem& placedGridItem, LayoutUnit 
     if (preferredSize.isAuto()) {
         // Grid item calculations for automatic sizes in a given dimensions vary by their
         // self-alignment values:
-        auto alignmentPosition = placedGridItem.inlineAxisAlignment().position();
-
         // normal:
         // If the grid item has no preferred aspect ratio, and no natural size in the relevant
         // axis (if it is a replaced element), the grid item is sized as for align-self: stretch.
@@ -200,10 +227,9 @@ LayoutUnit inlinePreferredSize(const PlacedGridItem& placedGridItem, LayoutUnit 
         // When the box’s computed width/height (as appropriate to the axis) is auto and neither of
         // its margins (in the appropriate axis) are auto, sets the box’s used size to the length
         // necessary to make its outer size as close to filling the alignment container as possible.
-        auto& marginStart = inlineAxisSizes.marginStart;
-        auto& marginEnd = inlineAxisSizes.marginEnd;
-        if ((alignmentPosition == ItemPosition::Normal) && !preferredAspectRatio(placedGridItem.layoutBox()) && !placedGridItem.isReplacedElement()
-            && !marginStart.isAuto() && !marginEnd.isAuto()) {
+        if (isStretchedForAutomaticSize(placedGridItem, inlineAxisSizes, placedGridItem.inlineAxisAlignment())) {
+            auto& marginStart = inlineAxisSizes.marginStart;
+            auto& marginEnd = inlineAxisSizes.marginEnd;
             auto& usedZoom = placedGridItem.usedZoom();
             auto usedMarginStart = LayoutUnit { marginStart.tryFixed()->resolveZoom(usedZoom) };
             auto usedMarginEnd = LayoutUnit { marginEnd.tryFixed()->resolveZoom(usedZoom) };
@@ -326,21 +352,10 @@ static BorderBoxSize automaticMinimumBlockSize(const PlacedGridItem& gridItem, L
     return contentBasedMinimumSize();
 }
 
-bool hasStretchedBlockSize(const PlacedGridItem& placedGridItem)
-{
-    if (!placedGridItem.blockAxisSizes().preferredSize.isAuto())
-        return false;
-    if (preferredAspectRatio(placedGridItem.layoutBox()) || placedGridItem.isReplacedElement())
-        return false;
-    auto& marginStart = placedGridItem.blockAxisSizes().marginStart;
-    auto& marginEnd = placedGridItem.blockAxisSizes().marginEnd;
-    return placedGridItem.blockAxisAlignment().position() == ItemPosition::Normal && !marginStart.isAuto() && !marginEnd.isAuto();
-}
-
 LayoutUnit stretchedBlockSize(const PlacedGridItem& placedGridItem, LayoutUnit borderAndPadding, LayoutUnit rowsSize)
 {
-    ASSERT(hasStretchedBlockSize(placedGridItem));
     auto& blockAxisSizes = placedGridItem.blockAxisSizes();
+    ASSERT(isStretchedForAutomaticSize(placedGridItem, blockAxisSizes, placedGridItem.blockAxisAlignment()));
     auto& usedZoom = placedGridItem.usedZoom();
     auto usedMarginStart = LayoutUnit { blockAxisSizes.marginStart.tryFixed()->resolveZoom(usedZoom) };
     auto usedMarginEnd = LayoutUnit { blockAxisSizes.marginEnd.tryFixed()->resolveZoom(usedZoom) };
@@ -367,7 +382,7 @@ LayoutUnit blockPreferredSize(const PlacedGridItem& placedGridItem, LayoutUnit b
         // When the box's computed width/height (as appropriate to the axis) is auto and neither of
         // its margins (in the appropriate axis) are auto, sets the box's used size to the length
         // necessary to make its outer size as close to filling the alignment container as possible.
-        if (hasStretchedBlockSize(placedGridItem))
+        if (isStretchedForAutomaticSize(placedGridItem, blockAxisSizes, placedGridItem.blockAxisAlignment()))
             return stretchedBlockSize(placedGridItem, borderAndPadding, rowsSize);
     }
 

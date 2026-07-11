@@ -48,7 +48,6 @@ LayoutUnit NODELETE totalGuttersSize(size_t tracksCount, LayoutUnit gapsSize);
 
 LayoutUnit inlinePreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit columnsSize);
 LayoutUnit blockPreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit rowsSize);
-bool hasStretchedBlockSize(const PlacedGridItem&);
 LayoutUnit stretchedBlockSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit rowsSize);
 
 LayoutUnit inlineMinimumSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit columnsSize, const IntegrationUtils&);
