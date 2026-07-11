@@ -128,6 +128,11 @@ struct TestWebKitAPI {
 
         let configuration = instance.configure()
 
+        if configuration.help {
+            print(configuration.usage)
+            exit(EXIT_SUCCESS)
+        }
+
         let (googleTestsPassed, didRunGoogleTests) = try await instance.runGoogleTests(with: configuration)
 
         #if WTF_PLATFORM_MAC
