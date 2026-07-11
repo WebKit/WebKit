@@ -46,4 +46,5 @@ if (open(my $fh, '>', "DerivedSources/unified-sources-bundle-policy")) {
     close($fh);
 }
 
+print('ninja: Entering directory `' . getcwd() . "'\n");
 exec('/usr/bin/caffeinate', '-i', $ninja, @ARGV);
