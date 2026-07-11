@@ -257,6 +257,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/ShareableBitmap.cpp
         Tests/WebCore/SharedBuffer.cpp
         Tests/WebCore/SharedBufferTest.cpp
+        Tests/WebCore/SharedStringHash.cpp
         Tests/WebCore/StyleGradient.cpp
         Tests/WebCore/TestPlatformStrategies.cpp
         Tests/WebCore/TextIterator.cpp

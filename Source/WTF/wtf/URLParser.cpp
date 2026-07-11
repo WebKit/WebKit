@@ -1084,8 +1084,9 @@ ALWAYS_INLINE size_t URLParser::currentPosition(const CodePointIterator<Characte
     return iterator.codeUnitsSince(reinterpret_cast<const CharacterType*>(m_inputBegin));
 }
 
-URLParser::URLParser(String&& input, const URL& base, const URLTextEncoding* nonUTF8QueryEncoding)
-    : m_inputString(WTF::move(input))
+URLParser::URLParser(String&& input, const URL& base, const URLTextEncoding* nonUTF8QueryEncoding, ShouldConstructString shouldConstructString)
+    : m_shouldConstructString(shouldConstructString)
+    , m_inputString(WTF::move(input))
 {
     if (m_inputString.isNull()) {
         if (base.isValid() && !base.m_hasOpaquePath) {
@@ -1104,6 +1105,9 @@ URLParser::URLParser(String&& input, const URL& base, const URLTextEncoding* non
         m_inputBegin = characters.data();
         parse(characters, base, nonUTF8QueryEncoding);
     }
+
+    if (m_shouldConstructString == ShouldConstructString::No)
+        return;
 
     ASSERT(!m_url.m_isValid
         || m_didSeeSyntaxViolation == (m_url.string() != m_inputString)
@@ -2058,6 +2062,12 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
         break;
     }
 
+    if (m_shouldConstructString == ShouldConstructString::No) [[unlikely]] {
+        // parseAndConsume() hashes m_asciiBuffer / m_inputString directly; skip the result String.
+        m_url.m_isValid = true;
+        return;
+    }
+
     if (!m_didSeeSyntaxViolation) [[likely]] {
         m_url.m_string = m_inputString;
         ASSERT(m_asciiBuffer.isEmpty());
@@ -2545,12 +2555,35 @@ URLParser::Latin1Buffer URLParser::percentDecode(std::span<const Latin1Character
 
 bool URLParser::needsNonSpecialDotSlash() const
 {
+    return needsNonSpecialDotSlash(m_url.m_string);
+}
+
+bool URLParser::needsNonSpecialDotSlash(StringView urlString) const
+{
     auto pathStart = m_url.m_hostEnd + m_url.m_portLength;
     return !m_urlIsSpecial
         && pathStart == m_url.m_schemeEnd + 1U
-        && pathStart + 1 < m_url.m_string.length()
-        && m_url.m_string[pathStart] == '/'
-        && m_url.m_string[pathStart + 1] == '/';
+        && pathStart + 1 < urlString.length()
+        && urlString[pathStart] == '/'
+        && urlString[pathStart + 1] == '/';
+}
+
+StringView URLParser::canonicalView(String& fixupStorage) const
+{
+    StringView view;
+    if (!m_url.m_string.isNull())
+        view = m_url.m_string; // failure() and base-copy paths set the string directly.
+    else if (!m_didSeeSyntaxViolation)
+        view = m_inputString;
+    else
+        view = m_asciiBuffer.span();
+
+    if (needsNonSpecialDotSlash(view)) [[unlikely]] {
+        auto pathStart = m_url.m_hostEnd + m_url.m_portLength;
+        fixupStorage = makeString(view.left(pathStart + 1), "./"_s, view.substring(pathStart + 1));
+        return fixupStorage;
+    }
+    return view;
 }
 
 void URLParser::addNonSpecialDotSlash()

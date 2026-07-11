@@ -797,6 +797,7 @@
 				WebCore/ShareableBitmap.cpp,
 				WebCore/SharedBuffer.cpp,
 				WebCore/SharedBufferTest.cpp,
+				WebCore/SharedStringHash.cpp,
 				WebCore/SharedMemoryTests.cpp,
 				WebCore/SharedTimebaseTests.cpp,
 				WebCore/StaticRangeValidity.cpp,

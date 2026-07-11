@@ -69,9 +69,25 @@ public:
     static std::optional<uint16_t> NODELETE defaultPortForProtocol(StringView);
     WTF_EXPORT_PRIVATE static std::optional<String> formURLDecode(StringView input);
 
+    // Resolves "input" against "base" using the full URL canonicalizer, then invokes "consumer"
+    // with the canonical URL characters as a StringView — without allocating the result String.
+    // The StringView is only valid for the duration of the consumer call.
+    template<typename Consumer>
+    static auto parseAndConsume(String&& input, const URL& base, const URLTextEncoding* encoding, NOESCAPE Consumer&& consumer)
+    {
+        URLParser parser(WTF::move(input), base, encoding, ShouldConstructString::No);
+        String fixupStorage;
+        return consumer(parser.canonicalView(fixupStorage));
+    }
+
 private:
-    URLParser(String&&, const URL& = { }, const URLTextEncoding* = nullptr);
+    enum class ShouldConstructString : bool { No, Yes };
+    WTF_EXPORT_PRIVATE URLParser(String&&, const URL& = { }, const URLTextEncoding* = nullptr, ShouldConstructString = ShouldConstructString::Yes);
     URL result() { return m_url; }
+
+    // Canonical URL characters left behind by parse(). Valid only while this URLParser is alive;
+    // "fixupStorage" backs the rare non-special "//" path and must outlive the returned view.
+    WTF_EXPORT_PRIVATE StringView canonicalView(String& fixupStorage) const LIFETIME_BOUND;
 
     friend class URL;
 
@@ -81,6 +97,7 @@ private:
     bool m_urlIsFile { false };
     bool m_hostHasPercentOrNonASCII { false };
     bool m_didSeeSyntaxViolation { false };
+    ShouldConstructString m_shouldConstructString { ShouldConstructString::Yes };
     String m_inputString;
     const void* m_inputBegin { nullptr };
 
@@ -131,6 +148,7 @@ private:
     char16_t parsedDataView(size_t position);
 
     bool NODELETE needsNonSpecialDotSlash() const;
+    bool NODELETE needsNonSpecialDotSlash(StringView) const;
     void addNonSpecialDotSlash();
 
     using IPv4Address = uint32_t;
