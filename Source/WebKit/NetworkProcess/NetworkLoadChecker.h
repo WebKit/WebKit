@@ -27,6 +27,7 @@
 
 #include "UserContentControllerIdentifier.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/ContentRuleListResults.h>
 #include <WebCore/ContentSecurityPolicyResponseHeaders.h>
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/FetchOptions.h>
@@ -41,7 +42,6 @@
 namespace WebCore {
 class ContentSecurityPolicy;
 class OriginAccessPatterns;
-struct ContentRuleListResults;
 struct ContentSecurityPolicyClient;
 class ResourceError;
 class SecurityOrigin;

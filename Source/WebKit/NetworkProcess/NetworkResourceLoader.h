@@ -67,6 +67,7 @@ class NetworkStorageSession;
 class PendingStreamState;
 class Report;
 class ResourceRequest;
+enum class ReferrerPolicy : uint8_t;
 }
 
 namespace WebKit {
@@ -298,6 +299,7 @@ private:
     void handleEarlyHintsResponse(WebCore::ResourceResponse&&);
     WebCore::ResourceRequest constructPreconnectRequest(const WebCore::ResourceRequest&, const URL&);
     void startPreconnectTask(const URL& baseURL, const WebCore::LinkHeader&, const WebCore::ContentSecurityPolicy&);
+    void startPreloadTask(const URL& baseURL, const WebCore::LinkHeader&, const WebCore::ContentSecurityPolicy&, WebCore::ReferrerPolicy documentReferrerPolicy);
 
     void logSlowCacheRetrieveIfNeeded(const NetworkCache::Cache::RetrieveInfo&);
 
@@ -405,6 +407,7 @@ private:
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
     bool m_isKeptAlive { false };
     bool m_hasReceivedEarlyHints { false };
+    bool m_servedFromEarlyHintsPreload { false };
 
     std::optional<NetworkActivityTracker> m_networkActivityTracker;
     RefPtr<ServiceWorkerFetchTask> m_serviceWorkerFetchTask;

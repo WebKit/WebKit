@@ -79,6 +79,7 @@ enum class Critical : bool;
 
 namespace WebKit {
 class BackgroundFetchStoreImpl;
+class EarlyHintsPreloadCache;
 class NetworkBroadcastChannelRegistry;
 class NetworkDataTask;
 class NetworkLoadScheduler;
@@ -203,6 +204,8 @@ public:
 
     PrefetchCache& NODELETE prefetchCache();
     void clearPrefetchCache() { m_prefetchCache->clear(); }
+
+    CheckedRef<EarlyHintsPreloadCache> earlyHintsPreloadCache();
 
     virtual RefPtr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByDedicatedWorker);
     virtual void removeWebSocketTask(SessionSet&, WebSocketTask&) { }
@@ -375,6 +378,7 @@ protected:
     HashMap<NetworkResourceLoadIdentifier, Ref<CachedNetworkResourceLoader>> m_loadersAwaitingWebProcessTransfer;
 
     const UniqueRef<PrefetchCache> m_prefetchCache;
+    const UniqueRef<EarlyHintsPreloadCache> m_earlyHintsPreloadCache;
 
     bool m_isInvalidated { false };
     RefPtr<NetworkCache::Cache> m_cache;

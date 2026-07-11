@@ -67,7 +67,7 @@ static std::optional<ReferrerPolicy> parseReferrerPolicyToken(StringView policy,
     return std::nullopt;
 }
     
-std::optional<ReferrerPolicy> parseReferrerPolicy(StringView policyString, ReferrerPolicySource source)
+WEBCORE_EXPORT std::optional<ReferrerPolicy> parseReferrerPolicy(StringView policyString, ReferrerPolicySource source)
 {
     switch (source) {
     case ReferrerPolicySource::HTTPHeader: {

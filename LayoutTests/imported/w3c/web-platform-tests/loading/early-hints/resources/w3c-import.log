@@ -43,6 +43,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/multiple-early-hints-preconnects.html
 /LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/multiple-early-hints-responses.h2.py
 /LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/multiple-early-hints-responses.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/no-store.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/no-store.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/pdf-with-early-hints.h2.py
 /LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/png-with-early-hints.h2.py
 /LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/preconnect-in-early-hints.h2.py
@@ -60,6 +62,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/preload-initiator-type.html
 /LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/preload-integrity-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/preload-integrity.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/preload-no-store.html
 /LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/redirect-between-early-hints.h2.py
 /LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/redirect-cross-origin-between-early-hints.html
 /LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/redirect-cross-origin.html

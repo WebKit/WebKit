@@ -173,6 +173,8 @@ public:
 
     bool allowChildFrameFromSource(const URL&, std::optional<TextPosition>&&, RedirectResponseReceived = RedirectResponseReceived::No) const;
     WEBCORE_EXPORT bool allowConnectToSource(const URL&, std::optional<TextPosition>&&, RedirectResponseReceived = RedirectResponseReceived::No, const URL& requestedURL = URL()) const;
+    // Whether the given Link: rel=preload `as` destination is allowed; nullopt if `as` is one we don't preload.
+    WEBCORE_EXPORT std::optional<bool> decisionForSupportedPreload(const String& destination, const URL&, const URL& baseURL) const;
     bool allowFormAction(const URL&, std::optional<TextPosition>&&, RedirectResponseReceived = RedirectResponseReceived::No, const URL& preRedirectURL = URL()) const;
 
     bool allowObjectFromSource(const URL&, std::optional<TextPosition>&&, RedirectResponseReceived = RedirectResponseReceived::No, const URL& preRedirectURL = URL()) const;
