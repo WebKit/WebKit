@@ -1181,7 +1181,7 @@ extension WebGPU.CommandEncoder {
                 mtlAttachment.slice = 0
                 var depthSliceOrArrayLayer: UInt64 = 0
                 // FIXME: (rdar://170907318) This should be changed to `if let` when possible.
-                if var depthSlice = Optional(fromCxx: attachment.depthSlice) {
+                if let depthSlice = Optional(fromCxx: attachment.depthSlice) {
                     if !texture.is3DTexture() {
                         return WebGPU.RenderPassEncoder.createInvalid(self, m_device.ptr(), "depthSlice specified on 2D texture")
                     }
@@ -1243,7 +1243,7 @@ extension WebGPU.CommandEncoder {
                     resolveTarget.setCommandEncoder(self)
                     let resolveTexture = resolveTarget.texture()
                     // FIXME: (rdar://170907318) This should be changed to `guard let` when possible.
-                    guard var resolveTexture, var mtlTexture else {
+                    guard let resolveTexture, let mtlTexture else {
                         return WebGPU.RenderPassEncoder.createInvalid(self, m_device.ptr(), "resolveTexture/mtlTexture is nil")
                     }
 
@@ -1273,17 +1273,17 @@ extension WebGPU.CommandEncoder {
                 }
 
                 // FIXME: (rdar://170907318) This should be changed to `if let` when possible.
-                if var textureToClear {
+                if let textureToClear {
                     let textureWithResolve = TextureAndClearColor(texture: textureToClear)
                     attachmentsToClear[i as NSNumber] = textureWithResolve
                     texture.setPreviouslyCleared()
                     // FIXME: (rdar://170907318) This should be changed to `if let` when possible.
-                    if var resolveTarget = attachment.resolveTarget {
+                    if let resolveTarget = attachment.resolveTarget {
                         // FIXME: rdar://138042799 remove default argument.
                         WebGPU.fromAPI(resolveTarget).setPreviouslyCleared(0, 0)
                     }
                     // FIXME: (rdar://170907318) This should be changed to `if let` when possible.
-                    if var resolveTexture = attachment.resolveTexture {
+                    if let resolveTexture = attachment.resolveTexture {
                         WebGPU.fromAPI(resolveTexture).setPreviouslyCleared()
                     }
                 }
@@ -1381,7 +1381,7 @@ extension WebGPU.CommandEncoder {
                     return WebGPU.RenderPassEncoder.createInvalid(self, m_device.ptr(), "no color targets and depth-stencil texture is destroyed")
                 }
                 // FIXME: (rdar://170907318) This should be changed to `guard let` when possible.
-                guard var metalDepthStencilTexture, metalDepthStencilTexture.sampleCount > 0 else {
+                guard let metalDepthStencilTexture, metalDepthStencilTexture.sampleCount > 0 else {
                     return WebGPU.RenderPassEncoder.createInvalid(self, m_device.ptr(), "no color targets and depth-stencil texture is nil")
                 }
 
