@@ -70,27 +70,27 @@ inline std::span<const ISO8601::ExactTime> epochCandidates(const PossibleEpochNa
 }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-ISO8601::PlainDateTime JS_EXPORT_PRIVATE exactTimeToLocalDateAndTime(ISO8601::ExactTime, int64_t offsetNs);
+JS_EXPORT_PRIVATE ISO8601::PlainDateTime exactTimeToLocalDateAndTime(ISO8601::ExactTime, int64_t offsetNs);
 
 // https://tc39.es/proposal-canonical-tz/#sec-temporal-timezoneequals
 // Fast path: both operands are already Time Zone Identifier Records. No parsing,
 // no string comparison — at most one array lookup per side to resolve aliases.
-bool JS_EXPORT_PRIVATE timeZoneEquals(const TimeZone&, const TimeZone&);
+JS_EXPORT_PRIVATE bool timeZoneEquals(const TimeZone&, const TimeZone&);
 // String form: parses each side to a TimeZone, then delegates. Returns false if
 // either input is not a syntactically valid identifier.
-bool JS_EXPORT_PRIVATE timeZoneEquals(StringView id1, StringView id2);
+JS_EXPORT_PRIVATE bool timeZoneEquals(StringView id1, StringView id2);
 
-TemporalResult<int64_t> JS_EXPORT_PRIVATE getOffsetNanosecondsFor(const TimeZone&, ISO8601::ExactTime);
+JS_EXPORT_PRIVATE TemporalResult<int64_t> getOffsetNanosecondsFor(const TimeZone&, ISO8601::ExactTime);
 
-TemporalResult<ISO8601::PlainDateTime> JS_EXPORT_PRIVATE getISODateTimeFor(const TimeZone&, ISO8601::ExactTime);
+JS_EXPORT_PRIVATE TemporalResult<ISO8601::PlainDateTime> getISODateTimeFor(const TimeZone&, ISO8601::ExactTime);
 
-TemporalResult<PossibleEpochNanoseconds> JS_EXPORT_PRIVATE getPossibleEpochNanosecondsFor(const TimeZone&, const ISO8601::PlainDate&, const ISO8601::PlainTime&);
+JS_EXPORT_PRIVATE TemporalResult<PossibleEpochNanoseconds> getPossibleEpochNanosecondsFor(const TimeZone&, const ISO8601::PlainDate&, const ISO8601::PlainTime&);
 
-TemporalResult<std::optional<ISO8601::ExactTime>> JS_EXPORT_PRIVATE getTimeZoneTransition(const TimeZone&, ISO8601::ExactTime, TransitionDirection);
+JS_EXPORT_PRIVATE TemporalResult<std::optional<ISO8601::ExactTime>> getTimeZoneTransition(const TimeZone&, ISO8601::ExactTime, TransitionDirection);
 
-TemporalResult<ISO8601::ExactTime> JS_EXPORT_PRIVATE getEpochNanosecondsFor(const TimeZone&, const ISO8601::PlainDate&, const ISO8601::PlainTime&, TemporalDisambiguation);
+JS_EXPORT_PRIVATE TemporalResult<ISO8601::ExactTime> getEpochNanosecondsFor(const TimeZone&, const ISO8601::PlainDate&, const ISO8601::PlainTime&, TemporalDisambiguation);
 
-TemporalResult<ISO8601::ExactTime> JS_EXPORT_PRIVATE addZonedDateTime(ISO8601::ExactTime startEpochNs, const TimeZone&, const ISO8601::Duration&, TemporalOverflow, CalendarID calendarKind = iso8601CalendarID());
+JS_EXPORT_PRIVATE TemporalResult<ISO8601::ExactTime> addZonedDateTime(ISO8601::ExactTime startEpochNs, const TimeZone&, const ISO8601::Duration&, TemporalOverflow, CalendarID calendarKind = iso8601CalendarID());
 
 } // namespace TemporalCore
 } // namespace JSC

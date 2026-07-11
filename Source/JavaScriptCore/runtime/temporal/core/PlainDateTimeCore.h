@@ -38,16 +38,16 @@
 namespace JSC {
 namespace TemporalCore {
 
-int32_t NODELETE JS_EXPORT_PRIVATE compareISODateTime(ISO8601::PlainDate, ISO8601::PlainTime, ISO8601::PlainDate, ISO8601::PlainTime);
+JS_EXPORT_PRIVATE int32_t NODELETE compareISODateTime(ISO8601::PlainDate, ISO8601::PlainTime, ISO8601::PlainDate, ISO8601::PlainTime);
 
-TemporalResult<ISO8601::InternalDuration> JS_EXPORT_PRIVATE differencePlainDateTimeWithRounding(
+JS_EXPORT_PRIVATE TemporalResult<ISO8601::InternalDuration> differencePlainDateTimeWithRounding(
     ISO8601::PlainDate thisDate, ISO8601::PlainTime thisTime,
     ISO8601::PlainDate otherDate, ISO8601::PlainTime otherTime,
     CalendarID,
     TemporalUnit largestUnit, TemporalUnit smallestUnit,
     RoundingMode, double increment);
 
-TemporalResult<ISO8601::Duration> JS_EXPORT_PRIVATE differenceTemporalPlainDateTime(
+JS_EXPORT_PRIVATE TemporalResult<ISO8601::Duration> differenceTemporalPlainDateTime(
     DifferenceOperation,
     ISO8601::PlainDate thisDate, ISO8601::PlainTime thisTime,
     ISO8601::PlainDate otherDate, ISO8601::PlainTime otherTime,

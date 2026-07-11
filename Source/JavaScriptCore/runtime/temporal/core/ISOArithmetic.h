@@ -37,27 +37,27 @@
 namespace JSC {
 namespace TemporalCore {
 
-ISO8601::PlainYearMonth JS_EXPORT_PRIVATE balanceISOYearMonth(int64_t year, int64_t month);
+JS_EXPORT_PRIVATE ISO8601::PlainYearMonth balanceISOYearMonth(int64_t year, int64_t month);
 
-ISO8601::PlainDate JS_EXPORT_PRIVATE addDaysToISODate(const ISO8601::PlainDate&, int64_t days);
+JS_EXPORT_PRIVATE ISO8601::PlainDate addDaysToISODate(const ISO8601::PlainDate&, int64_t days);
 
-TemporalResult<ISO8601::PlainDate> JS_EXPORT_PRIVATE regulateISODate(int32_t year, int32_t month, int64_t day, TemporalOverflow);
+JS_EXPORT_PRIVATE TemporalResult<ISO8601::PlainDate> regulateISODate(int32_t year, int32_t month, int64_t day, TemporalOverflow);
 
-TemporalResult<ISO8601::PlainDate> JS_EXPORT_PRIVATE isoDateAdd(const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
+JS_EXPORT_PRIVATE TemporalResult<ISO8601::PlainDate> isoDateAdd(const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
 
-int32_t NODELETE JS_EXPORT_PRIVATE isoDateCompare(const ISO8601::PlainDate&, const ISO8601::PlainDate&);
+JS_EXPORT_PRIVATE int32_t NODELETE isoDateCompare(const ISO8601::PlainDate&, const ISO8601::PlainDate&);
 
-int32_t NODELETE JS_EXPORT_PRIVATE isoTimeCompare(const ISO8601::PlainTime&, const ISO8601::PlainTime&);
+JS_EXPORT_PRIVATE int32_t NODELETE isoTimeCompare(const ISO8601::PlainTime&, const ISO8601::PlainTime&);
 
-ISO8601::Duration JS_EXPORT_PRIVATE diffISODate(const ISO8601::PlainDate& one, const ISO8601::PlainDate& two, TemporalUnit largestUnit);
+JS_EXPORT_PRIVATE ISO8601::Duration diffISODate(const ISO8601::PlainDate& one, const ISO8601::PlainDate& two, TemporalUnit largestUnit);
 
-ISO8601::InternalDuration JS_EXPORT_PRIVATE diffISODateTime(const ISO8601::PlainDate& d1, const ISO8601::PlainTime& t1, const ISO8601::PlainDate& d2, const ISO8601::PlainTime& t2, TemporalUnit largestUnit);
+JS_EXPORT_PRIVATE ISO8601::InternalDuration diffISODateTime(const ISO8601::PlainDate& d1, const ISO8601::PlainTime& t1, const ISO8601::PlainDate& d2, const ISO8601::PlainTime& t2, TemporalUnit largestUnit);
 
 struct RoundedISODateTime {
     ISO8601::PlainDate date;
     ISO8601::PlainTime time;
 };
-RoundedISODateTime JS_EXPORT_PRIVATE roundISODateTime(ISO8601::PlainDate, ISO8601::PlainTime, Int128 incrementNs, TemporalUnit, RoundingMode);
+JS_EXPORT_PRIVATE RoundedISODateTime roundISODateTime(ISO8601::PlainDate, ISO8601::PlainTime, Int128 incrementNs, TemporalUnit, RoundingMode);
 
 } // namespace TemporalCore
 } // namespace JSC

@@ -39,7 +39,7 @@ namespace JSC {
 
 // Free helper functions (previously static methods of the removed TemporalCalendar JSObject class).
 
-std::optional<CalendarID> JS_EXPORT_PRIVATE isBuiltinCalendar(StringView);
+JS_EXPORT_PRIVATE std::optional<CalendarID> isBuiltinCalendar(StringView);
 
 std::optional<ParsedMonthCode> parseMonthCode(JSGlobalObject*, JSValue argument);
 

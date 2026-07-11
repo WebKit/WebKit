@@ -59,25 +59,25 @@ struct ResolvedCalendarDate {
     CalendarID calendarId { 0 };
 };
 
-TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE dateFromFields(CalendarID, const CalendarFieldsIn&, TemporalOverflow);
+JS_EXPORT_PRIVATE TemporalResult<ResolvedCalendarDate> dateFromFields(CalendarID, const CalendarFieldsIn&, TemporalOverflow);
 
-TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE yearMonthFromFields(CalendarID, const CalendarFieldsIn&, TemporalOverflow);
+JS_EXPORT_PRIVATE TemporalResult<ResolvedCalendarDate> yearMonthFromFields(CalendarID, const CalendarFieldsIn&, TemporalOverflow);
 
-TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE monthDayFromFields(CalendarID, const CalendarFieldsIn&, TemporalOverflow);
+JS_EXPORT_PRIVATE TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID, const CalendarFieldsIn&, TemporalOverflow);
 
-TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE plainYearMonthWith(CalendarID, const ISO8601::PlainDate& currentISODate, const CalendarFieldsIn& partialFields, TemporalOverflow);
+JS_EXPORT_PRIVATE TemporalResult<ResolvedCalendarDate> plainYearMonthWith(CalendarID, const ISO8601::PlainDate& currentISODate, const CalendarFieldsIn& partialFields, TemporalOverflow);
 
-TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE plainDateWith(CalendarID, const ISO8601::PlainDate& currentISODate, const CalendarFieldsIn& partialFields, TemporalOverflow);
+JS_EXPORT_PRIVATE TemporalResult<ResolvedCalendarDate> plainDateWith(CalendarID, const ISO8601::PlainDate& currentISODate, const CalendarFieldsIn& partialFields, TemporalOverflow);
 
-TemporalResult<ISO8601::Duration> JS_EXPORT_PRIVATE differenceYearMonth(CalendarID, const ISO8601::PlainDate& thisISODate, const ISO8601::PlainDate& otherISODate, TemporalUnit largestUnit);
+JS_EXPORT_PRIVATE TemporalResult<ISO8601::Duration> differenceYearMonth(CalendarID, const ISO8601::PlainDate& thisISODate, const ISO8601::PlainDate& otherISODate, TemporalUnit largestUnit);
 
-TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE plainYearMonthAdd(CalendarID, const ISO8601::PlainDate& currentISODate, const ISO8601::Duration&, TemporalOverflow);
+JS_EXPORT_PRIVATE TemporalResult<ResolvedCalendarDate> plainYearMonthAdd(CalendarID, const ISO8601::PlainDate& currentISODate, const ISO8601::Duration&, TemporalOverflow);
 
-TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE plainYearMonthToPlainDate(CalendarID, const ISO8601::PlainDate& pymISODate, uint8_t day);
+JS_EXPORT_PRIVATE TemporalResult<ResolvedCalendarDate> plainYearMonthToPlainDate(CalendarID, const ISO8601::PlainDate& pymISODate, uint8_t day);
 
-TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE plainYearMonthFromISODate(CalendarID, const ISO8601::PlainDate& fullISODate);
+JS_EXPORT_PRIVATE TemporalResult<ResolvedCalendarDate> plainYearMonthFromISODate(CalendarID, const ISO8601::PlainDate& fullISODate);
 
-TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE plainMonthDayFromISODate(CalendarID, const ISO8601::PlainDate& fullISODate, TemporalOverflow);
+JS_EXPORT_PRIVATE TemporalResult<ResolvedCalendarDate> plainMonthDayFromISODate(CalendarID, const ISO8601::PlainDate& fullISODate, TemporalOverflow);
 
 } // namespace TemporalCore
 } // namespace JSC

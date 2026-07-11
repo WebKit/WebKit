@@ -52,7 +52,7 @@ struct CalendarFields {
     String monthCode;
 };
 
-CalendarID JS_EXPORT_PRIVATE calendarIDFromString(StringView);
+JS_EXPORT_PRIVATE CalendarID calendarIDFromString(StringView);
 
 inline StringView calendarIDToString(CalendarID id) { return intlAvailableCalendars()[id]; }
 
@@ -85,27 +85,27 @@ inline bool calendarIsIslamic(CalendarID id)
 
 TemporalResult<CalendarFields> isoToCalendarFields(CalendarID, const ISO8601::PlainDate& isoDate);
 
-TemporalResult<int32_t> JS_EXPORT_PRIVATE calendarYear(CalendarID, const ISO8601::PlainDate& isoDate);
+JS_EXPORT_PRIVATE TemporalResult<int32_t> calendarYear(CalendarID, const ISO8601::PlainDate& isoDate);
 
-TemporalResult<uint8_t> JS_EXPORT_PRIVATE calendarMonth(CalendarID, const ISO8601::PlainDate& isoDate);
+JS_EXPORT_PRIVATE TemporalResult<uint8_t> calendarMonth(CalendarID, const ISO8601::PlainDate& isoDate);
 
-TemporalResult<String> JS_EXPORT_PRIVATE calendarMonthCode(CalendarID, const ISO8601::PlainDate& isoDate);
+JS_EXPORT_PRIVATE TemporalResult<String> calendarMonthCode(CalendarID, const ISO8601::PlainDate& isoDate);
 
-TemporalResult<uint8_t> JS_EXPORT_PRIVATE calendarDay(CalendarID, const ISO8601::PlainDate& isoDate);
+JS_EXPORT_PRIVATE TemporalResult<uint8_t> calendarDay(CalendarID, const ISO8601::PlainDate& isoDate);
 
-TemporalResult<std::optional<String>> JS_EXPORT_PRIVATE calendarEra(CalendarID, const ISO8601::PlainDate& isoDate);
+JS_EXPORT_PRIVATE TemporalResult<std::optional<String>> calendarEra(CalendarID, const ISO8601::PlainDate& isoDate);
 
-TemporalResult<std::optional<int32_t>> JS_EXPORT_PRIVATE calendarEraYear(CalendarID, const ISO8601::PlainDate& isoDate);
+JS_EXPORT_PRIVATE TemporalResult<std::optional<int32_t>> calendarEraYear(CalendarID, const ISO8601::PlainDate& isoDate);
 
-TemporalResult<int32_t> JS_EXPORT_PRIVATE calendarDaysInMonth(CalendarID, const ISO8601::PlainDate& isoDate);
+JS_EXPORT_PRIVATE TemporalResult<int32_t> calendarDaysInMonth(CalendarID, const ISO8601::PlainDate& isoDate);
 
-TemporalResult<int32_t> JS_EXPORT_PRIVATE calendarDaysInYear(CalendarID, const ISO8601::PlainDate& isoDate);
+JS_EXPORT_PRIVATE TemporalResult<int32_t> calendarDaysInYear(CalendarID, const ISO8601::PlainDate& isoDate);
 
-TemporalResult<int32_t> JS_EXPORT_PRIVATE calendarMonthsInYear(CalendarID, const ISO8601::PlainDate& isoDate);
+JS_EXPORT_PRIVATE TemporalResult<int32_t> calendarMonthsInYear(CalendarID, const ISO8601::PlainDate& isoDate);
 
-TemporalResult<bool> JS_EXPORT_PRIVATE calendarInLeapYear(CalendarID, const ISO8601::PlainDate& isoDate);
+JS_EXPORT_PRIVATE TemporalResult<bool> calendarInLeapYear(CalendarID, const ISO8601::PlainDate& isoDate);
 
-TemporalResult<ISO8601::PlainDate> JS_EXPORT_PRIVATE calendarDateAdd(CalendarID, const ISO8601::PlainDate& isoDate, const ISO8601::Duration&, TemporalOverflow);
+JS_EXPORT_PRIVATE TemporalResult<ISO8601::PlainDate> calendarDateAdd(CalendarID, const ISO8601::PlainDate& isoDate, const ISO8601::Duration&, TemporalOverflow);
 
 TemporalResult<ISO8601::Duration> calendarDateUntil(CalendarID, const ISO8601::PlainDate& one, const ISO8601::PlainDate& two, TemporalUnit largestUnit);
 
@@ -124,9 +124,9 @@ static constexpr int32_t ecmaRefYearNotInCalendar = INT32_MIN + 1;
 
 int32_t ecmaReferenceYear(CalendarID, uint8_t monthNumber, bool isLeapMonth, uint8_t day);
 
-int32_t JS_EXPORT_PRIVATE lunarCalendarExtendedYearFor1972(CalendarID);
+JS_EXPORT_PRIVATE int32_t lunarCalendarExtendedYearFor1972(CalendarID);
 
-TemporalResult<ISO8601::PlainDate> JS_EXPORT_PRIVATE calendarDateFromFields(CalendarID, std::optional<int32_t> year, uint8_t month, uint8_t day, std::optional<StringView> era, std::optional<int32_t> eraYear, std::optional<ParsedMonthCode>, TemporalOverflow);
+JS_EXPORT_PRIVATE TemporalResult<ISO8601::PlainDate> calendarDateFromFields(CalendarID, std::optional<int32_t> year, uint8_t month, uint8_t day, std::optional<StringView> era, std::optional<int32_t> eraYear, std::optional<ParsedMonthCode>, TemporalOverflow);
 
 } // namespace TemporalCore
 } // namespace JSC

@@ -38,9 +38,9 @@
 namespace JSC {
 namespace TemporalCore {
 
-ISO8601::Duration JS_EXPORT_PRIVATE calendarDateUntil(const ISO8601::PlainDate& one, const ISO8601::PlainDate& two, TemporalUnit largestUnit);
+JS_EXPORT_PRIVATE ISO8601::Duration calendarDateUntil(const ISO8601::PlainDate& one, const ISO8601::PlainDate& two, TemporalUnit largestUnit);
 
-TemporalResult<ISO8601::PlainDate> JS_EXPORT_PRIVATE calendarDateAdd(const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
+JS_EXPORT_PRIVATE TemporalResult<ISO8601::PlainDate> calendarDateAdd(const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
 
 } // namespace TemporalCore
 } // namespace JSC

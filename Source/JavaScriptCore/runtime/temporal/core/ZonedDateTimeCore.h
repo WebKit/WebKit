@@ -38,7 +38,7 @@
 namespace JSC {
 namespace TemporalCore {
 
-TemporalResult<ISO8601::ExactTime> JS_EXPORT_PRIVATE interpretISODateTimeOffset(
+JS_EXPORT_PRIVATE TemporalResult<ISO8601::ExactTime> interpretISODateTimeOffset(
     const ISO8601::PlainDate&,
     const ISO8601::PlainTime&,
     bool useStartOfDay,
@@ -49,9 +49,9 @@ TemporalResult<ISO8601::ExactTime> JS_EXPORT_PRIVATE interpretISODateTimeOffset(
     const TimeZone&,
     TemporalDisambiguation);
 
-TemporalResult<ISO8601::ExactTime> JS_EXPORT_PRIVATE getStartOfDay(const TimeZone&, ISO8601::PlainDate);
+JS_EXPORT_PRIVATE TemporalResult<ISO8601::ExactTime> getStartOfDay(const TimeZone&, ISO8601::PlainDate);
 
-TemporalResult<ISO8601::InternalDuration> JS_EXPORT_PRIVATE differenceZonedDateTimeWithRounding(
+JS_EXPORT_PRIVATE TemporalResult<ISO8601::InternalDuration> differenceZonedDateTimeWithRounding(
     ISO8601::ExactTime ns1,
     ISO8601::ExactTime ns2,
     const TimeZone&,
