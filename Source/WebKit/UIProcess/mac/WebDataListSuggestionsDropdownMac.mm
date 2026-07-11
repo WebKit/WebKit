@@ -473,8 +473,8 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
 
     CGFloat width = std::min<CGFloat>(std::max(rect.width(), rect.height()), screenRect.size.width);
     CGFloat height = std::min<CGFloat>(totalIntercellSpacingAndPadding + std::min(totalCellHeight, maximumTotalHeightForDropdownCells), screenRect.size.height);
-    CGFloat originX = std::max<CGFloat>(NSMinX(windowRect), 0);
-    CGFloat originY = std::max<CGFloat>(NSMinY(windowRect) - height - dropdownTopMargin, 0);
+    CGFloat originX = std::clamp<CGFloat>(NSMinX(windowRect), NSMinX(screenRect), NSMaxX(screenRect) - width);
+    CGFloat originY = std::clamp<CGFloat>(NSMinY(windowRect) - height - dropdownTopMargin, NSMinY(screenRect), NSMaxY(screenRect) - height);
 
     return NSMakeRect(originX, originY, width, height);
 }
