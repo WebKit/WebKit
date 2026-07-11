@@ -182,7 +182,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         context.cssScrollStateContainerQueriesEnabled,
         context.cssCalcMixEnabled,
         context.cssIdentFunctionEnabled,
-        context.cssIfFunctionEnabled
+        context.cssIfFunctionEnabled,
+        context.legacyFontFaceAttributeMode
     );
     add(hasher, context.baseURL, context.charset, context.propertySettings, context.mode, context.enclosingRuleType, bits);
 }

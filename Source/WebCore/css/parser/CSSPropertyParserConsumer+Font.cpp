@@ -252,12 +252,14 @@ WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID ident)
     }
 }
 
-static AtomString concatenateFamilyName(CSSParserTokenRange& range)
+static AtomString concatenateFamilyName(CSSParserTokenRange& range, bool allowNumericTokens = false)
 {
     StringBuilder builder;
     bool addedSpace = false;
     const CSSParserToken& firstToken = range.peek();
-    while (range.peek().type() == IdentToken) {
+    // In legacyFontFaceAttributeMode (the <font face> attribute), a numeric token is allowed as
+    // part of a literal family name, e.g. "Bodoni 72" (its original text is preserved in value()).
+    while (range.peek().type() == IdentToken || (allowNumericTokens && range.peek().type() == NumberToken)) {
         if (!builder.isEmpty()) {
             builder.append(' ');
             addedSpace = true;
@@ -270,13 +272,13 @@ static AtomString concatenateFamilyName(CSSParserTokenRange& range)
     return builder.toAtomString();
 }
 
-static AtomString consumeFamilyNameUnresolved(CSSParserTokenRange& range)
+static AtomString consumeFamilyNameUnresolved(CSSParserTokenRange& range, bool allowNumericTokens = false)
 {
     if (range.peek().type() == StringToken)
         return range.consumeIncludingWhitespace().value().toAtomString();
     if (range.peek().type() != IdentToken)
         return nullAtom();
-    return concatenateFamilyName(range);
+    return concatenateFamilyName(range, allowNumericTokens);
 }
 
 static std::optional<CSSValueID> consumeGenericFamilyUnresolved(CSSParserTokenRange& range)
@@ -318,7 +320,7 @@ RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange& range, CSS::PropertyPars
 {
     // https://drafts.csswg.org/css-fonts-4/#family-name-syntax
 
-    auto familyName = consumeFamilyNameUnresolved(range);
+    auto familyName = consumeFamilyNameUnresolved(range, state.context.legacyFontFaceAttributeMode);
     if (familyName.isNull())
         return nullptr;
     return state.pool.createFontFamilyNameValue(familyName);

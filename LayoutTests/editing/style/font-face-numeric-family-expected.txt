@@ -1,0 +1,13 @@
+A <font face> whose family name contains a numeric token (e.g. "Bodoni 72") is applied as the font-family instead of reverting to the inherited default. The relaxed parsing is scoped to the legacy face attribute: the same unquoted name remains invalid for the CSS font-family property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS familyFromFace("Georgia") is familyFromCSS("Georgia")
+PASS familyFromFace("Bodoni 72") is familyFromCSS("'Bodoni 72'")
+PASS familyFromFace("Bodoni 72, Georgia") is familyFromCSS("'Bodoni 72', Georgia")
+PASS cssFontFamilySpecifiedValue("Bodoni 72") is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

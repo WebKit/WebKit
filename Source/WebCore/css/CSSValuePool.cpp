@@ -27,6 +27,7 @@
 #include "CSSValuePool.h"
 
 #include "CSSFontFamilyNameValue.h"
+#include "CSSParserContext.h"
 #include "CSSPropertyParser.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
@@ -114,9 +115,13 @@ RefPtr<CSSValueList> CSSValuePool::createFontFaceValue(const AtomString& string)
     if (m_fontFaceValueCache.size() >= maximumFontFaceCacheSize)
         m_fontFaceValueCache.remove(m_fontFaceValueCache.random());
 
-    return m_fontFaceValueCache.ensure(string, [&string]() -> RefPtr<CSSValueList> {
-        auto value = CSSPropertyParser::parseStylePropertyLonghand(CSSPropertyFontFamily, string, strictCSSParserContext());
-        return dynamicDowncast<CSSValueList>(value.get());
+    return m_fontFaceValueCache.ensure(string, [&string] {
+        // Parse the legacy <font face> attribute as a font-family value, relaxing the family-name
+        // grammar to accept numeric-token names such as "Bodoni 72" (legacyFontFaceAttributeMode).
+        // Regular CSS font-family parsing is unaffected and still rejects such names.
+        CSSParserContext context = strictCSSParserContext();
+        context.legacyFontFaceAttributeMode = true;
+        return dynamicDowncast<CSSValueList>(CSSPropertyParser::parseStylePropertyLonghand(CSSPropertyFontFamily, string, context));
     }).iterator->value;
 }
 
