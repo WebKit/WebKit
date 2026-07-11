@@ -24,6 +24,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+import argparse
 import os
 import re
 import sys
@@ -34,7 +35,7 @@ should_restrict_header_replacement_based_on_feature = True
 
 
 def read_content_from_webkit_additions(built_products_directory, sdk_root_directory, filename):
-    library_headers_folder_path = os.environ['WK_LIBRARY_HEADERS_FOLDER_PATH'].removeprefix('/')
+    library_headers_folder_path = os.environ.get('WK_LIBRARY_HEADERS_FOLDER_PATH', '').removeprefix('/')
     additions_path = os.path.join(library_headers_folder_path, "WebKitAdditions", filename)
     try:
         file_in_build_directory = open(os.path.join(built_products_directory, additions_path), "r")
@@ -55,28 +56,33 @@ def check_should_do_replacement(built_products_directory, sdk_root_directory):
 
 
 def main(argv=None):
-    if not argv:
-        argv = sys.argv
+    parser = argparse.ArgumentParser()
+    parser.add_argument('built_products_dir')
+    parser.add_argument('sdk_root_dir')
+    parser.add_argument('src', nargs='?')
+    parser.add_argument('dst', nargs='?')
+    args = parser.parse_args(argv)
 
-    if len(argv) != 3:
-        print("Usage: replace-webkit-additions-includes.py <built_products_directory> <sdk_root_directory>", file=sys.stderr)
-        return 1
+    if not args.src:
+        src = sys.stdin
+    else:
+        src = open(args.src, 'r')
 
-    built_products_directory = argv[1]
-    sdk_root_directory = argv[2]
+    if not args.dst:
+        dst = sys.stdout
+    else:
+        if os.path.exists(args.dst) and os.path.islink(args.dst):
+            # Migrate from a CMake build that used symlinks to source headers.
+            os.unlink(args.dst)
+        dst = open(args.dst, 'w')
 
-    if not len(built_products_directory):
-        print("(%s): built products directory unspecified" % argv[0], file=sys.stderr)
-        return 1
-
-    if not len(sdk_root_directory):
-        print("(%s): SDK root directory unspecified" % argv[0], file=sys.stderr)
-        return 1
+    built_products_directory = args.built_products_dir
+    sdk_root_directory = args.sdk_root_dir
 
     should_do_replacement = check_should_do_replacement(built_products_directory, sdk_root_directory)
 
     additions_import_pattern = re.compile(r"\#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT\n#import <WebKitAdditions/(.*)>\n#endif")
-    header_contents = sys.stdin.read()
+    header_contents = src.read()
     match = additions_import_pattern.search(header_contents)
     while match:
         if should_do_replacement:
@@ -84,8 +90,7 @@ def main(argv=None):
         else:
             header_contents = header_contents[:match.start()] + header_contents[match.end():]
         match = additions_import_pattern.search(header_contents)
-    sys.stdout.write(header_contents)
-    return 0
+    dst.write(header_contents)
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    main()

@@ -164,6 +164,25 @@ list(APPEND WebKit_PRIVATE_LIBRARIES
     "-weak_framework PowerLog"
 )
 
+foreach (_header IN LISTS WebKit_PUBLIC_FRAMEWORK_HEADERS)
+    file(READ ${WEBKIT_DIR}/${_header} _contents)
+    # Only run headers through the replacement script if they actually contain
+    # a WKA import.
+    if (_contents MATCHES "#import <WebKitAdditions/.*\.h>")
+        get_filename_component(_name ${_header} NAME)
+        add_custom_command(
+            OUTPUT ${WebKit_HEADERS_DIR}/${_name}
+            COMMAND
+                env ${WEBKITADDITIONS_DEFINITIONS_FOR_HEADER_REPLACEMENT}
+                    ${WEBKIT_DIR}/mac/replace-webkit-additions-includes.py
+                    ${WebKitAdditions_FRAMEWORK_HEADERS_DIR} ${CMAKE_OSX_SYSROOT}
+                    ${WEBKIT_DIR}/${_header} ${WebKit_HEADERS_DIR}/${_name}
+            MAIN_DEPENDENCY ${WEBKIT_DIR}/${_header}
+            VERBATIM
+        )
+    endif ()
+endforeach ()
+
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")
 # -Wl,-u forces a symbol reference so -dead_strip_dylibs won't prune the weak framework.
 target_link_options(WebKit PRIVATE
