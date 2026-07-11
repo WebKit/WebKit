@@ -162,16 +162,15 @@ private:
     public:
         FlexLayoutItem(RenderBox&, const FlexBaseAndHypotheticalMainSize&, bool everHadLayout);
 
-        LayoutUnit NODELETE hypotheticalMainAxisMarginBoxSize() const;
-        LayoutUnit NODELETE flexBaseMarginBoxSize() const;
-        LayoutUnit NODELETE flexedMarginBoxSize(LayoutUnit mainSize) const;
+        LayoutUnit NODELETE hypotheticalMainAxisMarginBoxSize(LayoutUnit mainAxisMargin) const;
+        LayoutUnit NODELETE flexBaseMarginBoxSize(LayoutUnit mainAxisMargin) const;
+        LayoutUnit NODELETE flexedMarginBoxSize(LayoutUnit mainSize, LayoutUnit mainAxisMargin) const;
         const Style::ComputedStyle& NODELETE style() const LIFETIME_BOUND;
         LayoutUnit constrainSizeByMinMax(const LayoutUnit size) const;
 
         CheckedRef<RenderBox> renderer;
         LayoutUnit flexBaseContentSize;
         const LayoutUnit mainAxisBorderAndPadding;
-        mutable LayoutUnit mainAxisMargin;
         const std::pair<LayoutUnit, LayoutUnit> minMaxSizes;
         const LayoutUnit hypotheticalMainContentSize;
         bool everHadLayout { false };
@@ -265,7 +264,7 @@ private:
         double totalWeightedFlexShrink { 0 };
         LayoutUnit sumHypotheticalMainSize;
     };
-    std::optional<FlexingLineData> computeNextFlexLine(size_t& nextIndex, FlexLayoutItems& allItems, LayoutUnit mainAxisAvailableSpace, LayoutUnit gapBetweenItems);
+    std::optional<FlexingLineData> computeNextFlexLine(size_t& nextIndex, FlexLayoutItems& allItems, std::span<LayoutUnit> mainAxisMargins, LayoutUnit mainAxisAvailableSpace, LayoutUnit gapBetweenItems);
 
     // A flex line is a contiguous range of allItems. computeFlexLines collects every line's range upfront
     // plus the per-line hypothetical main size that columnInnerMainSize needs.
@@ -274,14 +273,14 @@ private:
         LineRanges ranges;
         Vector<LayoutUnit> hypotheticalMainSizes;
     };
-    FlexLines computeFlexLines(FlexLayoutItems& allItems, LayoutUnit gapBetweenItems);
+    FlexLines computeFlexLines(FlexLayoutItems& allItems, std::span<LayoutUnit> mainAxisMargins, LayoutUnit gapBetweenItems);
     // Resolves each flex item's flexed main size (spec 9.7) for every line, and returns the used main size of each item.
-    Vector<LayoutUnit> computeMainSizeForFlexItems(FlexLayoutItems& allItems, const FlexLines&, LayoutUnit gapBetweenItems);
+    Vector<LayoutUnit> computeMainSizeForFlexItems(FlexLayoutItems& allItems, const FlexLines&, std::span<const LayoutUnit> mainAxisMargins, LayoutUnit gapBetweenItems);
     void trimCrossAxisMarginsForFlexItems(FlexLayoutItems& allItems, const FlexLines&);
     void layoutFlexItems(std::span<FlexLayoutItem>, std::span<const LayoutUnit> mainSizes, RelayoutChildren);
     Vector<LayoutUnit> hypotheticalCrossSizeForFlexItems(const FlexLayoutItems&);
     Vector<LayoutUnit> crossSizeForFlexLines(const FlexLines&, const FlexLayoutItems&, const Vector<LayoutUnit>& hypotheticalCrossSizeList);
-    void handleMainAxisAlignment(const FlexLines&, FlexLineStates&, const Vector<LayoutUnit>& mainSizeList, LayoutUnit gapBetweenItems);
+    void handleMainAxisAlignment(const FlexLines&, FlexLineStates&, const Vector<LayoutUnit>& mainSizeList, const Vector<LayoutUnit>& marginsList, LayoutUnit gapBetweenItems);
 
     LayoutUnit NODELETE autoMarginOffsetInMainAxis(std::span<const FlexLayoutItem>, LayoutUnit& availableFreeSpace);
     void NODELETE updateAutoMarginsInMainAxis(RenderBox& flexItem, LayoutUnit autoMarginOffset);
@@ -294,17 +293,17 @@ private:
     // Margins parallel with the main axis
     bool NODELETE shouldTrimCrossAxisMarginStart() const;
     bool NODELETE shouldTrimCrossAxisMarginEnd() const;
-    void trimMainAxisMarginStart(const FlexLayoutItem&);
-    void trimMainAxisMarginEnd(const FlexLayoutItem&);
+    void trimMainAxisMarginStart(const FlexLayoutItem&, LayoutUnit& mainAxisMargin);
+    void trimMainAxisMarginEnd(const FlexLayoutItem&, LayoutUnit& mainAxisMargin);
     void trimCrossAxisMarginStart(const FlexLayoutItem&);
     void trimCrossAxisMarginEnd(const FlexLayoutItem&);
     bool isChildEligibleForMarginTrim(Style::MarginTrimSide, const RenderBox&) const final;
-    bool canFitItemWithTrimmedMarginEnd(const FlexLayoutItem&, LayoutUnit sumHypotheticalMainSize, LayoutUnit mainAxisAvailableSpace) const;
+    bool canFitItemWithTrimmedMarginEnd(const FlexLayoutItem&, LayoutUnit mainAxisMargin, LayoutUnit sumHypotheticalMainSize, LayoutUnit mainAxisAvailableSpace) const;
     void removeMarginEndFromFlexSizes(FlexLayoutItem&, LayoutUnit& sumFlexBaseSize, LayoutUnit& sumHypotheticalMainSize) const;
 
     bool NODELETE hasAutoMarginsInCrossAxis(const RenderBox& flexItem) const;
     bool NODELETE updateAutoMarginsInCrossAxis(FlexLayoutItem&, LayoutPoint& position, LayoutUnit availableAlignmentSpace);
-    LayoutUnit resolveFlexibleLengthsForLineItems(std::span<FlexLayoutItem>, std::span<LayoutUnit> mainSizes, LayoutUnit containerMainInnerSize, LayoutUnit gapBetweenItems);
+    LayoutUnit resolveFlexibleLengthsForLineItems(std::span<FlexLayoutItem>, std::span<LayoutUnit> mainSizes, std::span<const LayoutUnit> margins, LayoutUnit containerMainInnerSize, LayoutUnit gapBetweenItems);
     void distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(FlexLineStates&, LayoutUnit gapBetweenItems);
     void repositionLogicalHeightDependentFlexItems(FlexLineStates&, LayoutUnit gapBetweenLines);
     
