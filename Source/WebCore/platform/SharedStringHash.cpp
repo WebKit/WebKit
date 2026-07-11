@@ -24,6 +24,7 @@
 #include "config.h"
 #include "SharedStringHash.h"
 
+#include <wtf/ASCIICType.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/URL.h>
 #include <wtf/text/AtomString.h>
@@ -72,16 +73,19 @@ static inline size_t NODELETE findSlashDotSlash(std::span<const CharacterType> c
 }
 
 template <typename CharacterType>
-static inline bool NODELETE containsColonSlashSlash(std::span<const CharacterType> characters)
+static inline bool NODELETE startsWithSchemeColonSlashSlash(std::span<const CharacterType> characters)
 {
-    if (characters.size() < 3)
+    if (!isASCIIAlpha(characters[0]))
         return false;
-    unsigned loopLimit = characters.size() - 2;
-    for (unsigned i = 0; i < loopLimit; ++i) {
-        if (characters[i] == ':' && characters[i + 1] == '/' && characters[i + 2] == '/')
-            return true;
+    size_t i = 1;
+    for (; i < characters.size(); ++i) {
+        auto character = characters[i];
+        if (character == ':')
+            break;
+        if (!isASCIIAlphanumeric(character) && character != '+' && character != '-' && character != '.')
+            return false;
     }
-    return false;
+    return i + 2 < characters.size() && characters[i] == ':' && characters[i + 1] == '/' && characters[i + 2] == '/';
 }
 
 template <typename CharacterType>
@@ -231,14 +235,10 @@ static ALWAYS_INLINE SharedStringHash computeSharedStringHashInline(const URL& b
     // FIXME: It's missing a lot of what completeURL does and a lot of what URL does.
     // For example, it does not handle international domain names properly.
 
-    // FIXME: It is wrong that we do not do further processing on strings that have "://" in them:
-    //    1) The "://" could be in the query or anchor.
-    //    2) The URL's path could have a "/./" or a "/../" or a "//" sequence in it.
-
     // FIXME: needsTrailingSlash does not properly return true for a URL that has no path, but does
     // have a query or anchor.
 
-    if (containsColonSlashSlash(characters)) {
+    if (startsWithSchemeColonSlashSlash(characters)) {
         if (!needsTrailingSlash(characters))
             return computeSharedStringHashInline(characters);
 
@@ -251,9 +251,11 @@ static ALWAYS_INLINE SharedStringHash computeSharedStringHashInline(const URL& b
     }
 
     Vector<CharacterType, 512> buffer;
-    if (characters.empty())
-        append(buffer, base.string());
-    else {
+    if (characters.size() >= 2 && characters[0] == '/' && characters[1] == '/') {
+        // Protocol-relative URL; inherit the scheme from the base URL.
+        append(buffer, base.protocol());
+        buffer.append(':');
+    } else {
         switch (characters[0]) {
         case '/':
             append(buffer, StringView(base.string()).left(base.pathStart()));
