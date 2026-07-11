@@ -5155,6 +5155,14 @@ RefPtr<TextTrackCueGeneric> Internals::createGenericCue(double startTime, double
     return TextTrackCueGeneric::create(*document, MediaTime::createWithDouble(startTime), MediaTime::createWithDouble(endTime), text);
 }
 
+bool Internals::cueIsOrderedBefore(TextTrackCueGeneric& a, TextTrackCueGeneric& b)
+{
+    // isOrderedBefore() is public on TextTrackCue but a private override on
+    // TextTrackCueGeneric, so call it through a base reference (virtual
+    // dispatch still runs the generic override).
+    return static_cast<const TextTrackCue&>(a).isOrderedBefore(&b);
+}
+
 ExceptionOr<String> Internals::textTrackBCP47Language(TextTrack& track)
 {
     return String { track.validBCP47Language() };

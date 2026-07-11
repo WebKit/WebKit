@@ -1069,6 +1069,7 @@ enum ContentsFormat {
     [Conditional=VIDEO] undefined setCaptionDisplayMode(DOMString mode);
     [Conditional=VIDEO] readonly attribute DOMString captionDisplayMode;
     [Conditional=VIDEO] TextTrackCueGeneric? createGenericCue(double startTime, double endTime, DOMString text);
+    [Conditional=VIDEO] boolean cueIsOrderedBefore(TextTrackCueGeneric a, TextTrackCueGeneric b);
     [Conditional=VIDEO] DOMString textTrackBCP47Language(TextTrack track);
 
     [Conditional=VIDEO] TimeRanges createTimeRanges(Float32Array startTimes, Float32Array

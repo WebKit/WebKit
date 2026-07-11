@@ -1,0 +1,5 @@
+
+PASS isOrderedBefore is antisymmetric for equal-timing generic cues
+PASS isOrderedBefore orders equal-timing generic cues by line, not cue index
+PASS isOrderedBefore stays a strict weak ordering across many conflicting generic cues
+

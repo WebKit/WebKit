@@ -893,6 +893,7 @@ public:
     String captionDisplayMode() const;
 #if ENABLE(VIDEO)
     RefPtr<TextTrackCueGeneric> createGenericCue(double startTime, double endTime, String text);
+    bool cueIsOrderedBefore(TextTrackCueGeneric&, TextTrackCueGeneric&);
     ExceptionOr<String> textTrackBCP47Language(TextTrack&);
     Ref<TimeRanges> createTimeRanges(Float32Array& startTimes, Float32Array& endTimes);
     double closestTimeToTimeRanges(double time, TimeRanges&);
