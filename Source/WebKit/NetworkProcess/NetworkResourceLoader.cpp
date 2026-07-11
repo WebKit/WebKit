@@ -28,6 +28,8 @@
 #include "NetworkResourceLoader.h"
 
 #include "ArgumentCoders.h"
+#include "EarlyHintsPreloadCache.h"
+#include "EarlyHintsPreloadTask.h"
 #include "FormDataReference.h"
 #include "LoadedWebArchive.h"
 #include "Logging.h"
@@ -80,6 +82,7 @@
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/PendingStreamState.h>
+#include <WebCore/ReferrerPolicy.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ReportingScope.h>
 #include <WebCore/ResourceLoaderOptions.h>
@@ -253,6 +256,11 @@ bool NetworkResourceLoader::isSynchronous() const
 
 void NetworkResourceLoader::start()
 {
+    // A new main-frame navigation supersedes any early hints preloads still parked for this frame.
+    if (isMainFrameLoad()) {
+        if (CheckedPtr session = connectionToWebProcess().networkProcess().networkSession(sessionID()))
+            session->earlyHintsPreloadCache()->clear(globalFrameID());
+    }
     startRequest(originalRequest());
 }
 
@@ -286,6 +294,9 @@ void NetworkResourceLoader::startRequest(const ResourceRequest& newRequest)
                 },
                 [protectedThis] (ResourceRequest& request) {
                     LOADER_RELEASE_LOG_WITH_THIS(protectedThis, "start: NetworkLoadChecker::check is done");
+                    if (protectedThis->retrieveEarlyHintsPreload(request))
+                        return;
+
                     if (protectedThis->canUseCache(request)) {
                         protectedThis->retrieveCacheEntry(request);
                         return;
@@ -297,6 +308,9 @@ void NetworkResourceLoader::startRequest(const ResourceRequest& newRequest)
         });
         return;
     }
+    if (retrieveEarlyHintsPreload(newRequest))
+        return;
+
     // FIXME: Remove that code path once m_networkLoadChecker is used for all network loads.
     if (canUseCache(newRequest)) {
         retrieveCacheEntry(originalRequest());
@@ -334,6 +348,28 @@ void NetworkResourceLoader::startContentFiltering(ResourceRequest&& request, Com
 }
 
 #endif
+
+bool NetworkResourceLoader::retrieveEarlyHintsPreload(const ResourceRequest& request)
+{
+    CheckedPtr session = connectionToWebProcess().networkProcess().networkSession(sessionID());
+    if (!session)
+        return false;
+
+    auto storageSession = protect(connectionToWebProcess().networkProcess().storageSession(sessionID()));
+    auto entry = session->earlyHintsPreloadCache()->take(globalFrameID(), request, m_parameters.options.mode, m_parameters.storedCredentialsPolicy, storageSession.get());
+    if (!entry)
+        return false;
+
+    LOADER_RELEASE_LOG("retrieveEarlyHintsPreload: retrieved an entry from the early hints preload cache");
+    m_servedFromEarlyHintsPreload = true;
+    // The preload already seeded the network cache, so this entry only carries the response to the
+    // consumer and is never stored. Building it here rather than via NetworkCache::Cache lets an
+    // ephemeral session, which has no cache at all, still consume its preloads. The key is never used.
+    NetworkCache::Key key { request.cachePartition(), "Resource"_s, request.httpHeaderField(HTTPHeaderName::Range), request.url().stringWithoutFragmentIdentifier(), { } };
+    auto cacheEntry = makeUnique<NetworkCache::Entry>(key, entry->response, entry->privateRelayed, entry->releaseBuffer(), entry->varyingRequestHeaders);
+    retrieveCacheEntryInternal(WTF::move(cacheEntry), ResourceRequest { request });
+    return true;
+}
 
 void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
 {
@@ -995,13 +1031,17 @@ void NetworkResourceLoader::didReceiveInformationalResponse(ResourceResponse&& r
 
 void NetworkResourceLoader::handleEarlyHintsResponse(ResourceResponse&& response)
 {
-    // For consistency with other browsers, only process early hints for top-level navigation from
-    // secure origins using HTTP/2 or later.
+    // Acting on early hints at all is a UA policy (other browsers apply the same limits); the specs
+    // permit them more broadly. HTTP/1.x is declined because of the interim-response framing /
+    // cross-origin disclosure hazard in RFC 8297 section 3
+    // (https://www.rfc-editor.org/rfc/rfc8297#section-3); the https and main-frame limits are ours,
+    // to keep the initial surface small.
     if (!isMainFrameLoad() || response.url().protocol() != "https"_s || response.httpVersion().startsWith("HTTP/1"_s))
         return;
 
-    // Only the first early hint response served during the navigation is handled.
-    // FIXME: discard hints on cross-origin redirect once we support early hint preloads.
+    // Honor only the first 103. Per HTML's "create navigation params by fetching", its
+    // processEarlyHintsResponse sets commitEarlyHints only while it is null, so a later 103 is ignored.
+    // https://html.spec.whatwg.org/multipage/browsing-the-web.html#create-navigation-params-by-fetching
     if (m_hasReceivedEarlyHints)
         return;
     m_hasReceivedEarlyHints = true;
@@ -1014,13 +1054,23 @@ void NetworkResourceLoader::handleEarlyHintsResponse(ResourceResponse&& response
     ContentSecurityPolicy contentSecurityPolicy { URL { url }, this, nullptr };
     contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, originalRequest().httpReferrer());
 
+    auto documentReferrerPolicy = parseReferrerPolicy(response.httpHeaderField(HTTPHeaderName::ReferrerPolicy), ReferrerPolicySource::HTTPHeader).value_or(ReferrerPolicy::Default);
+
     LinkHeaderSet headerSet(headerValue);
+    unsigned preloadCount = 0;
     for (const auto& header : headerSet) {
         if (!header.valid() || header.url().isEmpty() || header.rel().isEmpty() || header.isViewportDependent())
             continue;
 
         if (equalLettersIgnoringASCIICase(header.rel(), "preconnect"_s))
             startPreconnectTask(url, header, contentSecurityPolicy);
+        else if (equalLettersIgnoringASCIICase(header.rel(), "preload"_s)) {
+            // Cap the fetches we issue, not just the entries the cache keeps.
+            if (preloadCount >= EarlyHintsPreloadCache::maxPreloadsPerNavigation)
+                continue;
+            ++preloadCount;
+            startPreloadTask(url, header, contentSecurityPolicy, documentReferrerPolicy);
+        }
     }
 }
 
@@ -1077,6 +1127,90 @@ void NetworkResourceLoader::startPreconnectTask(const URL& baseURL, const LinkHe
     UNUSED_PARAM(header);
     UNUSED_PARAM(contentSecurityPolicy);
 #endif
+}
+
+void NetworkResourceLoader::startPreloadTask(const URL& baseURL, const LinkHeader& header, const ContentSecurityPolicy& contentSecurityPolicy, ReferrerPolicy documentReferrerPolicy)
+{
+    auto sharedPreferences = connectionToWebProcess().sharedPreferencesForWebProcess();
+    if (!sharedPreferences || !sharedPreferences->linkPreloadEarlyHintsEnabled)
+        return;
+
+    auto destination = header.as();
+    URL url(baseURL, header.url());
+    if (!url.isValid() || url.protocol() != "https"_s)
+        return;
+
+    auto contentSecurityPolicyDecision = contentSecurityPolicy.decisionForSupportedPreload(destination, url);
+    if (!contentSecurityPolicyDecision) {
+        addConsoleMessage(MessageSource::Network, MessageLevel::Warning, makeString("Ignoring early hint preload with unsupported `as` value: "_s, destination));
+        return;
+    }
+    if (!*contentSecurityPolicyDecision)
+        return;
+
+    CheckedPtr networkSession = protect(connectionToWebProcess())->networkSession();
+    if (!networkSession)
+        return;
+
+    // Tag with the 103's origin so a later cross-origin navigation can't consume these preloads.
+    auto hintingOrigin = SecurityOriginData::fromURL(baseURL);
+
+    // Match the consumer's crossorigin semantics so the preload is reusable.
+    const auto& crossOrigin = header.crossOrigin();
+    auto mode = crossOrigin.isNull() ? FetchOptions::Mode::NoCors : FetchOptions::Mode::Cors;
+    auto storedCredentialsPolicy = StoredCredentialsPolicy::Use;
+    // Anonymous (and any invalid keyword) means same-origin credentials; only use-credentials includes them.
+    if (mode == FetchOptions::Mode::Cors && !equalLettersIgnoringASCIICase(crossOrigin, "use-credentials"_s))
+        storedCredentialsPolicy = hintingOrigin == SecurityOriginData::fromURL(url) ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
+
+    // Inherit the navigation's privacy and routing policy instead of hand-picking fields, so the
+    // preload is issued under the same conditions as the load that will consume it.
+    auto globalFrameID = this->globalFrameID();
+    auto parameters = m_parameters.networkLoadParameters();
+    parameters.contentSniffingPolicy = ContentSniffingPolicy::DoNotSniffContent;
+    parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
+    parameters.shouldPreconnectOnly = PreconnectOnly::No;
+    // A preload is a subresource fetch, not the navigation that carried the 103.
+    parameters.isMainFrameNavigation = false;
+    parameters.mainResourceNavigationDataForAnyFrame = std::nullopt;
+    // Fetch with the same downgrade startNetworkLoad would apply, but key the entry on the policy the
+    // consumer declares, since its own loader downgrades identically.
+    parameters.storedCredentialsPolicy = storedCredentialsPolicy;
+    if (parameters.storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
+        if (RefPtr networkLoadChecker = m_networkLoadChecker)
+            parameters.storedCredentialsPolicy = networkLoadChecker->storedCredentialsPolicy();
+    }
+
+    ResourceRequest request { URL { url } };
+    // The consuming document is at baseURL; originalRequest() is stale across redirects.
+    request.setFirstPartyForCookies(baseURL);
+    request.setShouldBlockThirdPartyStorage(originalRequest().shouldBlockThirdPartyStorage());
+    auto userAgent = originalRequest().httpUserAgent();
+    if (!userAgent.isEmpty())
+        request.setHTTPUserAgent(userAgent);
+    request.setHTTPMethod("GET"_s);
+    // A cors preload needs Origin so its response passes the consumer's CORS validation.
+    if (mode == FetchOptions::Mode::Cors)
+        request.setHTTPHeaderField(HTTPHeaderName::Origin, hintingOrigin.toString());
+
+    // Match the Referer the consumer would send, so the preloaded response matches.
+    auto referrerPolicy = documentReferrerPolicy;
+    // An explicitly empty referrerpolicy parses to EmptyString, which generateReferrerHeader treats as
+    // unreachable and would fall through to sending the full URL. Keep the document's policy instead.
+    auto linkReferrerPolicy = parseReferrerPolicy(header.referrerPolicy(), ReferrerPolicySource::ReferrerPolicyAttribute);
+    if (linkReferrerPolicy && *linkReferrerPolicy != ReferrerPolicy::EmptyString)
+        referrerPolicy = *linkReferrerPolicy;
+    auto referrer = SecurityPolicy::generateReferrerHeader(referrerPolicy, url, URL { baseURL.strippedForUseAsReferrer().string }, connectionToWebProcess().originAccessPatterns());
+    if (!referrer.isEmpty())
+        request.setHTTPHeaderField(HTTPHeaderName::Referer, referrer);
+
+    // Key the navigation by the partition the consumer's fetch will present.
+    networkSession->earlyHintsPreloadCache()->registerNavigation(globalFrameID, hintingOrigin, request.cachePartition());
+
+    parameters.request = WTF::move(request);
+
+    Ref preloadTask = EarlyHintsPreloadTask::create(*networkSession, WTF::move(parameters), globalFrameID, WTF::move(hintingOrigin), WTF::move(url), destination.convertToASCIILowercase(), mode, storedCredentialsPolicy);
+    preloadTask->start();
 }
 
 void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedResponse, PrivateRelayed privateRelayed, ResponseCompletionHandler&& completionHandler)
@@ -1176,6 +1310,17 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         } else
             m_cacheEntryForValidation = nullptr;
     }
+    // The final response's CSP may differ from the 103's, so drop preloads it disallows. Runs before
+    // the revalidation bail-out below; on a 304 it's the merged entry that has the headers.
+    if (m_hasReceivedEarlyHints) {
+        if (CheckedPtr session = connectionToWebProcess().networkProcess().networkSession(sessionID())) {
+            const auto& finalResponse = m_cacheEntryForValidation ? m_cacheEntryForValidation->response() : m_response;
+            ContentSecurityPolicy contentSecurityPolicy { URL { finalResponse.url() }, this, nullptr };
+            contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { finalResponse }, originalRequest().httpReferrer(), ContentSecurityPolicy::ReportParsingErrors::No);
+            session->earlyHintsPreloadCache()->pruneForFinalResponse(globalFrameID(), contentSecurityPolicy);
+        }
+    }
+
     if (m_cacheEntryForValidation)
         return completionHandler(PolicyAction::Use);
 
@@ -1558,6 +1703,15 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
     m_redirectResponse = redirectResponse;
     if (!m_firstResponseURL.isValid())
         m_firstResponseURL = redirectResponse.url();
+
+    // A cross-origin redirect discards early hints preloads and restarts processing, per
+    // https://html.spec.whatwg.org/multipage/browsing-the-web.html#create-navigation-params-by-fetching
+    // (step 21.1.3 nulls commitEarlyHints; step 21.5.1 reprocesses the new origin's hints).
+    if (isMainFrameLoad() && !protocolHostAndPortAreEqual(request.url(), redirectRequest.url())) {
+        m_hasReceivedEarlyHints = false;
+        if (CheckedPtr session = connectionToWebProcess().networkProcess().networkSession(sessionID()))
+            session->earlyHintsPreloadCache()->clear(globalFrameID());
+    }
 
 #if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter) {
@@ -2210,6 +2364,7 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
     auto dispatchDidFinishResourceLoad = [&] {
         NetworkLoadMetrics metrics;
         metrics.markComplete();
+        metrics.fromEarlyHints = m_servedFromEarlyHintsPreload;
         if (shouldCaptureExtraNetworkLoadMetrics()) {
             auto additionalMetrics = WebCore::AdditionalNetworkLoadMetricsForWebInspector::create();
             additionalMetrics->requestHeaderBytesSent = 0;
