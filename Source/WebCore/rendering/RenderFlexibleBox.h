@@ -258,8 +258,6 @@ private:
 
     void performFlexLayout(RelayoutChildren);
     FlexLayoutItems collectFlexItems(RelayoutChildren);
-    // Positions each line's items along the main axis (justify-content + auto margins).
-    void handleMainAxisAlignment(FlexLineStates&, const Vector<LayoutUnit>& remainingFreeSpaces, LayoutUnit gapBetweenItems);
     void setFlexItemCountsForFirstAndLastLine(const FlexLineStates&);
     void adjustLogicalHeightForLineIfEmpty();
 
@@ -280,12 +278,13 @@ private:
         Vector<LayoutUnit> hypotheticalMainSizes;
     };
     FlexLines computeFlexLines(FlexLayoutItems& allItems, LayoutUnit gapBetweenItems);
-    // Resolves each flex item's flexed main size (spec 9.7) for every line, and returns the resulting main-axis free space per line.
+    // Resolves each flex item's flexed main size (spec 9.7) for every line, and returns the used main size of each item.
     Vector<LayoutUnit> computeMainSizeForFlexItems(FlexLayoutItems& allItems, const FlexLines&, LayoutUnit gapBetweenItems);
     void trimCrossAxisMarginsForFlexItems(FlexLayoutItems& allItems, const FlexLines&);
     void layoutFlexItems(std::span<FlexLayoutItem>, RelayoutChildren);
     Vector<LayoutUnit> hypotheticalCrossSizeForFlexItems(const FlexLayoutItems&);
     Vector<LayoutUnit> crossSizeForFlexLines(const FlexLines&, const FlexLayoutItems&, const Vector<LayoutUnit>& hypotheticalCrossSizeList);
+    void handleMainAxisAlignment(const FlexLines&, FlexLineStates&, const Vector<LayoutUnit>& mainSizeList, LayoutUnit gapBetweenItems);
 
     LayoutUnit NODELETE autoMarginOffsetInMainAxis(std::span<const FlexLayoutItem>, LayoutUnit& availableFreeSpace);
     void NODELETE updateAutoMarginsInMainAxis(RenderBox& flexItem, LayoutUnit autoMarginOffset);
