@@ -257,7 +257,6 @@ static TemporalPlainDateTime* fromImpl(JSGlobalObject* globalObject, JSValue ite
             }
         }
 
-
         // Validate/clamp month and day at double level before double→unsigned cast.
         // static_cast<unsigned> of values >= 2^32 is UB and wraps to 0 on x86.
         if (!isNonISO) {
@@ -376,9 +375,7 @@ TemporalPlainDateTime* TemporalPlainDateTime::from(JSGlobalObject* globalObject,
         if (itemValue.inherits<TemporalZonedDateTime>()) {
             // Step 2.b.i: GetISODateTimeFor FIRST (before options — spec step order).
             auto* zdt = uncheckedDowncast<TemporalZonedDateTime>(itemValue);
-            ISO8601::PlainDate date;
-            ISO8601::PlainTime time;
-            zdt->getLocalDateAndTime(globalObject, date, time);
+            auto [date, time] = zdt->getLocalDateTime(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
             // Step 2.b.ii: GetOptionsObject + overflow.
             toTemporalOverflow(globalObject, optionsValue);

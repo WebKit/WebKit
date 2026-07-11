@@ -64,9 +64,7 @@ public:
 
     std::optional<int64_t> getOffsetNanoseconds(JSGlobalObject*) const;
 
-    // Decomposes this ZDT into local (PlainDate, PlainTime) via GetISODateTimeFor.
-    // Throws on ICU failure; out-params are valid only when no exception is set after the call.
-    void getLocalDateAndTime(JSGlobalObject*, ISO8601::PlainDate&, ISO8601::PlainTime&) const;
+    ISO8601::PlainDateTime getLocalDateTime(JSGlobalObject*) const;
 
     static std::optional<ISO8601::ExactTime> getEpochNanosecondsFor(JSGlobalObject*, const TimeZone&, const ISO8601::PlainDate&, const ISO8601::PlainTime&, TemporalDisambiguation);
 

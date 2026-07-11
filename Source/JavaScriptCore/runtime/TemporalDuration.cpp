@@ -869,14 +869,12 @@ static std::optional<double> differenceZonedDateTimeWithTotal(JSGlobalObject* gl
     }
 
     // Step 3: dateTime = GetISODateTimeFor(tz, nsA).
-    ISO8601::PlainDate startDate;
-    ISO8601::PlainTime startTime;
-    auto offsetResult = TemporalCore::getOffsetNanosecondsFor(tz, endpoints.startExact);
-    if (!offsetResult) [[unlikely]] {
-        throwRangeError(globalObject, scope, offsetResult.error().message);
+    auto isoDTResult = TemporalCore::getISODateTimeFor(tz, endpoints.startExact);
+    if (!isoDTResult) [[unlikely]] {
+        throwRangeError(globalObject, scope, isoDTResult.error().message);
         return std::nullopt;
     }
-    TemporalCore::exactTimeToLocalDateAndTime(endpoints.startExact, *offsetResult, startDate, startTime);
+    auto [startDate, startTime] = *isoDTResult;
 
     // Step 4: Return ? TotalRelativeDuration — via nudgeToCalendarUnit with Trunc/1.0.
     int32_t sign = (endpoints.nsB > endpoints.nsA) ? 1 : (endpoints.nsB < endpoints.nsA) ? -1 : 1;

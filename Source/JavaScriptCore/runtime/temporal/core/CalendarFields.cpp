@@ -724,7 +724,8 @@ TemporalResult<ResolvedCalendarDate> plainYearMonthToPlainDate(CalendarID calend
 
 // plainYearMonthFromISODate — no 1:1 temporal_rs function; inlined in PlainYearMonth::from_parsed
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporalyearmonth (string parse path)
-// Implements steps 10, 12; step 9 (ISOYearMonthWithinLimits) done by JS-layer caller.
+// Implements steps 10 and 12; the within-limits check (spec step 9) runs inside
+// yearMonthFromFields (see ISOYearMonthWithinLimits guard below in that function).
 TemporalResult<ResolvedCalendarDate> plainYearMonthFromISODate(CalendarID calendarId, const ISO8601::PlainDate& fullISODate)
 {
     bool isISO = calendarIsISO(calendarId);
@@ -754,7 +755,8 @@ TemporalResult<ResolvedCalendarDate> plainYearMonthFromISODate(CalendarID calend
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporalmonthday (string parse path)
-// Implements steps 10, 12; step 9 (ISODateWithinLimits) done by JS-layer caller.
+// Implements steps 10 and 12; the within-limits check (spec step 9) runs inside
+// monthDayFromFields (see ISODateWithinLimits guard in that function).
 TemporalResult<ResolvedCalendarDate> plainMonthDayFromISODate(CalendarID calendarId, const ISO8601::PlainDate& fullISODate, TemporalOverflow overflow)
 {
     bool isISO = calendarIsISO(calendarId);

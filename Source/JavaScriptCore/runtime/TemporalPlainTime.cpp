@@ -516,9 +516,7 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
         // Return ! CreateTemporalTime(isoDateTime.[[Time]]).
         if (itemValue.inherits<TemporalZonedDateTime>()) {
             auto* zdt = uncheckedDowncast<TemporalZonedDateTime>(itemValue);
-            ISO8601::PlainDate date;
-            ISO8601::PlainTime time;
-            zdt->getLocalDateAndTime(globalObject, date, time);
+            auto [date, time] = zdt->getLocalDateTime(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
             toTemporalOverflow(globalObject, optionsValue);
             RETURN_IF_EXCEPTION(scope, { });

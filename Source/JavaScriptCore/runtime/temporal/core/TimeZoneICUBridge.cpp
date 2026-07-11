@@ -114,38 +114,73 @@ static double isoDateTimeToLocalMs(const ISO8601::PlainDate& date, const ISO8601
     return makeDate(days, timeMs);
 }
 
-// exactTimeToLocalDateAndTime — internal: decomposes an exact epoch time + offset into PlainDate + PlainTime.
-void exactTimeToLocalDateAndTime(ISO8601::ExactTime exactTime, int64_t offsetNs, ISO8601::PlainDate& outDate, ISO8601::PlainTime& outTime)
+static constexpr std::pair<int64_t, int64_t> floorDivMod(int64_t num, int64_t denom)
 {
-    int64_t epochMs = exactTime.floorEpochMilliseconds();
-    int64_t offsetMs = offsetNs / static_cast<int64_t>(ISO8601::ExactTime::nsPerMillisecond);
-    int64_t localMs = epochMs + offsetMs;
+    int64_t q = num / denom;
+    int64_t r = num % denom;
+    if (r < 0) {
+        r += denom;
+        q -= 1;
+    }
+    return { q, r };
+}
 
-    WTF::Int64Milliseconds localMsWT(localMs);
-    int32_t days = WTF::msToDays(localMsWT);
-    int32_t timeInDayMs = WTF::timeInDay(localMsWT, days);
+// temporal_rs: IsoTime::balance (src/iso.rs:664). Cascades ns→μs→ms→s→m→h; returns overflow days.
+static std::pair<int64_t, ISO8601::PlainTime> balanceIsoTime(int64_t hour, int64_t minute, int64_t second, int64_t millisecond, int64_t microsecond, int64_t nanosecond)
+{
+    auto [nq, ns] = floorDivMod(nanosecond, 1000);
+    microsecond += nq;
+    auto [uq, us] = floorDivMod(microsecond, 1000);
+    millisecond += uq;
+    auto [mq, ms] = floorDivMod(millisecond, 1000);
+    second += mq;
+    auto [sq, s] = floorDivMod(second, 60);
+    minute += sq;
+    auto [minq, min] = floorDivMod(minute, 60);
+    hour += minq;
+    auto [days, h] = floorDivMod(hour, 24);
+    return { days, ISO8601::PlainTime(static_cast<int>(h), static_cast<int>(min), static_cast<int>(s), static_cast<int>(ms), static_cast<int>(us), static_cast<int>(ns)) };
+}
 
-    auto [year, month, day] = WTF::yearMonthDayFromDays(days);
-    // month from yearMonthDayFromDays is 0-indexed; ISO8601::PlainDate wants 1-indexed.
-    outDate = ISO8601::PlainDate(year, static_cast<uint8_t>(month + 1), static_cast<uint8_t>(day));
+// temporal_rs: IsoDate::balance (src/iso.rs:343). Normalizes (y, m, d) via epoch-days round-trip.
+static ISO8601::PlainDate balanceIsoDate(int32_t year, int32_t month, int64_t day)
+{
+    double epochDays = makeDay(year, month - 1, static_cast<int>(day));
+    auto [y, m0, d] = WTF::yearMonthDayFromDays(static_cast<int32_t>(epochDays));
+    return ISO8601::PlainDate(y, static_cast<uint8_t>(m0 + 1), static_cast<uint8_t>(d));
+}
 
-    const int32_t msPerHour = 3'600'000; // nsPerHour / nsPerMillisecond
-    const int32_t msPerMinute = 60'000; // nsPerMinute / nsPerMillisecond
-    const int32_t msPerSecond = 1'000; // nsPerSecond / nsPerMillisecond
-    int hour = timeInDayMs / msPerHour;
-    int minute = (timeInDayMs / msPerMinute) % 60;
-    int second = (timeInDayMs / msPerSecond) % 60;
-    int millisecond = timeInDayMs % msPerSecond;
+// temporal_rs: IsoDateTime::from_epoch_nanos (src/iso.rs:87).
+// Steps 2-3 of GetISODateTimeFor with caller-supplied offset.
+ISO8601::PlainDateTime exactTimeToLocalDateAndTime(ISO8601::ExactTime exactTime, int64_t offsetNs)
+{
+    // Floor-split epochNs into (epochMs, remainderNs).
+    Int128 epochNs = exactTime.epochNanoseconds();
+    Int128 nsPerMs = ISO8601::ExactTime::nsPerMillisecond;
+    Int128 remainderNs128 = epochNs % nsPerMs;
+    Int128 epochMs128 = epochNs / nsPerMs;
+    if (remainderNs128 < 0) {
+        remainderNs128 += nsPerMs;
+        epochMs128 -= 1;
+    }
+    int64_t epochMs = static_cast<int64_t>(epochMs128);
+    int64_t remainderNs = static_cast<int64_t>(remainderNs128);
 
-    // Sub-millisecond precision from the nanosecond timestamp.
-    auto epochNs = exactTime.epochNanoseconds();
-    auto nsInMs = static_cast<int32_t>(epochNs % ISO8601::ExactTime::nsPerMillisecond);
-    if (nsInMs < 0)
-        nsInMs += static_cast<int32_t>(ISO8601::ExactTime::nsPerMillisecond);
-    int microsecond = nsInMs / static_cast<int32_t>(ISO8601::ExactTime::nsPerMicrosecond);
-    int nanosecond = nsInMs % static_cast<int32_t>(ISO8601::ExactTime::nsPerMicrosecond);
+    // Raw y/m/d/h/m/s/ms from epochMs; μs/ns from remainderNs. Offset is applied by balance below.
+    WTF::Int64Milliseconds epochMsWT(epochMs);
+    int32_t days = WTF::msToDays(epochMsWT);
+    int32_t timeInDayMs = WTF::timeInDay(epochMsWT, days);
+    auto [year, month0, day] = WTF::yearMonthDayFromDays(days);
 
-    outTime = ISO8601::PlainTime(hour, minute, second, millisecond, microsecond, nanosecond);
+    int64_t hour = timeInDayMs / 3'600'000;
+    int64_t minute = (timeInDayMs / 60'000) % 60;
+    int64_t second = (timeInDayMs / 1'000) % 60;
+    int64_t millisecond = timeInDayMs % 1'000;
+    int64_t microsecond = remainderNs / 1'000;
+    int64_t nanosecond = remainderNs % 1'000;
+
+    auto [overflowDays, time] = balanceIsoTime(hour, minute, second, millisecond, microsecond, nanosecond + offsetNs);
+    return ISO8601::PlainDateTime(balanceIsoDate(year, month0 + 1, static_cast<int64_t>(day) + overflowDays), time);
 }
 
 // getOffsetNanosecondsFor — temporal_rs: TimeZone::get_offset_nanos_for (src/builtins/core/time_zone.rs)
@@ -169,6 +204,17 @@ TemporalResult<int64_t> getOffsetNanosecondsFor(const TimeZone& timeZone, ISO860
         constexpr int64_t nsPerMs = 1'000'000;
         return static_cast<int64_t>(*offsetMs) * nsPerMs;
     });
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-getisodatetimefor
+TemporalResult<ISO8601::PlainDateTime> getISODateTimeFor(const TimeZone& timeZone, ISO8601::ExactTime epochNs)
+{
+    // Step 1: Let offsetNs be GetOffsetNanosecondsFor(tz, epochNs).
+    auto offsetResult = getOffsetNanosecondsFor(timeZone, epochNs);
+    if (!offsetResult) [[unlikely]]
+        return makeUnexpected(offsetResult.error());
+    // Steps 2-3: GetISOPartsFromEpoch(ℝ(epochNs) + offsetNs) + CombineISODateAndTimeRecord.
+    return exactTimeToLocalDateAndTime(epochNs, *offsetResult);
 }
 
 // tryPreLMTFallback — workaround for ICU4C snapping pre-first-transition dates to the wrong year.
@@ -530,13 +576,10 @@ TemporalResult<ISO8601::ExactTime> addZonedDateTime(ISO8601::ExactTime startEpoc
     }
 
     // 2. Let isoDateTime be GetISODateTimeFor(timeZone, epochNanoseconds).
-    // NOTE: GetISODateTimeFor = GetOffsetNanosecondsFor + ExactTimeToLocalDateAndTime.
-    auto offsetResult = getOffsetNanosecondsFor(timeZone, startEpochNs);
-    if (!offsetResult)
-        return makeUnexpected(offsetResult.error());
-    ISO8601::PlainDate date;
-    ISO8601::PlainTime time;
-    exactTimeToLocalDateAndTime(startEpochNs, *offsetResult, date, time);
+    auto isoDateTimeResult = getISODateTimeFor(timeZone, startEpochNs);
+    if (!isoDateTimeResult) [[unlikely]]
+        return makeUnexpected(isoDateTimeResult.error());
+    auto [date, time] = *isoDateTimeResult;
 
     // 3. Let addedDate be ? CalendarDateAdd(calendar, isoDateTime.[[ISODate]], duration.[[Date]], overflow).
     ISO8601::Duration dateDuration(duration.years(), duration.months(), duration.weeks(), duration.days(), 0, 0, 0, 0, 0, 0);

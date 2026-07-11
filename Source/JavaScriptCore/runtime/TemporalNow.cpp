@@ -34,9 +34,7 @@
 #include "TemporalPlainTime.h"
 #include "TemporalZonedDateTime.h"
 #include "TimeZoneICUBridge.h"
-#include <unicode/ucal.h>
 #include <wtf/DateMath.h>
-#include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {
 
@@ -116,36 +114,34 @@ static std::optional<TimeZone> resolveNowTimeZone(JSGlobalObject* globalObject, 
     return toTemporalTimeZoneIdentifier(globalObject, arg);
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-getoffsetnanosecondsfor
-// Compute UTC offset in nanoseconds for a TimeZone at epoch milliseconds.
-// For named timezones, uses ICU to sum UCAL_ZONE_OFFSET + UCAL_DST_OFFSET.
-static int64_t getOffsetNanosecondsForTimeZone(const TimeZone& timeZone, double epochMs)
+// https://tc39.es/proposal-temporal/#sec-temporal-systemdatetime
+static ISO8601::PlainDateTime systemDateTime(JSGlobalObject* globalObject, JSValue timeZoneLike)
 {
-    if (timeZone.isUTCOffset())
-        return timeZone.utcOffsetNanoseconds();
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // Named timezone: open a temporary ICU calendar and query the offset.
-    String timeZoneForICU = timeZone.toICUString();
-    StringView view(timeZoneForICU);
-    auto upconverted = view.upconvertedCharacters();
+    // Steps 1-2: If tzLike is undefined, tz = SystemTimeZoneIdentifier(); else tz = ? ToTemporalTimeZoneIdentifier(tzLike).
+    auto tzOpt = resolveNowTimeZone(globalObject, timeZoneLike);
+    RETURN_IF_EXCEPTION(scope, { });
 
-    UErrorCode status = U_ZERO_ERROR;
-    auto calendar = std::unique_ptr<UCalendar, ICUDeleter<ucal_close>>(
-        ucal_open(upconverted, view.length(), "", UCAL_DEFAULT, &status));
-    if (U_FAILURE(status))
-        return 0;
+    // Step 3: Let epochNs be SystemUTCEpochNanoseconds().
+    auto exactTime = ISO8601::ExactTime::now();
 
-    ucal_setMillis(calendar.get(), epochMs, &status);
-    if (U_FAILURE(status))
-        return 0;
-
-    int32_t rawOffset = ucal_get(calendar.get(), UCAL_ZONE_OFFSET, &status);
-    int32_t dstOffset = ucal_get(calendar.get(), UCAL_DST_OFFSET, &status);
-    if (U_FAILURE(status))
-        return 0;
-
-    constexpr int64_t nsPerMs = static_cast<int64_t>(ISO8601::ExactTime::nsPerMillisecond);
-    return static_cast<int64_t>(rawOffset + dstOffset) * nsPerMs;
+    // Step 4: Return GetISODateTimeFor(tz, epochNs).
+    if (!tzOpt) {
+        // Fast path for system tz: use DateCache's cached offset directly,
+        // then decompose via the canonical exactTimeToLocalDateAndTime.
+        GregorianDateTime dt;
+        vm.dateCache.msToGregorianDateTime(static_cast<double>(exactTime.floorEpochMilliseconds()), TimeType::LocalTime, dt);
+        int64_t offsetNs = static_cast<int64_t>(dt.utcOffsetInMinute()) * WTF::Int64Milliseconds::msPerMinute * static_cast<int64_t>(ISO8601::ExactTime::nsPerMillisecond);
+        return TemporalCore::exactTimeToLocalDateAndTime(exactTime, offsetNs);
+    }
+    auto result = TemporalCore::getISODateTimeFor(*tzOpt, exactTime);
+    if (!result) [[unlikely]] {
+        throwTemporalError(globalObject, scope, result.error());
+        return { };
+    }
+    return *result;
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.now.plaindateiso
@@ -154,29 +150,12 @@ JSC_DEFINE_HOST_FUNCTION(temporalNowFuncPlainDateISO, (JSGlobalObject* globalObj
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // Step 1: Return ? SystemDate("iso8601", temporalTimeZoneLike).
-    // SystemDate step 1: SystemDateTime — ToTemporalTimeZoneIdentifier(temporalTimeZoneLike).
-    auto tzOpt = resolveNowTimeZone(globalObject, callFrame->argument(0));
+    // Step 1: Let isoDateTime be ? SystemDateTime(temporalTimeZoneLike).
+    auto isoDT = systemDateTime(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    // SystemDate step 1 (cont): SystemUTCEpochNanoseconds().
-    auto exactTime = ISO8601::ExactTime::now();
-    ISO8601::PlainDate plainDate;
-
-    if (!tzOpt) {
-        // Use system timezone via DateCache.
-        GregorianDateTime dt;
-        vm.dateCache.msToGregorianDateTime(static_cast<double>(exactTime.floorEpochMilliseconds()), TimeType::LocalTime, dt);
-        plainDate = ISO8601::PlainDate(dt.year(), static_cast<uint8_t>(dt.month() + 1), static_cast<uint8_t>(dt.monthDay()));
-    } else {
-        // SystemDate step 1 (cont): GetOffsetNanosecondsFor + GetISODateTimeFor.
-        int64_t offsetNs = getOffsetNanosecondsForTimeZone(*tzOpt, static_cast<double>(exactTime.floorEpochMilliseconds()));
-        ISO8601::PlainTime unusedTime;
-        TemporalCore::exactTimeToLocalDateAndTime(exactTime, offsetNs, plainDate, unusedTime);
-    }
-
-    // SystemDate step 2: CreateTemporalDate(isoDateTime.[[ISODate]], "iso8601").
-    return JSValue::encode(TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTF::move(plainDate)));
+    // Step 2: Return ! CreateTemporalDate(isoDateTime.[[ISODate]], "iso8601").
+    return JSValue::encode(TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTF::move(isoDT.date)));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.now.plaindatetimeiso
@@ -185,31 +164,12 @@ JSC_DEFINE_HOST_FUNCTION(temporalNowFuncPlainDateTimeISO, (JSGlobalObject* globa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // Step 1: Return ? SystemDateTime("iso8601", temporalTimeZoneLike).
-    // SystemDateTime step 1: ToTemporalTimeZoneIdentifier(temporalTimeZoneLike).
-    auto tzOpt = resolveNowTimeZone(globalObject, callFrame->argument(0));
+    // Step 1: Let isoDateTime be ? SystemDateTime(temporalTimeZoneLike).
+    auto isoDT = systemDateTime(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    // SystemDateTime step 2: SystemUTCEpochNanoseconds().
-    auto exactTime = ISO8601::ExactTime::now();
-    ISO8601::PlainDate plainDate;
-    ISO8601::PlainTime plainTime;
-
-    if (!tzOpt) {
-        // Use system timezone via DateCache for millisecond resolution.
-        GregorianDateTime dt;
-        vm.dateCache.msToGregorianDateTime(static_cast<double>(exactTime.floorEpochMilliseconds()), TimeType::LocalTime, dt);
-        // Reconstruct offset from the system timezone to reuse exactTimeToLocalDateAndTime for sub-ms.
-        int64_t offsetMs = static_cast<int64_t>(dt.utcOffsetInMinute()) * WTF::Int64Milliseconds::msPerMinute;
-        TemporalCore::exactTimeToLocalDateAndTime(exactTime, offsetMs * static_cast<int64_t>(ISO8601::ExactTime::nsPerMillisecond), plainDate, plainTime);
-    } else {
-        // SystemDateTime step 3: GetISODateTimeFor(timeZone, epochNs).
-        int64_t offsetNs = getOffsetNanosecondsForTimeZone(*tzOpt, static_cast<double>(exactTime.floorEpochMilliseconds()));
-        TemporalCore::exactTimeToLocalDateAndTime(exactTime, offsetNs, plainDate, plainTime);
-    }
-
-    // Step 1 (cont): CreateTemporalDateTime(isoDateTime, "iso8601").
-    return JSValue::encode(TemporalPlainDateTime::create(vm, globalObject->plainDateTimeStructure(), WTF::move(plainDate), WTF::move(plainTime)));
+    // Step 2: Return ! CreateTemporalDateTime(isoDateTime, "iso8601").
+    return JSValue::encode(TemporalPlainDateTime::create(vm, globalObject->plainDateTimeStructure(), WTF::move(isoDT.date), WTF::move(isoDT.time)));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.now.plaintimeiso
@@ -218,29 +178,12 @@ JSC_DEFINE_HOST_FUNCTION(temporalNowFuncPlainTimeISO, (JSGlobalObject* globalObj
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // Step 1: Return ? SystemTime("iso8601", temporalTimeZoneLike).
-    // SystemTime step 1: ToTemporalTimeZoneIdentifier(temporalTimeZoneLike).
-    auto tzOpt = resolveNowTimeZone(globalObject, callFrame->argument(0));
+    // Step 1: Let isoDateTime be ? SystemDateTime(temporalTimeZoneLike).
+    auto isoDT = systemDateTime(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    // SystemTime step 2: SystemUTCEpochNanoseconds().
-    auto exactTime = ISO8601::ExactTime::now();
-    ISO8601::PlainDate unusedDate;
-    ISO8601::PlainTime plainTime;
-
-    if (!tzOpt) {
-        GregorianDateTime dt;
-        vm.dateCache.msToGregorianDateTime(static_cast<double>(exactTime.floorEpochMilliseconds()), TimeType::LocalTime, dt);
-        int64_t offsetMs = static_cast<int64_t>(dt.utcOffsetInMinute()) * WTF::Int64Milliseconds::msPerMinute;
-        TemporalCore::exactTimeToLocalDateAndTime(exactTime, offsetMs * static_cast<int64_t>(ISO8601::ExactTime::nsPerMillisecond), unusedDate, plainTime);
-    } else {
-        // SystemTime step 3: GetISODateTimeFor(timeZone, epochNs).
-        int64_t offsetNs = getOffsetNanosecondsForTimeZone(*tzOpt, static_cast<double>(exactTime.floorEpochMilliseconds()));
-        TemporalCore::exactTimeToLocalDateAndTime(exactTime, offsetNs, unusedDate, plainTime);
-    }
-
-    // Step 1 (cont): CreateTemporalTime(isoDateTime.[[Time]]).
-    return JSValue::encode(TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTF::move(plainTime)));
+    // Step 2: Return ! CreateTemporalTime(isoDateTime.[[Time]]).
+    return JSValue::encode(TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTF::move(isoDT.time)));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.now.zoneddatetimeiso
@@ -249,18 +192,15 @@ JSC_DEFINE_HOST_FUNCTION(temporalNowFuncZonedDateTimeISO, (JSGlobalObject* globa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    // Step 1: If temporalTimeZoneLike is undefined, let tz be SystemTimeZoneIdentifier();
+    //   else, let tz be ? ToTemporalTimeZoneIdentifier(temporalTimeZoneLike).
     auto tzOpt = resolveNowTimeZone(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
+    TimeZone tz = tzOpt ? *tzOpt : vm.dateCache.defaultTimeZone();
 
-    auto exactTime = ISO8601::ExactTime::now();
-
-    TimeZone tz;
-    if (tzOpt)
-        tz = *tzOpt;
-    else
-        tz = vm.dateCache.defaultTimeZone();
-
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::create(vm, globalObject->zonedDateTimeStructure(), exactTime, tz, iso8601CalendarID())));
+    // Step 2: Let epochNs be SystemUTCEpochNanoseconds().
+    // Step 3: Return ! CreateTemporalZonedDateTime(epochNs, tz, "iso8601").
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::create(vm, globalObject->zonedDateTimeStructure(), ISO8601::ExactTime::now(), tz, iso8601CalendarID())));
 }
 
 } // namespace JSC

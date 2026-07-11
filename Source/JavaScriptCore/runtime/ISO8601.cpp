@@ -46,6 +46,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace JSC {
 namespace ISO8601 {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlainDateTime);
+
 static constexpr int64_t nsPerHour = 1000LL * 1000 * 1000 * 60 * 60;
 static constexpr int64_t nsPerMinute = 1000LL * 1000 * 1000 * 60;
 static constexpr int64_t nsPerSecond = 1000LL * 1000 * 1000;

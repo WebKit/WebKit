@@ -165,17 +165,15 @@ static TemporalResult<ISO8601::InternalDuration> differenceZonedDateTime(ISO8601
     if (nsA == nsB)
         return ISO8601::InternalDuration::combineDateAndTimeDuration(ISO8601::Duration(), 0);
 
-    // Steps 2–3: GetISODateTimeFor(timeZone, ns1/ns2). (split: getOffsetNanosecondsFor + exactTimeToLocalDateAndTime)
-    auto offset1Result = getOffsetNanosecondsFor(timeZone, ns1);
-    if (!offset1Result)
-        return makeUnexpected(offset1Result.error());
-    auto offset2Result = getOffsetNanosecondsFor(timeZone, ns2);
-    if (!offset2Result)
-        return makeUnexpected(offset2Result.error());
-    ISO8601::PlainDate startDate, endDate;
-    ISO8601::PlainTime startTime, endTime;
-    exactTimeToLocalDateAndTime(ns1, *offset1Result, startDate, startTime);
-    exactTimeToLocalDateAndTime(ns2, *offset2Result, endDate, endTime);
+    // Steps 2–3: GetISODateTimeFor(timeZone, ns1/ns2).
+    auto startResult = getISODateTimeFor(timeZone, ns1);
+    if (!startResult) [[unlikely]]
+        return makeUnexpected(startResult.error());
+    auto endResult = getISODateTimeFor(timeZone, ns2);
+    if (!endResult) [[unlikely]]
+        return makeUnexpected(endResult.error());
+    auto [startDate, startTime] = *startResult;
+    auto [endDate, endTime] = *endResult;
 
     // Step 4: If startDate = endDate -> timeDuration = ns2 - ns1, return.
     if (!isoDateCompare(startDate, endDate))
@@ -278,13 +276,11 @@ TemporalResult<ISO8601::InternalDuration> differenceZonedDateTimeWithRounding(
     if (smallestUnit == TemporalUnit::Nanosecond && increment == 1)
         return internalDuration;
 
-    // Step 4: dateTime = GetISODateTimeFor(timeZone, ns1). (split: getOffsetNanosecondsFor + exactTimeToLocalDateAndTime)
-    auto offset1 = getOffsetNanosecondsFor(timeZone, ns1);
-    if (!offset1)
-        return makeUnexpected(offset1.error());
-    ISO8601::PlainDate startDate;
-    ISO8601::PlainTime startTime;
-    exactTimeToLocalDateAndTime(ns1, *offset1, startDate, startTime);
+    // Step 4: dateTime = GetISODateTimeFor(timeZone, ns1).
+    auto startResult = getISODateTimeFor(timeZone, ns1);
+    if (!startResult) [[unlikely]]
+        return makeUnexpected(startResult.error());
+    auto [startDate, startTime] = *startResult;
 
     // Step 5: Return RoundRelativeDuration(difference, ns1, ns2, dateTime, ...).
     auto roundResult = roundRelativeDuration(internalDuration, nsA, nsB, startDate, startTime,

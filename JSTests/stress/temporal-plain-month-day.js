@@ -277,5 +277,3 @@ function shouldThrowAny(fn, msg) {
     shouldThrow(() => Temporal.PlainMonthDay.from({ year: 2018, era: "ce", eraYear: 2024, month: 3, day: 15, calendar: "gregory" }),
         RangeError, "PMD gregory from year+era inconsistent");
 }
-
-print("PASS");

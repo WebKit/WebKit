@@ -624,7 +624,7 @@ static TemporalResult<std::optional<NudgeWindow>> computeNudgeWindow(
         startEpochNs = originEpochNs;
     else {
         auto startResult = TemporalCore::calendarDateAdd(calendarId, isoDate, startDuration, TemporalOverflow::Constrain);
-        if (!startResult)
+        if (!startResult) [[unlikely]]
             return makeUnexpected(startResult.error());
         auto start = *startResult;
         double startDayCount = dateToDaysFrom1970(start.year(), static_cast<int>(start.month()) - 1, static_cast<int>(start.day()));
@@ -637,7 +637,7 @@ static TemporalResult<std::optional<NudgeWindow>> computeNudgeWindow(
     }
     // Step 9: end = CalendarDateAdd(calendar, isoDateTime.[[ISODate]], endDuration, constrain).
     auto endResult = TemporalCore::calendarDateAdd(calendarId, isoDate, endDuration, TemporalOverflow::Constrain);
-    if (!endResult)
+    if (!endResult) [[unlikely]]
         return makeUnexpected(endResult.error());
     auto end = *endResult;
     double endDayCount = dateToDaysFrom1970(end.year(), static_cast<int>(end.month()) - 1, static_cast<int>(end.day()));
@@ -732,7 +732,7 @@ TemporalResult<NudgeResult> nudgeToZonedTime(int32_t sign,
 {
     // Step 1: Let start be ? CalendarDateAdd(calendar, isoDateTime.[[ISODate]], duration.[[Date]], ~constrain~).
     auto startResult = TemporalCore::calendarDateAdd(calendarId, isoDate, duration.dateDuration(), TemporalOverflow::Constrain);
-    if (!startResult)
+    if (!startResult) [[unlikely]]
         return makeUnexpected(startResult.error());
     auto start = *startResult;
     // Step 2: startDateTime = CombineISODateAndTimeRecord(start, isoDateTime.[[Time]]).
@@ -882,7 +882,7 @@ TemporalResult<ISO8601::InternalDuration> bubbleRelativeDuration(
             }
             // Step 6.b.iv: Let end be ? CalendarDateAdd(calendar, isoDateTime.[[ISODate]], endDuration, ~constrain~).
             auto endResult = TemporalCore::calendarDateAdd(calendarId, isoDate, endDuration, TemporalOverflow::Constrain);
-            if (!endResult)
+            if (!endResult) [[unlikely]]
                 return makeUnexpected(endResult.error());
             // Step 6.b.v: endDateTime = CombineISODateAndTimeRecord(end, isoDateTime.[[Time]]).
             // Step 6.b.vi: endEpochNs = GetUTCEpochNanoseconds/GetEpochNanosecondsFor. (v+vi fused)

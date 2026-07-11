@@ -391,6 +391,22 @@ private:
 };
 static_assert(sizeof(PlainDate) == sizeof(int32_t));
 
+class PlainDateTime {
+    WTF_MAKE_TZONE_ALLOCATED(PlainDateTime);
+public:
+    constexpr PlainDateTime() = default;
+    constexpr PlainDateTime(PlainDate d, PlainTime t)
+        : date(d)
+        , time(t)
+    {
+    }
+
+    friend bool operator==(const PlainDateTime&, const PlainDateTime&) = default;
+
+    PlainDate date { };
+    PlainTime time { };
+};
+
 class PlainYearMonth final {
     WTF_MAKE_TZONE_ALLOCATED(PlainYearMonth);
 public:

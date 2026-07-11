@@ -2862,22 +2862,20 @@ static void testCalendarICUNonISO()
 
 static void testExactTimeToLocalDateAndTime()
 {
-    ISO8601::PlainDate date;
-    ISO8601::PlainTime time;
     // epoch=0, offset=0 -> 1970-01-01T00:00:00
-    exactTimeToLocalDateAndTime(ISO8601::ExactTime(Int128(0)), 0, date, time);
+    auto [date, time] = exactTimeToLocalDateAndTime(ISO8601::ExactTime(Int128(0)), 0);
     TCHECK_EQ(date.year(), 1970, "localDT: epoch year");
     TCHECK_EQ(date.month(), 1u, "localDT: epoch month");
     TCHECK_EQ(date.day(), 1u, "localDT: epoch day");
     TCHECK_EQ(time.hour(), 0u, "localDT: epoch hour");
     // epoch=86400000000000 (1 day), offset=0 -> 1970-01-02T00:00:00
-    exactTimeToLocalDateAndTime(ISO8601::ExactTime(Int128(86400000000000LL)), 0, date, time);
-    TCHECK_EQ(date.year(), 1970, "localDT: +1day year");
-    TCHECK_EQ(date.day(), 2u, "localDT: +1day day");
+    auto [date2, time2] = exactTimeToLocalDateAndTime(ISO8601::ExactTime(Int128(86400000000000LL)), 0);
+    TCHECK_EQ(date2.year(), 1970, "localDT: +1day year");
+    TCHECK_EQ(date2.day(), 2u, "localDT: +1day day");
     // offset=-18000000000000 ns (UTC-5): epoch=0 -> 1969-12-31T19:00:00
-    exactTimeToLocalDateAndTime(ISO8601::ExactTime(Int128(0)), -18000000000000LL, date, time);
-    TCHECK_EQ(date.year(), 1969, "localDT: UTC-5 epoch year");
-    TCHECK_EQ(time.hour(), 19u, "localDT: UTC-5 epoch hour");
+    auto [date3, time3] = exactTimeToLocalDateAndTime(ISO8601::ExactTime(Int128(0)), -18000000000000LL);
+    TCHECK_EQ(date3.year(), 1969, "localDT: UTC-5 epoch year");
+    TCHECK_EQ(time3.hour(), 19u, "localDT: UTC-5 epoch hour");
 }
 
 static void testInterpretISODateTimeOffset()
@@ -3240,11 +3238,9 @@ static void testToZonedDateTime()
     auto r = getEpochNanosecondsFor(utc, { 2020, 1, 1 }, { 0, 0, 0, 0, 0, 0 }, TemporalDisambiguation::Compatible);
     TCHECK_TRUE(r.has_value(), "toZDT: 2020-01-01 UTC ok");
     // Verify round-trip: epoch -> local date/time
-    ISO8601::PlainDate date;
-    ISO8601::PlainTime time;
     auto offset = getOffsetNanosecondsFor(utc, *r);
     TCHECK_TRUE(offset.has_value(), "toZDT: offset ok");
-    exactTimeToLocalDateAndTime(*r, *offset, date, time);
+    auto [date, time] = exactTimeToLocalDateAndTime(*r, *offset);
     TCHECK_EQ(date.year(), 2020, "toZDT: year=2020");
     TCHECK_EQ(date.month(), 1u, "toZDT: month=1");
     TCHECK_EQ(date.day(), 1u, "toZDT: day=1");

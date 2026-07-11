@@ -190,9 +190,7 @@ static TemporalPlainDate* fromImpl(JSGlobalObject* globalObject, JSValue itemVal
 
         if (itemValue.inherits<TemporalZonedDateTime>()) {
             auto* zdt = uncheckedDowncast<TemporalZonedDateTime>(itemValue);
-            ISO8601::PlainDate date;
-            ISO8601::PlainTime time;
-            zdt->getLocalDateAndTime(globalObject, date, time);
+            auto [date, time] = zdt->getLocalDateTime(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
             if (!TemporalCore::calendarIsISO(zdt->calendarID()))
                 return TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTF::move(date), String(zdt->calendarId()));
@@ -295,9 +293,7 @@ TemporalPlainDate* TemporalPlainDate::from(JSGlobalObject* globalObject, JSValue
         //   GetISODateTimeFor (before options, per spec order) + overflow + CreateTemporalDate.
         if (itemValue.inherits<TemporalZonedDateTime>()) {
             auto* zdt = uncheckedDowncast<TemporalZonedDateTime>(itemValue);
-            ISO8601::PlainDate date;
-            ISO8601::PlainTime time;
-            zdt->getLocalDateAndTime(globalObject, date, time);
+            auto [date, time] = zdt->getLocalDateTime(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
             toTemporalOverflow(globalObject, optionsValue);
             RETURN_IF_EXCEPTION(scope, { });
