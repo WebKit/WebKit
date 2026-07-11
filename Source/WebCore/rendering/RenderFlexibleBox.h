@@ -258,8 +258,6 @@ private:
 
     void performFlexLayout(RelayoutChildren);
     FlexLayoutItems collectFlexItems(RelayoutChildren);
-    // Sizes every flex line and lays out its items, returning the line states together with each line's remaining main-axis free space.
-    std::pair<FlexLineStates, Vector<LayoutUnit>> layoutFlexLines(FlexLayoutItems& allItems, RelayoutChildren, LayoutUnit gapBetweenItems);
     // Positions each line's items along the main axis (justify-content + auto margins).
     void handleMainAxisAlignment(FlexLineStates&, const Vector<LayoutUnit>& remainingFreeSpaces, LayoutUnit gapBetweenItems);
     void setFlexItemCountsForFirstAndLastLine(const FlexLineStates&);
@@ -286,8 +284,8 @@ private:
     Vector<LayoutUnit> computeMainSizeForFlexItems(FlexLayoutItems& allItems, const FlexLines&, LayoutUnit gapBetweenItems);
     void trimCrossAxisMarginsForFlexItems(FlexLayoutItems& allItems, const FlexLines&);
     void layoutFlexItems(std::span<FlexLayoutItem>, RelayoutChildren);
-    // Measures every flex line's cross size up front, returning the line states (cross-axis offset, cross extent, baseline groups) ready for placement.
-    FlexLineStates computeCrossSizeForFlexLines(FlexLayoutItems& allItems, const FlexLines&);
+    Vector<LayoutUnit> hypotheticalCrossSizeForFlexItems(const FlexLayoutItems&);
+    Vector<LayoutUnit> crossSizeForFlexLines(const FlexLines&, const FlexLayoutItems&, const Vector<LayoutUnit>& hypotheticalCrossSizeList);
 
     LayoutUnit NODELETE autoMarginOffsetInMainAxis(std::span<const FlexLayoutItem>, LayoutUnit& availableFreeSpace);
     void NODELETE updateAutoMarginsInMainAxis(RenderBox& flexItem, LayoutUnit autoMarginOffset);
@@ -344,13 +342,6 @@ private:
     // A line almost always has a single baseline-sharing group (at most 3 can exist), so keep one inline.
     using BaselineSharingGroups = Vector<BaselineSharingGroup, 1>;
 
-    struct FlexLineResult {
-        LayoutUnit crossAxisOffsetForNextLine;
-        LayoutUnit crossAxisExtent;
-        BaselineSharingGroups baselineSharingGroups;
-    };
-    // Measures each flex item's hypothetical cross size, returning the line's cross extent, its baseline sharing groups, and the next line's cross-axis offset.
-    FlexLineResult hypotheticalCrossSizeForFlexItems(std::span<const FlexLayoutItem>, LayoutUnit crossAxisOffset);
     void placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayoutItem>, LayoutUnit availableFreeSpace, LayoutUnit gapBetweenItems);
     void layoutFlexItemAfterMainSizing(FlexLayoutItem&, RelayoutChildren);
     void layoutColumnReverse(std::span<FlexLayoutItem>, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit gapBetweenItems);
