@@ -680,16 +680,14 @@ void VTTCue::determineTextDirection()
         if (!current || isCueParagraphSeparator(current))
             return;
 
-        if (char16_t current = paragraph[i]) {
-            UCharDirection charDirection = u_charDirection(current);
-            if (charDirection == U_LEFT_TO_RIGHT) {
-                m_displayDirection = CSSValueLtr;
-                return;
-            }
-            if (charDirection == U_RIGHT_TO_LEFT || charDirection == U_RIGHT_TO_LEFT_ARABIC) {
-                m_displayDirection = CSSValueRtl;
-                return;
-            }
+        UCharDirection charDirection = u_charDirection(current);
+        if (charDirection == U_LEFT_TO_RIGHT) {
+            m_displayDirection = CSSValueLtr;
+            return;
+        }
+        if (charDirection == U_RIGHT_TO_LEFT || charDirection == U_RIGHT_TO_LEFT_ARABIC) {
+            m_displayDirection = CSSValueRtl;
+            return;
         }
     }
 }
