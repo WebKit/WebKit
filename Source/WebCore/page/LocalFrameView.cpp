@@ -3,7 +3,7 @@
  *                     1999 Lars Knoll <knoll@kde.org>
  *                     1999 Antti Koivisto <koivisto@kde.org>
  *                     2000 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2009 Google Inc. All rights reserved.
@@ -90,6 +90,7 @@
 #include "PageColorSampler.h"
 #include "PageInspectorController.h"
 #include "PageOverlayController.h"
+#include "ParsedContentType.h"
 #include "PerformanceLoggingClient.h"
 #include "PlatformRenderTheme.h"
 #include "ProgressTracker.h"
@@ -3141,6 +3142,15 @@ bool LocalFrameView::scrollToTextFragment(IsRetry isRetry)
         return false;
 
     if (!m_frame->isMainFrame())
+        return false;
+
+    // Text directives are only processed in text/html and text/plain documents. Parse the
+    // content type so that a MIME parameter (e.g. "text/html; charset=UTF-8") is ignored.
+    auto parsedContentType = ParsedContentType::create(document->contentType());
+    if (!parsedContentType)
+        return false;
+    auto mimeType = parsedContentType->mimeType();
+    if (!equalLettersIgnoringASCIICase(mimeType, "text/html"_s) && !equalLettersIgnoringASCIICase(mimeType, "text/plain"_s))
         return false;
 
     // Block text fragments in cross-origin window.open() popups
