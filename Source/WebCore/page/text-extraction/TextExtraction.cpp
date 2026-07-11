@@ -38,6 +38,7 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "ElementAncestorIteratorInlines.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementInlines.h"
 #include "EventHandler.h"
 #include "EventListenerMap.h"
@@ -67,6 +68,7 @@
 #include "JSNode.h"
 #include "LocalFrame.h"
 #include "NodeList.h"
+#include "NodeTraversal.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
@@ -80,6 +82,9 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGSVGElement.h"
+#include "SVGTitleElement.h"
 #include "Settings.h"
 #include "SimpleRange.h"
 #include "StaticRange.h"
@@ -692,6 +697,22 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
             .completedSource = completedSourceURL,
             .shortenedName = StringEntropyHelpers::lowEntropyLastPathComponent(completedSourceURL, "image"_s, mimeType),
             .altText = image->altText(),
+        } };
+    }
+
+    if (RefPtr svg = dynamicDowncast<SVGSVGElement>(element)) {
+        auto altText = normalizeText(element->attributeWithoutSynchronization(HTMLNames::aria_labelAttr));
+        if (altText.isEmpty()) {
+            for (Ref title : childrenOfType<SVGTitleElement>(*svg)) {
+                altText = normalizeText(title->textContent());
+                break;
+            }
+        }
+
+        return { ImageItemData {
+            .completedSource = { },
+            .shortenedName = { },
+            .altText = WTF::move(altText),
         } };
     }
 
@@ -2191,6 +2212,55 @@ static RefPtr<Element> closestLinkOrButtonAncestor(const Element& element)
     return nullptr;
 }
 
+static bool containsLetterOrDigit(StringView text)
+{
+    return text.contains([](auto character) {
+        return u_isalpha(character) || u_isdigit(character);
+    });
+}
+
+static String precedingRenderedTextLabel(const Element& element)
+{
+    static constexpr unsigned maximumPrecedingTextNodesToSearch = 16;
+    static constexpr unsigned maximumAdjacentTextLength = 40;
+
+    RefPtr stayWithin = element.document().documentElement();
+    unsigned examinedTextNodes = 0;
+    Vector<String> collectedInReverse;
+    for (RefPtr node = NodeTraversal::previous(element, stayWithin.get()); node; node = NodeTraversal::previous(*node, stayWithin.get())) {
+        RefPtr text = dynamicDowncast<Text>(*node);
+        if (!text || !text->renderer())
+            continue;
+
+        if (shouldTreatAsPasswordField(text->shadowHost()))
+            continue;
+
+        if (++examinedTextNodes > maximumPrecedingTextNodesToSearch)
+            break;
+
+        auto normalized = normalizeText(text->data());
+        if (normalized.isEmpty())
+            continue;
+
+        collectedInReverse.append(normalized);
+        if (containsLetterOrDigit(normalized))
+            break;
+    }
+
+    collectedInReverse.reverse();
+    if (collectedInReverse.isEmpty())
+        return { };
+
+    auto joined = makeStringByJoining(collectedInReverse, " "_s);
+    if (!containsLetterOrDigit(joined))
+        return { };
+
+    if (joined.length() > maximumAdjacentTextLength)
+        joined = makeString(StringView { joined }.left(maximumAdjacentTextLength - 3), "..."_s);
+
+    return joined;
+}
+
 static String textDescription(const Element& element, Vector<String>& stringsToValidate, bool isTargetElement = true)
 {
     StringBuilder description;
@@ -2205,30 +2275,35 @@ static String textDescription(const Element& element, Vector<String>& stringsToV
         description.append(tagName);
 
     auto needsParentContext = true;
+    auto hasAccessibleName = false;
 
     if (element.isLink()) {
         if (auto text = normalizeText(element.attributeWithoutSynchronization(HTMLNames::hrefAttr)); !text.isEmpty()) {
             description.append(makeString(" with href "_s, wrapWithDoubleQuotes(WTF::move(text))));
             stringsToValidate.append(WTF::move(text));
             needsParentContext = false;
+            hasAccessibleName = true;
         }
     }
 
     if (auto text = normalizeText(element.attributeWithoutSynchronization(HTMLNames::roleAttr)); !text.isEmpty() && text != tagName) {
         description.append(makeString(" with role "_s, wrapWithDoubleQuotes(WTF::move(text))));
         needsParentContext = false;
+        hasAccessibleName = true;
     }
 
     if (auto text = normalizedLabelText(element); !text.isEmpty()) {
         description.append(makeString(" labeled "_s, wrapWithDoubleQuotes(WTF::move(text))));
         stringsToValidate.append(WTF::move(text));
         needsParentContext = false;
+        hasAccessibleName = true;
     }
 
     if (auto text = normalizeText(element.attributeWithoutSynchronization(HTMLNames::titleAttr)); !text.isEmpty()) {
         description.append(makeString(" titled "_s, wrapWithDoubleQuotes(WTF::move(text))));
         stringsToValidate.append(WTF::move(text));
         needsParentContext = false;
+        hasAccessibleName = true;
     }
 
     if (auto text = element.attributeWithoutSynchronization(HTMLNames::typeAttr); !text.isEmpty() && text != tagName)
@@ -2238,6 +2313,7 @@ static String textDescription(const Element& element, Vector<String>& stringsToV
         description.append(makeString(" with placeholder "_s, wrapWithDoubleQuotes(WTF::move(text))));
         stringsToValidate.append(WTF::move(text));
         needsParentContext = false;
+        hasAccessibleName = true;
     }
 
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(element)) {
@@ -2250,6 +2326,7 @@ static String textDescription(const Element& element, Vector<String>& stringsToV
                 description.append(makeString(" with value "_s, wrapWithDoubleQuotes(WTF::move(text))));
                 stringsToValidate.append(WTF::move(text));
                 needsParentContext = false;
+                hasAccessibleName = true;
             }
         }
     }
@@ -2286,6 +2363,19 @@ static String textDescription(const Element& element, Vector<String>& stringsToV
             auto ancestorDescription = textDescription(*ancestor, stringsToValidate, false);
             if (!ancestorDescription.isEmpty())
                 return makeString(WTF::move(elementDescription), " under "_s, WTF::move(ancestorDescription));
+        }
+    }
+
+    if (isTargetElement && !hasAccessibleName && (is<HTMLImageElement>(element) || element.isSVGElement())) {
+        bool hasImageAltText = false;
+        if (RefPtr image = dynamicDowncast<HTMLImageElement>(element))
+            hasImageAltText = !normalizeText(image->altText()).isEmpty();
+
+        if (!hasImageAltText) {
+            if (auto neighborText = precedingRenderedTextLabel(element); !neighborText.isEmpty()) {
+                stringsToValidate.append(neighborText);
+                return makeString(WTF::move(elementDescription), " after rendered text "_s, wrapWithDoubleQuotes(WTF::move(neighborText)));
+            }
         }
     }
 

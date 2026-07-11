@@ -365,6 +365,36 @@ TEST(TextExtractionTests, InteractionDebugDescription)
     }
 }
 
+TEST(TextExtractionTests, InteractionDescriptionUsesAdjacentTextForUnlabeledIcon)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView synchronouslyLoadHTMLString:@"<div><span>Full Name</span><svg width='16' height='16' class='pencil1' onclick=''></svg></div>"
+        "<div><span>Password</span><span>********</span><svg width='16' height='16' class='pencil2' onclick=''></svg></div>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:nil];
+    RetainPtr nameIconID = extractNodeIdentifier(debugText, @"pencil1");
+    RetainPtr passwordIconID = extractNodeIdentifier(debugText, @"pencil2");
+    EXPECT_NOT_NULL(nameIconID);
+    EXPECT_NOT_NULL(passwordIconID);
+
+    NSError *error = nil;
+    NSString *description = nil;
+    RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+
+    [interaction setNodeIdentifier:nameIconID];
+    description = [interaction debugDescriptionInWebView:webView error:&error];
+    EXPECT_WK_STREQ("Click on svg with class “pencil1” after rendered text “Full Name”", description);
+    EXPECT_NULL(error);
+
+    [interaction setNodeIdentifier:passwordIconID];
+    description = [interaction debugDescriptionInWebView:webView error:&error];
+    EXPECT_WK_STREQ("Click on svg with class “pencil2” after rendered text “Password ********”", description);
+    EXPECT_NULL(error);
+}
+
 TEST(TextExtractionTests, InteractionDebugDescriptionWithStaleNodeIdentifier)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
