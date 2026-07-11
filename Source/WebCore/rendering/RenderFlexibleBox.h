@@ -175,7 +175,6 @@ private:
         const std::pair<LayoutUnit, LayoutUnit> minMaxSizes;
         const LayoutUnit hypotheticalMainContentSize;
         LayoutUnit flexedContentSize;
-        bool frozen { false };
         bool everHadLayout { false };
         LayoutPoint flowAwareLocation;
     };
@@ -323,9 +322,9 @@ private:
     LayoutUnit adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(const RenderBox& flexItem, LayoutUnit flexItemSize);
     FlexBaseAndHypotheticalMainSize flexBaseAndHypotheticalMainSize(RenderBox&);
     
-    void freezeInflexibleItems(FlexSign, std::span<FlexLayoutItem>, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
-    bool resolveFlexibleLengths(FlexSign, std::span<FlexLayoutItem>, LayoutUnit initialFreeSpace, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
-    void freezeViolations(Vector<FlexLayoutItem*, 4>&, LayoutUnit& availableFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
+    void freezeInflexibleItems(FlexSign, std::span<FlexLayoutItem>, Vector<bool>& frozen, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
+    bool resolveFlexibleLengths(FlexSign, std::span<FlexLayoutItem>, Vector<bool>& frozen, LayoutUnit initialFreeSpace, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
+    void freezeViolations(Vector<size_t, 4>&, std::span<FlexLayoutItem>, Vector<bool>& frozen, LayoutUnit& availableFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
     
     void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& flexItem);
     void setOverridingMainSizeForFlexItem(RenderBox&, LayoutUnit);
