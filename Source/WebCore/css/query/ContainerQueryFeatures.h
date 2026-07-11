@@ -55,6 +55,8 @@ const MQ::FeatureSchema& style();
 // (scrollable/scrolled/stuck/snapped), or nullptr. Used inside scroll-state().
 const MQ::FeatureSchema* scrollState(const AtomString&);
 
+bool isScrollStateFeature(const MQ::FeatureSchema*);
+
 Vector<const MQ::FeatureSchema*> allSchemas();
 
 } // namespace Features

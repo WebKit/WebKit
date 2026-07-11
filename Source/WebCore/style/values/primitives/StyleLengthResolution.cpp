@@ -276,7 +276,7 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
             : Style::ContainerQueryEvaluator::SelectionMode::PseudoElement;
 
         // "The query container for each axis is the nearest ancestor container that accepts container size queries on that axis."
-        while ((element = Style::ContainerQueryEvaluator::selectContainer(physicalAxis, nullString(), *element, mode))) {
+        while ((element = Style::ContainerQueryEvaluator::selectContainer(CQ::ContainerRequirements { physicalAxis }, nullString(), *element, mode))) {
             auto* containerRenderer = dynamicDowncast<RenderBox>(element->renderer());
             if (containerRenderer && containerRenderer->hasEligibleContainmentForSizeQuery()) {
                 auto widthOrHeight = physicalAxis == CQ::Axis::Width ? containerRenderer->contentBoxWidth() : containerRenderer->contentBoxHeight();

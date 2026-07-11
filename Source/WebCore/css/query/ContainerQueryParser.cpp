@@ -197,16 +197,18 @@ std::optional<ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSPar
         condition = MQ::Condition { };
     }
 
-    OptionSet<Axis> requiredAxes;
+    ContainerRequirements requirements;
     auto containsUnknownFeature = ContainsUnknownFeature::No;
 
     traverseFeatures(*condition, [&](auto& feature) {
-        requiredAxes.add(requiredAxesForFeature(feature));
+        requirements.sizeAxes.add(requiredAxesForFeature(feature));
+        if (Features::isScrollStateFeature(feature.schema))
+            requirements.scrollState = true;
         if (!feature.schema)
             containsUnknownFeature = ContainsUnknownFeature::Yes;
     });
 
-    return ContainerQuery { name, *condition, requiredAxes, containsUnknownFeature };
+    return ContainerQuery { name, *condition, requirements, containsUnknownFeature };
 }
 
 bool ContainerQueryParser::isValidFunctionId(CSSValueID functionId)

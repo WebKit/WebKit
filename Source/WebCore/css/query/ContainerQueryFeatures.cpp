@@ -547,6 +547,14 @@ const MQ::FeatureSchema* scrollState(const AtomString& name)
     return nullptr;
 }
 
+bool isScrollStateFeature(const MQ::FeatureSchema* schema)
+{
+    return schema == &scrollableFeatureSchema()
+        || schema == &scrolledFeatureSchema()
+        || schema == &stuckFeatureSchema()
+        || schema == &snappedFeatureSchema();
+}
+
 Vector<const MQ::FeatureSchema*> allSchemas()
 {
     return {
