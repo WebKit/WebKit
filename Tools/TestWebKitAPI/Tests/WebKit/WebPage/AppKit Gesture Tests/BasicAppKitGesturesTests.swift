@@ -56,6 +56,7 @@ extension AppKitGesturesTests {
 
             self.window = NSWindow(size: contentSize) { [page] in
                 WebView(page)
+                    .webViewBackForwardNavigationGestures(.enabled)
             }
 
             self.window.setFrameOrigin(.zero)
@@ -986,6 +987,42 @@ extension AppKitGesturesTests.Basic {
                     extent: .init(in: "div", at: onesRange.upperBound)
                 )
         )
+    }
+
+    @Test
+    func scrubbingVideoTimelineDoesNotTriggerBackNavigation() async throws {
+        // Establish a back-forward history entry so that a "swipe back" gesture would have somewhere to navigate to.
+        try await page.load(URL(string: "about:blank?1")).wait()
+
+        let videoPlayerURL = try #require(Bundle.testResources.url(forResource: "playback-scrubber", withExtension: "html"))
+        try await page.load(videoPlayerURL).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let urlBeforeScrub = page.url
+        #expect(page.backForwardList.backList.count == 1)
+
+        let scrubberBounds = try await screenBounds(ofElementWithID: "scrubber")
+        let thumbBounds = try await screenBounds(ofElementWithID: "playhead")
+        let start = thumbBounds.center
+        let end = CGPoint(x: scrubberBounds.maxX - 10, y: start.y)
+
+        await recap.play { composer in
+            composer._wk_scroll(withStart: start, end: end, duration: .seconds(0.5))
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        // Allow any (incorrectly) triggered back navigation to occur before asserting it did not.
+        try await Task.sleep(for: .seconds(1))
+
+        #expect(page.url == urlBeforeScrub)
+        #expect(page.backForwardList.backList.count == 1)
+
+        let scrubbedValues = try await page.callJavaScript(returning: [Double].self) {
+            "return window.scrubbedValues ?? [];"
+        }
+        let lastScrubbedValue = try #require(scrubbedValues.last)
+        #expect(lastScrubbedValue > 0)
     }
 }
 
