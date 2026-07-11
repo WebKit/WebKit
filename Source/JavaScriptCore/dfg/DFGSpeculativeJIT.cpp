@@ -3388,8 +3388,13 @@ void SpeculativeJIT::setIntTypedArrayLoadResult(Node* node, JSValueRegs resultRe
 
     if (shouldBox) {
         if (isUInt32) {
-            convertUInt32ToDouble(resultReg, resultFPR);
-            boxDouble(resultFPR, resultRegs);
+            if (node->shouldSpeculateInt32() && canSpeculate) {
+                speculationCheck(ExitKind::Overflow, JSValueRegs(), nullptr, branch32(LessThan, resultReg, TrustedImm32(0)));
+                boxInt32(resultReg, resultRegs);
+            } else {
+                convertUInt32ToDouble(resultReg, resultFPR);
+                boxDouble(resultFPR, resultRegs);
+            }
         } else
             boxInt32(resultRegs.payloadGPR(), resultRegs);
         if (outOfBounds.isSet())
