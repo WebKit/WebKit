@@ -8318,9 +8318,6 @@ fast/events/ios/should-be-able-to-dismiss-form-accessory-after-tapping-outside-i
 # This tests the system picker triggered by HTMLSelectElement::showPopup(), which iOS doesn't use.
 fast/css/css-anchor-position/anchor-positioned-select-picker.html [ Skip ]
 
-# from fast/ tests that are flaky: adding timeout
-webkit.org/b/304027 fast/block/basic/001.html [ Pass Failure Timeout ]
-
 webkit.org/b/303650 fast/lists/marker-before-empty-inline.html [ ImageOnlyFailure ]
 
 webkit.org/b/304298 accessibility/text-stitching-inside-links.html [ Failure ]
