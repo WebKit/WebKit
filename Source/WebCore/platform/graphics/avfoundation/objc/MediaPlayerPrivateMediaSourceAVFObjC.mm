@@ -1553,16 +1553,14 @@ void MediaPlayerPrivateMediaSourceAVFObjC::isInFullscreenOrPictureInPictureChang
 
 WebCore::HostingContext MediaPlayerPrivateMediaSourceAVFObjC::hostingContext() const
 {
+    assertIsMainThread();
     return m_renderer->hostingContext();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::requestHostingContext(LayerHostingContextCallback&& completionHandler)
+Ref<MediaPlayer::HostingContextPromise> MediaPlayerPrivateMediaSourceAVFObjC::requestHostingContext()
 {
-    m_renderer->requestHostingContext([completionHandler = WTF::move(completionHandler)](WebCore::HostingContext hostingContext) mutable {
-        ensureOnMainThread([completionHandler = WTF::move(completionHandler), hostingContext = WTF::move(hostingContext)]() mutable {
-            completionHandler(WTF::move(hostingContext));
-        });
-    });
+    assertIsMainThread();
+    return m_renderer->requestHostingContext();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoLayerSizeFenced(const WebCore::FloatSize& size, WTF::MachSendRightAnnotated&& sendRightAnnotated)

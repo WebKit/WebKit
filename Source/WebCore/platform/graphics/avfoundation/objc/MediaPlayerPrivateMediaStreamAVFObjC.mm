@@ -50,6 +50,7 @@
 #import <wtf/Lock.h>
 #import <wtf/MachSendRightAnnotated.h>
 #import <wtf/MainThread.h>
+#import <wtf/NativePromise.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/MakeString.h>
@@ -474,8 +475,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::layersAreInitialized(IntSize size, bo
 
     m_canEnqueueDisplayLayer = true;
 
-    if (m_layerHostingContextCallback)
-        m_layerHostingContextCallback(sampleBufferDisplayLayer->hostingContext());
+    for (auto& promise : std::exchange(m_layerHostingContextPromises, { }))
+        promise.resolve(sampleBufferDisplayLayer->hostingContext());
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers()
@@ -1302,14 +1303,15 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setVideoLayerSizeFenced(const FloatSi
     sampleBufferDisplayLayer->updateBoundsAndPosition(*m_storedBounds, WTF::move(fence));
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::requestHostingContext(LayerHostingContextCallback&& callback)
+Ref<MediaPlayer::HostingContextPromise> MediaPlayerPrivateMediaStreamAVFObjC::requestHostingContext()
 {
     auto context = hostingContext();
-    if (context.contextID) {
-        callback(context);
-        return;
-    }
-    m_layerHostingContextCallback = WTF::move(callback);
+    if (context.contextID)
+        return HostingContextPromise::createAndResolve(WTF::move(context));
+    HostingContextPromise::AutoRejectProducer producer;
+    Ref promise = producer.promise();
+    m_layerHostingContextPromises.append(WTF::move(producer));
+    return promise;
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setShouldMaintainAspectRatio(bool shouldMaintainAspectRatio)

@@ -184,8 +184,7 @@ private:
     void setSpatialTrackingInfo(bool, SoundStageSize, const String&, const String&, const String&) final;
 
     // Remote Layers
-    using LayerHostingContextCallback = CompletionHandler<void(WebCore::HostingContext)>;
-    void requestHostingContext(LayerHostingContextCallback&&) final;
+    Ref<HostingContextPromise> requestHostingContext() final;
     WebCore::HostingContext hostingContext() const final;
     void setLayerHostingContext(WebCore::HostingContext&&);
 #if PLATFORM(COCOA)
@@ -282,7 +281,6 @@ private:
     HashMap<TrackIdentifier, Function<void(TrackIdentifier, const MediaTime&)>> m_trackNeedsReenqueuingCallbacks WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     HashMap<TrackIdentifier, WebCore::MediaSampleConverter> m_mediaSampleConverters WTF_GUARDED_BY_CAPABILITY(queueSingleton());
 
-    Vector<LayerHostingContextCallback> m_layerHostingContextRequests WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     WebCore::HostingContext m_layerHostingContext WTF_GUARDED_BY_LOCK(m_lock);
     WebCore::FloatSize m_naturalSize WTF_GUARDED_BY_LOCK(m_lock);
 

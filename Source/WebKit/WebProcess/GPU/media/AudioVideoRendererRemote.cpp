@@ -162,8 +162,6 @@ AudioVideoRendererRemote::~AudioVideoRendererRemote() WTF_IGNORES_THREAD_SAFETY_
         });
     }
 
-    for (auto& request : std::exchange(m_layerHostingContextRequests, { }))
-        request({ });
 }
 
 void AudioVideoRendererRemote::setVolume(float volume)
@@ -935,37 +933,37 @@ void AudioVideoRendererRemote::resolveRequestMediaDataWhenReadyIfNeeded(TrackIde
     m_requestMediaDataWhenReadyDataPromises.take(iterator)->resolve(trackIdentifier);
 }
 
-void AudioVideoRendererRemote::requestHostingContext(LayerHostingContextCallback&& completionHandler)
+Ref<AudioVideoRenderer::HostingContextPromise> AudioVideoRendererRemote::requestHostingContext()
 {
-    ensureOnDispatcher([weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
+    return invokeAsync(queueSingleton(), [weakThis = ThreadSafeWeakPtr { *this }] {
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis) {
-            completionHandler({ });
-            return;
-        }
+        if (!protectedThis)
+            return HostingContextPromise::createAndReject();
         assertIsCurrent(queueSingleton());
 
         // FIXME: should it be called on the main thread???
         RefPtr gpuProcessConnection = protectedThis->m_gpuProcessConnection.get();
-        if (!protectedThis->isGPURunning() || !gpuProcessConnection) {
-            completionHandler({ });
-            return;
-        }
+        if (!protectedThis->isGPURunning() || !gpuProcessConnection)
+            return HostingContextPromise::createAndReject();
 
         auto layerHostingContext = [&] {
             Locker locker { protectedThis->m_lock };
             return protectedThis->m_layerHostingContext;
         }();
-        if (layerHostingContext.contextID) {
-            completionHandler(layerHostingContext);
-            return;
-        }
+        if (layerHostingContext.contextID)
+            return HostingContextPromise::createAndResolve(WTF::move(layerHostingContext));
 
-        protectedThis->m_layerHostingContextRequests.append(WTF::move(completionHandler));
-        gpuProcessConnection->connection().sendWithAsyncReplyOnDispatcher(Messages::RemoteAudioVideoRendererProxyManager::RequestHostingContext(protectedThis->m_identifier), queueSingleton(), [weakThis] (WebCore::HostingContext context) {
-            if (RefPtr protectedThis = weakThis.get())
-                protectedThis->setLayerHostingContext(WTF::move(context));
+        HostingContextPromise::AutoRejectProducer producer;
+        Ref promise = producer.promise();
+        gpuProcessConnection->connection().sendWithAsyncReplyOnDispatcher(Messages::RemoteAudioVideoRendererProxyManager::RequestHostingContext(protectedThis->m_identifier), queueSingleton(), [weakThis, producer = WTF::move(producer)] (WebCore::HostingContext context) mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis || !context.contextID)
+                return;
+            assertIsCurrent(queueSingleton());
+            protectedThis->setLayerHostingContext(WebCore::HostingContext { context });
+            producer.resolve(WTF::move(context));
         }, 0);
+        return promise;
     });
 }
 
@@ -979,22 +977,13 @@ void AudioVideoRendererRemote::setLayerHostingContext(WebCore::HostingContext&& 
 {
     assertIsCurrent(queueSingleton());
 
-    Vector<LayerHostingContextCallback> layerHostingContextRequests;
-    HostingContext layerHostingContext { hostingContext };
-    {
-        Locker locker { m_lock };
-        if (m_layerHostingContext.contextID == hostingContext.contextID)
-            return;
-
-        m_layerHostingContext = WTF::move(hostingContext);
+    Locker locker { m_lock };
+    if (m_layerHostingContext.contextID == hostingContext.contextID)
+        return;
+    m_layerHostingContext = WTF::move(hostingContext);
 #if PLATFORM(COCOA)
-        m_videoLayer = nullptr;
+    m_videoLayer = nullptr;
 #endif
-    }
-    callOnMainRunLoop([layerHostingContext = WTF::move(layerHostingContext), layerHostingContextRequests = std::exchange(m_layerHostingContextRequests, { })]() mutable {
-        for (auto& request : layerHostingContextRequests)
-            request(layerHostingContext);
-    });
 }
 
 bool AudioVideoRendererRemote::inVideoFullscreenOrPictureInPicture() const

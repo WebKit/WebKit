@@ -77,7 +77,13 @@ void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
 
 void RemoteMediaPlayerProxy::requestHostingContext(CompletionHandler<void(WebCore::HostingContext)>&& completionHandler)
 {
-    m_layerHostingContextManager->requestHostingContext(WTF::move(completionHandler));
+    m_layerHostingContextManager->requestHostingContext()->whenSettled(RunLoop::mainSingleton(), [completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
+        if (!result) {
+            completionHandler({ });
+            return;
+        }
+        completionHandler(WTF::move(*result));
+    });
 }
 
 void RemoteMediaPlayerProxy::setVideoLayerSizeFenced(const WebCore::FloatSize& size, WTF::MachSendRightAnnotated&& sendRightAnnotated)

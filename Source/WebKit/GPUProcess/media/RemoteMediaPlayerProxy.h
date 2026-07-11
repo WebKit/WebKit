@@ -369,8 +369,7 @@ private:
     void bitmapImageForCurrentTime(CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 
     void setShouldDisableHDR(bool);
-    using LayerHostingContextCallback = WebCore::MediaPlayer::LayerHostingContextCallback;
-    void requestHostingContext(LayerHostingContextCallback&&);
+    void requestHostingContext(CompletionHandler<void(WebCore::HostingContext)>&&);
     void setShouldCheckHardwareSupport(bool);
 #if HAVE(SPATIAL_TRACKING_LABEL)
     void setDefaultSpatialTrackingLabel(const String&);

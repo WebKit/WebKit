@@ -699,7 +699,8 @@ public:
 
     bool hasSource() const { return hasCurrentSrc() || srcObject(); }
 
-    WEBCORE_EXPORT void requestHostingContext(Function<void(HostingContext)>&&);
+    using HostingContextPromise = MediaPlayer::HostingContextPromise;
+    WEBCORE_EXPORT Ref<HostingContextPromise> requestHostingContext();
     WEBCORE_EXPORT WebCore::HostingContext layerHostingContext();
     WEBCORE_EXPORT WebCore::FloatSize naturalSize();
     WEBCORE_EXPORT WebCore::FloatSize NODELETE videoLayerSize() const;

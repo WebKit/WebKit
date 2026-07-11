@@ -1374,9 +1374,9 @@ void MediaPlayer::setShouldMaintainAspectRatio(bool maintainAspectRatio)
     protect(m_private)->setShouldMaintainAspectRatio(maintainAspectRatio);
 }
 
-void MediaPlayer::requestHostingContext(LayerHostingContextCallback&& callback)
+Ref<MediaPlayer::HostingContextPromise> MediaPlayer::requestHostingContext()
 {
-    return protect(m_private)->requestHostingContext(WTF::move(callback));
+    return protect(m_private)->requestHostingContext();
 }
 
 HostingContext MediaPlayer::hostingContext() const

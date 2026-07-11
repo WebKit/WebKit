@@ -97,8 +97,8 @@ public:
     virtual void videoFullscreenStandbyChanged() { }
 #endif
 
-    using LayerHostingContextCallback = CompletionHandler<void(HostingContext)>;
-    virtual void requestHostingContext(LayerHostingContextCallback&& completionHandler) { completionHandler({ }); }
+    using HostingContextPromise = MediaPlayer::HostingContextPromise;
+    virtual Ref<HostingContextPromise> requestHostingContext();
     virtual HostingContext hostingContext() const { return { }; }
     virtual FloatSize videoLayerSize() const { return { }; }
     virtual void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRightAnnotated&&) { }

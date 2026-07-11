@@ -213,9 +213,6 @@ MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote()
         audioSourceProvider->close();
 #endif
 
-    for (auto& request : std::exchange(m_layerHostingContextRequests, { }))
-        request({ });
-
     // Shutdown any stale MediaResources.
     // This condition can happen if the MediaPlayer gets reloaded half-way.
     ensureOnMainThread([resources = std::exchange(m_mediaResources, { })] {
@@ -1597,18 +1594,21 @@ WTFLogChannel& MediaPlayerPrivateRemote::logChannel() const
 }
 #endif
 
-void MediaPlayerPrivateRemote::requestHostingContext(LayerHostingContextCallback&& completionHandler)
+Ref<MediaPlayer::HostingContextPromise> MediaPlayerPrivateRemote::requestHostingContext()
 {
-    if (m_layerHostingContext.contextID) {
-        completionHandler(m_layerHostingContext);
-        return;
-    }
+    if (m_layerHostingContext.contextID)
+        return HostingContextPromise::createAndResolve(m_layerHostingContext);
 
-    m_layerHostingContextRequests.append(WTF::move(completionHandler));
-    protect(connection())->sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::RequestHostingContext(), [weakThis = ThreadSafeWeakPtr { *this }] (WebCore::HostingContext context) {
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->setLayerHostingContext(WTF::move(context));
+    HostingContextPromise::AutoRejectProducer producer;
+    Ref promise = producer.promise();
+    protect(connection())->sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::RequestHostingContext(), [weakThis = ThreadSafeWeakPtr { *this }, producer = WTF::move(producer)] (WebCore::HostingContext context) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !context.contextID)
+            return;
+        protectedThis->setLayerHostingContext(WebCore::HostingContext { context });
+        producer.resolve(WTF::move(context));
     }, m_id);
+    return promise;
 }
 
 WebCore::HostingContext MediaPlayerPrivateRemote::hostingContext() const
@@ -1620,14 +1620,10 @@ void MediaPlayerPrivateRemote::setLayerHostingContext(WebCore::HostingContext&& 
 {
     if (m_layerHostingContext.contextID == hostingContext.contextID)
         return;
-
     m_layerHostingContext = WTF::move(hostingContext);
 #if PLATFORM(COCOA)
     m_videoLayer = nullptr;
 #endif
-
-    for (auto& request : std::exchange(m_layerHostingContextRequests, { }))
-        request(m_layerHostingContext);
 }
 
 #if ENABLE(MEDIA_SOURCE)

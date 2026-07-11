@@ -106,6 +106,11 @@ MediaTime MediaPlayerPrivateInterface::currentOrPendingSeekTime() const
     return currentTime();
 }
 
+auto MediaPlayerPrivateInterface::requestHostingContext() -> Ref<HostingContextPromise>
+{
+    return HostingContextPromise::createAndReject();
+}
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 OptionSet<MediaPlaybackTargetType> MediaPlayerPrivateInterface::supportedPlaybackTargetTypes() const
 {

@@ -53,6 +53,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Logger.h>
 #include <wtf/MediaTime.h>
+#include <wtf/NativePromise.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/URL.h>
@@ -413,8 +414,8 @@ public:
     bool isVideoFullscreenStandby() const;
 #endif
 
-    using LayerHostingContextCallback = CompletionHandler<void(HostingContext)>;
-    void requestHostingContext(LayerHostingContextCallback&&);
+    using HostingContextPromise = NativePromise<HostingContext, void, WTF::PromiseOption::Default | WTF::PromiseOption::WithoutCrossThreadCopy>;
+    Ref<HostingContextPromise> requestHostingContext();
     HostingContext hostingContext() const;
     FloatSize videoLayerSize() const;
     void videoLayerSizeDidChange(const FloatSize&);

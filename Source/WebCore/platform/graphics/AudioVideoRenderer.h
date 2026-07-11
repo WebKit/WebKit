@@ -96,8 +96,8 @@ public:
 #endif
     virtual PlatformLayer* platformVideoLayer() const { return nullptr; }
 
-    using LayerHostingContextCallback = CompletionHandler<void(HostingContext)>;
-    virtual void requestHostingContext(LayerHostingContextCallback&& completionHandler) { completionHandler({ }); }
+    using HostingContextPromise = NativePromise<WebCore::HostingContext, void, WTF::PromiseOption::Default | WTF::PromiseOption::WithoutCrossThreadCopy>;
+    virtual Ref<HostingContextPromise> requestHostingContext() { return HostingContextPromise::createAndReject(); }
     virtual HostingContext hostingContext() const { return { }; }
     virtual WebCore::FloatSize videoLayerSize() const { return { }; }
     virtual void notifyVideoLayerSizeChanged(Function<void(const MediaTime&, FloatSize)>&&) { }

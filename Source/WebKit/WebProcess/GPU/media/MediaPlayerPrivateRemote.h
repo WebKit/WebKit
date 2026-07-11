@@ -195,7 +195,7 @@ public:
     const Logger& mediaPlayerLogger() const { return logger(); }
 #endif
 
-    void requestHostingContext(LayerHostingContextCallback&&) override;
+    Ref<HostingContextPromise> requestHostingContext() override;
     WebCore::HostingContext hostingContext() const override;
     void setLayerHostingContext(WebCore::HostingContext&&);
 
@@ -543,7 +543,6 @@ private:
     RefPtr<RemoteVideoFrameProxy> m_videoFrameGatheredWithVideoFrameMetadata;
 #endif
 
-    Vector<LayerHostingContextCallback> m_layerHostingContextRequests;
     WebCore::HostingContext m_layerHostingContext;
     std::optional<WebCore::VideoFrameMetadata> m_videoFrameMetadata;
     bool m_isGatheringVideoFrameMetadata { false };

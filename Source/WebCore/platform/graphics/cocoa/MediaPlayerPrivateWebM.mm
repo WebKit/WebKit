@@ -1953,13 +1953,10 @@ WebCore::HostingContext MediaPlayerPrivateWebM::hostingContext() const
     return m_renderer->hostingContext();
 }
 
-void MediaPlayerPrivateWebM::requestHostingContext(LayerHostingContextCallback&& completionHandler)
+Ref<MediaPlayer::HostingContextPromise> MediaPlayerPrivateWebM::requestHostingContext()
 {
-    m_renderer->requestHostingContext([completionHandler = WTF::move(completionHandler)](WebCore::HostingContext hostingContext) mutable {
-        ensureOnMainThread([completionHandler = WTF::move(completionHandler), hostingContext = WTF::move(hostingContext)]() mutable {
-            completionHandler(WTF::move(hostingContext));
-        });
-    });
+    assertIsMainThread();
+    return m_renderer->requestHostingContext();
 }
 
 void MediaPlayerPrivateWebM::setVideoLayerSizeFenced(const WebCore::FloatSize& size, WTF::MachSendRightAnnotated&& sendRightAnnotated)

@@ -750,7 +750,13 @@ void RemoteAudioVideoRendererProxyManager::requestHostingContext(RemoteAudioVide
     ALWAYS_LOG(LOGIDENTIFIER, identifier.loggingString());
 #if PLATFORM(COCOA)
     MESSAGE_CHECK_COMPLETION(m_renderers.contains(identifier), completionHandler({ }));
-    contextFor(identifier).layerHostingContextManager.requestHostingContext(WTF::move(completionHandler));
+    contextFor(identifier).layerHostingContextManager.requestHostingContext()->whenSettled(RunLoop::mainSingleton(), [completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
+        if (!result) {
+            completionHandler({ });
+            return;
+        }
+        completionHandler(WTF::move(*result));
+    });
 #else
     completionHandler({ });
 #endif

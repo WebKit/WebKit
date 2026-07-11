@@ -631,7 +631,7 @@ void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
     protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::RenderingModeChanged(), m_id);
 }
 
-void RemoteMediaPlayerProxy::requestHostingContext(LayerHostingContextCallback&& completionHandler)
+void RemoteMediaPlayerProxy::requestHostingContext(CompletionHandler<void(WebCore::HostingContext)>&& completionHandler)
 {
     completionHandler({ });
 }

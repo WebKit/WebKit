@@ -39,20 +39,17 @@ LayerHostingContextManager::LayerHostingContextManager() = default;
 LayerHostingContextManager::LayerHostingContextManager(LayerHostingContextManager&&) = default;
 LayerHostingContextManager& LayerHostingContextManager::operator=(LayerHostingContextManager&&) = default;
 
-LayerHostingContextManager::~LayerHostingContextManager()
-{
-    for (auto& request : std::exchange(m_layerHostingContextRequests, { }))
-        request({ });
-}
+LayerHostingContextManager::~LayerHostingContextManager() = default;
 
-void LayerHostingContextManager::requestHostingContext(LayerHostingContextCallback&& completionHandler)
+auto LayerHostingContextManager::requestHostingContext() -> Ref<HostingContextPromise>
 {
-    if (m_inlineLayerHostingContext) {
-        completionHandler(m_inlineLayerHostingContext->hostingContext());
-        return;
-    }
+    if (m_inlineLayerHostingContext)
+        return HostingContextPromise::createAndResolve(m_inlineLayerHostingContext->hostingContext());
 
-    m_layerHostingContextRequests.append(WTF::move(completionHandler));
+    HostingContextPromise::AutoRejectProducer producer;
+    Ref promise = producer.promise();
+    m_layerHostingContextRequests.append(WTF::move(producer));
+    return promise;
 }
 
 void LayerHostingContextManager::setInitialVideoLayerSize(const WebCore::FloatSize& size)
@@ -80,7 +77,7 @@ std::optional<WebCore::HostingContext> LayerHostingContextManager::createHosting
         auto& size = m_videoLayerSize;
         [layer setFrame:CGRectMake(0, 0, size.width(), size.height())];
         for (auto& request : std::exchange(m_layerHostingContextRequests, { }))
-            request(m_inlineLayerHostingContext->hostingContext());
+            request.resolve(m_inlineLayerHostingContext->hostingContext());
         hadLayer = true;
     } else if (!layer && m_inlineLayerHostingContext) {
         m_inlineLayerHostingContext = nullptr;

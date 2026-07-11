@@ -247,7 +247,7 @@ private:
 
     HostingContext hostingContext() const final;
     void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRightAnnotated&&) final;
-    void requestHostingContext(LayerHostingContextCallback&&) final;
+    Ref<HostingContextPromise> requestHostingContext() final;
 
 
     ThreadSafeWeakPtr<MediaPlayer> m_player;
@@ -324,7 +324,7 @@ private:
 
     std::optional<CGRect> m_storedBounds;
     static NativeImageCreator m_nativeImageCreator;
-    LayerHostingContextCallback m_layerHostingContextCallback;
+    Vector<HostingContextPromise::AutoRejectProducer> m_layerHostingContextPromises;
     bool m_shouldMaintainAspectRatio { true };
 };
 
