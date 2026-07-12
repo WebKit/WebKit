@@ -587,10 +587,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeAddToReadingList info:elementInfo assistant:self]];
 #endif
 
-    if ([elementInfo imageURL]) {
-        if ([self _canShowSaveImageActionForImageURL:elementInfo.imageURL])
-            [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeSaveImage info:elementInfo assistant:self]];
-    }
+    if (elementInfo._hasSaveableImage && [self _canShowSaveImageActionForImageURL:elementInfo.imageURL])
+        [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeSaveImage info:elementInfo assistant:self]];
 
     if (!isJavaScriptURL(targetURL)) {
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy info:elementInfo assistant:self]];
@@ -623,6 +621,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)_canShowSaveImageActionForImageURL:(NSURL *)imageURL
 {
+    if (!imageURL)
+        return NO;
+
     if ([self _isPhotoLibraryAccessDenied])
         return NO;
 
@@ -652,7 +653,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if ([getSSReadingListClassSingleton() supportsURL:targetURL])
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeAddToReadingList info:elementInfo assistant:self]];
 #endif
-    if ([self _canShowSaveImageActionForImageURL:elementInfo.imageURL])
+    if (elementInfo._hasSaveableImage && [self _canShowSaveImageActionForImageURL:elementInfo.imageURL])
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeSaveImage info:elementInfo assistant:self]];
 
     [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy info:elementInfo assistant:self]];

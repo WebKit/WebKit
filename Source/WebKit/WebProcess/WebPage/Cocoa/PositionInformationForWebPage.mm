@@ -251,6 +251,10 @@ static void imagePositionInformation(WebPage& page, WebCore::Element& element, c
 
     auto& [renderImage, image] = *rendererAndImage;
     info.isImage = true;
+#if PLATFORM(IOS_FAMILY)
+    // UIImageDataWriteToSavedPhotosAlbum works with resource data, and thus only for bitmap images.
+    info.hasSaveableImage = image.isBitmapImage() && !image.isNull();
+#endif
     info.imageURL = page.applyLinkDecorationFiltering(protect(element.document())->encodingParseURL(protect(renderImage.cachedImage())->url().string()), WebCore::LinkDecorationFilteringTrigger::Unspecified);
     info.imageMIMEType = image.mimeType();
     info.isAnimatedImage = image.isAnimated();

@@ -79,6 +79,9 @@ struct InteractionInformationAtPosition {
 #endif
         bool isLink,
         bool isImage,
+#if PLATFORM(IOS_FAMILY)
+        bool hasSaveableImage,
+#endif
 #if ENABLE(MODEL_PROCESS)
         bool isInteractiveModel,
 #endif
@@ -151,6 +154,9 @@ struct InteractionInformationAtPosition {
 #endif
     bool isLink { false };
     bool isImage { false };
+#if PLATFORM(IOS_FAMILY)
+    bool hasSaveableImage { false };
+#endif
 #if ENABLE(MODEL_PROCESS)
     bool isInteractiveModel { false };
 #endif

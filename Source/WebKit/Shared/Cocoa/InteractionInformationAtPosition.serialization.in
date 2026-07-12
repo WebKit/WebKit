@@ -50,6 +50,9 @@ struct WebKit::InteractionInformationAtPosition {
 #endif
     bool isLink;
     bool isImage;
+#if PLATFORM(IOS_FAMILY)
+    bool hasSaveableImage;
+#endif
 #if ENABLE(MODEL_PROCESS)
     bool isInteractiveModel;
 #endif

@@ -51,18 +51,40 @@
     BOOL _isAnimating;
     Vector<WebCore::ElementAnimationContext> _animationsUnderElement;
 #endif
-    BOOL _animatedImage;
+    BOOL _isAnimatedImage;
+#if PLATFORM(IOS_FAMILY)
     BOOL _isImage;
+    BOOL _hasSaveableImage;
     BOOL _isUsingAlternateURLForImage;
+#endif
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
     BOOL _isSpatialImage;
 #endif
 }
 
 #if PLATFORM(IOS_FAMILY)
+
 + (instancetype)activatedElementInfoWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information userInfo:(NSDictionary *)userInfo
 {
     return adoptNS([[self alloc] _initWithInteractionInformationAtPosition:information isUsingAlternateURLForImage:NO userInfo:userInfo]).autorelease();
+}
+
+- (void)setFromInformation:(const WebKit::InteractionInformationAtPosition&)information
+{
+    // This sets the fields in common between the two different types of init method below.
+
+    _boundingRect = information.bounds;
+    _hasSaveableImage = information.hasSaveableImage;
+    _ID = information.idAttribute.createNSString();
+    _imageMIMEType = information.imageMIMEType.createNSString();
+    _interactionLocation = information.request.point;
+    _isAnimatedImage = information.isAnimatedImage;
+    _isAnimating = information.isAnimating;
+    _title = information.title.createNSString();
+
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    _animationsUnderElement = information.animationsAtPoint;
+#endif
 }
 
 - (instancetype)_initWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information isUsingAlternateURLForImage:(BOOL)isUsingAlternateURLForImage userInfo:(NSDictionary *)userInfo
@@ -73,11 +95,7 @@
     _URL = information.url.createNSURL();
     _imageURL = information.imageURL.createNSURL();
     _modelURL = information.modelURL.createNSURL();
-    _imageMIMEType = information.imageMIMEType.createNSString().get();
-    _interactionLocation = information.request.point;
-    _title = information.title.createNSString().get();
-    _boundingRect = information.bounds;
-    
+
     if (information.isAttachment)
         _type = _WKActivatedElementTypeAttachment;
     else if (information.isLink)
@@ -88,18 +106,14 @@
         _type = _WKActivatedElementTypeUnspecified;
     
     _image = information.image;
-    _ID = information.idAttribute.createNSString().get();
-    _animatedImage = information.isAnimatedImage;
-    _isAnimating = information.isAnimating;
     _isImage = information.isImage;
     _isUsingAlternateURLForImage = isUsingAlternateURLForImage;
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
     _isSpatialImage = information.isSpatialImage;
 #endif
     _userInfo = userInfo;
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    _animationsUnderElement = information.animationsAtPoint;
-#endif
+
+    [self setFromInformation:information];
 
     return self;
 }
@@ -131,39 +145,21 @@
 
 - (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL image:(WebCore::ShareableBitmap*)image userInfo:(NSDictionary *)userInfo information:(const WebKit::InteractionInformationAtPosition&)information
 {
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    auto animationsAtPoint = information.animationsAtPoint;
-#else
-    Vector<WebCore::ElementAnimationContext> animationsAtPoint;
-#endif
-
-    return [self _initWithType:type URL:url imageURL:imageURL location:information.request.point title:information.title.createNSString().get() ID:information.idAttribute.createNSString().get() rect:information.bounds image:image imageMIMEType:information.imageMIMEType.createNSString().get() isAnimatedImage:information.isAnimatedImage isAnimating:information.isAnimating animationsUnderElement:animationsAtPoint userInfo:userInfo];
-}
-#endif // PLATFORM(IOS_FAMILY)
-
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(const WebCore::IntPoint&)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebCore::ShareableBitmap*)image imageMIMEType:(NSString *)imageMIMEType isAnimatedImage:(BOOL)isAnimatedImage isAnimating:(BOOL)isAnimating animationsUnderElement:(Vector<WebCore::ElementAnimationContext>)animationsUnderElement userInfo:(NSDictionary *)userInfo
-{
     if (!(self = [super init]))
         return nil;
 
     _URL = adoptNS([url copy]);
     _imageURL = adoptNS([imageURL copy]);
-    _imageMIMEType = adoptNS(imageMIMEType.copy);
-    _interactionLocation = location;
-    _title = adoptNS([title copy]);
-    _boundingRect = rect;
     _type = type;
     _image = image;
-    _ID = ID;
-#if PLATFORM(IOS_FAMILY)
     _userInfo = adoptNS([userInfo copy]);
-    _isAnimating = isAnimating;
-    _animationsUnderElement = animationsUnderElement;
-#endif
-    _animatedImage = isAnimatedImage;
+
+    [self setFromInformation:information];
 
     return self;
 }
+
+#endif // PLATFORM(IOS_FAMILY)
 
 - (NSURL *)URL
 {
@@ -202,22 +198,29 @@
 
 - (BOOL)isAnimatedImage
 {
-    return _animatedImage;
+    return _isAnimatedImage;
 }
+
+#if PLATFORM(IOS_FAMILY)
 
 - (BOOL)_isUsingAlternateURLForImage
 {
     return _isUsingAlternateURLForImage;
 }
 
+#endif
+
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
+
 - (BOOL)isSpatialImage
 {
     return _isSpatialImage;
 }
+
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+
 - (BOOL)isAnimating
 {
     return _isAnimating;
@@ -232,12 +235,18 @@
 {
     return _userInfo.get();
 }
-#endif
 
 - (BOOL)_isImage
 {
     return _isImage;
 }
+
+- (BOOL)_hasSaveableImage
+{
+    return _hasSaveableImage;
+}
+
+#endif
 
 - (CocoaImage *)image
 {

@@ -24,8 +24,8 @@
  */
 
 #if PLATFORM(IOS_FAMILY)
+
 #import "InteractionInformationAtPosition.h"
-#endif
 #import <WebCore/ElementAnimationContext.h>
 #import <WebCore/IntPoint.h>
 #import <WebKit/_WKActivatedElementInfo.h>
@@ -36,7 +36,6 @@ class ShareableBitmap;
 
 @interface _WKActivatedElementInfo ()
 
-#if PLATFORM(IOS_FAMILY)
 + (instancetype)activatedElementInfoWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information userInfo:(NSDictionary *)userInfo;
 - (instancetype)_initWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information isUsingAlternateURLForImage:(BOOL)isUsingAlternateURLForImage userInfo:(NSDictionary *)userInfo;
 - (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url information:(const WebKit::InteractionInformationAtPosition&)information;
@@ -44,13 +43,15 @@ class ShareableBitmap;
 - (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL information:(const WebKit::InteractionInformationAtPosition&)information;
 - (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url image:(WebCore::ShareableBitmap*)image information:(const WebKit::InteractionInformationAtPosition&)information;
 - (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL userInfo:(NSDictionary *)userInfo information:(const WebKit::InteractionInformationAtPosition&)information;
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(const WebCore::IntPoint&)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebCore::ShareableBitmap*)image imageMIMEType:(NSString *)imageMIMEType isAnimatedImage:(BOOL)isAnimatedImage isAnimating:(BOOL)isAnimating animationsUnderElement:(Vector<WebCore::ElementAnimationContext>)animationsUnderElement userInfo:(NSDictionary *)userInfo;
-#endif // PLATFORM(IOS_FAMILY)
 
 @property (nonatomic, readonly) NSString *imageMIMEType;
 @property (nonatomic, readonly) WebCore::IntPoint _interactionLocation;
+
 @property (nonatomic, readonly) BOOL _isImage;
+@property (nonatomic, readonly) BOOL _hasSaveableImage;
 @property (nonatomic, readonly) BOOL _isUsingAlternateURLForImage;
 @property (nonatomic, readonly) const Vector<WebCore::ElementAnimationContext>& _animationsUnderElement;
 
 @end
+
+#endif // PLATFORM(IOS_FAMILY)

@@ -599,6 +599,16 @@ TEST(ActionSheetTests, LinkedImageSaveImageActionIsExcludedWhenImageURLIsManaged
     EXPECT_FALSE(saveImageActionIsPresent(@"image-in-link-and-input", CGPointMake(100, 50), MockManagedImageURL.class));
 }
 
+TEST(ActionSheetTests, SVGImageSaveImageActionIsExcluded)
+{
+    EXPECT_FALSE(saveImageActionIsPresent(@"svg-image", CGPointMake(100, 100)));
+}
+
+TEST(ActionSheetTests, LinkedSVGImageSaveImageActionIsExcluded)
+{
+    EXPECT_FALSE(saveImageActionIsPresent(@"svg-image-in-link", CGPointMake(100, 100)));
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)

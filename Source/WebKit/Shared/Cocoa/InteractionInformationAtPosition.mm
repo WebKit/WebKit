@@ -52,6 +52,9 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
 #endif
     bool isLink,
     bool isImage,
+#if PLATFORM(IOS_FAMILY)
+    bool hasSaveableImage,
+#endif
 #if ENABLE(MODEL_PROCESS)
     bool isInteractiveModel,
 #endif
@@ -119,6 +122,9 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
 #endif
     , isLink(isLink)
     , isImage(isImage)
+#if PLATFORM(IOS_FAMILY)
+    , hasSaveableImage(hasSaveableImage)
+#endif
 #if ENABLE(MODEL_PROCESS)
     , isInteractiveModel(isInteractiveModel)
 #endif
