@@ -9840,7 +9840,9 @@ void HTMLMediaElement::updateShouldPlay()
         play();
     } else
         ALWAYS_LOG(LOGIDENTIFIER, "autoplay blocked with reason: ", canTransition.error());
-}void HTMLMediaElement::resetPlaybackSessionState()
+}
+
+void HTMLMediaElement::resetPlaybackSessionState()
 {
     if (RefPtr mediaSession = m_mediaSession)
         mediaSession->resetPlaybackSessionState();
