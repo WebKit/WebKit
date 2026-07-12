@@ -19629,7 +19629,7 @@ IGNORE_CLANG_WARNINGS_END
         ASSERT(structure->inlineCapacity() == 2);
 
         LValue iterator = lowCell(m_node->child1());
-        FTL_TYPE_CHECK(jsValueValue(iterator), m_node->child1(), SpecObjectOther, isNotType(iterator, JSRegExpStringIteratorType));
+        speculate(BadType, jsValueValue(iterator), m_node->child1().node(), isNotType(iterator, JSRegExpStringIteratorType));
 
         // FIXME: Detach iterator advancement and result object creation from this node so that the iterator allocation can be sunk.
         LValue match = vmCall(Int64, operationRegExpStringIteratorNext, weakPointer(globalObject), iterator);
