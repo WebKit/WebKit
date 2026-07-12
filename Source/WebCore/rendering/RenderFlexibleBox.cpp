@@ -1546,6 +1546,7 @@ void RenderFlexibleBox::performFlexLayout(RelayoutChildren relayoutChildren)
     Vector<LayoutUnit> marginsList(allItems.size());
     Vector<LayoutUnit> lineCrossSizeList;
     Vector<LayoutUnit> lineCrossOffsetList;
+    LayoutUnit crossAxisStartEdge;
     for (size_t index = 0; index < allItems.size(); ++index)
         marginsList[index] = isHorizontalFlow() ? allItems[index].renderer->horizontalMarginExtent() : allItems[index].renderer->verticalMarginExtent();
 
@@ -1590,7 +1591,7 @@ void RenderFlexibleBox::performFlexLayout(RelayoutChildren relayoutChildren)
         distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(flexLines, allItems, mainSizeList, marginsList, positionList, lineCrossOffsetList, gapBetweenItems);
 
         // 9.6. (#13 - #16) Cross-Axis Alignment.
-        LayoutUnit crossAxisStartEdge = lineCrossOffsetList.isEmpty() ? 0_lu : lineCrossOffsetList[0];
+        crossAxisStartEdge = lineCrossOffsetList.isEmpty() ? 0_lu : lineCrossOffsetList[0];
         // If we have a single line flexbox, the line height is all the available space. For flex-direction: row,
         // this means we need to use the height, so we do this after calling updateLogicalHeight.
         if (!isMultiline() && !lineCrossSizeList.isEmpty())
@@ -1604,18 +1605,35 @@ void RenderFlexibleBox::performFlexLayout(RelayoutChildren relayoutChildren)
 
         // 9.6. (#13 - #14) Resolve cross-axis auto margins and align each item per align-self.
         handleCrossAxisAlignmentForFlexItems(flexLines, allItems, positionList, crossSizeList, lineCrossSizeList);
-
-        if (isWrapReverse())
-            flipForWrapReverse(flexLines, positionList, lineCrossOffsetList, lineCrossSizeList, crossAxisStartEdge);
-
-        // direction:rtl + flex-direction:column means the cross-axis direction is flipped.
-        flipForRightToLeftColumn(flexLines, positionList, crossSizeList);
     };
     performContentAlignment();
 
-    // Write each flex item's final flow-aware location to its renderer (cf. FlexLayout::computeFlexItemRects).
-    for (size_t index = 0; index < allItems.size(); ++index)
-        setFlexItemGeometry(allItems[index], positionList[index]);
+    // 9.6. Place each flex item at its final flow-aware location, applying the wrap-reverse and rtl-column
+    // cross-axis flips, and write it to the renderer (cf. FlexLayout::computeFlexItemRects).
+    auto computeFlexItemRects = [&] {
+        auto crossContentExtent = crossAxisContentExtent();
+        auto crossExtent = crossAxisExtent();
+        bool isRightToLeftColumn = !writingMode().isLogicalLeftInlineStart() && isColumnFlow();
+        for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
+            auto lineRange = flexLines.ranges[lineIndex];
+            for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
+                auto location = positionList[flexItemIndex];
+                if (isWrapReverse()) {
+                    auto originalOffset = lineCrossOffsetList[lineIndex] - crossAxisStartEdge;
+                    location.move(0_lu, (crossContentExtent - originalOffset - lineCrossSizeList[lineIndex]) - originalOffset);
+                }
+                if (isRightToLeftColumn) {
+                    // For vertical flows, setFlowAwareLocationForFlexItem will transpose x and
+                    // y, so using the y axis for a column cross axis extent is correct.
+                    location.setY(crossExtent - crossSizeList[flexItemIndex] - location.y());
+                    if (!isHorizontalWritingMode())
+                        location.move(LayoutSize(0, -horizontalScrollbarHeight()));
+                }
+                setFlexItemGeometry(allItems[flexItemIndex], location);
+            }
+        }
+    };
+    computeFlexItemRects();
 }
 
 RenderFlexibleBox::FlexLayoutItems RenderFlexibleBox::collectFlexItems(RelayoutChildren relayoutChildren)
@@ -1880,8 +1898,8 @@ bool RenderFlexibleBox::updateAutoMarginsInCrossAxis(FlexLayoutItem& flexLayoutI
     bool shouldAdjustTopOrLeft = true;
     if (isColumnFlow() && flexItem.writingMode().isInlineFlipped()) {
         // For column flows, only make this adjustment if topOrLeft corresponds to
-        // the "before" margin, so that flipForRightToLeftColumn will do the right
-        // thing.
+        // the "before" margin, so that the rtl-column flip in computeFlexItemRects
+        // will do the right thing.
         shouldAdjustTopOrLeft = false;
     }
     if (!isColumnFlow() && flexItem.writingMode().isBlockFlipped()) {
@@ -2809,7 +2827,7 @@ void RenderFlexibleBox::placeFlexItems(LayoutUnit crossAxisOffset, std::span<Fle
 
         LayoutUnit flexItemMainExtent = mainAxisExtentForFlexItem(flexItem);
         // In an RTL column situation, this will apply the margin-right/margin-end
-        // on the left. This will be fixed later in flipForRightToLeftColumn.
+        // on the left. This will be fixed later by the rtl-column flip in computeFlexItemRects.
         auto leadingScrollbarSize = writingMode().isInlineFlipped() && writingMode().isVertical() ? mainAxisScrollbarExtent() : LayoutUnit();
         LayoutPoint location(shouldFlipMainAxis ? totalMainExtent - mainAxisOffset - flexItemMainExtent - leadingScrollbarSize : mainAxisOffset, crossAxisOffset + flowAwareMarginBeforeForFlexItem(flexItem));
         positions[i] = location;
@@ -3219,39 +3237,6 @@ LayoutUnit RenderFlexibleBox::applyStretchAlignmentToFlexItem(RenderBox& flexIte
         flexItem.layoutIfNeeded();
     }
     return flexItemWidth;
-}
-
-void RenderFlexibleBox::flipForRightToLeftColumn(const FlexLines& flexLines, Vector<LayoutPoint>& positionList, const Vector<LayoutUnit>& crossSizeList)
-{
-    if (writingMode().isLogicalLeftInlineStart() || !isColumnFlow())
-        return;
-
-    LayoutUnit crossExtent = crossAxisExtent();
-    for (auto lineRange : flexLines.ranges) {
-        for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
-            auto location = positionList[flexItemIndex];
-            // For vertical flows, setFlowAwareLocationForFlexItem will transpose x and
-            // y, so using the y axis for a column cross axis extent is correct.
-            location.setY(crossExtent - crossSizeList[flexItemIndex] - location.y());
-            if (!isHorizontalWritingMode())
-                location.move(LayoutSize(0, -horizontalScrollbarHeight()));
-            positionList[flexItemIndex] = location;
-        }
-    }
-}
-
-void RenderFlexibleBox::flipForWrapReverse(const FlexLines& flexLines, Vector<LayoutPoint>& positionList, const Vector<LayoutUnit>& lineCrossOffsetList, const Vector<LayoutUnit>& lineCrossSizeList, LayoutUnit crossAxisStartEdge)
-{
-    LayoutUnit contentExtent = crossAxisContentExtent();
-    for (size_t lineNumber = 0; lineNumber < flexLines.ranges.size(); ++lineNumber) {
-        auto lineRange = flexLines.ranges[lineNumber];
-        for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
-            LayoutUnit lineCrossAxisExtent = lineCrossSizeList[lineNumber];
-            LayoutUnit originalOffset = lineCrossOffsetList[lineNumber] - crossAxisStartEdge;
-            LayoutUnit newOffset = contentExtent - originalOffset - lineCrossAxisExtent;
-            adjustAlignmentForFlexItem(positionList[flexItemIndex], newOffset - originalOffset);
-        }
-    }
 }
 
 std::optional<TextDirection> RenderFlexibleBox::leftRightAxisDirectionFromStyle(const Style::ComputedStyle& style)
