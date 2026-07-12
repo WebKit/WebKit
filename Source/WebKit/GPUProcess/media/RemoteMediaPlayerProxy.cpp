@@ -183,7 +183,7 @@ void RemoteMediaPlayerProxy::getConfiguration(RemoteMediaPlayerConfiguration& co
     });
 }
 
-void RemoteMediaPlayerProxy::load(URL&& url, std::optional<SandboxExtension::Handle>&& sandboxExtensionHandle, const MediaPlayer::LoadOptions& options, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&& completionHandler)
+CompletionHandlerCalledToken RemoteMediaPlayerProxy::load(URL&& url, std::optional<SandboxExtension::Handle>&& sandboxExtensionHandle, const MediaPlayer::LoadOptions& options, CompletionHandler<void(RemoteMediaPlayerConfiguration&&), true>&& completionHandler)
 {
     RemoteMediaPlayerConfiguration configuration;
     if (sandboxExtensionHandle) {
@@ -196,8 +196,9 @@ void RemoteMediaPlayerProxy::load(URL&& url, std::optional<SandboxExtension::Han
 
     protect(m_player)->load(url, options);
     getConfiguration(configuration);
-    completionHandler(WTF::move(configuration));
+    return completionHandler(WTF::move(configuration));
 }
+
 
 void RemoteMediaPlayerProxy::cancelLoad()
 {
@@ -362,11 +363,13 @@ void RemoteMediaPlayerProxy::setRate(double rate)
     protect(m_player)->setRate(rate);
 }
 
-void RemoteMediaPlayerProxy::didLoadingProgress(CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken RemoteMediaPlayerProxy::didLoadingProgress(CompletionHandler<void(bool), true>&& completionHandler)
 {
-    protect(m_player)->didLoadingProgress(WTF::move(completionHandler));
-
-    protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::ReportGPUMemoryFootprint(WTF::memoryFootprint()), m_id);
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        auto token = protect(m_player)->didLoadingProgress(WTF::move(completionHandler));
+        protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::ReportGPUMemoryFootprint(WTF::memoryFootprint()), m_id);
+        return token;
+    });
 }
 
 void RemoteMediaPlayerProxy::setPresentationSize(const WebCore::IntSize& size)
@@ -997,20 +1000,21 @@ void RemoteMediaPlayerProxy::videoFrameForCurrentTimeIfChanged(CompletionHandler
     completionHandler(WTF::move(result), changed);
 }
 
-void RemoteMediaPlayerProxy::bitmapImageForCurrentTime(CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
+CompletionHandlerCalledToken RemoteMediaPlayerProxy::bitmapImageForCurrentTime(CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&), true>&& completionHandler)
 {
     RefPtr player = m_player;
     if (!player) {
-        completionHandler({ });
-        return;
+        return completionHandler({ });
     }
 
-    player->bitmapImageForCurrentTime()->whenSettled(RunLoop::mainSingleton(), [completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
-        if (!result) {
-            completionHandler({ });
-            return;
-        }
-        completionHandler((*result)->createHandle());
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        player->bitmapImageForCurrentTime()->whenSettled(RunLoop::mainSingleton(), [completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
+            if (!result)
+                completionHandler({ });
+            else
+                completionHandler((*result)->createHandle());
+        });
+        return WTF::move(deferred);
     });
 }
 

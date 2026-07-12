@@ -70,7 +70,7 @@ public:
     void didClose(IPC::Connection&) override { close(); }
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) override { close(); }
 
-    void show(CompletionHandler<void(bool success)>&&);
+    CompletionHandlerCalledToken show(CompletionHandler<void(bool success), true>&&);
     void close();
 
     void canAttachWindow(bool& result);

@@ -227,10 +227,10 @@ private:
     // WebFullScreenManagerProxyClient
     void closeFullScreenManager() override;
     bool isFullScreen() override;
-    void enterFullScreen(WebCore::FloatSize, CompletionHandler<void(bool)>&&) override;
-    void exitFullScreen(CompletionHandler<void()>&&) override;
-    void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void(bool)>&&) override;
-    void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void()>&&) override;
+    CompletionHandlerCalledToken enterFullScreen(WebCore::FloatSize, CompletionHandler<void(bool), true>&&) override;
+    CompletionHandlerCalledToken exitFullScreen(CompletionHandler<void(), true>&&) override;
+    CompletionHandlerCalledToken beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void(bool), true>&&) override;
+    CompletionHandlerCalledToken beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void(), true>&&) override;
     WebCore::IntRect convertMainFrameCoordinatesInFullscreenPlaceholderViewToScreen(WebPageProxy&, WebCore::IntRect) const override;
 #endif
 

@@ -69,9 +69,9 @@ WebPageTesting::~WebPageTesting()
     WebProcess::singleton().removeMessageReceiver(Messages::WebPageTesting::messageReceiverName(), m_pageIdentifier);
 }
 
-void WebPageTesting::isLayerTreeFrozen(CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken WebPageTesting::isLayerTreeFrozen(CompletionHandler<void(bool), true>&& completionHandler)
 {
-    completionHandler(m_page && !!m_page->layerTreeFreezeReasons());
+    return completionHandler(m_page && !!m_page->layerTreeFreezeReasons());
 }
 
 void WebPageTesting::numberOfLiveDocuments(CompletionHandler<void(uint64_t)>&& completionHandler)
@@ -128,37 +128,36 @@ void WebPageTesting::clearWheelEventTestMonitor()
     page->clearWheelEventTestMonitor();
 }
 
-void WebPageTesting::startMonitoringWheelEventsForTesting(CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken WebPageTesting::startMonitoringWheelEventsForTesting(CompletionHandler<void(), true>&& completionHandler)
 {
     RefPtr page = m_page ? m_page->corePage() : nullptr;
     if (!page) {
-        completionHandler();
-        return;
+        return completionHandler();
     }
 
     page->startMonitoringWheelEvents(true);
-    completionHandler();
+    return completionHandler();
 }
 
-void WebPageTesting::waitForWheelEventsToCompleteForTesting(CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken WebPageTesting::waitForWheelEventsToCompleteForTesting(CompletionHandler<void(), true>&& completionHandler)
 {
     RefPtr page = m_page ? m_page->corePage() : nullptr;
     if (!page || !page->isMonitoringWheelEvents()) {
-        completionHandler();
-        return;
+        return completionHandler();
     }
 
     if (auto wheelEventTestMonitor = page->wheelEventTestMonitor())
-        wheelEventTestMonitor->setTestCallbackAndStartMonitoring(true, false, WTF::move(completionHandler));
-    else
-        completionHandler();
+        return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+            return wheelEventTestMonitor->setTestCallbackAndStartMonitoring(true, false, WTF::move(completionHandler));
+        });
+    return completionHandler();
 }
 
-void WebPageTesting::setObscuredContentInsets(float top, float right, float bottom, float left, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken WebPageTesting::setObscuredContentInsets(float top, float right, float bottom, float left, CompletionHandler<void(), true>&& completionHandler)
 {
     if (RefPtr page = m_page.get())
         page->setObscuredContentInsets({ top, right, bottom, left });
-    completionHandler();
+    return completionHandler();
 }
 
 void WebPageTesting::resetStateBetweenTests()
@@ -177,7 +176,7 @@ void WebPageTesting::resetStateBetweenTests()
     }
 }
 
-void WebPageTesting::clearCachedBackForwardListCounts(CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken WebPageTesting::clearCachedBackForwardListCounts(CompletionHandler<void(), true>&& completionHandler)
 {
     RefPtr page = m_page ? m_page->corePage() : nullptr;
     if (!page)
@@ -185,10 +184,10 @@ void WebPageTesting::clearCachedBackForwardListCounts(CompletionHandler<void()>&
 
     Ref backForwardListProxy = downcast<WebBackForwardListProxy>(page->backForward().client());
     backForwardListProxy->clearCachedListCounts();
-    completionHandler();
+    return completionHandler();
 }
 
-void WebPageTesting::setTracksRepaints(bool trackRepaints, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken WebPageTesting::setTracksRepaints(bool trackRepaints, CompletionHandler<void(), true>&& completionHandler)
 {
     RefPtr page = m_page ? m_page->corePage() : nullptr;
     if (!page)
@@ -198,14 +197,14 @@ void WebPageTesting::setTracksRepaints(bool trackRepaints, CompletionHandler<voi
         if (RefPtr view = rootFrame->view())
             view->setTracksRepaints(trackRepaints);
     }
-    completionHandler();
+    return completionHandler();
 }
 
-void WebPageTesting::displayAndTrackRepaints(CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken WebPageTesting::displayAndTrackRepaints(CompletionHandler<void(), true>&& completionHandler)
 {
     RefPtr page = m_page.get();
     if (!page)
-        return;
+        return completionHandler();
 
     RefPtr corePage = m_page->corePage();
     if (!corePage)
@@ -218,7 +217,7 @@ void WebPageTesting::displayAndTrackRepaints(CompletionHandler<void()>&& complet
             view->resetTrackedRepaints();
         }
     }
-    completionHandler();
+    return completionHandler();
 }
 
 } // namespace WebKit

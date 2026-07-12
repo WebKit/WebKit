@@ -395,38 +395,38 @@ bool NavigationState::NavigationClient::didChangeBackForwardList(WebPageProxy&, 
     return true;
 }
 
-void NavigationState::NavigationClient::shouldGoToBackForwardListItem(WebPageProxy&, WebBackForwardListItem& item, bool inBackForwardCache, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken NavigationState::NavigationClient::shouldGoToBackForwardListItem(WebPageProxy&, WebBackForwardListItem& item, bool inBackForwardCache, CompletionHandler<void(bool), true>&& completionHandler)
 {
     RefPtr navigationState = m_navigationState.get();
-    if (!navigationState) {
-        completionHandler(true);
-        return;
-    }
+    if (!navigationState)
+        return completionHandler(true);
 
     auto navigationDelegate = navigationState->navigationDelegate();
-    if (!navigationDelegate) {
-        completionHandler(true);
-        return;
-    }
+    if (!navigationDelegate)
+        return completionHandler(true);
 
     if (navigationState->m_navigationDelegateMethods.webViewShouldGoToBackForwardListItemWillUseInstantBackCompletionHandler) {
-        [static_cast<id<WKNavigationDelegatePrivate>>(navigationDelegate) webView:navigationState->webView().get() shouldGoToBackForwardListItem:protect(wrapper(item)).get() willUseInstantBack:inBackForwardCache completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)] (BOOL result) mutable {
-            completionHandler(result);
-        }).get()];
-        return;
+        return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+            [static_cast<id<WKNavigationDelegatePrivate>>(navigationDelegate) webView:navigationState->webView().get() shouldGoToBackForwardListItem:protect(wrapper(item)).get() willUseInstantBack:inBackForwardCache completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)] (BOOL result) mutable {
+                completionHandler(result);
+            }).get()];
+            return WTF::move(deferred);
+        });
     }
 
     if (navigationState->m_navigationDelegateMethods.webViewShouldGoToBackForwardListItemInBackForwardCacheCompletionHandler) {
-        [static_cast<id<WKNavigationDelegatePrivate>>(navigationDelegate) _webView:navigationState->webView().get() shouldGoToBackForwardListItem:protect(wrapper(item)).get() inPageCache:inBackForwardCache completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)] (BOOL result) mutable {
-            completionHandler(result);
-        }).get()];
-        return;
+        return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+            [static_cast<id<WKNavigationDelegatePrivate>>(navigationDelegate) _webView:navigationState->webView().get() shouldGoToBackForwardListItem:protect(wrapper(item)).get() inPageCache:inBackForwardCache completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)] (BOOL result) mutable {
+                completionHandler(result);
+            }).get()];
+            return WTF::move(deferred);
+        });
     }
 
     if (navigationState->m_navigationDelegateMethods.webViewWillGoToBackForwardListItemInBackForwardCache)
         [static_cast<id<WKNavigationDelegatePrivate>>(navigationDelegate) _webView:navigationState->webView().get() willGoToBackForwardListItem:protect(wrapper(item)).get() inPageCache:inBackForwardCache];
 
-    completionHandler(true);
+    return completionHandler(true);
 }
 
 static void trySOAuthorization(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Function<void(bool)>&& completionHandler)

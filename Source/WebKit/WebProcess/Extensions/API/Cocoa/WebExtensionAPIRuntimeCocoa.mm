@@ -456,9 +456,9 @@ void WebExtensionAPIWebPageRuntime::sendMessage(WebPage& page, WebFrame& frame, 
     RefPtr destinationExtensionContext = page.webExtensionControllerProxy()->extensionContext(extensionID);
     if (!destinationExtensionContext) {
         // Respond after a random delay to prevent the page from easily detecting if extensions are not installed.
-        callAfterRandomDelay([callback = WTF::move(callback)]() {
+        callAfterRandomDelay(Function<void()>([callback = WTF::move(callback)]() {
             callback->call();
-        });
+        }));
 
         return;
     }
@@ -504,9 +504,9 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIWebPageRuntime::connect(WebPage& page
         // Return a port that cant send messages, and disconnect after a random delay to prevent the page from easily detecting if extensions are not installed.
         Ref port = WebExtensionAPIPort::create(*this, resolvedName);
 
-        callAfterRandomDelay([=]() {
+        callAfterRandomDelay(Function<void()>([=]() {
             port->disconnect();
-        });
+        }));
 
         return port;
     }
@@ -637,10 +637,17 @@ static bool matches(WebFrame& frame, const std::optional<WebExtensionMessageTarg
 
 void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(String&& replyJSON)>&& completionHandler)
 {
+    internalDispatchRuntimeMessageEvent(contentWorldType, messageJSON, targetParameters, senderParameters, userGesture, CompletionHandler<void(String&& replyJSON), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(String&& replyJSON), true>&& completionHandler)
+{
+    // The completion handler is stored in an EagerCallbackAggregator (multi-dispatch fan-out
+    // captured into compiled ObjC blocks), so this is a genuine leaf.
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
     if (!hasDOMWrapperWorld(contentWorldType)) {
         // A null reply to the completionHandler means no listeners replied.
-        completionHandler({ });
-        return;
+        return completionHandler({ });
     }
 
     id message = parseJSON(messageJSON.createNSString().get(), JSONOptions::FragmentsAllowed);
@@ -726,35 +733,39 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
 
     if (!anyListenerHandledMessage)
         callbackAggregator.get()(nil, IsDefaultReply::Yes);
+
+    return WTF::move(deferred);
+    });
 }
 
-void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(String&& replyJSON)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(String&& replyJSON), true>&& completionHandler)
 {
     switch (contentWorldType) {
     case WebExtensionContentWorldType::Main:
 #if ENABLE(INSPECTOR_EXTENSIONS)
     case WebExtensionContentWorldType::Inspector:
 #endif
-        internalDispatchRuntimeMessageEvent(contentWorldType, messageJSON, targetParameters, senderParameters, userGesture, WTF::move(completionHandler));
-        return;
-
     case WebExtensionContentWorldType::ContentScript:
-        internalDispatchRuntimeMessageEvent(contentWorldType, messageJSON, targetParameters, senderParameters, userGesture, WTF::move(completionHandler));
-        return;
+        return internalDispatchRuntimeMessageEvent(contentWorldType, messageJSON, targetParameters, senderParameters, userGesture, WTF::move(completionHandler));
 
     case WebExtensionContentWorldType::Native:
     case WebExtensionContentWorldType::WebPage:
         ASSERT_NOT_REACHED();
-        return;
+        return completionHandler({ });
     }
+    ASSERT_NOT_REACHED();
+    return completionHandler({ });
 }
 
 void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&& completionHandler)
 {
-    if (!hasDOMWrapperWorld(contentWorldType)) {
-        completionHandler({ });
-        return;
-    }
+    internalDispatchRuntimeConnectEvent(contentWorldType, channelIdentifier, name, targetParameters, senderParameters, userGesture, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&), true>&& completionHandler)
+{
+    if (!hasDOMWrapperWorld(contentWorldType))
+        return completionHandler({ });
 
     HashCountedSet<WebPageProxyIdentifier> firedEventCounts;
     auto sourceContentWorldType = senderParameters.contentWorldType;
@@ -793,28 +804,28 @@ void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionC
         }
     }, toDOMWrapperWorld(contentWorldType));
 
-    completionHandler(WTF::move(firedEventCounts));
+    return completionHandler(WTF::move(firedEventCounts));
 }
 
-void WebExtensionContextProxy::dispatchRuntimeConnectEvent(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContextProxy::dispatchRuntimeConnectEvent(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&), true>&& completionHandler)
 {
     switch (contentWorldType) {
     case WebExtensionContentWorldType::Main:
 #if ENABLE(INSPECTOR_EXTENSIONS)
     case WebExtensionContentWorldType::Inspector:
 #endif
-        internalDispatchRuntimeConnectEvent(contentWorldType, channelIdentifier, name, targetParameters, senderParameters, userGesture, WTF::move(completionHandler));
-        return;
-
     case WebExtensionContentWorldType::ContentScript:
-        internalDispatchRuntimeConnectEvent(contentWorldType, channelIdentifier, name, targetParameters, senderParameters, userGesture, WTF::move(completionHandler));
-        return;
+        return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+            return internalDispatchRuntimeConnectEvent(contentWorldType, channelIdentifier, name, targetParameters, senderParameters, userGesture, WTF::move(completionHandler));
+        });
 
     case WebExtensionContentWorldType::Native:
     case WebExtensionContentWorldType::WebPage:
         ASSERT_NOT_REACHED();
-        return;
+        return completionHandler({ });
     }
+    ASSERT_NOT_REACHED();
+    return completionHandler({ });
 }
 
 inline NSString *toWebAPI(WebExtensionContext::InstallReason installReason)

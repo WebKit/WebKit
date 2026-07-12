@@ -49,7 +49,7 @@
 
 namespace WebKit {
 
-void WebExtensionContext::permissionsGetAll(CompletionHandler<void(Vector<String>&&, Vector<String>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::permissionsGetAll(CompletionHandler<void(Vector<String>&&, Vector<String>&&), true>&& completionHandler)
 {
     Vector<String> permissions, origins;
 
@@ -83,28 +83,26 @@ void WebExtensionContext::permissionsGetAll(CompletionHandler<void(Vector<String
             origins.append(WebExtensionMatchPattern::allHostsAndSchemesMatchPattern()->string());
     }
 
-    completionHandler(WTF::move(permissions), WTF::move(origins));
+    return completionHandler(WTF::move(permissions), WTF::move(origins));
 }
 
-void WebExtensionContext::permissionsContains(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::permissionsContains(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool), true>&& completionHandler)
 {
-    completionHandler(hasPermissions(permissions, toPatterns(origins)));
+    return completionHandler(hasPermissions(permissions, toPatterns(origins)));
 }
 
-void WebExtensionContext::permissionsRequest(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::permissionsRequest(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool), true>&& completionHandler)
 {
     auto matchPatterns = toPatterns(origins);
 
     // If there is nothing to grant, return true. This matches Chrome and Firefox.
     if (permissions.isEmpty() && origins.isEmpty()) {
         firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnAdded, permissions, matchPatterns);
-        completionHandler(true);
-        return;
+        return completionHandler(true);
     }
 
     if (hasPermissions(permissions, matchPatterns)) {
-        completionHandler(true);
-        return;
+        return completionHandler(true);
     }
 
     // There shouldn't be any unsupported permissions, since they got reported as an error before this.
@@ -142,22 +140,26 @@ void WebExtensionContext::permissionsRequest(HashSet<String> permissions, HashSe
         completionHandler(true);
     });
 
-    requestPermissionMatchPatterns(matchPatterns, nullptr, [callbackAggregator, resultHolder](MatchPatternSet&& neededMatchPatterns, MatchPatternSet&& allowedMatchPatterns, WallTime expirationDate) {
-        // The permissions.request() API only allows granting all or none.
-        resultHolder->matchPatternsAreGranted = neededMatchPatterns.size() == allowedMatchPatterns.size();
-        resultHolder->neededMatchPatterns = WTF::move(neededMatchPatterns);
-        resultHolder->permissionExpirationDate = expirationDate;
-    }, GrantOnCompletion::No, PermissionStateOptions::IncludeOptionalPermissions);
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        requestPermissionMatchPatterns(matchPatterns, nullptr, [callbackAggregator, resultHolder](MatchPatternSet&& neededMatchPatterns, MatchPatternSet&& allowedMatchPatterns, WallTime expirationDate) {
+            // The permissions.request() API only allows granting all or none.
+            resultHolder->matchPatternsAreGranted = neededMatchPatterns.size() == allowedMatchPatterns.size();
+            resultHolder->neededMatchPatterns = WTF::move(neededMatchPatterns);
+            resultHolder->permissionExpirationDate = expirationDate;
+        }, GrantOnCompletion::No, PermissionStateOptions::IncludeOptionalPermissions);
 
-    requestPermissions(permissions, nullptr, [callbackAggregator, resultHolder](PermissionsSet&& neededPermissions, PermissionsSet&& allowedPermissions, WallTime expirationDate) {
-        // The permissions.request() API only allows granting all or none.
-        resultHolder->permissionsAreGranted = neededPermissions.size() == allowedPermissions.size();
-        resultHolder->neededPermissions = WTF::move(neededPermissions);
-        resultHolder->matchPatternExpirationDate = expirationDate;
-    }, GrantOnCompletion::No, PermissionStateOptions::IncludeOptionalPermissions);
+        requestPermissions(permissions, nullptr, [callbackAggregator, resultHolder](PermissionsSet&& neededPermissions, PermissionsSet&& allowedPermissions, WallTime expirationDate) {
+            // The permissions.request() API only allows granting all or none.
+            resultHolder->permissionsAreGranted = neededPermissions.size() == allowedPermissions.size();
+            resultHolder->neededPermissions = WTF::move(neededPermissions);
+            resultHolder->matchPatternExpirationDate = expirationDate;
+        }, GrantOnCompletion::No, PermissionStateOptions::IncludeOptionalPermissions);
+        return WTF::move(deferred);
+    });
+
 }
 
-void WebExtensionContext::permissionsRemove(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::permissionsRemove(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool), true>&& completionHandler)
 {
     auto matchPatterns = toPatterns(origins);
     bool removingAllHostsPattern = WebExtensionMatchPattern::patternsMatchAllHosts(matchPatterns);
@@ -167,7 +169,7 @@ void WebExtensionContext::permissionsRemove(HashSet<String> permissions, HashSet
     removeGrantedPermissions(permissions);
     removeGrantedPermissionMatchPatterns(matchPatterns, EqualityOnly::No);
 
-    completionHandler(!hasPermissions(permissions, matchPatterns));
+    return completionHandler(!hasPermissions(permissions, matchPatterns));
 }
 
 void WebExtensionContext::firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType type, const PermissionsSet& permissions, const MatchPatternSet& matchPatterns)
@@ -176,9 +178,9 @@ void WebExtensionContext::firePermissionsEventListenerIfNecessary(WebExtensionEv
 
     HashSet<String> origins = toStrings(matchPatterns);
 
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, Function<void()>([=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchPermissionsEvent(type, permissions, origins));
-    });
+    }));
 }
 
 } // namespace WebKit

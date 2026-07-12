@@ -36,6 +36,11 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkTransportStream);
 
+void NetworkTransportStream::sendBytes(std::span<const uint8_t> data, bool withFin, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
+{
+    sendBytes(data, withFin, CompletionHandler<void(std::optional<WebCore::Exception>&&), true>(WTF::move(completionHandler)));
+}
+
 #if !PLATFORM(COCOA)
 NetworkTransportStream::NetworkTransportStream()
     : m_identifier(WebCore::WebTransportStreamIdentifier::generate())
@@ -44,9 +49,9 @@ NetworkTransportStream::NetworkTransportStream()
 {
 }
 
-void NetworkTransportStream::sendBytes(std::span<const uint8_t>, bool, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
+CompletionHandlerCalledToken NetworkTransportStream::sendBytes(std::span<const uint8_t>, bool, CompletionHandler<void(std::optional<WebCore::Exception>&&), true>&& completionHandler)
 {
-    completionHandler(std::nullopt);
+    return completionHandler(std::nullopt);
 }
 
 void NetworkTransportStream::cancelReceive(std::optional<WebCore::WebTransportStreamErrorCode>)

@@ -46,29 +46,29 @@ bool WebExtensionContext::isCommandsMessageAllowed(IPC::Decoder& message)
     return isLoadedAndPrivilegedMessage(message) && protect(extension())->hasCommands();
 }
 
-void WebExtensionContext::commandsGetAll(CompletionHandler<void(Vector<WebExtensionCommandParameters>)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::commandsGetAll(CompletionHandler<void(Vector<WebExtensionCommandParameters>), true>&& completionHandler)
 {
     auto results = WTF::map(commands(), [](auto& command) {
         return command->parameters();
     });
 
-    completionHandler(WTF::move(results));
+    return completionHandler(WTF::move(results));
 }
 
 void WebExtensionContext::fireCommandEventIfNeeded(const WebExtensionCommand& command, WebExtensionTab* tab)
 {
     constexpr auto type = WebExtensionEventListenerType::CommandsOnCommand;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }, command = Ref { command }, tab = RefPtr { tab }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, Function<void()>([=, this, protectedThis = Ref { *this }, command = Ref { command }, tab = RefPtr { tab }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchCommandsCommandEvent(command->identifier(), tab ? std::optional(tab->parameters()) : std::nullopt));
-    });
+    }));
 }
 
 void WebExtensionContext::fireCommandChangedEventIfNeeded(const WebExtensionCommand& command, const String& oldShortcut)
 {
     constexpr auto type = WebExtensionEventListenerType::CommandsOnChanged;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }, command = Ref { command }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, Function<void()>([=, this, protectedThis = Ref { *this }, command = Ref { command }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchCommandsChangedEvent(command->identifier(), oldShortcut, command->shortcutString()));
-    });
+    }));
 }
 
 } // namespace WebKit

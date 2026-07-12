@@ -3967,10 +3967,10 @@ void WebPage::dispatchAsynchronousTouchEvents(UniqueRef<EventDispatcher::TouchEv
         // dispatched to JS, but their handlers must still be invoked so that state
         // transitions they carry (e.g. m_touchMovePreventionState) are resolved.
         for (auto&& completionHandler : touchEventData.completionHandlers | std::views::take(touchEventData.completionHandlers.size() - 1))
-            completionHandler(handled, std::nullopt);
+            (void)completionHandler(handled, std::nullopt);
 
         // The last handler corresponds to the event that was actually dispatched.
-        touchEventData.completionHandlers.last()(handled, transformEventIfNecessary(handleTouchEventResult, WTF::move(touchEventData.event)));
+        (void)touchEventData.completionHandlers.last()(handled, transformEventIfNecessary(handleTouchEventResult, WTF::move(touchEventData.event)));
     }
 }
 
@@ -3978,7 +3978,7 @@ void WebPage::cancelAsynchronousTouchEvents(UniqueRef<EventDispatcher::TouchEven
 {
     for (auto& touchEventData : queue.get()) {
         for (auto& completionHandler : touchEventData.completionHandlers)
-            completionHandler(true, std::nullopt);
+            (void)completionHandler(true, std::nullopt);
     }
 }
 #endif

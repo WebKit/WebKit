@@ -152,15 +152,14 @@ void WebInspectorBackend::whenFrontendConnectionEstablished(Function<void(IPC::C
 }
 
 // Called by WebInspectorBackend messages
-void WebInspectorBackend::show(CompletionHandler<void(bool success)>&& completionHandler)
+CompletionHandlerCalledToken WebInspectorBackend::show(CompletionHandler<void(bool success), true>&& completionHandler)
 {
     if (!m_page->corePage()) {
-        completionHandler(false);
-        return;
+        return completionHandler(false);
     }
 
     m_page->corePage()->inspectorController().show();
-    completionHandler(true);
+    return completionHandler(true);
 }
 
 void WebInspectorBackend::close()

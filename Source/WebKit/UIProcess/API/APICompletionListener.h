@@ -33,14 +33,24 @@ namespace API {
 
 class CompletionListener : public API::ObjectImpl<API::Object::Type::CompletionListener> {
 public:
-    static Ref<CompletionListener> create(CompletionHandler<void(WKTypeRef)>&& completionHandler) { return adoptRef(*new CompletionListener(WTF::move(completionHandler))); }
-    void complete(WKTypeRef result) { m_completionHandler(result); }
+    // The handler is stored for later dispatch via complete(), so CompletionListener is a
+    // genuine leaf. Its member is enforced: complete() now proves at compile time that the
+    // stored handler is invoked (token discarded at the single drain site). The single
+    // deferUnchecked that produces the caller's token lives at the storage site in WKPage.cpp
+    // that moves the outer handler into this listener.
+    //
+    // A single non-enforced create() is kept (constructing the enforced member from a plain
+    // CompletionHandler is free) to avoid overload ambiguity for token-returning lambdas,
+    // which are convertible to both enforced and non-enforced CompletionHandler.
+    static Ref<CompletionListener> create(CompletionHandler<void(WKTypeRef)>&& completionHandler) { return adoptRef(*new CompletionListener(CompletionHandler<void(WKTypeRef), true>(WTF::move(completionHandler)))); }
+
+    void complete(WKTypeRef result) { (void)m_completionHandler(result); }
 
 private:
-    explicit CompletionListener(CompletionHandler<void(WKTypeRef)>&& completionHandler)
+    explicit CompletionListener(CompletionHandler<void(WKTypeRef), true>&& completionHandler)
         : m_completionHandler(WTF::move(completionHandler)) { }
 
-    CompletionHandler<void(WKTypeRef)> m_completionHandler;
+    CompletionHandler<void(WKTypeRef), true> m_completionHandler;
 };
 
 }

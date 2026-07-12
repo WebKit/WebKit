@@ -210,16 +210,19 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-void EventDispatcher::gestureEvent(FrameIdentifier frameID, PageIdentifier pageID, const WebGestureEvent& gestureEvent, CompletionHandler<void(std::optional<WebEventType>, bool, std::optional<RemoteUserInputEventData>)>&& completionHandler)
+CompletionHandlerCalledToken EventDispatcher::gestureEvent(FrameIdentifier frameID, PageIdentifier pageID, const WebGestureEvent& gestureEvent, CompletionHandler<void(std::optional<WebEventType>, bool, std::optional<RemoteUserInputEventData>), true>&& completionHandler)
 {
-    RunLoop::mainSingleton().dispatch([this, frameID, pageID, gestureEvent, completionHandler = WTF::move(completionHandler)] mutable {
-        dispatchGestureEvent(frameID, pageID, gestureEvent, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        RunLoop::mainSingleton().dispatch([this, frameID, pageID, gestureEvent, completionHandler = WTF::move(completionHandler)] mutable {
+            dispatchGestureEvent(frameID, pageID, gestureEvent, WTF::move(completionHandler));
+        });
+        return WTF::move(deferred);
     });
 }
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-TouchEventData::TouchEventData(WebCore::FrameIdentifier frameID, const WebTouchEvent& event, CompletionHandler<void(bool, std::optional<RemoteWebTouchEvent>)>&& completionHandler)
+TouchEventData::TouchEventData(WebCore::FrameIdentifier frameID, const WebTouchEvent& event, CompletionHandler<void(bool, std::optional<RemoteWebTouchEvent>), true>&& completionHandler)
     : frameID(frameID)
     , event(event)
 {
@@ -240,43 +243,46 @@ void EventDispatcher::takeQueuedTouchEventsForPage(const WebPage& webPage, Uniqu
         destinationQueue = makeUniqueRefFromNonNullUniquePtr(WTF::move(queue));
 }
 
-void EventDispatcher::touchEvent(PageIdentifier pageID, FrameIdentifier frameID, const WebTouchEvent& touchEvent, CompletionHandler<void(bool, std::optional<RemoteWebTouchEvent>)>&& completionHandler)
+CompletionHandlerCalledToken EventDispatcher::touchEvent(PageIdentifier pageID, FrameIdentifier frameID, const WebTouchEvent& touchEvent, CompletionHandler<void(bool, std::optional<RemoteWebTouchEvent>), true>&& completionHandler)
 {
-    bool updateListWasEmpty;
-    {
-        Locker locker { m_touchEventsLock };
-        updateListWasEmpty = m_touchEvents.isEmpty();
-        auto addResult = m_touchEvents.add(pageID, makeUniqueRef<TouchEventQueue>());
-        if (addResult.isNewEntry)
-            addResult.iterator->value->append({ frameID, touchEvent, WTF::move(completionHandler) });
-        else {
-            auto& queuedEvents = addResult.iterator->value;
-            ASSERT(!queuedEvents->isEmpty());
-            auto& touchEventData = queuedEvents->last();
-            // Coalesce touch move events.
-            if (touchEvent.type() == WebEventType::TouchMove && touchEventData.event.type() == WebEventType::TouchMove) {
-                auto coalescedEvents = Vector<WebTouchEvent> { };
-                coalescedEvents.appendVector(queuedEvents->last().event.coalescedEvents());
-                coalescedEvents.appendVector(touchEvent.coalescedEvents());
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        bool updateListWasEmpty;
+        {
+            Locker locker { m_touchEventsLock };
+            updateListWasEmpty = m_touchEvents.isEmpty();
+            auto addResult = m_touchEvents.add(pageID, makeUniqueRef<TouchEventQueue>());
+            if (addResult.isNewEntry)
+                addResult.iterator->value->append({ frameID, touchEvent, WTF::move(completionHandler) });
+            else {
+                auto& queuedEvents = addResult.iterator->value;
+                ASSERT(!queuedEvents->isEmpty());
+                auto& touchEventData = queuedEvents->last();
+                // Coalesce touch move events.
+                if (touchEvent.type() == WebEventType::TouchMove && touchEventData.event.type() == WebEventType::TouchMove) {
+                    auto coalescedEvents = Vector<WebTouchEvent> { };
+                    coalescedEvents.appendVector(queuedEvents->last().event.coalescedEvents());
+                    coalescedEvents.appendVector(touchEvent.coalescedEvents());
 
-                auto touchEventWithCoalescedEvents = touchEvent;
-                touchEventWithCoalescedEvents.setCoalescedEvents(coalescedEvents);
+                    auto touchEventWithCoalescedEvents = touchEvent;
+                    touchEventWithCoalescedEvents.setCoalescedEvents(coalescedEvents);
 
-                // Preserve coalesced completion handlers so their state transitions are not lost.
-                queuedEvents->last().frameID = frameID;
-                queuedEvents->last().event = touchEventWithCoalescedEvents;
-                queuedEvents->last().completionHandlers.append(WTF::move(completionHandler));
-            } else
-                queuedEvents->append({ frameID, touchEvent, WTF::move(completionHandler) });
+                    // Preserve coalesced completion handlers so their state transitions are not lost.
+                    queuedEvents->last().frameID = frameID;
+                    queuedEvents->last().event = touchEventWithCoalescedEvents;
+                    queuedEvents->last().completionHandlers.append(WTF::move(completionHandler));
+                } else
+                    queuedEvents->append({ frameID, touchEvent, WTF::move(completionHandler) });
+            }
         }
-    }
 
-    if (updateListWasEmpty) {
-        RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }] {
-            if (RefPtr protectedThis = weakThis.get())
-                protectedThis->dispatchTouchEvents();
-        });
-    }
+        if (updateListWasEmpty) {
+            RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }] {
+                if (RefPtr protectedThis = weakThis.get())
+                    protectedThis->dispatchTouchEvents();
+            });
+        }
+        return WTF::move(deferred);
+    });
 }
 
 void EventDispatcher::dispatchTouchEvents()
@@ -295,7 +301,7 @@ void EventDispatcher::dispatchTouchEvents()
         else {
             for (auto& data : slot.value.get()) {
                 for (auto& completionHandler : data.completionHandlers)
-                    completionHandler(false, std::nullopt);
+                    (void)completionHandler(false, std::nullopt);
             }
             ASSERT_NOT_REACHED();
         }

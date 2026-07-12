@@ -69,103 +69,105 @@ NetworkMDNSRegister::~NetworkMDNSRegister()
     g_cancellable_cancel(m_cancellable.get());
 }
 
-void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdentifier documentIdentifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&& completionHandler)
+CompletionHandlerCalledToken NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdentifier documentIdentifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>), true>&& completionHandler)
 {
     auto name = makeString(WTF::UUID::createVersion4(), ".local"_s);
 
     if (ipAddress == "0.0.0.0"_s || ipAddress == "::"_s) {
-        completionHandler(name, WebCore::MDNSRegisterError::BadParameter);
-        return;
+        return completionHandler(name, WebCore::MDNSRegisterError::BadParameter);
     }
 
     if (!m_dbusProxy) {
-        completionHandler(name, WebCore::MDNSRegisterError::Internal);
-        return;
+        return completionHandler(name, WebCore::MDNSRegisterError::Internal);
     }
 
-    m_registeredNames.add(name);
-    m_perDocumentRegisteredNames.ensure(documentIdentifier, [] {
-        return Vector<String>();
-    }).iterator->value.append(name);
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        m_registeredNames.add(name);
+        m_perDocumentRegisteredNames.ensure(documentIdentifier, [] {
+            return Vector<String>();
+        }).iterator->value.append(name);
 
-    Ref connection = m_connection.get();
-    auto request = makeUnique<PendingRegistrationRequest>(connection.get(), WTF::move(name), ipAddress, sessionID(), WTF::move(completionHandler));
+        Ref connection = m_connection.get();
+        auto request = makeUnique<PendingRegistrationRequest>(connection.get(), WTF::move(name), ipAddress, sessionID(), WTF::move(completionHandler));
 
-    request->cancellable = m_cancellable;
+        request->cancellable = m_cancellable;
 
-    g_dbus_proxy_call(m_dbusProxy.get(), "EntryGroupNew", g_variant_new("()"), G_DBUS_CALL_FLAGS_NONE, -1, m_cancellable.get(), [](GObject* object, GAsyncResult* result, gpointer userData) {
-        std::unique_ptr<PendingRegistrationRequest> request;
-        request.reset(reinterpret_cast<PendingRegistrationRequest*>(userData));
-
-        GUniqueOutPtr<GError> error;
-        auto variant = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(object), result, &error.outPtr()));
-        if (error) {
-            // We might have access to the system bus but Avahi is not activatable/installed, don't
-            // log an error when that is the case.
-            if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED)
-                && !g_error_matches(error.get(), G_DBUS_ERROR, G_DBUS_ERROR_SERVICE_UNKNOWN)) {
-                LOG_ERROR("Unable to add Avahi entry group: %s", error->message);
-            }
-            request->completionHandler(request->name, WebCore::MDNSRegisterError::Internal);
-            return;
-        }
-        GUniqueOutPtr<char> objectPath;
-        g_variant_get(variant.get(), "(o)", &objectPath.outPtr());
-
-        auto* cancellable = request->cancellable.get();
-        g_dbus_proxy_new_for_bus(G_BUS_TYPE_SYSTEM, G_DBUS_PROXY_FLAGS_NONE, nullptr, "org.freedesktop.Avahi", objectPath.get(), "org.freedesktop.Avahi.EntryGroup", cancellable, [](GObject*, GAsyncResult* result, gpointer userData) {
+        g_dbus_proxy_call(m_dbusProxy.get(), "EntryGroupNew", g_variant_new("()"), G_DBUS_CALL_FLAGS_NONE, -1, m_cancellable.get(), [](GObject* object, GAsyncResult* result, gpointer userData) {
             std::unique_ptr<PendingRegistrationRequest> request;
             request.reset(reinterpret_cast<PendingRegistrationRequest*>(userData));
 
             GUniqueOutPtr<GError> error;
-            auto dbusProxy = adoptGRef(g_dbus_proxy_new_for_bus_finish(result, &error.outPtr()));
-
+            GRefPtr<GVariant> variant = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(object), result, &error.outPtr()));
             if (error) {
-                if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-                    LOG_ERROR("Unable to create DBus proxy for Avahi entry group: %s", error->message);
-                request->completionHandler(request->name, WebCore::MDNSRegisterError::Internal);
+                // We might have access to the system bus but Avahi is not activatable/installed, don't
+                // log an error when that is the case.
+                if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED)
+                    && !g_error_matches(error.get(), G_DBUS_ERROR, G_DBUS_ERROR_SERVICE_UNKNOWN)) {
+                    LOG_ERROR("Unable to add Avahi entry group: %s", error->message);
+                }
+                (void)request->completionHandler(request->name, WebCore::MDNSRegisterError::Internal);
                 return;
             }
-
-            int interface = -1;
-            int protocol = -1;
-            uint32_t flags = 16; // AVAHI_PUBLISH_NO_REVERSE
+            GUniqueOutPtr<char> objectPath;
+            g_variant_get(variant.get(), "(o)", &objectPath.outPtr());
 
             auto* cancellable = request->cancellable.get();
-            auto requestName = request->name.ascii();
-            auto requestAddress = request->address.ascii();
-            g_dbus_proxy_call(dbusProxy.get(), "AddAddress", g_variant_new("(iiuss)", interface, protocol, flags, requestName.data(), requestAddress.data()), G_DBUS_CALL_FLAGS_NONE, -1, cancellable, [](GObject* object, GAsyncResult* result, gpointer userData) {
+            g_dbus_proxy_new_for_bus(G_BUS_TYPE_SYSTEM, G_DBUS_PROXY_FLAGS_NONE, nullptr, "org.freedesktop.Avahi", objectPath.get(), "org.freedesktop.Avahi.EntryGroup", cancellable, [](GObject*, GAsyncResult* result, gpointer userData) {
                 std::unique_ptr<PendingRegistrationRequest> request;
                 request.reset(reinterpret_cast<PendingRegistrationRequest*>(userData));
 
                 GUniqueOutPtr<GError> error;
-                auto proxy = G_DBUS_PROXY(object);
-                auto finalResult = adoptGRef(g_dbus_proxy_call_finish(proxy, result, &error.outPtr()));
-                if (!finalResult) {
+                GRefPtr<GDBusProxy> dbusProxy = adoptGRef(g_dbus_proxy_new_for_bus_finish(result, &error.outPtr()));
+
+                if (error) {
                     if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-                        LOG_ERROR("Unable to register MDNS address %s to Avahi: %s", request->name.ascii().data(), error->message);
-                    request->completionHandler(request->name, WebCore::MDNSRegisterError::Internal);
+                        LOG_ERROR("Unable to create DBus proxy for Avahi entry group: %s", error->message);
+                    (void)request->completionHandler(request->name, WebCore::MDNSRegisterError::Internal);
                     return;
                 }
 
+                int interface = -1;
+                int protocol = -1;
+                uint32_t flags = 16; // AVAHI_PUBLISH_NO_REVERSE
+
                 auto* cancellable = request->cancellable.get();
-                g_dbus_proxy_call(proxy, "Commit", g_variant_new("()"), G_DBUS_CALL_FLAGS_NONE, -1, cancellable, [](GObject* object, GAsyncResult* result, gpointer userData) {
+                auto requestName = request->name.ascii();
+                auto requestAddress = request->address.ascii();
+                g_dbus_proxy_call(dbusProxy.get(), "AddAddress", g_variant_new("(iiuss)", interface, protocol, flags, requestName.data(), requestAddress.data()), G_DBUS_CALL_FLAGS_NONE, -1, cancellable, [](GObject* object, GAsyncResult* result, gpointer userData) {
                     std::unique_ptr<PendingRegistrationRequest> request;
                     request.reset(reinterpret_cast<PendingRegistrationRequest*>(userData));
 
                     GUniqueOutPtr<GError> error;
-                    auto finalResult = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(object), result, &error.outPtr()));
+                    auto proxy = G_DBUS_PROXY(object);
+                    GRefPtr<GVariant> finalResult = adoptGRef(g_dbus_proxy_call_finish(proxy, result, &error.outPtr()));
                     if (!finalResult) {
                         if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-                            LOG_ERROR("Unable to commit MDNS address %s to Avahi: %s", request->name.ascii().data(), error->message);
-                        request->completionHandler(request->name, WebCore::MDNSRegisterError::Internal);
+                            LOG_ERROR("Unable to register MDNS address %s to Avahi: %s", request->name.ascii().data(), error->message);
+                        (void)request->completionHandler(request->name, WebCore::MDNSRegisterError::Internal);
                         return;
                     }
-                    request->completionHandler(request->name, { });
+
+                    auto* cancellable = request->cancellable.get();
+                    g_dbus_proxy_call(proxy, "Commit", g_variant_new("()"), G_DBUS_CALL_FLAGS_NONE, -1, cancellable, [](GObject* object, GAsyncResult* result, gpointer userData) {
+                        std::unique_ptr<PendingRegistrationRequest> request;
+                        request.reset(reinterpret_cast<PendingRegistrationRequest*>(userData));
+
+                        GUniqueOutPtr<GError> error;
+                        GRefPtr<GVariant> finalResult = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(object), result, &error.outPtr()));
+                        if (!finalResult) {
+                            if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
+                                LOG_ERROR("Unable to commit MDNS address %s to Avahi: %s", request->name.ascii().data(), error->message);
+                            (void)request->completionHandler(request->name, WebCore::MDNSRegisterError::Internal);
+                            return;
+                        }
+                        (void)request->completionHandler(request->name, { });
+                    }, request.release());
                 }, request.release());
             }, request.release());
         }, request.release());
-    }, request.release());
+        return WTF::move(deferred);
+    });
+
 }
 
 } // namespace WebKit

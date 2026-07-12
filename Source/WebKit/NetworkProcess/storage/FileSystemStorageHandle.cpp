@@ -383,33 +383,36 @@ std::optional<size_t> FileSystemStorageHandle::computeCommandSpace(WebCore::File
 
 void FileSystemStorageHandle::executeCommandForWritable(WebCore::FileSystemWritableFileStreamIdentifier streamIdentifier, WebCore::FileSystemWriteCommandType type, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
 {
+    executeCommandForWritable(streamIdentifier, type, position, size, dataBytes, hasDataError, CompletionHandler<void(std::optional<FileSystemStorageError>), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken FileSystemStorageHandle::executeCommandForWritable(WebCore::FileSystemWritableFileStreamIdentifier streamIdentifier, WebCore::FileSystemWriteCommandType type, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, CompletionHandler<void(std::optional<FileSystemStorageError>), true>&& completionHandler)
+{
     auto spaceRequired = computeCommandSpace(streamIdentifier, type, position, size, dataBytes, hasDataError);
     RefPtr manager = m_manager.get();
     if (!spaceRequired || !manager) {
         closeWritable(streamIdentifier, WebCore::FileSystemWriteCloseReason::Aborted);
-        completionHandler(FileSystemStorageError::Unknown);
-        return;
+        return completionHandler(FileSystemStorageError::Unknown);
     }
 
-    manager->requestSpace(*spaceRequired, [weakThis = WeakPtr { *this }, streamIdentifier, type, position, size, dataBytes = Vector<uint8_t>(dataBytes), completionHandler = WTF::move(completionHandler)](bool granted) mutable {
+    // The reply lambda is token-returning, so every branch is compile-forced to complete the handler;
+    // requestSpace's enforced overload owns the single deferUnchecked leaf (handler -> m_quotaCheckFunction).
+    return manager->requestSpace(*spaceRequired, CompletionHandler<void(bool), true>([weakThis = WeakPtr { *this }, streamIdentifier, type, position, size, dataBytes = Vector<uint8_t>(dataBytes), completionHandler = WTF::move(completionHandler)](bool granted) mutable -> CompletionHandlerCalledToken {
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis) {
-            completionHandler(FileSystemStorageError::Unknown);
-            return;
-        }
+        if (!protectedThis)
+            return completionHandler(FileSystemStorageError::Unknown);
 
         if (!granted) {
             protectedThis->closeWritable(streamIdentifier, WebCore::FileSystemWriteCloseReason::Aborted);
-            completionHandler(FileSystemStorageError::QuotaError);
-            return;
+            return completionHandler(FileSystemStorageError::QuotaError);
         }
 
         auto error = protectedThis->executeCommandForWritableInternal(streamIdentifier, type, position, size, dataBytes.span(), false);
         if (error)
             protectedThis->closeWritable(streamIdentifier, WebCore::FileSystemWriteCloseReason::Aborted);
 
-        completionHandler(error);
-    });
+        return completionHandler(error);
+    }));
 }
 
 Vector<WebCore::FileSystemWritableFileStreamIdentifier> FileSystemStorageHandle::writables() const
@@ -497,6 +500,11 @@ uint64_t FileSystemStorageHandle::allocatedUnusedCapacity()
 
 void FileSystemStorageHandle::requestNewCapacityForSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, uint64_t newCapacity, CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler)
 {
+    requestNewCapacityForSyncAccessHandle(accessHandleIdentifier, newCapacity, CompletionHandler<void(std::optional<uint64_t>), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken FileSystemStorageHandle::requestNewCapacityForSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, uint64_t newCapacity, CompletionHandler<void(std::optional<uint64_t>), true>&& completionHandler)
+{
     if (!isActiveSyncAccessHandle(accessHandleIdentifier))
         return completionHandler(std::nullopt);
 
@@ -515,7 +523,9 @@ void FileSystemStorageHandle::requestNewCapacityForSyncAccessHandle(WebCore::Fil
     else
         newCapacity = defaultCapacityStep * ((newCapacity / defaultCapacityStep) + 1);
 
-    manager->requestSpace(newCapacity - currentCapacity, [weakThis = WeakPtr { *this }, accessHandleIdentifier, newCapacity, completionHandler = WTF::move(completionHandler)](bool granted) mutable {
+    // The reply lambda is token-returning, so every branch is compile-forced to complete the handler;
+    // requestSpace's enforced overload owns the single deferUnchecked leaf (handler -> m_quotaCheckFunction).
+    return manager->requestSpace(newCapacity - currentCapacity, CompletionHandler<void(bool), true>([weakThis = WeakPtr { *this }, accessHandleIdentifier, newCapacity, completionHandler = WTF::move(completionHandler)](bool granted) mutable -> CompletionHandlerCalledToken {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return completionHandler(std::nullopt);
@@ -525,8 +535,8 @@ void FileSystemStorageHandle::requestNewCapacityForSyncAccessHandle(WebCore::Fil
 
         if (granted)
             protectedThis->m_activeSyncAccessHandle->capacity = newCapacity;
-        completionHandler(protectedThis->m_activeSyncAccessHandle->capacity);
-    });
+        return completionHandler(protectedThis->m_activeSyncAccessHandle->capacity);
+    }));
 }
 
 } // namespace WebKit

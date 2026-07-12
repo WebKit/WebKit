@@ -510,7 +510,7 @@ void TiledCoreAnimationDrawingArea::setExposedContentRect(const FloatRect&)
     ASSERT_NOT_REACHED();
 }
 
-void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void(), true>&& completionHandler)
 {
     m_inUpdateGeometry = true;
 
@@ -545,17 +545,17 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, bool
     if (flushSynchronously)
         [CATransaction flush];
 
-    completionHandler();
+    return completionHandler();
 
     m_inUpdateGeometry = false;
 
     m_layerHostingContext->setFencePort(fencePort.sendRight());
 }
 
-void TiledCoreAnimationDrawingArea::setDeviceScaleFactor(float deviceScaleFactor, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken TiledCoreAnimationDrawingArea::setDeviceScaleFactor(float deviceScaleFactor, CompletionHandler<void(), true>&& completionHandler)
 {
     Ref { m_webPage.get() }->setDeviceScaleFactor(deviceScaleFactor);
-    completionHandler();
+    return completionHandler();
 }
 
 void TiledCoreAnimationDrawingArea::setColorSpace(std::optional<WebCore::DestinationColorSpace> colorSpace)
@@ -718,12 +718,11 @@ void TiledCoreAnimationDrawingArea::adjustTransientZoom(double scale, FloatPoint
     prepopulateRectForZoom(scale, origin);
 }
 
-void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint origin, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint origin, CompletionHandler<void(), true>&& completionHandler)
 {
     Ref webPage = m_webPage.get();
     if (!webPage->localMainFrameView()) {
-        completionHandler();
-        return;
+        return completionHandler();
     }
 
     scale *= webPage->viewScaleFactor();
@@ -750,8 +749,7 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
     if (m_transientZoomScale == scale && roundedIntPoint(m_transientZoomOrigin) == roundedIntPoint(constrainedOrigin)) {
         // We're already at the right scale and position, so we don't need to animate.
         applyTransientZoomToPage(scale, origin);
-        completionHandler();
-        return;
+        return completionHandler();
     }
 
     TransformationMatrix transform;
@@ -797,7 +795,7 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
     }
 
     [CATransaction commit];
-    completionHandler();
+    return completionHandler();
 }
 
 void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, FloatPoint origin)

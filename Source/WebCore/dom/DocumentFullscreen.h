@@ -84,6 +84,8 @@ public:
         ExemptIFrameAllowFullscreenRequirement,
     };
     WEBCORE_EXPORT void requestFullscreen(Ref<Element>&&, FullscreenCheckType, CompletionHandler<void(ExceptionOr<void>)>&&, HTMLMediaElementEnums::VideoFullscreenMode = HTMLMediaElementEnums::VideoFullscreenModeStandard);
+    WEBCORE_EXPORT CompletionHandlerCalledToken requestFullscreen(Ref<Element>&&, FullscreenCheckType, CompletionHandler<void(ExceptionOr<void>), true>&&, HTMLMediaElementEnums::VideoFullscreenMode = HTMLMediaElementEnums::VideoFullscreenModeStandard);
+    WEBCORE_EXPORT CompletionHandlerCalledToken requestFullscreenForBoolResult(Ref<Element>&&, FullscreenCheckType, CompletionHandler<void(bool), true>&&, HTMLMediaElementEnums::VideoFullscreenMode = HTMLMediaElementEnums::VideoFullscreenModeStandard);
     WEBCORE_EXPORT ExceptionOr<void> willEnterFullscreen(Element&, HTMLMediaElementEnums::VideoFullscreenMode);
     WEBCORE_EXPORT bool willExitFullscreen();
     WEBCORE_EXPORT void didExitFullscreen(CompletionHandler<void(ExceptionOr<void>)>&&);

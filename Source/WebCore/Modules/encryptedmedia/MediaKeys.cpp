@@ -137,7 +137,7 @@ void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<
 
     // 5.1. Use this object's cdm instance to process certificate.
     ALWAYS_LOG(identifier);
-    m_instance->setServerCertificate(WTF::move(certificate), [this, protectedThis = Ref { *this }, promise = WTF::move(promise), identifier = WTF::move(identifier)] (auto success) {
+    m_instance->setServerCertificate(WTF::move(certificate), CDMInstance::SuccessCallback([this, protectedThis = Ref { *this }, promise = WTF::move(promise), identifier = WTF::move(identifier)] (auto success) {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
 #endif
@@ -151,7 +151,7 @@ void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<
 
         ALWAYS_LOG(identifier, "::task() - Resolved");
         promise->resolve<IDLBoolean>(true);
-    });
+    }));
 
     // 6. Return promise.
 }

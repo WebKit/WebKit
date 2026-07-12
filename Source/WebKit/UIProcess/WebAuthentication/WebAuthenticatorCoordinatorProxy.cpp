@@ -229,9 +229,9 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
 
 
 #if !HAVE(UNIFIED_ASC_AUTH_UI) && !HAVE(WEB_AUTHN_AS_MODERN)
-void WebAuthenticatorCoordinatorProxy::cancel(CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken WebAuthenticatorCoordinatorProxy::cancel(CompletionHandler<void(), true>&& completionHandler)
 {
-    completionHandler();
+    return completionHandler();
 }
 
 void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(const SecurityOriginData&, QueryCompletionHandler&& handler)

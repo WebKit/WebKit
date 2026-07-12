@@ -61,13 +61,13 @@ void DownloadProxy::publishProgress(const URL& url)
 }
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-void DownloadProxy::didReceivePlaceholderURL(const URL& placeholderURL, std::span<const uint8_t> bookmarkData, WebKit::SandboxExtensionHandle&& handle, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken DownloadProxy::didReceivePlaceholderURL(const URL& placeholderURL, std::span<const uint8_t> bookmarkData, WebKit::SandboxExtensionHandle&& handle, CompletionHandler<void(), true>&& completionHandler)
 {
     if (auto placeholderFileExtension = SandboxExtension::create(WTF::move(handle))) {
         bool ok = placeholderFileExtension->consume();
         ASSERT_UNUSED(ok, ok);
     }
-    m_client->didReceivePlaceholderURL(*this, placeholderURL, bookmarkData, WTF::move(completionHandler));
+    return m_client->didReceivePlaceholderURL(*this, placeholderURL, bookmarkData, WTF::move(completionHandler));
 }
 
 void DownloadProxy::didReceiveFinalURL(const URL& finalURL, std::span<const uint8_t> bookmarkData, WebKit::SandboxExtensionHandle&& handle)

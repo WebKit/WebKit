@@ -116,6 +116,7 @@ gboolean webkitWebViewScriptDialog(WebKitWebView*, WebKitScriptDialog*);
 gboolean webkitWebViewRunFileChooser(WebKitWebView*, WebKitFileChooserRequest*);
 void webkitWebViewDidChangePageID(WebKitWebView*);
 void webkitWebViewDidReceiveUserMessage(WebKitWebView*, WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&)>&&);
+CompletionHandlerCalledToken webkitWebViewDidReceiveUserMessage(WebKitWebView*, WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&), true>&&);
 
 #if ENABLE(POINTER_LOCK)
 void webkitWebViewRequestPointerLock(WebKitWebView*, CompletionHandler<void(bool)>&&);

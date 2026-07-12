@@ -37,10 +37,15 @@ public:
     }
 
 private:
-    void willSubmitForm(WebPageProxy&, WebFrameProxy&, WebFrameProxy&, WebKit::FrameInfoData&&, WebKit::FrameInfoData&&, const Vector<std::pair<String, String>>& values, API::Object*, const WTF::URL&, const WTF::String&, CompletionHandler<void()>&& completionHandler) override
+    CompletionHandlerCalledToken willSubmitForm(WebPageProxy&, WebFrameProxy&, WebFrameProxy&, WebKit::FrameInfoData&&, WebKit::FrameInfoData&&, const Vector<std::pair<String, String>>& values, API::Object*, const WTF::URL&, const WTF::String&, CompletionHandler<void(), true>&& completionHandler) override
     {
-        GRefPtr<WebKitFormSubmissionRequest> request = adoptGRef(webkitFormSubmissionRequestCreate(values, WebFormSubmissionListenerProxy::create(WTF::move(completionHandler))));
-        webkitWebViewSubmitFormRequest(m_webView, request.get());
+        // Genuine leaf: the handler is stored in a WebFormSubmissionListenerProxy
+        // and dispatched later when the form request is resolved.
+        return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+            GRefPtr<WebKitFormSubmissionRequest> request = adoptGRef(webkitFormSubmissionRequestCreate(values, WebFormSubmissionListenerProxy::create(CompletionHandler<void()>(WTF::move(completionHandler)))));
+            webkitWebViewSubmitFormRequest(m_webView, request.get());
+            return WTF::move(deferred);
+        });
     }
 
     WebKitWebView* m_webView;

@@ -60,7 +60,9 @@ public:
 
     // Called on MediaResourceLoader's WorkQueue.
     void responseReceived(const WebCore::ResourceResponse&, bool, CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&&);
+    CompletionHandlerCalledToken responseReceived(const WebCore::ResourceResponse&, bool, CompletionHandler<void(WebCore::ShouldContinuePolicyCheck), true>&&);
     void redirectReceived(WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
+    CompletionHandlerCalledToken redirectReceived(WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&), true>&&);
     void dataSent(uint64_t, uint64_t);
     void dataReceived(const WebCore::SharedBuffer&);
     void accessControlCheckFailed(const WebCore::ResourceError&);

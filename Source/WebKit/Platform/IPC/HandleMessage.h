@@ -130,6 +130,9 @@ void logReply(const C& connection, MessageName messageName, const T&... args)
 
 // Dispatch functions with no reply arguments.
 
+// Forward declaration needed by callMemberFunction overloads below.
+template<typename FunctionType> struct MethodSignatureValidation;
+
 template<typename T, typename U, typename MF, typename ArgsTuple>
 void callMemberFunction(T* object, MF U::* function, ArgsTuple&& tuple)
 {
@@ -142,9 +145,14 @@ void callMemberFunction(T* object, MF U::* function, ArgsTuple&& tuple)
 
 // Dispatch functions with synchronous reply arguments.
 
-template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
-void callMemberFunction(T* object, MF U::* function, ArgsTuple&& tuple, CompletionHandler<CH>&& completionHandler)
+template<typename T, typename U, typename MF, typename ArgsTuple, typename CH, bool Enforced>
+void callMemberFunction(T* object, MF U::* function, ArgsTuple&& tuple, CompletionHandler<CH, Enforced>&& completionHandler)
 {
+    if constexpr (Enforced) {
+        static_assert(WTF::IsCompletionHandlerCalledToken<typename MethodSignatureValidation<MF>::ReturnType>,
+            "A message handler that takes an enforcing CompletionHandler must return CompletionHandlerCalledToken "
+            "(obtained by calling the handler) to prove at compile time that the handler was invoked.");
+    }
     std::apply(
         [&](auto&&... args) {
             // Use of object without protection is safe here since std::apply() runs synchronously.
@@ -164,9 +172,14 @@ void callMemberFunction(T* object, MF U::* function, ArgsTuple&& tuple, WTF::Ref
 
 // Dispatch functions with connection parameter with synchronous reply arguments.
 
-template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
-void callMemberFunction(T* object, MF U::* function, Connection& connection, ArgsTuple&& tuple, CompletionHandler<CH>&& completionHandler)
+template<typename T, typename U, typename MF, typename ArgsTuple, typename CH, bool Enforced>
+void callMemberFunction(T* object, MF U::* function, Connection& connection, ArgsTuple&& tuple, CompletionHandler<CH, Enforced>&& completionHandler)
 {
+    if constexpr (Enforced) {
+        static_assert(WTF::IsCompletionHandlerCalledToken<typename MethodSignatureValidation<MF>::ReturnType>,
+            "A message handler that takes an enforcing CompletionHandler must return CompletionHandlerCalledToken "
+            "(obtained by calling the handler) to prove at compile time that the handler was invoked.");
+    }
     std::apply(
         [&](auto&&... args) {
             // Use of object without protection is safe here since std::apply() runs synchronously.
@@ -374,11 +387,16 @@ struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::t
 };
 
 // Properties, traits and conversions for C++ message handler functions
-template<typename... MessageArgumentTypes, typename... CompletionHandlerArgumentTypes>
-struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<CompletionHandler<void(CompletionHandlerArgumentTypes...)>&&>>
+template<typename... MessageArgumentTypes, typename... CompletionHandlerArgumentTypes, bool Enforced>
+struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<CompletionHandler<void(CompletionHandlerArgumentTypes...), Enforced>&&>>
     : MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> {
     using CompletionHandlerArguments = std::tuple<std::remove_cvref_t<CompletionHandlerArgumentTypes>...>;
-    using CompletionHandlerType = CompletionHandler<void(CompletionHandlerArgumentTypes...)>;
+    // CompletionHandlerType enforcement is determined by MethodSignatureValidation below
+    // based on whether the handler function returns a CompletionHandlerCalledToken.
+    // This allows incremental migration: only functions that already return the token are enforced.
+    template<bool ShouldEnforce>
+    using CompletionHandlerTypeFor = CompletionHandler<void(CompletionHandlerArgumentTypes...), ShouldEnforce>;
+    using CompletionHandlerType = CompletionHandlerTypeFor<Enforced>;
     static constexpr std::identity wrapCompletionHandler { };
     static constexpr std::identity unwrapCompletionHandler { };
 };
@@ -390,6 +408,9 @@ struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::t
     : MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> {
     using CompletionHandlerArguments = std::tuple<std::remove_cvref_t<CompletionHandlerArgumentTypes>...>;
     using CompletionHandlerType = CompletionHandler<void(CompletionHandlerArgumentTypes...)>;
+    // Swift handlers always use the non-enforced completion handler (RefCounted wrapper doesn't support enforcement).
+    template<bool>
+    using CompletionHandlerTypeFor = CompletionHandlerType;
     template<typename CH>
     static Ref<WTF::RefCountable<WTF::CompletionHandler<CH>>> wrapCompletionHandler(CompletionHandler<CH>&& handler)
     {
@@ -405,19 +426,40 @@ struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::t
 
 template<typename FunctionType> struct MethodSignatureValidation { };
 
+// Helper to lazily select CompletionHandlerType based on whether R is a token,
+// avoiding eager instantiation of CompletionHandlerTypeFor in the no-handler case.
+template<bool HasHandler, typename Base, bool ShouldEnforce>
+struct SelectCompletionHandlerType {
+    using type = typename Base::template CompletionHandlerTypeFor<ShouldEnforce>;
+};
+template<typename Base, bool ShouldEnforce>
+struct SelectCompletionHandlerType<false, Base, ShouldEnforce> {
+    using type = void;
+};
+
 template<typename R, typename... MethodArgumentTypes>
 struct MethodSignatureValidation<R(MethodArgumentTypes...)>
     : MethodSignatureValidationImpl<std::tuple<>, std::tuple<MethodArgumentTypes...>> {
+    using Base = MethodSignatureValidationImpl<std::tuple<>, std::tuple<MethodArgumentTypes...>>;
     using ReturnType = R;
-    static constexpr bool returnsVoid = std::is_same_v<R, void>;
+    // Treat CompletionHandlerCalledToken returns the same as void — they are not awaitables, and
+    // the token return is just a compile-time proof. Use the same (non-coroutine) dispatch path.
+    static constexpr bool returnsVoid = std::is_same_v<R, void> || WTF::IsCompletionHandlerCalledToken<R>;
     static constexpr bool returnsAwaitableVoid = std::is_same_v<R, Awaitable<void>>;
+    // Override CompletionHandlerType to use Enforced=true only when the function returns a
+    // CompletionHandlerCalledToken — enabling incremental migration. Functions not yet migrated
+    // (returning void) get Enforced=false and behave exactly as before.
+    using CompletionHandlerType = typename SelectCompletionHandlerType<
+        !std::is_void_v<typename Base::CompletionHandlerType>,
+        Base,
+        WTF::IsCompletionHandlerCalledToken<R>>::type;
 };
 
 template<typename R, typename... MethodArgumentTypes>
 struct MethodSignatureValidation<R(MethodArgumentTypes...) const>
     : MethodSignatureValidation<R(MethodArgumentTypes...)> {
     using ReturnType = R;
-    static constexpr bool returnsVoid = std::is_same_v<R, void>;
+    static constexpr bool returnsVoid = std::is_same_v<R, void> || WTF::IsCompletionHandlerCalledToken<R>;
     static constexpr bool returnsAwaitableVoid = std::is_same_v<R, Awaitable<void>>;
 };
 

@@ -50,17 +50,17 @@ RemoteMediaEngineConfigurationFactoryProxy::RemoteMediaEngineConfigurationFactor
 
 RemoteMediaEngineConfigurationFactoryProxy::~RemoteMediaEngineConfigurationFactoryProxy() = default;
 
-void RemoteMediaEngineConfigurationFactoryProxy:: createDecodingConfiguration(WebCore::PlatformMediaDecodingConfiguration&& configuration, CompletionHandler<void(WebCore::PlatformMediaCapabilitiesDecodingInfo&&)>&& completion)
+CompletionHandlerCalledToken RemoteMediaEngineConfigurationFactoryProxy:: createDecodingConfiguration(WebCore::PlatformMediaDecodingConfiguration&& configuration, CompletionHandler<void(WebCore::PlatformMediaCapabilitiesDecodingInfo&&), true>&& completion)
 {
-    WebCore::PlatformMediaEngineConfigurationFactory::createDecodingConfiguration(WTF::move(configuration), [completion = WTF::move(completion)] (auto info) mutable {
-        completion(WTF::move(info));
+    return CompletionHandlerCalledToken::defer(WTF::move(completion), [&](auto completion) -> CompletionHandlerCalledToken {
+        return WebCore::PlatformMediaEngineConfigurationFactory::createDecodingConfiguration(WTF::move(configuration), WTF::move(completion));
     });
 }
 
-void RemoteMediaEngineConfigurationFactoryProxy::createEncodingConfiguration(WebCore::PlatformMediaEncodingConfiguration&& configuration, CompletionHandler<void(WebCore::PlatformMediaCapabilitiesEncodingInfo&&)>&& completion)
+CompletionHandlerCalledToken RemoteMediaEngineConfigurationFactoryProxy::createEncodingConfiguration(WebCore::PlatformMediaEncodingConfiguration&& configuration, CompletionHandler<void(WebCore::PlatformMediaCapabilitiesEncodingInfo&&), true>&& completion)
 {
-    WebCore::PlatformMediaEngineConfigurationFactory::createEncodingConfiguration(WTF::move(configuration), [completion = WTF::move(completion)] (auto info) mutable {
-        completion(WTF::move(info));
+    return CompletionHandlerCalledToken::defer(WTF::move(completion), [&](auto completion) -> CompletionHandlerCalledToken {
+        return WebCore::PlatformMediaEngineConfigurationFactory::createEncodingConfiguration(WTF::move(configuration), WTF::move(completion));
     });
 }
 

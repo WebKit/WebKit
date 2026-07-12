@@ -57,7 +57,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
-    void secItemRequest(IPC::Connection&, const SecItemRequestData&, CompletionHandler<void(std::optional<SecItemResponseData>&&)>&&);
+    CompletionHandlerCalledToken secItemRequest(IPC::Connection&, const SecItemRequestData&, CompletionHandler<void(std::optional<SecItemResponseData>&&), true>&&);
     void secItemRequestSync(IPC::Connection&, const SecItemRequestData&, CompletionHandler<void(std::optional<SecItemResponseData>&&)>&&);
 
     const Ref<WorkQueue> m_queue;

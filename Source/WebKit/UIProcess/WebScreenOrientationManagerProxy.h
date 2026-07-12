@@ -63,8 +63,8 @@ public:
     WebCore::ScreenOrientationType currentOrientationType() const { return m_currentOrientation; }
 
     // IPC message handlers.
-    void currentOrientation(CompletionHandler<void(WebCore::ScreenOrientationType)>&&);
-    void lock(WebCore::ScreenOrientationLockType, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
+    CompletionHandlerCalledToken currentOrientation(CompletionHandler<void(WebCore::ScreenOrientationType), true>&&);
+    CompletionHandlerCalledToken lock(WebCore::ScreenOrientationLockType, CompletionHandler<void(std::optional<WebCore::Exception>&&), true>&&);
     void unlock();
     void NODELETE setShouldSendChangeNotification(bool);
 
@@ -77,7 +77,7 @@ private:
     WeakRef<WebPageProxy> m_page;
     WebCore::ScreenOrientationType m_currentOrientation;
     std::optional<WebCore::ScreenOrientationType> m_currentlyLockedOrientation;
-    CompletionHandler<void(std::optional<WebCore::Exception>&&)> m_currentLockRequest;
+    CompletionHandler<void(std::optional<WebCore::Exception>&&), true> m_currentLockRequest;
     bool m_shouldSendChangeNotifications { false };
 };
 

@@ -156,12 +156,12 @@ public:
     WebCore::ModelPlayerAccessibilityChildren accessibilityChildren() final;
     void setAutoplay(bool) final;
     void setLoop(bool) final;
-    void setPlaybackRate(double, CompletionHandler<void(double effectivePlaybackRate)>&&) final;
+    CompletionHandlerCalledToken setPlaybackRate(double, CompletionHandler<void(double effectivePlaybackRate), true>&&) final;
     double duration() const final;
     bool paused() const final;
-    void setPaused(bool, CompletionHandler<void(bool succeeded)>&&) final;
+    CompletionHandlerCalledToken setPaused(bool, CompletionHandler<void(bool succeeded), true>&&) final;
     Seconds currentTime() const final;
-    void setCurrentTime(Seconds, CompletionHandler<void()>&&) final;
+    CompletionHandlerCalledToken setCurrentTime(Seconds, CompletionHandler<void(), true>&&) final;
     void setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data) final;
     void setHasPortal(bool) final;
     void setStageMode(WebCore::StageModeOperation) final;
@@ -170,11 +170,11 @@ public:
     void endStageModeInteraction() final;
     void resetModelTransformAfterDrag() final;
     void stageModeInteractionDidUpdateModel();
-    void animateModelToFitPortal(CompletionHandler<void(bool)>&&) final;
+    CompletionHandlerCalledToken animateModelToFitPortal(CompletionHandler<void(bool), true>&&) final;
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    void ensureImmersivePresentation(CompletionHandler<void(std::optional<WebCore::LayerHostingContextIdentifier>)>&&) final;
-    void exitImmersivePresentation(CompletionHandler<void()>&&) final;
+    CompletionHandlerCalledToken ensureImmersivePresentation(CompletionHandler<void(std::optional<WebCore::LayerHostingContextIdentifier>), true>&&) final;
+    CompletionHandlerCalledToken exitImmersivePresentation(CompletionHandler<void(), true>&&) final;
 #endif
 
     USING_CAN_MAKE_WEAKPTR(WebCore::REModelLoaderClient);
@@ -252,10 +252,11 @@ private:
     RefPtr<WebCore::Model> m_currentModel;
     RefPtr<WebCore::SharedBuffer> m_persistedEnvironmentMapData;
     std::optional<int> m_loadedEntityMemoryLimit;
-    Vector<CompletionHandler<void(bool)>> m_modelLoadedCallbacks;
+    Vector<CompletionHandler<void(bool), true>> m_modelLoadedCallbacks;
 
     void triggerModelLoadedCallbacks(bool);
     void ensureModelLoaded(CompletionHandler<void(bool)>&&);
+    CompletionHandlerCalledToken ensureModelLoaded(CompletionHandler<void(bool), true>&&);
     void setImmersivePresentation(bool);
     void teardownEntity();
     void captureStateForReload();

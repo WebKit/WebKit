@@ -105,6 +105,7 @@
 #include <ranges>
 #include <unicode/uchar.h>
 #include <wtf/Scope.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -1920,7 +1921,7 @@ static String searchTextNotFoundDescription(const String& searchText)
 static constexpr auto nullFrameDescription = "Browsing context has been detached"_s;
 static constexpr auto interactedWithSelectElementDescription = "Successfully updated option in select element"_s;
 
-static void dispatchSimulatedClick(LocalFrame& frame, IntPoint location, CompletionHandler<void(bool, String&&)>&& completion)
+static CompletionHandlerCalledToken dispatchSimulatedClick(LocalFrame& frame, IntPoint location, CompletionHandler<void(bool, String&&), true>&& completion)
 {
     frame.eventHandler().handleMouseMoveEvent({
         location, location, MouseButton::Left, PlatformEvent::Type::MouseMoved, 0, { }, MonotonicTime::now(), ForceAtClick, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven
@@ -1934,16 +1935,16 @@ static void dispatchSimulatedClick(LocalFrame& frame, IntPoint location, Complet
         location, location, MouseButton::Left, PlatformEvent::Type::MouseReleased, 1, { }, MonotonicTime::now(), ForceAtClick, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven
     }, HitTestRequest::Type::IgnoreClipping);
 
-    completion(true, { });
+    return completion(true, { });
 }
 
-static void dispatchSimulatedHover(LocalFrame& frame, IntPoint location, CompletionHandler<void(bool, String&&)>&& completion)
+static CompletionHandlerCalledToken dispatchSimulatedHover(LocalFrame& frame, IntPoint location, CompletionHandler<void(bool, String&&), true>&& completion)
 {
     frame.eventHandler().handleMouseMoveEvent({
         location, location, MouseButton::None, PlatformEvent::Type::MouseMoved, 0, { }, MonotonicTime::now(), ForceAtClick, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven
     });
 
-    completion(true, { });
+    return completion(true, { });
 }
 
 static Node* findNodeAtRootViewLocation(const LocalFrameView& view, Document& document, FloatPoint locationInRootView)
@@ -2030,7 +2031,7 @@ static Expected<ResolvedMouseTarget, String> resolveMouseTarget(Node& targetNode
     return ResolvedMouseTarget { element.releaseNonNull(), frame.releaseNonNull(), view.releaseNonNull(), roundedIntPoint(targetRectInRootView->center()) };
 }
 
-static void dispatchSimulatedClick(Node& targetNode, const String& searchText, CompletionHandler<void(bool, String&&)>&& completion)
+static CompletionHandlerCalledToken dispatchSimulatedClick(Node& targetNode, const String& searchText, CompletionHandler<void(bool, String&&), true>&& completion)
 {
     auto resolved = resolveMouseTarget(targetNode, searchText, "#34c759"_s, ScrollTargetIntoView::Yes);
     if (!resolved)
@@ -2051,21 +2052,21 @@ static void dispatchSimulatedClick(Node& targetNode, const String& searchText, C
 
     // Fall back to dispatching a programmatic click.
     if (protect(element)->dispatchSimulatedClick(nullptr, SendMouseUpDownEvents))
-        completion(true, { });
-    else
-        completion(false, "Failed to click (tried falling back to dispatching programmatic click since target could not be hit-tested)"_s);
+        return completion(true, { });
+
+    return completion(false, "Failed to click (tried falling back to dispatching programmatic click since target could not be hit-tested)"_s);
 }
 
-static void dispatchSimulatedClick(NodeIdentifier identifier, const String& searchText, CompletionHandler<void(bool, String&&)>&& completion)
+static CompletionHandlerCalledToken dispatchSimulatedClick(NodeIdentifier identifier, const String& searchText, CompletionHandler<void(bool, String&&), true>&& completion)
 {
     RefPtr foundNode = Node::fromIdentifier(identifier);
     if (!foundNode)
         return completion(false, invalidNodeIdentifierDescription(identifier));
 
-    dispatchSimulatedClick(*foundNode, searchText, WTF::move(completion));
+    return dispatchSimulatedClick(*foundNode, searchText, WTF::move(completion));
 }
 
-static void dispatchSimulatedHover(Node& targetNode, const String& searchText, CompletionHandler<void(bool, String&&)>&& completion)
+static CompletionHandlerCalledToken dispatchSimulatedHover(Node& targetNode, const String& searchText, CompletionHandler<void(bool, String&&), true>&& completion)
 {
     auto resolved = resolveMouseTarget(targetNode, searchText, "#ff9500"_s);
     if (!resolved)
@@ -2074,13 +2075,13 @@ static void dispatchSimulatedHover(Node& targetNode, const String& searchText, C
     return dispatchSimulatedHover(resolved->frame, resolved->centerInRootView, WTF::move(completion));
 }
 
-static void dispatchSimulatedHover(NodeIdentifier identifier, const String& searchText, CompletionHandler<void(bool, String&&)>&& completion)
+static CompletionHandlerCalledToken dispatchSimulatedHover(NodeIdentifier identifier, const String& searchText, CompletionHandler<void(bool, String&&), true>&& completion)
 {
     RefPtr foundNode = Node::fromIdentifier(identifier);
     if (!foundNode)
         return completion(false, invalidNodeIdentifierDescription(identifier));
 
-    dispatchSimulatedHover(*foundNode, searchText, WTF::move(completion));
+    return dispatchSimulatedHover(*foundNode, searchText, WTF::move(completion));
 }
 
 struct SelectOptionResult {
@@ -2137,7 +2138,7 @@ static std::optional<SimpleRange> rangeForTextInContainer(const String& searchTe
     return searchForText(node, searchText);
 }
 
-static void selectText(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, const String& searchText, bool revealText, CompletionHandler<void(bool, String&&)>&& completion)
+static CompletionHandlerCalledToken selectText(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, const String& searchText, bool revealText, CompletionHandler<void(bool, String&&), true>&& completion)
 {
     RefPtr foundNode = resolveNodeWithBodyOrDocumentElementAsFallback(frame, identifier);
     if (!foundNode)
@@ -2164,7 +2165,7 @@ static void selectText(LocalFrame& frame, std::optional<NodeIdentifier>&& identi
     return completion(true, { });
 }
 
-static void highlightText(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, const String& searchText, bool scrollToVisible, CompletionHandler<void(bool, String&&)>&& completion)
+static CompletionHandlerCalledToken highlightText(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, const String& searchText, bool scrollToVisible, CompletionHandler<void(bool, String&&), true>&& completion)
 {
     RefPtr foundNode = resolveNodeWithBodyOrDocumentElementAsFallback(frame, identifier);
     if (!foundNode)
@@ -2581,7 +2582,7 @@ static std::optional<std::pair<String, ScrollableContainer>> redirectToLargeScro
     return { { description.toString(), { WTF::move(element), WTF::move(scrollableArea) } } };
 }
 
-static void scrollBy(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, FloatSize scrollDelta, CompletionHandler<void(bool, String&&)>&& completion)
+static CompletionHandlerCalledToken scrollBy(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, FloatSize scrollDelta, CompletionHandler<void(bool, String&&), true>&& completion)
 {
     bool identifierProvided = identifier.has_value();
     RefPtr foundNode = resolveNodeWithBodyOrDocumentElementAsFallback(frame, identifier);
@@ -2606,10 +2607,10 @@ static void scrollBy(LocalFrame& frame, std::optional<NodeIdentifier>&& identifi
     if (!fallbackDescription.isEmpty())
         summary = makeString("Scrolled within "_s, WTF::move(fallbackDescription), " (root frame is unscrollable)"_s);
 
-    completion(true, WTF::move(summary));
+    return completion(true, WTF::move(summary));
 }
 
-static void scrollToNextPage(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, CompletionHandler<void(bool, String&&)>&& completion)
+static CompletionHandlerCalledToken scrollToNextPage(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, CompletionHandler<void(bool, String&&), true>&& completion)
 {
     bool identifierProvided = identifier.has_value();
     RefPtr foundNode = resolveNodeWithBodyOrDocumentElementAsFallback(frame, identifier);
@@ -2654,20 +2655,20 @@ static void scrollToNextPage(LocalFrame& frame, std::optional<NodeIdentifier>&& 
         scroller->scrollToOffsetWithoutAnimation({ });
         auto direction = scrollsHorizontally ? (isRTL ? "right"_s : "left"_s) : "up"_s;
         auto distance = scrollsHorizontally ? roundToInt(currentOffset.x()) : roundToInt(currentOffset.y());
-        completion(true, buildSummary(distance, direction, "wrapped to start"_s));
-    } else {
-        auto visibleSize = scroller->visibleSize();
-        auto delta = scrollsHorizontally ? FloatSize { static_cast<float>(visibleSize.width()), 0 } : FloatSize { 0, static_cast<float>(visibleSize.height()) };
-        scroller->scrollToOffsetWithoutAnimation(FloatPoint { currentOffset } + delta);
-        auto direction = scrollsHorizontally ? (isRTL ? "left"_s : "right"_s) : "down"_s;
-        auto distance = scrollsHorizontally
-            ? std::min(roundToInt(visibleSize.width()), roundToInt(maxOffset.x() - currentOffset.x()))
-            : std::min(roundToInt(visibleSize.height()), roundToInt(maxOffset.y() - currentOffset.y()));
-        completion(true, buildSummary(distance, direction, ASCIILiteral { }));
+        return completion(true, buildSummary(distance, direction, "wrapped to start"_s));
     }
+
+    auto visibleSize = scroller->visibleSize();
+    auto delta = scrollsHorizontally ? FloatSize { static_cast<float>(visibleSize.width()), 0 } : FloatSize { 0, static_cast<float>(visibleSize.height()) };
+    scroller->scrollToOffsetWithoutAnimation(FloatPoint { currentOffset } + delta);
+    auto direction = scrollsHorizontally ? (isRTL ? "left"_s : "right"_s) : "down"_s;
+    auto distance = scrollsHorizontally
+        ? std::min(roundToInt(visibleSize.width()), roundToInt(maxOffset.x() - currentOffset.x()))
+        : std::min(roundToInt(visibleSize.height()), roundToInt(maxOffset.y() - currentOffset.y()));
+    return completion(true, buildSummary(distance, direction, ASCIILiteral { }));
 }
 
-static void scrollToReveal(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, String&& searchText, CompletionHandler<void(bool, String&&)>&& completion)
+static CompletionHandlerCalledToken scrollToReveal(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, String&& searchText, CompletionHandler<void(bool, String&&), true>&& completion)
 {
     RefPtr searchScope = resolveNodeWithBodyOrDocumentElementAsFallback(frame, identifier);
     if (!searchScope)
@@ -2689,7 +2690,7 @@ static void scrollToReveal(LocalFrame& frame, std::optional<NodeIdentifier>&& id
         return completion(false, searchTextNotFoundDescription(searchText));
 
     elementToReveal->scrollIntoView();
-    completion(true, { });
+    return completion(true, { });
 }
 
 static bool simulateKeyPress(LocalFrame& frame, const String& key)
@@ -2707,7 +2708,7 @@ static bool simulateKeyPress(LocalFrame& frame, const String& key)
     return true;
 }
 
-static void simulateKeyPress(LocalFrame& targetFrame, std::optional<NodeIdentifier>&& identifier, const String& text, CompletionHandler<void(bool, String&&)>&& completion)
+static CompletionHandlerCalledToken simulateKeyPress(LocalFrame& targetFrame, std::optional<NodeIdentifier>&& identifier, const String& text, CompletionHandler<void(bool, String&&), true>&& completion)
 {
     if (identifier) {
         RefPtr focusTarget = dynamicDowncast<Element>(Node::fromIdentifier(*identifier));
@@ -2738,12 +2739,12 @@ static void simulateKeyPress(LocalFrame& targetFrame, std::optional<NodeIdentifi
             succeeded = false;
     }
 
-    completion(succeeded, succeeded
+    return completion(succeeded, succeeded
         ? makeString('\'', text, "' is not a valid key, but we successfully fell back to typing each character in the string separately"_s)
         : makeString("One or more key events failed (tried to input '"_s, text, "' character by character"_s));
 }
 
-static void focusAndInsertText(NodeIdentifier identifier, String&& text, bool replaceAll, CompletionHandler<void(bool, String&&)>&& completion)
+static CompletionHandlerCalledToken focusAndInsertText(NodeIdentifier identifier, String&& text, bool replaceAll, CompletionHandler<void(bool, String&&), true>&& completion)
 {
     RefPtr foundNode = Node::fromIdentifier(identifier);
     if (!foundNode)
@@ -2772,7 +2773,7 @@ static void focusAndInsertText(NodeIdentifier identifier, String&& text, bool re
         return completion(false, nullFrameDescription);
 
     // First, attempt to dispatch a click over the editable area (and fall back to programmatically setting focus).
-    dispatchSimulatedClick(*elementToFocus, { }, [document = document.copyRef(), elementToFocus, frame, replaceAll, text = WTF::move(text), completion = WTF::move(completion)](bool clicked, String&&) mutable {
+    return dispatchSimulatedClick(*elementToFocus, { }, CompletionHandler<void(bool, String&&), true>([document = document.copyRef(), elementToFocus, frame, replaceAll, text = WTF::move(text), completion = WTF::move(completion)](bool clicked, String&&) mutable -> CompletionHandlerCalledToken {
         if (!clicked || elementToFocus != document->activeElement())
             elementToFocus->focus();
 
@@ -2786,11 +2787,11 @@ static void focusAndInsertText(NodeIdentifier identifier, String&& text, bool re
         UserTypingGestureIndicator indicator { *frame };
 
         protect(document->editor())->pasteAsPlainText(text, false);
-        completion(true, makeString("Inserted text into "_s, textDescription(*elementToFocus)));
-    });
+        return completion(true, makeString("Inserted text into "_s, textDescription(*elementToFocus)));
+    }));
 }
 
-static void dispatchInteraction(Interaction&& interaction, LocalFrame& frame, CompletionHandler<void(bool, String&&)>&& completion)
+static CompletionHandlerCalledToken dispatchInteraction(Interaction&& interaction, LocalFrame& frame, CompletionHandler<void(bool, String&&), true>&& completion)
 {
     switch (interaction.action) {
     case Action::Click: {
@@ -2872,10 +2873,10 @@ static void dispatchInteraction(Interaction&& interaction, LocalFrame& frame, Co
         ASSERT_NOT_REACHED();
         break;
     }
-    completion(false, "Invalid action"_s);
+    return completion(false, "Invalid action"_s);
 }
 
-void handleInteraction(Interaction&& interaction, LocalFrame& frame, CompletionHandler<void(bool, String&&, FloatRect)>&& completion)
+CompletionHandlerCalledToken handleInteraction(Interaction&& interaction, LocalFrame& frame, CompletionHandler<void(bool, String&&, FloatRect), true>&& completion)
 {
     RefPtr<Node> targetNode;
     if (auto location = interaction.locationInRootView) {
@@ -2886,12 +2887,17 @@ void handleInteraction(Interaction&& interaction, LocalFrame& frame, CompletionH
     } else if (auto identifier = interaction.nodeIdentifier)
         targetNode = Node::fromIdentifier(*identifier);
 
-    dispatchInteraction(WTF::move(interaction), frame, [completion = WTF::move(completion), targetNode = WTF::move(targetNode)](bool success, String&& message) mutable {
+    return dispatchInteraction(WTF::move(interaction), frame, CompletionHandler<void(bool, String&&), true>([completion = WTF::move(completion), targetNode = WTF::move(targetNode)](bool success, String&& message) mutable -> CompletionHandlerCalledToken {
         FloatRect bounds;
         if (targetNode)
             bounds = rootViewBounds(*targetNode);
-        completion(success, WTF::move(message), bounds);
-    });
+        return completion(success, WTF::move(message), bounds);
+    }));
+}
+
+void handleInteraction(Interaction&& interaction, LocalFrame& frame, CompletionHandler<void(bool, String&&, FloatRect)>&& completion)
+{
+    handleInteraction(WTF::move(interaction), frame, CompletionHandler<void(bool, String&&, FloatRect), true>(WTF::move(completion)));
 }
 
 InteractionDescription interactionDescription(const Interaction& interaction, LocalFrame& frame, Tense tense)

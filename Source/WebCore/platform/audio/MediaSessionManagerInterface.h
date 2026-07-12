@@ -122,6 +122,7 @@ public:
     virtual void resetRestrictions();
 
     virtual void sessionWillBeginPlayback(PlatformMediaSessionInterface&, CompletionHandler<void(bool)>&&);
+    virtual CompletionHandlerCalledToken sessionWillBeginPlayback(PlatformMediaSessionInterface&, CompletionHandler<void(bool), true>&&);
     virtual void sessionWillEndPlayback(PlatformMediaSessionInterface&, DelayCallingUpdateNowPlaying);
     virtual void sessionStateChanged(PlatformMediaSessionInterface&);
     virtual void sessionDidEndRemoteScrubbing(PlatformMediaSessionInterface&) { }

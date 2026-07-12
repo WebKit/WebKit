@@ -76,6 +76,7 @@ public:
 
     using SupportedConfigurationCallback = Function<void(std::optional<CDMKeySystemConfiguration>)>;
     WEBCORE_EXPORT virtual void getSupportedConfiguration(CDMKeySystemConfiguration&& candidateConfiguration, LocalStorageAccess, SupportedConfigurationCallback&&);
+    WEBCORE_EXPORT CompletionHandlerCalledToken getSupportedConfiguration(CDMKeySystemConfiguration&& candidateConfiguration, LocalStorageAccess, CompletionHandler<void(std::optional<CDMKeySystemConfiguration>), true>&&);
 
     virtual Vector<String> supportedInitDataTypes() const = 0;
     virtual bool supportsConfiguration(const CDMKeySystemConfiguration&) const = 0;

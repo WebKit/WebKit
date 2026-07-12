@@ -48,8 +48,8 @@ class WebSocketTask : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Web
 public:
     typedef uint64_t TaskIdentifier;
 
-    void sendString(std::span<const uint8_t>, CompletionHandler<void()>&&) { }
-    void sendData(std::span<const uint8_t>, CompletionHandler<void()>&&) { }
+    CompletionHandlerCalledToken sendString(std::span<const uint8_t>, CompletionHandler<void(), true>&& callback) { return callback(); }
+    CompletionHandlerCalledToken sendData(std::span<const uint8_t>, CompletionHandler<void(), true>&& callback) { return callback(); }
     void close(int32_t code, const String& reason) { }
 
     void cancel() { }

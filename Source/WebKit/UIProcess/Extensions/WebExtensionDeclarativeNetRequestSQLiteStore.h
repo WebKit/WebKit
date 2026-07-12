@@ -68,6 +68,7 @@ public:
     };
 
     void getRulesWithRuleIDs(Vector<double> ruleIDs, CompletionHandler<void(RefPtr<JSON::Array> rules, const String& errorMessage)>&&);
+    CompletionHandlerCalledToken getRulesWithRuleIDs(Vector<double> ruleIDs, CompletionHandler<void(RefPtr<JSON::Array> rules, const String& errorMessage), true>&&);
     void updateRulesByRemovingIDs(Vector<double> ruleIDs, Ref<JSON::Array> rules, CompletionHandler<void(const String& errorMessage)>&&);
 
     void addRules(Ref<JSON::Array> rules, CompletionHandler<void(const String& errorMessage)>&&);

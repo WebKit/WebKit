@@ -160,6 +160,22 @@ void PlatformMediaEngineConfigurationFactory::createEncodingConfiguration(Platfo
     factoryCallback(factoryCallback, factories().span(), WTF::move(config), WTF::move(callback));
 }
 
+CompletionHandlerCalledToken PlatformMediaEngineConfigurationFactory::createDecodingConfiguration(PlatformMediaDecodingConfiguration&& config, CompletionHandler<void(PlatformMediaCapabilitiesDecodingInfo&&), true>&& handler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+        createDecodingConfiguration(WTF::move(config), DecodingConfigurationCallback(WTF::move(handler)));
+        return WTF::move(deferred);
+    });
+}
+
+CompletionHandlerCalledToken PlatformMediaEngineConfigurationFactory::createEncodingConfiguration(PlatformMediaEncodingConfiguration&& config, CompletionHandler<void(PlatformMediaCapabilitiesEncodingInfo&&), true>&& handler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+        createEncodingConfiguration(WTF::move(config), EncodingConfigurationCallback(WTF::move(handler)));
+        return WTF::move(deferred);
+    });
+}
+
 void PlatformMediaEngineConfigurationFactory::enableMock()
 {
     mockEnabled() = true;

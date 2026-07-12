@@ -226,21 +226,21 @@ void WebSocketTask::didClose(unsigned short code, const String& reason)
     protect(m_channel)->didClose(code, reason);
 }
 
-void WebSocketTask::sendString(std::span<const uint8_t> utf8, CompletionHandler<void()>&& callback)
+CompletionHandlerCalledToken WebSocketTask::sendString(std::span<const uint8_t> utf8, CompletionHandler<void(), true>&& callback)
 {
     if (m_connection && soup_websocket_connection_get_state(m_connection.get()) == SOUP_WEBSOCKET_STATE_OPEN) {
         // Soup is going to copy the data immediately, so we can use g_bytes_new_static() here to avoid more data copies.
         GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(utf8.data(), utf8.size()));
         soup_websocket_connection_send_message(m_connection.get(), SOUP_WEBSOCKET_DATA_TEXT, bytes.get());
     }
-    callback();
+    return callback();
 }
 
-void WebSocketTask::sendData(std::span<const uint8_t> data, CompletionHandler<void()>&& callback)
+CompletionHandlerCalledToken WebSocketTask::sendData(std::span<const uint8_t> data, CompletionHandler<void(), true>&& callback)
 {
     if (m_connection && soup_websocket_connection_get_state(m_connection.get()) == SOUP_WEBSOCKET_STATE_OPEN)
         soup_websocket_connection_send_binary(m_connection.get(), data.data(), data.size());
-    callback();
+    return callback();
 }
 
 void WebSocketTask::close(int32_t code, const String& reason)

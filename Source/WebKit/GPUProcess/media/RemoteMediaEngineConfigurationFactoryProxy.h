@@ -57,8 +57,8 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // Messages
-    void createDecodingConfiguration(WebCore::PlatformMediaDecodingConfiguration&&, CompletionHandler<void(WebCore::PlatformMediaCapabilitiesDecodingInfo&&)>&&);
-    void createEncodingConfiguration(WebCore::PlatformMediaEncodingConfiguration&&, CompletionHandler<void(WebCore::PlatformMediaCapabilitiesEncodingInfo&&)>&&);
+    CompletionHandlerCalledToken createDecodingConfiguration(WebCore::PlatformMediaDecodingConfiguration&&, CompletionHandler<void(WebCore::PlatformMediaCapabilitiesDecodingInfo&&), true>&&);
+    CompletionHandlerCalledToken createEncodingConfiguration(WebCore::PlatformMediaEncodingConfiguration&&, CompletionHandler<void(WebCore::PlatformMediaCapabilitiesEncodingInfo&&), true>&&);
 
     ThreadSafeWeakRef<GPUConnectionToWebProcess> m_connection;
 };

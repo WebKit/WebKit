@@ -92,7 +92,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     
     // Respond to UI process changes.
-    void scrollUpdateForNode(WebCore::ScrollUpdate&&, CompletionHandler<void()>&&);
+    CompletionHandlerCalledToken scrollUpdateForNode(WebCore::ScrollUpdate&&, CompletionHandler<void(), true>&&);
     void currentSnapPointIndicesChangedForNode(WebCore::ScrollingNodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical);
 
     void receivedWheelEventWithPhases(WebCore::PlatformWheelEventPhase phase, WebCore::PlatformWheelEventPhase momentumPhase);

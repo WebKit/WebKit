@@ -40,7 +40,7 @@ public:
     }
 
 private:
-    void willSendRequest(DownloadProxy& downloadProxy, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) override
+    CompletionHandlerCalledToken willSendRequest(DownloadProxy& downloadProxy, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&), true>&& completionHandler) override
     {
         ASSERT(m_download);
         if (!request.hasHTTPHeaderField(HTTPHeaderName::UserAgent)) {
@@ -48,7 +48,7 @@ private:
             request.setHTTPUserAgent(webView ? webkitWebViewGetPage(webView).userAgentForURL(request.url()) : WebPageProxy::standardUserAgent());
         }
 
-        completionHandler(WTF::move(request));
+        return completionHandler(WTF::move(request));
     }
 
     void didReceiveAuthenticationChallenge(DownloadProxy& downloadProxy, AuthenticationChallengeProxy& authenticationChallenge) override

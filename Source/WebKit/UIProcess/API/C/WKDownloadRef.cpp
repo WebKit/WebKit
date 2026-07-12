@@ -134,17 +134,13 @@ void WKDownloadSetClient(WKDownloadRef download, WKDownloadClientBase* client)
             didFail(download, WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, download.request().url(), "Network process crashed during download"_s }, nullptr);
         }
 
-        void willSendRequest(WebKit::DownloadProxy& download, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse& response, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler) override
+        CompletionHandlerCalledToken willSendRequest(WebKit::DownloadProxy& download, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse& response, CompletionHandler<void(WebCore::ResourceRequest&&), true>&& completionHandler) override
         {
-            if (!m_client.willPerformHTTPRedirection) {
-                completionHandler(WTF::move(request));
-                return;
-            }
-            if (!m_client.willPerformHTTPRedirection(toAPI(download), toAPI(response), toAPI(request), m_client.base.clientInfo)) {
-                completionHandler({ });
-                return;
-            }
-            completionHandler(WTF::move(request));
+            if (!m_client.willPerformHTTPRedirection)
+                return completionHandler(WTF::move(request));
+            if (!m_client.willPerformHTTPRedirection(toAPI(download), toAPI(response), toAPI(request), m_client.base.clientInfo))
+                return completionHandler({ });
+            return completionHandler(WTF::move(request));
         }
     };
 

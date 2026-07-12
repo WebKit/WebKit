@@ -352,7 +352,7 @@ void WebSWContextManagerConnection::fireActivateEvent(ServiceWorkerIdentifier id
         serviceWorkerThreadProxy->fireActivateEvent();
 }
 
-void WebSWContextManagerConnection::firePushEvent(ServiceWorkerIdentifier identifier, std::optional<std::span<const uint8_t>> ipcData, std::optional<NotificationPayload>&& proposedPayload, CompletionHandler<void(bool, std::optional<NotificationPayload>&&)>&& callback)
+CompletionHandlerCalledToken WebSWContextManagerConnection::firePushEvent(ServiceWorkerIdentifier identifier, std::optional<std::span<const uint8_t>> ipcData, std::optional<NotificationPayload>&& proposedPayload, CompletionHandler<void(bool, std::optional<NotificationPayload>&&), true>&& callback)
 {
     assertIsCurrent(m_queue.get());
 
@@ -360,56 +360,68 @@ void WebSWContextManagerConnection::firePushEvent(ServiceWorkerIdentifier identi
     if (ipcData)
         data = Vector<uint8_t> { *ipcData };
 
-    auto inQueueCallback = [queue = m_queue, callback = WTF::move(callback)](bool result, std::optional<NotificationPayload>&& resultPayload) mutable {
-        queue->dispatch([result, resultPayload = crossThreadCopy(WTF::move(resultPayload)), callback = WTF::move(callback)]() mutable {
-            callback(result, WTF::move(resultPayload));
-        });
-    };
+    return CompletionHandlerCalledToken::deferUnchecked(callback, [&](auto& callback, auto deferred) -> CompletionHandlerCalledToken {
+        auto inQueueCallback = [queue = m_queue, callback = WTF::move(callback)](bool result, std::optional<NotificationPayload>&& resultPayload) mutable {
+            queue->dispatch([result, resultPayload = crossThreadCopy(WTF::move(resultPayload)), callback = WTF::move(callback)]() mutable -> CompletionHandlerCalledToken {
+                return callback(result, WTF::move(resultPayload));
+            });
+        };
 
-    callOnMainRunLoop([identifier, data = WTF::move(data), proposedPayload = crossThreadCopy(WTF::move(proposedPayload)), callback = WTF::move(inQueueCallback)]() mutable {
-        SWContextManager::singleton().firePushEvent(identifier, WTF::move(data), WTF::move(proposedPayload), WTF::move(callback));
+        callOnMainRunLoop([identifier, data = WTF::move(data), proposedPayload = crossThreadCopy(WTF::move(proposedPayload)), callback = WTF::move(inQueueCallback)]() mutable {
+            SWContextManager::singleton().firePushEvent(identifier, WTF::move(data), WTF::move(proposedPayload), WTF::move(callback));
+        });
+        return WTF::move(deferred);
     });
 }
 
-void WebSWContextManagerConnection::fireNotificationEvent(ServiceWorkerIdentifier identifier, NotificationData&& data, NotificationEventType eventType, CompletionHandler<void(bool)>&& callback)
+CompletionHandlerCalledToken WebSWContextManagerConnection::fireNotificationEvent(ServiceWorkerIdentifier identifier, NotificationData&& data, NotificationEventType eventType, CompletionHandler<void(bool), true>&& callback)
 {
     assertIsCurrent(m_queue.get());
 
-    auto inQueueCallback = [queue = m_queue, callback = WTF::move(callback)](bool result) mutable {
-        queue->dispatch([result, callback = WTF::move(callback)]() mutable {
-            callback(result);
+    return CompletionHandlerCalledToken::deferUnchecked(callback, [&](auto& callback, auto deferred) -> CompletionHandlerCalledToken {
+        auto inQueueCallback = [queue = m_queue, callback = WTF::move(callback)](bool result) mutable {
+            queue->dispatch([result, callback = WTF::move(callback)]() mutable -> CompletionHandlerCalledToken {
+                return callback(result);
+            });
+        };
+        callOnMainRunLoop([identifier, data = WTF::move(data).isolatedCopy(), eventType, callback = WTF::move(inQueueCallback)]() mutable {
+            SWContextManager::singleton().fireNotificationEvent(identifier, WTF::move(data), eventType, WTF::move(callback));
         });
-    };
-    callOnMainRunLoop([identifier, data = WTF::move(data).isolatedCopy(), eventType, callback = WTF::move(inQueueCallback)]() mutable {
-        SWContextManager::singleton().fireNotificationEvent(identifier, WTF::move(data), eventType, WTF::move(callback));
+        return WTF::move(deferred);
     });
 }
 
-void WebSWContextManagerConnection::fireBackgroundFetchEvent(ServiceWorkerIdentifier identifier, BackgroundFetchInformation&& info, CompletionHandler<void(bool)>&& callback)
+CompletionHandlerCalledToken WebSWContextManagerConnection::fireBackgroundFetchEvent(ServiceWorkerIdentifier identifier, BackgroundFetchInformation&& info, CompletionHandler<void(bool), true>&& callback)
 {
     assertIsCurrent(m_queue.get());
 
-    auto inQueueCallback = [queue = m_queue, callback = WTF::move(callback)](bool result) mutable {
-        queue->dispatch([result, callback = WTF::move(callback)]() mutable {
-            callback(result);
+    return CompletionHandlerCalledToken::deferUnchecked(callback, [&](auto& callback, auto deferred) -> CompletionHandlerCalledToken {
+        auto inQueueCallback = [queue = m_queue, callback = WTF::move(callback)](bool result) mutable {
+            queue->dispatch([result, callback = WTF::move(callback)]() mutable -> CompletionHandlerCalledToken {
+                return callback(result);
+            });
+        };
+        callOnMainRunLoop([identifier, info = WTF::move(info).isolatedCopy(), callback = WTF::move(inQueueCallback)]() mutable {
+            SWContextManager::singleton().fireBackgroundFetchEvent(identifier, WTF::move(info), WTF::move(callback));
         });
-    };
-    callOnMainRunLoop([identifier, info = WTF::move(info).isolatedCopy(), callback = WTF::move(inQueueCallback)]() mutable {
-        SWContextManager::singleton().fireBackgroundFetchEvent(identifier, WTF::move(info), WTF::move(callback));
+        return WTF::move(deferred);
     });
 }
 
-void WebSWContextManagerConnection::fireBackgroundFetchClickEvent(ServiceWorkerIdentifier identifier, BackgroundFetchInformation&& info, CompletionHandler<void(bool)>&& callback)
+CompletionHandlerCalledToken WebSWContextManagerConnection::fireBackgroundFetchClickEvent(ServiceWorkerIdentifier identifier, BackgroundFetchInformation&& info, CompletionHandler<void(bool), true>&& callback)
 {
     assertIsCurrent(m_queue.get());
 
-    auto inQueueCallback = [queue = m_queue, callback = WTF::move(callback)](bool result) mutable {
-        queue->dispatch([result, callback = WTF::move(callback)]() mutable {
-            callback(result);
+    return CompletionHandlerCalledToken::deferUnchecked(callback, [&](auto& callback, auto deferred) -> CompletionHandlerCalledToken {
+        auto inQueueCallback = [queue = m_queue, callback = WTF::move(callback)](bool result) mutable {
+            queue->dispatch([result, callback = WTF::move(callback)]() mutable -> CompletionHandlerCalledToken {
+                return callback(result);
+            });
+        };
+        callOnMainRunLoop([identifier, info = WTF::move(info).isolatedCopy(), callback = WTF::move(inQueueCallback)]() mutable {
+            SWContextManager::singleton().fireBackgroundFetchClickEvent(identifier, WTF::move(info), WTF::move(callback));
         });
-    };
-    callOnMainRunLoop([identifier, info = WTF::move(info).isolatedCopy(), callback = WTF::move(inQueueCallback)]() mutable {
-        SWContextManager::singleton().fireBackgroundFetchClickEvent(identifier, WTF::move(info), WTF::move(callback));
+        return WTF::move(deferred);
     });
 }
 

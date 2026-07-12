@@ -621,9 +621,9 @@ bool WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePageRef pageR
         return false;
     
     if (auto wheelEventTestMonitor = page->wheelEventTestMonitor()) {
-        wheelEventTestMonitor->setTestCallbackAndStartMonitoring(expectWheelEndOrCancel, expectMomentumEnd, [=]() {
+        wheelEventTestMonitor->setTestCallbackAndStartMonitoring(expectWheelEndOrCancel, expectMomentumEnd, WTF::Function<void()>([=]() {
             callback(context);
-        });
+        }));
     }
     return true;
 }

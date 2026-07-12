@@ -146,8 +146,8 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendCl
 
 void RemoteWebInspectorUIProxy::platformResetState() { }
 void RemoteWebInspectorUIProxy::platformBringToFront() { }
-void RemoteWebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler) { completionHandler(nullString()); }
-void RemoteWebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler) { completionHandler({ }); }
+CompletionHandlerCalledToken RemoteWebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&), true>&& completionHandler) { return completionHandler(nullString()); }
+CompletionHandlerCalledToken RemoteWebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&), true>&& completionHandler) { return completionHandler({ }); }
 void RemoteWebInspectorUIProxy::platformSetSheetRect(const WebCore::FloatRect&) { }
 void RemoteWebInspectorUIProxy::platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance) { }
 void RemoteWebInspectorUIProxy::platformStartWindowDrag() { }

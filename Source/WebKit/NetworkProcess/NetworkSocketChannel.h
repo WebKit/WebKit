@@ -85,8 +85,8 @@ private:
     void didSendHandshakeRequest(WebCore::ResourceRequest&&);
     void didReceiveHandshakeResponse(WebCore::ResourceResponse&&);
 
-    void sendString(std::span<const uint8_t>, CompletionHandler<void()>&&);
-    void sendData(std::span<const uint8_t>, CompletionHandler<void()>&&);
+    CompletionHandlerCalledToken sendString(std::span<const uint8_t>, CompletionHandler<void(), true>&&);
+    CompletionHandlerCalledToken sendData(std::span<const uint8_t>, CompletionHandler<void(), true>&&);
     void close(int32_t code, const String& reason);
     void sendDelayedError();
 

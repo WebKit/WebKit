@@ -58,7 +58,7 @@ public:
 private:
     WebBroadcastChannelRegistry() = default;
 
-    void postMessageToRemote(const WebCore::ClientOrigin&, const String& name, WebCore::MessageWithMessagePorts&&, CompletionHandler<void()>&&);
+    CompletionHandlerCalledToken postMessageToRemote(const WebCore::ClientOrigin&, const String& name, WebCore::MessageWithMessagePorts&&, CompletionHandler<void(), true>&&);
     void postMessageLocally(const WebCore::PartitionedSecurityOrigin&, const String& name, std::optional<WebCore::BroadcastChannelIdentifier> sourceInProcess, Ref<WebCore::SerializedScriptValue>&&, Ref<WTF::CallbackAggregator>&&);
 
     HashMap<WebCore::PartitionedSecurityOrigin, HashMap<String, Vector<WebCore::BroadcastChannelIdentifier>>> m_channelsPerOrigin;

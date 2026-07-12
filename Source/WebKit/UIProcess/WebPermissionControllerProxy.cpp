@@ -68,17 +68,19 @@ void WebPermissionControllerProxy::deref() const
     m_process->deref();
 }
 
-void WebPermissionControllerProxy::query(const WebCore::ClientOrigin& clientOrigin, const WebCore::PermissionDescriptor& descriptor, std::optional<WebPageProxyIdentifier> identifier, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
+CompletionHandlerCalledToken WebPermissionControllerProxy::query(const WebCore::ClientOrigin& clientOrigin, const WebCore::PermissionDescriptor& descriptor, std::optional<WebPageProxyIdentifier> identifier, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>), true>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(identifier || (source == WebCore::PermissionQuerySource::SharedWorker || source == WebCore::PermissionQuerySource::ServiceWorker), completionHandler(std::nullopt));
 
     RefPtr webPageProxy = identifier ? RefPtr { m_process->webPage(identifier.value()) } : mostReasonableWebPageProxy(clientOrigin.topOrigin, source);
     if (!webPageProxy) {
-        completionHandler(WebCore::PermissionState::Prompt);
-        return;
+        return completionHandler(WebCore::PermissionState::Prompt);
     }
 
-    webPageProxy->queryPermission(clientOrigin, descriptor, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return webPageProxy->queryPermission(clientOrigin, descriptor, WTF::move(completionHandler));
+    });
+
 }
 
 RefPtr<WebPageProxy> WebPermissionControllerProxy::mostReasonableWebPageProxy(const WebCore::SecurityOriginData& topOrigin, WebCore::PermissionQuerySource source) const

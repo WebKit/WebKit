@@ -6359,7 +6359,7 @@ static inline OptionSet<WebKit::FindOptions> NODELETE toFindOptions(_WKFindOptio
 
         virtual ~FormClient() { }
 
-        void willSubmitForm(WebKit::WebPageProxy& page, WebKit::WebFrameProxy&, WebKit::WebFrameProxy&, WebKit::FrameInfoData&& frameInfoData, WebKit::FrameInfoData&& sourceFrameInfoData, const Vector<std::pair<WTF::String, WTF::String>>& textFieldValues, API::Object* userData, const WTF::URL& requestURL, const WTF::String& method, CompletionHandler<void()>&& completionHandler) override
+        CompletionHandlerCalledToken willSubmitForm(WebKit::WebPageProxy& page, WebKit::WebFrameProxy&, WebKit::WebFrameProxy&, WebKit::FrameInfoData&& frameInfoData, WebKit::FrameInfoData&& sourceFrameInfoData, const Vector<std::pair<WTF::String, WTF::String>>& textFieldValues, API::Object* userData, const WTF::URL& requestURL, const WTF::String& method, CompletionHandler<void(), true>&& completionHandler) override
         {
             auto webView = m_webView.get();
             if (!webView)
@@ -6378,10 +6378,8 @@ static inline OptionSet<WebKit::FindOptions> NODELETE toFindOptions(_WKFindOptio
             bool inputDelegateRespondsToWillSubmitFormValuesWithoutRequestURL = [inputDelegate respondsToSelector:willSubmitFormValuesWithoutRequestURLSelector];
             bool inputDelegateRespondsToWillSubmitFormValuesLegacy = [inputDelegate respondsToSelector:willSubmitFormValuesLegacySelector];
 
-            if (!navigationDelegateRespondsToWillSubmitForm && !inputDelegateRespondsToWillSubmitFormValues && !inputDelegateRespondsToWillSubmitFormValuesLegacy && !inputDelegateRespondsToWillSubmitFormValuesWithoutRequestURL) {
-                completionHandler();
-                return;
-            }
+            if (!navigationDelegateRespondsToWillSubmitForm && !inputDelegateRespondsToWillSubmitFormValues && !inputDelegateRespondsToWillSubmitFormValuesLegacy && !inputDelegateRespondsToWillSubmitFormValuesWithoutRequestURL)
+                return completionHandler();
 
             auto valueMap = adoptNS([[NSMutableDictionary alloc] initWithCapacity:textFieldValues.size()]);
             for (const auto& pair : textFieldValues)
@@ -6397,37 +6395,42 @@ static inline OptionSet<WebKit::FindOptions> NODELETE toFindOptions(_WKFindOptio
                 return WebKit::CompletionHandlerCallChecker::create(inputDelegate.get(), willSubmitFormValuesSelector);
             }();
 
-            auto submissionHandler = makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] () mutable {
-                if (checker->completionHandlerHasBeenCalled())
-                    return;
-                checker->didCallCompletionHandler();
-                completionHandler();
+            // Genuine leaf: the handler is captured into an ObjC block handed to
+            // the delegate, so its call cannot be proven synchronously.
+            return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+                auto submissionHandler = makeBlockPtr([completionHandler = CompletionHandler<void()>(WTF::move(completionHandler)), checker = WTF::move(checker)] () mutable {
+                    if (checker->completionHandlerHasBeenCalled())
+                        return;
+                    checker->didCallCompletionHandler();
+                    completionHandler();
+                });
+
+                auto apiTargetFrameInfo = API::FrameInfo::create(WTF::move(frameInfoData));
+                auto apiSourceFrameInfo = API::FrameInfo::create(WTF::move(sourceFrameInfoData));
+                if (navigationDelegateRespondsToWillSubmitForm) {
+                    auto apiFormInfo = API::FormInfo::create(apiTargetFrameInfo.get(), apiSourceFrameInfo.get(), requestURL, method, textFieldValues);
+                    RetainPtr formInfo = wrapper(apiFormInfo);
+                    [navigationDelegate webView:webView.get() willSubmitForm:formInfo.get() submissionHandler:submissionHandler.get()];
+                    return WTF::move(deferred);
+                }
+
+                auto userObject = userData ? userData->toNSObject() : RetainPtr<NSObject<NSSecureCoding>>();
+
+                if (inputDelegateRespondsToWillSubmitFormValuesLegacy) {
+                    [inputDelegate _webView:webView.get() willSubmitFormValues:valueMap.get() userObject:userObject.get() submissionHandler:submissionHandler.get()];
+                    return WTF::move(deferred);
+                }
+
+                RetainPtr targetFrameInfo = wrapper(apiTargetFrameInfo);
+                RetainPtr sourceFrameInfo = wrapper(apiSourceFrameInfo);
+                if (inputDelegateRespondsToWillSubmitFormValuesWithoutRequestURL) {
+                    [inputDelegate _webView:webView.get() willSubmitFormValues:valueMap.get() frameInfo:targetFrameInfo sourceFrameInfo:sourceFrameInfo userObject:userObject.get() submissionHandler:submissionHandler.get()];
+                    return WTF::move(deferred);
+                }
+
+                [inputDelegate _webView:webView.get() willSubmitFormValues:valueMap.get() frameInfo:targetFrameInfo sourceFrameInfo:sourceFrameInfo userObject:userObject.get() requestURL:requestURL.createNSURL().get() method:method.createNSString().get() submissionHandler:submissionHandler.get()];
+                return WTF::move(deferred);
             });
-
-            auto apiTargetFrameInfo = API::FrameInfo::create(WTF::move(frameInfoData));
-            auto apiSourceFrameInfo = API::FrameInfo::create(WTF::move(sourceFrameInfoData));
-            if (navigationDelegateRespondsToWillSubmitForm) {
-                auto apiFormInfo = API::FormInfo::create(apiTargetFrameInfo.get(), apiSourceFrameInfo.get(), requestURL, method, textFieldValues);
-                RetainPtr formInfo = wrapper(apiFormInfo);
-                [navigationDelegate webView:webView.get() willSubmitForm:formInfo.get() submissionHandler:submissionHandler.get()];
-                return;
-            }
-
-            auto userObject = userData ? userData->toNSObject() : RetainPtr<NSObject<NSSecureCoding>>();
-
-            if (inputDelegateRespondsToWillSubmitFormValuesLegacy) {
-                [inputDelegate _webView:webView.get() willSubmitFormValues:valueMap.get() userObject:userObject.get() submissionHandler:submissionHandler.get()];
-                return;
-            }
-
-            RetainPtr targetFrameInfo = wrapper(apiTargetFrameInfo);
-            RetainPtr sourceFrameInfo = wrapper(apiSourceFrameInfo);
-            if (inputDelegateRespondsToWillSubmitFormValuesWithoutRequestURL) {
-                [inputDelegate _webView:webView.get() willSubmitFormValues:valueMap.get() frameInfo:targetFrameInfo sourceFrameInfo:sourceFrameInfo userObject:userObject.get() submissionHandler:submissionHandler.get()];
-                return;
-            }
-
-            [inputDelegate _webView:webView.get() willSubmitFormValues:valueMap.get() frameInfo:targetFrameInfo sourceFrameInfo:sourceFrameInfo userObject:userObject.get() requestURL:requestURL.createNSURL().get() method:method.createNSString().get() submissionHandler:submissionHandler.get()];
         }
 
     private:

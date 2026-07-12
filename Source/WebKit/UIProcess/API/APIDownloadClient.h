@@ -66,12 +66,24 @@ public:
     virtual void didFinish(WebKit::DownloadProxy&) { }
     virtual void didFail(WebKit::DownloadProxy&, const WebCore::ResourceError&, API::Data* resumeData) { }
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    virtual void didReceivePlaceholderURL(WebKit::DownloadProxy&, const WTF::URL&, std::span<const uint8_t>, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
+    // Enforced is the real virtual: every override must return a CompletionHandlerCalledToken
+    // proving the handler was called. The default just calls it.
+    virtual CompletionHandlerCalledToken didReceivePlaceholderURL(WebKit::DownloadProxy&, const WTF::URL&, std::span<const uint8_t>, CompletionHandler<void(), true>&& completionHandler) { return completionHandler(); }
     virtual void didReceiveFinalURL(WebKit::DownloadProxy&, const WTF::URL&, std::span<const uint8_t>) { }
 #endif
     virtual void legacyDidCancel(WebKit::DownloadProxy&) { }
     virtual void processDidCrash(WebKit::DownloadProxy&) { }
-    virtual void willSendRequest(WebKit::DownloadProxy&, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler) { completionHandler(WTF::move(request)); }
+    // Enforced is the real virtual: every override must return a CompletionHandlerCalledToken
+    // proving the handler was called. The default just calls it.
+    virtual CompletionHandlerCalledToken willSendRequest(WebKit::DownloadProxy&, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&), true>&& completionHandler)
+    {
+        return completionHandler(WTF::move(request));
+    }
+    // Free non-enforced wrapper for callers that still hold a plain CompletionHandler.
+    void willSendRequest(WebKit::DownloadProxy& download, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse& response, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+    {
+        willSendRequest(download, WTF::move(request), response, CompletionHandler<void(WebCore::ResourceRequest&&), true>(WTF::move(completionHandler)));
+    }
 };
 
 } // namespace API

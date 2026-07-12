@@ -70,7 +70,9 @@ public:
     WEBCORE_EXPORT ~SWServerWorker();
 
     WEBCORE_EXPORT void terminate(CompletionHandler<void()>&& = [] { });
+    WEBCORE_EXPORT CompletionHandlerCalledToken terminate(CompletionHandler<void(), true>&&);
     WEBCORE_EXPORT void whenTerminated(CompletionHandler<void()>&&);
+    WEBCORE_EXPORT CompletionHandlerCalledToken whenTerminated(CompletionHandler<void(), true>&&);
 
     WEBCORE_EXPORT void whenActivated(CompletionHandler<void(bool)>&&);
 
@@ -178,7 +180,8 @@ private:
 
     void callWhenActivatedHandler(bool success);
 
-    void startTermination(CompletionHandler<void()>&&);
+    CompletionHandlerCalledToken startTermination(CompletionHandler<void(), true>&&);
+    CompletionHandlerCalledToken appendTerminationCallback(CompletionHandler<void(), true>&&);
     void terminationCompleted();
     void terminationTimerFired();
     void terminationIfPossibleTimerFired();
@@ -205,7 +208,7 @@ private:
     MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript> m_scriptResourceMap;
     bool m_shouldSkipHandleFetch { false };
     bool m_hasTimedOutAnyFetchTasks { false };
-    Vector<CompletionHandler<void()>> m_terminationCallbacks;
+    Vector<CompletionHandler<void(), true>> m_terminationCallbacks;
     Timer m_terminationTimer;
     Timer m_terminationIfPossibleTimer;
     LastNavigationWasAppInitiated m_lastNavigationWasAppInitiated;

@@ -142,6 +142,7 @@ public:
         WEBCORE_EXPORT void registerServiceWorkerInServer(ServiceWorkerIdentifier);
         WEBCORE_EXPORT void unregisterServiceWorkerInServer(ServiceWorkerIdentifier);
         WEBCORE_EXPORT void whenRegistrationReady(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&&);
+        WEBCORE_EXPORT CompletionHandlerCalledToken whenRegistrationReady(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&), true>&&);
 
         WEBCORE_EXPORT void storeRegistrationsOnDisk(CompletionHandler<void()>&&);
 
@@ -155,7 +156,7 @@ public:
         struct RegistrationReadyRequest {
             SecurityOriginData topOrigin;
             URL clientURL;
-            CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)> callback;
+            CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&), true> callback;
         };
 
         WeakPtr<SWServer> m_server;
@@ -178,7 +179,7 @@ public:
     WEBCORE_EXPORT SWServerRegistration* getRegistration(const ServiceWorkerRegistrationKey&);
     void addRegistration(Ref<SWServerRegistration>&&);
     void removeRegistration(ServiceWorkerRegistrationIdentifier);
-    WEBCORE_EXPORT void getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(Vector<ServiceWorkerRegistrationData>&&)>&&);
+    WEBCORE_EXPORT CompletionHandlerCalledToken getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(Vector<ServiceWorkerRegistrationData>&&), true>&&);
     WEBCORE_EXPORT RefPtr<SWServerRegistration> doRegistrationMatchingSync(const SecurityOriginData& topOrigin, const URL& clientURL);
     WEBCORE_EXPORT void storeRegistrationsOnDisk(CompletionHandler<void()>&&);
 
@@ -253,7 +254,12 @@ public:
     WEBCORE_EXPORT void createContextConnection(const Site&, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CrossOriginEmbedderPolicyValue);
 
     WEBCORE_EXPORT bool isImportCompletedForOrigin(const SecurityOriginData& topOrigin) const;
-    WEBCORE_EXPORT void importRegistrationsForOrigin(const SecurityOriginData& topOrigin, CompletionHandler<void()>&&);
+    WEBCORE_EXPORT CompletionHandlerCalledToken importRegistrationsForOrigin(const SecurityOriginData& topOrigin, CompletionHandler<void(), true>&&);
+    // Free non-enforced wrapper: forwards to the enforced implementation and discards the proof token.
+    void importRegistrationsForOrigin(const SecurityOriginData& topOrigin, CompletionHandler<void()>&& callback)
+    {
+        importRegistrationsForOrigin(topOrigin, CompletionHandler<void(), true>(WTF::move(callback)));
+    }
 
     void softUpdate(SWServerRegistration&);
 
@@ -314,6 +320,7 @@ public:
 #endif
 
     WEBCORE_EXPORT void addRoutes(ServiceWorkerRegistrationIdentifier, Vector<ServiceWorkerRoute>&&, CompletionHandler<void(Expected<void, ExceptionData>&&)>&&);
+    WEBCORE_EXPORT CompletionHandlerCalledToken addRoutes(ServiceWorkerRegistrationIdentifier, Vector<ServiceWorkerRoute>&&, CompletionHandler<void(Expected<void, ExceptionData>&&), true>&&);
     WEBCORE_EXPORT bool addHandlerIfHasControlledClients(CompletionHandler<void()>&&);
 
     bool hasPendingConnectionDomain(const ContextConnectionKey& key) const { return m_pendingConnectionDomains.contains(key); }
@@ -402,7 +409,7 @@ private:
     // Origins known to have registrations on disk but not yet imported. Populated by the origin list import at startup,
     // and drained as origins are lazily imported.
     HashSet<ClientOrigin> m_originsYetToBeImported;
-    HashMap<SecurityOriginData, Vector<CompletionHandler<void()>>> m_pendingOriginImportCallbacks;
+    HashMap<SecurityOriginData, Vector<CompletionHandler<void(), true>>> m_pendingOriginImportCallbacks;
 
     HashSet<RegistrableDomain> m_appBoundDomains;
     bool m_shouldRunServiceWorkersOnMainThreadForTesting { false };

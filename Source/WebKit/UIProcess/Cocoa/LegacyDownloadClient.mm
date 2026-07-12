@@ -178,12 +178,12 @@ void LegacyDownloadClient::legacyDidCancel(DownloadProxy& downloadProxy)
         [m_delegate.get() _downloadDidCancel:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()]];
 }
 
-void LegacyDownloadClient::willSendRequest(DownloadProxy& downloadProxy, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+CompletionHandlerCalledToken LegacyDownloadClient::willSendRequest(DownloadProxy& downloadProxy, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&), true>&& completionHandler)
 {
     if (m_delegateMethods.downloadDidReceiveServerRedirectToURL)
         [m_delegate.get() _download:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()] didReceiveServerRedirectToURL:request.url().createNSURL().get()];
 
-    completionHandler(WTF::move(request));
+    return completionHandler(WTF::move(request));
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_END

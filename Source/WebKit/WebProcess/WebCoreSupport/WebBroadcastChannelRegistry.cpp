@@ -126,11 +126,14 @@ void WebBroadcastChannelRegistry::postMessageLocally(const WebCore::PartitionedS
     }
 }
 
-void WebBroadcastChannelRegistry::postMessageToRemote(const WebCore::ClientOrigin& clientOrigin, const String& name, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken WebBroadcastChannelRegistry::postMessageToRemote(const WebCore::ClientOrigin& clientOrigin, const String& name, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void(), true>&& completionHandler)
 {
-    auto callbackAggregator = CallbackAggregator::create(WTF::move(completionHandler));
-    WebCore::PartitionedSecurityOrigin origin { clientOrigin.topOrigin.securityOrigin(), clientOrigin.clientOrigin.securityOrigin() };
-    postMessageLocally(origin, name, std::nullopt, *message.message, callbackAggregator.copyRef());
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        auto callbackAggregator = CallbackAggregator::create(WTF::move(completionHandler));
+        WebCore::PartitionedSecurityOrigin origin { clientOrigin.topOrigin.securityOrigin(), clientOrigin.clientOrigin.securityOrigin() };
+        postMessageLocally(origin, name, std::nullopt, *message.message, callbackAggregator.copyRef());
+        return WTF::move(deferred);
+    });
 }
 
 void WebBroadcastChannelRegistry::networkProcessCrashed()

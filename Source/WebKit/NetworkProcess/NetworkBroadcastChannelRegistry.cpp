@@ -88,7 +88,7 @@ void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connect
     connectionIdentifiersForNameIterator->value.removeFirst(connection.uniqueID());
 }
 
-void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void(), true>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(isValidClientOrigin(origin), connection, completionHandler());
     MESSAGE_CHECK_COMPLETION(!name.isNull(), connection, completionHandler());
@@ -102,18 +102,21 @@ void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, c
     if (connectionIdentifiersForNameIterator == channelsForOriginIterator->value.end())
         return completionHandler();
 
-    auto callbackAggregator = CallbackAggregator::create(WTF::move(completionHandler));
-    for (auto& connectionID : connectionIdentifiersForNameIterator->value) {
-        // Only dispatch the post the messages to BroadcastChannels outside the source process.
-        if (connectionID == connection.uniqueID())
-            continue;
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        auto callbackAggregator = CallbackAggregator::create(WTF::move(completionHandler));
+        for (auto& connectionID : connectionIdentifiersForNameIterator->value) {
+            // Only dispatch the post the messages to BroadcastChannels outside the source process.
+            if (connectionID == connection.uniqueID())
+                continue;
 
-        RefPtr connection = IPC::Connection::connection(connectionID);
-        if (!connection)
-            continue;
+            RefPtr connection = IPC::Connection::connection(connectionID);
+            if (!connection)
+                continue;
 
-        connection->sendWithAsyncReply(Messages::WebBroadcastChannelRegistry::PostMessageToRemote(origin, name, message), [callbackAggregator] { }, 0);
-    }
+            connection->sendWithAsyncReply(Messages::WebBroadcastChannelRegistry::PostMessageToRemote(origin, name, message), [callbackAggregator] { }, 0);
+        }
+        return WTF::move(deferred);
+    });
 }
 
 void NetworkBroadcastChannelRegistry::removeConnection(IPC::Connection& connection)

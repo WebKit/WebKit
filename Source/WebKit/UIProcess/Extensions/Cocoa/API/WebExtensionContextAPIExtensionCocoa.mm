@@ -34,9 +34,9 @@
 
 namespace WebKit {
 
-void WebExtensionContext::extensionIsAllowedIncognitoAccess(CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::extensionIsAllowedIncognitoAccess(CompletionHandler<void(bool), true>&& completionHandler)
 {
-    completionHandler(hasAccessToPrivateData());
+    return completionHandler(hasAccessToPrivateData());
 }
 
 } // namespace WebKit

@@ -651,9 +651,9 @@ private:
 
 #if ENABLE(GAMEPAD)
     void startedUsingGamepads(IPC::Connection&);
-    void stoppedUsingGamepads(IPC::Connection&, CompletionHandler<void()>&&);
-    void playGamepadEffect(unsigned gamepadIndex, const String& gamepadID, WebCore::GamepadHapticEffectType, const WebCore::GamepadEffectParameters&, CompletionHandler<void(bool)>&&);
-    void stopGamepadEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&&);
+    CompletionHandlerCalledToken stoppedUsingGamepads(IPC::Connection&, CompletionHandler<void(), true>&&);
+    CompletionHandlerCalledToken playGamepadEffect(unsigned gamepadIndex, const String& gamepadID, WebCore::GamepadHapticEffectType, const WebCore::GamepadEffectParameters&, CompletionHandler<void(bool), true>&&);
+    CompletionHandlerCalledToken stopGamepadEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void(), true>&&);
 
     void processStoppedUsingGamepads(WebProcessProxy&);
 #endif

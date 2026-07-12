@@ -57,6 +57,7 @@ public:
 
     void close();
     void deleteDatabase(CompletionHandler<void(const String& errorMessage)>&&);
+    CompletionHandlerCalledToken deleteDatabase(CompletionHandler<void(const String& errorMessage), true>&&);
     String deleteDatabaseIfEmpty();
 
     void createSavepoint(CompletionHandler<void(Markable<WTF::UUID> savepointIdentifier, const String& errorMessage)>&&);

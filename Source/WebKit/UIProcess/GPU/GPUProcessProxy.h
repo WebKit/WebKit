@@ -166,6 +166,7 @@ public:
 #if PLATFORM(VISION) && ENABLE(MODEL_PROCESS)
 #if HAVE(CORE_RE)
     void requestSharedSimulationConnection(audit_token_t, CompletionHandler<void(std::optional<IPC::SharedFileHandle>)>&&);
+    CompletionHandlerCalledToken requestSharedSimulationConnection(audit_token_t, CompletionHandler<void(std::optional<IPC::SharedFileHandle>), true>&&);
 #endif
 
 #if HAVE(TASK_IDENTITY_TOKEN)
@@ -226,7 +227,7 @@ private:
     void voiceActivityDetected();
     void microphoneMuteStatusChanged(bool isMuting);
 #if PLATFORM(IOS_FAMILY)
-    void statusBarWasTapped(CompletionHandler<void()>&&);
+    CompletionHandlerCalledToken statusBarWasTapped(CompletionHandler<void(), true>&&);
 #endif
 #endif // ENABLE(MEDIA_STREAM)
 

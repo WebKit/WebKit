@@ -52,6 +52,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     void load(CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)>&&);
+    CompletionHandlerCalledToken load(CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&), true>&&);
 
     const URL& url() const LIFETIME_BOUND { return m_url; }
     SharedWorker& worker() { return m_worker.get(); }
@@ -67,7 +68,7 @@ private:
     const Ref<SharedWorker> m_worker;
     const Ref<WorkerScriptLoader> m_loader;
     const URL m_url;
-    CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)> m_completionHandler;
+    CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&), true> m_completionHandler;
 };
 
 } // namespace WebCore

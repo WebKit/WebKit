@@ -41,14 +41,14 @@ public:
 private:
     explicit WebNotificationManagerMessageHandler(WebPageProxy&);
 
-    void showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void()>&&) final;
+    CompletionHandlerCalledToken showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void(), true>&&) final;
     void cancelNotification(WebCore::SecurityOriginData&&, const WTF::UUID& notificationID) final;
     void clearNotifications(const Vector<WTF::UUID>& notificationIDs) final;
     void didDestroyNotification(const WTF::UUID& notificationID) final;
     void pageWasNotifiedOfNotificationPermission() final;
-    void requestPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&) final;
+    CompletionHandlerCalledToken requestPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool), true>&&) final;
     void setAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t>) final { }
-    void getPermissionState(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&) final;
+    CompletionHandlerCalledToken getPermissionState(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState), true>&&) final;
     void getPermissionStateSync(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&) final;
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const final;
     WebPageProxy& page() const { return m_webPageProxy; }

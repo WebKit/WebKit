@@ -111,14 +111,14 @@ void GamepadHapticActuator::playEffect(EffectType effectType, GamepadEffectParam
     effectParameters.duration = std::min(effectParameters.duration, GamepadEffectParameters::maximumDuration.milliseconds());
 
     currentEffectPromise = WTF::move(promise);
-    GamepadProvider::singleton().playEffect(m_gamepad->index(), m_gamepad->id(), effectType, effectParameters, [pendingActivity = makePendingActivity(*this), playingEffectPromise = currentEffectPromise, effectType](bool success) mutable {
+    GamepadProvider::singleton().playEffect(m_gamepad->index(), m_gamepad->id(), effectType, effectParameters, CompletionHandler<void(bool)>([pendingActivity = makePendingActivity(*this), playingEffectPromise = currentEffectPromise, effectType](bool success) mutable {
         auto& currentEffectPromise = pendingActivity->object().promiseForEffectType(effectType);
         if (playingEffectPromise != currentEffectPromise)
             return; // Was already pre-empted.
         pendingActivity->object().queueTaskKeepingObjectAlive(pendingActivity->object(), TaskSource::Gamepad, [playingEffectPromise = std::exchange(currentEffectPromise, nullptr), success](auto&) {
             playingEffectPromise->resolve<IDLEnumeration<Result>>(success ? Result::Complete : Result::Preempted);
         });
-    });
+    }));
 }
 
 void GamepadHapticActuator::reset(Ref<DeferredPromise>&& promise)

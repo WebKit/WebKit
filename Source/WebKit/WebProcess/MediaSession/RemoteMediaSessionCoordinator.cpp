@@ -186,40 +186,48 @@ void RemoteMediaSessionCoordinator::trackIdentifierChanged(const String& identif
     protect(m_page)->send(Messages::RemoteMediaSessionCoordinatorProxy::TrackIdentifierChanged { identifier });
 }
 
-void RemoteMediaSessionCoordinator::seekSessionToTime(double time, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken RemoteMediaSessionCoordinator::seekSessionToTime(double time, CompletionHandler<void(bool), true>&& completionHandler)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, time);
-    if (auto coordinatorClient = client())
-        coordinatorClient->seekSessionToTime(time, WTF::move((completionHandler)));
-    else
-        completionHandler(false);
+    if (auto coordinatorClient = client()) {
+        return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+            return coordinatorClient->seekSessionToTime(time, WTF::move(completionHandler));
+        });
+    }
+    return completionHandler(false);
 }
 
-void RemoteMediaSessionCoordinator::playSession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken RemoteMediaSessionCoordinator::playSession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime, CompletionHandler<void(bool), true>&& completionHandler)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    if (auto coordinatorClient = client())
-        coordinatorClient->playSession(WTF::move(atTime), WTF::move(hostTime), WTF::move((completionHandler)));
-    else
-        completionHandler(false);
+    if (auto coordinatorClient = client()) {
+        return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+            return coordinatorClient->playSession(WTF::move(atTime), WTF::move(hostTime), WTF::move(completionHandler));
+        });
+    }
+    return completionHandler(false);
 }
 
-void RemoteMediaSessionCoordinator::pauseSession(CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken RemoteMediaSessionCoordinator::pauseSession(CompletionHandler<void(bool), true>&& completionHandler)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    if (auto coordinatorClient = client())
-        coordinatorClient->pauseSession(WTF::move((completionHandler)));
-    else
-        completionHandler(false);
+    if (auto coordinatorClient = client()) {
+        return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+            return coordinatorClient->pauseSession(WTF::move(completionHandler));
+        });
+    }
+    return completionHandler(false);
 }
 
-void RemoteMediaSessionCoordinator::setSessionTrack(const String& trackIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken RemoteMediaSessionCoordinator::setSessionTrack(const String& trackIdentifier, CompletionHandler<void(bool), true>&& completionHandler)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, trackIdentifier);
-    if (auto coordinatorClient = client())
-        coordinatorClient->setSessionTrack(trackIdentifier, WTF::move((completionHandler)));
-    else
-        completionHandler(false);
+    if (auto coordinatorClient = client()) {
+        return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+            return coordinatorClient->setSessionTrack(trackIdentifier, WTF::move(completionHandler));
+        });
+    }
+    return completionHandler(false);
 }
 
 void RemoteMediaSessionCoordinator::coordinatorStateChanged(WebCore::MediaSessionCoordinatorState state)

@@ -1166,7 +1166,12 @@ double MediaPlayer::liveUpdateInterval()
 
 void MediaPlayer::didLoadingProgress(DidLoadingProgressCompletionHandler&& callback) const
 {
-    protect(m_private)->didLoadingProgressAsync(WTF::move(callback));
+    (void)protect(m_private)->didLoadingProgressAsync(CompletionHandler<void(bool), true>(WTF::move(callback)));
+}
+
+CompletionHandlerCalledToken MediaPlayer::didLoadingProgress(CompletionHandler<void(bool), true>&& callback) const
+{
+    return protect(m_private)->didLoadingProgressAsync(WTF::move(callback));
 }
 
 void MediaPlayer::setPresentationSize(const IntSize& size)

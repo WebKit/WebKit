@@ -164,12 +164,11 @@ void RemoteLegacyCDMFactoryProxy::addSession(RemoteLegacyCDMSessionIdentifier id
     m_sessions.set(identifier, WTF::move(session));
 }
 
-void RemoteLegacyCDMFactoryProxy::removeSession(RemoteLegacyCDMSessionIdentifier identifier, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken RemoteLegacyCDMFactoryProxy::removeSession(RemoteLegacyCDMSessionIdentifier identifier, CompletionHandler<void(), true>&& completionHandler)
 {
     RefPtr connection = m_gpuConnectionToWebProcess.get();
     if (!connection) {
-        completionHandler();
-        return;
+        return completionHandler();
     }
 
     connection->messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMSessionProxy::messageReceiverName(), identifier.toUInt64());
@@ -181,7 +180,7 @@ void RemoteLegacyCDMFactoryProxy::removeSession(RemoteLegacyCDMSessionIdentifier
     if (connection && allowsExitUnderMemoryPressure())
         connection->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 
-    completionHandler();
+    return completionHandler();
 }
 
 RemoteLegacyCDMSessionProxy* RemoteLegacyCDMFactoryProxy::getSession(const RemoteLegacyCDMSessionIdentifier& identifier) const

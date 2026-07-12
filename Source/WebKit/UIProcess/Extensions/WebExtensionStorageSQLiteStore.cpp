@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include "WebExtensionDataType.h"
 #include "WebExtensionSQLiteHelpers.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -60,44 +61,52 @@ WebExtensionStorageSQLiteStore::WebExtensionStorageSQLiteStore(const String& uni
 
 void WebExtensionStorageSQLiteStore::getAllKeys(CompletionHandler<void(Vector<String> keys, const String& errorMessage)>&& completionHandler)
 {
-    queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, uniqueIdentifier = crossThreadCopy(uniqueIdentifier()), completionHandler = WTF::move(completionHandler)]() mutable {
+    getAllKeys(CompletionHandler<void(Vector<String>, const String&), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken WebExtensionStorageSQLiteStore::getAllKeys(CompletionHandler<void(Vector<String> keys, const String& errorMessage), true>&& completionHandler)
+{
+    return queue().dispatch(CompletionHandler<void(), true>([weakThis = ThreadSafeWeakPtr { *this }, uniqueIdentifier = crossThreadCopy(uniqueIdentifier()), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             RELEASE_LOG_ERROR(Extensions, "Failed to retrieve all keys for extension %s.", uniqueIdentifier.utf8().data());
-            WorkQueue::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
-                completionHandler({ }, "Failed to retrieve all keys"_s);
-            });
-            return;
+            return WorkQueue::mainSingleton().dispatch(CompletionHandler<void(), true>([completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
+                return completionHandler({ }, "Failed to retrieve all keys"_s);
+            }));
         }
 
         String errorMessage;
         auto keysArray = protectedThis->getAllKeysWithErrorMessage(errorMessage);
 
-        WorkQueue::mainSingleton().dispatch([keysArray = crossThreadCopy(keysArray), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
-            completionHandler(keysArray, errorMessage);
-        });
-    });
+        return WorkQueue::mainSingleton().dispatch(CompletionHandler<void(), true>([keysArray = crossThreadCopy(keysArray), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
+            return completionHandler(keysArray, errorMessage);
+        }));
+    }));
 }
 
 void WebExtensionStorageSQLiteStore::getValuesForKeys(Vector<String> keys, CompletionHandler<void(HashMap<String, String> results, const String& errorMessage)>&& completionHandler)
 {
-    queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, uniqueIdentifier = crossThreadCopy(uniqueIdentifier()), keys = crossThreadCopy(keys), completionHandler = WTF::move(completionHandler)]() mutable {
+    getValuesForKeys(WTF::move(keys), CompletionHandler<void(HashMap<String, String>, const String&), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken WebExtensionStorageSQLiteStore::getValuesForKeys(Vector<String> keys, CompletionHandler<void(HashMap<String, String> results, const String& errorMessage), true>&& completionHandler)
+{
+    return queue().dispatch(CompletionHandler<void(), true>([weakThis = ThreadSafeWeakPtr { *this }, uniqueIdentifier = crossThreadCopy(uniqueIdentifier()), keys = crossThreadCopy(keys), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             RELEASE_LOG_ERROR(Extensions, "Failed to retrieve values for keys: %s for extension %s.", rowFilterStringFromRowKeys(keys).utf8().data(), uniqueIdentifier.utf8().data());
-            WorkQueue::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
-                completionHandler({ }, "Failed to retrieve values for keys"_s);
-            });
-            return;
+            return WorkQueue::mainSingleton().dispatch(CompletionHandler<void(), true>([completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
+                return completionHandler({ }, "Failed to retrieve values for keys"_s);
+            }));
         }
 
         String errorMessage;
         auto results = keys.size() ? protectedThis->getValuesForKeysWithErrorMessage(keys, errorMessage) : protectedThis->getValuesForAllKeys(errorMessage);
 
-        WorkQueue::mainSingleton().dispatch([results = crossThreadCopy(results), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
-            completionHandler(results, errorMessage);
-        });
-    });
+        return WorkQueue::mainSingleton().dispatch(CompletionHandler<void(), true>([results = crossThreadCopy(results), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
+            return completionHandler(results, errorMessage);
+        }));
+    }));
 }
 
 static size_t storageSizeOf(HashMap<String, String> map)
@@ -115,38 +124,38 @@ static size_t storageSizeOf(HashMap<String, String> map)
 
 void WebExtensionStorageSQLiteStore::getStorageSizeForKeys(Vector<String> keys, CompletionHandler<void(size_t storageSize, const String& errorMessage)>&& completionHandler)
 {
-    queue().dispatch([protectedThis = Ref { *this }, uniqueIdentifier = crossThreadCopy(uniqueIdentifier()), keys = crossThreadCopy(keys), completionHandler = WTF::move(completionHandler)]() mutable {
+    getStorageSizeForKeys(WTF::move(keys), CompletionHandler<void(size_t, const String&), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken WebExtensionStorageSQLiteStore::getStorageSizeForKeys(Vector<String> keys, CompletionHandler<void(size_t storageSize, const String& errorMessage), true>&& completionHandler)
+{
+    return queue().dispatch(CompletionHandler<void(), true>([protectedThis = Ref { *this }, uniqueIdentifier = crossThreadCopy(uniqueIdentifier()), keys = crossThreadCopy(keys), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
         String errorMessage;
         if (!keys.isEmpty()) {
             auto keysAndValues = protectedThis->getValuesForKeysWithErrorMessage(keys, errorMessage);
-            WorkQueue::mainSingleton().dispatch([keysAndValues = crossThreadCopy(keysAndValues), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
-                completionHandler(storageSizeOf(keysAndValues), errorMessage);
-            });
-
-            return;
+            return WorkQueue::mainSingleton().dispatch(CompletionHandler<void(), true>([keysAndValues = crossThreadCopy(keysAndValues), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
+                return completionHandler(storageSizeOf(keysAndValues), errorMessage);
+            }));
         }
 
         // Return storage size for all keys if no keys are specified.
         if (!protectedThis->openDatabaseIfNecessary(errorMessage, false)) {
-            WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
-                completionHandler(0, errorMessage);
-            });
-            return;
+            return WorkQueue::mainSingleton().dispatch(CompletionHandler<void(), true>([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
+                return completionHandler(0, errorMessage);
+            }));
         }
 
         int64_t result = 0;
         RefPtr<API::Error> error;
         SQLiteDatabaseEnumerate(*(protectedThis->database()), error, "SELECT SUM(LENGTH(key) + LENGTH(value)) FROM extension_storage"_s, std::tie(result));
 
-        WorkQueue::mainSingleton().dispatch([result, error, completionHandler = WTF::move(completionHandler)]() mutable {
+        return WorkQueue::mainSingleton().dispatch(CompletionHandler<void(), true>([result, error, completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
             if (!error)
-                completionHandler(result, { });
-            else {
-                RELEASE_LOG_ERROR(Extensions, "Failed to calculate storage size for keys: %s", error->localizedDescription().utf8().data());
-                completionHandler(0, error->localizedDescription());
-            }
-        });
-    });
+                return completionHandler(result, { });
+            RELEASE_LOG_ERROR(Extensions, "Failed to calculate storage size for keys: %s", error->localizedDescription().utf8().data());
+            return completionHandler(0, error->localizedDescription());
+        }));
+    }));
 }
 
 static Vector<String> toVector(HashMap<String, String> map, bool mapKeys)
@@ -165,20 +174,22 @@ static Vector<String> toVector(HashMap<String, String> map, bool mapKeys)
 
 void WebExtensionStorageSQLiteStore::getStorageSizeForAllKeys(HashMap<String, String> additionalKeyedData, CompletionHandler<void(size_t storageSize, int numberOfKeysIncludingAdditionalKeyedData, HashMap<String, String> existingKeysAndValues, const String& errorMessage)>&& completionHandler)
 {
-    getStorageSizeForKeys({ }, [this, protectedThis = Ref { *this }, additionalKeyedData, completionHandler = WTF::move(completionHandler)](size_t storageSize, const String& errorMessage) mutable {
-        if (!errorMessage.isEmpty()) {
-            completionHandler(0.0, 0, { }, errorMessage);
-            return;
-        }
+    getStorageSizeForAllKeys(WTF::move(additionalKeyedData), CompletionHandler<void(size_t, int, HashMap<String, String>, const String&), true>(WTF::move(completionHandler)));
+}
 
-        queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, uniqueIdentifier = crossThreadCopy(uniqueIdentifier()), storageSize, additionalKeyedData = crossThreadCopy(additionalKeyedData), completionHandler = WTF::move(completionHandler)]() mutable {
+CompletionHandlerCalledToken WebExtensionStorageSQLiteStore::getStorageSizeForAllKeys(HashMap<String, String> additionalKeyedData, CompletionHandler<void(size_t storageSize, int numberOfKeysIncludingAdditionalKeyedData, HashMap<String, String> existingKeysAndValues, const String& errorMessage), true>&& completionHandler)
+{
+    return getStorageSizeForKeys({ }, CompletionHandler<void(size_t, const String&), true>([this, protectedThis = Ref { *this }, additionalKeyedData, completionHandler = WTF::move(completionHandler)](size_t storageSize, const String& errorMessage) mutable -> CompletionHandlerCalledToken {
+        if (!errorMessage.isEmpty())
+            return completionHandler(0.0, 0, { }, errorMessage);
+
+        return queue().dispatch(CompletionHandler<void(), true>([weakThis = ThreadSafeWeakPtr { *this }, uniqueIdentifier = crossThreadCopy(uniqueIdentifier()), storageSize, additionalKeyedData = crossThreadCopy(additionalKeyedData), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis) {
                 RELEASE_LOG_ERROR(Extensions, "Failed to calculate storage size for extension %s.", uniqueIdentifier.utf8().data());
-                WorkQueue::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
-                    completionHandler(0.0, 0, { }, makeString("Failed to calculate storage size"_s));
-                });
-                return;
+                return WorkQueue::mainSingleton().dispatch(CompletionHandler<void(), true>([completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
+                    return completionHandler(0.0, 0, { }, makeString("Failed to calculate storage size"_s));
+                }));
             }
 
             String errorMessage;
@@ -190,30 +201,33 @@ void WebExtensionStorageSQLiteStore::getStorageSizeForAllKeys(HashMap<String, St
             auto existingAndAdditionalKeys = protectedThis->getAllKeysWithErrorMessage(errorMessage);
             existingAndAdditionalKeys.appendVector(toVector(additionalKeyedData, true));
 
-            WorkQueue::mainSingleton().dispatch([updatedStorageSize, existingAndAdditionalKeys = crossThreadCopy(existingAndAdditionalKeys), oldValuesForAdditionalKeys = crossThreadCopy(oldValuesForAdditionalKeys), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
-                completionHandler(updatedStorageSize, existingAndAdditionalKeys.size(), oldValuesForAdditionalKeys, errorMessage);
-            });
-        });
-    });
+            return WorkQueue::mainSingleton().dispatch(CompletionHandler<void(), true>([updatedStorageSize, existingAndAdditionalKeys = crossThreadCopy(existingAndAdditionalKeys), oldValuesForAdditionalKeys = crossThreadCopy(oldValuesForAdditionalKeys), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
+                return completionHandler(updatedStorageSize, existingAndAdditionalKeys.size(), oldValuesForAdditionalKeys, errorMessage);
+            }));
+        }));
+    }));
 }
 
 void WebExtensionStorageSQLiteStore::setKeyedData(HashMap<String, String> keyedData, CompletionHandler<void(Vector<String> keysSuccessfullySet, const String& errorMessage)>&& completionHandler)
 {
-    queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, keyedData = crossThreadCopy(keyedData), completionHandler = WTF::move(completionHandler)]() mutable {
+    setKeyedData(WTF::move(keyedData), CompletionHandler<void(Vector<String>, const String&), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken WebExtensionStorageSQLiteStore::setKeyedData(HashMap<String, String> keyedData, CompletionHandler<void(Vector<String> keysSuccessfullySet, const String& errorMessage), true>&& completionHandler)
+{
+    return queue().dispatch(CompletionHandler<void(), true>([weakThis = ThreadSafeWeakPtr { *this }, keyedData = crossThreadCopy(keyedData), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
-            WorkQueue::mainSingleton().dispatch([keyedData = WTF::move(keyedData), completionHandler = WTF::move(completionHandler)]() mutable {
-                completionHandler({ }, makeString("Failed to set keys: "_s, rowFilterStringFromRowKeys(toVector(keyedData, true))));
-            });
-            return;
+            return WorkQueue::mainSingleton().dispatch(CompletionHandler<void(), true>([keyedData = WTF::move(keyedData), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
+                return completionHandler({ }, makeString("Failed to set keys: "_s, rowFilterStringFromRowKeys(toVector(keyedData, true))));
+            }));
         }
 
         String errorMessage;
         if (!protectedThis->openDatabaseIfNecessary(errorMessage, true)) {
-            WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
-                completionHandler({ }, errorMessage);
-            });
-            return;
+            return WorkQueue::mainSingleton().dispatch(CompletionHandler<void(), true>([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
+                return completionHandler({ }, errorMessage);
+            }));
         }
 
         ASSERT(errorMessage.isEmpty());
@@ -227,29 +241,32 @@ void WebExtensionStorageSQLiteStore::setKeyedData(HashMap<String, String> keyedD
             keysSuccessfullySet.append(key);
         }
 
-        WorkQueue::mainSingleton().dispatch([keysSuccessfullySet = crossThreadCopy(keysSuccessfullySet), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
-            completionHandler(keysSuccessfullySet, errorMessage);
-        });
-    });
+        return WorkQueue::mainSingleton().dispatch(CompletionHandler<void(), true>([keysSuccessfullySet = crossThreadCopy(keysSuccessfullySet), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
+            return completionHandler(keysSuccessfullySet, errorMessage);
+        }));
+    }));
 }
 
 void WebExtensionStorageSQLiteStore::deleteValuesForKeys(Vector<String> keys, CompletionHandler<void(const String& errorMessage)>&& completionHandler)
 {
-    queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, keys = crossThreadCopy(keys), completionHandler = WTF::move(completionHandler)]() mutable {
+    deleteValuesForKeys(WTF::move(keys), CompletionHandler<void(const String&), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken WebExtensionStorageSQLiteStore::deleteValuesForKeys(Vector<String> keys, CompletionHandler<void(const String& errorMessage), true>&& completionHandler)
+{
+    return queue().dispatch(CompletionHandler<void(), true>([weakThis = ThreadSafeWeakPtr { *this }, keys = crossThreadCopy(keys), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
-            WorkQueue::mainSingleton().dispatch([keys = WTF::move(keys), completionHandler = WTF::move(completionHandler)]() mutable {
-                completionHandler(makeString("Failed to delete keys: "_s, rowFilterStringFromRowKeys(keys)));
-            });
-            return;
+            return WorkQueue::mainSingleton().dispatch(CompletionHandler<void(), true>([keys = WTF::move(keys), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
+                return completionHandler(makeString("Failed to delete keys: "_s, rowFilterStringFromRowKeys(keys)));
+            }));
         }
 
         String errorMessage;
         if (!protectedThis->openDatabaseIfNecessary(errorMessage, false)) {
-            WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
-                completionHandler(errorMessage);
-            });
-            return;
+            return WorkQueue::mainSingleton().dispatch(CompletionHandler<void(), true>([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
+                return completionHandler(errorMessage);
+            }));
         }
 
         ASSERT(errorMessage.isEmpty());
@@ -262,11 +279,11 @@ void WebExtensionStorageSQLiteStore::deleteValuesForKeys(Vector<String> keys, Co
 
         auto deleteDatabaseErrorMessage = protectedThis->deleteDatabaseIfEmpty();
 
-        WorkQueue::mainSingleton().dispatch([deleteDatabaseErrorMessage = crossThreadCopy(deleteDatabaseErrorMessage), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
+        return WorkQueue::mainSingleton().dispatch(CompletionHandler<void(), true>([deleteDatabaseErrorMessage = crossThreadCopy(deleteDatabaseErrorMessage), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
             // Errors from opening the database or deleting keys take precedence over an error deleting the database.
-            completionHandler(!errorMessage.isEmpty() ? errorMessage : deleteDatabaseErrorMessage);
-        });
-    });
+            return completionHandler(!errorMessage.isEmpty() ? errorMessage : deleteDatabaseErrorMessage);
+        }));
+    }));
 }
 
 String WebExtensionStorageSQLiteStore::insertOrUpdateValue(const String& value, const String& key, Ref<WebExtensionSQLiteDatabase> database)

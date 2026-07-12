@@ -250,14 +250,13 @@ void RemoteAudioDestinationManager::deref() const
     m_gpuConnectionToWebProcess.get()->deref();
 }
 
-void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, WebCore::SharedMemory::Handle&& handle, CompletionHandler<void(uint64_t)>&& completionHandler)
+CompletionHandlerCalledToken RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, WebCore::SharedMemory::Handle&& handle, CompletionHandler<void(uint64_t), true>&& completionHandler)
 {
     auto connection = m_gpuConnectionToWebProcess.get();
     if (!connection) {
-        completionHandler(0);
-        return;
+        return completionHandler(0);
     }
-    MESSAGE_CHECK(!connection->isLockdownModeEnabled(), "Received a createAudioDestination() message from a webpage in Lockdown mode.");
+    MESSAGE_CHECK_COMPLETION(!connection->isLockdownModeEnabled(), completionHandler(0));
 
     auto destination = makeUniqueRef<RemoteAudioDestination>(*connection, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate, hardwareSampleRate, WTF::move(renderSemaphore));
 #if PLATFORM(COCOA)
@@ -273,8 +272,8 @@ void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinatio
 
     size_t latency = destination->audioUnitLatency();
     bool success = m_audioDestinations.add(identifier, WTF::move(destination)).isNewEntry;
-    MESSAGE_CHECK(success, "AudioDestination already cached.");
-    completionHandler(latency);
+    MESSAGE_CHECK_COMPLETION(success, completionHandler(0));
+    return completionHandler(latency);
 }
 
 void RemoteAudioDestinationManager::deleteAudioDestination(RemoteAudioDestinationIdentifier identifier)
@@ -290,7 +289,7 @@ void RemoteAudioDestinationManager::deleteAudioDestination(RemoteAudioDestinatio
         connection->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
-void RemoteAudioDestinationManager::startAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void(bool, uint64_t)>&& completionHandler)
+CompletionHandlerCalledToken RemoteAudioDestinationManager::startAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void(bool, uint64_t), true>&& completionHandler)
 {
     auto connection = m_gpuConnectionToWebProcess.get();
     if (!connection)
@@ -304,10 +303,10 @@ void RemoteAudioDestinationManager::startAudioDestination(RemoteAudioDestination
         isPlaying = item->isPlaying();
         latency = item->audioUnitLatency();
     }
-    completionHandler(isPlaying, latency);
+    return completionHandler(isPlaying, latency);
 }
 
-void RemoteAudioDestinationManager::stopAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken RemoteAudioDestinationManager::stopAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void(bool), true>&& completionHandler)
 {
     auto connection = m_gpuConnectionToWebProcess.get();
     if (!connection)
@@ -319,7 +318,7 @@ void RemoteAudioDestinationManager::stopAudioDestination(RemoteAudioDestinationI
         item->stop();
         isPlaying = item->isPlaying();
     }
-    completionHandler(isPlaying);
+    return completionHandler(isPlaying);
 }
 
 #if PLATFORM(COCOA)

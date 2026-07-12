@@ -40,41 +40,43 @@
 
 namespace WebKit {
 
-void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier webPageProxyIdentifier, const String& scriptSource, const std::optional<URL>& frameURL, CompletionHandler<void(Expected<Expected<JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier webPageProxyIdentifier, const String& scriptSource, const std::optional<URL>& frameURL, CompletionHandler<void(Expected<Expected<JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>, WebExtensionError>&&), true>&& completionHandler)
 {
     static NSString * const apiName = @"devtools.inspectedWindow.eval()";
 
     RefPtr extension = inspectorExtension(webPageProxyIdentifier);
     if (!extension) {
         RELEASE_LOG_ERROR(Extensions, "Inspector extension not found for page %llu", webPageProxyIdentifier.toUInt64());
-        completionHandler(toWebExtensionError(apiName, nullString(), @"Web Inspector not found"));
-        return;
+        return completionHandler(toWebExtensionError(apiName, nullString(), @"Web Inspector not found"));
     }
 
     // FIXME: <https://webkit.org/b/269349> Implement `contextSecurityOrigin` and `useContentScriptContext` options for `devtools.inspectedWindow.eval` command
 
     RefPtr tab = getTab(webPageProxyIdentifier, std::nullopt, IncludeExtensionViews::Yes);
     if (!tab) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
-        return;
+        return completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
     }
 
-    requestPermissionToAccessURLs({ tab->url() }, tab, [extension, tab, scriptSource, frameURL, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
-        if (!tab->extensionHasPermission()) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
-            return;
-        }
+    return requestPermissionToAccessURLs({ tab->url() }, tab, CompletionHandler<void(URLSet&&, URLSet&&, WallTime), true>([extension, tab, scriptSource, frameURL, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable -> CompletionHandlerCalledToken {
+        if (!tab->extensionHasPermission())
+            return completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
 
-        extension->evaluateScript(scriptSource, frameURL, std::nullopt, std::nullopt, [completionHandler = WTF::move(completionHandler)](Inspector::ExtensionEvaluationResult&& result) mutable {
-            if (!result) {
-                RELEASE_LOG_ERROR(Extensions, "Inspector could not evaluate script (%{public}@)", extensionErrorToString(result.error()).createNSString().get());
-                completionHandler(toWebExtensionError(apiName, nullString(), @"Web Inspector could not evaluate script"));
-                return;
-            }
+        // evaluateScript() takes a non-enforced handler and dispatches it over IPC, so this is a
+        // genuine leaf: keep a single deferUnchecked here.
+        return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+            extension->evaluateScript(scriptSource, frameURL, std::nullopt, std::nullopt, [completionHandler = WTF::move(completionHandler)](Inspector::ExtensionEvaluationResult&& result) mutable {
+                if (!result) {
+                    RELEASE_LOG_ERROR(Extensions, "Inspector could not evaluate script (%{public}@)", extensionErrorToString(result.error()).createNSString().get());
+                    completionHandler(toWebExtensionError(apiName, nullString(), @"Web Inspector could not evaluate script"));
+                    return;
+                }
 
-            completionHandler({ WTF::move(*result) });
+                completionHandler({ WTF::move(*result) });
+            });
+            return WTF::move(deferred);
         });
-    });
+    }));
+
 }
 
 void WebExtensionContext::devToolsInspectedWindowReload(WebPageProxyIdentifier webPageProxyIdentifier, const std::optional<bool>& ignoreCache)

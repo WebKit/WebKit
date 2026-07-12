@@ -530,7 +530,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::deleteCookie(const 
         RefPtr page = document->page();
         if (!page)
             continue;
-        page->cookieJar().deleteCookie(*document, parsedURL, cookieName, [] { });
+        page->cookieJar().deleteCookie(*document, parsedURL, cookieName, CompletionHandler<void()>([] { }));
     }
 
     return { };

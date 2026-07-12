@@ -319,7 +319,7 @@ Expected<bool, RefPtr<API::Error>> WebExtensionContext::load(WebExtensionControl
         loadRegisteredContentScripts();
 
         loadDeclarativeNetRequestRulesetStateFromStorage();
-        loadDeclarativeNetRequestRules([](bool) { });
+        loadDeclarativeNetRequestRules(CompletionHandler<void(bool)>([](bool) { }));
 
         // Notify the WebProcess that the extension loaded before we inject content scripts.
         // This will ensure that the content world is set up correctly (e.g. configured with the `browser` namespace).
@@ -843,6 +843,14 @@ void WebExtensionContext::requestPermissionToAccessURLs(const URLVector& request
     [delegate webExtensionController:extensionController->wrapper() promptForPermissionToAccessURLs:toAPI(neededURLs) inTab:tab ? tab->delegate() : nil forExtensionContext:wrapper() completionHandler:makeBlockPtr([callbackAggregator](NSSet *allowedURLs, NSDate *expirationDate) {
         callbackAggregator.get()(allowedURLs, expirationDate);
     }).get()];
+}
+
+CompletionHandlerCalledToken WebExtensionContext::requestPermissionToAccessURLs(const URLVector& requestedURLs, RefPtr<WebExtensionTab> tab, CompletionHandler<void(URLSet&& neededURLs, URLSet&& allowedURLs, WallTime expirationDate), true>&& completionHandler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        requestPermissionToAccessURLs(requestedURLs, tab, CompletionHandler<void(URLSet&&, URLSet&&, WallTime)>(WTF::move(completionHandler)));
+        return deferred;
+    });
 }
 
 void WebExtensionContext::requestPermissions(const PermissionsSet& requestedPermissions, RefPtr<WebExtensionTab> tab, CompletionHandler<void(PermissionsSet&&, PermissionsSet&&, WallTime expirationDate)>&& completionHandler, GrantOnCompletion grantOnCompletion, OptionSet<PermissionStateOptions> options)
@@ -1564,9 +1572,9 @@ void WebExtensionContext::didStartProvisionalLoadForFrame(WebPageProxyIdentifier
     // Dispatch webNavigation events.
     if (tab && hasPermission(WebExtensionPermission::webNavigation(), tab.get()) && hasPermission(frameURL, tab.get())) {
         constexpr auto eventType = WebExtensionEventListenerType::WebNavigationOnBeforeNavigate;
-        wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [=, this, protectedThis = Ref { *this }] {
+        wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, Function<void()>([=, this, protectedThis = Ref { *this }] {
             sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameParameters, timestamp));
-        });
+        }));
     }
 }
 
@@ -1612,10 +1620,10 @@ void WebExtensionContext::didCommitLoadForFrame(WebPageProxyIdentifier pageID, c
         constexpr auto committedEventType = WebExtensionEventListenerType::WebNavigationOnCommitted;
         constexpr auto contentEventType = WebExtensionEventListenerType::WebNavigationOnDOMContentLoaded;
 
-        wakeUpBackgroundContentIfNecessaryToFireEvents({ committedEventType, contentEventType }, [=, this, protectedThis = Ref { *this }] {
+        wakeUpBackgroundContentIfNecessaryToFireEvents({ committedEventType, contentEventType }, Function<void()>([=, this, protectedThis = Ref { *this }] {
             sendToProcessesForEvent(committedEventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(committedEventType, tab->identifier(), frameParameters, timestamp));
             sendToProcessesForEvent(contentEventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(contentEventType, tab->identifier(), frameParameters, timestamp));
-        });
+        }));
     }
 }
 
@@ -1629,9 +1637,9 @@ void WebExtensionContext::didFinishLoadForFrame(WebPageProxyIdentifier pageID, c
     // Dispatch webNavigation events.
     if (tab && hasPermission(WebExtensionPermission::webNavigation(), tab.get()) && hasPermission(frameURL, tab.get())) {
         constexpr auto eventType = WebExtensionEventListenerType::WebNavigationOnCompleted;
-        wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [=, this, protectedThis = Ref { *this }] {
+        wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, Function<void()>([=, this, protectedThis = Ref { *this }] {
             sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameParameters, timestamp));
-        });
+        }));
     }
 }
 
@@ -1645,9 +1653,9 @@ void WebExtensionContext::didFailLoadForFrame(WebPageProxyIdentifier pageID, con
     // Dispatch webNavigation events.
     if (tab && hasPermission(WebExtensionPermission::webNavigation(), tab.get()) && hasPermission(frameURL, tab.get())) {
         constexpr auto eventType = WebExtensionEventListenerType::WebNavigationOnErrorOccurred;
-        wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [=, this, protectedThis = Ref { *this }] {
+        wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, Function<void()>([=, this, protectedThis = Ref { *this }] {
             sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameParameters, timestamp));
-        });
+        }));
     }
 }
 
@@ -1693,9 +1701,9 @@ void WebExtensionContext::resourceLoadDidSendRequest(WebPageProxyIdentifier page
     constexpr auto beforeSendHeadersType = WebExtensionEventListenerType::WebRequestOnBeforeSendHeaders;
     constexpr auto sendHeadersType = WebExtensionEventListenerType::WebRequestOnSendHeaders;
 
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ beforeRequestType, beforeSendHeadersType, sendHeadersType }, [=, this, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ beforeRequestType, beforeSendHeadersType, sendHeadersType }, Function<void()>([=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvents({ beforeRequestType, beforeSendHeadersType, sendHeadersType }, Messages::WebExtensionContextProxy::ResourceLoadDidSendRequest(tab->identifier(), windowIdentifier, request, loadInfo, formDataReference));
-    });
+    }));
 }
 
 void WebExtensionContext::resourceLoadDidPerformHTTPRedirection(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request)
@@ -1710,9 +1718,9 @@ void WebExtensionContext::resourceLoadDidPerformHTTPRedirection(WebPageProxyIden
     constexpr auto headersReceivedType = WebExtensionEventListenerType::WebRequestOnHeadersReceived;
     constexpr auto redirectType = WebExtensionEventListenerType::WebRequestOnBeforeRedirect;
 
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ headersReceivedType, redirectType }, [=, this, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ headersReceivedType, redirectType }, Function<void()>([=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvents({ headersReceivedType, redirectType }, Messages::WebExtensionContextProxy::ResourceLoadDidPerformHTTPRedirection(tab->identifier(), windowIdentifier, response, loadInfo, request));
-    });
+    }));
 
     // After dispatching the redirect events, also dispatch the `didSendRequest` events for the redirection.
     resourceLoadDidSendRequest(pageID, loadInfo, request);
@@ -1729,9 +1737,9 @@ void WebExtensionContext::resourceLoadDidReceiveChallenge(WebPageProxyIdentifier
 
     constexpr auto authRequiredType = WebExtensionEventListenerType::WebRequestOnAuthRequired;
 
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ authRequiredType }, [=, this, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ authRequiredType }, Function<void()>([=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(authRequiredType, Messages::WebExtensionContextProxy::ResourceLoadDidReceiveChallenge(tab->identifier(), windowIdentifier, challenge, loadInfo));
-    });
+    }));
 }
 
 void WebExtensionContext::resourceLoadDidReceiveResponse(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response)
@@ -1746,9 +1754,9 @@ void WebExtensionContext::resourceLoadDidReceiveResponse(WebPageProxyIdentifier 
     constexpr auto headersReceivedType = WebExtensionEventListenerType::WebRequestOnHeadersReceived;
     constexpr auto responseStartedType = WebExtensionEventListenerType::WebRequestOnResponseStarted;
 
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ headersReceivedType, responseStartedType }, [=, this, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ headersReceivedType, responseStartedType }, Function<void()>([=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvents({ headersReceivedType, responseStartedType }, Messages::WebExtensionContextProxy::ResourceLoadDidReceiveResponse(tab->identifier(), windowIdentifier, response, loadInfo));
-    });
+    }));
 }
 
 void WebExtensionContext::resourceLoadDidCompleteWithError(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response, const WebCore::ResourceError& error)
@@ -1776,9 +1784,9 @@ void WebExtensionContext::resourceLoadDidCompleteWithError(WebPageProxyIdentifie
     constexpr auto errorOccurredType = WebExtensionEventListenerType::WebRequestOnErrorOccurred;
     constexpr auto completedType = WebExtensionEventListenerType::WebRequestOnCompleted;
 
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ errorOccurredType, completedType }, [=, this, protectedThis = Ref { *this }] mutable {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ errorOccurredType, completedType }, Function<void()>([=, this, protectedThis = Ref { *this }] mutable {
         sendToProcessesForEvents({ errorOccurredType, completedType }, Messages::WebExtensionContextProxy::ResourceLoadDidCompleteWithError(tab->identifier(), windowIdentifier, response, error, loadInfo));
-    });
+    }));
 }
 
 WebExtensionAction& WebExtensionContext::defaultAction()
@@ -3374,7 +3382,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
     };
 
     auto addDynamicAndStaticRules = [this, protectedThis = Ref { *this }, addStaticRulesets = WTF::move(addStaticRulesets), allJSONData = RetainPtr { allJSONData }] () mutable {
-        declarativeNetRequestDynamicRulesStore()->getRulesWithRuleIDs({ }, [this, protectedThis = Ref { *this }, addStaticRulesets = WTF::move(addStaticRulesets), allJSONData = RetainPtr { allJSONData }](RefPtr<JSON::Array> rules, const String& errorMessage) mutable {
+        declarativeNetRequestDynamicRulesStore()->getRulesWithRuleIDs({ }, CompletionHandler<void(RefPtr<JSON::Array>, const String&)>([this, protectedThis = Ref { *this }, addStaticRulesets = WTF::move(addStaticRulesets), allJSONData = RetainPtr { allJSONData }](RefPtr<JSON::Array> rules, const String& errorMessage) mutable {
             if (!rules || !rules->length()) {
                 m_dynamicRulesIDs.clear();
                 addStaticRulesets();
@@ -3395,10 +3403,10 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
             m_dynamicRulesIDs = WTF::move(dynamicRuleIDs);
 
             addStaticRulesets();
-        });
+        }));
     };
 
-    declarativeNetRequestSessionRulesStore()->getRulesWithRuleIDs({ }, [this, protectedThis = Ref { *this }, addDynamicAndStaticRules = WTF::move(addDynamicAndStaticRules), allJSONData = RetainPtr { allJSONData }](RefPtr<JSON::Array> rules, const String& errorMessage) mutable {
+    declarativeNetRequestSessionRulesStore()->getRulesWithRuleIDs({ }, CompletionHandler<void(RefPtr<JSON::Array>, const String&)>([this, protectedThis = Ref { *this }, addDynamicAndStaticRules = WTF::move(addDynamicAndStaticRules), allJSONData = RetainPtr { allJSONData }](RefPtr<JSON::Array> rules, const String& errorMessage) mutable {
         if (!rules || !rules->length()) {
             m_sessionRulesIDs.clear();
             addDynamicAndStaticRules();
@@ -3419,6 +3427,14 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
         m_sessionRulesIDs = WTF::move(sessionRuleIDs);
 
         addDynamicAndStaticRules();
+    }));
+}
+
+CompletionHandlerCalledToken WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(bool), true>&& completionHandler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        loadDeclarativeNetRequestRules(CompletionHandler<void(bool)>(WTF::move(completionHandler)));
+        return deferred;
     });
 }
 
@@ -3456,9 +3472,9 @@ void WebExtensionContext::sendTestMessage(const String& message, id argument)
 
     sendToContentScriptProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchTestMessageEvent(message, argumentJSON, WebExtensionContentWorldType::ContentScript));
 
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [=, this, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, Function<void()>([=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchTestMessageEvent(message, argumentJSON, WebExtensionContentWorldType::Main));
-    });
+    }));
 }
 
 void WebExtensionContext::sendTestStarted(id argument)
@@ -3480,9 +3496,9 @@ void WebExtensionContext::sendTestStarted(id argument)
 
     sendToContentScriptProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTestStartedEvent(argumentJSON, WebExtensionContentWorldType::ContentScript));
 
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, Function<void()>([=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTestStartedEvent(argumentJSON, WebExtensionContentWorldType::Main));
-    });
+    }));
 }
 
 void WebExtensionContext::sendTestFinished(id argument)
@@ -3504,9 +3520,9 @@ void WebExtensionContext::sendTestFinished(id argument)
 
     sendToContentScriptProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTestFinishedEvent(argumentJSON, WebExtensionContentWorldType::ContentScript));
 
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, Function<void()>([=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTestFinishedEvent(argumentJSON, WebExtensionContentWorldType::Main));
-    });
+    }));
 }
 
 void WebExtensionContext::addTestMessageToQueue(const String& message, id argument, WebExtensionEventListenerType type)

@@ -115,6 +115,7 @@ public:
 
     State state() const;
     void setState(State, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    CompletionHandlerCalledToken setState(State, CompletionHandler<void(Expected<void, WebExtensionError>&&), true>&&);
 
     bool isOpen() const;
     void didOpen() { ASSERT(!m_isOpen); m_isOpen = true; }
@@ -123,6 +124,7 @@ public:
     bool isFocused() const;
     bool isFrontmost() const;
     void focus(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    CompletionHandlerCalledToken focus(CompletionHandler<void(Expected<void, WebExtensionError>&&), true>&&);
 
     bool isPrivate() const;
 
@@ -133,6 +135,7 @@ public:
     // Handles the frame in the screen's native coordinate system.
     CGRect frame() const;
     void setFrame(CGRect, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    CompletionHandlerCalledToken setFrame(CGRect, CompletionHandler<void(Expected<void, WebExtensionError>&&), true>&&);
 #endif
 
 #if PLATFORM(MAC)
@@ -140,6 +143,7 @@ public:
 #endif
 
     void close(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    CompletionHandlerCalledToken close(CompletionHandler<void(Expected<void, WebExtensionError>&&), true>&&);
 
 #ifdef __OBJC__
     WKWebExtensionWindow *delegate() const { return m_delegate.getAutoreleased(); }

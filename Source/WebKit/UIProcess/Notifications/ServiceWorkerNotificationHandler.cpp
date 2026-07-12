@@ -50,18 +50,17 @@ WebsiteDataStore* ServiceWorkerNotificationHandler::dataStoreForNotificationID(c
     return WebsiteDataStore::existingDataStoreForSessionID(iterator->value);
 }
 
-void ServiceWorkerNotificationHandler::showNotification(IPC::Connection& connection, const WebCore::NotificationData& data, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void()>&& callback)
+CompletionHandlerCalledToken ServiceWorkerNotificationHandler::showNotification(IPC::Connection& connection, const WebCore::NotificationData& data, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void(), true>&& callback)
 {
     RELEASE_LOG(Push, "ServiceWorkerNotificationHandler showNotification called");
 
-    auto scope = makeScopeExit([&callback] { callback(); });
-
     RefPtr dataStore = WebsiteDataStore::existingDataStoreForSessionID(data.sourceSession);
     if (!dataStore)
-        return;
+        return callback();
 
     m_notificationToSessionMap.add(data.notificationID, data.sourceSession);
     dataStore->showPersistentNotification(&connection, data);
+    return callback();
 }
 
 void ServiceWorkerNotificationHandler::cancelNotification(WebCore::SecurityOriginData&&, const WTF::UUID& notificationID)
@@ -84,12 +83,12 @@ void ServiceWorkerNotificationHandler::didDestroyNotification(const WTF::UUID& n
         dataStore->didDestroyServiceWorkerNotification(notificationID);
 }
 
-void ServiceWorkerNotificationHandler::requestPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&)
+CompletionHandlerCalledToken ServiceWorkerNotificationHandler::requestPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool), true>&&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void ServiceWorkerNotificationHandler::getPermissionState(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&)
+CompletionHandlerCalledToken ServiceWorkerNotificationHandler::getPermissionState(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState), true>&&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }

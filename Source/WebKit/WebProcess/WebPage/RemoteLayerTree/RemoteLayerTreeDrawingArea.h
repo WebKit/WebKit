@@ -80,7 +80,7 @@ private:
     void setNeedsDisplay() final;
     void setNeedsDisplayInRect(const WebCore::IntRect&) final;
     void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) final;
-    void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&&) final;
+    CompletionHandlerCalledToken updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void(), true>&&) final;
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() final;
     void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
@@ -122,7 +122,7 @@ private:
 
     void displayDidRefresh(MonotonicTime) final;
 
-    void setDeviceScaleFactor(float, CompletionHandler<void()>&&) final;
+    CompletionHandlerCalledToken setDeviceScaleFactor(float, CompletionHandler<void(), true>&&) final;
 
     void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) override;
 

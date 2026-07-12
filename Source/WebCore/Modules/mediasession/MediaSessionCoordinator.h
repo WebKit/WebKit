@@ -102,6 +102,10 @@ private:
     void playSession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime, CompletionHandler<void(bool)>&&) final;
     void pauseSession(CompletionHandler<void(bool)>&&) final;
     void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) final;
+    CompletionHandlerCalledToken seekSessionToTime(double, CompletionHandler<void(bool), true>&&) final;
+    CompletionHandlerCalledToken playSession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime, CompletionHandler<void(bool), true>&&) final;
+    CompletionHandlerCalledToken pauseSession(CompletionHandler<void(bool), true>&&) final;
+    CompletionHandlerCalledToken setSessionTrack(const String&, CompletionHandler<void(bool), true>&&) final;
     void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) final;
 
     bool currentPositionApproximatelyEqualTo(double) const;

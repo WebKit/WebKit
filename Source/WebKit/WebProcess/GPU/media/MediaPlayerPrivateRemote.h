@@ -113,7 +113,7 @@ public:
     WebCore::MediaPlayer::ReadyState readyState() const final { return m_readyState; }
     void setReadyState(WebCore::MediaPlayer::ReadyState);
 
-    void commitAllTransactions(CompletionHandler<void()>&&);
+    CompletionHandlerCalledToken commitAllTransactions(CompletionHandler<void(), true>&&);
     void reportGPUMemoryFootprint(uint64_t);
     void networkStateChanged(RemoteMediaPlayerState&&);
     void readyStateChanged(RemoteMediaPlayerState&&, WebCore::MediaPlayer::ReadyState);
@@ -340,7 +340,7 @@ private:
 
     unsigned long long totalBytes() const final;
     bool didLoadingProgress() const final;
-    void didLoadingProgressAsync(WebCore::MediaPlayer::DidLoadingProgressCompletionHandler&&) const final;
+    WTF::CompletionHandlerCalledToken didLoadingProgressAsync(CompletionHandler<void(bool), true>&&) const final;
 
     void setPresentationSize(const WebCore::IntSize&) final;
 

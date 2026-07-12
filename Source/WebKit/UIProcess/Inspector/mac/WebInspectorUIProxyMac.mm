@@ -722,17 +722,35 @@ void WebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<voi
         completionHandler(nullString());
 }
 
+CompletionHandlerCalledToken WebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<void(const String&), true>&& handler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+        platformLoad(path, CompletionHandler<void(const String&)>(WTF::move(handler)));
+        return WTF::move(deferred);
+    });
+}
+
+CompletionHandlerCalledToken WebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&), true>&& completionHandler)
+{
+    // Genuine leaf: the completion handler is captured into an ObjC block handed to NSColorSampler,
+    // so enforcement terminates here with a single deferUnchecked.
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        RetainPtr sampler = adoptNS([[NSColorSampler alloc] init]);
+        [sampler.get() showSamplerWithSelectionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSColor *selectedColor) mutable {
+            if (!selectedColor) {
+                completionHandler(std::nullopt);
+                return;
+            }
+
+            completionHandler(Color::createAndPreserveColorSpace(RetainPtr { selectedColor.CGColor }.get()));
+        }).get()];
+        return WTF::move(deferred);
+    });
+}
+
 void WebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
 {
-    auto sampler = adoptNS([[NSColorSampler alloc] init]);
-    [sampler.get() showSamplerWithSelectionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSColor *selectedColor) mutable {
-        if (!selectedColor) {
-            completionHandler(std::nullopt);
-            return;
-        }
-
-        completionHandler(Color::createAndPreserveColorSpace(RetainPtr { selectedColor.CGColor }.get()));
-    }).get()];
+    platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&), true>(WTF::move(completionHandler)));
 }
 
 void WebInspectorUIProxy::windowFrameDidChange()

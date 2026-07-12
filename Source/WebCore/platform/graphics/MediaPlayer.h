@@ -530,6 +530,7 @@ public:
 
     using DidLoadingProgressCompletionHandler = CompletionHandler<void(bool)>;
     void didLoadingProgress(DidLoadingProgressCompletionHandler&&) const;
+    CompletionHandlerCalledToken didLoadingProgress(CompletionHandler<void(bool), true>&&) const;
 
     void setVolumeLocked(bool);
 

@@ -75,7 +75,7 @@ SWServer::Connection::Connection(SWServer& server, Identifier identifier)
 SWServer::Connection::~Connection()
 {
     for (auto& request : std::exchange(m_registrationReadyRequests, { }))
-        request.callback({ });
+        (void)request.callback({ });
 }
 
 Ref<SWServer> SWServer::create(SWServerDelegate& delegate, UniqueRef<SWOriginStore>&& originStore, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, bool shouldRunServiceWorkersOnMainThreadForTesting, bool hasServiceWorkerEntitlement, std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue, ServiceWorkerIsInspectable isInspectable)
@@ -194,7 +194,7 @@ void SWServer::originImportComplete(const SecurityOriginData& topOrigin, Monoton
     UNUSED_PARAM(startTime);
 #endif
     for (auto& callback : callbacks)
-        callback();
+        (void)callback();
 }
 
 void SWServer::fireAllOriginImportCallbacks()
@@ -202,68 +202,68 @@ void SWServer::fireAllOriginImportCallbacks()
     auto pendingCallbacks = std::exchange(m_pendingOriginImportCallbacks, { });
     for (auto& callbacks : pendingCallbacks.values()) {
         for (auto& callback : callbacks)
-            callback();
+            (void)callback();
     }
 }
 
-void SWServer::importRegistrationsForOrigin(const SecurityOriginData& topOrigin, CompletionHandler<void()>&& callback)
+CompletionHandlerCalledToken SWServer::importRegistrationsForOrigin(const SecurityOriginData& topOrigin, CompletionHandler<void(), true>&& callback)
 {
-    if (topOrigin.isNull() || topOrigin.isOpaque()) {
-        callback();
-        return;
-    }
+    if (topOrigin.isNull() || topOrigin.isOpaque())
+        return callback();
 
-    if (m_importedTopOrigins.contains(topOrigin)) {
-        callback();
-        return;
-    }
+    if (m_importedTopOrigins.contains(topOrigin))
+        return callback();
 
     // No registrations on disk for this origin; skip the store query.
     if (m_originListImportComplete && std::ranges::none_of(m_originsYetToBeImported, [&](auto& origin) { return origin.topOrigin == topOrigin; })) {
         m_importedTopOrigins.add(topOrigin);
-        callback();
-        return;
+        return callback();
     }
 
-    auto result = m_pendingOriginImportCallbacks.add(topOrigin, Vector<CompletionHandler<void()>>());
-    result.iterator->value.append(WTF::move(callback));
-    if (!result.isNewEntry)
-        return;
+    // Genuine boundary: the handler is stored for later multi-dispatch when the import completes
+    // (see originImportComplete/fireAllOriginImportCallbacks), so it cannot be proven called here.
+    return CompletionHandlerCalledToken::deferUnchecked(callback, [&](auto& callback, auto deferred) -> CompletionHandlerCalledToken {
+        auto result = m_pendingOriginImportCallbacks.add(topOrigin, Vector<CompletionHandler<void(), true>>());
+        result.iterator->value.append(WTF::move(callback));
+        if (!result.isNewEntry)
+            return WTF::move(deferred);
 
-    RELEASE_LOG(ServiceWorker, "SWServer::importRegistrationsForOrigin: Starting import for origin %" SENSITIVE_LOG_STRING, topOrigin.toString().utf8().data());
+        RELEASE_LOG(ServiceWorker, "SWServer::importRegistrationsForOrigin: Starting import for origin %" SENSITIVE_LOG_STRING, topOrigin.toString().utf8().data());
 
-    RefPtr store = m_registrationStore;
-    if (!store) {
-        originImportComplete(topOrigin, MonotonicTime::now());
-        return;
-    }
-
-    auto startTime = MonotonicTime::now();
-    store->importRegistrationsForOrigin(topOrigin, [weakThis = WeakPtr { *this }, topOrigin, startTime, clearAllCounter = m_clearAllCounter](auto&& result) mutable {
-        RefPtr protectedThis = weakThis;
-        if (!protectedThis)
-            return;
-
-        RELEASE_LOG(ServiceWorker, "SWServer::importRegistrationsForOrigin: Loaded %zu registrations for origin %" SENSITIVE_LOG_STRING " in %.0f ms", result ? result->size() : 0, topOrigin.toString().utf8().data(), (MonotonicTime::now() - startTime).milliseconds());
-
-        // Discard stale results if clearAll() was called after this import was initiated.
-        if (clearAllCounter != protectedThis->m_clearAllCounter) {
-            protectedThis->originImportComplete(topOrigin, startTime);
-            return;
+        RefPtr store = m_registrationStore;
+        if (!store) {
+            originImportComplete(topOrigin, MonotonicTime::now());
+            return WTF::move(deferred);
         }
 
-        if (!result || result->isEmpty()) {
-            protectedThis->originImportComplete(topOrigin, startTime);
-            return;
-        }
+        auto startTime = MonotonicTime::now();
+        store->importRegistrationsForOrigin(topOrigin, [weakThis = WeakPtr { *this }, topOrigin, startTime, clearAllCounter = m_clearAllCounter](auto&& result) mutable {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
+                return;
 
-        Ref callbackAggregator = CallbackAggregator::create([weakThis = WTF::move(weakThis), topOrigin, startTime]() mutable {
-            if (RefPtr protectedThis = weakThis)
+            RELEASE_LOG(ServiceWorker, "SWServer::importRegistrationsForOrigin: Loaded %zu registrations for origin %" SENSITIVE_LOG_STRING " in %.0f ms", result ? result->size() : 0, topOrigin.toString().utf8().data(), (MonotonicTime::now() - startTime).milliseconds());
+
+            // Discard stale results if clearAll() was called after this import was initiated.
+            if (clearAllCounter != protectedThis->m_clearAllCounter) {
                 protectedThis->originImportComplete(topOrigin, startTime);
-        });
+                return;
+            }
 
-        for (auto&& data : WTF::move(result.value()))
-            protectedThis->addRegistrationFromStore(WTF::move(data), [callbackAggregator] { });
+            if (!result || result->isEmpty()) {
+                protectedThis->originImportComplete(topOrigin, startTime);
+                return;
+            }
+
+            Ref callbackAggregator = CallbackAggregator::create([weakThis = WTF::move(weakThis), topOrigin, startTime]() mutable {
+                if (RefPtr protectedThis = weakThis)
+                    protectedThis->originImportComplete(topOrigin, startTime);
+            });
+
+            for (auto&& data : WTF::move(result.value()))
+                protectedThis->addRegistrationFromStore(WTF::move(data), [callbackAggregator] { });
+        });
+        return WTF::move(deferred);
     });
 }
 
@@ -380,9 +380,9 @@ void SWServer::removeRegistration(ServiceWorkerRegistrationIdentifier registrati
     protect(backgroundFetchEngine())->remove(*registration);
 }
 
-void SWServer::getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(Vector<ServiceWorkerRegistrationData>&&)>&& callback)
+CompletionHandlerCalledToken SWServer::getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(Vector<ServiceWorkerRegistrationData>&&), true>&& callback)
 {
-    importRegistrationsForOrigin(topOrigin, [weakThis = WeakPtr { *this }, topOrigin, clientURL, callback = WTF::move(callback)]() mutable {
+    return importRegistrationsForOrigin(topOrigin, CompletionHandler<void(), true>([weakThis = WeakPtr { *this }, topOrigin, clientURL, callback = WTF::move(callback)]() mutable -> CompletionHandlerCalledToken {
         RefPtr protectedThis = weakThis;
         if (!protectedThis)
             return callback({ });
@@ -398,10 +398,10 @@ void SWServer::getRegistrations(const SecurityOriginData& topOrigin, const URL& 
         std::ranges::sort(matchingRegistrations, [](auto& a, auto& b) {
             return a->creationTime() < b->creationTime();
         });
-        callback(matchingRegistrations.map([](auto& registration) {
+        return callback(matchingRegistrations.map([](auto& registration) {
             return registration->data();
         }));
-    });
+    }));
 }
 
 void SWServer::storeRegistrationsOnDisk(CompletionHandler<void()>&& completionHandler)
@@ -455,7 +455,7 @@ void SWServer::clear(const ClientOrigin& origin, CompletionHandler<void()>&& com
 void SWServer::clearInternal(const SecurityOriginData& topOrigin, Function<bool(const ServiceWorkerRegistrationKey&)>&& matches, CompletionHandler<void()>&& completionHandler)
 {
     // FIXME: We should clear registrations directly in the store by origin instead of importing them into memory first.
-    importRegistrationsForOrigin(topOrigin, [weakThis = WeakPtr { *this }, matches = WTF::move(matches), completionHandler = WTF::move(completionHandler)]() mutable {
+    importRegistrationsForOrigin(topOrigin, CompletionHandler<void()>([weakThis = WeakPtr { *this }, matches = WTF::move(matches), completionHandler = WTF::move(completionHandler)]() mutable {
         RefPtr protectedThis = weakThis;
         if (!protectedThis)
             return completionHandler();
@@ -490,7 +490,7 @@ void SWServer::clearInternal(const SecurityOriginData& topOrigin, Function<bool(
             return completionHandler();
 
         store->flushChanges(WTF::move(completionHandler));
-    });
+    }));
 }
 
 void SWServer::Connection::finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, WorkerFetchResult&& result)
@@ -511,7 +511,7 @@ void SWServer::Connection::doRegistrationMatching(const SecurityOriginData& topO
     if (!server)
         return callback({ });
 
-    server->importRegistrationsForOrigin(topOrigin, [weakThis = WeakPtr { *this }, topOrigin, clientURL, callback = WTF::move(callback)]() mutable {
+    server->importRegistrationsForOrigin(topOrigin, CompletionHandler<void()>([weakThis = WeakPtr { *this }, topOrigin, clientURL, callback = WTF::move(callback)]() mutable {
         RefPtr protectedThis = weakThis;
         if (!protectedThis)
             return callback({ });
@@ -520,7 +520,7 @@ void SWServer::Connection::doRegistrationMatching(const SecurityOriginData& topO
                 return callback(registration->data());
         }
         callback({ });
-    });
+    }));
 }
 
 void SWServer::Connection::addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier identifier)
@@ -635,7 +635,7 @@ void SWServer::validateRegistrationDomain(WebCore::RegistrableDomain domain, Ser
 void SWServer::scheduleJob(ServiceWorkerJobData&& jobData)
 {
     auto topOrigin = jobData.topOrigin;
-    importRegistrationsForOrigin(topOrigin, [weakThis = WeakPtr { *this }, jobData = WTF::move(jobData)]() mutable {
+    importRegistrationsForOrigin(topOrigin, CompletionHandler<void()>([weakThis = WeakPtr { *this }, jobData = WTF::move(jobData)]() mutable {
         RefPtr protectedThis = weakThis;
         if (!protectedThis)
             return;
@@ -670,7 +670,7 @@ void SWServer::scheduleJob(ServiceWorkerJobData&& jobData)
             } else
                 protectedThis->rejectJob(jobData, { ExceptionCode::TypeError, "Job rejected for non app-bound domain"_s });
         });
-    });
+    }));
 }
 
 void SWServer::scheduleUnregisterJob(ServiceWorkerJobDataIdentifier jobDataIdentifier, SWServerRegistration& registration, ServiceWorkerOrClientIdentifier contextIdentifier, URL&& clientCreationURL)
@@ -1119,24 +1119,23 @@ OptionSet<AdvancedPrivacyProtections> SWServer::advancedPrivacyProtectionsFromCl
 
 void SWServer::addRoutes(ServiceWorkerRegistrationIdentifier identifier, Vector<ServiceWorkerRoute>&& routes, CompletionHandler<void(Expected<void, ExceptionData>&&)>&& callback)
 {
+    addRoutes(identifier, WTF::move(routes), CompletionHandler<void(Expected<void, ExceptionData>&&), true>(WTF::move(callback)));
+}
+
+CompletionHandlerCalledToken SWServer::addRoutes(ServiceWorkerRegistrationIdentifier identifier, Vector<ServiceWorkerRoute>&& routes, CompletionHandler<void(Expected<void, ExceptionData>&&), true>&& callback)
+{
     RefPtr registration = getRegistration(identifier);
-    if (!registration) {
-        callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No registration found"_s }));
-        return;
-    }
+    if (!registration)
+        return callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No registration found"_s }));
 
     RefPtr installingWorker = registration->installingWorker();
-    if (!installingWorker) {
-        callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "Service worker is not installing"_s }));
-        return;
-    }
+    if (!installingWorker)
+        return callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "Service worker is not installing"_s }));
 
-    if (auto exception = installingWorker->addRoutes(WTF::move(routes))) {
-        callback(makeUnexpected(WTF::move(*exception)));
-        return;
-    }
+    if (auto exception = installingWorker->addRoutes(WTF::move(routes)))
+        return callback(makeUnexpected(WTF::move(*exception)));
 
-    callback({ });
+    return callback({ });
 }
 
 void SWServer::installContextData(const ServiceWorkerContextData& data)
@@ -1196,12 +1195,12 @@ void SWServer::runServiceWorkerIfNecessary(SWServerWorker& worker, RunServiceWor
     }
 
     if (worker.isTerminating()) {
-        worker.whenTerminated([weakThis = WeakPtr { *this }, identifier = worker.identifier(), callback = WTF::move(callback)]() mutable {
+        worker.whenTerminated(CompletionHandler<void()>([weakThis = WeakPtr { *this }, identifier = worker.identifier(), callback = WTF::move(callback)]() mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return callback(nullptr);
             protectedThis->runServiceWorkerIfNecessary(identifier, WTF::move(callback));
-        });
+        }));
         return;
     }
 
@@ -1636,24 +1635,32 @@ void SWServer::resolveRegistrationReadyRequests(SWServerRegistration& registrati
 
 void SWServer::Connection::whenRegistrationReady(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&& callback)
 {
+    whenRegistrationReady(topOrigin, clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&), true>(WTF::move(callback)));
+}
+
+CompletionHandlerCalledToken SWServer::Connection::whenRegistrationReady(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&), true>&& callback)
+{
     RefPtr server = m_server.get();
     if (!server)
         return callback({ });
 
-    server->importRegistrationsForOrigin(topOrigin, [weakThis = WeakPtr { *this }, topOrigin, clientURL, callback = WTF::move(callback)]() mutable {
+    return server->importRegistrationsForOrigin(topOrigin, CompletionHandler<void(), true>([weakThis = WeakPtr { *this }, topOrigin, clientURL, callback = WTF::move(callback)]() mutable -> CompletionHandlerCalledToken {
         RefPtr protectedThis = weakThis;
         if (!protectedThis)
             return callback({ });
         if (RefPtr server = protectedThis->m_server.get()) {
             if (RefPtr registration = server->doRegistrationMatchingSync(topOrigin, clientURL)) {
-                if (registration->activeWorker()) {
-                    callback(registration->data());
-                    return;
-                }
+                if (registration->activeWorker())
+                    return callback(registration->data());
             }
         }
-        protectedThis->m_registrationReadyRequests.append({ topOrigin, clientURL, WTF::move(callback) });
-    });
+        // Genuine boundary: the handler is stored for later dispatch when a matching registration
+        // becomes ready (see resolveRegistrationReadyRequests / ~Connection), so it cannot be proven called here.
+        return CompletionHandlerCalledToken::deferUnchecked(callback, [&](auto& callback, auto deferred) -> CompletionHandlerCalledToken {
+            protectedThis->m_registrationReadyRequests.append({ topOrigin, clientURL, WTF::move(callback) });
+            return WTF::move(deferred);
+        });
+    }));
 }
 
 void SWServer::Connection::storeRegistrationsOnDisk(CompletionHandler<void()>&& callback)
@@ -1670,7 +1677,7 @@ void SWServer::Connection::resolveRegistrationReadyRequests(SWServerRegistration
         if (!registration.key().isMatching(request.topOrigin, request.clientURL))
             return false;
 
-        request.callback(registration.data());
+        (void)request.callback(registration.data());
         return true;
     });
 }
@@ -1863,7 +1870,7 @@ void SWServer::softUpdate(SWServerRegistration& registration)
 void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, std::optional<NotificationPayload>&& notificationPayload, URL&& registrationURL, CompletionHandler<void(bool, std::optional<NotificationPayload>&&)>&& callback)
 {
     auto topOrigin = SecurityOriginData::fromURL(registrationURL);
-    importRegistrationsForOrigin(topOrigin, [weakThis = WeakPtr { *this }, data = WTF::move(data), notificationPayload = WTF::move(notificationPayload), registrationURL = WTF::move(registrationURL), callback = WTF::move(callback)]() mutable {
+    importRegistrationsForOrigin(topOrigin, CompletionHandler<void()>([weakThis = WeakPtr { *this }, data = WTF::move(data), notificationPayload = WTF::move(notificationPayload), registrationURL = WTF::move(registrationURL), callback = WTF::move(callback)]() mutable {
         LOG(Push, "ServiceWorker import is complete for origin, can handle push message now");
         RefPtr protectedThis = weakThis;
         if (!protectedThis) {
@@ -1913,13 +1920,13 @@ void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, std::op
                 callback(succeeded, WTF::move(resultPayload));
             });
         });
-    });
+    }));
 }
 
 void SWServer::processNotificationEvent(NotificationData&& data, NotificationEventType type, CompletionHandler<void(bool)>&& callback)
 {
     auto topOrigin = SecurityOriginData::fromURL(data.serviceWorkerRegistrationURL);
-    importRegistrationsForOrigin(topOrigin, [weakThis = WeakPtr { *this }, data = WTF::move(data), type, callback = WTF::move(callback)]() mutable {
+    importRegistrationsForOrigin(topOrigin, CompletionHandler<void()>([weakThis = WeakPtr { *this }, data = WTF::move(data), type, callback = WTF::move(callback)]() mutable {
         RefPtr protectedThis = weakThis;
         if (!protectedThis) {
             callback(false);
@@ -1968,7 +1975,7 @@ void SWServer::processNotificationEvent(NotificationData&& data, NotificationEve
                 callback(succeeded);
             });
         });
-    });
+    }));
 }
 
 void SWServer::fireBackgroundFetchEvent(SWServerRegistration& registration, BackgroundFetchInformation&& info, CompletionHandler<void()>&& callback)

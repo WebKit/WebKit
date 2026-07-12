@@ -219,6 +219,16 @@ void CookieJar::deleteCookie(const Document& document, const URL& url, const Str
     }
 }
 
+CompletionHandlerCalledToken CookieJar::deleteCookie(const Document& document, const URL& url, const String& cookieName, CompletionHandler<void(), true>&& completionHandler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        deleteCookie(document, url, cookieName, CompletionHandler<void()>([completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
+            return completionHandler();
+        }));
+        return WTF::move(deferred);
+    });
+}
+
 void CookieJar::getCookiesAsync(Document&, const URL&, const CookieStoreGetOptions&, CompletionHandler<void(std::optional<Vector<Cookie>>&&)>&& completionHandler) const
 {
     completionHandler(std::nullopt);

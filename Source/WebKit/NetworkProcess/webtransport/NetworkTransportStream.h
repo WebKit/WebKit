@@ -68,6 +68,7 @@ public:
 
     void start(NetworkTransportStreamReadyHandler&&);
     void sendBytes(std::span<const uint8_t>, bool, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
+    CompletionHandlerCalledToken sendBytes(std::span<const uint8_t>, bool, CompletionHandler<void(std::optional<WebCore::Exception>&&), true>&&);
     void cancelReceive(std::optional<WebCore::WebTransportStreamErrorCode>);
     void cancelSend(std::optional<WebCore::WebTransportStreamErrorCode>);
     void cancel(std::optional<WebCore::WebTransportStreamErrorCode>);

@@ -155,8 +155,8 @@ private:
 
     // Message handlers
     void canMakePayments(CompletionHandler<void(bool)>&&);
-    void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&);
-    void openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&);
+    CompletionHandlerCalledToken canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool), true>&&);
+    CompletionHandlerCalledToken openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool), true>&&);
     void showPaymentUI(WebCore::PageIdentifier destinationID, WebPageProxyIdentifier, const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&);
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&);
     void completeShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&&);
@@ -169,10 +169,11 @@ private:
     void abortPaymentSession();
     void cancelPaymentSession();
 
-    void getSetupFeatures(const PaymentSetupConfiguration&, CompletionHandler<void(PaymentSetupFeatures&&)>&&);
-    void beginApplePaySetup(const PaymentSetupConfiguration&, const PaymentSetupFeatures&, CompletionHandler<void(bool)>&&);
+    CompletionHandlerCalledToken getSetupFeatures(const PaymentSetupConfiguration&, CompletionHandler<void(PaymentSetupFeatures&&), true>&&);
+    CompletionHandlerCalledToken beginApplePaySetup(const PaymentSetupConfiguration&, const PaymentSetupFeatures&, CompletionHandler<void(bool), true>&&);
     void endApplePaySetup();
-    void platformBeginApplePaySetup(const PaymentSetupConfiguration&, const PaymentSetupFeatures&, CompletionHandler<void(bool)>&&);
+    CompletionHandlerCalledToken platformBeginApplePaySetup(const PaymentSetupConfiguration&, const PaymentSetupFeatures&, CompletionHandler<void(bool), true>&&);
+    void platformBeginApplePaySetup(const PaymentSetupConfiguration& configuration, const PaymentSetupFeatures& features, CompletionHandler<void(bool)>&& reply) { platformBeginApplePaySetup(configuration, features, CompletionHandler<void(bool), true>(WTF::move(reply))); }
     void platformEndApplePaySetup();
 
     bool NODELETE canBegin() const;
@@ -183,8 +184,8 @@ private:
     void didReachFinalState(WebCore::PaymentSessionError&& = { });
 
     void platformCanMakePayments(CompletionHandler<void(bool)>&&);
-    void platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler);
-    void platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler);
+    CompletionHandlerCalledToken platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool), true>&&);
+    CompletionHandlerCalledToken platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool), true>&&);
     void platformShowPaymentUI(WebPageProxyIdentifier, const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&);
     void platformCompleteMerchantValidation(const WebCore::PaymentMerchantSession&);
     void platformCompleteShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&&);

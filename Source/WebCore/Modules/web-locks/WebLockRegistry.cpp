@@ -56,6 +56,24 @@ void WebLockRegistry::setSharedRegistry(Ref<WebLockRegistry>&& registry)
     sharedRegistry() = WTF::move(registry);
 }
 
+WebLockRegistry::~WebLockRegistry() = default;
+
+CompletionHandlerCalledToken WebLockRegistry::abortLockRequest(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier clientID, const String& name, CompletionHandler<void(bool), true>&& handler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+        abortLockRequest(sessionID, clientOrigin, lockIdentifier, clientID, name, CompletionHandler<void(bool)>(WTF::move(handler)));
+        return WTF::move(deferred);
+    });
+}
+
+CompletionHandlerCalledToken WebLockRegistry::snapshot(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, CompletionHandler<void(WebLockManagerSnapshot&&), true>&& handler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+        snapshot(sessionID, clientOrigin, CompletionHandler<void(WebLockManagerSnapshot&&)>(WTF::move(handler)));
+        return WTF::move(deferred);
+    });
+}
+
 class LocalWebLockRegistry::PerOriginRegistry : public RefCountedAndCanMakeWeakPtr<PerOriginRegistry> {
 public:
     static Ref<PerOriginRegistry> create(LocalWebLockRegistry&, PAL::SessionID, const ClientOrigin&);
@@ -71,8 +89,10 @@ public:
 
     void requestLock(WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler);
     void releaseLock(WebLockIdentifier, const String& name);
-    void abortLockRequest(WebLockIdentifier, const String& name, CompletionHandler<void(bool)>&&);
-    void snapshot(CompletionHandler<void(WebLockManagerSnapshot&&)>&&);
+    CompletionHandlerCalledToken abortLockRequest(WebLockIdentifier, const String& name, CompletionHandler<void(bool), true>&&);
+    void abortLockRequest(WebLockIdentifier lockIdentifier, const String& name, CompletionHandler<void(bool)>&& handler) { abortLockRequest(lockIdentifier, name, CompletionHandler<void(bool), true>(WTF::move(handler))); }
+    CompletionHandlerCalledToken snapshot(CompletionHandler<void(WebLockManagerSnapshot&&), true>&&);
+    void snapshot(CompletionHandler<void(WebLockManagerSnapshot&&)>&& handler) { snapshot(CompletionHandler<void(WebLockManagerSnapshot&&), true>(WTF::move(handler))); }
     void clientsAreGoingAway(NOESCAPE const Function<bool(const LockInfo&)>& matchClient);
 
 private:
@@ -181,17 +201,22 @@ void LocalWebLockRegistry::PerOriginRegistry::releaseLock(WebLockIdentifier lock
         processLockRequestQueue(name, queueIterator->value);
 }
 
-void LocalWebLockRegistry::abortLockRequest(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier, const String& name, CompletionHandler<void(bool)>&& completionHandler)
+void LocalWebLockRegistry::abortLockRequest(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier clientID, const String& name, CompletionHandler<void(bool)>&& completionHandler)
+{
+    abortLockRequest(sessionID, clientOrigin, lockIdentifier, clientID, name, CompletionHandler<void(bool), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken LocalWebLockRegistry::abortLockRequest(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier, const String& name, CompletionHandler<void(bool), true>&& completionHandler)
 {
     auto registry = existingRegistryForOrigin(sessionID, clientOrigin);
     if (!registry)
         return completionHandler(false);
 
-    registry->abortLockRequest(lockIdentifier, name, WTF::move(completionHandler));
+    return registry->abortLockRequest(lockIdentifier, name, WTF::move(completionHandler));
 }
 
 // https://wicg.github.io/web-locks/#abort-the-request
-void LocalWebLockRegistry::PerOriginRegistry::abortLockRequest(WebLockIdentifier lockIdentifier, const String& name, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken LocalWebLockRegistry::PerOriginRegistry::abortLockRequest(WebLockIdentifier lockIdentifier, const String& name, CompletionHandler<void(bool), true>&& completionHandler)
 {
     auto queueIterator = m_lockRequestQueueMap.find(name);
     if (queueIterator == m_lockRequestQueueMap.end())
@@ -209,7 +234,7 @@ void LocalWebLockRegistry::PerOriginRegistry::abortLockRequest(WebLockIdentifier
     }
 
     processLockRequestQueue(name, queue);
-    completionHandler(true);
+    return completionHandler(true);
 }
 
 // https://wicg.github.io/web-locks/#grantable
@@ -247,15 +272,20 @@ void LocalWebLockRegistry::PerOriginRegistry::processLockRequestQueue(const Stri
 
 void LocalWebLockRegistry::snapshot(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, CompletionHandler<void(WebLockManager::Snapshot&&)>&& completionHandler)
 {
+    snapshot(sessionID, clientOrigin, CompletionHandler<void(WebLockManager::Snapshot&&), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken LocalWebLockRegistry::snapshot(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, CompletionHandler<void(WebLockManagerSnapshot&&), true>&& completionHandler)
+{
     auto registry = existingRegistryForOrigin(sessionID, clientOrigin);
     if (!registry)
         return completionHandler({ });
 
-    registry->snapshot(WTF::move(completionHandler));
+    return registry->snapshot(WTF::move(completionHandler));
 }
 
 // https://wicg.github.io/web-locks/#snapshot-the-lock-state
-void LocalWebLockRegistry::PerOriginRegistry::snapshot(CompletionHandler<void(WebLockManager::Snapshot&&)>&& completionHandler)
+CompletionHandlerCalledToken LocalWebLockRegistry::PerOriginRegistry::snapshot(CompletionHandler<void(WebLockManager::Snapshot&&), true>&& completionHandler)
 {
     WebLockManager::Snapshot snapshot;
     for (auto& pair : m_lockRequestQueueMap) {
@@ -267,7 +297,7 @@ void LocalWebLockRegistry::PerOriginRegistry::snapshot(CompletionHandler<void(We
             snapshot.held.append({ pair.key, lockInfo.mode, lockInfo.clientID.toString() });
     }
 
-    completionHandler(WTF::move(snapshot));
+    return completionHandler(WTF::move(snapshot));
 }
 
 void LocalWebLockRegistry::clientIsGoingAway(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, ScriptExecutionContextIdentifier clientID)

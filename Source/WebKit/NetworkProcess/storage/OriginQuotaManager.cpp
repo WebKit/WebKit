@@ -65,8 +65,7 @@ uint64_t OriginQuotaManager::usage()
 
 void OriginQuotaManager::requestSpace(uint64_t spaceRequested, RequestCallback&& callback)
 {
-    m_requests.append(OriginQuotaManager::Request { spaceRequested, WTF::move(callback), std::nullopt });
-    handleRequests();
+    (void)requestSpace(spaceRequested, EnforcedRequestCallback(WTF::move(callback)));
 }
 
 void OriginQuotaManager::handleRequests()
@@ -79,13 +78,13 @@ void OriginQuotaManager::handleRequests()
     while (!m_currentRequest && !m_requests.isEmpty()) {
         m_currentRequest = m_requests.takeFirst();
         if (grantWithCurrentQuota(m_currentRequest->spaceRequested)) {
-            m_currentRequest->callback(Decision::Grant);
+            (void)m_currentRequest->callback(Decision::Grant);
             m_currentRequest = std::nullopt;
             continue;
         }
 
         if (!m_increaseQuotaFunction) {
-            m_currentRequest->callback(Decision::Deny);
+            (void)m_currentRequest->callback(Decision::Deny);
             m_currentRequest = std::nullopt;
             continue;
         }
@@ -142,7 +141,7 @@ void OriginQuotaManager::didIncreaseQuota(QuotaIncreaseRequestIdentifier identif
     }
 
     auto decision = grantWithCurrentQuota(m_currentRequest->spaceRequested) ? Decision::Grant : Decision::Deny;
-    m_currentRequest->callback(decision);
+    (void)m_currentRequest->callback(decision);
     m_currentRequest = std::nullopt;
 
     if (!m_isHandlingRequests)

@@ -1398,17 +1398,29 @@ void WebPageProxy::didFinishLoadForQuickLookDocumentInMainFrame(ShareableResourc
     m_navigationClient->didFinishLoadForQuickLookDocumentInMainFrame(*buffer);
 }
 
-void WebPageProxy::requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&& completionHandler)
+CompletionHandlerCalledToken WebPageProxy::requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&), true>&& completionHandler)
 {
-    requestPasswordForQuickLookDocumentInMainFrameShared(fileName, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return requestPasswordForQuickLookDocumentInMainFrameShared(fileName, WTF::move(completionHandler));
+    });
 }
 
-void WebPageProxy::requestPasswordForQuickLookDocumentInMainFrameShared(const String& fileName, CompletionHandler<void(const String&)>&& completionHandler)
+CompletionHandlerCalledToken WebPageProxy::requestPasswordForQuickLookDocumentInMainFrameShared(const String& fileName, CompletionHandler<void(const String&), true>&& completionHandler)
 {
     RefPtr pageClient = this->pageClient();
     if (!pageClient)
         return completionHandler({ });
-    pageClient->requestPasswordForQuickLookDocument(fileName, WTF::move(completionHandler));
+    // pageClient->requestPasswordForQuickLookDocument captures the handler into an ObjC block
+    // (a genuine leaf), so it cannot be made enforced. Keep the single deferUnchecked here.
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        pageClient->requestPasswordForQuickLookDocument(fileName, CompletionHandler<void(const String&)>(WTF::move(completionHandler)));
+        return WTF::move(deferred);
+    });
+}
+
+void WebPageProxy::requestPasswordForQuickLookDocumentInMainFrameShared(const String& fileName, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    requestPasswordForQuickLookDocumentInMainFrameShared(fileName, CompletionHandler<void(const String&), true>(WTF::move(completionHandler)));
 }
 
 #endif

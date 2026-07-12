@@ -42,7 +42,7 @@ class FileSystemStorageHandleRegistry;
 class FileSystemStorageManager final : public RefCountedAndCanMakeWeakPtr<FileSystemStorageManager> {
     WTF_MAKE_TZONE_ALLOCATED(FileSystemStorageManager);
 public:
-    using QuotaCheckFunction = Function<void(uint64_t spaceRequested, CompletionHandler<void(bool)>&&)>;
+    using QuotaCheckFunction = Function<CompletionHandlerCalledToken(uint64_t spaceRequested, CompletionHandler<void(bool), true>&&)>;
     static Ref<FileSystemStorageManager> create(String&& path, FileSystemStorageHandleRegistry&, QuotaCheckFunction&&);
     ~FileSystemStorageManager();
 
@@ -77,6 +77,10 @@ public:
     bool releaseLockForFile(const String& path);
     bool hasActiveLock(const String& path) const;
     void requestSpace(uint64_t spaceRequested, CompletionHandler<void(bool)>&&);
+    // Enforced overload: the completion handler crosses into m_quotaCheckFunction (a stored WTF::Function),
+    // so the genuine deferUnchecked leaf lives in the definition. Callers get a token to propagate, which
+    // forces every branch of their reply lambda to complete the handler.
+    CompletionHandlerCalledToken requestSpace(uint64_t spaceRequested, CompletionHandler<void(bool), true>&&);
 
 private:
     FileSystemStorageManager(String&& path, FileSystemStorageHandleRegistry&, QuotaCheckFunction&&);

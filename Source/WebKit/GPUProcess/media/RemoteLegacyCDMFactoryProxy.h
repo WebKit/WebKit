@@ -69,7 +69,7 @@ public:
     void removeProxy(RemoteLegacyCDMIdentifier);
 
     void addSession(RemoteLegacyCDMSessionIdentifier, Ref<RemoteLegacyCDMSessionProxy>&&);
-    void removeSession(RemoteLegacyCDMSessionIdentifier, CompletionHandler<void()>&&);
+    CompletionHandlerCalledToken removeSession(RemoteLegacyCDMSessionIdentifier, CompletionHandler<void(), true>&&);
     RemoteLegacyCDMSessionProxy* NODELETE getSession(const RemoteLegacyCDMSessionIdentifier&) const;
 
     RefPtr<GPUConnectionToWebProcess> gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }

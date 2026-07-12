@@ -2784,7 +2784,7 @@ void WebViewImpl::prepareForMoveToWindow(NSWindow *targetWindow, WTF::Function<v
     m_shouldDeferViewInWindowChanges = false;
 
     WeakPtr weakThis { *this };
-    m_page->installActivityStateChangeCompletionHandler(WTF::move(completionHandler));
+    m_page->installActivityStateChangeCompletionHandler(CompletionHandler<void()>(WTF::move(completionHandler)));
 
     flushPendingObscuredContentInsetChanges();
     m_page->activityStateDidChange(WebCore::ActivityState::IsInWindow, WebPageProxy::ActivityStateChangeDispatchMode::Immediate);

@@ -53,6 +53,9 @@ public:
     virtual void playEffect(unsigned gamepadIndex, const String& gamepadID, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) = 0;
     virtual void stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&&) = 0;
 
+    WEBCORE_EXPORT CompletionHandlerCalledToken playEffect(unsigned gamepadIndex, const String& gamepadID, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool), true>&&);
+    WEBCORE_EXPORT CompletionHandlerCalledToken stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void(), true>&&);
+
     virtual void clearGamepadsForTesting() { }
 
 protected:

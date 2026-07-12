@@ -1266,7 +1266,7 @@ void ModelProcessModelPlayerProxy::captureStateForReload()
         m_transientEnvironmentMapData = m_persistedEnvironmentMapData;
 }
 
-void ModelProcessModelPlayerProxy::ensureImmersivePresentation(CompletionHandler<void(std::optional<WebCore::LayerHostingContextIdentifier>)>&& completion)
+CompletionHandlerCalledToken ModelProcessModelPlayerProxy::ensureImmersivePresentation(CompletionHandler<void(std::optional<WebCore::LayerHostingContextIdentifier>), true>&& completion)
 {
     int targetLimit = entityMemoryLimit(true);
     bool atTargetLimit = m_loadedEntityMemoryLimit && *m_loadedEntityMemoryLimit == targetLimit;
@@ -1282,21 +1282,24 @@ void ModelProcessModelPlayerProxy::ensureImmersivePresentation(CompletionHandler
         load(*m_currentModel, m_layoutSize, true);
     }
 
-    ensureModelLoaded([weakThis = WeakPtr { *this }, completion = WTF::move(completion)] (bool loaded) mutable {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
-            return completion(std::nullopt);
+    return CompletionHandlerCalledToken::defer(WTF::move(completion), [&](auto completion) -> CompletionHandlerCalledToken {
+        return ensureModelLoaded([weakThis = WeakPtr { *this }, completion = WTF::move(completion)] (bool loaded) mutable -> CompletionHandlerCalledToken {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return completion(std::nullopt);
 
-        if (loaded)
-            completion(protectedThis->layerHostingContextIdentifier().value());
-        else {
+            RetainPtr entity = protectedThis->m_modelRKEntity;
+            if (loaded && entity) {
+                [entity ensureSceneUnderstanding];
+                return completion(protectedThis->layerHostingContextIdentifier().value());
+            }
             protectedThis->setImmersivePresentation(false);
-            completion(std::nullopt);
-        }
+            return completion(std::nullopt);
+        });
     });
 }
 
-void ModelProcessModelPlayerProxy::exitImmersivePresentation(CompletionHandler<void()>&& completion)
+CompletionHandlerCalledToken ModelProcessModelPlayerProxy::exitImmersivePresentation(CompletionHandler<void(), true>&& completion)
 {
     int targetLimit = entityMemoryLimit(false);
     bool atTargetLimit = m_loadedEntityMemoryLimit && *m_loadedEntityMemoryLimit == targetLimit;
@@ -1310,13 +1313,14 @@ void ModelProcessModelPlayerProxy::exitImmersivePresentation(CompletionHandler<v
         RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy::exitImmersivePresentation: reloading at %dMB id=%" PRIu64, this, targetLimit, m_id.toUInt64());
         teardownEntity();
         load(*m_currentModel, m_layoutSize, false);
-        ensureModelLoaded([completion = WTF::move(completion)] (bool) mutable {
-            completion();
+        return CompletionHandlerCalledToken::defer(WTF::move(completion), [&](auto completion) -> CompletionHandlerCalledToken {
+            return ensureModelLoaded([completion = WTF::move(completion)] (bool) mutable -> CompletionHandlerCalledToken {
+                return completion();
+            });
         });
-        return;
     }
 
-    completion();
+    return completion();
 }
 
 void ModelProcessModelPlayerProxy::setImmersivePresentation(bool immersivePresentation)
@@ -1337,18 +1341,24 @@ void ModelProcessModelPlayerProxy::setImmersivePresentation(bool immersivePresen
 
 void ModelProcessModelPlayerProxy::ensureModelLoaded(CompletionHandler<void(bool)>&& completion)
 {
-    if (m_modelRKEntity) {
-        completion(true);
-        return;
-    }
-
-    m_modelLoadedCallbacks.append(WTF::move(completion));
+    ensureModelLoaded(CompletionHandler<void(bool), true>(WTF::move(completion)));
 }
 
 void ModelProcessModelPlayerProxy::triggerModelLoadedCallbacks(bool result)
 {
     for (auto& callback : std::exchange(m_modelLoadedCallbacks, { }))
-        callback(result);
+        (void)callback(result);
+}
+
+CompletionHandlerCalledToken ModelProcessModelPlayerProxy::ensureModelLoaded(CompletionHandler<void(bool), true>&& completion)
+{
+    if (m_modelRKEntity)
+        return completion(true);
+
+    return CompletionHandlerCalledToken::deferUnchecked(completion, [&](auto& completion, auto deferred) -> CompletionHandlerCalledToken {
+        m_modelLoadedCallbacks.append(WTF::move(completion));
+        return deferred;
+    });
 }
 
 #endif

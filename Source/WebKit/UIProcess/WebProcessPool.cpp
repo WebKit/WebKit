@@ -1932,25 +1932,32 @@ void WebProcessPool::startedUsingGamepads(IPC::Connection& connection)
     proxy->send(Messages::WebProcess::SetInitialGamepads(UIGamepadProvider::singleton().snapshotGamepads()), 0);
 }
 
-void WebProcessPool::stoppedUsingGamepads(IPC::Connection& connection, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken WebProcessPool::stoppedUsingGamepads(IPC::Connection& connection, CompletionHandler<void(), true>&& completionHandler)
 {
-    CompletionHandlerCallingScope callCompletionHandlerOnExit(WTF::move(completionHandler));
     RefPtr proxy = webProcessProxyFromConnection(connection);
     if (!proxy)
-        return;
+        return completionHandler();
 
     ASSERT(m_processesUsingGamepads.contains(*proxy));
     processStoppedUsingGamepads(*proxy);
+    return completionHandler();
+
 }
 
-void WebProcessPool::playGamepadEffect(unsigned gamepadIndex, const String& gamepadID, WebCore::GamepadHapticEffectType type, const WebCore::GamepadEffectParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken WebProcessPool::playGamepadEffect(unsigned gamepadIndex, const String& gamepadID, WebCore::GamepadHapticEffectType type, const WebCore::GamepadEffectParameters& parameters, CompletionHandler<void(bool), true>&& completionHandler)
 {
-    GamepadProvider::singleton().playEffect(gamepadIndex, gamepadID, type, parameters, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return GamepadProvider::singleton().playEffect(gamepadIndex, gamepadID, type, parameters, WTF::move(completionHandler));
+    });
+
 }
 
-void WebProcessPool::stopGamepadEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken WebProcessPool::stopGamepadEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void(), true>&& completionHandler)
 {
-    GamepadProvider::singleton().stopEffects(gamepadIndex, gamepadID, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return GamepadProvider::singleton().stopEffects(gamepadIndex, gamepadID, WTF::move(completionHandler));
+    });
+
 }
 
 void WebProcessPool::processStoppedUsingGamepads(WebProcessProxy& process)

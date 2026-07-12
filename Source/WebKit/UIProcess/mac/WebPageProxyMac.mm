@@ -690,7 +690,7 @@ void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const St
 }
 
 #if ENABLE(PDF_PLUGIN)
-void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu, PDFPluginIdentifier identifier, WebCore::FrameIdentifier frameID, CompletionHandler<void(std::optional<int32_t>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu, PDFPluginIdentifier identifier, WebCore::FrameIdentifier frameID, CompletionHandler<void(std::optional<int32_t>&&), true>&& completionHandler)
 {
     if (!contextMenu.items.size())
         return completionHandler(std::nullopt);
@@ -745,32 +745,35 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
     RetainPtr<NSView> view = window.get().contentView;
     auto locationInWindowCoordinates = [window convertRectFromScreen: { contextMenu.point, NSZeroSize }].origin;
 
-    auto handleSelectedMenuItem = [this, protectedThis = Ref { *this }, menuTarget, contextMenu, frameID, identifier, completionHandler = WTF::move(completionHandler)] mutable {
-        if (RetainPtr selectedMenuItem = [menuTarget selectedMenuItem]) {
-            NSInteger tag = [selectedMenuItem tag];
-            if (contextMenu.openInDefaultViewerTag == tag)
-                pdfOpenWithPreview(identifier, frameID);
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        auto handleSelectedMenuItem = [this, protectedThis = Ref { *this }, menuTarget, contextMenu, frameID, identifier, completionHandler = WTF::move(completionHandler)] mutable -> CompletionHandlerCalledToken {
+            if (RetainPtr selectedMenuItem = [menuTarget selectedMenuItem]) {
+                NSInteger tag = [selectedMenuItem tag];
+                if (contextMenu.openInDefaultViewerTag == tag)
+                    pdfOpenWithPreview(identifier, frameID);
 
-            completionHandler(tag);
-            return;
-        }
+                return completionHandler(tag);
+            }
 
-        completionHandler(std::nullopt);
-    };
+            return completionHandler(std::nullopt);
+        };
 
-    if (contextMenu.inputSource == WebEventInputSource::Automation) {
+        if (contextMenu.inputSource == WebEventInputSource::Automation) {
 #if HAVE(APPKIT_GESTURES_SUPPORT)
-        NSPoint locationInScreenCoordinates = [window convertPointToScreen:locationInWindowCoordinates];
-        RetainPtr screenRelativeContext = [_NSViewMenuContext menuContextWithLocation:locationInScreenCoordinates source:ContextMenuRequestSourceForAutomation];
-        [NSMenu _popUpContextMenu:nsMenu.get() withContext:screenRelativeContext.get() forView:view.get() completionBlock:makeBlockPtr(WTF::move(handleSelectedMenuItem)).get()];
+            NSPoint locationInScreenCoordinates = [window convertPointToScreen:locationInWindowCoordinates];
+            RetainPtr screenRelativeContext = [_NSViewMenuContext menuContextWithLocation:locationInScreenCoordinates source:ContextMenuRequestSourceForAutomation];
+            [NSMenu _popUpContextMenu:nsMenu.get() withContext:screenRelativeContext.get() forView:view.get() completionBlock:makeBlockPtr(WTF::move(handleSelectedMenuItem)).get()];
 #else
-        RELEASE_ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
 #endif
-    } else {
-        RetainPtr event = createSyntheticEventForContextMenu(locationInWindowCoordinates);
-        [NSMenu popUpContextMenu:nsMenu.get() withEvent:event.get() forView:view.get()];
-        handleSelectedMenuItem();
-    }
+        } else {
+            RetainPtr event = createSyntheticEventForContextMenu(locationInWindowCoordinates);
+            [NSMenu popUpContextMenu:nsMenu.get() withEvent:event.get() forView:view.get()];
+            handleSelectedMenuItem();
+        }
+        return WTF::move(deferred);
+    });
+
 }
 #endif
 

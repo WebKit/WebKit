@@ -138,11 +138,13 @@ void DownloadProxy::didReceiveAuthenticationChallenge(AuthenticationChallenge&& 
     protect(client())->didReceiveAuthenticationChallenge(*this, authenticationChallengeProxy.get());
 }
 
-void DownloadProxy::willSendRequest(ResourceRequest&& proposedRequest, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
+CompletionHandlerCalledToken DownloadProxy::willSendRequest(ResourceRequest&& proposedRequest, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&), true>&& completionHandler)
 {
-    protect(client())->willSendRequest(*this, WTF::move(proposedRequest), redirectResponse, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (ResourceRequest&& newRequest) mutable {
-        m_redirectChain.append(newRequest.url());
-        completionHandler(WTF::move(newRequest));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return protect(client())->willSendRequest(*this, WTF::move(proposedRequest), redirectResponse, CompletionHandler<void(ResourceRequest&&), true>([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (ResourceRequest&& newRequest) mutable -> CompletionHandlerCalledToken {
+            m_redirectChain.append(newRequest.url());
+            return completionHandler(WTF::move(newRequest));
+        }));
     });
 }
 

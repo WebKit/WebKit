@@ -263,24 +263,24 @@ void WebExtensionController::calculateStorageSize(RefPtr<WebExtensionStorageSQLi
     if (!storage)
         return;
 
-    storage->getStorageSizeForKeys({ }, [completionHandler = WTF::move(completionHandler)](size_t storageSize, const String& errorMessage) mutable {
+    storage->getStorageSizeForKeys({ }, CompletionHandler<void(size_t storageSize, const String& errorMessage)>([completionHandler = WTF::move(completionHandler)](size_t storageSize, const String& errorMessage) mutable {
         // FIXME: <https://webkit.org/b/269100> Add storage size of window.localStorage, window.sessionStorage and indexedDB.
         if (!errorMessage.isEmpty())
             completionHandler(makeUnexpected(errorMessage));
         else
             completionHandler(storageSize);
-    });
+    }));
 }
 
 void WebExtensionController::removeStorage(RefPtr<WebExtensionStorageSQLiteStore> storage, WebExtensionDataType type, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
-    storage->deleteDatabase([completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
+    storage->deleteDatabase(CompletionHandler<void(const String& errorMessage)>([completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
         // FIXME: <https://webkit.org/b/269100> Remove window.localStorage, window.sessionStorage, indexedDB.
         if (!errorMessage.isEmpty())
             completionHandler(makeUnexpected(errorMessage));
         else
             completionHandler({ });
-    });
+    }));
 }
 
 Expected<bool, RefPtr<API::Error>> WebExtensionController::load(WebExtensionContext& extensionContext)

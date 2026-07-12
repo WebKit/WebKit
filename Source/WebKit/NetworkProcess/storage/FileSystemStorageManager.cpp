@@ -253,7 +253,13 @@ void FileSystemStorageManager::close()
 
 void FileSystemStorageManager::requestSpace(uint64_t size, CompletionHandler<void(bool)>&& completionHandler)
 {
-    m_quotaCheckFunction(size, WTF::move(completionHandler));
+    (void)m_quotaCheckFunction(size, CompletionHandler<void(bool), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken FileSystemStorageManager::requestSpace(uint64_t size, CompletionHandler<void(bool), true>&& completionHandler)
+{
+    // Propagates the token from the quota chain; the single deferUnchecked leaf lives in OriginQuotaManager.
+    return m_quotaCheckFunction(size, WTF::move(completionHandler));
 }
 
 void FileSystemStorageManager::addGlobalIdentifierReference(WebCore::FileSystemHandleGlobalIdentifier globalIdentifier)

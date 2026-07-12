@@ -296,7 +296,7 @@ void RemoteAudioVideoRendererProxyManager::newTrackInfoForTrack(RemoteAudioVideo
     converterFor(contextFor(identifier), trackIdentifier).setTrackInfo(WTF::move(info));
 }
 
-void RemoteAudioVideoRendererProxyManager::enqueueSample(RemoteAudioVideoRendererIdentifier identifier, TrackIdentifier trackIdentifier, WebCore::MediaSamplesBlock&& samplesBlock, std::optional<MediaTime> minimumPresentationTime, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken RemoteAudioVideoRendererProxyManager::enqueueSample(RemoteAudioVideoRendererIdentifier identifier, TrackIdentifier trackIdentifier, WebCore::MediaSamplesBlock&& samplesBlock, std::optional<MediaTime> minimumPresentationTime, CompletionHandler<void(bool), true>&& completionHandler)
 {
     auto iterator = m_renderers.find(identifier);
     MESSAGE_CHECK_COMPLETION(iterator != m_renderers.end(), completionHandler(false));
@@ -305,10 +305,9 @@ void RemoteAudioVideoRendererProxyManager::enqueueSample(RemoteAudioVideoRendere
     MESSAGE_CHECK_COMPLETION(!!converter.currentTrackInfo(), completionHandler(false));
     if (RefPtr mediaSample = converter.convert(WTF::move(samplesBlock))) {
         iterator->value.renderer->enqueueSample(trackIdentifier, mediaSample.releaseNonNull(), minimumPresentationTime);
-        completionHandler(iterator->value.renderer->isReadyForMoreSamples(trackIdentifier));
-        return;
+        return completionHandler(iterator->value.renderer->isReadyForMoreSamples(trackIdentifier));
     }
-    completionHandler(false);
+    return completionHandler(false);
 }
 
 void RemoteAudioVideoRendererProxyManager::notifyTimeReachedAndStall(RemoteAudioVideoRendererIdentifier identifier, const MediaTime& time, CompletionHandler<void(WebCore::MediaTimePromise::Result&&)>&& completionHandler)
@@ -645,19 +644,20 @@ void RemoteAudioVideoRendererProxyManager::currentVideoFrame(RemoteAudioVideoRen
     completionHandler(WTF::move(result));
 }
 
-void RemoteAudioVideoRendererProxyManager::currentBitmapImage(RemoteAudioVideoRendererIdentifier identifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler) const
+CompletionHandlerCalledToken RemoteAudioVideoRendererProxyManager::currentBitmapImage(RemoteAudioVideoRendererIdentifier identifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&), true>&& completionHandler) const
 {
     RefPtr renderer = rendererFor(identifier);
     if (!renderer) {
-        completionHandler(std::nullopt);
-        return;
+        return completionHandler(std::nullopt);
     }
-    renderer->currentBitmapImage()->whenSettled(RunLoop::mainSingleton(), [completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
-        if (!result) {
-            completionHandler(std::nullopt);
-            return;
-        }
-        completionHandler((*result)->createHandle());
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        renderer->currentBitmapImage()->whenSettled(RunLoop::mainSingleton(), [completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
+            if (!result)
+                completionHandler(std::nullopt);
+            else
+                completionHandler((*result)->createHandle());
+        });
+        return WTF::move(deferred);
     });
 }
 
@@ -801,11 +801,18 @@ void RemoteAudioVideoRendererProxyManager::setCDMInstance(RemoteAudioVideoRender
         ALWAYS_LOG(LOGIDENTIFIER, "Unable to find CDMInstance: ", instanceId->loggingString());
 }
 
-void RemoteAudioVideoRendererProxyManager::setInitData(RemoteAudioVideoRendererIdentifier identifier, Ref<WebCore::SharedBuffer> initData, CompletionHandler<void(Expected<void, WebCore::PlatformMediaError>)>&& completionHandler)
+CompletionHandlerCalledToken RemoteAudioVideoRendererProxyManager::setInitData(RemoteAudioVideoRendererIdentifier identifier, Ref<WebCore::SharedBuffer> initData, CompletionHandler<void(Expected<void, WebCore::PlatformMediaError>), true>&& completionHandler)
 {
     ALWAYS_LOG(LOGIDENTIFIER, identifier.loggingString());
-    if (RefPtr renderer = rendererFor(identifier))
-        renderer->setInitData(initData)->whenSettled(RunLoop::mainSingleton(), WTF::move(completionHandler));
+    if (RefPtr renderer = rendererFor(identifier)) {
+        return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+            renderer->setInitData(initData)->whenSettled(RunLoop::mainSingleton(), [completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
+                completionHandler(std::forward<decltype(result)>(result));
+            });
+            return WTF::move(deferred);
+        });
+    }
+    return completionHandler({ });
 }
 
 void RemoteAudioVideoRendererProxyManager::attemptToDecrypt(RemoteAudioVideoRendererIdentifier identifier)

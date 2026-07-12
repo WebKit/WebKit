@@ -45,26 +45,36 @@ WebDeviceOrientationAndMotionAccessController::WebDeviceOrientationAndMotionAcce
 
 void WebDeviceOrientationAndMotionAccessController::shouldAllowAccess(WebPageProxy& page, WebFrameProxy& frame, FrameInfoData&& frameInfo, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& completionHandler)
 {
+    shouldAllowAccess(page, frame, WTF::move(frameInfo), mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken WebDeviceOrientationAndMotionAccessController::shouldAllowAccess(WebPageProxy& page, WebFrameProxy& frame, FrameInfoData&& frameInfo, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState), true>&& completionHandler)
+{
     auto requestOriginData = frameInfo.topOrigin;
     auto currentPermission = cachedDeviceOrientationPermission(requestOriginData);
     if (currentPermission != DeviceOrientationOrMotionPermissionState::Prompt || !mayPrompt)
         return completionHandler(currentPermission);
 
-    auto& pendingRequests = m_pendingRequests.ensure(requestOriginData, [] {
-        return Vector<CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>> { };
-    }).iterator->value;
-    pendingRequests.append(WTF::move(completionHandler));
-    if (pendingRequests.size() > 1)
-        return;
+    // The handler is stored in a member container for later multi-dispatch from the
+    // UI client callback below; this is a genuine leaf, so keep a single deferUnchecked.
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        auto& pendingRequests = m_pendingRequests.ensure(requestOriginData, [] {
+            return Vector<CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState), true>> { };
+        }).iterator->value;
+        pendingRequests.append(WTF::move(completionHandler));
+        if (pendingRequests.size() > 1)
+            return WTF::move(deferred);
 
-    page.uiClient().shouldAllowDeviceOrientationAndMotionAccess(page, frame, WTF::move(frameInfo), [weakThis = WeakPtr { *this }, requestOriginData](bool granted) mutable {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
-            return;
-        protectedThis->m_deviceOrientationPermissionDecisions.set(requestOriginData, granted);
-        auto requests = protectedThis->m_pendingRequests.take(requestOriginData);
-        for (auto& completionHandler : requests)
-            completionHandler(granted ? DeviceOrientationOrMotionPermissionState::Granted : DeviceOrientationOrMotionPermissionState::Denied);
+        page.uiClient().shouldAllowDeviceOrientationAndMotionAccess(page, frame, WTF::move(frameInfo), [weakThis = WeakPtr { *this }, requestOriginData](bool granted) mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+            protectedThis->m_deviceOrientationPermissionDecisions.set(requestOriginData, granted);
+            auto requests = protectedThis->m_pendingRequests.take(requestOriginData);
+            for (auto& completionHandler : requests)
+                (void)completionHandler(granted ? DeviceOrientationOrMotionPermissionState::Granted : DeviceOrientationOrMotionPermissionState::Denied);
+        });
+        return WTF::move(deferred);
     });
 }
 

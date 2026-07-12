@@ -69,46 +69,36 @@ do { \
 
 #define ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF_SET(optionalError) \
 do { \
-    if (optionalError.has_value()) { \
-        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_MESSAGE(optionalError.value()))); \
-        return; \
-    } \
+    if (optionalError.has_value()) \
+        return callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_MESSAGE(optionalError.value()))); \
 } while (false)
 
 #define ASYNC_FAIL_IF_UNEXPECTED_RESULT(expected) \
 do { \
-    if (!expected) { \
-        callback(makeUnexpected(expected.error().toProtocolString())); \
-        return; \
-    } \
+    if (!expected) \
+        return callback(makeUnexpected(expected.error().toProtocolString())); \
 } while (false)
 
 
 
 #define ASYNC_FAIL_WITH_PREDEFINED_ERROR(errorName) \
 do { \
-    callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(errorName))); \
-    return; \
+    return callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(errorName))); \
 } while (false)
 
 #define ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(condition, errorName) \
 do { \
-    if (condition) { \
-        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(errorName))); \
-        return; \
-    } \
+    if (condition) \
+        return callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(errorName))); \
 } while (false)
 
 #define ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(errorName, detailsString) \
 do { \
-    callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(errorName, detailsString))); \
-    return; \
+    return callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(errorName, detailsString))); \
 } while (false)
 
 #define ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(condition, errorName, detailsString) \
 do { \
-    if (condition) { \
-        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(errorName, detailsString))); \
-        return; \
-    } \
+    if (condition) \
+        return callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(errorName, detailsString))); \
 } while (false)

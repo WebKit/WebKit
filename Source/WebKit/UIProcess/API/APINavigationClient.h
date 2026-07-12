@@ -36,6 +36,7 @@
 #include "WebsitePoliciesData.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/LayoutMilestone.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -138,9 +139,15 @@ public:
     virtual void contentRuleListNotification(WebKit::WebPageProxy&, WTF::URL&&, WebCore::ContentRuleListResults&&) { };
     virtual void contentRuleListMatchedRule(WebKit::WebPageProxy&, WebCore::ContentRuleListMatchedRule&&) { };
 
-    virtual void shouldGoToBackForwardListItem(WebKit::WebPageProxy&, WebKit::WebBackForwardListItem&, bool inBackForwardCache, CompletionHandler<void(bool)>&& completionHandler)
+    // Free non-enforced wrapper for callers that still pass a plain CompletionHandler.
+    void shouldGoToBackForwardListItem(WebKit::WebPageProxy& page, WebKit::WebBackForwardListItem& item, bool inBackForwardCache, CompletionHandler<void(bool)>&& completionHandler)
     {
-        completionHandler(true);
+        shouldGoToBackForwardListItem(page, item, inBackForwardCache, CompletionHandler<void(bool), true>(WTF::move(completionHandler)));
+    }
+    // The real, enforced implementation. Subclasses override this and must return a CompletionHandlerCalledToken proving the handler was called.
+    virtual CompletionHandlerCalledToken shouldGoToBackForwardListItem(WebKit::WebPageProxy& page, WebKit::WebBackForwardListItem& item, bool inBackForwardCache, CompletionHandler<void(bool), true>&& completionHandler)
+    {
+        return completionHandler(true);
     }
 
     virtual void didBeginNavigationGesture(WebKit::WebPageProxy&) { }

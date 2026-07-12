@@ -83,8 +83,10 @@ static void callReplyWithoutUsingConnection(Decoder& decoder, C&& completionHand
     if constexpr (!std::tuple_size_v<typename T::ReplyArguments>)
         completionHandler();
     else {
-        if (auto arguments = decoder.template decode<typename T::ReplyArguments>())
-            return std::apply(std::forward<C>(completionHandler), WTF::move(*arguments));
+        if (auto arguments = decoder.template decode<typename T::ReplyArguments>()) {
+            std::apply(std::forward<C>(completionHandler), WTF::move(*arguments));
+            return;
+        }
         cancelReplyWithoutUsingConnection<T>(std::forward<C>(completionHandler));
     }
 }
@@ -103,6 +105,14 @@ template<typename MessageType, typename C> inline bool MessageSender::sendWithAs
     };
 
     SUPPRESS_FORWARD_DECL_ARG return performSendWithAsyncReplyWithoutUsingIPCConnection(WTF::move(encoder), WTF::move(asyncHandler));
+}
+
+template<typename MessageType, typename Sig> inline CompletionHandlerCalledToken MessageSender::sendWithAsyncReplyWithoutUsingIPCConnection(MessageType&& message, CompletionHandler<Sig, true>&& completionHandler) const
+{
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        sendWithAsyncReplyWithoutUsingIPCConnection(std::forward<MessageType>(message), CompletionHandler<Sig>(WTF::move(completionHandler)));
+        return deferred;
+    });
 }
 
 template<typename MessageType> inline bool MessageSender::send(MessageType&& message)
@@ -153,6 +163,27 @@ template<typename MessageType, typename U, typename V, typename W> inline auto M
 template<typename MessageType, typename U, typename V, typename W> inline auto MessageSender::sendSync(MessageType&& message, ObjectIdentifierGeneric<U, V, W> destinationID, Timeout timeout, OptionSet<SendSyncOption> options) -> SendSyncResult<MessageType>
 {
     return sendSync(std::forward<MessageType>(message), destinationID.toUInt64(), timeout, options);
+}
+
+template<typename MessageType, typename Sig> inline CompletionHandlerCalledToken MessageSender::sendWithAsyncReply(MessageType&& message, CompletionHandler<Sig, true>&& completionHandler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        sendWithAsyncReply(std::forward<MessageType>(message), CompletionHandler<Sig>(WTF::move(completionHandler)));
+        return deferred;
+    });
+}
+
+template<typename MessageType, typename Sig> inline CompletionHandlerCalledToken MessageSender::sendWithAsyncReply(MessageType&& message, CompletionHandler<Sig, true>&& completionHandler, uint64_t destinationID, OptionSet<SendOption> options)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        sendWithAsyncReply(std::forward<MessageType>(message), CompletionHandler<Sig>(WTF::move(completionHandler)), destinationID, options);
+        return deferred;
+    });
+}
+
+template<typename MessageType, typename Sig, typename U, typename V, typename W> inline CompletionHandlerCalledToken MessageSender::sendWithAsyncReply(MessageType&& message, CompletionHandler<Sig, true>&& completionHandler, ObjectIdentifierGeneric<U, V, W> destinationID, OptionSet<SendOption> options)
+{
+    return sendWithAsyncReply(std::forward<MessageType>(message), WTF::move(completionHandler), destinationID.toUInt64(), options);
 }
 
 template<typename MessageType, typename C> inline std::optional<AsyncReplyID> MessageSender::sendWithAsyncReply(MessageType&& message, C&& completionHandler)

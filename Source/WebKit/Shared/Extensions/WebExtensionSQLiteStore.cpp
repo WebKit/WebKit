@@ -70,12 +70,17 @@ void WebExtensionSQLiteStore::close()
 
 void WebExtensionSQLiteStore::deleteDatabase(CompletionHandler<void(const String& errorMessage)>&& completionHandler)
 {
-    m_queue->dispatch([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
+    deleteDatabase(CompletionHandler<void(const String&), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken WebExtensionSQLiteStore::deleteDatabase(CompletionHandler<void(const String& errorMessage), true>&& completionHandler)
+{
+    return m_queue->dispatch(CompletionHandler<void(), true>([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
         auto deleteDatabaseErrorMessage = protectedThis->deleteDatabase();
-        WorkQueue::mainSingleton().dispatch([deleteDatabaseErrorMessage = crossThreadCopy(deleteDatabaseErrorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
-            completionHandler(deleteDatabaseErrorMessage);
-        });
-    });
+        return WorkQueue::mainSingleton().dispatch(CompletionHandler<void(), true>([deleteDatabaseErrorMessage = crossThreadCopy(deleteDatabaseErrorMessage), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
+            return completionHandler(deleteDatabaseErrorMessage);
+        }));
+    }));
 }
 
 // MARK: Database Management

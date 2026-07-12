@@ -414,6 +414,11 @@ namespace WebKit {
 
 void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOriginData& topOrigin, const WebCore::SystemPreviewInfo& systemPreviewInfo, CompletionHandler<void()>&& completionHandler)
 {
+    begin(url, topOrigin, systemPreviewInfo, CompletionHandler<void(), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken SystemPreviewController::begin(const URL& url, const WebCore::SecurityOriginData& topOrigin, const WebCore::SystemPreviewInfo& systemPreviewInfo, CompletionHandler<void(), true>&& completionHandler)
+{
     if (m_state != State::Initial || m_allowPreviewCallback) {
         RELEASE_LOG(SystemPreview, "SystemPreview didn't start because an existing preview is in progress");
         m_showPreviewDelay = std::min(30., 1. + m_showPreviewDelay * m_showPreviewDelay);
@@ -438,7 +443,12 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
 
     m_systemPreviewInfo = systemPreviewInfo;
 
-    auto successHandler = [completionHandler = WTF::move(completionHandler), topOrigin, weakThis = WeakPtr { *this }, url, presentingViewController] (bool success) mutable {
+    // The completion handler escapes here into an ObjC block stored in m_allowPreviewCallback, which is
+    // invoked asynchronously from the UIAlertAction handlers (or the testing path). This is the genuine
+    // leaf: enforcement cannot be proven past the crossing into the ObjC block, so the single
+    // deferUnchecked lives here.
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+    auto successHandler = [completionHandler = CompletionHandler<void()>(WTF::move(completionHandler)), topOrigin, weakThis = WeakPtr { *this }, url, presentingViewController] (bool success) mutable {
         if (!success || !weakThis)
             return completionHandler();
 
@@ -510,6 +520,9 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
         m_showPreviewDelay = 0;
     } else
         [presentingViewController presentViewController:alert.get() animated:YES completion:nil];
+
+    return WTF::move(deferred);
+    });
 }
 
 void SystemPreviewController::loadStarted(const URL& localFileURL)

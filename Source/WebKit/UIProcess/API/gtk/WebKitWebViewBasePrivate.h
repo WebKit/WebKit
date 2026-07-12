@@ -122,6 +122,7 @@ void webkitWebViewBaseDidSameDocumentNavigationForMainFrame(WebKitWebViewBase*, 
 void webkitWebViewBaseDidRestoreScrollPosition(WebKitWebViewBase*);
 
 void webkitWebViewBaseShowEmojiChooser(WebKitWebViewBase*, const WebCore::IntRect&, CompletionHandler<void(String)>&&);
+CompletionHandlerCalledToken webkitWebViewBaseShowEmojiChooser(WebKitWebViewBase*, const WebCore::IntRect&, CompletionHandler<void(String), true>&&);
 
 void webkitWebViewBaseRequestPointerLock(WebKitWebViewBase*, CompletionHandler<void(bool)>&&);
 void webkitWebViewBaseDidLosePointerLock(WebKitWebViewBase*);

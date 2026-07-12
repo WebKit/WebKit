@@ -28,6 +28,8 @@
 #pragma once
 
 #include <WebCore/PageIdentifier.h>
+#include <wtf/CompletionHandler.h>
+#include <wtf/Forward.h>
 #include <wtf/Function.h>
 
 namespace WebCore {
@@ -48,6 +50,9 @@ public:
 
     WEBCORE_EXPORT static void createDecodingConfiguration(PlatformMediaDecodingConfiguration&&, DecodingConfigurationCallback&&);
     WEBCORE_EXPORT static void createEncodingConfiguration(PlatformMediaEncodingConfiguration&&, EncodingConfigurationCallback&&);
+
+    WEBCORE_EXPORT static CompletionHandlerCalledToken createDecodingConfiguration(PlatformMediaDecodingConfiguration&&, CompletionHandler<void(PlatformMediaCapabilitiesDecodingInfo&&), true>&&);
+    WEBCORE_EXPORT static CompletionHandlerCalledToken createEncodingConfiguration(PlatformMediaEncodingConfiguration&&, CompletionHandler<void(PlatformMediaCapabilitiesEncodingInfo&&), true>&&);
 
     using CreateDecodingConfiguration = Function<void(PlatformMediaDecodingConfiguration&&, DecodingConfigurationCallback&&)>;
     using CreateEncodingConfiguration = Function<void(PlatformMediaEncodingConfiguration&&, EncodingConfigurationCallback&&)>;

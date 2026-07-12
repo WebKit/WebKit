@@ -29,10 +29,12 @@
 
 #include "XRDeviceIdentifier.h"
 #include "XRDeviceInfo.h"
+#include <WebCore/ExceptionData.h>
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/PlatformXR.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 
 namespace WebCore {
@@ -93,8 +95,36 @@ public:
 
 #if ENABLE(WEBXR_HIT_TEST)
     virtual void requestHitTestSource(WebPageProxy&, const PlatformXR::HitTestOptions&, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::HitTestSource>)>&& completionHandler) { completionHandler(WebCore::Exception { WebCore::ExceptionCode::InvalidStateError }); }
+    CompletionHandlerCalledToken requestHitTestSource(WebPageProxy& page, const PlatformXR::HitTestOptions& options, CompletionHandler<void(Expected<PlatformXR::HitTestSource, WebCore::ExceptionData>), true>&& handler)
+    {
+        return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+            requestHitTestSource(page, options, [handler = WTF::move(handler)](WebCore::ExceptionOr<PlatformXR::HitTestSource> exceptionOrValue) mutable {
+                if (exceptionOrValue.hasException()) {
+                    auto exception = exceptionOrValue.releaseException();
+                    handler(makeUnexpected(WebCore::ExceptionData { exception.code(), exception.releaseMessage() }));
+                    return;
+                }
+                handler(exceptionOrValue.releaseReturnValue());
+            });
+            return WTF::move(deferred);
+        });
+    }
     virtual void deleteHitTestSource(WebPageProxy&, PlatformXR::HitTestSource) { }
     virtual void requestTransientInputHitTestSource(WebPageProxy&, const PlatformXR::TransientInputHitTestOptions&, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::TransientInputHitTestSource>)>&& completionHandler) { completionHandler(WebCore::Exception { WebCore::ExceptionCode::InvalidStateError }); }
+    CompletionHandlerCalledToken requestTransientInputHitTestSource(WebPageProxy& page, const PlatformXR::TransientInputHitTestOptions& options, CompletionHandler<void(Expected<PlatformXR::TransientInputHitTestSource, WebCore::ExceptionData>), true>&& handler)
+    {
+        return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+            requestTransientInputHitTestSource(page, options, [handler = WTF::move(handler)](WebCore::ExceptionOr<PlatformXR::TransientInputHitTestSource> exceptionOrValue) mutable {
+                if (exceptionOrValue.hasException()) {
+                    auto exception = exceptionOrValue.releaseException();
+                    handler(makeUnexpected(WebCore::ExceptionData { exception.code(), exception.releaseMessage() }));
+                    return;
+                }
+                handler(exceptionOrValue.releaseReturnValue());
+            });
+            return WTF::move(deferred);
+        });
+    }
     virtual void deleteTransientInputHitTestSource(WebPageProxy&, PlatformXR::TransientInputHitTestSource) { }
 #endif
 };

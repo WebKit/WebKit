@@ -81,13 +81,16 @@ void RemoteMediaResourceLoaderProxy::requestResource(RemoteMediaResourceIdentifi
     m_connection->send(Messages::RemoteMediaResourceLoader::LoadFailed(id, { WebCore::ResourceError::Type::Cancellation }), m_identifier.toUInt64());
 }
 
-void RemoteMediaResourceLoaderProxy::sendH2Ping(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
+CompletionHandlerCalledToken RemoteMediaResourceLoaderProxy::sendH2Ping(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&), true>&& completionHandler)
 {
     assertIsCurrent(defaultQueue());
-    m_platformLoader->sendH2Ping(url, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return m_platformLoader->sendH2Ping(url, WTF::move(completionHandler));
+    });
+
 }
 
-void RemoteMediaResourceLoaderProxy::removeResource(RemoteMediaResourceIdentifier id, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken RemoteMediaResourceLoaderProxy::removeResource(RemoteMediaResourceIdentifier id, CompletionHandler<void(), true>&& completionHandler)
 {
     assertIsCurrent(defaultQueue());
 
@@ -95,7 +98,7 @@ void RemoteMediaResourceLoaderProxy::removeResource(RemoteMediaResourceIdentifie
     if (auto resource = m_mediaResources.take(id))
         resource->shutdown();
 
-    completionHandler();
+    return completionHandler();
 }
 
 void RemoteMediaResourceLoaderProxy::responseReceived(RemoteMediaResourceIdentifier id, const WebCore::ResourceResponse& response, bool didPassAccessControlCheck, CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&& completionHandler)

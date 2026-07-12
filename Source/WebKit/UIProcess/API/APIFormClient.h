@@ -42,9 +42,22 @@ class FormClient {
 public:
     virtual ~FormClient() { }
 
-    virtual void willSubmitForm(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebFrameProxy&, WebKit::FrameInfoData&&, WebKit::FrameInfoData&&, const Vector<std::pair<WTF::String, WTF::String>>&, API::Object*, const WTF::URL&, const WTF::String&, CompletionHandler<void()>&& completionHandler)
+    // Enforced primary virtual. Subclasses override this and must return a
+    // CompletionHandlerCalledToken (proving the handler was called or its
+    // call was deferred to a genuine leaf, e.g. stored in a listener proxy or
+    // captured into an ObjC block). The base default calls the handler
+    // synchronously, which is itself enforced with no deferUnchecked.
+    virtual CompletionHandlerCalledToken willSubmitForm(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebFrameProxy&, WebKit::FrameInfoData&&, WebKit::FrameInfoData&&, const Vector<std::pair<WTF::String, WTF::String>>&, API::Object*, const WTF::URL&, const WTF::String&, CompletionHandler<void(), true>&& completionHandler)
     {
-        completionHandler();
+        return completionHandler();
+    }
+
+    // Free non-enforced wrapper for callers that still hold a plain
+    // CompletionHandler. Constructing the enforced handler from a non-enforced
+    // one is free and introduces no deferUnchecked.
+    void willSubmitForm(WebKit::WebPageProxy& page, WebKit::WebFrameProxy& frame, WebKit::WebFrameProxy& sourceFrame, WebKit::FrameInfoData&& frameInfoData, WebKit::FrameInfoData&& sourceFrameInfoData, const Vector<std::pair<WTF::String, WTF::String>>& textFieldValues, API::Object* userData, const WTF::URL& requestURL, const WTF::String& method, CompletionHandler<void()>&& completionHandler)
+    {
+        willSubmitForm(page, frame, sourceFrame, WTF::move(frameInfoData), WTF::move(sourceFrameInfoData), textFieldValues, userData, requestURL, method, CompletionHandler<void(), true>(WTF::move(completionHandler)));
     }
 };
 

@@ -121,7 +121,7 @@ MainFrameMainResource WebResourceLoader::mainFrameMainResource() const
     return MainFrameMainResource::Yes;
 }
 
-void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::FormDataReference&& proposedRequestBody, ResourceResponse&& redirectResponse, CompletionHandler<void(ResourceRequest&&, bool)>&& completionHandler)
+CompletionHandlerCalledToken WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::FormDataReference&& proposedRequestBody, ResourceResponse&& redirectResponse, CompletionHandler<void(ResourceRequest&&, bool), true>&& completionHandler)
 {
     Ref<WebResourceLoader> protectedThis(*this);
     RefPtr coreLoader = m_coreLoader;
@@ -139,15 +139,18 @@ void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::
         }
     }
 
-    coreLoader->willSendRequest(WTF::move(proposedRequest), redirectResponse, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (ResourceRequest&& request) mutable {
-        RefPtr coreLoader = m_coreLoader;
-        if (!m_coreLoader || !coreLoader->identifier()) {
-            WEBRESOURCELOADER_RELEASE_LOG(WebResourceLoaderWillSendRequestNoCoreLoader);
-            return completionHandler({ }, false);
-        }
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return coreLoader->willSendRequest(WTF::move(proposedRequest), redirectResponse,
+            CompletionHandler<void(ResourceRequest&&), true>([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](ResourceRequest&& request) mutable -> CompletionHandlerCalledToken {
+                RefPtr coreLoader = m_coreLoader;
+                if (!m_coreLoader || !coreLoader->identifier()) {
+                    WEBRESOURCELOADER_RELEASE_LOG(WebResourceLoaderWillSendRequestNoCoreLoader);
+                    return completionHandler({ }, false);
+                }
 
-        WEBRESOURCELOADER_RELEASE_LOG(WebResourceLoaderWillSendRequestContinue);
-        completionHandler(WTF::move(request), coreLoader->isAllowedToAskUserForCredentials());
+                WEBRESOURCELOADER_RELEASE_LOG(WebResourceLoaderWillSendRequestContinue);
+                return completionHandler(WTF::move(request), coreLoader->isAllowedToAskUserForCredentials());
+            }));
     });
 }
 

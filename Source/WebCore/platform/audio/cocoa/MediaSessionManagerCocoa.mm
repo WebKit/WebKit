@@ -277,7 +277,7 @@ void MediaSessionManagerCocoa::scheduleSessionStatusUpdate()
 
 void MediaSessionManagerCocoa::sessionWillBeginPlayback(PlatformMediaSessionInterface& session, CompletionHandler<void(bool)>&& completionHandler)
 {
-    PlatformMediaSessionManager::sessionWillBeginPlayback(session, [weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTF::move(completionHandler)](bool willBegin) mutable {
+    PlatformMediaSessionManager::sessionWillBeginPlayback(session, CompletionHandler<void(bool)>([weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTF::move(completionHandler)](bool willBegin) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !willBegin) {
             completionHandler(false);
@@ -286,7 +286,7 @@ void MediaSessionManagerCocoa::sessionWillBeginPlayback(PlatformMediaSessionInte
 
         protectedThis->scheduleSessionStatusUpdate();
         completionHandler(true);
-    });
+    }));
 }
 
 void MediaSessionManagerCocoa::sessionDidEndRemoteScrubbing(PlatformMediaSessionInterface&)

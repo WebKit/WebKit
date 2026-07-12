@@ -84,14 +84,14 @@ NetworkSocketChannel::~NetworkSocketChannel()
     }
 }
 
-void NetworkSocketChannel::sendString(std::span<const uint8_t> message, CompletionHandler<void()>&& callback)
+CompletionHandlerCalledToken NetworkSocketChannel::sendString(std::span<const uint8_t> message, CompletionHandler<void(), true>&& callback)
 {
-    protect(m_socket)->sendString(message, WTF::move(callback));
+    return protect(m_socket)->sendString(message, WTF::move(callback));
 }
 
-void NetworkSocketChannel::sendData(std::span<const uint8_t> data, CompletionHandler<void()>&& callback)
+CompletionHandlerCalledToken NetworkSocketChannel::sendData(std::span<const uint8_t> data, CompletionHandler<void(), true>&& callback)
 {
-    protect(m_socket)->sendData(data, WTF::move(callback));
+    return protect(m_socket)->sendData(data, WTF::move(callback));
 }
 
 void NetworkSocketChannel::finishClosingIfPossible()

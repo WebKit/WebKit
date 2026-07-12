@@ -47,6 +47,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMPrivate);
 CDMPrivate::CDMPrivate() = default;
 CDMPrivate::~CDMPrivate() = default;
 
+CompletionHandlerCalledToken CDMPrivate::getSupportedConfiguration(CDMKeySystemConfiguration&& candidateConfiguration, LocalStorageAccess access, CompletionHandler<void(std::optional<CDMKeySystemConfiguration>), true>&& handler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+        getSupportedConfiguration(WTF::move(candidateConfiguration), access, SupportedConfigurationCallback(WTF::move(handler)));
+        return WTF::move(deferred);
+    });
+}
+
 void CDMPrivate::getSupportedConfiguration(CDMKeySystemConfiguration&& candidateConfiguration, LocalStorageAccess access, SupportedConfigurationCallback&& callback)
 {
     // https://w3c.github.io/encrypted-media/#get-supported-configuration

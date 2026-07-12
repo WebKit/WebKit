@@ -32,6 +32,7 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/SystemPreviewInfo.h>
 #include <wtf/BlockPtr.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -63,6 +64,7 @@ public:
     bool canPreview(const String& mimeType) const;
 
     void begin(const URL&, const WebCore::SecurityOriginData& topOrigin, const WebCore::SystemPreviewInfo&, CompletionHandler<void()>&&);
+    CompletionHandlerCalledToken begin(const URL&, const WebCore::SecurityOriginData& topOrigin, const WebCore::SystemPreviewInfo&, CompletionHandler<void(), true>&&);
     void updateProgress(float);
     void loadStarted(const URL& localFileURL);
     void loadCompleted(const URL& localFileURL);

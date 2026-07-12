@@ -84,8 +84,8 @@ public:
     void willExitFullScreen(CompletionHandler<void()>&&);
     void didExitFullScreen(CompletionHandler<void()>&&);
 
-    void enterFullScreenForOwnerElements(WebCore::FrameIdentifier, CompletionHandler<void()>&&);
-    void exitFullScreenInMainFrame(CompletionHandler<void()>&&);
+    CompletionHandlerCalledToken enterFullScreenForOwnerElements(WebCore::FrameIdentifier, CompletionHandler<void(), true>&&);
+    CompletionHandlerCalledToken exitFullScreenInMainFrame(CompletionHandler<void(), true>&&);
 
     WebCore::Element* NODELETE element();
 
@@ -100,7 +100,7 @@ protected:
 
     void willEnterFullScreen(WebCore::Element&, CompletionHandler<void(WebCore::ExceptionOr<void>)>&&, CompletionHandler<bool(bool)>&&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode = WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard);
     void setAnimatingFullScreen(bool);
-    void requestRestoreFullScreen(CompletionHandler<void(bool)>&&);
+    CompletionHandlerCalledToken requestRestoreFullScreen(CompletionHandler<void(bool), true>&&);
     void requestExitFullScreen();
     void setFullscreenInsets(const WebCore::FloatBoxExtent&);
     void setFullscreenAutoHideDuration(Seconds);

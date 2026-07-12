@@ -141,6 +141,14 @@ void InspectorFrontendAPIDispatcher::dispatchCommandWithResultAsync(const String
     evaluateOrQueueExpression(expressionForEvaluatingCommand(command, WTF::move(arguments)), WTF::move(resultHandler));
 }
 
+CompletionHandlerCalledToken InspectorFrontendAPIDispatcher::dispatchCommandWithResultAsync(const String& command, Vector<Ref<JSON::Value>>&& arguments, CompletionHandler<void(EvaluationResult), true>&& handler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+        dispatchCommandWithResultAsync(command, WTF::move(arguments), EvaluationResultHandler(WTF::move(handler)));
+        return deferred;
+    });
+}
+
 void InspectorFrontendAPIDispatcher::dispatchMessageAsync(const String& message)
 {
     evaluateOrQueueExpression(makeString("InspectorFrontendAPI.dispatchMessageAsync("_s, message, ')'));

@@ -59,10 +59,10 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // MessageReceivers.
-    void seekSessionToTime(double, CompletionHandler<void(bool)>&&);
-    void playSession(std::optional<double>, std::optional<MonotonicTime>, CompletionHandler<void(bool)>&&);
-    void pauseSession(CompletionHandler<void(bool)>&&);
-    void setSessionTrack(const String&, CompletionHandler<void(bool)>&&);
+    CompletionHandlerCalledToken seekSessionToTime(double, CompletionHandler<void(bool), true>&&);
+    CompletionHandlerCalledToken playSession(std::optional<double>, std::optional<MonotonicTime>, CompletionHandler<void(bool), true>&&);
+    CompletionHandlerCalledToken pauseSession(CompletionHandler<void(bool), true>&&);
+    CompletionHandlerCalledToken setSessionTrack(const String&, CompletionHandler<void(bool), true>&&);
     void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState);
 
     // MediaSessionCoordinatorPrivate overrides.

@@ -116,10 +116,25 @@ public:
     using AsyncReplyID = IPC::Connection::AsyncReplyID;
     template<typename T, typename C> std::optional<AsyncReplyID> sendWithAsyncReply(T&&, C&&, uint64_t destinationID = 0, OptionSet<IPC::SendOption> = { }, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
 
+    template<typename T, typename Sig>
+    CompletionHandlerCalledToken sendWithAsyncReply(T&& message, CompletionHandler<Sig, true>&& completionHandler, uint64_t destinationID = 0, OptionSet<IPC::SendOption> sendOptions = { }, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes)
+    {
+        return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+            sendWithAsyncReply(std::forward<T>(message), CompletionHandler<Sig>(WTF::move(completionHandler)), destinationID, sendOptions, shouldStartProcessThrottlerActivity);
+            return deferred;
+        });
+    }
+
     template<typename T, typename C, typename RawValue>
     std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, const ObjectIdentifierGenericBase<RawValue>& destinationID, OptionSet<IPC::SendOption> sendOptions = { }, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes)
     {
         return sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), destinationID.toUInt64(), sendOptions, shouldStartProcessThrottlerActivity);
+    }
+
+    template<typename T, typename Sig, typename RawValue>
+    CompletionHandlerCalledToken sendWithAsyncReply(T&& message, CompletionHandler<Sig, true>&& completionHandler, const ObjectIdentifierGenericBase<RawValue>& destinationID, OptionSet<IPC::SendOption> sendOptions = { }, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes)
+    {
+        return sendWithAsyncReply(std::forward<T>(message), WTF::move(completionHandler), destinationID.toUInt64(), sendOptions, shouldStartProcessThrottlerActivity);
     }
 
     // Like sendWithAsyncReply(), but the reply is dispatched on the provided dispatcher (e.g. a WorkQueue) instead of the

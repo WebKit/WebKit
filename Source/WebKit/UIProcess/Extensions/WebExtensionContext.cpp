@@ -1571,9 +1571,9 @@ void WebExtensionContext::handleContentRuleListMatchedRule(WebExtensionTab& tab,
     if (!(hasPermission(WebExtensionPermission::declarativeNetRequestFeedback()) && hasPermission(WebExtensionPermission::declarativeNetRequest()) && hasPermission(URL { matchedRule.request.url }, &tab)))
         return;
 
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ WebExtensionEventListenerType::DeclarativeNetRequestOnRuleMatchedDebug }, [=, this, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ WebExtensionEventListenerType::DeclarativeNetRequestOnRuleMatchedDebug }, Function<void()>([=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(WebExtensionEventListenerType::DeclarativeNetRequestOnRuleMatchedDebug, Messages::WebExtensionContextProxy::DispatchOnRuleMatchedDebugEvent(matchedRule));
-    });
+    }));
 }
 #endif
 
@@ -1792,10 +1792,10 @@ void WebExtensionContext::loadBackgroundContent(CompletionHandler<void(RefPtr<AP
         return;
     }
 
-    wakeUpBackgroundContentIfNecessary([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
+    wakeUpBackgroundContentIfNecessary(Function<void()>([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
         if (completionHandler)
             completionHandler(backgroundContentLoadError());
-    });
+    }));
 }
 
 void WebExtensionContext::loadBackgroundWebViewDuringLoad()
@@ -1865,6 +1865,12 @@ void WebExtensionContext::wakeUpBackgroundContentIfNecessary(Function<void()>&& 
     loadBackgroundWebViewIfNeeded();
 }
 
+CompletionHandlerCalledToken WebExtensionContext::wakeUpBackgroundContentIfNecessary(Function<CompletionHandlerCalledToken()>&& completionHandler)
+{
+    wakeUpBackgroundContentIfNecessary(Function<void()>(WTF::move(completionHandler)));
+    return CompletionHandlerCalledToken::forNullHandler();
+}
+
 void WebExtensionContext::wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet&& types, Function<void()>&& completionHandler)
 {
     RefPtr extension = m_extension;
@@ -1895,6 +1901,12 @@ void WebExtensionContext::wakeUpBackgroundContentIfNecessaryToFireEvents(EventLi
     }
 
     wakeUpBackgroundContentIfNecessary(WTF::move(completionHandler));
+}
+
+CompletionHandlerCalledToken WebExtensionContext::wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet&& types, Function<CompletionHandlerCalledToken()>&& completionHandler)
+{
+    wakeUpBackgroundContentIfNecessaryToFireEvents(WTF::move(types), Function<void()>(WTF::move(completionHandler)));
+    return CompletionHandlerCalledToken::forNullHandler();
 }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)

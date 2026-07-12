@@ -488,6 +488,14 @@ void ResourceLoader::willSendRequest(ResourceRequest&& request, const ResourceRe
     willSendRequestInternal(WTF::move(request), redirectResponse, WTF::move(completionHandler));
 }
 
+CompletionHandlerCalledToken ResourceLoader::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&), true>&& handler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+        willSendRequest(WTF::move(request), redirectResponse, CompletionHandler<void(ResourceRequest&&)>(WTF::move(handler)));
+        return WTF::move(deferred);
+    });
+}
+
 void ResourceLoader::didSendData(unsigned long long, unsigned long long)
 {
 }

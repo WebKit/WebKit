@@ -199,7 +199,7 @@ public:
     // The default implementation of didLoadingProgressAsync is implemented in terms of
     // synchronous didLoadingProgress() calls. Implementations may also
     // override didLoadingProgressAsync to create a more proper async implementation.
-    virtual void didLoadingProgressAsync(MediaPlayer::DidLoadingProgressCompletionHandler&& callback) const { callback(didLoadingProgress()); }
+    virtual CompletionHandlerCalledToken didLoadingProgressAsync(CompletionHandler<void(bool), true>&& callback) const { return callback(didLoadingProgress()); }
 
     virtual void setPresentationSize(const IntSize&) { }
 

@@ -106,42 +106,61 @@ void SWServerWorker::updateAppInitiatedValue(LastNavigationWasAppInitiated lastN
 
 void SWServerWorker::terminate(CompletionHandler<void()>&& callback)
 {
+    terminate(CompletionHandler<void(), true>(WTF::move(callback)));
+}
+
+CompletionHandlerCalledToken SWServerWorker::terminate(CompletionHandler<void(), true>&& callback)
+{
     if (!m_server)
         return callback();
 
     switch (m_state) {
     case State::Running:
-        startTermination(WTF::move(callback));
-        return;
+        return startTermination(WTF::move(callback));
     case State::Terminating:
-        m_terminationCallbacks.append(WTF::move(callback));
-        return;
+        return appendTerminationCallback(WTF::move(callback));
     case State::NotRunning:
         return callback();
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void SWServerWorker::whenTerminated(CompletionHandler<void()>&& callback)
 {
-    ASSERT(isRunning() || isTerminating());
-    m_terminationCallbacks.append(WTF::move(callback));
+    whenTerminated(CompletionHandler<void(), true>(WTF::move(callback)));
 }
 
-void SWServerWorker::startTermination(CompletionHandler<void()>&& callback)
+CompletionHandlerCalledToken SWServerWorker::whenTerminated(CompletionHandler<void(), true>&& callback)
+{
+    ASSERT(isRunning() || isTerminating());
+    return appendTerminationCallback(WTF::move(callback));
+}
+
+// Genuine leaf: the handler is stored in m_terminationCallbacks for later multi-dispatch
+// in callTerminationCallbacks(). The single deferUnchecked for this leaf lives here.
+CompletionHandlerCalledToken SWServerWorker::appendTerminationCallback(CompletionHandler<void(), true>&& callback)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(callback, [&](auto& callback, auto deferred) -> CompletionHandlerCalledToken {
+        m_terminationCallbacks.append(WTF::move(callback));
+        return WTF::move(deferred);
+    });
+}
+
+CompletionHandlerCalledToken SWServerWorker::startTermination(CompletionHandler<void(), true>&& callback)
 {
     RefPtr contextConnection = this->contextConnection();
     ASSERT(contextConnection);
     if (!contextConnection) {
         RELEASE_LOG_ERROR(ServiceWorker, "Request to terminate a worker %" PRIu64 " whose context connection does not exist", identifier().toUInt64());
         setState(State::NotRunning);
-        callback();
+        auto token = callback();
         protect(*server())->workerContextTerminated(*this);
-        return;
+        return token;
     }
 
     setState(State::Terminating);
 
-    m_terminationCallbacks.append(WTF::move(callback));
+    auto token = appendTerminationCallback(WTF::move(callback));
 
     constexpr Seconds terminationDelayForTesting = 1_s;
     RefPtr server = m_server;
@@ -150,6 +169,8 @@ void SWServerWorker::startTermination(CompletionHandler<void()>&& callback)
     m_terminationIfPossibleTimer.stop();
 
     contextConnection->terminateWorker(identifier());
+
+    return token;
 }
 
 void SWServerWorker::terminationCompleted()
@@ -162,7 +183,7 @@ void SWServerWorker::callTerminationCallbacks()
 {
     auto callbacks = WTF::move(m_terminationCallbacks);
     for (auto& callback : callbacks)
-        callback();
+        (void)callback();
 }
 
 void SWServerWorker::terminationTimerFired()

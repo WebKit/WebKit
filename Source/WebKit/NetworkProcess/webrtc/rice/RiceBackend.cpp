@@ -213,7 +213,7 @@ struct ResolveAddressDataInner {
 };
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(ResolveAddressDataInner);
 
-void RiceBackend::resolveAddress(const String& address, CompletionHandler<void(Expected<String, WebCore::ExceptionData>&&)>&& completionHandler)
+CompletionHandlerCalledToken RiceBackend::resolveAddress(const String& address, CompletionHandler<void(Expected<String, WebCore::ExceptionData>&&), true>&& completionHandler)
 {
     auto data = createResolveAddressData();
     data->resolver = adoptGRef(g_resolver_get_default());

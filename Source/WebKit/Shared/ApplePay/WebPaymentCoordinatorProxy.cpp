@@ -70,18 +70,22 @@ void WebPaymentCoordinatorProxy::canMakePayments(CompletionHandler<void(bool)>&&
     platformCanMakePayments(WTF::move(reply));
 }
 
-void WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool), true>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(!merchantIdentifier.isNull(), completionHandler(false));
     MESSAGE_CHECK_COMPLETION(!domainName.isNull(), completionHandler(false));
-    platformCanMakePaymentsWithActiveCard(merchantIdentifier, domainName, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return platformCanMakePaymentsWithActiveCard(merchantIdentifier, domainName, WTF::move(completionHandler));
+    });
 }
 
-void WebPaymentCoordinatorProxy::openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken WebPaymentCoordinatorProxy::openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool), true>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(!merchantIdentifier.isNull(), completionHandler(false));
     MESSAGE_CHECK_COMPLETION(!domainName.isNull(), completionHandler(false));
-    platformOpenPaymentSetup(merchantIdentifier, domainName, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return platformOpenPaymentSetup(merchantIdentifier, domainName, WTF::move(completionHandler));
+    });
 }
 
 void WebPaymentCoordinatorProxy::showPaymentUI(WebCore::PageIdentifier destinationID, WebPageProxyIdentifier webPageProxyID, const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest, CompletionHandler<void(bool)>&& completionHandler)

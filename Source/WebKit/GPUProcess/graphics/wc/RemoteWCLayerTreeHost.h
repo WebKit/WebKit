@@ -52,7 +52,7 @@ public:
     static Ref<RemoteWCLayerTreeHost> create(GPUConnectionToWebProcess&, WebKit::WCLayerTreeHostIdentifier, uint64_t nativeWindow, bool usesOffscreenRendering);
     ~RemoteWCLayerTreeHost();
     // message handlers
-    void update(WCUpdateInfo&&, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&&);
+    CompletionHandlerCalledToken update(WCUpdateInfo&&, CompletionHandler<void(std::optional<WebKit::UpdateInfo>), true>&&);
 
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

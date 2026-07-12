@@ -65,9 +65,9 @@ std::optional<SharedPreferencesForWebProcess> WebScreenOrientationManagerProxy::
     return WebProcessProxy::fromConnection(connection)->sharedPreferencesForWebProcess();
 }
 
-void WebScreenOrientationManagerProxy::currentOrientation(CompletionHandler<void(WebCore::ScreenOrientationType)>&& completionHandler)
+CompletionHandlerCalledToken WebScreenOrientationManagerProxy::currentOrientation(CompletionHandler<void(WebCore::ScreenOrientationType), true>&& completionHandler)
 {
-    completionHandler(m_currentOrientation);
+    return completionHandler(m_currentOrientation);
 }
 
 void WebScreenOrientationManagerProxy::setCurrentOrientation(WebCore::ScreenOrientationType orientation)
@@ -87,7 +87,7 @@ void WebScreenOrientationManagerProxy::setCurrentOrientation(WebCore::ScreenOrie
     });
 
     if (m_currentLockRequest)
-        m_currentLockRequest(std::nullopt);
+        (void)m_currentLockRequest(std::nullopt);
 }
 
 SUPPRESS_NODELETE static WebCore::ScreenOrientationType NODELETE resolveScreenOrientationLockType(WebCore::ScreenOrientationType currentOrientation, WebCore::ScreenOrientationLockType lockType)
@@ -121,40 +121,41 @@ SUPPRESS_NODELETE static WebCore::ScreenOrientationType NODELETE resolveScreenOr
     return WebCore::ScreenOrientationType::PortraitPrimary;
 }
 
-void WebScreenOrientationManagerProxy::lock(WebCore::ScreenOrientationLockType lockType, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebScreenOrientationManagerProxy::lock(WebCore::ScreenOrientationLockType lockType, CompletionHandler<void(std::optional<WebCore::Exception>&&), true>&& completionHandler)
 {
     if (m_currentLockRequest)
-        m_currentLockRequest(WebCore::Exception { WebCore::ExceptionCode::AbortError, "A new lock request was started"_s });
+        (void)m_currentLockRequest(WebCore::Exception { WebCore::ExceptionCode::AbortError, "A new lock request was started"_s });
 
-    if (auto exception = platformShouldRejectLockRequest()) {
-        completionHandler(*exception);
-        return;
-    }
+    if (auto exception = platformShouldRejectLockRequest())
+        return completionHandler(*exception);
 
-    m_currentLockRequest = WTF::move(completionHandler);
-    auto resolvedLockedOrientation = resolveScreenOrientationLockType(m_currentOrientation, lockType);
-    bool shouldOrientationChange = m_currentOrientation != resolvedLockedOrientation;
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        m_currentLockRequest = WTF::move(completionHandler);
+        auto resolvedLockedOrientation = resolveScreenOrientationLockType(m_currentOrientation, lockType);
+        bool shouldOrientationChange = m_currentOrientation != resolvedLockedOrientation;
 
-    if (resolvedLockedOrientation != m_currentlyLockedOrientation) {
-        bool didLockOrientation = false;
-        Ref page = m_page.get();
+        if (resolvedLockedOrientation != m_currentlyLockedOrientation) {
+            bool didLockOrientation = false;
+            Ref page = m_page.get();
 #if ENABLE(FULLSCREEN_API)
-        if (CheckedPtr fullscreenManager = page->fullScreenManager(); fullscreenManager && fullscreenManager->isFullScreen()) {
-            if (!fullscreenManager->lockFullscreenOrientation(resolvedLockedOrientation)) {
-                m_currentLockRequest(WebCore::Exception { WebCore::ExceptionCode::NotSupportedError, "Screen orientation locking is not supported"_s });
-                return;
+            if (CheckedPtr fullscreenManager = page->fullScreenManager(); fullscreenManager && fullscreenManager->isFullScreen()) {
+                if (!fullscreenManager->lockFullscreenOrientation(resolvedLockedOrientation)) {
+                    (void)m_currentLockRequest(WebCore::Exception { WebCore::ExceptionCode::NotSupportedError, "Screen orientation locking is not supported"_s });
+                    return WTF::move(deferred);
+                }
+                didLockOrientation = true;
             }
-            didLockOrientation = true;
-        }
 #endif
-        if (!didLockOrientation && !page->uiClient().lockScreenOrientation(page, resolvedLockedOrientation)) {
-            m_currentLockRequest(WebCore::Exception { WebCore::ExceptionCode::NotSupportedError, "Screen orientation locking is not supported"_s });
-            return;
+            if (!didLockOrientation && !page->uiClient().lockScreenOrientation(page, resolvedLockedOrientation)) {
+                (void)m_currentLockRequest(WebCore::Exception { WebCore::ExceptionCode::NotSupportedError, "Screen orientation locking is not supported"_s });
+                return WTF::move(deferred);
+            }
         }
-    }
-    m_currentlyLockedOrientation = resolvedLockedOrientation;
-    if (!shouldOrientationChange)
-        m_currentLockRequest(std::nullopt);
+        m_currentlyLockedOrientation = resolvedLockedOrientation;
+        if (!shouldOrientationChange)
+            (void)m_currentLockRequest(std::nullopt);
+        return WTF::move(deferred);
+    });
 }
 
 void WebScreenOrientationManagerProxy::unlock()
@@ -163,7 +164,7 @@ void WebScreenOrientationManagerProxy::unlock()
         return;
 
     if (m_currentLockRequest)
-        m_currentLockRequest(WebCore::Exception { WebCore::ExceptionCode::AbortError, "Unlock request was received"_s });
+        (void)m_currentLockRequest(WebCore::Exception { WebCore::ExceptionCode::AbortError, "Unlock request was received"_s });
 
     bool didUnlockOrientation = false;
     Ref page = m_page.get();
@@ -189,7 +190,7 @@ void WebScreenOrientationManagerProxy::unlockIfNecessary()
     if (m_currentlyLockedOrientation)
         unlock();
     if (m_currentLockRequest)
-        m_currentLockRequest(WebCore::Exception { WebCore::ExceptionCode::AbortError, "Screen lock request was aborted"_s });
+        (void)m_currentLockRequest(WebCore::Exception { WebCore::ExceptionCode::AbortError, "Screen lock request was aborted"_s });
 }
 
 #if !PLATFORM(IOS_FAMILY)

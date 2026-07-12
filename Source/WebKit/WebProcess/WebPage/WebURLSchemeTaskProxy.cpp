@@ -122,7 +122,7 @@ void WebURLSchemeTaskProxy::didPerformRedirection(WebCore::ResourceResponse&& re
         processNextPendingTask();
     };
 
-    loader->willSendRequest(WTF::move(request), redirectResponse, WTF::move(innerCompletionHandler));
+    loader->willSendRequest(WTF::move(request), redirectResponse, CompletionHandler<void(ResourceRequest&&)>(WTF::move(innerCompletionHandler)));
 }
 
 void WebURLSchemeTaskProxy::didReceiveResponse(ResourceResponse&& response)

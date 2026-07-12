@@ -117,7 +117,7 @@ private:
 #endif
 
 #if PLATFORM(VISION) && ENABLE(GPU_PROCESS)
-    void requestSharedSimulationConnection(WebCore::ProcessIdentifier, CompletionHandler<void(std::optional<IPC::SharedFileHandle>)>&&);
+    CompletionHandlerCalledToken requestSharedSimulationConnection(WebCore::ProcessIdentifier, CompletionHandler<void(std::optional<IPC::SharedFileHandle>), true>&&);
 #endif
 
 #if PLATFORM(COCOA)

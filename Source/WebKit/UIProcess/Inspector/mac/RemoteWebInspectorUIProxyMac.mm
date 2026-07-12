@@ -180,25 +180,27 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::Sav
     });
 }
 
-void RemoteWebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
+CompletionHandlerCalledToken RemoteWebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<void(const String&), true>&& completionHandler)
 {
     if (auto contents = FileSystem::readEntireFile(path))
-        completionHandler(String::fromUTF8ReplacingInvalidSequences(byteCast<Latin1Character>(contents->span())));
-    else
-        completionHandler(nullString());
+        return completionHandler(String::fromUTF8ReplacingInvalidSequences(byteCast<Latin1Character>(contents->span())));
+    return completionHandler(nullString());
 }
 
-void RemoteWebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
+CompletionHandlerCalledToken RemoteWebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&), true>&& completionHandler)
 {
-    auto sampler = adoptNS([[NSColorSampler alloc] init]);
-    [sampler.get() showSamplerWithSelectionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSColor *selectedColor) mutable {
-        if (!selectedColor) {
-            completionHandler(std::nullopt);
-            return;
-        }
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        RetainPtr sampler = adoptNS([[NSColorSampler alloc] init]);
+        [sampler.get() showSamplerWithSelectionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSColor *selectedColor) mutable {
+            if (!selectedColor) {
+                completionHandler(std::nullopt);
+                return;
+            }
 
-        completionHandler(Color::createAndPreserveColorSpace(RetainPtr { selectedColor.CGColor }.get()));
-    }).get()];
+            completionHandler(Color::createAndPreserveColorSpace(RetainPtr { selectedColor.CGColor }.get()));
+        }).get()];
+        return WTF::move(deferred);
+    });
 }
 
 void RemoteWebInspectorUIProxy::platformSetSheetRect(const FloatRect& rect)

@@ -64,13 +64,13 @@ public:
 
     virtual void closeFullScreenManager() = 0;
     virtual bool isFullScreen() = 0;
-    virtual void enterFullScreen(WebCore::FloatSize mediaDimensions, CompletionHandler<void(bool)>&&) = 0;
+    virtual CompletionHandlerCalledToken enterFullScreen(WebCore::FloatSize mediaDimensions, CompletionHandler<void(bool), true>&&) = 0;
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     virtual void updateImageSource() = 0;
 #endif
-    virtual void exitFullScreen(CompletionHandler<void()>&&) = 0;
-    virtual void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void(bool)>&&) = 0;
-    virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void()>&&) = 0;
+    virtual CompletionHandlerCalledToken exitFullScreen(CompletionHandler<void(), true>&&) = 0;
+    virtual CompletionHandlerCalledToken beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void(bool), true>&&) = 0;
+    virtual CompletionHandlerCalledToken beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void(), true>&&) = 0;
     virtual WebCore::IntRect convertMainFrameCoordinatesInFullscreenPlaceholderViewToScreen(WebPageProxy&, WebCore::IntRect) const;
 
     virtual bool lockFullscreenOrientation(WebCore::ScreenOrientationType) { return false; }

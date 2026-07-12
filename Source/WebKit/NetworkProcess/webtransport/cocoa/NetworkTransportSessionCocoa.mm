@@ -373,20 +373,20 @@ void NetworkTransportSession::initialize(CompletionHandler<void(std::optional<We
     setupDatagramConnection([](std::optional<WebCore::WebTransportConnectionInfo>&&) { });
 }
 
-void NetworkTransportSession::createBidirectionalStream(CompletionHandler<void(std::optional<WebCore::WebTransportStreamIdentifier>)>&& completionHandler)
+CompletionHandlerCalledToken NetworkTransportSession::createBidirectionalStream(CompletionHandler<void(std::optional<WebCore::WebTransportStreamIdentifier>), true>&& completionHandler)
 {
-    createStream(NetworkTransportStreamType::Bidirectional, WTF::move(completionHandler));
+    return createStream(NetworkTransportStreamType::Bidirectional, WTF::move(completionHandler));
 }
 
-void NetworkTransportSession::getStats(CompletionHandler<void(WebCore::WebTransportConnectionStats&&)>&& completionHandler)
+CompletionHandlerCalledToken NetworkTransportSession::getStats(CompletionHandler<void(WebCore::WebTransportConnectionStats&&), true>&& completionHandler)
 {
     // FIXME: Implement.
-    completionHandler({ });
+    return completionHandler({ });
 }
 
-void NetworkTransportSession::createOutgoingUnidirectionalStream(CompletionHandler<void(std::optional<WebCore::WebTransportStreamIdentifier>)>&& completionHandler)
+CompletionHandlerCalledToken NetworkTransportSession::createOutgoingUnidirectionalStream(CompletionHandler<void(std::optional<WebCore::WebTransportStreamIdentifier>), true>&& completionHandler)
 {
-    createStream(NetworkTransportStreamType::OutgoingUnidirectional, WTF::move(completionHandler));
+    return createStream(NetworkTransportStreamType::OutgoingUnidirectional, WTF::move(completionHandler));
 }
 
 void NetworkTransportSession::setupDatagramConnection(CompletionHandler<void(std::optional<WebCore::WebTransportConnectionInfo>&&)>&& completionHandler)
@@ -445,24 +445,28 @@ void NetworkTransportSession::setupDatagramConnection(CompletionHandler<void(std
     receiveDatagramLoop();
 }
 
-void NetworkTransportSession::sendDatagram(std::optional<WebCore::WebTransportSendGroupIdentifier> identifier, std::span<const uint8_t> data, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
+CompletionHandlerCalledToken NetworkTransportSession::sendDatagram(std::optional<WebCore::WebTransportSendGroupIdentifier> identifier, std::span<const uint8_t> data, CompletionHandler<void(std::optional<WebCore::Exception>&&), true>&& completionHandler)
 {
-    if (identifier) {
-        m_datagramStats.ensure(*identifier, [] {
-            return uint64_t { };
-        }).iterator->value += data.size();
-    }
-    ASSERT(m_datagramConnection);
-    nw_connection_send(m_datagramConnection.get(), makeDispatchData(Vector(data)).get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, makeBlockPtr([completionHandler = WTF::move(completionHandler)] (nw_error_t error) mutable {
-        if (error) {
-            if (nw_error_get_error_domain(error) == nw_error_domain_posix && nw_error_get_error_code(error) == ECANCELED)
-                completionHandler(std::nullopt);
-            else
-                completionHandler(WebCore::Exception(WebCore::ExceptionCode::NetworkError));
-            return;
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        if (identifier) {
+            m_datagramStats.ensure(*identifier, [] {
+                return uint64_t { };
+            }).iterator->value += data.size();
         }
-        completionHandler(std::nullopt);
-    }).get());
+        ASSERT(m_datagramConnection);
+        nw_connection_send(m_datagramConnection.get(), makeDispatchData(Vector(data)).get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, makeBlockPtr([completionHandler = WTF::move(completionHandler)] (nw_error_t error) mutable {
+            if (error) {
+                if (nw_error_get_error_domain(error) == nw_error_domain_posix && nw_error_get_error_code(error) == ECANCELED)
+                    completionHandler(std::nullopt);
+                else
+                    completionHandler(WebCore::Exception(WebCore::ExceptionCode::NetworkError));
+                return;
+            }
+            completionHandler(std::nullopt);
+        }).get());
+        return WTF::move(deferred);
+    });
+
 }
 
 void NetworkTransportSession::setupConnectionHandler()
@@ -497,6 +501,11 @@ void NetworkTransportSession::setupConnectionHandler()
 
 void NetworkTransportSession::createStream(NetworkTransportStreamType streamType, CompletionHandler<void(std::optional<WebCore::WebTransportStreamIdentifier>)>&& completionHandler)
 {
+    createStream(streamType, CompletionHandler<void(std::optional<WebCore::WebTransportStreamIdentifier>), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken NetworkTransportSession::createStream(NetworkTransportStreamType streamType, CompletionHandler<void(std::optional<WebCore::WebTransportStreamIdentifier>), true>&& completionHandler)
+{
     if (!canLoad_Network_nw_webtransport_create_options())
         return completionHandler(std::nullopt);
 
@@ -519,15 +528,23 @@ void NetworkTransportSession::createStream(NetworkTransportStreamType streamType
     auto identifier = stream->identifier();
     ASSERT(!m_streams.contains(identifier));
     m_streams.set(identifier, stream.copyRef());
-    stream->start([weakThis = WeakPtr { *this }, identifier, completionHandler = WTF::move(completionHandler)] (std::optional<NetworkTransportStreamType> streamType) mutable {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
-            return completionHandler(std::nullopt);
-        if (!streamType) {
-            protectedThis->destroyStream(identifier, std::nullopt);
-            return completionHandler(std::nullopt);
-        }
-        completionHandler(identifier);
+    // The handler is captured into a NetworkTransportStreamReadyHandler stored by the
+    // stream until it becomes ready, so this is a genuine leaf.
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        stream->start([weakThis = WeakPtr { *this }, identifier, completionHandler = WTF::move(completionHandler)] (std::optional<NetworkTransportStreamType> streamType) mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis) {
+                completionHandler(std::nullopt);
+                return;
+            }
+            if (!streamType) {
+                protectedThis->destroyStream(identifier, std::nullopt);
+                completionHandler(std::nullopt);
+                return;
+            }
+            completionHandler(identifier);
+        });
+        return WTF::move(deferred);
     });
 }
 

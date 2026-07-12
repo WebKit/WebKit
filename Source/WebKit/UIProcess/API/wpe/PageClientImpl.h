@@ -78,6 +78,7 @@ public:
 #endif
 
     void sendMessageToWebView(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&);
+    CompletionHandlerCalledToken sendMessageToWebView(UserMessage&&, CompletionHandler<void(UserMessage&&), true>&&);
     void setInputMethodState(std::optional<InputMethodState>&&);
     void callAfterNextPresentationUpdate(CompletionHandler<void()>&&);
 

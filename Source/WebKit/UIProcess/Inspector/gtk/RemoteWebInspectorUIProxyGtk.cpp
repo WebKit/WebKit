@@ -162,14 +162,14 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::Sav
         G_FILE_CREATE_REPLACE_DESTINATION, nullptr, remoteFileReplaceContentsCallback, protect(m_inspectorPage).get());
 }
 
-void RemoteWebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler)
+CompletionHandlerCalledToken RemoteWebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&), true>&& completionHandler)
 {
-    completionHandler(nullString());
+    return completionHandler(nullString());
 }
 
-void RemoteWebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
+CompletionHandlerCalledToken RemoteWebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&), true>&& completionHandler)
 {
-    completionHandler({ });
+    return completionHandler({ });
 }
 
 void RemoteWebInspectorUIProxy::platformSetSheetRect(const FloatRect&)

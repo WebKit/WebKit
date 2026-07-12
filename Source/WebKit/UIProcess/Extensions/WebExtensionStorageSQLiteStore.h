@@ -47,11 +47,17 @@ public:
     virtual ~WebExtensionStorageSQLiteStore() = default;
 
     void getAllKeys(CompletionHandler<void(Vector<String> keys, const String& errorMessage)>&&);
+    CompletionHandlerCalledToken getAllKeys(CompletionHandler<void(Vector<String> keys, const String& errorMessage), true>&&);
     void getValuesForKeys(Vector<String> keys, CompletionHandler<void(HashMap<String, String> results, const String& errorMessage)>&&);
+    CompletionHandlerCalledToken getValuesForKeys(Vector<String> keys, CompletionHandler<void(HashMap<String, String> results, const String& errorMessage), true>&&);
     void getStorageSizeForKeys(Vector<String> keys, CompletionHandler<void(size_t storageSize, const String& errorMessage)>&&);
+    CompletionHandlerCalledToken getStorageSizeForKeys(Vector<String> keys, CompletionHandler<void(size_t storageSize, const String& errorMessage), true>&&);
     void getStorageSizeForAllKeys(HashMap<String, String> additionalKeyedData, CompletionHandler<void(size_t storageSize, int numberOfKeysIncludingAdditionalKeyedData, HashMap<String, String> existingKeysAndValues, const String& errorMessage)>&&);
+    CompletionHandlerCalledToken getStorageSizeForAllKeys(HashMap<String, String> additionalKeyedData, CompletionHandler<void(size_t storageSize, int numberOfKeysIncludingAdditionalKeyedData, HashMap<String, String> existingKeysAndValues, const String& errorMessage), true>&&);
     void setKeyedData(HashMap<String, String> keyedData, CompletionHandler<void(Vector<String> keysSuccessfullySet, const String& errorMessage)>&&);
+    CompletionHandlerCalledToken setKeyedData(HashMap<String, String> keyedData, CompletionHandler<void(Vector<String> keysSuccessfullySet, const String& errorMessage), true>&&);
     void deleteValuesForKeys(Vector<String> keys, CompletionHandler<void(const String& errorMessage)>&&);
+    CompletionHandlerCalledToken deleteValuesForKeys(Vector<String> keys, CompletionHandler<void(const String& errorMessage), true>&&);
 
     enum class UsesInMemoryDatabase : bool {
         No = false,

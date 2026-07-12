@@ -159,7 +159,7 @@ public:
     virtual bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone>) { return false; }
 
 #if PLATFORM(COCOA)
-    virtual void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&&) = 0;
+    virtual CompletionHandlerCalledToken updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void(), true>&&) = 0;
 #endif
 
 #if USE(GRAPHICS_LAYER_WC) || USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
@@ -170,7 +170,7 @@ public:
 #endif
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    virtual void updateGeometry(const WebCore::IntSize&, CompletionHandler<void()>&&) = 0;
+    virtual CompletionHandlerCalledToken updateGeometry(const WebCore::IntSize&, CompletionHandler<void(), true>&&) = 0;
     virtual bool enterAcceleratedCompositingModeIfNeeded() = 0;
     virtual void backgroundColorDidChange() { }
 #endif
@@ -233,7 +233,7 @@ private:
     virtual void didDiscardBackingStore() { }
 #endif
 
-    virtual void setDeviceScaleFactor(float, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
+    virtual CompletionHandlerCalledToken setDeviceScaleFactor(float, CompletionHandler<void(), true>&& completionHandler) { return completionHandler(); }
     virtual void displayDidRefresh(MonotonicTime) { }
 
     // DisplayRefreshMonitorFactory.
@@ -249,7 +249,7 @@ private:
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) { }
-    virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin, CompletionHandler<void()>&&) { }
+    virtual CompletionHandlerCalledToken commitTransientZoom(double scale, WebCore::FloatPoint origin, CompletionHandler<void(), true>&& completionHandler) { return completionHandler(); }
 #endif
 
     bool m_hasRemovedMessageReceiver { false };
