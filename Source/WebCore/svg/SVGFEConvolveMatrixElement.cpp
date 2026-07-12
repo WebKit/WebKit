@@ -70,6 +70,13 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         Ref { m_in1 }->setBaseValInternal(newValue);
         break;
     case AttributeNames::orderAttr: {
+        if (newValue.isEmpty()) {
+            // A removed or absent order attribute is valid; the spec default is 3x3.
+            m_orderX->setBaseValInternal(initialOrderValue);
+            m_orderY->setBaseValInternal(initialOrderValue);
+            m_hasInvalidOrderAttribute = false;
+            break;
+        }
         auto result = parseNumberOptionalNumber(newValue);
         if (!result || result->first < 1 || result->second < 1) {
             m_orderX->setBaseValInternal(initialOrderValue);
