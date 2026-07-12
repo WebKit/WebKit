@@ -520,8 +520,8 @@ private:
             SAFE_FPRINTF(stderr, "SequesteredImmortalHeap: initialized by thread (%u)\n", currentThreadID());
     }
 
-    void installScavenger();
-    bool scavengeImpl(void* userdata);
+    WTF_EXPORT_PRIVATE void installScavenger();
+    WTF_EXPORT_PRIVATE bool scavengeImpl(void* userdata);
 
     static void* getUnchecked()
     {

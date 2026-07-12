@@ -195,7 +195,7 @@ bool WriteReplyToFd(int fd, const std::vector<Span<const uint8_t>> &spans) {
   }
 
   uint32_t nums[1 + kMaxArgs];
-  iovec iovs[kMaxArgs + 1];
+  struct iovec iovs[kMaxArgs + 1];
   nums[0] = spans.size();
   iovs[0].iov_base = nums;
   iovs[0].iov_len = sizeof(uint32_t) * (1 + spans.size());
@@ -226,7 +226,7 @@ bool WriteReplyToFd(int fd, const std::vector<Span<const uint8_t>> &spans) {
 
     size_t written = r;
     for (size_t i = iov_done; i < num_iov && written > 0; i++) {
-      iovec &iov = iovs[i];
+      struct iovec &iov = iovs[i];
 
       size_t done = written;
       if (done > iov.iov_len) {
