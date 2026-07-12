@@ -1,0 +1,3 @@
+
+PASS Earlier-inserted scripts can observe the parentNode of later-inserted nodes, because script runs after DOM insertion completes
+

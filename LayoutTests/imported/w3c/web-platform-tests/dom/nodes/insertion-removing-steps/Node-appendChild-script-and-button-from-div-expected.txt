@@ -1,0 +1,5 @@
+
+
+FAIL Script inserted before a form-associated button can observe the button's form, because by the time the script executes, the DOM insertion that associates the button with the form is already done assert_equals: expected Element node <form id="form"><div><script>
+    buttonForm = button.for... but got null
+

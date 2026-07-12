@@ -1,0 +1,6 @@
+
+PASS Insertion steps: load event fires synchronously *after* iframe DOM insertion, as part of the iframe element's insertion steps
+FAIL Removing steps (innerHTML): script does not run synchronously during iframe destruction assert_false: iframe1 pagehide did not fire expected false got true
+FAIL Removing steps (replaceChildren): script does not run synchronously during iframe destruction assert_false: iframe1 pagehide did not fire expected false got true
+FAIL Removing steps (remove): script does not run synchronously during iframe destruction assert_false: iframe1 pagehide did not fire expected false got true
+

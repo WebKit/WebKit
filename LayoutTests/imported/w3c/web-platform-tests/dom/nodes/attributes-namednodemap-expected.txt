@@ -6,5 +6,5 @@ PASS an attribute with a null namespace should be accessible as a field on the `
 PASS an attribute with a set namespace should be accessible as a field on the `attributes` field of an Element
 PASS setting an attribute should not overwrite the methods of an `NamedNodeMap` object
 PASS setting an attribute should not overwrite the methods defined by prototype ancestors of an `NamedNodeMap` object
-PASS setting an attribute should not overwrite the the length property of an `NamedNodeMap` object
+PASS setting an attribute should not overwrite the length property of an `NamedNodeMap` object
 

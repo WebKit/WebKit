@@ -1,0 +1,16 @@
+
+
+PASS Document.createTextNode() creates a node in the target document's realm
+PASS Document.createComment() creates a node in the target document's realm
+PASS Document.createProcessingInstruction() creates a node in the target document's realm
+PASS Document.createDocumentFragment() creates a node in the target document's realm
+PASS Document.createAttribute() creates a node in the target document's realm
+PASS Document.createCDATASection() creates a node in the target document's realm
+PASS DOMImplementation.createDocumentType() creates a node in the associated document's realm
+PASS DOMImplementation.createDocument() creates the document in the target realm
+PASS DOMImplementation.createHTMLDocument() creates the document and its contents in the target realm
+PASS cloneNode() clones into the node's node document realm
+PASS importNode() imports into the target document's realm
+PASS Range.cloneContents() builds the fragment in the range's node document realm
+FAIL innerHTML parses Text and Comment nodes in the node document's realm after adoption assert_true: is a top-level-realm Text expected true got false
+

@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/CharacterData-appendChild.html
@@ -41,6 +39,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-Element-getElementsByTagName.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-Element-getElementsByTagNameNS.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-URL.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-adoptNode-DocumentFragment-with-host.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-adoptNode.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-characterSet-normalization-1.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-characterSet-normalization-2.html
@@ -144,13 +143,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-disconnect.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-document.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-inner-outer.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-nested-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-sanity.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-takeRecords.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-textContent.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-appendChild-cereactions-vs-script.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-appendChild.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-baseURI.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-childNodes-cache-2.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-childNodes-cache.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-childNodes.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-cloneNode-XMLDocument.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-cloneNode-document-allow-declarative-shadow-roots.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-cloneNode-document-with-doctype.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-cloneNode-external-stylesheet-no-bc.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-cloneNode-on-inactive-document-crash.html
@@ -213,14 +217,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Text-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Text-splitText.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Text-wholeText.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/adoption.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/append-on-Document.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/attach-shadow-realm-after-adoption.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/attributes-namednodemap-cross-document.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/attributes-namednodemap.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/attributes.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/case.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/case.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/characterset-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/create-element-realm-after-adoption.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/creators.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/encoding.py
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/getElementsByClassName-01.htm
@@ -259,20 +267,26 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/getElementsByClassName-whitespace-class-names.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/getElementsByClassNameFrame.htm
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insert-adjacent.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertBefore-iframe-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/mutationobservers.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/name-validation.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/node-appendchild-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/node-creation-realm.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/node-realm-preserved-across-adoption.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/pre-insertion-validation-hierarchy.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/pre-insertion-validation-notfound.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/prepend-on-Document.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/productions.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/query-target-in-load-event.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/query-target-in-load-event.part.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/querySelector-mixed-case.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-and-adopt-thcrash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-from-shadow-host-and-adopt-into-iframe-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-from-shadow-host-and-adopt-into-iframe-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-from-shadow-host-and-adopt-into-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-next-sibling-during-replace-with.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-unscopable.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/replaceWith-document-element-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/rootNode.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/selectors.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/svg-template-querySelector.html

@@ -1,3 +1,4 @@
 
 PASS simple append of foreign div with text
+PASS Adopting an element into a different document update's the element's owner doc as well as the owner docs of it's attributes
 text

@@ -1,0 +1,4 @@
+
+PASS A later-inserted script removed by an earlier-inserted script in the same document fragment should not run
+PASS A later-inserted script removed by an earlier-inserted script in the same append() call should not run
+

@@ -1,0 +1,4 @@
+
+PASS <input> element does not fire blur event upon DOM removal
+PASS <button> element does not fire blur/focusout events upon DOM removal
+

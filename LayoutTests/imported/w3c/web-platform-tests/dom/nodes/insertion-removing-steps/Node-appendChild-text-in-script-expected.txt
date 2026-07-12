@@ -1,0 +1,3 @@
+
+PASS Node.appendChild: inserting two text nodes in an empty script
+
