@@ -1880,9 +1880,9 @@ bool RenderFlexibleBox::hasAutoMarginsInCrossAxis(const RenderBox& flexItem) con
     return flexItem.style().marginLeft().isAuto() || flexItem.style().marginRight().isAuto();
 }
 
-LayoutUnit RenderFlexibleBox::availableAlignmentSpaceForFlexItem(LayoutUnit lineCrossAxisExtent, const RenderBox& flexItem)
+LayoutUnit RenderFlexibleBox::availableAlignmentSpaceForFlexItem(LayoutUnit lineCrossAxisExtent, const RenderBox& flexItem, LayoutUnit crossSize)
 {
-    LayoutUnit flexItemCrossExtent = crossAxisMarginExtentForFlexItem(flexItem) + crossAxisExtentForFlexItem(flexItem);
+    LayoutUnit flexItemCrossExtent = crossAxisMarginExtentForFlexItem(flexItem) + crossSize;
     return lineCrossAxisExtent - flexItemCrossExtent;
 }
 
@@ -1944,7 +1944,7 @@ bool RenderFlexibleBox::updateAutoMarginsInCrossAxis(FlexLayoutItem& flexLayoutI
     return false;
 }
 
-LayoutUnit RenderFlexibleBox::marginBoxAscentForFlexItem(const RenderBox& flexItem)
+LayoutUnit RenderFlexibleBox::marginBoxAscentForFlexItem(const RenderBox& flexItem, LayoutUnit crossSize)
 {
     auto isHorizontalFlow = this->isHorizontalFlow();
     auto direction = isHorizontalFlow ? LineDirection::Horizontal : LineDirection::Vertical;
@@ -1975,7 +1975,7 @@ LayoutUnit RenderFlexibleBox::marginBoxAscentForFlexItem(const RenderBox& flexIt
     }
 
     if (isHorizontalFlow ? flexItem.isScrollContainerY() : flexItem.isScrollContainerX())
-        return std::max(0_lu, std::min(*ascent, crossAxisExtentForFlexItem(flexItem))) + flowAwareMarginBeforeForFlexItem(flexItem);
+        return std::max(0_lu, std::min(*ascent, crossSize)) + flowAwareMarginBeforeForFlexItem(flexItem);
     return *ascent + flowAwareMarginBeforeForFlexItem(flexItem);;
 }
 
@@ -2439,7 +2439,7 @@ LayoutUnit RenderFlexibleBox::staticMainAxisPositionForPositionedFlexItem(const 
 
 LayoutUnit RenderFlexibleBox::staticCrossAxisPositionForPositionedFlexItem(const RenderBox& flexItem)
 {
-    auto availableSpace = availableAlignmentSpaceForFlexItem(crossAxisContentExtent(), flexItem);
+    auto availableSpace = availableAlignmentSpaceForFlexItem(crossAxisContentExtent(), flexItem, crossAxisExtentForFlexItem(flexItem));
     auto safety = overflowAlignmentForFlexItem(flexItem);
     auto align = alignmentForFlexItem(flexItem);
     if (availableSpace < 0 && safety == OverflowAlignment::Safe)
@@ -2785,7 +2785,7 @@ Vector<LayoutUnit> RenderFlexibleBox::crossSizeForFlexLines(const FlexLines& fle
             LayoutUnit flexItemCrossAxisMarginBoxExtent;
             auto alignment = alignmentForFlexItem(flexItem);
             if ((alignment == ItemPosition::Baseline || alignment == ItemPosition::LastBaseline) && !hasAutoMarginsInCrossAxis(flexItem)) {
-                LayoutUnit ascent = marginBoxAscentForFlexItem(flexItem);
+                LayoutUnit ascent = marginBoxAscentForFlexItem(flexItem, crossAxisExtentForFlexItem(flexItem));
                 LayoutUnit descent = (crossAxisMarginExtentForFlexItem(flexItem) + crossAxisExtentForFlexItem(flexItem)) - ascent;
                 maxDescent = std::max(maxDescent, descent);
                 if (alignment == ItemPosition::Baseline) {
@@ -3043,10 +3043,10 @@ void RenderFlexibleBox::handleCrossAxisAlignmentForFlexItems(FlexLineStates& lin
 
             auto safety = overflowAlignmentForFlexItem(flexLayoutItem.renderer);
             auto position = alignmentForFlexItem(flexLayoutItem.renderer);
-            if (updateAutoMarginsInCrossAxis(flexLayoutItem, lineState.positions[itemIndex], std::max(0_lu, availableAlignmentSpaceForFlexItem(lineCrossAxisExtent, flexLayoutItem.renderer))) || position == ItemPosition::Baseline || position == ItemPosition::LastBaseline)
+            if (updateAutoMarginsInCrossAxis(flexLayoutItem, lineState.positions[itemIndex], std::max(0_lu, availableAlignmentSpaceForFlexItem(lineCrossAxisExtent, flexLayoutItem.renderer, lineState.crossSizes[itemIndex]))) || position == ItemPosition::Baseline || position == ItemPosition::LastBaseline)
                 continue;
 
-            LayoutUnit availableSpace = availableAlignmentSpaceForFlexItem(lineCrossAxisExtent, flexLayoutItem.renderer);
+            LayoutUnit availableSpace = availableAlignmentSpaceForFlexItem(lineCrossAxisExtent, flexLayoutItem.renderer, lineState.crossSizes[itemIndex]);
             if (availableSpace < 0 && safety == OverflowAlignment::Safe)
                 position = ItemPosition::FlexStart; // See Start == FlexStart assumption in alignmentForFlexItem().
             LayoutUnit offset = alignmentOffset(availableSpace, position, { }, { }, isWrapReverse());
@@ -3103,7 +3103,7 @@ void RenderFlexibleBox::performBaselineAlignment(LineState& lineState)
         if (baselineSharingGroupIndex == baselineSharingGroups.size())
             baselineSharingGroups.append({ });
         auto& group = baselineSharingGroups[baselineSharingGroupIndex];
-        group.maxAscent = std::max(group.maxAscent, marginBoxAscentForFlexItem(flexItem));
+        group.maxAscent = std::max(group.maxAscent, marginBoxAscentForFlexItem(flexItem, lineState.crossSizes[itemIndex]));
         group.items.append(itemIndex);
     }
 
@@ -3113,11 +3113,11 @@ void RenderFlexibleBox::performBaselineAlignment(LineState& lineState)
             auto& flexItem = lineState.flexLayoutItems[itemIndex].renderer.get();
             auto position = alignmentForFlexItem(flexItem);
             ASSERT(position == ItemPosition::Baseline || position == ItemPosition::LastBaseline);
-            auto offset = alignmentOffset(availableAlignmentSpaceForFlexItem(lineCrossAxisExtent, flexItem), position, marginBoxAscentForFlexItem(flexItem), baselineSharingGroup.maxAscent, containerHasWrapReverse);
+            auto offset = alignmentOffset(availableAlignmentSpaceForFlexItem(lineCrossAxisExtent, flexItem, lineState.crossSizes[itemIndex]), position, marginBoxAscentForFlexItem(flexItem, lineState.crossSizes[itemIndex]), baselineSharingGroup.maxAscent, containerHasWrapReverse);
             adjustAlignmentForFlexItem(lineState.positions[itemIndex], offset);
 
             if (shouldAdjustItemTowardsCrossAxisEnd(flexItemWritingModeForBaselineAlignment(flexItem).blockDirection(), position))
-                minMarginAfterBaseline = std::min(minMarginAfterBaseline, availableAlignmentSpaceForFlexItem(lineCrossAxisExtent, flexItem) - offset);
+                minMarginAfterBaseline = std::min(minMarginAfterBaseline, availableAlignmentSpaceForFlexItem(lineCrossAxisExtent, flexItem, lineState.crossSizes[itemIndex]) - offset);
         }
         // css-align-3 9.3 part 3:
         // Position the aligned baseline-sharing group within the alignment container according to its

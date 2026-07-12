@@ -307,8 +307,8 @@ private:
     void distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(FlexLineStates&, LayoutUnit gapBetweenItems);
     void repositionLogicalHeightDependentFlexItems(FlexLineStates&, LayoutUnit gapBetweenLines);
     
-    LayoutUnit availableAlignmentSpaceForFlexItem(LayoutUnit lineCrossAxisExtent, const RenderBox& flexItem);
-    LayoutUnit marginBoxAscentForFlexItem(const RenderBox& flexItem);
+    LayoutUnit availableAlignmentSpaceForFlexItem(LayoutUnit lineCrossAxisExtent, const RenderBox& flexItem, LayoutUnit crossSize);
+    LayoutUnit marginBoxAscentForFlexItem(const RenderBox& flexItem, LayoutUnit crossSize);
     
     LayoutUnit computeFlexItemMarginValue(const Style::MarginEdge&);
     void prepareOrderIteratorAndMargins();
