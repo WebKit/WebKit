@@ -196,9 +196,9 @@ static void interpolateCustomProperty(const AtomString& customProperty, Style::C
 static bool syntaxValuesRequireInterpolationForAccumulativeIteration(const CustomProperty::Value& a, const CustomProperty::Value& b, bool isList)
 {
     return WTF::switchOn(a,
-        [b, isList](const LengthPercentage<>& aLengthPercentage) {
-            ASSERT(std::holds_alternative<LengthPercentage<>>(b));
-            return !isList && Style::requiresInterpolationForAccumulativeIteration(aLengthPercentage, std::get<LengthPercentage<>>(b));
+        [b, isList](const LengthPercentage<CSS::AllUnzoomed>& aLengthPercentage) {
+            ASSERT(std::holds_alternative<LengthPercentage<CSS::AllUnzoomed>>(b));
+            return !isList && Style::requiresInterpolationForAccumulativeIteration(aLengthPercentage, std::get<LengthPercentage<CSS::AllUnzoomed>>(b));
         },
         [](const RefPtr<TransformOperation>&) {
             return true;
