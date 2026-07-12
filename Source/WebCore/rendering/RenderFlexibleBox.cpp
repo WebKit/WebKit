@@ -595,31 +595,6 @@ void RenderFlexibleBox::distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(co
     }
 }
 
-void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(const FlexLines& flexLines, FlexLayoutItems& allItems, Vector<LayoutPoint>& positionList, Vector<LayoutUnit>& crossSizeList, Vector<LayoutUnit>& lineCrossOffsetList, Vector<LayoutUnit>& lineCrossSizeList, LayoutUnit gapBetweenLines)
-{
-    LayoutUnit crossAxisStartEdge = lineCrossOffsetList.isEmpty() ? 0_lu : lineCrossOffsetList[0];
-    // If we have a single line flexbox, the line height is all the available space. For flex-direction: row,
-    // this means we need to use the height, so we do this after calling updateLogicalHeight.
-    if (!isMultiline() && !lineCrossSizeList.isEmpty())
-        lineCrossSizeList[0] = crossAxisContentExtent();
-
-    // 9.4. (#9) Handle 'align-content: stretch' and 9.6. (#16) align all flex lines per align-content.
-    handleCrossAxisAlignmentForFlexLines(flexLines, positionList, lineCrossOffsetList, lineCrossSizeList, gapBetweenLines);
-
-    // 9.4. (#11) Determine the used cross size of each flex item.
-    computeCrossSizeForFlexItems(flexLines, allItems, crossSizeList, lineCrossSizeList);
-
-    // 9.6. (#13 - #14) Resolve cross-axis auto margins and align each item per align-self.
-    handleCrossAxisAlignmentForFlexItems(flexLines, allItems, positionList, crossSizeList, lineCrossSizeList);
-
-    if (isWrapReverse())
-        flipForWrapReverse(flexLines, positionList, lineCrossOffsetList, lineCrossSizeList, crossAxisStartEdge);
-
-    // direction:rtl + flex-direction:column means the cross-axis direction is
-    // flipped.
-    flipForRightToLeftColumn(flexLines, positionList, crossSizeList);
-}
-
 bool RenderFlexibleBox::mainAxisIsFlexItemInlineAxis(const RenderBox& flexItem) const
 {
     return isHorizontalFlow() == flexItem.isHorizontalWritingMode();
@@ -1615,7 +1590,26 @@ void RenderFlexibleBox::performFlexLayout(RelayoutChildren relayoutChildren)
         distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(flexLines, allItems, mainSizeList, marginsList, positionList, lineCrossOffsetList, gapBetweenItems);
 
         // 9.6. (#13 - #16) Cross-Axis Alignment.
-        repositionLogicalHeightDependentFlexItems(flexLines, allItems, positionList, crossSizeList, lineCrossOffsetList, lineCrossSizeList, gapBetweenLines);
+        LayoutUnit crossAxisStartEdge = lineCrossOffsetList.isEmpty() ? 0_lu : lineCrossOffsetList[0];
+        // If we have a single line flexbox, the line height is all the available space. For flex-direction: row,
+        // this means we need to use the height, so we do this after calling updateLogicalHeight.
+        if (!isMultiline() && !lineCrossSizeList.isEmpty())
+            lineCrossSizeList[0] = crossAxisContentExtent();
+
+        // 9.4. (#9) Handle 'align-content: stretch' and 9.6. (#16) align all flex lines per align-content.
+        handleCrossAxisAlignmentForFlexLines(flexLines, positionList, lineCrossOffsetList, lineCrossSizeList, gapBetweenLines);
+
+        // 9.4. (#11) Determine the used cross size of each flex item.
+        computeCrossSizeForFlexItems(flexLines, allItems, crossSizeList, lineCrossSizeList);
+
+        // 9.6. (#13 - #14) Resolve cross-axis auto margins and align each item per align-self.
+        handleCrossAxisAlignmentForFlexItems(flexLines, allItems, positionList, crossSizeList, lineCrossSizeList);
+
+        if (isWrapReverse())
+            flipForWrapReverse(flexLines, positionList, lineCrossOffsetList, lineCrossSizeList, crossAxisStartEdge);
+
+        // direction:rtl + flex-direction:column means the cross-axis direction is flipped.
+        flipForRightToLeftColumn(flexLines, positionList, crossSizeList);
     };
     performContentAlignment();
 
