@@ -112,6 +112,91 @@ public:
     enum class MakeAPIArray : bool { No, Yes };
 
 private:
+    // Couples the entries vector with the current index, making it structurally impossible
+    // to have a non-empty list without a valid current index, or vice versa.
+    class ActiveList {
+    public:
+        ActiveList(BackForwardListItemVector&& entries, size_t currentIndex)
+            : m_entries(WTF::move(entries))
+            , m_currentIndex(currentIndex)
+        {
+            ASSERT(!m_entries.isEmpty() && m_currentIndex < m_entries.size());
+        }
+
+        const BackForwardListItemVector& entries() const { return m_entries; }
+        size_t currentIndex() const { return m_currentIndex; }
+
+        void assertValid() const { ASSERT(m_currentIndex < m_entries.size()); }
+
+        // Removes and returns the last entry. Caller must ensure forward entries exist.
+        Ref<WebBackForwardListItem> removeLast()
+        {
+            Ref<WebBackForwardListItem> removed = WTF::move(m_entries.last());
+            m_entries.removeLast();
+            assertValid();
+            return removed;
+        }
+
+        // Removes and returns the first entry, adjusting currentIndex.
+        // Caller must ensure currentIndex > 0. Since currentIndex > 0 implies
+        // entries.size() >= 2, entries cannot become empty after this call.
+        Ref<WebBackForwardListItem> removeFirst()
+        {
+            ASSERT(m_currentIndex > 0);
+            Ref<WebBackForwardListItem> removed = WTF::move(m_entries[0]);
+            m_entries.removeAt(0);
+            --m_currentIndex;
+            assertValid();
+            return removed;
+        }
+
+        // Replaces the entry at currentIndex with newItem; returns the replaced entry.
+        Ref<WebBackForwardListItem> replaceCurrentEntry(Ref<WebBackForwardListItem>&& newItem)
+        {
+            Ref<WebBackForwardListItem> removed = WTF::move(m_entries[m_currentIndex]);
+            m_entries[m_currentIndex] = WTF::move(newItem);
+            assertValid();
+            return removed;
+        }
+
+        // Advances currentIndex by 1 and inserts newItem there.
+        void advanceAndInsert(Ref<WebBackForwardListItem>&& newItem)
+        {
+            ++m_currentIndex;
+            m_entries.insert(m_currentIndex, WTF::move(newItem));
+            assertValid();
+        }
+
+        // Removes the current entry and moves currentIndex to point at the item
+        // that was at preRemovalTargetIndex in the pre-removal list.
+        // preRemovalTargetIndex must not equal currentIndex.
+        Ref<WebBackForwardListItem> removeCurrentEntry(size_t preRemovalTargetIndex)
+        {
+            ASSERT(preRemovalTargetIndex != m_currentIndex);
+            Ref<WebBackForwardListItem> removed = WTF::move(m_entries[m_currentIndex]);
+            m_entries.removeAt(m_currentIndex);
+            m_currentIndex = preRemovalTargetIndex > m_currentIndex ? preRemovalTargetIndex - 1 : preRemovalTargetIndex;
+            assertValid();
+            return removed;
+        }
+
+        // Moves currentIndex to newIndex without modifying entries.
+        void moveToIndex(size_t newIndex)
+        {
+            ASSERT(newIndex < m_entries.size());
+            m_currentIndex = newIndex;
+            assertValid();
+        }
+
+        // Returns all entries, leaving this object in an invalid state.
+        // Only call immediately before destroying or resetting the containing optional.
+        BackForwardListItemVector takeEntries() { return WTF::move(m_entries); }
+
+    private:
+        BackForwardListItemVector m_entries;
+        size_t m_currentIndex;
+    };
+
     explicit WebBackForwardList(WebPageProxy&);
 
     enum class NavigationDirection { Backward, Forward };
@@ -127,7 +212,7 @@ private:
     void addItem(Ref<WebBackForwardListItem>&&);
     void addChildItem(WebCore::FrameIdentifier, Ref<FrameState>&&);
     void didRemoveItem(WebBackForwardListItem&);
-    const BackForwardListItemVector& entries() const LIFETIME_BOUND { return m_entries; }
+    const BackForwardListItemVector& activeEntries() const LIFETIME_BOUND;
     WebBackForwardListCounts NODELETE rawCounts() const;
     Ref<FrameState> completeFrameStateForNavigation(Ref<FrameState>&&);
 
@@ -143,9 +228,9 @@ private:
     void backForwardListCounts(CompletionHandler<void(WebBackForwardListCounts&&)>&&);
 
     WeakPtr<WebPageProxy> m_page;
-    BackForwardListItemVector m_entries;
-    std::optional<size_t> m_currentIndex;
+    std::optional<ActiveList> m_activeList;
     bool m_handlingProvisionalMessage { false };
+
 };
 
 using WebBackForwardListWrapper = WebBackForwardList;
