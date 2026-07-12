@@ -63,14 +63,16 @@ void RenderMedia::layout()
 void RenderMedia::styleDidChange(Style::Difference difference, const Style::ComputedStyle* oldStyle)
 {
     RenderImage::styleDidChange(difference, oldStyle);
+
+    Ref mediaElement = this->mediaElement();
     if (!oldStyle || style().usedVisibility() != oldStyle->usedVisibility())
-        protect(mediaElement())->visibilityDidChange();
+        mediaElement->visibilityDidChange();
 
     if (!oldStyle || style().dynamicRangeLimit() != oldStyle->dynamicRangeLimit())
-        protect(mediaElement())->dynamicRangeLimitDidChange(style().dynamicRangeLimit().toPlatformDynamicRangeLimit());
+        mediaElement->dynamicRangeLimitDidChange(style().dynamicRangeLimit().toPlatformDynamicRangeLimit());
 
     if (oldStyle && style().transform() != oldStyle->transform())
-        protect(mediaElement())->layoutSizeChanged();
+        mediaElement->layoutSizeChanged();
 }
 
 } // namespace WebCore
