@@ -566,6 +566,7 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
                 SkPaint paint = setupPaint();
                 paint.setBlendMode(SkBlendMode::kClear);
                 canvas.drawRect(SkRect(m_contentsRect), paint);
+                m_contentsBuffer->bufferWasRendered();
             } else
 #endif // ENABLE(VIDEO)
                 image = m_contentsBuffer->skiaImage();
@@ -579,6 +580,7 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
                 SkPaint paint = setupPaint();
                 paint.setShader(tileImage->makeShader(SkTileMode::kRepeat, SkTileMode::kRepeat, SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone), matrix));
                 canvas.drawRect(m_contentsRect, paint);
+                buffer->bufferWasRendered();
             }
         }
 
@@ -587,13 +589,21 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
                 SkPaint paint = setupPaint();
                 canvas.drawImageRect(image, SkRect::MakeSize(SkSize::Make(image->dimensions())), SkRect(m_contentsRect),
                     SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone), &paint, SkCanvas::kFast_SrcRectConstraint);
+                if (m_contentsBuffer)
+                    m_contentsBuffer->bufferWasRendered();
             } else {
                 auto clippingRect = m_contentsClippingRect.rect();
                 if (clippingRect.contains(m_contentsRect))
                     clippingRect = { };
+                CoordinatedPlatformLayerBuffer::BufferWasRendered callback;
+                if (m_contentsBuffer)
+                    callback = m_contentsBuffer->takeBufferRenderedCallback();
                 context.imageSetBatch.addImage(canvas, image, m_contentsRect, clippingRect, ctm, context.opacity, enableAntialias);
+                if (callback)
+                    callback();
             }
-        }
+        } else if (m_contentsBuffer)
+            m_contentsBuffer->bufferWasRendered();
     }
 }
 

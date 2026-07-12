@@ -320,6 +320,8 @@ protected:
     GstElement* createVideoSinkGL();
 #endif
 
+    Ref<VideoFrameGStreamer> initializeVideoFrameForRendering();
+
 #if USE(COORDINATED_GRAPHICS)
     void pushTextureToCompositor(bool isDuplicateSample);
 #endif
@@ -670,14 +672,17 @@ private:
     DataMutex<TaskAtMediaTimeScheduler> m_TaskAtMediaTimeSchedulerDataMutex;
 
 private:
+    void updateVideoFrameMetadata(VideoFrameMetadata&&);
     std::optional<VideoFrameMetadata> videoFrameMetadata() final;
 #if ENABLE(MEDIA_STREAM)
     std::pair<String, GRefPtr<GstDevice>> resolveAudioOutputDevice(const String& deviceId);
 #endif
     bool applyAudioSinkDevice(GstElement* audioSink, const GRefPtr<GstDevice>&, const String& deviceId);
 
-    uint64_t m_sampleCount { 0 };
-    uint64_t m_lastVideoFrameMetadataSampleCount { 0 };
+    Lock m_videoFrameMetadataLock;
+    std::optional<VideoFrameMetadata> m_videoFrameMetadata WTF_GUARDED_BY_LOCK(m_videoFrameMetadataLock);
+    uint64_t m_sampleCount WTF_GUARDED_BY_LOCK(m_videoFrameMetadataLock) { 0 };
+
     mutable PlatformTimeRanges m_buffered;
 #if !RELEASE_LOG_DISABLED
     const Ref<const Logger> m_logger;

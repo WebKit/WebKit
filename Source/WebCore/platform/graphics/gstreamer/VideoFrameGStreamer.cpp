@@ -510,6 +510,7 @@ VideoFrameGStreamer::VideoFrameGStreamer(const GRefPtr<GstSample>& sample, const
     setMemoryTypeFromCaps();
 
     m_info = options.info.value_or(infoFromCaps(GRefPtr(gst_sample_get_caps(m_sample.get()))));
+    m_rvfcPresentationTime = options.rvfcPresentationTime;
 
     auto buffer = gst_sample_get_buffer(sample.get());
     auto [videoRotationFromMeta, isMirrored] = webkitGstBufferGetVideoRotation(buffer);
@@ -554,6 +555,27 @@ void VideoFrameGStreamer::setMetadataAndContentHint(std::optional<VideoFrameTime
     auto modifiedBuffer = webkitGstBufferSetVideoFrameMetadata(WTF::move(buffer), metadata, rotation(), isMirrored(), hint);
     m_sample = adoptGRef(gst_sample_make_writable(m_sample.leakRef()));
     gst_sample_set_buffer(m_sample.get(), modifiedBuffer.get());
+}
+
+VideoFrameMetadata VideoFrameGStreamer::metadata() const
+{
+    const auto& sample = this->sample();
+
+    auto buffer = gst_sample_get_buffer(sample.get());
+    RELEASE_ASSERT(GST_IS_BUFFER(buffer));
+    auto metadata = webkitGstBufferGetVideoFrameMetadata(buffer);
+
+    if (GST_BUFFER_PTS_IS_VALID(buffer)) {
+        auto segment = gst_sample_get_segment(sample.get());
+        RELEASE_ASSERT(segment);
+        uint64_t streamTime;
+        if (int sign = gst_segment_to_stream_time_full(segment, GST_FORMAT_TIME, GST_BUFFER_PTS(buffer), &streamTime))
+            metadata.mediaTime = sign * fromGstClockTime(streamTime).toDouble();
+    }
+
+    if (m_rvfcPresentationTime)
+        metadata.presentationTime = *m_rvfcPresentationTime;
+    return metadata;
 }
 
 static void copyPlane(std::span<uint8_t>& destination, const std::span<uint8_t>& source, uint64_t sourceStride, const ComputedPlaneLayout& spanPlaneLayout)

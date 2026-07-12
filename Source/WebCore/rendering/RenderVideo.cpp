@@ -313,6 +313,11 @@ void RenderVideo::layout()
 void RenderVideo::styleDidChange(Style::Difference difference, const Style::ComputedStyle* oldStyle)
 {
     RenderMedia::styleDidChange(difference, oldStyle);
+    if (style().usedVisibility() != Visibility::Visible) {
+        Ref videoElement = this->videoElement();
+        if (RefPtr mediaPlayer = videoElement->player())
+            mediaPlayer->setViewportVisibility(HTMLMediaElementEnums::ViewportVisibility::NotVisible);
+    }
     if (oldStyle && style().objectFit() != oldStyle->objectFit())
         setNeedsLayout();
 }
@@ -345,7 +350,7 @@ bool RenderVideo::updatePlayer()
     if (videoElement->inActiveDocument())
         contentChanged(ContentChangeType::Video);
 
-    videoElement->updateMediaPlayer(videoBox().size(), style().objectFit() != ObjectFit::Fill);
+    videoElement->updateMediaPlayer(videoBox().size(), style().objectFit() != ObjectFit::Fill, style().usedVisibility() != Visibility::Visible);
     return intrinsicSizeChanged;
 }
 

@@ -3877,6 +3877,21 @@ void MediaPlayerPrivateGStreamer::isLoopingChanged()
 #endif
 }
 
+Ref<VideoFrameGStreamer> MediaPlayerPrivateGStreamer::initializeVideoFrameForRendering()
+{
+    Locker sampleLocker { m_sampleMutex };
+
+    RELEASE_ASSERT(GST_IS_SAMPLE(m_sample.get()));
+
+    if (!m_videoInfo)
+        m_videoInfo = VideoFrameGStreamer::infoFromCaps(GRefPtr(gst_sample_get_caps(m_sample.get())));
+
+    VideoFrameGStreamer::CreateOptions options;
+    options.info = m_videoInfo;
+    options.rvfcPresentationTime = MonotonicTime::now().secondsSinceEpoch().seconds();
+    return VideoFrameGStreamer::createWrappedSample(m_sample, options);
+}
+
 #if USE(COORDINATED_GRAPHICS)
 PlatformLayer* MediaPlayerPrivateGStreamer::platformLayer() const
 {
@@ -3885,34 +3900,43 @@ PlatformLayer* MediaPlayerPrivateGStreamer::platformLayer() const
 
 void MediaPlayerPrivateGStreamer::pushTextureToCompositor(bool isDuplicateSample)
 {
-    Locker sampleLocker { m_sampleMutex };
-    if (!GST_IS_SAMPLE(m_sample.get()))
-        return;
+    auto frame = initializeVideoFrameForRendering();
+    auto videoBuffer = CoordinatedPlatformLayerBufferVideo::create(frame, m_videoDecoderPlatform, !m_isUsingFallbackVideoSink, m_textureMapperFlags);
 
     // The GL video appsink reports the sample following a preroll with the same buffer, so don't
     // account for this scenario, this is important for rvfc, ensuring timestamps in metadata
     // increase monotonically during playback.
-    if (!isDuplicateSample)
-        ++m_sampleCount;
+    if (!isDuplicateSample) {
+        CompletionHandler<void()> callback([weakThis = ThreadSafeWeakPtr { *this }, frame = WTF::move(frame)] {
+            RefPtr self = weakThis.get();
+            if (!self)
+                return;
 
-    if (!m_videoInfo)
-        m_videoInfo = VideoFrameGStreamer::infoFromCaps(GRefPtr(gst_sample_get_caps(m_sample.get())));
+            self->updateVideoFrameMetadata(frame->metadata());
+        }, CompletionHandlerCallThread::AnyThread);
+        videoBuffer->setBufferRenderedCallback(WTF::move(callback));
+    }
 
-    VideoFrameGStreamer::CreateOptions options;
-    options.info = m_videoInfo;
-    auto frame = VideoFrameGStreamer::createWrappedSample(m_sample, options);
-
-    m_contentsBufferProxy->setDisplayBuffer(CoordinatedPlatformLayerBufferVideo::create(WTF::move(frame), m_videoDecoderPlatform, !m_isUsingFallbackVideoSink, m_textureMapperFlags));
+    if (RefPtr player = m_player.get()) {
+        if (player->viewportVisibility() == ViewportVisibility::NotVisible) {
+            videoBuffer->bufferWasRendered();
+            return;
+        }
+    }
+    m_contentsBufferProxy->setDisplayBuffer(WTF::move(videoBuffer));
 }
 #endif // USE(COORDINATED_GRAPHICS)
 
 void MediaPlayerPrivateGStreamer::repaint()
 {
-    ASSERT(m_sample);
     ASSERT(isMainThread());
+
+    auto frame = initializeVideoFrameForRendering();
 
     if (RefPtr player = m_player.get())
         player->repaint();
+
+    updateVideoFrameMetadata(frame->metadata());
 
     Locker locker { m_drawLock };
     m_drawCondition.notifyOne();
@@ -4191,9 +4215,8 @@ void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
     }
 
 #if USE(COORDINATED_GRAPHICS)
-    auto shouldWait = m_videoDecoderPlatform == GstVideoDecoderPlatform::Video4Linux ? CoordinatedPlatformLayerBufferProxy::ShouldWait::Yes : CoordinatedPlatformLayerBufferProxy::ShouldWait::No;
-    GST_DEBUG_OBJECT(pipeline(), "Flushing video sample %s", shouldWait == CoordinatedPlatformLayerBufferProxy::ShouldWait::Yes ? "synchronously" : "");
-    m_contentsBufferProxy->dropCurrentBufferWhilePreservingTexture(shouldWait);
+    GST_DEBUG_OBJECT(pipeline(), "Flushing video sample");
+    m_contentsBufferProxy->dropCurrentBufferWhilePreservingTexture();
 #endif
 }
 #endif
@@ -4765,43 +4788,27 @@ WTFLogChannel& MediaPlayerPrivateGStreamer::logChannel() const
 }
 #endif
 
-std::optional<VideoFrameMetadata> MediaPlayerPrivateGStreamer::videoFrameMetadata()
+void MediaPlayerPrivateGStreamer::updateVideoFrameMetadata(VideoFrameMetadata&& metadata)
 {
-    Locker sampleLocker { m_sampleMutex };
-    if (!GST_IS_SAMPLE(m_sample.get()))
-        return { };
+    Locker locker { m_videoFrameMetadataLock };
+    ++m_sampleCount;
 
-    if (m_sampleCount == m_lastVideoFrameMetadataSampleCount)
-        return { };
-
-    auto buffer = gst_sample_get_buffer(m_sample.get());
-    if (!GST_IS_BUFFER(buffer))
-        return { };
-
-    m_lastVideoFrameMetadataSampleCount = m_sampleCount;
-
-    auto metadata = webkitGstBufferGetVideoFrameMetadata(buffer);
     auto size = naturalSize();
     metadata.width = size.width();
     metadata.height = size.height();
     metadata.presentedFrames = m_sampleCount;
+    metadata.expectedDisplayTime = MonotonicTime::now().secondsSinceEpoch().seconds();
+    if (isMediaStreamPlayer())
+        metadata.mediaTime = currentTime().toDouble();
 
-    if (GST_BUFFER_PTS_IS_VALID(buffer)) {
-        if (isMediaStreamPlayer())
-            metadata.mediaTime = currentTime().toDouble();
-        else {
-            auto segment = gst_sample_get_segment(m_sample.get());
-            RELEASE_ASSERT(segment);
-            uint64_t streamTime;
-            if (int sign = gst_segment_to_stream_time_full(segment, GST_FORMAT_TIME, GST_BUFFER_PTS(buffer), &streamTime))
-                metadata.mediaTime = sign * fromGstClockTime(streamTime).toDouble();
-        }
-    }
+    m_videoFrameMetadata = WTF::move(metadata);
+}
 
-    // FIXME: presentationTime and expectedDisplayTime might not always have the same value, we should try getting more precise values.
-    metadata.presentationTime = MonotonicTime::now().secondsSinceEpoch().seconds();
-    metadata.expectedDisplayTime = metadata.presentationTime;
-
+std::optional<VideoFrameMetadata> MediaPlayerPrivateGStreamer::videoFrameMetadata()
+{
+    Locker locker { m_videoFrameMetadataLock };
+    std::optional<VideoFrameMetadata> metadata;
+    std::swap(m_videoFrameMetadata, metadata);
     return metadata;
 }
 

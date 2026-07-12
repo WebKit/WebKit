@@ -685,7 +685,7 @@ public:
     AudioSessionMode modeAtMostRecentPlayback() const { return m_modeAtMostRecentPlayback; }
 #endif
 
-    void updateMediaPlayer(IntSize, bool);
+    void updateMediaPlayer(IntSize, bool shouldMaintainAspectRatio, bool isHidden);
     WEBCORE_EXPORT bool elementIsHidden() const;
 
     bool showingStats() const { return m_showingStats; }
