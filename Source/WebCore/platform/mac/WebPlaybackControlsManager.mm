@@ -36,14 +36,9 @@
 #import <wtf/text/WTFString.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
+#import <pal/cocoa/AVKitSoftLink.h>
 
 IGNORE_WARNINGS_BEGIN("nullability-completeness")
-
-#if !defined(WebCore_AVKitLibrary_SoftLinked)
-#define WebCore_AVKitLibrary_SoftLinked
-SOFTLINK_AVKIT_FRAMEWORK()
-#endif
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVTouchBarMediaSelectionOption)
 
 using WebCore::MediaSelectionOption;
 using WebCore::PlaybackSessionInterfaceMac;
@@ -271,7 +266,7 @@ static AVTouchBarMediaSelectionOptionType NODELETE toAVTouchBarMediaSelectionOpt
 static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOption>& options)
 {
     return createNSArray(options, [] (auto& option) {
-        return adoptNS([allocAVTouchBarMediaSelectionOptionInstance() initWithTitle:option.displayName.createNSString().get() type:toAVTouchBarMediaSelectionOptionType(option.legibleType)]);
+        return adoptNS([PAL::allocAVTouchBarMediaSelectionOptionInstance() initWithTitle:option.displayName.createNSString().get() type:toAVTouchBarMediaSelectionOptionType(option.legibleType)]);
     });
 }
 

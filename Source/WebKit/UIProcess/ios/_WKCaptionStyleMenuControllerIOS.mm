@@ -42,9 +42,7 @@
 
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/cf/CoreMediaSoftLink.h>
-
-SOFTLINK_AVKIT_FRAMEWORK()
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVLegibleMediaOptionsMenuController)
+#import <pal/cocoa/AVKitSoftLink.h>
 #endif
 
 using namespace WebCore;
@@ -66,7 +64,7 @@ static const UIMenuIdentifier WKCaptionStyleMenuSystemSettingsIdentifier = @"WKC
 + (instancetype)menuController
 {
 #if HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER)
-    if (AVKitLibrary() && getAVLegibleMediaOptionsMenuControllerClassSingleton())
+    if (PAL::isAVKitFrameworkAvailable() && PAL::getAVLegibleMediaOptionsMenuControllerClassSingleton())
         return [[[_WKCaptionStyleMenuControllerAVKit alloc] init] autorelease];
 #endif
     return [[[super alloc] init] autorelease];

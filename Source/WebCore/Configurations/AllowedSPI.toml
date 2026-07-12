@@ -173,3 +173,12 @@ cleanup = "rdar://170480216"
 symbols = [
     "CTFontHasComplexColorFormatForGlyph",
 ]
+
+[[staging]]
+request = "rdar://160159492"
+classes = [
+    "AVInterfaceMediaSelectionOptionSource",
+    "AVInterfaceMetadata",
+    "AVInterfaceTimelineSegment",
+]
+requires-sdk = ["iOS < 27.0"]

@@ -36,6 +36,7 @@ cg/CoreGraphicsSoftLink.cpp
 cocoa/ARKitSoftLink.mm @nonARC
 cocoa/AVFAudioSoftLink.mm @nonARC
 cocoa/AVFoundationSoftLink.mm @nonARC
+cocoa/AVKitSoftLink.mm @nonARC
 cocoa/AccessibilitySoftLink.mm @nonARC
 cocoa/AppSSOSoftLink.mm @nonARC
 cocoa/CompositorServicesSoftLink.mm @nonARC

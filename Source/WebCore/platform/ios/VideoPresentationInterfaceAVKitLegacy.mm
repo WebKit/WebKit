@@ -53,19 +53,11 @@
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
+#import <pal/cocoa/AVKitSoftLink.h>
 #import <pal/ios/UIKitSoftLink.h>
 
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 static const NSTimeInterval playbackControlsVisibleDurationAfterResettingVideoSource = 1.0;
-#endif
-
-SOFTLINK_AVKIT_FRAMEWORK()
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPictureInPictureController)
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPlayerViewController)
-
-#if HAVE(PIP_CONTROLLER)
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPictureInPictureControllerContentSource)
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPictureInPictureContentViewController)
 #endif
 
 @interface AVPlayerViewController (Details)
@@ -270,7 +262,7 @@ static WebAVPictureInPictureContentViewController* WebAVPictureInPictureContentV
     ASSERT(controller);
 
     WebAVPictureInPictureContentViewController *pipController = aSelf;
-    objc_super superClass { pipController, getAVPictureInPictureContentViewControllerClassSingleton() };
+    objc_super superClass { pipController, PAL::getAVPictureInPictureContentViewControllerClassSingleton() };
     auto super_init = reinterpret_cast<id(*)(objc_super*, SEL)>(objc_msgSendSuper);
     aSelf = super_init(&superClass, @selector(init));
     if (!aSelf)
@@ -310,7 +302,7 @@ static void WebAVPictureInPictureContentViewController_setPlayerLayer(id aSelf, 
 static void WebAVPictureInPictureContentViewController_viewWillLayoutSubviews(id aSelf, SEL)
 {
     WebAVPictureInPictureContentViewController *pipController = aSelf;
-    objc_super superClass { pipController, getAVPictureInPictureContentViewControllerClassSingleton() };
+    objc_super superClass { pipController, PAL::getAVPictureInPictureContentViewControllerClassSingleton() };
     auto super_viewWillLayoutSubviews = reinterpret_cast<void(*)(objc_super*, SEL)>(objc_msgSendSuper);
     super_viewWillLayoutSubviews(&superClass, @selector(viewWillLayoutSubviews));
     [[pipController playerLayer] setFrame:[pipController view].bounds];
@@ -322,7 +314,7 @@ static void WebAVPictureInPictureContentViewController_dealloc(id aSelf, SEL)
     [[pipController playerLayer] removeFromSuperlayer];
     [[pipController controller] release];
     [[pipController playerLayer] release];
-    objc_super superClass { pipController, getAVPictureInPictureContentViewControllerClassSingleton() };
+    objc_super superClass { pipController, PAL::getAVPictureInPictureContentViewControllerClassSingleton() };
     auto super_dealloc = reinterpret_cast<void(*)(objc_super*, SEL)>(objc_msgSendSuper);
     super_dealloc(&superClass, @selector(dealloc));
 }
@@ -330,7 +322,7 @@ static void WebAVPictureInPictureContentViewController_dealloc(id aSelf, SEL)
 static WebAVPictureInPictureContentViewController *allocWebAVPictureInPictureContentViewControllerInstance()
 {
     static Class theClass = [] {
-        auto theClass = objc_allocateClassPair(getAVPictureInPictureContentViewControllerClassSingleton(), "WebAVPictureInPictureContentViewController", 0);
+        auto theClass = objc_allocateClassPair(PAL::getAVPictureInPictureContentViewControllerClassSingleton(), "WebAVPictureInPictureContentViewController", 0);
         class_addMethod(theClass, @selector(initWithController:), (IMP)WebAVPictureInPictureContentViewController_initWithController, "v@:@");
         class_addMethod(theClass, @selector(controller), (IMP)WebAVPictureInPictureContentViewController_controller, "@@:");
         class_addMethod(theClass, @selector(playerController), (IMP)WebAVPictureInPictureContentViewController_controller, "@@:");
@@ -401,10 +393,10 @@ NS_ASSUME_NONNULL_END
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
 
 #if PLATFORM(APPLETV)
-    _avPlayerViewController = adoptNS([allocAVPlayerViewControllerInstance() init]);
+    _avPlayerViewController = adoptNS([PAL::allocAVPlayerViewControllerInstance() init]);
     [self configurePlayerViewControllerWithFullscreenInterface:interface];
 #else
-    _avPlayerViewController = adoptNS([allocAVPlayerViewControllerInstance() initWithPlayerLayerView:_playerLayerView.get()]);
+    _avPlayerViewController = adoptNS([PAL::allocAVPlayerViewControllerInstance() initWithPlayerLayerView:_playerLayerView.get()]);
 #endif
     [_avPlayerViewController setModalPresentationStyle:UIModalPresentationOverFullScreen];
 #if PLATFORM(WATCHOS)
@@ -420,9 +412,9 @@ NS_ASSUME_NONNULL_END
     auto *playerController = static_cast<AVPlayerController *>(interface->playerController());
     _pipContentViewController = adoptNS([allocWebAVPictureInPictureContentViewControllerInstance() initWithController:playerController]);
 
-    auto source = adoptNS([allocAVPictureInPictureControllerContentSourceInstance() initWithSourceView:static_cast<UIView *>(interface->playerLayerView()) contentViewController:_pipContentViewController.get() playerController:playerController]);
+    auto source = adoptNS([PAL::allocAVPictureInPictureControllerContentSourceInstance() initWithSourceView:static_cast<UIView *>(interface->playerLayerView()) contentViewController:_pipContentViewController.get() playerController:playerController]);
 
-    _pipController = adoptNS([allocAVPictureInPictureControllerInstance() initWithContentSource:source.get()]);
+    _pipController = adoptNS([PAL::allocAVPictureInPictureControllerInstance() initWithContentSource:source.get()]);
 #endif
 
     return self;
@@ -955,7 +947,7 @@ bool supportsPictureInPicture()
 #if ENABLE(VIDEO_PRESENTATION_MODE) && !PLATFORM(WATCHOS)
     if (isPictureInPictureSupported.has_value())
         return *isPictureInPictureSupported;
-    return [getAVPictureInPictureControllerClassSingleton() isPictureInPictureSupported];
+    return [PAL::getAVPictureInPictureControllerClassSingleton() isPictureInPictureSupported];
 #else
     return false;
 #endif

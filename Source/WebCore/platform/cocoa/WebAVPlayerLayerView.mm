@@ -35,14 +35,12 @@
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
+#import <pal/cocoa/AVKitSoftLink.h>
 #import <pal/ios/UIKitSoftLink.h>
 
 #if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
 static NSString * const pictureInPicturePlayerLayerViewKey = @"_pictureInPicturePlayerLayerView";
 #endif
-
-SOFTLINK_AVKIT_FRAMEWORK()
-SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
 
 namespace WebCore {
 
@@ -85,8 +83,8 @@ static AVPlayerLayer *WebAVPlayerLayerView_playerLayer(id aSelf, SEL)
 {
     __AVPlayerLayerView *playerLayerView = aSelf;
 
-    if ([get__AVPlayerLayerViewClassSingleton() instancesRespondToSelector:@selector(playerLayer)]) {
-        objc_super superClass { playerLayerView, get__AVPlayerLayerViewClassSingleton() };
+    if ([PAL::get__AVPlayerLayerViewClassSingleton() instancesRespondToSelector:@selector(playerLayer)]) {
+        objc_super superClass { playerLayerView, PAL::get__AVPlayerLayerViewClassSingleton() };
         auto superClassMethod = reinterpret_cast<AVPlayerLayer *(*)(objc_super *, SEL)>(objc_msgSendSuper);
         return superClassMethod(&superClass, @selector(playerLayer));
     }
@@ -167,7 +165,7 @@ static void WebAVPlayerLayerView_dealloc(id aSelf, SEL)
 #if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
     [playerLayerView setValue:nil forKey:pictureInPicturePlayerLayerViewKey];
 #endif
-    objc_super superClass { playerLayerView, get__AVPlayerLayerViewClassSingleton() };
+    objc_super superClass { playerLayerView, PAL::get__AVPlayerLayerViewClassSingleton() };
     auto super_dealloc = reinterpret_cast<void(*)(objc_super*, SEL)>(objc_msgSendSuper);
     super_dealloc(&superClass, @selector(dealloc));
 }
@@ -177,8 +175,8 @@ static void WebAVPlayerLayerView_dealloc(id aSelf, SEL)
 WebAVPlayerLayerView *allocWebAVPlayerLayerViewInstance()
 {
     static Class theClass = [] {
-        ASSERT(get__AVPlayerLayerViewClassSingleton());
-        auto theClass = objc_allocateClassPair(get__AVPlayerLayerViewClassSingleton(), "WebAVPlayerLayerView", 0);
+        ASSERT(PAL::get__AVPlayerLayerViewClassSingleton());
+        auto theClass = objc_allocateClassPair(PAL::get__AVPlayerLayerViewClassSingleton(), "WebAVPlayerLayerView", 0);
         class_addMethod(theClass, @selector(dealloc), (IMP)WebAVPlayerLayerView_dealloc, "v@:");
         class_addMethod(theClass, @selector(transferVideoViewTo:), (IMP)WebAVPlayerLayerView_transferVideoViewTo, "v@:@");
         class_addMethod(theClass, @selector(setPlayerController:), (IMP)WebAVPlayerLayerView_setPlayerController, "v@:@");

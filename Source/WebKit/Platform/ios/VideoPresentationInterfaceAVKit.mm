@@ -39,9 +39,7 @@
 
 #import "WebKitSwiftSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
-
-SOFTLINK_AVKIT_FRAMEWORK()
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPlayerViewControllerContentSource)
+#import <pal/cocoa/AVKitSoftLink.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -160,7 +158,7 @@ void VideoPresentationInterfaceAVKit::setupPlayerViewController()
     RetainPtr contentSource = playbackSessionInterface().contentSource();
     [contentSource setVideoLayer:fullscreenPlayerLayer()];
 
-    RetainPtr platformContentSource = adoptNS([allocAVPlayerViewControllerContentSourceInstance() initWithVideoPlaybackControllable:contentSource.get()]);
+    RetainPtr platformContentSource = adoptNS([PAL::allocAVPlayerViewControllerContentSourceInstance() initWithVideoPlaybackControllable:contentSource.get()]);
     m_experienceController = adoptNS([allocWKSExperienceControllerInstance() initWithContentSource:platformContentSource.get()]);
     [m_experienceController setDelegate:m_experienceControllerDelegate.get()];
 }

@@ -32,10 +32,7 @@
 #import <wtf/RetainPtr.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
-
-SOFTLINK_AVKIT_FRAMEWORK()
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVInterfaceMetadata)
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVInterfaceTimelineSegment)
+#import <pal/cocoa/AVKitSoftLink.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

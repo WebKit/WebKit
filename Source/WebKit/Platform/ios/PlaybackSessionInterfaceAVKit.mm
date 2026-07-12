@@ -35,11 +35,7 @@
 #import <wtf/TZoneMallocInlines.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
-
-SOFTLINK_AVKIT_FRAMEWORK()
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVInterfaceMediaSelectionOptionSource)
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVInterfaceMetadata)
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVInterfaceTimelineSegment)
+#import <pal/cocoa/AVKitSoftLink.h>
 
 namespace WebKit {
 
@@ -102,7 +98,7 @@ void PlaybackSessionInterfaceAVKit::seekableRangesChanged(const WebCore::Platfor
 
 static RetainPtr<AVInterfaceMediaSelectionOptionSource> mediaSelectionOptionSource(const WebCore::MediaSelectionOption& option)
 {
-    return adoptNS([allocAVInterfaceMediaSelectionOptionSourceInstance() initWithDisplayName:option.displayName.createNSString().get() identifier:[NSUUID UUID].UUIDString extendedLanguageTag:option.languageTag.createNSString().get()]);
+    return adoptNS([PAL::allocAVInterfaceMediaSelectionOptionSourceInstance() initWithDisplayName:option.displayName.createNSString().get() identifier:[NSUUID UUID].UUIDString extendedLanguageTag:option.languageTag.createNSString().get()]);
 }
 
 void PlaybackSessionInterfaceAVKit::audioMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex)

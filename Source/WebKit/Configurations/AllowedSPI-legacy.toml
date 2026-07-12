@@ -107,7 +107,6 @@ classes = [
     "ASDInstallWebAttributionService",
     "ASGlobalFrameIdentifier",
     "ASVThumbnailView",
-    "AVBackgroundView",
     "CAContext",
     "CoreTelephonyClient",
     "DMFWebsitePolicyMonitor",

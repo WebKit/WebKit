@@ -41,17 +41,7 @@
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
-
-#if !defined(WebCore_AVKitLibrary_SoftLinked)
-#define WebCore_AVKitLibrary_SoftLinked
-SOFTLINK_AVKIT_FRAMEWORK()
-#endif
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPlayerController)
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVTimeRange)
-#if !defined(WebCore_AVValueTiming_SoftLinked)
-#define WebCore_AVValueTiming_SoftLinked
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
-#endif
+#import <pal/cocoa/AVKitSoftLink.h>
 
 OBJC_CLASS AVAssetTrack;
 OBJC_CLASS AVMetadataItem;
@@ -194,7 +184,7 @@ static Class createWebAVPlayerControllerForwarderClassSingleton()
     // so that the resulting type can be safely cast to AVPlayerController via Swift's `as!`,
     // which strictly requires the castee to derive from the destination type.
 
-    Class superClass = getAVPlayerControllerClassSingleton();
+    Class superClass = PAL::getAVPlayerControllerClassSingleton();
     Class implClass = [WebAVPlayerControllerForwarder class];
     Class newClass = objc_allocateClassPair(superClass, "WebAVPlayerControllerForwarder_AVKitCompatible", 0);
 
@@ -264,7 +254,7 @@ Class webAVPlayerControllerClassSingleton()
 
 - (instancetype)init
 {
-    if (!getAVPlayerControllerClassSingleton()) {
+    if (!PAL::getAVPlayerControllerClassSingleton()) {
         [self release];
         return nil;
     }
@@ -280,8 +270,8 @@ Class webAVPlayerControllerClassSingleton()
     _player = adoptNS([PAL::allocAVPlayerInstance() initWithPlayerItem:playerItem.get()]);
 #endif
 
-    initAVPlayerController();
-    self.playerControllerProxy = adoptNS([allocAVPlayerControllerInstance() init]).get();
+    PAL::getAVPlayerControllerClassSingleton();
+    self.playerControllerProxy = adoptNS([PAL::allocAVPlayerControllerInstance() init]).get();
     _liveStreamEventModePossible = YES;
 
     [self addObserver:self forKeyPath:@"seekableTimeRanges" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:WebAVPlayerControllerSeekableTimeRangesObserverContext];
@@ -953,7 +943,7 @@ Class webAVPlayerControllerClassSingleton()
     BOOL hasSeekableLiveStreamingContent = NO;
 
     if ([self hasLiveStreamingContent] && [self minTiming] && [self maxTiming] && isfinite([self liveUpdateInterval]) && [self liveUpdateInterval] > WebAVPlayerControllerLiveStreamMinimumTargetDuration && ([self seekableTimeRangesLastModifiedTime] != 0.0)) {
-        NSTimeInterval timeStamp = [getAVValueTimingClassSingleton() currentTimeStamp];
+        NSTimeInterval timeStamp = [PAL::getAVValueTimingClassSingleton() currentTimeStamp];
         NSTimeInterval minTime = [[self minTiming] valueForTimeStamp:timeStamp];
         NSTimeInterval maxTime = [[self maxTiming] valueForTimeStamp:timeStamp];
         hasSeekableLiveStreamingContent = ((maxTime - minTime) > WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration);
@@ -1015,7 +1005,7 @@ Class webAVPlayerControllerClassSingleton()
     CMTime minSeekable = [seekableTimeRanges.firstObject CMTimeRangeValue].start;
     CMTime maxSeekable = PAL::CMTimeRangeGetEnd([seekableTimeRanges.lastObject CMTimeRangeValue]);
     CMTime duration = PAL::CMTimeSubtract(maxSeekable, minSeekable);
-    return [[allocAVTimeRangeInstance() initWithCMTimeRange:PAL::CMTimeRangeMake(minSeekable, duration)] autorelease];
+    return [[PAL::allocAVTimeRangeInstance() initWithCMTimeRange:PAL::CMTimeRangeMake(minSeekable, duration)] autorelease];
 }
 
 - (BOOL)hasItem
@@ -1111,7 +1101,7 @@ Class webAVPlayerControllerClassSingleton()
 
 - (AVTimeRange *)timeRangeForNavigation
 {
-    return [[allocAVTimeRangeInstance() initWithStartTime:self.minTime endTime:self.maxTime] autorelease];
+    return [[PAL::allocAVTimeRangeInstance() initWithStartTime:self.minTime endTime:self.maxTime] autorelease];
 }
 
 - (NSTimeInterval)timeFromDisplayTime:(NSTimeInterval)displayTime

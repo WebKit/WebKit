@@ -152,11 +152,16 @@ selectors = [
 [[legacy]]
 classes = [
     "AVAssetCollection",
+    "AVBackgroundView",
     "AVContentKeyReportGroup",
     "AVOutputContext",
+    "AVOutputDeviceMenuController",
     "AVPlayerController",
+    "AVPlayerViewControllerContentSource",
     "AVStreamDataParser",
     "AVSystemController",
+    "AVTimeRange",
+    "AVTouchBarMediaSelectionOption",
     "AVValueTiming",
     "CABackdropLayer",
     "CAFilter",

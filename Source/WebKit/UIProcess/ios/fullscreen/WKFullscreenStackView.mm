@@ -31,12 +31,10 @@
 #import "UIKitSPI.h"
 #import <UIKit/UIVisualEffectView.h>
 #import <pal/cf/CoreMediaSoftLink.h>
+#import <pal/cocoa/AVKitSoftLink.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
-
-SOFTLINK_AVKIT_FRAMEWORK()
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVBackgroundView)
 
 @interface WKFullscreenStackView () {
 
@@ -62,7 +60,7 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVBackgroundView)
 
     [self setClipsToBounds:YES];
 #if !PLATFORM(APPLETV)
-    _backgroundView = adoptNS([allocAVBackgroundViewInstance() initWithFrame:frame]);
+    _backgroundView = adoptNS([PAL::allocAVBackgroundViewInstance() initWithFrame:frame]);
     // FIXME: remove this once AVBackgroundView handles this. https://bugs.webkit.org/show_bug.cgi?id=188022
     [_backgroundView setClipsToBounds:YES];
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN

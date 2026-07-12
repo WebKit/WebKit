@@ -17,6 +17,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/ARKitSoftLink.h
     cocoa/AVFAudioSoftLink.h
     cocoa/AVFoundationSoftLink.h
+    cocoa/AVKitSoftLink.h
     cocoa/AccessibilitySoftLink.h
     cocoa/AppSSOSoftLink.h
     cocoa/ContactsSoftLink.h

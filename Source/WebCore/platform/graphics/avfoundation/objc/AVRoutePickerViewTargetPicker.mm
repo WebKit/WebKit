@@ -38,12 +38,7 @@
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
-
-#if !defined(WebCore_AVKitLibrary_SoftLinked)
-#define WebCore_AVKitLibrary_SoftLinked
-SOFTLINK_AVKIT_FRAMEWORK()
-#endif
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVRoutePickerView)
+#import <pal/cocoa/AVKitSoftLink.h>
 
 using namespace WebCore;
 
@@ -66,10 +61,10 @@ bool AVRoutePickerViewTargetPicker::isAvailable()
     static bool available;
     static std::once_flag flag;
     std::call_once(flag, [] () {
-        if (!getAVRoutePickerViewClassSingleton())
+        if (!PAL::getAVRoutePickerViewClassSingleton())
             return;
 
-        if (auto picker = adoptNS([allocAVRoutePickerViewInstance() init]))
+        if (RetainPtr picker = adoptNS([PAL::allocAVRoutePickerViewInstance() init]))
             available = [picker respondsToSelector:@selector(showRoutePickingControlsForOutputContext:relativeToRect:ofView:)];
     });
 
@@ -103,7 +98,7 @@ AVOutputContext * AVRoutePickerViewTargetPicker::outputContextInternal()
 AVRoutePickerView *AVRoutePickerViewTargetPicker::devicePicker()
 {
     if (!m_routePickerView) {
-        m_routePickerView = adoptNS([allocAVRoutePickerViewInstance() init]);
+        m_routePickerView = adoptNS([PAL::allocAVRoutePickerViewInstance() init]);
         [m_routePickerView setDelegate:m_routePickerViewDelegate.get()];
     }
 

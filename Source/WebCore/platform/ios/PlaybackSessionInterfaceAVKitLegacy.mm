@@ -41,9 +41,7 @@
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
-
-SOFTLINK_AVKIT_FRAMEWORK()
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
+#import <pal/cocoa/AVKitSoftLink.h>
 
 namespace WebCore {
 
@@ -114,7 +112,7 @@ void PlaybackSessionInterfaceAVKitLegacy::currentTimeChanged(double currentTime,
         return;
 
     NSTimeInterval anchorTimeStamp = ![m_playerController rate] ? NAN : anchorTime;
-    AVValueTiming *timing = [getAVValueTimingClassSingleton() valueTimingWithAnchorValue:currentTime
+    AVValueTiming *timing = [PAL::getAVValueTimingClassSingleton() valueTimingWithAnchorValue:currentTime
         anchorTimeStamp:anchorTimeStamp rate:0];
 
     [m_playerController setTiming:timing];

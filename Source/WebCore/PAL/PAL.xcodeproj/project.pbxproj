@@ -69,14 +69,14 @@
 		2E1342CD215AA10A007199D2 /* UIKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E1342CB215AA10A007199D2 /* UIKitSoftLink.mm */; };
 		31647FB0251759DD0010F8FB /* OpenGLSoftLinkCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31647FAE251759DB0010F8FB /* OpenGLSoftLinkCocoa.mm */; };
 		3A02FE2B2B214A38001724B1 /* ARKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A02FE2A2B214A38001724B1 /* ARKitSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3ABF16D02F984F0000267B72 /* ARKitSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 3ABF16B72F983E3B00267B72 /* ARKitSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3ABF16D12F984F0000267B72 /* ARKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3ABF16B82F983E3B00267B72 /* ARKitSoftLink.mm */; };
 		3AA35C462D6E7F430078EA17 /* WebContentRestrictionsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AA35C452D6E7F430078EA17 /* WebContentRestrictionsSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3AA35C4C2D6E802D0078EA17 /* WebContentRestrictionsSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AA35C4A2D6E802D0078EA17 /* WebContentRestrictionsSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3AA35C4D2D6E802D0078EA17 /* WebContentRestrictionsSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3AA35C4B2D6E802D0078EA17 /* WebContentRestrictionsSoftLink.mm */; };
 		3ABF16C02F98463200267B72 /* CompositorServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 3ABF16BF2F98463200267B72 /* CompositorServicesSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3ABF16C62F98479200267B72 /* CompositorServicesSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 3ABF16C42F98478500267B72 /* CompositorServicesSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3ABF16C72F9849B900267B72 /* CompositorServicesSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3ABF16C52F98478500267B72 /* CompositorServicesSoftLink.mm */; };
+		3ABF16D02F984F0000267B72 /* ARKitSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 3ABF16B72F983E3B00267B72 /* ARKitSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3ABF16D12F984F0000267B72 /* ARKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3ABF16B82F983E3B00267B72 /* ARKitSoftLink.mm */; };
 		3CBEEDE928A1861D00221FAE /* BarcodeSupportSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C963637289DC1C600570DD6 /* BarcodeSupportSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		416E995323DAE6BE00E871CB /* AudioToolboxSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E995123DAE6BD00E871CB /* AudioToolboxSoftLink.cpp */; };
 		4177B3DA296CB8C3009711F0 /* CoreCryptoSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4177B3D9296CB8C3009711F0 /* CoreCryptoSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -319,6 +319,8 @@
 		DD20DE6427BC90D80093D175 /* ThreadGlobalData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5C57DE275719F4003B540D /* ThreadGlobalData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DE6527BC90F90093D175 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0571E31C57E00725F18 /* config.h */; };
 		DD5697F92DC1303C00050321 /* rdar150228472.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5697F82DC1303C00050321 /* rdar150228472.swift */; };
+		DD9D0491300077D7000AA495 /* AVKitSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = DD9D048C300077CF000AA495 /* AVKitSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD9D0492300077E8000AA495 /* AVKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD9D048D300077CF000AA495 /* AVKitSoftLink.mm */; };
 		DDB04F32278E4F1B008D3678 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE99300278D07B800F60D26 /* libWebKitAdditions.a */; };
 		E34F26F62846D0D90076E549 /* PowerLogSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E34F26F52846B7550076E549 /* PowerLogSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E544F3922CEBD95D007E1413 /* CoreMaterialSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = E544F3912CEBD95D007E1413 /* CoreMaterialSoftLink.mm */; };
@@ -661,11 +663,11 @@
 		31647FAE251759DB0010F8FB /* OpenGLSoftLinkCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenGLSoftLinkCocoa.mm; sourceTree = "<group>"; };
 		31647FAF251759DC0010F8FB /* OpenGLSoftLinkCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenGLSoftLinkCocoa.h; sourceTree = "<group>"; };
 		3A02FE2A2B214A38001724B1 /* ARKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARKitSPI.h; sourceTree = "<group>"; };
-		3ABF16B72F983E3B00267B72 /* ARKitSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKitSoftLink.h; sourceTree = "<group>"; };
-		3ABF16B82F983E3B00267B72 /* ARKitSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ARKitSoftLink.mm; sourceTree = "<group>"; };
 		3AA35C452D6E7F430078EA17 /* WebContentRestrictionsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebContentRestrictionsSPI.h; sourceTree = "<group>"; };
 		3AA35C4A2D6E802D0078EA17 /* WebContentRestrictionsSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebContentRestrictionsSoftLink.h; sourceTree = "<group>"; };
 		3AA35C4B2D6E802D0078EA17 /* WebContentRestrictionsSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentRestrictionsSoftLink.mm; sourceTree = "<group>"; };
+		3ABF16B72F983E3B00267B72 /* ARKitSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKitSoftLink.h; sourceTree = "<group>"; };
+		3ABF16B82F983E3B00267B72 /* ARKitSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ARKitSoftLink.mm; sourceTree = "<group>"; };
 		3ABF16BF2F98463200267B72 /* CompositorServicesSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompositorServicesSPI.h; sourceTree = "<group>"; };
 		3ABF16C42F98478500267B72 /* CompositorServicesSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompositorServicesSoftLink.h; sourceTree = "<group>"; };
 		3ABF16C52F98478500267B72 /* CompositorServicesSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CompositorServicesSoftLink.mm; sourceTree = "<group>"; };
@@ -796,6 +798,8 @@
 		DD05A35F27BF0AC40096EFAB /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD0B43C127F67999009E31FC /* WebGPU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WebGPU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD5697F82DC1303C00050321 /* rdar150228472.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = rdar150228472.swift; path = DerivedSources/WebCore/rdar150228472.swift; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD9D048C300077CF000AA495 /* AVKitSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVKitSoftLink.h; sourceTree = "<group>"; };
+		DD9D048D300077CF000AA495 /* AVKitSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AVKitSoftLink.mm; sourceTree = "<group>"; };
 		DDE99300278D07B800F60D26 /* libWebKitAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF83E208263734F1000825EF /* CryptoKitPrivateSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKitPrivateSPI.h; sourceTree = "<group>"; };
 		E327C0DE260BDC90002281C5 /* NotifySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotifySPI.h; sourceTree = "<group>"; };
@@ -1204,6 +1208,8 @@
 				41D99CC72C9C45580025844F /* AVFAudioSoftLink.mm */,
 				077E87B0226A460200A2AFF0 /* AVFoundationSoftLink.h */,
 				077E87AF226A460200A2AFF0 /* AVFoundationSoftLink.mm */,
+				DD9D048C300077CF000AA495 /* AVKitSoftLink.h */,
+				DD9D048D300077CF000AA495 /* AVKitSoftLink.mm */,
 				3ABF16C42F98478500267B72 /* CompositorServicesSoftLink.h */,
 				3ABF16C52F98478500267B72 /* CompositorServicesSoftLink.mm */,
 				5157ADFB2B23B9F300C0E095 /* ContactsSoftLink.h */,
@@ -1487,6 +1493,7 @@
 				41D99CC82C9C45590025844F /* AVFAudioSoftLink.h in Headers */,
 				DD20DD1B27BC90D60093D175 /* AVFoundationSoftLink.h in Headers */,
 				DD20DDDB27BC90D70093D175 /* AVFoundationSPI.h in Headers */,
+				DD9D0491300077D7000AA495 /* AVKitSoftLink.h in Headers */,
 				DD20DDDC27BC90D70093D175 /* AVKitSPI.h in Headers */,
 				A15E66242EDA972C007FB56F /* AVRoutingSoftLink.h in Headers */,
 				DD20DDDD27BC90D70093D175 /* AVStreamDataParserSPI.h in Headers */,
@@ -1882,6 +1889,7 @@
 				416E995323DAE6BE00E871CB /* AudioToolboxSoftLink.cpp in Sources */,
 				41D99CC92C9C45590025844F /* AVFAudioSoftLink.mm in Sources */,
 				077E87B1226A460200A2AFF0 /* AVFoundationSoftLink.mm in Sources */,
+				DD9D0492300077E8000AA495 /* AVKitSoftLink.mm in Sources */,
 				A15E661B2EDA937A007FB56F /* AVRoutingSoftLink.mm in Sources */,
 				1D2B413425F05E3500A3F70A /* ClockGeneric.cpp in Sources */,
 				3ABF16C72F9849B900267B72 /* CompositorServicesSoftLink.mm in Sources */,

@@ -42,9 +42,7 @@
 #import <wtf/text/WTFString.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
-
-SOFTLINK_AVKIT_FRAMEWORK()
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVLegibleMediaOptionsMenuController)
+#import <pal/cocoa/AVKitSoftLink.h>
 
 using namespace WebCore;
 using namespace WTF;
@@ -61,10 +59,10 @@ using namespace WTF;
     if (!(self = [super init]))
         return nil;
 
-    if (!AVKitLibrary())
+    if (!PAL::isAVKitFrameworkAvailable())
         return nil;
 
-    _menuController = [allocAVLegibleMediaOptionsMenuControllerInstance() initWithPlayer:nil];
+    _menuController = [PAL::allocAVLegibleMediaOptionsMenuControllerInstance() initWithPlayer:nil];
     [_menuController setDelegate:self];
     [self rebuildMenu];
 
