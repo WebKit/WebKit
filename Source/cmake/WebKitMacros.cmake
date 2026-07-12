@@ -942,6 +942,8 @@ function(_webkit_generate_platform_swift_args _target _resp_path _ordering_dep)
     if (CMAKE_CXX_FLAGS_${_build_type_upper} MATCHES "NDEBUG" OR CMAKE_CXX_FLAGS MATCHES "NDEBUG")
         list(APPEND _clang_cmd "-DNDEBUG")
     endif ()
+    # -fsanitize=* drives ASAN_ENABLED etc; keep this preprocess in sync with C++.
+    list(APPEND _clang_cmd ${ENABLED_COMPILER_SANITIZERS})
     list(APPEND _clang_cmd "${_empty_input}")
 
     # Order resp generation after the framework's headers are staged: the
@@ -1110,6 +1112,8 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         if (APPLE)
             # Swift modules extend their underlying ObjC++ module.
             list(APPEND _swift_options "-import-underlying-module")
+            # Don't fire the module's own cross-import overlay while compiling it.
+            list(APPEND _swift_options "-Xfrontend" "-disable-cross-import-overlays")
         endif ()
         if (${_target}_SWIFT_INTEROP_MODULE_PATH_SWIFT_ONLY)
             list(APPEND _swift_options "-I${_interop_module_path}")
