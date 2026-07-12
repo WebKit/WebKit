@@ -770,24 +770,34 @@ double VTTCue::calculateMaximumSize() const
     auto computedPosition = calculateComputedTextPosition();
     auto positionAlignment = calculateComputedPositionAlignment();
 
-    if (positionAlignment == PositionAlignSetting::LineLeft) {
+    switch (positionAlignment) {
+    case PositionAlignSetting::LineLeft:
         // If the computed position alignment is line-left
         // Let maximum size be the computed position subtracted from 100.
         maxSize = 100.0 - computedPosition;
-    } else if (positionAlignment == PositionAlignSetting::LineRight) {
+        break;
+    case PositionAlignSetting::LineRight:
         // If the computed position alignment is line-right
         // Let maximum size be the computed position.
         maxSize = computedPosition;
-    } else if (positionAlignment == PositionAlignSetting::Center && computedPosition <= 50) {
-        // If the computed position alignment is center, and the computed position is less than or equal to 50
-        // Let maximum size be the computed position multiplied by two.
-        maxSize = 2 * computedPosition;
-        // If the computed position alignment is center, and the computed position is greater than 50
-    } else if (positionAlignment == PositionAlignSetting::Center && computedPosition > 50) {
-        // Let maximum size be the result of subtracting computed position from 100 and then multiplying the result by two.
-        maxSize = 2 * (100.0 - computedPosition);
-    } else
+        break;
+    case PositionAlignSetting::Center:
+        if (computedPosition <= 50) {
+            // If the computed position alignment is center, and the computed position is less than or equal to 50
+            // Let maximum size be the computed position multiplied by two.
+            maxSize = 2 * computedPosition;
+        } else {
+            // If the computed position alignment is center, and the computed position is greater than 50
+            // Let maximum size be the result of subtracting computed position from 100 and then multiplying the result by two.
+            maxSize = 2 * (100.0 - computedPosition);
+        }
+        break;
+    case PositionAlignSetting::Auto:
+        // calculateComputedPositionAlignment() resolves auto to one of the
+        // cases above, so this is never reached.
         ASSERT_NOT_REACHED();
+        break;
+    }
 
     return maxSize;
 }
