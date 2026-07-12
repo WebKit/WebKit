@@ -2735,6 +2735,7 @@ webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_image_bit
 webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_image_bitmap/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Pass ]
 webkit.org/b/251107 webgl/2.0.y/conformance/textures/image_bitmap_from_image_bitmap/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Pass ]
 webkit.org/b/251107 webgl/2.0.y/conformance/textures/misc/copytexsubimage2d-large-partial-copy-corruption.html [ Pass ]
+webkit.org/b/251107 webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Pass ]
 webkit.org/b/251107 webgl/2.0.y/conformance/textures/misc/texture-corner-case-videos.html [ Pass ]
 
 # WebGL Video timeout decoding vorbis file that require playbin3

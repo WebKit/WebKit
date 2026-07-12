@@ -1368,7 +1368,7 @@ webkit.org/b/318891 [ arm64 ] imported/w3c/web-platform-tests/webrtc/RTCDataChan
 webkit.org/b/318638 [ Release ] http/tests/misc/iframe-shadow-realm.html [ Crash Pass ]
 
 webkit.org/b/318757 webgl/1.0.x/conformance/textures/misc/video-rotation.html [ Failure Timeout ]
-[ Release ] webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Failure Pass ]
+webkit.org/b/251107 [ arm64 ] webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Failure Pass ]
 webkit.org/b/318757 webgl/2.0.y/conformance/textures/misc/video-rotation.html [ Failure Timeout ]
 
 webkit.org/b/319067 [ x86_64 ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Failure Pass ]
