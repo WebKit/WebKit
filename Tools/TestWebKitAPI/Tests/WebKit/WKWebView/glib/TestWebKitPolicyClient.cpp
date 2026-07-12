@@ -188,6 +188,12 @@ static void testNavigationPolicy(PolicyClientTest* test, gconstpointer)
     g_assert_cmpint(webkit_navigation_action_get_modifiers(navigationAction), ==, 0);
     g_assert_false(webkit_navigation_action_is_redirect(navigationAction));
     g_assert_null(webkit_navigation_action_get_frame_name(navigationAction));
+    WebKitFrameInfo* sourceFrameInfo = webkit_navigation_action_get_source_frame_info(navigationAction);
+    g_assert_nonnull(sourceFrameInfo);
+    g_assert_true(webkit_frame_info_is_main_frame(sourceFrameInfo));
+    WebKitFrameInfo* targetFrameInfo = webkit_navigation_action_get_target_frame_info(navigationAction);
+    g_assert_nonnull(targetFrameInfo);
+    g_assert_true(webkit_frame_info_is_main_frame(targetFrameInfo));
     WebKitURIRequest* request = webkit_navigation_action_get_request(navigationAction);
     g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, "http://webkitgtk.org/");
 
@@ -223,6 +229,39 @@ static void testNavigationPolicy(PolicyClientTest* test, gconstpointer)
     test->loadHtml("<html/>", "http://webkitgtk.org/");
     test->waitUntilLoadFinished();
     g_assert_cmpint(test->m_loadEvents.size(), ==, 0);
+}
+
+static void testNavigationPolicyWithIframe(PolicyClientTest* test, gconstpointer)
+{
+    test->m_policyDecisionTypeFilter = WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION;
+
+    test->m_policyDecisionResponse = PolicyClientTest::Use;
+    test->loadURI(kServer->getURIForPath("/iframe"));
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
+
+    WebKitNavigationPolicyDecision* decision = WEBKIT_NAVIGATION_POLICY_DECISION(test->m_previousPolicyDecision.get());
+    WebKitNavigationAction* navigationAction = webkit_navigation_policy_decision_get_navigation_action(decision);
+    WebKitFrameInfo* sourceFrameInfo = webkit_navigation_action_get_source_frame_info(navigationAction);
+    g_assert_nonnull(sourceFrameInfo);
+    g_assert_true(webkit_frame_info_is_main_frame(sourceFrameInfo));
+    WebKitFrameInfo* targetFrameInfo = webkit_navigation_action_get_target_frame_info(navigationAction);
+    g_assert_nonnull(targetFrameInfo);
+    g_assert_false(webkit_frame_info_is_main_frame(targetFrameInfo));
+
+    test->m_policyDecisionResponse = PolicyClientTest::Use;
+    test->loadHtml("<html><body><iframe src='/iframe'></iframe></body></html>", kServer->getURIForPath("/").legacyCStringPointer());
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
+
+    decision = WEBKIT_NAVIGATION_POLICY_DECISION(test->m_previousPolicyDecision.get());
+    navigationAction = webkit_navigation_policy_decision_get_navigation_action(decision);
+    sourceFrameInfo = webkit_navigation_action_get_source_frame_info(navigationAction);
+    g_assert_nonnull(sourceFrameInfo);
+    g_assert_false(webkit_frame_info_is_main_frame(sourceFrameInfo));
+    targetFrameInfo = webkit_navigation_action_get_target_frame_info(navigationAction);
+    g_assert_nonnull(targetFrameInfo);
+    g_assert_false(webkit_frame_info_is_main_frame(targetFrameInfo));
 }
 
 static void testResponsePolicy(PolicyClientTest* test, gconstpointer)
@@ -306,6 +345,8 @@ static void testNewWindowPolicy(PolicyClientTest* test, gconstpointer)
     WebKitNavigationPolicyDecision* decision = WEBKIT_NAVIGATION_POLICY_DECISION(test->m_previousPolicyDecision.get());
     WebKitNavigationAction* navigationAction = webkit_navigation_policy_decision_get_navigation_action(decision);
     g_assert_cmpstr(webkit_navigation_action_get_frame_name(navigationAction), ==, "_blank");
+    WebKitFrameInfo* targetFrameInfo = webkit_navigation_action_get_target_frame_info(navigationAction);
+    g_assert_null(targetFrameInfo);
 
     // Using a short timeout is a bit ugly here, but it's hard to get around because if we block
     // the new window signal we cannot halt the main loop in the create callback. If we
@@ -326,6 +367,13 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
 
     if (g_str_equal(path, "/")) {
         static const char* responseString = "<html><body>Testing!</body></html>";
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+        auto* responseBody = soup_server_message_get_response_body(message);
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
+        soup_message_body_complete(responseBody);
+    }
+    if (g_str_equal(path, "/iframe")) {
+        static const char* responseString = "<html><body><iframe src='/'></iframe></body></html>";
         soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
         auto* responseBody = soup_server_message_get_response_body(message);
         soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
@@ -546,6 +594,7 @@ void beforeAll()
     kServer->run(serverCallback);
 
     PolicyClientTest::add("WebKitPolicyClient", "navigation-policy", testNavigationPolicy);
+    PolicyClientTest::add("WebKitPolicyClient", "navigation-policy-iframe", testNavigationPolicyWithIframe);
     PolicyClientTest::add("WebKitPolicyClient", "response-policy", testResponsePolicy);
     PolicyClientTest::add("WebKitPolicyClient", "autoplay-policy", testAutoplayPolicy);
     PolicyClientTest::add("WebKitPolicyClient", "custom-user-agent-policy", testCustomUserAgentPolicy);

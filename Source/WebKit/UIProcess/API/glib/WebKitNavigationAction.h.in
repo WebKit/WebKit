@@ -24,6 +24,7 @@
 
 #include <glib-object.h>
 #include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
+#include <@API_INCLUDE_PREFIX@/WebKitFrameInfo.h>
 #include <@API_INCLUDE_PREFIX@/WebKitURIRequest.h>
 
 G_BEGIN_DECLS
@@ -54,34 +55,40 @@ typedef struct _WebKitNavigationAction WebKitNavigationAction;
 
 
 WEBKIT_API GType
-webkit_navigation_action_get_type            (void);
+webkit_navigation_action_get_type              (void);
 
 WEBKIT_API WebKitNavigationAction *
-webkit_navigation_action_copy                (WebKitNavigationAction *navigation);
+webkit_navigation_action_copy                  (WebKitNavigationAction *navigation);
 
 WEBKIT_API void
-webkit_navigation_action_free                (WebKitNavigationAction *navigation);
+webkit_navigation_action_free                  (WebKitNavigationAction *navigation);
 
 WEBKIT_API WebKitNavigationType
-webkit_navigation_action_get_navigation_type (WebKitNavigationAction *navigation);
+webkit_navigation_action_get_navigation_type   (WebKitNavigationAction *navigation);
 
 WEBKIT_API guint
-webkit_navigation_action_get_mouse_button    (WebKitNavigationAction *navigation);
+webkit_navigation_action_get_mouse_button      (WebKitNavigationAction *navigation);
 
 WEBKIT_API guint
-webkit_navigation_action_get_modifiers       (WebKitNavigationAction *navigation);
+webkit_navigation_action_get_modifiers         (WebKitNavigationAction *navigation);
 
 WEBKIT_API WebKitURIRequest *
-webkit_navigation_action_get_request         (WebKitNavigationAction *navigation);
+webkit_navigation_action_get_request           (WebKitNavigationAction *navigation);
 
 WEBKIT_API gboolean
-webkit_navigation_action_is_user_gesture     (WebKitNavigationAction *navigation);
+webkit_navigation_action_is_user_gesture       (WebKitNavigationAction *navigation);
 
 WEBKIT_API gboolean
-webkit_navigation_action_is_redirect         (WebKitNavigationAction *navigation);
+webkit_navigation_action_is_redirect           (WebKitNavigationAction *navigation);
 
 WEBKIT_API const char *
-webkit_navigation_action_get_frame_name      (WebKitNavigationAction *navigation);
+webkit_navigation_action_get_frame_name        (WebKitNavigationAction *navigation);
+
+WEBKIT_API WebKitFrameInfo *
+webkit_navigation_action_get_source_frame_info (WebKitNavigationAction *navigation);
+
+WEBKIT_API WebKitFrameInfo *
+webkit_navigation_action_get_target_frame_info (WebKitNavigationAction *navigation);
 
 G_END_DECLS
 
