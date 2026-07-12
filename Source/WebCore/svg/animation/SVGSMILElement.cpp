@@ -772,10 +772,21 @@ SMILTime SVGSMILElement::simpleDuration() const
     return std::min(dur(), SMILTime::indefinite());
 }
 
-static void insertSorted(Vector<SMILTimeWithOrigin>& list, SMILTimeWithOrigin time)
+static void insertSortedAndUnique(Vector<SMILTimeWithOrigin>& list, SMILTimeWithOrigin time)
 {
     ASSERT(std::is_sorted(list.begin(), list.end()));
-    list.insert(std::lower_bound(list.begin(), list.end(), time) - list.begin(), time);
+    size_t position = std::lower_bound(list.begin(), list.end(), time) - list.begin();
+    // The list is only ordered by time, so entries sharing this time are contiguous
+    // starting at `position`. Skip the insertion if the same (time, origin) pair is
+    // already present to keep repeated beginElementAt/endElementAt calls from ballooning
+    // the list with duplicates.
+    for (auto& existing : list.subspan(position)) {
+        if (existing.time() != time.time())
+            break;
+        if (existing.originIsScript() == time.originIsScript())
+            return;
+    }
+    list.insert(position, time);
 }
 
 void SVGSMILElement::addInstanceTime(BeginOrEnd beginOrEnd, SMILTime time, SMILTimeWithOrigin::Origin origin)
@@ -783,7 +794,7 @@ void SVGSMILElement::addInstanceTime(BeginOrEnd beginOrEnd, SMILTime time, SMILT
     SMILTime elapsed = this->elapsed();
     if (elapsed.isUnresolved())
         return;
-    insertSorted(beginOrEnd == Begin ? m_beginTimes : m_endTimes, SMILTimeWithOrigin(time, origin));
+    insertSortedAndUnique(beginOrEnd == Begin ? m_beginTimes : m_endTimes, SMILTimeWithOrigin(time, origin));
     if (beginOrEnd == Begin)
         beginListChanged(elapsed);
     else
