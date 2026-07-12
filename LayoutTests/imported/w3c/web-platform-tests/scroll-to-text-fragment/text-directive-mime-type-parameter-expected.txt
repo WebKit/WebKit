@@ -1,3 +1,4 @@
 
 PASS Text directive allowed in text/html with a charset parameter
+PASS Text directive allowed in text/html served with mixed-case MIME type
 

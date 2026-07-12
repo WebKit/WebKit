@@ -3150,7 +3150,7 @@ bool LocalFrameView::scrollToTextFragment(IsRetry isRetry)
     if (!parsedContentType)
         return false;
     auto mimeType = parsedContentType->mimeType();
-    if (!equalLettersIgnoringASCIICase(mimeType, "text/html"_s) && !equalLettersIgnoringASCIICase(mimeType, "text/plain"_s))
+    if (mimeType != "text/html"_s && mimeType != "text/plain"_s)
         return false;
 
     // Block text fragments in cross-origin window.open() popups
