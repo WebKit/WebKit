@@ -212,7 +212,9 @@ static bool menuHasMenuAncestor(UIMenu *targetMenu, UIMenu *ancestorMenu)
 - (void)systemCaptionStyleSettingsActionSelected:(UIAction *)action
 {
     NSURL *settingsURL = [NSURL URLWithString:@"App-prefs:ACCESSIBILITY"];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if ([[UIApplication sharedApplication] canOpenURL:settingsURL])
+    ALLOW_DEPRECATED_DECLARATIONS_END
         [[UIApplication sharedApplication] openURL:settingsURL options:@{ } completionHandler:nil];
 }
 
