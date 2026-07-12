@@ -37,11 +37,15 @@ WI.SourceMap = class SourceMap
             if (!sourceURL)
                 continue;
             let generatedPositionForOriginalLine = this._generatedPositionForOriginalLineForURL.getOrInsert(sourceURL, new Map);
-            // For range mappings we need to compute the line span of the range here, because it is difficult to compute later.
-            let rangeMappingSpan = 0;
-            if (isRangeMapping && (index + 1 < this._mappings.length))
-                rangeMappingSpan = this._mappings[index + 1][0] - generatedLine;
-            generatedPositionForOriginalLine.getOrInsert(originalLine, [generatedLine, generatedColumn, rangeMappingSpan]);
+            generatedPositionForOriginalLine.getOrInsertComputed(originalLine, () => {
+                let generatedPosition = [generatedLine, generatedColumn];
+                if (isRangeMapping && (index + 1 < this._mappings.length)) {
+                    generatedPosition.push(originalColumn);
+                    generatedPosition.push(this._mappings[index + 1][0]); // rangeEndGeneratedLine
+                    generatedPosition.push(this._mappings[index + 1][1]); // rangeEndGeneratedColumn
+                }
+                return generatedPosition;
+            });
         }
 
         this._sourceMapResourceForURL = new Map;
@@ -383,28 +387,45 @@ WI.SourceMap = class SourceMap
         return [sourceMapResource, originalLine, originalColumn];
     }
 
-    findGeneratedPosition(sourceURL, lineNumber)
+    findGeneratedPosition(sourceURL, lineNumber, columnNumber)
     {
         let generatedPositionForOriginalLine = this._generatedPositionForOriginalLineForURL.get(sourceURL);
+
         // Search backwards in case the queried line is in the span of a range mapping.
         for (let currentLine = lineNumber; currentLine >= 0; --currentLine) {
-            let generatedPosition = generatedPositionForOriginalLine.get(currentLine);
-            if (!generatedPosition)
+            let [generatedLine, generatedColumn, originalColumn, rangeEndGeneratedLine, rangeEndGeneratedColumn] = generatedPositionForOriginalLine.get(currentLine) || [];
+            if (isNaN(generatedLine) || isNaN(generatedColumn))
                 continue;
-
-            let rangeMappingSpan = generatedPosition[2];
-            let offset = lineNumber - currentLine;
-            if (!rangeMappingSpan || offset >= rangeMappingSpan)
+            if (isNaN(rangeEndGeneratedLine) || isNaN(rangeEndGeneratedColumn))
                 break;
 
-            let generatedColumn = (offset === 0) ? generatedPosition[1] : 0;
-            return [generatedPosition[0] + offset, generatedColumn];
+            let offset = lineNumber - currentLine;
+
+            let resolvedColumn;
+            if (offset === 0) {
+                if (columnNumber === undefined)
+                    resolvedColumn = generatedColumn;
+                else {
+                    if (columnNumber < originalColumn)
+                        break;
+                    resolvedColumn = generatedColumn + columnNumber - originalColumn;
+                }
+            } else
+                resolvedColumn = columnNumber || 0;
+
+            let resolvedLine = generatedLine + offset;
+            if (resolvedLine > rangeEndGeneratedLine || (resolvedLine === rangeEndGeneratedLine && resolvedColumn >= rangeEndGeneratedColumn))
+                break;
+
+            return [resolvedLine, resolvedColumn];
         }
+
         for (let lastLineNumber = generatedPositionForOriginalLine.lastKey; lineNumber <= lastLineNumber; ++lineNumber) {
             let generatedPosition = generatedPositionForOriginalLine.get(lineNumber);
             if (generatedPosition)
                 return generatedPosition;
         }
+
         return generatedPositionForOriginalLine.firstValue;
     }
 };
