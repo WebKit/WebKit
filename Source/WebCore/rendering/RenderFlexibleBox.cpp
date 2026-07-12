@@ -75,21 +75,19 @@ static bool flexContainerIsHorizontalFlow(const RenderBox& flexItem)
 
 RenderFlexibleBox::FlexLayoutItem::FlexLayoutItem(RenderBox& flexItem, const FlexBaseAndHypotheticalMainSize& sizing, bool everHadLayout)
     : renderer(flexItem)
-    , flexBaseContentSize(sizing.flexBaseContentSize)
     , mainAxisBorderAndPadding(flexContainerIsHorizontalFlow(flexItem) ? flexItem.horizontalBorderAndPaddingExtent() : flexItem.verticalBorderAndPaddingExtent())
     , minMaxSizes(sizing.minMaxMainSizes)
-    , hypotheticalMainContentSize(sizing.hypotheticalMainContentSize)
     , everHadLayout(everHadLayout)
 {
     ASSERT(!flexItem.isOutOfFlowPositioned());
 }
 
-LayoutUnit RenderFlexibleBox::FlexLayoutItem::hypotheticalMainAxisMarginBoxSize(LayoutUnit mainAxisMargin) const
+LayoutUnit RenderFlexibleBox::FlexLayoutItem::hypotheticalMainAxisMarginBoxSize(LayoutUnit hypotheticalMainContentSize, LayoutUnit mainAxisMargin) const
 {
     return hypotheticalMainContentSize + mainAxisBorderAndPadding + mainAxisMargin;
 }
 
-LayoutUnit RenderFlexibleBox::FlexLayoutItem::flexBaseMarginBoxSize(LayoutUnit mainAxisMargin) const
+LayoutUnit RenderFlexibleBox::FlexLayoutItem::flexBaseMarginBoxSize(LayoutUnit flexBaseContentSize, LayoutUnit mainAxisMargin) const
 {
     return flexBaseContentSize + mainAxisBorderAndPadding + mainAxisMargin;
 }
@@ -527,7 +525,7 @@ void RenderFlexibleBox::paintChildren(PaintInfo& paintInfo, const LayoutPoint& p
     }
 }
 
-LayoutUnit RenderFlexibleBox::resolveFlexibleLengthsForLineItems(std::span<FlexLayoutItem> lineItems, std::span<LayoutUnit> mainSizes, std::span<const LayoutUnit> margins, LayoutUnit containerMainInnerSize, LayoutUnit gapBetweenItems)
+LayoutUnit RenderFlexibleBox::resolveFlexibleLengthsForLineItems(std::span<FlexLayoutItem> lineItems, std::span<const FlexBaseAndHypotheticalMainSize> lineSizing, std::span<LayoutUnit> mainSizes, std::span<const LayoutUnit> margins, LayoutUnit containerMainInnerSize, LayoutUnit gapBetweenItems)
 {
     Vector<bool> frozen(FillWith { }, lineItems.size(), false);
     double totalFlexGrow = 0;
@@ -537,12 +535,12 @@ LayoutUnit RenderFlexibleBox::resolveFlexibleLengthsForLineItems(std::span<FlexL
     LayoutUnit sumHypotheticalMainSize;
     for (size_t index = 0; index < lineItems.size(); ++index) {
         auto& flexLayoutItem = lineItems[index];
-        mainSizes[index] = flexLayoutItem.flexBaseContentSize;
+        mainSizes[index] = lineSizing[index].flexBaseContentSize;
         totalFlexGrow += flexLayoutItem.style().flexGrow().value;
         totalFlexShrink += flexLayoutItem.style().flexShrink().value;
-        totalWeightedFlexShrink += flexLayoutItem.style().flexShrink().value * flexLayoutItem.flexBaseContentSize;
-        sumFlexBaseSize += flexLayoutItem.flexBaseMarginBoxSize(margins[index]);
-        sumHypotheticalMainSize += flexLayoutItem.hypotheticalMainAxisMarginBoxSize(margins[index]);
+        totalWeightedFlexShrink += flexLayoutItem.style().flexShrink().value * lineSizing[index].flexBaseContentSize;
+        sumFlexBaseSize += flexLayoutItem.flexBaseMarginBoxSize(lineSizing[index].flexBaseContentSize, margins[index]);
+        sumHypotheticalMainSize += flexLayoutItem.hypotheticalMainAxisMarginBoxSize(lineSizing[index].hypotheticalMainContentSize, margins[index]);
     }
     if (lineItems.size() > 1) {
         auto totalGap = (lineItems.size() - 1) * gapBetweenItems;
@@ -552,14 +550,14 @@ LayoutUnit RenderFlexibleBox::resolveFlexibleLengthsForLineItems(std::span<FlexL
 
     auto remainingFreeSpace = containerMainInnerSize - sumFlexBaseSize;
     auto flexSign = (sumHypotheticalMainSize < containerMainInnerSize) ? FlexSign::PositiveFlexibility : FlexSign::NegativeFlexibility;
-    freezeInflexibleItems(flexSign, lineItems, mainSizes, frozen, remainingFreeSpace, totalFlexGrow, totalFlexShrink, totalWeightedFlexShrink);
+    freezeInflexibleItems(flexSign, lineItems, lineSizing, mainSizes, frozen, remainingFreeSpace, totalFlexGrow, totalFlexShrink, totalWeightedFlexShrink);
     auto initialFreeSpace = remainingFreeSpace;
-    while (!resolveFlexibleLengths(flexSign, lineItems, mainSizes, frozen, initialFreeSpace, remainingFreeSpace, totalFlexGrow, totalFlexShrink, totalWeightedFlexShrink)) { }
+    while (!resolveFlexibleLengths(flexSign, lineItems, lineSizing, mainSizes, frozen, initialFreeSpace, remainingFreeSpace, totalFlexGrow, totalFlexShrink, totalWeightedFlexShrink)) { }
 
     return remainingFreeSpace;
 }
 
-void RenderFlexibleBox::distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(const FlexLines& flexLines, FlexLayoutItems& allItems, Vector<LayoutUnit>& mainSizeList, const Vector<LayoutUnit>& marginsList, Vector<LayoutPoint>& positionList, const Vector<LayoutUnit>& lineCrossOffsetList, LayoutUnit gapBetweenItems)
+void RenderFlexibleBox::distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(const FlexLines& flexLines, FlexLayoutItems& allItems, std::span<const FlexBaseAndHypotheticalMainSize> sizingList, Vector<LayoutUnit>& mainSizeList, const Vector<LayoutUnit>& marginsList, Vector<LayoutPoint>& positionList, const Vector<LayoutUnit>& lineCrossOffsetList, LayoutUnit gapBetweenItems)
 {
     // In multi-line column flex, the container's main size (height) is only known
     // after all lines are laid out. Lines whose items had flex-grow may not have
@@ -572,6 +570,7 @@ void RenderFlexibleBox::distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(co
     for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
         auto lineRange = flexLines.ranges[lineIndex];
         auto lineItems = allItems.mutableSpan().subspan(lineRange.begin(), lineRange.distance());
+        auto lineSizing = sizingList.subspan(lineRange.begin(), lineRange.distance());
         auto lineMainSizes = mainSizeList.mutableSpan().subspan(lineRange.begin(), lineRange.distance());
         auto lineMargins = marginsList.span().subspan(lineRange.begin(), lineRange.distance());
         auto linePositions = positionList.mutableSpan().subspan(lineRange.begin(), lineRange.distance());
@@ -583,7 +582,7 @@ void RenderFlexibleBox::distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(co
         if (lineMainSize >= containerMainInnerSize)
             continue;
 
-        resolveFlexibleLengthsForLineItems(lineItems, lineMainSizes, lineMargins, containerMainInnerSize, gapBetweenItems);
+        resolveFlexibleLengthsForLineItems(lineItems, lineSizing, lineMainSizes, lineMargins, containerMainInnerSize, gapBetweenItems);
 
         auto remainingFreeSpace = containerMainInnerSize;
         for (size_t index = 0; index < lineItems.size(); ++index)
@@ -1040,11 +1039,11 @@ void RenderFlexibleBox::initializeMarginTrimState()
         isRowsFlexbox ? m_marginTrimItems.m_itemsAtFlexLineEnd.add(*flexItem) : m_marginTrimItems.m_itemsOnLastFlexLine.add(*flexItem);
 }
 
-bool RenderFlexibleBox::canFitItemWithTrimmedMarginEnd(const FlexLayoutItem& flexLayoutItem, LayoutUnit mainAxisMargin, LayoutUnit sumHypotheticalMainSize, LayoutUnit mainAxisAvailableSpace) const
+bool RenderFlexibleBox::canFitItemWithTrimmedMarginEnd(const FlexLayoutItem& flexLayoutItem, LayoutUnit hypotheticalMainContentSize, LayoutUnit mainAxisMargin, LayoutUnit sumHypotheticalMainSize, LayoutUnit mainAxisAvailableSpace) const
 {
     auto marginTrim = style().marginTrim();
     if ((isHorizontalFlow() && marginTrim.contains(Style::MarginTrimSide::InlineEnd)) || (isColumnFlow() && marginTrim.contains(Style::MarginTrimSide::BlockEnd)))
-        return sumHypotheticalMainSize + flexLayoutItem.hypotheticalMainAxisMarginBoxSize(mainAxisMargin) - flowAwareMarginEndForFlexItem(flexLayoutItem.renderer) <= mainAxisAvailableSpace;
+        return sumHypotheticalMainSize + flexLayoutItem.hypotheticalMainAxisMarginBoxSize(hypotheticalMainContentSize, mainAxisMargin) - flowAwareMarginEndForFlexItem(flexLayoutItem.renderer) <= mainAxisAvailableSpace;
     return false;
 }
 
@@ -1529,7 +1528,8 @@ void RenderFlexibleBox::performFlexLayout(RelayoutChildren relayoutChildren)
     if (layoutUsingFlexFormattingContext())
         return;
 
-    auto allItems = collectFlexItems(relayoutChildren);
+    FlexBaseAndHypotheticalMainSizeList flexBaseAndHypotheticalMainSizeList;
+    auto allItems = collectFlexItems(relayoutChildren, flexBaseAndHypotheticalMainSizeList);
     if (allItems.isEmpty()) {
         adjustLogicalHeightForLineIfEmpty();
         updateLogicalHeight();
@@ -1555,9 +1555,9 @@ void RenderFlexibleBox::performFlexLayout(RelayoutChildren relayoutChildren)
     auto performContentSizing = [&] {
         InspectorInstrumentation::flexibleBoxRendererBeganLayout(*this);
         // 9.3. (#5) Collect the flex items into flex lines.
-        flexLines = computeFlexLines(allItems, marginsList.mutableSpan(), gapBetweenItems);
+        flexLines = computeFlexLines(allItems, flexBaseAndHypotheticalMainSizeList.span(), marginsList.mutableSpan(), gapBetweenItems);
         // 9.3. (#6) Resolve the flexible lengths to find the used main size of each item.
-        mainSizeList = computeMainSizeForFlexItems(allItems, flexLines, marginsList.span(), gapBetweenItems);
+        mainSizeList = computeMainSizeForFlexItems(allItems, flexLines, flexBaseAndHypotheticalMainSizeList.span(), marginsList.span(), gapBetweenItems);
         trimCrossAxisMarginsForFlexItems(allItems, flexLines);
         layoutFlexItems(allItems.mutableSpan(), mainSizeList.span(), relayoutChildren);
         // 9.4. (#7) Determine the hypothetical cross size of each item.
@@ -1590,7 +1590,7 @@ void RenderFlexibleBox::performFlexLayout(RelayoutChildren relayoutChildren)
         updateLogicalHeight();
 
         // Multi-line column flex only knows its main size now, so re-resolve the flexible lengths of any lines that were left short.
-        distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(flexLines, allItems, mainSizeList, marginsList, positionList, lineCrossOffsetList, gapBetweenItems);
+        distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(flexLines, allItems, flexBaseAndHypotheticalMainSizeList.span(), mainSizeList, marginsList, positionList, lineCrossOffsetList, gapBetweenItems);
 
         // 9.6. (#13 - #16) Cross-Axis Alignment.
         crossAxisStartEdge = lineCrossOffsetList.isEmpty() ? 0_lu : lineCrossOffsetList[0];
@@ -1641,7 +1641,7 @@ void RenderFlexibleBox::performFlexLayout(RelayoutChildren relayoutChildren)
     computeFlexItemRects();
 }
 
-RenderFlexibleBox::FlexLayoutItems RenderFlexibleBox::collectFlexItems(RelayoutChildren relayoutChildren)
+RenderFlexibleBox::FlexLayoutItems RenderFlexibleBox::collectFlexItems(RelayoutChildren relayoutChildren, FlexBaseAndHypotheticalMainSizeList& sizingList)
 {
     // Set up our master list of flex items. All of the rest of the algorithm
     // should work off this list of a subset.
@@ -1666,21 +1666,23 @@ RenderFlexibleBox::FlexLayoutItems RenderFlexibleBox::collectFlexItems(RelayoutC
             return everHadLayout;
         };
         auto everHadLayout = prepareFlexItem();
-        allItems.append({ *flexItem, flexBaseAndHypotheticalMainSize(*flexItem), everHadLayout });
+        auto sizing = flexBaseAndHypotheticalMainSize(*flexItem);
+        sizingList.append(sizing);
+        allItems.append({ *flexItem, sizing, everHadLayout });
         // flexBaseAndHypotheticalMainSize might set the override containing block height so any value cached for definiteness might be incorrect.
         resetHasDefiniteHeight();
     }
     return allItems;
 }
 
-RenderFlexibleBox::FlexLines RenderFlexibleBox::computeFlexLines(FlexLayoutItems& allItems, std::span<LayoutUnit> mainAxisMargins, LayoutUnit gapBetweenItems)
+RenderFlexibleBox::FlexLines RenderFlexibleBox::computeFlexLines(FlexLayoutItems& allItems, std::span<const FlexBaseAndHypotheticalMainSize> sizingList, std::span<LayoutUnit> mainAxisMargins, LayoutUnit gapBetweenItems)
 {
     auto mainAxisAvailableSpace = this->mainAxisAvailableSpace();
     FlexLines flexLines;
     size_t nextIndex = 0;
     while (true) {
         auto lineStartIndex = nextIndex;
-        auto lineData = computeNextFlexLine(nextIndex, allItems, mainAxisMargins, mainAxisAvailableSpace, gapBetweenItems);
+        auto lineData = computeNextFlexLine(nextIndex, allItems, sizingList, mainAxisMargins, mainAxisAvailableSpace, gapBetweenItems);
         if (!lineData)
             break;
         flexLines.ranges.append({ lineStartIndex, nextIndex });
@@ -1689,16 +1691,17 @@ RenderFlexibleBox::FlexLines RenderFlexibleBox::computeFlexLines(FlexLayoutItems
     return flexLines;
 }
 
-Vector<LayoutUnit> RenderFlexibleBox::computeMainSizeForFlexItems(FlexLayoutItems& allItems, const FlexLines& flexLines, std::span<const LayoutUnit> mainAxisMargins, LayoutUnit gapBetweenItems)
+Vector<LayoutUnit> RenderFlexibleBox::computeMainSizeForFlexItems(FlexLayoutItems& allItems, const FlexLines& flexLines, std::span<const FlexBaseAndHypotheticalMainSize> sizingList, std::span<const LayoutUnit> mainAxisMargins, LayoutUnit gapBetweenItems)
 {
     Vector<LayoutUnit> mainSizeList(allItems.size());
     for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
         auto lineRange = flexLines.ranges[lineIndex];
         auto lineItems = allItems.mutableSpan().subspan(lineRange.begin(), lineRange.distance());
+        auto lineSizing = sizingList.subspan(lineRange.begin(), lineRange.distance());
         auto lineMainSizes = mainSizeList.mutableSpan().subspan(lineRange.begin(), lineRange.distance());
         auto lineMargins = mainAxisMargins.subspan(lineRange.begin(), lineRange.distance());
         auto containerMainInnerSize = isColumnFlow() ? columnInnerMainSize(flexLines.hypotheticalMainSizes[lineIndex]) : contentBoxLogicalWidth();
-        resolveFlexibleLengthsForLineItems(lineItems, lineMainSizes, lineMargins, containerMainInnerSize, gapBetweenItems);
+        resolveFlexibleLengthsForLineItems(lineItems, lineSizing, lineMainSizes, lineMargins, containerMainInnerSize, gapBetweenItems);
     }
     return mainSizeList;
 }
@@ -1779,7 +1782,7 @@ void RenderFlexibleBox::adjustLogicalHeightForLineIfEmpty()
         setLogicalHeight(minHeight);
 }
 
-std::optional<RenderFlexibleBox::FlexingLineData> RenderFlexibleBox::computeNextFlexLine(size_t& nextIndex, FlexLayoutItems& allItems, std::span<LayoutUnit> mainAxisMargins, LayoutUnit mainAxisAvailableSpace, LayoutUnit gapBetweenItems)
+std::optional<RenderFlexibleBox::FlexingLineData> RenderFlexibleBox::computeNextFlexLine(size_t& nextIndex, FlexLayoutItems& allItems, std::span<const FlexBaseAndHypotheticalMainSize> sizingList, std::span<LayoutUnit> mainAxisMargins, LayoutUnit mainAxisAvailableSpace, LayoutUnit gapBetweenItems)
 {
     if (nextIndex >= allItems.size())
         return { };
@@ -1793,13 +1796,13 @@ std::optional<RenderFlexibleBox::FlexingLineData> RenderFlexibleBox::computeNext
         const auto& flexLayoutItem = allItems[nextIndex];
         auto& style = flexLayoutItem.style();
         ASSERT(!flexLayoutItem.renderer->isOutOfFlowPositioned());
-        if (isMultiline() && (lineData.sumHypotheticalMainSize + flexLayoutItem.hypotheticalMainAxisMarginBoxSize(mainAxisMargins[nextIndex]) > mainAxisAvailableSpace && !canFitItemWithTrimmedMarginEnd(flexLayoutItem, mainAxisMargins[nextIndex], lineData.sumHypotheticalMainSize, mainAxisAvailableSpace)) && nextIndex > lineStartIndex)
+        if (isMultiline() && (lineData.sumHypotheticalMainSize + flexLayoutItem.hypotheticalMainAxisMarginBoxSize(sizingList[nextIndex].hypotheticalMainContentSize, mainAxisMargins[nextIndex]) > mainAxisAvailableSpace && !canFitItemWithTrimmedMarginEnd(flexLayoutItem, sizingList[nextIndex].hypotheticalMainContentSize, mainAxisMargins[nextIndex], lineData.sumHypotheticalMainSize, mainAxisAvailableSpace)) && nextIndex > lineStartIndex)
             break;
-        lineData.sumFlexBaseSize += flexLayoutItem.flexBaseMarginBoxSize(mainAxisMargins[nextIndex]) + gapBetweenItems;
+        lineData.sumFlexBaseSize += flexLayoutItem.flexBaseMarginBoxSize(sizingList[nextIndex].flexBaseContentSize, mainAxisMargins[nextIndex]) + gapBetweenItems;
         lineData.totalFlexGrow += style.flexGrow().value;
         lineData.totalFlexShrink += style.flexShrink().value;
-        lineData.totalWeightedFlexShrink += style.flexShrink().value * flexLayoutItem.flexBaseContentSize;
-        lineData.sumHypotheticalMainSize += flexLayoutItem.hypotheticalMainAxisMarginBoxSize(mainAxisMargins[nextIndex]) + gapBetweenItems;
+        lineData.totalWeightedFlexShrink += style.flexShrink().value * sizingList[nextIndex].flexBaseContentSize;
+        lineData.sumHypotheticalMainSize += flexLayoutItem.hypotheticalMainAxisMarginBoxSize(sizingList[nextIndex].hypotheticalMainContentSize, mainAxisMargins[nextIndex]) + gapBetweenItems;
     }
 
     auto lineItemCount = nextIndex - lineStartIndex;
@@ -2213,17 +2216,17 @@ RenderFlexibleBox::FlexBaseAndHypotheticalMainSize RenderFlexibleBox::flexBaseAn
     return { flexBaseContentSize, std::max(minMaxMainSizes.first, std::min(flexBaseContentSize, minMaxMainSizes.second)), minMaxMainSizes };
 }
     
-void RenderFlexibleBox::freezeViolations(Vector<size_t, 4>& violations, std::span<FlexLayoutItem> flexLayoutItems, std::span<LayoutUnit> mainSizes, Vector<bool>& frozen, LayoutUnit& availableFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink)
+void RenderFlexibleBox::freezeViolations(Vector<size_t, 4>& violations, std::span<FlexLayoutItem> flexLayoutItems, std::span<const FlexBaseAndHypotheticalMainSize> lineSizing, std::span<LayoutUnit> mainSizes, Vector<bool>& frozen, LayoutUnit& availableFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink)
 {
     for (auto index : violations) {
         auto& flexLayoutItem = flexLayoutItems[index];
         ASSERT(!frozen[index]);
         auto& flexItemStyle = flexLayoutItem.style();
         LayoutUnit flexItemSize = mainSizes[index];
-        availableFreeSpace -= flexItemSize - flexLayoutItem.flexBaseContentSize;
+        availableFreeSpace -= flexItemSize - lineSizing[index].flexBaseContentSize;
         totalFlexGrow -= flexItemStyle.flexGrow().value;
         totalFlexShrink -= flexItemStyle.flexShrink().value;
-        totalWeightedFlexShrink -= flexItemStyle.flexShrink().value * flexLayoutItem.flexBaseContentSize;
+        totalWeightedFlexShrink -= flexItemStyle.flexShrink().value * lineSizing[index].flexBaseContentSize;
         // totalWeightedFlexShrink can be negative when we exceed the precision of
         // a double when we initially calcuate totalWeightedFlexShrink. We then
         // subtract each child's weighted flex shrink with full precision, now
@@ -2234,7 +2237,7 @@ void RenderFlexibleBox::freezeViolations(Vector<size_t, 4>& violations, std::spa
     }
 }
     
-void RenderFlexibleBox::freezeInflexibleItems(FlexSign flexSign, std::span<FlexLayoutItem> flexLayoutItems, std::span<LayoutUnit> mainSizes, Vector<bool>& frozen, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink)
+void RenderFlexibleBox::freezeInflexibleItems(FlexSign flexSign, std::span<FlexLayoutItem> flexLayoutItems, std::span<const FlexBaseAndHypotheticalMainSize> lineSizing, std::span<LayoutUnit> mainSizes, Vector<bool>& frozen, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink)
 {
     // Per https://drafts.csswg.org/css-flexbox/#resolve-flexible-lengths step 2,
     // we freeze all items with a flex factor of 0 as well as those with a min/max
@@ -2245,16 +2248,16 @@ void RenderFlexibleBox::freezeInflexibleItems(FlexSign flexSign, std::span<FlexL
         ASSERT(!flexLayoutItem.renderer->isOutOfFlowPositioned());
         ASSERT(!frozen[index]);
         float flexFactor = (flexSign == FlexSign::PositiveFlexibility) ? flexLayoutItem.style().flexGrow().value : flexLayoutItem.style().flexShrink().value;
-        if (!flexFactor || (flexSign == FlexSign::PositiveFlexibility && flexLayoutItem.flexBaseContentSize > flexLayoutItem.hypotheticalMainContentSize) || (flexSign == FlexSign::NegativeFlexibility && flexLayoutItem.flexBaseContentSize < flexLayoutItem.hypotheticalMainContentSize)) {
-            mainSizes[index] = flexLayoutItem.hypotheticalMainContentSize;
+        if (!flexFactor || (flexSign == FlexSign::PositiveFlexibility && lineSizing[index].flexBaseContentSize > lineSizing[index].hypotheticalMainContentSize) || (flexSign == FlexSign::NegativeFlexibility && lineSizing[index].flexBaseContentSize < lineSizing[index].hypotheticalMainContentSize)) {
+            mainSizes[index] = lineSizing[index].hypotheticalMainContentSize;
             newInflexibleItems.append(index);
         }
     }
-    freezeViolations(newInflexibleItems, flexLayoutItems, mainSizes, frozen, remainingFreeSpace, totalFlexGrow, totalFlexShrink, totalWeightedFlexShrink);
+    freezeViolations(newInflexibleItems, flexLayoutItems, lineSizing, mainSizes, frozen, remainingFreeSpace, totalFlexGrow, totalFlexShrink, totalWeightedFlexShrink);
 }
 
 // Returns true if we successfully ran the algorithm and sized the flex items.
-bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, std::span<FlexLayoutItem> flexLayoutItems, std::span<LayoutUnit> mainSizes, Vector<bool>& frozen, LayoutUnit initialFreeSpace, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink)
+bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, std::span<FlexLayoutItem> flexLayoutItems, std::span<const FlexBaseAndHypotheticalMainSize> lineSizing, std::span<LayoutUnit> mainSizes, Vector<bool>& frozen, LayoutUnit initialFreeSpace, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink)
 {
     LayoutUnit totalViolation;
     LayoutUnit usedFreeSpace;
@@ -2275,19 +2278,19 @@ bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, std::span<Flex
             continue;
 
         auto& flexItemStyle = flexLayoutItem.style();
-        LayoutUnit flexItemSize = flexLayoutItem.flexBaseContentSize;
+        LayoutUnit flexItemSize = lineSizing[index].flexBaseContentSize;
         double extraSpace = 0;
         if (remainingFreeSpace > 0 && totalFlexGrow > 0 && flexSign == FlexSign::PositiveFlexibility && std::isfinite(totalFlexGrow))
             extraSpace = remainingFreeSpace * (flexItemStyle.flexGrow().value / totalFlexGrow);
         else if (remainingFreeSpace < 0 && totalWeightedFlexShrink > 0 && flexSign == FlexSign::NegativeFlexibility && std::isfinite(totalWeightedFlexShrink) && !flexItemStyle.flexShrink().isZero())
-            extraSpace = remainingFreeSpace * flexItemStyle.flexShrink().value * flexLayoutItem.flexBaseContentSize / totalWeightedFlexShrink;
+            extraSpace = remainingFreeSpace * flexItemStyle.flexShrink().value * lineSizing[index].flexBaseContentSize / totalWeightedFlexShrink;
         if (std::isfinite(extraSpace))
             flexItemSize += LayoutUnit::fromFloatRound(extraSpace);
 
         LayoutUnit adjustedFlexItemSize = flexLayoutItem.constrainSizeByMinMax(flexItemSize);
         ASSERT(adjustedFlexItemSize >= 0);
         mainSizes[index] = adjustedFlexItemSize;
-        usedFreeSpace += adjustedFlexItemSize - flexLayoutItem.flexBaseContentSize;
+        usedFreeSpace += adjustedFlexItemSize - lineSizing[index].flexBaseContentSize;
 
         LayoutUnit violation = adjustedFlexItemSize - flexItemSize;
         if (violation > 0)
@@ -2298,7 +2301,7 @@ bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, std::span<Flex
     }
 
     if (totalViolation)
-        freezeViolations(totalViolation < 0 ? maxViolations : minViolations, flexLayoutItems, mainSizes, frozen, remainingFreeSpace, totalFlexGrow, totalFlexShrink, totalWeightedFlexShrink);
+        freezeViolations(totalViolation < 0 ? maxViolations : minViolations, flexLayoutItems, lineSizing, mainSizes, frozen, remainingFreeSpace, totalFlexGrow, totalFlexShrink, totalWeightedFlexShrink);
     else
         remainingFreeSpace -= usedFreeSpace;
 
