@@ -91,7 +91,7 @@ static ExceptionOr<IntersectionObserverMarginBox> parseMargin(String& margin, co
         return IntersectionObserverMarginBox { IntersectionObserverMarginEdge::Dimension { 0 } };
 
     auto consumeEdge = [&] -> ExceptionOr<IntersectionObserverMarginEdge> {
-        auto parsedValue = MetaConsumer<CSS::LengthPercentageRaw<CSS::All, float>>::consume(tokenRange, parserState);
+        auto parsedValue = MetaConsumer<CSS::LengthPercentageRaw<CSS::AllUnzoomed>>::consume(tokenRange, parserState);
 
         if (!parsedValue)
             return Exception { ExceptionCode::SyntaxError, makeString("Failed to construct 'IntersectionObserver': "_s, marginName, " must be specified as an absolute length or a percentage."_s) };
@@ -228,7 +228,7 @@ static String marginBoxToString(const IntersectionObserverMarginBox& marginBox)
         if (auto percentage = edge.tryPercentage())
             stringBuilder.append(static_cast<int>(percentage->value), "%"_s, side != BoxSide::Left ? " "_s : ""_s);
         else
-            stringBuilder.append(static_cast<int>(edge.tryDimension()->resolveZoom(Style::ZoomNeeded { })), "px"_s, side != BoxSide::Left ? " "_s : ""_s);
+            stringBuilder.append(static_cast<int>(edge.tryDimension()->resolveZoom(Style::ZoomFactor::none())), "px"_s, side != BoxSide::Left ? " "_s : ""_s);
     }
     return stringBuilder.toString();
 }
@@ -339,19 +339,13 @@ void IntersectionObserver::rootDestroyed()
     m_root = nullptr;
 }
 
-static void expandRootBoundsWithRootMargin(FloatRect& rootBounds, const IntersectionObserverMarginBox& rootMargin, float zoomFactor)
+static void expandRootBoundsWithRootMargin(FloatRect& rootBounds, const IntersectionObserverMarginBox& rootMargin, Style::ZoomFactor zoomFactor)
 {
-    auto zoomAdjustedLength = [](const IntersectionObserverMarginEdge& edge, float maximumValue, float zoomFactor) {
-        if (auto percentage = edge.tryPercentage())
-            return Style::evaluate<float>(*percentage, maximumValue);
-        return Style::evaluate<float>(*edge.tryDimension(), Style::ZoomNeeded { }) * zoomFactor;
-    };
-
     auto rootMarginEdges = FloatBoxExtent {
-        zoomAdjustedLength(rootMargin.top(), rootBounds.height(), zoomFactor),
-        zoomAdjustedLength(rootMargin.right(), rootBounds.width(), zoomFactor),
-        zoomAdjustedLength(rootMargin.bottom(), rootBounds.height(), zoomFactor),
-        zoomAdjustedLength(rootMargin.left(), rootBounds.width(), zoomFactor)
+        Style::evaluate<float>(rootMargin.top(), rootBounds.height(), zoomFactor),
+        Style::evaluate<float>(rootMargin.right(), rootBounds.width(), zoomFactor),
+        Style::evaluate<float>(rootMargin.bottom(), rootBounds.height(), zoomFactor),
+        Style::evaluate<float>(rootMargin.left(), rootBounds.width(), zoomFactor)
     };
 
     rootBounds.expand(rootMarginEdges);
@@ -455,10 +449,10 @@ static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const Lay
     auto frameRect = enclosingFrameView->layoutViewportRect();
     if (scrollMargin) {
         auto scrollMarginEdges = LayoutBoxExtent {
-            LayoutUnit(Style::evaluate<int>(scrollMargin->top(), frameRect.height(), Style::ZoomNeeded { })),
-            LayoutUnit(Style::evaluate<int>(scrollMargin->right(), frameRect.width(), Style::ZoomNeeded { })),
-            LayoutUnit(Style::evaluate<int>(scrollMargin->bottom(), frameRect.height(), Style::ZoomNeeded { })),
-            LayoutUnit(Style::evaluate<int>(scrollMargin->left(), frameRect.width(), Style::ZoomNeeded { })),
+            LayoutUnit(Style::evaluate<int>(scrollMargin->top(), frameRect.height(), Style::ZoomFactor::none())),
+            LayoutUnit(Style::evaluate<int>(scrollMargin->right(), frameRect.width(), Style::ZoomFactor::none())),
+            LayoutUnit(Style::evaluate<int>(scrollMargin->bottom(), frameRect.height(), Style::ZoomFactor::none())),
+            LayoutUnit(Style::evaluate<int>(scrollMargin->left(), frameRect.width(), Style::ZoomFactor::none())),
         };
         frameRect.expand(scrollMarginEdges);
     }
@@ -611,7 +605,7 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
         // Therefore the root renderer should be available, as the root is in the
         // same process as the target (with or without Site Isolation)
         ASSERT(rootRenderer);
-        float rootUsedZoom = rootRenderer ? rootRenderer->style().usedZoom() : 1;
+        auto rootUsedZoom = rootRenderer ? Style::ZoomFactor { rootRenderer->style().usedZoom() } : Style::ZoomFactor::none();
 
         expandRootBoundsWithRootMargin(intersectionState.rootBounds, scrollMarginBox(), rootUsedZoom);
         expandRootBoundsWithRootMargin(intersectionState.rootBounds, rootMarginBox(), rootUsedZoom);
