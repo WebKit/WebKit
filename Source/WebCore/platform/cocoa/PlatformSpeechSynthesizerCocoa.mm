@@ -101,6 +101,12 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
 
 #if HAVE(AVSPEECHSYNTHESIS_VOICES_CHANGE_NOTIFICATION)
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:RetainPtr { AVSpeechSynthesisAvailableVoicesDidChangeNotification }.get() object:nil];
+    [super dealloc];
+}
+
 - (void)availableVoicesDidChange
 {
     // AVFoundation may post AVSpeechSynthesisAvailableVoicesDidChangeNotification from a
