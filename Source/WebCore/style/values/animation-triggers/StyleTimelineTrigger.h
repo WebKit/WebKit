@@ -27,6 +27,7 @@
 
 #include <WebCore/CSSPropertyNames.h>
 #include <WebCore/StyleCoordinatedValueListValue.h>
+#include <WebCore/StyleSingleAnimationRange.h>
 #include <WebCore/StyleSingleAnimationTimeline.h>
 #include <WebCore/StyleTimelineTriggerName.h>
 #include <WebCore/StyleValueTypes.h>
@@ -39,6 +40,8 @@ namespace Style {
 #define FOR_EACH_TIMELINE_TRIGGER_REFERENCE(macro) \
     macro(TimelineTrigger, TimelineTriggerName, TimelineTriggerName, name, Name) \
     macro(TimelineTrigger, TimelineTriggerSource, SingleAnimationTimeline, source, Source) \
+    macro(TimelineTrigger, TimelineTriggerActivationRangeStart, SingleAnimationRangeStart, activationRangeStart, ActivationRangeStart) \
+    macro(TimelineTrigger, TimelineTriggerActivationRangeEnd, SingleAnimationRangeEnd, activationRangeEnd, ActivationRangeEnd) \
 \
 
 #define FOR_EACH_TIMELINE_TRIGGER_PROPERTY(macro) \
@@ -51,9 +54,13 @@ struct TimelineTrigger {
 
     const TimelineTriggerName& name() const { return data().m_name; }
     const SingleAnimationTimeline& source() const LIFETIME_BOUND { return data().m_source; }
+    const SingleAnimationRangeStart& activationRangeStart() const LIFETIME_BOUND { return data().m_activationRangeStart; }
+    const SingleAnimationRangeEnd& activationRangeEnd() const LIFETIME_BOUND { return data().m_activationRangeEnd; }
 
     static TimelineTriggerName initialName() { return CSS::Keyword::None { }; }
     static SingleAnimationTimeline initialSource() { return CSS::Keyword::Auto { }; }
+    static SingleAnimationRangeStart initialActivationRangeStart() { return CSS::Keyword::Normal { }; }
+    static SingleAnimationRangeEnd initialActivationRangeEnd() { return CSS::Keyword::Normal { }; }
 
     FOR_EACH_TIMELINE_TRIGGER_REFERENCE(DECLARE_COORDINATED_VALUE_LIST_GETTER_AND_SETTERS_REFERENCE)
 
@@ -72,6 +79,8 @@ private:
 
         TimelineTriggerName m_name { TimelineTrigger::initialName() };
         SingleAnimationTimeline m_source { TimelineTrigger::initialSource() };
+        SingleAnimationRangeStart m_activationRangeStart { TimelineTrigger::initialActivationRangeStart() };
+        SingleAnimationRangeEnd m_activationRangeEnd { TimelineTrigger::initialActivationRangeEnd() };
 
         FOR_EACH_TIMELINE_TRIGGER_PROPERTY(DECLARE_COORDINATED_VALUE_LIST_IS_SET_AND_IS_FILLED_MEMBERS)
     };
