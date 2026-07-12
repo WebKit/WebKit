@@ -29,12 +29,21 @@
 #include <JavaScriptCore/BooleanObject.h>
 #include <JavaScriptCore/CloneBase.h>
 #include <JavaScriptCore/DateInstance.h>
+#include <JavaScriptCore/JSArray.h>
 #include <JavaScriptCore/JSBigInt.h>
+#include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/JSGlobalObjectInlines.h>
+#include <JavaScriptCore/JSMapInlines.h>
+#include <JavaScriptCore/JSObjectInlines.h>
+#include <JavaScriptCore/JSSetInlines.h>
 #include <JavaScriptCore/JSString.h>
+#include <JavaScriptCore/MarkedVector.h>
 #include <JavaScriptCore/NumberObject.h>
+#include <JavaScriptCore/ObjectConstructor.h>
 #include <JavaScriptCore/RegExpObject.h>
 #include <JavaScriptCore/StringObject.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 #include <JavaScriptCore/YarrFlags.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -608,6 +617,351 @@ protected:
             return false;
         errorType = static_cast<SerializableErrorType>(errorTypeInt);
         return true;
+    }
+
+    void putProperty(JSObject* object, unsigned index, JSValue value)
+    {
+        object->putDirectIndex(m_lexicalGlobalObject, index, value);
+    }
+
+    void putProperty(JSObject* object, const Identifier& property, JSValue value)
+    {
+        object->putDirectMayBeIndex(m_lexicalGlobalObject, property, value);
+    }
+
+    template<SerializationTag Tag>
+    bool consumeCollectionDataTerminationIfPossible()
+    {
+        auto originalData = m_data;
+        if (readTag() == Tag)
+            return true;
+        m_data = originalData;
+        return false;
+    }
+
+    enum class VisitNamedMemberResult : uint8_t { Error, Break, Start, Unknown };
+
+    template<WalkerState endState>
+    ALWAYS_INLINE VisitNamedMemberResult startVisitNamedMember(MarkedVector<JSObject*, 32>& outputObjectStack, Vector<Identifier, 16>& propertyNameStack, Vector<WalkerState, 16>& stateStack, JSValue& outValue)
+    {
+        static_assert(endState == WalkerState::ArrayEndVisitNamedMember || endState == WalkerState::ObjectEndVisitNamedMember);
+        VM& vm = m_lexicalGlobalObject->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        CachedStringRef cachedString;
+        bool wasTerminator = false;
+        if (!readStringData(cachedString, wasTerminator, ShouldAtomize::Yes)) {
+            if (!wasTerminator) {
+                SERIALIZE_TRACE("FAIL deserialize");
+                return VisitNamedMemberResult::Error;
+            }
+
+            JSObject* outObject = outputObjectStack.last();
+            outValue = outObject;
+            outputObjectStack.removeLast();
+            return VisitNamedMemberResult::Break;
+        }
+
+        Identifier identifier = Identifier::fromString(vm, cachedString->string());
+        if constexpr (endState == WalkerState::ArrayEndVisitNamedMember)
+            RELEASE_ASSERT(identifier != vm.propertyNames->length);
+
+        JSValue terminal = readTerminal();
+        if (scope.exception()) [[unlikely]]
+            return VisitNamedMemberResult::Error;
+        if (terminal) {
+            putProperty(outputObjectStack.last(), identifier, terminal);
+            if (scope.exception()) [[unlikely]]
+                return VisitNamedMemberResult::Error;
+            return VisitNamedMemberResult::Start;
+        }
+
+        stateStack.append(endState);
+        propertyNameStack.append(identifier);
+        return VisitNamedMemberResult::Unknown;
+    }
+
+    ALWAYS_INLINE void objectEndVisitNamedMember(MarkedVector<JSObject*, 32>& outputObjectStack, Vector<Identifier, 16>& propertyNameStack, JSValue& outValue)
+    {
+        VM& vm = m_lexicalGlobalObject->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        putProperty(outputObjectStack.last(), propertyNameStack.last(), outValue);
+        if (scope.exception()) [[unlikely]]
+            return;
+        propertyNameStack.removeLast();
+    }
+
+    DeserializationResult deserialize()
+    {
+        VM& vm = m_lexicalGlobalObject->vm();
+        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+
+        Vector<uint32_t, 16> indexStack;
+        Vector<Identifier, 16> propertyNameStack;
+        MarkedVector<JSObject*, 32> outputObjectStack;
+        MarkedVector<JSValue, 4> mapKeyStack;
+        MarkedVector<JSMap*, 4> mapStack;
+        MarkedVector<JSSet*, 4> setStack;
+        Vector<WalkerState, 16> stateStack;
+        WalkerState state = WalkerState::StateUnknown;
+        JSValue outValue;
+
+        while (true) {
+            switch (state) {
+            arrayStartState:
+            case WalkerState::ArrayStartState: {
+                uint32_t length;
+                if (!read(length)) {
+                    SERIALIZE_TRACE("FAIL deserialize");
+                    fail();
+                    goto error;
+                }
+                JSArray* outArray = constructEmptyArray(m_globalObject, static_cast<JSC::ArrayAllocationProfile*>(nullptr), length);
+                if (scope.exception()) [[unlikely]] {
+                    SERIALIZE_TRACE("FAIL deserialize");
+                    fail();
+                    goto error;
+                }
+                addToObjectPool<ArrayTag>(outArray);
+                outputObjectStack.append(outArray);
+            }
+            arrayStartVisitIndexedMember:
+            [[fallthrough]];
+            case WalkerState::ArrayStartVisitIndexedMember: {
+                uint32_t index;
+                if (!read(index)) {
+                    SERIALIZE_TRACE("FAIL deserialize");
+                    fail();
+                    goto error;
+                }
+
+                if (m_majorVersion >= 15 || (m_majorVersion == 12 && m_minorVersion == 1)) {
+                    if (index == TerminatorTag) {
+                        // We reached the end of the indexed properties section.
+                        if (!read(index)) {
+                            SERIALIZE_TRACE("FAIL deserialize");
+                            fail();
+                            goto error;
+                        }
+                        // At this point, we're either done with the array or is starting the
+                        // non-indexed property section.
+                        if (index == TerminatorTag) {
+                            JSObject* outArray = outputObjectStack.last();
+                            outValue = outArray;
+                            outputObjectStack.removeLast();
+                            break;
+                        }
+                        if (index == NonIndexPropertiesTag)
+                            goto arrayStartVisitNamedMember;
+                    }
+                } else if (index == TerminatorTag) {
+                    JSObject* outArray = outputObjectStack.last();
+                    outValue = outArray;
+                    outputObjectStack.removeLast();
+                    break;
+                } else if (index == NonIndexPropertiesTag)
+                    goto arrayStartVisitNamedMember;
+
+                JSValue terminal = readTerminal();
+                if (scope.exception()) [[unlikely]] {
+                    SERIALIZE_TRACE("FAIL deserialize");
+                    fail();
+                    goto error;
+                }
+                if (terminal) {
+                    putProperty(outputObjectStack.last(), index, terminal);
+                    if (scope.exception()) [[unlikely]] {
+                        SERIALIZE_TRACE("FAIL deserialize");
+                        fail();
+                        goto error;
+                    }
+                    goto arrayStartVisitIndexedMember;
+                }
+                if (m_failed)
+                    goto error;
+                indexStack.append(index);
+                stateStack.append(WalkerState::ArrayEndVisitIndexedMember);
+                goto stateUnknown;
+            }
+            case WalkerState::ArrayEndVisitIndexedMember: {
+                JSObject* outArray = outputObjectStack.last();
+                putProperty(outArray, indexStack.last(), outValue);
+                if (scope.exception()) [[unlikely]] {
+                    SERIALIZE_TRACE("FAIL deserialize");
+                    fail();
+                    goto error;
+                }
+                indexStack.removeLast();
+                goto arrayStartVisitIndexedMember;
+            }
+            arrayStartVisitNamedMember:
+            case WalkerState::ArrayStartVisitNamedMember: {
+                auto result = startVisitNamedMember<WalkerState::ArrayEndVisitNamedMember>(outputObjectStack, propertyNameStack, stateStack, outValue);
+                if (scope.exception()) [[unlikely]] {
+                    SERIALIZE_TRACE("FAIL deserialize");
+                    fail();
+                    goto error;
+                }
+                switch (result) {
+                case VisitNamedMemberResult::Error:
+                    goto error;
+                case VisitNamedMemberResult::Break:
+                    break;
+                case VisitNamedMemberResult::Start:
+                    goto arrayStartVisitNamedMember;
+                case VisitNamedMemberResult::Unknown:
+                    goto stateUnknown;
+                }
+                break;
+            }
+            case WalkerState::ArrayEndVisitNamedMember: {
+                objectEndVisitNamedMember(outputObjectStack, propertyNameStack, outValue);
+                if (scope.exception()) [[unlikely]] {
+                    SERIALIZE_TRACE("FAIL deserialize");
+                    fail();
+                    goto error;
+                }
+                goto arrayStartVisitNamedMember;
+            }
+            objectStartState:
+            case WalkerState::ObjectStartState: {
+                if (outputObjectStack.size() > maximumFilterRecursion)
+                    return { JSValue(), SerializationReturnCode::StackOverflowError };
+                JSObject* outObject = JSC::constructEmptyObject(m_lexicalGlobalObject, m_globalObject->objectPrototype());
+                addToObjectPool<ObjectTag>(outObject);
+                outputObjectStack.append(outObject);
+            }
+            startVisitNamedMember:
+            [[fallthrough]];
+            case WalkerState::ObjectStartVisitNamedMember: {
+                auto result = startVisitNamedMember<WalkerState::ObjectEndVisitNamedMember>(outputObjectStack, propertyNameStack, stateStack, outValue);
+                if (scope.exception()) [[unlikely]] {
+                    SERIALIZE_TRACE("FAIL deserialize");
+                    fail();
+                    goto error;
+                }
+                switch (result) {
+                case VisitNamedMemberResult::Error:
+                    goto error;
+                case VisitNamedMemberResult::Break:
+                    break;
+                case VisitNamedMemberResult::Start:
+                    goto startVisitNamedMember;
+                case VisitNamedMemberResult::Unknown:
+                    goto stateUnknown;
+                }
+                break;
+            }
+            case WalkerState::ObjectEndVisitNamedMember: {
+                objectEndVisitNamedMember(outputObjectStack, propertyNameStack, outValue);
+                if (scope.exception()) [[unlikely]] {
+                    SERIALIZE_TRACE("FAIL deserialize");
+                    fail();
+                    goto error;
+                }
+                goto startVisitNamedMember;
+            }
+            mapStartState: {
+                if (outputObjectStack.size() > maximumFilterRecursion) {
+                    SERIALIZE_TRACE("FAIL deserialize");
+                    return { JSValue(), SerializationReturnCode::StackOverflowError };
+                }
+                JSMap* map = JSMap::create(m_lexicalGlobalObject->vm(), m_globalObject->mapStructure());
+                addToObjectPool<MapObjectTag>(map);
+                outputObjectStack.append(map);
+                mapStack.append(map);
+                goto mapDataStartVisitEntry;
+            }
+            mapDataStartVisitEntry:
+            case WalkerState::MapDataStartVisitEntry: {
+                if (consumeCollectionDataTerminationIfPossible<NonMapPropertiesTag>()) {
+                    mapStack.removeLast();
+                    goto startVisitNamedMember;
+                }
+                stateStack.append(WalkerState::MapDataEndVisitKey);
+                goto stateUnknown;
+            }
+            case WalkerState::MapDataEndVisitKey: {
+                mapKeyStack.append(outValue);
+                stateStack.append(WalkerState::MapDataEndVisitValue);
+                goto stateUnknown;
+            }
+            case WalkerState::MapDataEndVisitValue: {
+                mapStack.last()->set(m_lexicalGlobalObject, mapKeyStack.last(), outValue);
+                if (scope.exception()) [[unlikely]] {
+                    SERIALIZE_TRACE("FAIL deserialize");
+                    fail();
+                    goto error;
+                }
+                mapKeyStack.removeLast();
+                goto mapDataStartVisitEntry;
+            }
+
+            setStartState: {
+                if (outputObjectStack.size() > maximumFilterRecursion) {
+                    SERIALIZE_TRACE("FAIL deserialize");
+                    return { JSValue(), SerializationReturnCode::StackOverflowError };
+                }
+                JSSet* set = JSSet::create(m_lexicalGlobalObject->vm(), m_globalObject->setStructure());
+                addToObjectPool<SetObjectTag>(set);
+                outputObjectStack.append(set);
+                setStack.append(set);
+                goto setDataStartVisitEntry;
+            }
+            setDataStartVisitEntry:
+            case WalkerState::SetDataStartVisitEntry: {
+                if (consumeCollectionDataTerminationIfPossible<NonSetPropertiesTag>()) {
+                    setStack.removeLast();
+                    goto startVisitNamedMember;
+                }
+                stateStack.append(WalkerState::SetDataEndVisitKey);
+                goto stateUnknown;
+            }
+            case WalkerState::SetDataEndVisitKey: {
+                JSSet* set = setStack.last();
+                set->add(m_lexicalGlobalObject, outValue);
+                if (scope.exception()) [[unlikely]] {
+                    SERIALIZE_TRACE("FAIL deserialize");
+                    fail();
+                    goto error;
+                }
+                goto setDataStartVisitEntry;
+            }
+
+            stateUnknown:
+            case WalkerState::StateUnknown:
+                JSValue terminal = readTerminal();
+                if (scope.exception()) [[unlikely]] {
+                    SERIALIZE_TRACE("FAIL deserialize");
+                    fail();
+                    goto error;
+                }
+                if (terminal) {
+                    outValue = terminal;
+                    break;
+                }
+                SerializationTag tag = readTag();
+                if (tag == ArrayTag)
+                    goto arrayStartState;
+                if (tag == ObjectTag)
+                    goto objectStartState;
+                if (tag == MapObjectTag)
+                    goto mapStartState;
+                if (tag == SetObjectTag)
+                    goto setStartState;
+                goto error;
+            }
+            if (stateStack.isEmpty())
+                break;
+
+            state = stateStack.last();
+            stateStack.removeLast();
+        }
+        ASSERT(outValue);
+        ASSERT(!m_failed);
+        return { outValue, SerializationReturnCode::SuccessfullyCompleted };
+    error:
+        fail();
+        return { JSValue(), SerializationReturnCode::ValidationError };
     }
 
     JSGlobalObject* const m_globalObject;

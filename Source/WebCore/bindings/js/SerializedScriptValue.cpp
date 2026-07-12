@@ -165,14 +165,7 @@ using namespace JSC;
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SerializedScriptValue);
 
-static constexpr unsigned maximumFilterRecursion = 40000;
 static constexpr uint64_t autoLengthMarker = UINT64_MAX;
-
-enum WalkerState { StateUnknown, ArrayStartState, ArrayStartVisitIndexedMember, ArrayEndVisitIndexedMember,
-    ArrayStartVisitNamedMember, ArrayEndVisitNamedMember,
-    ObjectStartState, ObjectStartVisitNamedMember, ObjectEndVisitNamedMember,
-    MapDataStartVisitEntry, MapDataEndVisitKey, MapDataEndVisitValue,
-    SetDataStartVisitEntry, SetDataEndVisitKey };
 
 static bool NODELETE isTypeExposedToGlobalObject(JSC::JSGlobalObject& globalObject, SerializationTag tag)
 {
@@ -438,11 +431,6 @@ enum class CryptoKeyOKPOpNameTag : bool {
 const uint8_t cryptoKeyOKPOpNameTagMaximumValue = 1;
 
 // See JavaScriptCore's StructuredCloneTags.h for a description of the wire format.
-
-struct DeserializationResult {
-    JSC::JSValue value;
-    SerializationReturnCode code;
-};
 
 static std::optional<Vector<uint8_t>> serializeAndWrapCryptoKey(JSGlobalObject* lexicalGlobalObject, WebCore::CryptoKeyData&& key)
 {
@@ -758,43 +746,7 @@ private:
         }
     }
 
-    SerializationReturnCode serialize(JSValue in);
-
-    bool NODELETE isArray(JSValue value)
-    {
-        if (!value.isObject())
-            return false;
-        JSObject* object = asObject(value);
-        return object->inherits<JSArray>();
-    }
-
-    bool NODELETE isMap(JSValue value)
-    {
-        if (!value.isObject())
-            return false;
-        JSObject* object = asObject(value);
-        return object->inherits<JSMap>();
-    }
-    bool NODELETE isSet(JSValue value)
-    {
-        if (!value.isObject())
-            return false;
-        JSObject* object = asObject(value);
-        return object->inherits<JSSet>();
-    }
-
-    void endObject()
-    {
-        write(TerminatorTag);
-    }
-
-    JSValue getProperty(JSObject* object, const Identifier& propertyName)
-    {
-        PropertySlot slot(object, PropertySlot::InternalMethodType::Get);
-        if (object->methodTable()->getOwnPropertySlot(object, m_lexicalGlobalObject, propertyName, slot))
-            return slot.getValue(m_lexicalGlobalObject, propertyName);
-        return JSValue();
-    }
+    SerializationReturnCode serialize(JSValue in) { return Base::serialize(in); }
 
     JSC::JSValue toJSArrayBuffer(ArrayBuffer& arrayBuffer)
     {
@@ -1229,332 +1181,318 @@ private:
     }
 
 public:
-    bool dumpDerivedTerminal(JSValue value, SerializationReturnCode& code)
+    bool dumpDerivedTerminal(JSObject* obj, SerializationReturnCode& code)
     {
-        ASSERT(value.isCell());
+        VM& vm = m_lexicalGlobalObject->vm();
 
-        if (value.isSymbol()) {
-            code = SerializationReturnCode::DataCloneError;
+        if (RefPtr file = JSFile::toWrapped(vm, obj)) {
+            write(FileTag);
+            write(*file);
             return true;
         }
+        if (RefPtr list = JSFileList::toWrapped(vm, obj)) {
+            write(FileListTag);
+            write(list->length());
+            for (auto& file : list->files())
+                write(file.get());
+            return true;
+        }
+        if (RefPtr blob = JSBlob::toWrapped(vm, obj)) {
+            write(BlobTag);
+            m_blobHandles.append(blob->handle().isolatedCopy());
+            write(blob->url().string());
+            write(blob->type());
+            static_assert(sizeof(uint64_t) == sizeof(decltype(blob->size())));
+            uint64_t size = blob->size();
+            write(size);
+            uint64_t memoryCost = blob->memoryCost();
+            write(memoryCost);
+            return true;
+        }
+        if (RefPtr data = JSImageData::toWrapped(vm, obj)) {
+            write(ImageDataTag);
+            auto addResult = m_imageDataPool.add(*data, m_imageDataPool.size());
+            if (!addResult.isNewEntry) {
+                write(ImageDataPoolTag);
+                writeImageDataIndex(addResult.iterator->value);
+                return true;
+            }
+            write(static_cast<uint32_t>(data->width()));
+            write(static_cast<uint32_t>(data->height()));
+            CheckedUint32 dataLength = data->data().byteLength();
+            if (dataLength.hasOverflowed()) {
+                code = SerializationReturnCode::DataCloneError;
+                return true;
+            }
+            write(dataLength);
+            write(protect(data->data().arrayBufferView())->span());
+            write(data->colorSpace());
+            return true;
+        }
+        if (obj->inherits<JSMessagePort>()) {
+            auto index = m_transferredMessagePorts.find(obj);
+            if (index != m_transferredMessagePorts.end()) {
+                write(MessagePortReferenceTag);
+                write(index->value);
+                return true;
+            }
+            if (m_context == SerializationContext::CloneAcrossWorlds) {
+                write(InMemoryMessagePortTag);
+                write(static_cast<uint32_t>(m_inMemoryMessagePorts.size()));
+                m_inMemoryMessagePorts.append(protect(downcast<JSMessagePort>(obj)->wrapped()));
+                return true;
+            }
+            // MessagePort object could not be found in transferred message ports
+            code = SerializationReturnCode::ValidationError;
+            return true;
+        }
+        if (RefPtr arrayBuffer = toPossiblySharedArrayBuffer(vm, obj)) {
+            if (arrayBuffer->isDetached()) {
+                code = SerializationReturnCode::DataCloneError;
+                return true;
+            }
+            auto index = m_transferredArrayBuffers.find(obj);
+            if (index != m_transferredArrayBuffers.end()) {
+                write(ArrayBufferTransferTag);
+                write(index->value);
+                return true;
+            }
+            if (!addToObjectPoolIfNotDupe<ArrayBufferTag, ResizableArrayBufferTag, SharedArrayBufferTag>(obj))
+                return true;
 
-        VM& vm = m_lexicalGlobalObject->vm();
-        if (isArray(value))
-            return false;
-
-        if (value.isObject()) {
-            auto* obj = asObject(value);
-            if (RefPtr file = JSFile::toWrapped(vm, obj)) {
-                write(FileTag);
-                write(*file);
-                return true;
-            }
-            if (RefPtr list = JSFileList::toWrapped(vm, obj)) {
-                write(FileListTag);
-                write(list->length());
-                for (auto& file : list->files())
-                    write(file.get());
-                return true;
-            }
-            if (RefPtr blob = JSBlob::toWrapped(vm, obj)) {
-                write(BlobTag);
-                m_blobHandles.append(blob->handle().isolatedCopy());
-                write(blob->url().string());
-                write(blob->type());
-                static_assert(sizeof(uint64_t) == sizeof(decltype(blob->size())));
-                uint64_t size = blob->size();
-                write(size);
-                uint64_t memoryCost = blob->memoryCost();
-                write(memoryCost);
-                return true;
-            }
-            if (RefPtr data = JSImageData::toWrapped(vm, obj)) {
-                write(ImageDataTag);
-                auto addResult = m_imageDataPool.add(*data, m_imageDataPool.size());
-                if (!addResult.isNewEntry) {
-                    write(ImageDataPoolTag);
-                    writeImageDataIndex(addResult.iterator->value);
-                    return true;
-                }
-                write(static_cast<uint32_t>(data->width()));
-                write(static_cast<uint32_t>(data->height()));
-                CheckedUint32 dataLength = data->data().byteLength();
-                if (dataLength.hasOverflowed()) {
-                    code = SerializationReturnCode::DataCloneError;
-                    return true;
-                }
-                write(dataLength);
-                write(protect(data->data().arrayBufferView())->span());
-                write(data->colorSpace());
-                return true;
-            }
-            if (obj->inherits<JSMessagePort>()) {
-                auto index = m_transferredMessagePorts.find(obj);
-                if (index != m_transferredMessagePorts.end()) {
-                    write(MessagePortReferenceTag);
-                    write(index->value);
-                    return true;
-                } else if (m_context == SerializationContext::CloneAcrossWorlds) {
-                    write(InMemoryMessagePortTag);
-                    write(static_cast<uint32_t>(m_inMemoryMessagePorts.size()));
-                    m_inMemoryMessagePorts.append(protect(downcast<JSMessagePort>(obj)->wrapped()));
-                    return true;
-                }
-                // MessagePort object could not be found in transferred message ports
-                code = SerializationReturnCode::ValidationError;
-                return true;
-            }
-            if (RefPtr arrayBuffer = toPossiblySharedArrayBuffer(vm, obj)) {
-                if (arrayBuffer->isDetached()) {
-                    code = SerializationReturnCode::DataCloneError;
-                    return true;
-                }
-                auto index = m_transferredArrayBuffers.find(obj);
-                if (index != m_transferredArrayBuffers.end()) {
-                    write(ArrayBufferTransferTag);
-                    write(index->value);
-                    return true;
-                }
-                if (!addToObjectPoolIfNotDupe<ArrayBufferTag, ResizableArrayBufferTag, SharedArrayBufferTag>(obj))
-                    return true;
-                
-                if (arrayBuffer->isShared()) {
-                    // https://html.spec.whatwg.org/multipage/structured-data.html#structuredserializeinternal
-                    if (m_forStorage == SerializationForStorage::Yes) {
-                        code = SerializationReturnCode::DataCloneError;
-                        return true;
-                    }
-                    if (isCrossOriginIsolatedContext(m_lexicalGlobalObject) || JSC::Options::useSharedArrayBuffer()) {
-                        uint32_t index = m_sharedBuffers.size();
-                        ArrayBufferContents contents;
-                        if (arrayBuffer->shareWith(contents)) {
-                            appendObjectPoolTag(SharedArrayBufferTag);
-                            write(SharedArrayBufferTag);
-                            write(agentClusterIDFromGlobalObject(*m_lexicalGlobalObject));
-                            m_sharedBuffers.append(WTF::move(contents));
-                            write(index);
-                            return true;
-                        }
-                    }
-                    code = SerializationReturnCode::DataCloneError;
-                    return true;
-                }
-                
-                if (arrayBuffer->isResizableOrGrowableShared()) {
-                    appendObjectPoolTag(ResizableArrayBufferTag);
-                    write(ResizableArrayBufferTag);
-                    writeResizableArrayBuffer(arrayBuffer->span(), arrayBuffer->maxByteLength().value_or(0));
-                    return true;
-                }
-
-                appendObjectPoolTag(ArrayBufferTag);
-                write(ArrayBufferTag);
-                uint64_t byteLength = arrayBuffer->byteLength();
-                write(byteLength);
-                write(arrayBuffer->span());
-                return true;
-            }
-            if (obj->inherits<JSArrayBufferView>()) {
-                // Note: we can't just use addToObjectPoolIfNotDupe() here because the deserializer
-                // expects to deserialize the children before it deserializes the JSArrayBufferView.
-                // We need to make the serializer follow the same serialization order here by doing
-                // this dance with writeObjectReferenceIfDupe() and addToObjectPool().
-                if (writeObjectReferenceIfDupe<ArrayBufferViewTag>(obj))
-                    return true;
-                bool success = dumpArrayBufferView(obj, code);
-                addToObjectPool<ArrayBufferViewTag>(obj);
-                return success;
-            }
-            if (RefPtr key = JSCryptoKey::toWrapped(vm, obj)) {
-                write(CryptoKeyTag);
-                auto wrappedKey = serializeAndWrapCryptoKey(m_lexicalGlobalObject, key->data());
-                if (!wrappedKey) {
-                    code = SerializationReturnCode::DataCloneError;
-                    return true;
-                }
-
-                write(*wrappedKey);
-                return true;
-            }
-#if ENABLE(WEB_RTC)
-            if (RefPtr rtcCertificate = JSRTCCertificate::toWrapped(vm, obj)) {
-                write(RTCCertificateTag);
-                write(rtcCertificate->expires());
-                write(rtcCertificate->pemCertificate());
-                write(rtcCertificate->origin().toString());
-                write(rtcCertificate->pemPrivateKey());
-                write(static_cast<unsigned>(rtcCertificate->getFingerprints().size()));
-                for (const auto& fingerprint : rtcCertificate->getFingerprints()) {
-                    write(fingerprint.algorithm);
-                    write(fingerprint.value);
-                }
-                return true;
-            }
-#endif
-#if ENABLE(WEBASSEMBLY)
-            if (JSWebAssemblyModule* module = dynamicDowncast<JSWebAssemblyModule>(obj)) {
+            if (arrayBuffer->isShared()) {
+                // https://html.spec.whatwg.org/multipage/structured-data.html#structuredserializeinternal
                 if (m_forStorage == SerializationForStorage::Yes) {
                     code = SerializationReturnCode::DataCloneError;
                     return true;
                 }
+                if (isCrossOriginIsolatedContext(m_lexicalGlobalObject) || JSC::Options::useSharedArrayBuffer()) {
+                    uint32_t index = m_sharedBuffers.size();
+                    ArrayBufferContents contents;
+                    if (arrayBuffer->shareWith(contents)) {
+                        appendObjectPoolTag(SharedArrayBufferTag);
+                        write(SharedArrayBufferTag);
+                        write(agentClusterIDFromGlobalObject(*m_lexicalGlobalObject));
+                        m_sharedBuffers.append(WTF::move(contents));
+                        write(index);
+                        return true;
+                    }
+                }
+                code = SerializationReturnCode::DataCloneError;
+                return true;
+            }
 
-                uint32_t index = m_wasmModules.size();
-                m_wasmModules.append(Ref { module->module() });
-                write(WasmModuleTag);
-                write(agentClusterIDFromGlobalObject(*m_lexicalGlobalObject));
-                write(index);
+            if (arrayBuffer->isResizableOrGrowableShared()) {
+                appendObjectPoolTag(ResizableArrayBufferTag);
+                write(ResizableArrayBufferTag);
+                writeResizableArrayBuffer(arrayBuffer->span(), arrayBuffer->maxByteLength().value_or(0));
                 return true;
             }
-            if (JSWebAssemblyMemory* memory = dynamicDowncast<JSWebAssemblyMemory>(obj)) {
-                if (m_forStorage == SerializationForStorage::Yes || memory->memory().sharingMode() != JSC::MemorySharingMode::Shared) {
-                    code = SerializationReturnCode::DataCloneError;
-                    return true;
-                }
-                if (!isCrossOriginIsolatedContext(m_lexicalGlobalObject) && !JSC::Options::useSharedArrayBuffer()) {
-                    code = SerializationReturnCode::DataCloneError;
-                    return true;
-                }
-                uint32_t index = m_wasmMemoryHandles.size();
-                m_wasmMemoryHandles.append(memory->memory().shared());
-                write(WasmMemoryTag);
-                write(agentClusterIDFromGlobalObject(*m_lexicalGlobalObject));
-                write(index);
+
+            appendObjectPoolTag(ArrayBufferTag);
+            write(ArrayBufferTag);
+            uint64_t byteLength = arrayBuffer->byteLength();
+            write(byteLength);
+            write(arrayBuffer->span());
+            return true;
+        }
+        if (obj->inherits<JSArrayBufferView>()) {
+            // Note: we can't just use addToObjectPoolIfNotDupe() here because the deserializer
+            // expects to deserialize the children before it deserializes the JSArrayBufferView.
+            // We need to make the serializer follow the same serialization order here by doing
+            // this dance with writeObjectReferenceIfDupe() and addToObjectPool().
+            if (writeObjectReferenceIfDupe<ArrayBufferViewTag>(obj))
+                return true;
+            bool success = dumpArrayBufferView(obj, code);
+            addToObjectPool<ArrayBufferViewTag>(obj);
+            return success;
+        }
+        if (RefPtr key = JSCryptoKey::toWrapped(vm, obj)) {
+            write(CryptoKeyTag);
+            auto wrappedKey = serializeAndWrapCryptoKey(m_lexicalGlobalObject, key->data());
+            if (!wrappedKey) {
+                code = SerializationReturnCode::DataCloneError;
                 return true;
             }
+
+            write(*wrappedKey);
+            return true;
+        }
+#if ENABLE(WEB_RTC)
+        if (RefPtr rtcCertificate = JSRTCCertificate::toWrapped(vm, obj)) {
+            write(RTCCertificateTag);
+            write(rtcCertificate->expires());
+            write(rtcCertificate->pemCertificate());
+            write(rtcCertificate->origin().toString());
+            write(rtcCertificate->pemPrivateKey());
+            write(static_cast<unsigned>(rtcCertificate->getFingerprints().size()));
+            for (const auto& fingerprint : rtcCertificate->getFingerprints()) {
+                write(fingerprint.algorithm);
+                write(fingerprint.value);
+            }
+            return true;
+        }
 #endif
-            if (obj->inherits<JSDOMPointReadOnly>()) {
-                dumpDOMPoint(obj);
+#if ENABLE(WEBASSEMBLY)
+        if (JSWebAssemblyModule* module = dynamicDowncast<JSWebAssemblyModule>(obj)) {
+            if (m_forStorage == SerializationForStorage::Yes) {
+                code = SerializationReturnCode::DataCloneError;
                 return true;
             }
-            if (obj->inherits<JSDOMRectReadOnly>()) {
-                dumpDOMRect(obj);
+
+            uint32_t index = m_wasmModules.size();
+            m_wasmModules.append(Ref { module->module() });
+            write(WasmModuleTag);
+            write(agentClusterIDFromGlobalObject(*m_lexicalGlobalObject));
+            write(index);
+            return true;
+        }
+        if (JSWebAssemblyMemory* memory = dynamicDowncast<JSWebAssemblyMemory>(obj)) {
+            if (m_forStorage == SerializationForStorage::Yes || memory->memory().sharingMode() != JSC::MemorySharingMode::Shared) {
+                code = SerializationReturnCode::DataCloneError;
                 return true;
             }
-            if (obj->inherits<JSDOMMatrixReadOnly>()) {
-                dumpDOMMatrix(obj);
+            if (!isCrossOriginIsolatedContext(m_lexicalGlobalObject) && !JSC::Options::useSharedArrayBuffer()) {
+                code = SerializationReturnCode::DataCloneError;
                 return true;
             }
-            if (obj->inherits<JSDOMQuad>()) {
-                dumpDOMQuad(obj);
-                return true;
-            }
-            if (obj->inherits<JSImageBitmap>()) {
-                dumpImageBitmap(obj, code);
-                return true;
-            }
+            uint32_t index = m_wasmMemoryHandles.size();
+            m_wasmMemoryHandles.append(memory->memory().shared());
+            write(WasmMemoryTag);
+            write(agentClusterIDFromGlobalObject(*m_lexicalGlobalObject));
+            write(index);
+            return true;
+        }
+#endif
+        if (obj->inherits<JSDOMPointReadOnly>()) {
+            dumpDOMPoint(obj);
+            return true;
+        }
+        if (obj->inherits<JSDOMRectReadOnly>()) {
+            dumpDOMRect(obj);
+            return true;
+        }
+        if (obj->inherits<JSDOMMatrixReadOnly>()) {
+            dumpDOMMatrix(obj);
+            return true;
+        }
+        if (obj->inherits<JSDOMQuad>()) {
+            dumpDOMQuad(obj);
+            return true;
+        }
+        if (obj->inherits<JSImageBitmap>()) {
+            dumpImageBitmap(obj, code);
+            return true;
+        }
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
-            if (obj->inherits<JSOffscreenCanvas>()) {
-                dumpOffscreenCanvas(obj, code);
-                return true;
-            }
+        if (obj->inherits<JSOffscreenCanvas>()) {
+            dumpOffscreenCanvas(obj, code);
+            return true;
+        }
 #endif
 #if ENABLE(WEB_RTC)
-            if (obj->inherits<JSRTCDataChannel>()) {
-                dumpRTCDataChannel(obj, code);
-                return true;
-            }
-            if (obj->inherits<JSRTCEncodedAudioFrame>()) {
-                dumpRTCEncodedAudioFrame(obj);
-                return true;
-            }
-            if (obj->inherits<JSRTCEncodedVideoFrame>()) {
-                dumpRTCEncodedVideoFrame(obj);
-                return true;
-            }
+        if (obj->inherits<JSRTCDataChannel>()) {
+            dumpRTCDataChannel(obj, code);
+            return true;
+        }
+        if (obj->inherits<JSRTCEncodedAudioFrame>()) {
+            dumpRTCEncodedAudioFrame(obj);
+            return true;
+        }
+        if (obj->inherits<JSRTCEncodedVideoFrame>()) {
+            dumpRTCEncodedVideoFrame(obj);
+            return true;
+        }
 #endif
-            if (obj->inherits<JSReadableStream>()) {
-                dumpReadableStream(obj, code);
-                return true;
-            }
-            if (obj->inherits<JSWritableStream>()) {
-                dumpWritableStream(obj, code);
-                return true;
-            }
-            if (obj->inherits<JSTransformStream>()) {
-                dumpTransformStream(obj, code);
-                return true;
-            }
-            if (obj->inherits<JSDOMException>()) {
-                dumpDOMException(obj, code);
-                return true;
-            }
+        if (obj->inherits<JSReadableStream>()) {
+            dumpReadableStream(obj, code);
+            return true;
+        }
+        if (obj->inherits<JSWritableStream>()) {
+            dumpWritableStream(obj, code);
+            return true;
+        }
+        if (obj->inherits<JSTransformStream>()) {
+            dumpTransformStream(obj, code);
+            return true;
+        }
+        if (obj->inherits<JSDOMException>()) {
+            dumpDOMException(obj, code);
+            return true;
+        }
 #if ENABLE(WEB_CODECS)
-            if (obj->inherits<JSWebCodecsEncodedVideoChunk>()) {
-                if (m_forStorage == SerializationForStorage::Yes)
-                    return false;
-                dumpWebCodecsEncodedVideoChunk(obj);
-                return true;
-            }
-            if (obj->inherits<JSWebCodecsVideoFrame>()) {
-                if (m_forStorage == SerializationForStorage::Yes)
-                    return false;
-                return dumpWebCodecsVideoFrame(obj);
-            }
-            if (obj->inherits<JSWebCodecsEncodedAudioChunk>()) {
-                if (m_forStorage == SerializationForStorage::Yes)
-                    return false;
-                dumpWebCodecsEncodedAudioChunk(obj);
-                return true;
-            }
-            if (obj->inherits<JSWebCodecsAudioData>()) {
-                if (m_forStorage == SerializationForStorage::Yes)
-                    return false;
-                return dumpWebCodecsAudioData(obj);
-            }
+        if (obj->inherits<JSWebCodecsEncodedVideoChunk>()) {
+            if (m_forStorage == SerializationForStorage::Yes)
+                return false;
+            dumpWebCodecsEncodedVideoChunk(obj);
+            return true;
+        }
+        if (obj->inherits<JSWebCodecsVideoFrame>()) {
+            if (m_forStorage == SerializationForStorage::Yes)
+                return false;
+            return dumpWebCodecsVideoFrame(obj);
+        }
+        if (obj->inherits<JSWebCodecsEncodedAudioChunk>()) {
+            if (m_forStorage == SerializationForStorage::Yes)
+                return false;
+            dumpWebCodecsEncodedAudioChunk(obj);
+            return true;
+        }
+        if (obj->inherits<JSWebCodecsAudioData>()) {
+            if (m_forStorage == SerializationForStorage::Yes)
+                return false;
+            return dumpWebCodecsAudioData(obj);
+        }
 #endif
 #if ENABLE(MEDIA_STREAM)
-            if (obj->inherits<JSMediaStreamTrack>()) {
-                if (m_forStorage == SerializationForStorage::Yes)
-                    return false;
-                dumpMediaStreamTrack(obj, code);
-                return true;
-            }
-            if (obj->inherits<JSMediaStreamTrackHandle>()) {
-                if (m_forStorage == SerializationForStorage::Yes)
-                    return false;
-                dumpMediaStreamTrackHandle(obj, code);
-                return true;
-            }
+        if (obj->inherits<JSMediaStreamTrack>()) {
+            if (m_forStorage == SerializationForStorage::Yes)
+                return false;
+            dumpMediaStreamTrack(obj, code);
+            return true;
+        }
+        if (obj->inherits<JSMediaStreamTrackHandle>()) {
+            if (m_forStorage == SerializationForStorage::Yes)
+                return false;
+            dumpMediaStreamTrackHandle(obj, code);
+            return true;
+        }
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
-            if (obj->inherits<JSMediaSourceHandle>()) {
-                dumpMediaSourceHandle(obj, code);
-                return true;
-            }
+        if (obj->inherits<JSMediaSourceHandle>()) {
+            dumpMediaSourceHandle(obj, code);
+            return true;
+        }
 #endif
 
-            auto serializeFileSystemHandle = [&](FileSystemHandle& handle) {
-                if (handle.isClosed()) {
-                    code = SerializationReturnCode::DataCloneError;
-                    return true;
-                }
-                RefPtr context = handle.scriptExecutionContext();
-                if (!context || !context->settingsValues().fileSystemHandleSerializationEnabled) {
-                    code = SerializationReturnCode::DataCloneError;
-                    return true;
-                }
-                write(FileSystemHandleTag);
-                write(std::to_underlying(handle.kind()));
-                write(handle.name());
-                write(std::span<const uint8_t> { handle.globalIdentifier().toRawValue().span() });
-                ASSERT(!context->securityOrigin()->isOpaque());
-                write(context->securityOrigin()->toString());
-                if (RefPtr connection = fileSystemStorageConnectionForContext(*context)) {
-                    auto origin = clientOriginForContext(*context);
-                    m_fileSystemHandleKeepAlives.append({ WTF::move(origin), handle.globalIdentifier(), connection.releaseNonNull() });
-                }
+        auto serializeFileSystemHandle = [&](FileSystemHandle& handle) {
+            if (handle.isClosed()) {
+                code = SerializationReturnCode::DataCloneError;
                 return true;
-            };
-            if (auto* fileHandle = dynamicDowncast<JSFileSystemFileHandle>(obj))
-                return serializeFileSystemHandle(fileHandle->wrapped());
-            if (auto* dirHandle = dynamicDowncast<JSFileSystemDirectoryHandle>(obj))
-                return serializeFileSystemHandle(dirHandle->wrapped());
+            }
+            RefPtr context = handle.scriptExecutionContext();
+            if (!context || !context->settingsValues().fileSystemHandleSerializationEnabled) {
+                code = SerializationReturnCode::DataCloneError;
+                return true;
+            }
+            write(FileSystemHandleTag);
+            write(std::to_underlying(handle.kind()));
+            write(handle.name());
+            write(std::span<const uint8_t> { handle.globalIdentifier().toRawValue().span() });
+            ASSERT(!context->securityOrigin()->isOpaque());
+            write(context->securityOrigin()->toString());
+            if (RefPtr connection = fileSystemStorageConnectionForContext(*context)) {
+                auto origin = clientOriginForContext(*context);
+                m_fileSystemHandleKeepAlives.append({ WTF::move(origin), handle.globalIdentifier(), connection.releaseNonNull() });
+            }
+            return true;
+        };
+        if (auto* fileHandle = dynamicDowncast<JSFileSystemFileHandle>(obj))
+            return serializeFileSystemHandle(fileHandle->wrapped());
+        if (auto* dirHandle = dynamicDowncast<JSFileSystemDirectoryHandle>(obj))
+            return serializeFileSystemHandle(dirHandle->wrapped());
 
-            return false;
-        }
-        // Any other types are expected to serialize as null.
-        write(NullTag);
-        return true;
+        return false;
     }
 
 private:
@@ -1972,268 +1910,6 @@ private:
 };
 static_assert(JSC::StructuredCloneSerializerHandler<CloneSerializer>);
 
-SerializationReturnCode CloneSerializer::serialize(JSValue in)
-{
-    VM& vm = m_lexicalGlobalObject->vm();
-    Vector<uint32_t, 16> indexStack;
-    Vector<uint32_t, 16> lengthStack;
-    Vector<PropertyNameArrayBuilder, 16> propertyStack;
-    Vector<JSObject*, 32> inputObjectStack;
-    Vector<JSMapIterator*, 4> mapIteratorStack;
-    Vector<JSSetIterator*, 4> setIteratorStack;
-    Vector<JSValue, 4> mapIteratorValueStack;
-    Vector<WalkerState, 16> stateStack;
-    WalkerState state = StateUnknown;
-    JSValue inValue = in;
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    while (1) {
-        switch (state) {
-            arrayStartState:
-            case ArrayStartState: {
-                ASSERT(isArray(inValue));
-                if (inputObjectStack.size() > maximumFilterRecursion)
-                    return SerializationReturnCode::StackOverflowError;
-
-                JSArray* inArray = asArray(inValue);
-                unsigned length = inArray->length();
-                if (!addToObjectPoolIfNotDupe<ArrayTag>(inArray))
-                    break;
-                write(ArrayTag);
-                write(length);
-                inputObjectStack.append(inArray);
-                indexStack.append(0);
-                lengthStack.append(length);
-            }
-            arrayStartVisitIndexedMember:
-            [[fallthrough]];
-            case ArrayStartVisitIndexedMember: {
-                JSObject* array = inputObjectStack.last();
-                uint32_t index = indexStack.last();
-                if (index == lengthStack.last()) {
-                    indexStack.removeLast();
-                    lengthStack.removeLast();
-                    write(TerminatorTag); // Terminate the indexed property section.
-
-                    propertyStack.append(PropertyNameArrayBuilder(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
-                    array->getOwnNonIndexPropertyNames(m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
-                    if (scope.exception()) [[unlikely]]
-                        return SerializationReturnCode::ExistingExceptionError;
-                    if (propertyStack.last().size()) {
-                        write(NonIndexPropertiesTag);
-                        indexStack.append(0);
-                        goto startVisitNamedMember;
-                    }
-                    propertyStack.removeLast();
-
-                    endObject();
-                    inputObjectStack.removeLast();
-                    break;
-                }
-                inValue = array->getDirectIndex(m_lexicalGlobalObject, index);
-                if (scope.exception()) [[unlikely]]
-                    return SerializationReturnCode::ExistingExceptionError;
-                if (!inValue) {
-                    indexStack.last()++;
-                    goto arrayStartVisitIndexedMember;
-                }
-
-                write(index);
-                auto terminalCode = SerializationReturnCode::SuccessfullyCompleted;
-                if (dumpIfTerminal(inValue, terminalCode)) {
-                    if (terminalCode != SerializationReturnCode::SuccessfullyCompleted)
-                        return terminalCode;
-                    indexStack.last()++;
-                    goto arrayStartVisitIndexedMember;
-                }
-                stateStack.append(ArrayEndVisitIndexedMember);
-                goto stateUnknown;
-            }
-            case ArrayEndVisitIndexedMember: {
-                indexStack.last()++;
-                goto arrayStartVisitIndexedMember;
-            }
-            case ArrayStartVisitNamedMember:
-            case ArrayEndVisitNamedMember:
-                RELEASE_ASSERT_NOT_REACHED();
-            objectStartState:
-            case ObjectStartState: {
-                ASSERT(inValue.isObject());
-                if (inputObjectStack.size() > maximumFilterRecursion)
-                    return SerializationReturnCode::StackOverflowError;
-                JSObject* inObject = asObject(inValue);
-                if (!addToObjectPoolIfNotDupe<ObjectTag>(inObject))
-                    break;
-                write(ObjectTag);
-                // At this point, all supported objects other than Object
-                // objects have been handled. If we reach this point and
-                // the input is not an Object object then we should throw
-                // a DataCloneError.
-                if (inObject->classInfo() != JSFinalObject::info() && inObject->classInfo() != ObjectPrototype::info())
-                    return SerializationReturnCode::DataCloneError;
-                inputObjectStack.append(inObject);
-                indexStack.append(0);
-                propertyStack.append(PropertyNameArrayBuilder(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
-                inObject->methodTable()->getOwnPropertyNames(inObject, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
-                if (scope.exception()) [[unlikely]]
-                    return SerializationReturnCode::ExistingExceptionError;
-            }
-            startVisitNamedMember:
-            [[fallthrough]];
-            case ObjectStartVisitNamedMember: {
-                JSObject* object = inputObjectStack.last();
-                uint32_t index = indexStack.last();
-                PropertyNameArrayBuilder& properties = propertyStack.last();
-                if (index == properties.size()) {
-                    endObject();
-                    inputObjectStack.removeLast();
-                    indexStack.removeLast();
-                    propertyStack.removeLast();
-                    break;
-                }
-                inValue = getProperty(object, properties[index]);
-                if (scope.exception()) [[unlikely]]
-                    return SerializationReturnCode::ExistingExceptionError;
-
-                if (!inValue) {
-                    // Property was removed during serialisation
-                    indexStack.last()++;
-                    goto startVisitNamedMember;
-                }
-                write(properties[index].string());
-
-                if (scope.exception()) [[unlikely]]
-                    return SerializationReturnCode::ExistingExceptionError;
-
-                auto terminalCode = SerializationReturnCode::SuccessfullyCompleted;
-                if (!dumpIfTerminal(inValue, terminalCode)) {
-                    stateStack.append(ObjectEndVisitNamedMember);
-                    goto stateUnknown;
-                }
-                if (terminalCode != SerializationReturnCode::SuccessfullyCompleted)
-                    return terminalCode;
-                [[fallthrough]];
-            }
-            case ObjectEndVisitNamedMember: {
-                if (scope.exception()) [[unlikely]]
-                    return SerializationReturnCode::ExistingExceptionError;
-
-                indexStack.last()++;
-                goto startVisitNamedMember;
-            }
-            mapStartState: {
-                ASSERT(inValue.isObject());
-                if (inputObjectStack.size() > maximumFilterRecursion)
-                    return SerializationReturnCode::StackOverflowError;
-                JSMap* inMap = downcast<JSMap>(inValue);
-                if (!addToObjectPoolIfNotDupe<MapObjectTag>(inMap))
-                    break;
-                write(MapObjectTag);
-                JSMapIterator* iterator = JSMapIterator::create(vm, m_lexicalGlobalObject->mapIteratorStructure(), inMap, IterationKind::Entries);
-                m_keepAliveBuffer.appendWithCrashOnOverflow(iterator);
-                mapIteratorStack.append(iterator);
-                inputObjectStack.append(inMap);
-                goto mapDataStartVisitEntry;
-            }
-            mapDataStartVisitEntry:
-            case MapDataStartVisitEntry: {
-                JSMapIterator* iterator = mapIteratorStack.last();
-                JSValue key, value;
-                if (!iterator->nextKeyValue(m_lexicalGlobalObject, key, value)) {
-                    mapIteratorStack.removeLast();
-                    JSObject* object = inputObjectStack.last();
-                    ASSERT(is<JSMap>(*object));
-                    propertyStack.append(PropertyNameArrayBuilder(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
-                    object->methodTable()->getOwnPropertyNames(object, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
-                    if (scope.exception()) [[unlikely]]
-                        return SerializationReturnCode::ExistingExceptionError;
-                    write(NonMapPropertiesTag);
-                    indexStack.append(0);
-                    goto startVisitNamedMember;
-                }
-                inValue = key;
-                m_keepAliveBuffer.appendWithCrashOnOverflow(value);
-                mapIteratorValueStack.append(value);
-                stateStack.append(MapDataEndVisitKey);
-                goto stateUnknown;
-            }
-            case MapDataEndVisitKey: {
-                inValue = mapIteratorValueStack.last();
-                mapIteratorValueStack.removeLast();
-                stateStack.append(MapDataEndVisitValue);
-                goto stateUnknown;
-            }
-            case MapDataEndVisitValue: {
-                goto mapDataStartVisitEntry;
-            }
-
-            setStartState: {
-                ASSERT(inValue.isObject());
-                if (inputObjectStack.size() > maximumFilterRecursion)
-                    return SerializationReturnCode::StackOverflowError;
-                JSSet* inSet = downcast<JSSet>(inValue);
-                if (!addToObjectPoolIfNotDupe<SetObjectTag>(inSet))
-                    break;
-                write(SetObjectTag);
-                JSSetIterator* iterator = JSSetIterator::create(vm, m_lexicalGlobalObject->setIteratorStructure(), inSet, IterationKind::Keys);
-                m_keepAliveBuffer.appendWithCrashOnOverflow(iterator);
-                setIteratorStack.append(iterator);
-                inputObjectStack.append(inSet);
-                goto setDataStartVisitEntry;
-            }
-            setDataStartVisitEntry:
-            case SetDataStartVisitEntry: {
-                JSSetIterator* iterator = setIteratorStack.last();
-                JSValue key;
-                if (!iterator->next(m_lexicalGlobalObject, key)) {
-                    setIteratorStack.removeLast();
-                    JSObject* object = inputObjectStack.last();
-                    ASSERT(is<JSSet>(*object));
-                    propertyStack.append(PropertyNameArrayBuilder(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
-                    object->methodTable()->getOwnPropertyNames(object, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
-                    if (scope.exception()) [[unlikely]]
-                        return SerializationReturnCode::ExistingExceptionError;
-                    write(NonSetPropertiesTag);
-                    indexStack.append(0);
-                    goto startVisitNamedMember;
-                }
-                inValue = key;
-                stateStack.append(SetDataEndVisitKey);
-                goto stateUnknown;
-            }
-            case SetDataEndVisitKey: {
-                goto setDataStartVisitEntry;
-            }
-
-            stateUnknown:
-            case StateUnknown: {
-                auto terminalCode = SerializationReturnCode::SuccessfullyCompleted;
-                if (dumpIfTerminal(inValue, terminalCode)) {
-                    if (terminalCode != SerializationReturnCode::SuccessfullyCompleted)
-                        return terminalCode;
-                    break;
-                }
-
-                if (isArray(inValue))
-                    goto arrayStartState;
-                if (isMap(inValue))
-                    goto mapStartState;
-                if (isSet(inValue))
-                    goto setStartState;
-                goto objectStartState;
-            }
-        }
-        if (stateStack.isEmpty())
-            break;
-
-        state = stateStack.last();
-        stateStack.removeLast();
-    }
-    if (m_failed)
-        return SerializationReturnCode::UnspecifiedError;
-
-    return SerializationReturnCode::SuccessfullyCompleted;
-}
-
 class CloneDeserializer : public JSC::CloneDeserializerBase<CloneDeserializer> {
     using Base = JSC::CloneDeserializerBase<CloneDeserializer>;
     WTF_FORBID_HEAP_ALLOCATION;
@@ -2530,58 +2206,7 @@ private:
         readAndStoreVersion();
     }
 
-    enum class VisitNamedMemberResult : uint8_t { Error, Break, Start, Unknown };
-
-    template<WalkerState endState>
-    ALWAYS_INLINE VisitNamedMemberResult startVisitNamedMember(MarkedVector<JSObject*, 32>& outputObjectStack, Vector<Identifier, 16>& propertyNameStack, Vector<WalkerState, 16>& stateStack, JSValue& outValue)
-    {
-        static_assert(endState == ArrayEndVisitNamedMember || endState == ObjectEndVisitNamedMember);
-        VM& vm = m_lexicalGlobalObject->vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        CachedStringRef cachedString;
-        bool wasTerminator = false;
-        if (!readStringData(cachedString, wasTerminator, ShouldAtomize::Yes)) {
-            if (!wasTerminator) {
-                SERIALIZE_TRACE("FAIL deserialize");
-                return VisitNamedMemberResult::Error;
-            }
-
-            JSObject* outObject = outputObjectStack.last();
-            outValue = outObject;
-            outputObjectStack.removeLast();
-            return VisitNamedMemberResult::Break;
-        }
-
-        Identifier identifier = Identifier::fromString(vm, cachedString->string());
-        if constexpr (endState == ArrayEndVisitNamedMember)
-            RELEASE_ASSERT(identifier != vm.propertyNames->length);
-
-        JSValue terminal = readTerminal();
-        if (scope.exception()) [[unlikely]]
-            return VisitNamedMemberResult::Error;
-        if (terminal) {
-            putProperty(outputObjectStack.last(), identifier, terminal);
-            if (scope.exception()) [[unlikely]]
-                return VisitNamedMemberResult::Error;
-            return VisitNamedMemberResult::Start;
-        }
-
-        stateStack.append(endState);
-        propertyNameStack.append(identifier);
-        return VisitNamedMemberResult::Unknown;
-    }
-
-    ALWAYS_INLINE void objectEndVisitNamedMember(MarkedVector<JSObject*, 32>& outputObjectStack, Vector<Identifier, 16>& propertyNameStack, JSValue& outValue)
-    {
-        VM& vm = m_lexicalGlobalObject->vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        putProperty(outputObjectStack.last(), propertyNameStack.last(), outValue);
-        if (scope.exception()) [[unlikely]]
-            return;
-        propertyNameStack.removeLast();
-    }
-
-    DeserializationResult deserialize();
+    DeserializationResult deserialize() { return Base::deserialize(); }
 
     Vector<std::optional<DetachedImageBitmap>> takeDetachedImageBitmaps() { return std::exchange(m_detachedImageBitmaps, { }); }
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
@@ -2619,16 +2244,6 @@ private:
             return false;
         tag = static_cast<ArrayBufferViewSubtag>(consume(m_data));
         return true;
-    }
-
-    void putProperty(JSObject* object, unsigned index, JSValue value)
-    {
-        object->putDirectIndex(m_lexicalGlobalObject, index, value);
-    }
-
-    void putProperty(JSObject* object, const Identifier& property, JSValue value)
-    {
-        object->putDirectMayBeIndex(m_lexicalGlobalObject, property, value);
     }
 
     bool readFile(RefPtr<File>& file)
@@ -4306,16 +3921,6 @@ public:
 
 private:
 
-    template<SerializationTag Tag>
-    bool consumeCollectionDataTerminationIfPossible()
-    {
-        auto originalData = m_data;
-        if (readTag() == Tag)
-            return true;
-        m_data = originalData;
-        return false;
-    }
-
     const bool m_isDOMGlobalObject;
     const bool m_canCreateDOMObject;
     Vector<Ref<ImageData>> m_imageDataPool;
@@ -4385,282 +3990,6 @@ private:
 #endif
 };
 static_assert(JSC::StructuredCloneDeserializerHandler<CloneDeserializer>);
-
-DeserializationResult CloneDeserializer::deserialize()
-{
-    VM& vm = m_lexicalGlobalObject->vm();
-    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
-
-    Vector<uint32_t, 16> indexStack;
-    Vector<Identifier, 16> propertyNameStack;
-    MarkedVector<JSObject*, 32> outputObjectStack;
-    MarkedVector<JSValue, 4> mapKeyStack;
-    MarkedVector<JSMap*, 4> mapStack;
-    MarkedVector<JSSet*, 4> setStack;
-    Vector<WalkerState, 16> stateStack;
-    WalkerState state = StateUnknown;
-    JSValue outValue;
-
-    while (1) {
-        switch (state) {
-        arrayStartState:
-        case ArrayStartState: {
-            uint32_t length;
-            if (!read(length)) {
-                SERIALIZE_TRACE("FAIL deserialize");
-                fail();
-                goto error;
-            }
-            JSArray* outArray = constructEmptyArray(m_globalObject, static_cast<JSC::ArrayAllocationProfile*>(nullptr), length);
-            if (scope.exception()) [[unlikely]] {
-                SERIALIZE_TRACE("FAIL deserialize");
-                fail();
-                goto error;
-            }
-            addToObjectPool<ArrayTag>(outArray);
-            outputObjectStack.append(outArray);
-        }
-        arrayStartVisitIndexedMember:
-        [[fallthrough]];
-        case ArrayStartVisitIndexedMember: {
-            uint32_t index;
-            if (!read(index)) {
-                SERIALIZE_TRACE("FAIL deserialize");
-                fail();
-                goto error;
-            }
-
-            if (m_majorVersion >= 15 || (m_majorVersion == 12 && m_minorVersion == 1)) {
-                if (index == TerminatorTag) {
-                    // We reached the end of the indexed properties section.
-                    if (!read(index)) {
-                        SERIALIZE_TRACE("FAIL deserialize");
-                        fail();
-                        goto error;
-                    }
-                    // At this point, we're either done with the array or is starting the
-                    // non-indexed property section.
-                    if (index == TerminatorTag) {
-                        JSObject* outArray = outputObjectStack.last();
-                        outValue = outArray;
-                        outputObjectStack.removeLast();
-                        break;
-                    }
-                    if (index == NonIndexPropertiesTag)
-                        goto arrayStartVisitNamedMember;
-                }
-            } else {
-                if (index == TerminatorTag) {
-                    JSObject* outArray = outputObjectStack.last();
-                    outValue = outArray;
-                    outputObjectStack.removeLast();
-                    break;
-                } else if (index == NonIndexPropertiesTag)
-                    goto arrayStartVisitNamedMember;
-            }
-
-            JSValue terminal = readTerminal();
-            if (scope.exception()) [[unlikely]] {
-                SERIALIZE_TRACE("FAIL deserialize");
-                fail();
-                goto error;
-            }
-            if (terminal) {
-                putProperty(outputObjectStack.last(), index, terminal);
-                if (scope.exception()) [[unlikely]] {
-                    SERIALIZE_TRACE("FAIL deserialize");
-                    fail();
-                    goto error;
-                }
-                goto arrayStartVisitIndexedMember;
-            }
-            if (m_failed)
-                goto error;
-            indexStack.append(index);
-            stateStack.append(ArrayEndVisitIndexedMember);
-            goto stateUnknown;
-        }
-        case ArrayEndVisitIndexedMember: {
-            JSObject* outArray = outputObjectStack.last();
-            putProperty(outArray, indexStack.last(), outValue);
-            if (scope.exception()) [[unlikely]] {
-                SERIALIZE_TRACE("FAIL deserialize");
-                fail();
-                goto error;
-            }
-            indexStack.removeLast();
-            goto arrayStartVisitIndexedMember;
-        }
-        arrayStartVisitNamedMember:
-        case ArrayStartVisitNamedMember: {
-            auto result = startVisitNamedMember<ArrayEndVisitNamedMember>(outputObjectStack, propertyNameStack, stateStack, outValue);
-            if (scope.exception()) [[unlikely]] {
-                SERIALIZE_TRACE("FAIL deserialize");
-                fail();
-                goto error;
-            }
-            switch (result) {
-            case VisitNamedMemberResult::Error:
-                goto error;
-            case VisitNamedMemberResult::Break:
-                break;
-            case VisitNamedMemberResult::Start:
-                goto arrayStartVisitNamedMember;
-            case VisitNamedMemberResult::Unknown:
-                goto stateUnknown;
-            }
-            break;
-        }
-        case ArrayEndVisitNamedMember: {
-            objectEndVisitNamedMember(outputObjectStack, propertyNameStack, outValue);
-            if (scope.exception()) [[unlikely]] {
-                SERIALIZE_TRACE("FAIL deserialize");
-                fail();
-                goto error;
-            }
-            goto arrayStartVisitNamedMember;
-        }
-        objectStartState:
-        case ObjectStartState: {
-            if (outputObjectStack.size() > maximumFilterRecursion)
-                return { JSValue(), SerializationReturnCode::StackOverflowError };
-            JSObject* outObject = JSC::constructEmptyObject(m_lexicalGlobalObject, m_globalObject->objectPrototype());
-            addToObjectPool<ObjectTag>(outObject);
-            outputObjectStack.append(outObject);
-        }
-        startVisitNamedMember:
-        [[fallthrough]];
-        case ObjectStartVisitNamedMember: {
-            auto result = startVisitNamedMember<ObjectEndVisitNamedMember>(outputObjectStack, propertyNameStack, stateStack, outValue);
-            if (scope.exception()) [[unlikely]] {
-                SERIALIZE_TRACE("FAIL deserialize");
-                fail();
-                goto error;
-            }
-            switch (result) {
-            case VisitNamedMemberResult::Error:
-                goto error;
-            case VisitNamedMemberResult::Break:
-                break;
-            case VisitNamedMemberResult::Start:
-                goto startVisitNamedMember;
-            case VisitNamedMemberResult::Unknown:
-                goto stateUnknown;
-            }
-            break;
-        }
-        case ObjectEndVisitNamedMember: {
-            objectEndVisitNamedMember(outputObjectStack, propertyNameStack, outValue);
-            if (scope.exception()) [[unlikely]] {
-                SERIALIZE_TRACE("FAIL deserialize");
-                fail();
-                goto error;
-            }
-            goto startVisitNamedMember;
-        }
-        mapStartState: {
-            if (outputObjectStack.size() > maximumFilterRecursion) {
-                SERIALIZE_TRACE("FAIL deserialize");
-                return { JSValue(), SerializationReturnCode::StackOverflowError };
-            }
-            JSMap* map = JSMap::create(m_lexicalGlobalObject->vm(), m_globalObject->mapStructure());
-            addToObjectPool<MapObjectTag>(map);
-            outputObjectStack.append(map);
-            mapStack.append(map);
-            goto mapDataStartVisitEntry;
-        }
-        mapDataStartVisitEntry:
-        case MapDataStartVisitEntry: {
-            if (consumeCollectionDataTerminationIfPossible<NonMapPropertiesTag>()) {
-                mapStack.removeLast();
-                goto startVisitNamedMember;
-            }
-            stateStack.append(MapDataEndVisitKey);
-            goto stateUnknown;
-        }
-        case MapDataEndVisitKey: {
-            mapKeyStack.append(outValue);
-            stateStack.append(MapDataEndVisitValue);
-            goto stateUnknown;
-        }
-        case MapDataEndVisitValue: {
-            mapStack.last()->set(m_lexicalGlobalObject, mapKeyStack.last(), outValue);
-            if (scope.exception()) [[unlikely]] {
-                SERIALIZE_TRACE("FAIL deserialize");
-                fail();
-                goto error;
-            }
-            mapKeyStack.removeLast();
-            goto mapDataStartVisitEntry;
-        }
-
-        setStartState: {
-            if (outputObjectStack.size() > maximumFilterRecursion) {
-                SERIALIZE_TRACE("FAIL deserialize");
-                return { JSValue(), SerializationReturnCode::StackOverflowError };
-            }
-            JSSet* set = JSSet::create(m_lexicalGlobalObject->vm(), m_globalObject->setStructure());
-            addToObjectPool<SetObjectTag>(set);
-            outputObjectStack.append(set);
-            setStack.append(set);
-            goto setDataStartVisitEntry;
-        }
-        setDataStartVisitEntry:
-        case SetDataStartVisitEntry: {
-            if (consumeCollectionDataTerminationIfPossible<NonSetPropertiesTag>()) {
-                setStack.removeLast();
-                goto startVisitNamedMember;
-            }
-            stateStack.append(SetDataEndVisitKey);
-            goto stateUnknown;
-        }
-        case SetDataEndVisitKey: {
-            JSSet* set = setStack.last();
-            set->add(m_lexicalGlobalObject, outValue);
-            if (scope.exception()) [[unlikely]] {
-                SERIALIZE_TRACE("FAIL deserialize");
-                fail();
-                goto error;
-            }
-            goto setDataStartVisitEntry;
-        }
-
-        stateUnknown:
-        case StateUnknown:
-            JSValue terminal = readTerminal();
-            if (scope.exception()) [[unlikely]] {
-                SERIALIZE_TRACE("FAIL deserialize");
-                fail();
-                goto error;
-            }
-            if (terminal) {
-                outValue = terminal;
-                break;
-            }
-            SerializationTag tag = readTag();
-            if (tag == ArrayTag)
-                goto arrayStartState;
-            if (tag == ObjectTag)
-                goto objectStartState;
-            if (tag == MapObjectTag)
-                goto mapStartState;
-            if (tag == SetObjectTag)
-                goto setStartState;
-            goto error;
-        }
-        if (stateStack.isEmpty())
-            break;
-
-        state = stateStack.last();
-        stateStack.removeLast();
-    }
-    ASSERT(outValue);
-    ASSERT(!m_failed);
-    return { outValue, SerializationReturnCode::SuccessfullyCompleted };
-error:
-    fail();
-    return { JSValue(), SerializationReturnCode::ValidationError };
-}
 
 #if ASSERT_ENABLED
 void validateSerializedResult(CloneSerializer& serializer, SerializationReturnCode code, Vector<uint8_t>& result, JSGlobalObject* lexicalGlobalObject, Vector<Ref<MessagePort>>& messagePorts, ArrayBufferContentsArray& arrayBufferContentsArray, ArrayBufferContentsArray& sharedBuffers, Vector<Ref<MessagePort>>& inMemoryMessagePorts)

@@ -30,10 +30,17 @@
 #include <JavaScriptCore/CloneBase.h>
 #include <JavaScriptCore/DateInstance.h>
 #include <JavaScriptCore/Identifier.h>
+#include <JavaScriptCore/JSArray.h>
 #include <JavaScriptCore/JSBigInt.h>
 #include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/JSMapInlines.h>
+#include <JavaScriptCore/JSMapIterator.h>
+#include <JavaScriptCore/JSObjectInlines.h>
+#include <JavaScriptCore/JSSetInlines.h>
+#include <JavaScriptCore/JSSetIterator.h>
 #include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/NumberObject.h>
+#include <JavaScriptCore/PropertyNameArray.h>
 #include <JavaScriptCore/RegExpObject.h>
 #include <JavaScriptCore/StringObject.h>
 #include <JavaScriptCore/YarrFlags.h>
@@ -45,8 +52,8 @@
 namespace JSC {
 
 template<typename Derived>
-concept StructuredCloneSerializerHandler = requires(Derived& d, JSValue v, SerializationReturnCode& code) {
-    { d.dumpDerivedTerminal(v, code) } -> std::same_as<bool>;
+concept StructuredCloneSerializerHandler = requires(Derived& d, JSObject* obj, SerializationReturnCode& code) {
+    { d.dumpDerivedTerminal(obj, code) } -> std::same_as<bool>;
 };
 
 namespace StructuredCloneInternal {
@@ -374,67 +381,355 @@ protected:
             dumpBigIntData(value);
             return true;
         }
-        if (value.isObject()) {
-            auto* obj = asObject(value);
-            if (auto* dateObject = dynamicDowncast<DateInstance>(obj)) {
-                write(DateTag);
-                write(dateObject->internalNumber());
-                return true;
-            }
-            if (auto* regExp = dynamicDowncast<RegExpObject>(obj)) {
-                write(RegExpTag);
-                write(regExp->regExp()->pattern());
-                write(String::fromLatin1(JSC::Yarr::flagsString(regExp->regExp()->flags()).data()));
-                return true;
-            }
-            if (auto* booleanObject = dynamicDowncast<BooleanObject>(obj)) {
-                if (!addToObjectPoolIfNotDupe<TrueObjectTag, FalseObjectTag>(booleanObject))
-                    return true;
-                auto tag = booleanObject->internalValue().toBoolean(m_lexicalGlobalObject) ? TrueObjectTag : FalseObjectTag;
-                write(tag);
-                appendObjectPoolTag(tag);
-                return true;
-            }
-            if (auto* stringObject = dynamicDowncast<StringObject>(obj)) {
-                if (!addToObjectPoolIfNotDupe<EmptyStringObjectTag, StringObjectTag>(stringObject))
-                    return true;
-                auto str = asString(stringObject->internalValue())->value(m_lexicalGlobalObject);
-                dumpStringObject(str);
-                return true;
-            }
-            if (auto* numberObject = dynamicDowncast<NumberObject>(obj)) {
-                if (!addToObjectPoolIfNotDupe<NumberObjectTag>(numberObject))
-                    return true;
-                write(NumberObjectTag);
-                write(numberObject->internalValue().asNumber());
-                return true;
-            }
-            if (auto* bigIntObject = dynamicDowncast<BigIntObject>(obj)) {
-                if (!addToObjectPoolIfNotDupe<BigIntObjectTag>(bigIntObject))
-                    return true;
-                write(BigIntObjectTag);
-                JSValue bigIntValue = bigIntObject->internalValue();
-                ASSERT(bigIntValue.isBigInt());
-                dumpBigIntData(bigIntValue);
-                return true;
-            }
-            if (auto* errorInstance = dynamicDowncast<ErrorInstance>(obj)) {
-                auto errorInformation = extractErrorInformationFromErrorInstance(m_lexicalGlobalObject, *errorInstance);
-                if (!errorInformation)
-                    return false;
 
-                write(ErrorInstanceTag);
-                write(static_cast<uint8_t>(errorNameToSerializableErrorType(errorInformation->errorTypeString)));
-                writeNullableString(errorInformation->message);
-                write(errorInformation->line);
-                write(errorInformation->column);
-                writeNullableString(errorInformation->sourceURL);
-                writeNullableString(errorInformation->stack);
-                writeNullableString(errorInformation->cause);
-                return true;
-            }
+        if (!value.isObject()) {
+            ASSERT(value.isSymbol());
+            code = SerializationReturnCode::DataCloneError;
+            return true;
         }
-        return static_cast<Derived*>(this)->dumpDerivedTerminal(value, code);
+
+        auto* obj = asObject(value);
+        if (auto* dateObject = dynamicDowncast<DateInstance>(obj)) {
+            write(DateTag);
+            write(dateObject->internalNumber());
+            return true;
+        }
+        if (auto* regExp = dynamicDowncast<RegExpObject>(obj)) {
+            write(RegExpTag);
+            write(regExp->regExp()->pattern());
+            write(String::fromLatin1(JSC::Yarr::flagsString(regExp->regExp()->flags()).data()));
+            return true;
+        }
+        if (auto* booleanObject = dynamicDowncast<BooleanObject>(obj)) {
+            if (!addToObjectPoolIfNotDupe<TrueObjectTag, FalseObjectTag>(booleanObject))
+                return true;
+            auto tag = booleanObject->internalValue().toBoolean(m_lexicalGlobalObject) ? TrueObjectTag : FalseObjectTag;
+            write(tag);
+            appendObjectPoolTag(tag);
+            return true;
+        }
+        if (auto* stringObject = dynamicDowncast<StringObject>(obj)) {
+            if (!addToObjectPoolIfNotDupe<EmptyStringObjectTag, StringObjectTag>(stringObject))
+                return true;
+            auto str = asString(stringObject->internalValue())->value(m_lexicalGlobalObject);
+            dumpStringObject(str);
+            return true;
+        }
+        if (auto* numberObject = dynamicDowncast<NumberObject>(obj)) {
+            if (!addToObjectPoolIfNotDupe<NumberObjectTag>(numberObject))
+                return true;
+            write(NumberObjectTag);
+            write(numberObject->internalValue().asNumber());
+            return true;
+        }
+        if (auto* bigIntObject = dynamicDowncast<BigIntObject>(obj)) {
+            if (!addToObjectPoolIfNotDupe<BigIntObjectTag>(bigIntObject))
+                return true;
+            write(BigIntObjectTag);
+            JSValue bigIntValue = bigIntObject->internalValue();
+            ASSERT(bigIntValue.isBigInt());
+            dumpBigIntData(bigIntValue);
+            return true;
+        }
+        if (auto* errorInstance = dynamicDowncast<ErrorInstance>(obj)) {
+            auto errorInformation = extractErrorInformationFromErrorInstance(m_lexicalGlobalObject, *errorInstance);
+            if (!errorInformation)
+                return false;
+
+            write(ErrorInstanceTag);
+            write(static_cast<uint8_t>(errorNameToSerializableErrorType(errorInformation->errorTypeString)));
+            writeNullableString(errorInformation->message);
+            write(errorInformation->line);
+            write(errorInformation->column);
+            writeNullableString(errorInformation->sourceURL);
+            writeNullableString(errorInformation->stack);
+            writeNullableString(errorInformation->cause);
+            return true;
+        }
+
+        // The walker descends into JSArray/JSMap/JSSet; never let Derived claim
+        // them as terminals. Plain objects (JSFinalObject / ObjectPrototype) fall
+        // through to dumpDerivedTerminal so DOM types may opt in, with the walker
+        // catching anything Derived didn't claim.
+        if (is<JSArray>(*obj) || is<JSMap>(*obj) || is<JSSet>(*obj))
+            return false;
+
+        return static_cast<Derived*>(this)->dumpDerivedTerminal(obj, code);
+    }
+
+    void endObject()
+    {
+        write(TerminatorTag);
+    }
+
+    JSValue getProperty(JSObject* object, const Identifier& propertyName)
+    {
+        PropertySlot slot(object, PropertySlot::InternalMethodType::Get);
+        if (object->methodTable()->getOwnPropertySlot(object, m_lexicalGlobalObject, propertyName, slot))
+            return slot.getValue(m_lexicalGlobalObject, propertyName);
+        return JSValue();
+    }
+
+    SerializationReturnCode serialize(JSValue in)
+    {
+        VM& vm = m_lexicalGlobalObject->vm();
+        Vector<uint32_t, 16> indexStack;
+        Vector<uint32_t, 16> lengthStack;
+        Vector<PropertyNameArrayBuilder, 16> propertyStack;
+        Vector<JSObject*, 32> inputObjectStack;
+        Vector<JSMapIterator*, 4> mapIteratorStack;
+        Vector<JSSetIterator*, 4> setIteratorStack;
+        Vector<JSValue, 4> mapIteratorValueStack;
+        Vector<WalkerState, 16> stateStack;
+        WalkerState state = WalkerState::StateUnknown;
+        JSValue inValue = in;
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        while (1) {
+            switch (state) {
+            arrayStartState:
+            case WalkerState::ArrayStartState: {
+                ASSERT(is<JSArray>(inValue));
+                if (inputObjectStack.size() > maximumFilterRecursion)
+                    return SerializationReturnCode::StackOverflowError;
+
+                JSArray* inArray = asArray(inValue);
+                unsigned length = inArray->length();
+                if (!addToObjectPoolIfNotDupe<ArrayTag>(inArray))
+                    break;
+                write(ArrayTag);
+                write(length);
+                inputObjectStack.append(inArray);
+                indexStack.append(0);
+                lengthStack.append(length);
+            }
+            arrayStartVisitIndexedMember:
+            [[fallthrough]];
+            case WalkerState::ArrayStartVisitIndexedMember: {
+                JSObject* array = inputObjectStack.last();
+                uint32_t index = indexStack.last();
+                if (index == lengthStack.last()) {
+                    indexStack.removeLast();
+                    lengthStack.removeLast();
+                    write(TerminatorTag); // Terminate the indexed property section.
+
+                    propertyStack.append(PropertyNameArrayBuilder(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
+                    array->getOwnNonIndexPropertyNames(m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
+                    if (scope.exception()) [[unlikely]]
+                        return SerializationReturnCode::ExistingExceptionError;
+                    if (propertyStack.last().size()) {
+                        write(NonIndexPropertiesTag);
+                        indexStack.append(0);
+                        goto startVisitNamedMember;
+                    }
+                    propertyStack.removeLast();
+
+                    endObject();
+                    inputObjectStack.removeLast();
+                    break;
+                }
+                inValue = array->getDirectIndex(m_lexicalGlobalObject, index);
+                if (scope.exception()) [[unlikely]]
+                    return SerializationReturnCode::ExistingExceptionError;
+                if (!inValue) {
+                    indexStack.last()++;
+                    goto arrayStartVisitIndexedMember;
+                }
+
+                write(index);
+                auto terminalCode = SerializationReturnCode::SuccessfullyCompleted;
+                if (dumpIfTerminal(inValue, terminalCode)) {
+                    if (terminalCode != SerializationReturnCode::SuccessfullyCompleted)
+                        return terminalCode;
+                    indexStack.last()++;
+                    goto arrayStartVisitIndexedMember;
+                }
+                stateStack.append(WalkerState::ArrayEndVisitIndexedMember);
+                goto stateUnknown;
+            }
+            case WalkerState::ArrayEndVisitIndexedMember: {
+                indexStack.last()++;
+                goto arrayStartVisitIndexedMember;
+            }
+            case WalkerState::ArrayStartVisitNamedMember:
+            case WalkerState::ArrayEndVisitNamedMember:
+                RELEASE_ASSERT_NOT_REACHED();
+            objectStartState:
+            case WalkerState::ObjectStartState: {
+                ASSERT(inValue.isObject());
+                if (inputObjectStack.size() > maximumFilterRecursion)
+                    return SerializationReturnCode::StackOverflowError;
+                JSObject* inObject = asObject(inValue);
+                if (!addToObjectPoolIfNotDupe<ObjectTag>(inObject))
+                    break;
+                write(ObjectTag);
+                // At this point, all supported objects other than Object
+                // objects have been handled. If we reach this point and
+                // the input is not an Object object then we should throw
+                // a DataCloneError.
+                if (inObject->classInfo() != JSFinalObject::info() && inObject->classInfo() != ObjectPrototype::info())
+                    return SerializationReturnCode::DataCloneError;
+                inputObjectStack.append(inObject);
+                indexStack.append(0);
+                propertyStack.append(PropertyNameArrayBuilder(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
+                inObject->methodTable()->getOwnPropertyNames(inObject, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
+                if (scope.exception()) [[unlikely]]
+                    return SerializationReturnCode::ExistingExceptionError;
+            }
+            startVisitNamedMember:
+            [[fallthrough]];
+            case WalkerState::ObjectStartVisitNamedMember: {
+                JSObject* object = inputObjectStack.last();
+                uint32_t index = indexStack.last();
+                PropertyNameArrayBuilder& properties = propertyStack.last();
+                if (index == properties.size()) {
+                    endObject();
+                    inputObjectStack.removeLast();
+                    indexStack.removeLast();
+                    propertyStack.removeLast();
+                    break;
+                }
+                inValue = getProperty(object, properties[index]);
+                if (scope.exception()) [[unlikely]]
+                    return SerializationReturnCode::ExistingExceptionError;
+
+                if (!inValue) {
+                    // Property was removed during serialisation
+                    indexStack.last()++;
+                    goto startVisitNamedMember;
+                }
+                write(properties[index].string());
+
+                if (scope.exception()) [[unlikely]]
+                    return SerializationReturnCode::ExistingExceptionError;
+
+                auto terminalCode = SerializationReturnCode::SuccessfullyCompleted;
+                if (!dumpIfTerminal(inValue, terminalCode)) {
+                    stateStack.append(WalkerState::ObjectEndVisitNamedMember);
+                    goto stateUnknown;
+                }
+                if (terminalCode != SerializationReturnCode::SuccessfullyCompleted)
+                    return terminalCode;
+                [[fallthrough]];
+            }
+            case WalkerState::ObjectEndVisitNamedMember: {
+                if (scope.exception()) [[unlikely]]
+                    return SerializationReturnCode::ExistingExceptionError;
+
+                indexStack.last()++;
+                goto startVisitNamedMember;
+            }
+            mapStartState: {
+                ASSERT(inValue.isObject());
+                if (inputObjectStack.size() > maximumFilterRecursion)
+                    return SerializationReturnCode::StackOverflowError;
+                JSMap* inMap = downcast<JSMap>(inValue);
+                if (!addToObjectPoolIfNotDupe<MapObjectTag>(inMap))
+                    break;
+                write(MapObjectTag);
+                JSMapIterator* iterator = JSMapIterator::create(vm, m_lexicalGlobalObject->mapIteratorStructure(), inMap, IterationKind::Entries);
+                m_keepAliveBuffer.appendWithCrashOnOverflow(iterator);
+                mapIteratorStack.append(iterator);
+                inputObjectStack.append(inMap);
+                goto mapDataStartVisitEntry;
+            }
+            mapDataStartVisitEntry:
+            case WalkerState::MapDataStartVisitEntry: {
+                JSMapIterator* iterator = mapIteratorStack.last();
+                JSValue key, value;
+                if (!iterator->nextKeyValue(m_lexicalGlobalObject, key, value)) {
+                    mapIteratorStack.removeLast();
+                    JSObject* object = inputObjectStack.last();
+                    ASSERT(is<JSMap>(*object));
+                    propertyStack.append(PropertyNameArrayBuilder(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
+                    object->methodTable()->getOwnPropertyNames(object, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
+                    if (scope.exception()) [[unlikely]]
+                        return SerializationReturnCode::ExistingExceptionError;
+                    write(NonMapPropertiesTag);
+                    indexStack.append(0);
+                    goto startVisitNamedMember;
+                }
+                inValue = key;
+                m_keepAliveBuffer.appendWithCrashOnOverflow(value);
+                mapIteratorValueStack.append(value);
+                stateStack.append(WalkerState::MapDataEndVisitKey);
+                goto stateUnknown;
+            }
+            case WalkerState::MapDataEndVisitKey: {
+                inValue = mapIteratorValueStack.last();
+                mapIteratorValueStack.removeLast();
+                stateStack.append(WalkerState::MapDataEndVisitValue);
+                goto stateUnknown;
+            }
+            case WalkerState::MapDataEndVisitValue: {
+                goto mapDataStartVisitEntry;
+            }
+
+            setStartState: {
+                ASSERT(inValue.isObject());
+                if (inputObjectStack.size() > maximumFilterRecursion)
+                    return SerializationReturnCode::StackOverflowError;
+                JSSet* inSet = downcast<JSSet>(inValue);
+                if (!addToObjectPoolIfNotDupe<SetObjectTag>(inSet))
+                    break;
+                write(SetObjectTag);
+                JSSetIterator* iterator = JSSetIterator::create(vm, m_lexicalGlobalObject->setIteratorStructure(), inSet, IterationKind::Keys);
+                m_keepAliveBuffer.appendWithCrashOnOverflow(iterator);
+                setIteratorStack.append(iterator);
+                inputObjectStack.append(inSet);
+                goto setDataStartVisitEntry;
+            }
+            setDataStartVisitEntry:
+            case WalkerState::SetDataStartVisitEntry: {
+                JSSetIterator* iterator = setIteratorStack.last();
+                JSValue key;
+                if (!iterator->next(m_lexicalGlobalObject, key)) {
+                    setIteratorStack.removeLast();
+                    JSObject* object = inputObjectStack.last();
+                    ASSERT(is<JSSet>(*object));
+                    propertyStack.append(PropertyNameArrayBuilder(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
+                    object->methodTable()->getOwnPropertyNames(object, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
+                    if (scope.exception()) [[unlikely]]
+                        return SerializationReturnCode::ExistingExceptionError;
+                    write(NonSetPropertiesTag);
+                    indexStack.append(0);
+                    goto startVisitNamedMember;
+                }
+                inValue = key;
+                stateStack.append(WalkerState::SetDataEndVisitKey);
+                goto stateUnknown;
+            }
+            case WalkerState::SetDataEndVisitKey: {
+                goto setDataStartVisitEntry;
+            }
+
+            stateUnknown:
+            case WalkerState::StateUnknown: {
+                auto terminalCode = SerializationReturnCode::SuccessfullyCompleted;
+                if (dumpIfTerminal(inValue, terminalCode)) {
+                    if (terminalCode != SerializationReturnCode::SuccessfullyCompleted)
+                        return terminalCode;
+                    break;
+                }
+
+                if (is<JSArray>(inValue))
+                    goto arrayStartState;
+                if (is<JSMap>(inValue))
+                    goto mapStartState;
+                if (is<JSSet>(inValue))
+                    goto setStartState;
+                goto objectStartState;
+            }
+            }
+            if (stateStack.isEmpty())
+                break;
+
+            state = stateStack.last();
+            stateStack.removeLast();
+        }
+        if (m_failed)
+            return SerializationReturnCode::UnspecifiedError;
+
+        return SerializationReturnCode::SuccessfullyCompleted;
     }
 
     Vector<uint8_t>& m_buffer;

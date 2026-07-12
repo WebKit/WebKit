@@ -364,6 +364,11 @@ enum class SerializationReturnCode {
     UnspecifiedError
 };
 
+struct DeserializationResult {
+    JSValue value;
+    SerializationReturnCode code;
+};
+
 enum class SerializableErrorType : uint8_t {
     Error,
     EvalError,

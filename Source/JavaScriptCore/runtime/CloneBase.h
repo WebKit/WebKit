@@ -44,6 +44,25 @@ inline constexpr bool verboseCloneTrace = false;
 class JSGlobalObject;
 class CachedString;
 
+inline constexpr unsigned maximumFilterRecursion = 40000;
+
+enum class WalkerState : uint8_t {
+    StateUnknown,
+    ArrayStartState,
+    ArrayStartVisitIndexedMember,
+    ArrayEndVisitIndexedMember,
+    ArrayStartVisitNamedMember,
+    ArrayEndVisitNamedMember,
+    ObjectStartState,
+    ObjectStartVisitNamedMember,
+    ObjectEndVisitNamedMember,
+    MapDataStartVisitEntry,
+    MapDataEndVisitKey,
+    MapDataEndVisitValue,
+    SetDataStartVisitEntry,
+    SetDataEndVisitKey,
+};
+
 // Shared infrastructure for both CloneSerializerBase and CloneDeserializerBase.
 class CloneBase {
     WTF_FORBID_HEAP_ALLOCATION;
