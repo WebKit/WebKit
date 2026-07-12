@@ -1,0 +1,11 @@
+Tests that CSS.getMatchedStyleForNode does not crash for an element matched by a rule inside a top-level @scope containing a bare declaration.
+
+
+== Running test suite: CSS.getMatchedStyleForNode.ScopeImplicitProperties
+-- Running test case: CSS.getMatchedStyleForNode.ScopeImplicitProperties.BareDeclaration
+PASS: Should have 1 authored rule.
+PASS: Selector text should be "#target".
+PASS: Rule should have 1 grouping.
+PASS: Grouping should have a type of "scope-rule".
+PASS: Did not crash while building matched styles for the @scope rule.
+

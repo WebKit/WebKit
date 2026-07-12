@@ -1,0 +1,49 @@
+Tests that CSS.getMatchedStyleForNode does not crash when reparsing stylesheets that contain at-rules which report their rule body to the inspector before consuming their contents.
+
+
+== Running test suite: CSS.getMatchedStyleForNode.AtRulesDoNotCrash
+-- Running test case: CSS.getMatchedStyleForNode.AtRulesDoNotCrash.Import
+PASS: Should have 1 authored rule.
+PASS: Selector text should be "#target-import".
+PASS: Did not crash while building matched styles for the stylesheet.
+
+-- Running test case: CSS.getMatchedStyleForNode.AtRulesDoNotCrash.FontFace
+PASS: Should have 1 authored rule.
+PASS: Selector text should be "#target-font-face".
+PASS: Did not crash while building matched styles for the stylesheet.
+
+-- Running test case: CSS.getMatchedStyleForNode.AtRulesDoNotCrash.FontFeatureValues
+PASS: Should have 1 authored rule.
+PASS: Selector text should be "#target-font-feature-values".
+PASS: Did not crash while building matched styles for the stylesheet.
+
+-- Running test case: CSS.getMatchedStyleForNode.AtRulesDoNotCrash.FontPaletteValues
+PASS: Should have 1 authored rule.
+PASS: Selector text should be "#target-font-palette-values".
+PASS: Did not crash while building matched styles for the stylesheet.
+
+-- Running test case: CSS.getMatchedStyleForNode.AtRulesDoNotCrash.Keyframes
+PASS: Should have 1 authored rule.
+PASS: Selector text should be "#target-keyframes".
+PASS: Did not crash while building matched styles for the stylesheet.
+
+-- Running test case: CSS.getMatchedStyleForNode.AtRulesDoNotCrash.CounterStyle
+PASS: Should have 1 authored rule.
+PASS: Selector text should be "#target-counter-style".
+PASS: Did not crash while building matched styles for the stylesheet.
+
+-- Running test case: CSS.getMatchedStyleForNode.AtRulesDoNotCrash.ViewTransition
+PASS: Should have 1 authored rule.
+PASS: Selector text should be "#target-view-transition".
+PASS: Did not crash while building matched styles for the stylesheet.
+
+-- Running test case: CSS.getMatchedStyleForNode.AtRulesDoNotCrash.PositionTry
+PASS: Should have 1 authored rule.
+PASS: Selector text should be "#target-position-try".
+PASS: Did not crash while building matched styles for the stylesheet.
+
+-- Running test case: CSS.getMatchedStyleForNode.AtRulesDoNotCrash.Layer
+PASS: Should have 1 authored rule.
+PASS: Selector text should be "#target-layer".
+PASS: Did not crash while building matched styles for the stylesheet.
+

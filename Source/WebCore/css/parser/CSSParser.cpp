@@ -1286,12 +1286,15 @@ RefPtr<StyleRuleScope> CSSParser::consumeScopeRule(CSSParserTokenRange prelude, 
         observerWrapper->observer().startRuleHeader(StyleRuleType::Scope, observerWrapper->startOffset(preludeRangeCopy));
         observerWrapper->observer().endRuleHeader(observerWrapper->endOffset(prelude));
         observerWrapper->observer().startRuleBody(observerWrapper->previousTokenStartOffset(block));
-        observerWrapper->observer().endRuleBody(observerWrapper->endOffset(block));
     }
 
     m_ancestorRuleTypeStack.append(CSSParserEnum::NestedContextType::Scope);
     auto rules = consumeNestedGroupRules(block);
     m_ancestorRuleTypeStack.removeLast();
+
+    if (RefPtr observerWrapper = m_observerWrapper.get())
+        observerWrapper->observer().endRuleBody(observerWrapper->endOffset(block));
+
     Ref rule = StyleRuleScope::create(WTF::move(scopeStart), WTF::move(scopeEnd), WTF::move(rules));
     if (auto* styleSheet = m_styleSheet.get())
         rule->setStyleSheetContents(*styleSheet);
