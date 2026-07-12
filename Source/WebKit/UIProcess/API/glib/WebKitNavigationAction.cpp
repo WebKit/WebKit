@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitNavigationAction.h"
 
+#include "WebKitFrameInfoPrivate.h"
 #include "WebKitNavigationActionPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"
@@ -72,6 +73,10 @@ void webkit_navigation_action_free(WebKitNavigationAction* navigation)
 {
     g_return_if_fail(navigation);
 
+    if (auto sourceFrame = navigation->sourceFrame)
+        webkit_frame_info_free(sourceFrame);
+    if (auto targetFrame = navigation->targetFrame)
+        webkit_frame_info_free(targetFrame);
     navigation->~WebKitNavigationAction();
     fastFree(navigation);
 }
@@ -208,4 +213,45 @@ const char* webkit_navigation_action_get_frame_name(WebKitNavigationAction* navi
             navigation->frameName = CString();
     }
     return navigation->frameName->data();
+}
+
+/**
+ * webkit_navigation_action_get_source_frame:
+ * @navigation: a #WebKitNavigationAction
+ *
+ * The frame that requested the navigation.
+ *
+ * Returns: (transfer none) (nullable): a #WebKitFrameInfo or %NULL
+ *
+ * Since: 2.54
+ */
+WebKitFrameInfo* webkit_navigation_action_get_source_frame(WebKitNavigationAction* navigation)
+{
+    g_return_val_if_fail(navigation, nullptr);
+    if (!navigation->sourceFrame) {
+        if (auto sourceFrame = navigation->action->sourceFrame())
+            navigation->sourceFrame = webkitFrameInfoCreate(sourceFrame);
+    }
+    return navigation->sourceFrame;
+}
+
+/**
+ * webkit_navigation_action_get_target_frame:
+ * @navigation: a #WebKitNavigationAction
+ *
+ * The frame in which to display the new content or %NULL
+ * if the target of the navigation is a new window.
+ *
+ * Returns: (transfer none) (nullable): a #WebKitFrameInfo or %NULL
+ *
+ * Since: 2.54
+ */
+WebKitFrameInfo* webkit_navigation_action_get_target_frame(WebKitNavigationAction* navigation)
+{
+    g_return_val_if_fail(navigation, nullptr);
+    if (!navigation->targetFrame) {
+        if (auto targetFrame = navigation->action->targetFrame())
+            navigation->targetFrame = webkitFrameInfoCreate(targetFrame);
+    }
+    return navigation->targetFrame;
 }

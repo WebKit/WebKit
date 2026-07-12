@@ -88,6 +88,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitWebInspector, g_object_unref)
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitApplicationInfo, webkit_application_info_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitCredential, webkit_credential_free)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitFrameInfo, webkit_frame_info_free)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitITPFirstParty, webkit_itp_first_party_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitITPThirdParty, webkit_itp_third_party_unref)
 #if !ENABLE(2022_GLIB_API)

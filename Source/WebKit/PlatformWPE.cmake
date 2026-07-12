@@ -183,6 +183,7 @@ set(WPE_API_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFileChooserRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFindController.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFormSubmissionRequest.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFrameInfo.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitGeolocationManager.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitGeolocationPermissionRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitHitTestResult.h.in
