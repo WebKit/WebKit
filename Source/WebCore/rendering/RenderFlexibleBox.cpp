@@ -3001,9 +3001,9 @@ void RenderFlexibleBox::computeCrossSizeForFlexItems(const FlexLines& flexLines,
             // If a flex item has align-self: stretch, its computed cross size property is auto, and neither of its cross-axis margins are auto, the used outer cross size is the used cross size
             // of its flex line, clamped according to the item's used min and max cross sizes. Otherwise, the used cross size is the item's hypothetical cross size.
             if (alignmentForFlexItem(flexItem) == ItemPosition::Stretch && !hasAutoMarginsInCrossAxis(flexItem))
-                applyStretchAlignmentToFlexItem(flexItem, lineCrossSizeList[lineIndex]);
-            // Capture the used cross size (the stretch relayout is the render-native boundary; later phases read this list, not the renderer).
-            crossSizeList[flexItemIndex] = crossAxisExtentForFlexItem(flexItem);
+                crossSizeList[flexItemIndex] = applyStretchAlignmentToFlexItem(flexItem, lineCrossSizeList[lineIndex]);
+            else
+                crossSizeList[flexItemIndex] = crossAxisExtentForFlexItem(flexItem);
         }
     }
 }
@@ -3111,7 +3111,7 @@ void RenderFlexibleBox::performBaselineAlignment(WTF::Range<size_t> lineRange, F
     }
 }
 
-void RenderFlexibleBox::applyStretchMinMaxCrossSize(RenderBox& flexItem, LayoutUnit lineCrossAxisExtent, LogicalBoxAxis crossAxis)
+LayoutUnit RenderFlexibleBox::applyStretchMinMaxCrossSize(RenderBox& flexItem, LayoutUnit lineCrossAxisExtent, LogicalBoxAxis crossAxis)
 {
     bool isBlockAxis = crossAxis == LogicalBoxAxis::Block;
     auto& style = flexItem.style();
@@ -3120,7 +3120,7 @@ void RenderFlexibleBox::applyStretchMinMaxCrossSize(RenderBox& flexItem, LayoutU
     bool minIsStretch = min.isStretch();
     bool maxIsStretch = !max.isNone() && max.isStretch();
     if (!minIsStretch && !maxIsStretch)
-        return;
+        return crossAxisExtentForFlexItem(flexItem);
 
     // The block-axis floor ensures the stretched size never goes below border+padding,
     // matching the behavior in applyStretchAlignmentToFlexItem.
@@ -3165,9 +3165,10 @@ void RenderFlexibleBox::applyStretchMinMaxCrossSize(RenderBox& flexItem, LayoutU
         flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
         flexItem.layoutIfNeeded();
     }
+    return newSize;
 }
 
-void RenderFlexibleBox::applyStretchAlignmentToFlexItem(RenderBox& flexItem, LayoutUnit lineCrossAxisExtent)
+LayoutUnit RenderFlexibleBox::applyStretchAlignmentToFlexItem(RenderBox& flexItem, LayoutUnit lineCrossAxisExtent)
 {
     auto flexLayoutScope = SetForScope(m_afterCrossAxisItemSizing, true);
     if (mainAxisIsFlexItemInlineAxis(flexItem)) {
@@ -3208,7 +3209,7 @@ void RenderFlexibleBox::applyStretchAlignmentToFlexItem(RenderBox& flexItem, Lay
             if (canSetFlexItemContentLogicalHeight(flexItem))
                 m_contentLogicalHeights.set(flexItem, contentLogicalHeight);
         }
-        return;
+        return desiredLogicalHeight;
     }
 
     // Cross axis is inline axis (width).
@@ -3223,6 +3224,7 @@ void RenderFlexibleBox::applyStretchAlignmentToFlexItem(RenderBox& flexItem, Lay
         flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
         flexItem.layoutIfNeeded();
     }
+    return flexItemWidth;
 }
 
 void RenderFlexibleBox::flipForRightToLeftColumn(const FlexLines& flexLines, Vector<LayoutPoint>& positionList, const Vector<LayoutUnit>& crossSizeList)
