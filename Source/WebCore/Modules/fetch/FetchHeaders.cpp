@@ -80,8 +80,10 @@ static ExceptionOr<void> appendToHeaderMap(const String& name, const String& val
         return appendSetCookie(normalizedValue, setCookieValues, guard);
 
     String combinedValue = normalizedValue;
-    if (headers.contains(name))
-        combinedValue = makeString(headers.get(name), ", "_s, normalizedValue);
+    String existingValue = headers.get(name);
+    ASSERT(!existingValue.isNull() || !headers.contains(name));
+    if (!existingValue.isNull())
+        combinedValue = makeString(existingValue, ", "_s, normalizedValue);
     auto canWriteResult = canWriteHeader(name, normalizedValue, combinedValue, guard);
     if (canWriteResult.hasException())
         return canWriteResult.releaseException();
