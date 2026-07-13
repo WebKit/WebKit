@@ -50,6 +50,7 @@
 #include "WebBackForwardListFrameItem.h"
 #include "WebFrameMessages.h"
 #include "WebFramePolicyListenerProxy.h"
+#include "WebFrameProxyFromNetworkProcessMessages.h"
 #include "WebNavigationState.h"
 #include "WebPageInspectorController.h"
 #include "WebPageMessages.h"
@@ -1240,14 +1241,9 @@ void WebFrameProxy::waitForCertificateInfoFromNetworkProcess(const String& hostA
     RefPtr connection = networkProcess->connection();
     if (!connection)
         return;
-    // The message should already be queued at this point. Drain ReceivedMainResourceResponseWithCertificateInfo
-    // entries until our frame's hostAndPort appears in the map, since the singleton receiver no longer
-    // filters by frame destination.
-    while (!m_hostAndPortToCertificateInfo.contains(hostAndPort)) {
-        if (connection->waitForAndDispatchImmediately<Messages::NetworkProcessProxy::ReceivedMainResourceResponseWithCertificateInfo>(0, 0_s) != IPC::Error::NoError) {
-            RELEASE_LOG_ERROR(Network, "Unexpectedly missing certificate info from IPC");
-            return;
-        }
+    if (connection->waitForAndDispatchImmediately<Messages::WebFrameProxyFromNetworkProcess::ReceivedMainResourceResponseWithCertificateInfo>(frameID(), 0_s) != IPC::Error::NoError) {
+        RELEASE_LOG_ERROR(Network, "Unexpectedly missing certificate info from IPC");
+        return;
     }
 }
 

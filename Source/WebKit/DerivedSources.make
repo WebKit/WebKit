@@ -172,6 +172,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/Inspector/WebInspectorUIExtensionControllerProxy \
 	UIProcess/DrawingAreaProxy \
 	UIProcess/WebFrameProxy \
+	UIProcess/WebFrameProxyFromNetworkProcess \
 	UIProcess/Network/NetworkProcessProxy \
 	UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy \
 	UIProcess/WebPageProxy \

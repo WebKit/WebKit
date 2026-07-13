@@ -50,6 +50,7 @@
 #include "ServiceWorkerFetchTask.h"
 #include "SharedBufferReference.h"
 #include "WebErrors.h"
+#include "WebFrameProxyFromNetworkProcessMessages.h"
 #include "WebLoaderStrategy.h"
 #include "WebPageMessages.h"
 #include "WebResourceLoaderMessages.h"
@@ -1758,7 +1759,7 @@ void NetworkResourceLoader::didReceiveMainResourceResponse(const WebCore::Resour
     if (CheckedPtr speculativeLoadManager = m_cache ? m_cache->speculativeLoadManager() : nullptr)
         speculativeLoadManager->registerMainResourceLoadResponse(globalFrameID(), originalRequest(), response);
     if (auto& certificateInfo = response.certificateInfo(); certificateInfo && !certificateInfo->isEmpty())
-        connectionToWebProcess().networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ReceivedMainResourceResponseWithCertificateInfo(frameID(), response.url().hostAndPort(), *certificateInfo), 0);
+        connectionToWebProcess().networkProcess().parentProcessConnection()->send(Messages::WebFrameProxyFromNetworkProcess::ReceivedMainResourceResponseWithCertificateInfo(response.url().hostAndPort(), *certificateInfo), frameID());
 }
 
 void NetworkResourceLoader::initializeReportingEndpoints(const ResourceResponse& response)

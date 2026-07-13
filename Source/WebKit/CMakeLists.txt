@@ -305,6 +305,7 @@ set(WebKit_MESSAGES_IN_FILES
     UIProcess/VisitedLinkStore
     UIProcess/WebBackForwardList
     UIProcess/WebFrameProxy
+    UIProcess/WebFrameProxyFromNetworkProcess
     UIProcess/WebFullScreenManagerProxy
     UIProcess/WebGeolocationManagerProxy
     UIProcess/WebLockRegistryProxy

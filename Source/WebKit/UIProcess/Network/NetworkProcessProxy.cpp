@@ -66,6 +66,7 @@
 #include "ViewSnapshotStore.h"
 #include "WebCompiledContentRuleList.h"
 #include "WebFrameProxy.h"
+#include "WebFrameProxyFromNetworkProcessMessages.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
@@ -516,6 +517,18 @@ void NetworkProcessProxy::didClose(IPC::Connection& connection)
 
     // This will cause us to be deleted.
     networkProcessDidTerminate(ProcessTerminationReason::Crash);
+}
+
+bool NetworkProcessProxy::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+{
+    if (AuxiliaryProcessProxy::dispatchMessage(connection, decoder))
+        return true;
+    if (decoder.messageReceiverName() == Messages::WebFrameProxyFromNetworkProcess::messageReceiverName()) {
+        if (RefPtr frame = FrameIdentifier::isValidIdentifier(decoder.destinationID()) ? WebFrameProxy::webFrame(FrameIdentifier(decoder.destinationID())) : nullptr)
+            frame->didReceiveMessageWithReceiverName(connection, decoder);
+        return true;
+    }
+    return false;
 }
 
 void NetworkProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName, const Vector<uint32_t>&)
@@ -1941,12 +1954,6 @@ void NetworkProcessProxy::navigateServiceWorkerClient(WebCore::FrameIdentifier f
     if (RefPtr frame = WebFrameProxy::webFrame(frameIdentifier))
         return frame->navigateServiceWorkerClient(documentIdentifier, url, WTF::move(callback));
     callback({ }, { });
-}
-
-void NetworkProcessProxy::receivedMainResourceResponseWithCertificateInfo(WebCore::FrameIdentifier frameID, String&& hostAndPort, WebCore::CertificateInfo&& certificateInfo)
-{
-    if (RefPtr frame = WebFrameProxy::webFrame(frameID))
-        frame->receivedMainResourceResponseWithCertificateInfo(WTF::move(hostAndPort), WTF::move(certificateInfo));
 }
 
 void NetworkProcessProxy::applicationDidEnterBackground()
