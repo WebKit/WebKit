@@ -86,6 +86,24 @@ TEST(WTF, TestUUIDVersion4Parsing)
     EXPECT_EQ(parseAndStringifyUUID(testAd12), testAd12.convertToASCIILowercase());
 }
 
+// parseInteger() silently accepts a single leading '+', so UUID::parse() must
+// explicitly reject a '+' at the start of every segment. The five segments
+// begin at indices 0, 9, 14, 19 and 24. Note that parseVersion4() cannot
+// exercise the index-14 case: a leading '+' there consumes a character slot,
+// leaving only 3 hex digits, so the version nibble can never be 4 and the
+// version check rejects it before the '+' would matter. parse() must be
+// tested directly.
+TEST(WTF, UUIDParseRejectsLeadingPlusInEachSegment)
+{
+    EXPECT_FALSE(!!WTF::UUID::parse("+1234567-89ab-cdef-0123-456789abcdef"_s)); // index 0
+    EXPECT_FALSE(!!WTF::UUID::parse("01234567-+9ab-cdef-0123-456789abcdef"_s)); // index 9
+    EXPECT_FALSE(!!WTF::UUID::parse("01234567-89ab-+def-0123-456789abcdef"_s)); // index 14
+    EXPECT_FALSE(!!WTF::UUID::parse("01234567-89ab-cdef-+123-456789abcdef"_s)); // index 19
+    EXPECT_FALSE(!!WTF::UUID::parse("01234567-89ab-cdef-0123-+56789abcdef"_s)); // index 24
+
+    EXPECT_TRUE(!!WTF::UUID::parse("01234567-89ab-cdef-0123-456789abcdef"_s));
+}
+
 TEST(WTF, TestUUIDVersion4MakeString)
 {
     String testNormal = "12345678-9abc-4de0-89ab-0123456789ab"_s;

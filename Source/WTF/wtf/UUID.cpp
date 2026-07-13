@@ -125,7 +125,7 @@ std::optional<UUID> UUID::parse(StringView value)
         return { };
 
     // parseInteger may accept integers starting with +, let's check this beforehand.
-    if (value[0] == '+' || value[9] == '+'  || value[19] == '+' || value[24] == '+')
+    if (value[0] == '+' || value[9] == '+'  || value[14] == '+' || value[19] == '+' || value[24] == '+')
         return { };
 
     auto firstValue = parseInteger<uint64_t>(value.left(8), 16);
