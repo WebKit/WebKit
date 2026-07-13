@@ -7439,28 +7439,30 @@ void WebPageProxy::logFrameTree()
 
 #else
 
-static void logFrameTreeHelper(int indent, const FrameTreeNodeData& node)
+static void logFrameTreeHelper(int indent, const WebFrameProxy& frame)
 {
     int spaces = (indent > 2) ? indent - 2 : 0;
-    RELEASE_LOG(FrameTree, "%*s|- pid: %d | site: %" SENSITIVE_LOG_STRING " | url: %" SENSITIVE_LOG_STRING, spaces, "", node.info.processID, Site(node.info.securityOrigin).loggingString().ascii().data(), node.info.request.url().string().ascii().data());
-    for (const auto& child : node.children)
+    RELEASE_LOG(FrameTree, "%*s|- pid: %d | site: %" SENSITIVE_LOG_STRING " | url: %" SENSITIVE_LOG_STRING, spaces, "", frame.process().processID(), Site(frame.documentSecurityOriginData()).loggingString().ascii().data(), frame.url().string().ascii().data());
+    for (Ref child : frame.childFrames()) {
+        // m_childFrames can still contain iframes that are in the back/forward cache and no longer
+        // parented to this frame. Skip them so we only log the currently-connected tree.
+        if (child->parentFrame() != &frame)
+            continue;
         logFrameTreeHelper(indent + 2, child);
-}
-
-static void logFrameTreeRoot(uintptr_t pagePointer, const FrameTreeNodeData& root)
-{
-    RELEASE_LOG(FrameTree, "WebPageProxy %p | pid: %d | site: %" SENSITIVE_LOG_STRING " | url: %" SENSITIVE_LOG_STRING, reinterpret_cast<void*>(pagePointer), root.info.processID, Site(root.info.securityOrigin).loggingString().ascii().data(), root.info.request.url().string().ascii().data());
-    for (const auto& child : root.children)
-        logFrameTreeHelper(2, child);
+    }
 }
 
 void WebPageProxy::logFrameTree()
 {
-    getAllFrames([pagePointer = reinterpret_cast<uintptr_t>(this)](auto&& maybeFrameTree) {
-        if (!maybeFrameTree)
-            return;
-        logFrameTreeRoot(pagePointer, *maybeFrameTree);
-    });
+    RefPtr mainFrame = m_mainFrame;
+    if (!mainFrame)
+        return;
+    RELEASE_LOG(FrameTree, "WebPageProxy %p | pid: %d | site: %" SENSITIVE_LOG_STRING " | url: %" SENSITIVE_LOG_STRING, this, mainFrame->process().processID(), Site(mainFrame->documentSecurityOriginData()).loggingString().ascii().data(), mainFrame->url().string().ascii().data());
+    for (Ref child : mainFrame->childFrames()) {
+        if (child->parentFrame() != mainFrame.get())
+            continue;
+        logFrameTreeHelper(2, child);
+    }
 }
 
 #endif
