@@ -29,6 +29,7 @@
 #import "config.h"
 #import "NSURLExtras.h"
 
+#import <wtf/IndexedRange.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/URL.h>
@@ -334,15 +335,15 @@ BOOL isUserVisibleURL(NSString *string)
 
     // Check for control characters, %-escape sequences that are non-ASCII, and xn--: these
     // are the things that might lead the userVisibleString function to actually change the string.
-    for (auto character : characters) {
+    for (auto [i, character] : indexedRange(characters)) {
         // Control characters, including space, will be escaped by userVisibleString.
         if (character <= 0x20 || character == 0x7F)
             return NO;
         // Escape sequences that expand to non-ASCII characters may be converted to non-escaped UTF-8 sequences.
-        if (character == '%' && isASCIIHexDigit(characters[0]) && isASCIIHexDigit(characters[1]) && !isASCII(toASCIIHexValue(characters[0], characters[1])))
+        if (character == '%' && i + 2 < characters.size() && isASCIIHexDigit(characters[i + 1]) && isASCIIHexDigit(characters[i + 2]) && !isASCII(toASCIIHexValue(characters[i + 1], characters[i + 2])))
             return NO;
         // If "xn--" appears, then we might need to run the IDN algorithm if it's a host name.
-        if (isASCIIAlphaCaselessEqual(character, 'x') && isASCIIAlphaCaselessEqual(characters[0], 'n') && characters[1] == '-' && characters[2] == '-')
+        if (isASCIIAlphaCaselessEqual(character, 'x') && i + 3 < characters.size() && isASCIIAlphaCaselessEqual(characters[i + 1], 'n') && characters[i + 2] == '-' && characters[i + 3] == '-')
             return NO;
     }
 

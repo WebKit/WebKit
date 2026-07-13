@@ -399,5 +399,17 @@ TEST(URLExtras, URLByRemovingUserInfo)
     EXPECT_STREQ("https://foo.github.io/upload/test.zip", url2.string().utf8().data());
 }
 
+// isUserVisibleURL() is a fast-path guard that must return YES only when
+// userVisibleString() is guaranteed to leave the URL unchanged.
+TEST(URLExtras, IsUserVisibleURL)
+{
+    EXPECT_TRUE(WTF::isUserVisibleURL(@"http://webkit.org/path"));
+
+    EXPECT_STRNE("http://example.com/%E2%82%AC", userVisibleString(literalURL("http://example.com/%E2%82%AC")));
+    EXPECT_FALSE(WTF::isUserVisibleURL(@"http://example.com/%E2%82%AC"));
+
+    EXPECT_FALSE(WTF::isUserVisibleURL(@"http://xn--nxasmq6b.com/"));
+}
+
 } // namespace TestWebKitAPI
 
