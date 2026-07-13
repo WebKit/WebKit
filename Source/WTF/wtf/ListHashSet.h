@@ -262,8 +262,8 @@ inline void ListHashSetLink::unlink()
 
 inline void ListHashSetLink::insertAfter(ListHashSetLink* prev)
 {
-    ASSERT(m_prev = this);
-    ASSERT(m_next = this);
+    ASSERT(m_prev == this);
+    ASSERT(m_next == this);
 
     m_prev = prev;
     m_next = prev->m_next;
@@ -274,8 +274,8 @@ inline void ListHashSetLink::insertAfter(ListHashSetLink* prev)
 
 inline void ListHashSetLink::insertBefore(ListHashSetLink* next)
 {
-    ASSERT(m_prev = this);
-    ASSERT(m_next = this);
+    ASSERT(m_prev == this);
+    ASSERT(m_next == this);
 
     m_prev = next->m_prev;
     m_next = next;
