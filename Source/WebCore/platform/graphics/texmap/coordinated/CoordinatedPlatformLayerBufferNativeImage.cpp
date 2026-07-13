@@ -113,6 +113,12 @@ bool CoordinatedPlatformLayerBufferNativeImage::tryEnsureBuffer(UseSkiaForCompos
     OptionSet<BitmapTexture::Flags> textureFlags;
     if (m_image->hasAlpha())
         textureFlags.add(BitmapTexture::Flags::SupportsAlpha);
+
+#if USE(SKIA)
+    if (m_image->platformImage()->imageInfo().colorType() == kBGRA_8888_SkColorType)
+        textureFlags.add(BitmapTexture::Flags::UseBGRALayout);
+#endif
+
     auto texture = BitmapTexturePool::singleton().acquireTexture(m_size, textureFlags);
 
 #if USE(CAIRO)
