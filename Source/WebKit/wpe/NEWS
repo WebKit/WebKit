@@ -1,4 +1,19 @@
 =================
+WPE WebKit 2.52.5
+=================
+
+What's new in WPE WebKit 2.52.5?
+
+  - Fire scrollend event for instant programmatic scrolls.
+  - Increase network idle connection timeout to 115 seconds.
+  - Add User-Agent quirk for HBO Max.
+  - Make MiniBrowser exit cleanly when receiving signals and PGO profiles
+    are being gathered.
+  - Add User-Agent quirk to make WebXR work better on ikea.com.
+  - Fix the build with system malloc.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.52.4
 =================
 
