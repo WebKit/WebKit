@@ -123,9 +123,10 @@ buildDirectoryCache();
 
 my @idlFilesToUpdate = grep &{sub {
     my $absPath = Cwd::abs_path($_) || $_;
-    if (defined($oldSupplements{$absPath})
-        && @{$oldSupplements{$absPath}} ne @{$newSupplements{$absPath} or []}) {
-        # Re-process the IDL file if its supplemental dependencies were added or removed
+    my $oldSupplement = $oldSupplements{$absPath};
+    if (defined($oldSupplement)
+        && join("\0", @$oldSupplement) ne join("\0", @{$newSupplements{$absPath} || []})) {
+        # Re-process the IDL file if its supplemental dependencies were added, removed, or changed.
         return 1;
     }
     my ($filename, $dirs, $suffix) = fileparse($_, '.idl');
