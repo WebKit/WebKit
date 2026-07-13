@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -116,17 +116,18 @@ void HTMLFrameSetElement::attributeChanged(const QualifiedName& name, const Atom
                 m_frameborder = false;
                 m_frameborderSet = true;
             } else if (equalLettersIgnoringASCIICase(newValue, "yes"_s) || newValue == "1"_s) {
+                m_frameborder = true;
                 m_frameborderSet = true;
             }
         } else {
-            m_frameborder = false;
+            m_frameborder = true;
             m_frameborderSet = false;
         }
-        // FIXME: Do we need to trigger repainting?
+        invalidateStyleForSubtree();
         break;
     case AttributeNames::noresizeAttr:
-        // FIXME: This should set m_noresize to false if the value is null.
-        m_noresize = true;
+        m_noresize = !newValue.isNull();
+        invalidateStyleForSubtree();
         break;
     case AttributeNames::borderAttr:
         if (!newValue.isNull()) {

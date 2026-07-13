@@ -1388,6 +1388,7 @@ fast/css/resize-textarea-align-content.html [ Skip ]
 fast/events/mouse-events-on-textarea-resize.html [ Skip ]
 fast/events/mouse_resizer_mousedown.html [ Skip ]
 fast/css/resize-corner-over-child-layer.html [ Skip ]
+fast/frames/frameset-noresize-removal-allows-resize.html [ Skip ]
 
 # The file-wrapper part of <attachment> is not yet working on iOS
 fast/attachment/attachment-type-attribute.html [ Skip ]
