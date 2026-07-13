@@ -40,6 +40,7 @@
 #include "ScrollingTreePositionedNodeCoordinated.h"
 #include "ScrollingTreeStickyNodeCoordinated.h"
 #include <ranges>
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
@@ -85,12 +86,20 @@ void ScrollingTreeCoordinated::applyLayerPositionsInternal()
     if (!rootScrollingNode)
         return;
 
+    if (m_didRequestComposition.exchange(true)) {
+        setNeedsApplyLayerPositions();
+        return;
+    }
+
     ThreadedScrollingTree::applyLayerPositionsInternal();
 
-    if (ScrollingThread::isCurrentThread()) {
-        auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeCoordinated*>(rootScrollingNode)->rootContentsLayer();
-        rootContentsLayer->requestComposition(CompositionReason::AsyncScrolling);
-    }
+    auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeCoordinated*>(rootScrollingNode)->rootContentsLayer();
+    rootContentsLayer->requestCompositionForScrolling(CompletionHandler<void()>([this, protectedThis = protect(this)] {
+        m_didRequestComposition = false;
+        ScrollingThread::dispatch([this, protectedThis] {
+            applyLayerPositions();
+        });
+    }, CompletionHandlerCallThread::AnyThread), ScrollingThread::isCurrentThread());
 }
 
 void ScrollingTreeCoordinated::didCompleteRenderingUpdate()
