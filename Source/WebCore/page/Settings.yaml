@@ -106,6 +106,7 @@ EditingBehaviorType:
 
 FixedBackgroundsPaintRelativeToDocument:
   type: bool
+  inspectorOverride: true
   defaultValue:
     WebCore:
       PLATFORM(IOS_FAMILY): true

@@ -1,0 +1,9 @@
+Tests for the Page.overrideSetting command and the NotificationsEnabled setting.
+
+
+== Running test suite: Page.overrideSetting.NotificationsEnabled
+-- Running test case: Page.overrideSetting.NotificationsEnabled
+PASS: window.Notification should be unavailable when NotificationsEnabled is overridden to false.
+PASS: window.Notification should be available when NotificationsEnabled is overridden to true.
+PASS: window.Notification should return to its default when the NotificationsEnabled override is removed.
+

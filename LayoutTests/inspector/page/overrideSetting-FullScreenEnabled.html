@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function probeRequestFullscreen() {
+    let frame = document.createElement("iframe");
+    document.body.appendChild(frame);
+    let result = "requestFullscreen" in frame.contentWindow.Element.prototype;
+    frame.remove();
+    return result;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Page.overrideSetting.FullScreenEnabled");
+
+    async function observe() {
+        return await InspectorTest.evaluateInPage(`probeRequestFullscreen()`);
+    }
+
+    suite.addTestCase({
+        name: "Page.overrideSetting.FullScreenEnabled",
+        description: "Test that overriding FullScreenEnabled controls the availability of Element.prototype.requestFullscreen.",
+        async test() {
+            let defaultValue = await observe();
+
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.FullScreenEnabled, false);
+            InspectorTest.expectFalse(await observe(), "Element.prototype.requestFullscreen should be unavailable when FullScreenEnabled is overridden to false.");
+
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.FullScreenEnabled, true);
+            InspectorTest.expectTrue(await observe(), "Element.prototype.requestFullscreen should be available when FullScreenEnabled is overridden to true.");
+
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.FullScreenEnabled);
+            InspectorTest.expectEqual(await observe(), defaultValue, "Element.prototype.requestFullscreen should return to its default when the FullScreenEnabled override is removed.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the Page.overrideSetting command and the FullScreenEnabled setting.</p>
+</body>
+</html>

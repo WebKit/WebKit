@@ -160,8 +160,11 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
 
     auto& inspectedPageSettings = m_inspectedPage->settings();
     inspectedPageSettings.setAuthorAndUserStylesEnabledInspectorOverride(std::nullopt);
+    inspectedPageSettings.setFixedBackgroundsPaintRelativeToDocumentInspectorOverride(std::nullopt);
     inspectedPageSettings.setICECandidateFilteringEnabledInspectorOverride(std::nullopt);
     inspectedPageSettings.setImagesEnabledInspectorOverride(std::nullopt);
+    inspectedPageSettings.setInputTypeMonthEnabledInspectorOverride(std::nullopt);
+    inspectedPageSettings.setInputTypeWeekEnabledInspectorOverride(std::nullopt);
     inspectedPageSettings.setMediaCaptureRequiresSecureConnectionInspectorOverride(std::nullopt);
     inspectedPageSettings.setMockCaptureDevicesEnabledInspectorOverride(std::nullopt);
     inspectedPageSettings.setNeedsSiteSpecificQuirksInspectorOverride(std::nullopt);
@@ -169,6 +172,18 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
     inspectedPageSettings.setShowDebugBordersInspectorOverride(std::nullopt);
     inspectedPageSettings.setShowRepaintCounterInspectorOverride(std::nullopt);
     inspectedPageSettings.setWebSecurityEnabledInspectorOverride(std::nullopt);
+
+#if ENABLE(FULLSCREEN_API)
+    overrideSettingByModifyingValue(m_fullScreenEnabledBeforeOverride, std::nullopt, &Settings::fullScreenEnabled, &Settings::setFullScreenEnabled);
+#endif
+#if ENABLE(NOTIFICATIONS)
+    overrideSettingByModifyingValue(m_notificationsEnabledBeforeOverride, std::nullopt, &Settings::notificationsEnabled, &Settings::setNotificationsEnabled);
+#endif
+#if ENABLE(POINTER_LOCK)
+    overrideSettingByModifyingValue(m_pointerLockEnabledBeforeOverride, std::nullopt, &Settings::pointerLockEnabled, &Settings::setPointerLockEnabled);
+#endif
+    overrideSettingByModifyingValue(m_pushAPIEnabledBeforeOverride, std::nullopt, &Settings::pushAPIEnabled, &Settings::setPushAPIEnabled);
+
     inspectedPageSettings.setForcedPrefersReducedMotionAccessibilityValue(ForcedAccessibilityValue::System);
     inspectedPageSettings.setForcedPrefersContrastAccessibilityValue(ForcedAccessibilityValue::System);
 
@@ -208,6 +223,19 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::overrideUserAgent(c
     return { };
 }
 
+void InspectorPageAgent::overrideSettingByModifyingValue(std::optional<bool>& savedValue, std::optional<bool> value, bool (Settings::*getter)() const, void (Settings::*setter)(bool))
+{
+    Ref inspectedPageSettings = m_inspectedPage->settings();
+    if (value) {
+        if (!savedValue)
+            savedValue = (inspectedPageSettings.get().*getter)();
+        (inspectedPageSettings.get().*setter)(*value);
+    } else if (savedValue) {
+        (inspectedPageSettings.get().*setter)(*savedValue);
+        savedValue = std::nullopt;
+    }
+}
+
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::overrideSetting(Inspector::Protocol::Page::Setting setting, std::optional<bool>&& value)
 {
     auto& inspectedPageSettings = m_inspectedPage->settings();
@@ -219,6 +247,16 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::overrideSetting(Ins
 
     case Inspector::Protocol::Page::Setting::AuthorAndUserStylesEnabled:
         inspectedPageSettings.setAuthorAndUserStylesEnabledInspectorOverride(value);
+        return { };
+
+    case Inspector::Protocol::Page::Setting::FixedBackgroundsPaintRelativeToDocument:
+        inspectedPageSettings.setFixedBackgroundsPaintRelativeToDocumentInspectorOverride(value);
+        return { };
+
+    case Inspector::Protocol::Page::Setting::FullScreenEnabled:
+#if ENABLE(FULLSCREEN_API)
+        overrideSettingByModifyingValue(m_fullScreenEnabledBeforeOverride, value, &Settings::fullScreenEnabled, &Settings::setFullScreenEnabled);
+#endif
         return { };
 
     case Inspector::Protocol::Page::Setting::ICECandidateFilteringEnabled:
@@ -233,6 +271,14 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::overrideSetting(Ins
         inspectedPageSettings.setImagesEnabledInspectorOverride(value);
         return { };
 
+    case Inspector::Protocol::Page::Setting::InputTypeMonthEnabled:
+        inspectedPageSettings.setInputTypeMonthEnabledInspectorOverride(value);
+        return { };
+
+    case Inspector::Protocol::Page::Setting::InputTypeWeekEnabled:
+        inspectedPageSettings.setInputTypeWeekEnabledInspectorOverride(value);
+        return { };
+
     case Inspector::Protocol::Page::Setting::MediaCaptureRequiresSecureConnection:
         inspectedPageSettings.setMediaCaptureRequiresSecureConnectionInspectorOverride(value);
         return { };
@@ -245,6 +291,22 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::overrideSetting(Ins
     case Inspector::Protocol::Page::Setting::NeedsSiteSpecificQuirks:
         inspectedPageSettings.setNeedsSiteSpecificQuirksInspectorOverride(value);
         m_client->setDeveloperPreferenceOverride(InspectorBackendClient::DeveloperPreference::NeedsSiteSpecificQuirks, value);
+        return { };
+
+    case Inspector::Protocol::Page::Setting::NotificationsEnabled:
+#if ENABLE(NOTIFICATIONS)
+        overrideSettingByModifyingValue(m_notificationsEnabledBeforeOverride, value, &Settings::notificationsEnabled, &Settings::setNotificationsEnabled);
+#endif
+        return { };
+
+    case Inspector::Protocol::Page::Setting::PointerLockEnabled:
+#if ENABLE(POINTER_LOCK)
+        overrideSettingByModifyingValue(m_pointerLockEnabledBeforeOverride, value, &Settings::pointerLockEnabled, &Settings::setPointerLockEnabled);
+#endif
+        return { };
+
+    case Inspector::Protocol::Page::Setting::PushAPIEnabled:
+        overrideSettingByModifyingValue(m_pushAPIEnabledBeforeOverride, value, &Settings::pushAPIEnabled, &Settings::setPushAPIEnabled);
         return { };
 
     case Inspector::Protocol::Page::Setting::ScriptEnabled:

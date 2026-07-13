@@ -361,6 +361,7 @@ webkit.org/b/204001 pointer-lock/ [ Skip ]
 webkit.org/b/204001 fast/shadow-dom/pointerlockelement-in-shadow-tree.html [ Skip ]
 webkit.org/b/204001 fast/shadow-dom/pointerlockelement-in-slot.html [ Skip ]
 webkit.org/b/204001 imported/w3c/web-platform-tests/pointerlock/ [ Skip ]
+webkit.org/b/204001 inspector/page/overrideSetting-PointerLockEnabled.html [ Skip ]
 
 webkit.org/b/206454 fast/events/mouse-cursor-change.html [ Failure ]
 webkit.org/b/206454 fast/events/mouse-cursor-no-mousemove.html [ Failure ]

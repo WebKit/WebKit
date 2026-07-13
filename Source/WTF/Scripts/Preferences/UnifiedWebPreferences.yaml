@@ -4216,6 +4216,7 @@ InputTypeMonthEnabled:
   status: embedder
   humanReadableName: "Month Input"
   humanReadableDescription: "Enable input elements of type month"
+  inspectorOverride: true
   defaultValue:
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY)": true
@@ -4248,6 +4249,7 @@ InputTypeWeekEnabled:
   status: embedder
   humanReadableName: "Week Input"
   humanReadableDescription: "Enable input elements of type week"
+  inspectorOverride: true
   defaultValue:
     WebKitLegacy:
       default: false

@@ -9,3 +9,18 @@ Property "color" equals "rgb(0, 0, 0)"
 Removing AuthorAndUserStylesEnabled override...
 Property "color" equals "rgb(255, 0, 0)"
 
+-- Running test case: Page.overrideSetting.PushAPIEnabled
+PASS: window.PushManager should be unavailable when PushAPIEnabled is overridden to false.
+PASS: window.PushManager should be available when PushAPIEnabled is overridden to true.
+PASS: window.PushManager should return to its default when the PushAPIEnabled override is removed.
+
+-- Running test case: Page.overrideSetting.InputTypeMonthEnabled
+PASS: an <input type="month"> should be unavailable when InputTypeMonthEnabled is overridden to false.
+PASS: an <input type="month"> should be available when InputTypeMonthEnabled is overridden to true.
+PASS: an <input type="month"> should return to its default when the InputTypeMonthEnabled override is removed.
+
+-- Running test case: Page.overrideSetting.InputTypeWeekEnabled
+PASS: an <input type="week"> should be unavailable when InputTypeWeekEnabled is overridden to false.
+PASS: an <input type="week"> should be available when InputTypeWeekEnabled is overridden to true.
+PASS: an <input type="week"> should return to its default when the InputTypeWeekEnabled override is removed.
+

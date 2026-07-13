@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function probeNotification() {
+    let frame = document.createElement("iframe");
+    document.body.appendChild(frame);
+    let result = "Notification" in frame.contentWindow;
+    frame.remove();
+    return result;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Page.overrideSetting.NotificationsEnabled");
+
+    async function observe() {
+        return await InspectorTest.evaluateInPage(`probeNotification()`);
+    }
+
+    suite.addTestCase({
+        name: "Page.overrideSetting.NotificationsEnabled",
+        description: "Test that overriding NotificationsEnabled controls the availability of window.Notification.",
+        async test() {
+            let defaultValue = await observe();
+
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.NotificationsEnabled, false);
+            InspectorTest.expectFalse(await observe(), "window.Notification should be unavailable when NotificationsEnabled is overridden to false.");
+
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.NotificationsEnabled, true);
+            InspectorTest.expectTrue(await observe(), "window.Notification should be available when NotificationsEnabled is overridden to true.");
+
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.NotificationsEnabled);
+            InspectorTest.expectEqual(await observe(), defaultValue, "window.Notification should return to its default when the NotificationsEnabled override is removed.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the Page.overrideSetting command and the NotificationsEnabled setting.</p>
+</body>
+</html>
