@@ -33,6 +33,7 @@
 #import "PluginView.h"
 #import "ShareableBitmapUtilities.h"
 #import "WebPage.h"
+#import <WebCore/AccessibilityObject.h>
 #import <WebCore/ContainerNodeInlines.h>
 #import <WebCore/DataDetection.h>
 #import <WebCore/DataDetectionResultsStorage.h>
@@ -359,7 +360,7 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
 
     auto contentsPoint = frameView->rootViewToContents(request.point);
 
-    constexpr OptionSet<WebCore::HitTestRequest::Type> hitType {
+    constexpr OptionSet hitType {
         WebCore::HitTestRequest::Type::ReadOnly,
         WebCore::HitTestRequest::Type::Active,
         WebCore::HitTestRequest::Type::AllowVisibleChildFrameContentOnly
@@ -434,6 +435,28 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
         if (info.prefersDraggingOverTextSelection || info.isDHTMLDraggable || info.isColorInput || info.isRangeInput)
             break;
     }
+
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    if (!info.isRangeInput) {
+        constexpr auto sliderHitType = hitType | OptionSet {
+            WebCore::HitTestRequest::Type::CollectMultipleElements,
+            WebCore::HitTestRequest::Type::IncludeAllElementsUnderPoint,
+        };
+        const auto sliderResult = localMainFrame->eventHandler().hitTestResultAtPoint(contentsPoint, sliderHitType);
+        for (Ref node : sliderResult.listBasedTestResult()) {
+            const RefPtr element = dynamicDowncast<WebCore::Element>(node);
+            if (!element)
+                continue;
+
+            const auto ariaRole = element->attributeWithoutSynchronization(WebCore::HTMLNames::roleAttr);
+            if (WebCore::AccessibilityObject::ariaRoleToWebCoreRole(ariaRole) == WebCore::AccessibilityRole::Slider) {
+                info.isARIASlider = true;
+                break;
+            }
+        }
+    }
+#endif // HAVE(APPKIT_GESTURES_SUPPORT)
+
 #if PLATFORM(MACCATALYST)
     bool isInsideFixedPosition;
     WebCore::VisiblePosition caretPosition(renderer->visiblePositionForPoint(contentsPoint, WebCore::HitTestSource::User));

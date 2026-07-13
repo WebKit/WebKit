@@ -45,6 +45,7 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
     bool isDHTMLDraggable,
     bool isColorInput,
     bool isRangeInput,
+    bool isARIASlider,
     bool isNearMarkedText,
 #if PLATFORM(IOS_FAMILY)
     bool touchCalloutEnabled,
@@ -111,6 +112,7 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
     , isDHTMLDraggable(isDHTMLDraggable)
     , isColorInput(isColorInput)
     , isRangeInput(isRangeInput)
+    , isARIASlider(isARIASlider)
     , isNearMarkedText(isNearMarkedText)
 #if PLATFORM(IOS_FAMILY)
     , touchCalloutEnabled(touchCalloutEnabled)

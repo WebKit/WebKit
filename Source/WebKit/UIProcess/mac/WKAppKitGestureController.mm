@@ -919,7 +919,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     static constexpr int panPositionInformationToleranceRadius = 15;
     bool requestIsValid = [self _positionInformationRequestIsValidAtLocation:locationInViewCoordinates withRadius:panPositionInformationToleranceRadius];
 
-    bool prefersInteraction = _positionInformation.isRangeInput;
+    // FIXME: (rdar://181964604) Because of this logic, vertically scrolling over these elements likely will not work.
+    bool prefersInteraction = _positionInformation.isRangeInput || _positionInformation.isARIASlider;
     bool yieldToContent = requestIsValid && prefersInteraction;
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+    html, body { margin: 0; overflow: hidden; }
+
+    #scrubber { position: absolute; left: 20px; bottom: 20px; width: 600px; height: 24px; background: #ccc; }
+    #scrubber [role="slider"] { position: absolute; inset: 0; }
+    #playhead { position: absolute; top: 0; left: 0; width: 16px; height: 100%; background: #333; }
+</style>
+<body>
+    <div id="scrubber">
+        <div role="slider" aria-label="Seek Slider" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0"></div>
+        <div id="playhead"></div>
+    </div>
+<script>
+    const scrubber = document.getElementById("scrubber");
+    const slider = scrubber.querySelector('[role="slider"]');
+    const playhead = document.getElementById("playhead");
+
+    window.scrubbedValues = [];
+
+    function scrubTo(clientX) {
+        const rect = scrubber.getBoundingClientRect();
+        const fraction = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        slider.setAttribute("aria-valuenow", fraction);
+        playhead.style.left = (fraction * (rect.width - playhead.offsetWidth)) + "px";
+        window.scrubbedValues.push(fraction);
+    }
+
+    let dragging = false;
+    scrubber.addEventListener("pointerdown", e => { dragging = true; scrubber.setPointerCapture(e.pointerId); scrubTo(e.clientX); e.preventDefault(); });
+    scrubber.addEventListener("pointermove", e => { if (dragging) scrubTo(e.clientX); });
+    scrubber.addEventListener("pointerup", () => { dragging = false; });
+    scrubber.addEventListener("pointercancel", () => { dragging = false; });
+</script>
+</body>
+</html>
