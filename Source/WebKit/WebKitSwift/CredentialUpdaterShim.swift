@@ -31,7 +31,7 @@ import Foundation
 @implementation
 extension CredentialUpdaterShim {
     class func signalUnknownCredential(withRelyingPartyIdentifier relyingPartyIdentifier: String, credentialID: Data) async throws {
-        try await ASCredentialUpdater()
+        try await ASCredentialDataManager()
             .reportUnknownPublicKeyCredential(relyingPartyIdentifier: relyingPartyIdentifier, credentialID: credentialID)
     }
 
@@ -40,7 +40,7 @@ extension CredentialUpdaterShim {
         userHandle: Data,
         acceptedCredentialIDs: [Data]
     ) async throws {
-        try await ASCredentialUpdater()
+        try await ASCredentialDataManager()
             .reportAllAcceptedPublicKeyCredentials(
                 relyingPartyIdentifier: relyingPartyIdentifier,
                 userHandle: userHandle,
@@ -53,7 +53,7 @@ extension CredentialUpdaterShim {
         userHandle: Data,
         newName: String
     ) async throws {
-        try await ASCredentialUpdater()
+        try await ASCredentialDataManager()
             .reportPublicKeyCredentialUpdate(relyingPartyIdentifier: relyingPartyIdentifier, userHandle: userHandle, newName: newName)
     }
 }
