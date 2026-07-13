@@ -44,6 +44,34 @@ function test()
     });
 
     suite.addTestCase({
+        name: "DOMBreakpoint.RemoveDoesNotEvictSiblingSharingURL",
+        description: "Removing one DOM breakpoint should not evict sibling breakpoints that share the same URL from the URL map.",
+        async test() {
+            let url = WI.networkManager.mainFrame.url;
+
+            let node1 = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#sibling-shared-url-test-1");
+            let node2 = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#sibling-shared-url-test-2");
+
+            let breakpoint1 = await InspectorTest.DOMBreakpoint.createBreakpoint(node1, WI.DOMBreakpoint.Type.SubtreeModified);
+            let breakpoint2 = await InspectorTest.DOMBreakpoint.createBreakpoint(node2, WI.DOMBreakpoint.Type.SubtreeModified);
+
+            InspectorTest.expectEqual(breakpoint1.url, url, "First breakpoint URL should match document URL.");
+            InspectorTest.expectEqual(breakpoint2.url, url, "Second breakpoint URL should match document URL.");
+
+            InspectorTest.log("Removing the first breakpoint...");
+            WI.domDebuggerManager.removeDOMBreakpoint(breakpoint1);
+
+            // The URL map is what re-resolves breakpoints to nodes after a navigation. Removing the
+            // first breakpoint must not evict its sibling (which shares the document URL) from the map.
+            let remainingForURL = WI.domDebuggerManager._domBreakpointURLMap.get(url);
+            remainingForURL = remainingForURL ? Array.from(remainingForURL) : [];
+            InspectorTest.expectEqual(remainingForURL.length, 1, "URL map should still contain the sibling breakpoint after removing its sibling.");
+            InspectorTest.expectEqual(remainingForURL[0], breakpoint2, "Remaining URL-mapped breakpoint should be the sibling that was not removed.");
+        },
+        teardown: InspectorTest.DOMBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
         name: "DOMBreakpoint.SetBreakpointWithInvalidNodeId",
         description: "Check that setting a breakpoint for a nonexistant node returns an error.",
         async test() {
@@ -100,6 +128,8 @@ function test()
 <div id="test-container" style="display: none">
     <div id="basic-test"></div>
     <div id="remove-all-breakpoints-for-node-test"></div>
+    <div id="sibling-shared-url-test-1"></div>
+    <div id="sibling-shared-url-test-2"></div>
 </div>
 </body>
 </html>

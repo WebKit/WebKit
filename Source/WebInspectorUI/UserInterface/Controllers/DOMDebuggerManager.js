@@ -287,7 +287,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         breakpoint.disabled = true;
         breakpoint.clearActions();
 
-        this._domBreakpointURLMap.delete(breakpoint.url);
+        this._domBreakpointURLMap.delete(breakpoint.url, breakpoint);
 
         if (breakpoint.domNode) {
             if (breakpoint.domNode.frame) {

@@ -18,6 +18,16 @@ Removing all breakpoints for #multiple-breakpoints-test...
 PASS: Should remove all breakpoints.
 -- Running test teardown.
 
+-- Running test case: DOMBreakpoint.RemoveDoesNotEvictSiblingSharingURL
+Adding "subtree-modified:1,HTML,1,BODY,1,DIV,2,DIV" DOM Breakpoint...
+Adding "subtree-modified:1,HTML,1,BODY,1,DIV,3,DIV" DOM Breakpoint...
+PASS: First breakpoint URL should match document URL.
+PASS: Second breakpoint URL should match document URL.
+Removing the first breakpoint...
+PASS: URL map should still contain the sibling breakpoint after removing its sibling.
+PASS: Remaining URL-mapped breakpoint should be the sibling that was not removed.
+-- Running test teardown.
+
 -- Running test case: DOMBreakpoint.SetBreakpointWithInvalidNodeId
 Setting breakpoint...
 PASS: Should produce an exception.
