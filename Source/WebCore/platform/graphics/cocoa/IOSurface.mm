@@ -543,12 +543,19 @@ RetainPtr<CGImageRef> IOSurface::createImage(CGContextRef context)
     return adoptCF(CGIOSurfaceContextCreateImage(context));
 }
 
-RefPtr<NativeImage> IOSurface::createNativeImage()
+RefPtr<NativeImage> IOSurface::createNativeImage(ShouldForceOpaque shouldForceOpaque)
 {
     std::optional<CGImageAlphaInfo> alphaInfo;
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-    if (pixelFormat() == Format::RGBA16F)
+    // An RGBA16F surface always uses IOSurface::Format::RGBA16F regardless of whether
+    // its contents are opaque, so bitmapConfiguration() assumes premultiplied alpha.
+    // Callers presenting opaque contents must force the alpha channel to be ignored;
+    // otherwise (e.g. a premultiplied WebGPU canvas) the alpha must be preserved so
+    // the contents composite transparently.
+    if (shouldForceOpaque == ShouldForceOpaque::Yes && pixelFormat() == Format::RGBA16F)
         alphaInfo = kCGImageAlphaNoneSkipLast;
+#else
+    UNUSED_PARAM(shouldForceOpaque);
 #endif
     RetainPtr<CGContextRef> cgContext { createPlatformContext(0, alphaInfo) };
     if (!cgContext)

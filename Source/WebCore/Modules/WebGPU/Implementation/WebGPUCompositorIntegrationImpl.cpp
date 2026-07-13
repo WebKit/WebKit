@@ -74,6 +74,7 @@ Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width
 {
     m_renderBuffers.clear();
     m_device = device;
+    m_alphaMode = alphaMode;
 
     if (RefPtr presentationContext = m_presentationContext) {
         static_cast<PresentationContext*>(presentationContext.get())->unconfigure();
@@ -131,7 +132,11 @@ void CompositorIntegrationImpl::withDisplayBufferAsNativeImage(uint32_t bufferIn
         if (!isIOSurfaceSupportedFormat)
             return completion(nullptr);
 
-        displayImage = m_renderBuffers[bufferIndex]->createNativeImage();
+        // A premultiplied canvas must keep its alpha channel so transparent pixels
+        // composite over the page; an opaque canvas forces the alpha to be ignored.
+        // This matters for RGBA16F, whose IOSurface format cannot itself encode opacity.
+        auto shouldForceOpaque = m_alphaMode == WebCore::AlphaPremultiplication::Premultiplied ? IOSurface::ShouldForceOpaque::No : IOSurface::ShouldForceOpaque::Yes;
+        displayImage = m_renderBuffers[bufferIndex]->createNativeImage(shouldForceOpaque);
     }
 
     if (!displayImage)
