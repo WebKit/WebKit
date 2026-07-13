@@ -1,0 +1,3 @@
+
+PASS exit-fullscreen: disconnected element is unfullscreened; fullscreenElement becomes null
+

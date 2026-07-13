@@ -9,7 +9,7 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
 }
 
-function runWithKeyDown(fn) 
+function runWithKeyDown(fn)
 {
     // FIXME: WKTR does not yet support the keyDown() message.  Do a mouseDown here
     // instead until keyDown support is added.
