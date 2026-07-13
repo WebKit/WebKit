@@ -461,7 +461,8 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
         || !style.rotate().isNone()
         || !style.translate().isNone()
         || !style.scale().isNone();
-    bool hasSVGTransform = !svgTransform.isIdentity() || preApplySVGTransformMatrix || postApplySVGTransformMatrix || supplementalTransform;
+    bool hasSupplementalOrExternalTransformMatrix = preApplySVGTransformMatrix || postApplySVGTransformMatrix || supplementalTransform;
+    bool hasSVGTransform = !svgTransform.isIdentity() || hasSupplementalOrExternalTransformMatrix;
 
     // Common case: 'viewBox' set on outermost <svg> element -> 'preApplySVGTransformMatrix'
     // passed by RenderSVGViewportContainer::applyTransform(), the anonymous single child
@@ -485,8 +486,16 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
     };
 
     FloatPoint3D originTranslate;
-    if (options.contains(Style::TransformResolverOption::TransformOrigin) && affectedByTransformOrigin())
-        originTranslate = transformResolver.computeTransformOrigin(boundingBox);
+    if (options.contains(Style::TransformResolverOption::TransformOrigin) && affectedByTransformOrigin()) {
+        // For a plain SVG transform-attribute shape (no CSS transform and no supplemental
+        // or external matrix) the transform origin depends only on the style and the reference box,
+        // both of which are stable while the shape is only animated by its transform.
+        std::optional<FloatPoint3D> cached;
+        if (!hasCSSTransform && !hasSupplementalOrExternalTransformMatrix)
+            cached = cachedTransformOriginForReferenceBox(style, boundingBox);
+
+        originTranslate = cached ? cached.value() : transformResolver.computeTransformOrigin(boundingBox);
+    }
 
     transformResolver.applyTransformOrigin(originTranslate);
 

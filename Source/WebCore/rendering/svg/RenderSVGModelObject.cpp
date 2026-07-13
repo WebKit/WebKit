@@ -171,6 +171,12 @@ void RenderSVGModelObject::styleDidChange(Style::Difference diff, const Style::C
 {
     RenderLayerModelObject::styleDidChange(diff, oldStyle);
 
+    // Invalidate cached transform origin when relevant styles change.
+    if (!oldStyle
+        || oldStyle->transformOrigin() != style().transformOrigin()
+        || oldStyle->usedZoomForLength().value != style().usedZoomForLength().value)
+        invalidateCachedTransformOrigin();
+
     // Invalidate cached visual overflow rect when relevant styles change.
     if (oldStyle && diff >= Style::DifferenceResult::Repaint) {
         auto visualOverflowStyleChanged = [](const Style::ComputedStyle& newStyle, const Style::ComputedStyle& oldStyle) {
@@ -212,6 +218,15 @@ void RenderSVGModelObject::styleDidChange(Style::Difference diff, const Style::C
     bool hasSVGMask = false;
     if (hasSVGMask && hasLayer() && style().usedVisibility() != Visibility::Visible)
         layer()->setHasVisibleContent();
+}
+
+std::optional<FloatPoint3D> RenderSVGModelObject::cachedTransformOriginForReferenceBox(const Style::ComputedStyle& style, const FloatRect& referenceBox) const
+{
+    if (!m_cachedTransformOrigin || m_cachedTransformOriginBox != referenceBox) {
+        m_cachedTransformOrigin = Style::TransformResolver::computeTransformOrigin(style, referenceBox);
+        m_cachedTransformOriginBox = referenceBox;
+    }
+    return m_cachedTransformOrigin;
 }
 
 void RenderSVGModelObject::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, TransformState& transformState) const

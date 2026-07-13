@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include <WebCore/FloatPoint3D.h>
 #include <WebCore/PaintPhase.h>
 #include <WebCore/RenderElement.h>
 #include <wtf/OptionSet.h>
@@ -109,6 +110,8 @@ public:
     void applySVGTransform(TransformationMatrix&, const SVGGraphicsElement&, const Style::ComputedStyle&, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<Style::TransformResolverOption>) const;
     void updateHasSVGTransformFlags();
     virtual bool needsHasSVGTransformFlags() const { ASSERT_NOT_REACHED(); return false; }
+
+    virtual std::optional<FloatPoint3D> cachedTransformOriginForReferenceBox(const Style::ComputedStyle&, const FloatRect&) const { return std::nullopt; }
 
     enum class SVGAttributeChangeRepaintMode : bool {
         // Issue a full repaint at the new position from inside the function.

@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <WebCore/FloatPoint3D.h>
 #include <WebCore/RenderBox.h>
 #include <WebCore/RenderLayerModelObject.h>
 #include <WebCore/SVGBoundingBoxComputation.h>
@@ -100,6 +101,9 @@ public:
 
     void invalidateCachedVisualOverflowRect() override { m_cachedVisualOverflowRect = std::nullopt; }
 
+    std::optional<FloatPoint3D> cachedTransformOriginForReferenceBox(const Style::ComputedStyle&, const FloatRect& referenceBox) const override;
+    void invalidateCachedTransformOrigin() const { m_cachedTransformOrigin = std::nullopt; }
+
 protected:
     RenderSVGModelObject(Type, Document&, Style::ComputedStyle&&, OptionSet<SVGModelObjectFlag> = { });
     RenderSVGModelObject(Type, SVGElement&, Style::ComputedStyle&&, OptionSet<SVGModelObjectFlag> = { });
@@ -132,6 +136,9 @@ private:
 
     LayoutRect m_layoutRect;
     std::optional<AffineTransform> m_localTransform;
+
+    mutable std::optional<FloatPoint3D> m_cachedTransformOrigin;
+    mutable FloatRect m_cachedTransformOriginBox;
 };
 
 } // namespace WebCore
