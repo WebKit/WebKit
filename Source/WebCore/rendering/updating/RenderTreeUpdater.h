@@ -81,8 +81,8 @@ private:
         const Style::ElementUpdate* update { nullptr };
         std::optional<RenderTreePosition> renderTreePosition;
 
-        bool didCreateOrDestroyChildRenderer { false };
         RenderObject* previousChildRenderer { nullptr };
+        bool didCreateOrDestroyChildRenderer { false };
         bool hasPrecedingInFlowChild { false };
 
         Parent(ContainerNode& root);
