@@ -130,6 +130,9 @@ public:
 private:
     static LayoutRoundedRect computeInnerEdgeRoundedRect(const LayoutRoundedRect& borderRoundedRect, const RectEdges<LayoutUnit>& borderWidths);
 
+    // Insets the snapped outer rect by device-rounded widths so opposite sides stay equal thickness.
+    FloatRoundedRect snappedInnerEdgeRectForPainting(float deviceScaleFactor) const;
+
     // True if any corner uses a non-`round` shape (curvature != 1), so the shape
     bool hasNonRoundCornerShape() const;
 
