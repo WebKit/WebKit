@@ -6239,17 +6239,17 @@ OriginAPIEnabled:
 
 OriginAgentClusterEnabled:
   type: bool
-  status: preview
+  status: stable
   category: security
   humanReadableName: "Origin-Agent-Cluster header"
   humanReadableDescription: "Support for the Origin-Agent-Cluster HTTP response header and window.originAgentCluster getter"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 OverlayRegionsEnabled:
   type: bool
