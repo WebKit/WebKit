@@ -44,6 +44,7 @@ promise_test(async (t) => {
                 },
             },
             cachePartition: '',
+            shouldBlockThirdPartyStorage: false,
             hiddenFromInspector: false,
         },
         requestBody: { data: {}, sandboxExtensionHandles: [] },
@@ -63,6 +64,7 @@ promise_test(async (t) => {
         hadMainFrameMainResourcePrivateRelayed: false,
         allowPrivacyProxy: true,
         advancedPrivacyProtections: 0,
+        mayBlockNetworkRequest: false,
         requiredCookiesVersion: 0n,
         identifier: { optionalValue: 99001n },
         requestBodySandboxExtensions: [],
@@ -129,6 +131,8 @@ promise_test(async (t) => {
         shouldRecordFrameLoadForStorageAccess: false,
         isInitiatorPrefetch: false,
         isInitiatedByDedicatedWorker: false,
+        globalPrivacyControlStatus: false,
+        shouldConsiderEnhancedSecurityForInsecureResponse:false,
     };
 
     CoreIPC.Networking.NetworkConnectionToWebProcess.TakeInvalidMessageStringForTesting(0, {}, () => { });
