@@ -2062,6 +2062,15 @@ std::optional<String> Quirks::needsCustomUserAgentOverride(const URL& url, const
         auto baseUA = currentUserAgent.isEmpty() ? standardUserAgentWithApplicationName(applicationNameForUserAgent) : currentUserAgent;
         return makeStringByReplacingAll(baseUA, "like Gecko"_s, "like Gecko, like Chrome/149."_s);
     }
+
+    // FIXME(https://bugs.webkit.org/show_bug.cgi?id=319011 or rdar://181825035):
+    // github.com serves Safari some JS that tries to adjust the scroll position
+    // which interferes with WebKit's scroll to fragment implementation.
+    // Presenting a Chrome-like UA takes the working code path.
+    if (domainString == "github.com"_s) {
+        auto baseUA = currentUserAgent.isEmpty() ? standardUserAgentWithApplicationName(applicationNameForUserAgent) : currentUserAgent;
+        return makeStringByReplacingAll(baseUA, "like Gecko"_s, "like Gecko, like Chrome/151."_s);
+    }
 #else
     UNUSED_PARAM(applicationNameForUserAgent);
     UNUSED_PARAM(currentUserAgent);
