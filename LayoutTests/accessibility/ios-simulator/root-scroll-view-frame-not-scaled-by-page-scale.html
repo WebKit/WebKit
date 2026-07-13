@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+body { margin: 0; }
+#target { position: absolute; top: 200px; left: 100px; width: 80px; height: 30px; }
+</style>
+</head>
+<body>
+
+<button id="target">Click me</button>
+
+<script>
+var output = "This test ensures the root scroll view's accessibility frame size is NOT scaled by the page scale factor.\n";
+output += "The root scroll view represents the on-screen viewport, whose size does not change when the page is zoomed (only the content within it scales).\n";
+
+var root, initialRootWidth, initialRootHeight, initialTargetX;
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    (async function() {
+        await waitForFrameGeometryReady();
+
+        root = accessibilityController.rootElement;
+        initialRootWidth = root.width;
+        initialRootHeight = root.height;
+
+        initialTargetX = accessibilityController.accessibleElementById("target").x;
+
+        await testRunner.setPageScaleFactor(2, 0, 0);
+
+        // Wait for the scaled geometry to propagate to accessibility (a content element's screen
+        // position shifts as the page zooms).
+        await waitFor(() => accessibilityController.accessibleElementById("target").x !== initialTargetX);
+
+        // Verify the page scale genuinely took effect (content element moved in screen space).
+        output += expect("accessibilityController.accessibleElementById('target').x !== initialTargetX", "true");
+
+        // The regression: the root viewport must be unchanged by page zoom. Before the fix its
+        // width/height were multiplied by the page scale factor (ratio ~= 2 here instead of ~= 1).
+        root = accessibilityController.rootElement;
+        output += expectNumber("root.width / initialRootWidth", 1, /* allowedVariance */ 0.05);
+        output += expectNumber("root.height / initialRootHeight", 1, /* allowedVariance */ 0.05);
+
+        debug(output);
+        finishJSTest();
+    })();
+}
+</script>
+</body>
+</html>

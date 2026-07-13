@@ -592,7 +592,19 @@ FloatRect AccessibilityObject::convertFrameToSpace(const FloatRect& frameRect, A
 
         auto geometry = rootScrollView->frameGeometry();
 
-        auto scaledRect = geometry.screenTransform.mapRect(FloatRect(snappedFrameRect));
+        // The top-level page scroll view's own frame is in view/device space (the viewport). Every other
+        // object's frame is content-space. screenTransform is the content->screen page-zoom scale, so
+        // applying it to the already-device-space viewport double-scales it (viewport * pageZoom),
+        // shrinking the frame that Voice Control, Switch Control, etc. clips its set of visible elements
+        // against. Skip the transform for the top page scroll view's own frame only.
+        //
+        // Guard on "no ancestor scroll view" -- NOT isRoot(), which is also true for local iframe roots under
+        // ACCESSIBILITY_LOCAL_FRAME -- so iframe scroll views (content-space elementRect) are still scaled.
+        // No-op at page zoom 1.0 (screenTransform is identity).
+        const bool isTopPageScrollViewOwnFrame = this == rootScrollView.get() && !parentAccessibilityScrollView;
+        auto scaledRect = isTopPageScrollViewOwnFrame
+            ? FloatRect(snappedFrameRect)
+            : geometry.screenTransform.mapRect(FloatRect(snappedFrameRect));
 
         auto screenPosition = geometry.screenPosition;
 
