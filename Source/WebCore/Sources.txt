@@ -2932,6 +2932,7 @@ rendering/CounterNode.cpp
 rendering/EllipsisBoxPainter.cpp @header:RenderStyleGetters @cost:5
 rendering/EventRegion.cpp @header:RenderStyleGetters @cost:5
 rendering/FixedTableLayout.cpp @header:RenderStyleGetters @cost:5
+rendering/FlexLayoutUtils.cpp @header:RenderStyleGetters @cost:4
 rendering/FloatingObjects.cpp @header:RenderStyleGetters @cost:5
 rendering/GlyphDisplayListCache.cpp @header:RenderStyleGetters @cost:5
 rendering/GlyphDisplayListCacheRemoval.cpp

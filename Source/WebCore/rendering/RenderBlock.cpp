@@ -3044,10 +3044,10 @@ bool RenderBlock::hasDefiniteLogicalHeightForPercentageResolutionFromStyle() con
         auto hasDefiniteHeight = [&] {
             auto& flexContainer = downcast<RenderFlexibleBox>(*parent());
             // §9.8 rule 3: stretched cross-axis items have definite cross size.
-            if (flexContainer.mainAxisIsFlexItemInlineAxis(*this))
-                return flexContainer.alignmentForFlexItem(*this) == ItemPosition::Stretch;
+            if (flexContainer.flexLayoutUtils().mainAxisIsFlexItemInlineAxis(*this))
+                return flexContainer.flexLayoutUtils().alignmentForFlexItem(*this) == ItemPosition::Stretch;
             // §9.8 rule 2: definite flex-basis makes post-flexing main size definite.
-            auto flexBasis = flexContainer.flexBasisForFlexItem(*this);
+            auto flexBasis = flexContainer.flexLayoutUtils().flexBasisForFlexItem(*this);
             if (!flexBasis.isAuto() && !flexBasis.isContent() && !flexBasis.isPercentOrCalculated() && !flexBasis.isIntrinsic())
                 return true;
             // §9.8 rule 1: definite container main size makes all items definite.
@@ -3113,7 +3113,7 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
                 // horizontal WM, horizontal for vertical WM). It aligns with the
                 // main axis when they point in different physical directions.
                 auto& flexContainer = downcast<RenderFlexibleBox>(*parent());
-                return !style.flexBasis().isAuto() && flexContainer.isHorizontalFlow() != isHorizontalWritingMode();
+                return !style.flexBasis().isAuto() && flexContainer.flexLayoutUtils().isHorizontalFlow() != isHorizontalWritingMode();
             };
             if (!flexBasisOverridesHeight()) {
                 auto contentBoxHeight = adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit { fixedLogicalHeight->resolveZoom(style.usedZoomForLength()) });

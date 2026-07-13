@@ -776,9 +776,9 @@ static bool formattingContextRootIntrinsicLogicalWidthsDependOnOwnHeight(const R
         //    to the flex item's min and max cross size) and is considered definite."
         // In multi-line containers each line's cross size is driven by its own items, so the
         // container's preferred widths cannot depend on its own height through this mechanism.
-        if (flexBox->isMultiline())
+        if (flexBox->flexLayoutUtils().isMultiline())
             return false;
-        if (flexBox->hasStretchedFlexItemWithAspectRatio())
+        if (flexBox->flexLayoutUtils().hasStretchedFlexItemWithAspectRatio())
             return true;
     }
     return false;

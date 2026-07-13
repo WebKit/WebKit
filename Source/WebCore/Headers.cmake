@@ -2997,6 +2997,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/ClipRect.h
     rendering/EllipsisBoxPainter.h
     rendering/EventRegion.h
+    rendering/FlexLayoutUtils.h
     rendering/FloatingObjects.h
     rendering/GapRects.h
     rendering/GlyphDisplayListCacheRemoval.h
