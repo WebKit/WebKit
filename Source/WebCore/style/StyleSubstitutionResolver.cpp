@@ -780,14 +780,11 @@ bool SubstitutionResolver::substituteInternalAutoBaseFunction(CSSParserTokenRang
     return true;
 }
 
-bool SubstitutionResolver::substituteRandomItemFunction(CSSParserTokenRange range, Vector<CSSParserToken>& tokens, const CSSParserContext& context)
+auto SubstitutionResolver::substituteRandomItemArgumentGrammar(CSSParserTokenRange range, const CSSParserContext& context) -> std::optional<RandomItemArgumentGrammarSubstitution>
 {
-    // https://drafts.csswg.org/css-values-5/#funcdef-random-item
-    //
-    // The argument grammar is validated at parse time:
-    //   <random-item-args> = random-item( <declaration-value>, [ <declaration-value>? ]# )
-    // Here the full grammar is applied: substitute the argument grammar first, then parse the
-    // first argument as <random-key> and select an item. This follows substituteAttrFunction.
+    // https://drafts.csswg.org/css-values-5/#argument-grammars
+    // <random-item-args> = random-item( <declaration-value>, [ <declaration-value>? ]# )
+    // Splits at the literal commas and substitutes the first argument (the <random-key>).
 
     range.consumeWhitespace();
 
@@ -798,10 +795,10 @@ bool SubstitutionResolver::substituteRandomItemFunction(CSSParserTokenRange rang
     auto randomKeyRange = randomKeyStart.rangeUntil(range);
 
     if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range))
-        return false;
+        return { };
 
     // Collect the item ranges. Each item is a (possibly empty) <declaration-value>; a {}-wrapped
-    // block groups internal commas and is unwrapped when the selected item is substituted below.
+    // block groups internal commas and is unwrapped when the selected item is substituted.
     Vector<CSSParserTokenRange> items;
     do {
         auto itemStart = range;
@@ -811,17 +808,33 @@ bool SubstitutionResolver::substituteRandomItemFunction(CSSParserTokenRange rang
     } while (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range));
 
     if (items.isEmpty())
-        return false;
+        return { };
 
     // <random-key> may itself contain arbitrary substitution functions (var(), attr(), ...);
-    // substitute them before parsing it as a <random-key>.
+    // substitute them before parsing it as a <random-key>. Items are substituted lazily, once
+    // the selected one is known.
     auto substitutedRandomKey = substituteTokenRange(randomKeyRange, context);
     if (!substitutedRandomKey)
+        return { };
+
+    return RandomItemArgumentGrammarSubstitution { WTF::move(*substitutedRandomKey), WTF::move(items) };
+}
+
+bool SubstitutionResolver::substituteRandomItemFunction(CSSParserTokenRange range, Vector<CSSParserToken>& tokens, const CSSParserContext& context)
+{
+    // https://drafts.csswg.org/css-values-5/#funcdef-random-item
+
+    // <random-item-args> = random-item( <declaration-value>, [ <declaration-value>? ]# )
+    auto randomItemArgs = substituteRandomItemArgumentGrammar(range, context);
+    if (!randomItemArgs)
         return false;
 
-    auto baseValue = randomItemBaseValue(WTF::move(*substitutedRandomKey));
+    // random-item() = random-item( <random-key> , [ <declaration-value>? ]# )
+    auto baseValue = randomItemBaseValue(WTF::move(randomItemArgs->randomKey));
     if (!baseValue)
         return false;
+
+    auto& items = randomItemArgs->items;
 
     // https://drafts.csswg.org/css-values-5/#random-item
     // "Let index be a random integer less than N (the number of items), given the base value R:

@@ -80,6 +80,12 @@ private:
     };
     std::optional<AttrArgumentGrammarSubstitution> substituteAttrArgumentGrammar(CSSParserTokenRange, const CSSParserContext&);
 
+    struct RandomItemArgumentGrammarSubstitution {
+        Vector<CSSParserToken> randomKey;
+        Vector<CSSParserTokenRange> items;
+    };
+    std::optional<RandomItemArgumentGrammarSubstitution> substituteRandomItemArgumentGrammar(CSSParserTokenRange, const CSSParserContext&);
+
     struct IfBranch {
         // A null condition is the `else` keyword, which always matches.
         std::optional<Vector<CSSParserToken>> condition;
