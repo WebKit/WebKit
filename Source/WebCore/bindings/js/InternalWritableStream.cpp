@@ -167,7 +167,7 @@ JSC::JSValue InternalWritableStream::abortForBindings(JSC::JSGlobalObject& globa
     return result.returnValue();
 }
 
-JSC::JSValue InternalWritableStream::abort(JSC::JSGlobalObject& globalObject, JSC::JSValue reason)
+ExceptionOr<JSC::JSValue> InternalWritableStream::abort(JSC::JSGlobalObject& globalObject, JSC::JSValue reason)
 {
     auto* clientData = downcast<JSVMClientData>(globalObject.vm().clientData);
     auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().writableStreamAbortPrivateName();
@@ -177,11 +177,7 @@ JSC::JSValue InternalWritableStream::abort(JSC::JSGlobalObject& globalObject, JS
     arguments.append(reason);
     ASSERT(!arguments.hasOverflowed());
 
-    auto result = invokeWritableStreamFunction(globalObject, privateName, arguments);
-    if (result.hasException())
-        return { };
-
-    return result.returnValue();
+    return invokeWritableStreamFunction(globalObject, privateName, arguments);
 }
 
 JSC::JSValue InternalWritableStream::closeForBindings(JSC::JSGlobalObject& globalObject)
@@ -243,21 +239,20 @@ void InternalWritableStream::errorIfPossible(Exception&& exception)
     TRY_CLEAR_EXCEPTION(scope, void());
 }
 
-JSC::JSValue InternalWritableStream::errorIfPossible(JSC::JSGlobalObject& globalObject, JSC::JSValue reason)
+void InternalWritableStream::errorIfPossible(JSC::JSGlobalObject& globalObject, JSC::JSValue reason)
 {
     auto* clientData = downcast<JSVMClientData>(globalObject.vm().clientData);
     auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().writableStreamErrorIfPossiblePrivateName();
+
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(globalObject.vm());
 
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(guardedObject());
     arguments.append(reason);
     ASSERT(!arguments.hasOverflowed());
 
-    auto result = invokeWritableStreamFunction(globalObject, privateName, arguments);
-    if (result.hasException())
-        return { };
-
-    return result.returnValue();
+    invokeWritableStreamFunction(globalObject, privateName, arguments);
+    TRY_CLEAR_EXCEPTION(scope, void());
 }
 
 JSC::JSValue InternalWritableStream::getWriter(JSC::JSGlobalObject& globalObject)
@@ -282,31 +277,43 @@ String InternalWritableStream::state(JSC::JSGlobalObject& globalObject) const
     auto* clientData = downcast<JSVMClientData>(globalObject.vm().clientData);
     auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().writableStreamStatePrivateName();
 
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(globalObject.vm());
+
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(guardedObject());
     ASSERT(!arguments.hasOverflowed());
 
     auto result = invokeWritableStreamFunction(globalObject, privateName, arguments);
-    if (result.hasException())
+    if (result.hasException()) {
+        (void)scope.tryClearException();
         return { };
+    }
 
     return result.returnValue().toWTFString(&globalObject);
 }
 
-ExceptionOr<JSC::JSValue> InternalWritableStream::storedError() const
+JSC::JSValue InternalWritableStream::storedError() const
 {
     auto* globalObject = this->globalObject();
     if (!globalObject)
-        return Exception { ExceptionCode::InvalidStateError };
+        return { };
 
     auto* clientData = downcast<JSVMClientData>(globalObject->vm().clientData);
     auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().writableStreamStoredErrorPrivateName();
+
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(globalObject->vm());
 
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(guardedObject());
     ASSERT(!arguments.hasOverflowed());
 
-    return invokeWritableStreamFunction(*globalObject, privateName, arguments);
+    auto result = invokeWritableStreamFunction(*globalObject, privateName, arguments);
+    if (result.hasException()) {
+        (void)scope.tryClearException();
+        return { };
+    }
+
+    return result.releaseReturnValue();
 }
 
 bool InternalWritableStream::closeQueuedOrInFlight()
@@ -318,13 +325,17 @@ bool InternalWritableStream::closeQueuedOrInFlight()
     auto* clientData = downcast<JSVMClientData>(globalObject->vm().clientData);
     auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().writableStreamCloseQueuedOrInFlightPrivateName();
 
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(globalObject->vm());
+
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(guardedObject());
     ASSERT(!arguments.hasOverflowed());
 
     auto result = invokeWritableStreamFunction(*globalObject, privateName, arguments);
-    if (result.hasException())
+    if (result.hasException()) {
+        (void)scope.tryClearException();
         return true;
+    }
 
     return result.returnValue().toBoolean(globalObject);
 }
