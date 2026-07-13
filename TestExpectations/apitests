@@ -58,6 +58,7 @@ webkit.org/b/318967 [ ios ] TestWebKitAPI.DownloadProgress.PublishProgressOnPart
 [ iOS Debug ] TestWebKitAPI.IPCTestingAPI.LockdownModeDetection [ Failure ]
 [ iOS Debug ] TestWebKitAPI.IPCTestingAPI.LockdownModeDisabledAllowsWebGL [ Failure ]
 
+webkit.org/b/319130 [ ios ] TestWebKitAPI.TextManipulation.CompleteTextManipulationAvoidExtractingManipulatedTextAfterManipulation [ Pass Timeout ]
 webkit.org/b/318978 [ ios ] TestWebKitAPI.VisualViewport.RotationResize [ Pass Failure ]
 
 TestWebKitAPI.WebPageTransferableTests/exportToImage(type:) [ Skip ]
