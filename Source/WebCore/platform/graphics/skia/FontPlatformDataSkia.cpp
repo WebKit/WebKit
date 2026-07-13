@@ -48,18 +48,23 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 namespace WebCore {
 
 FontPlatformData::FontPlatformData(sk_sp<SkTypeface>&& typeface, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, Vector<hb_feature_t>&& features, const FontCustomPlatformData* customPlatformData)
-    : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode, customPlatformData)
+    : FontPlatformData(WTF::move(typeface), FontMetadata { size, orientation, widthVariant, textRenderingMode, syntheticBold, syntheticOblique }, WTF::move(features), customPlatformData)
 {
-    m_font = SkFont(typeface, m_size);
+}
+
+FontPlatformData::FontPlatformData(sk_sp<SkTypeface>&& typeface, const FontMetadata& metadata, Vector<hb_feature_t>&& features, const FontCustomPlatformData* customPlatformData)
+    : FontPlatformData(metadata, customPlatformData)
+{
+    m_font = SkFont(typeface, m_metadata.pointSize);
     m_features = WTF::move(features);
 
     platformDataInit();
 }
 
-FontPlatformData::FontPlatformData(float size, FontOrientation&& orientation, FontWidthVariant&& widthVariant, TextRenderingMode&& textRenderingMode, bool syntheticBold, bool syntheticOblique, RefPtr<FontCustomPlatformData>&& customPlatformData)
-    : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode, customPlatformData.get())
+FontPlatformData::FontPlatformData(const FontMetadata& metadata, RefPtr<FontCustomPlatformData>&& customPlatformData)
+    : FontPlatformData(metadata, customPlatformData.get())
 {
-    m_font = SkFont(customPlatformData->m_typeface, m_size);
+    m_font = SkFont(customPlatformData->m_typeface, m_metadata.pointSize);
 
     platformDataInit();
 }
@@ -117,8 +122,8 @@ bool FontPlatformData::skiaTypefaceHasAnySupportedColorTable(const SkTypeface& t
 
 void FontPlatformData::platformDataInit()
 {
-    m_font.setEmbolden(m_syntheticBold);
-    m_font.setSkewX(m_syntheticOblique ? -SK_Scalar1 / 4 : 0);
+    m_font.setEmbolden(m_metadata.isSyntheticBold);
+    m_font.setSkewX(m_metadata.isSyntheticOblique ? -SK_Scalar1 / 4 : 0);
 
     bool useSubpixelPositioning = FontRenderOptions::singleton().useSubpixelPositioning();
 
@@ -143,19 +148,19 @@ void FontPlatformData::platformDataInit()
     m_isColorBitmapFont = m_hbFont->isColorBitmapFont();
 }
 
-std::optional<FontPlatformData> FontPlatformData::fromIPCData(float size, FontOrientation&& orientation, FontWidthVariant&& widthVariant, TextRenderingMode&& textRenderingMode, bool syntheticBold, bool syntheticOblique, IPCData&& ipcData)
+std::optional<FontPlatformData> FontPlatformData::fromIPCData(const FontMetadata& metadata, IPCData&& ipcData)
 {
     return WTF::switchOn(ipcData,
         [&] (const FontPlatformSerializedData& d) -> std::optional<FontPlatformData> {
             if (sk_sp<SkTypeface> typeface = SkTypeface::MakeDeserialize(SkMemoryStream::Make(d.typefaceData).get(), nullptr))
-                return FontPlatformData(WTF::move(typeface), size, syntheticBold, syntheticOblique, WTF::move(orientation), WTF::move(widthVariant), WTF::move(textRenderingMode), { });
+                return FontPlatformData(WTF::move(typeface), metadata, { });
 
             return std::nullopt;
         },
         [&] (CustomFontCreationData& d) -> std::optional<FontPlatformData> {
             auto fontFaceData = SharedBuffer::create(WTF::move(d.fontFaceData));
             if (RefPtr fontCustomPlatformData = FontCustomPlatformData::create(fontFaceData, d.itemInCollection))
-                return FontPlatformData(size, WTF::move(orientation), WTF::move(widthVariant), WTF::move(textRenderingMode), syntheticBold, syntheticOblique, WTF::move(fontCustomPlatformData));
+                return FontPlatformData(metadata, WTF::move(fontCustomPlatformData));
 
             return std::nullopt;
         }
@@ -178,7 +183,7 @@ bool FontPlatformData::isFixedPitch() const
 unsigned FontPlatformData::hash() const
 {
     // FIXME: do we need to consider m_features for the hash?
-    return computeHash(m_font.getTypeface()->uniqueID(), m_widthVariant, m_isHashTableDeletedValue, m_textRenderingMode, m_orientation, m_syntheticBold, m_syntheticOblique);
+    return computeHash(m_font.getTypeface()->uniqueID(), m_isHashTableDeletedValue, m_metadata.widthVariant, m_metadata.textRenderingMode, m_metadata.orientation, m_metadata.isSyntheticBold, m_metadata.isSyntheticOblique);
 }
 
 bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
@@ -229,10 +234,10 @@ FontPlatformData FontPlatformData::create(const Attributes& data, const FontCust
     Vector<hb_feature_t> features = data.m_features;
     if (custom) {
         sk_sp<SkTypeface> typeface = custom->m_typeface;
-        return { WTF::move(typeface), data.m_size, data.m_syntheticBold, data.m_syntheticOblique, data.m_orientation, data.m_widthVariant, data.m_textRenderingMode, WTF::move(features), custom };
+        return { WTF::move(typeface), data.m_metadata, WTF::move(features), custom };
     }
     sk_sp<SkTypeface> typeface = FontCache::forCurrentThread().fontManager().matchFamilyStyle(data.m_familyName.c_str(), data.m_style);
-    return { WTF::move(typeface), data.m_size, data.m_syntheticBold, data.m_syntheticOblique, data.m_orientation, data.m_widthVariant, data.m_textRenderingMode, WTF::move(features) };
+    return { WTF::move(typeface), data.m_metadata, WTF::move(features) };
 }
 
 FontPlatformData::Attributes FontPlatformData::attributes() const
@@ -241,7 +246,7 @@ FontPlatformData::Attributes FontPlatformData::attributes() const
     skFont().getTypeface()->getFamilyName(&familyName);
     SkFontStyle style = skFont().getTypeface()->fontStyle();
     Vector<hb_feature_t> features = m_features;
-    return { m_size, m_orientation, m_widthVariant, m_textRenderingMode, m_syntheticBold, m_syntheticOblique, familyName, style, WTF::move(features) };
+    return { m_metadata, familyName, style, WTF::move(features) };
 }
 
 hb_font_t* FontPlatformData::hbFont() const
@@ -262,8 +267,8 @@ HbUniquePtr<hb_font_t> FontPlatformData::createOpenTypeMathHarfBuzzFont() const
 
 void FontPlatformData::updateSize(float size)
 {
-    m_size = size;
-    m_font.setSize(m_size);
+    m_metadata.pointSize = size;
+    m_font.setSize(m_metadata.pointSize);
 }
 
 Vector<FontPlatformData::FontVariationAxis> FontPlatformData::variationAxes(ShouldLocalizeAxisNames) const

@@ -601,7 +601,7 @@ static std::optional<SpecialCaseFontLookupResult> fontDescriptorWithFamilySpecia
         return { { adoptCF(CTFontDescriptorCreateLastResort()), FontTypeForPreparation::NonSystemFont } };
 
     if (equalLettersIgnoringASCIICase(family, "-apple-system-monospaced-numbers"_s)) {
-        auto systemFontDescriptor = UnrealizedCoreTextFont { adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, size, nullptr)) };
+        auto systemFontDescriptor = UnrealizedCoreTextFont { adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, size, fontDescription.computedLocale().string().createCFString().get())) };
         systemFontDescriptor.modify([](CFMutableDictionaryRef attributes) {
             int numberSpacingType = kNumberSpacingType;
             int monospacedNumbersSelector = kMonospacedNumbersSelector;

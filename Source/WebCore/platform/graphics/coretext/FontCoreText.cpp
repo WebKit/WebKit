@@ -1029,7 +1029,7 @@ std::optional<Ref<Font>> Font::fromIPCData(IPCFontData&& data)
 
             RetainPtr font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), creationData.metadata.pointSize, nullptr));
 
-            return Font::create(FontPlatformData(creationData.metadata.pointSize, FontOrientation(creationData.metadata.orientation), FontWidthVariant(creationData.metadata.widthVariant), TextRenderingMode(creationData.metadata.textRenderingMode), creationData.metadata.syntheticBold, creationData.metadata.syntheticOblique, WTF::move(font), WTF::move(customPlatformData)));
+            return Font::create(FontPlatformData(creationData.metadata, WTF::move(font), WTF::move(customPlatformData)));
         }
     );
 }
@@ -1040,15 +1040,6 @@ std::optional<InstalledFont> Font::toSerializableInstalledFont() const
     if (!ctFont || m_platformData.creationData())
         return std::nullopt;
 
-    FontMetadata fontData = {
-        CTFontGetSize(ctFont.get()),
-        platformData().orientation(),
-        platformData().widthVariant(),
-        platformData().textRenderingMode(),
-        platformData().syntheticBold(),
-        platformData().syntheticOblique()
-    };
-
     SystemUIFontType fontType = CTFontGetUIFontType(ctFont.get());
     if (fontType != SystemUIFontTypeNone) {
         return InstalledFont {
@@ -1056,7 +1047,7 @@ std::optional<InstalledFont> Font::toSerializableInstalledFont() const
                 fontType,
                 adoptCF(checked_cf_cast<CFStringRef>(CTFontCopyAttribute(ctFont.get(), kCTFontDescriptorLanguageAttribute))).get()
             },
-            fontData
+            platformData().metadata()
         };
     }
 
@@ -1068,7 +1059,7 @@ std::optional<InstalledFont> Font::toSerializableInstalledFont() const
             CTFontDescriptorGetOptions(fontDescriptor.get()),
             FontPlatformSerializedAttributes::fromCF(attributes.get())
         },
-        fontData
+        platformData().metadata()
     };
 }
 
@@ -1083,16 +1074,7 @@ IPCFontData Font::toSerializableFont() const
     RetainPtr attributes = adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get()));
 
     const auto& data = m_platformData.creationData();
-    FontMetadata fontData = {
-        CTFontGetSize(font.get()),
-        m_platformData.orientation(),
-        m_platformData.widthVariant(),
-        m_platformData.textRenderingMode(),
-        m_platformData.syntheticBold(),
-        m_platformData.syntheticOblique()
-    };
-
-    return { CustomFontCreationData { fontData, { data->fontFaceData->span() }, FontPlatformSerializedAttributes::fromCF(attributes.get()), data->itemInCollection } };
+    return { CustomFontCreationData { platformData().metadata(), { data->fontFaceData->span() }, FontPlatformSerializedAttributes::fromCF(attributes.get()), data->itemInCollection } };
 }
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)

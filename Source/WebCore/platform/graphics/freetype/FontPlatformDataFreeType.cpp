@@ -134,8 +134,8 @@ FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, RefPtr<FcPattern
 FontPlatformData FontPlatformData::cloneWithOrientation(const FontPlatformData& source, FontOrientation orientation)
 {
     FontPlatformData copy(source);
-    if (copy.m_scaledFont && copy.m_orientation != orientation) {
-        copy.m_orientation = orientation;
+    if (copy.m_scaledFont && copy.m_metadata.orientation != orientation) {
+        copy.m_metadata.orientation = orientation;
         copy.buildScaledFont(cairo_scaled_font_get_font_face(copy.m_scaledFont.get()));
     }
     return copy;
@@ -150,7 +150,7 @@ FontPlatformData FontPlatformData::cloneWithSize(const FontPlatformData& source,
 
 void FontPlatformData::updateSize(float size)
 {
-    m_size = size;
+    m_metadata.pointSize = size;
     // We need to reinitialize the instance, because the difference in size
     // necessitates a new scaled font instance.
     ASSERT(m_scaledFont.get());
@@ -239,17 +239,17 @@ void FontPlatformData::buildScaledFont(cairo_font_face_t* fontFace)
     // The matrix from FontConfig does not include the scale. Scaling a font with width zero size leads
     // to a failed cairo_scaled_font_t instantiations. Instead we scale the font to a very tiny
     // size and just abort rendering later on.
-    float realSize = m_size ? m_size : 1;
+    float realSize = m_metadata.pointSize ? m_metadata.pointSize : 1;
     cairo_matrix_scale(&fontMatrix, realSize, realSize);
 
     if (syntheticOblique()) {
         static const float syntheticObliqueSkew = -tanf(14 * acosf(0) / 90);
         static const cairo_matrix_t skew = {1, 0, syntheticObliqueSkew, 1, 0, 0};
         static const cairo_matrix_t verticalSkew = {1, -syntheticObliqueSkew, 0, 1, 0, 0};
-        cairo_matrix_multiply(&fontMatrix, m_orientation == FontOrientation::Vertical ? &verticalSkew : &skew, &fontMatrix);
+        cairo_matrix_multiply(&fontMatrix, m_metadata.orientation == FontOrientation::Vertical ? &verticalSkew : &skew, &fontMatrix);
     }
 
-    if (m_orientation == FontOrientation::Vertical) {
+    if (m_metadata.orientation == FontOrientation::Vertical) {
         // The resulting transformation matrix for vertical glyphs (V) is a
         // combination of rotation (R) and translation (T) applied on the
         // horizontal matrix (H). V = H . R . T, where R rotates by -90 degrees
@@ -340,15 +340,15 @@ FontPlatformData FontPlatformData::create(const Attributes& data, const FontCust
         fontFace = adoptRef(cairo_ft_font_face_create_for_pattern(pattern));
     }
 
-    return FontPlatformData(fontFace.get(), pattern, data.m_size, fixedWidth, data.m_syntheticBold, data.m_syntheticOblique, data.m_orientation, custom);
+    return FontPlatformData(fontFace.get(), pattern, data.m_metadata.pointSize, fixedWidth, data.m_metadata.isSyntheticBold, data.m_metadata.isSyntheticOblique, data.m_metadata.orientation, custom);
 }
 
 FontPlatformData::Attributes FontPlatformData::attributes() const
 {
-    return Attributes(m_size, m_orientation, m_widthVariant, m_textRenderingMode, m_syntheticBold, m_syntheticOblique);
+    return Attributes(m_metadata);
 }
 
-std::optional<FontPlatformData> FontPlatformData::fromIPCData(float, FontOrientation&&, FontWidthVariant&&, TextRenderingMode&&, bool, bool, IPCData&&)
+std::optional<FontPlatformData> FontPlatformData::fromIPCData(const FontMetadata&, IPCData&&)
 {
     ASSERT_NOT_REACHED();
     return std::nullopt;

@@ -68,30 +68,30 @@ FontPlatformData FontPlatformData::create(const Attributes& data, const FontCust
         wcscpy_s(logFont.lfFaceName, LF_FACESIZE, custom->name.wideCharacters().data());
 
     auto gdiFont = adoptGDIObject(CreateFontIndirect(&logFont));
-    return FontPlatformData(WTF::move(gdiFont), data.m_size, data.m_syntheticBold, data.m_syntheticOblique, custom);
+    return FontPlatformData(WTF::move(gdiFont), data.m_metadata.pointSize, data.m_metadata.isSyntheticBold, data.m_metadata.isSyntheticOblique, custom);
 }
 
 FontPlatformData::Attributes FontPlatformData::attributes() const
 {
-    Attributes result(m_size, m_orientation, m_widthVariant, m_textRenderingMode, m_syntheticBold, m_syntheticOblique);
+    Attributes result(m_metadata);
 
     GetObject(hfont(), sizeof(LOGFONT), &result.m_font);
     return result;
 }
 
-std::optional<FontPlatformData> FontPlatformData::fromIPCData(float size, FontOrientation&& orientation, FontWidthVariant&& widthVariant, TextRenderingMode&& textRenderingMode, bool syntheticBold, bool syntheticOblique, IPCData&& ipcData)
+std::optional<FontPlatformData> FontPlatformData::fromIPCData(const FontMetadata& metadata, IPCData&& ipcData)
 {
     return WTF::switchOn(ipcData,
         [&] (const FontPlatformSerializedData& d) -> std::optional<FontPlatformData> {
             if (auto gdiFont = adoptGDIObject(CreateFontIndirect(&d.logFont)))
-                return FontPlatformData(WTF::move(gdiFont), size, syntheticBold, syntheticOblique);
+                return FontPlatformData(WTF::move(gdiFont), metadata.pointSize, metadata.isSyntheticBold, metadata.isSyntheticOblique);
 
             return std::nullopt;
         },
         [&] (CustomFontCreationData& d) -> std::optional<FontPlatformData> {
             auto fontFaceData = SharedBuffer::create(WTF::move(d.fontFaceData));
             if (RefPtr fontCustomPlatformData = FontCustomPlatformData::create(fontFaceData, d.itemInCollection))
-                return FontPlatformData(size, syntheticBold, syntheticOblique, WTF::move(orientation), WTF::move(widthVariant), WTF::move(textRenderingMode), fontCustomPlatformData.get());
+                return FontPlatformData(metadata, fontCustomPlatformData.get());
 
             return std::nullopt;
         }

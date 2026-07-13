@@ -51,28 +51,28 @@ enum class WebCore::TextRenderingMode : uint8_t {
     GeometricPrecision
 };
 
+header: <WebCore/FontPlatformData.h>
+[CustomHeader] struct WebCore::FontMetadata {
+    float pointSize;
+    WebCore::FontOrientation orientation;
+    WebCore::FontWidthVariant widthVariant;
+    WebCore::TextRenderingMode textRenderingMode;
+    bool isSyntheticBold;
+    bool isSyntheticOblique;
+}
+
 #if !USE(CORE_TEXT)
 using WebCore::FontPlatformData::IPCData = Variant<WebCore::FontPlatformSerializedData, WebCore::CustomFontCreationData>;
 
 [CreateUsing=fromIPCData] class WebCore::FontPlatformData {
-    float size();
-    WebCore::FontOrientation orientation();
-    WebCore::FontWidthVariant widthVariant();
-    WebCore::TextRenderingMode textRenderingMode();
-    bool syntheticBold();
-    bool syntheticOblique();
+    WebCore::FontMetadata metadata();
     WebCore::FontPlatformData::IPCData toIPCData();
 }
 #endif
 
 header: <WebCore/FontPlatformData.h>
 [CustomHeader] struct WebCore::FontPlatformDataAttributes {
-    float m_size;
-    WebCore::FontOrientation m_orientation;
-    WebCore::FontWidthVariant m_widthVariant;
-    WebCore::TextRenderingMode m_textRenderingMode;
-    bool m_syntheticBold;
-    bool m_syntheticOblique;
+    WebCore::FontMetadata m_metadata;
 #if PLATFORM(WIN) && USE(CAIRO)
     LOGFONT m_font;
 #endif
@@ -157,15 +157,6 @@ header: <WebCore/FontPlatformData.h>
     std::optional<WebCore::FontPlatformSerializedAttributes> attributes;
     String itemInCollection;
 };
-
-[CustomHeader] struct WebCore::FontMetadata {
-    double pointSize;
-    WebCore::FontOrientation orientation;
-    WebCore::FontWidthVariant widthVariant;
-    WebCore::TextRenderingMode textRenderingMode;
-    bool syntheticBold;
-    bool syntheticOblique;
-}
 
 using WebCore::SystemUIFontType = uint32_t;
 
