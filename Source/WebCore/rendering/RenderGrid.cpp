@@ -471,6 +471,10 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
             return;
         }
 
+        // We are committed to a full grid layout; invalidate the resolved track list now so that a
+        // stale read asserts if we fail to repopulate it below (see updateResolvedTrackListsAfterLayout).
+        m_resolvedTrackList.invalidate();
+
         // Fieldsets need to find their legend and position it inside the border of the object.
         // The legend then gets skipped during normal layout. The same is true for ruby text.
         // It doesn't get included in the normal layout process but is instead skipped.
@@ -543,6 +547,8 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
 
         layoutGridItems(gridLayoutState);
 
+        updateResolvedTrackListsAfterLayout();
+
         endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
         updateInFlowDescendantTransformsAfterLayout();
@@ -594,6 +600,10 @@ void RenderGrid::layoutMasonry(RelayoutChildren relayoutChildren)
         RenderGridLayoutState gridLayoutState;
 
         clearGridItemOverridingSizesBeforeLayout(*this);
+
+        // We are committed to a full masonry layout; invalidate the resolved track list now so that a
+        // stale read asserts if we fail to repopulate it below (see updateResolvedTrackListsAfterLayout).
+        m_resolvedTrackList.invalidate();
 
         preparePaginationBeforeBlockLayout(relayoutChildren);
         beginUpdateScrollInfoAfterLayoutTransaction();
@@ -691,6 +701,8 @@ void RenderGrid::layoutMasonry(RelayoutChildren relayoutChildren)
         }
 
         layoutMasonryItems(gridLayoutState);
+
+        updateResolvedTrackListsAfterLayout();
 
         endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
@@ -1478,7 +1490,7 @@ void RenderGrid::setNeedsItemPlacement(SubgridDidChange subgridDidChange)
     }
 }
 
-Vector<LayoutUnit> RenderGrid::trackSizesForComputedStyle(Style::GridTrackSizingDirection direction) const
+Vector<LayoutUnit> RenderGrid::computeResolvedTrackList(Style::GridTrackSizingDirection direction) const
 {
     const auto& positions = this->positions(direction);
     auto numPositions = positions.size();
@@ -1516,6 +1528,21 @@ Vector<LayoutUnit> RenderGrid::trackSizesForComputedStyle(Style::GridTrackSizing
     }
 
     return tracks;
+}
+
+const Vector<LayoutUnit>& RenderGrid::trackSizesForComputedStyle(Style::GridTrackSizingDirection direction) const
+{
+    // FIXME: The grid formatting context path does not yet populate the resolved track list, so
+    // only assert validity for the legacy layout path.
+    ASSERT(m_hasGridFormattingContextLayout.value_or(false) || m_resolvedTrackList.isValid);
+    return m_resolvedTrackList.sizes(direction);
+}
+
+void RenderGrid::updateResolvedTrackListsAfterLayout()
+{
+    m_resolvedTrackList.sizes(Style::GridTrackSizingDirection::Columns) = computeResolvedTrackList(Style::GridTrackSizingDirection::Columns);
+    m_resolvedTrackList.sizes(Style::GridTrackSizingDirection::Rows) = computeResolvedTrackList(Style::GridTrackSizingDirection::Rows);
+    m_resolvedTrackList.isValid = true;
 }
 
 static const StyleContentAlignmentData& NODELETE contentAlignmentNormalBehaviorGrid()

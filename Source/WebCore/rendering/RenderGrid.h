@@ -88,7 +88,7 @@ public:
     const std::optional<LayoutUnit> availableLogicalHeightForContentBox() const;
 
     void setNeedsItemPlacement(SubgridDidChange descendantSubgridsNeedItemPlacement = SubgridDidChange::No);
-    Vector<LayoutUnit> trackSizesForComputedStyle(Style::GridTrackSizingDirection) const;
+    const Vector<LayoutUnit>& trackSizesForComputedStyle(Style::GridTrackSizingDirection) const LIFETIME_BOUND;
 
     const Vector<LayoutUnit>& columnPositions() const LIFETIME_BOUND { return m_columnPositions; }
     const Vector<LayoutUnit>& rowPositions() const LIFETIME_BOUND { return m_rowPositions; }
@@ -277,6 +277,13 @@ private:
 
     Vector<LayoutUnit>& positions(Style::GridTrackSizingDirection direction) LIFETIME_BOUND { return direction == Style::GridTrackSizingDirection::Columns ? m_columnPositions : m_rowPositions; }
 
+    // https://drafts.csswg.org/css-grid-2/#resolved-track-list
+    // The resolved value of grid-template-columns / grid-template-rows for a grid container is its
+    // used value: every track listed individually with its size serialized as a length in pixels.
+    // We compute this once at the end of layout instead of on demand for each getComputedStyle query.
+    Vector<LayoutUnit> computeResolvedTrackList(Style::GridTrackSizingDirection) const;
+    void updateResolvedTrackListsAfterLayout();
+
     ContentAlignmentData& offsetBetweenTracks(Style::GridTrackSizingDirection direction) LIFETIME_BOUND { return direction == Style::GridTrackSizingDirection::Columns ? m_offsetBetweenColumns : m_offsetBetweenRows; }
     const ContentAlignmentData& offsetBetweenTracks(Style::GridTrackSizingDirection direction) const LIFETIME_BOUND { return direction == Style::GridTrackSizingDirection::Columns ? m_offsetBetweenColumns : m_offsetBetweenRows; }
 
@@ -298,6 +305,25 @@ private:
     Vector<LayoutUnit> m_rowPositions;
     ContentAlignmentData m_offsetBetweenColumns;
     ContentAlignmentData m_offsetBetweenRows;
+
+    // Cached resolved value of grid-template-columns / grid-template-rows (see computeResolvedTrackList).
+    // Invalidated when a full (non-simplified) layout begins and repopulated at the end of that layout,
+    // so a stale read trips the assert in trackSizesForComputedStyle().
+    struct ResolvedTrackList {
+        Vector<LayoutUnit> columnSizes;
+        Vector<LayoutUnit> rowSizes;
+        bool isValid { false };
+
+        void invalidate()
+        {
+            isValid = false;
+            columnSizes.clear();
+            rowSizes.clear();
+        }
+
+        const Vector<LayoutUnit>& sizes(Style::GridTrackSizingDirection direction) const LIFETIME_BOUND { return direction == Style::GridTrackSizingDirection::Columns ? columnSizes : rowSizes; }
+        Vector<LayoutUnit>& sizes(Style::GridTrackSizingDirection direction) LIFETIME_BOUND { return direction == Style::GridTrackSizingDirection::Columns ? columnSizes : rowSizes; }
+    } m_resolvedTrackList;
 
     mutable GridMasonryLayout m_masonryLayout;
 

@@ -1440,7 +1440,7 @@ template<GridTrackSizingDirection direction> Ref<CSSValue> extractGridTemplateVa
         CSS::GridTrackList trackList;
 
         OrderedNamedLinesCollectorInGridLayout collector(state, tracks, renderGrid->autoRepeatCountForDirection(direction), autoRepeatTrackSizes.size());
-        auto computedTrackSizes = renderGrid->trackSizesForComputedStyle(direction);
+        auto& computedTrackSizes = renderGrid->trackSizesForComputedStyle(direction);
         // Named grid line indices are relative to the explicit grid, but we are including all tracks.
         // So we need to subtract the number of leading implicit tracks in order to get the proper line index.
         int offset = -renderGrid->explicitGridStartForDirection(direction);
