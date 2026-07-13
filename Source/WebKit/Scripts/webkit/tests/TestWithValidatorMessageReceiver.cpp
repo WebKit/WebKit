@@ -83,29 +83,6 @@ void TestWithValidator::didReceiveMessage(IPC::Connection& connection, IPC::Deco
     decoder.markInvalid();
 }
 
-void TestWithValidator::sendCancelReply(IPC::Connection& connection, IPC::Decoder& decoder)
-{
-    ASSERT(decoder.messageReceiverName() == IPC::ReceiverName::TestWithValidator);
-    switch (decoder.messageName()) {
-    case IPC::MessageName::TestWithValidator_MessageWithReply: {
-        auto arguments = decoder.decode<typename Messages::TestWithValidator::MessageWithReply::Arguments>();
-        if (!arguments) [[unlikely]]
-            return;
-        auto replyID = decoder.decode<IPC::AsyncReplyID>();
-        if (!replyID) [[unlikely]]
-            return;
-        connection.sendAsyncReply<Messages::TestWithValidator::MessageWithReply>(*replyID
-            , IPC::AsyncReplyError<String>::create()
-            , IPC::AsyncReplyError<double>::create()
-        );
-        return;
-    }
-    default:
-        // No reply to send.
-        return;
-    }
-}
-
 } // namespace WebKit
 
 #if ENABLE(IPC_TESTING_API)

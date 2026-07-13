@@ -43,7 +43,7 @@ struct MockTestMessage2 {
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
-    static constexpr IPC::MessageName name() { return IPC::MessageName::IPCTester_EmptyMessageWithReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::IPCTester_StartMessageTesting; }
     template<typename Encoder> void encode(Encoder&) { }
 };
 
@@ -62,7 +62,7 @@ struct MockTestMessage4 {
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
-    static constexpr IPC::MessageName name() { return IPC::MessageName::IPCTester_AsyncPing; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::IPCTester_SendSameSemaphoreBack; }
     template<typename Encoder> void encode(Encoder&) { }
 };
 
@@ -330,8 +330,8 @@ TEST_F(MessageLogEndToEndTest, AsyncReplyMessagesLogged)
 
     // Set up A to respond to async reply messages
     aClient().setAsyncMessageHandler([this](IPC::Connection&, IPC::Decoder& decoder) -> bool {
-        auto listenerID = decoder.decode<uint64_t>();
-        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+        decoder.markHandled();
+        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), decoder.asyncReplyID().toUInt64());
         encoder.get() << decoder.destinationID();
         a()->sendSyncReply(WTF::move(encoder));
         return true;

@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "AsyncReplyID.h"
 #include "ConnectionHandle.h"
 #include "Decoder.h"
 #include "MessageNames.h"
@@ -221,9 +222,6 @@ class Decoder;
 class MachMessage;
 class UnixMessage;
 class WorkQueueMessageReceiverBase;
-
-struct AsyncReplyIDType;
-using AsyncReplyID = AtomicObjectIdentifier<AsyncReplyIDType>;
 
 // Sync message sender is expected to hold this instance alive as long as the reply() is being
 // accessed. View type data types in replies, such as std::span, refer to data stored in
@@ -504,6 +502,9 @@ public:
     Error sendSyncReply(UniqueRef<Encoder>&&);
     template<typename T, typename... Arguments>
     void sendAsyncReply(AsyncReplyID, Arguments&&...);
+    // Sends a CancelAsyncReply control message so the peer's pending async reply handler for
+    // replyID is invoked with the default ("cancelled") reply arguments instead of being orphaned.
+    void sendAsyncReplyCancel(AsyncReplyID);
 
     void wakeUpRunLoop();
 
@@ -880,6 +881,7 @@ std::optional<Connection::AsyncReplyID> Connection::sendWithAsyncReply(T&& messa
     auto handler = makeAsyncReplyHandler<T>(std::forward<C>(completionHandler));
     auto replyID = handler.replyID;
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
+    encoder.get() << *replyID;
     message.encode(encoder.get());
     if (sendMessageWithAsyncReply(WTF::move(encoder), WTF::move(handler), sendOptions) == Error::NoError)
         return replyID;
@@ -894,6 +896,7 @@ std::optional<Connection::AsyncReplyID> Connection::sendWithAsyncReplyOnDispatch
     auto handler = makeAsyncReplyHandlerWithDispatcher<T>(std::forward<C>(completionHandler), dispatcher);
     auto replyID = handler.replyID;
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
+    encoder.get() << *replyID;
     message.encode(encoder.get());
     if (sendMessageWithAsyncReplyWithDispatcher(WTF::move(encoder), WTF::move(handler), sendOptions) == Error::NoError)
         return replyID;
@@ -909,6 +912,7 @@ Ref<Promise> Connection::sendWithPromisedReply(T&& message, uint64_t destination
     auto promise = producer.promise();
     auto handler = makeAsyncReplyHandlerWithDispatcher<PC, T, Promise>(WTF::move(producer));
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
+    encoder.get() << *handler.replyID;
     message.encode(encoder.get());
     sendMessageWithAsyncReplyWithDispatcher(WTF::move(encoder), WTF::move(handler), sendOptions);
     // The promise will be rejected in the handler should an error occur.

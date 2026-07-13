@@ -277,7 +277,6 @@ public:
     bool wasRemovedInAnotherProcess() const { return m_wasRemovedInAnotherProcess; }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
-    static void sendCancelReply(IPC::Connection&, IPC::Decoder&);
 
     void setAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t> badge);
 

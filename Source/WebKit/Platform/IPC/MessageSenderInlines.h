@@ -51,9 +51,10 @@ template<typename MessageType, typename C> inline std::optional<AsyncReplyID> Me
 {
     static_assert(!MessageType::isSync);
     auto encoder = makeUniqueRef<IPC::Encoder>(MessageType::name(), destinationID);
-    message.encode(encoder.get());
     auto asyncHandler = Connection::makeAsyncReplyHandler<MessageType>(std::forward<C>(completionHandler));
     auto replyID = asyncHandler.replyID;
+    encoder.get() << *replyID;
+    message.encode(encoder.get());
     if (sendMessageWithAsyncReply(WTF::move(encoder), WTF::move(asyncHandler), options))
         return replyID;
     return std::nullopt;

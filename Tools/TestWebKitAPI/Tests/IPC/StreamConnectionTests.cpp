@@ -329,13 +329,13 @@ public:
         m_mockServerReceiver->setAsyncMessageHandler([] (IPC::StreamServerConnection& connection, IPC::Decoder& decoder) {
             if (decoder.messageName() != MockStreamTestMessageWithAsyncReply1::name())
                 return false;
-            using AsyncReplyID = IPC::StreamServerConnection::AsyncReplyID;
             auto contents = decoder.decode<uint64_t>();
             ASSERT(contents);
-            auto asyncReplyID = decoder.decode<AsyncReplyID>();
-            ASSERT(asyncReplyID);
             ASSERT(decoder.isValid());
-            connection.sendAsyncReply<MockStreamTestMessageWithAsyncReply1>(*asyncReplyID, *contents);
+            ASSERT(decoder.isAsyncWithReplyMessage());
+            auto asyncReplyID = decoder.asyncReplyID();
+            decoder.markHandled();
+            connection.sendAsyncReply<MockStreamTestMessageWithAsyncReply1>(asyncReplyID, *contents);
             return true;
         });
         serverQueue().dispatch([this, serverConnection = WTF::move(serverConnection)] () mutable {

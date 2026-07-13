@@ -530,9 +530,6 @@ void handleMessageAsync(C& connection, Decoder& decoder, T* object, MF U::* func
     auto arguments = decoder.decode<typename MessageType::Arguments>();
     if (!arguments) [[unlikely]]
         return;
-    auto replyID = decoder.decode<IPC::AsyncReplyID>();
-    if (!replyID) [[unlikely]]
-        return;
 
     if constexpr (ValidationType::returnsVoid)
         static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
@@ -542,8 +539,10 @@ void handleMessageAsync(C& connection, Decoder& decoder, T* object, MF U::* func
     using CompletionHandlerType = std::conditional_t<ValidationType::returnsVoid, typename ValidationType::CompletionHandlerType, typename MessageType::Reply>;
 
     logMessage(connection, MessageType::name(), object, *arguments);
+    auto replyID = decoder.asyncReplyID();
+    decoder.markHandled();
     auto completionHandler = ValidationType::wrapCompletionHandler(CompletionHandlerType(
-        [replyID = *replyID, connection = protect(connection)] (auto&&... args) mutable {
+        [replyID, connection = protect(connection)] (auto&&... args) mutable {
             connection->template sendAsyncReply<MessageType>(replyID, std::forward<decltype(args)>(args)...);
         }, MessageType::callbackThread));
     if constexpr (ValidationType::returnsVoid) {
@@ -601,13 +600,12 @@ void handleMessageAsyncWithReplyID(Connection& connection, Decoder& decoder, T* 
     using ValidationType = MethodSignatureValidation<MF>;
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, std::tuple<IPC::AsyncReplyID>>);
 
-    auto replyID = decoder.decode<Connection::AsyncReplyID>();
-    if (!replyID) [[unlikely]]
-        return;
 
     logMessage(connection, MessageType::name(), object, std::tuple<>());
     static_assert(!ValidationType::expectsConnectionArgument);
-    callMemberFunction(object, function, std::tuple<IPC::AsyncReplyID>(*replyID));
+    auto replyID = decoder.asyncReplyID();
+    decoder.markHandled();
+    callMemberFunction(object, function, std::tuple<IPC::AsyncReplyID>(replyID));
 }
 
 } // namespace IPC

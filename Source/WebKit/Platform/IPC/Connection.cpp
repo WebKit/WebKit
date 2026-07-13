@@ -451,8 +451,11 @@ void Connection::dispatchMessageReceiverMessage(MessageReceiverType& messageRece
         std::unique_ptr remainingReplyEncoder = replyEncoder.moveToUniquePtr();
         if (remainingReplyEncoder)
             sendMessageImpl(makeUniqueRef<Encoder>(MessageName::CancelSyncMessageReply, decoder->syncRequestID().toUInt64()), { });
-    } else
+    } else {
         messageReceiver.didReceiveMessage(*this, decoder.get());
+        if (decoder->isAsyncWithReplyMessage() && !decoder->wasHandled())
+            sendAsyncReplyCancel(decoder->asyncReplyID());
+    }
 
 #if ASSERT_ENABLED
     --m_inDispatchMessageCount;
@@ -697,7 +700,6 @@ Error Connection::sendMessageWithAsyncReply(UniqueRef<Encoder>&& encoder, AsyncR
     ASSERT(replyHandler.replyID);
     ASSERT(replyHandler.completionHandler);
     auto replyID = *replyHandler.replyID;
-    encoder.get() << replyID;
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     if (signpostsEnabled()) [[unlikely]] {
@@ -733,7 +735,6 @@ Error Connection::sendMessageWithAsyncReplyWithDispatcher(UniqueRef<Encoder>&& e
     ASSERT(replyHandler.replyID);
     ASSERT(replyHandler.completionHandler);
     auto replyID = *replyHandler.replyID;
-    encoder.get() << replyID;
     addAsyncReplyHandlerWithDispatcher(WTF::move(replyHandler));
     auto error = sendMessage(WTF::move(encoder), sendOptions, qos);
     if (error == Error::NoError)
@@ -747,6 +748,11 @@ Error Connection::sendMessageWithAsyncReplyWithDispatcher(UniqueRef<Encoder>&& e
 Error Connection::sendSyncReply(UniqueRef<Encoder>&& encoder)
 {
     return sendMessageImpl(WTF::move(encoder), { });
+}
+
+void Connection::sendAsyncReplyCancel(AsyncReplyID replyID)
+{
+    sendMessageImpl(makeUniqueRef<Encoder>(MessageName::CancelAsyncReply, replyID.toUInt64()), { });
 }
 
 Timeout Connection::timeoutRespectingIgnoreTimeoutsForTesting(Timeout timeout) const
@@ -1104,6 +1110,19 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
         // Fallback to default case, error handling will be performed in sendMessage().
     }
 
+    // A CancelAsyncReply for a dispatcher-registered reply handler must be handled here so the
+    // cancellation runs on the registered dispatcher. Handlers registered without a dispatcher are
+    // cancelled later in dispatchMessage(). Invoking with a null connection/decoder runs the
+    // handler with the default ("cancelled") reply arguments.
+    if (message->messageName() == MessageName::CancelAsyncReply
+        && AtomicObjectIdentifier<AsyncReplyIDType>::isValidIdentifier(message->destinationID())) {
+        if (auto replyHandlerWithDispatcher = takeAsyncReplyHandlerWithDispatcherWithLockHeld(AtomicObjectIdentifier<AsyncReplyIDType>(message->destinationID()))) {
+            replyHandlerWithDispatcher(nullptr, nullptr);
+            return;
+        }
+        // Not a dispatcher-registered reply; fall through so the message reaches dispatchMessage().
+    }
+
     if (message->isSyncMessage()) {
         Locker locker { m_incomingSyncMessageCallbackLock };
 
@@ -1414,6 +1433,12 @@ void Connection::dispatchMessage(Decoder& decoder)
         return;
     }
 
+    if (decoder.messageName() == MessageName::CancelAsyncReply) {
+        if (auto handler = takeAsyncReplyHandler(AtomicObjectIdentifier<AsyncReplyIDType>(decoder.destinationID())))
+            handler(nullptr, nullptr);
+        return;
+    }
+
 #if ENABLE(IPC_TESTING_API)
     if (isMainRunLoop()) {
         bool hasDeadObservers = false;
@@ -1429,6 +1454,9 @@ void Connection::dispatchMessage(Decoder& decoder)
 #endif
 
     client->didReceiveMessage(*this, decoder);
+
+    if (decoder.isAsyncWithReplyMessage() && !decoder.wasHandled())
+        sendAsyncReplyCancel(decoder.asyncReplyID());
 
 #if ENABLE(IPC_TESTING_API)
     // If we haven't registered an error yet, check whether we found one

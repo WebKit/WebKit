@@ -81,6 +81,8 @@
 #include <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #endif
 
+#include "GeneratedSerializersExtra.h"
+
 template<uint64_t...> struct BitsInIncreasingOrder;
 template<uint64_t onlyBit> struct BitsInIncreasingOrder<onlyBit> {
     static constexpr bool value = true;
@@ -103,16 +105,6 @@ IGNORE_WARNINGS_BEGIN("invalid-offsetof")
 
 namespace IPC {
 
-
-template<> struct ArgumentCoder<Namespace::OtherClass> {
-    static void encode(Encoder&, const Namespace::OtherClass&);
-    static std::optional<Namespace::OtherClass> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<Namespace::ClassWithMemberPrecondition> {
-    static void encode(Encoder&, const Namespace::ClassWithMemberPrecondition&);
-    static std::optional<Namespace::ClassWithMemberPrecondition> decode(Decoder&);
-};
 
 #if ENABLE(TEST_FEATURE)
 void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(Encoder& encoder, const Namespace::Subnamespace::StructName& instance)
