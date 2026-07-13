@@ -38,6 +38,8 @@ struct WebKit::WebExtensionContextParameters {
     double manifestVersion;
     bool isSessionStorageAllowedInContentScripts;
 
+    PAL::SessionID defaultSessionID;
+
     std::optional<WebCore::PageIdentifier> backgroundPageIdentifier;
 #if ENABLE(INSPECTOR_EXTENSIONS)
     Vector<WebKit::WebExtensionContext::PageIdentifierTuple> inspectorPageIdentifiers;

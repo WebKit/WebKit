@@ -33,6 +33,8 @@ namespace WebKit {
 WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(IsPersistent persistent)
     : m_storageDirectory(persistent == IsPersistent::Yes ? createStorageDirectoryPath() : nullString())
 {
+    if (persistent == IsPersistent::No)
+        m_defaultWebsiteDataStore = WebsiteDataStore::createNonPersistent();
 }
 
 WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(TemporaryTag, const String& storageDirectory)

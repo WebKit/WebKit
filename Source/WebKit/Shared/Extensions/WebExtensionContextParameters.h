@@ -32,6 +32,7 @@
 #include "WebExtensionContextIdentifier.h"
 #include "WebExtensionTabIdentifier.h"
 #include "WebExtensionWindowIdentifier.h"
+#include <pal/SessionID.h>
 #include <wtf/URL.h>
 
 namespace WebKit {
@@ -51,6 +52,8 @@ struct WebExtensionContextParameters {
 
     double manifestVersion { 0 };
     bool isSessionStorageAllowedInContentScripts { false };
+
+    PAL::SessionID defaultSessionID;
 
     std::optional<WebCore::PageIdentifier> backgroundPageIdentifier;
 #if ENABLE(INSPECTOR_EXTENSIONS)

@@ -38,6 +38,7 @@
 #import "WebExtensionAPIWindows.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionUtilities.h"
+#import "WebFrame.h"
 #import "WebPage.h"
 #import "WebProcess.h"
 
@@ -156,6 +157,14 @@ NSArray *WebExtensionAPIExtension::getViews(JSContextRef context, NSDictionary *
 bool WebExtensionAPIExtension::isInIncognitoContext(WebPage& page)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension/inIncognitoContext
+
+    // Extension pages (background, popup, etc.) are never in an incognito context.
+    if (protect(extensionContext())->isURLForThisExtension(page.mainWebFrame().url()))
+        return false;
+
+    // Pages in the controller's own non-persistent session are not incognito.
+    if (page.sessionID() == extensionContext().defaultSessionID())
+        return false;
 
     return page.usesEphemeralSession();
 }

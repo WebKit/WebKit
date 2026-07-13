@@ -57,7 +57,9 @@ TEST(WKWebExtensionControllerConfiguration, Initialization)
     EXPECT_NE(configuration, WKWebExtensionControllerConfiguration.nonPersistentConfiguration);
     EXPECT_FALSE([configuration isEqual:WKWebExtensionControllerConfiguration.nonPersistentConfiguration]);
     EXPECT_FALSE([configuration.webViewConfiguration isEqual:WKWebExtensionControllerConfiguration.nonPersistentConfiguration.webViewConfiguration]);
-    EXPECT_NS_EQUAL(configuration.defaultWebsiteDataStore, WKWebsiteDataStore.defaultDataStore);
+    EXPECT_FALSE(configuration.defaultWebsiteDataStore.persistent);
+    EXPECT_FALSE(configuration.webViewConfiguration.websiteDataStore.persistent);
+    EXPECT_NS_EQUAL(configuration.defaultWebsiteDataStore, configuration.webViewConfiguration.websiteDataStore);
 
     auto *identifier = [NSUUID UUID];
     configuration = [WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier];
@@ -122,11 +124,11 @@ TEST(WKWebExtensionControllerConfiguration, SecureCoding)
     EXPECT_FALSE(result._temporary);
     EXPECT_NS_EQUAL(result._storageDirectoryPath, configuration._storageDirectoryPath);
     EXPECT_NOT_NULL(result.webViewConfiguration);
-    EXPECT_NS_EQUAL(result.defaultWebsiteDataStore, WKWebsiteDataStore.defaultDataStore);
+    EXPECT_FALSE(result.defaultWebsiteDataStore.persistent);
+    EXPECT_FALSE(result.webViewConfiguration.websiteDataStore.persistent);
     EXPECT_NE(configuration, result);
     EXPECT_FALSE([result isEqual:configuration]);
     EXPECT_FALSE([result.webViewConfiguration isEqual:configuration.webViewConfiguration]);
-    EXPECT_NS_EQUAL(result.defaultWebsiteDataStore, configuration.defaultWebsiteDataStore);
 
     auto *identifier = [NSUUID UUID];
     configuration = [WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier];
@@ -192,7 +194,8 @@ TEST(WKWebExtensionControllerConfiguration, Copying)
     EXPECT_FALSE(copy._temporary);
     EXPECT_NS_EQUAL(copy._storageDirectoryPath, configuration._storageDirectoryPath);
     EXPECT_NOT_NULL(copy.webViewConfiguration);
-    EXPECT_NS_EQUAL(copy.defaultWebsiteDataStore, WKWebsiteDataStore.defaultDataStore);
+    EXPECT_FALSE(copy.defaultWebsiteDataStore.persistent);
+    EXPECT_FALSE(copy.webViewConfiguration.websiteDataStore.persistent);
     EXPECT_NE(configuration, copy);
     EXPECT_FALSE([copy isEqual:configuration]);
     EXPECT_FALSE([copy.webViewConfiguration isEqual:configuration.webViewConfiguration]);

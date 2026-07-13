@@ -115,7 +115,7 @@ static inline NSDictionary *toWebAPI(const WebExtensionCookieParameters& cookieP
     return [result copy];
 }
 
-static inline NSArray *toWebAPI(const HashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>>& stores)
+static inline NSArray *toWebAPI(const HashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>>& stores, PAL::SessionID ownSessionID)
 {
     auto *result = [NSMutableArray arrayWithCapacity:stores.size()];
 
@@ -124,7 +124,8 @@ static inline NSArray *toWebAPI(const HashMap<PAL::SessionID, Vector<WebExtensio
             return @(toWebAPI(tabIdentifier));
         }).get();
 
-        [result addObject:@{ idKey: toWebAPI(entry.key), tabIdsKey: tabIdentifiers, incognitoKey: @(entry.key.isEphemeral()) }];
+        bool incognito = entry.key.isEphemeral() && entry.key != ownSessionID;
+        [result addObject:@{ idKey: toWebAPI(entry.key), tabIdsKey: tabIdentifiers, incognitoKey: @(incognito) }];
     }
 
     return [result copy];
@@ -354,7 +355,7 @@ void WebExtensionAPICookies::getAllCookieStores(Ref<WebExtensionCallbackHandler>
             return;
         }
 
-        callback->call(toJSValueRef(callback->globalContext(), toWebAPI(result.value())));
+        callback->call(toJSValueRef(callback->globalContext(), toWebAPI(result.value(), protectedThis->extensionContext().defaultSessionID())));
     }, extensionContext().identifier());
 }
 

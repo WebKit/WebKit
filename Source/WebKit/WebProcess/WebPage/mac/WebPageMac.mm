@@ -134,8 +134,11 @@ void WebPage::platformInitializeAccessibility(ShouldInitializeNSAccessibility sh
 {
     RELEASE_LOG(Process, "WebPage::platformInitializeAccessibility shouldInitializeNSAccessibility = %d", shouldInitializeNSAccessibility == ShouldInitializeNSAccessibility::Yes);
 
-    // For performance reasons, we should have received the LS database before initializing NSApplication.
-    ASSERT(LaunchServicesDatabaseManager::singleton().hasReceivedLaunchServicesDatabase());
+    // Wait for the LaunchServices database before initializing NSApplication, since it is needed
+    // for accessibility initialization. Normally this has already been received, but in rare cases
+    // (e.g. process restart after network process termination) there can be a race where CreateWebPage
+    // arrives before the database XPC message is processed.
+    LaunchServicesDatabaseManager::singleton().waitForDatabaseUpdate();
 
     // Need to initialize accessibility for VoiceOver to work when the WebContent process is using NSRunLoop.
     // Currently, it is also needed to allocate and initialize an NSApplication object.

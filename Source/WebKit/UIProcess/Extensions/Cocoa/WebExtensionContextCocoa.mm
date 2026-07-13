@@ -2490,8 +2490,10 @@ WebsiteDataStore* WebExtensionContext::websiteDataStore(std::optional<PAL::Sessi
         return nullptr;
 
     WeakPtr weakDataStore = extensionController->websiteDataStore(sessionID);
-    if (weakDataStore && !weakDataStore->isPersistent() && !hasAccessToPrivateData())
-        return nullptr;
+    if (weakDataStore && !weakDataStore->isPersistent() && !hasAccessToPrivateData()) {
+        if (weakDataStore.get() != &extensionController->configuration().defaultWebsiteDataStore())
+            return nullptr;
+    }
 
     return weakDataStore.get();
 }

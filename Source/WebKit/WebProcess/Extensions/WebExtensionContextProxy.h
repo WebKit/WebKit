@@ -96,6 +96,8 @@ public:
 
     bool isSessionStorageAllowedInContentScripts() const { return m_isSessionStorageAllowedInContentScripts; }
 
+    PAL::SessionID defaultSessionID() const { return m_defaultSessionID; }
+
     bool NODELETE inTestingMode() const;
 
     bool hasDOMWrapperWorld(WebExtensionContentWorldType contentWorldType) const { return contentWorldType != WebExtensionContentWorldType::ContentScript || hasContentScriptWorld(); }
@@ -251,6 +253,7 @@ private:
 #endif
     double m_manifestVersion { 0 };
     bool m_isSessionStorageAllowedInContentScripts { false };
+    PAL::SessionID m_defaultSessionID { PAL::SessionID::defaultSessionID() };
     mutable PermissionsMap m_grantedPermissions;
     mutable WallTime m_nextGrantedPermissionsExpirationDate { WallTime::nan() };
     RefPtr<WebCore::DOMWrapperWorld> m_contentScriptWorld;
