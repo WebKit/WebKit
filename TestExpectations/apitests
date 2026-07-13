@@ -52,6 +52,8 @@
 #     Bug(identifier)       - Other bug tracker
 #
 
+webkit.org/b/319115 [ ios ] TestWebKitAPI.AppPrivacyReport.AppInitiatedRequestWithServiceWorker [ Pass Timeout ]
+
 webkit.org/b/318967 [ ios ] TestWebKitAPI.DownloadProgress.PublishProgressOnPartialDownload [ Pass Failure ]
 
 # webkit.org/b/318893 [ iOS DEBUG ] 2x TestWebKitAPI.IPCTestingAPI.* (api-tests) are constant fails.
