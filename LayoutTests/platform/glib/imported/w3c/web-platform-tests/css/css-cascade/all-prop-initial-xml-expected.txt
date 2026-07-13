@@ -374,6 +374,8 @@ PASS text-wrap-style
 PASS timeline-scope
 PASS timeline-trigger-activation-range-end
 PASS timeline-trigger-activation-range-start
+PASS timeline-trigger-active-range-end
+PASS timeline-trigger-active-range-start
 PASS timeline-trigger-name
 PASS timeline-trigger-source
 PASS top

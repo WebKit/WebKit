@@ -51,6 +51,8 @@ TextStream& operator<<(TextStream& ts, const TimelineTrigger& value)
     ts.dumpProperty("source"_s, value.source());
     ts.dumpProperty("activation-range-start"_s, value.activationRangeStart());
     ts.dumpProperty("activation-range-end"_s, value.activationRangeEnd());
+    ts.dumpProperty("active-range-start"_s, value.activeRangeStart());
+    ts.dumpProperty("active-range-end"_s, value.activeRangeEnd());
 
     return ts;
 }

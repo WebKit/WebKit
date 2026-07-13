@@ -13267,6 +13267,46 @@
                 "url": "https://drafts.csswg.org/animation-triggers-1/#propdef-timeline-trigger-activation-range-end"
             }
         },
+        "timeline-trigger-active-range-start": {
+            "animation-type": "not animatable",
+            "initial": "normal",
+            "values": [
+                "normal"
+            ],
+            "codegen-properties": {
+                "coordinated-value-list-property": true,
+                "coordinated-value-list-property-name-for-methods": "ActiveRangeStart",
+                "coordinated-value-list-property-item-type": "Style::SingleAnimationRangeStart",
+                "computed-style-storage-container": "opaque",
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData", "timelineTriggers"],
+                "parser-grammar": "<single-animation-range-start>#",
+                "settings-flag": "animationTriggersEnabled"
+            },
+            "specification": {
+                "category": "animation-triggers",
+                "url": "https://drafts.csswg.org/animation-triggers-1/#propdef-timeline-trigger-active-range-start"
+            }
+        },
+        "timeline-trigger-active-range-end": {
+            "animation-type": "not animatable",
+            "initial": "normal",
+            "values": [
+                "normal"
+            ],
+            "codegen-properties": {
+                "coordinated-value-list-property": true,
+                "coordinated-value-list-property-name-for-methods": "ActiveRangeEnd",
+                "coordinated-value-list-property-item-type": "Style::SingleAnimationRangeEnd",
+                "computed-style-storage-container": "opaque",
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData", "timelineTriggers"],
+                "parser-grammar": "<single-animation-range-end>#",
+                "settings-flag": "animationTriggersEnabled"
+            },
+            "specification": {
+                "category": "animation-triggers",
+                "url": "https://drafts.csswg.org/animation-triggers-1/#propdef-timeline-trigger-active-range-end"
+            }
+        },
         "view-transition-class": {
             "animation-type": "discrete",
             "initial": "none",

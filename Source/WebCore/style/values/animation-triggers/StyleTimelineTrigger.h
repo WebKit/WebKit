@@ -42,6 +42,8 @@ namespace Style {
     macro(TimelineTrigger, TimelineTriggerSource, SingleAnimationTimeline, source, Source) \
     macro(TimelineTrigger, TimelineTriggerActivationRangeStart, SingleAnimationRangeStart, activationRangeStart, ActivationRangeStart) \
     macro(TimelineTrigger, TimelineTriggerActivationRangeEnd, SingleAnimationRangeEnd, activationRangeEnd, ActivationRangeEnd) \
+    macro(TimelineTrigger, TimelineTriggerActiveRangeStart, SingleAnimationRangeStart, activeRangeStart, ActiveRangeStart) \
+    macro(TimelineTrigger, TimelineTriggerActiveRangeEnd, SingleAnimationRangeEnd, activeRangeEnd, ActiveRangeEnd) \
 \
 
 #define FOR_EACH_TIMELINE_TRIGGER_PROPERTY(macro) \
@@ -56,11 +58,15 @@ struct TimelineTrigger {
     const SingleAnimationTimeline& source() const LIFETIME_BOUND { return data().m_source; }
     const SingleAnimationRangeStart& activationRangeStart() const LIFETIME_BOUND { return data().m_activationRangeStart; }
     const SingleAnimationRangeEnd& activationRangeEnd() const LIFETIME_BOUND { return data().m_activationRangeEnd; }
+    const SingleAnimationRangeStart& activeRangeStart() const LIFETIME_BOUND { return data().m_activeRangeStart; }
+    const SingleAnimationRangeEnd& activeRangeEnd() const LIFETIME_BOUND { return data().m_activeRangeEnd; }
 
     static TimelineTriggerName initialName() { return CSS::Keyword::None { }; }
     static SingleAnimationTimeline initialSource() { return CSS::Keyword::Auto { }; }
     static SingleAnimationRangeStart initialActivationRangeStart() { return CSS::Keyword::Normal { }; }
     static SingleAnimationRangeEnd initialActivationRangeEnd() { return CSS::Keyword::Normal { }; }
+    static SingleAnimationRangeStart initialActiveRangeStart() { return CSS::Keyword::Normal { }; }
+    static SingleAnimationRangeEnd initialActiveRangeEnd() { return CSS::Keyword::Normal { }; }
 
     FOR_EACH_TIMELINE_TRIGGER_REFERENCE(DECLARE_COORDINATED_VALUE_LIST_GETTER_AND_SETTERS_REFERENCE)
 
@@ -81,6 +87,8 @@ private:
         SingleAnimationTimeline m_source { TimelineTrigger::initialSource() };
         SingleAnimationRangeStart m_activationRangeStart { TimelineTrigger::initialActivationRangeStart() };
         SingleAnimationRangeEnd m_activationRangeEnd { TimelineTrigger::initialActivationRangeEnd() };
+        SingleAnimationRangeStart m_activeRangeStart { TimelineTrigger::initialActiveRangeStart() };
+        SingleAnimationRangeEnd m_activeRangeEnd { TimelineTrigger::initialActiveRangeEnd() };
 
         FOR_EACH_TIMELINE_TRIGGER_PROPERTY(DECLARE_COORDINATED_VALUE_LIST_IS_SET_AND_IS_FILLED_MEMBERS)
     };
