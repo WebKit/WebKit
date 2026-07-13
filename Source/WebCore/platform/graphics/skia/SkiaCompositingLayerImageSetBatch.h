@@ -48,7 +48,6 @@ public:
     ~SkiaCompositingLayerImageSetBatch() = default;
 
     void updatePaintProperties(SkCanvas&, const sk_sp<SkColorFilter>&, const std::optional<SkBlendMode>&);
-    void updateSamplingOptions(SkCanvas&, SkSamplingOptions);
     void addImageSet(SkCanvas&, SkiaBackingStore&, const SkMatrix&, float opacity, bool enableAntialias);
     void addImage(SkCanvas&, const sk_sp<SkImage>&, const FloatRect&, const FloatRect& clip, const SkMatrix&, float opacity, bool enableAntialias);
     void flushIfNeeded(SkCanvas&);
@@ -72,6 +71,9 @@ public:
     };
 
 private:
+    void updateSamplingOptions(SkCanvas&, SkSamplingOptions);
+    bool imageRequiresLinearSampling(const SkCanvas&, const sk_sp<SkImage>&, const FloatRect&, const SkMatrix&) const;
+
     Vector<SkCanvas::ImageSetEntry> m_imageSet;
     Vector<SkPoint> m_dstClips;
     Vector<SkMatrix> m_preViewMatrices;

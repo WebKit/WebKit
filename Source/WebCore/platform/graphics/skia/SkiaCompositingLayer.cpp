@@ -500,9 +500,12 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
     // FIXME: a color filter forces source-over conservatively -- it may turn opaque contents
     // translucent, and kSrc would then write those pixels without blending. We could inspect the
     // filter and still use kSrc when it provably keeps the contents opaque.
+    bool forcedSrcBlendMode = false;
     auto batchBlendMode = context.blendMode;
-    if (!batchBlendMode && !context.colorFilter && m_contentsOpaque && context.opacity == 1)
+    if (!batchBlendMode && !context.colorFilter && m_contentsOpaque && context.opacity == 1) {
         batchBlendMode = SkBlendMode::kSrc;
+        forcedSrcBlendMode = true;
+    }
     context.imageSetBatch.updatePaintProperties(canvas, context.colorFilter, batchBlendMode);
 
     auto setupPaint = [&] -> SkPaint {
@@ -591,6 +594,10 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
                 auto clippingRect = m_contentsClippingRect.rect();
                 if (clippingRect.contains(m_contentsRect))
                     clippingRect = { };
+
+                // The contents image composites over the backing store, so it must use SrcOver always.
+                if (forcedSrcBlendMode && m_backingStore)
+                    context.imageSetBatch.updatePaintProperties(canvas, context.colorFilter, context.blendMode);
                 context.imageSetBatch.addImage(canvas, image, m_contentsRect, clippingRect, ctm, context.opacity, enableAntialias);
             }
         }

@@ -51,6 +51,26 @@ void SkiaCompositingLayerImageSetBatch::updateSamplingOptions(SkCanvas& canvas, 
     m_samplingOptions = samplingOptions;
 }
 
+bool SkiaCompositingLayerImageSetBatch::imageRequiresLinearSampling(const SkCanvas& canvas, const sk_sp<SkImage>& image, const FloatRect& rect, const SkMatrix& ctm) const
+{
+    if (m_samplingOptions.filter == SkFilterMode::kLinear) {
+        // Linear is already the batch sampling options, so don't need change it to keep the batch.
+        return false;
+    }
+
+    // For axis aligned, not scaled and integer translated transforms, nearest and linear do the same,
+    // so we can keep nearest to avoid the sampling options switch that will cause a new batch.
+    auto matrix = canvas.getLocalToDeviceAs3x3() * ctm;
+    matrix.preConcat(SkMatrix::RectToRect(SkRect::MakeWH(image->width(), image->height()), SkRect(rect)));
+    if (!matrix.isScaleTranslate())
+        return true;
+
+    if (std::abs(matrix.getScaleX()) != 1 || std::abs(matrix.getScaleY()) != 1)
+        return true;
+
+    return !WTF::isIntegral(matrix.getTranslateX()) || !WTF::isIntegral(matrix.getTranslateY());
+}
+
 void SkiaCompositingLayerImageSetBatch::addImageSet(SkCanvas& canvas, SkiaBackingStore& backingStore, const SkMatrix& ctm, float opacity, bool enableAntialias)
 {
     updateSamplingOptions(canvas, SkSamplingOptions(SkFilterMode::kNearest, SkMipmapMode::kNone));
@@ -67,7 +87,8 @@ void SkiaCompositingLayerImageSetBatch::addImageSet(SkCanvas& canvas, SkiaBackin
 
 void SkiaCompositingLayerImageSetBatch::addImage(SkCanvas& canvas, const sk_sp<SkImage>& image, const FloatRect& rect, const FloatRect& clip, const SkMatrix& ctm, float opacity, bool enableAntialias)
 {
-    updateSamplingOptions(canvas, SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone));
+    if (imageRequiresLinearSampling(canvas, image, rect, ctm))
+        updateSamplingOptions(canvas, SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone));
 
     if (m_preViewMatrices.isEmpty() || m_preViewMatrices.last() != ctm)
         m_preViewMatrices.append(ctm);
