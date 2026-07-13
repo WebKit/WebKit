@@ -1385,6 +1385,13 @@ if (ENABLE_BACK_FORWARD_LIST_SWIFT)
     )
 endif ()
 
+if (ENABLE_IPC_TESTING_SWIFT)
+    list(APPEND WebKit_SOURCES
+        ${WEBKIT_DIR}/Shared/IPCTesterReceiver.swift
+        ${WebKit_DERIVED_SOURCES_DIR}/IPCTesterReceiverMessageReceiver.swift
+    )
+endif ()
+
 if (SWIFT_REQUIRED)
     set_source_files_properties(
         ${WebKit_DERIVED_SOURCES_DIR}/IPCTesterReceiverMessageReceiver.swift

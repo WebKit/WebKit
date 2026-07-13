@@ -132,9 +132,6 @@ workers/service/ServiceWorkerRoute.mm @nonARC
 HTMLNames.cpp
 JSMediaConfiguration.cpp
 JSRTCRtpCodingParameters.cpp
-JSTouch.cpp
-JSTouchEvent.cpp
-JSTouchList.cpp
 JSWebXRHitTestResult.cpp
 JSWebXRHitTestSource.cpp
 JSWebXRRay.cpp

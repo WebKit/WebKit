@@ -68,6 +68,11 @@ if (NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
         "SourcesCMakeCocoa.txt"
     )
 endif ()
+if (USE_APPLE_INTERNAL_SDK)
+    list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
+        "SourcesCocoaInternalSDK.txt"
+    )
+endif ()
 
 list(APPEND WebCore_LIBRARIES
     ${ACCELERATE_LIBRARY}

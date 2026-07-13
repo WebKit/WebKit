@@ -35,12 +35,21 @@ if (NOT AVFAUDIO_LIBRARY-NOTFOUND)
 endif ()
 
 list(APPEND WebKit_PRIVATE_LIBRARIES "-weak_framework PowerLog")
+if (USE_APPLE_INTERNAL_SDK)
+    list(APPEND WebKit_PRIVATE_LIBRARIES
+        "-weak_framework CoreML"
+        "-weak_framework NaturalLanguage"
+    )
+endif ()
 
 list(APPEND WebKit_SOURCES
     NetworkProcess/mac/NetworkConnectionToWebProcessMac.mm
 
     UIProcess/PDF/WKPDFHUDView.mm
     ${WEBKIT_DIR}/Platform/cocoa/WKMaterialHostingSupport.swift
+    ${WEBKIT_DIR}/Shared/Model/WKStageModeOrbitSimulator.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/WKDeferringGestureRecognizer.swift
+    ${WEBKIT_DIR}/UIProcess/mac/WKTextSelectionController.swift
     ${WEBKIT_DIR}/UIProcess/PDF/WKPDFHUDView.swift
 
     WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.mm
@@ -150,7 +159,7 @@ add_custom_command(
         ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-derived-log-sources.py
         ${_log_messages_inputs}
         ${_log_messages_generated}
-        "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}"
+        ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}
     WORKING_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR}
     VERBATIM
 )
