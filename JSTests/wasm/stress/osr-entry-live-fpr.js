@@ -1,4 +1,7 @@
 //@ skip unless $isSIMDPlatform
+//@ $skipModes << "wasm-no-jit".to_sym
+//@ $skipModes << "wasm-no-wasm-jit".to_sym
+// FIXME: SIMD requires the JIT because IPInt does not interpret it; unskip once IPInt supports SIMD.
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from '../assert.js';
 

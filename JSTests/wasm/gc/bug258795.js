@@ -1,5 +1,8 @@
 //@ skip if !$isSIMDPlatform
 //@ requireOptions("--useWasmSIMD=1")
+//@ $skipModes << "wasm-no-jit".to_sym
+//@ $skipModes << "wasm-no-wasm-jit".to_sym
+// FIXME: SIMD requires the JIT because IPInt does not interpret it; unskip once IPInt supports SIMD.
 
 function module(bytes, valid = true) {
   let buffer = new ArrayBuffer(bytes.length);

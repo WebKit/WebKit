@@ -1,5 +1,8 @@
 //@ requireOptions("--useWasmSIMD=1", "--useBBQJIT=1", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0")
 //@ skip if !$isSIMDPlatform or $memoryLimited
+//@ $skipModes << "wasm-no-jit".to_sym
+//@ $skipModes << "wasm-no-wasm-jit".to_sym
+// FIXME: SIMD requires the JIT because IPInt does not interpret it; unskip once IPInt supports SIMD.
 import * as assert from "../assert.js"
 
 function instantiate(filename, importObject) {
