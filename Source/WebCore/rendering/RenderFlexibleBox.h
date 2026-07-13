@@ -313,10 +313,6 @@ private:
     LayoutUnit adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(const RenderBox& flexItem, LayoutUnit flexItemSize);
     FlexBaseAndHypotheticalMainSize flexBaseAndHypotheticalMainSize(RenderBox&);
     
-    void freezeInflexibleItems(FlexSign, std::span<FlexLayoutItem>, std::span<const FlexBaseAndHypotheticalMainSize> lineSizing, std::span<LayoutUnit> mainSizes, Vector<bool>& frozen, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
-    bool resolveFlexibleLengths(FlexSign, std::span<FlexLayoutItem>, std::span<const FlexBaseAndHypotheticalMainSize> lineSizing, std::span<LayoutUnit> mainSizes, Vector<bool>& frozen, LayoutUnit initialFreeSpace, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
-    void freezeViolations(Vector<size_t, 4>&, std::span<FlexLayoutItem>, std::span<const FlexBaseAndHypotheticalMainSize> lineSizing, std::span<LayoutUnit> mainSizes, Vector<bool>& frozen, LayoutUnit& availableFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
-    
     void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& flexItem);
     void setOverridingMainSizeForFlexItem(RenderBox&, LayoutUnit);
     void prepareFlexItemForPositionedLayout(RenderBox& flexItem);
