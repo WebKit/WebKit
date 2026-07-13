@@ -52,17 +52,17 @@ template<>
 void JSRopeString::RopeBuilder<RecordOverflow>::expand()
 {
     RELEASE_ASSERT(!this->hasOverflowed());
-    ASSERT(m_strings.size() == JSRopeString::s_maxInternalRopeLength);
+    ASSERT(m_index == JSRopeString::s_maxInternalRopeLength);
     static_assert(3 == JSRopeString::s_maxInternalRopeLength);
     ASSERT(m_length);
-    ASSERT(asString(m_strings.at(0))->length());
-    ASSERT(asString(m_strings.at(1))->length());
-    ASSERT(asString(m_strings.at(2))->length());
+    ASSERT(m_strings[0]->length());
+    ASSERT(m_strings[1]->length());
+    ASSERT(m_strings[2]->length());
 
-    JSString* string = JSRopeString::create(m_vm, asString(m_strings.at(0)), asString(m_strings.at(1)), asString(m_strings.at(2)));
+    JSString* string = JSRopeString::create(m_vm, m_strings[0], m_strings[1], m_strings[2]);
     ASSERT(string->length() == m_length);
-    m_strings.clear();
-    m_strings.append(string);
+    m_strings[0] = string;
+    m_index = 1;
 }
 
 void JSString::dumpToStream(const JSCell* cell, PrintStream& out)

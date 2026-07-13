@@ -21,7 +21,9 @@
 #include "config.h"
 #include "StringConstructor.h"
 
+#include "JSArrayInlines.h"
 #include "JSCInlines.h"
+#include "SparseArrayValueMap.h"
 #include "StringPrototype.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -29,6 +31,7 @@ namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(stringFromCharCode);
 static JSC_DECLARE_HOST_FUNCTION(stringFromCodePoint);
+static JSC_DECLARE_HOST_FUNCTION(stringRaw);
 
 }
 
@@ -42,7 +45,7 @@ const ClassInfo StringConstructor::s_info = { "Function"_s, &Base::s_info, &stri
 @begin stringConstructorTable
   fromCharCode          stringFromCharCode         DontEnum|Function 1 FromCharCodeIntrinsic
   fromCodePoint         stringFromCodePoint        DontEnum|Function 1 FromCodePointIntrinsic
-  raw                   JSBuiltin                  DontEnum|Function 1
+  raw                   stringRaw                  DontEnum|Function 1
 @end
 */
 
@@ -160,6 +163,123 @@ JSString* stringFromCodePoint(JSGlobalObject* globalObject, int32_t arg)
 
     char16_t buffer[2] = { U16_LEAD(codePoint), U16_TRAIL(codePoint) };
     return jsNontrivialString(vm, String({ buffer, 2 }));
+}
+
+// https://tc39.es/ecma262/#sec-string.raw
+JSC_DEFINE_HOST_FUNCTION(stringRaw, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue templateValue = callFrame->argument(0);
+    if (templateValue.isUndefinedOrNull()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "String.raw requires template not be null or undefined"_s);
+
+    JSObject* cooked = templateValue.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    JSValue rawValue = cooked->getDirect(vm, vm.propertyNames->raw);
+    if (!rawValue || rawValue.isGetterSetter() || rawValue.isCustomGetterSetter()) [[unlikely]] {
+        rawValue = cooked->get(globalObject, vm.propertyNames->raw);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    if (rawValue.isUndefinedOrNull()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "String.raw requires template.raw not be null or undefined"_s);
+
+    JSObject* raw = rawValue.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    uint64_t literalCount = toLength(globalObject, raw);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (!literalCount)
+        return JSValue::encode(jsEmptyString(vm));
+
+    unsigned argumentCount = callFrame->argumentCount();
+    unsigned substitutionCount = argumentCount ? argumentCount - 1 : 0;
+
+    JSArray* rawArray = isJSArray(raw) ? asArray(raw) : nullptr;
+    JSRopeString::RopeBuilder<RecordOverflow> ropeBuilder(vm);
+    for (uint64_t index = 0; ; ++index) {
+        JSValue segment;
+        if (rawArray) [[likely]] {
+            Butterfly* butterfly = rawArray->butterfly();
+            switch (rawArray->indexingType()) {
+            case ALL_INT32_INDEXING_TYPES:
+                if (index < butterfly->publicLength()) {
+                    JSValue value = butterfly->contiguous().at(rawArray, index).get();
+                    if (value) [[likely]]
+                        segment = jsString(vm, vm.numericStrings.add(value.asInt32()));
+                }
+                break;
+            case ALL_DOUBLE_INDEXING_TYPES:
+                if (index < butterfly->publicLength()) {
+                    double value = butterfly->contiguousDouble().at(rawArray, index);
+                    if (value == value) [[likely]]
+                        segment = jsString(vm, vm.numericStrings.add(value));
+                }
+                break;
+            case ALL_CONTIGUOUS_INDEXING_TYPES:
+                if (index < butterfly->publicLength())
+                    segment = butterfly->contiguous().at(rawArray, index).get();
+                break;
+
+            case ALL_ARRAY_STORAGE_INDEXING_TYPES: [[likely]] {
+                // This is the hot case because String.raw is used with tagged-templates,
+                // and its template callsite object is a frozen array.
+                ArrayStorage* storage = butterfly->arrayStorage();
+                if (index < storage->length()) {
+                    JSValue value;
+                    if (index < storage->vectorLength()) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+                        value = storage->m_vector[index].get();
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+                    } else if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
+                        auto it = map->find(index);
+                        if (it != map->notFound()) {
+                            JSValue candidate = it->get();
+                            if (!candidate.isGetterSetter() && !candidate.isCustomGetterSetter()) [[likely]]
+                                value = candidate;
+                        }
+                    }
+                    segment = value;
+                }
+                break;
+            }
+            default:
+                break;
+            }
+        }
+
+        if (!segment) [[unlikely]] {
+            segment = raw->get(globalObject, index);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+
+        JSString* segmentString;
+        if (segment.isString()) [[likely]]
+            segmentString = asString(segment);
+        else {
+            segmentString = segment.toString(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+
+        if (!ropeBuilder.append(segmentString)) [[unlikely]]
+            return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
+
+        if (index + 1 == literalCount)
+            break;
+
+        if (index < substitutionCount) {
+            JSString* substitution = callFrame->uncheckedArgument(index + 1).toString(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+
+            if (!ropeBuilder.append(substitution)) [[unlikely]]
+                return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
+        }
+    }
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(ropeBuilder.release()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(constructWithStringConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
