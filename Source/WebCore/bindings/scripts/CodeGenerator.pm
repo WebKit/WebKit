@@ -568,7 +568,7 @@ sub ForAllParents
             my $parentInterface = $object->ParseInterface($outerInterface, $interfaceName);
 
             if ($beforeRecursion) {
-                &$beforeRecursion($parentInterface) eq 'prune' and next;
+                &$beforeRecursion($parentInterface) eq 'prune' and return;
             }
             &$recurse($outerInterface, $parentInterface);
             &$afterRecursion($parentInterface) if $afterRecursion;
