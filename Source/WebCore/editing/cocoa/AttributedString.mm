@@ -62,7 +62,7 @@ using IdentifierToTableMap = HashMap<AttributedStringTextTableID, RetainPtr<NSTe
 using IdentifierToTableBlockMap = HashMap<AttributedStringTextTableBlockID, RetainPtr<NSTextTableBlock>>;
 using IdentifierToListMap = HashMap<AttributedStringTextListID, RetainPtr<NSTextList>>;
 
-using NSFontToInstalledFontCache = HashMap<CTFontRef, std::unique_ptr<InstalledFont>>;
+using NSFontToInstalledFontCache = HashMap<RetainPtr<CTFontRef>, std::unique_ptr<InstalledFont>, WTF::RetainPtrObjectHash<CTFontRef>, WTF::RetainPtrObjectHashTraits<CTFontRef>>;
 using InstalledFontToCTFontCache = HashMap<String, RetainPtr<CTFontRef>>;
 
 static unsigned s_encodeFontCacheMisses;
@@ -838,14 +838,14 @@ static std::optional<AttributedString::AttributeValue> extractValue(id value, Ta
     }
     if ([value isKindOfClass:PlatformFontClass]) {
         RetainPtr ctFont = bridge_cast((PlatformFont *)value);
-        if (auto it = fontCache.find(ctFont.get()); it != fontCache.end())
+        if (auto it = fontCache.find(ctFont); it != fontCache.end())
             return AttributedString::AttributeValue { *it->value };
         ++s_encodeFontCacheMisses;
         auto installedFont = Font::create(FontPlatformData(ctFont.get(), [(PlatformFont *)value pointSize]))->toSerializableInstalledFont();
         if (!installedFont)
             return std::nullopt;
         AttributedString::AttributeValue result { *installedFont };
-        fontCache.set(ctFont.get(), makeUniqueWithoutFastMallocCheck<InstalledFont>(WTF::move(*installedFont)));
+        fontCache.set(ctFont, makeUniqueWithoutFastMallocCheck<InstalledFont>(WTF::move(*installedFont)));
         return result;
     }
     if ([value isKindOfClass:PlatformColorClass])
