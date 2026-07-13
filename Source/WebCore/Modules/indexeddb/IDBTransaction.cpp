@@ -161,20 +161,13 @@ ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(const String& objec
     if (RefPtr store = m_referencedObjectStores.get(objectStoreName))
         return store.releaseNonNull();
 
-    bool found = false;
-    for (auto& objectStore : m_info.objectStores()) {
-        if (objectStore == objectStoreName) {
-            found = true;
-            break;
-        }
-    }
-
     auto* info = m_database->info().infoForExistingObjectStore(objectStoreName);
     if (!info)
         return Exception { ExceptionCode::NotFoundError, "Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found."_s };
 
     // Version change transactions are scoped to every object store in the database.
-    if (!info || (!found && !isVersionChange()))
+    bool found = m_info.objectStores().contains(objectStoreName);
+    if (!found && !isVersionChange())
         return Exception { ExceptionCode::NotFoundError, "Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found."_s };
 
     auto objectStore = IDBObjectStore::create(*protect(scriptExecutionContext()), *info, *this);
