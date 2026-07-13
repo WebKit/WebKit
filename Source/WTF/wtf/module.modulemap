@@ -52,6 +52,12 @@ module wtf [system] {
     explicit module Core {
         umbrella "."
 
+        exclude header "DequeInstantiations.h"
+        exclude header "HashMapInstantiations.h"
+        exclude header "HashSetInstantiations.h"
+        exclude header "RangeInstantiations.h"
+        exclude header "VectorInstantiations.h"
+
         requires cplusplus
 
         explicit module * {

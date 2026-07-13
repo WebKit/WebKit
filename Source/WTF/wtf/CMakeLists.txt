@@ -83,6 +83,7 @@ set(WTF_PUBLIC_HEADERS
     DebugUtilities.h
     DeferrableRefCounted.h
     Deque.h
+    DequeInstantiations.h
     Dominators.h
     DoublyLinkedList.h
     EmbeddedFixedVector.h
@@ -127,8 +128,10 @@ set(WTF_PUBLIC_HEADERS
     HashFunctions.h
     HashIterators.h
     HashMap.h
+    HashMapInstantiations.h
     HashMethod.h
     HashSet.h
+    HashSetInstantiations.h
     HashTable.h
     HashTraits.h
     Hasher.h
@@ -263,6 +266,7 @@ set(WTF_PUBLIC_HEADERS
     RAMSize.h
     RandomDevice.h
     Range.h
+    RangeInstantiations.h
     RangeAdaptors.h
     RangeSet.h
     RawHex.h
@@ -408,6 +412,7 @@ set(WTF_PUBLIC_HEADERS
     VariantList.h
     VariantListOperations.h
     Vector.h
+    VectorInstantiations.h
     VectorTraits.h
     WTFConfig.h
     WTFProcess.h
@@ -502,6 +507,7 @@ set(WTF_PUBLIC_HEADERS
     text/StringConcatenate.h
     text/StringConcatenateNumbers.h
     text/StringHash.h
+    text/StringHashSet.h
     text/StringHasher.h
     text/StringHasherInlines.h
     text/SuperFastHash.h
@@ -562,6 +568,7 @@ set(WTF_SOURCES
     CurrentTime.cpp
     DataLog.cpp
     DateMath.cpp
+    Deque.cpp
     DebugHeap.cpp
     EmbeddedFixedVector.cpp
     FastBitVector.cpp
@@ -604,6 +611,7 @@ set(WTF_SOURCES
     PrintStream.cpp
     ProcessPrivilege.cpp
     RAMSize.cpp
+    Range.cpp
     RandomDevice.cpp
     ReadWriteLock.cpp
     RefCountDebugger.cpp
