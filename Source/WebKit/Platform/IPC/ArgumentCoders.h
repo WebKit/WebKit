@@ -67,7 +67,12 @@ template<typename T, size_t Extent> struct ArgumentCoder<std::span<T, Extent>> {
     template<typename Decoder>
     static std::optional<std::span<T, Extent>> decode(Decoder& decoder)
     {
-        return decoder.template decode<UnsafeSpan<std::remove_const_t<T>, Extent>>().transform([](auto&& span) { return span.span(); });
+        auto span = decoder.template decode<UnsafeSpan<std::remove_const_t<T>, Extent>>();
+        if (!span)
+            return std::nullopt;
+        if (decoder.isStream())
+            return decoder.copySpanIntoOwnedStorage(span->span());
+        return span->span();
     }
 };
 
@@ -128,7 +133,18 @@ struct ArgumentCoder<ArrayReferenceTuple<Types...>> {
     template<typename Decoder>
     static std::optional<ArrayReferenceTuple<Types...>> decode(Decoder& decoder)
     {
-        return decoder.template decode<UnsafeArrayReferenceTuple<Types...>>().transform([](auto&& arrayReference) { return arrayReference.tuple(); });
+        return decode(decoder, std::index_sequence_for<Types...> { });
+    }
+
+    template<typename Decoder, size_t... Indices>
+    static std::optional<ArrayReferenceTuple<Types...>> decode(Decoder& decoder, std::index_sequence<Indices...>)
+    {
+        auto arrayReference = decoder.template decode<UnsafeArrayReferenceTuple<Types...>>();
+        if (!arrayReference)
+            return std::nullopt;
+        if (decoder.isStream())
+            return ArrayReferenceTuple<Types...> { decoder.copySpanIntoOwnedStorage(arrayReference->template span<Indices>()).data()..., arrayReference->size() };
+        return arrayReference->tuple();
     }
 };
 
@@ -540,10 +556,19 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
     template<typename Decoder>
     static std::optional<Vector<T, inlineCapacity, OverflowHandler, minCapacity>> decode(Decoder& decoder)
     {
-        auto data = decoder.template decode<std::span<const T>>();
-        if (!data)
+        auto decodedSize = decoder.template decode<uint64_t>();
+        if (!decodedSize)
             return std::nullopt;
-        return std::make_optional<Vector<T, inlineCapacity, OverflowHandler, minCapacity>>(*data);
+        if (!*decodedSize)
+            return std::make_optional<Vector<T, inlineCapacity, OverflowHandler, minCapacity>>();
+
+        if (*decodedSize > std::numeric_limits<size_t>::max())
+            return std::nullopt;
+
+        auto data = decoder.template decodeSpan<T>(*decodedSize);
+        if (!data.data() || data.size() != *decodedSize)
+            return std::nullopt;
+        return std::make_optional<Vector<T, inlineCapacity, OverflowHandler, minCapacity>>(data);
     }
 };
 
@@ -601,10 +626,19 @@ template<typename T> struct FixedVectorArgumentCoder<true, T> {
     template<typename Decoder>
     static std::optional<FixedVector<T>> decode(Decoder& decoder)
     {
-        auto data = decoder.template decode<std::span<const T>>();
-        if (!data)
+        auto decodedSize = decoder.template decode<uint64_t>();
+        if (!decodedSize)
             return std::nullopt;
-        return std::make_optional<FixedVector<T>>(*data);
+        if (!*decodedSize)
+            return std::make_optional<FixedVector<T>>();
+
+        if (*decodedSize > std::numeric_limits<size_t>::max())
+            return std::nullopt;
+
+        auto data = decoder.template decodeSpan<T>(*decodedSize);
+        if (!data.data() || data.size() != *decodedSize)
+            return std::nullopt;
+        return std::make_optional<FixedVector<T>>(data);
     }
 };
 
