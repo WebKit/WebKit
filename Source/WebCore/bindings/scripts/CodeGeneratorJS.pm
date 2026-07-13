@@ -4518,7 +4518,7 @@ sub GenerateRuntimeEnableConditionalString
     }
 
     if ($context->extendedAttributes->{EnabledByQuirk}) {
-        assert("Must specify value for EnabledByQuirk.") if $context->extendedAttributes->{DisabledByQuirk} eq "VALUE_IS_MISSING";
+        assert("Must specify value for EnabledByQuirk.") if $context->extendedAttributes->{EnabledByQuirk} eq "VALUE_IS_MISSING";
 
         AddToImplIncludes("DocumentQuirks.h");
 
