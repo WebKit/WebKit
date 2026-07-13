@@ -82,6 +82,7 @@ static bool isRound(const Corner& corner) { return corner.curvature == 1.0; }
 static bool isScoop(const Corner& corner) { return corner.curvature == -1.0; }
 static bool isBevel(const Corner& corner) { return corner.curvature == 0.0; }
 static bool isNotch(const Corner& corner) { return std::isinf(corner.curvature) && corner.curvature < 0.0; }
+static bool isSquare(const Corner& corner) { return std::isinf(corner.curvature) && corner.curvature > 0.0; }
 static bool isEmpty(const Corner& corner)
 {
     return (corner.outer - corner.start).diagonalLength() < limit
@@ -223,8 +224,10 @@ static Corner adjustCornerForInset(const Corner& original, double startInset, do
     if (isNotch(original)) {
         strokeA = -1;
         strokeB = 1;
+    } else if (isSquare(original)) {
+        strokeB = 1;
     }
-    // TODO: implement inset for squircle, square (§3.9.4.2 hull direction).
+    // TODO: implement inset for squircle (§3.9.4.2 hull direction).
 
     auto offset1 = (original.outer - original.start).directionScaledBy(float(startInset * strokeA));
     auto offset2 = (original.end - original.outer).directionScaledBy(float(startInset * strokeB));
@@ -288,6 +291,12 @@ static void addCurvedCorner(Path& path, const Corner& corner)
     if (isRound(corner)) {
         path.addLineTo(corner.start);
         addEllipticalArc(path, corner);
+        return;
+    }
+    if (isSquare(corner)) {
+        path.addLineTo(corner.start);
+        path.addLineTo(corner.outer);
+        path.addLineTo(corner.end);
         return;
     }
 
