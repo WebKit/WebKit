@@ -267,6 +267,9 @@
     },
     "TestWTF": {
         "subtests": {
+            "WTF_GUniquePtr.Basic": {
+                "expected": {"all@Debug": {"status": ["FAIL"], "bug": "webkit.org/b/319221"}}
+            },
             "ThreadMessage.MultipleSenders": {
                 "expected": {"all": {"slow": true, "bug": "webkit.org/b/246472" }}
             },
