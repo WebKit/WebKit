@@ -46,6 +46,10 @@ static void drawCrossfadeSubimage(GraphicsContext& context, Image& image, Compos
 {
     FloatSize imageSize = image.size();
 
+    // A zero-sized image would produce a non-finite scale below, poisoning the CTM.
+    if (imageSize.isEmpty())
+        return;
+
     // SVGImage resets the opacity when painting, so we have to use transparency layers to accurately paint one at a given opacity.
     bool useTransparencyLayer = image.drawsSVGImage();
 
@@ -93,7 +97,7 @@ ImageDrawResult CrossfadeGeneratedImage::draw(GraphicsContext& context, const Fl
     context.setCompositeOperation(options.compositeOperator(), options.blendMode());
     context.clip(dstRect);
     context.translate(dstRect.location());
-    if (dstRect.size() != srcRect.size())
+    if (dstRect.size() != srcRect.size() && !srcRect.isEmpty())
         context.scale(dstRect.size() / srcRect.size());
     context.translate(-srcRect.location());
     
