@@ -73,7 +73,7 @@ class CommitClassifier(object):
             self.trailers = [CommitClassifier.LineFilter(trailer) for trailer in trailers or []]
             self.paths = [re.compile(r'^{}'.format(path)) for path in (paths or [])]
 
-            if not self.headers and not self.trailers and not self.paths:
+            if not self.headers and not self.trailers and not self.paths and not self.contents:
                 raise ValueError('A CommitClass must not match all commits')
 
             for argument, _ in kwargs.items():
@@ -86,6 +86,16 @@ class CommitClassifier(object):
                 description += '    headers = [\n'
                 for header in self.headers:
                     description += '        {}\n'.format(header)
+                description += '    ]\n'
+            if self.contents:
+                description += '    contents = [\n'
+                for content in self.contents:
+                    description += '        {}\n'.format(content)
+                description += '    ]\n'
+            if self.trailers:
+                description += '    trailers = [\n'
+                for trailer in self.trailers:
+                    description += '        {}\n'.format(trailer)
                 description += '    ]\n'
             if self.paths:
                 description += '    paths = [\n'
@@ -126,7 +136,9 @@ class CommitClassifier(object):
             matches_header = klass.headers and header and any([f(header) for f in klass.headers])
             matches_trailers = klass.trailers and trailers and any([any([f(trailer) for f in klass.trailers]) for trailer in trailers])
             matches_content = klass.contents and contents and any([f(contents) for f in klass.contents])
-            if (matching_header or matching_trailer or matching_content) and not matches_header and not matches_trailers and not matches_content:
+            if (matching_header or matching_trailer) and not matches_header and not matches_trailers:
+                continue
+            if matching_content and not matches_content:
                 continue
 
             if klass.paths and paths_for.value and not all([
