@@ -23,6 +23,7 @@
 
 import json
 import logging
+import os
 import sys
 import time
 
@@ -172,7 +173,8 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         python_interp = sys.executable
 
         wpt_file = self._filesystem.join(self._doc_root_path, "wpt.py")
-        self._start_cmd = [python_interp, wpt_file, "serve", "--config", self._config_filename]
+        # --venv is required whenever --skip-venv-setup is passed, but the path itself is never used.
+        self._start_cmd = [python_interp, wpt_file, "--venv", os.devnull, "--skip-venv-setup", "serve", "--config", self._config_filename]
 
         self._mappings = []
         config = wpt_config_json(port_obj)

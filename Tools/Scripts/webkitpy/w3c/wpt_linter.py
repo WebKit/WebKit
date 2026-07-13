@@ -30,6 +30,8 @@ import os
 import subprocess
 import tempfile
 
+from webkitcorepy import AutoInstall
+
 _log = logging.getLogger(__name__)
 
 
@@ -39,7 +41,9 @@ class WPTLinter(object):
 
     def lint(self, paths=None):
         """Yield each ``./wpt lint --json`` error dict."""
-        cmd = ['./wpt', 'lint', '--json', '--repo-root', '.']
+        AutoInstall.install('yaml')
+        # --venv is required whenever --skip-venv-setup is passed, but the path itself is never used.
+        cmd = ['./wpt', '--venv', os.devnull, '--skip-venv-setup', 'lint', '--json', '--repo-root', '.']
 
         if paths is not None:
             paths_file = None
@@ -58,10 +62,15 @@ class WPTLinter(object):
 
     def _run_lint(self, cmd):
         _log.debug('Running WPT linter: %s (cwd=%s)', ' '.join(cmd), self.wpt_path)
+        env = dict(os.environ)
+        if AutoInstall.directory:
+            env['PYTHONPATH'] = os.pathsep.join(
+                [AutoInstall.directory] + ([env['PYTHONPATH']] if env.get('PYTHONPATH') else []))
         result = subprocess.run(
             cmd,
             cwd=self.wpt_path,
             capture_output=True,
+            env=env,
         )
         for line in result.stdout.splitlines():
             if not line.strip():
