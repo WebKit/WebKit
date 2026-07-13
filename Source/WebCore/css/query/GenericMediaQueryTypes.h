@@ -81,7 +81,7 @@ struct FeatureSchema;
 using Value = Variant<
     CSS::Integer<>,
     CSS::Number<>,
-    CSS::Length<>,
+    CSS::Length<CSS::AllUnzoomed>,
     CSS::Resolution<>,
     CSS::Ratio,
     CSS::Keyword,

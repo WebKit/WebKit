@@ -112,7 +112,7 @@ static std::optional<Value> consumeValue(CSSParserTokenRange& range, const Media
     if (auto value = MetaConsumer<CSS::Number<>>::consume(range, parserState))
         return Value { WTF::move(*value) };
     // FIXME: Figure out and document why overrideParserMode is explicitly set to HTMLStandardMode here.
-    if (auto value = MetaConsumer<CSS::Length<>>::consume(range, parserState, { .overrideParserMode = HTMLStandardMode }))
+    if (auto value = MetaConsumer<CSS::Length<CSS::AllUnzoomed>>::consume(range, parserState, { .overrideParserMode = HTMLStandardMode }))
         return Value { WTF::move(*value) };
     if (auto value = MetaConsumer<CSS::Resolution<>>::consume(range, parserState))
         return Value { WTF::move(*value) };
@@ -296,7 +296,7 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
                         }
                     );
                 }
-                return WTF::holdsAlternative<CSS::Length<>>(*value);
+                return WTF::holdsAlternative<CSS::Length<CSS::AllUnzoomed>>(*value);
 
             case FeatureSchema::ValueType::Resolution:
                 return WTF::holdsAlternative<CSS::Resolution<>>(*value);

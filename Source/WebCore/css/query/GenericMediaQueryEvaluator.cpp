@@ -35,7 +35,7 @@
 namespace WebCore {
 namespace MQ {
 
-static std::optional<LayoutUnit> resolveLength(const Value& value, const CSSToLengthConversionData& conversionData)
+static std::optional<LayoutUnit> resolveLength(const Value& value, const CSSToLengthConversionData& conversionData, Style::ZoomFactor zoom)
 {
     return WTF::switchOn(value,
         [&](const CSS::Integer<>& integer) -> std::optional<LayoutUnit> {
@@ -50,8 +50,8 @@ static std::optional<LayoutUnit> resolveLength(const Value& value, const CSSToLe
                 return 0_lu;
             return { };
         },
-        [&](const CSS::Length<>& length) -> std::optional<LayoutUnit> {
-            return Style::evaluate<LayoutUnit>(Style::toStyle(length, conversionData), Style::ZoomNeeded { });
+        [&](const CSS::Length<CSS::AllUnzoomed>& length) -> std::optional<LayoutUnit> {
+            return Style::evaluate<LayoutUnit>(Style::toStyle(length, conversionData), zoom);
         },
         [](const auto&) -> std::optional<LayoutUnit> {
             return std::nullopt;
@@ -126,17 +126,17 @@ static CSSValueID resolveIdent(const Value& value)
 }
 
 enum class Side : uint8_t { Left, Right };
-static EvaluationResult evaluateLengthComparison(LayoutUnit size, const std::optional<Comparison>& comparison, Side side, const CSSToLengthConversionData& conversionData)
+static EvaluationResult evaluateLengthComparison(LayoutUnit unzoomedSize, const std::optional<Comparison>& comparison, Side side, const CSSToLengthConversionData& conversionData)
 {
     if (!comparison)
         return EvaluationResult::True;
 
-    auto expressionSize = resolveLength(*comparison->value, conversionData);
+    auto expressionSize = resolveLength(*comparison->value, conversionData, Style::ZoomFactor::none());
     if (!expressionSize)
         return EvaluationResult::Unknown;
 
-    auto left = side == Side::Left ? *expressionSize : size;
-    auto right = side == Side::Left ? size : *expressionSize;
+    auto left = side == Side::Left ? *expressionSize : unzoomedSize;
+    auto right = side == Side::Left ? unzoomedSize : *expressionSize;
 
     return toEvaluationResult(compare(comparison->op, left, right));
 };
@@ -180,13 +180,13 @@ static EvaluationResult evaluateResolutionComparison(float resolution, const std
     return toEvaluationResult(compare(comparison->op, left, right));
 };
 
-EvaluationResult evaluateLengthFeature(const Feature& feature, LayoutUnit length, const CSSToLengthConversionData& conversionData)
+EvaluationResult evaluateLengthFeature(const Feature& feature, LayoutUnit unzoomedLength, const CSSToLengthConversionData& conversionData)
 {
     if (!feature.leftComparison && !feature.rightComparison)
-        return toEvaluationResult(!!length);
+        return toEvaluationResult(!!unzoomedLength);
 
-    auto leftResult = evaluateLengthComparison(length, feature.leftComparison, Side::Left, conversionData);
-    auto rightResult = evaluateLengthComparison(length, feature.rightComparison, Side::Right, conversionData);
+    auto leftResult = evaluateLengthComparison(unzoomedLength, feature.leftComparison, Side::Left, conversionData);
+    auto rightResult = evaluateLengthComparison(unzoomedLength, feature.rightComparison, Side::Right, conversionData);
 
     return leftResult & rightResult;
 };

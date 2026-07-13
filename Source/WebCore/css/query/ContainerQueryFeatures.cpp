@@ -51,18 +51,12 @@
 #include "StyleCustomPropertyRegistry.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "StyleZoomPrimitivesInlines.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore::CQ {
 
 using namespace MQ;
-
-static LayoutUnit NODELETE unscaledSizeForPrincipleBox(const Style::PreferredSize& computedSize, LayoutUnit usedSize, UsesSVGZoomRulesForLength usesSVGZoomRulesForLength, float usedZoom)
-{
-    if (usesSVGZoomRulesForLength == UsesSVGZoomRulesForLength::Yes || !computedSize.isFixed())
-        return usedSize;
-    return LayoutUnit { usedSize / usedZoom };
-}
 
 struct SizeFeatureSchema : public FeatureSchema {
     SizeFeatureSchema(const AtomString& name, Type type, ValueType valueType, OptionSet<MediaQueryDynamicDependency> dependencies, FixedVector<CSSValueID>&& valueIdentifiers = { })
@@ -101,10 +95,7 @@ struct WidthFeatureSchema : public SizeFeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        CheckedRef renderStyle = renderer.style();
-        auto usesSVGZoomRulesForLength = renderStyle->useSVGZoomRulesForLength() ? UsesSVGZoomRulesForLength::Yes : UsesSVGZoomRulesForLength::No;
-
-        auto width = unscaledSizeForPrincipleBox(renderStyle->width(), renderer.contentBoxWidth(), usesSVGZoomRulesForLength, renderStyle->usedZoom());
+        auto width = Style::adjustForAbsoluteZoom(renderer.contentBoxWidth(), renderer);
         return evaluateLengthFeature(feature, width, conversionData);
     }
 };
@@ -119,10 +110,7 @@ struct HeightFeatureSchema : public SizeFeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        CheckedRef renderStyle = renderer.style();
-        auto usesSVGZoomRulesForLength = renderStyle->useSVGZoomRulesForLength() ? UsesSVGZoomRulesForLength::Yes : UsesSVGZoomRulesForLength::No;
-
-        auto height = unscaledSizeForPrincipleBox(renderStyle->height(), renderer.contentBoxHeight(), usesSVGZoomRulesForLength, renderStyle->usedZoom());
+        auto height = Style::adjustForAbsoluteZoom(renderer.contentBoxHeight(), renderer);
         return evaluateLengthFeature(feature, height, conversionData);
     }
 };
@@ -137,10 +125,7 @@ struct InlineSizeFeatureSchema : public SizeFeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        CheckedRef renderStyle = renderer.style();
-        auto usesSVGZoomRulesForLength = renderStyle->useSVGZoomRulesForLength() ? UsesSVGZoomRulesForLength::Yes : UsesSVGZoomRulesForLength::No;
-
-        auto logicalWidth = unscaledSizeForPrincipleBox(renderStyle->logicalWidth(), renderer.contentBoxLogicalWidth(), usesSVGZoomRulesForLength, renderStyle->usedZoom());
+        auto logicalWidth = Style::adjustForAbsoluteZoom(renderer.contentBoxLogicalWidth(), renderer);
         return evaluateLengthFeature(feature, logicalWidth, conversionData);
     }
 };
@@ -155,10 +140,7 @@ struct BlockSizeFeatureSchema : public SizeFeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        CheckedRef renderStyle = renderer.style();
-        auto usesSVGZoomRulesForLength = renderStyle->useSVGZoomRulesForLength() ? UsesSVGZoomRulesForLength::Yes : UsesSVGZoomRulesForLength::No;
-
-        auto logicalHeight = unscaledSizeForPrincipleBox(renderStyle->logicalHeight(), renderer.contentBoxLogicalHeight(), usesSVGZoomRulesForLength, renderStyle->usedZoom());
+        auto logicalHeight = Style::adjustForAbsoluteZoom(renderer.contentBoxLogicalHeight(), renderer);
         return evaluateLengthFeature(feature, logicalHeight, conversionData);
     }
 };
@@ -204,7 +186,7 @@ struct StyleRangeValue {
 // Evaluates the (already substituted) computed value of a <style-range-value> into one of
 // <number>, <length>, <percentage>, <angle>, <time>, <frequency> or <resolution>, computed
 // with respect to the query container. Returns nullopt if it doesn't parse as a single value.
-static std::optional<StyleRangeValue> evaluateStyleRangeValue(const Vector<CSSParserToken>& tokens, const FeatureEvaluationContext& context)
+static std::optional<StyleRangeValue> evaluateStyleRangeValue(const Vector<CSSParserToken>& tokens, const FeatureEvaluationContext& context, const Style::ComputedStyle& style)
 {
     using namespace CSSPropertyParserHelpers;
 
@@ -231,9 +213,9 @@ static std::optional<StyleRangeValue> evaluateStyleRangeValue(const Vector<CSSPa
     }
     // overrideParserMode matches MQ::consumeValue's <length> parsing so quirky/quirks-mode lengths behave
     // identically here. See the FIXME there.
-    if (auto subrange = range; auto value = MetaConsumer<CSS::Length<>>::consume(subrange, parserState, { .overrideParserMode = HTMLStandardMode })) {
+    if (auto subrange = range; auto value = MetaConsumer<CSS::Length<CSS::AllUnzoomed>>::consume(subrange, parserState, { .overrideParserMode = HTMLStandardMode })) {
         if (isFullyConsumed(subrange))
-            return StyleRangeValue { StyleRangeCategory::Length, Style::evaluate<double>(Style::toStyle(*value, conversionData), Style::ZoomNeeded { }) };
+            return StyleRangeValue { StyleRangeCategory::Length, Style::evaluate<double>(Style::toStyle(*value, conversionData), style.usedZoomForLength()) };
     }
     if (auto subrange = range; auto value = MetaConsumer<CSS::Percentage<>>::consume(subrange, parserState)) {
         if (isFullyConsumed(subrange))
@@ -380,7 +362,7 @@ struct StyleFeatureSchema : public FeatureSchema {
             }
             if (!customProperty || customProperty->isGuaranteedInvalid())
                 return { };
-            return evaluateStyleRangeValue(customProperty->tokens(), context);
+            return evaluateStyleRangeValue(customProperty->tokens(), context, style);
         };
 
         auto center = resolveOperand(feature.subject, feature.name);
