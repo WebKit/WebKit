@@ -266,7 +266,7 @@ void RunLoop::TimerBase::stop()
     // tearing it down from another thread races with the in-flight callback and risks a use-after-free.
     // (Starting a timer cross-thread is safe and supported -- that is how dispatch()/dispatchAfter()
     // schedule work onto another run loop.)
-    assertIsCurrent(m_runLoop);
+    releaseAssertIsCurrent(m_runLoop);
     m_isActive = false;
     m_nextFireDate = MonotonicTime::infinity();
 

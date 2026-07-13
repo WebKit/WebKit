@@ -313,7 +313,7 @@ RunLoop::TimerBase::~TimerBase()
     // (Starting a timer cross-thread is safe and supported -- that is how dispatch()/dispatchAfter()
     // schedule work onto another run loop.)
     if (m_scheduledTask->isActive())
-        assertIsCurrent(m_runLoop);
+        releaseAssertIsCurrent(m_runLoop);
     Locker locker { m_runLoop->m_loopLock };
     stopWithLock();
 }
@@ -337,7 +337,7 @@ void RunLoop::TimerBase::stop()
 {
     Locker locker { m_runLoop->m_loopLock };
     if (m_scheduledTask->isActive())
-        assertIsCurrent(m_runLoop);
+        releaseAssertIsCurrent(m_runLoop);
     stopWithLock();
 }
 

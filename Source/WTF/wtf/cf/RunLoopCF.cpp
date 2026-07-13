@@ -154,7 +154,7 @@ void RunLoop::TimerBase::stop()
     // from another thread races with the in-flight callback and can leave it reading freed memory.
     // (Starting a timer cross-thread is safe and supported -- that is how dispatch()/dispatchAfter()
     // schedule work onto another run loop.)
-    assertIsCurrent(m_runLoop);
+    releaseAssertIsCurrent(m_runLoop);
     CFRunLoopTimerInvalidate(m_timer.get());
     m_timer = nullptr;
 }

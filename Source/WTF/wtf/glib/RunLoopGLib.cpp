@@ -341,7 +341,7 @@ RunLoop::TimerBase::~TimerBase()
     // (Starting a timer cross-thread is safe and supported -- that is how dispatch()/dispatchAfter()
     // schedule work onto another run loop.)
     if (isActive())
-        assertIsCurrent(m_runLoop);
+        releaseAssertIsCurrent(m_runLoop);
     g_source_destroy(m_source.get());
 }
 
@@ -386,7 +386,7 @@ void RunLoop::TimerBase::start(Seconds interval, bool repeat)
 void RunLoop::TimerBase::stop()
 {
     if (isActive())
-        assertIsCurrent(m_runLoop);
+        releaseAssertIsCurrent(m_runLoop);
     g_source_set_ready_time(m_source.get(), -1);
     m_interval = { };
     m_isRepeating = false;

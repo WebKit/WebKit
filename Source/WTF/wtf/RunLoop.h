@@ -414,8 +414,17 @@ inline void assertIsCurrent(const RunLoop& runLoop) WTF_ASSERTS_ACQUIRED_CAPABIL
     ASSERT_WITH_SECURITY_IMPLICATION(runLoop.isCurrent());
 }
 
+// Like assertIsCurrent(), but enforced in release builds too. Used by RunLoop::Timer::stop() and the
+// destructor, where running off the run loop's thread while the timer is active is a cross-thread
+// use-after-free, so it must crash even when debug assertions are disabled.
+inline void releaseAssertIsCurrent(const RunLoop& runLoop) WTF_ASSERTS_ACQUIRED_CAPABILITY(runLoop)
+{
+    RELEASE_ASSERT(runLoop.isCurrent());
+}
+
 } // namespace WTF
 
 using WTF::RunLoop;
 using WTF::RunLoopMode;
 using WTF::assertIsCurrent;
+using WTF::releaseAssertIsCurrent;
