@@ -354,7 +354,7 @@ sub MergeExtendedAttributesFromSupplemental
         # Handle case that the attribute already has a extented attribute with this key.
         if ($property->extendedAttributes->{$extendedAttributeName}) {
             if (!$idlAttributes->{$extendedAttributeName}->{"supportsConjunction"}) {
-                die "Duplicate non-mergeable extended attribute ($extendedAttributeName) found when merging extended attributes for ${property->name}";
+                die "Duplicate non-mergeable extended attribute ($extendedAttributeName) found when merging extended attributes for " . $property->name;
             }
             $property->extendedAttributes->{$extendedAttributeName} = $property->extendedAttributes->{$extendedAttributeName} . "&" . $supplementalExtendedAttributes->{$extendedAttributeName};
         } else {
