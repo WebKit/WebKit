@@ -1,0 +1,9 @@
+This test ensures VoiceOver's focused-element query resolves cross-frame to a text input focused inside an in-process (local) iframe. It is a regression test for accessibilityFocusedUIElement returning nothing when focus is inside a local frame.
+
+PASS: focus.domIdentifier === 'cvv'
+PASS: focus.role === 'AXRole: AXTextField'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

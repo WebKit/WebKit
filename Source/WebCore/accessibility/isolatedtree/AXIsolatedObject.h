@@ -349,10 +349,7 @@ private:
     {
         return tree().focusedNode().unsafeGet();
     }
-    AXIsolatedObject* focusedUIElementInAnyLocalFrame() const final
-    {
-        return tree().focusedNode().unsafeGet();
-    }
+    AXIsolatedObject* focusedUIElementInAnyLocalFrame() const final;
     AXIsolatedObject* internalLinkElement() const final { return objectAttributeValue(AXProperty::InternalLinkElement); }
     AccessibilityChildrenVector radioButtonGroup() const final { return tree().objectsForIDs(vectorAttributeValue<AXID>(AXProperty::RadioButtonGroupMembers)); }
     AXIsolatedObject* scrollBar(AccessibilityOrientation) final;
