@@ -328,7 +328,7 @@ void WTFReportBacktraceWithPrefixAndStackDepth(const char* prefix, int framesToS
     WTFGetBacktrace(samples.mutableSpan().data(), &frames);
     CrashLogPrintStream out;
     if (frames > kDefaultFramesToSkip)
-        WTFPrintBacktraceWithPrefixAndPrintStream(out, samples.subspan(kDefaultFramesToSkip, framesToShow), prefix);
+        WTFPrintBacktraceWithPrefixAndPrintStream(out, samples.subspan(kDefaultFramesToSkip, frames - kDefaultFramesToSkip), prefix);
     else
         out.print("%sno stacktrace available", prefix);
 }
