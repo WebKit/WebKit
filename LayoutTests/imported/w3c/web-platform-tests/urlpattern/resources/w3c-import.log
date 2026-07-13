@@ -10,12 +10,11 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/urlpattern/resources/urlpattern-compare-test-data.json
 /LayoutTests/imported/w3c/web-platform-tests/urlpattern/resources/urlpattern-compare-tests.tentative.js
+/LayoutTests/imported/w3c/web-platform-tests/urlpattern/resources/urlpattern-generate-test-data.json
 /LayoutTests/imported/w3c/web-platform-tests/urlpattern/resources/urlpattern-hasregexpgroups-tests.js
 /LayoutTests/imported/w3c/web-platform-tests/urlpattern/resources/urlpatterntestdata.json
 /LayoutTests/imported/w3c/web-platform-tests/urlpattern/resources/urlpatterntests.js

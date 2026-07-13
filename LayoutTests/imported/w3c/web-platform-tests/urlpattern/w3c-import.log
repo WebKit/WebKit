@@ -10,13 +10,16 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/urlpattern/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/urlpattern/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/urlpattern/urlpattern-compare.tentative.any.js
 /LayoutTests/imported/w3c/web-platform-tests/urlpattern/urlpattern-compare.tentative.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/urlpattern/urlpattern-constructor.any.js
+/LayoutTests/imported/w3c/web-platform-tests/urlpattern/urlpattern-detached-frame-regexp.html
+/LayoutTests/imported/w3c/web-platform-tests/urlpattern/urlpattern-empty-regexp-group.html
+/LayoutTests/imported/w3c/web-platform-tests/urlpattern/urlpattern-generate.tentative.any.js
 /LayoutTests/imported/w3c/web-platform-tests/urlpattern/urlpattern-hasregexpgroups.any.js
 /LayoutTests/imported/w3c/web-platform-tests/urlpattern/urlpattern.any.js
 /LayoutTests/imported/w3c/web-platform-tests/urlpattern/urlpattern.https.any.js

@@ -1,0 +1,22 @@
+
+PASS Loading data...
+PASS Pattern: {"pathname":"/foo"} Component: invalid Groups: {}
+FAIL Pattern: {"pathname":"/foo"} Component: pathname Groups: {} pattern.generate is not a function. (In 'pattern.generate(entry.component, entry.groups)', 'pattern.generate' is undefined)
+FAIL Pattern: {"pathname":"/:foo"} Component: pathname Groups: {"foo":"bar"} pattern.generate is not a function. (In 'pattern.generate(entry.component, entry.groups)', 'pattern.generate' is undefined)
+FAIL Pattern: {"pathname":"/:foo"} Component: pathname Groups: {"foo":"🍅"} pattern.generate is not a function. (In 'pattern.generate(entry.component, entry.groups)', 'pattern.generate' is undefined)
+FAIL Pattern: {"hostname":"{:foo}.example.com"} Component: hostname Groups: {"foo":"🍅"} pattern.generate is not a function. (In 'pattern.generate(entry.component, entry.groups)', 'pattern.generate' is undefined)
+PASS Pattern: {"pathname":"/:foo"} Component: pathname Groups: {}
+FAIL Pattern: {"pathname":"/foo/:bar"} Component: pathname Groups: {"bar":"baz"} pattern.generate is not a function. (In 'pattern.generate(entry.component, entry.groups)', 'pattern.generate' is undefined)
+FAIL Pattern: {"pathname":"/foo:bar"} Component: pathname Groups: {"bar":"baz"} pattern.generate is not a function. (In 'pattern.generate(entry.component, entry.groups)', 'pattern.generate' is undefined)
+FAIL Pattern: {"pathname":"/:foo/:bar"} Component: pathname Groups: {"foo":"baz","bar":"qux"} pattern.generate is not a function. (In 'pattern.generate(entry.component, entry.groups)', 'pattern.generate' is undefined)
+FAIL Pattern: "https://example.com/:foo" Component: pathname Groups: {"foo":" "} pattern.generate is not a function. (In 'pattern.generate(entry.component, entry.groups)', 'pattern.generate' is undefined)
+FAIL Pattern: "original-scheme://example.com/:foo" Component: pathname Groups: {"foo":" "} pattern.generate is not a function. (In 'pattern.generate(entry.component, entry.groups)', 'pattern.generate' is undefined)
+PASS Pattern: {"pathname":"/:foo"} Component: pathname Groups: {"foo":"bar/baz"}
+PASS Pattern: {"pathname":"*"} Component: pathname Groups: {}
+PASS Pattern: {"pathname":"/{foo}+"} Component: pathname Groups: {}
+PASS Pattern: {"pathname":"/{foo}?"} Component: pathname Groups: {}
+PASS Pattern: {"pathname":"/{foo}*"} Component: pathname Groups: {}
+PASS Pattern: {"pathname":"/(regexp)"} Component: pathname Groups: {}
+PASS Pattern: {"pathname":"/([^\\/]+?)"} Component: pathname Groups: {}
+PASS Pattern: {"port":"([^\\:]+?)"} Component: port Groups: {}
+
