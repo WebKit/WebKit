@@ -41,6 +41,18 @@ module WebKit_Internal [system] {
         export *
     }
 
+    module InteractionInformationRequest {
+        requires cplusplus20
+        header "../../Shared/Cocoa/InteractionInformationRequest.h"
+        export *
+    }
+
+    module InteractionInformationAtPosition {
+        requires cplusplus20
+        header "../../Shared/Cocoa/InteractionInformationAtPosition.h"
+        export *
+    }
+
     module HistoryClient {
         requires cplusplus20
         header "../../UIProcess/API/APIHistoryClient.h"

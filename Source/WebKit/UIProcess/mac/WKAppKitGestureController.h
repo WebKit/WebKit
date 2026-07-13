@@ -30,6 +30,7 @@
 #if HAVE(APPKIT_GESTURES_SUPPORT)
 
 #import <AppKit/NSGestureRecognizer.h>
+#import <AppKit/NSGestureRecognizer_Private.h>
 #import <wtf/Forward.h>
 #import <wtf/ObjectIdentifier.h>
 #import <wtf/Vector.h>
@@ -57,7 +58,7 @@ OBJC_CLASS WKWebView;
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 NS_SWIFT_UI_ACTOR
-@interface WKAppKitGestureController : NSObject <NSGestureRecognizerDelegate>
+@interface WKAppKitGestureController : NSObject
 
 - (instancetype)initWithPage:(std::reference_wrapper<WebKit::WebPageProxy>)page viewImpl:(std::reference_wrapper<WebKit::WebViewImpl>)viewImpl;
 - (void)enableGesturesIfNeeded;
@@ -89,9 +90,23 @@ NS_SWIFT_UI_ACTOR
 
 // Exposed for Swift
 @property (nonatomic, readonly, nullable) WKWebView *webView;
+@property (nonatomic, readonly) BOOL hasValidPositionInformation;
+@property (nonatomic, readonly) BOOL caughtDeceleratingScroll;
+@property (nonatomic, readonly) WebKit::InteractionInformationAtPosition positionInformation;
 @property (nonatomic, strong, nullable) NSPanGestureRecognizer *panGestureRecognizer;
+@property (nonatomic, strong, nullable) NSPressGestureRecognizer *singleClickGestureRecognizer;
+@property (nonatomic, strong, nullable) NSPressGestureRecognizer *mouseTrackingGestureRecognizer;
+@property (nonatomic, strong, nullable) NSPressGestureRecognizer *dragPressGestureRecognizer;
+@property (nonatomic, strong, nullable) NSPressGestureRecognizer *secondaryClickGestureRecognizer;
+@property (nonatomic, strong, nullable) NSClickGestureRecognizer *doubleClickGestureRecognizer;
 - (void)configureForScrolling:(NSPanGestureRecognizer *)gesture;
 - (void)panGestureRecognized:(NSGestureRecognizer *)gesture;
+- (BOOL)panGestureRecognizerCanScroll;
+- (void)_invalidateCurrentPositionInformation;
+
+@end
+
+@interface WKAppKitGestureController (NSGestureRecognizerDelegate) <NSGestureRecognizerDelegatePrivate>
 
 @end
 

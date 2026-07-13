@@ -212,15 +212,38 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     return webView.getAutoreleased();
 }
 
-- (NSPanGestureRecognizer *)panGestureRecognizer
+- (BOOL)hasValidPositionInformation
 {
-    return _panGestureRecognizer.get();
+    return _hasValidPositionInformation;
 }
 
-- (void)setPanGestureRecognizer:(NSPanGestureRecognizer *)recognizer
+- (BOOL)caughtDeceleratingScroll
 {
-    _panGestureRecognizer = recognizer;
+    return _caughtDeceleratingScroll;
 }
+
+- (WebKit::InteractionInformationAtPosition)positionInformation
+{
+    return _positionInformation;
+}
+
+#define GESTURE_RECOGNIZER_GETTER_SETTER(type, name, getter, setter) \
+- (type *)getter \
+{ \
+    return name.get(); \
+} \
+\
+- (void)setter:(type *)recognizer \
+{ \
+    name = recognizer; \
+} \
+
+GESTURE_RECOGNIZER_GETTER_SETTER(NSPanGestureRecognizer, _panGestureRecognizer, panGestureRecognizer, setPanGestureRecognizer)
+GESTURE_RECOGNIZER_GETTER_SETTER(NSPressGestureRecognizer, _singleClickGestureRecognizer, singleClickGestureRecognizer, setSingleClickGestureRecognizer)
+GESTURE_RECOGNIZER_GETTER_SETTER(NSPressGestureRecognizer, _mouseTrackingGestureRecognizer, mouseTrackingGestureRecognizer, setMouseTrackingGestureRecognizer)
+GESTURE_RECOGNIZER_GETTER_SETTER(NSPressGestureRecognizer, _dragPressGestureRecognizer, dragPressGestureRecognizer, setDragPressGestureRecognizer)
+GESTURE_RECOGNIZER_GETTER_SETTER(NSPressGestureRecognizer, _secondaryClickGestureRecognizer, secondaryClickGestureRecognizer, setSecondaryClickGestureRecognizer)
+GESTURE_RECOGNIZER_GETTER_SETTER(NSClickGestureRecognizer, _doubleClickGestureRecognizer, doubleClickGestureRecognizer, setDoubleClickGestureRecognizer)
 
 - (void)setUpGestureRecognizers
 {
@@ -859,82 +882,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     [self _invokeAndRemovePendingHandlersValidForCurrentPositionInformation];
 }
 
-- (BOOL)_secondaryClickShouldBeginAtLocation:(NSPoint)locationInViewCoordinates
-{
-    WebKit::InteractionInformationRequest request { WebCore::IntPoint { locationInViewCoordinates } };
-
-    bool requestIsValid = _hasValidPositionInformation && _positionInformation.request.isValidForRequest(request);
-    bool isSelectable = _positionInformation.isSelectable();
-    bool isOverSelectableText = _positionInformation.isOverSelectableText;
-
-    // The secondary click owns selectable points that are not over actual text (e.g. the page
-    // background). Over a run of selectable text, the text selection manager should win so that a
-    // long press selects a word instead of synthesizing a context menu.
-    bool shouldBegin = requestIsValid && isSelectable && !isOverSelectableText;
-
-    if (!requestIsValid)
-        [self _invalidateCurrentPositionInformation];
-
-    return shouldBegin;
-}
-
-- (BOOL)_positionInformationRequestIsValidAtLocation:(NSPoint)locationInViewCoordinates withRadius:(NSInteger)radius
-{
-    WebKit::InteractionInformationRequest request { WebCore::IntPoint { locationInViewCoordinates } };
-    return _hasValidPositionInformation && _positionInformation.request.isApproximatelyValidForRequest(request, radius);
-}
-
-- (BOOL)_dragPressShouldBeginAtLocation:(NSPoint)locationInViewCoordinates
-{
-    int radius = static_cast<int>(std::ceil([_dragPressGestureRecognizer allowableMovement]));
-
-    // FIXME: Migrate to requestDragStart: IPC for an authoritative decision.
-    // The heuristic below approximates DragController::draggableElement() by consulting the same element-type and style signals.
-    bool isDraggable = representsDraggableElement(_positionInformation);
-    bool requestIsValid = [self _positionInformationRequestIsValidAtLocation:locationInViewCoordinates withRadius:radius];
-    bool shouldDrag = requestIsValid && isDraggable;
-
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(
-        RefPtr { _page.get() }->logIdentifier(),
-        "Drag-press shouldBegin → %d (hasInfo=%d link=%d image=%d attachment=%d dhtml=%d color=%d prefersDrag=%d radius=%d)",
-        shouldDrag,
-        _hasValidPositionInformation,
-        _positionInformation.isLink,
-        _positionInformation.isImage,
-        _positionInformation.isAttachment,
-        _positionInformation.isDHTMLDraggable,
-        _positionInformation.isColorInput,
-        _positionInformation.prefersDraggingOverTextSelection,
-        radius
-    );
-
-    if (!requestIsValid)
-        [self _invalidateCurrentPositionInformation];
-
-    return shouldDrag;
-}
-
-- (BOOL)_panShouldBeginAtLocation:(NSPoint)locationInViewCoordinates
-{
-    static constexpr int panPositionInformationToleranceRadius = 15;
-    bool requestIsValid = [self _positionInformationRequestIsValidAtLocation:locationInViewCoordinates withRadius:panPositionInformationToleranceRadius];
-
-    // FIXME: (rdar://181964604) Because of this logic, vertically scrolling over these elements likely will not work.
-    bool prefersInteraction = _positionInformation.isRangeInput || _positionInformation.isARIASlider;
-    bool yieldToContent = requestIsValid && prefersInteraction;
-
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(
-        RefPtr { _page.get() }->logIdentifier(),
-        "Pan shouldBegin → %d (hasInfo=%d valid=%d prefersInteraction=%d)",
-        !yieldToContent,
-        _hasValidPositionInformation,
-        requestIsValid,
-        prefersInteraction
-    );
-
-    return !yieldToContent;
-}
-
 #pragma mark - Drag Handling
 
 - (void)dragPressGestureRecognized:(NSGestureRecognizer *)gesture
@@ -1378,203 +1325,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     [self _invalidateCurrentPositionInformation];
     _lastOutstandingPositionInformationRequest.reset();
     _pendingPositionInformationHandlers.clear();
-}
-
-#pragma mark - NSGestureRecognizerDelegate
-
-static BOOL isBuiltInScrollViewPanGestureRecognizer(NSGestureRecognizer *recognizer)
-{
-    static Class scrollViewPanGestureClass = NSClassFromString(@"NSScrollViewPanGestureRecognizer");
-    return [recognizer isKindOfClass:scrollViewPanGestureClass];
-}
-
-static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NSGestureRecognizer *x, NSGestureRecognizer *y)
-{
-    return (a == x && b == y) || (b == x && a == y);
-}
-
-- (BOOL)gestureRecognizer:(NSGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(NSGestureRecognizer *)otherGestureRecognizer
-{
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "Gesture: %@, Other gesture: %@", gestureLogDescription(gestureRecognizer), gestureLogDescription(otherGestureRecognizer));
-
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleClickGestureRecognizer.get(), _panGestureRecognizer.get()))
-        return YES;
-
-    if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class] || [otherGestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
-        return YES;
-
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _mouseTrackingGestureRecognizer.get(), _singleClickGestureRecognizer.get()))
-        return YES;
-
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _dragPressGestureRecognizer.get(), _singleClickGestureRecognizer.get()))
-        return YES;
-
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _dragPressGestureRecognizer.get(), _mouseTrackingGestureRecognizer.get()))
-        return YES;
-
-    if (gestureRecognizer == _singleClickGestureRecognizer
-        && isBuiltInScrollViewPanGestureRecognizer(otherGestureRecognizer)
-        && [otherGestureRecognizer.view isKindOfClass:NSScrollView.class])
-        return YES;
-
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return NO;
-
-    RetainPtr webView = viewImpl->view();
-    if (!webView)
-        return NO;
-
-    // Allow the single click or mouse tracking GRs to be simultaneously
-    // recognized with any of those from the text selection manager.
-    for (NSGestureRecognizer *gestureForFailureRequirements in [[webView textSelectionManager] gesturesForFailureRequirements]) {
-        if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleClickGestureRecognizer.get(), gestureForFailureRequirements))
-            return YES;
-        if (isSamePair(gestureRecognizer, otherGestureRecognizer, _mouseTrackingGestureRecognizer.get(), gestureForFailureRequirements))
-            return YES;
-    }
-
-    return NO;
-}
-
-- (BOOL)gestureRecognizer:(NSGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(NSGestureRecognizer *)otherGestureRecognizer
-{
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "Gesture: %@, Other gesture: %@", gestureLogDescription(gestureRecognizer), gestureLogDescription(otherGestureRecognizer));
-
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return NO;
-
-    RetainPtr webView = viewImpl->view();
-    if (!webView)
-        return NO;
-
-    if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
-        return [(WKDeferringGestureRecognizer *)gestureRecognizer shouldDeferGestureRecognizer:otherGestureRecognizer];
-
-    // Fail any gestures from the text selection manager if the secondary click GR handles them.
-    for (NSGestureRecognizer *gestureForFailureRequirements in [[webView textSelectionManager] gesturesForFailureRequirements]) {
-        if (gestureRecognizer == _secondaryClickGestureRecognizer && otherGestureRecognizer == gestureForFailureRequirements)
-            return YES;
-    }
-
-    return NO;
-}
-
-- (BOOL)gestureRecognizer:(NSGestureRecognizer *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(NSGestureRecognizer *)otherGestureRecognizer
-{
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "Gesture: %@, Other gesture: %@", gestureLogDescription(gestureRecognizer), gestureLogDescription(otherGestureRecognizer));
-
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return NO;
-
-    RetainPtr webView = viewImpl->view();
-    if (!webView)
-        return NO;
-
-    if (gestureRecognizer == _singleClickGestureRecognizer && otherGestureRecognizer == _doubleClickGestureRecognizer)
-        return YES;
-
-    if (gestureRecognizer == _mouseTrackingGestureRecognizer && otherGestureRecognizer == _panGestureRecognizer) {
-        bool panCanScroll = [self panGestureRecognizerCanScroll];
-        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "Mouse tracking requires pan to fail: %d", panCanScroll);
-        return panCanScroll;
-    }
-
-    return NO;
-}
-
-- (BOOL)gestureRecognizerShouldBegin:(NSGestureRecognizer *)gestureRecognizer
-{
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "Gesture: %@", gestureLogDescription(gestureRecognizer));
-
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return NO;
-
-    RetainPtr webView = viewImpl->view();
-    if (!webView)
-        return NO;
-
-    NSPoint locationInViewCoordinates = [gestureRecognizer locationInView:webView];
-
-    // While catching a decelerating scroll, only select gestures are allowed to begin:
-    // - single click, so it can reset the interruption state
-    // - pan, so it can continue with successive scrolls
-    if (_caughtDeceleratingScroll) {
-        if (gestureRecognizer == _singleClickGestureRecognizer)
-            return YES;
-        if (gestureRecognizer != _panGestureRecognizer)
-            return NO;
-    }
-
-    if (gestureRecognizer == _doubleClickGestureRecognizer)
-        return viewImpl->allowsMagnification();
-
-    if (gestureRecognizer == _secondaryClickGestureRecognizer)
-        return [self _secondaryClickShouldBeginAtLocation:locationInViewCoordinates];
-
-    if (gestureRecognizer == _dragPressGestureRecognizer)
-        return [self _dragPressShouldBeginAtLocation:locationInViewCoordinates];
-
-    if (gestureRecognizer == _panGestureRecognizer)
-        return [self _panShouldBeginAtLocation:locationInViewCoordinates];
-
-    if (gestureRecognizer == _singleClickGestureRecognizer)
-        return !viewImpl->isTextSelectedAtPoint(locationInViewCoordinates);
-
-    if (gestureRecognizer == _mouseTrackingGestureRecognizer)
-        return !viewImpl->isTextSelectedAtPoint(locationInViewCoordinates);
-
-    return YES;
-}
-
-- (BOOL)_isScrollOrZoomGestureRecognizer:(NSGestureRecognizer *)gesture
-{
-    return gesture == _panGestureRecognizer || isBuiltInScrollViewPanGestureRecognizer(gesture) || [gesture isKindOfClass:[NSMagnificationGestureRecognizer class]];
-}
-
-- (BOOL)_gestureRecognizer:(NSGestureRecognizer *)preventingGestureRecognizer canPreventGestureRecognizer:(NSGestureRecognizer *)preventedGestureRecognizer
-{
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "Preventing gesture: %@, Prevented gesture: %@", gestureLogDescription(preventingGestureRecognizer), gestureLogDescription(preventedGestureRecognizer));
-
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return NO;
-
-    RetainPtr webView = viewImpl->view();
-    if (!webView)
-        return NO;
-
-    // None of our gesture recognizers may prevent an enclosing scroll view's pan (or any other
-    // scroll/zoom) gesture, so that a scroll can always be handed off to the enclosing scroll view
-    // e.g. a scroll over a draggable <img> in a non-scrollable web view.
-    if ([self _isScrollOrZoomGestureRecognizer:preventedGestureRecognizer])
-        return NO;
-
-    bool isOurClickGesture = preventingGestureRecognizer == _singleClickGestureRecognizer
-        || preventingGestureRecognizer == _secondaryClickGestureRecognizer
-        || preventingGestureRecognizer == _mouseTrackingGestureRecognizer
-        || preventingGestureRecognizer == _dragPressGestureRecognizer;
-
-    if (!isOurClickGesture)
-        return YES;
-
-    // Don't let other click gestures prevent the secondary click GR; it must be allowed to fire its
-    // press timer (0.72s) without being short-circuited by gestures that recognize earlier
-    // (e.g. single click and mouse-tracking, which both transition to Began at mouse-down).
-    if (preventedGestureRecognizer == _secondaryClickGestureRecognizer)
-        return NO;
-
-    // Don't let our click gestures prevent text selection manager gestures;
-    // they should be allowed to recognize simultaneously (per shouldRecognizeSimultaneouslyWithGestureRecognizer:).
-    for (NSGestureRecognizer *textSelectionGesture in [[webView textSelectionManager] gesturesForFailureRequirements]) {
-        if (preventedGestureRecognizer == textSelectionGesture)
-            return NO;
-    }
-
-    return YES;
 }
 
 @end
