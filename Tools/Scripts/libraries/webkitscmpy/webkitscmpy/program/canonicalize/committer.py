@@ -26,7 +26,6 @@ import os
 import re
 import sys
 
-from webkitcorepy import run
 from webkitscmpy import Contributor, local
 
 EMAIL_RE = re.compile(r'(?P<email>[^@]+@[^@]+)(@.*)?')
@@ -66,7 +65,7 @@ def main(contributor_file):
 
     # Attempt to extract patch-by
     if author_email == committer_email and REPOSITORY_PATH and GIT_COMMIT:
-        log = run(
+        log = local.Git.run_command_on_repo(
             [local.Git.executable(), 'log', GIT_COMMIT, '-1'],
             cwd=REPOSITORY_PATH, capture_output=True, encoding='utf-8',
         )

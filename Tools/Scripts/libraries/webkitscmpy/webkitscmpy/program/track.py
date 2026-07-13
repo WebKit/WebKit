@@ -24,7 +24,7 @@ import re
 import sys
 
 from .command import Command
-from webkitcorepy import arguments, run
+from webkitcorepy import arguments
 from webkitscmpy import log, local
 
 
@@ -62,7 +62,7 @@ class Track(Command):
         if args.fetch:
             for remote in repository.source_remotes():
                 log.info("Fetching '{}'...".format(remote))
-                result = run(
+                result = repository.run_command_on_repo(
                     [repository.executable(), 'fetch', remote, '--prune'],
                     capture_output=True, cwd=repository.root_path, encoding='utf-8',
                 )
@@ -86,7 +86,7 @@ class Track(Command):
                 sys.stderr.write("No remote for '{}' found\n".format(arg))
                 continue
             print("Tracking '{}' via 'remotes/{}'".format(arg, remote))
-            result = run([
+            result = repository.run_command_on_repo([
                 repository.executable(), 'branch',
                 '--set-upstream-to' if arg in repository.branches_for(remote=False) else '--track',
                 arg, '{}/{}'.format(remote, arg),

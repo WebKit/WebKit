@@ -204,7 +204,7 @@ class Revert(Command):
     @classmethod
     def revert_commit(cls, args, repository, issue, commit_objects, **kwargs):
         commits_to_revert = [c.hash for c in commit_objects]
-        result = run([repository.executable(), 'revert', '--no-commit'] + commits_to_revert, cwd=repository.root_path, capture_output=True)
+        result = repository.run_command_on_repo([repository.executable(), 'revert', '--no-commit'] + commits_to_revert, cwd=repository.root_path, capture_output=True)
         if result.returncode:
             # git revert will output nothing if this commit is already reverted
             if not result.stdout.strip():
@@ -223,9 +223,9 @@ class Revert(Command):
         )
 
         if args.commit:
-            result = run([repository.executable(), 'commit', '--date=now'], cwd=repository.root_path, env=os.environ)
+            result = repository.run_command_on_repo([repository.executable(), 'commit', '--date=now'], cwd=repository.root_path, env=os.environ)
         if result.returncode:
-            run([repository.executable(), 'revert', '--abort'], cwd=repository.root_path)
+            repository.run_command_on_repo([repository.executable(), 'revert', '--abort'], cwd=repository.root_path)
             sys.stderr.write('Failed revert commit')
             return 1
         log.info('Reverted {}'.format(', '.join(commits)))

@@ -108,7 +108,7 @@ class Commit(Command):
         if args.update is not None:
             env['WKSCMPY_UPDATE_CHANGELOG'] = str(bool(args.update))
 
-        return run(
+        return repository.run_command_on_repo(
             [repository.executable(), 'commit', '--date=now'] + additional_args + args.args,
             cwd=repository.root_path,
             env=env,

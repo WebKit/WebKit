@@ -51,7 +51,7 @@ class Land(Command):
 
     @classmethod
     def revert_branch(cls, repository, remote, branch):
-        if run(
+        if repository.run_command_on_repo(
             [repository.executable(), 'branch', '-f', branch, 'remotes/{}/{}'.format(remote, branch)],
             cwd=repository.root_path,
         ).returncode:
@@ -226,7 +226,7 @@ class Land(Command):
                 ]
                 if repository.commit_signing_enabled():
                     command += ['--commit-filter', 'git commit-tree -S "$@"']
-                if run(
+                if repository.run_command_on_repo(
                     command + ['{}...{}'.format(source_branch, branch_point.hash)],
                     cwd=repository.root_path,
                     env={'FILTER_BRANCH_SQUELCH_WARNING': '1'},
@@ -268,7 +268,7 @@ class Land(Command):
             return 1
         log.info("Rebased '{}' from '{}' to '{}'!".format(source_branch, branch_point.branch, target))
 
-        if run([repository.executable(), 'branch', '-f', target, source_branch], cwd=repository.root_path).returncode:
+        if repository.run_command_on_repo([repository.executable(), 'branch', '-f', target, source_branch], cwd=repository.root_path).returncode:
             sys.stderr.write("Failed to move '{}' ref\n".format(target))
             return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
 
@@ -279,7 +279,7 @@ class Land(Command):
             ), repository, identifier_template=identifier_template):
                 sys.stderr.write("Failed to embed identifiers to '{}'\n".format(target))
                 return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
-            if run([repository.executable(), 'branch', '-f', source_branch, target], cwd=repository.root_path).returncode:
+            if repository.run_command_on_repo([repository.executable(), 'branch', '-f', source_branch, target], cwd=repository.root_path).returncode:
                 sys.stderr.write("Failed to move '{}' ref to the canonicalized head of '{}'\n".format(source, target))
                 cls.revert_branch(repository, cls.REMOTE, target)
                 return -1
@@ -291,11 +291,11 @@ class Land(Command):
         push_env['VERBOSITY'] = str(args.verbose)
 
         if canonical_svn:
-            if run([repository.executable(), 'svn', 'fetch'], cwd=repository.root_path).returncode:
+            if repository.run_command_on_repo([repository.executable(), 'svn', 'fetch'], cwd=repository.root_path).returncode:
                 sys.stderr.write("Failed to update subversion refs\n".format(target))
                 return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
 
-            dcommit = run(
+            dcommit = repository.run_command_on_repo(
                 [repository.executable(), 'svn', 'dcommit'],
                 cwd=repository.root_path,
                 stdout=subprocess.PIPE,
@@ -318,7 +318,7 @@ class Land(Command):
                 sys.stderr.write("Failed to find revision in '{}' when committing to Subversion remote\n".format(target))
                 return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
 
-            run([repository.executable(), 'reset', 'HEAD~{}'.format(len(commits)), '--hard'], cwd=repository.root_path)
+            repository.run_command_on_repo([repository.executable(), 'reset', 'HEAD~{}'.format(len(commits)), '--hard'], cwd=repository.root_path)
 
             # Verify the mirror processed our change
             started = time.time()
@@ -329,7 +329,7 @@ class Land(Command):
                     return 1
                 log.info('    Verifying mirror processesed change')
                 time.sleep(5)
-                run([repository.executable(), 'pull'], cwd=repository.root_path)
+                repository.run_command_on_repo([repository.executable(), 'pull'], cwd=repository.root_path)
                 latest = repository.find('HEAD', include_log=True, include_identifier=False)
             if repository.cache and target in repository.cache._last_populated:
                 del repository.cache._last_populated[target]
@@ -340,8 +340,8 @@ class Land(Command):
             commit = commits[-1]
 
             if pull_request:
-                run([repository.executable(), 'branch', '-f', source_branch, target], cwd=repository.root_path)
-                run([repository.executable(), 'push', '-f', remote_target, source_branch], cwd=repository.root_path, env=push_env)
+                repository.run_command_on_repo([repository.executable(), 'branch', '-f', source_branch, target], cwd=repository.root_path)
+                repository.run_command_on_repo([repository.executable(), 'push', '-f', remote_target, source_branch], cwd=repository.root_path, env=push_env)
                 rmt.pull_requests.update(
                     pull_request=pull_request,
                     title=PullRequest.title_for(commits),
@@ -354,7 +354,7 @@ class Land(Command):
             if pull_request:
                 log.info("Updating '{}' to match landing commits...".format(pull_request))
                 commits = list(repository.commits(begin=dict(argument='{}~{}'.format(source_branch, len(commits))), end=dict(branch=source_branch)))
-                run([repository.executable(), 'push', '-f', remote_target, source_branch], cwd=repository.root_path, env=push_env)
+                repository.run_command_on_repo([repository.executable(), 'push', '-f', remote_target, source_branch], cwd=repository.root_path, env=push_env)
                 rmt.pull_requests.update(
                     pull_request=pull_request,
                     title=PullRequest.title_for(commits),
@@ -363,7 +363,7 @@ class Land(Command):
                     head=source_branch,
                 )
 
-            if run([repository.executable(), 'push', cls.REMOTE, target], cwd=repository.root_path, env=push_env).returncode:
+            if repository.run_command_on_repo([repository.executable(), 'push', cls.REMOTE, target], cwd=repository.root_path, env=push_env).returncode:
                 sys.stderr.write("Failed to push '{}' to '{}'\n".format(target, cls.REMOTE))
                 return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
             repository.checkout(target)
@@ -386,6 +386,6 @@ class Land(Command):
             regex = re.compile(r'^{}-(?P<count>\d+)$'.format(source_branch))
             for to_delete in repository.branches_for(remote=remote_target):
                 if to_delete == source_branch or regex.match(to_delete) and remote_target == 'fork':
-                    run([repository.executable(), 'branch', '-D', to_delete], cwd=repository.root_path)
-                    run([repository.executable(), 'push', remote_target, '--delete', to_delete], cwd=repository.root_path, env=push_env)
+                    repository.run_command_on_repo([repository.executable(), 'branch', '-D', to_delete], cwd=repository.root_path)
+                    repository.run_command_on_repo([repository.executable(), 'push', remote_target, '--delete', to_delete], cwd=repository.root_path, env=push_env)
         return 0

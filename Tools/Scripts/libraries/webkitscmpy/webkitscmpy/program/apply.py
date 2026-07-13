@@ -31,7 +31,7 @@ from .diff.html_diff import HTMLDiff
 from .pull_request import PullRequest
 
 from webkitbugspy import radar, Tracker
-from webkitcorepy import arguments, run, Terminal
+from webkitcorepy import arguments, Terminal
 from webkitscmpy import local, log
 
 
@@ -117,13 +117,13 @@ class Apply(Command):
     def edit_commit_message(cls, repository):
         '''Amend the just-applied commit without a message flag, so git opens its message in the editor.
         No --date, so the author date `git am` preserved (or --reset-author refreshed) survives.'''
-        if run([repository.executable(), 'commit', '--amend'], cwd=repository.root_path).returncode:
+        if repository.run_command_on_repo([repository.executable(), 'commit', '--amend'], cwd=repository.root_path).returncode:
             sys.stderr.write("Applied the patch, but couldn't open the commit message for editing; it keeps the patch's message.\n")
 
     @classmethod
     def head(cls, repository):
         '''Hash of the current HEAD, or None on an unborn branch.'''
-        result = run(
+        result = repository.run_command_on_repo(
             [repository.executable(), 'rev-parse', 'HEAD'],
             cwd=repository.root_path, capture_output=True, encoding='utf-8',
         )
@@ -132,7 +132,7 @@ class Apply(Command):
     @classmethod
     def commit_count(cls, repository, since):
         '''Number of commits `since` is behind HEAD, or None when git won't say.'''
-        result = run(
+        result = repository.run_command_on_repo(
             [repository.executable(), 'rev-list', '--count', '{}..HEAD'.format(since)],
             cwd=repository.root_path, capture_output=True, encoding='utf-8',
         )
@@ -153,7 +153,7 @@ class Apply(Command):
         if applied and applied > 1:
             # --no-autosquash so a patch whose message starts with fixup!/squash! is replayed as its
             # own commit, whatever the checkout's rebase.autoSquash says.
-            result = run(
+            result = repository.run_command_on_repo(
                 [
                     repository.executable(), 'rebase', '--no-autosquash',
                     '--exec', '{} commit --amend --reset-author --no-edit'.format(shlex.quote(repository.executable())),
@@ -162,10 +162,10 @@ class Apply(Command):
                 cwd=repository.root_path,
             )
             if result.returncode:
-                run([repository.executable(), 'rebase', '--abort'], cwd=repository.root_path, capture_output=True)
+                repository.run_command_on_repo([repository.executable(), 'rebase', '--abort'], cwd=repository.root_path, capture_output=True)
                 sys.stderr.write("Applied the patch, but couldn't reset its commits' authors; they keep the patch's authors.\n")
             return
-        if run(
+        if repository.run_command_on_repo(
             [repository.executable(), 'commit', '--amend', '--reset-author', '--no-edit'],
             cwd=repository.root_path,
         ).returncode:
@@ -239,14 +239,14 @@ class Apply(Command):
                 patch_file.write(content)
 
             if args.commit:
-                result = run([repository.executable(), 'am', patch_path], cwd=repository.root_path)
+                result = repository.run_command_on_repo([repository.executable(), 'am', patch_path], cwd=repository.root_path)
             else:
-                result = run([repository.executable(), 'apply', '--3way', patch_path], cwd=repository.root_path)
+                result = repository.run_command_on_repo([repository.executable(), 'apply', '--3way', patch_path], cwd=repository.root_path)
 
             if result.returncode:
                 sys.stderr.write("Failed to apply '{}' from {}\n".format(patch.name, issue.link))
                 if args.commit:
-                    run([repository.executable(), 'am', '--abort'], cwd=repository.root_path, capture_output=True)
+                    repository.run_command_on_repo([repository.executable(), 'am', '--abort'], cwd=repository.root_path, capture_output=True)
                     sys.stderr.write('Re-run with --no-commit to apply it to the working tree and resolve conflicts by hand.\n')
                 else:
                     sys.stderr.write('Conflicting hunks were left as conflict markers / .rej files; `git checkout -- .` to discard.\n')

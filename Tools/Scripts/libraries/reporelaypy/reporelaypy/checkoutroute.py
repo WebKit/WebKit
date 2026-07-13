@@ -26,7 +26,6 @@ import re
 from flask import abort, current_app, json as fjson, redirect, Flask, Response
 from webkitflaskpy import AuthedBlueprint, Database
 from webkitscmpy import Commit, remote
-from webkitcorepy import run
 
 
 class Redirector(object):
@@ -230,7 +229,7 @@ class CheckoutRoute(AuthedBlueprint):
                 pass
             return None
 
-        if run([
+        if self.checkout.repository.run_command_on_repo([
             self.checkout.repository.executable(), 'merge-base', '--is-ancestor',
             commit.hash, 'remotes/origin/{}'.format(commit.branch),
         ], capture_output=True, cwd=self.checkout.repository.root_path).returncode:

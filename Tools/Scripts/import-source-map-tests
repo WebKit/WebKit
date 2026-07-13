@@ -44,7 +44,8 @@ import webkitpy
 from webkitcorepy import run
 from webkitscmpy import local, remote
 
-layout_tests_directory = Path(__file__).parent / "../../LayoutTests"
+repository_root = Path(__file__).parent / "../.."
+layout_tests_directory = repository_root / "LayoutTests"
 source_map_repo_url = "https://github.com/tc39/source-map-tests.git"
 source_map_repo_branch = "main"
 
@@ -67,7 +68,7 @@ def checkout_tests(continuation):
         checkout_folder = "source-map-tests"
         checkout_directory = os.path.join(temporary_directory, checkout_folder)
         print("Checking out tests from " + source_map_repo_url + " into " + checkout_directory)
-        result = run([local.Git.executable(), "clone", "-b", source_map_repo_branch, source_map_repo_url, checkout_directory], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        result = run([local.Git.executable(), "clone", "-b", source_map_repo_branch, source_map_repo_url, checkout_directory], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=local.Git.sanitize_repo_env())
         result.check_returncode()
         git = local.Scm.from_path(checkout_directory)
         git_hash = git.commit().hash
@@ -78,7 +79,7 @@ def checkout_tests(continuation):
 
 def copy_tests(tmp_path, git_hash):
     tests_path = layout_tests_directory / "imported/tc39-tg4/source-map-tests"
-    result = run([local.Git.executable(), "status", "--porcelain=v2", "-z", tests_path], capture_output=True)
+    result = local.Git.run_command_on_repo([local.Git.executable(), "status", "--porcelain=v2", "-z", tests_path], cwd=repository_root, capture_output=True)
     test_dir_clean = result.returncode == 0 and len(result.stdout) == 0
     if not test_dir_clean:
         print("Uncommitted changes in source map tests, please commit or discard them")

@@ -92,4 +92,4 @@ class SetupGitSvn(Command):
                     config.write('\tfetch = branches/{branch}:refs/remotes/origin/{branch}\n'.format(branch=branch))
 
         print('Populating svn commit mapping (will take a few minutes)...')
-        return run([repository.executable(), 'svn', 'fetch', '--log-window-size=5000', '-r', '1:HEAD'], cwd=repository.root_path).returncode
+        return repository.run_command_on_repo([repository.executable(), 'svn', 'fetch', '--log-window-size=5000', '-r', '1:HEAD'], cwd=repository.root_path).returncode

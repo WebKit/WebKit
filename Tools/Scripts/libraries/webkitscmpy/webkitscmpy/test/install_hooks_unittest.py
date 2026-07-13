@@ -135,7 +135,7 @@ class TestInstallHooks(testing.PathTestCase):
         with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('Change'), mocks.local.Git(self.path, remote='git@example.org:WebKit/project.git'), mocks.local.Svn():
             run(
                 [local.Git.executable(), 'config', 'core.hookspath', os.path.join(self.path, 'alternate-hooks-path')],
-                capture_output=True, cwd=self.path,
+                capture_output=True, cwd=self.path, env=local.Git.sanitize_repo_env(),
             )
             self.write_hook(os.path.join(self.path, 'hooks', 'pre-commit'))
             self.assertEqual(0, program.main(
@@ -174,7 +174,7 @@ class TestInstallHooks(testing.PathTestCase):
         with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('Use'), mocks.local.Git(self.path, remote='git@example.org:WebKit/project.git'), mocks.local.Svn():
             run(
                 [local.Git.executable(), 'config', 'core.hookspath', os.path.join(self.path, 'alternate-hooks-path')],
-                capture_output=True, cwd=self.path,
+                capture_output=True, cwd=self.path, env=local.Git.sanitize_repo_env(),
             )
             self.write_hook(os.path.join(self.path, 'hooks', 'pre-commit'))
             self.assertEqual(0, program.main(
@@ -213,7 +213,7 @@ class TestInstallHooks(testing.PathTestCase):
         with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('Exit'), mocks.local.Git(self.path, remote='git@example.org:WebKit/project.git'), mocks.local.Svn():
             run(
                 [local.Git.executable(), 'config', 'core.hookspath', os.path.join(self.path, 'alternate-hooks-path')],
-                capture_output=True, cwd=self.path,
+                capture_output=True, cwd=self.path, env=local.Git.sanitize_repo_env(),
             )
             self.write_hook(os.path.join(self.path, 'hooks', 'pre-commit'))
             self.assertEqual(1, program.main(

@@ -54,6 +54,7 @@ from webkitpy.common.checkout.scm.scm import CheckoutNeedsUpdate, commit_error_h
 from webkitpy.test.markers import xfail
 
 from webkitcorepy import OutputCapture
+from webkitscmpy import local
 
 
 # We cache the mock SVN repo so that we don't create it again for each call to an SVNTest or GitTest test_ method.
@@ -83,6 +84,7 @@ def delete_cached_mock_repo_at_exit():
 def run_command(*args, **kwargs):
     # FIXME: This should not be a global static.
     # New code should use Executive.run_command directly instead
+    kwargs['env'] = local.Git.sanitize_repo_env(kwargs.get('env'))
     return Executive().run_command(*args, **kwargs)
 
 

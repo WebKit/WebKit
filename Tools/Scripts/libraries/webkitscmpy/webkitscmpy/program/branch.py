@@ -235,11 +235,11 @@ class Branch(Command):
         if args.issue in repository.branches_for(remote=False):
             if args.delete_existing:
                 log.info("Locally deleting existing branch '{}'".format(args.issue))
-                if run([repository.executable(), 'branch', '-D', args.issue], cwd=repository.root_path).returncode:
+                if repository.run_command_on_repo([repository.executable(), 'branch', '-D', args.issue], cwd=repository.root_path).returncode:
                     sys.stderr.write("Failed to locally delete '{}'\n".format(args.issue))
             elif args.delete_existing is None:
                 log.warning("Rebasing existing branch '{}' instead of creating a new one".format(args.issue))
-                if run([repository.executable(), 'rebase', 'HEAD', args.issue, '--autostash'], cwd=repository.root_path).returncode:
+                if repository.run_command_on_repo([repository.executable(), 'rebase', 'HEAD', args.issue, '--autostash'], cwd=repository.root_path).returncode:
                     return 1
                 print("Rebased the local development branch '{}'".format(args.issue))
                 return 0
@@ -248,7 +248,7 @@ class Branch(Command):
                 return 1
 
         log.info("Creating the local development branch '{}'...".format(args.issue))
-        if run([repository.executable(), 'checkout', '-b', args.issue], cwd=repository.root_path).returncode:
+        if repository.run_command_on_repo([repository.executable(), 'checkout', '-b', args.issue], cwd=repository.root_path).returncode:
             sys.stderr.write("Failed to create '{}'\n".format(args.issue))
             return 1
         repository._branch = args.issue  # Assign the cache because of repository.branch's caching

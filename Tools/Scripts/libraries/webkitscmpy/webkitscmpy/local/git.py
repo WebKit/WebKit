@@ -137,6 +137,7 @@ class Git(Scm):
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     encoding='utf-8',
+                    env=Git.sanitize_repo_env(),
                 )
                 if log.poll():
                     raise self.repo.Exception("Failed to construct branch history for '{}'".format(branch))
@@ -331,8 +332,30 @@ class Git(Scm):
         return Scm.executable('git')
 
     @classmethod
+    @decorators.Memoize()
+    def local_env_vars(cls):
+        proc = run(
+            [cls.executable(), 'rev-parse', '--local-env-vars'],
+            capture_output=True,
+            encoding='ascii',
+            check=True,
+        )
+        return frozenset(proc.stdout.split())
+
+    @classmethod
+    def sanitize_repo_env(cls, env=None):
+        if env is None:
+            env = os.environ
+        return {k: v for k, v in env.items() if k not in cls.local_env_vars()}
+
+    @classmethod
+    def run_command_on_repo(cls, *args, cwd, **kwargs):
+        kwargs['env'] = cls.sanitize_repo_env(kwargs.get('env'))
+        return run(*args, cwd=cwd, **kwargs)
+
+    @classmethod
     def is_checkout(cls, path):
-        return run([cls.executable(), 'rev-parse', '--show-toplevel'], cwd=path, capture_output=True).returncode == 0
+        return cls.run_command_on_repo([cls.executable(), 'rev-parse', '--show-toplevel'], cwd=path, capture_output=True).returncode == 0
 
     @decorators.hybridmethod
     @decorators.Memoize()
@@ -347,15 +370,16 @@ class Git(Scm):
 
         if isinstance(context, type) or location == 'global':
             args += ['--global']
+            command = run(args, env=context.sanitize_repo_env(), **kwargs)
         else:
-            kwargs['cwd'] = context.root_path
+            cwd = context.root_path
             if location == 'project':
                 # Without a project config, use the library defaults
                 if not context.metadata or not os.path.isfile(os.path.join(context.metadata, context.GIT_CONFIG_EXTENSION)):
                     return {key: values[0] for key, values in context.PROJECT_CONFIG_OPTIONS.items()}
                 args += ['--file', os.path.join(context.metadata, context.GIT_CONFIG_EXTENSION)]
+            command = context.run_command_on_repo(args, cwd=cwd, **kwargs)
 
-        command = run(args, **kwargs)
         if command.returncode:
             sys.stderr.write("Failed to run '{}'{}\n".format(
                 ' '.join(args),
@@ -413,7 +437,7 @@ class Git(Scm):
         if not self.is_svn:
             raise self.Exception('Cannot run SVN info on a git checkout which is not git-svn')
 
-        info_result = run([self.executable(), 'svn', 'info'], cwd=self.path, capture_output=True, encoding='utf-8')
+        info_result = self.run_command_on_repo([self.executable(), 'svn', 'info'], cwd=self.path, capture_output=True, encoding='utf-8')
         if info_result.returncode:
             return {}
 
@@ -443,7 +467,7 @@ class Git(Scm):
     @property
     @decorators.Memoize()
     def root_path(self):
-        result = run([self.executable(), 'rev-parse', '--show-toplevel'], cwd=self.path, capture_output=True, encoding='utf-8')
+        result = self.run_command_on_repo([self.executable(), 'rev-parse', '--show-toplevel'], cwd=self.path, capture_output=True, encoding='utf-8')
         if result.returncode:
             return None
         return result.stdout.rstrip()
@@ -451,7 +475,7 @@ class Git(Scm):
     @property
     @decorators.Memoize()
     def common_directory(self):
-        result = run([self.executable(), 'rev-parse', '--git-common-dir'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+        result = self.run_command_on_repo([self.executable(), 'rev-parse', '--git-common-dir'], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if result.returncode:
             return os.path.join(self.root_path, '.git')
         return os.path.abspath(os.path.join(self.root_path, result.stdout.rstrip()))
@@ -459,7 +483,7 @@ class Git(Scm):
     @property
     @decorators.Memoize()
     def git_directory(self):
-        result = run([self.executable(), 'rev-parse', '--git-dir'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+        result = self.run_command_on_repo([self.executable(), 'rev-parse', '--git-dir'], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if result.returncode:
             return os.path.join(self.root_path, '.git')
         return os.path.abspath(os.path.join(self.root_path, result.stdout.rstrip()))
@@ -477,7 +501,7 @@ class Git(Scm):
     @decorators.Memoize()
     def default_branch(self):
         for name in ['HEAD', 'main', 'master']:
-            result = run([self.executable(), 'rev-parse', '--symbolic-full-name', 'refs/remotes/{}/{}'.format(self.default_remote, name)],
+            result = self.run_command_on_repo([self.executable(), 'rev-parse', '--symbolic-full-name', 'refs/remotes/{}/{}'.format(self.default_remote, name)],
                          cwd=self.path, capture_output=True, encoding='utf-8')
             s = result.stdout.strip()
             if result.returncode == 0 and s:
@@ -496,11 +520,11 @@ class Git(Scm):
         if self._branch:
             return self._branch
 
-        head_ref = run([self.executable(), 'symbolic-ref', '-q', 'HEAD'], cwd=self.root_path, stdout=subprocess.DEVNULL)
+        head_ref = self.run_command_on_repo([self.executable(), 'symbolic-ref', '-q', 'HEAD'], cwd=self.root_path, stdout=subprocess.DEVNULL)
         if head_ref.returncode:
             return None
 
-        result = run([self.executable(), 'rev-parse', '--abbrev-ref', 'HEAD'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+        result = self.run_command_on_repo([self.executable(), 'rev-parse', '--abbrev-ref', 'HEAD'], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if result.returncode:
             raise self.Exception('Failed to retrieve branch for {}'.format(self.root_path))
         self._branch = result.stdout.rstrip()
@@ -515,12 +539,12 @@ class Git(Scm):
 
     def tags(self, remote=None):
         if not remote:
-            tags = run([self.executable(), 'tag'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            tags = self.run_command_on_repo([self.executable(), 'tag'], cwd=self.root_path, capture_output=True, encoding='utf-8')
             if tags.returncode:
                 raise self.Exception('Failed to retrieve tag list for {}'.format(self.root_path))
             return tags.stdout.splitlines()
 
-        tags = run([self.executable(), 'ls-remote', '--tags', remote], cwd=self.root_path, capture_output=True, encoding='utf-8')
+        tags = self.run_command_on_repo([self.executable(), 'ls-remote', '--tags', remote], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if tags.returncode:
             raise self.Exception('Failed to retrieve tag list for {} in {}'.format(remote, self.root_path))
         result = []
@@ -624,7 +648,7 @@ class Git(Scm):
         return remotes
 
     def _commit_count(self, native_parameter):
-        revision_count = run(
+        revision_count = self.run_command_on_repo(
             [self.executable(), '--no-replace-objects', 'rev-list', '--count', '--no-merges', native_parameter],
             cwd=self.root_path, capture_output=True, encoding='utf-8',
         )
@@ -648,7 +672,7 @@ class Git(Scm):
                 patterns.append('refs/remotes/**')
                 group_remotes = remote is not True
 
-        refs = run(
+        refs = self.run_command_on_repo(
             [self.executable(), 'for-each-ref', '--format', '%(refname)'] + contains + patterns,
             cwd=self.root_path,
             capture_output=True,
@@ -713,16 +737,16 @@ class Git(Scm):
             return
         fh_hash = merge_candidates.pop()
         # Check if the ref on remotes/origin/defrbranch is strictly an ancestor of FETCH_HEAD and in that case update the ref of it
-        is_defrbranch_ancestor_of_fh = run([self.executable(), 'merge-base', '--is-ancestor', f'remotes/origin/{self.default_branch}', f'{fh_hash}'],
+        is_defrbranch_ancestor_of_fh = self.run_command_on_repo([self.executable(), 'merge-base', '--is-ancestor', f'remotes/origin/{self.default_branch}', f'{fh_hash}'],
                                            cwd=self.root_path).returncode == 0
         if not is_defrbranch_ancestor_of_fh:
             log.warning(f'Hash {fh_hash} at FETCH_HEAD is not a fast-foward update for remotes/origin/{self.default_branch}')
             return
-        is_fh_not_ancestor_of_defrbranch = run([self.executable(), 'merge-base', '--is-ancestor', f'{fh_hash}', f'remotes/origin/{self.default_branch}'],
+        is_fh_not_ancestor_of_defrbranch = self.run_command_on_repo([self.executable(), 'merge-base', '--is-ancestor', f'{fh_hash}', f'remotes/origin/{self.default_branch}'],
                                                cwd=self.root_path).returncode == 1
         is_fh_strictly_fast_forward_of_defrbranch = is_defrbranch_ancestor_of_fh and is_fh_not_ancestor_of_defrbranch
         if is_fh_strictly_fast_forward_of_defrbranch:
-            result = run([self.executable(), 'update-ref', f'refs/remotes/origin/{self.default_branch}', f'{fh_hash}'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            result = self.run_command_on_repo([self.executable(), 'update-ref', f'refs/remotes/origin/{self.default_branch}', f'{fh_hash}'], cwd=self.root_path, capture_output=True, encoding='utf-8')
             if result.returncode:
                 log.warning(f'Error updating remotes/origin/{self.default_branch} to FETCH_HEAD: {result.stderr}')
 
@@ -731,7 +755,7 @@ class Git(Scm):
         remote_keys = [None] + self.source_remotes()
         default_branch = self.default_branch
         for key in remote_keys:
-            if run([self.executable(), 'merge-base', '--is-ancestor', hash,
+            if self.run_command_on_repo([self.executable(), 'merge-base', '--is-ancestor', hash,
                     f'refs/remotes/{key}/{default_branch}' if key is not None else f'refs/heads/{default_branch}'],
                    cwd=self.root_path, capture_output=True, encoding='utf-8').returncode == 0:
                 return True
@@ -745,7 +769,7 @@ class Git(Scm):
             for branch in branches[remote] if not self.dev_branches.match(branch)
         ]
 
-        head = run(
+        head = self.run_command_on_repo(
             [self.executable(), 'rev-parse', ref],
             cwd=self.root_path,
             capture_output=True,
@@ -759,7 +783,7 @@ class Git(Scm):
         ]:
             if not shard:
                 continue
-            result = run(
+            result = self.run_command_on_repo(
                 [self.executable(), 'merge-base', head] + shard,
                 cwd=self.root_path,
                 capture_output=True,
@@ -782,7 +806,7 @@ class Git(Scm):
         if len(partial_bases) == 1:
             merge_base = list(partial_bases)[0]
         elif len(partial_bases) > 1:
-            result = run(
+            result = self.run_command_on_repo(
                 [self.executable(), 'merge-base', head] + list(partial_bases),
                 cwd=self.root_path,
                 capture_output=True,
@@ -815,7 +839,7 @@ class Git(Scm):
                 raise ValueError('Cannot define both hash and revision')
 
             revision = Commit._parse_revision(revision, do_assert=True)
-            revision_log = run(
+            revision_log = self.run_command_on_repo(
                 [self.executable(), 'svn', 'find-rev', 'r{}'.format(revision)],
                 cwd=self.root_path, capture_output=True, encoding='utf-8',
                 timeout=3,
@@ -853,7 +877,7 @@ class Git(Scm):
 
             # If the cache managed to convert the identifier to a hash, we can skip some computation
             if hash:
-                log = run(
+                log = self.run_command_on_repo(
                     [self.executable(), 'log', hash] + log_format + ['--'],
                     cwd=self.root_path,
                     capture_output=True,
@@ -882,7 +906,7 @@ class Git(Scm):
 
                 if identifier > base_count:
                     raise self.Exception('Identifier {} cannot be found on the specified branch in the current checkout. Latest identifier on this branch is {}'.format(identifier, base_count))
-                log = run(
+                log = self.run_command_on_repo(
                     [self.executable(), 'log', '{}~{}'.format(branch or 'HEAD', base_count - identifier)] + log_format + ['--'],
                     cwd=self.root_path,
                     capture_output=True,
@@ -904,14 +928,14 @@ class Git(Scm):
             if branch and tag:
                 raise ValueError('Cannot define both tag and branch')
 
-            log = run([self.executable(), 'log', branch or tag] + log_format + ['--'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            log = self.run_command_on_repo([self.executable(), 'log', branch or tag] + log_format + ['--'], cwd=self.root_path, capture_output=True, encoding='utf-8')
             if log.returncode:
                 raise self.Exception("Failed to retrieve commit information for '{}'".format(branch or tag))
 
         # Determine the `git log` output for a given hash
         else:
             hash = Commit._parse_hash(hash, do_assert=True)
-            log = run([self.executable(), 'log', hash or 'HEAD'] + log_format + ['--'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            log = self.run_command_on_repo([self.executable(), 'log', hash or 'HEAD'] + log_format + ['--'], cwd=self.root_path, capture_output=True, encoding='utf-8')
             if log.returncode:
                 raise self.Exception("Failed to retrieve commit information for '{}'".format(hash or 'HEAD'))
 
@@ -972,7 +996,7 @@ class Git(Scm):
         revision = int(matches[-1].split('@')[0]) if matches else None
 
         # We only care about when a commit was commited
-        commit_time = run(
+        commit_time = self.run_command_on_repo(
             [self.executable(), 'show', '-s', '--format=%ct', hash],
             cwd=self.root_path, capture_output=True, encoding='utf-8',
         )
@@ -985,7 +1009,7 @@ class Git(Scm):
         # zero-indexed "order" within it's timestamp.
         order = 0
         while not identifier or order + 1 < identifier + (branch_point or 0):
-            commit_time = run(
+            commit_time = self.run_command_on_repo(
                 [self.executable(), 'show', '-s', '--format=%ct', '{}~{}'.format(hash, order + 1)],
                 cwd=self.root_path, capture_output=True, encoding='utf-8',
             )
@@ -1046,7 +1070,7 @@ class Git(Scm):
 
         in_scope = set()
         for scope in scopes or []:
-            ran = run(
+            ran = self.run_command_on_repo(
                 [self.executable(), 'log', '--pretty=%H', '{}..{}'.format(begin.hash, end.hash), '--', scope],
                 cwd=self.root_path,
                 capture_output=True,
@@ -1065,6 +1089,7 @@ class Git(Scm):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 encoding='utf-8',
+                env=self.sanitize_repo_env(),
             )
             if log.poll():
                 raise self.Exception("Failed to construct history for '{}'".format(end.branch))
@@ -1132,7 +1157,7 @@ class Git(Scm):
         Return the last `count` Commit objects that modified the specified file.
         """
         try:
-            output = run(
+            output = self.run_command_on_repo(
                 [self.executable(), 'log', f'--max-count={count}', '--follow', '--format=%H', '--', path],
                 cwd=self.root_path, capture_output=True, encoding='utf-8', check=True,
             )
@@ -1168,7 +1193,7 @@ class Git(Scm):
             )
 
         # The argument isn't a recognized commit format, hopefully it is a valid git ref of some form
-        output = run(
+        output = self.run_command_on_repo(
             [self.executable(), 'rev-parse', argument],
             cwd=self.root_path, capture_output=True, encoding='utf-8',
         )
@@ -1228,7 +1253,7 @@ class Git(Scm):
                 else:
                     sys.stderr.write("Failed to convert '{}' to '{}' remote\n".format(url, username))
                     return None
-                if run(
+                if self.run_command_on_repo(
                     [self.executable(), 'remote', 'add', name, rmt],
                     capture_output=True, cwd=self.root_path,
                 ).returncode:
@@ -1247,7 +1272,7 @@ class Git(Scm):
                         candidate_remotes.append(candidate)
 
             for remote_name in candidate_remotes:
-                rc = run(
+                rc = self.run_command_on_repo(
                     [self.executable(), 'checkout'] + ['-B', branch, 'remotes/{}/{}'.format(remote_name, branch)],
                     cwd=self.root_path, capture_output=True,
                 ).returncode
@@ -1261,8 +1286,8 @@ class Git(Scm):
                         elif name in self.source_remotes() and self.config()['webkitscmpy.auto-prune'] == 'only-source':
                             command.append('--prune')
                     log.info(f'Fetching {remote_name}...')
-                    run(command, cwd=self.root_path, capture_output=True)
-                if not run(
+                    self.run_command_on_repo(command, cwd=self.root_path, capture_output=True)
+                if not self.run_command_on_repo(
                     [self.executable(), 'checkout'] + ['-B', branch, '{}/{}'.format(remote_name, branch)] + log_arg,
                     cwd=self.root_path,
                 ).returncode:
@@ -1282,7 +1307,7 @@ class Git(Scm):
             else:
                 remote_head = self.commit(branch=remote_path, include_log=False, include_identifier=False)
                 local_bp = self.branch_point(ref=local_head.hash)
-                merge_base_with_target_remote = run(
+                merge_base_with_target_remote = self.run_command_on_repo(
                     [self.executable(), 'merge-base', local_bp.hash, remote_head.hash],
                     cwd=self.root_path,
                     capture_output=True,
@@ -1309,7 +1334,7 @@ class Git(Scm):
 
         # Branch exists on a remote.
         if branch_remote:
-            result = run([
+            result = self.run_command_on_repo([
                 self.executable(), 'branch',
                 '--set-upstream-to' if argument in self.branches_for(remote=False) else '--track',
                 argument, '{}/{}'.format(branch_remote, argument),
@@ -1318,7 +1343,7 @@ class Git(Scm):
                 sys.stderr.write(result.stderr)
 
         # Branch is dev or local.
-        return None if run(
+        return None if self.run_command_on_repo(
             [self.executable(), 'checkout', self._to_git_ref(argument)] + log_arg + ['--'],
             cwd=self.root_path,
         ).returncode else self.commit()
@@ -1336,7 +1361,7 @@ class Git(Scm):
         command = [self.executable()]
         if need_commit_signature:
             command += ['-c', 'commit.gpgsign=false']
-        code = run(
+        code = self.run_command_on_repo(
             command + ['rebase', '--onto', target, base or target, head],
             cwd=self.root_path,
         ).returncode
@@ -1369,7 +1394,7 @@ class Git(Scm):
         command = [self.executable(), 'fetch', remote, '{}:{}'.format(branch, branch), '+refs/heads/{}:refs/remotes/{}/{}'.format(branch, remote, branch)]
         if prune:
             command.append('--prune')
-        return run(command, cwd=self.root_path).returncode
+        return self.run_command_on_repo(command, cwd=self.root_path).returncode
 
     def pull(self, rebase=None, branch=None, remote=None, prune=None):
         remote = remote or self.default_remote
@@ -1392,12 +1417,12 @@ class Git(Scm):
                 command += ['--rebase=True', '--autostash']
             elif rebase is False:
                 command += ['--rebase=False']
-            code = run(command, cwd=self.root_path).returncode
+            code = self.run_command_on_repo(command, cwd=self.root_path).returncode
         if self.cache and rebase and branch != self.branch:
             self.cache.clear(self.branch)
 
         if not code and branch and rebase:
-            result = run([self.executable(), 'rev-parse', 'HEAD'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            result = self.run_command_on_repo([self.executable(), 'rev-parse', 'HEAD'], cwd=self.root_path, capture_output=True, encoding='utf-8')
             if not result.returncode and result.stdout.rstrip() != commit.hash:
                 command = [
                     self.executable(),
@@ -1416,19 +1441,19 @@ class Git(Scm):
                 ).returncode
 
         if not code and self.is_svn and commit.revision:
-            return run([
+            return self.run_command_on_repo([
                 self.executable(), 'svn', 'fetch', '--log-window-size=5000', '-r', '{}:HEAD'.format(commit.revision),
             ], cwd=self.root_path).returncode
         return code
 
     def clean(self):
-        return run([
+        return self.run_command_on_repo([
             self.executable(), 'reset', 'HEAD', '--hard',
         ], cwd=self.root_path).returncode
 
     def modified(self, staged=None):
         if staged in [True, False]:
-            command = run(
+            command = self.run_command_on_repo(
                 [self.executable(), 'diff', '--name-only'] + (['--staged'] if staged else []),
                 capture_output=True, encoding='utf-8', cwd=self.root_path,
             )
@@ -1438,7 +1463,7 @@ class Git(Scm):
 
         # When the user hasn't specified what they're looking for, we need to make some assumptions.
         # If all staged files are added, the user probably wants to include non-staged files too
-        command = run(
+        command = self.run_command_on_repo(
             [self.executable(), 'diff', '--name-status', '--staged'],
             capture_output=True, encoding='utf-8', cwd=self.root_path,
         )
@@ -1484,6 +1509,7 @@ class Git(Scm):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             encoding='utf-8',
+            env=self.sanitize_repo_env(),
         )
 
         if proc.poll():
@@ -1504,7 +1530,7 @@ class Git(Scm):
                 raise ValueError("'{}' is not an argument recognized by git".format(argument))
             argument = commit.hash
 
-        output = run(
+        output = self.run_command_on_repo(
             [self.executable(), 'show', argument, '--pretty=', '--name-only'],
             cwd=self.root_path, capture_output=True, encoding='utf-8',
         )
@@ -1518,7 +1544,7 @@ class Git(Scm):
         assert all_candidates[: len(impersonal_candidates)] == impersonal_candidates
         personal_candidates = all_candidates[len(impersonal_candidates):]
 
-        proc = run(
+        proc = self.run_command_on_repo(
             [self.executable(), 'for-each-ref', '--format', '%(objectname) %(refname)', *all_candidates],
             cwd=self.root_path,
             capture_output=True,
@@ -1555,7 +1581,7 @@ class Git(Scm):
                 # need to run anything with --contains.
                 selected_ref = first_ref
             else:
-                proc = run(
+                proc = self.run_command_on_repo(
                     [
                         self.executable(),
                         'for-each-ref',
@@ -1597,7 +1623,7 @@ class Git(Scm):
         b = self.find(ref_b, include_log=False, include_identifier=False)
         if not a or not b:
             return None
-        result = run(
+        result = self.run_command_on_repo(
             [self.executable(), 'merge-base', a.hash, b.hash],
             capture_output=True, encoding='utf-8', cwd=self.path,
         )

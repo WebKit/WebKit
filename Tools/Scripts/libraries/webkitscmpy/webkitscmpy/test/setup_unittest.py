@@ -25,6 +25,8 @@ import os
 import sys
 import time
 
+from unittest.mock import patch
+
 from webkitcorepy import Editor, OutputCapture, testing, mocks as wkmocks
 from webkitcorepy.mocks import Terminal as MockTerminal
 from webkitscmpy import local, program, mocks, Commit
@@ -288,10 +290,14 @@ Fetched 1 remote!
 
             try:
                 from prepare_commit_msg import main
-                self.assertEqual(
-                    main(os.path.join(self.path, 'COMMIT_MESSAGE')),
-                    0,
-                )
+                # Ensure GIT_DIR etc. don't leak from the current env into the hook. The
+                # hook itself doesn't call Git.sanitize_repo_env(): a hook is supposed
+                # to obey whatever env git gives it.
+                with patch.dict(os.environ, local.Git.sanitize_repo_env(), clear=True):
+                    self.assertEqual(
+                        main(os.path.join(self.path, 'COMMIT_MESSAGE')),
+                        0,
+                    )
                 with open(os.path.join(self.path, 'COMMIT_MESSAGE'), 'r') as file:
                     self.assertEqual(
                         file.read(),

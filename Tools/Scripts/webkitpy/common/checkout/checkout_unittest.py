@@ -28,7 +28,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import os
 import unittest
 
 from webkitpy.common.checkout.checkout import Checkout
@@ -43,6 +42,7 @@ from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.thirdparty.mock import Mock
 
 from webkitcorepy import string_utils, OutputCapture
+from webkitscmpy import local
 
 
 _changelog1entry1 = u"""2010-03-25  Fr\u00e9d\u00e9ric Wang  <fred.wang@free.fr>
@@ -160,7 +160,7 @@ class CommitMessageForThisCommitTest(unittest.TestCase):
         def mock_run(*args, **kwargs):
             # Note that we use a real Executive here, not a MockExecutive, so we can test that we're
             # invoking commit-log-editor correctly.
-            env = os.environ.copy()
+            env = local.Git.sanitize_repo_env()
             env['CHANGE_LOG_EMAIL_ADDRESS'] = 'fred.wang@free.fr'
             kwargs['env'] = env
             return executive.run_command(*args, **kwargs)
