@@ -48,6 +48,7 @@
 #import <algorithm>
 #import <objc/runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <pal/spi/cf/CoreVideoSPI.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Scope.h>
@@ -473,8 +474,14 @@ void AVVideoCaptureSource::commitConfiguration()
     if (!m_beginConfigurationCount || --m_beginConfigurationCount > 0)
         return;
 
-    if (m_session)
+    if (!m_session)
+        return;
+
+    @try {
         [m_session commitConfiguration];
+    } @catch (NSException *exception) {
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "error calling -commitConfiguration ", [[exception name] UTF8String], ", reason : ", exception.reason);
+    }
 }
 
 void AVVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
@@ -1521,6 +1528,11 @@ void AVVideoCaptureSource::generatePresets()
 {
     Vector<VideoPreset> presets;
     for (AVCaptureDeviceFormat* format in [device() formats]) {
+
+        // Skip packed-Bayer ProRes RAW sensor formats as they are not currently supported.
+        auto mediaSubType = PAL::CMFormatDescriptionGetMediaSubType(format.formatDescription);
+        if (mediaSubType == kCVPixelFormatType_96VersatileBayerPacked12 || mediaSubType == kCVPixelFormatType_96BayerPacked12_BGGR)
+            continue;
 
         CMVideoDimensions dimensions = PAL::CMVideoFormatDescriptionGetDimensions(format.formatDescription);
         IntSize size = { dimensions.width, dimensions.height };
