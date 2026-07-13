@@ -52,6 +52,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HRTFElevation);
 // Total number of components of an HRTF database.
 constexpr size_t TotalNumberOfResponses = 240;
 
+// This table maps an index into the concatenated elevation table to its
+// corresponding elevation angle. The elevations are stored in this (non-contiguous)
+// order, with negative elevations expressed as angle + 360. See
+// https://bugs.webkit.org/show_bug.cgi?id=98294#c9 for details.
+constexpr std::array<int, HRTFDatabase::NumberOfRawElevations> elevationIndexTable {
+    0, 15, 30, 45, 60, 75, 90, 315, 330, 345
+};
+
 // Number of frames in an individual impulse response.
 constexpr size_t ResponseFrameSize = 256;
 
@@ -132,9 +140,22 @@ bool HRTFElevation::calculateKernelsForAzimuthElevation(int azimuth, int elevati
     if (!bus)
         return false;
 
-    int elevationIndex = positiveElevation / AzimuthSpacing;
-    if (positiveElevation > 90)
-        elevationIndex -= AzimuthSpacing;
+    int elevationIndex = -1;
+    for (size_t k = 0; k < elevationIndexTable.size(); ++k) {
+        if (elevationIndexTable[k] == positiveElevation) {
+            elevationIndex = static_cast<int>(k);
+            break;
+        }
+    }
+
+    // The isElevationGood check above restricts elevation to the multiples of
+    // AzimuthSpacing in [-45, 90], so positiveElevation is always one of the ten
+    // values in elevationIndexTable and the lookup above always finds a match.
+    // This is defense-in-depth in case that invariant is ever broken.
+    bool isElevationIndexGood = elevationIndex >= 0;
+    ASSERT(isElevationIndexGood);
+    if (!isElevationIndexGood)
+        return false;
 
     // The concatenated impulse response is a bus containing all
     // the elevations per azimuth, for all azimuths by increasing

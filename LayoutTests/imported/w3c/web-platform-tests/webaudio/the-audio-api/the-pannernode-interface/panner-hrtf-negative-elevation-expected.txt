@@ -1,0 +1,10 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "negative-elevation"
+PASS Audit report
+PASS > [negative-elevation] A below-horizon source must not collapse onto the overhead response
+PASS   Peak of the overhead (+90) response is greater than 0.
+PASS   Relative max difference between +90 and -45 responses is greater than or equal to 0.01.
+PASS < [negative-elevation] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
+
