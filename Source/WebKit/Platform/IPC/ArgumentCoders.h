@@ -29,6 +29,8 @@
 #include "Decoder.h"
 #include "Encoder.h"
 #include "GeneratedSerializers.h"
+#include "UnsafeArrayReferenceTuple.h"
+#include "UnsafeSpan.h"
 #include <utility>
 #include <variant>
 #include <wtf/ArgumentCoder.h>
@@ -59,8 +61,23 @@ template<typename T, size_t Extent> struct ArgumentCoder<std::span<T, Extent>> {
     template<typename Encoder>
     static void encode(Encoder& encoder, std::span<T, Extent> span)
     {
+        ArgumentCoder<UnsafeSpan<std::remove_const_t<T>, Extent>>::encode(encoder, { span });
+    }
+
+    template<typename Decoder>
+    static std::optional<std::span<T, Extent>> decode(Decoder& decoder)
+    {
+        return decoder.template decode<UnsafeSpan<std::remove_const_t<T>, Extent>>().transform([](auto&& span) { return span.span(); });
+    }
+};
+
+template<typename T, size_t Extent> struct ArgumentCoder<UnsafeSpan<T, Extent>> {
+    template<typename Encoder>
+    static void encode(Encoder& encoder, const UnsafeSpan<T, Extent>& value)
+    {
         static_assert(Extent, "Can't encode a fixed size of 0");
 
+        auto span = value.span();
         if constexpr (Extent == std::dynamic_extent) {
             uint64_t size = span.size();
             encoder << size;
@@ -71,7 +88,7 @@ template<typename T, size_t Extent> struct ArgumentCoder<std::span<T, Extent>> {
     }
 
     template<typename Decoder>
-    static std::optional<std::span<T, Extent>> decode(Decoder& decoder)
+    static std::optional<UnsafeSpan<T, Extent>> decode(Decoder& decoder)
     {
         static_assert(Extent, "Can't decode a fixed size of 0");
 
@@ -86,7 +103,7 @@ template<typename T, size_t Extent> struct ArgumentCoder<std::span<T, Extent>> {
 
             size = *decodedSize;
             if (!size)
-                return std::span<T, Extent> { };
+                return UnsafeSpan<T, Extent> { std::span<const T, Extent> { } };
         }
 
         auto data = decoder.template decodeSpan<T>(size);
@@ -94,9 +111,9 @@ template<typename T, size_t Extent> struct ArgumentCoder<std::span<T, Extent>> {
             return std::nullopt;
 
         if constexpr (Extent == std::dynamic_extent)
-            return data;
+            return UnsafeSpan<T, Extent> { data };
         else
-            return data.template subspan<0, Extent>();
+            return UnsafeSpan<T, Extent> { data.template subspan<0, Extent>() };
     }
 };
 
@@ -105,11 +122,26 @@ struct ArgumentCoder<ArrayReferenceTuple<Types...>> {
     template<typename Encoder>
     static void encode(Encoder& encoder, const ArrayReferenceTuple<Types...>& arrayReference)
     {
+        ArgumentCoder<UnsafeArrayReferenceTuple<Types...>>::encode(encoder, { arrayReference });
+    }
+
+    template<typename Decoder>
+    static std::optional<ArrayReferenceTuple<Types...>> decode(Decoder& decoder)
+    {
+        return decoder.template decode<UnsafeArrayReferenceTuple<Types...>>().transform([](auto&& arrayReference) { return arrayReference.tuple(); });
+    }
+};
+
+template<typename... Types>
+struct ArgumentCoder<UnsafeArrayReferenceTuple<Types...>> {
+    template<typename Encoder>
+    static void encode(Encoder& encoder, const UnsafeArrayReferenceTuple<Types...>& arrayReference)
+    {
         encode(encoder, arrayReference, std::index_sequence_for<Types...> { });
     }
 
     template<typename Encoder, size_t... Indices>
-    static void encode(Encoder& encoder, const ArrayReferenceTuple<Types...>& arrayReference, std::index_sequence<Indices...>)
+    static void encode(Encoder& encoder, const UnsafeArrayReferenceTuple<Types...>& arrayReference, std::index_sequence<Indices...>)
     {
         uint64_t size = arrayReference.size();
         encoder << size;
@@ -120,13 +152,13 @@ struct ArgumentCoder<ArrayReferenceTuple<Types...>> {
     }
 
     template<typename Decoder>
-    static std::optional<ArrayReferenceTuple<Types...>> decode(Decoder& decoder)
+    static std::optional<UnsafeArrayReferenceTuple<Types...>> decode(Decoder& decoder)
     {
         auto decodedSize = decoder.template decode<uint64_t>();
         if (!decodedSize) [[unlikely]]
             return std::nullopt;
         if (!*decodedSize) [[unlikely]]
-            return ArrayReferenceTuple<Types...> { };
+            return UnsafeArrayReferenceTuple<Types...> { };
 
         CheckedSize size { *decodedSize };
         bool anyOverflow = (... || (size * sizeof(Types)).hasOverflowed());
@@ -137,7 +169,7 @@ struct ArgumentCoder<ArrayReferenceTuple<Types...>> {
     }
 
     template<typename Decoder, typename... DataPointerTypes>
-    static std::optional<ArrayReferenceTuple<Types...>> decode(Decoder& decoder, size_t size, DataPointerTypes&&... dataPointers)
+    static std::optional<UnsafeArrayReferenceTuple<Types...>> decode(Decoder& decoder, size_t size, DataPointerTypes&&... dataPointers)
     {
         constexpr size_t Index = sizeof...(DataPointerTypes);
         static_assert(Index <= sizeof...(Types));
@@ -149,7 +181,7 @@ struct ArgumentCoder<ArrayReferenceTuple<Types...>> {
                 return std::nullopt;
             return decode(decoder, size, std::forward<DataPointerTypes>(dataPointers)..., data.data());
         } else
-            return ArrayReferenceTuple<Types...> { std::forward<DataPointerTypes>(dataPointers)..., size };
+            return UnsafeArrayReferenceTuple<Types...> { std::forward<DataPointerTypes>(dataPointers)..., size };
     }
 };
 

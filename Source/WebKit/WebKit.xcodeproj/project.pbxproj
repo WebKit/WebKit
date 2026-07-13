@@ -1172,6 +1172,8 @@
 		48E4FD912C91486DA934D031 /* InspectorPassthroughChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCCB565EDBD4471CBF56BE45 /* InspectorPassthroughChannel.cpp */; };
 		493102BD2683F3D0002BB885 /* AppPrivacyReport.h in Headers */ = {isa = PBXBuildFile; fileRef = 493102BC2683F3A5002BB885 /* AppPrivacyReport.h */; };
 		4955A6E628076D4D00BB91C4 /* ArrayReferenceTuple.h in Headers */ = {isa = PBXBuildFile; fileRef = 4955A6E528076D4C00BB91C4 /* ArrayReferenceTuple.h */; };
+		CA11AB1E0000000000000002 /* UnsafeSpan.h in Headers */ = {isa = PBXBuildFile; fileRef = CA11AB1E0000000000000001 /* UnsafeSpan.h */; };
+		CA11AB1E0000000000000004 /* UnsafeArrayReferenceTuple.h in Headers */ = {isa = PBXBuildFile; fileRef = CA11AB1E0000000000000003 /* UnsafeArrayReferenceTuple.h */; };
 		4973DF482422941F00E4C26A /* NavigatingToAppBoundDomain.h in Headers */ = {isa = PBXBuildFile; fileRef = 4973DF472422941F00E4C26A /* NavigatingToAppBoundDomain.h */; };
 		4990002124D2429C00049CB4 /* WKRenderLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4990001F24D2429C00049CB4 /* WKRenderLayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4990002424D24C2900049CB4 /* WKRenderObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 4990002324D24C1C00049CB4 /* WKRenderObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5923,6 +5925,8 @@
 		48B188FE2E789A3B009B57A9 /* AccessibilityPreferences.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = AccessibilityPreferences.mm; sourceTree = "<group>"; };
 		493102BC2683F3A5002BB885 /* AppPrivacyReport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppPrivacyReport.h; sourceTree = "<group>"; };
 		4955A6E528076D4C00BB91C4 /* ArrayReferenceTuple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayReferenceTuple.h; sourceTree = "<group>"; };
+		CA11AB1E0000000000000001 /* UnsafeSpan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnsafeSpan.h; sourceTree = "<group>"; };
+		CA11AB1E0000000000000003 /* UnsafeArrayReferenceTuple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnsafeArrayReferenceTuple.h; sourceTree = "<group>"; };
 		4973DF472422941F00E4C26A /* NavigatingToAppBoundDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigatingToAppBoundDomain.h; sourceTree = "<group>"; };
 		4990001E24D2429C00049CB4 /* WKRenderLayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WKRenderLayer.cpp; sourceTree = "<group>"; };
 		4990001F24D2429C00049CB4 /* WKRenderLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKRenderLayer.h; sourceTree = "<group>"; };
@@ -11013,6 +11017,8 @@
 				F48570A22644BEC400C05F71 /* Timeout.h */,
 				7B8486832ED9C1D500E34DC1 /* TransferString.cpp */,
 				7B8486822ED9C1D500E34DC1 /* TransferString.h */,
+				CA11AB1E0000000000000003 /* UnsafeArrayReferenceTuple.h */,
+				CA11AB1E0000000000000001 /* UnsafeSpan.h */,
 				7BDD9DDB28D205C6004CDF48 /* WorkQueueMessageReceiver.h */,
 			);
 			path = IPC;
@@ -18856,6 +18862,8 @@
 				EE7371602EE2555C009F354F /* UIWindowScene+Extras.h in Headers */,
 				5C4B9D8B210A8CCF008F14D1 /* UndoOrRedo.h in Headers */,
 				93D1EEF529669D74009B31D6 /* UnifiedOriginStorageLevel.h in Headers */,
+				CA11AB1E0000000000000004 /* UnsafeArrayReferenceTuple.h in Headers */,
+				CA11AB1E0000000000000002 /* UnsafeSpan.h in Headers */,
 				1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */,
 				5C19A5201FD0B29500EEA323 /* URLSchemeTaskParameters.h in Headers */,
 				E33E8FFD2C7FD2980002BEB3 /* UseDownloadPlaceholder.h in Headers */,
