@@ -665,6 +665,14 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                 }
             }
 
+            // Caching a custom access records the constant custom getter/setter and relies on a structure transition
+            // to be informed if the custom goes away. On a dictionary, a property can be added in place (shadowing the
+            // custom accessor) without any structure transition, which would leave this cache stale. Fresh dictionaries
+            // were flattened above into non-dictionaries, but a structure that has already been flattened once is not
+            // re-flattened and can be a dictionary again, so we need to refuse to cache the custom in that case.
+            if (slot.isCacheableCustom() && slot.slotBase()->structure()->isDictionary())
+                return GiveUpOnCache;
+
             JSFunction* getter = nullptr;
             if (slot.isCacheableGetter())
                 getter = dynamicDowncast<JSFunction>(slot.getterSetter()->getter());
@@ -1204,6 +1212,15 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                 // function pointer.
                 auto cacheStatus = prepareChainForCaching(globalObject, baseCell, propertyName.uid(), slot.base());
                 if (!cacheStatus)
+                    return GiveUpOnCache;
+
+                // prepareChainForCaching flattens a fresh dictionary so that adding/replacing the
+                // property transitions the structure, invalidating this cache. But a structure that
+                // has already been flattened once is not reflattened and can be a dictionary again.
+                // Caching the constant custom setter against such a live dictionary is unsafe:
+                // the property can be shadowed by an in-place property addition with no structure
+                // transition, leaving this cache stale.
+                if (slot.base()->structure()->isDictionary())
                     return GiveUpOnCache;
 
                 if (slot.base() != baseValue) {
