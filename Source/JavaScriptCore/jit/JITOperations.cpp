@@ -347,7 +347,8 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdDirectOptimize, EncodedJSValue, (Encode
     OPERATION_RETURN(scope, JSValue::encode(found ? slot.getValue(globalObject, identifier) : jsUndefined()));
 }
 
-static ALWAYS_INLINE JSValue getByIdMegamorphic(JSGlobalObject* globalObject, VM& vm, CallFrame* callFrame, PropertyInlineCache* propertyCache, JSValue baseValue, JSValue thisValue, CacheableIdentifier identifier, GetByKind kind)
+template<GetByKind kind>
+static ALWAYS_INLINE JSValue getByIdMegamorphic(JSGlobalObject* globalObject, VM& vm, CallFrame* callFrame, PropertyInlineCache* propertyCache, JSValue baseValue, JSValue thisValue, CacheableIdentifier identifier)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -397,6 +398,20 @@ static ALWAYS_INLINE JSValue getByIdMegamorphic(JSGlobalObject* globalObject, VM
                             repatchGetBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
                     }
                 }
+            } else if constexpr (kind == GetByKind::ById) {
+                if (cacheable && slot.isCacheableGetter() && slot.cachedOffset() <= MegamorphicCache::maxOffset) [[likely]] {
+                    if (slot.slotBase() == baseObject || !baseObject->structure()->isDictionary())
+                        vm.megamorphicCache()->initAsGetterHit(baseObject->structureID(), uid, slot.slotBase(), slot.cachedOffset(), slot.slotBase() == baseValue);
+                    else {
+                        if (baseObject->structure()->hasBeenFlattenedBefore()) [[unlikely]] {
+                            if (propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
+                                repatchGetBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
+                        }
+                    }
+                } else {
+                    if (shouldGiveUp && propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
+                        repatchGetBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
+                }
             } else {
                 if (shouldGiveUp && propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
                     repatchGetBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
@@ -439,7 +454,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdMegamorphic, EncodedJSValue, (EncodedJS
     JSValue baseValue = JSValue::decode(base);
     CacheableIdentifier identifier = propertyCache->identifier();
 
-    OPERATION_RETURN(scope, JSValue::encode(getByIdMegamorphic(globalObject, vm, callFrame, propertyCache, baseValue, baseValue, identifier, GetByKind::ById)));
+    OPERATION_RETURN(scope, JSValue::encode(getByIdMegamorphic<GetByKind::ById>(globalObject, vm, callFrame, propertyCache, baseValue, baseValue, identifier)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetByIdMegamorphicGeneric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, uintptr_t rawCacheableIdentifier))
@@ -452,7 +467,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdMegamorphicGeneric, EncodedJSValue, (JS
     JSValue baseValue = JSValue::decode(base);
     CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
 
-    OPERATION_RETURN(scope, JSValue::encode(getByIdMegamorphic(globalObject, vm, callFrame, nullptr, baseValue, baseValue, identifier, GetByKind::ById)));
+    OPERATION_RETURN(scope, JSValue::encode(getByIdMegamorphic<GetByKind::ById>(globalObject, vm, callFrame, nullptr, baseValue, baseValue, identifier)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetByIdGaveUp, EncodedJSValue, (EncodedJSValue base, PropertyInlineCache* propertyCache))
@@ -464,9 +479,9 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdGaveUp, EncodedJSValue, (EncodedJSValue
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     ICSlowPathCallFrameTracer tracer(vm, callFrame, propertyCache);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    
+
     propertyCache->tookSlowPath = true;
-    
+
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue, PropertySlot::InternalMethodType::Get);
     CacheableIdentifier identifier = propertyCache->identifier();
@@ -604,7 +619,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdWithThisMegamorphic, EncodedJSValue, (E
 
     CacheableIdentifier identifier = propertyCache->identifier();
 
-    OPERATION_RETURN(scope, JSValue::encode(getByIdMegamorphic(globalObject, vm, callFrame, propertyCache, JSValue::decode(base), JSValue::decode(encodedThis), identifier, GetByKind::ByIdWithThis)));
+    OPERATION_RETURN(scope, JSValue::encode(getByIdMegamorphic<GetByKind::ByIdWithThis>(globalObject, vm, callFrame, propertyCache, JSValue::decode(base), JSValue::decode(encodedThis), identifier)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetByIdWithThisMegamorphicGeneric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, EncodedJSValue encodedThis, uintptr_t rawCacheableIdentifier))
@@ -616,7 +631,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdWithThisMegamorphicGeneric, EncodedJSVa
 
     CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
 
-    OPERATION_RETURN(scope, JSValue::encode(getByIdMegamorphic(globalObject, vm, callFrame, nullptr, JSValue::decode(base), JSValue::decode(encodedThis), identifier, GetByKind::ByIdWithThis)));
+    OPERATION_RETURN(scope, JSValue::encode(getByIdMegamorphic<GetByKind::ByIdWithThis>(globalObject, vm, callFrame, nullptr, JSValue::decode(base), JSValue::decode(encodedThis), identifier)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationInByIdGaveUp, EncodedJSValue, (EncodedJSValue base, PropertyInlineCache* propertyCache))

@@ -489,10 +489,12 @@ void AssemblyHelpers::storeProperty(JSValueRegs value, GPRReg object, GPRReg off
 }
 
 #if USE(JSVALUE64)
-AssemblyHelpers::JumpList AssemblyHelpers::loadMegamorphicProperty(VM& vm, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl* uid, GPRReg resultGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR)
+template<uint32_t primaryMask, ptrdiff_t primaryEntriesOffset, uint32_t secondaryMask, ptrdiff_t secondaryEntriesOffset>
+AssemblyHelpers::JumpList AssemblyHelpers::findMegamorphicCacheEntry(VM& vm, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl* uid, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR)
 {
-    // uidGPR can be InvalidGPRReg if uid is non-nullptr.
+    using Entry = MegamorphicCache::LoadEntry;
 
+    // uidGPR can be InvalidGPRReg if uid is non-nullptr.
     if (!uid)
         ASSERT(uidGPR != InvalidGPRReg);
 
@@ -522,35 +524,30 @@ AssemblyHelpers::JumpList AssemblyHelpers::loadMegamorphicProperty(VM& vm, GPRRe
         add32(scratch2GPR, scratch3GPR);
     }
 
-    and32(TrustedImm32(MegamorphicCache::loadCachePrimaryMask), scratch3GPR);
-    if (hasOneBitSet(sizeof(MegamorphicCache::LoadEntry))) // is a power of 2
-        lshift32(TrustedImm32(getLSBSet(sizeof(MegamorphicCache::LoadEntry))), scratch3GPR);
+    and32(TrustedImm32(primaryMask), scratch3GPR);
+    if (hasOneBitSet(sizeof(Entry))) // is a power of 2
+        lshift32(TrustedImm32(getLSBSet(sizeof(Entry))), scratch3GPR);
     else
-        mul32(TrustedImm32(sizeof(MegamorphicCache::LoadEntry)), scratch3GPR, scratch3GPR);
+        mul32(TrustedImm32(sizeof(Entry)), scratch3GPR, scratch3GPR);
     auto& cache = vm.ensureMegamorphicCache();
     move(TrustedImmPtr(&cache), scratch2GPR);
-    static_assert(!MegamorphicCache::offsetOfLoadCachePrimaryEntries());
     addPtr(scratch2GPR, scratch3GPR);
+    if constexpr (primaryEntriesOffset)
+        addPtr(TrustedImm32(primaryEntriesOffset), scratch3GPR);
 
     load16(Address(scratch2GPR, MegamorphicCache::offsetOfEpoch()), scratch2GPR);
 
-    primaryFail.append(branch32(NotEqual, scratch1GPR, Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfStructureID())));
+    primaryFail.append(branch32(NotEqual, scratch1GPR, Address(scratch3GPR, Entry::offsetOfStructureID())));
     if (uid)
-        primaryFail.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfUid()), TrustedImmPtr(uid)));
+        primaryFail.append(branchPtr(NotEqual, Address(scratch3GPR, Entry::offsetOfUid()), TrustedImmPtr(uid)));
     else
-        primaryFail.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfUid()), uidGPR));
+        primaryFail.append(branchPtr(NotEqual, Address(scratch3GPR, Entry::offsetOfUid()), uidGPR));
     // We already hit StructureID and uid. And we get stale epoch for this entry.
     // Since all entries in the secondary cache has stale epoch for this StructureID and uid pair, we should just go to the slow case.
-    slowCases.append(branch32WithMemory16(NotEqual, Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfEpoch()), scratch2GPR));
+    slowCases.append(branch32WithMemory16(NotEqual, Address(scratch3GPR, Entry::offsetOfEpoch()), scratch2GPR));
 
-    // Cache hit!
-    Label cacheHit = label();
-    loadPtr(Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfHolder()), scratch2GPR);
-    auto missed = branchTestPtr(Zero, scratch2GPR);
-    moveConditionally64(Equal, scratch2GPR, TrustedImm32(std::bit_cast<uintptr_t>(JSCell::seenMultipleCalleeObjects())), baseGPR, scratch2GPR, scratch1GPR);
-    load16(Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfOffset()), scratch2GPR);
-    loadProperty(scratch1GPR, scratch2GPR, JSValueRegs { resultGPR });
-    auto done = jump();
+    // Primary hit: scratch3GPR points at the matching entry. Skip the secondary lookup.
+    Jump primaryHit = jump();
 
     // Secondary cache lookup. Now,
     //   1. scratch1GPR holds StructureID.
@@ -561,25 +558,61 @@ AssemblyHelpers::JumpList AssemblyHelpers::loadMegamorphicProperty(VM& vm, GPRRe
     else
         add32(uidGPR, scratch1GPR, scratch3GPR);
     addUnsignedRightShift32(scratch3GPR, scratch3GPR, TrustedImm32(MegamorphicCache::structureIDHashShift3), scratch3GPR);
-    and32(TrustedImm32(MegamorphicCache::loadCacheSecondaryMask), scratch3GPR);
-    if constexpr (hasOneBitSet(sizeof(MegamorphicCache::LoadEntry))) // is a power of 2
-        lshift32(TrustedImm32(getLSBSet(sizeof(MegamorphicCache::LoadEntry))), scratch3GPR);
+    and32(TrustedImm32(secondaryMask), scratch3GPR);
+    if constexpr (hasOneBitSet(sizeof(Entry))) // is a power of 2
+        lshift32(TrustedImm32(getLSBSet(sizeof(Entry))), scratch3GPR);
     else
-        mul32(TrustedImm32(sizeof(MegamorphicCache::LoadEntry)), scratch3GPR, scratch3GPR);
-    addPtr(TrustedImmPtr(std::bit_cast<uint8_t*>(&cache) + MegamorphicCache::offsetOfLoadCacheSecondaryEntries()), scratch3GPR);
+        mul32(TrustedImm32(sizeof(Entry)), scratch3GPR, scratch3GPR);
+    addPtr(TrustedImmPtr(std::bit_cast<uint8_t*>(&cache) + secondaryEntriesOffset), scratch3GPR);
 
-    slowCases.append(branch32(NotEqual, scratch1GPR, Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfStructureID())));
+    slowCases.append(branch32(NotEqual, scratch1GPR, Address(scratch3GPR, Entry::offsetOfStructureID())));
     if (uid)
-        slowCases.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfUid()), TrustedImmPtr(uid)));
+        slowCases.append(branchPtr(NotEqual, Address(scratch3GPR, Entry::offsetOfUid()), TrustedImmPtr(uid)));
     else
-        slowCases.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfUid()), uidGPR));
-    slowCases.append(branch32WithMemory16(NotEqual, Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfEpoch()), scratch2GPR));
-    jump().linkTo(cacheHit, this);
+        slowCases.append(branchPtr(NotEqual, Address(scratch3GPR, Entry::offsetOfUid()), uidGPR));
+    slowCases.append(branch32WithMemory16(NotEqual, Address(scratch3GPR, Entry::offsetOfEpoch()), scratch2GPR));
+
+    // Secondary hit falls through; the primary hit converges here. scratch3GPR points at the entry.
+    primaryHit.link(this);
+
+    return slowCases;
+}
+
+AssemblyHelpers::JumpList AssemblyHelpers::loadMegamorphicProperty(VM& vm, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl* uid, GPRReg resultGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR)
+{
+    using Entry = MegamorphicCache::LoadEntry;
+    JumpList slowCases = findMegamorphicCacheEntry<
+        MegamorphicCache::loadCachePrimaryMask, MegamorphicCache::offsetOfLoadCachePrimaryEntries(),
+        MegamorphicCache::loadCacheSecondaryMask, MegamorphicCache::offsetOfLoadCacheSecondaryEntries()>(
+            vm, baseGPR, uidGPR, uid, scratch1GPR, scratch2GPR, scratch3GPR);
+
+    loadPtr(Address(scratch3GPR, Entry::offsetOfHolder()), scratch2GPR);
+    auto missed = branchTestPtr(Zero, scratch2GPR);
+    moveConditionally64(Equal, scratch2GPR, TrustedImm32(std::bit_cast<uintptr_t>(JSCell::seenMultipleCalleeObjects())), baseGPR, scratch2GPR, scratch1GPR);
+    load16(Address(scratch3GPR, Entry::offsetOfOffset()), scratch2GPR);
+    loadProperty(scratch1GPR, scratch2GPR, JSValueRegs { resultGPR });
+    auto done = jump();
 
     missed.link(this);
     moveTrustedValue(jsUndefined(), JSValueRegs { resultGPR });
 
     done.link(this);
+
+    return slowCases;
+}
+
+AssemblyHelpers::JumpList AssemblyHelpers::loadMegamorphicGetterSetter(VM& vm, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl* uid, GPRReg resultGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR)
+{
+    using Entry = MegamorphicCache::GetterEntry;
+    JumpList slowCases = findMegamorphicCacheEntry<
+        MegamorphicCache::getterCachePrimaryMask, MegamorphicCache::offsetOfGetterCachePrimaryEntries(),
+        MegamorphicCache::getterCacheSecondaryMask, MegamorphicCache::offsetOfGetterCacheSecondaryEntries()>(
+            vm, baseGPR, uidGPR, uid, scratch1GPR, scratch2GPR, scratch3GPR);
+
+    loadPtr(Address(scratch3GPR, Entry::offsetOfHolder()), scratch1GPR);
+    moveConditionally64(Equal, scratch1GPR, TrustedImm32(std::bit_cast<uintptr_t>(JSCell::seenMultipleCalleeObjects())), baseGPR, scratch1GPR, scratch1GPR);
+    load16(Address(scratch3GPR, Entry::offsetOfOffset()), scratch2GPR);
+    loadProperty(scratch1GPR, scratch2GPR, JSValueRegs { resultGPR });
 
     return slowCases;
 }

@@ -298,6 +298,13 @@ GetByStatus GetByStatus::computeForPropertyInlineCacheWithoutExitSiteFeedback(co
                     return GetByStatus(Megamorphic, /* wasSeenInJIT */ true);
                 break;
             }
+            case AccessCase::LoadMegamorphicGetter: {
+                // FIXME: Using MakesCalls, not Megamorphic. The value-only GetByIdMegamorphic DFG node can't
+                // service accessors, so keep it a regular GetById and let DFG/FTL install the handler.
+                if (!propertyCache->tookSlowPath)
+                    return GetByStatus(MakesCalls, /* wasSeenInJIT */ true);
+                break;
+            }
             default:
                 break;
             }

@@ -81,6 +81,7 @@ class NativeExecutable;
     macro(GetByIdCustomAccessorHandler, getByIdCustomAccessorHandler) \
     macro(GetByIdCustomValueHandler, getByIdCustomValueHandler) \
     macro(GetByIdGetterHandler, getByIdGetterHandler) \
+    macro(GetByIdMegamorphicGetterHandler, getByIdMegamorphicGetterHandler) \
     macro(GetByIdProxyObjectLoadHandler, getByIdProxyObjectLoadHandler) \
     macro(GetByIdModuleNamespaceLoadHandler, getByIdModuleNamespaceLoadHandler) \
     macro(PutByIdReplaceHandler, putByIdReplaceHandler) \

@@ -236,6 +236,7 @@ static bool NODELETE needsScratchFPR(AccessCase::AccessType type)
     switch (type) {
     case AccessCase::Load:
     case AccessCase::LoadMegamorphic:
+    case AccessCase::LoadMegamorphicGetter:
     case AccessCase::StoreMegamorphic:
     case AccessCase::InMegamorphic:
     case AccessCase::Transition:
@@ -385,6 +386,7 @@ static bool NODELETE forInBy(AccessCase::AccessType type)
     switch (type) {
     case AccessCase::Load:
     case AccessCase::LoadMegamorphic:
+    case AccessCase::LoadMegamorphicGetter:
     case AccessCase::StoreMegamorphic:
     case AccessCase::Transition:
     case AccessCase::Delete:
@@ -559,6 +561,7 @@ static bool NODELETE isStateless(AccessCase::AccessType type)
     case AccessCase::IndexedFalseKeyReplace:
     case AccessCase::IndexedFalseKeyTransition:
     case AccessCase::Getter:
+    case AccessCase::LoadMegamorphicGetter:
     case AccessCase::Setter:
     case AccessCase::ProxyObjectIn:
     case AccessCase::ProxyObjectLoad:
@@ -682,6 +685,7 @@ bool NODELETE doesJSCalls(AccessCase::AccessType type)
 {
     switch (type) {
     case AccessCase::Getter:
+    case AccessCase::LoadMegamorphicGetter:
     case AccessCase::Setter:
     case AccessCase::ProxyObjectIn:
     case AccessCase::ProxyObjectLoad:
@@ -832,6 +836,7 @@ static bool NODELETE isMegamorphic(AccessCase::AccessType type)
 {
     switch (type) {
     case AccessCase::LoadMegamorphic:
+    case AccessCase::LoadMegamorphicGetter:
     case AccessCase::StoreMegamorphic:
     case AccessCase::InMegamorphic:
     case AccessCase::IndexedMegamorphicLoad:
@@ -1029,6 +1034,7 @@ bool canBeViaGlobalProxy(AccessCase::AccessType type)
     case AccessCase::IndexedNoIndexingInMiss:
     case AccessCase::InMegamorphic:
     case AccessCase::LoadMegamorphic:
+    case AccessCase::LoadMegamorphicGetter:
     case AccessCase::StoreMegamorphic:
     case AccessCase::ArrayLength:
     case AccessCase::StringLength:
@@ -3232,6 +3238,10 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
         return;
     }
 
+    case AccessCase::LoadMegamorphicGetter:
+        // No structure guard; the getter cache lookup in generateAccessCase validates (structure, uid).
+        break;
+
     default:
         emitDefaultGuard();
         break;
@@ -3508,45 +3518,75 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
 
     case AccessCase::Getter:
     case AccessCase::Setter:
+    case AccessCase::LoadMegamorphicGetter:
     case AccessCase::IntrinsicGetter: {
-        Structure* currStructure = accessCase.structure();
-        if (auto* object = accessCase.tryGetAlternateBase())
-            currStructure = object->structure();
+        if (accessCase.m_type == AccessCase::LoadMegamorphicGetter) {
+            // Resolve the GetterSetter cell from the getter cache into scratchGPR, then fall through
+            // to the shared getter-call sequence. A cache miss repatches to the generic slow path.
+            ASSERT(!accessCase.viaGlobalProxy());
+            auto* uid = accessCase.m_identifier.uid();
 
-        if (isValidOffset(accessCase.m_offset))
-            currStructure->startWatchingPropertyForReplacements(vm, accessCase.offset());
+            auto allocator = makeDefaultScratchAllocator(scratchGPR);
+            GPRReg scratch2GPR = allocator.allocateScratchGPR();
+            GPRReg scratch3GPR = allocator.allocateScratchGPR();
+            GPRReg scratch4GPR = allocator.allocateScratchGPR();
 
-        {
-            GPRReg propertyOwnerGPR = baseGPR;
-            if (accessCase.polyProtoAccessChain()) {
-                // This isn't pretty, but we know we got here via generateWithGuard,
-                // and it left the baseForAccess inside scratchGPR. We could re-derive the base,
-                // but it'd require emitting the same code to load the base twice.
-                propertyOwnerGPR = scratchGPR;
-            } else if (auto* object = accessCase.tryGetAlternateBase()) {
-                jit.move(CCallHelpers::TrustedImmPtr(object), scratchGPR);
-                propertyOwnerGPR = scratchGPR;
-            } else if (accessCase.viaGlobalProxy()) {
-                ASSERT(canBeViaGlobalProxy(accessCase.m_type));
-                // We only need this when loading an inline or out of line property. For customs accessors,
-                // we can invoke with a receiver value that is a JSGlobalProxy. For custom values, we unbox to the
-                // JSGlobalProxy's target. For getters/setters, we'll also invoke them with the JSGlobalProxy as |this|,
-                // but we need to load the actual GetterSetter cell from the JSGlobalProxy's target.
-                jit.loadPtr(CCallHelpers::Address(baseGPR, JSGlobalProxy::targetOffset()), scratchGPR);
-                propertyOwnerGPR = scratchGPR;
-            }
+            ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
-            GPRReg storageGPR = propertyOwnerGPR;
-            if (!isInlineOffset(accessCase.m_offset)) {
-                jit.loadPtr(CCallHelpers::Address(propertyOwnerGPR, JSObject::butterflyOffset()), scratchGPR);
-                storageGPR = scratchGPR;
-            }
+            CCallHelpers::JumpList slowCases;
+            ASSERT(!useHandlerIC());
+            slowCases.append(jit.loadMegamorphicGetterSetter(vm, baseGPR, InvalidGPRReg, uid, scratchGPR, scratch2GPR, scratch3GPR, scratch4GPR));
+
+            allocator.restoreReusedRegistersByPopping(jit, preservedState);
+
+            if (allocator.didReuseRegisters()) {
+                CCallHelpers::Jump ok = jit.jump();
+                slowCases.link(&jit);
+                allocator.restoreReusedRegistersByPopping(jit, preservedState);
+                m_failAndRepatch.append(jit.jump());
+                ok.link(&jit);
+            } else
+                m_failAndRepatch.append(slowCases);
+        } else {
+            Structure* currStructure = accessCase.structure();
+            if (auto* object = accessCase.tryGetAlternateBase())
+                currStructure = object->structure();
+
+            if (isValidOffset(accessCase.m_offset))
+                currStructure->startWatchingPropertyForReplacements(vm, accessCase.offset());
+
+            {
+                GPRReg propertyOwnerGPR = baseGPR;
+                if (accessCase.polyProtoAccessChain()) {
+                    // This isn't pretty, but we know we got here via generateWithGuard,
+                    // and it left the baseForAccess inside scratchGPR. We could re-derive the base,
+                    // but it'd require emitting the same code to load the base twice.
+                    propertyOwnerGPR = scratchGPR;
+                } else if (auto* object = accessCase.tryGetAlternateBase()) {
+                    jit.move(CCallHelpers::TrustedImmPtr(object), scratchGPR);
+                    propertyOwnerGPR = scratchGPR;
+                } else if (accessCase.viaGlobalProxy()) {
+                    ASSERT(canBeViaGlobalProxy(accessCase.m_type));
+                    // We only need this when loading an inline or out of line property. For customs accessors,
+                    // we can invoke with a receiver value that is a JSGlobalProxy. For custom values, we unbox to the
+                    // JSGlobalProxy's target. For getters/setters, we'll also invoke them with the JSGlobalProxy as |this|,
+                    // but we need to load the actual GetterSetter cell from the JSGlobalProxy's target.
+                    jit.loadPtr(CCallHelpers::Address(baseGPR, JSGlobalProxy::targetOffset()), scratchGPR);
+                    propertyOwnerGPR = scratchGPR;
+                }
+
+                GPRReg storageGPR = propertyOwnerGPR;
+                if (!isInlineOffset(accessCase.m_offset)) {
+                    jit.loadPtr(CCallHelpers::Address(propertyOwnerGPR, JSObject::butterflyOffset()), scratchGPR);
+                    storageGPR = scratchGPR;
+                }
 
 #if USE(JSVALUE64)
-            jit.load64(CCallHelpers::Address(storageGPR, offsetRelativeToBase(accessCase.m_offset)), scratchGPR);
+                jit.load64(CCallHelpers::Address(storageGPR, offsetRelativeToBase(accessCase.m_offset)), scratchGPR);
 #else
-            jit.load32(CCallHelpers::Address(storageGPR, offsetRelativeToBase(accessCase.m_offset) + PayloadOffset), scratchGPR);
+                jit.load32(CCallHelpers::Address(storageGPR, offsetRelativeToBase(accessCase.m_offset) + PayloadOffset), scratchGPR);
 #endif
+            }
         }
 
         if (accessCase.m_type == AccessCase::IntrinsicGetter) {
@@ -3556,7 +3596,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
             return;
         }
 
-        bool isGetter = accessCase.m_type == AccessCase::Getter;
+        bool isGetter = accessCase.m_type == AccessCase::Getter || accessCase.m_type == AccessCase::LoadMegamorphicGetter;
 
         // This also does the necessary calculations of whether or not we're an
         // exception handling call site.
@@ -4825,6 +4865,23 @@ RefPtr<AccessCase> InlineCacheCompiler::tryFoldToMegamorphic(CodeBlock* codeBloc
         case AccessType::GetById:
         case AccessType::GetByIdWithThis: {
             auto identifier = m_propertyCache.m_identifier;
+
+            // Currently, we do not apply megamorphic cache for "length" property since Array#length and String#length are too common.
+            if (!canUseMegamorphicGetById(vm(), identifier.uid()))
+                return nullptr;
+
+            if (m_propertyCache.accessType == AccessType::GetById) {
+                bool allGetters = !cases.empty();
+                for (auto& accessCase : cases) {
+                    if (accessCase->type() != AccessCase::Getter || accessCase->viaGlobalProxy() || accessCase->usesPolyProto()) {
+                        allGetters = false;
+                        break;
+                    }
+                }
+                if (allGetters)
+                    return AccessCase::create(vm(), codeBlock, AccessCase::LoadMegamorphicGetter, identifier);
+            }
+
             unsigned numberOfUndesiredMegamorphicAccessVariants = 0;
             for (auto& accessCase : cases) {
                 if (accessCase->type() != AccessCase::Load && accessCase->type() != AccessCase::Miss)
@@ -4836,10 +4893,6 @@ RefPtr<AccessCase> InlineCacheCompiler::tryFoldToMegamorphic(CodeBlock* codeBloc
                 if (accessCase->usesPolyProto())
                     ++numberOfUndesiredMegamorphicAccessVariants;
             }
-
-            // Currently, we do not apply megamorphic cache for "length" property since Array#length and String#length are too common.
-            if (!canUseMegamorphicGetById(vm(), identifier.uid()))
-                return nullptr;
 
             if (numberOfUndesiredMegamorphicAccessVariants) {
                 if ((numberOfUndesiredMegamorphicAccessVariants / static_cast<double>(cases.size())) >= Options::thresholdForUndesiredMegamorphicAccessVariantListSize())
@@ -5552,28 +5605,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomValueHandler(VM& vm)
     return getByIdCustomHandlerImpl<isAccessor>(vm);
 }
 
-static void getterHandlerImpl(VM&, CCallHelpers& jit, JSValueRegs baseJSR, [[maybe_unused]] JSValueRegs resultJSR, GPRReg propertyCacheGPR, GPRReg scratch1GPR, GPRReg scratch2GPR)
+static void getterCallFromGetterSetterImpl(CCallHelpers& jit, JSValueRegs baseJSR, [[maybe_unused]] JSValueRegs resultJSR, GPRReg propertyCacheGPR, GPRReg scratch1GPR)
 {
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfHolder()), scratch1GPR);
-    jit.moveConditionally64(CCallHelpers::Equal, scratch1GPR, CCallHelpers::TrustedImm32(0), baseJSR.payloadGPR(), scratch1GPR, scratch1GPR);
-    jit.load32(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfOffset()), scratch2GPR);
-    jit.loadProperty(scratch1GPR, scratch2GPR, JSValueRegs { scratch1GPR });
-
     jit.transfer32(CCallHelpers::Address(propertyCacheGPR, PropertyInlineCache::offsetOfCallSiteIndex()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
-
-    // Create a JS call using a JS call inline cache. Assume that:
-    //
-    // - SP is aligned and represents the extent of the calling compiler's stack usage.
-    //
-    // - FP is set correctly (i.e. it points to the caller's call frame header).
-    //
-    // - SP - FP is an aligned difference.
-    //
-    // - Any byte between FP (exclusive) and SP (inclusive) could be live in the calling
-    //   code.
-    //
-    // Therefore, we temporarily grow the stack for the purpose of the call and then
-    // shrink it after.
 
     // There is a "this" argument.
     constexpr unsigned numberOfParameters = 1;
@@ -5612,6 +5646,15 @@ static void getterHandlerImpl(VM&, CCallHelpers& jit, JSValueRegs baseJSR, [[may
     InlineCacheCompiler::emitDataICRestoreAfterCall(jit);
 }
 
+static void getterHandlerImpl(VM&, CCallHelpers& jit, JSValueRegs baseJSR, JSValueRegs resultJSR, GPRReg propertyCacheGPR, GPRReg scratch1GPR, GPRReg scratch2GPR)
+{
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfHolder()), scratch1GPR);
+    jit.moveConditionally64(CCallHelpers::Equal, scratch1GPR, CCallHelpers::TrustedImm32(0), baseJSR.payloadGPR(), scratch1GPR, scratch1GPR);
+    jit.load32(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfOffset()), scratch2GPR);
+    jit.loadProperty(scratch1GPR, scratch2GPR, JSValueRegs { scratch1GPR });
+    getterCallFromGetterSetterImpl(jit, baseJSR, resultJSR, propertyCacheGPR, scratch1GPR);
+}
+
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdGetterHandler(VM& vm)
 {
     CCallHelpers jit;
@@ -5638,6 +5681,41 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdGetterHandler(VM& vm)
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "GetById Getter handler"_s, "GetById Getter handler");
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMegamorphicGetterHandler(VM& vm)
+{
+    CCallHelpers jit;
+
+    using BaselineJITRegisters::GetById::baseJSR;
+    using BaselineJITRegisters::GetById::propertyCacheGPR;
+    using BaselineJITRegisters::GetById::scratch1GPR;
+    using BaselineJITRegisters::GetById::scratch2GPR;
+    using BaselineJITRegisters::GetById::scratch3GPR;
+    using BaselineJITRegisters::GetById::scratch4GPR;
+    using BaselineJITRegisters::GetById::scratch5GPR;
+    using BaselineJITRegisters::GetById::resultJSR;
+
+    InlineCacheCompiler::emitDataICPrologue(jit);
+    traceHandler(jit, ICEvent::GetByIdMegamorphicGetterHandler);
+
+    CCallHelpers::JumpList fallThrough;
+
+    // The base must be a cell (getters live on objects).
+    fallThrough.append(jit.branchIfNotCell(baseJSR));
+
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfUid()), scratch5GPR);
+    // On a hit scratch1GPR holds the GetterSetter cell.
+    fallThrough.append(jit.loadMegamorphicGetterSetter(vm, baseJSR.payloadGPR(), scratch5GPR, nullptr, scratch1GPR, scratch2GPR, scratch3GPR, scratch4GPR));
+    getterCallFromGetterSetterImpl(jit, baseJSR, resultJSR, propertyCacheGPR, scratch1GPR);
+    InlineCacheCompiler::emitDataICEpilogue(jit);
+    jit.ret();
+
+    fallThrough.link(&jit);
+    InlineCacheCompiler::emitDataICJumpNextHandler(jit);
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "GetById Megamorphic Getter handler"_s, "GetById Megamorphic Getter handler");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdProxyObjectLoadHandler(VM&)
@@ -7484,6 +7562,13 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
                         }
                     }
                     break;
+                }
+                case AccessCase::LoadMegamorphicGetter: {
+                    // No watchpoints: the getter cache is (structure, uid)-keyed and epoch-validated.
+                    auto code = vm.getCTIStub(CommonJITThunkID::GetByIdMegamorphicGetterHandler).retagged<JITStubRoutinePtrTag>();
+                    auto stub = createPreCompiledICJITStubRoutine(WTF::move(code), vm, codeBlock);
+                    connectWatchpointSets(stub.get(), { }, WTF::move(additionalWatchpointSets));
+                    return finishPreCompiledCodeGeneration(WTF::move(stub));
                 }
                 case AccessCase::ProxyObjectLoad: {
                     ASSERT(!accessCase.viaGlobalProxy());

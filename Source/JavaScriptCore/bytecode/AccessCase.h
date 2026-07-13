@@ -57,6 +57,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
 #define JSC_FOR_EACH_ACCESS_TYPE(macro) \
     macro(Load) \
     macro(LoadMegamorphic) \
+    macro(LoadMegamorphicGetter) \
     macro(Transition) \
     macro(StoreMegamorphic) \
     macro(Delete) \
