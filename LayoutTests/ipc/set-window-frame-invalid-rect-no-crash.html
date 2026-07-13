@@ -1,0 +1,42 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/ipc.js"></script>
+<title>SetWindowFrame IPC with a non-finite or out-of-int-range rect must not crash the UI process.</title>
+</head>
+<body>
+<p>This test passes if it does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.IPC) {
+    import("./coreipc.js").then(async ({ CoreIPC }) => {
+        const send = (x, y, width, height) => {
+            CoreIPC.UI.WebPageProxy.SetWindowFrameIPC(IPC.webPageProxyID, {
+                windowFrame: { location: { x, y }, size: { width, height } }
+            });
+        };
+        // Non-finite and out-of-int-range rects the UI process must reject.
+        send(0, 0, Infinity, 100);
+        send(0, 0, 100, 4.108321913406242e+26);
+        send(NaN, 0, 100, 100);
+        send(0, -Infinity, 100, 100);
+
+        // Let the UI process dispatch the messages above before finishing.
+        await asyncFlush("UI");
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }).catch(e => {
+        document.body.textContent = "FAIL: " + e;
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+} else if (window.testRunner)
+    testRunner.notifyDone();
+</script>
+</body>
+</html>

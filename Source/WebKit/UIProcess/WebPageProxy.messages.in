@@ -46,7 +46,7 @@ messages -> WebPageProxy {
     FocusedFrameChanged(std::optional<WebCore::FrameIdentifier> frameID)
     SetRenderTreeSize(uint64_t treeSize)
     SetIsResizable(bool isResizable)
-    SetWindowFrame(WebCore::FloatRect windowFrame)
+    SetWindowFrameIPC(WebCore::FloatRect windowFrame)
     GetWindowFrame() -> (WebCore::FloatRect windowFrame) Synchronous
     ScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint) Synchronous
     RootViewPointToScreen(WebCore::IntPoint rect) -> (WebCore::IntPoint viewPoint) Synchronous
