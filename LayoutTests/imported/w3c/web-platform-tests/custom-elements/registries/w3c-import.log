@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Construct.html
@@ -43,9 +41,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/pseudo-class-defined.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-custom-element-registry-customelementregistry-attribute-in-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-custom-element-registry-customelementregistry-attribute.html
-/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-append-does-not-upgrade.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-append.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-define-upgrade-criteria.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-define-upgrade-order.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-effective-global-registry.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-initialize-upgrades.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-initialize.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-registry-define-get-etc.html

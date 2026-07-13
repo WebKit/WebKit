@@ -9,4 +9,10 @@ PASS Inserting a node from another document with global registry results in the 
 PASS Inserting a node from another document with null registry results in the custom element registry to be set and upgraded.
 PASS Inserting a node cloned from a template with null registry into a scoped shadow root should set global registry
 PASS adoptNode then inserting into a scoped shadow root should preserve global registry
+PASS Declarative shadow DOM without shadowrootcustomelementregistry attribute without registry initialized should gain effective global registry after adoption.
+FAIL Declarative shadow DOM with shadowrootcustomelementregistry attribute without registry initialized should remain null registry after adoption. assert_equals: expected null but got object "[object CustomElementRegistry]"
+FAIL Null registry element should gain effective global registry of global registry from its parent upon adoption. assert_true: expected true got false
+PASS Null registry element should gain effective global registry of null from its parent upon adoption.
+FAIL Null registry element should gain effective global registry of scoped registry from its parent upon adoption. assert_equals: expected null but got object "[object CustomElementRegistry]"
+FAIL Global registry element should gain effective global registry of scoped registry from its parent upon adoption. assert_equals: expected object "[object CustomElementRegistry]" but got object "[object CustomElementRegistry]"
 
