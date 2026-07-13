@@ -23,8 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {extractRevisionsAndReason, extractTextIfMentioned, extractCommandAndArgs} from "../src/WebKitBot.mjs";
+import {buildGitWebkitRevertCommand, extractRevisionsAndReason, extractTextIfMentioned, extractCommandAndArgs} from "../src/WebKitBot.mjs";
 const WebKitBotID = 42;
+
+test("buildGitWebkitRevertCommand skips style checks with a reason", () => {
+    let args = buildGitWebkitRevertCommand("git-webkit", ["263483"], "testing revert", null);
+    expect(args).toEqual(["git-webkit", "revert", "263483", "--pr", "--defaults", "--no-checks", "--reason", "testing revert"]);
+});
+
+test("buildGitWebkitRevertCommand skips style checks with an issue URL", () => {
+    let args = buildGitWebkitRevertCommand("git-webkit", ["263483", "263484"], "unused reason", "https://bugs.webkit.org/show_bug.cgi?id=1");
+    expect(args).toEqual(["git-webkit", "revert", "263483", "263484", "--pr", "--defaults", "--no-checks", "--issue", "https://bugs.webkit.org/show_bug.cgi?id=1"]);
+});
 
 test("revert command basic", () => {
     let message = `<@${WebKitBotID}> revert 263483 testing revert`;

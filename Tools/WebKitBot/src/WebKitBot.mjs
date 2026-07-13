@@ -91,6 +91,7 @@ export function buildGitWebkitRevertCommand(gitWebkitPath, revisions, reason, is
         ...revisions,
         "--pr",
         "--defaults",
+        "--no-checks",
     ];
 
     if (issueUrl)
