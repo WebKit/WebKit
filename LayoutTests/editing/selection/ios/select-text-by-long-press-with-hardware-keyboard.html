@@ -24,7 +24,7 @@ description("Verifies that long-pressing non-editable text while a separate edit
 
 addEventListener("load", async () => {
     const input = document.querySelector("input");
-    await UIHelper.activateElementAndWaitForInputSession(input);
+    await UIHelper.activateElementAndWaitForInputSessionStart(input);
 
     window.focusedElementWasInput = document.activeElement === input;
     shouldBeTrue("focusedElementWasInput");
