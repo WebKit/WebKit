@@ -208,7 +208,7 @@ static Vector<LayoutUnit> minimumContributions(const TrackSizingItemList& trackS
         // containing block in the relevant axis, its minimum contribution is the outer size
         // that would result from assuming the item’s used minimum size as its preferred size.
         auto& preferredSize = trackSizingItem.computedSizes.preferredSize;
-        if (GridLayoutUtils::preferredSizeBehavesAsAuto(preferredSize) || GridLayoutUtils::preferredSizeDependsOnContainingBlockSize(preferredSize))
+        if (GridLayoutUtils::preferredSizeBehavesAsAuto(preferredSize) || GridLayoutUtils::sizeDependsOnContainingBlockSize(preferredSize))
             return gridItemSizingFunctions.usedMinimumSize(trackSizingItem.gridItem, trackSizingFunctions, trackSizingItem.borderAndPadding, { }, trackSizingItem.oppositeAxisConstraint);
         // else the item’s minimum contribution is its min-content contribution.
         return gridItemSizingFunctions.minContentContribution(trackSizingItem.gridItem, trackSizingItem.oppositeAxisConstraint);

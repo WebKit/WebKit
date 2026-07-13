@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class WritingMode;
+
 namespace Style {
 struct PreferredSize;
 }
@@ -41,6 +43,7 @@ class ElementBox;
 class GridFormattingContext;
 class IntegrationUtils;
 class PlacedGridItem;
+struct GridItemSizingFunctions;
 
 namespace GridLayoutUtils {
 
@@ -67,9 +70,14 @@ LayoutUnit blockAxisMinContentContribution(const PlacedGridItem&, LayoutUnit inl
 LayoutUnit blockAxisMaxContentContribution(const PlacedGridItem&, LayoutUnit inlineAxisConstraint, const GridFormattingContext&);
 
 bool preferredSizeBehavesAsAuto(const Style::PreferredSize&);
-bool NODELETE preferredSizeDependsOnContainingBlockSize(const Style::PreferredSize&);
+template<typename SizeType>
+bool sizeDependsOnContainingBlockSize(const SizeType& size)
+{
+    return size.isStretch() || size.isPercentOrCalculated();
+}
 
 std::optional<double> preferredAspectRatio(const ElementBox&);
+bool inlineContributionMayRequireFullSizingAlgorithmForIntrinsicWidth(const ElementBox&, WritingMode containerWritingMode);
 
 } // namespace GridLayoutUtils
 } // namespace Layout

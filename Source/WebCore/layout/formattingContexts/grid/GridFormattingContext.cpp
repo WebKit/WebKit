@@ -49,6 +49,7 @@ GridFormattingContext::GridFormattingContext(const ElementBox& gridBox, LayoutSt
     : m_gridBox(gridBox)
     , m_globalLayoutState(layoutState)
     , m_integrationUtils(layoutState)
+    , m_intrinsicWidthSizingPath(classifyIntrinsicWidthSizingPath())
 {
 }
 
@@ -259,14 +260,31 @@ void GridFormattingContext::setGridItemGeometries(const GridItemRects& gridItemR
     }
 }
 
+IntrinsicWidthSizingPath GridFormattingContext::classifyIntrinsicWidthSizingPath() const
+{
+    auto containerWritingMode = writingMode();
+
+    auto anyGridItemInlineContributionMayRequireFullSizingAlgorithm = [&] {
+        for (CheckedRef gridItem : childrenOfType<ElementBox>(m_gridBox)) {
+            if (gridItem->isOutOfFlowPositioned())
+                continue;
+            if (GridLayoutUtils::inlineContributionMayRequireFullSizingAlgorithmForIntrinsicWidth(gridItem, containerWritingMode))
+                return true;
+        }
+        return false;
+    };
+
+    return anyGridItemInlineContributionMayRequireFullSizingAlgorithm()
+        ? IntrinsicWidthSizingPath::NeedsFullSizing
+        : IntrinsicWidthSizingPath::ColumnsOnly;
+}
+
 // https://drafts.csswg.org/css-grid-1/#intrinsic-sizes
 // The max-content size (min-content size) of a grid container is the sum of
 // the grid container's track sizes (including gutters) in the appropriate axis,
 // when the grid is sized under a max-content constraint (min-content constraint).
 GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWidths()
 {
-    auto unplacedGridItems = constructUnplacedGridItems();
-
     CheckedRef gridStyle = root().style();
     GridAutoFlowOptions autoFlowOptions {
         .strategy = gridStyle->gridAutoFlow().isDense() ? PackingStrategy::Dense : PackingStrategy::Sparse,
@@ -283,32 +301,29 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
         autoFlowOptions
     };
 
-    // Clone items for second pass since layout() consumes them
-    auto unplacedGridItemsForMaxContent = unplacedGridItems;
-
     auto usedJustifyContent = gridStyle->justifyContent().resolve();
     auto usedAlignContent = gridStyle->alignContent().resolve();
 
     auto usedColumnGap = usedGapValue(gridStyle->columnGap(), gridStyle);
     auto usedRowGap = usedGapValue(gridStyle->rowGap(), gridStyle);
 
-    // Compute min-content width by running the full grid sizing algorithm with MinContent scenario
-    GridLayoutConstraints minContentConstraints {
-        .inlineAxis = AxisConstraint::minContent(),
-        .blockAxis = AxisConstraint::minContent()
-    };
-    GridLayoutState minContentLayoutState { minContentConstraints, gridDefinition, usedJustifyContent, usedAlignContent, usedColumnGap, usedRowGap };
-    auto [minContentTrackSizes, minContentGridItemRects] = GridLayout { *this }.layout(unplacedGridItems, minContentLayoutState);
-    UNUSED_VARIABLE(minContentGridItemRects);
+    auto unplacedGridItems = constructUnplacedGridItems();
 
-    // Compute max-content width by running the full grid sizing algorithm with MaxContent scenario
-    GridLayoutConstraints maxContentConstraints {
-        .inlineAxis = AxisConstraint::maxContent(),
-        .blockAxis = AxisConstraint::maxContent()
+    auto columnSizesForConstraint = [&](AxisConstraint intrinsicConstraint) -> TrackSizes {
+        GridLayoutConstraints layoutConstraints {
+            .inlineAxis = intrinsicConstraint,
+            .blockAxis = intrinsicConstraint
+        };
+        GridLayoutState layoutState { layoutConstraints, gridDefinition, usedJustifyContent, usedAlignContent, usedColumnGap, usedRowGap };
+
+        // Clone items per scenario since the placement and sizing algorithm consumes them.
+        auto unplacedGridItemsForScenario = unplacedGridItems;
+
+        return GridLayout { *this }.layout(unplacedGridItemsForScenario, layoutState).usedTrackSizes.columnSizes;
     };
-    GridLayoutState maxContentLayoutState { maxContentConstraints, gridDefinition, usedJustifyContent, usedAlignContent, usedColumnGap, usedRowGap };
-    auto [maxContentTrackSizes, maxContentGridItemRects] = GridLayout { *this }.layout(unplacedGridItemsForMaxContent, maxContentLayoutState);
-    UNUSED_VARIABLE(maxContentGridItemRects);
+
+    TrackSizes minContentColumnSizes = columnSizesForConstraint(AxisConstraint::minContent());
+    TrackSizes maxContentColumnSizes = columnSizesForConstraint(AxisConstraint::maxContent());
 
     // Sum track sizes and add gaps
     auto computeIntrinsicWidth = [&](const TrackSizes& trackSizes) -> LayoutUnit {
@@ -320,8 +335,8 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
     };
 
     return IntrinsicWidths {
-        .minimum = computeIntrinsicWidth(minContentTrackSizes.columnSizes),
-        .maximum = computeIntrinsicWidth(maxContentTrackSizes.columnSizes)
+        .minimum = computeIntrinsicWidth(minContentColumnSizes),
+        .maximum = computeIntrinsicWidth(maxContentColumnSizes)
     };
 }
 

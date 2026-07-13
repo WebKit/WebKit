@@ -39,7 +39,6 @@ namespace Layout {
 
 class ElementBox;
 class PlacedGridItem;
-
 class UnplacedGridItem;
 
 struct GridAreaLines;
@@ -71,6 +70,14 @@ struct GridDefinition {
     GridAutoFlowOptions autoFlowOptions;
 };
 
+// Static classification of how much grid-sizing work is required to compute
+// the grid's intrinsic widths. Set once per GridFormattingContext before
+// either the min-content or max-content scenario runs.
+enum class IntrinsicWidthSizingPath : uint8_t {
+    ColumnsOnly, // No item's inline contribution depends on the item's own block size.
+    NeedsFullSizing, // At least one item's inline contribution depends on the item's own block size.
+};
+
 class GridFormattingContext {
     WTF_MAKE_TZONE_ALLOCATED(GridFormattingContext);
 public:
@@ -85,6 +92,7 @@ public:
     };
 
     IntrinsicWidths computeIntrinsicWidths();
+    IntrinsicWidthSizingPath intrinsicWidthSizingPath() const { return m_intrinsicWidthSizingPath; }
 
     PlacedGridItems constructPlacedGridItems(const GridAreas&) const;
 
@@ -117,6 +125,8 @@ public:
 private:
     UnplacedGridItems constructUnplacedGridItems() const;
 
+    IntrinsicWidthSizingPath classifyIntrinsicWidthSizingPath() const;
+
     const LayoutState& layoutState() const LIFETIME_BOUND { return m_globalLayoutState; }
     BoxGeometry& geometryForGridItem(const ElementBox&) LIFETIME_BOUND;
     void setGridItemGeometries(const GridItemRects&);
@@ -126,6 +136,7 @@ private:
     const CheckedRef<const ElementBox> m_gridBox;
     const CheckedRef<LayoutState> m_globalLayoutState;
     const IntegrationUtils m_integrationUtils;
+    const IntrinsicWidthSizingPath m_intrinsicWidthSizingPath;
 };
 
 } // namespace Layout

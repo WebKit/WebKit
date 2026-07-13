@@ -36,6 +36,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TrackSizingAlgorithm.h"
 #include "TrackSizingFunctions.h"
+#include "WritingMode.h"
 #include <wtf/Range.h>
 
 namespace WebCore {
@@ -117,6 +118,38 @@ static bool isStretchedForAutomaticSize(const PlacedGridItem& placedGridItem, co
         return !preferredAspectRatio(placedGridItem.layoutBox()) && !placedGridItem.isReplacedElement();
 
     return alignmentPosition == ItemPosition::Stretch;
+}
+
+bool inlineContributionMayRequireFullSizingAlgorithmForIntrinsicWidth(const ElementBox& gridItem, WritingMode containerWritingMode)
+{
+    CheckedRef itemStyle = gridItem.style();
+
+    // The inline contribution of an orthogonal grid item is the grid item's block contribution. We should run the full sizing algorithm.
+    if (itemStyle->writingMode().isOrthogonal(containerWritingMode))
+        return true;
+
+    // Grid items with an aspect ratio may transfers block size into inline size, so we should run the full sizing algorithm.
+    // FIXME: This is only the case when inline size is indefinite, so we can tighten this constraint.
+    if (preferredAspectRatio(gridItem))
+        return true;
+
+    // A wrapped column flex container (flex-flow: column wrap) lays out its flex lines along the cross (inline) axis,
+    // so the number of lines - and thus its inline contribution - grows as the available block size shrinks.
+    if (itemStyle->display().isFlexibleBox() && itemStyle->isColumnFlexDirection() && itemStyle->flexWrap() != FlexWrap::NoWrap)
+        return true;
+
+    // A multi-column container fills its columns based on the available block size, so its column count - and thus
+    // its inline contribution - depends on the block size.
+    if (itemStyle->specifiesColumns())
+        return true;
+
+    // If the computed size of an item depends on the size of its containing block, we should run the full sizing algorithm.
+    if (sizeDependsOnContainingBlockSize(itemStyle->logicalHeight())
+        || sizeDependsOnContainingBlockSize(itemStyle->logicalMinHeight())
+        || sizeDependsOnContainingBlockSize(itemStyle->logicalMaxHeight()))
+        return true;
+
+    return false;
 }
 
 static bool NODELETE spansAutoMinTrackSizingFunction(WTF::Range<size_t> spannedTrackIndexes, const TrackSizingFunctionsList& trackSizingFunctions)
@@ -540,11 +573,6 @@ bool preferredSizeBehavesAsAuto(const Style::PreferredSize& preferredSize)
     // FIXME: Handle cases where preferred size is not auto but behaves as auto,
     // such as percentage height resolving against indefinite size.
     return preferredSize.isAuto();
-}
-
-bool preferredSizeDependsOnContainingBlockSize(const Style::PreferredSize& preferredSize)
-{
-    return preferredSize.isStretch() || preferredSize.isPercentOrCalculated();
 }
 
 }
