@@ -573,10 +573,25 @@ bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& source, const V
         && !isBlock(*sourceNode) && !isBlock(*destinationNode);
 }
 
+static bool isLightEnoughToTreatAsBackground(double lightness)
+{
+    return lightness > 0.6;
+}
+
+static bool isLightOrDarkNeutralBackgroundColor(const Color& color)
+{
+    auto lightness = color.lightness();
+    if (isLightEnoughToTreatAsBackground(lightness))
+        return true;
+
+    constexpr double lightnessDarkEnoughForBackground = 0.2;
+    constexpr float maxSaturationToTreatAsNeutral = 20;
+    return lightness < lightnessDarkEnoughForBackground && color.toColorTypeLossy<HSLA<float>>().resolved().saturation < maxSaturationToTreatAsNeutral;
+}
+
 static bool nodeTreeHasInlineStyleWithLegibleColorForInvertLightness(const Node& node, std::optional<double> textLightness, std::optional<double> backgroundLightness)
 {
     constexpr double lightnessDarkEnoughForText = 0.4;
-    constexpr double lightnessLightEnoughForBackground = 0.6;
 
     constexpr auto lightnessIgnoringSemanticColors = [](const std::optional<Color>& color) -> std::optional<double> {
         if (!color || !color->isVisible() || color->isSemantic())
@@ -589,7 +604,7 @@ static bool nodeTreeHasInlineStyleWithLegibleColorForInvertLightness(const Node&
         if (textLightness && *textLightness < lightnessDarkEnoughForText)
             return true;
 
-        if (backgroundLightness && *backgroundLightness > lightnessLightEnoughForBackground)
+        if (backgroundLightness && isLightEnoughToTreatAsBackground(*backgroundLightness))
             return true;
 
         return false;
@@ -2015,7 +2030,7 @@ void ReplaceSelectionCommand::updateDirectionForStartOfInsertedContentIfNeeded(c
         setEndingSelection(originalEndingSelection);
 }
 
-using ElementToStyleProperties = HashMap<Ref<StyledElement>, Vector<CSSPropertyID, 2>>;
+using ElementToStyleProperties = HashMap<Ref<StyledElement>, Vector<CSSPropertyID, 3>>;
 [[nodiscard]] static IterationStatus collectStylesToRemove(Node& node, const Node& lastLeaf, double backgroundLuminance, ElementToStyleProperties& stylesToRemove)
 {
     auto addStylesToRemove = [&](StyledElement& element) {
@@ -2031,13 +2046,19 @@ using ElementToStyleProperties = HashMap<Ref<StyledElement>, Vector<CSSPropertyI
             return;
 
         Ref document = node.document();
-        if (auto color = style->propertyAsColor(CSSPropertyBackgroundColor)) {
-            auto compositeOperator = document->compositeOperatorForBackgroundColor(*color, *renderer);
-            if (compositeOperator != CompositeOperator::DestinationIn && compositeOperator != CompositeOperator::DestinationOut)
-                return;
+        Vector<CSSPropertyID, 3> propertiesToRemove;
+        if (auto inlineBackgroundColor = style->propertyAsColor(CSSPropertyBackgroundColor)) {
+            bool inlineColorIsValid = inlineBackgroundColor->isValid();
+            auto backgroundColor = inlineColorIsValid ? *inlineBackgroundColor : renderer->style().visitedDependentBackgroundColor();
+            auto compositeOperator = document->compositeOperatorForBackgroundColor(backgroundColor, *renderer);
+            if (compositeOperator != CompositeOperator::DestinationIn && compositeOperator != CompositeOperator::DestinationOut) {
+                bool inlineColorIsSemantic = inlineColorIsValid && inlineBackgroundColor->isSemantic();
+                if (inlineColorIsSemantic || !document->settings().punchOutWhiteBackgroundsInDarkMode() || !backgroundColor.isOpaque() || !isLightOrDarkNeutralBackgroundColor(backgroundColor))
+                    return;
+                propertiesToRemove.append(CSSPropertyBackgroundColor);
+            }
         }
 
-        Vector<CSSPropertyID, 2> propertiesToRemove;
         for (auto property : { CSSPropertyColor, CSSPropertyCaretColor }) {
             auto color = style->propertyAsColor(property);
             if (!color)

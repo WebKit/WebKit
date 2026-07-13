@@ -619,6 +619,30 @@ TEST(PasteHTML, PasteDarkTextOnWhiteBackgroundIntoDarkModeEditor)
     EXPECT_WK_STREQ(computedCaretColor.get(), "rgb(255, 255, 255)");
 }
 
+TEST(PasteHTML, DropsCanvasLikeBackgroundWhenPastingIntoPunchOutEditor)
+{
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration _setColorFilterEnabled:YES];
+    [configuration preferences]._punchOutWhiteBackgroundsInDarkMode = YES;
+    auto preferences = (__bridge WKPreferencesRef)[configuration preferences];
+    WKPreferencesSetDataTransferItemsEnabled(preferences, true);
+    WKPreferencesSetCustomPasteboardDataEnabled(preferences, true);
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration]);
+    [webView _setEditable:YES];
+    [webView forceDarkMode];
+    [webView synchronouslyLoadTestPageNamed:@"rich-color-filtered"];
+
+    writeHTMLToPasteboard(@"<p style=\"color: rgb(23, 43, 77); background-color: rgb(244, 245, 247);\">Overview</p>"
+        "<p style=\"color: rgb(23, 43, 77); background-color: rgb(255, 193, 7);\">At risk</p>");
+
+    [webView stringByEvaluatingJavaScript:@"selectRichText()"];
+    [webView paste:nil];
+
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"rich.querySelectorAll('p')[0].style.backgroundColor"], @"");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"rich.querySelectorAll('p')[1].style.backgroundColor"], @"rgb(255, 193, 7)");
+}
+
 #endif // ENABLE(DARK_MODE_CSS)
 
 #endif // PLATFORM(COCOA)
