@@ -158,6 +158,7 @@ private:
         : JSCell(CreatingWellDefinedBuiltinCell, vm.stringStructure.get()->id(), defaultTypeInfoBlob())
     {
         new (&uninitializedValueInternal()) String(WTF::move(value));
+        WTF::storeStoreFence();
     }
 
     JSString(VM& vm)
