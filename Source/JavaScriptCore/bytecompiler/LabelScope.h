@@ -29,17 +29,16 @@
 #pragma once
 
 #include "Label.h"
+#include <wtf/text/UniquedStringImpl.h>
 
 namespace JSC {
-
-class Identifier;
 
 class LabelScope {
 WTF_MAKE_NONCOPYABLE(LabelScope);
 public:
     enum Type { Loop, Switch, NamedLabel };
 
-    LabelScope(Type type, const Identifier* name, int scopeDepth, Ref<Label>&& breakTarget, RefPtr<Label>&& continueTarget)
+    LabelScope(Type type, UniquedStringImpl* name, int scopeDepth, Ref<Label>&& breakTarget, RefPtr<Label>&& continueTarget)
         : m_refCount(0)
         , m_type(type)
         , m_name(name)
@@ -53,7 +52,7 @@ public:
     Label* continueTarget() const { return m_continueTarget.get(); }
 
     Type type() const { return m_type; }
-    const Identifier* name() const { return m_name; }
+    UniquedStringImpl* name() const { return m_name; }
     int scopeDepth() const { return m_scopeDepth; }
 
     void ref() { ++m_refCount; }
@@ -77,7 +76,7 @@ public:
 private:
     int m_refCount;
     Type m_type;
-    const Identifier* m_name;
+    SUPPRESS_UNCOUNTED_MEMBER UniquedStringImpl* m_name;
     int m_scopeDepth;
     const Ref<Label> m_breakTarget;
     const RefPtr<Label> m_continueTarget;

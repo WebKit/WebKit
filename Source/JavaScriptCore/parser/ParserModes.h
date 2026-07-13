@@ -298,9 +298,9 @@ ALWAYS_INLINE ConstructAbility constructAbilityForParseMode(SourceParseMode pars
     return ConstructAbility::CannotConstruct;
 }
 
-inline bool functionNameIsInScope(const Identifier& name, FunctionMode functionMode)
+inline bool functionNameIsInScope(UniquedStringImpl* name, FunctionMode functionMode)
 {
-    if (name.isNull())
+    if (!name)
         return false;
 
     if (functionMode != FunctionMode::FunctionExpression)

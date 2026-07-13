@@ -250,7 +250,7 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
     if (!metadata)
         return nullptr;
     
-    metadata->overrideName(name);
+    metadata->overrideName(name.impl());
     metadata->setEndPosition(positionBeforeLastNewline);
     // The Function constructor only has access to global variables, so no variables will be under TDZ unless they're
     // in the global lexical environment, which we always TDZ check accesses from.

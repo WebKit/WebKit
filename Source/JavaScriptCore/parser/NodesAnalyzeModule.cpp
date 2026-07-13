@@ -43,15 +43,15 @@ static Expected<RefPtr<ScriptFetchParameters>, std::tuple<ErrorType, String>> tr
     // Currently, only "type" is supported.
     std::optional<ScriptFetchParameters::Type> type;
     for (auto& [key, value] : attributesList->attributes()) {
-        if (*key != vm.propertyNames->type)
-            return makeUnexpected(std::tuple { ErrorType::SyntaxError, makeString("Import attribute \""_s, StringView(key->impl()), "\" is not supported"_s) });
+        if (key != vm.propertyNames->type.impl())
+            return makeUnexpected(std::tuple { ErrorType::SyntaxError, makeString("Import attribute \""_s, StringView { key }, "\" is not supported"_s) });
     }
 
     for (auto& [key, value] : attributesList->attributes()) {
-        if (*key == vm.propertyNames->type) {
-            type = ScriptFetchParameters::parseType(value->impl());
+        if (key == vm.propertyNames->type.impl()) {
+            type = ScriptFetchParameters::parseType(value);
             if (!type)
-                return makeUnexpected(std::tuple { ErrorType::TypeError, makeString("Import attribute type \""_s, StringView(value->impl()), "\" is not valid"_s) });
+                return makeUnexpected(std::tuple { ErrorType::TypeError, makeString("Import attribute type \""_s, StringView { value }, "\" is not valid"_s) });
         }
     }
 
@@ -84,16 +84,17 @@ bool ImportDeclarationNode::analyzeModule(ModuleAnalyzer& analyzer)
         return false;
     }
 
+    VM& vm = analyzer.vm();
     auto phase = m_type == ImportType::Deferred ? AbstractModuleRecord::ModulePhase::Defer : AbstractModuleRecord::ModulePhase::Evaluation;
-    analyzer.appendRequestedModule(m_moduleName->moduleName(), WTF::move(result.value()), phase);
+    SUPPRESS_UNCOUNTED_ARG analyzer.appendRequestedModule(Identifier::fromUid(vm, m_moduleName->moduleName()), WTF::move(result.value()), phase);
     for (auto* specifier : m_specifierList->specifiers()) {
-        analyzer.moduleRecord()->addImportEntry(JSModuleRecord::ImportEntry {
-            specifier->importedName() == analyzer.vm().propertyNames->starNamespacePrivateName
+        SUPPRESS_UNCOUNTED_ARG analyzer.moduleRecord()->addImportEntry(JSModuleRecord::ImportEntry {
+            specifier->importedName() == vm.propertyNames->starNamespacePrivateName.impl()
                 ? JSModuleRecord::ImportEntryType::Namespace : JSModuleRecord::ImportEntryType::Single,
             phase,
-            m_moduleName->moduleName(),
-            specifier->importedName(),
-            specifier->localName(),
+            Identifier::fromUid(vm, m_moduleName->moduleName()),
+            Identifier::fromUid(vm, specifier->importedName()),
+            Identifier::fromUid(vm, specifier->localName()),
         });
     }
     return true;
@@ -107,8 +108,8 @@ bool ExportAllDeclarationNode::analyzeModule(ModuleAnalyzer& analyzer)
         return false;
     }
 
-    analyzer.appendRequestedModule(m_moduleName->moduleName(), WTF::move(result.value()));
-    analyzer.moduleRecord()->addStarExportEntry(m_moduleName->moduleName());
+    SUPPRESS_UNCOUNTED_ARG analyzer.appendRequestedModule(Identifier::fromUid(analyzer.vm(), m_moduleName->moduleName()), WTF::move(result.value()));
+    SUPPRESS_UNCOUNTED_ARG analyzer.moduleRecord()->addStarExportEntry(Identifier::fromUid(analyzer.vm(), m_moduleName->moduleName()));
     return true;
 }
 
@@ -131,7 +132,7 @@ bool ExportNamedDeclarationNode::analyzeModule(ModuleAnalyzer& analyzer)
             return false;
         }
 
-        analyzer.appendRequestedModule(m_moduleName->moduleName(), WTF::move(result.value()));
+        SUPPRESS_UNCOUNTED_ARG analyzer.appendRequestedModule(Identifier::fromUid(analyzer.vm(), m_moduleName->moduleName()), WTF::move(result.value()));
     }
 
     for (auto* specifier : m_specifierList->specifiers()) {
@@ -144,10 +145,10 @@ bool ExportNamedDeclarationNode::analyzeModule(ModuleAnalyzer& analyzer)
             // export * as v from "mod"
             //
             // If it is namespace export, we should use createNamespace.
-            if (specifier->localName() == analyzer.vm().propertyNames->starNamespacePrivateName)
-                analyzer.moduleRecord()->addExportEntry(JSModuleRecord::ExportEntry::createNamespace(specifier->exportedName(), m_moduleName->moduleName()));
+            if (specifier->localName() == analyzer.vm().propertyNames->starNamespacePrivateName.impl())
+                SUPPRESS_UNCOUNTED_ARG analyzer.moduleRecord()->addExportEntry(JSModuleRecord::ExportEntry::createNamespace(Identifier::fromUid(analyzer.vm(), specifier->exportedName()), Identifier::fromUid(analyzer.vm(), m_moduleName->moduleName())));
             else
-                analyzer.moduleRecord()->addExportEntry(JSModuleRecord::ExportEntry::createIndirect(specifier->exportedName(), specifier->localName(), m_moduleName->moduleName()));
+                SUPPRESS_UNCOUNTED_ARG analyzer.moduleRecord()->addExportEntry(JSModuleRecord::ExportEntry::createIndirect(Identifier::fromUid(analyzer.vm(), specifier->exportedName()), Identifier::fromUid(analyzer.vm(), specifier->localName()), Identifier::fromUid(analyzer.vm(), m_moduleName->moduleName())));
         }
     }
     return true;

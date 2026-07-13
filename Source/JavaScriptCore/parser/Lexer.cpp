@@ -925,7 +925,7 @@ template<typename CharacterType> inline void Lexer<CharacterType>::recordUnicode
 }
 
 #if ASSERT_ENABLED
-bool isSafeBuiltinIdentifier(VM& vm, const Identifier* ident)
+bool isSafeBuiltinIdentifier(VM& vm, UniquedStringImpl* ident)
 {
     if (!ident)
         return true;
@@ -933,13 +933,13 @@ bool isSafeBuiltinIdentifier(VM& vm, const Identifier* ident)
      * be used as a safety net while implementing builtins.
      */
     // FIXME: How can a debug-only assertion be a safety net?
-    if (*ident == vm.propertyNames->builtinNames().callPublicName())
+    if (ident == vm.propertyNames->builtinNames().callPublicName().impl())
         return false;
-    if (*ident == vm.propertyNames->builtinNames().applyPublicName())
+    if (ident == vm.propertyNames->builtinNames().applyPublicName().impl())
         return false;
-    if (*ident == vm.propertyNames->eval)
+    if (ident == vm.propertyNames->eval.impl())
         return false;
-    if (*ident == vm.propertyNames->Function)
+    if (ident == vm.propertyNames->Function.impl())
         return false;
     return true;
 }
@@ -1012,26 +1012,26 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<Latin1Cha
     if (m_current == '\\') [[unlikely]]
         return parseIdentifierSlowCase<shouldCreateIdentifier>(tokenData, lexerFlags, strictMode, identifierStart);
 
-    const Identifier* ident = nullptr;
-    
+    SUPPRESS_UNCOUNTED_LOCAL UniquedStringImpl* ident = nullptr;
+
     if (shouldCreateIdentifier || m_parsingBuiltinFunction) {
         std::span identifierSpan { identifierStart, static_cast<size_t>(currentSourcePtr() - identifierStart) };
         if (m_parsingBuiltinFunction && isBuiltinName) {
             if (isWellKnownSymbol)
-                ident = &m_arena->makeIdentifier(m_vm, m_vm.propertyNames->builtinNames().lookUpWellKnownSymbol(identifierSpan));
+                SUPPRESS_UNCOUNTED_LOCAL ident = m_arena->makeIdentifier(m_vm, m_vm.propertyNames->builtinNames().lookUpWellKnownSymbol(identifierSpan));
             else
-                ident = &m_arena->makeIdentifier(m_vm, m_vm.propertyNames->builtinNames().lookUpPrivateName(identifierSpan));
+                SUPPRESS_UNCOUNTED_LOCAL ident = m_arena->makeIdentifier(m_vm, m_vm.propertyNames->builtinNames().lookUpPrivateName(identifierSpan));
             if (!ident)
                 return INVALID_PRIVATE_NAME_ERRORTOK;
         } else {
-            ident = makeIdentifier(identifierSpan);
+            SUPPRESS_UNCOUNTED_LOCAL ident = makeIdentifier(identifierSpan);
             if (m_parsingBuiltinFunction) {
                 if (!isSafeBuiltinIdentifier(m_vm, ident)) {
-                    m_lexErrorMessage = makeString("The use of '"_s, ident->string(), "' is disallowed in builtin functions."_s);
+                    m_lexErrorMessage = makeString("The use of '"_s, StringView { ident }, "' is disallowed in builtin functions."_s);
                     return ERRORTOK;
                 }
-                if (*ident == m_vm.propertyNames->undefinedKeyword)
-                    tokenData->ident = &m_vm.propertyNames->undefinedPrivateName;
+                if (ident == m_vm.propertyNames->undefinedKeyword.impl())
+                    tokenData->ident = m_vm.propertyNames->undefinedPrivateName.impl();
             }
         }
         tokenData->ident = ident;
@@ -1042,7 +1042,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<Latin1Cha
     if ((remaining < maxTokenLength) && !lexerFlags.contains(LexerFlags::IgnoreReservedWords)) [[unlikely]] {
         if (!isBuiltinName) {
             ASSERT(shouldCreateIdentifier);
-            const HashTableValue* entry = JSC::mainTable.entry(*ident);
+            const HashTableValue* entry = JSC::mainTable.entry(ident);
             ASSERT((remaining < maxTokenLength) || !entry);
             if (!entry)
                 return identType;
@@ -1115,31 +1115,30 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<char16_t>
         return parseIdentifierSlowCase<shouldCreateIdentifier>(tokenData, lexerFlags, strictMode, identifierStart);
 
     bool isAll8Bit = !(orAllChars & ~0xff);
-    const Identifier* ident = nullptr;
-    
-    if (shouldCreateIdentifier) {
+    if constexpr (shouldCreateIdentifier) {
+        SUPPRESS_UNCOUNTED_LOCAL UniquedStringImpl* ident = nullptr;
         if (isAll8Bit)
-            ident = makeLatin1Identifier(std::span { identifierStart, currentSourcePtr() });
+            SUPPRESS_UNCOUNTED_LOCAL ident = makeLatin1Identifier(std::span { identifierStart, currentSourcePtr() });
         else
-            ident = makeIdentifier(std::span { identifierStart, currentSourcePtr() });
+            SUPPRESS_UNCOUNTED_LOCAL ident = makeIdentifier(std::span { identifierStart, currentSourcePtr() });
         tokenData->ident = ident;
-    } else
-        tokenData->ident = nullptr;
-    
-    if (isPrivateName)
-        return PRIVATENAME;
 
-    if ((remaining < maxTokenLength) && !lexerFlags.contains(LexerFlags::IgnoreReservedWords)) [[unlikely]] {
-        ASSERT(shouldCreateIdentifier);
-        const HashTableValue* entry = JSC::mainTable.entry(*ident);
-        ASSERT((remaining < maxTokenLength) || !entry);
-        if (!entry)
-            return IDENT;
-        JSTokenType token = static_cast<JSTokenType>(entry->lexerValue());
-        return (token != RESERVED_IF_STRICT) || strictMode ? token : IDENT;
+        if (isPrivateName)
+            return PRIVATENAME;
+
+        if ((remaining < maxTokenLength) && !lexerFlags.contains(LexerFlags::IgnoreReservedWords)) [[unlikely]] {
+            const HashTableValue* entry = JSC::mainTable.entry(ident);
+            ASSERT((remaining < maxTokenLength) || !entry);
+            if (!entry)
+                return IDENT;
+            JSTokenType token = static_cast<JSTokenType>(entry->lexerValue());
+            return (token != RESERVED_IF_STRICT) || strictMode ? token : IDENT;
+        }
+        return IDENT;
     }
 
-    return IDENT;
+    tokenData->ident = nullptr;
+    return isPrivateName ? PRIVATENAME : IDENT;
 }
 
 template<typename CharacterType>
@@ -1174,7 +1173,7 @@ JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData
                 return character.isIncomplete() ? UNTERMINATED_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK : INVALID_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK;
             if (isStart ? !isIdentStart(character.value()) : !isIdentPart(character.value())) [[unlikely]]
                 return INVALID_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK;
-            if (shouldCreateIdentifier)
+            if constexpr (shouldCreateIdentifier)
                 recordUnicodeCodePoint(character.value());
             identifierStart = currentSourcePtr();
             return identType;
@@ -1213,26 +1212,24 @@ JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData
             return type;
     }
 
-    const Identifier* ident = nullptr;
-    if (shouldCreateIdentifier) {
+    if constexpr (shouldCreateIdentifier) {
         if (identifierStart != currentSourcePtr())
             m_buffer16.append(std::span(identifierStart, currentSourcePtr() - identifierStart));
-        ident = makeIdentifier(m_buffer16.span());
-
+        SUPPRESS_UNCOUNTED_LOCAL auto* ident = makeIdentifier(m_buffer16.span());
         tokenData->ident = ident;
-    } else
+        m_buffer16.shrink(0);
+
+        if (!lexerFlags.contains(LexerFlags::IgnoreReservedWords)) [[likely]] {
+            const HashTableValue* entry = JSC::mainTable.entry(ident);
+            if (!entry)
+                return identType;
+            JSTokenType token = static_cast<JSTokenType>(entry->lexerValue());
+            if ((token != RESERVED_IF_STRICT) || strictMode)
+                return ESCAPED_KEYWORD;
+        }
+    } else {
         tokenData->ident = nullptr;
-
-    m_buffer16.shrink(0);
-
-    if (!lexerFlags.contains(LexerFlags::IgnoreReservedWords)) [[likely]] {
-        ASSERT(shouldCreateIdentifier);
-        const HashTableValue* entry = JSC::mainTable.entry(*ident);
-        if (!entry)
-            return identType;
-        JSTokenType token = static_cast<JSTokenType>(entry->lexerValue());
-        if ((token != RESERVED_IF_STRICT) || strictMode)
-            return ESCAPED_KEYWORD;
+        m_buffer16.shrink(0);
     }
 
     return identType;
@@ -2512,7 +2509,7 @@ start:
             else {
                 token = BIGINT;
                 shift();
-                tokenData->bigIntString = std::get<const Identifier*>(*parseNumberResult);
+                tokenData->bigIntString = std::get<UniquedStringImpl*>(*parseNumberResult);
                 tokenData->radix = 16;
             }
 
@@ -2551,7 +2548,7 @@ start:
             else {
                 token = BIGINT;
                 shift();
-                tokenData->bigIntString = std::get<const Identifier*>(*parseNumberResult);
+                tokenData->bigIntString = std::get<UniquedStringImpl*>(*parseNumberResult);
                 tokenData->radix = 2;
             }
 
@@ -2591,7 +2588,7 @@ start:
             else {
                 token = BIGINT;
                 shift();
-                tokenData->bigIntString = std::get<const Identifier*>(*parseNumberResult);
+                tokenData->bigIntString = std::get<UniquedStringImpl*>(*parseNumberResult);
                 tokenData->radix = 8;
             }
 
@@ -2683,7 +2680,7 @@ start:
                 } else {
                     token = BIGINT;
                     shift();
-                    tokenData->bigIntString = std::get<const Identifier*>(*parseNumberResult);
+                    tokenData->bigIntString = std::get<UniquedStringImpl*>(*parseNumberResult);
                     tokenData->radix = 10;
                 }
             } else {

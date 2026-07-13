@@ -82,14 +82,14 @@ void ParserArena::allocateFreeablePool()
     ASSERT(freeablePool() == pool);
 }
 
-const Identifier* IdentifierArena::makeBigIntDecimalIdentifier(VM& vm, const Identifier& identifier, uint8_t radix)
+UniquedStringImpl* IdentifierArena::makeBigIntDecimalIdentifier(VM& vm, UniquedStringImpl* identifier, uint8_t radix)
 {
     if (radix == 10)
-        return &identifier;
+        return identifier;
 
     DeferTermination deferScope(vm);
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
-    JSValue bigInt = JSBigInt::parseInt(nullptr, vm, identifier.string(), radix, JSBigInt::ErrorParseMode::ThrowExceptions, JSBigInt::ParseIntSign::Unsigned);
+    JSValue bigInt = JSBigInt::parseInt(nullptr, vm, StringView { identifier }, radix, JSBigInt::ErrorParseMode::ThrowExceptions, JSBigInt::ParseIntSign::Unsigned);
     scope.assertNoException();
 
     if (bigInt.isEmpty()) {
@@ -114,16 +114,17 @@ const Identifier* IdentifierArena::makeBigIntDecimalIdentifier(VM& vm, const Ide
 #endif
         heapBigInt = bigInt.asHeapBigInt();
 
-    m_identifiers.append(Identifier::fromString(vm, JSBigInt::tryGetString(vm, heapBigInt, 10)));
-    return &m_identifiers.last();
+    m_identifiers.append(Ref { *Identifier::fromString(vm, JSBigInt::tryGetString(vm, heapBigInt, 10)).impl() });
+    return m_identifiers.last().ptr();
 }
 
-const Identifier& IdentifierArena::makePrivateIdentifier(VM& vm, ASCIILiteral prefix, unsigned identifier)
+UniquedStringImpl* IdentifierArena::makePrivateIdentifier(VM& vm, ASCIILiteral prefix, unsigned identifier)
 {
     auto symbolName = makeString(prefix, identifier);
-    auto symbol = protect(vm.privateSymbolRegistry())->symbolForKey(symbolName);
-    m_identifiers.append(Identifier::fromUid(symbol));
-    return m_identifiers.last();
+    Ref<RegisteredSymbolImpl> symbol = protect(vm.privateSymbolRegistry())->symbolForKey(symbolName);
+    SUPPRESS_UNCOUNTED_LOCAL UniquedStringImpl* ptr = static_cast<UniquedStringImpl*>(&symbol.get());
+    m_identifiers.append(Ref<UniquedStringImpl> { *ptr });
+    return ptr;
 }
 
 }

@@ -30,6 +30,7 @@
 #include <JavaScriptCore/MathCommon.h>
 #include <array>
 #include <type_traits>
+#include <wtf/Ref.h>
 #include <wtf/SegmentedVector.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -48,18 +49,18 @@ namespace JSC {
         }
 
         template <typename T>
-        ALWAYS_INLINE const Identifier& makeIdentifier(VM&, std::span<const T> characters);
-        ALWAYS_INLINE const Identifier& makeEmptyIdentifier(VM&);
-        ALWAYS_INLINE const Identifier& makeLatin1Identifier(VM&, std::span<const char16_t> characters);
-        ALWAYS_INLINE const Identifier& makeIdentifier(VM&, SymbolImpl*);
+        ALWAYS_INLINE UniquedStringImpl* makeIdentifier(VM&, std::span<const T> characters);
+        ALWAYS_INLINE UniquedStringImpl* makeEmptyIdentifier(VM&);
+        ALWAYS_INLINE UniquedStringImpl* makeLatin1Identifier(VM&, std::span<const char16_t> characters);
+        ALWAYS_INLINE UniquedStringImpl* makeIdentifier(VM&, SymbolImpl*);
 
-        const Identifier* makeBigIntDecimalIdentifier(VM&, const Identifier&, uint8_t radix);
-        const Identifier& makeNumericIdentifier(VM&, double number);
-        const Identifier& makePrivateIdentifier(VM&, ASCIILiteral, unsigned);
+        UniquedStringImpl* makeBigIntDecimalIdentifier(VM&, UniquedStringImpl*, uint8_t radix);
+        UniquedStringImpl* makeNumericIdentifier(VM&, double number);
+        UniquedStringImpl* makePrivateIdentifier(VM&, ASCIILiteral, unsigned);
 
     public:
         static const int MaximumCachableCharacter = 128;
-        typedef SegmentedVector<Identifier, 64> IdentifierVector;
+        typedef SegmentedVector<Ref<UniquedStringImpl>, 64> IdentifierVector;
         void clear()
         {
             m_identifiers.clear();
@@ -71,78 +72,78 @@ namespace JSC {
 
     private:
         IdentifierVector m_identifiers;
-        std::array<Identifier*, MaximumCachableCharacter> m_shortIdentifiers;
-        std::array<Identifier*, MaximumCachableCharacter> m_recentIdentifiers;
+        std::array<UniquedStringImpl*, MaximumCachableCharacter> m_shortIdentifiers { };
+        std::array<UniquedStringImpl*, MaximumCachableCharacter> m_recentIdentifiers { };
     };
 
     template <typename T>
-    ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifier(VM& vm, std::span<const T> characters)
+    ALWAYS_INLINE UniquedStringImpl* IdentifierArena::makeIdentifier(VM& vm, std::span<const T> characters)
     {
         if (characters.empty())
-            return vm.propertyNames->emptyIdentifier;
+            return vm.propertyNames->emptyIdentifier.impl();
         if (characters.front() >= MaximumCachableCharacter) {
-            m_identifiers.append(Identifier::fromString(vm, characters));
-            return m_identifiers.last();
+            m_identifiers.append(Ref { *Identifier::fromString(vm, characters).impl() });
+            return m_identifiers.last().ptr();
         }
         if (characters.size() == 1) {
-            if (Identifier* ident = m_shortIdentifiers[characters.front()])
-                return *ident;
-            m_identifiers.append(Identifier::fromString(vm, characters));
-            m_shortIdentifiers[characters.front()] = &m_identifiers.last();
-            return m_identifiers.last();
+            if (SUPPRESS_UNCOUNTED_LOCAL UniquedStringImpl* impl = m_shortIdentifiers[characters.front()])
+                return impl;
+            m_identifiers.append(Ref { *Identifier::fromString(vm, characters).impl() });
+            m_shortIdentifiers[characters.front()] = m_identifiers.last().ptr();
+            return m_identifiers.last().ptr();
         }
-        Identifier* ident = m_recentIdentifiers[characters.front()];
-        if (ident && Identifier::equal(ident->impl(), characters))
-            return *ident;
-        m_identifiers.append(Identifier::fromString(vm, characters));
-        m_recentIdentifiers[characters.front()] = &m_identifiers.last();
-        return m_identifiers.last();
+        SUPPRESS_UNCOUNTED_LOCAL UniquedStringImpl* impl = m_recentIdentifiers[characters.front()];
+        if (impl && Identifier::equal(impl, characters))
+            return impl;
+        m_identifiers.append(Ref { *Identifier::fromString(vm, characters).impl() });
+        m_recentIdentifiers[characters.front()] = m_identifiers.last().ptr();
+        return m_identifiers.last().ptr();
     }
 
-    ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifier(VM&, SymbolImpl* symbol)
+    ALWAYS_INLINE UniquedStringImpl* IdentifierArena::makeIdentifier(VM&, SymbolImpl* symbol)
     {
         ASSERT(symbol);
-        m_identifiers.append(Identifier::fromUid(*symbol));
-        return m_identifiers.last();
+        m_identifiers.append(Ref { *symbol });
+        return symbol;
     }
 
-    ALWAYS_INLINE const Identifier& IdentifierArena::makeEmptyIdentifier(VM& vm)
+    ALWAYS_INLINE UniquedStringImpl* IdentifierArena::makeEmptyIdentifier(VM& vm)
     {
-        return vm.propertyNames->emptyIdentifier;
+        return vm.propertyNames->emptyIdentifier.impl();
     }
 
-    ALWAYS_INLINE const Identifier& IdentifierArena::makeLatin1Identifier(VM& vm, std::span<const char16_t> characters)
+    ALWAYS_INLINE UniquedStringImpl* IdentifierArena::makeLatin1Identifier(VM& vm, std::span<const char16_t> characters)
     {
         if (characters.empty())
-            return vm.propertyNames->emptyIdentifier;
+            return vm.propertyNames->emptyIdentifier.impl();
         if (characters.front() >= MaximumCachableCharacter) {
-            m_identifiers.append(Identifier::createLatin1(vm, characters));
-            return m_identifiers.last();
+            m_identifiers.append(Ref { *Identifier::createLatin1(vm, characters).impl() });
+            return m_identifiers.last().ptr();
         }
         if (characters.size() == 1) {
-            if (Identifier* ident = m_shortIdentifiers[characters.front()])
-                return *ident;
-            m_identifiers.append(Identifier::fromString(vm, characters));
-            m_shortIdentifiers[characters.front()] = &m_identifiers.last();
-            return m_identifiers.last();
+            if (UniquedStringImpl* impl = m_shortIdentifiers[characters.front()])
+                return impl;
+            m_identifiers.append(Ref { *Identifier::fromString(vm, characters).impl() });
+            m_shortIdentifiers[characters.front()] = m_identifiers.last().ptr();
+            return m_identifiers.last().ptr();
         }
-        Identifier* ident = m_recentIdentifiers[characters.front()];
-        if (ident && Identifier::equal(ident->impl(), characters))
-            return *ident;
-        m_identifiers.append(Identifier::createLatin1(vm, characters));
-        m_recentIdentifiers[characters.front()] = &m_identifiers.last();
-        return m_identifiers.last();
+        SUPPRESS_UNCOUNTED_LOCAL UniquedStringImpl* impl = m_recentIdentifiers[characters.front()];
+        if (impl && Identifier::equal(impl, characters))
+            return impl;
+        m_identifiers.append(Ref { *Identifier::createLatin1(vm, characters).impl() });
+        m_recentIdentifiers[characters.front()] = m_identifiers.last().ptr();
+        return m_identifiers.last().ptr();
     }
-    
-    inline const Identifier& IdentifierArena::makeNumericIdentifier(VM& vm, double number)
+
+    inline UniquedStringImpl* IdentifierArena::makeNumericIdentifier(VM& vm, double number)
     {
         Identifier token;
         if (auto int32Value = tryConvertToStrictInt32(number))
             token = Identifier::from(vm, int32Value.value());
         else
             token = Identifier::from(vm, number);
-        m_identifiers.append(WTF::move(token));
-        return m_identifiers.last();
+        m_identifiers.append(Ref { *token.impl() });
+        return m_identifiers.last().ptr();
     }
 
     DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ParserArena);

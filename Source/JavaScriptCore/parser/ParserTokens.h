@@ -29,14 +29,13 @@
 #include <stdint.h>
 #include <wtf/Assertions.h>
 #include <wtf/Compiler.h>
+#include <wtf/text/UniquedStringImpl.h>
 
 namespace WTF {
 class PrintStream;
 }
 
 namespace JSC {
-
-class Identifier;
 
 #define BINARY_OP_PRECEDENCE(prec) (((prec) << BinaryOpTokenPrecedenceShift) | ((prec) << (BinaryOpTokenPrecedenceShift + BinaryOpTokenAllowsInPrecedenceAdditionalShift)))
 #define IN_OP_PRECEDENCE(prec) ((prec) << (BinaryOpTokenPrecedenceShift + BinaryOpTokenAllowsInPrecedenceAdditionalShift))
@@ -241,8 +240,8 @@ struct JSTextPosition {
 
 union JSTokenData {
     struct {
-        const Identifier* cooked;
-        const Identifier* raw;
+        SUPPRESS_UNCOUNTED_MEMBER UniquedStringImpl* cooked;
+        SUPPRESS_UNCOUNTED_MEMBER UniquedStringImpl* raw;
         bool isTail;
     };
     struct {
@@ -252,16 +251,16 @@ union JSTokenData {
     };
     double doubleValue;
     struct {
-        const Identifier* ident;
+        SUPPRESS_UNCOUNTED_MEMBER UniquedStringImpl* ident;
         bool escaped;
     };
     struct {
-        const Identifier* bigIntString;
+        SUPPRESS_UNCOUNTED_MEMBER UniquedStringImpl* bigIntString;
         uint8_t radix;
     };
     struct {
-        const Identifier* pattern;
-        const Identifier* flags;
+        SUPPRESS_UNCOUNTED_MEMBER UniquedStringImpl* pattern;
+        SUPPRESS_UNCOUNTED_MEMBER UniquedStringImpl* flags;
     };
 };
 
