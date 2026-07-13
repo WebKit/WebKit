@@ -1263,6 +1263,8 @@ def class_template_headers(template_string):
         'Variant': {'headers': ['<wtf/Variant.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'IPC::ArrayReferenceTuple': {'headers': ['"ArrayReferenceTuple.h"'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'IPC::Untrusted': {'headers': ['"Untrusted.h"'], 'argument_coder_headers': ['"Untrusted.h"']},
+        'IPC::UnsafeSpan': {'headers': ['"UnsafeSpan.h"'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
+        'IPC::UnsafeArrayReferenceTuple': {'headers': ['"UnsafeArrayReferenceTuple.h"'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'Ref': {'headers': ['<wtf/Ref.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'RefPtr': {'headers': ['<wtf/RefCounted.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'RetainPtr': {'headers': ['<wtf/RetainPtr.h>'], 'argument_coder_headers': []},
