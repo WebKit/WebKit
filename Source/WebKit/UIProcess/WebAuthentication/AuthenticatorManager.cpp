@@ -375,7 +375,7 @@ void AuthenticatorManager::requestPin(uint64_t retries, CompletionHandler<void(c
 
     auto callback = [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] (const WTF::String& pin) mutable {
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis) {
+        if (!protectedThis || !protectedThis->m_pendingRequest) {
             completionHandler(nullString());
             return;
         }
@@ -404,7 +404,7 @@ void AuthenticatorManager::requestNewPin(uint64_t minLength, CompletionHandler<v
 
     auto callback = [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] (const WTF::String& pin) mutable {
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis) {
+        if (!protectedThis || !protectedThis->m_pendingRequest) {
             completionHandler(nullString());
             return;
         }
