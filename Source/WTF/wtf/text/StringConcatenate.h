@@ -351,8 +351,7 @@ public:
         unsigned count = 0;
         if (underlyingLength < m_padding.length) {
             count = m_padding.length - underlyingLength;
-            for (unsigned i = 0; i < count; ++i)
-                destination[i] = m_padding.character;
+            std::ranges::fill(destination.first(count), m_padding.character);
         }
         m_underlyingAdapter.writeTo(destination.subspan(count));
     }
@@ -405,7 +404,7 @@ public:
 
     template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const
     {
-        std::fill_n(destination.data(), m_indentation.value * N, ' ');
+        std::ranges::fill(destination.first(m_indentation.value * N), ' ');
     }
 
 private:
