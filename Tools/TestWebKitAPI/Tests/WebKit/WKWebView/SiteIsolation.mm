@@ -3580,11 +3580,9 @@ TEST(SiteIsolation, DrawAfterNavigateToDomainAgain)
 
     [webView evaluateJavaScript:@"window.location = 'https://c.com/c'" completionHandler:nil];
     [navigationDelegate waitForDidFinishNavigation];
+    // c.com is unrelated to the back/forward-cached a.com and gets a fresh group, so it is a lone tree here.
     checkFrameTreesInProcesses(webView.get(), {
-        { "https://c.com"_s },
-        // a.com is BFCached; the b.com iframe process stays alive as a
-        // suspended cached iframe and surfaces here as a remote tree.
-        { RemoteFrame }
+        { "https://c.com"_s }
     });
 
     [webView evaluateJavaScript:@"window.location = 'https://a.com/a'" completionHandler:nil];
@@ -3598,6 +3596,38 @@ TEST(SiteIsolation, DrawAfterNavigateToDomainAgain)
     });
 
     [webView waitForNextPresentationUpdate];
+}
+
+TEST(SiteIsolation, NavigateToUnrelatedDomainDoesNotShareBCGWithSuspendedPage)
+{
+    HTTPServer server({
+        { "/a"_s, { "<iframe src='https://b.com/b'></iframe>"_s } },
+        { "/b"_s, { "hi"_s } },
+        { "/c"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    while (![webView mainFrame].childFrames.count)
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ([webView mainFrame].info.securityOrigin.host, "a.com");
+    _WKFrameTreeNode *bFrameForA = [webView mainFrame].childFrames.firstObject;
+    EXPECT_WK_STREQ(bFrameForA.info.securityOrigin.host, "b.com");
+    pid_t bProcessForA = bFrameForA.info._processIdentifier;
+    EXPECT_NE(bProcessForA, 0);
+
+    [webView evaluateJavaScript:@"window.location = 'https://c.com/c'" completionHandler:nil];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([webView mainFrame].info.securityOrigin.host, "c.com");
+
+    // a.com's iframe process stays alive in the back/forward cache, but c.com is in a fresh group, so it is a lone
+    // tree not linked to that suspended process.
+    EXPECT_TRUE(processStillRunning(bProcessForA));
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://c.com"_s }
+    });
 }
 
 TEST(SiteIsolation, CancelProvisionalLoad)

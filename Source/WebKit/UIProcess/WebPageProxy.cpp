@@ -1628,8 +1628,7 @@ void WebPageProxy::swapToProvisionalPage(Ref<ProvisionalPageProxy>&& provisional
     ASSERT(!m_drawingArea);
     setDrawingArea(provisionalPage->takeDrawingArea());
 
-    // FIXME: Think about what to do if the provisional page didn't get its browsing context group from the SuspendedPageProxy.
-    // We do need to clear it at some point for navigations that aren't from back/forward navigations. Probably in the same place as PSON?
+    // The group was chosen in browsingContextGroupForNavigation(); adopt whatever the provisional page carries.
     setBrowsingContextGroup(provisionalPage->browsingContextGroup());
 
     protect(legacyMainFrameProcess())->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::No);
@@ -5552,11 +5551,21 @@ Ref<BrowsingContextGroup> WebPageProxy::browsingContextGroupForNavigation(WebFra
         return m_browsingContextGroup;
 
     bool usesSameWebsiteDataStore = &websiteDataStore == &this->websiteDataStore();
-    bool mainFrameSiteChanges = !m_mainFrame || Site { m_mainFrame->url() } != Site { navigation.currentRequest().url() };
+    Site requestedSite { navigation.currentRequest().url() };
+    bool mainFrameSiteChanges = !m_mainFrame || Site { m_mainFrame->url() } != requestedSite;
     if (RefPtr targetBackForwardItem = navigation.targetItem(); targetBackForwardItem && targetBackForwardItem->browsingContextGroup() && usesSameWebsiteDataStore)
         return *targetBackForwardItem->browsingContextGroup();
 
     if (processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes || !usesSameWebsiteDataStore || (navigation.isRequestFromClientOrUserInput() && !navigation.isFromLoadData() && mainFrameSiteChanges))
+        return BrowsingContextGroup::create();
+
+    // Under Site Isolation, keeping the current group for a site-changing, non-back/forward main-frame
+    // navigation would let the incoming document share a group with the outgoing page once that page enters
+    // the back/forward cache, linking their iframe processes across unrelated top-level browsing contexts.
+    // Start a fresh group instead.
+    // FIXME: The non-Site-Isolation PSON path still adopts the outgoing (possibly back/forward-cached) group;
+    // it should get a fresh group here too.
+    if (protect(preferences())->siteIsolationEnabled() && !navigation.targetItem() && m_mainFrame && mainFrameSiteChanges && !requestedSite.isEmpty() && !protect(m_browsingContextGroup)->hasMultiplePages())
         return BrowsingContextGroup::create();
 
     return m_browsingContextGroup;
