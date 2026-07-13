@@ -6942,7 +6942,9 @@ sub IsArrayLiteralDefaultValueValid
 
 sub GenerateArgumentConversions
 {
-    my ($outputArray, $inputArguments, $outputArguments, $globalObjectReference, $interface, $quotedFunctionName, $functionImplementationName, $conditional, $indent) = @_;
+    my ($outputArray, $inputArguments, $outputArguments, $globalObjectReference, $interface, $quotedFunctionName, $functionImplementationName, $conditional, $indent, $thisObjectReference) = @_;
+
+    $thisObjectReference = "*castedThis" unless $thisObjectReference;
 
     my $argumentIndex = 0;
     foreach my $argument (@$inputArguments) {
@@ -6998,7 +7000,7 @@ sub GenerateArgumentConversions
 
             my $optional = $argument->isOptional && ((defined($argument->default) && !WillConvertUndefinedToDefaultParameterValue($argument->type, $argument->default)) || !defined($argument->default));
 
-            my $nativeValue = JSValueToNative($interface, $argument, $argumentLookupForConversion, $conditional, "lexicalGlobalObject", "*lexicalGlobalObject", "*castedThis", $globalObjectReference, $argumentExceptionThrowerFunctor, $functionImplementationName, $optional, $argumentDefaultValueFunctor);
+            my $nativeValue = JSValueToNative($interface, $argument, $argumentLookupForConversion, $conditional, "lexicalGlobalObject", "*lexicalGlobalObject", $thisObjectReference, $globalObjectReference, $argumentExceptionThrowerFunctor, $functionImplementationName, $optional, $argumentDefaultValueFunctor);
 
             push(@$outputArray, $indent . "auto ${name}ConversionResult = ${nativeValue};\n");
             push(@$outputArray, $indent . "if (${name}ConversionResult.hasException(throwScope)) [[unlikely]]\n");
@@ -7794,11 +7796,11 @@ END
 
             if ($interface->asyncIterable) {
                 my $quotedFunctionName = "\"$functionName\"_s";
-                my $globalObjectReference = "*castedThis->realm()";
+                my $globalObjectReference = "*thisObject->realm()";
                 my $conditional = $operation->extendedAttributes->{Conditional};
 
                 GenerateArgumentsCountCheck(\@implContent, $interface->asyncIterable, $interface, "    ");
-                GenerateArgumentConversions(\@implContent, \@{$interface->asyncIterable->arguments}, \@arguments, $globalObjectReference, $interface, $quotedFunctionName, $functionName, $conditional, "    ");
+                GenerateArgumentConversions(\@implContent, \@{$interface->asyncIterable->arguments}, \@arguments, $globalObjectReference, $interface, $quotedFunctionName, $functionName, $conditional, "    ", "*thisObject");
             }
 
             my $functionCall = "iteratorCreate<${iteratorName}>(" . join(", ", @arguments) . ")";

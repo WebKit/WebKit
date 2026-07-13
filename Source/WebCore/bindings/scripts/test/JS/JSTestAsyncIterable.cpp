@@ -29,12 +29,17 @@
 #include "JSDOMBinding.h"
 #include "JSDOMBindingFacade.h"
 #include "JSDOMConstructorNotConstructable.h"
+#include "JSDOMConvertCallbacks.h"
+#include "JSDOMConvertEventListener.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertOptional.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObject.h"
 #include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
+#include "JSEventListener.h"
+#include "JSTestCallbackInterface.h"
 #include "JSTestNode.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreJSClientData.h"
@@ -247,11 +252,21 @@ static inline EncodedJSValue jsTestAsyncIterablePrototypeFunction_valuesCaller(J
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto optionConversionResult = convert<IDLOptional<IDLInterface<TestNode>>>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "option"_s, "TestAsyncIterable"_s, "jsTestAsyncIterablePrototypeFunction_values"_s, "TestNode"_s); });
+    if (callFrame->argumentCount() < 2) [[unlikely]]
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto callbackConversionResult = convert<IDLCallbackInterface<JSTestCallbackInterface>>(*lexicalGlobalObject, argument0.value(), *thisObject->realm(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeObjectError(lexicalGlobalObject, scope, 0, "callback"_s, "TestAsyncIterable"_s, "jsTestAsyncIterablePrototypeFunction_values"_s); });
+    if (callbackConversionResult.hasException(throwScope)) [[unlikely]]
+       return encodedJSValue();
+    EnsureStillAliveScope argument1 = callFrame->uncheckedArgument(1);
+    auto listenerConversionResult = convert<IDLEventListener<JSEventListener>>(*lexicalGlobalObject, argument1.value(), *thisObject, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeObjectError(lexicalGlobalObject, scope, 1, "listener"_s, "TestAsyncIterable"_s, "jsTestAsyncIterablePrototypeFunction_values"_s); });
+    if (listenerConversionResult.hasException(throwScope)) [[unlikely]]
+       return encodedJSValue();
+    EnsureStillAliveScope argument2 = callFrame->argument(2);
+    auto optionConversionResult = convert<IDLOptional<IDLInterface<TestNode>>>(*lexicalGlobalObject, argument2.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 2, "option"_s, "TestAsyncIterable"_s, "jsTestAsyncIterablePrototypeFunction_values"_s, "TestNode"_s); });
     if (optionConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(iteratorCreate<TestAsyncIterableIterator>(*thisObject, *lexicalGlobalObject, throwScope, IterationKind::Values, optionConversionResult.releaseReturnValue())));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(iteratorCreate<TestAsyncIterableIterator>(*thisObject, *lexicalGlobalObject, throwScope, IterationKind::Values, callbackConversionResult.releaseReturnValue(), listenerConversionResult.releaseReturnValue(), optionConversionResult.releaseReturnValue())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestAsyncIterablePrototypeFunction_values, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
