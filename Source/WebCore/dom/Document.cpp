@@ -7616,6 +7616,11 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
         exitPointerLock();
 #endif
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+        if (RefPtr immersive = immersiveIfExists())
+            immersive->clearForBackForwardCache();
+#endif
+
         styleScope().clearResolver();
         m_styleRecalcTimer.stop();
 

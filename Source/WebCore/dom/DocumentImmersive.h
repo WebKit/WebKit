@@ -66,6 +66,7 @@ public:
     void dispatchPendingEvents();
     void queueImmersiveEventForElement(EventType, Element&);
     void clear();
+    void clearForBackForwardCache();
 
 protected:
     friend class Document;

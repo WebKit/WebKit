@@ -468,6 +468,18 @@ void DocumentImmersive::clear()
     clearPendingEvents();
 }
 
+void DocumentImmersive::clearForBackForwardCache()
+{
+    RefPtr previouslyImmersiveElement = m_immersiveElement;
+
+    clear();
+
+    if (previouslyImmersiveElement) {
+        previouslyImmersiveElement->exitImmersivePresentation([] { });
+        updateElementIsImmersive(previouslyImmersiveElement.get(), false);
+    }
+}
+
 }
 
 #endif
