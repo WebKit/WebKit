@@ -113,21 +113,21 @@ static std::optional<ScrollingAccelerationCurve> fromIOHIDDevice(IOHIDEventSende
         return std::nullopt;
     }
 
-    auto curves = adoptCF(dynamic_cf_cast<CFArrayRef>(IOHIDServiceClientCopyProperty(ioHIDService.get(), CFSTR(kHIDScrollAccelParametricCurvesKey))));
+    auto curves = dynamic_cf_cast<CFArrayRef>(adoptCF(IOHIDServiceClientCopyProperty(ioHIDService.get(), CFSTR(kHIDScrollAccelParametricCurvesKey))));
     if (!curves) {
         RELEASE_LOG(ScrollAnimations, "ScrollingAccelerationCurve::fromIOHIDDevice failed to look up curves");
         return std::nullopt;
     }
 
     auto readFixedPointServiceKey = [&] (CFStringRef key) -> std::optional<float> {
-        auto valueCF = adoptCF(dynamic_cf_cast<CFNumberRef>(IOHIDServiceClientCopyProperty(ioHIDService.get(), key)));
+        auto valueCF = dynamic_cf_cast<CFNumberRef>(adoptCF(IOHIDServiceClientCopyProperty(ioHIDService.get(), key)));
         if (!valueCF)
             return std::nullopt;
         return fromFixedPoint([(NSNumber *)valueCF.get() floatValue]);
     };
 
     auto scrollAcceleration = [&] () -> std::optional<float> {
-        if (auto scrollAccelerationType = adoptCF(dynamic_cf_cast<CFStringRef>(IOHIDServiceClientCopyProperty(ioHIDService.get(), CFSTR("HIDScrollAccelerationType"))))) {
+        if (auto scrollAccelerationType = dynamic_cf_cast<CFStringRef>(adoptCF(IOHIDServiceClientCopyProperty(ioHIDService.get(), CFSTR("HIDScrollAccelerationType"))))) {
             if (auto acceleration = readFixedPointServiceKey(scrollAccelerationType.get()))
                 return acceleration;
         }
@@ -153,7 +153,7 @@ static std::optional<ScrollingAccelerationCurve> fromIOHIDDevice(IOHIDEventSende
 
     static CFStringRef dispatchFrameRateKey = CFSTR("ScrollMomentumDispatchRate");
     static constexpr float defaultDispatchFrameRate = 60;
-    auto frameRateCF = adoptCF(dynamic_cf_cast<CFNumberRef>(IOHIDServiceClientCopyProperty(ioHIDService.get(), dispatchFrameRateKey)));
+    auto frameRateCF = dynamic_cf_cast<CFNumberRef>(adoptCF(IOHIDServiceClientCopyProperty(ioHIDService.get(), dispatchFrameRateKey)));
     float frameRate = frameRateCF ? fromCFNumber(frameRateCF.get()) : defaultDispatchFrameRate;
 
     return fromIOHIDCurveArrayWithAcceleration((NSArray *)curves.get(), *scrollAcceleration, *resolution, frameRate);

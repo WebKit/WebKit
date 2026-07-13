@@ -6207,6 +6207,28 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [runtime/auto_with_adopt] [4]",
             'foo.cpp')
 
+    def test_adopt_of_dynamic_cast(self):
+        self.assert_lint(
+            'RetainPtr array = adoptCF(dynamic_cf_cast<CFArrayRef>(SecTaskCopyValueForEntitlement(task, key, nullptr)));',
+            "Adopt the value before casting, e.g. 'dynamic_cf_cast<>(adoptCF(...))', otherwise the value leaks on type mismatch."
+            "  [runtime/adopt_dynamic_cast] [4]",
+            'foo.mm')
+        self.assert_lint(
+            'RetainPtr value = adoptNS(dynamic_objc_cast<NSString>([obj copyValue]));',
+            "Adopt the value before casting, e.g. 'dynamic_objc_cast<>(adoptNS(...))', otherwise the value leaks on type mismatch."
+            "  [runtime/adopt_dynamic_cast] [4]",
+            'foo.mm')
+        # The correct pattern (adopt before cast) should not be flagged.
+        self.assert_lint(
+            'RetainPtr array = dynamic_cf_cast<CFArrayRef>(adoptCF(SecTaskCopyValueForEntitlement(task, key, nullptr)));',
+            '',
+            'foo.mm')
+        # adoptCF of a plain Copy function (no cast) is fine.
+        self.assert_lint(
+            'RetainPtr context = adoptCF(CGBitmapContextCreate(0, 0, 0, 0, 0, 0, 0));',
+            '',
+            'foo.cpp')
+
     def test_wtf_make_unique(self):
         self.assert_lint(
              'std::unique_ptr<Foo> foo = WTF::makeUnique<Foo>();',

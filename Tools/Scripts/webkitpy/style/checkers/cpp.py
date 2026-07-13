@@ -3164,6 +3164,34 @@ def check_auto_with_adopt(clean_lines, line_number, file_state, error):
         error(line_number, 'runtime/auto_with_adopt', 4, "Use '%s' instead of 'auto' with '%s()'." % (smart_ptr, adopt_func))
 
 
+def check_adopt_of_dynamic_cast(clean_lines, line_number, file_state, error):
+    """Looks for 'adoptCF(dynamic_cf_cast<>(...))' and 'adoptNS(dynamic_objc_cast<>(...))'.
+
+    These patterns leak the value returned by the inner CF/NS 'Copy'/'Create'
+    function on a type mismatch: dynamic_cf_cast<>()/dynamic_objc_cast<>() return
+    nullptr when the type does not match, so adoptCF(nullptr)/adoptNS(nullptr)
+    silently drops the reference instead of releasing the original value. The
+    adopt should be applied to the value *before* the cast, e.g.
+    'dynamic_cf_cast<CFArrayRef>(adoptCF(...))', which relies on the
+    RetainPtr<>&& overload of dynamic_cf_cast<>() to release on mismatch.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+
+    matched = search(r'\b(adoptCF|adoptNS)\s*\(\s*(dynamic_cf_cast|dynamic_objc_cast)\b', line)
+    if matched:
+        adopt_func = matched.group(1)
+        cast_func = matched.group(2)
+        error(line_number, 'runtime/adopt_dynamic_cast', 4, "Adopt the value before casting, e.g. '%s<>(%s(...))', otherwise the value leaks on type mismatch." % (cast_func, adopt_func))
+
+
 def check_lock_guard(clean_lines, line_number, file_state, error):
     """Looks for use of 'std::lock_guard<>' which should be replaced with 'WTF::Locker'.
 
@@ -3992,6 +4020,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_wtf_os_object_ptr(clean_lines, line_number, file_state, error)
     check_wtf_xpc_object_ptr(clean_lines, line_number, file_state, error)
     check_auto_with_adopt(clean_lines, line_number, file_state, error)
+    check_adopt_of_dynamic_cast(clean_lines, line_number, file_state, error)
     check_lock_guard(clean_lines, line_number, file_state, error)
     check_log(clean_lines, line_number, file_state, error)
     check_ctype_functions(clean_lines, line_number, file_state, error)
@@ -5286,6 +5315,7 @@ class CppChecker(object):
         'runtime/unsafe_get_ptr',
         'runtime/unsigned',
         'runtime/virtual',
+        'runtime/adopt_dynamic_cast',
         'runtime/auto_with_adopt',
         'runtime/js_cast',
         'runtime/js_dynamic_cast',

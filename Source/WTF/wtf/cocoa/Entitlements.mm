@@ -87,7 +87,7 @@ bool hasEntitlementValueInArray(audit_token_t token, ASCIILiteral entitlement, A
         return false;
 
     auto string = entitlement.createCFString();
-    RetainPtr array = adoptCF(dynamic_cf_cast<CFArrayRef>(SecTaskCopyValueForEntitlement(secTaskForToken.get(), string.get(), nullptr)));
+    RetainPtr array = dynamic_cf_cast<CFArrayRef>(adoptCF(SecTaskCopyValueForEntitlement(secTaskForToken.get(), string.get(), nullptr)));
     if (!array)
         return false;
 

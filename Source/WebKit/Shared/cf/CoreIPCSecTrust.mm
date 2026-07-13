@@ -263,7 +263,7 @@ CoreIPCSecTrust::CoreIPCSecTrust(SecTrustRef trust)
     {
         // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
         CFErrorRef rawError = NULL;
-        cfDictionary = adoptCF(dynamic_cf_cast<CFDictionaryRef>(SecTrustCopyPropertyListRepresentation(trust, &rawError)));
+        cfDictionary = dynamic_cf_cast<CFDictionaryRef>(adoptCF(SecTrustCopyPropertyListRepresentation(trust, &rawError)));
         SUPPRESS_RETAINPTR_CTOR_ADOPT error = adoptCF(rawError);
     }
     if (!cfDictionary || error)
