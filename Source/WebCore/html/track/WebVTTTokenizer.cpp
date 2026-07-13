@@ -62,9 +62,9 @@ static void addNewClass(StringBuilder& classes, const StringBuilder& newClass)
     classes.append(newClass);
 }
 
-static bool emitToken(WebVTTToken& resultToken, const WebVTTToken& token)
+static bool emitToken(WebVTTToken& resultToken, WebVTTToken&& token)
 {
-    resultToken = token;
+    resultToken = WTF::move(token);
     return true;
 }
 
