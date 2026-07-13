@@ -155,6 +155,8 @@ rendering/LayerOverlapMap.cpp
 rendering/NinePieceImagePainter.cpp
 rendering/OutlinePainter.cpp
 rendering/RegionContext.cpp
+rendering/RenderBox.cpp
+rendering/RenderFlexibleBox.cpp
 rendering/RenderFrameSet.cpp
 rendering/RenderGeometryMap.cpp
 rendering/RenderLayerCompositor.cpp

@@ -62,6 +62,7 @@ rendering/AutoTableLayout.cpp
 rendering/BackgroundPainter.cpp
 rendering/CounterNode.cpp
 rendering/FixedTableLayout.cpp
+rendering/FlexLayoutUtils.cpp
 rendering/GridLayoutFunctions.cpp
 rendering/GridTrackSizingAlgorithm.cpp
 rendering/HitTestResult.cpp
