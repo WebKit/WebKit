@@ -344,6 +344,7 @@ rdar://174495016 [ mac ] TestWebKitAPI.WKWebExtensionAPIAlarms.DelaySingleShot [
 webkit.org/b/311933 [ mac ] TestWebKitAPI.WKWebExtensionAPIAlarms.WhenSingleShot [ Skip ]
 webkit.org/b/301660 [ mac debug ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequest.BlockedLoadInPrivateBrowsingTest [ Skip ]
 webkit.org/b/318265 [ mac debug ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequest.BlockedLoadTest [ Timeout ]
+webkit.org/b/318265 [ ios debug ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequest.BlockedLoadTest [ Pass Timeout ]
 webkit.org/b/318265 [ mac debug ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequest.UpdateEnabledRulesets [ Timeout ]
 webkit.org/b/318265 [ mac debug ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequest.UpdateEnabledRulesetsPerformsCompilation [ Timeout ]
 rdar://137268889 [ mac ] TestWebKitAPI.WKWebExtensionAPIDevTools.CreatePanel [ Skip ]
