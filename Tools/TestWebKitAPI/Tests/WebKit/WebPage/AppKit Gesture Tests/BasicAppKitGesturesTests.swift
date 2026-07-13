@@ -1024,6 +1024,35 @@ extension AppKitGesturesTests.Basic {
         let lastScrubbedValue = try #require(scrubbedValues.last)
         #expect(lastScrubbedValue > 0)
     }
+
+    @Test(
+        .bug("https://webkit.org/b/319256", "Trackpad swiping between spaces should not trigger back navigation")
+    )
+    func swipingBetweenSpacesShouldNotTriggerBackNavigation() async throws {
+        // Establish a back-forward history entry so that a "swipe back" gesture would have somewhere to navigate to.
+        try await page.load(URL(string: "about:blank?1")).wait()
+
+        let testURL = try #require(Bundle.testResources.url(forResource: "red", withExtension: "html"))
+        try await page.load(testURL).wait()
+        await page.waitForNextPresentationUpdate()
+        let urlBeforeGesture = page.url
+
+        #expect(page.backForwardList.backList.count == 1)
+
+        let start = screenBounds(ofPointInWindowCoordinates: CGPoint(x: window.frame.width / 4, y: window.frame.height / 2))
+        let end = screenBounds(ofPointInWindowCoordinates: CGPoint(x: 3 * window.frame.width / 4, y: window.frame.height / 2))
+
+        await recap.play { composer in
+            composer._wk_scroll(withStart: start, end: end, duration: .seconds(0.5), multiFinger: true)
+        }
+
+        // Allow any (incorrectly) triggered back navigation to occur before asserting it did not.
+        // FIXME: Switch over to `webViewDidBeginNavigationGesture` when we adopt it for positive swipe navigation tests.
+        try await Task.sleep(for: .seconds(1))
+
+        #expect(page.url == urlBeforeGesture)
+        #expect(page.backForwardList.backList.count == 1)
+    }
 }
 
 nonisolated(nonsending) private func withSwizzledContextMenu(perform body: () async -> Void) async {
