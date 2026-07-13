@@ -430,6 +430,13 @@ bool DocumentLoader::isLoading() const
     return isLoadingMainResource() || !m_subresourceLoaders.isEmpty() || !m_plugInStreamLoaders.isEmpty();
 }
 
+static void hideRedirectTimingForNoReferrerNavigation(const DocumentLoader& loader, NetworkLoadMetrics& metrics)
+{
+    // https://html.spec.whatwg.org/C#initialise-the-document-object step 15.3 resets redirectCount in case of "no-referrer".
+    if (loader.triggeringAction().requester() && loader.request().httpReferrer().isEmpty())
+        metrics.redirectCount = 0;
+}
+
 void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& fetchMetrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     ASSERT(isMainThread());
@@ -447,6 +454,8 @@ void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadM
     }
     if (!metrics)
         metrics = Box<NetworkLoadMetrics>::create(fetchMetrics);
+
+    hideRedirectTimingForNoReferrerNavigation(*this, *metrics);
 
     if (RefPtr document = this->document()) {
         if (RefPtr window = document->window())
@@ -1389,6 +1398,7 @@ void DocumentLoader::commitData(const SharedBuffer& data)
                     || source == ResourceResponse::Source::MemoryCacheAfterValidation;
                 if (RefPtr frameLoader = this->frameLoader())
                     finalMetrics.fromPrefetch = frameLoader->documentPrefetcher().wasPrefetched(url());
+                hideRedirectTimingForNoReferrerNavigation(*this, finalMetrics);
                 protect(window->performance())->addNavigationTiming(*this, document, protect(*m_mainResource), timing(), finalMetrics);
             }
         }

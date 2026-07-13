@@ -84,6 +84,9 @@ protected:
 
     bool isLoadedFromServiceWorker() const { return m_resourceTiming.isLoadedFromServiceWorker(); }
 
+    // Navigation timing exposes redirect timing under a different condition than the TAO check.
+    virtual bool NODELETE shouldExposeRedirectTiming() const;
+
     MonotonicTime m_timeOrigin;
     ResourceTiming m_resourceTiming;
     Vector<Ref<PerformanceServerTiming>> m_serverTiming;

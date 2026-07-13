@@ -1196,8 +1196,17 @@ void NetworkResourceLoader::didReceiveBuffer(const WebCore::FragmentedSharedBuff
     sendBuffer(buffer);
 }
 
-void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)
+void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& originalNetworkLoadMetrics)
 {
+    // https://fetch.spec.whatwg.org/#navigation-tao-check
+    std::optional<NetworkLoadMetrics> navigationMetrics;
+    if (parameters().options.mode == FetchOptions::Mode::Navigate && originalNetworkLoadMetrics.hasCrossOriginRedirect
+        && !(m_networkLoadChecker && m_networkLoadChecker->navigationTAOCheckPassed())) {
+        navigationMetrics = originalNetworkLoadMetrics;
+        navigationMetrics->redirectCount = 0;
+    }
+    const NetworkLoadMetrics& networkLoadMetrics = navigationMetrics ? *navigationMetrics : originalNetworkLoadMetrics;
+
     ASSERT(!m_networkLoadChecker || networkLoadMetrics.failsTAOCheck == m_networkLoadChecker->timingAllowFailedFlag());
 
     LOADER_RELEASE_LOG("didFinishLoading: (numBytesReceived=%zd, hasCacheEntryForValidation=%d)", m_numBytesReceived, !!m_cacheEntryForValidation);

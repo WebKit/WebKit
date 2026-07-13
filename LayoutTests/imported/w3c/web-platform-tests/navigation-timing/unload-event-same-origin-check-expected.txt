@@ -5,7 +5,7 @@ This test validates that the values of window.performance.getEntriesByType("navi
 
 
 PASS Redirect chain with a partial TAO opt-in
-FAIL Redirect chain with full TAO opt-in assert_equals: Expected redirectCount to be 1 expected 1 but got 0
+PASS Redirect chain with full TAO opt-in
 PASS Same-cross-same redirect chain with no TAO opt-in
 PASS cross-cross-same Redirect chain with no TAO opt-in
 PASS Previous document cross origin
@@ -14,6 +14,6 @@ PASS No previous document
 PASS Same origin previous document with same origin redirect
 PASS No previous document with same origin redirect
 PASS No previous document with cross origin redirect
-FAIL No previous document with cross origin redirect with partial TAO assert_equals: Expected redirectCount to be 1 expected 1 but got 0
+PASS No previous document with cross origin redirect with partial TAO
 PASS No previous document with cross origin redirect with TAO
 

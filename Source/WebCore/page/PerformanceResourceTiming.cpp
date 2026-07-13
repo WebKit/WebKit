@@ -56,9 +56,11 @@ static double networkLoadTimeToDOMHighResTimeStamp(MonotonicTime timeOrigin, Mon
     return result.milliseconds();
 }
 
-static double fetchStart(MonotonicTime timeOrigin, const ResourceTiming& resourceTiming)
+static double fetchStart(MonotonicTime timeOrigin, const ResourceTiming& resourceTiming, bool exposeRedirectTiming)
 {
-    if (auto fetchStart = resourceTiming.networkLoadMetrics().fetchStart; fetchStart && !resourceTiming.networkLoadMetrics().failsTAOCheck)
+    // The real fetch start reveals how long the redirects took, so only use it when redirect timing
+    // is exposed; otherwise fall back to the start time, which collapses that gap.
+    if (auto fetchStart = resourceTiming.networkLoadMetrics().fetchStart; fetchStart && exposeRedirectTiming)
         return networkLoadTimeToDOMHighResTimeStamp(timeOrigin, fetchStart);
 
     // fetchStart is a required property.
@@ -71,7 +73,7 @@ static double entryStartTime(MonotonicTime timeOrigin, const ResourceTiming& res
 {
     if (resourceTiming.networkLoadMetrics().failsTAOCheck
         || !resourceTiming.networkLoadMetrics().redirectCount)
-        return fetchStart(timeOrigin, resourceTiming);
+        return fetchStart(timeOrigin, resourceTiming, !resourceTiming.networkLoadMetrics().failsTAOCheck);
 
     if (resourceTiming.networkLoadMetrics().redirectStart)
         return networkLoadTimeToDOMHighResTimeStamp(timeOrigin, resourceTiming.networkLoadMetrics().redirectStart);
@@ -118,9 +120,14 @@ double PerformanceResourceTiming::workerStart() const
     return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.networkLoadMetrics().workerStart);
 }
 
+bool PerformanceResourceTiming::shouldExposeRedirectTiming() const
+{
+    return !m_resourceTiming.networkLoadMetrics().failsTAOCheck;
+}
+
 double PerformanceResourceTiming::redirectStart() const
 {
-    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
+    if (!shouldExposeRedirectTiming())
         return 0.0;
 
     if (m_resourceTiming.isLoadedFromServiceWorker())
@@ -134,7 +141,7 @@ double PerformanceResourceTiming::redirectStart() const
 
 double PerformanceResourceTiming::redirectEnd() const
 {
-    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
+    if (!shouldExposeRedirectTiming())
         return 0.0;
 
     if (m_resourceTiming.isLoadedFromServiceWorker())
@@ -143,6 +150,7 @@ double PerformanceResourceTiming::redirectEnd() const
     if (!m_resourceTiming.networkLoadMetrics().redirectCount)
         return 0.0;
 
+    // redirectEnd is when the last redirect finished, i.e. when the final request's fetch started.
     // These two times are so close to each other that we don't record two timestamps.
     // See https://www.w3.org/TR/resource-timing-2/#attribute-descriptions
     return fetchStart();
@@ -150,7 +158,7 @@ double PerformanceResourceTiming::redirectEnd() const
 
 double PerformanceResourceTiming::fetchStart() const
 {
-    return WebCore::fetchStart(m_timeOrigin, m_resourceTiming);
+    return WebCore::fetchStart(m_timeOrigin, m_resourceTiming, shouldExposeRedirectTiming());
 }
 
 double PerformanceResourceTiming::domainLookupStart() const

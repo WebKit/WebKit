@@ -44,6 +44,7 @@
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/TimingAllowOrigin.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -166,6 +167,9 @@ void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ResourceReq
         return;
     }
 
+    if (m_options.mode == FetchOptions::Mode::Navigate)
+        appendToNavigationTimingAllowValuesList(redirectResponse);
+
     m_previousURL = WTF::move(m_url);
     m_url = redirectRequest.url();
 
@@ -238,6 +242,10 @@ ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& reques
                 response.setDeprecatedNetworkLoadMetrics(WTF::move(metrics));
             }
         }
+
+        // https://fetch.spec.whatwg.org/#navigation-tao-check
+        if (m_options.mode == FetchOptions::Mode::Navigate && !response.isRedirection())
+            m_navigationTAOCheckPassed = WebCore::passesNavigationTAOCheck(m_navigationTimingAllowValuesList, SecurityOrigin::create(m_url).get());
     });
 
     if (m_redirectCount)
@@ -306,6 +314,19 @@ bool NetworkLoadChecker::checkTAO(const ResourceResponse& response)
 
     m_timingAllowFailedFlag = response.tainting() != ResourceResponse::Tainting::Basic;
     return !m_timingAllowFailedFlag;
+}
+
+// https://fetch.spec.whatwg.org/#append-to-a-requests-navigation-timing-allow-values-list
+void NetworkLoadChecker::appendToNavigationTimingAllowValuesList(const ResourceResponse& response)
+{
+    Vector<String> taoValues;
+    const auto& timingAllowOriginString = response.httpHeaderField(HTTPHeaderName::TimingAllowOrigin);
+    for (auto valueWithSpace : StringView(timingAllowOriginString).split(',')) {
+        auto value = valueWithSpace.trim(isASCIIWhitespaceWithoutFF<char16_t>);
+        if (!value.isEmpty())
+            taoValues.append(value.toString());
+    }
+    m_navigationTimingAllowValuesList.append(WTF::move(taoValues));
 }
 
 auto NetworkLoadChecker::accessControlErrorForValidationHandler(String&& message) -> RequestOrRedirectionTripletOrError

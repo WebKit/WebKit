@@ -77,6 +77,7 @@ private:
 
     double millisecondsSinceOrigin(MonotonicTime) const;
     bool NODELETE sameOriginCheckFails() const;
+    bool NODELETE shouldExposeRedirectTiming() const final;
 
     DocumentEventTiming m_documentEventTiming;
     DocumentLoadTiming m_documentLoadTiming;

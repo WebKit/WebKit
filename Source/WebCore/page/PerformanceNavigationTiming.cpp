@@ -121,11 +121,17 @@ PerformanceNavigationTiming::NavigationType PerformanceNavigationTiming::type() 
     return m_navigationType;
 }
 
+bool PerformanceNavigationTiming::shouldExposeRedirectTiming() const
+{
+    // https://html.spec.whatwg.org/C#initialise-the-document-object step 15 zeroes redirectCount when a
+    // cross-origin redirect chain does not opt in, so hide the redirect gap only then; a navigation with
+    // no such redirect (e.g. served by a service worker) must still expose its real fetch start.
+    auto& metrics = m_resourceTiming.networkLoadMetrics();
+    return metrics.redirectCount || !metrics.hasCrossOriginRedirect;
+}
+
 unsigned short PerformanceNavigationTiming::redirectCount() const
 {
-    if (m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
-        return 0;
-
     return m_resourceTiming.networkLoadMetrics().redirectCount;
 }
 

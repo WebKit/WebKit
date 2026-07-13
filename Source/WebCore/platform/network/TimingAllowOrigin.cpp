@@ -50,4 +50,15 @@ bool passesTimingAllowOriginCheck(const ResourceResponse& response, const Securi
     return false;
 }
 
+bool passesNavigationTAOCheck(const Vector<Vector<String>>& navigationTimingAllowValuesList, const SecurityOrigin& destinationOrigin)
+{
+    // https://fetch.spec.whatwg.org/#navigation-tao-check
+    auto destinationOriginString = destinationOrigin.toString();
+    for (auto& taoValues : navigationTimingAllowValuesList) {
+        if (!taoValues.contains("*"_s) && !taoValues.contains(destinationOriginString))
+            return false;
+    }
+    return true;
+}
+
 }
