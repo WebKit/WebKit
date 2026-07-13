@@ -935,7 +935,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
                 let newProbe = new WI.Probe(probeIdentifier, breakpoint, probeAction.data);
                 this._probesByIdentifier.set(probeIdentifier, newProbe);
                 probeSet.addProbe(newProbe);
-                break;
+                continue;
             }
 
             let probe = this._probesByIdentifier.get(probeIdentifier);
@@ -947,7 +947,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         // Look for missing probes based on what we saw last.
         for (let probeIdentifier of knownProbeIdentifiers) {
             if (seenProbeIdentifiers.has(probeIdentifier))
-                break;
+                continue;
 
             // The probe has gone missing, remove it.
             let probeSet = this._probeSetForBreakpoint(breakpoint);
