@@ -27,7 +27,6 @@ platform/graphics/TextRunIterator.h
 [ iOS ] platform/ios/DeviceMotionClientIOS.h
 [ iOS ] platform/ios/DeviceOrientationClientIOS.h
 rendering/BackgroundPainter.h
-rendering/FlexLayoutUtils.h
 rendering/GlyphDisplayListCache.cpp
 rendering/GridTrackSizingAlgorithm.h
 rendering/InlineBoxPainter.h

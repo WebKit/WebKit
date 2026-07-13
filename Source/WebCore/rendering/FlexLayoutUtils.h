@@ -27,6 +27,7 @@
 
 #include <WebCore/LayoutUnit.h>
 #include <optional>
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
@@ -110,8 +111,8 @@ public:
 
     FlowDirection crossAxisDirection() const;
     FlowDirection transformedBlockFlowDirection() const;
-    bool isHorizontalFlow() const;
-    bool isColumnFlow() const;
+    bool NODELETE isHorizontalFlow() const;
+    bool NODELETE isColumnFlow() const;
     bool isColumnOrRowReverse() const;
     bool isWrapReverse() const;
     bool isMultiline() const;
@@ -143,7 +144,7 @@ public:
 private:
     const RenderFlexibleBox& flexBox() const LIFETIME_BOUND { return m_flexBox; }
 
-    const RenderFlexibleBox& m_flexBox;
+    const CheckedRef<const RenderFlexibleBox> m_flexBox;
 };
 
 } // namespace WebCore

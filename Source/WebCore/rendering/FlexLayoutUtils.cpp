@@ -286,7 +286,8 @@ Overflow FlexLayoutUtils::crossAxisOverflowForFlexItem(const RenderBox& flexItem
 
 OverflowAlignment FlexLayoutUtils::overflowAlignmentForFlexItem(const RenderBox& flexItem) const
 {
-    return flexItem.style().alignSelf().resolve(&flexBox().style()).overflow();
+    CheckedRef containerStyle = flexBox().style();
+    return flexItem.style().alignSelf().resolve(containerStyle.ptr()).overflow();
 }
 
 bool FlexLayoutUtils::hasAutoMarginsInCrossAxis(const RenderBox& flexItem) const
@@ -349,7 +350,8 @@ bool FlexLayoutUtils::canResolveFullyConstrainedLogicalHeight(const RenderFlexib
     // stretched yet - its height is 0 at that point and computeLogicalHeight would give
     // a wrong answer. This happens when the nested out-of-flow flex is laid out as part of the
     // anector flex's main-axis sizing, before the stretch phase sets the final cross size.
-    return flexBox.hasFullyConstrainedLogicalHeight() && flexBox.containingBlock()->hasDefiniteLogicalHeight();
+    CheckedPtr containingBlock = flexBox.containingBlock();
+    return flexBox.hasFullyConstrainedLogicalHeight() && containingBlock->hasDefiniteLogicalHeight();
 }
 
 bool FlexLayoutUtils::flexItemHasComputableAspectRatio(const RenderBox& flexItem) const
@@ -607,7 +609,8 @@ Style::FlexBasis FlexLayoutUtils::flexBasisForFlexItem(const RenderBox& flexItem
 
 ItemPosition FlexLayoutUtils::alignmentForFlexItem(const RenderBox& flexItem) const
 {
-    auto align = flexItem.style().alignSelf().resolve(&flexBox().style()).position();
+    CheckedRef containerStyle = flexBox().style();
+    auto align = flexItem.style().alignSelf().resolve(containerStyle.ptr()).position();
     if (align == ItemPosition::Normal)
         align = ItemPosition::Stretch;
 
@@ -644,8 +647,8 @@ ItemPosition FlexLayoutUtils::alignmentForFlexItem(const RenderBox& flexItem) co
 
 bool FlexLayoutUtils::hasStretchedFlexItemWithAspectRatio() const
 {
-    for (auto& flexItem : childrenOfType<RenderBox>(flexBox())) {
-        if (flexItem.isOutOfFlowPositioned() || flexItem.isExcludedFromNormalLayout())
+    for (CheckedRef flexItem : childrenOfType<RenderBox>(flexBox())) {
+        if (flexItem->isOutOfFlowPositioned() || flexItem->isExcludedFromNormalLayout())
             continue;
         if (!flexItemHasAspectRatio(flexItem))
             continue;
