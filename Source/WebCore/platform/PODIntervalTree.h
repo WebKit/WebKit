@@ -122,7 +122,7 @@ private:
         if (!(point < node->data().low()))
             return smallestNodeGreaterThanFrom(point, node->right());
 
-        if (auto left = smallestNodeGreaterThanFrom(point, node->right()))
+        if (auto left = smallestNodeGreaterThanFrom(point, node->left()))
             return left;
 
         return node;
