@@ -769,4 +769,36 @@ TEST(LoadWebArchive, FailNavigationFromNonClientOrUserInitiatedWindowOpen)
     EXPECT_TRUE(failed);
 }
 
+TEST(LoadWebArchive, QuarantinedWebArchiveWithFragmentInName)
+{
+    RetainPtr archiveData = adoptNS([[NSData alloc] initWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"helloworld" withExtension:@"webarchive"]]);
+    RetainPtr directory = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSUUID UUID].UUIDString];
+    [NSFileManager.defaultManager createDirectoryAtPath:directory.get() withIntermediateDirectories:YES attributes:nil error:nil];
+    RetainPtr fileURL = [NSURL fileURLWithPath:[directory.get() stringByAppendingPathComponent:@"hash#x.webarchive"]];
+    [archiveData.get() writeToURL:fileURL.get() atomically:YES];
+
+    [fileURL.get() setResourceValue:@{ (__bridge NSString *)kLSQuarantineTypeKey: (__bridge NSString *)kLSQuarantineTypeWebDownload } forKey:NSURLQuarantinePropertiesKey error:nil];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] init]);
+    RetainPtr delegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block bool finished = false;
+    __block bool loaded = false;
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        loaded = true;
+        finished = true;
+    };
+    delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *) {
+        finished = true;
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:fileURL.get()]];
+    Util::run(&finished);
+
+    EXPECT_FALSE(loaded);
+
+    [[NSFileManager defaultManager] removeItemAtPath:directory.get() error:nil];
+}
+
 } // namespace TestWebKitAPI
