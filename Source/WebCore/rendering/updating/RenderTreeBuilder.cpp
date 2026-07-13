@@ -437,11 +437,8 @@ RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderO
 void RenderTreeBuilder::attachToRenderElement(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     if (tableBuilder().childRequiresTable(parent, *child)) {
-        RenderTable* table;
-        auto* afterChild = dynamicDowncast<RenderTable>(beforeChild ? beforeChild->previousSibling() : parent.lastChild());
-        if (afterChild && afterChild->isAnonymous() && !afterChild->isBeforeContent())
-            table = afterChild;
-        else {
+        auto* table = dynamicDowncast<RenderTable>(beforeChild ? beforeChild->previousSibling() : parent.lastChild());
+        if (!table || !table->isAnonymous() || table->isBeforeContent()) {
             auto newTable = Table::createAnonymousTableWithStyle(protect(parent.document()), parent.style());
             table = newTable.get();
             attach(parent, WTF::move(newTable), beforeChild);
