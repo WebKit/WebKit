@@ -51,3 +51,7 @@ WK_EXPORT void webkitWebViewBaseSynthesizeWheelEvent(WebKitWebViewBase*, double 
 
 WK_EXPORT SkImage* webkitWebViewBaseSnapshotForTesting(WebKitWebViewBase*);
 
+#if USE(GTK4) && defined(GTK_ACCESSIBILITY_ATSPI)
+#include <gtk/a11y/gtkatspi.h>
+WK_EXPORT GtkAtSpiSocket* webkitWebViewBaseGetAccessibilitySocketForTesting(WebKitWebViewBase*);
+#endif

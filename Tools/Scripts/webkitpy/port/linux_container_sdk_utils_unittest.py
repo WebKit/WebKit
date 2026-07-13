@@ -126,7 +126,7 @@ class GetAtSpiBusDirTest(unittest.TestCase):
         with self._mock_gdbus("unix:path={},guid=abc".format(sock)):
             at_spi_path, at_spi_env_var = _get_at_spi_bus_socket_or_dir_and_var(self.tmpdir)
             self.assertEqual(at_spi_path, sock)
-            self.assertIsNone(at_spi_env_var)
+            self.assertEqual(at_spi_env_var, 'AT_SPI_BUS_ADDRESS')
 
     def test_gdbus_missing_socket_falls_through(self):
         with self._mock_gdbus("unix:path=/does/not/exist,guid=abc"):
