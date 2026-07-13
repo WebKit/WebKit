@@ -403,7 +403,7 @@ const Vector<SVGPaintOrderLayerItem>& RenderLayer::childrenInDOMOrderForSVG()
 
 void RenderLayer::paintNonLayerChildForFragmentsForSVG(RenderElement& childRenderer, const LayoutSize& accumulatedAncestorOffset,
     PaintPhase phase, const LayerFragments& layerFragments, GraphicsContext& context, const LayerPaintingInfo& paintingInfo,
-    OptionSet<PaintBehavior> paintBehavior, RenderObject* subtreePaintRootForRenderer, const LayoutPoint& containerBaseOffset, bool isSVGRoot)
+    OptionSet<PaintBehavior> paintBehavior, RenderObject* subtreePaintRootForRenderer, const LayoutPoint& containerBaseOffset, bool isSVGRoot, bool sharedClipApplied)
 {
     LayoutPoint svgRootScrollAdjustment;
     if (isSVGRoot)
@@ -416,9 +416,15 @@ void RenderLayer::paintNonLayerChildForFragmentsForSVG(RenderElement& childRende
         if (!collectingEventRegion && (!fragment.shouldPaintContent || fragment.dirtyForegroundRect().isEmpty()))
             continue;
 
-        GraphicsContextStateSaver stateSaver(context, false);
-        RegionContextStateSaver regionContextStateSaver(paintingInfo.regionContext);
-        clipToRect(context, stateSaver, regionContextStateSaver, paintingInfo, paintBehavior, fragment.dirtyForegroundRect());
+        // Re-clip per shape only when the caller has not already applied a shared clip around the
+        // whole child loop (see paintChildrenInDOMOrderForSVG).
+        std::optional<GraphicsContextStateSaver> stateSaver;
+        std::optional<RegionContextStateSaver> regionContextStateSaver;
+        if (!sharedClipApplied) {
+            stateSaver.emplace(context, false);
+            regionContextStateSaver.emplace(paintingInfo.regionContext);
+            clipToRect(context, *stateSaver, *regionContextStateSaver, paintingInfo, paintBehavior, fragment.dirtyForegroundRect());
+        }
 
         PaintInfo paintInfo(context, fragment.dirtyForegroundRect().rect(),
             phase, paintBehavior, subtreePaintRootForRenderer,
@@ -473,6 +479,25 @@ void RenderLayer::paintChildrenInDOMOrderForSVG(GraphicsContext& context, const 
         endIndex = std::min<size_t>(svgPaintOrderItemRange->end(), allChildren.size());
     }
 
+    // Every non-layer child clips the context to the same fragment dirty-foreground rect, one
+    // CGContextSaveGState + CGContextClipToRect per shape. With a single paintable fragment and no
+    // child owning a layer, apply that clip once and share it across all children. Skip resource
+    // layers (marker/mask/pattern), whose content paints in its own coordinate system where this
+    // fragment rect is the wrong clip.
+    bool hasChildLayers = beginIndex < endIndex && std::ranges::any_of(allChildren.subspan(beginIndex, endIndex - beginIndex), [](auto& child) {
+        return !!child.layer.get();
+    });
+    std::optional<GraphicsContextStateSaver> sharedClipSaver;
+    std::optional<RegionContextStateSaver> sharedRegionSaver;
+    if (!hasChildLayers && layerFragments.size() == 1 && layerFragments[0].shouldPaintContent && !isPaintingResourceLayerForSVG()) {
+        auto dirtyForegroundRect = layerFragments[0].dirtyForegroundRect();
+        if (!dirtyForegroundRect.isEmpty()) {
+            sharedClipSaver.emplace(context, false);
+            sharedRegionSaver.emplace(paintingInfo.regionContext);
+            clipToRect(context, *sharedClipSaver, *sharedRegionSaver, paintingInfo, paintBehavior, dirtyForegroundRect);
+        }
+    }
+
     for (size_t index = beginIndex; index < endIndex; ++index) {
         auto& childToPaint = allChildren[index];
         if (CheckedPtr childLayer = childToPaint.layer.get()) {
@@ -514,9 +539,14 @@ void RenderLayer::paintChildrenInDOMOrderForSVG(GraphicsContext& context, const 
                 if (!fragment.shouldPaintContent || fragment.dirtyForegroundRect().isEmpty())
                     continue;
 
-                GraphicsContextStateSaver stateSaver(context, false);
-                RegionContextStateSaver regionContextStateSaver(paintingInfo.regionContext);
-                clipToRect(context, stateSaver, regionContextStateSaver, paintingInfo, paintBehavior, fragment.dirtyForegroundRect());
+                // Re-clip per shape only when no shared clip was applied before the loop (multiple fragments, or child layers present).
+                std::optional<GraphicsContextStateSaver> stateSaver;
+                std::optional<RegionContextStateSaver> regionContextStateSaver;
+                if (!sharedClipSaver) {
+                    stateSaver.emplace(context, false);
+                    regionContextStateSaver.emplace(paintingInfo.regionContext);
+                    clipToRect(context, *stateSaver, *regionContextStateSaver, paintingInfo, paintBehavior, fragment.dirtyForegroundRect());
+                }
 
                 // nominalCorrection is applied inside the scope, so TransformPaintScope concatenates it
                 // onto the CTM and inverse-maps paintDirtyRect through it together. The leaf
@@ -534,13 +564,13 @@ void RenderLayer::paintChildrenInDOMOrderForSVG(GraphicsContext& context, const 
         // EventRegion phase separately for non-layer children when collecting the event region.
         if (paintFlags.contains(PaintLayerFlag::CollectingEventRegion)) {
             paintNonLayerChildForFragmentsForSVG(childRenderer.get(), childToPaint.accumulatedAncestorOffset,
-                PaintPhase::EventRegion, layerFragments, context, paintingInfo, paintBehavior, subtreePaintRootForRenderer, containerBaseOffset, isSVGRoot);
+                PaintPhase::EventRegion, layerFragments, context, paintingInfo, paintBehavior, subtreePaintRootForRenderer, containerBaseOffset, isSVGRoot, sharedClipSaver.has_value());
             continue;
         }
 
         for (auto phase : childToPaint.phasesToPaint) {
             paintNonLayerChildForFragmentsForSVG(childRenderer.get(), childToPaint.accumulatedAncestorOffset,
-                phase, layerFragments, context, paintingInfo, paintBehavior, subtreePaintRootForRenderer, containerBaseOffset, isSVGRoot);
+                phase, layerFragments, context, paintingInfo, paintBehavior, subtreePaintRootForRenderer, containerBaseOffset, isSVGRoot, sharedClipSaver.has_value());
         }
     }
 }

@@ -1056,7 +1056,7 @@ private:
     bool appendChildrenInDOMOrderForSVG(RenderElement& parent, LayoutSize ancestorOffset, bool& anyNonZeroZIndex);
     const Vector<SVGPaintOrderLayerItem>& childrenInDOMOrderForSVG();
     void paintChildrenInDOMOrderForSVG(GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>, const LayerFragments&, OptionSet<PaintBehavior>, RenderObject*, std::optional<WTF::Range<unsigned>> svgPaintOrderItemRange);
-    void paintNonLayerChildForFragmentsForSVG(RenderElement&, const LayoutSize& accumulatedAncestorOffset, PaintPhase, const LayerFragments&, GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintBehavior>, RenderObject*, const LayoutPoint& containerBaseOffset, bool isSVGRoot);
+    void paintNonLayerChildForFragmentsForSVG(RenderElement&, const LayoutSize& accumulatedAncestorOffset, PaintPhase, const LayerFragments&, GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintBehavior>, RenderObject*, const LayoutPoint& containerBaseOffset, bool isSVGRoot, bool sharedClipApplied);
     void paintRendererByApplyingTransformForSVG(GraphicsContext&, CheckedRef<RenderElement>, const LayoutSize& positionOffset, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>, OptionSet<PaintBehavior>, RenderObject*, const LayoutSize& nominalPreTranslation = { });
     void paintSubtreeWithinTransformScopeForSVG(GraphicsContext&, RenderElement& container, const LayoutPoint& paintOffset, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>, OptionSet<PaintBehavior>, RenderObject*);
     HitLayer hitTestChildrenInDOMOrderForSVG(RenderLayer* rootLayer, const HitTestRequest&, HitTestResult&, const LayoutRect& hitTestRect, const HitTestLocation&, const HitTestingTransformState*, double* zOffsetForDescendants);
