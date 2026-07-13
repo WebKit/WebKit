@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <bit>
 #include <limits>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
@@ -48,7 +49,7 @@ class SmallSet {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SmallSet);
     WTF_MAKE_NONCOPYABLE(SmallSet);
     static_assert(std::is_trivially_destructible<T>::value, "We currently don't support non-trivially destructible types.");
-    static_assert(!(SmallArraySize & (SmallArraySize - 1)), "Inline size must be a power of two.");
+    static_assert(std::has_single_bit(SmallArraySize), "Inline size must be a power of two.");
     static_assert(sizeof(T*) <= SmallArraySize * sizeof(T), "This class has not been tested for m_inline.buffer larger than m_inline.smallStorage");
 
 public:
@@ -144,7 +145,7 @@ public:
         // If we're more than 3/4ths full we grow.
         if (m_size * 4 >= m_capacity * 3) [[unlikely]] {
             grow(m_capacity * 2);
-            ASSERT(!(m_capacity & (m_capacity - 1)));
+            ASSERT(std::has_single_bit(m_capacity));
         }
 
         T* bucket = this->bucket(value);
@@ -276,7 +277,7 @@ private:
 
     inline T* bucketInBuffer(std::span<T> buffer, T target) const
     {
-        ASSERT(!(m_capacity & (m_capacity - 1)));
+        ASSERT(std::has_single_bit(m_capacity));
         unsigned bucket = Hash::hash(target) & (m_capacity - 1);
         unsigned index = 0;
         while (true) {

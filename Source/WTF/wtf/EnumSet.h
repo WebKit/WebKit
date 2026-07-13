@@ -154,8 +154,7 @@ public:
 
     constexpr bool hasExactlyOneBitSet() const
     {
-        auto storage = m_storage;
-        return storage && !(storage & (storage - 1));
+        return std::has_single_bit(m_storage);
     }
 
     constexpr std::optional<E> toSingleValue() const
