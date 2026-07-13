@@ -226,6 +226,7 @@ struct Item {
     unsigned enclosingBlockNumber { 0 };
     unsigned visualBlockContainerNumber { 0 };
     bool hasLineThrough { false };
+    bool isVisuallyClickable { false };
 
     template<typename T> bool hasData() const
     {

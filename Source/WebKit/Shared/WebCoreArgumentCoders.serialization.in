@@ -5038,6 +5038,7 @@ header: <WebCore/TextExtractionTypes.h>
     unsigned enclosingBlockNumber;
     unsigned visualBlockContainerNumber;
     bool hasLineThrough;
+    bool isVisuallyClickable;
 };
 
 header: <WebCore/TextExtractionTypes.h>

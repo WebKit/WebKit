@@ -575,6 +575,8 @@ static bool NODELETE shouldTreatAsPasswordField(const Element* element)
 
 enum class FallbackPolicy : bool { Skip, Extract };
 
+static bool looksVisuallyClickable(const RenderObject&);
+
 static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(Node& node, FallbackPolicy policy, TraversalContext& context)
 {
     CheckedPtr renderer = node.renderer();
@@ -950,7 +952,7 @@ static bool looksVisuallyClickable(const RenderObject& renderer)
     if (style->pointerEvents() == PointerEvents::None)
         return false;
 
-    if (!hasVisuallyDistinctStyling(protect(style)))
+    if (!hasVisuallyDistinctStyling(protect(style)) && !renderer.isRenderReplaced())
         return false;
 
     CheckedPtr parent = renderer.parent();
@@ -1241,8 +1243,10 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
         context.onlyCollectTextAndLinksCount++;
     }
 
-    if (auto* renderer = node.renderer(); renderer && item)
+    if (CheckedPtr renderer = node.renderer(); renderer && item) {
         item->hasLineThrough = renderer->style().textDecorationLineInEffect().hasLineThrough();
+        item->isVisuallyClickable = looksVisuallyClickable(*renderer);
+    }
 
     if (item)
         item->visualBlockContainerNumber = context.currentVisualBlockContainerNumber();
