@@ -787,11 +787,12 @@ class PullRequest(Command):
         if radar_issue and update_issue and radar_issue.tracker.radarclient():
             if args.update_radar and radar_issue.state == 'Analyze' and radar_issue.substate in ['Investigate', 'Fix']:
                 try:
-                    radar_issue.set_state(state='Analyze', substate='Review')
-                    print('Updated {} to Analyze/Review'.format(radar_issue.link))
+                    new_state = 'Fix' if pr.draft else 'Review'
+                    radar_issue.set_state(state='Analyze', substate=new_state)
+                    print(f'Updated {radar_issue.link} to Analyze/{new_state}')
                 except radar_issue.tracker.radarclient().exceptions.UnsuccessfulResponseException as e:
-                    sys.stderr.write('Failed to update {}:\n'.format(radar_issue.link))
-                    sys.stderr.write('{}\n'.format(e))
+                    sys.stderr.write(f'Failed to update {radar_issue.link}:\n')
+                    sys.stderr.write(f'{e}\n')
 
         if issue and pr._metadata and pr._metadata.get('issue'):
             log.info('Syncing PR labels with issue component...')
