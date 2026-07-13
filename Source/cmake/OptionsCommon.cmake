@@ -297,8 +297,10 @@ if (ENABLE_ASSERTS STREQUAL "AUTO")
     # The default value is handled by the NDEBUG define which is generally set by the toolchain module used by CMake.
 elseif (ENABLE_ASSERTS)
     WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-DASSERT_ENABLED=1)
+    set(SKIA_DEBUG ON)
 elseif (NOT ENABLE_ASSERTS)
     WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-DASSERT_ENABLED=0)
+    set(SKIA_DEBUG OFF)
 endif ()
 
 if (NOT APPLE)
