@@ -253,7 +253,7 @@ void DocumentFullscreen::requestFullscreen(Ref<Element>&& element, FullscreenChe
 
         // Don't allow fullscreen if document is hidden.
         Ref document = protectedThis->document();
-        if ((document->hidden() && mode != HTMLMediaElementEnums::VideoFullscreenModeInWindow) || protectedThis->m_pendingFullscreenElement != element.ptr())
+        if (document->hidden() && mode != HTMLMediaElementEnums::VideoFullscreenModeInWindow)
             return handleError("Cannot request fullscreen in a hidden document."_s, EmitErrorEvent::Yes, WTF::move(completionHandler));
 
         // Fullscreen element ready check.
