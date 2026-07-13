@@ -2592,20 +2592,6 @@ DeviceWidth:
     WebCore:
       default: 0
 
-DevolvableWidgetsEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "CSS Devolvable Widgets"
-  humanReadableDescription: "Enable support for devolvable widgets"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 DiagnosticLoggingEnabled:
   type: bool
   status: embedder
