@@ -409,10 +409,8 @@ void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext& context, cons
 
 bool HTMLVideoElement::hasAvailableVideoFrame() const
 {
-    if (!player())
-        return false;
-    
-    return protect(player())->hasVideo() && protect(player())->hasAvailableVideoFrame();
+    RefPtr player = this->player();
+    return player && player->hasVideo() && player->hasAvailableVideoFrame();
 }
 
 bool HTMLVideoElement::shouldGetNativeImageForCanvasDrawing() const
