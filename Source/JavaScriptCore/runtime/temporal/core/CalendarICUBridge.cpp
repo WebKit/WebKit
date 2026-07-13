@@ -95,6 +95,17 @@ public:
 };
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CalendarCacheEntry);
 
+// Japanese/ROC/Buddhist derive from Gregorian and reject ucal_setGregorianChange
+// (U_UNSUPPORTED_ERROR), so year-length / month-length / leap-year accessors
+// route through gregory to get proleptic Gregorian. Era-facing paths keep the
+// derived calendar so era labels remain correct.
+static CalendarID gregorianArithmeticCalendarFor(CalendarID calendarId)
+{
+    if (calendarId == japaneseCalendarID() || calendarId == rocCalendarID() || calendarId == buddhistCalendarID())
+        return gregoryCalendarID();
+    return calendarId;
+}
+
 struct CalendarLRUCachePolicy {
     static bool isKeyNull(const CalendarID&) { return false; }
     static RefPtr<CalendarCacheEntry> createValueForNullKey() { return nullptr; }
@@ -399,7 +410,7 @@ static std::optional<int32_t> mapTemporalEraToICUEra(CalendarID calendarId, Stri
         return std::nullopt;
     }
     if (calendarId == copticCalendarID() || calendarId == ethiopicCalendarID())
-        return era == "am"_s ? std::optional<int32_t>(0) : std::nullopt;
+        return era == "am"_s ? std::optional<int32_t>(1) : std::nullopt;
     if (calendarId == ethioaaCalendarID())
         return era == "aa"_s ? std::optional<int32_t>(0) : std::nullopt;
     if (calendarId == hebrewCalendarID())
@@ -513,6 +524,13 @@ TemporalResult<int32_t> calendarYear(CalendarID calendarId, const ISO8601::Plain
             if (U_FAILURE(status)) [[unlikely]]
                 return makeUnexpected(rangeError(icuReadCalendarFailed));
             return !era ? -(eraYear - 1) : eraYear;
+        }
+        // Buddhist: UCAL_EXTENDED_YEAR is the Gregorian year; UCAL_YEAR is the BE year.
+        if (calendarId == buddhistCalendarID()) {
+            int32_t eraYear = ucal_get(cal, UCAL_YEAR, &status);
+            if (U_FAILURE(status)) [[unlikely]]
+                return makeUnexpected(rangeError(icuReadCalendarFailed));
+            return eraYear;
         }
         auto result = ucal_get(cal, UCAL_EXTENDED_YEAR, &status);
         if (U_FAILURE(status)) [[unlikely]]
@@ -685,7 +703,7 @@ TemporalResult<std::optional<int32_t>> calendarEraYear(CalendarID calendarId, co
 TemporalResult<int32_t> calendarDaysInMonth(CalendarID calendarId, const ISO8601::PlainDate& isoDate)
 {
     // 1. Return the number of days in the month containing isoDate in calendarId.
-    return withCalendar(calendarId, [&](UCalendar* cal) -> TemporalResult<int32_t> {
+    return withCalendar(gregorianArithmeticCalendarFor(calendarId), [&](UCalendar* cal) -> TemporalResult<int32_t> {
         if (!cal) [[unlikely]]
             return makeUnexpected(rangeError(icuOpenCalendarFailed));
         if (!setCalendarToISODate(cal, isoDate)) [[unlikely]]
@@ -707,7 +725,7 @@ TemporalResult<int32_t> calendarDaysInMonth(CalendarID calendarId, const ISO8601
 TemporalResult<int32_t> calendarDaysInYear(CalendarID calendarId, const ISO8601::PlainDate& isoDate)
 {
     // 1. Return the number of days in the year containing isoDate in calendarId.
-    return withCalendar(calendarId, [&](UCalendar* cal) -> TemporalResult<int32_t> {
+    return withCalendar(gregorianArithmeticCalendarFor(calendarId), [&](UCalendar* cal) -> TemporalResult<int32_t> {
         if (!cal) [[unlikely]]
             return makeUnexpected(rangeError(icuOpenCalendarFailed));
         if (!setCalendarToISODate(cal, isoDate)) [[unlikely]]
@@ -788,7 +806,7 @@ TemporalResult<bool> calendarInLeapYear(CalendarID calendarId, const ISO8601::Pl
             return makeUnexpected(months.error());
         return *months > 12;
     }
-    return withCalendar(calendarId, [&](UCalendar* cal) -> TemporalResult<bool> {
+    return withCalendar(gregorianArithmeticCalendarFor(calendarId), [&](UCalendar* cal) -> TemporalResult<bool> {
         if (!cal) [[unlikely]]
             return makeUnexpected(rangeError(icuOpenCalendarFailed));
         if (!setCalendarToISODate(cal, isoDate)) [[unlikely]]
@@ -1569,9 +1587,8 @@ int32_t ecmaReferenceYear(CalendarID calendarId, uint8_t monthNumber, bool isLea
     }
 
     if (calendarId == buddhistCalendarID()) {
-        // Buddhist: ICU4C UCAL_EXTENDED_YEAR for Buddhist = ISO/Gregorian year (not Buddhist era year).
-        // So ISO year 1972 is the reference — same as gregory/japanese.
-        return 1972;
+        // BE 2515 = Gregorian 1972 (leap); Feb has 29 days.
+        return 2515;
     }
 
     if (calendarId == rocCalendarID()) {
@@ -1660,6 +1677,10 @@ TemporalResult<ISO8601::PlainDate> calendarDateFromFields(CalendarID calendarId,
                 ucal_set(cal, UCAL_ERA, 1); // roc
                 ucal_set(cal, UCAL_YEAR, y);
             }
+        } else if (calendarId == buddhistCalendarID()) {
+            // Buddhist: `year` is the BE year (= Gregorian + 543). UCAL_YEAR is BE; UCAL_EXTENDED_YEAR is Gregorian.
+            ucal_set(cal, UCAL_ERA, 0); // be
+            ucal_set(cal, UCAL_YEAR, year.value_or(0));
         } else
             ucal_set(cal, UCAL_EXTENDED_YEAR, year.value_or(0));
 

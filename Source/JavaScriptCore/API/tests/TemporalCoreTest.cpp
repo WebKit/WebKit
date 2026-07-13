@@ -2768,6 +2768,25 @@ static void testCalendarDateFromFields()
     // --- Invalid era ---
     auto rBadEra = calendarDateFromFields(id("gregory"_s), 0, 1, 1, StringView("invalid"_s), 2024, std::nullopt, TemporalOverflow::Reject);
     TCHECK_TRUE(!rBadEra.has_value(), "gregory: invalid era -> error");
+
+    // Buddhist: user's `year` is BE (= Gregorian + 543).
+    auto rBud = calendarDateFromFields(id("buddhist"_s), 2567, 1, 1, std::nullopt, std::nullopt, std::nullopt, TemporalOverflow::Reject);
+    TCHECK_TRUE(rBud.has_value() && rBud->year() == 2024, "buddhist: BE 2567 -> ISO 2024");
+    auto rBudEra = calendarDateFromFields(id("buddhist"_s), std::nullopt, 1, 1, StringView("be"_s), 2567, std::nullopt, TemporalOverflow::Reject);
+    TCHECK_TRUE(rBudEra.has_value() && rBudEra->year() == 2024, "buddhist: era be, eraYear=2567 -> ISO 2024");
+    // Reference-year path: BE 2515 = Gregorian 1972 leap; Feb 29 must succeed.
+    auto rBudRef = calendarDateFromFields(id("buddhist"_s), 2515, 2, 29, std::nullopt, std::nullopt, std::nullopt, TemporalOverflow::Reject);
+    TCHECK_TRUE(rBudRef.has_value() && rBudRef->year() == 1972 && rBudRef->day() == 29u, "buddhist: BE 2515 Feb 29 -> ISO 1972-02-29");
+
+    // Coptic am era: era 1 (AM), not era 0. AM 1740 M01 D01 = ISO 2023-09-12.
+    auto rCop = calendarDateFromFields(id("coptic"_s), std::nullopt, 1, 1, StringView("am"_s), 1740, std::nullopt, TemporalOverflow::Reject);
+    TCHECK_TRUE(rCop.has_value() && rCop->year() == 2023 && rCop->month() == 9u && rCop->day() == 12u, "coptic: am 1740 M01 D01 -> ISO 2023-09-12");
+    auto rCopY = calendarDateFromFields(id("coptic"_s), 1740, 1, 1, std::nullopt, std::nullopt, std::nullopt, TemporalOverflow::Reject);
+    TCHECK_TRUE(rCopY.has_value() && rCopY->year() == 2023, "coptic: year=1740 -> ISO 2023 (era-free)");
+
+    // Ethiopic am era: same fix as Coptic. AM 2016 M01 D01 = ISO 2023-09-12.
+    auto rEth = calendarDateFromFields(id("ethiopic"_s), std::nullopt, 1, 1, StringView("am"_s), 2016, std::nullopt, TemporalOverflow::Reject);
+    TCHECK_TRUE(rEth.has_value() && rEth->year() == 2023, "ethiopic: am 2016 -> ISO 2023");
 }
 
 static void testCalendarICUNonISO()
@@ -2854,6 +2873,21 @@ static void testCalendarICUNonISO()
     TCHECK_TRUE(rHL.has_value(), "hebrew: 5782 leap check ok");
     // Hebrew 5782 is a leap year (has Adar II)
     TCHECK_TRUE(*rHL, "hebrew: 5782 is leap");
+
+    // Buddhist: calendarYear returns BE year (Gregorian + 543).
+    auto rBudY = calendarYear(calendarIDFromString("buddhist"_s), { 2024, 1, 1 });
+    TCHECK_TRUE(rBudY.has_value() && *rBudY == 2567, "buddhist: ISO 2024 -> BE 2567");
+
+    // Japanese pre-1582: proleptic Gregorian (not Julian). ISO 1500 is Julian-leap but not Gregorian-leap.
+    auto rJpFeb = calendarDaysInMonth(calendarIDFromString("japanese"_s), { 1500, 2, 15 });
+    TCHECK_TRUE(rJpFeb.has_value() && *rJpFeb == 28, "japanese: 1500 Feb = 28 days");
+    auto rJpDIY = calendarDaysInYear(calendarIDFromString("japanese"_s), { 1500, 6, 15 });
+    TCHECK_TRUE(rJpDIY.has_value() && *rJpDIY == 365, "japanese: 1500 daysInYear = 365");
+    auto rJpLeap = calendarInLeapYear(calendarIDFromString("japanese"_s), { 1500, 6, 15 });
+    TCHECK_TRUE(rJpLeap.has_value() && !*rJpLeap, "japanese: 1500 not leap");
+    // 1600 IS a Gregorian leap (400-year rule).
+    auto rJp1600 = calendarInLeapYear(calendarIDFromString("japanese"_s), { 1600, 6, 15 });
+    TCHECK_TRUE(rJp1600.has_value() && *rJp1600, "japanese: 1600 is leap");
 }
 
 // ---------------------------------------------------------------------------
@@ -3775,7 +3809,7 @@ static void runStressTests()
     testCalendarInLeapYearISO(); // ISO leap year
     testCalendarISO8601Fields(); // ISO field accessors
     testCalendarICUNonISO(); // Non-ISO calendars (hebrew, chinese, japanese, persian)
-    testCalendarDateFromFields(); // calendarDateFromFields: era, monthCode, overflow, ROC, Japanese
+    testCalendarDateFromFields(); // calendarDateFromFields: era, monthCode, overflow, ROC, Japanese, Buddhist, Coptic, Ethiopic
     testCalendarFieldsFunctions(); // yearMonthFromFields, monthDayFromFields, differenceYearMonth, plainYearMonthAdd, etc.
 
     // parseISODateTime
