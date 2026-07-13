@@ -1,0 +1,17 @@
+Tests that CSSManager evicts its frame+URL stylesheet cache when a stylesheet resource changes, so stale stylesheets are not returned.
+
+
+== Running test suite: CSSManager.clearStyleSheetsForResourceInvalidatesCache
+-- Running test case: FoundStyleSheetResource
+PASS: Should find the external.css stylesheet resource.
+PASS: Resource type should be StyleSheet.
+
+-- Running test case: PrimeCache
+PASS: Lookup should resolve to a stylesheet.
+
+-- Running test case: SecondLookupHitsCache
+PASS: Repeat lookup should be served from cache (no re-fetch).
+
+-- Running test case: TypeChangeInvalidatesCache
+PASS: Lookup after TypeDidChange should re-fetch (cache invalidated).
+

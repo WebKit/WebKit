@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<link rel="stylesheet" href="resources/external.css">
+<script>
+function test()
+{
+    let mainFrame = WI.networkManager.mainFrame;
+
+    // Find the external.css stylesheet resource in the main frame.
+    let styleSheetResource = null;
+    for (let resource of Array.from(mainFrame.resourceCollectionForType(WI.Resource.Type.StyleSheet))) {
+        if (resource.url.endsWith("resources/external.css")) {
+            styleSheetResource = resource;
+            break;
+        }
+    }
+
+    // A cache miss in CSSMan._lookupStyleSheet routes to _fetchInfoForAllStyleSheets
+    // (which sends CSS.getAllStyleSheets); a cache hit returns synchronously without it.
+    // Counting fetches lets us observe, without poking private map state, that
+    // _clearStyleSheetsForResource actually evicts the frame+URL cache entry.
+    let fetchCount = 0;
+    let originalFetch = WI.cssManager._fetchInfoForAllStyleSheets;
+    WI.cssManager._fetchInfoForAllStyleSheets = function(callback) {
+        ++fetchCount;
+        return originalFetch.call(this, callback);
+    };
+
+    function lookup() {
+        return new Promise((resolve) => WI.cssManager._lookupStyleSheetForResource(styleSheetResource, resolve));
+    }
+
+    let suite = InspectorTest.createAsyncSuite("CSSManager.clearStyleSheetsForResourceInvalidatesCache");
+
+    suite.addTestCase({
+        name: "FoundStyleSheetResource",
+        description: "Locate the external.css stylesheet resource in the main frame.",
+        test(resolve, reject) {
+            InspectorTest.expectThat(styleSheetResource, "Should find the external.css stylesheet resource.");
+            InspectorTest.expectEqual(styleSheetResource.type, WI.Resource.Type.StyleSheet, "Resource type should be StyleSheet.");
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "PrimeCache",
+        description: "Looking up the resource populates the frame+URL cache.",
+        async test() {
+            let styleSheet = await lookup();
+            InspectorTest.expectThat(styleSheet, "Lookup should resolve to a stylesheet.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SecondLookupHitsCache",
+        description: "A repeat lookup is served from the cache without re-fetching.",
+        async test() {
+            let before = fetchCount;
+            await lookup();
+            InspectorTest.expectEqual(fetchCount, before, "Repeat lookup should be served from cache (no re-fetch).");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TypeChangeInvalidatesCache",
+        description: "Resource.Event.TypeDidChange must evict the frame+URL cache entry so the next lookup re-fetches. Regression guard for the delete targeting the wrong map (166259@main).",
+        async test() {
+            let before = fetchCount;
+            styleSheetResource.dispatchEventToListeners(WI.Resource.Event.TypeDidChange, {oldType: WI.Resource.Type.XHR});
+            await lookup();
+            InspectorTest.expectEqual(fetchCount, before + 1, "Lookup after TypeDidChange should re-fetch (cache invalidated).");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that CSSManager evicts its frame+URL stylesheet cache when a stylesheet resource changes, so stale stylesheets are not returned.</p>
+</body>
+</html>

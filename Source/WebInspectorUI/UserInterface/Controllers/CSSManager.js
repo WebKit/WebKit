@@ -720,7 +720,7 @@ WI.CSSManager = class CSSManager extends WI.Object
     {
         // Clear known stylesheets for this URL and frame. This will cause the style sheets to
         // be updated next time _fetchInfoForAllStyleSheets is called.
-        this._styleSheetIdentifierMap.delete(this._frameURLMapKey(resource.parentFrame, resource.url));
+        this._styleSheetFrameURLMap.delete(this._frameURLMapKey(resource.parentFrame, resource.url));
     }
 
     _frameURLMapKey(frame, url)
