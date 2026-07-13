@@ -34,6 +34,7 @@
 #include "B3DuplicateTails.h"
 #include "B3EliminateCommonSubexpressions.h"
 #include "B3EliminateDeadCode.h"
+#include "B3EliminateWasmGCAllocations.h"
 #include "B3FixSSA.h"
 #include "B3FoldPathConstants.h"
 #include "B3HoistLoopInvariantValues.h"
@@ -101,6 +102,8 @@ void generateToAir(Procedure& procedure)
             duplicateTails(procedure);
         fixSSA(procedure);
         foldPathConstants(procedure);
+        if (procedure.usesWasmGCStructAllocations() && Options::useB3EliminateWasmGCAllocations())
+            eliminateWasmGCAllocations(procedure);
         // FIXME: Add more optimizations here.
         // https://bugs.webkit.org/show_bug.cgi?id=150507
     } else if (procedure.optLevel() >= 1) {
