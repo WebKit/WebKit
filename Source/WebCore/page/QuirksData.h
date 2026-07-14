@@ -192,9 +192,7 @@ struct QuirksData {
         ShouldDisablePointerEventsQuirk,
 #endif
         ShouldDisablePushStateFilePathRestrictions,
-#if PLATFORM(IOS_FAMILY)
         ShouldDisableScrollAnchoringQuirk,
-#endif
 #if ENABLE(THREADED_ANIMATIONS)
         ShouldDisableThreadedAnimationsQuirk,
 #endif

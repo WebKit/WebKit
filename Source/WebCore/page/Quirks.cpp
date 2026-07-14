@@ -1821,24 +1821,27 @@ bool Quirks::shouldDisableLazyIframeLoadingQuirk() const
     return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldDisableLazyIframeLoadingQuirk);
 }
 
-// reddit.com with Sink It extension (rdar://176377447).
+// reddit.com with Sink It extension (rdar://176377447) and apple.com/retail (rdar://181007316).
 bool Quirks::shouldDisableScrollAnchoringQuirk() const
 {
-#if PLATFORM(IOS_FAMILY)
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
     if (!m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldDisableScrollAnchoringQuirk))
         return false;
 
-    RefPtr document = m_document.get();
-    if (!document)
-        return false;
+#if PLATFORM(IOS_FAMILY)
+    // reddit.com only disables scroll anchoring while the Sink It extension's element is present.
+    if (isDomain("reddit.com"_s)) {
+        RefPtr document = m_document.get();
+        if (!document)
+            return false;
 
-    static MainThreadNeverDestroyed<const AtomString> sinkItBackToTopID("sink-it-back-to-top"_s);
-    return !!document->getElementById(sinkItBackToTopID.get());
-#else
-    return false;
+        static MainThreadNeverDestroyed<const AtomString> sinkItBackToTopID("sink-it-back-to-top"_s);
+        return !!document->getElementById(sinkItBackToTopID.get());
+    }
 #endif
+
+    return true;
 }
 
 // Breaks express checkout on victoriassecret.com (rdar://104818312).
@@ -3825,8 +3828,13 @@ static void handlePinterestQuirks(QuirksData& quirksData, const URL& /* quirksUR
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldAllowNotificationPermissionWithoutUserGesture);
 }
 
-static void handleAppleQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
+static void handleAppleQuirks(QuirksData& quirksData, const URL& quirksURL, const String& quirksDomainString, const URL&  /* documentURL */)
 {
+    // Quirk added for rdar://181007316, remove when rdar://182134549 is fixed.
+    if (quirksURL.path().contains("/retail"_s))
+        quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldDisableScrollAnchoringQuirk);
+
+    // FIXME: Maybe EnsureCaptionVisibilityInFullscreenAndPictureInPicture should apply to apple.com.cn too?
     QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("apple.com"_s);
 
     // apple.com rdar://154434137
