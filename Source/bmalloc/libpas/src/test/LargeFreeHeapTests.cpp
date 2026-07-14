@@ -510,6 +510,41 @@ void testMergeZeroModeOnCoalesce(pas_zero_mode leftMode, pas_zero_mode rightMode
         testSimpleLargeFreeHeap(actions, frees, 1);
 }
 
+void testSplitPreservesZeroMode(pas_zero_mode mode, bool useFastHeap)
+{
+    // Seed a free region [1000, 2000) carrying `mode`, then allocate a 512-aligned sub-range from
+    // it. The split (pas_large_free_split) must copy `mode` to both leftover halves -- [1000, 1024)
+    // and [1124, 2000) -- and to the allocation result at 1024. Align 512 forces both a left and a
+    // right leftover.
+    vector<Action> actions = {
+        Action::deallocate(1000, 1000, trappingAllocator, trappingDeallocator, mode),
+        Action::allocate(100, alignSimple(512), 1024, trappingAllocator, trappingDeallocator, mode),
+    };
+    set<Free> frees = { Free(1000, 1024, mode), Free(1124, 2000, mode) };
+    if (useFastHeap)
+        testFastLargeFreeHeap(actions, frees, 1);
+    else
+        testSimpleLargeFreeHeap(actions, frees, 1);
+}
+
+void testSplitPreservesZeroModeFromSource(pas_zero_mode mode, bool useFastHeap)
+{
+    // Same split, but the region comes fresh from the memory source: allocating into an empty heap
+    // invokes the mock allocator, which returns a chunk [1000, 2000) carrying `mode` with the object
+    // at 1024. With no deallocator wired (paddings are kept, not given back), the left/right padding
+    // must enter the free list carrying `mode` and the allocation result must carry `mode`.
+    vector<Action> actions = {
+        Action::allocate(100, alignSimple(512), 1024,
+                         allocateOnce(100, alignSimple(512), 1000, 1024, 1124, 2000, mode),
+                         { }, mode),
+    };
+    set<Free> frees = { Free(1000, 1024, mode), Free(1124, 2000, mode) };
+    if (useFastHeap)
+        testFastLargeFreeHeap(actions, frees, 1);
+    else
+        testSimpleLargeFreeHeap(actions, frees, 1);
+}
+
 } // anonymous namespace
 
 void addLargeFreeHeapTests()
@@ -1325,6 +1360,17 @@ void addLargeFreeHeapTests()
             ADD_TEST(testMergeZeroModeOnCoalesce(pas_zero_mode_may_have_non_zero, pas_zero_mode_may_have_non_zero,
                                                  pas_zero_mode_may_have_non_zero, rightFirst, useFastHeap));
         }
+    }
+
+    // zero_mode split preservation. Allocating a sub-range from a free region must copy that
+    // region's zero_mode to both leftover halves and to the allocation result -- pas_large_free_split
+    // copies the parent mode to both halves. Covered both for a region seeded via deallocate and for
+    // a fresh chunk from the memory source, on the simple and fast heaps.
+    for (bool useFastHeap : { false, true }) {
+        ADD_TEST(testSplitPreservesZeroMode(pas_zero_mode_is_all_zero, useFastHeap));
+        ADD_TEST(testSplitPreservesZeroMode(pas_zero_mode_may_have_non_zero, useFastHeap));
+        ADD_TEST(testSplitPreservesZeroModeFromSource(pas_zero_mode_is_all_zero, useFastHeap));
+        ADD_TEST(testSplitPreservesZeroModeFromSource(pas_zero_mode_may_have_non_zero, useFastHeap));
     }
 }
 
