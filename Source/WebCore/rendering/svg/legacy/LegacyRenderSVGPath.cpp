@@ -136,15 +136,16 @@ bool LegacyRenderSVGPath::shapeDependentStrokeContains(const FloatPoint& point, 
     if (LegacyRenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace))
         return true;
 
-    for (size_t i = 0; i < m_zeroLengthLinecapLocations.size(); ++i) {
-        ASSERT(!style().stroke().isNone());
-        float strokeWidth = this->strokeWidth();
-        if (style().capStyle() == LineCap::Square) {
-            if (zeroLengthSubpathRect(m_zeroLengthLinecapLocations[i], strokeWidth).contains(point))
+    ASSERT(m_zeroLengthLinecapLocations.isEmpty() || !style().stroke().isNone());
+    float strokeWidth = this->strokeWidth();
+    bool isSquareCap = style().capStyle() == LineCap::Square;
+    for (auto& linecapLocation : m_zeroLengthLinecapLocations) {
+        if (isSquareCap) {
+            if (zeroLengthSubpathRect(linecapLocation, strokeWidth).contains(point))
                 return true;
         } else {
             ASSERT(style().capStyle() == LineCap::Round);
-            FloatPoint radiusVector(point.x() - m_zeroLengthLinecapLocations[i].x(), point.y() -  m_zeroLengthLinecapLocations[i].y());
+            FloatPoint radiusVector(point.x() - linecapLocation.x(), point.y() - linecapLocation.y());
             if (radiusVector.lengthSquared() < strokeWidth * strokeWidth * .25f)
                 return true;
         }
