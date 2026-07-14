@@ -35,7 +35,6 @@
                 run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
                 await connectPromise;
 
-                // With no route name, the placard title falls back to the localized "AirPlay".
                 await testExpectedEventually('placardTitleText() === "AirPlay"', true);
                 endTest();
             }

@@ -31,6 +31,8 @@
     undefined setURLCallback(MockMediaDeviceRouteURLCallback? callback);
 
     attribute DOMString deviceName;
+    attribute DOMString protocolTypeIdentifier;
+    readonly attribute DOMString routeName;
     attribute boolean ready;
     attribute boolean playing;
     attribute boolean hasPlaybackError;

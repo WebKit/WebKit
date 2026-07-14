@@ -9,6 +9,6 @@ EVENT(playing)
 EXPECTED (route.routeName == '') OK
 RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
 EVENT(connect)
-EXPECTED (placardTitleText() == 'AirPlay') OK
+EXPECTED (placardTitleText() === "AirPlay" == 'true') OK
 END OF TEST
 

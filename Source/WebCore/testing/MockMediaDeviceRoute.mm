@@ -30,11 +30,15 @@
 
 #import "WebMockMediaDeviceRoute.h"
 #import <AVKit/AVKit.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/TZoneMallocInlines.h>
 
 SOFT_LINK_FRAMEWORK(AVKit)
 SOFT_LINK_CLASS(AVKit, AVPlaybackUserInterfaceMediaSelectionOption)
+
+SOFT_LINK_FRAMEWORK(UniformTypeIdentifiers)
+SOFT_LINK_CLASS(UniformTypeIdentifiers, UTType)
 
 namespace WebCore {
 
@@ -68,6 +72,21 @@ String MockMediaDeviceRoute::deviceName() const
 void MockMediaDeviceRoute::setDeviceName(const String& deviceName)
 {
     [m_platformRoute setRouteDisplayName:deviceName.createNSString().get()];
+}
+
+String MockMediaDeviceRoute::protocolTypeIdentifier() const
+{
+    return [[m_platformRoute protocolType] identifier];
+}
+
+void MockMediaDeviceRoute::setProtocolTypeIdentifier(const String& identifier)
+{
+    [m_platformRoute setProtocolType:[getUTTypeClassSingleton() typeWithIdentifier:identifier.createNSString().get()]];
+}
+
+String MockMediaDeviceRoute::routeName() const
+{
+    return [[m_platformRoute protocolType] localizedDescription];
 }
 
 bool MockMediaDeviceRoute::ready() const

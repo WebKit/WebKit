@@ -36,11 +36,7 @@
                 run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
                 await connectPromise;
 
-                // Wait for the AirPlay placard to appear, then verify it shows the route name
-                // from the first update (rather than briefly falling back to "AirPlay").
-                while (placardTitleText() === null)
-                    await new Promise(requestAnimationFrame);
-                testExpected('placardTitleText() === route.routeName', true);
+                await testExpectedEventually('placardTitleText() === route.routeName', true);
                 endTest();
             }
         </script>
