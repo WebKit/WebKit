@@ -29,11 +29,14 @@
 #include "GetterSetter.h"
 #include "JSCBuiltins.h"
 #include "JSCInlines.h"
+#include "JSGenericTypedArrayViewInlines.h"
 #include "JSTypedArrayViewPrototype.h"
+#include "JSTypedArrays.h"
 
 namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(constructTypedArrayView);
+static JSC_DECLARE_HOST_FUNCTION(typedArrayConstructorOf);
 
 JSTypedArrayViewConstructor::JSTypedArrayViewConstructor(VM& vm, Structure* structure)
     : Base(vm, structure, constructTypedArrayView, constructTypedArrayView)
@@ -48,7 +51,7 @@ void JSTypedArrayViewConstructor::finishCreation(VM& vm, JSGlobalObject* globalO
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->speciesSymbol, globalObject->typedArraySpeciesGetterSetter(), PropertyAttribute::Accessor | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->of, typedArrayConstructorOfCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->of, typedArrayConstructorOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->from, typedArrayConstructorFromCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     globalObject->installTypedArrayConstructorSpeciesWatchpoint(this);
 }
@@ -64,6 +67,78 @@ JSC_DEFINE_HOST_FUNCTION(constructTypedArrayView, (JSGlobalObject* globalObject,
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     return throwVMTypeError(globalObject, scope, "%TypedArray% should not be called directly"_s);
+}
+
+template<typename ViewClass>
+static ALWAYS_INLINE void typedArrayOfSetElements(JSGlobalObject* globalObject, ViewClass* result, CallFrame* callFrame)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    unsigned length = callFrame->argumentCount();
+    for (unsigned index = 0; index < length; ++index) {
+        result->setIndex(globalObject, index, callFrame->uncheckedArgument(index));
+        RETURN_IF_EXCEPTION(scope, void());
+    }
+}
+
+template<typename ViewClass>
+static ALWAYS_INLINE ViewClass* typedArrayOfFast(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    unsigned length = callFrame->argumentCount();
+
+    Structure* structure = globalObject->typedArrayStructure(ViewClass::TypedArrayStorageType, /* isResizableOrGrowableShared */ false);
+    ViewClass* result = ViewClass::createUninitialized(globalObject, structure, length);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    scope.release();
+    typedArrayOfSetElements<ViewClass>(globalObject, result, callFrame);
+    return result;
+}
+
+// https://tc39.es/ecma262/#sec-%typedarray%.of
+JSC_DEFINE_HOST_FUNCTION(typedArrayConstructorOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    size_t length = callFrame->argumentCount();
+    JSValue thisValue = callFrame->thisValue();
+
+    if (!thisValue.isConstructor()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "TypedArray.of requires |this| to be a constructor"_s);
+
+#define JSC_TYPED_ARRAY_OF_FAST(name) \
+    if (thisValue == globalObject->typedArrayConstructorConcurrently(Type##name)) \
+        RELEASE_AND_RETURN(scope, JSValue::encode(typedArrayOfFast<JS##name##Array>(globalObject, callFrame)));
+    FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_TYPED_ARRAY_OF_FAST)
+#undef JSC_TYPED_ARRAY_OF_FAST
+
+    MarkedArgumentBuffer args;
+    args.append(jsNumber(length));
+    ASSERT(!args.hasOverflowed());
+    JSObject* constructed = construct(globalObject, thisValue, args, "TypedArray.of requires |this| to be a constructor"_s);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    JSArrayBufferView* view = validateTypedArray(globalObject, constructed);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (view->length() < length) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "TypedArray.of constructed typed array of insufficient length"_s);
+
+    switch (view->type()) {
+#define JSC_TYPED_ARRAY_OF_SET(name) \
+    case name##ArrayType: { \
+        scope.release(); \
+        typedArrayOfSetElements(globalObject, uncheckedDowncast<JS##name##Array>(view), callFrame); \
+        return JSValue::encode(view); \
+    }
+    FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_TYPED_ARRAY_OF_SET)
+#undef JSC_TYPED_ARRAY_OF_SET
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return { };
+    }
 }
 
 } // namespace JSC

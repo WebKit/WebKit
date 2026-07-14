@@ -24,24 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function of(/* items... */)
-{
-    "use strict";
-    var len = @argumentCount();
-
-    if (!@isConstructor(this))
-        @throwTypeError("TypedArray.of requires |this| to be a constructor");
-
-    var result = new this(len);
-    if (@typedArrayLength(result) < len)
-        @throwTypeError("TypedArray.of constructed typed array of insufficient length");
-
-    for (var i = 0; i < len; i++)
-        result[i] = arguments[i];
-
-    return result;
-}
-
 function from(items /* [ , mapfn [ , thisArg ] ] */)
 {
     "use strict";

@@ -1151,6 +1151,7 @@ public:
     template<TypedArrayType type> Structure* resizableOrGrowableSharedTypedArrayStructureWithTypedArrayType() const { return typedArrayStructure(type, /* isResizableOrGrowableShared */ true); }
 
     inline JSObject* typedArrayConstructor(TypedArrayType) const;
+    inline JSObject* typedArrayConstructorConcurrently(TypedArrayType) const;
     inline JSObject* typedArrayPrototype(TypedArrayType) const;
 
     inline JSCell* linkTimeConstant(LinkTimeConstant) const;
