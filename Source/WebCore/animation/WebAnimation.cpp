@@ -1546,7 +1546,10 @@ void WebAnimation::autoAlignStartTime()
     // 7. Set start time to start offset if effective playback rate ≥ 0, and end offset otherwise.
     auto previousStartTime = std::exchange(m_startTime, effectivePlaybackRate() >= 0 ? startOffset : endOffset);
 
-    // 8. Clear hold time.
+    // 8. Apply any pending playback rate on animation.
+    applyPendingPlaybackRate();
+
+    // 9. Clear hold time.
     m_holdTime = std::nullopt;
 
     if (previousStartTime != m_startTime)

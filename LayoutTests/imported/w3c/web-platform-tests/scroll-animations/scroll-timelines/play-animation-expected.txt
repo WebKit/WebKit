@@ -12,7 +12,7 @@ PASS The ready promise should be replaced if the animation is not already pendin
 PASS A pending ready promise should be resolved and not replaced when the animation enters the running state
 PASS Resuming an animation from paused realigns with scroll position.
 PASS If a pause operation is interrupted, the ready promise is reused
-FAIL A pending playback rate is used when determining timeline range alignment assert_approx_equals: values do not match for "undefined" expected 100 +/- 0.125 but got -100
+PASS A pending playback rate is used when determining timeline range alignment
 PASS Playing a canceled animation sets the start time
 PASS Playing a canceled animation backwards sets the start time
 
