@@ -110,7 +110,12 @@ void RenderSVGResourceClipper::applyPathClipping(GraphicsContext& context, const
     if (layer()->isTransformed())
         clipPathTransform.multiply(layer()->transform()->toAffineTransform());
 
-    const auto& clipPath = clipRenderer.computeClipPath(clipPathTransform);
+    clipRenderer.computeClipContentTransform(clipPathTransform);
+    if (!m_cachedPathClip || m_cachedPathClipRenderer.get() != &clipRenderer) {
+        m_cachedPathClip = clipRenderer.computeClipPathGeometry();
+        m_cachedPathClipRenderer = clipRenderer;
+    }
+    const auto& clipPath = *m_cachedPathClip;
     auto windRule = clipRenderer.style().clipRule();
 
     if (auto* shape = dynamicDowncast<RenderSVGShape>(targetRenderer); shape && shape->shapeType() == RenderSVGShape::ShapeType::Rectangle) {
@@ -305,6 +310,12 @@ void RenderSVGResourceClipper::styleDidChange(Style::Difference diff, const Styl
     // Ensure that descendants with layers are rooted within our layer.
     if (hasLayer())
         layer()->setIsOpportunisticStackingContext(true);
+}
+
+void RenderSVGResourceClipper::clearCacheBeforeLayout()
+{
+    m_cachedPathClip = std::nullopt;
+    m_cachedPathClipRenderer = nullptr;
 }
 
 }

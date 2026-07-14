@@ -49,6 +49,7 @@ RenderSVGResourceContainer::~RenderSVGResourceContainer() = default;
 
 void RenderSVGResourceContainer::layout()
 {
+    clearCacheBeforeLayout();
     RenderSVGHiddenContainer::layout();
     repaintAllClients();
 }

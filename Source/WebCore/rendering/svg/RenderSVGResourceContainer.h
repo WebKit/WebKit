@@ -41,6 +41,8 @@ public:
 protected:
     RenderSVGResourceContainer(Type, SVGElement&, Style::ComputedStyle&&);
 
+    virtual void clearCacheBeforeLayout() { }
+
 private:
     void layout() override;
     void willBeDestroyed() final;

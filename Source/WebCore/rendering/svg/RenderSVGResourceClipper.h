@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "Path.h"
 #include "RenderSVGResourceContainer.h"
 #include "SVGUnitTypes.h"
 
@@ -60,6 +61,11 @@ private:
     ASCIILiteral renderName() const final { return "RenderSVGResourceClipper"_s; }
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
+
+    void clearCacheBeforeLayout() final;
+
+    mutable std::optional<Path> m_cachedPathClip;
+    mutable SingleThreadWeakPtr<RenderSVGModelObject> m_cachedPathClipRenderer;
 };
 
 }
