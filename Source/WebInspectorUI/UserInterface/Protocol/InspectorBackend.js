@@ -137,6 +137,11 @@ InspectorBackendClass = class InspectorBackendClass
         }
     }
 
+    get customTracer()
+    {
+        return this._customTracer;
+    }
+
     get activeTracers()
     {
         return this._activeTracers;

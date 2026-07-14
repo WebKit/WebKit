@@ -236,7 +236,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
 
         let responseData = {command, request: messageObject, callback};
 
-        if (InspectorBackend.activeTracer)
+        if (InspectorBackend.activeTracers.length)
             responseData.sendRequestTimestamp = performance.now();
 
         this._pendingResponses.set(sequenceId, responseData);
@@ -257,7 +257,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
 
         let responseData = {command, request: messageObject};
 
-        if (InspectorBackend.activeTracer)
+        if (InspectorBackend.activeTracers.length)
             responseData.sendRequestTimestamp = performance.now();
 
         let responsePromise = new Promise(function(resolve, reject) {

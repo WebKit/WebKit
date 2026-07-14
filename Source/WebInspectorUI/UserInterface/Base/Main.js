@@ -1930,16 +1930,16 @@ WI._contextMenuRequested = function(event)
         });
 
         let protocolSubMenu = proposedContextMenu.appendSubMenuItem(WI.unlocalizedString("Protocol Debugging"), null, false);
-        let isCapturingTraffic = InspectorBackend.activeTracer instanceof WI.CapturingProtocolTracer;
+        let isCapturingTraffic = InspectorBackend.customTracer instanceof WI.CapturingProtocolTracer;
 
         protocolSubMenu.appendCheckboxItem(WI.unlocalizedString("Capture Trace"), () => {
             if (isCapturingTraffic)
-                InspectorBackend.activeTracer = null;
+                InspectorBackend.customTracer = null;
             else
-                InspectorBackend.activeTracer = new WI.CapturingProtocolTracer;
+                InspectorBackend.customTracer = new WI.CapturingProtocolTracer;
         }, isCapturingTraffic);
 
-        let trace = InspectorBackend.activeTracer?.trace;
+        let trace = InspectorBackend.customTracer?.trace;
         if (trace && WI.FileUtilities.canSave(trace.saveMode)) {
             protocolSubMenu.appendSeparator();
 

@@ -1,0 +1,14 @@
+Testing that the inspector backend reports a valid (non-NaN) round-trip time to an installed protocol tracer.
+
+
+== Running test suite: Protocol.BackendRoundTripTime
+-- Running test case: CustomTracer.GetterReflectsSetter
+PASS: customTracer should be null by default.
+PASS: customTracer should return the installed tracer.
+PASS: activeTracers should include the custom tracer.
+PASS: customTracer should be null after being cleared.
+
+-- Running test case: RoundTripTime.IsFiniteNumber
+PASS: A round-trip time should have been recorded for the command's response.
+PASS: Every recorded round-trip time should be a finite number (not NaN).
+

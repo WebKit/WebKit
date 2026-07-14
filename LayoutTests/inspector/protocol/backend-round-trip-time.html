@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Protocol.BackendRoundTripTime");
+
+    // A minimal tracer that records the round-trip time reported for each
+    // handled response, so the test can observe what Connection.js computes.
+    class RecordingProtocolTracer extends WI.ProtocolTracer {
+        constructor() {
+            super();
+            this.roundTripTimes = [];
+        }
+
+        logDidHandleResponse(connection, message, timings = null) {
+            if (timings)
+                this.roundTripTimes.push(timings.rtt);
+        }
+    }
+
+    suite.addTestCase({
+        name: "CustomTracer.GetterReflectsSetter",
+        description: "InspectorBackend.customTracer should read back the tracer installed via its setter.",
+        test(resolve, reject) {
+            InspectorTest.expectThat(InspectorBackend.customTracer === null, "customTracer should be null by default.");
+
+            let tracer = new RecordingProtocolTracer;
+            InspectorBackend.customTracer = tracer;
+            InspectorTest.expectEqual(InspectorBackend.customTracer, tracer, "customTracer should return the installed tracer.");
+            InspectorTest.expectThat(InspectorBackend.activeTracers.includes(tracer), "activeTracers should include the custom tracer.");
+
+            InspectorBackend.customTracer = null;
+            InspectorTest.expectThat(InspectorBackend.customTracer === null, "customTracer should be null after being cleared.");
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "RoundTripTime.IsFiniteNumber",
+        description: "The round-trip time reported to a tracer should be a finite number, not NaN.",
+        test(resolve, reject) {
+            let tracer = new RecordingProtocolTracer;
+            InspectorBackend.customTracer = tracer;
+
+            // Send a command *after* installing the tracer so its send-time
+            // timestamp is recorded and the round-trip time can be computed.
+            RuntimeAgent.evaluate.invoke({expression: "1 + 1"}, (error) => {
+                InspectorBackend.customTracer = null;
+
+                if (error) {
+                    InspectorTest.fail(`Unexpected protocol error: ${error}`);
+                    reject();
+                    return;
+                }
+
+                InspectorTest.expectThat(tracer.roundTripTimes.length > 0, "A round-trip time should have been recorded for the command's response.");
+
+                let allFinite = tracer.roundTripTimes.every((rtt) => Number.isFinite(Number(rtt)));
+                InspectorTest.expectThat(allFinite, "Every recorded round-trip time should be a finite number (not NaN).");
+
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that the inspector backend reports a valid (non-NaN) round-trip time to an installed protocol tracer.</p>
+</body>
+</html>
