@@ -226,6 +226,29 @@ op :iterator_open,
         getNext: nil,
     }
 
+# iterator = symbolIterator.@call(iterable); next = iterator.next. Mirrors op_iterator_open; the fast
+# path skips the call for a genuine async generator, leaving the driver sentinel in next.
+op :async_iterator_open,
+    args: {
+        iterator: VirtualRegister,
+        next: VirtualRegister,
+        symbolIterator: VirtualRegister,
+        iterable: VirtualRegister,
+        stackOffset: unsigned,
+        iterableValueProfile: unsigned,
+        iteratorValueProfile: unsigned,
+        nextValueProfile: unsigned,
+    },
+    metadata: {
+        callLinkInfo: DataOnlyCallLinkInfo,
+        modeMetadata: GetByIdModeMetadata,
+        iterationMetadata: IterationModeMetadata,
+    },
+    checkpoints: {
+        symbolCall: nil,
+        getNext: nil,
+    }
+
 # Semantically, this is dst = value instanceof constructor.
 op :instanceof,
     args: {
@@ -462,6 +485,25 @@ op :call_ignore_result,
         callLinkInfo: DataOnlyCallLinkInfo,
         arrayProfile: ArrayProfile,
     }
+
+# dst = next.call(iterator), or -- if next is the fast async generator driver sentinel -- enqueue
+# onto the producer instead (dst unused; the result is awaited via a separate op_yield). Unlike
+# op_iterator_next there are no getDone/getValue checkpoints: the intervening await makes .done/.value
+# separate get_by_id bytecodes after suspension.
+op :async_iterator_next,
+    args: {
+        dst: VirtualRegister,
+        next: VirtualRegister,
+        iterator: VirtualRegister,
+        driver: VirtualRegister,
+        stackOffset: unsigned,
+        valueProfile: unsigned,
+    },
+    metadata: {
+        callLinkInfo: DataOnlyCallLinkInfo,
+        iterationMetadata: IterationModeMetadata,
+    }
+
 
 op :resolve_scope,
     args: {
@@ -1433,6 +1475,7 @@ op :op_call_varargs_return_location
 op :op_construct_varargs_return_location
 op :op_super_construct_varargs_return_location
 op :op_get_by_id_return_location
+op :op_async_iterator_open_return_location
 op :op_get_by_id_direct_return_location
 op :op_get_length_return_location
 op :op_get_by_val_return_location
@@ -1447,6 +1490,7 @@ op :op_enumerator_put_by_val_return_location
 op :op_enumerator_in_by_val_return_location
 op :op_iterator_open_return_location
 op :op_iterator_next_return_location
+op :op_async_iterator_next_return_location
 op :op_call_direct_eval_slow_return_location
 op :js_to_wasm_wrapper_entry
 op :wasm_to_wasm_ipint_wrapper_entry
@@ -1469,6 +1513,8 @@ op :js_trampoline_op_construct_varargs
 op :js_trampoline_op_super_construct_varargs
 op :js_trampoline_op_iterator_next
 op :js_trampoline_op_iterator_open
+op :js_trampoline_op_async_iterator_open
+op :js_trampoline_op_async_iterator_next
 op :js_trampoline_op_call_direct_eval_slow
 op :js_trampoline_llint_function_for_call_arity_check_untag
 op :js_trampoline_llint_function_for_call_arity_check_tag

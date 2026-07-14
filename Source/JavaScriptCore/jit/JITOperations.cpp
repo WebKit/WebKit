@@ -63,6 +63,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironmentInlines.h"
 #include "JSMapIterator.h"
+#include "JSMicrotask.h"
 #include "JSPromise.h"
 #include "JSRemoteFunction.h"
 #include "JSSentinel.h"
@@ -2901,6 +2902,17 @@ JSC_DEFINE_JIT_OPERATION(operationSetFunctionName, void, (JSGlobalObject* global
     JSFunction* func = uncheckedDowncast<JSFunction>(funcCell);
     JSValue name = JSValue::decode(encodedName);
     func->setFunctionName(globalObject, name);
+    OPERATION_RETURN(scope);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationEnqueueAsyncGeneratorDriver, void, (JSGlobalObject* globalObject, JSAsyncGenerator* iterator, JSObject* driver))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    enqueueAsyncGeneratorDriver(globalObject, iterator, driver);
     OPERATION_RETURN(scope);
 }
 

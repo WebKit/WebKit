@@ -47,12 +47,15 @@
 #include "JITExceptions.h"
 #include "JITWorklist.h"
 #include "JSAsyncFunction.h"
+#include "JSAsyncGenerator.h"
 #include "JSAsyncGeneratorFunction.h"
 #include "JSCInlines.h"
 #include "JSCJSValue.h"
 #include "JSGeneratorFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironmentInlines.h"
+#include "JSMicrotask.h"
+#include "JSSentinel.h"
 #include "JSString.h"
 #include "LLIntCommon.h"
 #include "LLIntData.h"
@@ -1996,6 +1999,36 @@ LLINT_SLOW_PATH_DECL(slow_path_set_function_name)
     LLINT_END();
 }
 
+LLINT_SLOW_PATH_DECL(slow_path_async_iterator_open_get_next)
+{
+    LLINT_BEGIN();
+    auto bytecode = pc->as<OpAsyncIteratorOpen>();
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue iterator = getOperand(callFrame, bytecode.m_iterator);
+    Register& nextRegister = callFrame->uncheckedR(bytecode.m_next);
+
+    if (!iterator.isObject())
+        LLINT_THROW(createTypeError(globalObject, "Iterator result interface is not an object."_s));
+
+    JSValue result = performLLIntGetByID(codeBlock->bytecodeIndex(pc).withCheckpoint(OpAsyncIteratorOpen::getNext), codeBlock, globalObject, iterator, vm.propertyNames->next, metadata.m_modeMetadata);
+    LLINT_CHECK_EXCEPTION();
+    nextRegister = result;
+    codeBlock->valueProfileForOffset(bytecode.m_nextValueProfile).m_buckets[0] = JSValue::encode(result);
+    LLINT_END();
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_async_iterator_next_with_driver)
+{
+    LLINT_BEGIN();
+    auto bytecode = pc->as<OpAsyncIteratorNext>();
+    auto& metadata = bytecode.metadata(codeBlock);
+    metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastAsyncGenerator;
+    JSAsyncGenerator* iterator = uncheckedDowncast<JSAsyncGenerator>(getNonConstantOperand(callFrame, bytecode.m_iterator));
+    auto* driver = asObject(getNonConstantOperand(callFrame, bytecode.m_driver).asCell());
+    enqueueAsyncGeneratorDriver(globalObject, iterator, driver);
+    LLINT_RETURN(vm.fastAsyncGeneratorSentinel());
+}
+
 static UGPRPair handleHostCall(CallFrame* calleeFrame, JSValue callee, CodeSpecializationKind kind)
 {
     slowPathLog("Performing host call.\n");
@@ -2540,6 +2573,20 @@ static void handleIteratorOpenCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalO
     callFrame->uncheckedR(bytecode.m_next) = next;
 }
 
+static void handleAsyncIteratorOpenCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalObject* globalObject, const OpAsyncIteratorOpen& bytecode)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSValue iterator = callFrame->uncheckedR(bytecode.m_iterator).jsValue();
+    if (!iterator.isObject()) {
+        throwVMTypeError(globalObject, scope, "Iterator result interface is not an object."_s);
+        return;
+    }
+
+    JSValue next = iterator.get(globalObject, vm.propertyNames->next);
+    RETURN_IF_EXCEPTION(scope, void());
+    callFrame->uncheckedR(bytecode.m_next) = next;
+}
+
 static void handleIteratorNextCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalObject* globalObject, const OpIteratorNext& bytecode, CheckpointOSRExitSideState& sideState)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -2675,6 +2722,11 @@ extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit_from_inlined_ca
         callFrame->uncheckedR(destinationFor(pc->as<OpIteratorOpen>(), bytecodeIndex.checkpoint()).virtualRegister()) = JSValue::decode(result);
         break;
     }
+    case op_async_iterator_open: {
+        ASSERT(bytecodeIndex.checkpoint() == OpAsyncIteratorOpen::getNext);
+        callFrame->uncheckedR(destinationFor(pc->as<OpAsyncIteratorOpen>(), bytecodeIndex.checkpoint()).virtualRegister()) = JSValue::decode(result);
+        break;
+    }
     case op_iterator_next: {
         callFrame->uncheckedR(destinationFor(pc->as<OpIteratorNext>(), bytecodeIndex.checkpoint()).virtualRegister()) = JSValue::decode(result);
         switch (bytecodeIndex.checkpoint()) {
@@ -2755,6 +2807,10 @@ extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit(CallFrame* call
 
     case op_iterator_open: {
         handleIteratorOpenCheckpoint(vm, callFrame, globalObject, pc->as<OpIteratorOpen>());
+        break;
+    }
+    case op_async_iterator_open: {
+        handleAsyncIteratorOpenCheckpoint(vm, callFrame, globalObject, pc->as<OpAsyncIteratorOpen>());
         break;
     }
     case op_iterator_next: {

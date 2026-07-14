@@ -31,8 +31,6 @@
 
 namespace JSC {
 
-class JSPromise;
-
 class JSAsyncGenerator final : public JSInternalFieldObjectImpl<8> {
 public:
     using Base = JSInternalFieldObjectImpl<8>;
@@ -195,8 +193,12 @@ public:
         return false;
     }
 
-    void enqueue(VM&, JSValue value, int32_t resumeMode, JSPromise*);
-    std::tuple<JSValue, int32_t, JSPromise*> dequeue(VM&);
+    // A queued request settles one of two ways, distinguished by the settlement target's type:
+    //   - a real .next()/.throw()/.return() carries its result JSPromise; or
+    //   - a for-await driver carries its own generator/async-function driver (never a
+    //     JSPromise), resumed directly via an AsyncGeneratorDriverResume microtask.
+    void enqueue(VM&, JSValue value, int32_t resumeMode, JSObject* settlementTarget);
+    JSObject* dequeue(VM&);
 
     DECLARE_EXPORT_INFO;
 

@@ -424,6 +424,7 @@ inline CapabilityLevel canCompile(DFG::Node* node)
     case SetRegExpObjectLastIndex:
     case RecordRegExpCachedResult:
     case SetFunctionName:
+    case EnqueueAsyncGeneratorDriver:
     case LogShadowChickenPrologue:
     case LogShadowChickenTail:
     case ResolveScope:

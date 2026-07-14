@@ -8908,6 +8908,20 @@ void SpeculativeJIT::compileSetFunctionName(Node* node)
     noResult(node);
 }
 
+void SpeculativeJIT::compileEnqueueAsyncGeneratorDriver(Node* node)
+{
+    SpeculateCellOperand iterator(this, node->child1());
+    SpeculateCellOperand driver(this, node->child2());
+
+    GPRReg iteratorGPR = iterator.gpr();
+    GPRReg driverGPR = driver.gpr();
+
+    flushRegisters();
+    callOperation(operationEnqueueAsyncGeneratorDriver, LinkableConstant::globalObject(*this, node), iteratorGPR, driverGPR);
+
+    noResult(node);
+}
+
 void SpeculativeJIT::compileVarargsLength(Node* node)
 {
     LoadVarargsData* data = node->loadVarargsData();

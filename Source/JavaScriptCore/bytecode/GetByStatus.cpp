@@ -113,6 +113,18 @@ GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
         break;
     }
 
+    case op_async_iterator_open: {
+        ASSERT(bytecodeIndex.checkpoint() == OpAsyncIteratorOpen::getNext);
+        auto& metadata = instruction->as<OpAsyncIteratorOpen>().metadata(profiledBlock);
+
+        // FIXME: We should not just bail if we see a get_by_id_proto_load.
+        if (metadata.m_modeMetadata.mode != GetByIdMode::Default)
+            return GetByStatus(NoInformation, false);
+        structureID = metadata.m_modeMetadata.defaultMode.structureID;
+        identifier = &vm.propertyNames->next;
+        break;
+    }
+
     case op_iterator_next: {
         auto& metadata = instruction->as<OpIteratorNext>().metadata(profiledBlock);
         if (bytecodeIndex.checkpoint() == OpIteratorNext::getDone) {

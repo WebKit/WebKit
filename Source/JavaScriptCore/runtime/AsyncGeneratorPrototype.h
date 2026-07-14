@@ -30,6 +30,8 @@
 
 namespace JSC {
 
+JSC_DECLARE_HOST_FUNCTION(asyncGeneratorPrototypeNext);
+
 // %AsyncGeneratorPrototype% intrinsic.
 // https://tc39.github.io/ecma262/#sec-properties-of-generator-prototype
 class AsyncGeneratorPrototype final : public JSNonFinalObject {
@@ -44,10 +46,10 @@ public:
         return &vm.plainObjectSpace();
     }
 
-    static AsyncGeneratorPrototype* create(VM& vm, JSGlobalObject*, Structure* structure)
+    static AsyncGeneratorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
         AsyncGeneratorPrototype* prototype = new (NotNull, allocateCell<AsyncGeneratorPrototype>(vm)) AsyncGeneratorPrototype(vm, structure);
-        prototype->finishCreation(vm);
+        prototype->finishCreation(vm, globalObject);
         return prototype;
     }
 
@@ -60,7 +62,7 @@ private:
         : Base(vm, structure)
     {
     }
-    void finishCreation(VM&);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
 } // namespace JSC

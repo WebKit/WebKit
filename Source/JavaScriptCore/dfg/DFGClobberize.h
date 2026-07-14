@@ -850,6 +850,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case HasOwnProperty:
     case ValueNegate:
     case SetFunctionName:
+    case EnqueueAsyncGeneratorDriver:
     case GetDynamicVar:
     case PutDynamicVar:
     case ResolveScopeForHoistingFuncDeclInEval:

@@ -5121,7 +5121,6 @@
 		8B6016F31F3E3CC000F9DE6A /* AsyncFromSyncIteratorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncFromSyncIteratorPrototype.cpp; sourceTree = "<group>"; };
 		8B6016F41F3E3CC000F9DE6A /* AsyncFromSyncIteratorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncFromSyncIteratorPrototype.h; sourceTree = "<group>"; };
 		8B9F6D551D5912FA001C739F /* IterationKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IterationKind.h; sourceTree = "<group>"; };
-		8BC064821E180B4A00B2B8CA /* AsyncGeneratorPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = AsyncGeneratorPrototype.js; sourceTree = "<group>"; };
 		8BC064831E1A4FD000B2B8CA /* AsyncGeneratorFunctionConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncGeneratorFunctionConstructor.cpp; sourceTree = "<group>"; };
 		8BC064841E1A4FD100B2B8CA /* AsyncGeneratorFunctionConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncGeneratorFunctionConstructor.h; sourceTree = "<group>"; };
 		8BC064851E1A4FD100B2B8CA /* AsyncGeneratorFunctionPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncGeneratorFunctionPrototype.cpp; sourceTree = "<group>"; };
@@ -10672,7 +10671,6 @@
 				A7D801A01880D66E0026C39B /* ArrayPrototype.js */,
 				8C7B16342DEAD8FC00BF0920 /* AsyncDisposableStackPrototype.js */,
 				8B1735EF1E92E52900369054 /* AsyncFromSyncIteratorPrototype.js */,
-				8BC064821E180B4A00B2B8CA /* AsyncGeneratorPrototype.js */,
 				8C9F78BF2DC8836D00868239 /* AsyncIteratorPrototype.js */,
 				DE26E9061CB5DD9600D2BE82 /* BuiltinExecutableCreator.cpp */,
 				DE26E9021CB5DD0500D2BE82 /* BuiltinExecutableCreator.h */,

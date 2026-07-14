@@ -548,6 +548,8 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpSuperConstruct, callLinkInfo)
         LINK(OpIteratorOpen, callLinkInfo)
         LINK(OpIteratorNext, callLinkInfo)
+        LINK(OpAsyncIteratorOpen, callLinkInfo)
+        LINK(OpAsyncIteratorNext, callLinkInfo)
         LINK(OpCallVarargs, callLinkInfo)
         LINK(OpTailCallVarargs, callLinkInfo)
         LINK(OpConstructVarargs, callLinkInfo)
@@ -1511,6 +1513,10 @@ void CodeBlock::finalizeLLIntInlineCaches()
             clearIfNeeded(metadata.m_modeMetadata, "iterator open"_s);
         });
 
+        m_metadata->forEach<OpAsyncIteratorOpen>([&] (auto& metadata) {
+            clearIfNeeded(metadata.m_modeMetadata, "async iterator open"_s);
+        });
+
         m_metadata->forEach<OpIteratorNext>([&] (auto& metadata) {
             clearIfNeeded(metadata.m_doneModeMetadata, "iterator next"_s);
             clearIfNeeded(metadata.m_valueModeMetadata, "iterator next"_s);
@@ -1698,6 +1704,11 @@ void CodeBlock::finalizeLLIntInlineCaches()
             case op_iterator_open: {
                 dataLogLnIf(Options::verboseOSR(), "Clearing LLInt iterator open property access.");
                 LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(instruction->as<OpIteratorOpen>().metadata(this).m_modeMetadata);
+                break;
+            }
+            case op_async_iterator_open: {
+                dataLogLnIf(Options::verboseOSR(), "Clearing LLInt async iterator open property access.");
+                LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(instruction->as<OpAsyncIteratorOpen>().metadata(this).m_modeMetadata);
                 break;
             }
             case op_iterator_next: {
@@ -3371,6 +3382,8 @@ ValueProfile* CodeBlock::tryGetValueProfileForBytecodeIndex(BytecodeIndex byteco
 
     case op_iterator_open:
         return &m_metadata->valueProfilesEnd()[-static_cast<ptrdiff_t>(valueProfileOffsetFor(instruction->as<OpIteratorOpen>(), bytecodeIndex.checkpoint()))];
+    case op_async_iterator_open:
+        return &m_metadata->valueProfilesEnd()[-static_cast<ptrdiff_t>(valueProfileOffsetFor(instruction->as<OpAsyncIteratorOpen>(), bytecodeIndex.checkpoint()))];
     case op_iterator_next:
         return &m_metadata->valueProfilesEnd()[-static_cast<ptrdiff_t>(valueProfileOffsetFor(instruction->as<OpIteratorNext>(), bytecodeIndex.checkpoint()))];
     case op_instanceof:

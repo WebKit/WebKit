@@ -66,6 +66,8 @@
     macro(op_construct_varargs) \
     macro(op_super_construct_varargs) \
     macro(op_get_by_id) \
+    macro(op_async_iterator_open) \
+    macro(op_async_iterator_next) \
     macro(op_get_by_id_direct) \
     macro(op_get_length) \
     macro(op_get_by_val) \

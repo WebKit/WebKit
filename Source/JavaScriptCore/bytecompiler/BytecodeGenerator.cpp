@@ -3665,6 +3665,37 @@ void BytecodeGenerator::emitSetFunctionName(RegisterID* value, RegisterID* name)
     OpSetFunctionName::emit(this, value, name);
 }
 
+void BytecodeGenerator::emitAsyncIteratorOpen(RegisterID* iterator, RegisterID* next, RegisterID* symbolIterator, CallArguments& iterable, const ThrowableExpressionData* node)
+{
+    // Reserve space for call frame. Mirrors emitIteratorOpen.
+    Vector<RefPtr<RegisterID>, CallFrame::headerSizeInRegisters, UnsafeVectorOverflow> callFrame;
+    for (int i = 0; i < CallFrame::headerSizeInRegisters; ++i)
+        callFrame.append(newTemporary());
+
+    if (shouldEmitDebugHooks())
+        emitDebugHook(WillExecuteExpression, node->divotStart());
+
+    emitExpressionInfo(node->divot(), node->divotStart(), node->divotEnd());
+    OpAsyncIteratorOpen::emit(this, iterator, next, symbolIterator, iterable.thisRegister(), iterable.stackOffset(), nextValueProfileIndex(), nextValueProfileIndex(), nextValueProfileIndex());
+}
+
+RegisterID* BytecodeGenerator::emitAsyncIteratorNext(RegisterID* dst, RegisterID* next, RegisterID* iterator, const ThrowableExpressionData* node)
+{
+    CallArguments nextArguments(*this, nullptr);
+    move(nextArguments.thisRegister(), iterator);
+
+    // Reserve space for call frame. Mirrors emitIteratorNext / emitAsyncIteratorOpen; the generic
+    // branch of op_async_iterator_next makes a real next.call(iterator), so numCalleeLocals must
+    // cover the callee frame header sitting below argv.
+    Vector<RefPtr<RegisterID>, CallFrame::headerSizeInRegisters, UnsafeVectorOverflow> callFrame;
+    for (int i = 0; i < CallFrame::headerSizeInRegisters; ++i)
+        callFrame.append(newTemporary());
+
+    emitExpressionInfo(node->divot(), node->divotStart(), node->divotEnd());
+    OpAsyncIteratorNext::emit(this, kill(dst), next, nextArguments.thisRegister(), generatorRegister(), nextArguments.stackOffset(), nextValueProfileIndex());
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitCall(RegisterID* dst, RegisterID* func, ExpectedFunction expectedFunction, CallArguments& callArguments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall debuggableCall)
 {
     return emitCall<OpCall>(dst, func, expectedFunction, callArguments, divot, divotStart, divotEnd, debuggableCall);
@@ -4910,74 +4941,108 @@ void BytecodeGenerator::emitBodyWithUsingIfNeeded(unsigned usingCount, bool hasA
         emitBody(*this);
 }
 
-void BytecodeGenerator::emitGenericEnumeration(ThrowableExpressionData* node, ExpressionNode* subjectNode, const ScopedLambda<void(BytecodeGenerator&, RegisterID*)>& callBack, ForOfNode* forLoopNode, RegisterID* forLoopSymbolTable)
+void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, ExpressionNode* subjectNode, const ScopedLambda<void(BytecodeGenerator&, RegisterID*)>& callBack, ForOfNode* forLoopNode, RegisterID* forLoopSymbolTable)
 {
-    bool isForAwait = forLoopNode && forLoopNode->isForAwait();
-    auto shouldEmitAwait = isForAwait ? EmitAwait::Yes : EmitAwait::No;
-    ASSERT(!isForAwait || (isAsyncFunctionParseMode(parseMode()) || isModuleParseMode(parseMode())));
+    if (forLoopNode && forLoopNode->isForAwait()) {
+        ASSERT(isAsyncFunctionParseMode(parseMode()) || isModuleParseMode(parseMode()));
 
-    RefPtr<RegisterID> subject = newTemporary();
-    emitNode(subject.get(), subjectNode);
-    RefPtr<RegisterID> iterator = isForAwait ? emitGetAsyncIterator(subject.get(), node) : emitGetGenericIterator(subject.get(), node);
-    RefPtr<RegisterID> nextMethod = emitGetById(newTemporary(), iterator.get(), propertyNames().next);
+        RefPtr<RegisterID> subject = newTemporary();
+        emitNode(subject.get(), subjectNode);
 
-    Ref<Label> loopDone = newLabel();
+        RefPtr<RegisterID> iterator = newTemporary();
+        RefPtr<RegisterID> nextMethod = newTemporary();
+        RefPtr<RegisterID> symbolAsyncIterator;
 
-    // RefPtr<Register> iterator's lifetime must be longer than IteratorCloseContext.
-    Ref<Label> finallyLabel = newLabel();
-    FinallyContext finallyContext(*this, finallyLabel.get());
-    pushFinallyControlFlowScope(finallyContext);
+        if (isAsyncFunctionParseMode(parseMode())) {
+            emitExpressionInfo(node->divot(), node->divotStart(), node->divotEnd());
+            symbolAsyncIterator = emitGetById(newTemporary(), subject.get(), propertyNames().asyncIteratorSymbol);
 
-    {
-        Ref<LabelScope> scope = newLabelScope(LabelScope::Loop);
-        RefPtr<RegisterID> value = newTemporary();
-        emitLoad(value.get(), jsUndefined());
+            Ref<Label> asyncIteratorNotFound = newLabel();
+            Ref<Label> iteratorAcquired = newLabel();
+            emitJumpIfTrue(emitIsUndefinedOrNull(newTemporary(), symbolAsyncIterator.get()), asyncIteratorNotFound.get());
 
-        emitJump(*scope->continueTarget());
+            {
+                CallArguments args(*this, nullptr, 0);
+                move(args.thisRegister(), subject.get());
+                emitAsyncIteratorOpen(iterator.get(), nextMethod.get(), symbolAsyncIterator.get(), args, node);
+            }
+            emitJump(iteratorAcquired.get());
 
-        Ref<Label> loopStart = newLabel();
-        emitLabel(loopStart.get());
-        emitLoopHint();
+            // Async-from-sync fallback: GetIterator(subject, sync) then CreateAsyncFromSyncIterator.
+            emitLabel(asyncIteratorNotFound.get());
+            {
+                RefPtr<RegisterID> syncIterator = emitGetGenericIterator(subject.get(), node);
+                RefPtr<RegisterID> syncNextMethod = emitGetById(newTemporary(), syncIterator.get(), propertyNames().next);
+                RefPtr<RegisterID> createAsyncFromSyncIterator = moveLinkTimeConstant(nullptr, LinkTimeConstant::createAsyncFromSyncIterator);
+                CallArguments args(*this, nullptr, 2);
+                emitLoad(args.thisRegister(), jsUndefined());
+                move(args.argumentRegister(0), syncIterator.get());
+                move(args.argumentRegister(1), syncNextMethod.get());
+                JSTextPosition divot(m_scopeNode->firstLine(), m_scopeNode->startOffset(), m_scopeNode->lineStartOffset());
+                emitCall(iterator.get(), createAsyncFromSyncIterator.get(), NoExpectedFunction, args, divot, divot, divot, DebuggableCall::No);
+                emitGetById(nextMethod.get(), iterator.get(), propertyNames().next);
+            }
+            emitLabel(iteratorAcquired.get());
+        } else {
+            // Module top-level await. `driver` is an AbstractModuleRecord, which AsyncGeneratorDriverResume
+            // cannot drive, so acquire generically -- op_async_iterator_next then always takes its real-call branch.
+            move(iterator.get(), emitGetAsyncIterator(subject.get(), node));
+            emitGetById(nextMethod.get(), iterator.get(), propertyNames().next);
+        }
 
-        emitTryWithFinallyThatDoesNotShadowException(finallyContext, scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
-            callBack(generator, value.get());
-            generator.emitJump(*scope->continueTarget());
-        }), scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
-            generator.emitIteratorGenericClose(iterator.get(), node, shouldEmitAwait);
-        }));
+        Ref<Label> loopDone = newLabel();
 
-        emitLabel(*scope->continueTarget());
-        if (forLoopNode) {
+        Ref<Label> finallyLabel = newLabel();
+        FinallyContext finallyContext(*this, finallyLabel.get());
+        pushFinallyControlFlowScope(finallyContext);
+
+        {
+            Ref<LabelScope> scope = newLabelScope(LabelScope::Loop);
+            RefPtr<RegisterID> value = newTemporary();
+            emitLoad(value.get(), jsUndefined());
+
+            emitJump(*scope->continueTarget());
+
+            Ref<Label> loopStart = newLabel();
+            emitLabel(loopStart.get());
+            emitLoopHint();
+
+            emitTryWithFinallyThatDoesNotShadowException(finallyContext, scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
+                callBack(generator, value.get());
+                generator.emitJump(*scope->continueTarget());
+            }), scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
+                generator.emitIteratorGenericClose(iterator.get(), node, EmitAwait::Yes);
+            }));
+
+            emitLabel(*scope->continueTarget());
             RELEASE_ASSERT(forLoopNode->isForOfNode());
             prepareLexicalScopeForNextForLoopIteration(forLoopNode, forLoopSymbolTable);
             emitDebugHook(forLoopNode->lexpr());
+
+            {
+                emitAsyncIteratorNext(value.get(), nextMethod.get(), iterator.get(), node);
+                emitAwait(value.get(), value.get(), node->divot());
+
+                Ref<Label> typeIsObject = newLabel();
+                emitJumpIfTrue(emitIsObject(newTemporary(), value.get()), typeIsObject.get());
+                emitThrowTypeError("Iterator result interface is not an object."_s);
+                emitLabel(typeIsObject.get());
+
+                emitJumpIfTrue(emitGetById(newTemporary(), value.get(), propertyNames().done), loopDone.get());
+                emitGetById(value.get(), value.get(), propertyNames().value);
+                emitJump(loopStart.get());
+            }
+
+            bool breakLabelIsBound = scope->breakTargetMayBeBound();
+            if (breakLabelIsBound)
+                emitLabel(scope->breakTarget());
+            popFinallyControlFlowScope();
+            if (breakLabelIsBound) {
+                // IteratorClose sequence for break-ed control flow.
+                emitIteratorGenericClose(iterator.get(), node, EmitAwait::Yes);
+            }
         }
-
-        {
-            emitIteratorGenericNext(value.get(), nextMethod.get(), iterator.get(), node, shouldEmitAwait);
-
-            emitJumpIfTrue(emitGetById(newTemporary(), value.get(), propertyNames().done), loopDone.get());
-            emitGetById(value.get(), value.get(), propertyNames().value);
-            emitJump(loopStart.get());
-        }
-
-        bool breakLabelIsBound = scope->breakTargetMayBeBound();
-        if (breakLabelIsBound)
-            emitLabel(scope->breakTarget());
-        popFinallyControlFlowScope();
-        if (breakLabelIsBound) {
-            // IteratorClose sequence for break-ed control flow.
-            emitIteratorGenericClose(iterator.get(), node, shouldEmitAwait);
-        }
-    }
-    emitLabel(loopDone.get());
-}
-
-
-void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, ExpressionNode* subjectNode, const ScopedLambda<void(BytecodeGenerator&, RegisterID*)>& callBack, ForOfNode* forLoopNode, RegisterID* forLoopSymbolTable)
-{
-    if (!Options::useIterationIntrinsics() || (forLoopNode && forLoopNode->isForAwait())) {
-        emitGenericEnumeration(node, subjectNode, callBack, forLoopNode, forLoopSymbolTable);
+        emitLabel(loopDone.get());
         return;
     }
 

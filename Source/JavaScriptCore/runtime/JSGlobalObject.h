@@ -1156,6 +1156,9 @@ public:
     inline JSCell* linkTimeConstant(LinkTimeConstant) const;
     template<typename Type> inline Type linkTimeConstantConcurrently(LinkTimeConstant) const;
 
+    inline JSObject* asyncGeneratorPrototypeNextFunction() const;
+    inline JSObject* asyncIteratorPrototypeSymbolAsyncIteratorFunction() const;
+
     WatchpointSet& masqueradesAsUndefinedWatchpointSet() { return m_masqueradesAsUndefinedWatchpointSet.get(); }
     WatchpointSet& havingABadTimeWatchpointSet() { return m_havingABadTimeWatchpointSet.get(); }
     WatchpointSet& varInjectionWatchpointSet() { return m_varInjectionWatchpointSet.get(); }

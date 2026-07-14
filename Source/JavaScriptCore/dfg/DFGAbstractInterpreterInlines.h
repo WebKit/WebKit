@@ -5876,6 +5876,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case EnqueueAsyncGeneratorDriver: {
+        clobberWorld();
+        break;
+    }
+
     case StoreBarrier:
     case FencedStoreBarrier: {
         filter(node->child1(), SpecCell);
