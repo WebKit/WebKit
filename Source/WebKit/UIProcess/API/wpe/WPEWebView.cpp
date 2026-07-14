@@ -31,9 +31,13 @@
 #include "DrawingAreaProxy.h"
 #include "EditingRange.h"
 #include "EditorState.h"
+#include "NativeWebMouseEvent.h"
 #include "WebPreferences.h"
 #include "WebProcessPool.h"
 #include <WebCore/CompositionUnderline.h>
+#include <WebCore/DoublePoint.h>
+#include <WebCore/DragData.h>
+#include <WebCore/SelectionData.h>
 
 using namespace WebKit;
 
@@ -157,5 +161,31 @@ void View::willExitFullScreen(CompletionHandler<void()>&& completionHandler)
     m_fullscreenState = WebFullScreenManagerProxy::FullscreenState::ExitingFullscreen;
 }
 #endif // ENABLE(FULLSCREEN_API)
+
+#if ENABLE(DRAG_SUPPORT)
+void View::setDragData(WebCore::SelectionData&& selectionData, OptionSet<WebCore::DragOperation> dragOperationMask)
+{
+    m_dragData = makeUnique<WebCore::SelectionData>(WTF::move(selectionData));
+    m_dragMask = dragOperationMask;
+}
+
+void View::updateDrag(const WebKit::NativeWebMouseEvent& event)
+{
+    if (!m_dragData || (event.type() != WebKit::WebEventType::MouseMove && event.type() != WebKit::WebEventType::MouseUp))
+        return;
+
+    auto clientPosition = WebCore::roundedIntPoint(event.position());
+    auto globalPosition = WebCore::roundedIntPoint(event.globalPosition());
+    WebCore::DragData dragData(m_dragData.get(), clientPosition, globalPosition, m_dragMask);
+    if (event.type() == WebKit::WebEventType::MouseMove)
+        page().dragUpdated(dragData);
+    else {
+        page().dragUpdated(dragData);
+        page().performDragOperation(dragData, { }, { }, { });
+        page().dragEnded(clientPosition, globalPosition, m_dragMask);
+        m_dragData = nullptr;
+    }
+}
+#endif // ENABLE(DRAG_SUPPORT)
 
 } // namespace WKWPE

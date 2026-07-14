@@ -5813,7 +5813,7 @@ NotificationPermissionRequestManager* WebPage::notificationPermissionRequestMana
 
 #if ENABLE(DRAG_SUPPORT)
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
 void WebPage::performDragControllerAction(DragControllerAction action, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> draggingSourceOperationMask, SelectionData&& selectionData, OptionSet<DragApplicationFlags> flags, CompletionHandler<void(std::optional<DragOperation>, DragHandlingMethod, bool, unsigned, IntRect, IntRect, std::optional<RemoteUserInputEventData>)>&& completionHandler)
 {
     if (!m_page)

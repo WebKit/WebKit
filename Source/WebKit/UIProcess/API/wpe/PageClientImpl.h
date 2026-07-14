@@ -72,6 +72,9 @@ public:
 #if ENABLE(WPE_PLATFORM)
     WPEView* wpeView() const;
 #endif
+#if ENABLE(DRAG_SUPPORT)
+    void startDrag(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<WebCore::ShareableBitmap>&& dragImage, WebCore::IntPoint&& dragImageHotspot) override;
+#endif
 
 #if USE(ATK)
     AtkObject* accessible();

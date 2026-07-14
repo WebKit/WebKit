@@ -279,18 +279,14 @@ fast/url/user-visible [ Skip ]
 
 # platformLayerTreeAsText is only implemented for Cocoa ports.
 
-# ENABLE_DRAG_SUPPORT is OFF in WPE.
+# These drag-and-drop tests need features not yet supported on WPE (autoscroll,
+# subframes, drag images) or are Cocoa-specific (data detectors).
 fast/events/do-not-drag-and-drop-data-detectors-link.html [ Skip ]
 fast/events/drag-and-drop-autoscroll-inner-frame.html [ Skip ]
-fast/events/drag-and-drop-link-containing-block.html [ Skip ]
-fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html [ Skip ]
 fast/events/drag-and-drop-subframe-dataTransfer.html [ Skip ]
-fast/events/drag-customData.html [ Skip ]
 fast/events/drag-image-filename.html [ Skip ]
 fast/events/resources/drag-in-frames-left.html [ Skip ]
 fast/events/resources/drag-in-frames-right.html [ Skip ]
-fast/forms/drag-into-textarea.html [ Skip ]
-fast/forms/drag-out-of-textarea.html [ Skip ]
 http/tests/local/drag-over-remote-content.html [ Skip ]
 
 fast/loader/plain-text-document-dark-mode.html [ Pass ]

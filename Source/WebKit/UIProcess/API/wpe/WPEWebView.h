@@ -85,6 +85,11 @@ public:
     void close();
 
     WebKit::WebPageProxy& page() { return *m_pageProxy; }
+
+#if ENABLE(DRAG_SUPPORT)
+    void setDragData(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>);
+    void updateDrag(const WebKit::NativeWebMouseEvent&);
+#endif
     API::ViewClient& client() const { return *m_client; }
     const WebCore::IntSize& size() const LIFETIME_BOUND { return m_size; }
     OptionSet<WebCore::ActivityState> viewState() const { return m_viewStateFlags; }
@@ -111,6 +116,10 @@ protected:
     std::unique_ptr<API::ViewClient> m_client;
     const std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
     RefPtr<WebKit::WebPageProxy> m_pageProxy;
+#if ENABLE(DRAG_SUPPORT)
+    std::unique_ptr<WebCore::SelectionData> m_dragData;
+    OptionSet<WebCore::DragOperation> m_dragMask;
+#endif
     WebCore::IntSize m_size;
     OptionSet<WebCore::ActivityState> m_viewStateFlags;
 #if ENABLE(FULLSCREEN_API)

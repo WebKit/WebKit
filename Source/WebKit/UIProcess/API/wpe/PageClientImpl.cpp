@@ -73,6 +73,13 @@ PageClientImpl::PageClientImpl(WKWPE::View& view)
 
 PageClientImpl::~PageClientImpl() = default;
 
+#if ENABLE(DRAG_SUPPORT)
+void PageClientImpl::startDrag(WebCore::SelectionData&& selection, OptionSet<WebCore::DragOperation> dragOperationMask, RefPtr<WebCore::ShareableBitmap>&&, WebCore::IntPoint&&)
+{
+    m_view.setDragData(WTF::move(selection), dragOperationMask);
+}
+#endif
+
 #if USE(LIBWPE)
 struct wpe_view_backend* PageClientImpl::viewBackend()
 {
