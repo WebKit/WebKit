@@ -401,8 +401,12 @@ HeapSnapshot = class HeapSnapshot
         }
 
         // Determine which node identifiers have since been deleted.
+        // Walk the previous snapshot using its own field count. This snapshot and the
+        // previous one may have been serialized with different layouts (e.g. an "Inspector"
+        // snapshot has 4 fields per node while a "GCDebugging" snapshot has 7), so striding
+        // by this._nodeFieldCount would read node identifiers from misaligned offsets.
         let collectedNodesList = [];
-        for (let nodeIndex = 0; nodeIndex < previousSnapshot._nodes.length; nodeIndex += this._nodeFieldCount) {
+        for (let nodeIndex = 0; nodeIndex < previousSnapshot._nodes.length; nodeIndex += previousSnapshot._nodeFieldCount) {
             let nodeIdentifier = previousSnapshot._nodes[nodeIndex + nodeIdOffset];
             let wasDeleted = !known.has(nodeIdentifier);
             if (wasDeleted)
