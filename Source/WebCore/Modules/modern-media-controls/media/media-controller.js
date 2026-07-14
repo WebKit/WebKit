@@ -454,7 +454,8 @@ class MediaController
         let touchEvents = ["touchstart", "touchmove", "touchend"];
         for (let touchEvent of touchEvents) {
             this.controls.element.addEventListener(touchEvent, (event) => {
-                event.stopPropagation();
+                if (event.target !== this.controls.element)
+                    event.stopPropagation();
             });
         }
     }
