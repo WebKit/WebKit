@@ -292,6 +292,7 @@ public:
     RetainPtr<NSSet> pdfHUDs();
     bool isPointOnPDFHUD(WebCore::FloatPoint locationInView);
     RetainPtr<NSView> hitTestPDFHUD(WebCore::FloatPoint locationInView);
+    bool isPointInScrollbar(CGPoint locationInView);
 
     bool isViewVisible(NSView *);
 

@@ -68,6 +68,8 @@ public:
     virtual void receivedEventAfterDefaultHandling(const WebCore::PlatformWheelEvent&, std::optional<WebCore::WheelScrollGestureState>) { };
     virtual WebCore::WheelEventHandlingResult handleWheelEventAfterDefaultHandling(const WebCore::PlatformWheelEvent&, std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>) { return WebCore::WheelEventHandlingResult::unhandled(); }
 
+    virtual bool isPointInScrollbar(WebCore::FloatPoint locationInViewCoordinates) { return false; }
+
     RemoteScrollingCoordinatorProxy* NODELETE scrollingCoordinatorProxy() const;
 
     void scrollingTreeNodeDidScroll(WebCore::ScrollingTreeScrollingNode&, WebCore::ScrollingLayerPositionAction = WebCore::ScrollingLayerPositionAction::Sync) override;

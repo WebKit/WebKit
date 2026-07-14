@@ -1841,6 +1841,15 @@ bool WebViewImpl::isPointOnPDFHUD(WebCore::FloatPoint locationInView)
     return !!hitTestPDFHUD(locationInView);
 }
 
+bool WebViewImpl::isPointInScrollbar(CGPoint locationInView)
+{
+    CheckedPtr scrollingCoordinatorProxy = m_page->scrollingCoordinatorProxy();
+    if (!scrollingCoordinatorProxy)
+        return false;
+
+    return scrollingCoordinatorProxy->isPointInScrollbar(locationInView);
+}
+
 bool WebViewImpl::isViewVisible(NSView *view)
 {
     return m_pageClient->isViewVisible(view, [view window]);

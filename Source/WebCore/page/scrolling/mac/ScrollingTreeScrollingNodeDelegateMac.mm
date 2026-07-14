@@ -427,6 +427,28 @@ String ScrollingTreeScrollingNodeDelegateMac::scrollbarStateForOrientation(Scrol
     return m_scrollerPair->scrollbarStateForOrientation(orientation);
 }
 
+bool ScrollingTreeScrollingNodeDelegateMac::isPointInScrollbar(const FloatPoint& pointInReferenceLayer, CALayer *referenceLayer) const
+{
+    if (!referenceLayer)
+        return false;
+
+    const auto scrollbarStyle = m_scrollerPair->scrollbarStyle();
+
+    const auto isPointOverScroller = [&](ScrollerMac& scroller) {
+        RetainPtr hostLayer = scroller.hostLayer();
+        if (!hostLayer)
+            return false;
+
+        if (scrollbarStyle == ScrollbarStyle::Overlay && scroller.knobAlpha() <= 0)
+            return false;
+
+        const auto pointInHostLayer = [hostLayer convertPoint:pointInReferenceLayer fromLayer:referenceLayer];
+        return static_cast<bool>([hostLayer containsPoint:pointInHostLayer]);
+    };
+
+    return isPointOverScroller(m_scrollerPair->verticalScroller()) || isPointOverScroller(m_scrollerPair->horizontalScroller());
+}
+
 } // namespace WebCore
 
 #endif // PLATFORM(MAC)

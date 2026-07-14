@@ -63,6 +63,8 @@
 
 @property (nonatomic, readonly) CGFloat _fullScreenTitlebarOverlayHeightForTesting;
 
+- (BOOL)isPointInScrollbar:(NSPoint)locationInView;
+
 @end
 
 #endif // !TARGET_OS_IPHONE

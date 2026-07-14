@@ -29,6 +29,7 @@
 #if PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING)
 
 #import "Logging.h"
+#import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeNode.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "RemoteScrollingTreeCocoa.h"
@@ -40,6 +41,7 @@
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/ScrollingThread.h>
 #import <WebCore/ScrollingTreeFixedNodeCocoa.h>
+#import <WebCore/ScrollingTreeFrameScrollingNodeMac.h>
 #import <WebCore/ScrollingTreeOverflowScrollProxyNode.h>
 #import <WebCore/ScrollingTreePositionedNode.h>
 #import <WebCore/WebCoreCALayerExtras.h>
@@ -527,6 +529,35 @@ RefPtr<ScrollingTreeNode> RemoteScrollingTreeMac::scrollingNodeForPoint(FloatPoi
 
     LOG_WITH_STREAM(UIHitTesting, stream << "RemoteScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found no scrollable layers; using root node");
     return rootScrollingNode;
+}
+
+bool RemoteScrollingTreeMac::isPointInScrollbar(FloatPoint locationInViewCoordinates)
+{
+    RefPtr frameNode = dynamicDowncast<ScrollingTreeFrameScrollingNodeMac>(rootNode());
+    if (!frameNode)
+        return false;
+
+    HitTestLocker hitTestLocker { *this };
+
+    RetainPtr scrolledContentsLayer { static_cast<CALayer *>(frameNode->scrolledContentsLayer()) };
+    if (!scrolledContentsLayer)
+        return false;
+
+    CheckedPtr scrollingCoordinatorProxy = this->scrollingCoordinatorProxy();
+    if (!scrollingCoordinatorProxy)
+        return false;
+
+    const auto* layerTreeHost = scrollingCoordinatorProxy->layerTreeHost();
+    if (!layerTreeHost)
+        return false;
+
+    RetainPtr viewCoordinateLayer = layerTreeHost->rootLayer();
+    if (!viewCoordinateLayer)
+        return false;
+
+    const auto pointInContentsLayer = FloatPoint { [scrolledContentsLayer convertPoint:locationInViewCoordinates fromLayer:viewCoordinateLayer] };
+
+    return frameNode->isPointInScrollbar(pointInContentsLayer, scrolledContentsLayer);
 }
 
 #if ENABLE(WHEEL_EVENT_REGIONS)

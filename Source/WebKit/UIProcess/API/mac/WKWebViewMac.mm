@@ -50,6 +50,7 @@
 #import "_WKWarningView.h"
 #import <WebCore/CGWindowUtilities.h>
 #import <WebCore/CornerRadii.h>
+#import <WebCore/FloatPoint.h>
 #import <WebCore/FrameIdentifier.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebKit/WKUIDelegatePrivate.h>
@@ -823,8 +824,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
+// FIXME: This is no longer actually called. Should it instead be replaced by `-[NSView _hitTestToBlockWindowResizing:forResizeDirection:]`? Or removed entirely?
+// This was originally added to resolve <rdar://9211232>.
 - (BOOL)_windowResizeMouseLocationIsInVisibleScrollerThumb:(NSPoint)point
 {
+    // FIXME: Consider using the new `isPointInScrollbar` path, which works for both axes,
+    // and leverages UI-side scrolling instead of cached web content information.
     return _impl->windowResizeMouseLocationIsInVisibleScrollerThumb(NSPointToCGPoint(point));
 }
 

@@ -104,6 +104,15 @@ extension WebPage {
     }
 
     #if os(macOS)
+
+    /// Determines if the specified point is located above a visible scrollbar.
+    ///
+    /// - Parameter locationInView: The point in view coordinates to test.
+    /// - Returns: `true` if the point is over a scrollbar; `false` otherwise.
+    public func isPointInScrollbar(locationInView: NSPoint) -> Bool {
+        backingWebView.isPoint(inScrollbar: locationInView)
+    }
+
     /// Sends a left mouse-down NSEvent to the web view at the given location.
     ///
     /// - Parameter location: The location in window coordinates.
