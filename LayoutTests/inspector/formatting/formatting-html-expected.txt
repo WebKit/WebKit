@@ -8,6 +8,7 @@ PASS: auto-close-normal.html
 PASS: auto-close-special.html
 PASS: basic-1.html
 PASS: basic-2.html
+PASS: canvas.html
 PASS: comments.html
 PASS: eof-1.html
 PASS: eof-2.html

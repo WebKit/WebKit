@@ -333,7 +333,6 @@ HTMLTreeBuilderFormatter.TagNamesWithoutChildren = new Set([
     "base",
     "basefont",
     "br",
-    "canvas",
     "col",
     "command",
     "embed",
