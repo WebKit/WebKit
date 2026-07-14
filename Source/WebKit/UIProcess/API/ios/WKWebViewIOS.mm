@@ -2907,6 +2907,13 @@ static CGFloat liveResizeMinimumWidthDifference()
 
 #endif // HAVE(UIKIT_RESIZABLE_WINDOWS)
 
+- (CGRect)_inputViewBoundsForViewportCalculations
+{
+    if (_perProcessState.viewportMetaTagInteractiveWidget == WebCore::InteractiveWidget::OverlaysContent)
+        return CGRectZero;
+    return _inputViewBoundsInWindow;
+}
+
 // Unobscured content rect where the user can interact. When the keyboard is up, this should be the area above or below the keyboard, wherever there is enough space.
 - (CGRect)_contentRectForUserInteraction
 {
@@ -3192,7 +3199,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         velocityData = { 0, 0, 0, timestamp };
     }
 
-    CGRect unobscuredContentRectRespectingInputViewBounds = [_contentView _computeUnobscuredContentRectRespectingInputViewBounds:unobscuredRectInContentCoordinates inputViewBounds:_inputViewBoundsInWindow];
+    CGRect unobscuredContentRectRespectingInputViewBounds = [_contentView _computeUnobscuredContentRectRespectingInputViewBounds:unobscuredRectInContentCoordinates inputViewBounds:[self _inputViewBoundsForViewportCalculations]];
     WebCore::FloatRect fixedPositionRectForLayout = _page->computeLayoutViewportRect(unobscuredRectInContentCoordinates, unobscuredContentRectRespectingInputViewBounds, _page->layoutViewportRect(), scaleFactor, WebCore::LayoutViewportConstraint::ConstrainedToDocumentRect);
 
     return { {
@@ -3517,7 +3524,9 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
         return [self.window convertRect:keyboardFrameInScreen fromCoordinateSpace:self.window.screen.coordinateSpace];
     })();
 
-    if (adjustScrollView) {
+    BOOL keyboardShouldOverlayContent = _perProcessState.viewportMetaTagInteractiveWidget == WebCore::InteractiveWidget::OverlaysContent;
+
+    if (adjustScrollView && !keyboardShouldOverlayContent) {
         CGFloat bottomInsetBeforeAdjustment = [_scrollView contentInset].bottom;
         SetForScope insetAdjustmentGuard(_perProcessState.currentlyAdjustingScrollViewInsetsForKeyboard, YES);
         [_scrollView _adjustForAutomaticKeyboardInfo:keyboardInfo animated:YES lastAdjustment:&_lastAdjustmentForScroller];

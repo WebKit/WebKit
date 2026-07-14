@@ -1,0 +1,11 @@
+layoutViewport: {"x":0,"y":0,"width":390,"height":797,"top":0,"right":390,"bottom":797,"left":0}
+visualViewportRect: {"x":0,"y":0,"width":268,"height":548,"top":0,"right":268,"bottom":548,"left":0}
+PASS window.visualViewport.pageTop is 0
+PASS window.visualViewport.scale is not 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Layout viewport: {"x":0,"y":0,"width":390,"height":797,"top":0,"right":390,"bottom":797,"left":0}
+Visual viewport: {"x":0,"y":0,"width":268,"height":548,"top":0,"right":268,"bottom":548,"left":0}
+
+

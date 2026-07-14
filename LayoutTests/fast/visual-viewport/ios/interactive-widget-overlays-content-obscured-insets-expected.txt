@@ -1,0 +1,22 @@
+layoutViewport: {"x":0,"y":0,"width":390,"height":747,"top":0,"right":390,"bottom":747,"left":0}
+visualViewportRect: {"x":0,"y":0,"width":390,"height":747,"top":0,"right":390,"bottom":747,"left":0}
+PASS window.visualViewport.pageTop is 0
+PASS window.visualViewport.scale is 1
+PASS window.visualViewport.width is 390
+PASS window.visualViewport.height is 747
+layoutViewport: {"x":0,"y":0,"width":390,"height":697,"top":0,"right":390,"bottom":697,"left":0}
+visualViewportRect: {"x":0,"y":0,"width":390,"height":697,"top":0,"right":390,"bottom":697,"left":0}
+PASS window.visualViewport.pageTop is 0
+PASS window.visualViewport.scale is 1
+PASS window.visualViewport.width is 390
+PASS window.visualViewport.height is 697
+layoutViewport: {"x":0,"y":0,"width":390,"height":729,"top":0,"right":390,"bottom":729,"left":0}
+visualViewportRect: {"x":0,"y":0,"width":390,"height":729,"top":0,"right":390,"bottom":729,"left":0}
+PASS window.visualViewport.pageTop is 0
+PASS window.visualViewport.scale is 1
+PASS window.visualViewport.width is 390
+PASS window.visualViewport.height is 729
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

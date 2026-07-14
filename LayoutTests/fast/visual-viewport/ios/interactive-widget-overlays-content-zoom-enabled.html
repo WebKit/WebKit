@@ -1,0 +1,38 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=overlays-content"/>
+    <style>
+        input {
+            width: 400px;
+            height: 50px;
+        }
+    </style>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <p id="results"></p>
+    <input id="input" type="text">
+
+    <script>
+        jsTestIsAsync = true;
+        addEventListener("load", async () => {
+            let textField = document.querySelector("input");
+            await UIHelper.activateElement(textField);
+            await UIHelper.waitForKeyboardToShow();
+
+            debug('layoutViewport: ' + JSON.stringify(internals.layoutViewportRect()));
+            debug('visualViewportRect: ' + JSON.stringify(internals.visualViewportRect()));
+
+            shouldBe('window.visualViewport.pageTop', '0');
+            shouldNotBe('window.visualViewport.scale', '1');
+            var output = 'Layout viewport: ' + JSON.stringify(internals.layoutViewportRect()) + '\nVisual viewport: ' + JSON.stringify(internals.visualViewportRect()) + '\n';
+            document.getElementById('results').innerText = output;
+
+            finishJSTest();
+        });
+    </script>
+</body>
+
+</html>
