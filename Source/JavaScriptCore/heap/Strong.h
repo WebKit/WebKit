@@ -97,7 +97,7 @@ public:
     {
     }
 
-    ~Strong() override
+    ~Strong()
     {
         clear();
     }
@@ -152,6 +152,11 @@ template<class T> inline void swap(Strong<T>& a, Strong<T>& b)
 {
     a.swap(b);
 }
+
+#if !ENABLE(REFTRACKER)
+// Handle has no virtual methods, so a Strong is just its slot pointer.
+static_assert(sizeof(Strong<Unknown>) == sizeof(HandleSlot));
+#endif
 
 } // namespace JSC
 

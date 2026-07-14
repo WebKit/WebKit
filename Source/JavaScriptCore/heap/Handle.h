@@ -115,8 +115,6 @@ public:
         setSlot(o.slot());
     }
 
-    virtual ~Handle() = default;
-
     void swap(Handle& other) { HandleBase::swap(other); }
 
     ExternalType get() const { return HandleTypes<T>::getFromSlot(this->slot()); }
