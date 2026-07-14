@@ -15,6 +15,11 @@ PASS: Cookie value should be 'PASS'.
 PASS: setCookie should return a partitionKey.
 PASS: Returned partitionKey should echo the explicit cookie partitionKey.
 
+-- Running test case: Storage.setCookie.SessionCookieRoundtrip
+PASS: A session cookie set with expires:0 should be readable, not silently dropped as epoch-expired.
+PASS: Session cookie value should be 'PASS'.
+PASS: Round-tripped cookie should still be a session cookie.
+
 -- Running test case: Storage.deleteCookies.ByFilter
 PASS: 'DeleteMe' should be gone.
 PASS: 'KeepMe' should remain.

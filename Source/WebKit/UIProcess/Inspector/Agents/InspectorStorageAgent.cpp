@@ -220,8 +220,14 @@ void InspectorStorageAgent::setCookie(Ref<JSON::Object>&& cookie, RefPtr<JSON::O
     webCoreCookie.secure = cookie->getBoolean("secure"_s).value_or(false);
     webCoreCookie.httpOnly = cookie->getBoolean("httpOnly"_s).value_or(false);
     webCoreCookie.session = cookie->getBoolean("session"_s).value_or(false);
-    if (auto expires = cookie->getDouble("expires"_s))
-        webCoreCookie.expires = *expires;
+    // A session cookie has no expiry, but getCookies must emit the required `expires` field, so it
+    // serializes a session cookie's absent expiry as 0. Echoing that back must not set expires to 0
+    // (the 1970 epoch, i.e. already expired). Treat session (and any non-positive timestamp) as "no
+    // expiry", matching WI.Cookie's own `(!session && expires)` rule.
+    if (!webCoreCookie.session) {
+        if (auto expires = cookie->getDouble("expires"_s); expires && *expires > 0)
+            webCoreCookie.expires = *expires;
+    }
     if (auto sameSite = cookie->getString("sameSite"_s); !sameSite.isEmpty())
         webCoreCookie.sameSite = fromProtocol(sameSite);
 

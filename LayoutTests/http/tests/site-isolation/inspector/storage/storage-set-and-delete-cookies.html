@@ -57,6 +57,28 @@ function test()
     });
 
     suite.addTestCase({
+        name: "Storage.setCookie.SessionCookieRoundtrip",
+        description: "A session cookie (session:true) read back by getCookies serializes its required 'expires' field as 0. Echoing that object straight back into setCookie must NOT file an epoch-expired cookie: the agent honors 'session' and leaves the expiry unset, so the cookie survives the round-trip.",
+        async test() {
+            await WI.backendTarget.StorageAgent.setCookie({
+                name: "SessionCookie",
+                value: "PASS",
+                domain: "127.0.0.1",
+                path: "/",
+                session: true,
+                expires: 0,
+            });
+
+            let {cookies} = await WI.backendTarget.StorageAgent.getCookies({name: "SessionCookie"});
+            InspectorTest.expectEqual(cookies.length, 1, "A session cookie set with expires:0 should be readable, not silently dropped as epoch-expired.");
+            if (cookies.length) {
+                InspectorTest.expectEqual(cookies[0].value, "PASS", "Session cookie value should be 'PASS'.");
+                InspectorTest.expectEqual(cookies[0].session, true, "Round-tripped cookie should still be a session cookie.");
+            }
+        }
+    });
+
+    suite.addTestCase({
         name: "Storage.deleteCookies.ByFilter",
         description: "Deleting by filter should remove only the matching cookies.",
         async test() {

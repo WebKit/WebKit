@@ -46,6 +46,7 @@ WI.MultiplexingBackendTarget = class MultiplexingBackendTarget extends WI.Target
         // Site Isolation. NetworkManager initializes the multiplexing target's Network agent
         // lazily when the first FrameTarget is created (signaling SI is active).
         WI.browserManager.initializeTarget(this);
+        WI.storageManager.initializeTarget(this);
         WI.targetManager.initializeTarget(this);
     }
 

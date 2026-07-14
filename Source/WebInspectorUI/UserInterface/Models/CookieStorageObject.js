@@ -57,10 +57,89 @@ WI.CookieStorageObject = class CookieStorageObject
         return this._host;
     }
 
+    // Under Site Isolation cookies are read through the "Storage" domain, which reads the authoritative
+    // NetworkProcess store and so sees the out-of-process cross-origin iframe cookies the legacy in-process
+    // Page cookie commands cannot. Otherwise the legacy Page path is used, leaving non-Site-Isolation
+    // sessions unchanged. Callers use these accessors and methods and never touch a specific agent/target.
+
+    get canGetCookies()
+    {
+        if (this._useStorageDomain)
+            return WI.backendTarget.hasCommand("Storage.getCookies");
+        return InspectorBackend.hasCommand("Page.getCookies");
+    }
+
+    get canSetCookie()
+    {
+        if (this._useStorageDomain)
+            return WI.backendTarget.hasCommand("Storage.setCookie");
+        return InspectorBackend.hasCommand("Page.setCookie");
+    }
+
+    get canDeleteCookie()
+    {
+        if (this._useStorageDomain)
+            return WI.backendTarget.hasCommand("Storage.deleteCookies");
+        return InspectorBackend.hasCommand("Page.deleteCookie");
+    }
+
+    // True when cookies can arrive from targets that appear after the initial load. Under Site Isolation
+    // a cross-origin iframe becomes its own out-of-process target and its cookies then become readable,
+    // so the view should refresh on TargetAdded. The legacy in-process path has no such late arrivals.
+    get reloadsCookiesOnTargetAdded()
+    {
+        return this._useStorageDomain;
+    }
+
+    getCookies()
+    {
+        if (this._useStorageDomain) {
+            // No filter: fetch the full authoritative store; the view buckets by host. Partition
+            // "context" targets the inspected page's data store.
+            return WI.backendTarget.StorageAgent.getCookies.invoke({partition: {type: "context"}}).then((payload) => payload.cookies);
+        }
+
+        return WI.assumingMainTarget().PageAgent.getCookies().then((payload) => payload.cookies);
+    }
+
+    setCookie(cookie, cookieProtocolPayload)
+    {
+        if (this._useStorageDomain)
+            return WI.backendTarget.StorageAgent.setCookie.invoke({cookie: cookieProtocolPayload, partition: {type: "context"}});
+
+        // COMPATIBILITY (macOS 15.2, iOS 18.2): `Page.setCookie` did not have a `shouldPartition` parameter yet.
+        return WI.assumingMainTarget().PageAgent.setCookie.invoke({
+            cookie: cookieProtocolPayload,
+            shouldPartition: !cookie.partitionKey && !!cookie.partitioned,
+        });
+    }
+
+    deleteCookie(cookie)
+    {
+        if (this._useStorageDomain) {
+            // Storage.deleteCookies is filter-based; target this one cookie by its identity fields.
+            let filter = {name: cookie.name};
+            if (cookie.domain)
+                filter.domain = cookie.domain;
+            if (cookie.path)
+                filter.path = cookie.path;
+            return WI.backendTarget.StorageAgent.deleteCookies.invoke({filter, partition: {type: "context"}});
+        }
+
+        return WI.assumingMainTarget().PageAgent.deleteCookie(cookie.name, cookie.url);
+    }
+
     saveIdentityToCookie(cookie)
     {
         // FIXME <https://webkit.org/b/151413>: This class should actually store cookie data for this host.
         cookie[WI.CookieStorageObject.CookieHostCookieKey] = this.host;
+    }
+
+    // Private
+
+    get _useStorageDomain()
+    {
+        return WI.storageManager.shouldUseStorageDomain;
     }
 };
 

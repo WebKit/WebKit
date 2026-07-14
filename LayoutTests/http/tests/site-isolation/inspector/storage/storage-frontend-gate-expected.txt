@@ -1,0 +1,12 @@
+Tests that the frontend's WI.storageManager.shouldUseStorageDomain gate selects the Storage domain for cookie inspection only once a cross-origin iframe (a Frame Target) makes Site Isolation active.
+
+
+== Running test suite: SiteIsolation.Storage.FrontendGate
+-- Running test case: SiteIsolation.Storage.FrontendGate.RoutesToStorageDomainOnceFrameTargetExists
+PASS: The Storage domain should exist on the backend (multiplexing) target regardless of Site Isolation.
+PASS: Site Isolation should not be active before a cross-origin iframe loads.
+PASS: Frontend should not route cookies through the Storage domain before Site Isolation is active.
+PASS: Cross-origin iframe should be its own Frame Target (out-of-process).
+PASS: Site Isolation should be active once a Frame Target exists.
+PASS: Frontend should route cookies through the Storage domain once Site Isolation is active.
+

@@ -42,21 +42,24 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         this._filterBarNavigationItem = new WI.FilterBarNavigationItem;
         this._filterBarNavigationItem.filterBar.addEventListener(WI.FilterBar.Event.FilterDidChange, this._handleFilterBarFilterDidChange, this);
 
-        if (InspectorBackend.hasCommand("Page.setCookie")) {
+        if (this._canSetCookie) {
             this._setCookieButtonNavigationItem = new WI.ButtonNavigationItem("cookie-storage-set-cookie", WI.UIString("Add Cookie"), "Images/Plus15.svg", 15, 15);
             this._setCookieButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleSetCookieButtonClick, this);
         }
 
-        if (InspectorBackend.hasCommand("Page.getCookies")) {
+        if (this._canGetCookies) {
             this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("cookie-storage-refresh", WI.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
             this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
         }
 
-        if (InspectorBackend.hasCommand("Page.deleteCookie")) {
-            this._clearButtonNavigationItem = new WI.ButtonNavigationItem("cookie-storage-clear", WI.UIString("Clear Cookies"), "Images/NavigationItemTrash.svg", 15, 15);
+        if (this._canDeleteCookie) {            this._clearButtonNavigationItem = new WI.ButtonNavigationItem("cookie-storage-clear", WI.UIString("Clear Cookies"), "Images/NavigationItemTrash.svg", 15, 15);
             this._clearButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
             this._clearButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleClearNavigationItemClicked, this);
         }
+
+        // Under Site Isolation the authoritative cookie store can gain cookies from a cross-origin
+        // iframe that only just became its own out-of-process target, so refresh when one appears.
+        WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, this._handleTargetAdded, this);
     }
 
     // Public
@@ -79,6 +82,13 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
     {
         cookie.type = WI.ContentViewCookieType.CookieStorage;
         cookie.host = this.representedObject.host;
+    }
+
+    closed()
+    {
+        WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, this._handleTargetAdded, this);
+
+        super.closed();
     }
 
     get scrollableElements()
@@ -153,7 +163,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
         contextMenu.appendSeparator();
 
-        if (InspectorBackend.hasCommand("Page.setCookie") && column.identifier !== "size") {
+        if (this._canSetCookie && column.identifier !== "size") {
             contextMenu.appendItem(WI.UIString("Edit %s").format(column.name), () => {
                 this._showCookiePopover(cell, this._filteredCookies[rowIndex], column.identifier);
             });
@@ -170,7 +180,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             InspectorFrontendHost.copyText(this._formatCookiesAsText(cookies));
         });
 
-        if (InspectorBackend.hasCommand("Page.deleteCookie")) {
+        if (this._canDeleteCookie) {
             contextMenu.appendItem(WI.UIString("Delete"), () => {
                 if (table.isRowSelected(rowIndex))
                     table.removeSelectedRows();
@@ -197,8 +207,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             this._filteredCookies.splice(rowIndex, 1);
             this._cookies.remove(cookie);
 
-            let target = WI.assumingMainTarget();
-            target.PageAgent.deleteCookie(cookie.name, cookie.url);
+            this._deleteCookie(cookie);
         }
     }
 
@@ -335,6 +344,47 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
     // Private
 
+    // Cookie fetch/store lives on the represented object (WI.CookieStorageObject); the view only asks
+    // it for cookies and for what operations are available, and never knows which backend serves them.
+
+    get _canGetCookies()
+    {
+        return this.representedObject.canGetCookies;
+    }
+
+    get _canSetCookie()
+    {
+        return this.representedObject.canSetCookie;
+    }
+
+    get _canDeleteCookie()
+    {
+        return this.representedObject.canDeleteCookie;
+    }
+
+    _getCookies()
+    {
+        return this.representedObject.getCookies();
+    }
+
+    _setCookie(cookie, cookieProtocolPayload)
+    {
+        return this.representedObject.setCookie(cookie, cookieProtocolPayload);
+    }
+
+    _deleteCookie(cookie)
+    {
+        return this.representedObject.deleteCookie(cookie);
+    }
+
+    _handleTargetAdded(event)
+    {
+        // The represented object may serve cookies from targets that appear after the initial load
+        // (e.g. a cross-origin iframe becoming its own target under Site Isolation); refresh if so.
+        if (this.representedObject.reloadsCookiesOnTargetAdded)
+            this._reloadCookies();
+    }
+
     _getCookiesForHost(cookies, host)
     {
         let resourceMatchesStorageDomain = (resource) => {
@@ -460,17 +510,13 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             return;
         }
 
-        let target = WI.assumingMainTarget();
-
         let promises = [];
-        if (editingCookie)
-            promises.push(target.PageAgent.deleteCookie(editingCookie.name, editingCookie.url));
 
-        // COMPATIBILITY (macOS 15.2, iOS 18.2): `Page.setCookie` did not have a `shouldPartition` parameter yet.
-        promises.push(target.PageAgent.setCookie.invoke({
-            cookie: cookieProtocolPayload,
-            shouldPartition: !cookieToSet.partitionKey && !!cookieToSet.partitioned,
-        }));
+        // Editing a cookie can change its identity (name/domain/path), so delete the original first.
+        if (editingCookie)
+            promises.push(this._deleteCookie(editingCookie));
+
+        promises.push(this._setCookie(cookieToSet, cookieProtocolPayload));
 
         promises.push(this._reloadCookies());
         await Promise.all(promises);
@@ -499,21 +545,24 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
     _handleClearNavigationItemClicked(event)
     {
-        let target = WI.assumingMainTarget();
         for (let cookie of this._cookies)
-            target.PageAgent.deleteCookie(cookie.name, cookie.url);
+            this._deleteCookie(cookie);
 
         this._reloadCookies();
     }
 
     _reloadCookies()
     {
-        let target = WI.assumingMainTarget();
-        if (!target.hasCommand("Page.getCookies"))
-            return;
+        // A refresh can be requested (e.g. by _handleTargetAdded) before initialLayout has created
+        // the table. There is nothing to populate yet; initialLayout does the first load itself.
+        if (!this._table)
+            return Promise.resolve();
 
-        target.PageAgent.getCookies().then((payload) => {
-            this._cookies = this._getCookiesForHost(payload.cookies.map(WI.Cookie.fromPayload), this.representedObject.host);
+        if (!this._canGetCookies)
+            return Promise.resolve();
+
+        return this._getCookies().then((cookies) => {
+            this._cookies = this._getCookiesForHost(cookies.map(WI.Cookie.fromPayload), this.representedObject.host);
             this._updateSort();
             this._updateFilteredCookies();
             this._updateEmptyFilterResultsMessage();
@@ -583,7 +632,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
     _handleTableKeyDown(event)
     {
         if (event.keyCode === WI.KeyboardShortcut.Key.Backspace.keyCode || event.keyCode === WI.KeyboardShortcut.Key.Delete.keyCode) {
-            if (InspectorBackend.hasCommand("Page.deleteCookie"))
+            if (this._canDeleteCookie)
                 this._table.removeSelectedRows();
             else
                 InspectorFrontendHost.beep();

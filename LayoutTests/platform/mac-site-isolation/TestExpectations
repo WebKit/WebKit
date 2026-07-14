@@ -58,6 +58,8 @@ http/tests/site-isolation/inspector/debugger/setBreakpoint-cross-origin-iframe.h
 http/tests/site-isolation/inspector/page/override-setting-cross-origin-iframe.html [ Pass Failure ]
 webkit.org/b/311836 http/tests/site-isolation/inspector/page/set-emulated-media-cross-origin-iframe.html [ Pass Failure ]
 http/tests/site-isolation/inspector/worker/worker-in-cross-origin-iframe.html [ Pass ]
+http/tests/site-isolation/inspector/storage/storage-get-cookies-cross-origin-iframe.html [ Pass ]
+http/tests/site-isolation/inspector/storage/storage-frontend-gate.html [ Pass ]
 http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-ephemeral.https.html [ Failure ]
 http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture.https.html [ Failure ]
 http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame.https.html [ Failure ]
