@@ -3717,17 +3717,17 @@ HardwareAccelerationEnabled:
 
 HeadingOffsetEnabled:
   type: bool
-  status: preview
+  status: stable
   category: html
   humanReadableName: "HTML headingoffset & headingreset attributes"
   humanReadableDescription: "Enable HTML headingoffset & headingreset attribute support"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 HiddenPageCSSAnimationSuspensionEnabled:
   type: bool
