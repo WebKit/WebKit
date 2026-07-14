@@ -1159,6 +1159,15 @@ TextStream& operator<<(TextStream& ts, TextWrapStyle style)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, WrapInside wrapInside)
+{
+    switch (wrapInside) {
+    case WrapInside::Auto: ts << "auto"_s; break;
+    case WrapInside::Avoid: ts << "avoid"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, TextBoxTrim textBoxTrim)
 {
     switch (textBoxTrim) {

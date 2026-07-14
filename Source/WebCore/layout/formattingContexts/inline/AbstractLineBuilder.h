@@ -40,6 +40,8 @@ struct LineInput {
     InlineRect initialLogicalRect;
 };
 
+using WrapOpportunityList = Vector<const InlineItem*, 32>;
+
 class AbstractLineBuilder {
 public:
     virtual LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&, bool isFirstFormattedLineCandidate) = 0;
@@ -75,7 +77,7 @@ protected:
     Line m_line;
     InlineRect m_lineLogicalRect;
     std::span<const InlineItem> m_inlineItemList;
-    Vector<const InlineItem*, 32> m_wrapOpportunityList;
+    WrapOpportunityList m_wrapOpportunityList;
     std::optional<InlineTextItem> m_partialLeadingTextItem;
     std::optional<PreviousLine> m_previousLine { };
     bool m_isFirstFormattedLineCandidate { false };

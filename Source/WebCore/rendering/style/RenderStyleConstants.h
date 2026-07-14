@@ -806,6 +806,11 @@ enum class TextWrapStyle : uint8_t {
     Stable
 };
 
+enum class WrapInside : bool {
+    Auto,
+    Avoid
+};
+
 enum class ImageRendering : uint8_t {
     Auto = 0,
     OptimizeSpeed,
@@ -1218,6 +1223,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, TextOverflow);
 WTF::TextStream& operator<<(WTF::TextStream&, TextSecurity);
 WTF::TextStream& operator<<(WTF::TextStream&, TextWrapMode);
 WTF::TextStream& operator<<(WTF::TextStream&, TextWrapStyle);
+WTF::TextStream& operator<<(WTF::TextStream&, WrapInside);
 WTF::TextStream& operator<<(WTF::TextStream&, TextBoxTrim);
 WTF::TextStream& operator<<(WTF::TextStream&, TextEdgeOver);
 WTF::TextStream& operator<<(WTF::TextStream&, TextEdgeUnder);

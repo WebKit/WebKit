@@ -154,6 +154,11 @@ inline bool ComputedStyleBase::isEffectivelyTransparent() const
     return m_inheritedRareData->effectivelyTransparent;
 }
 
+inline bool ComputedStyleBase::effectiveWrapInsideAvoid() const
+{
+    return m_inheritedRareData->effectiveWrapInsideAvoid;
+}
+
 inline bool ComputedStyleBase::insideDefaultButton() const
 {
     return m_inheritedRareData->insideDefaultButton;

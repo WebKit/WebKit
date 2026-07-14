@@ -352,6 +352,7 @@ public:
     #endif
             || a.wordBreak != b.wordBreak
             || a.overflowWrap != b.overflowWrap
+            || a.effectiveWrapInsideAvoid != b.effectiveWrapInsideAvoid
             || a.nbspMode != b.nbspMode
             || a.lineBreak != b.lineBreak
             || a.textSecurity != b.textSecurity

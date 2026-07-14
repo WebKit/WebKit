@@ -217,6 +217,7 @@ public:
     PREFERRED_TYPE(bool) unsigned hasExplicitlySetStrokeColor : 1;
     PREFERRED_TYPE(bool) unsigned effectiveInert : 1;
     PREFERRED_TYPE(bool) unsigned effectivelyTransparent : 1;
+    PREFERRED_TYPE(bool) unsigned effectiveWrapInsideAvoid : 1; // This box or an ancestor has wrap-inside: avoid.
     PREFERRED_TYPE(bool) unsigned isInSubtreeWithBlendMode : 1;
     PREFERRED_TYPE(bool) unsigned isForceHidden : 1;
     PREFERRED_TYPE(ContentVisibility) unsigned usedContentVisibility : 2;

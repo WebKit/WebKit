@@ -241,6 +241,7 @@ public:
     PREFERRED_TYPE(PositionTryOrder) unsigned positionTryOrder : 3;
     PREFERRED_TYPE(PositionVisibility) unsigned positionVisibility : 5;
     PREFERRED_TYPE(FieldSizing) unsigned fieldSizing : 1;
+    PREFERRED_TYPE(WrapInside) unsigned wrapInside : 1;
     PREFERRED_TYPE(bool) unsigned nativeAppearanceDisabled : 1;
 #if HAVE(CORE_MATERIAL)
     PREFERRED_TYPE(AppleVisualEffect) unsigned appleVisualEffect : 5;

@@ -1723,6 +1723,33 @@ void LineBuilder::commitCandidateContent(LineCandidate& lineCandidate, std::opti
     }
 }
 
+static const InlineItem& NODELETE wrapOpportunityToRevertTo(const WrapOpportunityList& wrapOpportunityList)
+{
+    ASSERT(!wrapOpportunityList.isEmpty());
+    auto enclosingBoxForWrapOpportunity = [](auto& wrapOpportunity) -> const Box& {
+        // Inline boxes set the wrapping rules for their content and not for themselves, so the box that encloses a wrap
+        // opportunity is the inline box its trailing content belongs to.
+        auto& layoutBox = wrapOpportunity.layoutBox();
+        return layoutBox.isInlineBox() ? layoutBox : layoutBox.parent();
+    };
+
+    // https://drafts.csswg.org/css-text-4/#wrap-inside
+    // Prefer the last wrap opportunity that is outside any wrap-inside: avoid box.
+    for (auto* wrapOpportunity : wrapOpportunityList | std::views::reverse) {
+        if (!enclosingBoxForWrapOpportunity(*wrapOpportunity).style().effectiveWrapInsideAvoid())
+            return *wrapOpportunity;
+    }
+    // Every opportunity is inside an avoid box, so we must break within one. "A break in an outer box must be used
+    // before a break within an inner box", so revert to the last opportunity sitting directly in an outermost avoid box
+    // - one whose enclosing box is not itself inside another avoid box.
+    for (auto* wrapOpportunity : wrapOpportunityList | std::views::reverse) {
+        if (!enclosingBoxForWrapOpportunity(*wrapOpportunity).parent().style().effectiveWrapInsideAvoid())
+            return *wrapOpportunity;
+    }
+    // The outermost avoid box is the only content on the line; break inside it as a last resort.
+    return *wrapOpportunityList.last();
+}
+
 LineBuilder::Result LineBuilder::processLineBreakingResult(LineCandidate& lineCandidate, const InlineItemRange& layoutRange, const InlineContentBreaker::Result& lineBreakingResult)
 {
     auto& candidateRuns = lineCandidate.inlineContent.continuousContent().runs();
@@ -1780,7 +1807,7 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(LineCandidate& lineCa
         ASSERT(lineBreakingResult.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes);
         // Not only this content can't be placed on the current line, but we even need to revert the line back to an earlier position.
         ASSERT(!m_wrapOpportunityList.isEmpty());
-        return { InlineContentBreaker::IsEndOfLine::Yes, { rebuildLineWithInlineContent(layoutRange, *m_wrapOpportunityList.last()), true } };
+        return { InlineContentBreaker::IsEndOfLine::Yes, { rebuildLineWithInlineContent(layoutRange, wrapOpportunityToRevertTo(m_wrapOpportunityList)), true } };
     case InlineContentBreaker::Result::Action::RevertToLastNonOverflowingWrapOpportunity:
         ASSERT(lineBreakingResult.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes);
         ASSERT(!m_wrapOpportunityList.isEmpty());

@@ -125,6 +125,7 @@ InheritedRareData::InheritedRareData()
     , hasExplicitlySetStrokeColor(false)
     , effectiveInert(false)
     , effectivelyTransparent(false)
+    , effectiveWrapInsideAvoid(false)
     , isInSubtreeWithBlendMode(false)
     , isForceHidden(false)
     , usedContentVisibility(static_cast<unsigned>(ContentVisibility::Visible))
@@ -231,6 +232,7 @@ inline InheritedRareData::InheritedRareData(const InheritedRareData& o)
     , hasExplicitlySetStrokeColor(o.hasExplicitlySetStrokeColor)
     , effectiveInert(o.effectiveInert)
     , effectivelyTransparent(o.effectivelyTransparent)
+    , effectiveWrapInsideAvoid(o.effectiveWrapInsideAvoid)
     , isInSubtreeWithBlendMode(o.isInSubtreeWithBlendMode)
     , isForceHidden(o.isForceHidden)
     , usedContentVisibility(o.usedContentVisibility)
@@ -340,6 +342,7 @@ bool InheritedRareData::operator==(const InheritedRareData& o) const
         && eventListenerRegionTypes == o.eventListenerRegionTypes
         && effectiveInert == o.effectiveInert
         && effectivelyTransparent == o.effectivelyTransparent
+        && effectiveWrapInsideAvoid == o.effectiveWrapInsideAvoid
         && usedContentVisibility == o.usedContentVisibility
         && insideDefaultButton == o.insideDefaultButton
         && insideSubmitButton == o.insideSubmitButton
@@ -457,6 +460,7 @@ void InheritedRareData::dumpDifferences(TextStream& ts, const InheritedRareData&
 
     LOG_IF_DIFFERENT_WITH_CAST(bool, effectiveInert);
     LOG_IF_DIFFERENT_WITH_CAST(bool, effectivelyTransparent);
+    LOG_IF_DIFFERENT_WITH_CAST(bool, effectiveWrapInsideAvoid);
 
     LOG_IF_DIFFERENT_WITH_CAST(bool, isInSubtreeWithBlendMode);
     LOG_IF_DIFFERENT_WITH_CAST(bool, isForceHidden);

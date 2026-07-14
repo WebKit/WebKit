@@ -113,6 +113,11 @@ inline void ComputedStyleBase::setIsEffectivelyTransparent(bool effectivelyTrans
     SET(m_inheritedRareData, effectivelyTransparent, effectivelyTransparent);
 }
 
+inline void ComputedStyleBase::setEffectiveWrapInsideAvoid(bool effectiveWrapInsideAvoid)
+{
+    SET(m_inheritedRareData, effectiveWrapInsideAvoid, effectiveWrapInsideAvoid);
+}
+
 inline void ComputedStyleBase::setEventListenerRegionTypes(OptionSet<EventListenerRegionType> eventListenerTypes)
 {
     SET(m_inheritedRareData, eventListenerRegionTypes, eventListenerTypes);

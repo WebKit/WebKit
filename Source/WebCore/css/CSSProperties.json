@@ -9214,6 +9214,25 @@
                 "url": "https://www.w3.org/TR/css-text/#word-spacing-property"
             }
         },
+        "wrap-inside": {
+            "animation-type": "discrete",
+            "initial": "auto",
+            "values": [
+                "auto",
+                "avoid"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssWrapInsideEnabled",
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
+                "computed-style-storage-kind": "enum",
+                "computed-style-type": "WrapInside",
+                "parser-grammar": "<<values>>"
+            },
+            "specification": {
+                "category": "css-text",
+                "url": "https://drafts.csswg.org/css-text-4/#wrap-inside"
+            }
+        },
         "x": {
             "animation-type": "by computed value",
             "initial": "0px",

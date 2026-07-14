@@ -185,6 +185,7 @@ enum class WhiteSpace : uint8_t;
 enum class WhiteSpaceCollapse : uint8_t;
 enum class WindRule : bool;
 enum class WordBreak : uint8_t;
+enum class WrapInside : bool;
 
 struct BorderData;
 struct BorderValue;
@@ -538,6 +539,9 @@ public:
 
     inline bool isEffectivelyTransparent() const; // This or any ancestor has opacity 0.
     inline void setIsEffectivelyTransparent(bool);
+
+    inline bool effectiveWrapInsideAvoid() const; // This box or any ancestor has wrap-inside: avoid.
+    inline void setEffectiveWrapInsideAvoid(bool);
 
     // No setter. Set via `ComputedStyleProperties::setDisplay()`.
     inline constexpr Display originalDisplay() const;

@@ -728,6 +728,12 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
 
     style.setIsEffectivelyTransparent(style.opacity().isTransparent() || m_parentStyle.isEffectivelyTransparent());
 
+    // https://drafts.csswg.org/css-text-4/#wrap-inside
+    // wrap-inside is not inherited, but its "avoid" effect applies to soft wrap opportunities within the box's own inline
+    // formatting context. Propagate it from an inline box to its in-flow content.
+    bool isInlineBox = style.display() == DisplayType::InlineFlow || style.display() == DisplayType::InlineRuby || style.display() == DisplayType::RubyBase;
+    style.setEffectiveWrapInsideAvoid(style.wrapInside() == WrapInside::Avoid || (isInlineBox && m_parentStyle.effectiveWrapInsideAvoid()));
+
     if (RefPtr element = dynamicDowncast<SVGElement>(m_element))
         adjustSVGElementStyle(style, *element);
 
