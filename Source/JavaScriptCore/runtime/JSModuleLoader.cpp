@@ -600,10 +600,30 @@ JSPromise* JSModuleLoader::hostLoadImportedModule(JSGlobalObject* globalObject, 
     const Identifier& specifier = moduleRequest.m_specifier;
     auto type = moduleRequest.type();
 
+    ModuleMapKey moduleMapKey { specifier.impl(), type };
+
+    // HostLoadImportedModule is required to be idempotent for the same
+    // (referrer, moduleRequest) pair. referrer.[[LoadedModules]] is that cache;
+    // FinishLoadingImportedModule populates it, and innerModuleLoading consults it,
+    // but top-level loadModule (dynamic import) reaches here without checking.
+    // Consult it now so we can skip the host resolve() hook for repeat imports.
+    {
+        auto& loadedModules = record ? record->loadedModules() : m_loadedModules;
+        if (auto iter = loadedModules.find(moduleMapKey); iter != loadedModules.end()) {
+            AbstractModuleRecord* loaded = iter->value.m_module.get();
+            ModuleRegistryEntry* loadedEntry = getRegisteredMayBeNull(loaded->moduleKey(), type);
+            ASSERT(loadedEntry);
+            ASSERT(loadedEntry->record() == loaded);
+            ASSERT(loadedEntry->loadPromise());
+            finishLoadingImportedModule(globalObject, referrer, moduleRequest, payload, loaded, scriptFetcher);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            return loadedEntry->loadPromise();
+        }
+    }
+
     if (specifier.isSymbol())
         mapEntry = getRegisteredMayBeNull(specifier, type);
 
-    ModuleMapKey moduleMapKey { specifier.impl(), type };
     ResolutionMapKey resolutionKey { referrerKey.impl(), specifier.impl() };
 
     if (auto error = m_resolutionFailures.get(resolutionKey)) {
