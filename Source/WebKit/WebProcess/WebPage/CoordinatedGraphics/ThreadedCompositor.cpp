@@ -80,7 +80,7 @@ ThreadedCompositor::ThreadedCompositor(WebPage& webPage, LayerTreeHost& layerTre
     , m_useSkia(webPage.corePage()->settings().useSkiaForComposition())
     , m_surface(AcceleratedSurface::create(webPage, [this] { frameComplete(); }, AcceleratedSurface::RenderingPurpose::Composited, m_useSkia))
     , m_sceneState(&sceneState)
-    , m_flipY(m_surface->shouldPaintMirrored())
+    , m_flipY(!m_surface->shouldPaintMirrored())
     , m_renderTimer(m_workQueue->runLoop(), "ThreadedCompositor::RenderTimer"_s, this, &ThreadedCompositor::renderLayerTree)
 {
     ASSERT(RunLoop::isMain());
@@ -129,8 +129,6 @@ ThreadedCompositor::ThreadedCompositor(WebPage& webPage, LayerTreeHost& layerTre
         } else {
             m_context = WTF::move(context);
             m_textureMapper = TextureMapper::create();
-            if (!nativeSurfaceHandle)
-                m_flipY = !m_flipY;
         }
     });
 }

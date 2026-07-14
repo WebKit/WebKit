@@ -110,6 +110,10 @@ public:
     uint64_t surfaceID() const { return m_id; }
     bool shouldPaintMirrored() const
     {
+#if USE(WPE_RENDERER)
+        if (m_swapChain.type() == SwapChain::Type::WPEBackend)
+            return true;
+#endif
 #if PLATFORM(WPE) || (PLATFORM(GTK) && USE(GTK4))
         return false;
 #else
@@ -190,12 +194,13 @@ private:
 #endif
 
     protected:
-        explicit RenderTarget(AcceleratedSurface&);
+        RenderTarget(AcceleratedSurface&, const WebCore::IntSize&);
 
-        void createSkiaSurfaceForTexture(const WebCore::BitmapTexture&);
+        void createSkiaSurfaceForFramebuffer(unsigned);
 
         uint64_t m_id { 0 };
         const CheckedRef<AcceleratedSurface> m_surface;
+        WebCore::IntSize m_size;
         sk_sp<SkSurface> m_skiaSurface;
 #if ENABLE(DAMAGE_TRACKING)
         std::optional<WebCore::Damage> m_damage;
@@ -221,11 +226,13 @@ private:
         void sync(bool) override;
         void setReleaseFenceFD(UnixFileDescriptor&&) override;
 
+        void initializeColorBuffer(EGLImage = nullptr);
+
         unsigned m_fbo { 0 };
         unsigned m_depthStencilBuffer { 0 };
+        unsigned m_colorBuffer { 0 };
         UnixFileDescriptor m_renderingFenceFD;
         UnixFileDescriptor m_releaseFenceFD;
-        WebCore::IntSize m_initialSize;
     };
 
 #if USE(GBM) || OS(ANDROID)
@@ -282,11 +289,8 @@ private:
 
     private:
         bool supportsExplicitSync() const override { return true; }
-        void initializeColorBuffer();
 
-        unsigned m_colorBuffer { 0 };
         EGLImage m_image { nullptr };
-        RefPtr<WebCore::BitmapTexture> m_texture;
     };
 #endif // USE(GBM) || OS(ANDROID)
 
@@ -300,9 +304,7 @@ private:
         bool supportsExplicitSync() const override { return false; }
         void didRenderFrame() override;
 
-        unsigned m_colorBuffer { 0 };
         const Ref<WebCore::ShareableBitmap> m_bitmap;
-        RefPtr<WebCore::BitmapTexture> m_texture;
     };
 
     class RenderTargetTexture final : public RenderTargetShareableBuffer {
@@ -333,7 +335,6 @@ private:
         void didRenderFrame() override;
 
         struct wpe_renderer_backend_egl_target* m_backend { nullptr };
-        WebCore::IntSize m_size;
     };
 #endif
 
