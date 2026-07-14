@@ -362,3 +362,5 @@ webkit.org/b/266292 [ mac ] TestWebKitAPI.FullscreenVideoTextRecognition.AddVide
 webkit.org/b/319407 [ mac ] TestWebKitAPI.WebKit.ViewScaleFactorAfterShrinkToFit [ Failure ]
 
 webkit.org/b/319410 [ mac ] TestWebKitAPI.PasteImage.PasteFileWhileNetworkProcessIsLaunching [ Failure ]
+
+webkit.org/b/318967 [ ios ] TestWebKitAPI.DownloadProgress.PublishProgressOnPartialDownload [ Pass Failure ]
