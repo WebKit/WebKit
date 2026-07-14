@@ -66,6 +66,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
         WI.settings.showConsoleMessageTimestamps.addEventListener(WI.Setting.Event.Changed, this._handleShowConsoleMessageTimestampsSettingChanged, this);
 
         this._pendingMessagesForSessionOrGroup = new Map;
+        this._openGroupForSessionOrGroup = new Map;
         this._scheduledRenderIdentifier = 0;
 
         this.startNewSession();
@@ -85,6 +86,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
     {
         if (clearPreviousSessions) {
             this._pendingMessagesForSessionOrGroup.clear();
+            this._openGroupForSessionOrGroup.clear();
 
             if (this._sessions.length) {
                 for (let session of this._sessions)
@@ -104,6 +106,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
         // Remove empty session.
         if (lastSession && !lastSession.hasMessages() && !this._pendingMessagesForSessionOrGroup.has(lastSession)) {
             this._sessions.pop();
+            this._openGroupForSessionOrGroup.delete(lastSession);
             lastSession.element.remove();
         }
 
@@ -354,7 +357,12 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
         const maxMessagesPerFrame = 100;
         let renderedMessages = 0;
         for (let [session, messages] of this._pendingMessagesForSessionOrGroup) {
-            this._currentSessionOrGroup = session;
+            // Resume rendering in the group that was still open when this session's
+            // messages were last rendered. Otherwise a group whose messages span more
+            // than one frame (or whose remaining messages arrive after the queue drained
+            // on a group boundary) would have its later messages appended to the session
+            // instead of the group, so they would not be hidden when the group is collapsed.
+            this._currentSessionOrGroup = this._openGroupForSessionOrGroup.get(session) || session;
 
             let messagesToRender = messages.splice(0, maxMessagesPerFrame - renderedMessages);
             for (let message of messagesToRender) {
@@ -363,6 +371,14 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
             }
 
             lastMessageView = messagesToRender.lastValue;
+
+            // Remember the currently open group (if any) so a later frame continues nesting
+            // into it. This must persist even when the pending queue drains on a group
+            // boundary, since more messages for the same open group may arrive later.
+            if (this._currentSessionOrGroup === session)
+                this._openGroupForSessionOrGroup.delete(session);
+            else
+                this._openGroupForSessionOrGroup.set(session, this._currentSessionOrGroup);
 
             if (!messages.length)
                 this._pendingMessagesForSessionOrGroup.delete(session);
