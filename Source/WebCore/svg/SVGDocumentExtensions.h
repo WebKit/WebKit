@@ -25,11 +25,14 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/URLHash.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
+class CachedImage;
 class Document;
+class IsolatedSVGDocumentContext;
 class Element;
 class SVGElement;
 class SVGFontFaceElement;
@@ -72,6 +75,10 @@ public:
     void registerSVGFontFaceElement(SVGFontFaceElement&);
     void unregisterSVGFontFaceElement(SVGFontFaceElement&);
 
+    bool hasExternalSVGPaintResource(const URL&) const;
+    void addExternalSVGPaintResource(const URL&, CachedImage&, Document&);
+    IsolatedSVGDocumentContext* isolatedSVGPaintDocument(const URL&) const;
+
 private:
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     WeakHashSet<SVGSVGElement, WeakPtrImplWithEventTargetData> m_timeContainers; // For SVG 1.2 support this will need to be made more general.
@@ -81,6 +88,7 @@ private:
     Vector<Ref<SVGElement>> m_rebuildElements;
     bool m_areAnimationsPaused;
 
+    HashMap<URL, Ref<IsolatedSVGDocumentContext>> m_externalSVGPaintDocuments;
 };
 
 } // namespace WebCore

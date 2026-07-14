@@ -27,9 +27,16 @@
 #include "StylePendingResources.h"
 
 #include "CSSCursorImageValue.h"
+#include "CachedImage.h"
+#include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
+#include "CachedResourceRequestInitiatorTypes.h"
+#include "Document.h"
 #include "DocumentResourceLoader.h"
 #include "DocumentView.h"
 #include "NodeInlinesLight.h"
+#include "ResourceRequest.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -70,6 +77,39 @@ static void loadPendingImage(Document& document, const Image* image, const Eleme
     const_cast<Image&>(*image).load(protect(document.cachedResourceLoader()), options);
 }
 
+static void loadPendingExternalSVGPaint(Document& document, const Style::SVGPaint& paint)
+{
+    auto url = paint.tryAnyURL();
+    if (!url)
+        return;
+
+    auto& resolved = url->resolved;
+    if (resolved.isNull())
+        return;
+
+    if (!resolved.protocolIsData() && !SVGURIReference::isExternalURIReference(resolved.string(), document))
+        return;
+
+    auto documentURL = *url;
+    documentURL.resolved.removeFragmentIdentifier();
+
+    CheckedRef extensions = document.svgExtensions();
+    auto key = documentURL.resolved;
+    if (extensions->hasExternalSVGPaintResource(key))
+        return;
+
+    auto options = CachedResourceLoader::defaultCachedResourceOptions();
+    options.mode = FetchOptions::Mode::SameOrigin;
+    options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
+
+    CachedResourceRequest request(ResourceRequest(WTF::URL { documentURL.resolved }), options);
+    request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
+    RefPtr cachedImage = protect(document.cachedResourceLoader())->requestImage(WTF::move(request)).value_or(nullptr);
+    if (!cachedImage)
+        return;
+    extensions->addExternalSVGPaintResource(key, *cachedImage, document);
+}
+
 void loadPendingResources(Style::ComputedStyle& style, Document& document, const Element* element)
 {
     for (auto& backgroundLayer : style.backgroundLayers().usedValues())
@@ -107,7 +147,12 @@ void loadPendingResources(Style::ComputedStyle& style, Document& document, const
     if (RefPtr shapeValueImage = style.shapeOutside().image())
         loadPendingImage(document, shapeValueImage.get(), element, LoadPolicy::Anonymous);
 
-    // Are there other pseudo-elements that need resource loading? 
+    if (document.settings().svgExternalResourcesEnabled()) {
+        loadPendingExternalSVGPaint(document, style.fill());
+        loadPendingExternalSVGPaint(document, style.stroke());
+    }
+
+    // Are there other pseudo-elements that need resource loading?
     if (CheckedPtr firstLineStyle = style.pseudoElementStyle({ PseudoElementType::FirstLine }))
         loadPendingResources(*firstLineStyle, document, element);
 }

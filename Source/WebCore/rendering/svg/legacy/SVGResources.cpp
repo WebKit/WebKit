@@ -20,7 +20,10 @@
 #include "config.h"
 #include "SVGResources.h"
 
+#include "Document.h"
+#include "DocumentInlines.h"
 #include "FilterOperation.h"
+#include "IsolatedSVGDocumentContext.h"
 #include "LegacyRenderSVGResourceClipperInlines.h"
 #include "LegacyRenderSVGResourceContainerInlines.h"
 #include "LegacyRenderSVGResourceFilterInlines.h"
@@ -29,6 +32,7 @@
 #include "LegacyRenderSVGRoot.h"
 #include "PathOperation.h"
 #include "RenderElementInlines.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFilterElement.h"
 #include "SVGGradientElement.h"
@@ -36,6 +40,7 @@
 #include "SVGNames.h"
 #include "SVGPatternElement.h"
 #include "SVGURIReference.h"
+#include "Settings.h"
 #include "StyleCachedImage.h"
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/SetForScope.h>
@@ -183,16 +188,12 @@ static inline bool NODELETE isChainableResource(const SVGElement& element, const
     return false;
 }
 
-static inline CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromSVGPaint(TreeScope& treeScope, const Style::SVGPaint& paint, AtomString& id, bool& hasPendingResource)
+static CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromTreeScopeAndId(TreeScope& treeScope, const AtomString& id, bool* hasPendingResource)
 {
-    auto paintURL = paint.tryAnyURL();
-    if (!paintURL)
-        return nullptr;
-
-    id = SVGURIReference::fragmentIdentifierFromIRIString(*paintURL, protect(treeScope.documentScope()));
     CheckedPtr container = getRenderSVGResourceContainerById(treeScope, id);
     if (!container) {
-        hasPendingResource = true;
+        if (hasPendingResource)
+            *hasPendingResource = true;
         return nullptr;
     }
 
@@ -201,6 +202,40 @@ static inline CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromS
         return nullptr;
 
     return container;
+}
+
+static inline CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromSVGPaint(TreeScope& treeScope, const Style::SVGPaint& paint, AtomString& id, bool& hasPendingResource)
+{
+    auto paintURL = paint.tryAnyURL();
+    if (!paintURL)
+        return nullptr;
+
+    Ref document = treeScope.documentScope();
+
+    if (document->settings().svgExternalResourcesEnabled()
+        && (paintURL->resolved.protocolIsData() || SVGURIReference::isExternalURIReference(paintURL->resolved.string(), document))) {
+        id = paintURL->resolved.fragmentIdentifier().toAtomString();
+        if (id.isEmpty())
+            return nullptr;
+
+        auto documentURL = *paintURL;
+        documentURL.resolved.removeFragmentIdentifier();
+
+        RefPtr isolatedDocument = document->svgExtensions().isolatedSVGPaintDocument(documentURL.resolved);
+        if (!isolatedDocument)
+            return nullptr;
+
+        RefPtr externalDocument = isolatedDocument->document();
+        if (!externalDocument)
+            return nullptr;
+
+        // The resource lives in the isolated document, which is realized separately and does not use
+        // this document's pending-resource mechanism so no hasPendingResource.
+        return paintingResourceFromTreeScopeAndId(*externalDocument, id, nullptr);
+    }
+
+    id = SVGURIReference::fragmentIdentifierFromIRIString(*paintURL, document);
+    return paintingResourceFromTreeScopeAndId(treeScope, id, &hasPendingResource);
 }
 
 std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderElement& renderer, const Style::ComputedStyle& style)

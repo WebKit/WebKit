@@ -7110,6 +7110,20 @@ SKAttributionEnabled:
     WebKit:
       default: true
 
+SVGExternalResourcesEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "SVG external resources"
+  humanReadableDescription: "Enable referencing SVG resources (paint servers, etc.) via external or data: URLs"
+  defaultValue:
+    WebCore:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
 SWVPDecodersAlwaysEnabled:
   type: bool
   status: internal

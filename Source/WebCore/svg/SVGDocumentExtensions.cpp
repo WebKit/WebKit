@@ -22,9 +22,12 @@
 #include "config.h"
 #include "SVGDocumentExtensions.h"
 
+#include "CachedImage.h"
+#include "Document.h"
 #include "DocumentPage.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
+#include "IsolatedSVGDocumentContext.h"
 #include "LocalFrame.h"
 #include "SMILTimeContainer.h"
 #include "SVGElement.h"
@@ -37,6 +40,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
@@ -168,6 +172,22 @@ void SVGDocumentExtensions::unregisterSVGFontFaceElement(SVGFontFaceElement& ele
 {
     ASSERT(m_svgFontFaceElements.contains(element));
     m_svgFontFaceElements.remove(element);
+}
+
+bool SVGDocumentExtensions::hasExternalSVGPaintResource(const URL& url) const
+{
+    return m_externalSVGPaintDocuments.contains(url);
+}
+
+void SVGDocumentExtensions::addExternalSVGPaintResource(const URL& url, CachedImage& cachedImage, Document& document)
+{
+    m_externalSVGPaintDocuments.set(url, IsolatedSVGDocumentContext::create(cachedImage, document));
+}
+
+IsolatedSVGDocumentContext* SVGDocumentExtensions::isolatedSVGPaintDocument(const URL& url) const
+{
+    auto it = m_externalSVGPaintDocuments.find(url);
+    return it != m_externalSVGPaintDocuments.end() ? it->value.ptr() : nullptr;
 }
 
 }

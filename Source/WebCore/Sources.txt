@@ -3532,6 +3532,7 @@ style/values/ui/StyleResize.cpp
 style/values/view-transitions/StyleViewTransitionName.cpp
 style/values/will-change/StyleWillChange.cpp
 svg/DocumentSVG.cpp
+svg/IsolatedSVGDocumentContext.cpp
 svg/SVGAElement.cpp @header:RenderStyleGetters
 svg/SVGAltGlyphDefElement.cpp
 svg/SVGAltGlyphElement.cpp @header:RenderStyleGetters

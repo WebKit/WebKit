@@ -14986,6 +14986,8 @@
 		7C017C3D24969F1300DC0C02 /* NavigatorPlugins.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigatorPlugins.idl; sourceTree = "<group>"; };
 		7C023200251A524800BA7BB6 /* DocumentSVG.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DocumentSVG.h; sourceTree = "<group>"; };
 		7C023201251A524800BA7BB6 /* DocumentSVG.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentSVG.cpp; sourceTree = "<group>"; };
+		9E114EAF2FF41ACE007BD399 /* IsolatedSVGDocumentContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IsolatedSVGDocumentContext.h; sourceTree = "<group>"; };
+		9E114EB02FF41AF3007BD399 /* IsolatedSVGDocumentContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IsolatedSVGDocumentContext.cpp; sourceTree = "<group>"; };
 		7C029C6D2493C8F800268204 /* ColorTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorTypes.h; sourceTree = "<group>"; };
 		7C0CEF281E4A542C008DEB80 /* JSDOMConstructorBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConstructorBase.h; sourceTree = "<group>"; };
 		7C0CEF291E4A54D3008DEB80 /* JSDOMConstructorWithDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConstructorWithDocument.h; sourceTree = "<group>"; };
@@ -36040,6 +36042,8 @@
 				7C023201251A524800BA7BB6 /* DocumentSVG.cpp */,
 				7C023200251A524800BA7BB6 /* DocumentSVG.h */,
 				B22277CD0D00BF1F0071B782 /* GradientAttributes.h */,
+				9E114EB02FF41AF3007BD399 /* IsolatedSVGDocumentContext.cpp */,
+				9E114EAF2FF41ACE007BD399 /* IsolatedSVGDocumentContext.h */,
 				B22277CE0D00BF1F0071B782 /* LinearGradientAttributes.h */,
 				B22277DB0D00BF1F0071B782 /* PatternAttributes.h */,
 				B22277DC0D00BF1F0071B782 /* RadialGradientAttributes.h */,
