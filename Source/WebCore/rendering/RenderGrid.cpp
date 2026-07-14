@@ -466,14 +466,15 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
 
         resetLogicalHeightBeforeLayoutIfNeeded();
 
+        // We are committed to a full grid layout; invalidate the resolved track list now so that a
+        // stale read asserts if this layout (either the grid formatting context path below or the
+        // legacy path) fails to repopulate it.
+        m_resolvedTrackList.invalidate();
+
         if (layoutUsingGridFormattingContext()) {
             endAndCommitUpdateScrollInfoAfterLayoutTransaction();
             return;
         }
-
-        // We are committed to a full grid layout; invalidate the resolved track list now so that a
-        // stale read asserts if we fail to repopulate it below (see updateResolvedTrackListsAfterLayout).
-        m_resolvedTrackList.invalidate();
 
         // Fieldsets need to find their legend and position it inside the border of the object.
         // The legend then gets skipped during normal layout. The same is true for ruby text.
@@ -1532,9 +1533,7 @@ Vector<LayoutUnit> RenderGrid::computeResolvedTrackList(Style::GridTrackSizingDi
 
 const Vector<LayoutUnit>& RenderGrid::trackSizesForComputedStyle(Style::GridTrackSizingDirection direction) const
 {
-    // FIXME: The grid formatting context path does not yet populate the resolved track list, so
-    // only assert validity for the legacy layout path.
-    ASSERT(m_hasGridFormattingContextLayout.value_or(false) || m_resolvedTrackList.isValid);
+    ASSERT(m_resolvedTrackList.isValid);
     return m_resolvedTrackList.sizes(direction);
 }
 
@@ -1542,6 +1541,14 @@ void RenderGrid::updateResolvedTrackListsAfterLayout()
 {
     m_resolvedTrackList.sizes(Style::GridTrackSizingDirection::Columns) = computeResolvedTrackList(Style::GridTrackSizingDirection::Columns);
     m_resolvedTrackList.sizes(Style::GridTrackSizingDirection::Rows) = computeResolvedTrackList(Style::GridTrackSizingDirection::Rows);
+    m_resolvedTrackList.isValid = true;
+}
+
+void RenderGrid::setResolvedTrackSizes(Vector<LayoutUnit>&& columnSizes, Vector<LayoutUnit>&& rowSizes)
+{
+    ASSERT(!m_resolvedTrackList.isValid);
+    m_resolvedTrackList.columnSizes = WTF::move(columnSizes);
+    m_resolvedTrackList.rowSizes = WTF::move(rowSizes);
     m_resolvedTrackList.isValid = true;
 }
 

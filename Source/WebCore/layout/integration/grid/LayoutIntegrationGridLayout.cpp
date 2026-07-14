@@ -217,6 +217,9 @@ void GridLayout::layout()
     CheckedRef renderGrid = gridBoxRenderer();
     renderGrid->updateLogicalHeight();
     updateOverflow(renderGrid);
+
+    // https://drafts.csswg.org/css-grid-2/#resolved-track-list
+    renderGrid->setResolvedTrackSizes(WTF::move(usedTrackSizes.columnSizes), WTF::move(usedTrackSizes.rowSizes));
 }
 
 void GridLayout::updateOverflow(RenderGrid& renderGrid)

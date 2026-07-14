@@ -283,6 +283,7 @@ private:
     // We compute this once at the end of layout instead of on demand for each getComputedStyle query.
     Vector<LayoutUnit> computeResolvedTrackList(Style::GridTrackSizingDirection) const;
     void updateResolvedTrackListsAfterLayout();
+    void setResolvedTrackSizes(Vector<LayoutUnit>&& columnSizes, Vector<LayoutUnit>&& rowSizes);
 
     ContentAlignmentData& offsetBetweenTracks(Style::GridTrackSizingDirection direction) LIFETIME_BOUND { return direction == Style::GridTrackSizingDirection::Columns ? m_offsetBetweenColumns : m_offsetBetweenRows; }
     const ContentAlignmentData& offsetBetweenTracks(Style::GridTrackSizingDirection direction) const LIFETIME_BOUND { return direction == Style::GridTrackSizingDirection::Columns ? m_offsetBetweenColumns : m_offsetBetweenRows; }
