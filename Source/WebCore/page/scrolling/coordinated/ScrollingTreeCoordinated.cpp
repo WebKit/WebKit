@@ -111,11 +111,9 @@ void ScrollingTreeCoordinated::didCompletePlatformRenderingUpdate()
     renderingUpdateComplete();
 }
 
-static bool collectDescendantLayersAtPoint(Vector<Ref<CoordinatedPlatformLayer>>& layersAtPoint, const Ref<CoordinatedPlatformLayer>& parent, const FloatPoint& point)
+static bool traverseDescendantLayersAtPoint(const Ref<CoordinatedPlatformLayer>& parent, const FloatPoint& point, const auto& iterator)
 {
-    bool existsOnDescendent = false;
-    bool existsOnLayer = !!parent->scrollingNodeID() && parent->bounds().contains(point) && parent->eventRegion().contains(roundedIntPoint(point));
-    for (auto& child : parent->children()) {
+    for (auto& child : parent->children() | std::views::reverse) {
         Locker childLocker { child->lock() };
         FloatPoint transformedPoint(point);
         if (child->transform().isInvertible()) {
@@ -128,13 +126,15 @@ static bool collectDescendantLayersAtPoint(Vector<Ref<CoordinatedPlatformLayer>>
             auto pointInChildSpace = transform.projectPoint(point);
             transformedPoint.set(pointInChildSpace.x(), pointInChildSpace.y());
         }
-        existsOnDescendent |= collectDescendantLayersAtPoint(layersAtPoint, child, transformedPoint);
+        if (traverseDescendantLayersAtPoint(child, transformedPoint, iterator))
+            return true;
     }
 
-    if (existsOnLayer && !existsOnDescendent)
-        layersAtPoint.append(parent);
-
-    return existsOnLayer || existsOnDescendent;
+    if (parent->bounds().contains(point) && parent->eventRegion().contains(roundedIntPoint(point))) {
+        if (iterator(parent, point))
+            return true;
+    }
+    return false;
 }
 
 RefPtr<ScrollingTreeNode> ScrollingTreeCoordinated::scrollingNodeForPoint(FloatPoint point)
@@ -146,19 +146,25 @@ RefPtr<ScrollingTreeNode> ScrollingTreeCoordinated::scrollingNodeForPoint(FloatP
     Locker layerLocker { m_layerHitTestMutex };
 
     auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeCoordinated*>(rootScrollingNode)->rootContentsLayer();
-    Vector<Ref<CoordinatedPlatformLayer>> layersAtPoint;
+
+    RefPtr<ScrollingTreeNode> hitScrollingNode;
     {
         Locker rootContentsLayerLocker { rootContentsLayer->lock() };
-        collectDescendantLayersAtPoint(layersAtPoint, Ref { *rootContentsLayer }, point);
+        traverseDescendantLayersAtPoint(Ref { *rootContentsLayer }, point, [&](const Ref<CoordinatedPlatformLayer>& layer, const FloatPoint&) {
+            if (!layer->scrollingNodeID())
+                return false;
+            Locker locker { layer->lock() };
+            auto* scrollingNode = nodeForID(layer->scrollingNodeID());
+            if (is<ScrollingTreeScrollingNode>(scrollingNode)) {
+                hitScrollingNode = scrollingNode;
+                return true;
+            }
+            return false;
+        });
     }
 
-    for (auto& layer : layersAtPoint | std::views::reverse) {
-        Locker locker { layer->lock() };
-        auto* scrollingNode = nodeForID(layer->scrollingNodeID());
-        if (is<ScrollingTreeScrollingNode>(scrollingNode))
-            return scrollingNode;
-    }
-
+    if (hitScrollingNode)
+        return hitScrollingNode;
     return rootScrollingNode;
 }
 
@@ -178,32 +184,6 @@ void ScrollingTreeCoordinated::hasNodeWithAnimatedScrollChanged(bool hasNodeWith
 #endif
 
 #if ENABLE(WHEEL_EVENT_REGIONS)
-static OptionSet<EventListenerRegionType> findEventListenerRegionTypes(const Ref<CoordinatedPlatformLayer>& parent, const FloatPoint& point)
-{
-    bool existsOnLayer = parent->bounds().contains(point) && parent->eventRegion().contains(roundedIntPoint(point));
-    for (auto& child : parent->children() | std::views::reverse) {
-        Locker childLocker { child->lock() };
-        FloatPoint transformedPoint(point);
-        if (child->transform().isInvertible()) {
-            float originX = child->anchorPoint().x() * child->size().width();
-            float originY = child->anchorPoint().y() * child->size().height();
-            auto transform = *(TransformationMatrix()
-                .translate3d(originX + child->position().x() - parent->boundsOrigin().x(), originY + child->position().y() - parent->boundsOrigin().y(), child->anchorPoint().z())
-                .multiply(child->transform())
-                .translate3d(-originX, -originY, -child->anchorPoint().z()).inverse());
-            auto pointInChildSpace = transform.projectPoint(point);
-            transformedPoint.set(pointInChildSpace.x(), pointInChildSpace.y());
-        }
-        if (auto result = findEventListenerRegionTypes(child, transformedPoint))
-            return result;
-    }
-
-    if (existsOnLayer)
-        return parent->eventRegion().eventListenerRegionTypesForPoint(roundedIntPoint(point));
-
-    return { };
-}
-
 OptionSet<EventListenerRegionType> ScrollingTreeCoordinated::eventListenerRegionTypesForPoint(FloatPoint point) const
 {
     RefPtr rootScrollingNode = rootNode();
@@ -214,7 +194,13 @@ OptionSet<EventListenerRegionType> ScrollingTreeCoordinated::eventListenerRegion
 
     Ref rootContentsLayer = *static_cast<ScrollingTreeFrameScrollingNodeCoordinated*>(rootScrollingNode.get())->rootContentsLayer();
     Locker rootContentsLayerLocker { rootContentsLayer->lock() };
-    return findEventListenerRegionTypes(rootContentsLayer, point);
+
+    OptionSet<EventListenerRegionType> result;
+    traverseDescendantLayersAtPoint(rootContentsLayer, point, [&](const Ref<CoordinatedPlatformLayer>& layer, const FloatPoint& point) {
+        result = layer->eventRegion().eventListenerRegionTypesForPoint(roundedIntPoint(point));
+        return true;
+    });
+    return result;
 }
 #endif
 
