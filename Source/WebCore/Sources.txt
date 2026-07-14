@@ -1399,6 +1399,7 @@ dom/PositionIterator.cpp @header:RenderStyleGetters
 dom/ProcessingInstruction.cpp
 dom/ProgressEvent.cpp
 dom/PromiseRejectionEvent.cpp
+dom/PromiseSettlementObserver.cpp
 dom/PseudoElement.cpp @header:RenderStyleGetters
 dom/QualifiedName.cpp
 dom/QualifiedNameCache.cpp
@@ -2241,6 +2242,7 @@ page/MemoryRelease.cpp @header:RenderStyleGetters @cost:9
 page/MouseEventWithHitTestResults.cpp
 page/NavigateEvent.cpp
 page/Navigation.cpp
+page/NavigationAPIMethodTracker.cpp
 page/NavigationActivation.cpp
 page/NavigationCurrentEntryChangeEvent.cpp
 page/NavigationDestination.cpp

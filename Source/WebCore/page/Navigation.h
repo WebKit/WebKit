@@ -31,8 +31,10 @@
 #include "JSDOMPromiseDeferredForward.h"
 #include "LocalDOMWindowProperty.h"
 #include "NavigateEvent.h"
+#include "NavigationAPIMethodTracker.h"
 #include "NavigationHistoryEntry.h"
 #include "NavigationNavigationType.h"
+#include "NavigationRateLimiter.h"
 #include "NavigationTransition.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/MonotonicTime.h>
@@ -48,63 +50,6 @@ class HistoryItem;
 class SerializedScriptValue;
 class NavigationActivation;
 class NavigationDestination;
-
-// https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigation-api-method-tracker
-class NavigationAPIMethodTracker : public RefCounted<NavigationAPIMethodTracker> {
-    WTF_MAKE_TZONE_ALLOCATED(NavigationAPIMethodTracker);
-public:
-    static Ref<NavigationAPIMethodTracker> create(JSC::JSGlobalObject&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue&& info, RefPtr<SerializedScriptValue>&& serializedState);
-    ~NavigationAPIMethodTracker();
-
-    bool operator==(const NavigationAPIMethodTracker& other) const
-    {
-        // key is optional so we manually identify each tracker.
-        return m_identifier == other.m_identifier;
-    }
-
-    const String& key() const { return m_key; }
-    void setKey(const String& key) { m_key = key; }
-    JSValueInWrappedObject& info() { return m_info; }
-    SerializedScriptValue* serializedState() const { return m_serializedState.get(); }
-    DeferredPromise& committedPromise() { return m_committedPromise; }
-    const DeferredPromise& committedPromise() const { return m_committedPromise; }
-    DeferredPromise& finishedPromise() { return m_finishedPromise; }
-    const DeferredPromise& finishedPromise() const { return m_finishedPromise; }
-
-    bool hasCommitted() const { return !!m_committedToEntry; }
-    bool isSettled() const { return m_state == State::Settled; }
-
-    // https://html.spec.whatwg.org/multipage/nav-history-apis.html#notify-about-the-committed-to-entry
-    void commitTo(NavigationHistoryEntry&, NavigationNavigationType);
-    // https://html.spec.whatwg.org/multipage/nav-history-apis.html#resolve-the-finished-promise
-    void resolveFinished();
-    // https://html.spec.whatwg.org/multipage/nav-history-apis.html#reject-the-finished-promise
-    void rejectFinished(const Exception&, JSC::JSValue exceptionObject);
-    void rejectFinished(JSC::JSValue error);
-
-private:
-    NavigationAPIMethodTracker(JSC::JSGlobalObject&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue&& info, RefPtr<SerializedScriptValue>&& serializedState);
-
-    enum class IdentifierType { };
-    using Identifier = ObjectIdentifier<IdentifierType>;
-
-    // The commit and finish signals can arrive in either order; each promise settles exactly once.
-    enum class State : uint8_t {
-        Pending,
-        FinishedBeforeCommit,
-        Committed,
-        Settled,
-    };
-
-    State m_state { State::Pending };
-    String m_key;
-    JSValueInWrappedObject m_info;
-    RefPtr<SerializedScriptValue> m_serializedState;
-    RefPtr<NavigationHistoryEntry> m_committedToEntry;
-    Ref<DeferredPromise> m_committedPromise;
-    Ref<DeferredPromise> m_finishedPromise;
-    Identifier m_identifier;
-};
 
 enum class ShouldCopyStateObjectFromCurrentEntry : bool { No, Yes };
 
@@ -206,50 +151,8 @@ public:
     };
     Ref<AbortHandler> registerAbortHandler();
 
-    // Rate limiter to prevent excessive navigation requests.
-    class RateLimiter {
-        WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(RateLimiter);
-        WTF_MAKE_NONCOPYABLE(RateLimiter);
-        WTF_MAKE_NONMOVABLE(RateLimiter);
-    public:
-        RateLimiter() = default;
-
-        bool navigationAllowed();
-        bool wasReported() const { return m_limitMessageSent; }
-        void markReported() { m_limitMessageSent = true; }
-
-        // Testing support
-        void setParametersForTesting(unsigned maxNavigations, Seconds duration)
-        {
-            m_maxNavigationsPerWindow = maxNavigations;
-            m_windowDuration = duration;
-            resetForTesting();
-        }
-
-        void resetForTesting()
-        {
-            m_windowStartTime = MonotonicTime::now();
-            m_navigationCount = 0;
-            m_limitMessageSent = false;
-        }
-
-    private:
-        friend class Navigation;
-
-        // Sliding window rate limiter: allows 200 navigations per 10 second window (~20/sec sustained).
-        // Chromium uses 200 navigations per 10 seconds (same ~20/sec rate):
-        // https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/core/frame/navigation_rate_limiter.cc
-        // Both prevent IPC flooding and stack overflow from recursive navigation patterns.
-        unsigned m_maxNavigationsPerWindow { 200 };
-        Seconds m_windowDuration { 10_s };
-
-        MonotonicTime m_windowStartTime { MonotonicTime::now() };
-        unsigned m_navigationCount { 0 };
-        bool m_limitMessageSent { false };
-    };
-
     // Testing support
-    RateLimiter& rateLimiterForTesting() LIFETIME_BOUND { return m_rateLimiter; }
+    NavigationRateLimiter& rateLimiterForTesting() LIFETIME_BOUND { return m_rateLimiter; }
 
     NavigateEvent* ongoingNavigateEvent() { return m_ongoingNavigateEvent.get(); } // This may get called on a GC thread.
     bool hasInterceptedOngoingNavigateEvent() const { return m_ongoingNavigateEvent && m_ongoingNavigateEvent->wasIntercepted(); }
@@ -289,33 +192,6 @@ private:
     void disposeOfForwardEntriesInParents(BackForwardItemIdentifier);
     void recursivelyDisposeOfForwardEntriesInParents(BackForwardItemIdentifier, LocalFrame* navigatedFrame);
 
-    // https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigation-api-method-tracker
-    class MethodTrackerRegistry {
-    public:
-        void setUpcomingNonTraverse(Ref<NavigationAPIMethodTracker>&&) WTF_EXCLUDES_LOCK(m_lock);
-        void addUpcomingTraverse(const String& key, Ref<NavigationAPIMethodTracker>&&) WTF_EXCLUDES_LOCK(m_lock);
-        NavigationAPIMethodTracker* upcomingTraverse(const String& key) const WTF_EXCLUDES_LOCK(m_lock);
-        NavigationAPIMethodTracker* ongoing() const WTF_EXCLUDES_LOCK(m_lock);
-
-        RefPtr<NavigationAPIMethodTracker> takeUpcomingNonTraverseIfEquals(NavigationAPIMethodTracker&) WTF_EXCLUDES_LOCK(m_lock);
-
-        // https://html.spec.whatwg.org/multipage/nav-history-apis.html#promote-an-upcoming-api-method-tracker-to-ongoing
-        NavigationAPIMethodTracker* promoteUpcomingNonTraverseToOngoing() WTF_EXCLUDES_LOCK(m_lock);
-        NavigationAPIMethodTracker* promoteUpcomingTraverseToOngoing(const String& destinationKey) WTF_EXCLUDES_LOCK(m_lock);
-
-        // https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigation-api-method-tracker-clean-up
-        void unregister(NavigationAPIMethodTracker&) WTF_EXCLUDES_LOCK(m_lock);
-
-        bool isEmpty() const WTF_EXCLUDES_LOCK(m_lock);
-        void visitInGCThread(JSC::AbstractSlotVisitor&) const WTF_EXCLUDES_LOCK(m_lock);
-
-    private:
-        mutable Lock m_lock;
-        RefPtr<NavigationAPIMethodTracker> m_ongoing WTF_GUARDED_BY_LOCK(m_lock);
-        RefPtr<NavigationAPIMethodTracker> m_upcomingNonTraverse WTF_GUARDED_BY_LOCK(m_lock);
-        HashMap<String, Ref<NavigationAPIMethodTracker>> m_upcomingTraverse WTF_GUARDED_BY_LOCK(m_lock);
-    };
-
     std::optional<size_t> m_currentEntryIndex;
     RefPtr<NavigationTransition> m_transition;
     RefPtr<NavigationActivation> m_activation;
@@ -324,9 +200,9 @@ private:
     RefPtr<NavigateEvent> m_ongoingNavigateEvent;
     FocusDidChange m_focusChangedDuringOngoingNavigation { FocusDidChange::No };
     bool m_suppressNormalScrollRestorationDuringOngoingNavigation { false };
-    MethodTrackerRegistry m_methodTrackers;
+    NavigationMethodTrackerRegistry m_methodTrackers;
     WeakHashSet<AbortHandler> m_abortHandlers;
-    RateLimiter m_rateLimiter;
+    NavigationRateLimiter m_rateLimiter;
 };
 
 } // namespace WebCore
