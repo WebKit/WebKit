@@ -141,6 +141,9 @@ void NetworkResourcesData::resourceCreated(const String& requestId, const String
 
     auto resourceData = makeUnique<ResourceData>(requestId, loaderId);
     resourceData->setCachedResource(&cachedResource);
+    m_cachedResourceToRequestIds.ensure(cachedResource, [] {
+        return HashSet<String>();
+    }).iterator->value.add(requestId);
     m_requestIdToResourceDataMap.set(requestId, WTF::move(resourceData));
 }
 
@@ -276,6 +279,11 @@ void NetworkResourcesData::addCachedResource(const String& requestId, CachedReso
     if (!resourceData)
         return;
     resourceData->setCachedResource(cachedResource);
+    if (cachedResource) {
+        m_cachedResourceToRequestIds.ensure(*cachedResource, [] {
+            return HashSet<String>();
+        }).iterator->value.add(requestId);
+    }
 }
 
 void NetworkResourcesData::addResourceSharedBuffer(const String& requestId, RefPtr<FragmentedSharedBuffer>&& buffer, const String& textEncodingName)
@@ -311,14 +319,13 @@ NetworkResourcesData::ResourceData const* NetworkResourcesData::dataForURL(const
 Vector<String> NetworkResourcesData::removeCachedResource(CachedResource* cachedResource)
 {
     Vector<String> result;
-    for (auto& entry : m_requestIdToResourceDataMap) {
-        ResourceData* resourceData = entry.value.get();
-        if (resourceData->cachedResource() == cachedResource) {
+    for (auto& requestId : m_cachedResourceToRequestIds.take(*cachedResource)) {
+        if (auto* resourceData = resourceDataForRequestId(requestId)) {
+            ASSERT(resourceData->cachedResource() == cachedResource);
             resourceData->setCachedResource(nullptr);
-            result.append(entry.key);
+            result.append(requestId);
         }
     }
-
     return result;
 }
 
@@ -327,6 +334,7 @@ void NetworkResourcesData::clear(std::optional<String> preservedLoaderId)
     if (!preservedLoaderId) {
         m_requestIdToResourceDataMap.clear();
         m_requestIdsDeque.clear();
+        m_cachedResourceToRequestIds.clear();
         m_contentSize = 0;
         return;
     }
@@ -338,6 +346,7 @@ void NetworkResourcesData::clear(std::optional<String> preservedLoaderId)
         if (resourceData->loaderId() == *preservedLoaderId)
             m_requestIdsDeque.add(requestId);
         else {
+            removeRequestIdFromCachedResourceIndex(*resourceData, requestId);
             m_contentSize -= resourceData->evictContent();
             m_requestIdToResourceDataMap.remove(requestId);
         }
@@ -363,8 +372,24 @@ void NetworkResourcesData::ensureNoDataForRequestId(const String& requestId)
         return;
 
     ResourceData* resourceData = result.get();
+    removeRequestIdFromCachedResourceIndex(*resourceData, requestId);
     if (resourceData->hasContent() || resourceData->hasData())
         m_contentSize -= resourceData->evictContent();
+}
+
+void NetworkResourcesData::removeRequestIdFromCachedResourceIndex(const ResourceData& resourceData, const String& requestId)
+{
+    RefPtr cachedResource = resourceData.cachedResource();
+    if (!cachedResource)
+        return;
+
+    auto it = m_cachedResourceToRequestIds.find(*cachedResource);
+    if (it == m_cachedResourceToRequestIds.end())
+        return;
+
+    it->value.remove(requestId);
+    if (it->value.isEmpty())
+        m_cachedResourceToRequestIds.remove(it);
 }
 
 bool NetworkResourcesData::ensureFreeSpace(size_t size)
