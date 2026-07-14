@@ -189,6 +189,7 @@ WI.settings = {
     canvasRecordingAutoCaptureFrameCount: new WI.Setting("canvas-recording-auto-capture-frame-count", 1),
     consoleAutoExpandTrace: new WI.Setting("console-auto-expand-trace", true),
     consoleClearAPIEnabled: new WI.Setting("console-clear-api-enabled", true),
+    consoleEvaluationPreviewEnabled: new WI.Setting("console-evaluation-preview-enabled", true),
     consoleSavedResultAlias: new WI.Setting("console-saved-result-alias", ""),
     cssChangesPerNode: new WI.Setting("css-changes-per-node", false),
     clearLogOnNavigate: new WI.Setting("clear-log-on-navigate", true),

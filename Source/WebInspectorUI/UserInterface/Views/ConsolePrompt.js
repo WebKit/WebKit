@@ -64,6 +64,19 @@ WI.ConsolePrompt = class ConsolePrompt extends WI.View
 
         this._history = [{}];
         this._historyIndex = 0;
+
+        this._evaluationPreviewElement = this.element.appendChild(document.createElement("div"));
+        this._evaluationPreviewElement.classList.add("evaluation-preview");
+        this._evaluationPreviewElement.hidden = !WI.settings.consoleEvaluationPreviewEnabled.value;
+
+        this._evaluationPreviewTimeoutIdentifier = undefined;
+
+        this._codeMirror.on("change", this._handleCodeMirrorChange.bind(this));
+        WI.settings.consoleEvaluationPreviewEnabled.addEventListener(WI.Setting.Event.Changed, this._handleEvaluationPreviewSettingChanged, this);
+        WI.settings.consoleSavedResultAlias.addEventListener(WI.Setting.Event.Changed, this._handleEvaluationEnvironmentChanged, this);
+        WI.settings.emulateInUserGesture.addEventListener(WI.Setting.Event.Changed, this._handleEvaluationEnvironmentChanged, this);
+        WI.runtimeManager.addEventListener(WI.RuntimeManager.Event.ActiveExecutionContextChanged, this._handleEvaluationEnvironmentChanged, this);
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this._handleEvaluationEnvironmentChanged, this);
     }
 
     // Public
@@ -145,6 +158,16 @@ WI.ConsolePrompt = class ConsolePrompt extends WI.View
         return !!this.text;
     }
 
+    completionControllerCompletionApplied(completionController)
+    {
+        this._scheduleEvaluationPreviewUpdate();
+    }
+
+    completionControllerCompletionsHidden(completionController)
+    {
+        this._scheduleEvaluationPreviewUpdate();
+    }
+
     sizeDidChange()
     {
         super.sizeDidChange();
@@ -172,6 +195,101 @@ WI.ConsolePrompt = class ConsolePrompt extends WI.View
             if (result === WI.CodeMirrorCompletionController.UpdatePromise.NoCompletionsFound)
                 InspectorFrontendHost.beep();
         });
+    }
+
+    _handleCodeMirrorChange(codeMirror)
+    {
+        this._scheduleEvaluationPreviewUpdate();
+    }
+
+    _handleEvaluationEnvironmentChanged(event)
+    {
+        this._scheduleEvaluationPreviewUpdate();
+    }
+
+    _handleEvaluationPreviewSettingChanged(event)
+    {
+        let enabled = WI.settings.consoleEvaluationPreviewEnabled.value;
+        this._evaluationPreviewElement.hidden = !enabled;
+
+        if (enabled)
+            this._scheduleEvaluationPreviewUpdate();
+        else
+            this._cancelEvaluationPreview();
+    }
+
+    _scheduleEvaluationPreviewUpdate()
+    {
+        if (!WI.settings.consoleEvaluationPreviewEnabled.value)
+            return;
+
+        this._cancelEvaluationPreview(false);
+
+        let text = this._completionController.textWithCurrentCompletion()?.trim();
+        if (!text) {
+            this._evaluationPreviewElement.removeChildren();
+            return;
+        }
+
+        let identifier = setTimeout(() => {
+            this.delegate?.consolePromptGetEvaluationPreviewObject?.(this, text, (result, wasThrown) => {
+                if (identifier !== this._evaluationPreviewTimeoutIdentifier)
+                    return;
+
+                let previewElement = undefined;
+
+                if (result) {
+                    if (wasThrown) {
+                        if (result.subtype === "error") {
+                            if (result.description.startsWith("SyntaxError")) {
+                                // Nothing to show.
+                            } else
+                                previewElement = WI.FormattedValue.createElementForError(result);
+                        } else {
+                            const hadException = true;
+                            previewElement = WI.FormattedValue.createElementForRemoteObject(result, true);
+                        }
+                    } else if (result.preview)
+                        previewElement = WI.FormattedValue.createObjectPreviewOrFormattedValueForObjectPreview(result.preview, {objectPreviewViewMode: WI.ObjectPreviewView.Mode.Brief});
+                    else
+                        previewElement = WI.FormattedValue.createElementForRemoteObject(result);
+                }
+
+                if (previewElement)
+                    this._evaluationPreviewElement.replaceChildren(previewElement);
+                else
+                    this._evaluationPreviewElement.removeChildren();
+            });
+        }, 100);
+        this._evaluationPreviewTimeoutIdentifier = identifier;
+    }
+
+    _renderEvaluationPreview(result, wasThrown)
+    {
+        if (wasThrown) {
+            if (result.subtype === "error")
+                return WI.FormattedValue.createElementForError(result);
+
+            const hadException = true;
+            return WI.FormattedValue.createElementForRemoteObject(result, true);
+        }
+
+        let preview = result.preview;
+        if (preview)
+            return WI.FormattedValue.createObjectPreviewOrFormattedValueForObjectPreview(preview, {objectPreviewViewMode: WI.ObjectPreviewView.Mode.Brief});
+
+        return WI.FormattedValue.createElementForRemoteObject(result);
+    }
+
+    _cancelEvaluationPreview(clearPreview = true)
+    {
+        if (this._evaluationPreviewTimeoutIdentifier) {
+            clearTimeout(this._evaluationPreviewTimeoutIdentifier);
+            this._evaluationPreviewTimeoutIdentifier = undefined;
+        }
+
+        if (clearPreview)
+            this._evaluationPreviewElement.removeChildren();
     }
 
     _handleEscapeKey(codeMirror)
@@ -254,6 +372,7 @@ WI.ConsolePrompt = class ConsolePrompt extends WI.View
                 return;
             }
 
+            this._cancelEvaluationPreview();
             this._commitHistoryEntry(this._historyEntryForCurrentText());
 
             if (!keepCurrentText) {
