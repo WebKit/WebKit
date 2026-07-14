@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/NotificationDirection.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <optional>
 #include <pal/SessionID.h>
@@ -37,8 +38,6 @@
 OBJC_CLASS NSDictionary;
 
 namespace WebCore {
-
-enum class NotificationDirection : uint8_t;
 
 static constexpr Seconds silentPushTimeoutForProduction { 30_s };
 static constexpr Seconds silentPushTimeoutForTesting { 1_s };
@@ -60,7 +59,7 @@ struct NotificationData {
     String iconURL;
     String tag;
     String language;
-    WebCore::NotificationDirection direction;
+    NotificationDirection direction { NotificationDirection::Auto };
     String originString;
     URL serviceWorkerRegistrationURL;
     WTF::UUID notificationID { WTF::UUID::createVersion4() };
