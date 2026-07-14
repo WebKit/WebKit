@@ -93,3 +93,7 @@ exec \"\$DIR/MiniBrowser.app/Contents/MacOS/MiniBrowser\" \"\$@\"
 ")
 file(CHMOD ${CMAKE_BINARY_DIR}/run-minibrowser PERMISSIONS
     OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+
+if (TARGET MiniBrowser)
+    WEBKIT_PROCESS_ENTITLEMENTS(MiniBrowser ENTITLEMENTS ${TOOLS_DIR}/MiniBrowser/MiniBrowser.entitlements)
+endif ()
