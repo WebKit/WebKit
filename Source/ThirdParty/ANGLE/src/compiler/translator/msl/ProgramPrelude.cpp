@@ -1017,7 +1017,7 @@ struct ANGLE_VectorElemRef
     ANGLE_VectorElemRef(thread metal::vec<T, N> &vec, int index)
         : mVec(vec), mRef(vec[index]), mIndex(index)
     {}
-    operator thread T &() { return mRef; }
+    operator thread T &() thread { return mRef; }
 };
 template <typename T, int N>
 ANGLE_ALWAYS_INLINE ANGLE_VectorElemRef<T, N> ANGLE_elem_ref(thread metal::vec<T, N> &vec, int index)
@@ -1052,7 +1052,7 @@ struct ANGLE_SwizzleRef
             mRef[i] = mVec[j];
         }
     }
-    operator thread metal::vec<T, SN> &() { return mRef; }
+    operator thread metal::vec<T, SN> &() thread { return mRef; }
 };
 template <typename T, int N>
 ANGLE_ALWAYS_INLINE ANGLE_VectorElemRef<T, N> ANGLE_swizzle_ref(thread metal::vec<T, N> &vec, int i0)
@@ -1090,7 +1090,7 @@ struct ANGLE_Out
     ANGLE_Out(thread T &dest)
         : mTemp(dest), mDest(dest)
     {}
-    operator thread T &() { return mTemp; }
+    operator thread T &() thread { return mTemp; }
 };
 template <typename T>
 ANGLE_ALWAYS_INLINE ANGLE_Out<T> ANGLE_out(thread T &dest)
@@ -1109,7 +1109,7 @@ struct ANGLE_InOut
     ANGLE_InOut(thread T &dest)
         : mTemp(dest), mDest(dest)
     {}
-    operator thread T &() { return mTemp; }
+    operator thread T &() thread { return mTemp; }
 };
 template <typename T>
 ANGLE_ALWAYS_INLINE ANGLE_InOut<T> ANGLE_inout(thread T &dest)
