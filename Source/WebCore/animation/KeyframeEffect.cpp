@@ -63,6 +63,8 @@
 #include "RenderBox.h"
 #include "RenderBoxModelObject.h"
 #include "RenderElement.h"
+#include "RenderLayer.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderObjectInlines.h"
 #include "ScrollTimeline.h"
 #include "Settings.h"
@@ -2184,6 +2186,22 @@ void KeyframeEffect::animationDidFinish()
     if (canHaveAcceleratedRepresentation() && !m_isAssociatedWithProgressBasedTimeline)
         updateAcceleratedAnimationIfNecessary();
 #endif
+
+    // An accelerated transform animation runs on the compositor without triggering layout, so a transform that extends
+    // its scroll container's scrollable overflow leaves the container over-scrolled once the animation settles. Recompute
+    // overflow at completion so the scroll offset is re-clamped -- but only when the enclosing scroll container is actually
+    // scrolled, since otherwise there is nothing to re-clamp and forcing layout would needlessly repaint every composited
+    // transform animation on completion. webkit.org/b/318289.
+    if (animatablePropertiesContainTransformRelatedProperty(animatedProperties())) {
+        if (CheckedPtr renderer = this->renderer()) {
+            if (CheckedPtr scrollContainer = renderer->enclosingScrollableContainer()) {
+                CheckedPtr layer = scrollContainer->layer();
+                CheckedPtr scrollableArea = layer ? layer->scrollableArea() : nullptr;
+                if (scrollableArea && !scrollableArea->scrollOffset().isZero())
+                    renderer->setNeedsLayoutForOverflowChange();
+            }
+        }
+    }
 }
 
 void KeyframeEffect::animationPlaybackRateDidChange()
