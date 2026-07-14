@@ -72,6 +72,9 @@ void layoutWithFormattingContextForBox(const Layout::ElementBox& box, std::optio
     if (widthConstraint)
         renderer->clearOverridingBorderBoxLogicalWidth();
 
+    if (heightConstraint)
+        renderer->clearOverridingBorderBoxLogicalHeight();
+
     auto updater = BoxGeometryUpdater { layoutState, rootLayoutBox(box) };
     updater.updateBoxGeometryAfterIntegrationLayout(box, widthConstraint.value_or(renderer->containingBlock()->contentBoxLogicalWidth()));
 }
