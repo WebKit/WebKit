@@ -58,11 +58,16 @@ struct GridLayoutResult {
     GridItemRects gridItemRects;
 };
 
+enum class GridLayoutScope : bool {
+    Full, // Run the whole grid sizing algorithm, lay out the grid items, and align them.
+    ColumnSizingOnly // Run only the first step of the grid sizing algorithm (size the columns); skip row sizing, grid-item layout, and alignment.
+};
+
 class GridLayout {
 public:
     GridLayout(const GridFormattingContext&);
 
-    GridLayoutResult layout(UnplacedGridItems&, const GridLayoutState&);
+    GridLayoutResult layout(UnplacedGridItems&, const GridLayoutState&, GridLayoutScope = GridLayoutScope::Full);
 
 private:
 

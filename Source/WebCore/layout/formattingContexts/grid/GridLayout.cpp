@@ -204,7 +204,7 @@ static GridAreaSizes computeGridAreaSizes(const PlacedGridItems& gridItems, cons
 }
 
 // https://drafts.csswg.org/css-grid-1/#layout-algorithm
-GridLayoutResult GridLayout::layout(UnplacedGridItems& unplacedGridItems, const GridLayoutState& gridLayoutState)
+GridLayoutResult GridLayout::layout(UnplacedGridItems& unplacedGridItems, const GridLayoutState& gridLayoutState, GridLayoutScope scope)
 {
     auto& gridDefinition = gridLayoutState.gridDefinition;
     auto& gridTemplateColumnsTrackSizes = gridDefinition.gridTemplateColumns.sizes;
@@ -217,6 +217,16 @@ GridLayoutResult GridLayout::layout(UnplacedGridItems& unplacedGridItems, const 
 
     auto columnTrackSizingFunctionsList = trackSizingFunctions(columnsCount, gridTemplateColumnsTrackSizes, gridDefinition.gridAutoColumns);
     auto rowTrackSizingFunctionsList = trackSizingFunctions(rowsCount, gridTemplateRowsTrackSizes, gridDefinition.gridAutoRows);
+
+    // https://drafts.csswg.org/css-grid-1/#algo-grid-sizing
+    // Fast path: the caller only needs the column sizes resolved by step 1 of the grid sizing
+    // algorithm (e.g. intrinsic width computation where no grid item's inline contribution depends
+    // on its block size). Steps 2-4 cannot change the column sizes, so size the columns alone and
+    // skip row sizing, grid-item layout, and alignment.
+    if (scope == GridLayoutScope::ColumnSizingOnly) {
+        TrackSizes columnSizes = sizeColumnTracks(placedGridItems, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList, gridLayoutState);
+        return { { columnSizes, { } }, { } };
+    }
 
     // 2. FIXME: Find the size of the grid container.
 
