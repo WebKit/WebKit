@@ -1,0 +1,4 @@
+topfirstsecond
+
+PASS Scroller re-snaps to the focused target after scrollBy
+

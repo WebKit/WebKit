@@ -117,6 +117,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-margin-y-axis.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-x-axis.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-y-axis.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-to-zero-height-interior-area.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snapevent-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/unreachable-snap-positions-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/unreachable-snap-positions-002.html
