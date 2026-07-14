@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -334,6 +334,26 @@ void ScrollingStateTree::clear()
     m_unparentedNodes.clear();
 }
 
+// Walk the live tree once, building the next-commit snapshot AND accumulating dirty node IDs
+// (those whose static CoW groups differ from the previous snapshot, plus any newly-added node).
+// Coalesces the previous "compute dirty" + "build snapshot" passes into a single recursion.
+static Ref<ScrollingStateNode> buildSnapshotNodeAndCollectDirty(ScrollingStateNode& liveNode, ScrollingStateTree& snapshotTree, CheckedPtr<const ScrollingStateTree> previousSnapshot, Vector<ScrollingNodeID>& dirtyNodeIDs)
+{
+    if (previousSnapshot) {
+        if (auto previousNode = previousSnapshot->stateNodeForID(liveNode.scrollingNodeID())) {
+            if (!liveNode.hasUnchangedGroupsAs(*previousNode))
+                dirtyNodeIDs.append(liveNode.scrollingNodeID());
+        } else
+            dirtyNodeIDs.append(liveNode.scrollingNodeID());
+    } else
+        dirtyNodeIDs.append(liveNode.scrollingNodeID());
+
+    Ref snapshotClone = liveNode.clone(snapshotTree);
+    for (auto& child : liveNode.children())
+        snapshotClone->appendChild(buildSnapshotNodeAndCollectDirty(child.get(), snapshotTree, previousSnapshot, dirtyNodeIDs));
+    return snapshotClone;
+}
+
 std::unique_ptr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentation::Type preferredLayerRepresentation)
 {
     ASSERT(isValid());
@@ -342,6 +362,21 @@ std::unique_ptr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentati
         // We expect temporarily to have unparented nodes when committing when connecting across iframe boundaries, but unparented nodes should not stick around for a long time.
         LOG(ScrollingTree, "Committing with %u unparented nodes", m_unparentedNodes.size());
     }
+
+    // If no setter has mutated state since the last commit, and the root structure is unchanged, skip cloning the live tree.
+    if (m_lastCommittedTree && !m_hasChangedProperties && !m_hasNewRootStateNode) {
+        m_dirtyNodeIDsFromLastCommit.clear();
+        LOG_WITH_STREAM(Scrolling, stream << "ScrollingStateTree " << this << " commit: empty transaction (nothing changed since last commit)");
+        // The UI process expects a non-nullptr result, so return an empty ScrollingStateTree with hasChangedProperties() == false so existing consumer-side guards correctly no-op the transaction.
+        auto emptyTree = makeUnique<ScrollingStateTree>();
+        emptyTree->setPreferredLayerRepresentation(preferredLayerRepresentation);
+        return emptyTree;
+    }
+
+    // Compute dirty nodes for diagnostic logging and external inspection (via
+    // dirtyNodeIDsFromLastCommit()) in the non-idle path. Folded into the snapshot-build
+    // traversal below so we visit each live node once for both purposes.
+    Vector<ScrollingNodeID> dirtyNodeIDs;
 
     // This function clones and resets the current state tree, but leaves the tree structure intact.
     auto treeStateClone = makeUnique<ScrollingStateTree>();
@@ -353,6 +388,38 @@ std::unique_ptr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentati
     // Now the clone tree has changed properties, and the original tree does not.
     treeStateClone->m_hasChangedProperties = std::exchange(m_hasChangedProperties, false);
     treeStateClone->m_hasNewRootStateNode = std::exchange(m_hasNewRootStateNode, false);
+
+    // Clear inherited layer fields on the IPC clone whose Property::XxxLayer bit isn't set
+    // (so the in-process Coordinated Graphics scrolling-tree receiver sees an empty
+    // LayerRepresentation rather than the live tree's un-translated GraphicsLayerData), and
+    // verify the post-condition in debug builds — both done in a single IPC-clone traversal.
+    // Layer-clearing is performed only on the IPC clone, NOT on the snapshot below, so the
+    // snapshot's static-config DataRef stays shared with the live tree and hasUnchangedGroupsAs
+    // reports accurate dirty-node counts.
+    if (RefPtr clonedRoot = treeStateClone->m_rootStateNode) {
+        clonedRoot->traverse([&](ScrollingStateNode& cloneNode) {
+            cloneNode.clearLayerFieldsForUnchangedProperties();
+#if ASSERT_ENABLED
+            cloneNode.verifyClearedLayerFieldsForUnchangedProperties();
+#endif
+        });
+    }
+
+    // Take a separate snapshot for the next commit's group comparison, AND collect the dirty
+    // node IDs for this commit, in a single live-tree traversal. CoW makes the static groups
+    // Ref-bumps; the cost is dominated by per-node dynamic-state copies. Properties on the
+    // live tree were already reset by the cloneAndReset above, so no resetChangedProperties
+    // is needed here.
+    auto committedSnapshot = makeUnique<ScrollingStateTree>();
+    committedSnapshot->setPreferredLayerRepresentation(preferredLayerRepresentation);
+    if (RefPtr rootStateNode = m_rootStateNode) {
+        CheckedPtr<const ScrollingStateTree> previousSnapshot = m_lastCommittedTree.get();
+        committedSnapshot->setRootStateNode(downcast<ScrollingStateFrameScrollingNode>(buildSnapshotNodeAndCollectDirty(*rootStateNode, *committedSnapshot, previousSnapshot, dirtyNodeIDs)));
+    }
+
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingStateTree " << this << " commit: " << dirtyNodeIDs.size() << " node(s) with changed CoW groups out of " << m_stateNodeMap.size());
+    m_dirtyNodeIDsFromLastCommit = WTF::move(dirtyNodeIDs);
+    m_lastCommittedTree = WTF::move(committedSnapshot);
 
     return treeStateClone;
 }

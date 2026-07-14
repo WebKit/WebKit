@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,10 @@
 #include "GraphicsLayer.h"
 #include "Logging.h"
 #include "ScrollingStateTree.h"
+#include <wtf/DataRef.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -40,9 +44,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingStatePositionedNode);
 
 ScrollingStatePositionedNode::ScrollingStatePositionedNode(ScrollingNodeID nodeID, Vector<Ref<ScrollingStateNode>>&& children, OptionSet<ScrollingStateNodeProperty> changedProperties, std::optional<PlatformLayerIdentifier> layerID, Vector<ScrollingNodeID>&& relatedOverflowScrollingNodes, AbsolutePositionConstraints&& constraints)
     : ScrollingStateNode(ScrollingNodeType::Positioned, nodeID, WTF::move(children), changedProperties, layerID)
-    , m_relatedOverflowScrollingNodes(WTF::move(relatedOverflowScrollingNodes))
-    , m_constraints(WTF::move(constraints))
 {
+    SUPPRESS_UNCOUNTED_LOCAL auto& layout = m_staticLayoutData.access();
+    layout.relatedOverflowScrollingNodes = WTF::move(relatedOverflowScrollingNodes);
+    layout.constraints = WTF::move(constraints);
 }
 
 ScrollingStatePositionedNode::ScrollingStatePositionedNode(ScrollingStateTree& tree, ScrollingNodeID nodeID)
@@ -52,8 +57,7 @@ ScrollingStatePositionedNode::ScrollingStatePositionedNode(ScrollingStateTree& t
 
 ScrollingStatePositionedNode::ScrollingStatePositionedNode(const ScrollingStatePositionedNode& node, ScrollingStateTree& adoptiveTree)
     : ScrollingStateNode(node, adoptiveTree)
-    , m_relatedOverflowScrollingNodes(node.relatedOverflowScrollingNodes())
-    , m_constraints(node.layoutConstraints())
+    , m_staticLayoutData(node.m_staticLayoutData)
 {
 }
 
@@ -73,23 +77,31 @@ OptionSet<ScrollingStateNode::Property> ScrollingStatePositionedNode::applicable
     return properties;
 }
 
+bool ScrollingStatePositionedNode::hasUnchangedGroupsAs(const ScrollingStateNode& other) const
+{
+    if (!ScrollingStateNode::hasUnchangedGroupsAs(other))
+        return false;
+    auto& otherPositioned = downcast<ScrollingStatePositionedNode>(other);
+    return m_staticLayoutData.ptr() == otherPositioned.m_staticLayoutData.ptr();
+}
+
 void ScrollingStatePositionedNode::setRelatedOverflowScrollingNodes(Vector<ScrollingNodeID>&& nodes)
 {
-    if (nodes == m_relatedOverflowScrollingNodes)
+    if (nodes == m_staticLayoutData->relatedOverflowScrollingNodes)
         return;
 
-    m_relatedOverflowScrollingNodes = WTF::move(nodes);
+    m_staticLayoutData.access().relatedOverflowScrollingNodes = WTF::move(nodes);
     setPropertyChanged(Property::RelatedOverflowScrollingNodes);
 }
 
 void ScrollingStatePositionedNode::updateConstraints(const AbsolutePositionConstraints& constraints)
 {
-    if (m_constraints == constraints)
+    if (m_staticLayoutData->constraints == constraints)
         return;
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingStatePositionedNode " << scrollingNodeID() << " updateConstraints " << constraints);
 
-    m_constraints = constraints;
+    m_staticLayoutData.access().constraints = constraints;
     setPropertyChanged(Property::LayoutConstraintData);
 }
 
@@ -98,14 +110,15 @@ void ScrollingStatePositionedNode::dumpProperties(TextStream& ts, OptionSet<Scro
     ts << "Positioned node"_s;
     ScrollingStateNode::dumpProperties(ts, behavior);
 
-    ts.dumpProperty("layout constraints"_s, m_constraints);
-    ts.dumpProperty("related overflow nodes"_s, m_relatedOverflowScrollingNodes.size());
+    SUPPRESS_UNCOUNTED_LOCAL auto& layout = m_staticLayoutData.get();
+    ts.dumpProperty("layout constraints"_s, layout.constraints);
+    ts.dumpProperty("related overflow nodes"_s, layout.relatedOverflowScrollingNodes.size());
 
     if (behavior & ScrollingStateTreeAsTextBehavior::IncludeNodeIDs) {
-        if (!m_relatedOverflowScrollingNodes.isEmpty()) {
+        if (!layout.relatedOverflowScrollingNodes.isEmpty()) {
             TextStream::GroupScope scope(ts);
             ts << "overflow nodes"_s;
-            for (auto nodeID : m_relatedOverflowScrollingNodes)
+            for (auto nodeID : layout.relatedOverflowScrollingNodes)
                 ts << '\n' << indent << "nodeID "_s << nodeID;
         }
     }

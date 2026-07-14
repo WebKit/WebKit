@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,10 @@
 #include "GraphicsLayer.h"
 #include "Logging.h"
 #include "ScrollingStateTree.h"
+#include <wtf/DataRef.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -40,13 +44,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingStateFixedNode);
 
 ScrollingStateFixedNode::ScrollingStateFixedNode(ScrollingNodeID nodeID, Vector<Ref<ScrollingStateNode>>&& children, OptionSet<ScrollingStateNodeProperty> changedProperties, std::optional<PlatformLayerIdentifier> layerID, FixedPositionViewportConstraints&& constraints)
     : ScrollingStateNode(ScrollingNodeType::Fixed, nodeID, WTF::move(children), changedProperties, layerID)
-    , m_constraints(WTF::move(constraints))
 {
+    m_staticLayoutData.access().constraints = WTF::move(constraints);
 }
 
 ScrollingStateFixedNode::ScrollingStateFixedNode(const ScrollingStateFixedNode& node, ScrollingStateTree& adoptiveTree)
     : ScrollingStateNode(node, adoptiveTree)
-    , m_constraints(FixedPositionViewportConstraints(node.viewportConstraints()))
+    , m_staticLayoutData(node.m_staticLayoutData)
 {
 }
 
@@ -71,20 +75,29 @@ OptionSet<ScrollingStateNode::Property> ScrollingStateFixedNode::applicablePrope
     return properties;
 }
 
+bool ScrollingStateFixedNode::hasUnchangedGroupsAs(const ScrollingStateNode& other) const
+{
+    if (!ScrollingStateNode::hasUnchangedGroupsAs(other))
+        return false;
+    auto& otherFixed = downcast<ScrollingStateFixedNode>(other);
+    return m_staticLayoutData.ptr() == otherFixed.m_staticLayoutData.ptr();
+}
+
 void ScrollingStateFixedNode::updateConstraints(const FixedPositionViewportConstraints& constraints)
 {
-    if (m_constraints == constraints)
+    if (m_staticLayoutData->constraints == constraints)
         return;
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingStateFixedNode " << scrollingNodeID() << " updateConstraints with viewport rect " << constraints.viewportRectAtLastLayout() << " layer pos at last layout " << constraints.layerPositionAtLastLayout() << " offset from top " << (constraints.layerPositionAtLastLayout().y() - constraints.viewportRectAtLastLayout().y()));
 
-    m_constraints = constraints;
+    m_staticLayoutData.access().constraints = constraints;
     setPropertyChanged(Property::ViewportConstraints);
 }
 
 void ScrollingStateFixedNode::reconcileLayerPositionForViewportRect(const LayoutRect& viewportRect, ScrollingLayerPositionAction action)
 {
-    auto position = m_constraints.viewportRelativeLayerPosition(viewportRect);
+    auto& constraints = m_staticLayoutData->constraints;
+    auto position = constraints.viewportRelativeLayerPosition(viewportRect);
     if (layer().representsGraphicsLayer()) {
         RefPtr graphicsLayer = static_cast<GraphicsLayer*>(layer());
         ASSERT(graphicsLayer);
@@ -93,7 +106,7 @@ void ScrollingStateFixedNode::reconcileLayerPositionForViewportRect(const Layout
             return;
 
         LOG_WITH_STREAM(Scrolling, stream << "ScrollingStateFixedNode " << scrollingNodeID() <<" reconcileLayerPositionForViewportRect " << action << " position of layer " << graphicsLayer->primaryLayerID() << " to " << position);
-        
+
         switch (action) {
         case ScrollingLayerPositionAction::Set:
             graphicsLayer->setPosition(position);
@@ -102,7 +115,7 @@ void ScrollingStateFixedNode::reconcileLayerPositionForViewportRect(const Layout
         case ScrollingLayerPositionAction::SetApproximate:
             graphicsLayer->setApproximatePosition(position);
             break;
-        
+
         case ScrollingLayerPositionAction::Sync:
             graphicsLayer->syncPosition(position);
             break;
@@ -115,27 +128,29 @@ void ScrollingStateFixedNode::dumpProperties(TextStream& ts, OptionSet<Scrolling
     ts << "Fixed node"_s;
     ScrollingStateNode::dumpProperties(ts, behavior);
 
-    if (m_constraints.anchorEdges()) {
+    auto& constraints = m_staticLayoutData->constraints;
+
+    if (constraints.anchorEdges()) {
         TextStream::GroupScope scope(ts);
         ts << "anchor edges: "_s;
-        if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeLeft))
+        if (constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeLeft))
             ts << "AnchorEdgeLeft "_s;
-        if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeRight))
+        if (constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeRight))
             ts << "AnchorEdgeRight "_s;
-        if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeTop))
+        if (constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeTop))
             ts << "AnchorEdgeTop"_s;
-        if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeBottom))
+        if (constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeBottom))
             ts << "AnchorEdgeBottom"_s;
     }
 
-    if (!m_constraints.alignmentOffset().isEmpty())
-        ts.dumpProperty("alignment offset"_s, m_constraints.alignmentOffset());
+    if (!constraints.alignmentOffset().isEmpty())
+        ts.dumpProperty("alignment offset"_s, constraints.alignmentOffset());
 
-    if (!m_constraints.viewportRectAtLastLayout().isEmpty())
-        ts.dumpProperty("viewport rect at last layout"_s, m_constraints.viewportRectAtLastLayout());
+    if (!constraints.viewportRectAtLastLayout().isEmpty())
+        ts.dumpProperty("viewport rect at last layout"_s, constraints.viewportRectAtLastLayout());
 
-    if (m_constraints.layerPositionAtLastLayout() != FloatPoint())
-        ts.dumpProperty("layer position at last layout"_s, m_constraints.layerPositionAtLastLayout());
+    if (constraints.layerPositionAtLastLayout() != FloatPoint())
+        ts.dumpProperty("layer position at last layout"_s, constraints.layerPositionAtLastLayout());
 }
 
 } // namespace WebCore

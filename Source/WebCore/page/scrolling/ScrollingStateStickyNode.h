@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,9 +46,9 @@ public:
     virtual ~ScrollingStateStickyNode();
 
     WEBCORE_EXPORT void updateConstraints(const StickyPositionViewportConstraints&);
-    const StickyPositionViewportConstraints& viewportConstraints() const LIFETIME_BOUND { return m_constraints; }
+    const StickyPositionViewportConstraints& viewportConstraints() const LIFETIME_BOUND { return m_staticLayoutData->constraints; }
 
-    const LayerRepresentation& viewportAnchorLayer() const LIFETIME_BOUND { return m_viewportAnchorLayer; }
+    const LayerRepresentation& viewportAnchorLayer() const LIFETIME_BOUND { return m_staticConfigData->viewportAnchorLayer; }
     WEBCORE_EXPORT void setViewportAnchorLayer(const LayerRepresentation&);
 
 private:
@@ -63,11 +63,50 @@ private:
 
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const final;
     OptionSet<ScrollingStateNode::Property> applicableProperties() const final;
+    bool hasUnchangedGroupsAs(const ScrollingStateNode&) const final;
+    void clearLayerFieldsForUnchangedProperties() final;
+#if ASSERT_ENABLED
+    void verifyClearedLayerFieldsForUnchangedProperties() const final;
+#endif
 
     bool hasViewportClippingLayer() const;
 
-    StickyPositionViewportConstraints m_constraints;
-    LayerRepresentation m_viewportAnchorLayer;
+    // Layout-derived sticky-node state. CoW-shared via DataRef.
+    class StaticLayoutStickyState : public ThreadSafeRefCounted<StaticLayoutStickyState> {
+    public:
+        static Ref<StaticLayoutStickyState> create() { return adoptRef(*new StaticLayoutStickyState); }
+        Ref<StaticLayoutStickyState> copy() const { return adoptRef(*new StaticLayoutStickyState(*this)); }
+
+        StickyPositionViewportConstraints constraints;
+
+    private:
+        StaticLayoutStickyState() = default;
+        StaticLayoutStickyState(const StaticLayoutStickyState& other)
+            : ThreadSafeRefCounted<StaticLayoutStickyState>()
+            , constraints(other.constraints)
+        {
+        }
+    };
+
+    // Long-lived sticky-node configuration. CoW-shared via DataRef.
+    class StaticConfigurationStickyState : public ThreadSafeRefCounted<StaticConfigurationStickyState> {
+    public:
+        static Ref<StaticConfigurationStickyState> create() { return adoptRef(*new StaticConfigurationStickyState); }
+        Ref<StaticConfigurationStickyState> copy() const { return adoptRef(*new StaticConfigurationStickyState(*this)); }
+
+        LayerRepresentation viewportAnchorLayer;
+
+    private:
+        StaticConfigurationStickyState() = default;
+        StaticConfigurationStickyState(const StaticConfigurationStickyState& other)
+            : ThreadSafeRefCounted<StaticConfigurationStickyState>()
+            , viewportAnchorLayer(other.viewportAnchorLayer)
+        {
+        }
+    };
+
+    DataRef<StaticLayoutStickyState> m_staticLayoutData { StaticLayoutStickyState::create() };
+    DataRef<StaticConfigurationStickyState> m_staticConfigData { StaticConfigurationStickyState::create() };
 };
 
 } // namespace WebCore
