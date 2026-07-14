@@ -1149,15 +1149,17 @@ NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceI
 }
 
 #if PLATFORM(MAC)
-bool WebPageProxy::isQuarantinedAndNotUserApproved(const String& fileURLString)
+bool WebPageProxy::isQuarantinedAndNotUserApproved(const URL& fileURL)
 {
-    RetainPtr fileURL = adoptNS([[NSURL alloc] initWithString:fileURLString.createNSString().get()]);
-    if ([retainPtr(fileURL.get().pathExtension) caseInsensitiveCompare:@"webarchive"] != NSOrderedSame)
+    auto filePath = fileURL.fileSystemPath();
+    if (!filePath.endsWithIgnoringASCIICase(".webarchive"_s))
         return false;
+
+    RetainPtr nsFileURL = adoptNS([[NSURL alloc] initFileURLWithPath:filePath.createNSString().get()]);
 
     qtn_file_t qf = qtn_file_alloc();
 
-    int quarantineError = qtn_file_init_with_path(qf, fileURL.get().path.fileSystemRepresentation);
+    int quarantineError = qtn_file_init_with_path(qf, nsFileURL.get().path.fileSystemRepresentation);
 
     if (quarantineError == ENOENT || quarantineError == QTN_NOT_QUARANTINED)
         return false;
