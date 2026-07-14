@@ -270,6 +270,9 @@ http/tests/loading/resourceLoadStatistics/ [ Skip ]
 http/tests/cookies/multiple-cookies.https.html [ Skip ]
 http/tests/cookies/multiple-cookies-iframes.https.html [ Skip ]
 http/tests/cookies/max-partitioned-cookies.https.html [ Skip ]
+# Skipped by default: asserts a partitioned-cookie partitionKey that needs HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+# (macOS 26.2+). platform/mac-wk2/TestExpectations re-enables it (expected Pass) on [ Tahoe+ ].
+http/tests/site-isolation/inspector/storage/storage-get-partitioned-cookies.https.html [ Skip ]
 http/tests/resourceLoadStatistics/ [ Skip ]
 http/tests/websocket/connection-refusal-in-frame-resource-load-statistics.html [ Skip ]
 http/tests/storageAccess/ [ Skip ]

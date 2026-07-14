@@ -1,0 +1,57 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true OptInPartitionedCookiesEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+// Set a CHIPS partitioned cookie from the page itself. The page is a top-level https document, so
+// the cookie is partitioned under this document's own site (first-party partition). Partitioned
+// cookies require Secure + SameSite=None + the Partitioned attribute, hence the .https.html context
+// and the OptInPartitionedCookiesEnabled preference above.
+function setPartitionedCookie() {
+    document.cookie = "PartitionedProbe=PASS; SameSite=None; Secure; Partitioned; path=/";
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Storage.getCookies.Partitioned");
+
+    suite.addTestCase({
+        name: "Storage.getCookies.Partitioned.Probe",
+        description: "Probe whether Storage.getCookies (which reads the flat authoritative store via API::HTTPCookieStore) surfaces a CHIPS partitioned cookie, and whether its partitionKey is populated. This settles whether partitioned cookies are visible now or genuinely need a separate per-partition read path.",
+        async test() {
+            await WI.backendTarget.StorageAgent.enable();
+            await InspectorTest.evaluateInPage(`if (window.testRunner) testRunner.setAlwaysAcceptCookies(true);`);
+
+            await InspectorTest.evaluateInPage("setPartitionedCookie()");
+
+            // The write round-trips to the NetworkProcess; poll until getCookies observes the cookie
+            // (or we exhaust attempts, in which case the probe result is "not visible").
+            let cookie = null;
+            for (let attempt = 0; attempt < 50 && !cookie; ++attempt) {
+                let {cookies} = await WI.backendTarget.StorageAgent.getCookies();
+                cookie = cookies.find((c) => c.name === "PartitionedProbe");
+                if (!cookie)
+                    await new Promise((resolve) => setTimeout(resolve, 20));
+            }
+
+            InspectorTest.expectNotNull(cookie, "Storage.getCookies should surface the partitioned cookie from the flat store.");
+            if (cookie) {
+                InspectorTest.expectEqual(cookie.value, "PASS", "Partitioned cookie value should be 'PASS'.");
+                // The interesting bit: does the flat read carry the partition label through to the
+                // protocol object? Log presence explicitly so the expected output records reality.
+                InspectorTest.expectNotNull(cookie.partitionKey, "Partitioned cookie should carry a non-empty partitionKey.");
+                InspectorTest.log("Observed partitionKey is a non-empty string: " + (typeof cookie.partitionKey === "string" && cookie.partitionKey.length > 0));
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Probe: does Storage.getCookies surface a CHIPS partitioned cookie (set via the Partitioned attribute) with its partitionKey populated?</p>
+</body>
+</html>

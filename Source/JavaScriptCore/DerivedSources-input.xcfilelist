@@ -110,6 +110,7 @@ $(PROJECT_DIR)/inspector/protocol/Runtime.json
 $(PROJECT_DIR)/inspector/protocol/ScriptProfiler.json
 $(PROJECT_DIR)/inspector/protocol/Security.json
 $(PROJECT_DIR)/inspector/protocol/ServiceWorker.json
+$(PROJECT_DIR)/inspector/protocol/Storage.json
 $(PROJECT_DIR)/inspector/protocol/Target.json
 $(PROJECT_DIR)/inspector/protocol/Timeline.json
 $(PROJECT_DIR)/inspector/protocol/Worker.json

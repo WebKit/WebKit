@@ -29,6 +29,7 @@
 #if ENABLE(WEBDRIVER_BIDI)
 
 #include "AutomationProtocolObjects.h"
+#include "InspectorCookieStoreHelpers.h"
 #include "Logging.h"
 #include "WebAutomationSession.h"
 #include "WebAutomationSessionMacros.h"
@@ -41,7 +42,6 @@ namespace WebKit {
 using namespace Inspector;
 using PartitionKey = Inspector::Protocol::BidiStorage::PartitionKey;
 using PartialCookie = Inspector::Protocol::BidiStorage::PartialCookie;
-using CookieFilter = Inspector::Protocol::BidiStorage::CookieFilter;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BidiStorageAgent);
 
@@ -75,48 +75,6 @@ static Ref<JSON::ArrayOf<PartialCookie>> buildArrayForCookies(const Vector<WebCo
         cookies->addItem(buildObjectForCookie(cookie));
 
     return cookies;
-}
-
-static bool cookieMatchesFilter(const WebCore::Cookie& cookie, const RefPtr<JSON::Object> optionalFilter)
-{
-
-    String optionalFilterName = optionalFilter->getString("name"_s);
-    if (!optionalFilterName.isEmpty()) {
-        if (cookie.name != optionalFilterName)
-            return false;
-    }
-
-    auto optionalFilterValue = optionalFilter->getString("value"_s);
-    if (!optionalFilterValue.isEmpty()) {
-        if (cookie.value != optionalFilterValue)
-            return false;
-    }
-
-    auto optionalFilterDomain = optionalFilter->getString("domain"_s);
-    if (!optionalFilterDomain.isEmpty()) {
-        if (cookie.domain != optionalFilterDomain)
-            return false;
-    }
-
-    auto optionalFilterPath = optionalFilter->getString("path"_s);
-    if (!optionalFilterPath.isEmpty()) {
-        if (cookie.path != optionalFilterPath)
-            return false;
-    }
-
-    auto optionalFilterHttpOnly = optionalFilter->getBoolean("httpOnly"_s);
-    if (optionalFilterHttpOnly) {
-        if (cookie.httpOnly != optionalFilterHttpOnly.value())
-            return false;
-    }
-
-    auto optionalFilterSecure = optionalFilter->getBoolean("secure"_s);
-    if (optionalFilterSecure) {
-        if (cookie.secure != optionalFilterSecure.value())
-            return false;
-    }
-
-    return true;
 }
 
 Inspector::Protocol::ErrorStringOr<Ref<PartitionKey>> BidiStorageAgent::makePartitionKey(RefPtr<JSON::Object> partitionDescriptor)
@@ -196,12 +154,12 @@ void BidiStorageAgent::getCookies(RefPtr<JSON::Object>&& optionalFilter, RefPtr<
     if (!optionalFilter)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(InvalidParameter);
 
-    resolvedCookieStore->cookies([callback = WTF::move(callback), filter = WTF::move(optionalFilter), partitionKey = WTF::move(partitionKey)](Vector<WebCore::Cookie>&& cookiesList) mutable {
+    resolvedCookieStore->cookies([callback = WTF::move(callback), filter = CookieFilter::fromProtocol(optionalFilter), partitionKey = WTF::move(partitionKey)](Vector<WebCore::Cookie>&& cookiesList) mutable {
         Vector<WebCore::Cookie> matchingCookies;
         matchingCookies.reserveInitialCapacity(cookiesList.size());
 
         for (const auto& cookie : cookiesList) {
-            if (cookieMatchesFilter(cookie, filter))
+            if (filter.matches(cookie))
                 matchingCookies.append(cookie);
         }
 
@@ -277,15 +235,13 @@ void BidiStorageAgent::deleteCookies(RefPtr<JSON::Object>&& optionalFilter, RefP
     if (!optionalFilter)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(InvalidParameter);
 
-    cookieStore->cookies([callback = WTF::move(callback), filter = WTF::move(optionalFilter), partitionKey = WTF::move(partitionKey), cookieStore](Vector<WebCore::Cookie>&& fetchedCookies) mutable {
+    cookieStore->cookies([callback = WTF::move(callback), filter = CookieFilter::fromProtocol(optionalFilter), partitionKey = WTF::move(partitionKey), cookieStore](Vector<WebCore::Cookie>&& fetchedCookies) mutable {
         Vector<WebCore::Cookie> toDelete;
         toDelete.reserveInitialCapacity(fetchedCookies.size());
 
-        if (filter) {
-            for (auto& cookie : fetchedCookies) {
-                if (cookieMatchesFilter(cookie, filter))
-                    toDelete.append(cookie);
-            }
+        for (auto& cookie : fetchedCookies) {
+            if (filter.matches(cookie))
+                toDelete.append(cookie);
         }
 
         if (toDelete.isEmpty()) {

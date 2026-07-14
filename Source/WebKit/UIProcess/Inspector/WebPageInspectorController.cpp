@@ -30,6 +30,7 @@
 #include "FrameInspectorTarget.h"
 #include "FrameInspectorTargetProxy.h"
 #include "InspectorBrowserAgent.h"
+#include "InspectorStorageAgent.h"
 #include "PageInspectorTarget.h"
 #include "PageInspectorTargetProxy.h"
 #include "ProvisionalFrameProxy.h"
@@ -511,6 +512,7 @@ void WebPageInspectorController::createLazyAgents()
     auto webPageContext = webPageAgentContext();
 
     m_agents.append(makeUniqueRef<InspectorBrowserAgent>(webPageContext));
+    m_agents.append(makeUniqueRef<InspectorStorageAgent>(webPageContext));
 
     if (protect(protect(m_inspectedPage)->preferences())->siteIsolationEnabled()) {
         // ProxyingNetworkAgent and ProxyingPageAgent are RefCounted (for IPC MessageReceiver)

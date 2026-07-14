@@ -303,6 +303,7 @@ INSPECTOR_DOMAINS := \
     $(JavaScriptCore)/inspector/protocol/ScriptProfiler.json \
     $(JavaScriptCore)/inspector/protocol/Security.json \
     $(JavaScriptCore)/inspector/protocol/ServiceWorker.json \
+    $(JavaScriptCore)/inspector/protocol/Storage.json \
     $(JavaScriptCore)/inspector/protocol/Target.json \
     $(JavaScriptCore)/inspector/protocol/Timeline.json \
     $(JavaScriptCore)/inspector/protocol/Worker.json \

@@ -629,6 +629,7 @@ UIProcess/Model/ModelProcessProxy.cpp
 
 UIProcess/Inspector/FrameInspectorTargetProxy.cpp
 UIProcess/Inspector/InspectorTargetProxy.cpp @cost:3
+UIProcess/Inspector/InspectorCookieStoreHelpers.cpp
 UIProcess/Inspector/PageInspectorTargetProxy.cpp @cost:3
 UIProcess/Inspector/RemoteWebInspectorUIProxy.cpp
 UIProcess/Inspector/WasmDebuggerDebuggable.cpp
@@ -640,6 +641,7 @@ UIProcess/Inspector/WebPageDebuggable.cpp
 UIProcess/Inspector/WebPageInspectorController.cpp
 
 UIProcess/Inspector/Agents/InspectorBrowserAgent.cpp
+UIProcess/Inspector/Agents/InspectorStorageAgent.cpp
 UIProcess/Inspector/Agents/ProxyingNetworkAgent.cpp
 UIProcess/Inspector/Agents/ProxyingPageAgent.cpp
 

@@ -155,6 +155,7 @@ WI.Target = class Target extends WI.Object
     get RuntimeAgent() { return this._agents.Runtime; }
     get ScriptProfilerAgent() { return this._agents.ScriptProfiler; }
     get ServiceWorkerAgent() { return this._agents.ServiceWorker; }
+    get StorageAgent() { return this._agents.Storage; }
     get TargetAgent() { return this._agents.Target; }
     get TimelineAgent() { return this._agents.Timeline; }
     get WorkerAgent() { return this._agents.Worker; }
