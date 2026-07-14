@@ -10361,17 +10361,17 @@ WirelessPlaybackTargetAPIEnabled:
 
 WorkerInSharedWorkerEnabled:
   type: bool
-  status: preview
+  status: stable
   category: dom
   humanReadableName: "Worker in SharedWorker"
   humanReadableDescription: "Allow creating dedicated workers from shared workers"
   defaultValue:
     WebCore:
-      default: false
+      default: true
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
 
 WorkerParseErrorReportingEnabled:
   type: bool
