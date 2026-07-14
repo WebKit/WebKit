@@ -3252,6 +3252,10 @@ endif ()
 
 WEBKIT_FRAMEWORK(WebCore)
 
+if (USE_APPLE_INTERNAL_SDK)
+    WEBKIT_TARGET_USE_PGO(WebCore PROFILE WebCore)
+endif ()
+
 # Specify dependencies explicitly so we can generate derived sources before our
 # upstream targets finish linking.
 set(_WebCore_generated_sources ${WebCore_SOURCES})

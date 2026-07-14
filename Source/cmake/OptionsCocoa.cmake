@@ -183,3 +183,10 @@ if (CMAKE_EXPORT_COMPILE_COMMANDS AND NOT EXISTS ${CMAKE_SOURCE_DIR}/compile_com
         ${CMAKE_SOURCE_DIR}/compile_commands.json
         SYMBOLIC)
 endif ()
+
+# Profile-Guided Optimization for the Cocoa ports. The Internal overlay resolves
+# the WebKitAdditions PGO profiles and defines WEBKIT_TARGET_USE_PGO,
+# which the relevant framework CMakeLists call.
+if (USE_APPLE_INTERNAL_SDK)
+    include(OptionsPGO)
+endif ()

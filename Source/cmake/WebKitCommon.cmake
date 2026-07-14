@@ -375,8 +375,11 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
         message(STATUS "  Override at runtime with: LLVM_PROFILE_FILE=/your/path/%p_%m.profraw")
     endif ()
 
-    # Phase 2: Profile Use - build optimized binary using collected profile data
-    if (USE_PGO_PROFILE AND COMPILER_IS_CLANG AND NOT MSVC)
+    # Phase 2: Profile Use - build optimized binary using collected profile data.
+    # This is the generic single-profile path for most ports. On Apple internal SDK
+    # builds, the WebKitAdditions overlay applies per-framework profiles instead,
+    # so skip there.
+    if (USE_PGO_PROFILE AND COMPILER_IS_CLANG AND NOT MSVC AND NOT USE_APPLE_INTERNAL_SDK)
         set(PGO_PROFILE_PATH "" CACHE FILEPATH "Path to merged .profdata file for PGO")
         if (NOT PGO_PROFILE_PATH)
             message(FATAL_ERROR "USE_PGO_PROFILE is ON but PGO_PROFILE_PATH is not set")

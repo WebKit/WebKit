@@ -131,6 +131,21 @@
             "binaryDir": "WebKitBuild/cmake-mac/Debug"
         },
         {
+            "name": "mac-performance",
+            "displayName": "macOS Development (Release, PGO, ThinLTO, ccache) (Requires internal SDK or custom PGO_PROFILE_PATH)",
+            "inherits": ["mac-release"],
+            "cacheVariables": {
+                "USE_PGO_PROFILE": {
+                    "type": "BOOL",
+                    "value": "ON"
+                },
+                "LTO_MODE": {
+                    "type": "STRING",
+                    "value": "thin"
+                }
+            }
+        },
+        {
             "name": "mac-dev-release",
             "displayName": "macOS Development (Release, ccache, compile_commands)",
             "inherits": ["mac-release", "dev"]
@@ -372,6 +387,11 @@
             "name": "mac-debug",
             "displayName": "macOS Debug",
             "configurePreset": "mac-debug"
+        },
+        {
+            "name": "mac-performance",
+            "displayName": "macOS Performance",
+            "configurePreset": "mac-performance"
         },
         {
             "name": "mac-dev-release",

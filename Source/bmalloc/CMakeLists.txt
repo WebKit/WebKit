@@ -724,6 +724,11 @@ endif ()
 
 WEBKIT_FRAMEWORK(bmalloc)
 
+# bmalloc is statically linked into JavaScriptCore, so it uses JSC's PGO profile.
+if (USE_APPLE_INTERNAL_SDK)
+    WEBKIT_TARGET_USE_PGO(bmalloc PROFILE JavaScriptCore)
+endif ()
+
 # Only build mbmalloc on platforms that MallocBench supports
 if (DEVELOPER_MODE AND (APPLE OR HAVE_MALLOC_TRIM))
     add_library(mbmalloc SHARED bmalloc/mbmalloc.cpp)
