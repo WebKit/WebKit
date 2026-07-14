@@ -35,8 +35,6 @@
 
 namespace JSC { namespace DFG {
 
-const char* const tierName = "DFG ";
-
 FunctionAllowlist& ensureGlobalDFGAllowlist()
 {
     static LazyNeverDestroyed<FunctionAllowlist> dfgAllowlist;

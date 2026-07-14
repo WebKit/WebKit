@@ -34,12 +34,13 @@
 #include <JavaScriptCore/JSExportMacros.h>
 #include <JavaScriptCore/Options.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace JSC { namespace B3 {
 
 class Procedure;
 
-extern const char* const tierName;
+inline constexpr ASCIILiteral tierName { "b3  "_s };
 
 enum B3CompilationMode {
     B3Mode,

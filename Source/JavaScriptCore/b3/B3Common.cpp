@@ -35,8 +35,6 @@
 
 namespace JSC { namespace B3 {
 
-const char* const tierName = "b3  ";
-
 bool shouldDumpIR(Procedure& procedure, B3CompilationMode mode)
 {
     if (procedure.shouldDumpIR())

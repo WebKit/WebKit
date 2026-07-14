@@ -32,6 +32,7 @@
 
 #include <JavaScriptCore/Options.h>
 #include <limits.h>
+#include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {
@@ -46,7 +47,7 @@ struct Node;
 typedef uint32_t BlockIndex;
 static constexpr BlockIndex NoBlock = UINT_MAX;
 
-extern const char* const tierName;
+inline constexpr ASCIILiteral tierName { "DFG "_s };
 
 // Use RefChildren if the child ref counts haven't already been adjusted using
 // other means and either of the following is true:

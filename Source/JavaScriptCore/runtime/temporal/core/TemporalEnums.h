@@ -30,6 +30,7 @@
 
 #include <cstdint>
 #include <wtf/Int128.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/StringView.h>
 
@@ -107,7 +108,20 @@ static constexpr unsigned numberOfTemporalPlainYearMonthUnits = 0 JSC_TEMPORAL_P
 static constexpr unsigned numberOfTemporalPlainMonthDayUnits = 0 JSC_TEMPORAL_PLAIN_MONTH_DAY_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 #undef JSC_COUNT_TEMPORAL_UNITS
 
-extern const TemporalUnit temporalUnitsInTableOrder[numberOfTemporalUnits];
+// https://tc39.es/proposal-temporal/#table-temporal-temporaldurationlike-properties
+inline constexpr auto temporalUnitsInTableOrder = WTF::toArray<TemporalUnit>({
+    TemporalUnit::Day,
+    TemporalUnit::Hour,
+    TemporalUnit::Microsecond,
+    TemporalUnit::Millisecond,
+    TemporalUnit::Minute,
+    TemporalUnit::Month,
+    TemporalUnit::Nanosecond,
+    TemporalUnit::Second,
+    TemporalUnit::Week,
+    TemporalUnit::Year,
+});
+static_assert(temporalUnitsInTableOrder.size() == numberOfTemporalUnits);
 
 // https://tc39.es/proposal-temporal/#table-temporal-units
 constexpr Int128 lengthInNanoseconds(TemporalUnit unit)

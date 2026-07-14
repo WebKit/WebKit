@@ -197,20 +197,6 @@ PropertyName temporalUnitSingularPropertyName(VM& vm, TemporalUnit unit)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-// https://tc39.es/proposal-temporal/#table-temporal-temporaldurationlike-properties
-const TemporalUnit temporalUnitsInTableOrder[numberOfTemporalUnits] = {
-    TemporalUnit::Day,
-    TemporalUnit::Hour,
-    TemporalUnit::Microsecond,
-    TemporalUnit::Millisecond,
-    TemporalUnit::Minute,
-    TemporalUnit::Month,
-    TemporalUnit::Nanosecond,
-    TemporalUnit::Second,
-    TemporalUnit::Week,
-    TemporalUnit::Year,
-};
-
 std::optional<TemporalUnit> temporalUnitType(StringView unit)
 {
     StringView singular = singularUnit(unit);

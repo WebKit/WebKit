@@ -44,8 +44,6 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
-const char* const tierName = "Air ";
-
 WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(CFG);
 WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(Code);
 WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(Dominators);

@@ -42,8 +42,6 @@ bool JSValue::isHeapBigIntSlow() const
     return isHeapBigInt();
 }
 
-constinit const char radixDigits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
-
 double JSValue::toIntegerPreserveNaN(JSGlobalObject* globalObject) const
 {
     if (isInt32())

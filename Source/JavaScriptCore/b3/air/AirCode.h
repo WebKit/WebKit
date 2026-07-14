@@ -45,6 +45,7 @@
 #include <wtf/SmallSet.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRandom.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace JSC {
 
@@ -74,7 +75,7 @@ typedef SharedTask<WasmBoundsCheckGeneratorFunction> WasmBoundsCheckGenerator;
 typedef void PrologueGeneratorFunction(CCallHelpers&, Code&);
 typedef SharedTask<PrologueGeneratorFunction> PrologueGenerator;
 
-extern const char* const tierName;
+inline constexpr ASCIILiteral tierName { "Air "_s };
 
 // This is an IR that is very close to the bare metal. It requires about 40x more bytes than the
 // generated machine code - for example if you're generating 1MB of machine code, you need about

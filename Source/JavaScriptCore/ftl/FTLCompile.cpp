@@ -51,8 +51,6 @@
 
 namespace JSC { namespace FTL {
 
-const char* const tierName = "FTL ";
-
 using namespace DFG;
 
 static void collectIRDumpDebugInfo(State& state, DFG::Graph& graph, CodeBlock* codeBlock)

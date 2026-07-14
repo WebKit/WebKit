@@ -29,10 +29,11 @@
 
 #include "FTLState.h"
 #include "JITSafepoint.h"
+#include <wtf/text/ASCIILiteral.h>
 
 namespace JSC { namespace FTL {
 
-extern const char* const tierName;
+inline constexpr ASCIILiteral tierName { "FTL "_s };
 
 void compile(State&, Safepoint::Result&);
 

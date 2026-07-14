@@ -271,7 +271,7 @@ static ALWAYS_INLINE typename std::invoke_result<CallbackWhenNoException, String
 }
 
 // Mapping from integers 0..35 to digit identifying this value, for radix 2..36.
-extern const char radixDigits[37]; // in JSCJSValue.cpp
+inline constexpr char radixDigits[37] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 } // namespace JSC
 

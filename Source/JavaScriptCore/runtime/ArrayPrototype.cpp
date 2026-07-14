@@ -76,8 +76,6 @@ static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncCopyWithin);
 static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncToSpliced);
 static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncFlat);
 
-const ASCIILiteral unshiftArrayLengthExceeded { "unshift cannot produce an array of length larger than (2 ** 53) - 1"_s };
-
 // ------------------------------ ArrayPrototype ----------------------------
 
 const ClassInfo ArrayPrototype::s_info = { "Array"_s, &JSArray::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ArrayPrototype) };
