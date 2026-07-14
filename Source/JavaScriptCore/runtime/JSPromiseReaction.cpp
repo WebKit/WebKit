@@ -67,7 +67,7 @@ const ClassInfo JSSlimPromiseReaction::s_info = { "SlimPromiseReaction"_s, &JSPr
 
 JSSlimPromiseReaction* JSSlimPromiseReaction::create(VM& vm, JSValue promise, JSValue handler, bool isFulfill, JSPromiseReaction* next)
 {
-    JSSlimPromiseReaction* result = new (NotNull, allocateCell<JSSlimPromiseReaction>(vm)) JSSlimPromiseReaction(vm, vm.slimPromiseReactionStructure.get(), promise, handler, next, InternalMicrotask::None, isFulfill);
+    JSSlimPromiseReaction* result = new (NotNull, allocateCell<JSSlimPromiseReaction>(vm)) JSSlimPromiseReaction(vm, vm.slimPromiseReactionStructure.get(), promise, handler, next, static_cast<uint8_t>(InternalMicrotask::None), isFulfill);
     result->finishCreation(vm);
     return result;
 }
@@ -75,7 +75,14 @@ JSSlimPromiseReaction* JSSlimPromiseReaction::create(VM& vm, JSValue promise, JS
 JSSlimPromiseReaction* JSSlimPromiseReaction::create(VM& vm, JSValue promise, InternalMicrotask task, JSValue context, JSPromiseReaction* next)
 {
     ASSERT(task != InternalMicrotask::None);
-    JSSlimPromiseReaction* result = new (NotNull, allocateCell<JSSlimPromiseReaction>(vm)) JSSlimPromiseReaction(vm, vm.slimPromiseReactionStructure.get(), promise, context, next, task, false);
+    JSSlimPromiseReaction* result = new (NotNull, allocateCell<JSSlimPromiseReaction>(vm)) JSSlimPromiseReaction(vm, vm.slimPromiseReactionStructure.get(), promise, context, next, static_cast<uint8_t>(task), false);
+    result->finishCreation(vm);
+    return result;
+}
+
+JSSlimPromiseReaction* JSSlimPromiseReaction::createAsyncGeneratorRequest(VM& vm, JSValue settlementTarget, JSValue value, uint8_t resumeMode, JSPromiseReaction* next)
+{
+    JSSlimPromiseReaction* result = new (NotNull, allocateCell<JSSlimPromiseReaction>(vm)) JSSlimPromiseReaction(vm, vm.slimPromiseReactionStructure.get(), settlementTarget, value, next, resumeMode, false);
     result->finishCreation(vm);
     return result;
 }
