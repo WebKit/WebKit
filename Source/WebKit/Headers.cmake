@@ -541,6 +541,7 @@ endif ()
 set(WebKit_PROJECT_HEADERS
     GPUProcess/graphics/Model/Float3.h
     GPUProcess/graphics/Model/Float4x4.h
+    GPUProcess/graphics/Model/ModelTypes.h
 
     Shared/mac/SecItemRequestData.h
 

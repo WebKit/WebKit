@@ -49,6 +49,11 @@ list(APPEND WebKit_SOURCES
     ${WEBKIT_DIR}/Platform/cocoa/WKMaterialHostingSupport.swift
     ${WEBKIT_DIR}/Shared/Model/WKStageModeOrbitSimulator.swift
     ${WEBKIT_DIR}/UIProcess/Cocoa/WKDeferringGestureRecognizer.swift
+    ${WEBKIT_DIR}/Platform/cocoa/FloatRectCG.swift
+    ${WEBKIT_DIR}/Platform/cocoa/IntRectCG.swift
+    ${WEBKIT_DIR}/UIProcess/API/Cocoa/Logger+Extras.swift
+    ${WEBKIT_DIR}/UIProcess/WebPageProxy.swift
+    ${WEBKIT_DIR}/UIProcess/mac/WKAppKitGestureController.swift
     ${WEBKIT_DIR}/UIProcess/mac/WKTextSelectionController.swift
     ${WEBKIT_DIR}/UIProcess/PDF/WKPDFHUDView.swift
 

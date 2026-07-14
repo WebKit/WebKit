@@ -868,6 +868,7 @@ if (ENABLE_BACK_FORWARD_LIST_SWIFT)
     requires cplusplus
     header \"${WebCore_PRIVATE_HEADERS_DIR}/DiagnosticLoggingKeys.h\"
     header \"${WebCore_PRIVATE_HEADERS_DIR}/DiagnosticLoggingClient.h\"
+    header \"${WebCore_PRIVATE_HEADERS_DIR}/TextGranularity.h\"
     export *
 }
 ")
