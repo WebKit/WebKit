@@ -84,28 +84,6 @@ extension simd_float4x4 {
     }
 }
 
-extension LowLevelMeshResource.Descriptor {
-    static func fromLlmDescriptor(_ llmDescriptor: LowLevelMesh.Descriptor) -> Self {
-        var descriptor = Self.init()
-        descriptor.vertexCapacity = llmDescriptor.vertexCapacity
-        descriptor.vertexAttributes = llmDescriptor.vertexAttributes.map { attribute in
-            .init(
-                semantic: mapSemantic(attribute.semantic),
-                format: attribute.format,
-                layoutIndex: attribute.layoutIndex,
-                offset: attribute.offset
-            )
-        }
-        descriptor.vertexLayouts = llmDescriptor.vertexLayouts.map { layout in
-            .init(bufferIndex: layout.bufferIndex, bufferOffset: layout.bufferOffset, bufferStride: layout.bufferStride)
-        }
-        descriptor.indexCapacity = llmDescriptor.indexCapacity
-        descriptor.indexType = llmDescriptor.indexType
-
-        return descriptor
-    }
-}
-
 @_lifetime(buffer: copy buffer)
 private func copyDataIntoBuffer(_ buffer: inout MutableRawSpan, from data: Data) {
     precondition(
@@ -238,7 +216,13 @@ extension LowLevelMeshResource.Descriptor {
             )
         }
         descriptor.vertexLayouts = llmDescriptor.vertexLayouts.map { layout in
-            .init(bufferIndex: layout.bufferIndex, bufferOffset: layout.bufferOffset, bufferStride: layout.bufferStride)
+            .init(
+                bufferIndex: layout.bufferIndex,
+                bufferOffset: layout.bufferOffset,
+                bufferStride: layout.bufferStride,
+                stepFunction: layout.stepFunction,
+                stepRate: layout.stepRate
+            )
         }
         descriptor.indexCapacity = llmDescriptor.indexCapacity
         descriptor.indexType = llmDescriptor.indexType

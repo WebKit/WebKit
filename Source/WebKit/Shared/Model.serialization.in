@@ -169,10 +169,21 @@ header: <WebKit/ModelTypes.h>
 };
 
 header: <WebKit/ModelTypes.h>
+[CustomHeader] enum class WebModel::VertexStepFunction : uint8_t {
+    Constant,
+    PerVertex,
+    PerInstance,
+    PerPatch,
+    PerPatchControlPoint,
+};
+
+header: <WebKit/ModelTypes.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::VertexLayout {
     long bufferIndex;
     long bufferOffset;
     long bufferStride;
+    WebModel::VertexStepFunction stepFunction;
+    long stepRate;
 };
 
 header: <WebKit/ModelTypes.h>

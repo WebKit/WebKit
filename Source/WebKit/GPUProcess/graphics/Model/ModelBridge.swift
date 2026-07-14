@@ -57,15 +57,21 @@ extension WKBridgeVertexLayout {
     let bufferIndex: Int
     let bufferOffset: Int
     let bufferStride: Int
+    let stepFunction: MTLVertexStepFunction
+    let stepRate: Int
 
     init(
         bufferIndex: Int,
         bufferOffset: Int,
-        bufferStride: Int
+        bufferStride: Int,
+        stepFunction: MTLVertexStepFunction,
+        stepRate: Int
     ) {
         self.bufferIndex = bufferIndex
         self.bufferOffset = bufferOffset
         self.bufferStride = bufferStride
+        self.stepFunction = stepFunction
+        self.stepRate = stepRate
     }
 }
 
@@ -664,7 +670,13 @@ private func webAttributesFromAttributes(_ attributes: [LowLevelMesh.Attribute])
 
 private func webLayoutsFromLayouts(_ attributes: [LowLevelMesh.Layout]) -> [WKBridgeVertexLayout] {
     attributes.map({ a in
-        WKBridgeVertexLayout(bufferIndex: a.bufferIndex, bufferOffset: a.bufferOffset, bufferStride: a.bufferStride)
+        WKBridgeVertexLayout(
+            bufferIndex: a.bufferIndex,
+            bufferOffset: a.bufferOffset,
+            bufferStride: a.bufferStride,
+            stepFunction: a.stepFunction,
+            stepRate: a.stepRate
+        )
     })
 }
 

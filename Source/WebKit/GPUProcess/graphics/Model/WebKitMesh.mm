@@ -234,6 +234,22 @@ static MTLIndexType toMetal(WebModel::IndexType indexType)
     }
 }
 
+static MTLVertexStepFunction toMetal(WebModel::VertexStepFunction stepFunction)
+{
+    switch (stepFunction) {
+    case WebModel::VertexStepFunction::Constant:
+        return MTLVertexStepFunctionConstant;
+    case WebModel::VertexStepFunction::PerVertex:
+        return MTLVertexStepFunctionPerVertex;
+    case WebModel::VertexStepFunction::PerInstance:
+        return MTLVertexStepFunctionPerInstance;
+    case WebModel::VertexStepFunction::PerPatch:
+        return MTLVertexStepFunctionPerPatch;
+    case WebModel::VertexStepFunction::PerPatchControlPoint:
+        return MTLVertexStepFunctionPerPatchControlPoint;
+    }
+}
+
 static MTLPixelFormat toMetal(WebCore::WebGPU::TextureFormat textureFormat)
 {
     switch (textureFormat) {
@@ -605,7 +621,7 @@ static NSArray<WKBridgeVertexLayout *> *convert(const Vector<VertexLayout>& layo
 
     NSMutableArray<WKBridgeVertexLayout *> *result = [NSMutableArray array];
     for (const auto& layout : layouts)
-        [result addObject:[WebKit::allocWKBridgeVertexLayoutInstance() initWithBufferIndex:layout.bufferIndex bufferOffset:layout.bufferOffset bufferStride:layout.bufferStride]];
+        [result addObject:[WebKit::allocWKBridgeVertexLayoutInstance() initWithBufferIndex:layout.bufferIndex bufferOffset:layout.bufferOffset bufferStride:layout.bufferStride stepFunction:toMetal(layout.stepFunction) stepRate:layout.stepRate]];
 
     return result;
 }
