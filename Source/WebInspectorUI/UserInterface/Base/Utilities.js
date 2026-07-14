@@ -1484,7 +1484,7 @@ function parseMIMEType(fullMimeType)
         if (subparts[0].toLowerCase() === "boundary")
             boundary = subparts[1];
         else if (subparts[0].toLowerCase() === "charset")
-            encoding = subparts[1].replace("^\"|\"$", ""); // Trim quotes.
+            encoding = subparts[1].replaceAll("\"", ""); // Trim quotes.
     }
 
     return {type, boundary: boundary || null, encoding: encoding || null};

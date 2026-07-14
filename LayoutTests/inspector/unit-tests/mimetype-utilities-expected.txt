@@ -67,6 +67,26 @@ PASS: type should be: "mime/generic"
 PASS: boundary should be: "foo"
 PASS: encoding should be: "bar"
 
+Test "mime/generic ; charset = \"bar\""
+PASS: type should be: "mime/generic"
+PASS: boundary should be: null
+PASS: encoding should be: "bar"
+
+Test "mime/generic ; charset=\"bar\" ; boundary=\"foo\""
+PASS: type should be: "mime/generic"
+PASS: boundary should be: "\"foo\""
+PASS: encoding should be: "bar"
+
+Test "mime/generic ; charset=ut\"f-8"
+PASS: type should be: "mime/generic"
+PASS: boundary should be: null
+PASS: encoding should be: "utf-8"
+
+Test "mime/generic ; charset=\"ut\"f-8\""
+PASS: type should be: "mime/generic"
+PASS: boundary should be: null
+PASS: encoding should be: "utf-8"
+
 -- Running test case: fileExtensionForFilename
 PASS: File extension for null filename should be null.
 PASS: File extension for filename without a period should be null.

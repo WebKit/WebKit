@@ -109,6 +109,31 @@ function test()
                 encoding: "bar",
             });
 
+            test('mime/generic ; charset = "bar"', {
+                type: "mime/generic",
+                boundary: null,
+                encoding: "bar",
+            });
+
+            test('mime/generic ; charset="bar" ; boundary="foo"', {
+                type: "mime/generic",
+                boundary: '"foo"',
+                encoding: "bar",
+            });
+
+            // All quote characters are stripped, including interior ones from malformed values.
+            test('mime/generic ; charset=ut"f-8', {
+                type: "mime/generic",
+                boundary: null,
+                encoding: "utf-8",
+            });
+
+            test('mime/generic ; charset="ut"f-8"', {
+                type: "mime/generic",
+                boundary: null,
+                encoding: "utf-8",
+            });
+
             return true;
         }
     });
