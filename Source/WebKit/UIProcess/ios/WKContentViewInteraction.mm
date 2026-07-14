@@ -326,7 +326,7 @@ static bool canAttemptTextRecognitionForNonImageElements(const WebKit::Interacti
 }
 
 @interface AVPlayerViewController (Staging_86237428)
-- (void)setImageAnalysis:(CocoaImageAnalysis *)analysis;
+- (void)setImageAnalysis:(VKCImageAnalysis *)analysis;
 @end
 
 #endif // ENABLE(IMAGE_ANALYSIS)
@@ -13177,7 +13177,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #pragma mark - Image Extraction
 
-- (CocoaImageAnalyzer *)imageAnalyzer
+- (VKCImageAnalyzer *)imageAnalyzer
 {
     if (!_imageAnalyzer)
         _imageAnalyzer = WebKit::createImageAnalyzer();
@@ -13233,7 +13233,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _elementPendingImageAnalysis = std::nullopt;
 }
 
-- (RetainPtr<CocoaImageAnalyzerRequest>)createImageAnalyzerRequest:(VKAnalysisTypes)analysisTypes image:(CGImageRef)image imageURL:(NSURL *)imageURL
+- (RetainPtr<VKCImageAnalyzerRequest>)createImageAnalyzerRequest:(VKAnalysisTypes)analysisTypes image:(CGImageRef)image imageURL:(NSURL *)imageURL
 {
     auto request = WebKit::createImageAnalyzerRequest(image, analysisTypes);
     [request setImageURL:imageURL];
@@ -13241,13 +13241,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return request;
 }
 
-- (RetainPtr<CocoaImageAnalyzerRequest>)createImageAnalyzerRequest:(VKAnalysisTypes)analysisTypes image:(CGImageRef)image
+- (RetainPtr<VKCImageAnalyzerRequest>)createImageAnalyzerRequest:(VKAnalysisTypes)analysisTypes image:(CGImageRef)image
 {
     return [self createImageAnalyzerRequest:analysisTypes image:image imageURL:_positionInformation.imageURL.createNSURL().get()];
 }
 
 
-- (void)updateImageAnalysisForContextMenuPresentation:(CocoaImageAnalysis *)analysis elementBounds:(CGRect)elementBounds
+- (void)updateImageAnalysisForContextMenuPresentation:(VKCImageAnalysis *)analysis elementBounds:(CGRect)elementBounds
 {
 #if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
     analysis.presentingViewControllerForMrcAction = self._wk_viewControllerForFullScreenPresentation;
@@ -13292,7 +13292,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return WebKit::requestVisualTranslation(self.imageAnalyzer, imageURL, sourceLanguageIdentifier, targetLanguageIdentifier, cgImage.get(), WTF::move(completion));
 
     auto request = [self createImageAnalyzerRequest:VKAnalysisTypeText image:cgImage.get()];
-    [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTF::move(completion)] (CocoaImageAnalysis *result, NSError *) mutable {
+    [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTF::move(completion)] (VKCImageAnalysis *result, NSError *) mutable {
         completion(WebKit::makeTextRecognitionResult(result));
     }).get()];
 }
@@ -13370,7 +13370,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }
 
         auto textAnalysisStartTime = MonotonicTime::now();
-        [[strongSelf imageAnalyzer] processRequest:requestForTextSelection.get() progressHandler:nil completionHandler:[requestIdentifier = WTF::move(requestIdentifier), weakSelf, elementContext, requestLocation, cgImage, gestureDeferralToken, textAnalysisStartTime] (CocoaImageAnalysis *result, NSError *error) mutable {
+        [[strongSelf imageAnalyzer] processRequest:requestForTextSelection.get() progressHandler:nil completionHandler:[requestIdentifier = WTF::move(requestIdentifier), weakSelf, elementContext, requestLocation, cgImage, gestureDeferralToken, textAnalysisStartTime] (VKCImageAnalysis *result, NSError *error) mutable {
             auto strongSelf = weakSelf.get();
             if (![strongSelf validateImageAnalysisRequestIdentifier:requestIdentifier])
                 return;
@@ -13402,7 +13402,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #if ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
-static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAnalysis *result)
+static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(VKCImageAnalysis *result)
 {
 #if HAVE(BCS_LIVE_CAMERA_ONLY_ACTION_SPI)
     return [result.barcodeActions indexOfObjectPassingTest:^BOOL(BCSAction *action, NSUInteger index, BOOL *stop) {
@@ -13439,7 +13439,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 
     auto elementBounds = _positionInformation.bounds;
     auto visualSearchAnalysisStartTime = MonotonicTime::now();
-    [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:[requestIdentifier = WTF::move(requestIdentifier), weakSelf, visualSearchAnalysisStartTime, aggregator = aggregator.copyRef(), data, elementBounds] (CocoaImageAnalysis *result, NSError *error) mutable {
+    [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:[requestIdentifier = WTF::move(requestIdentifier), weakSelf, visualSearchAnalysisStartTime, aggregator = aggregator.copyRef(), data, elementBounds] (VKCImageAnalysis *result, NSError *error) mutable {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
@@ -13606,7 +13606,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 
     auto request = [self createImageAnalyzerRequest:WebKit::analysisTypesForFullscreenVideo() image:cgImage.get()];
     [request setImageSource:VKImageAnalyzerRequestImageSourceVideoFrame];
-    _fullscreenVideoImageAnalysisRequestIdentifier = [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([weakSelf = WeakObjCPtr<WKContentView>(self), controller = RetainPtr { controller }] (CocoaImageAnalysis *result, NSError *) mutable {
+    _fullscreenVideoImageAnalysisRequestIdentifier = [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([weakSelf = WeakObjCPtr<WKContentView>(self), controller = RetainPtr { controller }] (VKCImageAnalysis *result, NSError *) mutable {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
@@ -13652,7 +13652,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 
     auto request = WebKit::createImageAnalyzerRequest(image.get(), WebKit::analysisTypesForElementFullscreenVideo());
     [request setImageSource:VKImageAnalyzerRequestImageSourceVideoFrame];
-    _fullscreenVideoImageAnalysisRequestIdentifier = [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:[weakSelf = WeakObjCPtr<WKContentView>(self), bounds](CocoaImageAnalysis *result, NSError *error) {
+    _fullscreenVideoImageAnalysisRequestIdentifier = [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:[weakSelf = WeakObjCPtr<WKContentView>(self), bounds](VKCImageAnalysis *result, NSError *error) {
         auto strongSelf = weakSelf.get();
         if (!strongSelf || !strongSelf->_fullscreenVideoImageAnalysisRequestIdentifier)
             return;

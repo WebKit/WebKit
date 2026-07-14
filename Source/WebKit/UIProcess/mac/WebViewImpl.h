@@ -1007,8 +1007,8 @@ private:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    CocoaImageAnalyzer* ensureImageAnalyzer();
-    int32_t processImageAnalyzerRequest(CocoaImageAnalyzerRequest *, CompletionHandler<void(RetainPtr<CocoaImageAnalysis>&&, NSError *)>&&);
+    VKCImageAnalyzer* ensureImageAnalyzer();
+    int32_t processImageAnalyzerRequest(VKCImageAnalyzerRequest *, CompletionHandler<void(RetainPtr<VKCImageAnalysis>&&, NSError *)>&&);
 #endif
 
     std::optional<EditorState::PostLayoutData> postLayoutDataForContentEditable();
@@ -1187,7 +1187,7 @@ private:
 
 #if ENABLE(IMAGE_ANALYSIS)
     const RefPtr<WorkQueue> m_imageAnalyzerQueue;
-    const RetainPtr<CocoaImageAnalyzer> m_imageAnalyzer;
+    const RetainPtr<VKCImageAnalyzer> m_imageAnalyzer;
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)

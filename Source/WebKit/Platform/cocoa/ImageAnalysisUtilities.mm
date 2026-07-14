@@ -53,12 +53,12 @@ using namespace WebCore;
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-RetainPtr<CocoaImageAnalyzer> createImageAnalyzer()
+RetainPtr<VKCImageAnalyzer> createImageAnalyzer()
 {
     return adoptNS([PAL::allocVKCImageAnalyzerInstance() init]);
 }
 
-RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef image, VKAnalysisTypes types)
+RetainPtr<VKCImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef image, VKAnalysisTypes types)
 {
     return adoptNS([(PAL::allocVKCImageAnalyzerRequestInstance()) initWithCGImage:image orientation:VKImageOrientationUp requestType:types]);
 }
@@ -75,7 +75,7 @@ static Vector<FloatQuad> floatQuads(NSArray<VKQuad *> *vkQuads)
     });
 }
 
-TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
+TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysis *analysis)
 {
     RetainPtr<NSArray<VKWKLineInfo *>> allLines = analysis.allLines;
     TextRecognitionResult result;
@@ -198,7 +198,7 @@ static bool shouldLogFullImageTranslationResults()
     return shouldLog;
 }
 
-void requestVisualTranslation(CocoaImageAnalyzer *analyzer, NSURL *imageURL, const String& sourceLocale, const String& targetLocale, CGImageRef image, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
+void requestVisualTranslation(VKCImageAnalyzer *analyzer, NSURL *imageURL, const String& sourceLocale, const String& targetLocale, CGImageRef image, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
 {
     auto startTime = MonotonicTime::now();
     static auto imageAnalysisRequestID = TransactionID::generateMonotonic();
@@ -208,7 +208,7 @@ void requestVisualTranslation(CocoaImageAnalyzer *analyzer, NSURL *imageURL, con
     else
         RELEASE_LOG(Translation, "[#%{public}s] Image translation started", currentRequestID.loggingString().utf8().data());
     auto request = createImageAnalyzerRequest(image, VKAnalysisTypeText);
-    [analyzer processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTF::move(completion), sourceLocale, targetLocale, currentRequestID, startTime] (CocoaImageAnalysis *analysis, NSError *analysisError) mutable {
+    [analyzer processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTF::move(completion), sourceLocale, targetLocale, currentRequestID, startTime] (VKCImageAnalysis *analysis, NSError *analysisError) mutable {
         callOnMainRunLoop([completion = WTF::move(completion), analysis = RetainPtr { analysis }, analysisError = RetainPtr { analysisError }, sourceLocale, targetLocale, currentRequestID, startTime] () mutable {
             auto imageAnalysisDelay = MonotonicTime::now() - startTime;
             if (!analysis) {
