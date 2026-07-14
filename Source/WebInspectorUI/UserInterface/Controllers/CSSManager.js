@@ -292,8 +292,6 @@ WI.CSSManager = class CSSManager extends WI.Object
 
     get defaultUserPreferences() { return this._defaultUserPreferences; }
 
-    get overriddenUserPreferences() { return this._overriddenUserPreferences; }
-
     get preferredColorFormat()
     {
         return this._colorFormatSetting.value;
