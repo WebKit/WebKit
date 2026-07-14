@@ -46,6 +46,10 @@ namespace Style {
     macro(TimelineTrigger, TimelineTriggerActiveRangeEnd, SingleAnimationRangeEnd, activeRangeEnd, ActiveRangeEnd) \
 \
 
+#define FOR_EACH_TIMELINE_TRIGGER_SHORTHAND(macro) \
+    macro(TimelineTrigger, TimelineTriggerActivationRange, SingleAnimationRange, activationRange, ActivationRange) \
+\
+
 #define FOR_EACH_TIMELINE_TRIGGER_PROPERTY(macro) \
     FOR_EACH_TIMELINE_TRIGGER_REFERENCE(macro) \
 \
@@ -69,6 +73,16 @@ struct TimelineTrigger {
     static SingleAnimationRangeEnd initialActiveRangeEnd() { return CSS::Keyword::Normal { }; }
 
     FOR_EACH_TIMELINE_TRIGGER_REFERENCE(DECLARE_COORDINATED_VALUE_LIST_GETTER_AND_SETTERS_REFERENCE)
+
+    // Support for the `timeline-trigger-activation-range` shorthand.
+    static SingleAnimationRange initialActivationRange() { return { initialActivationRangeStart(), initialActivationRangeEnd() }; }
+    SingleAnimationRange activationRange() const { return { activationRangeStart(), activationRangeEnd() }; }
+    void setActivationRange(SingleAnimationRange&& activationRange) { setActivationRangeStart(WTF::move(activationRange.start)); setActivationRangeEnd(WTF::move(activationRange.end)); }
+    void fillActivationRange(SingleAnimationRange&& activationRange) { fillActivationRangeStart(WTF::move(activationRange.start)); fillActivationRangeEnd(WTF::move(activationRange.end)); }
+    void clearActivationRange() { clearActivationRangeStart(); clearActivationRangeEnd(); }
+    bool isActivationRangeUnset() const { return isActivationRangeStartUnset() && isActivationRangeEndUnset(); }
+    bool isActivationRangeSet() const { return isActivationRangeStartSet() || isActivationRangeEndSet(); }
+    bool isActivationRangeFilled() const { return isActivationRangeStartFilled() || isActivationRangeEndFilled(); }
 
     bool operator==(const TimelineTrigger&) const = default;
 
@@ -106,6 +120,7 @@ private:
 };
 
 FOR_EACH_TIMELINE_TRIGGER_REFERENCE(DECLARE_COORDINATED_VALUE_LIST_PROPERTY_ACCESSOR_REFERENCE)
+FOR_EACH_TIMELINE_TRIGGER_SHORTHAND(DECLARE_COORDINATED_VALUE_LIST_PROPERTY_ACCESSOR_SHORTHAND)
 
 // MARK: - Logging
 
@@ -113,6 +128,7 @@ TextStream& operator<<(TextStream&, const TimelineTrigger&);
 
 #undef FOR_EACH_TIMELINE_TRIGGER_REFERENCE
 #undef FOR_EACH_TIMELINE_TRIGGER_PROPERTY
+#undef FOR_EACH_TIMELINE_TRIGGER_SHORTHAND
 
 } // namespace Style
 } // namespace WebCore
