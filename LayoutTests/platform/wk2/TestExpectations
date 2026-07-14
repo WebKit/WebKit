@@ -776,3 +776,7 @@ webkit.org/b/288774 fast/dynamic/content-visibility-crash-with-continuation-and-
 webkit.org/b/288851 imported/w3c/web-platform-tests/fetch/http-cache/invalidate.any.html [ Pass Failure ]
 
 webkit.org/b/289550 imported/w3c/web-platform-tests/fetch/http-cache/invalidate.any.sharedworker.html [ Pass Failure ]
+
+# Same pre-existing animated-background/repaint-tracking race as fast/repaint/obscured-background-no-repaint.html (webkit.org/b/131477).
+webkit.org/b/131477 fast/css/object-view-box-subset-obscures-background-no-repaint.html [ Pass Failure ]
+webkit.org/b/131477 fast/css/object-view-box-superset-does-not-obscure-background-repaint.html [ Pass Failure ]

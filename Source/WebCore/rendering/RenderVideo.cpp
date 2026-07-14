@@ -240,6 +240,7 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     Ref page = this->page();
     RefPtr mediaPlayer = videoElement->player();
     bool displayingPoster = videoElement->shouldDisplayPosterImage();
+    GraphicsContext& context = paintInfo.context();
 
     if (!displayingPoster && !mediaPlayer) {
         if (paintInfo.phase == PaintPhase::Foreground)
@@ -256,7 +257,16 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     auto rect = videoBoxRect;
     rect.moveBy(paintOffset);
-    GraphicsContext& context = paintInfo.context();
+
+    LayoutRect contentRect = contentBoxRect();
+    contentRect.moveBy(paintOffset);
+
+    LayoutRect paintRect = computePaintRectForObjectViewBox(rect);
+
+    bool clip = !contentRect.contains(paintRect);
+    GraphicsContextStateSaver stateSaver(context, clip);
+    if (clip)
+        context.clip(contentRect);
 
     if (paintInfo.phase == PaintPhase::Foreground) {
         page->addRelevantRepaintedObject(*this, rect);
@@ -264,21 +274,13 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             protect(document())->didPaintImage(videoElement.get(), protect(cachedImage()), videoBoxRect);
     }
 
-    LayoutRect contentRect = contentBoxRect();
-    contentRect.moveBy(paintOffset);
-
     if (context.detectingContentfulPaint()) {
         context.setContentfulPaintDetected();
         return;
     }
 
-    bool clip = !contentRect.contains(rect);
-    GraphicsContextStateSaver stateSaver(context, clip);
-    if (clip)
-        context.clip(contentRect);
-
     if (displayingPoster) {
-        paintIntoRect(paintInfo, rect);
+        paintIntoRect(paintInfo, paintRect);
         return;
     }
 
@@ -299,7 +301,7 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         && !paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting))
         return;
 
-    videoElement->paint(context, rect);
+    videoElement->paint(context, paintRect);
 }
 
 void RenderVideo::layout()
@@ -382,6 +384,11 @@ bool RenderVideo::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
         return RenderImage::foregroundIsKnownToBeOpaqueInRect(localRect, maxDepthToTest);
 
     if (!videoBox().contains(enclosingIntRect(localRect)))
+        return false;
+
+    // object-view-box's inset() can be negative, making the view box a superset of the natural
+    // size, in which case the painted frame is smaller than videoBox() and leaves gaps.
+    if (!objectViewBoxIsContainedWithinNaturalSize())
         return false;
 
     if (RefPtr player = videoElement->player())

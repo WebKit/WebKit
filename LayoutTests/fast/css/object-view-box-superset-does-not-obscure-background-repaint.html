@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ CSSObjectViewBoxEnabled=true ] -->
+<html>
+<head>
+<script>jsTestIsAsync = true;</script>
+<script src="../../resources/js-test.js"></script>
+<style>
+    img {
+        display: block;
+        width: 100px;
+        height: 100px;
+        object-fit: fill;
+        background-image: url(../repaint/resources/animated.gif);
+        /* Negative left inset: the view box is a superset of the natural
+           image, so the painted content is scaled down and leaves a real
+           gap where the background shows through. The opaque-foreground
+           optimization must not suppress the animated background's repaint
+           in this case, or the gap would go stale. */
+        object-view-box: inset(0px 0px 0px -50px);
+    }
+</style>
+</head>
+<body>
+<img src="../repaint/resources/apple.jpg">
+<script>
+    description("A superset object-view-box (negative inset) must not let the opaque-foreground optimization suppress an obscured animated background's repaint, since the painted content leaves real gaps. This test requires DRT.");
+
+    async function start()
+    {
+        if (!window.testRunner || !window.internals) {
+            finishJSTest();
+            return;
+        }
+
+        document.body.offsetTop;
+        await testRunner.displayAndTrackRepaints();
+        setTimeout(logRepaints, 200);
+    }
+
+    function logRepaints()
+    {
+        repaintRects = window.internals.repaintRectsAsText();
+        window.internals.stopTrackingRepaints();
+
+        shouldNotBeEqualToString("repaintRects", "");
+
+        finishJSTest();
+    }
+
+    window.addEventListener("load", start);
+</script>
+</body>
+</html>

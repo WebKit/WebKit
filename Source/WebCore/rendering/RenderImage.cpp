@@ -685,18 +685,22 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         replacedContentRect.moveBy(paintOffset);
     }
 
-    bool clip = !contentBoxRect.contains(replacedContentRect);
+    LayoutRect paintRect = replacedContentRect;
+    if (!isDimensionlessSVG())
+        paintRect = computePaintRectForObjectViewBox(replacedContentRect);
+
+    bool clip = !contentBoxRect.contains(paintRect);
     GraphicsContextStateSaver stateSaver(context, clip);
     if (clip)
         context.clip(contentBoxRect);
 
-    ImageDrawResult result = paintIntoRect(paintInfo, snapRectToDevicePixels(replacedContentRect, deviceScaleFactor));
+    ImageDrawResult result = paintIntoRect(paintInfo, snapRectToDevicePixels(paintRect, deviceScaleFactor));
 
     if (showBorderForIncompleteImage && (result != ImageDrawResult::DidDraw || (cachedImage() && cachedImage()->isLoading())))
         paintIncompleteImageOutline(paintInfo, paintOffset, missingImageBorderWidth);
-    
+
     if (cachedImage() && paintInfo.phase == PaintPhase::Foreground && !context.paintingDisabled()) {
-        // For now, count images as unpainted if they are still progressively loading. We may want 
+        // For now, count images as unpainted if they are still progressively loading. We may want
         // to refine this in the future to account for the portion of the image that has painted.
         LayoutRect visibleRect = intersection(replacedContentRect, contentBoxRect);
         if (cachedImage()->isLoading() || result == ImageDrawResult::DidRequestDecoding)
@@ -842,6 +846,11 @@ bool RenderImage::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
     if (auto objectFit = style().objectFit(); objectFit != ObjectFit::Fill && objectFit != ObjectFit::Cover)
         return false;
 
+    // object-view-box's inset() can be negative, making the view box a superset of the natural
+    // size, in which case the painted image is smaller than replacedContentRect() and leaves gaps.
+    if (!objectViewBoxIsContainedWithinNaturalSize())
+        return false;
+
     if (style().objectPosition() != Style::ComputedStyle::initialObjectPosition())
         return false;
 
@@ -853,7 +862,7 @@ bool RenderImage::computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintO
 {
     if (!hasBackground())
         return false;
-    
+
     LayoutRect paintedExtent;
     if (!getBackgroundPaintedExtent(paintOffset, paintedExtent))
         return false;

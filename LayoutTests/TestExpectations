@@ -4498,33 +4498,6 @@ imported/w3c/web-platform-tests/css/css-images/object-position-svg-001e.html [ I
 imported/w3c/web-platform-tests/css/css-images/object-position-svg-001o.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/object-position-svg-002e.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/object-position-svg-002o.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-contain-intrinsic-size.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-fit-contain-canvas.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-fit-contain-img.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-fit-contain-svg.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-fit-contain-video.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-fit-cover-canvas.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-fit-cover-img.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-fit-cover-svg.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-fit-cover-video.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-fit-fill-canvas.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-fit-fill-img.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-fit-fill-svg.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-fit-fill-video.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-fit-none-canvas.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-fit-none-img.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-fit-none-svg.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-fit-none-video.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-property-changed.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-rect-percentage.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-rect.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-size-containment.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-writing-mode-canvas.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-writing-mode-img.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-writing-mode-svg.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-writing-mode-video.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-xywh-percentage.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-view-box-xywh.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/tiled-gradients.html [ ImageOnlyFailure ]
 
 # These need fuzziness.
@@ -7163,7 +7136,6 @@ imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-reload.html [ Skip ]
 
 # -- View Transitions -- #
-
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-element-overflow-clip-with-border-radius.html [ ImageOnlyFailure ]
 
 # Timeouts
@@ -7200,12 +7172,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/scoped/ [ Skip ]
 
 # waitUntil() method.
 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-waituntil-animation-manipulation.html [ ImageOnlyFailure ]
-
-# Depends on object-view-box (unimplemented).
-imported/w3c/web-platform-tests/css/css-view-transitions/old-content-with-object-view-box.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/object-view-box-new-image.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/object-view-box-old-image.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-with-object-view-box.html [ ImageOnlyFailure ]
 
 # -- END: View transitions -- #
 

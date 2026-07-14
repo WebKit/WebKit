@@ -162,6 +162,18 @@ FloatRect smallestRectWithAspectRatioAroundRect(float aspectRatio, const FloatRe
     return destRect;
 }
 
+FloatRect fullRectFromSubrectAndSize(const FloatSize& naturalSize, const FloatRect& subrect, const FloatRect& destRect)
+{
+    float scaleX = destRect.width() / subrect.width();
+    float scaleY = destRect.height() / subrect.height();
+    return {
+        destRect.x() - subrect.x() * scaleX,
+        destRect.y() - subrect.y() * scaleY,
+        naturalSize.width() * scaleX,
+        naturalSize.height() * scaleY
+    };
+}
+
 FloatSize sizeWithAreaAndAspectRatio(float area, float aspectRatio)
 {
     auto scaledWidth = std::sqrt(area * aspectRatio);

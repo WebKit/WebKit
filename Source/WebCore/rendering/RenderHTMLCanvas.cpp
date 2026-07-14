@@ -90,11 +90,16 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
     LayoutRect replacedContentRect = this->replacedContentRect();
     replacedContentRect.moveBy(paintOffset);
 
-    // Not allowed to overflow the content box.
-    bool clip = !contentBoxRect.contains(replacedContentRect);
-    GraphicsContextStateSaver stateSaver(paintInfo.context(), clip);
+    LayoutRect paintRect = computePaintRectForObjectViewBox(replacedContentRect);
+
+    // Not allowed to overflow the content box. Snap before testing containment so that
+    // pixel-snapping can't push paintRect outside contentBoxRect without a clip being applied
+    // (or vice versa).
+    IntRect snappedContentBoxRect = snappedIntRect(contentBoxRect);
+    bool clip = !snappedContentBoxRect.contains(snappedIntRect(paintRect));
+    GraphicsContextStateSaver stateSaver(context, clip);
     if (clip)
-        paintInfo.context().clip(snappedIntRect(contentBoxRect));
+        context.clip(snappedContentBoxRect);
 
     if (paintInfo.phase == PaintPhase::Foreground)
         protect(page())->addRelevantRepaintedObject(*this, intersection(replacedContentRect, contentBoxRect));
@@ -103,7 +108,7 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
 
     Ref canvasEl = canvasElement();
     canvasEl->setIsSnapshotting(paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting));
-    canvasEl->paint(context, replacedContentRect);
+    canvasEl->paint(context, paintRect);
     canvasEl->setIsSnapshotting(false);
 }
 

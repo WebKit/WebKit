@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ CSSObjectViewBoxEnabled=true ] -->
+<html>
+<head>
+<script>jsTestIsAsync = true;</script>
+<script src="../../resources/js-test.js"></script>
+<style>
+    img {
+        display: block;
+        width: 100px;
+        height: 100px;
+        object-fit: fill;
+        background-image: url(../repaint/resources/animated.gif);
+        /* Positive insets: the view box is a subset of the natural image, so
+           the opaque foreground still fully covers the background in every
+           frame. RenderImage::foregroundIsKnownToBeOpaqueInRect() should
+           still recognize this and suppress the animated background's
+           repeated repaint, just like it does with no object-view-box at all. */
+        object-view-box: inset(10px 10px 10px 10px);
+    }
+</style>
+</head>
+<body>
+<img src="../repaint/resources/apple.jpg">
+<script>
+    description("A subset object-view-box (all-positive insets) should not prevent the opaque-foreground optimization from suppressing an obscured animated background's repaint. This test requires DRT.");
+
+    async function start()
+    {
+        if (!window.testRunner || !window.internals) {
+            finishJSTest();
+            return;
+        }
+
+        document.body.offsetTop;
+        await testRunner.displayAndTrackRepaints();
+        setTimeout(logRepaints, 200);
+    }
+
+    function logRepaints()
+    {
+        repaintRects = window.internals.repaintRectsAsText();
+        window.internals.stopTrackingRepaints();
+
+        shouldBeEqualToString("repaintRects", "");
+
+        finishJSTest();
+    }
+
+    window.addEventListener("load", start);
+</script>
+</body>
+</html>

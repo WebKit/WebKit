@@ -30,6 +30,7 @@
 #include "DocumentMarkerController.h"
 #include "ElementRuleCollector.h"
 #include "FloatRoundedRect.h"
+#include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
@@ -134,6 +135,14 @@ void RenderReplaced::styleDidChange(Style::Difference diff, const Style::Compute
     auto previousUsedZoom = oldStyle ? oldStyle->usedZoom() : Style::evaluate<float>(Style::ComputedStyle::initialZoom());
     if (previousUsedZoom != style().usedZoom())
         intrinsicSizeChanged();
+    // object-view-box affects the element's natural size, so layout is needed when
+    // dimensions are auto. With explicit sizing, a repaint suffices (see StyleDifference.cpp).
+    if (oldStyle && style().objectViewBox() != oldStyle->objectViewBox()) {
+        auto& s = style();
+        if (s.logicalWidth().isAuto() || s.logicalHeight().isAuto()
+            || s.logicalMinWidth().isAuto() || s.logicalMinHeight().isAuto())
+            setNeedsLayout();
+    }
 }
 
 static bool shouldRepaintOnSizeChange(RenderReplaced& renderer)
@@ -545,6 +554,22 @@ void RenderReplaced::computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(Fl
             m_intrinsicSize = LayoutSize(sizeToCache);
         } else if (!intrinsicRatio.isEmpty() && !intrinsicSize.isZero())
             m_intrinsicSize = LayoutSize(sizeToCache);
+
+        // Apply object-view-box: use view box dimensions as the element's effective natural size.
+        // intrinsicSize here is in logical coordinates; convert to physical for resolvedObjectViewBox,
+        // then convert the result back to logical.
+        if (!intrinsicSize.isEmpty() && !style().objectViewBox().isNone()) {
+            auto physicalSize = isHorizontalWritingMode() ? intrinsicSize : intrinsicSize.transposedSize();
+            if (auto viewBox = resolvedObjectViewBox(physicalSize)) {
+                auto logicalViewBoxSize = isHorizontalWritingMode() ? viewBox->size() : viewBox->size().transposedSize();
+                intrinsicSize = logicalViewBoxSize;
+                // An explicit, non-auto aspect-ratio always wins, but "auto <ratio>" (e.g. from the
+                // width/height content attribute presentational hint) must defer to the intrinsic
+                // ratio, matching preferredAspectRatioAsSize()'s use of isRatio() below.
+                if (!style().aspectRatio().isRatio())
+                    intrinsicRatio = logicalViewBoxSize;
+            }
+        }
     }
 
     // Now constrain the intrinsic size along each axis according to minimum and maximum width/heights along the
@@ -580,11 +605,65 @@ void RenderReplaced::computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(Fl
     }
 }
 
+std::optional<FloatRect> RenderReplaced::resolvedObjectViewBox(const FloatSize& physicalIntrinsicSize) const
+{
+    auto viewBox = style().objectViewBox().tryRect();
+    if (!viewBox)
+        return std::nullopt;
+
+    auto zoom = style().usedZoomForLength();
+    auto insets = RectEdges<float> {
+        Style::evaluate<float>(viewBox->parameters.insets.top(), physicalIntrinsicSize.height(), zoom),
+        Style::evaluate<float>(viewBox->parameters.insets.right(), physicalIntrinsicSize.width(), zoom),
+        Style::evaluate<float>(viewBox->parameters.insets.bottom(), physicalIntrinsicSize.height(), zoom),
+        Style::evaluate<float>(viewBox->parameters.insets.left(), physicalIntrinsicSize.width(), zoom),
+    };
+
+    auto width = physicalIntrinsicSize.width() - insets.left() - insets.right();
+    auto height = physicalIntrinsicSize.height() - insets.top() - insets.bottom();
+
+    if (width <= 0 || height <= 0)
+        return std::nullopt;
+
+    FloatRect viewBoxRect { insets.left(), insets.top(), width, height };
+    if (viewBoxRect == FloatRect { { }, physicalIntrinsicSize })
+        return std::nullopt;
+
+    return viewBoxRect;
+}
+
+bool RenderReplaced::objectViewBoxIsContainedWithinNaturalSize() const
+{
+    if (style().objectViewBox().isNone())
+        return true;
+
+    auto viewBox = resolvedObjectViewBox(FloatSize(intrinsicSize()));
+    if (!viewBox)
+        return true;
+
+    return FloatRect({ }, FloatSize(intrinsicSize())).contains(*viewBox);
+}
+
+LayoutRect RenderReplaced::computePaintRectForObjectViewBox(const LayoutRect& destRect) const
+{
+    if (!style().objectViewBox().isNone()) {
+        if (auto viewBox = resolvedObjectViewBox(FloatSize(intrinsicSize())))
+            return LayoutRect(fullRectFromSubrectAndSize(FloatSize(intrinsicSize()), *viewBox, FloatRect(destRect)));
+    }
+    return destRect;
+}
+
 LayoutRect RenderReplaced::replacedContentRect(const LayoutSize& intrinsicSize) const
 {
     LayoutRect contentRect = contentBoxRect();
     if (intrinsicSize.isEmpty())
         return contentRect;
+
+    LayoutSize effectiveIntrinsicSize = intrinsicSize;
+    if (!style().objectViewBox().isNone()) {
+        if (auto viewBox = resolvedObjectViewBox(FloatSize(intrinsicSize)))
+            effectiveIntrinsicSize = LayoutSize(viewBox->size());
+    }
 
     auto objectFit = style().objectFit();
 
@@ -593,12 +672,12 @@ LayoutRect RenderReplaced::replacedContentRect(const LayoutSize& intrinsicSize) 
     case ObjectFit::Contain:
     case ObjectFit::ScaleDown:
     case ObjectFit::Cover:
-        finalRect.setSize(finalRect.size().fitToAspectRatio(intrinsicSize, objectFit == ObjectFit::Cover ? AspectRatioFitGrow : AspectRatioFitShrink));
-        if (objectFit != ObjectFit::ScaleDown || finalRect.width() <= intrinsicSize.width())
+        finalRect.setSize(finalRect.size().fitToAspectRatio(effectiveIntrinsicSize, objectFit == ObjectFit::Cover ? AspectRatioFitGrow : AspectRatioFitShrink));
+        if (objectFit != ObjectFit::ScaleDown || finalRect.width() <= effectiveIntrinsicSize.width())
             break;
         [[fallthrough]];
     case ObjectFit::None:
-        finalRect.setSize(intrinsicSize);
+        finalRect.setSize(effectiveIntrinsicSize);
         break;
     case ObjectFit::Fill:
         break;

@@ -39,6 +39,16 @@ public:
     LayoutRect replacedContentRect(const LayoutSize& intrinsicSize) const;
     LayoutRect replacedContentRect() const { return replacedContentRect(intrinsicSize()); }
 
+    std::optional<FloatRect> resolvedObjectViewBox(const FloatSize& physicalIntrinsicSize) const;
+
+    // Returns the full content rect scaled so the view-box sub-region maps onto destRect,
+    // or destRect itself when object-view-box is not set.
+    LayoutRect computePaintRectForObjectViewBox(const LayoutRect& destRect) const;
+
+    // False only when object-view-box has a negative inset, making the view box a superset
+    // of the natural size; in that case the painted content doesn't fully cover destRect.
+    bool objectViewBoxIsContainedWithinNaturalSize() const;
+
     bool setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
 
     LayoutSize intrinsicSize() const final;

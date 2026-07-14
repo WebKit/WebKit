@@ -764,7 +764,8 @@ public:
     {
         if (a.userDrag != b.userDrag
             || a.objectFit != b.objectFit
-            || a.objectPosition != b.objectPosition)
+            || a.objectPosition != b.objectPosition
+            || a.objectViewBox != b.objectViewBox)
             return true;
 
         return false;

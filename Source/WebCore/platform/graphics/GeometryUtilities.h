@@ -57,6 +57,10 @@ WEBCORE_EXPORT FloatRect NODELETE mapRect(const FloatRect&, const FloatRect& src
 WEBCORE_EXPORT FloatRect NODELETE largestRectWithAspectRatioInsideRect(float aspectRatio, const FloatRect&);
 WEBCORE_EXPORT FloatRect NODELETE smallestRectWithAspectRatioAroundRect(float aspectRatio, const FloatRect&);
 
+// Given a natural size and a subrect of it, compute the rect that natural-sized content
+// would occupy such that subrect maps exactly onto destRect. Used by object-view-box rendering.
+FloatRect NODELETE fullRectFromSubrectAndSize(const FloatSize& naturalSize, const FloatRect& subrect, const FloatRect& destRect);
+
 FloatSize NODELETE sizeWithAreaAndAspectRatio(float area, float aspectRatio);
 
 // Compute a rect that encloses all points covered by the given rect if it were rotated a full turn around (0,0).
