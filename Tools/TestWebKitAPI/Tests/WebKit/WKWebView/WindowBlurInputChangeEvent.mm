@@ -49,10 +49,14 @@ TEST(WKWebView, InputChangeFiresOnWindowBlur)
         </html>
     )"];
 
+    [webView waitForNextPresentationUpdate];
+
     [webView objectByEvaluatingJavaScript:@"document.getElementById('input').focus();"];
     [webView typeCharacter:'a'];
 
     [webView setVisibility:NO];
+
+    [webView waitForNextPresentationUpdate];
 
     EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.changeFired"] boolValue]);
 }
