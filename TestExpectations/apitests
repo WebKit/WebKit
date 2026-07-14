@@ -360,3 +360,5 @@ webkit.org/b/318713 [ Debug x86_64 ] TestWebKitAPI.EvaluateJavaScript.Serializat
 webkit.org/b/266292 [ mac ] TestWebKitAPI.FullscreenVideoTextRecognition.AddVideoAfterEnteringFullscreen [ Timeout ]
 
 webkit.org/b/319407 [ mac ] TestWebKitAPI.WebKit.ViewScaleFactorAfterShrinkToFit [ Failure ]
+
+webkit.org/b/319410 [ mac ] TestWebKitAPI.PasteImage.PasteFileWhileNetworkProcessIsLaunching [ Failure ]
