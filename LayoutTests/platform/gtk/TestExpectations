@@ -471,8 +471,6 @@ webkit.org/b/172283 inspector/worker/debugger-multiple-targets-pause.html [ Time
 # TypeError: Argument 1 ('node') to Internals.markerCountForNode must be an instance of Node.
 webkit.org/b/186673 editing/spelling/spellcheck-async-mutation.html [ Skip ] # Timeout.
 
-webkit.org/b/179173 [ Release ] http/tests/inspector/network/har/har-page-aggressive-gc.html [ Failure ]
-
 webkit.org/b/188042 imported/w3c/web-platform-tests/infrastructure/assumptions/ahem.html [ ImageOnlyFailure Timeout ]
 
 webkit.org/b/190703 [ Release ] inspector/worker/debugger-pause.html [ Failure Pass Timeout ]
@@ -1315,3 +1313,8 @@ webkit.org/b/319066 [ Debug ] imported/w3c/web-platform-tests/css/css-view-trans
 
 webkit.org/b/319072 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio-loading-lazy-window-onload.html [ Failure Pass ]
 webkit.org/b/319073 inspector/canvas/create-context-bitmaprenderer.html [ Crash Failure Pass ]
+webkit.org/b/319318 http/tests/inspector/network/har/har-page-aggressive-gc.html [ Failure ]
+webkit.org/b/319319 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-replaced.html [ Failure Pass ]
+webkit.org/b/319323 imported/w3c/web-platform-tests/css/css-scroll-snap/input/keyboard-snap-interruption.html [ Failure Pass ]
+webkit.org/b/319324 inspector/canvas/create-context-webgl.html [ Failure Pass ]
+webkit.org/b/319325 fast/body-propagation/background-color/010.html [ ImageOnlyFailure Pass ]

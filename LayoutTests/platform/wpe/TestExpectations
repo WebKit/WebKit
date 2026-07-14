@@ -1377,3 +1377,13 @@ webkit.org/b/319068 [ arm64 ] imported/w3c/web-platform-tests/media-source/media
 webkit.org/b/319069 [ arm64 ] imported/w3c/web-platform-tests/wasm/core/simd/simd_f64x2_rounding.wast.js.html [ Pass Timeout ]
 webkit.org/b/319070 [ arm64 ] imported/w3c/web-platform-tests/wasm/core/simd/simd_f32x4_rounding.wast.js.html [ Pass Timeout ]
 webkit.org/b/319071 [ arm64 ] fast/parser/entities-in-attributes.xhtml [ Pass Timeout ]
+
+webkit.org/b/319309 [ Debug ] editing/input/page-up-down-scrolls.html [ Crash Pass ]
+webkit.org/b/319313 [ arm64 ] storage/indexeddb/modern/leak-1.html [ Crash Failure Pass Timeout ]
+webkit.org/b/319314 [ Debug ] fast/repaint/overflow-scroll-delete.html [ Crash Pass ]
+webkit.org/b/319315 [ Debug ] fast/repaint/table-with-padding-row-invalidation.html [ Crash Pass ]
+webkit.org/b/319316 [ Debug ] fast/scrolling/scrolling-event-target-gc.html [ Crash Pass ]
+webkit.org/b/319317 [ Debug ] imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-transfer.html [ Crash Pass ]
+webkit.org/b/319320 [ arm64 ] compositing/reflections/animation-inside-reflection.html [ Failure Pass ]
+webkit.org/b/319325 [ arm64 ] fast/body-propagation/background-color/010.html [ ImageOnlyFailure Pass ]
+webkit.org/b/319326 [ arm64 ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-framesize.html [ Failure Pass ]
