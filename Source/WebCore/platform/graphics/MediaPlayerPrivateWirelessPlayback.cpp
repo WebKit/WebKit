@@ -92,7 +92,10 @@ MediaPlayerPrivateWirelessPlayback::MediaPlayerPrivateWirelessPlayback(MediaPlay
 
 MediaPlayerPrivateWirelessPlayback::~MediaPlayerPrivateWirelessPlayback()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     destroyTimebase();
+    if (RefPtr route = this->route())
+        route->disconnectFromSession();
 }
 
 static bool supportsURL(const URL& url)
@@ -115,6 +118,13 @@ void MediaPlayerPrivateWirelessPlayback::load(const URL& url, const LoadOptions&
 
     m_url = url;
     updateURLIfNeeded();
+}
+
+void MediaPlayerPrivateWirelessPlayback::cancelLoad()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    if (RefPtr route = this->route())
+        route->disconnectFromSession();
 }
 
 OptionSet<MediaPlaybackTargetType> MediaPlayerPrivateWirelessPlayback::playbackTargetTypes()

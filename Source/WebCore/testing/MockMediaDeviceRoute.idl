@@ -33,6 +33,7 @@
     attribute DOMString deviceName;
     attribute DOMString protocolTypeIdentifier;
     readonly attribute DOMString routeName;
+    readonly attribute boolean connected;
     attribute boolean ready;
     attribute boolean playing;
     attribute boolean hasPlaybackError;

@@ -89,6 +89,11 @@ String MockMediaDeviceRoute::routeName() const
     return [[m_platformRoute protocolType] localizedDescription];
 }
 
+bool MockMediaDeviceRoute::connected() const
+{
+    return [m_platformRoute isConnected];
+}
+
 bool MockMediaDeviceRoute::ready() const
 {
     return [m_platformRoute isReady];

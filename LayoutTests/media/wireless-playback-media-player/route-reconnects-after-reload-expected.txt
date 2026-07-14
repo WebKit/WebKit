@@ -1,0 +1,13 @@
+
+Test that a MediaDeviceRoute reconnects after the media element reloads.
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+RUN(video.src = findMediaFile('video', '../content/test'))
+RUN(video.play())
+RUN(route.ready = true)
+EVENT(canplaythrough)
+EXPECTED (route.connected == 'true') OK
+RUN(video.load())
+EXPECTED (route.connected == 'true') OK
+END OF TEST
+

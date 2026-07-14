@@ -62,6 +62,8 @@ public:
 
     String routeName() const;
 
+    bool connected() const;
+
     bool ready() const;
     void setReady(bool);
 

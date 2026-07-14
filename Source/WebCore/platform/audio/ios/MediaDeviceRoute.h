@@ -117,6 +117,7 @@ public:
     WebMediaDevicePlatformRoute *platformRoute() const;
 
     void loadURL(const URL&, CompletionHandler<void(const MediaDeviceRouteLoadURLResult&)>&&);
+    void disconnectFromSession();
 
     MediaTimeRange timeRange() const;
     bool ready() const;

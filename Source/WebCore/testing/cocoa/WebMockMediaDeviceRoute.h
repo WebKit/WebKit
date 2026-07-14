@@ -54,6 +54,7 @@ extern NSErrorDomain const WebMockMediaDeviceRouteErrorDomain;
 @property (nonatomic, strong, nullable) NSError *error;
 @property (nonatomic) CMTimeRange timeRange;
 @property (nonatomic, copy) NSArray<AVPlaybackUserInterfaceMediaSelectionOption *> *audioOptions;
+@property (nonatomic, readonly, getter=isConnected) BOOL connected;
 @end
 
 NS_ASSUME_NONNULL_END
