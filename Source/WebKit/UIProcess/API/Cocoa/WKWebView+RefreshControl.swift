@@ -26,16 +26,15 @@
 #if HAVE_NSREFRESHCONTROLLER
 
 import Foundation
-@_spi(RefreshControl) public import AppKit
 #if canImport(WebKit_Internal)
 internal import WebKit_Internal
 #endif
 
-@_spi(_)
-extension WKWebView: AppKit.NSRefreshControlHosting {
+@objc(NSRefreshControlHosting)
+@implementation
+extension WKWebView {
     // Protocol conformance.
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public func apply(verticalInset: CGFloat, animated: Bool, completion: (@Sendable @convention(block) () -> Void)?) {
+    func apply(withVerticalInset verticalInset: CGFloat, animated: Bool, completion: (@Sendable () -> Void)?) {
         defer {
             completion?()
         }
@@ -48,8 +47,7 @@ extension WKWebView: AppKit.NSRefreshControlHosting {
     }
 
     // Protocol conformance.
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public func remove(verticalInset: CGFloat, animated: Bool, completion: (@Sendable @convention(block) () -> Void)?) {
+    func remove(withVerticalInset verticalInset: CGFloat, animated: Bool, completion: (@Sendable () -> Void)?) {
         defer {
             completion?()
         }
@@ -62,15 +60,13 @@ extension WKWebView: AppKit.NSRefreshControlHosting {
     }
 
     // Protocol conformance.
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     @objc(refreshControlVisibleHeight)
-    public var refreshControlVisibleHeight: CGFloat {
+    var refreshControlVisibleHeight: CGFloat {
         _refreshControlVisibleHeight
     }
 
     // Protocol conformance.
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public var refreshControlHostBounds: NSRect {
+    var refreshControlHostBounds: NSRect {
         let insets = _obscuredContentInsets
         return NSRect(
             x: bounds.origin.x + insets.left,

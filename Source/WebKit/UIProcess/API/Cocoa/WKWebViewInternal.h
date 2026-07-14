@@ -31,6 +31,10 @@
 #import <WebKit/_WKTextExtraction.h>
 #import <pal/spi/cocoa/WritingToolsSPI.h>
 
+#if PLATFORM(MAC)
+#import "AppKitSPI.h"
+#endif
+
 #if !__has_feature(modules) || (defined(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP) && WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)
 
 #import "IdentifierTypes.h"
@@ -772,6 +776,20 @@ struct LiveResizeSnapshotState {
 - (BOOL)_scrollPocketInFullscreenEnabled;
 
 @end
+
+#if PLATFORM(MAC) && HAVE(NSREFRESHCONTROLLER)
+
+NS_SWIFT_UI_ACTOR
+@interface WKWebView (NSRefreshControlHosting) <NSRefreshControlHosting>
+
+- (void)applyWithVerticalInset:(CGFloat)verticalInset animated:(BOOL)animated completion:(NS_SWIFT_SENDABLE void (^ _Nullable)(void))completion;
+- (void)removeWithVerticalInset:(CGFloat)verticalInset animated:(BOOL)animated completion:(NS_SWIFT_SENDABLE void (^ _Nullable)(void))completion;
+@property (nonatomic, readonly) CGFloat refreshControlVisibleHeight;
+@property (nonatomic, readonly) NSRect refreshControlHostBounds;
+
+@end
+
+#endif // PLATFORM(MAC) && HAVE(NSREFRESHCONTROLLER)
 
 @interface WKWebView (WKTextExtraction)
 
