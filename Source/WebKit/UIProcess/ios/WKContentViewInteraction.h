@@ -686,7 +686,6 @@ struct ImageAnalysisContextMenuActionData {
     std::optional<WebKit::ImageAnalysisRequestIdentifier> _pendingImageAnalysisRequestIdentifier;
     std::optional<WebCore::ElementContext> _elementPendingImageAnalysis;
     Vector<BlockPtr<void(WebKit::ProceedWithTextSelectionInImage)>> _actionsToPerformAfterPendingImageAnalysis;
-    BOOL _isProceedingWithTextSelectionInImage;
     RetainPtr<CocoaImageAnalyzer> _imageAnalyzer;
 #if USE(QUICK_LOOK)
     RetainPtr<QLPreviewController> _visualSearchPreviewController;
