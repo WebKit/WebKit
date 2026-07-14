@@ -382,7 +382,7 @@ WI.HARBuilder = class HARBuilder
         // NOTE: Resource.remoteAddress always includes the port at the end.
         // So this always matches the last part.
         let index = remoteAddress.lastIndexOf(":");
-        if (!index)
+        if (index === -1)
             return undefined;
 
         let portString = remoteAddress.substring(index + 1);
