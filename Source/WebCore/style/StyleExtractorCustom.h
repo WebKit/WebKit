@@ -280,6 +280,11 @@ public:
     static void extractMarkerShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
 };
 
+template<typename T> Length<CSS::AllUnzoomed> unzoomedLengthIfEvaluationTimeZoomEnabled(ExtractorState& state, T value)
+{
+    return Length<CSS::AllUnzoomed> { value / state.style.usedZoomForLength().value };
+}
+
 // MARK: - Shared Adaptor
 
 // Shared adaptors are used by adaptors to further adapt a value that has been partially extracted from a ComputedStyle. Like adaptors, they use a provided functor to allow them to be used for both CSSValue creation and serialization.
@@ -318,7 +323,7 @@ template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
                         containingBlockSize = box->containingBlockLogicalWidthForContent();
                 }
             }
-            return functor(Length<> { evaluate<LayoutUnit>(value, containingBlockSize, containingBlock->style().usedZoomForLength()) });
+            return functor(unzoomedLengthIfEvaluationTimeZoomEnabled(state, evaluate<LayoutUnit>(value, containingBlockSize, state.style.usedZoomForLength())));
         }
 
         // Return a "computed value" length.
@@ -351,7 +356,7 @@ template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
 
         // The property won't be over-constrained if its computed value is "auto", so the "used value" can be returned.
         if (box->isRelativelyPositioned())
-            return functor(Length<> { insetUsedStyleRelative(*box) });
+            return functor(unzoomedLengthIfEvaluationTimeZoomEnabled(state, insetUsedStyleRelative(*box)));
 
         auto insetUsedStyleOutOfFlowPositioned = [&](auto& container, auto& box) {
             // For out-of-flow positioned boxes, the inset is how far an box's margin
@@ -393,7 +398,7 @@ template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
         };
 
         if (containingBlock && box->isOutOfFlowPositioned())
-            return functor(Length<> { insetUsedStyleOutOfFlowPositioned(*containingBlock, *box) });
+            return functor(unzoomedLengthIfEvaluationTimeZoomEnabled(state, insetUsedStyleOutOfFlowPositioned(*containingBlock, *box)));
 
         return functor(CSS::Keyword::Auto { });
     }
@@ -403,15 +408,15 @@ template<CSSPropertyID propertyID> struct MarginEdgeSharedAdaptor {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, const MarginEdge& value, F&& functor) const
     {
         auto rendererCanHaveTrimmedMargin = [](const RenderBox& renderer) {
-            auto marginTrimSide = [] -> Style::MarginTrimSide {
+            auto marginTrimSide = [] -> MarginTrimSide {
                 if constexpr (propertyID == CSSPropertyMarginTop)
-                    return Style::MarginTrimSide::BlockStart;
+                    return MarginTrimSide::BlockStart;
                 else if constexpr (propertyID == CSSPropertyMarginRight)
-                    return Style::MarginTrimSide::InlineEnd;
+                    return MarginTrimSide::InlineEnd;
                 else if constexpr (propertyID == CSSPropertyMarginBottom)
-                    return Style::MarginTrimSide::BlockEnd;
+                    return MarginTrimSide::BlockEnd;
                 else if constexpr (propertyID == CSSPropertyMarginLeft)
-                    return Style::MarginTrimSide::InlineStart;
+                    return MarginTrimSide::InlineStart;
             };
 
             // A renderer will have a specific margin marked as trimmed by setting its rare data bit if:
@@ -436,8 +441,8 @@ template<CSSPropertyID propertyID> struct MarginEdgeSharedAdaptor {
             return false;
         };
 
-        auto toMarginTrimSide = [](const RenderBox& renderer) -> Style::MarginTrimSide {
-            auto formattingContextRootStyle = [](const RenderBox& renderer) -> const Style::ComputedStyle& {
+        auto toMarginTrimSide = [](const RenderBox& renderer) -> MarginTrimSide {
+            auto formattingContextRootStyle = [](const RenderBox& renderer) -> const ComputedStyle& {
                 if (auto* ancestorToUse = (renderer.isFlexItem() || renderer.isGridItem()) ? renderer.parent() : renderer.containingBlock())
                     return ancestorToUse->style();
                 ASSERT_NOT_REACHED();
@@ -457,28 +462,28 @@ template<CSSPropertyID propertyID> struct MarginEdgeSharedAdaptor {
 
             switch (mapSidePhysicalToLogical(formattingContextRootStyle(renderer).writingMode(), boxSide())) {
             case LogicalBoxSide::BlockStart:
-                return Style::MarginTrimSide::BlockStart;
+                return MarginTrimSide::BlockStart;
             case LogicalBoxSide::BlockEnd:
-                return Style::MarginTrimSide::BlockEnd;
+                return MarginTrimSide::BlockEnd;
             case LogicalBoxSide::InlineStart:
-                return Style::MarginTrimSide::InlineStart;
+                return MarginTrimSide::InlineStart;
             case LogicalBoxSide::InlineEnd:
-                return Style::MarginTrimSide::InlineEnd;
+                return MarginTrimSide::InlineEnd;
             default:
                 ASSERT_NOT_REACHED();
-                return Style::MarginTrimSide::BlockStart;
+                return MarginTrimSide::BlockStart;
             }
         };
 
         auto usedValue = [](auto& box) {
             if constexpr (propertyID == CSSPropertyMarginTop)
-                return Length<> { box.marginTop() };
+                return box.marginTop();
             else if constexpr (propertyID == CSSPropertyMarginRight)
-                return Length<> { box.marginRight() };
+                return box.marginRight();
             else if constexpr (propertyID == CSSPropertyMarginBottom)
-                return Length<> { box.marginBottom() };
+                return box.marginBottom();
             else if constexpr (propertyID == CSSPropertyMarginLeft)
-                return Length<> { box.marginLeft() };
+                return box.marginLeft();
         };
 
         CheckedPtr box = dynamicDowncast<RenderBox>(state.renderer);
@@ -487,7 +492,7 @@ template<CSSPropertyID propertyID> struct MarginEdgeSharedAdaptor {
 
         if constexpr (propertyID == CSSPropertyMarginRight) {
             if (rendererCanHaveTrimmedMargin(*box) && box->hasTrimmedMargin(toMarginTrimSide(*box)))
-                return functor(usedValue(*box));
+                return functor(unzoomedLengthIfEvaluationTimeZoomEnabled(state, usedValue(*box)));
 
             if (value.isFixed())
                 return functor(value);
@@ -496,29 +501,33 @@ template<CSSPropertyID propertyID> struct MarginEdgeSharedAdaptor {
                 // RenderBox gives a marginRight() that is the distance between the right-edge of the child box
                 // and the right-edge of the containing box, when display == DisplayType::BlockFlow. Let's calculate the absolute
                 // value of the specified margin-right % instead of relying on RenderBox's marginRight() value.
-                return functor(Length<> { evaluateMinimum<float>(value, box->containingBlockLogicalWidthForContent(), state.style.usedZoomForLength()) });
+                return functor(unzoomedLengthIfEvaluationTimeZoomEnabled(state, evaluateMinimum<float>(value, box->containingBlockLogicalWidthForContent(), state.style.usedZoomForLength())));
             }
         }
 
-        return functor(usedValue(*box));
+        return functor(unzoomedLengthIfEvaluationTimeZoomEnabled(state, usedValue(*box)));
     }
 };
 
 template<CSSPropertyID propertyID> struct PaddingEdgeSharedAdaptor {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, const PaddingEdge& value, F&& functor) const
     {
-        auto* renderBox = dynamicDowncast<RenderBox>(state.renderer);
-        if (!renderBox || value.value.isFixed())
+        auto* box = dynamicDowncast<RenderBox>(state.renderer);
+        if (!box || value.value.isFixed())
             return functor(value);
 
-        if constexpr (propertyID == CSSPropertyPaddingTop)
-            return functor(Length<> { renderBox->computedCSSPaddingTop() });
-        else if constexpr (propertyID == CSSPropertyPaddingRight)
-            return functor(Length<> { renderBox->computedCSSPaddingRight() });
-        else if constexpr (propertyID == CSSPropertyPaddingBottom)
-            return functor(Length<> { renderBox->computedCSSPaddingBottom() });
-        else if constexpr (propertyID == CSSPropertyPaddingLeft)
-            return functor(Length<> { renderBox->computedCSSPaddingLeft() });
+        auto usedValue = [&](auto& box) {
+            if constexpr (propertyID == CSSPropertyPaddingTop)
+                return box.computedCSSPaddingTop();
+            else if constexpr (propertyID == CSSPropertyPaddingRight)
+                return box.computedCSSPaddingRight();
+            else if constexpr (propertyID == CSSPropertyPaddingBottom)
+                return box.computedCSSPaddingBottom();
+            else if constexpr (propertyID == CSSPropertyPaddingLeft)
+                return box.computedCSSPaddingLeft();
+        };
+
+        return functor(unzoomedLengthIfEvaluationTimeZoomEnabled(state, usedValue(*box)));
     }
 };
 
@@ -554,15 +563,22 @@ template<CSSPropertyID propertyID> struct PreferredSizeSharedAdaptor {
                 // value directly using SVGLengthContext rather than reading from the bounding box,
                 // because the bounding box may be empty when only one dimension is set. Per the
                 // SVG2 sizing spec, keywords like 'auto' resolve to 0 for these elements; that
-                // happens via SVGLengthContext's non-numeric fallback path. The Length<> wrapper
-                // divides by usedZoom on serialization, so pre-multiply to round-trip the value.
+                // happens via SVGLengthContext's non-numeric fallback path.
                 if (RefPtr svgElement = dynamicDowncast<SVGElement>(state.element.get())) {
                     SVGLengthContext lengthContext(svgElement.get());
-                    auto usedZoom = state.style.usedZoom();
-                    if constexpr (propertyID == CSSPropertyWidth)
-                        return functor(Length<> { lengthContext.valueForLength(state.style.width(), Style::ZoomFactor::none(), SVGLengthMode::Width) * usedZoom });
-                    else if constexpr (propertyID == CSSPropertyHeight)
-                        return functor(Length<> { lengthContext.valueForLength(state.style.height(), Style::ZoomFactor::none(), SVGLengthMode::Height) * usedZoom });
+                    if (!state.style.evaluationTimeZoomEnabled()) {
+                        // When evaluationTimeZoomEnabled() is false, Length<> will be unconditionally
+                        // divided by usedZoom on serialization so pre-multiply to round-trip the value.
+                        if constexpr (propertyID == CSSPropertyWidth)
+                            return functor(Length<CSS::AllUnzoomed> { lengthContext.valueForLength(state.style.width(), ZoomFactor::none(), SVGLengthMode::Width) * state.style.usedZoom() });
+                        else if constexpr (propertyID == CSSPropertyHeight)
+                            return functor(Length<CSS::AllUnzoomed> { lengthContext.valueForLength(state.style.height(), ZoomFactor::none(), SVGLengthMode::Height) * state.style.usedZoom() });
+                    } else {
+                        if constexpr (propertyID == CSSPropertyWidth)
+                            return functor(Length<CSS::AllUnzoomed> { lengthContext.valueForLength(state.style.width(), ZoomFactor::none(), SVGLengthMode::Width) });
+                        else if constexpr (propertyID == CSSPropertyHeight)
+                            return functor(Length<CSS::AllUnzoomed> { lengthContext.valueForLength(state.style.height(), ZoomFactor::none(), SVGLengthMode::Height) });
+                    }
                 }
             } else if (!state.renderer->isSVGRenderer() || state.renderer->isRenderOrLegacyRenderSVGRoot() || state.renderer->isRenderOrLegacyRenderSVGForeignObject()) {
                 // For non-SVG elements (and SVG root / foreignObject which are proper RenderBox
@@ -570,9 +586,9 @@ template<CSSPropertyID propertyID> struct PreferredSizeSharedAdaptor {
                 // not apply for non-replaced inline elements.
                 if (!isNonReplacedInline(*state.renderer)) {
                     if constexpr (propertyID == CSSPropertyHeight)
-                        return functor(Length<> { sizingBox(*state.renderer).height() });
+                        return functor(unzoomedLengthIfEvaluationTimeZoomEnabled(state, sizingBox(*state.renderer).height()));
                     else if constexpr (propertyID == CSSPropertyWidth)
-                        return functor(Length<> { sizingBox(*state.renderer).width() });
+                        return functor(unzoomedLengthIfEvaluationTimeZoomEnabled(state, sizingBox(*state.renderer).width()));
                 }
             }
         }
@@ -600,7 +616,7 @@ template<CSSPropertyID> struct MinimumSizeSharedAdaptor {
         if (value.isAuto()) {
             if (isFlexOrGridItem(state.renderer))
                 return functor(CSS::Keyword::Auto { });
-            return functor(Length<> { 0 });
+            return functor(Length<CSS::AllUnzoomed> { 0 });
         }
         return functor(value);
     }
@@ -687,7 +703,7 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyDirection> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
     {
         if (state.element.ptr() == state.element->document().documentElement() && !state.style.hasExplicitlySetDirection())
-            return functor(Style::ComputedStyle::initialDirection());
+            return functor(ComputedStyle::initialDirection());
         return functor(state.style.writingMode().computedTextDirection());
     }
 };
@@ -696,7 +712,7 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyWritingMode> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
     {
         if (state.element.ptr() == state.element->document().documentElement() && !state.style.hasExplicitlySetWritingMode())
-            return functor(Style::ComputedStyle::initialWritingMode());
+            return functor(ComputedStyle::initialWritingMode());
         return functor(state.style.writingMode().computedWritingMode());
     }
 };
@@ -1052,25 +1068,25 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyBlockStep> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
     {
         auto blockStepSize = state.style.blockStepSize();
-        bool hasBlockStepSize = blockStepSize != Style::ComputedStyle::initialBlockStepSize();
-        auto blockStepSizeValue = [&] -> std::optional<Style::BlockStepSize> {
+        bool hasBlockStepSize = blockStepSize != ComputedStyle::initialBlockStepSize();
+        auto blockStepSizeValue = [&] -> std::optional<BlockStepSize> {
             return hasBlockStepSize ? std::make_optional(blockStepSize) : std::nullopt;
         };
 
         auto blockStepInsert = state.style.blockStepInsert();
-        bool hasBlockStepInsert = blockStepInsert != Style::ComputedStyle::initialBlockStepInsert();
+        bool hasBlockStepInsert = blockStepInsert != ComputedStyle::initialBlockStepInsert();
         auto blockStepInsertValue = [&] -> std::optional<BlockStepInsert> {
             return hasBlockStepInsert ? std::make_optional(blockStepInsert) : std::nullopt;
         };
 
         auto blockStepAlign = state.style.blockStepAlign();
-        bool hasBlockStepAlign = blockStepAlign != Style::ComputedStyle::initialBlockStepAlign();
+        bool hasBlockStepAlign = blockStepAlign != ComputedStyle::initialBlockStepAlign();
         auto blockStepAlignValue = [&] -> std::optional<BlockStepAlign> {
             return hasBlockStepAlign ? std::make_optional(blockStepAlign) : std::nullopt;
         };
 
         auto blockStepRound = state.style.blockStepRound();
-        bool hasBlockStepRound = blockStepRound != Style::ComputedStyle::initialBlockStepRound();
+        bool hasBlockStepRound = blockStepRound != ComputedStyle::initialBlockStepRound();
         auto blockStepRoundValue = [&] -> std::optional<BlockStepRound> {
             return hasBlockStepRound ? std::make_optional(blockStepRound) : std::nullopt;
         };
@@ -1179,18 +1195,10 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyPerspectiveOrigin> {
     {
         if (state.renderer) {
             auto box = state.renderer->transformReferenceBoxRect(state.style);
-
-            if (!state.style.evaluationTimeZoomEnabled()) {
-                auto perspectiveOriginX = Length<> { evaluate<float>(state.style.perspectiveOriginX(), box.width(), ZoomFactor::none()) };
-                auto perspectiveOriginY = Length<> { evaluate<float>(state.style.perspectiveOriginY(), box.height(), ZoomFactor::none()) };
-
-                return functor(SpaceSeparatedTuple { perspectiveOriginX, perspectiveOriginY });
-            }
-
             auto zoom = state.style.usedZoomForLength();
 
-            auto perspectiveOriginX = Length<CSS::AllUnzoomed> { evaluate<float>(state.style.perspectiveOriginX(), box.width(), zoom) / zoom.value };
-            auto perspectiveOriginY = Length<CSS::AllUnzoomed> { evaluate<float>(state.style.perspectiveOriginY(), box.height(), zoom) / zoom.value };
+            auto perspectiveOriginX = unzoomedLengthIfEvaluationTimeZoomEnabled(state, evaluate<float>(state.style.perspectiveOriginX(), box.width(), zoom));
+            auto perspectiveOriginY = unzoomedLengthIfEvaluationTimeZoomEnabled(state, evaluate<float>(state.style.perspectiveOriginY(), box.height(), zoom));
 
             return functor(SpaceSeparatedTuple { perspectiveOriginX, perspectiveOriginY });
         }
@@ -1205,8 +1213,8 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyTextBox> {
         auto textBoxTrim = state.style.textBoxTrim();
         auto textBoxEdge = state.style.textBoxEdge();
 
-        auto hasDefaultTextBoxTrim = textBoxTrim == Style::ComputedStyle::initialTextBoxTrim();
-        auto hasDefaultTextBoxEdge = textBoxEdge == Style::ComputedStyle::initialTextBoxEdge();
+        auto hasDefaultTextBoxTrim = textBoxTrim == ComputedStyle::initialTextBoxTrim();
+        auto hasDefaultTextBoxEdge = textBoxEdge == ComputedStyle::initialTextBoxEdge();
 
         if (hasDefaultTextBoxTrim && hasDefaultTextBoxEdge)
             return functor(CSS::Keyword::Normal { });
@@ -1223,19 +1231,19 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyTextDecoration> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
     {
         auto textDecorationLine = state.style.textDecorationLine();
-        bool hasTextDecorationLine = textDecorationLine != Style::ComputedStyle::initialTextDecorationLine();
+        bool hasTextDecorationLine = textDecorationLine != ComputedStyle::initialTextDecorationLine();
         auto textDecorationLineValue = [&] -> std::optional<TextDecorationLine> {
             return hasTextDecorationLine ? std::make_optional(textDecorationLine) : std::nullopt;
         };
 
         auto textDecorationThickness = state.style.textDecorationThickness();
-        bool hasTextDecorationThickness = state.style.textDecorationThickness() != Style::ComputedStyle::initialTextDecorationThickness();
+        bool hasTextDecorationThickness = state.style.textDecorationThickness() != ComputedStyle::initialTextDecorationThickness();
         auto textDecorationThicknessValue = [&] -> std::optional<TextDecorationThickness> {
             return hasTextDecorationThickness ? std::make_optional(textDecorationThickness) : std::nullopt;
         };
 
         auto textDecorationStyle = state.style.textDecorationStyle();
-        bool hasTextDecorationStyle = state.style.textDecorationStyle() != Style::ComputedStyle::initialTextDecorationStyle();
+        bool hasTextDecorationStyle = state.style.textDecorationStyle() != ComputedStyle::initialTextDecorationStyle();
         auto textDecorationStyleValue = [&] -> std::optional<TextDecorationStyle> {
             return hasTextDecorationStyle ? std::make_optional(textDecorationStyle) : std::nullopt;
         };
@@ -1260,9 +1268,9 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyTextWrap> {
         auto textWrapStyle = state.style.textWrapStyle();
 
         // Omit default longhand values.
-        if (textWrapStyle == Style::ComputedStyle::initialTextWrapStyle())
+        if (textWrapStyle == ComputedStyle::initialTextWrapStyle())
             return functor(textWrapMode);
-        if (textWrapMode == Style::ComputedStyle::initialTextWrapMode())
+        if (textWrapMode == ComputedStyle::initialTextWrapMode())
             return functor(textWrapStyle);
 
         return functor(SpaceSeparatedTuple { textWrapMode, textWrapStyle });
@@ -1274,20 +1282,10 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyTransformOrigin> {
     {
         if (state.renderer) {
             auto box = state.renderer->transformReferenceBoxRect(state.style);
-
-            if (!state.style.evaluationTimeZoomEnabled()) {
-                auto transformOriginX = Length<> { evaluate<float>(state.style.transformOriginX(), box.width(), ZoomFactor::none()) };
-                auto transformOriginY = Length<> { evaluate<float>(state.style.transformOriginY(), box.height(), ZoomFactor::none()) };
-
-                if (auto transformOriginZ = state.style.transformOriginZ(); !transformOriginZ.isZero())
-                    return functor(SpaceSeparatedTuple { transformOriginX, transformOriginY, transformOriginZ });
-                return functor(SpaceSeparatedTuple { transformOriginX, transformOriginY });
-            }
-
             auto zoom = state.style.usedZoomForLength();
 
-            auto transformOriginX = Length<CSS::AllUnzoomed> { evaluate<float>(state.style.transformOriginX(), box.width(), zoom) / zoom.value };
-            auto transformOriginY = Length<CSS::AllUnzoomed> { evaluate<float>(state.style.transformOriginY(), box.height(), zoom) / zoom.value };
+            auto transformOriginX = unzoomedLengthIfEvaluationTimeZoomEnabled(state, evaluate<float>(state.style.transformOriginX(), box.width(), zoom));
+            auto transformOriginY = unzoomedLengthIfEvaluationTimeZoomEnabled(state, evaluate<float>(state.style.transformOriginY(), box.height(), zoom));
 
             if (auto transformOriginZ = state.style.transformOriginZ(); !transformOriginZ.isZero())
                 return functor(SpaceSeparatedTuple { transformOriginX, transformOriginY, transformOriginZ });
@@ -1317,9 +1315,9 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyWhiteSpace> {
             return functor(CSS::Keyword::PreLine { });
 
         // Omit default longhand values.
-        if (whiteSpaceCollapse == Style::ComputedStyle::initialWhiteSpaceCollapse())
+        if (whiteSpaceCollapse == ComputedStyle::initialWhiteSpaceCollapse())
             return functor(textWrapMode);
-        if (textWrapMode == Style::ComputedStyle::initialTextWrapMode())
+        if (textWrapMode == ComputedStyle::initialTextWrapMode())
             return functor(whiteSpaceCollapse);
 
         return functor(SpaceSeparatedTuple { whiteSpaceCollapse, textWrapMode });
@@ -1865,7 +1863,7 @@ template<CSSPropertyID property> inline Ref<CSSValue> extractFillLayerPropertySh
 {
     static_assert(property == CSSPropertyBackground || property == CSSPropertyMask);
 
-    auto computeRenderStyle = [&](std::unique_ptr<Style::ComputedStyle>& ownedStyle) -> const Style::ComputedStyle* {
+    auto computeRenderStyle = [&](std::unique_ptr<ComputedStyle>& ownedStyle) -> const ComputedStyle* {
         if (auto renderer = state.element->renderer(); renderer && renderer->isComposited() && Interpolation::isAccelerated(property, state.element->document().settings())) {
             ownedStyle = renderer->animatedStyle();
             if (state.pseudoElementIdentifier) {
@@ -1881,7 +1879,7 @@ template<CSSPropertyID property> inline Ref<CSSValue> extractFillLayerPropertySh
     auto layerCount = [&] -> size_t {
         // FIXME: Why does this not use state.style?
 
-        std::unique_ptr<Style::ComputedStyle> ownedStyle;
+        std::unique_ptr<ComputedStyle> ownedStyle;
         auto style = computeRenderStyle(ownedStyle);
         if (!style)
             return 0;
@@ -2381,7 +2379,7 @@ inline void ExtractorCustom::extractGridTemplateRowsSerialization(ExtractorState
     extractGridTemplateSerialization<GridTrackSizingDirection::Rows>(state, builder, context);
 }
 
-inline Ref<CSSValue> convertSingleAnimationDuration(ExtractorState& state, const Style::SingleAnimationDuration& duration, const std::optional<Style::Animation>& animation, const Style::Animations& animationList)
+inline Ref<CSSValue> convertSingleAnimationDuration(ExtractorState& state, const SingleAnimationDuration& duration, const std::optional<Animation>& animation, const Animations& animationList)
 {
     auto animationListHasMultipleExplicitTimelines = [&] {
         if (animationList.computedLength() <= 1)
@@ -2839,20 +2837,20 @@ inline void ExtractorCustom::extractBorderRadiusShorthandSerialization(Extractor
 
 inline RefPtr<CSSValue> ExtractorCustom::extractColumnsShorthand(ExtractorState& state)
 {
-    if (state.style.columnCount() == Style::ComputedStyle::initialColumnCount())
+    if (state.style.columnCount() == ComputedStyle::initialColumnCount())
         return createCSSValue(state.pool, state.style, state.style.columnWidth());
-    if (state.style.columnWidth() == Style::ComputedStyle::initialColumnWidth())
+    if (state.style.columnWidth() == ComputedStyle::initialColumnWidth())
         return createCSSValue(state.pool, state.style, state.style.columnCount());
     return extractStandardSpaceSeparatedShorthand(state, columnsShorthand());
 }
 
 inline void ExtractorCustom::extractColumnsShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
-    if (state.style.columnCount() == Style::ComputedStyle::initialColumnCount()) {
+    if (state.style.columnCount() == ComputedStyle::initialColumnCount()) {
         serializationForCSS(builder, context, state.style, state.style.columnWidth());
         return;
     }
-    if (state.style.columnWidth() == Style::ComputedStyle::initialColumnWidth()) {
+    if (state.style.columnWidth() == ComputedStyle::initialColumnWidth()) {
         serializationForCSS(builder, context, state.style, state.style.columnCount());
         return;
     }
@@ -2892,20 +2890,20 @@ inline void ExtractorCustom::extractContainerShorthandSerialization(ExtractorSta
 
 inline RefPtr<CSSValue> ExtractorCustom::extractFlexFlowShorthand(ExtractorState& state)
 {
-    if (state.style.flexWrap() == Style::ComputedStyle::initialFlexWrap())
+    if (state.style.flexWrap() == ComputedStyle::initialFlexWrap())
         return createCSSValue(state.pool, state.style, state.style.flexDirection());
-    if (state.style.flexDirection() == Style::ComputedStyle::initialFlexDirection())
+    if (state.style.flexDirection() == ComputedStyle::initialFlexDirection())
         return createCSSValue(state.pool, state.style, state.style.flexWrap());
     return extractStandardSpaceSeparatedShorthand(state, flexFlowShorthand());
 }
 
 inline void ExtractorCustom::extractFlexFlowShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
-    if (state.style.flexWrap() == Style::ComputedStyle::initialFlexWrap()) {
+    if (state.style.flexWrap() == ComputedStyle::initialFlexWrap()) {
         serializationForCSS(builder, context, state.style, state.style.flexDirection());
         return;
     }
-    if (state.style.flexDirection() == Style::ComputedStyle::initialFlexDirection()) {
+    if (state.style.flexDirection() == ComputedStyle::initialFlexDirection()) {
         serializationForCSS(builder, context, state.style, state.style.flexWrap());
         return;
     }
@@ -3164,14 +3162,14 @@ inline void ExtractorCustom::extractPerspectiveOriginShorthandSerialization(Extr
 
 inline RefPtr<CSSValue> ExtractorCustom::extractPositionTryShorthand(ExtractorState& state)
 {
-    if (state.style.positionTryOrder() == Style::ComputedStyle::initialPositionTryOrder())
+    if (state.style.positionTryOrder() == ComputedStyle::initialPositionTryOrder())
         return ExtractorGenerated::extractValue(state, CSSPropertyPositionTryFallbacks);
     return extractStandardSpaceSeparatedShorthand(state, positionTryShorthand());
 }
 
 inline void ExtractorCustom::extractPositionTryShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
-    if (state.style.positionTryOrder() == Style::ComputedStyle::initialPositionTryOrder()) {
+    if (state.style.positionTryOrder() == ComputedStyle::initialPositionTryOrder()) {
         ExtractorGenerated::extractValueSerialization(state, builder, context, CSSPropertyPositionTryFallbacks);
         return;
     }

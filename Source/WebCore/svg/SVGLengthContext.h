@@ -42,7 +42,6 @@ struct SVGStrokeDasharrayValue;
 struct SVGStrokeDashoffset;
 struct StrokeWidth;
 struct ZoomFactor;
-struct ZoomNeeded;
 }
 
 class SVGLengthContext {
