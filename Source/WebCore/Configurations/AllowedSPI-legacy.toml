@@ -101,6 +101,18 @@ symbols = [
 ]
 requires-sdk = ["iOS <= 26.4"]
 
+[[legacy]]
+selectors = [
+    { name = "addData:", class = "?" },
+    { name = "dataComplete", class = "?" },
+    { name = "filterState", class = "?" },
+    { name = "initWithResponse:", class = "?" },
+    { name = "isManagedSession", class = "?" },
+    { name = "setBrowserAuditToken:", class = "?" },
+    { name = "unblockWithCompletion:", class = "?" },
+]
+requires = ["!HAVE_WEBCONTENTRESTRICTIONS", "HAVE_WEBCONTENTANALYSIS_FRAMEWORK"]
+
 # ------------------------------------------------------------------------
 # Below are uncategorized and unconditionally used SPI introduced in older
 # releases.
