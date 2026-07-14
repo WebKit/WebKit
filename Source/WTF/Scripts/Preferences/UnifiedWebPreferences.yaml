@@ -7972,6 +7972,7 @@ ShrinksStandaloneImagesToFit:
 SiteIsolationEnabled:
   type: bool
   status: unstable
+  defaultsOverridable: true
   category: security
   humanReadableName: "Site Isolation"
   humanReadableDescription: "Put cross-origin iframes in a different process"
