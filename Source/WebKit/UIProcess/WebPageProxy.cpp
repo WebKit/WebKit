@@ -13653,7 +13653,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #endif
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    m_mediaSessionManagerProxy = nullptr;
+    if (RefPtr mediaSessionManagerProxy = std::exchange(m_mediaSessionManagerProxy, nullptr))
+        mediaSessionManagerProxy->invalidate();
 #endif
 
     for (Ref editCommand : std::exchange(m_editCommandSet, { }))

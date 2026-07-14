@@ -38,6 +38,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/PlatformMediaSessionInterface.h>
 #include <WebCore/PlatformMediaSessionManager.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -86,6 +87,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionManagerAudioHardwareListener);
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionManagerProxy);
 
+#if PLATFORM(COCOA)
+static WeakPtr<RemoteMediaSessionManagerProxy>& currentAudioHardwareListenerCreator()
+{
+    static NeverDestroyed<WeakPtr<RemoteMediaSessionManagerProxy>> instance;
+    return instance;
+}
+#endif
+
 RefPtr<RemoteMediaSessionManagerProxy> RemoteMediaSessionManagerProxy::create(WebPageProxy& page)
 {
     return adoptRef(new RemoteMediaSessionManagerProxy(page));
@@ -95,7 +104,6 @@ RemoteMediaSessionManagerProxy::RemoteMediaSessionManagerProxy(WebPageProxy& pag
     : REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS(page.webPageIDInMainFrameProcess())
     , m_page(page)
     , m_pageID(page.webPageIDInMainFrameProcess())
-    , m_process(page.legacyMainFrameProcess())
 {
 #if USE(AUDIO_SESSION)
     AudioSession::setSharedSession(*this);
@@ -105,14 +113,29 @@ RemoteMediaSessionManagerProxy::RemoteMediaSessionManagerProxy(WebPageProxy& pag
     WebCore::AudioHardwareListener::setCreationFunction([protectedThis = Ref { *this }] (WebCore::AudioHardwareListener::Client& client) {
         return protectedThis->ensureAudioHardwareListenerProxy(client);
     });
+    currentAudioHardwareListenerCreator() = *this;
 #endif
 
-    m_process->addMessageReceiver(Messages::RemoteMediaSessionManagerProxy::messageReceiverName(), m_pageID, *this);
+    page.legacyMainFrameProcess().addMessageReceiver(Messages::RemoteMediaSessionManagerProxy::messageReceiverName(), m_pageID, *this);
 }
 
 RemoteMediaSessionManagerProxy::~RemoteMediaSessionManagerProxy()
 {
-    m_process->removeMessageReceiver(Messages::RemoteMediaSessionManagerProxy::messageReceiverName(), m_pageID);
+    if (RefPtr process = this->process())
+        process->removeMessageReceiver(Messages::RemoteMediaSessionManagerProxy::messageReceiverName(), m_pageID);
+    invalidate();
+}
+
+void RemoteMediaSessionManagerProxy::invalidate()
+{
+#if USE(AUDIO_SESSION)
+    AudioSession::clearSharedSession(*this);
+#endif
+
+#if PLATFORM(COCOA)
+    if (currentAudioHardwareListenerCreator() == this)
+        WebCore::AudioHardwareListener::resetCreationFunction();
+#endif
 }
 
 void RemoteMediaSessionManagerProxy::addMediaSession(RemoteMediaSessionState&& state)
@@ -293,9 +316,16 @@ RefPtr<WebCore::PlatformMediaSessionInterface> RemoteMediaSessionManagerProxy::f
     return session;
 }
 
+RefPtr<WebProcessProxy> RemoteMediaSessionManagerProxy::process() const
+{
+    RefPtr page = m_page.get();
+    return page ? &page->legacyMainFrameProcess() : nullptr;
+}
+
 IPC::Connection* RemoteMediaSessionManagerProxy::messageSenderConnection() const
 {
-    return m_process->hasConnection() ? &m_process->connection() : nullptr;
+    RefPtr process = this->process();
+    return process && process->hasConnection() ? &process->connection() : nullptr;
 }
 
 uint64_t RemoteMediaSessionManagerProxy::messageSenderDestinationID() const
@@ -305,7 +335,8 @@ uint64_t RemoteMediaSessionManagerProxy::messageSenderDestinationID() const
 
 std::optional<SharedPreferencesForWebProcess> RemoteMediaSessionManagerProxy::sharedPreferencesForWebProcess() const
 {
-    return m_process->sharedPreferencesForWebProcess();
+    RefPtr process = this->process();
+    return process ? process->sharedPreferencesForWebProcess() : std::nullopt;
 }
 
 } // namespace WebKit

@@ -120,6 +120,12 @@ void AudioSession::setSharedSession(Ref<AudioSession>&& session)
     });
 }
 
+void AudioSession::clearSharedSession(AudioSession& session)
+{
+    if (sharedAudioSession() == &session)
+        sharedAudioSession() = nullptr;
+}
+
 void AudioSession::addAudioSessionChangedObserver(const ChangedObserver& observer)
 {
     ASSERT(!audioSessionChangedObservers().contains(observer));

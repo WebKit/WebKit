@@ -100,6 +100,7 @@ class WEBCORE_EXPORT AudioSession : public AbstractThreadSafeRefCountedAndCanMak
 public:
     static Ref<AudioSession> create();
     static void setSharedSession(Ref<AudioSession>&&);
+    static void clearSharedSession(AudioSession&);
     static AudioSession& singleton();
 
     static bool NODELETE enableMediaPlayback();

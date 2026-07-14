@@ -80,6 +80,8 @@ public:
 
     virtual ~RemoteMediaSessionManagerProxy();
 
+    void invalidate();
+
     // IPC::MessageReceiver, WebCore::AudioSession.
     void ref() const final { WebCore::REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::ref(); }
     void deref() const final { WebCore::REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::deref(); }
@@ -90,7 +92,7 @@ public:
     uint32_t weakRefCount() const final { return REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::weakRefCount(); }
 #endif
 
-    const Ref<WebProcessProxy> process() const { return m_process; }
+    RefPtr<WebProcessProxy> process() const;
 
 private:
     friend class RemotePageMediaSessionManagerProxy;
@@ -159,7 +161,6 @@ private:
 
     WeakPtr<WebPageProxy> m_page;
     WebCore::PageIdentifier m_pageID;
-    const Ref<WebProcessProxy> m_process;
     HashMap<WebCore::MediaSessionIdentifier, Ref<RemoteMediaSessionProxy>> m_sessionProxies;
 
 #if PLATFORM(COCOA)
