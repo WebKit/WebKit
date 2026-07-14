@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let nodeStyles = null;
+
+    let suite = InspectorTest.createAsyncSuite("InlineSwatch.GradientColorStops");
+
+    function propertyNamed(name) {
+        for (let rule of nodeStyles.matchedRules) {
+            if (rule.selectorText !== "div#x")
+                continue;
+
+            for (let property of rule.style.enabledProperties) {
+                if (property.name === name)
+                    return property;
+            }
+        }
+        return null;
+    }
+
+    function addTestCase(name, propertyName, expectedColorSwatches, expectedGradientSwatches) {
+        suite.addTestCase({
+            name,
+            test(resolve, reject) {
+                let property = propertyNamed(propertyName);
+                InspectorTest.assert(property, `Found property "${propertyName}".`);
+
+                // Render the property the same way the Styles sidebar does.
+                let spreadsheetProperty = new WI.SpreadsheetStyleProperty(null, property, {readOnly: true, hideDocumentation: true});
+
+                let colorSwatches = spreadsheetProperty.element.querySelectorAll(".inline-swatch.color").length;
+                let gradientSwatches = spreadsheetProperty.element.querySelectorAll(".inline-swatch.gradient").length;
+
+                InspectorTest.expectEqual(colorSwatches, expectedColorSwatches, `"${propertyName}" should have ${expectedColorSwatches} color swatch(es), one before each <color>.`);
+                InspectorTest.expectEqual(gradientSwatches, expectedGradientSwatches, `"${propertyName}" should have ${expectedGradientSwatches} gradient swatch(es).`);
+
+                resolve();
+            }
+        });
+    }
+
+    // A gradient should show a color swatch before every <color>, just like color-mix() does.
+
+    // `background-image` is a color-aware property.
+    addTestCase("InlineSwatch.GradientColorStops.Linear", "background-image", 2, 1);
+
+    // Custom properties are always processed, regardless of the property allowlist.
+    addTestCase("InlineSwatch.GradientColorStops.CustomPropertyRadial", "--radial", 2, 1);
+    addTestCase("InlineSwatch.GradientColorStops.CustomPropertyConic", "--conic", 2, 1);
+
+    // `mask` and `border-image` only accept an <image> (not a bare <color>), but a gradient
+    // value should still get a gradient swatch and a swatch for each color stop.
+    addTestCase("InlineSwatch.GradientColorStops.MaskRadialLengthStop", "mask", 2, 1);
+    addTestCase("InlineSwatch.GradientColorStops.BorderImageConicAngleStop", "border-image", 2, 1);
+
+    // For comparison, color-mix() already shows a swatch before each <color>.
+    addTestCase("InlineSwatch.GradientColorStops.ColorMix", "background-color", 2, 0);
+
+    WI.domManager.requestDocument((documentNode) => {
+        documentNode.querySelector("div#x", (contentNodeId) => {
+            if (contentNodeId) {
+                let domNode = WI.domManager.nodeForId(contentNodeId);
+                nodeStyles = WI.cssManager.stylesForNode(domNode);
+
+                if (nodeStyles.needsRefresh) {
+                    nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
+                        suite.runTestCasesAndFinish();
+                    });
+                } else
+                    suite.runTestCasesAndFinish();
+            } else {
+                InspectorTest.fail("DOM node not found.");
+                InspectorTest.completeTest();
+            }
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that gradient functions show an inline color swatch before every &lt;color&gt; stop, matching the behavior of color-mix().</p>
+
+    <style>
+    div#x {
+        background-image: linear-gradient(hotpink, steelblue);
+        --radial: radial-gradient(hotpink 5em, steelblue);
+        --conic: conic-gradient(hotpink 75deg, steelblue);
+        mask: radial-gradient(hotpink 5em, steelblue);
+        border-image: conic-gradient(hotpink 75deg, steelblue) fill 0;
+        background-color: color-mix(in hsl, hotpink 35%, steelblue);
+    }
+    </style>
+    <div id="x"></div>
+</body>
+</html>

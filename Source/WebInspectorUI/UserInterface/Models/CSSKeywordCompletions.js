@@ -184,6 +184,18 @@ WI.CSSKeywordCompletions.isColorAwareProperty = function(name)
     return false;
 };
 
+WI.CSSKeywordCompletions.isGradientAwareProperty = function(name)
+{
+    if (WI.CSSKeywordCompletions._gradientAwareProperties.has(name))
+        return true;
+
+    let isNotPrefixed = name.charAt(0) !== "-";
+    if (isNotPrefixed && WI.CSSKeywordCompletions._gradientAwareProperties.has("-webkit-" + name))
+        return true;
+
+    return false;
+};
+
 WI.CSSKeywordCompletions.isTimingFunctionAwareProperty = function(name)
 {
     if (WI.CSSKeywordCompletions._timingFunctionAwareProperties.has(name))
@@ -464,6 +476,19 @@ WI.CSSKeywordCompletions._colorAwareProperties = new Set([
 
     // iOS Properties
     "-webkit-tap-highlight-color",
+]);
+
+// Properties that accept an <image> (and therefore a CSS gradient) but not a bare <color>.
+// These are not color-aware (so they don't get color keyword completions), but a gradient
+// value inside them should still get a gradient swatch and per-color-stop swatches.
+WI.CSSKeywordCompletions._gradientAwareProperties = new Set([
+    "border-image", "border-image-source", "-webkit-border-image",
+    "content",
+    "cursor",
+    "list-style", "list-style-image",
+    "mask", "mask-image", "-webkit-mask", "-webkit-mask-image",
+    "mask-border", "mask-border-source", "-webkit-mask-box-image",
+    "shape-outside",
 ]);
 
 WI.CSSKeywordCompletions._timingFunctionAwareProperties = new Set([

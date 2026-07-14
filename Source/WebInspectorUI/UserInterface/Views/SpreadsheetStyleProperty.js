@@ -706,6 +706,10 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         if (this._property.isVariable || WI.CSSKeywordCompletions.isColorAwareProperty(this._property.name)) {
             tokens = this._addGradientTokens(tokens);
             tokens = this._addColorTokens(tokens);
+        } else if (WI.CSSKeywordCompletions.isGradientAwareProperty(this._property.name)) {
+            // Image properties (e.g. `border-image`, `mask`) don't accept a bare <color>, but a
+            // gradient value should still get a gradient swatch and a swatch for each color stop.
+            tokens = this._addGradientTokens(tokens);
         }
 
         if (this._property.isVariable || WI.CSSKeywordCompletions.isTimingFunctionAwareProperty(this._property.name)) {
@@ -744,7 +748,14 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 let rawTokens = tokens.slice(gradientStartIndex, i + 1);
 
                 let text = this._resolveVariables(rawTokens.map((token) => token.value).join(""));
-                rawTokens = this._addVariableTokens(rawTokens);
+
+                // A gradient will always have a `(` after the function name. Recurse into
+                // the color stops so that each `<color>` gets its own swatch, matching the
+                // behavior of color functions like `color-mix()`.
+                let functionOpeningTokens = tokens.slice(gradientStartIndex, gradientStartIndex + 2);
+                let functionInnerTokens = this._addColorTokens(tokens.slice(gradientStartIndex + 2, i));
+                let functionClosingToken = tokens[i];
+                rawTokens = this._addVariableTokens([...functionOpeningTokens, ...functionInnerTokens, functionClosingToken]);
 
                 let gradient = WI.Gradient.fromString(text);
                 if (gradient)
