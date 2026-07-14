@@ -1050,7 +1050,7 @@ static bool networkProcessWillCheckBlobFileAccess()
 #endif
 }
 
-void WebProcessProxy::assumeReadAccessToBaseURL(WebPageProxy& page, const String& urlString, CompletionHandler<void()>&& completionHandler, bool directoryOnly)
+void WebProcessProxy::assumeReadAccessToBaseURL(WebPageProxy& page, const String& urlString, CompletionHandler<void()>&& completionHandler, CreateSandboxExtensionForNetworkingProcess createSandboxExtension)
 {
     URL url { urlString };
     if (!url.protocolIsFile())
@@ -1081,10 +1081,20 @@ void WebProcessProxy::assumeReadAccessToBaseURL(WebPageProxy& page, const String
     if (!networkProcessWillCheckBlobFileAccess())
         return afterAllowAccess();
 
-    if (directoryOnly)
-        afterAllowAccess();
-    else
-        protect(dataStore->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::AllowFileAccessFromWebProcess(coreProcessIdentifier(), path), WTF::move(afterAllowAccess));
+    RefPtr networkProcess = dataStore->networkProcess();
+    std::optional<SandboxExtension::Handle> handle;
+    if (createSandboxExtension == CreateSandboxExtensionForNetworkingProcess::Yes) {
+#if HAVE(AUDIT_TOKEN)
+        std::optional<audit_token_t> token;
+        if (networkProcess->hasConnection())
+            token = protect(networkProcess->connection())->getAuditToken();
+        if (token)
+            handle = SandboxExtension::createHandleForReadByAuditToken(path, *token);
+        else
+#endif
+        handle = SandboxExtension::createHandle(path, SandboxExtension::Type::ReadOnly);
+    }
+    networkProcess->sendWithAsyncReply(Messages::NetworkProcess::AllowFileAccessFromWebProcess(coreProcessIdentifier(), path, WTF::move(handle)), WTF::move(afterAllowAccess));
 }
 
 void WebProcessProxy::assumeReadAccessToBaseURLs(WebPageProxy& page, const Vector<String>& urls, CompletionHandler<void()>&& completionHandler)

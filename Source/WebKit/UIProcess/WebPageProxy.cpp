@@ -2497,7 +2497,7 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
             return;
         protectedProcess->send(Messages::WebPage::LoadData(WTF::move(loadParameters)), webPageID);
         protectedProcess->startResponsivenessTimer();
-    }, true);
+    }, WebProcessProxy::CreateSandboxExtensionForNetworkingProcess::Yes);
 }
 
 RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequest&& simulatedRequest, WebCore::ResourceResponse&& simulatedResponse, Ref<WebCore::SharedBuffer>&& data)

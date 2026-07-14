@@ -194,6 +194,7 @@ public:
     enum class ShouldLaunchProcess : bool { No, Yes };
     enum class LockdownMode : bool { Disabled, Enabled };
     enum class EnableWebAssemblyDebugger : bool { No, Yes };
+    enum class CreateSandboxExtensionForNetworkingProcess : bool { No, Yes };
 
     enum class IsolatedProcessType : uint8_t {
         Unspecified,
@@ -336,7 +337,7 @@ public:
     void updateTextCheckerState();
 
     void willAcquireUniversalFileReadSandboxExtension() { m_mayHaveUniversalFileReadSandboxExtension = true; }
-    void assumeReadAccessToBaseURL(WebPageProxy&, const String&, CompletionHandler<void()>&&, bool directoryOnly = false);
+    void assumeReadAccessToBaseURL(WebPageProxy&, const String&, CompletionHandler<void()>&&, CreateSandboxExtensionForNetworkingProcess = CreateSandboxExtensionForNetworkingProcess::No);
     void assumeReadAccessToBaseURLs(WebPageProxy&, const Vector<String>&, CompletionHandler<void()>&&);
     bool hasAssumedReadAccessToURL(const URL&) const;
 

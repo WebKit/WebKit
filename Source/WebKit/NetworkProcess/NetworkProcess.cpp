@@ -3425,10 +3425,13 @@ void NetworkProcess::allowFilesAccessFromWebProcess(WebCore::ProcessIdentifier p
     completionHandler();
 }
 
-void NetworkProcess::allowFileAccessFromWebProcess(WebCore::ProcessIdentifier processID, const String& path, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::allowFileAccessFromWebProcess(WebCore::ProcessIdentifier processID, const String& path, std::optional<WebKit::SandboxExtensionHandle> handle, CompletionHandler<void()>&& completionHandler)
 {
-    if (RefPtr connection = webProcessConnection(processID))
+    if (RefPtr connection = webProcessConnection(processID)) {
+        if (handle)
+            SandboxExtension::consumePermanently(*handle);
         connection->allowAccessToFile(path);
+    }
     completionHandler();
 }
 

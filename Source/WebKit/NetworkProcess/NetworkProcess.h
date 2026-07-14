@@ -482,7 +482,7 @@ public:
     void getAppBadgeForTesting(PAL::SessionID, CompletionHandler<void(std::optional<uint64_t>)>&&);
 
     void allowFilesAccessFromWebProcess(WebCore::ProcessIdentifier, const Vector<String>&, CompletionHandler<void()>&&);
-    void allowFileAccessFromWebProcess(WebCore::ProcessIdentifier, const String&, CompletionHandler<void()>&&);
+    void allowFileAccessFromWebProcess(WebCore::ProcessIdentifier, const String&, std::optional<WebKit::SandboxExtensionHandle>, CompletionHandler<void()>&&);
 
     bool enableModernDownloadProgress() const { return m_enableModernDownloadProgress; }
 
