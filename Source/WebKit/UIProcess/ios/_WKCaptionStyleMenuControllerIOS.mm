@@ -214,8 +214,11 @@ static bool menuHasMenuAncestor(UIMenu *targetMenu, UIMenu *ancestorMenu)
 - (void)systemCaptionStyleSettingsActionSelected:(UIAction *)action
 {
     NSURL *settingsURL = [NSURL URLWithString:@"App-prefs:ACCESSIBILITY"];
+    // FIXME: rdar://182141876 ([ Build-Failure ] [ safari-7625-branch iOS27 visionOS27 Debug ] error: 'canOpenURL:' is deprecated: first deprecated in iOS 27.0)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if ([[UIApplication sharedApplication] canOpenURL:settingsURL])
         [[UIApplication sharedApplication] openURL:settingsURL options:@{ } completionHandler:nil];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (void)notifyMenuWillOpen
