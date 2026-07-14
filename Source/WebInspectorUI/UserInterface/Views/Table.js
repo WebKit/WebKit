@@ -1303,7 +1303,7 @@ WI.Table = class Table extends WI.View
         if (!this._previousRevealedRowCount)
             return false;
 
-        return rowIndex >= this._visibleRowIndexStart && rowIndex <= this._visibleRowIndexEnd;
+        return rowIndex >= this._visibleRowIndexStart && rowIndex < this._visibleRowIndexEnd;
     }
 
     _indexToInsertColumn(column)
@@ -1313,7 +1313,7 @@ WI.Table = class Table extends WI.View
         for (let columnIdentifier of this._columnOrder) {
             if (columnIdentifier === column.identifier)
                 return currentVisibleColumnIndex;
-            if (columnIdentifier === this._visibleColumns[currentVisibleColumnIndex].identifier) {
+            if (currentVisibleColumnIndex < this._visibleColumns.length && columnIdentifier === this._visibleColumns[currentVisibleColumnIndex].identifier) {
                 currentVisibleColumnIndex++;
                 if (currentVisibleColumnIndex >= this._visibleColumns.length)
                     break;
