@@ -1913,7 +1913,7 @@ WI.DataGrid = class DataGrid extends WI.View
 
         dragPoint = Number.constrain(dragPoint, leftMinimum, rightMaximum);
 
-        resizer.element.style.setProperty(isRTL ? "right" : "left", `${dragPoint - this.CenterResizerOverBorderAdjustment}px`);
+        resizer.element.style.setProperty(isRTL ? "right" : "left", `${dragPoint - WI.DataGrid.CenterResizerOverBorderAdjustment}px`);
 
         let percentLeftColumn = (((dragPoint - leadingEdgeOfPreviousColumn) / this._dataTableElement.offsetWidth) * 100) + "%";
         this._headerTableColumnGroupElement.children[leftColumnIndex].style.width = percentLeftColumn;
