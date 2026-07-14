@@ -228,6 +228,7 @@ private:
 #if ENABLE(DAMAGE_TRACKING)
     void addDamage(Damage&&);
 #endif
+    void damageWholeLayer();
 
     void flushCompositingStateOnTarget(const OptionSet<CompositionReason>&, TextureMapperLayer&);
 #if USE(SKIA)
