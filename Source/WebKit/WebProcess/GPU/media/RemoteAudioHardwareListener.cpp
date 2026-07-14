@@ -77,19 +77,22 @@ void RemoteAudioHardwareListener::gpuProcessConnectionDidClose(GPUProcessConnect
 void RemoteAudioHardwareListener::audioHardwareDidBecomeActive()
 {
     setHardwareActivity(AudioHardwareActivityType::IsActive);
-    m_client.audioHardwareDidBecomeActive();
+    if (RefPtr client = this->client())
+        client->audioHardwareDidBecomeActive();
 }
 
 void RemoteAudioHardwareListener::audioHardwareDidBecomeInactive()
 {
     setHardwareActivity(AudioHardwareActivityType::IsInactive);
-    m_client.audioHardwareDidBecomeInactive();
+    if (RefPtr client = this->client())
+        client->audioHardwareDidBecomeInactive();
 }
 
 void RemoteAudioHardwareListener::audioOutputDeviceChanged(uint64_t bufferSizeMinimum, uint64_t bufferSizeMaximum)
 {
     setSupportedBufferSizes({ bufferSizeMinimum, bufferSizeMaximum });
-    m_client.audioOutputDeviceChanged();
+    if (RefPtr client = this->client())
+        client->audioOutputDeviceChanged();
 }
 
 }

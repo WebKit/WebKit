@@ -65,19 +65,22 @@ public:
     void audioHardwareDidBecomeActive()
     {
         setHardwareActivity(WebCore::AudioHardwareActivityType::IsActive);
-        m_client.audioHardwareDidBecomeActive();
+        if (RefPtr client = this->client())
+            client->audioHardwareDidBecomeActive();
     }
 
     void audioHardwareDidBecomeInactive()
     {
         setHardwareActivity(WebCore::AudioHardwareActivityType::IsInactive);
-        m_client.audioHardwareDidBecomeInactive();
+        if (RefPtr client = this->client())
+            client->audioHardwareDidBecomeInactive();
     }
 
     void audioOutputDeviceChanged(uint64_t bufferSizeMinimum, uint64_t bufferSizeMaximum)
     {
         setSupportedBufferSizes({ bufferSizeMinimum, bufferSizeMaximum });
-        m_client.audioOutputDeviceChanged();
+        if (RefPtr client = this->client())
+            client->audioOutputDeviceChanged();
     }
 };
 #endif
@@ -101,8 +104,10 @@ RemoteMediaSessionManagerProxy::RemoteMediaSessionManagerProxy(WebCore::PageIden
 #endif
 
 #if PLATFORM(COCOA)
-    WebCore::AudioHardwareListener::setCreationFunction([protectedThis = Ref { *this }] (WebCore::AudioHardwareListener::Client& client) {
-        return protectedThis->ensureAudioHardwareListenerProxy(client);
+    WebCore::AudioHardwareListener::setCreationFunction([weakThis = ThreadSafeWeakPtr { *this }] (WebCore::AudioHardwareListener::Client& client) -> Ref<WebCore::AudioHardwareListener> {
+        if (RefPtr protectedThis = weakThis.get())
+            return protectedThis->ensureAudioHardwareListenerProxy(client);
+        return RemoteMediaSessionManagerAudioHardwareListener::create(client);
     });
 #endif
 
@@ -272,27 +277,33 @@ void RemoteMediaSessionManagerProxy::setPreferredBufferSize(size_t size)
 #if PLATFORM(COCOA)
 void RemoteMediaSessionManagerProxy::remoteAudioHardwareDidBecomeActive()
 {
-    if (m_audioHardwareListenerProxy)
-        Ref { *m_audioHardwareListenerProxy }->audioHardwareDidBecomeActive();
+    if (RefPtr listener = m_audioHardwareListenerProxy.get())
+        listener->audioHardwareDidBecomeActive();
 }
 
 void RemoteMediaSessionManagerProxy::remoteAudioHardwareDidBecomeInactive()
 {
-    if (m_audioHardwareListenerProxy)
-        Ref { *m_audioHardwareListenerProxy }->audioHardwareDidBecomeInactive();
+    if (RefPtr listener = m_audioHardwareListenerProxy.get())
+        listener->audioHardwareDidBecomeInactive();
 }
 
 void RemoteMediaSessionManagerProxy::remoteAudioOutputDeviceChanged(uint64_t bufferSizeMinimum, uint64_t bufferSizeMaximum)
 {
-    if (m_audioHardwareListenerProxy)
-        Ref { *m_audioHardwareListenerProxy }->audioOutputDeviceChanged(bufferSizeMinimum, bufferSizeMaximum);
+    if (RefPtr listener = m_audioHardwareListenerProxy.get())
+        listener->audioOutputDeviceChanged(bufferSizeMinimum, bufferSizeMaximum);
 }
 
 Ref<RemoteMediaSessionManagerAudioHardwareListener> RemoteMediaSessionManagerProxy::ensureAudioHardwareListenerProxy(WebCore::AudioHardwareListener::Client& client)
 {
-    if (!m_audioHardwareListenerProxy)
-        m_audioHardwareListenerProxy = RemoteMediaSessionManagerAudioHardwareListener::create(client);
-    return *m_audioHardwareListenerProxy;
+    if (&client == static_cast<WebCore::AudioHardwareListener::Client*>(this)) {
+        if (RefPtr existing = m_audioHardwareListenerProxy.get())
+            return existing.releaseNonNull();
+        auto listener = RemoteMediaSessionManagerAudioHardwareListener::create(client);
+        m_audioHardwareListenerProxy = listener.get();
+        return listener;
+    }
+
+    return RemoteMediaSessionManagerAudioHardwareListener::create(client);
 }
 #endif
 
