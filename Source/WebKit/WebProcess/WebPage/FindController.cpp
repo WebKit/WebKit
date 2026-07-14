@@ -121,6 +121,40 @@ static std::optional<size_t> indexOfCursor(const Vector<FindMatch>& merged, cons
     return std::nullopt;
 }
 
+static size_t cueIndexNearestPlayhead(const Vector<FindMatch>& merged, size_t matchIndex, bool backwards)
+{
+    auto* cue = std::get_if<CueMatch>(&merged[matchIndex]);
+    if (!cue)
+        return matchIndex;
+    RefPtr media = cue->mediaElement.get();
+    if (!media)
+        return matchIndex;
+
+    auto isSameMediaCue = [&](size_t index) {
+        auto* candidate = std::get_if<CueMatch>(&merged[index]);
+        return candidate && candidate->mediaElement.get() == media.get();
+    };
+
+    double currentTime = media->currentTime();
+    size_t nearestIndex = matchIndex;
+
+    if (!backwards) {
+        for (size_t index = matchIndex; index < merged.size() && isSameMediaCue(index); ++index) {
+            nearestIndex = index;
+            if (std::get<CueMatch>(merged[index]).seekTime.toDouble() >= currentTime)
+                return index;
+        }
+        return nearestIndex;
+    }
+
+    for (size_t index = matchIndex + 1; index && isSameMediaCue(index - 1); --index) {
+        nearestIndex = index - 1;
+        if (std::get<CueMatch>(merged[index - 1]).seekTime.toDouble() <= currentTime)
+            return index - 1;
+    }
+    return nearestIndex;
+}
+
 static std::optional<size_t> indexClosestToSelection(const Vector<FindMatch>& merged, const std::optional<SimpleRange>& selection, bool backwards)
 {
     if (merged.isEmpty() || !selection)
@@ -138,13 +172,13 @@ static std::optional<size_t> indexClosestToSelection(const Vector<FindMatch>& me
     if (!backwards) {
         for (size_t matchIndex = 0; matchIndex < merged.size(); ++matchIndex) {
             if (auto position = positionOf(merged[matchIndex]); position && is_gteq(treeOrder<ComposedTree>(*position, anchor)))
-                return matchIndex;
+                return cueIndexNearestPlayhead(merged, matchIndex, backwards);
         }
         return std::nullopt;
     }
     for (size_t matchIndex = merged.size(); matchIndex > 0; --matchIndex) {
         if (auto position = positionOf(merged[matchIndex - 1]); position && is_lteq(treeOrder<ComposedTree>(*position, anchor)))
-            return matchIndex - 1;
+            return cueIndexNearestPlayhead(merged, matchIndex - 1, backwards);
     }
     return std::nullopt;
 }
