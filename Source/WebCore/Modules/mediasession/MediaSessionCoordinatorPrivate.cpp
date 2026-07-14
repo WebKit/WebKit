@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
+#include <wtf/CompletionHandler.h>
 #include <wtf/Logger.h>
 #include <wtf/NeverDestroyed.h>
 

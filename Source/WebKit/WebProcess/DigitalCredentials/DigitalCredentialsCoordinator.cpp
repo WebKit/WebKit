@@ -104,12 +104,12 @@ void DigitalCredentialsCoordinator::dismissDigitalCredentialsChooser(CompletionH
         completionHandler(false);
 }
 
-void DigitalCredentialsCoordinator::provideRawDigitalCredentialRequests(CompletionHandler<void(WebCore::DigitalCredentialsRawRequests&&)>&& completionHandler)
+CompletionHandlerCalledToken DigitalCredentialsCoordinator::provideRawDigitalCredentialRequests(CompletionHandler<void(WebCore::DigitalCredentialsRawRequests&&), true>&& completionHandler)
 {
     WTF::switchOn(m_rawRequests, [](auto& rawRequests) {
         ASSERT(!rawRequests.isEmpty());
     });
-    completionHandler(std::exchange(m_rawRequests, { }));
+    return completionHandler(std::exchange(m_rawRequests, { }));
 }
 
 } // namespace WebKit

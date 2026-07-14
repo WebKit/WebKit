@@ -1210,18 +1210,16 @@ void VideoPresentationManagerProxy::enterFullscreen(PlaybackSessionContextIdenti
     }
 }
 
-void VideoPresentationManagerProxy::exitFullscreen(PlaybackSessionContextIdentifier contextId, WebCore::FloatRect finalRect, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken VideoPresentationManagerProxy::exitFullscreen(PlaybackSessionContextIdentifier contextId, WebCore::FloatRect finalRect, CompletionHandler<void(bool), true>&& completionHandler)
 {
     RefPtr page = m_page.get();
     if (!page) {
-        completionHandler(false);
-        return;
+        return completionHandler(false);
     }
 
     ASSERT(m_contextMap.contains(contextId));
     if (!m_contextMap.contains(contextId)) {
-        completionHandler(false);
-        return;
+        return completionHandler(false);
     }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -1238,14 +1236,13 @@ void VideoPresentationManagerProxy::exitFullscreen(PlaybackSessionContextIdentif
 #else
         didExitFullscreen(contextId);
 #endif
-        completionHandler(true);
-        return;
+        return completionHandler(true);
     }
 
 #if PLATFORM(IOS_FAMILY)
-    completionHandler(ensureInterface(contextId)->exitFullscreen(finalRect));
+    return completionHandler(ensureInterface(contextId)->exitFullscreen(finalRect));
 #else
-    completionHandler(ensureInterface(contextId)->exitFullscreen(finalWindowRect, protect(page->platformWindow()).get()));
+    return completionHandler(ensureInterface(contextId)->exitFullscreen(finalWindowRect, protect(page->platformWindow()).get()));
 #endif
 }
 

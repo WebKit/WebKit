@@ -686,14 +686,14 @@ OriginQuotaManager& OriginStorageManager::quotaManager()
 
 FileSystemStorageManager& OriginStorageManager::fileSystemStorageManager(FileSystemStorageHandleRegistry& registry)
 {
-    return defaultBucket().fileSystemStorageManager(registry, [quotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
+    return defaultBucket().fileSystemStorageManager(registry, [quotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool), true>&& completionHandler) mutable -> CompletionHandlerCalledToken {
         auto strongReference = quotaManager.get();
         if (!strongReference)
             return completionHandler(false);
 
-        strongReference->requestSpace(spaceRequested, [completionHandler = WTF::move(completionHandler)](auto decision) mutable {
-            completionHandler(decision == OriginQuotaManager::Decision::Grant);
-        });
+        return strongReference->requestSpace(spaceRequested, OriginQuotaManager::EnforcedRequestCallback([completionHandler = WTF::move(completionHandler)](auto decision) mutable -> CompletionHandlerCalledToken {
+            return completionHandler(decision == OriginQuotaManager::Decision::Grant);
+        }));
     });
 }
 

@@ -299,6 +299,24 @@ void DocumentFullscreen::requestFullscreen(Ref<Element>&& element, FullscreenChe
     });
 }
 
+CompletionHandlerCalledToken DocumentFullscreen::requestFullscreen(Ref<Element>&& element, FullscreenCheckType checkType, CompletionHandler<void(ExceptionOr<void>), true>&& handler, HTMLMediaElementEnums::VideoFullscreenMode mode)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+        requestFullscreen(WTF::move(element), checkType, CompletionHandler<void(ExceptionOr<void>)>(WTF::move(handler)), mode);
+        return deferred;
+    });
+}
+
+CompletionHandlerCalledToken DocumentFullscreen::requestFullscreenForBoolResult(Ref<Element>&& element, FullscreenCheckType checkType, CompletionHandler<void(bool), true>&& handler, HTMLMediaElementEnums::VideoFullscreenMode mode)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+        requestFullscreen(WTF::move(element), checkType, CompletionHandler<void(ExceptionOr<void>)>([handler = WTF::move(handler)](auto result) mutable {
+            handler(!result.hasException());
+        }), mode);
+        return deferred;
+    });
+}
+
 ExceptionOr<void> DocumentFullscreen::willEnterFullscreen(Element& element, HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
 #if !ENABLE(VIDEO)

@@ -115,11 +115,11 @@ private:
     void isConditionalMediationAvailable(const WebCore::SecurityOriginData&, QueryCompletionHandler&&);
     void getClientCapabilities(const WebCore::SecurityOriginData&, CapabilitiesCompletionHandler&&);
 
-    void signalUnknownCredential(const WebCore::SecurityOriginData&, WebCore::UnknownCredentialOptions&&, CompletionHandler<void(std::optional<WebCore::ExceptionData>)>&&);
-    void signalAllAcceptedCredentials(const WebCore::SecurityOriginData&, WebCore::AllAcceptedCredentialsOptions&&, CompletionHandler<void(std::optional<WebCore::ExceptionData>)>&&);
-    void signalCurrentUserDetails(const WebCore::SecurityOriginData&, WebCore::CurrentUserDetailsOptions&&, CompletionHandler<void(std::optional<WebCore::ExceptionData>)>&&);
+    CompletionHandlerCalledToken signalUnknownCredential(const WebCore::SecurityOriginData&, WebCore::UnknownCredentialOptions&&, CompletionHandler<void(std::optional<WebCore::ExceptionData>), true>&&);
+    CompletionHandlerCalledToken signalAllAcceptedCredentials(const WebCore::SecurityOriginData&, WebCore::AllAcceptedCredentialsOptions&&, CompletionHandler<void(std::optional<WebCore::ExceptionData>), true>&&);
+    CompletionHandlerCalledToken signalCurrentUserDetails(const WebCore::SecurityOriginData&, WebCore::CurrentUserDetailsOptions&&, CompletionHandler<void(std::optional<WebCore::ExceptionData>), true>&&);
 
-    void cancel(CompletionHandler<void()>&&);
+    CompletionHandlerCalledToken cancel(CompletionHandler<void(), true>&&);
 
     void handleRequest(WebAuthenticationRequestData&&, RequestCompletionHandler&&);
 
@@ -158,7 +158,7 @@ private:
     RetainPtr<ASCAuthorizationRemotePresenter> m_presenter;
     RetainPtr<ASCAgentProxy> m_proxy;
 #endif // HAVE(UNIFIED_ASC_AUTH_UI)
-    CompletionHandler<void()> m_cancelHandler;
+    CompletionHandler<void(), true> m_cancelHandler;
 };
 
 } // namespace WebKit

@@ -93,11 +93,11 @@ private:
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     // Message handlers
-    void enumerateImmersiveXRDevices(CompletionHandler<void(Vector<XRDeviceInfo>&&)>&&);
-    void requestPermissionOnSessionFeatures(IPC::Connection&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&&);
+    CompletionHandlerCalledToken enumerateImmersiveXRDevices(CompletionHandler<void(Vector<XRDeviceInfo>&&), true>&&);
+    CompletionHandlerCalledToken requestPermissionOnSessionFeatures(IPC::Connection&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&), true>&&);
     void initializeTrackingAndRendering(IPC::Connection&, std::optional<WebCore::WebGPU::TextureFormat>, std::optional<WebCore::WebGPU::TextureFormat>);
     void shutDownTrackingAndRendering(IPC::Connection&);
-    void requestFrame(IPC::Connection&, std::optional<PlatformXR::RequestData>&&, CompletionHandler<void(PlatformXR::FrameData&&)>&&);
+    CompletionHandlerCalledToken requestFrame(IPC::Connection&, std::optional<PlatformXR::RequestData>&&, CompletionHandler<void(PlatformXR::FrameData&&), true>&&);
 #if USE(OPENXR)
     void createLayerProjection(IPC::Connection&, uint32_t width, uint32_t height, bool alpha, CompletionHandler<void(std::optional<PlatformXR::LayerInfo>)>&&);
     void submitFrame(IPC::Connection&, Vector<PlatformXR::DeviceLayer>&&);
@@ -108,9 +108,9 @@ private:
     void NODELETE createCompositionLayer(IPC::Connection&, PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout, CompletionHandler<void(std::optional<PlatformXR::LayerInfo>)>&&);
 #endif
 #if ENABLE(WEBXR_HIT_TEST)
-    void requestHitTestSource(const PlatformXR::HitTestOptions&, CompletionHandler<void(Expected<PlatformXR::HitTestSource, WebCore::ExceptionData>)>&&);
+    CompletionHandlerCalledToken requestHitTestSource(const PlatformXR::HitTestOptions&, CompletionHandler<void(Expected<PlatformXR::HitTestSource, WebCore::ExceptionData>), true>&&);
     void deleteHitTestSource(PlatformXR::HitTestSource);
-    void requestTransientInputHitTestSource(const PlatformXR::TransientInputHitTestOptions&, CompletionHandler<void(Expected<PlatformXR::TransientInputHitTestSource, WebCore::ExceptionData>)>&&);
+    CompletionHandlerCalledToken requestTransientInputHitTestSource(const PlatformXR::TransientInputHitTestOptions&, CompletionHandler<void(Expected<PlatformXR::TransientInputHitTestSource, WebCore::ExceptionData>), true>&&);
     void deleteTransientInputHitTestSource(PlatformXR::TransientInputHitTestSource);
 #endif
     void didCompleteShutdownTriggeredBySystem(IPC::Connection&);

@@ -107,12 +107,15 @@ void WebPageProxy::didUpdateEditorState(const EditorState&, const EditorState& n
     }
 }
 
-void WebPageProxy::sendMessageToWebViewWithReply(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
+CompletionHandlerCalledToken WebPageProxy::sendMessageToWebViewWithReply(UserMessage&& message, CompletionHandler<void(UserMessage&&), true>&& completionHandler)
 {
     RefPtr pageClient = this->pageClient();
     if (!pageClient)
         return completionHandler({ });
-    static_cast<PageClientImpl&>(*pageClient).sendMessageToWebView(WTF::move(message), WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return static_cast<PageClientImpl&>(*pageClient).sendMessageToWebView(WTF::move(message), WTF::move(completionHandler));
+    });
+
 }
 
 void WebPageProxy::sendMessageToWebView(UserMessage&& message)

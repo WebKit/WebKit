@@ -76,6 +76,13 @@ public:
     virtual ~PlatformMediaResourceLoader() = default;
 
     virtual void sendH2Ping(const URL&, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&&) = 0;
+    CompletionHandlerCalledToken sendH2Ping(const URL& url, CompletionHandler<void(Expected<Seconds, ResourceError>&&), true>&& handler)
+    {
+        return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+            sendH2Ping(url, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>(WTF::move(handler)));
+            return WTF::move(deferred);
+        });
+    }
 
     // Can be called on any threads. Return the function dispatcher on which the PlaftormMediaResource and PlatformMediaResourceClient must be be called on.
     virtual Ref<GuaranteedSerialFunctionDispatcher> targetDispatcher() { return MainThreadDispatcher::singleton(); }

@@ -114,7 +114,21 @@ public:
     using AllowPersistentState = WebCore::CDMInstanceAllowPersistentState;
 
     virtual void initializeWithConfiguration(const CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) = 0;
+    CompletionHandlerCalledToken initializeWithConfiguration(const CDMKeySystemConfiguration& configuration, AllowDistinctiveIdentifiers allowDistinctiveIdentifiers, AllowPersistentState allowPersistentState, CompletionHandler<void(SuccessValue), true>&& handler)
+    {
+        return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+            initializeWithConfiguration(configuration, allowDistinctiveIdentifiers, allowPersistentState, SuccessCallback(WTF::move(handler)));
+            return WTF::move(deferred);
+        });
+    }
     virtual void setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&&) = 0;
+    CompletionHandlerCalledToken setServerCertificate(Ref<SharedBuffer>&& certificate, CompletionHandler<void(SuccessValue), true>&& handler)
+    {
+        return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+            setServerCertificate(WTF::move(certificate), SuccessCallback(WTF::move(handler)));
+            return WTF::move(deferred);
+        });
+    }
     virtual void setStorageDirectory(const String&) = 0;
     virtual const String& keySystem() const = 0;
     virtual RefPtr<CDMInstanceSession> createSession() = 0;

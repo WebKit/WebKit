@@ -40,7 +40,7 @@
 #endif
 
 namespace WTF {
-template<typename> class CompletionHandler;
+template<typename, bool> class CompletionHandler;
 class CompletionHandlerCallingScope;
 }
 

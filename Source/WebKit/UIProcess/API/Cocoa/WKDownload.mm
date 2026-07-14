@@ -62,26 +62,31 @@ public:
     }
 
 private:
-    void willSendRequest(WebKit::DownloadProxy& download, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse& response, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler) final
+    CompletionHandlerCalledToken willSendRequest(WebKit::DownloadProxy& download, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse& response, CompletionHandler<void(WebCore::ResourceRequest&&), true>&& completionHandler) final
     {
         RetainPtr delegate = m_delegate.get();
         if (!delegate || !m_respondsToWillPerformHTTPRedirection)
             return completionHandler(WTF::move(request));
 
         RetainPtr<NSURLRequest> nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
-        [delegate download:protect(wrapper(download)).get() willPerformHTTPRedirection:RetainPtr { checked_objc_cast<NSHTTPURLResponse>(response.nsURLResponse()) }.get() newRequest:nsRequest.get() decisionHandler:makeBlockPtr([request = WTF::move(request), completionHandler = WTF::move(completionHandler), checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(download:willPerformHTTPRedirection:newRequest:decisionHandler:))](WKDownloadRedirectPolicy policy) mutable {
-            if (checker->completionHandlerHasBeenCalled())
-                return;
-            checker->didCallCompletionHandler();
-            switch (policy) {
-            case WKDownloadRedirectPolicyCancel:
-                return completionHandler({ });
-            case WKDownloadRedirectPolicyAllow:
-                return completionHandler(WTF::move(request));
-            default:
-                [NSException raise:NSInvalidArgumentException format:@"Invalid WKDownloadRedirectPolicy (%ld)", (long)policy];
-            }
-        }).get()];
+        // Genuine leaf: the handler is captured into an ObjC block, so enforcement cannot be
+        // proven at compile time. Keep exactly one deferUnchecked here.
+        return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+            [delegate download:protect(wrapper(download)).get() willPerformHTTPRedirection:RetainPtr { checked_objc_cast<NSHTTPURLResponse>(response.nsURLResponse()) }.get() newRequest:nsRequest.get() decisionHandler:makeBlockPtr([request = WTF::move(request), completionHandler = CompletionHandler<void(WebCore::ResourceRequest&&)>(WTF::move(completionHandler)), checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(download:willPerformHTTPRedirection:newRequest:decisionHandler:))](WKDownloadRedirectPolicy policy) mutable {
+                if (checker->completionHandlerHasBeenCalled())
+                    return;
+                checker->didCallCompletionHandler();
+                switch (policy) {
+                case WKDownloadRedirectPolicyCancel:
+                    return completionHandler({ });
+                case WKDownloadRedirectPolicyAllow:
+                    return completionHandler(WTF::move(request));
+                default:
+                    [NSException raise:NSInvalidArgumentException format:@"Invalid WKDownloadRedirectPolicy (%ld)", (long)policy];
+                }
+            }).get()];
+            return WTF::move(deferred);
+        });
     }
 
     void didReceiveAuthenticationChallenge(WebKit::DownloadProxy& download, WebKit::AuthenticationChallengeProxy& challenge) final
@@ -219,13 +224,11 @@ private:
     }
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    void didReceivePlaceholderURL(WebKit::DownloadProxy& download, const WTF::URL& url, std::span<const uint8_t> bookmarkData, CompletionHandler<void()>&& completionHandler) final
+    CompletionHandlerCalledToken didReceivePlaceholderURL(WebKit::DownloadProxy& download, const WTF::URL& url, std::span<const uint8_t> bookmarkData, CompletionHandler<void(), true>&& completionHandler) final
     {
         RetainPtr delegate = m_delegate.get();
-        if (!delegate || (!m_respondsToDidReceivePlaceholderURL && !m_respondsToDidReceivePlaceholderURLAPI)) {
-            completionHandler();
-            return;
-        }
+        if (!delegate || (!m_respondsToDidReceivePlaceholderURL && !m_respondsToDidReceivePlaceholderURLAPI))
+            return completionHandler();
 
         BOOL bookmarkDataIsStale = NO;
         NSError *bookmarkResolvingError;
@@ -237,10 +240,13 @@ private:
         if (!urlFromBookmark)
             urlFromBookmark = url.createNSURL();
 
-        if (m_respondsToDidReceivePlaceholderURL)
-            [delegate _download:protect(wrapper(download)).get() didReceivePlaceholderURL:urlFromBookmark.get() completionHandler:makeBlockPtr(WTF::move(completionHandler)).get()];
-        else
-            [delegate download:protect(wrapper(download)).get() didReceivePlaceholderURL:urlFromBookmark.get() completionHandler:makeBlockPtr(WTF::move(completionHandler)).get()];
+        return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+            if (m_respondsToDidReceivePlaceholderURL)
+                [delegate _download:protect(wrapper(download)).get() didReceivePlaceholderURL:urlFromBookmark.get() completionHandler:makeBlockPtr(WTF::move(completionHandler)).get()];
+            else
+                [delegate download:protect(wrapper(download)).get() didReceivePlaceholderURL:urlFromBookmark.get() completionHandler:makeBlockPtr(WTF::move(completionHandler)).get()];
+            return WTF::move(deferred);
+        });
     }
 
     void didReceiveFinalURL(WebKit::DownloadProxy& download, const WTF::URL& url, std::span<const uint8_t> bookmarkData) final

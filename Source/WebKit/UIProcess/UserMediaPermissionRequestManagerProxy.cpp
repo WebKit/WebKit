@@ -1115,6 +1115,14 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(Frame
 #endif
 }
 
+CompletionHandlerCalledToken UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(const Vector<CaptureDeviceWithCapabilities>&, MediaDeviceHashSalts&&), true>&& completionHandler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        enumerateMediaDevicesForFrame(frameID, WTF::move(userMediaDocumentOrigin), WTF::move(topLevelDocumentOrigin), CompletionHandler<void(const Vector<CaptureDeviceWithCapabilities>&, MediaDeviceHashSalts&&)>(WTF::move(completionHandler)));
+        return WTF::move(deferred);
+    });
+}
+
 void UserMediaPermissionRequestManagerProxy::setMockCaptureDevicesEnabledOverride(std::optional<bool> enabled)
 {
     m_mockDevicesEnabledOverride = enabled;

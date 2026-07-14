@@ -63,6 +63,14 @@ void InspectorExtension::createTab(const WTF::String& tabName, const WTF::URL& t
     extensionControllerProxy->createTabForExtension(m_identifier, tabName, tabIconURL, sourceURL, WTF::move(completionHandler));
 }
 
+CompletionHandlerCalledToken InspectorExtension::createTab(const WTF::String& tabName, const WTF::URL& tabIconURL, const WTF::URL& sourceURL, WTF::CompletionHandler<void(Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>), true>&& completionHandler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        createTab(tabName, tabIconURL, sourceURL, WTF::CompletionHandler<void(Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>)>(WTF::move(completionHandler)));
+        return WTF::move(deferred);
+    });
+}
+
 void InspectorExtension::evaluateScript(const WTF::String& scriptSource, const std::optional<WTF::URL>& frameURL, const std::optional<WTF::URL>& contextSecurityOrigin, const std::optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
 {
     RefPtr extensionControllerProxy = m_extensionControllerProxy.get();

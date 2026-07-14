@@ -53,7 +53,7 @@ public:
 
 protected:
     // IPC messages.
-    WEBCORE_EXPORT void fetchScriptInClient(URL&&, WebCore::SharedWorkerObjectIdentifier, WorkerOptions&&, CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)>&&);
+    WEBCORE_EXPORT CompletionHandlerCalledToken fetchScriptInClient(URL&&, WebCore::SharedWorkerObjectIdentifier, WorkerOptions&&, CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&), true>&&);
     WEBCORE_EXPORT void notifyWorkerObjectOfLoadCompletion(WebCore::SharedWorkerObjectIdentifier, const ResourceError&);
     WEBCORE_EXPORT void postErrorToWorkerObject(SharedWorkerObjectIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent);
 

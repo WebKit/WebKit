@@ -143,9 +143,9 @@ private:
     void resetState();
     void bringToFront();
     void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
-    void load(const String& path, CompletionHandler<void(const String&)>&&);
-    void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
-    void NODELETE setSheetRect(const WebCore::FloatRect&);
+    CompletionHandlerCalledToken load(const String& path, CompletionHandler<void(const String&), true>&&);
+    CompletionHandlerCalledToken pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&), true>&&);
+    void setSheetRect(const WebCore::FloatRect&);
     void setForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void startWindowDrag();
     void openURLExternally(const String& url);
@@ -164,8 +164,8 @@ private:
     void platformResetState();
     void platformBringToFront();
     void platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
-    void platformLoad(const String& path, CompletionHandler<void(const String&)>&&);
-    void platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
+    CompletionHandlerCalledToken platformLoad(const String& path, CompletionHandler<void(const String&), true>&&);
+    CompletionHandlerCalledToken platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&), true>&&);
     void NODELETE platformSetSheetRect(const WebCore::FloatRect&);
     void platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void platformStartWindowDrag();

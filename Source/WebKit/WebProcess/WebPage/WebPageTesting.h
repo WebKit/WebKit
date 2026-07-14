@@ -55,24 +55,24 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
-    void isLayerTreeFrozen(CompletionHandler<void(bool)>&&);
+    CompletionHandlerCalledToken isLayerTreeFrozen(CompletionHandler<void(bool), true>&&);
     void numberOfLiveDocuments(CompletionHandler<void(uint64_t)>&&);
     void setPermissionLevel(const String& origin, bool allowed);
     void isEditingCommandEnabled(const String& commandName, CompletionHandler<void(bool)>&&);
     void resetStateBetweenTests();
-    void clearCachedBackForwardListCounts(CompletionHandler<void()>&&);
-    void setTracksRepaints(bool, CompletionHandler<void()>&&);
-    void displayAndTrackRepaints(CompletionHandler<void()>&&);
+    CompletionHandlerCalledToken clearCachedBackForwardListCounts(CompletionHandler<void(), true>&&);
+    CompletionHandlerCalledToken setTracksRepaints(bool, CompletionHandler<void(), true>&&);
+    CompletionHandlerCalledToken displayAndTrackRepaints(CompletionHandler<void(), true>&&);
 
 #if ENABLE(NOTIFICATIONS)
     void clearNotificationPermissionState();
 #endif
 
-    void setObscuredContentInsets(float top, float right, float bottom, float left, CompletionHandler<void()>&&);
+    CompletionHandlerCalledToken setObscuredContentInsets(float top, float right, float bottom, float left, CompletionHandler<void(), true>&&);
 
     void clearWheelEventTestMonitor();
-    void startMonitoringWheelEventsForTesting(CompletionHandler<void()>&&);
-    void waitForWheelEventsToCompleteForTesting(CompletionHandler<void()>&&);
+    CompletionHandlerCalledToken startMonitoringWheelEventsForTesting(CompletionHandler<void(), true>&&);
+    CompletionHandlerCalledToken waitForWheelEventsToCompleteForTesting(CompletionHandler<void(), true>&&);
 
     WeakPtr<WebPage> m_page;
     WebCore::PageIdentifier m_pageIdentifier;

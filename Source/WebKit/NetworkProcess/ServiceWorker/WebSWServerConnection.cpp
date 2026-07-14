@@ -102,7 +102,7 @@ WebSWServerConnection::~WebSWServerConnection()
             server->unregisterServiceWorkerClient(keyValue.value, keyValue.key);
     }
     for (auto& completionHandler : m_unregisterJobs.values())
-        completionHandler(false);
+        (void)completionHandler(false);
 }
 
 NetworkProcess& WebSWServerConnection::networkProcess()
@@ -121,7 +121,7 @@ std::optional<SharedPreferencesForWebProcess> WebSWServerConnection::sharedPrefe
 void WebSWServerConnection::rejectJobInClient(ServiceWorkerJobIdentifier jobIdentifier, const ExceptionData& exceptionData)
 {
     if (auto completionHandler = m_unregisterJobs.take(jobIdentifier))
-        return completionHandler(makeUnexpected(exceptionData));
+        return (void)completionHandler(makeUnexpected(exceptionData));
     send(Messages::WebSWClientConnection::JobRejectedInServer(jobIdentifier, exceptionData));
 }
 
@@ -141,17 +141,17 @@ void WebSWServerConnection::resolveUnregistrationJobInClient(ServiceWorkerJobIde
 #else
         if (!checkedSession) {
 #endif
-            completionHandler(unregistrationResult);
+            (void)completionHandler(unregistrationResult);
             return;
         }
 
         auto scopeURL = registrationKey.scope();
-        checkedSession->notificationManager().unsubscribeFromPushService(WTF::move(scopeURL), std::nullopt, [completionHandler = WTF::move(completionHandler), unregistrationResult](auto&&) mutable {
-            completionHandler(unregistrationResult);
-        });
+        checkedSession->notificationManager().unsubscribeFromPushService(WTF::move(scopeURL), std::nullopt, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&)>([completionHandler = WTF::move(completionHandler), unregistrationResult](auto&&) mutable {
+            (void)completionHandler(unregistrationResult);
+        }));
 
 #else
-        completionHandler(unregistrationResult);
+        (void)completionHandler(unregistrationResult);
 #endif
     }
 }
@@ -462,7 +462,7 @@ URL WebSWServerConnection::clientURLFromIdentifier(ServiceWorkerOrClientIdentifi
     });
 }
 
-void WebSWServerConnection::scheduleUnregisterJobInServer(ServiceWorkerJobIdentifier jobIdentifier, ServiceWorkerRegistrationIdentifier registrationIdentifier, ServiceWorkerOrClientIdentifier contextIdentifier, CompletionHandler<void(UnregisterJobResult&&)>&& completionHandler)
+CompletionHandlerCalledToken WebSWServerConnection::scheduleUnregisterJobInServer(ServiceWorkerJobIdentifier jobIdentifier, ServiceWorkerRegistrationIdentifier registrationIdentifier, ServiceWorkerOrClientIdentifier contextIdentifier, CompletionHandler<void(UnregisterJobResult&&), true>&& completionHandler)
 {
     SWSERVERCONNECTION_RELEASE_LOG("Scheduling unregister ServiceWorker job in server");
 
@@ -478,10 +478,12 @@ void WebSWServerConnection::scheduleUnregisterJobInServer(ServiceWorkerJobIdenti
     if (!clientURL.isValid())
         return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Client is unknown"_s }));
 
-    ASSERT(!m_unregisterJobs.contains(jobIdentifier));
-    m_unregisterJobs.add(jobIdentifier, WTF::move(completionHandler));
-
-    server->scheduleUnregisterJob(ServiceWorkerJobDataIdentifier { identifier(), jobIdentifier }, *registration, contextIdentifier, WTF::move(clientURL));
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        ASSERT(!m_unregisterJobs.contains(jobIdentifier));
+        m_unregisterJobs.add(jobIdentifier, WTF::move(completionHandler));
+        server->scheduleUnregisterJob(ServiceWorkerJobDataIdentifier { identifier(), jobIdentifier }, *registration, contextIdentifier, WTF::move(clientURL));
+        return WTF::move(deferred);
+    });
 }
 
 void WebSWServerConnection::postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier destinationContextIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const SecurityOriginData& sourceOrigin)
@@ -501,33 +503,41 @@ void WebSWServerConnection::postMessageToServiceWorkerClient(ScriptExecutionCont
     });
 }
 
-void WebSWServerConnection::matchRegistration(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&& callback)
+CompletionHandlerCalledToken WebSWServerConnection::matchRegistration(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&), true>&& callback)
 {
     if (!checkTopOrigin(topOrigin))
-        return;
+        return callback({ });
 
-    doRegistrationMatching(topOrigin, clientURL, WTF::move(callback));
+    RefPtr server = this->server();
+    if (server) {
+        if (RefPtr registration = server->doRegistrationMatchingSync(topOrigin, clientURL))
+            return callback(registration->data());
+    }
+    return callback({ });
 }
 
-void WebSWServerConnection::whenRegistrationReady(const WebCore::SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&& callback)
+CompletionHandlerCalledToken WebSWServerConnection::whenRegistrationReady(const WebCore::SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&), true>&& callback)
 {
     if (!checkTopOrigin(topOrigin))
-        return;
+        return callback(std::nullopt);
 
-    SWServer::Connection::whenRegistrationReady(topOrigin, clientURL, WTF::move(callback));
+    return CompletionHandlerCalledToken::defer(WTF::move(callback), [&](auto callback) -> CompletionHandlerCalledToken {
+        return SWServer::Connection::whenRegistrationReady(topOrigin, clientURL, WTF::move(callback));
+    });
 }
 
-void WebSWServerConnection::getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(const Vector<ServiceWorkerRegistrationData>&)>&& callback)
+CompletionHandlerCalledToken WebSWServerConnection::getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(const Vector<ServiceWorkerRegistrationData>&), true>&& callback)
 {
     if (!checkTopOrigin(topOrigin))
-        return;
+        return callback({ });
 
     RefPtr server = this->server();
     if (!server)
         return callback({ });
-
-    server->getRegistrations(topOrigin, clientURL, [callback = WTF::move(callback)](auto&& registrations) mutable {
-        callback(registrations);
+    return CompletionHandlerCalledToken::defer(WTF::move(callback), [&](auto callback) -> CompletionHandlerCalledToken {
+        return server->getRegistrations(topOrigin, clientURL, CompletionHandler<void(Vector<ServiceWorkerRegistrationData>&&), true>([callback = WTF::move(callback)](Vector<ServiceWorkerRegistrationData>&& registrations) mutable -> CompletionHandlerCalledToken {
+            return callback(registrations);
+        }));
     });
 }
 
@@ -661,128 +671,110 @@ void WebSWServerConnection::updateThrottleState()
     }
 }
 
-void WebSWServerConnection::subscribeToPushService(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(Expected<PushSubscriptionData, ExceptionData>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebSWServerConnection::subscribeToPushService(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(Expected<PushSubscriptionData, ExceptionData>&&), true>&& completionHandler)
 {
 #if !ENABLE(WEB_PUSH_NOTIFICATIONS)
     UNUSED_PARAM(registrationIdentifier);
     UNUSED_PARAM(applicationServerKey);
-    completionHandler(makeUnexpected(ExceptionData { ExceptionCode::AbortError, "Push service not implemented"_s }));
+    return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::AbortError, "Push service not implemented"_s }));
 #else
     RefPtr server = this->server();
-    if (!server) {
-        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Subscribing for push requires a server"_s }));
-        return;
-    }
+    if (!server)
+        return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Subscribing for push requires a server"_s }));
 
     RefPtr registration = server->getRegistration(registrationIdentifier);
-    if (!registration) {
-        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Subscribing for push requires an active service worker"_s }));
-        return;
-    }
+    if (!registration)
+        return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Subscribing for push requires an active service worker"_s }));
 
     CheckedPtr session = this->session();
-    if (!session) {
-        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
-        return;
-    }
+    if (!session)
+        return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
 
-    session->notificationManager().subscribeToPushService(registration->scopeURLWithoutFragment(), WTF::move(applicationServerKey), [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler), registrableDomain = RegistrableDomain(registration->data().scopeURL)] (Expected<PushSubscriptionData, ExceptionData>&& result) mutable {
-        if (RefPtr resourceLoadStatistics = weakThis && weakThis->session() ? weakThis->session()->resourceLoadStatistics() : nullptr; result && resourceLoadStatistics) {
-            return resourceLoadStatistics->setMostRecentWebPushInteractionTime(WTF::move(registrableDomain), [result = WTF::move(result), completionHandler = WTF::move(completionHandler)] () mutable {
-                completionHandler(WTF::move(result));
-            });
-        }
-        completionHandler(WTF::move(result));
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        session->notificationManager().subscribeToPushService(registration->scopeURLWithoutFragment(), WTF::move(applicationServerKey), [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler), registrableDomain = RegistrableDomain(registration->data().scopeURL)] (Expected<PushSubscriptionData, ExceptionData>&& result) mutable {
+            if (RefPtr resourceLoadStatistics = weakThis && weakThis->session() ? weakThis->session()->resourceLoadStatistics() : nullptr; result && resourceLoadStatistics) {
+                return resourceLoadStatistics->setMostRecentWebPushInteractionTime(WTF::move(registrableDomain), [result = WTF::move(result), completionHandler = WTF::move(completionHandler)] () mutable -> CompletionHandlerCalledToken {
+                    return completionHandler(WTF::move(result));
+                });
+            }
+            completionHandler(WTF::move(result));
+        });
+        return WTF::move(deferred);
     });
 #endif
 }
 
-void WebSWServerConnection::unsubscribeFromPushService(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, WebCore::PushSubscriptionIdentifier subscriptionIdentifier, CompletionHandler<void(Expected<bool, ExceptionData>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebSWServerConnection::unsubscribeFromPushService(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, WebCore::PushSubscriptionIdentifier subscriptionIdentifier, CompletionHandler<void(Expected<bool, ExceptionData>&&), true>&& completionHandler)
 {
 #if !ENABLE(WEB_PUSH_NOTIFICATIONS)
     UNUSED_PARAM(registrationIdentifier);
     UNUSED_PARAM(subscriptionIdentifier);
-
-    completionHandler(false);
+    return completionHandler(false);
 #else
     RefPtr server = this->server();
-    if (!server) {
-        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Unsubscribing from push requires a server"_s }));
-        return;
-    }
+    if (!server)
+        return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Unsubscribing from push requires a server"_s }));
 
     RefPtr registration = server->getRegistration(registrationIdentifier);
-    if (!registration) {
-        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Unsubscribing from push requires a service worker"_s }));
-        return;
-    }
+    if (!registration)
+        return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Unsubscribing from push requires a service worker"_s }));
 
     CheckedPtr session = this->session();
-    if (!session) {
-        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
-        return;
-    }
+    if (!session)
+        return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
 
-    session->notificationManager().unsubscribeFromPushService(registration->scopeURLWithoutFragment(), subscriptionIdentifier, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return session->notificationManager().unsubscribeFromPushService(registration->scopeURLWithoutFragment(), subscriptionIdentifier, WTF::move(completionHandler));
+    });
 #endif
 }
 
-void WebSWServerConnection::getPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, CompletionHandler<void(Expected<std::optional<PushSubscriptionData>, ExceptionData>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebSWServerConnection::getPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, CompletionHandler<void(Expected<std::optional<PushSubscriptionData>, ExceptionData>&&), true>&& completionHandler)
 {
 #if !ENABLE(WEB_PUSH_NOTIFICATIONS)
     UNUSED_PARAM(registrationIdentifier);
-
-    completionHandler(std::optional<PushSubscriptionData>(std::nullopt));
+    return completionHandler(std::optional<PushSubscriptionData>(std::nullopt));
 #else
     RefPtr server = this->server();
-    if (!server) {
-        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Getting push subscription requires a server"_s }));
-        return;
-    }
+    if (!server)
+        return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Getting push subscription requires a server"_s }));
 
     RefPtr registration = server->getRegistration(registrationIdentifier);
-    if (!registration) {
-        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Getting push subscription requires a service worker"_s }));
-        return;
-    }
+    if (!registration)
+        return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Getting push subscription requires a service worker"_s }));
 
     CheckedPtr session = this->session();
-    if (!session) {
-        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
-        return;
-    }
+    if (!session)
+        return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
 
-    session->notificationManager().getPushSubscription(registration->scopeURLWithoutFragment(), WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return session->notificationManager().getPushSubscription(registration->scopeURLWithoutFragment(), WTF::move(completionHandler));
+    });
 #endif
 }
 
-void WebSWServerConnection::getPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, CompletionHandler<void(Expected<uint8_t, ExceptionData>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebSWServerConnection::getPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, CompletionHandler<void(Expected<uint8_t, ExceptionData>&&), true>&& completionHandler)
 {
 #if !ENABLE(WEB_PUSH_NOTIFICATIONS)
     UNUSED_PARAM(registrationIdentifier);
-
-    completionHandler(static_cast<uint8_t>(PushPermissionState::Denied));
+    return completionHandler(static_cast<uint8_t>(PushPermissionState::Denied));
 #else
     RefPtr server = this->server();
-    if (!server) {
-        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Getting push permission state requires a server"_s }));
-        return;
-    }
+    if (!server)
+        return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Getting push permission state requires a server"_s }));
 
     RefPtr registration = server->getRegistration(registrationIdentifier);
-    if (!registration) {
-        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Getting push permission state requires a service worker"_s }));
-        return;
-    }
+    if (!registration)
+        return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Getting push permission state requires a service worker"_s }));
 
     CheckedPtr session = this->session();
-    if (!session) {
-        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
-        return;
-    }
+    if (!session)
+        return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
 
-    session->notificationManager().getPermissionState(SecurityOriginData::fromURL( registration->scopeURLWithoutFragment()), [completionHandler = WTF::move(completionHandler)](WebCore::PushPermissionState state) mutable {
-        completionHandler(static_cast<uint8_t>(state));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return session->notificationManager().getPermissionState(SecurityOriginData::fromURL( registration->scopeURLWithoutFragment()), [completionHandler = WTF::move(completionHandler)](WebCore::PushPermissionState state) mutable -> CompletionHandlerCalledToken {
+            return completionHandler(static_cast<uint8_t>(state));
+        });
     });
 #endif
 }
@@ -796,7 +788,7 @@ void WebSWServerConnection::contextConnectionCreated(SWServerToContextConnection
         protect(networkProcess().parentProcessConnection())->send(Messages::NetworkProcessProxy::RegisterRemoteWorkerClientProcess { RemoteWorkerType::ServiceWorker, identifier(), connection.webProcessIdentifier() }, 0);
 }
 
-void WebSWServerConnection::terminateWorkerFromClient(ServiceWorkerIdentifier serviceWorkerIdentifier, CompletionHandler<void()>&& callback)
+CompletionHandlerCalledToken WebSWServerConnection::terminateWorkerFromClient(ServiceWorkerIdentifier serviceWorkerIdentifier, CompletionHandler<void(), true>&& callback)
 {
     RefPtr server = this->server();
     if (!server)
@@ -804,15 +796,19 @@ void WebSWServerConnection::terminateWorkerFromClient(ServiceWorkerIdentifier se
     RefPtr worker = server->workerByID(serviceWorkerIdentifier);
     if (!worker)
         return callback();
-    worker->terminate(WTF::move(callback));
+    return CompletionHandlerCalledToken::defer(WTF::move(callback), [&](auto callback) -> CompletionHandlerCalledToken {
+        return worker->terminate(WTF::move(callback));
+    });
 }
 
-void WebSWServerConnection::whenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier identifier, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken WebSWServerConnection::whenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier identifier, CompletionHandler<void(), true>&& completionHandler)
 {
     RefPtr worker = SWServerWorker::existingWorkerForIdentifier(identifier);
     if (!worker || worker->isNotRunning())
         return completionHandler();
-    worker->whenTerminated(WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return worker->whenTerminated(WTF::move(completionHandler));
+    });
 }
 
 PAL::SessionID WebSWServerConnection::sessionID() const
@@ -906,7 +902,12 @@ void WebSWServerConnection::getNavigationPreloadState(WebCore::ServiceWorkerRegi
 
 void WebSWServerConnection::focusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&)>&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWClientConnection::FocusServiceWorkerClient { clientIdentifier }, WTF::move(callback));
+    focusServiceWorkerClient(clientIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&), true>(WTF::move(callback)));
+}
+
+CompletionHandlerCalledToken WebSWServerConnection::focusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&), true>&& callback)
+{
+    return sendWithAsyncReply(Messages::WebSWClientConnection::FocusServiceWorkerClient { clientIdentifier }, WTF::move(callback));
 }
 
 void WebSWServerConnection::transferServiceWorkerLoadToNewWebProcess(NetworkResourceLoader& loader, WebCore::SWServerRegistration& registration, const WebCore::ResourceRequest& request)
@@ -1003,26 +1004,26 @@ void WebSWServerConnection::cookieChangeSubscriptions(WebCore::ServiceWorkerRegi
     callback(registration->cookieChangeSubscriptions());
 }
 
-void WebSWServerConnection::addRoutes(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, Vector<WebCore::ServiceWorkerRoute>&& routes, CompletionHandler<void(Expected<void, WebCore::ExceptionData>&&)>&& callback)
+CompletionHandlerCalledToken WebSWServerConnection::addRoutes(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, Vector<WebCore::ServiceWorkerRoute>&& routes, CompletionHandler<void(Expected<void, WebCore::ExceptionData>&&), true>&& callback)
 {
     RefPtr server = this->server();
-    if (!server) {
-        callback(makeUnexpected(WebCore::ExceptionData { ExceptionCode::TypeError, "Internal error"_s }));
-        return;
-    }
-    server->addRoutes(registrationIdentifier, WTF::move(routes), WTF::move(callback));
+    if (!server)
+        return callback(makeUnexpected(WebCore::ExceptionData { ExceptionCode::TypeError, "Internal error"_s }));
+    return CompletionHandlerCalledToken::defer(WTF::move(callback), [&](auto callback) -> CompletionHandlerCalledToken {
+        return server->addRoutes(registrationIdentifier, WTF::move(routes), WTF::move(callback));
+    });
 }
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-void WebSWServerConnection::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebSWServerConnection::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&), true>&& completionHandler)
 {
     CheckedPtr session = this->session();
-    if (!session) {
-        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
-        return;
-    }
+    if (!session)
+        return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
 
-    session->notificationManager().getNotifications(registrationURL, tag, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return session->notificationManager().getNotifications(registrationURL, tag, WTF::move(completionHandler));
+    });
 }
 #endif
 

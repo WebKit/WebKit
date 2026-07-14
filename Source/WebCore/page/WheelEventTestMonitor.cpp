@@ -53,7 +53,7 @@ void WheelEventTestMonitor::clearAllTestDeferrals()
 
     ASSERT(isMainThread());
     m_deferCompletionReasons.clear();
-    m_completionCallback = nullptr;
+    m_completionCallback = { };
     m_everHadDeferral = false;
     m_receivedWheelEndOrCancel = false;
     m_receivedMomentumEnd = false;
@@ -62,21 +62,29 @@ void WheelEventTestMonitor::clearAllTestDeferrals()
 
 void WheelEventTestMonitor::setTestCallbackAndStartMonitoring(bool expectWheelEndOrCancel, bool expectMomentumEnd, Function<void()>&& functionCallback)
 {
+    setTestCallbackAndStartMonitoring(expectWheelEndOrCancel, expectMomentumEnd, CompletionHandler<void(), true>(WTF::move(functionCallback)));
+}
+
+CompletionHandlerCalledToken WheelEventTestMonitor::setTestCallbackAndStartMonitoring(bool expectWheelEndOrCancel, bool expectMomentumEnd, CompletionHandler<void(), true>&& handler)
+{
     Locker locker { m_lock };
 
     ASSERT(isMainThread());
-    m_completionCallback = WTF::move(functionCallback);
+    return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+        m_completionCallback = WTF::move(handler);
 #if ENABLE(KINETIC_SCROLLING)
-    m_expectWheelEndOrCancel = expectWheelEndOrCancel;
-    m_expectMomentumEnd = expectMomentumEnd;
+        m_expectWheelEndOrCancel = expectWheelEndOrCancel;
+        m_expectMomentumEnd = expectMomentumEnd;
 #else
-    UNUSED_PARAM(expectWheelEndOrCancel);
-    UNUSED_PARAM(expectMomentumEnd);
+        UNUSED_PARAM(expectWheelEndOrCancel);
+        UNUSED_PARAM(expectMomentumEnd);
 #endif
 
-    protect(m_page)->scheduleRenderingUpdate(RenderingUpdateStep::WheelEventMonitorCallbacks);
+        protect(m_page)->scheduleRenderingUpdate(RenderingUpdateStep::WheelEventMonitorCallbacks);
 
-    LOG_WITH_STREAM(WheelEventTestMonitor, stream << "  WheelEventTestMonitor::setTestCallbackAndStartMonitoring - expect end/cancel " << expectWheelEndOrCancel << ", expect momentum end " << expectMomentumEnd);
+        LOG_WITH_STREAM(WheelEventTestMonitor, stream << "  WheelEventTestMonitor::setTestCallbackAndStartMonitoring - expect end/cancel " << expectWheelEndOrCancel << ", expect momentum end " << expectMomentumEnd);
+        return deferred;
+    });
 }
 
 void WheelEventTestMonitor::deferForReason(ScrollingNodeID identifier, OptionSet<DeferReason> reason)
@@ -168,7 +176,7 @@ void WheelEventTestMonitor::checkShouldFireCallbacks()
 
     if (auto functionCallback = WTF::move(m_completionCallback)) {
         LOG_WITH_STREAM(WheelEventTestMonitor, stream << "  WheelEventTestMonitor::checkShouldFireCallbacks: scrolling is idle, FIRING TEST");
-        functionCallback();
+        (void)functionCallback();
     } else
         LOG_WITH_STREAM(WheelEventTestMonitor, stream << "  WheelEventTestMonitor::checkShouldFireCallbacks - no callback");
 }

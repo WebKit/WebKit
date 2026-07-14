@@ -276,11 +276,11 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     if (_enterFullScreenCompletionHandler)
-        _enterFullScreenCompletionHandler(false);
+        (void)_enterFullScreenCompletionHandler(false);
     if (_beganExitFullScreenCompletionHandler)
-        _beganExitFullScreenCompletionHandler();
+        (void)_beganExitFullScreenCompletionHandler();
     if (_exitFullScreenCompletionHandler)
-        _exitFullScreenCompletionHandler();
+        (void)_exitFullScreenCompletionHandler();
 
     [super dealloc];
 }
@@ -365,7 +365,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     return adoptCF(CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace.get(), bitmapInfo, provider.get(), 0, shouldInterpolate, intent));
 }
 
-- (void)_continueEnteringFullscreenAfterPostingNotification:(CompletionHandler<void(bool)>&&)completionHandler
+- (CompletionHandlerCalledToken)_continueEnteringFullscreenAfterPostingNotification:(CompletionHandler<void(bool), true>&&)completionHandler
 {
     if ([self isFullScreen])
         return completionHandler(false);
@@ -430,10 +430,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     page->scalePageRelativeToScrollPosition(1, { });
     if (RefPtr manager = [self _manager])
         manager->setAnimatingFullScreen(true);
-    completionHandler(true);
+    return completionHandler(true);
 }
 
-- (void)enterFullScreen:(CompletionHandler<void(bool)>&&)completionHandler
+- (CompletionHandlerCalledToken)enterFullScreen:(CompletionHandler<void(bool), true>&&)completionHandler
 {
 #if ENABLE(GPU_PROCESS)
     RefPtr gpuProcess = WebKit::GPUProcessProxy::singletonIfCreated();
@@ -442,60 +442,71 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
 
-    gpuProcess->postWillTakeSnapshotNotification([self, protectedSelf = RetainPtr { self }, completionHandler = WTF::move(completionHandler), logIdentifier = OBJC_LOGIDENTIFIER] () mutable {
-        OBJC_ALWAYS_LOG(logIdentifier, " - finished posting snapshot notification");
+    // The enforced completion handler is captured into a WTF::Function that crosses
+    // into IPC via postWillTakeSnapshotNotification; this is the genuine leaf, so a
+    // single deferUnchecked is required here.
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        gpuProcess->postWillTakeSnapshotNotification([self, protectedSelf = RetainPtr { self }, completionHandler = WTF::move(completionHandler), logIdentifier = OBJC_LOGIDENTIFIER] () mutable {
+            OBJC_ALWAYS_LOG(logIdentifier, " - finished posting snapshot notification");
 
-        [protectedSelf _continueEnteringFullscreenAfterPostingNotification:WTF::move(completionHandler)];
+            (void)[protectedSelf _continueEnteringFullscreenAfterPostingNotification:WTF::move(completionHandler)];
+        });
+        return WTF::move(deferred);
     });
 #else
-    [self _continueEnteringFullscreenAfterPostingNotification:WTF::move(completionHandler)];
+    return [self _continueEnteringFullscreenAfterPostingNotification:WTF::move(completionHandler)];
 #endif
 }
 
-- (void)beganEnterFullScreenWithInitialFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame completionHandler:(CompletionHandler<void(bool)>&&)completionHandler
+- (CompletionHandlerCalledToken)beganEnterFullScreenWithInitialFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame completionHandler:(CompletionHandler<void(bool), true>&&)completionHandler
 {
     if (_fullScreenState != WaitingToEnterFullScreen) {
         OBJC_ERROR_LOG(OBJC_LOGIDENTIFIER, "fullScreenState is not WaitingToEnterFullScreen! Bailing");
         return completionHandler(false);
     }
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
-    _enterFullScreenCompletionHandler = WTF::move(completionHandler);
-    _fullScreenState = EnteringFullScreen;
+    // The handler is stored for later dispatch (drained in -finishedEnterFullScreenAnimation:),
+    // so this storage point is the genuine leaf and keeps a single deferUnchecked.
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        _enterFullScreenCompletionHandler = WTF::move(completionHandler);
+        _fullScreenState = EnteringFullScreen;
 
-    _initialFrame = initialFrame;
-    _finalFrame = finalFrame;
+        _initialFrame = initialFrame;
+        _finalFrame = finalFrame;
 
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
 
-    RetainPtr<CALayer> clipLayer = _clipView.get().layer;
-    RetainPtr contentView = [[self window] contentView];
+        RetainPtr<CALayer> clipLayer = _clipView.get().layer;
+        RetainPtr contentView = [[self window] contentView];
 
-    // Give the initial animations a speed of "0". We want the animations in place when we order in
-    // the window, but to not start animating until we get the callback from AppKit with the required
-    // animation duration. These animations will be replaced with the final animations in
-    // -_startEnterFullScreenAnimationWithDuration:
-    [clipLayer addAnimation:zoomAnimation(_initialFrame, _finalFrame, self.window.screen.frame, 1, 0, AnimateIn).get() forKey:@"fullscreen"];
-    RetainPtr mask = createMask(contentView.get().bounds).get();
-    clipLayer.get().mask = mask.get();
-    [mask addAnimation:maskAnimation(_initialFrame, _finalFrame, self.window.screen.frame, 1, 0, AnimateIn).get() forKey:@"fullscreen"];
-    contentView.get().hidden = NO;
+        // Give the initial animations a speed of "0". We want the animations in place when we order in
+        // the window, but to not start animating until we get the callback from AppKit with the required
+        // animation duration. These animations will be replaced with the final animations in
+        // -_startEnterFullScreenAnimationWithDuration:
+        [clipLayer addAnimation:zoomAnimation(_initialFrame, _finalFrame, self.window.screen.frame, 1, 0, AnimateIn).get() forKey:@"fullscreen"];
+        RetainPtr mask = createMask(contentView.get().bounds).get();
+        clipLayer.get().mask = mask.get();
+        [mask addAnimation:maskAnimation(_initialFrame, _finalFrame, self.window.screen.frame, 1, 0, AnimateIn).get() forKey:@"fullscreen"];
+        contentView.get().hidden = NO;
 
-    RetainPtr<NSWindow> window = self.window;
-    NSWindowCollectionBehavior behavior = [window collectionBehavior];
-    [window setCollectionBehavior:(behavior | NSWindowCollectionBehaviorCanJoinAllSpaces)];
-    [window makeFirstResponder:_webView.get().get()];
-    [window makeKeyAndOrderFront:self];
-    [window setCollectionBehavior:behavior];
+        RetainPtr<NSWindow> window = self.window;
+        NSWindowCollectionBehavior behavior = [window collectionBehavior];
+        [window setCollectionBehavior:(behavior | NSWindowCollectionBehaviorCanJoinAllSpaces)];
+        [window makeFirstResponder:_webView.get().get()];
+        [window makeKeyAndOrderFront:self];
+        [window setCollectionBehavior:behavior];
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [window setAutodisplay:YES];
+        [window setAutodisplay:YES];
 ALLOW_DEPRECATED_DECLARATIONS_END
-    [window displayIfNeeded];
+        [window displayIfNeeded];
 
-    [CATransaction commit];
+        [CATransaction commit];
 
-    [window enterFullScreenMode:self];
+        [window enterFullScreenMode:self];
+        return WTF::move(deferred);
+    });
 }
 
 static const float minVideoWidth = 468; // Keep in sync with `--controls-bar-width`.
@@ -511,7 +522,7 @@ static const float minVideoWidth = 468; // Keep in sync with `--controls-bar-wid
         _fullScreenState = InFullScreen;
 
         if (_enterFullScreenCompletionHandler)
-            _enterFullScreenCompletionHandler(true);
+            (void)_enterFullScreenCompletionHandler(true);
         manager->setAnimatingFullScreen(false);
         page->setSuppressVisibilityUpdates(false);
 
@@ -571,18 +582,21 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     page->flushDeferredScrollEvents();
 
     if (_exitFullScreenCompletionHandler)
-        [self exitFullScreen:WTF::move(_exitFullScreenCompletionHandler)];
+        (void)[self exitFullScreen:WTF::move(_exitFullScreenCompletionHandler)];
 }
 
-- (void)exitFullScreen:(CompletionHandler<void()>&&)completionHandler
+- (CompletionHandlerCalledToken)exitFullScreen:(CompletionHandler<void(), true>&&)completionHandler
 {
     if (_fullScreenState == EnteringFullScreen
         || _fullScreenState == WaitingToEnterFullScreen) {
         // Do not try to exit fullscreen during the enter animation; remember
         // that exit was requested and perform the exit upon enter fullscreen
-        // animation complete.
-        _exitFullScreenCompletionHandler = WTF::move(completionHandler);
-        return;
+        // animation complete. The handler is stored for later dispatch, so this
+        // storage point is the genuine leaf and keeps a single deferUnchecked.
+        return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+            _exitFullScreenCompletionHandler = WTF::move(completionHandler);
+            return WTF::move(deferred);
+        });
     }
 
     if (_watchdogTimer) {
@@ -610,7 +624,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (RefPtr manager = [self _manager])
         manager->setAnimatingFullScreen(true);
-    completionHandler();
+    return completionHandler();
 }
 
 - (void)exitFullScreenImmediately
@@ -658,21 +672,27 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return WebCore::enclosingIntRect(tempRect);
 }
 
-- (void)beganExitFullScreenWithInitialFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame completionHandler:(CompletionHandler<void()>&&)completionHandler
+- (CompletionHandlerCalledToken)beganExitFullScreenWithInitialFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame completionHandler:(CompletionHandler<void(), true>&&)completionHandler
 {
     if (_fullScreenState != WaitingToExitFullScreen)
         return completionHandler();
-    _fullScreenState = ExitingFullScreen;
-    _beganExitFullScreenCompletionHandler = WTF::move(completionHandler);
+    // The handler is stored for later dispatch (drained in
+    // -finishedExitFullScreenAnimationAndExitImmediately:), so this storage point is
+    // the genuine leaf and keeps a single deferUnchecked.
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        _fullScreenState = ExitingFullScreen;
+        _beganExitFullScreenCompletionHandler = WTF::move(completionHandler);
 
-    RetainPtr window = [self window];
-    if (![window isOnActiveSpace]) {
-        // If the full screen window is not in the active space, the NSWindow full screen animation delegate methods
-        // will never be called. So call finishedExitFullScreenAnimationAndExitImmediately explicitly.
-        [self finishedExitFullScreenAnimationAndExitImmediately:NO];
-    }
+        RetainPtr window = [self window];
+        if (![window isOnActiveSpace]) {
+            // If the full screen window is not in the active space, the NSWindow full screen animation delegate methods
+            // will never be called. So call finishedExitFullScreenAnimationAndExitImmediately explicitly.
+            [self finishedExitFullScreenAnimationAndExitImmediately:NO];
+        }
 
-    [window exitFullScreenMode:self];
+        [window exitFullScreenMode:self];
+        return WTF::move(deferred);
+    });
 }
 
 static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captureAtNominalResolution)
@@ -757,7 +777,7 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     // These messages must be sent after the swap or flashing will occur during forceRepaint:
     manager->setAnimatingFullScreen(false);
     if (_beganExitFullScreenCompletionHandler)
-        _beganExitFullScreenCompletionHandler();
+        (void)_beganExitFullScreenCompletionHandler();
     page->scalePageRelativeToScrollPosition(_savedScale, { });
     page->setObscuredContentInsets(_savedObscuredContentInsets);
     page->flushDeferredResizeEvents();

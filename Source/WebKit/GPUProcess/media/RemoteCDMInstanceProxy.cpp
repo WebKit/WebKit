@@ -80,14 +80,18 @@ void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(const String&
     gpuConnectionToWebProcess->connection().send(Messages::RemoteCDMInstance::UnrequestedInitializationDataReceived(type, WTF::move(initData)), m_identifier);
 }
 
-void RemoteCDMInstanceProxy::initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration& configuration, AllowDistinctiveIdentifiers allowDistinctiveIdentifiers, AllowPersistentState allowPersistentState, CompletionHandler<void(SuccessValue)>&& completion)
+CompletionHandlerCalledToken RemoteCDMInstanceProxy::initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration& configuration, AllowDistinctiveIdentifiers allowDistinctiveIdentifiers, AllowPersistentState allowPersistentState, CompletionHandler<void(SuccessValue), true>&& completion)
 {
-    m_instance->initializeWithConfiguration(configuration, allowDistinctiveIdentifiers, allowPersistentState, WTF::move(completion));
+    return CompletionHandlerCalledToken::defer(WTF::move(completion), [&](auto completion) -> CompletionHandlerCalledToken {
+        return m_instance->initializeWithConfiguration(configuration, allowDistinctiveIdentifiers, allowPersistentState, WTF::move(completion));
+    });
 }
 
-void RemoteCDMInstanceProxy::setServerCertificate(Ref<SharedBuffer>&& certificate, CompletionHandler<void(SuccessValue)>&& completion)
+CompletionHandlerCalledToken RemoteCDMInstanceProxy::setServerCertificate(Ref<SharedBuffer>&& certificate, CompletionHandler<void(SuccessValue), true>&& completion)
 {
-    m_instance->setServerCertificate(WTF::move(certificate), WTF::move(completion));
+    return CompletionHandlerCalledToken::defer(WTF::move(completion), [&](auto completion) -> CompletionHandlerCalledToken {
+        return m_instance->setServerCertificate(WTF::move(certificate), WTF::move(completion));
+    });
 }
 
 void RemoteCDMInstanceProxy::setStorageDirectory(const String& directory)

@@ -97,13 +97,16 @@ uint64_t RemoteWCLayerTreeHost::messageSenderDestinationID() const
     return m_identifier.toUInt64();
 }
 
-void RemoteWCLayerTreeHost::update(WCUpdateInfo&& update, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&& completionHandler)
+CompletionHandlerCalledToken RemoteWCLayerTreeHost::update(WCUpdateInfo&& update, CompletionHandler<void(std::optional<WebKit::UpdateInfo>), true>&& completionHandler)
 {
-    remoteGraphicsStreamWorkQueue().dispatch([scene = m_scene.get(), update = WTF::move(update), completionHandler = WTF::move(completionHandler)]() mutable {
-        auto updateInfo = scene->update(WTF::move(update));
-        RunLoop::mainSingleton().dispatch([updateInfo = WTF::move(updateInfo), completionHandler = WTF::move(completionHandler)]() mutable {
-            completionHandler(WTF::move(updateInfo));
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        remoteGraphicsStreamWorkQueue().dispatch([scene = m_scene.get(), update = WTF::move(update), completionHandler = WTF::move(completionHandler)]() mutable {
+            auto updateInfo = scene->update(WTF::move(update));
+            RunLoop::mainSingleton().dispatch([updateInfo = WTF::move(updateInfo), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
+                return completionHandler(WTF::move(updateInfo));
+            });
         });
+        return WTF::move(deferred);
     });
 }
 

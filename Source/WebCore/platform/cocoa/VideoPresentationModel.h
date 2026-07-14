@@ -100,7 +100,11 @@ public:
     virtual void requestHideCaptionDisplaySettingsPreview() { }
 #endif
 
-    virtual void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&& completionHandler) { completionHandler(RouteSharingPolicy::Default, emptyString()); }
+    virtual void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&& completionHandler) { requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String), true>(WTF::move(completionHandler))); }
+    virtual CompletionHandlerCalledToken requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String), true>&& completionHandler)
+    {
+        return completionHandler(RouteSharingPolicy::Default, emptyString());
+    }
 
 #if PLATFORM(IOS_FAMILY)
     virtual UIViewController *presentingViewController() { return nullptr; }

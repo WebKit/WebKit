@@ -116,22 +116,26 @@ RefPtr<RemoteMediaResource> RemoteMediaResourceLoader::resourceForId(RemoteMedia
     return m_remoteMediaResources.get(identifier).get();
 }
 
-void RemoteMediaResourceLoader::responseReceived(RemoteMediaResourceIdentifier identifier, const ResourceResponse& response, bool didPassAccessControlCheck, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
+CompletionHandlerCalledToken RemoteMediaResourceLoader::responseReceived(RemoteMediaResourceIdentifier identifier, const ResourceResponse& response, bool didPassAccessControlCheck, CompletionHandler<void(ShouldContinuePolicyCheck), true>&& completionHandler)
 {
     assertIsCurrent(defaultQueue());
-    if (RefPtr resource = resourceForId(identifier))
-        resource->responseReceived(response, didPassAccessControlCheck, WTF::move(completionHandler));
-    else
-        completionHandler(ShouldContinuePolicyCheck::No);
+    if (RefPtr resource = resourceForId(identifier)) {
+        return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+            return resource->responseReceived(response, didPassAccessControlCheck, WTF::move(completionHandler));
+        });
+    }
+    return completionHandler(ShouldContinuePolicyCheck::No);
 }
 
-void RemoteMediaResourceLoader::redirectReceived(RemoteMediaResourceIdentifier identifier, ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+CompletionHandlerCalledToken RemoteMediaResourceLoader::redirectReceived(RemoteMediaResourceIdentifier identifier, ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(WebCore::ResourceRequest&&), true>&& completionHandler)
 {
     assertIsCurrent(defaultQueue());
-    if (RefPtr resource = resourceForId(identifier))
-        resource->redirectReceived(WTF::move(request), response, WTF::move(completionHandler));
-    else
-        completionHandler({ });
+    if (RefPtr resource = resourceForId(identifier)) {
+        return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+            return resource->redirectReceived(WTF::move(request), response, WTF::move(completionHandler));
+        });
+    }
+    return completionHandler({ });
 }
 
 void RemoteMediaResourceLoader::dataSent(RemoteMediaResourceIdentifier identifier, uint64_t bytesSent, uint64_t totalBytesToBeSent)
@@ -141,7 +145,7 @@ void RemoteMediaResourceLoader::dataSent(RemoteMediaResourceIdentifier identifie
         resource->dataSent(bytesSent, totalBytesToBeSent);
 }
 
-void RemoteMediaResourceLoader::dataReceived(RemoteMediaResourceIdentifier identifier, IPC::SharedBufferReference&& buffer, CompletionHandler<void(std::optional<SharedMemory::Handle>&&)>&& completionHandler)
+CompletionHandlerCalledToken RemoteMediaResourceLoader::dataReceived(RemoteMediaResourceIdentifier identifier, IPC::SharedBufferReference&& buffer, CompletionHandler<void(std::optional<SharedMemory::Handle>&&), true>&& completionHandler)
 {
     assertIsCurrent(defaultQueue());
     RefPtr resource = resourceForId(identifier);
@@ -157,7 +161,7 @@ void RemoteMediaResourceLoader::dataReceived(RemoteMediaResourceIdentifier ident
         return completionHandler(std::nullopt);
 
     resource->dataReceived(sharedMemory->createSharedBuffer(buffer.size()));
-    completionHandler(WTF::move(handle));
+    return completionHandler(WTF::move(handle));
 }
 
 void RemoteMediaResourceLoader::accessControlCheckFailed(RemoteMediaResourceIdentifier identifier, const ResourceError& error)

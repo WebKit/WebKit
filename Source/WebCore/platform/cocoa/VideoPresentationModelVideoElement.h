@@ -85,6 +85,7 @@ public:
     WEBCORE_EXPORT void setVideoSizeFenced(const FloatSize&, WTF::MachSendRightAnnotated&&);
 
     WEBCORE_EXPORT void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&&) final;
+    WEBCORE_EXPORT CompletionHandlerCalledToken requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String), true>&&) final;
     WEBCORE_EXPORT void setRequiresTextTrackRepresentation(bool) final;
     WEBCORE_EXPORT void setTextTrackRepresentationBounds(const IntRect&) final;
 

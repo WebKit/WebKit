@@ -48,7 +48,7 @@ SharedWorkerObjectConnection::SharedWorkerObjectConnection() = default;
 
 SharedWorkerObjectConnection::~SharedWorkerObjectConnection() = default;
 
-void SharedWorkerObjectConnection::fetchScriptInClient(URL&& url, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WorkerOptions&& workerOptions, CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)>&& completionHandler)
+CompletionHandlerCalledToken SharedWorkerObjectConnection::fetchScriptInClient(URL&& url, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WorkerOptions&& workerOptions, CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&), true>&& completionHandler)
 {
     ASSERT(isMainThread());
 
@@ -61,11 +61,13 @@ void SharedWorkerObjectConnection::fetchScriptInClient(URL&& url, WebCore::Share
     Ref loader = SharedWorkerScriptLoader::create(WTF::move(url), *workerObject, WTF::move(workerOptions));
     m_loaders.add(loaderIdentifier, loader.copyRef());
 
-    loader->load([this, loaderIdentifier, completionHandler = WTF::move(completionHandler)](WorkerFetchResult&& fetchResult, WorkerInitializationData&& initializationData) mutable {
-        CONNECTION_RELEASE_LOG("fetchScriptInClient: finished script load, success=%d", fetchResult.error.isNull());
-        RefPtr loader = m_loaders.take(loaderIdentifier);
-        ASSERT(loader);
-        completionHandler(WTF::move(fetchResult), WTF::move(initializationData));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return loader->load(CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&), true>([this, loaderIdentifier, completionHandler = WTF::move(completionHandler)](WorkerFetchResult&& fetchResult, WorkerInitializationData&& initializationData) mutable -> CompletionHandlerCalledToken {
+            CONNECTION_RELEASE_LOG("fetchScriptInClient: finished script load, success=%d", fetchResult.error.isNull());
+            RefPtr loader = m_loaders.take(loaderIdentifier);
+            ASSERT(loader);
+            return completionHandler(WTF::move(fetchResult), WTF::move(initializationData));
+        }));
     });
 }
 

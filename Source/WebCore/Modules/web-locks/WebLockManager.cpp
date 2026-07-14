@@ -139,23 +139,23 @@ void WebLockManager::MainThreadBridge::releaseLock(WebLockIdentifier lockIdentif
 
 void WebLockManager::MainThreadBridge::abortLockRequest(WebLockIdentifier lockIdentifier, const String& name, Function<void(bool)>&& callback)
 {
-    callOnMainThread([this, protectedThis = Ref { *this }, lockIdentifier, name = crossThreadCopy(name), callback = WTF::move(callback)]() mutable {
-        WebLockRegistry::singleton().abortLockRequest(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name, [clientID = m_clientID, callback = WTF::move(callback)](bool wasAborted) mutable {
-            ScriptExecutionContext::ensureOnContextThread(clientID, [callback = WTF::move(callback), wasAborted](auto&) mutable {
-                callback(wasAborted);
+    callOnMainThread([this, protectedThis = Ref { *this }, lockIdentifier, name = crossThreadCopy(name), completionHandler = WTF::move(callback)]() mutable {
+        WebLockRegistry::singleton().abortLockRequest(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name, CompletionHandler<void(bool)>([clientID = m_clientID, completionHandler = WTF::move(completionHandler)](bool wasAborted) mutable {
+            ScriptExecutionContext::ensureOnContextThread(clientID, [completionHandler = WTF::move(completionHandler), wasAborted](auto&) mutable {
+                completionHandler(wasAborted);
             });
-        });
+        }));
     });
 }
 
 void WebLockManager::MainThreadBridge::query(Function<void(Snapshot&&)>&& callback)
 {
-    callOnMainThread([this, protectedThis = Ref { *this }, callback = WTF::move(callback)]() mutable {
-        WebLockRegistry::singleton().snapshot(m_sessionID, m_clientOrigin, [clientID = m_clientID, callback = WTF::move(callback)](Snapshot&& snapshot) mutable {
-            ScriptExecutionContext::ensureOnContextThread(clientID, [callback = WTF::move(callback), snapshot = crossThreadCopy(snapshot)](auto&) mutable {
-                callback(WTF::move(snapshot));
+    callOnMainThread([this, protectedThis = Ref { *this }, completionHandler = WTF::move(callback)]() mutable {
+        WebLockRegistry::singleton().snapshot(m_sessionID, m_clientOrigin, CompletionHandler<void(WebLockManagerSnapshot&&)>([clientID = m_clientID, completionHandler = WTF::move(completionHandler)](Snapshot&& snapshot) mutable {
+            ScriptExecutionContext::ensureOnContextThread(clientID, [completionHandler = WTF::move(completionHandler), snapshot = crossThreadCopy(snapshot)](auto&) mutable {
+                completionHandler(WTF::move(snapshot));
             });
-        });
+        }));
     });
 }
 

@@ -31,6 +31,7 @@
 #include <WebCore/PlatformWheelEvent.h>
 #include <WebCore/ScrollingNodeID.h>
 #include <functional>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -60,6 +61,7 @@ public:
     WheelEventTestMonitor(Page&);
 
     WEBCORE_EXPORT void setTestCallbackAndStartMonitoring(bool expectWheelEndOrCancel, bool expectMomentumEnd, Function<void()>&&);
+    WEBCORE_EXPORT CompletionHandlerCalledToken setTestCallbackAndStartMonitoring(bool expectWheelEndOrCancel, bool expectMomentumEnd, CompletionHandler<void(), true>&&);
     WEBCORE_EXPORT void clearAllTestDeferrals();
     
     using DeferReason = WheelEventTestMonitorDeferReason;
@@ -75,7 +77,7 @@ public:
 private:
     void scheduleCallbackCheck();
 
-    Function<void()> m_completionCallback;
+    CompletionHandler<void(), true> m_completionCallback;
     WeakRef<Page> m_page;
 
     Lock m_lock;

@@ -113,10 +113,10 @@ private:
     void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, WebCore::MessageWithMessagePorts&&, WebCore::ServiceWorkerOrClientData&& sourceData);
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier);
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier);
-    void firePushEvent(WebCore::ServiceWorkerIdentifier, std::optional<std::span<const uint8_t>>, std::optional<WebCore::NotificationPayload>&&, CompletionHandler<void(bool, std::optional<WebCore::NotificationPayload>&&)>&&);
-    void fireNotificationEvent(WebCore::ServiceWorkerIdentifier, WebCore::NotificationData&&, WebCore::NotificationEventType, CompletionHandler<void(bool)>&&);
-    void fireBackgroundFetchEvent(WebCore::ServiceWorkerIdentifier, WebCore::BackgroundFetchInformation&&, CompletionHandler<void(bool)>&&);
-    void fireBackgroundFetchClickEvent(WebCore::ServiceWorkerIdentifier, WebCore::BackgroundFetchInformation&&, CompletionHandler<void(bool)>&&);
+    CompletionHandlerCalledToken firePushEvent(WebCore::ServiceWorkerIdentifier, std::optional<std::span<const uint8_t>>, std::optional<WebCore::NotificationPayload>&&, CompletionHandler<void(bool, std::optional<WebCore::NotificationPayload>&&), true>&&);
+    CompletionHandlerCalledToken fireNotificationEvent(WebCore::ServiceWorkerIdentifier, WebCore::NotificationData&&, WebCore::NotificationEventType, CompletionHandler<void(bool), true>&&);
+    CompletionHandlerCalledToken fireBackgroundFetchEvent(WebCore::ServiceWorkerIdentifier, WebCore::BackgroundFetchInformation&&, CompletionHandler<void(bool), true>&&);
+    CompletionHandlerCalledToken fireBackgroundFetchClickEvent(WebCore::ServiceWorkerIdentifier, WebCore::BackgroundFetchInformation&&, CompletionHandler<void(bool), true>&&);
     void terminateWorker(WebCore::ServiceWorkerIdentifier);
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
     void didSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier, WebCore::ScriptBuffer&&, HashMap<URL, WebCore::ScriptBuffer>&& importedScripts);

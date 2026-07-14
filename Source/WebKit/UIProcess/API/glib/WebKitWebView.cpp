@@ -3239,6 +3239,14 @@ void webkitWebViewDidChangePageID(WebKitWebView* webView)
     g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_PAGE_ID]);
 }
 
+CompletionHandlerCalledToken webkitWebViewDidReceiveUserMessage(WebKitWebView* webView, UserMessage&& message, CompletionHandler<void(UserMessage&&), true>&& completionHandler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        webkitWebViewDidReceiveUserMessage(webView, WTF::move(message), CompletionHandler<void(UserMessage&&)>(WTF::move(completionHandler)));
+        return deferred;
+    });
+}
+
 void webkitWebViewDidReceiveUserMessage(WebKitWebView* webView, UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
 {
     // Sink the floating ref.

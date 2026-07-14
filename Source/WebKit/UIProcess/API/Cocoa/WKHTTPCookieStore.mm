@@ -147,11 +147,11 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (void)setCookie:(NSHTTPCookie *)cookie completionHandler:(void (^)(void))completionHandler
 {
-    protect(*_cookieStore)->setCookies({ cookie }, [handler = adoptNS([completionHandler copy])]() {
+    protect(*_cookieStore)->setCookies({ cookie }, CompletionHandler<void()>([handler = adoptNS([completionHandler copy])]() {
         auto rawHandler = (void (^)())handler.get();
         if (rawHandler)
             rawHandler();
-    });
+    }));
 
 }
 
@@ -165,18 +165,18 @@ static std::optional<WebCore::Cookie> makeVectorElement(const WebCore::Cookie*, 
 
 - (void)setCookies:(NSArray<NSHTTPCookie *> *)cookies completionHandler:(void (^)(void))completionHandler
 {
-    protect(*_cookieStore)->setCookies(makeVector<WebCore::Cookie>(cookies), [completionHandler = makeBlockPtr(completionHandler)]() {
+    protect(*_cookieStore)->setCookies(makeVector<WebCore::Cookie>(cookies), CompletionHandler<void()>([completionHandler = makeBlockPtr(completionHandler)]() {
         completionHandler();
-    });
+    }));
 }
 
 - (void)deleteCookie:(NSHTTPCookie *)cookie completionHandler:(void (^)(void))completionHandler
 {
-    protect(*_cookieStore)->deleteCookie(cookie, [handler = adoptNS([completionHandler copy])]() {
+    protect(*_cookieStore)->deleteCookie(cookie, CompletionHandler<void()>([handler = adoptNS([completionHandler copy])]() {
         auto rawHandler = (void (^)())handler.get();
         if (rawHandler)
             rawHandler();
-    });
+    }));
 }
 
 - (void)addObserver:(id<WKHTTPCookieStoreObserver>)observer
@@ -276,9 +276,9 @@ static WKCookiePolicy NODELETE toWKCookiePolicy(WebCore::HTTPCookieAcceptPolicy 
 
 - (void)_setCookies:(NSArray<NSHTTPCookie *> *)cookies completionHandler:(void (^)(void))completionHandler
 {
-    protect(*_cookieStore)->setCookies(makeVector<WebCore::Cookie>(cookies), [completionHandler = makeBlockPtr(completionHandler)]() {
+    protect(*_cookieStore)->setCookies(makeVector<WebCore::Cookie>(cookies), CompletionHandler<void()>([completionHandler = makeBlockPtr(completionHandler)]() {
         completionHandler();
-    });
+    }));
 }
 
 #endif

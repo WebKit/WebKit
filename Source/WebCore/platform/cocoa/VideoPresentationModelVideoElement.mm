@@ -368,7 +368,12 @@ void VideoPresentationModelVideoElement::fullscreenModeChanged(HTMLMediaElementE
 
 void VideoPresentationModelVideoElement::requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&& completionHandler)
 {
-    completionHandler(AudioSession::singleton().routeSharingPolicy(), AudioSession::singleton().routingContextUID());
+    requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken VideoPresentationModelVideoElement::requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String), true>&& completionHandler)
+{
+    return completionHandler(AudioSession::singleton().routeSharingPolicy(), AudioSession::singleton().routingContextUID());
 }
 
 void VideoPresentationModelVideoElement::addClient(VideoPresentationModelClient& client)

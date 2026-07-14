@@ -358,94 +358,96 @@ void MediaSessionCoordinator::readyStateChanged(MediaSessionReadyState readyStat
 
 void MediaSessionCoordinator::seekSessionToTime(double time, CompletionHandler<void(bool)>&& completionHandler)
 {
+    seekSessionToTime(time, CompletionHandler<void(bool), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken MediaSessionCoordinator::seekSessionToTime(double time, CompletionHandler<void(bool), true>&& completionHandler)
+{
     ALWAYS_LOG(LOGIDENTIFIER, m_state, ", ", time);
 
-    if (m_state != MediaSessionCoordinatorState::Joined) {
-        completionHandler(false);
-        return;
-    }
+    if (m_state != MediaSessionCoordinatorState::Joined)
+        return completionHandler(false);
 
     RefPtr session = m_session.get();
-    if (!session) {
-        completionHandler(false);
-        return;
-    }
+    if (!session)
+        return completionHandler(false);
 
     bool isPaused = session->playbackState() == MediaSessionPlaybackState::Paused;
 
-    if (isPaused && currentPositionApproximatelyEqualTo(time)) {
-        completionHandler(true);
-        return;
-    }
+    if (isPaused && currentPositionApproximatelyEqualTo(time))
+        return completionHandler(true);
 
     if (!isPaused)
         session->callActionHandler({ .action = MediaSessionAction::Pause });
 
     session->callActionHandler({ .action = MediaSessionAction::Seekto, .seekTime = time });
-    completionHandler(true);
+    return completionHandler(true);
 }
 
 void MediaSessionCoordinator::playSession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime, CompletionHandler<void(bool)>&& completionHandler)
+{
+    playSession(WTF::move(atTime), WTF::move(hostTime), CompletionHandler<void(bool), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken MediaSessionCoordinator::playSession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime, CompletionHandler<void(bool), true>&& completionHandler)
 {
     auto now = MonotonicTime::now();
     auto delta = hostTime ? *hostTime - now : Seconds::nan();
     ALWAYS_LOG(LOGIDENTIFIER, m_state, " time: ", atTime ? *atTime : -1, " hostTime: ", (hostTime ? *hostTime : MonotonicTime::nan()).secondsSinceEpoch().value(), " delta: ", delta.value());
 
-    if (m_state != MediaSessionCoordinatorState::Joined) {
-        completionHandler(false);
-        return;
-    }
+    if (m_state != MediaSessionCoordinatorState::Joined)
+        return completionHandler(false);
 
     RefPtr session = m_session.get();
-    if (!session) {
-        completionHandler(false);
-        return;
-    }
+    if (!session)
+        return completionHandler(false);
 
     if (atTime && !currentPositionApproximatelyEqualTo(*atTime))
         session->callActionHandler({ .action = MediaSessionAction::Seekto, .seekTime = *atTime });
 
     m_currentPlaySessionCommand = { atTime, hostTime };
     session->callActionHandler({ .action = MediaSessionAction::Play });
-    completionHandler(true);
+    return completionHandler(true);
 }
 
 void MediaSessionCoordinator::pauseSession(CompletionHandler<void(bool)>&& completionHandler)
 {
+    pauseSession(CompletionHandler<void(bool), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken MediaSessionCoordinator::pauseSession(CompletionHandler<void(bool), true>&& completionHandler)
+{
     ALWAYS_LOG(LOGIDENTIFIER, m_state);
 
-    if (m_state != MediaSessionCoordinatorState::Joined) {
-        completionHandler(false);
-        return;
-    }
+    if (m_state != MediaSessionCoordinatorState::Joined)
+        return completionHandler(false);
 
     RefPtr session = m_session.get();
-    if (!session) {
-        completionHandler(false);
-        return;
-    }
+    if (!session)
+        return completionHandler(false);
 
     session->callActionHandler({ .action = MediaSessionAction::Pause });
-    completionHandler(true);
+    return completionHandler(true);
 }
 
 void MediaSessionCoordinator::setSessionTrack(const String& track, CompletionHandler<void(bool)>&& completionHandler)
 {
+    setSessionTrack(track, CompletionHandler<void(bool), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken MediaSessionCoordinator::setSessionTrack(const String& track, CompletionHandler<void(bool), true>&& completionHandler)
+{
     ALWAYS_LOG(LOGIDENTIFIER, m_state, ", ", track);
 
-    if (m_state != MediaSessionCoordinatorState::Joined) {
-        completionHandler(false);
-        return;
-    }
+    if (m_state != MediaSessionCoordinatorState::Joined)
+        return completionHandler(false);
 
     RefPtr session = m_session.get();
-    if (!session) {
-        completionHandler(false);
-        return;
-    }
+    if (!session)
+        return completionHandler(false);
 
     session->callActionHandler({ .action = MediaSessionAction::Settrack, .trackIdentifier = track });
-    completionHandler(true);
+    return completionHandler(true);
 }
 
 bool MediaSessionCoordinator::shouldFireEvents() const

@@ -86,9 +86,12 @@ void WebPageProxy::setInputMethodState(std::optional<InputMethodState>&& state)
     webkitWebViewBaseSetInputMethodState(WEBKIT_WEB_VIEW_BASE(viewWidget()), WTF::move(state));
 }
 
-void WebPageProxy::showEmojiPicker(const WebCore::IntRect& caretRect, CompletionHandler<void(String)>&& completionHandler)
+CompletionHandlerCalledToken WebPageProxy::showEmojiPicker(const WebCore::IntRect& caretRect, CompletionHandler<void(String), true>&& completionHandler)
 {
-    webkitWebViewBaseShowEmojiChooser(WEBKIT_WEB_VIEW_BASE(viewWidget()), caretRect, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return webkitWebViewBaseShowEmojiChooser(WEBKIT_WEB_VIEW_BASE(viewWidget()), caretRect, WTF::move(completionHandler));
+    });
+
 }
 
 void WebPageProxy::showValidationMessageWithMainFrameRect(const WebCore::IntRect& mainFrameAnchorRect)
@@ -97,14 +100,16 @@ void WebPageProxy::showValidationMessageWithMainFrameRect(const WebCore::IntRect
         bubble->showRelativeTo(mainFrameAnchorRect);
 }
 
-void WebPageProxy::sendMessageToWebViewWithReply(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
+CompletionHandlerCalledToken WebPageProxy::sendMessageToWebViewWithReply(UserMessage&& message, CompletionHandler<void(UserMessage&&), true>&& completionHandler)
 {
     if (!WEBKIT_IS_WEB_VIEW(viewWidget())) {
-        completionHandler(UserMessage(message.name, WEBKIT_USER_MESSAGE_UNHANDLED_MESSAGE));
-        return;
+        return completionHandler(UserMessage(message.name, WEBKIT_USER_MESSAGE_UNHANDLED_MESSAGE));
     }
 
-    webkitWebViewDidReceiveUserMessage(WEBKIT_WEB_VIEW(viewWidget()), WTF::move(message), WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return webkitWebViewDidReceiveUserMessage(WEBKIT_WEB_VIEW(viewWidget()), WTF::move(message), WTF::move(completionHandler));
+    });
+
 }
 
 void WebPageProxy::sendMessageToWebView(UserMessage&& message)

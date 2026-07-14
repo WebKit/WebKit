@@ -2010,9 +2010,9 @@ void WebAutomationSession::addSingleCookie(const Inspector::Protocol::Automation
     cookie.sameSite = toWebCoreSameSitePolicy(*parsedSameSite);
 
     Ref cookieStore = protect(page->websiteDataStore())->cookieStore();
-    cookieStore->setCookies({ cookie }, [callback = WTF::move(callback)]() {
+    cookieStore->setCookies({ cookie }, CompletionHandler<void()>([callback = WTF::move(callback)]() {
         callback({ });
-    });
+    }));
 }
 
 CommandResult<void> WebAutomationSession::deleteAllCookies(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle)

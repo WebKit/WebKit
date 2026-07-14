@@ -71,14 +71,14 @@ struct RemoteWebTouchEvent;
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 struct TouchEventData {
-    TouchEventData(WebCore::FrameIdentifier, const WebTouchEvent&, CompletionHandler<void(bool, std::optional<RemoteWebTouchEvent>)>&&);
+    TouchEventData(WebCore::FrameIdentifier, const WebTouchEvent&, CompletionHandler<void(bool, std::optional<RemoteWebTouchEvent>), true>&&);
     TouchEventData(TouchEventData&&);
     ~TouchEventData();
     TouchEventData& operator=(TouchEventData&&);
 
     WebCore::FrameIdentifier frameID;
     WebTouchEvent event;
-    Vector<CompletionHandler<void(bool, std::optional<RemoteWebTouchEvent>)>> completionHandlers;
+    Vector<CompletionHandler<void(bool, std::optional<RemoteWebTouchEvent>), true>> completionHandlers;
 };
 #endif
 
@@ -126,10 +126,10 @@ private:
     void setScrollingAccelerationCurve(WebCore::PageIdentifier, std::optional<ScrollingAccelerationCurve>&&);
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
-    void touchEvent(WebCore::PageIdentifier, WebCore::FrameIdentifier, const WebTouchEvent&, CompletionHandler<void(bool, std::optional<RemoteWebTouchEvent>)>&&);
+    CompletionHandlerCalledToken touchEvent(WebCore::PageIdentifier, WebCore::FrameIdentifier, const WebTouchEvent&, CompletionHandler<void(bool, std::optional<RemoteWebTouchEvent>), true>&&);
 #endif
 #if ENABLE(MAC_GESTURE_EVENTS)
-    void gestureEvent(WebCore::FrameIdentifier, WebCore::PageIdentifier, const WebGestureEvent&, CompletionHandler<void(std::optional<WebEventType>, bool, std::optional<WebCore::RemoteUserInputEventData>)>&&);
+    CompletionHandlerCalledToken gestureEvent(WebCore::FrameIdentifier, WebCore::PageIdentifier, const WebGestureEvent&, CompletionHandler<void(std::optional<WebEventType>, bool, std::optional<WebCore::RemoteUserInputEventData>), true>&&);
 #endif
 
     // This is called on the main thread.

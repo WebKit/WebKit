@@ -29,6 +29,7 @@
 
 #include "EmptyGamepadProvider.h"
 #include "GamepadProviderClient.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -56,6 +57,22 @@ void GamepadProvider::dispatchPlatformGamepadInputActivity()
         client->platformGamepadInputActivity(m_shouldMakeGamepadsVisible ? EventMakesGamepadsVisible::Yes : EventMakesGamepadsVisible::No);
 
     m_shouldMakeGamepadsVisible = false;
+}
+
+CompletionHandlerCalledToken GamepadProvider::playEffect(unsigned gamepadIndex, const String& gamepadID, GamepadHapticEffectType type, const GamepadEffectParameters& parameters, CompletionHandler<void(bool), true>&& handler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+        playEffect(gamepadIndex, gamepadID, type, parameters, CompletionHandler<void(bool)>(WTF::move(handler)));
+        return WTF::move(deferred);
+    });
+}
+
+CompletionHandlerCalledToken GamepadProvider::stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void(), true>&& handler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+        stopEffects(gamepadIndex, gamepadID, CompletionHandler<void()>(WTF::move(handler)));
+        return WTF::move(deferred);
+    });
 }
 
 } // namespace WebCore

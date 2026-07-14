@@ -283,22 +283,22 @@ public:
 
     std::optional<WebCore::ResourceResponse> resourceResponseForURL(const URL&) const;
 
-    void takeSnapshotOfNode(WebCore::JSHandleIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
+    CompletionHandlerCalledToken takeSnapshotOfNode(WebCore::JSHandleIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&), true>&&);
 
     void connectInspector(Inspector::FrontendChannel::ConnectionType);
     void disconnectInspector();
     void sendMessageToInspectorTarget(const String& message);
 
-    void requestTextExtraction(WebCore::TextExtraction::Request&&, CompletionHandler<void(WebCore::TextExtraction::Result&&)>&&);
-    void handleTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(bool, String&&, WebCore::FloatRect)>&&);
-    void describeTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(WebCore::TextExtraction::InteractionDescription&&)>&&);
-    void takeSnapshotOfExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&&);
-    void requestJSHandleForExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
-    void requestContainerJSHandleForExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
+    CompletionHandlerCalledToken requestTextExtraction(WebCore::TextExtraction::Request&&, CompletionHandler<void(WebCore::TextExtraction::Result&&), true>&&);
+    CompletionHandlerCalledToken handleTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(bool, String&&, WebCore::FloatRect), true>&&);
+    CompletionHandlerCalledToken describeTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(WebCore::TextExtraction::InteractionDescription&&), true>&&);
+    CompletionHandlerCalledToken takeSnapshotOfExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&), true>&&);
+    CompletionHandlerCalledToken requestJSHandleForExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(std::optional<JSHandleInfo>&&), true>&&);
+    CompletionHandlerCalledToken requestContainerJSHandleForExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(std::optional<JSHandleInfo>&&), true>&&);
     void requestContainerJSHandleForSearchTexts(Vector<String>&&, std::optional<WebCore::NodeIdentifier>&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
 
-    void getSelectorPathsForNode(JSHandleInfo&&, CompletionHandler<void(Vector<HashSet<String>>&&)>&&);
-    void getNodeForSelectorPaths(Vector<HashSet<String>>&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
+    CompletionHandlerCalledToken getSelectorPathsForNode(JSHandleInfo&&, CompletionHandler<void(Vector<HashSet<String>>&&), true>&&);
+    CompletionHandlerCalledToken getNodeForSelectorPaths(Vector<HashSet<String>>&&, CompletionHandler<void(std::optional<JSHandleInfo>&&), true>&&);
 
 private:
     WebFrame(WebPage&, WebCore::FrameIdentifier);
@@ -313,7 +313,7 @@ private:
 
     RefPtr<WebCore::LocalFrame> localFrame();
 
-    void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, WebCore::ShouldFocusElement, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&);
+    CompletionHandlerCalledToken findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, WebCore::ShouldFocusElement, CompletionHandler<void(WebCore::FoundElementInRemoteFrame), true>&&);
     void findFocusableElementContinuingFromFrame(WebCore::FocusDirection, WebCore::FrameIdentifier, const WebCore::FocusEventData&, WebCore::ShouldFocusElement);
 
     CheckedRef<FrameInspectorTarget> ensureInspectorTarget();

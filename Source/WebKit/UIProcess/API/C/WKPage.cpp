@@ -1197,38 +1197,44 @@ void WKPageSetFullScreenClientForTesting(WKPageRef pageRef, const WKPageFullScre
         void closeFullScreenManager() override { }
         bool isFullScreen() override { return false; }
 
-        void enterFullScreen(WebCore::FloatSize, CompletionHandler<void(bool)>&& completionHandler) override
+        CompletionHandlerCalledToken enterFullScreen(WebCore::FloatSize, CompletionHandler<void(bool), true>&& completionHandler) override
         {
             if (!m_client.willEnterFullScreen)
                 return completionHandler(false);
-            m_client.willEnterFullScreen(toAPI(protect(page()).get()), toAPI(API::CompletionListener::create([completionHandler = WTF::move(completionHandler)] (WKTypeRef) mutable {
-                completionHandler(true);
-            }).ptr()), m_client.base.clientInfo);
+            return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+                m_client.willEnterFullScreen(toAPI(protect(page()).get()), toAPI(API::CompletionListener::create([completionHandler = WTF::move(completionHandler)] (WKTypeRef) mutable -> CompletionHandlerCalledToken {
+                    return completionHandler(true);
+                }).ptr()), m_client.base.clientInfo);
+                return WTF::move(deferred);
+            });
         }
 
-        void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void(bool)>&& completionHandler) override
+        CompletionHandlerCalledToken beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void(bool), true>&& completionHandler) override
         {
             if (!m_client.beganEnterFullScreen)
                 return completionHandler(false);
             m_client.beganEnterFullScreen(toAPI(protect(page()).get()), toAPI(initialFrame), toAPI(finalFrame), m_client.base.clientInfo);
-            completionHandler(true);
+            return completionHandler(true);
         }
 
-        void exitFullScreen(CompletionHandler<void()>&& completionHandler) override
+        CompletionHandlerCalledToken exitFullScreen(CompletionHandler<void(), true>&& completionHandler) override
         {
             if (!m_client.exitFullScreen)
                 return completionHandler();
             m_client.exitFullScreen(toAPI(protect(page()).get()), m_client.base.clientInfo);
-            completionHandler();
+            return completionHandler();
         }
 
-        void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void()>&& completionHandler) override
+        CompletionHandlerCalledToken beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void(), true>&& completionHandler) override
         {
             if (!m_client.beganExitFullScreen)
                 return completionHandler();
-            m_client.beganExitFullScreen(toAPI(protect(page()).get()), toAPI(initialFrame), toAPI(finalFrame), toAPI(API::CompletionListener::create([completionHandler = WTF::move(completionHandler)] (WKTypeRef) mutable {
-                completionHandler();
-            }).ptr()), m_client.base.clientInfo);
+            return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+                m_client.beganExitFullScreen(toAPI(protect(page()).get()), toAPI(initialFrame), toAPI(finalFrame), toAPI(API::CompletionListener::create([completionHandler = WTF::move(completionHandler)] (WKTypeRef) mutable -> CompletionHandlerCalledToken {
+                    return completionHandler();
+                }).ptr()), m_client.base.clientInfo);
+                return WTF::move(deferred);
+            });
         }
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
@@ -2055,12 +2061,16 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.decidePolicyForUserMediaPermissionRequest(toAPI(&page), toAPI(&frame), toAPI(&userMediaDocumentOrigin), toAPI(&topLevelDocumentOrigin), toAPI(&permissionRequest), m_client.base.clientInfo);
         }
         
-        void decidePolicyForNotificationPermissionRequest(WebPageProxy& page, API::SecurityOrigin& origin, CompletionHandler<void(bool allowed)>&& completionHandler) final
+        CompletionHandlerCalledToken decidePolicyForNotificationPermissionRequest(WebPageProxy& page, API::SecurityOrigin& origin, CompletionHandler<void(bool allowed), true>&& completionHandler) final
         {
             if (!m_client.decidePolicyForNotificationPermissionRequest)
                 return completionHandler(false);
 
-            m_client.decidePolicyForNotificationPermissionRequest(toAPI(&page), toAPI(&origin), toAPI(NotificationPermissionRequest::create(WTF::move(completionHandler)).ptr()), m_client.base.clientInfo);
+            // Genuine leaf: the handler is stored in a NotificationPermissionRequest and dispatched via a C client callback.
+            return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+                m_client.decidePolicyForNotificationPermissionRequest(toAPI(&page), toAPI(&origin), toAPI(NotificationPermissionRequest::create(WTF::move(completionHandler)).ptr()), m_client.base.clientInfo);
+                return WTF::move(deferred);
+            });
         }
 
         void requestStorageAccessConfirm(WebPageProxy& page, WebFrameProxy* frame, const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, std::optional<WebCore::OrganizationStorageAccessPromptQuirk>&&, CompletionHandler<void(bool)>&& completionHandler) final

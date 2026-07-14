@@ -611,12 +611,12 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
         auto topOrigin = loadParameters.topOriginForServiceWorkers(loadParameters.request.url());
         if (!server->isImportCompletedForOrigin(topOrigin)) {
             CONNECTION_RELEASE_LOG(Loading, "scheduleResourceLoad: Deferring resource load until service worker registrations for origin are imported");
-            server->importRegistrationsForOrigin(topOrigin, [this, protectedThis = Ref { *this }, loadParameters = WTF::move(loadParameters), existingLoaderToResume]() mutable {
+            server->importRegistrationsForOrigin(topOrigin, CompletionHandler<void()>([this, protectedThis = Ref { *this }, loadParameters = WTF::move(loadParameters), existingLoaderToResume]() mutable {
                 if (!m_networkProcess->webProcessConnection(webProcessIdentifier()))
                     return;
 
                 scheduleResourceLoad(WTF::move(loadParameters), existingLoaderToResume);
-            });
+            }));
             return;
         }
     }

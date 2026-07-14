@@ -30,6 +30,7 @@
 #include <WebCore/DeviceOrientationOrMotionPermissionState.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/CanMakeWeakPtr.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 
 namespace WebKit {
@@ -47,6 +48,7 @@ public:
     void deref() const;
 
     void shouldAllowAccess(WebPageProxy&, WebFrameProxy&, FrameInfoData&&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&);
+    CompletionHandlerCalledToken shouldAllowAccess(WebPageProxy&, WebFrameProxy&, FrameInfoData&&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState), true>&&);
     void clearPermissions() { m_deviceOrientationPermissionDecisions.clear(); }
 
     WebCore::DeviceOrientationOrMotionPermissionState cachedDeviceOrientationPermission(const WebCore::SecurityOriginData&) const;
@@ -54,7 +56,7 @@ public:
 
 private:
     HashMap<WebCore::SecurityOriginData, bool> m_deviceOrientationPermissionDecisions;
-    HashMap<WebCore::SecurityOriginData, Vector<CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>>> m_pendingRequests;
+    HashMap<WebCore::SecurityOriginData, Vector<CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState), true>>> m_pendingRequests;
 
     WeakRef<WebsiteDataStore> m_websiteDataStore;
 };

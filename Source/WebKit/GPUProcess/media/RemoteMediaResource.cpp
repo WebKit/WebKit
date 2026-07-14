@@ -81,6 +81,11 @@ void RemoteMediaResource::shutdown()
 
 void RemoteMediaResource::responseReceived(const ResourceResponse& response, bool didPassAccessControlCheck, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
 {
+    responseReceived(response, didPassAccessControlCheck, CompletionHandler<void(ShouldContinuePolicyCheck), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken RemoteMediaResource::responseReceived(const ResourceResponse& response, bool didPassAccessControlCheck, CompletionHandler<void(ShouldContinuePolicyCheck), true>&& completionHandler)
+{
     assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
 
     auto client = this->client();
@@ -88,20 +93,38 @@ void RemoteMediaResource::responseReceived(const ResourceResponse& response, boo
         return completionHandler(ShouldContinuePolicyCheck::No);
 
     m_didPassAccessControlCheck = didPassAccessControlCheck;
-    client->responseReceived(*this, response, [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](auto shouldContinue) mutable {
-        if (shouldContinue == ShouldContinuePolicyCheck::No)
-            protectedThis->shutdown();
+    // The handler is forwarded into the PlatformMediaResourceClient virtual, whose
+    // non-enforced signature we cannot change here; this is a genuine leaf.
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        client->responseReceived(*this, response, [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](auto shouldContinue) mutable {
+            if (shouldContinue == ShouldContinuePolicyCheck::No)
+                protectedThis->shutdown();
 
-        completionHandler(shouldContinue);
+            completionHandler(shouldContinue);
+        });
+        return WTF::move(deferred);
     });
 }
 
 void RemoteMediaResource::redirectReceived(ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
+    redirectReceived(WTF::move(request), response, CompletionHandler<void(ResourceRequest&&), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken RemoteMediaResource::redirectReceived(ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&), true>&& completionHandler)
+{
     assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
 
-    if (auto client = this->client())
-        client->redirectReceived(*this, WTF::move(request), response, WTF::move(completionHandler));
+    auto client = this->client();
+    if (!client)
+        return completionHandler(WTF::move(request));
+
+    // The handler is forwarded into the PlatformMediaResourceClient virtual, whose
+    // non-enforced signature we cannot change here; this is a genuine leaf.
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        client->redirectReceived(*this, WTF::move(request), response, CompletionHandler<void(ResourceRequest&&)>(WTF::move(completionHandler)));
+        return WTF::move(deferred);
+    });
 }
 
 void RemoteMediaResource::dataSent(uint64_t bytesSent, uint64_t totalBytesToBeSent)

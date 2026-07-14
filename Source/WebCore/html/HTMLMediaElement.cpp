@@ -3815,7 +3815,7 @@ void HTMLMediaElement::progressEventTimerFired()
     if (!player->supportsProgressMonitoring())
         return;
 
-    player->didLoadingProgress([weakThis = WeakPtr { *this }](bool progress) {
+    player->didLoadingProgress(CompletionHandler<void(bool)>([weakThis = WeakPtr { *this }](bool progress) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -3835,7 +3835,7 @@ void HTMLMediaElement::progressEventTimerFired()
             protectedThis->updateStalledState();
             protectedThis->setShouldDelayLoadEvent(false);
         }
-    });
+    }));
 }
 
 void HTMLMediaElement::rewind(double timeDelta)
@@ -7629,13 +7629,13 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
         m_waitingToEnterFullscreen = true;
         auto fullscreenCheckType = m_ignoreFullscreenPermissionsPolicy ? DocumentFullscreen::ExemptIFrameAllowFullscreenRequirement : DocumentFullscreen::EnforceIFrameAllowFullscreenRequirement;
         m_ignoreFullscreenPermissionsPolicy = false;
-        protect(protect(document())->fullscreen())->requestFullscreen(*this, fullscreenCheckType, [weakThis = WeakPtr { *this }](ExceptionOr<void> result) {
+        protect(protect(document())->fullscreen())->requestFullscreen(*this, fullscreenCheckType, CompletionHandler<void(ExceptionOr<void>)>([weakThis = WeakPtr { *this }](ExceptionOr<void> result) {
             auto* rawThis = weakThis.get();
             if (!rawThis || !result.hasException())
                 return;
             rawThis->setChangingVideoFullscreenMode(false);
             rawThis->m_waitingToEnterFullscreen = false;
-        }, mode);
+        }), mode);
         return;
     }
 #endif

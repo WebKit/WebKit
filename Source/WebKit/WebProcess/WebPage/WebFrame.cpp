@@ -1654,7 +1654,7 @@ std::optional<ResourceResponse> WebFrame::resourceResponseForURL(const URL& url)
     return std::nullopt;
 }
 
-void WebFrame::findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection direction, const WebCore::FocusEventData& focusEventData, WebCore::ShouldFocusElement shouldFocusElement, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&& completionHandler)
+CompletionHandlerCalledToken WebFrame::findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection direction, const WebCore::FocusEventData& focusEventData, WebCore::ShouldFocusElement shouldFocusElement, CompletionHandler<void(WebCore::FoundElementInRemoteFrame), true>&& completionHandler)
 {
     auto foundElementInRemoteFrame = WebCore::FoundElementInRemoteFrame::No;
 
@@ -1668,7 +1668,7 @@ void WebFrame::findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirec
         }
     }
 
-    completionHandler(foundElementInRemoteFrame);
+    return completionHandler(foundElementInRemoteFrame);
 }
 
 void WebFrame::findFocusableElementContinuingFromFrame(WebCore::FocusDirection direction, WebCore::FrameIdentifier frameID, const WebCore::FocusEventData& focusEventData, WebCore::ShouldFocusElement shouldFocusElement)
@@ -1695,7 +1695,7 @@ static RefPtr<Node> nodeFromJSHandleIdentifier(JSHandleIdentifier identifier)
     return jsNode->wrapped();
 }
 
-void WebFrame::takeSnapshotOfNode(JSHandleIdentifier identifier, CompletionHandler<void(std::optional<ShareableBitmapHandle>&&)>&& completion)
+CompletionHandlerCalledToken WebFrame::takeSnapshotOfNode(JSHandleIdentifier identifier, CompletionHandler<void(std::optional<ShareableBitmapHandle>&&), true>&& completion)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -1709,7 +1709,7 @@ void WebFrame::takeSnapshotOfNode(JSHandleIdentifier identifier, CompletionHandl
     if (!bitmap)
         return completion({ });
 
-    completion(bitmap->createHandle(SharedMemory::Protection::ReadOnly));
+    return completion(bitmap->createHandle(SharedMemory::Protection::ReadOnly));
 }
 
 CheckedRef<FrameInspectorTarget> WebFrame::ensureInspectorTarget()
@@ -1734,7 +1734,7 @@ void WebFrame::sendMessageToInspectorTarget(const String& message)
     ensureInspectorTarget()->sendMessageToTargetBackend(message);
 }
 
-void WebFrame::requestTextExtraction(TextExtraction::Request&& request, CompletionHandler<void(TextExtraction::Result&&)>&& completion)
+CompletionHandlerCalledToken WebFrame::requestTextExtraction(TextExtraction::Request&& request, CompletionHandler<void(TextExtraction::Result&&), true>&& completion)
 {
     RefPtr frame = coreLocalFrame();
     if (!frame)
@@ -1759,10 +1759,10 @@ void WebFrame::requestTextExtraction(TextExtraction::Request&& request, Completi
     }
 #endif
 
-    completion(TextExtraction::extractItem(WTF::move(request), *frame));
+    return completion(TextExtraction::extractItem(WTF::move(request), *frame));
 }
 
-void WebFrame::takeSnapshotOfExtractedText(TextExtraction::ExtractedText&& extractedText, CompletionHandler<void(RefPtr<TextIndicator>&&)>&& completion)
+CompletionHandlerCalledToken WebFrame::takeSnapshotOfExtractedText(TextExtraction::ExtractedText&& extractedText, CompletionHandler<void(RefPtr<TextIndicator>&&), true>&& completion)
 {
     RefPtr frame = coreLocalFrame();
     if (!frame)
@@ -1782,33 +1782,35 @@ void WebFrame::takeSnapshotOfExtractedText(TextExtraction::ExtractedText&& extra
         DoNotClipToVisibleRect
     };
 
-    completion(TextIndicator::createWithRange(*range, options, TextIndicatorPresentationTransition::None));
+    return completion(TextIndicator::createWithRange(*range, options, TextIndicatorPresentationTransition::None));
 }
 
-void WebFrame::describeTextExtractionInteraction(TextExtraction::Interaction&& interaction, CompletionHandler<void(TextExtraction::InteractionDescription&&)>&& completion)
+CompletionHandlerCalledToken WebFrame::describeTextExtractionInteraction(TextExtraction::Interaction&& interaction, CompletionHandler<void(TextExtraction::InteractionDescription&&), true>&& completion)
 {
     RefPtr frame = coreLocalFrame();
     if (!frame)
         return completion({ { }, { }, false });
 
-    completion(TextExtraction::interactionDescription(interaction, *frame));
+    return completion(TextExtraction::interactionDescription(interaction, *frame));
 }
 
-void WebFrame::handleTextExtractionInteraction(TextExtraction::Interaction&& interaction, CompletionHandler<void(bool, String&&, FloatRect)>&& completion)
+CompletionHandlerCalledToken WebFrame::handleTextExtractionInteraction(TextExtraction::Interaction&& interaction, CompletionHandler<void(bool, String&&, FloatRect), true>&& completion)
 {
     RefPtr frame = coreLocalFrame();
     if (!frame)
         return completion(false, "Browsing context is unavailable"_s, { });
 
     auto summary = TextExtraction::interactionDescription(interaction, *frame, TextExtraction::Tense::Past).description;
-    TextExtraction::handleInteraction(WTF::move(interaction), *frame, [completion = WTF::move(completion), summary = WTF::move(summary)](bool success, String&& message, FloatRect interactedElementBounds) mutable {
-        if (success && message.isEmpty())
-            message = WTF::move(summary);
-        completion(success, WTF::move(message), interactedElementBounds);
+    return CompletionHandlerCalledToken::defer(WTF::move(completion), [&](auto completion) -> CompletionHandlerCalledToken {
+        return TextExtraction::handleInteraction(WTF::move(interaction), *frame, CompletionHandler<void(bool, String&&, FloatRect), true>([completion = WTF::move(completion), summary = WTF::move(summary)](bool success, String&& message, FloatRect interactedElementBounds) mutable -> CompletionHandlerCalledToken {
+            if (success && message.isEmpty())
+                message = WTF::move(summary);
+            return completion(success, WTF::move(message), interactedElementBounds);
+        }));
     });
 }
 
-void WebFrame::requestJSHandleForExtractedText(TextExtraction::ExtractedText&& extractedText, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
+CompletionHandlerCalledToken WebFrame::requestJSHandleForExtractedText(TextExtraction::ExtractedText&& extractedText, CompletionHandler<void(std::optional<JSHandleInfo>&&), true>&& completion)
 {
     RefPtr frame = coreLocalFrame();
     if (!frame)
@@ -1822,10 +1824,10 @@ void WebFrame::requestJSHandleForExtractedText(TextExtraction::ExtractedText&& e
     if (!handleAndInfo)
         return completion({ });
 
-    completion({ WTF::move(handleAndInfo->second) });
+    return completion({ WTF::move(handleAndInfo->second) });
 }
 
-void WebFrame::requestContainerJSHandleForExtractedText(TextExtraction::ExtractedText&& extractedText, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
+CompletionHandlerCalledToken WebFrame::requestContainerJSHandleForExtractedText(TextExtraction::ExtractedText&& extractedText, CompletionHandler<void(std::optional<JSHandleInfo>&&), true>&& completion)
 {
     RefPtr frame = coreLocalFrame();
     if (!frame)
@@ -1839,7 +1841,7 @@ void WebFrame::requestContainerJSHandleForExtractedText(TextExtraction::Extracte
     if (!handleAndInfo)
         return completion({ });
 
-    completion({ WTF::move(handleAndInfo->second) });
+    return completion({ WTF::move(handleAndInfo->second) });
 }
 
 void WebFrame::requestContainerJSHandleForSearchTexts(Vector<String>&& searchTexts, std::optional<NodeIdentifier>&& targetNodeIdentifier, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
@@ -1856,10 +1858,10 @@ void WebFrame::requestContainerJSHandleForSearchTexts(Vector<String>&& searchTex
     if (!handleAndInfo)
         return completion({ });
 
-    completion({ WTF::move(handleAndInfo->second) });
+    return completion({ WTF::move(handleAndInfo->second) });
 }
 
-void WebFrame::getSelectorPathsForNode(JSHandleInfo&& handle, CompletionHandler<void(Vector<HashSet<String>>&&)>&& completion)
+CompletionHandlerCalledToken WebFrame::getSelectorPathsForNode(JSHandleInfo&& handle, CompletionHandler<void(Vector<HashSet<String>>&&), true>&& completion)
 {
     RefPtr node = nodeFromJSHandleIdentifier(handle.identifier);
     if (!node)
@@ -1869,10 +1871,10 @@ void WebFrame::getSelectorPathsForNode(JSHandleInfo&& handle, CompletionHandler<
     if (!element)
         return completion({ });
 
-    completion(ElementTargetingController::selectorsForElement(*element));
+    return completion(ElementTargetingController::selectorsForElement(*element));
 }
 
-void WebFrame::getNodeForSelectorPaths(Vector<HashSet<String>>&& selectors, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
+CompletionHandlerCalledToken WebFrame::getNodeForSelectorPaths(Vector<HashSet<String>>&& selectors, CompletionHandler<void(std::optional<JSHandleInfo>&&), true>&& completion)
 {
     RefPtr frame = coreLocalFrame();
     if (!frame)
@@ -1890,7 +1892,7 @@ void WebFrame::getNodeForSelectorPaths(Vector<HashSet<String>>&& selectors, Comp
     if (!handleAndInfo)
         return completion({ });
 
-    completion({ WTF::move(handleAndInfo->second) });
+    return completion({ WTF::move(handleAndInfo->second) });
 }
 
 } // namespace WebKit

@@ -72,6 +72,7 @@ public:
 
     EvaluationResult dispatchCommandWithResultSync(const String& command, Vector<Ref<JSON::Value>>&& arguments = { });
     WEBCORE_EXPORT void dispatchCommandWithResultAsync(const String& command, Vector<Ref<JSON::Value>>&& arguments = { }, EvaluationResultHandler&& handler = { });
+    WEBCORE_EXPORT CompletionHandlerCalledToken dispatchCommandWithResultAsync(const String& command, Vector<Ref<JSON::Value>>&& arguments, CompletionHandler<void(EvaluationResult), true>&&);
 
     // Used to forward messages from the backend connection to the frontend.
     WEBCORE_EXPORT void dispatchMessageAsync(const String& message);

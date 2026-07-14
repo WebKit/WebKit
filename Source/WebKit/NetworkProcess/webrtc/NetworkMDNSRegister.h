@@ -95,13 +95,13 @@ public:
 
     struct PendingRegistrationRequest {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(PendingRegistrationRequest);
-        PendingRegistrationRequest(Ref<NetworkConnectionToWebProcess> &&, String &&name, String address, PAL::SessionID, CompletionHandler<void(const String &, std::optional<WebCore::MDNSRegisterError>)> &&);
+        PendingRegistrationRequest(Ref<NetworkConnectionToWebProcess> &&, String &&name, String address, PAL::SessionID, CompletionHandler<void(const String &, std::optional<WebCore::MDNSRegisterError>), true> &&);
 
         Ref<NetworkConnectionToWebProcess> connection;
         String name;
         String address;
         PAL::SessionID sessionID;
-        CompletionHandler<void(const String &, std::optional<WebCore::MDNSRegisterError>)> completionHandler;
+        CompletionHandler<void(const String &, std::optional<WebCore::MDNSRegisterError>), true> completionHandler;
 #if USE(GLIB)
         GRefPtr<GCancellable> cancellable;
 #endif
@@ -109,7 +109,7 @@ public:
 
 private:
     void unregisterMDNSNames(WebCore::ScriptExecutionContextIdentifier);
-    void registerMDNSName(WebCore::ScriptExecutionContextIdentifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&&);
+    CompletionHandlerCalledToken registerMDNSName(WebCore::ScriptExecutionContextIdentifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>), true>&&);
 
     PAL::SessionID NODELETE sessionID() const;
 

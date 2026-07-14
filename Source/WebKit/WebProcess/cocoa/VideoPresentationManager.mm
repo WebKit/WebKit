@@ -892,9 +892,11 @@ void VideoPresentationManager::fullscreenMayReturnToInline(WebCore::MediaPlayerC
     RefPtr { m_page.get() }->send(Messages::VideoPresentationManagerProxy::PreparedToReturnToInline(processQualify(contextId), true, inlineVideoFrame(*videoElement)));
 }
 
-void VideoPresentationManager::requestRouteSharingPolicyAndContextUID(WebCore::MediaPlayerClientIdentifier contextId, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&& reply)
+CompletionHandlerCalledToken VideoPresentationManager::requestRouteSharingPolicyAndContextUID(WebCore::MediaPlayerClientIdentifier contextId, CompletionHandler<void(WebCore::RouteSharingPolicy, String), true>&& reply)
 {
-    ensureModel(contextId)->requestRouteSharingPolicyAndContextUID(WTF::move(reply));
+    return CompletionHandlerCalledToken::defer(WTF::move(reply), [&](auto reply) -> CompletionHandlerCalledToken {
+        return ensureModel(contextId)->requestRouteSharingPolicyAndContextUID(WTF::move(reply));
+    });
 }
 
 void VideoPresentationManager::ensureUpdatedVideoDimensions(WebCore::MediaPlayerClientIdentifier contextId, WebCore::FloatSize existingVideoDimensions)

@@ -150,7 +150,7 @@ private:
 #endif
 
         bool didChangeBackForwardList(WebPageProxy&, WebBackForwardListItem*, const Vector<Ref<WebBackForwardListItem>>&) final;
-        void shouldGoToBackForwardListItem(WebPageProxy&, WebBackForwardListItem&, bool inBackForwardCache, CompletionHandler<void(bool)>&&) final;
+        CompletionHandlerCalledToken shouldGoToBackForwardListItem(WebPageProxy&, WebBackForwardListItem&, bool inBackForwardCache, CompletionHandler<void(bool), true>&&) final;
 
 #if ENABLE(CONTENT_EXTENSIONS)
         void contentRuleListNotification(WebPageProxy&, URL&&, WebCore::ContentRuleListResults&&) final;

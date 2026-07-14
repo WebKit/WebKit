@@ -832,12 +832,26 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
                 callback(false);
         }
 
+        CompletionHandlerCalledToken seekSessionToTime(double time, CompletionHandler<void(bool), true>&& callback) final
+        {
+            if (RefPtr coordinatorClient = client())
+                return coordinatorClient->seekSessionToTime(time, WTF::move(callback));
+            return callback(false);
+        }
+
         void playSession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime, CompletionHandler<void(bool)>&& callback) final
         {
             if (RefPtr coordinatorClient = client())
                 coordinatorClient->playSession(WTF::move(atTime), WTF::move(hostTime), WTF::move(callback));
             else
                 callback(false);
+        }
+
+        CompletionHandlerCalledToken playSession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime, CompletionHandler<void(bool), true>&& callback) final
+        {
+            if (RefPtr coordinatorClient = client())
+                return coordinatorClient->playSession(WTF::move(atTime), WTF::move(hostTime), WTF::move(callback));
+            return callback(false);
         }
 
         void pauseSession(CompletionHandler<void(bool)>&& callback) final
@@ -848,12 +862,26 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
                 callback(false);
         }
 
+        CompletionHandlerCalledToken pauseSession(CompletionHandler<void(bool), true>&& callback) final
+        {
+            if (RefPtr coordinatorClient = client())
+                return coordinatorClient->pauseSession(WTF::move(callback));
+            return callback(false);
+        }
+
         void setSessionTrack(const String& trackIdentifier, CompletionHandler<void(bool)>&& callback) final
         {
             if (RefPtr coordinatorClient = client())
                 coordinatorClient->setSessionTrack(trackIdentifier, WTF::move(callback));
             else
                 callback(false);
+        }
+
+        CompletionHandlerCalledToken setSessionTrack(const String& trackIdentifier, CompletionHandler<void(bool), true>&& callback) final
+        {
+            if (RefPtr coordinatorClient = client())
+                return coordinatorClient->setSessionTrack(trackIdentifier, WTF::move(callback));
+            return callback(false);
         }
 
         void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState state) final

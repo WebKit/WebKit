@@ -74,10 +74,10 @@ public:
 private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
-    void createAudioDestination(RemoteAudioDestinationIdentifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, WebCore::SharedMemoryHandle&&, CompletionHandler<void(uint64_t)>&&);
+    CompletionHandlerCalledToken createAudioDestination(RemoteAudioDestinationIdentifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, WebCore::SharedMemoryHandle&&, CompletionHandler<void(uint64_t), true>&&);
     void deleteAudioDestination(RemoteAudioDestinationIdentifier);
-    void startAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool, uint64_t)>&&);
-    void stopAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool)>&&);
+    CompletionHandlerCalledToken startAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool, uint64_t), true>&&);
+    CompletionHandlerCalledToken stopAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool), true>&&);
 #if PLATFORM(COCOA)
     void audioSamplesStorageChanged(RemoteAudioDestinationIdentifier, ConsumerSharedCARingBuffer::Handle&&);
 #endif

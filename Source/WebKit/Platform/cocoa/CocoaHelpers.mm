@@ -447,6 +447,12 @@ void callAfterRandomDelay(Function<void()>&& completionHandler)
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delay.nanosecondsAs<int64_t>()), mainDispatchQueueSingleton(), makeBlockPtr(WTF::move(completionHandler)).get());
 }
 
+CompletionHandlerCalledToken callAfterRandomDelay(Function<CompletionHandlerCalledToken()>&& completionHandler)
+{
+    callAfterRandomDelay(Function<void()>(WTF::move(completionHandler)));
+    return CompletionHandlerCalledToken::forNullHandler();
+}
+
 NSDate *toAPI(const WallTime& time)
 {
     if (time.isNaN())

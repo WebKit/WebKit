@@ -32,7 +32,7 @@ namespace WebKit {
 
 class NotificationPermissionRequest : public API::ObjectImpl<API::Object::Type::NotificationPermissionRequest> {
 public:
-    static Ref<NotificationPermissionRequest> create(CompletionHandler<void(bool)>&& completionHandler)
+    static Ref<NotificationPermissionRequest> create(CompletionHandler<void(bool), true>&& completionHandler)
     {
         return adoptRef(*new NotificationPermissionRequest(WTF::move(completionHandler)));
     }
@@ -41,20 +41,20 @@ public:
     {
         didReceiveDecision(false);
     }
-    
+
     void didReceiveDecision(bool allowed)
     {
         if (m_completionHandler)
-            m_completionHandler(allowed);
+            (void)m_completionHandler(allowed);
     }
 
 private:
-    explicit NotificationPermissionRequest(CompletionHandler<void(bool)>&& completionHandler)
+    explicit NotificationPermissionRequest(CompletionHandler<void(bool), true>&& completionHandler)
         : m_completionHandler(WTF::move(completionHandler))
     {
     }
-    
-    CompletionHandler<void(bool)> m_completionHandler;
+
+    CompletionHandler<void(bool), true> m_completionHandler;
 };
 
 } // namespace WebKit

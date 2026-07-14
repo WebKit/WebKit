@@ -288,7 +288,7 @@ void NetworkStorageManager::close(CompletionHandler<void()>&& completionHandler)
         m_originStorageManagers.clear();
         m_fileSystemStorageHandleRegistry = nullptr;
         for (auto&& completionHandler : std::exchange(m_persistCompletionHandlers, { }))
-            completionHandler.second(false);
+            (void)completionHandler.second(false);
         m_sharedServiceWorkerStorageManager = nullptr;
 
         RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), completionHandler = WTF::move(completionHandler)]() mutable {
@@ -857,12 +857,12 @@ bool NetworkStorageManager::persistedInternal(const WebCore::ClientOrigin& origi
     return FileSystem::fileExists(persistedFile);
 }
 
-void NetworkStorageManager::persisted(IPC::Connection& connection, const WebCore::ClientOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::persisted(IPC::Connection& connection, const WebCore::ClientOrigin& origin, CompletionHandler<void(bool), true>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection, completionHandler(false));
 
-    completionHandler(persistedInternal(origin));
+    return completionHandler(persistedInternal(origin));
 }
 
 void NetworkStorageManager::fetchRegistrableDomainsForPersist()
@@ -894,7 +894,7 @@ void NetworkStorageManager::didFetchRegistrableDomainsForPersist(HashSet<WebCore
 
         protectedThis->m_domainsExemptFromEviction = WTF::move(domains);
         for (auto&& [origin, completionHandler] : std::exchange(protectedThis->m_persistCompletionHandlers, { }))
-            completionHandler(protectedThis->persistOrigin(origin));
+            (void)completionHandler(protectedThis->persistOrigin(origin));
     });
 }
 
@@ -913,7 +913,7 @@ bool NetworkStorageManager::persistOrigin(const WebCore::ClientOrigin& origin)
     return !!FileSystem::overwriteEntireFile(persistedFilePath(origin), std::span<uint8_t> { });
 }
 
-void NetworkStorageManager::persist(IPC::Connection& connection, const WebCore::ClientOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::persist(IPC::Connection& connection, const WebCore::ClientOrigin& origin, CompletionHandler<void(bool), true>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection, completionHandler(false));
@@ -927,19 +927,22 @@ void NetworkStorageManager::persist(IPC::Connection& connection, const WebCore::
     if (m_domainsExemptFromEviction)
         return completionHandler(persistOrigin(origin));
 
-    m_persistCompletionHandlers.append({ origin, WTF::move(completionHandler) });
-    RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }]() mutable {
-        if (auto protectedThis = weakThis.get())
-            protectedThis->fetchRegistrableDomainsForPersist();
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        m_persistCompletionHandlers.append({ origin, WTF::move(completionHandler) });
+        RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }]() mutable {
+            if (auto protectedThis = weakThis.get())
+                protectedThis->fetchRegistrableDomainsForPersist();
+        });
+        return WTF::move(deferred);
     });
 }
 
-void NetworkStorageManager::estimate(IPC::Connection& connection, const WebCore::ClientOrigin& origin, CompletionHandler<void(std::optional<WebCore::StorageEstimate>)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::estimate(IPC::Connection& connection, const WebCore::ClientOrigin& origin, CompletionHandler<void(std::optional<WebCore::StorageEstimate>), true>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection, completionHandler(std::nullopt));
 
-    completionHandler(originStorageManager(origin)->estimate());
+    return completionHandler(originStorageManager(origin)->estimate());
 }
 
 void NetworkStorageManager::resetStoragePersistedState(CompletionHandler<void()>&& completionHandler)
@@ -1062,7 +1065,7 @@ void NetworkStorageManager::didIncreaseQuota(WebCore::ClientOrigin&& origin, Quo
     });
 }
 
-void NetworkStorageManager::fileSystemGetDirectory(IPC::Connection& connection, WebCore::ClientOrigin&& origin, CompletionHandler<void(Expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::fileSystemGetDirectory(IPC::Connection& connection, WebCore::ClientOrigin&& origin, CompletionHandler<void(Expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
     MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
@@ -1072,7 +1075,7 @@ void NetworkStorageManager::fileSystemGetDirectory(IPC::Connection& connection, 
     if (!result)
         return completionHandler(makeUnexpected(result.error()));
 
-    completionHandler(result.value());
+    return completionHandler(result.value());
 }
 
 void NetworkStorageManager::closeHandle(WebCore::FileSystemHandleIdentifier identifier)
@@ -1083,7 +1086,7 @@ void NetworkStorageManager::closeHandle(WebCore::FileSystemHandleIdentifier iden
         handle->close();
 }
 
-void NetworkStorageManager::isSameEntry(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::isSameEntry(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier, CompletionHandler<void(bool), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1091,10 +1094,10 @@ void NetworkStorageManager::isSameEntry(WebCore::FileSystemHandleIdentifier iden
     if (!handle)
         return completionHandler(false);
 
-    completionHandler(handle->isSameEntry(targetIdentifier));
+    return completionHandler(handle->isSameEntry(targetIdentifier));
 }
 
-void NetworkStorageManager::move(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier destinationIdentifier, const String& newName, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::move(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier destinationIdentifier, const String& newName, CompletionHandler<void(std::optional<FileSystemStorageError>), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1102,10 +1105,10 @@ void NetworkStorageManager::move(WebCore::FileSystemHandleIdentifier identifier,
     if (!handle)
         return completionHandler(FileSystemStorageError::Unknown);
 
-    completionHandler(handle->move(destinationIdentifier, newName));
+    return completionHandler(handle->move(destinationIdentifier, newName));
 }
 
-void NetworkStorageManager::getFileHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::getFileHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1117,10 +1120,10 @@ void NetworkStorageManager::getFileHandle(IPC::Connection& connection, WebCore::
     if (!result)
         return completionHandler(makeUnexpected(result.error()));
 
-    completionHandler(result.value());
+    return completionHandler(result.value());
 }
 
-void NetworkStorageManager::getDirectoryHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::getDirectoryHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1132,10 +1135,10 @@ void NetworkStorageManager::getDirectoryHandle(IPC::Connection& connection, WebC
     if (!result)
         return completionHandler(makeUnexpected(result.error()));
 
-    completionHandler(result.value());
+    return completionHandler(result.value());
 }
 
-void NetworkStorageManager::removeEntry(WebCore::FileSystemHandleIdentifier identifier, const String& name, bool deleteRecursively, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::removeEntry(WebCore::FileSystemHandleIdentifier identifier, const String& name, bool deleteRecursively, CompletionHandler<void(std::optional<FileSystemStorageError>), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1143,10 +1146,10 @@ void NetworkStorageManager::removeEntry(WebCore::FileSystemHandleIdentifier iden
     if (!handle)
         return completionHandler(FileSystemStorageError::Unknown);
 
-    completionHandler(handle->removeEntry(name, deleteRecursively));
+    return completionHandler(handle->removeEntry(name, deleteRecursively));
 }
 
-void NetworkStorageManager::resolve(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier, CompletionHandler<void(Expected<std::optional<Vector<String>>, FileSystemStorageError>)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::resolve(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier, CompletionHandler<void(Expected<std::optional<Vector<String>>, FileSystemStorageError>), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1154,10 +1157,10 @@ void NetworkStorageManager::resolve(WebCore::FileSystemHandleIdentifier identifi
     if (!handle)
         return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
 
-    completionHandler(handle->resolve(targetIdentifier));
+    return completionHandler(handle->resolve(targetIdentifier));
 }
 
-void NetworkStorageManager::getFile(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<String, FileSystemStorageError>)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::getFile(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<String, FileSystemStorageError>), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1168,18 +1171,21 @@ void NetworkStorageManager::getFile(IPC::Connection& connection, WebCore::FileSy
     if (!FileSystem::fileExists(handle->path()))
         return completionHandler(makeUnexpected(FileSystemStorageError::FileNotFound));
 
-    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, connection = Ref { connection }, path = crossThreadCopy(handle->path()), completionHandler = WTF::move(completionHandler)] mutable {
-        if (RefPtr process = protectedThis->m_process.get()) {
-            if (RefPtr webConnection = process->webProcessConnection(connection.get()))
-                webConnection->allowAccessToFile(path);
-        }
-        protectedThis->workQueue().dispatch([path = crossThreadCopy(WTF::move(path)), completionHandler = WTF::move(completionHandler)] mutable {
-            completionHandler(WTF::move(path));
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, connection = Ref { connection }, path = crossThreadCopy(handle->path()), completionHandler = WTF::move(completionHandler)] mutable {
+            if (RefPtr process = protectedThis->m_process.get()) {
+                if (RefPtr webConnection = process->webProcessConnection(connection.get()))
+                    webConnection->allowAccessToFile(path);
+            }
+            protectedThis->workQueue().dispatch([path = crossThreadCopy(WTF::move(path)), completionHandler = WTF::move(completionHandler)] mutable {
+                completionHandler(WTF::move(path));
+            });
         });
+        return WTF::move(deferred);
     });
 }
 
-void NetworkStorageManager::createSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError>)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::createSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError>), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1187,20 +1193,20 @@ void NetworkStorageManager::createSyncAccessHandle(WebCore::FileSystemHandleIden
     if (!handle)
         return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
 
-    completionHandler(handle->createSyncAccessHandle());
+    return completionHandler(handle->createSyncAccessHandle());
 }
 
-void NetworkStorageManager::closeSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::closeSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
     if (RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier))
         handle->closeSyncAccessHandle(accessHandleIdentifier);
 
-    completionHandler();
+    return completionHandler();
 }
 
-void NetworkStorageManager::requestNewCapacityForSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, uint64_t newCapacity, CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::requestNewCapacityForSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, uint64_t newCapacity, CompletionHandler<void(std::optional<uint64_t>), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1208,10 +1214,12 @@ void NetworkStorageManager::requestNewCapacityForSyncAccessHandle(WebCore::FileS
     if (!handle)
         return completionHandler(std::nullopt);
 
-    handle->requestNewCapacityForSyncAccessHandle(accessHandleIdentifier, newCapacity, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return handle->requestNewCapacityForSyncAccessHandle(accessHandleIdentifier, newCapacity, WTF::move(completionHandler));
+    });
 }
 
-void NetworkStorageManager::createWritable(WebCore::FileSystemHandleIdentifier identifier, bool keepExistingData, CompletionHandler<void(Expected<WebCore::FileSystemWritableFileStreamIdentifier, FileSystemStorageError>)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::createWritable(WebCore::FileSystemHandleIdentifier identifier, bool keepExistingData, CompletionHandler<void(Expected<WebCore::FileSystemWritableFileStreamIdentifier, FileSystemStorageError>), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1219,10 +1227,10 @@ void NetworkStorageManager::createWritable(WebCore::FileSystemHandleIdentifier i
     if (!handle)
         return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
 
-    completionHandler(handle->createWritable(keepExistingData));
+    return completionHandler(handle->createWritable(keepExistingData));
 }
 
-void NetworkStorageManager::closeWritable(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemWritableFileStreamIdentifier streamIdentifier, WebCore::FileSystemWriteCloseReason reason, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::closeWritable(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemWritableFileStreamIdentifier streamIdentifier, WebCore::FileSystemWriteCloseReason reason, CompletionHandler<void(std::optional<FileSystemStorageError>), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1230,10 +1238,10 @@ void NetworkStorageManager::closeWritable(WebCore::FileSystemHandleIdentifier id
     if (!handle)
         return completionHandler(FileSystemStorageError::Unknown);
 
-    completionHandler(handle->closeWritable(streamIdentifier, reason));
+    return completionHandler(handle->closeWritable(streamIdentifier, reason));
 }
 
-void NetworkStorageManager::executeCommandForWritable(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemWritableFileStreamIdentifier streamIdentifier, WebCore::FileSystemWriteCommandType type, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::executeCommandForWritable(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemWritableFileStreamIdentifier streamIdentifier, WebCore::FileSystemWriteCommandType type, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, CompletionHandler<void(std::optional<FileSystemStorageError>), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1241,10 +1249,12 @@ void NetworkStorageManager::executeCommandForWritable(WebCore::FileSystemHandleI
     if (!handle)
         return completionHandler(FileSystemStorageError::Unknown);
 
-    handle->executeCommandForWritable(streamIdentifier, type, position, size, dataBytes, hasDataError, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return handle->executeCommandForWritable(streamIdentifier, type, position, size, dataBytes, hasDataError, WTF::move(completionHandler));
+    });
 }
 
-void NetworkStorageManager::getHandleNames(WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::getHandleNames(WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1252,10 +1262,10 @@ void NetworkStorageManager::getHandleNames(WebCore::FileSystemHandleIdentifier i
     if (!handle)
         return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
 
-    completionHandler(handle->getHandleNames());
+    return completionHandler(handle->getHandleNames());
 }
 
-void NetworkStorageManager::getHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, String&& name, CompletionHandler<void(Expected<std::optional<WebCore::FileSystemHandleInfo>, FileSystemStorageError>)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::getHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, String&& name, CompletionHandler<void(Expected<std::optional<WebCore::FileSystemHandleInfo>, FileSystemStorageError>), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1267,7 +1277,7 @@ void NetworkStorageManager::getHandle(IPC::Connection& connection, WebCore::File
     if (!result)
         return completionHandler(makeUnexpected(result.error()));
 
-    completionHandler(std::optional { result.value() });
+    return completionHandler(std::optional { result.value() });
 }
 
 void NetworkStorageManager::addGlobalIdentifierReference(IPC::Connection& connection, WebCore::ClientOrigin&& origin, WebCore::FileSystemHandleGlobalIdentifier globalIdentifier)
@@ -1867,7 +1877,7 @@ bool NetworkStorageManager::canConnectionAccessSiteForWebStorage(IPC::Connection
     return isSiteAllowedForConnection(connection.uniqueID(), site);
 }
 
-void NetworkStorageManager::connectToStorageArea(IPC::Connection& connection, WebCore::StorageType type, StorageAreaMapIdentifier sourceIdentifier, std::optional<StorageNamespaceIdentifier> namespaceIdentifier, const WebCore::ClientOrigin& origin, CompletionHandler<void(std::optional<StorageAreaIdentifier>, HashMap<String, String>, uint64_t)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::connectToStorageArea(IPC::Connection& connection, WebCore::StorageType type, StorageAreaMapIdentifier sourceIdentifier, std::optional<StorageNamespaceIdentifier> namespaceIdentifier, const WebCore::ClientOrigin& origin, CompletionHandler<void(std::optional<StorageAreaIdentifier>, HashMap<String, String>, uint64_t), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
     MESSAGE_CHECK_COMPLETION(canConnectionAccessSiteForWebStorage(connection, WebCore::RegistrableDomain { origin.topOrigin }), connection, completionHandler(std::nullopt, { }, StorageAreaBase::nextMessageIdentifier()));
@@ -1895,9 +1905,9 @@ void NetworkStorageManager::connectToStorageArea(IPC::Connection& connection, We
         return completionHandler(std::nullopt, HashMap<String, String> { }, StorageAreaBase::nextMessageIdentifier());
 
     if (RefPtr storageArea = m_storageAreaRegistry->getStorageArea(*resultIdentifier)) {
-        completionHandler(*resultIdentifier, storageArea->allItems(), StorageAreaBase::nextMessageIdentifier());
+        auto result = completionHandler(*resultIdentifier, storageArea->allItems(), StorageAreaBase::nextMessageIdentifier());
         writeOriginToFileIfNecessary(origin, ShouldUpdateOriginAccessTime::Yes, storageArea.get());
-        return;
+        return result;
     }
 
     return completionHandler(*resultIdentifier, HashMap<String, String> { }, StorageAreaBase::nextMessageIdentifier());
@@ -1955,7 +1965,7 @@ void NetworkStorageManager::disconnectFromStorageArea(IPC::Connection& connectio
         originStorageManager->sessionStorageManager(*m_storageAreaRegistry).disconnectFromStorageArea(connection.uniqueID(), identifier);
 }
 
-void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& value, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& value, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1973,12 +1983,12 @@ void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIden
     hasError = !result;
     if (hasError)
         allItems = storageArea->allItems();
-    completionHandler(hasError, WTF::move(allItems));
-
+    auto token = completionHandler(hasError, WTF::move(allItems));
     writeOriginToFileIfNecessary(storageArea->origin(), ShouldUpdateOriginAccessTime::Yes, storageArea.get());
+    return token;
 }
 
-void NetworkStorageManager::removeItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&)>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::removeItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1996,12 +2006,12 @@ void NetworkStorageManager::removeItem(IPC::Connection& connection, StorageAreaI
     hasError = !result;
     if (hasError)
         allItems = storageArea->allItems();
-    completionHandler(hasError, WTF::move(allItems));
-
+    auto token = completionHandler(hasError, WTF::move(allItems));
     writeOriginToFileIfNecessary(storageArea->origin(), ShouldUpdateOriginAccessTime::Yes, storageArea.get());
+    return token;
 }
 
-void NetworkStorageManager::clear(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& urlString, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken NetworkStorageManager::clear(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& urlString, CompletionHandler<void(), true>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -2014,9 +2024,9 @@ void NetworkStorageManager::clear(IPC::Connection& connection, StorageAreaIdenti
     MESSAGE_CHECK_COMPLETION(isStorageAreaTypeEnabled(connection, storageArea->storageType()), connection, completionHandler());
 
     std::ignore = storageArea->clear(connection.uniqueID(), implIdentifier, WTF::move(urlString));
-    completionHandler();
-
+    auto token = completionHandler();
     writeOriginToFileIfNecessary(storageArea->origin(), ShouldUpdateOriginAccessTime::Yes, storageArea.get());
+    return token;
 }
 
 IDBStorageManager& NetworkStorageManager::idbStorageManagerForOrigin(const WebCore::ClientOrigin& origin, ShouldWriteOriginFile shouldWriteOriginFile, ShouldUpdateOriginAccessTime shouldUpdateOriginAccessTime)
@@ -2438,7 +2448,7 @@ void NetworkStorageManager::cacheStoragePutRecords(IPC::Connection& connection, 
     cache->putRecords(WTF::move(records), WTF::move(callback));
 }
 
-void NetworkStorageManager::cacheStorageClearMemoryRepresentation(IPC::Connection& connection, const WebCore::ClientOrigin& origin, CompletionHandler<void()>&& callback)
+CompletionHandlerCalledToken NetworkStorageManager::cacheStorageClearMemoryRepresentation(IPC::Connection& connection, const WebCore::ClientOrigin& origin, CompletionHandler<void(), true>&& callback)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection, callback());
@@ -2447,10 +2457,10 @@ void NetworkStorageManager::cacheStorageClearMemoryRepresentation(IPC::Connectio
     if (iterator != m_originStorageManagers.end())
         CheckedRef { *(iterator->value) }->closeCacheStorageManager();
 
-    callback();
+    return callback();
 }
 
-void NetworkStorageManager::cacheStorageRepresentation(CompletionHandler<void(const String&)>&& callback)
+CompletionHandlerCalledToken NetworkStorageManager::cacheStorageRepresentation(CompletionHandler<void(const String&), true>&& callback)
 {
     Vector<String> originStrings;
     auto targetTypes = OptionSet<WebsiteDataType> { WebsiteDataType::DOMCache };
@@ -2480,7 +2490,7 @@ void NetworkStorageManager::cacheStorageRepresentation(CompletionHandler<void(co
         divider = ","_s;
     }
     builder.append("]}"_s);
-    callback(builder.toString());
+    return callback(builder.toString());
 }
 
 void NetworkStorageManager::dispatchTaskToBackgroundFetchManager(const WebCore::ClientOrigin& origin, Function<void(BackgroundFetchStoreManager*)>&& callback)

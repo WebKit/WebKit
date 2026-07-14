@@ -116,7 +116,7 @@ private:
         void didResignInputElementStrongPasswordAppearance(WebPageProxy&, API::Object*) final;
         bool takeFocus(WebPageProxy*, WKFocusDirection) final;
         void handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
-        void decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool allowed)>&&) final;
+        CompletionHandlerCalledToken decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool allowed), true>&&) final;
         bool focusFromServiceWorker(WebKit::WebPageProxy&) final;
         bool runOpenPanel(WebPageProxy&, WebFrameProxy*, FrameInfoData&&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) final;
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)

@@ -78,9 +78,11 @@ std::optional<String> RemoteCDMProxy::sanitizeSessionId(const String& sessionId)
     return m_private->sanitizeSessionId(sessionId);
 }
 
-void RemoteCDMProxy::getSupportedConfiguration(WebCore::CDMKeySystemConfiguration&& configuration, WebCore::CDMPrivate::LocalStorageAccess access, CompletionHandler<void(std::optional<WebCore::CDMKeySystemConfiguration>)>&& callback)
+CompletionHandlerCalledToken RemoteCDMProxy::getSupportedConfiguration(WebCore::CDMKeySystemConfiguration&& configuration, WebCore::CDMPrivate::LocalStorageAccess access, CompletionHandler<void(std::optional<WebCore::CDMKeySystemConfiguration>), true>&& callback)
 {
-    m_private->getSupportedConfiguration(WTF::move(configuration), access, WTF::move(callback));
+    return CompletionHandlerCalledToken::defer(WTF::move(callback), [&](auto callback) -> CompletionHandlerCalledToken {
+        return m_private->getSupportedConfiguration(WTF::move(configuration), access, WTF::move(callback));
+    });
 }
 
 void RemoteCDMProxy::createInstance(CompletionHandler<void(std::optional<RemoteCDMInstanceIdentifier>, RemoteCDMInstanceConfiguration&&)>&& completion)

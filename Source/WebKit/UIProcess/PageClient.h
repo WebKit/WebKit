@@ -344,13 +344,41 @@ public:
 
     virtual bool handleRunOpenPanel(const WebPageProxy&, const WebFrameProxy&, const FrameInfoData&, API::OpenPanelParameters&, WebOpenPanelResultListenerProxy&) { return false; }
     virtual bool showShareSheet(WebCore::ShareDataWithParsedURL&&, WTF::CompletionHandler<void (bool)>&&) { return false; }
+    virtual CompletionHandlerCalledToken showShareSheet(WebCore::ShareDataWithParsedURL&& shareData, WTF::CompletionHandler<void(bool), true>&& completionHandler)
+    {
+        return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+            showShareSheet(WTF::move(shareData), WTF::CompletionHandler<void(bool)>(WTF::move(completionHandler)));
+            return WTF::move(deferred);
+        });
+    }
     virtual void showContactPicker(WebCore::ContactsRequestData&&, WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&& completionHandler) { completionHandler(std::nullopt); }
+    virtual CompletionHandlerCalledToken showContactPicker(WebCore::ContactsRequestData&& requestData, WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&), true>&& completionHandler)
+    {
+        return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+            showContactPicker(WTF::move(requestData), WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>(WTF::move(completionHandler)));
+            return WTF::move(deferred);
+        });
+    }
 
     virtual void showDigitalCredentialsChooser(const WebCore::DigitalCredentialsRequestData&, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
     {
         completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotSupportedError, "Digital credentials are not supported."_s }));
     }
+    virtual CompletionHandlerCalledToken showDigitalCredentialsChooser(const WebCore::DigitalCredentialsRequestData& requestData, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&), true>&& completionHandler)
+    {
+        return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+            showDigitalCredentialsChooser(requestData, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>(WTF::move(completionHandler)));
+            return WTF::move(deferred);
+        });
+    }
     virtual void dismissDigitalCredentialsChooser(WTF::CompletionHandler<void(bool)>&& completionHandler) { completionHandler(true); }
+    virtual CompletionHandlerCalledToken dismissDigitalCredentialsChooser(WTF::CompletionHandler<void(bool), true>&& completionHandler)
+    {
+        return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+            dismissDigitalCredentialsChooser(WTF::CompletionHandler<void(bool)>(WTF::move(completionHandler)));
+            return WTF::move(deferred);
+        });
+    }
     virtual void dismissAnyOpenPicker() { }
 
     virtual void didChangeContentSize(const WebCore::IntSize&) = 0;
@@ -710,11 +738,25 @@ public:
 
 #if ENABLE(IMAGE_ANALYSIS)
     virtual void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion) { completion({ }); }
+    virtual CompletionHandlerCalledToken requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&), true>&& completion)
+    {
+        return CompletionHandlerCalledToken::deferUnchecked(completion, [&](auto& completion, auto deferred) -> CompletionHandlerCalledToken {
+            requestTextRecognition(imageURL, WTF::move(imageData), sourceLanguageIdentifier, targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>(WTF::move(completion)));
+            return WTF::move(deferred);
+        });
+    }
     virtual void computeHasVisualSearchResults(const URL&, WebCore::ShareableBitmap&, CompletionHandler<void(bool)>&& completion) { completion(false); }
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
     virtual void showMediaControlsContextMenu(WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, const FrameInfoData&, WebCore::HTMLMediaElementIdentifier, CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&& completionHandler) { completionHandler(WebCore::MediaControlsContextMenuItem::invalidID); }
+    virtual CompletionHandlerCalledToken showMediaControlsContextMenu(WebCore::FloatRect&& targetFrame, Vector<WebCore::MediaControlsContextMenuItem>&& items, const FrameInfoData& frameInfo, WebCore::HTMLMediaElementIdentifier identifier, CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID), true>&& completionHandler)
+    {
+        return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+            showMediaControlsContextMenu(WTF::move(targetFrame), WTF::move(items), frameInfo, identifier, CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>(WTF::move(completionHandler)));
+            return WTF::move(deferred);
+        });
+    }
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
     
 #if PLATFORM(MAC)
@@ -887,12 +929,20 @@ public:
 
 #if ENABLE(VIDEO)
     virtual void showCaptionDisplaySettings(WebCore::HTMLMediaElementIdentifier, const WebCore::ResolvedCaptionDisplaySettingsOptions&, CompletionHandler<void(Expected<void, WebCore::ExceptionData>&&)>&&);
+    virtual CompletionHandlerCalledToken showCaptionDisplaySettings(WebCore::HTMLMediaElementIdentifier, const WebCore::ResolvedCaptionDisplaySettingsOptions&, CompletionHandler<void(Expected<void, WebCore::ExceptionData>&&), true>&&);
 #endif
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     virtual void allowImmersiveElement(Ref<API::FrameInfo>&&, CompletionHandler<void(bool)>&& completion) const { completion(false); }
     virtual void presentImmersiveElement(const WebCore::LayerHostingContextIdentifier, Ref<API::FrameInfo>&&, CompletionHandler<void(bool)>&& completion) const { completion(false); }
     virtual void dismissImmersiveElement(CompletionHandler<void()>&& completion) const { completion(); }
+    virtual CompletionHandlerCalledToken dismissImmersiveElement(CompletionHandler<void(), true>&& completion) const
+    {
+        return CompletionHandlerCalledToken::deferUnchecked(completion, [&](auto& completion, auto deferred) -> CompletionHandlerCalledToken {
+            dismissImmersiveElement(CompletionHandler<void()>(WTF::move(completion)));
+            return WTF::move(deferred);
+        });
+    }
 #endif
 };
 

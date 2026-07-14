@@ -836,7 +836,7 @@ void UIDelegate::UIClient::handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayE
     [delegate _webView:uiDelegate->m_webView.get().get() handleAutoplayEvent:toWKAutoplayEvent(event) withFlags:toWKAutoplayEventFlags(flags)];
 }
 
-void UIDelegate::UIClient::decidePolicyForNotificationPermissionRequest(WebKit::WebPageProxy&, API::SecurityOrigin& securityOrigin, CompletionHandler<void(bool allowed)>&& completionHandler)
+CompletionHandlerCalledToken UIDelegate::UIClient::decidePolicyForNotificationPermissionRequest(WebKit::WebPageProxy&, API::SecurityOrigin& securityOrigin, CompletionHandler<void(bool allowed), true>&& completionHandler)
 {
     RefPtr uiDelegate = m_uiDelegate.get();
     if (!uiDelegate)
@@ -849,14 +849,18 @@ void UIDelegate::UIClient::decidePolicyForNotificationPermissionRequest(WebKit::
     if (!delegate)
         return completionHandler(false);
 
-    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:));
-    [delegate _webView:uiDelegate->m_webView.get().get() requestNotificationPermissionForSecurityOrigin:protect(wrapper(securityOrigin)).get() decisionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (BOOL result) mutable {
-        if (checker->completionHandlerHasBeenCalled())
-            return;
-        checker->didCallCompletionHandler();
+    // Genuine leaf: the handler is captured into an ObjC block, so its call cannot be proven at compile time here.
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:));
+        [delegate _webView:uiDelegate->m_webView.get().get() requestNotificationPermissionForSecurityOrigin:protect(wrapper(securityOrigin)).get() decisionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (BOOL result) mutable {
+            if (checker->completionHandlerHasBeenCalled())
+                return;
+            checker->didCallCompletionHandler();
 
-        completionHandler(result);
-    }).get()];
+            completionHandler(result);
+        }).get()];
+        return WTF::move(deferred);
+    });
 }
 
 bool UIDelegate::UIClient::focusFromServiceWorker(WebKit::WebPageProxy& proxy)

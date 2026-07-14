@@ -263,7 +263,9 @@ private:
     void platformRevealFileExternally(const String&);
     void platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
     void platformLoad(const String& path, CompletionHandler<void(const String&)>&&);
+    CompletionHandlerCalledToken platformLoad(const String& path, CompletionHandler<void(const String&), true>&&);
     void platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
+    CompletionHandlerCalledToken platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&), true>&&);
 
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN)
     bool platformCanAttach(bool webProcessCanAttach);
@@ -299,8 +301,8 @@ private:
 #endif
 
     void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
-    void load(const String& path, CompletionHandler<void(const String&)>&&);
-    void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
+    CompletionHandlerCalledToken load(const String& path, CompletionHandler<void(const String&), true>&&);
+    CompletionHandlerCalledToken pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&), true>&&);
 
     bool canAttach() const { return m_canAttach; }
     bool shouldOpenAttached();

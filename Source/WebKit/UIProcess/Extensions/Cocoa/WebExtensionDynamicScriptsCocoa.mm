@@ -175,6 +175,14 @@ void executeScript(const SourcePairs& scriptPairs, WKWebView *webView, API::Cont
     }).get()];
 }
 
+CompletionHandlerCalledToken executeScript(const SourcePairs& scriptPairs, WKWebView *webView, API::ContentWorld& executionWorld, WebExtensionTab& tab, const WebExtensionScriptInjectionParameters& parameters, WebExtensionContext& context, bool userGesture, CompletionHandler<void(InjectionResults&&), true>&& completionHandler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        executeScript(scriptPairs, webView, executionWorld, tab, parameters, context, userGesture, WTF::move(completionHandler));
+        return WTF::move(deferred);
+    });
+}
+
 void injectStyleSheets(const SourcePairs& styleSheetPairs, WKWebView *webView, API::ContentWorld& executionWorld, WebCore::UserStyleLevel styleLevel, WebCore::UserContentInjectedFrames injectedFrames, WebExtensionContext& context)
 {
     auto page = webView._page;

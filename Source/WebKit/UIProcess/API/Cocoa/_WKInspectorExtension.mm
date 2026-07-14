@@ -72,14 +72,14 @@
 
 - (void)createTabWithName:(NSString *)tabName tabIconURL:(NSURL *)tabIconURL sourceURL:(NSURL *)sourceURL completionHandler:(void(^)(NSError *, NSString *))completionHandler
 {
-    protect(*_extension)->createTab(tabName, { tabIconURL.baseURL, tabIconURL.relativeString }, { tabIconURL.baseURL, sourceURL.relativeString }, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<Inspector::ExtensionTabID, Inspector::ExtensionError> result) mutable {
+    protect(*_extension)->createTab(tabName, { tabIconURL.baseURL, tabIconURL.relativeString }, { tabIconURL.baseURL, sourceURL.relativeString }, WTF::CompletionHandler<void(Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>)>([protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<Inspector::ExtensionTabID, Inspector::ExtensionError> result) mutable {
         if (!result) {
             capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get(), nil);
             return;
         }
 
         capturedBlock(nil, result.value().createNSString().get());
-    });
+    }));
 }
 
 - (void)evaluateScript:(NSString *)scriptSource frameURL:(NSURL *)frameURL contextSecurityOrigin:(NSURL *)contextSecurityOrigin useContentScriptContext:(BOOL)useContentScriptContext completionHandler:(void(^)(NSError *, id))completionHandler

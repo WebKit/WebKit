@@ -756,7 +756,7 @@ void WebFullScreenManager::setAnimatingFullScreen(bool animating)
     protect(protect(m_element->document())->fullscreen())->setAnimatingFullscreen(animating);
 }
 
-void WebFullScreenManager::requestRestoreFullScreen(CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken WebFullScreenManager::requestRestoreFullScreen(CompletionHandler<void(bool), true>&& completionHandler)
 {
     ASSERT(!m_element);
     if (m_element)
@@ -770,8 +770,8 @@ void WebFullScreenManager::requestRestoreFullScreen(CompletionHandler<void(bool)
 
     ALWAYS_LOG(LOGIDENTIFIER, "<", element->tagName(), " id=\"", element->getIdAttribute(), "\">");
     WebCore::UserGestureIndicator gestureIndicator(WebCore::IsProcessingUserGesture::Yes, &element->document());
-    protect(protect(element->document())->fullscreen())->requestFullscreen(*element, WebCore::DocumentFullscreen::ExemptIFrameAllowFullscreenRequirement, [completionHandler = WTF::move(completionHandler)] (auto result) mutable {
-        completionHandler(!result.hasException());
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return protect(protect(element->document())->fullscreen())->requestFullscreenForBoolResult(*element, WebCore::DocumentFullscreen::ExemptIFrameAllowFullscreenRequirement, WTF::move(completionHandler));
     });
 }
 
@@ -927,7 +927,7 @@ WTFLogChannel& WebFullScreenManager::logChannel() const
 }
 #endif
 
-void WebFullScreenManager::enterFullScreenForOwnerElements(WebCore::FrameIdentifier frameID, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken WebFullScreenManager::enterFullScreenForOwnerElements(WebCore::FrameIdentifier frameID, CompletionHandler<void(), true>&& completionHandler)
 {
     RefPtr webFrame = WebFrame::webFrame(frameID);
     if (!webFrame)
@@ -944,17 +944,17 @@ void WebFullScreenManager::enterFullScreenForOwnerElements(WebCore::FrameIdentif
     for (auto element : elements | std::views::reverse)
         DocumentFullscreen::elementEnterFullscreen(element);
 
-    completionHandler();
+    return completionHandler();
 }
 
-void WebFullScreenManager::exitFullScreenInMainFrame(CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken WebFullScreenManager::exitFullScreenInMainFrame(CompletionHandler<void(), true>&& completionHandler)
 {
     RefPtr mainFrame = m_page->mainFrame();
     if (!mainFrame)
         return completionHandler();
 
     DocumentFullscreen::finishExitFullscreen(*mainFrame, DocumentFullscreen::ExitMode::Resize);
-    completionHandler();
+    return completionHandler();
 }
 
 } // namespace WebKit

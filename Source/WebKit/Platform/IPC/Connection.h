@@ -185,8 +185,7 @@ extern ASCIILiteral errorAsString(Error);
         RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %s", CString(WTF_PRETTY_FUNCTION)); \
         IPC::markCurrentlyDispatchedMessageAsInvalid(connection, "Message check failed: " #assertion ## _s); \
         CRASH_IF_TESTING \
-        { completion; } \
-        return; \
+        return completion; \
     } \
 } while (0)
 
@@ -439,6 +438,7 @@ public:
     };
 
     template<typename T, typename C> std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID = 0, OptionSet<SendOption> = { }); // Thread-safe, but the reply will be called on the Connection's dispatcher
+    template<typename T, typename Sig> CompletionHandlerCalledToken sendWithAsyncReply(T&& message, CompletionHandler<Sig, true>&& completionHandler, uint64_t destinationID = 0, OptionSet<SendOption> = { }); // Thread-safe, enforced overload returning CompletionHandlerCalledToken
     template<typename PC = NoOpPromiseConverter, typename T, typename Promise = typename ConvertedPromise<PC, typename T::Promise>::Type> Ref<Promise> sendWithPromisedReply(T&& message, uint64_t destinationID = 0, OptionSet<SendOption> = { }); // Thread-safe.
     template<typename T, typename C> std::optional<AsyncReplyID> sendWithAsyncReplyOnDispatcher(T&& message, GuaranteedSerialFunctionDispatcher&, C&& completionHandler, uint64_t destinationID = 0, OptionSet<SendOption> = { }); // Thread-safe.
     template<typename T> Error send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions = { }, std::optional<ThreadQOS> qos = std::nullopt); // Thread-safe.
@@ -887,6 +887,15 @@ std::optional<Connection::AsyncReplyID> Connection::sendWithAsyncReply(T&& messa
     return std::nullopt;
 }
 
+template<typename T, typename Sig>
+CompletionHandlerCalledToken Connection::sendWithAsyncReply(T&& message, CompletionHandler<Sig, true>&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        sendWithAsyncReply(std::forward<T>(message), CompletionHandler<Sig>(WTF::move(completionHandler)), destinationID, sendOptions);
+        return deferred;
+    });
+}
+
 template<typename T, typename C>
 std::optional<Connection::AsyncReplyID> Connection::sendWithAsyncReplyOnDispatcher(T&& message, GuaranteedSerialFunctionDispatcher& dispatcher, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions)
 {
@@ -1090,9 +1099,10 @@ void Connection::callReply(Connection* connection, Decoder& decoder, C&& complet
 {
     if (auto arguments = decoder.decode<typename T::ReplyArguments>()) {
         if constexpr (CanApply<C, typename T::ReplyArguments>::value)
-            return std::apply(std::forward<C>(completionHandler), WTF::move(*arguments));
+            std::apply(std::forward<C>(completionHandler), WTF::move(*arguments));
         else
-            return callWithConnectionAndArgsTuple(std::forward<C>(completionHandler), connection, WTF::move(*arguments));
+            callWithConnectionAndArgsTuple(std::forward<C>(completionHandler), connection, WTF::move(*arguments));
+        return;
     }
     cancelReply<T>(std::forward<C>(completionHandler));
 }

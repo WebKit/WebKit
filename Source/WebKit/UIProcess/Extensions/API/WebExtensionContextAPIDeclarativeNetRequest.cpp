@@ -41,13 +41,13 @@ bool WebExtensionContext::isDeclarativeNetRequestMessageAllowed(IPC::Decoder& me
     return isLoadedAndPrivilegedMessage(message) && (hasPermission(WebExtensionPermission::declarativeNetRequest()) || hasPermission(WebExtensionPermission::declarativeNetRequestWithHostAccess()));
 }
 
-void WebExtensionContext::declarativeNetRequestGetEnabledRulesets(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::declarativeNetRequestGetEnabledRulesets(CompletionHandler<void(Vector<String>&&), true>&& completionHandler)
 {
     Vector<String> enabledRulesets;
     for (auto& identifier : m_enabledStaticRulesetIDs)
         enabledRulesets.append(identifier);
 
-    completionHandler(WTF::move(enabledRulesets));
+    return completionHandler(WTF::move(enabledRulesets));
 }
 
 WebExtensionContext::DeclarativeNetRequestValidatedRulesets WebExtensionContext::declarativeNetRequestValidateRulesetIdentifiers(const Vector<String>& rulesetIdentifiers)
@@ -82,6 +82,14 @@ Ref<WebExtensionDeclarativeNetRequestSQLiteStore> WebExtensionContext::declarati
     return *m_declarativeNetRequestSessionRulesStore;
 }
 
+CompletionHandlerCalledToken WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(RefPtr<WebExtensionDeclarativeNetRequestSQLiteStore> storage, const String& storageType, const String& apiName, Ref<JSON::Array> rulesToAdd, Vector<double> ruleIDsToRemove, CompletionHandler<void(Expected<void, WebExtensionError>&&), true>&& completionHandler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        updateDeclarativeNetRequestRulesInStorage(storage, storageType, apiName, rulesToAdd, ruleIDsToRemove, WTF::move(completionHandler));
+        return WTF::move(deferred);
+    });
+}
+
 void WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(RefPtr<WebExtensionDeclarativeNetRequestSQLiteStore> storage, const String& storageType, const String& apiName, Ref<JSON::Array> rulesToAdd, Vector<double> ruleIDsToRemove, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     if (storage) {
@@ -108,7 +116,7 @@ void WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(RefPtr<WebEx
                 }
 
                 // Update was successful, load the new rules
-                loadDeclarativeNetRequestRules([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), storageType, apiName, storage, savepointIdentifier = WTF::move(savepointIdentifier), errorMessage](bool success) mutable {
+                loadDeclarativeNetRequestRules(CompletionHandler<void(bool)>([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), storageType, apiName, storage, savepointIdentifier = WTF::move(savepointIdentifier), errorMessage](bool success) mutable {
                     if (!success) {
                         // Load was unsucessful, rollback the changes to the database.
                         storage->rollbackToSavepoint(savepointIdentifier.value(), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), storageType, apiName, errorMessage](const String& savepointErrorMessage) mutable {
@@ -116,14 +124,14 @@ void WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(RefPtr<WebEx
                                 RELEASE_LOG_ERROR(Extensions, "Unable to rollback to %s rules savepoint for extension %s. Error: %s", storageType.utf8().data(), uniqueIdentifier().utf8().data(), savepointErrorMessage.utf8().data());
 
                             // Load the declarativeNetRequest rules again after rolling back the dynamic update.
-                            loadDeclarativeNetRequestRules([completionHandler = WTF::move(completionHandler), apiName](bool success) mutable {
+                            loadDeclarativeNetRequestRules(CompletionHandler<void(bool)>([completionHandler = WTF::move(completionHandler), apiName](bool success) mutable {
                                 if (!success) {
                                     completionHandler(toWebExtensionError(apiName, nullString(), "unable to load declarativeNetRequest rules"_s));
                                     return;
                                 }
 
                                 completionHandler({ });
-                            });
+                            }));
                         });
 
                         return;
@@ -136,13 +144,13 @@ void WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(RefPtr<WebEx
 
                         completionHandler({ });
                     });
-                });
+                }));
             });
         });
     }
 }
 
-void WebExtensionContext::declarativeNetRequestGetDynamicRules(Vector<double>&& filter, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::declarativeNetRequestGetDynamicRules(Vector<double>&& filter, CompletionHandler<void(Expected<String, WebExtensionError>&&), true>&& completionHandler)
 {
     auto ruleIDs = compactMap(filter, [&](auto& ruleID) -> std::optional<double> {
         if (m_dynamicRulesIDs.contains(ruleID))
@@ -151,17 +159,19 @@ void WebExtensionContext::declarativeNetRequestGetDynamicRules(Vector<double>&& 
         return std::nullopt;
     });
 
-    declarativeNetRequestDynamicRulesStore()->getRulesWithRuleIDs(ruleIDs, [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](RefPtr<JSON::Array> rules, const String& errorMessage) mutable {
-        if (!errorMessage.isEmpty()) {
-            completionHandler(toWebExtensionError("declarativeNetRequest.getDynamicRules()"_s, nullString(), errorMessage));
-            return;
-        }
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return declarativeNetRequestDynamicRulesStore()->getRulesWithRuleIDs(ruleIDs,
+            CompletionHandler<void(RefPtr<JSON::Array>, const String&), true>([completionHandler = WTF::move(completionHandler)](RefPtr<JSON::Array> rules, const String& errorMessage) mutable -> CompletionHandlerCalledToken {
+                if (!errorMessage.isEmpty())
+                    return completionHandler(toWebExtensionError("declarativeNetRequest.getDynamicRules()"_s, nullString(), errorMessage));
 
-        completionHandler(rules->toJSONString());
+                return completionHandler(rules->toJSONString());
+            }));
     });
+
 }
 
-void WebExtensionContext::declarativeNetRequestUpdateDynamicRules(String&& rulesToAddJSON, Vector<double>&& ruleIDsToDeleteVector, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::declarativeNetRequestUpdateDynamicRules(String&& rulesToAddJSON, Vector<double>&& ruleIDsToDeleteVector, CompletionHandler<void(Expected<void, WebExtensionError>&&), true>&& completionHandler)
 {
     static constexpr auto apiName = "declarativeNetRequest.updateDynamicRules()"_s;
 
@@ -180,20 +190,21 @@ void WebExtensionContext::declarativeNetRequestUpdateDynamicRules(String&& rules
     }
 
     if (!ruleIDsToDelete.size() && !rulesToAdd->length()) {
-        completionHandler({ });
-        return;
+        return completionHandler({ });
     }
 
     auto updatedDynamicRulesCount = m_dynamicRulesIDs.size() + rulesToAdd->length() - ruleIDsToDelete.size();
     if (updatedDynamicRulesCount + m_dynamicRulesIDs.size() > webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules) {
-        completionHandler(toWebExtensionError(apiName, nullString(), "Failed to add dynamic rules. Maximum number of dynamic and session rules exceeded."_s));
-        return;
+        return completionHandler(toWebExtensionError(apiName, nullString(), "Failed to add dynamic rules. Maximum number of dynamic and session rules exceeded."_s));
     }
 
-    updateDeclarativeNetRequestRulesInStorage(declarativeNetRequestDynamicRulesStore(), "dynamic"_s, apiName, rulesToAdd, ruleIDsToDelete, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return updateDeclarativeNetRequestRulesInStorage(declarativeNetRequestDynamicRulesStore(), "dynamic"_s, apiName, rulesToAdd, ruleIDsToDelete, WTF::move(completionHandler));
+    });
+
 }
 
-void WebExtensionContext::declarativeNetRequestGetSessionRules(Vector<double>&& filter, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::declarativeNetRequestGetSessionRules(Vector<double>&& filter, CompletionHandler<void(Expected<String, WebExtensionError>&&), true>&& completionHandler)
 {
     auto ruleIDs = compactMap(filter, [&](auto& ruleID) -> std::optional<double> {
         if (m_sessionRulesIDs.contains(ruleID))
@@ -202,17 +213,19 @@ void WebExtensionContext::declarativeNetRequestGetSessionRules(Vector<double>&& 
         return std::nullopt;
     });
 
-    declarativeNetRequestSessionRulesStore()->getRulesWithRuleIDs(ruleIDs, [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](RefPtr<JSON::Array> rules, const String& errorMessage) mutable {
-        if (!errorMessage.isEmpty()) {
-            completionHandler(toWebExtensionError("declarativeNetRequest.getSessionRules()"_s, nullString(), errorMessage));
-            return;
-        }
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return declarativeNetRequestSessionRulesStore()->getRulesWithRuleIDs(ruleIDs,
+            CompletionHandler<void(RefPtr<JSON::Array>, const String&), true>([completionHandler = WTF::move(completionHandler)](RefPtr<JSON::Array> rules, const String& errorMessage) mutable -> CompletionHandlerCalledToken {
+                if (!errorMessage.isEmpty())
+                    return completionHandler(toWebExtensionError("declarativeNetRequest.getSessionRules()"_s, nullString(), errorMessage));
 
-        completionHandler(rules->toJSONString());
+                return completionHandler(rules->toJSONString());
+            }));
     });
+
 }
 
-void WebExtensionContext::declarativeNetRequestUpdateSessionRules(String&& rulesToAddJSON, Vector<double>&& ruleIDsToDeleteVector, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::declarativeNetRequestUpdateSessionRules(String&& rulesToAddJSON, Vector<double>&& ruleIDsToDeleteVector, CompletionHandler<void(Expected<void, WebExtensionError>&&), true>&& completionHandler)
 {
     static constexpr auto apiName = "declarativeNetRequest.updateSessionRules()"_s;
 
@@ -231,17 +244,18 @@ void WebExtensionContext::declarativeNetRequestUpdateSessionRules(String&& rules
     }
 
     if (!ruleIDsToDelete.size() && !rulesToAdd->length()) {
-        completionHandler({ });
-        return;
+        return completionHandler({ });
     }
 
     auto updatedSessionRulesCount = m_sessionRulesIDs.size() + rulesToAdd->length() - ruleIDsToDelete.size();
     if (updatedSessionRulesCount + m_sessionRulesIDs.size() > webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules) {
-        completionHandler(toWebExtensionError(apiName, nullString(), "Failed to add session rules. Maximum number of dynamic and session rules exceeded."_s));
-        return;
+        return completionHandler(toWebExtensionError(apiName, nullString(), "Failed to add session rules. Maximum number of dynamic and session rules exceeded."_s));
     }
 
-    updateDeclarativeNetRequestRulesInStorage(declarativeNetRequestSessionRulesStore(), "session"_s, apiName, rulesToAdd, ruleIDsToDelete, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return updateDeclarativeNetRequestRulesInStorage(declarativeNetRequestSessionRulesStore(), "session"_s, apiName, rulesToAdd, ruleIDsToDelete, WTF::move(completionHandler));
+    });
+
 }
 
 } // namespace WebKit

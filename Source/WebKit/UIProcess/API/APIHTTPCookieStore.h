@@ -71,7 +71,9 @@ public:
     void cookies(CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&, RefPtr<WTF::WorkQueue> replyQueue = nullptr);
     void cookiesForURL(WTF::URL&&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&, RefPtr<WTF::WorkQueue> replyQueue = nullptr);
     void setCookies(Vector<WebCore::Cookie>&&, CompletionHandler<void()>&&);
+    CompletionHandlerCalledToken setCookies(Vector<WebCore::Cookie>&&, CompletionHandler<void(), true>&&);
     void deleteCookie(const WebCore::Cookie&, CompletionHandler<void()>&&);
+    CompletionHandlerCalledToken deleteCookie(const WebCore::Cookie&, CompletionHandler<void(), true>&&);
     void deleteCookiesForHostnames(const Vector<WTF::String>&, CompletionHandler<void()>&&);
     
     void deleteAllCookies(CompletionHandler<void()>&&);

@@ -107,13 +107,14 @@ private:
 
     template<typename T> void sendToParentProcess(T&&);
     template<typename T, typename C> void sendWithAsyncReplyToParentProcess(T&&, C&&);
+    template<typename T, typename Sig> CompletionHandlerCalledToken sendWithAsyncReplyToParentProcess(T&&, CompletionHandler<Sig, true>&&);
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
     void postMessageToServiceWorkerClient(const WebCore::ScriptExecutionContextIdentifier& destinationIdentifier, const WebCore::MessageWithMessagePorts&, WebCore::ServiceWorkerIdentifier sourceIdentifier, const WebCore::SecurityOriginData& sourceOrigin);
-    void skipWaiting(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
+    CompletionHandlerCalledToken skipWaiting(WebCore::ServiceWorkerIdentifier, CompletionHandler<void(), true>&&);
 
     // Messages back from the SW host process
     void setAsInspected(WebCore::ServiceWorkerIdentifier, bool);
@@ -130,8 +131,8 @@ private:
     void fireNotificationEvent(WebCore::ServiceWorkerIdentifier, const WebCore::NotificationData&, WebCore::NotificationEventType, CompletionHandler<void(bool)>&&) final;
     void fireBackgroundFetchEvent(WebCore::ServiceWorkerIdentifier, const WebCore::BackgroundFetchInformation&, CompletionHandler<void(bool)>&&) final;
     void fireBackgroundFetchClickEvent(WebCore::ServiceWorkerIdentifier, const WebCore::BackgroundFetchInformation&, CompletionHandler<void(bool)>&&) final;
-    void focus(WebCore::ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&&);
-    void navigate(WebCore::ScriptExecutionContextIdentifier, WebCore::ServiceWorkerIdentifier, const URL&, CompletionHandler<void(Expected<std::optional<WebCore::ServiceWorkerClientData>, WebCore::ExceptionData>&&)>&&);
+    CompletionHandlerCalledToken focus(WebCore::ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&), true>&&);
+    CompletionHandlerCalledToken navigate(WebCore::ScriptExecutionContextIdentifier, WebCore::ServiceWorkerIdentifier, const URL&, CompletionHandler<void(Expected<std::optional<WebCore::ServiceWorkerClientData>, WebCore::ExceptionData>&&), true>&&);
 
     void connectionIsNoLongerNeeded() final;
     void terminateDueToUnresponsiveness() final;

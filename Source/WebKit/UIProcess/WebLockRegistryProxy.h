@@ -59,8 +59,8 @@ private:
     // IPC Message handlers.
     void requestLock(WebCore::ClientOrigin&&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, String&& name, WebCore::WebLockMode, bool steal, bool ifAvailable);
     void releaseLock(WebCore::ClientOrigin&&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, String&& name);
-    void abortLockRequest(WebCore::ClientOrigin&&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, String&& name, CompletionHandler<void(bool)>&&);
-    void snapshot(WebCore::ClientOrigin&&, CompletionHandler<void(WebCore::WebLockManagerSnapshot&&)>&&);
+    CompletionHandlerCalledToken abortLockRequest(WebCore::ClientOrigin&&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, String&& name, CompletionHandler<void(bool), true>&&);
+    CompletionHandlerCalledToken snapshot(WebCore::ClientOrigin&&, CompletionHandler<void(WebCore::WebLockManagerSnapshot&&), true>&&);
     void clientIsGoingAway(WebCore::ClientOrigin&&, WebCore::ScriptExecutionContextIdentifier);
 
     const CheckedRef<WebProcessProxy> m_process;

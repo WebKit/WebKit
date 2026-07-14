@@ -147,26 +147,30 @@ void WebSocketTask::didClose(unsigned short code, const String& reason)
     protect(m_channel)->didClose(code, reason);
 }
 
-void WebSocketTask::sendString(std::span<const uint8_t> utf8String, CompletionHandler<void()>&& callback)
+CompletionHandlerCalledToken WebSocketTask::sendString(std::span<const uint8_t> utf8String, CompletionHandler<void(), true>&& callback)
 {
     auto text = adoptNS([[NSString alloc] initWithBytes:utf8String.data() length:utf8String.size() encoding:NSUTF8StringEncoding]);
-    if (!text) {
-        callback();
-        return;
-    }
+    if (!text)
+        return callback();
     auto message = adoptNS([[NSURLSessionWebSocketMessage alloc] initWithString:text.get()]);
-    [m_task sendMessage:message.get() completionHandler:makeBlockPtr([callback = WTF::move(callback)](NSError * _Nullable) mutable {
-        callback();
-    }).get()];
+    return CompletionHandlerCalledToken::deferUnchecked(callback, [&](auto& callback, auto deferred) -> CompletionHandlerCalledToken {
+        [m_task sendMessage:message.get() completionHandler:makeBlockPtr([callback = WTF::move(callback)](NSError * _Nullable) mutable {
+            callback();
+        }).get()];
+        return WTF::move(deferred);
+    });
 }
 
-void WebSocketTask::sendData(std::span<const uint8_t> data, CompletionHandler<void()>&& callback)
+CompletionHandlerCalledToken WebSocketTask::sendData(std::span<const uint8_t> data, CompletionHandler<void(), true>&& callback)
 {
     RetainPtr nsData = toNSData(data);
     auto message = adoptNS([[NSURLSessionWebSocketMessage alloc] initWithData:nsData.get()]);
-    [m_task sendMessage:message.get() completionHandler:makeBlockPtr([callback = WTF::move(callback)](NSError * _Nullable) mutable {
-        callback();
-    }).get()];
+    return CompletionHandlerCalledToken::deferUnchecked(callback, [&](auto& callback, auto deferred) -> CompletionHandlerCalledToken {
+        [m_task sendMessage:message.get() completionHandler:makeBlockPtr([callback = WTF::move(callback)](NSError * _Nullable) mutable {
+            callback();
+        }).get()];
+        return WTF::move(deferred);
+    });
 }
 
 void WebSocketTask::close(int32_t code, const String& reason)

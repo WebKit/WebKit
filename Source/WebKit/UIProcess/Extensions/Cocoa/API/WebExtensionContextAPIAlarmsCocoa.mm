@@ -50,43 +50,43 @@ void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterv
     }));
 }
 
-void WebExtensionContext::alarmsGet(const String& name, CompletionHandler<void(std::optional<WebExtensionAlarmParameters>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::alarmsGet(const String& name, CompletionHandler<void(std::optional<WebExtensionAlarmParameters>&&), true>&& completionHandler)
 {
     if (RefPtr alarm = m_alarmMap.get(name))
-        completionHandler(alarm->parameters());
+        return completionHandler(alarm->parameters());
     else
-        completionHandler(std::nullopt);
+        return completionHandler(std::nullopt);
 }
 
-void WebExtensionContext::alarmsClear(const String& name, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::alarmsClear(const String& name, CompletionHandler<void(), true>&& completionHandler)
 {
     m_alarmMap.remove(name);
 
-    completionHandler();
+    return completionHandler();
 }
 
-void WebExtensionContext::alarmsGetAll(CompletionHandler<void(Vector<WebExtensionAlarmParameters>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::alarmsGetAll(CompletionHandler<void(Vector<WebExtensionAlarmParameters>&&), true>&& completionHandler)
 {
     auto alarms = WTF::map(m_alarmMap.values(), [](auto&& alarm) {
         return alarm->parameters();
     });
 
-    completionHandler(WTF::move(alarms));
+    return completionHandler(WTF::move(alarms));
 }
 
-void WebExtensionContext::alarmsClearAll(CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::alarmsClearAll(CompletionHandler<void(), true>&& completionHandler)
 {
     m_alarmMap.clear();
 
-    completionHandler();
+    return completionHandler();
 }
 
 void WebExtensionContext::fireAlarmsEventIfNeeded(const WebExtensionAlarm& alarm)
 {
     constexpr auto type = WebExtensionEventListenerType::AlarmsOnAlarm;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }, alarm = Ref { alarm }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, Function<void()>([=, this, protectedThis = Ref { *this }, alarm = Ref { alarm }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchAlarmsEvent(alarm->parameters()));
-    });
+    }));
 }
 
 } // namespace WebKit

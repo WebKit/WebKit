@@ -191,21 +191,22 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::deleteRules(Vector<double> ru
 
 void WebExtensionDeclarativeNetRequestSQLiteStore::getRulesWithRuleIDs(Vector<double> ruleIDs, CompletionHandler<void(RefPtr<JSON::Array> rules, const String& errorMessage)>&& completionHandler)
 {
-    queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, ruleIDs = crossThreadCopy(ruleIDs), completionHandler = WTF::move(completionHandler)]() mutable {
+    getRulesWithRuleIDs(WTF::move(ruleIDs), CompletionHandler<void(RefPtr<JSON::Array>, const String&), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken WebExtensionDeclarativeNetRequestSQLiteStore::getRulesWithRuleIDs(Vector<double> ruleIDs, CompletionHandler<void(RefPtr<JSON::Array> rules, const String& errorMessage), true>&& completionHandler)
+{
+    return queue().dispatch(CompletionHandler<void(), true>([weakThis = ThreadSafeWeakPtr { *this }, ruleIDs = crossThreadCopy(ruleIDs), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis) {
-            WorkQueue::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
-                completionHandler({ }, nullString());
-            });
-            return;
-        }
+        if (!protectedThis)
+            return completionHandler({ }, nullString());
 
         String errorMessage;
         RefPtr rules = protectedThis->getRulesWithRuleIDsInternal(ruleIDs, errorMessage);
-        WorkQueue::mainSingleton().dispatch([rules = WTF::move(rules), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
-            completionHandler(rules, errorMessage);
-        });
-    });
+        return WorkQueue::mainSingleton().dispatch(CompletionHandler<void(), true>([rules = WTF::move(rules), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable -> CompletionHandlerCalledToken {
+            return completionHandler(rules, errorMessage);
+        }));
+    }));
 }
 
 RefPtr<JSON::Array> WebExtensionDeclarativeNetRequestSQLiteStore::getRulesWithRuleIDsInternal(Vector<double> ruleIDs, String& errorMessage)

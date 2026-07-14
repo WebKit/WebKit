@@ -848,26 +848,31 @@ void WebInspectorUIProxy::save(Vector<InspectorFrontendClient::SaveData>&& saveD
     platformSave(WTF::move(saveDatas), forceSaveAs);
 }
 
-void WebInspectorUIProxy::load(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
+CompletionHandlerCalledToken WebInspectorUIProxy::load(const String& path, CompletionHandler<void(const String&), true>&& completionHandler)
 {
     if (!protect(protect(inspectedPage())->preferences())->developerExtrasEnabled())
-        return;
+        return completionHandler({ });
 
     ASSERT(!path.isEmpty());
     if (path.isEmpty())
-        return;
+        return completionHandler({ });
 
-    platformLoad(path, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return platformLoad(path, WTF::move(completionHandler));
+    });
+
 }
 
-void WebInspectorUIProxy::pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color> &)>&& completionHandler)
+CompletionHandlerCalledToken WebInspectorUIProxy::pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color> &), true>&& completionHandler)
 {
     if (!protect(protect(inspectedPage())->preferences())->developerExtrasEnabled()) {
-        completionHandler({ });
-        return;
+        return completionHandler({ });
     }
 
-    platformPickColorFromScreen(WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [this](auto completionHandler) -> CompletionHandlerCalledToken {
+        return platformPickColorFromScreen(WTF::move(completionHandler));
+    });
+
 }
 
 bool WebInspectorUIProxy::shouldOpenAttached()
@@ -984,10 +989,22 @@ void WebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<voi
     completionHandler(nullString());
 }
 
+CompletionHandlerCalledToken WebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&), true>&& handler)
+{
+    notImplemented();
+    return handler(nullString());
+}
+
 void WebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
 {
     notImplemented();
     completionHandler({ });
+}
+
+CompletionHandlerCalledToken WebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&), true>&& completionHandler)
+{
+    notImplemented();
+    return completionHandler({ });
 }
 
 void WebInspectorUIProxy::platformAttach()

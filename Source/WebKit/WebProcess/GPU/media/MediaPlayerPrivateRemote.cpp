@@ -406,9 +406,9 @@ bool MediaPlayerPrivateRemote::didLoadingProgress() const
     return false;
 }
 
-void MediaPlayerPrivateRemote::didLoadingProgressAsync(MediaPlayer::DidLoadingProgressCompletionHandler&& callback) const
+CompletionHandlerCalledToken MediaPlayerPrivateRemote::didLoadingProgressAsync(CompletionHandler<void(bool), true>&& callback) const
 {
-    protect(connection())->sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::DidLoadingProgress(), WTF::move(callback), m_id);
+    return protect(connection())->sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::DidLoadingProgress(), WTF::move(callback), m_id.toUInt64(), { });
 }
 
 bool MediaPlayerPrivateRemote::hasVideo() const
@@ -1748,9 +1748,9 @@ void MediaPlayerPrivateRemote::audioOutputDeviceChanged()
         protect(connection())->send(Messages::RemoteMediaPlayerProxy::AudioOutputDeviceChanged { player->audioOutputDeviceId() }, m_id);
 }
 
-void MediaPlayerPrivateRemote::commitAllTransactions(CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken MediaPlayerPrivateRemote::commitAllTransactions(CompletionHandler<void(), true>&& completionHandler)
 {
-    completionHandler();
+    return completionHandler();
 }
 
 Ref<RemoteMediaPlayerManager> MediaPlayerPrivateRemote::manager() const

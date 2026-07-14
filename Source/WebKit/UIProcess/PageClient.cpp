@@ -41,6 +41,14 @@ void PageClient::showCaptionDisplaySettings(WebCore::HTMLMediaElementIdentifier,
 {
     completionHandler(makeUnexpected<WebCore::ExceptionData>({ WebCore::ExceptionCode::NotSupportedError, "Caption Display Settings are not supported."_s }));
 }
+
+CompletionHandlerCalledToken PageClient::showCaptionDisplaySettings(WebCore::HTMLMediaElementIdentifier identifier, const WebCore::ResolvedCaptionDisplaySettingsOptions& options, CompletionHandler<void(Expected<void, WebCore::ExceptionData>&&), true>&& completionHandler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        showCaptionDisplaySettings(identifier, options, CompletionHandler<void(Expected<void, WebCore::ExceptionData>&&)>(WTF::move(completionHandler)));
+        return WTF::move(deferred);
+    });
+}
 #endif
 
 } // namespace WebKit

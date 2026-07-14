@@ -246,11 +246,11 @@ void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadCli
                 return;
             m_client.processDidCrash(m_context, WebKit::toAPI(&downloadProxy), m_client.base.clientInfo);
         }
-        void willSendRequest(WebKit::DownloadProxy& downloadProxy, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler) final
+        CompletionHandlerCalledToken willSendRequest(WebKit::DownloadProxy& downloadProxy, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&), true>&& completionHandler) final
         {
             if (m_client.didReceiveServerRedirect)
                 m_client.didReceiveServerRedirect(m_context, WebKit::toAPI(&downloadProxy), WebKit::toURLRef(request.url().string().impl()), m_client.base.clientInfo);
-            completionHandler(WTF::move(request));
+            return completionHandler(WTF::move(request));
         }
         WKContextRef m_context;
     };

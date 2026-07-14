@@ -61,9 +61,9 @@ typedef enum FullScreenState : NSInteger FullScreenState;
     RetainPtr<NSArray> _savedConstraints;
 
     FullScreenState _fullScreenState;
-    CompletionHandler<void(bool)> _enterFullScreenCompletionHandler;
-    CompletionHandler<void()> _beganExitFullScreenCompletionHandler;
-    CompletionHandler<void()> _exitFullScreenCompletionHandler;
+    CompletionHandler<void(bool), true> _enterFullScreenCompletionHandler;
+    CompletionHandler<void(), true> _beganExitFullScreenCompletionHandler;
+    CompletionHandler<void(), true> _exitFullScreenCompletionHandler;
 
     double _savedScale;
     WebCore::FloatBoxExtent _savedObscuredContentInsets;
@@ -79,13 +79,13 @@ typedef enum FullScreenState : NSInteger FullScreenState;
 
 - (BOOL)isFullScreen;
 
-- (void)enterFullScreen:(CompletionHandler<void(bool)>&&)completionHandler;
-- (void)exitFullScreen:(CompletionHandler<void()>&&)completionHandler;
+- (CompletionHandlerCalledToken)enterFullScreen:(CompletionHandler<void(bool), true>&&)completionHandler;
+- (CompletionHandlerCalledToken)exitFullScreen:(CompletionHandler<void(), true>&&)completionHandler;
 - (void)exitFullScreenImmediately;
 - (void)requestExitFullScreen;
 - (void)close;
-- (void)beganEnterFullScreenWithInitialFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame completionHandler:(CompletionHandler<void(bool)>&&)completionHandler;
-- (void)beganExitFullScreenWithInitialFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame completionHandler:(CompletionHandler<void()>&&)completionHandler;
+- (CompletionHandlerCalledToken)beganEnterFullScreenWithInitialFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame completionHandler:(CompletionHandler<void(bool), true>&&)completionHandler;
+- (CompletionHandlerCalledToken)beganExitFullScreenWithInitialFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame completionHandler:(CompletionHandler<void(), true>&&)completionHandler;
 - (std::optional<WebCore::IntRect>)convertMainFrameCoordinatesInFullscreenPlaceholderViewToScreen:(WebCore::IntRect)mainFrameCoordinates;
 
 - (void)videoControlsManagerDidChange;

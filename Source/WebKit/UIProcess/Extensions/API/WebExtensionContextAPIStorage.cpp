@@ -52,15 +52,16 @@ bool WebExtensionContext::isStorageMessageAllowed(IPC::Decoder& message)
     return isLoaded() && (hasPermission(WebExtensionPermission::storage()) || hasPermission(WebExtensionPermission::unlimitedStorage()));
 }
 
-void WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const Vector<String>& keys, CompletionHandler<void(Expected<Vector<String>, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const Vector<String>& keys, CompletionHandler<void(Expected<Vector<String>, WebExtensionError>&&), true>&& completionHandler)
 {
     auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".get()"_s);
 
     Ref storage = storageForType(dataType);
-    storage->getValuesForKeys(keys, [callingAPIName, dataType, completionHandler = WTF::move(completionHandler)](HashMap<String, String> values, const String& errorMessage) mutable {
-        if (!errorMessage.isEmpty())
-            completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
-        else {
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return storage->getValuesForKeys(keys, CompletionHandler<void(HashMap<String, String>, const String&), true>([callingAPIName, dataType, completionHandler = WTF::move(completionHandler)](HashMap<String, String> values, const String& errorMessage) mutable -> CompletionHandlerCalledToken {
+            if (!errorMessage.isEmpty())
+                return completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
+
             Ref jsonObject = JSON::Object::create();
             for (auto& entry : values)
                 jsonObject->setString(entry.key, entry.value);
@@ -74,42 +75,46 @@ void WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifi
 
             if (size > webExtensionStorageAreaMaximumBytesPerCall) {
                 ASSERT_UNUSED(dataType, dataType == WebExtensionDataType::Local);
-                completionHandler(toWebExtensionError(callingAPIName, nullString(), "it exceeded maximum data size allowed per call"_s));
-                return;
+                return completionHandler(toWebExtensionError(callingAPIName, nullString(), "it exceeded maximum data size allowed per call"_s));
             }
 
-            completionHandler(serializedJSONStrings);
-        }
+            return completionHandler(serializedJSONStrings);
+        }));
     });
+
 }
 
-void WebExtensionContext::storageGetKeys(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, CompletionHandler<void(Expected<Vector<String>, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::storageGetKeys(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, CompletionHandler<void(Expected<Vector<String>, WebExtensionError>&&), true>&& completionHandler)
 {
     auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".getKeys()"_s);
 
     Ref storage = storageForType(dataType);
-    storage->getAllKeys([callingAPIName, completionHandler = WTF::move(completionHandler)](Vector<String> keys, const String& errorMessage) mutable {
-        if (!errorMessage.isEmpty())
-            completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
-        else
-            completionHandler(keys);
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return storage->getAllKeys(CompletionHandler<void(Vector<String>, const String&), true>([callingAPIName, completionHandler = WTF::move(completionHandler)](Vector<String> keys, const String& errorMessage) mutable -> CompletionHandlerCalledToken {
+            if (!errorMessage.isEmpty())
+                return completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
+            return completionHandler(keys);
+        }));
     });
+
 }
 
-void WebExtensionContext::storageGetBytesInUse(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const Vector<String>& keys, CompletionHandler<void(Expected<uint64_t, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::storageGetBytesInUse(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const Vector<String>& keys, CompletionHandler<void(Expected<uint64_t, WebExtensionError>&&), true>&& completionHandler)
 {
     auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".getBytesInUse()"_s);
 
     Ref storage = storageForType(dataType);
-    storage->getStorageSizeForKeys(keys, [callingAPIName, completionHandler = WTF::move(completionHandler)](size_t size, const String& errorMessage) mutable {
-        if (!errorMessage.isEmpty())
-            completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
-        else
-            completionHandler(size);
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return storage->getStorageSizeForKeys(keys, CompletionHandler<void(size_t, const String&), true>([callingAPIName, completionHandler = WTF::move(completionHandler)](size_t size, const String& errorMessage) mutable -> CompletionHandlerCalledToken {
+            if (!errorMessage.isEmpty())
+                return completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
+            return completionHandler(size);
+        }));
     });
+
 }
 
-void WebExtensionContext::storageSet(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const String& dataJSON, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::storageSet(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const String& dataJSON, CompletionHandler<void(Expected<void, WebExtensionError>&&), true>&& completionHandler)
 {
     auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".set()"_s);
 
@@ -122,96 +127,92 @@ void WebExtensionContext::storageSet(WebPageProxyIdentifier webPageProxyIdentifi
     }
 
     Ref storage = storageForType(dataType);
-    storage->getStorageSizeForAllKeys(data, [this, protectedThis = Ref { *this }, callingAPIName, dataType, data = WTF::move(data), completionHandler = WTF::move(completionHandler)](size_t size, int numberOfKeys, HashMap<String, String> existingKeysAndValues, const String& errorMessage) mutable {
-        if (!errorMessage.isEmpty()) {
-            completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
-            return;
-        }
-
-        if (size > quotaForStorageType(dataType)) {
-            completionHandler(toWebExtensionError(callingAPIName, nullString(), "exceeded storage quota"_s));
-            return;
-        }
-
-        if (dataType == WebExtensionDataType::Sync && static_cast<size_t>(numberOfKeys) > webExtensionStorageAreaSyncMaximumItems) {
-            completionHandler(toWebExtensionError(callingAPIName, nullString(), "exceeded maximum number of items"_s));
-            return;
-        }
-
-        Ref storage = storageForType(dataType);
-        storage->setKeyedData(data, [this, protectedThis = Ref { *this }, callingAPIName, data, dataType, existingKeysAndValues = WTF::move(existingKeysAndValues), completionHandler = WTF::move(completionHandler)](Vector<String> keysSuccessfullySet, const String& errorMessage) mutable {
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return storage->getStorageSizeForAllKeys(data, CompletionHandler<void(size_t, int, HashMap<String, String>, const String&), true>([this, protectedThis = Ref { *this }, callingAPIName, dataType, data = WTF::move(data), completionHandler = WTF::move(completionHandler)](size_t size, int numberOfKeys, HashMap<String, String> existingKeysAndValues, const String& errorMessage) mutable -> CompletionHandlerCalledToken {
             if (!errorMessage.isEmpty())
-                completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
-            else
-                completionHandler({ });
+                return completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
 
-            // Only fire an onChanged event for the keys that were successfully set.
-            if (!keysSuccessfullySet.size())
-                return;
+            if (size > quotaForStorageType(dataType))
+                return completionHandler(toWebExtensionError(callingAPIName, nullString(), "exceeded storage quota"_s));
 
-            if (keysSuccessfullySet.size() != data.size())
-                data.removeIf([&](auto& entry) { return !keysSuccessfullySet.contains(entry.key); });
+            if (dataType == WebExtensionDataType::Sync && static_cast<size_t>(numberOfKeys) > webExtensionStorageAreaSyncMaximumItems)
+                return completionHandler(toWebExtensionError(callingAPIName, nullString(), "exceeded maximum number of items"_s));
 
-            fireStorageChangedEventIfNeeded(existingKeysAndValues, data, dataType);
-        });
+            Ref storage = storageForType(dataType);
+            return storage->setKeyedData(data, CompletionHandler<void(Vector<String>, const String&), true>([this, protectedThis = Ref { *this }, callingAPIName, data, dataType, existingKeysAndValues = WTF::move(existingKeysAndValues), completionHandler = WTF::move(completionHandler)](Vector<String> keysSuccessfullySet, const String& errorMessage) mutable -> CompletionHandlerCalledToken {
+                if (!errorMessage.isEmpty())
+                    return completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
+
+                auto called = completionHandler({ });
+
+                // Only fire an onChanged event for the keys that were successfully set.
+                if (!keysSuccessfullySet.size())
+                    return called;
+
+                if (keysSuccessfullySet.size() != data.size())
+                    data.removeIf([&](auto& entry) { return !keysSuccessfullySet.contains(entry.key); });
+
+                fireStorageChangedEventIfNeeded(existingKeysAndValues, data, dataType);
+                return called;
+            }));
+        }));
     });
+
 }
 
-void WebExtensionContext::storageRemove(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const Vector<String>& keys, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::storageRemove(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const Vector<String>& keys, CompletionHandler<void(Expected<void, WebExtensionError>&&), true>&& completionHandler)
 {
     auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".remove()"_s);
 
     Ref storage = storageForType(dataType);
-    storage->getValuesForKeys(keys, [this, protectedThis = Ref { *this }, callingAPIName, keys, dataType, completionHandler = WTF::move(completionHandler)](HashMap<String, String> oldValuesAndKeys, const String& errorMessage) mutable {
-        if (!errorMessage.isEmpty()) {
-            completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
-            return;
-        }
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return storage->getValuesForKeys(keys, CompletionHandler<void(HashMap<String, String>, const String&), true>([this, protectedThis = Ref { *this }, callingAPIName, keys, dataType, completionHandler = WTF::move(completionHandler)](HashMap<String, String> oldValuesAndKeys, const String& errorMessage) mutable -> CompletionHandlerCalledToken {
+            if (!errorMessage.isEmpty())
+                return completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
 
-        Ref storage = storageForType(dataType);
-        storage->deleteValuesForKeys(keys, [this, protectedThis = Ref { *this }, callingAPIName, dataType, oldValuesAndKeys = WTF::move(oldValuesAndKeys), completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
-            if (!errorMessage.isEmpty()) {
-                completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
-                return;
-            }
+            Ref storage = storageForType(dataType);
+            return storage->deleteValuesForKeys(keys, CompletionHandler<void(const String&), true>([this, protectedThis = Ref { *this }, callingAPIName, dataType, oldValuesAndKeys = WTF::move(oldValuesAndKeys), completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable -> CompletionHandlerCalledToken {
+                if (!errorMessage.isEmpty())
+                    return completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
 
-            fireStorageChangedEventIfNeeded(oldValuesAndKeys, { }, dataType);
+                fireStorageChangedEventIfNeeded(oldValuesAndKeys, { }, dataType);
 
-            completionHandler({ });
-        });
+                return completionHandler({ });
+            }));
+        }));
     });
+
 }
 
-void WebExtensionContext::storageClear(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::storageClear(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, CompletionHandler<void(Expected<void, WebExtensionError>&&), true>&& completionHandler)
 {
     auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".clear()"_s);
 
     Ref storage = storageForType(dataType);
-    storage->getValuesForKeys({ }, [this, protectedThis = Ref { *this }, callingAPIName, dataType, completionHandler = WTF::move(completionHandler)](HashMap<String, String> oldValuesAndKeys, const String& errorMessage) mutable {
-        if (!errorMessage.isEmpty()) {
-            completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
-            return;
-        }
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return storage->getValuesForKeys({ }, CompletionHandler<void(HashMap<String, String>, const String&), true>([this, protectedThis = Ref { *this }, callingAPIName, dataType, completionHandler = WTF::move(completionHandler)](HashMap<String, String> oldValuesAndKeys, const String& errorMessage) mutable -> CompletionHandlerCalledToken {
+            if (!errorMessage.isEmpty())
+                return completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
 
-        Ref storage = storageForType(dataType);
-        storage->deleteDatabase([this, protectedThis = Ref { *this }, callingAPIName, oldValuesAndKeys = WTF::move(oldValuesAndKeys), dataType, completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
-            if (!errorMessage.isEmpty()) {
-                completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
-                return;
-            }
+            Ref storage = storageForType(dataType);
+            return storage->deleteDatabase(CompletionHandler<void(const String&), true>([this, protectedThis = Ref { *this }, callingAPIName, oldValuesAndKeys = WTF::move(oldValuesAndKeys), dataType, completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable -> CompletionHandlerCalledToken {
+                if (!errorMessage.isEmpty())
+                    return completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
 
-            fireStorageChangedEventIfNeeded(oldValuesAndKeys, { }, dataType);
+                fireStorageChangedEventIfNeeded(oldValuesAndKeys, { }, dataType);
 
-            completionHandler({ });
-        });
+                return completionHandler({ });
+            }));
+        }));
     });
+
 }
 
-void WebExtensionContext::storageSetAccessLevel(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const WebExtensionStorageAccessLevel accessLevel, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::storageSetAccessLevel(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const WebExtensionStorageAccessLevel accessLevel, CompletionHandler<void(Expected<void, WebExtensionError>&&), true>&& completionHandler)
 {
     setSessionStorageAllowedInContentScripts(accessLevel == WebExtensionStorageAccessLevel::TrustedAndUntrustedContexts);
 
-    completionHandler({ });
+    return completionHandler({ });
 }
 
 void WebExtensionContext::fireStorageChangedEventIfNeeded(HashMap<String, String> oldKeysAndValues, HashMap<String, String> newKeysAndValues, WebExtensionDataType dataType)
@@ -275,9 +276,9 @@ void WebExtensionContext::fireStorageChangedEventIfNeeded(HashMap<String, String
             // content scripts are allowed to listen to storage.onChanged events.
             sendToContentScriptProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchStorageChangedEvent(serializedJSONStrings, dataType, WebExtensionContentWorldType::ContentScript));
 
-            wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
+            wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, Function<void()>([=, this, protectedThis = Ref { *this }] {
                 sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchStorageChangedEvent(serializedJSONStrings, dataType, WebExtensionContentWorldType::Main));
-            });
+            }));
         });
     });
 }

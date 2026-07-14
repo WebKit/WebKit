@@ -116,6 +116,7 @@ public:
     virtual bool NODELETE isSubresourceLoader() const;
 
     virtual void willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& callback);
+    virtual CompletionHandlerCalledToken willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&), true>&& callback);
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
     virtual void didReceiveResponse(ResourceResponse&&, CompletionHandler<void()>&& policyCompletionHandler);
     virtual void didReceiveData(const SharedBuffer&, long long encodedDataLength, DataPayloadType);

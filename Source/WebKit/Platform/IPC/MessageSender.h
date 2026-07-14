@@ -27,6 +27,7 @@
 
 #include <optional>
 #include <wtf/Forward.h>
+#include <wtf/OptionSet.h>
 
 namespace IPC {
 
@@ -62,11 +63,14 @@ public:
 
     using AsyncReplyID = IPC::AsyncReplyID;
     template<typename T, typename C> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler);
+    template<typename T, typename Sig> inline CompletionHandlerCalledToken sendWithAsyncReply(T&& message, CompletionHandler<Sig, true>&&);
     template<typename T, typename C> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, OptionSet<SendOption>);
     template<typename T, typename C> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID);
     template<typename T, typename C> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption>);
+    template<typename T, typename Sig> inline CompletionHandlerCalledToken sendWithAsyncReply(T&& message, CompletionHandler<Sig, true>&& completionHandler, uint64_t destinationID, OptionSet<SendOption> = { });
     template<typename T, typename C, typename U, typename V, typename W> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W> destinationID);
     template<typename T, typename C, typename U, typename V, typename W> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W> destinationID, OptionSet<SendOption>);
+    template<typename T, typename Sig, typename U, typename V, typename W> inline CompletionHandlerCalledToken sendWithAsyncReply(T&& message, CompletionHandler<Sig, true>&& completionHandler, ObjectIdentifierGeneric<U, V, W> destinationID, OptionSet<SendOption> = { });
 
     template<typename T> Ref<typename T::Promise> inline sendWithPromisedReply(T&& message);
     template<typename T> Ref<typename T::Promise> inline sendWithPromisedReply(T&& message, uint64_t destinationID);
@@ -76,6 +80,7 @@ public:
     virtual bool performSendWithoutUsingIPCConnection(UniqueRef<Encoder>&&) const;
 
     template<typename T, typename C> inline bool sendWithAsyncReplyWithoutUsingIPCConnection(T&& message, C&& completionHandler) const;
+    template<typename T, typename Sig> inline CompletionHandlerCalledToken sendWithAsyncReplyWithoutUsingIPCConnection(T&& message, CompletionHandler<Sig, true>&&) const;
     virtual bool performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<Encoder>&&, CompletionHandler<void(Decoder*)>&&) const;
 
     virtual bool sendMessage(UniqueRef<Encoder>&&, OptionSet<SendOption>);

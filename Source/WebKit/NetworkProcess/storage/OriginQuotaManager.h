@@ -51,7 +51,21 @@ public:
     uint64_t usage();
     enum class Decision : bool { Deny, Grant };
     using RequestCallback = CompletionHandler<void(Decision)>;
+    using EnforcedRequestCallback = CompletionHandler<void(Decision), true>;
+    // Free non-enforced wrapper: forwards to the enforced overload and discards the proof token.
     void requestSpace(uint64_t spaceRequested, RequestCallback&&);
+    // Enforced overload: the callback is parked in m_requests and drained asynchronously in
+    // handleRequests()/didIncreaseQuota(), so this is the genuine store-now/call-later leaf and owns
+    // the single deferUnchecked. Constrained so a raw lambda still selects the non-enforced overload.
+    template<typename T> requires std::is_same_v<std::remove_cvref_t<T>, EnforcedRequestCallback>
+    CompletionHandlerCalledToken requestSpace(uint64_t spaceRequested, T&& callback)
+    {
+        return CompletionHandlerCalledToken::deferUnchecked(callback, [&](auto& callback, auto deferred) -> CompletionHandlerCalledToken {
+            m_requests.append(Request { spaceRequested, WTF::move(callback), std::nullopt });
+            handleRequests();
+            return WTF::move(deferred);
+        });
+    }
     void didIncreaseQuota(QuotaIncreaseRequestIdentifier, std::optional<uint64_t> newQuota);
 
     void NODELETE resetQuotaUpdatedBasedOnUsageForTesting();
@@ -67,7 +81,7 @@ private:
 
     struct Request {
         uint64_t spaceRequested;
-        RequestCallback callback;
+        EnforcedRequestCallback callback;
         Markable<QuotaIncreaseRequestIdentifier> identifier;
     };
     Deque<Request> m_requests;

@@ -93,7 +93,7 @@ private:
     void didGetRegistrations(uint64_t matchRequestIdentifier, Vector<WebCore::ServiceWorkerRegistrationData>&&);
     void whenRegistrationReady(const WebCore::SecurityOriginData& topOrigin, const URL& clientURL, WhenRegistrationReadyCallback&&) final;
 
-    void setServiceWorkerClientIsControlled(WebCore::ScriptExecutionContextIdentifier, WebCore::ServiceWorkerRegistrationData&&, CompletionHandler<void(bool)>&&);
+    CompletionHandlerCalledToken setServiceWorkerClientIsControlled(WebCore::ScriptExecutionContextIdentifier, WebCore::ServiceWorkerRegistrationData&&, CompletionHandler<void(bool), true>&&);
     void setWorkerIsControlled(WebCore::ScriptExecutionContextIdentifier, WebCore::ServiceWorkerRegistrationData&&, CompletionHandler<void(bool)>&&);
 
     void getRegistrations(WebCore::SecurityOriginData&& topOrigin, const URL& clientURL, GetRegistrationsCallback&&) final;
@@ -127,7 +127,7 @@ private:
     void cookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier, ExceptionOrCookieChangeSubscriptionsCallback&&) final;
     Ref<AddRoutePromise> addRoutes(WebCore::ServiceWorkerRegistrationIdentifier, Vector<WebCore::ServiceWorkerRoute>&&) final;
 
-    void focusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&&);
+    CompletionHandlerCalledToken focusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&), true>&&);
     void notifyRecordResponseBodyChunk(RetrieveRecordResponseBodyCallbackIdentifier, IPC::SharedBufferReference&&);
     void notifyRecordResponseBodyEnd(RetrieveRecordResponseBodyCallbackIdentifier, WebCore::ResourceError&&);
 

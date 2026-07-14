@@ -169,7 +169,7 @@ void RemoteLayerTreeDrawingArea::setRootCompositingLayer(WebCore::Frame& frame, 
     triggerRenderingUpdate();
 }
 
-void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight&, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight&, CompletionHandler<void(), true>&& completionHandler)
 {
     IntSize size = viewSize;
     IntSize contentSize = IntSize(-1, -1);
@@ -191,7 +191,7 @@ void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, bool fl
     }
 
     triggerRenderingUpdate();
-    completionHandler();
+    return completionHandler();
 }
 
 bool RemoteLayerTreeDrawingArea::shouldUseTiledBackingForFrameView(const LocalFrameView& frameView) const
@@ -217,10 +217,10 @@ void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore& pr
     DebugPageOverlays::settingsChanged(page);
 }
 
-void RemoteLayerTreeDrawingArea::setDeviceScaleFactor(float deviceScaleFactor, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken RemoteLayerTreeDrawingArea::setDeviceScaleFactor(float deviceScaleFactor, CompletionHandler<void(), true>&& completionHandler)
 {
     Ref { m_webPage.get() }->setDeviceScaleFactor(deviceScaleFactor);
-    completionHandler();
+    return completionHandler();
 }
 
 DelegatedScrollingMode RemoteLayerTreeDrawingArea::delegatedScrollingMode() const

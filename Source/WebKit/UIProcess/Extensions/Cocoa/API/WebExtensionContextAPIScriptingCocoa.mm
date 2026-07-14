@@ -129,35 +129,30 @@ bool WebExtensionContext::isScriptingMessageAllowed(IPC::Decoder& message)
     return isLoadedAndPrivilegedMessage(message) && hasPermission(WebExtensionPermission::scripting());
 }
 
-void WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjectionParameters& parameters, bool userGesture, CompletionHandler<void(Expected<InjectionResults, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjectionParameters& parameters, bool userGesture, CompletionHandler<void(Expected<InjectionResults, WebExtensionError>&&), true>&& completionHandler)
 {
     static NSString * const apiName= @"scripting.executeScript()";
 
     RefPtr tab = getTab(parameters.tabIdentifier.value());
     if (!tab) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
-        return;
+        return completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
     }
 
-    requestPermissionToAccessURLs({ tab->url() }, tab, [this, protectedThis = Ref { *this }, tab, parameters, userGesture, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
-        if (!tab->extensionHasPermission()) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
-            return;
-        }
+    return requestPermissionToAccessURLs({ tab->url() }, tab, CompletionHandler<void(URLSet&&, URLSet&&, WallTime), true>([this, protectedThis = Ref { *this }, tab, parameters, userGesture, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable -> CompletionHandlerCalledToken {
+        if (!tab->extensionHasPermission())
+            return completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
 
         auto *webView = tab->webView();
-        if (!webView) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"could not execute script on this tab"));
-            return;
-        }
+        if (!webView)
+            return completionHandler(toWebExtensionError(apiName, nullString(), @"could not execute script on this tab"));
 
         auto scriptPairs = getSourcePairsForParameters(parameters, *this);
         Ref executionWorld = toContentWorld(parameters.world);
 
-        executeScript(scriptPairs, webView, executionWorld, *tab, parameters, *this, userGesture, [completionHandler = WTF::move(completionHandler)](InjectionResults&& injectionResults) mutable {
-            completionHandler(WTF::move(injectionResults));
-        });
-    });
+        return executeScript(scriptPairs, webView, executionWorld, *tab, parameters, *this, userGesture, CompletionHandler<void(InjectionResults&&), true>([completionHandler = WTF::move(completionHandler)](InjectionResults&& injectionResults) mutable -> CompletionHandlerCalledToken {
+            return completionHandler(WTF::move(injectionResults));
+        }));
+    }));
 }
 
 void WebExtensionContext::scriptingInsertCSS(const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -170,7 +165,7 @@ void WebExtensionContext::scriptingInsertCSS(const WebExtensionScriptInjectionPa
         return;
     }
 
-    requestPermissionToAccessURLs({ tab->url() }, tab, [this, protectedThis = Ref { *this }, tab, parameters, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+    requestPermissionToAccessURLs({ tab->url() }, tab, CompletionHandler<void(URLSet&&, URLSet&&, WallTime)>([this, protectedThis = Ref { *this }, tab, parameters, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         if (!tab->extensionHasPermission()) {
             completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
             return;
@@ -189,7 +184,7 @@ void WebExtensionContext::scriptingInsertCSS(const WebExtensionScriptInjectionPa
         injectStyleSheets(styleSheetPairs, webView, Ref { *m_contentScriptWorld }, parameters.styleLevel, injectedFrames, *this);
 
         completionHandler({ });
-    });
+    }));
 }
 
 void WebExtensionContext::scriptingRemoveCSS(const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -266,8 +261,7 @@ void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExten
         auto scriptID = parameters.identifier;
         RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
         if (!registeredScript) {
-            completionHandler(toWebExtensionError(apiName, nullString(), makeString("no existing script with ID '"_s, scriptID, "'"_s)));
-            return;
+            return completionHandler(toWebExtensionError(apiName, nullString(), makeString("no existing script with ID '"_s, scriptID, "'"_s)));
         }
 
         registeredScript->merge(parameters);
@@ -341,8 +335,7 @@ void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>
 
     for (auto& scriptID : ids) {
         if (!m_registeredScriptsMap.contains(scriptID)) {
-            completionHandler(toWebExtensionError(apiName, nullString(), makeString("no script with ID '"_s, scriptID, "'"_s)));
-            return;
+            return completionHandler(toWebExtensionError(apiName, nullString(), makeString("no script with ID '"_s, scriptID, "'"_s)));
         }
     }
 
@@ -401,10 +394,10 @@ void WebExtensionContext::clearRegisteredContentScripts()
 {
     m_registeredScriptsMap.clear();
 
-    registeredContentScriptsStore()->deleteDatabase([](const String& errorMessage) {
+    registeredContentScriptsStore()->deleteDatabase(CompletionHandler<void(const String&)>([](const String& errorMessage) {
         if (!errorMessage.isEmpty())
             RELEASE_LOG_ERROR(Extensions, "Failed to delete registered content scripts database. Error: %s", errorMessage.utf8().data());
-    });
+    }));
 }
 
 bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, FirstTimeRegistration firstTimeRegistration, DynamicInjectedContentsMap& injectedContentsMap, NSString *callingAPIName, NSString **errorMessage)

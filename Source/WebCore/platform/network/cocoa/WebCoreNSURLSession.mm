@@ -550,7 +550,7 @@ NS_ASSUME_NONNULL_END
         if (self.invalidated)
             return pongHandler(adoptNS([[NSError alloc] initWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:nil]).get(), 0);
 
-        Ref { self.loader }->sendH2Ping(url.get(), [self, protectedSelf = WTF::move(protectedSelf), pongHandler = WTF::move(pongHandler)] (Expected<Seconds, ResourceError>&& result) mutable {
+        Ref { self.loader }->sendH2Ping(url.get(), CompletionHandler<void(Expected<Seconds, ResourceError>&&)>([self, protectedSelf = WTF::move(protectedSelf), pongHandler = WTF::move(pongHandler)] (Expected<Seconds, ResourceError>&& result) mutable {
             NSTimeInterval interval = 0;
             RetainPtr<NSError> error;
             if (result)
@@ -560,7 +560,7 @@ NS_ASSUME_NONNULL_END
             [self addDelegateOperation:[pongHandler = WTF::move(pongHandler), error = WTF::move(error), interval] () mutable {
                 pongHandler(error.get(), interval);
             }];
-        });
+        }));
     });
 }
 

@@ -159,14 +159,18 @@ void RemoteWebInspectorUIProxy::save(Vector<InspectorFrontendClient::SaveData>&&
     platformSave(WTF::move(saveDatas), forceSaveAs);
 }
 
-void RemoteWebInspectorUIProxy::load(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
+CompletionHandlerCalledToken RemoteWebInspectorUIProxy::load(const String& path, CompletionHandler<void(const String&), true>&& completionHandler)
 {
-    platformLoad(path, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return platformLoad(path, WTF::move(completionHandler));
+    });
 }
 
-void RemoteWebInspectorUIProxy::pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
+CompletionHandlerCalledToken RemoteWebInspectorUIProxy::pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&), true>&& completionHandler)
 {
-    platformPickColorFromScreen(WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return platformPickColorFromScreen(WTF::move(completionHandler));
+    });
 }
 
 void RemoteWebInspectorUIProxy::setSheetRect(const FloatRect& rect)
@@ -272,8 +276,8 @@ WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
 void RemoteWebInspectorUIProxy::platformResetState() { }
 void RemoteWebInspectorUIProxy::platformBringToFront() { }
 void RemoteWebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool /* forceSaveAs */) { }
-void RemoteWebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler) { completionHandler(nullString()); }
-void RemoteWebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler) { completionHandler({ }); }
+CompletionHandlerCalledToken RemoteWebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&), true>&& completionHandler) { return completionHandler(nullString()); }
+CompletionHandlerCalledToken RemoteWebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&), true>&& completionHandler) { return completionHandler({ }); }
 void RemoteWebInspectorUIProxy::platformSetSheetRect(const FloatRect&) { }
 void RemoteWebInspectorUIProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance) { }
 void RemoteWebInspectorUIProxy::platformStartWindowDrag() { }

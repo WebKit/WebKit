@@ -103,7 +103,7 @@ private:
     void setCurrentMediaSession(RemoteMediaSessionState&&);
     void updateMediaSessionState();
     void mediaSessionStateChanged(WebKit::RemoteMediaSessionState&&);
-    void mediaSessionWillBeginPlayback(RemoteMediaSessionState&&, CompletionHandler<void(bool)>&&);
+    CompletionHandlerCalledToken mediaSessionWillBeginPlayback(RemoteMediaSessionState&&, CompletionHandler<void(bool), true>&&);
 
     void setCurrentSession(WebCore::PlatformMediaSessionInterface&) final;
 

@@ -56,7 +56,13 @@ public:
         : m_callable(WTF::move(callable)) { }
     CallableWrapper(const CallableWrapper&) = delete;
     CallableWrapper& operator=(const CallableWrapper&) = delete;
-    Out call(In... in) final { return m_callable(std::forward<In>(in)...); }
+    Out call(In... in) final
+    {
+        if constexpr (std::is_void_v<Out>)
+            m_callable(std::forward<In>(in)...);
+        else
+            return m_callable(std::forward<In>(in)...);
+    }
 private:
     CallableType m_callable;
 };

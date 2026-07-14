@@ -1087,15 +1087,18 @@ void WebFrameProxy::didChangeCSPOriginsThatUpgradeInsecureNavigations(HashSet<We
     setCSPOriginsThatUpgradeInsecureNavigations(WTF::move(cspOriginsThatUpgradeInsecureNavigations));
 }
 
-void WebFrameProxy::findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection direction, const WebCore::FocusEventData& focusEventData, WebCore::ShouldFocusElement shouldFocusElement, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&& completionHandler)
+CompletionHandlerCalledToken WebFrameProxy::findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection direction, const WebCore::FocusEventData& focusEventData, WebCore::ShouldFocusElement shouldFocusElement, CompletionHandler<void(WebCore::FoundElementInRemoteFrame), true>&& completionHandler)
 {
     RefPtr page = m_page.get();
     if (!page) {
-        completionHandler(WebCore::FoundElementInRemoteFrame::No);
-        return;
+        return completionHandler(WebCore::FoundElementInRemoteFrame::No);
     }
 
-    sendWithAsyncReply(Messages::WebFrame::FindFocusableElementDescendingIntoRemoteFrame(direction, focusEventData, shouldFocusElement), WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        sendWithAsyncReply(Messages::WebFrame::FindFocusableElementDescendingIntoRemoteFrame(direction, focusEventData, shouldFocusElement), CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>(WTF::move(completionHandler)));
+        return WTF::move(deferred);
+    });
+
 }
 
 void WebFrameProxy::findFocusableElementContinuingFromFrame(WebCore::FocusDirection direction, WebCore::FrameIdentifier frameID, const WebCore::FocusEventData& focusEventData, WebCore::ShouldFocusElement shouldFocusElement)

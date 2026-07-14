@@ -69,22 +69,22 @@ WebSocketTask::~WebSocketTask()
     destructStream();
 }
 
-void WebSocketTask::sendString(std::span<const uint8_t> utf8, CompletionHandler<void()>&& callback)
+CompletionHandlerCalledToken WebSocketTask::sendString(std::span<const uint8_t> utf8, CompletionHandler<void(), true>&& callback)
 {
     if (m_state == State::Opened) {
         if (!sendFrame(WebCore::WebSocketFrame::OpCodeText, utf8))
             didFail("Failed to send WebSocket frame."_s);
     }
-    callback();
+    return callback();
 }
 
-void WebSocketTask::sendData(std::span<const uint8_t> data, CompletionHandler<void()>&& callback)
+CompletionHandlerCalledToken WebSocketTask::sendData(std::span<const uint8_t> data, CompletionHandler<void(), true>&& callback)
 {
     if (m_state == State::Opened) {
         if (!sendFrame(WebCore::WebSocketFrame::OpCodeBinary, data))
             didFail("Failed to send WebSocket frame."_s);
     }
-    callback();
+    return callback();
 }
 
 void WebSocketTask::close(int32_t code, const String& reason)

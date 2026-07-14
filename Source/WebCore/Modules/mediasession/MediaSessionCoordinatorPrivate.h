@@ -33,6 +33,7 @@
 #include <WebCore/MediaSessionPlaybackState.h>
 #include <WebCore/MediaSessionReadyState.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/WeakPtr.h>
 
@@ -51,6 +52,14 @@ public:
     virtual void pauseSession(CompletionHandler<void(bool)>&&) = 0;
     virtual void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) = 0;
     virtual void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) = 0;
+
+    // Enforced overloads: the implementation must prove the completion handler is
+    // called by returning a CompletionHandlerCalledToken. Subclasses implement these
+    // directly so enforcement is preserved across the virtual dispatch.
+    virtual CompletionHandlerCalledToken seekSessionToTime(double, CompletionHandler<void(bool), true>&&) = 0;
+    virtual CompletionHandlerCalledToken playSession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime, CompletionHandler<void(bool), true>&&) = 0;
+    virtual CompletionHandlerCalledToken pauseSession(CompletionHandler<void(bool), true>&&) = 0;
+    virtual CompletionHandlerCalledToken setSessionTrack(const String&, CompletionHandler<void(bool), true>&&) = 0;
 };
 
 class MediaSessionCoordinatorPrivate : public RefCounted<MediaSessionCoordinatorPrivate> {

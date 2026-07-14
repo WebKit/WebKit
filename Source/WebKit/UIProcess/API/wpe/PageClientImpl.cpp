@@ -565,6 +565,14 @@ void PageClientImpl::sendMessageToWebView(UserMessage&& message, CompletionHandl
     m_view.didReceiveUserMessage(WTF::move(message), WTF::move(completionHandler));
 }
 
+CompletionHandlerCalledToken PageClientImpl::sendMessageToWebView(UserMessage&& message, CompletionHandler<void(UserMessage&&), true>&& handler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+        sendMessageToWebView(WTF::move(message), CompletionHandler<void(UserMessage&&)>(WTF::move(handler)));
+        return deferred;
+    });
+}
+
 void PageClientImpl::setInputMethodState(std::optional<InputMethodState>&& state)
 {
     m_view.setInputMethodState(WTF::move(state));

@@ -193,13 +193,9 @@ void RemoteScrollingCoordinator::willSendScrollPositionRequest(ScrollingNodeID n
 
 */
 
-void RemoteScrollingCoordinator::scrollUpdateForNode(ScrollUpdate&& update, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken RemoteScrollingCoordinator::scrollUpdateForNode(ScrollUpdate&& update, CompletionHandler<void(), true>&& completionHandler)
 {
     LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinator::scrollUpdateForNode: " << update);
-
-    auto scopeExit = WTF::makeScopeExit([&] {
-        completionHandler();
-    });
 
     auto pendingResponseIt = m_scrollRequestsPendingResponse.find(update.nodeID);
     bool havePendingStateForNode = pendingResponseIt != m_scrollRequestsPendingResponse.end();
@@ -209,14 +205,14 @@ void RemoteScrollingCoordinator::scrollUpdateForNode(ScrollUpdate&& update, Comp
 
         ASSERT(responseData.responseIdentifier);
         if (!responseData.responseIdentifier)
-            return;
+            return completionHandler();
 
         auto requestIdentifier = *responseData.responseIdentifier;
 
         // We should at least be waiting for the identifier we've just received back.
         ASSERT(havePendingStateForNode);
         if (!havePendingStateForNode)
-            return;
+            return completionHandler();
 
         auto latestPendingIdentifier = *pendingResponseIt->value.identifier;
         ASSERT(requestIdentifier <= latestPendingIdentifier);
@@ -246,15 +242,16 @@ void RemoteScrollingCoordinator::scrollUpdateForNode(ScrollUpdate&& update, Comp
             }
         } else
             LOG_WITH_STREAM(Scrolling, stream << " identifier " << requestIdentifier << " is not the most recent; ignoring (will fire scroll end eventually " << pendingResponseIt->value.pendingScrollEnd << ")");
-        return;
+        return completionHandler();
     }
 
     if (havePendingStateForNode) {
         LOG_WITH_STREAM(Scrolling, stream << " waiting for scroll request id " << *pendingResponseIt->value.identifier << "; ignoring scroll update");
-        return;
+        return completionHandler();
     }
 
     applyScrollUpdate(WTF::move(update), ScrollType::User, ViewportRectStability::Stable);
+    return completionHandler();
 }
 
 void RemoteScrollingCoordinator::currentSnapPointIndicesChangedForNode(ScrollingNodeID nodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical)

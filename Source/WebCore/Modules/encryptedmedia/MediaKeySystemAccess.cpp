@@ -93,7 +93,7 @@ void MediaKeySystemAccess::createMediaKeys(Document& document, Ref<DeferredPromi
         auto allowDistinctiveIdentifiers = useDistinctiveIdentifier ? CDMInstance::AllowDistinctiveIdentifiers::Yes : CDMInstance::AllowDistinctiveIdentifiers::No;
         auto allowPersistentState = persistentStateAllowed ? CDMInstance::AllowPersistentState::Yes : CDMInstance::AllowPersistentState::No;
 
-        instance->initializeWithConfiguration(*access.m_configuration, allowDistinctiveIdentifiers, allowPersistentState, [weakDocument = WTF::move(weakDocument), sessionTypes = access.m_configuration->sessionTypes, implementation = access.m_implementation.copyRef(), useDistinctiveIdentifier, persistentStateAllowed, instance = instance.releaseNonNull(), promise = WTF::move(promise)] (auto successValue) mutable {
+        instance->initializeWithConfiguration(*access.m_configuration, allowDistinctiveIdentifiers, allowPersistentState, CDMInstance::SuccessCallback([weakDocument = WTF::move(weakDocument), sessionTypes = access.m_configuration->sessionTypes, implementation = access.m_implementation.copyRef(), useDistinctiveIdentifier, persistentStateAllowed, instance = instance.releaseNonNull(), promise = WTF::move(promise)] (auto successValue) mutable {
             if (successValue == CDMInstanceSuccessValue::Failed || !weakDocument) {
                 promise->reject(ExceptionCode::NotAllowedError);
                 return;
@@ -110,7 +110,7 @@ void MediaKeySystemAccess::createMediaKeys(Document& document, Ref<DeferredPromi
 
             // 2.11. Resolve promise with media keys.
             promise->resolveWithNewlyCreated<IDLInterface<MediaKeys>>(WTF::move(mediaKeys));
-        });
+        }));
     });
 
     // 3. Return promise.

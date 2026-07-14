@@ -50,16 +50,18 @@ void WebNotificationManagerMessageHandler::deref() const
     m_webPageProxy->deref();
 }
 
-void WebNotificationManagerMessageHandler::showNotification(IPC::Connection& connection, const WebCore::NotificationData& data, RefPtr<WebCore::NotificationResources>&& resources, CompletionHandler<void()>&& callback)
+CompletionHandlerCalledToken WebNotificationManagerMessageHandler::showNotification(IPC::Connection& connection, const WebCore::NotificationData& data, RefPtr<WebCore::NotificationResources>&& resources, CompletionHandler<void(), true>&& callback)
 {
     RELEASE_LOG(Push, "WebNotificationManagerMessageHandler showNotification called");
 
     if (!data.serviceWorkerRegistrationURL.isEmpty()) {
-        ServiceWorkerNotificationHandler::singleton().showNotification(connection, data, WTF::move(resources), WTF::move(callback));
-        return;
+        return CompletionHandlerCalledToken::defer(WTF::move(callback), [&](auto callback) -> CompletionHandlerCalledToken {
+            return ServiceWorkerNotificationHandler::singleton().showNotification(connection, data, WTF::move(resources), WTF::move(callback));
+        });
+
     }
     protect(page())->showNotification(connection, data, WTF::move(resources));
-    callback();
+    return callback();
 }
 
 void WebNotificationManagerMessageHandler::cancelNotification(WebCore::SecurityOriginData&& origin, const WTF::UUID& notificationID)
@@ -107,16 +109,16 @@ void WebNotificationManagerMessageHandler::pageWasNotifiedOfNotificationPermissi
     protect(page())->pageWillLikelyUseNotifications();
 }
 
-void WebNotificationManagerMessageHandler::requestPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken WebNotificationManagerMessageHandler::requestPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool), true>&& completionHandler)
 {
     ASSERT_NOT_REACHED();
-    completionHandler({ });
+    return completionHandler({ });
 }
 
-void WebNotificationManagerMessageHandler::getPermissionState(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&& completionHandler)
+CompletionHandlerCalledToken WebNotificationManagerMessageHandler::getPermissionState(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState), true>&& completionHandler)
 {
     ASSERT_NOT_REACHED();
-    completionHandler({ });
+    return completionHandler({ });
 }
 
 void WebNotificationManagerMessageHandler::getPermissionStateSync(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&& completionHandler)

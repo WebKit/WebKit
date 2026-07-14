@@ -69,6 +69,7 @@ public:
     virtual bool getRawCookies(Document&, const URL&, Vector<Cookie>&) const;
     virtual void setRawCookie(const Document&, const Cookie&, ShouldPartitionCookie);
     virtual void deleteCookie(const Document&, const URL&, const String& cookieName, CompletionHandler<void()>&&);
+    CompletionHandlerCalledToken deleteCookie(const Document&, const URL&, const String& cookieName, CompletionHandler<void(), true>&&);
 
     virtual void getCookiesAsync(Document&, const URL&, const CookieStoreGetOptions&, CompletionHandler<void(std::optional<Vector<Cookie>>&&)>&&) const;
     virtual void setCookieAsync(Document&, const URL&, const Cookie&, CompletionHandler<void(bool)>&&) const;

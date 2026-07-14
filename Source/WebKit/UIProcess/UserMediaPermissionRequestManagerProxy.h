@@ -107,6 +107,7 @@ public:
     void denyRequest(UserMediaPermissionRequestProxy&, WebCore::MediaConstraintType);
 
     void enumerateMediaDevicesForFrame(WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(const Vector<WebCore::CaptureDeviceWithCapabilities>&, WebCore::MediaDeviceHashSalts&&)>&&);
+    CompletionHandlerCalledToken enumerateMediaDevicesForFrame(WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(const Vector<WebCore::CaptureDeviceWithCapabilities>&, WebCore::MediaDeviceHashSalts&&), true>&&);
 
     void stopCapture();
     void scheduleNextRejection();

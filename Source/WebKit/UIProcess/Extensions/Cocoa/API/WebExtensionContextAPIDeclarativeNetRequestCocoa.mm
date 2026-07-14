@@ -106,48 +106,46 @@ void WebExtensionContext::declarativeNetRequestToggleRulesets(const Vector<Strin
     }
 }
 
-void WebExtensionContext::declarativeNetRequestUpdateEnabledRulesets(const Vector<String>& rulesetIdentifiersToEnable, const Vector<String>& rulesetIdentifiersToDisable, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::declarativeNetRequestUpdateEnabledRulesets(const Vector<String>& rulesetIdentifiersToEnable, const Vector<String>& rulesetIdentifiersToDisable, CompletionHandler<void(Expected<void, WebExtensionError>&&), true>&& completionHandler)
 {
     if (rulesetIdentifiersToEnable.isEmpty() && rulesetIdentifiersToDisable.isEmpty()) {
-        completionHandler({ });
-        return;
+        return completionHandler({ });
     }
 
     auto validatedRulesetsToEnable = declarativeNetRequestValidateRulesetIdentifiers(rulesetIdentifiersToEnable);
     if (!validatedRulesetsToEnable) {
-        completionHandler(makeUnexpected(validatedRulesetsToEnable.error()));
-        return;
+        return completionHandler(makeUnexpected(validatedRulesetsToEnable.error()));
     }
 
     auto validatedRulesetsToDisable = declarativeNetRequestValidateRulesetIdentifiers(rulesetIdentifiersToDisable);
     if (!validatedRulesetsToDisable) {
-        completionHandler(makeUnexpected(validatedRulesetsToDisable.error()));
-        return;
+        return completionHandler(makeUnexpected(validatedRulesetsToDisable.error()));
     }
 
     if (declarativeNetRequestEnabledRulesetCount() - rulesetIdentifiersToDisable.size() + rulesetIdentifiersToEnable.size() > webExtensionDeclarativeNetRequestMaximumNumberOfEnabledRulesets) {
-        completionHandler(toWebExtensionError(@"declarativeNetRequest.updateEnabledRulesets()", nullString(), makeString("The number of enabled static rulesets exceeds the limit. Only "_s, webExtensionDeclarativeNetRequestMaximumNumberOfEnabledRulesets, " rulesets can be enabled at once."_s)));
-        return;
+        return completionHandler(toWebExtensionError(@"declarativeNetRequest.updateEnabledRulesets()", nullString(), makeString("The number of enabled static rulesets exceeds the limit. Only "_s, webExtensionDeclarativeNetRequestMaximumNumberOfEnabledRulesets, " rulesets can be enabled at once."_s)));
     }
 
     NSMutableDictionary *rulesetIdentifiersToEnabledState = [NSMutableDictionary dictionary];
     declarativeNetRequestToggleRulesets(rulesetIdentifiersToDisable, false, rulesetIdentifiersToEnabledState);
     declarativeNetRequestToggleRulesets(rulesetIdentifiersToEnable, true, rulesetIdentifiersToEnabledState);
 
-    loadDeclarativeNetRequestRules([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), rulesetIdentifiersToEnable, rulesetIdentifiersToDisable, rulesetIdentifiersToEnabledState = RetainPtr { rulesetIdentifiersToEnabledState }](bool success) mutable {
-        if (success) {
-            saveDeclarativeNetRequestRulesetStateToStorage(rulesetIdentifiersToEnabledState.get());
-            completionHandler({ });
-            return;
-        }
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return loadDeclarativeNetRequestRules(CompletionHandler<void(bool), true>([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), rulesetIdentifiersToEnable, rulesetIdentifiersToDisable, rulesetIdentifiersToEnabledState = RetainPtr { rulesetIdentifiersToEnabledState }](bool success) mutable -> CompletionHandlerCalledToken {
+            if (success) {
+                saveDeclarativeNetRequestRulesetStateToStorage(rulesetIdentifiersToEnabledState.get());
+                return completionHandler({ });
+            }
 
-        // If loading the rules failed, undo the changed rulesets to get us back to a working state. We don't need to save anything to disk since
-        // we only do that in the success case.
-        declarativeNetRequestToggleRulesets(rulesetIdentifiersToDisable, true, rulesetIdentifiersToEnabledState.get());
-        declarativeNetRequestToggleRulesets(rulesetIdentifiersToEnable, false, rulesetIdentifiersToEnabledState.get());
+            // If loading the rules failed, undo the changed rulesets to get us back to a working state. We don't need to save anything to disk since
+            // we only do that in the success case.
+            declarativeNetRequestToggleRulesets(rulesetIdentifiersToDisable, true, rulesetIdentifiersToEnabledState.get());
+            declarativeNetRequestToggleRulesets(rulesetIdentifiersToEnable, false, rulesetIdentifiersToEnabledState.get());
 
-        completionHandler(toWebExtensionError(@"declarativeNetRequest.updateEnabledRulesets()", nullString(), @"Failed to apply rules."));
+            return completionHandler(toWebExtensionError(@"declarativeNetRequest.updateEnabledRulesets()", nullString(), @"Failed to apply rules."));
+        }));
     });
+
 }
 
 bool WebExtensionContext::shouldDisplayBlockedResourceCountAsBadgeText()
@@ -170,11 +168,10 @@ void WebExtensionContext::incrementActionCountForTab(WebExtensionTab& tab, ssize
     tabAction->incrementBlockedResourceCount(incrementAmount);
 }
 
-void WebExtensionContext::declarativeNetRequestDisplayActionCountAsBadgeText(bool displayActionCountAsBadgeText, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::declarativeNetRequestDisplayActionCountAsBadgeText(bool displayActionCountAsBadgeText, CompletionHandler<void(Expected<void, WebExtensionError>&&), true>&& completionHandler)
 {
     if (shouldDisplayBlockedResourceCountAsBadgeText() == displayActionCountAsBadgeText) {
-        completionHandler({ });
-        return;
+        return completionHandler({ });
     }
 
     saveShouldDisplayBlockedResourceCountAsBadgeText(displayActionCountAsBadgeText);
@@ -183,35 +180,32 @@ void WebExtensionContext::declarativeNetRequestDisplayActionCountAsBadgeText(boo
             Ref { entry.value }->clearBlockedResourceCount();
     }
 
-    completionHandler({ });
+    return completionHandler({ });
 }
 
-void WebExtensionContext::declarativeNetRequestIncrementActionCount(WebExtensionTabIdentifier tabIdentifier, double increment, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::declarativeNetRequestIncrementActionCount(WebExtensionTabIdentifier tabIdentifier, double increment, CompletionHandler<void(Expected<void, WebExtensionError>&&), true>&& completionHandler)
 {
     RefPtr tab = getTab(tabIdentifier);
     if (!tab) {
-        completionHandler(toWebExtensionError(@"declarativeNetRequest.setExtensionActionOptions()", nullString(), @"tab not found"));
-        return;
+        return completionHandler(toWebExtensionError(@"declarativeNetRequest.setExtensionActionOptions()", nullString(), @"tab not found"));
     }
 
     incrementActionCountForTab(*tab, increment);
-    completionHandler({ });
+    return completionHandler({ });
 }
 
-void WebExtensionContext::declarativeNetRequestGetMatchedRules(std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WallTime> minTimeStamp, CompletionHandler<void(Expected<Vector<WebExtensionMatchedRuleParameters>, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::declarativeNetRequestGetMatchedRules(std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WallTime> minTimeStamp, CompletionHandler<void(Expected<Vector<WebExtensionMatchedRuleParameters>, WebExtensionError>&&), true>&& completionHandler)
 {
     RefPtr tab = tabIdentifier ? getTab(tabIdentifier.value()) : nullptr;
 
     static NSString * const apiName = @"declarativeNetRequest.getMatchedRules()";
     if (tabIdentifier && !tab) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
-        return;
+        return completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
     }
 
     if (!hasPermission(WKWebExtensionPermissionDeclarativeNetRequestFeedback)) {
         if (!tab->extensionHasTemporaryPermission()) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"the 'activeTab' permission has not been granted by the user for the tab"));
-            return;
+            return completionHandler(toWebExtensionError(apiName, nullString(), @"the 'activeTab' permission has not been granted by the user for the tab"));
         }
     }
 
@@ -231,14 +225,17 @@ void WebExtensionContext::declarativeNetRequestGetMatchedRules(std::optional<Web
         allURLs.append(matchedRule.url);
     }
 
-    requestPermissionToAccessURLs(allURLs, tab, [protectedThis = Ref { *this }, filteredRules = WTF::move(filteredRules), completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
-        auto result = WTF::compactMap(filteredRules, [protectedThis](auto& matchedRule) -> std::optional<WebExtensionMatchedRuleParameters> {
-            RefPtr matchTab = protectedThis->getTab(matchedRule.tabIdentifier);
-            return protectedThis->hasPermission(matchedRule.url, matchTab.get()) ? std::optional(matchedRule) : std::nullopt;
-        });
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return requestPermissionToAccessURLs(allURLs, tab, CompletionHandler<void(URLSet&&, URLSet&&, WallTime), true>([protectedThis = Ref { *this }, filteredRules = WTF::move(filteredRules), completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable -> CompletionHandlerCalledToken {
+            auto result = WTF::compactMap(filteredRules, [protectedThis](auto& matchedRule) -> std::optional<WebExtensionMatchedRuleParameters> {
+                RefPtr matchTab = protectedThis->getTab(matchedRule.tabIdentifier);
+                return protectedThis->hasPermission(matchedRule.url, matchTab.get()) ? std::optional(matchedRule) : std::nullopt;
+            });
 
-        completionHandler(WTF::move(result));
+            return completionHandler(WTF::move(result));
+        }));
     });
+
 }
 
 } // namespace WebKit

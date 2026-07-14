@@ -72,8 +72,8 @@ public:
 
     // Messages from RemoteMediaResourceLoader:
     void requestResource(RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
-    void removeResource(RemoteMediaResourceIdentifier, CompletionHandler<void()>&&);
-    void sendH2Ping(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
+    CompletionHandlerCalledToken removeResource(RemoteMediaResourceIdentifier, CompletionHandler<void(), true>&&);
+    CompletionHandlerCalledToken sendH2Ping(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&), true>&&);
 
     // Messages to RemoteMediaResourceLoader:
     void responseReceived(RemoteMediaResourceIdentifier, const WebCore::ResourceResponse&, bool, CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&&);

@@ -258,7 +258,7 @@ private:
     void hasBeenInteractedWith(PlaybackSessionContextIdentifier);
     void setVideoDimensions(PlaybackSessionContextIdentifier, const WebCore::FloatSize&);
     void enterFullscreen(PlaybackSessionContextIdentifier);
-    void exitFullscreen(PlaybackSessionContextIdentifier, WebCore::FloatRect finalRect, CompletionHandler<void(bool)>&&);
+    CompletionHandlerCalledToken exitFullscreen(PlaybackSessionContextIdentifier, WebCore::FloatRect finalRect, CompletionHandler<void(bool), true>&&);
     void cleanupFullscreen(PlaybackSessionContextIdentifier);
     void preparedToReturnToInline(PlaybackSessionContextIdentifier, bool visible, WebCore::FloatRect inlineRect);
     void preparedToExitFullscreen(PlaybackSessionContextIdentifier);

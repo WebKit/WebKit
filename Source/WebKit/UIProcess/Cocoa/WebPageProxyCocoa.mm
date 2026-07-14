@@ -1019,11 +1019,10 @@ void WebPageProxy::setUpHighlightsObserver()
 
 #if ENABLE(APPLE_PAY_AMS_UI)
 
-void WebPageProxy::startApplePayAMSUISession(URL&& originatingURL, ApplePayAMSUIRequest&& request, CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebPageProxy::startApplePayAMSUISession(URL&& originatingURL, ApplePayAMSUIRequest&& request, CompletionHandler<void(std::optional<bool>&&), true>&& completionHandler)
 {
     if (!AppleMediaServicesUILibrary()) {
-        completionHandler(std::nullopt);
-        return;
+        return completionHandler(std::nullopt);
     }
 
     // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
@@ -1031,8 +1030,7 @@ void WebPageProxy::startApplePayAMSUISession(URL&& originatingURL, ApplePayAMSUI
     // We should call PageClientImpl::presentingViewController() instead.
     RetainPtr presentingViewController = uiClient().presentingViewController();
     if (!presentingViewController) {
-        completionHandler(std::nullopt);
-        return;
+        return completionHandler(std::nullopt);
     }
 
     RetainPtr amsRequest = adoptNS([allocAMSEngagementRequestInstance() initWithRequestDictionary:dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:retainPtr([request.engagementRequest.createNSString() dataUsingEncoding:NSUTF8StringEncoding]).get() options:0 error:nil])]);
@@ -1043,15 +1041,19 @@ void WebPageProxy::startApplePayAMSUISession(URL&& originatingURL, ApplePayAMSUI
     m_applePayAMSUISession = adoptNS([allocAMSUIEngagementTaskInstance() initWithRequest:amsRequest.get() bag:amsBag.get() presentingViewController:presentingViewController.get()]);
     [m_applePayAMSUISession setRemotePresentation:YES];
 
-    auto amsResult = retainPtr([m_applePayAMSUISession presentEngagement]);
-    [amsResult addFinishBlock:makeBlockPtr([completionHandler = WTF::move(completionHandler)] (AMSEngagementResult *result, NSError *error) mutable {
-        if (error) {
-            completionHandler(std::nullopt);
-            return;
-        }
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        auto amsResult = retainPtr([m_applePayAMSUISession presentEngagement]);
+        [amsResult addFinishBlock:makeBlockPtr([completionHandler = WTF::move(completionHandler)] (AMSEngagementResult *result, NSError *error) mutable {
+            if (error) {
+                completionHandler(std::nullopt);
+                return;
+            }
 
-        completionHandler(result);
-    }).get()];
+            completionHandler(result);
+        }).get()];
+        return WTF::move(deferred);
+    });
+
 }
 
 void WebPageProxy::abortApplePayAMSUISession()
@@ -1596,17 +1598,44 @@ void WebPageProxy::addTextAnimationForAnimationID(IPC::Connection& connection, c
     addTextAnimationForAnimationIDWithCompletionHandler(connection, uuid, styleData, textIndicator, { });
 }
 
-void WebPageProxy::addTextAnimationForAnimationIDWithCompletionHandler(IPC::Connection& connection, const WTF::UUID& uuid, const WebCore::TextAnimationData& styleData, const RefPtr<WebCore::TextIndicator> textIndicator, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
+CompletionHandlerCalledToken WebPageProxy::addTextAnimationForAnimationIDWithCompletionHandler(IPC::Connection& connection, const WTF::UUID& uuid, const WebCore::TextAnimationData& styleData, const RefPtr<WebCore::TextIndicator> textIndicator, CompletionHandler<void(WebCore::TextAnimationRunMode), true>&& completionHandler)
 {
     if (completionHandler)
         MESSAGE_CHECK_COMPLETION(uuid.isValid(), connection, completionHandler({ }));
     else
-        MESSAGE_CHECK(uuid.isValid(), connection);
+        MESSAGE_CHECK_COMPLETION(uuid.isValid(), connection, CompletionHandlerCalledToken::forNullHandler());
 
     internals().textIndicatorForAnimationID.add(uuid, textIndicator);
 
-    if (completionHandler)
-        internals().completionHandlerForAnimationID.add(uuid, WTF::move(completionHandler));
+    if (completionHandler) {
+        return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+            internals().completionHandlerForAnimationID.add(uuid, WTF::move(completionHandler));
+
+#if PLATFORM(IOS_FAMILY)
+            // The shape of the iOS API requires us to have stored this completionHandler when we call into the WebProcess
+            // to replace the text and generate the text indicator of the replacement text.
+            if (auto destinationAnimationCompletionHandler = internals().completionHandlerForDestinationTextIndicatorForSourceID.take(uuid))
+                destinationAnimationCompletionHandler(textIndicator);
+
+            // Storing and sending information for the different shaped SPI on iOS.
+            if (styleData.runMode == WebCore::TextAnimationRunMode::RunAnimation) {
+                if (styleData.style == WebCore::TextAnimationType::Source)
+                    internals().sourceAnimationIDtoDestinationAnimationID.add(*styleData.destinationAnimationUUID, uuid);
+
+                if (styleData.style == WebCore::TextAnimationType::Final) {
+                    if (auto sourceAnimationID = internals().sourceAnimationIDtoDestinationAnimationID.take(uuid)) {
+                        if (auto completionHandler = internals().completionHandlerForDestinationTextIndicatorForSourceID.take(sourceAnimationID))
+                            return completionHandler(textIndicator);
+                    }
+                }
+            }
+#endif
+
+            if (RefPtr pageClient = this->pageClient())
+                pageClient->addTextAnimationForAnimationID(uuid, styleData);
+            return WTF::move(deferred);
+        });
+    }
 
 #if PLATFORM(IOS_FAMILY)
     // The shape of the iOS API requires us to have stored this completionHandler when we call into the WebProcess
@@ -1622,7 +1651,7 @@ void WebPageProxy::addTextAnimationForAnimationIDWithCompletionHandler(IPC::Conn
         if (styleData.style == WebCore::TextAnimationType::Final) {
             if (auto sourceAnimationID = internals().sourceAnimationIDtoDestinationAnimationID.take(uuid)) {
                 if (auto completionHandler = internals().completionHandlerForDestinationTextIndicatorForSourceID.take(sourceAnimationID))
-                    completionHandler(textIndicator);
+                    return completionHandler(textIndicator);
             }
         }
     }
@@ -1630,6 +1659,8 @@ void WebPageProxy::addTextAnimationForAnimationIDWithCompletionHandler(IPC::Conn
 
     if (RefPtr pageClient = this->pageClient())
         pageClient->addTextAnimationForAnimationID(uuid, styleData);
+    return CompletionHandlerCalledToken::forNullHandler();
+
 }
 
 void WebPageProxy::callCompletionHandlerForAnimationID(const WTF::UUID& uuid, WebCore::TextAnimationRunMode runMode)
@@ -1638,7 +1669,7 @@ void WebPageProxy::callCompletionHandlerForAnimationID(const WTF::UUID& uuid, We
         return;
 
     if (auto completionHandler = internals().completionHandlerForAnimationID.take(uuid))
-        completionHandler(runMode);
+        (void)completionHandler(runMode);
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -2248,9 +2279,9 @@ void WebPageProxy::handleSmartMagnificationInformationForPotentialTap(WebKit::Ta
         pageClient->handleSmartMagnificationInformationForPotentialTap(requestID, renderRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale, nodeIsRootLevel, nodeIsPluginElement);
 }
 
-void WebPageProxy::isPotentialTapInProgress(CompletionHandler<void(bool)>&& completion)
+CompletionHandlerCalledToken WebPageProxy::isPotentialTapInProgress(CompletionHandler<void(bool), true>&& completion)
 {
-    completion(protect(pageClient())->isPotentialTapInProgress());
+    return completion(protect(pageClient())->isPotentialTapInProgress());
 }
 
 #endif // ENABLE(TWO_PHASE_CLICKS)

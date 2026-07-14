@@ -85,8 +85,8 @@ private:
     using AllowPersistentState = WebCore::CDMInstance::AllowPersistentState;
 
     // Messages
-    void initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, CompletionHandler<void(SuccessValue)>&&);
-    void setServerCertificate(Ref<WebCore::SharedBuffer>&&, CompletionHandler<void(SuccessValue)>&&);
+    CompletionHandlerCalledToken initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, CompletionHandler<void(SuccessValue), true>&&);
+    CompletionHandlerCalledToken setServerCertificate(Ref<WebCore::SharedBuffer>&&, CompletionHandler<void(SuccessValue), true>&&);
     void setStorageDirectory(const String&);
     void createSession(uint64_t logIdentifier, CompletionHandler<void(std::optional<RemoteCDMInstanceSessionIdentifier>)>&&);
 

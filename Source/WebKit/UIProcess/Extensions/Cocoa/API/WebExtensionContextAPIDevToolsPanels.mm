@@ -38,26 +38,27 @@
 
 namespace WebKit {
 
-void WebExtensionContext::devToolsPanelsCreate(WebPageProxyIdentifier webPageProxyIdentifier, const String& title, const String& iconPath, const String& pagePath, CompletionHandler<void(Expected<Inspector::ExtensionTabID, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::devToolsPanelsCreate(WebPageProxyIdentifier webPageProxyIdentifier, const String& title, const String& iconPath, const String& pagePath, CompletionHandler<void(Expected<Inspector::ExtensionTabID, WebExtensionError>&&), true>&& completionHandler)
 {
     static NSString * const apiName = @"devtools.panels.create()";
 
     RefPtr extension = inspectorExtension(webPageProxyIdentifier);
     if (!extension) {
         RELEASE_LOG_ERROR(Extensions, "Inspector extension not found for page %llu", webPageProxyIdentifier.toUInt64());
-        completionHandler(toWebExtensionError(apiName, nullString(), @"Web Inspector not found"));
-        return;
+        return completionHandler(toWebExtensionError(apiName, nullString(), @"Web Inspector not found"));
     }
 
-    extension->createTab(title, { baseURL(), iconPath }, { baseURL(), pagePath }, [completionHandler = WTF::move(completionHandler)](Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>&& result) mutable {
-        if (!result) {
-            RELEASE_LOG_ERROR(Extensions, "Inspector could not create panel (%{public}@)", extensionErrorToString(result.error()).createNSString().get());
-            completionHandler(toWebExtensionError(apiName, nullString(), @"Web Inspector could not create the panel"));
-            return;
-        }
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return extension->createTab(title, { baseURL(), iconPath }, { baseURL(), pagePath }, CompletionHandler<void(Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>), true>([completionHandler = WTF::move(completionHandler)](Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>&& result) mutable -> CompletionHandlerCalledToken {
+            if (!result) {
+                RELEASE_LOG_ERROR(Extensions, "Inspector could not create panel (%{public}@)", extensionErrorToString(result.error()).createNSString().get());
+                return completionHandler(toWebExtensionError(apiName, nullString(), @"Web Inspector could not create the panel"));
+            }
 
-        completionHandler(result.value());
+            return completionHandler(result.value());
+        }));
     });
+
 }
 
 } // namespace WebKit

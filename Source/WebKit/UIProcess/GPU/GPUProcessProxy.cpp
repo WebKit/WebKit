@@ -878,12 +878,12 @@ void GPUProcessProxy::microphoneMuteStatusChanged(bool isMuting)
 }
 
 #if PLATFORM(IOS_FAMILY)
-void GPUProcessProxy::statusBarWasTapped(CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken GPUProcessProxy::statusBarWasTapped(CompletionHandler<void(), true>&& completionHandler)
 {
     if (RefPtr page = WebProcessProxy::audioCapturingWebPage())
         page->statusBarWasTapped();
     // Find the web page capturing audio and put focus on it.
-    completionHandler();
+    return completionHandler();
 }
 #endif
 #endif // ENABLE(MEDIA_STREAM)
@@ -899,7 +899,12 @@ void GPUProcessProxy::setPresentingApplicationAuditToken(WebCore::ProcessIdentif
 #if HAVE(CORE_RE)
 void GPUProcessProxy::requestSharedSimulationConnection(audit_token_t modelProcessAuditToken, CompletionHandler<void(std::optional<IPC::SharedFileHandle>)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::GPUProcess::RequestSharedSimulationConnection { modelProcessAuditToken }, WTF::move(completionHandler));
+    requestSharedSimulationConnection(modelProcessAuditToken, CompletionHandler<void(std::optional<IPC::SharedFileHandle>), true>(WTF::move(completionHandler)));
+}
+
+CompletionHandlerCalledToken GPUProcessProxy::requestSharedSimulationConnection(audit_token_t modelProcessAuditToken, CompletionHandler<void(std::optional<IPC::SharedFileHandle>), true>&& completionHandler)
+{
+    return sendWithAsyncReply(Messages::GPUProcess::RequestSharedSimulationConnection { modelProcessAuditToken }, WTF::move(completionHandler));
 }
 #endif
 

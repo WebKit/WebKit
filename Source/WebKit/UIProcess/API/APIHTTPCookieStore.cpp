@@ -148,12 +148,27 @@ void HTTPCookieStore::setCookies(Vector<WebCore::Cookie>&& cookies, CompletionHa
     });
 }
 
+CompletionHandlerCalledToken HTTPCookieStore::setCookies(Vector<WebCore::Cookie>&& cookies, CompletionHandler<void(), true>&& completionHandler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [this, cookies = WTF::move(cookies)](auto& completionHandler, auto deferred) mutable -> CompletionHandlerCalledToken {
+        setCookies(WTF::move(cookies), CompletionHandler<void()>(WTF::move(completionHandler)));
+        return deferred;
+    });
+}
+
 void HTTPCookieStore::deleteCookie(const WebCore::Cookie& cookie, CompletionHandler<void()>&& completionHandler)
 {
     if (RefPtr networkProcess = networkProcessIfExists())
         networkProcess->sendWithAsyncReply(Messages::WebCookieManager::DeleteCookie(m_sessionID, cookie), WTF::move(completionHandler));
     else
         completionHandler();
+}
+
+CompletionHandlerCalledToken HTTPCookieStore::deleteCookie(const WebCore::Cookie& cookie, CompletionHandler<void(), true>&& completionHandler)
+{
+    if (RefPtr networkProcess = networkProcessIfExists())
+        return networkProcess->sendWithAsyncReply(Messages::WebCookieManager::DeleteCookie(m_sessionID, cookie), WTF::move(completionHandler));
+    return completionHandler();
 }
 
 void HTTPCookieStore::deleteAllCookies(CompletionHandler<void()>&& completionHandler)

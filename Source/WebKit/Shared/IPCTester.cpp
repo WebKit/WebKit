@@ -184,16 +184,18 @@ void IPCTester::sendAsyncMessageToReceiver(IPC::Connection& connection, uint32_t
     }, 0);
 }
 
-void IPCTester::sendAsyncMessageToReceiverRequestingReply(IPC::Connection& connection, uint32_t arg0, CompletionHandler<void(uint32_t, bool)>&& completionHandler)
+CompletionHandlerCalledToken IPCTester::sendAsyncMessageToReceiverRequestingReply(IPC::Connection& connection, uint32_t arg0, CompletionHandler<void(uint32_t, bool), true>&& completionHandler)
 {
 #if ENABLE(IPC_TESTING_SWIFT)
     constexpr bool usingSwift = true;
 #else
     constexpr bool usingSwift = false;
 #endif
-    connection.sendWithAsyncReply(Messages::IPCTesterReceiver::AsyncMessage(arg0 + 1), [completionHandler = WTF::move(completionHandler)](uint32_t newArg0) mutable {
-        completionHandler(newArg0, usingSwift);
-    }, 0);
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return connection.sendWithAsyncReply(Messages::IPCTesterReceiver::AsyncMessage(arg0 + 1), CompletionHandler<void(uint32_t), true>([completionHandler = WTF::move(completionHandler)](uint32_t newArg0) mutable -> CompletionHandlerCalledToken {
+            return completionHandler(newArg0, usingSwift);
+        }), 0);
+    });
 }
 
 void IPCTester::createConnectionTester(IPC::Connection& connection, IPCConnectionTesterIdentifier identifier, IPC::Connection::Handle&& testedConnectionIdentifier)
@@ -222,9 +224,9 @@ void IPCTester::releaseConnectionTester(IPCConnectionTesterIdentifier identifier
     completionHandler();
 }
 
-void IPCTester::asyncPing(uint32_t value, CompletionHandler<void(uint32_t)>&& completionHandler)
+CompletionHandlerCalledToken IPCTester::asyncPing(uint32_t value, CompletionHandler<void(uint32_t), true>&& completionHandler)
 {
-    completionHandler(value + 1);
+    return completionHandler(value + 1);
 }
 
 void IPCTester::syncPing(IPC::Connection&, uint32_t value, CompletionHandler<void(uint32_t)>&& completionHandler)
@@ -238,13 +240,12 @@ void IPCTester::syncPingEmptyReply(IPC::Connection&, uint32_t value, CompletionH
     completionHandler();
 }
 
-void IPCTester::asyncOptionalExceptionData(IPC::Connection&, bool sendEngaged, CompletionHandler<void(std::optional<WebCore::ExceptionData>, String)>&& completionHandler)
+CompletionHandlerCalledToken IPCTester::asyncOptionalExceptionData(IPC::Connection&, bool sendEngaged, CompletionHandler<void(std::optional<WebCore::ExceptionData>, String), true>&& completionHandler)
 {
     if (sendEngaged) {
-        completionHandler(WebCore::ExceptionData { WebCore::ExceptionCode::WrongDocumentError, "m"_s }, "a"_s);
-        return;
+        return completionHandler(WebCore::ExceptionData { WebCore::ExceptionCode::WrongDocumentError, "m"_s }, "a"_s);
     }
-    completionHandler(std::nullopt, "b"_s);
+    return completionHandler(std::nullopt, "b"_s);
 }
 
 void IPCTester::stopIfNeeded()
@@ -256,9 +257,9 @@ void IPCTester::stopIfNeeded()
     }
 }
 
-void IPCTester::emptyMessageWithReply(CompletionHandler<void(uint64_t)>&& completionHandler)
+CompletionHandlerCalledToken IPCTester::emptyMessageWithReply(CompletionHandler<void(uint64_t), true>&& completionHandler)
 {
-    completionHandler(0x1);
+    return completionHandler(0x1);
 }
 
 void IPCTester::checkTestParameter(IPC::Connection& connection, TestParameter param)

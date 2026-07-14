@@ -62,7 +62,7 @@ public:
         void setAsClosed() { m_isClosed = true; }
 
         // IPC message handlers.
-        WEBCORE_EXPORT void postConnectEvent(SharedWorkerIdentifier, TransferredMessagePort&&, const SecurityOriginData& sourceOrigin, CompletionHandler<void(bool)>&&);
+        WEBCORE_EXPORT CompletionHandlerCalledToken postConnectEvent(SharedWorkerIdentifier, TransferredMessagePort&&, const SecurityOriginData& sourceOrigin, CompletionHandler<void(bool), true>&&);
         WEBCORE_EXPORT void terminateSharedWorker(SharedWorkerIdentifier);
         WEBCORE_EXPORT void suspendSharedWorker(SharedWorkerIdentifier);
         WEBCORE_EXPORT void resumeSharedWorker(SharedWorkerIdentifier);

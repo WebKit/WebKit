@@ -53,7 +53,7 @@ private:
     void didFinish(DownloadProxy&) final;
     void didFail(DownloadProxy&, const WebCore::ResourceError&, API::Data*) final;
     void legacyDidCancel(DownloadProxy&) final;
-    void willSendRequest(DownloadProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&) final;
+    CompletionHandlerCalledToken willSendRequest(DownloadProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&), true>&&) final;
     void didReceiveAuthenticationChallenge(DownloadProxy&, AuthenticationChallengeProxy&) final;
     void didCreateDestination(DownloadProxy&, const String&) final;
     void processDidCrash(DownloadProxy&) final;

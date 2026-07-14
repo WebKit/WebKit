@@ -33,6 +33,7 @@
 #include "PlatformMediaSession.h"
 #include <algorithm>
 #include <ranges>
+#include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #define MEDIASESSIONMANAGERINTERFACE_RELEASE_LOG(formatString, ...) \
@@ -487,6 +488,14 @@ void MediaSessionManagerInterface::sessionWillBeginPlayback(PlatformMediaSession
 #else
     completionHandler(false);
 #endif
+}
+
+CompletionHandlerCalledToken MediaSessionManagerInterface::sessionWillBeginPlayback(PlatformMediaSessionInterface& session, CompletionHandler<void(bool), true>&& completionHandler)
+{
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        sessionWillBeginPlayback(session, CompletionHandler<void(bool)>(WTF::move(completionHandler)));
+        return deferred;
+    });
 }
 
 void MediaSessionManagerInterface::sessionWillEndPlayback(PlatformMediaSessionInterface& pausingSession, DelayCallingUpdateNowPlaying)

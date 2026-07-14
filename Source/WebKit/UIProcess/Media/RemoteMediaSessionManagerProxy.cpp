@@ -175,15 +175,18 @@ void RemoteMediaSessionManagerProxy::setCurrentSession(WebCore::PlatformMediaSes
     REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::addSession(session);
 }
 
-void RemoteMediaSessionManagerProxy::mediaSessionWillBeginPlayback(RemoteMediaSessionState&& state, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken RemoteMediaSessionManagerProxy::mediaSessionWillBeginPlayback(RemoteMediaSessionState&& state, CompletionHandler<void(bool), true>&& completionHandler)
 {
     RefPtr session = findAndUpdateSession(state);
     if (!session) {
-        completionHandler(false);
-        return;
+        return completionHandler(false);
     }
 
-    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionWillBeginPlayback(*session, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionWillBeginPlayback(*session, CompletionHandler<void(bool)>(WTF::move(completionHandler)));
+        return deferred;
+    });
+
 }
 
 void RemoteMediaSessionManagerProxy::addMediaSessionRestriction(WebCore::PlatformMediaSessionMediaType type, WebCore::MediaSessionRestrictions restrictions)

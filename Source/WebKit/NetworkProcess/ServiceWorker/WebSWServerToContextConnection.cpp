@@ -85,6 +85,12 @@ void WebSWServerToContextConnection::sendWithAsyncReplyToParentProcess(T&& messa
     networkProcess()->parentProcessConnection()->sendWithAsyncReply(WTF::move(message), WTF::move(callback), 0);
 }
 
+template<typename T, typename Sig>
+CompletionHandlerCalledToken WebSWServerToContextConnection::sendWithAsyncReplyToParentProcess(T&& message, CompletionHandler<Sig, true>&& callback)
+{
+    return networkProcess()->parentProcessConnection()->sendWithAsyncReply(WTF::move(message), WTF::move(callback), 0);
+}
+
 void WebSWServerToContextConnection::stop()
 {
     auto fetches = WTF::move(m_ongoingFetches);
@@ -136,14 +142,17 @@ void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const Scri
         connection->postMessageToServiceWorkerClient(destinationIdentifier, message, sourceIdentifier, sourceOrigin);
 }
 
-void WebSWServerToContextConnection::skipWaiting(ServiceWorkerIdentifier serviceWorkerIdentifier, CompletionHandler<void()>&& callback)
+CompletionHandlerCalledToken WebSWServerToContextConnection::skipWaiting(ServiceWorkerIdentifier serviceWorkerIdentifier, CompletionHandler<void(), true>&& callback)
 {
     if (RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier)) {
-        MESSAGE_CHECK(worker->isTerminating() || worker->registration());
+        if (!worker->isTerminating() && !worker->registration()) [[unlikely]] {
+            IPC::markCurrentlyDispatchedMessageAsInvalid(*ipcConnection(), "skipWaiting: invalid worker state"_s);
+            return callback();
+        }
         worker->skipWaiting();
     }
 
-    callback();
+    return callback();
 }
 
 void WebSWServerToContextConnection::installServiceWorkerContext(const ServiceWorkerContextData& contextData, const ServiceWorkerData& workerData, const String& userAgent, WorkerThreadMode workerThreadMode, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections)
@@ -261,12 +270,12 @@ void WebSWServerToContextConnection::setAsInspected(ServiceWorkerIdentifier serv
             auto scopeURL = worker->registrationKey().scope();
             session->notificationManager().setServiceWorkerIsBeingInspected(scopeURL, true);
 
-            worker->whenTerminated([connection = WeakPtr { m_connection }, scopeURL]() {
+            worker->whenTerminated(CompletionHandler<void()>([connection = WeakPtr { m_connection }, scopeURL]() {
                 if (RefPtr protectedConnection = connection.get()) {
                     if (CheckedPtr session = protectedConnection->networkSession())
                         session->notificationManager().setServiceWorkerIsBeingInspected(scopeURL, false);
                 }
-            });
+            }));
         }
     }
 #endif
@@ -424,47 +433,44 @@ void WebSWServerToContextConnection::unregisterDownload(ServiceWorkerDownloadTas
     m_ongoingDownloads.remove(task.fetchIdentifier());
 }
 
-void WebSWServerToContextConnection::focus(ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&& callback)
+CompletionHandlerCalledToken WebSWServerToContextConnection::focus(ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&), true>&& callback)
 {
     RefPtr server = this->server();
     RefPtr connection = server ? server->connection(clientIdentifier.processIdentifier()) : nullptr;
     if (!connection) {
-        callback({ });
-        return;
+        return callback({ });
     }
-    connection->focusServiceWorkerClient(clientIdentifier, WTF::move(callback));
+    return CompletionHandlerCalledToken::deferUnchecked(callback, [&](auto& callback, auto deferred) -> CompletionHandlerCalledToken {
+        connection->focusServiceWorkerClient(clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>(WTF::move(callback)));
+        return WTF::move(deferred);
+    });
 }
 
-void WebSWServerToContextConnection::navigate(ScriptExecutionContextIdentifier clientIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const URL& url, CompletionHandler<void(Expected<std::optional<ServiceWorkerClientData>, ExceptionData>&&)>&& callback)
+CompletionHandlerCalledToken WebSWServerToContextConnection::navigate(ScriptExecutionContextIdentifier clientIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const URL& url, CompletionHandler<void(Expected<std::optional<ServiceWorkerClientData>, ExceptionData>&&), true>&& callback)
 {
     RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier);
     if (!worker) {
-        callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "no service worker"_s }));
-        return;
+        return callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "no service worker"_s }));
     }
 
     if (!worker->isClientActiveServiceWorker(clientIdentifier)) {
-        callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "service worker is not the client active service worker"_s }));
-        return;
+        return callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "service worker is not the client active service worker"_s }));
     }
 
     auto data = worker->findClientByIdentifier(clientIdentifier);
     if (!data || !data->pageIdentifier || !data->frameIdentifier) {
-        callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "cannot navigate service worker client"_s }));
-        return;
+        return callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "cannot navigate service worker client"_s }));
     }
 
     auto frameIdentifier = *data->frameIdentifier;
-    sendWithAsyncReplyToParentProcess(Messages::NetworkProcessProxy::NavigateServiceWorkerClient { frameIdentifier, clientIdentifier, url }, [weakThis = WeakPtr { *this }, url, clientOrigin = worker->origin(), callback = WTF::move(callback)](auto pageIdentifier, auto frameIdentifier) mutable {
+    return sendWithAsyncReplyToParentProcess(Messages::NetworkProcessProxy::NavigateServiceWorkerClient { frameIdentifier, clientIdentifier, url }, CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>), true>([weakThis = WeakPtr { *this }, url, clientOrigin = worker->origin(), callback = WTF::move(callback)](auto pageIdentifier, auto frameIdentifier) mutable -> CompletionHandlerCalledToken {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !protectedThis->server()) {
-            callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "service worker is gone"_s }));
-            return;
+            return callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "service worker is gone"_s }));
         }
 
         if (!pageIdentifier || !frameIdentifier) {
-            callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "navigate failed"_s }));
-            return;
+            return callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "navigate failed"_s }));
         }
 
         std::optional<ServiceWorkerClientData> clientData;
@@ -472,8 +478,8 @@ void WebSWServerToContextConnection::navigate(ScriptExecutionContextIdentifier c
             if (!clientData && data.pageIdentifier && *data.pageIdentifier == *pageIdentifier && data.frameIdentifier && *data.frameIdentifier == *frameIdentifier && equalIgnoringFragmentIdentifier(data.url, url))
                 clientData = data;
         });
-        callback(WTF::move(clientData));
-    });
+        return callback(WTF::move(clientData));
+    }));
 }
 
 void WebSWServerToContextConnection::setInspectable(ServiceWorkerIsInspectable inspectable)

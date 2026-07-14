@@ -26,6 +26,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import <WebCore/Icon.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/HashSet.h>
 #import <wtf/OptionSet.h>
 #import <wtf/RetainPtr.h>
@@ -126,6 +127,7 @@ NSURL *ensureDirectoryExists(NSURL *directory);
 NSString *escapeCharactersInString(NSString *, NSString *charactersToEscape);
 
 void callAfterRandomDelay(Function<void()>&&);
+CompletionHandlerCalledToken callAfterRandomDelay(Function<CompletionHandlerCalledToken()>&&);
 
 NSDate *toAPI(const WallTime&);
 WallTime toImpl(NSDate *);

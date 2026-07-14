@@ -530,7 +530,7 @@ void WebAuthenticatorCoordinatorProxy::pauseConditionalAssertion(CompletionHandl
 
     if (m_isConditionalMediation) {
         m_paused = true;
-        m_cancelHandler = WTF::move(completionHandler);
+        m_cancelHandler = CompletionHandler<void(), true>(WTF::move(completionHandler));
         [m_controller cancel];
     } else
         completionHandler();
@@ -783,7 +783,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                     weakThis->m_isConditionalMediation = false;
                 }
                 if (auto cancelHandler = WTF::move(weakThis->m_cancelHandler))
-                    cancelHandler();
+                    (void)cancelHandler();
             }
         });
     }).get()]);
@@ -1364,110 +1364,127 @@ void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvail
     });
 }
 
-void WebAuthenticatorCoordinatorProxy::cancel(CompletionHandler<void()>&& handler)
+CompletionHandlerCalledToken WebAuthenticatorCoordinatorProxy::cancel(CompletionHandler<void(), true>&& handler)
 {
 #if HAVE(WEB_AUTHN_AS_MODERN)
     if (m_completionHandler || m_delegate) {
 #else
     if (m_proxy) {
 #endif
-        m_cancelHandler = [weakThis = WeakPtr { *this }, handler = WTF::move(handler)]() mutable {
+        return CompletionHandlerCalledToken::deferUnchecked(handler, [&](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+            m_cancelHandler = [weakThis = WeakPtr { *this }, handler = WTF::move(handler)]() mutable -> CompletionHandlerCalledToken {
 #if HAVE(WEB_AUTHN_AS_MODERN)
-            if (weakThis) {
-                weakThis->m_controller.clear();
-                weakThis->m_delegate.clear();
-                weakThis->m_completionHandler = nullptr;
-            }
+                if (weakThis) {
+                    weakThis->m_controller.clear();
+                    weakThis->m_delegate.clear();
+                    weakThis->m_completionHandler = nullptr;
+                }
 #endif
-            handler();
-        };
-    } else
-        handler();
+                return handler();
+            };
 
 #if HAVE(UNIFIED_ASC_AUTH_UI)
-    if (m_proxy) {
-        [m_proxy cancelCurrentRequest];
-        m_proxy.clear();
-    }
+            if (m_proxy) {
+                [m_proxy cancelCurrentRequest];
+                m_proxy.clear();
+            }
 #endif
 
 #if HAVE(WEB_AUTHN_AS_MODERN)
-    if (m_controller)
-        [m_controller cancel];
+            if (m_controller)
+                [m_controller cancel];
 #endif
+            return WTF::move(deferred);
+        });
+    } else
+        return handler();
 }
 
-void WebAuthenticatorCoordinatorProxy::signalUnknownCredential(const WebCore::SecurityOriginData&, WebCore::UnknownCredentialOptions&& options, CompletionHandler<void(std::optional<ExceptionData>)>&& completionHandler)
+CompletionHandlerCalledToken WebAuthenticatorCoordinatorProxy::signalUnknownCredential(const WebCore::SecurityOriginData&, WebCore::UnknownCredentialOptions&& options, CompletionHandler<void(std::optional<ExceptionData>), true>&& completionHandler)
 {
     auto decodedCredentialId = base64URLDecode(options.credentialId);
     if (!decodedCredentialId) {
         RELEASE_LOG_ERROR(WebAuthn, "Failed to parse credentialId for signalUnknownCredential.");
-        completionHandler(ExceptionData { ExceptionCode::UnknownError, "Unable to parse credential ID."_s });
-        return;
+        return completionHandler(ExceptionData { ExceptionCode::UnknownError, "Unable to parse credential ID."_s });
     }
 
 #if USE(APPLE_INTERNAL_SDK)
-    [getCredentialUpdaterShimClassSingleton() signalUnknownCredentialWithRelyingPartyIdentifier:options.rpId.createNSString().get() credentialID:WTF::toNSData(*decodedCredentialId).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
-        if (error) {
-            RELEASE_LOG_ERROR(WebAuthn, "Error signaling unknown credential: %@.", error.localizedDescription);
-            completionHandler(ExceptionData { ExceptionCode::UnknownError, "Error signaling unknown credential."_s });
-            return;
-        }
-        completionHandler(std::nullopt);
-    }).get()];
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        [getCredentialUpdaterShimClassSingleton() signalUnknownCredentialWithRelyingPartyIdentifier:options.rpId.createNSString().get() credentialID:WTF::toNSData(*decodedCredentialId).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
+            if (error) {
+                RELEASE_LOG_ERROR(WebAuthn, "Error signaling unknown credential: %@.", error.localizedDescription);
+                completionHandler(ExceptionData { ExceptionCode::UnknownError, "Error signaling unknown credential."_s });
+                return;
+            }
+            completionHandler(std::nullopt);
+        }).get()];
+        return WTF::move(deferred);
+    });
+#else
+    return completionHandler(std::nullopt);
 #endif
+
 }
 
-void WebAuthenticatorCoordinatorProxy::signalAllAcceptedCredentials(const WebCore::SecurityOriginData&, WebCore::AllAcceptedCredentialsOptions&& options, CompletionHandler<void(std::optional<ExceptionData>)>&& completionHandler)
+CompletionHandlerCalledToken WebAuthenticatorCoordinatorProxy::signalAllAcceptedCredentials(const WebCore::SecurityOriginData&, WebCore::AllAcceptedCredentialsOptions&& options, CompletionHandler<void(std::optional<ExceptionData>), true>&& completionHandler)
 {
     auto userHandle = base64URLDecode(options.userId);
     if (!userHandle) {
         RELEASE_LOG_ERROR(WebAuthn, "Failed to parse userHandle for signalAllAcceptedCredentials.");
-        completionHandler(ExceptionData { ExceptionCode::UnknownError, "Unable to parse credential ID."_s });
-        return;
+        return completionHandler(ExceptionData { ExceptionCode::UnknownError, "Unable to parse credential ID."_s });
     }
     RetainPtr<NSMutableArray<NSData *>> credentialIds = adoptNS([[NSMutableArray alloc] init]);
     for (auto& credential : options.allAcceptedCredentialIds) {
         auto decodedCredentialId = base64URLDecode(credential);
         if (!decodedCredentialId) {
             RELEASE_LOG_ERROR(WebAuthn, "Failed to parse credentialId for signalAllAcceptedCredentials.");
-            completionHandler(ExceptionData { ExceptionCode::UnknownError, "Unable to parse credential ID."_s });
-            return;
+            return completionHandler(ExceptionData { ExceptionCode::UnknownError, "Unable to parse credential ID."_s });
         }
         [credentialIds addObject:toNSData(*decodedCredentialId).get()];
     }
 
 #if USE(APPLE_INTERNAL_SDK)
-    [getCredentialUpdaterShimClassSingleton() signalAllAcceptedCredentialsWithRelyingPartyIdentifier:options.rpId.createNSString().get() userHandle:WTF::toNSData(*userHandle).get() acceptedCredentialIDs:credentialIds.get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
-        if (error) {
-            RELEASE_LOG_ERROR(WebAuthn, "Error signaling all accepted credentials: %@.", error.localizedDescription);
-            completionHandler(ExceptionData { ExceptionCode::UnknownError, "Error signaling all accepted credentials"_s });
-            return;
-        }
-        completionHandler(std::nullopt);
-    }).get()];
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        [getCredentialUpdaterShimClassSingleton() signalAllAcceptedCredentialsWithRelyingPartyIdentifier:options.rpId.createNSString().get() userHandle:WTF::toNSData(*userHandle).get() acceptedCredentialIDs:credentialIds.get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
+            if (error) {
+                RELEASE_LOG_ERROR(WebAuthn, "Error signaling all accepted credentials: %@.", error.localizedDescription);
+                completionHandler(ExceptionData { ExceptionCode::UnknownError, "Error signaling all accepted credentials"_s });
+                return;
+            }
+            completionHandler(std::nullopt);
+        }).get()];
+        return WTF::move(deferred);
+    });
+#else
+    return completionHandler(std::nullopt);
 #endif
+
 }
 
-void WebAuthenticatorCoordinatorProxy::signalCurrentUserDetails(const WebCore::SecurityOriginData&, WebCore::CurrentUserDetailsOptions&& options, CompletionHandler<void(std::optional<ExceptionData>)>&& completionHandler)
+CompletionHandlerCalledToken WebAuthenticatorCoordinatorProxy::signalCurrentUserDetails(const WebCore::SecurityOriginData&, WebCore::CurrentUserDetailsOptions&& options, CompletionHandler<void(std::optional<ExceptionData>), true>&& completionHandler)
 {
     auto userHandle = base64URLDecode(options.userId);
     if (!userHandle) {
         RELEASE_LOG_ERROR(WebAuthn, "Failed to parse userHandle for signalAllAcceptedCredentials.");
-        completionHandler(ExceptionData { ExceptionCode::UnknownError, "Unable to parse credential ID."_s });
-        return;
+        return completionHandler(ExceptionData { ExceptionCode::UnknownError, "Unable to parse credential ID."_s });
     }
 
 #if USE(APPLE_INTERNAL_SDK)
-    [getCredentialUpdaterShimClassSingleton() signalCurrentUserDetailsWithRelyingPartyIdentifier:options.rpId.createNSString().get() userHandle:WTF::toNSData(*userHandle).get() newName:options.name.createNSString().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
-        if (error) {
-            RELEASE_LOG_ERROR(WebAuthn, "Error signaling current user details: %@.", error.localizedDescription);
-            completionHandler(ExceptionData { ExceptionCode::UnknownError, "Error signaling current user details."_s });
-            return;
-        }
-        completionHandler(std::nullopt);
-    }).get()];
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        [getCredentialUpdaterShimClassSingleton() signalCurrentUserDetailsWithRelyingPartyIdentifier:options.rpId.createNSString().get() userHandle:WTF::toNSData(*userHandle).get() newName:options.name.createNSString().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
+            if (error) {
+                RELEASE_LOG_ERROR(WebAuthn, "Error signaling current user details: %@.", error.localizedDescription);
+                completionHandler(ExceptionData { ExceptionCode::UnknownError, "Error signaling current user details."_s });
+                return;
+            }
+            completionHandler(std::nullopt);
+        }).get()];
+        return WTF::move(deferred);
+    });
+#else
+    return completionHandler(std::nullopt);
 #endif
+
 }
 
 } // namespace WebKit

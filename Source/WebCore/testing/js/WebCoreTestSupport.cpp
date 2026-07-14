@@ -117,10 +117,10 @@ void setWheelEventMonitorTestCallbackAndStartMonitoring(bool expectWheelEndOrCan
     JSValueProtect(context, jsCallbackFunction);
 
     if (auto wheelEventTestMonitor = page->wheelEventTestMonitor()) {
-        wheelEventTestMonitor->setTestCallbackAndStartMonitoring(expectWheelEndOrCancel, expectMomentumEnd, [=](void) {
+        wheelEventTestMonitor->setTestCallbackAndStartMonitoring(expectWheelEndOrCancel, expectMomentumEnd, Function<void()> { [=](void) {
             JSObjectCallAsFunction(context, jsCallbackFunction, nullptr, 0, nullptr, nullptr);
             JSValueUnprotect(context, jsCallbackFunction);
-        });
+        } });
     }
 }
 

@@ -371,7 +371,7 @@ struct _WebKitWebViewBasePrivate {
 
 #if GTK_CHECK_VERSION(3, 24, 0)
     GtkWidget* emojiChooser;
-    CompletionHandler<void(String)> emojiChooserCompletionHandler;
+    CompletionHandler<void(String), true> emojiChooserCompletionHandler;
     RunLoop::Timer releaseEmojiChooserTimer;
 #endif
 
@@ -829,7 +829,7 @@ void webkitWebViewBaseRemoveWebInspector(WebKitWebViewBase* webViewBase, GtkWidg
 static void webkitWebViewBaseCompleteEmojiChooserRequest(WebKitWebViewBase* webView, const String& text)
 {
     if (auto completionHandler = std::exchange(webView->priv->emojiChooserCompletionHandler, nullptr))
-        completionHandler(text);
+        (void)completionHandler(text);
 }
 #endif
 
@@ -3049,7 +3049,7 @@ static void emojiChooserClosed(WebKitWebViewBase* webkitWebViewBase)
 }
 #endif
 
-void webkitWebViewBaseShowEmojiChooser(WebKitWebViewBase* webkitWebViewBase, const IntRect& caretRect, CompletionHandler<void(String)>&& completionHandler)
+CompletionHandlerCalledToken webkitWebViewBaseShowEmojiChooser(WebKitWebViewBase* webkitWebViewBase, const IntRect& caretRect, CompletionHandler<void(String), true>&& completionHandler)
 {
 #if GTK_CHECK_VERSION(3, 24, 0)
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
@@ -3067,16 +3067,24 @@ void webkitWebViewBaseShowEmojiChooser(WebKitWebViewBase* webkitWebViewBase, con
         g_signal_connect_swapped(priv->emojiChooser, "closed", G_CALLBACK(emojiChooserClosed), webkitWebViewBase);
     }
 
-    priv->emojiChooserCompletionHandler = WTF::move(completionHandler);
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        priv->emojiChooserCompletionHandler = WTF::move(completionHandler);
 
-    GdkRectangle gdkCaretRect = caretRect;
-    gtk_popover_set_pointing_to(GTK_POPOVER(priv->emojiChooser), &gdkCaretRect);
-    gtk_popover_popup(GTK_POPOVER(priv->emojiChooser));
+        GdkRectangle gdkCaretRect = caretRect;
+        gtk_popover_set_pointing_to(GTK_POPOVER(priv->emojiChooser), &gdkCaretRect);
+        gtk_popover_popup(GTK_POPOVER(priv->emojiChooser));
+        return deferred;
+    });
 #else
     UNUSED_PARAM(webkitWebViewBase);
     UNUSED_PARAM(caretRect);
-    completionHandler(emptyString());
+    return completionHandler(emptyString());
 #endif
+}
+
+void webkitWebViewBaseShowEmojiChooser(WebKitWebViewBase* webkitWebViewBase, const IntRect& caretRect, CompletionHandler<void(String)>&& completionHandler)
+{
+    webkitWebViewBaseShowEmojiChooser(webkitWebViewBase, caretRect, CompletionHandler<void(String), true>(WTF::move(completionHandler)));
 }
 
 #if ENABLE(POINTER_LOCK)

@@ -62,7 +62,7 @@ public:
     void showDigitalCredentialsChooser(std::optional<WebCore::FrameIdentifier>, WebCore::DigitalCredentialsRawRequests&&, const WebCore::DigitalCredentialsRequestData&, CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&) final;
     void dismissDigitalCredentialsChooser(CompletionHandler<void(bool)>&&) final;
     WebCore::ExceptionOr<Vector<WebCore::ValidatedDigitalCredentialRequest>> validateAndParseDigitalCredentialRequests(const WebCore::SecurityOrigin&, const WebCore::Document&, const Vector<WebCore::UnvalidatedDigitalCredentialRequest>&) final;
-    void provideRawDigitalCredentialRequests(CompletionHandler<void(WebCore::DigitalCredentialsRawRequests&&)>&&);
+    CompletionHandlerCalledToken provideRawDigitalCredentialRequests(CompletionHandler<void(WebCore::DigitalCredentialsRawRequests&&), true>&&);
 
 private:
     explicit DigitalCredentialsCoordinator(WebPage&);

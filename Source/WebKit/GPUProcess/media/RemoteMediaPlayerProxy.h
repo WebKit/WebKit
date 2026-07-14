@@ -150,7 +150,7 @@ public:
     void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm, bool prepareToPlay, bool prepareForRendering, WebCore::IntSize presentationSize, float videoContentScale, bool isFullscreen, WebCore::DynamicRangeMode, WebCore::PlatformDynamicRangeLimit);
     void prepareForRendering();
 
-    void load(URL&&, std::optional<SandboxExtension::Handle>&&, const WebCore::MediaPlayerLoadOptions&, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&&);
+    CompletionHandlerCalledToken load(URL&&, std::optional<SandboxExtension::Handle>&&, const WebCore::MediaPlayerLoadOptions&, CompletionHandler<void(RemoteMediaPlayerConfiguration&&), true>&&);
     void cancelLoad();
 
     void prepareToPlay();
@@ -180,7 +180,7 @@ public:
     void acceleratedRenderingStateChanged(bool);
     void setShouldDisableSleep(bool);
     void setRate(double);
-    void didLoadingProgress(CompletionHandler<void(bool)>&&);
+    CompletionHandlerCalledToken didLoadingProgress(CompletionHandler<void(bool), true>&&);
 
     void setPresentationSize(const WebCore::IntSize&);
 
@@ -366,7 +366,7 @@ private:
     void colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
 #endif
     void videoFrameForCurrentTimeIfChanged(CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>&&, bool)>&&);
-    void bitmapImageForCurrentTime(CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
+    CompletionHandlerCalledToken bitmapImageForCurrentTime(CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&), true>&&);
 
     void setShouldDisableHDR(bool);
     void requestHostingContext(CompletionHandler<void(WebCore::HostingContext)>&&);

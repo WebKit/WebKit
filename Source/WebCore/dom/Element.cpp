@@ -5240,13 +5240,13 @@ void Element::requestFullscreen(FullscreenOptions&& options, RefPtr<DeferredProm
         }
     }
 
-    protect(document())->fullscreen().requestFullscreen(*this, DocumentFullscreen::EnforceIFrameAllowFullscreenRequirement, [promise = WTF::move(promise)] (auto result) {
+    protect(document())->fullscreen().requestFullscreen(*this, DocumentFullscreen::EnforceIFrameAllowFullscreenRequirement, CompletionHandler<void(ExceptionOr<void>)>([promise = WTF::move(promise)] (auto result) {
         if (!promise)
             return;
         if (result.hasException())
             return promise->reject(result.releaseException());
         return promise->resolve();
-    });
+    }));
 }
 
 void Element::setFullscreenFlag(bool flag)

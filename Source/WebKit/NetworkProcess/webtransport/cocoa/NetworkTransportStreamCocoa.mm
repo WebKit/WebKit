@@ -192,44 +192,50 @@ void NetworkTransportStream::initializeReadyConnection()
     }
 }
 
-void NetworkTransportStream::sendBytes(std::span<const uint8_t> data, bool withFin, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
+CompletionHandlerCalledToken NetworkTransportStream::sendBytes(std::span<const uint8_t> data, bool withFin, CompletionHandler<void(std::optional<WebCore::Exception>&&), true>&& completionHandler)
 {
-    if (m_streamState == NetworkTransportStreamState::WriteClosed || m_streamState == NetworkTransportStreamState::Complete) {
-        completionHandler(WebCore::Exception(WebCore::ExceptionCode::InvalidStateError));
-        return;
-    }
-    nw_connection_send(m_connection.get(), makeDispatchData(Vector(data)).get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, withFin, makeBlockPtr([
-        weakThis = WeakPtr { *this },
-        withFin = withFin,
-        bytesSent = data.size(),
-        completionHandler = WTF::move(completionHandler)
-    ] (nw_error_t error) mutable {
-        // Send stream is errored only on incoming STOP_SENDING or session error.
-        if (error)
-            return completionHandler(std::nullopt);
+    if (m_streamState == NetworkTransportStreamState::WriteClosed || m_streamState == NetworkTransportStreamState::Complete)
+        return completionHandler(WebCore::Exception(WebCore::ExceptionCode::InvalidStateError));
 
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
-            return completionHandler(std::nullopt);
-
-        protectedThis->m_bytesSent += bytesSent;
-
-        if (withFin) {
-            switch (protectedThis->m_streamState) {
-            case NetworkTransportStreamState::Ready:
-                protectedThis->m_streamState = NetworkTransportStreamState::WriteClosed;
-                break;
-            case NetworkTransportStreamState::ReadClosed:
-                protectedThis->m_streamState = NetworkTransportStreamState::Complete;
-                break;
-            case NetworkTransportStreamState::WriteClosed:
-            case NetworkTransportStreamState::Complete:
-                break;
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        nw_connection_send(m_connection.get(), makeDispatchData(Vector(data)).get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, withFin, makeBlockPtr([
+            weakThis = WeakPtr { *this },
+            withFin = withFin,
+            bytesSent = data.size(),
+            completionHandler = WTF::move(completionHandler)
+        ] (nw_error_t error) mutable {
+            // Send stream is errored only on incoming STOP_SENDING or session error.
+            if (error) {
+                completionHandler(std::nullopt);
+                return;
             }
-        }
 
-        completionHandler(std::nullopt);
-    }).get());
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis) {
+                completionHandler(std::nullopt);
+                return;
+            }
+
+            protectedThis->m_bytesSent += bytesSent;
+
+            if (withFin) {
+                switch (protectedThis->m_streamState) {
+                case NetworkTransportStreamState::Ready:
+                    protectedThis->m_streamState = NetworkTransportStreamState::WriteClosed;
+                    break;
+                case NetworkTransportStreamState::ReadClosed:
+                    protectedThis->m_streamState = NetworkTransportStreamState::Complete;
+                    break;
+                case NetworkTransportStreamState::WriteClosed:
+                case NetworkTransportStreamState::Complete:
+                    break;
+                }
+            }
+
+            completionHandler(std::nullopt);
+        }).get());
+        return deferred;
+    });
 }
 
 void NetworkTransportStream::receiveLoop()

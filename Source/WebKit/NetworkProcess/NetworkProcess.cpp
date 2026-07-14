@@ -2963,9 +2963,9 @@ void NetworkProcess::hasPushSubscriptionForTesting(PAL::SessionID sessionID, URL
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     if (CheckedPtr session = networkSession(sessionID)) {
-        session->notificationManager().getPushSubscription(WTF::move(scopeURL), [callback = WTF::move(callback)](auto &&result) mutable {
+        session->notificationManager().getPushSubscription(WTF::move(scopeURL), CompletionHandler<void(Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>([callback = WTF::move(callback)](auto &&result) mutable {
             callback(result && result->has_value());
-        });
+        }));
         return;
     }
 #endif

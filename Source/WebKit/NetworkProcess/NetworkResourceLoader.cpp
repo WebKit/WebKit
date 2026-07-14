@@ -1571,9 +1571,9 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
         auto topOrigin = parameters().topOriginForServiceWorkers(newRequest.url());
         if (CheckedPtr session = protect(connectionToWebProcess())->networkSession()) {
             if (RefPtr server = session->swServer(); server && !server->isImportCompletedForOrigin(topOrigin)) {
-                server->importRegistrationsForOrigin(topOrigin, [this, protectedThis = Ref { *this }, newRequest = WTF::move(newRequest), isAllowedToAskUserForCredentials, completionHandler = WTF::move(completionHandler)]() mutable {
+                server->importRegistrationsForOrigin(topOrigin, CompletionHandler<void()>([this, protectedThis = Ref { *this }, newRequest = WTF::move(newRequest), isAllowedToAskUserForCredentials, completionHandler = WTF::move(completionHandler)]() mutable {
                     continueWillSendRequest(WTF::move(newRequest), isAllowedToAskUserForCredentials, WTF::move(completionHandler));
-                });
+                }));
                 return;
             }
         }

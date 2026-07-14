@@ -95,29 +95,37 @@ void NetworkNotificationManager::getPendingPushMessages(CompletionHandler<void(c
 
 void NetworkNotificationManager::showNotification(const WebCore::NotificationData& notification, RefPtr<NotificationResources>&& notificationResources, CompletionHandler<void()>&& completionHandler)
 {
-    RefPtr connection = m_connection;
-    if (!connection) {
-        completionHandler();
-        return;
-    }
-
-    connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::ShowNotification { notification, notificationResources }, WTF::move(completionHandler));
+    (void)showNotification(notification, WTF::move(notificationResources), CompletionHandler<void(), true>(WTF::move(completionHandler)));
 }
 
-void NetworkNotificationManager::showNotification(IPC::Connection&, const WebCore::NotificationData& notification, RefPtr<NotificationResources>&& notificationResources, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken NetworkNotificationManager::showNotification(const WebCore::NotificationData& notification, RefPtr<NotificationResources>&& notificationResources, CompletionHandler<void(), true>&& completionHandler)
 {
-    showNotification(notification, WTF::move(notificationResources), WTF::move(completionHandler));
+    RefPtr connection = m_connection;
+    if (!connection)
+        return completionHandler();
+
+    return connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::ShowNotification { notification, notificationResources }, WTF::move(completionHandler));
+}
+
+CompletionHandlerCalledToken NetworkNotificationManager::showNotification(IPC::Connection&, const WebCore::NotificationData& notification, RefPtr<NotificationResources>&& notificationResources, CompletionHandler<void(), true>&& completionHandler)
+{
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return showNotification(notification, WTF::move(notificationResources), WTF::move(completionHandler));
+    });
 }
 
 void NetworkNotificationManager::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
 {
-    RefPtr connection = m_connection;
-    if (!connection) {
-        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active connection to webpushd"_s }));
-        return;
-    }
+    (void)getNotifications(registrationURL, tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&), true>(WTF::move(completionHandler)));
+}
 
-    connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetNotifications { registrationURL, tag }, WTF::move(completionHandler));
+CompletionHandlerCalledToken NetworkNotificationManager::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&), true>&& completionHandler)
+{
+    RefPtr connection = m_connection;
+    if (!connection)
+        return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active connection to webpushd"_s }));
+
+    return connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetNotifications { registrationURL, tag }, WTF::move(completionHandler));
 }
 
 void NetworkNotificationManager::cancelNotification(WebCore::SecurityOriginData&& origin, const WTF::UUID& notificationID)
@@ -141,7 +149,7 @@ void NetworkNotificationManager::didDestroyNotification(const WTF::UUID&)
         return;
 }
 
-void NetworkNotificationManager::requestPermission(WebCore::SecurityOriginData&& origin, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken NetworkNotificationManager::requestPermission(WebCore::SecurityOriginData&& origin, CompletionHandler<void(bool), true>&& completionHandler)
 {
     RefPtr connection = m_connection;
     if (!connection) {
@@ -149,7 +157,9 @@ void NetworkNotificationManager::requestPermission(WebCore::SecurityOriginData&&
         return completionHandler(false);
     }
 
-    connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RequestPushPermission { WTF::move(origin) }, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RequestPushPermission { WTF::move(origin) }, WTF::move(completionHandler));
+    });
 }
 
 void NetworkNotificationManager::setAppBadge(const WebCore::SecurityOriginData& origin, std::optional<uint64_t> badge)
@@ -174,24 +184,30 @@ void NetworkNotificationManager::subscribeToPushService(URL&& scopeURL, Vector<u
 
 void NetworkNotificationManager::unsubscribeFromPushService(URL&& scopeURL, std::optional<PushSubscriptionIdentifier> pushSubscriptionIdentifier, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&)>&& completionHandler)
 {
-    RefPtr connection = m_connection;
-    if (!connection) {
-        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::AbortError, "No connection to push daemon"_s }));
-        return;
-    }
+    (void)unsubscribeFromPushService(WTF::move(scopeURL), pushSubscriptionIdentifier, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&), true>(WTF::move(completionHandler)));
+}
 
-    connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::UnsubscribeFromPushService(WTF::move(scopeURL), pushSubscriptionIdentifier), WTF::move(completionHandler));
+CompletionHandlerCalledToken NetworkNotificationManager::unsubscribeFromPushService(URL&& scopeURL, std::optional<PushSubscriptionIdentifier> pushSubscriptionIdentifier, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&), true>&& completionHandler)
+{
+    RefPtr connection = m_connection;
+    if (!connection)
+        return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::AbortError, "No connection to push daemon"_s }));
+
+    return connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::UnsubscribeFromPushService(WTF::move(scopeURL), pushSubscriptionIdentifier), WTF::move(completionHandler));
 }
 
 void NetworkNotificationManager::getPushSubscription(URL&& scopeURL, CompletionHandler<void(Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&& completionHandler)
 {
-    RefPtr connection = m_connection;
-    if (!connection) {
-        completionHandler(std::optional<WebCore::PushSubscriptionData> { });
-        return;
-    }
+    (void)getPushSubscription(WTF::move(scopeURL), CompletionHandler<void(Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&), true>(WTF::move(completionHandler)));
+}
 
-    connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushSubscription(WTF::move(scopeURL)), WTF::move(completionHandler));
+CompletionHandlerCalledToken NetworkNotificationManager::getPushSubscription(URL&& scopeURL, CompletionHandler<void(Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&), true>&& completionHandler)
+{
+    RefPtr connection = m_connection;
+    if (!connection)
+        return completionHandler(std::optional<WebCore::PushSubscriptionData> { });
+
+    return connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushSubscription(WTF::move(scopeURL)), WTF::move(completionHandler));
 }
 
 void NetworkNotificationManager::incrementSilentPushCount(WebCore::SecurityOriginData&& origin, CompletionHandler<void(unsigned)>&& completionHandler)
@@ -258,17 +274,26 @@ void NetworkNotificationManager::setServiceWorkerIsBeingInspected(const URL& sco
     connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetServiceWorkerIsBeingInspected { scopeURL, isInspected }, []() { });
 }
 
+static CompletionHandlerCalledToken getPushPermissionStateImpl(WebPushD::Connection*, WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState), true>&&);
+
 static void getPushPermissionStateImpl(WebPushD::Connection* connection, WebCore::SecurityOriginData&& origin, CompletionHandler<void(WebCore::PushPermissionState)>&& completionHandler)
+{
+    (void)getPushPermissionStateImpl(connection, WTF::move(origin), CompletionHandler<void(WebCore::PushPermissionState), true>(WTF::move(completionHandler)));
+}
+
+static CompletionHandlerCalledToken getPushPermissionStateImpl(WebPushD::Connection* connection, WebCore::SecurityOriginData&& origin, CompletionHandler<void(WebCore::PushPermissionState), true>&& completionHandler)
 {
     if (!connection)
         return completionHandler(WebCore::PushPermissionState::Denied);
 
-    connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushPermissionState(WTF::move(origin)), WTF::move(completionHandler));
+    return connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushPermissionState(WTF::move(origin)), WTF::move(completionHandler));
 }
 
-void NetworkNotificationManager::getPermissionState(WebCore::SecurityOriginData&& origin, CompletionHandler<void(WebCore::PushPermissionState)>&& completionHandler)
+CompletionHandlerCalledToken NetworkNotificationManager::getPermissionState(WebCore::SecurityOriginData&& origin, CompletionHandler<void(WebCore::PushPermissionState), true>&& completionHandler)
 {
-    getPushPermissionStateImpl(protect(m_connection).get(), WTF::move(origin), WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        return getPushPermissionStateImpl(protect(m_connection).get(), WTF::move(origin), WTF::move(completionHandler));
+    });
 }
 
 void NetworkNotificationManager::getPermissionStateSync(WebCore::SecurityOriginData&& origin, CompletionHandler<void(WebCore::PushPermissionState)>&& completionHandler)

@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/Seconds.h>
@@ -49,6 +50,17 @@ public:
     WTF_EXPORT_PRIVATE virtual ~WorkQueueBase();
 
     WTF_EXPORT_PRIVATE void dispatch(Function<void()>&&);
+    // Constrained to an actual enforced CompletionHandler so a raw lambda still unambiguously
+    // selects the Function<void()> overload above; only an explicit CompletionHandler<void(), true>
+    // reaches this token-returning overload.
+    template<typename T> requires std::is_same_v<std::remove_cvref_t<T>, CompletionHandler<void(), true>>
+    CompletionHandlerCalledToken dispatch(T&& handler)
+    {
+        return CompletionHandlerCalledToken::deferUnchecked(handler, [this](auto& handler, auto deferred) -> CompletionHandlerCalledToken {
+            dispatch(Function<void()>(WTF::move(handler)));
+            return WTF::move(deferred);
+        });
+    }
     WTF_EXPORT_PRIVATE void dispatchWithQOS(Function<void()>&&, QOS);
     WTF_EXPORT_PRIVATE virtual void dispatchAfter(Seconds, Function<void()>&&);
     WTF_EXPORT_PRIVATE virtual void dispatchSync(Function<void()>&&);
@@ -98,6 +110,7 @@ public:
 
     // WorkQueueBase
     void dispatch(Function<void()>&&) override;
+    using WorkQueueBase::dispatch;
     bool isCurrent() const override;
     void ref() const override { GuaranteedSerialFunctionDispatcher::ref(); }
     void deref() const override { GuaranteedSerialFunctionDispatcher::deref(); }
@@ -124,6 +137,7 @@ public:
     static Ref<ConcurrentWorkQueue> create(ASCIILiteral name, QOS = QOS::Default);
     static void apply(size_t iterations, WTF::Function<void(size_t index)>&&);
     void dispatch(Function<void()>&&) override;
+    using WorkQueueBase::dispatch;
 
     void ref() const final;
     void deref() const final;

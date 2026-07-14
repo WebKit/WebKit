@@ -48,6 +48,7 @@ public:
     const WTF::String& identifier() const LIFETIME_BOUND { return m_identifier; }
 
     void createTab(const WTF::String& tabName, const WTF::URL& tabIconURL, const WTF::URL& sourceURL, WTF::CompletionHandler<void(Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>)>&&);
+    CompletionHandlerCalledToken createTab(const WTF::String& tabName, const WTF::URL& tabIconURL, const WTF::URL& sourceURL, WTF::CompletionHandler<void(Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>), true>&&);
     void evaluateScript(const WTF::String& scriptSource, const std::optional<WTF::URL>& frameURL, const std::optional<WTF::URL>& contextSecurityOrigin, const std::optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&&);
     void navigateTab(const Inspector::ExtensionTabID&, const WTF::URL& sourceURL, WTF::CompletionHandler<void(const std::optional<Inspector::ExtensionError>)>&&);
     void reloadIgnoringCache(const std::optional<bool>& ignoreCache, const std::optional<WTF::String>& userAgent, const std::optional<WTF::String>& injectedScript, WTF::CompletionHandler<void(Inspector::ExtensionVoidResult)>&&);

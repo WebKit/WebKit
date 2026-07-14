@@ -2712,7 +2712,7 @@ void Quirks::clearLogoutSurvivingIdentityCookiesIfNeeded(const URL& fetchURL, in
     auto& documentURL = document->url();
     static constexpr std::array cookiesToDelete = { "__ssid"_s, "__cf_bm"_s, "anthropic-device-id"_s, "lastActiveOrg"_s, "activitySessionId"_s };
     for (auto& cookieName : cookiesToDelete)
-        page->cookieJar().deleteCookie(*document, documentURL, cookieName, [] { });
+        page->cookieJar().deleteCookie(*document, documentURL, cookieName, CompletionHandler<void()>([] { }));
 }
 
 bool Quirks::needsCustomUserAgentData() const

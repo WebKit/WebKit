@@ -65,13 +65,12 @@ void ModelProcessProxy::updateModelProcessCreationParameters(ModelProcessCreatio
 }
 
 #if PLATFORM(VISION) && ENABLE(GPU_PROCESS) && ENABLE(MODEL_PROCESS) && HAVE(CORE_RE)
-void ModelProcessProxy::requestSharedSimulationConnection(WebCore::ProcessIdentifier webProcessIdentifier, CompletionHandler<void(std::optional<IPC::SharedFileHandle>)>&& completionHandler)
+CompletionHandlerCalledToken ModelProcessProxy::requestSharedSimulationConnection(WebCore::ProcessIdentifier webProcessIdentifier, CompletionHandler<void(std::optional<IPC::SharedFileHandle>), true>&& completionHandler)
 {
     auto webProcessProxy = WebProcessProxy::processForIdentifier(webProcessIdentifier);
     if (!webProcessProxy) {
         RELEASE_LOG_ERROR(Process, "%p - ModelProcessProxy::requestSharedSimulationConnection() No WebProcessProxy with this identifier", this);
-        completionHandler(std::nullopt);
-        return;
+        return completionHandler(std::nullopt);
     }
 
     MESSAGE_CHECK(webProcessProxy->sharedPreferencesForWebProcessValue().modelElementEnabled);
@@ -85,12 +84,14 @@ void ModelProcessProxy::requestSharedSimulationConnection(WebCore::ProcessIdenti
     RBSProcessHandle *process = [RBSProcessHandle handleForIdentifier:[RBSProcessIdentifier identifierWithPid:processID()] error:&error];
     if (error) {
         RELEASE_LOG_ERROR(ModelElement, "%p - ModelProcessProxy: Failed to get audit token for requesting process: %@", this, error);
-        completionHandler(std::nullopt);
-        return;
+        return completionHandler(std::nullopt);
     }
 
-    RELEASE_LOG(ModelElement, "%p - ModelProcessProxy: Requesting shared simulation connection for model process with audit token for pid=%d", this, processID());
-    GPUProcessProxy::getOrCreate()->requestSharedSimulationConnection(process.auditToken, WTF::move(completionHandler));
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [&](auto completionHandler) -> CompletionHandlerCalledToken {
+        RELEASE_LOG(ModelElement, "%p - ModelProcessProxy: Requesting shared simulation connection for model process with audit token for pid=%d", this, processID());
+        return GPUProcessProxy::getOrCreate()->requestSharedSimulationConnection(process.auditToken, WTF::move(completionHandler));
+    });
+
 }
 
 #undef MESSAGE_CHECK

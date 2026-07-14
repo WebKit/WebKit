@@ -369,14 +369,14 @@ void WebRTCProvider::createDecodingConfiguration(PlatformMediaDecodingConfigurat
         videoConfiguration.video->contentType = contentTypeFromRTPVideoMimeType(info.configuration.video->contentType);
         videoConfiguration.type = PlatformMediaDecodingType::MediaSource;
 
-        PlatformMediaEngineConfigurationFactory::createDecodingConfiguration(WTF::move(videoConfiguration), [info = WTF::move(info), callback = WTF::move(callback)](auto&& result) mutable {
+        PlatformMediaEngineConfigurationFactory::createDecodingConfiguration(WTF::move(videoConfiguration), PlatformMediaEngineConfigurationFactory::DecodingConfigurationCallback([info = WTF::move(info), callback = WTF::move(callback)](auto&& result) mutable {
             info.supported = result.supported;
             info.smooth = result.smooth;
             info.powerEfficient = result.powerEfficient;
             if (!info.supported)
                 info.configuration = { };
             callback(WTF::move(info));
-        });
+        }));
         return;
     }
 

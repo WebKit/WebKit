@@ -33,7 +33,35 @@
 
 namespace WTF {
 
-template<typename> class CompletionHandler;
+// Token returned by CompletionHandler::operator() to prove the handler was called.
+// The constructor is private; only CompletionHandler itself can manufacture
+// one, so the only way to obtain a token is to actually call the handler.
+class CompletionHandlerCalledToken {
+    CompletionHandlerCalledToken() = default;
+    template<typename, bool> friend class CompletionHandler;
+public:
+    CompletionHandlerCalledToken(CompletionHandlerCalledToken&&) = default;
+    CompletionHandlerCalledToken& operator=(CompletionHandlerCalledToken&&) = default;
+
+    // Strict defer: lambda takes handler by move and must return CompletionHandlerCalledToken
+    // by actually calling the handler (or a propagating async API). No escape hatch.
+    template<typename Sig, typename Lambda>
+    static CompletionHandlerCalledToken defer(CompletionHandler<Sig, true>&&, Lambda&&);
+
+    // Cheaty defer for burn-down: lambda gets a pre-produced deferred token it can return
+    // without proving the inner async callback calls the handler. Convert to defer() as
+    // async APIs are updated to propagate CompletionHandlerCalledToken.
+    template<typename Sig, typename Lambda>
+    static CompletionHandlerCalledToken deferUnchecked(CompletionHandler<Sig, true>&, Lambda&&);
+
+    // For the rare case where a function accepts a nullable enforced handler and needs a
+    // token on the no-handler path. Prefer making the handler always present over using this.
+    static CompletionHandlerCalledToken forNullHandler() { return { }; }
+};
+
+template<typename T>
+inline constexpr bool IsCompletionHandlerCalledToken = std::is_same_v<T, CompletionHandlerCalledToken>;
+
 class CompletionHandlerCallThread {
 public:
     static inline constexpr auto ConstructionThread = currentThreadLike;
@@ -42,8 +70,10 @@ public:
 };
 
 // Wraps a Function to make sure it is always called once and only once.
-template <typename Out, typename... In>
-class CompletionHandler<Out(In...)> {
+// When Enforced=true, operator() returns a CompletionHandlerCalledToken instead of void,
+// allowing callers to prove at compile time that the handler was invoked.
+template <typename Out, typename... In, bool Enforced>
+class CompletionHandler<Out(In...), Enforced> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CompletionHandler);
 public:
     using OutType = Out;
@@ -87,11 +117,15 @@ public:
 
     [[nodiscard]] Impl* leak() { return m_function.leak(); }
 
-    Out operator()(In... in)
+    auto operator()(In... in) -> std::conditional_t<Enforced && std::is_void_v<Out>, CompletionHandlerCalledToken, Out>
     {
         assertIsCurrent(m_callThread);
         ASSERT_WITH_MESSAGE(m_function, "Completion handler should not be called more than once");
-        return std::exchange(m_function, nullptr)(std::forward<In>(in)...);
+        if constexpr (Enforced && std::is_void_v<Out>) {
+            std::exchange(m_function, nullptr)(std::forward<In>(in)...);
+            return CompletionHandlerCalledToken { };
+        } else
+            return std::exchange(m_function, nullptr)(std::forward<In>(in)...);
     }
 
 private:
@@ -147,18 +181,24 @@ private:
 
 namespace Detail {
 
-template<typename Out, typename... In>
-class CallableWrapper<CompletionHandler<Out(In...)>, Out, In...> : public CallableWrapperBase<Out, In...> {
+template<typename Out, typename... In, bool Enforced>
+class CallableWrapper<CompletionHandler<Out(In...), Enforced>, Out, In...> : public CallableWrapperBase<Out, In...> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CallableWrapper);
 public:
-    explicit CallableWrapper(CompletionHandler<Out(In...)>&& completionHandler)
+    explicit CallableWrapper(CompletionHandler<Out(In...), Enforced>&& completionHandler)
         : m_completionHandler(WTF::move(completionHandler))
     {
         RELEASE_ASSERT(m_completionHandler);
     }
-    Out call(In... in) final { return m_completionHandler(std::forward<In>(in)...); }
+    Out call(In... in) final
+    {
+        if constexpr (Enforced && std::is_void_v<Out>)
+            m_completionHandler(std::forward<In>(in)...);
+        else
+            return m_completionHandler(std::forward<In>(in)...);
+    }
 private:
-    CompletionHandler<Out(In...)> m_completionHandler;
+    CompletionHandler<Out(In...), Enforced> m_completionHandler;
 };
 
 } // namespace Detail
@@ -192,9 +232,34 @@ template<typename Out, typename... In> CompletionHandler<Out(In...)> adopt(typen
     return Function<Out(In...)>(impl, Function<Out(In...)>::Adopt);
 }
 
+template<typename Sig, typename Lambda>
+CompletionHandlerCalledToken CompletionHandlerCalledToken::defer(CompletionHandler<Sig, true>&& handler, Lambda&& lambda)
+{
+    static_assert(
+        std::is_invocable_r_v<CompletionHandlerCalledToken, Lambda, CompletionHandler<Sig, true>&&>,
+        "Lambda passed to CompletionHandlerCalledToken::defer must accept CompletionHandler<Sig, true>&& "
+        "and return CompletionHandlerCalledToken on all code paths by actually calling the handler");
+    ASSERT(handler);
+    return std::forward<Lambda>(lambda)(WTF::move(handler));
+}
+
+template<typename Sig, typename Lambda>
+CompletionHandlerCalledToken CompletionHandlerCalledToken::deferUnchecked(CompletionHandler<Sig, true>& handler, Lambda&& lambda)
+{
+    static_assert(
+        std::is_invocable_r_v<CompletionHandlerCalledToken, Lambda, CompletionHandler<Sig, true>&, CompletionHandlerCalledToken&&>,
+        "Lambda passed to CompletionHandlerCalledToken::deferUnchecked must accept (CompletionHandler<Sig, true>&, CompletionHandlerCalledToken&&) and return CompletionHandlerCalledToken on all code paths");
+    ASSERT(handler);
+    auto result = std::forward<Lambda>(lambda)(handler, CompletionHandlerCalledToken { });
+    RELEASE_ASSERT(!handler, "CompletionHandler was not consumed (moved or called) inside deferUnchecked()");
+    return result;
+}
+
 } // namespace WTF
 
 using WTF::CompletionHandler;
 using WTF::CompletionHandlerCallThread;
+using WTF::CompletionHandlerCalledToken;
 using WTF::CompletionHandlerCallingScope;
 using WTF::CompletionHandlerWithFinalizer;
+using WTF::IsCompletionHandlerCalledToken;

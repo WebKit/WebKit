@@ -217,22 +217,20 @@ void WebSWClientConnection::whenRegistrationReady(const SecurityOriginData& topO
     });
 }
 
-void WebSWClientConnection::setServiceWorkerClientIsControlled(ScriptExecutionContextIdentifier identifier, ServiceWorkerRegistrationData&& data, CompletionHandler<void(bool)>&& completionHandler)
+CompletionHandlerCalledToken WebSWClientConnection::setServiceWorkerClientIsControlled(ScriptExecutionContextIdentifier identifier, ServiceWorkerRegistrationData&& data, CompletionHandler<void(bool), true>&& completionHandler)
 {
     if (RefPtr loader = DocumentLoader::fromScriptExecutionContextIdentifier(identifier)) {
-        completionHandler(loader->setControllingServiceWorkerRegistration(WTF::move(data)));
-        return;
+        return completionHandler(loader->setControllingServiceWorkerRegistration(WTF::move(data)));
     }
 
     if (auto manager = WorkerScriptLoader::serviceWorkerDataManagerFromIdentifier(identifier)) {
         if (data.activeWorker) {
             manager->setData(WTF::move(*data.activeWorker));
-            completionHandler(true);
-            return;
+            return completionHandler(true);
         }
     }
 
-    completionHandler(false);
+    return completionHandler(false);
 }
 
 void WebSWClientConnection::getRegistrations(SecurityOriginData&& topOrigin, const URL& clientURL, GetRegistrationsCallback&& callback)
@@ -455,48 +453,48 @@ static RefPtr<Page> pageFromScriptExecutionContextIdentifier(ScriptExecutionCont
     return document->page();
 }
 
-void WebSWClientConnection::focusServiceWorkerClient(ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&)>&& callback)
+CompletionHandlerCalledToken WebSWClientConnection::focusServiceWorkerClient(ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&), true>&& callback)
 {
     RefPtr page = pageFromScriptExecutionContextIdentifier(clientIdentifier);
     if (!page) {
-        callback({ });
-        return;
+        return callback({ });
     }
 
-    WebPage::fromCorePage(*page)->sendWithAsyncReply(Messages::WebPageProxy::FocusFromServiceWorker { }, [clientIdentifier, callback = WTF::move(callback)] () mutable {
-        auto doFocusSteps = [callback = WTF::move(callback)] (auto* document) mutable {
-            if (!document) {
-                callback({ });
-                return;
-            }
-
-            document->eventLoop().queueTask(TaskSource::Networking, [document = RefPtr { document }, callback = WTF::move(callback)] () mutable {
-                RefPtr frame = document ? document->frame() : nullptr;
-                RefPtr page = frame ? frame->page() : nullptr;
-
-                if (!page) {
+    return CompletionHandlerCalledToken::deferUnchecked(callback, [&](auto& callback, auto deferred) -> CompletionHandlerCalledToken {
+        WebPage::fromCorePage(*page)->sendWithAsyncReply(Messages::WebPageProxy::FocusFromServiceWorker { }, [clientIdentifier, callback = WTF::move(callback)] () mutable {
+            auto doFocusSteps = [callback = WTF::move(callback)] (auto* document) mutable {
+                if (!document) {
                     callback({ });
                     return;
                 }
 
-                page->focusController().setFocusedFrame(frame.get());
-                // FIXME: This is a safer cpp false positive.
-                SUPPRESS_UNCOUNTED_ARG callback(ServiceWorkerClientData::from(*document));
-            });
-        };
+                document->eventLoop().queueTask(TaskSource::Networking, [document = RefPtr { document }, callback = WTF::move(callback)] () mutable -> CompletionHandlerCalledToken {
+                    RefPtr frame = document ? document->frame() : nullptr;
+                    RefPtr page = frame ? frame->page() : nullptr;
 
-        RefPtr document = Document::allDocumentsMap().get(clientIdentifier);
-        if (!document) {
-            RefPtr loader = DocumentLoader::fromScriptExecutionContextIdentifier(clientIdentifier);
-            if (!loader) {
-                callback({ });
-                return;
+                    if (!page)
+                        return callback({ });
+
+                    page->focusController().setFocusedFrame(frame.get());
+                    // FIXME: This is a safer cpp false positive.
+                    SUPPRESS_UNCOUNTED_ARG return callback(ServiceWorkerClientData::from(*document));
+                });
             };
-            loader->whenDocumentIsCreated(WTF::move(doFocusSteps));
-            return;
-        }
 
-        doFocusSteps(document.get());
+            RefPtr document = Document::allDocumentsMap().get(clientIdentifier);
+            if (!document) {
+                RefPtr loader = DocumentLoader::fromScriptExecutionContextIdentifier(clientIdentifier);
+                if (!loader) {
+                    callback({ });
+                    return;
+                };
+                loader->whenDocumentIsCreated(WTF::move(doFocusSteps));
+                return;
+            }
+
+            doFocusSteps(document.get());
+        });
+        return WTF::move(deferred);
     });
 }
 

@@ -872,43 +872,54 @@ bool PageClientImpl::isFullScreen()
     return protect(impl->fullScreenWindowController()).get().isFullScreen;
 }
 
-void PageClientImpl::enterFullScreen(FloatSize, CompletionHandler<void(bool)>&& completionHandler)
-{
-    CheckedRef impl = *m_impl;
-    if (RetainPtr fullScreenWindowController = impl->fullScreenWindowController())
-        [fullScreenWindowController enterFullScreen:WTF::move(completionHandler)];
-    else
-        return completionHandler(false);
-}
-
-void PageClientImpl::exitFullScreen(CompletionHandler<void()>&& completionHandler)
-{
-    CheckedRef impl = *m_impl;
-    if (RetainPtr fullScreenWindowController = impl->fullScreenWindowController())
-        [fullScreenWindowController exitFullScreen:WTF::move(completionHandler)];
-    else
-        return completionHandler();
-}
-
-void PageClientImpl::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame, CompletionHandler<void(bool)>&& completionHandler)
-{
-    CheckedRef impl = *m_impl;
-    if (RetainPtr fullScreenWindowController = impl->fullScreenWindowController())
-        [fullScreenWindowController beganEnterFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame completionHandler:WTF::move(completionHandler)];
-    else
-        completionHandler(false);
-
-    impl->updateSupportsArbitraryLayoutModes();
-}
-
-void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntRect& finalFrame, CompletionHandler<void()>&& completionHandler)
+CompletionHandlerCalledToken PageClientImpl::enterFullScreen(FloatSize, CompletionHandler<void(bool), true>&& completionHandler)
 {
     CheckedRef impl = *m_impl;
     if (RetainPtr fullScreenWindowController = impl->fullScreenWindowController()) {
-        [fullScreenWindowController beganExitFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame completionHandler:WTF::move(completionHandler)];
-        impl->updateSupportsArbitraryLayoutModes();
-    } else
-        return completionHandler();
+        return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [fullScreenWindowController](auto completionHandler) -> CompletionHandlerCalledToken {
+            return [fullScreenWindowController enterFullScreen:WTF::move(completionHandler)];
+        });
+    }
+    return completionHandler(false);
+}
+
+CompletionHandlerCalledToken PageClientImpl::exitFullScreen(CompletionHandler<void(), true>&& completionHandler)
+{
+    CheckedRef impl = *m_impl;
+    if (RetainPtr fullScreenWindowController = impl->fullScreenWindowController()) {
+        return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [fullScreenWindowController](auto completionHandler) -> CompletionHandlerCalledToken {
+            return [fullScreenWindowController exitFullScreen:WTF::move(completionHandler)];
+        });
+    }
+    return completionHandler();
+}
+
+CompletionHandlerCalledToken PageClientImpl::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame, CompletionHandler<void(bool), true>&& completionHandler)
+{
+    CheckedRef impl = *m_impl;
+    if (RetainPtr fullScreenWindowController = impl->fullScreenWindowController()) {
+        return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [fullScreenWindowController, &impl, initialFrame, finalFrame](auto completionHandler) -> CompletionHandlerCalledToken {
+            auto token = [fullScreenWindowController beganEnterFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame completionHandler:WTF::move(completionHandler)];
+            impl->updateSupportsArbitraryLayoutModes();
+            return token;
+        });
+    }
+    auto token = completionHandler(false);
+    impl->updateSupportsArbitraryLayoutModes();
+    return token;
+}
+
+CompletionHandlerCalledToken PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntRect& finalFrame, CompletionHandler<void(), true>&& completionHandler)
+{
+    CheckedRef impl = *m_impl;
+    if (RetainPtr fullScreenWindowController = impl->fullScreenWindowController()) {
+        return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [fullScreenWindowController, &impl, initialFrame, finalFrame](auto completionHandler) -> CompletionHandlerCalledToken {
+            auto token = [fullScreenWindowController beganExitFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame completionHandler:WTF::move(completionHandler)];
+            impl->updateSupportsArbitraryLayoutModes();
+            return token;
+        });
+    }
+    return completionHandler();
 }
 
 WebCore::IntRect PageClientImpl::convertMainFrameCoordinatesInFullscreenPlaceholderViewToScreen(WebPageProxy& page, WebCore::IntRect mainFrameCoordinates) const

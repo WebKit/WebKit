@@ -289,9 +289,9 @@ void WebExtensionContext::tabsGet(WebExtensionTabIdentifier tabIdentifier, Compl
         return;
     }
 
-    requestPermissionToAccessURLs({ tab->url() }, tab, [tab, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+    requestPermissionToAccessURLs({ tab->url() }, tab, CompletionHandler<void(URLSet&&, URLSet&&, WallTime)>([tab, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         completionHandler({ tab->parameters() });
-    });
+    }));
 }
 
 void WebExtensionContext::tabsGetCurrent(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(Expected<std::optional<WebExtensionTabParameters>, WebExtensionError>&&)>&& completionHandler)
@@ -303,9 +303,9 @@ void WebExtensionContext::tabsGetCurrent(WebPageProxyIdentifier webPageProxyIden
         return;
     }
 
-    requestPermissionToAccessURLs({ tab->url() }, tab, [tab, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+    requestPermissionToAccessURLs({ tab->url() }, tab, CompletionHandler<void(URLSet&&, URLSet&&, WallTime)>([tab, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         completionHandler({ tab->parameters() });
-    });
+    }));
 }
 
 void WebExtensionContext::tabsQuery(WebPageProxyIdentifier webPageProxyIdentifier, const WebExtensionTabQueryParameters& queryParameters, CompletionHandler<void(Expected<Vector<WebExtensionTabParameters>, WebExtensionError>&&)>&& completionHandler)
@@ -325,14 +325,14 @@ void WebExtensionContext::tabsQuery(WebPageProxyIdentifier webPageProxyIdentifie
         }
     }
 
-    requestPermissionToAccessURLs(tabURLs, nullptr, [matchedTabs = WTF::move(matchedTabs), completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+    requestPermissionToAccessURLs(tabURLs, nullptr, CompletionHandler<void(URLSet&&, URLSet&&, WallTime)>([matchedTabs = WTF::move(matchedTabs), completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         // Get the parameters after permission has been granted, so it can include the URL and title if allowed.
         auto result = WTF::map(matchedTabs, [&](auto& tab) {
             return tab->parameters();
         });
 
         completionHandler(WTF::move(result));
-    });
+    }));
 }
 
 void WebExtensionContext::tabsReload(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, ReloadFromOrigin reloadFromOrigin, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -378,7 +378,7 @@ void WebExtensionContext::tabsDetectLanguage(WebPageProxyIdentifier webPageProxy
         return;
     }
 
-    requestPermissionToAccessURLs({ tab->url() }, tab, [tab, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+    requestPermissionToAccessURLs({ tab->url() }, tab, CompletionHandler<void(URLSet&&, URLSet&&, WallTime)>([tab, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         if (!tab->extensionHasPermission()) {
             completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
             return;
@@ -392,7 +392,7 @@ void WebExtensionContext::tabsDetectLanguage(WebPageProxyIdentifier webPageProxy
 
             completionHandler(String(toWebAPI(result.value())));
         });
-    });
+    }));
 }
 
 static inline String toMIMEType(WebExtensionTab::ImageFormat format)
@@ -421,7 +421,7 @@ void WebExtensionContext::tabsCaptureVisibleTab(WebPageProxyIdentifier webPagePr
         return;
     }
 
-    requestPermissionToAccessURLs({ activeTab->url() }, activeTab, [activeTab, imageFormat, imageQuality, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+    requestPermissionToAccessURLs({ activeTab->url() }, activeTab, CompletionHandler<void(URLSet&&, URLSet&&, WallTime)>([activeTab, imageFormat, imageQuality, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         if (!activeTab->extensionHasPermission()) {
             completionHandler(toWebExtensionError(apiName, nullString(), @"either the 'activeTab' permission or granted host permissions for the current website are required"));
             return;
@@ -457,7 +457,7 @@ void WebExtensionContext::tabsCaptureVisibleTab(WebPageProxyIdentifier webPagePr
                 });
             });
         });
-    });
+    }));
 }
 
 void WebExtensionContext::tabsToggleReaderMode(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -471,53 +471,52 @@ void WebExtensionContext::tabsToggleReaderMode(WebPageProxyIdentifier webPagePro
     tab->toggleReaderMode(WTF::move(completionHandler));
 }
 
-void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifier, const String& messageJSON, const WebExtensionMessageTargetParameters& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifier, const String& messageJSON, const WebExtensionMessageTargetParameters& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(Expected<String, WebExtensionError>&&), true>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.sendMessage()";
 
     RefPtr tab = getTab(tabIdentifier);
     if (!tab) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
-        return;
+        return completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
     }
 
     auto *webView = tab->webView();
     if (!webView) {
-        completionHandler({ });
-        return;
+        return completionHandler({ });
     }
 
     auto targetContentWorldType = isURLForAnyExtension(tab->url()) ? WebExtensionContentWorldType::Main : WebExtensionContentWorldType::ContentScript;
 
     auto processes = tab->processes(WebExtensionEventListenerType::RuntimeOnMessage, targetContentWorldType);
     if (processes.isEmpty()) {
-        completionHandler({ });
-        return;
+        return completionHandler({ });
     }
 
-    auto targetParametersCopy = targetParameters;
-    targetParametersCopy.pageProxyIdentifier = webView._page->identifier();
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        auto targetParametersCopy = targetParameters;
+        targetParametersCopy.pageProxyIdentifier = webView._page->identifier();
 
-    Ref callbackAggregator = EagerCallbackAggregator<void(Expected<String, WebExtensionError>)>::create(WTF::move(completionHandler), { });
+        Ref callbackAggregator = EagerCallbackAggregator<void(Expected<String, WebExtensionError>)>::create(WTF::move(completionHandler), { });
 
-    for (Ref process : processes) {
-        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(targetContentWorldType, messageJSON, targetParametersCopy, senderParameters, userGesture), [callbackAggregator](String&& replyJSON) {
-            if (replyJSON.isNull())
-                return;
+        for (Ref process : processes) {
+            process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(targetContentWorldType, messageJSON, targetParametersCopy, senderParameters, userGesture), [callbackAggregator](String&& replyJSON) {
+                if (replyJSON.isNull())
+                    return;
 
-            callbackAggregator.get()(WTF::move(replyJSON));
-        }, identifier());
-    }
+                callbackAggregator.get()(WTF::move(replyJSON));
+            }, identifier());
+        }
+        return WTF::move(deferred);
+    });
 }
 
-void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, WebExtensionPortChannelIdentifier channelIdentifier, String name, const WebExtensionMessageTargetParameters& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, WebExtensionPortChannelIdentifier channelIdentifier, String name, const WebExtensionMessageTargetParameters& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(Expected<void, WebExtensionError>&&), true>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.connect()";
 
     RefPtr tab = getTab(tabIdentifier);
     if (!tab) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
-        return;
+        return completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
     }
 
     constexpr auto sourceContentWorldType = WebExtensionContentWorldType::Main;
@@ -528,8 +527,7 @@ void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, W
 
     auto processes = tab->processes(WebExtensionEventListenerType::RuntimeOnConnect, targetContentWorldType);
     if (processes.isEmpty()) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"no runtime.onConnect listeners found"));
-        return;
+        return completionHandler(toWebExtensionError(apiName, nullString(), @"no runtime.onConnect listeners found"));
     }
 
     auto handledCount = Box<size_t>::create(0);
@@ -553,7 +551,7 @@ void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, W
         }, identifier());
     }
 
-    completionHandler({ });
+    return completionHandler({ });
 }
 
 void WebExtensionContext::tabsGetZoom(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<double, WebExtensionError>&&)>&& completionHandler)
@@ -695,7 +693,7 @@ void WebExtensionContext::tabsMove(Vector<WebExtensionTabIdentifier> tabIdentifi
     }
 }
 
-void WebExtensionContext::tabsRemove(Vector<WebExtensionTabIdentifier> tabIdentifiers, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::tabsRemove(Vector<WebExtensionTabIdentifier> tabIdentifiers, CompletionHandler<void(Expected<void, WebExtensionError>&&), true>&& completionHandler)
 {
     Vector<Ref<WebExtensionTab>> tabs;
     tabs.reserveInitialCapacity(tabIdentifiers.size());
@@ -704,59 +702,55 @@ void WebExtensionContext::tabsRemove(Vector<WebExtensionTabIdentifier> tabIdenti
         if (RefPtr tab = getTab(tabIdentifier))
             tabs.append(tab.releaseNonNull());
         else {
-            completionHandler(toWebExtensionError(@"tabs.remove()", nullString(), makeString("tab '"_s, tabIdentifier.toUInt64(), "' was not found"_s)));
-            return;
+            return completionHandler(toWebExtensionError(@"tabs.remove()", nullString(), makeString("tab '"_s, tabIdentifier.toUInt64(), "' was not found"_s)));
         }
     }
 
-    Ref callbackAggregator = EagerCallbackAggregator<void(Expected<void, WebExtensionError>)>::create(WTF::move(completionHandler), { });
+    return CompletionHandlerCalledToken::deferUnchecked(completionHandler, [&](auto& completionHandler, auto deferred) -> CompletionHandlerCalledToken {
+        Ref callbackAggregator = EagerCallbackAggregator<void(Expected<void, WebExtensionError>)>::create(WTF::move(completionHandler), { });
 
-    for (Ref tab : tabs) {
-        tab->close([callbackAggregator](Expected<void, WebExtensionError>&& result) mutable {
-            if (!result)
-                callbackAggregator.get()(makeUnexpected(result.error()));
-        });
-    }
+        for (Ref tab : tabs) {
+            tab->close([callbackAggregator](Expected<void, WebExtensionError>&& result) mutable {
+                if (!result)
+                    callbackAggregator.get()(makeUnexpected(result.error()));
+            });
+        }
+        return WTF::move(deferred);
+    });
 }
 
-void WebExtensionContext::tabsExecuteScript(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const WebExtensionScriptInjectionParameters& parameters, bool userGesture, CompletionHandler<void(Expected<InjectionResults, WebExtensionError>&&)>&& completionHandler)
+CompletionHandlerCalledToken WebExtensionContext::tabsExecuteScript(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const WebExtensionScriptInjectionParameters& parameters, bool userGesture, CompletionHandler<void(Expected<InjectionResults, WebExtensionError>&&), true>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.executeScript()";
 
     RefPtr tab = getTab(webPageProxyIdentifier, tabIdentifier, IncludeExtensionViews::Yes);
-    if (!tab) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
-        return;
-    }
+    if (!tab)
+        return completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
 
-    requestPermissionToAccessURLs({ tab->url() }, tab, [this, protectedThis = Ref { *this }, tab, parameters, userGesture, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
-        if (!tab->extensionHasPermission()) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
-            return;
-        }
+    return CompletionHandlerCalledToken::defer(WTF::move(completionHandler), [this, protectedThis = Ref { *this }, tab, parameters, userGesture](auto completionHandler) -> CompletionHandlerCalledToken {
+        return requestPermissionToAccessURLs({ tab->url() }, tab, CompletionHandler<void(URLSet&&, URLSet&&, WallTime), true>([this, protectedThis, tab, parameters, userGesture, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable -> CompletionHandlerCalledToken {
+            if (!tab->extensionHasPermission())
+                return completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
 
-        auto *webView = tab->webView();
-        if (!webView) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"could not execute script in tab"));
-            return;
-        }
+            auto *webView = tab->webView();
+            if (!webView)
+                return completionHandler(toWebExtensionError(apiName, nullString(), @"could not execute script in tab"));
 
-        std::optional<SourcePair> scriptData;
-        if (parameters.code)
-            scriptData = SourcePair { parameters.code.value(), URL { } };
-        else {
-            RetainPtr filePath = parameters.files.value().first().createNSString();
-            scriptData = sourcePairForResource(filePath.get(), *this);
-            if (!scriptData) {
-                completionHandler(toWebExtensionError(apiName, nullString(), makeString("Invalid resource: "_s, String(filePath.get()))));
-                return;
+            std::optional<SourcePair> scriptData;
+            if (parameters.code)
+                scriptData = SourcePair { parameters.code.value(), URL { } };
+            else {
+                RetainPtr filePath = parameters.files.value().first().createNSString();
+                scriptData = sourcePairForResource(filePath.get(), *this);
+                if (!scriptData)
+                    return completionHandler(toWebExtensionError(apiName, nullString(), makeString("Invalid resource: "_s, String(filePath.get()))));
             }
-        }
 
-        auto scriptPairs = getSourcePairsForParameters(parameters, *this);
-        executeScript(scriptPairs, webView, *m_contentScriptWorld, *tab, parameters, *this, userGesture, [completionHandler = WTF::move(completionHandler)](InjectionResults&& injectionResults) mutable {
-            completionHandler(WTF::move(injectionResults));
-        });
+            auto scriptPairs = getSourcePairsForParameters(parameters, *this);
+            return executeScript(scriptPairs, webView, *m_contentScriptWorld, *tab, parameters, *this, userGesture, CompletionHandler<void(InjectionResults&&), true>([completionHandler = WTF::move(completionHandler)](InjectionResults&& injectionResults) mutable -> CompletionHandlerCalledToken {
+                return completionHandler(WTF::move(injectionResults));
+            }));
+        }));
     });
 }
 
@@ -770,7 +764,7 @@ void WebExtensionContext::tabsInsertCSS(WebPageProxyIdentifier webPageProxyIdent
         return;
     }
 
-    requestPermissionToAccessURLs({ tab->url() }, tab, [this, protectedThis = Ref { *this }, tab, parameters, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+    requestPermissionToAccessURLs({ tab->url() }, tab, CompletionHandler<void(URLSet&&, URLSet&&, WallTime)>([this, protectedThis = Ref { *this }, tab, parameters, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         if (!tab->extensionHasPermission()) {
             completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
             return;
@@ -789,7 +783,7 @@ void WebExtensionContext::tabsInsertCSS(WebPageProxyIdentifier webPageProxyIdent
         injectStyleSheets(styleSheetPairs, webView, Ref { *m_contentScriptWorld }, parameters.styleLevel, injectedFrames, *this);
 
         completionHandler({ });
-    });
+    }));
 }
 
 void WebExtensionContext::tabsRemoveCSS(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -823,73 +817,73 @@ void WebExtensionContext::tabsRemoveCSS(WebPageProxyIdentifier webPageProxyIdent
 void WebExtensionContext::fireTabsCreatedEventIfNeeded(const WebExtensionTabParameters& parameters)
 {
     constexpr auto type = WebExtensionEventListenerType::TabsOnCreated;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, Function<void()>([=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsCreatedEvent(parameters));
-    });
+    }));
 }
 
 void WebExtensionContext::fireTabsUpdatedEventIfNeeded(const WebExtensionTabParameters& parameters, const WebExtensionTabParameters& changedParameters)
 {
     constexpr auto type = WebExtensionEventListenerType::TabsOnUpdated;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, Function<void()>([=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsUpdatedEvent(parameters, changedParameters));
-    });
+    }));
 }
 
 void WebExtensionContext::fireTabsReplacedEventIfNeeded(WebExtensionTabIdentifier replacedTabIdentifier, WebExtensionTabIdentifier newTabIdentifier)
 {
     constexpr auto type = WebExtensionEventListenerType::TabsOnReplaced;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, Function<void()>([=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsReplacedEvent(replacedTabIdentifier, newTabIdentifier));
-    });
+    }));
 }
 
 void WebExtensionContext::fireTabsDetachedEventIfNeeded(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier oldWindowIdentifier, size_t oldIndex)
 {
     constexpr auto type = WebExtensionEventListenerType::TabsOnDetached;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, Function<void()>([=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsDetachedEvent(tabIdentifier, oldWindowIdentifier, oldIndex));
-    });
+    }));
 }
 
 void WebExtensionContext::fireTabsMovedEventIfNeeded(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier windowIdentifier, size_t oldIndex, size_t newIndex)
 {
     constexpr auto type = WebExtensionEventListenerType::TabsOnMoved;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, Function<void()>([=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsMovedEvent(tabIdentifier, windowIdentifier, oldIndex, newIndex));
-    });
+    }));
 }
 
 void WebExtensionContext::fireTabsAttachedEventIfNeeded(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier newWindowIdentifier, size_t newIndex)
 {
     constexpr auto type = WebExtensionEventListenerType::TabsOnAttached;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, Function<void()>([=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsAttachedEvent(tabIdentifier, newWindowIdentifier, newIndex));
-    });
+    }));
 }
 
 void WebExtensionContext::fireTabsActivatedEventIfNeeded(WebExtensionTabIdentifier previousActiveTabIdentifier, WebExtensionTabIdentifier newActiveTabIdentifier, WebExtensionWindowIdentifier windowIdentifier)
 {
     constexpr auto type = WebExtensionEventListenerType::TabsOnActivated;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, Function<void()>([=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsActivatedEvent(previousActiveTabIdentifier, newActiveTabIdentifier, windowIdentifier));
-    });
+    }));
 }
 
 void WebExtensionContext::fireTabsHighlightedEventIfNeeded(Vector<WebExtensionTabIdentifier> tabIdentifiers, WebExtensionWindowIdentifier windowIdentifier)
 {
     constexpr auto type = WebExtensionEventListenerType::TabsOnHighlighted;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, Function<void()>([=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsHighlightedEvent(tabIdentifiers, windowIdentifier));
-    });
+    }));
 }
 
 void WebExtensionContext::fireTabsRemovedEventIfNeeded(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier windowIdentifier, WindowIsClosing windowIsClosing)
 {
     constexpr auto type = WebExtensionEventListenerType::TabsOnRemoved;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, Function<void()>([=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsRemovedEvent(tabIdentifier, windowIdentifier, windowIsClosing));
-    });
+    }));
 }
 
 } // namespace WebKit
