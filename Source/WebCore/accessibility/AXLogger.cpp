@@ -863,6 +863,9 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
     case AXProperty::HeadingLevel:
         stream << "HeadingLevel";
         break;
+    case AXProperty::HasExplicitGroupRole:
+        stream << "HasExplicitGroupRole";
+        break;
     case AXProperty::IsARIAHidden:
         stream << "IsARIAHidden";
         break;

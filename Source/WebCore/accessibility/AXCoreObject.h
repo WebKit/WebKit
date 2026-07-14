@@ -1082,6 +1082,8 @@ public:
     virtual String language() const = 0;
     String languageIncludingAncestors() const;
     virtual unsigned ariaLevel() const = 0;
+    // True only when the author explicitly set role="group" on this object.
+    virtual bool hasExplicitGroupRole() const = 0;
     // 1-based, to match the aria-level spec.
     unsigned hierarchicalLevel() const;
     virtual bool isInlineText() const = 0;

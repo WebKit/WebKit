@@ -414,6 +414,7 @@ private:
 #endif
     std::optional<AccessibilityOrientation> explicitOrientation() const { return optionalAttributeValue<AccessibilityOrientation>(AXProperty::ExplicitOrientation); }
     unsigned ariaLevel() const final { return unsignedAttributeValue(AXProperty::ARIALevel); }
+    bool hasExplicitGroupRole() const final { return boolAttributeValue(AXProperty::HasExplicitGroupRole); }
     unsigned computedHeadingLevel() const final { return unsignedAttributeValue(AXProperty::HeadingLevel); }
     String language() const final { return stringAttributeValue(AXProperty::Language); }
     void setSelectedChildren(const AccessibilityChildrenVector&) final;

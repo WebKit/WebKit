@@ -2232,6 +2232,7 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
         setProperty(AXProperty::IsAttachment, object.isAttachment());
         setProperty(AXProperty::IsBusy, object.isBusy());
         setProperty(AXProperty::IsExpanded, object.isExpanded());
+        setProperty(AXProperty::HasExplicitGroupRole, object.hasExplicitGroupRole());
 
         // FIXME: Caching isSecureField would require caching an additional property (on top of input type), so for now, let's still cache this.
         setProperty(AXProperty::IsSecureField, object.isSecureField());
