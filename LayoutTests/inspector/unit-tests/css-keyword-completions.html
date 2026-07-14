@@ -272,6 +272,26 @@ function test()
         expectedCompletions: ["-webkit-flex"],
     });
 
+    // `-webkit-f|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.VendorPrefixedValueAfterSecondHyphen",
+        description: "Test that a value whose vendor prefix is complete (a `-vendor-` meta token) is entirely used as a prefix, so applying a completion does not duplicate the prefix (e.g. `-webkit--webkit-flex`).",
+        propertyName: "display",
+        text: "-webkit-f",
+        expectedPrefix: "-webkit-f",
+        expectedCompletions: ["-webkit-flex"],
+    });
+
+    // `-apple-sys|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.ApplePrefixedFontValue",
+        description: "Test that an `-apple-`-prefixed font value uses the whole identifier as the prefix, so applying a completion does not produce `-apple--apple-system`.",
+        propertyName: "font-family",
+        text: "-apple-sys",
+        expectedPrefix: "-apple-sys",
+        expectedCompletions: ["-apple-system"],
+    });
+
     // `calc(1 - |`
     addTestForPartialPropertyValue({
         name: "WI.CSSKeywordCompletions.forPartialPropertyValue.SubtractionCalc",

@@ -87,6 +87,14 @@ PASS: All expected completions were present.
 PASS: Expected result prefix to be "-webkit"
 PASS: All expected completions were present.
 
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.VendorPrefixedValueAfterSecondHyphen
+PASS: Expected result prefix to be "-webkit-f"
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.ApplePrefixedFontValue
+PASS: Expected result prefix to be "-apple-sys"
+PASS: All expected completions were present.
+
 -- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.SubtractionCalc
 PASS: Expected result prefix to be ""
 PASS: All expected completions were present.
