@@ -1343,9 +1343,6 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     bool siteIsolationEnabled = protect(pageConfiguration->preferences())->siteIsolationEnabled();
     if (siteIsolationEnabled) {
         Ref<WebPreferences> preferences = pageConfiguration->preferences();
-        // FIXME: we should enable UseUIProcessForBackForwardItemLoading not only here but also in test infrastructure
-        // when site isolation is enabled, but doing that causes a lot of test failures that we need to investigate.
-        // https://bugs.webkit.org/show_bug.cgi?id=316588
         preferences->setUseUIProcessForBackForwardItemLoading(true);
         preferences->setMultiProcessBackForwardCacheEnabled(true);
     }

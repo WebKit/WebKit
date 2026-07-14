@@ -236,7 +236,8 @@ public:
     virtual ShouldGoToHistoryItem shouldGoToHistoryItem(HistoryItem&, IsSameDocumentNavigation) const = 0;
     virtual bool supportsAsyncShouldGoToHistoryItem() const = 0;
     virtual void shouldGoToHistoryItemAsync(HistoryItem&, CompletionHandler<void(ShouldGoToHistoryItem)>&&) const = 0;
-    virtual void dispatchGoToBackForwardItemAtIndex(int steps, FrameLoadType) = 0;
+    virtual void dispatchGoToBackForwardItemAtIndex(int steps) = 0;
+    virtual void dispatchEnqueueHistoryTraversalDelta(int delta) = 0;
 
     virtual bool shouldFallBack(const ResourceError&) const = 0;
 

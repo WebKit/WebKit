@@ -1346,7 +1346,11 @@ void LocalFrame::frameWasDisconnectedFromOwner() const
             jsDOMWindow->setAssociatedContextIsFullyActive(false);
     }
 
-    protect(document())->willBeRemovedFromFrame();
+    // Skip while in the back/forward cache: such a document is cleared and removed by
+    // CachedFrame::destroy, so running willBeRemovedFromFrame here would fire it while still
+    // cached (matches the guards in setView() and setDocument()).
+    if (m_doc->backForwardCacheState() != Document::InBackForwardCache)
+        protect(document())->willBeRemovedFromFrame();
 }
 
 void LocalFrame::storageAccessExceptionReceivedForDomain(const RegistrableDomain& domain)

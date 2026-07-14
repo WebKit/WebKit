@@ -177,6 +177,11 @@ public:
     void setIsLoadedWithNavigationShared(bool value) { m_isLoadedWithNavigationShared = value; }
     bool isLoadedWithNavigationShared() const { return m_isLoadedWithNavigationShared; }
 
+    // True when goToBackForwardItem actually sent a traversal message to a web process; a per-frame
+    // walk can resolve an item yet send nothing, and the traversal-coalescing queue gates on this.
+    void setBackForwardTraversalWasDispatched(bool value) { m_backForwardTraversalWasDispatched = value; }
+    bool backForwardTraversalWasDispatched() const { return m_backForwardTraversalWasDispatched; }
+
     void setWebsitePolicies(RefPtr<API::WebsitePolicies>&& policies) { m_websitePolicies = WTF::move(policies); }
     API::WebsitePolicies* websitePolicies() { return m_websitePolicies.get(); }
 
@@ -237,6 +242,7 @@ private:
     Variant<std::monostate, Ref<WebKit::ProcessThrottler::TimedActivity>, Ref<WebKit::ProcessActivityGroup>> m_clientNavigationActivity;
     bool m_userContentExtensionsEnabled : 1 { true };
     bool m_isLoadedWithNavigationShared : 1 { false };
+    bool m_backForwardTraversalWasDispatched : 1 { false };
     bool m_requestIsFromClientInput : 1 { false };
     bool m_isFromLoadData : 1 { false };
     bool m_hadSafeBrowsingWarning : 1 { false };
