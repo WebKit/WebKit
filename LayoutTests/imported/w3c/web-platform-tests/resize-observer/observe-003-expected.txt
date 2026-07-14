@@ -1,0 +1,3 @@
+
+PASS throw exception when observing non-element
+

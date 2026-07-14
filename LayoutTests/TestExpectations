@@ -6412,7 +6412,6 @@ imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-visibil
 imported/w3c/web-platform-tests/paint-timing/fcp-only/svg-in-iframe.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointermove_in_pointerlock.html [ Skip ]
 imported/w3c/web-platform-tests/pointerlock/mouse_buttons_back_forward.html [ Skip ]
-imported/w3c/web-platform-tests/resize-observer/observe.html [ Skip ]
 imported/w3c/web-platform-tests/resize-observer/svg.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/entry-attributes.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/object-not-found-after-TAO-cross-origin-redirect.html [ Skip ]

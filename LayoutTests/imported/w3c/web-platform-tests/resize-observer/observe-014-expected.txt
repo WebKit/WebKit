@@ -1,0 +1,3 @@
+
+PASS an observation is fired after the change of writing mode when box's specified size comes from physical size properties.
+
