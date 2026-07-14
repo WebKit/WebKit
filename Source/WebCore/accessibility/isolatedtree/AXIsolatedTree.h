@@ -437,6 +437,16 @@ public:
     static Ref<AXIsolatedTree> createEmpty(AXObjectCache&);
     constexpr bool isEmptyContentTree() const { return m_isEmptyContentTree; }
     unsigned nodeMapSize() const { return m_nodeMap.size(); }
+
+    // Diagnostics for a broken tree. See AXObjectCache::treeData().
+    // True if createEmpty() couldn't obtain the root ScrollView, so the empty-content placeholder was
+    // created without a root (createEmptyContent() was never reached).
+    bool emptyContentCreatedWithoutRoot() const { return m_emptyContentCreatedWithoutRoot; }
+    // True if create() couldn't obtain the root ScrollView, so the full tree was built with no content.
+    bool fullTreeCreatedWithoutRoot() const { return m_fullTreeCreatedWithoutRoot; }
+    // True if createEmptyContent() couldn't find the WebArea child and bailed (see the FIXME there).
+    bool webAreaMissingAtCreation() const { return m_webAreaMissingAtCreation; }
+
     virtual ~AXIsolatedTree();
 
     static void removeTreeForFrameID(FrameIdentifier);
@@ -762,6 +772,11 @@ private:
     // These are placed here to fit in padding that would otherwise be between m_pendingSortedLiveRegionIDs and m_pendingSortedNonRootWebAreaIDs.
     OptionSet<ActivityState> m_pageActivityState;
     bool m_isEmptyContentTree { false };
+    // Diagnostics for a degenerate tree; surfaced in AXObjectCache::treeData(). Only written on the main
+    // thread at creation time.
+    bool m_emptyContentCreatedWithoutRoot { false };
+    bool m_fullTreeCreatedWithoutRoot { false };
+    bool m_webAreaMissingAtCreation { false };
     bool m_queuedForDestruction WTF_GUARDED_BY_LOCK(m_changeLogLock) { false };
     bool m_isMainFrame { false };
     bool m_siteIsolationEnabled { false };

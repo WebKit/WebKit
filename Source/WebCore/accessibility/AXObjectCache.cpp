@@ -402,6 +402,16 @@ bool AXObjectCache::shouldServeInitialCachedFrame()
 }
 
 static constexpr Seconds updateTreeSnapshotTimerInterval { 100_ms };
+
+// The isolated tree is initially served as a temporary empty-content placeholder (AXIsolatedTree::createEmpty)
+// while the full tree is built off the client-request critical path in buildIsolatedTree(). If that build
+// transiently fails (e.g. a detached document during navigation), the build timer repeats at this interval
+// until it succeeds, so we don't get stuck serving the empty placeholder.
+static constexpr Seconds buildIsolatedTreeRetryInterval { 200_ms };
+// Give up after this long so a cache that can never build a tree (e.g. its document is gone for good) doesn't
+// wake up forever.
+static constexpr Seconds buildIsolatedTreeMaxRetryDuration { 60_s };
+static constexpr unsigned buildIsolatedTreeMaxRetries = static_cast<unsigned>(buildIsolatedTreeMaxRetryDuration / buildIsolatedTreeRetryInterval);
 #endif
 
 AXObjectCache::AXObjectCache(LocalFrame& localFrame, Document* document)
@@ -1258,8 +1268,12 @@ RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree()
         // build a temporary "empty" isolated tree consisting only of the ScrollView and the
         // WebArea objects. Then we schedule building the entire isolated tree on a Timer.
         tree = AXIsolatedTree::createEmpty(*this);
-        if (!m_buildIsolatedTreeTimer.isActive())
-            m_buildIsolatedTreeTimer.startOneShot(0_s);
+        // Repeat the build until it succeeds (buildIsolatedTree() stops the timer on success), so a single
+        // failed build attempt can't leave us permanently serving the empty-content placeholder.
+        if (!m_buildIsolatedTreeTimer.isActive()) {
+            m_buildIsolatedTreeRetryCount = 0;
+            m_buildIsolatedTreeTimer.start(0_s, buildIsolatedTreeRetryInterval);
+        }
     }
 
     return tree;
@@ -1267,14 +1281,32 @@ RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree()
 
 void AXObjectCache::buildIsolatedTree()
 {
-    m_buildIsolatedTreeTimer.stop();
-
-    RefPtr tree = AXIsolatedTree::create(*this);
-
-    if (RefPtr webArea = rootWebArea()) {
-        postPlatformNotification(*webArea, AXNotification::LoadComplete);
-        postPlatformNotification(*webArea, AXNotification::FocusedUIElementChanged);
+    if (m_isBuildingIsolatedTree) {
+        // Building the tree for a large document can take a while. If we're still working on it when the
+        // timer fires again, early-exit.
+        return;
     }
+    SetForScope buildingIsolatedTree(m_isBuildingIsolatedTree, true);
+
+    if (RefPtr tree = AXIsolatedTree::create(*this)) {
+        // The temporary empty-content placeholder has been replaced with the full tree, so stop retrying.
+        m_buildIsolatedTreeTimer.stop();
+        m_buildIsolatedTreeRetryCount = 0;
+        m_lastIsolatedTreeBuildFailed = false;
+
+        if (RefPtr webArea = rootWebArea()) {
+            postPlatformNotification(*webArea, AXNotification::LoadComplete);
+            postPlatformNotification(*webArea, AXNotification::FocusedUIElementChanged);
+        }
+        return;
+    }
+
+    // create() returned null, so the build failed.
+    m_lastIsolatedTreeBuildFailed = true;
+    m_documentPresentAtLastIsolatedTreeBuildFailure = !!document();
+
+    if (++m_buildIsolatedTreeRetryCount >= buildIsolatedTreeMaxRetries)
+        m_buildIsolatedTreeTimer.stop();
 }
 
 void AXObjectCache::setIsolatedTree(Ref<AXIsolatedTree> tree)
@@ -6230,6 +6262,7 @@ AXTreeData AXObjectCache::treeData(std::optional<OptionSet<AXStreamOptions>> add
     TextStream stream(TextStream::LineMode::MultipleLine);
 
     stream << "\nAXObjectTree:\n";
+    stream << "Tree ID: " << treeID().loggingString() << "\n";
     stream << "Loading progress: " << m_loadingProgress << "\n";
 
     RefPtr document = this->document();
@@ -6271,9 +6304,21 @@ AXTreeData AXObjectCache::treeData(std::optional<OptionSet<AXStreamOptions>> add
 
         stream << "\nAXIsolatedTree:\n";
 
+        // Build-timer diagnostics (state on the AXObjectCache). Useful when the tree is stuck as an
+        // empty-content placeholder because the full-tree build never succeeded. gaveUp=yes means we
+        // exhausted buildIsolatedTreeMaxRetries and will no longer retry for this cache.
+        stream << "Build status: inProgress=" << (m_isBuildingIsolatedTree ? "yes" : "no")
+            << ", retries=" << m_buildIsolatedTreeRetryCount << "/" << buildIsolatedTreeMaxRetries
+            << ", gaveUp=" << (m_buildIsolatedTreeRetryCount >= buildIsolatedTreeMaxRetries ? "yes" : "no")
+            << ", lastBuildFailed=" << (m_lastIsolatedTreeBuildFailed ? "yes" : "no")
+            << ", documentPresentAtLastFailure=" << (m_documentPresentAtLastIsolatedTreeBuildFailure ? "yes" : "no")
+            << ", buildTimerActive=" << (m_buildIsolatedTreeTimer.isActive() ? "yes" : "no") << "\n";
+
         RefPtr tree = getOrCreateIsolatedTree();
         if (tree) {
+            stream << "Tree ID: " << tree->treeID().loggingString() << "\n";
             stream << "Loading progress: " << tree->loadingProgress() << ", isEmptyContentTree: " << (tree->isEmptyContentTree() ? "yes" : "no") << ", nodeMapSize: " << tree->nodeMapSize() << "\n";
+            stream << "Creation anomalies: emptyContentMissingRoot=" << (tree->emptyContentCreatedWithoutRoot() ? "yes" : "no") << ", fullTreeMissingRoot=" << (tree->fullTreeCreatedWithoutRoot() ? "yes" : "no") << ", webAreaMissing=" << (tree->webAreaMissingAtCreation() ? "yes" : "no") << "\n";
             if (auto focusID = tree->unsafeFocusedNodeID())
                 stream << "Focused object: ID=" << focusID->loggingString() << "\n";
             else

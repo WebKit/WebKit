@@ -1115,6 +1115,15 @@ private:
     const Ref<AXGeometryManager> m_geometryManager;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     Timer m_buildIsolatedTreeTimer;
+    // True while buildIsolatedTree() is running, to guard against re-entrant builds.
+    bool m_isBuildingIsolatedTree { false };
+    // Consecutive failed isolated-tree build attempts. The build timer gives up once this reaches
+    // buildIsolatedTreeMaxRetries.
+    unsigned m_buildIsolatedTreeRetryCount { 0 };
+    // Diagnostics for the most recent buildIsolatedTree() attempt where AXIsolatedTree::create()
+    // returned null.
+    bool m_lastIsolatedTreeBuildFailed { false };
+    bool m_documentPresentAtLastIsolatedTreeBuildFailure { false };
     bool m_deferredRegenerateIsolatedTree { false };
     DeferrableOneShotTimer m_selectedTextRangeTimer;
     Markable<AXID> m_lastDebouncedTextRangeObject;
