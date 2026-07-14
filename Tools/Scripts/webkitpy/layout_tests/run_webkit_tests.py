@@ -106,6 +106,9 @@ def main(argv, stdout, stderr):
             bot_printer = buildbot_results.BuildBotPrinter(stdout, options.debug_rwt_logging)
             bot_printer.print_results(run_details)
 
+            if options.show_interop_score:
+                _print_interop_score(host, port, options, run_details, stdout, stderr)
+
         return run_details.exit_code
 
     except KeyboardInterrupt:
@@ -115,6 +118,21 @@ def main(argv, stdout, stderr):
             print('\n%s raised: %s' % (e.__class__.__name__, str(e)), file=stderr)
             traceback.print_exc(file=stderr)
         return EXCEPTIONAL_EXIT_STATUS
+
+
+def _print_interop_score(host, port, options, run_details, stdout, stderr):
+    from webkitpy.layout_tests.interop import interop_score
+
+    data_path = interop_score.default_data_path(host.filesystem, options.interop_year)
+    try:
+        interop_data = interop_score.load_interop_data(host.filesystem, data_path)
+    except ValueError as error:
+        print(str(error), file=stderr)
+        return
+
+    score = interop_score.compute_interop_score(interop_data, run_details.initial_results.results_by_name, port)
+    stdout.write(interop_score.format_interop_score(score, verbose=options.verbose))
+    stdout.flush()
 
 
 def parse_args(args):
@@ -389,6 +407,13 @@ def parse_args(args):
         optparse.make_option("--show-window", action="store_true", default=False, help="Make the test runner window visible during testing."),
         optparse.make_option("--show-cursor", action="store_true", default=False, help="Show the cursor overlay in the test runner window during testing (for debugging). Use with --show-window"),
         optparse.make_option("--self-compare-with-header", help="Run all tests as A/B tests between the default configuration and the given test features header (ignoring expected results)."),
+        optparse.make_option(
+            "--show-interop-score", action="store_true", default=False,
+            help=("After the run, compute and print an interop score over any web-platform-tests that were run, "
+                  "using the focus areas for --interop-year.")),
+        optparse.make_option(
+            "--interop-year", type="int", default=2026,
+            help=("Interop year whose focus areas --show-interop-score uses (default: 2026).")),
     ]))
 
     option_group_definitions.append(("Web Platform Test Server Options", [
