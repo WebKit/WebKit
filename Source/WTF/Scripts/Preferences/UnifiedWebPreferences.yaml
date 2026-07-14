@@ -3154,7 +3154,7 @@ FileSystemEnabled:
 
 FileSystemHandleSerializationEnabled:
   type: bool
-  status: preview
+  status: stable
   category: dom
   humanReadableName: "File System Handle Serialization"
   humanReadableDescription: "Enable FileSystemHandle for postMessage() and structuredClone()"
@@ -3162,8 +3162,10 @@ FileSystemHandleSerializationEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(COCOA)" : true
       default: false
     WebCore:
+      "PLATFORM(COCOA)" : true
       default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
