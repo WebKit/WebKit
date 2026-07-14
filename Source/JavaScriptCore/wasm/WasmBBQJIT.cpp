@@ -2506,7 +2506,7 @@ void BBQJIT::moveShiftAmountIfNecessary(Location& rhsLocation)
     PREPARE_FOR_SHIFT;
     EMIT_BINARY(
         "I32Shl", TypeKind::I32,
-        BLOCK(Value::fromI32(lhs.asI32() << rhs.asI32())),
+        BLOCK(Value::fromI32(lhs.asI32() << (rhs.asI32() & 31))),
         BLOCK(
             moveShiftAmountIfNecessary(rhsLocation);
             m_jit.lshift32(lhsLocation.asGPR(), rhsLocation.asGPR(), resultLocation.asGPR());
@@ -2528,7 +2528,7 @@ void BBQJIT::moveShiftAmountIfNecessary(Location& rhsLocation)
     PREPARE_FOR_SHIFT;
     EMIT_BINARY(
         "I32ShrS", TypeKind::I32,
-        BLOCK(Value::fromI32(lhs.asI32() >> rhs.asI32())),
+        BLOCK(Value::fromI32(lhs.asI32() >> (rhs.asI32() & 31))),
         BLOCK(
             moveShiftAmountIfNecessary(rhsLocation);
             m_jit.rshift32(lhsLocation.asGPR(), rhsLocation.asGPR(), resultLocation.asGPR());
@@ -2550,7 +2550,7 @@ void BBQJIT::moveShiftAmountIfNecessary(Location& rhsLocation)
     PREPARE_FOR_SHIFT;
     EMIT_BINARY(
         "I32ShrU", TypeKind::I32,
-        BLOCK(Value::fromI32(static_cast<uint32_t>(lhs.asI32()) >> static_cast<uint32_t>(rhs.asI32()))),
+        BLOCK(Value::fromI32(static_cast<int32_t>(static_cast<uint32_t>(lhs.asI32()) >> (rhs.asI32() & 31)))),
         BLOCK(
             moveShiftAmountIfNecessary(rhsLocation);
             m_jit.urshift32(lhsLocation.asGPR(), rhsLocation.asGPR(), resultLocation.asGPR());

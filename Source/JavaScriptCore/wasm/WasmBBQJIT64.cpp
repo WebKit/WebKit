@@ -2725,7 +2725,7 @@ void BBQJIT::emitThrowOnNullReferenceBeforeAccess(Location ref, ptrdiff_t offset
     PREPARE_FOR_SHIFT;
     EMIT_BINARY(
         "I64Shl", TypeKind::I64,
-        BLOCK(Value::fromI64(lhs.asI64() << rhs.asI64())),
+        BLOCK(Value::fromI64(lhs.asI64() << (rhs.asI64() & 63))),
         BLOCK(
             moveShiftAmountIfNecessary(rhsLocation);
             m_jit.lshift64(lhsLocation.asGPR(), rhsLocation.asGPR(), resultLocation.asGPR());
@@ -2747,7 +2747,7 @@ void BBQJIT::emitThrowOnNullReferenceBeforeAccess(Location ref, ptrdiff_t offset
     PREPARE_FOR_SHIFT;
     EMIT_BINARY(
         "I64ShrS", TypeKind::I64,
-        BLOCK(Value::fromI64(lhs.asI64() >> rhs.asI64())),
+        BLOCK(Value::fromI64(lhs.asI64() >> (rhs.asI64() & 63))),
         BLOCK(
             moveShiftAmountIfNecessary(rhsLocation);
             m_jit.rshift64(lhsLocation.asGPR(), rhsLocation.asGPR(), resultLocation.asGPR());
@@ -2769,7 +2769,7 @@ void BBQJIT::emitThrowOnNullReferenceBeforeAccess(Location ref, ptrdiff_t offset
     PREPARE_FOR_SHIFT;
     EMIT_BINARY(
         "I64ShrU", TypeKind::I64,
-        BLOCK(Value::fromI64(static_cast<uint64_t>(lhs.asI64()) >> static_cast<uint64_t>(rhs.asI64()))),
+        BLOCK(Value::fromI64(static_cast<int64_t>(static_cast<uint64_t>(lhs.asI64()) >> (rhs.asI64() & 63)))),
         BLOCK(
             moveShiftAmountIfNecessary(rhsLocation);
             m_jit.urshift64(lhsLocation.asGPR(), rhsLocation.asGPR(), resultLocation.asGPR());
