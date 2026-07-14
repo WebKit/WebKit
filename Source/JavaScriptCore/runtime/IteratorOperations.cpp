@@ -560,26 +560,15 @@ IterationMode getIterationMode(VM&, JSGlobalObject* globalObject, JSValue iterab
     return IterationMode::Generic;
 }
 
-IterationMode getIterationMode(VM&, JSGlobalObject* globalObject, JSValue iterable)
+IterationMode getIterationMode(JSValue iterable)
 {
     if (!isJSArray(iterable))
         return IterationMode::Generic;
 
     JSArray* array = uncheckedDowncast<JSArray>(iterable);
-    Structure* structure = array->structure();
-    // FIXME: We want to support broader JSArrays as long as array[@@iterator] is not defined.
-    if (!globalObject->isOriginalArrayStructure(structure))
+    if (!array->isIteratorProtocolFastAndNonObservable())
         return IterationMode::Generic;
 
-    if (!globalObject->arrayIteratorProtocolWatchpointSet().isStillValid())
-        return IterationMode::Generic;
-
-    // Now, Array has original Array Structures and arrayIteratorProtocolWatchpointSet is not fired.
-    // This means,
-    // 1. Array.prototype is [[Prototype]].
-    // 2. array[@@iterator] is not overridden.
-    // 3. Array.prototype[@@iterator] is an expected one.
-    // So, we can say this will create an expected ArrayIterator.
     return IterationMode::FastArray;
 }
 

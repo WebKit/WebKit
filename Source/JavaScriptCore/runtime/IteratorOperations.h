@@ -89,7 +89,7 @@ enum class IterableValidationResult : uint8_t {
 JS_EXPORT_PRIVATE IterableValidationResult validateIterable(VM&, JSValue iterable, JSValue symbolIterator);
 JS_EXPORT_PRIVATE ASCIILiteral getIteratorErrorMessage(IterableValidationResult, JSValue iterable);
 
-JS_EXPORT_PRIVATE IterationMode NODELETE getIterationMode(VM&, JSGlobalObject*, JSValue iterable);
+JS_EXPORT_PRIVATE IterationMode getIterationMode(JSValue iterable);
 JS_EXPORT_PRIVATE IterationMode getIterationMode(VM&, JSGlobalObject*, JSValue iterable, JSValue symbolIterator);
 
 
@@ -197,7 +197,7 @@ static ALWAYS_INLINE void forEachInFastArray(JSGlobalObject* globalObject, JSVal
     UNUSED_PARAM(iterable);
 
     auto& vm = getVM(globalObject);
-    ASSERT(getIterationMode(vm, globalObject, iterable) == IterationMode::FastArray);
+    ASSERT(getIterationMode(iterable) == IterationMode::FastArray);
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -207,7 +207,7 @@ static ALWAYS_INLINE void forEachInFastArray(JSGlobalObject* globalObject, JSVal
         callback(vm, globalObject, nextValue);
         if (scope.exception()) [[unlikely]] {
             scope.release();
-            JSArrayIterator* iterator = JSArrayIterator::create(vm, globalObject->arrayIteratorStructure(), array, IterationKind::Values);
+            JSArrayIterator* iterator = JSArrayIterator::create(vm, array->realm()->arrayIteratorStructure(), array, IterationKind::Values);
             iterator->internalField(JSArrayIterator::Field::Index).setWithoutWriteBarrier(jsNumber(index + 1));
             iteratorClose(globalObject, iterator);
             return;
@@ -261,7 +261,7 @@ void forEachInIterable(JSGlobalObject* globalObject, JSValue iterable, NOESCAPE 
     auto& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (getIterationMode(vm, globalObject, iterable) == IterationMode::FastArray) {
+    if (getIterationMode(iterable) == IterationMode::FastArray) {
         auto* array = uncheckedDowncast<JSArray>(iterable);
         forEachInFastArray(globalObject, iterable, array, callback);
         RETURN_IF_EXCEPTION(scope, void());
