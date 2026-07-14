@@ -28,7 +28,6 @@
 
 #if ENABLE(WEBXR) && ENABLE(GAMEPAD)
 
-#include "Gamepad.h"
 #include "GamepadConstants.h"
 #include "XRTargetRayMode.h"
 #include <wtf/TZoneMallocInlines.h>
