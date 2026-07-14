@@ -1,0 +1,6 @@
+
+While the iframe is display:none: lazy image loaded = false (expected false)
+After the iframe becomes visible: lazy image loaded = true (expected true)
+
+PASS
+

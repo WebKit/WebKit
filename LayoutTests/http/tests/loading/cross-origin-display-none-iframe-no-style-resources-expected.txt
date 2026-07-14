@@ -1,0 +1,5 @@
+Hidden cross-origin iframe - CSS background fetched: false
+Same-origin iframe nested inside it - CSS background fetched: false
+
+PASS: throttling applied to the hidden cross-origin frame and propagated to its same-origin descendant
+

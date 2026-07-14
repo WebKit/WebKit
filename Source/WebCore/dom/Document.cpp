@@ -2789,6 +2789,9 @@ void Document::scheduleStyleRecalc()
 
     ASSERT(childNeedsStyleRecalc() || m_needsFullStyleRebuild);
 
+    if (RefPtr frameView = view(); frameView && frameView->isCrossOriginFrameWithHiddenOwner())
+        return;
+
     m_styleRecalcTimer.startOneShot(0_s);
 
     InspectorInstrumentation::didScheduleStyleRecalculation(*this);
@@ -8271,7 +8274,8 @@ void Document::finishedParsing()
         // started the resource load and might fire the window load event too early. To avoid this
         // we force the styles to be up to date before calling FrameLoader::finishedParsing().
         // See https://bugs.webkit.org/show_bug.cgi?id=36864 starting around comment 35.
-        updateStyleIfNeeded();
+        if (RefPtr frameView = view(); !frameView || !frameView->isCrossOriginFrameWithHiddenOwner())
+            updateStyleIfNeeded();
 
         frame->loader().finishedParsing();
         InspectorInstrumentation::domContentLoadedEventFired(*frame);

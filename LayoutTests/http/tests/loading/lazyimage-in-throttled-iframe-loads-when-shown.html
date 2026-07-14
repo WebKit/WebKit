@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<body>
+<pre id="log"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+if (window.internals)
+    internals.settings.setLazyImageLoadingEnabled(true);
+
+function log(s) { document.getElementById('log').textContent += s + "\n"; }
+
+let loadedWhileHidden = false;
+let loadedAfterVisible = false;
+let shown = false;
+
+window.addEventListener("message", function (event) {
+    if (event.data !== "lazyimg-loaded")
+        return;
+    if (shown)
+        loadedAfterVisible = true;
+    else
+        loadedWhileHidden = true;
+});
+
+// Unique per run so the image isn't served from cache, which would skip lazy-load deferral.
+const imageSrc = location.origin + "/resources/square100.png?lazyimage-in-throttled-iframe-" + crypto.randomUUID();
+
+const iframe = document.createElement("iframe");
+iframe.style.cssText = "display:none; width:200px; height:200px; border:0";
+iframe.sandbox = "allow-scripts";
+iframe.srcdoc =
+    '<!DOCTYPE html><body style="margin:0">'
+    + '<img loading="lazy" width="100" height="100" src="' + imageSrc + '"'
+    + ' onload="parent.postMessage(\'lazyimg-loaded\', \'*\')">'
+    + '</body>';
+document.body.insertBefore(iframe, document.body.firstChild);
+
+setTimeout(function () {
+    log("While the iframe is display:none: lazy image loaded = " + loadedWhileHidden + " (expected false)");
+    shown = true;
+    iframe.style.display = "block";
+    window.scrollTo(0, 0);
+    waitForLoadAfterVisible(25);
+}, 500);
+
+function waitForLoadAfterVisible(triesLeft) {
+    if (loadedAfterVisible || triesLeft <= 0) {
+        finish();
+        return;
+    }
+    setTimeout(function () { waitForLoadAfterVisible(triesLeft - 1); }, 100);
+}
+
+function finish() {
+    log("After the iframe becomes visible: lazy image loaded = " + loadedAfterVisible + " (expected true)");
+    log("");
+    log((!loadedWhileHidden && loadedAfterVisible)
+        ? "PASS"
+        : "FAIL: a deferred lazy image in a cross-origin hidden iframe did not load after the iframe became visible");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

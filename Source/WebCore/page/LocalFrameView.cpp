@@ -47,6 +47,7 @@
 #include "DocumentQuirks.h"
 #include "DocumentResourceLoader.h"
 #include "DocumentSVG.h"
+#include "DocumentSecurityOrigin.h"
 #include "DocumentView.h"
 #include "Editor.h"
 #include "EventHandler.h"
@@ -3842,6 +3843,23 @@ void LocalFrameView::resumeVisibleImageAnimations(const IntRect& visibleRect)
 
     if (auto* renderView = m_frame->contentRenderer())
         renderView->resumePausedImageAnimationsIfNeeded(visibleRect);
+}
+
+bool LocalFrameView::isCrossOriginFrameWithHiddenOwner() const
+{
+    if (!m_frame->ownerElement())
+        return false;
+
+    if (RefPtr parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent())) {
+        RefPtr parentView = parentFrame->view();
+        if (parentView && parentView->isCrossOriginFrameWithHiddenOwner())
+            return true;
+    }
+
+    if (m_frame->ownerRenderer())
+        return false;
+    RefPtr document = m_frame->document();
+    return document && !document->isSameOriginAsTopDocument();
 }
 
 void LocalFrameView::updateScriptedAnimationsAndTimersThrottlingState(const IntRect& visibleRect)

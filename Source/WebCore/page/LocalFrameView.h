@@ -134,6 +134,7 @@ public:
     WEBCORE_EXPORT bool NODELETE didFirstLayout() const;
 
     WEBCORE_EXPORT bool needsLayout() const;
+    bool isCrossOriginFrameWithHiddenOwner() const;
     WEBCORE_EXPORT void setNeedsLayoutAfterViewConfigurationChange();
 
     void setNeedsCompositingConfigurationUpdate();
