@@ -1,0 +1,6 @@
+
+PASS navigator.credentials.get() with respond mode should resolve with the specified data.
+PASS navigator.credentials.get() with complex data response should resolve with structured data.
+PASS navigator.credentials.get() with decline mode should reject with NotAllowedError.
+PASS navigator.credentials.get() with wait mode should reject with the abort reason when aborted.
+

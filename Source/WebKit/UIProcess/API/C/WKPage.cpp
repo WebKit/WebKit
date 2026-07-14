@@ -3241,6 +3241,18 @@ void WKPageSetUseDarkAppearanceForTesting(WKPageRef pageRef, bool useDarkAppeara
     protect(toImpl(pageRef))->setUseDarkAppearanceForTesting(useDarkAppearance);
 }
 
+void WKPageSetVirtualWalletBehaviorForTesting(WKPageRef pageRef, WKStringRef action, WKStringRef protocol, WKStringRef responseJSON)
+{
+#if ENABLE(WEB_AUTHN) && ENABLE(WEBDRIVER_BIDI)
+    protect(toImpl(pageRef))->setVirtualWalletBehaviorForTesting(toWTFString(action), toWTFString(protocol), toWTFString(responseJSON));
+#else
+    UNUSED_PARAM(pageRef);
+    UNUSED_PARAM(action);
+    UNUSED_PARAM(protocol);
+    UNUSED_PARAM(responseJSON);
+#endif
+}
+
 ProcessID WKPageGetProcessIdentifier(WKPageRef page)
 {
     return toImpl(page)->legacyMainFrameProcessID();

@@ -241,6 +241,14 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
     return self;
 }
 
+- (void)dealloc
+{
+    if (_completionHandler)
+        _completionHandler(makeUnexpected(WebCore::ExceptionData { ExceptionCode::OperationError, "The digital credential request was interrupted."_s }));
+
+    [super dealloc];
+}
+
 - (id<WKDigitalCredentialsPickerDelegate>)delegate
 {
     return _delegate.getAutoreleased();
@@ -464,6 +472,9 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
 {
     [_presentmentController cancelRequest];
     _presentmentController = nil;
+
+    if (_completionHandler)
+        _completionHandler(makeUnexpected(WebCore::ExceptionData { ExceptionCode::OperationError, "The digital credential request was cancelled."_s }));
 
     if ([self.delegate respondsToSelector:@selector(digitalCredentialsPickerDidDismiss:)])
         [self.delegate digitalCredentialsPickerDidDismiss:self];

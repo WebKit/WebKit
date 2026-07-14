@@ -172,6 +172,9 @@ WK_EXPORT void WKPageSetIgnoresViewportScaleLimits(WKPageRef page, bool ignoresV
 
 WK_EXPORT void WKPageSetUseDarkAppearanceForTesting(WKPageRef pageRef, bool useDarkAppearance);
 
+// Test-only virtual wallet actuation (action: "respond"|"decline"|"wait"|"clear"); webkit.org/b/306292.
+WK_EXPORT void WKPageSetVirtualWalletBehaviorForTesting(WKPageRef page, WKStringRef action, WKStringRef protocol, WKStringRef responseJSON);
+
 WK_EXPORT WKProcessID WKPageGetProcessIdentifier(WKPageRef page);
 WK_EXPORT WKProcessID WKPageGetGPUProcessIdentifier(WKPageRef page);
 

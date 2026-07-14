@@ -1,0 +1,7 @@
+
+PASS org-iso-mdoc response is passed through with correct protocol and data.
+PASS org-iso-mdoc response with Annex C shaped data preserves the response string.
+PASS Response data is passed through byte-for-byte without modification.
+PASS Empty response string is passed through (validation is the site's responsibility).
+PASS Additional fields in the response object are preserved.
+

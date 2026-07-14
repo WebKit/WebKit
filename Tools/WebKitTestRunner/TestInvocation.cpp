@@ -703,6 +703,15 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetVirtualWalletBehavior")) {
+        auto dictionary = dictionaryValue(messageBody);
+        TestController::singleton().setVirtualWalletBehavior(
+            stringValue(dictionary, "Action"),
+            stringValue(dictionary, "Protocol"),
+            stringValue(dictionary, "ResponseJSON"));
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "GetBackgroundFetchIdentifier"))
         return TestController::singleton().getBackgroundFetchIdentifier();
 

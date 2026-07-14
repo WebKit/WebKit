@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<title>Digital Credential API: get() webdriver tests.</title>
+<title>Digital Credential API: get() webdriver tests for openid4vp-v1-unsigned.</title>
 <link rel="help" href="https://wicg.github.io/digital-credentials/">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
@@ -55,10 +55,8 @@
     const options = makeGetOptions({ protocol: "openid4vp-v1-unsigned", signal: controller.signal });
     const promise = navigator.credentials.get(options);
 
-    // Give it some time to make sure it's pending.
-    await new Promise(resolve => t.step_timeout(resolve, 100));
-
-    controller.abort();
-    await promise_rejects_dom(t, "AbortError", promise);
-  }, "navigator.credentials.get() with wait mode should remain pending until aborted.");
+    const reason = new Error("aborted by test");
+    controller.abort(reason);
+    await promise_rejects_exactly(t, reason, promise);
+  }, "navigator.credentials.get() with wait mode should reject with the abort reason when aborted.");
 </script>

@@ -305,6 +305,7 @@ public:
     void resumeBackgroundFetch(JSStringRef);
     void simulateClickBackgroundFetch(JSStringRef);
     void setBackgroundFetchPermission(bool);
+    void setVirtualWalletBehavior(JSStringRef action, JSStringRef protocol, JSStringRef responseJSON);
     JSRetainPtr<JSStringRef> lastAddedBackgroundFetchIdentifier() const;
     JSRetainPtr<JSStringRef> lastRemovedBackgroundFetchIdentifier() const;
     JSRetainPtr<JSStringRef> lastUpdatedBackgroundFetchIdentifier() const;

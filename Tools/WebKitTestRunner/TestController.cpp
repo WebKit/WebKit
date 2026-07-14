@@ -2062,6 +2062,12 @@ ASCIILiteral TestController::serviceWorkerProcessName()
 #endif
 }
 
+void TestController::setVirtualWalletBehavior(WKStringRef action, WKStringRef protocol, WKStringRef responseJSON)
+{
+    if (auto* webView = mainWebView())
+        WKPageSetVirtualWalletBehaviorForTesting(webView->page(), action, protocol, responseJSON);
+}
+
 #if !PLATFORM(COCOA)
 
 void TestController::setAllowsAnySSLCertificate(bool allows)

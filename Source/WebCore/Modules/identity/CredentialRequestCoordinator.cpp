@@ -200,8 +200,10 @@ void CredentialRequestCoordinator::processCredentialChooserResponse(Expected<Dig
 
     // A parked "wait" reply released during abort/teardown can arrive after the
     // request already left Requesting; it is moot, so return before the guard.
-    if (m_interactionState != InteractionState::Requesting)
+    if (m_interactionState != InteractionState::Requesting) {
+        LOG(DigitalCredentials, "Ignoring credential chooser response received while not in the Requesting state.");
         return;
+    }
 
     InteractionStateGuard guard(*this);
 

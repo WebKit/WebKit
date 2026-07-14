@@ -15,4 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/webdriver/create.https.html
-/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/webdriver/get.https.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/webdriver/get-mdoc.https.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/webdriver/get-openid4vp.https.html

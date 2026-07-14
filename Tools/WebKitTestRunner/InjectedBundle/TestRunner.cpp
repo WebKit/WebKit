@@ -381,6 +381,15 @@ void TestRunner::setBackgroundFetchPermission(bool enabled)
     postSynchronousPageMessage("SetBackgroundFetchPermission", enabled);
 }
 
+void TestRunner::setVirtualWalletBehavior(JSStringRef action, JSStringRef protocol, JSStringRef responseJSON)
+{
+    postSynchronousPageMessage("SetVirtualWalletBehavior", createWKDictionary({
+        { "Action", toWK(action) },
+        { "Protocol", toWK(protocol) },
+        { "ResponseJSON", toWK(responseJSON) },
+    }));
+}
+
 JSRetainPtr<JSStringRef>  TestRunner::lastAddedBackgroundFetchIdentifier() const
 {
     auto identifier = InjectedBundle::singleton().lastAddedBackgroundFetchIdentifier();

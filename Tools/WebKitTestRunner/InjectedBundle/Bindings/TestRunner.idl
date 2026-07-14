@@ -188,6 +188,7 @@ interface TestRunner {
     undefined resumeBackgroundFetch(DOMString identifier);
     undefined simulateClickBackgroundFetch(DOMString identifier);
     undefined setBackgroundFetchPermission(boolean value);
+    undefined setVirtualWalletBehavior(DOMString action, DOMString protocol, DOMString responseJSON);
     DOMString lastAddedBackgroundFetchIdentifier();
     DOMString lastRemovedBackgroundFetchIdentifier();
     DOMString lastUpdatedBackgroundFetchIdentifier();

@@ -8072,11 +8072,8 @@ webkit.org/b/303807 imported/w3c/web-platform-tests/digital-credentials/create.d
 webkit.org/b/303807 imported/w3c/web-platform-tests/digital-credentials/create-enabled-on-self-origin-by-permissions-policy.https.sub.html [ Skip ]
 webkit.org/b/303807 imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-create.https.html [ Skip ]
 webkit.org/b/303807 imported/w3c/web-platform-tests/digital-credentials/webdriver/create.https.html [ Skip ]
-webkit.org/b/306292 imported/w3c/web-platform-tests/digital-credentials/webdriver/get.https.html [ Skip ]
-webkit.org/b/306292 http/wpt/identity/formats/ISO18013/valid-roundtrip.https.html [ Skip ]
-webkit.org/b/306292 http/wpt/identity/formats/ISO18013/response-handling.https.html [ Skip ]
+webkit.org/b/317545 imported/w3c/web-platform-tests/digital-credentials/webdriver/get-openid4vp.https.html [ Skip ]
 webkit.org/b/306292 http/wpt/identity/formats/ISO18013/origin-binding.https.html [ Skip ]
-webkit.org/b/306292 imported/w3c/web-platform-tests/digital-credentials/concurrent-requests.https.html [ Skip ]
 webkit.org/b/317545 imported/w3c/web-platform-tests/digital-credentials/protocol-filtering-openid4vp.https.html [ Skip ]
 
 # Hits assert in debug, tracked by https://bugs.webkit.org/show_bug.cgi?id=303414
