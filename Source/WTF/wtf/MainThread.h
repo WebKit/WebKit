@@ -55,6 +55,7 @@ WTF_EXPORT_PRIVATE void callOnWebThreadOrDispatchAsyncOnMainThread(void (^block)
 WTF_EXPORT_PRIVATE bool NODELETE isMainThread();
 
 WTF_EXPORT_PRIVATE bool canCurrentThreadAccessThreadLocalData(Thread&);
+WTF_EXPORT_PRIVATE bool canCurrentThreadIDAccessThreadLocalData(uint32_t);
 
 WTF_EXPORT_PRIVATE bool isMainRunLoop();
 WTF_EXPORT_PRIVATE void callOnMainRunLoop(Function<void()>&&);
@@ -95,6 +96,7 @@ using WTF::callOnMainRunLoopAndWait;
 using WTF::callOnMainThread;
 using WTF::callOnMainThreadAndWait;
 using WTF::canCurrentThreadAccessThreadLocalData;
+using WTF::canCurrentThreadIDAccessThreadLocalData;
 using WTF::ensureOnMainRunLoop;
 using WTF::ensureOnMainThread;
 using WTF::isMainRunLoop;

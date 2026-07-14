@@ -69,18 +69,6 @@ TestWebKitAPI.WebPageTransferableTests/exportToImage(type:) [ Skip ]
 [ iOS Debug ] TestWebKitAPI.ContentRuleList.RequestMethods [ Pass Timeout ]
 [ iOS Debug ] TestWebKitAPI.ContentRuleList.ResourceTypes [ Pass Timeout ]
 
-# webkit.org/b/318739 [iOS DEBUG] 10x TestWebKitAPI.WebKitLegacy.* (api-tests) are constant crashes.
-[ iOS Debug ] TestWebKitAPI.QuickLook.LegacyQuickLookContent [ Crash ]
-[ iOS Debug ] TestWebKitAPI.WebKitLegacy.DateInputAccessoryViewTest [ Crash ]
-[ iOS Debug ] TestWebKitAPI.WebKitLegacy.DateTimeLocalInputAccessoryViewTest [ Crash ]
-[ iOS Debug ] TestWebKitAPI.WebKitLegacy.MonthInputAccessoryViewTest [ Crash ]
-[ iOS Debug ] TestWebKitAPI.WebKitLegacy.RenderInContextSnapshot [ Crash ]
-[ iOS Debug ] TestWebKitAPI.WebKitLegacy.ScrollToRevealSelection [ Crash ]
-[ iOS Debug ] TestWebKitAPI.WebKitLegacy.SetTimeoutFunction [ Crash ]
-[ iOS Debug ] TestWebKitAPI.WebKitLegacy.TimeInputAccessoryViewTest [ Crash ]
-[ iOS Debug ] TestWebKitAPI.WebKitLegacy.WebGLNoCrashOnOtherThreadAccess [ Crash ]
-[ iOS Debug ] TestWebKitAPI.WebKitLegacy.WebGLPrepareDisplayOnWebThread [ Crash ]
-
 webkit.org/b/319125 [ ios release ] TestWebKitAPI.WKDownload.BlobDownload [ Pass Timeout ]
 
 webkit.org/b/319000 [ ios ] TestWebKitAPI.WKHTTPCookieStore.ObserveCookiesReceivedFromHTTP [ Pass Failure ]

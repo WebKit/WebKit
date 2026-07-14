@@ -53,6 +53,11 @@ bool canCurrentThreadAccessThreadLocalData(Thread& thread)
 {
     return &thread == &Thread::currentSingleton();
 }
+
+bool canCurrentThreadIDAccessThreadLocalData(uint32_t threadID)
+{
+    return threadID == currentThreadID();
+}
 #endif
 
 bool isMainRunLoop()
