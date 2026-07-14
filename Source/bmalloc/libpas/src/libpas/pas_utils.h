@@ -1328,6 +1328,12 @@ enum cpp_initialization_t { cpp_initialization };
     while ((x) == -1 && errno == EAGAIN) { } \
 } while (0)
 
+/* For advisory syscalls where retrying on EAGAIN is wrong: madvise() reports a failed
+   VMA split as EAGAIN, and that failure is permanent at vm.max_map_count. */
+#define PAS_SYSCALL_NO_RETRY(x) do { \
+    (void)(x); \
+} while (0)
+
 PAS_END_EXTERN_C;
 
 PAS_IGNORE_CLANG_WARNINGS_END // "qualifier-requires-header"
