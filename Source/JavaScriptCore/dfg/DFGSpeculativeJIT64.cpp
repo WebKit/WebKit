@@ -1740,7 +1740,7 @@ void SpeculativeJIT::compileRegExpStringIteratorNext(Node* node)
     GPRReg scratchGPR = scratch.gpr();
 
     // FIXME: Detach iterator advancement and result object creation from this node so that the iterator allocation can be sunk.
-    speculateCellType(node->child1(), iteratorGPR, SpecObjectOther, JSRegExpStringIteratorType);
+    speculateCellTypeWithoutTypeFiltering(node->child1(), iteratorGPR, JSRegExpStringIteratorType);
 
     flushRegisters();
     callOperation(operationRegExpStringIteratorNext, JSValueRegs(valueGPR), LinkableConstant::globalObject(*this, node), iteratorGPR);
