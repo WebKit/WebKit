@@ -712,6 +712,32 @@ window.test_driver_internal.get_computed_role = async function (element, context
 
 /**
  *
+ * @param {Element} element
+ * @returns {Promise<Object>}
+ */
+window.test_driver_internal.get_accessibility_properties_for_element = async function (element, context=null) {
+    if (!element)
+        return {};
+    context = context ?? window;
+
+    return context.internals.getAccessibilityPropertiesForElement(element);
+}
+
+/**
+ *
+ * @param {string} accessibilityNodeId
+ * @returns {Promise<Object>}
+ */
+window.test_driver_internal.get_accessibility_properties_for_accessibility_node = async function (accessibilityNodeId, context=null) {
+    if (!element)
+        return {};
+    context = context ?? window;
+
+    return context.internals.getAccessibilityPropertiesForAccessibilityNode(accessibilityNodeId);
+}
+
+/**
+ *
  * @param {string} origin
  * @param {string} embedding_origin
  * @param {boolean} blocked

@@ -106,6 +106,16 @@ enum class AXStreamOptions : uint16_t;
 enum class AXProperty : uint16_t;
 enum class LiveRegionStatus: uint8_t;
 
+// When this is updated, WebCoreArgumentCoders.serialization.in must be updated as well.
+struct AccessibilityProperties {
+    std::optional<String> accessibilityNodeId;
+    std::optional<String> role;
+    std::optional<String> label;
+    std::optional<String> checked;
+    std::optional<String> pressed;
+    std::optional<String> parent;
+    Vector<String> children;
+};
 
 struct AXTreeData {
     String liveTree;
