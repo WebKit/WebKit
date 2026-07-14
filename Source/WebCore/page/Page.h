@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -314,6 +314,7 @@ enum class RenderingUpdateStep : uint32_t {
     PrepareCanvasesForDisplayOrFlush    = 1 << 21,
     CaretAnimation                      = 1 << 22,
     FocusFixup                          = 1 << 23,
+    DrainScrollToFocusedElement         = 1 << 24,
     UpdateValidationMessagePositions    = 1 << 25,
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     AccessibilityRegionUpdate           = 1 << 26,
@@ -344,6 +345,7 @@ constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
     RenderingUpdateStep::Scroll,
     RenderingUpdateStep::MediaQueryEvaluation,
     RenderingUpdateStep::Animations,
+    RenderingUpdateStep::DrainScrollToFocusedElement,
     RenderingUpdateStep::Fullscreen,
     RenderingUpdateStep::AnimationFrameCallbacks,
     RenderingUpdateStep::IntersectionObservations,

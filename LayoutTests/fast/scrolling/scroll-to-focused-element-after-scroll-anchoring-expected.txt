@@ -1,0 +1,10 @@
+Focused-element scroll must commit before paint, even after scroll anchoring adjusts scrollTop. webkit.org/b/318168
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scrollTopAfterFocus is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
