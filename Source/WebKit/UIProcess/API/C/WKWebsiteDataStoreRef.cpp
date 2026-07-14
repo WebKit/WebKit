@@ -719,6 +719,7 @@ void WKWebsiteDataStoreClearStorage(WKWebsiteDataStoreRef dataStoreRef, void* co
 {
     OptionSet<WebKit::WebsiteDataType> dataTypes = {
         WebKit::WebsiteDataType::LocalStorage,
+        WebKit::WebsiteDataType::SessionStorage,
         WebKit::WebsiteDataType::IndexedDBDatabases,
         WebKit::WebsiteDataType::FileSystem,
         WebKit::WebsiteDataType::DOMCache,

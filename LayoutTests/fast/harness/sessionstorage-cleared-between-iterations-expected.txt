@@ -1,0 +1,4 @@
+This test verifies that sessionStorage is empty at the start of each test run (including subsequent iterations under run-webkit-tests --iterations N).
+Length at start is 0
+Value for iterationMarker is null
+
