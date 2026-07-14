@@ -360,3 +360,5 @@ webkit.org/b/318586 [ Tahoe X86_64 ] TestIPC.IPCSerialization.SecTrustRef [ Fail
 webkit.org/b/318713 [ Debug x86_64 ] TestWebKitAPI.EvaluateJavaScript.Serialization [ Timeout ]
 
 webkit.org/b/266292 [ mac ] TestWebKitAPI.FullscreenVideoTextRecognition.AddVideoAfterEnteringFullscreen [ Timeout ]
+
+webkit.org/b/319407 [ mac ] TestWebKitAPI.WebKit.ViewScaleFactorAfterShrinkToFit [ Failure ]
