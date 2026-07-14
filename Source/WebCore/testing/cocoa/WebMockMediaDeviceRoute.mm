@@ -75,6 +75,7 @@ NSErrorDomain const WebMockMediaDeviceRouteErrorDomain = @"WebMockMediaDeviceRou
 @synthesize volume;
 @synthesize metadata;
 @synthesize routeDisplayName;
+@synthesize protocolType;
 
 - (void)seekToPosition:(CMTime)position tolerance:(CMTime)tolerance
 {

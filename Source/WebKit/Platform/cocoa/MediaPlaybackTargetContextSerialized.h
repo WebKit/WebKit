@@ -44,6 +44,7 @@ public:
     explicit MediaPlaybackTargetContextSerialized(const WebCore::MediaPlaybackTarget&);
 
     String deviceName() const { return m_deviceName; }
+    String routeName() const { return m_routeName; }
     bool hasActiveRoute() const { return m_hasActiveRoute; }
     bool supportsRemoteVideoPlayback() const { return m_supportsRemoteVideoPlayback; }
 
@@ -54,16 +55,17 @@ public:
     WebCore::MediaPlaybackTargetMockState mockState() const { return m_state; }
 #if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
     CoreIPCAVOutputContext context() const { return m_context; }
-    MediaPlaybackTargetContextSerialized(String&&, bool, bool, WebCore::MediaPlaybackTargetType, WebCore::MediaPlaybackTargetMockState, CoreIPCAVOutputContext&&, std::optional<WTF::UUID>&&);
+    MediaPlaybackTargetContextSerialized(String&&, String&&, bool, bool, WebCore::MediaPlaybackTargetType, WebCore::MediaPlaybackTargetMockState, CoreIPCAVOutputContext&&, std::optional<WTF::UUID>&&);
 #else
     String contextID() const { return m_contextID; }
     String contextType() const { return m_contextType; }
-    MediaPlaybackTargetContextSerialized(String&&, bool, bool, WebCore::MediaPlaybackTargetType, WebCore::MediaPlaybackTargetMockState, String&&, String&&, std::optional<WTF::UUID>&&);
+    MediaPlaybackTargetContextSerialized(String&&, String&&, bool, bool, WebCore::MediaPlaybackTargetType, WebCore::MediaPlaybackTargetMockState, String&&, String&&, std::optional<WTF::UUID>&&);
 #endif
     const std::optional<WTF::UUID>& identifier() const LIFETIME_BOUND { return m_identifier; }
 
 private:
     String m_deviceName;
+    String m_routeName;
     bool m_hasActiveRoute { false };
     bool m_supportsRemoteVideoPlayback { false };
     // This should be const, however IPC's Decoder's handling doesn't allow for const member.

@@ -589,6 +589,7 @@ public:
     WirelessPlaybackTargetType wirelessPlaybackTargetType() const;
 
     String wirelessPlaybackTargetName() const;
+    String wirelessPlaybackRouteName() const;
 
     bool wirelessVideoPlaybackDisabled() const;
     void setWirelessVideoPlaybackDisabled(bool);

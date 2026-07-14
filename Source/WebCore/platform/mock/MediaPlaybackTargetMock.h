@@ -54,6 +54,7 @@ private:
 
     // MediaPlaybackTarget
     String deviceName() const final { return m_mockDeviceName; }
+    String routeName() const final { return { }; }
     bool hasActiveRoute() const final { return !m_mockDeviceName.isEmpty(); }
     bool supportsRemoteVideoPlayback() const final { return !m_mockDeviceName.isEmpty(); }
 

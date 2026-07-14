@@ -129,6 +129,13 @@ String MediaPlayerPrivateWirelessPlayback::wirelessPlaybackTargetName() const
     return { };
 }
 
+String MediaPlayerPrivateWirelessPlayback::wirelessPlaybackRouteName() const
+{
+    if (RefPtr playbackTarget = m_playbackTarget)
+        return playbackTarget->routeName();
+    return { };
+}
+
 MediaPlayer::WirelessPlaybackTargetType MediaPlayerPrivateWirelessPlayback::wirelessPlaybackTargetType() const
 {
     RefPtr playbackTarget = m_playbackTarget;

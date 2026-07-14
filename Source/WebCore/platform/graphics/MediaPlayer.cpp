@@ -1312,6 +1312,11 @@ String MediaPlayer::wirelessPlaybackTargetName() const
     return protect(m_private)->wirelessPlaybackTargetName();
 }
 
+String MediaPlayer::wirelessPlaybackRouteName() const
+{
+    return protect(m_private)->wirelessPlaybackRouteName();
+}
+
 MediaPlayer::WirelessPlaybackTargetType MediaPlayer::wirelessPlaybackTargetType() const
 {
     return protect(m_private)->wirelessPlaybackTargetType();

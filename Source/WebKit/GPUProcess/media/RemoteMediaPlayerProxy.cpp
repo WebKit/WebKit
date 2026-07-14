@@ -830,6 +830,7 @@ void RemoteMediaPlayerProxy::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(b
 {
     RefPtr player = m_player;
     m_cachedState.wirelessPlaybackTargetName = player->wirelessPlaybackTargetName();
+    m_cachedState.wirelessPlaybackRouteName = player->wirelessPlaybackRouteName();
     m_cachedState.wirelessPlaybackTargetType = player->wirelessPlaybackTargetType();
     sendCachedState();
     protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::CurrentPlaybackTargetIsWirelessChanged(isCurrentPlaybackTargetWireless), m_id);

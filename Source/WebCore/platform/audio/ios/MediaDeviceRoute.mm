@@ -235,6 +235,11 @@ String MediaDeviceRoute::deviceName() const
     return [m_platformRoute routeDisplayName];
 }
 
+String MediaDeviceRoute::routeName() const
+{
+    return [m_platformRoute protocolType].localizedDescription;
+}
+
 WebMediaDevicePlatformRoute *MediaDeviceRoute::platformRoute() const
 {
     return m_platformRoute.get();

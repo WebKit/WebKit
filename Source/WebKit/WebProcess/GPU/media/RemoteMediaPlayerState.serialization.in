@@ -29,6 +29,7 @@ struct WebKit::RemoteMediaPlayerState {
     MediaTime startTime;
     String languageOfPrimaryAudioTrack;
     String wirelessPlaybackTargetName;
+    String wirelessPlaybackRouteName;
     std::optional<WebCore::PlatformTimeRanges> bufferedRanges;
     WebCore::MediaPlayerNetworkState networkState;
     WebCore::MediaPlayerMovieLoadType movieLoadType;

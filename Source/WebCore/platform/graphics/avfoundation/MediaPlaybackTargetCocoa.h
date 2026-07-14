@@ -58,6 +58,7 @@ private:
 
     // MediaPlaybackTarget
     String deviceName() const final;
+    String routeName() const final;
     bool hasActiveRoute() const final;
 
     RetainPtr<AVOutputContext> m_outputContext;

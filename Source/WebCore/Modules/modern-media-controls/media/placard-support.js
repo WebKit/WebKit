@@ -95,19 +95,23 @@ class PlacardSupport extends MediaControllerSupport
 
     _updateAirPlayPlacard()
     {
-        var deviceName = "";
-        
         if (!this.mediaController.host)
             return;
-        
+
+        var deviceName = "";
+        var routeName = UIString("AirPlay");
+
         switch(this.mediaController.host.externalDeviceType) {
             case 'airplay':
                 deviceName = UIString("This video is playing on \u201C%s\u201D.", escapeHTML(this.mediaController.host.externalDeviceDisplayName) || UIString("Apple TV"));
+                if (this.mediaController.host.externalDeviceRouteName)
+                    routeName = escapeHTML(this.mediaController.host.externalDeviceRouteName);
                 break;
             case 'tvout':
                 deviceName = UIString("This video is playing on the TV.");
                 break;
         }
+        this.mediaController.controls.airplayPlacard.title = routeName;
         this.mediaController.controls.airplayPlacard.description = deviceName;
     }
 

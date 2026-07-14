@@ -360,6 +360,7 @@ private:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     String wirelessPlaybackTargetName() const final;
+    String wirelessPlaybackRouteName() const final;
     WebCore::MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const final;
 
     bool wirelessVideoPlaybackDisabled() const final;

@@ -1,0 +1,52 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WirelessPlaybackMediaPlayerEnabled=true ] -->
+<html>
+    <head>
+        <meta charset='UTF-8'>
+        <script src='../media-file.js'></script>
+        <script src='../video-test.js'></script>
+        <script>
+            var route;
+            var video;
+
+            function placardTitleText()
+            {
+                const node = internals.shadowRoot(video).querySelector('.placard .title');
+                return node ? node.innerText : null;
+            }
+
+            async function start()
+            {
+                if (window.internals)
+                    internals.mockMediaDeviceRouteController.enabled = true;
+
+                video = document.getElementsByTagName('video')[0];
+                testExpected('video.remote.state', 'disconnected');
+
+                run(`video.src = findMediaFile('video', '../content/test')`);
+                await waitFor(video, 'canplaythrough');
+
+                run(`video.play()`)
+                await waitFor(video, 'playing');
+
+                const connectPromise = waitFor(video.remote, 'connect');
+                route = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+                route.deviceName = 'test';
+                route.protocolTypeIdentifier = 'public.mpeg-4';
+                testExpected('route.routeName.length > 0', true);
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
+                await connectPromise;
+
+                // Wait for the AirPlay placard to appear, then verify it shows the route name
+                // from the first update (rather than briefly falling back to "AirPlay").
+                while (placardTitleText() === null)
+                    await new Promise(requestAnimationFrame);
+                testExpected('placardTitleText() === route.routeName', true);
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <video controls></video>
+        <p>Test that the AirPlay placard title is populated with the MediaDeviceRoute's routeName.</p>
+    </body>
+</html>

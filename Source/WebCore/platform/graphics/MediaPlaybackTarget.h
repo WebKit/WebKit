@@ -44,6 +44,7 @@ public:
 
     virtual bool hasActiveRoute() const = 0;
     virtual String deviceName() const = 0;
+    virtual String routeName() const = 0;
     virtual bool supportsRemoteVideoPlayback() const = 0;
 
     virtual bool operator==(const MediaPlaybackTarget& other) const { return this == &other; }
