@@ -31,7 +31,6 @@
 
 #include "ANGLEHeaders.h"
 #include "ANGLEUtilities.h"
-#include "ByteArrayPixelBuffer.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
@@ -39,6 +38,7 @@
 #include "Logging.h"
 #include "NativeImage.h"
 #include "NotImplemented.h"
+#include "TypedArrayPixelBuffer.h"
 #include <algorithm>
 #include <cstring>
 #include <sstream>

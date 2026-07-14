@@ -29,12 +29,11 @@
 #pragma once
 
 #include <JavaScriptCore/Forward.h>
-#include <WebCore/ByteArrayPixelBuffer.h>
-#include <WebCore/Float16ArrayPixelBuffer.h>
 #include <WebCore/ImageDataArray.h>
 #include <WebCore/ImageDataSettings.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/PredefinedColorSpace.h>
+#include <WebCore/TypedArrayPixelBuffer.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

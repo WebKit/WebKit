@@ -50,12 +50,16 @@
 #include "PlatformLayer.h"
 #include "StyleFilter.h"
 #include "Timer.h"
+#include "TypedArrayPixelBuffer.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+namespace JSC {
+struct Uint8ClampedAdaptor;
+}
+
 namespace WebCore {
 
-class ByteArrayPixelBuffer;
 class CachedImage;
 class CanvasLayerContextSwitcher;
 class CanvasGradient;

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "CanvasBase.h"
 
-#include "ByteArrayPixelBuffer.h"
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
 #include "Document.h"
@@ -43,6 +42,7 @@
 #include "ScriptTrackingPrivacyCategory.h"
 #include "StyleCanvasImage.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "TypedArrayPixelBuffer.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"

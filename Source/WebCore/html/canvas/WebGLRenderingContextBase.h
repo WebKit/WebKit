@@ -33,6 +33,7 @@
 #include "ImageBuffer.h"
 #include "PredefinedColorSpace.h"
 #include "Timer.h"
+#include "TypedArrayPixelBuffer.h"
 #include "WebGLAny.h"
 #include "WebGLBuffer.h"
 #include "WebGLContextAttributes.h"
@@ -75,7 +76,6 @@ class AbstractLocker;
 namespace WebCore {
 
 class ANGLEInstancedArrays;
-class ByteArrayPixelBuffer;
 class EXTBlendMinMax;
 class EXTClipControl;
 class EXTColorBufferFloat;

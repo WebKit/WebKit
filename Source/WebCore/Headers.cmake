@@ -2454,7 +2454,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/AudioVideoRenderer.h
     platform/graphics/BifurcatedGraphicsContext.h
     platform/graphics/BitmapImage.h
-    platform/graphics/ByteArrayPixelBuffer.h
     platform/graphics/CachedSubimage.h
     platform/graphics/Color.h
     platform/graphics/ColorBlending.h
@@ -2488,7 +2487,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/DoublePoint.h
     platform/graphics/DoubleRect.h
     platform/graphics/DoubleSize.h
-    platform/graphics/Float16ArrayPixelBuffer.h
     platform/graphics/FloatLine.h
     platform/graphics/FloatPoint.h
     platform/graphics/FloatPoint3D.h
@@ -2688,6 +2686,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/TrackBuffer.h
     platform/graphics/TrackPrivateBase.h
     platform/graphics/TrackPrivateBaseClient.h
+    platform/graphics/TypedArrayPixelBuffer.h
     platform/graphics/VP9Utilities.h
     platform/graphics/VelocityData.h
     platform/graphics/VideoLayerManager.h

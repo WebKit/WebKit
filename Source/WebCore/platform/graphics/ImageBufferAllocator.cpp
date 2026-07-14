@@ -26,9 +26,8 @@
 #include "config.h"
 #include "ImageBufferAllocator.h"
 
-#include "ByteArrayPixelBuffer.h"
-#include "Float16ArrayPixelBuffer.h"
 #include "ImageBuffer.h"
+#include "TypedArrayPixelBuffer.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

@@ -28,7 +28,6 @@
 #include "SerializedScriptValue.h"
 
 #include "BlobRegistry.h"
-#include "ByteArrayPixelBuffer.h"
 #include "ClientOrigin.h"
 #include "ContextDestructionObserverInlines.h"
 #include "CryptoKeyAES.h"
@@ -85,6 +84,7 @@
 #include "SecurityOrigin.h"
 #include "SerializedScriptValueInternals.h"
 #include "SharedBuffer.h"
+#include "TypedArrayPixelBuffer.h"
 #include "WebCodecsEncodedAudioChunk.h"
 #include "WebCodecsEncodedVideoChunk.h"
 #include "WebCoreJSClientData.h"

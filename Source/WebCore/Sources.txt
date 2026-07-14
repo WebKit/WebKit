@@ -2567,7 +2567,6 @@ platform/graphics/BifurcatedGraphicsContext.cpp
 platform/graphics/BitmapImage.cpp
 platform/graphics/BitmapImageDescriptor.cpp
 platform/graphics/BitmapImageSource.cpp
-platform/graphics/ByteArrayPixelBuffer.cpp
 platform/graphics/CachedSubimage.cpp
 platform/graphics/CodecUtilities.cpp
 platform/graphics/CornerShapeUtilities.cpp
@@ -2593,7 +2592,6 @@ platform/graphics/DisplayUpdate.cpp
 platform/graphics/DoublePoint.cpp
 platform/graphics/DoubleRect.cpp
 platform/graphics/DoubleSize.cpp
-platform/graphics/Float16ArrayPixelBuffer.cpp
 platform/graphics/FloatLine.cpp
 platform/graphics/FloatPoint.cpp
 platform/graphics/FloatPoint3D.cpp
@@ -2715,6 +2713,7 @@ platform/graphics/TextTransform.cpp
 platform/graphics/TrackBuffer.cpp
 platform/graphics/TrackPrivateBase.cpp
 platform/graphics/TransparencyLayerContextSwitcher.cpp
+platform/graphics/TypedArrayPixelBuffer.cpp
 platform/graphics/VP9Utilities.cpp
 platform/graphics/VelocityData.cpp
 platform/graphics/WOFFFileFormat.cpp

@@ -26,10 +26,10 @@
 #include "config.h"
 #include "CanvasNoiseInjection.h"
 
-#include "ByteArrayPixelBuffer.h"
 #include "FloatRect.h"
 #include "ImageBuffer.h"
 #include "PixelBuffer.h"
+#include "TypedArrayPixelBuffer.h"
 #include <algorithm>
 
 namespace WebCore {
