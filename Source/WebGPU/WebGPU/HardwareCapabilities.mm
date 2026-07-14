@@ -562,8 +562,13 @@ static bool isPhysicalHardware()
     static bool result = [] {
         uint32_t isVM = 0;
         size_t size = sizeof(isVM);
-        if (!sysctlbyname("kern.hv_vmm_present", &isVM, &size, NULL, 0))
-            return isVM ? static_cast<bool>([[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitAllowWebGPUOnVMs"]) : true;
+        if (!sysctlbyname("kern.hv_vmm_present", &isVM, &size, NULL, 0)) {
+            if (isVM) {
+                id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitAllowWebGPUOnVMs"];
+                return value ? static_cast<bool>([value boolValue]) : true;
+            }
+            return true;
+        }
         return true;
     }();
     return result;
