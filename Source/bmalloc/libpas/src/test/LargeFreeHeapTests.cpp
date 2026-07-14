@@ -545,6 +545,48 @@ void testSplitPreservesZeroModeFromSource(pas_zero_mode mode, bool useFastHeap)
         testSimpleLargeFreeHeap(actions, frees, 1);
 }
 
+void testFragmentationSplitRecoalescePreservesZero(bool useFastHeap)
+{
+    // An all-is_all_zero region survives a split-then-recoalesce cycle. Seed [1000, 4000)
+    // is_all_zero, carve two sub-ranges out (splits preserve zero, so the results and the leftover
+    // stay zero), then free both back is_all_zero so everything recoalesces. The final single free
+    // region must still be is_all_zero.
+    vector<Action> actions = {
+        Action::deallocate(1000, 3000, trappingAllocator, trappingDeallocator, pas_zero_mode_is_all_zero),
+        Action::allocate(1000, alignSimple(1), 1000, trappingAllocator, trappingDeallocator, pas_zero_mode_is_all_zero),
+        Action::allocate(1000, alignSimple(1), 2000, trappingAllocator, trappingDeallocator, pas_zero_mode_is_all_zero),
+        Action::deallocate(1000, 1000, trappingAllocator, trappingDeallocator, pas_zero_mode_is_all_zero),
+        Action::deallocate(2000, 1000, trappingAllocator, trappingDeallocator, pas_zero_mode_is_all_zero),
+    };
+    set<Free> frees = { Free(1000, 4000, pas_zero_mode_is_all_zero) };
+    if (useFastHeap)
+        testFastLargeFreeHeap(actions, frees, 1);
+    else
+        testSimpleLargeFreeHeap(actions, frees, 1);
+}
+
+void testFragmentationSplitRecoalesceContaminatedByNonZero(bool useFastHeap)
+{
+    // Recoalescing a may_have_non_zero sub-range into an is_all_zero neighbor must yield
+    // may_have_non_zero. Seed [1000, 4000) is_all_zero, carve two sub-ranges out (splits preserve
+    // zero), then free them back may_have_non_zero so they recoalesce with the still-zero leftover
+    // [3000, 4000). Per pas_zero_mode_merge the recoalesced region must be may_have_non_zero --
+    // is_all_zero survives a coalesce only when every part is is_all_zero; otherwise a later
+    // zeroedMalloc that trusts is_all_zero would skip zeroing and return stale bytes.
+    vector<Action> actions = {
+        Action::deallocate(1000, 3000, trappingAllocator, trappingDeallocator, pas_zero_mode_is_all_zero),
+        Action::allocate(1000, alignSimple(1), 1000, trappingAllocator, trappingDeallocator, pas_zero_mode_is_all_zero),
+        Action::allocate(1000, alignSimple(1), 2000, trappingAllocator, trappingDeallocator, pas_zero_mode_is_all_zero),
+        Action::deallocate(1000, 1000, trappingAllocator, trappingDeallocator, pas_zero_mode_may_have_non_zero),
+        Action::deallocate(2000, 1000, trappingAllocator, trappingDeallocator, pas_zero_mode_may_have_non_zero),
+    };
+    set<Free> frees = { Free(1000, 4000, pas_zero_mode_may_have_non_zero) };
+    if (useFastHeap)
+        testFastLargeFreeHeap(actions, frees, 1);
+    else
+        testSimpleLargeFreeHeap(actions, frees, 1);
+}
+
 } // anonymous namespace
 
 void addLargeFreeHeapTests()
@@ -1371,6 +1413,14 @@ void addLargeFreeHeapTests()
         ADD_TEST(testSplitPreservesZeroMode(pas_zero_mode_may_have_non_zero, useFastHeap));
         ADD_TEST(testSplitPreservesZeroModeFromSource(pas_zero_mode_is_all_zero, useFastHeap));
         ADD_TEST(testSplitPreservesZeroModeFromSource(pas_zero_mode_may_have_non_zero, useFastHeap));
+    }
+
+    // zero_mode through a fragmentation split-then-recoalesce sequence: an all-is_all_zero region
+    // survives the cycle, while freeing a may_have_non_zero sub-range back into it makes the
+    // recoalesced whole may_have_non_zero.
+    for (bool useFastHeap : { false, true }) {
+        ADD_TEST(testFragmentationSplitRecoalescePreservesZero(useFastHeap));
+        ADD_TEST(testFragmentationSplitRecoalesceContaminatedByNonZero(useFastHeap));
     }
 }
 
