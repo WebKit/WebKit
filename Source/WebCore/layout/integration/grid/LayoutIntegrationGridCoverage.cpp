@@ -63,6 +63,10 @@ enum class GridAvoidanceReason : uint8_t {
     GridHasUnsupportedGridTemplateRows,
     GridHasUnsupportedJustifyContent,
     GridHasUnsupportedAlignContent,
+    GridHasUnsupportedMinWidth,
+    GridHasUnsupportedMaxWidth,
+    GridHasUnsupportedMinHeight,
+    GridHasUnsupportedMaxHeight,
     GridItemHasNonInitialMaxWidth,
     GridItemHasNonInitialMaxHeight,
     GridItemHasBorder,
@@ -405,6 +409,19 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
     if (!renderGridStyle->alignContent().isNormal())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedAlignContent, reasons, reasonCollectionMode);
+
+    // GFC cannot yet resolve intrinsic (min-content/max-content/fit-content) sizing on the grid container itself.
+    if (renderGridStyle->minWidth().isIntrinsic())
+        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedMinWidth, reasons, reasonCollectionMode);
+
+    if (renderGridStyle->maxWidth().isIntrinsic())
+        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedMaxWidth, reasons, reasonCollectionMode);
+
+    if (renderGridStyle->minHeight().isIntrinsic())
+        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedMinHeight, reasons, reasonCollectionMode);
+
+    if (renderGridStyle->maxHeight().isIntrinsic())
+        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedMaxHeight, reasons, reasonCollectionMode);
 
     ASSERT(renderGridStyle->gridAutoFlow().isRow(),
         "If we end up supporting column auto flow before broader implicit grid support then the logic using explicitlyPlacedItemsInRowCount will need to be reworked to be based upon the auto flow direction");
@@ -791,6 +808,18 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridItemHasUnsupportedMinHeight:
         stream << "grid item has unsupported min-height";
+        break;
+    case GridAvoidanceReason::GridHasUnsupportedMinWidth:
+        stream << "grid container has unsupported min-width";
+        break;
+    case GridAvoidanceReason::GridHasUnsupportedMaxWidth:
+        stream << "grid container has unsupported max-width";
+        break;
+    case GridAvoidanceReason::GridHasUnsupportedMinHeight:
+        stream << "grid container has unsupported min-height";
+        break;
+    case GridAvoidanceReason::GridHasUnsupportedMaxHeight:
+        stream << "grid container has unsupported max-height";
         break;
     case GridAvoidanceReason::NotAGrid:
         stream << "not a grid";
