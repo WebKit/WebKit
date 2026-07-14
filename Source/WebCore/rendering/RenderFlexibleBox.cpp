@@ -76,6 +76,7 @@ static bool flexContainerIsHorizontalFlow(const RenderBox& flexItem)
 RenderFlexibleBox::FlexLayoutItem::FlexLayoutItem(RenderBox& flexItem, bool everHadLayout)
     : renderer(flexItem)
     , mainAxisBorderAndPadding(flexContainerIsHorizontalFlow(flexItem) ? flexItem.horizontalBorderAndPaddingExtent() : flexItem.verticalBorderAndPaddingExtent())
+    , crossAxisBorderAndPadding(flexContainerIsHorizontalFlow(flexItem) ? flexItem.verticalBorderAndPaddingExtent() : flexItem.horizontalBorderAndPaddingExtent())
     , everHadLayout(everHadLayout)
 {
     ASSERT(!flexItem.isOutOfFlowPositioned());
@@ -1574,7 +1575,7 @@ LayoutUnit RenderFlexibleBox::flexBaseSizeForFlexItem(const FlexLayoutItem& flex
     // the flex base size is calculated from its used cross size and the flex item's aspect ratio.
     if (flexItemHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(flexItem)) {
         auto& crossSizeLength = flexLayoutUtils().preferredCrossSizeLengthForFlexItem(flexItem);
-        return adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(flexItem, computeMainSizeFromAspectRatioUsing(flexItem, crossSizeLength));
+        return adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(flexLayoutItem, computeMainSizeFromAspectRatioUsing(flexLayoutItem, crossSizeLength));
     }
 
     // FIXME: C. If the used flex basis is content or depends on its available space, and the flex container is being
@@ -1721,7 +1722,7 @@ LayoutUnit RenderFlexibleBox::computeContentBasedMinMainSize(const FlexLayoutIte
     // aspect ratio) through the aspect ratio.
     bool canComputeSizeThroughAspectRatio = flexLayoutUtils().flexItemHasComputableAspectRatio(flexItem) && flexItemCrossSizeIsDefinite(flexItem, flexItemCrossSizeLength);
     if (canComputeSizeThroughAspectRatio)
-        contentSize = computeMainSizeFromAspectRatioUsing(flexItem, flexItemCrossSizeLength);
+        contentSize = computeMainSizeFromAspectRatioUsing(flexLayoutItem, flexItemCrossSizeLength);
 
     if (!canComputeSizeThroughAspectRatio || !flexItem.isRenderReplaced()) {
         ScopedCrossAxisOverrideForFlexItem scopedCrossAxisOverride(*this, flexItem, ScopedCrossAxisOverrideForFlexItem::InvalidateContentWidths::No);
@@ -1730,7 +1731,7 @@ LayoutUnit RenderFlexibleBox::computeContentBasedMinMainSize(const FlexLayoutIte
     }
 
     if (flexLayoutUtils().flexItemHasAspectRatio(flexItem))
-        contentSize = adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(flexItem, contentSize);
+        contentSize = adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(flexLayoutItem, contentSize);
 
     contentSize = std::max(0_lu, contentSize);
     ASSERT(contentSize >= 0);
@@ -1747,8 +1748,8 @@ LayoutUnit RenderFlexibleBox::computeContentBasedMinMainSize(const FlexLayoutIte
 
     // Transferred size suggestion: a replaced item's definite cross size converted through its aspect ratio.
     if (flexItem.isRenderReplaced() && flexItemHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(flexItem)) {
-        auto transferredSize = computeMainSizeFromAspectRatioUsing(flexItem, flexItemCrossSizeLength);
-        transferredSize = adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(flexItem, transferredSize);
+        auto transferredSize = computeMainSizeFromAspectRatioUsing(flexLayoutItem, flexItemCrossSizeLength);
+        transferredSize = adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(flexLayoutItem, transferredSize);
         return std::min(transferredSize, contentSize);
     }
 
@@ -1813,10 +1814,11 @@ template<typename SizeType> std::optional<LayoutUnit> RenderFlexibleBox::compute
 
 // FIXME: computeMainSizeFromAspectRatioUsing may need to return an std::optional<LayoutUnit> in the future
 // rather than returning indefinite sizes as 0/-1.
-template<typename SizeType> LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBox& flexItem, const SizeType& crossSizeLength) const
+template<typename SizeType> LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const FlexLayoutItem& flexLayoutItem, const SizeType& crossSizeLength) const
 {
+    auto& flexItem = flexLayoutItem.renderer.get();
     ASSERT(flexLayoutUtils().flexItemHasAspectRatio(flexItem));
-    auto flexItemCrossAxisBorderAndPadding = flexLayoutUtils().isHorizontalFlow() ? flexItem.verticalBorderAndPaddingExtent() : flexItem.horizontalBorderAndPaddingExtent();
+    auto flexItemCrossAxisBorderAndPadding = flexLayoutItem.crossAxisBorderAndPadding;
 
     // All paths return border-box cross size.
     auto crossSizeOptional = WTF::switchOn(crossSizeLength,
@@ -1881,18 +1883,19 @@ template<typename SizeType> LayoutUnit RenderFlexibleBox::computeMainSizeFromAsp
     return std::max(0_lu, LayoutUnit { crossSize * preferredAspectRatio } - flexItemMainAxisBorderAndPadding);
 }
 
-LayoutUnit RenderFlexibleBox::adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(const RenderBox& flexItem, LayoutUnit flexItemSize)
+LayoutUnit RenderFlexibleBox::adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(const FlexLayoutItem& flexLayoutItem, LayoutUnit flexItemSize)
 {
+    auto& flexItem = flexLayoutItem.renderer.get();
     auto& crossMin = flexLayoutUtils().minCrossSizeLengthForFlexItem(flexItem);
     auto& crossMax = flexLayoutUtils().maxCrossSizeLengthForFlexItem(flexItem);
 
     if (flexItemCrossSizeIsDefinite(flexItem, crossMax)) {
-        LayoutUnit maxValue = computeMainSizeFromAspectRatioUsing(flexItem, crossMax);
+        LayoutUnit maxValue = computeMainSizeFromAspectRatioUsing(flexLayoutItem, crossMax);
         flexItemSize = std::min(maxValue, flexItemSize);
     }
 
     if (flexItemCrossSizeIsDefinite(flexItem, crossMin)) {
-        LayoutUnit minValue = computeMainSizeFromAspectRatioUsing(flexItem, crossMin);
+        LayoutUnit minValue = computeMainSizeFromAspectRatioUsing(flexLayoutItem, crossMin);
         flexItemSize = std::max(minValue, flexItemSize);
     }
 

@@ -157,6 +157,7 @@ private:
 
         CheckedRef<RenderBox> renderer;
         const LayoutUnit mainAxisBorderAndPadding;
+        const LayoutUnit crossAxisBorderAndPadding;
         // The item's main-axis margin extent. Snapshotted in collectFlexItems after the item is laid out for its
         // flex base size (an orthogonal item only resolves its physical margins then), not at construction time.
         // margin-trim reduces it during line collection.
@@ -231,8 +232,8 @@ private:
     LayoutUnit computeUsedNonAutoMinMainSize(const FlexLayoutItem&, const Style::MinimumSize&);
     LayoutUnit computeContentBasedMinMainSize(const FlexLayoutItem&, std::optional<LayoutUnit> maxExtent);
     template<typename SizeType> std::optional<LayoutUnit> computeMainAxisExtentForFlexItem(RenderBox& flexItem, const SizeType&);
-    template<typename SizeType> LayoutUnit computeMainSizeFromAspectRatioUsing(const RenderBox& flexItem, const SizeType& crossSizeLength) const;
-    LayoutUnit adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(const RenderBox& flexItem, LayoutUnit flexItemSize);
+    template<typename SizeType> LayoutUnit computeMainSizeFromAspectRatioUsing(const FlexLayoutItem&, const SizeType& crossSizeLength) const;
+    LayoutUnit adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(const FlexLayoutItem&, LayoutUnit flexItemSize);
     LayoutUnit mainAxisAvailableSpace();
 
     LayoutUnit crossAxisIntrinsicExtentForFlexItem(const FlexLayoutItem&);
