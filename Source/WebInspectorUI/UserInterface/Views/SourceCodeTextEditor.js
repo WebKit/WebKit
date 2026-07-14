@@ -2155,8 +2155,8 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
     _tokenTrackingControllerHighlightedMarkedExpression(candidate, markers)
     {
         // Look for the outermost editable marker.
-        var editableMarker;
-        for (var marker of markers) {
+        let editableMarker;
+        for (let marker of markers) {
             if (!marker.range || !Object.values(WI.TextMarker.Type).includes(marker.type))
                 continue;
 
@@ -2178,7 +2178,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
         this._editingController = this.editingControllerForMarker(editableMarker);
 
-        if (marker.type === WI.TextMarker.Type.Color) {
+        if (editableMarker.type === WI.TextMarker.Type.Color) {
             var color = this._editingController.value;
             if (!color || !color.valid) {
                 editableMarker.clear();
