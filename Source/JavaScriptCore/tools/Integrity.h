@@ -115,6 +115,12 @@ ALWAYS_INLINE bool isSanePointer(const void* pointer)
 #endif // CPU(ADDRESS64)
 }
 
+template<typename T>
+ALWAYS_INLINE bool isSanePointer(const T* pointer)
+{
+    return isSanePointer(static_cast<const void*>(pointer)) && !(std::bit_cast<uintptr_t>(pointer) & (alignof(T) - 1));
+}
+
 #if USE(JSVALUE64)
 
 class Analyzer {
