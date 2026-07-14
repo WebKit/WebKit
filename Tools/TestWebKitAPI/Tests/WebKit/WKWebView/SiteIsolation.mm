@@ -925,15 +925,15 @@ TEST(SiteIsolation, OpenWithNoopener)
     auto [opener, opened] = openerAndOpenedViews(server, @"https://example.com/example", false);
     __block RetainPtr openerView = opener.webView;
     __block RetainPtr openedView = opened.webView;
-    opened.navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *, void (^completionHandler)(WKNavigationActionPolicy)) {
+    opened.navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
         checkFrameTreesInProcesses(openerView.get(), { { "https://example.com"_s } });
-        checkFrameTreesInProcesses(openedView.get(), { { "://"_s } }); // FIXME: This should be https://webkit.org
+        checkFrameTreesInProcesses(openedView.get(), { { "://"_s } });
         EXPECT_NE([openerView _webProcessIdentifier], [openedView _webProcessIdentifier]);
         completionHandler(WKNavigationActionPolicyAllow);
     };
     opened.navigationDelegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *, void (^completionHandler)(WKNavigationResponsePolicy)) {
         checkFrameTreesInProcesses(openerView.get(), { { "https://example.com"_s } });
-        checkFrameTreesInProcesses(openedView.get(), { { "://"_s } }); // FIXME: This should be https://webkit.org
+        checkFrameTreesInProcesses(openedView.get(), { { "://"_s } });
         EXPECT_NE([openerView _webProcessIdentifier], [openedView _webProcessIdentifier]);
         completionHandler(WKNavigationResponsePolicyAllow);
     };
@@ -5109,7 +5109,8 @@ TEST(SiteIsolation, MultipleWebViewsWithSameOpenedConfiguration)
     auto [opener, opened] = openerAndOpenedViews(server, @"https://example.com/example", false);
     RetainPtr webView2 = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:opened.webView.get().configuration]);
     [opened.navigationDelegate waitForDidFinishNavigation];
-    // FIXME: load something with webView2 without asserting, like https://example.com/popup
+    [webView2 loadURL:[NSURL URLWithString:@"https://example.com/popup"]];
+    [webView2 _test_waitForDidFinishNavigation];
 }
 
 TEST(SiteIsolation, RecoverFromCrash)
