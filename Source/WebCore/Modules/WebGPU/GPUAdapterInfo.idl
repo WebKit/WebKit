@@ -36,4 +36,6 @@ interface GPUAdapterInfo {
     readonly attribute DOMString device;
     readonly attribute DOMString description;
     readonly attribute boolean isFallbackAdapter;
+    readonly attribute unsigned long subgroupMinSize;
+    readonly attribute unsigned long subgroupMaxSize;
 };

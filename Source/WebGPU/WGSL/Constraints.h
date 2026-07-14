@@ -61,6 +61,7 @@ constexpr Constraint Concrete32BitNumber = ConcreteInteger | F32;
 
 constexpr Constraint SignedNumber = Float | SignedInteger;
 constexpr Constraint Number = Float | Integer;
+constexpr Constraint ConcreteNumber = ConcreteInteger | ConcreteFloat;
 
 }
 

@@ -459,6 +459,7 @@ module DSL
         ConcreteScalar = Constraint.new(:ConcreteScalar)
         Concrete32BitNumber = Constraint.new(:Concrete32BitNumber)
         SignedNumber = Constraint.new(:SignedNumber)
+        ConcreteNumber = Constraint.new(:ConcreteNumber)
 
         # primitives
         void = PrimitiveType.new(:Void)

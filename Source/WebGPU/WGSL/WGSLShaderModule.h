@@ -281,7 +281,7 @@ public:
     }
 
     OptionSet<Extension>& enabledExtensions() LIFETIME_BOUND { return m_enabledExtensions; }
-    OptionSet<LanguageFeature> requiredFeatures() { return m_requiredFeatures; }
+    OptionSet<LanguageFeature>& requiredFeatures() LIFETIME_BOUND { return m_requiredFeatures; }
     bool containsOverrideID(uint32_t idValue) const
     {
         return m_pipelineOverrideIds.contains(idValue);

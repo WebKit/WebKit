@@ -123,11 +123,15 @@ namespace WGSL {
     value(InstanceIndex, instance_index) \
     value(LocalInvocationId, local_invocation_id) \
     value(LocalInvocationIndex, local_invocation_index) \
+    value(NumSubgroups, num_subgroups) \
     value(NumWorkgroups, num_workgroups) \
     value(Position, position) \
     value(PrimitiveIndex, primitive_index) \
     value(SampleIndex, sample_index) \
     value(SampleMask, sample_mask) \
+    value(SubgroupId, subgroup_id) \
+    value(SubgroupInvocationId, subgroup_invocation_id) \
+    value(SubgroupSize, subgroup_size) \
     value(VertexIndex, vertex_index) \
     value(WorkgroupId, workgroup_id) \
 
@@ -135,11 +139,14 @@ namespace WGSL {
     value(ClipDistances, clip_distances, 1 << 0) \
     value(F16, f16, 1 << 1) \
     value(PrimitiveIndex, primitive_index, 1 << 2) \
+    value(Subgroups, subgroups, 1 << 3) \
 
 #define ENUM_LanguageFeature(value) \
     value(Packed4x8IntegerDotProduct, packed_4x8_integer_dot_product, 1 << 0) \
     value(PointerCompositeAccess, pointer_composite_access, 1 << 1) \
     value(ReadonlyAndReadwriteStorageTextures, readonly_and_readwrite_storage_textures, 1 << 2) \
+    value(SubgroupId, subgroup_id, 1 << 5) \
+    value(SubgroupUniformity, subgroup_uniformity, 1 << 6) \
     value(TextureFormatsTier1, texture_formats_tier1, 1 << 3) \
     value(UnrestrictedPointerParameters, unrestricted_pointer_parameters, 1 << 4) \
 

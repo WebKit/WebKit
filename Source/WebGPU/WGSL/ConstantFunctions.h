@@ -2057,6 +2057,47 @@ VALIDATION_FUNCTION(BitwiseShiftRight)
     return std::nullopt;
 }
 
+// https://www.w3.org/TR/WGSL/#subgroupShuffle-builtin
+// For subgroupShuffle{,Up,Down,Xor}, if the id/delta/mask argument is a const-expression
+// outside the range [0, 128) it is a shader-creation error. Non-const arguments are not
+// checked here (an out-of-range override is a pipeline-creation error handled separately).
+VALIDATION_FUNCTION(SubgroupShuffle)
+{
+    UNUSED_PARAM(parameterTypes);
+    if (arguments.size() == 2 && arguments[1]) {
+        auto id = arguments[1]->integerValue();
+        if (id < 0 || id >= 128)
+            return { makeString("the id argument of a subgroup shuffle must be in the range [0, 128), but was "_s, String::number(id)) };
+    }
+    return std::nullopt;
+}
+
+// https://www.w3.org/TR/WGSL/#subgroupBroadcast-builtin
+// subgroupBroadcast requires its id argument to be a const-expression in the range [0, 128).
+VALIDATION_FUNCTION(SubgroupBroadcast)
+{
+    UNUSED_PARAM(parameterTypes);
+    if (arguments.size() != 2 || !arguments[1])
+        return { "the id argument of subgroupBroadcast must be a const-expression"_s };
+    auto id = arguments[1]->integerValue();
+    if (id < 0 || id >= 128)
+        return { makeString("the id argument of subgroupBroadcast must be in the range [0, 128), but was "_s, String::number(id)) };
+    return std::nullopt;
+}
+
+// https://www.w3.org/TR/WGSL/#quadBroadcast-builtin
+// quadBroadcast requires its id argument to be a const-expression in the range [0, 4).
+VALIDATION_FUNCTION(QuadBroadcast)
+{
+    UNUSED_PARAM(parameterTypes);
+    if (arguments.size() != 2 || !arguments[1])
+        return { "the id argument of quadBroadcast must be a const-expression"_s };
+    auto id = arguments[1]->integerValue();
+    if (id < 0 || id >= 4)
+        return { makeString("the id argument of quadBroadcast must be in the range [0, 4), but was "_s, String::number(id)) };
+    return std::nullopt;
+}
+
 #undef VALIDATION_FUNCTION
 #undef CALL_
 #undef CALL

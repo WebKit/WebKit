@@ -34,9 +34,9 @@ namespace WebCore {
 
 class GPUAdapterInfo : public RefCounted<GPUAdapterInfo> {
 public:
-    static Ref<GPUAdapterInfo> create(String&& name)
+    static Ref<GPUAdapterInfo> create(String&& name, uint32_t subgroupMinSize, uint32_t subgroupMaxSize)
     {
-        return adoptRef(*new GPUAdapterInfo(WTF::move(name)));
+        return adoptRef(*new GPUAdapterInfo(WTF::move(name), subgroupMinSize, subgroupMaxSize));
     }
 
     String vendor() const { auto v = m_name.split(' '); return v.size() ? normalizedIdentifier(v[0]) : ""_s; }
@@ -44,15 +44,21 @@ public:
     String device() const { return vendor(); }
     String description() const { return vendor(); }
     bool isFallbackAdapter() const { return false; }
+    uint32_t subgroupMinSize() const { return m_subgroupMinSize; }
+    uint32_t subgroupMaxSize() const { return m_subgroupMaxSize; }
 
 private:
-    GPUAdapterInfo(String&& name)
+    GPUAdapterInfo(String&& name, uint32_t subgroupMinSize, uint32_t subgroupMaxSize)
         : m_name(name)
+        , m_subgroupMinSize(subgroupMinSize)
+        , m_subgroupMaxSize(subgroupMaxSize)
     {
     }
     static String normalizedIdentifier(const String& s) { return s.convertToLowercaseWithoutLocale().removeCharacters([](auto c) { return !isASCIIAlphanumeric(c); }); }
 
     String m_name;
+    uint32_t m_subgroupMinSize { 0 };
+    uint32_t m_subgroupMaxSize { 0 };
 };
 
 }

@@ -47,6 +47,8 @@ public:
     SupportedFeatures& features() const { return m_features; }
     SupportedLimits& limits() const { return m_limits; }
     bool isFallbackAdapter() const { return m_isFallbackAdapter; }
+    uint32_t subgroupMinSize() const { return m_subgroupMinSize; }
+    uint32_t subgroupMaxSize() const { return m_subgroupMaxSize; }
     virtual bool xrCompatible() = 0;
     virtual bool isRemoteAdapterProxy() const { return false; }
     virtual bool isAdapterImpl() const { return false; }
@@ -54,11 +56,13 @@ public:
     virtual void requestDevice(const DeviceDescriptor&, CompletionHandler<void(RefPtr<Device>&&)>&&) = 0;
 
 protected:
-    Adapter(String&& name, SupportedFeatures& features, SupportedLimits& limits, bool isFallbackAdapter)
+    Adapter(String&& name, SupportedFeatures& features, SupportedLimits& limits, bool isFallbackAdapter, uint32_t subgroupMinSize, uint32_t subgroupMaxSize)
         : m_name(WTF::move(name))
         , m_features(features)
         , m_limits(limits)
         , m_isFallbackAdapter(isFallbackAdapter)
+        , m_subgroupMinSize(subgroupMinSize)
+        , m_subgroupMaxSize(subgroupMaxSize)
     {
     }
 
@@ -72,6 +76,8 @@ private:
     const Ref<SupportedFeatures> m_features;
     const Ref<SupportedLimits> m_limits;
     bool m_isFallbackAdapter;
+    uint32_t m_subgroupMinSize { 0 };
+    uint32_t m_subgroupMaxSize { 0 };
 };
 
 } // namespace WebCore::WebGPU

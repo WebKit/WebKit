@@ -1611,3 +1611,150 @@ function :workgroupUniformLoad, {
     # @must_use fn workgroupUniformLoad(p : ptr<workgroup, T>) -> T
     [T].(ptr[workgroup, T]) => T,
 }
+
+# 17.12. Subgroup Built-in Functions (https://www.w3.org/TR/WGSL/#subgroup-builtin-functions)
+# All subgroup built-in functions may only be used in a fragment or compute shader stage.
+
+# Reduction and prefix-scan operations over a concrete numeric scalar or numeric vector.
+[
+    # 17.12.1 subgroupAdd / 17.12.1.1 subgroupExclusiveAdd / 17.12.1.2 subgroupInclusiveAdd
+    :subgroupAdd,
+    :subgroupExclusiveAdd,
+    :subgroupInclusiveAdd,
+    # 17.12.9 subgroupMul / 17.12.9.1 subgroupExclusiveMul / 17.12.9.2 subgroupInclusiveMul
+    :subgroupMul,
+    :subgroupExclusiveMul,
+    :subgroupInclusiveMul,
+    # 17.12.7 subgroupMax / 17.12.8 subgroupMin
+    :subgroupMax,
+    :subgroupMin,
+    # 17.12.4 subgroupBroadcastFirst
+    :subgroupBroadcastFirst,
+].each do |op|
+    function op, {
+        must_use: true,
+        stage: [:fragment, :compute],
+
+        [T < ConcreteNumber].(T) => T,
+        [T < ConcreteNumber, N].(vec[N][T]) => vec[N][T],
+    }
+end
+
+# Bitwise reduction operations over an integer scalar or vector.
+[
+    # 17.12.2 subgroupAnd
+    :subgroupAnd,
+    # 17.12.10 subgroupOr
+    :subgroupOr,
+    # 17.12.14 subgroupXor
+    :subgroupXor,
+].each do |op|
+    function op, {
+        must_use: true,
+        stage: [:fragment, :compute],
+
+        [T < ConcreteInteger].(T) => T,
+        [T < ConcreteInteger, N].(vec[N][T]) => vec[N][T],
+    }
+end
+
+# Boolean reductions.
+[
+    # 17.12.3 subgroupAll
+    :subgroupAll,
+    # 17.12.3 subgroupAny
+    :subgroupAny,
+].each do |op|
+    function op, {
+        must_use: true,
+        stage: [:fragment, :compute],
+
+        [].(bool) => bool,
+    }
+end
+
+# 17.12.5 subgroupBallot
+function :subgroupBallot, {
+    must_use: true,
+    stage: [:fragment, :compute],
+
+    [].(bool) => vec[4][u32],
+}
+
+# 17.12.6 subgroupElect
+function :subgroupElect, {
+    must_use: true,
+    stage: [:fragment, :compute],
+
+    [].() => bool,
+}
+
+# 17.12.6 subgroupBroadcast: id must be a const-expression in [0, 128).
+function :subgroupBroadcast, {
+    must_use: true,
+    stage: [:fragment, :compute],
+    validate: "validateSubgroupBroadcast",
+
+    [T < ConcreteNumber, U < ConcreteInteger].(T, U) => T,
+    [T < ConcreteNumber, N, U < ConcreteInteger].(vec[N][T], U) => vec[N][T],
+}
+
+# 17.12.12 subgroupShuffle: a const-expression id outside [0, 128) is a shader-creation error.
+function :subgroupShuffle, {
+    must_use: true,
+    stage: [:fragment, :compute],
+    validate: "validateSubgroupShuffle",
+
+    [T < ConcreteNumber, U < ConcreteInteger].(T, U) => T,
+    [T < ConcreteNumber, N, U < ConcreteInteger].(vec[N][T], U) => vec[N][T],
+}
+
+# Relative-shuffle operations with a u32 delta/mask.
+# A const-expression delta/mask outside [0, 128) is a shader-creation error.
+[
+    # 17.12.12.1 subgroupShuffleDown
+    :subgroupShuffleDown,
+    # 17.12.12.2 subgroupShuffleUp
+    :subgroupShuffleUp,
+    # 17.12.12.3 subgroupShuffleXor
+    :subgroupShuffleXor,
+].each do |op|
+    function op, {
+        must_use: true,
+        stage: [:fragment, :compute],
+        validate: "validateSubgroupShuffle",
+
+        [T < ConcreteNumber].(T, u32) => T,
+        [T < ConcreteNumber, N].(vec[N][T], u32) => vec[N][T],
+    }
+end
+
+# 17.13. Quad Built-in Functions (https://www.w3.org/TR/WGSL/#quad-builtin-functions)
+
+# 17.13.1 quadBroadcast: id must be a const-expression in [0, 4).
+function :quadBroadcast, {
+    must_use: true,
+    stage: [:fragment, :compute],
+    validate: "validateQuadBroadcast",
+
+    [T < ConcreteNumber, U < ConcreteInteger].(T, U) => T,
+    [T < ConcreteNumber, N, U < ConcreteInteger].(vec[N][T], U) => vec[N][T],
+}
+
+# Quad swap operations exchanging values within a quad.
+[
+    # 17.13.2 quadSwapDiagonal
+    :quadSwapDiagonal,
+    # 17.13.3 quadSwapX
+    :quadSwapX,
+    # 17.13.4 quadSwapY
+    :quadSwapY,
+].each do |op|
+    function op, {
+        must_use: true,
+        stage: [:fragment, :compute],
+
+        [T < ConcreteNumber].(T) => T,
+        [T < ConcreteNumber, N].(vec[N][T]) => vec[N][T],
+    }
+end

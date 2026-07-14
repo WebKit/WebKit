@@ -37,6 +37,8 @@ struct RemoteGPURequestAdapterResponse {
     WebGPU::SupportedFeatures features;
     WebGPU::SupportedLimits limits;
     bool isFallbackAdapter;
+    uint32_t subgroupMinSize { 0 };
+    uint32_t subgroupMaxSize { 0 };
 };
 
 } // namespace WebKit

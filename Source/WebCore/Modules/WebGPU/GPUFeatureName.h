@@ -53,6 +53,7 @@ enum class GPUFeatureName : uint8_t {
     TextureFormatsTier1,
     TextureFormatsTier2,
     PrimitiveIndex,
+    Subgroups,
 };
 
 inline WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
@@ -102,6 +103,8 @@ inline WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
         return WebGPU::FeatureName::TextureFormatsTier2;
     case GPUFeatureName::PrimitiveIndex:
         return WebGPU::FeatureName::PrimitiveIndex;
+    case GPUFeatureName::Subgroups:
+        return WebGPU::FeatureName::Subgroups;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

@@ -105,6 +105,8 @@ public:
     bool usesSampleMaskInOutput(const String&) const;
     bool usesFragDepth(const String&) const;
     bool usesPrimitiveIndexInInput(const String&) const;
+    bool usesSubgroupInvocationIdInInput(const String&) const;
+    bool usesSubgroupSizeInInput(const String&) const;
     uint32_t clipDistancesCount(const String&) const;
 
 private:
@@ -140,6 +142,8 @@ private:
         bool usesSampleMaskInOutput { false };
         bool usesFragDepth { false };
         bool usesPrimitiveIndexInInput { false };
+        bool usesSubgroupInvocationIdInInput { false };
+        bool usesSubgroupSizeInInput { false };
         uint32_t clipDistancesCount { 0 }; // Number of clip distances (0 if not used)
     };
     const ShaderModuleState* shaderModuleState(const String&) const;

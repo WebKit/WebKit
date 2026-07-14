@@ -1232,6 +1232,18 @@ void FunctionDefinitionWriter::visit(AST::BuiltinAttribute& builtin)
     case Builtin::SampleMask:
         m_body.append("[[sample_mask]]"_s);
         break;
+    case Builtin::SubgroupInvocationId:
+        m_body.append("[[thread_index_in_simdgroup]]"_s);
+        break;
+    case Builtin::SubgroupSize:
+        m_body.append("[[threads_per_simdgroup]]"_s);
+        break;
+    case Builtin::SubgroupId:
+        m_body.append("[[simdgroup_index_in_threadgroup]]"_s);
+        break;
+    case Builtin::NumSubgroups:
+        m_body.append("[[simdgroups_per_threadgroup]]"_s);
+        break;
     case Builtin::VertexIndex:
         m_body.append("[[vertex_id]]"_s);
         break;
@@ -2104,6 +2116,38 @@ static void emitWorkgroupUniformLoad(FunctionDefinitionWriter* writer, AST::Call
     writer->stringBuilder().append(')');
 }
 
+static void emitSubgroupBallot(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    // WGSL's subgroupBallot returns a vec4<u32> bitmask (x: lanes 0-31, y: 32-63, ...).
+    // Metal's simd_ballot returns a simd_vote; reinterpret its bits into the vec4 layout.
+    writer->stringBuilder().append("uint4(as_type<uint2>((uint64_t)(simd_vote::vote_t)simd_ballot("_s);
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(")), 0u, 0u)"_s);
+}
+
+static void emitQuadSwap(FunctionDefinitionWriter* writer, AST::CallExpression& call, unsigned mask)
+{
+    // WGSL's quadSwap* map to Metal's quad_shuffle_xor with a fixed mask.
+    writer->stringBuilder().append("quad_shuffle_xor("_s);
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(", "_s, mask, ')');
+}
+
+static void emitQuadSwapDiagonal(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    emitQuadSwap(writer, call, 3);
+}
+
+static void emitQuadSwapX(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    emitQuadSwap(writer, call, 1);
+}
+
+static void emitQuadSwapY(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    emitQuadSwap(writer, call, 2);
+}
+
 static void atomicFunction(ASCIILiteral name, FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
     writer->stringBuilder().append(name, '(');
@@ -2366,9 +2410,13 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "pack4xI8Clamp"_s, emitPack4xI8Clamp },
             { "pack4xU8"_s, emitPack4xU8 },
             { "pack4xU8Clamp"_s, emitPack4xU8Clamp },
+            { "quadSwapDiagonal"_s, emitQuadSwapDiagonal },
+            { "quadSwapX"_s, emitQuadSwapX },
+            { "quadSwapY"_s, emitQuadSwapY },
             { "quantizeToF16"_s, emitQuantizeToF16 },
             { "radians"_s, emitRadians },
             { "storageBarrier"_s, emitStorageBarrier },
+            { "subgroupBallot"_s, emitSubgroupBallot },
             { "textureBarrier"_s, emitTextureBarrier },
             { "textureDimensions"_s, emitTextureDimensions },
             { "textureGather"_s, emitTextureGather },
@@ -2440,10 +2488,31 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "pack2x16unorm"_s, EMIT_HELPER(PackFloatToUnorm2x16) },
             { "pack4x8snorm"_s, EMIT_HELPER(PackFloatToSnorm4x8) },
             { "pack4x8unorm"_s, EMIT_HELPER(PackFloatToUnorm4x8) },
+            { "quadBroadcast"_s, NOOP_HELPER(quad_broadcast) },
             { "reverseBits"_s, NOOP_HELPER(reverse_bits) },
             { "round"_s, NOOP_HELPER(rint) },
             { "sign"_s, NOOP_HELPER(__wgslSign) },
             { "sqrt"_s, EMIT_HELPER(Sqrt) },
+            { "subgroupAdd"_s, NOOP_HELPER(simd_sum) },
+            { "subgroupAll"_s, NOOP_HELPER(simd_all) },
+            { "subgroupAnd"_s, NOOP_HELPER(simd_and) },
+            { "subgroupAny"_s, NOOP_HELPER(simd_any) },
+            { "subgroupBroadcast"_s, NOOP_HELPER(simd_broadcast) },
+            { "subgroupBroadcastFirst"_s, NOOP_HELPER(simd_broadcast_first) },
+            { "subgroupElect"_s, NOOP_HELPER(simd_is_first) },
+            { "subgroupExclusiveAdd"_s, NOOP_HELPER(simd_prefix_exclusive_sum) },
+            { "subgroupExclusiveMul"_s, NOOP_HELPER(simd_prefix_exclusive_product) },
+            { "subgroupInclusiveAdd"_s, NOOP_HELPER(simd_prefix_inclusive_sum) },
+            { "subgroupInclusiveMul"_s, NOOP_HELPER(simd_prefix_inclusive_product) },
+            { "subgroupMax"_s, NOOP_HELPER(simd_max) },
+            { "subgroupMin"_s, NOOP_HELPER(simd_min) },
+            { "subgroupMul"_s, NOOP_HELPER(simd_product) },
+            { "subgroupOr"_s, NOOP_HELPER(simd_or) },
+            { "subgroupShuffle"_s, NOOP_HELPER(simd_shuffle) },
+            { "subgroupShuffleDown"_s, NOOP_HELPER(simd_shuffle_down) },
+            { "subgroupShuffleUp"_s, NOOP_HELPER(simd_shuffle_up) },
+            { "subgroupShuffleXor"_s, NOOP_HELPER(simd_shuffle_xor) },
+            { "subgroupXor"_s, NOOP_HELPER(simd_xor) },
             { "textureSampleBaseClampToEdge"_s, [](HelperGenerator& helperGenerator, AST::CallExpression& call) {
                 auto& texture = call.arguments()[0];
                 if (std::holds_alternative<Types::Texture>(*texture.inferredType())) {

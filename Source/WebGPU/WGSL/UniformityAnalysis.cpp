@@ -228,13 +228,25 @@ private:
         return m_severityStack.last();
     }
 
+    SeverityControl NODELETE currentSubgroupSeverity() const
+    {
+        return m_subgroupSeverityStack.last();
+    }
+
     ShaderModule& m_shaderModule;
     HashMap<String, FunctionInfo> m_functions;
     FunctionInfo* m_currentFunction { nullptr };
     Vector<SeverityControl> m_severityStack;
+    Vector<SeverityControl> m_subgroupSeverityStack;
     Vector<Warning> m_warnings;
     Vector<LoopSwitchInfo*> m_loopSwitchStack;
     Vector<std::unique_ptr<LoopSwitchInfo>> m_loopSwitchInfos;
+    // When the subgroup_uniformity language feature is supported, the analysis runs
+    // once per uniformity scope (workgroup/draw, then subgroup). In the subgroup scope,
+    // subgroup/quad ops relax to the subgroup's narrower uniformity requirements while
+    // barriers/derivatives (workgroup concerns) impose no requirement.
+    bool m_analyzingSubgroupScope { false };
+    bool m_supportsSubgroupUniformity { false };
 };
 
 AST::IdentifierExpression* UniformityGraph::rootIdentifier(AST::Expression& expr)
@@ -285,17 +297,54 @@ std::optional<FailedCheck> UniformityGraph::run()
 {
     dataLogLnIf(shouldLogUniformityAnalysis, "Starting graph-based uniformity analysis");
 
-    m_severityStack.append(m_shaderModule.severityFor(TriggeringRule::DerivativeUniformity).value_or(SeverityControl::Error));
+    // subgroup_uniformity is a WGSL language feature (advertised unconditionally via
+    // WGSLLanguageFeatures) rather than a device feature, and WebKit's WGSL implementation
+    // always supports it. When supported, the analysis runs an additional subgroup scope.
+    //
+    // Subgroup/quad ops require `enable subgroups;` (enforced in TypeCheck), and they are
+    // the only construct the subgroup scope enforces more strictly than the workgroup/draw
+    // scope -- every other subgroup-scope difference is a relaxation. So when the extension
+    // is not enabled, no subgroup/quad op can reach this analysis and the subgroup scope
+    // can only reproduce (never add) diagnostics, making it safe to skip.
+    m_supportsSubgroupUniformity = m_shaderModule.enabledExtensions().contains(Extension::Subgroups);
 
-    for (auto& declaration : m_shaderModule.declarations()) {
-        if (auto* function = dynamicDowncast<AST::Function>(declaration)) {
-            if (auto error = processFunction(*function))
-                return FailedCheck { Vector<Error> { *error }, WTF::move(m_warnings) };
+    // https://www.w3.org/TR/WGSL/#uniformity
+    // The analysis runs once per uniformity scope. Workgroup and draw scopes are
+    // equivalent (they differ only by shader stage). When the subgroup_uniformity
+    // feature is supported there is an additional, narrower subgroup scope, and a
+    // program is valid only if it passes in every scope.
+    auto analyzeScope = [&](bool subgroupScope) -> std::optional<FailedCheck> {
+        m_analyzingSubgroupScope = subgroupScope;
+        m_functions.clear();
+        m_loopSwitchStack.clear();
+        m_loopSwitchInfos.clear();
+        m_severityStack.clear();
+        m_subgroupSeverityStack.clear();
+        m_severityStack.append(m_shaderModule.severityFor(TriggeringRule::DerivativeUniformity).value_or(SeverityControl::Error));
+        m_subgroupSeverityStack.append(m_shaderModule.severityFor(TriggeringRule::SubgroupUniformity).value_or(SeverityControl::Error));
+
+        for (auto& declaration : m_shaderModule.declarations()) {
+            if (auto* function = dynamicDowncast<AST::Function>(declaration)) {
+                if (auto error = processFunction(*function))
+                    return FailedCheck { Vector<Error> { *error }, WTF::move(m_warnings) };
+            }
         }
+
+        if (!m_warnings.isEmpty())
+            return FailedCheck { { }, WTF::move(m_warnings) };
+        return std::nullopt;
+    };
+
+    // Workgroup/draw scope.
+    if (auto failure = analyzeScope(false))
+        return failure;
+
+    // Subgroup scope (only distinct when the feature is supported).
+    if (m_supportsSubgroupUniformity) {
+        if (auto failure = analyzeScope(true))
+            return failure;
     }
 
-    if (!m_warnings.isEmpty())
-        return FailedCheck { { }, WTF::move(m_warnings) };
     return std::nullopt;
 }
 
@@ -336,7 +385,20 @@ std::optional<Error> UniformityGraph::processFunction(AST::Function& function)
                 switch (*builtin) {
                 case Builtin::NumWorkgroups:
                 case Builtin::WorkgroupId:
+                case Builtin::NumSubgroups:
                     isNonUniform = false;
+                    break;
+                case Builtin::SubgroupSize:
+                    // subgroup_size is uniform within a workgroup (compute) but may
+                    // vary between invocations within a draw command (fragment). At
+                    // subgroup scope it is always uniform.
+                    if (function.stage() == ShaderStage::Compute || m_analyzingSubgroupScope)
+                        isNonUniform = false;
+                    break;
+                case Builtin::SubgroupId:
+                    // subgroup_id is uniform only at subgroup uniformity scope.
+                    if (m_analyzingSubgroupScope)
+                        isNonUniform = false;
                     break;
                 default:
                     break;
@@ -378,11 +440,18 @@ std::optional<Error> UniformityGraph::processFunction(AST::Function& function)
         m_severityStack.append(*severity);
         pushedFunctionSeverity = true;
     }
+    bool pushedFunctionSubgroupSeverity = false;
+    if (auto severity = function.severityFor(TriggeringRule::SubgroupUniformity)) {
+        m_subgroupSeverityStack.append(*severity);
+        pushedFunctionSubgroupSeverity = true;
+    }
 
     processStatements(info.cfStart, function.body().statements());
 
     if (pushedFunctionSeverity)
         m_severityStack.removeLast();
+    if (pushedFunctionSubgroupSeverity)
+        m_subgroupSeverityStack.removeLast();
 
     for (auto& paramInfo : info.parameters) {
         if (paramInfo.ptrOutputContents) {
@@ -513,9 +582,16 @@ Node* UniformityGraph::processStatement(Node* cf, AST::Statement& statement)
         m_severityStack.append(*severity);
         pushedSeverity = true;
     }
+    bool pushedSubgroupSeverity = false;
+    if (auto severity = statement.severityFor(TriggeringRule::SubgroupUniformity)) {
+        m_subgroupSeverityStack.append(*severity);
+        pushedSubgroupSeverity = true;
+    }
     auto popSeverity = makeScopeExit([&] {
         if (pushedSeverity)
             m_severityStack.removeLast();
+        if (pushedSubgroupSeverity)
+            m_subgroupSeverityStack.removeLast();
     });
 
     switch (statement.kind()) {
@@ -612,6 +688,12 @@ Node* UniformityGraph::processStatement(Node* cf, AST::Statement& statement)
         auto* condNode = info.createNode(&ifStmt);
         condNode->affectsControlFlow = true;
         condNode->addEdge(vCond);
+        // Code guarded by (or following, via an interrupting branch) this `if` is
+        // reachable only along the control flow that reached the condition, so it
+        // must inherit the uniformity of the incoming control flow. Without this
+        // edge, an op inside `if u { op }` nested in a non-uniform loop would lose
+        // the loop's non-uniformity.
+        condNode->addEdge(cfCond);
 
         info.pushScope();
         auto* cfTrue = processStatements(condNode, ifStmt.trueBody().statements());
@@ -1228,6 +1310,8 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
     SeverityControl callSiteSeverity = SeverityControl::Error;
     FunctionTag functionTag = FunctionTag::NoRestriction;
     const FunctionInfo* funcInfo = nullptr;
+    std::optional<unsigned> subgroupUniformArgIndex;
+    bool resultIsUniformRegardlessOfArgs = false;
 
     if (!name.isEmpty()) {
         auto it = m_functions.find(name);
@@ -1272,15 +1356,92 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
                 "atomicXor"_s,
             }) };
 
-            if (barrierFunctions.contains(name))
-                callSiteTag = CallSiteTag::RequiredToBeUniform;
-            else if (name == "workgroupUniformLoad"_s)
-                callSiteTag = CallSiteTag::RequiredToBeUniform;
-            else if (derivativeFunctions.contains(name)) {
-                callSiteSeverity = currentSeverity();
-                if (callSiteSeverity != SeverityControl::Off)
+            // Subgroup and quad built-in functions communicate across invocations,
+            // so (absent the subgroup_uniformity language feature, which we do not
+            // support) they require uniform control flow at their call site and may
+            // return a non-uniform value. This is governed by the subgroup_uniformity
+            // triggering rule rather than derivative_uniformity.
+            static constexpr SortedArraySet subgroupFunctions { WTF::toArray<ComparableASCIILiteral>({
+                "quadBroadcast"_s,
+                "quadSwapDiagonal"_s,
+                "quadSwapX"_s,
+                "quadSwapY"_s,
+                "subgroupAdd"_s,
+                "subgroupAll"_s,
+                "subgroupAnd"_s,
+                "subgroupAny"_s,
+                "subgroupBallot"_s,
+                "subgroupBroadcast"_s,
+                "subgroupBroadcastFirst"_s,
+                "subgroupElect"_s,
+                "subgroupExclusiveAdd"_s,
+                "subgroupExclusiveMul"_s,
+                "subgroupInclusiveAdd"_s,
+                "subgroupInclusiveMul"_s,
+                "subgroupMax"_s,
+                "subgroupMin"_s,
+                "subgroupMul"_s,
+                "subgroupOr"_s,
+                "subgroupShuffle"_s,
+                "subgroupShuffleDown"_s,
+                "subgroupShuffleUp"_s,
+                "subgroupShuffleXor"_s,
+                "subgroupXor"_s,
+            }) };
+
+            // Functions whose result is subgroup-uniform when evaluated in uniform
+            // control flow at subgroup scope (https://www.w3.org/TR/WGSL/#uniformity).
+            // The remaining subgroup/quad ops (shuffles, scans, quad swaps) may still
+            // produce a non-uniform result even at subgroup scope.
+            static constexpr SortedArraySet subgroupUniformResultFunctions { WTF::toArray<ComparableASCIILiteral>({
+                "subgroupAdd"_s,
+                "subgroupAll"_s,
+                "subgroupAnd"_s,
+                "subgroupAny"_s,
+                "subgroupBallot"_s,
+                "subgroupBroadcast"_s,
+                "subgroupBroadcastFirst"_s,
+                "subgroupMax"_s,
+                "subgroupMin"_s,
+                "subgroupMul"_s,
+                "subgroupOr"_s,
+                "subgroupXor"_s,
+            }) };
+
+            if (barrierFunctions.contains(name)) {
+                // Barriers are a workgroup concern; they impose no requirement at subgroup scope.
+                if (!m_analyzingSubgroupScope)
                     callSiteTag = CallSiteTag::RequiredToBeUniform;
+            } else if (name == "workgroupUniformLoad"_s) {
+                if (!m_analyzingSubgroupScope)
+                    callSiteTag = CallSiteTag::RequiredToBeUniform;
+            } else if (derivativeFunctions.contains(name)) {
+                // Derivatives are governed by derivative_uniformity (workgroup/draw scope only).
+                if (!m_analyzingSubgroupScope) {
+                    callSiteSeverity = currentSeverity();
+                    if (callSiteSeverity != SeverityControl::Off)
+                        callSiteTag = CallSiteTag::RequiredToBeUniform;
+                }
                 functionTag = FunctionTag::ReturnValueMayBeNonUniform;
+            } else if (subgroupFunctions.contains(name)) {
+                // Subgroup/quad ops require uniform control flow, enforced either at
+                // workgroup scope (feature off) or subgroup scope (feature on).
+                bool enforcedInThisScope = m_analyzingSubgroupScope || !m_supportsSubgroupUniformity;
+                if (enforcedInThisScope) {
+                    callSiteSeverity = currentSubgroupSeverity();
+                    if (callSiteSeverity != SeverityControl::Off)
+                        callSiteTag = CallSiteTag::RequiredToBeUniform;
+                    // subgroupShuffleUp/Down require a uniform `delta`, and subgroupShuffleXor
+                    // a uniform `mask` (argument index 1).
+                    if (name == "subgroupShuffleUp"_s || name == "subgroupShuffleDown"_s || name == "subgroupShuffleXor"_s)
+                        subgroupUniformArgIndex = 1;
+                }
+                // At subgroup scope, the reduction/broadcast ops produce a uniform result;
+                // everywhere else (and for shuffles/scans/quad swaps) the result may be non-uniform.
+                if (m_analyzingSubgroupScope && subgroupUniformResultFunctions.contains(name))
+                    resultIsUniformRegardlessOfArgs = true;
+                else
+                    functionTag = FunctionTag::ReturnValueMayBeNonUniform;
             } else if (atomicFunctions.contains(name))
                 functionTag = FunctionTag::ReturnValueMayBeNonUniform;
             else if (name == "textureLoad"_s) {
@@ -1352,13 +1513,14 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
                     info.setVariable(rootIdent->identifier().id(), ptrResult);
             }
         } else {
-            if (name == "workgroupUniformLoad"_s) {
+            if (name == "workgroupUniformLoad"_s && !m_analyzingSubgroupScope) {
                 // workgroupUniformLoad requires the pointer VALUE to be
                 // uniform (same memory location across invocations), but
                 // NOT the contents. For pointer parameters, args[i] reaches
                 // ptrInputContents (contents tracking), which would cause
                 // getParamTag to incorrectly tag as ContentsRequiredToBeUniform.
                 // Use paramInfo.value instead to get ValueRequiredToBeUniform.
+                // This is a workgroup concern, so it does not apply at subgroup scope.
                 auto* ptrValueNode = args[i];
                 auto* rootId = rootIdentifier(call.arguments()[i]);
                 if (rootId) {
@@ -1371,8 +1533,18 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
                 }
                 if (auto* node = info.requiredToBeUniformForSeverity(callSiteSeverity))
                     node->addEdge(ptrValueNode);
-            } else
-                result->addEdge(args[i]);
+            } else {
+                // A subgroup reduction/broadcast at subgroup scope yields a uniform
+                // result regardless of whether its inputs are uniform, so its result
+                // must not inherit argument non-uniformity.
+                if (!resultIsUniformRegardlessOfArgs)
+                    result->addEdge(args[i]);
+                // subgroupShuffleUp/Down `delta` and subgroupShuffleXor `mask` must be uniform.
+                if (subgroupUniformArgIndex && *subgroupUniformArgIndex == i) {
+                    if (auto* node = info.requiredToBeUniformForSeverity(callSiteSeverity))
+                        node->addEdge(args[i]);
+                }
+            }
         }
     }
 

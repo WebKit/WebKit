@@ -124,10 +124,24 @@ static bool isFallbackAdapter(WGPUAdapter adapter)
     return properties.adapterType == WGPUAdapterType_CPU;
 }
 
+static uint32_t subgroupMinSize(WGPUAdapter adapter)
+{
+    WGPUAdapterProperties properties;
+    wgpuAdapterGetProperties(adapter, &properties);
+    return properties.subgroupMinSize;
+}
+
+static uint32_t subgroupMaxSize(WGPUAdapter adapter)
+{
+    WGPUAdapterProperties properties;
+    wgpuAdapterGetProperties(adapter, &properties);
+    return properties.subgroupMaxSize;
+}
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AdapterImpl);
 
 AdapterImpl::AdapterImpl(WebGPUPtr<WGPUAdapter>&& adapter, ConvertToBackingContext& convertToBackingContext)
-    : Adapter(adapterName(adapter.get()), supportedFeatures(adapter.get()), supportedLimits(adapter.get()), WebGPU::isFallbackAdapter(adapter.get()))
+    : Adapter(adapterName(adapter.get()), supportedFeatures(adapter.get()), supportedLimits(adapter.get()), WebGPU::isFallbackAdapter(adapter.get()), WebGPU::subgroupMinSize(adapter.get()), WebGPU::subgroupMaxSize(adapter.get()))
     , m_backing(WTF::move(adapter))
     , m_convertToBackingContext(convertToBackingContext)
 {

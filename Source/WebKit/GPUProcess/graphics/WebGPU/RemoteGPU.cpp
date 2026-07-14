@@ -213,7 +213,7 @@ void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, Web
             limits->maxStorageTexturesInFragmentStage(),
             limits->maxStorageBuffersInVertexStage(),
             limits->maxStorageTexturesInVertexStage(),
-        }, adapter->isFallbackAdapter() } });
+        }, adapter->isFallbackAdapter(), adapter->subgroupMinSize(), adapter->subgroupMaxSize() } });
     });
 }
 

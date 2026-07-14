@@ -85,6 +85,8 @@ static ASCIILiteral wgslExtensionToWebGPUFeatureName(Extension extension)
         return "shader-f16"_s;
     case Extension::PrimitiveIndex:
         return "primitive-index"_s;
+    case Extension::Subgroups:
+        return "subgroups"_s;
     }
 }
 

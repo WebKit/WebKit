@@ -68,6 +68,29 @@ bool Adapter::getLimits(WGPUSupportedLimits& limits)
     return true;
 }
 
+static uint32_t subgroupSize(id<MTLDevice> device)
+{
+    // Apple Silicon GPUs have a fixed SIMD-group width of 32,
+    // so there's no need to compile a pipeline just to discover it.
+    if ([device supportsFamily:MTLGPUFamilyApple4])
+        return 32;
+
+    // On non-Apple (Intel/AMD) GPUs the SIMD-group width isn't a fixed device
+    // constant, so query it from a compute pipeline state's threadExecutionWidth.
+    // Fall back to 32 if the probe pipeline can't be built for any reason.
+    NSError *error = nil;
+    id<MTLLibrary> library = [device newLibraryWithSource:@"#include <metal_stdlib>\nusing namespace metal;\nkernel void _webgpu_subgroup_size_probe() { }" options:nil error:&error];
+    if (!library)
+        return 32;
+    id<MTLFunction> function = [library newFunctionWithName:@"_webgpu_subgroup_size_probe"];
+    if (!function)
+        return 32;
+    id<MTLComputePipelineState> pipelineState = [device newComputePipelineStateWithFunction:function error:&error];
+    if (!pipelineState)
+        return 32;
+    return static_cast<uint32_t>(pipelineState.threadExecutionWidth);
+}
+
 void Adapter::getProperties(WGPUAdapterProperties& properties)
 {
     // FIXME: What should the vendorID and deviceID be?
@@ -77,6 +100,18 @@ void Adapter::getProperties(WGPUAdapterProperties& properties)
     properties.driverDescription = "";
     properties.adapterType = m_device.hasUnifiedMemory ? WGPUAdapterType_IntegratedGPU : WGPUAdapterType_DiscreteGPU;
     properties.backendType = WGPUBackendType_Metal;
+    if (hasFeature(WGPUFeatureName_Subgroups)) {
+        // Metal exposes a single SIMD-group (subgroup) width per device, so
+        // min and max are equal. It's a fixed 32 on Apple Silicon; on other
+        // GPUs it's derived from a compute pipeline's threadExecutionWidth.
+        uint32_t size = subgroupSize(m_device);
+        properties.subgroupMinSize = size;
+        properties.subgroupMaxSize = size;
+    } else {
+        // Spec defaults when the feature is unsupported: https://github.com/gpuweb/gpuweb/pull/4963
+        properties.subgroupMinSize = 4;
+        properties.subgroupMaxSize = 128;
+    }
 }
 
 bool Adapter::hasFeature(WGPUFeatureName feature)

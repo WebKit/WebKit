@@ -46,7 +46,7 @@ GPUAdapter::GPUAdapter(Ref<WebGPU::Adapter>&& backing)
     : m_backing(WTF::move(backing))
     , m_features(GPUSupportedFeatures::create(WebGPU::SupportedFeatures::clone(m_backing->features())))
     , m_limits(GPUSupportedLimits::create(WebGPU::SupportedLimits::clone(m_backing->limits())))
-    , m_info(GPUAdapterInfo::create(name()))
+    , m_info(GPUAdapterInfo::create(name(), m_backing->subgroupMinSize(), m_backing->subgroupMaxSize()))
 {
 }
 
@@ -90,6 +90,7 @@ static GPUFeatureName convertFeatureNameToEnum(const String& stringValue)
         { "primitive-index"_s, GPUFeatureName::PrimitiveIndex },
         { "rg11b10ufloat-renderable"_s, GPUFeatureName::Rg11b10ufloatRenderable },
         { "shader-f16"_s, GPUFeatureName::ShaderF16 },
+        { "subgroups"_s, GPUFeatureName::Subgroups },
         { "texture-compression-astc"_s, GPUFeatureName::TextureCompressionAstc },
         { "texture-compression-astc-sliced-3d"_s, GPUFeatureName::TextureCompressionAstcSliced3d },
         { "texture-compression-bc"_s, GPUFeatureName::TextureCompressionBc },
@@ -132,7 +133,7 @@ void GPUAdapter::requestDevice(ScriptExecutionContext& scriptExecutionContext, c
             promise.reject(Exception(ExceptionCode::OperationError));
         else {
             auto queueLabel = deviceDescriptor->defaultQueue.label;
-            Ref<GPUDevice> gpuDevice = GPUDevice::create(scriptExecutionContextRef.ptr(), device.releaseNonNull(), deviceDescriptor ? WTF::move(queueLabel) : ""_s, GPUAdapterInfo::create(protectedThis->name()));
+            Ref<GPUDevice> gpuDevice = GPUDevice::create(scriptExecutionContextRef.ptr(), device.releaseNonNull(), deviceDescriptor ? WTF::move(queueLabel) : ""_s, GPUAdapterInfo::create(protectedThis->name(), protectedThis->m_info->subgroupMinSize(), protectedThis->m_info->subgroupMaxSize()));
             gpuDevice->suspendIfNeeded();
             promise.resolve(WTF::move(gpuDevice));
         }

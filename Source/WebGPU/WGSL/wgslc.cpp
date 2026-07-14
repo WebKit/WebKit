@@ -134,7 +134,7 @@ void CommandLine::parseArguments(int argc, char** argv)
 static int runWGSL(const CommandLine& options)
 {
     WGSL::Configuration configuration {
-        .supportedFeatures { "shader-f16"_s, "clip-distances"_s }
+        .supportedFeatures { "shader-f16"_s, "clip-distances"_s, "subgroups"_s }
     };
 
     String fileName = String::fromLatin1(options.file());

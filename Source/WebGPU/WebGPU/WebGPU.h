@@ -396,6 +396,7 @@ typedef enum WGPUFeatureName {
     WGPUFeatureName_CoreFeaturesAndLimits = 0x00000014,
     WGPUFeatureName_TextureFormatsTier1 = 0x00000015,
     WGPUFeatureName_TextureFormatsTier2 = 0x00000016,
+    WGPUFeatureName_Subgroups = 0x00000017,
     WGPUFeatureName_Force32 = 0x7FFFFFFF
 } WGPUFeatureName WGPU_ENUM_ATTRIBUTE;
 
@@ -814,6 +815,8 @@ typedef struct WGPUAdapterProperties {
     char const * driverDescription;
     WGPUAdapterType adapterType;
     WGPUBackendType backendType;
+    uint32_t subgroupMinSize;
+    uint32_t subgroupMaxSize;
 } WGPUAdapterProperties WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUBindGroupEntry {

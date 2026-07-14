@@ -426,7 +426,7 @@ Result<void> Parser<Lexer>::parseEnableDirective()
         CONSUME_TYPE_NAMED(identifier, Identifier);
         auto* extension = parseExtension(identifier.ident);
         if (!extension)
-            FAIL("Expected 'clip_distances', 'f16', or 'primitive_index'"_s);
+            FAIL("Expected 'clip_distances', 'f16', 'primitive_index', or 'subgroups'"_s);
         m_shaderModule.enabledExtensions().add(*extension);
 
         if (current().type != TokenType::Comma)
@@ -446,7 +446,7 @@ Result<void> Parser<Lexer>::parseRequireDirective()
         CONSUME_TYPE_NAMED(identifier, Identifier);
         auto* languageFeature = parseLanguageFeature(identifier.ident);
         if (!languageFeature)
-            FAIL("Expected 'clip_distances', 'readonly_and_readwrite_storage_textures', 'packed_4x8_integer_dot_product', 'unrestricted_pointer_parameters', 'texture_formats_tier1', or 'pointer_composite_access'"_s);
+            FAIL("Expected 'clip_distances', 'readonly_and_readwrite_storage_textures', 'packed_4x8_integer_dot_product', 'unrestricted_pointer_parameters', 'texture_formats_tier1', 'subgroup_id', 'subgroup_uniformity', or 'pointer_composite_access'"_s);
         m_shaderModule.requiredFeatures().add(*languageFeature);
 
         if (current().type != TokenType::Comma)

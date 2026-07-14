@@ -1566,6 +1566,10 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
         if (result) {
             target.m_inferredType = result;
 
+            // Subgroup and quad built-in functions require the 'subgroups' extension to be enabled.
+            if ((targetName.startsWith("subgroup"_s) || targetName.startsWith("quad"_s)) && !m_shaderModule.enabledExtensions().contains(Extension::Subgroups)) [[unlikely]]
+                TYPE_ERROR(call.span(), "'"_s, targetName, "' requires the 'subgroups' extension to be enabled"_s);
+
             // FIXME: <rdar://150366527> this will go away once we track used intrinsics properly
             if (targetName == "workgroupUniformLoad"_s) {
                 auto* argument = call.arguments()[0].inferredType();

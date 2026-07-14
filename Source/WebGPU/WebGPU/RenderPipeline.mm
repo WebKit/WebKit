@@ -1423,6 +1423,10 @@ static NSString* errorValidatingInterstageShaderInterfaces(WebGPU::Device &devic
             return @"maxFragmentShaderInputComponents is less than zero due to sample mask";
         if (fragmentModule->usesPrimitiveIndexInInput(fragmentEntryPoint) && !decrementByVariable(maxFragmentShaderInputComponents))
             return @"maxFragmentShaderInputComponents is less than zero due to primitive index";
+        if (fragmentModule->usesSubgroupInvocationIdInInput(fragmentEntryPoint) && !decrementByVariable(maxFragmentShaderInputComponents))
+            return @"maxFragmentShaderInputComponents is less than zero due to subgroup invocation id";
+        if (fragmentModule->usesSubgroupSizeInInput(fragmentEntryPoint) && !decrementByVariable(maxFragmentShaderInputComponents))
+            return @"maxFragmentShaderInputComponents is less than zero due to subgroup size";
 
         if (fragmentInputs) {
             WGSL::AST::Interpolation defaultInterpolation {

@@ -517,6 +517,20 @@ bool ShaderModule::usesPrimitiveIndexInInput(const String& entryPoint) const
     return false;
 }
 
+bool ShaderModule::usesSubgroupInvocationIdInInput(const String& entryPoint) const
+{
+    if (auto state = shaderModuleState(entryPoint))
+        return state->usesSubgroupInvocationIdInInput;
+    return false;
+}
+
+bool ShaderModule::usesSubgroupSizeInInput(const String& entryPoint) const
+{
+    if (auto state = shaderModuleState(entryPoint))
+        return state->usesSubgroupSizeInInput;
+    return false;
+}
+
 uint32_t ShaderModule::clipDistancesCount(const String& entryPoint) const
 {
     if (auto state = shaderModuleState(entryPoint))
@@ -562,6 +576,16 @@ void ShaderModule::populateFragmentInputs(const WGSL::Type& type, ShaderModule::
                 break;
             case SampleMask:
                 populateShaderModuleState(entryPointName).usesSampleMaskInInput = true;
+                break;
+            case SubgroupInvocationId:
+                populateShaderModuleState(entryPointName).usesSubgroupInvocationIdInInput = true;
+                break;
+            case SubgroupSize:
+                populateShaderModuleState(entryPointName).usesSubgroupSizeInInput = true;
+                break;
+            case SubgroupId:
+                break;
+            case NumSubgroups:
                 break;
             case VertexIndex:
                 break;
@@ -1188,6 +1212,8 @@ String wgpuAdapterFeatureName(WGPUFeatureName feature)
         return "texture-formats-tier1"_s;
     case WGPUFeatureName_TextureFormatsTier2:
         return "texture-formats-tier2"_s;
+    case WGPUFeatureName_Subgroups:
+        return "subgroups"_s;
     case WGPUFeatureName_Force32:
         return emptyString();
     }

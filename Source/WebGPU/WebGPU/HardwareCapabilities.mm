@@ -146,6 +146,12 @@ static Vector<WGPUFeatureName> baseFeatures(id<MTLDevice> device, const Hardware
     features.append(WGPUFeatureName_TextureFormatsTier2);
 #endif
 
+    // Subgroup (SIMD-group) built-in functions are guaranteed across GPU vendors by the
+    // Metal 3 feature set, which provides the full reduction, prefix-scan, shuffle, ballot,
+    // and quad operation set that the WGSL 'subgroups' extension requires.
+    if ([device supportsFamily:MTLGPUFamilyMetal3])
+        features.append(WGPUFeatureName_Subgroups);
+
 #if !PLATFORM(WATCHOS)
     if (device.supports32BitFloatFiltering)
         features.append(WGPUFeatureName_Float32Filterable);

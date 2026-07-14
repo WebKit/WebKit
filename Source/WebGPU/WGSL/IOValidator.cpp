@@ -340,6 +340,42 @@ case Builtin::__case: \
         break;
     }
     CASE(SampleIndex, TYPE_CHECK(u32), Fragment, Input)
+    case Builtin::SubgroupInvocationId:
+    case Builtin::SubgroupSize: {
+        // subgroup_invocation_id / subgroup_size require the 'subgroups' extension.
+        if (!m_shaderModule.enabledExtensions().contains(Extension::Subgroups)) [[unlikely]] {
+            error(span, "@builtin("_s, toString(builtin), ") requires the 'subgroups' extension to be enabled"_s);
+            return;
+        }
+        if (type != m_shaderModule.types().u32Type()) [[unlikely]] {
+            error(span, "store type of @builtin("_s, toString(builtin), ") must be 'u32'"_s);
+            return;
+        }
+        if ((stage != ShaderStage::Compute && stage != ShaderStage::Fragment) || direction != Direction::Input) [[unlikely]] {
+            error(span, "@builtin("_s, toString(builtin), ") can only be used for compute or fragment shader input"_s);
+            return;
+        }
+        break;
+    }
+    case Builtin::SubgroupId:
+    case Builtin::NumSubgroups: {
+        // subgroup_id / num_subgroups are gated on the 'subgroups' enable-extension. The
+        // 'subgroup_id' language extension is reported (and 'requires subgroup_id;' is
+        // accepted), but per WGSL §3.8.5 it is not required to be explicitly requested.
+        if (!m_shaderModule.enabledExtensions().contains(Extension::Subgroups)) [[unlikely]] {
+            error(span, "@builtin("_s, toString(builtin), ") requires the 'subgroups' extension to be enabled"_s);
+            return;
+        }
+        if (type != m_shaderModule.types().u32Type()) [[unlikely]] {
+            error(span, "store type of @builtin("_s, toString(builtin), ") must be 'u32'"_s);
+            return;
+        }
+        if (stage != ShaderStage::Compute || direction != Direction::Input) [[unlikely]] {
+            error(span, "@builtin("_s, toString(builtin), ") can only be used for compute shader input"_s);
+            return;
+        }
+        break;
+    }
     CASE(VertexIndex, TYPE_CHECK(u32), Vertex, Input)
     CASE(WorkgroupId, VEC_CHECK(3, u32), Compute, Input)
     CASE2(SampleMask, TYPE_CHECK(u32), Fragment, Input, Fragment, Output)
