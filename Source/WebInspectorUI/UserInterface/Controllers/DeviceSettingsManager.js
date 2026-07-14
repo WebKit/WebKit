@@ -30,9 +30,9 @@ WI.DeviceSettingsManager = class DeviceSettingsManager extends WI.Object
         super();
 
         this._deviceUserAgent = "";
-        this._overridenDeviceUserAgent = null;
-        this._overridenDeviceScreenSize = null;
-        this._overridenDeviceSettings = new Map;
+        this._overriddenDeviceUserAgent = null;
+        this._overriddenDeviceScreenSize = null;
+        this._overriddenDeviceSettings = new Map;
     }
 
     // Target
@@ -42,10 +42,10 @@ WI.DeviceSettingsManager = class DeviceSettingsManager extends WI.Object
         if (!target.hasDomain("Page"))
             return
 
-        if (this._overridenDeviceUserAgent)
-            target.PageAgent.overrideUserAgent(this._overridenDeviceUserAgent);
+        if (this._overriddenDeviceUserAgent)
+            target.PageAgent.overrideUserAgent(this._overriddenDeviceUserAgent);
 
-        for (let [setting, value] of this._overridenDeviceSettings)
+        for (let [setting, value] of this._overriddenDeviceSettings)
             target.PageAgent.overrideSetting(setting, value);
 
         const objectGroup = "user-agent";
@@ -68,13 +68,13 @@ WI.DeviceSettingsManager = class DeviceSettingsManager extends WI.Object
     // Public
 
     get deviceUserAgent() { return this._deviceUserAgent; }
-    get overridenDeviceUserAgent() { return this._overridenDeviceUserAgent; }
-    get overridenDeviceScreenSize() { return this._overridenDeviceScreenSize; }
-    get overridenDeviceSettings() { return this._overridenDeviceSettings; }
+    get overriddenDeviceUserAgent() { return this._overriddenDeviceUserAgent; }
+    get overriddenDeviceScreenSize() { return this._overriddenDeviceScreenSize; }
+    get overriddenDeviceSettings() { return this._overriddenDeviceSettings; }
 
     get hasOverridenDefaultSettings()
     {
-        return this._overridenDeviceUserAgent || this._overridenDeviceScreenSize || this._overridenDeviceSettings.size > 0;
+        return this._overriddenDeviceUserAgent || this._overriddenDeviceScreenSize || this._overriddenDeviceSettings.size > 0;
     }
 
     overrideDeviceSetting(setting, value, callback)
@@ -84,7 +84,7 @@ WI.DeviceSettingsManager = class DeviceSettingsManager extends WI.Object
             setting,
         };
 
-        let shouldOverride = !this._overridenDeviceSettings.has(setting);
+        let shouldOverride = !this._overriddenDeviceSettings.has(setting);
         if (shouldOverride)
             commandArguments.value = value;
 
@@ -96,9 +96,9 @@ WI.DeviceSettingsManager = class DeviceSettingsManager extends WI.Object
             }
 
             if (shouldOverride)
-                this._overridenDeviceSettings.set(setting, value);
+                this._overriddenDeviceSettings.set(setting, value);
             else
-                this._overridenDeviceSettings.delete(setting);
+                this._overriddenDeviceSettings.delete(setting);
 
             callback(shouldOverride);
             this.dispatchEventToListeners(WI.DeviceSettingsManager.Event.SettingChanged);
@@ -107,7 +107,7 @@ WI.DeviceSettingsManager = class DeviceSettingsManager extends WI.Object
 
     overrideUserAgent(value, force)
     {
-        if (value === this._overridenDeviceUserAgent)
+        if (value === this._overriddenDeviceUserAgent)
             return;
 
         let target = WI.assumingMainTarget();
@@ -123,7 +123,7 @@ WI.DeviceSettingsManager = class DeviceSettingsManager extends WI.Object
                 return;
             }
 
-            this._overridenDeviceUserAgent = shouldOverride ? value : null;
+            this._overriddenDeviceUserAgent = shouldOverride ? value : null;
 
             this.dispatchEventToListeners(WI.DeviceSettingsManager.Event.SettingChanged);
             target.PageAgent.reload();
@@ -132,7 +132,7 @@ WI.DeviceSettingsManager = class DeviceSettingsManager extends WI.Object
 
     overrideScreenSize(value, force)
     {
-        if (value === this._overridenDeviceScreenSize)
+        if (value === this._overriddenDeviceScreenSize)
             return;
 
         let target = WI.assumingMainTarget();
@@ -161,7 +161,7 @@ WI.DeviceSettingsManager = class DeviceSettingsManager extends WI.Object
                 return;
             }
 
-            this._overridenDeviceScreenSize = shouldOverride ? value : null;
+            this._overriddenDeviceScreenSize = shouldOverride ? value : null;
 
             this.dispatchEventToListeners(WI.DeviceSettingsManager.Event.SettingChanged);
             target.PageAgent.reload();

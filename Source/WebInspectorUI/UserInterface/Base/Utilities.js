@@ -949,9 +949,9 @@ Object.defineProperty(String, "tokenizeFormatString",
         }
 
         var index = 0;
-        for (var precentIndex = format.indexOf("%", index); precentIndex !== -1; precentIndex = format.indexOf("%", index)) {
-            addStringToken(format.substring(index, precentIndex));
-            index = precentIndex + 1;
+        for (var percentIndex = format.indexOf("%", index); percentIndex !== -1; percentIndex = format.indexOf("%", index)) {
+            addStringToken(format.substring(index, percentIndex));
+            index = percentIndex + 1;
 
             if (format[index] === "%") {
                 addStringToken("%");

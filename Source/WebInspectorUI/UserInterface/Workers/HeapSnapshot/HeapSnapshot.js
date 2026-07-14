@@ -818,7 +818,7 @@ HeapSnapshot = class HeapSnapshot
             currentPath.push({node: nodeIndex});
 
             // Loop in reverse order because edges were added in reverse order.
-            // It doesn't particularly matter other then consistency with previous code.
+            // It doesn't particularly matter other than consistency with previous code.
             let incomingEdgeIndexStart = this._nodeOrdinalToFirstIncomingEdge[nodeOrdinal];
             let incomingEdgeIndexEnd = this._nodeOrdinalToFirstIncomingEdge[nodeOrdinal + 1];
             for (let incomingEdgeIndex = incomingEdgeIndexEnd - 1; incomingEdgeIndex >= incomingEdgeIndexStart; --incomingEdgeIndex) {

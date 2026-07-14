@@ -1330,7 +1330,7 @@ WI.getMaximumSidebarWidth = function(sidebar)
         minimumWidth -= WI.navigationSidebar.width;
 
     if (tabContentView.detailsSidebarPanels && sidebar !== WI.detailsSidebar) {
-        // A sidebar within the detailsSidebar needs the minimum width of its sibilings.
+        // A sidebar within the detailsSidebar needs the minimum width of its siblings.
         for (let singleDetailsSidebar of WI.detailsSidebar.sidebars) {
             if (sidebar !== singleDetailsSidebar)
                 minimumWidth -= singleDetailsSidebar.width;

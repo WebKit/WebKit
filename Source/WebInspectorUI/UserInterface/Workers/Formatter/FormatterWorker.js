@@ -56,7 +56,7 @@ FormatterWorker = class FormatterWorker
             if (includeSourceMapData) {
                 result.sourceMapData = formatter.sourceMapData;
                 // NOTE: With the JSFormatter, multi-line tokens, such as comments and strings,
-                // would not have had their newlines counted properly by the builder. Rather then
+                // would not have had their newlines counted properly by the builder. Rather than
                 // modify the formatter to check and account for newlines in every token just
                 // compute the list of line endings directly on the result.
                 result.sourceMapData.formattedLineEndings = result.formattedText.lineEndings();

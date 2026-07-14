@@ -101,16 +101,16 @@ WI.CSSKeywordCompletions.forPartialPropertyValue = function(text, propertyName, 
     }
 
     let functionName = null;
-    let preceedingFunctionDepth = 0;
+    let precedingFunctionDepth = 0;
     for (let i = indexOfTokenAtCaret; i >= 0; --i) {
         let value = tokens[i].value;
 
         // There may be one or more complete functions between the cursor and the current scope's functions name.
         if (value === ")")
-            ++preceedingFunctionDepth;
+            ++precedingFunctionDepth;
         else if (value === "(") {
-            if (preceedingFunctionDepth)
-                --preceedingFunctionDepth;
+            if (precedingFunctionDepth)
+                --precedingFunctionDepth;
             else {
                 functionName = tokens[i - 1]?.value;
                 break;

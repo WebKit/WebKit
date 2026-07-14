@@ -421,7 +421,7 @@ WI.RemoteObject = class RemoteObject
         for (let propertyName of propertyNames) {
             // Check this here, otherwise things like '{}' would be valid Set keys.
             if (typeof propertyName !== "string" && typeof propertyName !== "number")
-                throw new Error(`Tried to get property using key is not a string or number: ${propertyName}`);
+                throw new Error(`Tried to get property using a key that is not a string or number: ${propertyName}`);
 
             if (seenPropertyNames.has(propertyName))
                 continue;
@@ -449,7 +449,7 @@ WI.RemoteObject = class RemoteObject
     {
         function inspectedPage_object_getProperty(property) {
             if (typeof property !== "string" && typeof property !== "number")
-                throw new Error(`Tried to get property using key is not a string or number: ${property}`);
+                throw new Error(`Tried to get property using a key that is not a string or number: ${property}`);
 
             return this[property];
         }

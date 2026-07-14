@@ -1088,7 +1088,7 @@ WI.TreeOutline.Event = {
     ElementRevealed: "element-revealed",
     ElementClicked: "element-clicked",
     ElementDisclosureDidChanged: "element-disclosure-did-change",
-    ElementVisibilityDidChange: "element-visbility-did-change",
+    ElementVisibilityDidChange: "element-visibility-did-change",
     SelectionDidChange: "selection-did-change",
 };
 

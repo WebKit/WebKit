@@ -1043,7 +1043,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
 
         // Draw vertical ruler.
         {
-            GraphicsContextStateSaver veritcalRulerStateSaver(context);
+            GraphicsContextStateSaver verticalRulerStateSaver(context);
 
             context.translate(cornerX - scrollX, obscuredContentInsets.top() - scrollY + 0.5f);
 
