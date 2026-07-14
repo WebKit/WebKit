@@ -44,6 +44,8 @@ PASS: 'linear-gradient(to top, red, blue)' is valid
 PASS: toString() output matches 'linear-gradient(to top, red, blue)'
 PASS: 'linear-gradient(30deg, red, blue)' is valid
 PASS: toString() output matches 'linear-gradient(30deg, red, blue)'
+PASS: 'linear-gradient(red 50%, lime 0%, blue)' is valid
+PASS: toString() output matches 'linear-gradient(red 50%, lime 0%, blue)'
 PASS: 'repeating-linear-gradient(red, blue)' is valid
 PASS: toString() output matches 'repeating-linear-gradient(red, blue)'
 PASS: 'radial-gradient(red, blue)' is valid
@@ -52,8 +54,16 @@ PASS: 'radial-gradient(30deg, red, blue)' is valid
 PASS: toString() output matches 'radial-gradient(30deg, red, blue)'
 PASS: 'radial-gradient(ellipse, red, blue)' is valid
 PASS: toString() output matches 'radial-gradient(ellipse, red, blue)'
+PASS: 'radial-gradient(red 50%, lime 0%, blue)' is valid
+PASS: toString() output matches 'radial-gradient(red 50%, lime 0%, blue)'
 PASS: 'repeating-radial-gradient(red, blue)' is valid
 PASS: toString() output matches 'repeating-radial-gradient(red, blue)'
+PASS: 'conic-gradient(red, blue)' is valid
+PASS: toString() output matches 'conic-gradient(red, blue)'
+PASS: 'conic-gradient(red 50%, lime 0%, blue)' is valid
+PASS: toString() output matches 'conic-gradient(red 50%, lime 0%, blue)'
+PASS: 'repeating-conic-gradient(red, blue)' is valid
+PASS: toString() output matches 'repeating-conic-gradient(red, blue)'
 
 -- Running test case: WI.LinearGradient.prototype.set angleUnits
 PASS: Gradient has angle value of '180'

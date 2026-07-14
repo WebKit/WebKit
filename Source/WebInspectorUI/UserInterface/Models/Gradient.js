@@ -147,8 +147,7 @@ WI.Gradient = class Gradient
             if (!stop)
                 return null;
 
-            if (!stop.offset)
-                stop.offset = i / (count - 1);
+            stop.offset ??= i / (count - 1);
         }
 
         return stops;
@@ -375,7 +374,7 @@ WI.RadialGradient = class RadialGradient extends WI.Gradient
 
     static fromComponents(components)
     {
-        let sizing = !WI.Color.fromString(components[0].join(" ")) ? components.shift().join(" ") : "";
+        let sizing = !WI.Color.fromString(components[0][0]) ? components.shift().join(" ") : "";
 
         let stops = WI.Gradient.stopsWithComponents(components);
         if (!stops)

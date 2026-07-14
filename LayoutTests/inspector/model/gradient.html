@@ -70,12 +70,18 @@ function test()
             test("linear-gradient(0deg, red, blue)", "linear-gradient(to top, red, blue)");
             test("linear-gradient(to top, red, blue)");
             test("linear-gradient(30deg, red, blue)");
+            test("linear-gradient(red 50%, lime 0%, blue)");
             test("repeating-linear-gradient(red, blue)");
 
             test("radial-gradient(red, blue)");
             test("radial-gradient(30deg, red, blue)");
             test("radial-gradient(ellipse, red, blue)");
+            test("radial-gradient(red 50%, lime 0%, blue)");
             test("repeating-radial-gradient(red, blue)");
+
+            test("conic-gradient(red, blue)");
+            test("conic-gradient(red 50%, lime 0%, blue)");
+            test("repeating-conic-gradient(red, blue)");
 
             resolve();
         }
