@@ -7297,9 +7297,7 @@ void Internals::installImageOverlay(Element& element, Vector<ImageOverlayLine>&&
         , blocks.map([] (auto& block) {
             return TextRecognitionBlockData { block.text, getQuad(block) };
         })
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
         , TextRecognitionResult::extractAttributedString(fakeImageAnalysisResultForTesting(lines).get())
-#endif
     });
 #else
     UNUSED_PARAM(blocks);

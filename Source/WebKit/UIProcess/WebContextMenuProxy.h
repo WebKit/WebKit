@@ -61,7 +61,7 @@ public:
     virtual RetainPtr<NSArray> platformData() const = 0;
 #endif // PLATFORM(COCOA)
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     virtual RetainPtr<CGImageRef> imageForCopySubject() const { return { }; }
 #endif
 

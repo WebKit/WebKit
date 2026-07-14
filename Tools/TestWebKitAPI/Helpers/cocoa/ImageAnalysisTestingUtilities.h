@@ -48,7 +48,7 @@ RetainPtr<VKWKLineInfo> createLineInfo(NSString *text, VKQuad *, NSArray<VKWKTex
 RetainPtr<VKImageAnalysis> createImageAnalysis(NSArray<VKWKLineInfo *> *);
 RetainPtr<VKImageAnalyzerRequest> createRequest(CGImageRef, VKImageOrientation, VKAnalysisTypes);
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 class RemoveBackgroundSwizzler {
 public:
@@ -58,7 +58,7 @@ private:
     InstanceMethodSwizzler m_removeBackgroundRequestSwizzler;
 };
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 } // namespace TestWebKitAPI
 

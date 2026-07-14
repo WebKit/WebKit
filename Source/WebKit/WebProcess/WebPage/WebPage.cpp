@@ -8273,7 +8273,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
 
     updateMockAccessibilityElementAfterCommittingLoad();
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     m_elementsToExcludeFromRemoveBackground.clear();
 #endif
 
@@ -10069,7 +10069,7 @@ void WebPage::cancelTextRecognitionForVideoInElementFullScreen()
 #endif // ENABLE(IMAGE_ANALYSIS) && ENABLE(VIDEO)
 
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 void WebPage::shouldAllowRemoveBackground(const ElementContext& context, CompletionHandler<void(bool)>&& completion) const
 {

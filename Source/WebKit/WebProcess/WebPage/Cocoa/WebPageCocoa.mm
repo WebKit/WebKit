@@ -1065,7 +1065,7 @@ private:
     Vector<String> m_types;
 };
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 void WebPage::replaceImageForRemoveBackground(const ElementContext& elementContext, const Vector<String>& types, std::span<const uint8_t> data)
 {
@@ -1135,7 +1135,7 @@ void WebPage::replaceImageForRemoveBackground(const ElementContext& elementConte
     protect(frame->selection())->setSelection(newSelectionRange, restoreSelectionOptions);
 }
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 void WebPage::replaceSelectionWithPasteboardData(const Vector<String>& types, std::span<const uint8_t> data)
 {

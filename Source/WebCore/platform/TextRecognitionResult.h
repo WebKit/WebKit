@@ -27,11 +27,9 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 OBJC_CLASS NSAttributedString;
 OBJC_CLASS NSData;
 OBJC_CLASS VKCImageAnalysis;
-#endif
 
 #if ENABLE(DATA_DETECTION)
 OBJC_CLASS DDScannerResult;
@@ -110,10 +108,8 @@ struct TextRecognitionResult {
 
     Vector<TextRecognitionBlockData> blocks;
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     std::optional<WebCore::AttributedString> imageAnalysisData;
     WEBCORE_EXPORT static std::optional<WebCore::AttributedString> extractAttributedString(VKCImageAnalysis *);
-#endif
 
     bool isEmpty() const
     {
@@ -132,9 +128,7 @@ struct TextRecognitionResult {
     }
 };
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 RetainPtr<NSAttributedString> stringForRange(const TextRecognitionResult&, const CharacterRange&);
-#endif
 
 } // namespace WebCore
 

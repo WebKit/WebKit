@@ -227,7 +227,7 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 #if __has_include(<VisionKitCore/VKCImageAnalysisTranslation.h>) && !__has_feature(modules)
 #import <VisionKitCore/VKCImageAnalysisTranslation.h>
@@ -420,6 +420,6 @@ NS_ASSUME_NONNULL_END
 #endif
 #endif // PLATFORM(IOS) || PLATFORM(VISION) || PLATFORM(MACCATALYST)
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #endif // HAVE(VK_IMAGE_ANALYSIS)

@@ -597,7 +597,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (elementInfo.type == _WKActivatedElementTypeImage || elementInfo._isImage) {
         RetainPtr protectedDelegate = _delegate.get();
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
         if ([protectedDelegate respondsToSelector:@selector(actionSheetAssistantShouldIncludeCopySubjectAction:)] && [protectedDelegate actionSheetAssistantShouldIncludeCopySubjectAction:self])
             [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopyCroppedImage info:elementInfo assistant:self]];
 #endif
@@ -664,7 +664,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     RetainPtr protectedDelegate = _delegate.get();
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     BOOL enableCopySubjectItem = [protectedDelegate respondsToSelector:@selector(actionSheetAssistantShouldIncludeCopySubjectAction:)] && [protectedDelegate actionSheetAssistantShouldIncludeCopySubjectAction:self];
     [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopyCroppedImage info:elementInfo assistant:self disabled:!enableCopySubjectItem]];
 #endif
@@ -1224,7 +1224,7 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
 #endif
         break;
     case _WKElementActionTypeCopyCroppedImage:
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
         [delegate actionSheetAssistant:self copySubject:element.image sourceMIMEType:element.imageMIMEType];
 #endif
         break;

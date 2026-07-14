@@ -1205,7 +1205,7 @@ void WebPageProxy::setCocoaView(WKWebView *view)
     internals().cocoaView = view;
 }
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 void WebPageProxy::replaceImageForRemoveBackground(const ElementContext& elementContext, const Vector<String>& types, std::span<const uint8_t> data)
 {

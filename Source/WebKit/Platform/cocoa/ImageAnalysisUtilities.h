@@ -34,14 +34,10 @@
 OBJC_CLASS NSData;
 OBJC_CLASS NSError;
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 using CocoaImageAnalysis = VKCImageAnalysis;
 using CocoaImageAnalyzer = VKCImageAnalyzer;
 using CocoaImageAnalyzerRequest = VKCImageAnalyzerRequest;
-#elif ENABLE(IMAGE_ANALYSIS)
-using CocoaImageAnalysis = VKImageAnalysis;
-using CocoaImageAnalyzer = VKImageAnalyzer;
-using CocoaImageAnalyzerRequest = VKImageAnalyzerRequest;
 #endif
 
 namespace WebCore {
@@ -60,7 +56,6 @@ WebCore::TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *);
 RetainPtr<CocoaImageAnalyzer> createImageAnalyzer();
 RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef, VKAnalysisTypes);
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 void requestVisualTranslation(CocoaImageAnalyzer *, NSURL *, const String& source, const String& target, CGImageRef, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
 void requestBackgroundRemoval(CGImageRef, CompletionHandler<void(CGImageRef)>&&);
 
@@ -89,7 +84,6 @@ using PlatformImageAnalysisObject = VKCImageAnalysisInteraction;
 using PlatformImageAnalysisObject = VKCImageAnalysisOverlayView;
 #endif
 void prepareImageAnalysisForOverlayView(PlatformImageAnalysisObject *);
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 

@@ -6882,7 +6882,7 @@ RemoveBackgroundEnabled:
   category: dom
   humanReadableName: "Remove Background"
   humanReadableDescription: "Enable Remove Background"
-  condition: ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+  condition: ENABLE(IMAGE_ANALYSIS)
   exposed: [ WebKit ]
   defaultValue:
     WebCore:

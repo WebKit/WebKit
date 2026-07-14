@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 #import "Helpers/cocoa/ImageAnalysisTestingUtilities.h"
 #import "InstanceMethodSwizzler.h"
@@ -535,4 +535,4 @@ TEST(FullscreenVideoTextRecognition, NoOverlayInstalledAfterSeekAndExitingNative
 
 } // namespace TestWebKitAPI
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#endif // ENABLE(IMAGE_ANALYSIS)

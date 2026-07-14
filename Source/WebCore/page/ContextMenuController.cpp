@@ -1064,7 +1064,7 @@ void ContextMenuController::populate()
     ContextMenuItem ShareMenuItem(ContextMenuItemType::Action, ContextMenuItemTagShareMenu, emptyString());
 #endif
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     ContextMenuItem copySubjectItem { ContextMenuItemType::Action, ContextMenuItemTagCopySubject, contextMenuItemTagCopySubject() };
 #endif
 
@@ -1160,7 +1160,7 @@ void ContextMenuController::populate()
                 appendItem(CopyImageItem, m_contextMenu.get());
 
                 if (image && !image->isAnimated()) {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
                     if (m_client->supportsCopySubject())
                         appendItem(copySubjectItem, m_contextMenu.get());
 #endif

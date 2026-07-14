@@ -55,7 +55,7 @@ public:
     virtual bool supportsLookUpInImages() = 0;
 #endif
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     virtual bool supportsCopySubject() = 0;
 #endif
 

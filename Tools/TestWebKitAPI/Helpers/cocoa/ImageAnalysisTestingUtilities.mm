@@ -199,7 +199,7 @@
 
 @end
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 @interface FakeRemoveBackgroundResult : NSObject
 - (instancetype)initWithImage:(CGImageRef)image cropRect:(CGRect)cropRect;
@@ -235,7 +235,7 @@
 
 @end
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 namespace TestWebKitAPI {
 
@@ -272,7 +272,7 @@ RetainPtr<VKImageAnalyzerRequest> createRequest(CGImageRef image, VKImageOrienta
     return adoptNS(static_cast<VKImageAnalyzerRequest *>([[TestVKImageAnalyzerRequest alloc] initWithCGImage:image orientation:orientation requestType:types]));
 }
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 IMP makeRequestHandler(CGImageRef image, CGRect cropRect)
 {
@@ -287,7 +287,7 @@ RemoveBackgroundSwizzler::RemoveBackgroundSwizzler(CGImageRef image, CGRect crop
 {
 }
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 } // namespace TestWebKitAPI
 

@@ -68,7 +68,7 @@
 
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 @interface FakeImageAnalysisResult : NSObject
 - (instancetype)initWithString:(NSString *)fullText;
@@ -121,7 +121,7 @@ static NSRange NODELETE clampRange(NSRange rangeToClamp, NSRange extentRange)
 
 @end
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebCoreInternalsAdditions.mm>)
 #import <WebKitAdditions/WebCoreInternalsAdditions.mm>
@@ -281,7 +281,7 @@ RefPtr<SharedBuffer> Internals::pngDataForTesting()
     return SharedBuffer::createWithContentsOfFile([webCoreBundle pathForResource:@"missingImage" ofType:@"png"]);
 }
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 RetainPtr<VKCImageAnalysis> Internals::fakeImageAnalysisResultForTesting(const Vector<ImageOverlayLine>& lines)
 {
@@ -302,7 +302,7 @@ RetainPtr<VKCImageAnalysis> Internals::fakeImageAnalysisResultForTesting(const V
     return adoptNS((id)[[FakeImageAnalysisResult alloc] initWithString:fullText.createNSString().get()]);
 }
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 bool Internals::emitWebCoreLogs(unsigned logCount, bool useMainThread) const

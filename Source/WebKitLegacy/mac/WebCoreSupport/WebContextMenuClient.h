@@ -62,7 +62,7 @@ public:
     bool supportsLookUpInImages() final { return false; }
 #endif
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     bool supportsCopySubject() final { return false; }
 #endif
 

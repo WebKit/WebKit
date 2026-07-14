@@ -437,7 +437,7 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemTagLookUpImage();
 #endif
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     WEBCORE_EXPORT String contextMenuItemTagCopySubject();
     WEBCORE_EXPORT String contextMenuItemTitleRemoveBackground();
 #endif
