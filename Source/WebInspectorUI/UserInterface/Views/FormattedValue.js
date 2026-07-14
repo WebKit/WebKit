@@ -141,6 +141,8 @@ WI.FormattedValue.createElementForNodePreview = function(preview, {remoteObjectA
             }
 
             remoteObjectAccessor((remoteObject) => {
+                if (!remoteObject)
+                    return;
                 remoteObject.pushNodeToFrontend((nodeId) => {
                     domNode = WI.domManager.nodeForId(nodeId);
                     if (domNode)

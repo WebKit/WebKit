@@ -198,6 +198,10 @@ WI.ObjectPreviewView = class ObjectPreviewView extends WI.Object
             let options = {
                 remoteObjectAccessor: (callback) => {
                     this._object.getCollectionEntries((entries) => {
+                        if (!entries?.length) {
+                            callback(null);
+                            return;
+                        }
                         let remoteObject = isKey ? entries[0].key : entries[0].value;
                         WI.consoleManager.releaseRemoteObjectWithConsoleClear(remoteObject);
                         callback(remoteObject);

@@ -395,6 +395,11 @@ WI.RemoteObject = class RemoteObject
 
         // COMPATIBILITY (iOS 13): `startIndex` and `numberToFetch` were renamed to `fetchStart` and `fetchCount` (but kept in the same position).
         this._target.RuntimeAgent.getCollectionEntries(this._objectId, objectGroup, fetchStart, fetchCount, (error, entries) => {
+            if (error) {
+                callback(null);
+                return;
+            }
+
             callback(entries.map((x) => WI.CollectionEntry.fromPayload(x, this._target)));
         });
     }
