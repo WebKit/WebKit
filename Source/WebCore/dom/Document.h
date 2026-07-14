@@ -1540,6 +1540,11 @@ public:
     bool hasHadUserInteraction() const { return static_cast<bool>(m_lastHandledUserGestureTimestamp); }
     void updateLastHandledUserGestureTimestamp(MonotonicTime);
     bool processingUserGestureForMedia() const;
+
+    // Identifies which branch of processingUserGestureForMedia() authorizes media playback.
+    enum class MediaGestureReason : uint8_t { None, ActiveToken, TransientActivation, MediaFinishedGrace, InheritsFromDocumentSetting, InheritedUserGesturesQuirk };
+    MediaGestureReason mediaUserGestureReason() const;
+
     bool hasRecentUserInteractionForNavigationFromJS() const;
     void userActivatedMediaFinishedPlaying() { m_userActivatedMediaFinishedPlayingTimestamp = MonotonicTime::now(); }
 

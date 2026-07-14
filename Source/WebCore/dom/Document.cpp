@@ -9573,23 +9573,28 @@ bool Document::mainFrameDocumentHasHadUserInteraction() const
 
 bool Document::processingUserGestureForMedia() const
 {
+    return mediaUserGestureReason() != MediaGestureReason::None;
+}
+
+Document::MediaGestureReason Document::mediaUserGestureReason() const
+{
     if (UserGestureIndicator::processingUserGestureForMedia())
-        return true;
+        return MediaGestureReason::ActiveToken;
 
     if (m_domWindow && m_domWindow->hasTransientActivation())
-        return true;
+        return MediaGestureReason::TransientActivation;
 
     if (m_userActivatedMediaFinishedPlayingTimestamp + maxIntervalForUserGestureForwardingAfterMediaFinishesPlaying >= MonotonicTime::now())
-        return true;
+        return MediaGestureReason::MediaFinishedGrace;
 
     if (settings().mediaUserGestureInheritsFromDocument())
-        return mainFrameDocumentHasHadUserInteraction();
+        return mainFrameDocumentHasHadUserInteraction() ? MediaGestureReason::InheritsFromDocumentSetting : MediaGestureReason::None;
 
     RefPtr loader = this->loader();
     if (loader && loader->allowedAutoplayQuirks().contains(AutoplayQuirk::InheritedUserGestures))
-        return mainFrameDocumentHasHadUserInteraction();
+        return mainFrameDocumentHasHadUserInteraction() ? MediaGestureReason::InheritedUserGesturesQuirk : MediaGestureReason::None;
 
-    return false;
+    return MediaGestureReason::None;
 }
 
 bool Document::hasRecentUserInteractionForNavigationFromJS() const

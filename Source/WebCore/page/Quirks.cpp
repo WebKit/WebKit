@@ -2461,6 +2461,14 @@ bool Quirks::shouldSuppressHLSSubtitles() const
     return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldSuppressHLSSubtitles);
 }
 
+// spotify.com: block additive audible playback (e.g. Home-page track previews) while another
+// audible media element is already playing in the document.
+bool Quirks::shouldBlockAudiblePlaybackWhileAudioIsPlaying() const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldBlockAudiblePlaybackWhileAudioIsPlaying);
+}
+
 bool Quirks::shouldSuppressMediaSessionPauseActionOnInterruption() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
@@ -3882,6 +3890,7 @@ static void handleSpotifyQuirks(QuirksData& quirksData, const URL& quirksURL, co
         QuirksData::SiteSpecificQuirk::ShouldLimitHLSPlaybackRate,
         QuirksData::SiteSpecificQuirk::NeedsWebKitMediaTextTrackDisplayQuirk,
         QuirksData::SiteSpecificQuirk::ShouldDeferIntersectionObserversDuringResize,
+        QuirksData::SiteSpecificQuirk::ShouldBlockAudiblePlaybackWhileAudioIsPlaying,
     });
 }
 
