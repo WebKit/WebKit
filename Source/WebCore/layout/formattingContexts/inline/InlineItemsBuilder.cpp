@@ -38,6 +38,7 @@
 #include "TextUtil.h"
 #include "UnicodeBidi.h"
 #include "platform/text/TextSpacing.h"
+#include <wtf/BitVector.h>
 #include <wtf/Scope.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -123,6 +124,9 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
     InlineItemList inlineItemList;
     collectInlineItems(inlineItemList, startPosition);
 
+    if (m_hasWhiteSpaceTrim)
+        adjustInlineItemsForWhiteSpaceTrim(inlineItemList);
+
     if (root().writingMode().isBidiRTL() || contentRequiresVisualReordering()) {
         // FIXME: Add support for partial, yet paragraph level bidi content handling.
         breakAndComputeBidiLevels(inlineItemList);
@@ -134,7 +138,7 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
     auto adjustInlineContentCacheWithNewInlineItems = [&] {
         ASSERT(!startPosition || startPosition.index < inlineContentCache().inlineItems().content().size());
 
-        auto contentAttributes = InlineContentCache::InlineItems::ContentAttributes { m_contentRequiresVisualReordering, m_hasTextAndLineBreakOnlyContent, m_hasTextAutospace, m_inlineBoxCount };
+        auto contentAttributes = InlineContentCache::InlineItems::ContentAttributes { m_contentRequiresVisualReordering, m_hasTextAndLineBreakOnlyContent, m_hasTextAutospace, m_inlineBoxCount, m_hasWhiteSpaceTrim };
         auto isPopulatedFromCache = m_textContentPopulatedFromCache && *m_textContentPopulatedFromCache ? InlineContentCache::InlineItems::IsPopulatedFromCache::Yes : InlineContentCache::InlineItems::IsPopulatedFromCache::No;
         auto& inlineItemCache = inlineContentCache().inlineItems();
         if (!startPosition || startPosition.index >= inlineItemCache.content().size())
@@ -167,6 +171,99 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
     ASSERT(m_inlineBoxCount == inlineBoxStart);
     ASSERT(m_hasTextAndLineBreakOnlyContent == hasTextAndLineBreakOnlyContent);
 #endif
+}
+
+static bool isNonReplacedInlineBlock(const Box& layoutBox)
+{
+    // inline-block (InlineFlowRoot) is the inline-level block container 'white-space-trim' applies to; it already
+    // implies isAtomicInlineBox(). A replaced box or iframe may carry InlineFlowRoot display but is not a block container.
+    return layoutBox.isInlineBlockBox() && !layoutBox.isReplacedBox() && !layoutBox.isIFrame();
+}
+
+void InlineItemsBuilder::adjustInlineItemsForWhiteSpaceTrim(InlineItemList& inlineItemList)
+{
+    // https://drafts.csswg.org/css-text-4/#white-space-trim
+    // 'discard-before' and 'discard-after' remove the collapsible white space immediately before the
+    // start / after the end of an element. Discarding the corresponding inline items here -before line
+    // building, bidi resolution and intrinsic sizing consume them- keeps the removed white space out of
+    // every downstream computation (rendering, soft wrap opportunities and min/max-content) at once.
+    // Inline box boundaries are transparent to this adjacency, matching white space collapsing.
+    //
+    // A single forward pass (each item is visited once):
+    //  - 'discardAfterActive' is armed by a discard-after box edge (an inline box end, or an inline-block)
+    //    and discards the collapsible white space that follows it, up to the next piece of real content.
+    //  - 'discardBeforeCandidates' holds the collapsible white space seen since the last piece of real
+    //    content; a discard-before box edge (an inline box start, or an inline-block) discards that run.
+    ASSERT(m_hasWhiteSpaceTrim);
+
+    auto isTrimmableWhitespace = [](const InlineItem& item) {
+        auto* textItem = dynamicDowncast<InlineTextItem>(item);
+        return textItem && textItem->isFullyTrimmable();
+    };
+
+    BitVector itemsToDiscard(inlineItemList.size());
+    bool hasItemsToDiscard = false;
+    bool discardAfterActive = false;
+    Vector<size_t, 4> discardBeforeCandidates;
+
+    for (size_t index = 0; index < inlineItemList.size(); ++index) {
+        auto& item = inlineItemList[index];
+        if (isTrimmableWhitespace(item)) {
+            if (discardAfterActive) {
+                itemsToDiscard.quickSet(index);
+                hasItemsToDiscard = true;
+            } else
+                discardBeforeCandidates.append(index);
+            continue;
+        }
+        if (item.isInlineBoxStart()) {
+            if (item.layoutBox().style().whiteSpaceTrim().contains(Style::WhiteSpaceTrimValue::DiscardBefore)) {
+                for (auto candidate : discardBeforeCandidates)
+                    itemsToDiscard.quickSet(candidate);
+                hasItemsToDiscard |= !discardBeforeCandidates.isEmpty();
+                discardBeforeCandidates.clear();
+            }
+            // Inline box boundaries are transparent: carry both states across them.
+            continue;
+        }
+        if (item.isInlineBoxEnd()) {
+            if (item.layoutBox().style().whiteSpaceTrim().contains(Style::WhiteSpaceTrimValue::DiscardAfter))
+                discardAfterActive = true;
+            continue;
+        }
+        if (item.isFloat() || item.isOutOfFlow()) {
+            // Floats and out-of-flow boxes are not in-flow content; like white space collapsing they are
+            // transparent to this adjacency and neither start nor terminate a discardable white space run.
+            continue;
+        }
+        if (isNonReplacedInlineBlock(item.layoutBox())) {
+            // An inline-block is a block container 'white-space-trim' applies to. Unlike an inline box
+            // boundary it is real content, so it terminates the preceding white space run rather than being
+            // transparent to it, but it can still trim the collapsible white space at both its own edges.
+            auto whiteSpaceTrim = item.layoutBox().style().whiteSpaceTrim();
+            if (whiteSpaceTrim.contains(Style::WhiteSpaceTrimValue::DiscardBefore)) {
+                for (auto candidate : discardBeforeCandidates)
+                    itemsToDiscard.quickSet(candidate);
+                hasItemsToDiscard |= !discardBeforeCandidates.isEmpty();
+            }
+            discardBeforeCandidates.clear();
+            discardAfterActive = whiteSpaceTrim.contains(Style::WhiteSpaceTrimValue::DiscardAfter);
+            continue;
+        }
+        // Any other item is real content and ends both adjacencies.
+        discardAfterActive = false;
+        discardBeforeCandidates.clear();
+    }
+    if (!hasItemsToDiscard)
+        return;
+
+    InlineItemList remainingItems;
+    remainingItems.reserveInitialCapacity(inlineItemList.size());
+    for (size_t index = 0; index < inlineItemList.size(); ++index) {
+        if (!itemsToDiscard.quickGet(index))
+            remainingItems.append(WTF::move(inlineItemList[index]));
+    }
+    inlineItemList = WTF::move(remainingItems);
 }
 
 void InlineItemsBuilder::computeInlineBoxBoundaryTextSpacings(const InlineItemList& inlineItemList)
@@ -1054,6 +1151,7 @@ void InlineItemsBuilder::handleInlineBoxStart(const Box& inlineBox, InlineItemLi
     inlineItemList.append({ inlineBox, InlineItem::Type::InlineBoxStart });
     m_contentRequiresVisualReordering |= requiresVisualReordering(inlineBox);
     m_hasTextAutospace |= !inlineBox.style().textAutospace().isNoAutospace();
+    m_hasWhiteSpaceTrim |= !inlineBox.style().whiteSpaceTrim().isNone();
     ++m_inlineBoxCount;
 }
 
@@ -1069,8 +1167,13 @@ void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItemLi
     if (layoutBox.isRubyAnnotationBox())
         return inlineItemList.append({ layoutBox, InlineItem::Type::OutOfFlow });
 
-    if (layoutBox.isAtomicInlineBox())
+    if (layoutBox.isAtomicInlineBox()) {
+        // An inline-block is a block container 'white-space-trim' applies to; track it as a carrier so the
+        // discard pass runs. Replaced content and iframes are not block containers and never carry it.
+        if (isNonReplacedInlineBlock(layoutBox))
+            m_hasWhiteSpaceTrim |= !layoutBox.style().whiteSpaceTrim().isNone();
         return inlineItemList.append({ layoutBox, InlineItem::Type::AtomicInlineBox });
+    }
 
     if (layoutBox.isLineBreakBox())
         return inlineItemList.append({ layoutBox, layoutBox.isWordBreakOpportunity() ? InlineItem::Type::WordBreakOpportunity : InlineItem::Type::HardLineBreak });

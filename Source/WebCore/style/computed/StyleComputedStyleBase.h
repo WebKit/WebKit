@@ -384,6 +384,7 @@ struct WebkitMarqueeIncrement;
 struct WebkitMarqueeRepetition;
 struct WebkitMarqueeSpeed;
 struct WebkitTextStrokeWidth;
+struct WhiteSpaceTrim;
 struct Widows;
 struct WillChange;
 struct WordSpacing;

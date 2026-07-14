@@ -41,6 +41,9 @@ static bool NODELETE isBoxEligibleForNonLineBuilderMinimumWidth(const ElementBox
 {
     // Note that hanging trailing content needs line builder (combination of wrapping is allowed but whitespace is preserved).
     auto& style = box.style();
+    // 'white-space-trim' discards some inline items, which this character-walking fast path (it iterates the text content directly, not the inline items) can't account for.
+    if (!style.whiteSpaceTrim().isNone())
+        return false;
     return TextUtil::isWrappingAllowed(style) && (style.lineBreak() == LineBreak::Anywhere || style.wordBreak() == WordBreak::BreakAll || style.wordBreak() == WordBreak::BreakWord) && style.whiteSpaceCollapse() != WhiteSpaceCollapse::Preserve;
 }
 

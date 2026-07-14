@@ -1,0 +1,9 @@
+
+PASS e.style['white-space-trim'] = "auto" should not set the property value
+PASS e.style['white-space-trim'] = "discard" should not set the property value
+PASS e.style['white-space-trim'] = "discard-foo" should not set the property value
+PASS e.style['white-space-trim'] = "discard-before discard-before" should not set the property value
+PASS e.style['white-space-trim'] = "none discard-before" should not set the property value
+PASS e.style['white-space-trim'] = "discard-before none" should not set the property value
+PASS e.style['white-space-trim'] = "discard-before, discard-after" should not set the property value
+

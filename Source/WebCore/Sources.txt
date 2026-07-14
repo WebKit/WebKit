@@ -3506,6 +3506,7 @@ style/values/text/StyleTextAlignLast.cpp @header:RenderStyleGetters @cost:5
 style/values/text/StyleTextAutospace.cpp
 style/values/text/StyleTextIndent.cpp
 style/values/text/StyleTextTransform.cpp
+style/values/text/StyleWhiteSpaceTrim.cpp
 style/values/text/StyleWordSpacing.cpp @header:RenderStyleGetters
 style/values/transforms/functions/StyleMatrix3DTransformFunction.cpp
 style/values/transforms/functions/StyleMatrixTransformFunction.cpp

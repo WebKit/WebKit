@@ -619,6 +619,11 @@ void InlineFormattingContext::rebuildInlineItemListIfNeeded(InlineDamage* lineDa
                 // FIXME: We don't support partial rebuild with certain types of content. Let's just re-collect inline items.
                 return { };
             }
+            if (inlineContentCache.inlineItems().hasWhiteSpaceTrim()) {
+                // white-space-trim discards collapsible white space based on cross-box adjacency that a
+                // partial rebuild starting mid-content cannot resolve. Re-collect all inline items.
+                return { };
+            }
             return startPosition->inlineItemPosition;
         }
         // Unsupported damage. Need to run full build/layout.

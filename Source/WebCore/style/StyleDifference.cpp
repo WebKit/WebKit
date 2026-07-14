@@ -312,6 +312,9 @@ public:
         if (a.textBoxTrim != b.textBoxTrim)
             return true;
 
+        if (a.whiteSpaceTrim != b.whiteSpaceTrim)
+            return true;
+
         if (a.maxLines != b.maxLines)
             return true;
 

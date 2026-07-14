@@ -81,6 +81,7 @@
 #include <WebCore/StyleWebKitBoxReflect.h>
 #include <WebCore/StyleWebKitInitialLetter.h>
 #include <WebCore/StyleWebKitLineClamp.h>
+#include <WebCore/StyleWhiteSpaceTrim.h>
 #include <WebCore/StyleWillChange.h>
 #include <WebCore/StyleZoom.h>
 #include <wtf/DataRef.h>
@@ -253,6 +254,7 @@ public:
     PREFERRED_TYPE(Contain) unsigned contain : 5;
     PREFERRED_TYPE(OverflowContinue) unsigned overflowContinue : 1;
     PREFERRED_TYPE(ScrollSnapStop) unsigned scrollSnapStop : 1;
+    PREFERRED_TYPE(WhiteSpaceTrim) unsigned whiteSpaceTrim : 3;
 
 private:
     NonInheritedRareData();

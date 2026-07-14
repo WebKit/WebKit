@@ -501,6 +501,10 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(const
     auto isEligibleByStyle = [](auto& style) {
         if (style.fontCascade().wordSpacing())
             return false;
+        // 'white-space-trim' discards inline items adjacent to box edges; the text-only fast paths
+        // (used for both layout and intrinsic sizing) don't account for that, so fall back to the line builder.
+        if (!style.whiteSpaceTrim().isNone())
+            return false;
         if (style.writingMode().isBidiRTL())
             return false;
         if (style.wordBreak() == WordBreak::AutoPhrase)

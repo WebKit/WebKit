@@ -893,6 +893,14 @@ preserve-breaks
 // preserve-spaces
 
 //
+// CSS_PROP_WHITE_SPACE_TRIM
+//
+// none
+discard-before
+discard-after
+discard-inner
+
+//
 // CSS_PROP__KHTML_NBSP_MODE
 //
 space

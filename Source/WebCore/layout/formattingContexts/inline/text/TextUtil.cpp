@@ -368,7 +368,11 @@ bool TextUtil::mayBreakInBetween(const InlineTextItem& previousInlineItem, const
 {
     // Check if these 2 adjacent non-whitespace inline items are connected at a breakable position.
     ASSERT(!previousInlineItem.isWhitespace() && !nextInlineItem.isWhitespace());
-    return mayBreakInBetween(previousInlineItem.inlineTextBox().content(), protect(previousInlineItem.style()), nextInlineItem.inlineTextBox().content(), protect(nextInlineItem.style()));
+    // Only the next item's leading edge decides breakability here, so when it starts at the beginning of
+    // its text box we can pass the box content directly. Only when leading content was dropped (e.g.
+    // white-space-trim moves start() past 0) do we take the item's substring and pay for the allocation.
+    String nextContent = nextInlineItem.start() ? nextInlineItem.content() : nextInlineItem.inlineTextBox().content();
+    return mayBreakInBetween(previousInlineItem.inlineTextBox().content(), protect(previousInlineItem.style()), nextContent, protect(nextInlineItem.style()));
 }
 
 bool TextUtil::mayBreakInBetween(String previousContent, const Style::ComputedStyle& previousContentStyle, String nextContent, const Style::ComputedStyle& nextContentStyle)

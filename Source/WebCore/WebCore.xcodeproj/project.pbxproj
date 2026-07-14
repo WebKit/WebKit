@@ -5245,6 +5245,7 @@
 		BC3E62432659791800548ACD /* PlatformColorSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3E62422659791700548ACD /* PlatformColorSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC3EBCAD2F957C1B0046F457 /* CSSKeywordList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3EBCAC2F957A110046F457 /* CSSKeywordList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC4529DD2ECBA98600FD066C /* StyleHangingPunctuation.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4529DB2ECBA96F00FD066C /* StyleHangingPunctuation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F00DCAFE000000000000A003 /* StyleWhiteSpaceTrim.h in Headers */ = {isa = PBXBuildFile; fileRef = F00DCAFE000000000000A001 /* StyleWhiteSpaceTrim.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC4529E92ECBAD6E00FD066C /* StyleSpeakAs.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4529E62ECBAD6400FD066C /* StyleSpeakAs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC452A022ECCE27E00FD066C /* StyleWebKitLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = BC452A012ECCE27900FD066C /* StyleWebKitLocale.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC452A0F2ECCF26F00FD066C /* StylePositionArea.h in Headers */ = {isa = PBXBuildFile; fileRef = BC452A0B2ECCF26300FD066C /* StylePositionArea.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -19504,7 +19505,9 @@
 		BC44B44B2EFDC36C00DE38FF /* StyleColorResolver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleColorResolver.cpp; sourceTree = "<group>"; };
 		BC44B4542F005B7D00DE38FF /* StyleComputedStyleProperties.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleComputedStyleProperties.cpp; sourceTree = "<group>"; };
 		BC4529DB2ECBA96F00FD066C /* StyleHangingPunctuation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleHangingPunctuation.h; sourceTree = "<group>"; };
+		F00DCAFE000000000000A001 /* StyleWhiteSpaceTrim.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleWhiteSpaceTrim.h; sourceTree = "<group>"; };
 		BC4529DC2ECBA96F00FD066C /* StyleHangingPunctuation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleHangingPunctuation.cpp; sourceTree = "<group>"; };
+		F00DCAFE000000000000A002 /* StyleWhiteSpaceTrim.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleWhiteSpaceTrim.cpp; sourceTree = "<group>"; };
 		BC4529E62ECBAD6400FD066C /* StyleSpeakAs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleSpeakAs.h; sourceTree = "<group>"; };
 		BC4529E72ECBAD6400FD066C /* StyleSpeakAs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleSpeakAs.cpp; sourceTree = "<group>"; };
 		BC452A012ECCE27900FD066C /* StyleWebKitLocale.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleWebKitLocale.h; sourceTree = "<group>"; };
@@ -39226,6 +39229,8 @@
 				BC46310E2EA30B5900EA911F /* StyleTextSpacingTrim.h */,
 				BC6120102EC8F27000904592 /* StyleTextTransform.cpp */,
 				BC61200F2EC8F27000904592 /* StyleTextTransform.h */,
+				F00DCAFE000000000000A002 /* StyleWhiteSpaceTrim.cpp */,
+				F00DCAFE000000000000A001 /* StyleWhiteSpaceTrim.h */,
 				BC10DA9B2E81B64E000EE742 /* StyleWordSpacing.cpp */,
 				BC10DA992E81B57D000EE742 /* StyleWordSpacing.h */,
 			);
@@ -49187,6 +49192,7 @@
 				BC0929B22E2AA9BA002ACB2C /* StyleWebKitOverflowScrolling.h in Headers */,
 				BC22AA392E353BAC009AC0C3 /* StyleWebKitTextStrokeWidth.h in Headers */,
 				BC0929AF2E2AA652002ACB2C /* StyleWebKitTouchCallout.h in Headers */,
+				F00DCAFE000000000000A003 /* StyleWhiteSpaceTrim.h in Headers */,
 				BC34D2C52E3BF0AB001EAD95 /* StyleWidows.h in Headers */,
 				BC4631CC2EAADF1300EA911F /* StyleWillChange.h in Headers */,
 				BCEA07452CC97000000AC148 /* StyleWindRuleComputation.h in Headers */,

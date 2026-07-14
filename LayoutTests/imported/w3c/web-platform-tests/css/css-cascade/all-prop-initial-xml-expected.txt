@@ -401,6 +401,7 @@ PASS view-transition-class
 PASS view-transition-name
 PASS visibility
 PASS white-space-collapse
+PASS white-space-trim
 PASS widows
 PASS width
 PASS will-change

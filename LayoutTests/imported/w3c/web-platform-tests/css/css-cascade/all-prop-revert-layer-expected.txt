@@ -354,6 +354,7 @@ PASS view-timeline-name
 PASS view-transition-name
 PASS visibility
 PASS white-space-collapse
+PASS white-space-trim
 PASS widows
 PASS width
 PASS will-change
