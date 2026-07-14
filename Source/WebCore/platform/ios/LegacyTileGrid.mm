@@ -120,10 +120,10 @@ bool LegacyTileGrid::dropDistantTiles(unsigned tilesNeeded, double shortestDista
     unsigned bytesUsed = tileCount() * bytesPerTile;
     unsigned maximumBytes = protect(tileCache())->tileCapacityForGrid(this);
 
-    int bytesToReclaim = int(bytesUsed) - (int(maximumBytes) - bytesNeeded);
-    if (bytesToReclaim <= 0)
+    if (bytesNeeded > maximumBytes || bytesUsed <= maximumBytes - bytesNeeded)
         return true;
 
+    unsigned bytesToReclaim = bytesUsed - (maximumBytes - bytesNeeded);
     unsigned tilesToRemoveCount = bytesToReclaim / bytesPerTile;
 
     IntRect visibleRect = this->visibleRect();
@@ -141,9 +141,9 @@ bool LegacyTileGrid::dropDistantTiles(unsigned tilesNeeded, double shortestDista
             toRemove.removeLast();
         }
     }
-    size_t removeCount = toRemove.size();
-    for (size_t n = 0; n < removeCount; ++n)
-        m_tiles.remove(toRemove[n].second);
+
+    for (const auto& tile : toRemove)
+        m_tiles.remove(tile.second);
 
     if (!shortestDistance)
         return true;
@@ -327,9 +327,9 @@ void LegacyTileGrid::dropInvalidTiles()
         if (expectedTileRect != tileRect || !dropBounds.contains(tileRect))
             toRemove.append(index);
     }
-    unsigned removeCount = toRemove.size();
-    for (unsigned n = 0; n < removeCount; ++n)
-        m_tiles.remove(toRemove[n]);
+
+    for (const auto& tile : toRemove)
+        m_tiles.remove(tile);
 
     m_validBounds = bounds;
 }
