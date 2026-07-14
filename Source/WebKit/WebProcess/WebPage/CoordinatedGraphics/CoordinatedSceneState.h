@@ -74,7 +74,8 @@ private:
     void commitPendingLayers();
 
     const Ref<WebCore::CoordinatedPlatformLayer> m_rootLayer;
-    HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_layers;
+    Lock m_layersLock;
+    HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_layers WTF_GUARDED_BY_LOCK(m_layersLock);
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_layersToRemove;
     Lock m_pendingLayersLock;
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_pendingLayers WTF_GUARDED_BY_LOCK(m_pendingLayersLock);
