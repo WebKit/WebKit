@@ -161,7 +161,7 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
 
     formattedLocationString(columnStyle, nameStyle, prefix)
     {
-        return this._locationString(this.sourceCode, this.formattedLineNumber, this.formattedColumn, columnStyle, nameStyle, prefix);
+        return this._locationString(this.sourceCode, this.formattedLineNumber, this.formattedColumnNumber, columnStyle, nameStyle, prefix);
     }
 
     displayLocationString(columnStyle, nameStyle, prefix)
