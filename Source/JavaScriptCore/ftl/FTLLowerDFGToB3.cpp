@@ -1562,6 +1562,27 @@ private:
         case ConstructForwardVarargs:
             compileCallOrConstructVarargs();
             break;
+        case CallVarargsWithSpread: {
+            // All spread operands phantomized → the fast all-forwarded path. A mix of eliminated and
+            // materialized (or all-materialized) spreads goes through the buffer path, which handles
+            // forwarded rest segments via the *Forward buffer ops.
+            BitVector* bitVector = m_node->bitVector();
+            bool hasPhantomSpread = false;
+            bool allSpreadsArePhantom = true;
+            for (unsigned e = 2; e < m_node->numChildren(); ++e) {
+                if (!bitVector->get(e - 2))
+                    continue;
+                if (m_graph.varArgChild(m_node, e)->isPhantomAllocation())
+                    hasPhantomSpread = true;
+                else
+                    allSpreadsArePhantom = false;
+            }
+            if (hasPhantomSpread && allSpreadsArePhantom)
+                compileCallOrConstructVarargsSpread();
+            else
+                compileCallVarargsWithSpread();
+            break;
+        }
         case CallDirectEval:
             compileCallDirectEval();
             break;
@@ -1578,8 +1599,14 @@ private:
         case VarargsLength:
             compileVarargsLength();
             break;
+        case VarargsLengthWithSpread:
+            compileVarargsLengthWithSpread();
+            break;
         case LoadVarargs:
             compileLoadVarargs();
+            break;
+        case LoadVarargsWithSpread:
+            compileLoadVarargsWithSpread();
             break;
         case ForwardVarargs:
             compileForwardVarargs();
@@ -14326,12 +14353,13 @@ IGNORE_CLANG_WARNINGS_END
     void compileCallOrConstructVarargsSpread()
     {
         Node* node = m_node;
-        Node* arguments = node->child3().node();
+        bool isCallWithSpread = node->op() == CallVarargsWithSpread;
+        Node* arguments = isCallWithSpread ? nullptr : node->child3().node();
 
-        LValue jsCallee = lowJSValue(m_node->child1());
-        LValue thisArg = lowJSValue(m_node->child2());
+        LValue jsCallee = lowJSValue(m_graph.child(node, 0));
+        LValue thisArg = lowJSValue(m_graph.child(node, 1));
 
-        RELEASE_ASSERT(arguments->op() == PhantomNewArrayWithSpread || arguments->op() == PhantomSpread || arguments->op() == PhantomNewArrayBuffer);
+        RELEASE_ASSERT(isCallWithSpread || arguments->op() == PhantomNewArrayWithSpread || arguments->op() == PhantomSpread || arguments->op() == PhantomNewArrayBuffer);
 
         unsigned staticArgumentCount = 0;
         Vector<LValue, 2> spreadLengths;
@@ -14396,7 +14424,21 @@ IGNORE_CLANG_WARNINGS_END
                 RELEASE_ASSERT_NOT_REACHED();
             }
         });
-        pushAndCountArgumentsFromRightToLeft(arguments);
+        if (isCallWithSpread) {
+            BitVector* bitVector = node->bitVector();
+            unsigned numElems = node->numChildren() - 2;
+            for (unsigned e = numElems; e--; ) {
+                if (bitVector->get(e))
+                    pushAndCountArgumentsFromRightToLeft(m_graph.varArgChild(node, 2 + e).node());
+                else {
+                    ++staticArgumentCount;
+                    LValue argument = this->lowJSValue(m_graph.varArgChild(node, 2 + e));
+                    patchpointArguments.append(argument);
+                    argumentsToEmitFromRightToLeft.append({ VarargsSpreadArgumentToEmit::Type::PhantomNewArrayWithSpreadCase, paramsOffset + (index++)});
+                }
+            }
+        } else
+            pushAndCountArgumentsFromRightToLeft(arguments);
 
         LValue argumentCountIncludingThis = m_out.constIntPtr(staticArgumentCount + 1);
         for (LValue length : spreadLengths)
@@ -14783,6 +14825,22 @@ IGNORE_CLANG_WARNINGS_END
                 GPRReg scratchGPR3 = forwarding ? allocator.allocateScratchGPR() : InvalidGPRReg;
                 RELEASE_ASSERT(!allocator.numberOfReusedRegisters());
 
+                // The small-array varargs fast path needs extra scratch registers; disable it gracefully
+                // if the target lacks enough free registers.
+                bool useArrayVarargsFastPath = !forwarding && !data->firstVarArgOffset;
+                GPRReg fpArrayGPR = InvalidGPRReg;
+                GPRReg fpScratchGPR1 = InvalidGPRReg;
+                GPRReg fpScratchGPR2 = InvalidGPRReg;
+                GPRReg fpScratchGPR3 = InvalidGPRReg;
+                if (useArrayVarargsFastPath) {
+                    fpArrayGPR = allocator.allocateScratchGPR();
+                    fpScratchGPR1 = allocator.allocateScratchGPR();
+                    fpScratchGPR2 = allocator.allocateScratchGPR();
+                    fpScratchGPR3 = allocator.allocateScratchGPR();
+                    if (allocator.numberOfReusedRegisters())
+                        useArrayVarargsFastPath = false;
+                }
+
                 auto callWithExceptionCheck = [&] (void(*callee)()) {
                     jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(callee)), GPRInfo::nonPreservedNonArgumentGPR0);
                     jit.call(GPRInfo::nonPreservedNonArgumentGPR0, OperationPtrTag);
@@ -14808,6 +14866,21 @@ IGNORE_CLANG_WARNINGS_END
 
                     done.link(&jit);
                 } else {
+                    CCallHelpers::JumpList slowArrayFast;
+                    std::optional<CCallHelpers::Jump> arrayFastDone;
+                    if (useArrayVarargsFastPath) {
+                        jit.move(CCallHelpers::TrustedImm32(originalStackHeight / sizeof(EncodedJSValue)), scratchGPR1);
+                        // Copy argumentsGPR aside: the helper clobbers its array reg, and B3 may have
+                        // placed argumentsLateRep in argumentsGPR itself, so preserving it here means the
+                        // slow-path bail needs no (unreliable) restore.
+                        jit.move(argumentsGPR, fpArrayGPR);
+                        emitInlineVarargsFrameForContiguousArray(*vm, jit, fpArrayGPR, scratchGPR1 /*numUsed*/, scratchGPR2 /*resultFrame*/, fpScratchGPR1, fpScratchGPR2, fpScratchGPR3, slowArrayFast);
+                        calleeLateRep.emitRestore(jit, BaselineJITRegisters::Call::calleeGPR);
+                        thisLateRep.emitRestore(jit, thisGPR);
+                        arrayFastDone = jit.jump();
+                        slowArrayFast.link(&jit);
+                    }
+
                     jit.move(CCallHelpers::TrustedImm32(originalStackHeight / sizeof(EncodedJSValue)), scratchGPR1);
                     jit.setupArguments<decltype(operationSizeFrameForVarargs)>(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), argumentsGPR, scratchGPR1, CCallHelpers::TrustedImm32(data->firstVarArgOffset));
                     jit.prepareCallOperation(jit.vm());
@@ -14829,6 +14902,9 @@ IGNORE_CLANG_WARNINGS_END
                     // This may not emit code if thisGPR got a callee-save. Also, we're guaranteed
                     // that thisGPR != GPRInfo::regT0 (BaselineJITRegisters::Call::calleeGPR) because regT0 interferes with it.
                     thisLateRep.emitRestore(jit, thisGPR);
+
+                    if (arrayFastDone)
+                        arrayFastDone->link(&jit);
                 }
 
                 jit.store64(BaselineJITRegisters::Call::calleeGPR, CCallHelpers::calleeFrameSlot(CallFrameSlot::callee));
@@ -14874,11 +14950,218 @@ IGNORE_CLANG_WARNINGS_END
         }
     }
 
+    void compileCallVarargsWithSpread()
+    {
+        // Fill a scratch buffer with the elements (kept live as patchpoint arguments for GC), then the
+        // C++ frame-setup ops expand it into the callee frame. Eliminated spreads are handled without
+        // allocation: a forwarded rest (PhantomCreateRest) becomes an empty-JSValue sentinel plus a
+        // descriptor consumed by the *Forward ops; a PhantomNewArrayBuffer becomes its constant butterfly
+        // cell, flowing through the ordinary spread-cell path.
+        Node* node = m_node;
+        LValue jsCallee = lowJSValue(m_graph.varArgChild(node, 0));
+        LValue thisArg = lowJSValue(m_graph.varArgChild(node, 1));
+        unsigned numElems = node->numChildren() - 2;
+
+        BitVector* bitVector = node->bitVector();
+        // Per-operand forwarding plan (kept 1:1 with elems so the generator's elemGPRs indexing is trivial).
+        Vector<uint8_t> isForwardRest(numElems, [](size_t) { return static_cast<uint8_t>(0); });
+        Vector<InlineCallFrame*> forwardInlineCallFrame(numElems, [](size_t) -> InlineCallFrame* { return nullptr; });
+        Vector<unsigned> forwardSkip(numElems, [](size_t) { return 0u; });
+        bool hasForward = false;
+        Vector<LValue, 8> elems(numElems, [&](size_t e) -> LValue {
+            Edge edge = m_graph.varArgChild(node, 2 + e);
+            if (!bitVector->get(e))
+                return lowJSValue(edge);
+            Node* operand = edge.node();
+            if (operand->op() == PhantomSpread) {
+                Node* inner = operand->child1().node();
+                if (inner->op() == PhantomCreateRest) {
+                    isForwardRest[e] = 1;
+                    forwardInlineCallFrame[e] = inner->origin.semantic.inlineCallFrame();
+                    forwardSkip[e] = inner->numberOfArgumentsToSkip();
+                    hasForward = true;
+                    return m_out.int64Zero; // placeholder; real data comes from the descriptor
+                }
+                ASSERT(inner->op() == PhantomNewArrayBuffer);
+                return weakPointer(inner->castOperand<JSCellButterfly*>());
+            }
+            return lowCell(edge);
+        });
+
+        size_t scratchSize = numElems * sizeof(EncodedJSValue) + numElems * sizeof(VarargsSpreadForwardDescriptor);
+        ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
+        EncodedJSValue* buffer = static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer());
+        auto* descriptors = std::bit_cast<VarargsSpreadForwardDescriptor*>(buffer + numElems);
+
+        // Fast path for the single-trailing-spread shape f(prefix..., ...c): build the frame inline.
+        // Disabled when any operand is a forwarded rest, whose sentinel would defeat the inline butterfly load.
+        bool singleTrailingSpread = !hasForward && numElems && bitVector->get(numElems - 1);
+        for (unsigned e = 0; singleTrailingSpread && e + 1 < numElems; ++e) {
+            if (bitVector->get(e))
+                singleTrailingSpread = false;
+        }
+        unsigned numPrefix = numElems - 1;
+
+        PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+        patchpoint->append(jsCallee, ValueRep::reg(BaselineJITRegisters::Call::calleeGPR));
+        patchpoint->appendSomeRegister(thisArg);
+        for (LValue elem : elems)
+            patchpoint->appendSomeRegister(elem);
+        // Late uses so callee/this survive clobbering (see compileCallOrConstructVarargs for the rationale).
+        patchpoint->append(jsCallee, ValueRep::LateColdAny);
+        patchpoint->append(thisArg, ValueRep::LateColdAny);
+
+        RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
+
+        patchpoint->append(m_notCellMask, ValueRep::reg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
+
+        patchpoint->clobber(RegisterSet::macroClobberedGPRs());
+        patchpoint->clobberLate(RegisterSet::registersToSaveForJSCall(RegisterSet::allScalarRegisters()));
+        patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::returnValueGPR) };
+
+        unsigned minimumJSCallAreaSize =
+            sizeof(CallerFrameAndPC) +
+            WTF::roundUpToMultipleOf<stackAlignmentBytes()>(5 * sizeof(EncodedJSValue));
+        m_proc.requestCallArgAreaSizeInBytes(minimumJSCallAreaSize);
+
+        CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
+        State* state = &m_ftlState;
+        VM* vm = &this->vm();
+        CodeOrigin semanticNodeOrigin = node->origin.semantic;
+        patchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+                CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(codeOrigin);
+
+                Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
+                exceptionHandle->scheduleExitCreationForUnwind(params, callSiteIndex);
+
+                jit.store32(CCallHelpers::TrustedImm32(callSiteIndex.bits()), CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
+
+                auto* callLinkInfo = state->addCallLinkInfo(semanticNodeOrigin);
+
+                unsigned argIndex = 1;
+                GPRReg calleeGPR = params[argIndex++].gpr();
+                ASSERT(calleeGPR == GPRInfo::regT0);
+                GPRReg thisGPR = params[argIndex++].gpr();
+                Vector<GPRReg, 8> elemGPRs(numElems, [&](size_t) { return params[argIndex++].gpr(); });
+                B3::ValueRep calleeLateRep = params[argIndex++];
+                B3::ValueRep thisLateRep = params[argIndex++];
+
+                RegisterSet usedRegisters;
+                usedRegisters.merge(RegisterSet::stackRegisters());
+                usedRegisters.merge(RegisterSet::reservedHardwareRegisters());
+                usedRegisters.merge(RegisterSet::calleeSaveRegisters());
+                usedRegisters.add(calleeGPR, IgnoreVectors);
+                usedRegisters.add(thisGPR, IgnoreVectors);
+                for (GPRReg elemGPR : elemGPRs)
+                    usedRegisters.add(elemGPR, IgnoreVectors);
+                if (calleeLateRep.isReg())
+                    usedRegisters.add(calleeLateRep.reg(), IgnoreVectors);
+                if (thisLateRep.isReg())
+                    usedRegisters.add(thisLateRep.reg(), IgnoreVectors);
+                ScratchRegisterAllocator allocator(usedRegisters);
+                GPRReg scratchGPR1 = allocator.allocateScratchGPR();
+                GPRReg scratchGPR2 = allocator.allocateScratchGPR();
+                bool useSpreadFast = singleTrailingSpread;
+                GPRReg spreadButterflyGPR = InvalidGPRReg;
+                GPRReg spreadNumUsedGPR = InvalidGPRReg;
+                GPRReg spreadScratch1 = InvalidGPRReg;
+                GPRReg spreadScratch2 = InvalidGPRReg;
+                if (useSpreadFast) {
+                    spreadButterflyGPR = allocator.allocateScratchGPR();
+                    spreadNumUsedGPR = allocator.allocateScratchGPR();
+                    spreadScratch1 = allocator.allocateScratchGPR();
+                    spreadScratch2 = allocator.allocateScratchGPR();
+                }
+                RELEASE_ASSERT(!allocator.numberOfReusedRegisters());
+
+                // Store the elements into the scratch buffer while they are still in registers. A forwarded
+                // rest operand has no register value: write the empty-JSValue sentinel plus its descriptor.
+                jit.move(CCallHelpers::TrustedImmPtr(buffer), scratchGPR1);
+                for (unsigned e = 0; e < numElems; ++e) {
+                    if (isForwardRest[e]) {
+                        jit.store64(CCallHelpers::TrustedImm64(JSValue::encode(JSValue())), CCallHelpers::Address(scratchGPR1, e * sizeof(EncodedJSValue)));
+                        unsigned descByteOffset = numElems * sizeof(EncodedJSValue) + e * sizeof(VarargsSpreadForwardDescriptor);
+                        jit.store64(CCallHelpers::TrustedImm64(std::bit_cast<int64_t>(forwardInlineCallFrame[e])), CCallHelpers::Address(scratchGPR1, descByteOffset + OBJECT_OFFSETOF(VarargsSpreadForwardDescriptor, inlineCallFrame)));
+                        jit.store32(CCallHelpers::TrustedImm32(forwardSkip[e]), CCallHelpers::Address(scratchGPR1, descByteOffset + OBJECT_OFFSETOF(VarargsSpreadForwardDescriptor, numberOfArgumentsToSkip)));
+                    } else
+                        jit.store64(elemGPRs[e], CCallHelpers::Address(scratchGPR1, e * sizeof(EncodedJSValue)));
+                }
+
+                auto callWithExceptionCheck = [&] (void(*callee)()) {
+                    jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(callee)), GPRInfo::nonPreservedNonArgumentGPR0);
+                    jit.call(GPRInfo::nonPreservedNonArgumentGPR0, OperationPtrTag);
+                    exceptions->append(jit.emitExceptionCheck(*vm, AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
+                };
+
+                unsigned originalStackHeight = params.proc().frameSize();
+
+                CCallHelpers::JumpList slowSpread;
+                std::optional<CCallHelpers::Jump> spreadFastDone;
+                if (useSpreadFast) {
+                    // scratchGPR1 still holds the buffer base; the spread butterfly is buffer[numPrefix].
+                    jit.load64(CCallHelpers::Address(scratchGPR1, numPrefix * sizeof(EncodedJSValue)), spreadButterflyGPR);
+                    jit.move(CCallHelpers::TrustedImm32(originalStackHeight / sizeof(EncodedJSValue)), spreadNumUsedGPR);
+                    emitInlineVarargsFrameForSpreadButterfly(*vm, jit, spreadButterflyGPR, spreadNumUsedGPR, scratchGPR2 /*resultFrame*/, spreadScratch1, spreadScratch2, slowSpread, numPrefix);
+                    for (unsigned p = 0; p < numPrefix; ++p) {
+                        jit.load64(CCallHelpers::Address(scratchGPR1, p * sizeof(EncodedJSValue)), spreadScratch1);
+                        jit.store64(spreadScratch1, CCallHelpers::calleeArgumentSlot(1 + p));
+                    }
+                    spreadFastDone = jit.jump();
+                    slowSpread.link(&jit);
+                }
+
+                jit.move(CCallHelpers::TrustedImm32(originalStackHeight / sizeof(EncodedJSValue)), scratchGPR1);
+                if (hasForward) {
+                    jit.setupArguments<decltype(operationSizeFrameForVarargsWithSpreadForwardBuffer)>(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), CCallHelpers::TrustedImmPtr(buffer), CCallHelpers::TrustedImm32(numElems), CCallHelpers::TrustedImmPtr(descriptors), scratchGPR1);
+                    jit.prepareCallOperation(jit.vm());
+                    callWithExceptionCheck(reinterpret_cast<void(*)()>(operationSizeFrameForVarargsWithSpreadForwardBuffer));
+                } else {
+                    jit.setupArguments<decltype(operationSizeFrameForVarargsWithSpreadBuffer)>(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), CCallHelpers::TrustedImmPtr(buffer), CCallHelpers::TrustedImm32(numElems), scratchGPR1);
+                    jit.prepareCallOperation(jit.vm());
+                    callWithExceptionCheck(reinterpret_cast<void(*)()>(operationSizeFrameForVarargsWithSpreadBuffer));
+                }
+
+                jit.move(GPRInfo::returnValueGPR, scratchGPR1);
+                jit.move(CCallHelpers::TrustedImm32(originalStackHeight / sizeof(EncodedJSValue)), scratchGPR2);
+                emitSetVarargsFrame(jit, scratchGPR1, false, scratchGPR2, scratchGPR2);
+                jit.addPtr(CCallHelpers::TrustedImm32(-minimumJSCallAreaSize), scratchGPR2, CCallHelpers::stackPointerRegister);
+                if (hasForward) {
+                    jit.setupArguments<decltype(operationSetupVarargsFrameWithSpreadForwardBuffer)>(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), scratchGPR2, CCallHelpers::TrustedImmPtr(buffer), CCallHelpers::TrustedImm32(numElems), CCallHelpers::TrustedImmPtr(descriptors), scratchGPR1);
+                    jit.prepareCallOperation(jit.vm());
+                    callWithExceptionCheck(reinterpret_cast<void(*)()>(operationSetupVarargsFrameWithSpreadForwardBuffer));
+                } else {
+                    jit.setupArguments<decltype(operationSetupVarargsFrameWithSpreadBuffer)>(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), scratchGPR2, CCallHelpers::TrustedImmPtr(buffer), CCallHelpers::TrustedImm32(numElems), scratchGPR1);
+                    jit.prepareCallOperation(jit.vm());
+                    callWithExceptionCheck(reinterpret_cast<void(*)()>(operationSetupVarargsFrameWithSpreadBuffer));
+                }
+
+                jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::returnValueGPR, CCallHelpers::stackPointerRegister);
+
+                calleeLateRep.emitRestore(jit, BaselineJITRegisters::Call::calleeGPR);
+                thisLateRep.emitRestore(jit, thisGPR);
+
+                // The fast path does no C calls, so calleeGPR/thisGPR are still live and need no restore.
+                if (spreadFastDone)
+                    spreadFastDone->link(&jit);
+
+                jit.store64(BaselineJITRegisters::Call::calleeGPR, CCallHelpers::calleeFrameSlot(CallFrameSlot::callee));
+                jit.store64(thisGPR, CCallHelpers::calleeArgumentSlot(0));
+
+                callLinkInfo->setUpCall(CallLinkInfo::CallVarargs);
+                CallLinkInfo::emitFastPath(jit, callLinkInfo);
+                jit.addPtr(CCallHelpers::TrustedImm32(-originalStackHeight), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+            });
+
+        setJSValue(patchpoint);
+    }
+
     void compileCallDirectEval()
     {
         Node* node = m_node;
         unsigned numArgs = node->numChildren() - 3; // callee, thisValue, scope
-
         LValue jsCallee = lowJSValue(m_graph.varArgChild(node, 0));
         LValue thisValue = lowJSValue(m_graph.varArgChild(node, node->numChildren() - 2));
         LValue callerScope = lowCell(m_graph.varArgChild(node, node->numChildren() - 1));
@@ -15275,6 +15558,81 @@ IGNORE_CLANG_WARNINGS_END
             DFG_CRASH(m_graph, m_node, "Bad use kind");
             break;
         }
+    }
+
+    EncodedJSValue* fillSpreadArgumentsBuffer(Node* node, unsigned base, unsigned numArgs, VarargsSpreadForwardDescriptor*& descriptors, bool& hasForward)
+    {
+        BitVector* bitVector = node->bitVector();
+        size_t scratchSize = numArgs * sizeof(EncodedJSValue) + numArgs * sizeof(VarargsSpreadForwardDescriptor);
+        ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
+        EncodedJSValue* buffer = static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer());
+        descriptors = std::bit_cast<VarargsSpreadForwardDescriptor*>(buffer + numArgs);
+        hasForward = false;
+        for (unsigned e = 0; e < numArgs; ++e) {
+            Edge edge = m_graph.varArgChild(node, base + e);
+            if (!bitVector->get(e)) {
+                m_out.store64(lowJSValue(edge), m_out.absolute(buffer + e));
+                continue;
+            }
+            // Eliminated spreads (see fillSpreadArgumentsBuffer's DFG twin): a forwarded rest becomes an
+            // empty sentinel plus a descriptor; a PhantomNewArrayBuffer becomes its constant butterfly cell.
+            Node* operand = edge.node();
+            if (operand->op() == PhantomSpread) {
+                Node* inner = operand->child1().node();
+                if (inner->op() == PhantomCreateRest) {
+                    VarargsSpreadForwardDescriptor* d = &descriptors[e];
+                    m_out.store64(m_out.constInt64(JSValue::encode(JSValue())), m_out.absolute(buffer + e));
+                    m_out.store64(m_out.constInt64(std::bit_cast<int64_t>(inner->origin.semantic.inlineCallFrame())), m_out.absolute(&d->inlineCallFrame));
+                    m_out.store32(m_out.constInt32(inner->numberOfArgumentsToSkip()), m_out.absolute(&d->numberOfArgumentsToSkip));
+                    hasForward = true;
+                    continue;
+                }
+                ASSERT(inner->op() == PhantomNewArrayBuffer);
+                m_out.store64(weakPointer(inner->castOperand<JSCellButterfly*>()), m_out.absolute(buffer + e));
+                continue;
+            }
+            m_out.store64(lowCell(edge), m_out.absolute(buffer + e));
+        }
+        return buffer;
+    }
+
+    void compileVarargsLengthWithSpread()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        Node* node = m_node;
+        unsigned numArgs = node->numChildren();
+
+        VarargsSpreadForwardDescriptor* descriptors = nullptr;
+        bool hasForward = false;
+        EncodedJSValue* buffer = fillSpreadArgumentsBuffer(node, 0, numArgs, descriptors, hasForward);
+
+        LValue length;
+        if (hasForward)
+            length = vmCall(Int32, operationSizeOfVarargsWithSpreadForward, weakPointer(globalObject), m_out.constIntPtr(buffer), m_out.constInt32(numArgs), m_out.constIntPtr(descriptors));
+        else
+            length = vmCall(Int32, operationSizeOfVarargsWithSpread, weakPointer(globalObject), m_out.constIntPtr(buffer), m_out.constInt32(numArgs));
+        setInt32(m_out.add(length, m_out.int32One));
+    }
+
+    void compileLoadVarargsWithSpread()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        Node* node = m_node;
+        LoadVarargsData* data = node->loadVarargsData();
+        LValue lengthIncludingThis = lowInt32(m_graph.varArgChild(node, 0));
+
+        unsigned numArgs = node->numChildren() - 1;
+        VarargsSpreadForwardDescriptor* descriptors = nullptr;
+        bool hasForward = false;
+        EncodedJSValue* buffer = fillSpreadArgumentsBuffer(node, 1, numArgs, descriptors, hasForward);
+
+        speculate(VarargsOverflow, noValue(), nullptr, m_out.bitOr(m_out.isZero32(lengthIncludingThis), m_out.above(lengthIncludingThis, m_out.constInt32(data->limit))));
+        m_out.store32(lengthIncludingThis, lowWordFor(data->machineCount));
+        LValue machineStart = m_out.lShr(m_out.sub(addressFor(data->machineStart).value(), m_callFrame), m_out.constIntPtr(3));
+        if (hasForward)
+            vmCall(Void, operationLoadVarargsWithSpreadForward, weakPointer(globalObject), m_out.castToInt32(machineStart), m_out.constIntPtr(buffer), m_out.constInt32(numArgs), m_out.constIntPtr(descriptors), lengthIncludingThis, m_out.constInt32(data->mandatoryMinimum));
+        else
+            vmCall(Void, operationLoadVarargsWithSpread, weakPointer(globalObject), m_out.castToInt32(machineStart), m_out.constIntPtr(buffer), m_out.constInt32(numArgs), lengthIncludingThis, m_out.constInt32(data->mandatoryMinimum));
     }
 
     void compileForwardVarargs()

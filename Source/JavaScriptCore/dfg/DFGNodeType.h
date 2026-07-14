@@ -210,6 +210,9 @@ namespace JSC { namespace DFG {
     macro(GetMyArgumentByValOutOfBounds, NodeResultJS | NodeMustGenerate) \
     macro(VarargsLength, NodeMustGenerate | NodeResultInt32) \
     macro(LoadVarargs, NodeMustGenerate) \
+    /* Spread analogs of the above for op_call_varargs_with_spread inlining. */ \
+    macro(VarargsLengthWithSpread, NodeMustGenerate | NodeResultInt32 | NodeHasVarArgs) \
+    macro(LoadVarargsWithSpread, NodeMustGenerate | NodeHasVarArgs) \
     macro(ForwardVarargs, NodeMustGenerate) \
     /* Note that PutByVal opcodes use VarArgs because they may have up to */\
     /* 5 children (? means optional): <cell>, <key>, <value>, <storage>?, and <length>?. */\
@@ -405,6 +408,7 @@ namespace JSC { namespace DFG {
     macro(Construct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(DirectConstruct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(CallVarargs, NodeResultJS | NodeMustGenerate) \
+    macro(CallVarargsWithSpread, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(CallForwardVarargs, NodeResultJS | NodeMustGenerate) \
     macro(ConstructVarargs, NodeResultJS | NodeMustGenerate) \
     macro(ConstructForwardVarargs, NodeResultJS | NodeMustGenerate) \

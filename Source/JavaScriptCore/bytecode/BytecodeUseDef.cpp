@@ -268,6 +268,14 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
         useAtEachCheckpoint(bytecode.m_callee, bytecode.m_thisValue, bytecode.m_arguments);
         return;
     }
+    case op_call_varargs_with_spread: {
+        auto bytecode = instruction->as<OpCallVarargsWithSpread>();
+        useAtEachCheckpoint(bytecode.m_callee, bytecode.m_thisValue);
+        int base = bytecode.m_argv.offset();
+        for (int i = 0; i < static_cast<int>(bytecode.m_argc); i++)
+            functor(VirtualRegister { base - i });
+        return;
+    }
     case op_tail_call_varargs: {
         auto bytecode = instruction->as<OpTailCallVarargs>();
         useAtEachCheckpoint(bytecode.m_callee, bytecode.m_thisValue, bytecode.m_arguments);
@@ -502,6 +510,11 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
     case op_call_varargs: {
         auto bytecode = instruction->as<OpCallVarargs>();
         defAt(OpCallVarargs::makeCall, bytecode.m_dst);
+        return;
+    }
+    case op_call_varargs_with_spread: {
+        auto bytecode = instruction->as<OpCallVarargsWithSpread>();
+        defAt(OpCallVarargsWithSpread::makeCall, bytecode.m_dst);
         return;
     }
     case op_tail_call_varargs: {

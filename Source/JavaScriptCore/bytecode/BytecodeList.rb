@@ -128,6 +128,28 @@ op :call_varargs,
         makeCall: nil,
     }
 
+op :call_varargs_with_spread,
+    args: {
+        dst: VirtualRegister,
+        callee: VirtualRegister,
+        thisValue?: VirtualRegister,
+        firstFree: VirtualRegister,
+        argv: VirtualRegister,
+        argc: unsigned,
+        bitVector: unsigned,
+        valueProfile: unsigned,
+    },
+    metadata: {
+        callLinkInfo: DataOnlyCallLinkInfo,
+    },
+    tmps: {
+        argCountIncludingThis: unsigned,
+    },
+    checkpoints: {
+        determiningArgCount: nil,
+        makeCall: nil,
+    }
+
 # Semantically, this is nextResult = next.@call(iterator); done = nextResult.done; value = done ? undefined : nextResult.value;
 op :iterator_next,
     args: {
@@ -1478,6 +1500,7 @@ op :op_call_ignore_result_return_location
 op :op_construct_return_location
 op :op_super_construct_return_location
 op :op_call_varargs_return_location
+op :op_call_varargs_with_spread_return_location
 op :op_construct_varargs_return_location
 op :op_super_construct_varargs_return_location
 op :op_get_by_id_return_location
@@ -1515,6 +1538,7 @@ op :js_trampoline_op_call_ignore_result
 op :js_trampoline_op_construct
 op :js_trampoline_op_super_construct
 op :js_trampoline_op_call_varargs
+op :js_trampoline_op_call_varargs_with_spread
 op :js_trampoline_op_construct_varargs
 op :js_trampoline_op_super_construct_varargs
 op :js_trampoline_op_iterator_next

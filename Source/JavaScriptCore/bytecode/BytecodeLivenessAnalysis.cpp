@@ -179,12 +179,14 @@ WTF::BitSet<maxNumCheckpointTmps> tmpLivenessForCheckpoint(const CodeBlock& code
 
     switch (codeBlock.instructions().at(bytecodeIndex)->opcodeID()) {
     case op_call_varargs:
+    case op_call_varargs_with_spread:
     case op_tail_call_varargs:
     case op_construct_varargs:
     case op_super_construct_varargs: {
         static_assert(enumValuesEqualAsIntegral(OpCallVarargs::makeCall, OpTailCallVarargs::makeCall) && enumValuesEqualAsIntegral(OpCallVarargs::argCountIncludingThis, OpTailCallVarargs::argCountIncludingThis));
         static_assert(enumValuesEqualAsIntegral(OpCallVarargs::makeCall, OpConstructVarargs::makeCall) && enumValuesEqualAsIntegral(OpCallVarargs::argCountIncludingThis, OpConstructVarargs::argCountIncludingThis));
         static_assert(enumValuesEqualAsIntegral(OpCallVarargs::makeCall, OpSuperConstructVarargs::makeCall) && enumValuesEqualAsIntegral(OpCallVarargs::argCountIncludingThis, OpSuperConstructVarargs::argCountIncludingThis));
+        static_assert(enumValuesEqualAsIntegral(OpCallVarargs::makeCall, OpCallVarargsWithSpread::makeCall) && enumValuesEqualAsIntegral(OpCallVarargs::argCountIncludingThis, OpCallVarargsWithSpread::argCountIncludingThis));
         if (checkpoint == OpCallVarargs::makeCall)
             result.set(OpCallVarargs::argCountIncludingThis);
         return result;

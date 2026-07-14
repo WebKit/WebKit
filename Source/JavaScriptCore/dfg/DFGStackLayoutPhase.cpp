@@ -74,6 +74,7 @@ public:
                 }
                     
                 case LoadVarargs:
+                case LoadVarargsWithSpread:
                 case ForwardVarargs: {
                     LoadVarargsData* data = node->loadVarargsData();
                     usedOperands.setOperand(data->count, true);
@@ -213,6 +214,7 @@ public:
                     Node* node = block->at(nodeIndex);
                     switch (node->op()) {
                     case LoadVarargs:
+                    case LoadVarargsWithSpread:
                     case ForwardVarargs: {
                         LoadVarargsData* data = node->loadVarargsData();
                         data->machineCount = assign(usedOperands, allocation, data->count);
