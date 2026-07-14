@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2019, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,12 +35,19 @@
 #include "pas_page_malloc.h"
 #include "pas_page_sharing_pool.h"
 #include "pas_simple_large_free_heap.h"
+#include "pas_zero_mode.h"
 #include <set>
 #include <vector>
 
 using namespace std;
 
 namespace {
+
+std::ostream& operator<<(std::ostream& out, pas_zero_mode mode)
+{
+    out << pas_zero_mode_get_string(mode);
+    return out;
+}
 
 pas_alignment alignSimple(size_t size)
 {
@@ -74,7 +81,8 @@ struct Action {
     static Action allocate(
         size_t size, pas_alignment alignment, uintptr_t expectedResult,
         function<pas_aligned_allocation_result(size_t size, pas_alignment alignment)> allocator = trappingAllocator,
-        function<void(void* base, size_t size)> deallocator = trappingDeallocator)
+        function<void(void* base, size_t size)> deallocator = trappingDeallocator,
+        pas_zero_mode expectedResultZeroMode = pas_zero_mode_may_have_non_zero)
     {
         Action result;
         result.kind = Allocate;
@@ -83,13 +91,15 @@ struct Action {
         result.allocator = allocator;
         result.deallocator = deallocator;
         result.result = expectedResult;
+        result.expectedResultZeroMode = expectedResultZeroMode;
         return result;
     }
-    
+
     static Action deallocate(
         uintptr_t base, size_t size,
         function<pas_aligned_allocation_result(size_t size, pas_alignment alignment)> allocator = trappingAllocator,
-        function<void(void* base, size_t size)> deallocator = trappingDeallocator)
+        function<void(void* base, size_t size)> deallocator = trappingDeallocator,
+        pas_zero_mode zeroMode = pas_zero_mode_may_have_non_zero)
     {
         Action result;
         result.kind = Deallocate;
@@ -97,9 +107,10 @@ struct Action {
         result.size = size;
         result.allocator = allocator;
         result.deallocator = deallocator;
+        result.deallocZeroMode = zeroMode;
         return result;
     }
-    
+
     Kind kind { Allocate };
     uintptr_t base { 0 };
     size_t size { 0 };
@@ -107,32 +118,40 @@ struct Action {
     function<pas_aligned_allocation_result(size_t size, pas_alignment alignment)> allocator;
     function<void(void* base, size_t size)> deallocator;
     uintptr_t result { 0 };
+    pas_zero_mode deallocZeroMode { pas_zero_mode_may_have_non_zero };
+    pas_zero_mode expectedResultZeroMode { pas_zero_mode_may_have_non_zero };
 };
 
 struct Free {
     Free() = default;
-    
-    Free(uintptr_t begin, uintptr_t end)
+
+    Free(uintptr_t begin, uintptr_t end,
+         pas_zero_mode zeroMode = pas_zero_mode_may_have_non_zero)
         : begin(begin)
         , end(end)
+        , zeroMode(zeroMode)
     {
     }
-    
+
     bool operator==(const Free& other) const
     {
         return begin == other.begin
-            && end == other.end;
+            && end == other.end
+            && zeroMode == other.zeroMode;
     }
-    
+
     bool operator<(const Free& other) const
     {
         if (begin != other.begin)
             return begin < other.begin;
-        return end < other.end;
+        if (end != other.end)
+            return end < other.end;
+        return zeroMode < other.zeroMode;
     }
-    
+
     uintptr_t begin;
     uintptr_t end;
+    pas_zero_mode zeroMode { pas_zero_mode_may_have_non_zero };
 };
 
 struct Allocation {
@@ -140,22 +159,25 @@ struct Allocation {
     
     Allocation(size_t expectedSize, pas_alignment expectedAlignment,
                uintptr_t leftPadding, uintptr_t resultBase,
-               uintptr_t rightPadding, uintptr_t end)
+               uintptr_t rightPadding, uintptr_t end,
+               pas_zero_mode zeroMode = pas_zero_mode_may_have_non_zero)
         : expectedSize(expectedSize)
         , expectedAlignment(expectedAlignment)
         , leftPadding(leftPadding)
         , resultBase(resultBase)
         , rightPadding(rightPadding)
         , end(end)
+        , zeroMode(zeroMode)
     {
     }
-    
+
     size_t expectedSize { 0 };
     pas_alignment expectedAlignment { 0 };
     uintptr_t leftPadding { 0 };
     uintptr_t resultBase { 0 };
     uintptr_t rightPadding { 0 };
     uintptr_t end { 0 };
+    pas_zero_mode zeroMode { pas_zero_mode_may_have_non_zero };
 };
 
 function<pas_aligned_allocation_result(size_t size, pas_alignment alignment)>
@@ -177,8 +199,8 @@ allocateFinite(vector<Allocation> allocations)
         result.result_size = allocation.rightPadding - allocation.resultBase;
         result.right_padding = (void*)allocation.rightPadding;
         result.right_padding_size = allocation.end - allocation.rightPadding;
-        result.zero_mode = pas_zero_mode_may_have_non_zero;
-        
+        result.zero_mode = allocation.zeroMode;
+
         return result;
     };
 }
@@ -189,11 +211,12 @@ allocateOnce(size_t expectedSize,
              uintptr_t leftPadding,
              uintptr_t resultBase,
              uintptr_t rightPadding,
-             uintptr_t end)
+             uintptr_t end,
+             pas_zero_mode zeroMode = pas_zero_mode_may_have_non_zero)
 {
     return allocateFinite({ Allocation(expectedSize, expectedAlignment,
                                        leftPadding, resultBase,
-                                       rightPadding, end) });
+                                       rightPadding, end, zeroMode) });
 }
 
 function<void(void* base, size_t size)> deallocateFinite(vector<Free> frees)
@@ -210,7 +233,8 @@ function<void(void* base, size_t size)> deallocateFinite(vector<Free> frees)
 ostream& operator<<(ostream& out, const Free& free)
 {
     out << "{begin = " << free.begin << ", end = " << free.end
-        << ", size = " << (free.end - free.begin) << "}";
+        << ", size = " << (free.end - free.begin)
+        << ", zero_mode = " << free.zeroMode << "}";
     return out;
 }
 
@@ -287,14 +311,17 @@ void testLargeFreeHeapImpl(HeapType* heap,
             cout << "    Allocating size = " << action.size
                  << ", alignment = " << pas_string_stream_get_string(&stream) << endl;
             pas_string_stream_destruct(&stream);
-            CHECK_EQUAL(allocateFunc(heap, action.size, action.alignment, &config).begin,
-                        action.result);
+            pas_allocation_result allocationResult =
+                allocateFunc(heap, action.size, action.alignment, &config);
+            CHECK_EQUAL(allocationResult.begin, action.result);
+            CHECK_EQUAL(allocationResult.zero_mode, action.expectedResultZeroMode);
             break;
         }
         case Action::Deallocate:
-            cout << "    Freeing base = " << action.base << endl;
+            cout << "    Freeing base = " << action.base
+                 << ", zero_mode = " << action.deallocZeroMode << endl;
             deallocateFunc(heap, action.base, action.base + action.size,
-                           pas_zero_mode_may_have_non_zero,
+                           action.deallocZeroMode,
                            &config);
             break;
         }
@@ -308,7 +335,7 @@ void testLargeFreeHeapImpl(HeapType* heap,
         heap,
         iterateFunc,
         [&] (pas_large_free largeFree) {
-            Free free(largeFree.begin, largeFree.end);
+            Free free(largeFree.begin, largeFree.end, largeFree.zero_mode);
             if (freesFound.count(free)) {
                 cout << "    FAIL: Found duplicate entry " << free << endl;
                 ok = false;
@@ -460,6 +487,27 @@ void testGiveBackGuardOnAllocationFailure(bool talksToLargeSharingPool)
     // give_back must be skipped too -- otherwise the balance drifts upward by
     // aligned_size on every failed allocation.
     CHECK_EQUAL(pas_physical_page_sharing_pool_balance, static_cast<intptr_t>(0));
+}
+
+void testMergeZeroModeOnCoalesce(pas_zero_mode leftMode, pas_zero_mode rightMode,
+                                 pas_zero_mode expectedMode,
+                                 bool deallocateRightFirst, bool useFastHeap)
+{
+    // Free two adjacent regions [1000, 1100) and [1100, 1200) carrying the given zero_modes. The
+    // heap must coalesce them into a single [1000, 1200) free region whose zero_mode is
+    // pas_zero_mode_merge(leftMode, rightMode) -- is_all_zero only if BOTH sides are is_all_zero
+    // (see pas_large_free_create_merged). We deallocate in both orders to exercise coalescing with
+    // the new region arriving on either side of the existing one.
+    Action lower = Action::deallocate(1000, 100, trappingAllocator, trappingDeallocator, leftMode);
+    Action upper = Action::deallocate(1100, 100, trappingAllocator, trappingDeallocator, rightMode);
+    vector<Action> actions = deallocateRightFirst
+        ? vector<Action> { upper, lower }
+        : vector<Action> { lower, upper };
+    set<Free> frees = { Free(1000, 1200, expectedMode) };
+    if (useFastHeap)
+        testFastLargeFreeHeap(actions, frees, 1);
+    else
+        testSimpleLargeFreeHeap(actions, frees, 1);
 }
 
 } // anonymous namespace
@@ -1262,5 +1310,21 @@ void addLargeFreeHeapTests()
 
     ADD_TEST(testGiveBackGuardOnAllocationFailure(true));
     ADD_TEST(testGiveBackGuardOnAllocationFailure(false));
+
+    // zero_mode merge/coalesce truth table. Coalescing two adjacent frees must merge their
+    // zero_modes conservatively: is_all_zero only when BOTH are is_all_zero, else may_have_non_zero.
+    // All four (left, right) combinations, both deallocation orders, on the simple and fast heaps.
+    for (bool useFastHeap : { false, true }) {
+        for (bool rightFirst : { false, true }) {
+            ADD_TEST(testMergeZeroModeOnCoalesce(pas_zero_mode_is_all_zero, pas_zero_mode_is_all_zero,
+                                                 pas_zero_mode_is_all_zero, rightFirst, useFastHeap));
+            ADD_TEST(testMergeZeroModeOnCoalesce(pas_zero_mode_is_all_zero, pas_zero_mode_may_have_non_zero,
+                                                 pas_zero_mode_may_have_non_zero, rightFirst, useFastHeap));
+            ADD_TEST(testMergeZeroModeOnCoalesce(pas_zero_mode_may_have_non_zero, pas_zero_mode_is_all_zero,
+                                                 pas_zero_mode_may_have_non_zero, rightFirst, useFastHeap));
+            ADD_TEST(testMergeZeroModeOnCoalesce(pas_zero_mode_may_have_non_zero, pas_zero_mode_may_have_non_zero,
+                                                 pas_zero_mode_may_have_non_zero, rightFirst, useFastHeap));
+        }
+    }
 }
 
