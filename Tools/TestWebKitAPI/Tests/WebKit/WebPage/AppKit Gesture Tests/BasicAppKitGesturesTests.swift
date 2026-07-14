@@ -614,6 +614,30 @@ extension AppKitGesturesTests.Basic {
         #expect(selection == expected)
     }
 
+    @Test(arguments: [6, 8], [Duration.seconds(0.1), .seconds(0.5), .seconds(1.0)])
+    func scrollingOnScrollBarChangesScrollPosition(inset: Int, pressAndWait: Duration) async throws {
+        let html = """
+            <body style="width: 100%; height: 2000px; margin: 0; background: repeating-linear-gradient(to bottom, blue 0 50px, white 50px 100px);">
+            </body>
+            """
+
+        try await page.load(html: html).wait()
+
+        let topOfScrollBarInWindowCoordinates = NSPoint(x: window.frame.maxX - CGFloat(inset), y: window.frame.maxY - 160)
+        let start = screenBounds(ofPointInWindowCoordinates: topOfScrollBarInWindowCoordinates)
+        let end = CGPoint(x: start.x, y: start.y + 200)
+
+        await recap.play { composer in
+            composer._wk_drag(withStart: start, end: end, duration: .seconds(1.0), pressAndWait: pressAndWait)
+        }
+
+        try await Task.sleep(for: .seconds(1))
+
+        let finalScrollPosition = try await page.callJavaScript(JavaScriptMessages.ScrollPosition())
+        #expect(finalScrollPosition.x == 0)
+        #expect(finalScrollPosition.y > 0)
+    }
+
     @Test(arguments: [true, false])
     func scrollingChangesScrollPosition(scrollOnImage: Bool) async throws {
         let image = scrollOnImage ? #"<img id="img" src="400x400-green.png" style="display: block; margin: 50px;">"# : ""

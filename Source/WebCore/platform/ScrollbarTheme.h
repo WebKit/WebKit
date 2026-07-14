@@ -51,7 +51,7 @@ public:
     virtual void updateEnabledState(Scrollbar&) { }
 
     virtual bool paint(Scrollbar&, GraphicsContext&, const IntRect& /*damageRect*/) { return false; }
-    virtual ScrollbarPart hitTest(Scrollbar&, const IntPoint&) { return NoPart; }
+    virtual ScrollbarPart hitTest(Scrollbar&, const IntPoint&, ScrollbarHitTestTolerance = ScrollbarHitTestTolerance::None) { return NoPart; }
     
     virtual int scrollbarThickness(ScrollbarWidth = ScrollbarWidth::Auto, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IncludeOverlayScrollbarSize) { return 0; }
 

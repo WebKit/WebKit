@@ -38,7 +38,7 @@ class ScrollbarThemeComposite : public ScrollbarTheme {
 public:
     // Implement ScrollbarTheme interface
     bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
-    ScrollbarPart hitTest(Scrollbar&, const IntPoint&) override;
+    ScrollbarPart hitTest(Scrollbar&, const IntPoint&, ScrollbarHitTestTolerance) override;
     void invalidatePart(Scrollbar&, ScrollbarPart) override;
     int thumbPosition(Scrollbar&) override;
     int thumbLength(Scrollbar&) override;

@@ -97,6 +97,7 @@ public:
 
     virtual bool isOverlayScrollbar() const;
     bool shouldParticipateInHitTesting();
+    int expandedHitTestToleranceThreshold() const;
     virtual bool isHiddenByStyle() const;
 
     bool isWindowActive() const;

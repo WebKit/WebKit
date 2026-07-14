@@ -1998,7 +1998,8 @@ std::optional<RemoteFrameGeometryTransformer> EventHandler::geometryTransformerF
 static Scrollbar* scrollbarForMouseEvent(const MouseEventWithHitTestResults& mouseEvent, LocalFrameView* view)
 {
     if (view) {
-        if (auto* scrollbar = view->scrollbarAtPoint(flooredIntPoint(mouseEvent.event().position())))
+        const auto tolerance = mouseEvent.event().inputSource() == MouseEventInputSource::Automation ? ScrollbarHitTestTolerance::Expanded : ScrollbarHitTestTolerance::None;
+        if (auto* scrollbar = view->scrollbarAtPoint(flooredIntPoint(mouseEvent.event().position()), tolerance))
             return scrollbar;
     }
     return mouseEvent.scrollbar();
