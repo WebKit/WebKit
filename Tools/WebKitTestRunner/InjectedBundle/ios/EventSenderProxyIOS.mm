@@ -126,20 +126,28 @@ void EventSenderProxy::setTouchPointRadius(int radiusX, int radiusY)
 {
 }
 
-void EventSenderProxy::touchStart()
+void EventSenderProxy::touchStart(CompletionHandler<void()>&& completionHandler)
 {
+    if (completionHandler)
+        completionHandler();
 }
 
-void EventSenderProxy::touchMove()
+void EventSenderProxy::touchMove(CompletionHandler<void()>&& completionHandler)
 {
+    if (completionHandler)
+        completionHandler();
 }
 
-void EventSenderProxy::touchEnd()
+void EventSenderProxy::touchEnd(CompletionHandler<void()>&& completionHandler)
 {
+    if (completionHandler)
+        completionHandler();
 }
 
-void EventSenderProxy::touchCancel()
+void EventSenderProxy::touchCancel(CompletionHandler<void()>&& completionHandler)
 {
+    if (completionHandler)
+        completionHandler();
 }
 
 void EventSenderProxy::clearTouchPoints()

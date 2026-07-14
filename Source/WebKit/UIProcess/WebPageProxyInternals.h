@@ -217,6 +217,10 @@ public:
     std::optional<WebCore::FontAttributes> cachedFontAttributesAtSelectionStart;
     Vector<Function<void()>> callbackHandlersAfterProcessingPendingMouseEvents;
     Vector<Function<void()>> callbackHandlersAfterProcessingPendingKeyEvents;
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    Vector<Function<void()>> callbackHandlersAfterProcessingPendingWheelEvents;
+    Vector<Function<void()>> callbackHandlersAfterProcessingPendingTouchEvents;
+#endif
     WebCore::FloatSize defaultUnobscuredSize;
     EditorState editorState;
     WebCore::IntSize fixedLayoutSize;

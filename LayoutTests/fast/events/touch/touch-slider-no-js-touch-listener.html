@@ -45,28 +45,29 @@ document.addEventListener('keydown', onKeyDown);
 description("Tests to ensure that touch events are delivered to an input element with type=range even when there are no touch event handlers in Javascript. This test is only expected to pass if ENABLE_TOUCH_SLIDER is defined.");
 window.jsTestIsAsync = true;
 
-
-if (window.eventSender) {
-    var x = slider.offsetLeft;
-    var y = slider.offsetTop + slider.clientHeight/2;
-    var w = slider.clientWidth;
-
-    checkPosition();
-
-    eventSender.clearTouchPoints();
-    eventSender.addTouchPoint(x + w/2, y);
-    eventSender.touchStart();
-
-    eventSender.updateTouchPoint(0, x, y);
-    eventSender.touchMove();
-
-    eventSender.releaseTouchPoint(0);
-    eventSender.touchEnd();
-
-    eventSender.keyDown(' ');
-
-} else {
-    debug('This test requires DRT.');
+onload = async () => {
+  if (window.eventSender) {
+      var x = slider.offsetLeft;
+      var y = slider.offsetTop + slider.clientHeight/2;
+      var w = slider.clientWidth;
+  
+      checkPosition();
+  
+      eventSender.clearTouchPoints();
+      eventSender.addTouchPoint(x + w/2, y);
+      await eventSender.asyncTouchStart();
+  
+      eventSender.updateTouchPoint(0, x, y);
+      await eventSender.asyncTouchMove();
+  
+      eventSender.releaseTouchPoint(0);
+      await eventSender.asyncTouchEnd();
+  
+      eventSender.keyDown(' ');
+  
+  } else {
+      debug('This test requires DRT.');
+  }
 }
 </script>
 </body>

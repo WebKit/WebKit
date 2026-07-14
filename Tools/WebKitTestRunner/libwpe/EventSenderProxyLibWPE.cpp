@@ -173,24 +173,32 @@ void EventSenderProxy::setTouchPointRadius(int, int)
     notImplemented();
 }
 
-void EventSenderProxy::touchStart()
+void EventSenderProxy::touchStart(CompletionHandler<void()>&& completionHandler)
 {
     m_client->touchStart(absoluteTimeForEventTime(m_time));
+    if (completionHandler)
+        m_testController->doAfterProcessingAllPendingTouchAndWheelEvents(WTF::move(completionHandler));
 }
 
-void EventSenderProxy::touchMove()
+void EventSenderProxy::touchMove(CompletionHandler<void()>&& completionHandler)
 {
     m_client->touchMove(absoluteTimeForEventTime(m_time));
+    if (completionHandler)
+        m_testController->doAfterProcessingAllPendingTouchAndWheelEvents(WTF::move(completionHandler));
 }
 
-void EventSenderProxy::touchEnd()
+void EventSenderProxy::touchEnd(CompletionHandler<void()>&& completionHandler)
 {
     m_client->touchEnd(absoluteTimeForEventTime(m_time));
+    if (completionHandler)
+        m_testController->doAfterProcessingAllPendingTouchAndWheelEvents(WTF::move(completionHandler));
 }
 
-void EventSenderProxy::touchCancel()
+void EventSenderProxy::touchCancel(CompletionHandler<void()>&& completionHandler)
 {
     m_client->touchCancel(absoluteTimeForEventTime(m_time));
+    if (completionHandler)
+        m_testController->doAfterProcessingAllPendingTouchAndWheelEvents(WTF::move(completionHandler));
 }
 
 void EventSenderProxy::clearTouchPoints()

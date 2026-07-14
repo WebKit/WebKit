@@ -82,7 +82,7 @@ var checkPosition = (function() {
 
 })();
 
-function runTest(slider, rotated) {
+async function runTest(slider, rotated) {
 
     var w = slider.clientWidth;
     var h = slider.clientHeight;
@@ -96,19 +96,19 @@ function runTest(slider, rotated) {
 
     eventSender.clearTouchPoints();
     eventSender.addTouchPoint(x, y);
-    eventSender.touchStart();
+    await eventSender.asyncTouchStart();
 
     eventSender.updateTouchPoint(0, x - w/2, y + h/2);
-    eventSender.touchMove();
+    await eventSender.asyncTouchMove();
 
     eventSender.updateTouchPoint(0, x + w/2, y - h/2);
-    eventSender.touchMove();
+    await eventSender.asyncTouchMove();
 
     eventSender.updateTouchPoint(0, x, y);
-    eventSender.touchMove();
+    await eventSender.asyncTouchMove();
 
     eventSender.releaseTouchPoint(0);
-    eventSender.touchEnd();
+    await eventSender.asyncTouchEnd();
 }
 
 document.addEventListener("touchstart", onTouchStart, false);
@@ -119,15 +119,16 @@ document.addEventListener("keydown", onKeyDown, false);
 description("Tests that the touch events originating on an input element with type=range update the slider position. This test is only expected to pass if ENABLE_TOUCH_SLIDER is defined.");
 window.jsTestIsAsync = true;
 
-
-if (window.eventSender) {
-    runTest(slider1, false);
-    runTest(slider2, false);
-    runTest(slider3, true);
-
-    eventSender.keyDown(' ');
-} else {
-    debug('This test requires DRT.');
+onload = async () => {
+    if (window.eventSender) {
+        await runTest(slider1, false);
+        await runTest(slider2, false);
+        await runTest(slider3, true);
+    
+        eventSender.keyDown(' ');
+    } else {
+        debug('This test requires DRT.');
+    }
 }
 </script>
 </body>

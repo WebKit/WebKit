@@ -108,10 +108,10 @@ public:
     void updateTouchPoint(int index, int x, int y);
     void setTouchModifier(WKEventModifiers, bool enable);
     void setTouchPointRadius(int radiusX, int radiusY);
-    void touchStart();
-    void touchMove();
-    void touchEnd();
-    void touchCancel();
+    void touchStart(CompletionHandler<void()>&& = nullptr);
+    void touchMove(CompletionHandler<void()>&& = nullptr);
+    void touchEnd(CompletionHandler<void()>&& = nullptr);
+    void touchCancel(CompletionHandler<void()>&& = nullptr);
     void clearTouchPoints();
     void releaseTouchPoint(int index);
     void cancelTouchPoint(int index);

@@ -2232,6 +2232,18 @@ if (window.eventSender) {
     eventSender.asyncKeyDown = async (key, modifiers) => { // NOLINT
         await post(['AsyncKeyDown', key, modifiers]);
     };
+    eventSender.asyncTouchStart = async () => { // NOLINT
+        await post(['AsyncTouchStart']);
+    };
+    eventSender.asyncTouchMove = async () => { // NOLINT
+        await post(['AsyncTouchMove']);
+    };
+    eventSender.asyncTouchEnd = async () => { // NOLINT
+        await post(['AsyncTouchEnd']);
+    };
+    eventSender.asyncTouchCancel = async () => { // NOLINT
+        await post(['AsyncTouchCancel']);
+    };
 }
 )eventSenderJS";
 
@@ -3100,6 +3112,33 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
             [completionHandler = WTF::move(completionHandler)] mutable { completionHandler(nullptr); });
         return;
     }
+
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    if (WKStringIsEqualToUTF8CString(command, "AsyncTouchStart")) {
+        m_eventSenderProxy->touchStart([completionHandler = WTF::move(completionHandler)] mutable {
+            completionHandler(nullptr);
+        });
+        return;
+    }
+    if (WKStringIsEqualToUTF8CString(command, "AsyncTouchMove")) {
+        m_eventSenderProxy->touchMove([completionHandler = WTF::move(completionHandler)] mutable {
+            completionHandler(nullptr);
+        });
+        return;
+    }
+    if (WKStringIsEqualToUTF8CString(command, "AsyncTouchEnd")) {
+        m_eventSenderProxy->touchEnd([completionHandler = WTF::move(completionHandler)] mutable {
+            completionHandler(nullptr);
+        });
+        return;
+    }
+    if (WKStringIsEqualToUTF8CString(command, "AsyncTouchCancel")) {
+        m_eventSenderProxy->touchCancel([completionHandler = WTF::move(completionHandler)] mutable {
+            completionHandler(nullptr);
+        });
+        return;
+    }
+#endif
 
     ASSERT_NOT_REACHED();
 }
@@ -6073,6 +6112,35 @@ void TestController::doAfterProcessingAllPendingKeyEvents(CompletionHandler<void
         delete completionHandler;
     });
 }
+
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+void TestController::doAfterProcessingAllPendingWheelEvents(CompletionHandler<void()>&& handler)
+{
+    auto* completionHandler = new CompletionHandler<void()>(WTF::move(handler));
+    WKPageDoAfterProcessingAllPendingWheelEvents(targetView()->page(), completionHandler, [](void* userData) {
+        auto* completionHandler = static_cast<CompletionHandler<void()>*>(userData);
+        (*completionHandler)();
+        delete completionHandler;
+    });
+}
+
+void TestController::doAfterProcessingAllPendingTouchEvents(CompletionHandler<void()>&& handler)
+{
+    auto* completionHandler = new CompletionHandler<void()>(WTF::move(handler));
+    WKPageDoAfterProcessingAllPendingTouchEvents(targetView()->page(), completionHandler, [](void* userData) {
+        auto* completionHandler = static_cast<CompletionHandler<void()>*>(userData);
+        (*completionHandler)();
+        delete completionHandler;
+    });
+}
+
+void TestController::doAfterProcessingAllPendingTouchAndWheelEvents(CompletionHandler<void()>&& handler)
+{
+    doAfterProcessingAllPendingTouchEvents([this, handler = WTF::move(handler)] mutable {
+        doAfterProcessingAllPendingWheelEvents(WTF::move(handler));
+    });
+}
+#endif
 #endif
 
 } // namespace WTR

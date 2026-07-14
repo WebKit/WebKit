@@ -1463,6 +1463,17 @@ public:
     void didFinishProcessingAllPendingKeyEvents();
     void flushPendingKeyEventCallbacks();
 
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    void doAfterProcessingAllPendingWheelEvents(Function<void()>&&);
+    void didFinishProcessingAllPendingWheelEvents();
+    void flushPendingWheelEventCallbacks();
+
+    bool isProcessingTouchEvents() const;
+    void doAfterProcessingAllPendingTouchEvents(Function<void()>&&);
+    void didFinishProcessingAllPendingTouchEvents();
+    void flushPendingTouchEventCallbacks();
+#endif
+
     bool NODELETE isProcessingWheelEvents() const;
     void handleNativeWheelEvent(const NativeWebWheelEvent&);
     void interruptSyntheticMomentumScrolling();

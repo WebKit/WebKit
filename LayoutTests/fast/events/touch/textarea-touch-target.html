@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <!--
   Touch tests that involve the ontouchstart, ontouchmove, ontouchend or ontouchcancel callbacks
   should be written in an asynchronous fashion so they can be run on mobile platforms like Android.
@@ -13,37 +13,38 @@
 <p id="description"></p>
 <div id="console"></div>
 <script>
-var target = document.createElement('textarea');
-target.id = "target";
-target.setAttribute('style', "position: absolute; top: 0; left: 0; font-size: 24px;");
+window.jsTestIsAsync = true;
 
-document.body.insertBefore(target, document.getElementById('console'));
+description("Tests that input elements can receive touch events.");
 
 function touchStartHandler()
 {
     shouldBeEqualToString('event.type', 'touchstart');
     shouldBeEqualToString('event.touches[0].target.id', target.id);
     shouldBeEqualToString('event.touches[0].target.nodeName', 'TEXTAREA');
-
-    successfullyParsed = true;
-    isSuccessfullyParsed();
 }
 
-target.addEventListener("touchstart", touchStartHandler, false);
+onload = async () => {
+    var target = document.createElement('textarea');
+    target.id = "target";
+    target.setAttribute('style', "position: absolute; top: 0; left: 0; font-size: 24px;");
 
-description("Tests that input elements can receive touch events.");
+    document.body.insertBefore(target, document.getElementById('console'));
 
-if (window.eventSender) {
-    eventSender.clearTouchPoints();
-    eventSender.addTouchPoint(10, 10);
-    eventSender.touchStart();
-    eventSender.touchEnd();
-} else
-    debug('This test requires DRT.');
+    target.addEventListener("touchstart", touchStartHandler, false);
 
-document.body.removeChild(target);
+    if (window.eventSender) {
+        eventSender.clearTouchPoints();
+        eventSender.addTouchPoint(10, 10);
+        await eventSender.asyncTouchStart();
+        eventSender.releaseTouchPoint(0);
+        await eventSender.asyncTouchEnd();
+    } else
+        debug('This test requires DRT.');
 
-var successfullyParsed = true;
+    document.body.removeChild(target);
+    finishJSTest();
+}
 </script>
 </body>
 </html>

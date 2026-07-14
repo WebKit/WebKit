@@ -511,6 +511,11 @@ public:
 #if !PLATFORM(COCOA)
     void doAfterProcessingAllPendingMouseEvents(CompletionHandler<void()>&&);
     void doAfterProcessingAllPendingKeyEvents(CompletionHandler<void()>&&);
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    void doAfterProcessingAllPendingWheelEvents(CompletionHandler<void()>&&);
+    void doAfterProcessingAllPendingTouchEvents(CompletionHandler<void()>&&);
+    void doAfterProcessingAllPendingTouchAndWheelEvents(CompletionHandler<void()>&&);
+#endif
 #endif
 
     static uint64_t responseHeaderCount(WKURLResponseRef);

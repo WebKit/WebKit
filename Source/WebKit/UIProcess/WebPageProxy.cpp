@@ -4689,6 +4689,55 @@ void WebPageProxy::flushPendingKeyEventCallbacks()
         callback();
 }
 
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+void WebPageProxy::doAfterProcessingAllPendingWheelEvents(WTF::Function<void ()>&& action)
+{
+    if (!isProcessingWheelEvents()) {
+        action();
+        return;
+    }
+
+    internals().callbackHandlersAfterProcessingPendingWheelEvents.append(WTF::move(action));
+}
+
+void WebPageProxy::didFinishProcessingAllPendingWheelEvents()
+{
+    flushPendingWheelEventCallbacks();
+}
+
+void WebPageProxy::flushPendingWheelEventCallbacks()
+{
+    for (auto&& callback : std::exchange(internals().callbackHandlersAfterProcessingPendingWheelEvents, { }))
+        callback();
+}
+
+bool WebPageProxy::isProcessingTouchEvents() const
+{
+    return !internals().touchEventQueue.isEmpty();
+}
+
+void WebPageProxy::doAfterProcessingAllPendingTouchEvents(WTF::Function<void ()>&& action)
+{
+    if (!isProcessingTouchEvents()) {
+        action();
+        return;
+    }
+
+    internals().callbackHandlersAfterProcessingPendingTouchEvents.append(WTF::move(action));
+}
+
+void WebPageProxy::didFinishProcessingAllPendingTouchEvents()
+{
+    flushPendingTouchEventCallbacks();
+}
+
+void WebPageProxy::flushPendingTouchEventCallbacks()
+{
+    for (auto&& callback : std::exchange(internals().callbackHandlersAfterProcessingPendingTouchEvents, { }))
+        callback();
+}
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 void WebPageProxy::handleWheelEventWithoutScrolling(const WebWheelEvent& event, CompletionHandler<void(bool)>&& completionHandler)
 {
@@ -4881,6 +4930,9 @@ void WebPageProxy::wheelEventHandlingCompleted(bool wasHandled)
 
     if (RefPtr automationSession = m_configuration->processPool().automationSession())
         automationSession->wheelEventsFlushedForPage(*this);
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    didFinishProcessingAllPendingWheelEvents();
+#endif
 }
 
 void WebPageProxy::cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent& nativeWheelEvent)
@@ -5330,6 +5382,11 @@ void WebPageProxy::touchEventHandlingCompleted(IPC::Connection* connection, std:
         bool isEventHandled = false;
         pageClient->doneWithTouchEvent(queuedEvents.deferredTouchEvents.at(i), isEventHandled);
     }
+
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    if (internals().touchEventQueue.isEmpty())
+        didFinishProcessingAllPendingTouchEvents();
+#endif
 }
 
 void WebPageProxy::handleTouchEvent(IPC::Connection* connection, const NativeWebTouchEvent& event)

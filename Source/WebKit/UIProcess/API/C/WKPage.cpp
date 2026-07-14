@@ -3615,6 +3615,22 @@ void WKPageDoAfterProcessingAllPendingKeyEvents(WKPageRef page, void* context, W
 }
 #endif
 
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+void WKPageDoAfterProcessingAllPendingWheelEvents(WKPageRef page, void* context, WKPageDoAfterProcessingAllPendingWheelEventsFunction completionHandler)
+{
+    protect(toImpl(page))->doAfterProcessingAllPendingWheelEvents([context, completionHandler] {
+        completionHandler(context);
+    });
+}
+
+void WKPageDoAfterProcessingAllPendingTouchEvents(WKPageRef page, void* context, WKPageDoAfterProcessingAllPendingTouchEventsFunction completionHandler)
+{
+    protect(toImpl(page))->doAfterProcessingAllPendingTouchEvents([context, completionHandler] {
+        completionHandler(context);
+    });
+}
+#endif
+
 void WKPageSetCursorDidChangeCallbackForTesting(WKPageRef page, WKPageCursorDidChangeCallbackForTesting callback, const void* clientInfo)
 {
     if (!callback) {
