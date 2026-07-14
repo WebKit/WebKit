@@ -307,6 +307,61 @@ public:
         return result;
     }
 
+    // Rects to paint. Unlike rects() they never overlap, and there are never more of them than the grid
+    // has cells, so a caller that draws each rect separately does a bounded amount of work. Overlapping
+    // rects are split at the cell borders and united per cell, which leaves at most one rect per cell.
+    // Rects that overlap nothing are left whole, because splitting them would only make more work for the
+    // callers that draw them.
+    Rects rectsForPainting() const
+    {
+        // A cell size of zero comes from a zero-sized rect, and the code below divides by it. It only
+        // happens with a rectangle threshold, where the cell size is derived from the rect.
+        if (size() <= 1 || m_mode != Mode::Rectangles || m_rects.cellSize.isEmpty())
+            return rects();
+
+        Rects paintRects;
+        paintRects.reserveInitialCapacity(size());
+        for (const auto& rect : *this) {
+            const auto paintRect = intersection(rect, m_rect);
+            if (!paintRect.isEmpty())
+                paintRects.append(paintRect);
+        }
+
+        // add() already unites into the grid once the rects reach the cell count, so the rects here never
+        // outnumber the cells and only the overlaps have to go. The scan is quadratic, but only in a count
+        // that bound keeps small.
+        if (!hasOverlappingRects(paintRects))
+            return paintRects;
+
+        const int columns = m_rects.gridCells.width();
+        const int rows = m_rects.gridCells.height();
+
+        // Visit every rect once and unite it into the cells it spans, rather than re-scanning every rect
+        // for every cell. A rect only ever spans a few cells, so this is linear in the rect count instead
+        // of rects times cells.
+        Rects cellBounds(columns * rows);
+        for (const auto& rect : paintRects) {
+            const int firstColumn = std::clamp((rect.x() - m_rect.x()) / m_rects.cellSize.width(), 0, columns - 1);
+            const int lastColumn = std::clamp((rect.maxX() - 1 - m_rect.x()) / m_rects.cellSize.width(), 0, columns - 1);
+            const int firstRow = std::clamp((rect.y() - m_rect.y()) / m_rects.cellSize.height(), 0, rows - 1);
+            const int lastRow = std::clamp((rect.maxY() - 1 - m_rect.y()) / m_rects.cellSize.height(), 0, rows - 1);
+
+            for (int row = firstRow; row <= lastRow; ++row) {
+                for (int column = firstColumn; column <= lastColumn; ++column) {
+                    const IntRect cellRect = { { m_rect.x() + column * m_rects.cellSize.width(), m_rect.y() + row * m_rects.cellSize.height() }, m_rects.cellSize };
+                    cellBounds[row * columns + column].unite(intersection(cellRect, rect));
+                }
+            }
+        }
+
+        cellBounds.removeAllMatching([](const IntRect& bounds) {
+            return bounds.isEmpty();
+        });
+
+        ASSERT(cellBounds.size() <= m_rects.gridCells.unclampedArea());
+        return cellBounds;
+    }
+
     void makeFull()
     {
         if (m_mode == Mode::Full)
@@ -438,8 +493,24 @@ public:
         if (m_mode == Mode::Rectangles) {
             // When both Damage are already united and have the same rect and grid, we can just iterate the rects and unite them.
             if (m_rects.shouldUnite && m_mode == other.m_mode && m_rect == other.m_rect && m_rects.gridCells == other.m_rects.gridCells && other.m_rects.shouldUnite && m_rects.rects.size() == other.m_rects.rects.size()) {
-                for (unsigned i = 0; i < m_rects.rects.size(); ++i)
+                m_minimumBoundingRectangle.unite(other.m_minimumBoundingRectangle);
+
+                // A single rect is the bounding rectangle itself, and carries no indices to mark.
+                if (m_rects.rects.size() == 1) {
+                    m_rects.rects[0] = m_minimumBoundingRectangle;
+                    return true;
+                }
+
+                for (unsigned i = 0; i < m_rects.rects.size(); ++i) {
+                    if (other.m_rects.rects[i].isEmpty())
+                        continue;
+
                     m_rects.rects[i].unite(other.m_rects.rects[i]);
+
+                    // The cell may be damaged in other but not here yet, and iteration goes through the
+                    // indices, so a cell whose bit is left unset would be dropped from rects().
+                    m_rects.indices.set(i);
+                }
                 return true;
             }
         }
@@ -457,6 +528,17 @@ public:
     }
 
 private:
+    static bool hasOverlappingRects(const Rects& rects)
+    {
+        for (size_t i = 0; i < rects.size(); ++i) {
+            for (size_t j = i + 1; j < rects.size(); ++j) {
+                if (rects[i].intersects(rects[j]))
+                    return true;
+            }
+        }
+        return false;
+    }
+
     IntSize gridSize(int maxRectangles) const
     {
         const float widthToHeightRatio = static_cast<float>(m_rect.width()) / m_rect.height();
