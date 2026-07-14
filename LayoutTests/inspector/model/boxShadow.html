@@ -88,6 +88,18 @@ function test()
             testGood("1px 2rem 3in 4q rgb(11, 12, 13) inset");
             InspectorTest.newline();
 
+            // number formats where String(parseFloat(x)) !== the source text
+            testGood("1.50px 2rem");
+            testGood("1e2px 2rem");
+            testGood(".5px 2rem");
+            testGood("1px 2.50rem 3in");
+            testGood("1E2px 2rem 3in 4q");
+            InspectorTest.newline();
+
+            // case-insensitive units
+            testGood("1PX 2Rem 3IN 4Q");
+            InspectorTest.newline();
+
             function testBad(string) {
                 let boxShadow = WI.BoxShadow.fromString(string);
                 InspectorTest.expectNull(boxShadow, `'${string}' should not be detected`);
@@ -102,6 +114,11 @@ function test()
             testBad("1px 2%");
             testBad("1px 2px 3%");
             testBad("1px 2px 3px 4%");
+            InspectorTest.newline();
+
+            // non-finite values (overflow to Infinity)
+            testBad("1e400px 2rem");
+            testBad("-1e400px 2rem");
             InspectorTest.newline();
 
             // missing or extra components

@@ -132,10 +132,10 @@ WI.BoxShadow = class BoxShadow
     static parseNumberComponent(string)
     {
         let value = parseFloat(string);
-        if (isNaN(value))
+        if (!isFinite(value))
             return null;
 
-        let unit = string.replace(value, "");
+        let unit = string.replace(/^[-+]?(?:\d*\.?\d+(?:[eE][-+]?\d+)?|\d+\.)/, "").toLowerCase();
         if (!unit) {
             if (value)
                 return null;

@@ -60,12 +60,23 @@ PASS: default value should be "none"
 
 "1px 2rem 3in 4q rgb(11, 12, 13) inset" resolves to "1px 2rem 3in 4q rgb(11, 12, 13) inset"
 
+"1.50px 2rem" resolves to "1.5px 2rem"
+"1e2px 2rem" resolves to "100px 2rem"
+".5px 2rem" resolves to "0.5px 2rem"
+"1px 2.50rem 3in" resolves to "1px 2.5rem 3in"
+"1E2px 2rem 3in 4q" resolves to "100px 2rem 3in 4q"
+
+"1PX 2Rem 3IN 4Q" resolves to "1px 2rem 3in 4q"
+
 PASS: '1' should not be detected
 
 PASS: '1%' should not be detected
 PASS: '1px 2%' should not be detected
 PASS: '1px 2px 3%' should not be detected
 PASS: '1px 2px 3px 4%' should not be detected
+
+PASS: '1e400px 2rem' should not be detected
+PASS: '-1e400px 2rem' should not be detected
 
 PASS: '1px' should not be detected
 PASS: '1px 2rem 3in 4q 5pt' should not be detected
