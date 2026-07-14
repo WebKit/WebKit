@@ -88,6 +88,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
         CheckedRef style = inlineTextBox.style();
         auto directionalOverride = isOverride(style->unicodeBidi());
         auto run = WebCore::TextRun { StringView(text).substring(from, to - from), contentLogicalLeft, { }, ExpansionBehavior::defaultBehavior(), directionalOverride ? style->writingMode().bidiDirection() : TextDirection::LTR, directionalOverride };
+        run.setMayHaveIdeographicContent(inlineTextBox.mayHaveIdeographicContent());
         if (!style->collapseWhiteSpace() && !style->tabSize().isZero())
             run.setTabSize(true, Style::toPlatform(style->tabSize(), style->usedZoomForLength()));
         // FIXME: consider moving this to TextRun ctor
@@ -749,6 +750,18 @@ bool TextUtil::hasPositionDependentContentWidth(StringView textContent)
     if (textContent.is8Bit())
         return charactersContain<Latin1Character, tabCharacter>(textContent.span8());
     return charactersContain<char16_t, tabCharacter>(textContent.span16());
+}
+
+bool TextUtil::mayHaveIdeographicContent(StringView textContent)
+{
+    // Ideographs are never Latin-1, so 8-bit content can never produce text-autospace spacing.
+    if (textContent.is8Bit())
+        return false;
+    for (char32_t character : textContent.codePoints()) {
+        if (TextSpacing::isIdeograph(character))
+            return true;
+    }
+    return false;
 }
 
 SUPPRESS_NODELETE char32_t TextUtil::lastBaseCharacterFromText(StringView string)

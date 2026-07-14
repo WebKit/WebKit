@@ -1,5 +1,5 @@
 
-FAIL Property text-autospace value 'initial' assert_equals: expected "normal" but got "no-autospace"
+PASS Property text-autospace value 'initial'
 PASS Property text-autospace value 'normal'
 PASS Property text-autospace value 'no-autospace'
 PASS Property text-autospace value 'auto'

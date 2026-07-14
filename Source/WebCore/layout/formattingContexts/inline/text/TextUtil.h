@@ -116,6 +116,7 @@ public:
 
     static bool canUseSimplifiedTextMeasuring(StringView, const FontCascade&, bool whitespaceIsCollapsed, const Style::ComputedStyle* firstLineStyle);
     static bool hasPositionDependentContentWidth(StringView);
+    static bool mayHaveIdeographicContent(StringView);
 
     static char32_t NODELETE lastBaseCharacterFromText(StringView);
 };

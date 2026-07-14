@@ -232,6 +232,8 @@ private:
     {
         if (m_hasSeenIdeograph)
             return true;
+        if (!textRun.mayHaveIdeographicContent())
+            return false;
         const auto& text = textRun.textAsString();
         for (unsigned index = 0; index < text.length(); ++index) {
             if (TextSpacing::isIdeograph(text.codeUnitAt(index))) {
