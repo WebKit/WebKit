@@ -804,6 +804,13 @@ inline TreeScope& HTMLConstructionSite::treeScopeForCurrentNode()
     return currentNode().treeScope();
 }
 
+inline ContainerNode& HTMLConstructionSite::containerForCurrentNode()
+{
+    if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode()))
+        return templateElement->fragmentForInsertion();
+    return currentNode();
+}
+
 inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
 {
     if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode()))
@@ -858,6 +865,8 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
             element->setUsesNullCustomElementRegistry();
     }
     ASSERT(element);
+    if (m_isParsingFragment && !registry && containerForCurrentNode().usesNullCustomElementRegistry())
+        element->setUsesNullCustomElementRegistry();
     if (registry && registry->isScoped() && registry != treeScope->customElementRegistry()) [[unlikely]]
         CustomElementRegistry::addToScopedCustomElementRegistryMap(*element, *registry);
 

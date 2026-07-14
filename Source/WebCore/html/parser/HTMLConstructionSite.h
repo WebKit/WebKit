@@ -162,6 +162,7 @@ public:
     HTMLStackItem& currentStackItem() const LIFETIME_BOUND { return m_openElements.topStackItem(); }
     HTMLStackItem* oneBelowTop() const LIFETIME_BOUND { return m_openElements.oneBelowTop(); }
     TreeScope& treeScopeForCurrentNode();
+    ContainerNode& containerForCurrentNode();
     Document& ownerDocumentForCurrentNode();
     HTMLElementStack& openElements() const LIFETIME_BOUND { return m_openElements; }
     HTMLFormattingElementList& activeFormattingElements() const LIFETIME_BOUND { return m_activeFormattingElements; }

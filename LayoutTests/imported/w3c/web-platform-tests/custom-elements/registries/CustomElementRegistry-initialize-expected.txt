@@ -11,5 +11,5 @@ PASS initialize sets element.customElementRegistry permantently
 PASS initialize is no-op on a subtree with a non-null registry
 PASS initialize works on Document
 PASS initialize works on DocumentFragment
-FAIL initialize sets registry on shadow root descendants with no registry assert_equals: expected object "[object CustomElementRegistry]" but got object "[object CustomElementRegistry]"
+PASS initialize sets registry on shadow root descendants with no registry
 

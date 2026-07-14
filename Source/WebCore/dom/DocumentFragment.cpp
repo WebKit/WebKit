@@ -95,7 +95,7 @@ Ref<Node> DocumentFragment::cloneNodeInternal(Document& document, CloningOperati
 void DocumentFragment::parseHTML(const String& source, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, CustomElementRegistry* registry)
 {
     Ref document = this->document();
-    if (!registry && tryFastParsingHTMLFragment(source, document, *this, contextElement, parserContentPolicy)) {
+    if (!registry && !usesNullCustomElementRegistry() && tryFastParsingHTMLFragment(source, document, *this, contextElement, parserContentPolicy)) {
         setWasParsedWithFastPath();
 #if ASSERT_ENABLED
         // As a sanity check for the fast-path, create another fragment using the full parser and compare the results.

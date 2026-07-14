@@ -8,7 +8,7 @@ PASS Cloning a custom element candidate with null regsitry should create an elem
 PASS HTML parser should create a custom element with null registry if customelementregistry is set
 PASS Setting customelementregistry content attribute after a custom element had finishsed parsing should not set null registry
 PASS Cloning a custom element with null regsitry should create an element with null registry
-FAIL Descendants of an element with customelementregistry should use null registry assert_equals: expected null but got object "[object CustomElementRegistry]"
+PASS Descendants of an element with customelementregistry should use null registry
 PASS Setting customelementregistry content attribute during constructor should not make it use null registry
 FAIL Body with customelementregistry attribute during initial parse should have null registry and propagate to children assert_equals: div child of body with customelementregistry should have null registry expected null but got object "[object CustomElementRegistry]"
 FAIL Custom element candidate child of body with customelementregistry should have null registry during initial parse assert_equals: custom element candidate child of body with customelementregistry should have null registry expected null but got object "[object CustomElementRegistry]"

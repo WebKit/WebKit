@@ -234,7 +234,7 @@ ExceptionOr<void> ShadowRoot::replaceChildrenWithMarkup(const String& markup, Op
         return { };
     }
 
-    auto fragment = createFragmentForInnerOuterHTML(*protect(host()), markup, policy, protect(customElementRegistry()));
+    auto fragment = createFragmentForInnerOuterHTML(*protect(host()), markup, policy, protect(customElementRegistry()), usesNullCustomElementRegistry() ? Element::CustomElementRegistryKind::Null : Element::CustomElementRegistryKind::Window);
     if (fragment.hasException())
         return fragment.releaseException();
     bool usedFastPath = fragment.returnValue()->hasWasParsedWithFastPath();
