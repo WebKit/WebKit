@@ -420,7 +420,7 @@ void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier,
     RefPtr document = loader && loader->frame() ? loader->frame()->document() : nullptr;
     auto initiatorObject = buildInitiatorObject(document, &request);
 
-    String url = loader ? loader->url().string() : request.url().string();
+    auto& url = loader ? loader->url().string() : request.url().string();
     std::optional<Inspector::Protocol::Page::ResourceType> typePayload;
     if (type != ResourceType::Other)
         typePayload = protocolResourceType;
