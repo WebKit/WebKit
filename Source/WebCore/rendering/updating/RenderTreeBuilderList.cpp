@@ -26,6 +26,7 @@
 
 #include "LegacyInlineIterator.h"
 #include "LineInlineHeaders.h"
+#include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
 #include "RenderListMarker.h"
 #include "RenderMenuList.h"
@@ -33,6 +34,11 @@
 #include "RenderObjectStyle.h"
 #include "RenderTable.h"
 #include "RenderText.h"
+#include "RenderTreeUpdaterGeneratedContent.h"
+#include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StyleComputedStyle.h"
+#include "StyleContent.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -149,15 +155,40 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
         return;
     }
 
-    if (RefPtr styleImage = style.listStyleImage().tryStyleImage(); style.listStyleType().isNone() && (!styleImage || styleImage->errorOccurred())) {
+    auto newStyle = listItemRenderer.computeMarkerStyle();
+    auto markerContentEnabled = listItemRenderer.document().settings().cssMarkerContentEnabled();
+    auto markerHasContent = markerContentEnabled && newStyle.content().isData();
+
+    // css-content-3: `content: none` on the ::marker suppresses the marker box entirely, regardless
+    // of list-style-type/image. Otherwise (css-lists-3 §3.3) a non-normal `content` generates the
+    // marker box even without a list-style-image/type; only suppress when there is nothing to show.
+    // (Gated on the CSSMarkerContent feature; when disabled, `content` on ::marker is ignored.)
+    RefPtr styleImage = style.listStyleImage().tryStyleImage();
+    auto hasListStyle = !style.listStyleType().isNone() || (styleImage && !styleImage->errorOccurred());
+    if ((markerContentEnabled && newStyle.content().isNone()) || (!markerHasContent && !hasListStyle)) {
         if (auto* marker = listItemRenderer.markerRenderer())
             m_builder.destroy(*marker);
         return;
     }
 
-    auto newStyle = listItemRenderer.computeMarkerStyle();
     if (auto* markerRenderer = listItemRenderer.markerRenderer()) {
+        auto contentChanged = markerRenderer->style().content() != newStyle.content();
+        // Tear down any existing generated content while the current style still permits children:
+        // setStyle below may flip canHaveChildren() to false (content: normal/none), and destroying
+        // the container afterwards would trip the detach assertion.
+        if (contentChanged) {
+            if (auto* existingContainer = markerRenderer->contentContainer())
+                m_builder.destroy(*existingContainer);
+        }
         markerRenderer->setStyle(WTF::move(newStyle));
+        if (contentChanged) {
+            if (markerHasContent)
+                buildMarkerContentRenderers(*markerRenderer);
+        } else if (auto* container = markerRenderer->contentContainer()) {
+            // Content unchanged but other style changed: refresh the generated image/quote children
+            // (RenderText/RenderCounter are handled by propagateStyleToAnonymousChildren on setStyle).
+            RenderTreeUpdater::GeneratedContent::updateStyleForContentRenderers(*container, markerRenderer->style());
+        }
         auto* currentParent = markerRenderer->parent();
         if (!currentParent) {
             ASSERT_NOT_REACHED();
@@ -207,6 +238,26 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
     // For outside markers, if the search failed because a flex/grid container blockified a replaced
     // child (e.g., <img>), we should collapse the anonymous block's height so it doesn't inflate the list item.
     listItemRenderer.markerRenderer()->setShouldCollapseAnonymousBlockParent(shouldCollapseAnonymousBlockParent);
+
+    if (markerHasContent)
+        buildMarkerContentRenderers(*listItemRenderer.markerRenderer());
+}
+
+void RenderTreeBuilder::List::buildMarkerContentRenderers(RenderListMarker& marker)
+{
+    ASSERT(marker.style().content().isData());
+    ASSERT(!marker.contentContainer());
+
+    // css-lists-3 §3.3 generates the marker contents "exactly as for ::before": an anonymous
+    // inline-block box holding the content list (strings, images, counters, quotes). The marker
+    // (RenderListMarker) lays this box out and paints it as a single atomic inline.
+    auto containerStyle = Style::ComputedStyle::createAnonymousStyleWithDisplay(marker.style(), Style::DisplayType::InlineFlowRoot);
+    auto newContainer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, marker.document(), WTF::move(containerStyle));
+    newContainer->initializeStyle();
+    CheckedRef container = *newContainer;
+    m_builder.attach(marker, WTF::move(newContainer));
+
+    RenderTreeUpdater::GeneratedContent::createContentRenderers(m_builder, container.get(), marker.style(), PseudoElementType::Marker);
 }
 
 }

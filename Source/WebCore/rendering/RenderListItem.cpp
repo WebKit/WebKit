@@ -65,26 +65,41 @@ RenderListItem::~RenderListItem()
 
 Style::ComputedStyle RenderListItem::computeMarkerStyle() const
 {
-    if (!is<PseudoElement>(element())) {
-        if (auto markerStyle = style().pseudoElementStyle({ PseudoElementType::Marker }))
-            return Style::ComputedStyle::clone(*markerStyle);
-    }
+    auto markerStyle = [&] {
+        if (!is<PseudoElement>(element())) {
+            if (auto markerStyle = style().pseudoElementStyle({ PseudoElementType::Marker }))
+                return Style::ComputedStyle::clone(*markerStyle);
+        }
 
-    // The marker always inherits from the list item, regardless of where it might end
-    // up (e.g., in some deeply nested line box). See CSS3 spec.
-    auto markerStyle = Style::ComputedStyle::create();
-    markerStyle.inheritFrom(style());
+        // The marker always inherits from the list item, regardless of where it might end
+        // up (e.g., in some deeply nested line box). See CSS3 spec.
+        auto markerStyle = Style::ComputedStyle::create();
+        markerStyle.inheritFrom(style());
 
-    // In the case of a ::before or ::after pseudo-element, we manually apply the properties
-    // otherwise set in the user-agent stylesheet since we don't support ::before::marker or
-    // ::after::marker. See bugs.webkit.org/b/218897.
-    auto fontDescription = style().fontDescription();
-    fontDescription.setVariantNumericSpacing(FontVariantNumericSpacing::TabularNumbers);
-    markerStyle.setFontDescription(WTF::move(fontDescription));
-    markerStyle.setUnicodeBidi(UnicodeBidi::Isolate);
-    markerStyle.setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
-    markerStyle.setTextWrapMode(TextWrapMode::NoWrap);
-    markerStyle.setTextTransform({ });
+        // In the case of a ::before or ::after pseudo-element, we manually apply the properties
+        // otherwise set in the user-agent stylesheet since we don't support ::before::marker or
+        // ::after::marker. See bugs.webkit.org/b/218897.
+        auto fontDescription = style().fontDescription();
+        fontDescription.setVariantNumericSpacing(FontVariantNumericSpacing::TabularNumbers);
+        markerStyle.setFontDescription(WTF::move(fontDescription));
+        markerStyle.setUnicodeBidi(UnicodeBidi::Isolate);
+        markerStyle.setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
+        markerStyle.setTextWrapMode(TextWrapMode::NoWrap);
+        markerStyle.setTextTransform({ });
+        return markerStyle;
+    }();
+
+    // The marker box is a text-decoration boundary: the originating element's text-decoration must
+    // not propagate into the marker's generated contents, matching list-style-type markers which are
+    // never decorated by the list's text-decoration.
+    markerStyle.setTextDecorationLineInEffect(markerStyle.textDecorationLine());
+
+    // text-align neither applies to nor is inherited by ::marker (css-pseudo-4): reset the value
+    // inherited from the originating element so it cannot leak into generated marker contents.
+    // (list-style-type markers ignore text-align as well.)
+    markerStyle.setTextAlign(Style::ComputedStyle::initialTextAlign());
+    markerStyle.setTextAlignLast(Style::ComputedStyle::initialTextAlignLast());
+
     return markerStyle;
 }
 

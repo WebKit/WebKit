@@ -152,6 +152,7 @@ ComputedStyle ComputedStyle::createStyleInheritingFromPseudoStyle(const Computed
 {
     ASSERT(pseudoStyle.pseudoElementType() == PseudoElementType::Before
         || pseudoStyle.pseudoElementType() == PseudoElementType::After
+        || pseudoStyle.pseudoElementType() == PseudoElementType::Marker
         || pseudoStyle.pseudoElementType() == PseudoElementType::Checkmark
         || pseudoStyle.pseudoElementType() == PseudoElementType::PickerIcon);
 

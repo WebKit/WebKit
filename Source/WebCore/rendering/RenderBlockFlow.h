@@ -391,6 +391,9 @@ public:
 
     void paintBlockLevelContentInInline(PaintInfo&, const LayoutPoint& paintOffset);
 
+    std::optional<LayoutUnit> firstLineBaseline() const override;
+    std::optional<LayoutUnit> lastLineBaseline() const override;
+
 protected:
     bool isChildEligibleForMarginTrim(Style::MarginTrimSide, const RenderBox&) const final;
 
@@ -427,9 +430,6 @@ protected:
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
     void createFloatingObjects();
-
-    std::optional<LayoutUnit> firstLineBaseline() const override;
-    std::optional<LayoutUnit> lastLineBaseline() const override;
 
     void NODELETE setComputedColumnCountAndWidth(int, LayoutUnit);
 
