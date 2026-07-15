@@ -352,6 +352,18 @@ class TestRunner(object):
     def _get_test_short_name(self, test_path):
         return test_path.replace(self._test_programs_base_dir(), '', 1).lstrip('/').split(':', 1)[0]
 
+    def _get_test_name_for_upload(self, test_path):
+        # Test binaries are built into a port-specific subdirectory
+        # (TestWebKitAPI/WebKitGTK for GTK, TestWebKitAPI/WPE for WPE), so the
+        # short name carries that prefix. Strip it so the same test is reported
+        # to results.webkit.org under a single name regardless of the port that
+        # ran it.
+        short_name = self._get_test_short_name(test_path)
+        for prefix in ('WebKitGTK/', 'WPE/'):
+            if short_name.startswith(prefix):
+                return short_name[len(prefix):]
+        return short_name
+
     def _getsubtests_to_run_for_test(self, requested_test_name):
         subtests_to_run = []
         requested_test_name = self._get_test_short_name(requested_test_name)
@@ -518,7 +530,7 @@ class TestRunner(object):
             results = {}
             for test, test_cases in tests_to_upload.items():
                 for test_case in test_cases:
-                    name = "%s:%s" % (self._get_test_short_name(test), test_case[0])
+                    name = "%s:%s" % (self._get_test_name_for_upload(test), test_case[0])
                     results[name] = Upload.create_test_result(actual=test_case[1], expected=' '.join(test_case[2]) if test_case[2] else None)
 
             upload = Upload(
