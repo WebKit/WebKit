@@ -23,10 +23,10 @@ promise_test(async (test) => {
     });
 
     let stats = await getTypedStats(firstConnection, "local-candidate");
-    assert_true(!stats.address, "address is not exposed");
+    assert_equals(stats.address, null, "address is not exposed");
     assert_true(!stats.networkType, "networkType is not exposed");
 
-    assert_array_equals(Object.keys(stats), ["id","timestamp","type","candidateType","foundation", "port","priority","protocol","transportId", "usernameFragment"], "local");
+    assert_array_equals(Object.keys(stats), ["id","timestamp","type","address","candidateType","foundation", "port","priority","protocol","transportId", "usernameFragment"], "local");
 
     stats = await getTypedStats(firstConnection, "remote-candidate");
 
@@ -37,10 +37,10 @@ promise_test(async (test) => {
     }
 
     // For now, we do not want to expose address or networkType.
-    assert_true(!stats.address, "address is not exposed");
+    assert_equals(stats.address, null, "address is not exposed");
     assert_true(!stats.networkType, "networkType is not exposed");
 
-    assert_array_equals(Object.keys(stats), ["id","timestamp","type","candidateType","foundation", "port","priority","protocol","transportId", "usernameFragment"], "remote");
+    assert_array_equals(Object.keys(stats), ["id","timestamp","type","address","candidateType","foundation", "port","priority","protocol","transportId", "usernameFragment"], "remote");
 }, "ICE candidate data channel stats");
         </script>
     </body>

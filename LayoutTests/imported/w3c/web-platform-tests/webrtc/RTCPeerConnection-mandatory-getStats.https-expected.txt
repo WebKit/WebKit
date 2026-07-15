@@ -65,7 +65,7 @@ PASS RTCIceCandidatePairStats's bytesReceived
 PASS RTCIceCandidatePairStats's totalRoundTripTime
 PASS RTCIceCandidatePairStats's responsesReceived
 PASS RTCIceCandidatePairStats's currentRoundTripTime
-FAIL RTCIceCandidateStats's address assert_true: Is address present expected true got false
+PASS RTCIceCandidateStats's address
 PASS RTCIceCandidateStats's port
 PASS RTCIceCandidateStats's protocol
 PASS RTCIceCandidateStats's candidateType

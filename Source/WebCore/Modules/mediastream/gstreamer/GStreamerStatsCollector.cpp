@@ -343,7 +343,7 @@ RTCStatsReport::IceCandidateStats RTCStatsReport::IceCandidateStats::convert(Gst
     return IceCandidateStats {
         Stats::convert(statsType == GST_WEBRTC_STATS_REMOTE_CANDIDATE ? Type::RemoteCandidate : Type::LocalCandidate, structure),
         gstStructureGetString(structure, "transport-id"_s).span(),
-        { }, // NOTE: We have the `address` field in the structure but we don't expose it for privacy reasons. Covered by test: webrtc/candidate-stats.html
+        String { }, // NOTE: We have the `address` field in the structure but we don't expose it for privacy reasons. Covered by test: webrtc/candidate-stats.html
         gstStructureGet<unsigned>(structure, "port"_s),
         gstStructureGetString(structure, "protocol"_s).span(),
         getCandidateType(),

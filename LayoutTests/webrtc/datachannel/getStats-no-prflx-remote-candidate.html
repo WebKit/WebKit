@@ -60,7 +60,7 @@ async function doTest()
     await remoteDataChannelPromise;
 
     const remoteCandidateStats = getRequiredStats(await localPc.getStats(), "remote-candidate");
-    assert_equals(remoteCandidateStats.address, undefined, "address should remain undefined");
+    assert_equals(remoteCandidateStats.address, null, "address should remain null");
 
     done();
 }
