@@ -208,6 +208,8 @@ ExceptionOr<void> CustomElementRegistry::initialize(Node& root)
         ASSERT(shadowRoot->hasScopedCustomElementRegistry());
         shadowRoot->clearUsesNullCustomElementRegistry();
         shadowRoot->setCustomElementRegistry(*this);
+        if (shadowRoot->isConnected())
+            didAssociateWithDocument(protect(shadowRoot->document()).get());
     } else if (auto* documentFragment = dynamicDowncast<DocumentFragment>(*containerRoot); documentFragment && documentFragment->usesNullCustomElementRegistry())
         documentFragment->clearUsesNullCustomElementRegistry();
 
