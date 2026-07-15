@@ -158,6 +158,8 @@ private:
         CheckedRef<RenderBox> renderer;
         const LayoutUnit mainAxisBorderAndPadding;
         const LayoutUnit crossAxisBorderAndPadding;
+        // True when the flex container's main axis is this item's inline axis (i.e. the item is not orthogonal to the container).
+        const bool mainAxisIsInlineAxis;
         // The item's main-axis margin extent. Snapshotted in collectFlexItems after the item is laid out for its
         // flex base size (an orthogonal item only resolves its physical margins then), not at construction time.
         // margin-trim reduces it during line collection.
