@@ -2316,7 +2316,7 @@ page/UserStyleSheet.cpp
 page/VisitedLinkStore.cpp
 page/VisualViewport.cpp
 page/WebKitJSHandle.cpp
-page/WebKitSerializedNode.cpp
+page/WebKitNodeSnapshot.cpp
 page/WebKitBuffer.cpp
 page/WebKitBufferNamespace.cpp
 page/WheelEventDeltaFilter.cpp
@@ -5275,7 +5275,7 @@ JSWebKitMediaKeys.cpp
 JSWebKitNamespace.cpp
 JSWebKitPlaybackTargetAvailabilityEvent.cpp
 JSWebKitPoint.cpp
-JSWebKitSerializedNode.cpp
+JSWebKitNodeSnapshot.cpp
 JSWebLock.cpp
 JSWebLockGrantedCallback.cpp
 JSWebLockManager.cpp

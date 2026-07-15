@@ -24,19 +24,19 @@
  */
 
 #import "APISerializedNode.h"
-#import "WKJSSerializedNode.h"
+#import "WKDOMNodeSnapshot.h"
 #import "WKObject.h"
 #import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
 template<> struct WrapperTraits<API::SerializedNode> {
-    using WrapperClass = WKJSSerializedNode;
+    using WrapperClass = WKDOMNodeSnapshot;
 };
 
 }
 
-@interface WKJSSerializedNode () <WKObject> {
+@interface WKDOMNodeSnapshot () <WKObject> {
 @package
     AlignedStorage<API::SerializedNode> _node;
 }

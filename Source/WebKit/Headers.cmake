@@ -173,6 +173,7 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/WKContentWorld.h
     UIProcess/API/Cocoa/WKContentWorldConfiguration.h
     UIProcess/API/Cocoa/WKContextMenuElementInfo.h
+    UIProcess/API/Cocoa/WKDOMNodeSnapshot.h
     UIProcess/API/Cocoa/WKDownload.h
     UIProcess/API/Cocoa/WKDownloadDelegate.h
     UIProcess/API/Cocoa/WKError.h
@@ -184,7 +185,6 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/WKImmersiveEnvironment.h
     UIProcess/API/Cocoa/WKImmersiveEnvironmentDelegate.h
     UIProcess/API/Cocoa/WKJSHandle.h
-    UIProcess/API/Cocoa/WKJSSerializedNode.h
     UIProcess/API/Cocoa/WKNavigation.h
     UIProcess/API/Cocoa/WKNavigationAction.h
     UIProcess/API/Cocoa/WKNavigationDelegate.h

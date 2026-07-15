@@ -1470,8 +1470,8 @@ set(WebCore_NON_SVG_IDL_FILES
     page/WebKitBuffer.idl
     page/WebKitBufferNamespace.idl
     page/WebKitJSHandle.idl
+    page/WebKitNodeSnapshot.idl
     page/WebKitPoint.idl
-    page/WebKitSerializedNode.idl
     page/WindowPostMessageOptions.idl
     page/WorkerNavigator.idl
 

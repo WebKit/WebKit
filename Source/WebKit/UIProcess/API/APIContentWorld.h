@@ -68,8 +68,8 @@ public:
     bool allowJSHandleCreation() const { return m_options.contains(WebKit::ContentWorldOption::AllowJSHandleCreation); }
     void setAllowJSHandleCreation() { m_options.add(WebKit::ContentWorldOption::AllowJSHandleCreation); }
 
-    bool allowNodeSerialization() const { return m_options.contains(WebKit::ContentWorldOption::AllowNodeSerialization); }
-    void setAllowNodeSerialization() { m_options.add(WebKit::ContentWorldOption::AllowNodeSerialization); }
+    bool allowNodeSnapshotCreation() const { return m_options.contains(WebKit::ContentWorldOption::AllowNodeSnapshotCreation); }
+    void setAllowNodeSnapshotCreation() { m_options.add(WebKit::ContentWorldOption::AllowNodeSnapshotCreation); }
 
     void addAssociatedUserContentControllerProxy(WebKit::WebUserContentControllerProxy&);
 

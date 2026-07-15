@@ -28,7 +28,7 @@ header: "ContentWorldData.h"
     AllowElementUserInfo,
     DisableLegacyBuiltinOverrides,
     AllowJSHandleCreation,
-    AllowNodeSerialization,
+    AllowNodeSnapshotCreation,
     Inspectable,
 };
 

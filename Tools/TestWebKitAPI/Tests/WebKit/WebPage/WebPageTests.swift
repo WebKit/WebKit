@@ -151,7 +151,7 @@ struct WebPageTests {
     @Test
     func clearContentWorld() async throws {
         let worldConfiguration = WKContentWorld.Configuration()
-        worldConfiguration.nodeSerializationEnabled = true
+        worldConfiguration.nodeSnapshotCreationEnabled = true
         let world = WKContentWorld(configuration: worldConfiguration)
 
         let page = WebPage()

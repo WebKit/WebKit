@@ -64,7 +64,7 @@ public:
     void NODELETE exposeClosedShadowRootsForExtensions();
     void NODELETE disableOverrideBuiltinsBehavior();
     void NODELETE setAllowJSHandleCreation();
-    void NODELETE setAllowNodeSerialization();
+    void NODELETE setAllowNodeSnapshotCreation();
     void NODELETE setAllowPostingLegacySynchronousMessages();
 
     ContentWorldIdentifier identifier() const { return m_identifier; }

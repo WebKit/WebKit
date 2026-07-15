@@ -43,7 +43,7 @@
 #include <WebCore/Document.h>
 #include <WebCore/ExceptionDetails.h>
 #include <WebCore/JSWebKitJSHandle.h>
-#include <WebCore/JSWebKitSerializedNode.h>
+#include <WebCore/JSWebKitNodeSnapshot.h>
 #include <WebCore/ScriptWrappableInlines.h>
 #include <WebCore/SerializedScriptValue.h>
 
@@ -393,7 +393,7 @@ auto JavaScriptEvaluationResult::JSExtractor::jsValueToExtractedValue(JSGlobalCo
         return makeUniqueRef<JSHandleInfo>(ref->identifier(), world->identifier(), frame->info(), ref->windowFrameIdentifier());
     }
 
-    if (auto* node = dynamicDowncast<JSWebKitSerializedNode>(jsObject)) {
+    if (auto* node = dynamicDowncast<JSWebKitNodeSnapshot>(jsObject)) {
         Ref serializedNode { node->wrapped() };
         return makeUniqueRef<SerializedNode>(serializedNode->serializedNode());
     }

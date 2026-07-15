@@ -7353,8 +7353,8 @@
 		FADCF77E2DC5E3F000591E33 /* RemoteFrameGeometryTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = FADCF77C2DC5DB1700591E33 /* RemoteFrameGeometryTransformer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FAEF5F6129D62710000AD8EC /* WindowPostMessageOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = FAEF5F5F29D6241C000AD8EC /* WindowPostMessageOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FAFFC34B2E298AA000CCC89C /* SerializedNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FAFFC34A2E298AA000CCC89C /* SerializedNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FAFFC3522E2A0C2600CCC89C /* JSWebKitSerializedNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FAFFC3512E2A0C2600CCC89C /* JSWebKitSerializedNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FAFFC35D2E2AC24D00CCC89C /* WebKitSerializedNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FAFFC34E2E29B1C200CCC89C /* WebKitSerializedNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FAFFC3522E2A0C2600CCC89C /* JSWebKitNodeSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = FAFFC3512E2A0C2600CCC89C /* JSWebKitNodeSnapshot.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FAFFC35D2E2AC24D00CCC89C /* WebKitNodeSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = FAFFC34E2E29B1C200CCC89C /* WebKitNodeSnapshot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FB273E822086E6C700A54E87 /* SVGGeometryElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FB273E7F2086E6A300A54E87 /* SVGGeometryElement.h */; };
 		FB273E852086E74D00A54E87 /* JSSVGGeometryElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FB273E842086E73E00A54E87 /* JSSVGGeometryElement.h */; };
 		FB2C15C3165D649D0039C9F8 /* CachedSVGDocumentReference.h in Headers */ = {isa = PBXBuildFile; fileRef = FB2C15C2165D64900039C9F8 /* CachedSVGDocumentReference.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -23626,10 +23626,10 @@
 		FAEF5F6029D626D1000AD8EC /* WindowPostMessageOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WindowPostMessageOptions.idl; sourceTree = "<group>"; };
 		FAEF5F6229D62D15000AD8EC /* DOMWindow.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMWindow.idl; sourceTree = "<group>"; };
 		FAFFC34A2E298AA000CCC89C /* SerializedNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SerializedNode.h; sourceTree = "<group>"; };
-		FAFFC34E2E29B1C200CCC89C /* WebKitSerializedNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitSerializedNode.h; sourceTree = "<group>"; };
-		FAFFC34F2E29B1C200CCC89C /* WebKitSerializedNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitSerializedNode.cpp; sourceTree = "<group>"; };
-		FAFFC3502E29B1C200CCC89C /* WebKitSerializedNode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebKitSerializedNode.idl; sourceTree = "<group>"; };
-		FAFFC3512E2A0C2600CCC89C /* JSWebKitSerializedNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSWebKitSerializedNode.h; sourceTree = "<group>"; };
+		FAFFC34E2E29B1C200CCC89C /* WebKitNodeSnapshot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitNodeSnapshot.h; sourceTree = "<group>"; };
+		FAFFC34F2E29B1C200CCC89C /* WebKitNodeSnapshot.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitNodeSnapshot.cpp; sourceTree = "<group>"; };
+		FAFFC3502E29B1C200CCC89C /* WebKitNodeSnapshot.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebKitNodeSnapshot.idl; sourceTree = "<group>"; };
+		FAFFC3512E2A0C2600CCC89C /* JSWebKitNodeSnapshot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSWebKitNodeSnapshot.h; sourceTree = "<group>"; };
 		FB273E7E2086E6A300A54E87 /* SVGGeometryElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGGeometryElement.cpp; sourceTree = "<group>"; };
 		FB273E7F2086E6A300A54E87 /* SVGGeometryElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGGeometryElement.h; sourceTree = "<group>"; };
 		FB273E802086E6A300A54E87 /* SVGGeometryElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGGeometryElement.idl; sourceTree = "<group>"; };
@@ -30690,7 +30690,7 @@
 				1CDDA4CC29E131F600DC5FB1 /* JSTextDetector.cpp */,
 				1CDDA4CE29E131F600DC5FB1 /* JSTextDetector.h */,
 				FA58F4472E1DE42E0098E1C8 /* JSWebKitJSHandle.h */,
-				FAFFC3512E2A0C2600CCC89C /* JSWebKitSerializedNode.h */,
+				FAFFC3512E2A0C2600CCC89C /* JSWebKitNodeSnapshot.h */,
 				446EE4E8255E0D9200454463 /* LocalizableAdditions.strings.out */,
 				FABE72FB1059C21100D999DD /* MathMLElementFactory.cpp */,
 				44A28AAB12DFB8AC00AE923B /* MathMLElementFactory.h */,
@@ -31439,11 +31439,11 @@
 				7C48A6CE191C9D6500026674 /* WebKitNamespace.cpp */,
 				7C48A6CF191C9D6500026674 /* WebKitNamespace.h */,
 				7C48A6D2191C9D8E00026674 /* WebKitNamespace.idl */,
+				FAFFC34F2E29B1C200CCC89C /* WebKitNodeSnapshot.cpp */,
+				FAFFC34E2E29B1C200CCC89C /* WebKitNodeSnapshot.h */,
+				FAFFC3502E29B1C200CCC89C /* WebKitNodeSnapshot.idl */,
 				494BD7930F55C8EE00747828 /* WebKitPoint.h */,
 				494BD7940F55C8EE00747828 /* WebKitPoint.idl */,
-				FAFFC34F2E29B1C200CCC89C /* WebKitSerializedNode.cpp */,
-				FAFFC34E2E29B1C200CCC89C /* WebKitSerializedNode.h */,
-				FAFFC3502E29B1C200CCC89C /* WebKitSerializedNode.idl */,
 				2E19516A1B6598D200DF6EEF /* WheelEventDeltaFilter.cpp */,
 				2EBBC3D71B65988300F5253D /* WheelEventDeltaFilter.h */,
 				7AE335EF1ACB09E200E401EF /* WheelEventTestMonitor.cpp */,
@@ -47007,9 +47007,9 @@
 				77EF62F412F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h in Headers */,
 				FA58F4482E1DE42E0098E1C8 /* JSWebKitJSHandle.h in Headers */,
 				7CC69941191EC5F500AF2270 /* JSWebKitNamespace.h in Headers */,
+				FAFFC3522E2A0C2600CCC89C /* JSWebKitNodeSnapshot.h in Headers */,
 				0FDA7C271883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.h in Headers */,
 				494BD79E0F55C94C00747828 /* JSWebKitPoint.h in Headers */,
-				FAFFC3522E2A0C2600CCC89C /* JSWebKitSerializedNode.h in Headers */,
 				5DA5E0FD102B953800088CF9 /* JSWebSocket.h in Headers */,
 				65DF320609D1CC60000BE325 /* JSWheelEvent.h in Headers */,
 				E868034828603E8900799EE3 /* JSWindowEventHandlers+Gamepad.h in Headers */,
@@ -50049,10 +50049,10 @@
 				2D06214E1DA63A8E00A7FB26 /* WebKitMediaKeys.h in Headers */,
 				2D0621501DA63A9400A7FB26 /* WebKitMediaKeySession.h in Headers */,
 				7C48A6D1191C9D6500026674 /* WebKitNamespace.h in Headers */,
+				FAFFC35D2E2AC24D00CCC89C /* WebKitNodeSnapshot.h in Headers */,
 				7A22732120C9FAFE00DB1DEF /* WebKitNSImageExtras.h in Headers */,
 				A5DEBDA416FB908700836FE0 /* WebKitPlaybackTargetAvailabilityEvent.h in Headers */,
 				494BD7950F55C8EE00747828 /* WebKitPoint.h in Headers */,
-				FAFFC35D2E2AC24D00CCC89C /* WebKitSerializedNode.h in Headers */,
 				7AFD16D32C63F70200B51D1A /* WebLayer.h in Headers */,
 				4644F7FA272A1C250055599E /* WebLock.h in Headers */,
 				4644F7F8272A1C1F0055599E /* WebLockGrantedCallback.h in Headers */,

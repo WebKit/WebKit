@@ -3443,8 +3443,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPlaybackTargetAvailabilityE
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPlaybackTargetAvailabilityEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPoint.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPoint.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitSerializedNode.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitSerializedNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitNodeSnapshot.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitNodeSnapshot.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLock.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLock.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLockGrantedCallback.cpp

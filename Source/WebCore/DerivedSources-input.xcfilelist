@@ -1994,7 +1994,7 @@ $(PROJECT_DIR)/page/WebKitBufferNamespace.idl
 $(PROJECT_DIR)/page/WebKitJSHandle.idl
 $(PROJECT_DIR)/page/WebKitNamespace.idl
 $(PROJECT_DIR)/page/WebKitPoint.idl
-$(PROJECT_DIR)/page/WebKitSerializedNode.idl
+$(PROJECT_DIR)/page/WebKitNodeSnapshot.idl
 $(PROJECT_DIR)/page/WindowEventHandlers.idl
 $(PROJECT_DIR)/page/WindowLocalStorage.idl
 $(PROJECT_DIR)/page/WindowOrWorkerGlobalScope+Crypto.idl

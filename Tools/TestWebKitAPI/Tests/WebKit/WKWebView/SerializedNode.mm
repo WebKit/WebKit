@@ -29,7 +29,7 @@
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKContentWorldPrivate.h>
-#import <WebKit/WKJSSerializedNode.h>
+#import <WebKit/WKDOMNodeSnapshot.h>
 #import <WebKit/_WKContentWorldConfiguration.h>
 
 namespace TestWebKitAPI {
@@ -41,12 +41,12 @@ TEST(SerializedNode, Basic)
     [webView _test_waitForDidFinishNavigation];
 
     RetainPtr worldConfiguration = adoptNS([WKContentWorldConfiguration new]);
-    worldConfiguration.get().nodeSerializationEnabled = YES;
+    worldConfiguration.get().nodeSnapshotCreationEnabled = YES;
     RetainPtr world = [WKContentWorld worldWithConfiguration:worldConfiguration.get()];
 
     auto verifyNodeSerialization = [world, webView] (const char* constructor, const char* accessor, const char* expected, const char* className, const char* init = "deep:true") {
-        RetainPtr serializedNode = [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.webkit.serializeNode(%s, { %s })", constructor, init] inFrame:nil inContentWorld:world.get()];
-        EXPECT_TRUE([serializedNode isKindOfClass:WKJSSerializedNode.class]);
+        RetainPtr serializedNode = [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.webkit.createNodeSnapshot(%s, { %s })", constructor, init] inFrame:nil inContentWorld:world.get()];
+        EXPECT_TRUE([serializedNode isKindOfClass:WKDOMNodeSnapshot.class]);
         RetainPtr other = adoptNS([TestWKWebView new]);
 
         id instanceof = [other objectByCallingAsyncFunction:@"return Object.getPrototypeOf(n).toString()" withArguments:@{ @"n" : serializedNode.get() }];
@@ -94,7 +94,7 @@ TEST(SerializedNode, Basic)
     verifyNodeSerialization("document.getElementById('host')", "n.shadowRoot.mode + ' ' + n.shadowRoot.delegatesFocus + ' ' + n.shadowRoot.serializable + ' ' + n.shadowRoot.host.tagName + ' ' + n.shadowRoot.querySelector('c-d')", "open false false DIV null", "HTMLDivElement");
 
     __block bool done { false };
-    [webView evaluateJavaScript:@"window.webkit.serializeNode(document.getElementById('host').shadowRoot)" inFrame:nil inContentWorld:world.get() completionHandler:^(id, NSError *error) {
+    [webView evaluateJavaScript:@"window.webkit.createNodeSnapshot(document.getElementById('host').shadowRoot)" inFrame:nil inContentWorld:world.get() completionHandler:^(id, NSError *error) {
         EXPECT_WK_STREQ(error.domain, WKErrorDomain);
         EXPECT_EQ(error.code, WKErrorJavaScriptExceptionOccurred);
         done = true;

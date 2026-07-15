@@ -23,9 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    EnabledForWorld=allowNodeSerialization,
-    Exposed=Window,
-    ExportMacro=WEBCORE_EXPORT
-] interface WebKitSerializedNode {
+#pragma once
+
+#include <WebCore/SerializedNode.h>
+
+namespace WebCore {
+
+class Node;
+
+class WebKitNodeSnapshot : public RefCounted<WebKitNodeSnapshot> {
+public:
+    static Ref<WebKitNodeSnapshot> create(const Node& node, bool deep) { return adoptRef(*new WebKitNodeSnapshot(node, deep)); }
+
+    const SerializedNode& serializedNode() const LIFETIME_BOUND { return m_serializedNode; }
+
+private:
+    WebKitNodeSnapshot(const Node&, bool);
+
+    const SerializedNode m_serializedNode;
 };
+
+} // namespace WebCore

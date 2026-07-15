@@ -53,12 +53,12 @@ WK_CLASS_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0))
 /*! @abstract A boolean value indicating whether the behavior that elements with a name attribute overrides builtin methods on document object should be enabled or not. */
 @property (nonatomic, getter=isLegacyBuiltinOverridesEnabled) BOOL legacyBuiltinOverridesEnabled NS_SWIFT_NAME(legacyBuiltinOverridesEnabled);
 
-/*! @abstract A boolean indicating whether or not `window.webkit.serializeNode` is available.
- @discussion JavaScript can call `window.webkit.serializeNode` with a return value to create a `WKJSSerializedNode`
+/*! @abstract A boolean indicating whether or not `window.webkit.createNodeSnapshot` is available.
+ @discussion JavaScript can call `window.webkit.createNodeSnapshot` with a return value to create a `WKDOMNodeSnapshot`
  object for the application to use in future JavaScript programs.
- Refer to the `WKJSSerializedNode` documentation for more information.
+ Refer to the `WKDOMNodeSnapshot` documentation for more information.
  */
-@property (nonatomic, getter=isNodeSerializationEnabled) BOOL nodeSerializationEnabled NS_SWIFT_NAME(nodeSerializationEnabled);
+@property (nonatomic, getter=isNodeSnapshotCreationEnabled) BOOL nodeSnapshotCreationEnabled NS_SWIFT_NAME(nodeSnapshotCreationEnabled);
 
 /*! @abstract A boolean indicating whether or not `window.webkit.createJSHandle` is available. */
 @property (nonatomic, getter=isJSHandleCreationEnabled, setter=setJSHandleCreationEnabled:) BOOL jsHandleCreationEnabled NS_SWIFT_NAME(jsHandleCreationEnabled);
