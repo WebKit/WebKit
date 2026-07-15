@@ -88,15 +88,17 @@ TEST(WebKit, ViewScaleFactorAfterShrinkToFit)
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
-    __block bool done = false;
-    [webView evaluateJavaScript:@"document.body.clientWidth" completionHandler:^(id, NSError *) {
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
+    // The WebProcess scales the view down to fit the wide document during a
+    // compositing flush and then sends ViewScaleFactorDidChange back to the
+    // UIProcess. Both steps are asynchronous with respect to navigation, so
+    // poll until the cached scale reflects the auto-scale rather than assuming
+    // it has arrived after a single round-trip.
+    bool scaledDown = TestWebKitAPI::Util::waitFor([&] {
+        return [webView _viewScale] < 1.0;
+    });
 
-    // The WebProcess scaled the view down to fit the wide document and sent
-    // ViewScaleFactorDidChange back to the UIProcess. The cached value must
-    // reflect that scale, not the default of 1.
+    // The cached value must reflect the auto-scale, not the default of 1.
+    EXPECT_TRUE(scaledDown);
     EXPECT_LT([webView _viewScale], 1.0);
     EXPECT_GT([webView _viewScale], 0.0);
 }
