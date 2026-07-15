@@ -235,6 +235,7 @@ UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp @no-unify
 UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
 UIProcess/Extensions/glib/WebExtensionGLib.cpp
+UIProcess/Extensions/glib/WebExtensionContextGLib.cpp
 
 UIProcess/Extensions/gtk/WebExtensionGTK.cpp
 

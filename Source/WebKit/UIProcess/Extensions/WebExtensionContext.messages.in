@@ -24,6 +24,7 @@
  */
 
 #if ENABLE(WK_WEB_EXTENSIONS)
+#if PLATFORM(COCOA)
 
 [
     ExceptionForEnabledBy,
@@ -199,4 +200,5 @@ messages -> WebExtensionContext {
     [Validator=isLoadedAndPrivilegedMessage] WindowsRemove(WebKit::WebExtensionWindowIdentifier windowIdentifier) -> (Expected<void, WebKit::WebExtensionError> result)
 }
 
+#endif // PLATFORM(COCOA)
 #endif // ENABLE(WK_WEB_EXTENSIONS)

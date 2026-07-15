@@ -121,6 +121,11 @@ WebKitWebExtensionMatchPattern* webkitWebExtensionMatchPatternCreate(Ref<WebExte
     return webkitWebExtensionMatchPatternCreate(apiMatchPattern);
 }
 
+RefPtr<WebKit::WebExtensionMatchPattern> webkitWebExtensionMatchPatternToImpl(WebKitWebExtensionMatchPattern* matchPattern)
+{
+    return matchPattern->matchPattern;
+}
+
 /**
  * webkit_web_extension_match_pattern_ref:
  * @matchPattern: a #WebKitWebExtensionMatchPattern

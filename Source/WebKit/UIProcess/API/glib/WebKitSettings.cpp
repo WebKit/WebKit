@@ -97,6 +97,9 @@ struct _WebKitSettingsPrivate {
 #if PLATFORM(GTK)
     bool enableBackForwardNavigationGestures { false };
 #endif
+#if ENABLE(WK_WEB_EXTENSIONS)
+    WeakPtr<WebExtensionContext> webExtensionContext;
+#endif
 };
 
 /**
@@ -4133,6 +4136,23 @@ void webkitSettingsSetGetUserMediaRequiresFocus(WebKitSettings* settings, bool r
     WebKitSettingsPrivate* priv = settings->priv;
     priv->preferences->setGetUserMediaRequiresFocus(required);
 }
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+WebExtensionContext* webkitSettingsGetWebExtensionContext(WebKitSettings* settings)
+{
+    WebKitSettingsPrivate* priv = settings->priv;
+    if (priv->webExtensionContext)
+        return priv->webExtensionContext.get();
+    return nullptr;
+}
+
+void webkitSettingsSetWebExtensionContext(WebKitSettings* settings, const WebExtensionContext& context)
+{
+    WebKitSettingsPrivate* priv = settings->priv;
+    priv->webExtensionContext = context;
+}
+#endif
+
 
 /**
  * webkit_settings_get_media_content_types_requiring_hardware_support:

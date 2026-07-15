@@ -168,7 +168,7 @@ static constexpr NSInteger currentDeclarativeNetRequestRuleTranslatorVersion = 6
     if (!extensionContext)
         return;
 
-    extensionContext->didFinishDocumentLoad(webView, navigation);
+    extensionContext->didFinishDocumentLoad(webView);
 }
 
 - (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error
@@ -177,7 +177,7 @@ static constexpr NSInteger currentDeclarativeNetRequestRuleTranslatorVersion = 6
     if (!extensionContext)
         return;
 
-    extensionContext->didFailNavigation(webView, navigation, API::Error::create(error));
+    extensionContext->didFailNavigation(webView, API::Error::create(error));
 }
 
 - (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
@@ -2606,29 +2606,9 @@ void WebExtensionContext::setBackgroundWebViewInspectionName(const String& name)
     m_backgroundWebView.get()._remoteInspectionNameOverride = name.createNSString().get();
 }
 
-static inline bool isNotRunningInTestRunner()
+bool WebExtensionContext::isNotRunningInTestRunner()
 {
     return applicationBundleIdentifier() != "com.apple.WebKit.TestWebKitAPI"_s;
-}
-
-void WebExtensionContext::scheduleBackgroundContentToUnload()
-{
-    if (!m_backgroundWebView || protect(extension())->backgroundContentIsPersistent())
-        return;
-
-#ifdef NDEBUG
-    static const auto testRunnerDelayBeforeUnloading = 3_s;
-#else
-    static const auto testRunnerDelayBeforeUnloading = 6_s;
-#endif
-
-    static const auto delayBeforeUnloading = isNotRunningInTestRunner() ? 30_s : testRunnerDelayBeforeUnloading;
-
-    RELEASE_LOG_DEBUG(Extensions, "Scheduling background content to unload in %{public}.0f seconds", delayBeforeUnloading.seconds());
-
-    if (!m_unloadBackgroundWebViewTimer)
-        m_unloadBackgroundWebViewTimer = makeUnique<RunLoop::Timer>(RunLoop::currentSingleton(), "WebExtensionContext::UnloadBackgroundWebViewTimer"_s, this, &WebExtensionContext::unloadBackgroundContentIfPossible);
-    m_unloadBackgroundWebViewTimer->startOneShot(delayBeforeUnloading);
 }
 
 void WebExtensionContext::unloadBackgroundContentIfPossible()
@@ -2817,7 +2797,7 @@ bool WebExtensionContext::decidePolicyForNavigationAction(WKWebView *webView, WK
     return false;
 }
 
-void WebExtensionContext::didFinishDocumentLoad(WKWebView *webView, WKNavigation *)
+void WebExtensionContext::didFinishDocumentLoad(WKWebView *webView)
 {
     if (webView != m_backgroundWebView)
         return;
@@ -2829,7 +2809,7 @@ void WebExtensionContext::didFinishDocumentLoad(WKWebView *webView, WKNavigation
     performTasksAfterBackgroundContentLoads();
 }
 
-void WebExtensionContext::didFailNavigation(WKWebView *webView, WKNavigation *, RefPtr<API::Error> error)
+void WebExtensionContext::didFailNavigation(WKWebView *webView, RefPtr<API::Error> error)
 {
     if (webView != m_backgroundWebView)
         return;

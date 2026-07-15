@@ -240,9 +240,11 @@ if (ENABLE_2022_GLIB_API)
     list(APPEND WPE_API_HEADER_TEMPLATES
         ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtension.h.in
         ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionMatchPattern.h.in
+        ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionContext.h.in
     )
     list(APPEND WebKit_SOURCES
         ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtension.cpp
+        ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionContext.cpp
     )
 endif ()
 

@@ -30,9 +30,18 @@
 #include "WebKitSettings.h"
 #include "WebPreferences.h"
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+#include "WebExtensionContext.h"
+#endif
+
 WebKit::WebPreferences* webkitSettingsGetPreferences(WebKitSettings*);
 
 WK_EXPORT void webkitSettingsSetMediaCaptureRequiresSecureConnection(WebKitSettings*, bool required);
 WK_EXPORT void webkitSettingsSetGetUserMediaRequiresFocus(WebKitSettings*, bool required);
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+WK_EXPORT WebKit::WebExtensionContext* webkitSettingsGetWebExtensionContext(WebKitSettings*);
+WK_EXPORT void webkitSettingsSetWebExtensionContext(WebKitSettings*, const WebKit::WebExtensionContext&);
+#endif // ENABLE(WK_WEB_EXTENSIONS)
 
 #endif // WebKitSettingsPrivate_h

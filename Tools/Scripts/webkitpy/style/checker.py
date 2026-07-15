@@ -206,6 +206,12 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/naming/acronym", "-readability/naming/underscores"]),
 
     ([
+        # The WebKitWebExtensionContext API has utility structs with underscored constructors,
+        # similar to other Gtk APIs.
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'glib', 'WebKitWebExtensionContext.cpp')],
+     ["-readability/naming/underscores", "-readability/enum_casing"]),
+
+    ([
       # The GTK+ and WPE APIs use upper case, underscore separated, words in
       # certain types of enums (e.g. signals, properties).
       os.path.join('Source', 'JavaScriptCore', 'API', 'glib'),

@@ -312,6 +312,7 @@ SchemaVersion WebExtensionDeclarativeNetRequestSQLiteStore::migrateToCurrentSche
 {
     assertIsCurrent(queue());
 
+#if PLATFORM(COCOA)
     auto currentDatabaseSchemaVersion = databaseSchemaVersion();
     if (currentDatabaseSchemaVersion == 1) {
         // We need to migrate existing data to the format understood by the new C++ SQLite Store parser
@@ -324,6 +325,7 @@ SchemaVersion WebExtensionDeclarativeNetRequestSQLiteStore::migrateToCurrentSche
         setDatabaseSchemaVersion(currentDeclarativeNetRequestSchemaVersion);
         return currentDeclarativeNetRequestSchemaVersion;
     }
+#endif
     return WebExtensionSQLiteStore::migrateToCurrentSchemaVersionIfNeeded();
 }
 

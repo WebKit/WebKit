@@ -139,3 +139,5 @@ WebKit::RendererBufferDescription webkitWebViewGetRendererBufferDescription(WebK
 #if ENABLE(WEBXR) && USE(OPENXR)
 void webkitWebViewSetIsImmersiveModeEnabled(WebKitWebView*, bool);
 #endif
+
+void webkitWebViewLoadServiceWorker(WebKitWebView*, const gchar* url, bool usingModules, CompletionHandler<void(bool success)>&&);

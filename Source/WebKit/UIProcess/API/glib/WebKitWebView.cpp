@@ -881,6 +881,21 @@ static Ref<API::PageConfiguration> webkitWebViewCreatePageConfiguration(WebKitWe
         break;
     }
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+    if (priv->webExtensionMode != WEBKIT_WEB_EXTENSION_MODE_NONE && webkitSettingsGetWebExtensionContext(priv->settings.get())) {
+        auto context = webkitSettingsGetWebExtensionContext(priv->settings.get());
+
+        pageConfiguration->setCrossOriginAccessControlCheckEnabled(false);
+        pageConfiguration->setProcessDisplayName(context->processDisplayName());
+        pageConfiguration->setRequiredWebExtensionBaseURL(URL(context->baseURL()));
+        pageConfiguration->setShouldRelaxThirdPartyCookieBlocking(WebCore::ShouldRelaxThirdPartyCookieBlocking::Yes);
+
+        pageConfiguration->setMaskedURLSchemes({ });
+
+        pageConfiguration->setCORSDisablingPatterns(context->corsDisablingPatterns());
+    }
+#endif
+
     if (!priv->defaultContentSecurityPolicy.isNull())
         pageConfiguration->setOverrideContentSecurityPolicy(String::fromUTF8(priv->defaultContentSecurityPolicy.data()));
 
@@ -1002,6 +1017,10 @@ static void webkitWebViewConstructed(GObject* object)
     }
 #endif
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+    if (!priv->websitePolicies && priv->webExtensionMode != WEBKIT_WEB_EXTENSION_MODE_NONE)
+        priv->websitePolicies = adoptGRef(webkit_website_policies_new_with_policies("autoplay", WEBKIT_AUTOPLAY_ALLOW, nullptr));
+#endif
     if (!priv->websitePolicies)
         priv->websitePolicies = adoptGRef(webkit_website_policies_new());
 
@@ -6106,3 +6125,17 @@ WebKitImageList* webkit_web_view_get_page_icons(WebKitWebView* webView)
     return webView->priv->pageIcons.get();
 }
 #endif
+
+void webkitWebViewLoadServiceWorker(WebKitWebView* webView, const gchar* url, bool usingModules, CompletionHandler<void(bool success)>&& completionHandler)
+{
+    Ref page = getPage(webView);
+
+    if (page->isServiceWorkerPage()) {
+        completionHandler(false);
+        return;
+    }
+
+    page->loadServiceWorker(URL { String::fromUTF8(url) }, usingModules, [completionHandler = WTF::move(completionHandler)](bool success) mutable {
+        completionHandler(success);
+    });
+}
