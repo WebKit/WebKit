@@ -27,13 +27,11 @@
 #pragma once
 
 #include "CSSToLengthConversionData.h"
-#include "Document.h"
-#include "FontTaggedSettings.h"
 #include "PropertyCascade.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
-#include "StyleComputedStyle.h"
 #include "StyleForVisitedLink.h"
+#include "StyleMutator.h"
 #include "StyleSubstitutionContext.h"
 #include "TextFlags.h"
 #include "TreeResolutionState.h"
@@ -41,9 +39,6 @@
 
 namespace WebCore {
 
-class FontCascadeDescription;
-class FontSelectionValue;
-class StyleResolver;
 struct CSSRegisteredCustomProperty;
 
 namespace CSSCalc {
@@ -59,22 +54,6 @@ class Image;
 class LocalPropertyRegistry;
 class Scope;
 struct Color;
-struct FontFamilies;
-struct FontFeatureSettings;
-struct FontPalette;
-struct FontSizeAdjust;
-struct FontStyle;
-struct FontVariantAlternates;
-struct FontVariantEastAsian;
-struct FontVariantLigatures;
-struct FontVariantNumeric;
-struct FontVariationSettings;
-struct FontWeight;
-struct FontWidth;
-struct TextAutospace;
-struct TextSpacingTrim;
-struct WebkitLocale;
-struct Zoom;
 
 enum class PositionTryFallbackTactic : uint8_t;
 
@@ -93,13 +72,13 @@ struct RegisteredSubstitutionAttribute {
 };
 
 struct BuilderContext {
-    const Ref<const Document> document;
+    Ref<const Document> document;
     const Style::ComputedStyle* parentStyle { };
     const Style::ComputedStyle* rootElementStyle { };
     RefPtr<const Element> element { };
     CheckedPtr<TreeResolutionState> treeResolutionState { };
     std::optional<BuilderPositionTryFallback> positionTryFallback { };
-    const LocalPropertyRegistry* localPropertyRegistry { nullptr };
+    const LocalPropertyRegistry* localPropertyRegistry { };
     // For a custom function's hypothetical element: the builder of the calling context, used to
     // resolve inherited custom properties on demand. https://drafts.csswg.org/css-mixins/#evaluating-custom-functions
     Builder* callingContextBuilder { nullptr };
@@ -117,43 +96,31 @@ public:
         return makeUniqueRefWithoutRefCountedCheck<BuilderState>(style, WTF::move(builderContext));
     }
 
-    ComputedStyle& style() { return m_style; }
-    const ComputedStyle& style() const { return m_style; }
+    Mutator& mutator() LIFETIME_BOUND { return m_mutator; }
+    const Mutator& mutator() const LIFETIME_BOUND { return m_mutator; }
 
-    Style::ComputedStyle& renderStyle() LIFETIME_BOUND { return m_style; }
-    const Style::ComputedStyle& renderStyle() const LIFETIME_BOUND { return m_style; }
+    ComputedStyle& style() LIFETIME_BOUND { return m_mutator.style(); }
+    const ComputedStyle& style() const LIFETIME_BOUND { return m_mutator.style(); }
 
-    const ComputedStyle& parentStyle() const { return *m_context.parentStyle; }
-    const Style::ComputedStyle& parentRenderStyle() const LIFETIME_BOUND { return *m_context.parentStyle; }
+    const ComputedStyle& parentStyle() const LIFETIME_BOUND { return m_mutator.parentStyle(); }
+    const ComputedStyle* rootElementStyle() const LIFETIME_BOUND { return m_mutator.rootElementStyle(); }
 
-    Builder* callingContextBuilder() const { return m_context.callingContextBuilder; }
+    Builder* callingContextBuilder() const { return m_callingContextBuilder; }
 
-    const ComputedStyle* rootElementStyle() const { return m_context.rootElementStyle; }
-    const Style::ComputedStyle* rootElementRenderStyle() const LIFETIME_BOUND { return m_context.rootElementStyle; }
-
-    const Document& document() const { return m_context.document; }
-    const Element* element() const { return m_context.element.get(); }
+    const Document& document() const { return m_mutator.document(); }
+    const Element* element() const { return m_mutator.element(); }
 
     const CSSRegisteredCustomProperty* registeredProperty(const AtomString&) const;
-
-    inline void setZoom(Zoom);
-    inline void setUsedZoom(float);
-    inline void setWritingMode(StyleWritingMode);
-    inline void setTextOrientation(TextOrientation);
-
-    bool fontDirty() const { return m_fontDirty; }
-    void setFontDirty() { m_fontDirty = true; }
-
-    inline const FontCascadeDescription& fontDescription() LIFETIME_BOUND;
-    inline const FontCascadeDescription& parentFontDescription() LIFETIME_BOUND;
 
     bool applyPropertyToRegularStyle() const { return m_linkMatch != SelectorChecker::MatchVisited; }
     bool applyPropertyToVisitedLinkStyle() const { return m_linkMatch != SelectorChecker::MatchLink; }
 
     float NODELETE zoomWithTextZoomFactor();
 
-    bool NODELETE useSVGZoomRules() const;
-    bool NODELETE useSVGZoomRulesForLength() const;
+    bool NODELETE useSVGZoomRules() const { return m_mutator.useSVGZoomRules(); }
+    bool NODELETE useSVGZoomRulesForLength() const { return m_mutator.useSVGZoomRulesForLength(); }
+
+    bool NODELETE evaluationTimeZoomEnabled() const;
 
     // Defaults to Element when called outside property cascade application (e.g. attr() resolution
     // during container-query evaluation), where there is no current property in flight.
@@ -191,61 +158,12 @@ public:
     unsigned NODELETE siblingCount();
     unsigned NODELETE siblingIndex();
 
-    AnchorPositionedStates* anchorPositionedStates() LIFETIME_BOUND { return m_context.treeResolutionState ? &m_context.treeResolutionState->anchorPositionedStates : nullptr; }
-    const std::optional<BuilderPositionTryFallback>& positionTryFallback() const LIFETIME_BOUND { return m_context.positionTryFallback; }
-
-    // FIXME: Copying a FontCascadeDescription is really inefficient. Migrate all callers to
-    // setFontDescriptionXXX() variants below, then remove these functions.
-    inline void setFontDescription(FontCascadeDescription&&);
-    void setFontSize(FontCascadeDescription&, float size);
-
-    void setFontDescriptionKeywordSizeFromIdentifier(CSSValueID);
-    void setFontDescriptionIsAbsoluteSize(bool);
-    void setFontDescriptionFontSize(float);
-    void setFontDescriptionFamilies(FontFamilies&&);
-    void setFontDescriptionFeatureSettings(FontFeatureSettings&&);
-    void setFontDescriptionFontPalette(FontPalette&&);
-    void setFontDescriptionFontSizeAdjust(FontSizeAdjust);
-    void setFontDescriptionFontSmoothing(FontSmoothingMode);
-    void setFontDescriptionFontStyle(FontStyle);
-    void setFontDescriptionFontSynthesisSmallCaps(FontSynthesisLonghandValue);
-    void setFontDescriptionFontSynthesisStyle(FontSynthesisStyleLonghandValue);
-    void setFontDescriptionFontSynthesisWeight(FontSynthesisLonghandValue);
-    void setFontDescriptionKerning(Kerning);
-    void setFontDescriptionOpticalSizing(FontOpticalSizing);
-    void setFontDescriptionSpecifiedLocale(WebkitLocale&&);
-    void setFontDescriptionTextAutospace(TextAutospace);
-    void setFontDescriptionTextRenderingMode(TextRenderingMode);
-    void setFontDescriptionTextSpacingTrim(TextSpacingTrim);
-    void setFontDescriptionVariantCaps(FontVariantCaps);
-    void setFontDescriptionVariantEmoji(FontVariantEmoji);
-    void setFontDescriptionVariantPosition(FontVariantPosition);
-    void setFontDescriptionVariationSettings(FontVariationSettings&&);
-    void setFontDescriptionWeight(FontWeight);
-    void setFontDescriptionWidth(FontWidth);
-    void setFontDescriptionVariantAlternates(FontVariantAlternates&&);
-    void setFontDescriptionVariantEastAsian(FontVariantEastAsian);
-    void setFontDescriptionVariantEastAsianVariant(FontVariantEastAsianVariant);
-    void setFontDescriptionVariantEastAsianWidth(FontVariantEastAsianWidth);
-    void setFontDescriptionVariantEastAsianRuby(FontVariantEastAsianRuby);
-    void setFontDescriptionKeywordSize(unsigned);
-    void setFontDescriptionVariantLigatures(FontVariantLigatures);
-    void setFontDescriptionVariantCommonLigatures(WebCore::FontVariantLigatures);
-    void setFontDescriptionVariantDiscretionaryLigatures(WebCore::FontVariantLigatures);
-    void setFontDescriptionVariantHistoricalLigatures(WebCore::FontVariantLigatures);
-    void setFontDescriptionVariantContextualAlternates(WebCore::FontVariantLigatures);
-    void setFontDescriptionVariantNumeric(FontVariantNumeric);
-    void setFontDescriptionVariantNumericFigure(FontVariantNumericFigure);
-    void setFontDescriptionVariantNumericSpacing(FontVariantNumericSpacing);
-    void setFontDescriptionVariantNumericFraction(FontVariantNumericFraction);
-    void setFontDescriptionVariantNumericOrdinal(FontVariantNumericOrdinal);
-    void setFontDescriptionVariantNumericSlashedZero(FontVariantNumericSlashedZero);
+    AnchorPositionedStates* anchorPositionedStates() LIFETIME_BOUND { return m_treeResolutionState ? &m_treeResolutionState->anchorPositionedStates : nullptr; }
+    const std::optional<BuilderPositionTryFallback>& positionTryFallback() const LIFETIME_BOUND { return m_positionTryFallback; }
 
     void disableNativeAppearanceIfNeeded(CSSPropertyID, PropertyCascade::Origin);
 
 private:
-    // See the comment in maybeUpdateFontForLetterSpacingOrWordSpacing() about why this needs to be a friend.
-    friend void maybeUpdateFontForLetterSpacingOrWordSpacing(BuilderState&, CSSValue&);
     friend class Builder;
     friend class SubstitutionResolver;
 
@@ -253,17 +171,12 @@ private:
 
     void NODELETE adjustStyleForInterCharacterRuby();
 
-    void updateFont();
-#if ENABLE(TEXT_AUTOSIZING)
-    void updateFontForTextSizeAdjust();
-#endif
-    void updateFontForZoomChange();
-    void updateFontForGenericFamilyChange();
-    void updateFontForOrientationChange();
-    void updateFontForSizeChange();
+    Mutator m_mutator;
 
-    Style::ComputedStyle& m_style;
-    BuilderContext m_context;
+    CheckedPtr<TreeResolutionState> m_treeResolutionState;
+    std::optional<BuilderPositionTryFallback> m_positionTryFallback;
+    const LocalPropertyRegistry* m_localPropertyRegistry;
+    Builder* m_callingContextBuilder;
 
     const CSSToLengthConversionData m_cssToLengthConversionData;
 
@@ -276,7 +189,6 @@ private:
     SelectorChecker::LinkMatchMask m_linkMatch { };
     const PropertyCascade* m_currentRollbackCascade { nullptr };
 
-    bool m_fontDirty { false };
     Vector<RegisteredSubstitutionAttribute> m_registeredSubstitutionAttributes;
 
     bool m_isBuildingKeyframeStyle { false };

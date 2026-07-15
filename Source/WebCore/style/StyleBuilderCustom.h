@@ -49,12 +49,12 @@
 #include "SVGPathElement.h"
 #include "Settings.h"
 #include "StyleBuilderChecking.h"
-#include "StyleBuilderStateInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleKeyword+CSSValueConversion.h"
+#include "StyleMutatorInlines.h"
 #include "StylePrimitiveNumericOrKeyword+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StyleResolveForFont.h"
@@ -210,19 +210,19 @@ void applyValueCoordinatedValueListProperty(BuilderState& builderState, CSSValue
 inline void BuilderCustom::resetUsedZoom(BuilderState& builderState)
 {
     // Reset the zoom in effect. This allows the setZoom method to accurately compute a new zoom in effect.
-    builderState.setUsedZoom(builderState.parentStyle().usedZoom());
+    builderState.mutator().setUsedZoom(builderState.parentStyle().usedZoom());
 }
 
 inline void BuilderCustom::applyInitialZoom(BuilderState& builderState)
 {
     resetUsedZoom(builderState);
-    builderState.setZoom(ComputedStyle::initialZoom());
+    builderState.mutator().setZoom(ComputedStyle::initialZoom());
 }
 
 inline void BuilderCustom::applyInheritZoom(BuilderState& builderState)
 {
     resetUsedZoom(builderState);
-    builderState.setZoom(forwardInheritedValue(builderState.parentStyle().zoom()));
+    builderState.mutator().setZoom(forwardInheritedValue(builderState.parentStyle().zoom()));
 }
 
 inline void BuilderCustom::applyValueZoom(BuilderState& builderState, CSSValue& value)
@@ -231,7 +231,7 @@ inline void BuilderCustom::applyValueZoom(BuilderState& builderState, CSSValue& 
         switch (keywordValue->valueID()) {
         case CSSValueNormal:
             resetUsedZoom(builderState);
-            builderState.setZoom(Style::ComputedStyle::initialZoom());
+            builderState.mutator().setZoom(ComputedStyle::initialZoom());
             return;
 
         default:
@@ -242,7 +242,7 @@ inline void BuilderCustom::applyValueZoom(BuilderState& builderState, CSSValue& 
 
     resetUsedZoom(builderState);
     auto zoom = toStyleFromCSSValue<Zoom>(builderState, value);
-    builderState.setZoom(isZero(zoom) ? Zoom { 1.0f } : zoom);
+    builderState.mutator().setZoom(isZero(zoom) ? Zoom { 1.0f } : zoom);
 }
 
 void maybeUpdateFontForLetterSpacingOrWordSpacing(BuilderState& builderState, CSSValue& value)
@@ -268,46 +268,46 @@ void maybeUpdateFontForLetterSpacingOrWordSpacing(BuilderState& builderState, CS
 
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         if (primitiveValue->isFontRelativeLength() || primitiveValue->isCalculated())
-            builderState.updateFont();
+            builderState.mutator().forceUpdateFont();
     }
 }
 
 inline void BuilderCustom::applyInheritWordSpacing(BuilderState& builderState)
 {
     builderState.style().setWordSpacing(forwardInheritedValue(builderState.parentStyle().computedWordSpacing()));
-    builderState.setFontDirty();
+    builderState.mutator().setFontDirty();
 }
 
 inline void BuilderCustom::applyInitialWordSpacing(BuilderState& builderState)
 {
     builderState.style().setWordSpacing(ComputedStyle::initialWordSpacing());
-    builderState.setFontDirty();
+    builderState.mutator().setFontDirty();
 }
 
 void BuilderCustom::applyValueWordSpacing(BuilderState& builderState, CSSValue& value)
 {
     maybeUpdateFontForLetterSpacingOrWordSpacing(builderState, value);
     builderState.style().setWordSpacing(toStyleFromCSSValue<WordSpacing>(builderState, value));
-    builderState.setFontDirty();
+    builderState.mutator().setFontDirty();
 }
 
 inline void BuilderCustom::applyInheritLetterSpacing(BuilderState& builderState)
 {
     builderState.style().setLetterSpacing(forwardInheritedValue(builderState.parentStyle().computedLetterSpacing()));
-    builderState.setFontDirty();
+    builderState.mutator().setFontDirty();
 }
 
 inline void BuilderCustom::applyInitialLetterSpacing(BuilderState& builderState)
 {
     builderState.style().setLetterSpacing(ComputedStyle::initialLetterSpacing());
-    builderState.setFontDirty();
+    builderState.mutator().setFontDirty();
 }
 
 inline void BuilderCustom::applyValueLetterSpacing(BuilderState& builderState, CSSValue& value)
 {
     maybeUpdateFontForLetterSpacingOrWordSpacing(builderState, value);
     builderState.style().setLetterSpacing(toStyleFromCSSValue<LetterSpacing>(builderState, value));
-    builderState.setFontDirty();
+    builderState.mutator().setFontDirty();
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
@@ -397,72 +397,72 @@ inline void BuilderCustom::applyValueLineHeight(BuilderState& builderState, CSSV
 
 inline void BuilderCustom::applyValueWebkitLocale(BuilderState& builderState, CSSValue& value)
 {
-    builderState.setFontDescriptionSpecifiedLocale(toStyleFromCSSValue<WebkitLocale>(builderState, value));
+    builderState.mutator().setFontDescriptionSpecifiedLocale(toStyleFromCSSValue<WebkitLocale>(builderState, value));
 }
 
 inline void BuilderCustom::applyValueWritingMode(BuilderState& builderState, CSSValue& value)
 {
-    builderState.setWritingMode(fromCSSValue<StyleWritingMode>(value));
+    builderState.mutator().setWritingMode(fromCSSValue<StyleWritingMode>(value));
     builderState.style().setHasExplicitlySetWritingMode(true);
 }
 
 inline void BuilderCustom::applyValueTextOrientation(BuilderState& builderState, CSSValue& value)
 {
-    builderState.setTextOrientation(fromCSSValue<TextOrientation>(value));
+    builderState.mutator().setTextOrientation(fromCSSValue<TextOrientation>(value));
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
 inline void BuilderCustom::applyValueWebkitTextSizeAdjust(BuilderState& builderState, CSSValue& value)
 {
     builderState.style().setTextSizeAdjust(toStyleFromCSSValue<TextSizeAdjust>(builderState, value));
-    builderState.setFontDirty();
+    builderState.mutator().setFontDirty();
 }
 #endif
 
 inline void BuilderCustom::applyValueWebkitTextZoom(BuilderState& builderState, CSSValue& value)
 {
     builderState.style().setTextZoom(toStyleFromCSSValue<TextZoom>(builderState, value));
-    builderState.setFontDirty();
+    builderState.mutator().setFontDirty();
 }
 
 inline void BuilderCustom::applyInitialFontFamily(BuilderState& builderState)
 {
-    auto& fontDescription = builderState.fontDescription();
+    auto& fontDescription = builderState.style().fontDescription();
     auto initialDesc = FontCascadeDescription();
 
     // We need to adjust the size to account for the generic family change from monospace to non-monospace.
     if (fontDescription.useFixedDefaultSize()) {
         if (CSSValueID sizeIdentifier = fontDescription.keywordSizeAsIdentifier())
-            builderState.setFontDescriptionFontSize(fontSizeForKeyword(sizeIdentifier, false, builderState.document()));
+            builderState.mutator().setFontDescriptionFontSize(fontSizeForKeyword(sizeIdentifier, false, builderState.document()));
     }
 
     if (!initialDesc.firstFamily().name.isEmpty())
-        builderState.setFontDescriptionFamilies(FontFamilies { initialDesc.families(), fontDescription.hasAuthorSpecifiedNonGenericPrimaryFont() });
+        builderState.mutator().setFontDescriptionFamilies(FontFamilies { initialDesc.families(), fontDescription.hasAuthorSpecifiedNonGenericPrimaryFont() });
 }
 
 inline void BuilderCustom::applyInheritFontFamily(BuilderState& builderState)
 {
-    builderState.setFontDescriptionFamilies(forwardInheritedValue(builderState.parentStyle().fontFamily()));
+    builderState.mutator().setFontDescriptionFamilies(forwardInheritedValue(builderState.parentStyle().fontFamily()));
 }
 
 inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSValue& value)
 {
-    auto& fontDescription = builderState.fontDescription();
+    auto& fontDescription = builderState.style().fontDescription();
 
     // Before mapping in a new font-family property, we should reset the generic family.
     bool oldFamilyUsedFixedDefaultSize = fontDescription.useFixedDefaultSize();
 
-    builderState.setFontDescriptionFamilies(toStyleFromCSSValue<FontFamilies>(builderState, value));
+    builderState.mutator().setFontDescriptionFamilies(toStyleFromCSSValue<FontFamilies>(builderState, value));
 
     if (fontDescription.useFixedDefaultSize() != oldFamilyUsedFixedDefaultSize) {
         if (CSSValueID sizeIdentifier = fontDescription.keywordSizeAsIdentifier())
-            builderState.setFontDescriptionFontSize(fontSizeForKeyword(sizeIdentifier, !oldFamilyUsedFixedDefaultSize, builderState.document()));
+            builderState.mutator().setFontDescriptionFontSize(fontSizeForKeyword(sizeIdentifier, !oldFamilyUsedFixedDefaultSize, builderState.document()));
     }
 }
 
 inline void BuilderCustom::applyInitialBorderTopWidth(BuilderState& builderState)
 {
-    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
+    if (!builderState.evaluationTimeZoomEnabled())
         builderState.style().setBorderTopWidth(LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.style().deviceScaleFactor()));
     else
         builderState.style().setBorderTopWidth(ComputedStyle::initialBorderTopWidth());
@@ -470,7 +470,7 @@ inline void BuilderCustom::applyInitialBorderTopWidth(BuilderState& builderState
 
 inline void BuilderCustom::applyInitialBorderRightWidth(BuilderState& builderState)
 {
-    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
+    if (!builderState.evaluationTimeZoomEnabled())
         builderState.style().setBorderRightWidth(LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.style().deviceScaleFactor()));
     else
         builderState.style().setBorderRightWidth(ComputedStyle::initialBorderRightWidth());
@@ -478,7 +478,7 @@ inline void BuilderCustom::applyInitialBorderRightWidth(BuilderState& builderSta
 
 inline void BuilderCustom::applyInitialBorderBottomWidth(BuilderState& builderState)
 {
-    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
+    if (!builderState.evaluationTimeZoomEnabled())
         builderState.style().setBorderBottomWidth(LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.style().deviceScaleFactor()));
     else
         builderState.style().setBorderBottomWidth(ComputedStyle::initialBorderBottomWidth());
@@ -486,7 +486,7 @@ inline void BuilderCustom::applyInitialBorderBottomWidth(BuilderState& builderSt
 
 inline void BuilderCustom::applyInitialBorderLeftWidth(BuilderState& builderState)
 {
-    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
+    if (!builderState.evaluationTimeZoomEnabled())
         builderState.style().setBorderLeftWidth(LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.style().deviceScaleFactor()));
     else
         builderState.style().setBorderLeftWidth(ComputedStyle::initialBorderLeftWidth());
@@ -494,7 +494,7 @@ inline void BuilderCustom::applyInitialBorderLeftWidth(BuilderState& builderStat
 
 inline void BuilderCustom::applyInitialOutlineWidth(BuilderState& builderState)
 {
-    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
+    if (!builderState.evaluationTimeZoomEnabled())
         builderState.style().setOutlineWidth(LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.style().deviceScaleFactor()));
     else
         builderState.style().setOutlineWidth(ComputedStyle::initialOutlineWidth());
@@ -502,7 +502,7 @@ inline void BuilderCustom::applyInitialOutlineWidth(BuilderState& builderState)
 
 inline void BuilderCustom::applyInitialColumnRuleWidth(BuilderState& builderState)
 {
-    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
+    if (!builderState.evaluationTimeZoomEnabled())
         builderState.style().setColumnRuleWidth(LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.style().deviceScaleFactor()));
     else
         builderState.style().setColumnRuleWidth(ComputedStyle::initialColumnRuleWidth());
@@ -510,15 +510,15 @@ inline void BuilderCustom::applyInitialColumnRuleWidth(BuilderState& builderStat
 
 inline void BuilderCustom::applyInitialFontSize(BuilderState& builderState)
 {
-    auto fontDescription = builderState.fontDescription();
+    auto fontDescription = builderState.style().fontDescription();
     float size = fontSizeForKeyword(CSSValueMedium, fontDescription.useFixedDefaultSize(), builderState.document());
 
     if (size < 0)
         return;
 
     fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
-    builderState.setFontSize(fontDescription, size);
-    builderState.setFontDescription(WTF::move(fontDescription));
+    builderState.mutator().setFontSize(fontDescription, size);
+    builderState.mutator().setFontDescription(WTF::move(fontDescription));
 }
 
 inline void BuilderCustom::applyInheritFontSize(BuilderState& builderState)
@@ -529,8 +529,8 @@ inline void BuilderCustom::applyInheritFontSize(BuilderState& builderState)
     if (size < 0)
         return;
 
-    builderState.setFontDescriptionKeywordSize(parentFontDescription.keywordSize());
-    builderState.setFontDescriptionFontSize(size);
+    builderState.mutator().setFontDescriptionKeywordSize(parentFontDescription.keywordSize());
+    builderState.mutator().setFontDescriptionFontSize(size);
 }
 
 // When the CSS keyword "larger" is used, this function will attempt to match within the keyword
@@ -631,8 +631,8 @@ inline float BuilderCustom::determineMathDepthScale(BuilderState& builderState)
 
 inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSValue& value)
 {
-    auto& fontDescription = builderState.fontDescription();
-    builderState.setFontDescriptionKeywordSizeFromIdentifier(CSSValueInvalid);
+    auto& fontDescription = builderState.style().fontDescription();
+    builderState.mutator().setFontDescriptionKeywordSizeFromIdentifier(CSSValueInvalid);
 
     float parentSize = builderState.parentStyle().fontDescription().specifiedSize();
     bool parentIsAbsoluteSize = builderState.parentStyle().fontDescription().isAbsoluteSize();
@@ -640,7 +640,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
     float size = 0;
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         auto ident = keywordValue->valueID();
-        builderState.setFontDescriptionIsAbsoluteSize((parentIsAbsoluteSize && (ident == CSSValueLarger || ident == CSSValueSmaller || ident == CSSValueWebkitRubyText || ident == CSSValueMath)) || CSSPropertyParserHelpers::isSystemFontShorthand(ident));
+        builderState.mutator().setFontDescriptionIsAbsoluteSize((parentIsAbsoluteSize && (ident == CSSValueLarger || ident == CSSValueSmaller || ident == CSSValueWebkitRubyText || ident == CSSValueMath)) || CSSPropertyParserHelpers::isSystemFontShorthand(ident));
 
         if (CSSPropertyParserHelpers::isSystemFontShorthand(ident))
             size = SystemFontDatabase::singleton().systemFontShorthandSize(CSSPropertyParserHelpers::lowerFontShorthand(ident));
@@ -655,7 +655,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
         case CSSValueXxLarge:
         case CSSValueXxxLarge:
             size = fontSizeForKeyword(ident, fontDescription.useFixedDefaultSize(), builderState.document());
-            builderState.setFontDescriptionKeywordSizeFromIdentifier(ident);
+            builderState.mutator().setFontDescriptionKeywordSizeFromIdentifier(ident);
             break;
         case CSSValueLarger:
             size = largerFontSize(parentSize);
@@ -674,7 +674,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
         }
     } else if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         // FIXME: Checking `primitiveValue->isPercentageOrParentFontRelativeLength()` is not sufficient to determine if any parent relative length units have been used, as arbitrary calc() expressions may contain them as well. For example, `font-size: calc(1px + 1em)`.
-        builderState.setFontDescriptionIsAbsoluteSize(parentIsAbsoluteSize || !primitiveValue->isPercentageOrParentFontRelativeLength());
+        builderState.mutator().setFontDescriptionIsAbsoluteSize(parentIsAbsoluteSize || !primitiveValue->isPercentageOrParentFontRelativeLength());
 
         auto conversionData = builderState.cssToLengthConversionData().copyForFontSize();
 
@@ -722,7 +722,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
     if (size < 0)
         return;
 
-    builderState.setFontDescriptionFontSize(std::min(maximumAllowedFontSize, size));
+    builderState.mutator().setFontDescriptionFontSize(std::min(maximumAllowedFontSize, size));
 }
 
 // CanvasText is the initial color according to spec.

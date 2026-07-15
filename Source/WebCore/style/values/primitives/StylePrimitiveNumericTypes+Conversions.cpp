@@ -57,10 +57,5 @@ bool evaluationTimeZoomEnabled(const Style::ComputedStyle& style)
     return style.evaluationTimeZoomEnabled();
 }
 
-bool evaluationTimeZoomEnabled(const BuilderState& state)
-{
-    return state.document().settings().evaluationTimeZoomEnabled();
-}
-
 } // namespace Style
 } // namespace WebCore

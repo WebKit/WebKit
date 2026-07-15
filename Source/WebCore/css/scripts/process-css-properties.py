@@ -4725,7 +4725,7 @@ class GenerateStyleBuilderGenerated:
     # Color property setters.
 
     def _generate_visited_link_color_supporting_property_initial_value_setter(self, to, property):
-        initial_function = "Style::ComputedStyle::" + property.codegen_properties.computed_style_initial
+        initial_function = "ComputedStyle::" + property.codegen_properties.computed_style_initial
         to.write(f"if (builderState.applyPropertyToRegularStyle())")
         to.write(f"    builderState.style().{property.codegen_properties.computed_style_setter}({initial_function}());")
         to.write(f"if (builderState.applyPropertyToVisitedLinkStyle())")
@@ -4757,19 +4757,19 @@ class GenerateStyleBuilderGenerated:
     # Font property setters.
 
     def _generate_font_property_initial_value_setter(self, to, property):
-        to.write(f"builderState.{property.codegen_properties.font_description_setter.replace('set', 'setFontDescription', 1)}(Style::ComputedStyle::{property.codegen_properties.computed_style_initial}());")
+        to.write(f"builderState.mutator().{property.codegen_properties.font_description_setter.replace('set', 'setFontDescription', 1)}(ComputedStyle::{property.codegen_properties.computed_style_initial}());")
 
     def _generate_font_property_inherit_value_setter(self, to, property):
         to.write(f"auto inheritedValue = builderState.parentStyle().{property.codegen_properties.computed_style_getter}();")
-        to.write(f"builderState.{property.codegen_properties.font_description_setter.replace('set', 'setFontDescription', 1)}(WTF::move(inheritedValue));")
+        to.write(f"builderState.mutator().{property.codegen_properties.font_description_setter.replace('set', 'setFontDescription', 1)}(WTF::move(inheritedValue));")
 
     def _generate_font_property_value_setter(self, to, property, value):
-        to.write(f"builderState.{property.codegen_properties.font_description_setter.replace('set', 'setFontDescription', 1)}({value});")
+        to.write(f"builderState.mutator().{property.codegen_properties.font_description_setter.replace('set', 'setFontDescription', 1)}({value});")
 
     # All other property setters.
 
     def _generate_property_initial_value_setter(self, to, property):
-        to.write(f"builderState.style().{property.codegen_properties.computed_style_setter}(Style::ComputedStyle::{property.codegen_properties.computed_style_initial}());")
+        to.write(f"builderState.style().{property.codegen_properties.computed_style_setter}(ComputedStyle::{property.codegen_properties.computed_style_initial}());")
 
     def _generate_property_inherit_value_setter(self, to, property):
         to.write(f"builderState.style().{property.codegen_properties.computed_style_setter}(forwardInheritedValue(builderState.parentStyle().{property.codegen_properties.computed_style_getter}()));")

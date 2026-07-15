@@ -471,13 +471,13 @@ style/StyleAdjuster.cpp
 style/StyleBuilder.cpp
 style/StyleBuilderCustom.h
 style/StyleBuilderState.cpp
-style/StyleBuilderStateInlines.h
 style/StyleCustomPropertyRegistry.cpp
 style/StyleDocumentScope.cpp
 style/StyleExtractor.cpp
 style/StyleExtractorCustom.h
 style/StyleInvalidationFunctions.h
 style/StyleInvalidator.cpp
+style/StyleMutatorInlines.h
 style/StyleResolver.cpp
 style/StyleScope.cpp
 style/StyleTreeResolver.cpp
