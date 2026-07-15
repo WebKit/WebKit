@@ -138,7 +138,7 @@ inline void ComputedStyleProperties::setFontSize(float size)
 
     auto description = fontDescription();
     description.setSpecifiedSize(size);
-    description.setComputedSize(size);
+    description.setComputedSize(size, description.usedZoomFactor());
     setFontDescription(WTF::move(description));
 
     // Whenever the font size changes, letter-spacing and word-spacing, which are dependent on font-size, must be re-synchronized.

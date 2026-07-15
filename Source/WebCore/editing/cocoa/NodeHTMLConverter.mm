@@ -650,7 +650,7 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID prope
 static inline bool floatValueFromPrimitiveValue(CSSPrimitiveValue& primitiveValue, float& result)
 {
     if (primitiveValue.isFontIndependentLength()) {
-        result = WebCore::Style::deprecatedToStyleFromCSSValue<WebCore::Style::Length<CSS::All, float>>(primitiveValue)->resolveZoom(WebCore::Style::ZoomNeeded { });
+        result = WebCore::Style::deprecatedToStyleFromCSSValue<WebCore::Style::Length<CSS::AllUnzoomed, float>>(primitiveValue)->resolveZoom(WebCore::Style::ZoomFactor::none());
         return true;
     }
     return false;

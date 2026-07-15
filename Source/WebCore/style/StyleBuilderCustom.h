@@ -678,11 +678,11 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
 
         auto conversionData = builderState.cssToLengthConversionData().copyForFontSize();
 
-        using StyleType = LengthPercentage<CSS::Nonnegative, float>;
+        using StyleType = LengthPercentage<CSS::NonnegativeUnzoomed, float>;
 
-        auto handleLength = [](const auto& length) -> float { return length.resolveZoom(ZoomNeeded { }); };
+        auto handleLength = [](const auto& length) -> float { return length.resolveZoom(ZoomFactor::none()); };
         auto handlePercentage = [&](const auto& percentage) -> float { return percentage.value * parentSize / 100.0f; };
-        auto handleCalc = [&](const auto& calc) -> float { return calc.evaluate(parentSize, ZoomNeeded { }); };
+        auto handleCalc = [&](const auto& calc) -> float { return calc.evaluate(parentSize, ZoomFactor::none()); };
 
         size =  WTF::switchOn(*primitiveValue,
             [&](const CSSPrimitiveValue::Calc& calc) -> float {

@@ -779,12 +779,12 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyLineHeight> {
                 // for how high to be in pixels does include things like minimum font size and the zoom factor.
                 // On the other hand, since font-size doesn't include the zoom factor, we really can't do
                 // that here either.
-                return functor(Length<CSS::Nonnegative> { percentage.value * state.style.fontDescription().computedSize() / 100 });
+                return functor(Length<CSS::NonnegativeUnzoomed> { percentage.value * state.style.fontDescription().computedSizeForRangeZoomOption(CSS::RangeZoomOptions::Unzoomed) / 100 });
             },
             [&](const LineHeight::Calc& calc) {
-                // FIXME: We pass 1.0f here to get the unzoomed value but it really is not clear why we are even
-                // evaluating calc here. We should probably revisit this and figure out another way to do this.
-                return functor(Length<CSS::Nonnegative> { evaluate<float>(calc, 0.0f, Style::ZoomFactor { 1.0f }) });
+                // FIXME: We pass ZoomFactor::none() but it really is not clear why we are even evaluating calc
+                // here. We should probably revisit this and figure out another way to do this.
+                return functor(Length<CSS::NonnegativeUnzoomed> { evaluate<float>(calc, 0.0f, ZoomFactor::none()) });
             }
         );
     }
@@ -803,7 +803,7 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyFontFamily> {
 template<> struct PropertyExtractorAdaptor<CSSPropertyFontSize> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
     {
-        return functor(Length<CSS::Nonnegative> { state.style.fontDescription().computedSize() });
+        return functor(Length<CSS::NonnegativeUnzoomed> { state.style.fontDescription().computedSizeForRangeZoomOption(CSS::RangeZoomOptions::Unzoomed) });
     }
 };
 
@@ -2957,7 +2957,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractFontShorthand(ExtractorState& st
     if (!propertiesResetByShorthandAreExpressible())
         return computedFont;
 
-    computedFont->size = createCSSValue(state.pool, state.style, Length<> { description.computedSize() });
+    computedFont->size = createCSSValue(state.pool, state.style, Length<CSS::AllUnzoomed> { description.computedSizeForRangeZoomOption(CSS::RangeZoomOptions::Unzoomed) });
 
     auto computedLineHeight = ExtractorGenerated::extractValue(state, CSSPropertyLineHeight);
     if (computedLineHeight && !isValueID(*computedLineHeight, CSSValueNormal))
