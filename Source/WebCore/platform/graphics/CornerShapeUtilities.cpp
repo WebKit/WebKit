@@ -123,13 +123,13 @@ static Corner makeCorner(const CornerInput& input)
 
 static std::pair<FloatPoint, FloatPoint> buildBevelCorners(const Corner& original, double startInset, double endInset)
 {
-    auto inwardNormal = (original.end - original.start).perpendicular().normalized();
+    auto strokeDirection = (original.end - original.start).perpendicular().normalized();
     auto outerToCenter = original.center - original.outer;
-    // Ensure the inward normal points toward the center of the corner
-    if (dotProduct(inwardNormal, outerToCenter) < 0)
-        inwardNormal = inwardNormal.scaled(-1);
-    auto innerStart = original.start + inwardNormal * float(startInset);
-    auto innerEnd = original.end + inwardNormal * float(endInset);
+    // Ensure the stroke direction points inward, toward the center of the corner.
+    if (dotProduct(strokeDirection, outerToCenter) < 0)
+        strokeDirection = strokeDirection.scaled(-1);
+    auto adjustedCornerStart = original.start + strokeDirection * float(startInset);
+    auto adjustedCornerEnd = original.end + strokeDirection * float(endInset);
 
     auto extendStart = (original.center - original.start).directionScaledBy(float(startInset));
     auto extendEnd = (original.center - original.end).directionScaledBy(float(endInset));
@@ -137,8 +137,9 @@ static std::pair<FloatPoint, FloatPoint> buildBevelCorners(const Corner& origina
     auto clipEnd = original.end + extendEnd;
     auto clipOuter = original.outer + extendStart + extendEnd;
 
-    auto axisAlignedCornerStart = findIntersection(innerStart, innerEnd, clipStart, clipOuter).value_or(innerStart);
-    auto axisAlignedCornerEnd = findIntersection(innerEnd, innerStart, clipEnd, clipOuter).value_or(innerEnd);
+    auto controlPoint = midPoint(adjustedCornerStart, adjustedCornerEnd);
+    auto axisAlignedCornerStart = findIntersection(adjustedCornerStart, controlPoint, clipStart, clipOuter).value_or(adjustedCornerStart);
+    auto axisAlignedCornerEnd = findIntersection(adjustedCornerEnd, controlPoint, clipEnd, clipOuter).value_or(adjustedCornerEnd);
 
     return { axisAlignedCornerStart, axisAlignedCornerEnd };
 }
