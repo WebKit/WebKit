@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<!-- This test is symlinked and run from a different location to test site isolated behaviors. Attempt to find the test driver from two possible places. -->
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../../../../../inspector/resources/inspector-test.js"></script>
+
+<script>
+function test()
+{
+    const DOCUMENT_NODE = 9;
+    const ELEMENT_NODE = 1;
+
+    let nextNodeId = 1;
+
+    // Build a standalone DOMManager per test case so _idToDOMNode / _unsplicedFrameDocuments
+    // are isolated. Constructing WI.DOMNode against a manager auto-registers it in that
+    // manager's _idToDOMNode, which is exactly what the splice logic scans.
+    function makeManager() {
+        return new WI.DOMManager;
+    }
+
+    function makeDocument(manager, url) {
+        return new WI.DOMNode(manager, null, false, {
+            nodeId: nextNodeId++,
+            nodeType: DOCUMENT_NODE,
+            nodeName: "#document",
+            documentURL: url,
+        });
+    }
+
+    function makeFrameElement(manager, ownerDocument, src, {nodeName = "IFRAME"} = {}) {
+        return new WI.DOMNode(manager, ownerDocument, false, {
+            nodeId: nextNodeId++,
+            nodeType: ELEMENT_NODE,
+            nodeName,
+            localName: nodeName.toLowerCase(),
+            attributes: src != null ? ["src", src] : [],
+        });
+    }
+
+    // A cross-origin frame document is modeled the same way as any document node.
+    let makeFrameDocument = makeDocument;
+
+    let suite = InspectorTest.createSyncSuite("DOMManager.FrameDocumentSplice");
+
+    suite.addTestCase({
+        name: "ImmediateExactURLMatch",
+        description: "A frame document splices into the iframe whose src exactly matches its documentURL.",
+        test() {
+            let manager = makeManager();
+            let pageDocument = makeDocument(manager, "https://example.com/");
+            let iframe = makeFrameElement(manager, pageDocument, "https://frames.test/a.html");
+            let frameDocument = makeFrameDocument(manager, "https://frames.test/a.html");
+
+            let childNodeCountEvents = 0;
+            let nodeInsertedEvents = 0;
+            manager.addEventListener(WI.DOMManager.Event.ChildNodeCountUpdated, () => { ++childNodeCountEvents; });
+            manager.addEventListener(WI.DOMManager.Event.NodeInserted, (event) => {
+                if (event.data.node === frameDocument && event.data.parent === iframe)
+                    ++nodeInsertedEvents;
+            });
+
+            InspectorTest.expectTrue(manager._trySpliceFrameDocumentIntoNode(frameDocument), "Should splice.");
+            InspectorTest.expectEqual(iframe._contentDocument, frameDocument, "iframe.contentDocument should be the frame document.");
+            InspectorTest.expectEqual(frameDocument.parentNode, iframe, "Frame document's parentNode should be the iframe.");
+            InspectorTest.expectEqual(iframe._children.length, 1, "iframe should have a single child.");
+            InspectorTest.expectEqual(iframe._children[0], frameDocument, "iframe's child should be the frame document.");
+            InspectorTest.expectEqual(childNodeCountEvents, 1, "ChildNodeCountUpdated should fire once.");
+            InspectorTest.expectEqual(nodeInsertedEvents, 1, "NodeInserted should fire once for (frameDocument, iframe).");
+        }
+    });
+
+    suite.addTestCase({
+        name: "RelativeSrcResolvedAgainstOwnerDocument",
+        description: "A relative iframe src is resolved against the parent document URL before matching.",
+        test() {
+            let manager = makeManager();
+            let pageDocument = makeDocument(manager, "https://example.com/dir/page.html");
+            let iframe = makeFrameElement(manager, pageDocument, "child.html");
+            let frameDocument = makeFrameDocument(manager, "https://example.com/dir/child.html");
+
+            InspectorTest.expectTrue(manager._trySpliceFrameDocumentIntoNode(frameDocument), "Relative src should resolve and match.");
+            InspectorTest.expectEqual(iframe._contentDocument, frameDocument, "iframe.contentDocument should be set.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "NoMatchLeavesDocumentUnspliced",
+        description: "A frame document with no matching iframe is not spliced.",
+        test() {
+            let manager = makeManager();
+            let pageDocument = makeDocument(manager, "https://example.com/");
+            let iframe = makeFrameElement(manager, pageDocument, "https://frames.test/a.html");
+            let frameDocument = makeFrameDocument(manager, "https://frames.test/b.html");
+
+            InspectorTest.expectFalse(manager._trySpliceFrameDocumentIntoNode(frameDocument), "Should not splice.");
+            InspectorTest.expectNull(iframe._contentDocument ?? null, "iframe.contentDocument should remain unset.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "DeferredSpliceOnLaterInsertedIframe",
+        description: "A frame document that arrives before its iframe splices once the iframe is later inserted (the JS-insertion retry path).",
+        test() {
+            let manager = makeManager();
+            let pageDocument = makeDocument(manager, "https://example.com/");
+            let frameDocument = makeFrameDocument(manager, "https://frames.test/a.html");
+
+            // Frame document arrived first: it sits in the unspliced list.
+            manager._unsplicedFrameDocuments.push(frameDocument);
+            manager._trySpliceUnsplicedFrameDocuments();
+            InspectorTest.expectEqual(manager._unsplicedFrameDocuments.length, 1, "With no iframe yet, the document stays unspliced.");
+            InspectorTest.expectNull(frameDocument.parentNode ?? null, "Frame document should not be parented yet.");
+
+            // A matching iframe is later inserted (e.g. via script). This is the pass that _childNodeInserted triggers.
+            let iframe = makeFrameElement(manager, pageDocument, "https://frames.test/a.html");
+            manager._trySpliceUnsplicedFrameDocuments();
+
+            InspectorTest.expectEqual(manager._unsplicedFrameDocuments.length, 0, "Unspliced list should drain after the iframe appears.");
+            InspectorTest.expectEqual(iframe._contentDocument, frameDocument, "The newly-inserted iframe should adopt the pending frame document.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "DistinctURLsMatchDistinctIframes",
+        description: "Multiple pending documents each splice into their own iframe by URL, regardless of ordering.",
+        test() {
+            let manager = makeManager();
+            let pageDocument = makeDocument(manager, "https://example.com/");
+            let iframeA = makeFrameElement(manager, pageDocument, "https://frames.test/a.html");
+            let iframeB = makeFrameElement(manager, pageDocument, "https://frames.test/b.html");
+            let docB = makeFrameDocument(manager, "https://frames.test/b.html");
+            let docA = makeFrameDocument(manager, "https://frames.test/a.html");
+
+            // Pending order (B, A) is intentionally the reverse of element order (A, B).
+            manager._unsplicedFrameDocuments.push(docB, docA);
+            manager._trySpliceUnsplicedFrameDocuments();
+
+            InspectorTest.expectEqual(manager._unsplicedFrameDocuments.length, 0, "Both documents should splice.");
+            InspectorTest.expectEqual(iframeA._contentDocument, docA, "iframe A should adopt doc A.");
+            InspectorTest.expectEqual(iframeB._contentDocument, docB, "iframe B should adopt doc B.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TwoDocumentsSameURLOneIframeConsumesOnlyOne",
+        description: "Within one pass, a matched iframe is not reused; a duplicate-URL document stays unspliced.",
+        test() {
+            let manager = makeManager();
+            let pageDocument = makeDocument(manager, "https://example.com/");
+            let iframe = makeFrameElement(manager, pageDocument, "https://frames.test/a.html");
+            let doc1 = makeFrameDocument(manager, "https://frames.test/a.html");
+            let doc2 = makeFrameDocument(manager, "https://frames.test/a.html");
+
+            manager._unsplicedFrameDocuments.push(doc1, doc2);
+            manager._trySpliceUnsplicedFrameDocuments();
+
+            InspectorTest.expectEqual(iframe._contentDocument, doc1, "The single iframe should adopt the first matching document.");
+            InspectorTest.expectEqual(manager._unsplicedFrameDocuments.length, 1, "The second same-URL document should remain unspliced.");
+            InspectorTest.expectEqual(manager._unsplicedFrameDocuments[0], doc2, "The leftover document should be the second one.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TwoDocumentsSameURLTwoIframesEachConsumesOne",
+        description: "A reused candidate snapshot still lets a second document match a second same-URL iframe.",
+        test() {
+            let manager = makeManager();
+            let pageDocument = makeDocument(manager, "https://example.com/");
+            let iframe1 = makeFrameElement(manager, pageDocument, "https://frames.test/a.html");
+            let iframe2 = makeFrameElement(manager, pageDocument, "https://frames.test/a.html");
+            let doc1 = makeFrameDocument(manager, "https://frames.test/a.html");
+            let doc2 = makeFrameDocument(manager, "https://frames.test/a.html");
+
+            manager._unsplicedFrameDocuments.push(doc1, doc2);
+            manager._trySpliceUnsplicedFrameDocuments();
+
+            InspectorTest.expectEqual(manager._unsplicedFrameDocuments.length, 0, "Both documents should splice.");
+            InspectorTest.expectEqual(iframe1._contentDocument, doc1, "First iframe should adopt the first document.");
+            InspectorTest.expectEqual(iframe2._contentDocument, doc2, "Second iframe should adopt the second document.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "IframeWithExistingContentDocumentSkipped",
+        description: "An iframe that already has a contentDocument is not re-matched.",
+        test() {
+            let manager = makeManager();
+            let pageDocument = makeDocument(manager, "https://example.com/");
+            let iframe = makeFrameElement(manager, pageDocument, "https://frames.test/a.html");
+            let existingDocument = makeFrameDocument(manager, "https://frames.test/a.html");
+            iframe._contentDocument = existingDocument;
+
+            let newDocument = makeFrameDocument(manager, "https://frames.test/a.html");
+            InspectorTest.expectFalse(manager._trySpliceFrameDocumentIntoNode(newDocument), "Should not re-match an already-populated iframe.");
+            InspectorTest.expectEqual(iframe._contentDocument, existingDocument, "Existing contentDocument should be untouched.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "DestroyedIframeSkipped",
+        description: "A destroyed iframe node is never a splice target.",
+        test() {
+            let manager = makeManager();
+            let pageDocument = makeDocument(manager, "https://example.com/");
+            let iframe = makeFrameElement(manager, pageDocument, "https://frames.test/a.html");
+            iframe.markDestroyed();
+            let frameDocument = makeFrameDocument(manager, "https://frames.test/a.html");
+
+            InspectorTest.expectFalse(manager._trySpliceFrameDocumentIntoNode(frameDocument), "Should not splice into a destroyed iframe.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "DestroyedPendingDocumentDropped",
+        description: "A destroyed pending document is dropped from the unspliced list without matching.",
+        test() {
+            let manager = makeManager();
+            let pageDocument = makeDocument(manager, "https://example.com/");
+            let iframe = makeFrameElement(manager, pageDocument, "https://frames.test/a.html");
+            let deadDocument = makeFrameDocument(manager, "https://frames.test/a.html");
+            deadDocument.markDestroyed();
+            let liveDocument = makeFrameDocument(manager, "https://frames.test/a.html");
+
+            manager._unsplicedFrameDocuments.push(deadDocument, liveDocument);
+            manager._trySpliceUnsplicedFrameDocuments();
+
+            InspectorTest.expectEqual(manager._unsplicedFrameDocuments.length, 0, "Both entries should leave the unspliced list.");
+            InspectorTest.expectEqual(iframe._contentDocument, liveDocument, "The live document should splice.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "LegacyFrameElementMatches",
+        description: "A <frame> element (not just <iframe>) is a valid splice target.",
+        test() {
+            let manager = makeManager();
+            let pageDocument = makeDocument(manager, "https://example.com/");
+            let frame = makeFrameElement(manager, pageDocument, "https://frames.test/a.html", {nodeName: "FRAME"});
+            let frameDocument = makeFrameDocument(manager, "https://frames.test/a.html");
+
+            InspectorTest.expectTrue(manager._trySpliceFrameDocumentIntoNode(frameDocument), "Should splice into a <frame>.");
+            InspectorTest.expectEqual(frame._contentDocument, frameDocument, "<frame>.contentDocument should be set.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests DOMManager frame-document splicing: URL matching, deferred/JS-inserted iframes, duplicate URLs, and destroyed-node handling.</p>
+</body>
+</html>

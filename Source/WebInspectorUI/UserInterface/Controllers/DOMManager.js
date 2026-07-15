@@ -165,19 +165,29 @@ WI.DOMManager = class DOMManager extends WI.Object
     // FIXME: <https://webkit.org/b/298980> URL-based matching is fragile (breaks with redirects,
     // blob: URLs, about:srcdoc, query strings). Use frame identity information (frame ID or target ID)
     // threaded through Target.targetCreated to directly look up the parent iframe element.
-    _trySpliceFrameDocumentIntoNode(frameDocument)
+    _unmatchedFrameNodes()
     {
-        let frameDocURL = frameDocument.documentURL;
-
+        // Only iframe/frame elements without a contentDocument are splice candidates.
+        let frameNodes = [];
         for (let node of Object.values(this._idToDOMNode)) {
-            if (node._destroyed)
+            if (node._destroyed || node._contentDocument)
                 continue;
 
             let nodeName = node._nodeName;
-            if (nodeName !== "IFRAME" && nodeName !== "FRAME")
-                continue;
+            if (nodeName === "IFRAME" || nodeName === "FRAME")
+                frameNodes.push(node);
+        }
+        return frameNodes;
+    }
 
-            if (node._contentDocument)
+    _trySpliceFrameDocumentIntoNode(frameDocument, candidateNodes)
+    {
+        let frameDocURL = frameDocument.documentURL;
+        let frameDocHref = null;
+
+        for (let node of candidateNodes || this._unmatchedFrameNodes()) {
+            // A node may have been matched by an earlier document in this pass.
+            if (node._destroyed || node._contentDocument)
                 continue;
 
             let srcAttr = node.getAttribute("src");
@@ -185,14 +195,13 @@ WI.DOMManager = class DOMManager extends WI.Object
                 continue;
 
             // Match by URL: exact match, then resolve relative src against parent document.
-            let matched = false;
-            if (srcAttr === frameDocURL)
-                matched = true;
-            else {
+            let matched = srcAttr === frameDocURL;
+            if (!matched) {
                 try {
                     let srcURL = new URL(srcAttr, node.ownerDocument ? node.ownerDocument.documentURL : undefined);
-                    let docURL = new URL(frameDocURL);
-                    if (srcURL.href === docURL.href)
+                    if (frameDocHref === null)
+                        frameDocHref = new URL(frameDocURL).href;
+                    if (srcURL.href === frameDocHref)
                         matched = true;
                 } catch (e) {
                 }
@@ -217,10 +226,16 @@ WI.DOMManager = class DOMManager extends WI.Object
         if (!this._unsplicedFrameDocuments.length)
             return;
 
+        // Collect candidate frame nodes once and reuse across all pending documents,
+        // rather than rescanning every DOM node for each pending document.
+        let candidateNodes = this._unmatchedFrameNodes();
+        if (!candidateNodes.length)
+            return;
+
         this._unsplicedFrameDocuments = this._unsplicedFrameDocuments.filter((doc) => {
             if (doc._destroyed)
                 return false;
-            return !this._trySpliceFrameDocumentIntoNode(doc);
+            return !this._trySpliceFrameDocumentIntoNode(doc, candidateNodes);
         });
     }
 

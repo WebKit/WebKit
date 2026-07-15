@@ -1,0 +1,57 @@
+Tests DOMManager frame-document splicing: URL matching, deferred/JS-inserted iframes, duplicate URLs, and destroyed-node handling.
+
+
+== Running test suite: DOMManager.FrameDocumentSplice
+-- Running test case: ImmediateExactURLMatch
+PASS: Should splice.
+PASS: iframe.contentDocument should be the frame document.
+PASS: Frame document's parentNode should be the iframe.
+PASS: iframe should have a single child.
+PASS: iframe's child should be the frame document.
+PASS: ChildNodeCountUpdated should fire once.
+PASS: NodeInserted should fire once for (frameDocument, iframe).
+
+-- Running test case: RelativeSrcResolvedAgainstOwnerDocument
+PASS: Relative src should resolve and match.
+PASS: iframe.contentDocument should be set.
+
+-- Running test case: NoMatchLeavesDocumentUnspliced
+PASS: Should not splice.
+PASS: iframe.contentDocument should remain unset.
+
+-- Running test case: DeferredSpliceOnLaterInsertedIframe
+PASS: With no iframe yet, the document stays unspliced.
+PASS: Frame document should not be parented yet.
+PASS: Unspliced list should drain after the iframe appears.
+PASS: The newly-inserted iframe should adopt the pending frame document.
+
+-- Running test case: DistinctURLsMatchDistinctIframes
+PASS: Both documents should splice.
+PASS: iframe A should adopt doc A.
+PASS: iframe B should adopt doc B.
+
+-- Running test case: TwoDocumentsSameURLOneIframeConsumesOnlyOne
+PASS: The single iframe should adopt the first matching document.
+PASS: The second same-URL document should remain unspliced.
+PASS: The leftover document should be the second one.
+
+-- Running test case: TwoDocumentsSameURLTwoIframesEachConsumesOne
+PASS: Both documents should splice.
+PASS: First iframe should adopt the first document.
+PASS: Second iframe should adopt the second document.
+
+-- Running test case: IframeWithExistingContentDocumentSkipped
+PASS: Should not re-match an already-populated iframe.
+PASS: Existing contentDocument should be untouched.
+
+-- Running test case: DestroyedIframeSkipped
+PASS: Should not splice into a destroyed iframe.
+
+-- Running test case: DestroyedPendingDocumentDropped
+PASS: Both entries should leave the unspliced list.
+PASS: The live document should splice.
+
+-- Running test case: LegacyFrameElementMatches
+PASS: Should splice into a <frame>.
+PASS: <frame>.contentDocument should be set.
+
