@@ -125,19 +125,19 @@ function test() {
         });
     });
 
-    WI.domManager.addEventListener(WI.DOMManager.Event.NodeInserted, function(event) {
+    WI.DOMNode.addEventListener(WI.DOMNode.Event.Inserted, function(event) {
         // Test logging will add nodes to the test page. Ignore any elements added that are not children of our test node.
-        if (event.data.parent !== testDOMNode)
+        if (event.target.parentNode !== testDOMNode)
             return;
 
         InspectorTest.log("EVENT: NodeInserted");
-        insertedOrRemovedDOMNode = event.data.node;
+        insertedOrRemovedDOMNode = event.target;
         next();
     });
 
-    WI.domManager.addEventListener(WI.DOMManager.Event.NodeRemoved, function(event) {
+    WI.DOMNode.addEventListener(WI.DOMNode.Event.Removed, function(event) {
         InspectorTest.log("EVENT: NodeRemoved");
-        insertedOrRemovedDOMNode = event.data.node;
+        insertedOrRemovedDOMNode = event.target;
         next();
     });
 }

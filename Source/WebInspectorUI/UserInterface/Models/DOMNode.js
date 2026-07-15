@@ -1428,15 +1428,20 @@ WI.DOMNode._defaultLayoutOverlayConfiguration = {
 };
 
 WI.DOMNode.Event = {
-    EnabledPseudoClassesChanged: "dom-node-enabled-pseudo-classes-did-change",
     AttributeModified: "dom-node-attribute-modified",
     AttributeRemoved: "dom-node-attribute-removed",
-    EventListenersChanged: "dom-node-event-listeners-changed",
+    CharacterDataModified: "dom-node-character-data-modified",
+    ChildNodeCountUpdated: "dom-node-child-node-count-updated",
+    CustomElementStateChanged: "dom-node-custom-element-state-changed",
     DidFireEvent: "dom-node-did-fire-event",
-    PowerEfficientPlaybackStateChanged: "dom-node-power-efficient-playback-state-changed",
+    EnabledPseudoClassesChanged: "dom-node-enabled-pseudo-classes-did-change",
+    EventListenersChanged: "dom-node-event-listeners-changed",
+    Inserted: "dom-node-inserted",
     LayoutFlagsChanged: "dom-node-layout-flags-changed",
-    LayoutOverlayShown: "dom-node-layout-overlay-shown",
     LayoutOverlayHidden: "dom-node-layout-overlay-hidden",
+    LayoutOverlayShown: "dom-node-layout-overlay-shown",
+    PowerEfficientPlaybackStateChanged: "dom-node-power-efficient-playback-state-changed",
+    Removed: "dom-node-removed",
 };
 
 WI.DOMNode.PseudoElementType = {

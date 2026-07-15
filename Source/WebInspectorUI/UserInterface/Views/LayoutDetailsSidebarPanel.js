@@ -40,8 +40,8 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
     {
         super.attached();
 
-        WI.domManager.addEventListener(WI.DOMManager.Event.NodeInserted, this._handleNodeInserted, this);
-        WI.domManager.addEventListener(WI.DOMManager.Event.NodeRemoved, this._handleNodeRemoved, this);
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.Inserted, this._handleNodeInserted, this);
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.Removed, this._handleNodeRemoved, this);
 
         WI.DOMNode.addEventListener(WI.DOMNode.Event.LayoutFlagsChanged, this._handleLayoutFlagsChanged, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
@@ -55,8 +55,8 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
     {
         WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.Observed;
 
-        WI.domManager.removeEventListener(WI.DOMManager.Event.NodeInserted, this._handleNodeInserted, this);
-        WI.domManager.removeEventListener(WI.DOMManager.Event.NodeRemoved, this._handleNodeRemoved, this);
+        WI.DOMNode.removeEventListener(WI.DOMNode.Event.Inserted, this._handleNodeInserted, this);
+        WI.DOMNode.removeEventListener(WI.DOMNode.Event.Removed, this._handleNodeRemoved, this);
 
         WI.DOMNode.removeEventListener(WI.DOMNode.Event.LayoutFlagsChanged, this._handleLayoutFlagsChanged, this);
         WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
@@ -153,7 +153,7 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
 
     _handleNodeRemoved(event)
     {
-        let domNode = event.target.node;
+        let domNode = event.target;
         this._removeNodeFromNodeSets(domNode);
         this.needsLayout();
     }

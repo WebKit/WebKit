@@ -36,30 +36,11 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         this._nodeRemoteObject = null;
     }
 
-    // Public
-
-    closed()
-    {
-        if (this.didInitialLayout) {
-            WI.domManager.removeEventListener(WI.DOMManager.Event.AttributeModified, this._attributesChanged, this);
-            WI.domManager.removeEventListener(WI.DOMManager.Event.AttributeRemoved, this._attributesChanged, this);
-            WI.domManager.removeEventListener(WI.DOMManager.Event.CharacterDataModified, this._characterDataModified, this);
-            WI.domManager.removeEventListener(WI.DOMManager.Event.CustomElementStateChanged, this._customElementStateChanged, this);
-        }
-
-        super.closed();
-    }
-
     // Protected
 
     initialLayout()
     {
         super.initialLayout();
-
-        WI.domManager.addEventListener(WI.DOMManager.Event.AttributeModified, this._attributesChanged, this);
-        WI.domManager.addEventListener(WI.DOMManager.Event.AttributeRemoved, this._attributesChanged, this);
-        WI.domManager.addEventListener(WI.DOMManager.Event.CharacterDataModified, this._characterDataModified, this);
-        WI.domManager.addEventListener(WI.DOMManager.Event.CustomElementStateChanged, this._customElementStateChanged, this);
 
         this._identityNodeTypeRow = new WI.DetailsSectionSimpleRow(WI.UIString("Type"));
         this._identityNodeNameRow = new WI.DetailsSectionSimpleRow(WI.UIString("Name"));
@@ -176,6 +157,22 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         WI.DOMNode.removeEventListener(WI.DOMNode.Event.EventListenersChanged, this._eventListenersChanged, this);
 
         super.detached();
+    }
+
+    addEventListeners()
+    {
+        this.domNode.addEventListener(WI.DOMNode.Event.AttributeModified, this._attributesChanged, this);
+        this.domNode.addEventListener(WI.DOMNode.Event.AttributeRemoved, this._attributesChanged, this);
+        this.domNode.addEventListener(WI.DOMNode.Event.CharacterDataModified, this._characterDataModified, this);
+        this.domNode.addEventListener(WI.DOMNode.Event.CustomElementStateChanged, this._customElementStateChanged, this);
+    }
+
+    removeEventListeners()
+    {
+        this.domNode.removeEventListener(WI.DOMNode.Event.AttributeModified, this._attributesChanged, this);
+        this.domNode.removeEventListener(WI.DOMNode.Event.AttributeRemoved, this._attributesChanged, this);
+        this.domNode.removeEventListener(WI.DOMNode.Event.CharacterDataModified, this._characterDataModified, this);
+        this.domNode.removeEventListener(WI.DOMNode.Event.CustomElementStateChanged, this._customElementStateChanged, this);
     }
 
     // Private
@@ -829,8 +826,6 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
 
     _attributesChanged(event)
     {
-        if (event.data.node !== this.domNode)
-            return;
         this._refreshAttributes();
         this._refreshAccessibility();
         this._refreshDataBindings();
@@ -851,15 +846,11 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
 
     _characterDataModified(event)
     {
-        if (event.data.node !== this.domNode)
-            return;
         this._identityNodeValueRow.value = this.domNode.nodeValue();
     }
 
     _customElementStateChanged(event)
     {
-        if (event.data.node !== this.domNode)
-            return;
         this._refreshIdentity();
     }
 
