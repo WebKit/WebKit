@@ -3235,6 +3235,7 @@ style/StyleFontSizeFunctions.cpp @header:RenderStyleGetters @cost:5
 style/StyleInterpolation.cpp @header:RenderStyleGetters @cost:6
 style/StyleInvalidator.cpp @cost:4
 style/StyleLocalPropertyRegistry.cpp
+style/StyleMutator.cpp @header:RenderStyleGetters @cost:8
 style/StyleNameScope.cpp
 style/StylePendingResources.cpp @header:RenderStyleGetters @cost:5
 style/StyleRelations.cpp @header:RenderStyleGetters @cost:5

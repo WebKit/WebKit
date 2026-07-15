@@ -55,7 +55,7 @@ static double NODELETE adjustValueForPageZoom(double dimension, const CSSToLengt
 
     auto* style = conversionData.style();
     auto* renderView = conversionData.renderView();
-    if (!renderView || !style || !evaluationTimeZoomEnabled(*style))
+    if (!renderView || !style || !style->evaluationTimeZoomEnabled())
         return dimension;
 
     return dimension / renderView->pageZoomFactor();

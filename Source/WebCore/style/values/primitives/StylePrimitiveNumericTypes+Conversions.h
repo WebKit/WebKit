@@ -42,7 +42,6 @@ double canonicalizeLength(double, CSS::LengthUnit, NoConversionDataRequiredToken
 double canonicalizeLength(double, CSS::LengthUnit, const CSSToLengthConversionData&);
 float NODELETE adjustForZoom(float, const Style::ComputedStyle&);
 bool NODELETE evaluationTimeZoomEnabled(const Style::ComputedStyle&);
-bool NODELETE evaluationTimeZoomEnabled(const BuilderState&);
 
 // MARK: Conversion Data specialization
 
@@ -61,7 +60,7 @@ template<auto R, typename V> struct ConversionDataSpecializer<Style::Length<R, V
                 ? state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
                 : state.cssToLengthConversionData();
         } else if constexpr (R.zoomOptions == CSS::RangeZoomOptions::Unzoomed) {
-            if (evaluationTimeZoomEnabled(state))
+            if (state.evaluationTimeZoomEnabled())
                 return state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f, R.zoomOptions);
 
             return state.useSVGZoomRulesForLength()
@@ -79,7 +78,7 @@ template<auto R, typename V> struct ConversionDataSpecializer<Style::LengthPerce
                 ? state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
                 : state.cssToLengthConversionData();
         } else if constexpr (R.zoomOptions == CSS::RangeZoomOptions::Unzoomed) {
-            if (evaluationTimeZoomEnabled(state))
+            if (state.evaluationTimeZoomEnabled())
                 return state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f, R.zoomOptions);
 
             return state.useSVGZoomRulesForLength()

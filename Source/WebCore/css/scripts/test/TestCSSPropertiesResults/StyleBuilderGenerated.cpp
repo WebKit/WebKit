@@ -43,7 +43,7 @@ public:
     }
     static void applyInitialTestAnimationWrapper(BuilderState& builderState)
     {
-        builderState.style().setTestAnimationWrapper(Style::ComputedStyle::initialTestAnimationWrapper());
+        builderState.style().setTestAnimationWrapper(ComputedStyle::initialTestAnimationWrapper());
     }
     static void applyInheritTestAnimationWrapper(BuilderState& builderState)
     {
@@ -55,7 +55,7 @@ public:
     }
     static void applyInitialTestAnimationWrapperAccelerationAlways(BuilderState& builderState)
     {
-        builderState.style().setTestAnimationWrapperAccelerationAlways(Style::ComputedStyle::initialTestAnimationWrapperAccelerationAlways());
+        builderState.style().setTestAnimationWrapperAccelerationAlways(ComputedStyle::initialTestAnimationWrapperAccelerationAlways());
     }
     static void applyInheritTestAnimationWrapperAccelerationAlways(BuilderState& builderState)
     {
@@ -67,7 +67,7 @@ public:
     }
     static void applyInitialTestAnimationWrapperAccelerationThreadedOnly(BuilderState& builderState)
     {
-        builderState.style().setTestAnimationWrapperAccelerationThreadedOnly(Style::ComputedStyle::initialTestAnimationWrapperAccelerationThreadedOnly());
+        builderState.style().setTestAnimationWrapperAccelerationThreadedOnly(ComputedStyle::initialTestAnimationWrapperAccelerationThreadedOnly());
     }
     static void applyInheritTestAnimationWrapperAccelerationThreadedOnly(BuilderState& builderState)
     {
@@ -79,7 +79,7 @@ public:
     }
     static void applyInitialTestColor(BuilderState& builderState)
     {
-        builderState.style().setTestColor(Style::ComputedStyle::initialTestColor());
+        builderState.style().setTestColor(ComputedStyle::initialTestColor());
     }
     static void applyInheritTestColor(BuilderState& builderState)
     {
@@ -91,7 +91,7 @@ public:
     }
     static void applyInitialTestColorAllowsTypesAbsolute(BuilderState& builderState)
     {
-        builderState.style().setTestColorAllowsTypesAbsolute(Style::ComputedStyle::initialTestColorAllowsTypesAbsolute());
+        builderState.style().setTestColorAllowsTypesAbsolute(ComputedStyle::initialTestColorAllowsTypesAbsolute());
     }
     static void applyInheritTestColorAllowsTypesAbsolute(BuilderState& builderState)
     {
@@ -104,9 +104,9 @@ public:
     static void applyInitialTestColorPropertyWithVisitedLinkSupport(BuilderState& builderState)
     {
         if (builderState.applyPropertyToRegularStyle())
-            builderState.style().setTestColorPropertyWithVisitedLinkSupport(Style::ComputedStyle::initialTestColorPropertyWithVisitedLinkSupport());
+            builderState.style().setTestColorPropertyWithVisitedLinkSupport(ComputedStyle::initialTestColorPropertyWithVisitedLinkSupport());
         if (builderState.applyPropertyToVisitedLinkStyle())
-            builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(Style::ComputedStyle::initialTestColorPropertyWithVisitedLinkSupport());
+            builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(ComputedStyle::initialTestColorPropertyWithVisitedLinkSupport());
     }
     static void applyInheritTestColorPropertyWithVisitedLinkSupport(BuilderState& builderState)
     {
@@ -124,7 +124,7 @@ public:
     }
     static void applyInitialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(Style::ComputedStyle::initialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin());
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(ComputedStyle::initialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin());
         builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState.isAuthorOrigin());
     }
     static void applyInheritTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(BuilderState& builderState)
@@ -139,7 +139,7 @@ public:
     }
     static void applyInitialTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(Style::ComputedStyle::initialTestRenderStyleHasExplicitlySetPolicyAllBorderRadius());
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(ComputedStyle::initialTestRenderStyleHasExplicitlySetPolicyAllBorderRadius());
         builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(false);
     }
     static void applyInheritTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(BuilderState& builderState)
@@ -154,7 +154,7 @@ public:
     }
     static void applyInitialTestRenderStyleHasExplicitlySetPolicyValueOnly(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleHasExplicitlySetPolicyValueOnly(Style::ComputedStyle::initialTestRenderStyleHasExplicitlySetPolicyValueOnly());
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyValueOnly(ComputedStyle::initialTestRenderStyleHasExplicitlySetPolicyValueOnly());
     }
     static void applyInheritTestRenderStyleHasExplicitlySetPolicyValueOnly(BuilderState& builderState)
     {
@@ -167,7 +167,7 @@ public:
     }
     static void applyInitialTestRenderStyleStorageOneLevelEnum(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelEnum(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelEnum());
+        builderState.style().setTestRenderStyleStorageOneLevelEnum(ComputedStyle::initialTestRenderStyleStorageOneLevelEnum());
     }
     static void applyInheritTestRenderStyleStorageOneLevelEnum(BuilderState& builderState)
     {
@@ -179,7 +179,7 @@ public:
     }
     static void applyInitialTestRenderStyleStorageOneLevelRaw(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelRaw(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelRaw());
+        builderState.style().setTestRenderStyleStorageOneLevelRaw(ComputedStyle::initialTestRenderStyleStorageOneLevelRaw());
     }
     static void applyInheritTestRenderStyleStorageOneLevelRaw(BuilderState& builderState)
     {
@@ -191,7 +191,7 @@ public:
     }
     static void applyInitialTestRenderStyleStorageOneLevelReference(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelReference(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelReference());
+        builderState.style().setTestRenderStyleStorageOneLevelReference(ComputedStyle::initialTestRenderStyleStorageOneLevelReference());
     }
     static void applyInheritTestRenderStyleStorageOneLevelReference(BuilderState& builderState)
     {
@@ -203,7 +203,7 @@ public:
     }
     static void applyInitialTestRenderStyleStorageOneLevelValue(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelValue(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelValue());
+        builderState.style().setTestRenderStyleStorageOneLevelValue(ComputedStyle::initialTestRenderStyleStorageOneLevelValue());
     }
     static void applyInheritTestRenderStyleStorageOneLevelValue(BuilderState& builderState)
     {
@@ -215,7 +215,7 @@ public:
     }
     static void applyInitialTestRenderStyleStorageTwoLevelEnum(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelEnum(Style::ComputedStyle::initialTestRenderStyleStorageTwoLevelEnum());
+        builderState.style().setTestRenderStyleStorageTwoLevelEnum(ComputedStyle::initialTestRenderStyleStorageTwoLevelEnum());
     }
     static void applyInheritTestRenderStyleStorageTwoLevelEnum(BuilderState& builderState)
     {
@@ -227,7 +227,7 @@ public:
     }
     static void applyInitialTestRenderStyleStorageTwoLevelRaw(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelRaw(Style::ComputedStyle::initialTestRenderStyleStorageTwoLevelRaw());
+        builderState.style().setTestRenderStyleStorageTwoLevelRaw(ComputedStyle::initialTestRenderStyleStorageTwoLevelRaw());
     }
     static void applyInheritTestRenderStyleStorageTwoLevelRaw(BuilderState& builderState)
     {
@@ -239,7 +239,7 @@ public:
     }
     static void applyInitialTestRenderStyleStorageTwoLevelReference(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelReference(Style::ComputedStyle::initialTestRenderStyleStorageTwoLevelReference());
+        builderState.style().setTestRenderStyleStorageTwoLevelReference(ComputedStyle::initialTestRenderStyleStorageTwoLevelReference());
     }
     static void applyInheritTestRenderStyleStorageTwoLevelReference(BuilderState& builderState)
     {
@@ -251,7 +251,7 @@ public:
     }
     static void applyInitialTestRenderStyleStorageTwoLevelValue(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelValue(Style::ComputedStyle::initialTestRenderStyleStorageTwoLevelValue());
+        builderState.style().setTestRenderStyleStorageTwoLevelValue(ComputedStyle::initialTestRenderStyleStorageTwoLevelValue());
     }
     static void applyInheritTestRenderStyleStorageTwoLevelValue(BuilderState& builderState)
     {
@@ -263,7 +263,7 @@ public:
     }
     static void applyInitialTestSettingsOne(BuilderState& builderState)
     {
-        builderState.style().setTestSettingsOne(Style::ComputedStyle::initialTestSettingsOne());
+        builderState.style().setTestSettingsOne(ComputedStyle::initialTestSettingsOne());
     }
     static void applyInheritTestSettingsOne(BuilderState& builderState)
     {
@@ -275,7 +275,7 @@ public:
     }
     static void applyInitialTestLogicalPropertyGroupPhysicalVertical(BuilderState& builderState)
     {
-        builderState.style().setTestLogicalPropertyGroupPhysicalVertical(Style::ComputedStyle::initialTestLogicalPropertyGroupPhysicalVertical());
+        builderState.style().setTestLogicalPropertyGroupPhysicalVertical(ComputedStyle::initialTestLogicalPropertyGroupPhysicalVertical());
     }
     static void applyInheritTestLogicalPropertyGroupPhysicalVertical(BuilderState& builderState)
     {

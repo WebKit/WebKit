@@ -181,12 +181,12 @@ style/PseudoElementUtilities.cpp
 style/StyleAdjuster.cpp
 style/StyleBuilder.cpp
 style/StyleBuilderCustom.h
-style/StyleBuilderStateInlines.h
 style/StyleDifference.cpp
 style/StyleDocumentScope.cpp
 style/StyleExtractor.cpp
 style/StyleExtractorCustom.h
 style/StyleInvalidationFunctions.h
+style/StyleMutatorInlines.h
 style/StyleResolver.cpp
 style/StyleScope.cpp
 style/StyleTreeResolver.cpp

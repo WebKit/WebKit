@@ -73,7 +73,7 @@ LineWidth::Length LineWidth::snapLengthAsBorderWidth(LineWidth::Length length, f
 
 auto CSSValueConversion<LineWidth>::operator()(BuilderState& state, const CSSValue& value) -> LineWidth
 {
-    if (!state.document().settings().evaluationTimeZoomEnabled()) {
+    if (!state.style().evaluationTimeZoomEnabled()) {
         if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
             switch (keywordValue->valueID()) {
             case CSSValueThin:

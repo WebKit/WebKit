@@ -141,27 +141,30 @@ void Builder::applyHighPriorityProperties()
     if (m_cascade.applyLowPriorityOnly())
         return;
 
-    applyProperties(firstHighPriorityProperty, lastHighPriorityProperty);
-    m_state->updateFont();
+    {
+        MutatorFontUpdateScope scope { m_state->mutator() };
+        applyProperties(firstHighPriorityProperty, lastHighPriorityProperty);
+    }
+
     // This needs to apply before other properties for the `lh` unit, but after updating the font.
     applyProperties(CSSPropertyLineHeight, CSSPropertyLineHeight);
 }
 
 void Builder::applyNonHighPriorityProperties()
 {
-    ASSERT(!m_state->fontDirty());
+    ASSERT(!m_state->mutator().fontDirty());
 
     applyProperties(firstLowPriorityProperty, lastLowPriorityProperty);
     applyLogicalGroupProperties();
     // Any referenced custom properties are already resolved. This will resolve the remaining ones.
     applyCustomProperties();
 
-    ASSERT(!m_state->fontDirty());
+    ASSERT(!m_state->mutator().fontDirty());
 }
 
 void Builder::adjustAfterApplying()
 {
-    Adjuster::adjustFromBuilder(m_state->renderStyle());
+    Adjuster::adjustFromBuilder(m_state->style());
 }
 
 void Builder::applyLogicalGroupProperties()
@@ -773,7 +776,7 @@ std::optional<Builder::CustomPropertyOrKeyword> Builder::resolveCustomPropertyVa
         return { };
 
     if (isFontDependent)
-        m_state->updateFont();
+        m_state->mutator().forceUpdateFont();
 
     auto isAttrTainted = resolvedData->isAttrTainted();
 

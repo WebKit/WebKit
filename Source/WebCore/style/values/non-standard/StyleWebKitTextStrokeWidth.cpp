@@ -42,7 +42,7 @@ auto CSSValueConversion<WebkitTextStrokeWidth>::operator()(BuilderState& state, 
 
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         auto convertFromEms = [&](auto ems) -> WebkitTextStrokeWidth::Length {
-            return emToPx<float>(ems, state.renderStyle());
+            return emToPx<float>(ems, state.style());
         };
 
         switch (keywordValue->valueID()) {

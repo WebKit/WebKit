@@ -1,6 +1,6 @@
-/**
+/*
  * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,8 @@
 
 #pragma once
 
-#include "StyleBuilderState.h"
+#include "StyleMutator.h"
+
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleZoom.h"
@@ -34,17 +35,32 @@
 namespace WebCore {
 namespace Style {
 
-inline void BuilderState::setTextOrientation(TextOrientation orientation) { m_fontDirty |= m_style.setTextOrientation(orientation); }
-inline void BuilderState::setWritingMode(StyleWritingMode mode) { m_fontDirty |= m_style.setWritingMode(mode); }
+inline void Mutator::setTextOrientation(TextOrientation orientation)
+{
+    m_fontDirty |= m_style.setTextOrientation(orientation);
+}
 
-inline void BuilderState::setZoom(Zoom zoom) { m_fontDirty |= m_style.setZoom(zoom); }
-inline void BuilderState::setUsedZoom(float zoom) { m_fontDirty |= m_style.setUsedZoom(zoom); }
+inline void Mutator::setWritingMode(StyleWritingMode mode)
+{
+    m_fontDirty |= m_style.setWritingMode(mode);
+}
 
-inline const FontCascadeDescription& BuilderState::parentFontDescription() { return parentStyle().fontDescription(); }
-inline const FontCascadeDescription& BuilderState::fontDescription() { return m_style.fontDescription(); }
-inline void BuilderState::setFontDescription(FontCascadeDescription&& description) { m_fontDirty |= m_style.setFontDescriptionWithoutUpdate(WTF::move(description)); }
+inline void Mutator::setZoom(Zoom zoom)
+{
+    m_fontDirty |= m_style.setZoom(zoom);
+}
 
-inline void BuilderState::setFontDescriptionKeywordSizeFromIdentifier(CSSValueID identifier)
+inline void Mutator::setUsedZoom(float zoom)
+{
+    m_fontDirty |= m_style.setUsedZoom(zoom);
+}
+
+inline void Mutator::setFontDescription(FontCascadeDescription&& description)
+{
+    m_fontDirty |= m_style.setFontDescriptionWithoutUpdate(WTF::move(description));
+}
+
+inline void Mutator::setFontDescriptionKeywordSizeFromIdentifier(CSSValueID identifier)
 {
     if (m_style.fontDescription().keywordSizeAsIdentifier() == identifier)
         return;
@@ -53,7 +69,7 @@ inline void BuilderState::setFontDescriptionKeywordSizeFromIdentifier(CSSValueID
     m_style.mutableFontDescriptionWithoutUpdate().setKeywordSizeFromIdentifier(identifier);
 }
 
-inline void BuilderState::setFontDescriptionIsAbsoluteSize(bool isAbsoluteSize)
+inline void Mutator::setFontDescriptionIsAbsoluteSize(bool isAbsoluteSize)
 {
     if (m_style.fontDescription().isAbsoluteSize() == isAbsoluteSize)
         return;
@@ -62,7 +78,7 @@ inline void BuilderState::setFontDescriptionIsAbsoluteSize(bool isAbsoluteSize)
     m_style.mutableFontDescriptionWithoutUpdate().setIsAbsoluteSize(isAbsoluteSize);
 }
 
-inline void BuilderState::setFontDescriptionFontSize(float fontSize)
+inline void Mutator::setFontDescriptionFontSize(float fontSize)
 {
     if (m_style.fontDescription().specifiedSize() != fontSize) {
         m_fontDirty = true;
@@ -76,7 +92,7 @@ inline void BuilderState::setFontDescriptionFontSize(float fontSize)
     }
 }
 
-inline void BuilderState::setFontDescriptionFamilies(FontFamilies&& families)
+inline void Mutator::setFontDescriptionFamilies(FontFamilies&& families)
 {
     bool hasAuthorSpecifiedNonGenericPrimaryFont = families.hasAuthorSpecifiedNonGenericPrimaryFont();
     if (m_style.fontDescription().families() == families.toPlatform()
@@ -90,7 +106,7 @@ inline void BuilderState::setFontDescriptionFamilies(FontFamilies&& families)
     fontCascade.updateUseBackslashAsYenSymbol();
 }
 
-inline void BuilderState::setFontDescriptionFeatureSettings(FontFeatureSettings&& featureSettings)
+inline void Mutator::setFontDescriptionFeatureSettings(FontFeatureSettings&& featureSettings)
 {
     if (m_style.fontDescription().featureSettings() == featureSettings.platform())
         return;
@@ -101,7 +117,7 @@ inline void BuilderState::setFontDescriptionFeatureSettings(FontFeatureSettings&
     fontCascade.updateRequiresShaping();
 }
 
-inline void BuilderState::setFontDescriptionFontPalette(FontPalette&& fontPalette)
+inline void Mutator::setFontDescriptionFontPalette(FontPalette&& fontPalette)
 {
     if (m_style.fontDescription().fontPalette() == fontPalette.platform())
         return;
@@ -110,7 +126,7 @@ inline void BuilderState::setFontDescriptionFontPalette(FontPalette&& fontPalett
     m_style.mutableFontDescriptionWithoutUpdate().setFontPalette(fontPalette.platform());
 }
 
-inline void BuilderState::setFontDescriptionFontSizeAdjust(FontSizeAdjust fontSizeAdjust)
+inline void Mutator::setFontDescriptionFontSizeAdjust(FontSizeAdjust fontSizeAdjust)
 {
     if (m_style.fontDescription().fontSizeAdjust() == fontSizeAdjust.platform())
         return;
@@ -119,7 +135,7 @@ inline void BuilderState::setFontDescriptionFontSizeAdjust(FontSizeAdjust fontSi
     m_style.mutableFontDescriptionWithoutUpdate().setFontSizeAdjust(fontSizeAdjust.platform());
 }
 
-inline void BuilderState::setFontDescriptionFontSmoothing(FontSmoothingMode fontSmoothing)
+inline void Mutator::setFontDescriptionFontSmoothing(FontSmoothingMode fontSmoothing)
 {
     if (m_style.fontDescription().fontSmoothing() == fontSmoothing)
         return;
@@ -128,7 +144,7 @@ inline void BuilderState::setFontDescriptionFontSmoothing(FontSmoothingMode font
     m_style.mutableFontDescriptionWithoutUpdate().setFontSmoothing(WTF::move(fontSmoothing));
 }
 
-inline void BuilderState::setFontDescriptionFontStyle(FontStyle fontStyle)
+inline void Mutator::setFontDescriptionFontStyle(FontStyle fontStyle)
 {
     auto& description = m_style.fontDescription();
     if (description.fontStyleSlope() == fontStyle.platformSlope() && description.fontStyleAxis() == fontStyle.platformAxis())
@@ -140,7 +156,7 @@ inline void BuilderState::setFontDescriptionFontStyle(FontStyle fontStyle)
     mutableDescription.setFontStyleAxis(fontStyle.platformAxis());
 }
 
-inline void BuilderState::setFontDescriptionFontSynthesisSmallCaps(FontSynthesisLonghandValue fontSynthesisSmallCaps)
+inline void Mutator::setFontDescriptionFontSynthesisSmallCaps(FontSynthesisLonghandValue fontSynthesisSmallCaps)
 {
     if (m_style.fontDescription().fontSynthesisSmallCaps() == fontSynthesisSmallCaps)
         return;
@@ -149,7 +165,7 @@ inline void BuilderState::setFontDescriptionFontSynthesisSmallCaps(FontSynthesis
     m_style.mutableFontDescriptionWithoutUpdate().setFontSynthesisSmallCaps(WTF::move(fontSynthesisSmallCaps));
 }
 
-inline void BuilderState::setFontDescriptionFontSynthesisStyle(FontSynthesisStyleLonghandValue fontSynthesisStyle)
+inline void Mutator::setFontDescriptionFontSynthesisStyle(FontSynthesisStyleLonghandValue fontSynthesisStyle)
 {
     if (m_style.fontDescription().fontSynthesisStyle() == fontSynthesisStyle)
         return;
@@ -158,7 +174,7 @@ inline void BuilderState::setFontDescriptionFontSynthesisStyle(FontSynthesisStyl
     m_style.mutableFontDescriptionWithoutUpdate().setFontSynthesisStyle(fontSynthesisStyle);
 }
 
-inline void BuilderState::setFontDescriptionFontSynthesisWeight(FontSynthesisLonghandValue fontSynthesisWeight)
+inline void Mutator::setFontDescriptionFontSynthesisWeight(FontSynthesisLonghandValue fontSynthesisWeight)
 {
     if (m_style.fontDescription().fontSynthesisWeight() == fontSynthesisWeight)
         return;
@@ -167,7 +183,7 @@ inline void BuilderState::setFontDescriptionFontSynthesisWeight(FontSynthesisLon
     m_style.mutableFontDescriptionWithoutUpdate().setFontSynthesisWeight(fontSynthesisWeight);
 }
 
-inline void BuilderState::setFontDescriptionKerning(Kerning kerning)
+inline void Mutator::setFontDescriptionKerning(Kerning kerning)
 {
     if (m_style.fontDescription().kerning() == kerning)
         return;
@@ -178,7 +194,7 @@ inline void BuilderState::setFontDescriptionKerning(Kerning kerning)
     fontCascade.updateEnableKerning();
 }
 
-inline void BuilderState::setFontDescriptionOpticalSizing(FontOpticalSizing opticalSizing)
+inline void Mutator::setFontDescriptionOpticalSizing(FontOpticalSizing opticalSizing)
 {
     if (m_style.fontDescription().opticalSizing() == opticalSizing)
         return;
@@ -187,7 +203,7 @@ inline void BuilderState::setFontDescriptionOpticalSizing(FontOpticalSizing opti
     m_style.mutableFontDescriptionWithoutUpdate().setOpticalSizing(opticalSizing);
 }
 
-inline void BuilderState::setFontDescriptionSpecifiedLocale(WebkitLocale&& specifiedLocale)
+inline void Mutator::setFontDescriptionSpecifiedLocale(WebkitLocale&& specifiedLocale)
 {
     if (m_style.fontDescription().specifiedLocale() == specifiedLocale.platform())
         return;
@@ -196,7 +212,7 @@ inline void BuilderState::setFontDescriptionSpecifiedLocale(WebkitLocale&& speci
     m_style.mutableFontDescriptionWithoutUpdate().setSpecifiedLocale(specifiedLocale.takePlatform());
 }
 
-inline void BuilderState::setFontDescriptionTextAutospace(TextAutospace textAutospace)
+inline void Mutator::setFontDescriptionTextAutospace(TextAutospace textAutospace)
 {
     if (m_style.fontDescription().textAutospace() == toPlatform(textAutospace))
         return;
@@ -205,7 +221,7 @@ inline void BuilderState::setFontDescriptionTextAutospace(TextAutospace textAuto
     m_style.mutableFontDescriptionWithoutUpdate().setTextAutospace(toPlatform(textAutospace));
 }
 
-inline void BuilderState::setFontDescriptionTextRenderingMode(TextRenderingMode textRenderingMode)
+inline void Mutator::setFontDescriptionTextRenderingMode(TextRenderingMode textRenderingMode)
 {
     if (m_style.fontDescription().textRenderingMode() == textRenderingMode)
         return;
@@ -217,7 +233,7 @@ inline void BuilderState::setFontDescriptionTextRenderingMode(TextRenderingMode 
     fontCascade.updateRequiresShaping();
 }
 
-inline void BuilderState::setFontDescriptionTextSpacingTrim(TextSpacingTrim textSpacingTrim)
+inline void Mutator::setFontDescriptionTextSpacingTrim(TextSpacingTrim textSpacingTrim)
 {
     if (m_style.fontDescription().textSpacingTrim() == textSpacingTrim.platform())
         return;
@@ -226,7 +242,7 @@ inline void BuilderState::setFontDescriptionTextSpacingTrim(TextSpacingTrim text
     m_style.mutableFontDescriptionWithoutUpdate().setTextSpacingTrim(textSpacingTrim.platform());
 }
 
-inline void BuilderState::setFontDescriptionVariantCaps(FontVariantCaps variantCaps)
+inline void Mutator::setFontDescriptionVariantCaps(FontVariantCaps variantCaps)
 {
     if (m_style.fontDescription().variantCaps() == variantCaps)
         return;
@@ -237,7 +253,7 @@ inline void BuilderState::setFontDescriptionVariantCaps(FontVariantCaps variantC
     fontCascade.updateRequiresShaping();
 }
 
-inline void BuilderState::setFontDescriptionVariantEmoji(FontVariantEmoji variantEmoji)
+inline void Mutator::setFontDescriptionVariantEmoji(FontVariantEmoji variantEmoji)
 {
     if (m_style.fontDescription().variantEmoji() == variantEmoji)
         return;
@@ -248,7 +264,7 @@ inline void BuilderState::setFontDescriptionVariantEmoji(FontVariantEmoji varian
     fontCascade.updateRequiresShaping();
 }
 
-inline void BuilderState::setFontDescriptionVariantPosition(FontVariantPosition variantPosition)
+inline void Mutator::setFontDescriptionVariantPosition(FontVariantPosition variantPosition)
 {
     if (m_style.fontDescription().variantPosition() == variantPosition)
         return;
@@ -259,7 +275,7 @@ inline void BuilderState::setFontDescriptionVariantPosition(FontVariantPosition 
     fontCascade.updateRequiresShaping();
 }
 
-inline void BuilderState::setFontDescriptionVariationSettings(FontVariationSettings&& variationSettings)
+inline void Mutator::setFontDescriptionVariationSettings(FontVariationSettings&& variationSettings)
 {
     if (m_style.fontDescription().variationSettings() == variationSettings.platform())
         return;
@@ -268,7 +284,7 @@ inline void BuilderState::setFontDescriptionVariationSettings(FontVariationSetti
     m_style.mutableFontDescriptionWithoutUpdate().setVariationSettings(variationSettings.takePlatform());
 }
 
-inline void BuilderState::setFontDescriptionWeight(FontWeight weight)
+inline void Mutator::setFontDescriptionWeight(FontWeight weight)
 {
     if (m_style.fontDescription().weight() == weight.platform())
         return;
@@ -277,7 +293,7 @@ inline void BuilderState::setFontDescriptionWeight(FontWeight weight)
     m_style.mutableFontDescriptionWithoutUpdate().setWeight(weight.platform());
 }
 
-inline void BuilderState::setFontDescriptionWidth(FontWidth width)
+inline void Mutator::setFontDescriptionWidth(FontWidth width)
 {
     if (m_style.fontDescription().width() == width.platform())
         return;
@@ -286,7 +302,7 @@ inline void BuilderState::setFontDescriptionWidth(FontWidth width)
     m_style.mutableFontDescriptionWithoutUpdate().setWidth(width.platform());
 }
 
-inline void BuilderState::setFontDescriptionVariantAlternates(FontVariantAlternates&& variantAlternates)
+inline void Mutator::setFontDescriptionVariantAlternates(FontVariantAlternates&& variantAlternates)
 {
     if (m_style.fontDescription().variantAlternates() == variantAlternates.platform())
         return;
@@ -297,14 +313,14 @@ inline void BuilderState::setFontDescriptionVariantAlternates(FontVariantAlterna
     fontCascade.updateRequiresShaping();
 }
 
-inline void BuilderState::setFontDescriptionVariantEastAsian(FontVariantEastAsian variantEastAsian)
+inline void Mutator::setFontDescriptionVariantEastAsian(FontVariantEastAsian variantEastAsian)
 {
     setFontDescriptionVariantEastAsianVariant(variantEastAsian.platform().variant);
     setFontDescriptionVariantEastAsianWidth(variantEastAsian.platform().width);
     setFontDescriptionVariantEastAsianRuby(variantEastAsian.platform().ruby);
 }
 
-inline void BuilderState::setFontDescriptionVariantEastAsianVariant(FontVariantEastAsianVariant variantEastAsianVariant)
+inline void Mutator::setFontDescriptionVariantEastAsianVariant(FontVariantEastAsianVariant variantEastAsianVariant)
 {
     if (m_style.fontDescription().variantEastAsianVariant() == variantEastAsianVariant)
         return;
@@ -315,7 +331,7 @@ inline void BuilderState::setFontDescriptionVariantEastAsianVariant(FontVariantE
     fontCascade.updateRequiresShaping();
 }
 
-inline void BuilderState::setFontDescriptionVariantEastAsianWidth(FontVariantEastAsianWidth variantEastAsianWidth)
+inline void Mutator::setFontDescriptionVariantEastAsianWidth(FontVariantEastAsianWidth variantEastAsianWidth)
 {
     if (m_style.fontDescription().variantEastAsianWidth() == variantEastAsianWidth)
         return;
@@ -326,7 +342,7 @@ inline void BuilderState::setFontDescriptionVariantEastAsianWidth(FontVariantEas
     fontCascade.updateRequiresShaping();
 }
 
-inline void BuilderState::setFontDescriptionVariantEastAsianRuby(FontVariantEastAsianRuby variantEastAsianRuby)
+inline void Mutator::setFontDescriptionVariantEastAsianRuby(FontVariantEastAsianRuby variantEastAsianRuby)
 {
     if (m_style.fontDescription().variantEastAsianRuby() == variantEastAsianRuby)
         return;
@@ -337,7 +353,7 @@ inline void BuilderState::setFontDescriptionVariantEastAsianRuby(FontVariantEast
     fontCascade.updateRequiresShaping();
 }
 
-inline void BuilderState::setFontDescriptionKeywordSize(unsigned keywordSize)
+inline void Mutator::setFontDescriptionKeywordSize(unsigned keywordSize)
 {
     if (m_style.fontDescription().keywordSize() == keywordSize)
         return;
@@ -346,7 +362,7 @@ inline void BuilderState::setFontDescriptionKeywordSize(unsigned keywordSize)
     m_style.mutableFontDescriptionWithoutUpdate().setKeywordSize(keywordSize);
 }
 
-inline void BuilderState::setFontDescriptionVariantLigatures(FontVariantLigatures variantLigatures)
+inline void Mutator::setFontDescriptionVariantLigatures(FontVariantLigatures variantLigatures)
 {
     setFontDescriptionVariantCommonLigatures(variantLigatures.platform().common);
     setFontDescriptionVariantDiscretionaryLigatures(variantLigatures.platform().discretionary);
@@ -354,7 +370,7 @@ inline void BuilderState::setFontDescriptionVariantLigatures(FontVariantLigature
     setFontDescriptionVariantContextualAlternates(variantLigatures.platform().contextual);
 }
 
-inline void BuilderState::setFontDescriptionVariantCommonLigatures(WebCore::FontVariantLigatures variantCommonLigatures)
+inline void Mutator::setFontDescriptionVariantCommonLigatures(WebCore::FontVariantLigatures variantCommonLigatures)
 {
     if (m_style.fontDescription().variantCommonLigatures() == variantCommonLigatures)
         return;
@@ -365,7 +381,7 @@ inline void BuilderState::setFontDescriptionVariantCommonLigatures(WebCore::Font
     fontCascade.updateRequiresShaping();
 }
 
-inline void BuilderState::setFontDescriptionVariantDiscretionaryLigatures(WebCore::FontVariantLigatures variantDiscretionaryLigatures)
+inline void Mutator::setFontDescriptionVariantDiscretionaryLigatures(WebCore::FontVariantLigatures variantDiscretionaryLigatures)
 {
     if (m_style.fontDescription().variantDiscretionaryLigatures() == variantDiscretionaryLigatures)
         return;
@@ -376,7 +392,7 @@ inline void BuilderState::setFontDescriptionVariantDiscretionaryLigatures(WebCor
     fontCascade.updateRequiresShaping();
 }
 
-inline void BuilderState::setFontDescriptionVariantHistoricalLigatures(WebCore::FontVariantLigatures variantHistoricalLigatures)
+inline void Mutator::setFontDescriptionVariantHistoricalLigatures(WebCore::FontVariantLigatures variantHistoricalLigatures)
 {
     if (m_style.fontDescription().variantHistoricalLigatures() == variantHistoricalLigatures)
         return;
@@ -387,7 +403,7 @@ inline void BuilderState::setFontDescriptionVariantHistoricalLigatures(WebCore::
     fontCascade.updateRequiresShaping();
 }
 
-inline void BuilderState::setFontDescriptionVariantContextualAlternates(WebCore::FontVariantLigatures variantContextualAlternates)
+inline void Mutator::setFontDescriptionVariantContextualAlternates(WebCore::FontVariantLigatures variantContextualAlternates)
 {
     if (m_style.fontDescription().variantContextualAlternates() == variantContextualAlternates)
         return;
@@ -398,7 +414,7 @@ inline void BuilderState::setFontDescriptionVariantContextualAlternates(WebCore:
     fontCascade.updateRequiresShaping();
 }
 
-inline void BuilderState::setFontDescriptionVariantNumeric(FontVariantNumeric variantNumeric)
+inline void Mutator::setFontDescriptionVariantNumeric(FontVariantNumeric variantNumeric)
 {
     setFontDescriptionVariantNumericFigure(variantNumeric.platform().figure);
     setFontDescriptionVariantNumericSpacing(variantNumeric.platform().spacing);
@@ -407,7 +423,7 @@ inline void BuilderState::setFontDescriptionVariantNumeric(FontVariantNumeric va
     setFontDescriptionVariantNumericSlashedZero(variantNumeric.platform().slashedZero);
 }
 
-inline void BuilderState::setFontDescriptionVariantNumericFigure(FontVariantNumericFigure variantNumericFigure)
+inline void Mutator::setFontDescriptionVariantNumericFigure(FontVariantNumericFigure variantNumericFigure)
 {
     if (m_style.fontDescription().variantNumericFigure() == variantNumericFigure)
         return;
@@ -418,7 +434,7 @@ inline void BuilderState::setFontDescriptionVariantNumericFigure(FontVariantNume
     fontCascade.updateRequiresShaping();
 }
 
-inline void BuilderState::setFontDescriptionVariantNumericSpacing(FontVariantNumericSpacing variantNumericSpacing)
+inline void Mutator::setFontDescriptionVariantNumericSpacing(FontVariantNumericSpacing variantNumericSpacing)
 {
     if (m_style.fontDescription().variantNumericSpacing() == variantNumericSpacing)
         return;
@@ -429,7 +445,7 @@ inline void BuilderState::setFontDescriptionVariantNumericSpacing(FontVariantNum
     fontCascade.updateRequiresShaping();
 }
 
-inline void BuilderState::setFontDescriptionVariantNumericFraction(FontVariantNumericFraction variantNumericFraction)
+inline void Mutator::setFontDescriptionVariantNumericFraction(FontVariantNumericFraction variantNumericFraction)
 {
     if (m_style.fontDescription().variantNumericFraction() == variantNumericFraction)
         return;
@@ -440,7 +456,7 @@ inline void BuilderState::setFontDescriptionVariantNumericFraction(FontVariantNu
     fontCascade.updateRequiresShaping();
 }
 
-inline void BuilderState::setFontDescriptionVariantNumericOrdinal(FontVariantNumericOrdinal variantNumericOrdinal)
+inline void Mutator::setFontDescriptionVariantNumericOrdinal(FontVariantNumericOrdinal variantNumericOrdinal)
 {
     if (m_style.fontDescription().variantNumericOrdinal() == variantNumericOrdinal)
         return;
@@ -451,7 +467,7 @@ inline void BuilderState::setFontDescriptionVariantNumericOrdinal(FontVariantNum
     fontCascade.updateRequiresShaping();
 }
 
-inline void BuilderState::setFontDescriptionVariantNumericSlashedZero(FontVariantNumericSlashedZero variantNumericSlashedZero)
+inline void Mutator::setFontDescriptionVariantNumericSlashedZero(FontVariantNumericSlashedZero variantNumericSlashedZero)
 {
     if (m_style.fontDescription().variantNumericSlashedZero() == variantNumericSlashedZero)
         return;
@@ -462,5 +478,5 @@ inline void BuilderState::setFontDescriptionVariantNumericSlashedZero(FontVarian
     fontCascade.updateRequiresShaping();
 }
 
-}
-}
+} // namespace Style
+} // namespace WebCore
