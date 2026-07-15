@@ -348,6 +348,35 @@ void InspectorDOMAgent::didCreateFrontendAndBackend()
 #endif
 }
 
+#if ENABLE(VIDEO)
+static void forEachInspectedNodeEventName(Node& node, const Function<void(const AtomString&)>& callback)
+{
+#if ENABLE(FULLSCREEN_API)
+    if (isAnyOf<Document, HTMLMediaElement>(node))
+        callback(eventNames().webkitfullscreenchangeEvent);
+#endif // ENABLE(FULLSCREEN_API)
+
+    if (is<HTMLMediaElement>(node)) {
+        callback(eventNames().abortEvent);
+        callback(eventNames().canplayEvent);
+        callback(eventNames().canplaythroughEvent);
+        callback(eventNames().emptiedEvent);
+        callback(eventNames().endedEvent);
+        callback(eventNames().loadeddataEvent);
+        callback(eventNames().loadedmetadataEvent);
+        callback(eventNames().loadstartEvent);
+        callback(eventNames().pauseEvent);
+        callback(eventNames().playEvent);
+        callback(eventNames().playingEvent);
+        callback(eventNames().seekedEvent);
+        callback(eventNames().seekingEvent);
+        callback(eventNames().stalledEvent);
+        callback(eventNames().suspendEvent);
+        callback(eventNames().waitingEvent);
+    }
+}
+#endif // ENABLE(VIDEO)
+
 void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_history.reset();
@@ -363,6 +392,28 @@ void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReaso
     Ref overlay = m_overlay.get();
     overlay->clearAllGridOverlays();
     overlay->clearAllFlexOverlays();
+
+#if ENABLE(VIDEO)
+    if (m_eventFiredCallback) {
+        auto removeFromNode = [eventFiredCallback = Ref { *m_eventFiredCallback }](Node& node) {
+            forEachInspectedNodeEventName(node, [node = Ref { node }, eventFiredCallback](const AtomString& eventName) {
+                node->removeEventListener(eventName, eventFiredCallback.get(), { });
+            });
+        };
+
+        if (RefPtr document = m_document)
+            removeFromNode(*document);
+
+        for (auto& mediaElement : HTMLMediaElement::allMediaElements())
+            removeFromNode(Ref { mediaElement.get() });
+
+        m_eventFiredCallback = nullptr;
+    }
+
+    if (m_mediaMetricsTimer.isActive())
+        m_mediaMetricsTimer.stop();
+    m_mediaMetrics.clear();
+#endif // ENABLE(VIDEO)
 
     Ref { m_instrumentingAgents.get() }->setPersistentDOMAgent(nullptr);
     m_documentRequested = false;
@@ -2648,35 +2699,14 @@ Inspector::Protocol::DOM::NodeId InspectorDOMAgent::identifierForNode(Node& node
 void InspectorDOMAgent::addEventListenersToNode(Node& node)
 {
 #if ENABLE(VIDEO)
-    auto callback = EventFiredCallback::create(*this);
+    if (!m_eventFiredCallback)
+        m_eventFiredCallback = EventFiredCallback::create(*this);
 
-    auto createEventListener = [&](const AtomString& eventName) {
-        node.addEventListener(eventName, callback.copyRef());
-    };
-
-#if ENABLE(FULLSCREEN_API)
-    if (isAnyOf<Document, HTMLMediaElement>(node))
-        createEventListener(eventNames().webkitfullscreenchangeEvent);
-#endif // ENABLE(FULLSCREEN_API)
+    forEachInspectedNodeEventName(node, [node = Ref { node }, eventFiredCallback = Ref { *m_eventFiredCallback }](const AtomString& eventName) {
+        node->addEventListener(eventName, eventFiredCallback.copyRef());
+    });
 
     if (is<HTMLMediaElement>(node)) {
-        createEventListener(eventNames().abortEvent);
-        createEventListener(eventNames().canplayEvent);
-        createEventListener(eventNames().canplaythroughEvent);
-        createEventListener(eventNames().emptiedEvent);
-        createEventListener(eventNames().endedEvent);
-        createEventListener(eventNames().loadeddataEvent);
-        createEventListener(eventNames().loadedmetadataEvent);
-        createEventListener(eventNames().loadstartEvent);
-        createEventListener(eventNames().pauseEvent);
-        createEventListener(eventNames().playEvent);
-        createEventListener(eventNames().playingEvent);
-        createEventListener(eventNames().seekedEvent);
-        createEventListener(eventNames().seekingEvent);
-        createEventListener(eventNames().stalledEvent);
-        createEventListener(eventNames().suspendEvent);
-        createEventListener(eventNames().waitingEvent);
-
         if (!m_mediaMetricsTimer.isActive())
             m_mediaMetricsTimer.start(0_s, 1_s / 15.);
     }
