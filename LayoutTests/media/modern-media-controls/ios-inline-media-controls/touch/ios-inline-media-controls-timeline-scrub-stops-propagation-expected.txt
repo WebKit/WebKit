@@ -1,11 +1,12 @@
-Test that scrubbing the timeline does not propagate touch events to parent elements.
+Test that touch events on the timeline scrubber do not propagate to parent elements, while touch events on the bare video surface do.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS containerReceivedTouchStart is false
-PASS containerReceivedTouchMove is false
-PASS containerReceivedTouchEnd is false
+A touch on the timeline scrubber should not propagate to the video element:
+PASS containerReceivedTouch is false
+A touch on the bare media controls surface should propagate to the video element:
+PASS containerReceivedTouch is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
