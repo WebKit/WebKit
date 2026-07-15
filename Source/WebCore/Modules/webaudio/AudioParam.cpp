@@ -378,7 +378,7 @@ void AudioParam::disconnect(AudioNodeOutput* output)
     if (!output)
         return;
 
-    INFO_LOG(LOGIDENTIFIER, output->node()->nodeType());
+    INFO_LOG_IF(!context()->isAudioThread(), LOGIDENTIFIER, output->node()->nodeType());
 
     if (removeOutput((*output)))
         output->removeParam(this);
