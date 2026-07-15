@@ -95,10 +95,12 @@ typedef NS_ENUM(uint8_t, WKBridgeVertexSemantic) {
 @property (nonatomic, readonly) long bufferIndex;
 @property (nonatomic, readonly) long bufferOffset;
 @property (nonatomic, readonly) long bufferStride;
+@property (nonatomic, readonly) MTLVertexStepFunction stepFunction;
+@property (nonatomic, readonly) long stepRate;
 
 - (instancetype)init NS_UNAVAILABLE;
 
-- (instancetype)initWithBufferIndex:(long)bufferIndex bufferOffset:(long)bufferOffset bufferStride:(long)bufferStride NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithBufferIndex:(long)bufferIndex bufferOffset:(long)bufferOffset bufferStride:(long)bufferStride stepFunction:(MTLVertexStepFunction)stepFunction stepRate:(long)stepRate NS_DESIGNATED_INITIALIZER;
 
 @end
 
@@ -565,10 +567,20 @@ struct ImageAsset {
     ImageAssetSwizzle swizzle { };
 };
 
+enum class VertexStepFunction : uint8_t {
+    Constant,
+    PerVertex,
+    PerInstance,
+    PerPatch,
+    PerPatchControlPoint,
+};
+
 struct VertexLayout {
     long bufferIndex;
     long bufferOffset;
     long bufferStride;
+    VertexStepFunction stepFunction;
+    long stepRate;
 };
 
 struct MeshPart {

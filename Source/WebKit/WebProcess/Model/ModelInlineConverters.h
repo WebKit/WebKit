@@ -191,6 +191,24 @@ static WebModel::IndexType toIndexType(MTLIndexType indexType)
     }
 }
 
+static WebModel::VertexStepFunction toStepFunction(MTLVertexStepFunction stepFunction)
+{
+    switch (stepFunction) {
+    case MTLVertexStepFunctionConstant:
+        return WebModel::VertexStepFunction::Constant;
+    case MTLVertexStepFunctionPerVertex:
+        return WebModel::VertexStepFunction::PerVertex;
+    case MTLVertexStepFunctionPerInstance:
+        return WebModel::VertexStepFunction::PerInstance;
+    case MTLVertexStepFunctionPerPatch:
+        return WebModel::VertexStepFunction::PerPatch;
+    case MTLVertexStepFunctionPerPatchControlPoint:
+        return WebModel::VertexStepFunction::PerPatchControlPoint;
+    default:
+        RELEASE_ASSERT_NOT_REACHED("%s - USD file is corrupt", __PRETTY_FUNCTION__);
+    }
+}
+
 static WebCore::WebGPU::TextureViewDimension toTextureViewDimension(MTLTextureType textureType)
 {
     switch (textureType) {
@@ -454,6 +472,8 @@ static WebModel::VertexLayout convert(WKBridgeVertexLayout *layout)
         .bufferIndex = layout.bufferIndex,
         .bufferOffset = layout.bufferOffset,
         .bufferStride = layout.bufferStride,
+        .stepFunction = toStepFunction(layout.stepFunction),
+        .stepRate = layout.stepRate,
     };
 }
 static Vector<WebModel::VertexLayout> convert(NSArray<WKBridgeVertexLayout *> *layouts)
