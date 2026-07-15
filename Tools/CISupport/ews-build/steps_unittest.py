@@ -6817,6 +6817,50 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         return self.run_step()
 
 
+class TestCleanWebKitBuildIfBaseChanged(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def test_passes_base_ref_to_script(self):
+        self.setup_step(CleanWebKitBuildIfBaseChanged())
+        self.setProperty('github.base.ref', 'safari-7625-branch')
+
+        self.expectRemoteCommands(
+            ExpectShell(command=['python3', 'Tools/CISupport/clean-webkitbuild-if-base-changed', '--current-branch', 'safari-7625-branch'], workdir='wkdir', timeout=900, log_environ=False).exit(0)
+            .log('stdio', stdout="Base branch unchanged or first build ('safari-7625-branch'); keeping WebKitBuild\n"),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Checked base branch for WebKitBuild reuse')
+        return self.run_step()
+
+    def test_defaults_to_main_when_base_ref_unset(self):
+        self.setup_step(CleanWebKitBuildIfBaseChanged())
+
+        self.expectRemoteCommands(
+            ExpectShell(command=['python3', 'Tools/CISupport/clean-webkitbuild-if-base-changed', '--current-branch', DEFAULT_BRANCH], workdir='wkdir', timeout=900, log_environ=False).exit(0)
+            .log('stdio', stdout="Base branch unchanged or first build ('main'); keeping WebKitBuild\n"),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Checked base branch for WebKitBuild reuse')
+        return self.run_step()
+
+    def test_failure_does_not_flunk_build(self):
+        # The script always exits 0 in practice, and the step sets
+        # haltOnFailure/flunkOnFailure/warnOnFailure to False, so even if the script
+        # were to fail it reports an ignored issue rather than blaming the change.
+        self.setup_step(CleanWebKitBuildIfBaseChanged())
+        self.setProperty('github.base.ref', 'main')
+
+        self.expectRemoteCommands(
+            ExpectShell(command=['python3', 'Tools/CISupport/clean-webkitbuild-if-base-changed', '--current-branch', 'main'], workdir='wkdir', timeout=900, log_environ=False).exit(2)
+            .log('stdio', stdout=''),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Encountered an issue checking the base branch (ignored)')
+        return self.run_step()
+
+
 class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         return self.setup_test_build_step()
