@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/explicit-grid-size-001.html
@@ -95,6 +93,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-layout-repeat-notation-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-layout-repeat-notation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-limits-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-minimum-contribution-fixed-size-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-minimum-contribution-with-percentages.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-percentage-rows-indefinite-height-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-percentage-rows-indefinite-height-002.html

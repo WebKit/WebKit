@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/anonymous-grid-items-001-ref.html
@@ -23,6 +21,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-2x2-blue-yellow-lime-magenta.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-auto-repeat-multiple-values-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-block-axis-alignment-auto-margins-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-block-axis-alignment-auto-margins-explicit-row-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-calc-margins-explicit-row-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-container-auto-margins-scrollbars-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-container-baseline-synthesized-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/reference/grid-container-scrollbars-sizing-001-ref.html

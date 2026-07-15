@@ -1,0 +1,12 @@
+Top
+
+Long text long enough to wrap onto multiple lines so that overflow:hidden can clip the overflowing portion
+Top
+
+Long text long enough to wrap onto multiple lines so that overflow:hidden can clip the overflowing portion
+Top
+
+Long text long enough to wrap onto multiple lines so that overflow:hidden can clip the overflowing portion
+
+PASS Sibling nested subgrids with overflow:hidden leaves must size their rows identically
+

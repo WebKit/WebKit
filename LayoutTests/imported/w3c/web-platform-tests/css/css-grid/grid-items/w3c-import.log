@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/anonymous-grid-item-001-expected.html
@@ -90,6 +88,25 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-intrinsic-maximums-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-intrinsic-maximums-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-intrinsic-maximums.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-block-axis-content-contribution-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-block-axis-content-contribution-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-block-axis-content-contribution-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-block-axis-content-contribution-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-block-axis-content-contribution-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-block-axis-content-contribution-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-block-axis-content-contribution-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-border-padding-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-border-padding-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-border-padding-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-border-padding-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-border-padding-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-border-padding-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-border-padding-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-border-padding-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-border-padding-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-border-padding-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-border-padding-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-border-padding-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-containing-block-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-containing-block-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-containing-block-002-expected.xht
@@ -98,6 +115,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-containing-block-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-containing-block-004-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-containing-block-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-direction-rtl-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-direction-rtl-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-direction-rtl-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-dynamic-min-contribution-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-flex-container-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-001-expected.xht
@@ -112,6 +132,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-margins-and-writing-modes-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-margins-and-writing-modes-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-min-auto-size-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-min-height-overrides-fixed-height-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-min-height-overrides-fixed-height-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-min-width-overrides-fixed-width-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-min-width-overrides-fixed-width-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-minimum-size-single-axis-scroll-container.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-minmax-img-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-minmax-img-001.html
