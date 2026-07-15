@@ -58,6 +58,10 @@
         abortController.abort();
       }
       result = await promise;
+      // A successful get()/create() yields a Credential, which is not structured-cloneable.
+      // Post a cloneable projection so cross-origin callers can read the outcome.
+      if (result && typeof result === "object" && "protocol" in result)
+        result = { protocol: result.protocol, data: result.data };
     } catch (error) {
       result = {
         constructor: error.constructor.name,

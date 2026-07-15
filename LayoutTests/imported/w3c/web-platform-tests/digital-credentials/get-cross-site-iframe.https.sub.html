@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<title>Digital Credential API: get() works from a cross-site iframe (document-origin request validation).</title>
+<link rel="help" href="https://bugs.webkit.org/show_bug.cgi?id=314463">
+<script src="/common/get-host-info.sub.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js?feature=bidi"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<body></body>
+<script type="module">
+  import { makeGetOptions } from "./support/helper.js";
+
+  const hostInfo = get_host_info();
+
+  promise_test(async (t) => {
+    await test_driver.set_virtual_wallet_behavior("respond", "org-iso-mdoc", { value: "cross-site-ok" });
+    t.add_cleanup(() => test_driver.set_virtual_wallet_behavior("clear"));
+
+    const iframe = document.createElement("iframe");
+    iframe.allow = "digital-credentials-get *";
+    t.add_cleanup(() => iframe.remove());
+    await new Promise((resolve) => {
+      iframe.onload = resolve;
+      // Registrably-different site from the top-level document => cross-site sub-frame.
+      iframe.src = new URL("/digital-credentials/support/iframe.html", hostInfo.HTTPS_NOTSAMESITE_ORIGIN).href;
+      document.body.appendChild(iframe);
+    });
+    iframe.focus();
+
+    await test_driver.bless("User activation");
+
+    const options = makeGetOptions({ protocol: "org-iso-mdoc" });
+    const { data: result } = await new Promise((resolve) => {
+      const callback = (e) => {
+        if (e.source === iframe.contentWindow) {
+          window.removeEventListener("message", callback);
+          resolve(e);
+        }
+      };
+      window.addEventListener("message", callback);
+      iframe.contentWindow.postMessage({ action: "get", options, needsActivation: true }, "*");
+    });
+
+    assert_equals(result.protocol, "org-iso-mdoc", `get() should resolve, got: ${JSON.stringify(result)}`);
+    assert_equals(result.data.value, "cross-site-ok");
+  }, "navigator.credentials.get() from a cross-site iframe resolves (request is validated against the iframe's document origin).");
+</script>
