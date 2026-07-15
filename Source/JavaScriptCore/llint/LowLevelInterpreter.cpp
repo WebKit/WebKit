@@ -143,6 +143,8 @@ public:
     ALWAYS_INLINE uintptr_t u() const { return m_value; }
     ALWAYS_INLINE int32_t i32() const { return m_value; }
     ALWAYS_INLINE uint32_t u32() const { return m_value; }
+    ALWAYS_INLINE int16_t i16() const { return m_value; }
+    ALWAYS_INLINE uint16_t u16() const { return m_value; }
     ALWAYS_INLINE int8_t i8() const { return m_value; }
     ALWAYS_INLINE uint8_t u8() const { return m_value; }
 
