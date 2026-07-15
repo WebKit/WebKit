@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutIntegrationGridCoverage.h"
 
+#include "BaselineAlignmentInlines.h"
 #include "Document.h"
 #include "RenderChildIterator.h"
 #include "RenderDescendantIterator.h"
@@ -285,8 +286,10 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridFormattingContextIntegrationDisabled, reasons, reasonCollectionMode);
 
     CheckedRef renderGridStyle = renderGrid.style();
-
-    if (renderGridStyle->display() == Style::DisplayType::InlineGrid)
+    CheckedPtr gridParentStyle = renderGrid.parent() ? &renderGrid.parent()->style() : nullptr;
+    if (renderGridStyle->display() == Style::DisplayType::InlineGrid
+        || isBaselinePosition(renderGridStyle->justifySelf().resolve(gridParentStyle).position())
+        || isBaselinePosition(renderGridStyle->alignSelf().resolve(gridParentStyle).position()))
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridNeedsBaseline, reasons, reasonCollectionMode);
 
     if (renderGridStyle->display() != Style::DisplayType::BlockGrid)
