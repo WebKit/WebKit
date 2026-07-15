@@ -904,6 +904,23 @@ void WebBackForwardList::backForwardGoToItemShared(BackForwardItemIdentifier ite
     if (!item)
         return completionHandler(rawCounts());
 
+    // A stale/duplicate BackForwardGoToItem from an earlier split-traversal leg can arrive after the
+    // index already advanced to a later leg's destination; ignore an index move opposite to the
+    // in-flight traversal direction so it cannot clobber the current item back (webkit.org/b/318728).
+    if (RefPtr page = m_page.get(); page && m_currentIndex) {
+        if (int32_t direction = page->inFlightTraversalDirection()) {
+            size_t targetIndex = m_entries.findIf([&](auto& entry) {
+                return entry.ptr() == item.get();
+            });
+            if (targetIndex != notFound) {
+                bool movesForward = targetIndex > *m_currentIndex;
+                bool movesBackward = targetIndex < *m_currentIndex;
+                if ((direction < 0 && movesForward) || (direction > 0 && movesBackward))
+                    return completionHandler(rawCounts());
+            }
+        }
+    }
+
     goToItem(*item);
     completionHandler(rawCounts());
 }

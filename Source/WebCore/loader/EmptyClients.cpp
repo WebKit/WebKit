@@ -1069,7 +1069,11 @@ void EmptyFrameLoaderClient::shouldGoToHistoryItemAsync(HistoryItem&, Completion
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void EmptyFrameLoaderClient::dispatchGoToBackForwardItemAtIndex(int, FrameLoadType)
+void EmptyFrameLoaderClient::dispatchGoToBackForwardItemAtIndex(int)
+{
+}
+
+void EmptyFrameLoaderClient::dispatchEnqueueHistoryTraversalDelta(int)
 {
 }
 

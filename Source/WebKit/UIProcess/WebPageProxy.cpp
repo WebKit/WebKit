@@ -129,6 +129,7 @@
 #include "RestrictedOpenerType.h"
 #include "RunJavaScriptParameters.h"
 #include "SandboxExtension.h"
+#include "SessionHistoryTraversalQueue.h"
 #include "SharedBufferReference.h"
 #include "SpeechRecognitionPermissionManager.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSource.h"
@@ -306,6 +307,7 @@
 #include <ranges>
 #include <stdio.h>
 #include <wtf/CallbackAggregator.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/CoroutineUtilities.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/FileSystem.h>
@@ -315,6 +317,7 @@
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/URLHash.h>
 #include <wtf/URLParser.h>
@@ -914,6 +917,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #endif
     , m_navigationState(makeUniqueRefWithoutRefCountedCheck<WebNavigationState>(*this))
     , m_generatePageLoadTimingTimer(RunLoop::mainSingleton(), "WebPageProxy::GeneratePageLoadTimingTimer"_s, this, &WebPageProxy::didEndNetworkRequestsForPageLoadTimingTimerFired)
+    , m_sessionHistoryTraversalQueue(makeUniqueRefWithoutRefCountedCheck<SessionHistoryTraversalQueue>(*this))
 #if PLATFORM(COCOA)
     , m_textIndicatorFadeTimer(RunLoop::mainSingleton(), "WebPageProxy::TextIndicatorFadeTimer"_s, this, &WebPageProxy::startTextIndicatorFadeOut)
 #endif
@@ -1901,6 +1905,8 @@ void WebPageProxy::close()
     abortPendingDigitalCredentialWaitHandlers("Page closed."_s);
 #endif
 
+    m_sessionHistoryTraversalQueue->cancel();
+
     // Make sure we do this before we clear the UIClient so that we can ask the UIClient
     // to release the wake locks.
     internals().sleepDisablers.clear();
@@ -2879,10 +2885,12 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
             anySent = sendGoToBackForwardItemForFrame(protect(item->mainFrameItem()), navigation->navigationID(), frameLoadType, shouldRestoreFromBackForwardCache, publicSuffix);
         if (!anySent)
             WEBPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "goToBackForwardItem: walk dispatched no GoToBackForwardItem messages — back/forward action will be silently dropped");
+        navigation->setBackForwardTraversalWasDispatched(anySent);
     } else {
         process->markProcessAsRecentlyUsed();
         process->send(Messages::WebPage::GoToBackForwardItem({ navigation->navigationID(), copyFrameStateForBackForwardNavigation(frameItem), frameLoadType, ShouldTreatAsContinuingLoad::No, std::nullopt, m_lastNavigationWasAppInitiated, shouldRestoreFromBackForwardCache, std::nullopt, WTF::move(publicSuffix), { }, WebCore::ProcessSwapDisposition::None }), webPageIDInProcess(process));
         process->startResponsivenessTimer();
+        navigation->setBackForwardTraversalWasDispatched(true);
     }
 
     return RefPtr<API::Navigation> { WTF::move(navigation) };
@@ -3087,15 +3095,33 @@ void WebPageProxy::shouldGoToBackForwardListItemSync(BackForwardItemIdentifier i
     shouldGoToBackForwardListItem(itemID, false, WTF::move(completionHandler));
 }
 
-void WebPageProxy::goToBackForwardItemAtIndex(int32_t steps, FrameLoadType frameLoadType)
+void WebPageProxy::goToBackForwardItemAtIndex(int32_t steps)
+{
+    goToBackForwardItemAtIndexForTraversal(steps);
+}
+
+RefPtr<API::Navigation> WebPageProxy::goToBackForwardItemAtIndexForTraversal(int32_t steps)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "goToBackForwardItemAtIndex: steps=%d", steps);
 
     RefPtr item = backForwardListWrapper().itemAtDeltaFromCurrentIndex(steps, AllowSkippingBackForwardItems::No);
     if (!item)
-        return;
+        return nullptr;
 
-    goToBackForwardItem(frameItemForLegacyTraversalRouting(*item, "goToBackForwardItemAtIndex"_s), frameLoadType);
+    // Report the navigation only when a traversal was actually dispatched — a resolved item whose
+    // per-frame walk sends nothing would otherwise leave the traversal queue waiting forever.
+    RefPtr navigation = goToBackForwardItem(frameItemForLegacyTraversalRouting(*item, "goToBackForwardItemAtIndex"_s), FrameLoadType::IndexedBackForward);
+    return navigation && navigation->backForwardTraversalWasDispatched() ? navigation : nullptr;
+}
+
+void WebPageProxy::enqueueHistoryTraversalDelta(int32_t delta)
+{
+    m_sessionHistoryTraversalQueue->enqueueDelta(delta);
+}
+
+int32_t WebPageProxy::inFlightTraversalDirection() const
+{
+    return m_sessionHistoryTraversalQueue->inFlightDirection();
 }
 
 bool WebPageProxy::shouldKeepCurrentBackForwardListItemInList(WebBackForwardListItem& item)
@@ -7877,9 +7903,15 @@ void WebPageProxy::didEndNetworkRequestsForPageLoadTimingTimerFired()
 void WebPageProxy::updateScrollingMode(IPC::Connection& connection, WebCore::FrameIdentifier frameID, WebCore::ScrollbarMode scrollingMode)
 {
     if (RefPtr frame = WebFrameProxy::webFrame(frameID)) {
-        Ref process = WebProcessProxy::fromConnection(connection);
         RefPtr parentFrame = frame->parentFrame();
-        MESSAGE_CHECK(process, parentFrame && &parentFrame->process() == process.ptr());
+        // A late UpdateScrollingMode for a subframe detached mid-traversal (parent already gone) is a
+        // benign straggler; ignore it. Terminating it as an invalid message resets PageLoadState to an
+        // empty URL and hangs the navigation (webkit.org/b/318728).
+        if (!parentFrame)
+            return;
+        Ref process = WebProcessProxy::fromConnection(connection);
+        // The sender must host the parent frame, which owns the child's scrolling mode.
+        MESSAGE_CHECK(process, &parentFrame->process() == process.ptr());
         frame->updateScrollingMode(scrollingMode);
     }
 }
@@ -8309,6 +8341,10 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
     MESSAGE_CHECK_URL(process, provisionalURL);
     MESSAGE_CHECK_URL(process, error.failingURL());
 
+    // A failed main-frame provisional load also settles an in-flight traversal (nothing committed).
+    if (frame.isMainFrame())
+        m_sessionHistoryTraversalQueue->traversalDidSettle();
+
     RefPtr protectedPageClient { pageClient() };
 
     if (m_controlledByAutomation && willInternallyHandleFailure == WillInternallyHandleFailure::No) {
@@ -8488,6 +8524,12 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return;
+
+    // The current index advances (via the synchronous BackForwardGoToItem) before this commit, so
+    // settle the cross-process traversal queue here; no-op unless a traversal is in flight.
+    if (frame->isMainFrame())
+        m_sessionHistoryTraversalQueue->traversalDidSettle();
+
     if (frame->provisionalFrame()) {
         frame->commitProvisionalFrame(connection, frameID, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(mimeType), frameHasCustomContentProvider, frameLoadType, usedLegacyTLS, wasPrivateRelayed, WTF::move(proxyName), source, containsPluginDocument, hasInsecureContent, mouseEventPolicy, WTF::move(documentSecurityPolicy), WTF::move(cspOriginsThatUpgradeInsecureNavigations), userData, restoredFromBackForwardCache, WTF::move(redirectReplaceFrameState));
         return;
@@ -9086,6 +9128,10 @@ void WebPageProxy::didSameDocumentNavigationForFrame(IPC::Connection& connection
     MESSAGE_CHECK_URL(m_legacyMainFrameProcess, url);
 
     WEBPAGEPROXY_RELEASE_LOG(Loading, "didSameDocumentNavigationForFrame: frameID=%" PRIu64 ", isMainFrame=%d, type=%u", frameID.toUInt64(), frame->isMainFrame(), std::to_underlying(navigationType));
+
+    // Same-document main-frame traversals advance the index without a load commit, so settle here too.
+    if (frame->isMainFrame())
+        m_sessionHistoryTraversalQueue->traversalDidSettle();
 
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the back/forward cache.
     RefPtr<API::Navigation> navigation;
