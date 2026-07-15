@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <pal/ExportMacros.h>
 #include <wtf/Forward.h>
 
@@ -47,3 +49,5 @@ protected:
 };
 
 }
+
+#endif // __cplusplus

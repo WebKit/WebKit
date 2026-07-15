@@ -29,6 +29,7 @@ import WebGPU_Internal.CxxBridging
 import WebGPU_Internal.QuerySet
 import WebGPU_Internal.TextureOrTextureView
 import WebGPU_Private.WebGPU
+private import wtf
 
 typealias String = Swift.String
 

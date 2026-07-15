@@ -133,8 +133,14 @@ SWIFT_OBJC_INTEROP_MODE = $(WK_SWIFT_OBJC_INTEROP_MODE_$(ENABLE_WEBGPU_SWIFT))
 WK_SWIFT_OBJC_INTEROP_MODE_ENABLE_WEBGPU_SWIFT = objcxx;
 SWIFT_LIBRARY_LEVEL = spi;
 
+SWIFT_INCLUDE_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/lib/swift $(WK_PRIVATE_SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_INSTALL_PATH)/swift $(DSTROOT)$(SYSTEM_PREFIX)/usr/local/lib/swift $(inherited);
+
 // FIXME: broaden SafeInteropWrappers to all of WebKit; rdar://159439903
 OTHER_SWIFT_FLAGS = $(inherited) @$(BUILT_PRODUCTS_DIR)/DerivedSources/WebGPU/platform-enabled-swift-args.$(arch).resp -Xcc -std=c++2b -Xcc -DUCHAR_TYPE=char16_t -enable-experimental-feature SafeInteropWrappers -enable-experimental-feature LifetimeDependence -no-verify-emitted-module-interface  -Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib -Xfrontend -emit-clang-header-min-access -Xfrontend internal;
+
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = WTF_SUPPORTS_SWIFT;
+SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=*26.2*] = ;
+SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=*26.3*] = ;
 
 EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(ENABLE_WEBGPU_SWIFT));
 EXCLUDED_SOURCE_FILE_NAMES_ENABLE_WEBGPU_SWIFT =;

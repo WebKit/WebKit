@@ -25,9 +25,13 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
+#include <pal/ExportMacros.h>
 #include <pal/crypto/CryptoTypes.h>
 #include <wtf/HexNumber.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -59,3 +63,5 @@ inline String CryptoDigest::toHexString()
 }
 
 } // namespace PAL::Crypto
+
+#endif // __cplusplus

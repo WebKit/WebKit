@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <pal/crypto/CryptoTypes.h>
 
 namespace PAL::Crypto::EdKey {
@@ -42,3 +44,5 @@ bool validateKeyPair(EdSigningAlgorithm, SpanConstUInt8 privateKey, SpanConstUIn
 bool validateKeyPairKeyAgreement(EdKeyAgreementAlgorithm, SpanConstUInt8 privateKey, SpanConstUInt8 publicKey);
 
 } // namespace PAL::Crypto::EdKey
+
+#endif // __cplusplus

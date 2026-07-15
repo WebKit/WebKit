@@ -25,8 +25,12 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 namespace PAL {
 
 PAL_EXPORT void systemBeep();
 
 } // namespace PAL
+
+#endif // __cplusplus

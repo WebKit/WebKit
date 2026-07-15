@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 namespace PAL {
 
 class SystemSleepListener {
@@ -48,3 +50,5 @@ protected:
 };
 
 } // namespace PAL
+
+#endif // __cplusplus

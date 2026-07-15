@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <pal/crypto/CryptoTypes.h>
 #include <wtf/Expected.h>
 
@@ -37,3 +39,5 @@ Expected<VectorUInt8, Error> encryptCryptoKitAESGCM(const VectorUInt8& iv, const
 Expected<VectorUInt8, Error> decyptAESGCM(const VectorUInt8& iv, const VectorUInt8& key, const VectorUInt8& cipherText, const VectorUInt8& additionalData, size_t desiredTagLengthInBytes);
 
 } // namespace PAL::Crypto
+
+#endif // __cplusplus

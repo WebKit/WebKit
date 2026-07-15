@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		072EDF032FAF17FA00E6753E /* StdLibExtras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072EDF022FAF17FA00E6753E /* StdLibExtras.swift */; };
 		07AC4F0E2EF5A68600468BCB /* module.modulemap in Headers */ = {isa = PBXBuildFile; fileRef = 07AC4F0D2EF5A62500468BCB /* module.modulemap */; settings = {ATTRIBUTES = (Private, ); }; };
 		07B588172F74609A00E8AF32 /* module.modulemap in Headers */ = {isa = PBXBuildFile; fileRef = 07B588162F74607A00E8AF32 /* module.modulemap */; settings = {ATTRIBUTES = (Private, ); }; };
 		07C913F32F820E86003A09D8 /* OptionCountedSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C913F22F820E86003A09D8 /* OptionCountedSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1145,6 +1146,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		072EDF022FAF17FA00E6753E /* StdLibExtras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StdLibExtras.swift; sourceTree = "<group>"; };
 		076382182EE550F300DB47BC /* GenerateModuleVerifierInputsTask.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = GenerateModuleVerifierInputsTask.py; sourceTree = "<group>"; };
 		076382192EE5512300DB47BC /* ModuleVerifierLanguage.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = ModuleVerifierLanguage.py; sourceTree = "<group>"; };
 		0763821A2EE5514000DB47BC /* ModuleVerifierTypes.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = ModuleVerifierTypes.py; sourceTree = "<group>"; };
@@ -2809,6 +2811,7 @@
 				7C595FFC252A96E000E42168 /* StdFilesystem.h */,
 				FE97F6A8245CE5DD00C63FC6 /* StdIntExtras.h */,
 				A8A47311151A825B004123FF /* StdLibExtras.h */,
+				072EDF022FAF17FA00E6753E /* StdLibExtras.swift */,
 				FF0A436588954F3CB07DBECA /* StdList.h */,
 				391BD6BA4D164FD294F9A93D /* StdMap.h */,
 				2B70468C2C6BC5F600318C0A /* StdMultimap.h */,
@@ -4706,6 +4709,7 @@
 				FEEA4DF9216D7BE400AC0602 /* StackPointer.cpp in Sources */,
 				FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */,
 				3337DB9CE743410FAF076E17 /* StackTrace.cpp in Sources */,
+				072EDF032FAF17FA00E6753E /* StdLibExtras.swift in Sources */,
 				0F95B63720CB5EFD00479635 /* StringBuffer.cpp in Sources */,
 				A8A4743C151A825B004123FF /* StringBuilder.cpp in Sources */,
 				E38D6E271F5522E300A75CC4 /* StringBuilderJSON.cpp in Sources */,

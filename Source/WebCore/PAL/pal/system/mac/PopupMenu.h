@@ -25,6 +25,8 @@
 
 #if PLATFORM(MAC)
 
+#ifdef __cplusplus
+
 #import <AppKit/AppKit.h>
 
 namespace PAL {
@@ -32,5 +34,7 @@ namespace PAL {
 PAL_EXPORT void popUpMenu(NSMenu *, NSPoint location, float width, NSView *, int selectedItem, NSFont *, NSControlSize, bool usesCustomAppearance);
 
 }
+
+#endif // PLATFORM(MAC)
 
 #endif // PLATFORM(MAC)

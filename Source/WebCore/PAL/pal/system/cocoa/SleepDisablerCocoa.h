@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #if PLATFORM(COCOA)
 
 #include <pal/system/SleepDisabler.h>
@@ -60,3 +62,5 @@ private:
 } // namespace PAL
 
 #endif // PLATFORM(COCOA)
+
+#endif // __cplusplus
