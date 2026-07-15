@@ -80,6 +80,9 @@ public:
     LayoutUnit mainAxisExtent() const;
     LayoutUnit crossAxisContentExtent() const;
 
+    enum class GapType : uint8_t { BetweenLines, BetweenItems };
+    LayoutUnit computeGap(GapType) const;
+
     LayoutUnit mainAxisMarginExtentForFlexItem(const RenderBox& flexItem) const;
     LayoutUnit crossAxisMarginExtentForFlexItem(const RenderBox& flexItem) const;
 

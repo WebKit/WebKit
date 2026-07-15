@@ -3036,6 +3036,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderElementInlines.h
     rendering/RenderElementStyleInlines.h
     rendering/RenderEmbeddedObject.h
+    rendering/RenderFlexLayout.h
     rendering/RenderFlexibleBox.h
     rendering/RenderFrame.h
     rendering/RenderFrameBase.h

@@ -4105,6 +4105,7 @@
 		99D1B2D323AC143100811CF0 /* InspectorDebuggableType.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D1B2D123AC143000811CF0 /* InspectorDebuggableType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9A528E8417D7F52F00AA9518 /* FloatingObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A528E8217D7F52F00AA9518 /* FloatingObjects.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE1A2B3C4D5E6F0011112203 /* FlexLayoutUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1A2B3C4D5E6F0011112202 /* FlexLayoutUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE1A2B3C4D5E6F0011112303 /* RenderFlexLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1A2B3C4D5E6F0011112302 /* RenderFlexLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9A7EB29F2EC20AE500A10F7E /* LibWebRTCVideoFrameUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A7EB29E2EC20AE400A10F7E /* LibWebRTCVideoFrameUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9A87D9E02A82925400EE7A8A /* AudioSampleFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A87D9DF2A82925400EE7A8A /* AudioSampleFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9A87D9E22A82933500EE7A8A /* PlatformRawAudioData.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A87D9E12A82933500EE7A8A /* PlatformRawAudioData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -16891,6 +16892,8 @@
 		9A528E8217D7F52F00AA9518 /* FloatingObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatingObjects.h; sourceTree = "<group>"; };
 		FE1A2B3C4D5E6F0011112201 /* FlexLayoutUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlexLayoutUtils.cpp; sourceTree = "<group>"; };
 		FE1A2B3C4D5E6F0011112202 /* FlexLayoutUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlexLayoutUtils.h; sourceTree = "<group>"; };
+		FE1A2B3C4D5E6F0011112301 /* RenderFlexLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFlexLayout.cpp; sourceTree = "<group>"; };
+		FE1A2B3C4D5E6F0011112302 /* RenderFlexLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderFlexLayout.h; sourceTree = "<group>"; };
 		9A7EB29E2EC20AE400A10F7E /* LibWebRTCVideoFrameUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCVideoFrameUtilities.h; path = libwebrtc/LibWebRTCVideoFrameUtilities.h; sourceTree = "<group>"; };
 		9A87D9DF2A82925400EE7A8A /* AudioSampleFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSampleFormat.h; sourceTree = "<group>"; };
 		9A87D9E12A82933500EE7A8A /* PlatformRawAudioData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformRawAudioData.h; sourceTree = "<group>"; };
@@ -42248,6 +42251,8 @@
 				066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */,
 				53C8298B13D8D92700DE2DEB /* RenderFlexibleBox.cpp */,
 				53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */,
+				FE1A2B3C4D5E6F0011112301 /* RenderFlexLayout.cpp */,
+				FE1A2B3C4D5E6F0011112302 /* RenderFlexLayout.h */,
 				D70AD65513E1342B005B50B4 /* RenderFragmentContainer.cpp */,
 				D70AD65613E1342B005B50B4 /* RenderFragmentContainer.h */,
 				BCE93F461517C6D5008CCF74 /* RenderFragmentContainerSet.cpp */,
@@ -48108,6 +48113,7 @@
 				0F5B7A5510F65D7A00376302 /* RenderEmbeddedObject.h in Headers */,
 				066C77310AB603FD00238CC4 /* RenderFileUploadControl.h in Headers */,
 				53C8298E13D8D92700DE2DEB /* RenderFlexibleBox.h in Headers */,
+				FE1A2B3C4D5E6F0011112303 /* RenderFlexLayout.h in Headers */,
 				D70AD65813E1342B005B50B4 /* RenderFragmentContainer.h in Headers */,
 				BCE93F451517C567008CCF74 /* RenderFragmentContainerSet.h in Headers */,
 				508CCA4F13CF106B003151F3 /* RenderFragmentedFlow.h in Headers */,

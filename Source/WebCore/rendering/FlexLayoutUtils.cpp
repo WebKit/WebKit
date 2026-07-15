@@ -202,6 +202,18 @@ LayoutUnit FlexLayoutUtils::crossAxisContentExtent() const
     return isHorizontalFlow() ? flexBox().contentBoxHeight() : flexBox().contentBoxWidth();
 }
 
+LayoutUnit FlexLayoutUtils::computeGap(GapType gapType) const
+{
+    // row-gap is used for gaps between flex items in column flows or for gaps between lines in row flows.
+    bool usesRowGap = (gapType == GapType::BetweenItems) == isColumnFlow();
+    auto& gap = usesRowGap ? flexBox().style().rowGap() : flexBox().style().columnGap();
+    if (gap.isNormal()) [[likely]]
+        return { };
+
+    auto availableSize = usesRowGap ? flexBox().availableLogicalHeightForPercentageComputation().value_or(0_lu) : flexBox().contentBoxLogicalWidth();
+    return Style::evaluateMinimum<LayoutUnit>(gap, availableSize, flexBox().style().usedZoomForLength());
+}
+
 LayoutUnit FlexLayoutUtils::mainAxisMarginExtentForFlexItem(const RenderBox& flexItem) const
 {
     if (!flexItem.needsLayout())

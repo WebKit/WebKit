@@ -2226,8 +2226,8 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
     flexHighlightOverlay.color = flexOverlay.config.flexColor;
     flexHighlightOverlay.containerBounds = localQuadToRootQuad(renderFlex->absoluteContentQuad());
 
-    float computedMainAxisGap = renderFlex->computeGap(RenderFlexibleBox::GapType::BetweenItems).toFloat();
-    float computedCrossAxisGap = renderFlex->computeGap(RenderFlexibleBox::GapType::BetweenLines).toFloat();
+    float computedMainAxisGap = renderFlex->flexLayoutUtils().computeGap(FlexLayoutUtils::GapType::BetweenItems).toFloat();
+    float computedCrossAxisGap = renderFlex->flexLayoutUtils().computeGap(FlexLayoutUtils::GapType::BetweenLines).toFloat();
 
     // For reasoning about the edges of the flex container, use the untransformed content rect moved to the origin of the
     // inner top-left corner of padding, which is the same relative coordinate space that each item's `frameRect()` will be in.
