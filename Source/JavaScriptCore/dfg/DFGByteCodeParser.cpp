@@ -12919,6 +12919,7 @@ void ByteCodeParser::handleAsyncIteratorOpen(const JSInstruction* currentInstruc
         auto* data = m_graph.m_getByIdData.add(GetByIdData { CacheableIdentifier::createFromImmortalIdentifier(nextImpl), getByStatus.preferredCacheType() });
         NodeType getByIdOp = getByStatus.makesCalls() ? GetByIdFlush : GetById;
         Node* fetched = addToGraph(getByIdOp, OpInfo(data), OpInfo(predict()), get(bytecode.m_iterator));
+        emitExitOK();
 
         // Stash the transient fetched .next in a flushed private tmp so successors read it via a phi merge,
         // not a cross-block edge that would violate the CPS validator.
@@ -12927,11 +12928,12 @@ void ByteCodeParser::handleAsyncIteratorOpen(const JSInstruction* currentInstruc
         set(fetchedTmp, fetched, ImmediateNakedSet);
         flush(fetchedTmp);
 
-        // The get_by_id clobbered exit state; re-mark exit-OK (the primordial .next is side-effect-free) so the
-        // branch and successors have a valid exit origin. No node from the fetch above through the m_next stores
-        // below can OSR-exit (SetLocal/Flush/CompareEqPtr/Branch never exit), so an observable .next (proxy/getter
-        // fallthrough) is read exactly once -- no exit can re-run getNext after the fetch already read it.
         Node* isprimordialNext = addToGraph(CompareEqPtr, OpInfo(m_graph.freeze(primordialNext)), get(fetchedTmp));
+        // Re-mark exit-OK again before the terminal: the tmp stores above turned exit state invalid (the
+        // scratch tmp is not part of the bytecode-visible state), but exiting here is still safe -- the
+        // getNext checkpoint reconstructs .next from R[m_iterator], independent of the scratch. This keeps
+        // the Branch (and the successor blocks' entries) exit-valid so InvalidationPointInjectionPhase can
+        // stamp a successor-entry InvalidationPoint on a valid exit origin.
         emitExitOK();
         BasicBlock* sentinelBlock = allocateUntargetableBlock();
         BasicBlock* keepBlock = allocateUntargetableBlock();
