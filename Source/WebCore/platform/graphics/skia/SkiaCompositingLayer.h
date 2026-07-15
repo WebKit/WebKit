@@ -175,6 +175,7 @@ private:
     void paintBackdrop(SkCanvas&, PaintContext&);
     Vector<IntRect, 1> computeConsolidatedOverlapRegionRects(const SkCanvas&, const PaintContext&, ComputeOverlapRegionMode);
     TransformationMatrix replicaTransform() const;
+    TransformationMatrix combinedTransform(const PaintContext&) const;
     IntRect clipBounds(const SkCanvas&, const PaintContext&) const;
     sk_sp<SkImage> maskImage();
     void collect3DRenderingContextLayers(Vector<Ref<SkiaCompositingLayer>>&);

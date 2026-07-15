@@ -31,6 +31,7 @@
 #include "CoordinatedTileBuffer.h"
 #include "FontRenderOptions.h"
 #include "PlatformDisplay.h"
+#include "SkiaDamageRegion.h"
 #include "SkiaPaintingEngine.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkColorSpace.h>
@@ -83,38 +84,62 @@ static inline bool allTileEdgesExposed(const FloatRect& totalRect, const FloatRe
     return !tileRect.x() && !tileRect.y() && tileRect.width() + tileRect.x() >= totalRect.width() && tileRect.height() + tileRect.y() >= totalRect.height();
 }
 
-void SkiaBackingStore::paintToCanvas(SkCanvas& canvas, const SkPaint& paint)
+void SkiaBackingStore::paintToCanvas(SkCanvas& canvas, const SkPaint& paint, const SkiaDamageRegion* damageRegion)
 {
     if (m_tiles.isEmpty())
         return;
 
+    // Tiles are culled against the damage region on top of the canvas clip, because quickReject() only
+    // tests the bounding box of the clip, which grows to the whole surface as soon as two damage rects
+    // are far apart.
+
     FloatRect layerRect = { { }, m_size };
 
+    const auto ctm = canvas.getLocalToDeviceAs3x3();
+    const auto sampling = SkSamplingOptions(SkFilterMode::kNearest, SkMipmapMode::kNone);
     auto tilePaint = paint;
     for (auto& tile : m_tiles.values()) {
         if (canvas.quickReject(tile.rect()))
             continue;
+
+        if (damageRegion) {
+            const auto deviceRect = ctm.mapRect(tile.rect());
+            if (!damageRegion->intersects(deviceRect))
+                continue;
+        }
 
         const auto& image = tile.image();
         if (!image)
             continue;
 
         tilePaint.setAntiAlias(paint.isAntiAlias() && allTileEdgesExposed(layerRect, tile.rect()));
-        canvas.drawImageRect(image, tile.imageSourceRect(), tile.rect(), SkSamplingOptions(SkFilterMode::kNearest, SkMipmapMode::kNone), &tilePaint, SkCanvas::kFast_SrcRectConstraint);
+        canvas.drawImageRect(image, tile.imageSourceRect(), tile.rect(), sampling, &tilePaint, SkCanvas::kFast_SrcRectConstraint);
     }
 }
 
-Vector<SkCanvas::ImageSetEntry> SkiaBackingStore::buildImageSet(SkCanvas& canvas, const SkMatrix& ctm, size_t matrixIndex, float opacity, bool enableAntialias) const
+void SkiaBackingStore::appendImageSetEntries(SkCanvas& canvas, const SkMatrix& ctm, size_t matrixIndex, float opacity, bool enableAntialias, Vector<SkCanvas::ImageSetEntry>& images, const SkiaDamageRegion* damageRegion) const
 {
     if (m_tiles.isEmpty())
-        return { };
+        return;
+
+    // Splitting a tile creates edges inside the tile, and antialiasing them would blend along those edges.
+    // This never happens: a split needs a CTM that keeps rects as rects, and the caller only antialiases
+    // when the CTM does not.
+    ASSERT(!damageRegion || !enableAntialias);
+
+    // Maps device rects back to layer coordinates. The caller only passes a damage region after establishing
+    // that the CTM keeps rects as rects, which implies it is invertible.
+    SkMatrix inverse;
+    if (damageRegion && !ctm.invert(&inverse)) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     FloatRect layerRect = { { }, m_size };
 
     SkAutoCanvasRestore autoRestore(&canvas, true);
     canvas.concat(ctm);
 
-    Vector<SkCanvas::ImageSetEntry> images;
     for (auto& tile : m_tiles.values()) {
         if (canvas.quickReject(tile.rect()))
             continue;
@@ -124,10 +149,23 @@ Vector<SkCanvas::ImageSetEntry> SkiaBackingStore::buildImageSet(SkCanvas& canvas
             continue;
 
         // FIXME: implement per edge antialiasing.
-        unsigned aaFlags = enableAntialias && allTileEdgesExposed(layerRect, tile.rect()) ? SkCanvas::kAll_QuadAAFlags : SkCanvas::kNone_QuadAAFlags;
-        images.append(SkCanvas::ImageSetEntry(image, tile.imageSourceRect(), SkRect(tile.rect()), matrixIndex, opacity, aaFlags, false));
+        const unsigned aaFlags = enableAntialias && allTileEdgesExposed(layerRect, tile.rect()) ? SkCanvas::kAll_QuadAAFlags : SkCanvas::kNone_QuadAAFlags;
+        const SkRect srcRectFull = tile.imageSourceRect();
+        const SkRect dstRectFull = tile.rect();
+
+        if (!damageRegion) {
+            images.append(SkCanvas::ImageSetEntry(image, srcRectFull, dstRectFull, matrixIndex, opacity, aaFlags, false));
+            continue;
+        }
+
+        const auto deviceRect = ctm.mapRect(dstRectFull);
+        if (!damageRegion->intersects(deviceRect))
+            continue;
+
+        damageRegion->forEachDamagedSubRect(deviceRect, dstRectFull, srcRectFull, inverse, [&](const SkRect& srcSubRect, const SkRect& dstSubRect) {
+            images.append(SkCanvas::ImageSetEntry(image, srcSubRect, dstSubRect, matrixIndex, opacity, aaFlags, false));
+        });
     }
-    return images;
 }
 
 void SkiaBackingStore::drawDebugBorders(SkCanvas& canvas, const SkPaint& paint)

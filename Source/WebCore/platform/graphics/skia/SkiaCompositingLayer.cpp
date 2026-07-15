@@ -486,10 +486,9 @@ void SkiaCompositingLayer::paintSelf(SkCanvas& canvas, PaintContext& context)
 
 void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context)
 {
-    TransformationMatrix transform(context.accumulatedReplicaTransform);
-    transform.multiply(m_transforms.combined);
+    const SkM44 transform(combinedTransform(context));
 
-    auto ctm = SkM44(transform).asM33();
+    const auto ctm = transform.asM33();
     bool enableAntialias = !ctm.preservesAxisAlignment() && !ctm.preservesRightAngles();
 
     // When the layer contents are fully opaque and composited at full opacity with the default
@@ -521,11 +520,11 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
     };
 
     if (m_backingStore)
-        context.imageSetBatch.addImageSet(canvas, *m_backingStore, ctm, context.opacity, enableAntialias);
+        context.imageSetBatch.addImageSet(canvas, *m_backingStore, transform, context.opacity, enableAntialias, nullptr, setupPaint());
 
     if (m_contentsSolidColor.isValid() && m_contentsSolidColor.isVisible()) {
         ScopedFlush autoFlush(canvas, context.imageSetBatch, ScopedFlush::Mode::FlushBefore);
-        canvas.concat(SkM44(transform));
+        canvas.concat(transform);
         SkPaint paint = setupPaint();
         paint.setColor(SkColor(m_contentsSolidColor.colorWithAlphaMultipliedBy(context.opacity)));
         canvas.drawRect(m_contentsRect, paint);
@@ -551,7 +550,7 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
 
         ScopedFlush autoFlush(canvas, context.imageSetBatch, shouldPaintNow ? ScopedFlush::Mode::FlushBefore : ScopedFlush::Mode::DoNothing);
         if (shouldPaintNow) {
-            canvas.concat(SkM44(transform));
+            canvas.concat(transform);
 
             if (m_contentsClippingRect.hasNonZeroRadii() || !m_contentsClippingRect.rect().contains(m_contentsRect))
                 clipRect(canvas, m_contentsClippingRect);
@@ -591,14 +590,11 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
                 canvas.drawImageRect(image, SkRect::MakeSize(SkSize::Make(image->dimensions())), SkRect(m_contentsRect),
                     SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone), &paint, SkCanvas::kFast_SrcRectConstraint);
             } else {
-                auto clippingRect = m_contentsClippingRect.rect();
-                if (clippingRect.contains(m_contentsRect))
-                    clippingRect = { };
-
                 // The contents image composites over the backing store, so it must use SrcOver always.
                 if (forcedSrcBlendMode && m_backingStore)
                     context.imageSetBatch.updatePaintProperties(canvas, context.colorFilter, context.blendMode);
-                context.imageSetBatch.addImage(canvas, image, m_contentsRect, clippingRect, ctm, context.opacity, enableAntialias);
+
+                context.imageSetBatch.addImage(canvas, image, m_contentsRect, transform, context.opacity, enableAntialias, nullptr, setupPaint());
             }
         }
     }
@@ -610,8 +606,7 @@ void SkiaCompositingLayer::collectFrameDamage(SkCanvas& canvas, PaintContext& co
     if (!frameDamagePropagationEnabled() || !context.frameDamage)
         return;
 
-    TransformationMatrix transform(context.accumulatedReplicaTransform);
-    transform.multiply(m_transforms.combined);
+    const auto transform = combinedTransform(context);
     auto frameDamage = transform.mapRect(effectiveLayerRect());
     auto clipBounds = FloatRect(this->clipBounds(canvas, context));
     if (!clipBounds.isEmpty())
@@ -636,8 +631,7 @@ void SkiaCompositingLayer::paintDebugIndicators(SkCanvas& canvas, PaintContext& 
     if (m_size.isEmpty() || !m_visible || !m_contentsVisible || !hasVisualContent())
         return;
 
-    TransformationMatrix transform(context.accumulatedReplicaTransform);
-    transform.multiply(m_transforms.combined);
+    const auto transform = combinedTransform(context);
 
     if (m_debugBorder) {
         SkAutoCanvasRestore autoRestore(&canvas, true);
@@ -788,6 +782,13 @@ TransformationMatrix SkiaCompositingLayer::replicaTransform() const
 {
     return TransformationMatrix(m_replica->m_transforms.combined)
         .multiply(m_transforms.combined.inverse().value_or(TransformationMatrix()));
+}
+
+TransformationMatrix SkiaCompositingLayer::combinedTransform(const PaintContext& context) const
+{
+    TransformationMatrix transform(context.accumulatedReplicaTransform);
+    transform.multiply(m_transforms.combined);
+    return transform;
 }
 
 IntRect SkiaCompositingLayer::clipBounds(const SkCanvas& canvas, const PaintContext& context) const

@@ -21,6 +21,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/skia/SkiaCompositingLayerFilters.h
     platform/graphics/skia/SkiaCompositingLayerImageSetBatch.h
     platform/graphics/skia/SkiaCompositingLayerOverlapRegions.h
+    platform/graphics/skia/SkiaDamageRegion.h
     platform/graphics/skia/SkiaGPUAtlas.h
     platform/graphics/skia/SkiaHarfBuzzFont.h
     platform/graphics/skia/SkiaHarfBuzzFontCache.h

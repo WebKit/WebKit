@@ -28,6 +28,8 @@
 #if USE(COORDINATED_GRAPHICS) && USE(SKIA)
 #include "CoordinatedBackingStoreProxy.h"
 #include "FloatRect.h"
+#include "IntRect.h"
+#include "SkiaDamageRegion.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkSurface.h>
@@ -47,12 +49,14 @@ public:
 
     float scale() const { return m_scale; }
     bool hasPendingTileUpdates() const { return m_hasPendingTileUpdates; }
+    FloatSize size() const { return m_size; }
 
     void update(const FloatSize&, float scale, CoordinatedBackingStoreProxy::Update&&);
     void processPendingTileUpdates();
 
-    void paintToCanvas(SkCanvas&, const SkPaint&);
-    Vector<SkCanvas::ImageSetEntry> buildImageSet(SkCanvas&, const SkMatrix&, size_t matrixIndex, float opacity, bool enableAntialias) const;
+    void paintToCanvas(SkCanvas&, const SkPaint&, const SkiaDamageRegion* = nullptr);
+    void appendImageSetEntries(SkCanvas&, const SkMatrix& ctm, size_t matrixIndex, float opacity, bool enableAntialias, Vector<SkCanvas::ImageSetEntry>& images, const SkiaDamageRegion* = nullptr) const;
+
     void drawDebugBorders(SkCanvas&, const SkPaint&);
 
 private:
