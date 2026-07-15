@@ -116,7 +116,7 @@ class TestRunner(object):
     def _get_tests(self, requested_test_list):
         tests = []
         for test in requested_test_list:
-            test = test.split(':', 1)[0]
+            test = self._binary_and_subtest(test)[0]
             if not os.path.exists(test):
                 test = os.path.join(self._test_programs_base_dir(), test)
             if os.path.isdir(test):
@@ -352,7 +352,7 @@ class TestRunner(object):
     def _get_test_short_name(self, test_path):
         return test_path.replace(self._test_programs_base_dir(), '', 1).lstrip('/').split(':', 1)[0]
 
-    def _get_test_name_for_upload(self, test_path):
+    def _get_test_name_for_upload(self, test_path, test_case):
         # Test binaries are built into a port-specific subdirectory
         # (TestWebKitAPI/WebKitGTK for GTK, TestWebKitAPI/WPE for WPE), so the
         # short name carries that prefix. Strip it so the same test is reported
@@ -361,21 +361,33 @@ class TestRunner(object):
         short_name = self._get_test_short_name(test_path)
         for prefix in ('WebKitGTK/', 'WPE/'):
             if short_name.startswith(prefix):
-                return short_name[len(prefix):]
-        return short_name
+                short_name = short_name[len(prefix):]
+                break
+        # Google Test cases use a dot to match other ports; GLib tests keep the colon.
+        separator = '.' if self.is_google_test(test_path) else ':'
+        return f'{short_name}{separator}{test_case}'
+
+    def _binary_and_subtest(self, test_name):
+        # Accept both the "<binary>:<subtest>" (GLib) and "<binary>.<case>"
+        # (Google Test) forms. Split the dotted form only when the bare name is
+        # not itself a program, since binary names have no dots.
+        if ':' in test_name:
+            return tuple(test_name.split(':', 1))
+        if '.' in test_name and not os.path.exists(test_name) \
+                and not os.path.exists(os.path.join(self._test_programs_base_dir(), test_name)):
+            return tuple(test_name.split('.', 1))
+        return test_name, None
 
     def _getsubtests_to_run_for_test(self, requested_test_name):
         subtests_to_run = []
         requested_test_name = self._get_test_short_name(requested_test_name)
         for test_name in self._initial_test_list:
-            subtest_name = None
-            if ':' in test_name:
-                test_name, subtest_name = test_name.split(':', 1)
+            test_name, subtest_name = self._binary_and_subtest(test_name)
             if requested_test_name == self._get_test_short_name(test_name):
                 if subtest_name:
                     subtests_to_run.append(subtest_name)
                 else:
-                    return []  # If there is any entry matching without ":subtest", return [] which means run all subtests.
+                    return []  # If there is any entry matching without a subtest, return [] which means run all subtests.
         return sorted(set(subtests_to_run))  # Remove duplicates and sort
 
     def list_tests(self):
@@ -530,7 +542,7 @@ class TestRunner(object):
             results = {}
             for test, test_cases in tests_to_upload.items():
                 for test_case in test_cases:
-                    name = "%s:%s" % (self._get_test_name_for_upload(test), test_case[0])
+                    name = self._get_test_name_for_upload(test, test_case[0])
                     results[name] = Upload.create_test_result(actual=test_case[1], expected=' '.join(test_case[2]) if test_case[2] else None)
 
             upload = Upload(
