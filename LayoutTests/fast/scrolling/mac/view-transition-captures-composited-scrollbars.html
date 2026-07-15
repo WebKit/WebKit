@@ -1,0 +1,44 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true ] -->
+<html class="reftest-wait">
+<title>view-transition snapshot includes a composited scroll container's scrollbars</title>
+<meta name="fuzzy" content="maxDifference=0-19; totalPixels=0-152">
+<style>
+#scroller {
+    view-transition-name: target;
+    overflow: scroll;
+    width: 200px;
+    height: 200px;
+}
+#content {
+    width: 1000px;
+    height: 1000px;
+}
+
+/* Freeze the transition at frame 0 with only ::view-transition-old(target) visible, so the
+   screenshot is the captured old snapshot of the scroller (including its scrollbars). */
+html::view-transition-group(root) { animation-duration: 300s; }
+html::view-transition-old(target) { animation: unset; opacity: 1; }
+html::view-transition-new(target) { animation: unset; opacity: 0; }
+</style>
+<script>
+// Use always-on (non-overlay) scrollbars so the thumb is always visible in the
+// snapshot, independent of the machine's "Show scroll bars" setting (overlay
+// scrollbars fade out). Compositing comes from AsyncOverflowScrollingEnabled in
+// the test-runner options above; together these give the scroller composited
+// always-on scrollbars — the case this test captures.
+if (window.internals)
+    internals.setUsesOverlayScrollbars(false);
+
+function finishTest() {
+    document.documentElement.classList.remove("reftest-wait");
+}
+
+function runTest() {
+    scroller.scrollTop = 300;
+    scroller.scrollLeft = 300;
+    document.startViewTransition().ready.then(() => requestAnimationFrame(finishTest));
+}
+
+onload = () => requestAnimationFrame(() => requestAnimationFrame(runTest));
+</script>
+<div id="scroller"><div id="content"></div></div>

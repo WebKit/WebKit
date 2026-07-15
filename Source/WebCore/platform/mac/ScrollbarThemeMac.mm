@@ -41,6 +41,7 @@
 #import "ScrollbarMac.h"
 #import "ScrollbarTrackCornerSystemImageMac.h"
 #import <Carbon/Carbon.h>
+#import <QuartzCore/CALayer.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/CoreUISPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
@@ -52,6 +53,58 @@
 #import <wtf/StdLibExtras.h>
 
 // FIXME: There are repainting problems due to Aqua scroll bar buttons' visual overflow.
+
+@interface NSScrollerImp (WebKitSnapshot)
+- (void)displayLayer:(CALayer *)layer;
+@end
+
+@interface WebSnapshotScrollerImpDelegate : NSObject<NSScrollerImpDelegate, CALayerDelegate>
+@property (nonatomic) BOOL useDarkAppearance;
+@property (nonatomic, weak) NSScrollerImp *scrollerImp;
+@end
+
+@implementation WebSnapshotScrollerImpDelegate
+
+- (NSRect)convertRectToBacking:(NSRect)rect
+{
+    return rect;
+}
+
+- (NSRect)convertRectFromBacking:(NSRect)rect
+{
+    return rect;
+}
+
+- (BOOL)shouldUseLayerPerPartForScrollerImp:(NSScrollerImp *)scrollerImp
+{
+    return YES;
+}
+
+- (NSAppearance *)effectiveAppearanceForScrollerImp:(NSScrollerImp *)scrollerImp
+{
+    if (auto *appearance = [NSAppearance appearanceNamed:self.useDarkAppearance ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua])
+        return appearance;
+    return [NSAppearance currentDrawingAppearance];
+}
+
+- (void)displayLayer:(CALayer *)layer
+{
+    // Work around an issue where NSScrollerImp creates layers with NaN corner
+    // radii, which the window server interprets as "maximum radius given the
+    // size of the layer", but which renderInContext: does not seem to handle.
+    [self.scrollerImp displayLayer:layer];
+    if (std::isnan(static_cast<double>([layer cornerRadius]))) {
+        CGRect frame = [layer frame];
+        [layer setCornerRadius:0.5 * std::min(frame.size.width, frame.size.height)];
+    }
+}
+
+- (CALayer *)layer { return nil; }
+- (void)scrollerImp:(NSScrollerImp *)scrollerImp animateKnobAlphaTo:(CGFloat)newKnobAlpha duration:(NSTimeInterval)duration { }
+- (void)scrollerImp:(NSScrollerImp *)scrollerImp animateTrackAlphaTo:(CGFloat)newTrackAlpha duration:(NSTimeInterval)duration { }
+- (void)scrollerImp:(NSScrollerImp *)scrollerImp overlayScrollerStateChangedTo:(NSOverlayScrollerState)newOverlayScrollerState { }
+@end
+
 
 namespace WebCore {
 
@@ -511,12 +564,41 @@ void ScrollbarThemeMac::setPaintCharacteristicsForScrollbar(Scrollbar& scrollbar
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-static void paintScrollbar(Scrollbar& scrollbar, GraphicsContext& context)
+static void paintScrollbarUsingLayersForSnapshot(Scrollbar& scrollbar, GraphicsContext& context)
 {
     LocalCurrentGraphicsContext localContext { context };
 
     RetainPtr scrollerImp = ScrollbarThemeMac::scrollerImpForScrollbar(scrollbar);
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    if (!scrollerImp)
+        return;
+
+    RetainPtr delegate = adoptNS([[WebSnapshotScrollerImpDelegate alloc] init]);
+    [delegate setUseDarkAppearance:protect(scrollbar.scrollableArea())->useDarkAppearanceForScrollbars()];
+    [delegate setScrollerImp:scrollerImp.get()];
+    [scrollerImp setDelegate:delegate.get()];
+
+    auto size = scrollbar.frameRect().size();
+
+    RetainPtr hostLayer = adoptNS([[CALayer alloc] init]);
+    [hostLayer setBounds:CGRectMake(0, 0, size.width(), size.height())];
+    [hostLayer setContentsScale:scrollbar.deviceScaleFactor()];
+    [hostLayer setGeometryFlipped:YES];
+    [scrollerImp setLayer:hostLayer.get()];
+
+    for (CALayer *sublayer in [hostLayer sublayers])
+        [sublayer setDelegate:delegate.get()];
+
+    [hostLayer renderInContext:protect(localContext.cgContext())];
+
+    [scrollerImp setLayer:nil];
+    [scrollerImp setDelegate:nil];
+}
+
+static void paintScrollbarUsingLegacyAppearance(Scrollbar& scrollbar, GraphicsContext& context)
+{
+    LocalCurrentGraphicsContext localContext { context };
+
+    RetainPtr scrollerImp = ScrollbarThemeMac::scrollerImpForScrollbar(scrollbar);
     // Use rectForPart: here; it will take the expansion transition progress into account.
     NSRect trackRect = [scrollerImp rectForPart:NSScrollerKnobSlot];
     [scrollerImp drawKnobSlotInRect:trackRect highlight:NO];
@@ -525,6 +607,15 @@ static void paintScrollbar(Scrollbar& scrollbar, GraphicsContext& context)
     // call drawKnob.
     if (scrollbar.enabled())
         [scrollerImp drawKnob];
+}
+
+static void paintScrollbar(Scrollbar& scrollbar, GraphicsContext& context)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    if (scrollbar.paintingIntoSnapshot() && scrollbar.supportsUpdateOnSecondaryThread())
+        paintScrollbarUsingLayersForSnapshot(scrollbar, context);
+    else
+        paintScrollbarUsingLegacyAppearance(scrollbar, context);
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -535,7 +626,7 @@ bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, co
 
     setPaintCharacteristicsForScrollbar(scrollbar);
 
-    if (scrollbar.supportsUpdateOnSecondaryThread())
+    if (scrollbar.supportsUpdateOnSecondaryThread() && !scrollbar.paintingIntoSnapshot())
         return true;
 
     SetForScope isCurrentlyDrawingIntoLayer(g_isCurrentlyDrawingIntoLayer, context.isCALayerContext());

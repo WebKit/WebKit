@@ -123,6 +123,9 @@ public:
     bool suppressInvalidation() const { return m_suppressInvalidation; }
     void setSuppressInvalidation(bool s) { m_suppressInvalidation = s; }
 
+    bool paintingIntoSnapshot() const { return m_paintingIntoSnapshot; }
+    void setPaintingIntoSnapshot(bool value) { m_paintingIntoSnapshot = value; }
+
     virtual void styleChanged() { }
 
     IntRect convertToContainingView(const IntRect&) const override;
@@ -188,6 +191,7 @@ protected:
     Timer m_scrollTimer;
 
     bool m_suppressInvalidation { false };
+    bool m_paintingIntoSnapshot { false };
 
 #if !PLATFORM(COCOA)
     float m_opacity { 1 };

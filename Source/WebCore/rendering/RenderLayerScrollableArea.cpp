@@ -1484,7 +1484,12 @@ void RenderLayerScrollableArea::paintOverflowControls(GraphicsContext& context, 
             damageRect.move(-widgetPaintOffset.width(), -widgetPaintOffset.height());
         }
 
+        bool paintingIntoSnapshot = paintBehavior.contains(PaintBehavior::Snapshotting);
+        if (paintingIntoSnapshot)
+            scrollbar->setPaintingIntoSnapshot(true);
         scrollbar->paint(context, damageRect);
+        if (paintingIntoSnapshot)
+            scrollbar->setPaintingIntoSnapshot(false);
     };
 
     paintScrollBarIfNecessary(m_hBar, damageRect);
