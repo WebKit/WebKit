@@ -3046,7 +3046,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
         repaintEntireCanvas = true;
     } else {
         auto clipBounds = c->clipBounds();
-        if ((clipBounds.isEmpty() || (!textRect.isEmpty() && !clipBounds.intersects(enclosingIntRect(textRect)))) && !shouldDrawShadows())
+        if ((clipBounds.isEmpty() || (!useMaxWidth && !textRect.isEmpty() && !clipBounds.intersects(enclosingIntRect(textRect)))) && !shouldDrawShadows())
             return;
         drawText(*c, location);
     }
