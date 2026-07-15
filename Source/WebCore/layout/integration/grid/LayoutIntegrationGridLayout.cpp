@@ -236,6 +236,13 @@ void GridLayout::updateOverflow(RenderGrid& renderGrid)
         LayoutRect gridItemBorderBoxRect = Layout::BoxGeometry::borderBoxRect(layoutState->geometryForBox(layoutBox));
         gridItemBorderBoxRect.move(contentBoxOffset);
         gridItemsOverflowRect.unite(gridItemBorderBoxRect);
+
+        CheckedRef gridItemRenderer = downcast<RenderBox>(*layoutBox->rendererForIntegration());
+        if (gridItemRenderer->hasVisualOverflow()) {
+            auto gridItemVisualOverflowRect = gridItemRenderer->visualOverflowRectForPropagation(renderGrid.writingMode());
+            gridItemVisualOverflowRect.move(gridItemRenderer->locationOffset());
+            gridItemsOverflowRect.unite(gridItemVisualOverflowRect);
+        }
     }
 
     if (!renderGrid.borderBoxRect().contains(gridItemsOverflowRect))
