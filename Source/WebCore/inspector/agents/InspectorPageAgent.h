@@ -88,9 +88,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> setBootstrapScript(const String& source);
     void searchInResource(const Inspector::Protocol::Network::FrameId&, const String& url, const String& query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, const Inspector::Protocol::Network::RequestId&, Ref<SearchInResourceCallback>&&);
     void searchInResources(const String&, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<SearchInResourcesCallback>&&);
-#if !PLATFORM(IOS_FAMILY)
     Inspector::Protocol::ErrorStringOr<void> setShowRulers(bool);
-#endif
     Inspector::Protocol::ErrorStringOr<void> setShowPaintRects(bool);
     Inspector::Protocol::ErrorStringOr<void> setEmulatedMedia(const String&);
     Inspector::Protocol::ErrorStringOr<String> snapshotNode(Inspector::Protocol::DOM::NodeId);

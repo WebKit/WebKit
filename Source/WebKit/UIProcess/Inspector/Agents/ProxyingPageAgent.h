@@ -88,9 +88,7 @@ public:
     CommandResult<void> setBootstrapScript(const String& source) final;
     void searchInResource(const Protocol::Network::FrameId&, const String& url, const String& query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, const Protocol::Network::RequestId&, Ref<SearchInResourceCallback>&&) final;
     void searchInResources(const String&, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<SearchInResourcesCallback>&&) final;
-#if !PLATFORM(IOS_FAMILY)
     CommandResult<void> setShowRulers(bool) final;
-#endif
     CommandResult<void> setShowPaintRects(bool) final;
     CommandResult<void> setEmulatedMedia(const String&) final;
     CommandResult<String> snapshotNode(Protocol::DOM::NodeId) final;

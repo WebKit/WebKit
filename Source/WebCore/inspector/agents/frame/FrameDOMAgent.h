@@ -98,22 +98,12 @@ public:
     Inspector::CommandResult<Ref<JSON::ArrayOf<int>>> getSearchResults(const String& searchId, int fromIndex, int toIndex) override;
     Inspector::CommandResult<void> discardSearchResults(const String& searchId) override;
     Inspector::CommandResult<int> requestNode(const String& objectId) override;
-#if PLATFORM(IOS_FAMILY)
-    Inspector::CommandResult<void> setInspectModeEnabled(bool enabled, RefPtr<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig) override;
-#else
     Inspector::CommandResult<void> setInspectModeEnabled(bool enabled, RefPtr<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers) override;
-#endif
     Inspector::CommandResult<void> highlightRect(int x, int y, int width, int height, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates) override;
     Inspector::CommandResult<void> highlightQuad(Ref<JSON::Array>&& quad, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates) override;
-#if PLATFORM(IOS_FAMILY)
-    Inspector::CommandResult<void> highlightSelector(const String& selectorString, const String& frameId, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig) override;
-    Inspector::CommandResult<void> highlightNode(std::optional<int>&& nodeId, const String& objectId, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig) override;
-    Inspector::CommandResult<void> highlightNodeList(Ref<JSON::Array>&& nodeIds, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig) override;
-#else
     Inspector::CommandResult<void> highlightSelector(const String& selectorString, const String& frameId, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers) override;
     Inspector::CommandResult<void> highlightNode(std::optional<int>&& nodeId, const String& objectId, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers) override;
     Inspector::CommandResult<void> highlightNodeList(Ref<JSON::Array>&& nodeIds, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers) override;
-#endif
     Inspector::CommandResult<void> hideHighlight() override;
     Inspector::CommandResult<void> highlightFrame(const String& frameId, RefPtr<JSON::Object>&& contentColor, RefPtr<JSON::Object>&& contentOutlineColor) override;
     Inspector::CommandResult<void> showGridOverlay(int nodeId, Ref<JSON::Object>&& gridOverlayConfig) override;

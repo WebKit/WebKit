@@ -152,9 +152,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
     Ref { m_instrumentingAgents.get() }->setEnabledPageAgent(nullptr);
 
     std::ignore = setShowPaintRects(false);
-#if !PLATFORM(IOS_FAMILY)
     std::ignore = setShowRulers(false);
-#endif
     std::ignore = overrideUserAgent(nullString());
     std::ignore = setEmulatedMedia(emptyString());
     overridePrefersColorScheme(std::nullopt);
@@ -706,14 +704,12 @@ void InspectorPageAgent::searchInResources(const String& text, std::optional<boo
     callback->sendSuccess(WTF::move(result));
 }
 
-#if !PLATFORM(IOS_FAMILY)
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setShowRulers(bool showRulers)
 {
     protect(overlay())->setShowRulers(showRulers);
 
     return { };
 }
-#endif
 
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setShowPaintRects(bool show)
 {

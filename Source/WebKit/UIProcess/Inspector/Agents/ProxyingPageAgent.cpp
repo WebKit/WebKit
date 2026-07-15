@@ -674,12 +674,10 @@ void ProxyingPageAgent::searchInResources(const String& text, std::optional<bool
 // FIXME: <https://webkit.org/b/308899> Draw rulers in every WebContent process. Rulers render via
 // InspectorOverlay, which subframe processes don't have wired up, and need page-wide (cross-process)
 // geometry rather than the per-frame local drawing used for paint rects.
-#if !PLATFORM(IOS_FAMILY)
 CommandResult<void> ProxyingPageAgent::setShowRulers(bool)
 {
     return { };
 }
-#endif
 
 // Fan the paint-rects toggle out to every WebContent process and remember it so a process that
 // registers later (enableInstrumentationForProcess) gets it replayed. Each process draws in its own
