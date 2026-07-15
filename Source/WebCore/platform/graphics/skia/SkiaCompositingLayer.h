@@ -34,6 +34,7 @@
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
+#include "IntSize.h"
 #include "SkiaCompositingLayerImageSetBatch.h"
 #include "SkiaCompositingLayerOverlapRegions.h"
 #include "TextureMapperAnimation.h"
@@ -111,9 +112,10 @@ public:
     const TransformationMatrix& toSurfaceTransform() const { return m_transforms.combined; }
     FloatRect effectiveLayerRect() const { return FloatRect({ }, m_size); }
 
-    bool paint(SkCanvas&, std::optional<Damage>&);
-
-    bool hasDebugIndicators() const { return m_debugBorder.has_value() || m_repaintCount.has_value(); }
+    // Applies the animations, computes the transforms, then walks the tree. When a frame damage is passed,
+    // it is collected first in a walk that draws nothing, before the walk that draws into the canvas.
+    // Returns whether any animation is still running.
+    bool paint(SkCanvas&, std::optional<Damage>& frameDamage);
 
 private:
     using ScopedFlush = SkiaCompositingLayerImageSetBatch::ScopedFlush;
@@ -124,22 +126,21 @@ private:
     bool isVisible() const;
     bool isLeafOf3DRenderingContext() const { return !m_preserves3D && (m_parent && m_parent->m_preserves3D); }
     bool isReplica() const { return !!m_replicatedLayer; }
-    bool hasVisualContent() const;
+    bool paintsContentsRect() const { return m_contentsBuffer || m_imageBackingStore || (m_contentsSolidColor.isValid() && m_contentsSolidColor.isVisible()); }
+    bool hasVisualContent() const { return m_backingStore || paintsContentsRect(); }
+    bool hasVisiblePaintableContent() const { return !m_size.isEmpty() && m_visible && m_contentsVisible && hasVisualContent(); }
     Ref<SkiaCompositingLayer> backdropRoot();
 
     bool computeTransformsAndAnimations(const TransformationMatrix& parentTransform, const TransformationMatrix& futureParentTransform, MonotonicTime);
 
-    enum class PaintMode : bool {
-        Paint,
-    };
-
+    // The damage-collecting walk gathers damage and draws nothing.
     struct PaintContext {
         explicit PaintContext(std::optional<Damage>& damage)
-            : frameDamage(damage)
-        {
-        }
+            : frameDamage(damage) { }
 
-        PaintMode mode { PaintMode::Paint };
+        bool shouldDraw() const { return !frameDamage; }
+
+        std::optional<Damage>& frameDamage; // Set for the collecting walk only.
         float opacity { 1 };
         std::optional<SkBlendMode> blendMode;
         IntSize offset;
@@ -147,7 +148,6 @@ private:
         TransformationMatrix accumulatedReplicaTransform;
         RefPtr<SkiaCompositingLayer> paintingBackdropForLayer;
         bool skipAfterBackdrop { false };
-        std::optional<Damage>& frameDamage;
         SkiaCompositingLayerImageSetBatch imageSetBatch;
     };
 
@@ -165,7 +165,8 @@ private:
     void paintWithFilterAndMask(SkCanvas&, PaintContext&);
     void paintSelf(SkCanvas&, PaintContext&);
     void paintContents(SkCanvas&, PaintContext&);
-    void paintDebugIndicators(SkCanvas&, PaintContext&);
+    void paintDebugBorder(SkCanvas&, PaintContext&);
+    void paintRepaintCounter(SkCanvas&, PaintContext&);
 #if ENABLE(DAMAGE_TRACKING)
     void collectFrameDamage(SkCanvas&, PaintContext&);
 #endif
@@ -190,7 +191,6 @@ private:
     bool frameDamagePropagationEnabled() const { return !!m_sharedFrameDamage; }
     void damageWholeLayer()
     {
-        m_accumulatedOverlapRegionFrameDamage = { };
         if (m_size.isEmpty())
             return;
 
@@ -286,7 +286,6 @@ private:
     std::shared_ptr<Damage> m_sharedFrameDamage;
     std::optional<Damage> m_layerDamage;
     FloatRect m_previousLayerRectInFrameCoordinates;
-    FloatRect m_accumulatedOverlapRegionFrameDamage;
 #endif
 };
 

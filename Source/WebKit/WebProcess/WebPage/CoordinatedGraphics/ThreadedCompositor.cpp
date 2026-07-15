@@ -405,17 +405,17 @@ void ThreadedCompositor::paintToSkiaCanvas(const TransformationMatrix& matrix, c
     auto& rootLayer = m_sceneState->rootLayer().ensureSkiaTarget();
     rootLayer.setTransform(matrix);
 
-    m_surface->clear(reasons);
-
-    canvas->save();
-
     std::optional<Damage> frameDamage;
 #if ENABLE(DAMAGE_TRACKING)
+    // The damage is collected by a walk of its own, which draws nothing, before the walk that draws.
     if (m_damage.flags)
         frameDamage = Damage(size, m_damage.flags->contains(DamagePropagationFlags::Unified) ? Damage::Mode::BoundingBox : Damage::Mode::Rectangles);
 #endif
 
-    bool sceneHasRunningAnimations = rootLayer.paint(*canvas, frameDamage);
+    m_surface->clear(reasons);
+
+    canvas->save();
+    const bool hasRunningAnimations = rootLayer.paint(*canvas, frameDamage);
     canvas->restore();
 
 #if ENABLE(DAMAGE_TRACKING)
@@ -426,9 +426,7 @@ void ThreadedCompositor::paintToSkiaCanvas(const TransformationMatrix& matrix, c
         if (!frameDamage->isEmpty())
             m_surface->setFrameDamage(WTF::move(*frameDamage));
     }
-#endif
 
-#if ENABLE(DAMAGE_TRACKING)
     if (m_damage.showSkiaDamage) {
         if (auto damage = m_surface->frameDamage())
             drawSkiaDamage(*canvas, damage);
@@ -445,7 +443,7 @@ void ThreadedCompositor::paintToSkiaCanvas(const TransformationMatrix& matrix, c
     if (auto* surface = canvas->getSurface())
         PlatformDisplay::sharedDisplay().skiaGrContext()->flushAndSubmit(surface, GrSyncCpu::kNo);
 
-    if (sceneHasRunningAnimations)
+    if (hasRunningAnimations)
         requestComposition(CompositionReason::Animation);
 }
 
