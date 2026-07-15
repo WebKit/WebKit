@@ -102,10 +102,9 @@ WEBKIT_COPY_FILES(PAL_CopyHeaders
 if (SWIFT_REQUIRED AND NOT (PORT STREQUAL GTK OR PORT STREQUAL WPE))
     target_sources(PAL PRIVATE
         ${PAL_DIR}/pal/pal.swift
-        ${PAL_DIR}/pal/crypto/CryptoKit+UnsafeOverlays.swift
-        ${PAL_DIR}/pal/crypto/CryptoTypes.swift
         ${PAL_DIR}/pal/system/cocoa/RegexHelper.swift
         ${PAL_DIR}/pal/crypto/CryptoKitShim.swift
+        ${PAL_DIR}/pal/crypto/WTFExtras.swift
     )
 
     if (APPLE)

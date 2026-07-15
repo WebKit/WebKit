@@ -27,17 +27,23 @@
 #include "CryptoAlgorithmHMACCocoaBridging.h"
 
 #include "PALSwift-Generated.h"
+#include <wtf/BorrowedBytes.h>
 
 namespace PAL::Crypto {
 
 Expected<VectorUInt8, Error> signHMACCryptoKit(const VectorUInt8& key, const VectorUInt8& data, CryptoDigestHashFunction hashFunction)
 {
-    return pal::HMAC::sign(key.span(), data.span(), hashFunction);
+    BorrowedVectorScope keyScope(key);
+    BorrowedVectorScope dataScope(data);
+    return pal::HMAC::sign(protect(keyScope.bytes()).ptr(), protect(dataScope.bytes()).ptr(), hashFunction);
 }
 
 Expected<bool, Error> verifyHMACCryptoKit(const VectorUInt8& signature, const VectorUInt8& key, const VectorUInt8& data, CryptoDigestHashFunction hashFunction)
 {
-    return pal::HMAC::verify(signature.span(), key.span(), data.span(), hashFunction);
+    BorrowedVectorScope signatureScope(signature);
+    BorrowedVectorScope keyScope(key);
+    BorrowedVectorScope dataScope(data);
+    return pal::HMAC::verify(protect(signatureScope.bytes()).ptr(), protect(keyScope.bytes()).ptr(), protect(dataScope.bytes()).ptr(), hashFunction);
 }
 
 }

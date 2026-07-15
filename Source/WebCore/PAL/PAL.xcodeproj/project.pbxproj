@@ -24,8 +24,6 @@
 		073A17A42F769BC200630B55 /* CryptoAlgorithmHMACCocoaBridging.h in Headers */ = {isa = PBXBuildFile; fileRef = 073A17A32F769BC200630B55 /* CryptoAlgorithmHMACCocoaBridging.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		073A17A92F769C0500630B55 /* CryptoAlgorithmHMACCocoaBridging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073A17A82F769C0500630B55 /* CryptoAlgorithmHMACCocoaBridging.cpp */; };
 		07611DB7243FA5BF00D80704 /* UsageTrackingSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07611DB5243FA5BF00D80704 /* UsageTrackingSoftLink.mm */; };
-		076E34C42F725D9D006A65D9 /* CryptoKit+UnsafeOverlays.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076E34C32F725D9D006A65D9 /* CryptoKit+UnsafeOverlays.swift */; };
-		076E34C92F725DD9006A65D9 /* CryptoTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076E34C82F725DD9006A65D9 /* CryptoTypes.swift */; };
 		077121B62C1E8B4400FACBF9 /* WritingToolsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 077121B52C1E8B4400FACBF9 /* WritingToolsSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077121BA2C1E8BE500FACBF9 /* WritingToolsUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 077121B92C1E8BE500FACBF9 /* WritingToolsUISPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07789181273B14FF00E408D1 /* ScreenCaptureKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0778917F273B14FF00E408D1 /* ScreenCaptureKitSoftLink.mm */; };
@@ -117,6 +115,7 @@
 		7B47F2A428587B9700E793C8 /* CoreGraphicsSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B47F2A228587B9700E793C8 /* CoreGraphicsSoftLink.cpp */; };
 		93B38EC025821CD800198E63 /* SpeechSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B38EBF25821CD700198E63 /* SpeechSoftLink.mm */; };
 		94F4AA022B730D2C006DFFDE /* CryptoKitShim.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F4AA012B730D2C006DFFDE /* CryptoKitShim.swift */; };
+		BB0000000000000000000010 /* WTFExtras.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000011 /* WTFExtras.swift */; };
 		A1038D332AB12BF100F57BA4 /* WebAVContentKeyGrouping.h in Headers */ = {isa = PBXBuildFile; fileRef = A1038D322AB12BF100F57BA4 /* WebAVContentKeyGrouping.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1038D4F2AB21FBB00F57BA4 /* WebAVContentKeyReportGroupExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A1038D4D2AB21FBB00F57BA4 /* WebAVContentKeyReportGroupExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10826FA1F576292004772AC /* WebPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10826F81F576292004772AC /* WebPanel.mm */; };
@@ -513,8 +512,6 @@
 		073A17A82F769C0500630B55 /* CryptoAlgorithmHMACCocoaBridging.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmHMACCocoaBridging.cpp; sourceTree = "<group>"; };
 		07611DB4243FA5BE00D80704 /* UsageTrackingSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsageTrackingSoftLink.h; sourceTree = "<group>"; };
 		07611DB5243FA5BF00D80704 /* UsageTrackingSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UsageTrackingSoftLink.mm; sourceTree = "<group>"; };
-		076E34C32F725D9D006A65D9 /* CryptoKit+UnsafeOverlays.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CryptoKit+UnsafeOverlays.swift"; sourceTree = "<group>"; };
-		076E34C82F725DD9006A65D9 /* CryptoTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoTypes.swift; sourceTree = "<group>"; };
 		077121B52C1E8B4400FACBF9 /* WritingToolsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WritingToolsSPI.h; sourceTree = "<group>"; };
 		077121B92C1E8BE500FACBF9 /* WritingToolsUISPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WritingToolsUISPI.h; sourceTree = "<group>"; };
 		0778917F273B14FF00E408D1 /* ScreenCaptureKitSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScreenCaptureKitSoftLink.mm; sourceTree = "<group>"; };
@@ -743,6 +740,7 @@
 		93E5909C1F93BF1E0067F8CF /* UnencodableHandling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnencodableHandling.h; sourceTree = "<group>"; };
 		94C759022B990D31000CC511 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		94F4AA012B730D2C006DFFDE /* CryptoKitShim.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CryptoKitShim.swift; path = pal/crypto/CryptoKitShim.swift; sourceTree = SOURCE_ROOT; };
+		BB0000000000000000000011 /* WTFExtras.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WTFExtras.swift; path = pal/crypto/WTFExtras.swift; sourceTree = SOURCE_ROOT; };
 		A10265881F56747A00B4C844 /* HIToolboxSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIToolboxSPI.h; sourceTree = "<group>"; };
 		A102658D1F567E9D00B4C844 /* HIServicesSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HIServicesSPI.h; sourceTree = "<group>"; };
 		A1038D322AB12BF100F57BA4 /* WebAVContentKeyGrouping.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAVContentKeyGrouping.h; sourceTree = "<group>"; };
@@ -1159,12 +1157,11 @@
 				1C09D0521E31C44100725F18 /* CryptoDigest.h */,
 				07ED412C2F771D5100C91401 /* CryptoEDKeyBridging.cpp */,
 				07ED41272F771BC200C91401 /* CryptoEDKeyBridging.h */,
-				076E34C32F725D9D006A65D9 /* CryptoKit+UnsafeOverlays.swift */,
 				94F4AA012B730D2C006DFFDE /* CryptoKitShim.swift */,
 				07C9C8DB2EDAAABD007B579A /* CryptoTypes.h */,
-				076E34C82F725DD9006A65D9 /* CryptoTypes.swift */,
 				078D1F412F74FB5D00B6BFA9 /* PlatformECKey.cpp */,
 				078D1F3C2F74D8D000B6BFA9 /* PlatformECKey.h */,
+				BB0000000000000000000011 /* WTFExtras.swift */,
 			);
 			path = crypto;
 			sourceTree = "<group>";
@@ -1908,10 +1905,8 @@
 				0737C2732F7351B300372185 /* CryptoAlgorithmX25519CocoaBridging.cpp in Sources */,
 				1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */,
 				07ED412D2F771D5100C91401 /* CryptoEDKeyBridging.cpp in Sources */,
-				076E34C42F725D9D006A65D9 /* CryptoKit+UnsafeOverlays.swift in Sources */,
 				57F1C90A25DCF0CF00E8F6EA /* CryptoKitPrivateSoftLink.mm in Sources */,
 				94F4AA022B730D2C006DFFDE /* CryptoKitShim.swift in Sources */,
-				076E34C92F725DD9006A65D9 /* CryptoTypes.swift in Sources */,
 				F4DDD01B264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.mm in Sources */,
 				F4E0875C266ACA53000F814A /* DataDetectorsSoftLink.mm in Sources */,
 				7AA1E2D029EF5947002D4455 /* DataDetectorsUISoftLink.mm in Sources */,
@@ -1985,6 +1980,7 @@
 				A10826FA1F576292004772AC /* WebPanel.mm in Sources */,
 				F499BAAD2947FDBA001241D6 /* WebPrivacySoftLink.mm in Sources */,
 				44047A0F2C220D45004EF28D /* WritingToolsUISoftLink.mm in Sources */,
+				BB0000000000000000000010 /* WTFExtras.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
