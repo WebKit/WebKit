@@ -300,6 +300,10 @@ static void buildScaledCornerInputs(const FloatRoundedRect& outerSnapped, const 
 
     for (auto key : { BoxCorner::TopLeft, BoxCorner::TopRight, BoxCorner::BottomLeft, BoxCorner::BottomRight }) {
         CornerInput& corner = cornerRects[key];
+
+        if (!corner.startInset && !corner.endInset)
+            continue;
+
         double scaledWidth = corner.width * scale;
         double scaledHeight = corner.height * scale;
 
@@ -343,7 +347,7 @@ Path BorderShape::pathForInnerRoundedRect(const FloatRoundedRect& innerSnapped) 
 static void addOuterCornerShapeToPath(Path& path, const FloatRoundedRect& outerSnapped, const RectCorners<float>& cornerCurvatures)
 {
     RectCorners<CornerInput> cornerRects;
-    buildScaledCornerInputs(outerSnapped, cornerCurvatures, 0, 0, 0, 0, cornerRects);
+    buildCornerInputs(outerSnapped, cornerCurvatures, 0, 0, 0, 0, cornerRects);
     borderContourPath(path, cornerRects);
 }
 
