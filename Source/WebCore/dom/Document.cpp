@@ -12112,7 +12112,7 @@ void Document::performPendingViewTransitions()
     Ref activeViewTransition = *m_activeViewTransition;
     if (activeViewTransition->phase() == ViewTransitionPhase::PendingCapture)
         activeViewTransition->setupViewTransition();
-    else if (activeViewTransition->phase() == ViewTransitionPhase::Animating)
+    else if (activeViewTransition->isAnimating())
         activeViewTransition->handleTransitionFrame();
 
     if (m_activeViewTransition)
