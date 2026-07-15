@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CSSCalcTree.h"
 #include "CSSPrimitiveNumericRange.h"
 #include "CSSToLengthConversionData.h"
 #include <optional>
@@ -32,6 +33,10 @@ namespace WebCore {
 
 namespace CSS {
 enum class Category : uint8_t;
+}
+
+namespace Style {
+class BuilderState;
 }
 
 class CSSCalcSymbolTable;
@@ -57,6 +62,10 @@ struct EvaluationOptions {
 
 std::optional<double> evaluateDouble(const Tree&, const EvaluationOptions&);
 std::optional<double> evaluateWithoutFallback(const Anchor&, const EvaluationOptions&);
+
+// Resolves a random() <random-value-sharing> to its base value in [0, 1] against the builder state.
+// Shared by random()'s evaluation and random-item()'s substitution-time resolution.
+std::optional<double> resolveRandomBaseValue(const Random::Sharing&, Style::BuilderState&);
 
 } // namespace CSSCalc
 } // namespace WebCore

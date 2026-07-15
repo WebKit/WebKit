@@ -20344,6 +20344,8 @@
 		BCB9C3382FC37CA800BA905E /* CSSQuotes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSQuotes.cpp; sourceTree = "<group>"; };
 		BCB9C3392FC37DBE00BA905E /* CSSQuotesValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSQuotesValue.h; sourceTree = "<group>"; };
 		BCB9C33A2FC37DBE00BA905E /* CSSQuotesValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSQuotesValue.cpp; sourceTree = "<group>"; };
+		3F793C53E2BC4B55A7DD92A6 /* CSSRandomKeyParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSRandomKeyParser.cpp; sourceTree = "<group>"; };
+		E726A03F07434F85BA54EB90 /* CSSRandomKeyParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSRandomKeyParser.h; sourceTree = "<group>"; };
 		BCBB8AB513F1AFB000734DF0 /* PODInterval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PODInterval.h; sourceTree = "<group>"; };
 		BCBB8AB613F1AFB000734DF0 /* PODIntervalTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PODIntervalTree.h; sourceTree = "<group>"; };
 		BCBB8AB713F1AFB000734DF0 /* PODRedBlackTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PODRedBlackTree.h; sourceTree = "<group>"; };
@@ -41885,6 +41887,8 @@
 				491342962B425C0100FEEF18 /* CSSPseudoSelectors.json */,
 				BCB9C33A2FC37DBE00BA905E /* CSSQuotesValue.cpp */,
 				BCB9C3392FC37DBE00BA905E /* CSSQuotesValue.h */,
+				3F793C53E2BC4B55A7DD92A6 /* CSSRandomKeyParser.cpp */,
+				E726A03F07434F85BA54EB90 /* CSSRandomKeyParser.h */,
 				CAE9F90D146441F000C245B0 /* CSSRatioValue.cpp */,
 				CAE9F90E146441F000C245B0 /* CSSRatioValue.h */,
 				66007A0127444CE200946C9B /* CSSRayValue.cpp */,

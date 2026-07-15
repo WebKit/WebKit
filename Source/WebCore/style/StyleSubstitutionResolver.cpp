@@ -26,17 +26,16 @@
 #include "config.h"
 #include "StyleSubstitutionResolver.h"
 
-#include "CSSCalcRandomCachingKey.h"
+#include "CSSCalcTree+Evaluation.h"
 #include "CSSCustomPropertySyntax.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
 #include "CSSPropertyParserConsumer+Ident.h"
-#include "CSSPropertyParserConsumer+MetaConsumer.h"
-#include "CSSPropertyParserConsumer+NumberDefinitions.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserState.h"
+#include "CSSRandomKeyParser.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "CSSSelectorParser.h"
 #include "CSSSerializationContext.h"
@@ -859,57 +858,13 @@ bool SubstitutionResolver::substituteRandomItemFunction(CSSParserTokenRange rang
 std::optional<double> SubstitutionResolver::randomItemBaseValue(Vector<CSSParserToken> randomKey)
 {
     // <random-key> = auto | <random-cache-key> | fixed <number [0,1]>
-    // The subset supported here matches random()'s current support:
-    //   [ [ auto | <dashed-ident> ] || element-scoped ] | fixed <number [0,1]>
+    // Parsed with the shared consumer so random-item()'s <random-key> stays in sync with random()'s.
+    // The supported subset matches random(): [ [ auto | <dashed-ident> ] || element-scoped ] | fixed <number [0,1]>;
     // property-scoped / property-index-scoped / <random-ua-ident> are a follow-up, in sync with random().
     CSSParserTokenRange randomKeyRange { randomKey };
     randomKeyRange.consumeWhitespace();
-    if (randomKeyRange.atEnd())
-        return { };
 
-    if (randomKeyRange.peek().id() == CSSValueFixed) {
-        randomKeyRange.consumeIncludingWhitespace();
-        // fixed <number [0,1]>, reusing random()'s number consumer so calc()/var()-derived numbers
-        // are accepted identically.
-        auto numberParsingState = CSS::PropertyParserState { .context = m_substitutionValue->context() };
-        auto number = CSSPropertyParserHelpers::MetaConsumer<CSS::Number<CSS::ClosedUnitRange>>::consume(randomKeyRange, numberParsingState);
-        if (!number || !randomKeyRange.atEnd())
-            return { };
-        return Style::toStyle(*number, m_styleBuilder.state()).value;
-    }
-
-    std::optional<CSS::Keyword::ElementScoped> elementScoped;
-    std::optional<AtomString> dashedIdent;
-    bool isAuto = false;
-
-    while (!randomKeyRange.atEnd()) {
-        auto& token = randomKeyRange.peek();
-        if (!elementScoped && token.id() == CSSValueElementScoped) {
-            elementScoped = CSS::Keyword::ElementScoped { };
-            randomKeyRange.consumeIncludingWhitespace();
-            continue;
-        }
-        if (!isAuto && !dashedIdent && token.id() == CSSValueAuto) {
-            isAuto = true;
-            randomKeyRange.consumeIncludingWhitespace();
-            continue;
-        }
-        if (!isAuto && !dashedIdent && token.type() == IdentToken && isCustomPropertyName(token.value())) {
-            dashedIdent = token.value().toAtomString();
-            randomKeyRange.consumeIncludingWhitespace();
-            continue;
-        }
-        break;
-    }
-
-    if (!randomKeyRange.atEnd())
-        return { };
-
-    if (elementScoped && !m_styleBuilder.state().element())
-        return { };
-
-    if (dashedIdent)
-        return m_styleBuilder.state().lookupCSSRandomBaseValue(CSSCalc::RandomCachingKey { Style::CustomIdent { *dashedIdent } }, elementScoped);
+    auto parserState = CSS::PropertyParserState { .context = m_substitutionValue->context() };
 
     // "auto" (or an omitted identifier alongside element-scoped) keys on the current property,
     // disambiguated by a per-resolver index so independent auto instances in one declaration select
@@ -919,12 +874,17 @@ std::optional<double> SubstitutionResolver::randomItemBaseValue(Vector<CSSParser
     // parse-time cssRandomFunctionCount. An auto random-item() and an auto random() in the same
     // property value can therefore land on the same RandomCachingKey and share a base value, and the
     // index follows the selected branch rather than parse position. Unifying this with random()'s
-    // counter is the job of the shared <random-key> helper follow-up.
-    auto autoKey = CSSCalc::RandomSharingOptions::Auto {
-        .property = m_styleBuilder.state().cssPropertyID(),
-        .index = m_randomItemAutoIndex++
-    };
-    return m_styleBuilder.state().lookupCSSRandomBaseValue(CSSCalc::RandomCachingKey { autoKey }, elementScoped);
+    // counter is a follow-up.
+    auto sharing = CSSPropertyParserHelpers::consumeUnresolvedRandomKey(randomKeyRange, parserState, [&] {
+        return CSSCalc::RandomSharingOptions::Auto {
+            .property = m_styleBuilder.state().cssPropertyID(),
+            .index = m_randomItemAutoIndex++
+        };
+    });
+    if (!sharing || !randomKeyRange.atEnd())
+        return { };
+
+    return CSSCalc::resolveRandomBaseValue(*sharing, m_styleBuilder.state());
 }
 
 auto SubstitutionResolver::substituteIfArgumentGrammar(CSSParserTokenRange range, const CSSParserContext& context) -> std::optional<Vector<IfBranch>>

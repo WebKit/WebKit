@@ -974,6 +974,7 @@ css/CSSPropertyInitialValues.cpp
 css/CSSPropertyRule.cpp
 css/CSSPropertySourceData.cpp
 css/CSSQuotesValue.cpp
+css/CSSRandomKeyParser.cpp
 css/CSSRatioValue.cpp
 css/CSSRayValue.cpp
 css/CSSRegisteredCounterStyle.cpp

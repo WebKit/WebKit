@@ -27,4 +27,7 @@ PASS random-item() selection is stable across style recalculation
 PASS Independent auto random-item() instances each resolve to a valid item
 PASS A shared dashed-ident key selects the same item across properties
 PASS random() and random-item() using auto in one declaration both resolve
+PASS A bare element-scoped key selects the same item across random-item() instances
+PASS random() and random-item() share the base value for a bare element-scoped key
+PASS Property color value 'random-item(--, rgb(1, 0, 0), rgb(0, 1, 0))'
 
