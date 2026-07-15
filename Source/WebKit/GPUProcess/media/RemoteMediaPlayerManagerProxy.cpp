@@ -97,7 +97,12 @@ void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier iden
     ASSERT(RunLoop::isMain());
     ASSERT(!m_proxies.contains(identifier));
 
-    MESSAGE_CHECK(playbackEngineForConnection(engineIdentifier));
+    if (!playbackEngineForConnection(engineIdentifier)) {
+        // Terminate only for a containment bypass: the engine is registered here for capability
+        // queries (Supports scope) but not for playback. An entirely-absent engine (e.g. media
+        // framework unavailable in recoveryOS) degrades to a null player.
+        MESSAGE_CHECK(!MediaPlayer::mediaEngine({ .identifier = engineIdentifier, .scope = MediaPlayerScope::Supports }));
+    }
 
     auto proxy = RemoteMediaPlayerProxy::create(*this, identifier, clientIdentifier, connection->connection(), engineIdentifier, WTF::move(proxyConfiguration), Ref { connection->videoFrameObjectHeap() }, connection->webProcessIdentity());
     m_proxies.add(identifier, WTF::move(proxy));
