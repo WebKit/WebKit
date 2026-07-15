@@ -819,7 +819,8 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         if (!impl->m_numberingSystem.isNull())
             localeBuilder.append("-nu-"_s, impl->m_numberingSystem);
     }
-    CString dataLocaleWithExtensions = localeBuilder.toString().utf8();
+    impl->m_dataLocaleWithExtensions = localeBuilder.toString().utf8();
+    const CString& dataLocaleWithExtensions = impl->m_dataLocaleWithExtensions;
 
     JSValue tzValue = jsUndefined();
     if (options) {
@@ -2098,7 +2099,7 @@ UDateFormat* IntlDateTimeFormat::getTemporalFormatter(VM& vm, TemporalFieldKind 
     }
     auto& cached = m_impl->m_temporalFormatterCache->m_formatters[static_cast<size_t>(kind)];
     if (!cached) {
-        cached = computeTemporalFormatter(kind);
+        cached = computeTemporalFormatter(vm, kind);
         if (cached)
             vm.heap.reportExtraMemoryAllocated(this, estimatedUDateFormatSize);
     }
@@ -2109,7 +2110,7 @@ UDateFormat* IntlDateTimeFormat::getTemporalFormatter(VM& vm, TemporalFieldKind 
 // https://tc39.es/proposal-temporal/#sec-createdatetimeformat (dispatch)
 // CreateDateTimeFormat calls AdjustDateTimeStyleFormat/GetDateTimeFormat eagerly at construction.
 // We implement them lazily here on first use, dispatching based on the same conditions.
-std::unique_ptr<UDateFormat, IntlDateTimeFormat::UDateFormatDeleter> IntlDateTimeFormat::computeTemporalFormatter(TemporalFieldKind kind) const
+std::unique_ptr<UDateFormat, IntlDateTimeFormat::UDateFormatDeleter> IntlDateTimeFormat::computeTemporalFormatter(VM& vm, TemporalFieldKind kind) const
 {
     ASSERT(kind != TemporalFieldKind::ZonedDateTime);
     Vector<char16_t, 32> patternBuf;
@@ -2134,15 +2135,15 @@ std::unique_ptr<UDateFormat, IntlDateTimeFormat::UDateFormatDeleter> IntlDateTim
             if (kind == TemporalFieldKind::PlainTime && m_impl->m_timeStyle == DateTimeStyle::None)
                 return nullptr; // Step i: timeStyle undefined -> null.
         }
-        return computeAdjustDateTimeStyleFormat(kind, skeleton);
+        return computeAdjustDateTimeStyleFormat(vm, kind, skeleton);
     }
     // CreateDateTimeFormat -> GetDateTimeFormat.
-    return computeGetDateTimeFormat(kind);
+    return computeGetDateTimeFormat(vm, kind);
 }
 
 
 // https://tc39.es/proposal-temporal/#sec-adjustdatetimestyleformat
-std::unique_ptr<UDateFormat, IntlDateTimeFormat::UDateFormatDeleter> IntlDateTimeFormat::computeAdjustDateTimeStyleFormat(TemporalFieldKind kind, const Vector<char16_t, 32>& skeleton) const
+std::unique_ptr<UDateFormat, IntlDateTimeFormat::UDateFormatDeleter> IntlDateTimeFormat::computeAdjustDateTimeStyleFormat(VM& vm, TemporalFieldKind kind, const Vector<char16_t, 32>& skeleton) const
 {
     ASSERT(kind != TemporalFieldKind::ZonedDateTime);
 
@@ -2189,16 +2190,7 @@ std::unique_ptr<UDateFormat, IntlDateTimeFormat::UDateFormatDeleter> IntlDateTim
         return nullptr;
 
     // Steps 7-8: BestFitFormatMatcher(formatOptions, formats).
-    String generatorLocale = m_impl->m_dataLocale;
-    if (!m_impl->m_calendar.isEmpty())
-        generatorLocale = makeString(generatorLocale, "-u-ca-"_s, m_impl->m_calendar);
-    auto generator = std::unique_ptr<UDateTimePatternGenerator, ICUDeleter<udatpg_close>>(udatpg_open(generatorLocale.utf8().data(), &status));
-    if (U_FAILURE(status))
-        return nullptr;
-    Vector<char16_t, 32> bestPattern;
-    status = callBufferProducingFunction(udatpg_getBestPatternWithOptions, generator.get(),
-        filteredSkeleton.span().data(), filteredSkeleton.size(),
-        UDATPG_MATCH_HOUR_FIELD_LENGTH, bestPattern);
+    Vector<char16_t, 32> bestPattern = vm.intlCache().getBestDateTimePattern(m_impl->m_dataLocaleWithExtensions, filteredSkeleton.span(), status);
     if (U_FAILURE(status) || bestPattern.isEmpty())
         return nullptr;
     if (m_impl->m_hourCycle != HourCycle::None)
@@ -2219,7 +2211,7 @@ std::unique_ptr<UDateFormat, IntlDateTimeFormat::UDateFormatDeleter> IntlDateTim
 }
 
 // https://tc39.es/proposal-temporal/#sec-getdatetimeformat
-std::unique_ptr<UDateFormat, IntlDateTimeFormat::UDateFormatDeleter> IntlDateTimeFormat::computeGetDateTimeFormat(TemporalFieldKind kind) const
+std::unique_ptr<UDateFormat, IntlDateTimeFormat::UDateFormatDeleter> IntlDateTimeFormat::computeGetDateTimeFormat(VM& vm, TemporalFieldKind kind) const
 {
     ASSERT(kind != TemporalFieldKind::ZonedDateTime);
     UErrorCode status = U_ZERO_ERROR;
@@ -2337,16 +2329,7 @@ std::unique_ptr<UDateFormat, IntlDateTimeFormat::UDateFormatDeleter> IntlDateTim
     // Steps 18-19: BestFitFormatMatcher(formatOptions, formats).
     // We always use best-fit (spec also allows basicFormatMatcher but best-fit is the default).
     // The hourCycle field from step 12 is applied post-pattern via replaceHourCycleInPattern.
-    String generatorLocale = m_impl->m_dataLocale;
-    if (!m_impl->m_calendar.isEmpty())
-        generatorLocale = makeString(generatorLocale, "-u-ca-"_s, m_impl->m_calendar);
-    auto generator = std::unique_ptr<UDateTimePatternGenerator, ICUDeleter<udatpg_close>>(udatpg_open(generatorLocale.utf8().data(), &status));
-    if (U_FAILURE(status))
-        return nullptr;
-    Vector<char16_t, 32> bestPattern;
-    status = callBufferProducingFunction(udatpg_getBestPatternWithOptions, generator.get(),
-        formatOptions.span().data(), formatOptions.size(),
-        UDATPG_MATCH_HOUR_FIELD_LENGTH, bestPattern);
+    Vector<char16_t, 32> bestPattern = vm.intlCache().getBestDateTimePattern(m_impl->m_dataLocaleWithExtensions, formatOptions.span(), status);
     if (U_FAILURE(status) || bestPattern.isEmpty())
         return nullptr;
     if (m_impl->m_hourCycle != HourCycle::None)
