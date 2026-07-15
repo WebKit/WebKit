@@ -39,12 +39,10 @@ class DeprecatedJSTestIncludesChecker(object):
 
     CATEGORY = 'build/deprecated/js-test-helpers'
 
-    # Matches <script ... src="...js-test-pre.js">, the js-test-post.js
-    # counterpart, and js-test-post-async.js, with either quote style and an
-    # optional query string. Listing post-async before post in the alternation
-    # ensures it wins the longest-match for post-async filenames.
+    # (?:[^"']*/)? anchors the name to a path segment (so custom-js-test-pre.js
+    # is not flagged); post-async precedes post to win the longest match.
     _DEPRECATED_INCLUDE_RE = re.compile(
-        r'''<script\b[^>]*\bsrc\s*=\s*["'][^"']*\b(?P<filename>js-test-post-async\.js|js-test-pre\.js|js-test-post\.js)(?:\?[^"']*)?["']''',
+        r'''<script\b[^>]*\bsrc\s*=\s*["'](?:[^"']*/)?(?P<filename>js-test-post-async\.js|js-test-pre\.js|js-test-post\.js)(?:[?#][^"']*)?["']''',
         re.IGNORECASE,
     )
 

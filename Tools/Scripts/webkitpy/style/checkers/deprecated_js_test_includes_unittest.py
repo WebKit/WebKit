@@ -61,6 +61,13 @@ class DeprecatedJSTestIncludesCheckerTest(unittest.TestCase):
             'js-test-pre.js',
         )
 
+    def test_flags_pre_include_deep_relative(self):
+        self.assertError(
+            ['<script src="../../../../resources/js-test-pre.js"></script>'],
+            1,
+            'js-test-pre.js',
+        )
+
     def test_flags_post_include_relative(self):
         self.assertError(
             ['<script src="../../resources/js-test-post.js"></script>'],
@@ -121,6 +128,18 @@ class DeprecatedJSTestIncludesCheckerTest(unittest.TestCase):
     def test_does_not_flag_unrelated_script(self):
         self.assertNoError(
             ['<script src="../../resources/unrelated-helper.js"></script>'],
+        )
+
+    def test_does_not_flag_similarly_named_helper(self):
+        self.assertNoError(
+            ['<script src="../../resources/custom-js-test-pre.js"></script>'],
+        )
+
+    def test_flags_with_fragment(self):
+        self.assertError(
+            ['<script src="../../resources/js-test-pre.js#frag"></script>'],
+            1,
+            'js-test-pre.js',
         )
 
     def test_does_not_flag_plain_filename_mention(self):

@@ -48,6 +48,7 @@ from webkitpy.style.checkers.changelog import ChangeLogChecker
 from webkitpy.style.checkers.cpp import CppChecker
 from webkitpy.style.checkers.cmake import CMakeChecker
 from webkitpy.style.checkers.deprecated_js_test_includes import categories as DeprecatedJSTestIncludesCategories
+from webkitpy.style.checkers.deprecated_js_test_includes import DeprecatedJSTestIncludesChecker
 from webkitpy.style.checkers.featuredefines import FeatureDefinesChecker
 from webkitpy.style.checkers.js import JSChecker
 from webkitpy.style.checkers.jsonchecker import JSONChecker
@@ -571,6 +572,10 @@ _NEVER_SKIPPED_FILES = _NEVER_SKIPPED_JS_FILES + [
     re.compile('^' + re.escape(os.path.join('LayoutTests', 'imported', 'w3c', 'resources', 'import-expectations.json')) + r'$'),
 ]
 
+# LayoutTests is skipped wholesale (see _SKIPPED_FILES_WITHOUT_WARNING), but
+# its non-imported HTML/XHTML markup is still linted for deprecated includes.
+_DEPRECATED_JS_TEST_MARKUP_RE = re.compile(r'^LayoutTests.(?!imported).*\.(?:html|xhtml)$')
+
 # Files to skip that are less obvious.
 #
 # Some files should be skipped when checking style. For example,
@@ -883,6 +888,10 @@ class CheckerDispatcher(object):
                 return True
         return False
 
+    def _is_lintable_layout_test_markup(self, file_path):
+        """Whether the file is LayoutTests markup to lint for deprecated js-test includes."""
+        return bool(_DEPRECATED_JS_TEST_MARKUP_RE.match(file_path))
+
     def should_skip_with_warning(self, file_path):
         """Return whether the given file should be skipped with a warning."""
         for skipped_file in _SKIPPED_FILES_WITH_WARNING:
@@ -907,6 +916,9 @@ class CheckerDispatcher(object):
         for pattern in _NEVER_SKIPPED_FILES:
             if self._file_matches_pattern(file_path, pattern):
                 return False
+        # Lint LayoutTests markup despite the wholesale skip below.
+        if self._is_lintable_layout_test_markup(file_path):
+            return False
         for skipped_file in _SKIPPED_FILES_WITHOUT_WARNING:
             if self._should_skip_file_path(file_path, skipped_file):
                 return True
@@ -1039,6 +1051,8 @@ class CheckerDispatcher(object):
                 checker = TestExpectationsChecker(file_path, handle_style_error)
             elif file_path.endswith('.messages.in'):
                 checker = MessagesInChecker(file_path, handle_style_error)
+            elif self._is_lintable_layout_test_markup(file_path):
+                checker = DeprecatedJSTestIncludesChecker(handle_style_error)
             else:
                 checker = TextChecker(file_path, handle_style_error)
         elif file_type == FileType.WATCHLIST:

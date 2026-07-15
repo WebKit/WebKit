@@ -54,6 +54,7 @@ from webkitpy.style.checker import StyleProcessorConfiguration
 from webkitpy.style.checkers.basexcconfig import BaseXcconfigChecker
 from webkitpy.style.checkers.changelog import ChangeLogChecker
 from webkitpy.style.checkers.cpp import CppChecker
+from webkitpy.style.checkers.deprecated_js_test_includes import DeprecatedJSTestIncludesChecker
 from webkitpy.style.checkers.js import JSChecker
 from webkitpy.style.checkers.jsonchecker import JSONChecker
 from webkitpy.style.checkers.python import PythonChecker
@@ -348,6 +349,9 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
             os.path.join('LayoutTests', 'foo.txt'),
             os.path.join('LayoutTests', 'imported', 'foo.py'),
             os.path.join('WebDriverTests', 'foo.py'),
+            # Imported markup and non-markup LayoutTests files stay skipped.
+            os.path.join('LayoutTests', 'imported', 'w3c', 'foo.html'),
+            os.path.join('LayoutTests', 'fast', 'foo.js'),
         ]
         for path in paths:
             self._assert_should_skip_without_warning(path,
@@ -362,6 +366,9 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
                  os.path.join('LayoutTests', 'TestExpectations'),
                  os.path.join('WebDriverTests', 'ChangeLog'),
                  os.path.join('WebDriverTests', 'TestExpectations.json'),
+                 # LayoutTests markup is linted for deprecated js-test includes.
+                 os.path.join('LayoutTests', 'fast', 'css', 'foo.html'),
+                 os.path.join('LayoutTests', 'fast', 'forms', 'bar.xhtml'),
         ]
 
         for path in paths:
@@ -441,6 +448,10 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
     def assert_checker_text(self, file_path):
         """Assert that the dispatched checker is a TextChecker."""
         self.assert_checker(file_path, TextChecker)
+
+    def assert_checker_deprecated_js_test_includes(self, file_path):
+        """Assert that the dispatched checker is a DeprecatedJSTestIncludesChecker."""
+        self.assert_checker(file_path, DeprecatedJSTestIncludesChecker)
 
     def assert_checker_xml(self, file_path):
         """Assert that the dispatched checker is a XMLChecker."""
@@ -615,6 +626,20 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
         checker = self.dispatch(file_path)
         self.assertEqual(checker.file_path, file_path)
         self.assertEqual(checker.handle_style_error, self.mock_handle_style_error)
+
+    def test_deprecated_js_test_includes_paths(self):
+        """LayoutTests HTML/XHTML markup routes to the deprecated js-test
+        include checker; non-LayoutTests and imported markup do not."""
+        deprecated_paths = [
+            os.path.join('LayoutTests', 'fast', 'css', 'foo.html'),
+            os.path.join('LayoutTests', 'fast', 'forms', 'bar.xhtml'),
+            os.path.join('LayoutTests', 'http', 'tests', 'security', 'baz.html'),
+        ]
+        for path in deprecated_paths:
+            self.assert_checker_deprecated_js_test_includes(path)
+
+        self.assert_checker_text(os.path.join('Source', 'WebCore', 'foo.html'))
+        self.assert_checker_text(os.path.join('LayoutTests', 'imported', 'w3c', 'foo.html'))
 
     def test_xml_paths(self):
         """Test paths that should be checked as XML."""
