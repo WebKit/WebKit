@@ -1061,53 +1061,50 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
 
 class PromiseSettlementObserver : public RefCounted<PromiseSettlementObserver> {
 public:
+    using SuccessSteps = Function<void()>;
+    using FailureSteps = Function<void(JSC::JSValue)>;
 
-    static Ref<PromiseSettlementObserver> create(Document& document)
+    static Ref<PromiseSettlementObserver> create(SuccessSteps&& successSteps, FailureSteps&& failureSteps)
     {
-        ASSERT(document.isFullyActive());
-        auto* globalObject = downcast<JSDOMGlobalObject>(document.globalObject());
-        JSC::JSLockHolder locker(globalObject->vm());
-        RefPtr wrapper = DeferredPromise::create(*globalObject, DeferredPromise::Mode::RetainPromiseOnResolve);
-        return adoptRef(*new PromiseSettlementObserver(wrapper.releaseNonNull()));
+        return adoptRef(*new PromiseSettlementObserver(WTF::move(successSteps), WTF::move(failureSteps)));
     }
 
     // https://webidl.spec.whatwg.org/#wait-for-all
-    Ref<DOMPromise> waitForAllPromises(const Vector<Ref<DOMPromise>>& promises)
+    static void waitForAll(Document& document, const Vector<Ref<DOMPromise>>& promises, SuccessSteps&& successSteps, FailureSteps&& failureSteps)
     {
-        ASSERT(!isSettled());
-        ASSERT(!m_totalPromises);
-
-        for (const auto& promise : promises) {
-            if (registerPromise(promise))
-                m_totalPromises++;
-        }
-
-        // Step 6.1 Queue a microtask to perform successSteps given « ».
-        if (!m_totalPromises) {
-            if (RefPtr context = m_wrapper->globalObject()->scriptExecutionContext()) {
-                protect(context->eventLoop())->queueMicrotask(context->vm(), [protectThis = Ref { *this }]() {
-                    protectThis->resolve();
-                });
-            }
-        }
-
-        return createDOMPromise(protect(*m_wrapper));
+        Ref observer = create(WTF::move(successSteps), WTF::move(failureSteps));
+        observer->registerPromises(promises);
+        observer->wait(document);
     }
 
 private:
-    explicit PromiseSettlementObserver(Ref<DeferredPromise>&& wrapper)
-        : m_wrapper(WTF::move(wrapper))
+    PromiseSettlementObserver(SuccessSteps&& successSteps, FailureSteps&& failureSteps)
+        : m_successSteps(WTF::move(successSteps))
+        , m_failureSteps(WTF::move(failureSteps))
     {
     }
 
     bool isWaiting() const { return m_totalPromises > m_settledPromises; }
-    bool isSettled() const { return !m_wrapper; }
-    void resolve() { consumeWrapper()->resolve(); }
-    void reject(JSC::JSValue result) { consumeWrapper()->reject<IDLAny>(result); }
+
+    void resolve()
+    {
+        if (m_settled)
+            return;
+        m_settled = true;
+        m_successSteps();
+    }
+
+    void reject(JSC::JSValue result)
+    {
+        if (m_settled)
+            return;
+        m_settled = true;
+        m_failureSteps(result);
+    }
 
     void handleResult(bool isFulfilled, JSC::JSValue result)
     {
-        if (isSettled())
+        if (m_settled)
             return;
 
         ASSERT(isWaiting());
@@ -1133,15 +1130,34 @@ private:
         return promise.whenSettledWithResult(WTF::move(handler)) == DOMPromise::IsCallbackRegistered::Yes;
     }
 
-    Ref<DeferredPromise> consumeWrapper()
+    void registerPromises(const Vector<Ref<DOMPromise>>& promises)
     {
-        ASSERT(!isSettled());
-        return std::exchange(m_wrapper, nullptr).releaseNonNull();
+        ASSERT(!m_totalPromises);
+        ASSERT(!m_settled);
+
+        for (const auto& promise : promises) {
+            if (registerPromise(promise))
+                m_totalPromises++;
+        }
     }
 
-    RefPtr<DeferredPromise> m_wrapper;
-    unsigned m_totalPromises = 0;
-    unsigned m_settledPromises = 0;
+    void wait(Document& document)
+    {
+        ASSERT(document.isFullyActive());
+
+        // Step 3 / 6.1 Queue a microtask to perform successSteps given « ».
+        if (!m_totalPromises) {
+            protect(document.eventLoop())->queueMicrotask(document.vm(), [protectThis = Ref { *this }]() {
+                protectThis->resolve();
+            });
+        }
+    }
+
+    SuccessSteps m_successSteps;
+    FailureSteps m_failureSteps;
+    bool m_settled { false };
+    unsigned m_totalPromises { 0 };
+    unsigned m_settledPromises { 0 };
 };
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#inner-navigate-event-firing-algorithm Step 32
@@ -1236,16 +1252,19 @@ std::optional<Navigation::DispatchResult> Navigation::handleSameDocumentNavigati
         });
     } else {
         // https://webidl.spec.whatwg.org/#wait-for-all
-        RefPtr wrapperPromise = PromiseSettlementObserver::create(document)->waitForAllPromises(promiseList);
-        wrapperPromise->whenSettledWithResult([weakThis = WeakPtr { this }, abortController = Ref { abortController }, document = Ref { document }, apiMethodTracker = RefPtr { apiMethodTracker }](JSDOMGlobalObject*, bool isFulfilled, JSC::JSValue result) mutable {
+        auto successSteps = [navigationType, weakThis = WeakPtr { this }, abortController = Ref { abortController }, document = Ref { document }, apiMethodTracker = RefPtr { apiMethodTracker }]() mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis || abortController->signal().aborted() || !document->isFullyActive() || !protectedThis->m_ongoingNavigateEvent)
                 return;
 
-            if (isFulfilled) {
-                auto focusChanged = std::exchange(protectedThis->m_focusChangedDuringOngoingNavigation, FocusDidChange::No);
-                protect(protectedThis->ongoingNavigateEvent())->finish(document.get(), InterceptionHandlersDidFulfill::Yes, focusChanged);
-                protectedThis->m_ongoingNavigateEvent = nullptr;
+            auto focusChanged = std::exchange(protectedThis->m_focusChangedDuringOngoingNavigation, FocusDidChange::No);
+            protect(protectedThis->ongoingNavigateEvent())->finish(document, InterceptionHandlersDidFulfill::Yes, focusChanged);
+            protectedThis->m_ongoingNavigateEvent = nullptr;
+
+            auto dispatchSuccess = [weakThis, abortController, document, apiMethodTracker]() mutable {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis || abortController->signal().aborted() || !document->isFullyActive())
+                    return;
 
                 protectedThis->dispatchEvent(Event::create(eventNames().navigatesuccessEvent, { }));
 
@@ -1254,35 +1273,51 @@ std::optional<Navigation::DispatchResult> Navigation::handleSameDocumentNavigati
 
                 if (RefPtr transition = std::exchange(protectedThis->m_transition, nullptr))
                     transition->resolvePromise();
-            } else {
-                auto focusChanged = std::exchange(protectedThis->m_focusChangedDuringOngoingNavigation, FocusDidChange::No);
-                protect(protectedThis->ongoingNavigateEvent())->finish(document.get(), InterceptionHandlersDidFulfill::No, focusChanged);
+            };
 
-                abortController->signal().signalAbort(result);
+            // For traverse navigations the committed-to entry is notified earlier (see notifyCommittedToEntry),
+            // so the committed promise reactions must run before navigatesuccess.
+            // https://html.spec.whatwg.org/multipage/nav-history-apis.html#inner-navigate-event-firing-algorithm
+            if (navigationType == NavigationNavigationType::Traverse)
+                protect(document->eventLoop())->queueMicrotask(document->vm(), WTF::move(dispatchSuccess));
+            else
+                dispatchSuccess();
+        };
 
-                protectedThis->m_ongoingNavigateEvent = nullptr;
+        auto failureSteps = [weakThis = WeakPtr { this }, abortController = Ref { abortController }, document = Ref { document }, apiMethodTracker = RefPtr { apiMethodTracker }](JSC::JSValue result) mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis || abortController->signal().aborted() || !document->isFullyActive() || !protectedThis->m_ongoingNavigateEvent)
+                return;
 
-                ErrorInformation errorInformation;
-                String errorMessage;
-                if (auto* errorInstance = dynamicDowncast<JSC::ErrorInstance>(result)) {
-                    if (auto result = extractErrorInformationFromErrorInstance(protect(protectedThis->scriptExecutionContext())->globalObject(), *errorInstance)) {
-                        errorInformation = WTF::move(*result);
-                        errorMessage = makeString("Uncaught "_s, errorInformation.errorTypeString, ": "_s, errorInformation.message);
-                    }
+            auto focusChanged = std::exchange(protectedThis->m_focusChangedDuringOngoingNavigation, FocusDidChange::No);
+            protect(protectedThis->ongoingNavigateEvent())->finish(document, InterceptionHandlersDidFulfill::No, focusChanged);
+
+            abortController->signal().signalAbort(result);
+
+            protectedThis->m_ongoingNavigateEvent = nullptr;
+
+            ErrorInformation errorInformation;
+            String errorMessage;
+            if (auto* errorInstance = dynamicDowncast<JSC::ErrorInstance>(result)) {
+                if (auto extracted = extractErrorInformationFromErrorInstance(protect(protectedThis->scriptExecutionContext())->globalObject(), *errorInstance)) {
+                    errorInformation = WTF::move(*extracted);
+                    errorMessage = makeString("Uncaught "_s, errorInformation.errorTypeString, ": "_s, errorInformation.message);
                 }
-
-                auto* navGlobalObject = protect(protectedThis->scriptExecutionContext())->globalObject();
-                protectedThis->dispatchEvent(ErrorEvent::create(*navGlobalObject, eventNames().navigateerrorEvent, errorMessage, errorInformation.sourceURL, errorInformation.line, errorInformation.column, { navGlobalObject->vm(), result }));
-
-                if (apiMethodTracker) {
-                    apiMethodTracker->rejectFinished(result);
-                    protectedThis->m_methodTrackers.unregister(*apiMethodTracker);
-                }
-
-                if (RefPtr transition = std::exchange(protectedThis->m_transition, nullptr))
-                    transition->rejectPromise(result);
             }
-        });
+
+            auto* navGlobalObject = protect(protectedThis->scriptExecutionContext())->globalObject();
+            protectedThis->dispatchEvent(ErrorEvent::create(*navGlobalObject, eventNames().navigateerrorEvent, errorMessage, errorInformation.sourceURL, errorInformation.line, errorInformation.column, { navGlobalObject->vm(), result }));
+
+            if (apiMethodTracker) {
+                apiMethodTracker->rejectFinished(result);
+                protectedThis->m_methodTrackers.unregister(*apiMethodTracker);
+            }
+
+            if (RefPtr transition = std::exchange(protectedThis->m_transition, nullptr))
+                transition->rejectPromise(result);
+        };
+
+        PromiseSettlementObserver::waitForAll(document, promiseList, WTF::move(successSteps), WTF::move(failureSteps));
 
         // If a new event has been dispatched in our event handler then we were aborted above.
         if (m_ongoingNavigateEvent != &event)
