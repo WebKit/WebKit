@@ -486,6 +486,47 @@ void SlotVisitor::optimizeForStoppedMutator()
     m_canOptimizeForStoppedMutator = true;
 }
 
+// The highest cost of GC marking is a cache miss when reading a cell off the mark stack,
+// since cells sit at effectively random addresses. We insert a fixed-depth FIFO between
+// the mark stack and the scanner: pop a cell, issue a software prefetch on it, push it
+// to the FIFO tail, and scan the FIFO head. This is the approach proposed in [1].
+//
+// [1]: "Effective Prefetch for Mark-Sweep Garbage Collection", Garner et al., ISMM '07.
+// https://www.steveblackburn.org/pubs/papers/pf-ismm-2007.pdf
+static ALWAYS_INLINE void drainWithPrefetchPipeline(unsigned distance, const Invocable<const JSCell*()> auto& pop, const Invocable<void(const JSCell*)> auto& visit)
+{
+    static constexpr unsigned ringCapacity = 4;
+    static constexpr unsigned ringMask = ringCapacity - 1;
+    distance = std::max<unsigned>(std::min<unsigned>(distance, ringCapacity), 1);
+
+    const JSCell* ring[ringCapacity];
+    unsigned head = 0;
+    unsigned tail = 0;
+    unsigned count = 0;
+
+    do {
+        const JSCell* cell = pop();
+        if (!cell)
+            break;
+        __builtin_prefetch(cell);
+        ring[tail] = cell;
+        tail = (tail + 1) & ringMask;
+        ++count;
+    } while (count < distance);
+
+    while (count) {
+        const JSCell* cell = ring[head];
+        head = (head + 1) & ringMask;
+        if (const JSCell* next = pop()) {
+            __builtin_prefetch(next);
+            ring[tail] = next;
+            tail = (tail + 1) & ringMask;
+        } else
+            --count;
+        visit(cell);
+    }
+}
+
 NEVER_INLINE void SlotVisitor::drain(MonotonicTime timeout)
 {
     if (!m_isInParallelMode) {
@@ -506,24 +547,18 @@ NEVER_INLINE void SlotVisitor::drain(MonotonicTime timeout)
 
                 m_isFirstVisit = (&stack == &m_collectorStack);
 
-                // The highest cost of GC marking is a cache miss when reading a cell, coming from the GC marker stack,
-                // because each cell would be likely placed in a random place. We perform software prefetching onto
-                // one next cell while accessing the current cell to make memory fetching in flight while handling
-                // the current cell.
                 unsigned countdown = Options::minimumNumberOfScansBetweenRebalance();
-                auto popAndPrefetch = [&] ALWAYS_INLINE_LAMBDA -> const JSCell* {
-                    if (!countdown || !stack.canRemoveLast())
-                        return nullptr;
-                    --countdown;
-                    const JSCell* cell = stack.removeLast();
-                    __builtin_prefetch(cell);
-                    return cell;
-                };
-                for (const JSCell* next = popAndPrefetch(); next;) {
-                    const JSCell* cell = next;
-                    next = popAndPrefetch();
-                    visitChildren(cell);
-                }
+                drainWithPrefetchPipeline(
+                    Options::gcMarkingPrefetchDistance(),
+                    [&] ALWAYS_INLINE_LAMBDA -> const JSCell* {
+                        if (!countdown || !stack.canRemoveLast())
+                            return nullptr;
+                        --countdown;
+                        return stack.removeLast();
+                    },
+                    [&] (const JSCell* cell) ALWAYS_INLINE_LAMBDA {
+                        visitChildren(cell);
+                    });
                 return IterationStatus::Done;
             });
         propagateExternalMemoryVisitedIfNecessary();
@@ -571,16 +606,22 @@ size_t SlotVisitor::performIncrementOfDraining(size_t bytesRequested)
                         return IterationStatus::Continue;
 
                     stack.refill();
-                    
+
                     m_isFirstVisit = (&stack == &m_collectorStack);
 
                     unsigned countdown = Options::minimumNumberOfScansBetweenRebalance();
-                    while (countdown && stack.canRemoveLast() && !isDone()) {
-                        const JSCell* cell = stack.removeLast();
-                        cellBytesVisited += cell->cellSize();
-                        visitChildren(cell);
-                        countdown--;
-                    }
+                    drainWithPrefetchPipeline(
+                        Options::gcMarkingPrefetchDistance(),
+                        [&] ALWAYS_INLINE_LAMBDA -> const JSCell* {
+                            if (!countdown || !stack.canRemoveLast() || isDone())
+                                return nullptr;
+                            --countdown;
+                            return stack.removeLast();
+                        },
+                        [&] (const JSCell* cell) ALWAYS_INLINE_LAMBDA {
+                            cellBytesVisited += cell->cellSize();
+                            visitChildren(cell);
+                        });
                     return IterationStatus::Done;
                 });
             propagateExternalMemoryVisitedIfNecessary();
