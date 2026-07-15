@@ -71,20 +71,28 @@ void ResizeObserver::observeInternal(Element& target, const ResizeObserverBoxOpt
 {
     ASSERT(!m_JSOrNativeCallback.valueless_by_exception());
 
-    auto addResult = m_observationMap.ensure(target, [&]() {
-        return ResizeObservation::create(target, boxOptions);
-    });
-    Ref observation = addResult.iterator->value;
-    if (!addResult.isNewEntry) {
+    if (RefPtr existingObservation = m_observationMap.get(target)) {
         // The spec suggests unconditionally unobserving here, but that causes a test failure:
         // https://github.com/web-platform-tests/wpt/issues/30708
-        if (observation->observedBox() == boxOptions)
+        if (existingObservation->observedBox() == boxOptions)
             return;
+
+        // This removes target from m_observations/m_observationMap.
         unobserve(target);
     }
+
+    Ref newObservation = ResizeObservation::create(target, boxOptions);
+    {
+        auto addResult = m_observationMap.add(target, newObservation);
+
+        // Can't have an existing entry. Either target has never been observed, or it was
+        // previously observed then unobserved (see above)
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    }
+
     auto& observerData = target.ensureResizeObserverData();
-    observerData.observers.append(*this);
-    m_observations.add(WTF::move(observation));
+    observerData.observers.add(*this);
+    m_observations.add(WTF::move(newObservation));
 
     // Per the specification, we should dispatch at least one observation for the target. For this reason, we make sure to keep the
     // target alive until this first observation. This, in turn, will keep the ResizeObserver's JS wrapper alive via
@@ -241,7 +249,7 @@ bool ResizeObserver::removeTarget(Element& target)
         return false;
 
     auto& observers = observerData->observers;
-    return observers.removeFirst(this);
+    return observers.remove(this);
 }
 
 void ResizeObserver::removeAllTargets()
