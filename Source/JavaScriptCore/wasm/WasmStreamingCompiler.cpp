@@ -188,8 +188,11 @@ void StreamingCompiler::didComplete()
         RefPtr<SourceProvider> provider = m_source.provider();
         m_vm.deferredWorkTimer->scheduleWorkSoonIfActive(m_ticket, [result = WTF::move(result), provider = WTF::move(provider), compileOptions = WTF::move(m_compileOptions)](DeferredWorkTimer::Ticket& ticket) mutable {
             JSPromise* promise = uncheckedDowncast<JSPromise>(ticket.target());
-            JSGlobalObject* globalObject = uncheckedDowncast<JSGlobalObject>(ticket.dependencies()[0]);
-            JSObject* importObject = uncheckedDowncast<JSObject>(ticket.dependencies()[1]);
+            auto& dependencies = ticket.dependencies();
+            JSGlobalObject* globalObject = uncheckedDowncast<JSGlobalObject>(dependencies[0]);
+            JSObject* importObject = nullptr;
+            if (dependencies.size() > 2)
+                importObject = uncheckedDowncast<JSObject>(dependencies[1]);
             VM& vm = globalObject->vm();
             auto scope = DECLARE_THROW_SCOPE(vm);
 
