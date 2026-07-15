@@ -341,7 +341,7 @@ kern_return_t catch_mach_exception_raise_state(
     PlatformRegisters& registers = reinterpretCastSpanStartTo<arm_unified_thread_state>(outState).ts_64;
 #elif CPU(ARM)
     RELEASE_ASSERT(*stateFlavor == ARM_THREAD_STATE);
-    PlatformRegisters& registers = reinterpretCastSpanStartTo<arm_unified_thread_state*>(outState).ts_32;
+    PlatformRegisters& registers = reinterpretCastSpanStartTo<arm_unified_thread_state>(outState).ts_32;
 #endif
 
     kern_return_t kr = runSignalHandlers(signal, registers, dataCount, exceptionData);
