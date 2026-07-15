@@ -1713,33 +1713,49 @@ const Vector<String>& intlAvailableCalendars()
     static LazyNeverDestroyed<Vector<String>> availableCalendars;
     static std::once_flag initializeOnce;
     std::call_once(initializeOnce, [&] {
-        UErrorCode status = U_ZERO_ERROR;
-        auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_getKeywordValuesForLocale("calendars", "und", false, &status));
-        ASSERT(U_SUCCESS(status));
-
-        int32_t count = uenum_count(enumeration.get(), &status);
-        ASSERT(U_SUCCESS(status));
-
         auto createImmortalThreadSafeString = [&](String&& string) {
             if (string.is8Bit())
                 return StringImpl::createStaticStringImpl(string.span8());
             return StringImpl::createStaticStringImpl(string.span16());
         };
-
         availableCalendars.construct();
-        for (int32_t i = 0; i < count; ++i) {
-            int32_t length = 0;
-            const char* pointer = uenum_next(enumeration.get(), &length, &status);
-            ASSERT(U_SUCCESS(status));
-            String calendar(unsafeMakeSpan(pointer, static_cast<size_t>(length)));
-            if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
-                calendar = WTF::move(mapped.value());
 
-            // Skip if the obtained calendar code is not meeting Unicode Locale Identifier's `type` definition
-            // as whole ECMAScript's i18n is relying on Unicode Local Identifiers.
-            if (!isUnicodeLocaleIdentifierType(calendar))
-                continue;
-            availableCalendars->append(createImmortalThreadSafeString(WTF::move(calendar)));
+        if (Options::useIntlEraMonthcode()) {
+            // https://tc39.es/proposal-intl-era-monthcode/#sup-availablecalendars
+            // proposal-intl-era-monthcode "Calendar Type" table.
+            static constexpr ASCIILiteral canonicalCalendars[] {
+                "buddhist"_s, "chinese"_s, "coptic"_s, "dangi"_s, "ethioaa"_s,
+                "ethiopic"_s, "gregory"_s, "hebrew"_s, "indian"_s,
+                "islamic-civil"_s, "islamic-tbla"_s, "islamic-umalqura"_s,
+                "iso8601"_s, "japanese"_s, "persian"_s, "roc"_s,
+            };
+            for (auto id : canonicalCalendars) {
+                String s(id);
+                availableCalendars->append(createImmortalThreadSafeString(WTF::move(s)));
+            }
+        } else {
+            // Pre-proposal (default): use ICU4C's keyword-set enumeration.
+            UErrorCode status = U_ZERO_ERROR;
+            auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_getKeywordValuesForLocale("calendars", "und", false, &status));
+            ASSERT(U_SUCCESS(status));
+
+            int32_t count = uenum_count(enumeration.get(), &status);
+            ASSERT(U_SUCCESS(status));
+
+            for (int32_t i = 0; i < count; ++i) {
+                int32_t length = 0;
+                const char* pointer = uenum_next(enumeration.get(), &length, &status);
+                ASSERT(U_SUCCESS(status));
+                String calendar(unsafeMakeSpan(pointer, static_cast<size_t>(length)));
+                if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
+                    calendar = WTF::move(mapped.value());
+
+                // Skip if the obtained calendar code is not meeting Unicode Locale Identifier's `type` definition
+                // as whole ECMAScript's i18n is relying on Unicode Local Identifiers.
+                if (!isUnicodeLocaleIdentifierType(calendar))
+                    continue;
+                availableCalendars->append(createImmortalThreadSafeString(WTF::move(calendar)));
+            }
         }
 
         // The AvailableCalendars abstract operation returns a List, ordered as if an Array of the same
@@ -1750,6 +1766,30 @@ const Vector<String>& intlAvailableCalendars()
             });
     });
     return availableCalendars;
+}
+
+const UncheckedKeyHashMap<String, CalendarID, ASCIICaseInsensitiveHash>& intlAvailableCalendarIndex()
+{
+    static LazyNeverDestroyed<UncheckedKeyHashMap<String, CalendarID, ASCIICaseInsensitiveHash>> index;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        const auto& calendars = intlAvailableCalendars();
+        UncheckedKeyHashMap<String, CalendarID, ASCIICaseInsensitiveHash> table;
+        for (CalendarID i = 0; i < calendars.size(); ++i)
+            table.add(calendars[i], i);
+
+        // Legacy CLDR aliases map to the same CalendarID as their canonical form.
+        auto addAlias = [&](ASCIILiteral alias, ASCIILiteral canonical) {
+            auto it = table.find(canonical);
+            if (it != table.end())
+                table.add(String(alias), it->value);
+        };
+        addAlias("islamicc"_s, "islamic-civil"_s);
+        addAlias("ethiopic-amete-alem"_s, "ethioaa"_s);
+
+        index.construct(WTF::move(table));
+    });
+    return index.get();
 }
 
 CalendarID iso8601CalendarIDStorage { std::numeric_limits<CalendarID>::max() };
@@ -1782,7 +1822,8 @@ CalendarID iso8601CalendarIDSlow()
                     return; \
                 } \
             } \
-            RELEASE_ASSERT_NOT_REACHED(); \
+            if (!Options::useIntlEraMonthcode()) \
+                RELEASE_ASSERT_NOT_REACHED(); \
         }); \
         return name##CalendarIDStorage; \
     }

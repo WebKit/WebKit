@@ -36,12 +36,14 @@
 #include "JSCTimeZone.h"
 #include "PlainDateTimeCore.h"
 #include "Rounding.h"
+#include "TemporalCalendar.h"
 #include "TemporalCoreTypes.h"
 #include "TemporalEnums.h"
 #include "TimeZoneICUBridge.h"
 #include "ZonedDateTimeCore.h"
 #include <stdio.h>
 #include <wtf/Int128.h>
+#include <wtf/text/MakeString.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -2789,6 +2791,29 @@ static void testCalendarDateFromFields()
     TCHECK_TRUE(rEth.has_value() && rEth->year() == 2023, "ethiopic: am 2016 -> ISO 2023");
 }
 
+static void testIsBuiltinCalendar()
+{
+    // Canonical (16 entries) — accepted regardless of flag.
+    auto calenders = { "buddhist"_s, "chinese"_s, "coptic"_s, "dangi"_s, "ethioaa"_s,
+        "ethiopic"_s, "gregory"_s, "hebrew"_s, "indian"_s,
+        "islamic-civil"_s, "islamic-tbla"_s, "islamic-umalqura"_s,
+        "iso8601"_s, "japanese"_s, "persian"_s, "roc"_s };
+    for (auto id : calenders)
+        TCHECK_TRUE(JSC::isBuiltinCalendar(id).has_value(), makeString(id, ": canonical accepted"_s).utf8().data());
+
+    // Legacy CLDR aliases resolve to their canonical CalendarID (both flag states).
+    TCHECK_TRUE(JSC::isBuiltinCalendar("islamicc"_s).has_value(), "islamicc alias -> islamic-civil");
+    TCHECK_TRUE(JSC::isBuiltinCalendar("ethiopic-amete-alem"_s).has_value(), "ethiopic-amete-alem alias -> ethioaa");
+    TCHECK_TRUE(*JSC::isBuiltinCalendar("islamicc"_s) == *JSC::isBuiltinCalendar("islamic-civil"_s), "islamicc same CalendarID as islamic-civil");
+    TCHECK_TRUE(*JSC::isBuiltinCalendar("ethiopic-amete-alem"_s) == *JSC::isBuiltinCalendar("ethioaa"_s), "ethiopic-amete-alem same CalendarID as ethioaa");
+
+    // Unknown identifier: rejected in either mode.
+    TCHECK_TRUE(!JSC::isBuiltinCalendar("nonexistent-calendar-name"_s).has_value(), "unknown -> nullopt");
+
+    // Case-insensitive canonical: ISO8601 accepted regardless of case.
+    TCHECK_TRUE(JSC::isBuiltinCalendar("ISO8601"_s).has_value(), "ISO8601 case-insensitive accepted");
+}
+
 static void testCalendarICUNonISO()
 {
     // Gregory calendar: same as ISO for modern dates
@@ -3810,6 +3835,7 @@ static void runStressTests()
     testCalendarISO8601Fields(); // ISO field accessors
     testCalendarICUNonISO(); // Non-ISO calendars (hebrew, chinese, japanese, persian)
     testCalendarDateFromFields(); // calendarDateFromFields: era, monthCode, overflow, ROC, Japanese, Buddhist, Coptic, Ethiopic
+    testIsBuiltinCalendar(); // Canonical Temporal calendar set + legacy aliases
     testCalendarFieldsFunctions(); // yearMonthFromFields, monthDayFromFields, differenceYearMonth, plainYearMonthAdd, etc.
 
     // parseISODateTime

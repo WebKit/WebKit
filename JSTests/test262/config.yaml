@@ -4,6 +4,7 @@ flags:
   SharedArrayBuffer: useSharedArrayBuffer
   Atomics: useSharedArrayBuffer
   Temporal: useTemporal
+  Intl.Era-monthcode: useIntlEraMonthcode
   ShadowRealm: useShadowRealm
   json-parse-with-source: useJSONSourceTextAccess
   iterator-sequencing: useIteratorSequencing

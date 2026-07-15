@@ -47,28 +47,11 @@ namespace JSC {
 
 std::optional<CalendarID> isBuiltinCalendar(StringView string)
 {
-    // FIXME: bare "islamic" is accepted via ICU's keyword set but V8/temporal_rs reject it;
-    // canonicalize to "islamic-civil" (CLDR alias) or filter out.
-    const auto& calendars = intlAvailableCalendars();
-    for (unsigned index = 0; index < calendars.size(); ++index) {
-        if (WTF::equalIgnoringASCIICase(calendars[index], string))
-            return index;
-    }
-    // Legacy alias: "islamicc" → "islamic-civil" (per CLDR/BCP 47).
-    if (WTF::equalIgnoringASCIICase(string, "islamicc"_s)) {
-        for (unsigned index = 0; index < calendars.size(); ++index) {
-            if (calendars[index] == "islamic-civil"_s)
-                return index;
-        }
-    }
-    // Legacy alias: "ethiopic-amete-alem" → "ethioaa".
-    if (WTF::equalIgnoringASCIICase(string, "ethiopic-amete-alem"_s)) {
-        for (unsigned index = 0; index < calendars.size(); ++index) {
-            if (calendars[index] == "ethioaa"_s)
-                return index;
-        }
-    }
-    return std::nullopt;
+    const auto& index = intlAvailableCalendarIndex();
+    auto entry = index.find<ASCIICaseInsensitiveStringViewHashTranslator>(string);
+    if (entry == index.end())
+        return std::nullopt;
+    return entry->value;
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-calendarresolvefields

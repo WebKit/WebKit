@@ -802,6 +802,13 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
             // Handling "islamicc" candidate for backward compatibility.
             if (calendar == "islamicc"_s)
                 calendar = "islamic-civil"_s;
+            if (Options::useIntlEraMonthcode()) {
+                // https://tc39.es/proposal-intl-era-monthcode/#sec-createdatetimeformat step 9
+                if (calendar == "islamic"_s)
+                    calendar = "islamic-tbla"_s;
+                if (!intlAvailableCalendarIndex().contains(calendar))
+                    calendar = defaultCalendarForLocale(resolved.dataLocale);
+            }
         }
         impl->m_calendar = WTF::move(calendar);
     }
