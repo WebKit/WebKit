@@ -163,7 +163,8 @@ private:
 
     // Builds this container's flex items (its formatting-context children) for FlexLayout to lay out.
     FlexLayoutItems collectFlexItems(RelayoutChildren);
-    FlexLayoutConstraints flexLayoutConstraints() const;
+    FlexLayoutConstraints flexLayoutConstraints();
+    LayoutUnit mainAxisAvailableSpace();
     void prepareFlexItemForPositionedLayout(RenderBox& flexItem);
     void adjustLogicalHeightForLineIfEmpty();
     std::optional<LayoutUnit> minimumHeightForLineIfEmpty() const;

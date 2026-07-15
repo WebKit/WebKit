@@ -66,8 +66,8 @@ using FlexLayoutItems = Vector<FlexLayoutItem, 4>;
 
 // The flex container's flow properties and fixed border/padding, snapshotted from the formatting-context root
 // (RenderFlexibleBox) and handed to FlexLayout so the pipeline reads them here rather than reaching back through
-// the container. The available cross/main sizes are deliberately not included: the container's cross size grows
-// during layout, so those stay live reads for now.
+// the container. The available cross size is deliberately not included: the container's cross size grows during
+// layout, so it stays a live read.
 struct FlexLayoutConstraints {
     // The formatting-context root's computed style (the flex container's own style).
     const Style::ComputedStyle& style;
@@ -83,6 +83,10 @@ struct FlexLayoutConstraints {
     std::pair<LayoutUnit, LayoutUnit> flowAwareBorderBlock;
     std::pair<LayoutUnit, LayoutUnit> flowAwarePaddingInline;
     std::pair<LayoutUnit, LayoutUnit> flowAwarePaddingBlock;
+    // The container's inner main size, fixed before the algorithm runs (contentBoxLogicalWidth for row flow; the
+    // specified logical height for column flow, LayoutUnit::max() when indefinite). Unlike the cross size it does
+    // not grow during layout.
+    LayoutUnit mainAxisAvailableSpace;
     // The minimum logical height the container needs when it has a line even while empty (nullopt when it does not).
     std::optional<LayoutUnit> minimumHeightForLineIfEmpty;
 };
@@ -174,7 +178,6 @@ private:
     template<typename SizeType> std::optional<LayoutUnit> computeMainAxisExtentForFlexItem(const FlexLayoutItem&, const SizeType&);
     template<typename SizeType> LayoutUnit computeMainSizeFromAspectRatioUsing(const FlexLayoutItem&, const SizeType& crossSizeLength) const;
     LayoutUnit adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(const FlexLayoutItem&, LayoutUnit flexItemSize);
-    LayoutUnit mainAxisAvailableSpace();
 
     LayoutUnit crossAxisIntrinsicExtentForFlexItem(const FlexLayoutItem&);
     LayoutUnit flexItemIntrinsicLogicalHeight(const FlexLayoutItem&) const;

@@ -221,7 +221,7 @@ FlexLayout::FlexLines FlexLayout::computeFlexLines(FlexLayoutItems& flexItems, s
     // 9.3. (#5) Collect flex items into flex lines: a single-line container collects all items into one line; a
     // multi-line container collects consecutive items until the next item's outer hypothetical main size would not
     // fit in the inner main size. The first uncollected item is always collected, even if it does not fit.
-    auto mainAxisAvailableSpace = this->mainAxisAvailableSpace();
+    auto mainAxisAvailableSpace = m_constraints.mainAxisAvailableSpace;
     auto gapBetweenItems = flexLayoutUtils().computeGap(FlexLayoutUtils::GapType::BetweenItems);
     FlexLines flexLines;
     size_t nextIndex = 0;
@@ -1207,28 +1207,6 @@ LayoutUnit FlexLayout::adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(const 
     }
 
     return flexItemSize;
-}
-
-LayoutUnit FlexLayout::mainAxisAvailableSpace()
-{
-    if (!m_constraints.isColumnFlow)
-        return m_flexBox.contentBoxLogicalWidth();
-
-    auto logicalHeightIgnoringFlexBasisOverride = [&] {
-        // The flex-basis override is for the parent flex's sizing of this item,
-        // not for this container's own wrapping decisions. Temporarily clear it
-        // so computeLogicalHeight sees the specified height.
-        auto override = m_flexBox.overridingLogicalHeightForFlexBasisComputation();
-        if (!override)
-            return m_flexBox.computeLogicalHeight(LayoutUnit::max(), m_flexBox.logicalTop()).extent;
-
-        m_flexBox.clearOverridingLogicalHeightForFlexBasisComputation();
-        auto computedValues = m_flexBox.computeLogicalHeight(LayoutUnit::max(), m_flexBox.logicalTop());
-        m_flexBox.setOverridingBorderBoxLogicalHeightForFlexBasisComputation(*override);
-        return computedValues.extent;
-    };
-    auto logicalHeight = logicalHeightIgnoringFlexBasisOverride();
-    return logicalHeight == LayoutUnit::max() ? logicalHeight : std::max(0_lu, logicalHeight - (m_flexBox.borderAndPaddingLogicalHeight() + m_flexBox.scrollbarLogicalHeight()));
 }
 
 LayoutUnit FlexLayout::crossAxisIntrinsicExtentForFlexItem(const FlexLayoutItem& flexLayoutItem)

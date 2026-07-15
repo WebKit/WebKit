@@ -917,7 +917,7 @@ void RenderFlexibleBox::adjustLogicalHeightForLineIfEmpty()
         setLogicalHeight(*minHeight);
 }
 
-FlexLayoutConstraints RenderFlexibleBox::flexLayoutConstraints() const
+FlexLayoutConstraints RenderFlexibleBox::flexLayoutConstraints()
 {
     auto& utils = flexLayoutUtils();
     return {
@@ -933,8 +933,31 @@ FlexLayoutConstraints RenderFlexibleBox::flexLayoutConstraints() const
         .flowAwareBorderBlock = { utils.flowAwareBorderBefore(), utils.flowAwareBorderAfter() },
         .flowAwarePaddingInline = { utils.flowAwarePaddingStart(), utils.flowAwarePaddingEnd() },
         .flowAwarePaddingBlock = { utils.flowAwarePaddingBefore(), utils.flowAwarePaddingAfter() },
+        .mainAxisAvailableSpace = mainAxisAvailableSpace(),
         .minimumHeightForLineIfEmpty = minimumHeightForLineIfEmpty(),
     };
+}
+
+LayoutUnit RenderFlexibleBox::mainAxisAvailableSpace()
+{
+    if (!flexLayoutUtils().isColumnFlow())
+        return contentBoxLogicalWidth();
+
+    auto logicalHeightIgnoringFlexBasisOverride = [&] {
+        // The flex-basis override is for the parent flex's sizing of this item,
+        // not for this container's own wrapping decisions. Temporarily clear it
+        // so computeLogicalHeight sees the specified height.
+        auto override = overridingLogicalHeightForFlexBasisComputation();
+        if (!override)
+            return computeLogicalHeight(LayoutUnit::max(), logicalTop()).extent;
+
+        clearOverridingLogicalHeightForFlexBasisComputation();
+        auto computedValues = computeLogicalHeight(LayoutUnit::max(), logicalTop());
+        setOverridingBorderBoxLogicalHeightForFlexBasisComputation(*override);
+        return computedValues.extent;
+    };
+    auto logicalHeight = logicalHeightIgnoringFlexBasisOverride();
+    return logicalHeight == LayoutUnit::max() ? logicalHeight : std::max(0_lu, logicalHeight - (borderAndPaddingLogicalHeight() + scrollbarLogicalHeight()));
 }
 
 FlexLayoutItems RenderFlexibleBox::collectFlexItems(RelayoutChildren relayoutChildren)
