@@ -65,6 +65,8 @@ public:
     virtual FloatPoint adjustedScrollPosition(const FloatPoint& scrollPosition) const { return scrollPosition; }
     virtual String scrollbarStateForOrientation(ScrollbarOrientation) const { return ""_s; }
 
+    virtual float rubberbandHyperbolicCoefficientForTesting() const { return 0; }
+
 #if HAVE(RUBBER_BANDING)
     virtual std::optional<RubberbandingState> captureRubberbandingState() const { return std::nullopt; }
 #endif

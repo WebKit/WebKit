@@ -378,6 +378,7 @@ public:
         m_scrollCount = webEvent.scrollCount();
         m_unacceleratedScrollingDeltaX = webEvent.unacceleratedScrollingDelta().width();
         m_unacceleratedScrollingDeltaY = webEvent.unacceleratedScrollingDelta().height();
+        m_inputSource = platform(webEvent.inputSource());
 #endif
     }
 };

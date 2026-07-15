@@ -116,6 +116,7 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 
 @property (nonatomic, setter=_setScrollingUpdatesDisabledForTesting:) BOOL _scrollingUpdatesDisabledForTesting;
 @property (nonatomic, readonly) NSString *_scrollingTreeAsText;
+@property (nonatomic, readonly) double _rubberbandHyperbolicCoefficientForTesting;
 
 @property (nonatomic, readonly) pid_t _networkProcessIdentifier;
 

@@ -359,6 +359,14 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     return coordinator->scrollingTreeAsText().createNSString().autorelease();
 }
 
+- (double)_rubberbandHyperbolicCoefficientForTesting
+{
+    if (CheckedPtr coordinator = _page->scrollingCoordinatorProxy())
+        return coordinator->rubberbandHyperbolicCoefficientForTesting();
+
+    return 0;
+}
+
 - (pid_t)_networkProcessIdentifier
 {
     RefPtr networkProcess = _page->websiteDataStore().networkProcessIfExists();

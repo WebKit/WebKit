@@ -46,6 +46,10 @@ class ThreadedScrollingTreeScrollingNodeDelegate : public ScrollingTreeScrolling
 public:
     void updateSnapScrollState();
 
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    float rubberbandHyperbolicCoefficientForTesting() const final { return m_scrollController.rubberbandHyperbolicCoefficientForTesting(); }
+#endif
+
 protected:
     explicit ThreadedScrollingTreeScrollingNodeDelegate(ScrollingTreeScrollingNode&);
     virtual ~ThreadedScrollingTreeScrollingNodeDelegate();

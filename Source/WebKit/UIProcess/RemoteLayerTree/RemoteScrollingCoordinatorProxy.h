@@ -167,6 +167,7 @@ public:
 #endif
 
     String scrollingTreeAsText() const;
+    float rubberbandHyperbolicCoefficientForTesting() const;
 
     void resetStateAfterProcessExited();
 

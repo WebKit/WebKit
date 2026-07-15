@@ -671,6 +671,62 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
+    func scrollInputSourceUpdatesrubberbandHyperbolicCoefficient() async throws {
+        let html = """
+            <body style="margin: 0; width: 100%; height: 20000px;
+                         background: repeating-linear-gradient(to bottom, blue 0 50px, white 50px 100px);">
+            </body>
+            """
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        // No gesture has run yet.
+        #expect(page.rubberbandHyperbolicCoefficient() == 0)
+        try await page.callJavaScript { "window.scrollTo(0, 0);" }
+        #expect(page.rubberbandHyperbolicCoefficient() == 0)
+
+        await page.waitForNextPresentationUpdate()
+
+        let automationLocation = screenBounds(ofPointInWindowCoordinates: window.frame.center)
+        let trackpadLocation = window.frame.center
+
+        func expectCoefficient(_ expected: CGFloat, _ message: Comment) {
+            let actual = page.rubberbandHyperbolicCoefficient()
+            #expect(abs(actual - Double(expected)) < 0.0001, message)
+        }
+
+        // 1. Trackpad scroll.
+        page.scrollWheel(at: trackpadLocation, delta: CGSize(width: 0, height: 600))
+        await page.waitForNextPresentationUpdate()
+        // End the scroll by programatically scrolling back to 0,0.
+        try await page.callJavaScript { "window.scrollTo(0, 0);" }
+
+        expectCoefficient(trackpadRubberbandHyperbolicCoefficient, "after initial trackpad scroll")
+
+        // 2. Automation scroll.
+        await recap.play { composer in
+            composer._wk_scroll(
+                withStart: automationLocation,
+                end: CGPoint(x: automationLocation.x, y: automationLocation.y + 200),
+                duration: .seconds(0.5)
+            )
+        }
+        await page.waitForNextPresentationUpdate()
+        // End the scroll by programatically scrolling back to 0,0.
+        try await page.callJavaScript { "window.scrollTo(0, 0);" }
+
+        expectCoefficient(automationHyperbolicCoefficient, "after automated scroll")
+
+        // 3. Trackpad scroll again.
+        page.scrollWheel(at: trackpadLocation, delta: CGSize(width: 0, height: 600))
+        await page.waitForNextPresentationUpdate()
+        // End the scroll by programatically scrolling back to 0,0.
+        try await page.callJavaScript { "window.scrollTo(0, 0);" }
+
+        expectCoefficient(trackpadRubberbandHyperbolicCoefficient, "after returning to trackpad scroll")
+    }
+
+    @Test
     func interruptingDeceleratingScrollDoesNotFollowLink() async throws {
         let html = """
             <a id="link" href="about:blank"

@@ -43,6 +43,10 @@ WTF_EXTERN_C_BEGIN
 CGFloat _NSElasticDeltaForReboundDelta(CGFloat delta);
 CGFloat _NSElasticDeltaForTimeDelta(CGFloat initialPosition, CGFloat initialVelocity, CGFloat elapsedTime);
 CGFloat _NSReboundDeltaForElasticDelta(CGFloat delta);
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+CGFloat _NSHyperbolicElasticDeltaForReboundDelta(CGFloat delta, CGFloat c, CGFloat d);
+CGFloat _NSHyperbolicReboundDeltaForElasticDelta(CGFloat delta, CGFloat c, CGFloat d);
+#endif
 
 WTF_EXTERN_C_END
 

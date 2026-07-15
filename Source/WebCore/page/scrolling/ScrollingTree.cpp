@@ -1165,6 +1165,12 @@ String ScrollingTree::scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBeha
     return ts.release();
 }
 
+float ScrollingTree::rubberbandHyperbolicCoefficientForTesting()
+{
+    RefPtr rootNode = m_rootNode;
+    return rootNode ? rootNode->rubberbandHyperbolicCoefficientForTesting() : 0;
+}
+
 bool ScrollingTree::hasFixedOrSticky() const
 {
     return !m_fixedOrStickyNodes.isEmptyIgnoringNullReferences();
