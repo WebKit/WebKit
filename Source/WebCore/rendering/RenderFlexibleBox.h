@@ -231,19 +231,19 @@ private:
     std::optional<LayoutUnit> computeUsedMaxMainSize(const FlexLayoutItem&);
     LayoutUnit computeUsedNonAutoMinMainSize(const FlexLayoutItem&, const Style::MinimumSize&);
     LayoutUnit computeContentBasedMinMainSize(const FlexLayoutItem&, std::optional<LayoutUnit> maxExtent);
-    template<typename SizeType> std::optional<LayoutUnit> computeMainAxisExtentForFlexItem(RenderBox& flexItem, const SizeType&);
+    template<typename SizeType> std::optional<LayoutUnit> computeMainAxisExtentForFlexItem(const FlexLayoutItem&, const SizeType&);
     template<typename SizeType> LayoutUnit computeMainSizeFromAspectRatioUsing(const FlexLayoutItem&, const SizeType& crossSizeLength) const;
     LayoutUnit adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(const FlexLayoutItem&, LayoutUnit flexItemSize);
     LayoutUnit mainAxisAvailableSpace();
 
     LayoutUnit crossAxisIntrinsicExtentForFlexItem(const FlexLayoutItem&);
-    LayoutUnit flexItemIntrinsicLogicalHeight(RenderBox& flexItem) const;
-    LayoutUnit flexItemIntrinsicLogicalWidth(RenderBox& flexItem);
+    LayoutUnit flexItemIntrinsicLogicalHeight(const FlexLayoutItem&) const;
+    LayoutUnit flexItemIntrinsicLogicalWidth(const FlexLayoutItem&);
     template<typename SizeType> bool canComputePercentageFlexBasis(const RenderBox& flexItem, const SizeType&, UpdatePercentageHeightDescendants);
     template<typename SizeType> bool flexItemMainSizeIsDefinite(const RenderBox&, const SizeType&);
-    template<typename SizeType> bool flexItemCrossSizeIsDefinite(const RenderBox&, const SizeType&);
+    template<typename SizeType> bool flexItemCrossSizeIsDefinite(const FlexLayoutItem&, const SizeType&);
 
-    bool flexItemHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(const RenderBox&);
+    bool flexItemHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(const FlexLayoutItem&);
 
     void initializeMarginTrimState();
     void trimMainAxisMarginStart(FlexLayoutItem&);
