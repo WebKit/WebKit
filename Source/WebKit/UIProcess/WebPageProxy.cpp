@@ -11276,25 +11276,25 @@ void WebPageProxy::showContactPicker(IPC::Connection& connection, ContactsReques
 }
 
 #if ENABLE(WEBDRIVER_BIDI) && ENABLE(WEB_AUTHN)
-template<typename StorePendingHandler>
-static bool applyVirtualWalletBehavior(const VirtualWalletBehavior& behavior, DigitalCredentialsPickerCompletionHandler&& completionHandler, NOESCAPE const StorePendingHandler& storePendingHandler)
+enum class VirtualWalletDisposition : uint8_t { NotHandled, Handled, StorePendingHandler };
+
+static VirtualWalletDisposition applyVirtualWalletBehavior(const VirtualWalletBehavior& behavior, DigitalCredentialsPickerCompletionHandler& completionHandler)
 {
     using VirtualWalletAction = Inspector::Protocol::BidiDigitalCredentials::VirtualWalletAction;
     switch (behavior.action) {
     case VirtualWalletAction::Wait:
-        storePendingHandler(WTF::move(completionHandler));
-        return true;
+        return VirtualWalletDisposition::StorePendingHandler;
     case VirtualWalletAction::Decline:
         completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "Virtual wallet declined the request."_s }));
-        return true;
+        return VirtualWalletDisposition::Handled;
     case VirtualWalletAction::Respond:
         completionHandler(WebCore::DigitalCredentialsResponseData { behavior.protocol, behavior.responseJSON });
-        return true;
+        return VirtualWalletDisposition::Handled;
     case VirtualWalletAction::Clear:
         ASSERT_NOT_REACHED();
         break;
     }
-    return false;
+    return VirtualWalletDisposition::NotHandled;
 }
 #endif
 
@@ -11328,16 +11328,20 @@ void WebPageProxy::showDigitalCredentialsChooser(IPC::Connection& connection, st
                         contextID = automationSession->handleForWebPageProxy(*this);
                     const auto walletBehavior = agent.behaviorForContext(contextID);
                     if (walletBehavior) {
-                        bool handled = applyVirtualWalletBehavior(*walletBehavior, WTF::move(completionHandler), [&](DigitalCredentialsPickerCompletionHandler&& handler) {
+                        switch (applyVirtualWalletBehavior(*walletBehavior, completionHandler)) {
+                        case VirtualWalletDisposition::StorePendingHandler:
                             // FIXME: A concurrent request from a site-isolated cross-origin iframe (separate
                             // process) can clobber this single slot; only same-process concurrency is
                             // serialized by prepareCredentialRequests (webkit.org/b/318408).
                             ASSERT(!m_pendingDigitalCredentialsWaitContextID);
                             m_pendingDigitalCredentialsWaitContextID = contextID;
-                            agent.holdPendingHandler(contextID, WTF::move(handler));
-                        });
-                        if (handled)
+                            agent.holdPendingHandler(contextID, WTF::move(completionHandler));
                             return;
+                        case VirtualWalletDisposition::Handled:
+                            return;
+                        case VirtualWalletDisposition::NotHandled:
+                            break;
+                        }
                     }
                 }
             }
@@ -11345,12 +11349,16 @@ void WebPageProxy::showDigitalCredentialsChooser(IPC::Connection& connection, st
 
 #if ENABLE(WEBDRIVER_BIDI)
             if (const auto& testBehavior = internals().testingVirtualWalletBehavior) {
-                bool handled = applyVirtualWalletBehavior(*testBehavior, WTF::move(completionHandler), [&](DigitalCredentialsPickerCompletionHandler&& handler) {
+                switch (applyVirtualWalletBehavior(*testBehavior, completionHandler)) {
+                case VirtualWalletDisposition::StorePendingHandler:
                     settlePendingTestingDigitalCredentialHandler("Superseded by a new digital credential request."_s);
-                    internals().testingPendingDigitalCredentialHandler = WTF::move(handler);
-                });
-                if (handled)
+                    internals().testingPendingDigitalCredentialHandler = WTF::move(completionHandler);
                     return;
+                case VirtualWalletDisposition::Handled:
+                    return;
+                case VirtualWalletDisposition::NotHandled:
+                    break;
+                }
             }
 #endif
 
