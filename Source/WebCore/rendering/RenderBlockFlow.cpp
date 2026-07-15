@@ -76,6 +76,7 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "StyleSelfAlignmentData.h"
 #include "TextAutoSizing.h"
 #include "TextBoxTrimmer.h"
 #include "TextUtil.h"
@@ -1379,6 +1380,26 @@ void RenderBlockFlow::determineLogicalLeftPositionForChild(RenderBox& child, App
         newPosition = std::max(newPosition, positionToAvoidFloats + childMarginStart);
     else if (positionToAvoidFloats > initialStartPosition)
         newPosition = std::max(newPosition, positionToAvoidFloats);
+
+    // justify-self self-alignment shifts a block-level box within its containing
+    // block's free inline space. Unlike auto margins and the legacy -webkit-* text-
+    // align values (which are folded into the used margins), this is a separate
+    // inline offset, so the used margins keep their specified values.
+    // https://drafts.csswg.org/css-align-3/#justify-block
+    auto inlineOffsetForJustifySelf = [&]() -> LayoutUnit {
+        if (child.isAnonymous() || child.isFloatingOrOutOfFlowPositioned() || child.isInline())
+            return { };
+        if (child.style().marginStart(writingMode()).isAuto() || child.style().marginEnd(writingMode()).isAuto())
+            return { };
+        auto justifySelf = child.style().justifySelf().resolve(&style());
+        if (justifySelf.isNormalStretchOrLegacy())
+            return { };
+        auto extraSpace = contentBoxLogicalWidth() - logicalWidthForChild(child) - marginStartForChild(child) - marginEndForChild(child);
+        if (justifySelf.overflow() == OverflowAlignment::Safe)
+            extraSpace = std::max(0_lu, extraSpace);
+        return StyleSelfAlignmentData::adjustmentFromStartEdge(extraSpace, justifySelf.position(), LogicalBoxAxis::Inline, writingMode(), child.writingMode());
+    };
+    newPosition += inlineOffsetForJustifySelf();
 
     setLogicalLeftForChild(child, writingMode().isLogicalLeftInlineStart() ? newPosition : totalAvailableLogicalWidth - newPosition - logicalWidthForChild(child), applyDelta);
 }

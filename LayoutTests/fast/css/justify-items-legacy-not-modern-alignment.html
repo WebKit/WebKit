@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>justify-items: legacy is not treated as modern justify-self on block-level boxes</title>
+<link rel="help" href="https://drafts.csswg.org/css-align-3/#justify-block">
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+.container {
+    position: relative;
+    width: 300px;
+}
+.child {
+    /* auto width -> would be fit-content (and offset) only under modern justify-self */
+    height: 20px;
+}
+#modernParent { justify-items: center; }
+#legacyParent { justify-items: legacy center; }
+</style>
+<body>
+<div class="container" id="modernParent"><div class="child" id="modernChild">modern</div></div>
+<div class="container" id="legacyParent"><div class="child" id="legacyChild">legacy</div></div>
+<script>
+description("A block-level child's justify-self:auto resolves to its parent's justify-items. A modern 'center' " +
+    "aligns it (fit-content, centered); a 'legacy center' value must NOT be treated as modern justify-self " +
+    "(it is the -webkit-* compatibility path), so the child stays full-width at the start.");
+
+var modern = document.getElementById("modernChild");
+var legacy = document.getElementById("legacyChild");
+
+debug("Modern 'justify-items: center' -> child is fit-content and centered:");
+// fit-content, so narrower than the 300px container, and offset to the center.
+shouldBeTrue("modern.offsetWidth < 300");
+shouldBeTrue("modern.offsetLeft > 0");
+
+debug("Legacy 'justify-items: legacy center' -> child is NOT modern-aligned (full width, at start):");
+shouldBe("legacy.offsetWidth", "300");
+shouldBe("legacy.offsetLeft", "0");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

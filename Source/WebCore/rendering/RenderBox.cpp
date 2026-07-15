@@ -103,6 +103,7 @@
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
+#include "StyleSelfAlignmentData.h"
 #include "StyleTransformResolver.h"
 #include "TransformOperationData.h"
 #include "TransformState.h"
@@ -2928,6 +2929,14 @@ void RenderBox::computeLogicalWidth(LogicalExtentComputedValues& computedValues)
         if (shouldMarginInlineEndContributeToScrollableOverflow(*this))
             return true;
 
+        // A block-level box with an explicit justify-self is aligned within its containing block, so the over-constraint is resolved by alignment
+        // rather than by adjusting a margin, leaving the used margins at their specified values.
+        // https://drafts.csswg.org/css-align-3/#justify-block
+        if (is<RenderBlockFlow>(containingBlock) && !isAnonymous()) {
+            if (!style().justifySelf().resolve(&containingBlock.style()).isNormalStretchOrLegacy())
+                return true;
+        }
+
         return !containerLogicalWidth || containerLogicalWidth == (computedValues.extent + computedValues.margins.start + computedValues.margins.end);
     };
     if (!shouldIgnoreOverconstrainedMargin()) {
@@ -3224,6 +3233,15 @@ bool RenderBox::sizesLogicalWidthToFitContent() const
     if (isOutOfFlowPositioned() && logicalWidth.isAuto() && !shouldComputeLogicalWidthFromAspectRatio())
         return style.logicalLeft().isAuto() || style.logicalRight().isAuto();
 
+    // A block-level box whose justify-self is an explicit alignment (i.e. neither normal nor stretch) is sized to fit-content,
+    // so there is free space to align it within its containing block along the inline axis.
+    // https://drafts.csswg.org/css-align-3/#justify-block
+    auto isBlockLevelInFlowBox = !isInline() && !isFloatingOrOutOfFlowPositioned() && !isAnonymous();
+    if (CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(containingBlock()); blockContainer && isBlockLevelInFlowBox) {
+        if (!style.justifySelf().resolve(&blockContainer->style()).isNormalStretchOrLegacy())
+            return true;
+    }
+
     return false;
 }
 
@@ -3287,9 +3305,14 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
 
     auto handleMarginAuto = [&] {
         auto containerWidthForMarginAuto = availableSpaceAdjustedWithFloats.value_or(containerWidth);
+        // When justify-self provides a modern alignment, it is applied at positioning time with
+        // unadjusted margins and supersedes the legacy -webkit-* text-align folding here. A legacy
+        // (or normal/stretch) value yields to that folding instead.
+        // https://drafts.csswg.org/css-align-3/#justify-block
+        auto justifySelfYieldsToTextAlign = !is<RenderBlockFlow>(containingBlock) || isAnonymous() || style().justifySelf().resolve(&containingBlockStyle).isNormalStretchOrLegacy();
         // Case One: The object is being centered in the containing block's available logical width.
         auto marginAutoCenter = marginStartLength.isAuto() && marginEndLength.isAuto() && childWidth < containerWidthForMarginAuto;
-        auto alignModeCenter = containingBlock.style().textAlign() == Style::TextAlign::WebKitCenter && !marginStartLength.isAuto() && !marginEndLength.isAuto();
+        auto alignModeCenter = justifySelfYieldsToTextAlign && containingBlock.style().textAlign() == Style::TextAlign::WebKitCenter && !marginStartLength.isAuto() && !marginEndLength.isAuto();
         if (marginAutoCenter || alignModeCenter) {
             // Other browsers center the margin box for align=center elements so we match them here.
             marginStart = computeOrTrimInlineMargin(containingBlock, Style::MarginTrimSide::InlineStart, [&] {
@@ -3313,7 +3336,7 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
         }
 
         // Case Three: The object is being pushed to the end of the containing block's available logical width.
-        auto pushToEndFromTextAlign = !marginEndLength.isAuto() && ((!containingBlockStyle.writingMode().isBidiLTR() && containingBlockStyle.textAlign() == Style::TextAlign::WebKitLeft)
+        auto pushToEndFromTextAlign = justifySelfYieldsToTextAlign && !marginEndLength.isAuto() && ((!containingBlockStyle.writingMode().isBidiLTR() && containingBlockStyle.textAlign() == Style::TextAlign::WebKitLeft)
             || (containingBlockStyle.writingMode().isBidiLTR() && containingBlockStyle.textAlign() == Style::TextAlign::WebKitRight));
         if ((marginStartLength.isAuto() || pushToEndFromTextAlign) && childWidth < containerWidthForMarginAuto) {
             marginEnd = computeOrTrimInlineMargin(containingBlock, Style::MarginTrimSide::InlineEnd, [&] {

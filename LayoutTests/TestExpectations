@@ -7824,11 +7824,9 @@ imported/w3c/web-platform-tests/css/css-align/abspos/align-self-static-position-
 imported/w3c/web-platform-tests/css/css-align/abspos/align-self-static-position-006.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-align/abspos/align-self-static-position-007.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-align/abspos/align-self-static-position-008.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-auto-margins-2.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-content-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-content-020.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-overflow-000.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-text-align.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-align/self-alignment/block-justify-self.html [ ImageOnlyFailure ]
 
 webkit.org/b/276727 imported/w3c/web-platform-tests/css/css-position/overlay/overlay-transition-backdrop.html [ ImageOnlyFailure ]

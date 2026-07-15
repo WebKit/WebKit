@@ -70,6 +70,11 @@ public:
         return position() == ItemPosition::Stretch;
     }
 
+    bool isNormalStretchOrLegacy() const
+    {
+        return isNormal() || isStretch() || positionType() == ItemPositionType::Legacy;
+    }
+
     bool isStretchy(ItemPosition normal) const
     {
         if (isNormal())
