@@ -1976,6 +1976,12 @@ void WebProcessPool::gamepadDisconnected(const UIGamepad& gamepad)
         process->send(Messages::WebProcess::GamepadDisconnected(gamepad.index()), 0);
 }
 
+void WebProcessPool::resetGamepadsForTesting()
+{
+    UIGamepadProvider::singleton().resetGamepadsForTesting();
+    sendToAllProcesses(Messages::WebProcess::ResetGamepadsForTesting());
+}
+
 #endif // ENABLE(GAMEPAD)
 
 size_t WebProcessPool::numberOfConnectedGamepadsForTesting(GamepadType gamepadType)

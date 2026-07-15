@@ -143,6 +143,12 @@ void WebGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
     });
 }
 
+void WebGamepadProvider::resetGamepadsForTesting()
+{
+    m_gamepads.clear();
+    m_rawGamepads.clear();
+}
+
 const Vector<WeakPtr<PlatformGamepad>>& WebGamepadProvider::platformGamepads()
 {
     return m_rawGamepads;

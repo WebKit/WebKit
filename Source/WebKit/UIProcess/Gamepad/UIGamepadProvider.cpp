@@ -249,6 +249,11 @@ Vector<std::optional<GamepadData>> UIGamepadProvider::snapshotGamepads()
     });
 }
 
+void UIGamepadProvider::resetGamepadsForTesting()
+{
+    m_gamepads.clear();
+}
+
 #if !PLATFORM(COCOA) && !(USE(MANETTE) && OS(LINUX)) && !USE(LIBWPE) && !ENABLE(WPE_PLATFORM)
 
 void UIGamepadProvider::platformSetDefaultGamepadProvider()

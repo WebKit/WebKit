@@ -461,6 +461,7 @@ public:
 #if ENABLE(GAMEPAD)
     void gamepadConnected(const UIGamepad&, WebCore::EventMakesGamepadsVisible);
     void gamepadDisconnected(const UIGamepad&);
+    void resetGamepadsForTesting();
 #endif
 
 #if PLATFORM(COCOA)

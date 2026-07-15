@@ -634,6 +634,7 @@ private:
     void setInitialGamepads(const Vector<std::optional<GamepadData>>&);
     void gamepadConnected(const GamepadData&, WebCore::EventMakesGamepadsVisible);
     void gamepadDisconnected(unsigned index);
+    void resetGamepadsForTesting();
 #endif
 
     void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, PageGroupIdentifier, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, WebCore::Site&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, RemoteWorkerInitializationData&&, WebCore::CrossOriginEmbedderPolicyValue, CompletionHandler<void()>&&);
