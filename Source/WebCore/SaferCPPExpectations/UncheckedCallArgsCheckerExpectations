@@ -333,7 +333,6 @@ page/LocalFrameView.cpp
 page/LocalFrameViewLayoutContext.cpp
 page/Location.cpp
 page/MemoryRelease.cpp
-page/NavigateEvent.cpp
 [ iOS ] page/Page.cpp
 page/PageColorSampler.cpp
 page/PageSerializer.cpp
