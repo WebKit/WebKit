@@ -354,6 +354,7 @@ struct StrokeWidth;
 struct TabSize;
 struct TextAutospace;
 struct TextBoxEdge;
+struct TextDecorationInset;
 struct TextDecorationLine;
 struct TextDecorationThickness;
 struct TextEmphasisPosition;

@@ -100,7 +100,8 @@ public:
 
             if (&a.nonInheritedData() != &b.nonInheritedData() && a.nonInheritedData().rareData.ptr() != b.nonInheritedData().rareData.ptr()) {
                 if (a.nonInheritedData().rareData->textDecorationStyle != b.nonInheritedData().rareData->textDecorationStyle
-                    || a.nonInheritedData().rareData->textDecorationThickness != b.nonInheritedData().rareData->textDecorationThickness)
+                    || a.nonInheritedData().rareData->textDecorationThickness != b.nonInheritedData().rareData->textDecorationThickness
+                    || a.nonInheritedData().rareData->textDecorationInset != b.nonInheritedData().rareData->textDecorationInset)
                     return true;
             }
 
@@ -786,7 +787,7 @@ public:
             // Don't return true; keep looking for another change.
         }
 
-        if (a.textDecorationStyle != b.textDecorationStyle || a.textDecorationColor != b.textDecorationColor || a.textDecorationThickness != b.textDecorationThickness)
+        if (a.textDecorationStyle != b.textDecorationStyle || a.textDecorationColor != b.textDecorationColor || a.textDecorationThickness != b.textDecorationThickness || a.textDecorationInset != b.textDecorationInset)
             return true;
 
         return false;

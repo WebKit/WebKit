@@ -52,6 +52,7 @@
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
 #include "Settings.h"
+#include "StyleTextDecorationInset.h"
 #include "StyleTextDecorationLine.h"
 #include "StyleTextDecorationThickness.h"
 #include "StyledMarkedText.h"
@@ -898,6 +899,91 @@ void TextBoxPainter::collectDecoratingBoxesForBackgroundPainting(DecoratingBoxLi
     }
 }
 
+static float autoTextDecorationInset(const Style::ComputedStyle& style)
+{
+    // A small UA-chosen inset (relative to font size) so that two adjacent identical underlined
+    // elements do not appear to share a single continuous underline (important for e.g. Chinese,
+    // where underlining is a form of punctuation).
+    return style.computedFontSize() / 8;
+}
+
+std::pair<FloatPoint, float> TextBoxPainter::insetAdjustedDecorationLocationAndWidth(const DecoratingBox& decoratingBox, const StyledMarkedText& markedText) const
+{
+    auto boxOrigin = decoratingBox.location;
+    auto width = decoratingBox.contentWidth;
+
+    // text-decoration-inset and box-decoration-break are not inherited, but a decoration propagates from
+    // the box that introduces it to the (possibly descendant) box that paints it, so they are resolved
+    // from the originating box and carried on the decoration Styles (see collectStylesForRenderer()),
+    // alongside the decoration color/thickness.
+    auto& insetStyles = decoratingBox.textDecorationStyles;
+    if (!insetStyles.inset)
+        return { boxOrigin, width };
+    auto& inset = *insetStyles.inset;
+
+    auto& style = decoratingBox.style.get();
+    auto autoValue = inset.isAuto() ? autoTextDecorationInset(style) : 0.f;
+    auto startInset = inset.resolvedStart(style, autoValue);
+    auto endInset = inset.resolvedEnd(style, autoValue);
+    if (!startInset && !endInset)
+        return { boxOrigin, width };
+
+    auto writingMode = style.writingMode();
+    auto decoratingInlineBox = decoratingBox.inlineBox;
+
+    // box-decoration-break: the start inset applies only to the first fragment's start edge and the
+    // end inset only to the last fragment's end edge; for box-decoration-break: clone every fragment is
+    // a complete box, so both endpoints are inset on every line.
+    auto closedEdges = [&]() -> RectEdges<bool> {
+        if (!decoratingInlineBox)
+            return { true };
+        if (insetStyles.boxDecorationBreak == BoxDecorationBreak::Clone)
+            return { true };
+        return decoratingInlineBox->closedEdges();
+    }();
+
+    bool isLTR = writingMode.isBidiLTR();
+
+    // A decorating box can span several leaf boxes on a line (its bidi runs), each split into marked-text
+    // sub-ranges. Map the logical start/end insets onto the decoration's visual left/right edges;
+    // displacements below are measured rightward (a positive inset trims inward, a negative one extends
+    // outward). box-decoration-break decides which of the decoration's edges live on this line fragment,
+    // and firstLeafBox/lastLeafBox + the marked-text offsets decide which painted piece actually reaches
+    // that visual edge.
+    auto textBox = makeIterator();
+    bool ownsLineLeftEdge = !decoratingInlineBox || textBox == decoratingInlineBox->firstLeafBox();
+    bool ownsLineRightEdge = !decoratingInlineBox || textBox == decoratingInlineBox->lastLeafBox();
+    bool ownsLogicalStart = !markedText.startOffset;
+    bool ownsLogicalEnd = markedText.endOffset == m_paintTextRun.length();
+
+    float visualLeftInset = isLTR ? startInset : endInset;
+    float visualRightInset = isLTR ? endInset : startInset;
+    bool leftEdgeOnFragment = isLTR ? closedEdges.start(writingMode) : closedEdges.end(writingMode);
+    bool rightEdgeOnFragment = isLTR ? closedEdges.end(writingMode) : closedEdges.start(writingMode);
+    float leftEdgeMove = leftEdgeOnFragment ? visualLeftInset : 0.f;
+    float rightEdgeMove = rightEdgeOnFragment ? -visualRightInset : 0.f;
+
+    // When the whole decoration lives on this fragment, the part of the inset that moves both visual
+    // edges the same way is an inline-axis shift of the decoration as a whole. Applying that shift to
+    // every painted piece keeps a symmetric inset a rigid shift of the decoration - including the seam
+    // between bidi runs - instead of pinning that interior seam. The remaining per-edge movement is the
+    // extend/trim overhang, applied only at the piece that actually reaches that visual edge; interior
+    // pieces (e.g. superscripts/subscripts at other baselines) get only the whole-decoration shift, so
+    // they stay put for a pure extend/trim. (skip-ink needs no adjustment: its gaps are measured relative
+    // to the underline's bounding box, which already tracks boxOrigin.)
+    float decorationInlineShift = (leftEdgeOnFragment && rightEdgeOnFragment) ? (leftEdgeMove + rightEdgeMove) / 2.f : 0.f;
+    bool reachesVisualLeft = leftEdgeOnFragment && ownsLineLeftEdge && (isLTR ? ownsLogicalStart : ownsLogicalEnd);
+    bool reachesVisualRight = rightEdgeOnFragment && ownsLineRightEdge && (isLTR ? ownsLogicalEnd : ownsLogicalStart);
+    float leftOverhang = reachesVisualLeft ? leftEdgeMove - decorationInlineShift : 0.f;
+    float rightOverhang = reachesVisualRight ? rightEdgeMove - decorationInlineShift : 0.f;
+
+    float adjustedLeft = boxOrigin.x() + decorationInlineShift + leftOverhang;
+    float adjustedRight = boxOrigin.x() + width + decorationInlineShift + rightOverhang;
+    boxOrigin.setX(adjustedLeft);
+    width = std::max(0.f, adjustedRight - adjustedLeft);
+    return { boxOrigin, width };
+}
+
 void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decorationPainter, const StyledMarkedText& markedText, const FloatRect& textBoxPaintRect)
 {
     if (m_isCombinedText)
@@ -934,10 +1020,11 @@ void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decoratio
                 return baseOffset - wavyOffset;
             };
 
+            auto [insetBoxOrigin, insetWidth] = insetAdjustedDecorationLocationAndWidth(decoratingBox, markedText);
             return TextDecorationPainter::BackgroundDecorationGeometry {
                 textOriginFromPaintRect(textBoxPaintRect),
-                decoratingBox.location,
-                decoratingBox.contentWidth,
+                insetBoxOrigin,
+                insetWidth,
                 textDecorationThickness,
                 underlineOffset(),
                 overlineOffset(),
@@ -1019,8 +1106,9 @@ void TextBoxPainter::paintForegroundDecorations(TextDecorationPainter& decoratio
 
         auto textDecorationThickness = resolveTextDecorationThicknessForPaintingBox(decoratingBox.textDecorationStyles.linethrough.thickness, decoratingBox.style.get(), deviceScaleFactor);
         auto linethroughCenter = computedLinethroughCenter(decoratingBox.style.get(), textDecorationThickness, computedAutoTextDecorationThickness(decoratingBox.style.get(), deviceScaleFactor));
-        decorationPainter.paintForegroundDecorations({ decoratingBox.location
-            , decoratingBox.contentWidth
+        auto [insetBoxOrigin, insetWidth] = insetAdjustedDecorationLocationAndWidth(decoratingBox, markedText);
+        decorationPainter.paintForegroundDecorations({ insetBoxOrigin
+            , insetWidth
             , textDecorationThickness
             , linethroughCenter
             , wavyStrokeParameters(decoratingBox.style->computedFontSize()) }, decoratingBox.textDecorationStyles);

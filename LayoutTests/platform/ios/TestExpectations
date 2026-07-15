@@ -365,6 +365,7 @@ fast/selectors/text-field-selection-text-shadow.html [ WontFix ]
 fast/selectors/text-field-selection-window-inactive-stroke-color.html [ WontFix ]
 fast/selectors/text-field-selection-window-inactive-text-shadow.html [ WontFix ]
 fast/text/selection-with-text-decorations.html [ WontFix ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-inset-marked-text-gap.html [ WontFix ]
 
 # Plugins are not supported on iOS
 fast/frames/sandboxed-iframe-plugins.html
@@ -1903,6 +1904,8 @@ imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-opacity-1e.html 
 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-length-rounding-min-val.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/svg-fill-none.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/svg-stroke-dasharray.html [ ImageOnlyFailure ]
+# incorrect skip ink on iOS only
+imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-inset-011.html [ ImageOnlyFailure ]
 
 fast/flexbox/flex-hang.html [ Failure ]
 fast/flexbox/overhanging-floats-removed.html [ Failure ]

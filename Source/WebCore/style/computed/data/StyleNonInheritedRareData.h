@@ -71,6 +71,7 @@
 #include <WebCore/StyleShapeImageThreshold.h>
 #include <WebCore/StyleShapeMargin.h>
 #include <WebCore/StyleShapeOutside.h>
+#include <WebCore/StyleTextDecorationInset.h>
 #include <WebCore/StyleTextDecorationThickness.h>
 #include <WebCore/StyleTimelineTriggers.h>
 #include <WebCore/StyleTouchAction.h>
@@ -183,6 +184,7 @@ public:
     OffsetRotate offsetRotate;
 
     Color textDecorationColor;
+    TextDecorationInset textDecorationInset;
     TextDecorationThickness textDecorationThickness;
 
     ScrollTimelines scrollTimelines;

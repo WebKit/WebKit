@@ -34,6 +34,7 @@
 #include "RenderText.h"
 #include "StyleAppleColorFilter.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StyleTextDecorationInset.h"
 #include "StyleTextDecorationLine.h"
 #include "TextBoxPainter.h"
 #include "TextRun.h"
@@ -178,7 +179,8 @@ bool TextDecorationPainter::Styles::operator==(const Styles& other) const
 {
     return underline.color == other.underline.color && overline.color == other.overline.color && linethrough.color == other.linethrough.color
         && underline.decorationStyle == other.underline.decorationStyle && overline.decorationStyle == other.overline.decorationStyle && linethrough.decorationStyle == other.linethrough.decorationStyle
-        && underline.thickness == other.underline.thickness && overline.thickness == other.overline.thickness && linethrough.thickness == other.linethrough.thickness;
+        && underline.thickness == other.underline.thickness && overline.thickness == other.overline.thickness && linethrough.thickness == other.linethrough.thickness
+        && inset == other.inset && boxDecorationBreak == other.boxDecorationBreak;
 }
 
 TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, const FontCascade& font, const Style::TextShadows& shadow, const Style::AppleColorFilter& colorFilter, bool isPrinting, WritingMode writingMode)
@@ -325,6 +327,11 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
     auto extractDecorations = [&] (const Style::ComputedStyle& style, Style::TextDecorationLine decorations) {
         if (!decorations.containsAny({ Style::TextDecorationLine::Flag::Underline, Style::TextDecorationLine::Flag::Overline, Style::TextDecorationLine::Flag::LineThrough }))
             return;
+
+        if (!result.inset) {
+            result.inset = style.textDecorationInset();
+            result.boxDecorationBreak = style.boxDecorationBreak();
+        }
 
         auto color = TextDecorationPainter::decorationColor(style, paintBehavior);
         auto decorationStyle = style.textDecorationStyle();

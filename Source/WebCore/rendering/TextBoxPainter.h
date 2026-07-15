@@ -103,6 +103,13 @@ protected:
     void collectDecoratingBoxesForBackgroundPainting(DecoratingBoxList&, const InlineIterator::TextBoxIterator&, const FloatRect& textBoxRect, const TextDecorationPainter::Styles&);
     void collectDecoratingBoxesForForegroundPainting(DecoratingBoxList&, const InlineIterator::TextBoxIterator&, const FloatRect& textBoxRect, const TextDecorationPainter::Styles&);
 
+    // Applies 'text-decoration-inset' to a decorating box, returning the decoration's adjusted
+    // logical origin and inline length. Honors box-decoration-break (via the inline box's closed
+    // edges) so the start inset only affects the first fragment and the end inset the last, and shares
+    // a symmetric inset's translation across bidi runs / marked-text pieces while applying the
+    // extend/trim overhang only at the piece that reaches the decoration's visual edge.
+    std::pair<FloatPoint, float> insetAdjustedDecorationLocationAndWidth(const DecoratingBox&, const StyledMarkedText&) const;
+
     // FIXME: We could just talk to the display box directly.
     const InlineIterator::BoxModernPath m_textBox;
     const CheckedRef<const RenderText> m_renderer;

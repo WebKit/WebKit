@@ -36,6 +36,7 @@
 #include "RenderElementInlines.h"
 #include "RenderInline.h"
 #include "RenderObjectInlines.h"
+#include "StyleTextDecorationInset.h"
 
 namespace WebCore {
 
@@ -222,6 +223,18 @@ static InkOverflowForDecorations computedInkOverflowForDecorations(const Style::
         overflowResult.extendTop(-rect.y());
         overflowResult.extendBottom(rect.maxY() - height);
     }
+
+    // text-decoration-inset moves the decoration's endpoints along the inline axis. A negative inset
+    // extends the line outward past the text box, so that overhang must be part of the ink overflow
+    // or it gets clipped / left unrepainted. A positive inset (and 'auto', which only trims inward)
+    // needs no expansion. We expand both inline edges by the largest outward amount, which is a safe
+    // superset regardless of writing mode / direction.
+    auto outwardInset = std::max<float>({ 0.f, -lineStyle.textDecorationInset().resolvedStart(lineStyle, 0.f), -lineStyle.textDecorationInset().resolvedEnd(lineStyle, 0.f) });
+    if (outwardInset) {
+        overflowResult.left() = std::max(overflowResult.left(), LayoutUnit(ceilf(outwardInset)));
+        overflowResult.right() = std::max(overflowResult.right(), LayoutUnit(ceilf(outwardInset)));
+    }
+
     return overflowResult;
 }
 

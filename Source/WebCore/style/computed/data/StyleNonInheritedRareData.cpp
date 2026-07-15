@@ -79,6 +79,7 @@ NonInheritedRareData::NonInheritedRareData()
     , offsetAnchor(ComputedStyle::initialOffsetAnchor())
     , offsetRotate(ComputedStyle::initialOffsetRotate())
     , textDecorationColor(ComputedStyle::initialTextDecorationColor())
+    , textDecorationInset(ComputedStyle::initialTextDecorationInset())
     , textDecorationThickness(ComputedStyle::initialTextDecorationThickness())
     , scrollTimelines { CSS::Keyword::None { } }
     , viewTimelines { CSS::Keyword::None { } }
@@ -189,6 +190,7 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , offsetAnchor(o.offsetAnchor)
     , offsetRotate(o.offsetRotate)
     , textDecorationColor(o.textDecorationColor)
+    , textDecorationInset(o.textDecorationInset)
     , textDecorationThickness(o.textDecorationThickness)
     , scrollTimelines(o.scrollTimelines)
     , viewTimelines(o.viewTimelines)
@@ -305,6 +307,7 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
         && offsetAnchor == o.offsetAnchor
         && offsetRotate == o.offsetRotate
         && textDecorationThickness == o.textDecorationThickness
+        && textDecorationInset == o.textDecorationInset
         && scrollTimelines == o.scrollTimelines
         && viewTimelines == o.viewTimelines
         && timelineScope == o.timelineScope
@@ -450,6 +453,7 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
     LOG_IF_DIFFERENT(offsetRotate);
 
     LOG_IF_DIFFERENT(textDecorationThickness);
+    LOG_IF_DIFFERENT(textDecorationInset);
 
     LOG_IF_DIFFERENT(scrollTimelines);
     LOG_IF_DIFFERENT(viewTimelines);
