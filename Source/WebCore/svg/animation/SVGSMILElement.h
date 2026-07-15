@@ -84,6 +84,7 @@ public:
     SMILTime simpleDuration() const;
 
     void seekToIntervalCorrespondingToTime(SMILTime elapsed);
+    void updateIntervalForProgress(SMILTime elapsed, bool seekToTime);
     bool progress(SMILTime elapsed, SVGSMILElement& firstAnimation, bool seekToTime);
     SMILTime NODELETE nextProgressTime() const;
 
@@ -208,6 +209,14 @@ private:
     ActiveState m_activeState { Inactive };
     float m_lastPercent { 0 };
     unsigned m_lastRepeat { 0 };
+
+    // How updateIntervalForProgress() resolved the current interval for this frame, and the active
+    // state at the start of the frame; progress() consumes both (after the animations have been
+    // sorted by priority) to apply the value and fire begin/end events. NotContributing covers both
+    // an unresolved interval and a seek that landed before the interval began.
+    enum class ProgressDisposition : uint8_t { NotContributing, BeforeInterval, Resolved };
+    ProgressDisposition m_progressDisposition { ProgressDisposition::NotContributing };
+    ActiveState m_previousActiveState { Inactive };
 
     SMILTime m_nextProgressTime { 0 };
 

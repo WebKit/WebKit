@@ -276,6 +276,14 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
     SMILTime earliestFireTime = SMILTime::unresolved();
 
     for (auto& animations : copyToVector(m_scheduledAnimations.values())) {
+        // Advance every animation's current interval to `elapsed` before sorting. An animation
+        // whose interval only restarts at (or before) the current time -- e.g. a sync-base
+        // dependent that just gained a new, later begin time -- must be sorted using that new
+        // interval, otherwise a lower-priority animation could incorrectly win the sandwich and
+        // its result would be applied last.
+        for (Ref animation : animations)
+            animation->updateIntervalForProgress(elapsed, seekToTime);
+
         // Sort according to priority. Elements with later begin time have higher priority.
         // In case of a tie, document order decides.
         // FIXME: This should also consider timing relationships between the elements. Dependents
@@ -283,8 +291,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
         sortByPriority(animations, elapsed);
 
         RefPtr<SVGSMILElement> firstAnimation;
-        for (auto& weakAnimation : animations) {
-            Ref animation = weakAnimation.get();
+        for (Ref animation : animations) {
             ASSERT(animation->timeContainer() == this);
             ASSERT(animation->targetElement());
             ASSERT(animation->hasValidAttributeName());

@@ -239,6 +239,7 @@ void SVGSMILElement::reset()
     stopAnimation(protect(targetElement()).get());
 
     m_activeState = Inactive;
+    m_previousActiveState = Inactive;
     m_isWaitingForFirstInterval = true;
     m_intervalBegin = SMILTime::unresolved();
     m_intervalEnd = SMILTime::unresolved();
@@ -1008,7 +1009,7 @@ void SVGSMILElement::checkRestart(SMILTime elapsed)
         if (restart != RestartAlways)
             return;
         SMILTime nextBegin = findInstanceTime(Begin, m_intervalBegin, false);
-        if (nextBegin < m_intervalEnd) { 
+        if (nextBegin < m_intervalEnd) {
             m_intervalEnd = nextBegin;
             notifyDependentsIntervalChanged();
         }
@@ -1134,21 +1135,69 @@ bool SVGSMILElement::isContributing(SMILTime elapsed) const
     return (m_activeState == Active && (fill() == FillFreeze || elapsed <= m_intervalBegin + repeatingDuration())) || m_activeState == Frozen;
 }
     
+void SVGSMILElement::updateIntervalForProgress(SMILTime elapsed, bool seekToTime)
+{
+    ASSERT(m_timeContainer);
+
+    if (!m_conditionsConnected)
+        connectConditions();
+
+    // Remember the state at the start of the frame so progress() can fire begin/end events for
+    // whatever transition happens now.
+    m_previousActiveState = m_activeState;
+
+    if (!m_intervalBegin.isFinite()) {
+        m_progressDisposition = ProgressDisposition::NotContributing;
+        return;
+    }
+
+    // The interval hasn't begun yet: keep the current (frozen or inactive) state.
+    if (elapsed < m_intervalBegin) {
+        m_progressDisposition = ProgressDisposition::BeforeInterval;
+        return;
+    }
+
+    m_previousIntervalBegin = m_intervalBegin;
+
+    if (m_isWaitingForFirstInterval) {
+        m_isWaitingForFirstInterval = false;
+        resolveFirstInterval();
+    }
+
+    if (seekToTime) {
+        seekToIntervalCorrespondingToTime(elapsed);
+        if (elapsed < m_intervalBegin) {
+            // elapsed is not within an interval.
+            m_progressDisposition = ProgressDisposition::NotContributing;
+            return;
+        }
+    }
+
+    // Resolve the current interval before progress() computes the animation percent. checkRestart()
+    // may end the current interval and start a new one; computing the percent afterwards (in
+    // progress(), against the resolved interval) ensures a just-restarted interval yields ~0 rather
+    // than the previous interval's end value. See https://bugs.webkit.org/show_bug.cgi?id=196596
+    checkRestart(elapsed);
+
+    m_activeState = determineActiveState(elapsed);
+    m_progressDisposition = ProgressDisposition::Resolved;
+}
+
 bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, bool seekToTime)
 {
     ASSERT(m_timeContainer);
     ASSERT(m_isWaitingForFirstInterval || m_intervalBegin.isFinite());
 
-    if (!m_conditionsConnected)
-        connectConditions();
-
-    if (!m_intervalBegin.isFinite()) {
-        ASSERT(m_activeState == Inactive);
-        m_nextProgressTime = SMILTime::unresolved();
+    // The interval and active state for this frame were resolved by updateIntervalForProgress(),
+    // which runs for every scheduled animation before they are sorted by priority.
+    switch (m_progressDisposition) {
+    case ProgressDisposition::NotContributing:
+        // Either the interval is unresolved (m_intervalBegin is unresolved) or a seek landed before
+        // the interval began; in both cases m_intervalBegin is the next time worth revisiting.
+        m_nextProgressTime = m_intervalBegin;
         return false;
-    }
 
-    if (elapsed < m_intervalBegin) {
+    case ProgressDisposition::BeforeInterval: {
         ASSERT(m_activeState != Active);
         bool isFrozen = (m_activeState == Frozen);
         if (isFrozen) {
@@ -1161,29 +1210,22 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, 
         return isFrozen;
     }
 
-    m_previousIntervalBegin = m_intervalBegin;
-
-    if (m_isWaitingForFirstInterval) {
-        m_isWaitingForFirstInterval = false;
-        resolveFirstInterval();
+    case ProgressDisposition::Resolved:
+        break;
     }
 
-    // This call may obtain a new interval -- never call calculateAnimationPercentAndRepeat() before!
-    if (seekToTime) {
-        seekToIntervalCorrespondingToTime(elapsed);
-        if (elapsed < m_intervalBegin) {
-            // elapsed is not within an interval.
-            m_nextProgressTime = m_intervalBegin;
-            return false;
-        }
-    }
-
+    // Compute the percent/repeat against the interval resolved by updateIntervalForProgress().
     unsigned repeat = 0;
-    float percent = calculateAnimationPercentAndRepeat(elapsed, repeat);
-    checkRestart(elapsed);
+    float percent = 0;
+    if (elapsed < m_intervalBegin) {
+        // checkRestart() advanced us to an interval that begins in the future (a gap between
+        // intervals); a frozen element holds its last value until that interval begins.
+        percent = m_lastPercent;
+        repeat = m_lastRepeat;
+    } else
+        percent = calculateAnimationPercentAndRepeat(elapsed, repeat);
 
-    ActiveState oldActiveState = m_activeState;
-    m_activeState = determineActiveState(elapsed);
+    ActiveState oldActiveState = m_previousActiveState;
     bool animationIsContributing = isContributing(elapsed);
 
     if (animationIsContributing) {
