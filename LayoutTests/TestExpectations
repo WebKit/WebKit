@@ -3523,7 +3523,6 @@ imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float
 imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapse-discard-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapse-preserve-breaks-001.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text/white-space/white-space-trim-discard-inner-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/white-space/eol-spaces-bidi-003.html [ ImageOnlyFailure ]
 webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-ideographic-space-005.html [ ImageOnlyFailure ]
 webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-ideographic-space-006.html [ ImageOnlyFailure ]

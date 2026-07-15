@@ -183,17 +183,20 @@ static bool isNonReplacedInlineBlock(const Box& layoutBox)
 void InlineItemsBuilder::adjustInlineItemsForWhiteSpaceTrim(InlineItemList& inlineItemList)
 {
     // https://drafts.csswg.org/css-text-4/#white-space-trim
-    // 'discard-before' and 'discard-after' remove the collapsible white space immediately before the
-    // start / after the end of an element. Discarding the corresponding inline items here -before line
-    // building, bidi resolution and intrinsic sizing consume them- keeps the removed white space out of
-    // every downstream computation (rendering, soft wrap opportunities and min/max-content) at once.
-    // Inline box boundaries are transparent to this adjacency, matching white space collapsing.
+    // 'discard-before' / 'discard-after' remove the collapsible white space immediately before the start /
+    // after the end of an element; 'discard-inner' removes the collapsible white space at the start and end
+    // of the element's own content (i.e. immediately inside its edges). Discarding the corresponding inline
+    // items here -before line building, bidi resolution and intrinsic sizing consume them- keeps the removed
+    // white space out of every downstream computation (rendering, soft wrap opportunities and min/max-content)
+    // at once. Inline box boundaries are transparent to this adjacency, matching white space collapsing.
     //
     // A single forward pass (each item is visited once):
-    //  - 'discardAfterActive' is armed by a discard-after box edge (an inline box end, or an inline-block)
-    //    and discards the collapsible white space that follows it, up to the next piece of real content.
+    //  - 'discardAfterActive' is armed by a discard-after box edge (an inline box end, or an inline-block) or
+    //    a discard-inner inline box start, and discards the collapsible white space that follows it, up to the
+    //    next piece of real content.
     //  - 'discardBeforeCandidates' holds the collapsible white space seen since the last piece of real
-    //    content; a discard-before box edge (an inline box start, or an inline-block) discards that run.
+    //    content; a discard-before box edge (an inline box start, or an inline-block) or a discard-inner
+    //    inline box end discards that entire preceding run.
     ASSERT(m_hasWhiteSpaceTrim);
 
     auto isTrimmableWhitespace = [](const InlineItem& item) {
@@ -206,6 +209,13 @@ void InlineItemsBuilder::adjustInlineItemsForWhiteSpaceTrim(InlineItemList& inli
     bool discardAfterActive = false;
     Vector<size_t, 4> discardBeforeCandidates;
 
+    auto discardPrecedingWhitespace = [&] {
+        for (auto candidate : discardBeforeCandidates)
+            itemsToDiscard.quickSet(candidate);
+        hasItemsToDiscard |= !discardBeforeCandidates.isEmpty();
+        discardBeforeCandidates.clear();
+    };
+
     for (size_t index = 0; index < inlineItemList.size(); ++index) {
         auto& item = inlineItemList[index];
         if (isTrimmableWhitespace(item)) {
@@ -217,18 +227,20 @@ void InlineItemsBuilder::adjustInlineItemsForWhiteSpaceTrim(InlineItemList& inli
             continue;
         }
         if (item.isInlineBoxStart()) {
-            if (item.layoutBox().style().whiteSpaceTrim().contains(Style::WhiteSpaceTrimValue::DiscardBefore)) {
-                for (auto candidate : discardBeforeCandidates)
-                    itemsToDiscard.quickSet(candidate);
-                hasItemsToDiscard |= !discardBeforeCandidates.isEmpty();
-                discardBeforeCandidates.clear();
-            }
+            auto whiteSpaceTrim = item.layoutBox().style().whiteSpaceTrim();
+            if (whiteSpaceTrim.contains(Style::WhiteSpaceTrimValue::DiscardBefore))
+                discardPrecedingWhitespace();
+            if (whiteSpaceTrim.contains(Style::WhiteSpaceTrimValue::DiscardInner))
+                discardAfterActive = true;
             // Inline box boundaries are transparent: carry both states across them.
             continue;
         }
         if (item.isInlineBoxEnd()) {
-            if (item.layoutBox().style().whiteSpaceTrim().contains(Style::WhiteSpaceTrimValue::DiscardAfter))
+            auto whiteSpaceTrim = item.layoutBox().style().whiteSpaceTrim();
+            if (whiteSpaceTrim.contains(Style::WhiteSpaceTrimValue::DiscardAfter))
                 discardAfterActive = true;
+            if (whiteSpaceTrim.contains(Style::WhiteSpaceTrimValue::DiscardInner))
+                discardPrecedingWhitespace();
             continue;
         }
         if (item.isFloat() || item.isOutOfFlow()) {
