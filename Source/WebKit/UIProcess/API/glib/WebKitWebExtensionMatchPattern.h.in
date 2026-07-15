@@ -99,6 +99,13 @@ webkit_web_extension_match_pattern_get_matches_all_urls (WebKitWebExtensionMatch
 WEBKIT_API gboolean
 webkit_web_extension_match_pattern_get_matches_all_hosts (WebKitWebExtensionMatchPattern *matchPattern);
 
+WEBKIT_API GDateTime*
+webkit_web_extension_match_pattern_get_expiration_date (WebKitWebExtensionMatchPattern *matchPattern);
+
+WEBKIT_API void
+webkit_web_extension_match_pattern_set_expiration_date (WebKitWebExtensionMatchPattern *matchPattern,
+                                                        GDateTime                      *expirationDate);
+
 WEBKIT_API gboolean
 webkit_web_extension_match_pattern_matches_url (WebKitWebExtensionMatchPattern        *matchPattern,
                                                 const gchar                           *url,

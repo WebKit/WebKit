@@ -978,6 +978,26 @@ static void testCustomURLScheme(Test*, gconstpointer)
     g_assert_no_error(error.get());
 }
 
+static void testExpirationDate(Test*, gconstpointer)
+{
+    GUniqueOutPtr<GError> error;
+
+    auto expirationDate = g_date_time_new_now_local();
+
+    WebKitWebExtensionMatchPattern* matchPattern = webkit_web_extension_match_pattern_new_all_urls();
+    webkit_web_extension_match_pattern_set_expiration_date(matchPattern, expirationDate);
+
+    g_assert_cmpint(g_date_time_equal(expirationDate, webkit_web_extension_match_pattern_get_expiration_date(matchPattern)), ==, TRUE);
+
+    // Ensure that a second match pattern doesn't also have the same expiration date
+    WebKitWebExtensionMatchPattern* secondMatchPattern = webkit_web_extension_match_pattern_new_all_urls();
+    g_assert_cmpint(g_date_time_equal(expirationDate, webkit_web_extension_match_pattern_get_expiration_date(secondMatchPattern)), ==, FALSE);
+
+    // Ensure a newly created match pattern is at least 100 years off
+    matchPattern = webkit_web_extension_match_pattern_new_all_urls();
+    g_assert_cmpint(g_date_time_difference(webkit_web_extension_match_pattern_get_expiration_date(matchPattern), expirationDate), >, G_TIME_SPAN_DAY * 365 * 100);
+}
+
 void beforeAll()
 {
     Test::add("WebKitWebExtensionMatchPattern", "pattern-validity", testPatternValidity);
@@ -986,6 +1006,7 @@ void beforeAll()
     Test::add("WebKitWebExtensionMatchPattern", "matches-all-hosts", testMatchesAllHosts);
     Test::add("WebKitWebExtensionMatchPattern", "matches-all-urls", testMatchesAllURLs);
     Test::add("WebKitWebExtensionMatchPattern", "custom-url-scheme", testCustomURLScheme);
+    Test::add("WebKitWebExtensionMatchPattern", "expiration-date", testExpirationDate);
 }
 
 void afterAll()

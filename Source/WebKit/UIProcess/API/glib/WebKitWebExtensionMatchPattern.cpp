@@ -54,6 +54,7 @@ struct _WebKitWebExtensionMatchPattern {
     CString path { matchPattern->path().utf8() };
     bool matchesAllURLs { matchPattern->matchesAllURLs() };
     bool matchesAllHosts { matchPattern->matchesAllHosts() };
+    GRefPtr<GDateTime> expiration;
     int referenceCount { 1 };
 #else
     _WebKitWebExtensionMatchPattern()
@@ -362,6 +363,42 @@ static OptionSet<WebExtensionMatchPattern::Options> toImpl(WebKitWebExtensionMat
 }
 
 /**
+ * webkit_web_extension_match_pattern_get_expiration_date:
+ * @matchPattern: A #WebKitWebExtensionMatchPattern
+ *
+ * Get the expiration date of @matchPattern. If the match pattern does not expire, a distant future date will be returned instead.
+ *
+ * Since: 2.54
+ */
+GDateTime* webkit_web_extension_match_pattern_get_expiration_date(WebKitWebExtensionMatchPattern* matchPattern)
+{
+    g_return_val_if_fail(matchPattern, nullptr);
+
+    if (matchPattern->expiration)
+        return matchPattern->expiration.get();
+    return g_date_time_new_utc(9999, 12, 31, 23, 59, 00);
+}
+
+/**
+ * webkit_web_extension_match_pattern_set_expiration_date:
+ * @matchPattern: A #WebKitWebExtensionMatchPattern
+ * @expirationDate: The expiration date for this pattern
+ *
+ * Specify the expiration date for the provided match pattern.
+ *
+ * If no expiration date is provided, or the match pattern should not expire, a date in the distant future will be used.
+ *
+ * Since: 2.54
+ */
+void webkit_web_extension_match_pattern_set_expiration_date(WebKitWebExtensionMatchPattern* matchPattern, GDateTime* expirationDate)
+{
+    g_return_if_fail(matchPattern);
+    g_return_if_fail(expirationDate);
+
+    matchPattern->expiration = adoptGRef(expirationDate);
+}
+
+/**
  * webkit_web_extension_match_pattern_matches_url:
  * @matchPattern: A #WebKitWebExtensionMatchPattern
  * @url: The URL to match against the pattern.
@@ -380,7 +417,6 @@ gboolean webkit_web_extension_match_pattern_matches_url(WebKitWebExtensionMatchP
 
     if (options & WEBKIT_WEB_EXTENSION_MATCH_PATTERN_OPTIONS_MATCH_BIDIRECTIONALLY)
         g_warning("Invalid parameter: WEBKIT_WEB_EXTENSION_MATCH_PATTERN_OPTIONS_MATCH_BIDIRECTIONALLY is not valid when matching a URL");
-
 
     return matchPattern->matchPattern->matchesURL(URL(String::fromUTF8(url)), toImpl(options));
 }
@@ -470,6 +506,16 @@ gboolean webkit_web_extension_match_pattern_get_matches_all_urls(WebKitWebExtens
 gboolean webkit_web_extension_match_pattern_get_matches_all_hosts(WebKitWebExtensionMatchPattern* matchPattern)
 {
     return 0;
+}
+
+GDateTime* webkit_web_extension_match_pattern_get_expiration_date(WebKitWebExtensionMatchPattern* matchPattern)
+{
+    return 0;
+}
+
+void webkit_web_extension_match_pattern_set_expiration_date(WebKitWebExtensionMatchPattern* matchPattern, GDateTime* expirationDate)
+{
+    return;
 }
 
 gboolean webkit_web_extension_match_pattern_matches_url(WebKitWebExtensionMatchPattern* matchPattern, const gchar* url, WebKitWebExtensionMatchPatternOptions  options)
