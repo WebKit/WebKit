@@ -683,17 +683,19 @@ TemporalResult<Nudged> nudgeToCalendarUnit(int32_t sign,
             return makeUnexpected(retried.error());
         ASSERT(retried->has_value());
         nudgeWindow = **retried;
-        // Step 5.a.ii / 6.a.ii: Assert bounds hold after retry. Set didExpandCalendarUnit to true.
-        ASSERT(sign != 1 || (nudgeWindow.startEpochNs <= destEpochNs && destEpochNs <= nudgeWindow.endEpochNs));
-        ASSERT(sign != -1 || (nudgeWindow.endEpochNs <= destEpochNs && destEpochNs <= nudgeWindow.startEpochNs));
+        // Step 5.a.ii / 6.a.ii: Set didExpandCalendarUnit to true. (The spec also asserts bounds
+        // hold after retry, but the assertion is violable: https://github.com/tc39/proposal-temporal/issues/3310)
         didExpandCalendarUnit = true;
     }
 
     // Steps 7-12: Extract r1, r2, startEpochNs, endEpochNs, startDuration, endDuration from nudgeWindow.
     auto& startDuration = nudgeWindow.startDuration;
     auto& endDuration = nudgeWindow.endDuration;
-    // Step 13: Assert: startEpochNs ≠ endEpochNs.
-    ASSERT(nudgeWindow.startEpochNs != nudgeWindow.endEpochNs);
+    // Step 13: Assert: startEpochNs ≠ endEpochNs. The assertion is violable when a time zone
+    // transition skips the entire calendar day (https://github.com/tc39/proposal-temporal/issues/3310).
+    // FIXME: RangeError matches the polyfill, not the spec; revisit once the issue above settles.
+    if (nudgeWindow.startEpochNs == nudgeWindow.endEpochNs)
+        return makeUnexpected(rangeError("cannot round relative to a time zone transition that skips an entire day"_s));
     // Step 14: Let progress be (destEpochNs - startEpochNs) / (endEpochNs - startEpochNs).
     Int128 progressNumerator = destEpochNs - nudgeWindow.startEpochNs;
     Int128 progressDenominator = nudgeWindow.endEpochNs - nudgeWindow.startEpochNs;
