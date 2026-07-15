@@ -296,4 +296,20 @@ TEST(Base64, DecodeURLValidatePaddingIgnoreWhitespace)
     EXPECT_TRUE(Vector<uint8_t>({ 0, 1, 128, 254, 255 }) == base64Decode(" A A G A _ v 8 = "_s, options));
 }
 
+TEST(Base64, EncodedSizeRejectsInputAboveUnsignedRange)
+{
+    static constexpr OptionSet<Base64EncodeOption> options;
+
+    size_t hugeLengthTruncatingToSmallValue = static_cast<size_t>(std::numeric_limits<unsigned>::max()) + 100;
+    EXPECT_EQ(calculateBase64EncodedSize(hugeLengthTruncatingToSmallValue, options), 0U);
+
+    EXPECT_EQ(calculateBase64EncodedSize(static_cast<size_t>(WTF::maximumBase64EncoderInputBufferSize) + 1, options), 0U);
+
+    EXPECT_EQ(calculateBase64EncodedSize(0, options), 0U);
+    EXPECT_EQ(calculateBase64EncodedSize(1, options), 4U);
+    EXPECT_EQ(calculateBase64EncodedSize(3, options), 4U);
+    EXPECT_EQ(calculateBase64EncodedSize(6, options), 8U);
+    EXPECT_NE(calculateBase64EncodedSize(WTF::maximumBase64EncoderInputBufferSize, options), 0U);
+}
+
 } // namespace TestWebKitAPI

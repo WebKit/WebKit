@@ -197,7 +197,7 @@ String base64EncodeToStringReturnNullIfOverflow(std::span<const std::byte> input
     return tryMakeString(base64Encoded(input, options));
 }
 
-unsigned calculateBase64EncodedSize(unsigned inputLength, OptionSet<Base64EncodeOption> options)
+unsigned calculateBase64EncodedSize(size_t inputLength, OptionSet<Base64EncodeOption> options)
 {
     if (inputLength > maximumBase64EncoderInputBufferSize)
         return 0;

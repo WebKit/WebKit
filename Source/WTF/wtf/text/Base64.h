@@ -53,7 +53,7 @@ struct Base64Specification {
 // Rather than being perfectly precise, this is a bit conservative.
 static constexpr unsigned maximumBase64EncoderInputBufferSize = std::numeric_limits<unsigned>::max() / 77 * 76 / 4 * 3 - 2;
 
-WTF_EXPORT_PRIVATE unsigned calculateBase64EncodedSize(unsigned inputLength, OptionSet<Base64EncodeOption>);
+WTF_EXPORT_PRIVATE unsigned calculateBase64EncodedSize(size_t inputLength, OptionSet<Base64EncodeOption>);
 
 template<typename CharacterType> bool isBase64OrBase64URLCharacter(CharacterType);
 
