@@ -115,7 +115,8 @@ public:
     void indirectIndexedBufferRecomputed(MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, bool committed = false);
 
     std::optional<DrawIndexCacheContainerIterator> canSkipDrawIndexedValidation(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> = nil) const;
-    void drawIndexedValidated(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> = nil);
+    uint64_t drawIndexedCacheInvalidationCount() const { return m_drawIndexedCacheInvalidationCount; }
+    void drawIndexedValidated(uint64_t invalidationCountAtDispatch, uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> = nil);
     void skippedDrawIndexedValidation(CommandEncoder&, DrawIndexCacheContainerIterator);
     void skippedDrawIndirectIndexedValidation(CommandEncoder&, Buffer*, MTLIndexType, uint32_t indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, MTLPrimitiveType);
     void skippedDrawIndirectValidation(CommandEncoder&, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
@@ -161,6 +162,7 @@ private:
     using MappedRanges = RangeSet<Range<size_t>>;
     MappedRanges m_mappedRanges;
     WGPUMapModeFlags m_mapMode { WGPUMapMode_None };
+    uint64_t m_drawIndexedCacheInvalidationCount { 0 };
     uint32_t m_maxUnsignedIndex { 0 };
     uint16_t m_maxUshortIndex { 0 };
 

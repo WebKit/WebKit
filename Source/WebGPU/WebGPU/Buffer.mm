@@ -482,8 +482,11 @@ std::optional<DrawIndexCacheContainerIterator> Buffer::canSkipDrawIndexedValidat
     return std::nullopt;
 }
 
-void Buffer::drawIndexedValidated(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType indexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> icb)
+void Buffer::drawIndexedValidated(uint64_t invalidationCountAtDispatch, uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType indexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> icb)
 {
+    if (invalidationCountAtDispatch != m_drawIndexedCacheInvalidationCount)
+        return;
+
     constexpr auto maxCacheSize = 1000000;
     if (m_drawIndexedCache.size() > maxCacheSize)
         m_drawIndexedCache.clear();
@@ -752,6 +755,7 @@ void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
 
     m_gpuResourceMap.clear();
     m_drawIndexedCache.clear();
+    ++m_drawIndexedCacheInvalidationCount;
     m_indirectCache = {
         .indirectOffset = UINT64_MAX,
         .indexBufferOffsetInBytes = UINT64_MAX,
