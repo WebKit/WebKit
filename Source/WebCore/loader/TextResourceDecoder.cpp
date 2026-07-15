@@ -236,12 +236,12 @@ auto KanjiCode::judge(std::span<const uint8_t> string) -> Type
                 } else if (0x81 <= string[i] && string[i] <= 0x9f) {
                     /* SJIS only */
                     code = Type::SJIS;
-                    if ((string.size() - i >= 1) && ((0x40 <= string[i + 1] && string[i + 1] <= 0x7e) || (0x80 <= string[i + 1] && string[i + 1] <= 0xfc)))
+                    if ((string.size() - i > 1) && ((0x40 <= string[i + 1] && string[i + 1] <= 0x7e) || (0x80 <= string[i + 1] && string[i + 1] <= 0xfc)))
                         return code;
                 } else if (0xfd <= string[i] && string[i] <= 0xfe) {
                     /* EUC only */
                     code = Type::EUC;
-                    if ((string.size() - i >= 1) && (0xa1 <= string[i + 1] && string[i + 1] <= 0xfe))
+                    if ((string.size() - i > 1) && (0xa1 <= string[i + 1] && string[i + 1] <= 0xfe))
                         return code;
                 } else if (string[i] <= 0x7f)
                     ;
