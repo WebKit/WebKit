@@ -207,6 +207,8 @@ static std::optional<ISO8601::PlainDate> isoDateFromCalendarChecked(UCalendar* c
 
 // Japanese era table — start years are historically fixed calendar facts.
 // icu4x: components/calendar/src/cal/japanese.rs Japanese::eras()
+static constexpr int32_t japaneseCalendarGregorianTransitionYear = 1873;
+
 struct JapaneseEra {
     int32_t startYear;
     ASCIILiteral name;
@@ -489,7 +491,7 @@ TemporalResult<CalendarFields> isoToCalendarFields(CalendarID calendarId, const 
         fields.era = mapICUEraToTemporalEra(calendarId, raw.ucalEra);
         fields.eraYear = raw.ucalYear;
         if (calendarId == japaneseCalendarID()) {
-            if (isoDate.year() < 1873) {
+            if (isoDate.year() < japaneseCalendarGregorianTransitionYear) {
                 fields.era = isoDate.year() > 0 ? "ce"_s : "bce"_s;
                 fields.eraYear = isoDate.year() > 0 ? isoDate.year() : (1 - isoDate.year());
             } else if (fields.era && *fields.era == "ce"_s)
@@ -549,7 +551,7 @@ TemporalResult<uint8_t> calendarMonth(CalendarID calendarId, const ISO8601::Plai
 {
     // 1. Return the ordinal month (1-based position in year, counting leap months) of isoDate in calendarId.
     // NOTE: Japanese pre-1873 "ce"/"bce" eras use ISO month directly to bypass ICU Julian conversion.
-    if (calendarId == japaneseCalendarID() && isoDate.year() < 1873)
+    if (calendarId == japaneseCalendarID() && isoDate.year() < japaneseCalendarGregorianTransitionYear)
         return isoDate.month();
     return withCalendar(calendarId, [&](UCalendar* cal) -> TemporalResult<uint8_t> {
         if (!cal) [[unlikely]]
@@ -573,7 +575,7 @@ TemporalResult<String> calendarMonthCode(CalendarID calendarId, const ISO8601::P
 {
     // 1. Return the month code string (e.g. "M01", "M05L") of isoDate in calendarId.
     // NOTE: Japanese pre-1873 "ce"/"bce" eras use ISO month code directly to bypass ICU Julian conversion.
-    if (calendarId == japaneseCalendarID() && isoDate.year() < 1873)
+    if (calendarId == japaneseCalendarID() && isoDate.year() < japaneseCalendarGregorianTransitionYear)
         return ISO8601::monthCode(isoDate.month());
     return withCalendar(calendarId, [&](UCalendar* cal) -> TemporalResult<String> {
         if (!cal) [[unlikely]]
@@ -597,7 +599,7 @@ TemporalResult<uint8_t> calendarDay(CalendarID calendarId, const ISO8601::PlainD
 {
     // 1. Return the day-of-month of isoDate in calendarId.
     // NOTE: Japanese pre-1873 "ce"/"bce" eras return ISO day directly to bypass ICU Julian conversion.
-    if (calendarId == japaneseCalendarID() && isoDate.year() < 1873)
+    if (calendarId == japaneseCalendarID() && isoDate.year() < japaneseCalendarGregorianTransitionYear)
         return isoDate.day();
     return withCalendar(calendarId, [&](UCalendar* cal) -> TemporalResult<uint8_t> {
         if (!cal) [[unlikely]]
@@ -609,6 +611,21 @@ TemporalResult<uint8_t> calendarDay(CalendarID calendarId, const ISO8601::PlainD
         if (U_FAILURE(status)) [[unlikely]]
             return makeUnexpected(rangeError(icuReadCalendarFailed));
         return static_cast<uint8_t>(day);
+    });
+}
+
+TemporalResult<uint16_t> calendarDayOfYear(CalendarID calendarId, const ISO8601::PlainDate& isoDate)
+{
+    return withCalendar(gregorianArithmeticCalendarFor(calendarId), [&](UCalendar* cal) -> TemporalResult<uint16_t> {
+        if (!cal) [[unlikely]]
+            return makeUnexpected(rangeError(icuOpenCalendarFailed));
+        if (!setCalendarToISODate(cal, isoDate)) [[unlikely]]
+            return makeUnexpected(rangeError(icuSetCalendarFailed));
+        UErrorCode status = U_ZERO_ERROR;
+        int32_t dayOfYear = ucal_get(cal, UCAL_DAY_OF_YEAR, &status);
+        if (U_FAILURE(status)) [[unlikely]]
+            return makeUnexpected(rangeError(icuReadCalendarFailed));
+        return static_cast<uint16_t>(dayOfYear);
     });
 }
 
@@ -625,7 +642,7 @@ TemporalResult<std::optional<String>> calendarEra(CalendarID calendarId, const I
         return std::optional<String>(std::nullopt);
     // 2. Return the era string for isoDate in calendarId (e.g. "ce", "bce", "reiwa").
     // NOTE: Japanese dates before 1873 use "ce"/"bce" per spec, not ICU era names.
-    if (calendarId == japaneseCalendarID() && isoDate.year() < 1873)
+    if (calendarId == japaneseCalendarID() && isoDate.year() < japaneseCalendarGregorianTransitionYear)
         return std::optional<String>(isoDate.year() > 0 ? String("ce"_s) : String("bce"_s));
     // Read UCAL_ERA inside the lock, then map to era string outside (mapICUEraToTemporalEra
     // for Japanese calls japaneseEraStartYear which needs its own withCalendar call).
@@ -658,7 +675,7 @@ TemporalResult<std::optional<int32_t>> calendarEraYear(CalendarID calendarId, co
         return std::optional<int32_t>(std::nullopt);
     // 2. Return the era year (year within the current era) of isoDate in calendarId.
     // NOTE: Japanese "ce"/"bce" fallback: eraYear is the Gregorian year.
-    if (calendarId == japaneseCalendarID() && isoDate.year() < 1873)
+    if (calendarId == japaneseCalendarID() && isoDate.year() < japaneseCalendarGregorianTransitionYear)
         return std::optional<int32_t>(isoDate.year() > 0 ? isoDate.year() : (1 - isoDate.year()));
 
     struct RawEraYear {

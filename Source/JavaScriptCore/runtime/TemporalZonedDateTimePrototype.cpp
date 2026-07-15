@@ -1443,8 +1443,12 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDayOfYear, (JSGloba
     auto [date, time] = zdt->getLocalDateTime(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     // Step 4: Return 𝔽(CalendarISOToDate(calendar, isoDateTime.[[ISODate]]).[[DayOfYear]]).
-    // NOTE: for non-ISO calendars this should return the day within the calendar year, not the ISO year.
-    // JSC currently returns the ISO day-of-year for all calendars (pre-existing behavior, matches PlainDate).
+    if (!TemporalCore::calendarIsISO(zdt->calendarID())) {
+        auto result = TemporalCore::calendarDayOfYear(zdt->calendarID(), date);
+        if (!result) [[unlikely]]
+            return throwVMRangeError(globalObject, scope, result.error().message);
+        return JSValue::encode(jsNumber(*result));
+    }
     return JSValue::encode(jsNumber(ISO8601::dayOfYear(date)));
 }
 

@@ -711,6 +711,12 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDatePrototypeGetterDayOfYear, (JSGlobalObj
     if (!plainDate) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDate.prototype.dayOfYear called on value that's not a PlainDate"_s);
 
+    if (!TemporalCore::calendarIsISO(plainDate->calendarID())) {
+        auto result = TemporalCore::calendarDayOfYear(plainDate->calendarID(), plainDate->plainDate());
+        if (!result) [[unlikely]]
+            return throwVMRangeError(globalObject, scope, result.error().message);
+        return JSValue::encode(jsNumber(*result));
+    }
     return JSValue::encode(jsNumber(plainDate->dayOfYear()));
 }
 

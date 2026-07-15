@@ -93,6 +93,8 @@ JS_EXPORT_PRIVATE TemporalResult<String> calendarMonthCode(CalendarID, const ISO
 
 JS_EXPORT_PRIVATE TemporalResult<uint8_t> calendarDay(CalendarID, const ISO8601::PlainDate& isoDate);
 
+JS_EXPORT_PRIVATE TemporalResult<uint16_t> calendarDayOfYear(CalendarID, const ISO8601::PlainDate& isoDate);
+
 JS_EXPORT_PRIVATE TemporalResult<std::optional<String>> calendarEra(CalendarID, const ISO8601::PlainDate& isoDate);
 
 JS_EXPORT_PRIVATE TemporalResult<std::optional<int32_t>> calendarEraYear(CalendarID, const ISO8601::PlainDate& isoDate);
