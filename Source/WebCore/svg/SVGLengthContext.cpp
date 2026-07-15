@@ -237,8 +237,9 @@ float SVGLengthContext::removeZoomFromFontOrRootFontRelativeLength(float value, 
     if (CSS::isFontRelativeLength(unit))
         usedZoom = svgElement->renderer()->style().usedZoom();
     else if (CSS::isRootFontRelativeLength(unit)) {
-        if (auto* rootRenderer = svgElement->document().documentElement()->renderer())
-            usedZoom = rootRenderer->style().usedZoom();
+        auto* rootElement = svgElement->document().documentElement();
+        if (rootElement && rootElement->renderer())
+            usedZoom = rootElement->renderer()->style().usedZoom();
     }
 
     return (usedZoom != 1.0f) ? value / usedZoom : value;
