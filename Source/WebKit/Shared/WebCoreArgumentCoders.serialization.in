@@ -5647,6 +5647,7 @@ struct WebCore::DragItem {
     std::optional<WebCore::DragSourceAction> sourceAction;
     std::optional<WebCore::FrameIdentifier> rootFrameID;
     WebCore::IntPoint eventPositionInContentCoordinates;
+    WebCore::IntPoint eventPositionInRootViewCoordinates;
     WebCore::IntPoint dragLocationInContentCoordinates;
     WebCore::IntPoint dragLocationInWindowCoordinates;
     String title;

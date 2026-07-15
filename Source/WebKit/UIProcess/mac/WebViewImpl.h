@@ -192,6 +192,12 @@ using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
 #if ENABLE(DRAG_SUPPORT)
 - (WKDragDestinationAction)_web_dragDestinationActionForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
 - (void)_web_didPerformDragOperation:(BOOL)handled;
+#if ENABLE(DRAG_SOURCE_CUSTOMIZATION)
+- (void)_web_draggingItemsForDraggingItem:(NSDraggingItem *)draggingItem atLocation:(NSPoint)viewLocation completionHandler:(void (^)(NSArray<NSDraggingItem *> *draggingItems))completionHandler;
+- (NSDragOperation)_web_dragSourceOperationMaskForDraggingContext:(NSDraggingContext)context defaultMask:(NSDragOperation)defaultMask;
+- (void)_web_draggingSession:(NSDraggingSession *)session willBeginAtPoint:(NSPoint)point;
+- (void)_web_draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)point operation:(NSDragOperation)operation;
+#endif
 #endif
 
 @optional
@@ -609,6 +615,7 @@ public:
     void registerDraggedTypes();
 
     NSDragOperation dragSourceOperationMask(NSDraggingSession *, NSDraggingContext);
+    void draggingSessionWillBegin(NSDraggingSession *, NSPoint);
     void draggingSessionEnded(NSDraggingSession *, NSPoint, NSDragOperation);
     void cancelDrag();
 

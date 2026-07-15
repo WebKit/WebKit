@@ -887,6 +887,28 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return 0;
 }
 
+#if ENABLE(DRAG_SOURCE_CUSTOMIZATION)
+
+- (void)_web_draggingItemsForDraggingItem:(NSDraggingItem *)draggingItem atLocation:(NSPoint)viewLocation completionHandler:(void (^)(NSArray<NSDraggingItem *> *draggingItems))completionHandler
+{
+    completionHandler(nil);
+}
+
+- (NSDragOperation)_web_dragSourceOperationMaskForDraggingContext:(NSDraggingContext)context defaultMask:(NSDragOperation)defaultMask
+{
+    return defaultMask;
+}
+
+- (void)_web_draggingSession:(NSDraggingSession *)session willBeginAtPoint:(NSPoint)point
+{
+}
+
+- (void)_web_draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)point operation:(NSDragOperation)operation
+{
+}
+
+#endif
+
 #endif
 
 - (void)_web_dismissContentRelativeChildWindows

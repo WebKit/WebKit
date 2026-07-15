@@ -340,6 +340,43 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView getContextMenuFromProposedMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element userInfo:(id <NSSecureCoding>)userInfo completionHandler:(void (^)(NSMenu *))completionHandler WK_API_AVAILABLE(macos(10.14));
 - (void)_webView:(WKWebView *)webView didPerformDragOperation:(BOOL)handled WK_API_AVAILABLE(macos(10.14.4));
 
+/*! @abstract Called before WebKit begins a drag session for a WebKit-initiated drag, allowing the client
+    to substitute the dragging items used for the session. WebKit retains ownership of the drag session,
+    source, and gesture; the client only supplies the items that are dragged.
+    @param webView The web view initiating the drag.
+    @param draggingItem A dragging item carrying WebKit's default dragging frame and image. Its pasteboard
+    writer is a placeholder and should not be used by the client.
+    @param viewLocation The location of the drag's originating event, in the coordinate system of the web view.
+    @param completionHandler A completion handler that must be called exactly once with the dragging items to
+    use for the session. Passing an empty or nil array keeps WebKit's default dragging items.
+ */
+- (void)_webView:(WKWebView *)webView draggingItemsForDraggingItem:(NSDraggingItem *)draggingItem atLocation:(NSPoint)viewLocation completionHandler:(void (^)(NSArray<NSDraggingItem *> *draggingItems))completionHandler WK_API_AVAILABLE(macos(27.0));
+
+/*! @abstract Called to determine the source operation mask for a WebKit-initiated drag, allowing the client
+    to override the operations WebKit would otherwise permit.
+    @param webView The web view that is the source of the drag.
+    @param context The dragging context the operation mask applies to.
+    @param defaultOperationMask The source operation mask WebKit would use by default. Return this value to
+    keep WebKit's behavior.
+ */
+- (NSDragOperation)_webView:(WKWebView *)webView sourceOperationMaskForDraggingContext:(NSDraggingContext)context defaultOperationMask:(NSDragOperation)defaultOperationMask WK_API_AVAILABLE(macos(27.0));
+
+/*! @abstract Called when a WebKit-initiated drag session is about to begin.
+    @param webView The web view that is the source of the drag.
+    @param session The dragging session that is about to begin.
+    @param screenPoint The starting location of the drag, in screen coordinates.
+ */
+- (void)_webView:(WKWebView *)webView draggingSession:(NSDraggingSession *)session willBeginAtPoint:(NSPoint)screenPoint WK_API_AVAILABLE(macos(27.0));
+
+/*! @abstract Called when a WebKit-initiated drag session has ended. WebKit completes its own drag teardown
+    before this method is called, so the client cannot interfere with it.
+    @param webView The web view that is the source of the drag.
+    @param session The dragging session that ended.
+    @param screenPoint The location where the drag ended, in screen coordinates.
+    @param operation The drag operation that was performed.
+ */
+- (void)_webView:(WKWebView *)webView draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation WK_API_AVAILABLE(macos(27.0));
+
 /*! @abstract Called when the _WKInspector for this WKWebView is about to be displayed. The client can
     provide a custom _WKInspectorConfiguration that should be used when creating the Web Inspector.
     @param inspector The Web Inspector instance that is about to be initialized.
