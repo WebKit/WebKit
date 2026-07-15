@@ -3497,6 +3497,7 @@ class YarrGenerator final : public YarrJITInfo {
         const MacroAssembler::RegisterID character = m_regs.regT0;
         const MacroAssembler::RegisterID matchPos = m_regs.regT1;
         const MacroAssembler::RegisterID scratch = m_regs.regT2;
+        const MacroAssembler::RegisterID initialStart = m_regs.regT3;
         m_usesT2 = true;
 
         MacroAssembler::JumpList foundBeginningNewLine;
@@ -3512,8 +3513,9 @@ class YarrGenerator final : public YarrJITInfo {
 
         ASSERT(!m_pattern.m_body->m_hasFixedSize);
         getMatchStart(matchPos);
+        loadFromFrame(m_pattern.m_initialStartValueFrameLocation, initialStart);
 
-        saveStartIndex.append(m_jit.branch32(MacroAssembler::BelowOrEqual, matchPos, m_regs.initialStart));
+        saveStartIndex.append(m_jit.branch32(MacroAssembler::BelowOrEqual, matchPos, initialStart));
         MacroAssembler::Label findBOLLoop(&m_jit);
         m_jit.sub32(MacroAssembler::TrustedImm32(1), matchPos);
         if (m_charSize == CharSize::Char8)
@@ -3522,7 +3524,7 @@ class YarrGenerator final : public YarrJITInfo {
             m_jit.load16(MacroAssembler::BaseIndex(m_regs.input, matchPos, MacroAssembler::TimesTwo, 0), character);
         matchCharacterClass(character, scratch, foundBeginningNewLine, m_pattern.newlineCharacterClass());
 
-        m_jit.branch32(MacroAssembler::Above, matchPos, m_regs.initialStart).linkTo(findBOLLoop, &m_jit);
+        m_jit.branch32(MacroAssembler::Above, matchPos, initialStart).linkTo(findBOLLoop, &m_jit);
         saveStartIndex.append(m_jit.jump());
 
         foundBeginningNewLine.link(&m_jit);
@@ -6619,11 +6621,10 @@ class YarrGenerator final : public YarrJITInfo {
     {
         RegisterSet registers;
 #if CPU(X86_64)
-        if (m_pattern.m_saveInitialStartValue)
-            registers.add(X86Registers::ebx, IgnoreVectors);
-
-        if (m_containsNestedSubpatterns)
-            registers.add(X86Registers::r12, IgnoreVectors);
+        if (m_containsNestedSubpatterns) {
+            registers.add(X86Registers::ebx, IgnoreVectors); // matchingContext
+            registers.add(X86Registers::r12, IgnoreVectors); // remainingMatchCount
+        }
 
         if (mayCall() || m_callFrameSizeInBytes) {
             registers.add(X86Registers::r13, IgnoreVectors);
@@ -6927,7 +6928,8 @@ public:
             unsigned offset = POKE_ARGUMENT_OFFSET;
             m_jit.loadPtr(MacroAssembler::Address(GPRInfo::callFrameRegister, offset * sizeof(void*)), matchingContext);
 #else
-            MacroAssembler::RegisterID matchingContext = m_regs.matchingContext;
+            // The MatchingContextHolder* arrives in the 5th argument register.
+            MacroAssembler::RegisterID matchingContext = GPRInfo::argumentGPR4;
 #endif
             MacroAssembler::Jump stackOk = m_jit.branchPtr(MacroAssembler::BelowOrEqual, MacroAssembler::Address(matchingContext, MatchingContextHolder::offsetOfStackLimit()), m_regs.regT0);
 
@@ -6947,6 +6949,12 @@ public:
 
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
         if (m_containsNestedSubpatterns) {
+#if CPU(X86_64)
+            // Preserve the MatchingContextHolder* in m_regs.matchingContext.
+            m_jit.move(GPRInfo::argumentGPR4, m_regs.matchingContext);
+#else
+            ASSERT(GPRInfo::argumentGPR4 == m_regs.matchingContext);
+#endif
             m_jit.move(MacroAssembler::TrustedImm32(matchLimit), m_regs.remainingMatchCount);
 
             // Initialize freelist to null - contexts will be allocated from stack
@@ -6965,7 +6973,7 @@ public:
             setMatchStart(m_regs.index);
 
         if (m_pattern.m_saveInitialStartValue)
-            m_jit.move(m_regs.index, m_regs.initialStart);
+            storeToFrame(m_regs.index, m_pattern.m_initialStartValueFrameLocation);
 
         generate();
         if (m_disassembler)
@@ -7116,7 +7124,7 @@ public:
             setMatchStart(m_regs.index);
 
         if (m_pattern.m_saveInitialStartValue)
-            m_jit.move(m_regs.index, m_regs.initialStart);
+            storeToFrame(m_regs.index, m_pattern.m_initialStartValueFrameLocation);
 
         generate();
         if (m_disassembler)
