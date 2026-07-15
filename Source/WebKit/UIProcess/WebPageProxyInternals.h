@@ -370,6 +370,7 @@ public:
 
     MonotonicTime didFinishDocumentLoadForMainFrameTimestamp;
     MonotonicTime lastActivationTimestamp;
+    MonotonicTime lastConsumedDigitalCredentialsActivationTimestamp;
     MonotonicTime didCommitLoadForMainFrameTimestamp;
 
 #if ENABLE(UI_SIDE_COMPOSITING)

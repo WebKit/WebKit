@@ -257,6 +257,7 @@
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/LinkDecorationFilteringData.h>
+#include <WebCore/LocalDOMWindow.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MediaDeviceHashSalts.h>
 #include <WebCore/MediaStreamRequest.h>
@@ -11359,6 +11360,14 @@ void WebPageProxy::showDigitalCredentialsChooser(IPC::Connection& connection, st
                 connection,
                 completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::SecurityError, "Digital credentials request is not same-origin with top-level navigable."_s }))
             );
+
+            auto lastActivationTimestamp = internals().lastActivationTimestamp;
+            bool hasTransientActivation = MonotonicTime::now() - lastActivationTimestamp < WebCore::LocalDOMWindow::transientActivationDuration();
+            if (!hasTransientActivation || lastActivationTimestamp <= internals().lastConsumedDigitalCredentialsActivationTimestamp) {
+                completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "Digital credentials request requires transient user activation."_s }));
+                return;
+            }
+            internals().lastConsumedDigitalCredentialsActivationTimestamp = lastActivationTimestamp;
 
             LOG(DigitalCredentials, "WebPageProxy::showDigitalCredentialsChooser() - UIProcess: passing to pageClient to present chooser UI");
             protect(pageClient())->showDigitalCredentialsChooser(requestData, WTF::move(completionHandler));

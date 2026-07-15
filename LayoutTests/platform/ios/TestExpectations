@@ -400,6 +400,7 @@ http/tests/media/audio-load-loadeddata.html [ Pass ]
 
 # Digital Credentials
 http/wpt/identity/identitycredentialscontainer-get-hidden.https.html [ Skip ]
+webkit.org/b/318843 http/wpt/identity/formats/ISO18013/mobiledocument.https.html [ Failure ]
 
 # No touch events
 fast/events/touch [ Skip ]
