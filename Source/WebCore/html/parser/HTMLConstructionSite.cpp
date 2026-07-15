@@ -861,11 +861,9 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
             } else
                 element = HTMLUnknownElement::create(qualifiedName, ownerDocument);
         }
-        if (!registry && treeScope->rootNode().usesNullCustomElementRegistry())
-            element->setUsesNullCustomElementRegistry();
     }
     ASSERT(element);
-    if (m_isParsingFragment && !registry && containerForCurrentNode().usesNullCustomElementRegistry())
+    if (!registry && containerForCurrentNode().usesNullCustomElementRegistry())
         element->setUsesNullCustomElementRegistry();
     if (registry && registry->isScoped() && registry != treeScope->customElementRegistry()) [[unlikely]]
         CustomElementRegistry::addToScopedCustomElementRegistryMap(*element, *registry);
