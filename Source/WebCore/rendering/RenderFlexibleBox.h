@@ -181,6 +181,9 @@ private:
     void setBlockAxisSizeForFlexItem(const RenderBox& flexItem, LayoutUnit size) { m_blockAxisSize.set(flexItem, size); }
     std::optional<LayoutUnit> blockAxisSizeForFlexItem(const RenderBox& flexItem) const { return m_blockAxisSize.getOptional(flexItem); }
     void cacheFlexItemContentLogicalHeightIfAllowed(const RenderBox& flexItem, LayoutUnit height);
+    LayoutUnit computeBlockAxisContentSizeForFlexItem(RenderBox& flexItem);
+    void markFlexItemLayoutComplete(const RenderBox& flexItem) { m_flexItemsWithCompletedLayout.add(flexItem); }
+    bool hasFlexItemCompletedLayout(const RenderBox& flexItem) const { return m_flexItemsWithCompletedLayout.contains(flexItem); }
     void addItemAtFlexLineStart(const RenderBox& flexItem) { m_marginTrimItems.m_itemsAtFlexLineStart.add(flexItem); }
     void addItemAtFlexLineEnd(const RenderBox& flexItem) { m_marginTrimItems.m_itemsAtFlexLineEnd.add(flexItem); }
     void addItemOnFirstFlexLine(const RenderBox& flexItem) { m_marginTrimItems.m_itemsOnFirstFlexLine.add(flexItem); }
@@ -194,6 +197,13 @@ private:
     // This is used to cache the intrinsic size on the cross axis to avoid
     // relayouts when stretching.
     HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_contentLogicalHeights;
+
+    // This set is used to keep track of which children we laid out in this
+    // current layout iteration. We need it because the ones in this set may
+    // need an additional layout pass for correct stretch alignment handling, as
+    // the first layout likely did not use the correct value for percentage
+    // sizing of children.
+    SingleThreadWeakHashSet<const RenderBox> m_flexItemsWithCompletedLayout;
 
     mutable OrderIterator m_orderIterator { *this };
     const FlexLayoutUtils m_flexLayoutUtils { *this };

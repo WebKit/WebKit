@@ -31,7 +31,6 @@
 #include "RenderBoxInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderLayer.h"
-#include "RenderLayoutState.h"
 #include "RenderObjectInlines.h"
 #include "RenderTable.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -171,13 +170,12 @@ static bool flexContainerIsHorizontalFlow(const RenderBox& flexItem)
     return downcast<RenderFlexibleBox>(*flexItem.parent()).flexLayoutUtils().isHorizontalFlow();
 }
 
-FlexLayoutItem::FlexLayoutItem(RenderBox& flexItem, bool everHadLayout, std::optional<LayoutUnit> cachedBlockAxisContentSize)
+FlexLayoutItem::FlexLayoutItem(RenderBox& flexItem, bool everHadLayout)
     : renderer(flexItem)
     , mainAxisBorderAndPadding(flexContainerIsHorizontalFlow(flexItem) ? flexItem.horizontalBorderAndPaddingExtent() : flexItem.verticalBorderAndPaddingExtent())
     , crossAxisBorderAndPadding(flexContainerIsHorizontalFlow(flexItem) ? flexItem.verticalBorderAndPaddingExtent() : flexItem.horizontalBorderAndPaddingExtent())
     , mainAxisIsInlineAxis(flexContainerIsHorizontalFlow(flexItem) == flexItem.isHorizontalWritingMode())
     , everHadLayout(everHadLayout)
-    , cachedBlockAxisContentSize(cachedBlockAxisContentSize)
 {
     ASSERT(!flexItem.isOutOfFlowPositioned());
 }
@@ -481,7 +479,7 @@ void FlexLayout::layoutFlexItemAfterMainSizing(FlexLayoutItem& flexLayoutItem, L
     }
     // We may have already forced relayout for orthogonal flowing children in
     // computeInnerFlexBaseSizeForFlexItem.
-    bool forceFlexItemRelayout = relayoutChildren == RelayoutChildren::Yes && !m_flexItemsWithCompletedLayout.contains(flexItem);
+    bool forceFlexItemRelayout = relayoutChildren == RelayoutChildren::Yes && !m_flexBox.hasFlexItemCompletedLayout(flexItem);
     if (!forceFlexItemRelayout && flexItemHasPercentHeightDescendants(flexItem)) {
         // Have to force another relayout even though the child is sized
         // correctly, because its descendants are not sized correctly yet. Our
@@ -493,7 +491,7 @@ void FlexLayout::layoutFlexItemAfterMainSizing(FlexLayoutItem& flexLayoutItem, L
     if (!flexItem.needsLayout())
         flexItem.markForPaginationRelayoutIfNeeded();
     if (flexItem.needsLayout())
-        m_flexItemsWithCompletedLayout.add(flexItem);
+        m_flexBox.markFlexItemLayoutComplete(flexItem);
 
     {
         auto flexLayoutScope = m_flexBox.scopedAfterMainAxisItemSizing();
@@ -955,33 +953,10 @@ bool FlexLayout::flexBaseSizeNeedsBlockAxisContentSize(const FlexLayoutItem& fle
 
 std::optional<LayoutUnit> FlexLayout::ensureBlockAxisContentSizeForFlexItemIfNeeded(const FlexLayoutItem& flexLayoutItem)
 {
-    auto& flexItem = flexLayoutItem.renderer.get();
     if (!flexBaseSizeNeedsBlockAxisContentSize(flexLayoutItem))
         return { };
-
-    // Reuse the size RenderFlexibleBox cached in a previous layout (passed in on the item) while it stays clean.
-    if (!flexItem.needsLayout() && flexLayoutItem.cachedBlockAxisContentSize)
-        return flexLayoutItem.cachedBlockAxisContentSize;
-
-    // Don't resolve percentages in children. This is especially important for the min-height calculation,
-    // where we want percentages to be treated as auto. For flex-basis itself, this is not a problem because
-    // by definition we have an indefinite flex basis here and thus percentages should not resolve.
-    auto percentResolveDisableScope = FlexPercentResolveDisabler { m_flexBox.view().frameView().layoutContext(), flexItem };
-    flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
-    flexItem.layoutIfNeeded();
-
-    auto innerSize = [&] {
-        auto flexBasis = flexLayoutUtils().flexBasisForFlexItem(flexItem);
-        if (flexBasis.isPercentOrCalculated() && !m_flexBox.flexItemMainSizeIsDefinite(flexItem, flexBasis))
-            return m_flexBox.flexItemContentLogicalHeight(flexItem) + flexItem.scrollbarLogicalHeight();
-        return flexItem.logicalHeight() - flexItem.borderAndPaddingLogicalHeight();
-    }();
-
-    // Hand the computed size back for RenderFlexibleBox to cache on itself; a subsequent layout can then reuse it
-    // to skip re-laying-out this item while it stays clean (see the reuse at the top of this function).
-    m_result.blockAxisContentSizes.append({ flexItem, innerSize });
-    m_flexItemsWithCompletedLayout.add(flexItem);
-    return innerSize;
+    // Laying the item out, reusing the previously cached size, and caching the new one are all render-tree work; ask RenderFlexibleBox.
+    return m_flexBox.computeBlockAxisContentSizeForFlexItem(flexLayoutItem.renderer.get());
 }
 
 std::pair<LayoutUnit, LayoutUnit> FlexLayout::computeFlexItemMinMaxMainSizes(const FlexLayoutItem& flexLayoutItem)
@@ -1520,7 +1495,7 @@ LayoutUnit FlexLayout::applyStretchAlignmentToFlexItem(const FlexLayoutItem& fle
 
         // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
         bool flexItemNeedsRelayout = desiredLogicalHeight != flexItem.logicalHeight();
-        if (!flexItemNeedsRelayout && m_flexItemsWithCompletedLayout.contains(flexItem) && flexItemHasPercentHeightDescendants(flexItem)) {
+        if (!flexItemNeedsRelayout && m_flexBox.hasFlexItemCompletedLayout(flexItem) && flexItemHasPercentHeightDescendants(flexItem)) {
             // Have to force another relayout even though the child is sized
             // correctly, because its descendants are not sized correctly yet. Our
             // previous layout of the child was done without an override height set.

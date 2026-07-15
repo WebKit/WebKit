@@ -180,6 +180,7 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
     LayoutRepainter repainter(*this);
 
     resetLogicalHeightBeforeLayoutIfNeeded();
+    m_flexItemsWithCompletedLayout.clear();
 
     bool oldInLayout = m_inLayout;
     m_inLayout = true;
@@ -228,9 +229,6 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
                 m_justifyContentStartOverflow = flexLayoutResult.justifyContentStartOverflow;
                 m_numberOfFlexItemsOnFirstLine = flexLayoutResult.numberOfFlexItemsOnFirstLine;
                 m_numberOfFlexItemsOnLastLine = flexLayoutResult.numberOfFlexItemsOnLastLine;
-                // Cache each item's block-axis size so a subsequent layout can skip re-laying-out that item while it stays clean.
-                for (auto& [flexItem, blockAxisContentSize] : flexLayoutResult.blockAxisContentSizes)
-                    setBlockAxisSizeForFlexItem(flexItem, blockAxisContentSize);
             }
         }
 
@@ -607,6 +605,34 @@ void RenderFlexibleBox::cacheFlexItemContentLogicalHeightIfAllowed(const RenderB
         m_contentLogicalHeights.set(flexItem, height);
 }
 
+LayoutUnit RenderFlexibleBox::computeBlockAxisContentSizeForFlexItem(RenderBox& flexItem)
+{
+    // Reuse the size cached in a previous layout while the item stays clean.
+    if (!flexItem.needsLayout()) {
+        if (auto cachedBlockAxisContentSize = blockAxisSizeForFlexItem(flexItem))
+            return *cachedBlockAxisContentSize;
+    }
+
+    // Don't resolve percentages in children. This is especially important for the min-height calculation,
+    // where we want percentages to be treated as auto. For flex-basis itself, this is not a problem because
+    // by definition we have an indefinite flex basis here and thus percentages should not resolve.
+    auto percentResolveDisableScope = FlexPercentResolveDisabler { view().frameView().layoutContext(), flexItem };
+    flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    flexItem.layoutIfNeeded();
+
+    auto blockAxisContentSize = [&] {
+        auto flexBasis = flexLayoutUtils().flexBasisForFlexItem(flexItem);
+        if (flexBasis.isPercentOrCalculated() && !flexItemMainSizeIsDefinite(flexItem, flexBasis))
+            return flexItemContentLogicalHeight(flexItem) + flexItem.scrollbarLogicalHeight();
+        return flexItem.logicalHeight() - flexItem.borderAndPaddingLogicalHeight();
+    }();
+
+    // Cache it so a later layout can skip re-laying-out this item while it stays clean, and record that we laid it out this iteration.
+    setBlockAxisSizeForFlexItem(flexItem, blockAxisContentSize);
+    markFlexItemLayoutComplete(flexItem);
+    return blockAxisContentSize;
+}
+
 LayoutUnit RenderFlexibleBox::staticMainAxisPositionForPositionedFlexItem(const RenderBox& flexItem)
 {
     auto flexItemMainExtent = flexLayoutUtils().mainAxisMarginExtentForFlexItem(flexItem) + flexLayoutUtils().mainAxisExtentForFlexItem(flexItem);
@@ -929,7 +955,7 @@ FlexLayoutItems RenderFlexibleBox::collectFlexItems(RelayoutChildren relayoutChi
         if (flexItem->shouldInvalidateContentWidths())
             flexItem->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
         updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, *flexItem);
-        flexItems.append({ *flexItem, everHadLayout, blockAxisSizeForFlexItem(*flexItem) });
+        flexItems.append({ *flexItem, everHadLayout });
     }
     return flexItems;
 }

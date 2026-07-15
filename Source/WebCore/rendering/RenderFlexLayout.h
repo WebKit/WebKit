@@ -27,7 +27,6 @@
 
 #include <WebCore/RenderBlock.h>
 #include <wtf/Range.h>
-#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -44,7 +43,7 @@ class RenderFlexibleBox;
 // LFC integration builds LogicalFlexItems for Layout::FlexLayout.
 class FlexLayoutItem {
 public:
-    FlexLayoutItem(RenderBox&, bool everHadLayout, std::optional<LayoutUnit> cachedBlockAxisContentSize);
+    FlexLayoutItem(RenderBox&, bool everHadLayout);
 
     LayoutUnit NODELETE hypotheticalMainAxisMarginBoxSize(LayoutUnit hypotheticalMainContentSize) const;
     LayoutUnit NODELETE flexBaseMarginBoxSize(LayoutUnit flexBaseContentSize) const;
@@ -61,9 +60,6 @@ public:
     // margin-trim reduces it during line collection.
     LayoutUnit mainAxisMargin;
     bool everHadLayout { false };
-    // The item's block-axis content size that RenderFlexibleBox cached in a previous layout (nullopt if none or
-    // invalidated); flex-base sizing reuses it to skip re-laying-out the item while it stays clean.
-    const std::optional<LayoutUnit> cachedBlockAxisContentSize;
 };
 
 using FlexLayoutItems = Vector<FlexLayoutItem, 4>;
@@ -109,9 +105,6 @@ public:
         LayoutUnit justifyContentStartOverflow;
         size_t numberOfFlexItemsOnFirstLine { 0 };
         size_t numberOfFlexItemsOnLastLine { 0 };
-        // The block-axis content size computed for each flex item (re)laid out this layout, for RenderFlexibleBox
-        // to cache on itself so a subsequent layout can skip re-laying-out that item while it stays clean.
-        Vector<std::pair<CheckedRef<const RenderBox>, LayoutUnit>> blockAxisContentSizes;
     };
     Result performFlexLayout(FlexLayoutItems&, RelayoutChildren);
 
@@ -217,9 +210,6 @@ private:
     RenderFlexibleBox& m_flexBox;
     const FlexLayoutConstraints m_constraints;
     Result m_result;
-    // The flex items laid out during this layout iteration; some may need a second layout pass for stretch
-    // alignment (the first pass likely did not use the right value for percentage sizing of their children).
-    SingleThreadWeakHashSet<const RenderBox> m_flexItemsWithCompletedLayout;
 };
 
 } // namespace WebCore
