@@ -104,9 +104,20 @@ bool ScrollSnapAnimatorState::preserveCurrentTargetForAxis(ScrollEventAxis axis,
 {
     auto snapOffsets = snapOffsetsForAxis(axis);
 
-    auto found = std::ranges::find_if(snapOffsets, [boxID](const SnapOffset<LayoutUnit>& p) -> bool {
-        return p.snapTargetID && *p.snapTargetID == boxID;
-    });
+    // A single snap offset can be shared by several snap areas, but only one of them is recorded
+    // as the offset's representative snapTargetID. Our box may be one of the other areas at that
+    // offset, so check every area contributing to the offset, not just snapTargetID.
+    auto offsetContainsBox = [&](const SnapOffset<LayoutUnit>& offset) {
+        if (offset.snapTargetID && *offset.snapTargetID == boxID)
+            return true;
+        for (auto areaIndex : offset.snapAreaIndices) {
+            if (areaIndex < m_snapOffsetsInfo.snapAreasIDs.size() && m_snapOffsetsInfo.snapAreasIDs[areaIndex] == boxID)
+                return true;
+        }
+        return false;
+    };
+
+    auto found = std::ranges::find_if(snapOffsets, offsetContainsBox);
     if (found == snapOffsets.end()) {
         setActiveSnapIndexForAxis(axis, std::nullopt);
         return false;
@@ -155,49 +166,71 @@ void ScrollSnapAnimatorState::setActiveSnapIndexForAxis(ScrollEventAxis axis, st
     updateCurrentlySnappedBoxes();
 }
 
+// Selects this axis's snap target among the boxes aligned at the active offset, per
+// https://drafts.csswg.org/css-scroll-snap-1/#multiple-aligned: focused, then targeted, then
+// innermost, then first in tree order. snapTargetID is the focused/targeted representative; this
+// adds the innermost step.
+std::optional<NodeIdentifier> ScrollSnapAnimatorState::selectSnapTargetForAxis(ScrollEventAxis axis) const
+{
+    auto offsets = currentlySnappedOffsetsForAxis(axis);
+    if (offsets.isEmpty())
+        return std::nullopt;
+    const auto& offset = offsets[0];
+
+    // A focused or fragment-targeted box wins outright.
+    if ((offset.isFocused || offset.isTarget) && offset.snapTargetID)
+        return *offset.snapTargetID;
+
+    const auto& areas = m_snapOffsetsInfo.snapAreas;
+    const auto& areaIDs = m_snapOffsetsInfo.snapAreasIDs;
+    const auto& indices = offset.snapAreaIndices;
+
+    auto enclosesAnotherArea = [&](size_t areaIndex) {
+        return std::ranges::any_of(indices, [&](size_t other) {
+            return other != areaIndex && other < areas.size()
+                && areas[areaIndex] != areas[other] && areas[areaIndex].contains(areas[other]);
+        });
+    };
+
+    // The innermost box is the first in tree order (snapAreaIndices are ascending) whose area does
+    // not enclose another aligned area.
+    for (auto areaIndex : indices) {
+        if (areaIndex < areas.size() && areaIndex < areaIDs.size() && !enclosesAnotherArea(areaIndex))
+            return areaIDs[areaIndex];
+    }
+    if (offset.snapTargetID)
+        return *offset.snapTargetID;
+    return std::nullopt;
+}
+
 void ScrollSnapAnimatorState::updateCurrentlySnappedBoxes()
 {
     auto horizontalOffsets = currentlySnappedOffsetsForAxis(ScrollEventAxis::Horizontal);
     auto verticalOffsets = currentlySnappedOffsetsForAxis(ScrollEventAxis::Vertical);
 
     m_currentlySnappedBoxes = currentlySnappedBoxes(horizontalOffsets, verticalOffsets);
+    m_currentSnapTargetForHorizontalAxis = selectSnapTargetForAxis(ScrollEventAxis::Horizontal);
+    m_currentSnapTargetForVerticalAxis = selectSnapTargetForAxis(ScrollEventAxis::Vertical);
 }
 
-// Among aligned snap targets, returns the box that an explicit preference points to: a focused box
-// first, then a fragment-targeted box, per https://drafts.csswg.org/css-scroll-snap-1/#re-snap
-// ("prefer the focused box, followed by the targeted box"). snapTargetID records the highest-priority
-// box at each offset (see addOrUpdateStopForSnapOffset). Returns nullopt when none of the snapped
-// boxes is focused or targeted.
-static std::optional<NodeIdentifier> preferredSnapTarget(const HashSet<NodeIdentifier>& snappedBoxes, const Vector<SnapOffset<LayoutUnit>>& horizontalOffsets, const Vector<SnapOffset<LayoutUnit>>& verticalOffsets)
+// Returns the snapped box this axis is focused/targeted on, evaluated fresh: focus and :target can
+// change after the snap, and the re-snap algorithm evaluates them at re-snap time.
+static std::optional<NodeIdentifier> focusedOrTargetedBox(const Vector<SnapOffset<LayoutUnit>>& offsets, const HashSet<NodeIdentifier>& snappedBoxes)
 {
-    auto findFlagged = [&](const Vector<SnapOffset<LayoutUnit>>& offsets, bool SnapOffset<LayoutUnit>::*flag) -> std::optional<NodeIdentifier> {
-        auto found = std::ranges::find_if(offsets, [&](const SnapOffset<LayoutUnit>& p) {
-            return p.snapTargetID && snappedBoxes.contains(*p.snapTargetID) && p.*flag;
+    auto findFlagged = [&](bool SnapOffset<LayoutUnit>::*flag) -> std::optional<NodeIdentifier> {
+        auto found = std::ranges::find_if(offsets, [&](const SnapOffset<LayoutUnit>& offset) {
+            return offset.snapTargetID && snappedBoxes.contains(*offset.snapTargetID) && offset.*flag;
         });
         if (found != offsets.end())
             return *found->snapTargetID;
         return std::nullopt;
     };
 
-    if (auto box = findFlagged(horizontalOffsets, &SnapOffset<LayoutUnit>::isFocused))
+    if (auto box = findFlagged(&SnapOffset<LayoutUnit>::isFocused))
         return box;
-    if (auto box = findFlagged(verticalOffsets, &SnapOffset<LayoutUnit>::isFocused))
-        return box;
-    if (auto box = findFlagged(horizontalOffsets, &SnapOffset<LayoutUnit>::isTarget))
-        return box;
-    if (auto box = findFlagged(verticalOffsets, &SnapOffset<LayoutUnit>::isTarget))
+    if (auto box = findFlagged(&SnapOffset<LayoutUnit>::isTarget))
         return box;
     return std::nullopt;
-}
-
-static NodeIdentifier chooseBoxToResnapTo(const HashSet<NodeIdentifier>& snappedBoxes, const Vector<SnapOffset<LayoutUnit>>& horizontalOffsets, const Vector<SnapOffset<LayoutUnit>>& verticalOffsets)
-{
-    ASSERT(snappedBoxes.size());
-
-    if (auto box = preferredSnapTarget(snappedBoxes, horizontalOffsets, verticalOffsets))
-        return *box;
-
-    return *snappedBoxes.begin();
 }
 
 bool ScrollSnapAnimatorState::resnapAfterLayout(ScrollOffset scrollOffset, const ScrollExtents& scrollExtents, float pageScale)
@@ -205,41 +238,40 @@ bool ScrollSnapAnimatorState::resnapAfterLayout(ScrollOffset scrollOffset, const
     bool snapPointChanged = false;
     auto activeHorizontalIndex = activeSnapIndexForAxis(ScrollEventAxis::Horizontal);
     auto activeVerticalIndex = activeSnapIndexForAxis(ScrollEventAxis::Vertical);
-    auto snapOffsetsVertical = snapOffsetsForAxis(ScrollEventAxis::Vertical);
-    auto snapOffsetsHorizontal = snapOffsetsForAxis(ScrollEventAxis::Horizontal);
-    
     auto previouslySnappedBoxes = std::exchange(m_currentlySnappedBoxes, { });
-    
+    auto previousSnapTargetForHorizontalAxis = std::exchange(m_currentSnapTargetForHorizontalAxis, { });
+    auto previousSnapTargetForVerticalAxis = std::exchange(m_currentSnapTargetForVerticalAxis, { });
+
     // Check if we need to set the current indices
-    if (!activeVerticalIndex || *activeVerticalIndex >= snapOffsetsForAxis(ScrollEventAxis::Vertical).size()) {
+    if (!activeVerticalIndex || *activeVerticalIndex >= snapOffsetsForAxis(ScrollEventAxis::Vertical).size())
         snapPointChanged |= setNearestScrollSnapIndexForAxisAndOffsetInternal(ScrollEventAxis::Vertical, scrollOffset, scrollExtents, pageScale);
-        activeVerticalIndex = activeSnapIndexForAxis(ScrollEventAxis::Vertical);
-    }
-    if (!activeHorizontalIndex || *activeHorizontalIndex >= snapOffsetsForAxis(ScrollEventAxis::Horizontal).size()) {
+    if (!activeHorizontalIndex || *activeHorizontalIndex >= snapOffsetsForAxis(ScrollEventAxis::Horizontal).size())
         snapPointChanged |= setNearestScrollSnapIndexForAxisAndOffsetInternal(ScrollEventAxis::Horizontal, scrollOffset, scrollExtents, pageScale);
-        activeHorizontalIndex = activeSnapIndexForAxis(ScrollEventAxis::Horizontal);
-    }
 
     updateCurrentlySnappedBoxes();
     LOG_WITH_STREAM(ScrollSnap, stream << "ScrollSnapAnimatorState::resnapAfterLayout() - previouslySnappedBoxes " << previouslySnappedBoxes << " m_currentlySnappedBoxes " << m_currentlySnappedBoxes);
 
-    auto wasSnappedToMultipleBoxes = previouslySnappedBoxes.size() > 1;
-    auto currentlySnappedToMultipleBoxes = m_currentlySnappedBoxes.size() > 1;
+    // Re-snap each axis independently to its selected box, following it to its post-layout offset.
+    // Focused/targeted boxes are re-evaluated fresh; otherwise the box recorded before the layout
+    // change (innermost / first-in-tree) is used. Per-axis selection keeps a box tied only in the
+    // other axis from dragging this axis off its snap position.
+    if (previouslySnappedBoxes.size() > 1) {
+        auto targetForAxis = [&](ScrollEventAxis axis, const Markable<NodeIdentifier>& recordedTarget) -> std::optional<NodeIdentifier> {
+            if (auto box = focusedOrTargetedBox(snapOffsetsForAxis(axis), previouslySnappedBoxes))
+                return box;
+            return recordedTarget ? std::optional<NodeIdentifier> { *recordedTarget } : std::nullopt;
+        };
 
-    if (wasSnappedToMultipleBoxes) {
-        // A fragment-targeted or focused box is followed to its post-layout offset even if other
-        // boxes remain aligned at the old offset (https://drafts.csswg.org/css-scroll-snap-1/#re-snap).
-        // Without such an explicit preference, only re-choose a target when the tie has collapsed to a
-        // single box, preserving the scroll position otherwise.
-        auto preferred = preferredSnapTarget(previouslySnappedBoxes, snapOffsetsHorizontal, snapOffsetsVertical);
-        if (preferred || !currentlySnappedToMultipleBoxes) {
-            auto box = preferred ? *preferred : chooseBoxToResnapTo(previouslySnappedBoxes, snapOffsetsHorizontal, snapOffsetsVertical);
-            snapPointChanged |= preserveCurrentTargetForAxis(ScrollEventAxis::Horizontal, box);
-            snapPointChanged |= preserveCurrentTargetForAxis(ScrollEventAxis::Vertical, box);
+        auto targetForHorizontalAxis = targetForAxis(ScrollEventAxis::Horizontal, previousSnapTargetForHorizontalAxis);
+        auto targetForVerticalAxis = targetForAxis(ScrollEventAxis::Vertical, previousSnapTargetForVerticalAxis);
 
-            updateCurrentlySnappedBoxes();
-            LOG_WITH_STREAM(ScrollSnap, stream << "ScrollSnapAnimatorState::resnapAfterLayout() - multiple boxes snapped; chose " << box << " (changed " << snapPointChanged << ") m_currentlySnappedBoxes " << m_currentlySnappedBoxes);
-        }
+        if (targetForHorizontalAxis)
+            snapPointChanged |= preserveCurrentTargetForAxis(ScrollEventAxis::Horizontal, *targetForHorizontalAxis);
+        if (targetForVerticalAxis)
+            snapPointChanged |= preserveCurrentTargetForAxis(ScrollEventAxis::Vertical, *targetForVerticalAxis);
+
+        updateCurrentlySnappedBoxes();
+        LOG_WITH_STREAM(ScrollSnap, stream << "ScrollSnapAnimatorState::resnapAfterLayout() - multiple boxes snapped; chose H " << targetForHorizontalAxis << " V " << targetForVerticalAxis << " (changed " << snapPointChanged << ") m_currentlySnappedBoxes " << m_currentlySnappedBoxes);
     }
 
     return snapPointChanged;

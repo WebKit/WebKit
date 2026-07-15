@@ -104,6 +104,11 @@ private:
     Vector<SnapOffset<LayoutUnit>> currentlySnappedOffsetsForAxis(ScrollEventAxis) const;
     HashSet<NodeIdentifier> currentlySnappedBoxes(const Vector<SnapOffset<LayoutUnit>>& horizontalOffsets, const Vector<SnapOffset<LayoutUnit>>& verticalOffsets) const;
 
+    // This axis's snap target among the boxes aligned at the active offset, per
+    // https://drafts.csswg.org/css-scroll-snap-1/#multiple-aligned (focused, targeted, innermost,
+    // then first in tree order).
+    std::optional<NodeIdentifier> selectSnapTargetForAxis(ScrollEventAxis) const;
+
     bool setNearestScrollSnapIndexForAxisAndOffsetInternal(ScrollEventAxis, ScrollOffset, const ScrollExtents&, float pageScale);
     void updateCurrentlySnappedBoxes();
 
@@ -124,6 +129,8 @@ private:
     std::optional<unsigned> m_activeSnapIndexX;
     std::optional<unsigned> m_activeSnapIndexY;
     HashSet<NodeIdentifier> m_currentlySnappedBoxes;
+    Markable<NodeIdentifier> m_currentSnapTargetForHorizontalAxis;
+    Markable<NodeIdentifier> m_currentSnapTargetForVerticalAxis;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ScrollSnapAnimatorState&);

@@ -1,5 +1,5 @@
 Top LeftTop RightOuter I1 I2 I3 I4
 
-FAIL snap container selects innermost area as snap target assert_equals: scroll position should follow inner3 snap target after relayout expected 250 but got 150
-FAIL snap container follows the innermost snap target after layout change (not the co-located outer target) assert_equals: scroll position should follow the innermost snap target after relayout expected 500 but got 400
+PASS snap container selects innermost area as snap target
+PASS snap container follows the innermost snap target after layout change (not the co-located outer target)
 
