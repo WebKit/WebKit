@@ -40,9 +40,9 @@ class ResizeObserverSize;
 class ResizeObserverEntry : public RefCounted<ResizeObserverEntry> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(ResizeObserverEntry);
 public:
-    static Ref<ResizeObserverEntry> create(Ref<Element>&& target, const FloatRect& contentRect, FloatSize borderBoxSize, FloatSize contentBoxSize)
+    static Ref<ResizeObserverEntry> create(Ref<Element>&& target, const FloatRect& contentRect, FloatSize borderBoxSize, FloatSize contentBoxSize, FloatSize devicePixelContentBoxSize)
     {
-        return adoptRef(*new ResizeObserverEntry(WTF::move(target), contentRect, borderBoxSize, contentBoxSize));
+        return adoptRef(*new ResizeObserverEntry(WTF::move(target), contentRect, borderBoxSize, contentBoxSize, devicePixelContentBoxSize));
     }
 
     Element& target() const { return m_target; }
@@ -50,13 +50,15 @@ public:
 
     const Vector<Ref<ResizeObserverSize>>& borderBoxSize() const LIFETIME_BOUND { return m_borderBoxSizes; }
     const Vector<Ref<ResizeObserverSize>>& contentBoxSize() const LIFETIME_BOUND { return m_contentBoxSizes; }
+    const Vector<Ref<ResizeObserverSize>>& devicePixelContentBoxSize() const LIFETIME_BOUND { return m_devicePixelContentBoxSizes; }
 
 private:
-    ResizeObserverEntry(Ref<Element>&& target, const FloatRect& contentRect, FloatSize borderBoxSize, FloatSize contentBoxSize)
+    ResizeObserverEntry(Ref<Element>&& target, const FloatRect& contentRect, FloatSize borderBoxSize, FloatSize contentBoxSize, FloatSize devicePixelContentBoxSize)
         : m_target(WTF::move(target))
         , m_contentRect(DOMRectReadOnly::create(contentRect.x(), contentRect.y(), contentRect.width(), contentRect.height()))
         , m_borderBoxSizes({ ResizeObserverSize::create(borderBoxSize.width(), borderBoxSize.height()) })
         , m_contentBoxSizes({ ResizeObserverSize::create(contentBoxSize.width(), contentBoxSize.height()) })
+        , m_devicePixelContentBoxSizes({ ResizeObserverSize::create(devicePixelContentBoxSize.width(), devicePixelContentBoxSize.height()) })
     {
     }
 
@@ -65,6 +67,7 @@ private:
     // The spec is designed to allow mulitple boxes for multicol scenarios, but for now these vectors only ever contain one entry.
     Vector<Ref<ResizeObserverSize>> m_borderBoxSizes;
     Vector<Ref<ResizeObserverSize>> m_contentBoxSizes;
+    Vector<Ref<ResizeObserverSize>> m_devicePixelContentBoxSizes;
 };
 
 } // namespace WebCore

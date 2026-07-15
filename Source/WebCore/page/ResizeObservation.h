@@ -53,6 +53,7 @@ public:
         LayoutSize contentBoxSize;
         LayoutSize contentBoxLogicalSize;
         LayoutSize borderBoxLogicalSize;
+        LayoutSize devicePixelContentBoxLogicalSize;
     };
 
     std::optional<BoxSizes> elementSizeChanged() const;
@@ -63,6 +64,7 @@ public:
     FloatSize NODELETE borderBoxSize() const;
     FloatSize NODELETE contentBoxSize() const;
     FloatSize NODELETE snappedContentBoxSize() const;
+    FloatSize devicePixelContentBoxSize() const;
 
     Element* target() const { return m_target.get(); }
     ResizeObserverBoxOptions observedBox() const { return m_observedBox; }
@@ -72,6 +74,7 @@ private:
     ResizeObservation(Element&, ResizeObserverBoxOptions);
 
     std::optional<BoxSizes> computeObservedSizes() const;
+    LayoutSize computeDevicePixelContentBoxLogicalSize() const;
     LayoutPoint computeTargetLocation() const;
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_target;

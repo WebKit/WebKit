@@ -7054,6 +7054,20 @@ RequiresUserGestureToLoadVideo:
       "PLATFORM(IOS_FAMILY)": true
       default: false
 
+ResizeObserverDevicePixelContentBoxEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "ResizeObserver devicePixelContentBoxSize"
+  humanReadableDescription: "Enable devicePixelContentBoxSize on ResizeObserverEntry"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 ResourceLoadSchedulingEnabled:
   type: bool
   status: internal

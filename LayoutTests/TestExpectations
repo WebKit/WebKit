@@ -4212,10 +4212,6 @@ fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontex
 fast/mediacapturefromelement/CanvasCaptureMediaStream-framerate-0.html [ Skip ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-element.html [ Skip ]
 
-# These test ResizeObserverEntry.devicePixelContentBoxSize, which is not implemented yet.
-webkit.org/b/219005 imported/w3c/web-platform-tests/resize-observer/devicepixel.html [ Skip ]
-webkit.org/b/219005 imported/w3c/web-platform-tests/resize-observer/devicepixel2.html [ Skip ]
-
 webkit.org/b/198103 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/offsets-into-the-media-resource/currentTime.html [ Pass Failure ]
 
 # This tests assumes that changes caused by removing 'video.src' will be visible immediately after the next rAF.
@@ -6450,7 +6446,6 @@ imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-visibil
 imported/w3c/web-platform-tests/paint-timing/fcp-only/svg-in-iframe.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointermove_in_pointerlock.html [ Skip ]
 imported/w3c/web-platform-tests/pointerlock/mouse_buttons_back_forward.html [ Skip ]
-imported/w3c/web-platform-tests/resize-observer/svg.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/entry-attributes.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/object-not-found-after-TAO-cross-origin-redirect.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/object-not-found-after-cross-origin-redirect.html [ Skip ]

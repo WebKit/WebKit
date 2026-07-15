@@ -33,6 +33,7 @@ namespace WebCore {
 enum class ResizeObserverBoxOptions : uint8_t {
     BorderBox,
     ContentBox,
+    DevicePixelContentBox,
 };
 
 } // namespace WebCore
