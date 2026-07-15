@@ -29,12 +29,14 @@
 #include "ResizeObserver.h"
 
 #include "ContextDestructionObserverInlines.h"
+#include "DocumentInlines.h"
 #include "Element.h"
 #include "InspectorInstrumentation.h"
 #include "JSNodeCustom.h"
 #include "Logging.h"
 #include "ResizeObserverEntry.h"
 #include "ResizeObserverOptions.h"
+#include "Settings.h"
 #include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -142,11 +144,14 @@ void ResizeObserver::targetDestroyed(Element& target)
 size_t ResizeObserver::gatherObservations(size_t deeperThan)
 {
     m_hasSkippedObservations = false;
+    bool exposesDevicePixelContentBoxSize = this->exposesDevicePixelContentBoxSize();
     size_t minObservedDepth = maxElementDepth();
     for (const auto& observation : m_observations) {
         if (auto currentSizes = observation->elementSizeChanged()) {
             size_t depth = observation->targetElementDepth();
             if (depth > deeperThan) {
+                if (exposesDevicePixelContentBoxSize && observation->observedBox() != ResizeObserverBoxOptions::DevicePixelContentBox)
+                    currentSizes->devicePixelContentBoxLogicalSize = observation->computeDevicePixelContentBoxLogicalSize();
                 observation->updateObservationSize(*currentSizes);
 
                 LOG_WITH_STREAM(ResizeObserver, stream << "ResizeObserver " << this << " gatherObservations - recording observation " << observation.get());
@@ -168,12 +173,13 @@ void ResizeObserver::deliverObservations()
 {
     LOG_WITH_STREAM(ResizeObserver, stream << "ResizeObserver " << this << " deliverObservations");
 
-    auto entries = WTF::compactMap(m_activeObservations, [](auto& observation) -> RefPtr<ResizeObserverEntry> {
+    auto entries = WTF::compactMap(m_activeObservations, [exposesDevicePixelContentBoxSize = exposesDevicePixelContentBoxSize()](auto& observation) -> RefPtr<ResizeObserverEntry> {
         RefPtr target = observation->target();
         ASSERT(target); // The target is supposed to be kept alive via `m_activeObservationTargets` and JSResizeObserver::visitAdditionalChildrenInGCThread().
         if (!target)
             return nullptr;
-        return ResizeObserverEntry::create(target.releaseNonNull(), observation->computeContentRect(), observation->borderBoxSize(), observation->contentBoxSize());
+        auto devicePixelContentBoxSize = exposesDevicePixelContentBoxSize ? std::optional { observation->devicePixelContentBoxSize() } : std::nullopt;
+        return ResizeObserverEntry::create(target.releaseNonNull(), observation->computeContentRect(), observation->borderBoxSize(), observation->contentBoxSize(), devicePixelContentBoxSize);
     });
     m_activeObservations.shrink(0);
 
@@ -291,6 +297,15 @@ bool ResizeObserver::isJSCallback()
 bool ResizeObserver::isNativeCallback()
 {
     return std::holds_alternative<NativeResizeObserverCallback>(m_JSOrNativeCallback);
+}
+
+// Native observers never read devicePixelContentBoxSize, and script can only read it when the setting is enabled.
+bool ResizeObserver::exposesDevicePixelContentBoxSize()
+{
+    if (isNativeCallback())
+        return false;
+    RefPtr document = m_document.get();
+    return document && document->settings().resizeObserverDevicePixelContentBoxEnabled();
 }
 
 ResizeObserverCallback* ResizeObserver::callbackConcurrently()

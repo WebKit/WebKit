@@ -95,6 +95,7 @@ private:
     void observeInternal(Element&, const ResizeObserverBoxOptions);
     bool NODELETE isNativeCallback();
     bool NODELETE isJSCallback();
+    bool exposesDevicePixelContentBoxSize();
 
     struct ResizeObservationHashFunctions {
         using T = Ref<ResizeObservation>;
