@@ -48,6 +48,7 @@ NSErrorDomain const WebMockMediaDeviceRouteErrorDomain = @"WebMockMediaDeviceRou
 @implementation WebMockMediaDeviceRoute {
     RefPtr<WebCore::MockMediaDeviceRouteURLCallback> _urlCallback;
     RefPtr<WebCore::DOMPromise> _urlPromise;
+    BOOL _connected;
 }
 
 @synthesize timeRange;
@@ -82,6 +83,11 @@ NSErrorDomain const WebMockMediaDeviceRouteErrorDomain = @"WebMockMediaDeviceRou
     self.playbackPosition = playbackPosition.get();
 }
 
+- (BOOL)isConnected
+{
+    return _connected;
+}
+
 - (WebCore::MockMediaDeviceRouteURLCallback* _Nullable)urlCallback
 {
     return _urlCallback.get();
@@ -109,6 +115,7 @@ NSErrorDomain const WebMockMediaDeviceRouteErrorDomain = @"WebMockMediaDeviceRou
 
         switch (std::exchange(strongSelf->_urlPromise, nullptr)->status()) {
         case WebCore::DOMPromise::Status::Fulfilled:
+            strongSelf->_connected = YES;
             return completionHandler(nil, strongSelf.get());
         case WebCore::DOMPromise::Status::Rejected:
             return completionHandler([NSError errorWithDomain:WebMockMediaDeviceRouteErrorDomain code:WebMockMediaDeviceRouteErrorCodeUnsupportedURL userInfo:nil], nil);
@@ -118,6 +125,11 @@ NSErrorDomain const WebMockMediaDeviceRouteErrorDomain = @"WebMockMediaDeviceRou
 
         RELEASE_ASSERT_NOT_REACHED();
     });
+}
+
+- (void)stop
+{
+    _connected = NO;
 }
 
 @end

@@ -70,6 +70,11 @@ void MockMediaDeviceRoute::setDeviceName(const String& deviceName)
     [m_platformRoute setRouteDisplayName:deviceName.createNSString().get()];
 }
 
+bool MockMediaDeviceRoute::connected() const
+{
+    return [m_platformRoute isConnected];
+}
+
 bool MockMediaDeviceRoute::ready() const
 {
     return [m_platformRoute isReady];

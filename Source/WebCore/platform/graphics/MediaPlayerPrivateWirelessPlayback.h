@@ -87,7 +87,7 @@ private:
 #if ENABLE(MEDIA_STREAM)
     void load(MediaStreamPrivate&) final { }
 #endif
-    void cancelLoad() final { }
+    void cancelLoad() final;
     void play() final;
     void pause() final;
     FloatSize naturalSize() const final { return { }; }

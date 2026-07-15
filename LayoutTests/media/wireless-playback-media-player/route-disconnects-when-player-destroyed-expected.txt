@@ -1,0 +1,13 @@
+
+Test that a MediaDeviceRoute is disconnected when the media player using it is destroyed.
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+RUN(video.src = findMediaFile('video', '../content/test'))
+RUN(video.play())
+RUN(route.ready = true)
+EVENT(canplaythrough)
+EXPECTED (route.connected == 'true') OK
+RUN(video.src = '')
+EXPECTED (route.connected == 'false') OK
+END OF TEST
+

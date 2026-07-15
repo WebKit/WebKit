@@ -57,6 +57,8 @@ public:
     String deviceName() const;
     void setDeviceName(const String&);
 
+    bool connected() const;
+
     bool ready() const;
     void setReady(bool);
 
