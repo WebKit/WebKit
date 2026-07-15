@@ -364,3 +364,14 @@ webkit.org/b/319407 [ mac ] TestWebKitAPI.WebKit.ViewScaleFactorAfterShrinkToFit
 webkit.org/b/319410 [ mac ] TestWebKitAPI.PasteImage.PasteFileWhileNetworkProcessIsLaunching [ Failure ]
 
 webkit.org/b/318967 [ ios ] TestWebKitAPI.DownloadProgress.PublishProgressOnPartialDownload [ Pass Failure ]
+
+webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.GetAssertionPin [ Skip ]
+webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.PanelHidCtapNoCredentialsFound [ Skip ]
+webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.GetAssertionPinAuthBlockedError [ Skip ]
+webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.NoPanelHidSuccess [ Skip ]
+webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.MultipleAccounts [ Skip ]
+webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.PanelHidCtapNoCredentialsFoundCancelNoCrash [ Skip ]
+webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.PanelTwice [ Skip ]
+webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.GetAssertionPinInvalidErrorAndRetry [ Skip ]
+webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.NullPanelHidSuccess [ Skip ]
+webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.GetAssertionInternalUVPinFallback [ Skip ]
