@@ -430,6 +430,8 @@ void MediaElementSession::removeBehaviorRestriction(BehaviorRestrictions restric
     m_restrictions &= ~restriction;
 }
 
+#if !RELEASE_LOG_DISABLED
+
 static ASCIILiteral mediaGestureReasonString(Document::MediaGestureReason reason)
 {
     switch (reason) {
@@ -442,6 +444,8 @@ static ASCIILiteral mediaGestureReasonString(Document::MediaGestureReason reason
     }
     return "Unknown"_s;
 }
+
+#endif
 
 Expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbackStateChangePermitted(MediaPlaybackState state) const
 {
