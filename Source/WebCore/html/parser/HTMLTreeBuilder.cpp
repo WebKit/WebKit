@@ -345,19 +345,27 @@ void HTMLTreeBuilder::constructTree(AtomHTMLToken&& token)
     else
         processToken(WTF::move(token));
 
-    // Use the adjusted current node for all checks, matching shouldProcessTokenInForeignContent().
-    // When fragment-parsing with only one element on the stack, the adjusted current node is the
-    // context element, not the DocumentFragment.
-    bool inForeignContent = false;
-    if (!m_tree.isEmpty()) {
-        auto& adjustedCurrentNode = adjustedCurrentStackItem();
-        inForeignContent = !isInHTMLNamespace(adjustedCurrentNode)
-            && !HTMLElementStack::isHTMLIntegrationPoint(adjustedCurrentNode)
-            && !HTMLElementStack::isMathMLTextIntegrationPoint(adjustedCurrentNode);
-    }
+    // Both flags are computed from the adjusted current node, matching the tree construction
+    // dispatcher. When fragment-parsing with only one element on the stack, the adjusted current
+    // node is the context element, not the DocumentFragment.
+    //
+    // These two flags use different conditions:
+    // - shouldAllowCDATA follows the tokenizer's markup declaration open state, which switches to
+    //   the CDATA section state whenever there is an adjusted current node and it is not an element
+    //   in the HTML namespace. Integration points are NOT a consideration there, so CDATA sections
+    //   are allowed even when the adjusted current node is an integration point.
+    //   https://html.spec.whatwg.org/multipage/parsing.html#markup-declaration-open-state
+    // - forceNullCharacterReplacement follows the dispatcher's notion of foreign content (used to
+    //   replace U+0000 NULL with U+FFFD), which treats integration points as HTML content and thus
+    //   excludes them.
+    //   https://html.spec.whatwg.org/multipage/parsing.html#tree-construction
+    bool adjustedCurrentNodeIsForeign = !m_tree.isEmpty() && !isInHTMLNamespace(adjustedCurrentStackItem());
+    bool inForeignContent = adjustedCurrentNodeIsForeign
+        && !HTMLElementStack::isHTMLIntegrationPoint(adjustedCurrentStackItem())
+        && !HTMLElementStack::isMathMLTextIntegrationPoint(adjustedCurrentStackItem());
 
     m_parser->tokenizer().setForceNullCharacterReplacement(m_insertionMode == InsertionMode::Text || inForeignContent);
-    m_parser->tokenizer().setShouldAllowCDATA(inForeignContent);
+    m_parser->tokenizer().setShouldAllowCDATA(adjustedCurrentNodeIsForeign);
 
 #if ASSERT_ENABLED
     m_destructionProhibited = false;
