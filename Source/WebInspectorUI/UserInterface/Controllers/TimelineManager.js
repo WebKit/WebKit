@@ -332,7 +332,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         }
 
         if (json.version !== WI.TimelineRecording.SerializationVersion) {
-            WI.NetworkManager.synthesizeImportError(WI.UIString("unsupported version"));
+            WI.TimelineManager.synthesizeImportError(WI.UIString("unsupported version"));
             return;
         }
 
