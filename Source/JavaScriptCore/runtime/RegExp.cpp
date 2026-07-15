@@ -356,6 +356,8 @@ bool RegExp::matchConcurrently(
         return false;
 
     position = matchInline<Yarr::MatchFrom::CompilerThread>(nullptr, vm, s, startOffset, ovector);
+    if (position == static_cast<int>(Yarr::JSRegExpResult::JITCodeFailure))
+        return false;
     if (m_state == ParseError)
         return false;
     return true;
@@ -432,6 +434,8 @@ bool RegExp::matchConcurrently(VM& vm, StringView s, unsigned startOffset, Match
         return false;
 
     result = matchInline<Yarr::MatchFrom::CompilerThread>(nullptr, vm, s, startOffset);
+    if (result.start == static_cast<size_t>(Yarr::JSRegExpResult::JITCodeFailure))
+        return false;
     return true;
 }
 

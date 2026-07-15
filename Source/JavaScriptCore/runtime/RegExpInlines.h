@@ -172,8 +172,10 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
                 if (m_state == ParseError)
                     return throwError();
             }
-            if (!m_regExpBytecode)
-                return -1;
+            if (!m_regExpBytecode) {
+                ASSERT(matchFrom == Yarr::MatchFrom::CompilerThread);
+                return result;
+            }
             {
                 Yarr::MatchingContextHolder regExpContext(vm, this, matchFrom);
                 result = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, reinterpret_cast<unsigned*>(offsetVector));
@@ -302,8 +304,10 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(JSGlobalObject* nullOrGlobalObject
             if (m_state == ParseError)
                 return throwError();
         }
-        if (!m_regExpBytecode)
-            return MatchResult::failed();
+        if (!m_regExpBytecode) {
+            ASSERT(matchFrom == Yarr::MatchFrom::CompilerThread);
+            return result;
+        }
     }
 #endif
 
