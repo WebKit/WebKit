@@ -1084,6 +1084,10 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
     if (message->isAsyncReplyMessage()) {
         // Disallow async replies with invalid destinationIDs to be sent
         if (!AtomicObjectIdentifier<AsyncReplyIDType>::isValidIdentifier(message->destinationID())) {
+            // Drop our SyncMessageState reference while still holding m_incomingMessagesLock. Otherwise the
+            // ~SyncMessageState triggered by this last deref would run without the lock and could race with
+            // invalidate() dropping its own reference (both under m_incomingMessagesLock) on the dispatcher thread.
+            syncState = nullptr;
             incomingMessagesLocker.unlockEarly();
             waitForMessagesLocker.unlockEarly();
 #if ENABLE(IPC_TESTING_API)
@@ -1095,6 +1099,10 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
             return;
         }
         if (auto replyHandlerWithDispatcher = takeAsyncReplyHandlerWithDispatcherWithLockHeld(AtomicObjectIdentifier<AsyncReplyIDType>(message->destinationID()))) {
+            // Drop our SyncMessageState reference while still holding m_incomingMessagesLock, before unlocking to
+            // run the reply handler. Otherwise the ~SyncMessageState triggered by this last deref would run without
+            // the lock and could race with invalidate() dropping its own reference on the dispatcher thread.
+            syncState = nullptr;
             incomingMessagesLocker.unlockEarly();
             waitForMessagesLocker.unlockEarly();
 
