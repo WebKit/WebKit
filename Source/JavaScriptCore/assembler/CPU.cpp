@@ -119,6 +119,8 @@ static int32_t hwPerfLevelPhysicalCPUMax(const char* name)
 // The highest performance cores.
 int32_t hwNumberOfP0Cores()
 {
+    if (int32_t numberOfCoresOverride = Options::numberOfP0CoresOverrides())
+        return numberOfCoresOverride;
     return hwPerfLevelPhysicalCPUMax("hw.perflevel0.physicalcpu_max");
 }
 
