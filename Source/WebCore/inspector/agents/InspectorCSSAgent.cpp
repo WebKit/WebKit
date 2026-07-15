@@ -383,10 +383,11 @@ void InspectorCSSAgent::setActiveStyleSheetsForDocument(Document& document, Vect
 
     for (auto* cssStyleSheet : removedStyleSheets) {
         previouslyKnownActiveStyleSheets.remove(cssStyleSheet);
-        RefPtr<InspectorStyleSheet> inspectorStyleSheet = m_cssStyleSheetToInspectorStyleSheet.get(cssStyleSheet);
-        if (m_idToInspectorStyleSheet.contains(inspectorStyleSheet->id())) {
-            auto id = unbindStyleSheet(inspectorStyleSheet.get());
-            m_frontendDispatcher->styleSheetRemoved(id);
+        if (RefPtr<InspectorStyleSheet> inspectorStyleSheet = m_cssStyleSheetToInspectorStyleSheet.get(cssStyleSheet)) {
+            if (m_idToInspectorStyleSheet.contains(inspectorStyleSheet->id())) {
+                auto id = unbindStyleSheet(inspectorStyleSheet.get());
+                m_frontendDispatcher->styleSheetRemoved(id);
+            }
         }
     }
 
