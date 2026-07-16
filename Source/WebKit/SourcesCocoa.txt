@@ -168,7 +168,6 @@ Shared/WebSQLiteDatabaseTracker.cpp
 Shared/cf/CookieStorageUtilsCF.mm @nonARC
 
 Shared/Authentication/cocoa/AuthenticationChallengeDispositionCocoa.mm @nonARC
-Shared/Authentication/cocoa/ClientCertificateAuthenticationXPCConstants.cpp
 
 Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonConnectionSet.mm @nonARC
 Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm @nonARC

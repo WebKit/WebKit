@@ -27,16 +27,18 @@
 
 #if HAVE(SEC_KEY_PROXY)
 
+#include <wtf/text/ASCIILiteral.h>
+
 namespace WebKit {
 
 namespace ClientCertificateAuthentication {
 
-extern const ASCIILiteral XPCCertificatesKey;
-extern const ASCIILiteral XPCChallengeIDKey;
-extern const ASCIILiteral XPCMessageNameKey;
-extern const ASCIILiteral XPCMessageNameValue;
-extern const ASCIILiteral XPCPersistenceKey;
-extern const ASCIILiteral XPCSecKeyProxyEndpointKey;
+inline constexpr ASCIILiteral XPCCertificatesKey { "certificates"_s };
+inline constexpr ASCIILiteral XPCChallengeIDKey { "challenge-id"_s };
+inline constexpr ASCIILiteral XPCMessageNameKey { "message-name"_s };
+inline constexpr ASCIILiteral XPCMessageNameValue { "client-certificate-credential"_s };
+inline constexpr ASCIILiteral XPCPersistenceKey { "persistence"_s };
+inline constexpr ASCIILiteral XPCSecKeyProxyEndpointKey { "sec-key-proxy-endpoint"_s };
 
 } // namespace ClientCertificateAuthentication
 
