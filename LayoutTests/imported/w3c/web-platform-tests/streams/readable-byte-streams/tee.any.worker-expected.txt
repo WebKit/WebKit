@@ -16,6 +16,7 @@ PASS ReadableStream teeing with byte source: erroring the original should immedi
 PASS ReadableStream teeing with byte source: erroring the original should error pending reads from default reader
 PASS ReadableStream teeing with byte source: erroring the original should error pending reads from BYOB reader
 PASS ReadableStream teeing with byte source: canceling branch1 should finish when branch2 reads until end of stream
+PASS ReadableStream teeing with byte source: canceling branch1 should finish when branch2 reads with a BYOB reader until end of stream
 PASS ReadableStream teeing with byte source: canceling branch1 should finish when original stream errors
 PASS ReadableStream teeing with byte source: should not pull any chunks if no branches are reading
 PASS ReadableStream teeing with byte source: should only pull enough to fill the emptiest queue
