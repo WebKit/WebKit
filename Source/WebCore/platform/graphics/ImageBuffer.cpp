@@ -636,7 +636,8 @@ std::optional<DynamicContentScalingDisplayList> ImageBuffer::dynamicContentScali
 
 void ImageBuffer::transferToNewContext(const ImageBufferCreationContext& context)
 {
-    backend()->transferToNewContext(context);
+    if (auto* backend = ensureBackend())
+        backend->transferToNewContext(context);
 }
 
 String ImageBuffer::debugDescription() const
