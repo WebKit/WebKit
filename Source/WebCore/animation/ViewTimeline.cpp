@@ -222,6 +222,8 @@ StickinessAdjustmentData StickinessAdjustmentData::computeStickinessAdjustmentDa
         float subjectPositionInScroller = stickyBoxStuckPosition + subjectOffset - stickyBoxStaticPosition;
         if (subjectPositionInScroller > scrollContainerSize)
             return StickinessLocation::BeforeEntry;
+        if (subjectPositionInScroller < 0 && subjectPositionInScroller + subjectSize > scrollContainerSize)
+            return StickinessLocation::WhileCovering;
         if (subjectPositionInScroller + subjectSize > scrollContainerSize)
             return StickinessLocation::DuringEntry;
         if (subjectPositionInScroller + subjectSize < 0)
@@ -256,9 +258,9 @@ StickinessAdjustmentData StickinessAdjustmentData::computeStickinessAdjustmentDa
 float StickinessAdjustmentData::entryDistanceAdjustment() const
 {
     float entryDistanceAdjustment = 0;
-    if (topOrLeftAdjustmentLocation == StickinessLocation::DuringEntry)
+    if (topOrLeftAdjustmentLocation == StickinessLocation::DuringEntry || topOrLeftAdjustmentLocation == StickinessLocation::WhileCovering)
         entryDistanceAdjustment += stickyTopOrLeftAdjustment;
-    if (bottomOrRightAdjustmentLocation == StickinessLocation::DuringEntry)
+    if (bottomOrRightAdjustmentLocation == StickinessLocation::DuringEntry || bottomOrRightAdjustmentLocation == StickinessLocation::WhileCovering)
         entryDistanceAdjustment -= stickyBottomOrRightAdjustment;
     return entryDistanceAdjustment;
 }
@@ -266,9 +268,9 @@ float StickinessAdjustmentData::entryDistanceAdjustment() const
 float StickinessAdjustmentData::exitDistanceAdjustment() const
 {
     float exitDistanceAdjustment = 0;
-    if (topOrLeftAdjustmentLocation == StickinessLocation::DuringExit)
+    if (topOrLeftAdjustmentLocation == StickinessLocation::DuringExit || topOrLeftAdjustmentLocation == StickinessLocation::WhileCovering)
         exitDistanceAdjustment += stickyTopOrLeftAdjustment;
-    if (bottomOrRightAdjustmentLocation == StickinessLocation::DuringExit)
+    if (bottomOrRightAdjustmentLocation == StickinessLocation::DuringExit || bottomOrRightAdjustmentLocation == StickinessLocation::WhileCovering)
         exitDistanceAdjustment -= stickyBottomOrRightAdjustment;
     return exitDistanceAdjustment;
 }
@@ -672,6 +674,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const StickinessAdjustmentData:
     case StickinessAdjustmentData::StickinessLocation::BeforeEntry: ts << "BeforeEntry"_s; break;
     case StickinessAdjustmentData::StickinessLocation::DuringEntry: ts << "DuringEntry"_s; break;
     case StickinessAdjustmentData::StickinessLocation::WhileContained: ts << "WhileContained"_s; break;
+    case StickinessAdjustmentData::StickinessLocation::WhileCovering: ts << "WhileCovering"_s; break;
     case StickinessAdjustmentData::StickinessLocation::DuringExit: ts << "DuringExit"_s; break;
     case StickinessAdjustmentData::StickinessLocation::AfterExit: ts << "AfterExit"_s; break;
     }

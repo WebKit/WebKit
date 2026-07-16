@@ -52,6 +52,7 @@ struct StickinessAdjustmentData {
         BeforeEntry,
         DuringEntry,
         WhileContained,
+        WhileCovering,
         DuringExit,
         AfterExit
     };
