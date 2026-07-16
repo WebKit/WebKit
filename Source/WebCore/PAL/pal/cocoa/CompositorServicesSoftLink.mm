@@ -26,9 +26,7 @@ SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_drawable_s
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_drawable_set_device_anchor, void, (cp_drawable_t drawable, ar_device_anchor_t device_anchor), (drawable, device_anchor), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_drawable_get_rasterization_rate_map_descriptor, MTLRasterizationRateMapDescriptor*, (cp_drawable_t drawable, size_t index), (drawable, index), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_drawable_get_rasterization_rate_map, id<MTLRasterizationRateMap>, (cp_drawable_t drawable, size_t index), (drawable, index), PAL_EXPORT)
-
-// FIXME: <rdar://134998122> Remove may fail when CC update lands.
-SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_drawable_set_write_forward_depth, void, (cp_drawable_t drawable, bool is_forward_z), (drawable, is_forward_z), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_drawable_set_write_forward_depth, void, (cp_drawable_t drawable, bool is_forward_z), (drawable, is_forward_z), PAL_EXPORT)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_frame_end_submission, void, (cp_frame_t frame), (frame), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_frame_get_frame_index, cp_layer_frame_index_t, (cp_frame_t frame), (frame), PAL_EXPORT)

@@ -96,8 +96,6 @@ CompositorCoordinator::CompositorCoordinator()
     : m_sessionPage(0)
 {
     ASSERT(isCompositorServicesAvailable());
-    // FIXME: rdar://134998122
-    m_forwardDepthAvailable = can_load_cp_drawable_set_write_forward_depth();
 }
 
 void CompositorCoordinator::getPrimaryDeviceInfo(WebPageProxy& page, DeviceInfoCallback&& callback)
@@ -504,11 +502,8 @@ void CompositorCoordinator::render(cp_frame_t frame, cp_drawable_t drawable, NST
 
         frameData.inputSources = [m_xrTrackingManager collectInputSources];
 
-        // FIXME: rdar://134998122
-        if (m_forwardDepthAvailable) {
-            cp_drawable_set_write_forward_depth(drawable, m_depthRange.near < m_depthRange.far);
-            cp_drawable_set_depth_range(drawable, simd_make_float2(std::max(m_depthRange.near, m_depthRange.far), std::min(m_depthRange.near, m_depthRange.far)));
-        }
+        cp_drawable_set_write_forward_depth(drawable, m_depthRange.near < m_depthRange.far);
+        cp_drawable_set_depth_range(drawable, simd_make_float2(std::max(m_depthRange.near, m_depthRange.far), std::min(m_depthRange.near, m_depthRange.far)));
 
         size_t viewCount = cp_drawable_get_view_count(drawable);
         if (!viewCount) {
@@ -569,8 +564,7 @@ void CompositorCoordinator::render(cp_frame_t frame, cp_drawable_t drawable, NST
                 .colorTexture = colorTextureSendRight,
                 .depthStencilBuffer = depthStencilBufferSendRight,
             },
-            // FIXME: rdar://134998122
-            .requestDepth = m_forwardDepthAvailable,
+            .requestDepth = true,
         };
 
         MTLRasterizationRateMapDescriptor* desc = cp_drawable_get_rasterization_rate_map_descriptor(drawable, textureIndexLeft);

@@ -39,11 +39,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_drawable_get_rasteriza
 #define cp_drawable_get_rasterization_rate_map_descriptor PAL::softLink_CompositorServices_cp_drawable_get_rasterization_rate_map_descriptor
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_drawable_get_rasterization_rate_map, id<MTLRasterizationRateMap>, (cp_drawable_t drawable, size_t index), (drawable, index))
 #define cp_drawable_get_rasterization_rate_map PAL::softLink_CompositorServices_cp_drawable_get_rasterization_rate_map
-
-// FIXME: <rdar://134998122> Remove may fail when CC update lands.
-SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, CompositorServices, cp_drawable_set_write_forward_depth, void, (cp_drawable_t drawable, bool is_forward_z), (drawable, is_forward_z));
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_drawable_set_write_forward_depth, void, (cp_drawable_t drawable, bool is_forward_z), (drawable, is_forward_z));
 #define cp_drawable_set_write_forward_depth PAL::softLink_CompositorServices_cp_drawable_set_write_forward_depth
-#define can_load_cp_drawable_set_write_forward_depth PAL::canLoad_CompositorServices_cp_drawable_set_write_forward_depth
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_frame_end_submission, void, (cp_frame_t frame), (frame))
 #define cp_frame_end_submission PAL::softLink_CompositorServices_cp_frame_end_submission

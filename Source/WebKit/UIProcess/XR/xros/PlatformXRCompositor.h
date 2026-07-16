@@ -126,7 +126,6 @@ private:
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
     bool m_foveationEnabled { false };
     bool m_layeredModeEnabled { false };
-    bool m_forwardDepthAvailable { false };
     Vector<std::tuple<WeakObjCPtr<id<MTLTexture>>, WeakObjCPtr<id<MTLTexture>>>> m_compositorTextures;
 #if HAVE(SPATIAL_CONTROLLERS)
     RetainPtr<WKXRControllerManager> m_controllerManager;

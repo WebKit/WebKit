@@ -417,7 +417,7 @@ struct FrameData {
         std::optional<LayerSetupData> layerSetup = { std::nullopt };
         uint64_t renderingFrameIndex { 0 };
         std::optional<ExternalTextureData> textureData;
-        // FIXME: <rdar://134998122> Remove when new CC lands.
+        // FIXME: <rdar://182368025> Is this still necessary?
         bool requestDepth { false };
         bool isForTesting { false };
     };
