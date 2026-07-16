@@ -1,0 +1,33 @@
+<!doctype html><!-- webkit-test-runner [ ReadableByteStreamFetchSourceEnabled=true ] -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Fetch byte stream delivers buffered bytes after the response goes quiet</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+promise_test(async (test) => {
+    const response = await fetch('resources/two-chunks-then-quiet.py');
+    const reader = response.body.getReader();
+
+    // Do not read yet. The first chunk satisfies the initial pull and fills
+    // the queue past its high-water mark, so the controller stops pulling;
+    // the second chunk arrives with no pull outstanding and gets buffered.
+    await new Promise(resolve => test.step_timeout(resolve, 2000));
+
+    let received = 0;
+    while (received < 32) {
+        const result = await Promise.race([
+            reader.read(),
+            new Promise(resolve => test.step_timeout(() => resolve('stalled'), 3000)),
+        ]);
+        assert_not_equals(result, 'stalled', 'read stalled with ' + received + ' of 32 bytes delivered and the connection idle');
+        assert_false(result.done);
+        received += result.value.byteLength;
+    }
+}, "Fetch body delivers bytes that arrived while no read was pending, after the stream goes quiet");
+    </script>
+  </body>
+</html>
