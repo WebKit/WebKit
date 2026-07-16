@@ -2413,6 +2413,8 @@ JSArray* JSArray::fastFlat(JSGlobalObject* globalObject, uint64_t depth, uint64_
         RETURN_IF_EXCEPTION(scope, nullptr);
         if (flattenedLength == std::numeric_limits<uint64_t>::max()) [[unlikely]]
             return nullptr;
+        if (flattenedLength > MAX_STORAGE_VECTOR_LENGTH) [[unlikely]]
+            return nullptr;
 
         Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(sourceType);
 
