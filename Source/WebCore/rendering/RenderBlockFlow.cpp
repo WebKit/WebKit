@@ -1427,10 +1427,6 @@ void RenderBlockFlow::adjustFloatingBlock(const MarginInfo& marginInfo)
 
 void RenderBlockFlow::setStaticInlinePositionForChild(RenderBox& child, LayoutUnit inlinePosition)
 {
-    if (enclosingFragmentedFlow()) {
-        // Shift the inline position to exclude the fragment offset.
-        inlinePosition += startOffsetForContent() - startOffsetForContent();
-    }
     child.layer()->setStaticInlinePosition(inlinePosition);
 }
 
