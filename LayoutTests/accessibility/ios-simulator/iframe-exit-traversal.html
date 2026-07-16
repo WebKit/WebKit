@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+<iframe id="iframe" onload="startTest();" src="data:text/html,<body><button id='frame-button'>Click me</button><a href='%23' id='frame-link'>a</a></body>"></iframe>
+</div>
+
+<script>
+var output = "Tests that an element inside an iframe can traverse back out to the hosting document on iOS. Walking up the accessibilityContainer chain from an element inside the iframe must cross the local frame boundary so VoiceOver can advance past the last iframe element and render a cursor.\n\n";
+
+var reachedIframeOwner = false;
+var reachedContent = false;
+
+if (window.accessibilityController)
+    window.jsTestIsAsync = true;
+
+function startTest() {
+    if (!window.accessibilityController)
+        return;
+
+    // frame-link is the last focusable element inside the iframe. accessibleElementById descends
+    // cross-frame (via accessibilityElementAtIndex) to find it.
+    var frameLink = accessibilityController.accessibleElementById("frame-link");
+
+    // Walk up the accessibilityContainer chain, recording each named ancestor. We should cross
+    // the iframe boundary, eventually reaching #content.
+    var namedAncestors = [];
+    var element = frameLink ? frameLink.parentElement() : null;
+    for (var i = 0; element && i < 25; i++) {
+        var domId = element.domIdentifier;
+        if (domId)
+            namedAncestors.push(domId);
+        if (domId == "iframe")
+            reachedIframeOwner = true;
+        if (domId == "content") {
+            reachedContent = true;
+            break;
+        }
+        element = element.parentElement();
+    }
+
+    output += `Named ancestors of frame-link (crossing out of the iframe): ${JSON.stringify(namedAncestors)}\n`;
+    output += expect("reachedIframeOwner", "true");
+    output += expect("reachedContent", "true");
+
+    debug(output);
+    finishJSTest();
+}
+</script>
+</body>
+</html>
