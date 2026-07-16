@@ -120,7 +120,7 @@ ExceptionOr<size_t> computeCopyElementCount(const WebCodecsAudioData& data, cons
     // All planes have the same number of frames, always
     auto frameCount = data.numberOfFrames();
     // 7. If options.frameOffset is greater than or equal to frameCount, throw a RangeError.
-    if (options.frameOffset && *options.frameOffset > frameCount)
+    if (options.frameOffset && *options.frameOffset >= frameCount)
         return Exception { ExceptionCode::RangeError, "frameOffset is too large"_s };
 
     // 8. Let copyFrameCount be the difference of subtracting options.frameOffset from frameCount.

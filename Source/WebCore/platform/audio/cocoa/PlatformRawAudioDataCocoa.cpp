@@ -244,6 +244,9 @@ static Variant<Vector<std::span<uint8_t>>, Vector<std::span<int16_t>>, Vector<st
 
 void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFormat destinationFormat, size_t planeIndex, std::optional<size_t> frameOffset, std::optional<size_t>, unsigned long copyElementCount)
 {
+    if (!copyElementCount)
+        return;
+
     // WebCodecsAudioDataAlgorithms's computeCopyElementCount ensures that all parameters are correct.
     auto& audioData = downcast<PlatformRawAudioDataCocoa>(*this);
 
