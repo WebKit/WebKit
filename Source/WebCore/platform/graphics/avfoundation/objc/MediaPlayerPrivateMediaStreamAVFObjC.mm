@@ -717,7 +717,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setVisibleForCanvas(bool)
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setViewportVisibility(ViewportVisibility visibility)
 {
-    m_isVisibleInViewPort = visibility == ViewportVisibility::VisibleInViewport;
+    if (visibility == ViewportVisibility::NotVisible || visibility == ViewportVisibility::IntersectingViewport)
+        m_isVisibleInViewPort = false;
+    else
+        m_isVisibleInViewPort = true;
 }
 
 MediaTime MediaPlayerPrivateMediaStreamAVFObjC::duration() const
