@@ -57,12 +57,12 @@ function test()
     });
 
     suite.addTestCase({
-        name: "Animation.Lifecycle.WebAnimation.CustomProperty",
-        description: "Check that Web Inspector is notified whenever web animations with custom properties are created/destroyed.",
+        name: "Animation.Lifecycle.CSSAnimation.CustomProperty",
+        description: "Check that Web Inspector is notified whenever CSS animations with custom properties are created/destroyed.",
         async test() {
             InspectorTest.log("Adding named animation to body.");
             let creationResults = await Promise.all([
-                InspectorTest.AnimationLifecycleUtilities.awaitAnimationCreated(WI.Animation.Type.WebAnimation),
+                InspectorTest.AnimationLifecycleUtilities.awaitAnimationCreated(WI.Animation.Type.CSSAnimation),
                 InspectorTest.evaluateInPage(`addNamedAnimationToBody()`),
             ]);
 

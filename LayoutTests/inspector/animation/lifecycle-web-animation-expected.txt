@@ -37,12 +37,10 @@ keyframes:
 ]
 
 
--- Running test case: Animation.Lifecycle.WebAnimation.CustomProperty
+-- Running test case: Animation.Lifecycle.CSSAnimation.CustomProperty
 Adding named animation to body.
 PASS: Animation created 'customKeyframes'.
-FAIL: Animation type should be Web Animation.
-    Expected: "web-animation"
-    Actual: "css-animation"
+PASS: Animation type should be CSS Animation.
 iterationCount: Infinity
 iterationDuration: 1000
 timingFunction: "linear"

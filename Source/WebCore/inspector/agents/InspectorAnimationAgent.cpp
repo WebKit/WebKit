@@ -60,10 +60,12 @@
 #include "TimingFunction.h"
 #include "WebAnimation.h"
 #include "WebAnimationTypes.h"
+#include "WebAnimationUtilities.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/InspectorEnvironment.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
+#include <ranges>
 #include <wtf/HashMap.h>
 #include <wtf/Seconds.h>
 #include <wtf/Stopwatch.h>
@@ -159,7 +161,8 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
                 keyframePayload->setEasing(timingFunction->cssText());
 
             StringBuilder stylePayloadBuilder;
-            auto& properties = blendingKeyframe.properties();
+            auto properties = copyToVector(blendingKeyframe.properties());
+            std::ranges::sort(properties, codePointCompareLessThan, animatablePropertyAsString);
             size_t count = properties.size();
             for (auto property : properties) {
                 --count;

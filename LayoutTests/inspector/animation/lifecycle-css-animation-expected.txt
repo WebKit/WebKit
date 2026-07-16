@@ -17,17 +17,17 @@ keyframes:
   {
     "offset": 0,
     "easing": "cubic-bezier(0.1, 0.2, 0.3, 0.4)",
-    "style": "opacity: 0;\ncolor: rgb(255, 0, 0);"
+    "style": "color: rgb(255, 0, 0);\nopacity: 0;"
   },
   {
     "offset": 0.5,
     "easing": "cubic-bezier(0.1, 0.2, 0.3, 0.4)",
-    "style": "opacity: 0.5;\ncolor: rgb(0, 128, 0);"
+    "style": "color: rgb(0, 128, 0);\nopacity: 0.5;"
   },
   {
     "offset": 1,
     "easing": "cubic-bezier(0.1, 0.2, 0.3, 0.4)",
-    "style": "opacity: 1;\ncolor: rgb(0, 0, 255);"
+    "style": "color: rgb(0, 0, 255);\nopacity: 1;"
   }
 ]
 
@@ -51,17 +51,17 @@ keyframes:
   {
     "offset": 0,
     "easing": "cubic-bezier(0.1, 0.2, 0.3, 0.4)",
-    "style": "opacity: 0;\ncolor: rgb(255, 0, 0);"
+    "style": "color: rgb(255, 0, 0);\nopacity: 0;"
   },
   {
     "offset": 0.5,
     "easing": "cubic-bezier(0.1, 0.2, 0.3, 0.4)",
-    "style": "opacity: 0.5;\ncolor: rgb(0, 128, 0);"
+    "style": "color: rgb(0, 128, 0);\nopacity: 0.5;"
   },
   {
     "offset": 1,
     "easing": "cubic-bezier(0.1, 0.2, 0.3, 0.4)",
-    "style": "opacity: 1;\ncolor: rgb(0, 0, 255);"
+    "style": "color: rgb(0, 0, 255);\nopacity: 1;"
   }
 ]
 

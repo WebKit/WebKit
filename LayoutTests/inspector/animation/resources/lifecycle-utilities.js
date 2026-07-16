@@ -68,10 +68,10 @@ TestPage.registerInitializer(() => {
                 let traceText = `  ${i}: `;
                 traceText += callFrame.functionName || "(anonymous function)";
 
-                if (callFrame.nativeCode)
-                    traceText += " - [native code]";
-                else if (callFrame.programCode)
+                if (callFrame.programCode)
                     traceText += " - [program code]";
+                else if (callFrame.nativeCode)
+                    traceText += " - [native code]";
                 else if (callFrame.sourceCodeLocation) {
                     let location = callFrame.sourceCodeLocation;
                     traceText += " - " + sanitizeURL(location.sourceCode.url) + `:${location.lineNumber}:${location.columnNumber}`;
