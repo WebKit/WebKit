@@ -451,6 +451,7 @@ String ShorthandSerializer::serialize()
         return serializeCoordinatingListPropertyGroup();
     case CSSPropertyAnimationRange:
     case CSSPropertyTimelineTriggerActivationRange:
+    case CSSPropertyTimelineTriggerActiveRange:
         return serializeAnimationRange();
     default:
         ASSERT_NOT_REACHED();

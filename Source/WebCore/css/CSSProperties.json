@@ -13364,6 +13364,24 @@
                 "url": "https://drafts.csswg.org/animation-triggers-1/#propdef-timeline-trigger-active-range-start"
             }
         },
+        "timeline-trigger-active-range": {
+            "codegen-properties": {
+                "longhands": [
+                    "timeline-trigger-active-range-start",
+                    "timeline-trigger-active-range-end"
+                ],
+                "coordinated-value-list-property": true,
+                "separator": ",",
+                "parser-function": "consumeTimelineTriggerActiveRangeShorthand",
+                "parser-grammar-unused": "[ <'timeline-trigger-active-range-start'> <'timeline-trigger-active-range-end'>? ]#",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars.",
+                "settings-flag": "animationTriggersEnabled"
+            },
+            "specification": {
+                "category": "animation-triggers",
+                "url": "https://drafts.csswg.org/animation-triggers-1/#propdef-timeline-trigger-active-range"
+            }
+        },
         "timeline-trigger-active-range-end": {
             "animation-type": "not animatable",
             "initial": "normal",

@@ -48,6 +48,7 @@ namespace Style {
 
 #define FOR_EACH_TIMELINE_TRIGGER_SHORTHAND(macro) \
     macro(TimelineTrigger, TimelineTriggerActivationRange, SingleAnimationRange, activationRange, ActivationRange) \
+    macro(TimelineTrigger, TimelineTriggerActiveRange, SingleAnimationRange, activeRange, ActiveRange) \
 \
 
 #define FOR_EACH_TIMELINE_TRIGGER_PROPERTY(macro) \
@@ -83,6 +84,16 @@ struct TimelineTrigger {
     bool isActivationRangeUnset() const { return isActivationRangeStartUnset() && isActivationRangeEndUnset(); }
     bool isActivationRangeSet() const { return isActivationRangeStartSet() || isActivationRangeEndSet(); }
     bool isActivationRangeFilled() const { return isActivationRangeStartFilled() || isActivationRangeEndFilled(); }
+
+    // Support for the `timeline-trigger-activation-range` shorthand.
+    static SingleAnimationRange initialActiveRange() { return { initialActiveRangeStart(), initialActiveRangeEnd() }; }
+    SingleAnimationRange activeRange() const { return { activeRangeStart(), activeRangeEnd() }; }
+    void setActiveRange(SingleAnimationRange&& activeRange) { setActiveRangeStart(WTF::move(activeRange.start)); setActiveRangeEnd(WTF::move(activeRange.end)); }
+    void fillActiveRange(SingleAnimationRange&& activeRange) { fillActiveRangeStart(WTF::move(activeRange.start)); fillActiveRangeEnd(WTF::move(activeRange.end)); }
+    void clearActiveRange() { clearActiveRangeStart(); clearActiveRangeEnd(); }
+    bool isActiveRangeUnset() const { return isActiveRangeStartUnset() && isActiveRangeEndUnset(); }
+    bool isActiveRangeSet() const { return isActiveRangeStartSet() || isActiveRangeEndSet(); }
+    bool isActiveRangeFilled() const { return isActiveRangeStartFilled() || isActiveRangeEndFilled(); }
 
     bool operator==(const TimelineTrigger&) const = default;
 

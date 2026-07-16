@@ -173,6 +173,7 @@ public:
     static bool consumeContainIntrinsicSizeShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeAnimationRangeShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeTimelineTriggerActivationRangeShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
+    static bool consumeTimelineTriggerActiveRangeShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeScrollTimelineShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeViewTimelineShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeLineClampShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
@@ -2127,6 +2128,11 @@ inline bool PropertyParserCustom::consumeAnimationRangeShorthand(CSSParserTokenR
 }
 
 inline bool PropertyParserCustom::consumeTimelineTriggerActivationRangeShorthand(CSSParserTokenRange& range, PropertyParserState& state, const StylePropertyShorthand& shorthand, PropertyParserResult& result)
+{
+    return consumeAnimationRangeShorthand(range, state, shorthand, result);
+}
+
+inline bool PropertyParserCustom::consumeTimelineTriggerActiveRangeShorthand(CSSParserTokenRange& range, PropertyParserState& state, const StylePropertyShorthand& shorthand, PropertyParserResult& result)
 {
     return consumeAnimationRangeShorthand(range, state, shorthand, result);
 }

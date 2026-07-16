@@ -1,83 +1,83 @@
 
 FAIL e.style['timeline-trigger-active-range'] = "auto" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['timeline-trigger-active-range'] = "auto auto" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "normal" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "normal normal" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['timeline-trigger-active-range'] = "normal" should set the property value
+FAIL e.style['timeline-trigger-active-range'] = "normal normal" should set the property value assert_equals: serialization should be canonical expected "normal normal" but got "normal"
 FAIL e.style['timeline-trigger-active-range'] = "normal auto" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['timeline-trigger-active-range'] = "auto normal" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "cover 0% normal" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "cover 50% normal" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "normal cover 100%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "normal cover 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "cover" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "contain" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "entry" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "entry-crossing" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "exit" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "exit-crossing" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "entry, exit" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "entry 0% entry 100%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "entry-crossing 0% entry-crossing 100%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "exit 0% exit 100%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "exit-crossing 0% exit-crossing 100%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "cover 0% cover 100%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "contain 0% contain 100%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "entry calc(10% - 10%) entry calc(50% + 50%)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "cover 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "contain 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "entry 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "entry-crossing 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "exit 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "exit-crossing 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "entry 50px exit 100px" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "exit calc(10% + 50px)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "entry 50% exit 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "cover 50% entry 50%, contain 50% exit 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "50% exit 50%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "normal 100px" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "100px" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "10%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "100px normal" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['timeline-trigger-active-range'] = "100% normal" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['timeline-trigger-active-range'] = "cover 0% normal" should set the property value assert_equals: serialization should be canonical expected "cover normal" but got "cover"
+FAIL e.style['timeline-trigger-active-range'] = "cover 50% normal" should set the property value assert_equals: serialization should be canonical expected "cover 50% normal" but got "cover 50%"
+PASS e.style['timeline-trigger-active-range'] = "normal cover 100%" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "normal cover 50%" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "cover" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "contain" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "entry" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "entry-crossing" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "exit" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "exit-crossing" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "entry, exit" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "entry 0% entry 100%" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "entry-crossing 0% entry-crossing 100%" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "exit 0% exit 100%" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "exit-crossing 0% exit-crossing 100%" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "cover 0% cover 100%" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "contain 0% contain 100%" should set the property value
+FAIL e.style['timeline-trigger-active-range'] = "entry calc(10% - 10%) entry calc(50% + 50%)" should set the property value assert_equals: serialization should be canonical expected "entry" but got "entry calc(0%) entry calc(100%)"
+PASS e.style['timeline-trigger-active-range'] = "cover 50%" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "contain 50%" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "entry 50%" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "entry-crossing 50%" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "exit 50%" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "exit-crossing 50%" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "entry 50px exit 100px" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "exit calc(10% + 50px)" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "entry 50% exit 50%" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "cover 50% entry 50%, contain 50% exit 50%" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "50% exit 50%" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "normal 100px" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "100px" should set the property value
+PASS e.style['timeline-trigger-active-range'] = "10%" should set the property value
+FAIL e.style['timeline-trigger-active-range'] = "100px normal" should set the property value assert_equals: serialization should be canonical expected "100px normal" but got "100px"
+FAIL e.style['timeline-trigger-active-range'] = "100% normal" should set the property value assert_equals: serialization should be canonical expected "100% normal" but got "100%"
 FAIL e.style['timeline-trigger-active-range'] = "100px auto" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['timeline-trigger-active-range'] = "100% auto" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL Property timeline-trigger-active-range value 'auto' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'auto auto' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'normal' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'auto normal' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'normal auto' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'normal normal' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'cover' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'contain' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'entry' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'entry-crossing' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'exit' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'exit-crossing' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'entry, exit' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'entry 0% entry 100%' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'entry-crossing 0% entry-crossing 100%' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'exit 0% exit 100%' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'exit-crossing 0% exit-crossing 100%' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'cover 0% cover 100%' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'contain 0% contain 100%' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'entry calc(10% - 10%) entry calc(50% + 50%)' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'cover 50%' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'contain 50%' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'entry 50%' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'entry-crossing 50%' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'exit 50%' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'exit-crossing 50%' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'entry 50px exit 100px' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'exit calc(10% + 50px)' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'entry 50% exit 50%' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'cover 50% entry 50%, contain 50% exit 50%' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'entry 10em exit 20em' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value '10em exit 20em' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value 'normal 100px' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value '100px' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value '100px normal' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value '10% normal' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
-FAIL Property timeline-trigger-active-range value '10% calc(70% + 10% * sign(100em - 1px))' assert_true: timeline-trigger-active-range doesn't seem to be supported in the computed style expected true got false
+FAIL Property timeline-trigger-active-range value 'auto' assert_true: 'auto' is a supported value for timeline-trigger-active-range. expected true got false
+FAIL Property timeline-trigger-active-range value 'auto auto' assert_true: 'auto auto' is a supported value for timeline-trigger-active-range. expected true got false
+PASS Property timeline-trigger-active-range value 'normal'
+FAIL Property timeline-trigger-active-range value 'auto normal' assert_true: 'auto normal' is a supported value for timeline-trigger-active-range. expected true got false
+FAIL Property timeline-trigger-active-range value 'normal auto' assert_true: 'normal auto' is a supported value for timeline-trigger-active-range. expected true got false
+FAIL Property timeline-trigger-active-range value 'normal normal' assert_equals: expected "normal normal" but got "normal"
+PASS Property timeline-trigger-active-range value 'cover'
+PASS Property timeline-trigger-active-range value 'contain'
+PASS Property timeline-trigger-active-range value 'entry'
+PASS Property timeline-trigger-active-range value 'entry-crossing'
+PASS Property timeline-trigger-active-range value 'exit'
+PASS Property timeline-trigger-active-range value 'exit-crossing'
+PASS Property timeline-trigger-active-range value 'entry, exit'
+PASS Property timeline-trigger-active-range value 'entry 0% entry 100%'
+PASS Property timeline-trigger-active-range value 'entry-crossing 0% entry-crossing 100%'
+PASS Property timeline-trigger-active-range value 'exit 0% exit 100%'
+PASS Property timeline-trigger-active-range value 'exit-crossing 0% exit-crossing 100%'
+PASS Property timeline-trigger-active-range value 'cover 0% cover 100%'
+PASS Property timeline-trigger-active-range value 'contain 0% contain 100%'
+PASS Property timeline-trigger-active-range value 'entry calc(10% - 10%) entry calc(50% + 50%)'
+PASS Property timeline-trigger-active-range value 'cover 50%'
+PASS Property timeline-trigger-active-range value 'contain 50%'
+PASS Property timeline-trigger-active-range value 'entry 50%'
+PASS Property timeline-trigger-active-range value 'entry-crossing 50%'
+PASS Property timeline-trigger-active-range value 'exit 50%'
+PASS Property timeline-trigger-active-range value 'exit-crossing 50%'
+PASS Property timeline-trigger-active-range value 'entry 50px exit 100px'
+PASS Property timeline-trigger-active-range value 'exit calc(10% + 50px)'
+PASS Property timeline-trigger-active-range value 'entry 50% exit 50%'
+PASS Property timeline-trigger-active-range value 'cover 50% entry 50%, contain 50% exit 50%'
+PASS Property timeline-trigger-active-range value 'entry 10em exit 20em'
+PASS Property timeline-trigger-active-range value '10em exit 20em'
+PASS Property timeline-trigger-active-range value 'normal 100px'
+PASS Property timeline-trigger-active-range value '100px'
+FAIL Property timeline-trigger-active-range value '100px normal' assert_equals: expected "100px normal" but got "100px"
+FAIL Property timeline-trigger-active-range value '10% normal' assert_equals: expected "10% normal" but got "10%"
+PASS Property timeline-trigger-active-range value '10% calc(70% + 10% * sign(100em - 1px))'
 PASS e.style['timeline-trigger-active-range'] = "entry 50% 0s" should not set the property value
 PASS e.style['timeline-trigger-active-range'] = "0s entry 50%" should not set the property value
 PASS e.style['timeline-trigger-active-range'] = "1s" should not set the property value
@@ -101,46 +101,46 @@ PASS e.style['timeline-trigger-active-range'] = "thing 100px" should not set the
 PASS e.style['timeline-trigger-active-range'] = "100% thing" should not set the property value
 PASS e.style['timeline-trigger-active-range'] = "normal foo normal 100%" should not set the property value
 PASS e.style['timeline-trigger-active-range'] = "normal normal 100%" should not set the property value
-FAIL e.style['timeline-trigger-active-range'] = "normal" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "auto" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "normal" should set timeline-trigger-active-range-start assert_equals: timeline-trigger-active-range-start should be canonical expected "normal" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "normal" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['timeline-trigger-active-range'] = "normal normal" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "normal" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "normal normal" should set timeline-trigger-active-range-start assert_equals: timeline-trigger-active-range-start should be canonical expected "normal" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "normal normal" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['timeline-trigger-active-range'] = "normal entry 100%" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "entry" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "normal entry 100%" should set timeline-trigger-active-range-start assert_equals: timeline-trigger-active-range-start should be canonical expected "normal" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "normal entry 100%" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['timeline-trigger-active-range'] = "normal entry 10%" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "entry 10%" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "normal entry 10%" should set timeline-trigger-active-range-start assert_equals: timeline-trigger-active-range-start should be canonical expected "normal" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "normal entry 10%" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['timeline-trigger-active-range'] = "cover" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "cover" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "cover" should set timeline-trigger-active-range-start assert_equals: timeline-trigger-active-range-start should be canonical expected "cover" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "cover" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['timeline-trigger-active-range'] = "contain" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "contain" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "contain" should set timeline-trigger-active-range-start assert_equals: timeline-trigger-active-range-start should be canonical expected "contain" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "contain" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['timeline-trigger-active-range'] = "contain 100% contain 0%" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "contain 0%" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "contain 100% contain 0%" should set timeline-trigger-active-range-start assert_equals: timeline-trigger-active-range-start should be canonical expected "contain 100%" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "contain 100% contain 0%" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['timeline-trigger-active-range'] = "entry 10% exit 20%" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "exit 20%" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "entry 10% exit 20%" should set timeline-trigger-active-range-start assert_equals: timeline-trigger-active-range-start should be canonical expected "entry 10%" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "entry 10% exit 20%" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['timeline-trigger-active-range'] = "entry calc(10% + 10px) exit 20px" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "exit 20px" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "entry calc(10% + 10px) exit 20px" should set timeline-trigger-active-range-start assert_equals: timeline-trigger-active-range-start should be canonical expected "entry calc(10% + 10px)" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "entry calc(10% + 10px) exit 20px" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['timeline-trigger-active-range'] = "entry, exit" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "entry, exit" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "entry, exit" should set timeline-trigger-active-range-start assert_equals: timeline-trigger-active-range-start should be canonical expected "entry, exit" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "entry, exit" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['timeline-trigger-active-range'] = "entry 0%, exit" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "entry, exit" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "entry 0%, exit" should set timeline-trigger-active-range-start assert_equals: timeline-trigger-active-range-start should be canonical expected "entry, exit" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "entry 0%, exit" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['timeline-trigger-active-range'] = "exit calc(10% + 50px)" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "exit" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "exit calc(10% + 50px)" should set timeline-trigger-active-range-start assert_equals: timeline-trigger-active-range-start should be canonical expected "exit calc(10% + 50px)" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "exit calc(10% + 50px)" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['timeline-trigger-active-range'] = "100px" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "auto" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "100px" should set timeline-trigger-active-range-start assert_equals: timeline-trigger-active-range-start should be canonical expected "100px" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "100px" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['timeline-trigger-active-range'] = "10%" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "auto" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "10%" should set timeline-trigger-active-range-start assert_equals: timeline-trigger-active-range-start should be canonical expected "10%" but got ""
-FAIL e.style['timeline-trigger-active-range'] = "10%" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['timeline-trigger-active-range'] = "normal" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "auto" but got "normal"
+PASS e.style['timeline-trigger-active-range'] = "normal" should set timeline-trigger-active-range-start
+PASS e.style['timeline-trigger-active-range'] = "normal" should not set unrelated longhands
+PASS e.style['timeline-trigger-active-range'] = "normal normal" should set timeline-trigger-active-range-end
+PASS e.style['timeline-trigger-active-range'] = "normal normal" should set timeline-trigger-active-range-start
+PASS e.style['timeline-trigger-active-range'] = "normal normal" should not set unrelated longhands
+PASS e.style['timeline-trigger-active-range'] = "normal entry 100%" should set timeline-trigger-active-range-end
+PASS e.style['timeline-trigger-active-range'] = "normal entry 100%" should set timeline-trigger-active-range-start
+PASS e.style['timeline-trigger-active-range'] = "normal entry 100%" should not set unrelated longhands
+PASS e.style['timeline-trigger-active-range'] = "normal entry 10%" should set timeline-trigger-active-range-end
+PASS e.style['timeline-trigger-active-range'] = "normal entry 10%" should set timeline-trigger-active-range-start
+PASS e.style['timeline-trigger-active-range'] = "normal entry 10%" should not set unrelated longhands
+PASS e.style['timeline-trigger-active-range'] = "cover" should set timeline-trigger-active-range-end
+PASS e.style['timeline-trigger-active-range'] = "cover" should set timeline-trigger-active-range-start
+PASS e.style['timeline-trigger-active-range'] = "cover" should not set unrelated longhands
+PASS e.style['timeline-trigger-active-range'] = "contain" should set timeline-trigger-active-range-end
+PASS e.style['timeline-trigger-active-range'] = "contain" should set timeline-trigger-active-range-start
+PASS e.style['timeline-trigger-active-range'] = "contain" should not set unrelated longhands
+PASS e.style['timeline-trigger-active-range'] = "contain 100% contain 0%" should set timeline-trigger-active-range-end
+PASS e.style['timeline-trigger-active-range'] = "contain 100% contain 0%" should set timeline-trigger-active-range-start
+PASS e.style['timeline-trigger-active-range'] = "contain 100% contain 0%" should not set unrelated longhands
+PASS e.style['timeline-trigger-active-range'] = "entry 10% exit 20%" should set timeline-trigger-active-range-end
+PASS e.style['timeline-trigger-active-range'] = "entry 10% exit 20%" should set timeline-trigger-active-range-start
+PASS e.style['timeline-trigger-active-range'] = "entry 10% exit 20%" should not set unrelated longhands
+PASS e.style['timeline-trigger-active-range'] = "entry calc(10% + 10px) exit 20px" should set timeline-trigger-active-range-end
+PASS e.style['timeline-trigger-active-range'] = "entry calc(10% + 10px) exit 20px" should set timeline-trigger-active-range-start
+PASS e.style['timeline-trigger-active-range'] = "entry calc(10% + 10px) exit 20px" should not set unrelated longhands
+PASS e.style['timeline-trigger-active-range'] = "entry, exit" should set timeline-trigger-active-range-end
+PASS e.style['timeline-trigger-active-range'] = "entry, exit" should set timeline-trigger-active-range-start
+PASS e.style['timeline-trigger-active-range'] = "entry, exit" should not set unrelated longhands
+PASS e.style['timeline-trigger-active-range'] = "entry 0%, exit" should set timeline-trigger-active-range-end
+PASS e.style['timeline-trigger-active-range'] = "entry 0%, exit" should set timeline-trigger-active-range-start
+PASS e.style['timeline-trigger-active-range'] = "entry 0%, exit" should not set unrelated longhands
+PASS e.style['timeline-trigger-active-range'] = "exit calc(10% + 50px)" should set timeline-trigger-active-range-end
+PASS e.style['timeline-trigger-active-range'] = "exit calc(10% + 50px)" should set timeline-trigger-active-range-start
+PASS e.style['timeline-trigger-active-range'] = "exit calc(10% + 50px)" should not set unrelated longhands
+FAIL e.style['timeline-trigger-active-range'] = "100px" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "auto" but got "normal"
+PASS e.style['timeline-trigger-active-range'] = "100px" should set timeline-trigger-active-range-start
+PASS e.style['timeline-trigger-active-range'] = "100px" should not set unrelated longhands
+FAIL e.style['timeline-trigger-active-range'] = "10%" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "auto" but got "normal"
+PASS e.style['timeline-trigger-active-range'] = "10%" should set timeline-trigger-active-range-start
+PASS e.style['timeline-trigger-active-range'] = "10%" should not set unrelated longhands
 

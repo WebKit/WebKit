@@ -170,6 +170,7 @@ public:
     static RefPtr<CSSValue> extractTextDecorationShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractTextWrapShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractTimelineTriggerActivationRangeShorthand(ExtractorState&);
+    static RefPtr<CSSValue> extractTimelineTriggerActiveRangeShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractTransformOriginShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractTransitionShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractViewTimelineShorthand(ExtractorState&);
@@ -268,6 +269,7 @@ public:
     static void extractTextDecorationShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractTextWrapShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractTimelineTriggerActivationRangeShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractTimelineTriggerActiveRangeShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractTransformOriginShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractTransitionShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractViewTimelineShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
@@ -2729,6 +2731,23 @@ inline void ExtractorCustom::extractTimelineTriggerActivationRangeShorthandSeria
         builder.append(convertAnimationRange(state, value)->cssText(context));
     };
     return extractCoordinatedValueListSerialization<CSSPropertyTimelineTriggerActivationRange>(state, builder, context, state.style.timelineTriggers(), mapper);
+}
+
+inline RefPtr<CSSValue> ExtractorCustom::extractTimelineTriggerActiveRangeShorthand(ExtractorState& state)
+{
+    auto mapper = [](auto& state, const auto& value, const std::optional<TimelineTrigger>&, const auto&) -> Ref<CSSValue> {
+        return convertAnimationRange(state, value);
+    };
+    return extractCoordinatedValueListValue<CSSPropertyTimelineTriggerActiveRange>(state, state.style.timelineTriggers(), mapper);
+}
+
+inline void ExtractorCustom::extractTimelineTriggerActiveRangeShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    auto mapper = [&](auto& state, auto& builder, const auto& context, const auto& value, const std::optional<TimelineTrigger>&, const auto&) {
+        // FIXME: Do this more efficiently without creating and destroying a CSSValue object.
+        builder.append(convertAnimationRange(state, value)->cssText(context));
+    };
+    return extractCoordinatedValueListSerialization<CSSPropertyTimelineTriggerActiveRange>(state, builder, context, state.style.timelineTriggers(), mapper);
 }
 
 inline RefPtr<CSSValue> ExtractorCustom::extractBackgroundShorthand(ExtractorState& state)
