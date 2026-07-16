@@ -35,7 +35,7 @@
 #include <JavaScriptCore/Forward.h>
 #include <sys/types.h>
 #include <wtf/LoggerHelper.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -46,7 +46,7 @@ enum class AutomationRateMode : bool { Fixed, Variable };
 
 class AudioParam final
     : public AudioSummingJunction
-    , public RefCounted<AudioParam>
+    , public ThreadSafeRefCounted<AudioParam, WTF::DestructionThread::Main>
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
