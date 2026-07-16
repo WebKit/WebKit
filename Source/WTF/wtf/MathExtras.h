@@ -360,7 +360,9 @@ constexpr bool hasTwoOrMoreBitsSet(T value)
 template<typename T>
 constexpr T divideRoundedUp(T a, T b)
 {
-    return (a + b - 1) / b;
+    // Mathematically equivalent to (a + b - 1) / b, but does not overflow
+    // when a is close to the maximum representable value of T.
+    return a / b + !!(a % b);
 }
 
 template<typename T>
