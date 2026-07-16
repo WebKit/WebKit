@@ -960,6 +960,19 @@ LayoutUnit RenderFlexibleBox::mainAxisAvailableSpace()
     return logicalHeight == LayoutUnit::max() ? logicalHeight : std::max(0_lu, logicalHeight - (borderAndPaddingLogicalHeight() + scrollbarLogicalHeight()));
 }
 
+void RenderFlexibleBox::updateLogicalHeightForFlexContent(LayoutUnit rowContentLogicalHeight, std::optional<LayoutUnit> minimumHeightForLineIfEmpty, LayoutUnit interLineGapTotal)
+{
+    // Row flow's cross size is the content extent FlexLayout accumulated from the lines; column flow's logical
+    // height is its main size, already set while placing the items, so only row flow seeds it here.
+    if (!flexLayoutUtils().isColumnFlow())
+        setLogicalHeight(rowContentLogicalHeight);
+    if (minimumHeightForLineIfEmpty && borderBoxHeight() < *minimumHeightForLineIfEmpty)
+        setLogicalHeight(*minimumHeightForLineIfEmpty);
+    if (interLineGapTotal)
+        setLogicalHeight(logicalHeight() + interLineGapTotal);
+    updateLogicalHeight();
+}
+
 FlexLayoutItems RenderFlexibleBox::collectFlexItems(RelayoutChildren relayoutChildren)
 {
     // Build this container's flex items in order-modified document order, skipping out-of-flow children (which are not flex items).
