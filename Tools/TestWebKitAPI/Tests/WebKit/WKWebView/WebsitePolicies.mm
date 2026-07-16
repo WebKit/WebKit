@@ -2290,7 +2290,7 @@ TEST(WebpagePreferences, GlobalPrivacyControlNavigatorAPI)
 
     __block BOOL nextNavigationGPC = YES;
     navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
-        [preferences setGlobalPrivacyControlStatus:nextNavigationGPC];
+        [preferences setGlobalPrivacyControlEnabled:nextNavigationGPC];
         decisionHandler(WKNavigationActionPolicyAllow, preferences);
     };
     [webView setNavigationDelegate:navigationDelegate.get()];
@@ -2341,7 +2341,7 @@ TEST(WebpagePreferences, GlobalPrivacyControlRequestHeader)
     webView.get().navigationDelegate = delegate.get();
 
     delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
-        [preferences setGlobalPrivacyControlStatus:YES];
+        [preferences setGlobalPrivacyControlEnabled:YES];
         completionHandler(WKNavigationActionPolicyAllow, preferences);
     };
     [webView loadRequest:server.requestWithLocalhost("/main"_s)];
@@ -2366,7 +2366,7 @@ TEST(WebpagePreferences, GlobalPrivacyControlNavigatorAPIInSubframe)
     RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
     delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         if (action.targetFrame.mainFrame)
-            [preferences setGlobalPrivacyControlStatus:YES];
+            [preferences setGlobalPrivacyControlEnabled:YES];
         completionHandler(WKNavigationActionPolicyAllow, preferences);
     };
     [webView setNavigationDelegate:delegate.get()];
@@ -2413,7 +2413,7 @@ TEST(WebpagePreferences, GlobalPrivacyControlRequestHeaderInSubframe)
 
     delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         if (action.targetFrame.mainFrame)
-            [preferences setGlobalPrivacyControlStatus:YES];
+            [preferences setGlobalPrivacyControlEnabled:YES];
         completionHandler(WKNavigationActionPolicyAllow, preferences);
     };
     [webView loadRequest:server.requestWithLocalhost("/main"_s)];

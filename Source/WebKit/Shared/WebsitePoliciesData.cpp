@@ -202,8 +202,8 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
         frame->settings().setTouchEventDOMAttributesEnabled(*overrideValue);
 #endif
 
-    if (auto overrideValue = websitePolicies.globalPrivacyControlStatus)
-        frame->settings().setGlobalPrivacyControlStatus(*overrideValue);
+    if (auto overrideValue = websitePolicies.globalPrivacyControlEnabled)
+        frame->settings().setGlobalPrivacyControlEnabled(*overrideValue);
 
     documentLoader.applyPoliciesToSettings();
 }

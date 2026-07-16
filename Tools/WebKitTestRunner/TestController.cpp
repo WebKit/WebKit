@@ -1460,8 +1460,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
         WKPreferencesSetMinimumFontSize(preferences, 0);
 
         WKPreferencesSetBoolValueForKeyForTesting(preferences, options.allowTestOnlyIPC(), toWK("AllowTestOnlyIPC").get());
-        WKPreferencesSetBoolValueForKeyForTesting(preferences, false, toWK("GlobalPrivacyControlStatus").get());
-        WKPreferencesSetBoolValueForKeyForTesting(preferences, false, toWK("GlobalPrivacyControlFeatureEnabled").get());
+        WKPreferencesSetBoolValueForKeyForTesting(preferences, false, toWK("GlobalPrivacyControlEnabled").get());
         WKPreferencesSetBoolValueForKeyForTesting(preferences, options.allowTestOnlyMockContentFilterIPC(), toWK("AllowTestOnlyMockContentFilterIPC").get());
         WKPreferencesSetBoolValueForKeyForTesting(preferences, options.allowTestOnlyOriginAccessAllowListIPC(), toWK("AllowTestOnlyOriginAccessAllowListIPC").get());
 

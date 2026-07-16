@@ -465,7 +465,7 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     if (networkSession->shouldSendPrivateTokenIPCForTesting())
         connectionToWebProcess().networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::DidAllowPrivateTokenUsageByThirdPartyForTesting(sessionID(), request.isPrivateTokenUsageByThirdPartyAllowed(), request.url()), 0);
 
-    if (m_parameters.globalPrivacyControlStatus) {
+    if (m_parameters.globalPrivacyControlEnabled) {
         auto requestOrigin = SecurityOrigin::create(request.url());
         if (requestOrigin->isPotentiallyTrustworthy())
             request.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::SecGPC, "1"_s);
