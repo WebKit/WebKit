@@ -908,8 +908,16 @@ function(_webkit_generate_platform_swift_args _target _resp_path _ordering_dep)
     if (NOT EXISTS "${_empty_input}")
         file(WRITE "${_empty_input}" "")
     endif ()
-    set(_clang_cmd
-        ${CMAKE_CXX_COMPILER}
+    set(_clang_cmd ${CMAKE_CXX_COMPILER})
+    if (COMPILER_IS_CLANG_CL)
+        # clang-cl defaults to the MSVC (cl) driver, which silently ignores the
+        # GCC-style preprocess flags below (-std=, -dM, -MF, -include ...) and
+        # then treats their operands as input files, failing with "no such file
+        # or directory: cmakeconfig.h". Flip it to the GCC driver so the flags
+        # are honored. Must precede the flags it governs.
+        list(APPEND _clang_cmd --driver-mode=gcc)
+    endif ()
+    list(APPEND _clang_cmd
         -x c++ -std=c++2b
         -E -P -dM
         -MD -MF "${_depfile}" -MT "${_resp_path}"
