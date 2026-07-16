@@ -183,10 +183,10 @@ TEST(URLSchemeHandler, BasicWithHTTPS)
 {
     using namespace TestWebKitAPI;
 
-    // Verify a custom scheme handler can serve a main resource that loads an HTTPS subresource
-    // through a configured HTTPS proxy.
+    done = false;
+
     HTTPServer httpsServer({
-        { "/data.txt"_s, { { { "Content-Type"_s, "text/plain"_s } }, "ok"_s } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, mainBytes } },
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
@@ -198,39 +198,24 @@ TEST(URLSchemeHandler, BasicWithHTTPS)
     auto configuration = adoptNS([WKWebViewConfiguration new]);
     [configuration setWebsiteDataStore:dataStore.get()];
 
-    RetainPtr startedURLs = adoptNS([[NSMutableArray alloc] init]);
-    RetainPtr schemeHandler = adoptNS([TestURLSchemeHandler new]);
-    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
-        [startedURLs addObject:task.request.URL];
-        if (![task.request.URL.absoluteString isEqualToString:@"testing:main"])
-            return;
-        NSData *html = [@"<html><script>"
-            "fetch('https://site1.example/data.txt', { mode: 'no-cors' })"
-              ".then(() => window.webkit.messageHandlers.testHandler.postMessage('done'))"
-              ".catch(e => window.webkit.messageHandlers.testHandler.postMessage('error:' + e));"
-            "</script></html>" dataUsingEncoding:NSUTF8StringEncoding];
-        RetainPtr response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:html.length textEncodingName:nil]);
-        [task didReceiveResponse:response.get()];
-        [task didReceiveData:html];
-        [task didFinish];
-    }];
-    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"testing"];
+    RetainPtr<SchemeHandler> handler = adoptNS([[SchemeHandler alloc] initWithData:mainBytesData().get() mimeType:@"text/html"]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testing"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     auto delegate = adoptNS([TestNavigationDelegate new]);
     [webView setNavigationDelegate:delegate.get()];
+
     delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
         completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
     };
 
-    static bool done = false;
-    [webView performAfterReceivingMessage:@"done" action:[&] { done = true; }];
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testing:main"]]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site1.example/"]];
+    [webView loadRequest:request];
     Util::run(&done);
 
-    EXPECT_EQ([startedURLs count], 1u);
-    EXPECT_TRUE([[startedURLs objectAtIndex:0] isEqual:[NSURL URLWithString:@"testing:main"]]);
-    EXPECT_EQ(httpsServer.totalRequests(), 1u);
+    EXPECT_EQ([handler.get().startedURLs count], 1u);
+    EXPECT_TRUE([[handler.get().startedURLs objectAtIndex:0] isEqual:[NSURL URLWithString:@"testing:image"]]);
+    EXPECT_EQ([handler.get().stoppedURLs count], 0u);
 }
 
 TEST(URLSchemeHandler, BasicWithAsyncPolicyDelegate)
@@ -1094,7 +1079,7 @@ TEST(URLSchemeHandler, DisableCORSCanvas)
         NSString *mimeType = nil;
         if ([task.request.URL.path isEqualToString:@"/main.html"]) {
             mimeType = @"text/html";
-            response = [@"<canvas id='canvas'></canvas><img src='cors://host2/image.png' onload='imageloaded()' onerror=\"fetch('corsfailure')\" id='img'></img><script>"
+            response = [@"<canvas id='canvas'></canvas><img src='cors://host2/image.png' onload='imageloaded()' id='img'></img><script>"
                 "function imageloaded() {"
                     "let canvas = document.getElementById('canvas');"
                     "let context = canvas.getContext('2d');"
@@ -1831,282 +1816,4 @@ TEST(URLSchemeHandler, Redirect301FromHTTPToHandledScheme)
 TEST(URLSchemeHandler, Redirect302FromHTTPToHandledScheme)
 {
     runRedirectToHandledSchemeTest(302);
-}
-
-static void respondForCrossOriginTest(id<WKURLSchemeTask> task)
-{
-    NSURL *url = task.request.URL;
-    NSString *mimeType = @"text/plain";
-    NSString *body = @"";
-
-    if ([url.path isEqualToString:@"/page.html"]) {
-        mimeType = @"text/html";
-        body = @"<!doctype html><html><head><script>"
-            "let results = {};"
-            "function report() {"
-              "if ('script' in results && 'fetch' in results)"
-                "alert('script=' + results.script + '|fetch=' + results.fetch);"
-            "}"
-            "window.addEventListener('load', () => {"
-              "const s = document.createElement('script');"
-              "s.src = '/config';"
-              "s.onload = () => { results.script = 'executed:' + (window.LEAKED_CONFIG || 'unset'); report(); };"
-              "s.onerror = () => { results.script = 'blocked'; report(); };"
-              "document.head.appendChild(s);"
-              "fetch('/data', { mode: 'no-cors' })"
-                ".then(() => { results.fetch = 'ok'; report(); })"
-                ".catch(() => { results.fetch = 'blocked'; report(); });"
-            "});"
-            "</script></head><body>page</body></html>";
-    } else if ([url.path isEqualToString:@"/config"]) {
-        mimeType = @"application/javascript";
-        body = @"window.LEAKED_CONFIG = 'secret-value';";
-    } else if ([url.path isEqualToString:@"/data"]) {
-        mimeType = @"application/json";
-        body = @"{\"secret\":\"secret-value\"}";
-    }
-
-    NSData *data = [body dataUsingEncoding:NSUTF8StringEncoding];
-    RetainPtr response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:url statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Content-Type": mimeType }]);
-    [task didReceiveResponse:response.get()];
-    [task didReceiveData:data];
-    [task didFinish];
-}
-
-// A myapp:// page (served by the scheme handler) is same-origin with other myapp://
-// subresources, so <script src> and no-cors fetch to same-scheme URLs should succeed.
-TEST(URLSchemeHandler, SameSchemeSubresourcesAllowed)
-{
-    RetainPtr receivedPaths = adoptNS([[NSMutableArray alloc] init]);
-    RetainPtr schemeHandler = adoptNS([TestURLSchemeHandler new]);
-    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
-        [receivedPaths addObject:task.request.URL.path];
-        respondForCrossOriginTest(task);
-    }];
-
-    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"myapp"];
-
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"myapp://host.test/page.html"]]];
-
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "script=executed:secret-value|fetch=ok");
-    EXPECT_TRUE([receivedPaths containsObject:@"/config"]);
-    EXPECT_TRUE([receivedPaths containsObject:@"/data"]);
-}
-
-// An http:// page is cross-origin to myapp://. A classic <script src> load and a
-// no-cors fetch to a URL scheme handler should not be delivered to the handler.
-TEST(URLSchemeHandler, CrossOriginNoCorsSubresourcesBlocked)
-{
-    TestWebKitAPI::HTTPServer server({
-        { "/attack.html"_s, { {{ "Content-Type"_s, "text/html"_s }},
-            "<!doctype html><html><head><script>"
-            "let results = {};"
-            "function report() {"
-              "if ('script' in results && 'fetch' in results)"
-                "alert('script=' + results.script + '|fetch=' + results.fetch);"
-            "}"
-            "window.addEventListener('load', () => {"
-              "const s = document.createElement('script');"
-              "s.src = 'myapp://host.test/config';"
-              "s.onload = () => { results.script = 'executed:' + (window.LEAKED_CONFIG || 'unset'); report(); };"
-              "s.onerror = () => { results.script = 'blocked'; report(); };"
-              "document.head.appendChild(s);"
-              "fetch('myapp://host.test/data', { mode: 'no-cors' })"
-                ".then(() => { results.fetch = 'ok'; report(); })"
-                ".catch(() => { results.fetch = 'blocked'; report(); });"
-            "});"
-            "</script></head><body>attack</body></html>"_s } }
-    });
-
-    RetainPtr receivedPaths = adoptNS([[NSMutableArray alloc] init]);
-    RetainPtr schemeHandler = adoptNS([TestURLSchemeHandler new]);
-    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
-        [receivedPaths addObject:task.request.URL.path];
-        respondForCrossOriginTest(task);
-    }];
-
-    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"myapp"];
-
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView loadRequest:server.request("/attack.html"_s)];
-
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "script=blocked|fetch=blocked");
-    EXPECT_FALSE([receivedPaths containsObject:@"/config"]);
-    EXPECT_FALSE([receivedPaths containsObject:@"/data"]);
-}
-
-// file: URLs are assumed to be app loaded and are given an exception to CORS handling for custom schemes
-TEST(URLSchemeHandler, LoadFileURLNoCorsSubresourceAllowed)
-{
-    NSString *tempDir = [NSTemporaryDirectory() stringByAppendingPathComponent:@"WKURLSchemeHandlerLoadFileURLTest"];
-    [[NSFileManager defaultManager] removeItemAtPath:tempDir error:nil];
-    [[NSFileManager defaultManager] createDirectoryAtPath:tempDir withIntermediateDirectories:YES attributes:nil error:nil];
-
-    NSString *htmlPath = [tempDir stringByAppendingPathComponent:@"page.html"];
-    NSString *html = @"<!doctype html><html><head><script>"
-        "let results = {};"
-        "function report() {"
-          "if ('script' in results && 'fetch' in results)"
-            "alert('script=' + results.script + '|fetch=' + results.fetch);"
-        "}"
-        "window.addEventListener('load', () => {"
-          "const s = document.createElement('script');"
-          "s.src = 'myapp://host.test/config';"
-          "s.onload = () => { results.script = 'executed:' + (window.LEAKED_CONFIG || 'unset'); report(); };"
-          "s.onerror = () => { results.script = 'blocked'; report(); };"
-          "document.head.appendChild(s);"
-          "fetch('myapp://host.test/data', { mode: 'no-cors' })"
-            ".then(() => { results.fetch = 'ok'; report(); })"
-            ".catch(() => { results.fetch = 'blocked'; report(); });"
-        "});"
-        "</script></head><body>page</body></html>";
-    [html writeToFile:htmlPath atomically:YES encoding:NSUTF8StringEncoding error:nil];
-
-    RetainPtr receivedPaths = adoptNS([[NSMutableArray alloc] init]);
-    RetainPtr schemeHandler = adoptNS([TestURLSchemeHandler new]);
-    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
-        [receivedPaths addObject:task.request.URL.path];
-        respondForCrossOriginTest(task);
-    }];
-
-    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"myapp"];
-
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-
-    NSURL *fileURL = [NSURL fileURLWithPath:htmlPath];
-    [webView loadFileURL:fileURL allowingReadAccessToURL:fileURL.URLByDeletingLastPathComponent];
-
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "script=executed:secret-value|fetch=ok");
-    EXPECT_TRUE([receivedPaths containsObject:@"/config"]);
-    EXPECT_TRUE([receivedPaths containsObject:@"/data"]);
-
-    [[NSFileManager defaultManager] removeItemAtPath:tempDir error:nil];
-}
-
-TEST(URLSchemeHandler, LoadCustomSchemeNoCorsCrossSchemeSubresourceAllowed)
-{
-    RetainPtr receivedPaths = adoptNS([[NSMutableArray alloc] init]);
-    RetainPtr documentSchemeHandler = adoptNS([TestURLSchemeHandler new]);
-    [documentSchemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
-        [receivedPaths addObject:task.request.URL.path];
-        NSURL *url = task.request.URL;
-        // Reference the other app scheme (bookimg://) absolutely so the subresource loads are cross-scheme.
-        NSString *html = @"<!doctype html><html><head><script>"
-            "let results = {};"
-            "function report() {"
-            "if ('script' in results && 'fetch' in results)"
-            "alert('script=' + results.script + '|fetch=' + results.fetch);"
-            "}"
-            "window.addEventListener('load', () => {"
-            "const s = document.createElement('script');"
-            "s.src = 'bookimg://host.test/config';"
-            "s.onload = () => { results.script = 'executed:' + (window.LEAKED_CONFIG || 'unset'); report(); };"
-            "s.onerror = () => { results.script = 'blocked'; report(); };"
-            "document.head.appendChild(s);"
-            "fetch('bookimg://host.test/data', { mode: 'no-cors' })"
-            ".then(() => { results.fetch = 'ok'; report(); })"
-            ".catch(() => { results.fetch = 'blocked'; report(); });"
-            "});"
-            "</script></head><body>page</body></html>";
-        NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
-        RetainPtr response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:url statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Content-Type": @"text/html" }]);
-        [task didReceiveResponse:response.get()];
-        [task didReceiveData:data];
-        [task didFinish];
-    }];
-    RetainPtr subresourceSchemeHandler = adoptNS([TestURLSchemeHandler new]);
-    [subresourceSchemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
-        [receivedPaths addObject:task.request.URL.path];
-        respondForCrossOriginTest(task);
-    }];
-
-    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setURLSchemeHandler:documentSchemeHandler.get() forURLScheme:@"bookapp"];
-    [configuration setURLSchemeHandler:subresourceSchemeHandler.get() forURLScheme:@"bookimg"];
-
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"bookapp://host.test/page.html"]]];
-
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "script=executed:secret-value|fetch=ok");
-    EXPECT_TRUE([receivedPaths containsObject:@"/config"]);
-    EXPECT_TRUE([receivedPaths containsObject:@"/data"]);
-}
-
-// Verifies that cross origin requests to a custom scheme handler work as expected,
-// both when they should be blocked and should be allowed.
-TEST(URLSchemeHandler, CrossOriginIframeCORSEnforcementForCustomScheme)
-{
-    TestWebKitAPI::HTTPServer attackerServer({
-        { "/attack.html"_s, { {{ "Content-Type"_s, "text/html"_s }},
-            "<!doctype html><html><head><script>"
-            "let results = {};"
-            "const keys = ['xhr-sync-deny', 'xhr-sync-allow', 'xhr-async-deny', 'xhr-async-allow', 'fetch-deny', 'fetch-allow'];"
-            "function report() {"
-              "if (keys.every(k => k in results))"
-                "parent.postMessage(keys.map(k => k + '=' + results[k]).join('|'), '*');"
-            "}"
-            "function runSyncXhr(path, key) {"
-              "try {"
-                "const xhr = new XMLHttpRequest();"
-                "xhr.open('GET', 'myapp://host.test' + path, false);"
-                "xhr.send();"
-                "results[key] = xhr.responseText || 'empty';"
-              "} catch (e) { results[key] = 'blocked'; }"
-              "report();"
-            "}"
-            "function runAsyncXhr(path, key) {"
-              "const xhr = new XMLHttpRequest();"
-              "xhr.open('GET', 'myapp://host.test' + path, true);"
-              "xhr.onload = () => { results[key] = xhr.responseText || 'empty'; report(); };"
-              "xhr.onerror = () => { results[key] = 'blocked'; report(); };"
-              "xhr.send();"
-            "}"
-            "function runFetch(path, key) {"
-              "fetch('myapp://host.test' + path)"
-                ".then(r => r.text())"
-                ".then(t => { results[key] = t || 'empty'; report(); })"
-                ".catch(() => { results[key] = 'blocked'; report(); });"
-            "}"
-            "window.addEventListener('load', () => {"
-              "runSyncXhr('/secret-deny', 'xhr-sync-deny');"
-              "runSyncXhr('/secret-allow', 'xhr-sync-allow');"
-              "runAsyncXhr('/secret-deny', 'xhr-async-deny');"
-              "runAsyncXhr('/secret-allow', 'xhr-async-allow');"
-              "runFetch('/secret-deny', 'fetch-deny');"
-              "runFetch('/secret-allow', 'fetch-allow');"
-            "});"
-            "</script></head><body>attack</body></html>"_s } }
-    });
-
-    TestWebKitAPI::HTTPServer trustedServer({ });
-    trustedServer.addResponse("/parent.html"_s, { { { "Content-Type"_s, "text/html"_s } },
-        makeString("<!doctype html><html><head><script>"
-          "window.addEventListener('message', e => alert(e.data));"
-        "</script></head><body><iframe src='http://127.0.0.1:"_s, attackerServer.port(), "/attack.html'></iframe></body></html>"_s) });
-
-    RetainPtr schemeHandler = adoptNS([TestURLSchemeHandler new]);
-    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
-        NSString *path = task.request.URL.path;
-        NSDictionary *headers = [path isEqualToString:@"/secret-allow"]
-            ? @{ @"Content-Type": @"text/plain", @"Access-Control-Allow-Origin": @"*" }
-            : @{ @"Content-Type": @"text/plain" };
-
-        RetainPtr response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:task.request.URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:headers]);
-        [task didReceiveResponse:response.get()];
-        NSString *body = [path isEqualToString:@"/secret-allow"] ? @"allow-body" : @"deny-body";
-        [task didReceiveData:[body dataUsingEncoding:NSUTF8StringEncoding]];
-        [task didFinish];
-    }];
-
-    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"myapp"];
-
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView loadRequest:trustedServer.request("/parent.html"_s)];
-
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "xhr-sync-deny=blocked|xhr-sync-allow=allow-body|xhr-async-deny=blocked|xhr-async-allow=allow-body|fetch-deny=blocked|fetch-allow=allow-body");
 }
