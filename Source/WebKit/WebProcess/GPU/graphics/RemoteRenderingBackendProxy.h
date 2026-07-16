@@ -178,7 +178,7 @@ public:
     void didPaintLayers();
 
     RenderingUpdateID renderingUpdateID() const { return m_renderingUpdateID; }
-    unsigned delayedRenderingUpdateCount() const { return m_renderingUpdateID - m_didRenderingUpdateID; }
+    SUPPRESS_NODELETE unsigned NODELETE delayedRenderingUpdateCount() const { return m_renderingUpdateID - m_didRenderingUpdateID; }
 
     RemoteRenderingBackendIdentifier NODELETE renderingBackendIdentifier() const;
 

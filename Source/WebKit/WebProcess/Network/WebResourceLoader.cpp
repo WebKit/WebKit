@@ -453,7 +453,7 @@ void WebResourceLoader::contentFilterDidBlockLoad(WebCore::ContentFilterUnblockH
 }
 #endif // ENABLE(CONTENT_FILTERING)
 
-size_t WebResourceLoader::calculateBytesTransferredOverNetworkDelta(size_t bytesTransferredOverNetwork)
+SUPPRESS_NODELETE size_t WebResourceLoader::calculateBytesTransferredOverNetworkDelta(size_t bytesTransferredOverNetwork)
 {
     CheckedSize delta = bytesTransferredOverNetwork - m_bytesTransferredOverNetwork;
     ASSERT(!delta.hasOverflowed());

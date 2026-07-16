@@ -33,7 +33,7 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBufferRemotePDFDocumentBackend);
 
-unsigned ImageBufferRemotePDFDocumentBackend::calculateBytesPerRow(const IntSize& backendSize)
+SUPPRESS_NODELETE unsigned ImageBufferRemotePDFDocumentBackend::calculateBytesPerRow(const IntSize& backendSize)
 {
     ASSERT(!backendSize.isEmpty());
     return CheckedUint32(backendSize.width()) * 4;

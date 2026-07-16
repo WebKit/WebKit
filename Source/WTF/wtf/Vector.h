@@ -786,13 +786,13 @@ public:
         return mutableSpan().subspan(offset, length);
     }
 
-    [[nodiscard]] T& at(size_t i) LIFETIME_BOUND
+    SUPPRESS_NODELETE [[nodiscard]] T& NODELETE at(size_t i) LIFETIME_BOUND
     {
         if (i >= size()) [[unlikely]]
             OverflowHandler::overflowed();
         return Base::buffer()[i];
     }
-    [[nodiscard]] const T& at(size_t i) const LIFETIME_BOUND
+    SUPPRESS_NODELETE [[nodiscard]] const T& NODELETE at(size_t i) const LIFETIME_BOUND
     {
         if (i >= size()) [[unlikely]]
             OverflowHandler::overflowed();
