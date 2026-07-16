@@ -232,8 +232,6 @@ void BaseAudioCaptureUnit::captureFailed()
         client.captureFailed();
     });
 
-    m_producingCount = 0;
-
     clearClients();
 
     stopRunning();
@@ -314,8 +312,6 @@ OSStatus BaseAudioCaptureUnit::resume()
         reconfigure();
     }
 
-    ASSERT(!m_producingCount);
-
     callOnMainThread([weakThis = WeakPtr { this }] {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || protectedThis->m_suspended)
@@ -333,6 +329,8 @@ OSStatus BaseAudioCaptureUnit::resume()
 OSStatus BaseAudioCaptureUnit::suspend()
 {
     ASSERT(isMainThread());
+    if (m_suspended)
+        return 0;
 
     RELEASE_LOG_INFO(WebRTC, "BaseAudioCaptureUnit::suspend");
 
@@ -343,8 +341,6 @@ OSStatus BaseAudioCaptureUnit::suspend()
         client.setCanResumeAfterInterruption(client.isProducingData());
         client.setMuted(true);
     });
-
-    m_producingCount = 0;
 
     return 0;
 }
