@@ -360,6 +360,7 @@ int childSuccessReportingPipe = -1;
 
 } // anonymous namespace
 
+void addAllocationZeroingTests();
 void addBitfieldVectorTests();
 void addBitfitTests();
 void addBitvectorTests();
@@ -855,6 +856,7 @@ int main(int argc, char** argv)
     ADD_SUITE(ThingyAndUtilityHeapAllocation);
 
     // Run the rest of the tests in alphabetical order.
+    ADD_SUITE(AllocationZeroing);
     ADD_SUITE(BitfieldVector);
     ADD_SUITE(Bitfit);
     ADD_SUITE(Bitvector);

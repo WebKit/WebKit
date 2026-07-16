@@ -188,6 +188,7 @@
 // to track down failures.
 LIBPAS_SUITE(ThingyAndUtilityHeapAllocation_WithVerifier, "ThingyAndUtilityHeapAllocation/install-verifier", 0)
 LIBPAS_SUITE(ThingyAndUtilityHeapAllocation_SansVerifier, "ThingyAndUtilityHeapAllocation/no-verifier", 0)
+SIMPLE_LIBPAS_SUITE(AllocationZeroing)
 SIMPLE_LIBPAS_SUITE(BitfieldVector)
 SIMPLE_LIBPAS_SUITE(Bitfit)
 SIMPLE_LIBPAS_SUITE(Bitvector)
