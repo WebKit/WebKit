@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -822,56 +822,56 @@ std::optional<Line::Run::TrailingWhitespace::Type> Line::Run::trailingWhitespace
 }
 
 Line::Run::Run(const InlineItem& inlineItem, const Style::ComputedStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment)
-    : m_type(toLineRunType(inlineItem))
+    : m_layoutBox(&inlineItem.layoutBox())
+    , m_style(style)
     , m_logicalLeft(logicalLeft)
     , m_logicalWidth(logicalWidth)
-    , m_bidiLevel(inlineItem.bidiLevel())
     , m_textSpacingAdjustment(textSpacingAdjustment)
-    , m_layoutBox(&inlineItem.layoutBox())
-    , m_style(style)
+    , m_type(toLineRunType(inlineItem))
+    , m_bidiLevel(inlineItem.bidiLevel())
 {
 }
 
 Line::Run::Run(const InlineItem& zeroWidhtInlineItem, const Style::ComputedStyle& style, InlineLayoutUnit logicalLeft)
-    : m_type(toLineRunType(zeroWidhtInlineItem))
-    , m_logicalLeft(logicalLeft)
-    , m_bidiLevel(zeroWidhtInlineItem.bidiLevel())
-    , m_layoutBox(&zeroWidhtInlineItem.layoutBox())
+    : m_layoutBox(&zeroWidhtInlineItem.layoutBox())
     , m_style(style)
+    , m_logicalLeft(logicalLeft)
+    , m_type(toLineRunType(zeroWidhtInlineItem))
+    , m_bidiLevel(zeroWidhtInlineItem.bidiLevel())
 {
 }
 
 Line::Run::Run(const InlineItem& lineSpanningInlineBoxItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment)
-    : m_type(Type::LineSpanningInlineBoxStart)
+    : m_layoutBox(&lineSpanningInlineBoxItem.layoutBox())
+    , m_style(lineSpanningInlineBoxItem.style())
     , m_logicalLeft(logicalLeft)
     , m_logicalWidth(logicalWidth)
-    , m_bidiLevel(lineSpanningInlineBoxItem.bidiLevel())
     , m_textSpacingAdjustment(textSpacingAdjustment)
-    , m_layoutBox(&lineSpanningInlineBoxItem.layoutBox())
-    , m_style(lineSpanningInlineBoxItem.style())
+    , m_type(Type::LineSpanningInlineBoxStart)
+    , m_bidiLevel(lineSpanningInlineBoxItem.bidiLevel())
 {
     ASSERT(lineSpanningInlineBoxItem.isInlineBoxStart());
 }
 
 Line::Run::Run(const InlineSoftLineBreakItem& softLineBreakItem, const Style::ComputedStyle& style, InlineLayoutUnit logicalLeft)
-    : m_type(Type::SoftLineBreak)
-    , m_logicalLeft(logicalLeft)
-    , m_bidiLevel(softLineBreakItem.bidiLevel())
-    , m_layoutBox(&softLineBreakItem.layoutBox())
+    : m_layoutBox(&softLineBreakItem.layoutBox())
     , m_style(style)
     , m_textContent({ softLineBreakItem.position(), 1 })
+    , m_logicalLeft(logicalLeft)
+    , m_type(Type::SoftLineBreak)
+    , m_bidiLevel(softLineBreakItem.bidiLevel())
 {
 }
 
 Line::Run::Run(const InlineTextItem& inlineTextItem, const Style::ComputedStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment, std::optional<Line::ShapingBoundary> shapingBoundary)
-    : m_type(inlineTextItem.isWordSeparator() ? Type::WordSeparator : inlineTextItem.isQuirkNonBreakingSpace() ? Type::NonBreakingSpace : Type::Text)
-    , m_shapingBoundary(shapingBoundary.value_or(ShapingBoundary::NotApplicable))
+    : m_layoutBox(&inlineTextItem.layoutBox())
+    , m_style(style)
     , m_logicalLeft(logicalLeft)
     , m_logicalWidth(logicalWidth)
-    , m_bidiLevel(inlineTextItem.bidiLevel())
     , m_textSpacingAdjustment(textSpacingAdjustment)
-    , m_layoutBox(&inlineTextItem.layoutBox())
-    , m_style(style)
+    , m_type(inlineTextItem.isWordSeparator() ? Type::WordSeparator : inlineTextItem.isQuirkNonBreakingSpace() ? Type::NonBreakingSpace : Type::Text)
+    , m_shapingBoundary(shapingBoundary.value_or(ShapingBoundary::NotApplicable))
+    , m_bidiLevel(inlineTextItem.bidiLevel())
 {
     auto length = inlineTextItem.length();
     auto whitespaceType = trailingWhitespaceType(inlineTextItem);

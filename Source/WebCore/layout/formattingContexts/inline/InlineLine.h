@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -210,19 +210,23 @@ public:
         InlineLayoutUnit NODELETE trailingLetterSpacing() const;
         InlineLayoutUnit NODELETE removeTrailingLetterSpacing();
 
+        // Members are ordered by descending alignment to minimize padding.
+        // 8-byte aligned:
         TrailingWhitespace m_trailingWhitespace { };
-        Type m_type { Type::Text };
-        Line::ShapingBoundary m_shapingBoundary { Line::ShapingBoundary::NotApplicable };
-        InlineLayoutUnit m_logicalLeft { 0 };
         Markable<size_t> m_lastNonWhitespaceContentStart { };
-        InlineLayoutUnit m_logicalWidth { 0 };
-        UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
-        InlineLayoutUnit m_textSpacingAdjustment { 0 };
-        GlyphOverflow m_glyphOverflow;
         const Box* m_layoutBox { nullptr };
         const Style::ComputedStyle& m_style;
-        InlineDisplay::Box::Expansion m_expansion;
         Text m_textContent;
+        // 4-byte aligned:
+        InlineLayoutUnit m_logicalLeft { 0 };
+        InlineLayoutUnit m_logicalWidth { 0 };
+        InlineLayoutUnit m_textSpacingAdjustment { 0 };
+        InlineDisplay::Box::Expansion m_expansion;
+        // 1-byte:
+        Type m_type { Type::Text };
+        Line::ShapingBoundary m_shapingBoundary { Line::ShapingBoundary::NotApplicable };
+        UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
+        GlyphOverflow m_glyphOverflow;
     };
     using RunList = Vector<Run, 1>;
     const RunList& runs() const LIFETIME_BOUND { return m_runs; }
