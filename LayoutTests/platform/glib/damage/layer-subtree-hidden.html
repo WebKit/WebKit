@@ -1,0 +1,21 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifyDamagedRegions=false ] -->
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .parent { position: fixed; left: 10px; top: 10px; width: 100px; height: 100px; will-change: transform; }
+      .child { position: absolute; left: 5px; top: 5px; width: 40px; height: 40px; background-color: green; will-change: transform; }
+    </style>
+  </head>
+  <body>
+    <div class="parent"><div class="child"></div></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => { document.getElementsByClassName("parent")[0].style.visibility = "hidden"; },
+          () => { assertRectsEq(latestFrameDamage().rects, [[15, 15, 40, 40]]); },
+      ], 0);
+    </script>
+  </body>
+</html>

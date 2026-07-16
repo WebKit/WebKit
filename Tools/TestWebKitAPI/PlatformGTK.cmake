@@ -46,6 +46,7 @@ list(APPEND TestWebCore_SOURCES
     Tests/WebCore/glib/Damage.cpp
     Tests/WebCore/glib/GraphicsContextGLTextureMapper.cpp
     Tests/WebCore/glib/RunLoopObserver.cpp
+    Tests/WebCore/glib/SkiaCompositingLayerDamage.cpp
 
     Tests/WebCore/gstreamer/GStreamerTest.cpp
     Tests/WebCore/gstreamer/GstElementHarness.cpp

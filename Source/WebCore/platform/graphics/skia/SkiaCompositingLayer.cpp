@@ -87,26 +87,24 @@ void SkiaCompositingLayer::invalidate()
     removeFromParent();
 }
 
+// The setters below damage once the new state is in place, since damageWholeLayer() reads the layer's
+// size to decide what to damage, and what it has to damage is what the layer is about to paint.
 void SkiaCompositingLayer::setSize(const FloatSize& size)
 {
-#if ENABLE(DAMAGE_TRACKING)
-    if (frameDamagePropagationEnabled() && m_size != size) {
-        m_size = size;
-        damageWholeLayer();
-        addPreviousRectToSharedFrameDamage();
+    if (m_size == size)
         return;
-    }
-#endif
+
     m_size = size;
+    damageWholeLayer();
 }
 
 void SkiaCompositingLayer::setOpacity(float opacity)
 {
-#if ENABLE(DAMAGE_TRACKING)
-    if (frameDamagePropagationEnabled() && m_opacity != opacity)
-        damageWholeLayer();
-#endif
+    if (m_opacity == opacity)
+        return;
+
     m_opacity = opacity;
+    damageWholeLayer();
 }
 
 void SkiaCompositingLayer::setBlendMode(BlendMode blendMode)
@@ -145,11 +143,6 @@ void SkiaCompositingLayer::removeFromParent()
     parent->m_children.removeFirstMatching([this](auto& layer) {
         return layer.ptr() == this;
     });
-
-#if ENABLE(DAMAGE_TRACKING)
-    if (parent->frameDamagePropagationEnabled())
-        recursiveAddPreviousRectToSharedFrameDamage(Ref { *this });
-#endif
 }
 
 void SkiaCompositingLayer::setUseBackingStore(bool useBackingStore, CoordinatedAnimatedBackingStoreClient* animatedBackingStoreClient)
@@ -198,16 +191,25 @@ void SkiaCompositingLayer::setContentsBuffer(std::unique_ptr<CoordinatedPlatform
 
 void SkiaCompositingLayer::setContentsSolidColor(const Color& color)
 {
-#if ENABLE(DAMAGE_TRACKING)
-    if (frameDamagePropagationEnabled() && m_contentsSolidColor != color)
-        damageWholeLayer();
-#endif
+    if (m_contentsSolidColor == color)
+        return;
+
     m_contentsSolidColor = color;
+    damageWholeLayer();
 }
 
 void SkiaCompositingLayer::setMask(RefPtr<SkiaCompositingLayer>&& mask)
 {
+    if (m_mask == mask)
+        return;
+
     m_mask = WTF::move(mask);
+
+    // Damaging the layer is not enough, since the mask applies to the whole subtree, and a mask that is
+    // gone has no damage of its own for collectMaskDamage() to find. Both are handled there.
+#if ENABLE(DAMAGE_TRACKING)
+    m_maskChanged = true;
+#endif
 }
 
 void SkiaCompositingLayer::setReplica(RefPtr<SkiaCompositingLayer>&& replica)
@@ -235,6 +237,25 @@ void SkiaCompositingLayer::setBackdropFiltersRect(const FloatRoundedRect& clipRe
     m_backdrop.clipRect = clipRect;
 }
 
+FloatRect SkiaCompositingLayer::paintedLayerRect() const
+{
+    auto rect = effectiveLayerRect();
+    if (paintsContentsRect())
+        rect.unite(m_contentsRect);
+    if (m_backdrop.filter)
+        rect.unite(m_backdrop.clipRect.rect());
+
+    // A filter such as a blur spreads what the layer paints past its bounds, unless something clips it
+    // back in, which mirrors what computeOverlapRegions() does with the same outsets.
+    auto filter = this->filter();
+    if (filter && !filter->outsets.isZero() && !m_masksToBounds && !m_mask && !m_backdrop.filter) {
+        rect.move(-filter->outsets.left(), -filter->outsets.top());
+        rect.expand(filter->outsets.left() + filter->outsets.right(), filter->outsets.top() + filter->outsets.bottom());
+    }
+
+    return rect;
+}
+
 Ref<SkiaCompositingLayer> SkiaCompositingLayer::backdropRoot()
 {
     if (m_isBackdropRoot)
@@ -259,24 +280,73 @@ void SkiaCompositingLayer::addDamage(Damage&& damage)
         m_layerDamage = WTF::move(damage);
 }
 
-void SkiaCompositingLayer::addPreviousRectToSharedFrameDamage()
+void SkiaCompositingLayer::LayerRectTracker::recordVisit(uint64_t id, const FloatRect& rectInFrame)
 {
-    if (m_previousLayerRectInFrameCoordinates.isEmpty())
-        return;
+    auto& entry = m_entries.add(id, Entry { }).iterator->value;
 
-    // In many cases, damaging the whole layer in the "new" state is not enough.
-    // When e.g. changing size, transform, etc. the layer (or its parts) effectively disappears from one place
-    // and re-appears in another. Therefore the damaging of a layer in the "old" state is required as well.
-    ASSERT(m_sharedFrameDamage);
-    m_sharedFrameDamage->add(std::exchange(m_previousLayerRectInFrameCoordinates, { }));
+    // A replicated layer is walked once per replica, so unite the visits rather than let the last one win,
+    // or the place the replica moved away from would never be repainted.
+    if (!wasVisitedThisFrame(entry)) {
+        entry.lastVisitedFrameID = m_currentFrameID;
+        entry.currentRect = rectInFrame;
+    } else
+        entry.currentRect.unite(rectInFrame);
 }
 
-void SkiaCompositingLayer::recursiveAddPreviousRectToSharedFrameDamage(Ref<SkiaCompositingLayer> layer)
+void SkiaCompositingLayer::LayerRectTracker::damageStaleLayerRectsAndAdvanceEntries(Damage& frameDamage)
 {
-    layer->addPreviousRectToSharedFrameDamage();
+    // Runs once the walk has visited every layer, so each entry's currentRect is complete.
+    m_entries.removeIf([&](auto& keyAndEntry) {
+        auto& entry = keyAndEntry.value;
 
-    for (auto& child : layer->m_children)
-        recursiveAddPreviousRectToSharedFrameDamage(child);
+        // Never visited, so the layer is hidden, out of the tree or already destroyed. Repaint where it
+        // was and forget it, and if it ever comes back it gets a fresh entry under the same id.
+        if (!wasVisitedThisFrame(entry)) {
+            frameDamage.add(entry.previousRect);
+            return true;
+        }
+
+        // The layer moved, so repaint both where it was and where it now is.
+        if (entry.previousRect != entry.currentRect) {
+            frameDamage.add(std::exchange(entry.previousRect, entry.currentRect));
+            frameDamage.add(entry.currentRect);
+        }
+
+        return false;
+    });
+}
+
+void SkiaCompositingLayer::trackLayerRect(PaintContext& context, const FloatRect& layerRectInFrame)
+{
+    auto& layerRectTracker = context.collectState->layerRectTracker;
+
+    // Identifiers are never reused, so an entry can outlive its layer without a later layer inheriting it.
+    if (!m_layerRectID)
+        m_layerRectID = layerRectTracker.generateLayerRectID();
+
+    layerRectTracker.recordVisit(m_layerRectID, layerRectInFrame);
+}
+
+void SkiaCompositingLayer::resolveBackdropDamage(const Vector<FloatRect>& backdropRectsInFrame, Damage& frameDamage)
+{
+    // A backdrop is filtered from what lies under it, so anything changing in it changes the whole
+    // backdrop. Walked in paint order, so a damaged backdrop also changes the backdrops above it.
+    for (const auto& backdropRect : backdropRectsInFrame) {
+        const auto backdropRectToTest = enclosingIntRect(backdropRect);
+
+        // Tested against the damage rects rather than their bounds, or a change anywhere on screen would
+        // repaint every backdrop on the page.
+        bool damagedUnderneath = false;
+        for (const auto& rect : frameDamage) {
+            if (rect.intersects(backdropRectToTest)) {
+                damagedUnderneath = true;
+                break;
+            }
+        }
+
+        if (damagedUnderneath)
+            frameDamage.add(backdropRect);
+    }
 }
 #endif
 
@@ -339,12 +409,10 @@ std::optional<SkiaCompositingLayer::AnimationsState> SkiaCompositingLayer::syncA
         state.futureTransform = futureResults.transform;
     }
     state.opacity = applicationResults.opacity;
-#if ENABLE(DAMAGE_TRACKING)
-    if (frameDamagePropagationEnabled() && opacity() != state.opacity.value_or(m_opacity)) {
+    if (opacity() != state.opacity.value_or(m_opacity)) {
         damageWholeLayer();
         // FIXME: add collectFrameDamageDespiteBeingInvisible?
     }
-#endif
     if (applicationResults.filters)
         state.filter = { SkiaCompositingLayerFilters::create(*applicationResults.filters), applicationResults.filters->outsets() };
     state.isRunning = applicationResults.hasRunningAnimations;
@@ -399,10 +467,8 @@ bool SkiaCompositingLayer::computeTransformsAndAnimations(const TransformationMa
         futureCombinedForChildren.translate3d(-origin.x(), -origin.y(), -m_anchorPoint.z());
 
 #if ENABLE(DAMAGE_TRACKING)
-        if (frameDamagePropagationEnabled() && previousTransform != m_transforms.combined) {
+        if (previousTransform != m_transforms.combined)
             damageWholeLayer();
-            addPreviousRectToSharedFrameDamage();
-        }
 #endif
 
         m_visible = m_backfaceVisibility || !m_transforms.combined.isBackFaceVisible();
@@ -437,33 +503,33 @@ bool SkiaCompositingLayer::paint(SkCanvas& canvas, std::optional<Damage>& frameD
     // Both walks below assume the animations have been applied and the transforms computed.
     bool hasRunningAnimations = computeTransformsAndAnimations({ }, { }, MonotonicTime::now());
 
-    std::optional<Damage> collectingDamage;
-    PaintContext context { collectingDamage };
-
 #if ENABLE(DAMAGE_TRACKING)
-    // When a frame damage is passed, collect it first in a walk of its own, which draws nothing, so the
-    // damage is complete before the walk that draws. Each layer's damage stays until
-    // recursiveCleanUpAfterPaint() clears it at the end of the frame. The optional marks the
-    // collecting walk, then resetting it to nullopt switches the context to the walk that draws.
+    // Collect the damage in a walk of its own first, so it is complete before the walk that draws. Each
+    // layer's damage stays until recursiveCleanUpAfterPaint() clears it at the end of the frame.
     if (frameDamage) {
-        collectingDamage = WTF::move(frameDamage);
+        // Only the layer paint() is called on needs the table, so only the root ever allocates one.
+        if (!m_layerRectTracker)
+            m_layerRectTracker = makeUnique<LayerRectTracker>();
+        m_layerRectTracker->advanceToNextFrame();
 
-        const auto canvasSize = expandedIntSize(m_size);
+        PaintContext collectContext;
+        collectContext.collectState.emplace(*frameDamage, *m_layerRectTracker);
+
+        // Sized like the canvas that will be drawn into, so both walks clip against the same device
+        // bounds. The layer's own size is in layer coordinates, which the root transform scales to the
+        // device by the device pixel ratio.
+        const auto canvasSize = canvas.getBaseLayerSize();
         SkNoDrawCanvas noDrawCanvas(canvasSize.width(), canvasSize.height());
-        recursivePaint(noDrawCanvas, context);
+        recursivePaint(noDrawCanvas, collectContext);
 
-        if (frameDamagePropagationEnabled()) {
-            collectingDamage->add(*m_sharedFrameDamage);
-            *m_sharedFrameDamage = Damage(m_size);
-        }
-
-        frameDamage = WTF::move(collectingDamage);
-        collectingDamage.reset();
+        m_layerRectTracker->damageStaleLayerRectsAndAdvanceEntries(*frameDamage);
+        resolveBackdropDamage(collectContext.collectState->backdropRectsInFrame, *frameDamage);
     }
 #else
     UNUSED_PARAM(frameDamage);
 #endif
 
+    PaintContext context;
     recursivePaint(canvas, context);
     context.imageSetBatch.flushIfNeeded(canvas);
 
@@ -493,15 +559,16 @@ void SkiaCompositingLayer::clipRect(SkCanvas& canvas, const FloatRoundedRect& re
 
 void SkiaCompositingLayer::paintSelf(SkCanvas& canvas, PaintContext& context)
 {
-    if (!hasVisiblePaintableContent())
-        return;
-
-    if (!context.shouldDraw()) {
 #if ENABLE(DAMAGE_TRACKING)
+    // Collected before the content check, because a backdrop filter paints without content of its own.
+    if (!context.shouldDraw()) {
         collectFrameDamage(canvas, context);
-#endif
         return;
     }
+#endif
+
+    if (!hasVisiblePaintableContent())
+        return;
 
     paintContents(canvas, context);
 
@@ -637,25 +704,68 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
 #if ENABLE(DAMAGE_TRACKING)
 void SkiaCompositingLayer::collectFrameDamage(SkCanvas& canvas, PaintContext& context)
 {
-    if (!frameDamagePropagationEnabled() || !context.frameDamage)
+    if (!damagePropagationEnabled() || !contributesToFrame())
         return;
 
     const auto transform = combinedTransform(context);
-    auto frameDamage = transform.mapRect(effectiveLayerRect());
+    auto layerRectInFrame = transform.mapRect(paintedLayerRect());
     auto clipBounds = FloatRect(this->clipBounds(canvas, context));
-    if (!clipBounds.isEmpty())
-        frameDamage.intersect(clipBounds);
+    layerRectInFrame.intersect(clipBounds);
 
-    m_previousLayerRectInFrameCoordinates.unite(frameDamage);
+    trackLayerRect(context, layerRectInFrame);
 
-    if (m_layerDamage) {
-        for (const auto& rect : *m_layerDamage) {
-            auto damageRect = transform.mapRect(FloatRect(rect));
-            if (!clipBounds.isEmpty())
-                damageRect.intersect(clipBounds);
-            context.frameDamage->add(damageRect);
-        }
+    if (!m_layerDamage)
+        return;
+
+    // A Damage is sized to the layer, so it cannot express a contents rect that overhangs it. Whole-layer
+    // damage, which is what a layer-state change produces, therefore damages what the layer paints.
+    if (m_layerDamage->mode() == Damage::Mode::Full) {
+        context.collectState->frameDamage.add(layerRectInFrame);
+        return;
     }
+
+    for (const auto& rect : *m_layerDamage) {
+        auto damageRect = transform.mapRect(FloatRect(rect));
+        damageRect.intersect(clipBounds);
+        context.collectState->frameDamage.add(damageRect);
+    }
+}
+
+void SkiaCompositingLayer::collectBackdropDamage(SkCanvas& canvas, PaintContext& context)
+{
+    if (!damagePropagationEnabled())
+        return;
+
+    // The filter samples the whole backdrop, so anything changing underneath changes every pixel of it. Only
+    // the rect is collected here, because what changed underneath is only known once the walk has finished.
+    // The backdrop root's subtree is walked by the walk itself, so it is not walked again.
+    auto backdropRectInFrame = combinedTransform(context).mapRect(m_backdrop.clipRect.rect());
+    backdropRectInFrame.intersect(FloatRect(this->clipBounds(canvas, context)));
+
+    context.collectState->backdropRectsInFrame.append(backdropRectInFrame);
+}
+
+void SkiaCompositingLayer::collectMaskDamage(SkCanvas& canvas, PaintContext& context)
+{
+    if (!damagePropagationEnabled())
+        return;
+
+    // A mask that was taken away has no damage left to find, so the removal is remembered by setMask().
+    if (!m_maskChanged && (!m_mask || !m_mask->hasLayerDamage()))
+        return;
+
+    // The walk never reaches a mask, so its damage is collected here, and a mask that only moves is
+    // damaged by computing the transforms, which does reach it. A changed mask changes what the masked
+    // layer composites to, so that is damaged rather than the mask itself, and the whole subtree with it,
+    // since the mask applies to descendants that need not paint within the layer's bounds. The overlap
+    // rects are already in frame coordinates and clipped, but take the layer's bounds, which the contents
+    // rect may overhang.
+    auto maskedRectInFrame = combinedTransform(context).mapRect(paintedLayerRect());
+    for (const auto& rect : computeConsolidatedOverlapRegionRects(canvas, context, ComputeOverlapRegionMode::Union))
+        maskedRectInFrame.unite(FloatRect(rect));
+    maskedRectInFrame.intersect(FloatRect(this->clipBounds(canvas, context)));
+
+    context.collectState->frameDamage.add(maskedRectInFrame);
 }
 
 #endif
@@ -869,10 +979,12 @@ void SkiaCompositingLayer::paintWithIntermediateSurface(SkCanvas& canvas, PaintC
     if (surfaceRect.isEmpty())
         return;
 
+#if ENABLE(DAMAGE_TRACKING)
     if (!context.shouldDraw()) {
         paintFunction(canvas, context);
         return;
     }
+#endif
 
     auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
     auto imageInfo = SkImageInfo::Make(surfaceRect.width(), surfaceRect.height(), kRGBA_8888_SkColorType, kPremul_SkAlphaType, SkColorSpace::MakeSRGB());
@@ -898,11 +1010,17 @@ void SkiaCompositingLayer::paintWithIntermediateSurface(SkCanvas& canvas, PaintC
 
 void SkiaCompositingLayer::paintBackdrop(SkCanvas& canvas, PaintContext& context)
 {
+#if ENABLE(DAMAGE_TRACKING)
+    if (!context.shouldDraw()) {
+        collectBackdropDamage(canvas, context);
+        return;
+    }
+#endif
+
     context.imageSetBatch.flushIfNeeded(canvas);
 
     SkAutoCanvasRestore autoRestore(&canvas, true);
-    TransformationMatrix clipTransform(context.accumulatedReplicaTransform);
-    clipTransform.multiply(m_transforms.combined);
+    const auto clipTransform = combinedTransform(context);
     clipRect(canvas, m_backdrop.clipRect, clipTransform);
 
     // Paint the backdrop root's subtree into a fresh surface (spec step 1),
@@ -929,17 +1047,27 @@ void SkiaCompositingLayer::paintBackdrop(SkCanvas& canvas, PaintContext& context
 
 void SkiaCompositingLayer::paintWithMaskAndBackdrop(SkCanvas& canvas, PaintContext& context)
 {
-    // An empty clip path fully clips the layer out, so it isn't painted at all.
-    // Skip it in every mode: there's nothing to paint, to collect damage for, or
-    // to annotate with debug indicators.
+    // An empty clip path clips the whole layer away, so skip it in every mode.
     if (m_mask && m_mask->m_clipPath && m_mask->m_clipPath->isEmpty())
         return;
 
+#if ENABLE(DAMAGE_TRACKING)
     // The mask only affects the drawn result, so apply it in the draw pass only. Damage collection
     // and debug indicators walk the tree unmasked.
+    if (!context.shouldDraw()) {
+        collectMaskDamage(canvas, context);
+
+        if (m_backdrop.filter && !context.paintingBackdropForLayer)
+            paintBackdrop(canvas, context);
+
+        paintWithBlendMode(canvas, context);
+        return;
+    }
+#endif
+
     bool shouldClipPath = false;
     sk_sp<SkImage> maskImage;
-    if (context.shouldDraw() && m_mask) {
+    if (m_mask) {
         shouldClipPath = m_mask->m_clipPath.has_value();
         if (!shouldClipPath)
             maskImage = m_mask->maskImage();
@@ -988,15 +1116,15 @@ void SkiaCompositingLayer::paintWithFilterAndMask(SkCanvas& canvas, PaintContext
     auto mode = m_mask ? ComputeOverlapRegionMode::Mask : ComputeOverlapRegionMode::Union;
     auto overlapRects = computeConsolidatedOverlapRegionRects(canvas, context, mode);
 
-    if (!context.shouldDraw()) {
 #if ENABLE(DAMAGE_TRACKING)
+    if (!context.shouldDraw()) {
         // The filter samples outside the layer, so the whole overlap region is damaged, not just what
         // the subtree drew into it. Accumulated per frame, not across frames, or a layer that moves would
         // keep damaging every region it has ever overlapped.
         // FIXME: Unlike the plain damage path, the previous overlap region is not added here, so a moved
         // or resized filtered layer leaves its old overlap undamaged. Once this damage feeds composition,
         // that could leave artifacts for blurred overlapping elements.
-        if (frameDamagePropagationEnabled()) {
+        if (damagePropagationEnabled()) {
             const auto clipBounds = FloatRect(this->clipBounds(canvas, context));
 
             FloatRect overlapRegionDamage;
@@ -1007,12 +1135,13 @@ void SkiaCompositingLayer::paintWithFilterAndMask(SkCanvas& canvas, PaintContext
             }
 
             if (!overlapRegionDamage.isEmpty())
-                context.frameDamage->add(overlapRegionDamage);
+                context.collectState->frameDamage.add(overlapRegionDamage);
         }
-#endif
+
         paintSelfAndChildren(canvas, context);
         return;
     }
+#endif
 
     SkPaint paint;
     paint.setImageFilter(filter->filter);
@@ -1077,7 +1206,12 @@ void SkiaCompositingLayer::recursivePaint(SkCanvas& canvas, PaintContext& contex
     else
         paintWithOpacity(canvas, context);
 
-    if (context.shouldDraw() && m_repaintCount)
+#if ENABLE(DAMAGE_TRACKING)
+    if (!context.shouldDraw())
+        return;
+#endif
+
+    if (m_repaintCount)
         paintRepaintCounter(canvas, context);
 }
 
@@ -1133,6 +1267,7 @@ void SkiaCompositingLayer::paintWithOpacity(SkCanvas& canvas, PaintContext& cont
         return;
     }
 
+#if ENABLE(DAMAGE_TRACKING)
     // The overlap regions below only exist to composite the group correctly, and the collecting walk
     // composites nothing. Splitting there would narrow the clip, shrink the damage each sub-walk collects
     // and walk the subtree once per region rect. One unsplit walk collects a superset of the same rects.
@@ -1140,6 +1275,7 @@ void SkiaCompositingLayer::paintWithOpacity(SkCanvas& canvas, PaintContext& cont
         paintWithReplica(canvas, context);
         return;
     }
+#endif
 
     ComputeOverlapRegionData data {
         .mode = ComputeOverlapRegionMode::Intersection,
@@ -1191,12 +1327,14 @@ void SkiaCompositingLayer::paintWithBlendMode(SkCanvas& canvas, PaintContext& co
         return;
     }
 
+#if ENABLE(DAMAGE_TRACKING)
     // See paintWithOpacity(): the collecting walk composites nothing, so it needs neither the blend mode
     // nor the overlap regions.
     if (!context.shouldDraw()) {
         paintWithFilterAndMask(canvas, context);
         return;
     }
+#endif
 
     auto blendMode = m_blendMode;
     if (!blendMode && m_shouldBlend)
@@ -1285,7 +1423,16 @@ void SkiaCompositingLayer::recursiveCleanUpAfterPaint()
 {
 #if ENABLE(DAMAGE_TRACKING)
     m_layerDamage = std::nullopt;
-    for (Ref child : m_children)
+    m_maskChanged = false;
+
+    // A mask and a replica are not children, and the walk does not reach them, so their damage would
+    // otherwise pile up forever.
+    if (m_mask)
+        m_mask->recursiveCleanUpAfterPaint();
+    if (m_replica)
+        m_replica->recursiveCleanUpAfterPaint();
+
+    for (auto& child : m_children)
         child->recursiveCleanUpAfterPaint();
 #endif
 }

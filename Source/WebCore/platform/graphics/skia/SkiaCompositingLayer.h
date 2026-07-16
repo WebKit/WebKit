@@ -46,6 +46,8 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkPath.h>
 #include <skia/effects/SkImageFilters.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#include <wtf/Function.h>
+#include <wtf/HashMap.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -94,7 +96,7 @@ public:
     void setChildren(Vector<Ref<SkiaCompositingLayer>>&&);
 
 #if ENABLE(DAMAGE_TRACKING)
-    void setSharedFrameDamage(std::shared_ptr<Damage> frameDamage) { m_sharedFrameDamage = WTF::move(frameDamage); }
+    void setDamagePropagationEnabled(bool enabled) { m_damagePropagationEnabled = enabled; }
     void addDamage(Damage&&);
 #endif
 
@@ -126,21 +128,70 @@ private:
     bool isVisible() const;
     bool isLeafOf3DRenderingContext() const { return !m_preserves3D && (m_parent && m_parent->m_preserves3D); }
     bool isReplica() const { return !!m_replicatedLayer; }
+    // Contents are painted into m_contentsRect, which the layer bounds do not have to contain.
     bool paintsContentsRect() const { return m_contentsBuffer || m_imageBackingStore || (m_contentsSolidColor.isValid() && m_contentsSolidColor.isVisible()); }
     bool hasVisualContent() const { return m_backingStore || paintsContentsRect(); }
     bool hasVisiblePaintableContent() const { return !m_size.isEmpty() && m_visible && m_contentsVisible && hasVisualContent(); }
+
+    // A backdrop filter paints the layer without any content of its own, so it contributes damage too.
+    bool contributesToFrame() const { return hasVisiblePaintableContent() || (!m_size.isEmpty() && m_visible && m_contentsVisible && !!m_backdrop.filter); }
+
+    // What the layer actually paints, unlike effectiveLayerRect(), which the contents rect and the
+    // backdrop rect may both overhang, and which a filter such as a blur may paint outside of.
+    FloatRect paintedLayerRect() const;
     Ref<SkiaCompositingLayer> backdropRoot();
 
     bool computeTransformsAndAnimations(const TransformationMatrix& parentTransform, const TransformationMatrix& futureParentTransform, MonotonicTime);
 
-    // The damage-collecting walk gathers damage and draws nothing.
+#if ENABLE(DAMAGE_TRACKING)
+    // Where every layer that has painted last frame and where it is painting now, keyed by an identifier
+    // given out on a layer's first paint. The root holds this rather than the layer itself, because the
+    // place a layer that leaves the tree used to be still needs a repaint, and the layer may already be
+    // destroyed by the time anyone notices. Every layer the collecting walk reaches records a visit, and
+    // whatever is left unvisited when the walk ends no longer paints, so
+    // damageStaleLayerRectsAndAdvanceEntries() repaints and drops it.
+    class LayerRectTracker {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(LayerRectTracker);
+    public:
+        void advanceToNextFrame() { ++m_currentFrameID; }
+        uint64_t generateLayerRectID() { return ++m_lastLayerRectID; }
+
+        void recordVisit(uint64_t layerRectID, const FloatRect& rectInFrame);
+
+        // Adds what has to be repainted to the damage, then advances every surviving entry to the rect it
+        // painted this frame and drops the entries of the layers that no longer paint.
+        void damageStaleLayerRectsAndAdvanceEntries(Damage&);
+
+    private:
+        struct Entry {
+            FloatRect previousRect;
+            FloatRect currentRect; // United over every visit of the walk.
+            uint64_t lastVisitedFrameID { 0 };
+        };
+
+        bool wasVisitedThisFrame(const Entry& entry) const { return entry.lastVisitedFrameID == m_currentFrameID; }
+
+        HashMap<uint64_t, Entry> m_entries;
+        uint64_t m_currentFrameID { 0 };
+        uint64_t m_lastLayerRectID { 0 };
+    };
+#endif
+
+    // The damage-collecting walk gathers damage and draws nothing. The painting walk is the reverse.
     struct PaintContext {
-        explicit PaintContext(std::optional<Damage>& damage)
-            : frameDamage(damage) { }
+#if ENABLE(DAMAGE_TRACKING)
+        // What the collecting walk gathers into. Only that walk engages it, which is how the two walks
+        // tell themselves apart.
+        struct CollectState {
+            Damage& frameDamage;
+            LayerRectTracker& layerRectTracker;
+            Vector<FloatRect> backdropRectsInFrame; // Resolved once the walk has finished.
+        };
 
-        bool shouldDraw() const { return !frameDamage; }
+        std::optional<CollectState> collectState;
 
-        std::optional<Damage>& frameDamage; // Set for the collecting walk only.
+        bool shouldDraw() const { return !collectState; }
+#endif
         float opacity { 1 };
         std::optional<SkBlendMode> blendMode;
         IntSize offset;
@@ -169,6 +220,9 @@ private:
     void paintRepaintCounter(SkCanvas&, PaintContext&);
 #if ENABLE(DAMAGE_TRACKING)
     void collectFrameDamage(SkCanvas&, PaintContext&);
+    void collectBackdropDamage(SkCanvas&, PaintContext&);
+    void collectMaskDamage(SkCanvas&, PaintContext&);
+    static void resolveBackdropDamage(const Vector<FloatRect>& backdropRectsInFrame, Damage&);
 #endif
     void paintSelfAndChildren(SkCanvas&, PaintContext&);
     void paintWithIntermediateSurface(SkCanvas&, PaintContext&, const IntRect&, SkPaint*, PaintFunction&&);
@@ -187,20 +241,23 @@ private:
     enum class IncludesReplica : bool { No, Yes };
     void computeOverlapRegions(ComputeOverlapRegionData&, const TransformationMatrix& accumulatedReplicaTransform, IncludesReplica = IncludesReplica::Yes);
 
-#if ENABLE(DAMAGE_TRACKING)
-    bool frameDamagePropagationEnabled() const { return !!m_sharedFrameDamage; }
     void damageWholeLayer()
     {
-        if (m_size.isEmpty())
+#if ENABLE(DAMAGE_TRACKING)
+        if (!damagePropagationEnabled() || m_size.isEmpty())
             return;
 
         if (!m_layerDamage)
             m_layerDamage = Damage(m_size, Damage::Mode::Full);
         else
             m_layerDamage->makeFull();
+#endif
     }
-    void addPreviousRectToSharedFrameDamage();
-    void recursiveAddPreviousRectToSharedFrameDamage(Ref<SkiaCompositingLayer>);
+
+#if ENABLE(DAMAGE_TRACKING)
+    bool damagePropagationEnabled() const { return m_damagePropagationEnabled; }
+    bool hasLayerDamage() const { return m_layerDamage && !m_layerDamage->isEmpty(); }
+    void trackLayerRect(PaintContext&, const FloatRect& layerRectInFrame);
 #endif
 
     struct AnimationsState {
@@ -283,9 +340,11 @@ private:
         TransformationMatrix futureCombined;
     } m_transforms;
 #if ENABLE(DAMAGE_TRACKING)
-    std::shared_ptr<Damage> m_sharedFrameDamage;
+    bool m_damagePropagationEnabled { false };
     std::optional<Damage> m_layerDamage;
-    FloatRect m_previousLayerRectInFrameCoordinates;
+    std::unique_ptr<LayerRectTracker> m_layerRectTracker;
+    uint64_t m_layerRectID { 0 };
+    bool m_maskChanged { false };
 #endif
 };
 

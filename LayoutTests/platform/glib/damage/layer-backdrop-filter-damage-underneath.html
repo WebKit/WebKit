@@ -1,0 +1,23 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifyDamagedRegions=false ] -->
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .under { position: fixed; left: 10px; top: 10px; width: 50px; height: 50px; background-color: green; }
+      .backdrop { position: fixed; left: 20px; top: 20px; width: 60px; height: 60px; backdrop-filter: blur(5px); }
+    </style>
+  </head>
+  <body>
+    <div class="under"></div>
+    <div class="backdrop"></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+      var under = document.getElementsByClassName("under")[0];
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => { under.style.backgroundColor = "red"; },
+          () => { assertRectsEq(latestFrameDamage().rects, [[10, 10, 50, 10], [10, 20, 70, 40], [20, 60, 60, 20]]); },
+      ], 0);
+    </script>
+  </body>
+</html>
