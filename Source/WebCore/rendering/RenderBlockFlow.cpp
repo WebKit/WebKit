@@ -335,26 +335,41 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
 
 void RenderBlockFlow::adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    if (!style().columnCount().isAuto() || !style().columnWidth().isAuto()) {
-        // The min/max intrinsic widths calculated really tell how much space elements need when
-        // laid out inside the columns. In order to eventually end up with the desired column width,
-        // we need to convert them to values pertaining to the multicol container.
-        int columnCount = style().columnCount().tryValue().value_or(1).value;
-        LayoutUnit columnWidth;
-        LayoutUnit colGap = columnGap();
-        LayoutUnit gapExtra = (columnCount - 1) * colGap;
-        if (auto columnWidthLength = style().columnWidth().tryLength()) {
-            columnWidth = Style::evaluate<LayoutUnit>(*columnWidthLength, style().usedZoomForLength());
-            minLogicalWidth = std::min(minLogicalWidth, columnWidth);
-        } else
-            minLogicalWidth = minLogicalWidth * columnCount + gapExtra;
-        // FIXME: If column-count is auto here, we should resolve it to calculate the maximum
-        // intrinsic width, instead of pretending that it's 1. The only way to do that is by
-        // performing a layout pass, but this is not an appropriate time or place for layout. The
-        // good news is that if height is unconstrained and there are no explicit breaks, the
-        // resolved column-count really should be 1.
-        maxLogicalWidth = std::max(maxLogicalWidth, columnWidth) * columnCount + gapExtra;
+    if (style().columnCount().isAuto() && style().columnWidth().isAuto())
+        return;
+
+    // The min/max intrinsic widths calculated really tell how much space elements need when
+    // laid out inside the columns. In order to eventually end up with the desired column width,
+    // we need to convert them to values pertaining to the multicol container.
+
+    // Spanners were excluded from the base widths (see computeBlockIntrinsicLogicalWidths()); a
+    // spanner spans all columns, so it contributes ×1 (no column-count multiplication, no gaps).
+    LayoutUnit spannerMinLogicalWidth;
+    LayoutUnit spannerMaxLogicalWidth;
+    for (auto& child : childrenOfType<RenderBox>(*this)) {
+        if (child.style().columnSpan() != ColumnSpan::All || child.isOutOfFlowPositioned())
+            continue;
+        auto [childMin, childMax] = computeChildIntrinsicLogicalWidths(const_cast<RenderBox&>(child));
+        auto [marginStart, marginEnd] = intrinsicLogicalMarginStartAndEnd(child);
+        spannerMinLogicalWidth = std::max(spannerMinLogicalWidth, childMin + marginStart + marginEnd);
+        spannerMaxLogicalWidth = std::max(spannerMaxLogicalWidth, childMax + marginStart + marginEnd);
     }
+
+    int columnCount = style().columnCount().tryValue().value_or(1).value;
+    LayoutUnit columnWidth;
+    LayoutUnit colGap = columnGap();
+    LayoutUnit gapExtra = (columnCount - 1) * colGap;
+    if (auto columnWidthLength = style().columnWidth().tryLength()) {
+        columnWidth = Style::evaluate<LayoutUnit>(*columnWidthLength, style().usedZoomForLength());
+        minLogicalWidth = std::min(minLogicalWidth, columnWidth);
+    } else
+        minLogicalWidth = minLogicalWidth * columnCount + gapExtra;
+    // FIXME: If column-count is auto here, we should resolve it to calculate the maximum
+    // intrinsic width, instead of pretending that it's 1.
+    maxLogicalWidth = std::max(maxLogicalWidth, columnWidth) * columnCount + gapExtra;
+
+    minLogicalWidth = std::max(minLogicalWidth, spannerMinLogicalWidth);
+    maxLogicalWidth = std::max(maxLogicalWidth, spannerMaxLogicalWidth);
 }
 
 std::pair<LayoutUnit, LayoutUnit> RenderBlockFlow::computeIntrinsicLogicalWidths() const

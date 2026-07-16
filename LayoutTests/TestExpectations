@@ -5421,10 +5421,7 @@ imported/w3c/web-platform-tests/css/css-multicol/fixed-in-nested-multicol-with-t
 imported/w3c/web-platform-tests/css/css-multicol/fixedpos-static-pos-with-viewport-cb-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/fixedpos-static-pos-with-viewport-cb-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/fixedpos-static-pos-with-viewport-cb-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/intrinsic-size-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/intrinsic-size-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/intrinsic-size-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/intrinsic-size-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-000.html [ ImageOnlyFailure ]
@@ -5465,7 +5462,6 @@ imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-002.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-rule-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-under-vertical-rl-scroll.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-width-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-width-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/orthogonal-writing-mode-shrink-to-fit.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/with-custom-layout-on-same-element.https.html

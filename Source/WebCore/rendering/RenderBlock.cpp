@@ -2333,6 +2333,12 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeBlockIntrinsicLogicalWidth
         if (childBox.isOutOfFlowPositioned() || childBox.isExcludedAndPlacedInBorder())
             continue;
 
+        // Column spanners occupy the full multicol width and must contribute ×1, not
+        // ×columnCount. They are folded back in by adjustIntrinsicLogicalWidthsForColumns().
+        if (childBox.style().columnSpan() == ColumnSpan::All
+            && is<RenderBlockFlow>(*this) && downcast<RenderBlockFlow>(*this).multiColumnFlow())
+            continue;
+
         // Either the box itself of its content avoids floats.
         auto childAvoidsFloats = childBox.avoidsFloats() || (childBox.isAnonymousBlock() && childBox.childrenInline());
         if (childBox.isFloating() || childAvoidsFloats) {
