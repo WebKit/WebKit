@@ -273,7 +273,8 @@ Connection::SendMessageResult Connection::sendMessage(std::unique_ptr<MachMessag
 
     default:
         auto messageName = message->messageName();
-        auto errorMessage = makeString("Unhandled error code 0x"_s, hex(kr), ", message '"_s, description(messageName), "' ("_s, messageName, ')');
+        bool isRetry = isRetryDueToLargeSize == IsRetryDueToLargeSize::Yes;
+        auto errorMessage = makeString("Unhandled error code 0x"_s, hex(kr), ", message '"_s, description(messageName), "' ("_s, messageName, "), messageSize="_s, message->size(), ", isRetryDueToLargeSize="_s, isRetry ? "1"_s : "0"_s);
         WebKit::logAndSetCrashLogMessage(errorMessage.utf8().data());
         CRASH_WITH_INFO(kr, std::to_underlying(messageName));
     }
@@ -381,7 +382,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
         if (result != SendMessageResult::MessageTooLarge)
             return result == SendMessageResult::Success;
 
-        RELEASE_LOG_ERROR(IPC, "sendOutgoingMessage: MACH_SEND_TOO_LARGE for message '%" PUBLIC_LOG_STRING "', retrying with SharedMemory", description(encoder->messageName()).characters());
+        RELEASE_LOG_ERROR(IPC, "sendOutgoingMessage: MACH_SEND_TOO_LARGE for message '%" PUBLIC_LOG_STRING "' (encoderBodySize=%zu, portDescriptors=%zu, sentOOL=%d), retrying with SharedMemory", description(encoder->messageName()).characters(), encoder->span().size(), numberOfPortDescriptors, messageBodyIsOOL);
     }
 
     return retrySendMessageWithSharedMemory(WTF::move(message), encoder);
@@ -434,6 +435,8 @@ bool Connection::retrySendMessageWithSharedMemory(std::unique_ptr<MachMessage> f
 
     // Inline body: uint64_t shared memory size.
     memcpySpan(newMessageSpan, asByteSpan(shmSize));
+
+    RELEASE_LOG_ERROR(IPC, "retrySendMessageWithSharedMemory: sending message '%" PUBLIC_LOG_STRING "' via SharedMemory (retryMessageSize=%zu, portDescriptors=%zu, shmSize=%llu)", description(newMessage->messageName()).characters(), safeNewMessageSize, newPortCount, shmSize);
 
     return sendMessage(newMessage, IsRetryDueToLargeSize::Yes) == SendMessageResult::Success;
 }

@@ -14421,6 +14421,36 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.shouldEnableNetworkInstrumentation = inspectorController().isNetworkInstrumentationEnabled();
     parameters.shouldEnablePageInstrumentation = inspectorController().isPageInstrumentationEnabled();
 
+    // Each SharedMemoryHandle serializes as a Mach port descriptor; the shared-memory send fallback cannot
+    // reduce the descriptor count, so log when it grows large (see MACH_SEND_TOO_LARGE CreateWebPage crashes).
+    auto& userContentParameters = parameters.userContentControllerParameters;
+    size_t estimatedPortDescriptors = userContentParameters.buffers.size();
+#if ENABLE(CONTENT_EXTENSIONS)
+    estimatedPortDescriptors += userContentParameters.contentRuleLists.size();
+#endif
+    constexpr size_t creationParametersPortDescriptorLogThreshold = 1000;
+    if (estimatedPortDescriptors >= creationParametersPortDescriptorLogThreshold) {
+        size_t contentRuleListsCount = 0;
+#if ENABLE(CONTENT_EXTENSIONS)
+        contentRuleListsCount = userContentParameters.contentRuleLists.size();
+#endif
+        size_t gpuIOKitExtensionHandlesCount = 0;
+        size_t gpuMachExtensionHandlesCount = 0;
+#if PLATFORM(COCOA)
+        gpuIOKitExtensionHandlesCount = parameters.gpuIOKitExtensionHandles.size();
+        gpuMachExtensionHandlesCount = parameters.gpuMachExtensionHandles.size();
+#endif
+        size_t fontMachExtensionHandlesCount = 0;
+#if HAVE(STATIC_FONT_REGISTRY) && !ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
+        fontMachExtensionHandlesCount = parameters.fontMachExtensionHandles.size();
+#endif
+
+        WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "creationParameters: high estimated port-descriptor count (~%zu): buffers=%zu, contentRuleLists=%zu, userScripts=%zu, userStyleSheets=%zu, messageHandlers=%zu, gpuIOKitExtensionHandles=%zu, gpuMachExtensionHandles=%zu, fontMachExtensionHandles=%zu"
+            , estimatedPortDescriptors, userContentParameters.buffers.size(), contentRuleListsCount
+            , userContentParameters.userScripts.size(), userContentParameters.userStyleSheets.size(), userContentParameters.messageHandlers.size()
+            , gpuIOKitExtensionHandlesCount, gpuMachExtensionHandlesCount, fontMachExtensionHandlesCount);
+    }
+
     return parameters;
 }
 
