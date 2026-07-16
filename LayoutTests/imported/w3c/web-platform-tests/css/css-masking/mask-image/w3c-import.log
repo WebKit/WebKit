@@ -10,11 +10,21 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-bad-mask-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-good-and-bad-mask-image-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-good-and-bad-mask-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-good-and-bad-mask-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-mask-image-while-loading.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/bad-mask-image-svg-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/bad-mask-image-svg-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/bad-mask-image-svg-3-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/bad-mask-image-svg-3.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/bad-mask-image-svg.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/bad-mask-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/firefox-bug-1928736-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-1.html
@@ -96,9 +106,21 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-6-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-6-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-6.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-after-backdrop-filter-removal-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-after-backdrop-filter-removal-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-after-backdrop-filter-removal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-backdrop-filter-with-border-radius-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-backdrop-filter-with-border-radius-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-backdrop-filter-with-border-radius.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-clip-exclude-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-clip-exclude-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-clip-exclude.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-cors-001-frame.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-cors-001-image.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-cors-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-cors-001-styles.sub.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-cors-001.sub-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-cors-001.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-data-url-image-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-data-url-image.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-ib-split-2-expected.html
@@ -113,6 +135,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-svg-foreignobject-zoomed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-svg-gradient-zoomed-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-svg-gradient-zoomed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-svg-loading-error-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-svg-loading-error.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-svg-viewport-changed-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-svg-viewport-changed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image-expected.html
@@ -260,3 +284,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-size-percent-percent-stretch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-size-percent-percent.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-size-percent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-under-border-radius-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-under-border-radius.html

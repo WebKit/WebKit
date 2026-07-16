@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-blending-offset-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-blending-offset-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-blending-offset.html
@@ -43,6 +42,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-circle-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-circle-008-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-circle-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-circle-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-circle-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-circle-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-circle-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-circle-closest-corner-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-circle-closest-corner.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-circle-farthest-corner-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-circle-farthest-corner.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-columns-shape-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-columns-shape-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-columns-shape-002-expected.html
@@ -87,6 +94,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-008-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-closest-farthest-corner-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-closest-farthest-corner.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-fillBox-1a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-fillBox-1a.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-fillBox-1b-expected.html
@@ -138,6 +147,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inset-round-percent-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inset-round-percent-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inset-round-percent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inset-round-rendering-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inset-round-rendering-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inset-round-rendering.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-localRef-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-localRef-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-localRef-1.html
@@ -153,6 +165,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-mix-blend-mode-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-mix-blend-mode-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-mix-blend-mode-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-nested-clippath-zoom-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-nested-clippath-zoom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-on-fixed-position-scroll-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-on-fixed-position-scroll-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-on-fixed-position-scroll.html
@@ -201,12 +215,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-polygon-012.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-polygon-013-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-polygon-013.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-polygon-014-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-polygon-014.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rect-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rect-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rect-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rect-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rect-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rect-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rect-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rect-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-reference-box-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-reference-box-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-reference-box-002-expected.html
@@ -217,6 +235,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-reference-box-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-reference-restore-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-reference-restore.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-restyle-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rotated-will-change-transform-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rotated-will-change-transform-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rotated-will-change-transform.html
@@ -242,8 +261,24 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-006-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-011.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-foreignobject-non-zero-xy-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-foreignobject-non-zero-xy.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-hline-vline-keywords-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-hline-vline-keywords.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-winding-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-winding.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-stacking-context-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-stacking-context-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-strokeBox-1a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-strokeBox-1a.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-strokeBox-1b-expected.html
@@ -268,8 +303,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-change-from-empty-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-change-from-empty.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-empty-while-loading.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-empty-while-loading.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-external-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-external.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-svg-foreignobject-zoomed-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-svg-foreignobject-zoomed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-text-clip-no-inherit-after-remove-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-text-clip-no-inherit-after-remove-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-text-clip-no-inherit-after-remove.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-viewBox-1a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-viewBox-1a.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-viewBox-1b-expected.html

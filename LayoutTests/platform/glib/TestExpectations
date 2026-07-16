@@ -1475,7 +1475,8 @@ webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-018.h
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-025.html [ ImageOnlyFailure ]
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-027.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-d.html [ Pass ]
+webkit.org/b/319525 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-d.html [ ImageOnlyFailure ]
+
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-property-013.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-property-013a.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-property-013b.html [ Pass ]

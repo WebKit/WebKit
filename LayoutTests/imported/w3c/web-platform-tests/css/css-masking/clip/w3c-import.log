@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-absolute-positioned-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-absolute-positioned-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-absolute-positioned-002-expected.html

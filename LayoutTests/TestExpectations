@@ -3006,14 +3006,16 @@ imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/hist
 webkit.org/b/104442 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-element-userSpaceOnUse-003.html [ ImageOnlyFailure ]
 webkit.org/b/104442 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-element-userSpaceOnUse-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-reference-box-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-borderBox-1c.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-fillBox-1a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-paddingBox-1c.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-strokeBox-1a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-viewBox-1c.html [ ImageOnlyFailure ]
 webkit.org/b/104442 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-change-from-empty.html [ ImageOnlyFailure ]
 webkit.org/b/229510 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-descendant-text-mutated-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-scaled-video.html [ Skip ]
+
+# <link rel="match" href="about:blank"> doesn't work
+webkit.org/b/319443 imported/w3c/web-platform-tests/css/css-masking/mask-image/bad-mask-image.html [ Skip ]
+webkit.org/b/319443 imported/w3c/web-platform-tests/css/css-masking/mask-image/bad-mask-image-svg.html [ Skip ]
+webkit.org/b/319443 imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-bad-mask-image.html [ Skip ]
+webkit.org/b/319443 imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-mask-image-while-loading.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-fixed-position-rounding-error.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-foreignobject-non-zero-xy.html [ ImageOnlyFailure ]
@@ -3022,7 +3024,6 @@ imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-4.html [ Im
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-5.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-6.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-7.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-8.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-composite-2d.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-svg-gradient-zoomed.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-e.html [ ImageOnlyFailure ]
@@ -3063,8 +3064,41 @@ imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-d.html [ Im
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-to-mask-type.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-origin-3.html [ ImageOnlyFailure ]
 
+imported/w3c/web-platform-tests/css/css-masking/animations/clip-path-interpolation-shape-arc-direction-agnostic-radius.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-polygon-014.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-011.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-empty-while-loading.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-external.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-composite-1c.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-composite-1d.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-composite-2a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-composite-2b.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-1a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-1b.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-6.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-b.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-c.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-luminance-with-mask-size.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-opacity-1a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-opacity-1b.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-opacity-1e.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-size-percent-percent-stretch.html [ ImageOnlyFailure ]
+
 # A support file for a test
 imported/w3c/web-platform-tests/css/css-masking/clip-path/svg-clipPath.svg [ Skip ]
+
+# Require pixel tolerance adjustment then a re-export
+imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-transition-allow-discrete-shape.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-borderBox-1c.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-paddingBox-1c.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-strokeBox-1a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-viewBox-1c.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-cors-001.sub.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-inline-sliced-1.html [ ImageOnlyFailure ]
+
+# Requires scoped view transitions
+webkit.org/b/319445 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-view-transition-mixed-change.html [ Skip ]
 
 # Imported w3c tests require fuzzy image comparison
 webkit.org/b/149828 imported/w3c/web-platform-tests/density-size-correction/density-corrected-image-svg-aspect-ratio.html [ ImageOnlyFailure ]

@@ -3,6 +3,10 @@ PASS Property clip-path value 'circle(calc(10px + 0.5em) at -50% 50%)'
 PASS Property clip-path value 'circle(calc(10px - 0.5em) at 50% -50%)'
 PASS Property clip-path value 'ellipse(at 50% 50%)'
 PASS Property clip-path value 'ellipse(60% closest-side at 50% 50%)'
+FAIL Property clip-path value 'polygon(round 1em, 1px 2px, 3em 4em)' assert_true: 'polygon(round 1em, 1px 2px, 3em 4em)' is a supported value for clip-path. expected true got false
+FAIL Property clip-path value 'polygon(evenodd round 6pt, 1px 2px, 3em 4em, 6pt 6%)' assert_true: 'polygon(evenodd round 6pt, 1px 2px, 3em 4em, 6pt 6%)' is a supported value for clip-path. expected true got false
+FAIL Property clip-path value 'polygon(round 0px, 1px 2px, 3px 4px)' assert_true: 'polygon(round 0px, 1px 2px, 3px 4px)' is a supported value for clip-path. expected true got false
+FAIL Property clip-path value 'polygon(round calc(1em + 2px), 1px 2px, 3px 4px)' assert_true: 'polygon(round calc(1em + 2px), 1px 2px, 3px 4px)' is a supported value for clip-path. expected true got false
 PASS Property clip-path value 'xywh(0 1% 2px 0.5em)'
 PASS Property clip-path value 'xywh(0px 1% 2px 0.5em round 0)'
 PASS Property clip-path value 'xywh(0px 1% 2px 3% round 0 1px)'

@@ -10,16 +10,23 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-empty-container-with-filter-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-empty-container-with-filter.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-invalid-reference-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-invalid-reference.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-negative-scale-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-negative-scale.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-on-thin-stroked-path-default-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-on-thin-stroked-path-default-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-on-thin-stroked-path-default-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-on-thin-stroked-path-default.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-on-thin-stroked-path-userspaceonuse-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-on-thin-stroked-path-userspaceonuse-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-on-thin-stroked-path-userspaceonuse-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-on-thin-stroked-path-userspaceonuse.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-text-001-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-text-001.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-type-001-expected.svg
