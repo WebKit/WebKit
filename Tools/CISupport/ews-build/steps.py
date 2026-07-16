@@ -6930,6 +6930,37 @@ class CleanGitRepo(steps.ShellSequence, ShellMixin):
         return {'step': 'Cleaned up git repository'}
 
 
+class CleanWebKitBuildIfBaseChanged(steps.ShellSequence):
+    # EWS workers reuse a worker's build directory across consecutive builds, keyed by builder
+    # rather than base branch. A build whose base branch differs from the previous build on the
+    # same worker+builder would otherwise reuse a stale, incompatible WebKitBuild and fail to
+    # compile with unrelated errors (e.g. mismatched installed headers). This step deletes
+    # WebKitBuild whenever the base branch changes, so such builds start clean, while preserving
+    # incremental builds when the base branch is unchanged. On single-branch queues (e.g.
+    # main-only) it is a no-op. It never fails the build.
+    name = 'clean-webkitbuild-if-base-changed'
+    description = ['Checking base branch for WebKitBuild reuse']
+    descriptionDone = ['Checked base branch for WebKitBuild reuse']
+    haltOnFailure = False
+    flunkOnFailure = False
+    warnOnFailure = False
+    logEnviron = False
+
+    def __init__(self, **kwargs):
+        super().__init__(timeout=15 * 60, **kwargs)
+
+    def run(self):
+        base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH) or DEFAULT_BRANCH
+        command = ['python3', 'Tools/CISupport/clean-webkitbuild-if-base-changed', '--current-branch', base_ref]
+        self.commands = [util.ShellArg(command=command, logname='stdio')]
+        return super().run()
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {'step': 'Encountered an issue checking the base branch (ignored)'}
+        return {'step': self.descriptionDone[0]}
+
+
 class PushCommitToWebKitRepo(shell.ShellCommand):
     name = 'push-commit-to-webkit-repo'
     descriptionDone = ['Pushed commit to WebKit repository']

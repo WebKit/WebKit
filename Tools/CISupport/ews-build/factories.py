@@ -46,6 +46,7 @@ class Factory(factory.BuildFactory):
         self.addStep(ValidateChange(branches=self.branches, excluded_branches=excluded))
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo())
+        self.addStep(CleanWebKitBuildIfBaseChanged())
         if platform.startswith('mac'):
             self.addStep(PruneCoreSymbolicationdCacheIfTooLarge())
         self.addStep(SetCredentialHelper())
@@ -419,6 +420,7 @@ class MergeQueueFactoryBase(factory.BuildFactory):
         self.addStep(ValidateCommitterAndReviewer())
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo())
+        self.addStep(CleanWebKitBuildIfBaseChanged())
         self.addStep(SetCredentialHelper())
         self.addStep(CheckOutSource())
         self.addStep(FetchBranches())

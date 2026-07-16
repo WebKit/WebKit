@@ -1,0 +1,133 @@
+#!/usr/bin/env python3
+# Copyright (C) 2026 Apple Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# EWS workers reuse a worker's build directory across consecutive builds, keyed by
+# builder rather than base branch. A build whose base branch differs from the
+# previous build on the same worker+builder would otherwise reuse a stale,
+# incompatible WebKitBuild and fail to compile with unrelated errors (e.g.
+# mismatched installed headers). This script deletes WebKitBuild whenever the base
+# branch changes, so such builds start clean, while preserving incremental builds
+# when the base branch is unchanged. On single-branch queues (e.g. main-only) it is
+# a no-op, and it always exits 0 so it can never fail the build.
+
+import optparse
+import os
+import shutil
+import subprocess
+import sys
+
+# The base branch last built is recorded in this marker file. It is stored in the
+# builder base directory (the parent of the `build/` checkout) so that it survives
+# CleanGitRepo's `git clean -f -d` and the re-checkouts that happen inside `build/`.
+MARKER_FILENAME = '.last-base-ref'
+
+
+def marker_path():
+    # This script lives at <basedir>/build/Tools/CISupport/clean-webkitbuild-if-base-changed,
+    # so the builder base directory is three levels above Tools/CISupport.
+    cisupport_directory = os.path.dirname(os.path.abspath(__file__))
+    base_directory = os.path.abspath(os.path.join(cisupport_directory, os.pardir, os.pardir, os.pardir))
+    return os.path.join(base_directory, MARKER_FILENAME)
+
+
+def remove_webkit_build_directory():
+    # Resolve and delete the top-level WebKitBuild directory. `--top-level` is
+    # configuration-independent, so no platform/configuration is needed here.
+    # Returns True once we are in a consistent state (removed, or nothing to
+    # remove), and False if resolving or removing it failed, so the caller can
+    # leave the marker untouched and let the next build retry the cleanup.
+    webkit_build_directory_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, 'Scripts', 'webkit-build-directory')
+    try:
+        process = subprocess.Popen(['perl', webkit_build_directory_script, '--top-level'], stdout=subprocess.PIPE)
+        webkit_build_directory = process.communicate()[0].decode('utf-8', 'replace').strip()
+    except OSError as error:
+        print("Could not resolve WebKitBuild directory ({}); will retry next build".format(error))
+        return False
+
+    if not webkit_build_directory:
+        print("Could not resolve WebKitBuild directory; will retry next build")
+        return False
+
+    if not os.path.isdir(webkit_build_directory):
+        print("No WebKitBuild directory present at {}".format(webkit_build_directory))
+        return True
+
+    try:
+        shutil.rmtree(webkit_build_directory)
+    except OSError as error:
+        print("Failed to remove {} ({}); will retry next build".format(webkit_build_directory, error))
+        return False
+
+    print("Removed {}".format(webkit_build_directory))
+    return True
+
+
+def main():
+    parser = optparse.OptionParser("usage: %prog --current-branch <branch>")
+    parser.add_option("--current-branch", dest="current_branch", help="The base branch the current build is targeting")
+    options, _ = parser.parse_args()
+
+    current_branch = (options.current_branch or '').strip()
+    if not current_branch:
+        # Without a branch to compare against there is nothing to do; do not error,
+        # so this can never fail the build.
+        print("No --current-branch provided; keeping WebKitBuild")
+        return 0
+
+    marker = marker_path()
+
+    # An unreadable-but-present marker is treated as a changed branch (like an empty
+    # previous value) so a stale WebKitBuild is still cleaned; only a genuinely absent
+    # marker counts as a first build.
+    marker_exists = os.path.isfile(marker)
+    previous_branch = ''
+    if marker_exists:
+        try:
+            with open(marker) as marker_file:
+                previous_branch = marker_file.read().strip()
+        except OSError as error:
+            print("Could not read marker {} ({}); assuming the base branch changed".format(marker, error))
+
+    if marker_exists and previous_branch != current_branch:
+        print("Base branch changed from '{}' to '{}'; removing WebKitBuild".format(previous_branch, current_branch))
+        if not remove_webkit_build_directory():
+            # Leave the marker untouched so the next build retries the cleanup.
+            return 0
+    else:
+        print("Base branch unchanged or first build ('{}'); keeping WebKitBuild".format(current_branch))
+
+    # Only advance the marker to the current base branch once we are in a consistent
+    # state (removed, nothing to remove, unchanged, or first build). If removing
+    # WebKitBuild failed above we returned early and left the marker for next time.
+    try:
+        with open(marker, 'w') as marker_file:
+            marker_file.write(current_branch)
+    except OSError as error:
+        print("Warning: could not write marker {} ({})".format(marker, error))
+
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())
