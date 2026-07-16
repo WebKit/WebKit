@@ -345,6 +345,19 @@ TEST(URLExtras, URLExtras_File)
     EXPECT_STREQ("file:///%E2%98%83", [[WTF::URLWithUserTypedString(@"file:///☃", nil) absoluteString] UTF8String]);
 }
 
+TEST(URLExtras, URLExtras_UserInfoColon)
+{
+    // A ":" in the userinfo must not be mistaken for the port separator: the host after
+    // the "@" (not the username before the ":") is what gets IDN-encoded.
+    EXPECT_STREQ("http://user:pass@xn--mnchen-3ya.de/", originalDataAsString(WTF::URLWithUserTypedString(@"http://user:pass@münchen.de/", nil)));
+
+    // The real host's port is still handled, and only the host is encoded.
+    EXPECT_STREQ("http://user:pass@xn--mnchen-3ya.de:8080/", originalDataAsString(WTF::URLWithUserTypedString(@"http://user:pass@münchen.de:8080/", nil)));
+
+    // The '%' defeats the ASCII fast path so this exercises the host-parsing code.
+    EXPECT_STREQ("http://user:pass@[::1]:8080/path%20x", originalDataAsString(WTF::URLWithUserTypedString(@"http://user:pass@[::1]:8080/path%20x", nil)));
+}
+
 TEST(URLExtras, URLExtras_ParsingError)
 {
     // Expect IDN failure.

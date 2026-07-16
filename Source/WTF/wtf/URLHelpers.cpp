@@ -793,10 +793,9 @@ static void applyHostNameFunctionToURLString(const String& string, URLDecodeFunc
         return;
     }
 
-    // Find the host name in a hierarchical URL.
-    // It comes after a "://" sequence, with scheme characters preceding.
-    // If ends with the end of the string or a ":", "/", or a "?".
-    // If there is a "@" character, the host part is just the part after the "@".
+    // Find the host name in a hierarchical URL. It comes after a "://" sequence, with scheme
+    // characters preceding. The authority ends at the end of the string or a "/", "?", or "#".
+    // If there is a "@", the host is the part after the last one, up to a ":" port separator.
     static constexpr auto separator = "://"_s;
     auto separatorIndex = string.find(separator);
     if (separatorIndex == notFound)
@@ -810,15 +809,21 @@ static void applyHostNameFunctionToURLString(const String& string, URLDecodeFunc
     }))
         return;
 
-    // Find terminating character.
-    auto hostNameTerminator = string.find([](char16_t character) {
-        return character == ':' || character == '/' || character == '?' || character == '#';
+    auto authorityTerminator = string.find([](char16_t character) {
+        return character == '/' || character == '?' || character == '#';
     }, authorityStart);
-    unsigned hostNameEnd = hostNameTerminator == notFound ? string.length() : hostNameTerminator;
+    unsigned authorityEnd = authorityTerminator == notFound ? string.length() : authorityTerminator;
 
-    // Find "@" for the start of the host name. There might be more than one and we try to find the last one.
-    auto lastUserInfoTerminator = StringView { string }.left(hostNameEnd).reverseFind('@');
+    auto lastUserInfoTerminator = StringView { string }.left(authorityEnd).reverseFind('@');
     unsigned hostNameStart = lastUserInfoTerminator == notFound ? authorityStart : lastUserInfoTerminator + 1;
+
+    // Skip IPv6 literals, whose brackets contain ":" characters that aren't a port separator.
+    unsigned hostNameEnd = authorityEnd;
+    if (hostNameStart < authorityEnd && string[hostNameStart] != '[') {
+        auto portSeparator = string.find(':', hostNameStart);
+        if (portSeparator != notFound && portSeparator < authorityEnd)
+            hostNameEnd = portSeparator;
+    }
 
     collectRangesThatNeedMapping(string, hostNameStart, hostNameEnd - hostNameStart, array, decodeFunction);
 }
