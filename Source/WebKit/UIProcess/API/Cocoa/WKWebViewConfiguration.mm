@@ -1063,12 +1063,11 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (BOOL)_shouldDeferAsynchronousScriptsUntilAfterDocumentLoad
 {
-    return _pageConfiguration->shouldDeferAsynchronousScriptsUntilAfterDocumentLoad();
+    return YES;
 }
 
 - (void)_setShouldDeferAsynchronousScriptsUntilAfterDocumentLoad:(BOOL)shouldDeferAsynchronousScriptsUntilAfterDocumentLoad
 {
-    _pageConfiguration->setShouldDeferAsynchronousScriptsUntilAfterDocumentLoad(shouldDeferAsynchronousScriptsUntilAfterDocumentLoad);
 }
 
 - (WKWebsiteDataStore *)_websiteDataStoreIfExists

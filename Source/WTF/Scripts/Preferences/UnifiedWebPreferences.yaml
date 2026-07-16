@@ -7780,20 +7780,6 @@ ShouldDecidePolicyBeforeLoadingQuickLookPreview:
     WebCore:
       default: false
 
-ShouldDeferAsynchronousScriptsUntilAfterDocumentLoadOrFirstPaint:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "Defer async scripts until DOMContentLoaded or first-paint"
-  humanReadableDescription: "Defer async scripts until DOMContentLoaded or first-paint"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 ShouldDisplayCaptions:
   type: bool
   status: embedder

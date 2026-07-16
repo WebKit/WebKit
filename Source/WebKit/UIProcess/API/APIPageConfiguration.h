@@ -407,9 +407,6 @@ public:
     bool shouldSendConsoleLogsToUIProcessForTesting() const { return m_data.shouldSendConsoleLogsToUIProcessForTesting; }
     void setShouldSendConsoleLogsToUIProcessForTesting(bool should) { m_data.shouldSendConsoleLogsToUIProcessForTesting = should; }
 
-    bool shouldDeferAsynchronousScriptsUntilAfterDocumentLoad() const { return m_data.shouldDeferAsynchronousScriptsUntilAfterDocumentLoad; }
-    void setShouldDeferAsynchronousScriptsUntilAfterDocumentLoad(bool defer) { m_data.shouldDeferAsynchronousScriptsUntilAfterDocumentLoad = defer; }
-
     bool undoManagerAPIEnabled() const { return m_data.undoManagerAPIEnabled; }
     void setUndoManagerAPIEnabled(bool enabled) { m_data.undoManagerAPIEnabled = enabled; }
 
@@ -653,7 +650,6 @@ private:
         bool allowMediaContentTypesRequiringHardwareSupportAsFallback { true };
         bool colorFilterEnabled { false };
         bool incompleteImageBorderEnabled { false };
-        bool shouldDeferAsynchronousScriptsUntilAfterDocumentLoad { true };
         bool undoManagerAPIEnabled { false };
         bool mainContentUserGestureOverrideEnabled { false };
         bool invisibleAutoplayForbidden { false };

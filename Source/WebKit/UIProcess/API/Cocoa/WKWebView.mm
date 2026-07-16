@@ -792,7 +792,6 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
     preferences->setAllowUniversalAccessFromFileURLs(!![_configuration _allowUniversalAccessFromFileURLs]);
     preferences->setAllowTopNavigationToDataURLs(!![_configuration _allowTopNavigationToDataURLs]);
     preferences->setIncompleteImageBorderEnabled(!![_configuration _incompleteImageBorderEnabled]);
-    preferences->setShouldDeferAsynchronousScriptsUntilAfterDocumentLoadOrFirstPaint(!![_configuration _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad]);
     preferences->setShouldRestrictBaseURLSchemes(shouldRestrictBaseURLSchemes());
 
 #if PLATFORM(MAC)
