@@ -1260,6 +1260,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
             case WI.LayoutTimelineRecord.EventType.InvalidateStyles:
             case WI.LayoutTimelineRecord.EventType.InvalidateLayout:
+            case WI.LayoutTimelineRecord.EventType.ScheduleLayout:
             case WI.LayoutTimelineRecord.EventType.FirstContentfulPaint:
             case WI.LayoutTimelineRecord.EventType.LargestContentfulPaint:
                 // These event types have no time range.
@@ -1583,6 +1584,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
                 return true;
             case WI.LayoutTimelineRecord.EventType.InvalidateStyles:
             case WI.LayoutTimelineRecord.EventType.InvalidateLayout:
+            case WI.LayoutTimelineRecord.EventType.ScheduleLayout:
             case WI.LayoutTimelineRecord.EventType.FirstContentfulPaint:
             case WI.LayoutTimelineRecord.EventType.LargestContentfulPaint:
                 return false;

@@ -48,6 +48,7 @@
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
 #include "InlineWalker.h"
+#include "InspectorInstrumentation.h"
 #include "LayoutElementBox.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LocalFrame.h"
@@ -1333,6 +1334,7 @@ void RenderElement::setNeedsOutOfFlowMovementLayout(const Style::ComputedStyle* 
     ASSERT(!isSetNeedsLayoutForbidden());
     if (needsOutOfFlowMovementLayout())
         return;
+    InspectorInstrumentation::willInvalidateLayout(*this);
     setNeedsOutOfFlowMovementLayoutBit(true);
     scheduleLayout(markContainingBlocksForLayout());
     if (hasLayer()) {
@@ -1377,6 +1379,7 @@ void RenderElement::setNeedsLayoutForOverflowChange()
     }
     if (needsSimplifiedNormalFlowLayout())
         return;
+    InspectorInstrumentation::willInvalidateLayout(*this);
     setNeedsSimplifiedNormalFlowLayoutBit(true);
     scheduleLayout(markContainingBlocksForLayout());
     if (hasLayer())
@@ -1390,6 +1393,7 @@ void RenderElement::setOutOfFlowChildNeedsStaticPositionLayout()
     // It's also assumed that regular, positioned child related bits are already set.
     ASSERT(!isSetNeedsLayoutForbidden());
     ASSERT(outOfFlowChildNeedsLayout() || selfNeedsLayout() || needsSimplifiedNormalFlowLayout() || !parent());
+    InspectorInstrumentation::willInvalidateLayout(*this);
     setOutOfFlowChildNeedsStaticPositionLayoutBit(true);
 }
 

@@ -45,6 +45,8 @@
 #include "LocalFrame.h"
 #include "NodeDocument.h"
 #include "Page.h"
+#include "RenderElement.h"
+#include "RenderObjectDocument.h"
 #include "ResourceLoader.h"
 #include "ResourceLoaderIdentifier.h"
 #include "ScriptExecutionContext.h"
@@ -193,7 +195,8 @@ public:
     static void didEvaluateScript(WorkerOrWorkletGlobalScope&);
     static void willFireTimer(ScriptExecutionContext&, int timerId, bool oneShot);
     static void didFireTimer(ScriptExecutionContext&, int timerId, bool oneShot);
-    static void didInvalidateLayout(LocalFrame&, const RenderElement&);
+    static void willInvalidateLayout(const RenderObject&);
+    static void didScheduleLayout(const RenderElement& layoutRoot);
     static void willLayout(LocalFrame&);
     static void didLayout(LocalFrame&, const RenderElement&, const Vector<FloatQuad>&);
     static void didScroll(Page&);
@@ -424,7 +427,8 @@ private:
     static void didEvaluateScriptImpl(InstrumentingAgents&);
     static void willFireTimerImpl(InstrumentingAgents&, int timerId, bool oneShot);
     static void didFireTimerImpl(InstrumentingAgents&, int timerId, bool oneShot);
-    static void didInvalidateLayoutImpl(InstrumentingAgents&, const RenderElement&);
+    static void willInvalidateLayoutImpl(InstrumentingAgents&, const RenderObject&);
+    static void didScheduleLayoutImpl(InstrumentingAgents&, const RenderElement& layoutRoot);
     static void willLayoutImpl(InstrumentingAgents&);
     static void didLayoutImpl(InstrumentingAgents&, const RenderElement&, const Vector<FloatQuad>&);
     static void didScrollImpl(InstrumentingAgents&);
@@ -1006,10 +1010,16 @@ inline void InspectorInstrumentation::didFireTimer(ScriptExecutionContext& conte
         didFireTimerImpl(*agents, timerId, oneShot);
 }
 
-inline void InspectorInstrumentation::didInvalidateLayout(LocalFrame& frame, const RenderElement& layoutRoot)
+inline void InspectorInstrumentation::willInvalidateLayout(const RenderObject& renderer)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    didInvalidateLayoutImpl(protect(instrumentingAgents(frame)), layoutRoot);
+    willInvalidateLayoutImpl(protect(instrumentingAgents(renderer.frame())), protect(renderer));
+}
+
+inline void InspectorInstrumentation::didScheduleLayout(const RenderElement& layoutRoot)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    didScheduleLayoutImpl(protect(instrumentingAgents(layoutRoot.frame())), protect(layoutRoot));
 }
 
 inline void InspectorInstrumentation::willLayout(LocalFrame& frame)

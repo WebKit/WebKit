@@ -52,6 +52,8 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
             return WI.UIString("Styles Recalculated");
         case WI.LayoutTimelineRecord.EventType.InvalidateLayout:
             return WI.UIString("Layout Invalidated");
+        case WI.LayoutTimelineRecord.EventType.ScheduleLayout:
+            return WI.UIString("Layout Scheduled");
         case WI.LayoutTimelineRecord.EventType.ForcedLayout:
             return WI.UIString("Forced Layout", "Layout phase records that were imperative (forced)");
         case WI.LayoutTimelineRecord.EventType.Layout:
@@ -134,6 +136,7 @@ WI.LayoutTimelineRecord.EventType = {
     InvalidateStyles: "invalidate-styles",
     RecalculateStyles: "recalculate-styles",
     InvalidateLayout: "invalidate-layout",
+    ScheduleLayout: "schedule-layout",
     ForcedLayout: "forced-layout",
     Layout: "layout",
     Paint: "paint",

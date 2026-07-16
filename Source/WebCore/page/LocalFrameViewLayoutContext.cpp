@@ -744,7 +744,7 @@ void LocalFrameViewLayoutContext::scheduleLayout()
 #endif
 
     ASSERT(renderView());
-    InspectorInstrumentation::didInvalidateLayout(protect(frame()), *renderView());
+    InspectorInstrumentation::didScheduleLayout(*renderView());
 
     m_layoutTimer.startOneShot(0_s);
 }
@@ -782,7 +782,7 @@ void LocalFrameViewLayoutContext::scheduleSubtreeLayout(RenderElement& layoutRoo
     if (!isLayoutPending() && isLayoutSchedulingEnabled()) {
         ASSERT(!layoutRoot.container() || is<RenderView>(layoutRoot.container()) || !layoutRoot.container()->needsLayout());
         setSubtreeLayoutRoot(layoutRoot);
-        InspectorInstrumentation::didInvalidateLayout(protect(frame()), layoutRoot);
+        InspectorInstrumentation::didScheduleLayout(layoutRoot);
         m_layoutTimer.startOneShot(0_s);
         return;
     }
@@ -794,7 +794,7 @@ void LocalFrameViewLayoutContext::scheduleSubtreeLayout(RenderElement& layoutRoo
     if (!subtreeLayoutRoot) {
         // We already have a pending (full) layout. Just mark the subtree for layout.
         layoutRoot.markContainingBlocksForLayout(renderView.ptr());
-        InspectorInstrumentation::didInvalidateLayout(protect(frame()), renderView.get());
+        InspectorInstrumentation::didScheduleLayout(renderView);
         return;
     }
 
@@ -810,13 +810,13 @@ void LocalFrameViewLayoutContext::scheduleSubtreeLayout(RenderElement& layoutRoo
         subtreeLayoutRoot->markContainingBlocksForLayout(&layoutRoot);
         setSubtreeLayoutRoot(layoutRoot);
         ASSERT(!layoutRoot.container() || is<RenderView>(layoutRoot.container()) || !layoutRoot.container()->needsLayout());
-        InspectorInstrumentation::didInvalidateLayout(protect(frame()), layoutRoot);
+        InspectorInstrumentation::didScheduleLayout(layoutRoot);
         return;
     }
     // Two disjoint subtrees need layout. Mark both of them and issue a full layout instead.
     convertSubtreeLayoutToFullLayout();
     layoutRoot.markContainingBlocksForLayout(renderView.ptr());
-    InspectorInstrumentation::didInvalidateLayout(protect(frame()), renderView.get());
+    InspectorInstrumentation::didScheduleLayout(renderView);
 }
 
 void LocalFrameViewLayoutContext::layoutTimerFired()

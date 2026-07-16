@@ -154,7 +154,7 @@ public:
     virtual void dirtyLineFromChangedChild() { }
 
     void setChildNeedsLayout(MarkingBehavior = MarkingBehavior::MarkContainingBlockChain);
-    void NODELETE setOutOfFlowChildNeedsStaticPositionLayout();
+    void setOutOfFlowChildNeedsStaticPositionLayout();
     void NODELETE clearChildNeedsLayout();
     void setNeedsOutOfFlowMovementLayout(const Style::ComputedStyle* oldStyle);
     void setNeedsLayoutForStyleDifference(Style::Difference, const Style::ComputedStyle* oldStyle);

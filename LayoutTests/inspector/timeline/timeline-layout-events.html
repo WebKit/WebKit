@@ -8,7 +8,7 @@
 function invalidateLayout() {
     document.getElementById("test").style.width = "200px";
 
-    savePageData({invalidatedLayout: true});
+    savePageData({layoutInvalidated: true});
 }
 
 async function test()
@@ -21,28 +21,30 @@ async function test()
         eventType: WI.LayoutTimelineRecord.EventType.Layout,
         silent: true,
     });
-    InspectorTest.assert(pageRecordingData.invalidatedLayout);
+    InspectorTest.assert(pageRecordingData.layoutInvalidated);
 
     let recording = WI.timelineManager.activeRecording;
     let layoutTimeline = recording.timelines.get(WI.TimelineRecord.Type.Layout);
 
-    let expectedEventTypes = [
-        WI.LayoutTimelineRecord.EventType.InvalidateStyles,
-        WI.LayoutTimelineRecord.EventType.RecalculateStyles,
-        WI.LayoutTimelineRecord.EventType.InvalidateLayout,
-        WI.LayoutTimelineRecord.EventType.Layout,
+    let expectedEvents = [
+        { type: WI.LayoutTimelineRecord.EventType.InvalidateStyles, nodeType: Node.DOCUMENT_NODE },
+        { type: WI.LayoutTimelineRecord.EventType.RecalculateStyles, nodeType: Node.DOCUMENT_NODE },
+        { type: WI.LayoutTimelineRecord.EventType.InvalidateLayout, nodeType: Node.ELEMENT_NODE },
+        { type: WI.LayoutTimelineRecord.EventType.ScheduleLayout, nodeType: Node.DOCUMENT_NODE },
+        { type: WI.LayoutTimelineRecord.EventType.Layout, nodeType: Node.DOCUMENT_NODE },
     ];
+    let expectedEventTypes = expectedEvents.map((e) => e.type);
     let records = layoutTimeline.records.filter((x) => expectedEventTypes.includes(x.eventType));
 
-    InspectorTest.expectEqual(records.length, 4, "Should have 4 Layout record.");
+    InspectorTest.expectEqual(records.length, expectedEventTypes.length, `Should have ${expectedEventTypes.length} Layout records.`);
 
-    for (let i = 0; i < expectedEventTypes.length; ++i) {
+    for (let i = 0; i < expectedEvents.length; ++i) {
         let record = records[i];
-        let expectedEventType = expectedEventTypes[i];
-        InspectorTest.expectEqual(record.eventType, expectedEventType, `Record ${i} should be ${expectedEventType}.`);
+        let expectedEvent = expectedEvents[i];
+        InspectorTest.expectEqual(record.eventType, expectedEvent.type, `Record ${i}'s event type should be ${expectedEvent.type}.`);
         InspectorTest.expectNotNull(record.domNode, `Record ${i} should have a DOM node.`);
-        InspectorTest.expectEqual(record.domNode.nodeType(), Node.DOCUMENT_NODE, `Record ${i} should have a document node.`);
-        InspectorTest.expectEqual(record.domNode.frame, WI.networkManager.mainFrame, `Record ${i} should have the main document node.`);
+        InspectorTest.expectEqual(record.domNode.nodeType(), expectedEvent.nodeType, `Record ${i}'s DOM node's type should be ${expectedEvent.nodeType}.`);
+        InspectorTest.expectEqual(record.domNode.frame, WI.networkManager.mainFrame, `Record ${i}'s DOM node's frame should be the main document frame.`);
     }
 
     InspectorTest.completeTest();

@@ -544,6 +544,8 @@ static Inspector::Protocol::Timeline::EventType NODELETE toProtocol(TimelineReco
         return Inspector::Protocol::Timeline::EventType::RecalculateStyles;
     case TimelineRecordType::InvalidateLayout:
         return Inspector::Protocol::Timeline::EventType::InvalidateLayout;
+    case TimelineRecordType::ScheduleLayout:
+        return Inspector::Protocol::Timeline::EventType::ScheduleLayout;
     case TimelineRecordType::Layout:
         return Inspector::Protocol::Timeline::EventType::Layout;
     case TimelineRecordType::Paint:

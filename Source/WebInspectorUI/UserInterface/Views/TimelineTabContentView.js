@@ -206,6 +206,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
             case WI.LayoutTimelineRecord.EventType.RecalculateStyles:
                 return WI.TimelineRecordTreeElement.StyleRecordIconStyleClass;
             case WI.LayoutTimelineRecord.EventType.InvalidateLayout:
+            case WI.LayoutTimelineRecord.EventType.ScheduleLayout:
             case WI.LayoutTimelineRecord.EventType.ForcedLayout:
             case WI.LayoutTimelineRecord.EventType.Layout:
                 return WI.TimelineRecordTreeElement.LayoutRecordIconStyleClass;

@@ -192,14 +192,30 @@ Inspector::Protocol::ErrorStringOr<void> PageTimelineAgent::setAutoCaptureEnable
     return { };
 }
 
-void PageTimelineAgent::didInvalidateLayout(const RenderElement& layoutRoot)
+void PageTimelineAgent::willInvalidateLayout(const RenderObject& renderer)
+{
+    if (renderer.needsLayout())
+        return;
+
+    if (!is<RenderElement>(renderer))
+        return;
+
+    auto data = JSON::Object::create();
+
+    if (auto nodeId = nodeIdForRenderer(renderer))
+        TimelineRecordFactory::appendNodeId(data.get(), nodeId);
+
+    appendRecord(WTF::move(data), TimelineRecordType::InvalidateLayout, true);
+}
+
+void PageTimelineAgent::didScheduleLayout(const RenderElement& layoutRoot)
 {
     auto data = JSON::Object::create();
 
     if (auto nodeId = nodeIdForRenderer(layoutRoot))
         TimelineRecordFactory::appendNodeId(data.get(), nodeId);
 
-    appendRecord(WTF::move(data), TimelineRecordType::InvalidateLayout, true);
+    appendRecord(WTF::move(data), TimelineRecordType::ScheduleLayout, true);
 }
 
 void PageTimelineAgent::willLayout()

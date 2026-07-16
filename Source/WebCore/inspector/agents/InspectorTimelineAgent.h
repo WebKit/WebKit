@@ -55,6 +55,7 @@ enum class TimelineRecordType {
     ScheduleStyleRecalculation,
     RecalculateStyles,
     InvalidateLayout,
+    ScheduleLayout,
     Layout,
     Paint,
     Composite,

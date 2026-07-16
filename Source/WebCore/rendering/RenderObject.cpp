@@ -43,6 +43,7 @@
 #include "HTMLBRElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
+#include "InspectorInstrumentation.h"
 #include "LayoutBox.h"
 #include "LayoutIntegrationCoverage.h"
 #include "LegacyRenderSVGModelObject.h"
@@ -703,6 +704,11 @@ void RenderObject::invalidateContainerContentLogicalWidths(const RenderBlock* an
         }
         ancestor = WTF::move(container);
     }
+}
+
+void RenderObject::notifyInspectorOfLayoutInvalidate()
+{
+    InspectorInstrumentation::willInvalidateLayout(*this);
 }
 
 void RenderObject::setLayerNeedsFullRepaint()

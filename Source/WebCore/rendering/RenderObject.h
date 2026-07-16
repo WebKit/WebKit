@@ -761,6 +761,8 @@ public:
     void clearNeedsLayout(HadSkippedLayout = HadSkippedLayout::No);
     void invalidateContentLogicalWidths(MarkingBehavior = MarkingBehavior::MarkContainingBlockChain, const RenderBlock* ancestorUpdateBoundary = nullptr);
     void clearContentLogicalWidthsInvalidation() { m_stateBitfields.setFlag(StateFlag::ContentLogicalWidthsInvalidated, { }); }
+
+    void notifyInspectorOfLayoutInvalidate();
     
     inline void setNeedsLayoutAndInvalidateContentLogicalWidths();
 

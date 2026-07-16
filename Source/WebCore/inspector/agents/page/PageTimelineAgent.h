@@ -49,7 +49,8 @@ public:
     Inspector::Protocol::ErrorStringOr<void> setAutoCaptureEnabled(bool) override;
 
     // InspectorInstrumentation
-    void didInvalidateLayout(const RenderElement&);
+    void willInvalidateLayout(const RenderObject&);
+    void didScheduleLayout(const RenderElement&);
     void willLayout();
     void didLayout(const RenderElement&, const Vector<FloatQuad>&);
     void willComposite();
