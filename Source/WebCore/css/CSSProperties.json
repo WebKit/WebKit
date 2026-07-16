@@ -2144,6 +2144,33 @@
                 "url": "https://drafts.csswg.org/css-animations-1/#propdef-animation-timing-function"
             }
         },
+        "animation-trigger": {
+            "animation-type": "not animatable",
+            "initial": "none",
+            "values": [
+                "none",
+                "replay",
+                "pause",
+                "play-backwards",
+                "reset",
+                "play-once",
+                "play-forwards",
+                "play"
+            ],
+            "codegen-properties": {
+                "coordinated-value-list-property": true,
+                "coordinated-value-list-property-name-for-methods": "Trigger",
+                "coordinated-value-list-property-item-type": "Style::SingleAnimationTrigger",
+                "computed-style-storage-container": "opaque",
+                "computed-style-storage-path": ["m_nonInheritedData", "miscData", "animations"],
+                "parser-grammar": "<single-animation-trigger>#@(no-single-item-opt)",
+                "settings-flag": "animationTriggersEnabled"
+            },
+            "specification": {
+                "category": "animation-triggers",
+                "url": "https://drafts.csswg.org/animation-triggers-1/#propdef-animation-trigger"
+            }
+        },
         "background": {
             "codegen-properties": {
                 "longhands": [
@@ -15603,6 +15630,20 @@
             "specification": {
                 "category": "css-animations",
                 "url": "https://drafts.csswg.org/css-animations-2/#typedef-single-animation-timeline"
+            }
+        },
+        "<animation-action>": {
+            "grammar": "none | play | play-once | play-forwards | play-backwards | pause | reset | replay",
+            "specification": {
+                "category": "animation-triggers",
+                "url": "https://drafts.csswg.org/animation-triggers-1/#typedef-animation-action"
+            }
+        },
+        "<single-animation-trigger>": {
+            "grammar": "none | [ <dashed-ident> <animation-action>+ ]+@(no-single-item-opt)",
+            "specification": {
+                "category": "animation-triggers",
+                "url": "https://drafts.csswg.org/animation-triggers-1/#propdef-animation-trigger"
             }
         },
         "<single-timeline-trigger-name>": {

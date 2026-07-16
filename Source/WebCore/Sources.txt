@@ -3313,6 +3313,7 @@ style/values/animations/StyleSingleAnimationName.cpp
 style/values/animations/StyleSingleAnimationRangeName.cpp
 style/values/animations/StyleSingleAnimationRange.cpp
 style/values/animations/StyleSingleAnimationTimeline.cpp
+style/values/animations/StyleSingleAnimationTrigger.cpp
 style/values/backgrounds/StyleBackgroundLayer.cpp
 style/values/backgrounds/StyleBackgroundSize.cpp
 style/values/backgrounds/StyleBorderImageOutset.cpp

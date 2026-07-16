@@ -21,6 +21,7 @@ PASS animation-range-end
 PASS animation-range-start
 PASS animation-timeline
 PASS animation-timing-function
+PASS animation-trigger
 PASS appearance
 PASS aspect-ratio
 PASS backdrop-filter

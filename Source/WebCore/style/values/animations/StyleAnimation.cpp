@@ -54,6 +54,7 @@ Animation::Data::Data()
     , m_defaultTimingFunctionForKeyframes { std::nullopt }
     , m_rangeStart { Animation::initialRangeStart() }
     , m_rangeEnd { Animation::initialRangeEnd() }
+    , m_trigger { Animation::initialTrigger() }
     , m_direction { static_cast<unsigned>(Animation::initialDirection()) }
     , m_fillMode { static_cast<unsigned>(Animation::initialFillMode()) }
     , m_playState { static_cast<unsigned>(Animation::initialPlayState()) }
@@ -72,6 +73,7 @@ Animation::Data::Data(const Data& other)
     , m_defaultTimingFunctionForKeyframes { other.m_defaultTimingFunctionForKeyframes }
     , m_rangeStart { other.m_rangeStart }
     , m_rangeEnd { other.m_rangeEnd }
+    , m_trigger { other.m_trigger }
     , m_direction { other.m_direction }
     , m_fillMode { other.m_fillMode }
     , m_playState { other.m_playState }
@@ -81,6 +83,7 @@ Animation::Data::Data(const Data& other)
     , m_timingFunctionState { other.m_timingFunctionState }
     , m_rangeStartState { other.m_rangeStartState }
     , m_rangeEndState { other.m_rangeEndState }
+    , m_triggerState { other.m_triggerState }
     , m_delayState { other.m_delayState }
     , m_durationState { other.m_durationState }
     , m_iterationCountState { other.m_iterationCountState }
@@ -105,6 +108,7 @@ bool Animation::Data::operator==(const Data& other) const
         && m_compositeOperation == other.m_compositeOperation
         && m_rangeStart == other.m_rangeStart
         && m_rangeEnd == other.m_rangeEnd
+        && m_trigger == other.m_trigger
         && m_nameState == other.m_nameState
         && m_delayState == other.m_delayState
         && m_directionState == other.m_directionState
@@ -116,7 +120,8 @@ bool Animation::Data::operator==(const Data& other) const
         && m_timingFunctionState == other.m_timingFunctionState
         && m_compositeOperationState == other.m_compositeOperationState
         && m_rangeStartState == other.m_rangeStartState
-        && m_rangeEndState == other.m_rangeEndState;
+        && m_rangeEndState == other.m_rangeEndState
+        && m_triggerState == other.m_triggerState;
 }
 
 // MARK: - Logging
@@ -135,6 +140,7 @@ TextStream& operator<<(TextStream& ts, const Animation& animation)
     ts.dumpProperty("composite-operation"_s, animation.compositeOperation());
     ts.dumpProperty("range-start"_s, animation.rangeStart());
     ts.dumpProperty("range-end"_s, animation.rangeEnd());
+    ts.dumpProperty("trigger"_s, animation.trigger());
 
     return ts;
 }

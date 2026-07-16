@@ -35,6 +35,7 @@
 #include <WebCore/StyleSingleAnimationName.h>
 #include <WebCore/StyleSingleAnimationRange.h>
 #include <WebCore/StyleSingleAnimationTimeline.h>
+#include <WebCore/StyleSingleAnimationTrigger.h>
 #include <WebCore/StyleValueTypes.h>
 
 namespace WebCore {
@@ -48,6 +49,7 @@ namespace Style {
     macro(Animation, AnimationTimingFunction, EasingFunction, timingFunction, TimingFunction) \
     macro(Animation, AnimationRangeStart, SingleAnimationRangeStart, rangeStart, RangeStart) \
     macro(Animation, AnimationRangeEnd, SingleAnimationRangeEnd, rangeEnd, RangeEnd) \
+    macro(Animation, AnimationTrigger, SingleAnimationTrigger, trigger, Trigger) \
 \
 
 #define FOR_EACH_ANIMATION_VALUE(macro) \
@@ -89,6 +91,7 @@ struct Animation {
     CompositeOperation compositeOperation() const { return static_cast<CompositeOperation>(m_data->m_compositeOperation); }
     const SingleAnimationRangeStart& rangeStart() const LIFETIME_BOUND { return m_data->m_rangeStart; }
     const SingleAnimationRangeEnd& rangeEnd() const LIFETIME_BOUND { return m_data->m_rangeEnd; }
+    const SingleAnimationTrigger& trigger() const LIFETIME_BOUND { return m_data->m_trigger; }
 
     static SingleAnimationName initialName() { return CSS::Keyword::None { }; }
     static SingleAnimationDelay initialDelay() { return 0; }
@@ -102,6 +105,7 @@ struct Animation {
     static EasingFunction initialTimingFunction() { return EasingFunction { CubicBezierTimingFunction::create() }; }
     static SingleAnimationRangeStart initialRangeStart() { return CSS::Keyword::Normal { }; }
     static SingleAnimationRangeEnd initialRangeEnd() { return CSS::Keyword::Normal { }; }
+    static SingleAnimationTrigger initialTrigger() { return CSS::Keyword::None { }; }
 
     const std::optional<EasingFunction>& defaultTimingFunctionForKeyframes() const LIFETIME_BOUND { return m_data->m_defaultTimingFunctionForKeyframes; }
     void setDefaultTimingFunctionForKeyframes(std::optional<EasingFunction>&& function) { m_data->m_defaultTimingFunctionForKeyframes = WTF::move(function); }
@@ -155,6 +159,7 @@ private:
         std::optional<EasingFunction> m_defaultTimingFunctionForKeyframes;
         SingleAnimationRangeStart m_rangeStart;
         SingleAnimationRangeEnd m_rangeEnd;
+        SingleAnimationTrigger m_trigger;
         PREFERRED_TYPE(AnimationDirection) unsigned m_direction : 2;
         PREFERRED_TYPE(AnimationFillMode) unsigned m_fillMode : 2;
         PREFERRED_TYPE(AnimationPlayState) unsigned m_playState : 2;

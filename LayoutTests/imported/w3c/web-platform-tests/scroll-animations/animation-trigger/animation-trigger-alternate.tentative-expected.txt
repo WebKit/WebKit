@@ -1,5 +1,5 @@
 
-FAIL animation triggered via scroll() timeline. assert_true: expected true got false
-FAIL animation triggered via view() timeline. assert_true: expected true got false
-FAIL animation triggered via deferred (view) timeline. assert_true: expected true got false
+FAIL animation triggered via scroll() timeline. assert_unreached: received unexpected event: animationstart. Reached unreachable code
+FAIL animation triggered via view() timeline. assert_unreached: received unexpected event: animationstart. Reached unreachable code
+FAIL animation triggered via deferred (view) timeline. assert_unreached: received unexpected event: animationstart. Reached unreachable code
 

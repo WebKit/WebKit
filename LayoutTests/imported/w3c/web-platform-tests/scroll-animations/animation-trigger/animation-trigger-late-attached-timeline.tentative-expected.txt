@@ -1,3 +1,5 @@
 
-FAIL late-attached trigger timeline plays animation assert_true: expected true got false
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT late-attached trigger timeline plays animation Test timed out
 

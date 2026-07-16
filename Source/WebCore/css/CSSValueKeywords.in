@@ -1102,6 +1102,18 @@ exit-crossing
 // scroll
 
 //
+// animation-trigger
+//
+// none
+play
+play-once
+play-forwards
+play-backwards
+pause
+// reset
+replay
+
+//
 // CSS_PROP_ZOOM
 //
 reset
