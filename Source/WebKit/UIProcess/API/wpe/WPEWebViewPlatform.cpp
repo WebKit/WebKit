@@ -372,9 +372,15 @@ gboolean ViewPlatform::handleEvent(WPEEvent* event)
     case WPE_EVENT_POINTER_UP:
     case WPE_EVENT_POINTER_MOVE:
     case WPE_EVENT_POINTER_ENTER:
-    case WPE_EVENT_POINTER_LEAVE:
-        page().handleMouseEvent(WebKit::NativeWebMouseEvent(event));
+    case WPE_EVENT_POINTER_LEAVE: {
+        WebKit::NativeWebMouseEvent mouseEvent(event);
+#if ENABLE(DRAG_SUPPORT)
+        if (updateDrag(mouseEvent))
+            return TRUE;
+#endif
+        page().handleMouseEvent(mouseEvent);
         return TRUE;
+    }
     case WPE_EVENT_SCROLL:
         page().handleNativeWheelEvent(WebKit::NativeWebWheelEvent(event));
         return TRUE;

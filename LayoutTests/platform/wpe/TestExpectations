@@ -279,18 +279,14 @@ fast/url/user-visible [ Skip ]
 
 # platformLayerTreeAsText is only implemented for Cocoa ports.
 
-# ENABLE_DRAG_SUPPORT is OFF in WPE.
+# These drag-and-drop tests need features not yet supported on WPE (autoscroll,
+# subframes, drag images) or are Cocoa-specific (data detectors).
 fast/events/do-not-drag-and-drop-data-detectors-link.html [ Skip ]
 fast/events/drag-and-drop-autoscroll-inner-frame.html [ Skip ]
-fast/events/drag-and-drop-link-containing-block.html [ Skip ]
-fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html [ Skip ]
 fast/events/drag-and-drop-subframe-dataTransfer.html [ Skip ]
-fast/events/drag-customData.html [ Skip ]
 fast/events/drag-image-filename.html [ Skip ]
 fast/events/resources/drag-in-frames-left.html [ Skip ]
 fast/events/resources/drag-in-frames-right.html [ Skip ]
-fast/forms/drag-into-textarea.html [ Skip ]
-fast/forms/drag-out-of-textarea.html [ Skip ]
 http/tests/local/drag-over-remote-content.html [ Skip ]
 
 fast/loader/plain-text-document-dark-mode.html [ Pass ]
@@ -663,16 +659,12 @@ webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-to-non-cor
 # The tests below need gardening after the EventSenderWPE has been added.
 # Most of them are probably failing because of missing support of event related
 # features in WPE.
-webkit.org/b/173419 fast/events/content-changed-during-drop.html [ Failure ]
 webkit.org/b/173419 fast/events/context-activated-by-key-event.html [ Failure ]
-webkit.org/b/173419 fast/events/crash-on-mutate-during-drop.html [ Failure ]
 webkit.org/b/173419 fast/events/ime-compositionend-on-selection-change.html [ Failure ]
-webkit.org/b/173419 fast/events/input-events-drag-and-drop.html [ Failure ]
 webkit.org/b/173419 fast/events/input-events-insert-by-drop.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/continuous-platform-wheelevent-in-scrolling-div.html [ Failure ]
 webkit.org/b/173419 fast/events/autoscroll-main-document.html [ Failure ]
 webkit.org/b/173419 fast/events/autoscroll-when-zoomed.html [ Failure ]
-webkit.org/b/173419 fast/events/drag-dataTransferItemList.html [ Timeout ]
 webkit.org/b/173419 fast/events/option-tab.html [ Failure ]
 webkit.org/b/173419 fast/events/page-visibility-iframe-delete-test.html [ Timeout ]
 webkit.org/b/173419 fast/events/page-visibility-iframe-move-test.html [ Timeout ]
@@ -683,7 +675,6 @@ webkit.org/b/173419 fast/events/page-visibility-transition-test.html [ Timeout ]
 webkit.org/b/173419 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure Timeout ]
 webkit.org/b/173419 fast/events/shadow-event-path-2.html [ Failure ]
 webkit.org/b/173419 fast/events/special-key-events-in-input-text.html [ Failure ]
-webkit.org/b/173419 fast/events/standalone-image-drag-to-editable.html [ Timeout ]
 webkit.org/b/173419 fast/events/webkit-media-key-events-constructor.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/platform-wheelevent-paging-x-in-non-scrolling-page.html [ Failure ]

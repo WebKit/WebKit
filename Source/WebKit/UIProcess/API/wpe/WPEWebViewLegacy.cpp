@@ -151,7 +151,12 @@ ViewLegacy::ViewLegacy(struct wpe_view_backend* backend, const API::PageConfigur
             if (event->type == wpe_input_pointer_event_type_button && event->state == 1)
                 view.m_inputMethodFilter.cancelComposition();
             auto& page = view.page();
-            page.handleMouseEvent(WebKit::NativeWebMouseEvent(event, page.deviceScaleFactor()));
+            WebKit::NativeWebMouseEvent mouseEvent(event, page.deviceScaleFactor());
+#if ENABLE(DRAG_SUPPORT)
+            if (view.updateDrag(mouseEvent))
+                return;
+#endif
+            page.handleMouseEvent(mouseEvent);
         },
         // handle_axis_event
         [](void* data, struct wpe_input_axis_event* event)
