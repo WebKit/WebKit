@@ -358,6 +358,7 @@ rendering/svg/legacy/LegacyRenderSVGImage.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceFilter.cpp
 rendering/svg/legacy/LegacyRenderSVGRoot.cpp
 rendering/svg/legacy/SVGResourcesCache.cpp
+rendering/updating/RenderTreeBuilderList.cpp
 rendering/updating/RenderTreeBuilderMathML.cpp
 rendering/updating/RenderTreeBuilderMultiColumn.cpp
 rendering/updating/RenderTreeBuilderTable.cpp

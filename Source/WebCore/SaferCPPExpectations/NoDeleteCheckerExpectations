@@ -27,6 +27,7 @@ css/CSSComputedStyleDeclaration.cpp
 css/CSSFontFaceSet.cpp
 css/CSSPropertyInitialValues.cpp
 css/CSSRegisteredCounterStyle.cpp
+css/DOMMatrixReadOnly.cpp
 css/MutableStyleProperties.cpp
 css/PropertySetCSSDescriptors.cpp
 css/SelectorChecker.cpp
@@ -36,7 +37,6 @@ css/StyleSheetContents.cpp
 css/StyleSheetList.cpp
 css/calc/CSSCalcType.cpp
 css/parser/CSSParserObserverWrapper.cpp
-css/parser/CSSParserTokenRange.cpp
 css/parser/CSSPropertyParserConsumer+String.cpp
 css/typedom/transform/CSSTransformValue.cpp
 cssjit/SelectorCompiler.cpp

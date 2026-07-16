@@ -83,6 +83,7 @@ rendering/RenderDeprecatedFlexibleBox.cpp
 rendering/RenderElement.cpp
 rendering/RenderElementStyleInlines.h
 rendering/RenderFileUploadControl.cpp
+rendering/RenderFlexLayout.cpp
 rendering/RenderFlexibleBox.cpp
 rendering/RenderFragmentedFlow.cpp
 rendering/RenderFrameSet.cpp

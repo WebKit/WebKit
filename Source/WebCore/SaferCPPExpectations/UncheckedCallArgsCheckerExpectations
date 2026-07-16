@@ -329,6 +329,7 @@ rendering/RenderElement.h
 rendering/RenderElementStyleInlines.h
 rendering/RenderEmbeddedObject.cpp
 rendering/RenderFileUploadControl.cpp
+rendering/RenderFlexLayout.cpp
 rendering/RenderFlexibleBox.cpp
 rendering/RenderFragmentContainer.cpp
 rendering/RenderFragmentContainerSet.cpp

@@ -41,7 +41,8 @@ rendering/RenderAncestorIterator.h
 rendering/RenderBlockFlow.cpp
 rendering/RenderDeprecatedFlexibleBox.cpp
 rendering/RenderDescendantIterator.h
-rendering/RenderFlexibleBox.cpp
+rendering/RenderFlexLayout.cpp
+rendering/RenderFlexLayout.h
 rendering/RenderFlexibleBox.h
 rendering/RenderFragmentContainer.h
 rendering/RenderGeometryMap.h

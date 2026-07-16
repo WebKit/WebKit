@@ -45,7 +45,6 @@ rendering/BackgroundPainter.cpp
 rendering/BorderPainter.cpp
 rendering/RenderBox.cpp
 rendering/RenderElement.cpp
-rendering/RenderFlexibleBox.cpp
 rendering/RenderGrid.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerCompositor.cpp
