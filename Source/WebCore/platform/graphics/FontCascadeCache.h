@@ -221,8 +221,8 @@ bool operator==(const FontFamilyName&, const FontFamilyName&);
 struct FontCascadeCacheKey {
     FontDescriptionKey fontDescriptionKey; // Shared with the lower level FontCache (caching Font objects)
     Vector<FontFamilyName, 3> families;
-    unsigned fontSelectorId;
-    unsigned fontSelectorVersion;
+    unsigned fontSelectorId { 0 };
+    unsigned fontSelectorVersion { 0 };
     bool hasComplexFontSelector { true };
 
 
