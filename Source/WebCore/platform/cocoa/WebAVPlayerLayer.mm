@@ -45,14 +45,6 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cocoa/AVKitSoftLink.h>
 
-#if !RELEASE_LOG_DISABLED
-@interface WebAVPlayerLayer (Logging)
-@property (readonly, nonatomic) uint64_t logIdentifier;
-@property (readonly, nonatomic) const Logger* loggerPtr;
-@property (readonly, nonatomic) WTFLogChannel* logChannel;
-@end
-#endif
-
 namespace WebCore {
 class WebAVPlayerLayerPresentationModelClient final : public VideoPresentationModelClient, public CanMakeCheckedPtr<WebAVPlayerLayerPresentationModelClient> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebAVPlayerLayerPresentationModelClient);

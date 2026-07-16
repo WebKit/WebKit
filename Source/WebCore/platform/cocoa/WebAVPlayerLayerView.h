@@ -32,8 +32,11 @@
 
 #import <pal/spi/cocoa/AVKitSPI.h>
 
+@class WebAVPlayerLayer;
+
 WEBCORE_EXPORT @interface WebAVPlayerLayerView : __AVPlayerLayerView
 @property (retain) UIView* videoView;
+@property (readonly, nonatomic) WebAVPlayerLayer *webPlayerLayer;
 - (void)transferVideoViewTo:(WebAVPlayerLayerView *)playerLayerView;
 @end
 

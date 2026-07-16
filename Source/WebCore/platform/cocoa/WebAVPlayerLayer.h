@@ -58,4 +58,12 @@ WEBCORE_EXPORT @interface WebAVPlayerLayer : CALayer
 - (void)stopShowingCaptionPreview;
 @end
 
+#if !RELEASE_LOG_DISABLED
+@interface WebAVPlayerLayer (Logging)
+@property (readonly, nonatomic) uint64_t logIdentifier;
+@property (readonly, nullable, nonatomic) const Logger* loggerPtr;
+@property (readonly, nullable, nonatomic) WTFLogChannel* logChannel;
+@end
+#endif
+
 #endif // HAVE(AVKIT)

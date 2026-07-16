@@ -121,6 +121,7 @@ requires = ["!HAVE_WEBCONTENTRESTRICTIONS", "HAVE_WEBCONTENTANALYSIS_FRAMEWORK"]
 [[legacy]]
 selectors = [
     { name = "borderColorForEdge:", class = "?" },
+    { name = "webPlayerLayer", class = "?" },
     { name = "transferVideoViewTo:", class = "?" },
     { name = "widthForLayer:edge:", class = "?" },
 ]
