@@ -624,11 +624,8 @@ static inline void setIntegrationBaseline(const RenderBox& renderBox)
             auto marginBoxLogicalHeight = renderBox.marginBoxLogicalHeight(rootWritingMode);
             auto isWritingModeRoot = rootWritingMode.computedWritingMode() != renderBox.writingMode().computedWritingMode();
 
-            if (renderBox.isFieldset()) {
-                if (isWritingModeRoot || renderBox.shouldApplyLayoutContainment())
-                    return marginBoxLogicalHeight;
+            if (renderBox.isFieldset())
                 return marginBoxLogicalHeight;
-            }
 
             if (is<RenderButton>(renderBox)) {
                 auto contentBoxBottom = rootWritingMode.isHorizontal() ? renderBox.borderTop() + renderBox.paddingTop() + renderBox.contentBoxHeight() : renderBox.borderRight() + renderBox.paddingRight() + renderBox.contentBoxWidth();
