@@ -579,7 +579,10 @@ static void webKitMediaSrcLoop(void* userData)
                 GST_DEBUG_OBJECT(pad, "Pushing new CAPS event: %" GST_PTR_FORMAT, gst_sample_get_caps(sample.get()));
                 [[maybe_unused]] bool result = gst_pad_push_event(stream->pad.get(), gst_event_new_caps(gst_sample_get_caps(sample.get())));
                 GST_DEBUG_OBJECT(pad, "CAPS event pushed, result = %s.", boolForPrinting(result));
-                ASSERT(result);
+                // result can be false when we started flushing from another thread just before
+                // pushing the caps event...
+                if (!result && !GST_PAD_IS_FLUSHING(pad))
+                    GST_WARNING_OBJECT(pad, "CAPS event was not handled downstream");
             });
             if (streamingMembers->isFlushing) {
                 gst_pad_pause_task(pad);
