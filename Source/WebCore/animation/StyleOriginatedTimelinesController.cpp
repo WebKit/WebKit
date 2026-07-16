@@ -108,15 +108,13 @@ ScrollTimeline* StyleOriginatedTimelinesController::determineTreeOrder(const Vec
         }
         if (!matchedTimelines.isEmpty()) {
             if (containsElement(timelineScopeElements, element.get())) {
-                if (matchedTimelines.size() == 1)
-                    return matchedTimelines.first().unsafePtr();
                 // Naming conflict due to timeline-scope, see if the element declares a non-deferred timeline.
                 for (auto& matchedTimeline : matchedTimelines) {
                     if (element == originatingElement(matchedTimeline).element().get())
                         return matchedTimeline.unsafePtr();
                 }
-                // If we only have deferred timelines, then the timeline is the inactive timeline.
-                return &inactiveNamedTimeline(matchedTimelines.first()->name());
+                // Otherwise return the last of the matching timelines per https://github.com/w3c/csswg-drafts/issues/12581.
+                return matchedTimelines.last().unsafePtr();
             }
             ASSERT(matchedTimelines.size() <= 2);
             // Favor scroll timelines in case of conflict
