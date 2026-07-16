@@ -1,0 +1,39 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AcceleratedFiltersEnabled=false ] -->
+<meta charset="utf-8">
+<title>backdrop-filter: chained SVG reference filters</title>
+<link rel="help" href="https://drafts.fxtf.org/filter-effects-2/#BackdropFilterProperty">
+<link rel="match" href="backdrop-filter-svg-chained-references-expected.html">
+<!-- Two chained reference filters: a feColorMatrix invert followed by a feColorMatrix
+     saturate(0), which are exactly the invert(1) and grayscale(1) matrices. Dropping either
+     link of the chain (or the whole chain) produces a visibly different color. -->
+
+<div class="fuchsiabox"></div>
+<div class="filter"></div>
+
+<svg width="0" height="0">
+  <filter id="invert" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values="-1 0 0 0 1  0 -1 0 0 1  0 0 -1 0 1  0 0 0 1 0"/>
+  </filter>
+  <filter id="desaturate" color-interpolation-filters="sRGB">
+    <feColorMatrix type="saturate" values="0"/>
+  </filter>
+</svg>
+
+<style>
+.fuchsiabox {
+  position: absolute;
+  background: fuchsia;
+  width: 100px;
+  height: 100px;
+  top: 100px;
+  left: 60px;
+}
+.filter {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 100px;
+  left: 60px;
+  backdrop-filter: url(#invert) url(#desaturate);
+}
+</style>
