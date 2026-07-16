@@ -790,6 +790,9 @@ public:
         if (a.textDecorationStyle != b.textDecorationStyle || a.textDecorationColor != b.textDecorationColor || a.textDecorationThickness != b.textDecorationThickness || a.textDecorationInset != b.textDecorationInset)
             return true;
 
+        if (a.viewTransitionName != b.viewTransitionName)
+            return true;
+
         return false;
     }
 
