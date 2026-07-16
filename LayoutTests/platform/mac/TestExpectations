@@ -1817,8 +1817,6 @@ imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage.any.worker.html [
 # Tests that use "finger" events
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-fling-in-large-area.html [ Skip ]
 
-imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/common-to-both-axes-supercedes-first-in-tree-order.html [ Pass Failure ]
-
 webkit.org/b/170629  memory/memory-pressure-simulation.html [ Pass Failure Crash ]
 
 webkit.org/b/239091 http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html [ Pass Failure ]

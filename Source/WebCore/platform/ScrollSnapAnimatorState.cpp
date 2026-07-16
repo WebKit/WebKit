@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -167,9 +167,10 @@ void ScrollSnapAnimatorState::setActiveSnapIndexForAxis(ScrollEventAxis axis, st
 }
 
 // Selects this axis's snap target among the boxes aligned at the active offset, per
-// https://drafts.csswg.org/css-scroll-snap-1/#multiple-aligned: focused, then targeted, then
-// innermost, then first in tree order. snapTargetID is the focused/targeted representative; this
-// adds the innermost step.
+// https://drafts.csswg.org/css-scroll-snap/#multiple-aligned-snap-areas: focused, then targeted,
+// then innermost (ancestors removed), then the area aligned in both axes (the block/inline set
+// intersection), then first in tree order. snapTargetID is the focused/targeted representative; this
+// adds the innermost and common-to-both-axes steps.
 std::optional<NodeIdentifier> ScrollSnapAnimatorState::selectSnapTargetForAxis(ScrollEventAxis axis) const
 {
     auto offsets = currentlySnappedOffsetsForAxis(axis);
@@ -181,9 +182,46 @@ std::optional<NodeIdentifier> ScrollSnapAnimatorState::selectSnapTargetForAxis(S
     if ((offset.isFocused || offset.isTarget) && offset.snapTargetID)
         return *offset.snapTargetID;
 
+    const auto& areaIDs = m_snapOffsetsInfo.snapAreasIDs;
+
+    // Candidate boxes after removing any area that encloses another aligned area (its ancestors), so
+    // a nested area supersedes a co-located ancestor, including an ancestor aligned in both axes.
+    auto candidateIndices = innermostAlignedAreaIndicesForAxis(axis);
+    if (candidateIndices.isEmpty())
+        return offset.snapTargetID;
+
+    // If the block and inline candidate sets overlap, both axes snap to the box common to both.
+    // snapAreaIndices are in ascending tree order, so iterating this axis's candidates and taking the
+    // first also present in the other axis's candidates yields the first-in-tree box of the
+    // intersection, which is the same box for both axes.
+    auto otherCandidateIndices = innermostAlignedAreaIndicesForAxis(axis == ScrollEventAxis::Horizontal ? ScrollEventAxis::Vertical : ScrollEventAxis::Horizontal);
+    if (!otherCandidateIndices.isEmpty()) {
+        HashSet<NodeIdentifier> otherAxisIDs;
+        for (auto areaIndex : otherCandidateIndices)
+            otherAxisIDs.add(areaIDs[areaIndex]);
+        for (auto areaIndex : candidateIndices) {
+            if (otherAxisIDs.contains(areaIDs[areaIndex]))
+                return areaIDs[areaIndex];
+        }
+    }
+
+    // Otherwise, the first in tree order.
+    return areaIDs[candidateIndices.first()];
+}
+
+// The snap areas aligned at this axis's active offset, minus any area that encloses another aligned
+// area (an ancestor), in tree order. This is the per-axis candidate list from
+// https://drafts.csswg.org/css-scroll-snap/#multiple-aligned-snap-areas after ancestor removal.
+Vector<size_t, 1> ScrollSnapAnimatorState::innermostAlignedAreaIndicesForAxis(ScrollEventAxis axis) const
+{
+    Vector<size_t, 1> candidateIndices;
+    auto offsets = currentlySnappedOffsetsForAxis(axis);
+    if (offsets.isEmpty())
+        return candidateIndices;
+
     const auto& areas = m_snapOffsetsInfo.snapAreas;
     const auto& areaIDs = m_snapOffsetsInfo.snapAreasIDs;
-    const auto& indices = offset.snapAreaIndices;
+    const auto& indices = offsets[0].snapAreaIndices;
 
     auto enclosesAnotherArea = [&](size_t areaIndex) {
         return std::ranges::any_of(indices, [&](size_t other) {
@@ -192,15 +230,11 @@ std::optional<NodeIdentifier> ScrollSnapAnimatorState::selectSnapTargetForAxis(S
         });
     };
 
-    // The innermost box is the first in tree order (snapAreaIndices are ascending) whose area does
-    // not enclose another aligned area.
     for (auto areaIndex : indices) {
         if (areaIndex < areas.size() && areaIndex < areaIDs.size() && !enclosesAnotherArea(areaIndex))
-            return areaIDs[areaIndex];
+            candidateIndices.append(areaIndex);
     }
-    if (offset.snapTargetID)
-        return *offset.snapTargetID;
-    return std::nullopt;
+    return candidateIndices;
 }
 
 void ScrollSnapAnimatorState::updateCurrentlySnappedBoxes()
@@ -271,6 +305,16 @@ bool ScrollSnapAnimatorState::resnapAfterLayout(ScrollOffset scrollOffset, const
             snapPointChanged |= preserveCurrentTargetForAxis(ScrollEventAxis::Vertical, *targetForVerticalAxis);
 
         updateCurrentlySnappedBoxes();
+
+        // Keep the box we actually followed as this axis's recorded target. updateCurrentlySnappedBoxes()
+        // re-runs selection, which could pick a different aligned box (first-in-tree, or one that is now
+        // common to both axes) and cause the scroller to abandon its tracked target on a later layout
+        // change. The followed box is authoritative, so restore it when it is still snapped.
+        if (targetForHorizontalAxis && m_currentlySnappedBoxes.contains(*targetForHorizontalAxis))
+            m_currentSnapTargetForHorizontalAxis = *targetForHorizontalAxis;
+        if (targetForVerticalAxis && m_currentlySnappedBoxes.contains(*targetForVerticalAxis))
+            m_currentSnapTargetForVerticalAxis = *targetForVerticalAxis;
+
         LOG_WITH_STREAM(ScrollSnap, stream << "ScrollSnapAnimatorState::resnapAfterLayout() - multiple boxes snapped; chose H " << targetForHorizontalAxis << " V " << targetForVerticalAxis << " (changed " << snapPointChanged << ") m_currentlySnappedBoxes " << m_currentlySnappedBoxes);
     }
 
