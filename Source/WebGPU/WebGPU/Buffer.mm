@@ -492,6 +492,11 @@ void Buffer::drawIndexedValidated(uint64_t invalidationCountAtDispatch, uint32_t
         m_drawIndexedCache.clear();
 
     m_drawIndexedCache.set(makeKey(firstIndex, indexCount, indexType, primitiveOffset, icb), vertexCount);
+
+    // Update the validated high-water marks so future writeBuffer calls
+    // with indices at or below these values don't need to invalidate.
+    m_maxValidatedUnsignedIndex = std::max(m_maxValidatedUnsignedIndex, m_maxUnsignedIndex);
+    m_maxValidatedUshortIndex = std::max(m_maxValidatedUshortIndex, m_maxUshortIndex);
 }
 
 template <typename T>
@@ -735,9 +740,11 @@ static size_t computeSize(HashSet<uint64_t, DefaultHash<uint64_t>, WTF::Unsigned
 
 bool Buffer::needsIndexValidation(uint32_t maxUnsignedIndex, uint16_t maxUshortIndex)
 {
-    const bool needsUpdate = maxUnsignedIndex > m_maxUnsignedIndex || maxUshortIndex > m_maxUshortIndex;
-    m_maxUnsignedIndex = std::max(m_maxUnsignedIndex, maxUnsignedIndex);
-    m_maxUshortIndex = std::max(m_maxUshortIndex, maxUshortIndex);
+    const bool needsUpdate = maxUnsignedIndex > m_maxValidatedUnsignedIndex || maxUshortIndex > m_maxValidatedUshortIndex;
+    // Track the current write's max so we can update the validated
+    // threshold after a successful clamp-shader pass.
+    m_maxUnsignedIndex = maxUnsignedIndex;
+    m_maxUshortIndex = maxUshortIndex;
 
     return needsUpdate;
 }
@@ -756,6 +763,8 @@ void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
     m_gpuResourceMap.clear();
     m_drawIndexedCache.clear();
     ++m_drawIndexedCacheInvalidationCount;
+    m_maxValidatedUnsignedIndex = 0;
+    m_maxValidatedUshortIndex = 0;
     m_indirectCache = {
         .indirectOffset = UINT64_MAX,
         .indexBufferOffsetInBytes = UINT64_MAX,

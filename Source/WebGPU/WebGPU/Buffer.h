@@ -165,6 +165,8 @@ private:
     uint64_t m_drawIndexedCacheInvalidationCount { 0 };
     uint32_t m_maxUnsignedIndex { 0 };
     uint16_t m_maxUshortIndex { 0 };
+    uint32_t m_maxValidatedUnsignedIndex { 0 };
+    uint16_t m_maxValidatedUshortIndex { 0 };
 
     struct IndirectArgsCache {
         uint64_t indirectOffset { UINT64_MAX };
