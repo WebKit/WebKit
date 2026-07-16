@@ -41,6 +41,7 @@
 #include "LayoutRepainter.h"
 #include "LayoutUnit.h"
 #include "LineClampUpdater.h"
+#include "RenderBlockFlow.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
@@ -631,6 +632,56 @@ LayoutUnit RenderFlexibleBox::computeBlockAxisContentSizeForFlexItem(RenderBox& 
     setBlockAxisSizeForFlexItem(flexItem, blockAxisContentSize);
     markFlexItemLayoutComplete(flexItem);
     return blockAxisContentSize;
+}
+
+void RenderFlexibleBox::stretchFlexItemLogicalHeight(RenderBox& flexItem, LayoutUnit desiredLogicalHeight, bool needsRelayout)
+{
+    if (needsRelayout || !flexItem.overridingBorderBoxLogicalHeight())
+        flexItem.setOverridingBorderBoxLogicalHeight(desiredLogicalHeight);
+    if (!needsRelayout)
+        return;
+
+    auto resetFlexItemLogicalHeight = scopedResetFlexItemLogicalHeightBeforeLayout();
+    // We cache the child's content logical height to avoid it being reset to the stretched height.
+    // FIXME: This is fragile. RenderBoxes should be smart enough to determine their content logical height
+    // correctly even when there's an overrideHeight.
+    LayoutUnit contentLogicalHeight = flexItemContentLogicalHeight(flexItem);
+    flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    dirtyPercentHeightDescendantsWithinFlexItem(flexItem);
+
+    // Don't use layoutChildIfNeeded to avoid setting cross axis cached size twice.
+    flexItem.layoutIfNeeded();
+
+    cacheFlexItemContentLogicalHeightIfAllowed(flexItem, contentLogicalHeight);
+}
+
+void RenderFlexibleBox::relayoutFlexItemForStretchedCrossSize(RenderBox& flexItem, LayoutUnit crossSize, LogicalBoxAxis crossAxis)
+{
+    if (crossAxis == LogicalBoxAxis::Block)
+        flexItem.setOverridingBorderBoxLogicalHeight(crossSize);
+    else
+        flexItem.setOverridingBorderBoxLogicalWidth(crossSize);
+    flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    flexItem.layoutIfNeeded();
+}
+
+void RenderFlexibleBox::dirtyPercentHeightDescendantsWithinFlexItem(RenderBox& flexItem)
+{
+    // In quirks mode, the percentage height walk may register descendants on the
+    // flex container instead of the flex item. This method uses
+    // dirtyForLayoutFromPercentageHeightDescendant to propagate layout through
+    // intermediate auto-height ancestors down to those descendants.
+    if (!hasPercentHeightDescendants())
+        return;
+    CheckedPtr flexItemBlockFlow = dynamicDowncast<RenderBlockFlow>(flexItem);
+    if (!flexItemBlockFlow)
+        return;
+    for (auto& descendant : *percentHeightDescendants()) {
+        if (descendant.parent() == this)
+            continue;
+        if (flexItemBlockFlow->isContainingBlockAncestorFor(descendant))
+            flexItemBlockFlow->dirtyForLayoutFromPercentageHeightDescendant(descendant);
+    }
 }
 
 LayoutUnit RenderFlexibleBox::staticMainAxisPositionForPositionedFlexItem(const RenderBox& flexItem)

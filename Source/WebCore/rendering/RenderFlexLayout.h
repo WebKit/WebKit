@@ -206,7 +206,6 @@ private:
     void setFlexItemGeometry(FlexLayoutItem&, const LayoutPoint& location);
 
     bool flexItemHasPercentHeightDescendants(const RenderBox&) const;
-    void dirtyPercentHeightDescendantsWithinFlexItem(RenderBox&);
 
     const FlexLayoutUtils& flexLayoutUtils() const;
 

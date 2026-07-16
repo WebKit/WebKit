@@ -184,6 +184,9 @@ private:
     std::optional<LayoutUnit> blockAxisSizeForFlexItem(const RenderBox& flexItem) const { return m_blockAxisSize.getOptional(flexItem); }
     void cacheFlexItemContentLogicalHeightIfAllowed(const RenderBox& flexItem, LayoutUnit height);
     LayoutUnit computeBlockAxisContentSizeForFlexItem(RenderBox& flexItem);
+    void stretchFlexItemLogicalHeight(RenderBox& flexItem, LayoutUnit desiredLogicalHeight, bool needsRelayout);
+    void relayoutFlexItemForStretchedCrossSize(RenderBox& flexItem, LayoutUnit crossSize, LogicalBoxAxis crossAxis);
+    void dirtyPercentHeightDescendantsWithinFlexItem(RenderBox& flexItem);
     void markFlexItemLayoutComplete(const RenderBox& flexItem) { m_flexItemsWithCompletedLayout.add(flexItem); }
     bool hasFlexItemCompletedLayout(const RenderBox& flexItem) const { return m_flexItemsWithCompletedLayout.contains(flexItem); }
     void addItemAtFlexLineStart(const RenderBox& flexItem) { m_marginTrimItems.m_itemsAtFlexLineStart.add(flexItem); }

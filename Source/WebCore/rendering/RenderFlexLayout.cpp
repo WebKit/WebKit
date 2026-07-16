@@ -1481,24 +1481,7 @@ LayoutUnit FlexLayout::applyStretchAlignmentToFlexItem(const FlexLayoutItem& fle
             // So, redo it here.
             flexItemNeedsRelayout = true;
         }
-        if (flexItemNeedsRelayout || !flexItem.overridingBorderBoxLogicalHeight())
-            flexItem.setOverridingBorderBoxLogicalHeight(desiredLogicalHeight);
-        if (flexItemNeedsRelayout) {
-            auto resetFlexItemLogicalHeight = m_flexBox.scopedResetFlexItemLogicalHeightBeforeLayout();
-            // We cache the child's content logical height to avoid it being
-            // reset to the stretched height.
-            // FIXME: This is fragile. RenderBoxes should be smart enough to
-            // determine their content logical height correctly even when
-            // there's an overrideHeight.
-            LayoutUnit contentLogicalHeight = m_flexBox.flexItemContentLogicalHeight(flexItem);
-            flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
-            dirtyPercentHeightDescendantsWithinFlexItem(flexItem);
-
-            // Don't use layoutChildIfNeeded to avoid setting cross axis cached size twice.
-            flexItem.layoutIfNeeded();
-
-            m_flexBox.cacheFlexItemContentLogicalHeightIfAllowed(flexItem, contentLogicalHeight);
-        }
+        m_flexBox.stretchFlexItemLogicalHeight(flexItem, desiredLogicalHeight, flexItemNeedsRelayout);
         return desiredLogicalHeight;
     }
 
@@ -1509,11 +1492,8 @@ LayoutUnit FlexLayout::applyStretchAlignmentToFlexItem(const FlexLayoutItem& fle
     auto flexItemWidth = std::max(0_lu, lineCrossAxisExtent - flexLayoutUtils().crossAxisMarginExtentForFlexItem(flexItem));
     flexItemWidth = flexItem.constrainLogicalWidthByMinMax(flexItemWidth, flexLayoutUtils().crossAxisContentExtent(), m_flexBox);
 
-    if (flexItemWidth != flexItem.logicalWidth()) {
-        flexItem.setOverridingBorderBoxLogicalWidth(flexItemWidth);
-        flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
-        flexItem.layoutIfNeeded();
-    }
+    if (flexItemWidth != flexItem.logicalWidth())
+        m_flexBox.relayoutFlexItemForStretchedCrossSize(flexItem, flexItemWidth, LogicalBoxAxis::Inline);
     return flexItemWidth;
 }
 
@@ -1571,14 +1551,8 @@ LayoutUnit FlexLayout::applyStretchMinMaxCrossSize(const FlexLayoutItem& flexLay
     auto newSize = std::max(std::min(specifiedSize, effectiveMax), effectiveMin);
 
     auto currentSize = isBlockAxis ? flexItem.logicalHeight() : flexItem.logicalWidth();
-    if (newSize != currentSize) {
-        if (isBlockAxis)
-            flexItem.setOverridingBorderBoxLogicalHeight(newSize);
-        else
-            flexItem.setOverridingBorderBoxLogicalWidth(newSize);
-        flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
-        flexItem.layoutIfNeeded();
-    }
+    if (newSize != currentSize)
+        m_flexBox.relayoutFlexItemForStretchedCrossSize(flexItem, newSize, crossAxis);
     return newSize;
 }
 
@@ -1659,25 +1633,6 @@ bool FlexLayout::flexItemHasPercentHeightDescendants(const RenderBox& renderer) 
             return true;
     }
     return false;
-}
-
-void FlexLayout::dirtyPercentHeightDescendantsWithinFlexItem(RenderBox& flexItem)
-{
-    // In quirks mode, the percentage height walk may register descendants on the
-    // flex container instead of the flex item. This method uses
-    // dirtyForLayoutFromPercentageHeightDescendant to propagate layout through
-    // intermediate auto-height ancestors down to those descendants.
-    if (!m_flexBox.hasPercentHeightDescendants())
-        return;
-    CheckedPtr flexItemBlockFlow = dynamicDowncast<RenderBlockFlow>(flexItem);
-    if (!flexItemBlockFlow)
-        return;
-    for (auto& descendant : *m_flexBox.percentHeightDescendants()) {
-        if (descendant.parent() == &m_flexBox)
-            continue;
-        if (flexItemBlockFlow->isContainingBlockAncestorFor(descendant))
-            flexItemBlockFlow->dirtyForLayoutFromPercentageHeightDescendant(descendant);
-    }
 }
 
 } // namespace WebCore
