@@ -3696,6 +3696,7 @@ fast/flexbox/clear-overflow-before-scroll-update.html [ Skip ]
 fast/gradients/crash-on-zero-radius.html [ Skip ]
 fast/gradients/generated-gradients.html [ Skip ]
 fast/gradients/list-item-gradient.html [ Skip ]
+fast/gradients/oklch-shorter-hue-wrap.html [ Skip ] # webkit.org/b/317853 - Cocoa-only gradient renderer bug
 fast/gradients/radial-centered.html [ Skip ]
 fast/gradients/simple-gradients.html [ Skip ]
 fast/html/crash-marquee-fullscreen.html [ Skip ] # Timeout

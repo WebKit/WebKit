@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=0-8; totalPixels=0-40000" />
+<style>
+    div {
+        width: 200px;
+        height: 200px;
+    }
+
+    /* Regression test for rdar://181244580 (bug 317853).
+
+       Shorter-hue OKLCH interpolation from 90deg to 300deg takes the arc that
+       passes through hue 0/360 (near the 60% mark). In SampledGradientBuilder
+       the coarse samples mixed hue representations across that wrap, so the
+       downstream linear interpolation swept the long way around the wheel and
+       painted a rainbow band in the middle of the gradient. */
+
+    #linear {
+        background-image: linear-gradient(180deg in oklch, oklch(90% 0.25 90), oklch(48% 0.25 300));
+    }
+</style>
+</head>
+<body>
+<div id="linear"></div>
+</body>
+</html>

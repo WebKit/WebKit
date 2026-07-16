@@ -1338,6 +1338,8 @@ webkit.org/b/213114 fast/flexbox/line-clamp-with-anchor-content-only.html [ Imag
 # Pass instead of removing this line.
 webkit.org/b/234606 fast/gradients/conic-gradient-alpha.html [ ImageOnlyFailure ]
 
+webkit.org/b/317853 fast/gradients/oklch-shorter-hue-wrap.html [ Skip ] # Cocoa-only gradient renderer bug
+
 webkit.org/b/216767 css3/font-feature-settings-stylistic-set.html [ ImageOnlyFailure ]
 
 webkit.org/b/216853 css3/font-synthesis-small-caps.html [ ImageOnlyFailure ]

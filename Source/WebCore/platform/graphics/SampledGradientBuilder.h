@@ -191,6 +191,8 @@ static ColorComponents<float, 4> evaluateLinearOS(const SamplingData& data, floa
     // 3. Interpolate IS components.
     auto interpolated = [&] {
         if constexpr (isHueColorSpace) {
+            constexpr size_t hueIndex = componentInfo[0].type == ColorComponentType::Angle ? 0
+                : componentInfo[1].type == ColorComponentType::Angle ? 1 : 2;
             // Plain component-wise lerp: the hue rotation rule has already
             // been applied by coarseSampleStops. NaN ('none') is replaced
             // with the other stop's value per CSS spec.
@@ -201,6 +203,17 @@ static ColorComponents<float, 4> evaluateLinearOS(const SamplingData& data, floa
                     return c0;
                 return c0 + t * (c1 - c0);
             }, stop0.color, stop1.color);
+            // Adjacent coarse samples carry hue in [0, 360), so a pair straddling
+            // the 0/360 boundary would lerp the long way around the wheel and paint
+            // a rainbow band. Unwrap stop1's hue to within 180° of stop0's, lerp,
+            // then renormalize: HSL->sRGB is undefined for hue outside [0, 360).
+            float h0 = stop0.color[hueIndex];
+            float h1 = stop1.color[hueIndex];
+            if (!std::isnan(h0) && !std::isnan(h1)) {
+                h1 -= 360.0f * std::round((h1 - h0) / 360.0f);
+                float h = h0 + t * (h1 - h0);
+                lerped[hueIndex] = h - 360.0f * std::floor(h / 360.0f);
+            }
             return makeFromComponents<InterpolationSpaceColorType>(lerped);
         } else {
             // interpolateColorComponents premultiplies, lerps, and unpremultiplies
