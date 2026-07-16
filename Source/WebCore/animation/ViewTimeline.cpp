@@ -33,6 +33,7 @@
 #include "CSSValuePair.h"
 #include "Document.h"
 #include "Element.h"
+#include "FloatQuad.h"
 #include "LegacyRenderSVGModelObject.h"
 #include "RenderBlock.h"
 #include "RenderBoxModelObject.h"
@@ -337,12 +338,19 @@ void ViewTimeline::cacheCurrentTime()
         subjectOffset -= scrollDirection.isVertical ? scrollerPaddingBoxOrigin.y() : scrollerPaddingBoxOrigin.x();
 
         auto subjectBounds = [&] -> FloatSize {
+            // For an SVG subject, map its local box through the SVG transform chain so the size stays
+            // consistent with the (already transform-aware) offset, e.g. a rotated <foreignObject>.
+            auto svgLocalBounds = [&]() -> std::optional<FloatRect> {
+                if (auto* subjectRenderSVGModelObject = dynamicDowncast<RenderSVGModelObject>(subjectRenderer.get()))
+                    return subjectRenderSVGModelObject->borderBoxRectEquivalent();
+                if (subjectRenderer->isRenderOrLegacyRenderSVGForeignObject() || is<LegacyRenderSVGModelObject>(subjectRenderer.get()))
+                    return subjectRenderer->objectBoundingBox();
+                return std::nullopt;
+            }();
+            if (svgLocalBounds)
+                return subjectRenderer->localToContainerQuad(FloatQuad { *svgLocalBounds }, sourceRenderer.get(), options).boundingBox().size();
             if (CheckedPtr subjectRenderBoxModelObject = dynamicDowncast<RenderBoxModelObject>(subjectRenderer.get()))
                 return subjectRenderBoxModelObject->borderBoundingBox().size();
-            if (auto* subjectRenderSVGModelObject = dynamicDowncast<RenderSVGModelObject>(subjectRenderer.get()))
-                return subjectRenderSVGModelObject->borderBoxRectEquivalent().size();
-            if (is<LegacyRenderSVGModelObject>(subjectRenderer.get()))
-                return subjectRenderer->objectBoundingBox().size();
             return { };
         }();
 
