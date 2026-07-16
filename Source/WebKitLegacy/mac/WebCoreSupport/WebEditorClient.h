@@ -84,6 +84,10 @@ private:
     void didWriteSelectionToPasteboard() final;
     void getClientPasteboardData(const std::optional<WebCore::SimpleRange>&, Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>>& pasteboardTypesAndData) final;
 
+#if PLATFORM(COCOA)
+    HashMap<WebCore::FrameIdentifier, WebCore::AttributedString> collectAttributedStringsForRemoteFrames(WebCore::FrameIdentifier, const Vector<WebCore::FrameIdentifier>&) final { return { }; }
+#endif
+
     void setInsertionPasteboard(const String&) final;
     WebCore::DOMPasteAccessResponse requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::FrameIdentifier, const String&) final { return WebCore::DOMPasteAccessResponse::DeniedForGesture; }
 

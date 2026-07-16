@@ -2028,6 +2028,92 @@ void WebPageProxy::getWebArchiveDataWithSelectedFrames(WebFrameProxy& rootFrame,
     }
 }
 
+static bool validateFrameIdentifiersForAttributedStringCollection(FrameIdentifier rootFrameIdentifier, const Vector<FrameIdentifier>& frameIdentifiers)
+{
+    auto isInSubtree = [&](WebFrameProxy& frame) {
+        for (RefPtr ancestor = &frame; ancestor; ancestor = ancestor->parentFrame()) {
+            if (ancestor->frameID() == rootFrameIdentifier)
+                return true;
+        }
+        return false;
+    };
+
+    for (auto identifier : frameIdentifiers) {
+        if (identifier == rootFrameIdentifier)
+            continue;
+
+        RefPtr frame = WebFrameProxy::webFrame(identifier);
+        if (frame && !isInSubtree(*frame))
+            return false;
+    }
+
+    return true;
+}
+
+void WebPageProxy::getAttributedStringsForRemoteFrames(IPC::Connection& connection, FrameIdentifier rootFrameIdentifier, const Vector<FrameIdentifier>& frameIdentifiers, CompletionHandler<void(HashMap<FrameIdentifier, AttributedString>&&)>&& completionHandler)
+{
+    if (!hasRunningProcess() || frameIdentifiers.isEmpty()) {
+        completionHandler({ });
+        return;
+    }
+
+    RefPtr rootFrame = WebFrameProxy::webFrame(rootFrameIdentifier);
+    MESSAGE_CHECK_COMPLETION(rootFrame && rootFrame->page() == this && &rootFrame->process() == WebProcessProxy::fromConnection(connection).ptr(), connection, completionHandler({ }));
+    MESSAGE_CHECK_COMPLETION(validateFrameIdentifiersForAttributedStringCollection(rootFrameIdentifier, frameIdentifiers), connection, completionHandler({ }));
+
+    HashMap<Ref<WebProcessProxy>, Vector<FrameIdentifier>> processFrames;
+    for (auto frameIdentifier : frameIdentifiers) {
+        RefPtr frame = WebFrameProxy::webFrame(frameIdentifier);
+        if (!frame)
+            continue;
+
+        processFrames.ensure(protect(frame->process()), [] {
+            return Vector<FrameIdentifier> { };
+        }).iterator->value.append(frameIdentifier);
+    }
+
+    if (processFrames.isEmpty()) {
+        completionHandler({ });
+        return;
+    }
+
+    class AttributedStringMapCallbackAggregator final : public RefCounted<AttributedStringMapCallbackAggregator> {
+    public:
+        static Ref<AttributedStringMapCallbackAggregator> create(CompletionHandler<void(HashMap<FrameIdentifier, AttributedString>&&)>&& completionHandler)
+        {
+            return adoptRef(*new AttributedStringMapCallbackAggregator(WTF::move(completionHandler)));
+        }
+
+        ~AttributedStringMapCallbackAggregator()
+        {
+            m_completionHandler(WTF::move(m_result));
+        }
+
+        void addResult(HashMap<FrameIdentifier, AttributedString>&& result)
+        {
+            for (auto&& [frameIdentifier, attributedString] : WTF::move(result))
+                m_result.set(frameIdentifier, WTF::move(attributedString));
+        }
+
+    private:
+        AttributedStringMapCallbackAggregator(CompletionHandler<void(HashMap<FrameIdentifier, AttributedString>&&)>&& completionHandler)
+            : m_completionHandler(WTF::move(completionHandler))
+        {
+        }
+
+        HashMap<FrameIdentifier, AttributedString> m_result;
+        CompletionHandler<void(HashMap<FrameIdentifier, AttributedString>&&)> m_completionHandler;
+    };
+
+    Ref aggregator = AttributedStringMapCallbackAggregator::create(WTF::move(completionHandler));
+    for (auto& [process, frameIDs] : processFrames) {
+        protect(process)->sendWithAsyncReply(Messages::WebPage::GetContentsAsAttributedStringForFrames(frameIDs), [frameIDs, aggregator](auto&& result) {
+            if (result.size() <= frameIDs.size())
+                aggregator->addResult(WTF::move(result));
+        }, webPageIDInProcess(process.get()));
+    }
+}
+
 String WebPageProxy::presentingApplicationBundleIdentifier() const
 {
     if (std::optional auditToken = presentingApplicationAuditToken()) {

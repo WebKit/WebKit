@@ -24,12 +24,14 @@
  */
 
 #import <WebCore/AttributedString.h>
+#import <WebCore/FrameIdentifier.h>
 #import <WebCore/SimpleRange.h>
+#import <wtf/HashMap.h>
 
 namespace WebCore {
 
 enum class IgnoreUserSelectNone : bool;
 
-WEBCORE_EXPORT AttributedString attributedString(const SimpleRange&, IgnoreUserSelectNone);
+WEBCORE_EXPORT AttributedString attributedString(const SimpleRange&, IgnoreUserSelectNone, HashMap<FrameIdentifier, AttributedString>&& remoteFrameContent = { });
 
 } // namespace WebCore

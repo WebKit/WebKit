@@ -6565,6 +6565,82 @@ TEST(SiteIsolation, CreateWebArchiveNestedFrameForCopy)
     validateWebArchiveMainResource([actualNestedFrameArchives.firstObject objectForKey:@"WebMainResource"], expectedNestedFrameResource);
 }
 
+TEST(SiteIsolation, ReadAttributedStringFromPasteboardAfterCopyWithCrossSiteIframe)
+{
+    static constexpr auto mainframeBytes = R"TESTRESOURCE(
+    <!DOCTYPE html>
+    mainframecontent
+    <iframe id='subframe' src='https://example2.com/subframe'></iframe>
+    <script>
+        function alertSubframe() { document.getElementById('subframe').contentWindow.postMessage('alert', '*'); }
+    </script>
+    )TESTRESOURCE"_s;
+
+    static constexpr auto subframeBytes = R"TESTRESOURCE(
+    <!DOCTYPE html>
+    subframecontent
+    <script>
+        window.addEventListener('message', function(event) {
+            alert('hi');
+        });
+    </script>
+    )TESTRESOURCE"_s;
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeBytes } },
+        { "/subframe"_s, { subframeBytes } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webViewAndDelegates = makeWebViewAndDelegates(server);
+    RetainPtr webView = webViewAndDelegates.webView;
+    RetainPtr navigationDelegate = webViewAndDelegates.navigationDelegate;
+    RetainPtr uiDelegate = webViewAndDelegates.uiDelegate;
+    WKPreferencesSetWriteRichTextDataWhenCopyingOrDragging((__bridge WKPreferencesRef)[[webView configuration] preferences], true);
+    static bool alerted = false;
+    [uiDelegate setRunJavaScriptAlertPanelWithMessage:^(WKWebView *, NSString *message, WKFrameInfo *, void (^completionHandler)()) {
+        alerted = true;
+        completionHandler();
+    }];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(webView, {
+        { "https://example.com"_s,
+            { { RemoteFrame } }
+        }, { RemoteFrame,
+            { { "https://example2.com"_s } }
+        },
+    });
+
+    [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.body)"];
+    [webView waitForNextPresentationUpdate];
+
+    [webView copy:nil];
+    [webView waitForNextPresentationUpdate];
+
+    [webView evaluateJavaScript:@"alertSubframe()" completionHandler:nil];
+    Util::run(&alerted);
+
+#if PLATFORM(MAC)
+    RetainPtr objects = [NSPasteboard.generalPasteboard readObjectsForClasses:@[NSAttributedString.class] options:@{ }];
+    EXPECT_EQ([objects count], 1u);
+    RetainPtr result = [objects firstObject];
+#elif PLATFORM(IOS_FAMILY)
+    RetainPtr itemProvider = [[UIPasteboard.generalPasteboard itemProviders] firstObject];
+    __block bool doneLoading = false;
+    __block RetainPtr<NSAttributedString> result;
+    [itemProvider loadObjectOfClass:NSAttributedString.class completionHandler:^(NSAttributedString *string, NSError *) {
+        result = string;
+        doneLoading = true;
+    }];
+    Util::run(&doneLoading);
+#endif
+
+    EXPECT_TRUE([[result string] containsString:@"mainframecontent"]);
+    EXPECT_TRUE([[result string] containsString:@"subframecontent"]);
+}
+
 TEST(SiteIsolation, LoadWebArchive)
 {
     RetainPtr<NSURL> archiveURL = [NSBundle.test_resourcesBundle URLForResource:@"SiteIsolationLoadWebArchive" withExtension:@"webarchive"];

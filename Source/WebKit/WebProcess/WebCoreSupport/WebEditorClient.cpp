@@ -515,6 +515,13 @@ bool WebEditorClient::shouldAllowSingleClickToChangeSelection(WebCore::Node& tar
     return page && page->shouldAllowSingleClickToChangeSelection(targetNode, newSelection, inputSource);
 }
 
+HashMap<WebCore::FrameIdentifier, WebCore::AttributedString> WebEditorClient::collectAttributedStringsForRemoteFrames(WebCore::FrameIdentifier rootFrameIdentifier, const Vector<WebCore::FrameIdentifier>& frameIdentifiers)
+{
+    if (RefPtr page = m_page.get())
+        return page->attributedStringsForRemoteFrames(rootFrameIdentifier, frameIdentifiers);
+    return { };
+}
+
 #endif // PLATFORM(COCOA)
 
 static bool getActionTypeForKeyEvent(KeyboardEvent* event, WKInputFieldActionType& type)

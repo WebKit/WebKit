@@ -201,6 +201,7 @@ messages -> WebPageProxy {
 
 #if PLATFORM(COCOA)
     DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information) CanDispatchOutOfOrder
+    GetAttributedStringsForRemoteFrames(WebCore::FrameIdentifier rootFrameIdentifier, Vector<WebCore::FrameIdentifier> frameIdentifiers) -> (HashMap<WebCore::FrameIdentifier, WebCore::AttributedString> result) Synchronous
 #endif
 
 #if PLATFORM(IOS_FAMILY)

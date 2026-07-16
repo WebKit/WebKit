@@ -45,6 +45,10 @@ enum class DOMPasteAccessCategory : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 enum class MouseEventInputSource : uint8_t;
 
+#if PLATFORM(COCOA)
+struct AttributedString;
+#endif
+
 #if ENABLE(ATTACHMENT_ELEMENT)
 enum class AttachmentAssociatedElementType : uint8_t;
 #endif
@@ -114,6 +118,9 @@ public:
     virtual void willWriteSelectionToPasteboard(const std::optional<SimpleRange>&) = 0;
     virtual void didWriteSelectionToPasteboard() = 0;
     virtual void getClientPasteboardData(const std::optional<SimpleRange>&, Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>>& pasteboardTypesAndData) = 0;
+#if PLATFORM(COCOA)
+    virtual HashMap<FrameIdentifier, AttributedString> collectAttributedStringsForRemoteFrames(FrameIdentifier rootFrameIdentifier, const Vector<FrameIdentifier>&) = 0;
+#endif
     virtual void requestCandidatesForSelection(const VisibleSelection&) { }
     virtual void handleAcceptedCandidateWithSoftSpaces(TextCheckingResult) { }
 

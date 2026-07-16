@@ -65,6 +65,7 @@
 #import "PasteboardStrategy.h"
 #import "PlatformNSAdaptiveImageGlyph.h"
 #import "PlatformStrategies.h"
+#import "RemoteFrame.h"
 #import "RenderElement.h"
 #import "ReplaceSelectionCommand.h"
 #import "Settings.h"
@@ -149,22 +150,22 @@ static RetainPtr<NSAttributedString> selectionInImageOverlayAsAttributedString(c
 #endif
 }
 
-static RetainPtr<NSAttributedString> selectionAsAttributedString(const Document& document)
+static RetainPtr<NSAttributedString> selectionAsAttributedString(const Document& document, HashMap<FrameIdentifier, AttributedString>&& remoteFrameContent)
 {
     auto selection = document.selection().selection();
     if (ImageOverlay::isInsideOverlay(selection))
         return selectionInImageOverlayAsAttributedString(selection);
     auto range = selection.firstRange();
-    return range ? attributedString(*range, IgnoreUserSelectNone::Yes).nsAttributedString() : adoptNS([[NSAttributedString alloc] init]);
+    return range ? attributedString(*range, IgnoreUserSelectNone::Yes, WTF::move(remoteFrameContent)).nsAttributedString() : adoptNS([NSAttributedString new]);
 }
 
 template<typename PasteboardContent>
-void populateRichTextDataIfNeeded(PasteboardContent& content, const Document& document)
+void populateRichTextDataIfNeeded(PasteboardContent& content, const Document& document, HashMap<FrameIdentifier, AttributedString>&& remoteFrameContent = { })
 {
     if (!document.settings().writeRichTextDataWhenCopyingOrDragging())
         return;
 
-    auto string = selectionAsAttributedString(document);
+    auto string = selectionAsAttributedString(document, WTF::move(remoteFrameContent));
     content.dataInRTFDFormat = [string containsAttachments] ? Editor::dataInRTFDFormat(string.get()) : nullptr;
     content.dataInRTFFormat = Editor::dataInRTFFormat(string.get());
     content.dataInAttributedStringFormat = AttributedString::fromNSAttributedString(string.get());
@@ -183,9 +184,24 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
                 LegacyWebArchive::ShouldSaveScriptsFromMemoryCache::Yes,
                 LegacyWebArchive::ShouldArchiveSubframes::No
             };
-            if (document->settings().siteIsolationEnabled())
+            HashMap<FrameIdentifier, AttributedString> remoteFrameContent;
+            if (document->settings().siteIsolationEnabled()) {
                 content.webArchive = LegacyWebArchive::createFromSelection(protect(document->frame()), WTF::move(options));
-            populateRichTextDataIfNeeded(content, document);
+                if (content.webArchive) {
+                    Vector<FrameIdentifier> remoteFrameIdentifiers;
+                    RefPtr localFrame = document->frame();
+                    if (localFrame) {
+                        auto subframeIdentifiers = protect(content.webArchive)->subframeIdentifiers();
+                        for (RefPtr frame = localFrame->tree().traverseNext(localFrame.get()); frame; frame = frame->tree().traverseNext(localFrame.get())) {
+                            if (is<RemoteFrame>(*frame) && subframeIdentifiers.contains(frame->frameID()))
+                                remoteFrameIdentifiers.append(frame->frameID());
+                        }
+                    }
+                    if (localFrame && !remoteFrameIdentifiers.isEmpty())
+                        remoteFrameContent = client()->collectAttributedStringsForRemoteFrames(localFrame->frameID(), remoteFrameIdentifiers);
+                }
+            }
+            populateRichTextDataIfNeeded(content, document, WTF::move(remoteFrameContent));
         }
         client()->getClientPasteboardData(selectedRange(), content.clientTypesAndData);
     }

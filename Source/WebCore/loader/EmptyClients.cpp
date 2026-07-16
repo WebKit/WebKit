@@ -319,6 +319,9 @@ private:
     void NODELETE clearUndoRedoOperations() final { }
 
     DOMPasteAccessResponse NODELETE requestDOMPasteAccess(DOMPasteAccessCategory, FrameIdentifier, const String&) final { return DOMPasteAccessResponse::DeniedForGesture; }
+#if PLATFORM(COCOA)
+    HashMap<FrameIdentifier, AttributedString> collectAttributedStringsForRemoteFrames(FrameIdentifier, const Vector<FrameIdentifier>&) final { return { }; }
+#endif
 
     bool NODELETE canCopyCut(LocalFrame*, bool defaultValue) const final { return defaultValue; }
     bool NODELETE canPaste(LocalFrame*, bool defaultValue) const final { return defaultValue; }
