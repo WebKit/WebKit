@@ -14430,17 +14430,17 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #endif
     constexpr size_t creationParametersPortDescriptorLogThreshold = 1000;
     if (estimatedPortDescriptors >= creationParametersPortDescriptorLogThreshold) {
-        size_t contentRuleListsCount = 0;
+        [[maybe_unused]] size_t contentRuleListsCount = 0;
 #if ENABLE(CONTENT_EXTENSIONS)
         contentRuleListsCount = userContentParameters.contentRuleLists.size();
 #endif
-        size_t gpuIOKitExtensionHandlesCount = 0;
-        size_t gpuMachExtensionHandlesCount = 0;
+        [[maybe_unused]] size_t gpuIOKitExtensionHandlesCount = 0;
+        [[maybe_unused]] size_t gpuMachExtensionHandlesCount = 0;
 #if PLATFORM(COCOA)
         gpuIOKitExtensionHandlesCount = parameters.gpuIOKitExtensionHandles.size();
         gpuMachExtensionHandlesCount = parameters.gpuMachExtensionHandles.size();
 #endif
-        size_t fontMachExtensionHandlesCount = 0;
+        [[maybe_unused]] size_t fontMachExtensionHandlesCount = 0;
 #if HAVE(STATIC_FONT_REGISTRY) && !ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
         fontMachExtensionHandlesCount = parameters.fontMachExtensionHandles.size();
 #endif
