@@ -546,6 +546,16 @@ TextFieldSelectionDirection HTMLTextFormControlElement::computeSelectionDirectio
     return selection.directionality() == Directionality::Strong ? (selection.isBaseFirst() ? SelectionHasForwardDirection : SelectionHasBackwardDirection) : SelectionHasNoDirection;
 }
 
+TextFieldSelectionDirection HTMLTextFormControlElement::normalizeSelectionDirection(TextFieldSelectionDirection direction)
+{
+    if (direction != SelectionHasNoDirection)
+        return direction;
+    RefPtr frame = document().frame();
+    if (frame && frame->editor().behavior().shouldConsiderSelectionAsDirectional())
+        return SelectionHasForwardDirection;
+    return SelectionHasNoDirection;
+}
+
 static void setContainerAndOffsetForRange(Node& node, unsigned offset, RefPtr<Node>& containerNode, unsigned& offsetInContainer)
 {
     if (node.isTextNode()) {

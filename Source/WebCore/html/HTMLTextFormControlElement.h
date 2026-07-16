@@ -88,6 +88,7 @@ public:
     void scheduleSelectionChangeEvent();
 
     TextFieldSelectionDirection NODELETE computeSelectionDirection() const;
+    TextFieldSelectionDirection normalizeSelectionDirection(TextFieldSelectionDirection);
 
     std::optional<SimpleRange> selection() const;
     String selectedText() const;

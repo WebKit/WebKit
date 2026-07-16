@@ -398,10 +398,10 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventB
         else {
             // We don't change text selection here but need to update caret to
             // the end of the text value except for initialize.
-            cacheSelection(endOfString, endOfString, SelectionHasNoDirection);
+            cacheSelection(endOfString, endOfString, normalizeSelectionDirection(SelectionHasNoDirection));
         }
     } else if (shouldClamp)
-        cacheSelection(std::min(endOfString, selectionStartValue), std::min(endOfString, selectionEndValue), SelectionHasNoDirection);
+        cacheSelection(std::min(endOfString, selectionStartValue), std::min(endOfString, selectionEndValue), normalizeSelectionDirection(SelectionHasNoDirection));
 
     setTextAsOfLastFormControlChangeEvent(String(normalizedValue));
 
