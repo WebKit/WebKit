@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/animation-events.html
@@ -26,9 +24,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/inline-subject.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/inline-view-timeline-current-time.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/intermediate-transform.html
-/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/subject-br-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/svg-graphics-element-001.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/svg-graphics-element-002.html
@@ -45,6 +43,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-range.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-root-source.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-snapport.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-source-single-axis-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-source-single-axis-outer.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-source.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-sticky-block.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-sticky-inline.html

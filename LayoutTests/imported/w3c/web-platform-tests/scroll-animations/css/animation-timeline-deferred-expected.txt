@@ -1,5 +1,5 @@
 
 PASS Animation.timeline returns attached timeline
-PASS Animation.timeline returns a timeline with no source for inactive deferred timeline
-PASS Animation.timeline returns a timeline with no source for inactive (overattached) deferred timeline
+FAIL Animation.timeline returns null for an inactive deferred timeline assert_equals: expected null but got object "[object ScrollTimeline]"
+FAIL Animation.timeline naming conflict resolves to last in tree order promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'timeline.source.id')"
 

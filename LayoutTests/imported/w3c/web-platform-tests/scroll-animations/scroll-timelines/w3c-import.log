@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-ref.html
@@ -63,11 +61,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-range.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-snapshot-elementsFromPoint.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-snapshotting.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-source-single-axis-inactive.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-source-single-axis-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-source-single-axis-outer.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-source-single-axis-progress.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-source-single-axis-viewport-writing-mode.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/set-current-time-before-play-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/set-current-time-before-play.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-current-time.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-effect.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-playback-rate.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-scroll-timeline-with-null-source-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-start-time.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-timeline.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/source-quirks-mode.html

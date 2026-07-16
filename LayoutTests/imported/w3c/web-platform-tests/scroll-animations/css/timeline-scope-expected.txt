@@ -4,7 +4,7 @@ PASS Deferred timeline with no attachments
 PASS Inner timeline does not interfere with outer timeline
 PASS Deferred timeline with two attachments
 PASS Dynamically re-attaching
-PASS Dynamically detaching
+FAIL Dynamically detaching assert_equals: expected "50px" but got "0px"
 PASS Removing/inserting element with attaching timeline
 PASS Ancestor attached element becoming display:none/block
 PASS A deferred timeline appearing dynamically in the ancestor chain

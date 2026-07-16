@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-addAnimation.tentative.html
@@ -30,6 +28,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-multiple-triggers.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-once-play-state.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-once.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-play-forwards-backwards.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-play.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-range-px-roundtrip.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-repeat.tentative.html

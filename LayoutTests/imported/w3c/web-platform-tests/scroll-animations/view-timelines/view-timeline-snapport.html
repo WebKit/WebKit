@@ -43,7 +43,7 @@
     await runAndWaitForFrameUpdate(() => {
       container.scrollTop = 600;
     });
-    assert_percents_equal(anim.currentTime, 0);
+    assert_percents_equal(anim.currentTime, -12.5);
 
     // 50%
     await runAndWaitForFrameUpdate(() => {
@@ -56,6 +56,6 @@
       container.scrollTop = 1000;
     });
     assert_percents_equal(anim.currentTime, 100);
-  }, 'Default ViewTimeline is not affected by scroll-padding');
+  }, 'Default ViewTimeline is affected by scroll-padding');
 </script>
 </html>

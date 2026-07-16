@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/animation-duration-auto.tentative.html
@@ -103,6 +101,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/timeline-offset-in-keyframe-change-timeline.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/timeline-offset-keyframes-hidden-subject.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/timeline-offset-keyframes-with-document-timeline.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/timeline-offset-keyframes-with-scroll-timeline.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/timeline-range-name-offset-in-keyframes.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/timeline-scope-all.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/timeline-scope-computed.html

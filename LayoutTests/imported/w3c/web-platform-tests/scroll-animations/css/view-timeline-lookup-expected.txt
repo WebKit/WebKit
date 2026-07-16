@@ -3,7 +3,7 @@ PASS view-timeline on self
 PASS timeline-scope on preceding sibling
 PASS view-timeline on ancestor
 PASS timeline-scope on ancestor sibling
-PASS timeline-scope on ancestor sibling, conflict remains unresolved
-PASS timeline-scope on ancestor sibling, closer timeline wins
+FAIL timeline-scope on ancestor sibling, resolve to last match in tree order assert_equals: expected "50" but got "auto"
+FAIL ancestor search stops at timeline-scope assert_equals: expected "auto" but got "0"
 PASS view-timeline on ancestor sibling, scroll-timeline wins on same element
 

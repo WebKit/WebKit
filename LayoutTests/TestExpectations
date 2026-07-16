@@ -7101,7 +7101,7 @@ webkit.org/b/283702 imported/w3c/web-platform-tests/scroll-animations/scroll-tim
 webkit.org/b/283107 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/updating-the-finished-state.html [ Skip ]
 
 # webkit.org/b/263872 [scroll-animations] some WPT tests are ImageOnlyFailure
-imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary.tentative.html [ ImageOnlyFailure ]
 
 # webkit.org/b/281482 [scroll-animations] some WPT reftests can't find their reference
 imported/w3c/web-platform-tests/scroll-animations/css/printing/animation-timeline-none-with-progress-print.tentative.html [ Skip ]

@@ -10,13 +10,14 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/change-timeline-from-finite-to-monotonic-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/clip-path-with-view-timeline.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/effect-target-set-to-null.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/invalid-animation-range.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/keyframe-offset-out-of-range-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/scroll-timeline-becomes-scrollable-after-sampling.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/scroll-timeline-completion-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/scroll-timeline-resize.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/viewport-100vh.html
