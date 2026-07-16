@@ -1064,8 +1064,7 @@ template<typename SizeType> std::optional<LayoutUnit> FlexLayout::computeMainAxi
         }
     }
 
-    auto mainAxisWidth = m_constraints.isColumnFlow ? m_flexBox.availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding) : m_flexBox.contentBoxLogicalWidth();
-    return flexItem.computeLogicalWidthUsing(size, mainAxisWidth, m_flexBox) - flexItem.borderAndPaddingLogicalWidth();
+    return flexItem.computeLogicalWidthUsing(size, m_constraints.mainAxisSizeForLengthResolution, m_flexBox) - flexItem.borderAndPaddingLogicalWidth();
 }
 
 // FIXME: computeMainSizeFromAspectRatioUsing may need to return an std::optional<LayoutUnit> in the future

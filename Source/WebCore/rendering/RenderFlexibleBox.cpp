@@ -1104,6 +1104,7 @@ FlexLayoutConstraints RenderFlexibleBox::flexLayoutConstraints()
         .flowAwarePaddingInline = { utils.flowAwarePaddingStart(), utils.flowAwarePaddingEnd() },
         .flowAwarePaddingBlock = { utils.flowAwarePaddingBefore(), utils.flowAwarePaddingAfter() },
         .mainAxisAvailableSpace = mainAxisAvailableSpace(),
+        .mainAxisSizeForLengthResolution = utils.isColumnFlow() ? availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding) : contentBoxLogicalWidth(),
         .minimumHeightForLineIfEmpty = minimumHeightForLineIfEmpty(),
     };
 }

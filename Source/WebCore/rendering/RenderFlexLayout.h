@@ -87,6 +87,10 @@ struct FlexLayoutConstraints {
     // specified logical height for column flow, LayoutUnit::max() when indefinite). Unlike the cross size it does
     // not grow during layout.
     LayoutUnit mainAxisAvailableSpace;
+    // The concrete main-axis size a flex item's main-axis length resolves against (contentBoxLogicalWidth for row
+    // flow; availableLogicalHeight for column flow). Unlike mainAxisAvailableSpace this never carries the indefinite
+    // LayoutUnit::max() marker, since a percentage main-size must resolve against a real size.
+    LayoutUnit mainAxisSizeForLengthResolution;
     // The minimum logical height the container needs when it has a line even while empty (nullopt when it does not).
     std::optional<LayoutUnit> minimumHeightForLineIfEmpty;
 };
