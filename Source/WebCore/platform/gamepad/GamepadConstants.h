@@ -55,9 +55,9 @@ enum class GamepadButtonRole : uint8_t {
     Nonstandard2 = 18,
 };
 
-extern const size_t numberOfStandardGamepadButtonsWithoutHomeButton;
-extern const size_t numberOfStandardGamepadButtonsWithHomeButton;
-extern const GamepadButtonRole maximumGamepadButton;
+inline constexpr GamepadButtonRole maximumGamepadButton = GamepadButtonRole::CenterClusterCenter;
+inline constexpr size_t numberOfStandardGamepadButtonsWithoutHomeButton = static_cast<size_t>(maximumGamepadButton);
+inline constexpr size_t numberOfStandardGamepadButtonsWithHomeButton = numberOfStandardGamepadButtonsWithoutHomeButton + 1;
 
 const String& standardGamepadMappingString();
 #if ENABLE(WEBXR)

@@ -35,9 +35,6 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ResourceErrorBase);
 
-const ASCIILiteral errorDomainWebKitInternal = "WebKitInternal"_s;
-const ASCIILiteral errorDomainWebKitServiceWorker = "WebKitServiceWorker"_s;
-
 inline const ResourceError& ResourceErrorBase::asResourceError() const
 {
     return *static_cast<const ResourceError*>(this);

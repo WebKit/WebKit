@@ -55,10 +55,6 @@
 
 namespace WebCore {
 
-const ASCIILiteral WebArchivePboardType = "Apple Web Archive pasteboard type"_s;
-const ASCIILiteral WebURLNamePboardType = "public.url-name"_s;
-const ASCIILiteral WebURLsWithTitlesPboardType = "WebURLsWithTitlesPboardType"_s;
-
 const ASCIILiteral WebSmartPastePboardType = "NeXT smart paste pasteboard type"_s;
 const ASCIILiteral WebURLPboardType = "public.url"_s;
 

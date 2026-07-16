@@ -403,9 +403,9 @@ extern NSString *UIImagePboardType;
 #endif
 
 #if PLATFORM(MAC)
-WEBCORE_EXPORT extern const ASCIILiteral WebArchivePboardType;
-extern const ASCIILiteral WebURLNamePboardType;
-extern const ASCIILiteral WebURLsWithTitlesPboardType;
+inline constexpr ASCIILiteral WebArchivePboardType { "Apple Web Archive pasteboard type"_s };
+inline constexpr ASCIILiteral WebURLNamePboardType { "public.url-name"_s };
+inline constexpr ASCIILiteral WebURLsWithTitlesPboardType { "WebURLsWithTitlesPboardType"_s };
 #endif
 
 #if !PLATFORM(GTK) && !PLATFORM(WPE)

@@ -35,8 +35,8 @@ namespace WebCore {
 
 class ResourceError;
 
-WEBCORE_EXPORT extern const ASCIILiteral errorDomainWebKitInternal; // Used for errors that won't be exposed to clients.
-WEBCORE_EXPORT extern const ASCIILiteral errorDomainWebKitServiceWorker; // Used for errors that happen when loading a resource from a service worker.
+inline constexpr ASCIILiteral errorDomainWebKitInternal { "WebKitInternal"_s }; // Used for errors that won't be exposed to clients.
+inline constexpr ASCIILiteral errorDomainWebKitServiceWorker { "WebKitServiceWorker"_s }; // Used for errors that happen when loading a resource from a service worker.
 
 enum class ResourceErrorBaseType : uint8_t {
     Null,
