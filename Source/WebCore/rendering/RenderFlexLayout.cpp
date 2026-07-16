@@ -206,17 +206,6 @@ static LayoutUnit constrainSizeByMinMax(LayoutUnit size, std::pair<LayoutUnit, L
     return std::max(minMaxSizes.first, std::min(size, minMaxSizes.second));
 }
 
-static void updateFlexItemDirtyBitsBeforeLayout(bool relayoutFlexItem, RenderBox& flexItem)
-{
-    if (flexItem.isOutOfFlowPositioned())
-        return;
-
-    // FIXME: Technically percentage height objects only need a relayout if their percentage isn't going to be turned into
-    // an auto value. Add a method to determine this, so that we can avoid the relayout.
-    if (relayoutFlexItem || flexItem.hasRelativeLogicalHeight())
-        flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
-}
-
 FlexLayout::FlexLines FlexLayout::computeFlexLines(FlexLayoutItems& flexItems, std::span<const FlexBaseAndHypotheticalMainSize> sizingList)
 {
     // 9.3. (#5) Collect flex items into flex lines: a single-line container collects all items into one line; a
@@ -460,50 +449,9 @@ void FlexLayout::trimCrossAxisMarginsForFlexItems(FlexLayoutItems& flexItems, co
 void FlexLayout::layoutFlexItems(std::span<FlexLayoutItem> flexLayoutItems, std::span<const LayoutUnit> mainSizes, RelayoutChildren relayoutChildren)
 {
     for (size_t index = 0; index < flexLayoutItems.size(); ++index)
-        layoutFlexItemAfterMainSizing(flexLayoutItems[index], mainSizes[index], relayoutChildren);
+        m_flexBox.layoutFlexItemAfterMainSizing(flexLayoutItems[index], mainSizes[index], relayoutChildren);
 }
 
-void FlexLayout::layoutFlexItemAfterMainSizing(FlexLayoutItem& flexLayoutItem, LayoutUnit mainSize, RelayoutChildren relayoutChildren)
-{
-    auto& flexItem = flexLayoutItem.renderer.get();
-
-    setOverridingMainSizeForFlexItem(flexItem, mainSize);
-    // The flexed content size and the override size include the scrollbar
-    // width, so we need to compare to the size including the scrollbar.
-    // FIXME: Should it include the scrollbar?
-    if (mainSize != flexLayoutUtils().mainAxisContentExtentForFlexItemIncludingScrollbar(flexItem))
-        flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
-    else {
-        // To avoid double applying margin changes in
-        // updateAutoMarginsInCrossAxis, we reset the margins here.
-        resetAutoMarginsAndLogicalTopInCrossAxis(flexItem);
-    }
-    // We may have already forced relayout for orthogonal flowing children in
-    // computeInnerFlexBaseSizeForFlexItem.
-    bool forceFlexItemRelayout = relayoutChildren == RelayoutChildren::Yes && !m_flexBox.hasFlexItemCompletedLayout(flexItem);
-    if (!forceFlexItemRelayout && flexItemHasPercentHeightDescendants(flexItem)) {
-        // Have to force another relayout even though the child is sized
-        // correctly, because its descendants are not sized correctly yet. Our
-        // previous layout of the child was done without an override height set.
-        // So, redo it here.
-        forceFlexItemRelayout = true;
-    }
-    updateFlexItemDirtyBitsBeforeLayout(forceFlexItemRelayout, flexItem);
-    if (!flexItem.needsLayout())
-        flexItem.markForPaginationRelayoutIfNeeded();
-    if (flexItem.needsLayout())
-        m_flexBox.markFlexItemLayoutComplete(flexItem);
-
-    {
-        auto flexLayoutScope = m_flexBox.scopedAfterMainAxisItemSizing();
-        flexItem.layoutIfNeeded();
-    }
-
-    if (!flexLayoutItem.everHadLayout && flexItem.checkForRepaintDuringLayout()) {
-        flexItem.repaint();
-        flexItem.repaintOverhangingFloats(true);
-    }
-}
 
 Vector<LayoutUnit> FlexLayout::hypotheticalCrossSizeForFlexItems(const FlexLayoutItems& flexItems)
 {
@@ -1474,7 +1422,7 @@ LayoutUnit FlexLayout::applyStretchAlignmentToFlexItem(const FlexLayoutItem& fle
 
         // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
         bool flexItemNeedsRelayout = desiredLogicalHeight != flexItem.logicalHeight();
-        if (!flexItemNeedsRelayout && m_flexBox.hasFlexItemCompletedLayout(flexItem) && flexItemHasPercentHeightDescendants(flexItem)) {
+        if (!flexItemNeedsRelayout && m_flexBox.hasFlexItemCompletedLayout(flexItem) && m_flexBox.flexItemHasPercentHeightDescendants(flexItem)) {
             // Have to force another relayout even though the child is sized
             // correctly, because its descendants are not sized correctly yet. Our
             // previous layout of the child was done without an override height set.
@@ -1556,32 +1504,6 @@ LayoutUnit FlexLayout::applyStretchMinMaxCrossSize(const FlexLayoutItem& flexLay
     return newSize;
 }
 
-void FlexLayout::setOverridingMainSizeForFlexItem(RenderBox& flexItem, LayoutUnit preferredSize)
-{
-    if (flexLayoutUtils().mainAxisIsFlexItemInlineAxis(flexItem))
-        flexItem.setOverridingBorderBoxLogicalWidth(preferredSize + flexItem.borderAndPaddingLogicalWidth());
-    else
-        flexItem.setOverridingBorderBoxLogicalHeight(preferredSize + flexItem.borderAndPaddingLogicalHeight());
-}
-
-void FlexLayout::resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& flexItem)
-{
-    if (flexLayoutUtils().hasAutoMarginsInCrossAxis(flexItem)) {
-        flexItem.updateLogicalHeight();
-        if (m_constraints.isHorizontalFlow) {
-            if (flexItem.style().marginTop().isAuto())
-                flexItem.setMarginTop(0_lu);
-            if (flexItem.style().marginBottom().isAuto())
-                flexItem.setMarginBottom(0_lu);
-        } else {
-            if (flexItem.style().marginLeft().isAuto())
-                flexItem.setMarginLeft(0_lu);
-            if (flexItem.style().marginRight().isAuto())
-                flexItem.setMarginRight(0_lu);
-        }
-    }
-}
-
 void FlexLayout::setFlowAwareLocationForFlexItem(RenderBox& flexItem, const LayoutPoint& location)
 {
     if (m_constraints.isHorizontalFlow)
@@ -1595,44 +1517,5 @@ void FlexLayout::setFlexItemGeometry(FlexLayoutItem& flexLayoutItem, const Layou
     setFlowAwareLocationForFlexItem(flexLayoutItem.renderer, location);
 }
 
-bool FlexLayout::flexItemHasPercentHeightDescendants(const RenderBox& renderer) const
-{
-    // FIXME: This function can be removed soon after webkit.org/b/204318 is fixed. Evaluate whether the
-    // skipContainingBlockForPercentHeightCalculation() check below should be moved to the caller in that case.
-    CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(renderer);
-    if (!renderBlock)
-        return false;
-
-    // FlexibleBoxImpl's like RenderButton might wrap their children in anonymous blocks. Those anonymous blocks are
-    // skipped for percentage height calculations in RenderBox::computePercentageLogicalHeight() and thus
-    // addPercentHeightDescendant() is never called for them. This means that this method would always wrongly
-    // return false for a child of a <button> with a percentage height.
-    if (m_flexBox.hasPercentHeightDescendants()) {
-        for (auto& descendant : *m_flexBox.percentHeightDescendants()) {
-            if (renderBlock->isContainingBlockAncestorFor(descendant))
-                return true;
-        }
-    }
-
-    if (!renderBlock->hasPercentHeightDescendants())
-        return false;
-
-    auto* percentHeightDescendants = renderBlock->percentHeightDescendants();
-    if (!percentHeightDescendants)
-        return false;
-
-    for (auto& descendant : *percentHeightDescendants) {
-        bool hasOutOfFlowAncestor = false;
-        for (auto* ancestor = descendant.containingBlock(); ancestor && ancestor != renderBlock.get(); ancestor = ancestor->containingBlock()) {
-            if (ancestor->isOutOfFlowPositioned()) {
-                hasOutOfFlowAncestor = true;
-                break;
-            }
-        }
-        if (!hasOutOfFlowAncestor)
-            return true;
-    }
-    return false;
-}
 
 } // namespace WebCore

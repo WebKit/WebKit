@@ -154,7 +154,6 @@ private:
     void trimCrossAxisMarginsForFlexItems(FlexLayoutItems& flexItems, const FlexLines&);
     // Lays out each flex item at its resolved main size.
     void layoutFlexItems(std::span<FlexLayoutItem>, std::span<const LayoutUnit> mainSizes, RelayoutChildren);
-    void layoutFlexItemAfterMainSizing(FlexLayoutItem&, LayoutUnit mainSize, RelayoutChildren);
     Vector<LayoutUnit> hypotheticalCrossSizeForFlexItems(const FlexLayoutItems&);
     Vector<LayoutUnit> crossSizeForFlexLines(const FlexLines&, const FlexLayoutItems&, const Vector<LayoutUnit>& hypotheticalCrossSizeList);
     Vector<LayoutPoint> handleMainAxisAlignment(const FlexLines&, FlexLayoutItems&, const Vector<LayoutUnit>& mainSizeList, const Vector<LayoutUnit>& lineCrossOffsetList, LayoutUnit gapBetweenItems);
@@ -199,13 +198,9 @@ private:
     bool NODELETE updateAutoMarginsInCrossAxis(FlexLayoutItem&, LayoutUnit& crossOffset, LayoutUnit availableAlignmentSpace);
     LayoutUnit applyStretchAlignmentToFlexItem(const FlexLayoutItem&, LayoutUnit lineCrossAxisExtent);
     LayoutUnit applyStretchMinMaxCrossSize(const FlexLayoutItem&, LayoutUnit lineCrossAxisExtent, LogicalBoxAxis);
-    void setOverridingMainSizeForFlexItem(RenderBox&, LayoutUnit);
 
-    void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& flexItem);
     void NODELETE setFlowAwareLocationForFlexItem(RenderBox& flexItem, const LayoutPoint&);
     void setFlexItemGeometry(FlexLayoutItem&, const LayoutPoint& location);
-
-    bool flexItemHasPercentHeightDescendants(const RenderBox&) const;
 
     const FlexLayoutUtils& flexLayoutUtils() const;
 
