@@ -161,7 +161,7 @@ public:
     WEBCORE_EXPORT IntSize backendSize() const;
 
     virtual void ensureBackendCreated() const { ensureBackend(); }
-    bool hasBackend() { return !!backend(); }
+    bool hasBackend() const { return !!backend(); }
 
     WEBCORE_EXPORT void transferToNewContext(const ImageBufferCreationContext&);
 
