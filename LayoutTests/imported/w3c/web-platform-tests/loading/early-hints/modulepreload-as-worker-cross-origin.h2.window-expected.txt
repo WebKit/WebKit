@@ -1,0 +1,3 @@
+
+PASS Modulepreload should not load with as="worker" from cross-origin url
+

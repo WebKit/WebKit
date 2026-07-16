@@ -8239,6 +8239,15 @@ imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/sh
 
 webkit.org/b/317017 imported/w3c/web-platform-tests/largest-contentful-paint/multiple-redirects-TAO.html [ Pass Failure ]
 
+# Early Hints preload is not implemented, so these time out waiting for a preload that never happens.
+imported/w3c/web-platform-tests/loading/early-hints/preload-finished-before-final-response.h2.window.html [ Skip ]
+imported/w3c/web-platform-tests/loading/early-hints/preload-finished-while-receiving-final-response-body.h2.window.html [ Skip ]
+imported/w3c/web-platform-tests/loading/early-hints/preload-fetchpriority.h2.window.html [ Skip ]
+# The <embed> element's load event never fires here, so the test times out.
+imported/w3c/web-platform-tests/loading/early-hints/embed-object.h2.window.html [ Skip ]
+# Failing due to explicit (non-deterministic) timestamps in the failure message, so it cannot be rebaselined.
+imported/w3c/web-platform-tests/loading/early-hints/early-hints-response-time.h2.html [ Skip ]
+
 imported/w3c/web-platform-tests/preload/preload-csp.sub.html [ Skip ] # Different hash generated on each run
 imported/w3c/web-platform-tests/preload/modulepreload-multiple.html [ Failure Pass ]
 

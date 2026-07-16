@@ -1387,3 +1387,4 @@ webkit.org/b/319317 [ Debug ] imported/w3c/web-platform-tests/html/canvas/elemen
 webkit.org/b/319320 [ arm64 ] compositing/reflections/animation-inside-reflection.html [ Failure Pass ]
 webkit.org/b/319325 [ arm64 ] fast/body-propagation/background-color/010.html [ ImageOnlyFailure Pass ]
 webkit.org/b/319326 [ arm64 ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-framesize.html [ Failure Pass ]
+
