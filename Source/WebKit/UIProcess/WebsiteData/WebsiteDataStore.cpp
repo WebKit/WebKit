@@ -358,6 +358,9 @@ void WebsiteDataStore::registerProcess(WebProcessProxy& process)
 {
     ASSERT(process.pageCount() || process.provisionalPageCount() || process.remotePageCount());
     m_processes.add(process);
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
+    m_cachedIsOptInCookiePartitioningEnabled = std::nullopt;
+#endif
 }
 
 void WebsiteDataStore::unregisterProcess(WebProcessProxy& process)
