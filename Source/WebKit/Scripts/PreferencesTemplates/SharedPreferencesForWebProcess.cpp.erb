@@ -91,4 +91,16 @@ bool updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess& shared
     return didChange;
 }
 
+JSCOptionsForWebProcess jscOptionsForWebProcess(const WebPreferencesStore& preferencesStore, bool isLockdownModeEnabled)
+{
+    // Project the JSC-option subset out of the full shared preferences so the values
+    // always match what SharedPreferencesForWebProcess would carry for the same store.
+    auto sharedPreferences = sharedPreferencesForWebProcess(preferencesStore, isLockdownModeEnabled);
+    JSCOptionsForWebProcess jscOptions;
+#define WEBKIT_COPY_JSC_OPTION_PREFERENCE(jscOption, preferenceField) jscOptions.preferenceField = sharedPreferences.preferenceField;
+    FOR_EACH_JSC_OPTION_SHARED_PREFERENCE(WEBKIT_COPY_JSC_OPTION_PREFERENCE)
+#undef WEBKIT_COPY_JSC_OPTION_PREFERENCE
+    return jscOptions;
+}
+
 } // namespace WebKit

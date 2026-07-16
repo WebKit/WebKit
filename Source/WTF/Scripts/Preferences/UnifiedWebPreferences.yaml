@@ -701,6 +701,19 @@ AsyncOverflowScrollingEnabled:
     WebCore:
       default: false
 
+AsyncStackTraceEnabled:
+  type: bool
+  status: stable
+  category: javascript
+  humanReadableName: "Async Stack Traces"
+  humanReadableDescription: "Enable async stack traces"
+  webcoreBinding: none
+  jscOptionName: useAsyncStackTrace
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: true
+
 AsynchronousSpellCheckingEnabled:
   type: bool
   status: embedder
@@ -923,6 +936,19 @@ BidiContentAwarePasteEnabled:
     WebKitLegacy:
       default: false
     WebCore:
+      default: false
+
+BigIntMathMethodsEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "BigInt Math Methods"
+  humanReadableDescription: "Enable BigInt math helper methods."
+  webcoreBinding: none
+  jscOptionName: useBigIntMathMethods
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
       default: false
 
 BlobFileAccessEnforcementEnabled:
@@ -3017,6 +3043,19 @@ ExperimentalSandboxEnabled:
     WebKit:
       default: false
 
+ExplicitResourceManagementEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "Explicit Resource Management"
+  humanReadableDescription: "Enable explicit resource management builtins and syntax."
+  webcoreBinding: none
+  jscOptionName: useExplicitResourceManagement
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: false
+
 ExposeCaptureDevicesAfterCaptureEnabled:
   type: bool
   status: internal
@@ -4063,6 +4102,19 @@ ImageControlsEnabled:
     WebCore:
       default: false
 
+ImportDeferEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "Import Defer"
+  humanReadableDescription: "Enable deferred module import."
+  webcoreBinding: none
+  jscOptionName: useImportDefer
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: false
+
 InactiveMediaCaptureStreamRepromptIntervalInMinutes:
   type: double
   status: embedder
@@ -4472,6 +4524,19 @@ InterruptVideoOnPageVisibilityChangeEnabled:
     WebCore:
       default: false
 
+IntlEraMonthcodeEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "Intl Era and Month Code"
+  humanReadableDescription: "Enable Intl.Era-monthcode proposal."
+  webcoreBinding: none
+  jscOptionName: useIntlEraMonthcode
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: false
+
 InvisibleAutoplayNotPermitted:
   type: bool
   status: embedder
@@ -4608,6 +4673,58 @@ IsThirdPartyCookieBlockingDisabled:
     WebCore:
       default: false
 
+IteratorChunkingEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "Iterator Chunking"
+  humanReadableDescription: "Expose the Iterator.prototype.chunks and Iterator.prototype.windows methods."
+  webcoreBinding: none
+  jscOptionName: useIteratorChunking
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: false
+
+IteratorIncludesEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "Iterator Includes"
+  humanReadableDescription: "Expose the Iterator.includes method."
+  webcoreBinding: none
+  jscOptionName: useIteratorIncludes
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: false
+
+IteratorJoinEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "Iterator Join"
+  humanReadableDescription: "Expose the Iterator.prototype.join method."
+  webcoreBinding: none
+  jscOptionName: useIteratorJoin
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: false
+
+IteratorSequencingEnabled:
+  type: bool
+  status: stable
+  category: javascript
+  humanReadableName: "Iterator Sequencing"
+  humanReadableDescription: "Expose the Iterator.concat method."
+  webcoreBinding: none
+  jscOptionName: useIteratorSequencing
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: true
+
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 ItpDebugModeEnabled:
   type: bool
@@ -4622,6 +4739,32 @@ ItpDebugModeEnabled:
       default: false
     WebCore:
       default: false
+
+JSONSourceTextAccessEnabled:
+  type: bool
+  status: stable
+  category: javascript
+  humanReadableName: "JSON Source Text Access"
+  humanReadableDescription: "Expose JSON source text access feature."
+  webcoreBinding: none
+  jscOptionName: useJSONSourceTextAccess
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: true
+
+JSPIEnabled:
+  type: bool
+  status: stable
+  category: javascript
+  humanReadableName: "JavaScript Promise Integration"
+  humanReadableDescription: "Enable the implementation of JavaScript Promise Integration."
+  webcoreBinding: none
+  jscOptionName: useJSPI
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: true
 
 JavaScriptCanAccessClipboard:
   type: bool
@@ -5931,6 +6074,19 @@ MomentumScrollingAnimatorEnabled:
     WebCore:
       default: false
 
+MoreCurrencyDisplayChoicesEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "More Currency Display Choices"
+  humanReadableDescription: "Enable more currencyDisplay choices for Intl.NumberFormat"
+  webcoreBinding: none
+  jscOptionName: useMoreCurrencyDisplayChoices
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: false
+
 MouseEventsSimulationEnabled:
   type: bool
   status: internal
@@ -6742,6 +6898,19 @@ ProcessSwapOnCrossSiteNavigationEnabled:
     WebKit:
       "PLATFORM(PLAYSTATION)": false
       default: true
+
+PromiseIsPromiseEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "Promise.isPromise"
+  humanReadableDescription: "Expose the Promise.isPromise method."
+  webcoreBinding: none
+  jscOptionName: usePromiseIsPromise
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: false
 
 PropagateDamagingInformation:
    type: bool
@@ -7671,6 +7840,19 @@ SessionStorageEnabled:
       default: false
   sharedPreferenceForWebProcess: true
 
+ShadowRealmEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "ShadowRealm"
+  humanReadableDescription: "Expose the ShadowRealm object."
+  webcoreBinding: none
+  jscOptionName: useShadowRealm
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: false
+
 ShadowRootReferenceTargetEnabled:
   type: bool
   status: testable
@@ -8448,6 +8630,19 @@ TelephoneNumberParsingEnabled:
       default: false
     WebCore:
       default: false
+
+TemporalEnabled:
+  type: bool
+  status: stable
+  category: javascript
+  humanReadableName: "Temporal"
+  humanReadableDescription: "Expose the Temporal object."
+  webcoreBinding: none
+  jscOptionName: useTemporal
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: true
 
 TemporaryTileCohortRetentionEnabled:
   type: bool
@@ -9467,6 +9662,110 @@ WantsBalancedSetDefersLoadingBehavior:
     WebKit:
       default: false
     WebCore:
+      default: false
+
+WasmJSStringBuiltinsEnabled:
+  type: bool
+  status: stable
+  category: javascript
+  humanReadableName: "WebAssembly JS String Builtins"
+  humanReadableDescription: "Enable the implementation of the JS String Builtins proposal."
+  webcoreBinding: none
+  jscOptionName: useWasmJSStringBuiltins
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: true
+
+WasmMemory64Enabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "WebAssembly Memory64"
+  humanReadableDescription: "Allow the Memory64 proposal for WebAssembly. This feature is currently only supported in the IPInt tier."
+  webcoreBinding: none
+  jscOptionName: useWasmMemory64
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: false
+
+WasmMemoryToBufferAPIsEnabled:
+  type: bool
+  status: stable
+  category: javascript
+  humanReadableName: "WebAssembly Memory to Buffer APIs"
+  humanReadableDescription: "Enable the toFixedLengthBuffer() and toResizableBuffer() Wasm Memory.prototype functions."
+  webcoreBinding: none
+  jscOptionName: useWasmMemoryToBufferAPIs
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: true
+
+WasmMultiMemoryEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "WebAssembly Multi-Memory"
+  humanReadableDescription: "Allow wasm code to access multiple linear memories"
+  webcoreBinding: none
+  jscOptionName: useWasmMultiMemory
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: false
+
+WasmRelaxedSIMDEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "WebAssembly Relaxed SIMD"
+  humanReadableDescription: "Allow the relaxed simd instructions and types from the wasm relaxed simd spec."
+  webcoreBinding: none
+  jscOptionName: useWasmRelaxedSIMD
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: false
+
+WasmSIMDEnabled:
+  type: bool
+  status: stable
+  category: javascript
+  humanReadableName: "WebAssembly SIMD"
+  humanReadableDescription: "Allow the new simd instructions and types from the wasm simd spec."
+  webcoreBinding: none
+  jscOptionName: useWasmSIMD
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: true
+
+WasmTailCallsEnabled:
+  type: bool
+  status: stable
+  category: javascript
+  humanReadableName: "WebAssembly Tail Calls"
+  humanReadableDescription: "Allow the new instructions from the wasm tail calls spec."
+  webcoreBinding: none
+  jscOptionName: useWasmTailCalls
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: true
+
+WasmWideArithmeticEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "WebAssembly Wide Arithmetic"
+  humanReadableDescription: "Allow the wide arithmetic instructions from the wasm wide-arithmetic spec."
+  webcoreBinding: none
+  jscOptionName: useWasmWideArithmetic
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
       default: false
 
 WebAPIStatisticsEnabled:

@@ -44,6 +44,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlSegmenterPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlSegmentsPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSCBuiltins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSCBuiltins.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSCWebPreferenceOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSDataViewPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSGlobalObject.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSIteratorHelperPrototype.lut.h

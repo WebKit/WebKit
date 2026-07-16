@@ -312,7 +312,7 @@ PASS #310 Test that a WebAssembly code traps (table_init64.wast:380)
 PASS #311 Test that a WebAssembly code traps (table_init64.wast:381)
 PASS #312 Test that a WebAssembly code traps (table_init64.wast:382)
 PASS #313 Test that a WebAssembly code traps (table_init64.wast:383)
-FAIL #314 Test that WebAssembly compilation succeeds (table_init64.wast:385) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 105: Memory64 is not enabled at {loc} expected true got false
+FAIL #314 Test that WebAssembly compilation succeeds (table_init64.wast:385) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 141: Element init_expr must produce an i32 at {loc} expected true got false
 FAIL #315 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
 table_init64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/table_init64.wast.js:610:18
 global code@http://web-platform.test:8800/wasm/core/js/memory64/table_init64.wast.js:2799:3 expected true got false
@@ -409,7 +409,7 @@ global code@http://web-platform.test:8800/wasm/core/js/memory64/table_init64.was
 FAIL #346 Test that a WebAssembly code traps (table_init64.wast:442) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
 table_init64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/table_init64.wast.js:703:12
 global code@http://web-platform.test:8800/wasm/core/js/memory64/table_init64.wast.js:2799:3 expected true got false
-FAIL #347 Test that WebAssembly compilation succeeds (table_init64.wast:444) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 105: Memory64 is not enabled at {loc} expected true got false
+FAIL #347 Test that WebAssembly compilation succeeds (table_init64.wast:444) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 141: Element init_expr must produce an i32 at {loc} expected true got false
 FAIL #348 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
 table_init64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/table_init64.wast.js:709:18
 global code@http://web-platform.test:8800/wasm/core/js/memory64/table_init64.wast.js:2799:3 expected true got false
@@ -506,7 +506,7 @@ global code@http://web-platform.test:8800/wasm/core/js/memory64/table_init64.was
 FAIL #379 Test that a WebAssembly code traps (table_init64.wast:501) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
 table_init64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/table_init64.wast.js:802:12
 global code@http://web-platform.test:8800/wasm/core/js/memory64/table_init64.wast.js:2799:3 expected true got false
-FAIL #380 Test that WebAssembly compilation succeeds (table_init64.wast:503) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 105: Memory64 is not enabled at {loc} expected true got false
+FAIL #380 Test that WebAssembly compilation succeeds (table_init64.wast:503) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 141: Element init_expr must produce an i32 at {loc} expected true got false
 FAIL #381 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
 table_init64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/table_init64.wast.js:808:19
 global code@http://web-platform.test:8800/wasm/core/js/memory64/table_init64.wast.js:2799:3 expected true got false
@@ -1232,7 +1232,7 @@ PASS #1038 Test that a WebAssembly code traps (table_init64.wast:2430)
 PASS #1039 Test that a WebAssembly code traps (table_init64.wast:2431)
 PASS #1040 Test that WebAssembly compilation succeeds (table_init64.wast:2433)
 PASS #1041 Test that WebAssembly instantiation succeeds (table_init64.wast:2433)
-FAIL #1042 Test that WebAssembly compilation succeeds (table_init64.wast:2457) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 39: Memory64 is not enabled at {loc} expected true got false
+FAIL #1042 Test that WebAssembly compilation succeeds (table_init64.wast:2457) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't validate: table.init dst_offset to type I64 expected I32, in function at index 0 at {loc} expected true got false
 FAIL #1043 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
 table_init64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/table_init64.wast.js:2794:19
 global code@http://web-platform.test:8800/wasm/core/js/memory64/table_init64.wast.js:2799:3 expected true got false

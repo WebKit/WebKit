@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/GCLogging.h>
+#include <JavaScriptCore/JSCWebPreferenceOptions.h>
 #include <JavaScriptCore/JSExportMacros.h>
 
 #if OS(DARWIN)
@@ -663,33 +664,14 @@ bool hasCapacityToUseLargeGigacage();
     \
     /* Feature Flags */\
     \
+    /* Feature-flag options whose source of truth is UnifiedWebPreferences.yaml. */ \
+    FOR_EACH_JSC_WEB_PREFERENCE_OPTION(v) \
     /* Restricted so some app doesn't set this environment variable and start using it. */ \
-    v(Bool, useAsyncStackTrace, true, Normal, "Enable async stack traces") \
     v(Bool, disallowMixedWasmExceptions, true, Restricted, "Disallow using both legacy and modern (try_table) wasm exception specs in the same module."_s) \
-    v(Bool, useBigIntMathMethods, false, Normal, "Enable BigInt math helper methods."_s) \
-    v(Bool, useExplicitResourceManagement, false, Normal, "Enable explicit resource management builtins and syntax."_s) \
-    v(Bool, useImportDefer, false, Normal, "Enable deferred module import."_s) \
-    v(Bool, useIteratorChunking, false, Normal, "Expose the Iterator.prototype.chunks and Iterator.prototype.windows methods."_s) \
-    v(Bool, useIteratorSequencing, true, Normal, "Expose the Iterator.concat method."_s) \
-    v(Bool, useIteratorIncludes, false, Normal, "Expose the Iterator.includes method."_s) \
-    v(Bool, useIteratorJoin, false, Normal, "Expose the Iterator.prototype.join method."_s) \
-    v(Bool, useJSONSourceTextAccess, true, Normal, "Expose JSON source text access feature."_s) \
-    v(Bool, useJSPI, true, Normal, "Enable the implementation of JavaScript Promise Integration."_s) \
-    v(Bool, useMoreCurrencyDisplayChoices, false, Normal, "Enable more currencyDisplay choices for Intl.NumberFormat"_s) \
-    v(Bool, usePromiseIsPromise, false, Normal, nullptr) \
+    /* Not sourced from UnifiedWebPreferences.yaml: force-enabled via the cross-origin-isolation path and consumed in WebCore. */ \
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
-    v(Bool, useShadowRealm, false, Normal, "Expose the ShadowRealm object."_s) \
-    v(Bool, useTemporal, true, Normal, "Expose the Temporal object."_s) \
-    v(Bool, useIntlEraMonthcode, false, Normal, "Enable Intl.Era-monthcode Stage 4 proposal."_s) \
+    /* Not sourced from UnifiedWebPreferences.yaml: shares its semantics with the WebCore-bound TrustedTypes feature. */ \
     v(Bool, useTrustedTypes, true, Normal, "Enable trusted types eval protection feature."_s) \
-    v(Bool, useWasmJSStringBuiltins, true, Normal, "Enable the implementation of the JS String Builtins proposal."_s) \
-    v(Bool, useWasmMemory64, false, Normal, "Allow the Memory64 proposal for WebAssembly. This feature is currently only supported in the IPInt tier."_s) \
-    v(Bool, useWasmMemoryToBufferAPIs, true, Normal, "Enable the toFixedLengthBuffer() and toResizableBuffer() Wasm Memory.prototype functions."_s) \
-    v(Bool, useWasmMultiMemory, false, Normal, "Allow wasm code to access multiple linear memories") \
-    v(Bool, useWasmRelaxedSIMD, false, Normal, "Allow the relaxed simd instructions and types from the wasm relaxed simd spec."_s) \
-    v(Bool, useWasmSIMD, true, Normal, "Allow the new simd instructions and types from the wasm simd spec."_s) \
-    v(Bool, useWasmTailCalls, true, Normal, "Allow the new instructions from the wasm tail calls spec."_s) \
-    v(Bool, useWasmWideArithmetic, false, Normal, "Allow the wide arithmetic instructions from the wasm wide-arithmetic spec."_s) \
 
 
 

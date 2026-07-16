@@ -1,6 +1,6 @@
 
 PASS #1 Reinitialize the default imports
-FAIL #2 Test that WebAssembly compilation succeeds (relaxed_min_max.wast:3) assert_equals: expected false but got true
+PASS #2 Test that WebAssembly compilation succeeds (relaxed_min_max.wast:3)
 PASS #3 Test that WebAssembly compilation succeeds (wrapper)
 PASS #4 Test that WebAssembly compilation succeeds (wrapper)
 PASS #5 Test that WebAssembly compilation succeeds (wrapper)
@@ -26,224 +26,78 @@ PASS #24 Test that WebAssembly compilation succeeds (wrapper)
 PASS #25 Test that WebAssembly compilation succeeds (wrapper)
 PASS #26 Test that WebAssembly compilation succeeds (wrapper)
 PASS #27 Reinitialize the default imports
-FAIL #28 Test that WebAssembly compilation succeeds (relaxed_min_max.wast:3) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 8: relaxed simd instructions not supported, in function at index 0 at {loc} expected true got false
-FAIL #29 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:7:18
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #28 Test that WebAssembly compilation succeeds (relaxed_min_max.wast:3)
+PASS #29 Test that WebAssembly instantiation succeeds (relaxed_min_max.wast:3)
 PASS #30 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #31 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32x4.relaxed_min must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:10:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:10:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #32 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:10:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #31 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #32 Run a WebAssembly test without special assertions (relaxed_min_max.wast:27)
 PASS #33 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #34 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32x4.relaxed_min must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:13:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:13:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #35 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:13:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #34 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #35 Run a WebAssembly test without special assertions (relaxed_min_max.wast:35)
 PASS #36 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #37 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32x4.relaxed_max must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:16:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:16:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #38 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:16:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #37 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #38 Run a WebAssembly test without special assertions (relaxed_min_max.wast:43)
 PASS #39 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #40 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32x4.relaxed_max must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:19:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:19:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #41 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:19:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #40 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #41 Run a WebAssembly test without special assertions (relaxed_min_max.wast:51)
 PASS #42 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #43 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64x2.relaxed_min must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:22:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:22:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #44 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:22:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #43 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #44 Run a WebAssembly test without special assertions (relaxed_min_max.wast:59)
 PASS #45 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #46 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64x2.relaxed_min must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:25:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:25:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #47 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:25:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #46 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #47 Run a WebAssembly test without special assertions (relaxed_min_max.wast:67)
 PASS #48 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #49 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64x2.relaxed_min must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:28:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:28:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #50 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:28:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #49 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #50 Run a WebAssembly test without special assertions (relaxed_min_max.wast:75)
 PASS #51 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #52 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64x2.relaxed_min must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:31:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:31:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #53 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:31:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #52 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #53 Run a WebAssembly test without special assertions (relaxed_min_max.wast:83)
 PASS #54 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #55 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64x2.relaxed_max must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:34:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:34:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #56 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:34:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #55 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #56 Run a WebAssembly test without special assertions (relaxed_min_max.wast:91)
 PASS #57 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #58 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64x2.relaxed_max must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:37:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:37:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #59 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:37:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #58 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #59 Run a WebAssembly test without special assertions (relaxed_min_max.wast:99)
 PASS #60 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #61 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64x2.relaxed_max must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:40:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:40:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #62 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:40:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #61 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #62 Run a WebAssembly test without special assertions (relaxed_min_max.wast:107)
 PASS #63 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #64 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64x2.relaxed_max must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:43:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:43:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #65 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:43:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #64 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #65 Run a WebAssembly test without special assertions (relaxed_min_max.wast:115)
 PASS #66 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #67 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32x4.relaxed_min_cmp must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:46:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:46:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #68 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:46:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #67 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #68 Run a WebAssembly test without special assertions (relaxed_min_max.wast:125)
 PASS #69 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #70 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32x4.relaxed_min_cmp must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:49:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:49:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #71 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:49:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #70 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #71 Run a WebAssembly test without special assertions (relaxed_min_max.wast:130)
 PASS #72 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #73 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32x4.relaxed_max_cmp must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:52:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:52:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #74 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:52:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #73 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #74 Run a WebAssembly test without special assertions (relaxed_min_max.wast:135)
 PASS #75 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #76 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f32x4.relaxed_max_cmp must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:55:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:55:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #77 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:55:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #76 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #77 Run a WebAssembly test without special assertions (relaxed_min_max.wast:140)
 PASS #78 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #79 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64x2.relaxed_min_cmp must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:58:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:58:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #80 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:58:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #79 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #80 Run a WebAssembly test without special assertions (relaxed_min_max.wast:145)
 PASS #81 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #82 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64x2.relaxed_min_cmp must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:61:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:61:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #83 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:61:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #82 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #83 Run a WebAssembly test without special assertions (relaxed_min_max.wast:150)
 PASS #84 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #85 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64x2.relaxed_min_cmp must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:64:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:64:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #86 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:64:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #85 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #86 Run a WebAssembly test without special assertions (relaxed_min_max.wast:155)
 PASS #87 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #88 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64x2.relaxed_min_cmp must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:67:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:67:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #89 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:67:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #88 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #89 Run a WebAssembly test without special assertions (relaxed_min_max.wast:160)
 PASS #90 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #91 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64x2.relaxed_max_cmp must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:70:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:70:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #92 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:70:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #91 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #92 Run a WebAssembly test without special assertions (relaxed_min_max.wast:165)
 PASS #93 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #94 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64x2.relaxed_max_cmp must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:73:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:73:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #95 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:73:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #94 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #95 Run a WebAssembly test without special assertions (relaxed_min_max.wast:170)
 PASS #96 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #97 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64x2.relaxed_max_cmp must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:76:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:76:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #98 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:76:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #97 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #98 Run a WebAssembly test without special assertions (relaxed_min_max.wast:175)
 PASS #99 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #100 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:f64x2.relaxed_max_cmp must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:79:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:79:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
-FAIL #101 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-relaxed_min_max_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:79:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/relaxed_min_max.wast.js:81:3 expected true got false
+PASS #100 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #101 Run a WebAssembly test without special assertions (relaxed_min_max.wast:180)
 

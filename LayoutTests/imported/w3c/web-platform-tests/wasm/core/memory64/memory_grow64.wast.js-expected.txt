@@ -1,159 +1,61 @@
 
 PASS #1 Reinitialize the default imports
-FAIL #2 Test that WebAssembly compilation succeeds (memory_grow64.wast:1) assert_equals: expected false but got true
-FAIL #3 Test that WebAssembly compilation succeeds (memory_grow64.wast:36) assert_equals: expected false but got true
-FAIL #4 Test that WebAssembly compilation succeeds (memory_grow64.wast:48) assert_equals: expected false but got true
-FAIL #5 Test that WebAssembly compilation succeeds (memory_grow64.wast:64) assert_equals: expected false but got true
+PASS #2 Test that WebAssembly compilation succeeds (memory_grow64.wast:1)
+PASS #3 Test that WebAssembly compilation succeeds (memory_grow64.wast:36)
+PASS #4 Test that WebAssembly compilation succeeds (memory_grow64.wast:48)
+PASS #5 Test that WebAssembly compilation succeeds (memory_grow64.wast:64)
 PASS #6 Reinitialize the default imports
-FAIL #7 Test that WebAssembly compilation succeeds (memory_grow64.wast:1) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 52: Memory64 is not enabled at {loc} expected true got false
-FAIL #8 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:7:18
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #9 Test that a WebAssembly code returns a specific result (memory_grow64.wast:14) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:10:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #10 Test that a WebAssembly code traps (memory_grow64.wast:15) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:13:12
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #11 Test that a WebAssembly code traps (memory_grow64.wast:16) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:16:12
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #12 Test that a WebAssembly code traps (memory_grow64.wast:17) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:19:12
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #13 Test that a WebAssembly code traps (memory_grow64.wast:18) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:22:12
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #14 Test that a WebAssembly code returns a specific result (memory_grow64.wast:19) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:25:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #15 Test that a WebAssembly code returns a specific result (memory_grow64.wast:20) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:28:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #16 Test that a WebAssembly code returns a specific result (memory_grow64.wast:21) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:31:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #17 Test that a WebAssembly code returns a specific result (memory_grow64.wast:22) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:34:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #18 Test that a WebAssembly code returns a specific result (memory_grow64.wast:23) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:37:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #19 Test that a WebAssembly code traps (memory_grow64.wast:24) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:40:12
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #20 Test that a WebAssembly code traps (memory_grow64.wast:25) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:43:12
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #21 Test that a WebAssembly code returns a specific result (memory_grow64.wast:26) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:46:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #22 Test that a WebAssembly code returns a specific result (memory_grow64.wast:27) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:49:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #23 Test that a WebAssembly code returns a specific result (memory_grow64.wast:28) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:52:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #24 Test that a WebAssembly code returns a specific result (memory_grow64.wast:29) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:55:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #25 Test that a WebAssembly code returns a specific result (memory_grow64.wast:30) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:58:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #26 Test that a WebAssembly code returns a specific result (memory_grow64.wast:31) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:61:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #27 Test that a WebAssembly code returns a specific result (memory_grow64.wast:32) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:64:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #28 Test that a WebAssembly code returns a specific result (memory_grow64.wast:33) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:67:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #29 Test that WebAssembly compilation succeeds (memory_grow64.wast:36) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 36: Memory64 is not enabled at {loc} expected true got false
-FAIL #30 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:73:18
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #31 Test that a WebAssembly code returns a specific result (memory_grow64.wast:41) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:76:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #32 Test that a WebAssembly code returns a specific result (memory_grow64.wast:42) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:79:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #33 Test that a WebAssembly code returns a specific result (memory_grow64.wast:43) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:82:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #34 Test that a WebAssembly code returns a specific result (memory_grow64.wast:44) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:85:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #35 Test that a WebAssembly code returns a specific result (memory_grow64.wast:45) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:88:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #36 Test that a WebAssembly code returns a specific result (memory_grow64.wast:46) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:91:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #37 Test that WebAssembly compilation succeeds (memory_grow64.wast:48) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 36: Memory64 is not enabled at {loc} expected true got false
-FAIL #38 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:97:18
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #39 Test that a WebAssembly code returns a specific result (memory_grow64.wast:53) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:100:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #40 Test that a WebAssembly code returns a specific result (memory_grow64.wast:54) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:103:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #41 Test that a WebAssembly code returns a specific result (memory_grow64.wast:55) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:106:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #42 Test that a WebAssembly code returns a specific result (memory_grow64.wast:56) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:109:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #43 Test that a WebAssembly code returns a specific result (memory_grow64.wast:57) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:112:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #44 Test that a WebAssembly code returns a specific result (memory_grow64.wast:58) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:115:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #45 Test that a WebAssembly code returns a specific result (memory_grow64.wast:59) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:118:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #46 Test that a WebAssembly code returns a specific result (memory_grow64.wast:60) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:121:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #47 Test that WebAssembly compilation succeeds (memory_grow64.wast:64) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 43: Memory64 is not enabled at {loc} expected true got false
-FAIL #48 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:127:18
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #49 Test that a WebAssembly code returns a specific result (memory_grow64.wast:85) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:130:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #50 Test that a WebAssembly code returns a specific result (memory_grow64.wast:86) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:133:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #51 Test that a WebAssembly code returns a specific result (memory_grow64.wast:87) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:136:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #52 Test that a WebAssembly code returns a specific result (memory_grow64.wast:88) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:139:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #53 Test that a WebAssembly code returns a specific result (memory_grow64.wast:89) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:142:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #54 Test that a WebAssembly code returns a specific result (memory_grow64.wast:90) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:145:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #55 Test that a WebAssembly code returns a specific result (memory_grow64.wast:91) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:148:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #56 Test that a WebAssembly code returns a specific result (memory_grow64.wast:92) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:151:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #57 Test that a WebAssembly code returns a specific result (memory_grow64.wast:93) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:154:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #58 Test that a WebAssembly code returns a specific result (memory_grow64.wast:94) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:157:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
-FAIL #59 Test that a WebAssembly code returns a specific result (memory_grow64.wast:95) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_grow64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:160:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_grow64.wast.js:162:3 expected true got false
+PASS #7 Test that WebAssembly compilation succeeds (memory_grow64.wast:1)
+PASS #8 Test that WebAssembly instantiation succeeds (memory_grow64.wast:1)
+PASS #9 Test that a WebAssembly code returns a specific result (memory_grow64.wast:14)
+PASS #10 Test that a WebAssembly code traps (memory_grow64.wast:15)
+PASS #11 Test that a WebAssembly code traps (memory_grow64.wast:16)
+PASS #12 Test that a WebAssembly code traps (memory_grow64.wast:17)
+PASS #13 Test that a WebAssembly code traps (memory_grow64.wast:18)
+PASS #14 Test that a WebAssembly code returns a specific result (memory_grow64.wast:19)
+PASS #15 Test that a WebAssembly code returns a specific result (memory_grow64.wast:20)
+PASS #16 Test that a WebAssembly code returns a specific result (memory_grow64.wast:21)
+PASS #17 Test that a WebAssembly code returns a specific result (memory_grow64.wast:22)
+PASS #18 Test that a WebAssembly code returns a specific result (memory_grow64.wast:23)
+PASS #19 Test that a WebAssembly code traps (memory_grow64.wast:24)
+PASS #20 Test that a WebAssembly code traps (memory_grow64.wast:25)
+PASS #21 Test that a WebAssembly code returns a specific result (memory_grow64.wast:26)
+PASS #22 Test that a WebAssembly code returns a specific result (memory_grow64.wast:27)
+PASS #23 Test that a WebAssembly code returns a specific result (memory_grow64.wast:28)
+PASS #24 Test that a WebAssembly code returns a specific result (memory_grow64.wast:29)
+PASS #25 Test that a WebAssembly code returns a specific result (memory_grow64.wast:30)
+PASS #26 Test that a WebAssembly code returns a specific result (memory_grow64.wast:31)
+PASS #27 Test that a WebAssembly code returns a specific result (memory_grow64.wast:32)
+PASS #28 Test that a WebAssembly code returns a specific result (memory_grow64.wast:33)
+PASS #29 Test that WebAssembly compilation succeeds (memory_grow64.wast:36)
+PASS #30 Test that WebAssembly instantiation succeeds (memory_grow64.wast:36)
+PASS #31 Test that a WebAssembly code returns a specific result (memory_grow64.wast:41)
+PASS #32 Test that a WebAssembly code returns a specific result (memory_grow64.wast:42)
+PASS #33 Test that a WebAssembly code returns a specific result (memory_grow64.wast:43)
+PASS #34 Test that a WebAssembly code returns a specific result (memory_grow64.wast:44)
+PASS #35 Test that a WebAssembly code returns a specific result (memory_grow64.wast:45)
+PASS #36 Test that a WebAssembly code returns a specific result (memory_grow64.wast:46)
+PASS #37 Test that WebAssembly compilation succeeds (memory_grow64.wast:48)
+PASS #38 Test that WebAssembly instantiation succeeds (memory_grow64.wast:48)
+PASS #39 Test that a WebAssembly code returns a specific result (memory_grow64.wast:53)
+PASS #40 Test that a WebAssembly code returns a specific result (memory_grow64.wast:54)
+PASS #41 Test that a WebAssembly code returns a specific result (memory_grow64.wast:55)
+PASS #42 Test that a WebAssembly code returns a specific result (memory_grow64.wast:56)
+PASS #43 Test that a WebAssembly code returns a specific result (memory_grow64.wast:57)
+PASS #44 Test that a WebAssembly code returns a specific result (memory_grow64.wast:58)
+PASS #45 Test that a WebAssembly code returns a specific result (memory_grow64.wast:59)
+PASS #46 Test that a WebAssembly code returns a specific result (memory_grow64.wast:60)
+PASS #47 Test that WebAssembly compilation succeeds (memory_grow64.wast:64)
+PASS #48 Test that WebAssembly instantiation succeeds (memory_grow64.wast:64)
+PASS #49 Test that a WebAssembly code returns a specific result (memory_grow64.wast:85)
+PASS #50 Test that a WebAssembly code returns a specific result (memory_grow64.wast:86)
+PASS #51 Test that a WebAssembly code returns a specific result (memory_grow64.wast:87)
+PASS #52 Test that a WebAssembly code returns a specific result (memory_grow64.wast:88)
+PASS #53 Test that a WebAssembly code returns a specific result (memory_grow64.wast:89)
+PASS #54 Test that a WebAssembly code returns a specific result (memory_grow64.wast:90)
+PASS #55 Test that a WebAssembly code returns a specific result (memory_grow64.wast:91)
+PASS #56 Test that a WebAssembly code returns a specific result (memory_grow64.wast:92)
+PASS #57 Test that a WebAssembly code returns a specific result (memory_grow64.wast:93)
+PASS #58 Test that a WebAssembly code returns a specific result (memory_grow64.wast:94)
+PASS #59 Test that a WebAssembly code returns a specific result (memory_grow64.wast:95)
 

@@ -1727,9 +1727,18 @@ static void setJSCOptions(const WTR::TestOptions& options)
         savedOptions.clear();
     }
 
-    if (options.jscOptions().length()) {
+    bool hasTestJSCOptions = options.jscOptions().length();
+    if (enableAllExperimentalFeatures || hasTestJSCOptions) {
         JSC::Options::dumpAllOptionsInALine(savedOptions);
-        JSC::Options::setOptions(options.jscOptions().c_str());
+        if (enableAllExperimentalFeatures) {
+            JSC::Options::AllowUnfinalizedAccessScope scope;
+#define WEBKIT_ENABLE_JSC_EXPERIMENTAL_OPTION(type, jscOption, defaultValue, status, description) JSC::Options::jscOption() = true;
+            FOR_EACH_JSC_WEB_PREFERENCE_OPTION(WEBKIT_ENABLE_JSC_EXPERIMENTAL_OPTION)
+#undef WEBKIT_ENABLE_JSC_EXPERIMENTAL_OPTION
+            JSC::Options::notifyOptionsChanged();
+        }
+        if (hasTestJSCOptions)
+            JSC::Options::setOptions(options.jscOptions().c_str());
     }
 }
 

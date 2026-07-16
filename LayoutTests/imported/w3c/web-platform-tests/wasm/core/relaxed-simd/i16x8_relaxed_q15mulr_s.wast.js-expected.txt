@@ -1,29 +1,15 @@
 
 PASS #1 Reinitialize the default imports
-FAIL #2 Test that WebAssembly compilation succeeds (i16x8_relaxed_q15mulr_s.wast:3) assert_equals: expected false but got true
+PASS #2 Test that WebAssembly compilation succeeds (i16x8_relaxed_q15mulr_s.wast:3)
 PASS #3 Test that WebAssembly compilation succeeds (wrapper)
 PASS #4 Test that WebAssembly compilation succeeds (wrapper)
 PASS #5 Reinitialize the default imports
-FAIL #6 Test that WebAssembly compilation succeeds (i16x8_relaxed_q15mulr_s.wast:3) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 8: relaxed simd instructions not supported, in function at index 0 at {loc} expected true got false
-FAIL #7 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-i16x8_relaxed_q15mulr_s_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/i16x8_relaxed_q15mulr_s.wast.js:7:18
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/i16x8_relaxed_q15mulr_s.wast.js:15:3 expected true got false
+PASS #6 Test that WebAssembly compilation succeeds (i16x8_relaxed_q15mulr_s.wast:3)
+PASS #7 Test that WebAssembly instantiation succeeds (i16x8_relaxed_q15mulr_s.wast:3)
 PASS #8 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #9 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:i16x8.relaxed_q15mulr_s must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/i16x8_relaxed_q15mulr_s.wast.js:10:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-i16x8_relaxed_q15mulr_s_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/i16x8_relaxed_q15mulr_s.wast.js:10:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/i16x8_relaxed_q15mulr_s.wast.js:15:3 expected true got false
-FAIL #10 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-i16x8_relaxed_q15mulr_s_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/i16x8_relaxed_q15mulr_s.wast.js:10:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/i16x8_relaxed_q15mulr_s.wast.js:15:3 expected true got false
+PASS #9 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #10 Run a WebAssembly test without special assertions (i16x8_relaxed_q15mulr_s.wast:13)
 PASS #11 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #12 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:i16x8.relaxed_q15mulr_s_cmp must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/relaxed-simd/i16x8_relaxed_q15mulr_s.wast.js:13:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-i16x8_relaxed_q15mulr_s_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/i16x8_relaxed_q15mulr_s.wast.js:13:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/i16x8_relaxed_q15mulr_s.wast.js:15:3 expected true got false
-FAIL #13 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-i16x8_relaxed_q15mulr_s_wast_js@http://web-platform.test:8800/wasm/core/js/relaxed-simd/i16x8_relaxed_q15mulr_s.wast.js:13:4
-global code@http://web-platform.test:8800/wasm/core/js/relaxed-simd/i16x8_relaxed_q15mulr_s.wast.js:15:3 expected true got false
+PASS #12 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #13 Run a WebAssembly test without special assertions (i16x8_relaxed_q15mulr_s.wast:22)
 

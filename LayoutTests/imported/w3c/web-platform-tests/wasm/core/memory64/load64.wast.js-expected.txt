@@ -1,6 +1,6 @@
 
 PASS #1 Reinitialize the default imports
-FAIL #2 Test that WebAssembly compilation succeeds (load64.wast:3) assert_equals: expected false but got true
+PASS #2 Test that WebAssembly compilation succeeds (load64.wast:3)
 PASS #3 Test that WebAssembly compilation fails (load64.wast:213)
 PASS #4 Test that WebAssembly compilation fails (load64.wast:220)
 PASS #5 Test that WebAssembly compilation fails (load64.wast:227)
@@ -61,121 +61,45 @@ PASS #59 Test that WebAssembly compilation fails (load64.wast:541)
 PASS #60 Test that WebAssembly compilation fails (load64.wast:550)
 PASS #61 Test that WebAssembly compilation fails (load64.wast:559)
 PASS #62 Reinitialize the default imports
-FAIL #63 Test that WebAssembly compilation succeeds (load64.wast:3) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 103: Memory64 is not enabled at {loc} expected true got false
-FAIL #64 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:7:18
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #65 Test that a WebAssembly code returns a specific result (load64.wast:161) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:10:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #66 Test that a WebAssembly code returns a specific result (load64.wast:163) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:13:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #67 Test that a WebAssembly code returns a specific result (load64.wast:164) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:16:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #68 Test that a WebAssembly code returns a specific result (load64.wast:165) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:19:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #69 Test that a WebAssembly code returns a specific result (load64.wast:167) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:22:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #70 Test that a WebAssembly code returns a specific result (load64.wast:168) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:25:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #71 Test that a WebAssembly code returns a specific result (load64.wast:169) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:28:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #72 Test that a WebAssembly code returns a specific result (load64.wast:171) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:31:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #73 Test that a WebAssembly code returns a specific result (load64.wast:173) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:34:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #74 Test that a WebAssembly code returns a specific result (load64.wast:174) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:37:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #75 Test that a WebAssembly code returns a specific result (load64.wast:175) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:40:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #76 Test that a WebAssembly code returns a specific result (load64.wast:177) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:43:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #77 Test that a WebAssembly code returns a specific result (load64.wast:178) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:46:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #78 Test that a WebAssembly code returns a specific result (load64.wast:179) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:49:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #79 Test that a WebAssembly code returns a specific result (load64.wast:181) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:52:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #80 Test that a WebAssembly code returns a specific result (load64.wast:182) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:55:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #81 Test that a WebAssembly code returns a specific result (load64.wast:183) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:58:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #82 Test that a WebAssembly code returns a specific result (load64.wast:185) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:61:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #83 Test that a WebAssembly code returns a specific result (load64.wast:186) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:64:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #84 Test that a WebAssembly code returns a specific result (load64.wast:187) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:67:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #85 Test that a WebAssembly code returns a specific result (load64.wast:188) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:70:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #86 Test that a WebAssembly code returns a specific result (load64.wast:190) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:73:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #87 Test that a WebAssembly code returns a specific result (load64.wast:191) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:76:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #88 Test that a WebAssembly code returns a specific result (load64.wast:192) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:79:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #89 Test that a WebAssembly code returns a specific result (load64.wast:194) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:82:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #90 Test that a WebAssembly code returns a specific result (load64.wast:195) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:85:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #91 Test that a WebAssembly code returns a specific result (load64.wast:196) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:88:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #92 Test that a WebAssembly code returns a specific result (load64.wast:197) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:91:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #93 Test that a WebAssembly code returns a specific result (load64.wast:198) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:94:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #94 Test that a WebAssembly code returns a specific result (load64.wast:199) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:97:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #95 Test that a WebAssembly code returns a specific result (load64.wast:201) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:100:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #96 Test that a WebAssembly code returns a specific result (load64.wast:203) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:103:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #97 Test that a WebAssembly code returns a specific result (load64.wast:204) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:106:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #98 Test that a WebAssembly code returns a specific result (load64.wast:206) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:109:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #99 Test that a WebAssembly code returns a specific result (load64.wast:208) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:112:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #100 Test that a WebAssembly code returns a specific result (load64.wast:209) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:115:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
-FAIL #101 Test that a WebAssembly code returns a specific result (load64.wast:211) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-load64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:118:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/load64.wast.js:297:3 expected true got false
+PASS #63 Test that WebAssembly compilation succeeds (load64.wast:3)
+PASS #64 Test that WebAssembly instantiation succeeds (load64.wast:3)
+PASS #65 Test that a WebAssembly code returns a specific result (load64.wast:161)
+PASS #66 Test that a WebAssembly code returns a specific result (load64.wast:163)
+PASS #67 Test that a WebAssembly code returns a specific result (load64.wast:164)
+PASS #68 Test that a WebAssembly code returns a specific result (load64.wast:165)
+PASS #69 Test that a WebAssembly code returns a specific result (load64.wast:167)
+PASS #70 Test that a WebAssembly code returns a specific result (load64.wast:168)
+PASS #71 Test that a WebAssembly code returns a specific result (load64.wast:169)
+PASS #72 Test that a WebAssembly code returns a specific result (load64.wast:171)
+PASS #73 Test that a WebAssembly code returns a specific result (load64.wast:173)
+PASS #74 Test that a WebAssembly code returns a specific result (load64.wast:174)
+PASS #75 Test that a WebAssembly code returns a specific result (load64.wast:175)
+PASS #76 Test that a WebAssembly code returns a specific result (load64.wast:177)
+PASS #77 Test that a WebAssembly code returns a specific result (load64.wast:178)
+PASS #78 Test that a WebAssembly code returns a specific result (load64.wast:179)
+PASS #79 Test that a WebAssembly code returns a specific result (load64.wast:181)
+PASS #80 Test that a WebAssembly code returns a specific result (load64.wast:182)
+PASS #81 Test that a WebAssembly code returns a specific result (load64.wast:183)
+PASS #82 Test that a WebAssembly code returns a specific result (load64.wast:185)
+PASS #83 Test that a WebAssembly code returns a specific result (load64.wast:186)
+PASS #84 Test that a WebAssembly code returns a specific result (load64.wast:187)
+PASS #85 Test that a WebAssembly code returns a specific result (load64.wast:188)
+PASS #86 Test that a WebAssembly code returns a specific result (load64.wast:190)
+PASS #87 Test that a WebAssembly code returns a specific result (load64.wast:191)
+PASS #88 Test that a WebAssembly code returns a specific result (load64.wast:192)
+PASS #89 Test that a WebAssembly code returns a specific result (load64.wast:194)
+PASS #90 Test that a WebAssembly code returns a specific result (load64.wast:195)
+PASS #91 Test that a WebAssembly code returns a specific result (load64.wast:196)
+PASS #92 Test that a WebAssembly code returns a specific result (load64.wast:197)
+PASS #93 Test that a WebAssembly code returns a specific result (load64.wast:198)
+PASS #94 Test that a WebAssembly code returns a specific result (load64.wast:199)
+PASS #95 Test that a WebAssembly code returns a specific result (load64.wast:201)
+PASS #96 Test that a WebAssembly code returns a specific result (load64.wast:203)
+PASS #97 Test that a WebAssembly code returns a specific result (load64.wast:204)
+PASS #98 Test that a WebAssembly code returns a specific result (load64.wast:206)
+PASS #99 Test that a WebAssembly code returns a specific result (load64.wast:208)
+PASS #100 Test that a WebAssembly code returns a specific result (load64.wast:209)
+PASS #101 Test that a WebAssembly code returns a specific result (load64.wast:211)
 PASS #102 Test that WebAssembly compilation fails (load64.wast:213)
 PASS #103 Test that WebAssembly compilation fails (load64.wast:220)
 PASS #104 Test that WebAssembly compilation fails (load64.wast:227)

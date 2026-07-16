@@ -1,39 +1,17 @@
 
 PASS #1 Reinitialize the default imports
-FAIL #2 Test that WebAssembly compilation succeeds (data_drop0.wast:2) assert_equals: expected false but got true
+PASS #2 Test that WebAssembly compilation succeeds (data_drop0.wast:2)
 PASS #3 Reinitialize the default imports
-FAIL #4 Test that WebAssembly compilation succeeds (data_drop0.wast:2) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 40: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
-FAIL #5 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-data_drop0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:7:18
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:39:3 expected true got false
-FAIL #6 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-data_drop0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:10:4
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:39:3 expected true got false
-FAIL #7 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-data_drop0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:13:4
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:39:3 expected true got false
-FAIL #8 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-data_drop0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:16:4
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:39:3 expected true got false
-FAIL #9 Test that a WebAssembly code returns a specific result (data_drop0.wast:21) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-data_drop0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:19:14
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:39:3 expected true got false
-FAIL #10 Test that a WebAssembly code traps (data_drop0.wast:22) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
-data_drop0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:22:12
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:39:3 expected true got false
-FAIL #11 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-data_drop0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:25:4
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:39:3 expected true got false
-FAIL #12 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-data_drop0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:28:4
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:39:3 expected true got false
-FAIL #13 Test that a WebAssembly code returns a specific result (data_drop0.wast:25) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-data_drop0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:31:14
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:39:3 expected true got false
-FAIL #14 Test that a WebAssembly code traps (data_drop0.wast:26) assert_true: expected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_trap@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:269:24
-data_drop0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:34:12
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:39:3 expected true got false
-FAIL #15 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-data_drop0_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:37:4
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/data_drop0.wast.js:39:3 expected true got false
+PASS #4 Test that WebAssembly compilation succeeds (data_drop0.wast:2)
+PASS #5 Test that WebAssembly instantiation succeeds (data_drop0.wast:2)
+PASS #6 Run a WebAssembly test without special assertions (data_drop0.wast:18)
+PASS #7 Run a WebAssembly test without special assertions (data_drop0.wast:19)
+PASS #8 Run a WebAssembly test without special assertions (data_drop0.wast:20)
+PASS #9 Test that a WebAssembly code returns a specific result (data_drop0.wast:21)
+PASS #10 Test that a WebAssembly code traps (data_drop0.wast:22)
+PASS #11 Run a WebAssembly test without special assertions (data_drop0.wast:23)
+PASS #12 Run a WebAssembly test without special assertions (data_drop0.wast:24)
+PASS #13 Test that a WebAssembly code returns a specific result (data_drop0.wast:25)
+PASS #14 Test that a WebAssembly code traps (data_drop0.wast:26)
+PASS #15 Run a WebAssembly test without special assertions (data_drop0.wast:27)
 

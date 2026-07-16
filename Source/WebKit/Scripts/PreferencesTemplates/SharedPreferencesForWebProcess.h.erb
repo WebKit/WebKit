@@ -53,4 +53,25 @@ struct SharedPreferencesForWebProcess {
 SharedPreferencesForWebProcess sharedPreferencesForWebProcess(const WebPreferencesStore&, bool isLockdownModeEnabled);
 bool updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&, const WebPreferencesStore&, bool isLockdownModeEnabled);
 
+// The subset of SharedPreferencesForWebProcess that backs JSC::Options feature flags.
+// It is delivered in WebProcessCreationParameters and applied to the process-global
+// JSC::Options before the first VM freezes them.
+struct JSCOptionsForWebProcess {
+<% @jscOptions.each do |pref| -%>
+    bool <%= pref.nameLower %> { <%= pref.defaultValues["default"] %> };
+<% end -%>
+
+    bool operator==(const JSCOptionsForWebProcess&) const = default;
+};
+
+JSCOptionsForWebProcess jscOptionsForWebProcess(const WebPreferencesStore&, bool isLockdownModeEnabled);
+
 } // namespace WebKit
+
+// Pairs each JSC::Options feature-flag option with the SharedPreferencesForWebProcess
+// field that carries its value: v(jscOption, sharedPreferenceField).
+#define FOR_EACH_JSC_OPTION_SHARED_PREFERENCE(v) \
+<% @jscOptions.each do |pref| -%>
+    v(<%= pref.jscOptionName %>, <%= pref.nameLower %>) \
+<% end -%>
+

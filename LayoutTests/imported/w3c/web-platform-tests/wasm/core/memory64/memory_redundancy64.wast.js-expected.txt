@@ -1,37 +1,17 @@
 
 PASS #1 Reinitialize the default imports
-FAIL #2 Test that WebAssembly compilation succeeds (memory_redundancy64.wast:5) assert_equals: expected false but got true
+PASS #2 Test that WebAssembly compilation succeeds (memory_redundancy64.wast:5)
 PASS #3 Test that WebAssembly compilation succeeds (wrapper)
 PASS #4 Reinitialize the default imports
-FAIL #5 Test that WebAssembly compilation succeeds (memory_redundancy64.wast:5) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 52: Memory64 is not enabled at {loc} expected true got false
-FAIL #6 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-memory_redundancy64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:7:18
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:30:3 expected true got false
-FAIL #7 Test that a WebAssembly code returns a specific result (memory_redundancy64.wast:59) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_redundancy64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:10:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:30:3 expected true got false
-FAIL #8 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-memory_redundancy64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:13:4
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:30:3 expected true got false
-FAIL #9 Test that a WebAssembly code returns a specific result (memory_redundancy64.wast:61) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_redundancy64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:16:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:30:3 expected true got false
-FAIL #10 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-memory_redundancy64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:19:4
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:30:3 expected true got false
+PASS #5 Test that WebAssembly compilation succeeds (memory_redundancy64.wast:5)
+PASS #6 Test that WebAssembly instantiation succeeds (memory_redundancy64.wast:5)
+PASS #7 Test that a WebAssembly code returns a specific result (memory_redundancy64.wast:59)
+PASS #8 Run a WebAssembly test without special assertions (memory_redundancy64.wast:60)
+PASS #9 Test that a WebAssembly code returns a specific result (memory_redundancy64.wast:61)
+PASS #10 Run a WebAssembly test without special assertions (memory_redundancy64.wast:62)
 PASS #11 Test that WebAssembly compilation succeeds (wrapper)
-FAIL #12 Test that WebAssembly instantiation succeeds (wrapper) assert_true: unexpected instantiation error, observed TypeError: import module:test_dead_store must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:22:24
-run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:249:37
-memory_redundancy64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:22:4
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:30:3 expected true got false
-FAIL #13 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-memory_redundancy64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:22:4
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:30:3 expected true got false
-FAIL #14 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-memory_redundancy64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:25:4
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:30:3 expected true got false
-FAIL #15 Test that a WebAssembly code returns a specific result (memory_redundancy64.wast:65) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_redundancy64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:28:14
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory_redundancy64.wast.js:30:3 expected true got false
+PASS #12 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #13 Run a WebAssembly test without special assertions (memory_redundancy64.wast:63)
+PASS #14 Run a WebAssembly test without special assertions (memory_redundancy64.wast:64)
+PASS #15 Test that a WebAssembly code returns a specific result (memory_redundancy64.wast:65)
 

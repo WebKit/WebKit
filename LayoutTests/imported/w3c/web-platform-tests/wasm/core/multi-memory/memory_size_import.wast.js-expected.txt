@@ -1,26 +1,14 @@
 
 PASS #1 Reinitialize the default imports
-FAIL #2 Test that WebAssembly compilation succeeds (memory_size_import.wast:1) assert_equals: expected false but got true
-FAIL #3 Test that WebAssembly compilation succeeds (memory_size_import.wast:7) assert_equals: expected false but got true
+PASS #2 Test that WebAssembly compilation succeeds (memory_size_import.wast:1)
+PASS #3 Test that WebAssembly compilation succeeds (memory_size_import.wast:7)
 PASS #4 Reinitialize the default imports
-FAIL #5 Test that WebAssembly compilation succeeds (memory_size_import.wast:1) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 15: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
-FAIL #6 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-memory_size_import_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/memory_size_import.wast.js:7:18
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/memory_size_import.wast.js:30:3 expected true got false
-FAIL #7 Test that WebAssembly compilation succeeds (memory_size_import.wast:7) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 45: there can at most be one Memory section for now at {loc} expected true got false
-FAIL #8 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-memory_size_import_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/memory_size_import.wast.js:16:18
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/memory_size_import.wast.js:30:3 expected true got false
-FAIL #9 Test that a WebAssembly code returns a specific result (memory_size_import.wast:19) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_size_import_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/memory_size_import.wast.js:19:14
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/memory_size_import.wast.js:30:3 expected true got false
-FAIL #10 Test that a WebAssembly code returns a specific result (memory_size_import.wast:20) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_size_import_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/memory_size_import.wast.js:22:14
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/memory_size_import.wast.js:30:3 expected true got false
-FAIL #11 Test that a WebAssembly code returns a specific result (memory_size_import.wast:21) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_size_import_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/memory_size_import.wast.js:25:14
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/memory_size_import.wast.js:30:3 expected true got false
-FAIL #12 Test that a WebAssembly code returns a specific result (memory_size_import.wast:22) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-memory_size_import_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/memory_size_import.wast.js:28:14
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/memory_size_import.wast.js:30:3 expected true got false
+PASS #5 Test that WebAssembly compilation succeeds (memory_size_import.wast:1)
+PASS #6 Test that WebAssembly instantiation succeeds (memory_size_import.wast:1)
+PASS #7 Test that WebAssembly compilation succeeds (memory_size_import.wast:7)
+PASS #8 Test that WebAssembly instantiation succeeds (memory_size_import.wast:7)
+PASS #9 Test that a WebAssembly code returns a specific result (memory_size_import.wast:19)
+PASS #10 Test that a WebAssembly code returns a specific result (memory_size_import.wast:20)
+PASS #11 Test that a WebAssembly code returns a specific result (memory_size_import.wast:21)
+PASS #12 Test that a WebAssembly code returns a specific result (memory_size_import.wast:22)
 

@@ -75,7 +75,11 @@ all : \
     yarr/YarrCanonicalizeUnicode.cpp \
     WasmOps.h \
     WasmOMGIRGeneratorInlines.h \
+    JSCWebPreferenceOptions.h \
 #
+
+JSCWebPreferenceOptions.h : $(JavaScriptCore)/Scripts/PreferencesTemplates/JSCWebPreferenceOptions.h.erb $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb
+	$(RUBY) $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb --frontend JavaScriptCore --outputDir . --template $(JavaScriptCore)/Scripts/PreferencesTemplates/JSCWebPreferenceOptions.h.erb $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml
 
 # JavaScript builtins.
 

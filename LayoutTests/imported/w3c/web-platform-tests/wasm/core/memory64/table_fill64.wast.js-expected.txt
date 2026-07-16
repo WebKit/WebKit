@@ -11,7 +11,7 @@ PASS #9 Test that WebAssembly compilation fails (table_fill64.wast:193)
 PASS #10 Test that WebAssembly compilation fails (table_fill64.wast:203)
 PASS #11 Test that WebAssembly compilation fails (table_fill64.wast:214)
 PASS #12 Reinitialize the default imports
-FAIL #13 Test that WebAssembly compilation succeeds (table_fill64.wast:1) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 61: Memory64 is not enabled at {loc} expected true got false
+FAIL #13 Test that WebAssembly compilation succeeds (table_fill64.wast:1) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't validate: table.fill expects an i32 offset value, got I64, in function at index 3 at {loc} expected true got false
 FAIL #14 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
 table_fill64_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/table_fill64.wast.js:7:18
 global code@http://web-platform.test:8800/wasm/core/js/memory64/table_fill64.wast.js:246:3 expected true got false

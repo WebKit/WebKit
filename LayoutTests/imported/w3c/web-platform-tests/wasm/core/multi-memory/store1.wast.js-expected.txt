@@ -2,7 +2,7 @@
 PASS #1 Reinitialize the default imports
 PASS #2 Test that WebAssembly compilation succeeds (store1.wast:1)
 PASS #3 Test that WebAssembly compilation succeeds (store1.wast:13)
-FAIL #4 Test that WebAssembly compilation succeeds (store1.wast:30) assert_equals: expected false but got true
+PASS #4 Test that WebAssembly compilation succeeds (store1.wast:30)
 PASS #5 Reinitialize the default imports
 PASS #6 Test that WebAssembly compilation succeeds (store1.wast:1)
 PASS #7 Test that WebAssembly instantiation succeeds (store1.wast:1)
@@ -12,20 +12,10 @@ PASS #10 Run a WebAssembly test without special assertions (store1.wast:25)
 PASS #11 Run a WebAssembly test without special assertions (store1.wast:26)
 PASS #12 Test that a WebAssembly code returns a specific result (store1.wast:27)
 PASS #13 Test that a WebAssembly code returns a specific result (store1.wast:28)
-FAIL #14 Test that WebAssembly compilation succeeds (store1.wast:30) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 50: there can at most be one Memory section for now at {loc} expected true got false
-FAIL #15 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-store1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/store1.wast.js:41:18
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/store1.wast.js:55:3 expected true got false
-FAIL #16 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-store1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/store1.wast.js:44:4
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/store1.wast.js:55:3 expected true got false
-FAIL #17 run assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') run@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:248:24
-store1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/store1.wast.js:47:4
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/store1.wast.js:55:3 expected true got false
-FAIL #18 Test that a WebAssembly code returns a specific result (store1.wast:51) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-store1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/store1.wast.js:50:14
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/store1.wast.js:55:3 expected true got false
-FAIL #19 Test that a WebAssembly code returns a specific result (store1.wast:52) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-store1_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/store1.wast.js:53:14
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/store1.wast.js:55:3 expected true got false
+PASS #14 Test that WebAssembly compilation succeeds (store1.wast:30)
+PASS #15 Test that WebAssembly instantiation succeeds (store1.wast:30)
+PASS #16 Run a WebAssembly test without special assertions (store1.wast:49)
+PASS #17 Run a WebAssembly test without special assertions (store1.wast:50)
+PASS #18 Test that a WebAssembly code returns a specific result (store1.wast:51)
+PASS #19 Test that a WebAssembly code returns a specific result (store1.wast:52)
 

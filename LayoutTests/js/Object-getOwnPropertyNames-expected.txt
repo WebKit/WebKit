@@ -62,7 +62,7 @@ PASS getSortedOwnPropertyNames(Error) is ['captureStackTrace', 'isError', 'lengt
 PASS getSortedOwnPropertyNames(Error.prototype) is ['constructor', 'message', 'name', 'toString']
 PASS getSortedOwnPropertyNames(Math) is ['E','LN10','LN2','LOG10E','LOG2E','PI','SQRT1_2','SQRT2','abs','acos','acosh','asin','asinh','atan','atan2','atanh','cbrt','ceil','clz32','cos','cosh','exp','expm1','f16round','floor','fround','hypot','imul','log','log10','log1p','log2','max','min','pow','random','round','sign','sin','sinh','sqrt','sumPrecise','tan','tanh','trunc']
 PASS getSortedOwnPropertyNames(JSON) is ['isRawJSON', 'parse', 'rawJSON', 'stringify']
-PASS getSortedOwnPropertyNames(Symbol) is ['asyncIterator','for', 'hasInstance', 'isConcatSpreadable', 'iterator', 'keyFor', 'length', 'match', 'matchAll', 'name', 'prototype', 'replace', 'search', 'species', 'split', 'toPrimitive', 'toStringTag', 'unscopables']
+PASS getSortedOwnPropertyNames(Symbol) is ['asyncDispose', 'asyncIterator', 'dispose', 'for', 'hasInstance', 'isConcatSpreadable', 'iterator', 'keyFor', 'length', 'match', 'matchAll', 'name', 'prototype', 'replace', 'search', 'species', 'split', 'toPrimitive', 'toStringTag', 'unscopables']
 PASS getSortedOwnPropertyNames(Symbol.prototype) is ['constructor', 'description', 'toString', 'valueOf']
 PASS getSortedOwnPropertyNames(Map) is ['groupBy', 'length', 'name', 'prototype']
 PASS getSortedOwnPropertyNames(Map.prototype) is ['clear', 'constructor', 'delete', 'entries', 'forEach', 'get', 'getOrInsert', 'getOrInsertComputed', 'has', 'keys', 'set', 'size', 'values']

@@ -31,6 +31,7 @@
 #include "CacheModel.h"
 #include "SandboxExtension.h"
 #include "ScriptTrackingPrivacyFilter.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "TextCheckerState.h"
 #include "UserData.h"
 
@@ -139,6 +140,11 @@ struct WebProcessCreationParameters {
     bool attrStyleEnabled { false };
     bool shouldThrowExceptionForGlobalConstantRedeclaration { true };
     WebCore::CrossOriginMode crossOriginMode { WebCore::CrossOriginMode::Shared }; // Cross-origin isolation via COOP+COEP headers.
+
+    // JSC feature-flag options delivered from the launching page's preferences and
+    // applied to the process-global JSC::Options before the first VM freezes them.
+    // See WebProcess::initializeWebProcess.
+    JSCOptionsForWebProcess jscOptions;
 
 #if ENABLE(SERVICE_CONTROLS)
     bool hasImageServices { false };

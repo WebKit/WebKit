@@ -694,7 +694,24 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
     setMemoryCacheDisabled(parameters.memoryCacheDisabled);
 
     WebCore::DeprecatedGlobalSettings::setAttrStyleEnabled(parameters.attrStyleEnabled);
-    
+
+    // Push the launching page's feature-flag options into the process-global JSC::Options
+    // before the first VM is created. On first VM creation JSC::Options freeze and, in
+    // production, the config page is made read-only, so this is the only point at which
+    // these options can be set for this process; there is no safe later write. A page that
+    // needs different values is given a different web process by the UI process's process
+    // matching, so a single apply here is correct for the life of the process. For a
+    // pageless launch (prewarm/dummy) jscOptions is default-constructed to the option
+    // defaults, so this apply is a no-op. See commonVM() below, which creates the VM.
+    if (!WebCore::commonVMOrNull()) {
+        const auto& jscOptions = parameters.jscOptions;
+        JSC::Options::AllowUnfinalizedAccessScope scope;
+#define WEBKIT_APPLY_JSC_OPTION_FROM_SHARED_PREFERENCE(jscOption, preferenceField) JSC::Options::jscOption() = jscOptions.preferenceField;
+        FOR_EACH_JSC_OPTION_SHARED_PREFERENCE(WEBKIT_APPLY_JSC_OPTION_FROM_SHARED_PREFERENCE)
+#undef WEBKIT_APPLY_JSC_OPTION_FROM_SHARED_PREFERENCE
+        JSC::Options::notifyOptionsChanged();
+    }
+
     commonVM().setGlobalConstRedeclarationShouldThrow(parameters.shouldThrowExceptionForGlobalConstantRedeclaration);
 
     ScriptExecutionContext::setCrossOriginMode(parameters.crossOriginMode);

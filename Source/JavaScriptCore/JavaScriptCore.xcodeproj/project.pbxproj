@@ -1258,6 +1258,7 @@
 		53ADF4792F0D7A8000A05CDD /* LOLRegisterAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ADF4732F0D7A2000A05CDD /* LOLRegisterAllocator.h */; };
 		53B0D0C42E2E834300FC209B /* SimpleRegisterAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B0D0C32E2E834300FC209B /* SimpleRegisterAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53B4BD121F68B32500D2BEA3 /* WasmOps.h in Headers */ = {isa = PBXBuildFile; fileRef = 533B15DE1DC7F463004D500A /* WasmOps.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		AA01FEED0000000000000002 /* JSCWebPreferenceOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA01FEED0000000000000001 /* JSCWebPreferenceOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53B601EC2034B8C5006BE667 /* JSCast.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B601EB2034B8C5006BE667 /* JSCast.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53C2CE9C22FCC3D6008B2853 /* AirHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C2CE9B22FCC3D6008B2853 /* AirHelpers.h */; };
 		53C4F66B21B1A409002FD009 /* JSAPIGlobalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C4F66A21B1A409002FD009 /* JSAPIGlobalObject.h */; };
@@ -4454,6 +4455,7 @@
 		5338E2A62396EFEC00C61BAD /* CheckpointOSRExitSideState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckpointOSRExitSideState.h; sourceTree = "<group>"; };
 		5338EBA223AB04A300382662 /* FTLSelectPredictability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLSelectPredictability.h; path = ftl/FTLSelectPredictability.h; sourceTree = "<group>"; };
 		533B15DE1DC7F463004D500A /* WasmOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmOps.h; sourceTree = "<group>"; };
+		AA01FEED0000000000000001 /* JSCWebPreferenceOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCWebPreferenceOptions.h; sourceTree = "<group>"; };
 		533D074322C2D797004D2FE2 /* FinalizationRegistryConstructor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FinalizationRegistryConstructor.h; sourceTree = "<group>"; };
 		533D074522C2D87F004D2FE2 /* FinalizationRegistryConstructor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FinalizationRegistryConstructor.cpp; sourceTree = "<group>"; };
 		533D074622C2D9D1004D2FE2 /* JSFinalizationRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSFinalizationRegistry.h; sourceTree = "<group>"; };
@@ -8303,6 +8305,7 @@
 				A125846D1B45A36000CC7F6C /* IntlNumberFormatPrototype.lut.h */,
 				A7D801A61880D6A80026C39B /* JSCBuiltins.cpp */,
 				A7D801A71880D6A80026C39B /* JSCBuiltins.h */,
+				AA01FEED0000000000000001 /* JSCWebPreferenceOptions.h */,
 				996B730A1BD9FA2C00331B84 /* JSDataViewPrototype.lut.h */,
 				996B730B1BD9FA2C00331B84 /* JSGlobalObject.lut.h */,
 				BC87CDB810712ACA000614CF /* JSONObject.lut.h */,
@@ -12147,6 +12150,7 @@
 				276B39182A71D2B600252F4E /* JSCustomGetterFunctionInlines.h in Headers */,
 				84323E7F25D5EC6A00F97776 /* JSCustomSetterFunction.h in Headers */,
 				276B38DD2A71D26400252F4E /* JSCustomSetterFunctionInlines.h in Headers */,
+				AA01FEED0000000000000002 /* JSCWebPreferenceOptions.h in Headers */,
 				0F2B66EC17B6B5AB00A7AE3F /* JSDataView.h in Headers */,
 				0F2B66EE17B6B5AB00A7AE3F /* JSDataViewPrototype.h in Headers */,
 				978801411471AD920041B016 /* JSDateMath.h in Headers */,

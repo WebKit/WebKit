@@ -1,38 +1,18 @@
 
 PASS #1 Reinitialize the default imports
-FAIL #2 Test that WebAssembly compilation succeeds (linking2.wast:1) assert_equals: expected false but got true
+PASS #2 Test that WebAssembly compilation succeeds (linking2.wast:1)
 PASS #3 Test that WebAssembly compilation succeeds (linking2.wast:14)
 PASS #4 Reinitialize the default imports
-FAIL #5 Test that WebAssembly compilation succeeds (linking2.wast:1) assert_true: WebAssembly.compile failed unexpectedly with CompileError: WebAssembly.Module doesn't parse at byte 35: Memory section has more than one memory, WebAssembly currently only allows zero or one at {loc} expected true got false
-FAIL #6 Test that WebAssembly instantiation succeeds assert_true: unexpected instantiation error, observed TypeError: undefined is not an object (evaluating 'values[0].source') instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-linking2_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:8:18
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:46:3 expected true got false
+PASS #5 Test that WebAssembly compilation succeeds (linking2.wast:1)
+PASS #6 Test that WebAssembly instantiation succeeds (linking2.wast:1)
 PASS #7 Test that WebAssembly compilation succeeds (linking2.wast:14)
-FAIL #8 Test that WebAssembly instantiation succeeds (linking2.wast:14) assert_true: unexpected instantiation error, observed TypeError: import Mm:mem1 must be an object instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:207:24
-linking2_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:19:18
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:46:3 expected true got false
-FAIL #9 Test that a WebAssembly code returns a specific result (linking2.wast:22) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-linking2_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:23:14
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:46:3 expected true got false
-FAIL #10 Test that a WebAssembly code returns a specific result (linking2.wast:23) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-linking2_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:26:14
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:46:3 expected true got false
-FAIL #11 Test that a WebAssembly code returns a specific result (linking2.wast:24) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-linking2_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:29:14
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:46:3 expected true got false
-FAIL #12 Test that a WebAssembly code returns a specific result (linking2.wast:25) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-linking2_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:32:14
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:46:3 expected true got false
-FAIL #13 Test that a WebAssembly code returns a specific result (linking2.wast:26) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-linking2_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:35:14
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:46:3 expected true got false
-FAIL #14 Test that a WebAssembly code returns a specific result (linking2.wast:27) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-linking2_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:38:14
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:46:3 expected true got false
-FAIL #15 Test that a WebAssembly code returns a specific result (linking2.wast:28) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-linking2_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:41:14
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:46:3 expected true got false
-FAIL #16 Test that a WebAssembly code returns a specific result (linking2.wast:29) assert_true: unexpected runtime error, observed TypeError: undefined is not an object (evaluating 'values[0].exports[name]') assert_return@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:312:24
-linking2_wast_js@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:44:14
-global code@http://web-platform.test:8800/wasm/core/js/multi-memory/linking2.wast.js:46:3 expected true got false
+PASS #8 Test that WebAssembly instantiation succeeds (linking2.wast:14)
+PASS #9 Test that a WebAssembly code returns a specific result (linking2.wast:22)
+PASS #10 Test that a WebAssembly code returns a specific result (linking2.wast:23)
+PASS #11 Test that a WebAssembly code returns a specific result (linking2.wast:24)
+PASS #12 Test that a WebAssembly code returns a specific result (linking2.wast:25)
+PASS #13 Test that a WebAssembly code returns a specific result (linking2.wast:26)
+PASS #14 Test that a WebAssembly code returns a specific result (linking2.wast:27)
+PASS #15 Test that a WebAssembly code returns a specific result (linking2.wast:28)
+PASS #16 Test that a WebAssembly code returns a specific result (linking2.wast:29)
 

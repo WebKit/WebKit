@@ -81,6 +81,7 @@ using WebCore::SystemSettings::State = WebCore::SystemSettingsState;
     bool attrStyleEnabled;
     bool shouldThrowExceptionForGlobalConstantRedeclaration;
     WebCore::CrossOriginMode crossOriginMode;
+    WebKit::JSCOptionsForWebProcess jscOptions;
 
 #if ENABLE(SERVICE_CONTROLS)
     bool hasImageServices;

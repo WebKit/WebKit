@@ -39,3 +39,10 @@ struct WebKit::SharedPreferencesForWebProcess {
 <%- end -%>
 <%- end -%>
 };
+
+header: "SharedPreferencesForWebProcess.h"
+[CustomHeader] struct WebKit::JSCOptionsForWebProcess {
+<% @jscOptions.each do |pref| -%>
+    bool <%= pref.nameLower %>;
+<% end -%>
+};

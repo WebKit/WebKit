@@ -760,7 +760,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
 
         WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishRemoteWorkerContextConnectionToNetworkProcess creating a new service worker process (process=%p, workerType=%" PUBLIC_LOG_STRING ", PID=%d)", remoteWorkerProcessProxy.get(), workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", remoteWorkerProcessProxy->processID());
 
-        processPool->initializeNewWebProcess(newProcessProxy, websiteDataStore.get());
+        processPool->initializeNewWebProcess(newProcessProxy, websiteDataStore.get(), WebProcessProxy::IsPrewarmed::No, WebProcessProxy::EnableWebAssemblyDebugger::No, WebKit::jscOptionsForWebProcess(preferencesStore.store, lockdownMode == WebProcessProxy::LockdownMode::Enabled));
         processPool->m_processes.append(WTF::move(newProcessProxy));
     }
 
@@ -826,10 +826,10 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
     platformResolvePathsForSandboxExtensions();
 }
 
-Ref<WebProcessProxy> WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, WebProcessProxy::EnableWebAssemblyDebugger enableWebAssemblyDebugger, WebProcessProxy::IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode)
+Ref<WebProcessProxy> WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, WebProcessProxy::EnableWebAssemblyDebugger enableWebAssemblyDebugger, WebProcessProxy::IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode, JSCOptionsForWebProcess jscOptions)
 {
     auto processProxy = WebProcessProxy::create(*this, websiteDataStore, lockdownMode, enhancedSecurity, isPrewarmed, crossOriginMode, WebProcessProxy::ShouldLaunchProcess::Yes);
-    initializeNewWebProcess(processProxy, websiteDataStore, isPrewarmed, enableWebAssemblyDebugger);
+    initializeNewWebProcess(processProxy, websiteDataStore, isPrewarmed, enableWebAssemblyDebugger, jscOptions);
     m_processes.append(processProxy.copyRef());
 
     return processProxy;
@@ -843,6 +843,16 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
     if (protect(pageConfiguration.preferences())->webAssemblyDebuggerEnabled()) [[unlikely]]
         return nullptr;
 #endif
+
+    // A prewarmed process created its VM with the default JSC::Options (a pageless launch
+    // applies the default JSCOptionsForWebProcess), and those options are frozen once the VM
+    // exists. It can only serve a page whose feature-flag values all match those defaults; a
+    // page that needs different values must get a process launched with them. Other shared
+    // preferences are applied at runtime and so do not gate reuse here. See WebProcess::initializeWebProcess.
+    if (WebKit::jscOptionsForWebProcess(pageConfiguration.preferences().store(), lockdownMode == WebProcessProxy::LockdownMode::Enabled) != JSCOptionsForWebProcess { }) {
+        WEBPROCESSPOOL_RELEASE_LOG(Process, "tryTakePrewarmedProcess: Not using prewarmed process because the page requires non-default JavaScript feature flags");
+        return nullptr;
+    }
 
     RefPtr<WebProcessProxy> prewarmedProcess;
 
@@ -965,7 +975,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
     };
 }
 
-void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDataStore* websiteDataStore, WebProcessProxy::IsPrewarmed isPrewarmed, WebProcessProxy::EnableWebAssemblyDebugger enableWebAssemblyDebugger)
+void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDataStore* websiteDataStore, WebProcessProxy::IsPrewarmed isPrewarmed, WebProcessProxy::EnableWebAssemblyDebugger enableWebAssemblyDebugger, JSCOptionsForWebProcess jscOptions)
 {
     WebProcessCreationParameters parameters;
     parameters.auxiliaryProcessParameters = AuxiliaryProcessProxy::auxiliaryProcessParameters();
@@ -1033,6 +1043,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     parameters.attrStyleEnabled = m_configuration->attrStyleEnabled();
     parameters.shouldThrowExceptionForGlobalConstantRedeclaration = m_configuration->shouldThrowExceptionForGlobalConstantRedeclaration();
     parameters.crossOriginMode = process.crossOriginMode();
+    parameters.jscOptions = jscOptions;
 
 #if ENABLE(SERVICE_CONTROLS)
     auto& serviceController = ServicesController::singleton();
@@ -1313,7 +1324,7 @@ Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDat
         }
     }
     auto enableWebAssemblyDebugger = protect(pageConfiguration.preferences())->webAssemblyDebuggerEnabled() ? WebProcessProxy::EnableWebAssemblyDebugger::Yes : WebProcessProxy::EnableWebAssemblyDebugger::No;
-    Ref process = createNewWebProcess(&websiteDataStore, lockdownMode, enhancedSecurity, enableWebAssemblyDebugger);
+    Ref process = createNewWebProcess(&websiteDataStore, lockdownMode, enhancedSecurity, enableWebAssemblyDebugger, WebProcessProxy::IsPrewarmed::No, CrossOriginMode::Shared, WebKit::jscOptionsForWebProcess(pageConfiguration.preferences().store(), lockdownMode == WebProcessProxy::LockdownMode::Enabled));
     process->setIsolatedProcessType(isolatedProcessType, mainFrameSite);
     if (processSwapDisposition == ProcessSwapDisposition::COOP)
         process->setIneligbleForWebProcessCache();

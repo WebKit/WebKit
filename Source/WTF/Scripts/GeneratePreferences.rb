@@ -39,7 +39,7 @@ optparse = OptionParser.new do |opts|
 
   opts.separator ""
 
-  opts.on("--frontend input", "frontend to generate preferences for (WebKit, WebKitLegacy)") { |frontend| options[:frontend] = frontend }
+  opts.on("--frontend input", "frontend to generate preferences for (WebKit, WebKitLegacy, WebCore, JavaScriptCore)") { |frontend| options[:frontend] = frontend }
   opts.on("--template input", "template to use for generation (may be specified multiple times)") { |template| options[:templates] << template }
   opts.on("--outputDir output", "directory to generate file in (default: cwd)") { |outputDir| options[:outputDirectory] = outputDir }
   opts.on("-h", "--help", "show this help message") { puts opts; exit 1 }
@@ -94,6 +94,7 @@ class Preference
   attr_accessor :richJavaScript
   attr_accessor :mediaPlaybackRelated
   attr_accessor :inspectorOverride
+  attr_accessor :jscOptionName
 
   def initialize(name, opts, frontend)
     @name = name
@@ -117,11 +118,14 @@ class Preference
     @condition = opts["condition"]
     @hidden = opts["hidden"] || false
     @defaultValues = opts["defaultValue"][frontend]
+    # JSC feature-flag options carry no JavaScriptCore default group; their default is the WebKit default.
+    @defaultValues ||= opts["defaultValue"]["WebKit"] if opts["jscOptionName"]
     @exposed = !opts["exposed"] || opts["exposed"].include?(frontend)
     @sharedPreferenceForWebProcess = opts["sharedPreferenceForWebProcess"] || false
     @richJavaScript = opts["richJavaScript"] || false
     @mediaPlaybackRelated = opts["mediaPlaybackRelated"] || false
     @inspectorOverride = opts["inspectorOverride"]
+    @jscOptionName = opts["jscOptionName"]
   end
 
   def nameLower
@@ -267,6 +271,8 @@ class Preferences
     @preferencesBoundToSetting = @preferences.select { |p| !p.webcoreBinding }
     @preferencesBoundToDeprecatedGlobalSettings = @preferences.select { |p| p.webcoreBinding == "DeprecatedGlobalSettings" }
 
+    @jscOptions = @preferences.select { |p| p.jscOptionName }.sort_by { |p| p.jscOptionName }
+
     @warning = "THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT."
   end
 
@@ -286,6 +292,12 @@ class Preferences
         webcoreSettingOnly = !options["webcoreBinding"] && options["defaultValue"].keys == ["WebCore"]
         status = options["status"]
 
+        if options["jscOptionName"]
+          reject.call "Preference #{name} has jscOptionName, so it must set sharedPreferenceForWebProcess: true." if !options["sharedPreferenceForWebProcess"]
+          reject.call "Preference #{name} has jscOptionName, so it must specify a WebKit default value." if !options["defaultValue"]["WebKit"]
+          next if failed
+        end
+
         if %w{ unstable internal developer testable preview stable }.include?(status)
           reject.call "Preference #{name} has no humanReadableName, which is required." if !options["humanReadableName"]
           reject.call "Preference #{name} is visible in client UI and has a default value bound to WebCore::Settings, so it must have default values for all frontends" if webcoreSettingOnly
@@ -304,7 +316,11 @@ class Preferences
             end
         end
 
-        if options["defaultValue"].include?(@frontend)
+        # The JavaScriptCore "frontend" is the set of preferences that back a
+        # JSC::Options feature flag, identified by jscOptionName; every other frontend
+        # selects on the presence of its own default group.
+        includedInFrontend = @frontend == "JavaScriptCore" ? !options["jscOptionName"].nil? : options["defaultValue"].include?(@frontend)
+        if includedInFrontend
           preference = Preference.new(name, options, @frontend)
           @preferences << preference
           result << preference
