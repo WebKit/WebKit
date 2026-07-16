@@ -3388,10 +3388,9 @@ void LocalFrameView::textFragmentIndicatorTimerFired()
     if (!m_pendingTextFragmentIndicatorRange)
         return;
     
-    if (m_pendingTextFragmentIndicatorText != plainText(m_pendingTextFragmentIndicatorRange.value()))
-        return;
-    
     auto range = m_pendingTextFragmentIndicatorRange.value();
+    if (m_pendingTextFragmentIndicatorText != plainText(range))
+        return;
 
     // FIXME: <http://webkit.org/b/245262> (Scroll To Text Fragment should use DelegateMainFrameScroll)
     auto selectionChange = revealRangeWithTemporarySelection(range);
