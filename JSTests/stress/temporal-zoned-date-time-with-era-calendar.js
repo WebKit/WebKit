@@ -121,3 +121,20 @@ function shouldThrow(func, errorType) {
     shouldBe(result.month, 3);
     shouldBe(result.day, 15);
 }
+
+{
+    // hebrew, year only — no month/monthCode → TypeError.
+    shouldThrow(() => Temporal.ZonedDateTime.from({
+        year: 5784, day: 1, calendar: "hebrew", timeZone: "UTC"
+    }), TypeError);
+
+    // hebrew with era+eraYear only, no month/monthCode → still TypeError.
+    shouldThrow(() => Temporal.ZonedDateTime.from({
+        era: "am", eraYear: 5784, day: 1, calendar: "hebrew", timeZone: "UTC"
+    }), TypeError);
+
+    // gregory (ISO-like) year only — same TypeError path.
+    shouldThrow(() => Temporal.ZonedDateTime.from({
+        year: 2024, day: 1, calendar: "gregory", timeZone: "UTC"
+    }), TypeError);
+}

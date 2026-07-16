@@ -144,8 +144,8 @@ static TemporalPlainDateTime* fromImpl(JSGlobalObject* globalObject, JSValue ite
         }
 
         // hour, microsecond, millisecond, minute (time fields interleaved before month)
-        ISO8601::Duration timeDuration { };
-        auto readTimeField = [&](JSValue val, TemporalUnit unit) {
+        TemporalCore::TimeFieldsIn timeFields;
+        auto readTimeField = [&](JSValue val, std::optional<double>& target) {
             if (val.isUndefined())
                 return;
             double d = val.toIntegerWithTruncation(globalObject);
@@ -154,27 +154,27 @@ static TemporalPlainDateTime* fromImpl(JSGlobalObject* globalObject, JSValue ite
                 throwRangeError(globalObject, scope, "Temporal time properties must be finite"_s);
                 return;
             }
-            timeDuration.setField(unit, d);
+            target = d;
         };
 
         JSValue hourProperty = item->get(globalObject, vm.propertyNames->hour);
         RETURN_IF_EXCEPTION(scope, { });
-        readTimeField(hourProperty, TemporalUnit::Hour);
+        readTimeField(hourProperty, timeFields.hour);
         RETURN_IF_EXCEPTION(scope, { });
 
         JSValue microsecondProperty = item->get(globalObject, vm.propertyNames->microsecond);
         RETURN_IF_EXCEPTION(scope, { });
-        readTimeField(microsecondProperty, TemporalUnit::Microsecond);
+        readTimeField(microsecondProperty, timeFields.microsecond);
         RETURN_IF_EXCEPTION(scope, { });
 
         JSValue millisecondProperty = item->get(globalObject, vm.propertyNames->millisecond);
         RETURN_IF_EXCEPTION(scope, { });
-        readTimeField(millisecondProperty, TemporalUnit::Millisecond);
+        readTimeField(millisecondProperty, timeFields.millisecond);
         RETURN_IF_EXCEPTION(scope, { });
 
         JSValue minuteProperty = item->get(globalObject, vm.propertyNames->minute);
         RETURN_IF_EXCEPTION(scope, { });
-        readTimeField(minuteProperty, TemporalUnit::Minute);
+        readTimeField(minuteProperty, timeFields.minute);
         RETURN_IF_EXCEPTION(scope, { });
 
         // month
@@ -184,6 +184,11 @@ static TemporalPlainDateTime* fromImpl(JSGlobalObject* globalObject, JSValue ite
         if (!monthProperty.isUndefined()) {
             month = monthProperty.toIntegerWithTruncation(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
+            // Spec uses ToPositiveIntegerWithTruncation: rejects NaN/±Inf and any value ≤ 0.
+            if (!(month > 0 && std::isfinite(month))) [[unlikely]] {
+                throwRangeError(globalObject, scope, "month property must be positive and finite"_s);
+                return { };
+            }
         }
 
         // monthCode
@@ -203,13 +208,13 @@ static TemporalPlainDateTime* fromImpl(JSGlobalObject* globalObject, JSValue ite
         // nanosecond
         JSValue nanosecondProperty = item->get(globalObject, vm.propertyNames->nanosecond);
         RETURN_IF_EXCEPTION(scope, { });
-        readTimeField(nanosecondProperty, TemporalUnit::Nanosecond);
+        readTimeField(nanosecondProperty, timeFields.nanosecond);
         RETURN_IF_EXCEPTION(scope, { });
 
         // second
         JSValue secondProperty = item->get(globalObject, vm.propertyNames->second);
         RETURN_IF_EXCEPTION(scope, { });
-        readTimeField(secondProperty, TemporalUnit::Second);
+        readTimeField(secondProperty, timeFields.second);
         RETURN_IF_EXCEPTION(scope, { });
 
         // year
@@ -233,75 +238,24 @@ static TemporalPlainDateTime* fromImpl(JSGlobalObject* globalObject, JSValue ite
             RETURN_IF_EXCEPTION(scope, { });
         }
 
-        // Step 2.h: InterpretTemporalDateTimeFields(calendar, fields, overflow).
-        // Resolve month vs monthCode — done after all fields (including year) are read.
-        bool isNonISO = extractedCalendarId != iso8601CalendarID();
-        if (otherMonth) {
-            if (!isNonISO && (otherMonth->monthNumber < 1 || otherMonth->monthNumber > 12 || otherMonth->isLeapMonth)) [[unlikely]] {
-                throwRangeError(globalObject, scope, "month code is not valid for ISO 8601 calendar"_s);
-                return { };
-            }
-        }
-        if (monthProperty.isUndefined()) {
-            ASSERT(otherMonth);
-            month = otherMonth->monthNumber;
-        } else {
-            // Spec uses ToPositiveIntegerWithTruncation: rejects NaN/±Inf and any value ≤ 0.
-            if (!(month > 0 && std::isfinite(month))) [[unlikely]] {
-                throwRangeError(globalObject, scope, "month property must be positive and finite"_s);
-                return { };
-            }
-            if (otherMonth && static_cast<double>(otherMonth->monthNumber) != month) [[unlikely]] {
-                throwRangeError(globalObject, scope, "month and monthCode properties must match if both are provided"_s);
-                return { };
-            }
-        }
-
-        // Validate/clamp month and day at double level before double→unsigned cast.
-        // static_cast<unsigned> of values >= 2^32 is UB and wraps to 0 on x86.
-        if (!isNonISO) {
-            if (overflow == TemporalOverflow::Constrain) {
-                month = std::clamp(month, 1.0, 12.0);
-                day = std::clamp(day, 1.0, 31.0);
-            } else {
-                if (!(month >= 1 && month <= 12)) [[unlikely]] {
-                    throwRangeError(globalObject, scope, "month is out of range"_s);
-                    return { };
-                }
-                if (!(day >= 1 && day <= 31)) [[unlikely]] {
-                    throwRangeError(globalObject, scope, "day is out of range"_s);
-                    return { };
-                }
-            }
-        }
-
-        ISO8601::PlainDate plainDate;
-        if (calUsesEras && (extractedEra || extractedEraYear)) {
-            std::optional<StringView> era;
-            if (extractedEra)
-                era = StringView(*extractedEra);
-            // Pass nullopt when user didn't provide year (yearProperty.isUndefined()), so the
-            // year-consistency check in calendarDateFromFields correctly skips for that case.
-            std::optional<int32_t> yearOpt = yearProperty.isUndefined() ? std::nullopt : std::optional<int32_t>(clampTo<int32_t>(year));
-            auto result = TemporalCore::calendarDateFromFields(
-                extractedCalendarId, yearOpt, clampTo<uint8_t>(month),
-                clampTo<uint8_t>(day), era, extractedEraYear,
-                otherMonth, overflow);
-            if (!result) [[unlikely]] {
-                throwRangeError(globalObject, scope, String(result.error().message));
-                return { };
-            }
-            plainDate = *result;
-        } else {
-            plainDate = isoDateFromFields(globalObject, TemporalDateFormat::Date, clampTo<int32_t>(year), clampTo<uint32_t>(month), clampTo<uint32_t>(day), otherMonth, overflow, extractedCalendarId);
-            RETURN_IF_EXCEPTION(scope, { });
-        }
-
-        auto plainTime = TemporalPlainTime::regulateTime(globalObject, WTF::move(timeDuration), overflow);
+        // Step 2.h: dateTimeResult = ? InterpretTemporalDateTimeFields(calendar, fields, overflow).
+        TemporalCore::CalendarFieldsIn dateFields;
+        if (!yearProperty.isUndefined())
+            dateFields.year = clampTo<int32_t>(year);
+        if (!monthProperty.isUndefined())
+            dateFields.month = clampTo<uint32_t>(month);
+        if (otherMonth)
+            dateFields.monthCode = otherMonth;
+        dateFields.day = clampTo<uint8_t>(day);
+        if (extractedEra)
+            dateFields.era = *extractedEra;
+        if (extractedEraYear)
+            dateFields.eraYear = *extractedEraYear;
+        auto pdt = interpretTemporalDateTimeFields(globalObject, extractedCalendarId, dateFields, timeFields, overflow);
         RETURN_IF_EXCEPTION(scope, { });
 
         // Step 2.h cont.: CreateTemporalDateTime(result, calendar).
-        auto* result = TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), WTF::move(plainDate), WTF::move(plainTime), extractedCalendarId);
+        auto* result = TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), ISO8601::PlainDate(pdt.date), ISO8601::PlainTime(pdt.time), extractedCalendarId);
         RETURN_IF_EXCEPTION(scope, { });
         return result;
     }

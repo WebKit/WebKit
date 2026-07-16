@@ -38,6 +38,7 @@
 #include "TemporalPlainDate.h"
 #include "TemporalPlainDateTime.h"
 #include "TemporalPlainMonthDay.h"
+#include "TemporalPlainTime.h"
 #include "TemporalPlainYearMonth.h"
 #include "TemporalZonedDateTime.h"
 #include "TimeZoneICUBridge.h"
@@ -491,6 +492,39 @@ ISO8601::PlainDate isoDateFromFields(JSGlobalObject* globalObject, TemporalDateF
     }
 
     return plainDate;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-interprettemporaldatetimefields
+ISO8601::PlainDateTime interpretTemporalDateTimeFields(JSGlobalObject* globalObject, CalendarID calendarId,
+    const TemporalCore::CalendarFieldsIn& dateFields, const TemporalCore::TimeFieldsIn& timeFields,
+    TemporalOverflow overflow)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // Step 1: isoDate = ? CalendarDateFromFields(calendar, fields, overflow).
+    auto dateResult = TemporalCore::dateFromFields(calendarId, dateFields, overflow);
+    if (!dateResult) [[unlikely]] {
+        if (dateResult.error().kind == TemporalErrorKind::TypeError)
+            throwTypeError(globalObject, scope, String(dateResult.error().message));
+        else
+            throwRangeError(globalObject, scope, String(dateResult.error().message));
+        return { };
+    }
+
+    // Step 2: time = ? RegulateTime(...).
+    ISO8601::Duration timeDur;
+    timeDur.setField(TemporalUnit::Hour, timeFields.hour.value_or(0));
+    timeDur.setField(TemporalUnit::Minute, timeFields.minute.value_or(0));
+    timeDur.setField(TemporalUnit::Second, timeFields.second.value_or(0));
+    timeDur.setField(TemporalUnit::Millisecond, timeFields.millisecond.value_or(0));
+    timeDur.setField(TemporalUnit::Microsecond, timeFields.microsecond.value_or(0));
+    timeDur.setField(TemporalUnit::Nanosecond, timeFields.nanosecond.value_or(0));
+    auto plainTime = TemporalPlainTime::regulateTime(globalObject, WTF::move(timeDur), overflow);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // Step 3: Return CombineISODateAndTimeRecord(isoDate, time).
+    return ISO8601::PlainDateTime(dateResult->isoDate, plainTime);
 }
 
 ISO8601::PlainDate isoDateAdd(JSGlobalObject* globalObject, const ISO8601::PlainDate& plainDate, const ISO8601::Duration& duration, TemporalOverflow overflow)

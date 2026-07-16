@@ -185,6 +185,8 @@ TemporalResult<ResolvedCalendarDate> dateFromFields(CalendarID calendarId, const
         return makeUnexpected(typeError("year property must be present"_s));
     if (!fields.day)
         return makeUnexpected(typeError("day property must be present"_s));
+    if (!fields.month && !fields.monthCode)
+        return makeUnexpected(typeError("month or monthCode property must be present"_s));
 
     // Resolve month from month/monthCode
     uint8_t month = 1;

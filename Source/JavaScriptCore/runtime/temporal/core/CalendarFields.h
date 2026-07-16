@@ -53,6 +53,15 @@ struct CalendarFieldsIn {
     std::optional<int32_t> eraYear;
 };
 
+struct TimeFieldsIn {
+    std::optional<double> hour;
+    std::optional<double> minute;
+    std::optional<double> second;
+    std::optional<double> millisecond;
+    std::optional<double> microsecond;
+    std::optional<double> nanosecond;
+};
+
 // Result of calendar field resolution: ISO date + calendar ID.
 struct ResolvedCalendarDate {
     ISO8601::PlainDate isoDate;

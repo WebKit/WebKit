@@ -668,8 +668,8 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWith, (JSGlobalObject
     TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
     RETURN_IF_EXCEPTION(scope, { });
 
-    // Step 23: dateTimeResult = ? InterpretTemporalDateTimeFields(calendar, fields, overflow).
-    // For non-ISO calendars, fall back to calendar-coordinate current values from ISODateToFields.
+    // Step 23 fallback prep: for non-ISO calendars, absent patch fields fall back to
+    // the calendar-native values (not the raw ISO year/month/day).
     int32_t fallbackYear = curDate.year();
     uint32_t fallbackMonth = curDate.month();
     uint32_t fallbackDay = curDate.day();
@@ -687,52 +687,34 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWith, (JSGlobalObject
 
     auto& pf = partialFields;
     auto& pDate = pf.dateFields;
-    int32_t mergedYear = pDate.year.value_or(fallbackYear);
-    uint32_t mergedMonth;
-    if (pDate.month)
-        mergedMonth = static_cast<uint32_t>(*pDate.month);
-    else if (pDate.monthCode)
-        mergedMonth = pDate.monthCode->monthNumber;
-    else
-        mergedMonth = fallbackMonth;
-    uint32_t mergedDay = pDate.day ? static_cast<uint32_t>(*pDate.day) : fallbackDay;
 
-    // For non-ISO with(), if neither month nor monthCode provided by user, use fallback monthCode.
-    std::optional<ParsedMonthCode> resolvedMonthCode = pDate.monthCode;
-    if (!pDate.month && !pDate.monthCode && fallbackMonthCode)
-        resolvedMonthCode = fallbackMonthCode;
-
-    ISO8601::PlainDate newDate;
-    if (pDate.era || pDate.eraYear) {
-        // User provided era+eraYear: route through calendarDateFromFields so ICU resolves the
-        // ISO year from era+eraYear (UCAL_ERA + UCAL_YEAR = eraYear).
-        // Pass pDate.year as optional: nullopt when absent (no consistency check),
-        // has_value when user provided it (conflict with era+eraYear throws RangeError).
-        std::optional<StringView> era;
-        if (pDate.era)
-            era = StringView(*pDate.era);
-        auto result = TemporalCore::calendarDateFromFields(
-            zdt->calendarID(), pDate.year, clampTo<uint8_t>(mergedMonth),
-            static_cast<uint8_t>(mergedDay), era, pDate.eraYear, resolvedMonthCode, overflow);
-        if (!result) [[unlikely]] {
-            throwRangeError(globalObject, scope, String(result.error().message));
-            return { };
-        }
-        newDate = *result;
-    } else {
-        newDate = isoDateFromFields(globalObject, TemporalDateFormat::Date, mergedYear, mergedMonth, mergedDay, resolvedMonthCode, overflow, zdt->calendarID());
-        RETURN_IF_EXCEPTION(scope, { });
+    // Step 23: dateTimeResult = ? InterpretTemporalDateTimeFields(calendar, fields, overflow).
+    // Merge patch onto current ZDT. Only populate month/monthCode from what the user
+    // actually provided so nonISOResolveFields' consistency check doesn't fire spuriously.
+    TemporalCore::CalendarFieldsIn merged = pDate;
+    if (!pDate.day)
+        merged.day = static_cast<uint8_t>(fallbackDay);
+    if (!pDate.year && !(pDate.era && pDate.eraYear))
+        merged.year = fallbackYear;
+    if (!pDate.month && !pDate.monthCode) {
+        // Prefer fallback monthCode (calendar-native) over numeric month for non-ISO.
+        if (fallbackMonthCode)
+            merged.monthCode = fallbackMonthCode;
+        else
+            merged.month = fallbackMonth;
     }
-
-    ISO8601::Duration timeDur { };
-    timeDur.setField(TemporalUnit::Hour, pf.hour.value_or(static_cast<double>(curTime.hour())));
-    timeDur.setField(TemporalUnit::Minute, pf.minute.value_or(static_cast<double>(curTime.minute())));
-    timeDur.setField(TemporalUnit::Second, pf.second.value_or(static_cast<double>(curTime.second())));
-    timeDur.setField(TemporalUnit::Millisecond, pf.millisecond.value_or(static_cast<double>(curTime.millisecond())));
-    timeDur.setField(TemporalUnit::Microsecond, pf.microsecond.value_or(static_cast<double>(curTime.microsecond())));
-    timeDur.setField(TemporalUnit::Nanosecond, pf.nanosecond.value_or(static_cast<double>(curTime.nanosecond())));
-    auto newTime = TemporalPlainTime::regulateTime(globalObject, WTF::move(timeDur), overflow);
+    TemporalCore::TimeFieldsIn timeFields {
+        pf.hour.value_or(static_cast<double>(curTime.hour())),
+        pf.minute.value_or(static_cast<double>(curTime.minute())),
+        pf.second.value_or(static_cast<double>(curTime.second())),
+        pf.millisecond.value_or(static_cast<double>(curTime.millisecond())),
+        pf.microsecond.value_or(static_cast<double>(curTime.microsecond())),
+        pf.nanosecond.value_or(static_cast<double>(curTime.nanosecond())),
+    };
+    auto pdt = interpretTemporalDateTimeFields(globalObject, zdt->calendarID(), merged, timeFields, overflow);
     RETURN_IF_EXCEPTION(scope, { });
+    ISO8601::PlainDate newDate = pdt.date;
+    ISO8601::PlainTime newTime = pdt.time;
 
     // Steps 24-25: InterpretISODateTimeOffset — resolve epoch nanoseconds.
     // Step 24: newOffsetNanoseconds — use provided offset OR current offset.

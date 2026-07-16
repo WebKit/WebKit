@@ -213,31 +213,6 @@ static Int128 add24HourDaysToTimeDuration(JSGlobalObject* globalObject, Int128 d
     return *result;
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-calendardatefromfields
-static ISO8601::PlainDate resolvePlainDateFromFields(JSGlobalObject* globalObject, CalendarID calendarId,
-    bool calHasEras, const std::optional<String>& era, const std::optional<double>& eraYear,
-    bool yearAbsent, double year, double month, double day, std::optional<ParsedMonthCode> monthCode)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (calHasEras && era && eraYear) {
-        std::optional<StringView> eraSV = StringView(*era);
-        std::optional<int32_t> yearOpt = yearAbsent ? std::nullopt : std::optional<int32_t>(clampTo<int32_t>(year));
-        auto result = TemporalCore::calendarDateFromFields(calendarId, yearOpt,
-            clampTo<uint8_t>(month), clampTo<uint8_t>(day),
-            eraSV, std::optional<int32_t>(clampTo<int32_t>(*eraYear)), monthCode, TemporalOverflow::Constrain);
-        if (!result) [[unlikely]] {
-            throwRangeError(globalObject, scope, String(result.error().message));
-            return { };
-        }
-        return *result;
-    }
-    RELEASE_AND_RETURN(scope, isoDateFromFields(globalObject, TemporalDateFormat::Date,
-        clampTo<int32_t>(year), clampTo<uint32_t>(month), clampTo<uint32_t>(day),
-        monthCode, TemporalOverflow::Constrain));
-}
-
 // Helper: calendar-aware date addition. Uses calendarDateAdd for non-ISO, isoDateAdd for ISO.
 // https://tc39.es/proposal-temporal/#sec-temporal-calendardateadd
 static ISO8601::PlainDate calendarAwareDateAdd(JSGlobalObject* globalObject, CalendarID calendarId, const ISO8601::PlainDate& date, const ISO8601::Duration& duration, TemporalOverflow overflow)
@@ -467,6 +442,21 @@ static RelativeToRecord toRelativeTemporalObject(JSGlobalObject* globalObject, J
             }
         }
 
+        // Step 5.f: dateTimeResult = ? InterpretTemporalDateTimeFields(calendar, fields, ~constrain~).
+        TemporalCore::CalendarFieldsIn dateFields;
+        if (!yearProperty.isUndefined())
+            dateFields.year = clampTo<int32_t>(year);
+        if (!monthProperty.isUndefined())
+            dateFields.month = clampTo<uint32_t>(month);
+        if (otherMonth)
+            dateFields.monthCode = otherMonth;
+        dateFields.day = clampTo<uint8_t>(day);
+        if (era)
+            dateFields.era = *era;
+        if (eraYear)
+            dateFields.eraYear = clampTo<int32_t>(*eraYear);
+        TemporalCore::TimeFieldsIn timeFields { hour, minute, second, millisecond, microsecond, nanosecond };
+
         // Both paths (object step 5.g, string step 6.e/6.f) set timeZone before reaching here.
         if (!timeZoneValue.isUndefined()) {
             // Steps 8-9: compute offsetNs based on offsetBehaviour.
@@ -476,19 +466,10 @@ static RelativeToRecord toRelativeTemporalObject(JSGlobalObject* globalObject, J
             ASSERT(timeZoneOpt);
             TimeZone timeZone = *timeZoneOpt;
 
-            auto plainDate = resolvePlainDateFromFields(globalObject, calendarId,
-                calHasEras, era, eraYear, yearProperty.isUndefined(), year, month, day, otherMonth);
+            auto pdt = interpretTemporalDateTimeFields(globalObject, calendarId, dateFields, timeFields, TemporalOverflow::Constrain);
             RETURN_IF_EXCEPTION(scope, { });
-
-            ISO8601::Duration timeDur;
-            timeDur.setField(TemporalUnit::Hour, hour);
-            timeDur.setField(TemporalUnit::Minute, minute);
-            timeDur.setField(TemporalUnit::Second, second);
-            timeDur.setField(TemporalUnit::Millisecond, millisecond);
-            timeDur.setField(TemporalUnit::Microsecond, microsecond);
-            timeDur.setField(TemporalUnit::Nanosecond, nanosecond);
-            auto plainTime = TemporalPlainTime::regulateTime(globalObject, WTF::move(timeDur), TemporalOverflow::Constrain);
-            RETURN_IF_EXCEPTION(scope, { });
+            auto plainDate = pdt.date;
+            auto plainTime = pdt.time;
 
             // offsetBehaviour = ~option~: find the candidate whose UTC offset exactly equals givenOffsetNs
             // (offsetOption = ~reject~, matchBehaviour = ~match-exactly~ → steps 10-12).
@@ -526,11 +507,10 @@ static RelativeToRecord toRelativeTemporalObject(JSGlobalObject* globalObject, J
         }
 
         // Step 7: timeZone is ~unset~ → return { [[PlainRelativeTo]]: CreateTemporalDate(isoDate, calendar) }.
-        // Time/offset fields were read for Proxy observability but are unused in this path.
-        auto plainDate = resolvePlainDateFromFields(globalObject, calendarId,
-            calHasEras, era, eraYear, yearProperty.isUndefined(), year, month, day, otherMonth);
+        // Time fields were read for Proxy observability; we discard the regulated time here.
+        auto pdt = interpretTemporalDateTimeFields(globalObject, calendarId, dateFields, timeFields, TemporalOverflow::Constrain);
         RETURN_IF_EXCEPTION(scope, { });
-        return RelativeToRecord { nullptr, plainDate, true, calendarId };
+        return RelativeToRecord { nullptr, pdt.date, true, calendarId };
     }
 
     // Step 6: If value is not a String, throw TypeError.
