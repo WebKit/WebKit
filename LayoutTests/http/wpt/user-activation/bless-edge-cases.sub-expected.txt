@@ -1,0 +1,8 @@
+
+PASS test_driver.click on a non-bless element in a subframe still dispatches real pointer events
+PASS blessing a frame that is already activated resolves and keeps it active
+PASS bless in an about:blank iframe
+PASS bless in a srcdoc iframe
+PASS bless in a sandboxed (allow-scripts, opaque-origin) cross-origin iframe
+PASS blessing two independent frames activates both
+

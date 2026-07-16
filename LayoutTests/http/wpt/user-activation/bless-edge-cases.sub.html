@@ -1,0 +1,126 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>
+    User activation: bless() edge cases (routing, already-active,
+    about:blank/srcdoc/sandbox, multi-bless)
+</title>
+<meta name="timeout" content="long" />
+<script src="/common/get-host-info.sub.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<body></body>
+<script type="module">
+    function reset() {
+        if (window.internals) internals.consumeTransientActivation();
+    }
+
+    const hostInfo = get_host_info();
+    // Absolute path, so swapping the origin keeps the directory (a relative URL would 404).
+    const IFRAME_PATH = new URL("resources/iframe.html", location.href).pathname;
+    const iframeSrc = (origin = location.origin) => new URL(IFRAME_PATH, origin).href;
+    const clickTargetSrc = new URL("resources/click-target.html", location.href).href;
+
+    function appendIframe(setUp) {
+        const { promise, resolve } = Promise.withResolvers();
+        const iframe = document.createElement("iframe");
+        setUp(iframe);
+        iframe.onload = () => resolve(iframe);
+        document.body.appendChild(iframe);
+        return promise;
+    }
+
+    // Post "run" to a frame and resolve with the report it sends back.
+    function runInFrame(frame) {
+        const { promise, resolve, reject } = Promise.withResolvers();
+        const timer = step_timeout(() => {
+            window.removeEventListener("message", onMessage);
+            reject(new Error("frame did not report back in time"));
+        }, 8000);
+        function onMessage(event) {
+            if (event.source !== frame) return;
+            clearTimeout(timer);
+            window.removeEventListener("message", onMessage);
+            resolve(event.data);
+        }
+        window.addEventListener("message", onMessage);
+        frame.postMessage("run", "*");
+        return promise;
+    }
+
+    promise_test(async (t) => {
+        reset();
+        const iframe = await appendIframe((frame) => {
+            frame.style = "position:absolute; left:0; top:0; width:200px; height:100px; border:0;";
+            frame.src = clickTargetSrc; // same-origin, at (0,0) so the click lands
+        });
+        t.add_cleanup(() => iframe.remove());
+        const report = await runInFrame(iframe.contentWindow);
+        assert_true(report.mousedown && report.mouseup,
+            "a normal click delivered real mousedown and mouseup events");
+    }, "test_driver.click on a non-bless element in a subframe still dispatches real pointer events");
+
+    promise_test(async (t) => {
+        reset();
+        const iframe = await appendIframe((frame) => (frame.src = iframeSrc()));
+        t.add_cleanup(() => iframe.remove());
+        await test_driver.bless("first", null, iframe.contentWindow);
+        assert_true(iframe.contentWindow.navigator.userActivation.isActive,
+            "active after the first bless");
+        await test_driver.bless("second", null, iframe.contentWindow);
+        assert_true(iframe.contentWindow.navigator.userActivation.isActive,
+            "still active after blessing an already-active frame");
+    }, "blessing a frame that is already activated resolves and keeps it active");
+
+    promise_test(async (t) => {
+        reset();
+        const iframe = await appendIframe((frame) => (frame.src = "about:blank"));
+        t.add_cleanup(() => iframe.remove());
+        assert_true(!!iframe.contentWindow.internals,
+            "internals is present in the about:blank frame");
+        await test_driver.bless("about:blank", null, iframe.contentWindow);
+        assert_true(iframe.contentWindow.navigator.userActivation.isActive,
+            "the about:blank frame is activated");
+    }, "bless in an about:blank iframe");
+
+    promise_test(async (t) => {
+        reset();
+        const iframe = await appendIframe(
+            (frame) => (frame.srcdoc = "<!doctype html><body>srcdoc</body>"));
+        t.add_cleanup(() => iframe.remove());
+        await test_driver.bless("srcdoc", null, iframe.contentWindow);
+        assert_true(iframe.contentWindow.navigator.userActivation.isActive,
+            "the srcdoc frame is activated");
+    }, "bless in a srcdoc iframe");
+
+    promise_test(async (t) => {
+        reset();
+        const iframe = await appendIframe((frame) => {
+            frame.sandbox = "allow-scripts";
+            frame.src = iframeSrc(hostInfo.HTTPS_REMOTE_ORIGIN);
+        });
+        t.add_cleanup(() => iframe.remove());
+        const report = await runInFrame(iframe.contentWindow);
+        assert_equals(report.status, "success", "bless resolved in the sandboxed frame");
+        assert_true(report.isActive, "the sandboxed frame is activated");
+    }, "bless in a sandboxed (allow-scripts, opaque-origin) cross-origin iframe");
+
+    promise_test(async (t) => {
+        reset();
+        const [sameOrigin, crossOrigin] = await Promise.all([
+            appendIframe((frame) => (frame.src = iframeSrc())),
+            appendIframe((frame) => (frame.src = iframeSrc(hostInfo.HTTPS_REMOTE_ORIGIN))),
+        ]);
+        t.add_cleanup(() => {
+            sameOrigin.remove();
+            crossOrigin.remove();
+        });
+        // Bless the frames one after another: a synthetic click is a serial gesture (as is a
+        // real mouse), so the two clicks can't overlap. Both frames stay activated afterwards.
+        const first = await runInFrame(sameOrigin.contentWindow);
+        const second = await runInFrame(crossOrigin.contentWindow);
+        assert_true(first.isActive, "the same-origin frame is activated");
+        assert_true(second.isActive, "the cross-origin frame is activated");
+    }, "blessing two independent frames activates both");
+</script>

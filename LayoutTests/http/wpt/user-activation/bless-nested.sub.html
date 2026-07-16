@@ -1,0 +1,152 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>
+    User activation: bless() works in nested cross-origin / cross-site iframes
+</title>
+<meta name="timeout" content="long" />
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<body></body>
+<script type="module">
+    // "sameOrigin" is the top's own origin; the cross-origins are distinct cross-site hosts via .sub
+    // substitution (get_host_info() can't be used: from localhost its remote origins collapse to one).
+    const ORIGINS = {
+        sameOrigin: location.origin,
+        crossOriginA: "http://{{hosts[][]}}:{{ports[http][0]}}",
+        crossOriginB: "http://{{hosts[alt][]}}:{{ports[http][0]}}",
+        crossOriginC: "http://{{hosts[alt][www1]}}:{{ports[http][0]}}",
+    };
+    const RELAY = new URL("resources/bless-relay.sub.html", location.href).pathname;
+
+    test(() => {
+        for (const [name, origin] of Object.entries(ORIGINS))
+            assert_false(origin.includes("{{"), `origin ${name} substituted (${origin})`);
+        assert_equals(new Set(Object.values(ORIGINS)).size, 4, "the four origins are distinct");
+    }, "the test server provides four distinct origins");
+
+    let counter = 0;
+    const nextId = () => "case" + ++counter;
+
+    function frameAtDepth(rootFrame, depth) {
+        let frame = rootFrame.contentWindow;
+        for (let level = 1; level < depth; level++) frame = frame.frames[0];
+        return frame;
+    }
+
+    // Dispatch same-id messages (parsed) to handler; returns an unlisten function.
+    function listen(id, handler) {
+        function onMessage(event) {
+            if (typeof event.data !== "string") return;
+            let message;
+            try { message = JSON.parse(event.data); } catch { return; }
+            if (message.id === id) handler(message);
+        }
+        window.addEventListener("message", onMessage);
+        return () => window.removeEventListener("message", onMessage);
+    }
+
+    function buildChain(tokens, id) {
+        const { promise, resolve, reject } = Promise.withResolvers();
+        const ready = new Set();
+        let unlisten, timer;
+        const stop = () => { clearTimeout(timer); unlisten(); };
+        timer = step_timeout(() => {
+            stop();
+            reject(new Error(`build timed out: ${ready.size}/${tokens.length} frames ready`));
+        }, 8000);
+        unlisten = listen(id, (message) => {
+            if (message.type === "error") {
+                stop();
+                reject(new Error(`depth ${message.depth}: ${message.reason}`));
+            } else if (message.type === "ready") {
+                ready.add(message.depth);
+                if (ready.size === tokens.length) { stop(); resolve(iframe); }
+            }
+        });
+
+        const descendantOrigins = tokens.slice(1).map((token) => ORIGINS[token]);
+        const iframe = document.createElement("iframe");
+        // Offset from top-left so the click must be resolved to top-window coordinates.
+        iframe.style = "position:absolute; left:40px; top:40px; width:700px; height:500px;";
+        iframe.src = ORIGINS[tokens[0]] + RELAY +
+            `?id=${id}&depth=1&chain=${encodeURIComponent(JSON.stringify(descendantOrigins))}`;
+        document.body.appendChild(iframe);
+        return promise;
+    }
+
+    function command(rootFrame, id, depth, cmd, replyType) {
+        const { promise, resolve, reject } = Promise.withResolvers();
+        let unlisten, timer;
+        timer = step_timeout(() => {
+            unlisten();
+            reject(new Error(`${cmd} at depth ${depth} timed out`));
+        }, 8000);
+        unlisten = listen(id, (message) => {
+            if (message.depth === depth && message.type === replyType) {
+                clearTimeout(timer);
+                unlisten();
+                resolve(message);
+            }
+        });
+        frameAtDepth(rootFrame, depth).postMessage(
+            JSON.stringify({ id, targetDepth: depth, cmd }), "*");
+        return promise;
+    }
+
+    // Sticky hasBeenActive per frame (never expires, so robust to slow round-trips); top omitted.
+    async function activationVector(rootFrame, id, depth) {
+        const activations = [];
+        for (let frameDepth = 1; frameDepth <= depth; frameDepth++)
+            activations.push((await command(rootFrame, id, frameDepth, "report", "state")).hasBeenActive);
+        return activations;
+    }
+
+    function expectedActivationVector(tokens, blessAt) {
+        const origins = [ORIGINS.sameOrigin, ...tokens.map((token) => ORIGINS[token])];
+        const blessedOrigin = origins[blessAt];
+        return origins
+            .map((origin, depth) => depth <= blessAt || origin === blessedOrigin)
+            .slice(1);
+    }
+
+    function blessInChain(tokens, blessAt, name) {
+        promise_test(async (t) => {
+            const id = nextId();
+            const rootFrame = await buildChain(tokens, id);
+            t.add_cleanup(() => rootFrame.remove());
+            const blessed = await command(rootFrame, id, blessAt, "bless", "done");
+            assert_true(blessed.ok, `bless resolved (${blessed.error || ""})`);
+            assert_true(blessed.isActive, "blessed frame has transient activation");
+            assert_array_equals(
+                await activationVector(rootFrame, id, tokens.length),
+                expectedActivationVector(tokens, blessAt),
+                `frames activated for [${tokens.join(", ")}] blessing depth ${blessAt}`);
+        }, name);
+    }
+
+    // [chain of iframe origins (top-down), depth to bless, test name]
+    const CASES = [
+        [["sameOrigin"], 1, "bless in a same-origin iframe"],
+        [["crossOriginA"], 1, "bless in a cross-origin iframe"],
+        [["sameOrigin", "sameOrigin"], 2, "bless two same-origin iframes deep"],
+        [["sameOrigin", "crossOriginA"], 2, "bless in a cross-origin iframe inside a same-origin iframe"],
+        [["crossOriginA", "sameOrigin"], 2, "bless in a same-origin iframe inside a cross-origin iframe"],
+        [["crossOriginA", "crossOriginA"], 2, "bless in a cross-origin iframe inside a cross-origin iframe"],
+        [["crossOriginA", "crossOriginB"], 2, "bless in a cross-origin iframe inside a different cross-origin iframe"],
+        [["sameOrigin", "crossOriginA"], 1, "blessing a same-origin iframe does not activate its cross-origin child"],
+        [["crossOriginA", "crossOriginB"], 1, "blessing a cross-origin iframe does not activate its cross-origin child"],
+        [["sameOrigin", "crossOriginA", "sameOrigin"], 3, "bless in a same-origin iframe nested behind a cross-origin iframe"],
+        // Currently FAILs: WebKit over-activates the nested same-origin frame when the cross-origin
+        // frame is clicked (webkit.org/b/318749). The expectation is spec-correct; the committed
+        // baseline captures the failure until that bug is fixed.
+        [["sameOrigin", "crossOriginA", "sameOrigin"], 2, "blessing a cross-origin iframe does not activate the same-origin iframe nested below it"],
+        [["sameOrigin", "crossOriginA", "sameOrigin"], 1, "blessing the outer iframe activates a same-origin descendant through a cross-origin frame, but not the cross-origin frame itself"],
+        [["crossOriginA", "crossOriginB", "crossOriginC"], 3, "bless three distinct cross-origins deep"],
+        [["crossOriginA", "crossOriginB", "crossOriginC"], 1, "blessing a cross-origin iframe does not activate its distinct cross-origin descendants"],
+        [["sameOrigin", "crossOriginA", "crossOriginB"], 3, "bless in a cross-origin iframe nested behind a same-origin and a cross-origin iframe"],
+        [["sameOrigin", "sameOrigin", "sameOrigin"], 3, "bless three same-origin iframes deep"],
+    ];
+    for (const [tokens, blessAt, name] of CASES) blessInChain(tokens, blessAt, name);
+</script>

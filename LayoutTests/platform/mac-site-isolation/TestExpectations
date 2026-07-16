@@ -270,3 +270,10 @@ imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub
 
 imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-non-uniform-scale.html [ Skip ]
 imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-with-none-preserve-aspect-ratio.html  [ Skip ]
+
+# webkit.org/b/318763 test_driver.click() cannot resolve a cross-process subframe element's
+# top-window coordinate under site isolation, so bless() into a cross-origin iframe times out.
+# The same-process cases pass; skip these here until the cross-process coordinate path exists.
+webkit.org/b/318763 http/wpt/user-activation/bless.html [ Skip ]
+webkit.org/b/318763 http/wpt/user-activation/bless-nested.sub.html [ Skip ]
+webkit.org/b/318763 http/wpt/user-activation/bless-edge-cases.sub.html [ Skip ]

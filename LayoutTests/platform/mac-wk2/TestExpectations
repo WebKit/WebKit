@@ -131,6 +131,10 @@ imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-transactions-ta
 # They crash in debug (as expected) so we skip them there. <rdar://problem/117742950>
 [ Debug ] ipc/restrictedendpoints/mac/deny-access-modelElement.html [ Skip ]
 
+# DigitalCredentials is enabled in debug Cocoa builds but not release; this DC-availability
+# test diverges from the DC-off baseline only on debug.
+[ Debug ] imported/w3c/web-platform-tests/digital-credentials/default-permissions-policy.https.sub.html [ Failure ]
+
 imported/w3c/web-platform-tests/media-source/dedicated-worker/ [ Pass ]
 # Test has non deterministic output as it measures how many main thread loops it takes to execute action in worker.
 imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-play-terminate-worker.html [ Pass Failure ]
@@ -711,6 +715,8 @@ imported/w3c/web-platform-tests/storage-access-api/hasStorageAccess.sub.https.wi
 imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.BlobURLDedicatedWorker.sub.https.tentative.window.html [ Skip ]
 imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.BlobURLSharedWorker.sub.https.tentative.window.html [ Skip ]
 imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.thirdPartyBlobStorage.sub.https.window.html [ Skip ]
+webkit.org/b/318286 imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.blobStorage.sub.https.window.html [ Skip ]
+webkit.org/b/318286 imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.none.sub.https.window.html [ Skip ]
 #http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html [ Pass Timeout ]
 http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html [ Skip ]
 http/tests/storageAccess/deny-with-prompt-under-general-third-party-cookie-blocking-with-partitioned-cookies.https.html [ Skip ]
@@ -1699,6 +1705,8 @@ imported/w3c/web-platform-tests/css/selectors/invalidation/modal-pseudo-class-in
 imported/w3c/web-platform-tests/screen-orientation/fullscreen-interactions.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/selectors/invalidation/fullscreen-pseudo-class-in-has.html [ Pass Failure ]
 imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html [ Pass Failure ]
+webkit.org/b/318285 imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Skip ]
+webkit.org/b/278329 imported/w3c/web-platform-tests/screen-orientation/lock-sandboxed-iframe.html [ Skip ]
 
 webkit.org/b/288025 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Pass Failure ]
 

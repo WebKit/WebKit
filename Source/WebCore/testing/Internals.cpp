@@ -2163,6 +2163,12 @@ Ref<DOMRect> Internals::boundingBox(Element& element)
     return DOMRect::create(renderer->absoluteBoundingBoxRectIgnoringTransforms());
 }
 
+Ref<DOMRect> Internals::boundingBoxInRootViewCoordinates(Element& element)
+{
+    element.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
+    return DOMRect::create(element.boundingBoxInRootViewCoordinates());
+}
+
 ExceptionOr<unsigned> Internals::inspectorGridOverlayCount()
 {
     Document* document = contextDocument();

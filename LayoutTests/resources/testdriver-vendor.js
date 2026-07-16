@@ -376,22 +376,36 @@ window.test_driver_internal.send_keys = async function(element, keys)
  */
 window.test_driver_internal.click = async function (element, coords)
 {
+    // Use the eventSender from the element's window so that events are
+    // dispatched to the correct view (e.g. a popup opened via window.open).
+    const targetWindow = element.ownerDocument.defaultView || window;
+    const targetEventSender = targetWindow.eventSender || eventSender;
+
+    // coords are frame-local; when the element is in a subframe, shift them to root-view
+    // coordinates since the click is hit-tested from the top window. A top-level element needs no
+    // shift. The shift ignores CSS transforms on an ancestor <iframe> (webkit.org/b/318752).
+    let point = coords;
+    const elementWindow = element.ownerDocument.defaultView;
+    if (elementWindow && elementWindow !== elementWindow.top) {
+        const rootView = targetWindow.internals.boundingBoxInRootViewCoordinates(element);
+        const frameLocal = element.getBoundingClientRect();
+        point = {
+            x: coords.x + rootView.left - frameLocal.left,
+            y: coords.y + rootView.top - frameLocal.top,
+        };
+    }
+
     if (testRunner.isIOSFamily && testRunner.isWebKit2) {
         await new Promise((resolve) => {
             testRunner.runUIScript(`
-                uiController.singleTapAtPoint(${coords.x}, ${coords.y}, function() {
+                uiController.singleTapAtPoint(${point.x}, ${point.y}, function() {
                     uiController.uiScriptComplete();
                 });`, resolve);
         });
         return;
     }
 
-    // Use the eventSender from the element's window so that events are
-    // dispatched to the correct view (e.g. a popup opened via window.open).
-    const targetWindow = element.ownerDocument.defaultView || window;
-    const targetEventSender = targetWindow.eventSender || eventSender;
-
-    await targetEventSender.asyncMouseMoveTo(coords.x, coords.y);
+    await targetEventSender.asyncMouseMoveTo(point.x, point.y);
     await targetEventSender.asyncMouseDown();
     await targetEventSender.asyncMouseUp();
 }

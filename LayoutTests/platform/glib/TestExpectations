@@ -524,6 +524,9 @@ media/webaudio-background-playback.html [ Failure ]
 # uiController.simulateRotationLikeSafari() is not implemented on glib ports.
 fast/screen-orientation/orientation-in-resize-event.html [ Skip ]
 
+webkit.org/b/318285 imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Skip ]
+webkit.org/b/278329 imported/w3c/web-platform-tests/screen-orientation/lock-sandboxed-iframe.html [ Skip ]
+
 # Passing since r274620.
 imported/w3c/web-platform-tests/css/css-contain/contain-paint-008.html [ Pass ]
 

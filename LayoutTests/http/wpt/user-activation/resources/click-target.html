@@ -1,0 +1,35 @@
+<!doctype html>
+<meta charset="utf-8" />
+<!-- Records which pointer events test_driver.click delivers to a normal (non-bless) element. -->
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<body>
+    <button
+        id="target"
+        style="
+            position: absolute;
+            left: 4px;
+            top: 4px;
+            width: 140px;
+            height: 50px;
+        "
+    >
+        click target
+    </button>
+</body>
+<script type="module">
+    const button = document.getElementById("target");
+    const seen = { mousedown: false, mouseup: false };
+    for (const type of Object.keys(seen))
+        button.addEventListener(type, () => {
+            seen[type] = true;
+        });
+
+    if (window !== window.top) test_driver.set_test_context(window.top);
+
+    window.addEventListener("message", async (event) => {
+        if (event.data !== "run") return;
+        await test_driver.click(button);
+        event.source.postMessage({ ...seen }, event.origin);
+    });
+</script>

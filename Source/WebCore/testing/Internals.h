@@ -382,6 +382,7 @@ public:
 #endif
 
     Ref<DOMRect> boundingBox(Element&);
+    Ref<DOMRect> boundingBoxInRootViewCoordinates(Element&);
 
     ExceptionOr<Ref<DOMRectList>> inspectorHighlightRects();
     ExceptionOr<unsigned> inspectorGridOverlayCount();

@@ -612,6 +612,7 @@ enum ContentsFormat {
     [Conditional=ACCESSIBILITY_NON_BLINKING_CURSOR] undefined setPrefersNonBlinkingCursor(boolean enabled);
 
     DOMRect boundingBox(Element element);
+    DOMRect boundingBoxInRootViewCoordinates(Element element);
 
     unsigned long inspectorGridOverlayCount();
     unsigned long inspectorFlexOverlayCount();
