@@ -4333,7 +4333,6 @@ webkit.org/b/278719 fast/events/touch/multi-touch-some-without-handlers.html [ F
 webkit.org/b/278719 fast/events/touch/ontouchstart-active-selector.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/page-scaled-touch-gesture-click.html [ Timeout ]
 webkit.org/b/278719 fast/events/touch/scroll-without-mouse-lacks-mousemove-events.html [ Failure ]
-webkit.org/b/278719 fast/events/touch/send-oncancel-event.html [ Timeout ]
 webkit.org/b/278719 fast/events/touch/touch-constructor.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/touch-input-element-change-documents.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/touch-scaled-scrolled.html [ Failure ]
@@ -4376,11 +4375,6 @@ fullscreen/full-screen-enter-while-exiting-mid-completion-handler.html [ Skip ]
 
 # Failures in new tests introduced by a re-sync of imported wasm tests: https://bugs.webkit.org/show_bug.cgi?id=292629
 # These are benign and caused by the difference in the URLs appearing in the expected and actual output
-
-# WASM IPInt SIMD extmul is missing its metadata length; fix pending in https://bugs.webkit.org/show_bug.cgi?id=318381
-webkit.org/b/318381 imported/w3c/web-platform-tests/wasm/core/simd/simd_i16x8_extmul_i8x16.wast.js.html [ Failure ]
-webkit.org/b/318381 imported/w3c/web-platform-tests/wasm/core/simd/simd_i32x4_extmul_i16x8.wast.js.html [ Failure ]
-webkit.org/b/318381 imported/w3c/web-platform-tests/wasm/core/simd/simd_i64x2_extmul_i32x4.wast.js.html [ Failure ]
 
 # CSS image-orientation is not yet enabled.
 webkit.org/b/89052 fast/css/image-orientation/image-orientation.html [ Failure ]

@@ -217,6 +217,7 @@ webkit.org/b/98940 editing/pasteboard/data-transfer-items-drag-drop-entry.html [
 webkit.org/b/98940 editing/pasteboard/data-transfer-items-drag-drop-string.html [ Skip ]
 webkit.org/b/98940 fast/events/clipboard-dataTransferItemList.html [ Skip ]
 webkit.org/b/98940 fast/events/drag-dataTransferItemList.html [ Skip ]
+webkit.org/b/278719 fast/events/touch/send-oncancel-event.html [ Timeout ]
 
 # Quota API is not supported.
 webkit.org/b/98942 storage/storageinfo-missing-arguments.html [ Failure ]
