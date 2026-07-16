@@ -47,8 +47,8 @@ public:
             // Note that <span>this is text</span> returns true as inline boxes are not considered 'content' here.
             bool hasTextAndLineBreakOnlyContent { false };
             bool hasTextAutospace { false };
-            size_t inlineBoxCount { 0 };
             bool hasWhiteSpaceTrim { false };
+            size_t inlineBoxCount { 0 };
         };
         enum class IsPopulatedFromCache : bool { No, Yes };
         void set(InlineItemList&&, ContentAttributes, IsPopulatedFromCache);
