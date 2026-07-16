@@ -27,4 +27,8 @@ FAIL Property shape-outside value 'shape(from 0 0, line to 100% 100%)' assert_tr
 FAIL Property shape-outside value 'shape(from 20px 40px, smooth to center 20%)' assert_true: 'shape(from 20px 40px, smooth to center 20%)' is a supported value for shape-outside. expected true got false
 FAIL Property shape-outside value 'shape(from 20px 40px, line to 100px 40px, line to 100px 100px, close)' assert_true: 'shape(from 20px 40px, line to 100px 40px, line to 100px 100px, close)' is a supported value for shape-outside. expected true got false
 FAIL Property shape-outside value 'shape(from 1em 2em, line to 3em 1em)' assert_true: 'shape(from 1em 2em, line to 3em 1em)' is a supported value for shape-outside. expected true got false
+PASS Property shape-outside value 'circle() content-box'
+PASS Property shape-outside value 'circle() padding-box'
+PASS Property shape-outside value 'circle() border-box'
+PASS Property shape-outside value 'circle() margin-box'
 

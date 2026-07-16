@@ -12,6 +12,4 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/support/rounded-rectangle.js
-/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/support/subpixel-utils.js
-/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/support/test-utils.js
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/crashtests/shape-outside-extreme-percent.html

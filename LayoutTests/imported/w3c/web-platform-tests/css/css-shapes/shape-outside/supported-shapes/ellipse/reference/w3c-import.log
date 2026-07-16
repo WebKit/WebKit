@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-013-ref.html
@@ -36,3 +34,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-050-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-051-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-052-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-053-ref.html

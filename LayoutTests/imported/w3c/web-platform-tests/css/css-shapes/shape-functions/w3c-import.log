@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/WEB_FEATURES.yml
@@ -30,6 +28,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/path-function-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/polygon-function-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/polygon-function-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/polygon-function-round-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/polygon-function-round-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/polygon-function-round-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/polygon-function-rounding-clamp-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/polygon-function-rounding-clamp-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/polygon-function-rounding-clamp.html
