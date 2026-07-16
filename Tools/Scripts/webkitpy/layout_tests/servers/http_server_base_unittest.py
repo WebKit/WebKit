@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import socket
 import unittest
 
 from webkitpy.common.host_mock import MockHost
@@ -75,3 +76,22 @@ class TestHttpServerBase(unittest.TestCase):
         ]
 
         self.assertEqual(server._build_alias_path_pairs(data), expected)
+
+    def test_is_udp_port_listening(self):
+        held = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            try:
+                held.bind(('127.0.0.1', 0))
+            except (PermissionError, OSError) as e:
+                self.skipTest("Environment does not permit binding a UDP socket: %s" % e)
+            held_port = held.getsockname()[1]
+
+            probe = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            probe.bind(('127.0.0.1', 0))
+            free_port = probe.getsockname()[1]
+            probe.close()
+
+            self.assertFalse(HttpServerBase._is_udp_port_listening(free_port))
+            self.assertTrue(HttpServerBase._is_udp_port_listening(held_port))
+        finally:
+            held.close()

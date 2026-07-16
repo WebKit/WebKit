@@ -43,6 +43,9 @@ http/wpt/identity/ [ Skip ]
 # webkit.org/b/308169 Skip until after macOS 26.4, where AXIntersectionWithSelectionRange returns AXTextMarkerRangeRef.
 accessibility/mac/intersection-with-selection-range.html [ Skip ]
 
+# webkit.org/b/319008 WebTransport-over-HTTP/3 needs Network.framework QUIC SPI only present on Tahoe; skip the suite on Sequoia.
+imported/w3c/web-platform-tests/webtransport [ Skip ]
+
 
 
 
