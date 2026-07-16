@@ -27,12 +27,6 @@ import os
 import sys
 import time
 
-# aioquic is the WebTransport-over-HTTP/3 backend the wpt server imports; it is provisioned via webkitpy's
-# AutoInstall (webkitpy/__init__.py). Importing it here puts AutoInstall.directory on sys.path so the wpt
-# serve subprocess can reach it via PYTHONPATH below.
-import aioquic  # noqa: F401
-from webkitcorepy import AutoInstall
-
 from webkitpy.layout_tests.servers import http_server_base
 try:
     from webkitpy.layout_tests.servers.basic_dns_server import DNSLogger, DNSServer, Resolver
@@ -130,7 +124,6 @@ def is_wpt_server_running(port_obj):
 def suppress_dns_resolver_logs(log_string):
     return
 
-
 class WebPlatformTestServer(http_server_base.HttpServerBase):
     def __init__(self, port_obj, name, pidfile=None):
         http_server_base.HttpServerBase.__init__(self, port_obj)
@@ -181,13 +174,7 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
 
         wpt_file = self._filesystem.join(self._doc_root_path, "wpt.py")
         # --venv is required whenever --skip-venv-setup is passed, but the path itself is never used.
-        self._start_cmd = [python_interp, wpt_file, "--venv", os.devnull, "--skip-venv-setup", "serve", "--config", self._config_filename, "--webtransport-h3"]
-
-        # The serve subprocess is a bare python_interp that never imports webkitpy, so it does not have
-        # AutoInstall.directory on its path; pass it via PYTHONPATH so the subprocess can import aioquic.
-        self._server_env = os.environ.copy()
-        existing_pythonpath = self._server_env.get('PYTHONPATH')
-        self._server_env['PYTHONPATH'] = os.pathsep.join([existing_pythonpath, AutoInstall.directory]) if existing_pythonpath else AutoInstall.directory
+        self._start_cmd = [python_interp, wpt_file, "--venv", os.devnull, "--skip-venv-setup", "serve", "--config", self._config_filename]
 
         self._mappings = []
         config = wpt_config_json(port_obj)
@@ -198,10 +185,10 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
                     port = {"port": value}
                     if key == "https" or key == "wss":
                         port["sslcert"] = True
-                    # webtransport-h3 is QUIC over UDP; flag it so the liveness check and port-forwarding treat it as UDP.
-                    if key == "webtransport-h3":
-                        port["udp"] = True
                     self._mappings.append(port)
+
+    def ports_to_forward(self):
+        return [mapping['port'] for mapping in self._mappings]
 
     def first_port(self, port_obj):
         config = wpt_config_json(port_obj)
@@ -220,7 +207,7 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
             self._filesystem.write_text_file(self._config_filename, json.dumps(config))
 
     def _spawn_process(self):
-        self._process = self._executive.popen(self._start_cmd, cwd=self._doc_root_path, env=self._server_env, shell=False, stdin=self._executive.PIPE, stdout=self._wsout, stderr=self._wsout)
+        self._process = self._executive.popen(self._start_cmd, cwd=self._doc_root_path, shell=False, stdin=self._executive.PIPE, stdout=self._wsout, stderr=self._wsout)
         self._filesystem.write_text_file(self._pid_file, str(self._process.pid))
 
         if self._dns_server:

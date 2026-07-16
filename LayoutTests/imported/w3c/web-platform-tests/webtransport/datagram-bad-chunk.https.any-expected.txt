@@ -1,3 +1,5 @@
 
-PASS Datagram should reject when non-buffer-source data is written
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Datagram should reject when non-buffer-source data is written Test timed out
 
