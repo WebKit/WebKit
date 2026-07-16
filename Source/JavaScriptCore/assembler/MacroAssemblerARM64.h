@@ -2471,6 +2471,21 @@ public:
         store64(getCachedDataTempRegisterIDAndInvalidate(), dest);
     }
 
+    void transfer64(PostIndexAddress src, PostIndexAddress dest)
+    {
+        auto temp = getCachedDataTempRegisterIDAndInvalidate();
+        load64(src, temp);
+        store64(temp, dest);
+    }
+
+    void transferPair64(PostIndexAddress src, PostIndexAddress dest)
+    {
+        auto temp1 = getCachedDataTempRegisterIDAndInvalidate();
+        auto temp2 = getCachedMemoryTempRegisterIDAndInvalidate();
+        loadPair64(src, temp1, temp2);
+        storePair64(temp1, temp2, dest);
+    }
+
     void transferPtr(auto src, auto dest) { transfer64(src, dest); }
     void transferFloat(auto src, auto dest) { transfer32(src, dest); }
     void transferDouble(auto src, auto dest) { transfer64(src, dest); }
