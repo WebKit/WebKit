@@ -343,6 +343,8 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                             }
 
                             m_instance->setGlobal(import.kindIndex, value);
+                        } else if (Wasm::isExnref(declaredGlobalType)) {
+                            m_instance->setGlobal(import.kindIndex, globalValue->global()->getReference());
                         } else {
                             auto global = globalValue->global()->get(globalObject);
                             RETURN_IF_EXCEPTION(scope, void());

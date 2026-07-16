@@ -73,6 +73,11 @@ public:
     Wasm::Type type() const { return m_type; }
     Wasm::Mutability mutability() const { return m_mutability; }
     JSValue get(JSGlobalObject*) const;
+    JSValue getReference() const
+    {
+        ASSERT(isRefType(m_type));
+        return m_value.m_externref.get();
+    }
     uint64_t getPrimitive() const { return m_value.m_primitive; }
     v128_t getVector() const { return m_value.m_vector; }
     void set(JSGlobalObject*, JSValue);
