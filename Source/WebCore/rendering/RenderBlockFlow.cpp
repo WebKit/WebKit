@@ -4681,6 +4681,16 @@ void RenderBlockFlow::checkForPaginationLogicalHeightChange(RelayoutChildren& re
             newColumnHeight = std::max<LayoutUnit>(computedValues.extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight(), 0);
             if (fragmentedFlow->columnHeightAvailable() != newColumnHeight)
                 relayoutChildren = RelayoutChildren::Yes;
+        } else if (style().columnFill() == ColumnFill::Auto) {
+            // With column-fill:auto the columns are filled sequentially, so an indefinite height that is
+            // nonetheless constrained by a definite max-height must feed that max-height in as the column
+            // height. Otherwise columnHeightAvailable() stays zero and requiresBalancing() wrongly kicks in,
+            // balancing content across columns instead of overflowing to the next column.
+            if (auto maxColumnHeight = computeContentLogicalHeight(style().logicalMaxHeight(), std::nullopt)) {
+                newColumnHeight = *maxColumnHeight;
+                if (fragmentedFlow->columnHeightAvailable() != newColumnHeight)
+                    relayoutChildren = RelayoutChildren::Yes;
+            }
         }
         fragmentedFlow->setColumnHeightAvailable(newColumnHeight);
     } else if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderFragmentedFlow>(*this)) {
