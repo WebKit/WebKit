@@ -2,6 +2,9 @@
 PASS Importing a specifier that previously failed due to an incorrect type attribute can succeed if the correct attribute is later given
 PASS Importing a specifier that previously succeeded with the correct type attribute should fail if the incorrect attribute is later given
 PASS Two modules of different type with the same specifier can load if the server changes its responses
-PASS An import should always fail if the same specifier/type attribute pair failed previously
-PASS If an import previously succeeded for a given specifier/type attribute pair, future uses of that pair should yield the same result
+FAIL An import should succeed even if the same specifier/module type pair previously failed due to a MIME type mismatch assert_unreached: Should have rejected: Dynamic import of JSON with a JS type content should fail Reached unreachable code
+FAIL An import should succeed even if the same specifier/module type pair previously failed due to a HTTP error promise_test: Unhandled rejection with value: object "TypeError: Importing a module script failed."
+FAIL An import should succeed even if the same specifier/module type pair previously failed due to a network error promise_test: Unhandled rejection with value: object "TypeError: Importing a module script failed."
+PASS If an import previously succeeded for a given specifier/module type attribute pair, future uses of that pair should yield the same result
+PASS Multiple import calls with the same specifier should be joined into a single fetch
 

@@ -1,0 +1,5 @@
+
+FAIL CSS Module repeated imports assert_not_equals: Import should have attempted to fetch got disallowed value "0"
+FAIL CSS Module repeated serial imports assert_unreached: CSS module should load successfully on multiple imports Reached unreachable code
+FAIL CSS Module repeated parallel imports assert_unreached: CSS module should load successfully on parallel imports Reached unreachable code
+

@@ -845,6 +845,9 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/mo
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-origin.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-same-origin.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-unsafe-url.sub.html [ Skip ]
+# Timing-dependent fetch-count tests that are flaky under stress testing.
+webkit.org/b/319548 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/shared-dependency-repeated-import.html [ Skip ]
+webkit.org/b/319548 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/shared-dependency-repeated-import.html [ Skip ]
 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-keyboard-enter.html [ Skip ]
 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-keyboard-escape.html [ Skip ]
 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-left.html [ Skip ]
