@@ -336,6 +336,75 @@ void testZeroingReuseWithScavengeLargeVirtualMemorySizes()
     runZeroingReuse(largeVirtualMemoryRegimeSizes(), Reuse::WithScavenge);
 }
 
+// Small objects are batched many-per-page: a segregated page holds at least
+// PAS_MIN_OBJECTS_PER_PAGE objects, so one page's backing serves many
+// allocations and those objects are zeroed per object, not per page. Fill
+// several pages so that many objects are co-resident on shared pages, verifying
+// each is independently zero -- both when first carved from a page and when a
+// freed object is reused.
+void smallPageBatching(HeapVariant variant, size_t size)
+{
+    // Enough objects to span several pages, computed per size so the packed and
+    // sparse cases both cross page boundaries. objectsPerPage is approximate (the
+    // object size is rounded up to a size class, and page headers take space),
+    // which only over-counts, so the span is at least this many pages.
+    constexpr size_t pagesToSpan = 4;
+    size_t objectsPerPage = PAS_SMALL_PAGE_DEFAULT_SIZE / size;
+    if (!objectsPerPage)
+        objectsPerPage = 1;
+    size_t count = objectsPerPage * pagesToSpan;
+
+    std::vector<void*> objects;
+    objects.reserve(count);
+
+    // Fill: allocate many co-resident objects sharing pages; each must be zero.
+    // Dirty each so that once they are freed the recycled objects hold non-zero
+    // bytes, making the refill check meaningful.
+    for (size_t i = 0; i < count; ++i) {
+        void* object = allocateZeroed(variant, AlignmentApi::Plain, size, bmallocMinAlign);
+        if (!object)
+            reportParameters(variant, AlignmentApi::Plain, size, bmallocMinAlign, "fill");
+        CHECK(object);
+        checkIsZeroed(object, size, variant, AlignmentApi::Plain, bmallocMinAlign, "fill");
+        dirtyBuffer(object, size);
+        objects.push_back(object);
+    }
+
+    // Free all, then refill: the freed objects are recycled to serve the new
+    // allocations, so each reallocated object must be re-zeroed individually rather
+    // than relying on the initial page commit.
+    for (void* object : objects)
+        deallocateVariant(variant, object);
+    for (size_t i = 0; i < count; ++i) {
+        void* object = allocateZeroed(variant, AlignmentApi::Plain, size, bmallocMinAlign);
+        if (!object)
+            reportParameters(variant, AlignmentApi::Plain, size, bmallocMinAlign, "recycled");
+        CHECK(object);
+        checkIsZeroed(object, size, variant, AlignmentApi::Plain, bmallocMinAlign, "recycled");
+        objects[i] = object;
+    }
+    for (void* object : objects)
+        deallocateVariant(variant, object);
+}
+
+// Verify per-object zeroing when many small objects share batched pages, on both
+// fresh page commits and object recycling.
+void testSmallZeroingPageBatching()
+{
+    // Small sizes bracketing the batching density: the smallest object (the most
+    // per page) and the largest small-segregated object (the fewest per page, but
+    // still at least PAS_MIN_OBJECTS_PER_PAGE).
+    static const size_t sizes[] = {
+        bmallocMinAlign,
+        PAS_SMALL_PAGE_DEFAULT_SIZE / PAS_MIN_OBJECTS_PER_PAGE,
+    };
+    static const HeapVariant variants[] = { HeapVariant::Untagged, HeapVariant::Tagged };
+    for (HeapVariant variant : variants) {
+        for (size_t size : sizes)
+            smallPageBatching(variant, size);
+    }
+}
+
 } // anonymous namespace
 
 #endif // PAS_ENABLE_BMALLOC
@@ -351,5 +420,6 @@ void addAllocationZeroingTests()
     ADD_TEST(testZeroingReuseWithScavengeBitfitSizes());
     ADD_TEST(testZeroingReuseWithScavengeLargeMemsetSizes());
     ADD_TEST(testZeroingReuseWithScavengeLargeVirtualMemorySizes());
+    ADD_TEST(testSmallZeroingPageBatching());
 #endif // PAS_ENABLE_BMALLOC
 }
