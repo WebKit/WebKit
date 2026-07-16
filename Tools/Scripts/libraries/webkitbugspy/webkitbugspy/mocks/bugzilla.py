@@ -427,6 +427,17 @@ class Bugzilla(Base, mocks.Requests):
                 url=url,
             )
 
+        if len(data['summary']) > 255:
+            return mocks.Response(
+                status_code=400,
+                text=json.dumps(dict(
+                    error=True,
+                    code=104,
+                    message='The text you entered in the Summary field is too long ({} characters, above the maximum length allowed of 255 characters).'.format(len(data['summary'])),
+                )),
+                url=url,
+            )
+
         id = 1
         while id in self.issues.keys():
             id += 1

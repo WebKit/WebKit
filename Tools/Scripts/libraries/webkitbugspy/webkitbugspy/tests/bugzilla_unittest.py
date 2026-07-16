@@ -493,6 +493,37 @@ What component in 'WebKit' should the bug be associated with?:
                 )
             self.assertEqual(f"'InvalidKeyword' is not a valid keyword for 'WebKit'", str(e.exception))
 
+    def test_create_surfaces_server_error(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), projects=mocks.PROJECTS, issues=mocks.ISSUES), patch.object(bugzilla.Tracker, 'MAX_SUMMARY_LENGTH', 1000):
+            with OutputCapture() as captured:
+                created = bugzilla.Tracker(self.URL).create(
+                    'A' * 300, 'Creating new bug',
+                    project='WebKit', component='Tables', version='Other',
+                )
+            self.assertIsNone(created)
+            self.assertEqual(
+                captured.stderr.getvalue(),
+                'Failed to create bug: The text you entered in the Summary field is too long (300 characters, above the maximum length allowed of 255 characters).\n',
+            )
+
+    def test_create_truncates_summary(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), projects=mocks.PROJECTS, issues=mocks.ISSUES):
+            long_title = 'A' * 300
+            created = bugzilla.Tracker(self.URL).create(
+                long_title, 'Creating new bug',
+                project='WebKit', component='Tables', version='Other',
+            )
+            self.assertIsNotNone(created)
+            self.assertEqual(len(created.title), 255)
+            self.assertEqual(created.title, 'A' * 252 + '...')
+            self.assertEqual(created.description, 'Creating new bug')
+
     def test_set_component(self):
         with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
                 BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',

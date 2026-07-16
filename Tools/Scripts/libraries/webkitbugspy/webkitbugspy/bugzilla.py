@@ -48,6 +48,7 @@ class Tracker(GenericTracker):
     ]
     NAME = 'Bugzilla'
     DEFAULT_TIMEOUT = 30
+    MAX_SUMMARY_LENGTH = 255
 
     # Security keywords to detect in title/description.
     # These trigger a prompt to use Security product.
@@ -538,9 +539,9 @@ class Tracker(GenericTracker):
                 )
             except RuntimeError as e:
                 sys.stderr.write('{}\n'.format(e))
-            if response and response.status_code // 100 == 4 and self._logins_left:
+            if response is not None and response.status_code // 100 == 4 and self._logins_left:
                 self._logins_left -= 1
-            if not response or response.status_code // 100 != 2:
+            if response is None or response.status_code // 100 != 2:
                 if assignee:
                     issue._assignee = None
                 if opened is not None:
@@ -576,9 +577,9 @@ class Tracker(GenericTracker):
         except RuntimeError as e:
             sys.stderr.write('{}\n'.format(e))
 
-        if response and response.status_code // 100 == 4 and self._logins_left:
+        if response is not None and response.status_code // 100 == 4 and self._logins_left:
             self._logins_left -= 1
-        if not response or response.status_code // 100 != 2:
+        if response is None or response.status_code // 100 != 2:
             sys.stderr.write("Failed to add comment to '{}'\n".format(issue))
             return None
 
@@ -623,9 +624,9 @@ class Tracker(GenericTracker):
             )
         except requests.exceptions.RequestException as e:
             sys.stderr.write('Request Error: {}\n'.format(e))
-        if response and response.status_code // 100 == 4 and self._logins_left:
+        if response is not None and response.status_code // 100 == 4 and self._logins_left:
             self._logins_left -= 1
-        if not response or response.status_code // 100 != 2:
+        if response is None or response.status_code // 100 != 2:
             sys.stderr.write("Failed to modify '{}'\n".format(issue))
             return None
 
@@ -737,6 +738,9 @@ class Tracker(GenericTracker):
             if keyword not in self.valid_keywords():
                 raise ValueError(f"'{keyword}' is not a valid keyword for '{project}'")
 
+        if len(title) > self.MAX_SUMMARY_LENGTH:
+            title = title[:self.MAX_SUMMARY_LENGTH - 3] + '...'
+
         params = dict(
             summary=title,
             description=description,
@@ -758,11 +762,11 @@ class Tracker(GenericTracker):
             )
         except RuntimeError as e:
             sys.stderr.write('{}\n'.format(e))
-        if response and response.status_code // 100 == 4 and self._logins_left:
+        if response is not None and response.status_code // 100 == 4 and self._logins_left:
             self._logins_left -= 1
-        if not response or response.status_code // 100 != 2:
+        if response is None or response.status_code // 100 != 2:
             sys.stderr.write("Failed to create bug: {}\n".format(
-                response.json().get('message', '?') if response else 'Login attempts exhausted'),
+                response.json().get('message', '?') if response is not None else 'Login attempts exhausted'),
             )
             return None
         return self.issue(response.json()['id'])
@@ -841,9 +845,9 @@ class Tracker(GenericTracker):
                 )
             except RuntimeError as e:
                 sys.stderr.write('{}\n'.format(e))
-            if response and response.status_code // 100 == 4 and self._logins_left:
+            if response is not None and response.status_code // 100 == 4 and self._logins_left:
                 self._logins_left -= 1
-            if not response or response.status_code // 100 != 2:
+            if response is None or response.status_code // 100 != 2:
                 sys.stderr.write("Failed to cc {} on '{}'\n".format(self.radar_importer.name, issue))
             elif radar and isinstance(radar.tracker, RadarTracker):
                 if comment_to_make:
