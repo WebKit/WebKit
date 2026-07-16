@@ -67,14 +67,10 @@ FlexLayout::Result FlexLayout::performFlexLayout(FlexLayoutItems& flexItems, Rel
         m_flexBox.resetHasDefiniteHeight();
     }
 
-    LayoutUnit gapBetweenItems = flexLayoutUtils().computeGap(FlexLayoutUtils::GapType::BetweenItems);
-    LayoutUnit gapBetweenLines = flexLayoutUtils().computeGap(FlexLayoutUtils::GapType::BetweenLines);
-
     FlexLines flexLines;
     Vector<LayoutUnit> flexItemsMainSizeList;
     Vector<LayoutUnit> flexLinesCrossSizeList;
     Vector<LayoutUnit> flexLinesCrossPositionList;
-    LayoutUnit crossAxisStartEdge;
     LayoutUnit flexContainerLogicalHeight;
 
     auto performContentSizing = [&] {
@@ -82,7 +78,7 @@ FlexLayout::Result FlexLayout::performFlexLayout(FlexLayoutItems& flexItems, Rel
         // 9.3. (#5) Collect the flex items into flex lines.
         flexLines = computeFlexLines(flexItems, flexBaseAndHypotheticalMainSizeList.span());
         // 9.3. (#6) Resolve the flexible lengths to find the used main size of each item.
-        flexItemsMainSizeList = computeMainSizeForFlexItems(flexItems, flexLines, flexBaseAndHypotheticalMainSizeList.span(), gapBetweenItems);
+        flexItemsMainSizeList = computeMainSizeForFlexItems(flexItems, flexLines, flexBaseAndHypotheticalMainSizeList.span());
         trimCrossAxisMarginsForFlexItems(flexItems, flexLines);
         layoutFlexItems(flexItems.mutableSpan(), flexItemsMainSizeList.span(), relayoutChildren);
         // 9.4. (#7) Determine the hypothetical cross size of each item.
@@ -105,20 +101,21 @@ FlexLayout::Result FlexLayout::performFlexLayout(FlexLayoutItems& flexItems, Rel
     };
     performContentSizing();
 
+    LayoutUnit crossAxisStartEdge;
     Vector<LayoutPoint> positionList;
     Vector<LayoutUnit> flexItemsCrossSizeList;
     auto performContentAlignment = [&] {
         // 9.5. (#12) Main-Axis Alignment.
-        positionList = handleMainAxisAlignment(flexLines, flexItems, flexItemsMainSizeList, flexLinesCrossPositionList, gapBetweenItems);
+        positionList = handleMainAxisAlignment(flexLines, flexItems, flexItemsMainSizeList, flexLinesCrossPositionList);
         setFlexItemCountsForFirstAndLastLine(flexLines);
 
         // 9.6. (#15) Determine the flex container's used cross size: hand the accumulated content extent to the
         // container so it resolves its own logical height (specified vs content, min/max, box-sizing).
-        auto interLineGapTotal = !m_constraints.isColumnFlow && flexLines.ranges.size() > 1 ? gapBetweenLines * (flexLines.ranges.size() - 1) : 0_lu;
+        auto interLineGapTotal = !m_constraints.isColumnFlow && flexLines.ranges.size() > 1 ? flexLayoutUtils().computeGap(FlexLayoutUtils::GapType::BetweenLines) * (flexLines.ranges.size() - 1) : 0_lu;
         m_flexBox.updateLogicalHeightForFlexContent(flexContainerLogicalHeight, m_constraints.minimumHeightForLineIfEmpty, interLineGapTotal);
 
         // Multi-line column flex only knows its main size now, so re-resolve the flexible lengths of any lines that were left short.
-        distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(flexLines, flexItems, flexBaseAndHypotheticalMainSizeList.span(), flexItemsMainSizeList, positionList, flexLinesCrossPositionList, gapBetweenItems);
+        distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(flexLines, flexItems, flexBaseAndHypotheticalMainSizeList.span(), flexItemsMainSizeList, positionList, flexLinesCrossPositionList);
 
         // 9.6. (#13 - #16) Cross-Axis Alignment.
         crossAxisStartEdge = flexLinesCrossPositionList.isEmpty() ? 0_lu : flexLinesCrossPositionList[0];
@@ -128,7 +125,7 @@ FlexLayout::Result FlexLayout::performFlexLayout(FlexLayoutItems& flexItems, Rel
             flexLinesCrossSizeList[0] = flexLayoutUtils().crossAxisContentExtent();
 
         // 9.4. (#9) Handle 'align-content: stretch' and 9.6. (#16) align all flex lines per align-content.
-        handleCrossAxisAlignmentForFlexLines(flexLines, positionList, flexLinesCrossPositionList, flexLinesCrossSizeList, gapBetweenLines);
+        handleCrossAxisAlignmentForFlexLines(flexLines, positionList, flexLinesCrossPositionList, flexLinesCrossSizeList);
 
         // 9.4. (#11) Determine the used cross size of each flex item.
         flexItemsCrossSizeList = computeCrossSizeForFlexItems(flexLines, flexItems, flexLinesCrossSizeList);
@@ -251,7 +248,7 @@ FlexLayout::FlexLines FlexLayout::computeFlexLines(FlexLayoutItems& flexItems, s
     return flexLines;
 }
 
-Vector<LayoutUnit> FlexLayout::computeMainSizeForFlexItems(FlexLayoutItems& flexItems, const FlexLines& flexLines, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList, LayoutUnit gapBetweenItems)
+Vector<LayoutUnit> FlexLayout::computeMainSizeForFlexItems(FlexLayoutItems& flexItems, const FlexLines& flexLines, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList)
 {
     Vector<LayoutUnit> flexItemsMainSizeList(flexItems.size());
     for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
@@ -260,15 +257,15 @@ Vector<LayoutUnit> FlexLayout::computeMainSizeForFlexItems(FlexLayoutItems& flex
         auto lineFlexBaseAndHypotheticalMainSizeList = flexBaseAndHypotheticalMainSizeList.subspan(lineRange.begin(), lineRange.distance());
         auto lineFlexItemsMainSizeList = flexItemsMainSizeList.mutableSpan().subspan(lineRange.begin(), lineRange.distance());
         auto flexContainerInnerMainSize = m_constraints.isColumnFlow ? flexLayoutUtils().columnInnerMainSize(flexLines.hypotheticalMainSizes[lineIndex]) : m_flexBox.contentBoxLogicalWidth();
-        resolveFlexibleLengthsForLineItems(lineItems, lineFlexBaseAndHypotheticalMainSizeList, lineFlexItemsMainSizeList, flexContainerInnerMainSize, gapBetweenItems);
+        resolveFlexibleLengthsForLineItems(lineItems, lineFlexBaseAndHypotheticalMainSizeList, lineFlexItemsMainSizeList, flexContainerInnerMainSize);
     }
     return flexItemsMainSizeList;
 }
 
-void FlexLayout::resolveFlexibleLengthsForLineItems(std::span<FlexLayoutItem> lineItems, std::span<const FlexBaseAndHypotheticalMainSize> lineFlexBaseAndHypotheticalMainSizeList, std::span<LayoutUnit> flexItemsMainSizeList, LayoutUnit flexContainerInnerMainSize, LayoutUnit gapBetweenItems)
+void FlexLayout::resolveFlexibleLengthsForLineItems(std::span<FlexLayoutItem> lineItems, std::span<const FlexBaseAndHypotheticalMainSize> lineFlexBaseAndHypotheticalMainSizeList, std::span<LayoutUnit> flexItemsMainSizeList, LayoutUnit flexContainerInnerMainSize)
 {
     auto nonFrozenSet = OrderedHashSet<size_t> { };
-    auto availableMainSpaceForLineContent = flexContainerInnerMainSize - (lineItems.size() - 1) * gapBetweenItems;
+    auto availableMainSpaceForLineContent = mainAxisAvailableSpaceForItemAlignment(flexContainerInnerMainSize, lineItems.size());
 
     // The outer main size of an item is its content-box main size plus its main-axis border, padding and margin.
     auto outerMainSize = [&](size_t index, LayoutUnit mainSize) {
@@ -387,7 +384,21 @@ void FlexLayout::resolveFlexibleLengthsForLineItems(std::span<FlexLayoutItem> li
     }
 }
 
-void FlexLayout::distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(const FlexLines& flexLines, FlexLayoutItems& flexItems, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList, Vector<LayoutUnit>& flexItemsMainSizeList, Vector<LayoutPoint>& positionList, const Vector<LayoutUnit>& flexLinesCrossPositionList, LayoutUnit gapBetweenItems)
+LayoutUnit FlexLayout::mainAxisAvailableSpaceForItemAlignment(LayoutUnit mainAxisAvailableSpace, size_t numberOfFlexItems) const
+{
+    if (numberOfFlexItems == 1)
+        return mainAxisAvailableSpace;
+    return mainAxisAvailableSpace - (numberOfFlexItems - 1) * flexLayoutUtils().computeGap(FlexLayoutUtils::GapType::BetweenItems);
+}
+
+LayoutUnit FlexLayout::crossAxisAvailableSpaceForLineSizingAndAlignment(LayoutUnit crossAxisAvailableSpace, size_t numberOfFlexLines) const
+{
+    if (numberOfFlexLines == 1)
+        return crossAxisAvailableSpace;
+    return crossAxisAvailableSpace - (numberOfFlexLines - 1) * flexLayoutUtils().computeGap(FlexLayoutUtils::GapType::BetweenLines);
+}
+
+void FlexLayout::distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(const FlexLines& flexLines, FlexLayoutItems& flexItems, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList, Vector<LayoutUnit>& flexItemsMainSizeList, Vector<LayoutPoint>& positionList, const Vector<LayoutUnit>& flexLinesCrossPositionList)
 {
     // In multi-line column flex, the container's main size (height) is only known
     // after all lines are laid out. Lines whose items had flex-grow may not have
@@ -404,22 +415,20 @@ void FlexLayout::distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(const Fle
         auto lineFlexItemsMainSizeList = flexItemsMainSizeList.mutableSpan().subspan(lineRange.begin(), lineRange.distance());
         auto linePositions = positionList.mutableSpan().subspan(lineRange.begin(), lineRange.distance());
 
-        auto lineMainSize = LayoutUnit { };
+        auto lineContentMainSize = LayoutUnit { };
         for (size_t index = 0; index < lineItems.size(); ++index)
-            lineMainSize += lineItems[index].flexedMarginBoxSize(lineFlexItemsMainSizeList[index]);
-        lineMainSize += (lineItems.size() - 1) * gapBetweenItems;
-        if (lineMainSize >= containerMainInnerSize)
+            lineContentMainSize += lineItems[index].flexedMarginBoxSize(lineFlexItemsMainSizeList[index]);
+        if (lineContentMainSize >= mainAxisAvailableSpaceForItemAlignment(containerMainInnerSize, lineItems.size()))
             continue;
 
-        resolveFlexibleLengthsForLineItems(lineItems, lineFlexBaseAndHypotheticalMainSizeList, lineFlexItemsMainSizeList, containerMainInnerSize, gapBetweenItems);
+        resolveFlexibleLengthsForLineItems(lineItems, lineFlexBaseAndHypotheticalMainSizeList, lineFlexItemsMainSizeList, containerMainInnerSize);
 
-        auto remainingFreeSpace = containerMainInnerSize;
+        auto remainingFreeSpace = mainAxisAvailableSpaceForItemAlignment(containerMainInnerSize, lineItems.size());
         for (size_t index = 0; index < lineItems.size(); ++index)
             remainingFreeSpace -= lineItems[index].flexedMarginBoxSize(lineFlexItemsMainSizeList[index]);
-        remainingFreeSpace -= (lineItems.size() - 1) * gapBetweenItems;
 
         layoutFlexItems(lineItems, lineFlexItemsMainSizeList, RelayoutChildren::No);
-        placeFlexItems(flexLinesCrossPositionList[lineIndex], lineItems, linePositions, remainingFreeSpace, gapBetweenItems);
+        placeFlexItems(flexLinesCrossPositionList[lineIndex], lineItems, linePositions, remainingFreeSpace);
     }
 }
 
@@ -503,23 +512,23 @@ Vector<LayoutUnit> FlexLayout::crossSizeForFlexLines(const FlexLines& flexLines,
     return flexLinesCrossSizeList;
 }
 
-Vector<LayoutPoint> FlexLayout::handleMainAxisAlignment(const FlexLines& flexLines, FlexLayoutItems& flexItems, const Vector<LayoutUnit>& flexItemsMainSizeList, const Vector<LayoutUnit>& flexLinesCrossPositionList, LayoutUnit gapBetweenItems)
+Vector<LayoutPoint> FlexLayout::handleMainAxisAlignment(const FlexLines& flexLines, FlexLayoutItems& flexItems, const Vector<LayoutUnit>& flexItemsMainSizeList, const Vector<LayoutUnit>& flexLinesCrossPositionList)
 {
     Vector<LayoutPoint> positionList(flexItems.size());
     for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
         auto lineRange = flexLines.ranges[lineIndex];
         auto containerMainInnerSize = m_constraints.isColumnFlow ? flexLayoutUtils().columnInnerMainSize(flexLines.hypotheticalMainSizes[lineIndex]) : m_flexBox.contentBoxLogicalWidth();
 
-        // The remaining free space is the line's inner main size minus the used outer main sizes of its items.
+        // The remaining free space is the space available to the line's items (its inner main size less inter-item
+        // gaps) minus their used outer main sizes.
         // (The 0..1 flex-factor adjustment means we recompute it here rather than trust the resolve step's leftover.)
-        auto remainingFreeSpace = containerMainInnerSize;
+        auto remainingFreeSpace = mainAxisAvailableSpaceForItemAlignment(containerMainInnerSize, lineRange.distance());
         for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
             ASSERT(!flexItems[flexItemIndex].renderer->isOutOfFlowPositioned());
             remainingFreeSpace -= flexItemsMainSizeList[flexItemIndex] + flexItems[flexItemIndex].mainAxisBorderAndPadding + flexItems[flexItemIndex].mainAxisMargin;
         }
-        remainingFreeSpace -= (lineRange.distance() - 1) * gapBetweenItems;
 
-        placeFlexItems(flexLinesCrossPositionList[lineIndex], flexItems.mutableSpan().subspan(lineRange.begin(), lineRange.distance()), positionList.mutableSpan().subspan(lineRange.begin(), lineRange.distance()), remainingFreeSpace, gapBetweenItems);
+        placeFlexItems(flexLinesCrossPositionList[lineIndex], flexItems.mutableSpan().subspan(lineRange.begin(), lineRange.distance()), positionList.mutableSpan().subspan(lineRange.begin(), lineRange.distance()), remainingFreeSpace);
     }
     return positionList;
 }
@@ -543,7 +552,7 @@ Vector<LayoutUnit> FlexLayout::computeCrossSizeForFlexItems(const FlexLines& fle
     return flexItemsCrossSizeList;
 }
 
-void FlexLayout::handleCrossAxisAlignmentForFlexLines(const FlexLines& flexLines, Vector<LayoutPoint>& positionList, Vector<LayoutUnit>& flexLinesCrossPositionList, Vector<LayoutUnit>& flexLinesCrossSizeList, LayoutUnit gapBetweenLines)
+void FlexLayout::handleCrossAxisAlignmentForFlexLines(const FlexLines& flexLines, Vector<LayoutPoint>& positionList, Vector<LayoutUnit>& flexLinesCrossPositionList, Vector<LayoutUnit>& flexLinesCrossSizeList)
 {
     // 9.6. (#16) Align the flex lines within the flex container per align-content, and (#9) grow the lines to fill
     // the container for align-content: stretch. A single-line container has nothing to align.
@@ -557,11 +566,12 @@ void FlexLayout::handleCrossAxisAlignmentForFlexLines(const FlexLines& flexLines
 
     bool isWrapReverse = m_constraints.isWrapReverse;
 
+    auto gapBetweenLines = flexLayoutUtils().computeGap(FlexLayoutUtils::GapType::BetweenLines);
     if (position == ContentPosition::FlexStart && !gapBetweenLines && safety != OverflowAlignment::Safe && !isWrapReverse)
         return;
 
     size_t numLines = flexLines.ranges.size();
-    LayoutUnit availableCrossAxisSpace = flexLayoutUtils().crossAxisContentExtent() - (numLines - 1) * gapBetweenLines;
+    LayoutUnit availableCrossAxisSpace = crossAxisAvailableSpaceForLineSizingAndAlignment(flexLayoutUtils().crossAxisContentExtent(), numLines);
     for (size_t i = 0; i < numLines; ++i)
         availableCrossAxisSpace -= flexLinesCrossSizeList[i];
 
@@ -692,7 +702,7 @@ void FlexLayout::performBaselineAlignment(WTF::Range<size_t> lineRange, FlexLayo
     }
 }
 
-void FlexLayout::placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayoutItem> flexLayoutItems, std::span<LayoutPoint> positions, LayoutUnit availableFreeSpace, LayoutUnit gapBetweenItems)
+void FlexLayout::placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayoutItem> flexLayoutItems, std::span<LayoutPoint> positions, LayoutUnit availableFreeSpace)
 {
     // 9.5. (#12) Position the items along the main axis: first give any positive free space to main-axis auto
     // margins, then place each item per justify-content (the initial offset plus the spacing between items).
@@ -716,6 +726,7 @@ void FlexLayout::placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayout
     auto resolvedJustifyContent = m_constraints.style.justifyContent().resolve(FlexLayoutUtils::contentAlignmentNormalBehavior());
     auto distribution = resolvedJustifyContent.distribution();
     bool shouldFlipMainAxis = !m_constraints.isColumnFlow && !m_constraints.isLeftToRightFlow;
+    auto gapBetweenItems = flexLayoutUtils().computeGap(FlexLayoutUtils::GapType::BetweenItems);
     for (size_t i = 0; i < flexLayoutItems.size(); ++i) {
         auto& flexItem = flexLayoutItems[i].renderer.get();
 
@@ -750,11 +761,11 @@ void FlexLayout::placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayout
         // items since the start depends on the height of the flexbox, which we
         // only know after we've positioned all the flex items.
         m_flexBox.updateLogicalHeight();
-        layoutColumnReverse(flexLayoutItems, positions, crossAxisOffset, availableFreeSpace, gapBetweenItems);
+        layoutColumnReverse(flexLayoutItems, positions, crossAxisOffset, availableFreeSpace);
     }
 }
 
-void FlexLayout::layoutColumnReverse(std::span<FlexLayoutItem> flexLayoutItems, std::span<LayoutPoint> positions, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit gapBetweenItems)
+void FlexLayout::layoutColumnReverse(std::span<FlexLayoutItem> flexLayoutItems, std::span<LayoutPoint> positions, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace)
 {
     // This is similar to the logic in placeFlexItems, except we place
     // the children starting from the end of the flexbox. We also don't need to
@@ -764,6 +775,7 @@ void FlexLayout::layoutColumnReverse(std::span<FlexLayoutItem> flexLayoutItems, 
     mainAxisOffset -= m_constraints.isHorizontalFlow ? m_flexBox.verticalScrollbarWidth() : m_flexBox.horizontalScrollbarHeight();
 
     auto distribution = m_constraints.style.justifyContent().resolve(FlexLayoutUtils::contentAlignmentNormalBehavior()).distribution();
+    auto gapBetweenItems = flexLayoutUtils().computeGap(FlexLayoutUtils::GapType::BetweenItems);
 
     for (size_t i = 0; i < flexLayoutItems.size(); ++i) {
         auto& flexItem = flexLayoutItems[i].renderer;
