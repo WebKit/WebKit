@@ -53,9 +53,9 @@ public:
 
     BrowsingContextGroup* NODELETE browsingContextGroup() const;
 
-    void incrementFrameCount() { m_frameCount++; }
-    void decrementFrameCount() { m_frameCount--; }
-    unsigned frameCount() const { return m_frameCount; }
+    SUPPRESS_NODELETE void NODELETE incrementFrameCount() { m_frameCount++; }
+    SUPPRESS_NODELETE void NODELETE decrementFrameCount() { m_frameCount--; }
+    SUPPRESS_NODELETE unsigned NODELETE frameCount() const { return m_frameCount; }
 
 private:
     friend class BrowsingContextGroup; // FrameProcess should not be created except by BrowsingContextGroup.
