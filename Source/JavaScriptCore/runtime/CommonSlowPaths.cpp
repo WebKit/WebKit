@@ -980,8 +980,12 @@ ALWAYS_INLINE UGPRPair asyncIteratorOpenTryFastImpl(VM& vm, JSGlobalObject* glob
         RETURN_IF_EXCEPTION(throwScope, encodeResult(nullptr, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::Generic))));
     }
 
-    if (iterationMode != IterationMode::Generic && !canUseFastIterationMode(metadata.m_iterationMetadata.seenModes, iterationMode)) [[unlikely]]
-        iterationMode = IterationMode::Generic;
+    if (iterationMode != IterationMode::Generic) {
+        if (!canUseFastIterationMode(metadata.m_iterationMetadata.seenModes, iterationMode)) [[unlikely]]
+            iterationMode = IterationMode::Generic;
+        else if (globalObject->promiseSpeciesWatchpointSet().state() != IsWatched) [[unlikely]]
+            iterationMode = IterationMode::Generic;
+    }
 
     if (iterationMode == IterationMode::FastAsyncGenerator) {
         metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastAsyncGenerator;

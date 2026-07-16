@@ -13000,7 +13000,12 @@ void ByteCodeParser::handleAsyncIteratorOpen(const JSInstruction* currentInstruc
         // Advance symbolCall (0) -> getNext (1). m_iterator is now defined and flushed, so an OSR exit at
         // getNext lands in handleAsyncIteratorOpenCheckpoint, which reads R[m_iterator].next into m_next.
         progressToNextCheckpoint();
-        emitGetNext(/* reclassify */ true);
+        // Sentinel only while the species is primordial; the watchpoint deopts us on later tamper.
+        if (globalObject->promiseSpeciesWatchpointSet().state() == IsWatched) {
+            m_graph.watchpoints().addLazily(globalObject->promiseSpeciesWatchpointSet());
+            emitGetNext(/* reclassify */ true);
+        } else
+            emitGetNext(/* reclassify */ false);
 
         m_currentIndex = startIndex;
     }

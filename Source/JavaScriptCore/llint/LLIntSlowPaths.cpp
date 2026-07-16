@@ -2023,10 +2023,10 @@ LLINT_SLOW_PATH_DECL(slow_path_async_iterator_next_with_driver)
     auto bytecode = pc->as<OpAsyncIteratorNext>();
     auto& metadata = bytecode.metadata(codeBlock);
     metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastAsyncGenerator;
-    JSAsyncGenerator* iterator = uncheckedDowncast<JSAsyncGenerator>(getNonConstantOperand(callFrame, bytecode.m_iterator));
+    JSObject* iterator = asObject(getNonConstantOperand(callFrame, bytecode.m_iterator).asCell());
     auto* driver = asObject(getNonConstantOperand(callFrame, bytecode.m_driver).asCell());
-    enqueueAsyncGeneratorDriver(globalObject, iterator, driver);
-    LLINT_RETURN(vm.fastAsyncGeneratorSentinel());
+    JSValue result = asyncIteratorNextWithDriver(globalObject, iterator, driver);
+    LLINT_RETURN(result);
 }
 
 static UGPRPair handleHostCall(CallFrame* calleeFrame, JSValue callee, CodeSpecializationKind kind)
