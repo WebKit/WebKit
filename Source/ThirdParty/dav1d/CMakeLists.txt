@@ -8,6 +8,7 @@ set(DAV1D_DIR "${CMAKE_SOURCE_DIR}/Source/WebCore/PAL/ThirdParty/dav1d")
 set(dav1d_generic_SOURCES
     src/cdf.c
     src/cpu.c
+    src/ctx.c
     src/data.c
     src/decode.c
     src/dequant_tables.c
@@ -20,6 +21,7 @@ set(dav1d_generic_SOURCES
     src/mem.c
     src/msac.c
     src/obu.c
+    src/pal.c
     src/picture.c
     src/qm.c
     src/ref.c
