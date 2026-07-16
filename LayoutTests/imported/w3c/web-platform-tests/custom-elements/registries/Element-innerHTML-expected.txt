@@ -4,8 +4,8 @@ PASS nested descendants in innerHTML on a disconnected element should use the sc
 PASS innerHTML on a disconnected element should use the scoped registry it was created with when parsing a simple HTML
 PASS innerHTML on an inserted element should continue to use the scoped registry it was created with
 PASS nested descendants in innerHTML should use the null registry when the container element has null registry
-FAIL insertAdjacentHTML should use the element's registry even when the registry is null assert_equals: expected null but got object "[object CustomElementRegistry]"
-FAIL createContextualFragment on a range inside a template should use null registry even when the template has a scoped registry assert_equals: expected null but got object "[object CustomElementRegistry]"
+PASS insertAdjacentHTML should use the element's registry even when the registry is null
+PASS createContextualFragment on a range inside a template should use null registry even when the template has a scoped registry
 PASS innerHTML on a template with a scoped registry should use the scoped registry of the document
 PASS createContextualFragment on a range inside an element with scoped registry should use the scoped registry of the element
 PASS insertAdjacentHTML with beforebegin should use the containing scope's registry

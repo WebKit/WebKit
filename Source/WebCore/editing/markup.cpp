@@ -72,6 +72,7 @@
 #include "HTMLSourceElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTableElement.h"
+#include "HTMLTemplateElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "LocalFrameInlines.h"
@@ -1631,7 +1632,13 @@ static void removeElementFromFragmentPreservingChildren(DocumentFragment& fragme
 
 ExceptionOr<Ref<DocumentFragment>> createContextualFragment(Element& element, const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
-    auto result = createFragmentForMarkup(element, markup, DocumentFragmentMode::New, parserContentPolicy, protect(CustomElementRegistry::registryForElement(element)), element.usesNullCustomElementRegistry() ? Element::CustomElementRegistryKind::Null : Element::CustomElementRegistryKind::Window);
+    Ref registryContainer = [&] -> Ref<Node> {
+        if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(element))
+            return templateElement->content();
+        return element;
+    }();
+    auto registryKind = registryContainer->usesNullCustomElementRegistry() ? Element::CustomElementRegistryKind::Null : Element::CustomElementRegistryKind::Window;
+    auto result = createFragmentForMarkup(element, markup, DocumentFragmentMode::New, parserContentPolicy, protect(CustomElementRegistry::registryForNodeOrTreeScope(registryContainer, protect(registryContainer->treeScope()))), registryKind);
     if (result.hasException())
         return result.releaseException();
 
