@@ -51,7 +51,18 @@ def main():
         urllib_urlretrieve(url, archivePath)
         return 0
 
-    return subprocess.call(["curl", "--fail", "--output", archivePath, urllib_quote(url, safe=':/')])
+    # A single TCP flow to S3 can collapse and stay collapsed for hours, while curl's
+    # progress meter keeps buildbot's inactivity timeout from ever firing. Give up on a
+    # transfer that stays under 100 KB/s for 60s and reconnect instead. The retry outlasts
+    # curl's 60s DNS cache, so each attempt re-resolves and may land on a different S3 host.
+    curlCommand = ["curl", "--fail",
+                   "--retry", "3",
+                   "--retry-delay", "5",
+                   "--speed-limit", "102400",
+                   "--speed-time", "60",
+                   "--output", archivePath, urllib_quote(url, safe=':/')]
+
+    return subprocess.call(curlCommand)
 
 
 if __name__ == '__main__':
