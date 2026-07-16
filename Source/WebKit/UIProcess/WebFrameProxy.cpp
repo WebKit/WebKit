@@ -491,7 +491,7 @@ bool WebFrameProxy::didHandleContentFilterUnblockNavigation(const ResourceReques
 #endif
             };
             protect(protect(page->websiteDataStore())->networkProcess())->allowEvaluatedURL(parameters, [page](bool unblocked) {
-            if (unblocked)
+                if (unblocked)
                     page->reload({ });
             });
             return true;
@@ -1068,6 +1068,27 @@ void WebFrameProxy::updateScrollingMode(WebCore::ScrollbarMode scrollingMode)
     m_scrollingMode = scrollingMode;
     if (RefPtr page = m_page.get())
         page->sendToProcessContainingFrame(m_frameID, Messages::WebPage::UpdateFrameScrollingMode(m_frameID, scrollingMode));
+}
+
+bool WebFrameProxy::isProcessAllowedToAccessFrame(WebProcessProxy& process) const
+{
+    if (&this->process() == &process)
+        return true;
+    RefPtr page = m_page.get();
+    if (!page)
+        return false;
+    if (&page->legacyMainFrameProcess() == &process)
+        return true;
+    if (isMainFrame()) {
+        if (RefPtr provisionalPage = page->provisionalPageProxy(); provisionalPage && &provisionalPage->process() == &process)
+            return true;
+    }
+    if (m_provisionalFrame && &m_provisionalFrame->process() == &process)
+        return true;
+    // A process joining the browsing context group gets a remote page for every cross-process page
+    // in the group (BrowsingContextGroup::addFrameProcessAndInjectPageContextIf), so this also
+    // covers a page this one opened, its opener, and openers further up the chain.
+    return protect(page->browsingContextGroup())->remotePageInProcess(*page, process);
 }
 
 void WebFrameProxy::setAppBadge(const WebCore::SecurityOriginData& origin, std::optional<uint64_t> badge)

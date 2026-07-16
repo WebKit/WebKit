@@ -285,6 +285,15 @@ public:
     bool isShowingInitialAboutBlank() const { return m_isShowingInitialAboutBlank; }
 
     WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
+
+    // Whether |process| legitimately participates in this frame's page and may therefore
+    // send IPC that acts on this frame. Under site isolation a frame is reachable from its
+    // own process, any process participating in its page (the main-frame process or a
+    // remote-page process), and a process running a provisional navigation of the page or
+    // frame. Used to gate handlers that resolve a frame from the global WebFrameProxy
+    // registry so a process cannot manipulate a frame belonging to a different page.
+    bool isProcessAllowedToAccessFrame(WebProcessProxy&) const;
+
     void setAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t> badge);
     void didChangeCSPOriginsThatUpgradeInsecureNavigations(HashSet<WebCore::SecurityOriginData>&&);
     void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, WebCore::ShouldFocusElement, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&);

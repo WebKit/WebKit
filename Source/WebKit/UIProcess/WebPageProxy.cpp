@@ -7772,11 +7772,17 @@ void WebPageProxy::preferencesDidChange()
     protect(websiteDataStore())->propagateSettingUpdates();
 }
 
-void WebPageProxy::didCreateSubframe(FrameIdentifier parentID, FrameIdentifier newFrameID, String&& frameName, SandboxFlags sandboxFlags, ReferrerPolicy referrerPolicy, ScrollbarMode scrollingMode)
+void WebPageProxy::didCreateSubframe(IPC::Connection& connection, FrameIdentifier parentID, FrameIdentifier newFrameID, String&& frameName, SandboxFlags sandboxFlags, ReferrerPolicy referrerPolicy, ScrollbarMode scrollingMode)
 {
     RefPtr parent = WebFrameProxy::webFrame(parentID);
     if (!parent)
         return;
+    Ref process = WebProcessProxy::fromConnection(connection);
+    if (&parent->process() != process.ptr()) {
+        // Ignore rather than terminate the sender: the process that hosted the parent a moment ago
+        // can still have an in-flight subframe creation for it after a cross-site navigation.
+        return;
+    }
     parent->didCreateSubframe(newFrameID, WTF::move(frameName), sandboxFlags, referrerPolicy, scrollingMode);
 }
 
@@ -7787,8 +7793,18 @@ void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier 
 #endif
     if (RefPtr automationSession = m_configuration->processPool().automationSession())
         automationSession->didDestroyFrame(frameID);
-    if (RefPtr frame = WebFrameProxy::webFrame(frameID))
+    if (RefPtr frame = WebFrameProxy::webFrame(frameID)) {
+        // DidDestroyFrame is driven by whichever process currently hosts, is committing, or
+        // is tearing down this frame; under site isolation that is any process participating
+        // in the frame's page. A process that does not participate must not disconnect a frame
+        // belonging to a different page it merely names by identifier. Drop the message rather
+        // than terminate: a frame mid-transition between processes can still have an in-flight
+        // teardown message from a process that no longer participates in its page.
+        Ref process = WebProcessProxy::fromConnection(connection);
+        if (!frame->isProcessAllowedToAccessFrame(process))
+            return;
         frame->disconnect();
+    }
 
     bool didRemove = m_framesWithSubresourceLoadingForPageLoadTiming.remove(frameID);
 #if PLATFORM(COCOA)

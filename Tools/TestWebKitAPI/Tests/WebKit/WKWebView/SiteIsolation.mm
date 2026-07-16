@@ -12217,4 +12217,249 @@ TEST(SiteIsolation, WebsitePoliciesAppliedToCrossOriginSubframeDocumentLoader)
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:check inFrame:[webView firstChildFrame]], "available");
 }
 
+#if ENABLE(IPC_TESTING_API)
+
+// A compromised WebContent process must not be able to manipulate a WebFrameProxy
+// owned by a *different* page by naming its FrameIdentifier in UIProcess IPC, since
+// WebFrameProxy::webFrame() is a global registry shared across every page and process
+// (rdar://171983356). Under site isolation the processes participating in one page
+// legitimately exchange frame IPC, so the enforced boundary is the page, not the
+// individual frame's owning process: WebProcessProxy::dispatchMessage gates every
+// WebFrameProxy message on the sender participating in the target frame's page, and
+// WebPageProxy::didCreateSubframe / didDestroyFrame apply the equivalent check when
+// they resolve a frame from the registry. A message from a process outside the target
+// frame's page records a MESSAGE_CHECK failure; legitimate same-page cross-process IPC
+// is accepted. None crash the UIProcess.
+
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedIPCTestingViewAndDelegate(const HTTPServer& server)
+{
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableFeature(configuration.get(), @"SiteIsolationEnabled");
+    enableFeature(configuration.get(), @"IPCTestingAPIEnabled");
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    return { WTF::move(webView), WTF::move(navigationDelegate) };
+}
+
+// Loads a main frame (example.com) containing a cross-origin iframe
+// (webkit.org). The iframe reports its own FrameIdentifier via alert. Returns
+// that identifier as a decimal string and asserts the iframe really is hosted
+// in a different WebContent process than the main frame.
+static RetainPtr<NSString> loadMainFrameWithCrossProcessChild(TestWKWebView *webView)
+{
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    RetainPtr childAlert = [webView _test_waitForAlert];
+    EXPECT_TRUE([childAlert hasPrefix:@"child:"]);
+
+    RetainPtr<_WKFrameTreeNode> mainFrame = [webView mainFrame];
+    RetainPtr<_WKFrameTreeNode> childFrame = mainFrame.get().childFrames.firstObject;
+    EXPECT_NE(mainFrame.get().info._processIdentifier, 0);
+    EXPECT_NE(childFrame.get().info._processIdentifier, 0);
+    EXPECT_NE(mainFrame.get().info._processIdentifier, childFrame.get().info._processIdentifier);
+
+    return [childAlert substringFromIndex:[@"child:" length]];
+}
+
+// Reads (and clears) the last MESSAGE_CHECK-failure string recorded on the main
+// frame's WebContent connection. Empty when no message check fired.
+static RetainPtr<NSString> takeInvalidMessageStringForTesting(TestWKWebView *webView)
+{
+    return [webView stringByEvaluatingJavaScript:@"(() => { const r = window.IPC.sendSyncMessage('UI', 0, window.IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 100, []); return (r && r.arguments && r.arguments[0]) ? String(r.arguments[0].value) : ''; })()"];
+}
+
+static HTTPServer mainAndCrossOriginChildServer()
+{
+    return HTTPServer({
+        { "/main"_s, { "<iframe src='https://webkit.org/child'></iframe>"_s } },
+        { "/child"_s, { "<script>alert('child:' + (window.IPC ? window.IPC.frameID[0] : 'NO_IPC'))</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+}
+
+// The process that hosts a frame's <iframe> element -- here the main frame's
+// process, which owns the cross-origin child -- participates in the frame's page
+// and legitimately drives its teardown. DidDestroyFrame naming that child must be
+// accepted, not flagged as a forged cross-process message. (This is the positive
+// counterpart of the over-strict check that regressed cross-origin subframe
+// teardown; see also SiteIsolation.RemoveFrames / RemoveFrameFromRemoteFrame.)
+TEST(SiteIsolation, DidDestroyFrameFromPageMemberProcessAccepted)
+{
+    auto server = mainAndCrossOriginChildServer();
+    auto [webView, navigationDelegate] = siteIsolatedIPCTestingViewAndDelegate(server);
+    RetainPtr childFrameID = loadMainFrameWithCrossProcessChild(webView.get());
+    EXPECT_EQ(1u, [webView mainFrame].childFrames.count);
+
+    [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"window.IPC.sendMessage('UI', window.IPC.webPageProxyID, window.IPC.messages.WebPageProxy_DidDestroyFrame.name, [{ type: 'FrameID', value: [%@n] }])", childFrameID.get()]];
+
+    RetainPtr invalidMessage = takeInvalidMessageStringForTesting(webView.get());
+    EXPECT_FALSE([invalidMessage containsString:@"Message check failed"]);
+    // The main-frame process participates in the child's page, so its DidDestroyFrame must be
+    // HONORED, not merely un-rejected: assert the child frame is actually disconnected.
+    // WebPageProxy::didDestroyFrame returns early (no disconnect()) when isProcessAllowedToAccessFrame
+    // is false, so a silently-dropped message leaves the child in place -- which the "Message check
+    // failed" assertion alone cannot detect (it catches only a hard MESSAGE_CHECK termination). This
+    // guards the legacyMainFrameProcess accept branch: without it the message is silently dropped.
+    EXPECT_EQ(0u, [webView mainFrame].childFrames.count);
+}
+
+// A process belonging to a *different* page must not disconnect a frame it does
+// not participate in by naming its FrameIdentifier in the global WebFrameProxy
+// registry. Page 1 hosts the target cross-origin child; page 2 loads an unrelated
+// origin (apple.com), so its process is outside page 1's process set. Page 2
+// forges DidDestroyFrame naming page 1's child -- didDestroyFrame resolves the
+// frame's owning page via frame->page() (page 1), finds page 2 does not
+// participate, and drops the message without disconnecting the frame or
+// terminating page 2 (a frame mid-transition between processes can still have an
+// in-flight teardown message from a non-participating process).
+TEST(SiteIsolation, DidDestroyFrameFromNonParticipatingProcessDropped)
+{
+    HTTPServer server({
+        { "/main"_s, { "<iframe src='https://webkit.org/child'></iframe>"_s } },
+        { "/child"_s, { "<script>alert('child:' + (window.IPC ? window.IPC.frameID[0] : 'NO_IPC'))</script>"_s } },
+        { "/other"_s, { "<script>alert('other:' + (window.IPC ? 'IPC' : 'NO_IPC'))</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [pageOneView, pageOneDelegate] = siteIsolatedIPCTestingViewAndDelegate(server);
+    RetainPtr childFrameID = loadMainFrameWithCrossProcessChild(pageOneView.get());
+    EXPECT_EQ(1u, [pageOneView mainFrame].childFrames.count);
+
+    // A second, unrelated page (apple.com) whose process is not in page 1's set.
+    auto [pageTwoView, pageTwoDelegate] = siteIsolatedIPCTestingViewAndDelegate(server);
+    [pageTwoView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://apple.com/other"]]];
+    RetainPtr pageTwoAlert = [pageTwoView _test_waitForAlert];
+    EXPECT_TRUE([pageTwoAlert hasPrefix:@"other:"]);
+
+    // Forge from page 2's process (its own webPageProxyID), naming page 1's
+    // cross-origin child frame. The handler still resolves the frame's page as
+    // page 1 via frame->page(), so page 2 is a non-participating sender.
+    [pageTwoView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"window.IPC.sendMessage('UI', window.IPC.webPageProxyID, window.IPC.messages.WebPageProxy_DidDestroyFrame.name, [{ type: 'FrameID', value: [%@n] }])", childFrameID.get()]];
+
+    RetainPtr invalidMessage = takeInvalidMessageStringForTesting(pageTwoView.get());
+    EXPECT_FALSE([invalidMessage containsString:@"Message check failed"]);
+    // Dropped, not honored: page 1's child must still be present. A wrongful accept would disconnect it
+    // (count -> 0) with no MESSAGE_CHECK, which the message-check assertion alone cannot detect.
+    EXPECT_EQ(1u, [pageOneView mainFrame].childFrames.count);
+}
+
+// Only the parent frame's current process may add a child to it; anything else is ignored and the
+// sender is not terminated. The IPC testing API has no SandboxFlags / ReferrerPolicy / ScrollbarMode
+// encoders, so those arguments go as their on-the-wire integer widths (uint16_t, uint8_t, uint8_t).
+TEST(SiteIsolation, DidCreateSubframeFromNonHostingProcessIgnored)
+{
+    auto server = mainAndCrossOriginChildServer();
+    auto [webView, navigationDelegate] = siteIsolatedIPCTestingViewAndDelegate(server);
+    RetainPtr childFrameID = loadMainFrameWithCrossProcessChild(webView.get());
+
+    // Name the cross-process child as the parent, which the sending main process does not host.
+    [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"window.IPC.sendMessage('UI', window.IPC.webPageProxyID, window.IPC.messages.WebPageProxy_DidCreateSubframe.name, ["
+        "{ type: 'FrameID', value: [%@n] },"
+        "{ type: 'FrameID', value: [(0xFFFFn << 32n) | 777n] },"
+        "{ type: 'String', value: 'forged' },"
+        "{ type: 'uint16_t', value: 0 },"
+        "{ type: 'uint8_t', value: 0 },"
+        "{ type: 'uint8_t', value: 0 }])", childFrameID.get()]];
+
+    RetainPtr invalidMessage = takeInvalidMessageStringForTesting(webView.get());
+    EXPECT_FALSE([invalidMessage containsString:@"Message check failed"]);
+    EXPECT_EQ(0u, [webView mainFrame].childFrames.firstObject.childFrames.count);
+}
+
+// A page and the page it opens share a BrowsingContextGroup, so the opened page's process
+// participates in the opener's frames and its DidDestroyFrame for one must be honored --
+// the opener's cross-origin child really goes away. Page membership alone would drop it.
+TEST(SiteIsolation, DidDestroyFrameFromOpenedPageProcessAccepted)
+{
+    HTTPServer server({
+        { "/main"_s, { "<iframe src='https://webkit.org/child'></iframe>"_s } },
+        { "/child"_s, { "<script>alert('child:' + (window.IPC ? window.IPC.frameID[0] : 'NO_IPC'))</script>"_s } },
+        { "/opened"_s, { "<script>alert('opened:' + (window.IPC ? 'IPC' : 'NO_IPC'))</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [openerView, openerDelegate] = siteIsolatedIPCTestingViewAndDelegate(server);
+    RetainPtr childFrameID = loadMainFrameWithCrossProcessChild(openerView.get());
+
+    // Install the UI delegate only now: _test_waitForAlert above asserts none is set and
+    // clears it on the way out, which would drop the createWebView hook.
+    __block RetainPtr<TestWKWebView> openedView;
+    __block RetainPtr<TestNavigationDelegate> openedDelegate;
+    RetainPtr openerUIDelegate = adoptNS([TestUIDelegate new]);
+    openerUIDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) {
+        enableFeature(configuration, @"SiteIsolationEnabled");
+        enableFeature(configuration, @"IPCTestingAPIEnabled");
+        openedDelegate = adoptNS([TestNavigationDelegate new]);
+        [openedDelegate allowAnyTLSCertificate];
+        openedView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        openedView.get().navigationDelegate = openedDelegate.get();
+        return openedView.get();
+    };
+    [openerView setUIDelegate:openerUIDelegate.get()];
+    openerView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    // Open a third site, so the opened page gets its own process inside the shared group.
+    [openerView evaluateJavaScript:@"window.open('https://apple.com/opened')" completionHandler:nil];
+    while (!openedView)
+        Util::spinRunLoop();
+    [openerView setUIDelegate:nil];
+    RetainPtr openedAlert = [openedView _test_waitForAlert];
+    EXPECT_TRUE([openedAlert hasPrefix:@"opened:"]);
+
+    // The opened page must be in its own process, distinct from BOTH the opener's main frame and
+    // the target child frame -- otherwise an earlier branch of the predicate would accept it and
+    // this test would say nothing about cross-page access.
+    pid_t openedPid = [openedView mainFrame].info._processIdentifier;
+    pid_t openerMainPid = [openerView mainFrame].info._processIdentifier;
+    pid_t childPid = [openerView mainFrame].childFrames.firstObject.info._processIdentifier;
+    EXPECT_NE(openedPid, 0);
+    EXPECT_NE(openedPid, openerMainPid);
+    EXPECT_NE(openedPid, childPid);
+
+    [openedView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"window.IPC.sendMessage('UI', window.IPC.webPageProxyID, window.IPC.messages.WebPageProxy_DidDestroyFrame.name, [{ type: 'FrameID', value: [%@n] }])", childFrameID.get()]];
+
+    RetainPtr invalidMessage = takeInvalidMessageStringForTesting(openedView.get());
+    EXPECT_FALSE([invalidMessage containsString:@"Message check failed"]);
+    while ([openerView mainFrame].childFrames.count)
+        Util::spinRunLoop();
+    EXPECT_EQ(0u, [openerView mainFrame].childFrames.count);
+}
+
+// A process belonging to a *different* page must not act on a frame it does not
+// participate in by routing a WebFrameProxy message at its FrameIdentifier through
+// the global WebFrameProxy registry. WebProcessProxy::dispatchMessage gates every
+// WebFrameProxy message on the sending process participating in the target frame's
+// page, before the message is decoded or dispatched to the handler -- so this
+// drops the forgery (via sendCancelReply, without terminating the sender) regardless
+// of the specific message or its payload (here SetAppBadge with empty arguments,
+// which never has to decode). Page 1 hosts the target cross-origin child; page 2
+// loads an unrelated origin (apple.com), so its process is outside page 1's process
+// set. Dropping rather than terminating tolerates a frame mid-transition between
+// processes still receiving in-flight messages from a non-participating process.
+TEST(SiteIsolation, WebFrameProxyMessageFromNonParticipatingProcessDropped)
+{
+    HTTPServer server({
+        { "/main"_s, { "<iframe src='https://webkit.org/child'></iframe>"_s } },
+        { "/child"_s, { "<script>alert('child:' + (window.IPC ? window.IPC.frameID[0] : 'NO_IPC'))</script>"_s } },
+        { "/other"_s, { "<script>alert('other:' + (window.IPC ? 'IPC' : 'NO_IPC'))</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [pageOneView, pageOneDelegate] = siteIsolatedIPCTestingViewAndDelegate(server);
+    RetainPtr childFrameID = loadMainFrameWithCrossProcessChild(pageOneView.get());
+
+    // A second, unrelated page (apple.com) whose process is not in page 1's set.
+    auto [pageTwoView, pageTwoDelegate] = siteIsolatedIPCTestingViewAndDelegate(server);
+    [pageTwoView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://apple.com/other"]]];
+    RetainPtr pageTwoAlert = [pageTwoView _test_waitForAlert];
+    EXPECT_TRUE([pageTwoAlert hasPrefix:@"other:"]);
+
+    // Forge a WebFrameProxy message from page 2's process, naming page 1's cross-origin
+    // child frame as the destination. dispatchMessage resolves that frame from the global
+    // registry and drops the message from page 2 as a non-participating sender.
+    [pageTwoView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"window.IPC.sendMessage('UI', %@n, window.IPC.messages.WebFrameProxy_SetAppBadge.name, [])", childFrameID.get()]];
+
+    RetainPtr invalidMessage = takeInvalidMessageStringForTesting(pageTwoView.get());
+    EXPECT_FALSE([invalidMessage containsString:@"Message check failed"]);
+}
+
+#endif // ENABLE(IPC_TESTING_API)
+
 }

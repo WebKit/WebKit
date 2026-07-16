@@ -1414,7 +1414,15 @@ bool WebProcessProxy::dispatchMessage(IPC::Connection& connection, IPC::Decoder&
         return handleRemoteObjectRegistryMessage(connection, decoder);
 #endif
     if (messageName == Messages::WebFrameProxy::messageReceiverName()) {
-        if (RefPtr frame = FrameIdentifier::isValidIdentifier(decoder.destinationID()) ? WebFrameProxy::webFrame(FrameIdentifier(decoder.destinationID())) : nullptr)
+        // WebFrameProxy::webFrame() is a global registry shared across every page and
+        // WebContent process, so gate the resolved frame on the sending process actually
+        // participating in the frame's page before dispatching. This blocks a compromised
+        // process from manipulating a WebFrameProxy owned by a different page it merely
+        // names by identifier, while allowing legitimate site-isolation IPC between the
+        // processes participating in a page. Drop the message rather than terminate the
+        // sender: a frame mid-transition between processes can still have in-flight messages
+        // from a process that no longer participates in its page.
+        if (RefPtr frame = FrameIdentifier::isValidIdentifier(decoder.destinationID()) ? WebFrameProxy::webFrame(FrameIdentifier(decoder.destinationID())) : nullptr; frame && frame->isProcessAllowedToAccessFrame(*this))
             frame->didReceiveMessage(connection, decoder);
         else
             WebFrameProxy::sendCancelReply(connection, decoder);
