@@ -946,6 +946,13 @@ inline JSString* JSString::getIndex(JSGlobalObject* globalObject, unsigned i)
     return jsSingleCharacterString(vm, view[i]);
 }
 
+// (1) Cost of making JSString    : sizeof(JSString) (for new string) + sizeof(StringImpl header) + totalLength
+// (2) Cost of making JSRopeString: sizeof(JSRopeString) + newFiberCount * sizeof(JSString) (for fibers not already wrapped in a JSString)
+ALWAYS_INLINE bool shouldMakeRope(size_t totalLength, unsigned newFiberCount)
+{
+    return StringImpl::headerSize<Latin1Character>() + totalLength >= sizeof(JSRopeString) + (newFiberCount - 1) * sizeof(JSString);
+}
+
 inline JSString* jsString(VM& vm, const String& s)
 {
     int size = s.length();

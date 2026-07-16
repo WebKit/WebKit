@@ -171,9 +171,19 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
     }
 
     if (rangeCount == 2 && separatorCount == 1) {
-        String leftPart(StringImpl::createSubstringSharingImpl(*source.impl(), substringRanges[0].begin(), substringRanges[0].distance()));
-        String rightPart(StringImpl::createSubstringSharingImpl(*source.impl(), substringRanges[1].begin(), substringRanges[1].distance()));
-        RELEASE_AND_RETURN(scope, jsString(globalObject, leftPart, separators[0], rightPart));
+        // Only profitable when jsString() below would create a rope. For shorter results, jsString()
+        // flattens via tryMakeString anyway, so the substrings and the extra copy are pure overhead
+        // compared to the generic single-allocation path below.
+        CheckedInt32 length = substringRanges[0].distance();
+        length += substringRanges[1].distance();
+        length += separators[0].length();
+        if (!length.hasOverflowed()) [[likely]] {
+            if (shouldMakeRope(length.value(), /* newFiberCount */ 3)) {
+                String leftPart(StringImpl::createSubstringSharingImpl(*source.impl(), substringRanges[0].begin(), substringRanges[0].distance()));
+                String rightPart(StringImpl::createSubstringSharingImpl(*source.impl(), substringRanges[1].begin(), substringRanges[1].distance()));
+                RELEASE_AND_RETURN(scope, jsString(globalObject, leftPart, separators[0], rightPart));
+            }
+        }
     }
 
     CheckedInt32 totalLength = 0;
@@ -244,7 +254,7 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
     RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
 }
 
-ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparator(JSGlobalObject* globalObject, JSString* sourceVal, const String& source, const Range<int32_t>* substringRanges, int rangeCount, const String& separator, int separatorCount)
+ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparator(JSGlobalObject* globalObject, JSString* sourceVal, const String& source, const Range<int32_t>* substringRanges, int rangeCount, JSString* separatorVal, const String& separator, int separatorCount)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -260,9 +270,25 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparator(JSGlobalObject* globalOb
     }
 
     if (rangeCount == 2 && separatorCount == 1) {
-        String leftPart(StringImpl::createSubstringSharingImpl(*source.impl(), substringRanges[0].begin(), substringRanges[0].distance()));
-        String rightPart(StringImpl::createSubstringSharingImpl(*source.impl(), substringRanges[1].begin(), substringRanges[1].distance()));
-        RELEASE_AND_RETURN(scope, jsString(globalObject, leftPart, separator, rightPart));
+        // Only profitable when jsString() below would create a rope. For shorter results, jsString()
+        // flattens via tryMakeString anyway, so the substrings and the extra copy are pure overhead
+        // compared to the generic single-allocation path below.
+        CheckedInt32 length = substringRanges[0].distance();
+        length += substringRanges[1].distance();
+        length += separator.length();
+        if (!length.hasOverflowed()) [[likely]] {
+            if (separatorVal) {
+                if (shouldMakeRope(length.value(), /* newFiberCount */ 2)) {
+                    JSString* leftPart = jsString(vm, StringImpl::createSubstringSharingImpl(*source.impl(), substringRanges[0].begin(), substringRanges[0].distance()));
+                    JSString* rightPart = jsString(vm, StringImpl::createSubstringSharingImpl(*source.impl(), substringRanges[1].begin(), substringRanges[1].distance()));
+                    RELEASE_AND_RETURN(scope, jsString(globalObject, leftPart, separatorVal, rightPart));
+                }
+            } else if (shouldMakeRope(length.value(), /* newFiberCount */ 3)) {
+                String leftPart(StringImpl::createSubstringSharingImpl(*source.impl(), substringRanges[0].begin(), substringRanges[0].distance()));
+                String rightPart(StringImpl::createSubstringSharingImpl(*source.impl(), substringRanges[1].begin(), substringRanges[1].distance()));
+                RELEASE_AND_RETURN(scope, jsString(globalObject, leftPart, separator, rightPart));
+            }
+        }
     }
 
     CheckedInt32 totalLength = 0;
@@ -1199,7 +1225,7 @@ static ALWAYS_INLINE JSString* tryTrimSpaces(VM& vm, JSGlobalObject* globalObjec
     return nullptr;
 }
 
-ALWAYS_INLINE JSString* replaceAllWithStringUsingRegExpSearchNoBackreferences(VM& vm, JSGlobalObject* globalObject, JSString* string, const String& source, RegExp* regExp, const String& replacementString)
+ALWAYS_INLINE JSString* replaceAllWithStringUsingRegExpSearchNoBackreferences(VM& vm, JSGlobalObject* globalObject, JSString* string, const String& source, RegExp* regExp, JSString* replacementVal, const String& replacementString)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -1245,7 +1271,7 @@ ALWAYS_INLINE JSString* replaceAllWithStringUsingRegExpSearchNoBackreferences(VM
         if (!sourceRanges.tryConstructAndAppend(lastIndex, sourceLen)) [[unlikely]]
             OUT_OF_MEMORY(globalObject, scope);
     }
-    RELEASE_AND_RETURN(scope, jsSpliceSubstringsWithSeparator(globalObject, string, source, sourceRanges.span().data(), sourceRanges.size(), replacementString, replacementCount));
+    RELEASE_AND_RETURN(scope, jsSpliceSubstringsWithSeparator(globalObject, string, source, sourceRanges.span().data(), sourceRanges.size(), replacementVal, replacementString, replacementCount));
 }
 
 struct StringReplaceTemplatePart {
@@ -1406,13 +1432,13 @@ ALWAYS_INLINE void appendReplacementUsingTemplate(StringBuilder& result, std::sp
     }
 }
 
-ALWAYS_INLINE JSString* replaceAllWithStringUsingRegExpSearch(VM& vm, JSGlobalObject* globalObject, JSString* string, const String& source, RegExp* regExp, const String& replacementString)
+ALWAYS_INLINE JSString* replaceAllWithStringUsingRegExpSearch(VM& vm, JSGlobalObject* globalObject, JSString* string, const String& source, RegExp* regExp, JSString* replacementVal, const String& replacementString)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     size_t dollarPos = replacementString.find('$');
     if (dollarPos == notFound)
-        RELEASE_AND_RETURN(scope, replaceAllWithStringUsingRegExpSearchNoBackreferences(vm, globalObject, string, source, regExp, replacementString));
+        RELEASE_AND_RETURN(scope, replaceAllWithStringUsingRegExpSearchNoBackreferences(vm, globalObject, string, source, regExp, replacementVal, replacementString));
 
     StringReplaceTemplateParts templateParts;
 
