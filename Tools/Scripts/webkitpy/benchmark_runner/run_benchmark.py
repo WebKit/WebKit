@@ -11,6 +11,7 @@ from webkitpy.benchmark_runner.browser_driver.browser_driver_factory import Brow
 from webkitpy.benchmark_runner.benchmark_runner import BenchmarkRunner
 from webkitpy.benchmark_runner.webdriver_benchmark_runner import WebDriverBenchmarkRunner
 from webkitpy.benchmark_runner.webserver_benchmark_runner import WebServerBenchmarkRunner
+from webkitpy.port.linux_container_sdk_utils import maybe_enter_webkit_container_sdk
 
 
 _log = logging.getLogger(__name__)
@@ -124,6 +125,9 @@ def list_subtests(plan):
 
 
 def start(args):
+    if args.browser in ['minibrowser-gtk', 'minibrowser-wpe']:
+        # for other browsers (firefox, chrome, etc) do not auto-enter into the container SDK, as those are not available there.
+        maybe_enter_webkit_container_sdk()
     if args.json_file:
         results_json = json.load(open(args.json_file, 'r'))
         if 'debugOutput' in results_json:
