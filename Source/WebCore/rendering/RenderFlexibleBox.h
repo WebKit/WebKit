@@ -165,7 +165,7 @@ private:
     FlexLayoutItems collectFlexItems(RelayoutChildren);
     FlexLayoutConstraints flexLayoutConstraints();
     LayoutUnit mainAxisAvailableSpace();
-    void updateLogicalHeightForFlexContent(LayoutUnit rowContentLogicalHeight, std::optional<LayoutUnit> minimumHeightForLineIfEmpty, LayoutUnit interLineGapTotal);
+    void updateLogicalHeightForFlexContent(std::optional<LayoutUnit> contentLogicalHeightForRowFlow, std::optional<LayoutUnit> minimumHeightForLineIfEmpty, LayoutUnit interLineGapTotal);
     void prepareFlexItemForPositionedLayout(RenderBox& flexItem);
     void adjustLogicalHeightForLineIfEmpty();
     std::optional<LayoutUnit> minimumHeightForLineIfEmpty() const;
