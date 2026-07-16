@@ -31,6 +31,7 @@
 #import "Helpers/cocoa/FindInPageUtilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/TestCocoa.h"
+#import "Helpers/cocoa/TestDownloadDelegate.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestScriptMessageHandler.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
@@ -10521,6 +10522,65 @@ TEST(SiteIsolation, CrossProcessSameDocumentHistoryTraversalDoesNotStall)
     [webView evaluateJavaScript:@"history.back()" inFrame:childFrames[0].info completionHandler:nil];
     waitForURL(@"https://example.com/page");
     EXPECT_WK_STREQ(@"https://example.com/page", [[webView URL] absoluteString]);
+}
+
+TEST(SiteIsolation, CrossSiteTargetBlankDownloadDoesNotCrashNetworkProcess)
+{
+    HTTPServer server({
+        { "/opener"_s, { "<a id='dl' href='https://s3.amazonaws.com/file.txt' target='_blank' rel='noreferrer' style='display:block;width:100%;height:100%'>Full logs</a>"_s } },
+        { "/file.txt"_s, { { { "Content-Type"_s, "text/plain"_s } }, "download content"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 400, 400));
+    RetainPtr navDelegate = navigationDelegate;
+
+    RetainPtr downloadDelegate = adoptNS([TestDownloadDelegate new]);
+    __block bool done = false;
+    __block bool downloadStarted = false;
+    __block bool processCrashed = false;
+
+    downloadDelegate.get().decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+        downloadStarted = true;
+        done = true;
+        completionHandler(nil);
+    };
+    downloadDelegate.get().didFailWithError = ^(WKDownload *, NSError *, NSData *) {
+        // A clean download failure is not a network process crash.
+        downloadStarted = true;
+        done = true;
+    };
+
+    navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        if ([action.request.URL.host isEqualToString:@"s3.amazonaws.com"])
+            completionHandler(WKNavigationActionPolicyDownload);
+        else
+            completionHandler(WKNavigationActionPolicyAllow);
+    };
+    navigationDelegate.get().navigationActionDidBecomeDownload = ^(WKNavigationAction *, WKDownload *download) {
+        download.delegate = downloadDelegate.get();
+    };
+    navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        processCrashed = true;
+        done = true;
+    };
+
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    __block RetainPtr<TestWKWebView> openedWebView;
+    uiDelegate.get().createWebViewWithConfiguration = ^WKWebView *(WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) {
+        openedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        openedWebView.get().navigationDelegate = navDelegate.get();
+        return openedWebView.get();
+    };
+    webView.get().UIDelegate = uiDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://ews-build.webkit.org/opener"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView clickOnElementID:@"dl"];
+
+    Util::run(&done);
+    EXPECT_TRUE(downloadStarted);
+    EXPECT_FALSE(processCrashed);
 }
 
 }
