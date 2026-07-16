@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -78,6 +78,8 @@
 		410B38F3292CBFF10003E515 /* data.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4FACF928FC714500FFE212 /* data.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		410B38F4292CC0150003E515 /* headers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4FACFA28FC714500FFE212 /* headers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		410B38F5292CC02C0003E515 /* version.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4FAE4628FC77AF00FFE212 /* version.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		41679AA32FFE7F53001D4EA4 /* pal.c in Sources */ = {isa = PBXBuildFile; fileRef = 41679AA22FFE7F53001D4EA4 /* pal.c */; };
+		41679AA42FFE7F53001D4EA4 /* ctx.c in Sources */ = {isa = PBXBuildFile; fileRef = 41679AA12FFE7F53001D4EA4 /* ctx.c */; };
 		444A6F1B2AEB1D4E005FE121 /* alloc_fail.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADE628FC721A00FFE212 /* alloc_fail.c */; };
 		444A6F1C2AEB1D50005FE121 /* dav1d_fuzzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FADE528FC721A00FFE212 /* dav1d_fuzzer.c */; };
 		444A6F1D2AEB1D6B005FE121 /* libdav1d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C4FACD528FC70C000FFE212 /* libdav1d.a */; };
@@ -409,6 +411,8 @@
 		1C4FAE5D28FC7CF500FFE212 /* libdav1d_bitdepth_16.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdav1d_bitdepth_16.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C4FAE6228FC7D1100FFE212 /* bitdepth_8.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = bitdepth_8.xcconfig; sourceTree = "<group>"; };
 		1C4FAE6328FC7D1D00FFE212 /* bitdepth_16.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = bitdepth_16.xcconfig; sourceTree = "<group>"; };
+		41679AA12FFE7F53001D4EA4 /* ctx.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ctx.c; sourceTree = "<group>"; };
+		41679AA22FFE7F53001D4EA4 /* pal.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pal.c; sourceTree = "<group>"; };
 		444A6F112AEB1D1C005FE121 /* dav1d_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dav1d_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
 		444A6F1E2AEB2051005FE121 /* dav1d_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = dav1d_fuzzer.xcconfig; sourceTree = "<group>"; };
 		444A6F1F2AEB2051005FE121 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
@@ -611,6 +615,7 @@
 				1C4FAD8C28FC71B900FFE212 /* cdf.h */,
 				1C4FAD1E28FC71B900FFE212 /* cpu.c */,
 				1C4FAD8528FC71B900FFE212 /* cpu.h */,
+				41679AA12FFE7F53001D4EA4 /* ctx.c */,
 				1C4FADCE28FC71B900FFE212 /* ctx.h */,
 				1C4FADC828FC71B900FFE212 /* data.c */,
 				1C4FAD2428FC71B900FFE212 /* data.h */,
@@ -660,6 +665,7 @@
 				1C4FADD228FC71B900FFE212 /* msac.h */,
 				1C4FAD4028FC71B900FFE212 /* obu.c */,
 				1C4FAD1328FC71B900FFE212 /* obu.h */,
+				41679AA22FFE7F53001D4EA4 /* pal.c */,
 				1C4FAD4428FC71B900FFE212 /* picture.c */,
 				1C4FAD1128FC71B900FFE212 /* picture.h */,
 				1C4FAD8928FC71B900FFE212 /* qm.c */,
@@ -1166,6 +1172,7 @@
 			files = (
 				1C4FAE3028FC751500FFE212 /* cdf.c in Sources */,
 				1C4FAE3A28FC751500FFE212 /* cpu.c in Sources */,
+				41679AA42FFE7F53001D4EA4 /* ctx.c in Sources */,
 				1C4FAE2228FC751500FFE212 /* data.c in Sources */,
 				1C4FAE2F28FC751500FFE212 /* decode.c in Sources */,
 				1C4FAE2328FC751500FFE212 /* dequant_tables.c in Sources */,
@@ -1178,6 +1185,7 @@
 				1C4FAE4428FC751500FFE212 /* mem.c in Sources */,
 				1C4FAE2A28FC751500FFE212 /* msac.c in Sources */,
 				1C4FAE2B28FC751500FFE212 /* obu.c in Sources */,
+				41679AA32FFE7F53001D4EA4 /* pal.c in Sources */,
 				1C4FAE2528FC751500FFE212 /* picture.c in Sources */,
 				1C4FAE4228FC751500FFE212 /* qm.c in Sources */,
 				1C4FAE2128FC751500FFE212 /* ref.c in Sources */,

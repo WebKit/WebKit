@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "tests/checkasm/checkasm.h"
+#include "tests/checkasm/internal.h"
 
 #include <string.h>
 
@@ -105,16 +105,16 @@ static void check_lpf_sb(loopfilter_sb_fn fn, const char *const name,
     ptrdiff_t stride, b4_stride;
     int w, h;
     if (dir) {
-        a_dst = a_dst_mem + 128 * 8;
-        c_dst = c_dst_mem + 128 * 8;
-        w = 128;
+        a_dst = a_dst_mem + n_blks * 4 * 8;
+        c_dst = c_dst_mem + n_blks * 4 * 8;
+        w = n_blks * 4;
         h = 16;
         b4_stride = 32;
     } else {
         a_dst = a_dst_mem + 8;
         c_dst = c_dst_mem + 8;
         w = 16;
-        h = 128;
+        h = n_blks * 4;
         b4_stride = 2;
     }
     stride = w * sizeof(pixel);
@@ -169,26 +169,26 @@ static void check_lpf_sb(loopfilter_sb_fn fn, const char *const name,
                 } else {
                     L = l[2 * x + 1][lf_idx] ? l[2 * x + 1][lf_idx] : l[2 * x][lf_idx];
                 }
-                init_lpf_border(c_dst + i * (dir ? 1 : 16), dir ? 128 : 1,
+                init_lpf_border(c_dst + i * (dir ? 1 : 16), dir ? n_blks * 4 : 1,
                                 lut.e[L], lut.i[L], bitdepth_max);
             }
             memcpy(a_dst_mem, c_dst_mem, 128 * sizeof(pixel) * 16);
 
-            call_ref(c_dst, stride,
-                     vmask, (const uint8_t(*)[4]) &l[dir ? 32 : 1][lf_idx], b4_stride,
-                     &lut, n_blks HIGHBD_TAIL_SUFFIX);
-            call_new(a_dst, stride,
-                     vmask, (const uint8_t(*)[4]) &l[dir ? 32 : 1][lf_idx], b4_stride,
-                     &lut, n_blks HIGHBD_TAIL_SUFFIX);
+            call_ref(c_dst, stride, vmask,
+                     (const uint8_t(*)[4]) &l[dir ? 32 : 1][lf_idx],
+                     b4_stride, &lut, n_blks HIGHBD_TAIL_SUFFIX);
+            call_new(a_dst, stride, vmask,
+                     (const uint8_t(*)[4]) &l[dir ? 32 : 1][lf_idx],
+                     b4_stride, &lut, n_blks HIGHBD_TAIL_SUFFIX);
 
             checkasm_check_pixel(c_dst_mem, stride, a_dst_mem, stride,
                                  w, h, "dst");
-            bench_new(a_dst, stride,
-                      vmask, (const uint8_t(*)[4]) &l[dir ? 32 : 1][lf_idx], b4_stride,
-                      &lut, n_blks HIGHBD_TAIL_SUFFIX);
+            bench_new(alternate(c_dst, a_dst), stride, vmask,
+                      (const uint8_t(*)[4]) &l[dir ? 32 : 1][lf_idx],
+                      b4_stride, &lut, n_blks HIGHBD_TAIL_SUFFIX);
         }
     }
-    report(name);
+    report("%s", name);
 }
 
 void bitfn(checkasm_check_loopfilter)(void) {

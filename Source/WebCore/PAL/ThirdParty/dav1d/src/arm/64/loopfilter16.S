@@ -28,6 +28,11 @@
 #include "src/arm/asm.S"
 #include "util.S"
 
+// depending on how many pixels need to be stored, returns:
+// x14 = (1 << 0) : 0 pixels
+// x14 = (1 << 4) : inner 4 pixels
+// x14 = (1 << 6) : inner 6 pixels
+// x14 = 0 : all pixels
 .macro loop_filter wd
 function lpf_8_wd\wd\()_neon
         uabd            v0.8h,   v22.8h,  v23.8h  // abs(p1 - p0)
@@ -77,8 +82,10 @@ function lpf_8_wd\wd\()_neon
         mov             x16, v1.d[0]
         mov             x17, v1.d[1]
         adds            x16, x16, x17
-        b.eq            9f                        // if (!fm || wd < 4) return;
-
+        b.ne            9f                        // if (!fm || wd < 4) return;
+        mov             x14, #(1 << 0)
+        ret
+9:
 .if \wd >= 6
         movi            v10.8h,  #1
         uabd            v2.8h,   v21.8h,  v23.8h  // abs(p2 - p0)
@@ -360,20 +367,20 @@ function lpf_8_wd\wd\()_neon
         bif             v11.16b, v29.16b, v15.16b // out q5
 .endif
 
+        mov             x14, #0
         ret
 .if \wd == 16
 7:
         // Return to a shorter epilogue, writing only the inner 6 pixels
-        ret             x13
+        mov             x14, #(1 << 6)
+        ret
 .endif
 .if \wd >= 8
 8:
         // Return to a shorter epilogue, writing only the inner 4 pixels
-        ret             x14
+        mov             x14, #(1 << 4)
+        ret
 .endif
-9:
-        // Return directly without writing back any pixels
-        ret             x15
 endfunc
 .endm
 
@@ -383,22 +390,34 @@ loop_filter 6
 loop_filter 4
 
 .macro lpf_8_wd16
-        adr             x13, 7f
-        adr             x14, 8f
         bl              lpf_8_wd16_neon
+        cbz             x14, 1f
+        tbnz            x14, #6, 7f
+        tbnz            x14, #4, 8f
+        ret             x15
+1:
 .endm
 
 .macro lpf_8_wd8
-        adr             x14, 8f
         bl              lpf_8_wd8_neon
+        cbz             x14, 1f
+        tbnz            x14, #4, 8f
+        ret             x15
+1:
 .endm
 
 .macro lpf_8_wd6
         bl              lpf_8_wd6_neon
+        cbz             x14, 1f
+        ret             x15
+1:
 .endm
 
 .macro lpf_8_wd4
         bl              lpf_8_wd4_neon
+        cbz             x14, 1f
+        ret             x15
+1:
 .endm
 
 function lpf_v_4_8_neon
@@ -531,7 +550,7 @@ function lpf_v_8_8_neon
         lpf_8_wd8
 
         sub             x16, x0,  x1, lsl #1
-        sub             x16, x16,  x1
+        sub             x16, x16, x1
         st1             {v21.8h}, [x16], x1 // p2
         st1             {v24.8h}, [x0],  x1 // q0
         st1             {v22.8h}, [x16], x1 // p1
@@ -762,7 +781,7 @@ function lpf_\dir\()_sb_\type\()_16bpc_neon, export=1
         mov             w8,  w7  // bitdepth_max
         clz             w9,  w8
         mov             w10, #24
-        sub             w9,  w10,  w9 // bitdepth_min_8
+        sub             w9,  w10, w9 // bitdepth_min_8
         stp             d8,  d9,  [sp, #-0x40]!
         stp             d10, d11, [sp, #0x10]
         stp             d12, d13, [sp, #0x20]
@@ -817,7 +836,7 @@ function lpf_\dir\()_sb_\type\()_16bpc_neon, export=1
         cmp             x16, #0
         b.eq            7f                        // if (!L) continue;
         neg             v5.8b,   v5.8b            // -sharp[0]
-        movrel          x16,  word_12
+        movrel          x16, word_12
         ushr            v12.8b,  v1.8b,   #4      // H
         ld1             {v16.2s}, [x16]
         sshl            v3.8b,   v1.8b,   v5.8b   // L >> sharp[0]

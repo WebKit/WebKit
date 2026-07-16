@@ -34,10 +34,10 @@ static void default_free_callback(const uint8_t *const data, void *const user_da
     dav1d_free_aligned(user_data);
 }
 
-Dav1dRef *dav1d_ref_create(size_t size) {
+Dav1dRef *dav1d_ref_create(const enum AllocationType type, size_t size) {
     size = (size + sizeof(void*) - 1) & ~(sizeof(void*) - 1);
 
-    uint8_t *const data = dav1d_alloc_aligned(size + sizeof(Dav1dRef), 64);
+    uint8_t *const data = dav1d_alloc_aligned(type, size + sizeof(Dav1dRef), 64);
     if (!data) return NULL;
 
     Dav1dRef *const res = (Dav1dRef*)(data + size);
@@ -54,14 +54,13 @@ static void pool_free_callback(const uint8_t *const data, void *const user_data)
 }
 
 Dav1dRef *dav1d_ref_create_using_pool(Dav1dMemPool *const pool, size_t size) {
-    size = (size + sizeof(void*) - 1) & ~(sizeof(void*) - 1);
-
-    Dav1dMemPoolBuffer *const buf =
-        dav1d_mem_pool_pop(pool, size + sizeof(Dav1dRef));
+    void *const buf = dav1d_mem_pool_pop(pool, size);
     if (!buf) return NULL;
 
+    /* Store Dav1dRef inside the Dav1dMemPoolBuffer alignment padding */
+    assert(sizeof(Dav1dMemPoolBuffer) + sizeof(Dav1dRef) <= 64);
     Dav1dRef *const res = &((Dav1dRef*)buf)[-1];
-    res->data = buf->data;
+    res->data = buf;
     res->const_data = pool;
     atomic_init(&res->ref_cnt, 1);
     res->free_ref = 0;
@@ -71,41 +70,16 @@ Dav1dRef *dav1d_ref_create_using_pool(Dav1dMemPool *const pool, size_t size) {
     return res;
 }
 
-Dav1dRef *dav1d_ref_wrap(const uint8_t *const ptr,
-                         void (*free_callback)(const uint8_t *data, void *user_data),
-                         void *const user_data)
-{
-    Dav1dRef *res = malloc(sizeof(Dav1dRef));
-    if (!res) return NULL;
-
-    res->data = NULL;
-    res->const_data = ptr;
-    atomic_init(&res->ref_cnt, 1);
-    res->free_ref = 1;
-    res->free_callback = free_callback;
-    res->user_data = user_data;
-
-    return res;
-}
-
-void dav1d_ref_inc(Dav1dRef *const ref) {
-    atomic_fetch_add(&ref->ref_cnt, 1);
-}
-
 void dav1d_ref_dec(Dav1dRef **const pref) {
     assert(pref != NULL);
 
     Dav1dRef *const ref = *pref;
     if (!ref) return;
 
+    *pref = NULL;
     if (atomic_fetch_sub(&ref->ref_cnt, 1) == 1) {
         const int free_ref = ref->free_ref;
         ref->free_callback(ref->const_data, ref->user_data);
-        if (free_ref) free(ref);
+        if (free_ref) dav1d_free(ref);
     }
-    *pref = NULL;
-}
-
-int dav1d_ref_is_writable(Dav1dRef *const ref) {
-    return atomic_load(&ref->ref_cnt) == 1 && ref->data;
 }

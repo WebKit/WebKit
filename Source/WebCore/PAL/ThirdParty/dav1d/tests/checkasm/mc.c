@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "tests/checkasm/checkasm.h"
+#include "tests/checkasm/internal.h"
 
 #include "src/levels.h"
 #include "src/mc.h"
@@ -98,6 +98,7 @@ static void check_mc(Dav1dMCDSPContext *const c) {
                                                     w, h, "dst");
 
                         if (filter == FILTER_2D_8TAP_REGULAR ||
+                            filter == FILTER_2D_8TAP_SHARP ||
                             filter == FILTER_2D_BILINEAR)
                         {
                             bench_new(a_dst, a_dst_stride, src, src_stride, w, h,
@@ -155,6 +156,7 @@ static void check_mct(Dav1dMCDSPContext *const c) {
                                                 w, h, "tmp");
 
                         if (filter == FILTER_2D_8TAP_REGULAR ||
+                            filter == FILTER_2D_8TAP_SHARP ||
                             filter == FILTER_2D_BILINEAR)
                         {
                             bench_new(a_tmp, src, src_stride, w, h,
@@ -343,7 +345,7 @@ static void check_w_avg(Dav1dMCDSPContext *const c) {
 
                 call_ref(c_dst, c_dst_stride, tmp[0], tmp[1], w, h, weight HIGHBD_TAIL_SUFFIX);
                 call_new(a_dst, a_dst_stride, tmp[0], tmp[1], w, h, weight HIGHBD_TAIL_SUFFIX);
-                checkasm_check_pixel_padded(c_dst, c_dst_stride,a_dst, a_dst_stride,
+                checkasm_check_pixel_padded(c_dst, c_dst_stride, a_dst, a_dst_stride,
                                             w, h, "dst");
 
                 bench_new(a_dst, a_dst_stride, tmp[0], tmp[1], w, h, weight HIGHBD_TAIL_SUFFIX);
@@ -477,7 +479,7 @@ static void check_blend(Dav1dMCDSPContext *const c) {
                 checkasm_check_pixel_padded(c_dst, c_dst_stride, a_dst, a_dst_stride,
                                             w, h, "dst");
 
-                bench_new(a_dst, a_dst_stride, tmp, w, h, mask);
+                bench_new(alternate(c_dst, a_dst), a_dst_stride, tmp, w, h, mask);
             }
     }
     report("blend");
@@ -516,7 +518,7 @@ static void check_blend_v(Dav1dMCDSPContext *const c) {
                 checkasm_check_pixel_padded(c_dst, c_dst_stride, a_dst, a_dst_stride,
                                             w, h, "dst");
 
-                bench_new(a_dst, a_dst_stride, tmp, w, h);
+                bench_new(alternate(c_dst, a_dst), a_dst_stride, tmp, w, h);
             }
     }
     report("blend_v");
@@ -554,7 +556,7 @@ static void check_blend_h(Dav1dMCDSPContext *const c) {
                 checkasm_check_pixel_padded(c_dst, c_dst_stride, a_dst, a_dst_stride,
                                             w, h, "dst");
 
-                bench_new(a_dst, a_dst_stride, tmp, w, h);
+                bench_new(alternate(c_dst, a_dst), a_dst_stride, tmp, w, h);
             }
     }
     report("blend_h");
