@@ -41,8 +41,6 @@
 #include <drm/drm_fourcc.h>
 #elif USE(LIBDRM)
 #include <drm_fourcc.h>
-#elif OS(ANDROID)
-#include <drm/drm_fourcc.h>
 #endif
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
