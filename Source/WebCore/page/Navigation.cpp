@@ -570,6 +570,9 @@ ExceptionOr<void> Navigation::updateCurrentEntry(UpdateCurrentEntryOptions&& opt
 bool Navigation::hasEntriesAndEventsDisabled() const
 {
     RefPtr window = this->window();
+    if (!window)
+        return true;
+
     RefPtr document = window->document();
     if (!document || !document->isFullyActive())
         return true;
