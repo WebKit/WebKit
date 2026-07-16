@@ -1471,7 +1471,7 @@ void RenderFlexibleBox::performFlexLayout(RelayoutChildren relayoutChildren)
     if (!lineStates.isEmpty()) {
         auto isWrapReverse = this->isWrapReverse();
         auto firstLineItemsCountInOriginalOrder = lineStates.first().flexLayoutItems.size();
-        auto lastLineItemsCountInOriginalOrder = lineStates.first().flexLayoutItems.size();
+        auto lastLineItemsCountInOriginalOrder = lineStates.last().flexLayoutItems.size();
 
         m_numberOfFlexItemsOnFirstLine = !isWrapReverse ? firstLineItemsCountInOriginalOrder : lastLineItemsCountInOriginalOrder;
         m_numberOfFlexItemsOnLastLine = !isWrapReverse ? lastLineItemsCountInOriginalOrder : firstLineItemsCountInOriginalOrder;
