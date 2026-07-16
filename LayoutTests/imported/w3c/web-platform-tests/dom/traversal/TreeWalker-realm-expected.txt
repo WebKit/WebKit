@@ -1,4 +1,4 @@
 
-FAIL Node returned by TreeWalker from different realm assert_true: expected true got false
-FAIL Node returned by TreeWalker from different realm with acceptNode assert_true: expected true got false
+PASS Node returned by TreeWalker from different realm
+PASS Node returned by TreeWalker from different realm with acceptNode
 

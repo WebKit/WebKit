@@ -95,8 +95,17 @@ DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSNode);
 static ALWAYS_INLINE JSValue createWrapperInline(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<Node>&& node)
 {
     ASSERT(!getCachedWrapper(globalObject->world(), node));
-    
-    JSDOMObject* wrapper;    
+
+    // Ensure DOM nodes are always wrapped in their own document's realm so that
+    // cross-realm traversal (e.g. TreeWalker over iframe nodes) produces wrappers
+    // with the correct prototype chain, matching the behavior expected by
+    // `node instanceof iframeWindow.Node`.
+    if (globalObject->worldIsNormal()) {
+        if (RefPtr frame = node->document().frame())
+            globalObject = &mainWorldGlobalObject(*frame);
+    }
+
+    JSDOMObject* wrapper;
     switch (node->nodeType()) {
     case NodeType::Element:
         if (is<HTMLElement>(node))
