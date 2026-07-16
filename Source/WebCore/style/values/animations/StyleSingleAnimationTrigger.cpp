@@ -42,8 +42,8 @@ auto CSSValueConversion<NamedAnimationTrigger>::operator()(BuilderState& state, 
         return { };
 
     return {
-        toStyleFromCSSValue<CustomIdent>(state, list->item(0)),
-        toStyleFromCSSValue<SpaceSeparatedFixedVector<AnimationAction>>(state, list->item(1))
+        toStyleFromCSSValue<CustomIdent>(state, protect(list->item(0))),
+        toStyleFromCSSValue<SpaceSeparatedFixedVector<AnimationAction>>(state, protect(list->item(1)))
     };
 }
 
