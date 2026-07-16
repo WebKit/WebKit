@@ -81,6 +81,7 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
+#include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGResourceContainer.h"
@@ -2501,6 +2502,29 @@ void RenderElement::removeFromRenderFragmentedFlowIncludingDescendants(bool shou
 
     if (shouldUpdateState)
         setFragmentedFlowState(FragmentedFlowState::NotInsideFlow);
+}
+
+bool RenderElement::multiColumnSpannerReevaluationNeededForStyleChange(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle) const
+{
+    // A column-span:all box only becomes a spanner if no box between it and its multi-column container
+    // establishes a containing block for all descendants (e.g. transform, filter, containment) or groups
+    // its contents (e.g. opacity). See RenderTreeBuilder::MultiColumn::isValidColumnSpanner().
+    auto trapsSpanner = [&](const Style::ComputedStyle& style) {
+        return canContainFixedPositionObjects(&style) || createsGroupForStyle(style);
+    };
+    // Cheap style-only check first: bail unless this box's spanner-trapping status actually flipped.
+    if (trapsSpanner(oldStyle) == trapsSpanner(newStyle))
+        return false;
+
+    if (!is<RenderMultiColumnFlow>(enclosingFragmentedFlow()))
+        return false;
+
+    // Only worth rebuilding if there is a spanner (or spanner candidate) in the subtree to re-evaluate.
+    for (auto& descendant : descendantsOfType<RenderElement>(*this)) {
+        if (descendant.style().columnSpan() == ColumnSpan::All || is<RenderMultiColumnSpannerPlaceholder>(descendant))
+            return true;
+    }
+    return false;
 }
 
 void RenderElement::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow* fragmentedFlow)

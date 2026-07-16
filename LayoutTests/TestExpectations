@@ -5420,7 +5420,6 @@ imported/w3c/web-platform-tests/css/css-multicol/fixedpos-static-pos-with-viewpo
 imported/w3c/web-platform-tests/css/css-multicol/fixedpos-static-pos-with-viewport-cb-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/intrinsic-size-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/intrinsic-size-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/intrinsic-size-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/intrinsic-size-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-002.html [ ImageOnlyFailure ]
@@ -5453,7 +5452,6 @@ webkit.org/b/299854 imported/w3c/web-platform-tests/css/css-multicol/multicol-sp
 webkit.org/b/299854 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-008.html [ ImageOnlyFailure ]
 webkit.org/b/299854 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-009.html [ ImageOnlyFailure ]
 webkit.org/b/299854 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-011.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-button-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-button-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-button-003.html [ ImageOnlyFailure ]
@@ -5495,7 +5493,6 @@ imported/w3c/web-platform-tests/css/css-multicol/multicol-overflow-clip-auto-siz
 imported/w3c/web-platform-tests/css/css-multicol/multicol-scroll-content.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-014.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-015.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-017.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-018.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-019.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-009.html [ ImageOnlyFailure ]
@@ -5552,8 +5549,6 @@ webkit.org/b/277262 [ Debug ] imported/w3c/web-platform-tests/css/css-multicol/c
 webkit.org/b/277262 [ Debug ] imported/w3c/web-platform-tests/css/css-multicol/crashtests/repeated-table-footer-in-caption-nested-multicol.html [ Skip ]
 webkit.org/b/277262 [ Debug ] imported/w3c/web-platform-tests/css/css-multicol/crashtests/table-caption-in-clipped-overflow.html [ Skip ]
 webkit.org/b/277262 [ Debug ] imported/w3c/web-platform-tests/css/css-multicol/crashtests/table-caption-inline-block-remove-child.html [ Skip ]
-webkit.org/b/277262 [ Debug ] imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-004.html [ Skip ]
-[ Release ] imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-004.html [ ImageOnlyFailure ]
 
 # -- End CSS multicol -- #
 

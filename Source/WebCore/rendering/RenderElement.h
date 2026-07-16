@@ -112,6 +112,12 @@ public:
     inline bool canContainAbsolutelyPositionedObjects(const Style::ComputedStyle* styleToUse = nullptr) const; // Defined in RenderElementStyleInlines.h.
     bool canEstablishContainingBlockWithTransform() const;
 
+    // Returns true if a style change from oldStyle to newStyle on this renderer, which lives inside a
+    // multi-column flow, toggles whether it "traps" column-span:all descendants (i.e. prevents them
+    // from becoming spanners). Such a change requires re-evaluating and rebuilding spanner placeholders
+    // in the subtree. See RenderTreeBuilder::MultiColumn::isValidColumnSpanner().
+    bool multiColumnSpannerReevaluationNeededForStyleChange(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle) const;
+
     inline bool shouldApplyLayoutContainment() const; // Defined in RenderElementStyleInlines.h
     inline bool shouldApplySizeContainment() const; // Defined in RenderElementStyleInlines.h
     inline bool shouldApplyInlineSizeContainment() const; // Defined in RenderElementStyleInlines.h.

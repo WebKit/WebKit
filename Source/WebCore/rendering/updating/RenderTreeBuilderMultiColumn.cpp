@@ -136,7 +136,15 @@ static bool isValidColumnSpanner(const RenderMultiColumnFlow& fragmentedFlow, co
             }
         }
         ASSERT(ancestor->style().columnSpan() != ColumnSpan::All || !isValidColumnSpanner(fragmentedFlow, *ancestor));
-        if (ancestor->isUnsplittableForPagination())
+        // A spanner cannot escape an ancestor that establishes an independent formatting context,
+        // forms a containing block for all descendants (e.g. transform, filter, containment), or
+        // otherwise groups its contents (e.g. opacity). Such an ancestor "traps" the box, so
+        // column-span:all does not create a spanner. Matches other engines.
+        // https://drafts.csswg.org/css-multicol-1/#column-span
+        if (ancestor->isUnsplittableForPagination()
+            || ancestor->createsNewFormattingContext()
+            || ancestor->canContainFixedPositionObjects()
+            || RenderElement::createsGroupForStyle(ancestor->style()))
             return false;
     }
     ASSERT_NOT_REACHED();

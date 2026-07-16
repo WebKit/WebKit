@@ -949,6 +949,14 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     if (element->hasInvalidRenderer() || parentChanges.contains(Change::Renderer))
         changes.add(Change::Renderer);
 
+    // Toggling a spanner-trapping property (e.g. transform, filter, opacity, containment) on a box
+    // inside a multi-column flow can change whether column-span:all descendants are spanners, which
+    // requires rebuilding the subtree to re-evaluate spanner placeholders.
+    if (currentStyle && !changes.contains(Change::Renderer)) {
+        if (CheckedPtr renderer = element->renderer(); renderer && renderer->multiColumnSpannerReevaluationNeededForStyleChange(*currentStyle, *newStyle))
+            changes.add(Change::Renderer);
+    }
+
     collectChangedAnchorNames(*newStyle, currentStyle);
 
     auto animationsAffectedDisplay = [&, animatedDisplay = newStyle->display()]() {
