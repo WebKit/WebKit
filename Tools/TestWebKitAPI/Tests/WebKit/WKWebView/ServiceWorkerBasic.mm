@@ -2578,6 +2578,73 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWor
     }));
 }
 
+#if PLATFORM(MAC)
+
+enum class UseSiteIsolationForCOOPWorkerTest : bool { No, Yes };
+
+static void runSharedWorkerNotReusedAfterCOOPProcessSwapTest(UseSiteIsolationForCOOPWorkerTest useSiteIsolation)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    if (useSiteIsolation == UseSiteIsolationForCOOPWorkerTest::Yes) {
+        for (_WKFeature *feature in [WKPreferences _features]) {
+            if ([feature.key isEqualToString:@"SiteIsolationEnabled"])
+                [[configuration preferences] _setEnabled:YES forFeature:feature];
+        }
+    }
+
+    TestWebKitAPI::HTTPServer server({
+        { "/no-coop.html"_s, { "<body>Hello world!</body>"_s } },
+        { "/coop.html"_s, { {{ "Cross-Origin-Opener-Policy"_s, "same-origin"_s }}, "<script>const worker = new SharedWorker('sharedWorker.js'); worker.port.start();</script>"_s } },
+        { "/sharedWorker.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, "onconnect = e => { e.ports[0].start(); };"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Https);
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    // Load a first page without COOP.
+    [webView loadRequest:server.request("/no-coop.html"_s)];
+    [navigationDelegate waitForDidFinishNavigation];
+    auto sourcePID = [webView _webProcessIdentifier];
+
+    // Navigate to a COOP page. This forces the page to be loaded in to a new PID. This page also
+    // loads a shared worker.
+    [webView loadRequest:server.request("/coop.html"_s)];
+    [navigationDelegate waitForDidFinishNavigation];
+    auto coopPID = [webView _webProcessIdentifier];
+    EXPECT_NE(sourcePID, coopPID);
+
+    // This tests our historic behavior of not allowing processes created as a result of a forced
+    // BCG switch (e.g. COOP response header) to host a shared or service worker.
+    auto sharedWorkerRunsInSeparateProcess = [&]() -> bool {
+        bool foundSharedWorkerProcess = false;
+        for (_WKWebContentProcessInfo *info in [WKProcessPool _webContentProcessInfo]) {
+            if (!info.runningSharedWorkers)
+                continue;
+            if (info.pid == coopPID)
+                return false;
+            foundSharedWorkerProcess = true;
+        }
+        return foundSharedWorkerProcess;
+    };
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] {
+        return sharedWorkerRunsInSeparateProcess();
+    }));
+}
+
+TEST(ServiceWorkers, SharedWorkerNotReusedAfterCOOPProcessSwap)
+{
+    runSharedWorkerNotReusedAfterCOOPProcessSwapTest(UseSiteIsolationForCOOPWorkerTest::No);
+}
+
+TEST(ServiceWorkers, SharedWorkerNotReusedAfterCOOPProcessSwapWithSiteIsolation)
+{
+    runSharedWorkerNotReusedAfterCOOPProcessSwapTest(UseSiteIsolationForCOOPWorkerTest::Yes);
+}
+
+#endif // PLATFORM(MAC)
+
 TEST(ServiceWorkers, SuspendServiceWorkerProcessBasedOnClientProcessesWithSeparateServiceWorkerProcess)
 {
     testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWorkerProcess::Yes);

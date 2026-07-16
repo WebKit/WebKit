@@ -637,6 +637,9 @@ public:
     void setIneligbleForWebProcessCache() { m_isEligibleForWebProcessCache = false; }
     bool isEligibleForWebProcessCache() const { return m_isEligibleForWebProcessCache; }
 
+    void setWasCreatedForBrowsingContextGroupSwitch() { m_wasCreatedForBrowsingContextGroupSwitch = true; }
+    bool wasCreatedForBrowsingContextGroupSwitch() const { return m_wasCreatedForBrowsingContextGroupSwitch; }
+
     void incrementFrameProcessCount() { ++m_frameProcessCount; }
     void decrementFrameProcessCount() { --m_frameProcessCount; }
     uint64_t frameProcessCount() const { return m_frameProcessCount; }
@@ -982,6 +985,7 @@ private:
 #endif
 
     bool m_isEligibleForWebProcessCache { true };
+    bool m_wasCreatedForBrowsingContextGroupSwitch { false };
 
     HashMap<String, SandboxExtension::Handle> m_fileSandboxExtensions;
 

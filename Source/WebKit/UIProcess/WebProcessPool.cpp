@@ -712,7 +712,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
 
     // Prioritize the requesting WebProcess for running the service worker.
     if (!remoteWorkerProcessProxy && !s_useSeparateServiceWorkerProcess && requestingProcess && requestingProcess->state() != WebProcessProxy::State::Terminated) {
-        if (requestingProcess->websiteDataStore() == websiteDataStore && requestingProcess->site() == site && requestingProcess->crossOriginMode() == crossOriginMode && !requestingProcess->isInProcessCache())
+        if (requestingProcess->websiteDataStore() == websiteDataStore && requestingProcess->site() == site && requestingProcess->crossOriginMode() == crossOriginMode && !requestingProcess->isInProcessCache() && !requestingProcess->wasCreatedForBrowsingContextGroupSwitch())
             useProcessForRemoteWorkers(*requestingProcess);
     }
 
@@ -729,6 +729,11 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
             if (process->crossOriginMode() != crossOriginMode)
                 continue;
             if (process->isInProcessCache())
+                continue;
+
+            // Historically, we haven't allowed main frame processes created due to a forced BCG
+            // switch to also host a service worker or shared worker.
+            if (process->wasCreatedForBrowsingContextGroupSwitch())
                 continue;
 
             useProcessForRemoteWorkers(process);
@@ -1288,8 +1293,10 @@ Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDat
             tryPrewarmWithDomainInformation(*process, site->domain());
         ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
         process->setIsolatedProcessType(isolatedProcessType, mainFrameSite);
-        if (processSwapDisposition == ProcessSwapDisposition::COOP)
+        if (processSwapDisposition == ProcessSwapDisposition::COOP) {
             process->setIneligbleForWebProcessCache();
+            process->setWasCreatedForBrowsingContextGroupSwitch();
+        }
         return process.releaseNonNull();
     }
 
@@ -1315,8 +1322,10 @@ Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDat
     auto enableWebAssemblyDebugger = protect(pageConfiguration.preferences())->webAssemblyDebuggerEnabled() ? WebProcessProxy::EnableWebAssemblyDebugger::Yes : WebProcessProxy::EnableWebAssemblyDebugger::No;
     Ref process = createNewWebProcess(&websiteDataStore, lockdownMode, enhancedSecurity, enableWebAssemblyDebugger);
     process->setIsolatedProcessType(isolatedProcessType, mainFrameSite);
-    if (processSwapDisposition == ProcessSwapDisposition::COOP)
+    if (processSwapDisposition == ProcessSwapDisposition::COOP) {
         process->setIneligbleForWebProcessCache();
+        process->setWasCreatedForBrowsingContextGroupSwitch();
+    }
     return process;
 }
 
