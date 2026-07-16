@@ -76,6 +76,7 @@ class BitmapTexture;
 class GLFence;
 class ShareableBitmap;
 class ShareableBitmapHandle;
+class SkiaDamageRegion;
 }
 
 namespace WebKit {
@@ -131,12 +132,21 @@ public:
 
     void willDestroyGLContext();
     void willRenderFrame(const WebCore::IntSize&);
-    void didRenderFrame();
+
+    enum class TargetContents : bool {
+        // The next use of this target must repaint it in full, because either nothing was drawn or what
+        // was drawn contains pixels the layer tree will not reproduce, like a debug overlay.
+        Invalid,
+        Valid
+    };
+    void didRenderFrame(TargetContents = TargetContents::Valid);
     void sendFrame();
-    void clear(const OptionSet<WebCore::CompositionReason>&);
+    void clear(const OptionSet<WebCore::CompositionReason>&, const WebCore::SkiaDamageRegion* = nullptr);
 
 #if ENABLE(DAMAGE_TRACKING)
-    void setFrameDamage(WebCore::Damage&& damage) { m_damageTracker.recordFrameDamage(WTF::move(damage)); }
+    void setFrameDamage(WebCore::Damage&& damage) { m_damageTracker.recordFrameDamage(WTF::move(damage), SwapChainDamageTracker::AccumulateIntoSwapChain::Yes); }
+
+    void setFrameDamageForPlatformOnly(WebCore::Damage&& damage) { m_damageTracker.recordFrameDamage(WTF::move(damage), SwapChainDamageTracker::AccumulateIntoSwapChain::No); }
     void setFrameDamageRectangleThreshold(unsigned threshold) { m_damageTracker.setRectangleThreshold(threshold); }
     const std::optional<WebCore::Damage>& frameDamage() const LIFETIME_BOUND { return m_damageTracker.frameDamage(); }
     const std::optional<WebCore::Damage>& renderTargetDamage();
@@ -171,6 +181,10 @@ private:
     void frameDone();
     void releaseUnusedBuffersTimerFired();
 
+#if ENABLE(DAMAGE_TRACKING)
+    class SwapChainDamageTracker;
+#endif
+
     class RenderTarget {
         WTF_MAKE_TZONE_ALLOCATED(RenderTarget);
     public:
@@ -187,10 +201,21 @@ private:
 
         SkSurface* skiaSurface() const { return m_skiaSurface.get(); }
 
+    private:
 #if ENABLE(DAMAGE_TRACKING)
-        void setDamage(WebCore::Damage&& damage) { m_damage = WTF::move(damage); }
+        // The damage record is maintained by SwapChainDamageTracker alone, which is what keeps it meaning
+        // everything that changed since this target was last current.
+        friend class SwapChainDamageTracker;
+
+        void setDamage(std::optional<WebCore::Damage>&& damage) { m_damage = WTF::move(damage); }
         const std::optional<WebCore::Damage>& damage() LIFETIME_BOUND { return m_damage; }
-        void addDamage(const std::optional<WebCore::Damage>&);
+        void addDamage(const WebCore::Damage& damage)
+        {
+            if (m_damage)
+                m_damage->add(damage);
+        }
+
+        std::optional<WebCore::Damage> m_damage;
 #endif
 
     protected:
@@ -202,9 +227,6 @@ private:
         const CheckedRef<AcceleratedSurface> m_surface;
         WebCore::IntSize m_size;
         sk_sp<SkSurface> m_skiaSurface;
-#if ENABLE(DAMAGE_TRACKING)
-        std::optional<WebCore::Damage> m_damage;
-#endif
     };
 
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
@@ -412,28 +434,43 @@ private:
     class SwapChainDamageTracker {
         WTF_MAKE_NONCOPYABLE(SwapChainDamageTracker);
     public:
-        explicit SwapChainDamageTracker(SwapChain& swapChain)
+        // needsFineGrainedDamage tells whether the records need individual rects, which is only worth
+        // building when someone iterates them, and no GL consumer does, reading nothing but the bounds.
+        SwapChainDamageTracker(SwapChain& swapChain, bool needsFineGrainedDamage)
             : m_swapChain(swapChain)
+            , m_needsFineGrainedDamage(needsFineGrainedDamage)
         {
         }
 
         void setRectangleThreshold(unsigned threshold) { m_rectangleThreshold = threshold; }
-        unsigned rectangleThreshold() const { return m_rectangleThreshold; }
 
-        // This frame's content change vs the last presented frame - propagated to the platform.
-        void recordFrameDamage(WebCore::Damage&& damage) { m_frameDamage = WTF::move(damage); }
+        enum class AccumulateIntoSwapChain : bool { No, Yes };
+
+        void recordFrameDamage(WebCore::Damage&&, AccumulateIntoSwapChain);
         const std::optional<WebCore::Damage>& frameDamage() const LIFETIME_BOUND { return m_frameDamage; }
         Vector<WebCore::IntRect, 1> takeFrameDamageRects();
 
-        // Propagates this frame's damage into every buffer and returns the given buffer's accumulated damage.
-        const std::optional<WebCore::Damage>& damageForTarget(RenderTarget&);
+        void didPresent(RenderTarget&, TargetContents);
+        const std::optional<WebCore::Damage>& damageSinceTargetWasLastCurrent(RenderTarget& target LIFETIME_BOUND) { return target.damage(); }
 
-        // Discards the pending frame damage, e.g. when the swap chain is resized.
-        void reset() { m_frameDamage = std::nullopt; }
+        // Discards the pending frame damage and every target's record, e.g. when the swap chain is
+        // resized, which leaves the targets holding contents no record can describe.
+        void reset()
+        {
+            m_frameDamage = std::nullopt;
+            m_swapChain.forEachTarget([](RenderTarget& target) {
+                target.setDamage(std::nullopt);
+            });
+        }
 
     private:
         SwapChain& m_swapChain;
+        const bool m_needsFineGrainedDamage;
         std::optional<WebCore::Damage> m_frameDamage;
+        // The most rects takeFrameDamageRects() will return. Once the frame damage holds more than
+        // this many rects, they all collapse into their single bounding box, trading precision for a
+        // smaller message to the platform. Only takeFrameDamageRects() is affected, so the per-target
+        // damage used for compositing stays fine-grained no matter how many rects the frame has.
         unsigned m_rectangleThreshold { 4 };
     };
 #endif

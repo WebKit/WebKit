@@ -32,6 +32,7 @@
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkMatrix.h>
+#include <skia/core/SkPaint.h>
 #include <skia/core/SkRect.h>
 #include <skia/core/SkRegion.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
@@ -105,6 +106,15 @@ public:
             inverseCtm.mapRect(&dstSubRect, damaged);
             emit(dstToSrc.mapRect(dstSubRect), dstSubRect);
         }
+    }
+
+    void fillCanvasInDeviceSpace(SkCanvas& canvas, const SkPaint& paint) const
+    {
+        // Unlike clipRegion(), drawRegion() maps the region by the CTM, so the canvas must carry none
+        // for the region to land in device space.
+        ASSERT(!isEmpty());
+        ASSERT(canvas.getLocalToDeviceAs3x3().isIdentity());
+        canvas.drawRegion(m_region, paint);
     }
 
     void clipCanvasInDeviceSpace(SkCanvas& canvas) const

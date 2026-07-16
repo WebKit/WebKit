@@ -38,6 +38,7 @@
 #include <WebCore/Region.h>
 #include <WebCore/Settings.h>
 #include <WebCore/ShareableBitmap.h>
+#include <WebCore/SkiaDamageRegion.h>
 #include <array>
 #include <fcntl.h>
 #include <unistd.h>
@@ -126,7 +127,7 @@ AcceleratedSurface::AcceleratedSurface(WebPage& webPage, Function<void()>&& fram
     , m_isVisible(webPage.activityState().contains(ActivityState::IsVisible))
     , m_useExplicitSync(usesGL() && useExplicitSync())
 #if ENABLE(DAMAGE_TRACKING)
-    , m_damageTracker(m_swapChain)
+    , m_damageTracker(m_swapChain, !usesGL())
 #endif
 {
 }
@@ -149,19 +150,6 @@ AcceleratedSurface::RenderTarget::RenderTarget(AcceleratedSurface& surface, cons
 }
 
 AcceleratedSurface::RenderTarget::~RenderTarget() = default;
-
-#if ENABLE(DAMAGE_TRACKING)
-void AcceleratedSurface::RenderTarget::addDamage(const std::optional<Damage>& damage)
-{
-    if (!m_damage)
-        return;
-
-    if (damage)
-        m_damage->add(*damage);
-    else
-        m_damage = std::nullopt;
-}
-#endif
 
 void AcceleratedSurface::RenderTarget::createSkiaSurfaceForFramebuffer(unsigned fbo)
 {
@@ -885,20 +873,49 @@ uint64_t AcceleratedSurface::SwapChain::window()
 #endif
 
 #if ENABLE(DAMAGE_TRACKING)
+void AcceleratedSurface::SwapChainDamageTracker::recordFrameDamage(Damage&& damage, AccumulateIntoSwapChain accumulate)
+{
+    m_frameDamage = WTF::move(damage);
+
+    // Add this frame's damage to every target, so each one repaints what changed since it was last
+    // rendered. This must happen on record rather than on read, since a frame that never reads its
+    // damage still has to contribute to the other targets.
+    if (accumulate == AccumulateIntoSwapChain::Yes) {
+        m_swapChain.forEachTarget([&](RenderTarget& target) {
+            target.addDamage(*m_frameDamage);
+        });
+    }
+}
+
 Vector<IntRect, 1> AcceleratedSurface::SwapChainDamageTracker::takeFrameDamageRects()
 {
     if (!m_frameDamage)
         return { };
 
-    return std::exchange(m_frameDamage, std::nullopt)->rects();
+    const auto frameDamage = *std::exchange(m_frameDamage, std::nullopt);
+    if (frameDamage.mode() != Damage::Mode::Rectangles || m_swapChain.size().isEmpty())
+        return frameDamage.rects();
+
+    // The frame damage is fine-grained, because the compositing restriction needs it that way, but the
+    // platform only wants a bounded number of rects. Merge it down to the threshold here, which is the
+    // only thing the threshold bounds.
+    Damage platformDamage(m_swapChain.size(), Damage::Mode::Rectangles, m_rectangleThreshold);
+    platformDamage.add(frameDamage);
+    return platformDamage.rects();
 }
 
-const std::optional<Damage>& AcceleratedSurface::SwapChainDamageTracker::damageForTarget(RenderTarget& target)
+void AcceleratedSurface::SwapChainDamageTracker::didPresent(RenderTarget& target, TargetContents targetContents)
 {
-    m_swapChain.forEachTarget([&](RenderTarget& candidate) {
-        candidate.addDamage(m_frameDamage);
-    });
-    return target.damage();
+    if (targetContents == TargetContents::Invalid) {
+        // Nothing was drawn, so drop the record and let the target's next use repaint it fully.
+        target.setDamage(std::nullopt);
+        return;
+    }
+
+    // The target is now current, so start a fresh, empty record. NoMaxRectangles keeps the grid as
+    // fine as the mode allows, since on a wide, short surface the threshold would collapse it into a
+    // few full-height cells.
+    target.setDamage(Damage(m_swapChain.size(), m_needsFineGrainedDamage ? Damage::Mode::Rectangles : Damage::Mode::BoundingBox, Damage::NoMaxRectangles));
 }
 #endif
 
@@ -1051,7 +1068,20 @@ void AcceleratedSurface::willRenderFrame(const IntSize& size)
         glViewport(0, 0, size.width(), size.height());
 }
 
-void AcceleratedSurface::clear(const OptionSet<WebCore::CompositionReason>& reasons)
+static void clearCanvas(SkCanvas& canvas, SkColor color, const SkiaDamageRegion* damageRegion)
+{
+    if (!damageRegion) {
+        canvas.clear(color);
+        return;
+    }
+
+    SkPaint paint;
+    paint.setColor(color);
+    paint.setBlendMode(SkBlendMode::kSrc);
+    damageRegion->fillCanvasInDeviceSpace(canvas, paint);
+}
+
+void AcceleratedSurface::clear(const OptionSet<WebCore::CompositionReason>& reasons, const SkiaDamageRegion* damageRegion)
 {
     std::optional<Color> backgroundColor;
     {
@@ -1062,9 +1092,9 @@ void AcceleratedSurface::clear(const OptionSet<WebCore::CompositionReason>& reas
     if (m_useSkia) {
         if (auto* canvas = this->canvas()) {
             if (backgroundColor && !backgroundColor->isOpaque())
-                canvas->clear(SK_ColorTRANSPARENT);
+                clearCanvas(*canvas, SK_ColorTRANSPARENT, damageRegion);
             else if (reasons.contains(CompositionReason::AsyncScrolling))
-                canvas->clear(backgroundColor ? SkColor(*backgroundColor) : SK_ColorWHITE);
+                clearCanvas(*canvas, backgroundColor ? SkColor(*backgroundColor) : SK_ColorWHITE, damageRegion);
         }
         return;
     }
@@ -1085,7 +1115,7 @@ void AcceleratedSurface::clear(const OptionSet<WebCore::CompositionReason>& reas
     }
 }
 
-void AcceleratedSurface::didRenderFrame()
+void AcceleratedSurface::didRenderFrame(TargetContents targetContents)
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
     TraceScope traceScope(WaitForCompositionCompletionStart, WaitForCompositionCompletionEnd);
@@ -1099,12 +1129,10 @@ void AcceleratedSurface::didRenderFrame()
 
     Vector<IntRect, 1> damageRects;
 #if ENABLE(DAMAGE_TRACKING)
-    // For GL targets we use bounding box damage for render target damage, as its only 2 consumers so far
-    // (CoordinatedBackingStore & ThreadedCompositor) only fetch bounds. Thus having damage with
-    // better resolution is pointless as the bounds are the same in such case.
-    // FIXME: If we start to consume fine-grained damage in the Skia compositor, we will need to relax the usesGL condition.
-    m_target->setDamage(Damage(m_swapChain.size(), usesGL() ? Damage::Mode::BoundingBox : Damage::Mode::Rectangles, m_damageTracker.rectangleThreshold()));
+    m_damageTracker.didPresent(*m_target, targetContents);
     damageRects = m_damageTracker.takeFrameDamageRects();
+#else
+    UNUSED_PARAM(targetContents);
 #endif
 
     m_target->didRenderFrame();
@@ -1125,7 +1153,7 @@ void AcceleratedSurface::sendFrame()
 const std::optional<Damage>& AcceleratedSurface::renderTargetDamage()
 {
     static std::optional<Damage> nulloptDamage;
-    return m_target ? m_damageTracker.damageForTarget(*m_target) : nulloptDamage;
+    return m_target ? m_damageTracker.damageSinceTargetWasLastCurrent(*m_target) : nulloptDamage;
 }
 #endif
 
