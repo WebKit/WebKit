@@ -82,7 +82,7 @@ private:
     Lock m_observersLock;
     Condition m_condition;
     HashMap<void*, std::pair<ResourceUsageCollectionMode, std::function<void(const ResourceUsageData&)>>> m_observers WTF_GUARDED_BY_LOCK(m_observersLock);
-    ResourceUsageCollectionMode m_collectionMode { None };
+    ResourceUsageCollectionMode m_collectionMode WTF_GUARDED_BY_LOCK(m_observersLock) { None };
 
     // Platforms may need to access some data from the common VM.
     // They should ensure their use of the VM is thread safe.

@@ -105,10 +105,12 @@ void ResourceUsageThread::notifyObservers(ResourceUsageData&& data)
 
 void ResourceUsageThread::recomputeCollectionMode()
 {
-    m_collectionMode = None;
+    ResourceUsageCollectionMode mode = None;
 
     for (auto& pair : m_observers.values())
-        m_collectionMode = static_cast<ResourceUsageCollectionMode>(m_collectionMode | pair.first);
+        mode = static_cast<ResourceUsageCollectionMode>(mode | pair.first);
+
+    m_collectionMode = mode;
 }
 
 void ResourceUsageThread::createThreadIfNeeded()
@@ -134,7 +136,11 @@ void ResourceUsageThread::createThreadIfNeeded()
         auto start = WallTime::now();
 
         ResourceUsageData data;
-        ResourceUsageCollectionMode mode = m_collectionMode;
+        ResourceUsageCollectionMode mode;
+        {
+            Locker locker { m_observersLock };
+            mode = m_collectionMode;
+        }
         if (mode & CPU)
             platformCollectCPUData(m_vm, data);
         if (mode & Memory)
