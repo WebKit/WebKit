@@ -108,6 +108,7 @@ private:
 
     bool NODELETE needsGridAreaAdjustmentBeforeStaticPositioning() const;
     std::optional<LayoutUnit> remainingSpaceForStaticAlignment(LayoutUnit itemSize) const;
+    bool shouldAlignStaticPositionInInlineAxis() const;
     void computeStaticPosition();
     LayoutUnit computedBlockStaticDistance() const;
 

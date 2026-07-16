@@ -30,6 +30,7 @@
 #include "ContainerNodeInlines.h"
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
+#include "RenderElementInlines.h"
 #include "RenderGrid.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
@@ -365,6 +366,32 @@ std::optional<LayoutUnit> PositionedLayoutConstraints::remainingSpaceForStaticAl
     return { };
 }
 
+bool PositionedLayoutConstraints::shouldAlignStaticPositionInInlineAxis() const
+{
+    // justify-self can align an out-of-flow box within its static-position rectangle when both
+    // inline-axis insets are auto. See https://drafts.csswg.org/css-align-3/#justify-abspos
+    if (!m_useStaticPosition)
+        return false;
+
+    // Only the box's own inline axis (justify-self); orthogonal / block-axis static positioning
+    // keeps the existing static-position path.
+    if (m_selfAxis != LogicalBoxAxis::Inline || m_containingAxis != LogicalBoxAxis::Inline)
+        return false;
+
+    // The static position must be established by a non-replaced block container, matching where
+    // justify-self applies to in-flow block-level boxes. Flex and grid containers position their
+    // abspos children with their own rules, and inline boxes don't align their out-of-flow
+    // children -- none of those are block containers.
+    CheckedPtr parent = m_renderer->parent();
+    if (!parent || !parent->isBlockContainer())
+        return false;
+
+    // normal / stretch / legacy keeps the box at its static position, which the existing path
+    // already computes correctly for every writing-mode / direction combination. Note that auto
+    // resolves against the parent's justify-items, so it may still resolve to a real alignment here.
+    return !m_style.justifySelf().resolve(m_renderer->parentStyle()).isNormalStretchOrLegacy();
+}
+
 // See CSS2 § 10.3.7-8 and 10.6.4-5.
 void PositionedLayoutConstraints::resolvePosition(RenderBox::LogicalExtentComputedValues& computedValues) const
 {
@@ -405,7 +432,12 @@ void PositionedLayoutConstraints::resolvePosition(RenderBox::LogicalExtentComput
     } else {
         if (auto staticRemainingSpace = remainingSpaceForStaticAlignment(outerSize))
             alignmentShift = resolveAlignmentShift(*staticRemainingSpace, outerSize);
-        else if (hasAutoBeforeInset != hasAutoAfterInset)
+        else if (shouldAlignStaticPositionInInlineAxis()) {
+            // Both insets were auto (static position) and an explicit justify-self was specified:
+            // align the box's margin box within its static-position rectangle.
+            // https://drafts.csswg.org/css-align-3/#justify-abspos
+            alignmentShift = resolveAlignmentShift(remainingSpace, outerSize);
+        } else if (hasAutoBeforeInset != hasAutoAfterInset)
             alignmentShift = hasAutoAfterInset ? 0_lu : remainingSpace;
         else // Align into remaining space.
             alignmentShift = resolveAlignmentShift(remainingSpace, outerSize);
@@ -514,6 +546,11 @@ LayoutUnit PositionedLayoutConstraints::resolveAlignmentShift(LayoutUnit unusedS
 ItemPosition PositionedLayoutConstraints::resolveAlignmentValue() const
 {
     if (m_useStaticPosition) {
+        // At the static position an explicit justify-self aligns the box within its
+        // static-position rectangle, resolving against the parent (the static-position
+        // containing block); auto resolves to the parent's justify-items.
+        if (shouldAlignStaticPositionInInlineAxis())
+            return m_style.justifySelf().resolve(m_renderer->parentStyle()).position();
 #if ASSERT_ENABLED
         ASSERT(m_isEligibleForStaticRangeAlignment);
 #endif
