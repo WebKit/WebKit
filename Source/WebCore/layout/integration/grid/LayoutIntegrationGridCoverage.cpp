@@ -452,7 +452,7 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         auto usedJustifySelf = gridItemStyle->justifySelf().resolve(renderGridStyle.ptr());
 
         if ((usedJustifySelf.position() != ItemPosition::Start && usedJustifySelf.position() != ItemPosition::Normal)
-            && usedJustifySelf.overflow() != OverflowAlignment::Default && usedJustifySelf.positionType() != ItemPositionType::NonLegacy)
+            || usedJustifySelf.overflow() != OverflowAlignment::Default || usedJustifySelf.positionType() != ItemPositionType::NonLegacy)
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedInlineAxisAlignment, reasons, reasonCollectionMode);
 
         auto& gridItemWidth = gridItemStyle->width();
@@ -465,7 +465,7 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         auto usedAlignSelf = gridItemStyle->alignSelf().resolve(renderGridStyle.ptr());
 
         if ((usedAlignSelf.position() != ItemPosition::Start && usedAlignSelf.position() != ItemPosition::Normal)
-            && usedAlignSelf.overflow() != OverflowAlignment::Default && usedAlignSelf.positionType() != ItemPositionType::NonLegacy)
+            || usedAlignSelf.overflow() != OverflowAlignment::Default || usedAlignSelf.positionType() != ItemPositionType::NonLegacy)
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedBlockAxisAlignment, reasons, reasonCollectionMode);
 
         auto& gridItemHeight = gridItemStyle->height();
