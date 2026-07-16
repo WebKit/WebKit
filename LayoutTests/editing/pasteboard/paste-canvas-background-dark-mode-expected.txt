@@ -1,0 +1,42 @@
+Pasting into a punch-out dark editor (like Mail compose) drops light canvas-like backgrounds and keeps intentional ones.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+--- Dropped: opaque light canvas-like backgrounds ---
+PASS nearWhiteBackground is ""
+PASS lightGrayBackground is ""
+--- Dropped: light background from an unresolved var() fallback (design-system content) ---
+PASS varLightBackground is ""
+--- Dropped: near-black neutral page surface (e.g. dark-mode Confluence #1d2125) ---
+PASS darkSurfaceBackground is ""
+PASS darkSurfaceShorthand is ""
+PASS darkSurfaceVar is ""
+PASS lightSurfaceShorthand is ""
+--- Dropped: near-black neutral surface on an inline element (single-paragraph wrapping span) ---
+PASS darkInlineBackground is ""
+--- Kept: dark but saturated block background (not neutral) ---
+PASS darkSaturatedBackground is "rgb(0, 0, 60)"
+--- Edge cases: element type and threshold boundaries ---
+PASS darkInlineBlockBackground is ""
+PASS boundaryLightnessKept is "rgb(150, 150, 150)"
+PASS boundaryLightnessDropped is ""
+PASS boundaryDarkKept is "rgb(51, 51, 51)"
+PASS nearOpaqueBackground is "rgba(244, 245, 247, 0.99)"
+--- Kept: pure white (renderer punches it out; not dropped here) ---
+PASS pureWhiteBackground is "rgb(255, 255, 255)"
+--- Kept: vivid author background (below the lightness threshold) ---
+PASS vividBackground is "rgb(255, 193, 7)"
+PASS varVividBackground.length > 0 is true
+PASS darkVividBackground is "rgb(0, 135, 90)"
+--- Kept: translucent (not opaque) ---
+PASS translucentBackground is "rgba(255, 255, 255, 0.3)"
+--- Kept: an element with an explicit transparent background keeps its own foreground color ---
+PASS transparentForeground is "rgb(30, 30, 30)"
+--- Kept: semantic / dynamic colors are not dropped ---
+PASS canvasBackground is "rgb(255, 255, 255)"
+PASS currentColorBackground is "currentcolor"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

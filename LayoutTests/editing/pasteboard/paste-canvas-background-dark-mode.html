@@ -1,0 +1,130 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ColorFilterEnabled=true PunchOutWhiteBackgroundsInDarkMode=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style> :root { color-scheme: dark; -apple-color-filter: apple-invert-lightness(); } </style>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Pasting into a punch-out dark editor (like Mail compose) drops light canvas-like backgrounds and keeps intentional ones.");
+
+if (window.internals)
+    internals.settings.setUseDarkAppearance(true);
+if (window.textInputController)
+    textInputController.setPageEditable(true);
+
+function pastedBackgroundColorFor(inlineStyle)
+{
+    let editor = document.createElement("div");
+    editor.contentEditable = true;
+    editor.textContent = "placeholder";
+    document.body.appendChild(editor);
+    editor.focus();
+    getSelection().selectAllChildren(editor);
+    document.execCommand("insertHTML", false, "<p style='" + inlineStyle + "'>content</p>");
+    let paragraph = editor.querySelector("p");
+    let result = paragraph ? paragraph.style.backgroundColor : "(no paragraph)";
+    editor.remove();
+    return result;
+}
+
+function pastedForegroundColorFor(inlineStyle)
+{
+    let editor = document.createElement("div");
+    editor.contentEditable = true;
+    editor.textContent = "placeholder";
+    document.body.appendChild(editor);
+    editor.focus();
+    getSelection().selectAllChildren(editor);
+    document.execCommand("insertHTML", false, "<p style='" + inlineStyle + "'>content</p>");
+    let paragraph = editor.querySelector("p");
+    let result = paragraph ? paragraph.style.color : "(no paragraph)";
+    editor.remove();
+    return result;
+}
+
+function pastedBackgroundColorForHTML(html, selector)
+{
+    let editor = document.createElement("div");
+    editor.contentEditable = true;
+    editor.textContent = "placeholder";
+    document.body.appendChild(editor);
+    editor.focus();
+    getSelection().selectAllChildren(editor);
+    document.execCommand("insertHTML", false, html);
+    let element = editor.querySelector(selector);
+    let result = element ? element.style.backgroundColor : "(no element)";
+    editor.remove();
+    return result;
+}
+
+debug("--- Dropped: opaque light canvas-like backgrounds ---");
+nearWhiteBackground = pastedBackgroundColorFor("background-color: rgb(244, 245, 247); color: rgb(23, 43, 77)");
+shouldBeEqualToString("nearWhiteBackground", "");
+lightGrayBackground = pastedBackgroundColorFor("background-color: rgb(230, 230, 230); color: rgb(23, 43, 77)");
+shouldBeEqualToString("lightGrayBackground", "");
+
+debug("--- Dropped: light background from an unresolved var() fallback (design-system content) ---");
+varLightBackground = pastedBackgroundColorFor("background-color: var(--undefined-token, rgb(171, 245, 209)); color: rgb(23, 43, 77)");
+shouldBeEqualToString("varLightBackground", "");
+
+debug("--- Dropped: near-black neutral page surface (e.g. dark-mode Confluence #1d2125) ---");
+darkSurfaceBackground = pastedBackgroundColorFor("background-color: rgb(29, 33, 37); color: rgb(23, 43, 77)");
+shouldBeEqualToString("darkSurfaceBackground", "");
+darkSurfaceShorthand = pastedBackgroundColorForHTML("<p id='t' style='background: rgb(29, 33, 37); color: rgb(23, 43, 77)'>content</p>", "#t");
+shouldBeEqualToString("darkSurfaceShorthand", "");
+darkSurfaceVar = pastedBackgroundColorForHTML("<p id='t' style='background-color: var(--undefined-token, rgb(29, 33, 37)); color: rgb(23, 43, 77)'>content</p>", "#t");
+shouldBeEqualToString("darkSurfaceVar", "");
+lightSurfaceShorthand = pastedBackgroundColorForHTML("<p id='t' style='background: rgb(244, 245, 247); color: rgb(23, 43, 77)'>content</p>", "#t");
+shouldBeEqualToString("lightSurfaceShorthand", "");
+
+debug("--- Dropped: near-black neutral surface on an inline element (single-paragraph wrapping span) ---");
+darkInlineBackground = pastedBackgroundColorForHTML("<span id='t' style='background-color: rgb(29, 33, 37); color: rgb(23, 43, 77)'>content</span>", "#t");
+shouldBeEqualToString("darkInlineBackground", "");
+
+debug("--- Kept: dark but saturated block background (not neutral) ---");
+darkSaturatedBackground = pastedBackgroundColorForHTML("<p id='t' style='background-color: rgb(0, 0, 60); color: rgb(23, 43, 77)'>content</p>", "#t");
+shouldBeEqualToString("darkSaturatedBackground", "rgb(0, 0, 60)");
+
+debug("--- Edge cases: element type and threshold boundaries ---");
+darkInlineBlockBackground = pastedBackgroundColorForHTML("<span id='t' style='display: inline-block; background-color: rgb(29, 33, 37); color: rgb(23, 43, 77)'>content</span>", "#t");
+shouldBeEqualToString("darkInlineBlockBackground", "");
+boundaryLightnessKept = pastedBackgroundColorFor("background-color: rgb(150, 150, 150); color: rgb(23, 43, 77)");
+shouldBeEqualToString("boundaryLightnessKept", "rgb(150, 150, 150)");
+boundaryLightnessDropped = pastedBackgroundColorFor("background-color: rgb(155, 155, 155); color: rgb(23, 43, 77)");
+shouldBeEqualToString("boundaryLightnessDropped", "");
+boundaryDarkKept = pastedBackgroundColorFor("background-color: rgb(51, 51, 51); color: rgb(23, 43, 77)");
+shouldBeEqualToString("boundaryDarkKept", "rgb(51, 51, 51)");
+nearOpaqueBackground = pastedBackgroundColorFor("background-color: rgba(244, 245, 247, 0.99); color: rgb(23, 43, 77)");
+shouldBeEqualToString("nearOpaqueBackground", "rgba(244, 245, 247, 0.99)");
+
+debug("--- Kept: pure white (renderer punches it out; not dropped here) ---");
+pureWhiteBackground = pastedBackgroundColorFor("background-color: rgb(255, 255, 255); color: rgb(23, 43, 77)");
+shouldBeEqualToString("pureWhiteBackground", "rgb(255, 255, 255)");
+
+debug("--- Kept: vivid author background (below the lightness threshold) ---");
+vividBackground = pastedBackgroundColorFor("background-color: rgb(255, 193, 7); color: rgb(23, 43, 77)");
+shouldBeEqualToString("vividBackground", "rgb(255, 193, 7)");
+varVividBackground = pastedBackgroundColorFor("background-color: var(--undefined-token, rgb(0, 135, 90)); color: rgb(23, 43, 77)");
+shouldBeTrue("varVividBackground.length > 0");
+darkVividBackground = pastedBackgroundColorFor("background-color: rgb(0, 135, 90); color: rgb(23, 43, 77)");
+shouldBeEqualToString("darkVividBackground", "rgb(0, 135, 90)");
+
+debug("--- Kept: translucent (not opaque) ---");
+translucentBackground = pastedBackgroundColorFor("background-color: rgba(255, 255, 255, 0.3); color: rgb(23, 43, 77)");
+shouldBeEqualToString("translucentBackground", "rgba(255, 255, 255, 0.3)");
+
+debug("--- Kept: an element with an explicit transparent background keeps its own foreground color ---");
+transparentForeground = pastedForegroundColorFor("background-color: transparent; color: rgb(30, 30, 30)");
+shouldBeEqualToString("transparentForeground", "rgb(30, 30, 30)");
+
+debug("--- Kept: semantic / dynamic colors are not dropped ---");
+canvasBackground = pastedBackgroundColorFor("background-color: Canvas; color: CanvasText");
+shouldBeEqualToString("canvasBackground", "rgb(255, 255, 255)");
+currentColorBackground = pastedBackgroundColorFor("background-color: currentColor; color: rgb(23, 43, 77)");
+shouldBeEqualToString("currentColorBackground", "currentcolor");
+</script>
+</body>
+</html>
