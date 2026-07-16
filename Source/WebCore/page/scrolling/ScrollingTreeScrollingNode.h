@@ -216,6 +216,8 @@ protected:
 
     void handleScrollPositionRequest(const RequestedScrollData&);
 
+    float rubberbandHyperbolicCoefficientForTesting() const;
+
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
     std::unique_ptr<ScrollingTreeScrollingNodeDelegate> m_delegate;

@@ -212,7 +212,14 @@ public:
     std::optional<RubberbandingState> captureRubberbandingState() const;
     bool restoreRubberbandingState(const RubberbandingState&);
     bool NODELETE shouldAttemptRubberbandingRestoration(const RubberbandingState&);
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    FloatSize NODELETE computeDampedStretchDelta(FloatSize delta, bool horizontalDeltaOpposesStretch, bool verticalDeltaOpposesStretch);
+    float NODELETE deltaAdjustedForRefreshController(float generalDampedHeight, float verticalDelta, float verticalStretch, bool verticalDeltaOpposesStretch);
+
+    float rubberbandHyperbolicCoefficientForTesting() const { return m_rubberbandHyperbolicCoefficient; }
+#else
     FloatSize NODELETE deltaAdjustedForRefreshController(const FloatSize& adjustedDelta, bool);
+#endif
 #endif
 
 private:
@@ -310,7 +317,10 @@ private:
     FloatSize m_cumulativeGestureDelta;
     MonotonicTime m_lastGestureEventTime;
 
-#if HAVE(NSREFRESHCONTROLLER)
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    float m_rubberbandHyperbolicCoefficient { 0 };
+    bool m_gestureBeganAtTop { false };
+#elif HAVE(NSREFRESHCONTROLLER)
     bool m_skipAdditionalDeltaAdjustments { false };
 #endif
 

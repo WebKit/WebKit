@@ -367,6 +367,11 @@ String RemoteScrollingCoordinatorProxy::scrollingTreeAsText() const
     return m_scrollingTree->scrollingTreeAsText();
 }
 
+float RemoteScrollingCoordinatorProxy::rubberbandHyperbolicCoefficientForTesting() const
+{
+    return m_scrollingTree->rubberbandHyperbolicCoefficientForTesting();
+}
+
 bool RemoteScrollingCoordinatorProxy::hasScrollableMainFrame() const
 {
     // FIXME: Locking

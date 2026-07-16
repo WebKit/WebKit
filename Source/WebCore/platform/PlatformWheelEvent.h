@@ -27,6 +27,7 @@
 
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntPoint.h>
+#include <WebCore/MouseEventTypes.h>
 #include <WebCore/PlatformEvent.h>
 #include <wtf/Platform.h>
 #include <wtf/WindowsExtras.h>
@@ -146,6 +147,9 @@ public:
     bool hasPreciseScrollingDeltas() const { return m_hasPreciseScrollingDeltas; }
     void setHasPreciseScrollingDeltas(bool hasPreciseScrollingDeltas) { m_hasPreciseScrollingDeltas = hasPreciseScrollingDeltas; }
 
+    MouseEventInputSource inputSource() const { return m_inputSource; }
+    void setInputSource(MouseEventInputSource inputSource) { m_inputSource = inputSource; }
+
 #if PLATFORM(COCOA)
     unsigned scrollCount() const { return m_scrollCount; }
     FloatSize unacceleratedScrollingDelta() const { return { m_unacceleratedScrollingDeltaX, m_unacceleratedScrollingDeltaY }; }
@@ -188,6 +192,7 @@ protected:
     PlatformWheelEventGranularity m_granularity { PlatformWheelEventGranularity::ScrollByPixelWheelEvent };
     bool m_directionInvertedFromDevice { false };
     bool m_hasPreciseScrollingDeltas { false };
+    MouseEventInputSource m_inputSource { MouseEventInputSource::UserDriven };
 
     IntPoint m_position;
     IntPoint m_globalPosition;

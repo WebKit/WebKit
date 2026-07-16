@@ -223,6 +223,8 @@ public:
 
     WEBCORE_EXPORT String scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { });
 
+    WEBCORE_EXPORT float rubberbandHyperbolicCoefficientForTesting();
+
     bool isMonitoringWheelEvents() const { return m_isMonitoringWheelEvents; }
     void setIsMonitoringWheelEvents(bool b) { m_isMonitoringWheelEvents = b; }
     bool inCommitTreeState() const { return m_inCommitTreeState; }

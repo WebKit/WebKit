@@ -529,6 +529,11 @@ void ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling(const FloatPoin
     scrollingTree()->scrollingTreeNodeDidScroll(*this, scrollingLayerPositionAction);
 }
 
+float ScrollingTreeScrollingNode::rubberbandHyperbolicCoefficientForTesting() const
+{
+    return m_delegate ? m_delegate->rubberbandHyperbolicCoefficientForTesting() : 0;
+}
+
 void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ScrollingTreeNode::dumpProperties(ts, behavior);
