@@ -261,6 +261,14 @@ KeyframeEffect* WebAnimation::keyframeEffect() const
     return dynamicDowncast<KeyframeEffect>(m_effect.get());
 }
 
+AnimationTimeline* WebAnimation::bindingsTimeline() const
+{
+    RefPtr scrollTimeline = dynamicDowncast<ScrollTimeline>(m_timeline);
+    if (scrollTimeline && scrollTimeline->isInactiveStyleOriginatedTimeline())
+        return nullptr;
+    return m_timeline.get();
+}
+
 void WebAnimation::setBindingsTimeline(RefPtr<AnimationTimeline>&& timeline)
 {
     setTimeline(WTF::move(timeline));

@@ -91,7 +91,7 @@ public:
     void setEffect(RefPtr<AnimationEffect>&&);
     KeyframeEffect* NODELETE keyframeEffect() const;
 
-    virtual AnimationTimeline* bindingsTimeline() const { return timeline(); }
+    virtual AnimationTimeline* bindingsTimeline() const;
     virtual void setBindingsTimeline(RefPtr<AnimationTimeline>&&);
     AnimationTimeline* timeline() const { return m_timeline.get(); }
     virtual void setTimeline(RefPtr<AnimationTimeline>&&);

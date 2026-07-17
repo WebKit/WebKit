@@ -1,5 +1,5 @@
 
 PASS Animation.timeline returns attached timeline
-FAIL Animation.timeline returns null for an inactive deferred timeline assert_equals: expected null but got object "[object ScrollTimeline]"
+PASS Animation.timeline returns null for an inactive deferred timeline
 PASS Animation.timeline naming conflict resolves to last in tree order
 
