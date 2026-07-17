@@ -54,6 +54,7 @@
 #import <WebCore/ScrollingTreePositionedNode.h>
 #import <WebCore/ScrollingTreeStickyNodeCocoa.h>
 #import <tuple>
+#import <wtf/SystemTracing.h>
 #import <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
@@ -849,6 +850,8 @@ void RemoteScrollingCoordinatorProxyIOS::updateAnimationStacksDependentOnScrolli
 
 void RemoteScrollingCoordinatorProxyIOS::updateAnimationStacks(NOESCAPE const Function<bool(const RemoteAnimationStack&)>& predicate)
 {
+    TraceScope scope(RemoteLayerTreeAnimationsUpdateStart, RemoteLayerTreeAnimationsUpdateEnd, m_animatedNodeLayerIDs.size());
+
     auto& layerTreeHost = drawingAreaIOS().remoteLayerTreeHost();
 
     auto animatedNodeLayerIDs = std::exchange(m_animatedNodeLayerIDs, { });

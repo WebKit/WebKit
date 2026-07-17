@@ -216,6 +216,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         case TimerFiredStart:
         case CoreImageRenderStart:
         case TextExtractionStart:
+        case RemoteLayerTreeAnimationsUpdateStart:
             beginMark(nullptr, tracePointCodeName(code).spanIncludingNullTerminator(), "%s", "");
             break;
 
@@ -283,6 +284,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         case TimerFiredEnd:
         case CoreImageRenderEnd:
         case TextExtractionEnd:
+        case RemoteLayerTreeAnimationsUpdateEnd:
             endMark(nullptr, tracePointCodeName(code).spanIncludingNullTerminator(), "%s", "");
             break;
 
@@ -567,6 +569,10 @@ private:
         case RenderLayerTreeStart:
         case RenderLayerTreeEnd:
             return "RenderLayerTree"_s;
+
+        case RemoteLayerTreeAnimationsUpdateStart:
+        case RemoteLayerTreeAnimationsUpdateEnd:
+            return "RemoteLayerTreeAnimationsUpdate"_s;
 
         case WTFRange:
         case JavaScriptRange:

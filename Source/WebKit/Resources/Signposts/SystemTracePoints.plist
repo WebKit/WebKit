@@ -996,6 +996,28 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>Update RemoteLayerTree animations</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>14015</string>
+                 <key>CodeEnd</key>
+                 <string>14016</string>
+                 <key>ArgNamesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Effect stacks</string>
+                 </dict>
+                 <key>ArgValueTypesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>UInt64</string>
+                 </dict>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Wake up and apply display list</string>
                  <key>Type</key>
                  <string>Interval</string>

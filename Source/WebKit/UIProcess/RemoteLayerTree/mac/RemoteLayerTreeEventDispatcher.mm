@@ -739,6 +739,8 @@ void RemoteLayerTreeEventDispatcher::updateAnimations(AnimationStacksToUpdate an
     ASSERT(isMainRunLoop() || ScrollingThread::isCurrentThread());
     Locker lock { m_animationLock };
 
+    TraceScope scope(RemoteLayerTreeAnimationsUpdateStart, RemoteLayerTreeAnimationsUpdateEnd, m_animationStacks.size());
+
     // FIXME: Rather than using 'now' at the point this is called, we
     // should probably be using the timestamp of the (next?) display
     // link update or vblank refresh.
