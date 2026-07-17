@@ -425,6 +425,7 @@ bool ValidateDrawElementsInstancedBase(const Context *context,
                                        DrawElementsType type,
                                        const void *indices,
                                        GLsizei primcount,
+                                       GLint basevertex,
                                        GLuint baseinstance);
 
 bool ValidateDrawInstancedANGLE(const Context *context, angle::EntryPoint entryPoint);
@@ -1073,7 +1074,8 @@ ANGLE_INLINE bool ValidateDrawElementsCommon(const Context *context,
                                              GLsizei count,
                                              DrawElementsType type,
                                              const void *indices,
-                                             GLsizei primcount)
+                                             GLsizei primcount,
+                                             GLint basevertex)
 {
     if (ANGLE_UNLIKELY(!ValidateDrawElementsBase(context, entryPoint, mode, type)))
     {
@@ -1178,8 +1180,6 @@ ANGLE_INLINE bool ValidateDrawElementsCommon(const Context *context,
     if (ANGLE_UNLIKELY(context->isBufferAccessValidationEnabled()) && ANGLE_UNLIKELY(primcount > 0))
     {
         // Use the parameter buffer to retrieve and cache the index range.
-        // TODO: this calculation should take basevertex into account for
-        // glDrawElementsInstancedBaseVertexBaseInstanceEXT.  http://anglebug.com/41481166
         IndexRange indexRange{IndexRange::Undefined()};
         ANGLE_VALIDATION_TRY(vao->getIndexRange(context, type, count, indices,
                                                 context->getState().isPrimitiveRestartEnabled(),
@@ -1188,16 +1188,33 @@ ANGLE_INLINE bool ValidateDrawElementsCommon(const Context *context,
         // No op if there are no real indices in the index data (all are primitive restart).
         if (!indexRange.isEmpty())
         {
-            // If we use an index greater than our maximum supported index range, return an error.
-            // The ES3 spec does not specify behaviour here, it is undefined, but ANGLE should
-            // always return an error if possible here.
-            if (indexRange.end() >= context->getCaps().maxElementIndex)
+            // The effective vertex index fetched by the backend is index[i] + basevertex (GLES 3.2
+            // section 10.5).  indexRange.end() is uint32_t and basevertex is GLint, so the sum fits
+            // in int64_t without overflow.  basevertex may be negative; per spec the operation is
+            // undefined if the sum would be negative, so reject that case for robust buffer access.
+            int64_t maxVertex =
+                static_cast<int64_t>(indexRange.end()) + static_cast<int64_t>(basevertex);
+            int64_t minVertex =
+                static_cast<int64_t>(indexRange.start()) + static_cast<int64_t>(basevertex);
+
+            // MAX_ELEMENT_INDEX bounds the raw index value, before basevertex is added (GLES 3.2
+            // section 10.5).
+            if (ANGLE_UNLIKELY(indexRange.end() >= context->getCaps().maxElementIndex))
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, err::kExceedsMaxElement);
                 return false;
             }
 
-            if (!ValidateDrawAttribs(context, entryPoint, static_cast<GLint64>(indexRange.end())))
+            // A negative effective index makes the vertex ID (index + basevertex) negative. The
+            // GLES 3.2 spec (section 10.5) leaves this undefined, to be handled as an out-of-bounds
+            // access (section 6.4); reject it rather than fetching before the start of the buffer.
+            if (ANGLE_UNLIKELY(minVertex < 0))
+            {
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, err::kNegativeEffectiveVertexIndex);
+                return false;
+            }
+
+            if (!ValidateDrawAttribs(context, entryPoint, maxVertex))
             {
                 return false;
             }

@@ -1869,7 +1869,7 @@ bool ValidateDrawRangeElements(const Context *context,
         return false;
     }
 
-    if (!ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 1))
+    if (!ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 1, 0))
     {
         return false;
     }
@@ -3524,7 +3524,7 @@ bool ValidateDrawElementsInstanced(const Context *context,
                                    GLsizei instanceCount)
 {
     return ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
-                                             instanceCount, 0);
+                                             instanceCount, 0, 0);
 }
 
 bool ValidateMultiDrawArraysInstancedANGLE(const Context *context,
@@ -3599,7 +3599,7 @@ bool ValidateMultiDrawElementsInstancedANGLE(const Context *context,
     for (GLsizei drawID = 0; drawID < drawcount; ++drawID)
     {
         if (!ValidateDrawElementsInstancedBase(context, entryPoint, mode, counts[drawID], type,
-                                               indices[drawID], instanceCounts[drawID], 0))
+                                               indices[drawID], instanceCounts[drawID], 0, 0))
         {
             return false;
         }
@@ -3641,7 +3641,7 @@ bool ValidateDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context *con
                                                               GLuint baseInstance)
 {
     return ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
-                                             instanceCount, baseInstance);
+                                             instanceCount, baseVertex, baseInstance);
 }
 
 bool ValidateMultiDrawArraysInstancedBaseInstanceANGLE(const Context *context,
@@ -3707,7 +3707,7 @@ bool ValidateMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context
     {
         if (!ValidateDrawElementsInstancedBase(context, entryPoint, modePacked, counts[drawID],
                                                typePacked, indices[drawID], instanceCounts[drawID],
-                                               baseInstances[drawID]))
+                                               baseVertices[drawID], baseInstances[drawID]))
         {
             return false;
         }

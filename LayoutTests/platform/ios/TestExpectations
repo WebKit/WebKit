@@ -2861,6 +2861,9 @@ fast/canvas/webgl/texImage2D-video-flipY-true.html [ Skip ]
 # rendering to floating point FBOs not supported on iOS
 fast/canvas/webgl/readPixels-float.html [ Skip ]
 
+# WEBGL_draw_instanced_base_vertex_base_instance is unavailable on the iOS simulator.
+webkit.org/b/319507 fast/canvas/webgl/draw-elements-base-vertex-out-of-bounds.html [ Skip ]
+
 # No colorspaces in iOS WebGL yet.
 webkit.org/b/247166 fast/canvas/webgl/colorspaces-test.html [ Failure ]
 webkit.org/b/247166 fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]

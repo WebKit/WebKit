@@ -1402,6 +1402,71 @@ TEST_P(DrawElementsTest, LargeIndexBufferSubData)
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::green);
 }
 
+// Test that drawElements*BaseVertex* includes baseVertex in the vertex-buffer bounds check, so an
+// out-of-range baseVertex is rejected instead of fetching vertices past the end of the buffer.
+TEST_P(WebGLDrawElementsTest3, DrawElementsBaseVertexBaseInstanceValidatesBaseVertex)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_base_vertex_base_instance"));
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    glUseProgram(program);
+    GLint positionLoc = glGetAttribLocation(program, essl3_shaders::PositionAttrib());
+    glEnableVertexAttribArray(positionLoc);
+
+    // Viewport-covering triangle drawn with indices [0,1,2], so baseVertex shifts the fetch window.
+    constexpr GLfloat kVertices[] = {-1.0f, -1.0f, 3.0f, -1.0f, -1.0f, 3.0f};
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(kVertices), kVertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(positionLoc, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    constexpr GLushort kIndices[] = {0, 1, 2};
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(kIndices), kIndices, GL_STATIC_DRAW);
+
+    // In-range baseVertex draws and fills the viewport red.
+    glDrawElementsInstancedBaseVertexBaseInstanceANGLE(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, nullptr,
+                                                       1, 0, 0);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::red);
+
+    // baseVertex past the end (9999) or underflowing (-1) must be rejected instead of fetching out
+    // of bounds. Only backends without robust buffer access (Metal) perform this validation.
+    if (isMetalRenderer())
+    {
+        glDrawElementsInstancedBaseVertexBaseInstanceANGLE(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT,
+                                                           nullptr, 1, 9999, 0);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+        glDrawElementsInstancedBaseVertexBaseInstanceANGLE(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT,
+                                                           nullptr, 1, -1, 0);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+        // Off-by-one: baseVertex 1 makes the max effective index equal the vertex count (3), which
+        // is out of bounds and must be rejected.
+        glDrawElementsInstancedBaseVertexBaseInstanceANGLE(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT,
+                                                           nullptr, 1, 1, 0);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+        // The multi-draw variant shares the same validator (and forwards baseVertices per draw), so
+        // it must reject an out-of-range baseVertex too.
+        if (EnsureGLExtensionEnabled("GL_ANGLE_multi_draw"))
+        {
+            const GLsizei counts[]         = {3};
+            const void *const indices[]    = {nullptr};
+            const GLsizei instanceCounts[] = {1};
+            const GLint baseVertices[]     = {9999};
+            const GLuint baseInstances[]   = {0};
+            glMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GL_TRIANGLES, counts,
+                                                                    GL_UNSIGNED_SHORT, indices,
+                                                                    instanceCounts, baseVertices,
+                                                                    baseInstances, 1);
+            EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+        }
+    }
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawElementsTest);
 ANGLE_INSTANTIATE_TEST_ES3(DrawElementsTest);
 
