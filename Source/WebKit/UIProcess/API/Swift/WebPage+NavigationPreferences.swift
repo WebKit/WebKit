@@ -148,7 +148,7 @@ extension WebPage {
         @available(anyAppleOSAndDownlevels 27.0, *)
         @available(watchOS, unavailable)
         @available(tvOS, unavailable)
-        public var globalPrivacyControlStatus: Bool = false
+        public var isGlobalPrivacyControlEnabled: Bool = false
     }
 }
 
@@ -209,7 +209,7 @@ extension WebPage.NavigationPreferences {
 
         self.alternateRequest = wrapped.alternateRequest
         self.overrideReferrer = wrapped.overrideReferrer
-        self.globalPrivacyControlStatus = wrapped.globalPrivacyControlStatus
+        self.isGlobalPrivacyControlEnabled = wrapped.globalPrivacyControlEnabled
     }
 }
 

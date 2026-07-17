@@ -70,7 +70,7 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     std::optional<bool> overrideTouchEventDOMAttributesEnabled;
 #endif
-    std::optional<bool> globalPrivacyControlStatus;
+    std::optional<bool> globalPrivacyControlEnabled;
     WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::Default };
     WebsitePopUpPolicy popUpPolicy { WebsitePopUpPolicy::Default };
     WebsiteMetaViewportPolicy metaViewportPolicy { WebsiteMetaViewportPolicy::Default };

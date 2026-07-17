@@ -24,8 +24,8 @@
  */
 
 // https://www.w3.org/TR/gpc/
-[
-    ImplementedBy=NavigatorGlobalPrivacyControl
-] interface mixin NavigatorGlobalPrivacyControl {
-    [ImplementedAs=globalPrivacyControlStatus] readonly attribute boolean globalPrivacyControl;
+[                                                                                                                           
+    ImplementedBy=NavigatorGlobalPrivacyControl                                                                          
+] interface mixin NavigatorGlobalPrivacyControl {         
+    [ImplementedAs=globalPrivacyControlEnabled] readonly attribute boolean globalPrivacyControl;
 };

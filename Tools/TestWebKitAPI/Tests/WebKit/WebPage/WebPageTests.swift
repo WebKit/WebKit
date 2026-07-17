@@ -100,10 +100,10 @@ struct WebPageTests {
     }
 
     @Test(arguments: [true, false])
-    func globalPrivacyControlStatusForNavigation(enabled: Bool) async throws {
+    func globalPrivacyControlEnabledForNavigation(enabled: Bool) async throws {
         let decider = TestNavigationDecider()
         decider.preferencesMutation = { preferences in
-            preferences.globalPrivacyControlStatus = enabled
+            preferences.isGlobalPrivacyControlEnabled = enabled
         }
 
         let page = WebPage(navigationDecider: decider)
