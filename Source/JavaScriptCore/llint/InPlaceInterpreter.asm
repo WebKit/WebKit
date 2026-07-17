@@ -441,9 +441,7 @@ end
 # Call site tracking
 
 macro saveCallSiteIndex()
-if X86_64
     loadp UnboxedWasmCalleeStackSlot[cfr], ws0
-end
     loadp Wasm::IPIntCallee::m_bytecode[ws0], t0
     negp t0
     addp PC, t0
@@ -515,6 +513,7 @@ end
 #
 # debugger-aware trap. 2 instructions; heavy logic in _wasm_ipint_check_debugger_hook_and_throw_trap due to fixed-size IPInt dispatch slots.
 macro handleDebuggerTrapIfNeededAndThrowWasmTrap(exception)
+    saveCallSiteIndex()
     storei constexpr Wasm::ExceptionType::%exception%, ArgumentCountIncludingThis + PayloadOffset[cfr]
 if ADDRESS64 and (ARM64 or ARM64E)
    # Currently, only ARM64 and ARM64E with ADDRESS64 platforms support the WasmDebugger.
@@ -1298,7 +1297,6 @@ op(wasm_throw_from_slow_path_trampoline, macro ()
     move wasmInstance, a1
     # Slow paths and the throwException macro store the exception code in the ArgumentCountIncludingThis slot
     loadi ArgumentCountIncludingThis + PayloadOffset[cfr], a2
-    storei 0, CallSiteIndex[cfr]
     cCall3(_slow_path_wasm_throw_exception)
     jumpToException()
 end)
@@ -1312,15 +1310,14 @@ op(wasm_unwind_from_slow_path_trampoline, macro()
 
     move cfr, a0
     move wasmInstance, a1
-    storei 0, CallSiteIndex[cfr]
     cCall3(_slow_path_wasm_unwind_exception)
     jumpToException()
 end)
 
 op(wasm_throw_from_fault_handler_trampoline_reg_instance, macro ()
-    # enableWasmDebugger disables BBQ/OMG, so this trampoline is only
-    # reached from IPInt when the debugger is active. The signal handler only patches
-    # the machine PC, so IPInt registers (PC, MC, ws0, cfr) are still live.
+    # Signal handler only patches the machine PC; IPInt registers (PC, MC, ws0, cfr) are still live.
+    # Fast/signaling memory OOB often traps here instead of the software bounds-check path.
+    saveCallSiteIndex()
     # Exception type comes from instance->m_exception; copy to CFR slot for handle_debugger_trap_if_needed.
     loadi JSWebAssemblyInstance::m_exception[wasmInstance], t0
     storei t0, ArgumentCountIncludingThis + PayloadOffset[cfr]
@@ -1335,7 +1332,6 @@ op(wasm_throw_from_fault_handler_trampoline_reg_instance, macro ()
     move a2, a1
     loadi JSWebAssemblyInstance::m_exception[a1], a2
 
-    storei 0, CallSiteIndex[cfr]
     cCall3(_slow_path_wasm_throw_exception)
     jumpToException()
 end)

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WasmIndexOrName.h"
 
+#include "Options.h"
 #include <wtf/PrintStream.h>
 #include <wtf/text/MakeString.h>
 
@@ -55,6 +56,23 @@ IndexOrName::IndexOrName(Index index, std::pair<const Name*, RefPtr<NameSection>
 
 void IndexOrName::dump(PrintStream& out) const
 {
+    if (Options::enableWasmDebugger()) {
+        if (isEmpty() || !nameSection()) {
+            if (isIndex())
+                out.print("wasm-function["_s, index(), ']');
+            else
+                out.print("wasm-function"_s);
+            return;
+        }
+
+        auto moduleName = nameSection()->moduleName.size() ? nameSection()->moduleName.span() : nameSection()->moduleHash.span();
+        if (isIndex())
+            out.print(moduleName, ":wasm-function["_s, index(), ']');
+        else
+            out.print(moduleName, ":wasm-function["_s, name()->span(), ']');
+        return;
+    }
+
     if (isEmpty() || !nameSection()) {
         out.print("wasm-stub"_s);
         if (isIndex())
@@ -71,6 +89,18 @@ void IndexOrName::dump(PrintStream& out) const
 
 String makeString(const IndexOrName& ion)
 {
+    if (Options::enableWasmDebugger()) {
+        if (ion.isEmpty() || !ion.nameSection()) {
+            if (ion.isIndex())
+                return makeString("wasm-function["_s, ion.index(), ']');
+            return "wasm-function"_s;
+        }
+        auto moduleName = ion.moduleName();
+        if (ion.isIndex())
+            return makeString(moduleName, ":wasm-function["_s, ion.index(), ']');
+        return makeString(moduleName, ":wasm-function["_s, ion.name()->span(), ']');
+    }
+
     if (ion.isEmpty() || !ion.nameSection()) {
         if (ion.isIndex())
             return makeString("wasm-stub["_s, ion.index(), "]"_s);
