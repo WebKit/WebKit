@@ -860,10 +860,9 @@ set(WebKit_SWIFT_INTEROP_MODULE_PATH_SWIFT_ONLY TRUE)
 # whose own dependencies aren't on the Swift Clang importer's search path.
 # Expose only what WebBackForwardList.swift names directly; the rest of the
 # WebCore:: types it uses are reachable transitively via WebKit_Internal headers.
-if (ENABLE_BACK_FORWARD_LIST_SWIFT)
-    set(WebCore_Private_SWIFT_MODULEMAP_DIR "${CMAKE_BINARY_DIR}/WebKit/SwiftModules/WebCorePrivate")
-    file(MAKE_DIRECTORY "${WebCore_Private_SWIFT_MODULEMAP_DIR}")
-    file(CONFIGURE OUTPUT "${WebCore_Private_SWIFT_MODULEMAP_DIR}/module.modulemap" CONTENT
+set(WebCore_Private_SWIFT_MODULEMAP_DIR "${CMAKE_BINARY_DIR}/WebKit/SwiftModules/WebCorePrivate")
+file(MAKE_DIRECTORY "${WebCore_Private_SWIFT_MODULEMAP_DIR}")
+file(CONFIGURE OUTPUT "${WebCore_Private_SWIFT_MODULEMAP_DIR}/module.modulemap" CONTENT
 "module WebCore_Private [system] {
     requires cplusplus
     header \"${WebCore_PRIVATE_HEADERS_DIR}/DiagnosticLoggingKeys.h\"
@@ -872,7 +871,6 @@ if (ENABLE_BACK_FORWARD_LIST_SWIFT)
     export *
 }
 ")
-endif ()
 
 WEBKIT_FRAMEWORK_DECLARE(WebKit)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
@@ -902,7 +900,7 @@ if (NOT USE_FRAMEWORK_BUNDLES)
     )
 endif ()
 
-if (NOT APPLE AND SWIFT_REQUIRED)
+if (NOT APPLE)
     # Export-macro stubs, NODELETE=, WK_SUPPORTS_SWIFT_OBJCXX_INTEROP and the
     # full ENABLE/HAVE/USE config-var set now come from
     # _WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS in WebKitMacros.cmake. Only
@@ -945,41 +943,44 @@ if (NOT APPLE AND SWIFT_REQUIRED)
     endforeach ()
 endif ()
 
-if (SWIFT_REQUIRED)
-    set(WebKit_SWIFT_INTEROP_SOURCES
-        UIProcess/ProvisionalPageProxy.cpp
-        UIProcess/RemotePageProxy.cpp
-        UIProcess/ViewGestureController.cpp
-        UIProcess/WebBackForwardList.cpp
-        UIProcess/WebPageProxy.cpp
-        UIProcess/Automation/WebAutomationSession.cpp
-        WebProcess/WebPage/IPCTestingAPI.cpp
-        ${WebKit_DERIVED_SOURCES_DIR}/UIProcess/WebBackForwardListMessageReceiver.cpp
-        ${WebKit_DERIVED_SOURCES_DIR}/Shared/IPCTesterReceiverMessageReceiver.cpp
-    )
-    if (APPLE)
-        list(APPEND WebKit_SWIFT_INTEROP_SOURCES
-            UIProcess/API/ios/WKWebViewIOS.mm
-            UIProcess/API/mac/WKWebViewMac.mm
-            UIProcess/ios/ViewGestureControllerIOS.mm
-            UIProcess/mac/ViewGestureControllerMac.mm
-            UIProcess/mac/WebViewImpl.mm
-        )
-    endif ()
-    foreach (_f IN LISTS WebKit_SWIFT_INTEROP_SOURCES)
-        cmake_path(GET _f FILENAME _fn)
-        list(APPEND WebKit_UNIFIED_SOURCE_EXCLUDES "(^|/)${_fn}( |$)")
-    endforeach ()
+set(WebKit_SWIFT_INTEROP_SOURCES
+    UIProcess/ProvisionalPageProxy.cpp
+    UIProcess/RemotePageProxy.cpp
+    UIProcess/ViewGestureController.cpp
+    UIProcess/WebBackForwardList.cpp
+    UIProcess/WebPageProxy.cpp
 
-    # FIXME(rdar://177840132): swiftc -emit-dependencies records imported
-    # clang modulemaps, but sometimes skips individual C++ headers.
-    file(STRINGS "${WebKit_SWIFT_INTEROP_MODULE_PATH}/module.modulemap" _mm_lines REGEX "header \"")
-    foreach (_l IN LISTS _mm_lines)
-        string(REGEX REPLACE ".*header \"(.*)\".*" "\\1" _h "${_l}")
-        cmake_path(ABSOLUTE_PATH _h BASE_DIRECTORY "${WebKit_SWIFT_INTEROP_MODULE_PATH}" NORMALIZE)
-        list(APPEND WebKit_SWIFT_INTEROP_HEADERS "${_h}")
-    endforeach ()
+    UIProcess/Automation/WebAutomationSession.cpp
+
+    WebProcess/WebPage/IPCTestingAPI.cpp
+    ${WebKit_DERIVED_SOURCES_DIR}/UIProcess/WebBackForwardListMessageReceiver.cpp
+    ${WebKit_DERIVED_SOURCES_DIR}/Shared/IPCTesterReceiverMessageReceiver.cpp
+)
+if (APPLE)
+    list(APPEND WebKit_SWIFT_INTEROP_SOURCES
+        UIProcess/API/ios/WKWebViewIOS.mm
+
+        UIProcess/API/mac/WKWebViewMac.mm
+
+        UIProcess/ios/ViewGestureControllerIOS.mm
+
+        UIProcess/mac/ViewGestureControllerMac.mm
+        UIProcess/mac/WebViewImpl.mm
+    )
 endif ()
+foreach (_f IN LISTS WebKit_SWIFT_INTEROP_SOURCES)
+    cmake_path(GET _f FILENAME _fn)
+    list(APPEND WebKit_UNIFIED_SOURCE_EXCLUDES "(^|/)${_fn}([ ]|$)")
+endforeach ()
+
+# FIXME(rdar://177840132): swiftc -emit-dependencies records imported
+# clang modulemaps, but sometimes skips individual C++ headers.
+file(STRINGS "${WebKit_SWIFT_INTEROP_MODULE_PATH}/module.modulemap" _mm_lines REGEX "header \"")
+foreach (_l IN LISTS _mm_lines)
+    string(REGEX REPLACE ".*header \"(.*)\".*" "\\1" _h "${_l}")
+    cmake_path(ABSOLUTE_PATH _h BASE_DIRECTORY "${WebKit_SWIFT_INTEROP_MODULE_PATH}" NORMALIZE)
+    list(APPEND WebKit_SWIFT_INTEROP_HEADERS "${_h}")
+endforeach ()
 
 WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WebKit WebKit
     "${WebKit_SWIFT_INTEROP_MODULE_PATH}"
@@ -1375,35 +1376,24 @@ if (ENABLE_SWIFT_DEMO_URI_SCHEME)
     )
 endif ()
 
-if (ENABLE_BACK_FORWARD_LIST_SWIFT)
-    set_source_files_properties(
-        ${WebKit_DERIVED_SOURCES_DIR}/WebBackForwardListMessageReceiver.swift
-        PROPERTIES GENERATED TRUE)
-    list(APPEND WebKit_SOURCES
-        ${WebKit_DERIVED_SOURCES_DIR}/WebBackForwardListMessageReceiver.swift
-        ${WEBKIT_DIR}/Shared/API/APIArray.swift
-        ${WEBKIT_DIR}/UIProcess/StdlibExtras.swift
-        ${WEBKIT_DIR}/UIProcess/WebBackForwardList.swift
-    )
-endif ()
+set_source_files_properties(
+    ${WebKit_DERIVED_SOURCES_DIR}/WebBackForwardListMessageReceiver.swift
+    PROPERTIES GENERATED TRUE)
+list(APPEND WebKit_SOURCES
+    ${WebKit_DERIVED_SOURCES_DIR}/WebBackForwardListMessageReceiver.swift
+    ${WEBKIT_DIR}/Shared/API/APIArray.swift
+    ${WEBKIT_DIR}/UIProcess/StdlibExtras.swift
+    ${WEBKIT_DIR}/UIProcess/WebBackForwardList.swift
+)
 
-if (ENABLE_IPC_TESTING_SWIFT)
-    list(APPEND WebKit_SOURCES
-        ${WEBKIT_DIR}/Shared/IPCTesterReceiver.swift
-        ${WebKit_DERIVED_SOURCES_DIR}/IPCTesterReceiverMessageReceiver.swift
-    )
-endif ()
-
-if (SWIFT_REQUIRED)
-    set_source_files_properties(
-        ${WebKit_DERIVED_SOURCES_DIR}/IPCTesterReceiverMessageReceiver.swift
-        PROPERTIES GENERATED TRUE)
-    list(APPEND WebKit_SOURCES
-        ${WEBKIT_DIR}/Shared/Foundation+Extras.swift
-        ${WEBKIT_DIR}/Shared/IPCTesterReceiver.swift
-        ${WebKit_DERIVED_SOURCES_DIR}/IPCTesterReceiverMessageReceiver.swift
-    )
-endif ()
+set_source_files_properties(
+    ${WebKit_DERIVED_SOURCES_DIR}/IPCTesterReceiverMessageReceiver.swift
+    PROPERTIES GENERATED TRUE)
+list(APPEND WebKit_SOURCES
+    ${WEBKIT_DIR}/Shared/Foundation+Extras.swift
+    ${WEBKIT_DIR}/Shared/IPCTesterReceiver.swift
+    ${WebKit_DERIVED_SOURCES_DIR}/IPCTesterReceiverMessageReceiver.swift
+)
 
 list(APPEND WebKit_SOURCES ${WebKit_DERIVED_SOURCES})
 
@@ -1439,7 +1429,7 @@ if (USE_APPLE_INTERNAL_SDK)
 endif ()
 WEBKIT_ADD_PREFIX_HEADER(WebKit WebKitPrefix.h PREFIX_LANGUAGES CXX OBJCXX)
 
-if (SWIFT_REQUIRED AND "${PORT}" STREQUAL "Mac")
+if ("${PORT}" STREQUAL "Mac")
     WEBKIT_ADD_SWIFT_PREWARM(WebKit SwiftPrewarmMac.swift)
 endif ()
 

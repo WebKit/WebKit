@@ -530,7 +530,7 @@ if (ENABLE_WPE_PLATFORM)
     # explicitly there. CMake >= 3.29 adds them itself and doing so again
     # duplicates every symbol.
     set(_old_cmake_swift_needs_explicit_objects FALSE)
-    if (SWIFT_REQUIRED AND CMAKE_VERSION VERSION_LESS "3.29")
+    if (CMAKE_VERSION VERSION_LESS "3.29")
         set(_old_cmake_swift_needs_explicit_objects TRUE)
     endif ()
 

@@ -101,11 +101,7 @@ namespace WebKit {
 class SwipeProgressTracker;
 class ViewSnapshot;
 class WebBackForwardList;
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
 class WebBackForwardListWrapper;
-#else
-using WebBackForwardListWrapper = WebBackForwardList;
-#endif
 class WebBackForwardListItem;
 class WebPageProxy;
 class WebProcessProxy;
@@ -247,11 +243,7 @@ private:
     void didStartProvisionalOrSameDocumentLoadForMainFrame();
 
 #if PLATFORM(COCOA)
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
     std::optional<WebBackForwardList> NODELETE backForwardListForNavigation() const;
-#else
-    WebBackForwardList* NODELETE backForwardListForNavigation() const;
-#endif
 #endif
 
     class SnapshotRemovalTracker : public CanMakeCheckedPtr<SnapshotRemovalTracker> {

@@ -6,17 +6,15 @@ list(APPEND WebGPU_UNIFIED_SOURCE_LIST_FILES
 
 set(WGSL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../WGSL)
 
-if (SWIFT_REQUIRED)
-    set(WebGPU_SWIFT_INTEROP_SOURCES
-        Buffer.mm
-        CommandEncoder.mm
-        Queue.mm
-    )
-    foreach (_f IN LISTS WebGPU_SWIFT_INTEROP_SOURCES)
-        cmake_path(GET _f FILENAME _fn)
-        list(APPEND WebGPU_UNIFIED_SOURCE_EXCLUDES "(^|/)${_fn}( |$)")
-    endforeach ()
-endif ()
+set(WebGPU_SWIFT_INTEROP_SOURCES
+    Buffer.mm
+    CommandEncoder.mm
+    Queue.mm
+)
+foreach (_f IN LISTS WebGPU_SWIFT_INTEROP_SOURCES)
+    cmake_path(GET _f FILENAME _fn)
+    list(APPEND WebGPU_UNIFIED_SOURCE_EXCLUDES "(^|/)${_fn}([ ]|$)")
+endforeach ()
 
 WEBKIT_COMPUTE_SOURCES(WebGPU)
 
@@ -91,9 +89,7 @@ target_compile_definitions(WebGPU PRIVATE
     __WEBGPU__
 )
 
-if (SWIFT_REQUIRED)
-    target_compile_definitions(WebGPU PRIVATE ENABLE_WEBGPU_SWIFT=1)
-endif ()
+target_compile_definitions(WebGPU PRIVATE ENABLE_WEBGPU_SWIFT=1)
 
 # Generate an empty cmakeconfig.h for the WebGPU target
 file(CONFIGURE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/cmakeconfig.h CONTENT "")
@@ -143,31 +139,29 @@ if (APPLE)
     if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
         make_directory("${_webgpu_fw}")
 
-        if (SWIFT_REQUIRED)
-            set(_webgpu_swiftmodule_dir "${CMAKE_BINARY_DIR}/WebGPU/Modules/WebGPU.swiftmodule")
-            make_directory(${_webgpu_swiftmodule_dir})
-            set(_webgpu_swift_output "${CMAKE_CURRENT_BINARY_DIR}")
-            set(_webgpu_swift_arch "${CMAKE_OSX_ARCHITECTURES}")
-            if (NOT _webgpu_swift_arch)
-                set(_webgpu_swift_arch "arm64")
-            endif ()
-            if (CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
-                set(_webgpu_swift_triple "${_webgpu_swift_arch}-apple-ios-simulator")
-            else ()
-                set(_webgpu_swift_triple "${_webgpu_swift_arch}-apple-ios")
-            endif ()
-            set(WebGPU_POST_BUILD_COMMAND
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    "${_webgpu_swift_output}/WebGPU.swiftmodule"
-                    "${_webgpu_swiftmodule_dir}/${_webgpu_swift_triple}.swiftmodule"
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    "${_webgpu_swift_output}/WebGPU.swiftdoc"
-                    "${_webgpu_swiftmodule_dir}/${_webgpu_swift_triple}.swiftdoc"
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    "${_webgpu_swift_output}/WebGPU.abi.json"
-                    "${_webgpu_swiftmodule_dir}/${_webgpu_swift_triple}.abi.json"
-            )
+        set(_webgpu_swiftmodule_dir "${CMAKE_BINARY_DIR}/WebGPU/Modules/WebGPU.swiftmodule")
+        make_directory(${_webgpu_swiftmodule_dir})
+        set(_webgpu_swift_output "${CMAKE_CURRENT_BINARY_DIR}")
+        set(_webgpu_swift_arch "${CMAKE_OSX_ARCHITECTURES}")
+        if (NOT _webgpu_swift_arch)
+            set(_webgpu_swift_arch "arm64")
         endif ()
+        if (CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
+            set(_webgpu_swift_triple "${_webgpu_swift_arch}-apple-ios-simulator")
+        else ()
+            set(_webgpu_swift_triple "${_webgpu_swift_arch}-apple-ios")
+        endif ()
+        set(WebGPU_POST_BUILD_COMMAND
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${_webgpu_swift_output}/WebGPU.swiftmodule"
+                "${_webgpu_swiftmodule_dir}/${_webgpu_swift_triple}.swiftmodule"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${_webgpu_swift_output}/WebGPU.swiftdoc"
+                "${_webgpu_swiftmodule_dir}/${_webgpu_swift_triple}.swiftdoc"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${_webgpu_swift_output}/WebGPU.abi.json"
+                "${_webgpu_swiftmodule_dir}/${_webgpu_swift_triple}.abi.json"
+        )
 
         # Strip Swift compiler artifacts and lift dSYM out of the framework
         # BEFORE codesigning on iOS. Doing this in a separate POST_BUILD chain
@@ -233,56 +227,54 @@ if (TARGET bmalloc_CopyHeaders)
 endif ()
 add_dependencies(WebGPU wgsl-types)
 
-if (SWIFT_REQUIRED)
-    target_sources(WebGPU PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/Buffer.swift
-        ${CMAKE_CURRENT_SOURCE_DIR}/CommandEncoder.swift
-        ${CMAKE_CURRENT_SOURCE_DIR}/Queue.swift
-        ${CMAKE_CURRENT_SOURCE_DIR}/StdLibExtras.swift
-    )
+target_sources(WebGPU PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/Buffer.swift
+    ${CMAKE_CURRENT_SOURCE_DIR}/CommandEncoder.swift
+    ${CMAKE_CURRENT_SOURCE_DIR}/Queue.swift
+    ${CMAKE_CURRENT_SOURCE_DIR}/StdLibExtras.swift
+)
 
-    target_compile_options(WebGPU PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:-I${CMAKE_CURRENT_SOURCE_DIR}/Internal>")
-    target_compile_options(WebGPU PRIVATE
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-experimental-feature SafeInteropWrappers>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-experimental-feature LifetimeDependence>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-experimental-feature Lifetimes>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-library-level spi>"
-        "$<$<COMPILE_LANGUAGE:Swift>:-no-verify-emitted-module-interface>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -disable-access-control>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib>"
-    )
+target_compile_options(WebGPU PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:-I${CMAKE_CURRENT_SOURCE_DIR}/Internal>")
+target_compile_options(WebGPU PRIVATE
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-experimental-feature SafeInteropWrappers>"
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-experimental-feature LifetimeDependence>"
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-experimental-feature Lifetimes>"
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-library-level spi>"
+    "$<$<COMPILE_LANGUAGE:Swift>:-no-verify-emitted-module-interface>"
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -disable-access-control>"
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib>"
+)
 
-    if (APPLE)
-        # Swift compiles transitively load system frameworks whose PCM builds
-        # need our project -Xcc flags. Explicit modules let libSwiftScan
-        # pre-build PCMs with the right context.
-        set(WebGPU_SWIFT_EXPLICIT_MODULE_BUILD TRUE)
-    endif ()
-
-    set(WebGPU_SWIFT_EMIT_CLANG_HEADER_MIN_ACCESS internal)
-
-    # FIXME(rdar://177840132): swiftc -emit-dependencies records imported
-    # clang modulemaps, but sometimes skips individual C++ headers.
-    file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/Internal/module.modulemap" _mm_lines REGEX "header \"")
-    foreach (_l IN LISTS _mm_lines)
-        string(REGEX REPLACE ".*header \"(.*)\".*" "\\1" _h "${_l}")
-        cmake_path(ABSOLUTE_PATH _h BASE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Internal" NORMALIZE)
-        list(APPEND WebGPU_SWIFT_INTEROP_HEADERS "${_h}")
-    endforeach ()
-
-    WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WebGPU WebGPU
-        "${WebGPU_FRAMEWORK_HEADERS_DIR}/WebGPU"
-        "WebGPUSwift-Generated.h")
-
-    WEBKIT_DEFINE_SUBTARGET(WebGPU_SwiftInterop WebGPU ${WebGPU_SWIFT_INTEROP_SOURCES})
-    target_precompile_headers(WebGPU_SwiftInterop REUSE_FROM WebGPU)
-    add_dependencies(WebGPU_SwiftInterop WTF_CopyHeaders bmalloc_CopyHeaders wgsl-types)
-    set(_interop_objs "$<FILTER:$<TARGET_OBJECTS:WebGPU_SwiftInterop>,EXCLUDE,\\.(g|p)ch$>")
-    set(_interop_rsp "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/WebGPU_SwiftInterop.dir/objects.rsp")
-    file(GENERATE OUTPUT "${_interop_rsp}" CONTENT "$<JOIN:${_interop_objs},\n>")
-    target_link_options(WebGPU PRIVATE "@${_interop_rsp}")
-    set_property(TARGET WebGPU APPEND PROPERTY LINK_DEPENDS "${_interop_objs};${_interop_rsp}")
+if (APPLE)
+    # Swift compiles transitively load system frameworks whose PCM builds
+    # need our project -Xcc flags. Explicit modules let libSwiftScan
+    # pre-build PCMs with the right context.
+    set(WebGPU_SWIFT_EXPLICIT_MODULE_BUILD TRUE)
 endif ()
+
+set(WebGPU_SWIFT_EMIT_CLANG_HEADER_MIN_ACCESS internal)
+
+# FIXME(rdar://177840132): swiftc -emit-dependencies records imported
+# clang modulemaps, but sometimes skips individual C++ headers.
+file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/Internal/module.modulemap" _mm_lines REGEX "header \"")
+foreach (_l IN LISTS _mm_lines)
+    string(REGEX REPLACE ".*header \"(.*)\".*" "\\1" _h "${_l}")
+    cmake_path(ABSOLUTE_PATH _h BASE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Internal" NORMALIZE)
+    list(APPEND WebGPU_SWIFT_INTEROP_HEADERS "${_h}")
+endforeach ()
+
+WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WebGPU WebGPU
+    "${WebGPU_FRAMEWORK_HEADERS_DIR}/WebGPU"
+    "WebGPUSwift-Generated.h")
+
+WEBKIT_DEFINE_SUBTARGET(WebGPU_SwiftInterop WebGPU ${WebGPU_SWIFT_INTEROP_SOURCES})
+target_precompile_headers(WebGPU_SwiftInterop REUSE_FROM WebGPU)
+add_dependencies(WebGPU_SwiftInterop WTF_CopyHeaders bmalloc_CopyHeaders wgsl-types)
+set(_interop_objs "$<FILTER:$<TARGET_OBJECTS:WebGPU_SwiftInterop>,EXCLUDE,\\.(g|p)ch$>")
+set(_interop_rsp "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/WebGPU_SwiftInterop.dir/objects.rsp")
+file(GENERATE OUTPUT "${_interop_rsp}" CONTENT "$<JOIN:${_interop_objs},\n>")
+target_link_options(WebGPU PRIVATE "@${_interop_rsp}")
+set_property(TARGET WebGPU APPEND PROPERTY LINK_DEPENDS "${_interop_objs};${_interop_rsp}")
 
 if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
     # Note: WebGPU.emit-module.d / WebGPU.swiftdeps removal and dSYM hoisting

@@ -48,10 +48,8 @@
 #include "DisplayLinkObserverID.h"
 #endif
 
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
 #include "WebBackForwardList.h"
 #include "WebBackForwardListMessages.h"
-#endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
 #include "InputMethodState.h"
@@ -563,12 +561,7 @@ class VisitedLinkStore;
 class WebAuthenticatorCoordinatorProxy;
 class WebAutomationSession;
 class WebBackForwardCache;
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
 class WebBackForwardListWrapper;
-#else
-class WebBackForwardList;
-using WebBackForwardListWrapper = WebBackForwardList;
-#endif
 class WebBackForwardListFrameItem;
 class WebBackForwardListItem;
 class WebBackForwardList;
@@ -815,13 +808,8 @@ public:
 #endif
 
     WebBackForwardListWrapper& backForwardListWrapper() { return m_backForwardList; }
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
     WebBackForwardList& backForwardList() const { return m_backForwardList->getImpl(); }
     WebBackForwardListMessageForwarder& backForwardListMessageReceiver() const;
-#else
-    WebBackForwardList& backForwardList() const { return m_backForwardList; }
-    WebBackForwardList& backForwardListMessageReceiver() const { return m_backForwardList; }
-#endif
 
     bool addsVisitedLinks() const { return m_addsVisitedLinks; }
     void setAddsVisitedLinks(bool addsVisitedLinks) { m_addsVisitedLinks = addsVisitedLinks; }
