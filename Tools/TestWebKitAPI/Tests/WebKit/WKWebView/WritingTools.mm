@@ -1058,6 +1058,53 @@ TEST(WritingTools, ProofreadingReviewDoesNotWriteIntoDriftedMarker)
     TestWebKitAPI::Util::run(&finished);
 }
 
+TEST(WritingTools, ProofreadingReviewBailsOnAmbiguousDriftedMarker)
+{
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>wug xx wug yy wug</p></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    NSString *originalText = @"wug xx wug yy wug";
+    NSString *mutatedText = @"wug xx wZg yy wug";
+
+    __block bool finished = false;
+
+    [(id)[webView writingToolsDelegate] willBeginWritingToolsSession:session forProofreadingReview:YES requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+        EXPECT_WK_STREQ(originalText, contexts.firstObject.attributedText.string);
+
+        [[webView writingToolsDelegate] didBeginWritingToolsSession:session contexts:contexts];
+
+        // Target the middle "wug"; the same text also appears at [0, 3) and [14, 17).
+        RetainPtr suggestion = adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(7, 3) replacement:@"bug"]);
+
+        [[webView writingToolsDelegate] proofreadingSession:session didReceiveSuggestions:@[ suggestion.get() ] processedRange:NSMakeRange(0, originalText.length) inContext:contexts.firstObject finished:YES];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
+
+        EXPECT_WK_STREQ(originalText, [webView contentsAsString]);
+
+        // Corrupt the marked word in place so its offsets go stale but the two other "wug"s stay put, equidistant from the stale offset.
+        [webView stringByEvaluatingJavaScript:@"document.getElementById('first').firstChild.replaceData(8, 1, 'Z')"];
+        [webView waitForNextPresentationUpdate];
+
+        EXPECT_WK_STREQ(mutatedText, [webView contentsAsString]);
+
+        // The two matches are equally close, so the controller must bail rather than guess.
+        [[webView writingToolsDelegate] proofreadingSession:session didUpdateState:WTTextSuggestionStateAccepted forSuggestionWithUUID:[suggestion uuid] inContext:contexts.firstObject];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
+
+        EXPECT_WK_STREQ(mutatedText, [webView contentsAsString]);
+
+        [[webView writingToolsDelegate] didEndWritingToolsSession:session accepted:YES];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
 TEST(WritingTools, CompositionWithAttemptedEditing)
 {
     RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);

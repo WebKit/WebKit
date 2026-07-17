@@ -1339,8 +1339,10 @@ std::optional<SimpleRange> WritingToolsController::validatedRangeForSuggestionMa
     auto sessionPlainText = plainText(sessionRange);
     auto staleOffset = characterRange(sessionRange, rangeToReplace).location;
 
+    // Re-anchoring is a heuristic, so reject it when ambiguous (a tie) or when it collides with another suggestion's marker.
     size_t bestMatch = notFound;
     uint64_t bestDistance = std::numeric_limits<uint64_t>::max();
+    uint64_t secondBestDistance = std::numeric_limits<uint64_t>::max();
     unsigned searchStart = 0;
     while (true) {
         auto matchIndex = sessionPlainText.find(expectedCurrentText, searchStart);
@@ -1348,9 +1350,11 @@ std::optional<SimpleRange> WritingToolsController::validatedRangeForSuggestionMa
             break;
         uint64_t distance = matchIndex > staleOffset ? matchIndex - staleOffset : staleOffset - matchIndex;
         if (distance < bestDistance) {
+            secondBestDistance = bestDistance;
             bestDistance = distance;
             bestMatch = matchIndex;
-        }
+        } else if (distance < secondBestDistance)
+            secondBestDistance = distance;
         searchStart = static_cast<unsigned>(matchIndex + 1);
     }
 
@@ -1359,7 +1363,34 @@ std::optional<SimpleRange> WritingToolsController::validatedRangeForSuggestionMa
         return std::nullopt;
     }
 
-    return resolveCharacterRange(sessionRange, { bestMatch, expectedCurrentText.length() });
+    if (secondBestDistance == bestDistance) {
+        RELEASE_LOG(WritingTools, "WritingToolsController::validatedRangeForSuggestionMarker bailing - ambiguous match for expected text of length %u", expectedCurrentText.length());
+        return std::nullopt;
+    }
+
+    CharacterRange resolvedCharacterRange { bestMatch, expectedCurrentText.length() };
+
+    auto suggestionID = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data()).suggestionID;
+    bool overlapsOtherSuggestion = false;
+    if (RefPtr document = this->document()) {
+        document->markers().forEach(sessionRange, { DocumentMarkerType::WritingToolsTextSuggestion }, [&](auto& otherNode, auto& otherMarker) {
+            if (std::get<DocumentMarker::WritingToolsTextSuggestionData>(otherMarker.data()).suggestionID == suggestionID)
+                return false;
+            auto otherRange = characterRange(sessionRange, makeSimpleRange(otherNode, otherMarker));
+            if (resolvedCharacterRange.location < otherRange.location + otherRange.length && otherRange.location < resolvedCharacterRange.location + resolvedCharacterRange.length) {
+                overlapsOtherSuggestion = true;
+                return true;
+            }
+            return false;
+        });
+    }
+
+    if (overlapsOtherSuggestion) {
+        RELEASE_LOG(WritingTools, "WritingToolsController::validatedRangeForSuggestionMarker bailing - re-anchored range overlaps another suggestion marker");
+        return std::nullopt;
+    }
+
+    return resolveCharacterRange(sessionRange, resolvedCharacterRange);
 }
 
 std::optional<std::tuple<Node&, DocumentMarker&>> WritingToolsController::findTextSuggestionMarkerContainingRange(const SimpleRange& range) const
