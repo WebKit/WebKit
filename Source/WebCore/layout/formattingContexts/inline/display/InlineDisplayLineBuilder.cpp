@@ -510,7 +510,7 @@ std::optional<InlineDisplay::Line::Ellipsis> InlineDisplayLineBuilder::applyElli
         );
     }();
 
-    if (ellipsisText.isNull())
+    if (ellipsisText.isEmpty())
         return { };
 
     auto ellipsisRect = trailingEllipsisVisualRectAfterTruncation(truncationPolicy, ellipsisText, displayLine, displayBoxes);
