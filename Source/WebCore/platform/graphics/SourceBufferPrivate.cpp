@@ -631,7 +631,7 @@ void SourceBufferPrivate::computeEvictionData(ComputeEvictionDataRule rule)
                 });
             }
 
-            PlatformTimeRanges buffered { MediaTime::zeroTime(), MediaTime::positiveInfiniteTime() };
+            PlatformTimeRanges buffered { currentTime, MediaTime::positiveInfiniteTime() };
             iterateTrackBuffers([&](const TrackBuffer& trackBuffer) {
                 buffered.intersectWith(trackBuffer.buffered());
             });
@@ -1795,12 +1795,15 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, const MediaTime& cur
         const auto minimumRangeStartAfterCurrentTime = currentTime + timeChunk;
 
         do {
-            PlatformTimeRanges buffered { MediaTime::zeroTime(), MediaTime::positiveInfiniteTime() };
+            PlatformTimeRanges buffered { currentTime, MediaTime::positiveInfiniteTime() };
             iterateTrackBuffers([&](const TrackBuffer& trackBuffer) {
                 buffered.intersectWith(trackBuffer.buffered());
             });
 
             auto rangeEndAfterCurrentTime = buffered.maximumBufferedTime();
+            if (!buffered.length())
+                break;
+
             if (!rangeEndAfterCurrentTime.isValid()) {
                 ASSERT_NOT_REACHED();
                 break;
