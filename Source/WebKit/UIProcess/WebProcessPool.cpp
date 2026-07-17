@@ -72,6 +72,7 @@
 #include "WKContextPrivate.h"
 #include "WebAutomationSession.h"
 #include "WebBackForwardCache.h"
+#include "WebBackForwardCacheEntry.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
 #include "WebCompiledContentRuleList.h"
@@ -2194,6 +2195,16 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
                     return;
                 }
             }
+            if (RefPtr entry = targetItem->backForwardCacheEntry()) {
+                if (RefPtr process = entry->process(); process && process->state() != AuxiliaryProcessProxy::State::Terminated) {
+                    ASSERT(isolatedProcessType != WebProcessProxy::IsolatedProcessType::Shared);
+                    prepareProcessForNavigation(process.releaseNonNull(), page, nullptr,
+                        "Using target back/forward item's process (in-process BFCache)"_s, isolatedProcessType,
+                        site, mainFrameSite, navigation, lockdownMode, enhancedSecurity, loadedWebArchive,
+                        WTF::move(dataStore), WTF::move(completionHandler));
+                    return;
+                }
+            }
         }
     }
 
@@ -2395,11 +2406,9 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
         }
     }
 
-    const bool treatAsSameOriginNavigation = [&targetURL, &sourceURL, &frame, siteIsolationEnabled] {
+    const bool treatAsSameOriginNavigation = [&targetURL, &sourceURL, siteIsolationEnabled] {
         if (siteIsolationEnabled) {
             if (targetURL.protocolIsAbout() && !SecurityPolicy::shouldInheritSecurityOriginFromOwner(targetURL))
-                return false;
-            if (frame.isMainFrame() && targetURL.protocolIsData())
                 return false;
         }
 
