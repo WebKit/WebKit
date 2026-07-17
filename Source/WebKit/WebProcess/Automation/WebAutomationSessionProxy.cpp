@@ -912,6 +912,19 @@ void WebAutomationSessionProxy::getComputedLabel(WebCore::PageIdentifier pageID,
     completionHandler(std::nullopt, axObject->computedLabel());
 }
 
+void WebAutomationSessionProxy::getAccessibilityProperties(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, CompletionHandler<void(std::optional<String>, std::optional<String>, std::optional<String>)>&& completionHandler)
+{
+    String errorType;
+    RefPtr axObject = getAccessibilityObjectForNode(pageID, frameID, nodeHandle, errorType);
+
+    if (!errorType.isNull()) {
+        completionHandler(errorType, std::nullopt, std::nullopt);
+        return;
+    }
+
+    completionHandler(std::nullopt, axObject->computedLabel(), axObject->computedRoleString());
+}
+
 void WebAutomationSessionProxy::selectOptionElement(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, CompletionHandler<void(std::optional<String>)>&& completionHandler)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);

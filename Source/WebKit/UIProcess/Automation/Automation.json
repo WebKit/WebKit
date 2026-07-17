@@ -3,6 +3,15 @@
     "description": "Automation domain exposes commands for automating user interactions with the browser.",
     "types": [
         {
+            "id": "AccessibilityNode",
+            "type": "object",
+            "description": "Snapshot of a DOM node's accessibility properties.",
+            "properties": [
+                { "name": "label", "type": "string"  },
+                { "name": "role", "type": "string" }
+            ]
+        },
+        {
             "id": "Point",
             "type": "object",
             "properties": [
@@ -710,6 +719,19 @@
             ],
             "returns": [
                 { "name": "label", "type": "string", "description": "The computed label for the element." }
+            ],
+            "async": true
+        },
+        {
+            "name": "getAccessibilityProperties",
+            "description": "Get computed accessibility properties for a DOM element.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "description": "The handle for the frame that contains the element. The main frame is used if this parameter is empty string." },
+                { "name": "nodeHandle", "$ref": "NodeHandle", "description": "The handle of the element to get the label of." }
+            ],
+            "returns": [
+                { "name": "node", "$ref": "AccessibilityNode" }
             ],
             "async": true
         },
