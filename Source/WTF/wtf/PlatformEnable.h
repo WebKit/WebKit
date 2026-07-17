@@ -313,6 +313,14 @@
 #define ENABLE_INSPECTOR_EXTENSIONS 0
 #endif
 
+// When enabled, the Web Inspector surfaces per-frame targets to the frontend, and routes the Page
+// and Network domains through the UIProcess "web-page" target, for every inspection -- not only
+// when Site Isolation is enabled. This decouples the inspector's frame-target architecture from
+// Site Isolation so inspection behaves the same regardless of that setting.
+#if !defined(ENABLE_INSPECTOR_FRAME_TARGETS)
+#define ENABLE_INSPECTOR_FRAME_TARGETS 0
+#endif
+
 #if !defined(ENABLE_INSPECTOR_TELEMETRY)
 #define ENABLE_INSPECTOR_TELEMETRY 0
 #endif

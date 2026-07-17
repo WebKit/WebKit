@@ -6076,14 +6076,17 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
     RefPtr mainFrameInPreviousProcess = m_mainFrame;
     Ref preferences = m_preferences;
     std::optional<WebCore::FrameIdentifier> oldMainFrameID;
-    if (mainFrameInPreviousProcess && preferences->siteIsolationEnabled()) {
+    if (mainFrameInPreviousProcess) {
+        // The inspector's frame-target commit (WebPageInspectorController::didCommitProvisionalPage)
+        // needs the previous main frame's identifier whenever frame targets are surfaced, which is
+        // no longer tied to Site Isolation. Capture it regardless of that setting.
         oldMainFrameID = mainFrameInPreviousProcess->frameID();
 
         // Update the back/forward list so existing entries use the new main frame's FrameIdentifier.
         // This is needed for back/forward navigations that trigger a process swap, since no new
         // back/forward list item is added (unlike forward navigations where backForwardAddItemShared
-        // handles the update).
-        if (*oldMainFrameID != frameID)
+        // handles the update). Only Site Isolation reassigns the main frame's identifier on swap.
+        if (preferences->siteIsolationEnabled() && *oldMainFrameID != frameID)
             backForwardList().updateFrameIdentifier(*oldMainFrameID, frameID);
     }
 

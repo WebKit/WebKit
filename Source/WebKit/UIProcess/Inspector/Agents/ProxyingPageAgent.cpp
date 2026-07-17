@@ -31,6 +31,7 @@
 #include "WebFrameProxy.h"
 #include "WebInspectorBackendMessages.h"
 #include "WebPageProxy.h"
+#include "WebPreferences.h"
 #include "WebProcessProxy.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
@@ -217,8 +218,7 @@ void ProxyingPageAgent::disableInstrumentationForProcess(WebProcessProxy& webPro
 CommandResult<void> ProxyingPageAgent::enable()
 {
     Ref<WebPageProxy> inspectedPage = m_inspectedPage.get();
-    Ref preferences = inspectedPage->preferences();
-    if (!preferences->siteIsolationEnabled())
+    if (!inspectedPage->preferences().inspectorFrameTargetsEnabled())
         return { };
 
     m_enabled = true;

@@ -201,6 +201,16 @@ void PageInspectorController::siteIsolationFirstEnabled()
     m_identifierRegistry = Inspector::BackendIdentifierRegistry::create();
 }
 
+bool inspectorFrameTargetsEnabled(const Settings& settings)
+{
+#if ENABLE(INSPECTOR_FRAME_TARGETS)
+    UNUSED_PARAM(settings);
+    return true;
+#else
+    return settings.siteIsolationEnabled();
+#endif
+}
+
 void PageInspectorController::inspectedPageDestroyed()
 {
     // Clean up resources and disconnect local and remote frontends.

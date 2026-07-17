@@ -71,6 +71,12 @@ public:
     FOR_EACH_WEBKIT_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
     FOR_EACH_WEBKIT_PREFERENCE_WITH_INSPECTOR_OVERRIDE(DECLARE_INSPECTOR_OVERRIDE_SETTERS)
 
+    // Whether the Web Inspector uses its frame-target architecture -- per-frame targets, plus the
+    // Page and Network domains served from this (UIProcess) "web-page" target -- for pages using
+    // these preferences. True when siteIsolationEnabled(), and (when ENABLE(INSPECTOR_FRAME_TARGETS)
+    // is set) for every inspection, so inspection behaves the same regardless of Site Isolation.
+    bool inspectorFrameTargetsEnabled() const;
+
     static const Vector<RefPtr<API::Object>>& features();
     static const Vector<RefPtr<API::Object>>& experimentalFeatures();
     static const Vector<RefPtr<API::Object>>& internalDebugFeatures();

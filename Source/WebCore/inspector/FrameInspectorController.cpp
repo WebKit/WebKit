@@ -76,7 +76,7 @@ FrameInspectorController::FrameInspectorController(LocalFrame& frame, PageInspec
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef(), &parentPageController.backendDispatcher()))
     , m_executionStopwatch(Stopwatch::create())
 {
-    if (frame.settings().siteIsolationEnabled())
+    if (inspectorFrameTargetsEnabled(frame.settings()))
         createConsoleAgent();
 }
 
@@ -143,7 +143,7 @@ void FrameInspectorController::createLazyAgents()
     if (!frame)
         return;
 
-    if (!frame->settings().siteIsolationEnabled())
+    if (!inspectorFrameTargetsEnabled(frame->settings()))
         return;
 
     // Create debugger before agents that depend on it.

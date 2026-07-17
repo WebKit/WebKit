@@ -63,10 +63,10 @@ PageNetworkAgent::~PageNetworkAgent() = default;
 
 Inspector::Protocol::ErrorStringOr<void> PageNetworkAgent::enable()
 {
-    // Under Site Isolation, ProxyingNetworkAgent in the UIProcess handles Network
-    // events for all processes. PageNetworkAgent should not be enabled to avoid
-    // duplicate events for same-process frames.
-    if (RefPtr page = m_inspectedPage.get(); page && page->settings().siteIsolationEnabled())
+    // Under the frame-target architecture, ProxyingNetworkAgent in the UIProcess handles Network
+    // events for all processes, so this in-process agent stays inert to avoid duplicate events for
+    // same-process frames.
+    if (RefPtr page = m_inspectedPage.get(); page && inspectorFrameTargetsEnabled(page->settings()))
         return { };
 
     return InspectorNetworkAgent::enable();

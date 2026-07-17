@@ -959,7 +959,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebPreferences::forceSiteIsolationAlwaysOnForTesting();
 
     updatePreferences(parameters.store);
-    if (page->settings().siteIsolationEnabled()) {
+    // Switch the inspector to its frame-target architecture: a backend-coordinated identifier
+    // registry (so frame/loader IDs are process-qualified and match the events the UIProcess
+    // proxying agents synthesize) and a per-frame console agent. See inspectorFrameTargetsEnabled().
+    if (inspectorFrameTargetsEnabled(page->settings())) {
         page->inspectorController().siteIsolationFirstEnabled();
         if (RefPtr frame = page->localMainFrame())
             frame->inspectorController().siteIsolationFirstEnabled();

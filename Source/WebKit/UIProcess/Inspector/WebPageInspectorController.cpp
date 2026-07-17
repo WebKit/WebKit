@@ -40,6 +40,7 @@
 #include "WebFrameProxy.h"
 #include "WebPageInspectorAgentBase.h"
 #include "WebPageProxy.h"
+#include "WebPreferences.h"
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
 #include <JavaScriptCore/InspectorAgentBase.h>
@@ -514,7 +515,11 @@ void WebPageInspectorController::createLazyAgents()
     m_agents.append(makeUniqueRef<InspectorBrowserAgent>(webPageContext));
     m_agents.append(makeUniqueRef<InspectorStorageAgent>(webPageContext));
 
-    if (protect(protect(m_inspectedPage)->preferences())->siteIsolationEnabled()) {
+    // When frame targets are in use, the Page and Network domains are served from this UIProcess
+    // "web-page" target by these proxying agents (aggregating events across all WebContent
+    // processes), rather than from the per-page target's in-process InspectorPageAgent /
+    // InspectorNetworkAgent. See WebPreferences::inspectorFrameTargetsEnabled().
+    if (protect(protect(m_inspectedPage)->preferences())->inspectorFrameTargetsEnabled()) {
         // ProxyingNetworkAgent and ProxyingPageAgent are RefCounted (for IPC MessageReceiver)
         // so they can't be stored in AgentRegistry which expects UniqueRef ownership.
         // Their lifecycle (didCreateFrontendAndBackend / willDestroyFrontendAndBackend) is
@@ -541,7 +546,7 @@ void WebPageInspectorController::removeTarget(const String& targetId)
 
 bool WebPageInspectorController::shouldManageFrameTargets() const
 {
-    return protect(protect(m_inspectedPage)->preferences())->siteIsolationEnabled();
+    return protect(protect(m_inspectedPage)->preferences())->inspectorFrameTargetsEnabled();
 }
 
 bool WebPageInspectorController::isNetworkInstrumentationEnabled() const

@@ -69,9 +69,10 @@ void PageDebugger::attachDebugger()
 {
     JSC::Debugger::attachDebugger();
 
-    // Under site isolation, FrameDebugger handles per-frame debugging.
-    // Don't attach the PageDebugger to frames to avoid conflicts.
-    if (m_page->settings().siteIsolationEnabled())
+    // Under the frame-target architecture, per-frame debugging is handled by FrameDebugger, so this
+    // PageDebugger is not attached to any frame (it exists only so PageDebuggerAgent can register
+    // the Debugger domain).
+    if (inspectorFrameTargetsEnabled(m_page->settings()))
         return;
 
     protect(m_page)->setDebugger(this);

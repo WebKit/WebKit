@@ -36,6 +36,7 @@
 #include "ProxyingNetworkAgentMessages.h"
 #include "WebInspectorBackendMessages.h"
 #include "WebPageProxy.h"
+#include "WebPreferences.h"
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
@@ -242,11 +243,8 @@ void ProxyingNetworkAgent::disableInstrumentationForProcess(WebKit::WebProcessPr
 
 CommandResult<void> ProxyingNetworkAgent::enable()
 {
-    // FIXME: <https://webkit.org/b/308890> Only needed under Site Isolation; without it,
-    // InspectorNetworkAgent in the single WebContent process handles network events.
     Ref inspectedPage = m_inspectedPage.get();
-    Ref prefs = inspectedPage->preferences();
-    if (!prefs->siteIsolationEnabled())
+    if (!inspectedPage->preferences().inspectorFrameTargetsEnabled())
         return { };
 
     m_enabled = true;

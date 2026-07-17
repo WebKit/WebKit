@@ -64,8 +64,15 @@ class LocalFrame;
 class Node;
 class Page;
 class PageDebugger;
+class Settings;
 class WebInjectedScriptManager;
 struct PageAgentContext;
+
+// Whether the Web Inspector uses its frame-target architecture -- per-frame targets, plus the Page
+// and Network domains served from the UIProcess "web-page" target -- for this page. True under Site
+// Isolation, and (when ENABLE(INSPECTOR_FRAME_TARGETS) is set) for every inspection, so inspection
+// behaves the same regardless of Site Isolation.
+WEBCORE_EXPORT bool inspectorFrameTargetsEnabled(const Settings&);
 
 class PageInspectorController final : public Inspector::InspectorEnvironment, public CanMakeCheckedPtr<PageInspectorController> {
     WTF_MAKE_NONCOPYABLE(PageInspectorController);
