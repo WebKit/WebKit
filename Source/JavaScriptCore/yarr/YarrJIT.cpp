@@ -455,7 +455,7 @@ public:
 };
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MaskedAlternativeInfo);
 
-static constexpr MacroAssembler::TrustedImm32 surrogateTagMask = MacroAssembler::TrustedImm32(0xdc00dc00);
+static constexpr MacroAssembler::TrustedImm32 surrogateTagMask = MacroAssembler::TrustedImm32(0xfc00fc00);
 static constexpr MacroAssembler::TrustedImm32 surrogatePairTags = MacroAssembler::TrustedImm32(0xdc00d800);
 
 #if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
@@ -542,7 +542,7 @@ void tryReadUnicodeCharSlowImpl(CCallHelpers& jit)
     // regs.input contains the pointer of the beginning of the string.
     // regs.endOfStringAddress contains the address one past the end of the string.
     // For architectures that put the surrogate masks and tags in registers,
-    // regs.surrogateTagMask contains 0xdc00dc00 and regs.surrogatePairTags contains 0xdc00d800.
+    // regs.surrogateTagMask contains 0xfc00fc00 and regs.surrogatePairTags contains 0xdc00d800.
     // When the YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP optimization is enabled and used,
     // regs.firstCharacterAdditionalReadSize is used to advance 2 characters when we read a non-BMP codepoint.
     // regs.unicodeAndSubpatternIdTemp is used as a temporary.
