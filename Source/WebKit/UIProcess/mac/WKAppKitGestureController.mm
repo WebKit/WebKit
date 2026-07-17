@@ -1426,8 +1426,6 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
     if (!webView)
         return NO;
 
-    NSPoint locationInViewCoordinates = [gestureRecognizer locationInView:webView];
-
     // While catching a decelerating scroll, only select gestures are allowed to begin:
     // - single click, so it can reset the interruption state
     // - pan, so it can continue with successive scrolls
@@ -1437,6 +1435,11 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
         if (gestureRecognizer != _panGestureRecognizer)
             return NO;
     }
+
+    if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
+        return YES;
+
+    NSPoint locationInViewCoordinates = [gestureRecognizer locationInView:webView];
 
     // An event over a scrollbar is a scrollbar interaction; only the mouse-tracking gesture (which drives
     // `Scrollbar::mouseDown` -> thumb drag) should handle it. The AppKit text-selection/context-menu gestures
