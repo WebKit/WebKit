@@ -119,14 +119,13 @@ TextUtil::FallbackFontList LineBoxBuilder::collectFallbackFonts(const InlineLeve
     if (fallbackFonts.isEmptyIgnoringNullReferences())
         return { };
 
-    auto fallbackFontsForInlineBoxes = m_fallbackFontsForInlineBoxes.get(&parentInlineBox);
-    auto numberOfFallbackFontsForInlineBox = fallbackFontsForInlineBoxes.computeSize();
+    auto& fallbackFontsForInlineBoxes = m_fallbackFontsForInlineBoxes.ensure(&parentInlineBox, [] {
+        return TextUtil::FallbackFontList { };
+    }).iterator->value;
     for (Ref font : fallbackFonts) {
         fallbackFontsForInlineBoxes.add(font.ptr());
         m_fallbackFontRequiresIdeographicBaseline = m_fallbackFontRequiresIdeographicBaseline || font->hasVerticalGlyphs();
     }
-    if (fallbackFontsForInlineBoxes.computeSize() != numberOfFallbackFontsForInlineBox)
-        m_fallbackFontsForInlineBoxes.set(&parentInlineBox, fallbackFontsForInlineBoxes);
     return fallbackFonts;
 }
 
