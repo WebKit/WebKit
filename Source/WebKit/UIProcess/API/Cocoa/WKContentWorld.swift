@@ -31,13 +31,3 @@ extension WKContentWorld {
         WKContentWorld(configuration: configuration)
     }
 }
-
-extension WKContentWorld.Configuration {
-    // SPI property declaration to keep others building for now
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    @_spi(_)
-    public var isInspectable: Bool {
-        get { inspectable }
-        set { inspectable = newValue }
-    }
-}

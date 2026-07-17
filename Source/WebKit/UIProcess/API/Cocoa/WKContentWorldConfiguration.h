@@ -64,7 +64,7 @@ WK_CLASS_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0))
 @property (nonatomic, getter=isJSHandleCreationEnabled, setter=setJSHandleCreationEnabled:) BOOL jsHandleCreationEnabled NS_SWIFT_NAME(jsHandleCreationEnabled);
 
 /*! @abstract A boolean indicating whether the JavaScript in this world is visible to the Web Inspector. */
-@property (nonatomic, getter=isInspectable) BOOL inspectable NS_SWIFT_NAME(inspectable);
+@property (nonatomic, getter=isInspectable) BOOL inspectable NS_SWIFT_NAME(isInspectable);
 
 @end
 
