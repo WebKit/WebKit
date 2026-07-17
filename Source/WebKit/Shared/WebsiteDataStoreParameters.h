@@ -46,6 +46,7 @@ struct WebsiteDataStoreParameters {
     std::optional<SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
     std::optional<SandboxExtension::Handle> parentBundleDirectoryExtensionHandle;
     std::optional<SandboxExtension::Handle> tempDirectoryExtensionHandle;
+    // FIXME: this extension should be removed
     std::optional<SandboxExtension::Handle> tempDirectoryRootExtensionHandle;
 #endif
 };

@@ -252,7 +252,7 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 
     RecordMessagePortTransferDestinationsForSiteIsolation(Vector<WebCore::MessagePortIdentifier> ports, WebCore::ProcessIdentifier destination) -> ()
 
-    AllowFileAccessFromWebProcess(WebCore::ProcessIdentifier processIdentifier, String url) -> ()
+    AllowFileAccessFromWebProcess(WebCore::ProcessIdentifier processIdentifier, String url, std::optional<WebKit::SandboxExtensionHandle> sandboxExtensionHandle) -> ()
     AllowFilesAccessFromWebProcess(WebCore::ProcessIdentifier processIdentifier, Vector<String> urls) -> () ReplyCanDispatchOutOfOrder
 
     TerminateRemoteWorkerContextConnectionWhenPossible(enum:uint8_t WebKit::RemoteWorkerType workerType, PAL::SessionID sessionID,  WebCore::RegistrableDomain registrableDomain, WebCore::ProcessIdentifier processIdentifier);
