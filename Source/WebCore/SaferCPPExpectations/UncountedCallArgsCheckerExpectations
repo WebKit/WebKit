@@ -25,7 +25,6 @@ Modules/webaudio/AudioSummingJunction.cpp
 Modules/webaudio/AudioWorkletMessagingProxy.cpp
 Modules/webaudio/AudioWorkletNode.cpp
 Modules/webaudio/BaseAudioContext.h
-Modules/webaudio/ChannelMergerNode.cpp
 Modules/webaudio/ConvolverNode.cpp
 Modules/webaudio/DefaultAudioDestinationNode.cpp
 Modules/webaudio/DynamicsCompressorNode.cpp
@@ -156,7 +155,6 @@ editing/ApplyStyleCommand.cpp
 editing/BreakBlockquoteCommand.cpp
 editing/CompositeEditCommand.cpp
 editing/DeleteSelectionCommand.cpp
-editing/EditCommand.cpp
 editing/Editor.cpp
 editing/FrameSelection.cpp
 editing/ReplaceSelectionCommand.cpp
@@ -172,7 +170,6 @@ html/CachedHTMLCollection.h
 html/CachedHTMLCollectionInlines.h
 html/CollectionTraversalInlines.h
 html/CustomPaintCanvas.cpp
-html/FileInputType.cpp
 html/HTMLCanvasElement.cpp
 html/HTMLInputElement.cpp
 html/HTMLLinkElement.cpp
@@ -370,7 +367,6 @@ style/ChildChangeInvalidation.h
 style/ElementRuleCollector.cpp
 style/RuleData.h
 style/RuleSet.cpp
-style/RuleSetBuilder.cpp
 style/StyleAdjuster.cpp
 style/StyleDocumentScope.cpp
 style/StyleExtractorCustom.h

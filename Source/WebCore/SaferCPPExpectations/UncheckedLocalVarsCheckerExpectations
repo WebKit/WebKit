@@ -29,22 +29,16 @@ inspector/InspectorOverlay.cpp
 inspector/agents/InspectorCSSAgent.cpp
 inspector/agents/InspectorDOMAgent.cpp
 layout/formattingContexts/FormattingGeometry.cpp
-layout/formattingContexts/inline/InlineContentAligner.cpp
-layout/formattingContexts/inline/InlineContentBreaker.cpp
-layout/formattingContexts/inline/InlineLine.cpp
 layout/formattingContexts/inline/InlineLineBoxBuilder.cpp
 layout/formattingContexts/inline/InlineLineBuilder.cpp
 layout/formattingContexts/inline/InlineQuirks.cpp
 layout/formattingContexts/inline/IntrinsicWidthHandler.cpp
 layout/formattingContexts/inline/TextOnlySimpleLineBuilder.cpp
 layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp
-layout/formattingContexts/inline/ruby/RubyFormattingContext.cpp
 layout/formattingContexts/table/TableFormattingContext.cpp
-layout/formattingContexts/table/TableFormattingGeometry.cpp
 layout/formattingContexts/table/TableLayout.cpp
 layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp
 layout/integration/LayoutIntegrationBoxTreeUpdater.cpp
-layout/integration/inline/InlineIteratorBoxModernPath.h
 loader/cache/CachedSVGFont.cpp
 [ iOS ] page/DOMTimer.cpp
 page/DragController.cpp
@@ -206,4 +200,3 @@ svg/animation/SMILTimeContainer.cpp
 testing/Internals.cpp
 workers/WorkerGlobalScope.cpp
 workers/WorkerOrWorkletThread.cpp
-xml/XPathNodeSet.cpp

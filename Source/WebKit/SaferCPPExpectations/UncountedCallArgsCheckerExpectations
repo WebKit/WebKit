@@ -1,7 +1,1 @@
-Shared/API/c/WKArray.cpp
-Shared/Cocoa/WKNSArray.mm
 Shared/WebBackForwardListFrameItem.cpp
-UIProcess/WebFrameProxy.cpp
-UIProcess/WebProcessPool.cpp
-WebProcess/WebPage/Cocoa/WebPageCocoa.mm
-[ iOS ] WebProcess/WebPage/ios/WebPageIOS.mm

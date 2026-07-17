@@ -19,7 +19,6 @@ accessibility/AXTableHelpers.cpp
 accessibility/AccessibilityObject.cpp
 accessibility/AccessibilitySVGObject.cpp
 [ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
-animation/StyleOriginatedTimelinesController.cpp
 bindings/js/JSAbortSignalCustom.cpp
 bindings/js/JSCSSRuleListCustom.cpp
 bindings/js/JSCSSStyleDeclarationCustom.cpp
@@ -35,7 +34,6 @@ bindings/js/JSResizeObserverCustom.cpp
 bindings/js/JSTextTrackCueCustom.cpp
 css/CSSStyleSheet.cpp
 css/SelectorChecker.cpp
-css/StyleSheetContents.cpp
 css/values/CSSValueAggregates.h
 dom/ContainerNode.cpp
 dom/DocumentFragment.cpp
@@ -52,7 +50,6 @@ html/HTMLMediaElement.cpp
 html/HTMLObjectElement.cpp
 html/HTMLTableElement.cpp
 inspector/InspectorIdentifierRegistry.cpp
-inspector/InspectorStyleSheet.cpp
 inspector/agents/InspectorCSSAgent.cpp
 inspector/agents/InspectorNetworkAgent.cpp
 inspector/agents/InspectorPageAgent.cpp
@@ -65,9 +62,6 @@ page/LocalFrameView.cpp
 [ iOS ] page/ios/FrameIOS.mm
 [ Mac ] page/mac/ServicesOverlayController.mm
 [ iOS ] platform/audio/ios/AudioSessionIOS.mm
-platform/graphics/ca/GraphicsLayerCA.cpp
-platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm
-platform/graphics/filters/FilterOperations.cpp
 platform/graphics/filters/software/FEMorphologySoftwareApplier.cpp
 rendering/RenderCounter.cpp
 rendering/RenderElement.cpp
@@ -91,4 +85,3 @@ svg/SVGUseElement.cpp
 svg/animation/SMILTimeContainer.cpp
 testing/Internals.cpp
 testing/LegacyMockCDM.cpp
-xml/XPathNodeSet.cpp
