@@ -50,6 +50,42 @@ class ConfigDotJSONTest(unittest.TestCase):
         cwd = os.path.dirname(os.path.abspath(__file__))
         loadConfig.loadBuilderConfig({}, is_test_mode_enabled=True, master_prefix_path=cwd)
 
+    def test_force_retry_schedulers(self):
+        cwd = os.path.dirname(os.path.abspath(__file__))
+        c = {}
+        loadConfig.loadBuilderConfig(c, is_test_mode_enabled=True, master_prefix_path=cwd)
+
+        config = self.get_config()
+        builders_with_triggers = [b for b in config['builders'] if b.get('triggers')]
+        self.assertTrue(builders_with_triggers,
+                        'config.json has no builders with triggers; the force-retry registration is no longer exercised')
+
+        scheduler_by_name = {s.name: s for s in c['schedulers']}
+
+        for builder in builders_with_triggers:
+            scheduler_name = f'force-retry-{builder["name"]}'
+            self.assertIn(scheduler_name, scheduler_by_name,
+                          f'expected force-retry scheduler {scheduler_name!r} for builder with triggers')
+            scheduler = scheduler_by_name[scheduler_name]
+            self.assertEqual(scheduler.builderNames, [builder['name']])
+
+            triggers_param = next((p for p in scheduler._config_kwargs.get('properties', []) if p.name == 'triggers'), None)
+            self.assertIsNotNone(triggers_param, f'{scheduler_name} missing triggers parameter')
+            self.assertEqual(sorted(triggers_param.choices), sorted(builder['triggers']),
+                             f'{scheduler_name} choices drifted from config.json triggers')
+            self.assertEqual(sorted(triggers_param.default), sorted(builder['triggers']),
+                             f'{scheduler_name} default should be the full fan-out')
+            self.assertTrue(triggers_param.multiple)
+            self.assertTrue(triggers_param.required)
+            self.assertTrue(triggers_param.strict)
+
+        for builder in config['builders']:
+            if builder.get('triggers'):
+                continue
+            scheduler_name = f'force-retry-{builder["name"]}'
+            self.assertNotIn(scheduler_name, scheduler_by_name,
+                             f'unexpected force-retry scheduler for builder without triggers: {builder["name"]}')
+
     def test_tab_character(self):
         cwd = os.path.dirname(os.path.abspath(__file__))
         with open(os.path.join(cwd, 'config.json'), 'r') as config:

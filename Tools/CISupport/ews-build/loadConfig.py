@@ -27,7 +27,7 @@ import re
 
 from buildbot.scheduler import AnyBranchScheduler, Periodic, Dependent, Triggerable, Nightly
 from buildbot.schedulers.trysched import Try_Userpass
-from buildbot.schedulers.forcesched import ForceScheduler, StringParameter, FixedParameter, CodebaseParameter
+from buildbot.schedulers.forcesched import ChoiceStringParameter, CodebaseParameter, FixedParameter, ForceScheduler, StringParameter
 from buildbot.worker import Worker
 from buildbot.util import identifiers as buildbot_identifiers
 from buildbot.changes.filter import ChangeFilter
@@ -66,6 +66,11 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, setup_main_schedulers=True,
     c['workers'] = [Worker(worker['name'], passwords.get(worker['name'], 'password'), max_builds=worker.get('max_builds', 1)) for worker in config['workers']]
     if is_test_mode_enabled:
         c['workers'].append(Worker('local-worker', 'password', max_builds=1))
+
+    builder_triggers_map = {
+        builder['name']: list(builder.get('triggers') or [])
+        for builder in config['builders']
+    }
 
     c['builders'] = []
     for builder in config['builders']:
@@ -112,7 +117,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, setup_main_schedulers=True,
         name='try_build',
         buttonName='Try Build',
         reason=StringParameter(name='reason', default='Trying pull request', size=20),
-        builderNames=[str(builder['name']) for builder in config['builders']],
+        builderNames=[str(builder['name']) for builder in config['builders'] if not builder_triggers_map.get(builder['name'])],
         # Disable default enabled input fields: branch, repository, project, additional properties
         codebases=[CodebaseParameter('',
                    revision=FixedParameter(name='revision', default=''),
@@ -125,6 +130,35 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, setup_main_schedulers=True,
     )
     if setup_force_schedulers is True:
         c['schedulers'].append(forceScheduler)
+
+    if setup_force_schedulers is True:
+        for builder_name, builder_triggers in builder_triggers_map.items():
+            if not builder_triggers:
+                continue
+            c['schedulers'].append(ForceScheduler(
+                name=f'force-retry-{builder_name}',
+                buttonName='Try Build',
+                reason=StringParameter(name='reason', default='Selective retry', size=40),
+                builderNames=[builder_name],
+                codebases=[CodebaseParameter('',
+                           revision=FixedParameter(name='revision', default=''),
+                           repository=FixedParameter(name='repository', default=''),
+                           project=FixedParameter(name='project', default=''),
+                           branch=FixedParameter(name='branch', default=''))],
+                properties=[
+                    StringParameter(name='pr_number', label='Pull Request number (not bug number)', regex=r'^[0-9]{5,6}$', required=True, maxsize=6),
+                    StringParameter(name='ews_revision', label='WebKit git hash to checkout before retrying (optional)', required=False, maxsize=40),
+                    ChoiceStringParameter(
+                        name='triggers',
+                        label='Downstream testers to trigger:',
+                        choices=builder_triggers,
+                        multiple=True,
+                        strict=True,
+                        default=builder_triggers,
+                        required=True,
+                    ),
+                ],
+            ))
 
 
 # Copied from https://github.com/buildbot/buildbot/blob/master/master/buildbot/util/async_sort.py
