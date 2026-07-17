@@ -1122,7 +1122,10 @@ macro(GENERATE_IDL_BINDINGS _output_source _inputs _cpp_inputs)
 
             ${WebKit_DERIVED_SOURCES_DIR}/JS${_name}.h
         )
-        list(APPEND ${_output_source} ${WebKit_DERIVED_SOURCES_DIR}/JS${_name}.h)
+        list(APPEND ${_output_source}
+            ${WebKit_DERIVED_SOURCES_DIR}/JS${_name}.cpp
+            ${WebKit_DERIVED_SOURCES_DIR}/JS${_name}.h
+        )
     endforeach ()
 
     add_custom_command(
