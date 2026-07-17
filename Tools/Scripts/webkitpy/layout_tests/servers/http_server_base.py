@@ -73,7 +73,8 @@ class HttpServerBase(object):
         self._filesystem.maybe_make_directory(self._runtime_path)
 
     def ports_to_forward(self):
-        return [mapping['port'] for mapping in self._mappings]
+        # Device port-forwarding is TCP-only; forwarding a UDP port (e.g. QUIC/HTTP-3) as TCP silently breaks it.
+        return [mapping['port'] for mapping in self._mappings if not mapping.get('udp')]
 
     def start(self):
         """Starts the server. It is an error to start an already started server.
@@ -210,7 +211,10 @@ class HttpServerBase(object):
             raise ServerError("Server exited")
 
         for mapping in self._mappings:
-            if not self._is_running_on_port(mapping['port']):
+            if mapping.get('udp'):
+                if not self._is_udp_port_listening(mapping['port']):
+                    return False
+            elif not self._is_running_on_port(mapping['port']):
                 return False
         return True
 
@@ -228,6 +232,21 @@ class HttpServerBase(object):
         finally:
             s.close()
         return True
+
+    @staticmethod
+    def _is_udp_port_listening(port):
+        # No UDP equivalent of TCP connect(): the server holds the port bound, so a bind() to its address
+        # (127.0.0.1) failing with EADDRINUSE means "listening".
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            s.bind(('127.0.0.1', port))
+        except OSError as e:
+            if e.errno == errno.EADDRINUSE:
+                return True
+            raise
+        finally:
+            s.close()
+        return False
 
     def _check_that_all_ports_are_available(self):
         for mapping in self._mappings:

@@ -126,6 +126,14 @@ AutoInstall.register(Package('pycodestyle', Version(2, 14, 0)))
 AutoInstall.register(Package('pyfakefs', Version(5, 10, 2)))
 AutoInstall.register(Package('soupsieve', Version(2, 2, 1)))
 
+# aioquic (WPT WebTransport-over-HTTP/3 server) and its deps, pinned to what pip resolves for aioquic==1.2.0.
+# service-identity stays <=24.2.0: newer needs cryptography>=47, but cryptography is capped <45 (see webkitcorepy).
+AutoInstall.register(Package('pylsqpack', Version(0, 3, 22), wheel=True))
+AutoInstall.register(Package('pyasn1', Version(0, 6, 4)))
+AutoInstall.register(Package('pyasn1_modules', Version(0, 4, 2), pypi_name='pyasn1-modules', implicit_deps=['pyasn1']))
+AutoInstall.register(Package('service_identity', Version(24, 2, 0), pypi_name='service-identity', implicit_deps=['attr', 'cryptography', 'OpenSSL', 'pyasn1', 'pyasn1_modules']))
+AutoInstall.register(Package('aioquic', Version(1, 2, 0), wheel=True, implicit_deps=['cryptography', 'certifi', 'pylsqpack', 'service_identity']))
+
 if sys.platform == 'linux':
     # Keep websocket toplevel for WebDriverTests' imported selenium
     AutoInstall.register(Package('websocket', Version(1, 8, 0), pypi_name='websocket-client'))

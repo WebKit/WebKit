@@ -5500,6 +5500,9 @@ webkit.org/b/319310 [ Debug ] fast/repaint/iframe-avoid-redundant-repaint.html [
 webkit.org/b/319311 [ Debug ] fast/repaint/missing-out-of-flow-repaint-on-destroy.html [ Pass ImageOnlyFailure ]
 webkit.org/b/319312 [ Debug ] workers/bomb.html [ Skip ]
 
+# WebTransport is Cocoa-only (non-Cocoa ports are a stub). https://bugs.webkit.org/show_bug.cgi?id=319008
+imported/w3c/web-platform-tests/webtransport/ [ Skip ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

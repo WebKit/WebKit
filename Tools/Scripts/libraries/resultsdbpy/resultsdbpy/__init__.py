@@ -71,7 +71,7 @@ AutoInstall.register(Package('fakeredis', Version(1, 5, 2)))
 AutoInstall.register(Package('geomet', Version(0, 2, 1)))
 AutoInstall.register(Package('gremlinpython', Version(3, 4, 6)))
 AutoInstall.register(Package('isodate', Version(0, 6, 0)))
-AutoInstall.register(Package('pyasn1_modules', Version(0, 2, 8), pypi_name='pyasn1-modules'))
+AutoInstall.register(Package('pyasn1_modules', Version(0, 4, 2), pypi_name='pyasn1-modules'))
 AutoInstall.register(Package('redis', Version(3, 5, 3)))
 
 if sys.platform == 'linux':
@@ -80,7 +80,7 @@ if sys.platform == 'linux':
 else:
     AutoInstall.register(Package('selenium', Version(4, 12, 0), wheel=True))
 
-AutoInstall.register(Package('service_identity', Version(21, 1, 0), pypi_name='service-identity'))
+AutoInstall.register(Package('service_identity', Version(24, 2, 0), pypi_name='service-identity'))
 AutoInstall.register(Package('sortedcontainers', Version(2, 4, 0)))
 AutoInstall.register(Package('tornado', Version(4, 5, 3)))
 AutoInstall.register(Package('twisted', Version(21, 2, 0), pypi_name='Twisted', implicit_deps=[
