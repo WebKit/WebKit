@@ -292,6 +292,8 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
 #if ENABLE(TEST_FEATURE)
     case MessageName::TestWithSuperclass_TestAsyncMessage:
         return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSuperclass_TestAsyncMessageAnyThread:
+        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessageAnyThread>(globalObject, decoder);
     case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
         return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments>(globalObject, decoder);
     case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments:
@@ -306,6 +308,8 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
 #if ENABLE(TEST_FEATURE)
     case MessageName::TestWithSuperclass_TestAsyncMessageReply:
         return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessageReply>(globalObject, decoder);
+    case MessageName::TestWithSuperclass_TestAsyncMessageAnyThreadReply:
+        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessageAnyThreadReply>(globalObject, decoder);
     case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply:
         return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply>(globalObject, decoder);
     case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply:
@@ -429,6 +433,8 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
 #if ENABLE(TEST_FEATURE)
     case MessageName::TestWithSuperclass_TestAsyncMessage:
         return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSuperclass_TestAsyncMessageAnyThread:
+        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessageAnyThread>(globalObject, decoder);
     case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
         return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments>(globalObject, decoder);
     case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments:
@@ -1068,6 +1074,10 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         return Vector<ArgumentDescription> {
             { "twoStateEnum"_s, "WebKit::TestTwoStateEnum"_s },
         };
+    case MessageName::TestWithSuperclass_TestAsyncMessageAnyThread:
+        return Vector<ArgumentDescription> {
+            { "twoStateEnum"_s, "WebKit::TestTwoStateEnum"_s },
+        };
     case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
         return Vector<ArgumentDescription> { };
     case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments:
@@ -1087,6 +1097,10 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         };
 #if ENABLE(TEST_FEATURE)
     case MessageName::TestWithSuperclass_TestAsyncMessageReply:
+        return Vector<ArgumentDescription> {
+            { "result"_s, "uint64_t"_s },
+        };
+    case MessageName::TestWithSuperclass_TestAsyncMessageAnyThreadReply:
         return Vector<ArgumentDescription> {
             { "result"_s, "uint64_t"_s },
         };
@@ -1296,6 +1310,10 @@ std::optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(Mess
 #endif
 #if ENABLE(TEST_FEATURE)
     case MessageName::TestWithSuperclass_TestAsyncMessage:
+        return Vector<ArgumentDescription> {
+            { "result"_s, "uint64_t"_s },
+        };
+    case MessageName::TestWithSuperclass_TestAsyncMessageAnyThread:
         return Vector<ArgumentDescription> {
             { "result"_s, "uint64_t"_s },
         };

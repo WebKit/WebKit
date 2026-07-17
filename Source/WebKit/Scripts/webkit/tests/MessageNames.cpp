@@ -112,6 +112,8 @@ const MessageDescriptionsArray messageDescriptions {
     MessageDescription { "TestWithSuperclass_LoadURL"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #if ENABLE(TEST_FEATURE)
     MessageDescription { "TestWithSuperclass_TestAsyncMessage"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithSuperclass_TestAsyncMessageAnyThread"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithSuperclass_TestAsyncMessageAnyThreadReply"_s, ReceiverName::TestWithSuperclass, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSuperclass_TestAsyncMessageReply"_s, ReceiverName::TestWithSuperclass, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSuperclass_TestAsyncMessageWithConnection"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSuperclass_TestAsyncMessageWithConnectionReply"_s, ReceiverName::TestWithSuperclass, false, false, true, ProcessName::Unknown, ProcessName::Unknown },

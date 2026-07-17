@@ -25,7 +25,7 @@
     DispatchedTo=WebContent
 ]
 messages -> EventDispatcher {
-    WheelEvent(WebCore::PageIdentifier pageID, WebKit::WebWheelEvent event, WebCore::RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges)
+    WheelEvent(WebCore::PageIdentifier pageID, WebKit::WebWheelEvent event, WebCore::RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges) -> (bool handled) AnyThread
 #if ENABLE(IOS_TOUCH_EVENTS)
     TouchEvent(WebCore::PageIdentifier pageID, WebCore::FrameIdentifier frameID, WebKit::WebTouchEvent event) -> (bool handled, struct std::optional<WebKit::RemoteWebTouchEvent> transformedEvent) MainThreadCallback
 #endif

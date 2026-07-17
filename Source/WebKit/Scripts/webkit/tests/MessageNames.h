@@ -158,6 +158,8 @@ enum class MessageName : uint16_t {
     TestWithSuperclass_LoadURL,
 #if ENABLE(TEST_FEATURE)
     TestWithSuperclass_TestAsyncMessage,
+    TestWithSuperclass_TestAsyncMessageAnyThread,
+    TestWithSuperclass_TestAsyncMessageAnyThreadReply,
     TestWithSuperclass_TestAsyncMessageReply,
     TestWithSuperclass_TestAsyncMessageWithConnection,
     TestWithSuperclass_TestAsyncMessageWithConnectionReply,

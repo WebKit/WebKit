@@ -65,8 +65,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
     ViewWillEndLiveResize()
 
     ExecuteEditCommandWithCallback(String name, String argument) -> ()
-    KeyEvent(WebCore::FrameIdentifier frameID, WebKit::WebKeyboardEvent event)
-    MouseEvent(WebCore::FrameIdentifier frameID, WebKit::WebMouseEvent event, std::optional<Vector<WebKit::SandboxExtensionHandle>> sandboxExtensions)
+    KeyEvent(WebCore::FrameIdentifier frameID, WebKit::WebKeyboardEvent event) -> (bool handled)
+    MouseEvent(WebCore::FrameIdentifier frameID, WebKit::WebMouseEvent event, std::optional<Vector<WebKit::SandboxExtensionHandle>> sandboxExtensions) -> (bool handled, struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
     SetLastKnownMousePosition(WebCore::FrameIdentifier frameID, WebCore::DoublePoint eventPoint, WebCore::DoublePoint globalPoint, enum:uint8_t std::optional<WebCore::LastKnownMousePositionSource> source);
 
 #if PLATFORM(COCOA)

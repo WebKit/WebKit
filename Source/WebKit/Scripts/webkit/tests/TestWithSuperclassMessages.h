@@ -103,6 +103,38 @@ private:
 #endif
 
 #if ENABLE(TEST_FEATURE)
+class TestAsyncMessageAnyThread {
+public:
+    using Arguments = std::tuple<WebKit::TestTwoStateEnum>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageAnyThread; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageAnyThreadReply; }
+    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::AnyThread;
+    using ReplyArguments = std::tuple<uint64_t>;
+    using Reply = CompletionHandler<void(uint64_t)>;
+    using Promise = WTF::NativePromise<uint64_t, IPC::Error>;
+    explicit TestAsyncMessageAnyThread(WebKit::TestTwoStateEnum twoStateEnum)
+        : m_twoStateEnum(twoStateEnum)
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        encoder << m_twoStateEnum;
+    }
+
+private:
+    WebKit::TestTwoStateEnum m_twoStateEnum;
+};
+#endif
+
+#if ENABLE(TEST_FEATURE)
 class TestAsyncMessageWithNoArguments {
 public:
     using Arguments = std::tuple<>;
@@ -260,6 +292,33 @@ public:
     static constexpr bool deferSendingIfSuspended = false;
 
     explicit TestAsyncMessageReply(uint64_t result)
+        : m_result(result)
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        encoder << m_result;
+    }
+
+private:
+    uint64_t m_result;
+};
+#endif
+
+#if ENABLE(TEST_FEATURE)
+class TestAsyncMessageAnyThreadReply {
+public:
+    using Arguments = std::tuple<uint64_t>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageAnyThreadReply; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    explicit TestAsyncMessageAnyThreadReply(uint64_t result)
         : m_result(result)
     {
     }

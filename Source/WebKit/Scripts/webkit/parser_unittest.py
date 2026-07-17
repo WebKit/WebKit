@@ -257,6 +257,16 @@ _expected_model_test_with_superclass = {
             'conditions': ('ENABLE(TEST_FEATURE)'),
         },
         {
+            'name': 'TestAsyncMessageAnyThread',
+            'parameters': (
+                ('WebKit::TestTwoStateEnum', 'twoStateEnum'),
+            ),
+            'reply_parameters': (
+                ('uint64_t', 'result'),
+            ),
+            'conditions': ('ENABLE(TEST_FEATURE)'),
+        },
+        {
             'name': 'TestAsyncMessageWithNoArguments',
             'parameters': (),
             'reply_parameters': (),

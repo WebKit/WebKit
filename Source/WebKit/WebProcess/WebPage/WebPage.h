@@ -2374,8 +2374,8 @@ private:
 
     void setNeedsFontAttributes(bool);
 
-    void mouseEvent(WebCore::FrameIdentifier, const WebMouseEvent&, std::optional<Vector<SandboxExtensionHandle>>&& sandboxExtensions);
-    void keyEvent(WebCore::FrameIdentifier, const WebKeyboardEvent&);
+    void mouseEvent(WebCore::FrameIdentifier, const WebMouseEvent&, std::optional<Vector<SandboxExtensionHandle>>&& sandboxExtensions, CompletionHandler<void(bool handled, std::optional<WebCore::RemoteUserInputEventData>)>&&);
+    void keyEvent(WebCore::FrameIdentifier, const WebKeyboardEvent&, CompletionHandler<void(bool handled)>&&);
 
     void setLastKnownMousePosition(WebCore::FrameIdentifier, const WebCore::DoublePoint&, const WebCore::DoublePoint&, std::optional<WebCore::LastKnownMousePositionSource>&& = std::nullopt);
 
@@ -3069,7 +3069,7 @@ private:
     unsigned m_cachedPageCount { 0 };
 
     struct DeferredDidReceiveMouseEvent {
-        std::optional<WebEventType> type;
+        CompletionHandler<void(bool handled, std::optional<WebCore::RemoteUserInputEventData>)> completionHandler;
         bool handled { false };
     };
     std::optional<DeferredDidReceiveMouseEvent> m_deferredDidReceiveMouseEvent;

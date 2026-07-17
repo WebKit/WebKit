@@ -31,7 +31,6 @@
 #include "RemoteWebTouchEvent.h"
 #include "WebEventConversion.h"
 #include "WebPage.h"
-#include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include "WebTouchEvent.h"
@@ -119,7 +118,7 @@ void EventDispatcher::initializeConnection(IPC::Connection& connection)
     connection.addMessageReceiver(m_queue.get(), *this, Messages::EventDispatcher::messageReceiverName());
 }
 
-void EventDispatcher::internalWheelEvent(PageIdentifier pageID, const WebWheelEvent& wheelEvent, RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges, WheelEventOrigin wheelEventOrigin)
+void EventDispatcher::internalWheelEvent(PageIdentifier pageID, const WebWheelEvent& wheelEvent, RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto processingSteps = OptionSet<WebCore::WheelEventProcessingSteps> { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::BlockingDOMEventDispatch };
 
@@ -131,7 +130,7 @@ void EventDispatcher::internalWheelEvent(PageIdentifier pageID, const WebWheelEv
             }
         }
     });
-    
+
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
     do {
         auto platformWheelEvent = platform(wheelEvent);
@@ -146,10 +145,10 @@ void EventDispatcher::internalWheelEvent(PageIdentifier pageID, const WebWheelEv
         Locker locker { m_scrollingTreesLock };
         RefPtr scrollingTree = m_scrollingTrees.get(pageID);
         if (!scrollingTree) {
-            dispatchWheelEventViaMainThread(pageID, wheelEvent, processingSteps, wheelEventOrigin);
+            dispatchWheelEventViaMainThread(pageID, wheelEvent, processingSteps, WTF::move(completionHandler));
             break;
         }
-        
+
         // FIXME: It's pretty horrible that we're updating the back/forward state here.
         // WebCore should always know the current state and know when it changes so the
         // scrolling tree can be notified.
@@ -169,10 +168,10 @@ void EventDispatcher::internalWheelEvent(PageIdentifier pageID, const WebWheelEv
 
         scrollingTree->willProcessWheelEvent();
 
-        ScrollingThread::dispatch([scrollingTree, wheelEvent, platformWheelEvent, processingSteps, useMainThreadForScrolling, pageID, wheelEventOrigin, this, protectedThis = Ref { *this }] {
+        ScrollingThread::dispatch([scrollingTree, wheelEvent, platformWheelEvent, processingSteps, useMainThreadForScrolling, pageID, this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] mutable {
             if (useMainThreadForScrolling) {
                 scrollingTree->willSendEventToMainThread(platformWheelEvent);
-                dispatchWheelEventViaMainThread(pageID, wheelEvent, processingSteps, wheelEventOrigin);
+                dispatchWheelEventViaMainThread(pageID, wheelEvent, processingSteps, WTF::move(completionHandler));
                 scrollingTree->waitForEventToBeProcessedByMainThread(platformWheelEvent);
                 return;
             }
@@ -180,33 +179,34 @@ void EventDispatcher::internalWheelEvent(PageIdentifier pageID, const WebWheelEv
             auto result = scrollingTree->handleWheelEvent(platformWheelEvent, processingSteps);
 
             if (result.needsMainThreadProcessing()) {
-                dispatchWheelEventViaMainThread(pageID, wheelEvent, result.steps, wheelEventOrigin);
-                if (result.steps.contains(WheelEventProcessingSteps::SynchronousScrolling))
+                if (result.steps.contains(WheelEventProcessingSteps::SynchronousScrolling)) {
+                    dispatchWheelEventViaMainThread(pageID, wheelEvent, result.steps, WTF::move(completionHandler));
                     return;
+                }
+                dispatchWheelEventViaMainThread(pageID, wheelEvent, result.steps, [](bool) { });
             }
 
             // If we scrolled on the scrolling thread (even if we send the event to the main thread for passive event handlers)
             // respond to the UI process that the event was handled.
-            if (wheelEventOrigin == WheelEventOrigin::UIProcess)
-                sendDidReceiveEvent(pageID, wheelEvent.type(), result.wasHandled);
+            completionHandler(result.wasHandled);
         });
     } while (false);
 #else
     UNUSED_PARAM(rubberBandableEdges);
 
-    dispatchWheelEventViaMainThread(pageID, wheelEvent, processingSteps, wheelEventOrigin);
+    dispatchWheelEventViaMainThread(pageID, wheelEvent, processingSteps, WTF::move(completionHandler));
 #endif
 }
 
-void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& wheelEvent, RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges)
+void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& wheelEvent, RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     if (m_momentumEventDispatcher->handleWheelEvent(pageID, wheelEvent, rubberBandableEdges)) {
-        sendDidReceiveEvent(pageID, wheelEvent.type(), true);
+        completionHandler(true);
         return;
     }
 #endif
-    internalWheelEvent(pageID, wheelEvent, rubberBandableEdges, WheelEventOrigin::UIProcess);
+    internalWheelEvent(pageID, wheelEvent, rubberBandableEdges, WTF::move(completionHandler));
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
@@ -303,30 +303,27 @@ void EventDispatcher::dispatchTouchEvents()
 }
 #endif
 
-void EventDispatcher::dispatchWheelEventViaMainThread(WebCore::PageIdentifier pageID, const WebWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, WheelEventOrigin wheelEventOrigin)
+void EventDispatcher::dispatchWheelEventViaMainThread(WebCore::PageIdentifier pageID, const WebWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
-    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, pageID, wheelEvent, wheelEventOrigin, steps = processingSteps - WheelEventProcessingSteps::AsyncScrolling] {
-        dispatchWheelEvent(pageID, wheelEvent, steps, wheelEventOrigin);
+    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, pageID, wheelEvent, steps = processingSteps - WheelEventProcessingSteps::AsyncScrolling, completionHandler = WTF::move(completionHandler)] mutable {
+        dispatchWheelEvent(pageID, wheelEvent, steps, WTF::move(completionHandler));
     });
 }
 
-void EventDispatcher::dispatchWheelEvent(PageIdentifier pageID, const WebWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, WheelEventOrigin wheelEventOrigin)
+void EventDispatcher::dispatchWheelEvent(PageIdentifier pageID, const WebWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
     RefPtr webPage = WebProcess::singleton().webPage(pageID);
-    if (!webPage)
-        return;
 
     bool handled = false;
-    if (webPage->mainFrame()) {
+    if (webPage && webPage->mainFrame()) {
         auto [result, _] = webPage->wheelEvent(webPage->mainFrame()->frameID(), wheelEvent, processingSteps);
         handled = result.wasHandled();
     }
 
-    if (processingSteps.contains(WheelEventProcessingSteps::SynchronousScrolling) && wheelEventOrigin == EventDispatcher::WheelEventOrigin::UIProcess)
-        sendDidReceiveEvent(pageID, wheelEvent.type(), handled);
+    completionHandler(handled);
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
@@ -341,11 +338,6 @@ void EventDispatcher::dispatchGestureEvent(FrameIdentifier frameID, PageIdentifi
     webPage->gestureEvent(frameID, gestureEvent, WTF::move(completionHandler));
 }
 #endif
-
-void EventDispatcher::sendDidReceiveEvent(PageIdentifier pageID, WebEventType eventType, bool didHandleEvent)
-{
-    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::DidReceiveEventIPC(eventType, didHandleEvent, std::nullopt), pageID);
-}
 
 void EventDispatcher::notifyScrollingTreesDisplayDidRefresh(PlatformDisplayID displayID)
 {
@@ -396,7 +388,7 @@ void EventDispatcher::setScrollingAccelerationCurve(PageIdentifier pageID, std::
 
 void EventDispatcher::handleSyntheticWheelEvent(WebCore::PageIdentifier pageIdentifier, const WebWheelEvent& event, WebCore::RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges)
 {
-    internalWheelEvent(pageIdentifier, event, rubberBandableEdges, WheelEventOrigin::MomentumEventDispatcher);
+    internalWheelEvent(pageIdentifier, event, rubberBandableEdges, [](bool) { });
 }
 
 void EventDispatcher::startDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID displayID)

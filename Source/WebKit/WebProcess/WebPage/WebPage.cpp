@@ -3953,7 +3953,7 @@ void WebPage::contextMenuForKeyEvent()
 }
 #endif
 
-void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEvent, std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensions)
+void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEvent, std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensions, CompletionHandler<void(bool, std::optional<RemoteUserInputEventData>)>&& completionHandler)
 {
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
 
@@ -3966,7 +3966,7 @@ void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEven
 #endif
 
     if (!shouldHandleEvent) {
-        send(Messages::WebPageProxy::DidReceiveEventIPC(mouseEvent.type(), false, std::nullopt));
+        completionHandler(false, std::nullopt);
         return;
     }
 
@@ -3988,7 +3988,7 @@ void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEven
         auto mouseEventResult = frame->handleMouseEvent(mouseEvent);
         if (auto remoteMouseEventData = mouseEventResult.remoteUserInputEventData()) {
             revokeSandboxExtensions(mouseEventSandboxExtensions);
-            send(Messages::WebPageProxy::DidReceiveEventIPC(mouseEvent.type(), false, *remoteMouseEventData));
+            completionHandler(false, *remoteMouseEventData);
             return;
         }
         handled = mouseEventResult.wasHandled();
@@ -4017,17 +4017,16 @@ void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEven
 
     if (shouldDeferDidReceiveEvent) {
         // For mousemove events where the user is only hovering (not clicking and dragging),
-        // we defer sending the DidReceiveEvent() IPC message until the end of the rendering
-        // update to throttle the rate of these events to the rendering update frequency.
-        // This logic works in tandem with the mouse event queue in the UI process, which
-        // coalesces mousemove events until the DidReceiveEvent() message is received after
-        // the rendering update.
-        m_deferredDidReceiveMouseEvent = { { mouseEvent.type(), handled } };
+        // we defer sending the mouse event reply until the end of the rendering update to
+        // throttle the rate of these events to the rendering update frequency. This logic
+        // works in tandem with the mouse event queue in the UI process, which coalesces
+        // mousemove events until the reply is received after the rendering update.
+        m_deferredDidReceiveMouseEvent = { { WTF::move(completionHandler), handled } };
         protect(corePage())->scheduleRenderingUpdate({ });
         return;
     }
 
-    send(Messages::WebPageProxy::DidReceiveEventIPC(mouseEvent.type(), handled, std::nullopt));
+    completionHandler(handled, std::nullopt);
 
 #if PLATFORM(IOS_FAMILY)
     if (mouseEvent.type() == WebEventType::MouseUp)
@@ -4077,7 +4076,7 @@ void WebPage::flushDeferredIntersectionObservations()
 void WebPage::flushDeferredDidReceiveMouseEvent()
 {
     if (auto info = std::exchange(m_deferredDidReceiveMouseEvent, std::nullopt))
-        send(Messages::WebPageProxy::DidReceiveEventIPC(*info->type, info->handled, std::nullopt));
+        info->completionHandler(info->handled, std::nullopt);
 }
 
 void WebPage::performHitTestForMouseEvent(const WebMouseEvent& event, CompletionHandler<void(WebHitTestResultData&&, OptionSet<WebEventModifier>)>&& completionHandler)
@@ -4156,7 +4155,7 @@ void WebPage::dispatchWheelEventWithoutScrolling(FrameIdentifier frameID, const 
 }
 #endif
 
-void WebPage::keyEvent(FrameIdentifier frameID, const WebKeyboardEvent& keyboardEvent)
+void WebPage::keyEvent(FrameIdentifier frameID, const WebKeyboardEvent& keyboardEvent, CompletionHandler<void(bool)>&& completionHandler)
 {
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
 
@@ -4170,7 +4169,7 @@ void WebPage::keyEvent(FrameIdentifier frameID, const WebKeyboardEvent& keyboard
     if (RefPtr frame = WebProcess::singleton().webFrame(frameID))
         handled = frame->handleKeyEvent(keyboardEvent);
 
-    send(Messages::WebPageProxy::DidReceiveEventIPC(keyboardEvent.type(), handled, std::nullopt));
+    completionHandler(handled);
 }
 
 bool WebPage::handleKeyEventByRelinquishingFocusToChrome(const KeyboardEvent& event)

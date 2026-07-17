@@ -27,6 +27,7 @@ from .opaque_ipc_types import is_opaque_type, opaque_ipc_types
 
 BUILTIN_ATTRIBUTE = "Builtin"
 MAINTHREADCALLBACK_ATTRIBUTE = "MainThreadCallback"
+ANYTHREADCALLBACK_ATTRIBUTE = "AnyThread"
 CALL_WITH_REPLY_ID_ATTRIBUTE = "CallWithReplyID"
 ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE = "AllowedWhenWaitingForSyncReply"
 ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE = "AllowedWhenWaitingForSyncReplyDuringUnboundedIPC"
