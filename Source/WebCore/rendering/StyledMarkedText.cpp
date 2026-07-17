@@ -66,6 +66,8 @@ static void computeStyleForPseudoElementStyle(StyledMarkedText::Style& style, co
         style.textDecorationStyles.linethrough.decorationStyle = decorationStyle;
         style.textDecorationStyles.linethrough.thickness = thickness;
     }
+
+    style.textShadow = pseudoElementStyle->textShadow();
 }
 
 static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, const StyledMarkedText::Style& baseStyle, const RenderText& renderer, const Style::ComputedStyle& lineStyle, const PaintInfo& paintInfo)
@@ -212,6 +214,9 @@ static Vector<StyledMarkedText> coalesceAdjacentWithSameRanges(Vector<StyledMark
             // Take text color of StyledMarkedText, maintaining insertion and priority order.
             if (text.type != MarkedText::Type::Unmarked && text.style.textStyles.hasExplicitlySetFillColor)
                 previousStyledMarkedText.style.textStyles.fillColor = text.style.textStyles.fillColor;
+            // Take the text-shadow of the frontmost highlight.
+            if (!text.highlightName.isNull())
+                previousStyledMarkedText.style.textShadow = text.style.textShadow;
             // Take the highlightName of the latest StyledMarkedText, regardless of priority.
             if (!text.highlightName.isNull())
                 previousStyledMarkedText.highlightName = text.highlightName;
