@@ -196,6 +196,7 @@ public:
     void updateBackingStore();
 
     void flushPendingState();
+    void flushPositionChanges(const OptionSet<CompositionReason>&, bool = false);
     void flushCompositingState(const OptionSet<CompositionReason>&, bool = false);
 
     bool hasPendingTilesCreation() const { return m_pendingTilesCreation; }

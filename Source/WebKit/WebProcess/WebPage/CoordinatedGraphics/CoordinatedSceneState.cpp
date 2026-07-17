@@ -129,16 +129,19 @@ void CoordinatedSceneState::flushCompositingState(const OptionSet<CompositionRea
 {
     commitPendingLayers();
 
-    // We update the tiles after flushing to release the state lock as early as possible.
-    Vector<Ref<CoordinatedPlatformLayer>, 16> layersWithPendingTileUpdates;
     {
         Locker stateLock { m_stateLock };
-        m_rootLayer->flushCompositingState(reasons, useSkia);
-        for (auto& layer : m_committedLayers) {
-            layer->flushCompositingState(reasons, useSkia);
-            if (layer->hasPendingBackingStoreTileUpdates())
-                layersWithPendingTileUpdates.append(Ref { layer });
-        }
+        m_rootLayer->flushPositionChanges(reasons, useSkia);
+        for (auto& layer : m_committedLayers)
+            layer->flushPositionChanges(reasons, useSkia);
+    }
+
+    Vector<Ref<CoordinatedPlatformLayer>, 16> layersWithPendingTileUpdates;
+    m_rootLayer->flushCompositingState(reasons, useSkia);
+    for (auto& layer : m_committedLayers) {
+        layer->flushCompositingState(reasons, useSkia);
+        if (layer->hasPendingBackingStoreTileUpdates())
+            layersWithPendingTileUpdates.append(Ref { layer });
     }
 
     for (auto& layer : layersWithPendingTileUpdates)

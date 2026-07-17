@@ -1019,6 +1019,40 @@ void CoordinatedPlatformLayer::flushPendingState()
         notifyCompositionRequired();
 }
 
+void CoordinatedPlatformLayer::flushPositionChanges(const OptionSet<CompositionReason>& reasons, bool useSkiaTarget)
+{
+    ASSERT(!isMainThread());
+    if (!reasons.containsAny({ CompositionReason::RenderingUpdate, CompositionReason::AsyncScrolling }))
+        return;
+
+    Locker locker { m_lock };
+    if (!m_pendingChanges.containsAny({ Change::Position, Change::BoundsOrigin }))
+        return;
+
+    auto applyPositionChanges = [this](auto& layer) {
+        if (m_pendingChanges.contains(Change::Position)) {
+            layer.setPosition(m_position);
+            m_pendingChanges.remove(Change::Position);
+        }
+
+        if (m_pendingChanges.contains(Change::BoundsOrigin)) {
+            layer.setBoundsOrigin(m_boundsOrigin);
+            m_pendingChanges.remove(Change::BoundsOrigin);
+        }
+    };
+
+#if USE(SKIA)
+    if (useSkiaTarget) {
+        applyPositionChanges(ensureSkiaTarget());
+        return;
+    }
+#else
+    UNUSED_PARAM(useSkiaTarget);
+#endif
+
+    applyPositionChanges(ensureTarget());
+}
+
 void CoordinatedPlatformLayer::flushCompositingState(const OptionSet<CompositionReason>& reasons, bool useSkiaTarget)
 {
     ASSERT(!isMainThread());
@@ -1041,16 +1075,6 @@ void CoordinatedPlatformLayer::flushCompositingState(const OptionSet<Composition
 void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<CompositionReason>& reasons, TextureMapperLayer& layer)
 {
     if (reasons.containsAny({ CompositionReason::RenderingUpdate, CompositionReason::AsyncScrolling })) {
-        if (m_pendingChanges.contains(Change::Position)) {
-            layer.setPosition(m_position);
-            m_pendingChanges.remove(Change::Position);
-        }
-
-        if (m_pendingChanges.contains(Change::BoundsOrigin)) {
-            layer.setBoundsOrigin(m_boundsOrigin);
-            m_pendingChanges.remove(Change::BoundsOrigin);
-        }
-
         if (m_pendingChanges.contains(Change::ContentsRect)) {
             layer.setContentsRect(m_contentsRect);
             m_pendingChanges.remove(Change::ContentsRect);
@@ -1238,16 +1262,6 @@ void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<Com
 void CoordinatedPlatformLayer::flushCompositingStateOnSkiaTarget(const OptionSet<CompositionReason>& reasons, SkiaCompositingLayer& layer)
 {
     if (reasons.containsAny({ CompositionReason::RenderingUpdate, CompositionReason::AsyncScrolling })) {
-        if (m_pendingChanges.contains(Change::Position)) {
-            layer.setPosition(m_position);
-            m_pendingChanges.remove(Change::Position);
-        }
-
-        if (m_pendingChanges.contains(Change::BoundsOrigin)) {
-            layer.setBoundsOrigin(m_boundsOrigin);
-            m_pendingChanges.remove(Change::BoundsOrigin);
-        }
-
         if (m_pendingChanges.contains(Change::ContentsRect)) {
             layer.setContentsRect(m_contentsRect);
             m_pendingChanges.remove(Change::ContentsRect);
