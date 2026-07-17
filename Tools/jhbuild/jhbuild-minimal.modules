@@ -69,8 +69,8 @@
   <cmake id="libwpe" cmakeargs="-DCMAKE_POLICY_VERSION_MINIMUM=3.5">
     <branch repo="github-tarball"
             module="WebPlatformForEmbedded/libwpe/releases/download/${version}/libwpe-${version}.tar.xz"
-            version="1.14.1"
-            hash="sha256:b1d0cdcf0f8dbb494e65b0f7913e357106da9a0d57f4fbb7b9d1238a6dbe9ade"/>
+            version="1.16.0"
+            hash="sha256:c7f3a3c6b3d006790d486dc7cceda2b6d2e329de07f33bc47dfc53f00f334b2a"/>
   </cmake>
 
   <meson id="wpebackend-fdo">
@@ -79,8 +79,8 @@
     </dependencies>
     <branch repo="github-tarball"
             module="Igalia/WPEBackend-fdo/releases/download/${version}/wpebackend-fdo-${version}.tar.xz"
-            version="1.14.2"
-            hash="sha256:93c9766ae9864eeaeaee2b0a74f22cbca08df42c1a1bdb55b086f2528e380d38">
+            version="1.14.3"
+            hash="sha256:10121842595a850291db3e82f3db0b9984df079022d386ce42c2b8508159dc6c">
     </branch>
   </meson>
 
@@ -196,8 +196,8 @@
     </dependencies>
     <branch module="GNOME/libsoup.git"
             repo="github.com"
-            tag="3.6.0"
-            version="3.6.0"
+            tag="3.6.5"
+            version="3.6.5"
             checkoutdir="libsoup-${version}"/>
   </meson>
 
