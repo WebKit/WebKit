@@ -468,8 +468,9 @@ void DocumentImmersive::clear()
     clearPendingEvents();
 }
 
-void DocumentImmersive::clearForBackForwardCache()
+void DocumentImmersive::didResumeFromBackForwardCache()
 {
+    // The ImmersiveSpace was dismissed by the navigation, clean-up state.
     RefPtr previouslyImmersiveElement = m_immersiveElement;
 
     clear();
