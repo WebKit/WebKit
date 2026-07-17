@@ -137,32 +137,7 @@ FlexLayout::Result FlexLayout::performFlexLayout(FlexLayoutItems& flexItems, Rel
     };
     performContentAlignment();
 
-    // 9.6. Place each flex item at its final flow-aware location, applying the wrap-reverse and rtl-column
-    // cross-axis flips, and write it to the renderer (cf. FlexLayout::computeFlexItemRects).
-    auto computeFlexItemRects = [&] {
-        auto crossContentExtent = flexLayoutUtils().crossAxisContentExtent();
-        auto crossExtent = flexLayoutUtils().crossAxisExtent();
-        bool isRightToLeftColumn = !m_constraints.style.writingMode().isLogicalLeftInlineStart() && m_constraints.isColumnFlow;
-        for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
-            auto lineRange = flexLines.ranges[lineIndex];
-            for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
-                auto location = positionList[flexItemIndex];
-                if (m_constraints.isWrapReverse) {
-                    auto originalOffset = flexLinesCrossPositionList[lineIndex] - crossAxisStartEdge;
-                    location.move(0_lu, (crossContentExtent - originalOffset - flexLinesCrossSizeList[lineIndex]) - originalOffset);
-                }
-                if (isRightToLeftColumn) {
-                    // For vertical flows, setFlowAwareLocationForFlexItem will transpose x and
-                    // y, so using the y axis for a column cross axis extent is correct.
-                    location.setY(crossExtent - flexItemsCrossSizeList[flexItemIndex] - location.y());
-                    if (!m_constraints.style.writingMode().isHorizontal())
-                        location.move(LayoutSize(0, -m_flexBox.horizontalScrollbarHeight()));
-                }
-                setFlexItemGeometry(flexItems[flexItemIndex], location);
-            }
-        }
-    };
-    computeFlexItemRects();
+    computeFlexItemRects(flexLines, flexItems, positionList, flexLinesCrossPositionList, flexLinesCrossSizeList, flexItemsCrossSizeList, crossAxisStartEdge);
     return m_result;
 }
 
@@ -699,6 +674,33 @@ void FlexLayout::performBaselineAlignment(WTF::Range<size_t> lineRange, FlexLayo
                 if (shouldAdjustItemTowardsCrossAxisEnd(flexItemWritingModeForBaselineAlignment(flexItem).blockDirection(), flexLayoutUtils().alignmentForFlexItem(flexItem)) && !flexLayoutUtils().hasAutoMarginsInCrossAxis(flexItem))
                     flexItemsCrossOffsetList[itemIndex] += minMarginAfterBaseline;
             }
+        }
+    }
+}
+
+void FlexLayout::computeFlexItemRects(const FlexLines& flexLines, FlexLayoutItems& flexItems, const Vector<LayoutPoint>& positionList, const Vector<LayoutUnit>& flexLinesCrossPositionList, const Vector<LayoutUnit>& flexLinesCrossSizeList, const Vector<LayoutUnit>& flexItemsCrossSizeList, LayoutUnit crossAxisStartEdge)
+{
+    // 9.6. Place each flex item at its final flow-aware location, applying the wrap-reverse and rtl-column
+    // cross-axis flips, and write it to the renderer.
+    auto crossContentExtent = flexLayoutUtils().crossAxisContentExtent();
+    auto crossExtent = flexLayoutUtils().crossAxisExtent();
+    bool isRightToLeftColumn = !m_constraints.style.writingMode().isLogicalLeftInlineStart() && m_constraints.isColumnFlow;
+    for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
+        auto lineRange = flexLines.ranges[lineIndex];
+        for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
+            auto location = positionList[flexItemIndex];
+            if (m_constraints.isWrapReverse) {
+                auto originalOffset = flexLinesCrossPositionList[lineIndex] - crossAxisStartEdge;
+                location.move(0_lu, (crossContentExtent - originalOffset - flexLinesCrossSizeList[lineIndex]) - originalOffset);
+            }
+            if (isRightToLeftColumn) {
+                // For vertical flows, setFlowAwareLocationForFlexItem will transpose x and
+                // y, so using the y axis for a column cross axis extent is correct.
+                location.setY(crossExtent - flexItemsCrossSizeList[flexItemIndex] - location.y());
+                if (!m_constraints.style.writingMode().isHorizontal())
+                    location.move(LayoutSize(0, -m_flexBox.horizontalScrollbarHeight()));
+            }
+            setFlexItemGeometry(flexItems[flexItemIndex], location);
         }
     }
 }
