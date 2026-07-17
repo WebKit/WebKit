@@ -384,6 +384,16 @@ private func rootJointIndices(forMeshAt meshPath: String, in stage: USDStage) ->
     var skelPrimPath: USDLayer.Path? = nil
     var current: USDPrim? = meshPrim
     while let prim = current {
+        #if canImport(USDKit, _version: 106.0.8)
+        let rel = prim.relationship(named: "skel:skeleton")
+        if rel.isValid {
+            if let target = rel.targets.first {
+                skelPrimPath = target
+                break
+            }
+        }
+        current = prim.parent
+        #else
         if let rel = prim.relationship(named: "skel:skeleton"),
             let target = rel.targets.first
         {
@@ -391,6 +401,7 @@ private func rootJointIndices(forMeshAt meshPath: String, in stage: USDStage) ->
             break
         }
         current = prim.parent
+        #endif
     }
 
     guard let skelPath = skelPrimPath else { return [] }
