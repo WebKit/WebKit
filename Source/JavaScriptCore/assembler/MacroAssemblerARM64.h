@@ -5007,9 +5007,9 @@ public:
         move(TrustedImmPtr(reinterpret_cast<void*>(address.offset)), getCachedMemoryTempRegisterIDAndInvalidate());
 
         if (MacroAssemblerHelpers::isUnsigned<MacroAssemblerARM64>(cond))
-            m_assembler.ldrb(memoryTempRegister, address.base, memoryTempRegister);
+            m_assembler.ldrb(memoryTempRegister, memoryTempRegister, address.base);
         else
-            m_assembler.ldrsb<32>(memoryTempRegister, address.base, memoryTempRegister);
+            m_assembler.ldrsb<32>(memoryTempRegister, memoryTempRegister, address.base);
 
         return branchTest32(cond, memoryTempRegister, mask8);
     }
@@ -5041,9 +5041,9 @@ public:
         move(TrustedImmPtr(reinterpret_cast<void*>(address.offset)), getCachedMemoryTempRegisterIDAndInvalidate());
 
         if (MacroAssemblerHelpers::isUnsigned<MacroAssemblerARM64>(cond))
-            m_assembler.ldrh(memoryTempRegister, address.base, memoryTempRegister);
+            m_assembler.ldrh(memoryTempRegister, memoryTempRegister, address.base);
         else
-            m_assembler.ldrsh<32>(memoryTempRegister, address.base, memoryTempRegister);
+            m_assembler.ldrsh<32>(memoryTempRegister, memoryTempRegister, address.base);
 
         return branchTest32(cond, memoryTempRegister, mask16);
     }
