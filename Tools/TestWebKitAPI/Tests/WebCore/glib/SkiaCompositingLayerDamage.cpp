@@ -34,6 +34,8 @@
 #include <WebCore/SkiaCompositingLayer.h>
 #include <WebCore/TransformationMatrix.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkColor.h>
+#include <skia/core/SkPixmap.h>
 #include <skia/core/SkSurface.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
@@ -202,6 +204,53 @@ static Ref<SkiaCompositingLayer> createSolidColorLayer(const FloatSize& size, co
     layer->setContentsSolidColor(Color::green);
     layer->setContentsRect({ 0, 0, size.width(), size.height() });
     return layer;
+}
+
+// The target's repaint region is in device coordinates, so the surface size paint() tests it against for
+// whole-surface coverage must be device sized too. A layer's own size is in layer coordinates, which the
+// root transform scales to the device by the device pixel ratio. Passing the layer size here would treat a
+// region that merely spans the layer-sized rect as covering the whole target, dropping the restriction and
+// repainting everything. Under a 2x scale the device target is 800x600 while the root's own size is
+// 400x300, so a region covering exactly the 400x300 rect is a partial repaint, not a full one.
+TEST(SkiaCompositingLayerDamage, PartialRepaintRegionUnderHiDPIRestrictsToTheDamageRect)
+{
+    constexpr SkColor untouched = SkColorSetARGB(0xFF, 0xFF, 0x00, 0x00);
+
+    auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(800, 600));
+    ASSERT_TRUE(surface);
+    surface->getCanvas()->clear(untouched);
+
+    auto root = SkiaCompositingLayer::create();
+    root->setDamagePropagationEnabled(true);
+    root->setSize({ 400, 300 });
+
+    TransformationMatrix deviceScale;
+    deviceScale.scale(2);
+    root->setTransform(deviceScale);
+
+    // Painted from the top-left and scaled up, the child reaches past the damage rect, so a full repaint
+    // colours pixels outside the damage while a restricted one leaves them alone.
+    auto child = createSolidColorLayer({ 400, 300 }, { 0, 0 });
+    Vector<Ref<SkiaCompositingLayer>> children;
+    children.append(child.copyRef());
+    root->setChildren(WTF::move(children));
+
+    // The damage rect is exactly the root's own 400x300 size, in device coordinates. It does not cover the
+    // 800x600 device target, so a draw landing outside it - but still within the surface - must be left out.
+    Damage priorTargetDamage(IntSize { 800, 600 });
+    priorTargetDamage.add(IntRect { 0, 0, 400, 300 });
+
+    std::optional<Damage> noFrameDamage;
+    root->paint(*surface->getCanvas(), noFrameDamage, priorTargetDamage);
+
+    SkPixmap pixmap;
+    ASSERT_TRUE(surface->peekPixels(&pixmap));
+
+    // Inside the damage rect the child paints, so the pixel changes. At (500, 350) the child still covers
+    // the pixel but the damage does not, so a correct restriction leaves it as it was. Treating the region
+    // as whole-surface coverage instead repaints everything and colours it too, which this catches.
+    EXPECT_NE(pixmap.getColor(200, 150), untouched);
+    EXPECT_EQ(pixmap.getColor(500, 350), untouched);
 }
 
 static SettledTree createSettledTree(SkCanvas& canvas, const FloatPoint& position)

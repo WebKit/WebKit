@@ -37,6 +37,7 @@
 #include "IntSize.h"
 #include "SkiaCompositingLayerImageSetBatch.h"
 #include "SkiaCompositingLayerOverlapRegions.h"
+#include "SkiaDamageRegion.h"
 #include "TextureMapperAnimation.h"
 #include "TransformationMatrix.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
@@ -115,9 +116,10 @@ public:
     FloatRect effectiveLayerRect() const { return FloatRect({ }, m_size); }
 
     // Applies the animations, computes the transforms, then walks the tree. When a frame damage is passed,
-    // it is collected first in a walk that draws nothing, before the walk that draws into the canvas.
-    // Returns whether any animation is still running.
-    bool paint(SkCanvas&, std::optional<Damage>& frameDamage);
+    // it is collected first in a walk that draws nothing, before the walk that draws. The draw is limited
+    // to the region the target must redraw - the target's prior owed damage combined with this frame's - and
+    // no prior damage repaints the whole target. Returns whether any animation is still running.
+    bool paint(SkCanvas&, std::optional<Damage>& frameDamage, const std::optional<Damage>& priorTargetDamage = std::nullopt);
 
 private:
     using ScopedFlush = SkiaCompositingLayerImageSetBatch::ScopedFlush;
@@ -192,6 +194,8 @@ private:
 
         bool shouldDraw() const { return !collectState; }
 #endif
+        std::optional<SkiaDamageRegion> compositingDamageRegion;
+        const SkiaDamageRegion* damageRegionOrNull() const { return compositingDamageRegion ? &*compositingDamageRegion : nullptr; }
         float opacity { 1 };
         std::optional<SkBlendMode> blendMode;
         IntSize offset;

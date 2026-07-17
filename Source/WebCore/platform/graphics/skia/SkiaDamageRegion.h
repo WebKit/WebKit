@@ -29,6 +29,7 @@
 
 #include "Damage.h"
 #include "IntRect.h"
+#include <optional>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkMatrix.h>
@@ -44,19 +45,42 @@ namespace WebCore {
 // and clip with - built once per frame.
 class SkiaDamageRegion {
 public:
-    static SkiaDamageRegion create(const Damage& damage)
+    static std::optional<SkiaDamageRegion> create(const Damage& repaintRegion, const IntSize& surfaceSize)
     {
-        const auto damageRects = damage.rectsForPainting().map([](const IntRect& rect) -> SkIRect {
+        if (repaintRegion.isEmpty())
+            return SkiaDamageRegion { };
+
+        auto damageRects = repaintRegion.rectsForPainting().map([](const IntRect& rect) -> SkIRect {
             return rect;
         });
 
         SkiaDamageRegion damageRegion;
         damageRegion.m_region.setRects(damageRects.span().data(), damageRects.size());
-        damageRegion.m_rects = damageRects.map([](const SkIRect& rect) -> SkRect {
-            return SkRect::Make(rect);
-        });
+        damageRegion.m_rects = WTF::move(damageRects);
+
+        // Ask the region, not its bounds, because two rects in opposite corners of the surface span a
+        // bounding box that covers it while the rects themselves cover almost none of it.
+        if (damageRegion.m_region.contains(SkIRect::MakeWH(surfaceSize.width(), surfaceSize.height())))
+            return std::nullopt;
 
         return damageRegion;
+    }
+
+    SkiaDamageRegion(const SkiaDamageRegion&) = default;
+    SkiaDamageRegion& operator=(const SkiaDamageRegion&) = default;
+
+    // SkRegion declares a copy constructor and a destructor, so it has no move constructor and would deep
+    // copy its run array on every move. swap() exchanges pointers instead.
+    SkiaDamageRegion(SkiaDamageRegion&& other)
+    {
+        *this = WTF::move(other);
+    }
+
+    SkiaDamageRegion& operator=(SkiaDamageRegion&& other)
+    {
+        m_rects = WTF::move(other.m_rects);
+        m_region.swap(other.m_region);
+        return *this;
     }
 
     bool isEmpty() const { return m_rects.isEmpty(); }
@@ -95,7 +119,7 @@ public:
         const auto dstToSrc = SkMatrix::RectToRect(dstRectFull, srcRectFull);
 
         for (const auto& rect : m_rects) {
-            SkRect damaged = rect;
+            auto damaged = SkRect::Make(rect);
             if (!damaged.intersect(deviceRect))
                 continue;
             if (damaged == deviceRect) {
@@ -105,6 +129,31 @@ public:
             SkRect dstSubRect;
             inverseCtm.mapRect(&dstSubRect, damaged);
             emit(dstToSrc.mapRect(dstSubRect), dstSubRect);
+        }
+    }
+
+    template<typename DrawFunction>
+    void restrictDraw(SkCanvas& canvas, const SkRect& srcRectFull, const SkRect& dstRectFull, NOESCAPE const DrawFunction& draw) const
+    {
+        ASSERT(!isEmpty());
+
+        const auto ctm = canvas.getLocalToDeviceAs3x3();
+        SkRect deviceRect;
+        ctm.mapRect(&deviceRect, dstRectFull);
+
+        SkMatrix inverse;
+        switch (planDraw(ctm, deviceRect, inverse)) {
+        case DrawDamageStrategy::Skip:
+            return;
+        case DrawDamageStrategy::SplitByRect:
+            forEachDamagedSubRect(deviceRect, dstRectFull, srcRectFull, inverse, draw);
+            return;
+        case DrawDamageStrategy::ClipToDamage: {
+            SkAutoCanvasRestore autoRestore(&canvas, true);
+            clipCanvasInDeviceSpace(canvas);
+            draw(srcRectFull, dstRectFull);
+            return;
+        }
         }
     }
 
@@ -126,9 +175,33 @@ public:
 private:
     SkiaDamageRegion() = default;
 
-    Vector<SkRect> m_rects;
+    Vector<SkIRect> m_rects;
     SkRegion m_region;
 };
+
+inline void drawRectRestricted(SkCanvas& canvas, const SkiaDamageRegion* damageRegion, const SkRect& rect, const SkPaint& paint)
+{
+    if (!damageRegion) {
+        canvas.drawRect(rect, paint);
+        return;
+    }
+
+    damageRegion->restrictDraw(canvas, rect, rect, [&](const SkRect&, const SkRect& dstSubRect) {
+        canvas.drawRect(dstSubRect, paint);
+    });
+}
+
+inline void drawImageRectRestricted(SkCanvas& canvas, const SkiaDamageRegion* damageRegion, const SkImage* image, const SkRect& srcRectFull, const SkRect& dstRectFull, const SkSamplingOptions& sampling, const SkPaint* paint)
+{
+    if (!damageRegion) {
+        canvas.drawImageRect(image, srcRectFull, dstRectFull, sampling, paint, SkCanvas::kFast_SrcRectConstraint);
+        return;
+    }
+
+    damageRegion->restrictDraw(canvas, srcRectFull, dstRectFull, [&](const SkRect& srcSubRect, const SkRect& dstSubRect) {
+        canvas.drawImageRect(image, srcSubRect, dstSubRect, sampling, paint, SkCanvas::kFast_SrcRectConstraint);
+    });
+}
 
 } // namespace WebCore
 

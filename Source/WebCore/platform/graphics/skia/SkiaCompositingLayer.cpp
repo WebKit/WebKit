@@ -41,6 +41,7 @@
 #include "SkiaCompositingLayer3DRenderingContext.h"
 #include "SkiaCompositingLayerFilters.h"
 #include "SkiaCompositingLayerOverlapRegions.h"
+#include "SkiaDamageRegion.h"
 #include "SkiaUtilities.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkFont.h>
@@ -498,7 +499,7 @@ bool SkiaCompositingLayer::computeTransformsAndAnimations(const TransformationMa
     return hasRunningAnimations;
 }
 
-bool SkiaCompositingLayer::paint(SkCanvas& canvas, std::optional<Damage>& frameDamage)
+bool SkiaCompositingLayer::paint(SkCanvas& canvas, std::optional<Damage>& frameDamage, const std::optional<Damage>& priorTargetDamage)
 {
     // Both walks below assume the animations have been applied and the transforms computed.
     bool hasRunningAnimations = computeTransformsAndAnimations({ }, { }, MonotonicTime::now());
@@ -529,9 +530,35 @@ bool SkiaCompositingLayer::paint(SkCanvas& canvas, std::optional<Damage>& frameD
     UNUSED_PARAM(frameDamage);
 #endif
 
-    PaintContext context;
-    recursivePaint(canvas, context);
-    context.imageSetBatch.flushIfNeeded(canvas);
+    // The region this target must redraw is the damage still on its record from before combined with
+    // this frame's. No prior damage means the target cannot be trusted, so repaint the whole of it.
+    std::optional<SkiaDamageRegion> damageRegion;
+#if ENABLE(DAMAGE_TRACKING)
+    if (priorTargetDamage) {
+        // The damage is in device space, so the surface size the region is tested against must be too.
+        // m_size is in layer coordinates, which the root transform scales to the device by the device
+        // pixel ratio - use the canvas device size instead, as the collect walk above already does.
+        const auto deviceSize = canvas.getBaseLayerSize();
+        const IntSize surfaceSize(deviceSize.width(), deviceSize.height());
+        if (frameDamage) {
+            auto repaintRegion = *priorTargetDamage;
+            repaintRegion.add(*frameDamage);
+            damageRegion = SkiaDamageRegion::create(repaintRegion, surfaceSize);
+        } else
+            damageRegion = SkiaDamageRegion::create(*priorTargetDamage, surfaceSize);
+    }
+#else
+    UNUSED_PARAM(priorTargetDamage);
+#endif
+
+    // An empty region means the target already holds the frame, so draw nothing.
+    if (!damageRegion || !damageRegion->isEmpty()) {
+        PaintContext context;
+        context.compositingDamageRegion = WTF::move(damageRegion);
+
+        recursivePaint(canvas, context);
+        context.imageSetBatch.flushIfNeeded(canvas);
+    }
 
     recursiveCleanUpAfterPaint();
 
@@ -587,6 +614,13 @@ TransformationMatrix SkiaCompositingLayer::combinedTransform(const PaintContext&
 
 void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context)
 {
+    // Important: the walk does not clip the canvas to the damage, so every content draw below limits
+    // itself, with drawRectRestricted() or drawImageRectRestricted() when it draws now, or by passing the
+    // region to the batch when it draws later. A draw that does not paints over undamaged pixels and
+    // composites translucent content twice, so any content type added here has to limit itself too. A set
+    // region is never empty, because paint() turns an empty one into a no-op.
+    ASSERT(!context.compositingDamageRegion || !context.compositingDamageRegion->isEmpty());
+
     const SkM44 transform(combinedTransform(context));
 
     const auto ctm = transform.asM33();
@@ -621,14 +655,14 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
     };
 
     if (m_backingStore)
-        context.imageSetBatch.addImageSet(canvas, *m_backingStore, transform, context.opacity, enableAntialias, nullptr, setupPaint());
+        context.imageSetBatch.addImageSet(canvas, *m_backingStore, transform, context.opacity, enableAntialias, context.damageRegionOrNull(), setupPaint());
 
     if (m_contentsSolidColor.isValid() && m_contentsSolidColor.isVisible()) {
         ScopedFlush autoFlush(canvas, context.imageSetBatch, ScopedFlush::Mode::FlushBefore);
         canvas.concat(transform);
         SkPaint paint = setupPaint();
         paint.setColor(SkColor(m_contentsSolidColor.colorWithAlphaMultipliedBy(context.opacity)));
-        canvas.drawRect(m_contentsRect, paint);
+        drawRectRestricted(canvas, context.damageRegionOrNull(), SkRect(m_contentsRect), paint);
     } else if (m_contentsBuffer || m_imageBackingStore) {
         bool shouldPaintNow = [&] {
             if (m_contentsClippingRect.hasNonZeroRadii())
@@ -668,7 +702,7 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
 #endif
                 SkPaint paint = setupPaint();
                 paint.setBlendMode(SkBlendMode::kClear);
-                canvas.drawRect(SkRect(m_contentsRect), paint);
+                drawRectRestricted(canvas, context.damageRegionOrNull(), SkRect(m_contentsRect), paint);
             } else
 #endif // ENABLE(VIDEO)
                 image = m_contentsBuffer->skiaImage();
@@ -681,21 +715,21 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
                 matrix.postTranslate(m_contentsRect.x() - m_contentsTiling.phase.width(), m_contentsRect.y() - m_contentsTiling.phase.height());
                 SkPaint paint = setupPaint();
                 paint.setShader(tileImage->makeShader(SkTileMode::kRepeat, SkTileMode::kRepeat, SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone), matrix));
-                canvas.drawRect(m_contentsRect, paint);
+                drawRectRestricted(canvas, context.damageRegionOrNull(), SkRect(m_contentsRect), paint);
             }
         }
 
         if (image) {
             if (shouldPaintNow) {
                 SkPaint paint = setupPaint();
-                canvas.drawImageRect(image, SkRect::MakeSize(SkSize::Make(image->dimensions())), SkRect(m_contentsRect),
-                    SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone), &paint, SkCanvas::kFast_SrcRectConstraint);
+                drawImageRectRestricted(canvas, context.damageRegionOrNull(), image.get(), SkRect::MakeSize(SkSize::Make(image->dimensions())), SkRect(m_contentsRect),
+                    SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone), &paint);
             } else {
                 // The contents image composites over the backing store, so it must use SrcOver always.
                 if (forcedSrcBlendMode && m_backingStore)
                     context.imageSetBatch.updatePaintProperties(canvas, context.colorFilter, context.blendMode);
 
-                context.imageSetBatch.addImage(canvas, image, m_contentsRect, transform, context.opacity, enableAntialias, nullptr, setupPaint());
+                context.imageSetBatch.addImage(canvas, image, m_contentsRect, transform, context.opacity, enableAntialias, context.damageRegionOrNull(), setupPaint());
             }
         }
     }
@@ -1001,11 +1035,20 @@ void SkiaCompositingLayer::paintWithIntermediateSurface(SkCanvas& canvas, PaintC
     surfaceCanvas->clear(SK_ColorTRANSPARENT);
     surfaceCanvas->translate(-surfaceRect.x(), -surfaceRect.y());
     SetForScope scopedOffset(context.offset, toIntSize(surfaceRect.location()));
-    paintFunction(*surfaceCanvas, context);
-    context.imageSetBatch.flushIfNeeded(*surfaceCanvas);
+
+    {
+        // The filter may sample outside the damage, so paint the whole subtree and limit only the composite.
+        SetForScope scopedNoDamageRestriction(context.compositingDamageRegion, std::nullopt);
+        paintFunction(*surfaceCanvas, context);
+        context.imageSetBatch.flushIfNeeded(*surfaceCanvas);
+    }
     grContext->flushAndSubmit(surface.get(), GrSyncCpu::kNo);
 
-    canvas.drawImageRect(surface->makeImageSnapshot(), SkRect::MakeWH(surfaceRect.width(), surfaceRect.height()), SkRect::Make(surfaceRect), SkSamplingOptions(SkFilterMode::kNearest, SkMipmapMode::kNone), paint, SkCanvas::kFast_SrcRectConstraint);
+    auto snapshot = surface->makeImageSnapshot();
+    const auto sampling = SkSamplingOptions(SkFilterMode::kNearest, SkMipmapMode::kNone);
+
+    drawImageRectRestricted(canvas, context.damageRegionOrNull(), snapshot.get(), SkRect::MakeWH(surfaceRect.width(), surfaceRect.height()),
+        SkRect::Make(surfaceRect), sampling, paint);
 }
 
 void SkiaCompositingLayer::paintBackdrop(SkCanvas& canvas, PaintContext& context)
