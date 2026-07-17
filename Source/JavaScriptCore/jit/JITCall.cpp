@@ -622,7 +622,7 @@ void JIT::emit_op_async_iterator_next(const JSInstruction* instruction)
     emitGetVirtualRegisterPayload(bytecode.m_iterator, iteratorGPR);
     emitGetVirtualRegisterPayload(bytecode.m_driver, driverGPR);
     loadGlobalObject(globalObjectGPR);
-    callOperation(operationAsyncIteratorNextWithDriver, globalObjectGPR, iteratorGPR, driverGPR);
+    callOperation(operationAsyncIteratorNextWithDriver, globalObjectGPR, iteratorGPR, driverGPR, TrustedImmPtr(&vm().syncResumeCallCache()));
     emitPutVirtualRegister(bytecode.m_dst, returnValueJSR);
     Jump doneCase = jump();
 

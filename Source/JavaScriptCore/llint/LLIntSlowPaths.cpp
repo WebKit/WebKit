@@ -2025,7 +2025,7 @@ LLINT_SLOW_PATH_DECL(slow_path_async_iterator_next_with_driver)
     metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastAsyncGenerator;
     JSObject* iterator = asObject(getNonConstantOperand(callFrame, bytecode.m_iterator).asCell());
     auto* driver = asObject(getNonConstantOperand(callFrame, bytecode.m_driver).asCell());
-    JSValue result = asyncIteratorNextWithDriver(globalObject, iterator, driver);
+    JSValue result = asyncIteratorNextWithDriver(globalObject, iterator, driver, &vm.syncResumeCallCache());
     LLINT_RETURN(result);
 }
 

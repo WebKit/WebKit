@@ -131,6 +131,7 @@ class JSPropertyNameEnumerator;
 class JITSizeStatistics;
 class JITThunks;
 class MegamorphicCache;
+class MicrotaskCallCache;
 class MicrotaskQueue;
 class NativeExecutable;
 class Debugger;
@@ -930,6 +931,9 @@ public:
     ALWAYS_INLINE MegamorphicCache* megamorphicCache() { return m_megamorphicCache.getIfExists(); }
     MegamorphicCache& ensureMegamorphicCache() { return m_megamorphicCache.get(*this); }
 
+    const UniqueRef<MicrotaskCallCache> m_syncResumeCallCache;
+    MicrotaskCallCache& syncResumeCallCache() { return m_syncResumeCallCache.get(); }
+
     enum class StructureChainIntegrityEvent : uint8_t {
         Add,
         Remove,
@@ -1102,6 +1106,7 @@ public:
 #endif
 
     void beginMarking();
+    void finalizeUnconditionally();
     DECLARE_VISIT_AGGREGATE;
 
     void NODELETE addDebugger(Debugger&);

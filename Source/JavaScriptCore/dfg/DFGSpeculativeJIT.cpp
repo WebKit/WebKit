@@ -80,6 +80,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "LLIntEntrypoint.h"
 #include "LLIntThunks.h"
 #include "MaxFrameExtentForSlowPathCall.h"
+#include "MicrotaskCall.h"
 #include "ProbeContext.h"
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
@@ -8917,7 +8918,7 @@ void SpeculativeJIT::compileEnqueueAsyncGeneratorDriver(Node* node)
     GPRReg driverGPR = driver.gpr();
 
     flushRegisters();
-    callOperation(operationEnqueueAsyncGeneratorDriver, LinkableConstant::globalObject(*this, node), iteratorGPR, driverGPR);
+    callOperation(operationEnqueueAsyncGeneratorDriver, LinkableConstant::globalObject(*this, node), iteratorGPR, driverGPR, TrustedImmPtr(&vm().syncResumeCallCache()));
 
     noResult(node);
 }

@@ -105,6 +105,7 @@
 #include "JSWrapForValidIterator.h"
 #include "LLIntThunks.h"
 #include "MegamorphicCache.h"
+#include "MicrotaskCall.h"
 #include "OperandsInlines.h"
 #include "PCToCodeOriginMap.h"
 #include "ProbeContext.h"
@@ -19802,7 +19803,7 @@ IGNORE_CLANG_WARNINGS_END
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         vmCall(Void, operationEnqueueAsyncGeneratorDriver, weakPointer(globalObject),
-            lowCell(m_node->child1()), lowCell(m_node->child2()));
+            lowCell(m_node->child1()), lowCell(m_node->child2()), m_out.constIntPtr(&vm().syncResumeCallCache()));
     }
 
     void compileStringReplace()

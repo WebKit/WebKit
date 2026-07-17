@@ -95,6 +95,7 @@
 #include "LLIntExceptions.h"
 #include "MarkedBlockInlines.h"
 #include "MegamorphicCache.h"
+#include "MicrotaskCall.h"
 #include "MicrotaskQueueInlines.h"
 #include "MinimumReservedZoneSize.h"
 #include "ModuleGraphLoadingStateInlines.h"
@@ -270,6 +271,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
 #endif
     , m_regExpCache(makeUnique<RegExpCache>())
     , m_compactVariableMap(adoptRef(*new CompactTDZEnvironmentMap))
+    , m_syncResumeCallCache(makeUniqueRef<MicrotaskCallCache>())
     , m_codeCache(makeUnique<CodeCache>())
     , m_intlCache(makeUnique<IntlCache>())
     , m_builtinExecutables(makeUnique<BuiltinExecutables>(*this))
@@ -1845,6 +1847,11 @@ void VM::beginMarking()
     m_microtaskQueues.forEach([&](MicrotaskQueue* microtaskQueue) {
         microtaskQueue->beginMarking();
     });
+}
+
+void VM::finalizeUnconditionally()
+{
+    m_syncResumeCallCache->finalizeUnconditionally(*this);
 }
 
 template<typename Visitor>
