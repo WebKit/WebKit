@@ -461,14 +461,14 @@ void AudioContext::willBeginPlayback(CompletionHandler<void(bool)>&& completionH
         removeBehaviorRestriction(BehaviorRestrictionFlags::RequirePageConsentForAudioStartRestriction);
     }
 
+    m_mediaSession->setActive(true);
+
     m_mediaSession->clientWillBeginPlayback([weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler), logSiteIdentifier = WTF::move(logSiteIdentifier)](bool willBegin) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             completionHandler(false);
             return;
         }
-
-        protectedThis->m_mediaSession->setActive(true);
 
         ALWAYS_LOG_WITH_THIS(protectedThis, logSiteIdentifier, "returning ", willBegin);
         completionHandler(willBegin);
