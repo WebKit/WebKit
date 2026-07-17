@@ -375,3 +375,5 @@ webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.PanelTwice [ Sk
 webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.GetAssertionPinInvalidErrorAndRetry [ Skip ]
 webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.NullPanelHidSuccess [ Skip ]
 webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.GetAssertionInternalUVPinFallback [ Skip ]
+webkit.org/b/319711 [ ios ] TestWebKitAPI.CopyURL.UnescapedURL [ Skip ]
+webkit.org/b/319711 [ ios ] TestWebKitAPI.CopyURL.ValidURL [ Skip ]
