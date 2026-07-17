@@ -215,7 +215,7 @@ static void testOrderingVMEnterInterruptContinue()
     unsigned successCount = 0;
 
     for (unsigned i = 0; i < STRESS_TEST_ITERATIONS; ++i) {
-        VLOG("[Test1][Iter ", i, "] start >>>>>>>>>>>>>>>>>>>>>>> ");
+        VLOG("[Test1][Iter ", i, "] start >>=>>=>>=>>=>>=>>=>>=>> ");
 
         // Signal VM to execute (becomes active)
         runVM = true;
@@ -235,7 +235,7 @@ static void testOrderingVMEnterInterruptContinue()
         CHECK(isRunning(), "Should be running after resume");
 
         successCount++;
-        VLOG("[Test1][Iter ", i, "] end <<<<<<<<<<<<<<<<<<<<<<<<< ");
+        VLOG("[Test1][Iter ", i, "] end <<=<<=<<=<<=<<=<<=<<=<<=< ");
     }
 
     TEST_LOG("PASS: ", successCount, "/", STRESS_TEST_ITERATIONS, " iterations succeeded");
@@ -277,7 +277,7 @@ static void testOrderingInterruptVMEnterContinue()
     unsigned successCount = 0;
 
     for (unsigned i = 0; i < STRESS_TEST_ITERATIONS; ++i) {
-        VLOG("[Test2][Iter ", i, "] start >>>>>>>>>>>>>>>>>>>>>>> ");
+        VLOG("[Test2][Iter ", i, "] start >>=>>=>>=>>=>>=>>=>>=>> ");
 
         // Interrupt FIRST (VM idle, not executing)
         // RunLoop dispatch will handle callback delivery
@@ -300,7 +300,7 @@ static void testOrderingInterruptVMEnterContinue()
         CHECK(isRunning(), "Should be running after resume");
 
         successCount++;
-        VLOG("[Test2][Iter ", i, "] end <<<<<<<<<<<<<<<<<<<<<<<<< ");
+        VLOG("[Test2][Iter ", i, "] end <<=<<=<<=<<=<<=<<=<<=<<=< ");
     }
 
     TEST_LOG("PASS: ", successCount, "/", STRESS_TEST_ITERATIONS, " iterations succeeded");
@@ -342,7 +342,7 @@ static void testOrderingInterruptContinueVMEnter()
     unsigned successCount = 0;
 
     for (unsigned i = 0; i < STRESS_TEST_ITERATIONS; ++i) {
-        VLOG("[Test3][Iter ", i, "] start >>>>>>>>>>>>>>>>>>>>>>> ");
+        VLOG("[Test3][Iter ", i, "] start >>=>>=>>=>>=>>=>>=>>=>> ");
 
         // Interrupt FIRST (VM should be idle)
         executionHandler->interrupt();
@@ -369,7 +369,7 @@ static void testOrderingInterruptContinueVMEnter()
         CHECK(info.numberOfVMs >= 1, "VM should be running");
 
         successCount++;
-        VLOG("[Test3][Iter ", i, "] end <<<<<<<<<<<<<<<<<<<<<<<<< ");
+        VLOG("[Test3][Iter ", i, "] end <<=<<=<<=<<=<<=<<=<<=<<=< ");
     }
 
     TEST_LOG("PASS: ", successCount, "/", STRESS_TEST_ITERATIONS, " iterations succeeded");
@@ -411,7 +411,7 @@ static void testIdleVMInterruptResumeLoops()
     unsigned successCount = 0;
 
     for (unsigned i = 0; i < STRESS_TEST_ITERATIONS; ++i) {
-        VLOG("[Test4][Iter ", i, "] start >>>>>>>>>>>>>>>>>>>>>>> ");
+        VLOG("[Test4][Iter ", i, "] start >>=>>=>>=>>=>>=>>=>>=>> ");
 
         // Interrupt while VM is idle - ONLY RunLoop dispatch can handle this
         executionHandler->interrupt();
@@ -431,7 +431,7 @@ static void testIdleVMInterruptResumeLoops()
         // This ensures we're testing pure RunLoop dispatch without any trap checking
 
         successCount++;
-        VLOG("[Test4][Iter ", i, "] end <<<<<<<<<<<<<<<<<<<<<<<<< ");
+        VLOG("[Test4][Iter ", i, "] end <<=<<=<<=<<=<<=<<=<<=<<=< ");
     }
 
     TEST_LOG("PASS: ", successCount, "/", STRESS_TEST_ITERATIONS, " iterations succeeded");
@@ -561,7 +561,7 @@ static void testIdleVMWithActiveVM()
     unsigned successCount = 0;
 
     for (unsigned i = 0; i < STRESS_TEST_ITERATIONS; ++i) {
-        VLOG("[Test5][Iter ", i, "] start >>>>>>>>>>>>>>>>>>>>>>> ");
+        VLOG("[Test5][Iter ", i, "] start >>=>>=>>=>>=>>=>>=>>=>> ");
 
         executionHandler->interrupt();
         CHECK(isStopped(), "Should be stopped after interrupt");
@@ -575,7 +575,7 @@ static void testIdleVMWithActiveVM()
         CHECK(isRunning(), "Should be running after resume");
 
         successCount++;
-        VLOG("[Test5][Iter ", i, "] end <<<<<<<<<<<<<<<<<<<<<<<<< ");
+        VLOG("[Test5][Iter ", i, "] end <<=<<=<<=<<=<<=<<=<<=<<=< ");
     }
 
     TEST_LOG("PASS: ", successCount, "/", STRESS_TEST_ITERATIONS, " iterations succeeded");
