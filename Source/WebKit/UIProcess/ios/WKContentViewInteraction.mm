@@ -6129,7 +6129,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
         return;
     }
 
-    protect(_page)->applyAutocorrection(correction, input, isCandidate, [view = retainPtr(self), completionHandler = WTF::move(completionHandler)](auto& string) {
+    protect(_page)->applyAutocorrection(correction, input, isCandidate, [view = retainPtr(self), completionHandler = WTF::move(completionHandler)](auto&& string) {
         if (completionHandler)
             completionHandler(!string.isNull());
     });

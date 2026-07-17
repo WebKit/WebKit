@@ -428,14 +428,16 @@ void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection
     protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::RequestAutocorrectionData(textForAutocorrection), WTF::move(callback), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::applyAutocorrection(const String& correction, const String& originalText, bool isCandidate, CompletionHandler<void(const String&)>&& callback)
+void WebPageProxy::applyAutocorrection(const String& correction, const String& originalText, bool isCandidate, CompletionHandler<void(String&&)>&& callback)
 {
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::ApplyAutocorrection(correction, originalText, isCandidate), WTF::move(callback), webPageIDInMainFrameProcess());
+    auto targetFrameID = focusedOrMainFrame() ? std::optional(focusedOrMainFrame()->frameID()) : std::nullopt;
+    sendWithAsyncReplyToProcessContainingFrame(targetFrameID, Messages::WebPage::ApplyAutocorrection(correction, originalText, isCandidate), WTF::move(callback));
 }
 
 bool WebPageProxy::applyAutocorrection(const String& correction, const String& originalText, bool isCandidate)
 {
-    auto sendSync = protect(m_legacyMainFrameProcess)->sendSync(Messages::WebPage::SyncApplyAutocorrection(correction, originalText, isCandidate), webPageIDInMainFrameProcess());
+    auto targetFrameID = focusedOrMainFrame() ? std::optional(focusedOrMainFrame()->frameID()) : std::nullopt;
+    auto sendSync = sendSyncToProcessContainingFrame(targetFrameID, Messages::WebPage::SyncApplyAutocorrection(correction, originalText, isCandidate), Seconds::infinity());
     auto [autocorrectionApplied] = sendSync.takeReplyOr(false);
     return autocorrectionApplied;
 }

@@ -8503,6 +8503,40 @@ TEST(SiteIsolation, DOMPasteAccessRectInCrossOriginIframe)
     EXPECT_EQ(SiteIsolationDOMPaste::capturedElementRect.origin.y, 100);
 }
 
+TEST(SiteIsolation, ApplyAutocorrectionInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe id='iframe' src='https://domain2.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<body contenteditable>teh</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // Focus the cross-origin iframe so the UI process tracks it as the focused frame, then select the
+    // misspelled word inside it.
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:nil];
+    while (![childFrame _isFocused])
+        childFrame = [webView firstChildFrame];
+
+    [webView _synchronouslyExecuteEditCommand:@"SelectAll" argument:nil];
+    while (![[webView stringByEvaluatingJavaScript:@"getSelection().toString()" inFrame:childFrame.get()] isEqualToString:@"teh"])
+        Util::spinRunLoop();
+
+    // Apply the autocorrection. Under site isolation this IPC must reach the iframe's process; if it
+    // is routed to the main frame instead the iframe's content is never corrected.
+    __block bool didApplyAutocorrection = false;
+    [webView replaceText:@"teh" withText:@"the" shouldUnderline:NO completion:^{
+        didApplyAutocorrection = true;
+    }];
+    Util::run(&didApplyAutocorrection);
+
+    EXPECT_WK_STREQ("the", [webView stringByEvaluatingJavaScript:@"document.body.textContent" inFrame:childFrame.get()]);
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(IMAGE_ANALYSIS)
