@@ -4,6 +4,6 @@ PASS timeline-scope on preceding sibling
 PASS view-timeline on ancestor
 PASS timeline-scope on ancestor sibling
 PASS timeline-scope on ancestor sibling, resolve to last match in tree order
-FAIL ancestor search stops at timeline-scope assert_equals: expected "auto" but got "0"
+PASS ancestor search stops at timeline-scope
 PASS view-timeline on ancestor sibling, scroll-timeline wins on same element
 
