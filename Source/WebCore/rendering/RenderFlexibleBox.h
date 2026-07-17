@@ -187,7 +187,7 @@ private:
     void stretchFlexItemLogicalHeight(RenderBox& flexItem, LayoutUnit desiredLogicalHeight, bool needsRelayout);
     void relayoutFlexItemForStretchedCrossSize(RenderBox& flexItem, LayoutUnit crossSize, LogicalBoxAxis crossAxis);
     void dirtyPercentHeightDescendantsWithinFlexItem(RenderBox& flexItem);
-    void layoutFlexItemAfterMainSizing(FlexLayoutItem&, LayoutUnit mainSize, RelayoutChildren);
+    void layoutFlexItemWithMainSize(FlexLayoutItem&, LayoutUnit mainSize);
     void setOverridingMainSizeForFlexItem(RenderBox& flexItem, LayoutUnit mainSize);
     void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& flexItem);
     bool flexItemHasPercentHeightDescendants(const RenderBox&) const;

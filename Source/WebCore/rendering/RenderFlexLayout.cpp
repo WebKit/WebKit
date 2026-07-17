@@ -51,7 +51,7 @@ const FlexLayoutUtils& FlexLayout::flexLayoutUtils() const
     return m_flexBox.flexLayoutUtils();
 }
 
-FlexLayout::Result FlexLayout::performFlexLayout(FlexLayoutItems& flexItems, RelayoutChildren relayoutChildren)
+FlexLayout::Result FlexLayout::layout(FlexLayoutItems& flexItems)
 {
     // RenderFlexibleBox collects the items and handles the empty case, so there is always at least one item here.
     ASSERT(!flexItems.isEmpty());
@@ -78,7 +78,7 @@ FlexLayout::Result FlexLayout::performFlexLayout(FlexLayoutItems& flexItems, Rel
         // 9.3. (#6) Resolve the flexible lengths to find the used main size of each item.
         flexItemsMainSizeList = computeMainSizeForFlexItems(flexItems, flexLines, flexBaseAndHypotheticalMainSizeList.span());
         trimCrossAxisMarginsForFlexItems(flexItems, flexLines);
-        layoutFlexItems(flexItems.mutableSpan(), flexItemsMainSizeList.span(), relayoutChildren);
+        layoutFlexItems(flexItems.mutableSpan(), flexItemsMainSizeList.span());
         // 9.4. (#7) Determine the hypothetical cross size of each item.
         auto flexItemsHypotheticalCrossSizeList = hypotheticalCrossSizeForFlexItems(flexItems);
         // 9.4. (#8) Calculate the cross size of each flex line.
@@ -86,11 +86,12 @@ FlexLayout::Result FlexLayout::performFlexLayout(FlexLayoutItems& flexItems, Rel
     };
     performContentSizing();
 
-    // 9.6. (#15) Record each flex line's cross-axis position and, for row flow, grow the container's logical height
-    // to fit the lines plus the inter-line gaps between them. (Column flow's height is its main size, set later while
-    // placing the items.) performContentAlignment resolves the final logical height for both flows.
     Vector<LayoutUnit> flexLinesCrossPositionList;
-    auto positionFlexLines = [&] {
+    auto computeFlexLineCrossPositions = [&] {
+        // Stack the flex lines along the cross axis, recording each line's cross-axis position. For row flow, grow the
+        // container's logical height to fit the lines plus the inter-line gaps as we go, so its content cross extent is
+        // known before alignment. (Column flow's height is its main size, set later while placing the items.)
+        // performContentAlignment resolves the final used cross size (9.6 #15) for both flows.
         flexLinesCrossPositionList = Vector<LayoutUnit>(flexLines.ranges.size());
         auto crossAxisOffset = m_constraints.flowAwareBorderBlock.first + m_constraints.flowAwarePaddingBlock.first;
         for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
@@ -109,7 +110,7 @@ FlexLayout::Result FlexLayout::performFlexLayout(FlexLayoutItems& flexItems, Rel
         auto totalGapBetweenLines = flexLines.ranges.size() > 1 ? flexLayoutUtils().computeGap(FlexLayoutUtils::GapType::BetweenLines) * (flexLines.ranges.size() - 1) : 0_lu;
         m_flexBox.setLogicalHeight(m_flexBox.logicalHeight() + totalGapBetweenLines);
     };
-    positionFlexLines();
+    computeFlexLineCrossPositions();
 
     LayoutUnit crossAxisStartEdge;
     Vector<LayoutPoint> positionList;
@@ -120,7 +121,7 @@ FlexLayout::Result FlexLayout::performFlexLayout(FlexLayoutItems& flexItems, Rel
         setFlexItemCountsForFirstAndLastLine(flexLines);
 
         // 9.6. (#15) Finalize the container's logical height: apply the empty-line minimum, then resolve it against
-        // the container's own specified/min/max height and box-sizing. Row flow's height was set in positionFlexLines
+        // the container's own specified/min/max height and box-sizing. Row flow's height was set in computeFlexLineCrossPositions
         // above; column flow's is its main size, set just now while placing the items.
         m_flexBox.updateFlexContainerLogicalHeight();
 
@@ -154,12 +155,13 @@ static bool flexContainerIsHorizontalFlow(const RenderBox& flexItem)
     return downcast<RenderFlexibleBox>(*flexItem.parent()).flexLayoutUtils().isHorizontalFlow();
 }
 
-FlexLayoutItem::FlexLayoutItem(RenderBox& flexItem, bool everHadLayout)
+FlexLayoutItem::FlexLayoutItem(RenderBox& flexItem, bool everHadLayout, bool shouldInvalidateChildContent)
     : renderer(flexItem)
     , mainAxisBorderAndPadding(flexContainerIsHorizontalFlow(flexItem) ? flexItem.horizontalBorderAndPaddingExtent() : flexItem.verticalBorderAndPaddingExtent())
     , crossAxisBorderAndPadding(flexContainerIsHorizontalFlow(flexItem) ? flexItem.verticalBorderAndPaddingExtent() : flexItem.horizontalBorderAndPaddingExtent())
     , mainAxisIsInlineAxis(flexContainerIsHorizontalFlow(flexItem) == flexItem.isHorizontalWritingMode())
     , everHadLayout(everHadLayout)
+    , shouldInvalidateChildContent(shouldInvalidateChildContent)
 {
     ASSERT(!flexItem.isOutOfFlowPositioned());
 }
@@ -411,7 +413,7 @@ void FlexLayout::distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(const Fle
         for (size_t index = 0; index < lineItems.size(); ++index)
             remainingFreeSpace -= lineItems[index].flexedMarginBoxSize(lineFlexItemsMainSizeList[index]);
 
-        layoutFlexItems(lineItems, lineFlexItemsMainSizeList, RelayoutChildren::No);
+        layoutFlexItems(lineItems, lineFlexItemsMainSizeList);
         placeFlexItems(flexLinesCrossPositionList[lineIndex], lineItems, linePositions, remainingFreeSpace);
     }
 }
@@ -440,10 +442,10 @@ void FlexLayout::trimCrossAxisMarginsForFlexItems(FlexLayoutItems& flexItems, co
     }
 }
 
-void FlexLayout::layoutFlexItems(std::span<FlexLayoutItem> flexLayoutItems, std::span<const LayoutUnit> flexItemsMainSizeList, RelayoutChildren relayoutChildren)
+void FlexLayout::layoutFlexItems(std::span<FlexLayoutItem> flexLayoutItems, std::span<const LayoutUnit> flexItemsMainSizeList)
 {
     for (size_t index = 0; index < flexLayoutItems.size(); ++index)
-        m_flexBox.layoutFlexItemAfterMainSizing(flexLayoutItems[index], flexItemsMainSizeList[index], relayoutChildren);
+        m_flexBox.layoutFlexItemWithMainSize(flexLayoutItems[index], flexItemsMainSizeList[index]);
 }
 
 Vector<LayoutUnit> FlexLayout::hypotheticalCrossSizeForFlexItems(const FlexLayoutItems& flexItems)

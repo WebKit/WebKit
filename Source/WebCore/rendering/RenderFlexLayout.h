@@ -43,7 +43,7 @@ class RenderFlexibleBox;
 // LFC integration builds LogicalFlexItems for Layout::FlexLayout.
 class FlexLayoutItem {
 public:
-    FlexLayoutItem(RenderBox&, bool everHadLayout);
+    FlexLayoutItem(RenderBox&, bool everHadLayout, bool shouldInvalidateChildContent);
 
     LayoutUnit NODELETE hypotheticalMainAxisMarginBoxSize(LayoutUnit hypotheticalMainContentSize) const;
     LayoutUnit NODELETE flexBaseMarginBoxSize(LayoutUnit flexBaseContentSize) const;
@@ -55,11 +55,14 @@ public:
     const LayoutUnit crossAxisBorderAndPadding;
     // True when the flex container's main axis is this item's inline axis (i.e. the item is not orthogonal to the container).
     const bool mainAxisIsInlineAxis;
-    // The item's main-axis margin extent. Snapshotted in FlexLayout::performFlexLayout after the item is laid out for
+    // The item's main-axis margin extent. Snapshotted in FlexLayout::layout after the item is laid out for
     // its flex base size (an orthogonal item only resolves its physical margins then), not at construction time.
     // margin-trim reduces it during line collection.
     LayoutUnit mainAxisMargin;
     bool everHadLayout { false };
+    // Whether the container is relaying out all its items this pass (RelayoutChildren::Yes); layoutFlexItemWithMainSize
+    // combines it with !hasFlexItemCompletedLayout to decide whether to invalidate this child's content.
+    bool shouldInvalidateChildContent { false };
 };
 
 using FlexLayoutItems = Vector<FlexLayoutItem, 4>;
@@ -112,7 +115,7 @@ public:
         size_t numberOfFlexItemsOnFirstLine { 0 };
         size_t numberOfFlexItemsOnLastLine { 0 };
     };
-    Result performFlexLayout(FlexLayoutItems&, RelayoutChildren);
+    Result layout(FlexLayoutItems&);
 
 private:
     struct FlexBaseAndHypotheticalMainSize {
@@ -154,7 +157,7 @@ private:
     // Trims the cross-axis margins of the items on the first and last flex line (must run before laying the items out).
     void trimCrossAxisMarginsForFlexItems(FlexLayoutItems& flexItems, const FlexLines&);
     // Lays out each flex item at its resolved main size.
-    void layoutFlexItems(std::span<FlexLayoutItem>, std::span<const LayoutUnit> flexItemsMainSizeList, RelayoutChildren);
+    void layoutFlexItems(std::span<FlexLayoutItem>, std::span<const LayoutUnit> flexItemsMainSizeList);
     Vector<LayoutUnit> hypotheticalCrossSizeForFlexItems(const FlexLayoutItems&);
     Vector<LayoutUnit> crossSizeForFlexLines(const FlexLines&, const FlexLayoutItems&, const Vector<LayoutUnit>& flexItemsHypotheticalCrossSizeList);
     Vector<LayoutPoint> handleMainAxisAlignment(const FlexLines&, FlexLayoutItems&, const Vector<LayoutUnit>& flexItemsMainSizeList, const Vector<LayoutUnit>& flexLinesCrossPositionList);

@@ -234,7 +234,7 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
             if (flexItems.isEmpty())
                 updateFlexContainerLogicalHeight();
             else {
-                auto flexLayoutResult = FlexLayout(*this, flexLayoutConstraints()).performFlexLayout(flexItems, relayoutChildren);
+                auto flexLayoutResult = FlexLayout(*this, flexLayoutConstraints()).layout(flexItems);
                 if (flexLayoutResult.alignContentStartOverflow)
                     m_alignContentStartOverflow = *flexLayoutResult.alignContentStartOverflow;
                 m_justifyContentStartOverflow = flexLayoutResult.justifyContentStartOverflow;
@@ -694,7 +694,7 @@ void RenderFlexibleBox::dirtyPercentHeightDescendantsWithinFlexItem(RenderBox& f
     }
 }
 
-void RenderFlexibleBox::layoutFlexItemAfterMainSizing(FlexLayoutItem& flexLayoutItem, LayoutUnit mainSize, RelayoutChildren relayoutChildren)
+void RenderFlexibleBox::layoutFlexItemWithMainSize(FlexLayoutItem& flexLayoutItem, LayoutUnit mainSize)
 {
     auto& flexItem = flexLayoutItem.renderer.get();
 
@@ -711,7 +711,7 @@ void RenderFlexibleBox::layoutFlexItemAfterMainSizing(FlexLayoutItem& flexLayout
     }
     // We may have already forced relayout for orthogonal flowing children in
     // computeInnerFlexBaseSizeForFlexItem.
-    bool forceFlexItemRelayout = relayoutChildren == RelayoutChildren::Yes && !hasFlexItemCompletedLayout(flexItem);
+    bool forceFlexItemRelayout = flexLayoutItem.shouldInvalidateChildContent && !hasFlexItemCompletedLayout(flexItem);
     if (!forceFlexItemRelayout && flexItemHasPercentHeightDescendants(flexItem)) {
         // Have to force another relayout even though the child is sized
         // correctly, because its descendants are not sized correctly yet. Our
@@ -1155,7 +1155,7 @@ FlexLayoutItems RenderFlexibleBox::collectFlexItems(RelayoutChildren relayoutChi
         if (flexItem->shouldInvalidateContentWidths())
             flexItem->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
         updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, *flexItem);
-        flexItems.append({ *flexItem, everHadLayout });
+        flexItems.append({ *flexItem, everHadLayout, relayoutChildren == RelayoutChildren::Yes });
     }
     return flexItems;
 }
