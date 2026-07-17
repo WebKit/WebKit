@@ -23,8 +23,6 @@
 
 PRODUCT_NAME = TestIPC;
 
-PROJECT_HEADER_SEARCH_PATHS = $(SRCROOT)/../../Source/WebKit/Platform $(SRCROOT)/../../Source/WebKit/Platform/IPC $(SRCROOT)/../../Source/WebKit/Platform/IPC/darwin $(SRCROOT)/../../Source/WebKit/Platform/IPC/cocoa $(SRCROOT)/../../Source/WebKit/Shared $(SRCROOT)/../../Source/WebKit/Shared/Cocoa $(SRCROOT)/../../Source/WebKit/Shared/cf $(SRCROOT)/../../Source/WebKit/Shared/API/C $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC $(inherited);
-
 // IR PGO profile generation flags
 WK_PGO_GEN_FLAGS = $(WK_PGO_GEN_FLAGS_$(ENABLE_LLVM_PROFILE_GENERATION));
 WK_PGO_GEN_FLAGS_YES = -fprofile-generate;

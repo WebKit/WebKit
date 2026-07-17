@@ -28,7 +28,10 @@ ENABLE_DAEMON_SYMLINKS[sdk=embedded*] = NO
 
 ALWAYS_SEARCH_USER_PATHS = NO;
 ENABLE_USER_SCRIPT_SANDBOXING = YES;
-EXCLUDED_USER_SCRIPT_SANDBOXING_PHASE_NAMES = $(inherited) "Generate Unified Sources" "Generate Derived Sources" "Generate Swift platform args" "Generate Swift TBA availability macros" "Check For Inappropriate Files In Framework" "Check For Inappropriate Macros in External Headers" "Check For Framework Include Consistency" "Check .xcfilelists" "Migrate WebCore and WebKitLegacy Headers" "Copy Custom WebContent Resources to Framework Private Headers" "Copy Profiling Data" "Process WebContent entitlements" "Process Network entitlements" "Process GPU entitlements" "Process Model entitlements" "Process webpushd Entitlements" "Process adattributiond Entitlements" "Process entitlements" "Audit SPI use" "Update Info.plist for RunningBoard management" "Create symlinks to XPC services and dylibs" "Work around rdar://109484516";
+EXCLUDED_USER_SCRIPT_SANDBOXING_PHASE_NAMES = $(inherited) "Generate Unified Sources" "Generate Derived Sources" "Generate Swift platform args" "Generate Swift TBA availability macros" "Check For Inappropriate Files In Framework" "Check For Inappropriate Macros in External Headers" "Check For Framework Include Consistency" "Check .xcfilelists" "Migrate WebCore and WebKitLegacy Headers" "Copy Custom WebContent Resources to Framework Private Headers" "Copy Profiling Data" "Process WebContent entitlements" "Process Network entitlements" "Process GPU entitlements" "Process Model entitlements" "Process webpushd Entitlements" "Process adattributiond Entitlements" "Process entitlements" "Audit SPI use" "Update Info.plist for RunningBoard management" "Create symlinks to XPC services and dylibs" "Work around rdar://109484516" "Copy IPC Testing Headers";
+
+WK_IPC_TESTING_HEADERS_DEST_DIR = $(BUILT_PRODUCTS_DIR)/WebKitTestSupport;
+WK_IPC_TESTING_HEADERS_DEST_DIR[config=Production] = $(DSTROOT)$(WK_LIBRARY_HEADERS_FOLDER_PATH)/WebKitTestSupport;
 
 CLANG_CXX_LANGUAGE_STANDARD = c++2b;
 CLANG_CXX_LIBRARY = libc++;
