@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,36 +25,47 @@
 
 #pragma once
 
-#include "ReadableStream.h"
+#include "ReadableStreamSource.h"
 
 namespace WebCore {
 
+class DOMPromise;
 class DeferredPromise;
-class WebTransportReceiveStreamByteSource;
-class WebTransportSession;
+class Exception;
+class ReadableStream;
+class WebTransport;
+class WebTransportReceiveStream;
 
-struct WebTransportReceiveStreamStats;
 struct WebTransportStreamIdentifierType;
 
 using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
 
-class WebTransportReceiveStream final : public ReadableStream {
+class WebTransportReceiveStreamByteSource final : public RefCounted<WebTransportReceiveStreamByteSource> {
 public:
-    static ExceptionOr<Ref<WebTransportReceiveStream>> create(WebTransportStreamIdentifier, WebTransportSession&, JSDOMGlobalObject&, Ref<WebTransportReceiveStreamByteSource>&&);
-    ~WebTransportReceiveStream() final;
+    static Ref<WebTransportReceiveStreamByteSource> create(WebTransport& transport, WebTransportStreamIdentifier identifier) { return adoptRef(*new WebTransportReceiveStreamByteSource(transport, identifier)); }
 
-    void getStats(ScriptExecutionContext&, Ref<DeferredPromise>&&);
+    Ref<DOMPromise> pull(JSDOMGlobalObject&);
+    void receiveBytes(std::span<const uint8_t>, bool, std::optional<Exception>&&);
+    void receiveError(JSDOMGlobalObject&, JSC::JSValue error);
+    void cancel(JSC::JSValue reason, Ref<DeferredPromise>&&);
+
+    void setStream(ReadableStream& stream)
+    {
+        ASSERT(!m_stream);
+        m_stream = stream;
+    }
+    ReadableStream* stream() const { return m_stream.get(); }
+
 private:
-    WebTransportReceiveStream(ScriptExecutionContext*, WebTransportStreamIdentifier, WebTransportSession&);
+    WebTransportReceiveStreamByteSource(WebTransport&, WebTransportStreamIdentifier);
 
-    virtual Type type() const { return Type::WebTransport; }
+    bool m_isCancelled { false };
+    bool m_isClosed { false };
 
+    ThreadSafeWeakPtr<WebTransport> m_transport;
+    WeakPtr<ReadableStream> m_stream;
     const WebTransportStreamIdentifier m_identifier;
-    const ThreadSafeWeakPtr<WebTransportSession> m_session;
 };
 
 }
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebTransportReceiveStream)
-static bool isType(const WebCore::ReadableStream& stream) { return stream.type() == WebCore::ReadableStream::Type::WebTransport; }
-SPECIALIZE_TYPE_TRAITS_END()

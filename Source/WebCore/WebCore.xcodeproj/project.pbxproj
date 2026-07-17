@@ -23513,6 +23513,8 @@
 		F916C48C0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequestProgressEvent.h; sourceTree = "<group>"; };
 		F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequestProgressEvent.h; sourceTree = "<group>"; };
 		F9F0ED780DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XMLHttpRequestProgressEvent.idl; sourceTree = "<group>"; };
+		FA0394113009AAF9007EE051 /* WebTransportReceiveStreamByteSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebTransportReceiveStreamByteSource.h; sourceTree = "<group>"; };
+		FA0394123009AAF9007EE051 /* WebTransportReceiveStreamByteSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebTransportReceiveStreamByteSource.cpp; sourceTree = "<group>"; };
 		FA0B46CB2E8C5E330073E9B3 /* WebTransportConnectionStats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebTransportConnectionStats.h; sourceTree = "<group>"; };
 		FA0B46CC2E8C5E330073E9B3 /* WebTransportConnectionStats.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebTransportConnectionStats.idl; sourceTree = "<group>"; };
 		FA0B46D02E8C920F0073E9B3 /* WebTransportSendStreamSink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebTransportSendStreamSink.h; sourceTree = "<group>"; };
@@ -38231,8 +38233,8 @@
 				BCCE029B2E789AD90028EA38 /* StyleSingleAnimationRangeName.h */,
 				BC73202B2E73487A00A6584F /* StyleSingleAnimationTimeline.cpp */,
 				BC73201B2E7343D900A6584F /* StyleSingleAnimationTimeline.h */,
-				715FD2F6300838CD00E41A1C /* StyleSingleAnimationTrigger.h */,
 				715FD2F7300838CD00E41A1C /* StyleSingleAnimationTrigger.cpp */,
+				715FD2F6300838CD00E41A1C /* StyleSingleAnimationTrigger.h */,
 			);
 			path = animations;
 			sourceTree = "<group>";
@@ -43348,6 +43350,8 @@
 				FAC3C3EC2A9966FF001E2EB8 /* WebTransportReceiveStream.cpp */,
 				FAC3C3FF2A996705001E2EB8 /* WebTransportReceiveStream.h */,
 				FAC3C3D62A9960DC001E2EB8 /* WebTransportReceiveStream.idl */,
+				FA0394123009AAF9007EE051 /* WebTransportReceiveStreamByteSource.cpp */,
+				FA0394113009AAF9007EE051 /* WebTransportReceiveStreamByteSource.h */,
 				FAC849952A9FD86000D407EF /* WebTransportReceiveStreamSource.cpp */,
 				FAC849942A9FD86000D407EF /* WebTransportReceiveStreamSource.h */,
 				FAC3C3E82A9966FD001E2EB8 /* WebTransportReceiveStreamStats.h */,
@@ -47265,7 +47269,6 @@
 				E451C6322394031A00993190 /* MarginTypes.h in Headers */,
 				CE1866451F72E5B400A0CAB6 /* MarkedText.h in Headers */,
 				93309DF8099E64920056E581 /* markup.h in Headers */,
-				715FD2F8300838D500E41A1C /* StyleSingleAnimationTrigger.h in Headers */,
 				9728C3141268E4390041E89B /* MarkupAccumulator.h in Headers */,
 				3A18A2ED2AFEAA7C00DB976C /* MarkupExclusionRule.h in Headers */,
 				00C60E3F13D76D7E0092A275 /* MarkupTokenizerInlines.h in Headers */,
@@ -49122,6 +49125,7 @@
 				BC73201F2E7343E800A6584F /* StyleSingleAnimationRange.h in Headers */,
 				BCCE029C2E789AD90028EA38 /* StyleSingleAnimationRangeName.h in Headers */,
 				BC73201D2E7343E800A6584F /* StyleSingleAnimationTimeline.h in Headers */,
+				715FD2F8300838D500E41A1C /* StyleSingleAnimationTrigger.h in Headers */,
 				BCCE02912E766AA30028EA38 /* StyleSingleTransitionDelay.h in Headers */,
 				BCCE02922E766AAA0028EA38 /* StyleSingleTransitionDuration.h in Headers */,
 				BC7320022E732F3F00A6584F /* StyleSingleTransitionProperty.h in Headers */,

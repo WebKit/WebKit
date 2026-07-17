@@ -187,12 +187,11 @@ public:
 
 protected:
     static ExceptionOr<Ref<ReadableStream>> createFromJSValues(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSValue, std::optional<double>);
-    static ExceptionOr<Ref<InternalReadableStream>> createInternalReadableStream(JSDOMGlobalObject&, Ref<ReadableStreamSource>&&);
     explicit ReadableStream(ScriptExecutionContext*, RefPtr<InternalReadableStream>&& = { }, RefPtr<DependencyToVisit>&& = { }, IsSourceReachableFromOpaqueRoot = IsSourceReachableFromOpaqueRoot::No);
+    void setupReadableByteStreamController(JSDOMGlobalObject&, ReadableByteStreamController::PullAlgorithm&&, ReadableByteStreamController::CancelAlgorithm&&, double, StartSynchronously);
 
 private:
     ExceptionOr<void> setupReadableByteStreamControllerFromUnderlyingSource(JSDOMGlobalObject&, JSC::JSValue, UnderlyingSource&&, double);
-    void setupReadableByteStreamController(JSDOMGlobalObject&, ReadableByteStreamController::PullAlgorithm&&, ReadableByteStreamController::CancelAlgorithm&&, double, StartSynchronously);
 
     bool NODELETE isPulling() const;
     void teedBranchIsDestroyed(ReadableStream&);

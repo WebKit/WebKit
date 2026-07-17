@@ -147,6 +147,56 @@ TEST(WebTransport, ClientBidirectional)
     EXPECT_TRUE(challenged);
 }
 
+TEST(WebTransport, ClientBidirectionalBYOB)
+{
+    if (!WebTransportServer::isAvailable())
+        return;
+
+    WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
+        auto connection = co_await group.receiveIncomingConnection();
+        auto request = co_await connection.awaitableReceiveBytes();
+        request.append('d');
+        request.append('e');
+        request.append('f');
+        co_await connection.awaitableSend(WTF::move(request));
+    });
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    enableWebTransport(configuration.get());
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+    __block bool challenged { false };
+    __block uint16_t port = echoServer.port();
+    delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        validateChallenge(challenge, port);
+        challenged = true;
+        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    };
+
+    NSString *html = [NSString stringWithFormat:@""
+        "<script>async function test() {"
+        "  try {"
+        "    let t = new WebTransport('https://127.0.0.1:%d/');"
+        "    await t.ready;"
+        "    let s = await t.createBidirectionalStream();"
+        "    let w = s.writable.getWriter();"
+        "    await w.write(new TextEncoder().encode('abc'));"
+        "    let r = s.readable.getReader({ mode: 'byob' });"
+        "    const { value, done } = await r.read(new Uint8Array(6));"
+        "    await w.close();"
+        "    r.releaseLock();"
+        "    t.close();"
+        "    alert('successfully read ' + new TextDecoder().decode(value) + ' done: ' + done);"
+        "  } catch (e) { alert('caught ' + e); }"
+        "}; test();"
+        "</script>",
+        port];
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully read abcdef done: false");
+    EXPECT_TRUE(challenged);
+}
+
 TEST(WebTransport, Datagram)
 {
     if (!WebTransportServer::isAvailable())

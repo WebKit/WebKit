@@ -28,28 +28,25 @@
 
 #include "JSDOMException.h"
 #include "JSDOMGlobalObject.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSWebTransportError.h"
 #include "JSWebTransportReceiveStream.h"
+#include "ReadableByteStreamController.h"
+#include "ReadableStream.h"
 #include "WebTransport.h"
 #include "WebTransportError.h"
 #include "WebTransportSession.h"
+#include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/HeapCellInlines.h>
 #include <JavaScriptCore/JSCellInlines.h>
 #include <wtf/Scope.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
-WebTransportReceiveStreamSource::WebTransportReceiveStreamSource() = default;
-
-WebTransportReceiveStreamSource::WebTransportReceiveStreamSource(WebTransport& transport, WebTransportStreamIdentifier identifier)
-    : m_transport(transport)
-    , m_identifier(identifier)
-{
-}
-
 bool WebTransportReceiveStreamSource::receiveIncomingStream(JSC::JSGlobalObject& globalObject, Ref<WebTransportReceiveStream>& stream)
 {
-    if (m_isCancelled || m_identifier)
+    if (m_isCancelled)
         return false;
     auto& jsDOMGlobalObject = downcast<JSDOMGlobalObject>(globalObject);
     Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
@@ -61,73 +58,10 @@ bool WebTransportReceiveStreamSource::receiveIncomingStream(JSC::JSGlobalObject&
     return true;
 }
 
-void WebTransportReceiveStreamSource::receiveBytes(std::span<const uint8_t> bytes, bool withFin, std::optional<WebCore::Exception>&& exception)
+void WebTransportReceiveStreamSource::doCancel(JSC::JSValue)
 {
-    if (m_isCancelled || m_isClosed || !m_identifier)
-        return;
-    if (exception) {
-        controller().error(*exception);
-        clean();
-        if (RefPtr transport = m_transport.get())
-            transport->receiveStreamClosed(*m_identifier);
-        return;
-    }
-    if (bytes.size()) {
-        auto arrayBuffer = ArrayBuffer::tryCreateUninitialized(bytes.size(), 1);
-        if (arrayBuffer)
-            memcpySpan(arrayBuffer->mutableSpan(), bytes);
-        if (!controller().enqueue(WTF::move(arrayBuffer)))
-            doCancel({ });
-    }
-    if (withFin) {
-        m_isClosed = true;
-        controller().close();
-        clean();
-        if (RefPtr transport = m_transport.get())
-            transport->receiveStreamClosed(*m_identifier);
-    }
-}
-
-void WebTransportReceiveStreamSource::receiveError(JSDOMGlobalObject& globalObject, JSC::JSValue error)
-{
-    if (m_isClosed || m_isCancelled || !m_identifier)
-        return;
     m_isCancelled = true;
-
-    Locker<JSC::JSLock> locker(globalObject.vm().apiLock());
-    controller().error(globalObject, error);
-    clean();
-
-    if (RefPtr transport = m_transport.get())
-        transport->receiveStreamClosed(*m_identifier);
+    cancelFinished();
 }
 
-void WebTransportReceiveStreamSource::doCancel(JSC::JSValue value)
-{
-    auto scope = makeScopeExit([&] {
-        cancelFinished();
-    });
-
-    if (m_isCancelled)
-        return;
-    m_isCancelled = true;
-    if (!m_identifier)
-        return;
-    RefPtr transport = m_transport.get();
-    if (!transport)
-        return;
-    transport->receiveStreamClosed(*m_identifier);
-
-    RefPtr session = transport->session();
-    if (!session)
-        return;
-
-    std::optional<uint64_t> errorCode;
-    if (auto* jsWebTransportError = dynamicDowncast<JSWebTransportError>(value)) {
-        auto& webTransportError = jsWebTransportError->wrapped();
-        if (auto webTransportErrorCode = webTransportError.streamErrorCode())
-            errorCode = static_cast<uint64_t>(*webTransportErrorCode);
-    }
-    session->cancelReceiveStream(*m_identifier, errorCode);
-}
 }

@@ -160,11 +160,6 @@ ExceptionOr<Ref<ReadableStream>> ReadableStream::createFromByteUnderlyingSource(
     return { WTF::move(readableStream) };
 }
 
-ExceptionOr<Ref<InternalReadableStream>> ReadableStream::createInternalReadableStream(JSDOMGlobalObject& globalObject, Ref<ReadableStreamSource>&& source)
-{
-    return InternalReadableStream::createFromUnderlyingSource(globalObject, toJSNewlyCreated(&globalObject, &globalObject, WTF::move(source)), JSC::jsUndefined(), { });
-}
-
 ExceptionOr<Ref<ReadableStream>> ReadableStream::create(JSDOMGlobalObject& globalObject, Ref<ReadableStreamSource>&& source, std::optional<double> highWaterMark)
 {
     return createFromJSValues(globalObject, toJSNewlyCreated(&globalObject, &globalObject, WTF::move(source)), JSC::jsUndefined(), highWaterMark);

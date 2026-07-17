@@ -29,27 +29,40 @@
 #include "JSDOMConvertDictionary.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebTransportReceiveStreamStats.h"
+#include "ReadableByteStreamController.h"
 #include "ScriptExecutionContextInlines.h"
 #include "TaskSource.h"
+#include "WebTransportReceiveStreamByteSource.h"
+#include "WebTransportReceiveStreamSource.h"
 #include "WebTransportReceiveStreamStats.h"
 #include "WebTransportSession.h"
+#include <JavaScriptCore/JSPromise.h>
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
-ExceptionOr<Ref<WebTransportReceiveStream>> WebTransportReceiveStream::create(WebTransportStreamIdentifier identifier, WebTransportSession& session, JSDOMGlobalObject& globalObject, Ref<ReadableStreamSource>&& source)
+ExceptionOr<Ref<WebTransportReceiveStream>> WebTransportReceiveStream::create(WebTransportStreamIdentifier identifier, WebTransportSession& session, JSDOMGlobalObject& globalObject, Ref<WebTransportReceiveStreamByteSource>&& source)
 {
-    auto result = createInternalReadableStream(globalObject, WTF::move(source));
-    if (result.hasException())
-        return result.releaseException();
-
-    Ref stream = adoptRef(*new WebTransportReceiveStream(protect(globalObject.scriptExecutionContext()).get(), identifier, session, result.releaseReturnValue()));
+    Ref stream = adoptRef(*new WebTransportReceiveStream(protect(globalObject.scriptExecutionContext()).get(), identifier, session));
     stream->suspendIfNeeded();
+
+    ReadableByteStreamController::PullAlgorithm pullAlgorithm = [source](auto& globalObject, auto&) {
+        return source->pull(globalObject);
+    };
+
+    ReadableByteStreamController::CancelAlgorithm cancelAlgorithm = [source](auto& globalObject, auto&, auto&& reason) {
+        auto [promise, deferred] = createPromiseAndWrapper(globalObject);
+        source->cancel(reason ? *reason : JSC::jsUndefined(), WTF::move(deferred));
+        return promise;
+    };
+
+    stream->setupReadableByteStreamController(globalObject, WTF::move(pullAlgorithm), WTF::move(cancelAlgorithm), 0, ReadableStream::StartSynchronously::No);
+
     return stream;
 }
 
-WebTransportReceiveStream::WebTransportReceiveStream(ScriptExecutionContext* context, WebTransportStreamIdentifier identifier, WebTransportSession& session, Ref<InternalReadableStream>&& stream)
-    : ReadableStream(context, WTF::move(stream))
+WebTransportReceiveStream::WebTransportReceiveStream(ScriptExecutionContext* context, WebTransportStreamIdentifier identifier, WebTransportSession& session)
+    : ReadableStream(context, { }, { }, ReadableStream::IsSourceReachableFromOpaqueRoot::Yes)
     , m_identifier(identifier)
     , m_session(session) { }
 

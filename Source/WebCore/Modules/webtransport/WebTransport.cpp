@@ -55,6 +55,7 @@
 #include "WebTransportError.h"
 #include "WebTransportOptions.h"
 #include "WebTransportReceiveStream.h"
+#include "WebTransportReceiveStreamByteSource.h"
 #include "WebTransportReceiveStreamSource.h"
 #include "WebTransportReliabilityMode.h"
 #include "WebTransportSendGroup.h"
@@ -234,7 +235,7 @@ void WebTransport::receiveIncomingUnidirectionalStream(WebTransportStreamIdentif
         return;
 
     auto& jsDOMGlobalObject = *downcast<JSDOMGlobalObject>(globalObject);
-    Ref incomingStream = WebTransportReceiveStreamSource::createIncomingDataSource(*this, identifier);
+    Ref incomingStream = WebTransportReceiveStreamByteSource::create(*this, identifier);
     auto stream = [&] {
         Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
         return WebTransportReceiveStream::create(identifier, *session, jsDOMGlobalObject, incomingStream.copyRef());
@@ -252,7 +253,7 @@ void WebTransport::receiveIncomingUnidirectionalStream(WebTransportStreamIdentif
         protect(m_session)->destroyStream(identifier, std::nullopt);
 }
 
-static ExceptionOr<Ref<WebTransportBidirectionalStream>> createBidirectionalStream(WebTransport& transport, WebTransportSession& session, JSDOMGlobalObject& globalObject, Ref<WebTransportSendStreamSink>&& sink, Ref<WebTransportReceiveStreamSource>&& source)
+static ExceptionOr<Ref<WebTransportBidirectionalStream>> createBidirectionalStream(WebTransport& transport, WebTransportSession& session, JSDOMGlobalObject& globalObject, Ref<WebTransportSendStreamSink>&& sink, Ref<WebTransportReceiveStreamByteSource>&& source)
 {
     auto identifier = sink->identifier();
     auto sendStream = [&] {
@@ -284,7 +285,7 @@ void WebTransport::receiveBidirectionalStream(WebTransportStreamIdentifier ident
 
     Ref sink = WebTransportSendStreamSink::create(*this, identifier);
     auto& jsDOMGlobalObject = *downcast<JSDOMGlobalObject>(globalObject);
-    Ref incomingStream = WebTransportReceiveStreamSource::createIncomingDataSource(*this, identifier);
+    Ref incomingStream = WebTransportReceiveStreamByteSource::create(*this, identifier);
     auto stream = WebCore::createBidirectionalStream(*this, *session, jsDOMGlobalObject, sink.copyRef(), incomingStream.copyRef());
     if (stream.hasException())
         return;
@@ -569,7 +570,7 @@ void WebTransport::createBidirectionalStream(ScriptExecutionContext& context, We
 
         Ref sink = WebTransportSendStreamSink::create(protectedThis.get(), *identifier);
         auto& jsDOMGlobalObject = *downcast<JSDOMGlobalObject>(globalObject);
-        Ref incomingStream = WebTransportReceiveStreamSource::createIncomingDataSource(protectedThis.get(), *identifier);
+        Ref incomingStream = WebTransportReceiveStreamByteSource::create(protectedThis.get(), *identifier);
         auto stream = WebCore::createBidirectionalStream(protectedThis, *session, jsDOMGlobalObject, sink.copyRef(), incomingStream.copyRef());
         if (stream.hasException())
             return promise->reject(stream.releaseException());

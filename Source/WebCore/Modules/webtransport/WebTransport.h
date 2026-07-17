@@ -55,6 +55,7 @@ class WebTransportBidirectionalStreamSource;
 class WebTransportDatagramDuplexStream;
 class WebTransportDatagramsWritable;
 class WebTransportError;
+class WebTransportReceiveStreamByteSource;
 class WebTransportReceiveStreamSource;
 class WebTransportSendGroup;
 class WebTransportSendStream;
@@ -155,7 +156,7 @@ private:
     const Ref<DatagramSource> m_datagramSource;
     const Ref<WebTransportReceiveStreamSource> m_receiveStreamSource;
     const Ref<WebTransportBidirectionalStreamSource> m_bidirectionalStreamSource;
-    HashMap<WebTransportStreamIdentifier, Ref<WebTransportReceiveStreamSource>> m_readStreamSources;
+    HashMap<WebTransportStreamIdentifier, Ref<WebTransportReceiveStreamByteSource>> m_readStreamSources;
     HashMap<WebTransportStreamIdentifier, Ref<WebTransportSendStreamSink>> m_sendStreamSinks;
     WeakHashSet<WebTransportDatagramsWritable> m_datagramsWritables;
 };
