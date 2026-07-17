@@ -1134,12 +1134,21 @@ void NetworkResourceLoader::sendDidReceiveResponseWithPotentialProcessSwap(const
         session->addLoaderAwaitingWebProcessTransfer(loader.releaseNonNull());
     Site responseSite { response.url() };
 
-    auto swapResultHandler = [existingNetworkResourceLoadIdentifierToResume, session = WeakPtr { connection->networkSession() }, shouldConsiderProcessSwapForEnhancedSecurity, connection = WTF::Ref { connection }, response, privateRelayed, needsContinueDidReceiveResponseMessage, responseMetrics](bool success) {
-        if (success)
-            return;
+    auto swapResultHandler = [existingNetworkResourceLoadIdentifierToResume, session = WeakPtr { connection->networkSession() }, shouldConsiderProcessSwapForEnhancedSecurity, connection = WTF::Ref { connection }, response, privateRelayed, needsContinueDidReceiveResponseMessage, responseMetrics](std::optional<WebCore::ProcessIdentifier> destinationWebProcess) {
         if (!session)
             return;
-        if (RefPtr loader = shouldConsiderProcessSwapForEnhancedSecurity ? session->takeLoaderAwaitingWebProcessTransfer(existingNetworkResourceLoadIdentifierToResume) : nullptr) {
+        if (destinationWebProcess) {
+            // The UIProcess chose the destination WebContent process for this parked loader. Bind the
+            // loader to it so only that process can claim it via ScheduleResourceLoad, and resolve any
+            // claims that arrived before the destination was known.
+            session->setParkedLoaderDestinationAndResolvePendingClaims(existingNetworkResourceLoadIdentifierToResume, *destinationWebProcess);
+            return;
+        }
+        // No process swap happened. For Enhanced Security this means the swap was declined, so resume the
+        // load in the original process. This is a trusted, in-NetworkProcess return-to-sender: the loader
+        // goes back to the connection that parked it, so no ownership check is needed (and none is possible,
+        // since the declined loader never had a destination recorded).
+        if (RefPtr loader = shouldConsiderProcessSwapForEnhancedSecurity ? session->takeParkedLoaderForOriginalProcess(existingNetworkResourceLoadIdentifierToResume) : nullptr) {
             auto loaderCoreIdentifier = loader->coreIdentifier();
             loader->send(Messages::WebResourceLoader::DidReceiveResponse { response, privateRelayed, needsContinueDidReceiveResponseMessage, responseMetrics }, loaderCoreIdentifier);
             connection->adoptNetworkResourceLoader(loaderCoreIdentifier, loader.releaseNonNull());

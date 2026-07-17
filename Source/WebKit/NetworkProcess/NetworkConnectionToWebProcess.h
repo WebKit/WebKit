@@ -287,6 +287,10 @@ public:
 
     std::optional<NetworkActivityTracker::CompletionCode> NODELETE lastRootActivityCompletionCodeForTesting(WebCore::PageIdentifier) const;
 
+    // Called by NetworkSession when draining the deferred-claim queue for a parked loader.
+    void completeQueuedExistingLoaderResume(Ref<NetworkResourceLoader>&&, NetworkResourceLoadParameters&&);
+    void terminateForInvalidLoaderResumeClaim();
+
 private:
     NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&, IPC::Connection::Identifier&&);
 
@@ -312,6 +316,8 @@ private:
     void isResourceLoadFinished(WebCore::ResourceLoaderIdentifier, CompletionHandler<void(bool)>&&);
 #if ENABLE(IPC_TESTING_API)
     void takeInvalidMessageStringForTesting(CompletionHandler<void(String&&)>&&);
+    void addSyntheticParkedLoaderForTesting(NetworkResourceLoadIdentifier, WebCore::ProcessIdentifier destination, CompletionHandler<void(bool)>&&);
+    void removeSyntheticParkedLoaderForTesting(NetworkResourceLoadIdentifier, CompletionHandler<void()>&&);
 #endif
 
     void removeLoadIdentifier(WebCore::ResourceLoaderIdentifier);
