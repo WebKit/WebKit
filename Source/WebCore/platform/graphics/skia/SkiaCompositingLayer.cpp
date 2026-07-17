@@ -246,6 +246,10 @@ FloatRect SkiaCompositingLayer::paintedLayerRect() const
     if (m_backdrop.filter)
         rect.unite(m_backdrop.clipRect.rect());
 
+    // A debug border is stroked on the edges of what the layer paints, respect that.
+    if (m_debugBorder)
+        rect.inflate(m_debugBorder->width / 2);
+
     // A filter such as a blur spreads what the layer paints past its bounds, unless something clips it
     // back in, which mirrors what computeOverlapRegions() does with the same outsets.
     auto filter = this->filter();
@@ -353,12 +357,16 @@ void SkiaCompositingLayer::resolveBackdropDamage(const Vector<FloatRect>& backdr
 
 void SkiaCompositingLayer::setDebugIndicators(Color&& debugBorderColor, std::optional<float> debugBorderWidth, std::optional<unsigned> repaintCount)
 {
+    std::optional<DebugBorder> debugBorder;
     if (debugBorderColor.isValid())
-        m_debugBorder = { WTF::move(debugBorderColor), debugBorderWidth.value_or(1) };
-    else
-        m_debugBorder = std::nullopt;
+        debugBorder = { WTF::move(debugBorderColor), debugBorderWidth.value_or(1) };
 
+    if (m_debugBorder == debugBorder && m_repaintCount == repaintCount)
+        return;
+
+    m_debugBorder = WTF::move(debugBorder);
     m_repaintCount = repaintCount;
+    damageWholeLayer();
 }
 
 const TransformationMatrix& SkiaCompositingLayer::localTransform() const
@@ -499,7 +507,7 @@ bool SkiaCompositingLayer::computeTransformsAndAnimations(const TransformationMa
     return hasRunningAnimations;
 }
 
-bool SkiaCompositingLayer::paint(SkCanvas& canvas, std::optional<Damage>& frameDamage, const std::optional<Damage>& priorTargetDamage)
+bool SkiaCompositingLayer::paint(SkCanvas& canvas, std::optional<Damage>& frameDamage, const std::optional<Damage>& priorTargetDamage, std::optional<SkColor> clearColor)
 {
     // Both walks below assume the animations have been applied and the transforms computed.
     bool hasRunningAnimations = computeTransformsAndAnimations({ }, { }, MonotonicTime::now());
@@ -551,8 +559,21 @@ bool SkiaCompositingLayer::paint(SkCanvas& canvas, std::optional<Damage>& frameD
     UNUSED_PARAM(priorTargetDamage);
 #endif
 
-    // An empty region means the target already holds the frame, so draw nothing.
-    if (!damageRegion || !damageRegion->isEmpty()) {
+    // An empty region means the target already holds the frame, so draw nothing and skip the clear.
+    const bool skipDraw = damageRegion && damageRegion->isEmpty();
+    if (!skipDraw) {
+        // Clear what will be redrawn - only the damage rects when compositing from the damage, which keeps
+        // undamaged content and composites translucent content once, or the whole target otherwise.
+        if (clearColor) {
+            if (damageRegion) {
+                SkPaint clearPaint;
+                clearPaint.setColor(*clearColor);
+                clearPaint.setBlendMode(SkBlendMode::kSrc);
+                damageRegion->fillCanvasInDeviceSpace(canvas, clearPaint);
+            } else
+                canvas.clear(*clearColor);
+        }
+
         PaintContext context;
         context.compositingDamageRegion = WTF::move(damageRegion);
 

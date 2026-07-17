@@ -40,6 +40,7 @@
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SkiaCompositingLayer.h>
+#include <WebCore/SkiaDamageRegion.h>
 #include <WebCore/TextureMapperLayer.h>
 #include <WebCore/TransformationMatrix.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
@@ -92,13 +93,11 @@ ThreadedCompositor::ThreadedCompositor(WebPage& webPage, LayerTreeHost& layerTre
     initializeFPSCounter();
 #if ENABLE(DAMAGE_TRACKING)
     if (m_useSkia) {
-        // WEBKIT_SHOW_DAMAGE=N renders the frame damage rects, insetting them
-        // by N-1 pixels (mirrors TextureMapperDamageVisualizer's behavior).
-        if (const auto* showDamageVariable = getenv("WEBKIT_SHOW_DAMAGE")) {
-            if (auto value = parseInteger<unsigned>(StringView::fromLatin1(showDamageVariable)); value && *value) {
-                m_damage.showSkiaDamage = true;
-                m_damage.skiaDamageMargin = *value - 1;
-            }
+        // The margin TextureMapperDamageVisualizer takes means nothing here, since the overlay fills the
+        // damage as a region, but the same variable enables both so it does not depend on the compositor.
+        if (const auto* showDamageEnvvar = getenv("WEBKIT_SHOW_DAMAGE")) {
+            if (auto value = parseInteger<unsigned>(StringView::fromLatin1(showDamageEnvvar)); value && *value)
+                m_damage.showAccumulatedDamageOverlay = true;
         }
     } else
         m_damage.visualizer = TextureMapperDamageVisualizer::create();
@@ -287,16 +286,31 @@ void ThreadedCompositor::setSize(const IntSize& size, float deviceScaleFactor)
 void ThreadedCompositor::setDamagePropagationSettings(std::optional<OptionSet<DamagePropagationFlags>> flags, unsigned rectangleThreshold)
 {
     m_damage.flags = flags;
-    if ((m_damage.visualizer || m_damage.showSkiaDamage) && m_damage.flags) {
-        // We don't use damage when rendering layers if the visualizer is enabled, because we need to make sure the whole
-        // frame is invalidated in the next paint so that previous damage rects are cleared.
-        m_damage.flags->remove(DamagePropagationFlags::UseForCompositing);
-    }
 
     rectangleThreshold = Damage::clampRectangleThreshold(rectangleThreshold);
-    m_damage.rectangleThreshold = rectangleThreshold;
-    if (m_surface)
+    if (m_surface) {
         m_surface->setFrameDamageRectangleThreshold(rectangleThreshold);
+        m_surface->setDamageUsedForCompositing(damageUsedForCompositing());
+    }
+}
+
+bool ThreadedCompositor::damageUsedForCompositing() const
+{
+    // Only the Skia compositor draws just the damage rects. TextureMapper scissors with the damage
+    // bounds, which needs neither fine-grained records nor swap-chain accumulation.
+    return m_useSkia && m_damage.flags && m_damage.flags->contains(DamagePropagationFlags::UseForCompositing);
+}
+
+bool ThreadedCompositor::drawsOverlay() const
+{
+    // The damage overlay is drawn by paintToSkiaCanvas(), the visualizer by paintToTextureMapper(), so
+    // each path only has its own. Both draw over the damage itself, and damaging what they drew would
+    // feed their own rects back into what they show next, growing until they cover the surface. So the
+    // frame repaints in full instead. The FPS counter has no such loop and damages its own box.
+    if (m_useSkia)
+        return m_damage.showAccumulatedDamageOverlay;
+
+    return !!m_damage.visualizer;
 }
 
 void ThreadedCompositor::enableFrameDamageNotificationForTesting()
@@ -320,12 +334,13 @@ void ThreadedCompositor::flushCompositingState(const OptionSet<CompositionReason
     m_sceneState->flushCompositingState(reasons, m_useSkia);
 }
 
-void ThreadedCompositor::paintToCurrentGLContext(const TransformationMatrix& matrix, const IntSize& size, const OptionSet<CompositionReason>& reasons)
+TargetContents ThreadedCompositor::paintToCurrentGLContext(const TransformationMatrix& matrix, const IntSize& size, const OptionSet<CompositionReason>& reasons)
 {
     if (m_useSkia)
-        paintToSkiaCanvas(matrix, size, reasons);
-    else
-        paintToTextureMapper(matrix, size, reasons);
+        return paintToSkiaCanvas(matrix, size, reasons);
+
+    paintToTextureMapper(matrix, size, reasons);
+    return TargetContents::Valid;
 }
 
 void ThreadedCompositor::paintToTextureMapper(const TransformationMatrix& matrix, const IntSize& size, const OptionSet<CompositionReason>& reasons)
@@ -350,18 +365,19 @@ void ThreadedCompositor::paintToTextureMapper(const TransformationMatrix& matrix
         currentRootLayer.collectDamage(*m_textureMapper, frameDamage);
         WTFEndSignpost(this, CollectDamage);
 
-        if (m_damage.shouldNotifyFrameDamageForTesting && m_layerTreeHost)
-            m_layerTreeHost->notifyFrameDamageForTesting(frameDamage.regionForTesting());
-
-        if (!frameDamage.isEmpty())
-            m_surface->setFrameDamage(WTF::move(frameDamage));
+        recordFrameDamage(WTF::move(frameDamage));
 
         if (m_damage.flags->contains(DamagePropagationFlags::UseForCompositing)) {
-            const auto& damageSinceLastSurfaceUse = m_surface->renderTargetDamage();
-            if (damageSinceLastSurfaceUse && !FloatRect(damageSinceLastSurfaceUse->bounds()).contains(clipRect))
-                rectContainingRegionThatActuallyChanged = FloatRoundedRect(damageSinceLastSurfaceUse->bounds());
+            if (drawsOverlay()) {
+                // No damage means repaint the whole frame, so skip the scissor below too.
+                m_textureMapper->setDamage(std::nullopt);
+            } else {
+                const auto& damageSinceLastSurfaceUse = m_surface->renderTargetDamage();
+                if (damageSinceLastSurfaceUse && !FloatRect(damageSinceLastSurfaceUse->bounds()).contains(clipRect))
+                    rectContainingRegionThatActuallyChanged = FloatRoundedRect(damageSinceLastSurfaceUse->bounds());
 
-            m_textureMapper->setDamage(damageSinceLastSurfaceUse);
+                m_textureMapper->setDamage(damageSinceLastSurfaceUse);
+            }
         }
     }
 
@@ -385,7 +401,7 @@ void ThreadedCompositor::paintToTextureMapper(const TransformationMatrix& matrix
         m_damage.visualizer->paintDamage(*m_textureMapper, m_surface->frameDamage());
         // When damage visualizer is active, we cannot send the original damage to the platform as in this case
         // the damage rects visualized previous frame may not get erased if platform actually uses damage.
-        m_surface->setFrameDamage(Damage(size, Damage::Mode::Full));
+        m_surface->setFrameDamageForPlatformOnly(Damage(size, Damage::Mode::Full));
     }
 #endif
 
@@ -396,45 +412,88 @@ void ThreadedCompositor::paintToTextureMapper(const TransformationMatrix& matrix
         requestComposition(CompositionReason::Animation);
 }
 
-void ThreadedCompositor::paintToSkiaCanvas(const TransformationMatrix& matrix, const IntSize& size, const OptionSet<CompositionReason>& reasons)
+#if ENABLE(DAMAGE_TRACKING)
+void ThreadedCompositor::recordFrameDamage(Damage&& damage)
+{
+    if (m_damage.shouldNotifyFrameDamageForTesting && m_layerTreeHost)
+        m_layerTreeHost->notifyFrameDamageForTesting(damage.regionForTesting());
+
+    // Nothing changed this frame: an empty damage contributes nothing to the targets, since Damage::add()
+    // ignores empty damage. Skip it rather than replace the recorded frame damage with an empty one.
+    if (damage.isEmpty())
+        return;
+
+    m_surface->setFrameDamage(WTF::move(damage));
+}
+
+static void drawDamageOverlay(SkCanvas& canvas, const Damage& damage, const IntSize& size, SkColor color)
+{
+    SkPaint paint;
+    paint.setStyle(SkPaint::kFill_Style);
+    paint.setColor(color);
+
+    // Drawn as a region, so the translucent overlay composites once even where the rects touch. No region
+    // means the damage covers the whole surface, which the overlay has to show as such.
+    if (auto damageRegion = SkiaDamageRegion::create(damage, size))
+        damageRegion->fillCanvasInDeviceSpace(canvas, paint);
+    else
+        canvas.drawPaint(paint);
+}
+#endif
+
+TargetContents ThreadedCompositor::paintToSkiaCanvas(const TransformationMatrix& matrix, const IntSize& size, const OptionSet<CompositionReason>& reasons)
 {
     auto* canvas = m_surface->canvas();
     if (!canvas)
-        return;
+        return TargetContents::Invalid;
 
     auto& rootLayer = m_sceneState->rootLayer().ensureSkiaTarget();
     rootLayer.setTransform(matrix);
 
+    // paint() collects this frame's damage into frameDamage, and limits the draw to what this target must
+    // redraw: priorTargetDamage - what changed since the target was last current, read before this frame
+    // is recorded - folded with frameDamage. An unset priorTargetDamage repaints the whole target.
     std::optional<Damage> frameDamage;
+    std::optional<Damage> priorTargetDamage;
+    const std::optional<SkColor> clearColor = m_surface->skiaClearColor(reasons);
+
 #if ENABLE(DAMAGE_TRACKING)
-    // The damage is collected by a walk of its own, which draws nothing, before the walk that draws.
-    if (m_damage.flags)
-        frameDamage = Damage(size, m_damage.flags->contains(DamagePropagationFlags::Unified) ? Damage::Mode::BoundingBox : Damage::Mode::Rectangles);
+    // Also collect for the accumulated-damage overlay, so it works with the compositing feature off.
+    if (m_damage.flags || m_damage.showAccumulatedDamageOverlay)
+        frameDamage = Damage(size, m_damage.flags && m_damage.flags->contains(DamagePropagationFlags::Unified) ? Damage::Mode::BoundingBox : Damage::Mode::Rectangles);
+
+    // No layer damages the counter's box, so seed it here, before paint() collects.
+    if (frameDamage && m_fpsCounter.drawsFPS)
+        frameDamage->add(takeFPSCounterDamage());
+
+    // Read the target's record before this frame is recorded into it.
+    if (damageUsedForCompositing() && !drawsOverlay())
+        priorTargetDamage = m_surface->renderTargetDamage();
 #endif
 
-    m_surface->clear(reasons);
-
     canvas->save();
-    const bool hasRunningAnimations = rootLayer.paint(*canvas, frameDamage);
+    const bool hasRunningAnimations = rootLayer.paint(*canvas, frameDamage, priorTargetDamage, clearColor);
     canvas->restore();
 
 #if ENABLE(DAMAGE_TRACKING)
-    if (frameDamage) {
-        if (m_damage.shouldNotifyFrameDamageForTesting && m_layerTreeHost)
-            m_layerTreeHost->notifyFrameDamageForTesting(frameDamage->regionForTesting());
+    // Record into every target, so each one repaints this frame's damage the next time it is used.
+    if (frameDamage)
+        recordFrameDamage(WTF::move(*frameDamage));
 
-        if (!frameDamage->isEmpty())
-            m_surface->setFrameDamage(WTF::move(*frameDamage));
+    if (m_damage.showAccumulatedDamageOverlay) {
+        if (const auto& damage = m_surface->renderTargetDamage(); damage && !damage->isEmpty()) {
+            drawDamageOverlay(*canvas, *damage, size, SkColorSetARGB(128, 0, 255, 0));
+
+            // Schedule one more composition, so that once damage stops the next frame repaints the
+            // overlay away instead of leaving it frozen on an idle page.
+            requestComposition(CompositionReason::Animation);
+        }
     }
 
-    if (m_damage.showSkiaDamage) {
-        if (auto damage = m_surface->frameDamage())
-            drawSkiaDamage(*canvas, damage);
-
-        // When the damage visualizer is active we cannot send the original damage to the platform, as the
-        // damage rects visualized in the previous frame may not get erased if the platform uses damage.
-        m_surface->setFrameDamage(Damage(size, Damage::Mode::Full));
-    }
+    // An overlay is redrawn every frame and is in no layer's damage, so tell the platform the whole
+    // surface changed. Otherwise it may leave the previous frame's overlay on screen.
+    if (drawsOverlay())
+        m_surface->setFrameDamageForPlatformOnly(Damage(size, Damage::Mode::Full));
 #endif
 
     if (m_fpsCounter.drawsFPS)
@@ -445,6 +504,8 @@ void ThreadedCompositor::paintToSkiaCanvas(const TransformationMatrix& matrix, c
 
     if (hasRunningAnimations)
         requestComposition(CompositionReason::Animation);
+
+    return TargetContents::Valid;
 }
 
 #if HAVE(OS_SIGNPOST) || USE(SYSPROF_CAPTURE)
@@ -527,7 +588,7 @@ void ThreadedCompositor::renderLayerTree()
     WTFEndSignpost(this, FlushCompositingState);
 
     WTFBeginSignpost(this, PaintToGLContext);
-    paintToCurrentGLContext(viewportTransform, viewportSize, reasons);
+    const auto targetContents = paintToCurrentGLContext(viewportTransform, viewportSize, reasons);
     WTFEndSignpost(this, PaintToGLContext);
 
     updateFPSCounter();
@@ -542,7 +603,7 @@ void ThreadedCompositor::renderLayerTree()
     else
         PlatformDisplay::sharedDisplay().skiaGLContext()->swapBuffers();
 
-    m_surface->didRenderFrame();
+    m_surface->didRenderFrame(targetContents);
     m_surface->sendFrame();
 
     RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }] {
@@ -705,7 +766,7 @@ void ThreadedCompositor::updateFPSCounter()
         m_fpsCounter.fps = std::nullopt;
 }
 
-void ThreadedCompositor::drawFPSCounter(SkCanvas& canvas)
+static const SkFont& fpsCounterFont()
 {
     static SkFont font = [] {
         constexpr unsigned defaultFontSize = 14;
@@ -720,21 +781,58 @@ void ThreadedCompositor::drawFPSCounter(SkCanvas& canvas)
         f.setSubpixel(true);
         return f;
     }();
+    return font;
+}
 
-    // Scale the box padding with the font size so the overlay stays
-    // proportionate at large WEBKIT_DRAW_FPS_FONT_SIZE values
-    // (~3px at the default size of 14).
-    const float padding = font.getSize() * 0.2f;
+// Scale the box padding with the font size so the overlay stays proportionate at large
+// WEBKIT_DRAW_FPS_FONT_SIZE values (~3px at the default size of 14).
+static float fpsCounterPadding()
+{
+    return fpsCounterFont().getSize() * 0.2f;
+}
 
-    if (m_fpsCounter.lastFPS != m_fpsCounter.displayedFPS) {
-        m_fpsCounter.displayedFPS = m_fpsCounter.lastFPS;
-        m_fpsCounter.fpsString = String::number(m_fpsCounter.lastFPS).ascii();
-        SkRect textBounds;
-        font.measureText(m_fpsCounter.fpsString.data(), m_fpsCounter.fpsString.length(), SkTextEncoding::kUTF8, &textBounds);
-        m_fpsCounter.backgroundWidth = textBounds.width() + padding * 2;
-        m_fpsCounter.backgroundHeight = textBounds.height() + padding * 2;
-        m_fpsCounter.textBaseline = -textBounds.fTop + padding;
-    }
+FloatRect ThreadedCompositor::fpsCounterRect() const
+{
+    return FloatRect(0, 0, m_fpsCounter.backgroundWidth, m_fpsCounter.backgroundHeight);
+}
+
+void ThreadedCompositor::updateFPSCounterGeometry()
+{
+    if (m_fpsCounter.lastFPS == m_fpsCounter.displayedFPS)
+        return;
+
+    m_fpsCounter.displayedFPS = m_fpsCounter.lastFPS;
+    m_fpsCounter.fpsString = String::number(m_fpsCounter.lastFPS).ascii();
+
+    const auto& font = fpsCounterFont();
+    SkRect textBounds;
+    font.measureText(m_fpsCounter.fpsString.data(), m_fpsCounter.fpsString.length(), SkTextEncoding::kUTF8, &textBounds);
+
+    const float padding = fpsCounterPadding();
+    m_fpsCounter.backgroundWidth = textBounds.width() + padding * 2;
+    m_fpsCounter.backgroundHeight = textBounds.height() + padding * 2;
+    m_fpsCounter.textBaseline = -textBounds.fTop + padding;
+}
+
+#if ENABLE(DAMAGE_TRACKING)
+IntRect ThreadedCompositor::takeFPSCounterDamage()
+{
+    // Nothing to repaint on the frames between counts, and drawFPSCounter() redraws the box regardless.
+    if (m_fpsCounter.lastFPS == m_fpsCounter.displayedFPS)
+        return { };
+
+    updateFPSCounterGeometry();
+
+    // The box drawn last frame is damaged too, since it shrinks when the count gets shorter.
+    auto damage = enclosingIntRect(fpsCounterRect());
+    damage.unite(std::exchange(m_fpsCounter.lastDrawnRect, damage));
+    return damage;
+}
+#endif
+
+void ThreadedCompositor::drawFPSCounter(SkCanvas& canvas)
+{
+    updateFPSCounterGeometry();
 
     // Drawn in device space at the top-left corner, matching the debug repaint
     // counter style used by SkiaCompositingLayer.
@@ -744,26 +842,13 @@ void ThreadedCompositor::drawFPSCounter(SkCanvas& canvas)
     SkPaint backgroundPaint;
     backgroundPaint.setColor(SK_ColorBLACK);
     backgroundPaint.setStyle(SkPaint::kFill_Style);
-    canvas.drawRect(SkRect::MakeXYWH(0, 0, m_fpsCounter.backgroundWidth, m_fpsCounter.backgroundHeight), backgroundPaint);
+    canvas.drawRect(SkRect(fpsCounterRect()), backgroundPaint);
 
     SkPaint textPaint;
     textPaint.setColor(SK_ColorWHITE);
     textPaint.setAntiAlias(true);
-    canvas.drawString(m_fpsCounter.fpsString.data(), padding, m_fpsCounter.textBaseline, font, textPaint);
+    canvas.drawString(m_fpsCounter.fpsString.data(), fpsCounterPadding(), m_fpsCounter.textBaseline, fpsCounterFont(), textPaint);
 }
-
-#if ENABLE(DAMAGE_TRACKING)
-void ThreadedCompositor::drawSkiaDamage(SkCanvas& canvas, const std::optional<WebCore::Damage>& damage)
-{
-    SkPaint paint;
-    paint.setStyle(SkPaint::kFill_Style);
-    paint.setColor(SkColorSetARGB(200, 255, 0, 0));
-
-    const auto margin = static_cast<SkScalar>(m_damage.skiaDamageMargin);
-    for (const auto& rect : *damage)
-        canvas.drawRect(SkRect::MakeXYWH(rect.x() - margin, rect.y() - margin, rect.width() + margin * 2, rect.height() + margin * 2), paint);
-}
-#endif
 
 void ThreadedCompositor::fillGLInformation(RenderProcessInfo&& info, CompletionHandler<void(RenderProcessInfo&&)>&& completionHandler)
 {

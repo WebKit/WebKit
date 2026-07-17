@@ -33,6 +33,7 @@
 #include <WebCore/DMABufBuffer.h>
 #include <WebCore/Damage.h>
 #include <WebCore/IntSize.h>
+#include <atomic>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkSurface.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
@@ -46,7 +47,6 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #if USE(GBM) || OS(ANDROID)
 #include "RendererBufferFormat.h"
-#include <atomic>
 #endif
 
 #if USE(GBM)
@@ -76,7 +76,6 @@ class BitmapTexture;
 class GLFence;
 class ShareableBitmap;
 class ShareableBitmapHandle;
-class SkiaDamageRegion;
 }
 
 namespace WebKit {
@@ -85,6 +84,14 @@ class AcceleratedSurface;
 
 namespace WebKit {
 class WebPage;
+
+// Whether the target holds the frame it was meant to hold once rendering ends. A frame that painted
+// nothing because the target was already current is still Valid.
+enum class TargetContents : bool {
+    // Nothing was drawn, so the next use of this target must repaint it in full.
+    Invalid,
+    Valid
+};
 
 class AcceleratedSurface final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AcceleratedSurface, WTF::DestructionThread::MainRunLoop>, public CanMakeThreadSafeCheckedPtr<AcceleratedSurface>
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
@@ -133,17 +140,14 @@ public:
     void willDestroyGLContext();
     void willRenderFrame(const WebCore::IntSize&);
 
-    enum class TargetContents : bool {
-        // The next use of this target must repaint it in full, because either nothing was drawn or what
-        // was drawn contains pixels the layer tree will not reproduce, like a debug overlay.
-        Invalid,
-        Valid
-    };
     void didRenderFrame(TargetContents = TargetContents::Valid);
     void sendFrame();
-    void clear(const OptionSet<WebCore::CompositionReason>&, const WebCore::SkiaDamageRegion* = nullptr);
+    void clear(const OptionSet<WebCore::CompositionReason>&);
+
+    std::optional<SkColor> skiaClearColor(const OptionSet<WebCore::CompositionReason>&);
 
 #if ENABLE(DAMAGE_TRACKING)
+    void setDamageUsedForCompositing(bool used) { m_damageTracker.setDamageUsedForCompositing(used); }
     void setFrameDamage(WebCore::Damage&& damage) { m_damageTracker.recordFrameDamage(WTF::move(damage), SwapChainDamageTracker::AccumulateIntoSwapChain::Yes); }
 
     void setFrameDamageForPlatformOnly(WebCore::Damage&& damage) { m_damageTracker.recordFrameDamage(WTF::move(damage), SwapChainDamageTracker::AccumulateIntoSwapChain::No); }
@@ -171,6 +175,7 @@ private:
 #endif
     bool useSkia() const { return m_useSkia; }
     bool isOpaque() const;
+    std::optional<WebCore::Color> backgroundColor();
 
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
     // IPC::MessageReceiver.
@@ -434,15 +439,16 @@ private:
     class SwapChainDamageTracker {
         WTF_MAKE_NONCOPYABLE(SwapChainDamageTracker);
     public:
-        // needsFineGrainedDamage tells whether the records need individual rects, which is only worth
-        // building when someone iterates them, and no GL consumer does, reading nothing but the bounds.
-        SwapChainDamageTracker(SwapChain& swapChain, bool needsFineGrainedDamage)
+        // A record needs individual rects only when a consumer walks them - the platform on the non-GL
+        // path, and the Skia compositor when it draws just the damage. Everyone else reads the bounds.
+        SwapChainDamageTracker(SwapChain& swapChain, bool platformWalksDamageRects)
             : m_swapChain(swapChain)
-            , m_needsFineGrainedDamage(needsFineGrainedDamage)
+            , m_platformWalksDamageRects(platformWalksDamageRects)
         {
         }
 
         void setRectangleThreshold(unsigned threshold) { m_rectangleThreshold = threshold; }
+        void setDamageUsedForCompositing(bool used) { m_damageUsedForCompositing = used; }
 
         enum class AccumulateIntoSwapChain : bool { No, Yes };
 
@@ -464,8 +470,11 @@ private:
         }
 
     private:
+        bool needsFineGrainedDamage() const { return m_platformWalksDamageRects || m_damageUsedForCompositing; }
+
         SwapChain& m_swapChain;
-        const bool m_needsFineGrainedDamage;
+        const bool m_platformWalksDamageRects;
+        std::atomic<bool> m_damageUsedForCompositing { false };
         std::optional<WebCore::Damage> m_frameDamage;
         // The most rects takeFrameDamageRects() will return. Once the frame damage holds more than
         // this many rects, they all collapse into their single bounding box, trading precision for a

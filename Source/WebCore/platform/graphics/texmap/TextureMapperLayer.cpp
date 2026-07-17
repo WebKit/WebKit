@@ -1433,6 +1433,51 @@ void TextureMapperLayer::setOpacity(float opacity)
     m_state.opacity = opacity;
 }
 
+void TextureMapperLayer::setShowDebugBorder(bool showDebugBorder)
+{
+#if ENABLE(DAMAGE_TRACKING)
+    if (m_damagePropagationEnabled && m_state.showDebugBorders != showDebugBorder)
+        damageWholeLayer();
+#endif
+    m_state.showDebugBorders = showDebugBorder;
+}
+
+void TextureMapperLayer::setDebugBorderColor(Color debugBorderColor)
+{
+#if ENABLE(DAMAGE_TRACKING)
+    if (m_damagePropagationEnabled && m_state.showDebugBorders && m_state.debugBorderColor != debugBorderColor)
+        damageWholeLayer();
+#endif
+    m_state.debugBorderColor = debugBorderColor;
+}
+
+void TextureMapperLayer::setDebugBorderWidth(float debugBorderWidth)
+{
+#if ENABLE(DAMAGE_TRACKING)
+    if (m_damagePropagationEnabled && m_state.showDebugBorders && m_state.debugBorderWidth != debugBorderWidth)
+        damageWholeLayer();
+#endif
+    m_state.debugBorderWidth = debugBorderWidth;
+}
+
+void TextureMapperLayer::setShowRepaintCounter(bool showRepaintCounter)
+{
+#if ENABLE(DAMAGE_TRACKING)
+    if (m_damagePropagationEnabled && m_state.showRepaintCounter != showRepaintCounter)
+        damageWholeLayer();
+#endif
+    m_state.showRepaintCounter = showRepaintCounter;
+}
+
+void TextureMapperLayer::setRepaintCount(int repaintCount)
+{
+#if ENABLE(DAMAGE_TRACKING)
+    if (m_damagePropagationEnabled && m_state.showRepaintCounter && m_state.repaintCount != repaintCount)
+        damageWholeLayer();
+#endif
+    m_state.repaintCount = repaintCount;
+}
+
 void TextureMapperLayer::setSolidColor(const Color& color)
 {
 #if ENABLE(DAMAGE_TRACKING)

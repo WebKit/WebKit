@@ -29,7 +29,9 @@
 #include <WebCore/CoordinatedCompositionReason.h>
 #include <WebCore/Damage.h>
 #include <WebCore/DisplayUpdate.h>
+#include <WebCore/FloatRect.h>
 #include <WebCore/GLContext.h>
+#include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/RunLoopObserver.h>
 #include <WebCore/TextureMapperDamageVisualizer.h>
@@ -61,6 +63,7 @@ enum class Critical : bool;
 
 namespace WebKit {
 class AcceleratedSurface;
+enum class TargetContents : bool;
 class CoordinatedSceneState;
 class LayerTreeHost;
 class WebPage;
@@ -122,9 +125,9 @@ private:
     void scheduleUpdateLocked();
     void flushCompositingState(const OptionSet<WebCore::CompositionReason>&);
     void renderLayerTree();
-    void paintToCurrentGLContext(const WebCore::TransformationMatrix&, const WebCore::IntSize&, const OptionSet<WebCore::CompositionReason>&);
+    TargetContents paintToCurrentGLContext(const WebCore::TransformationMatrix&, const WebCore::IntSize&, const OptionSet<WebCore::CompositionReason>&);
     void paintToTextureMapper(const WebCore::TransformationMatrix&, const WebCore::IntSize&, const OptionSet<WebCore::CompositionReason>&);
-    void paintToSkiaCanvas(const WebCore::TransformationMatrix&, const WebCore::IntSize&, const OptionSet<WebCore::CompositionReason>&);
+    TargetContents paintToSkiaCanvas(const WebCore::TransformationMatrix&, const WebCore::IntSize&, const OptionSet<WebCore::CompositionReason>&);
     void frameComplete();
 
     void didCompositeRunLoopObserverFired();
@@ -133,9 +136,15 @@ private:
 
     void initializeFPSCounter();
     void updateFPSCounter();
+    void updateFPSCounterGeometry();
+    WebCore::FloatRect fpsCounterRect() const;
     void drawFPSCounter(SkCanvas&);
 #if ENABLE(DAMAGE_TRACKING)
-    void drawSkiaDamage(SkCanvas&, const std::optional<WebCore::Damage>&);
+    bool drawsOverlay() const;
+
+    WebCore::IntRect takeFPSCounterDamage();
+    void recordFrameDamage(WebCore::Damage&&);
+    bool damageUsedForCompositing() const;
 #endif
 
     const Ref<WorkQueue> m_workQueue;
@@ -192,17 +201,14 @@ private:
         float backgroundWidth { 0 };
         float backgroundHeight { 0 };
         float textBaseline { 0 };
+        WebCore::IntRect lastDrawnRect;
     } m_fpsCounter;
 
 #if ENABLE(DAMAGE_TRACKING)
     struct {
         std::optional<OptionSet<DamagePropagationFlags>> flags;
-        unsigned rectangleThreshold { 4 };
         std::unique_ptr<WebCore::TextureMapperDamageVisualizer> visualizer;
-
-        bool showSkiaDamage { false };
-        unsigned skiaDamageMargin { 0 };
-
+        bool showAccumulatedDamageOverlay { false };
         std::atomic<bool> shouldNotifyFrameDamageForTesting { false };
     } m_damage;
 #endif

@@ -38,7 +38,6 @@
 #include <WebCore/Region.h>
 #include <WebCore/Settings.h>
 #include <WebCore/ShareableBitmap.h>
-#include <WebCore/SkiaDamageRegion.h>
 #include <array>
 #include <fcntl.h>
 #include <unistd.h>
@@ -915,7 +914,7 @@ void AcceleratedSurface::SwapChainDamageTracker::didPresent(RenderTarget& target
     // The target is now current, so start a fresh, empty record. NoMaxRectangles keeps the grid as
     // fine as the mode allows, since on a wide, short surface the threshold would collapse it into a
     // few full-height cells.
-    target.setDamage(Damage(m_swapChain.size(), m_needsFineGrainedDamage ? Damage::Mode::Rectangles : Damage::Mode::BoundingBox, Damage::NoMaxRectangles));
+    target.setDamage(Damage(m_swapChain.size(), needsFineGrainedDamage() ? Damage::Mode::Rectangles : Damage::Mode::BoundingBox, Damage::NoMaxRectangles));
 }
 #endif
 
@@ -1068,37 +1067,35 @@ void AcceleratedSurface::willRenderFrame(const IntSize& size)
         glViewport(0, 0, size.width(), size.height());
 }
 
-static void clearCanvas(SkCanvas& canvas, SkColor color, const SkiaDamageRegion* damageRegion)
+std::optional<Color> AcceleratedSurface::backgroundColor()
 {
-    if (!damageRegion) {
-        canvas.clear(color);
-        return;
-    }
-
-    SkPaint paint;
-    paint.setColor(color);
-    paint.setBlendMode(SkBlendMode::kSrc);
-    damageRegion->fillCanvasInDeviceSpace(canvas, paint);
+    Locker locker { m_backgroundColorLock };
+    return m_backgroundColor;
 }
 
-void AcceleratedSurface::clear(const OptionSet<WebCore::CompositionReason>& reasons, const SkiaDamageRegion* damageRegion)
+std::optional<SkColor> AcceleratedSurface::skiaClearColor(const OptionSet<WebCore::CompositionReason>& reasons)
 {
-    std::optional<Color> backgroundColor;
-    {
-        Locker locker { m_backgroundColorLock };
-        backgroundColor = m_backgroundColor;
-    }
+    const auto backgroundColor = this->backgroundColor();
+    if (backgroundColor && !backgroundColor->isOpaque())
+        return SK_ColorTRANSPARENT;
 
+    if (reasons.contains(CompositionReason::AsyncScrolling))
+        return backgroundColor ? SkColor(*backgroundColor) : SK_ColorWHITE;
+
+    return std::nullopt;
+}
+
+void AcceleratedSurface::clear(const OptionSet<WebCore::CompositionReason>& reasons)
+{
     if (m_useSkia) {
-        if (auto* canvas = this->canvas()) {
-            if (backgroundColor && !backgroundColor->isOpaque())
-                clearCanvas(*canvas, SK_ColorTRANSPARENT, damageRegion);
-            else if (reasons.contains(CompositionReason::AsyncScrolling))
-                clearCanvas(*canvas, backgroundColor ? SkColor(*backgroundColor) : SK_ColorWHITE, damageRegion);
+        if (auto clearColor = skiaClearColor(reasons)) {
+            if (auto* canvas = this->canvas())
+                canvas->clear(*clearColor);
         }
         return;
     }
 
+    const auto backgroundColor = this->backgroundColor();
     if (backgroundColor && !backgroundColor->isOpaque()) {
         glClearColor(0, 0, 0, 0);
         glClear(GL_COLOR_BUFFER_BIT);
