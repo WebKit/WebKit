@@ -598,17 +598,22 @@ def main():
         if args.verbose:
             sys.stderr.write(' '.join(shlex.quote(a) for a in argv) + '\n')
         proc = subprocess.run(argv, cwd=cwd, capture_output=True, text=True)
-        return tu, proc.stderr, header_only
+        return tu, proc.returncode, proc.stderr, header_only
 
     totalUnexpected = 0
     totalErrors = 0
     with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, args.j)) as pool:
-        for tu, stderr, header_only in pool.map(runOne, workItems):
+        for tu, returncode, stderr, header_only in pool.map(runOne, workItems):
             blocks, unexpected, errors = filter_diagnostics(
                 stderr, requestedPaths, expectations, args.ignore_expectations)
             label = repo_relative(tu) + ' (header-only)' if header_only else repo_relative(tu)
             print('==> {}'.format(label))
-            if blocks:
+            if returncode != 0 and not errors:
+                print('  error: clang exited {}; file did not compile:'.format(returncode))
+                for line in stderr.splitlines():
+                    print('    ' + line)
+                errors += 1
+            elif blocks:
                 for b in blocks:
                     print(b)
             else:
