@@ -198,8 +198,10 @@ static TemporalPlainDate* fromImpl(JSGlobalObject* globalObject, JSValue itemVal
         }
 
         // Step 2.d: calendar = ? GetTemporalCalendarIdentifierWithISODefault(item).
+        CalendarID calendarId = getTemporalCalendarIdentifierWithISODefault(globalObject, asObject(itemValue));
+        RETURN_IF_EXCEPTION(scope, { });
+
         // Step 2.e: fields = ? PrepareCalendarFields(...). Fields before options (spec order).
-        CalendarID calendarId = iso8601CalendarID();
         auto fields = readCalendarFieldsFromObject(globalObject, asObject(itemValue), calendarId);
         RETURN_IF_EXCEPTION(scope, { });
 

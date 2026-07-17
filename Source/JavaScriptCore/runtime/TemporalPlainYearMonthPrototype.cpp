@@ -207,9 +207,8 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncWith, (JSGlobalObjec
     // Step 4: calendar = plainYearMonth.[[Calendar]] — held on the receiver.
 
     // Step 6: partialYearMonth = ? PrepareCalendarFields(calendar, temporalYearMonthLike, « year, month, monthCode », « », ~partial~).
-    //   CalendarRead::Skip — calendar is known from the receiver; Step 3 already rejected a `calendar` property.
-    CalendarID unusedCalId = yearMonth->calendarID();
-    auto partialFields = readCalendarFieldsFromObject<FieldSetType::YearMonth, CalendarRead::Skip>(globalObject, like, unusedCalId);
+    // Calendar comes from the receiver — Step 3 already rejected a `calendar` property.
+    auto partialFields = readCalendarFieldsFromObject<FieldSetType::YearMonth>(globalObject, like, yearMonth->calendarID());
     RETURN_IF_EXCEPTION(scope, { });
     // ~partial~ throws TypeError if none of the requested fields are present with a non-undefined value.
     if (!partialFields.year && !partialFields.month && !partialFields.monthCode

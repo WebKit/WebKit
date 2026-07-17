@@ -178,9 +178,10 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject,
         }
 
         // Step 2.b: GetTemporalCalendarIdentifierWithISODefault(item).
+        CalendarID calendarId = getTemporalCalendarIdentifierWithISODefault(globalObject, asObject(itemValue));
+        RETURN_IF_EXCEPTION(scope, { });
+
         // Step 2.c: PrepareCalendarFields(calendar, item, {year,month,monthCode,day}, {}, {}).
-        // (Steps 2.b-c fused into readCalendarFieldsFromObject.)
-        CalendarID calendarId = iso8601CalendarID();
         auto fields = readCalendarFieldsFromObject<FieldSetType::MonthDay>(globalObject, asObject(itemValue), calendarId);
         RETURN_IF_EXCEPTION(scope, { });
 

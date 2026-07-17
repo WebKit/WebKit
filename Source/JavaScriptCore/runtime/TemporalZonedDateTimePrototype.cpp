@@ -646,10 +646,8 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWith, (JSGlobalObject
     //   (Fused with CalendarMergeFields below; current field values serve as the base.)
     // Step 17: partialZonedDateTime = ? PrepareCalendarFields(calendar, temporalZonedDateTimeLike,
     //          «year,month,month-code,day», «hour,...,nanosecond,offset», ~partial~).
-    //   CalendarRead::Skip — calendar already known from zdt; timeZone not read in with().
-    //   outCalendarId output is discarded (not used after this call).
-    CalendarID unusedCalId = zdt->calendarID();
-    auto partialFields = readZonedDateTimeFieldsFromObject<ZonedDateTimeFieldMode::Partial, CalendarRead::Skip>(globalObject, fields, unusedCalId);
+    // Calendar comes from `this`; timeZone is not read in with().
+    auto partialFields = readZonedDateTimeFieldsFromObject<ZonedDateTimeFieldMode::Partial>(globalObject, fields, zdt->calendarID());
     RETURN_IF_EXCEPTION(scope, { });
 
     // Step 18: fields = CalendarMergeFields(calendar, fields, partialZonedDateTime).

@@ -265,19 +265,13 @@ static RelativeToRecord toRelativeTemporalObject(JSGlobalObject* globalObject, J
             return RelativeToRecord { nullptr, pdt->plainDate(), true, pdt->calendarID() };
         }
         // Step 5.d: calendar = ? GetTemporalCalendarIdentifierWithISODefault(value).
+        CalendarID calendarId = getTemporalCalendarIdentifierWithISODefault(globalObject, obj);
+        RETURN_IF_EXCEPTION(scope, { });
+
         // Step 5.e: fields = ? PrepareCalendarFields(calendar, value,
         //   «year,month,month-code,day», «hour,...,nanosecond,offset,time-zone», «»).
         //   requiredFieldNames = «» → no field is required during PrepareCalendarFields.
         //   All fields read in alphabetical order.
-
-        // calendar
-        CalendarID calendarId = iso8601CalendarID();
-        JSValue calendarProperty = obj->get(globalObject, vm.propertyNames->calendar);
-        RETURN_IF_EXCEPTION(scope, { });
-        if (!calendarProperty.isUndefined()) {
-            calendarId = toTemporalCalendarIdentifier(globalObject, calendarProperty);
-            RETURN_IF_EXCEPTION(scope, { });
-        }
 
         // day (~to-positive-integer-with-truncation~)
         // NOTE: not in requiredFieldNames; CalendarResolveFields enforces presence later.

@@ -55,6 +55,35 @@ std::optional<CalendarID> isBuiltinCalendar(StringView string)
     return entry->value;
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-gettemporalcalendarslotvaluewithisodefault
+CalendarID getTemporalCalendarIdentifierWithISODefault(JSGlobalObject* globalObject, JSObject* item)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // Step 1: If item has an [[InitializedTemporalDate/DateTime/MonthDay/YearMonth/ZonedDateTime]]
+    // internal slot, return item.[[Calendar]].
+    if (auto* pd = dynamicDowncast<TemporalPlainDate>(item))
+        return pd->calendarID();
+    if (auto* pdt = dynamicDowncast<TemporalPlainDateTime>(item))
+        return pdt->calendarID();
+    if (auto* pmd = dynamicDowncast<TemporalPlainMonthDay>(item))
+        return pmd->calendarID();
+    if (auto* pym = dynamicDowncast<TemporalPlainYearMonth>(item))
+        return pym->calendarID();
+    if (auto* zdt = dynamicDowncast<TemporalZonedDateTime>(item))
+        return zdt->calendarID();
+
+    // Step 2: Let calendarLike be ? Get(item, "calendar").
+    JSValue calendarLike = item->get(globalObject, vm.propertyNames->calendar);
+    RETURN_IF_EXCEPTION(scope, iso8601CalendarID());
+    // Step 3: If calendarLike is undefined, return "iso8601".
+    if (calendarLike.isUndefined())
+        return iso8601CalendarID();
+    // Step 4: Return ? ToTemporalCalendarIdentifier(calendarLike).
+    RELEASE_AND_RETURN(scope, toTemporalCalendarIdentifier(globalObject, calendarLike));
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-calendarresolvefields
 static void calendarResolveFields(JSGlobalObject* globalObject, std::optional<int32_t> year, unsigned month, std::optional<ParsedMonthCode> monthCode, TemporalDateFormat format, CalendarID calendarId)
 {
@@ -89,26 +118,12 @@ static void calendarResolveFields(JSGlobalObject* globalObject, std::optional<in
 
 // temporal_rs: CalendarFields::from_prop_bag
 // https://tc39.es/proposal-temporal/#sec-temporal-preparecalendarfields
-template<FieldSetType type, CalendarRead calendarRead>
-TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject* globalObject, JSObject* bag, CalendarID& outCalendarId)
+template<FieldSetType type>
+TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject* globalObject, JSObject* bag, CalendarID calendarId)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     TemporalCore::CalendarFieldsIn fields;
-
-    // Alphabetical order per spec: calendar, day, era, eraYear, month, monthCode, year.
-
-    // calendar
-    if constexpr (calendarRead == CalendarRead::Read) {
-        outCalendarId = iso8601CalendarID();
-        JSValue calProp = bag->get(globalObject, vm.propertyNames->calendar);
-        RETURN_IF_EXCEPTION(scope, fields);
-        if (!calProp.isUndefined()) {
-            outCalendarId = toTemporalCalendarIdentifier(globalObject, calProp);
-            RETURN_IF_EXCEPTION(scope, fields);
-        }
-        // For non-ISO calendars, monthCode validation is handled by the ICU calendar.
-    }
 
     // day (not read for YearMonth per spec)
     if constexpr (type != FieldSetType::YearMonth) {
@@ -126,7 +141,7 @@ TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject* glob
     }
 
     // era, eraYear (only for calendars with eras)
-    if (TemporalCore::calendarHasEras(outCalendarId)) {
+    if (TemporalCore::calendarHasEras(calendarId)) {
         JSValue eraProp = bag->get(globalObject, Identifier::fromString(vm, "era"_s));
         RETURN_IF_EXCEPTION(scope, fields);
         if (!eraProp.isUndefined()) {
@@ -216,26 +231,12 @@ TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject* glob
 // mode == Full: from() — timeZone is the only required field; day/year/month checked later
 //               in CalendarDateFromFields/CalendarResolveFields.
 // mode == Partial: with() — all fields optional; anyFieldSet tracks whether anything was present.
-template<ZonedDateTimeFieldMode mode, CalendarRead calendarRead>
-ZonedDateTimeFields readZonedDateTimeFieldsFromObject(JSGlobalObject* globalObject, JSObject* bag, CalendarID& outCalendarId)
+template<ZonedDateTimeFieldMode mode>
+ZonedDateTimeFields readZonedDateTimeFieldsFromObject(JSGlobalObject* globalObject, JSObject* bag, CalendarID calendarId)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     ZonedDateTimeFields result; // step 6: all fields ~unset~, step 7: any = false
-
-    // Steps 2-8: calendar read first (per ToTemporalZonedDateTime step 4.b), then fields in
-    // lexicographic order (step 8). Steps 1/5 are static assertions; steps 3-4/6-7 are trivial.
-
-    // calendar — outside PrepareCalendarFields proper (ToTemporalZonedDateTime step 4.b).
-    if constexpr (calendarRead == CalendarRead::Read) {
-        outCalendarId = iso8601CalendarID();
-        JSValue calProp = bag->get(globalObject, vm.propertyNames->calendar);
-        RETURN_IF_EXCEPTION(scope, result);
-        if (!calProp.isUndefined()) {
-            outCalendarId = toTemporalCalendarIdentifier(globalObject, calProp);
-            RETURN_IF_EXCEPTION(scope, result);
-        }
-    }
 
     // Step 9: for each field in lexicographic order — Get, convert (step 9.c), check required (step 9.d).
 
@@ -259,7 +260,7 @@ ZonedDateTimeFields readZonedDateTimeFieldsFromObject(JSGlobalObject* globalObje
 
     // era (~to-string~), eraYear (~to-integer-with-truncation~)
     // CalendarExtraFields contributes these for era-based calendars (alphabetically between day and hour).
-    if (TemporalCore::calendarHasEras(outCalendarId)) {
+    if (TemporalCore::calendarHasEras(calendarId)) {
         JSValue eraVal = bag->get(globalObject, Identifier::fromString(vm, "era"_s));
         RETURN_IF_EXCEPTION(scope, result);
         if (!eraVal.isUndefined()) {
@@ -565,14 +566,11 @@ ISO8601::Duration calendarDateUntil(CalendarID calendarId, const ISO8601::PlainD
     return *result;
 }
 
-template TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject<FieldSetType::Date, CalendarRead::Read>(JSGlobalObject*, JSObject*, CalendarID&);
-template TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject<FieldSetType::Date, CalendarRead::Skip>(JSGlobalObject*, JSObject*, CalendarID&);
-template TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject<FieldSetType::YearMonth, CalendarRead::Read>(JSGlobalObject*, JSObject*, CalendarID&);
-template TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject<FieldSetType::YearMonth, CalendarRead::Skip>(JSGlobalObject*, JSObject*, CalendarID&);
-template TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject<FieldSetType::MonthDay, CalendarRead::Read>(JSGlobalObject*, JSObject*, CalendarID&);
-template TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject<FieldSetType::MonthDay, CalendarRead::Skip>(JSGlobalObject*, JSObject*, CalendarID&);
+template TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject<FieldSetType::Date>(JSGlobalObject*, JSObject*, CalendarID);
+template TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject<FieldSetType::YearMonth>(JSGlobalObject*, JSObject*, CalendarID);
+template TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject<FieldSetType::MonthDay>(JSGlobalObject*, JSObject*, CalendarID);
 
-template ZonedDateTimeFields readZonedDateTimeFieldsFromObject<ZonedDateTimeFieldMode::Full, CalendarRead::Read>(JSGlobalObject*, JSObject*, CalendarID&);
-template ZonedDateTimeFields readZonedDateTimeFieldsFromObject<ZonedDateTimeFieldMode::Partial, CalendarRead::Skip>(JSGlobalObject*, JSObject*, CalendarID&);
+template ZonedDateTimeFields readZonedDateTimeFieldsFromObject<ZonedDateTimeFieldMode::Full>(JSGlobalObject*, JSObject*, CalendarID);
+template ZonedDateTimeFields readZonedDateTimeFieldsFromObject<ZonedDateTimeFieldMode::Partial>(JSGlobalObject*, JSObject*, CalendarID);
 
 } // namespace JSC

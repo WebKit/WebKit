@@ -91,16 +91,11 @@ static TemporalPlainDateTime* fromImpl(JSGlobalObject* globalObject, JSValue ite
         JSObject* item = asObject(itemValue);
 
         // Step 2.d: GetTemporalCalendarIdentifierWithISODefault(item).
+        CalendarID extractedCalendarId = getTemporalCalendarIdentifierWithISODefault(globalObject, item);
+        RETURN_IF_EXCEPTION(scope, { });
+
         // Step 2.e: PrepareCalendarFields(calendar, item, {year,month,monthCode,day},
         //           {hour,minute,second,millisecond,microsecond,nanosecond}, {}) — alphabetical.
-        // calendar
-        CalendarID extractedCalendarId = iso8601CalendarID();
-        JSValue calendarProperty = item->get(globalObject, vm.propertyNames->calendar);
-        RETURN_IF_EXCEPTION(scope, { });
-        if (!calendarProperty.isUndefined()) {
-            extractedCalendarId = toTemporalCalendarIdentifier(globalObject, calendarProperty);
-            RETURN_IF_EXCEPTION(scope, { });
-        }
 
         // day
         JSValue dayProperty = item->get(globalObject, vm.propertyNames->day);

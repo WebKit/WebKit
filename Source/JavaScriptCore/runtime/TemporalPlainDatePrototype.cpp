@@ -290,9 +290,8 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncWith, (JSGlobalObject* gl
     ISO8601::PlainDate result;
     if (isNonISO) {
         // Step 6: partialDate = ? PrepareCalendarFields(calendar, temporalDateLike, «year,month,monthCode,day», «», ~partial~).
-        //   CalendarRead::Skip — calendar is known from the receiver; step 3 already rejected a `calendar` property.
-        CalendarID unusedCalId = calendarId;
-        auto partialFields = readCalendarFieldsFromObject<FieldSetType::Date, CalendarRead::Skip>(globalObject, like, unusedCalId);
+        // Calendar comes from the receiver — step 3 already rejected a `calendar` property.
+        auto partialFields = readCalendarFieldsFromObject(globalObject, like, calendarId);
         RETURN_IF_EXCEPTION(scope, { });
         // ~partial~ throws TypeError if none of the requested fields are present with a non-undefined value.
         if (!partialFields.day && !partialFields.era && !partialFields.eraYear && !partialFields.month && !partialFields.monthCode && !partialFields.year) [[unlikely]]

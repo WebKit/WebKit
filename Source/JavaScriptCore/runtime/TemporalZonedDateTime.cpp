@@ -268,9 +268,11 @@ static std::optional<ZDTEpochArgs> toEpochArgsFromPropertyBag(JSGlobalObject* gl
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // Steps 4.b+4.c: GetTemporalCalendarIdentifierWithISODefault + PrepareCalendarFields
-    //                (all 15 ZDT fields read alphabetically in one pass).
-    CalendarID calendarID = iso8601CalendarID();
+    // Step 4.b: calendar = ? GetTemporalCalendarIdentifierWithISODefault(item).
+    CalendarID calendarID = getTemporalCalendarIdentifierWithISODefault(globalObject, bag);
+    RETURN_IF_EXCEPTION(scope, std::nullopt);
+
+    // Step 4.c: PrepareCalendarFields — all 15 ZDT fields read alphabetically in one pass.
     auto fields = readZonedDateTimeFieldsFromObject<ZonedDateTimeFieldMode::Full>(globalObject, bag, calendarID);
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 

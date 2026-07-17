@@ -41,6 +41,8 @@ namespace JSC {
 
 JS_EXPORT_PRIVATE std::optional<CalendarID> isBuiltinCalendar(StringView);
 
+CalendarID getTemporalCalendarIdentifierWithISODefault(JSGlobalObject*, JSObject* item);
+
 std::optional<ParsedMonthCode> parseMonthCode(JSGlobalObject*, JSValue argument);
 
 ISO8601::PlainDate isoDateFromFields(JSGlobalObject*, TemporalDateFormat, int32_t, uint32_t, uint32_t, std::optional<ParsedMonthCode>, TemporalOverflow, CalendarID = iso8601CalendarID());
@@ -52,9 +54,8 @@ ISO8601::PlainDate calendarDateAdd(JSGlobalObject*, CalendarID, const ISO8601::P
 ISO8601::Duration calendarDateUntil(CalendarID, const ISO8601::PlainDate&, const ISO8601::PlainDate&, TemporalUnit);
 
 enum class FieldSetType { Date, YearMonth, MonthDay };
-enum class CalendarRead { Read, Skip };
-template<FieldSetType type = FieldSetType::Date, CalendarRead calendarRead = CalendarRead::Read>
-TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject*, JSObject* bag, CalendarID& outCalendarId);
+template<FieldSetType type = FieldSetType::Date>
+TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject*, JSObject*, CalendarID);
 
 // Fields read from a ZonedDateTime property bag (from() or with()).
 struct ZonedDateTimeFields {
@@ -84,7 +85,7 @@ enum class ZonedDateTimeFieldMode {
     Partial, // with(): all fields optional, anyFieldSet is tracked (~partial~ mode)
 };
 
-template<ZonedDateTimeFieldMode mode = ZonedDateTimeFieldMode::Full, CalendarRead calendarRead = CalendarRead::Read>
-ZonedDateTimeFields readZonedDateTimeFieldsFromObject(JSGlobalObject*, JSObject* bag, CalendarID& outCalendarId);
+template<ZonedDateTimeFieldMode mode = ZonedDateTimeFieldMode::Full>
+ZonedDateTimeFields readZonedDateTimeFieldsFromObject(JSGlobalObject*, JSObject*, CalendarID);
 
 } // namespace JSC
