@@ -2441,3 +2441,5 @@ webkit.org/b/311570 [ Debug ] http/tests/site-isolation/nested-cross-origin-ifra
 
 ipc/send-gpu-GetShareableBitmap-RemoteRenderingBackend.html [ Pass ImageOnlyFailure ]
 media/media-source/media-source-real-play-after-eos.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/319716 ipc/create-socket-channel-invalid-url-crash.html [ Skip ]
