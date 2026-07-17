@@ -260,27 +260,27 @@ void MediaSessionHelper::activeRoutesDidChange(MediaDeviceRouteController& route
     ASSERT(&MediaDeviceRouteController::singleton() == &routeController);
 
     Ref target = MediaPlaybackTargetCocoa::create();
+    RefPtr mostRecentActiveRoute = routeController.mostRecentActiveRoute();
 
-    if (RefPtr mostRecentActiveRoute = routeController.mostRecentActiveRoute()) {
-#if HAVE(AVROUTING_FRAMEWORK)
-        bool hasAirPlayDevice = target->hasAirPlayDevice();
-        RELEASE_LOG(Media, "MediaSessionHelper::activeRoutesDidChange: hasAirPlayDevice = %d", hasAirPlayDevice);
-        if (!hasAirPlayDevice)
-            return;
-
-        auto wirelessPlaybackTarget = dynamicDowncast<MediaPlaybackTargetWirelessPlayback>(m_playbackTarget.get());
-        if (wirelessPlaybackTarget && wirelessPlaybackTarget->route() == mostRecentActiveRoute.get())
-            return;
+    bool supportsVideo = [&] {
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+        return true;
+#else
+        return target->supportsCustomProtocolVideoPlayback();
 #endif
+    }();
 
-        activeVideoRouteDidChange(SupportsAirPlayVideo::Yes, MediaPlaybackTargetWirelessPlayback::create(*mostRecentActiveRoute));
+    RELEASE_LOG(Media, "MediaSessionHelper::activeRoutesDidChange: mostRecentActiveRoute=%d, supportsVideo=%d", !!mostRecentActiveRoute, supportsVideo);
+
+    if (!mostRecentActiveRoute || !supportsVideo) {
+        activeAudioRouteDidChange(ShouldPause::Yes);
+        activeVideoRouteDidChange(SupportsAirPlayVideo::No, WTF::move(target));
         return;
     }
 
-#if PLATFORM(IOS_FAMILY_SIMULATOR)
-    activeAudioRouteDidChange(ShouldPause::Yes);
-    activeVideoRouteDidChange(SupportsAirPlayVideo::No, WTF::move(target));
-#endif
+    auto wirelessPlaybackTarget = dynamicDowncast<MediaPlaybackTargetWirelessPlayback>(m_playbackTarget.get());
+    if (!wirelessPlaybackTarget || wirelessPlaybackTarget->route() != mostRecentActiveRoute.get())
+        activeVideoRouteDidChange(SupportsAirPlayVideo::Yes, MediaPlaybackTargetWirelessPlayback::create(*mostRecentActiveRoute));
 }
 #endif // ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 
@@ -602,22 +602,7 @@ void MediaSessionHelperIOS::externalOutputDeviceAvailableDidChange()
 
         callback->updateCarPlayIsConnected();
         callback->activeAudioRouteDidChange(shouldPause);
-
-        Ref target = MediaPlaybackTargetCocoa::create();
-
-#if HAVE(AVROUTING_FRAMEWORK)
-        bool hasAirPlayDevice = target->hasAirPlayDevice();
-        RELEASE_LOG(Media, "-[WebMediaSessionHelper activeOutputDeviceDidChange:]: hasAirPlayDevice = %d", hasAirPlayDevice);
-        if (hasAirPlayDevice) {
-            RefPtr mostRecentActiveRoute = MediaDeviceRouteController::singleton().mostRecentActiveRoute();
-            auto wirelessPlaybackTarget = dynamicDowncast<MediaPlaybackTargetWirelessPlayback>(callback->playbackTarget());
-            if (!wirelessPlaybackTarget || wirelessPlaybackTarget->route() != mostRecentActiveRoute.get())
-                callback->activeVideoRouteDidChange(MediaPlaybackTargetWirelessPlayback::create(*mostRecentActiveRoute));
-            return;
-        }
-#endif
-
-        callback->activeVideoRouteDidChange(WTF::move(target));
+        callback->activeVideoRouteDidChange(MediaPlaybackTargetCocoa::create());
     });
 }
 

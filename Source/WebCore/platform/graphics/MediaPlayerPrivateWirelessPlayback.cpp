@@ -185,6 +185,11 @@ void MediaPlayerPrivateWirelessPlayback::setWirelessPlaybackTarget(Ref<MediaPlay
 
     ALWAYS_LOG(LOGIDENTIFIER, playbackTarget->type());
 
+    if (RefPtr route = this->route()) {
+        route->disconnectFromSession();
+        route->setClient(nullptr);
+    }
+
     m_playbackTarget = WTF::move(playbackTarget);
 
     if (!wirelessPlaybackTarget())
