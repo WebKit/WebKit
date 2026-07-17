@@ -121,7 +121,9 @@ std::unique_ptr<WebGLRenderingContext> WebGLRenderingContext::create(CanvasBase&
 
 WebGLRenderingContext::~WebGLRenderingContext()
 {
-    m_activeQuery = nullptr;
+    // The object -> context WeakPtr might be used with upcasting. This is not
+    // safe, so mark the context lost.
+    m_contextObjectWeakPtrFactory.revokeAll();
 }
 
 void WebGLRenderingContext::initializeDefaultObjects()
@@ -129,6 +131,12 @@ void WebGLRenderingContext::initializeDefaultObjects()
     WebGLRenderingContextBase::initializeDefaultObjects();
     m_defaultVertexArrayObject = WebGLVertexArrayObjectOES::createDefault(*this);
     m_boundVertexArrayObject = m_defaultVertexArrayObject;
+}
+
+void WebGLRenderingContext::detachAndRemoveAllObjects()
+{
+    WebGLRenderingContextBase::detachAndRemoveAllObjects();
+    m_activeQuery = nullptr;
 }
 
 std::optional<WebGLExtensionAny> WebGLRenderingContext::getExtension(const String& name)
@@ -355,7 +363,7 @@ void WebGLRenderingContext::addMembersToOpaqueRoots(JSC::AbstractSlotVisitor& vi
     WebGLRenderingContextBase::addMembersToOpaqueRoots(visitor);
 
     Locker locker { objectGraphLock() };
-    addWebCoreOpaqueRoot(visitor, RefPtr { m_activeQuery.get() }.get());
+    SUPPRESS_UNCHECKED_LOCAL addWebCoreOpaqueRoot(visitor, m_activeQuery.get());
 }
 
 WebCoreOpaqueRoot root(const WebGLExtension<WebGLRenderingContext>* extension)

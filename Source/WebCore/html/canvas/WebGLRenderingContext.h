@@ -50,7 +50,6 @@ public:
 
     GCGLint maxDrawBuffers() final;
     GCGLint maxColorAttachments() final;
-    void initializeDefaultObjects() WTF_REQUIRES_LOCK(objectGraphLock()) final;
 
     void addMembersToOpaqueRoots(JSC::AbstractSlotVisitor&) final;
 
@@ -61,6 +60,8 @@ protected:
 
 private:
     using WebGLRenderingContextBase::WebGLRenderingContextBase;
+    void initializeDefaultObjects() WTF_REQUIRES_LOCK(objectGraphLock()) final;
+    void detachAndRemoveAllObjects() WTF_REQUIRES_LOCK(objectGraphLock()) final;
 };
 
 WebCoreOpaqueRoot root(const WebGLExtension<WebGLRenderingContext>*);

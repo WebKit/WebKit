@@ -122,31 +122,14 @@ std::unique_ptr<WebGL2RenderingContext> WebGL2RenderingContext::create(CanvasBas
 
 WebGL2RenderingContext::~WebGL2RenderingContext()
 {
-    // Remove all references to WebGLObjects so if they are the last reference
-    // they will be freed before the last context is removed from the context group.
-    m_readFramebufferBinding = nullptr;
-    m_boundTransformFeedback = nullptr;
-    m_boundTransformFeedbackBuffer = nullptr;
-    m_boundUniformBuffer = nullptr;
-    m_boundIndexedUniformBuffers.clear();
-    for (auto& activeQuery : m_activeQueries)
-        activeQuery = nullptr;
+    // The object -> context WeakPtr might be used with upcasting. This is not
+    // safe, so mark the context lost.
+    m_contextObjectWeakPtrFactory.revokeAll();
 }
 
 void WebGL2RenderingContext::initializeContextState()
 {
     WebGLRenderingContextBase::initializeContextState();
-
-    m_readFramebufferBinding = nullptr;
-
-    m_boundCopyReadBuffer = nullptr;
-    m_boundCopyWriteBuffer = nullptr;
-    m_boundPixelPackBuffer = nullptr;
-    m_boundPixelUnpackBuffer = nullptr;
-    m_boundTransformFeedbackBuffer = nullptr;
-    m_boundUniformBuffer = nullptr;
-
-    // NEEDS_PORT: boolean occlusion query, transform feedback primitives written query, elapsed query
 
     RefPtr context = m_context;
     m_maxTransformFeedbackSeparateAttribs = context->getInteger(GraphicsContextGL::MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS);
@@ -163,8 +146,7 @@ void WebGL2RenderingContext::initializeContextState()
     m_max3DTextureLevel = WebGLTexture::computeLevelCount(m_max3DTextureSize, m_max3DTextureSize);
     m_maxArrayTextureLayers = context->getInteger(GraphicsContextGL::MAX_ARRAY_TEXTURE_LAYERS);
 
-    m_boundSamplers.clear();
-    m_boundSamplers.grow(m_textureUnits.size());
+    m_boundSamplers.resize(m_textureUnits.size());
 }
 
 long long WebGL2RenderingContext::getInt64Parameter(GCGLenum pname)
@@ -177,10 +159,26 @@ void WebGL2RenderingContext::initializeDefaultObjects()
     WebGLRenderingContextBase::initializeDefaultObjects();
     m_defaultVertexArrayObject = WebGLVertexArrayObject::create(*this, WebGLVertexArrayObject::Type::Default);
     m_boundVertexArrayObject = m_defaultVertexArrayObject;
-    if (!m_defaultVertexArrayObject)
-        return;
-    // The default VAO was removed in OpenGL 3.3 but not from WebGL 2; bind the default for WebGL to use.
-    graphicsContextGL()->bindVertexArray(m_defaultVertexArrayObject->object());
+    if (m_defaultVertexArrayObject)
+        graphicsContextGL()->bindVertexArray(m_defaultVertexArrayObject->object());
+}
+
+void WebGL2RenderingContext::detachAndRemoveAllObjects()
+{
+    WebGLRenderingContextBase::detachAndRemoveAllObjects();
+    m_readFramebufferBinding = nullptr;
+    m_boundTransformFeedback = nullptr;
+    m_defaultTransformFeedback = nullptr;
+    m_boundCopyReadBuffer = nullptr;
+    m_boundCopyWriteBuffer = nullptr;
+    m_boundPixelPackBuffer = nullptr;
+    m_boundPixelUnpackBuffer = nullptr;
+    m_boundTransformFeedbackBuffer = nullptr;
+    m_boundUniformBuffer = nullptr;
+    m_boundIndexedUniformBuffers.clear();
+    for (auto& activeQuery : m_activeQueries)
+        activeQuery = nullptr;
+    m_boundSamplers.clear();
 }
 
 bool WebGL2RenderingContext::validateBufferTarget(ASCIILiteral functionName, GCGLenum target)
@@ -1491,7 +1489,7 @@ void WebGL2RenderingContext::vertexAttribI4uiv(GCGLuint index, Uint32List&& list
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribI4uiv"_s, "no array"_s);
         return;
     }
-    
+
     int size = list.length();
     if (size < 4) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribI4uiv"_s, "array too small"_s);
@@ -1921,7 +1919,7 @@ void WebGL2RenderingContext::bindSampler(GCGLuint unit, WebGLSampler* sampler)
     Locker locker { objectGraphLock() };
     if (!validateNullableWebGLObject("bindSampler"_s, sampler))
         return;
-    
+
     if (unit >= m_boundSamplers.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bindSampler"_s, "invalid texture unit"_s);
         return;
@@ -2032,7 +2030,7 @@ GCGLenum WebGL2RenderingContext::clientWaitSync(WebGLSync& sync, GCGLbitfield fl
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "clientWaitSync"_s, "timeout > MAX_CLIENT_WAIT_TIMEOUT_WEBGL"_s);
         return GraphicsContextGL::WAIT_FAILED_WEBGL;
     }
-    
+
     if (flags && flags != GraphicsContextGL::SYNC_FLUSH_COMMANDS_BIT) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "clientWaitSync"_s, "invalid flags"_s);
         return GraphicsContextGL::WAIT_FAILED_WEBGL;
@@ -2169,7 +2167,7 @@ void WebGL2RenderingContext::beginTransformFeedback(GCGLenum primitiveMode)
 {
     if (isContextLost())
         return;
-    
+
     if (!ValidateTransformFeedbackPrimitiveMode(primitiveMode)) {
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "beginTransformFeedback"_s, "invalid transform feedback primitive mode"_s);
         return;
@@ -2211,7 +2209,7 @@ void WebGL2RenderingContext::endTransformFeedback()
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "endTransformFeedback"_s, "transform feedback is not active"_s);
         return;
     }
-    
+
     graphicsContextGL()->endTransformFeedback();
 
     m_boundTransformFeedback->setPaused(false);
@@ -2224,7 +2222,7 @@ void WebGL2RenderingContext::transformFeedbackVaryings(WebGLProgram& program, co
         return;
     if (!validateWebGLObject("transformFeedbackVaryings"_s, program))
         return;
-    
+
     switch (bufferMode) {
     case GraphicsContextGL::SEPARATE_ATTRIBS:
         if (varyings.size() > m_maxTransformFeedbackSeparateAttribs) {

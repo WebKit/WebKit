@@ -623,30 +623,36 @@ void WebGLRenderingContextBase::initializeDefaultObjects()
     m_defaultFramebuffer = WebGLDefaultFramebuffer::create(*this, clampedCanvasSize());
 }
 
-void WebGLRenderingContextBase::addCompressedTextureFormat(GCGLenum format)
+void WebGLRenderingContextBase::detachAndRemoveAllObjects()
 {
-    if (!m_compressedTextureFormats.contains(format))
-        m_compressedTextureFormats.append(format);
-}
-
-
-WebGLRenderingContextBase::~WebGLRenderingContextBase()
-{
-    // Remove all references to WebGLObjects so if they are the last reference
-    // they will be freed before the last context is removed from the context group.
+    m_contextObjectWeakPtrFactory.revokeAll();
     m_boundArrayBuffer = nullptr;
     m_defaultVertexArrayObject = nullptr;
     m_boundVertexArrayObject = nullptr;
     m_currentProgram = nullptr;
     m_framebufferBinding = nullptr;
     m_renderbufferBinding = nullptr;
-
     for (auto& textureUnit : m_textureUnits) {
         textureUnit.texture2DBinding = nullptr;
         textureUnit.textureCubeMapBinding = nullptr;
+        textureUnit.texture3DBinding = nullptr;
+        textureUnit.texture2DArrayBinding = nullptr;
     }
+}
 
-    detachAndRemoveAllObjects();
+void WebGLRenderingContextBase::addCompressedTextureFormat(GCGLenum format)
+{
+    if (!m_compressedTextureFormats.contains(format))
+        m_compressedTextureFormats.append(format);
+}
+
+WebGLRenderingContextBase::~WebGLRenderingContextBase()
+{
+    // Subclasses should reset the weak ptr factory so that webgl objects that point to
+    // context do not upcast to already deleted subclass.
+    ASSERT(!m_contextObjectWeakPtrFactory.isInitialized());
+
+    // Currently the extensions are not part of the weak ptr object graph. Lose them explicitly.
     loseExtensions(LostContextMode::RealLostContext);
     destroyGraphicsContextGL();
 
@@ -4648,7 +4654,10 @@ void WebGLRenderingContextBase::forceLostContext(WebGLRenderingContextBase::Lost
     m_contextLostState = ContextLostState { mode };
     m_contextLostState->errors.add(GCGLErrorCode::ContextLost);
 
-    detachAndRemoveAllObjects();
+    {
+        Locker locker { objectGraphLock() };
+        detachAndRemoveAllObjects();
+    }
     loseExtensions(mode);
 
     graphicsContextGL()->getErrors();
@@ -4688,12 +4697,6 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> WebGLRenderingContextBase::layerCon
 WeakPtr<WebGLRenderingContextBase> WebGLRenderingContextBase::createRefForContextObject()
 {
     return m_contextObjectWeakPtrFactory.createWeakPtr(*this);
-}
-
-void WebGLRenderingContextBase::detachAndRemoveAllObjects()
-{
-    Locker locker { objectGraphLock() };
-    m_contextObjectWeakPtrFactory.revokeAll();
 }
 
 void WebGLRenderingContextBase::stop()
@@ -5272,7 +5275,10 @@ void WebGLRenderingContextBase::maybeRestoreContext()
             return;
         }
         // Remove the possible objects added during the initialization.
-        detachAndRemoveAllObjects();
+        {
+            Locker locker { objectGraphLock() };
+            detachAndRemoveAllObjects();
+        }
     }
 
     // Either we failed to create context or the context was lost during initialization.

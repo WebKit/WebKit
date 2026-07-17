@@ -270,6 +270,7 @@ private:
     Vector<bool> getIndexedBooleanArrayParameter(GCGLenum pname, GCGLuint index);
 
     void initializeDefaultObjects() WTF_REQUIRES_LOCK(objectGraphLock()) final;
+    void detachAndRemoveAllObjects() WTF_REQUIRES_LOCK(objectGraphLock()) final;
     bool validateBufferTarget(ASCIILiteral functionName, GCGLenum target) final;
     bool validateBufferTargetCompatibility(ASCIILiteral, GCGLenum, WebGLBuffer*);
     RefPtr<WebGLBuffer> validateBufferDataParameters(ASCIILiteral functionName, GCGLenum target, GCGLenum usage) final;

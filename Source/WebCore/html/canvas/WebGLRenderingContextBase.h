@@ -530,13 +530,12 @@ protected:
     void initializeNewContext(Ref<GraphicsContextGL>);
     virtual void initializeContextState() WTF_REQUIRES_LOCK(objectGraphLock());
     virtual void initializeDefaultObjects() WTF_REQUIRES_LOCK(objectGraphLock());
+    virtual void detachAndRemoveAllObjects() WTF_REQUIRES_LOCK(objectGraphLock());
 
     // ActiveDOMObject
     void stop() override;
     void suspend(ReasonForSuspension) override;
     void resume() override;
-
-    void detachAndRemoveAllObjects();
 
     void destroyGraphicsContextGL();
 
@@ -774,6 +773,7 @@ protected:
     HashSet<GCGLenum> m_supportedTexImageSourceInternalFormats;
     HashSet<GCGLenum> m_supportedTexImageSourceFormats;
     HashSet<GCGLenum> m_supportedTexImageSourceTypes;
+    WeakPtrFactory<WebGLRenderingContextBase> m_contextObjectWeakPtrFactory;
 
     // Helpers for getParameter and other similar functions.
     bool getBooleanParameter(GCGLenum);
@@ -1044,12 +1044,11 @@ private:
 #if ENABLE(WEB_CODECS)
     ExceptionOr<void> texImageSource(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, WebCodecsVideoFrame& source);
 #endif
+    // The ordinal number of when the context was last active (drew, read pixels).
+    uint64_t m_activeOrdinal { 0 };
 
     bool m_isSuspended { false };
     bool m_packReverseRowOrderSupported { false };
-    // The ordinal number of when the context was last active (drew, read pixels).
-    uint64_t m_activeOrdinal { 0 };
-    WeakPtrFactory<WebGLRenderingContextBase> m_contextObjectWeakPtrFactory;
 };
 
 template<typename T>
