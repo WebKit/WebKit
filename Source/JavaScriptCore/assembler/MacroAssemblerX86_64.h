@@ -2681,6 +2681,16 @@ public:
             m_assembler.movq_rr(src, dest);
     }
 
+    void moveWithoutClobberingFlags(TrustedImm32 imm, RegisterID dest)
+    {
+        m_assembler.movl_i32r(imm.m_value, dest);
+    }
+
+    void moveWithoutClobberingFlags(TrustedImm64 imm, RegisterID dest)
+    {
+        m_assembler.movq_i64r(imm.m_value, dest);
+    }
+
     void move(TrustedImmPtr imm, RegisterID dest)
     {
         if (!imm.m_value)
@@ -2929,10 +2939,10 @@ public:
         m_assembler.cmpl_ir(right.m_value, left);
 
         if (elseCase == dest) {
-            move(thenCase, scratchRegister());
+            moveWithoutClobberingFlags(thenCase, scratchRegister());
             cmov(x86Condition(cond), scratchRegister(), dest);
         } else {
-            move(thenCase, dest);
+            moveWithoutClobberingFlags(thenCase, dest);
             cmov(x86Condition(invert(cond)), elseCase, dest);
         }
     }
@@ -2969,10 +2979,10 @@ public:
         m_assembler.testl_rr(right, left);
 
         if (elseCase == dest) {
-            move(thenCase, scratchRegister());
+            moveWithoutClobberingFlags(thenCase, scratchRegister());
             cmov(x86Condition(cond), scratchRegister(), dest);
         } else {
-            move(thenCase, dest);
+            moveWithoutClobberingFlags(thenCase, dest);
             cmov(x86Condition(invert(cond)), elseCase, dest);
         }
     }
@@ -3009,10 +3019,10 @@ public:
         test32(testReg, mask);
 
         if (elseCase == dest) {
-            move(thenCase, scratchRegister());
+            moveWithoutClobberingFlags(thenCase, scratchRegister());
             cmov(x86Condition(cond), scratchRegister(), dest);
         } else {
-            move(thenCase, dest);
+            moveWithoutClobberingFlags(thenCase, dest);
             cmov(x86Condition(invert(cond)), elseCase, dest);
         }
     }
