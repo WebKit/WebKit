@@ -79,6 +79,8 @@ public:
 
     void didEvaluateJavaScriptFunction(WebCore::FrameIdentifier, JSCallbackIdentifier, const String& result, const String& errorType);
 
+    void cancelPendingEvaluateJavaScriptCallbacks();
+
 private:
     explicit WebAutomationSessionProxy(const String& sessionIdentifier);
     JSObjectRef scriptObject(JSGlobalContextRef);

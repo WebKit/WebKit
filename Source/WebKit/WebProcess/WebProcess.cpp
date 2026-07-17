@@ -2170,6 +2170,8 @@ void WebProcess::ensureAutomationSessionProxy(const String& sessionIdentifier)
 
 void WebProcess::destroyAutomationSessionProxy()
 {
+    if (RefPtr automationSessionProxy = m_automationSessionProxy)
+        automationSessionProxy->cancelPendingEvaluateJavaScriptCallbacks();
     m_automationSessionProxy = nullptr;
 }
 
