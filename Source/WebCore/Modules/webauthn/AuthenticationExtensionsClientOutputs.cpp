@@ -49,9 +49,10 @@ std::optional<AuthenticationExtensionsClientOutputs> AuthenticationExtensionsCli
     it = decodedMap.find(cbor::CBORValue("credProps"));
     if (it != decodedMap.end() && it->second.isMap()) {
         CredentialPropertiesOutput credProps;
-        it = it->second.getMap().find(cbor::CBORValue("rk"));
-        if (it != decodedMap.end() && it->second.isBool())
-            credProps.rk = it->second.getBool();
+        const auto& credPropsMap = it->second.getMap();
+        auto credPropsIt = credPropsMap.find(cbor::CBORValue("rk"));
+        if (credPropsIt != credPropsMap.end() && credPropsIt->second.isBool())
+            credProps.rk = credPropsIt->second.getBool();
         clientOutputs.credProps = credProps;
     }
 
