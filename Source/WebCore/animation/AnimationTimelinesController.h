@@ -63,6 +63,7 @@ public:
     void detachFromDocument();
     void updateAnimationsAndSendEvents(ReducedResolutionSeconds);
     void updateStaleScrollTimelines();
+    bool hasProgressBasedScrollDrivenAnimation() const;
     void addPendingAnimation(WebAnimation&);
 
     std::optional<ReducedResolutionSeconds> currentTime(UseCachedCurrentTime = UseCachedCurrentTime::Yes);

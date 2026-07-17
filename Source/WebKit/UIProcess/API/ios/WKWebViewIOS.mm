@@ -1194,6 +1194,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
         [self _trackTransactionCommit:transactionID];
 
         _perProcessState.lastTransactionID = transactionID;
+        _perProcessState.hasMainThreadScrollDrivenAnimations = mainFrameCommitData.hasMainThreadScrollDrivenAnimations;
 
 #if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
         auto transactionIDForEndLiveResize = _perProcessState.transactionIDForEndLiveResize;
@@ -3259,7 +3260,10 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         return;
     }
 
-    if (_isChangingObscuredInsetsInteractively) {
+    // If we're changing obscured insets interactively we want to throttle visible content rect updates to save power.
+    // But we must send them anyway if there are unaccelerated scroll-driven animations as they need the visible content rect
+    // updates every frame in order to avoid jitter.
+    if (_isChangingObscuredInsetsInteractively && !_perProcessState.hasMainThreadScrollDrivenAnimations) {
         auto timeSinceLastUpdate = timeNow - _timeOfLastVisibleContentRectUpdate;
         if (timeSinceLastUpdate < delayBeforeUpdatingVisibleContentRectsWhenChangingObscuredInsetsInteractively) {
             auto delay = delayBeforeUpdatingVisibleContentRectsWhenChangingObscuredInsetsInteractively - timeSinceLastUpdate;

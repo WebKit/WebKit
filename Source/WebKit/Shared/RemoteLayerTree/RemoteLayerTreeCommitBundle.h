@@ -87,6 +87,7 @@ struct MainFrameData {
     bool viewportMetaTagWidthWasExplicit { false };
     bool viewportMetaTagCameFromImageDocument { false };
     bool isInStableState { false };
+    bool hasMainThreadScrollDrivenAnimations { false };
     WebCore::InteractiveWidget viewportMetaTagInteractiveWidget { WebCore::InteractiveWidget::ResizesVisual };
 
 #if PLATFORM(IOS_FAMILY)

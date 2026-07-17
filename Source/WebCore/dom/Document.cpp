@@ -10941,6 +10941,11 @@ AnimationTimelinesController& Document::ensureTimelinesController()
     return *m_timelinesController.get();
 }
 
+bool Document::hasProgressBasedScrollDrivenAnimation() const
+{
+    return m_timelinesController && m_timelinesController->hasProgressBasedScrollDrivenAnimation();
+}
+
 StyleOriginatedTimelinesController& Document::ensureStyleOriginatedTimelinesController()
 {
     if (!m_styleOriginatedTimelinesController)

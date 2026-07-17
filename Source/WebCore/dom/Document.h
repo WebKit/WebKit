@@ -1875,6 +1875,7 @@ public:
     Vector<Ref<WebAnimation>> matchingAnimations(NOESCAPE const Function<bool(Element&)>&);
     AnimationTimelinesController* timelinesController() const { return m_timelinesController.get(); }
     WEBCORE_EXPORT AnimationTimelinesController& ensureTimelinesController();
+    WEBCORE_EXPORT bool hasProgressBasedScrollDrivenAnimation() const;
     StyleOriginatedTimelinesController* styleOriginatedTimelinesController() { return m_styleOriginatedTimelinesController.get(); }
     StyleOriginatedTimelinesController& ensureStyleOriginatedTimelinesController();
     void keyframesRuleDidChange(const String& name);

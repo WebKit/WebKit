@@ -285,6 +285,7 @@ using WebKit::PageData::TransactionCallbackID = IPC::AsyncReplyID;
     bool viewportMetaTagWidthWasExplicit;
     bool viewportMetaTagCameFromImageDocument;
     bool isInStableState;
+    bool hasMainThreadScrollDrivenAnimations;
     WebCore::InteractiveWidget viewportMetaTagInteractiveWidget;
 
 #if PLATFORM(IOS_FAMILY)

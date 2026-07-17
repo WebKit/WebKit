@@ -2367,6 +2367,8 @@ void WebPage::willCommitMainFrameData(MainFrameData& data, const TransactionID& 
     data.viewportMetaTagCameFromImageDocument = m_viewportConfiguration.viewportArguments().type == ViewportArguments::Type::ImageDocument;
     data.avoidsUnsafeArea = m_viewportConfiguration.avoidsUnsafeArea();
     data.isInStableState = m_isInStableState;
+    if (RefPtr document = mainFrameView->frame().document())
+        data.hasMainThreadScrollDrivenAnimations = document->hasProgressBasedScrollDrivenAnimation();
     data.allowsUserScaling = allowsUserScaling();
     if (m_pendingDynamicViewportSizeUpdateID) {
         data.dynamicViewportSizeUpdateID = *m_pendingDynamicViewportSizeUpdateID;
