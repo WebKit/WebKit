@@ -51,7 +51,6 @@ http/tests/media/media-stream/speech-recognition-iframe-allow-attribute.html [ F
 http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
 http/tests/navigation/cross-origin-navigation-fires-onload.html [ Failure ]
 http/tests/navigation/page-cache-xhr-in-loading-iframe.html [ Failure ]
-http/tests/privateClickMeasurement/store-private-click-measurement-nested.html [ Failure ]
 http/tests/site-isolation/inspector/debugger/pause-in-cross-origin-iframe.html [ Pass ]
 http/tests/site-isolation/inspector/debugger/scriptParsed-frame-target.html [ Pass ]
 http/tests/site-isolation/inspector/debugger/setBreakpoint-cross-origin-iframe.html [ Pass ]

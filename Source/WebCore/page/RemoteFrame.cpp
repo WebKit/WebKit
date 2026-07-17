@@ -33,6 +33,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "FrameInlines.h"
 #include "NodeDocument.h"
+#include "PrivateClickMeasurement.h"
 #include "RemoteDOMWindow.h"
 #include "RemoteFrameClient.h"
 #include "RemoteFrameView.h"
@@ -106,12 +107,12 @@ bool RemoteFrame::preventsParentFromBeingComplete() const
 
 void RemoteFrame::changeLocation(FrameLoadRequest&& request)
 {
-    m_client->changeLocation(WTF::move(request));
+    m_client->changeLocation(WTF::move(request), std::nullopt);
 }
 
 void RemoteFrame::loadFrameRequest(FrameLoadRequest&& request, Event*)
 {
-    m_client->changeLocation(WTF::move(request));
+    m_client->changeLocation(WTF::move(request), std::nullopt);
 }
 
 void RemoteFrame::updateRemoteFrameAccessibilityOffset(IntPoint offset)

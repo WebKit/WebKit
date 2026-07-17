@@ -43,6 +43,7 @@
 #include <WebCore/HitTestResult.h>
 #include <WebCore/NodeDocument.h>
 #include <WebCore/PolicyChecker.h>
+#include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RemoteFrame.h>
 #include <WebCore/UserGestureIndicator.h>
 
@@ -98,9 +99,14 @@ void WebRemoteFrameClient::postMessageToRemote(FrameIdentifier source, const Sec
         page->send(Messages::WebPageProxy::PostMessageToRemote(source, sourceOrigin, target, targetOrigin, message, userGestureToken));
 }
 
-void WebRemoteFrameClient::changeLocation(FrameLoadRequest&& request)
+void WebRemoteFrameClient::changeLocation(FrameLoadRequest&& request, std::optional<PrivateClickMeasurement>&& privateClickMeasurement)
 {
     NavigationAction action(request);
+    // Private Click Measurement parsed in this process for a cross-process main-frame navigation
+    // (e.g. <a target="_top"> in a cross-origin iframe) is passed in explicitly; attach it to the
+    // NavigationAction so it is sent to the UI process in the NavigationActionData.
+    if (privateClickMeasurement)
+        action.setPrivateClickMeasurement(WTF::move(*privateClickMeasurement));
     // FIXME: action.request and request are probably duplicate information. <rdar://116203126>
     // FIXME: Get more parameters correct and add tests for each one. <rdar://116203354>
     dispatchDecidePolicyForNavigationAction(action, action.originalRequest(), ResourceResponse(), nullptr, { }, { }, { }, { }, NavigationUpgradeToHTTPSBehavior::BasedOnPolicy, { }, PolicyDecisionMode::Asynchronous, [protectedFrame = Ref { m_frame }, request = WTF::move(request)] (PolicyAction policyAction) mutable {

@@ -217,7 +217,6 @@ http/tests/paymentrequest/page-cache-created-payment-request.https.html [ Failur
 http/tests/paymentrequest/page-cache-created-payment-response.https.html [ Failure ]
 http/tests/paymentrequest/page-cache-interactive-payment-request.https.html [ Failure ]
 http/tests/paymentrequest/page-cache-retried-payment-response.https.html [ Failure ]
-http/tests/privateClickMeasurement/store-private-click-measurement-nested.html [ Failure ]
 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny.html [ Failure ]
 http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html [ Failure ]
 http/tests/security/allow-top-level-navigations-by-third-party-iframes-with-previous-user-activation.html [ Failure ]

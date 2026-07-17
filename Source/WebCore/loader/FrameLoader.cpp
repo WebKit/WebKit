@@ -1639,9 +1639,13 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
 
     // The search for a target frame is done earlier in the case of form submission.
     RefPtr effectiveTargetFrame = findFrameForNavigation(effectiveFrameName);
-    if (is<RemoteFrame>(effectiveTargetFrame)) {
-        updateRequestAndAddExtraFields(*effectiveTargetFrame, frameLoadRequest.resourceRequest(), IsMainResource::Yes, newLoadType, ShouldUpdateAppInitiatedValue::Yes, FrameLoader::IsServiceWorkerNavigationLoad::No, WillOpenInNewWindow::No, protect(frameLoadRequest.requester()).ptr());
-        effectiveTargetFrame->changeLocation(WTF::move(frameLoadRequest));
+    if (RefPtr remoteEffectiveTargetFrame = dynamicDowncast<RemoteFrame>(effectiveTargetFrame)) {
+        updateRequestAndAddExtraFields(*remoteEffectiveTargetFrame, frameLoadRequest.resourceRequest(), IsMainResource::Yes, newLoadType, ShouldUpdateAppInitiatedValue::Yes, FrameLoader::IsServiceWorkerNavigationLoad::No, WillOpenInNewWindow::No, protect(frameLoadRequest.requester()).ptr());
+        // The local-frame path below attaches Private Click Measurement to the NavigationAction once the load
+        // reaches the main frame (see the frame->isMainFrame() check below). When the main frame is remote (site
+        // isolation) that path is never reached, so hand the data to the RemoteFrameClient directly to be
+        // re-attached to the cross-process NavigationAction.
+        remoteEffectiveTargetFrame->client().changeLocation(WTF::move(frameLoadRequest), remoteEffectiveTargetFrame->isMainFrame() ? WTF::move(privateClickMeasurement) : std::nullopt);
         return;
     }
 
