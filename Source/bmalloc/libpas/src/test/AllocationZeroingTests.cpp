@@ -28,7 +28,9 @@
 #include "bmalloc_heap.h"
 #include "bmalloc_heap_config.h"
 #include "pas_internal_config.h"
+#include "pas_page_malloc.h"
 #include "tagged_bmalloc_heap.h"
+#include <algorithm>
 #include <cstdint>
 #include <vector>
 
@@ -137,19 +139,87 @@ void reportParameters(HeapVariant variant, AlignmentApi api, size_t size, size_t
               << " size=" << size << " alignment=" << alignment << " phase=" << phase << std::endl;
 }
 
-// Require every byte to be zero, reporting the identifying parameters and the
-// first offending offset/value on failure.
-void checkIsZeroed(const void* ptr, size_t size, HeapVariant variant, AlignmentApi api,
-                   size_t alignment, const char* phase)
+// The order in which a buffer's pages are first faulted during verification. The
+// large VA-zeroing path (madvise(MADV_ZERO) or the mmap fallback) leaves pages
+// zero-fill-on-demand, so a page is only observed zero when first touched; a
+// hashtable reads its buckets in hash order -- effectively at random -- so a
+// fault-order-dependent zeroing bug could surface under non-ascending access but
+// not under an ascending scan. (For the eagerly memset-zeroed regimes the order
+// is immaterial, so those callers use the default Ascending.)
+enum class FaultOrder { Ascending, Descending, Shuffled };
+
+const char* faultOrderName(FaultOrder order)
 {
-    size_t offset = firstNonZeroByte(ptr, size);
-    if (offset < size) {
-        const uint8_t* bytes = static_cast<const uint8_t*>(ptr);
-        reportParameters(variant, api, size, alignment, phase);
-        std::cout << "  first non-zero byte at offset " << offset << " is 0x" << std::hex
-                  << static_cast<unsigned>(bytes[offset]) << std::dec << "." << std::endl;
+    switch (order) {
+    case FaultOrder::Ascending:
+        return "ascending";
+    case FaultOrder::Descending:
+        return "descending";
+    case FaultOrder::Shuffled:
+        return "shuffled";
     }
-    CHECK_EQUAL(offset, size);
+    CHECK(!"Invalid fault order");
+    return "";
+}
+
+// The sequence of page indices to touch, in the requested first-fault order.
+std::vector<size_t> pageVisitationOrder(size_t numPages, FaultOrder order)
+{
+    std::vector<size_t> pages;
+    pages.reserve(numPages);
+    for (size_t i = 0; i < numPages; ++i)
+        pages.push_back(i);
+
+    switch (order) {
+    case FaultOrder::Ascending:
+        break;
+    case FaultOrder::Descending:
+        std::reverse(pages.begin(), pages.end());
+        break;
+    case FaultOrder::Shuffled:
+        // Deterministic Fisher-Yates using the seeded test RNG, so the order is
+        // reproducible across runs.
+        for (size_t i = numPages; i-- > 1;) {
+            size_t j = deterministicRandomNumber(static_cast<unsigned>(i + 1));
+            size_t swapTemp = pages[i];
+            pages[i] = pages[j];
+            pages[j] = swapTemp;
+        }
+        break;
+    }
+    return pages;
+}
+
+// Require every byte to be zero, reporting the identifying parameters and the
+// first offending offset/value on failure. `order` controls the order in which
+// the buffer's pages are first faulted: Ascending walks them front to back;
+// Descending/Shuffled visit pages out of order (the first byte touched in each
+// page faults it), which matters only for the large VA-zeroed path.
+void checkIsZeroed(const void* ptr, size_t size, HeapVariant variant, AlignmentApi api,
+                   size_t alignment, const char* phase, FaultOrder order = FaultOrder::Ascending)
+{
+    const uint8_t* bytes = static_cast<const uint8_t*>(ptr);
+
+    // Visit the pages in the requested order so the first byte touched in each
+    // page faults it in that order.
+    size_t pageSize = pas_page_malloc_alignment();
+    size_t numPages = (size + pageSize - 1) / pageSize;
+    std::vector<size_t> pages = pageVisitationOrder(numPages, order);
+    for (size_t pageIndex : pages) {
+        size_t begin = pageIndex * pageSize;
+        // The allocation might not be a whole number of pages; clamp the last one.
+        size_t end = std::min(begin + pageSize, size);
+        size_t pageLength = end - begin;
+        size_t nonZero = firstNonZeroByte(bytes + begin, pageLength);
+        if (nonZero < pageLength) {
+            size_t offset = begin + nonZero;
+            reportParameters(variant, api, size, alignment, phase);
+            std::cout << "  first non-zero byte at offset " << offset << " (page " << pageIndex << " of "
+                      << numPages << ") is 0x" << std::hex << static_cast<unsigned>(bytes[offset]) << std::dec
+                      << " with " << faultOrderName(order) << " fault order." << std::endl;
+            CHECK(!bytes[offset]);
+        }
+    }
 }
 
 void checkIsAligned(const void* ptr, size_t size, HeapVariant variant, AlignmentApi api,
@@ -165,9 +235,11 @@ void checkIsAligned(const void* ptr, size_t size, HeapVariant variant, Alignment
 // then zeroed-alloc the same size again and verify the reused region is zero.
 // With Reuse::WithScavenge, a synchronous scavenge runs after the free so the
 // region is decommitted and the reuse must go through recommit rather than a
-// straight free-list handback.
+// straight free-list handback. `order` sets the fault order of the reused
+// buffer's check -- Ascending for the generic runs; the large VA-zeroed
+// fault-order test (testLargeZeroingFaultOrder) drives Descending/Shuffled.
 void zeroingReuse(HeapVariant variant, AlignmentApi api, size_t size, size_t alignment,
-                  Reuse reuse)
+                  Reuse reuse, FaultOrder order = FaultOrder::Ascending)
 {
     void* first = allocateZeroed(variant, api, size, alignment);
     if (!first)
@@ -200,7 +272,7 @@ void zeroingReuse(HeapVariant variant, AlignmentApi api, size_t size, size_t ali
         std::cout << "Note: reuse returned a different region for size " << size
                   << "; dirtied-backing reuse not exercised." << std::endl;
     }
-    checkIsZeroed(second, size, variant, api, alignment, "reused");
+    checkIsZeroed(second, size, variant, api, alignment, "reused", order);
     if (api == AlignmentApi::WithAlignment)
         checkIsAligned(second, size, variant, api, alignment, "reused");
 
@@ -218,14 +290,36 @@ void runZeroingReuse(const std::vector<size_t>& sizes, Reuse reuse = Reuse::With
 {
     pas_scavenger_suspend();
 
-    static const HeapVariant variants[] = { HeapVariant::Untagged, HeapVariant::Tagged };
-    static const size_t alignments[] = { 16, 512, 4096, 16384 };
+    static constexpr HeapVariant variants[] = { HeapVariant::Untagged, HeapVariant::Tagged };
+    static constexpr size_t alignments[] = { 16, 512, 4096, 16384 };
 
     for (HeapVariant variant : variants) {
         for (size_t size : sizes) {
             zeroingReuse(variant, AlignmentApi::Plain, size, bmallocMinAlign, reuse);
             for (size_t alignment : alignments)
                 zeroingReuse(variant, AlignmentApi::WithAlignment, size, alignment, reuse);
+        }
+    }
+}
+
+// Companion run for the large VA-zeroed path: for each size, cross the fault
+// order (how the reused buffer's pages are first touched) with the reuse mode
+// (immediate free-list reuse vs forced decommit/recommit). Untagged/plain only,
+// since the VA-zeroing path is variant- and alignment-independent. Suspends the
+// scavenger for the same determinism reason as runZeroingReuse.
+void runZeroingReuseFaultOrders(const std::vector<size_t>& sizes)
+{
+    pas_scavenger_suspend();
+
+    static constexpr FaultOrder orders[] = {
+        FaultOrder::Ascending, FaultOrder::Descending, FaultOrder::Shuffled,
+    };
+    static constexpr Reuse reuses[] = { Reuse::WithoutScavenge, Reuse::WithScavenge };
+
+    for (size_t size : sizes) {
+        for (FaultOrder order : orders) {
+            for (Reuse reuse : reuses)
+                zeroingReuse(HeapVariant::Untagged, AlignmentApi::Plain, size, bmallocMinAlign, reuse, order);
         }
     }
 }
@@ -394,15 +488,29 @@ void testSmallZeroingPageBatching()
     // Small sizes bracketing the batching density: the smallest object (the most
     // per page) and the largest small-segregated object (the fewest per page, but
     // still at least PAS_MIN_OBJECTS_PER_PAGE).
-    static const size_t sizes[] = {
+    static constexpr size_t sizes[] = {
         bmallocMinAlign,
         PAS_SMALL_PAGE_DEFAULT_SIZE / PAS_MIN_OBJECTS_PER_PAGE,
     };
-    static const HeapVariant variants[] = { HeapVariant::Untagged, HeapVariant::Tagged };
+    static constexpr HeapVariant variants[] = { HeapVariant::Untagged, HeapVariant::Tagged };
     for (HeapVariant variant : variants) {
         for (size_t size : sizes)
             smallPageBatching(variant, size);
     }
+}
+
+// Verify large VA-zeroed allocations read zero regardless of the order in which
+// their pages are first faulted, mimicking a hashtable's non-sequential bucket
+// access on reused (previously-dirtied) memory. Runs each order under both reuse
+// modes; ascending is a control against descending and shuffled.
+void testLargeZeroingFaultOrder()
+{
+    // A fixed multi-megabyte size (spans many pages) alongside the threshold; kept
+    // independent of vaZeroThreshold so lowering the threshold can't shrink it.
+    constexpr size_t multiMegabyteSize = static_cast<size_t>(4) << 20;
+    static_assert(multiMegabyteSize >= vaZeroThreshold,
+                  "large fault-order sample should stay on the VA-zeroing path");
+    runZeroingReuseFaultOrders({ vaZeroThreshold, multiMegabyteSize });
 }
 
 } // anonymous namespace
@@ -421,5 +529,6 @@ void addAllocationZeroingTests()
     ADD_TEST(testZeroingReuseWithScavengeLargeMemsetSizes());
     ADD_TEST(testZeroingReuseWithScavengeLargeVirtualMemorySizes());
     ADD_TEST(testSmallZeroingPageBatching());
+    ADD_TEST(testLargeZeroingFaultOrder());
 #endif // PAS_ENABLE_BMALLOC
 }
