@@ -6440,6 +6440,29 @@ void SpeculativeJIT::compile(Node* node)
                     strictInt52Result(t2, node);
                 break;
             }
+            case 8: {
+                load64(baseIndex, t2);
+
+                if (data.isLittleEndian == TriState::False)
+                    byteSwap64(t2);
+                else if (data.isLittleEndian == TriState::Indeterminate) {
+                    RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
+                    auto isLittleEndian = branchTest32(NonZero, isLittleEndianGPR, TrustedImm32(1));
+                    byteSwap64(t2);
+                    isLittleEndian.link(this);
+                }
+
+                flushRegisters();
+                GPRFlushedCallResult result(this);
+                GPRReg resultGPR = result.gpr();
+                if (data.isSigned)
+                    callOperation(operationInt64ToBigInt, resultGPR, LinkableConstant::globalObject(*this, node), t2);
+                else
+                    callOperation(operationUInt64ToBigInt, resultGPR, LinkableConstant::globalObject(*this, node), t2);
+                exceptionCheck();
+                jsValueResult(resultGPR, node);
+                break;
+            }
             default:
                 RELEASE_ASSERT_NOT_REACHED();
             }
@@ -6567,6 +6590,7 @@ void SpeculativeJIT::compile(Node* node)
         std::optional<SpeculateStrictInt52Operand> int52Value;
         std::optional<SpeculateDoubleOperand> doubleValue;
         std::optional<SpeculateInt32Operand> int32Value;
+        std::optional<SpeculateCellOperand> bigIntValue;
         std::optional<FPRTemporary> fprTemporary;
         GPRReg valueGPR = InvalidGPRReg;
         FPRReg valueFPR = InvalidFPRReg;
@@ -6591,6 +6615,11 @@ void SpeculativeJIT::compile(Node* node)
         case Int52RepUse:
             int52Value.emplace(this, valueEdge);
             valueGPR = int52Value->gpr();
+            break;
+        case HeapBigIntUse:
+            bigIntValue.emplace(this, valueEdge);
+            valueGPR = bigIntValue->gpr();
+            speculateHeapBigInt(valueEdge, valueGPR);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -6779,6 +6808,24 @@ void SpeculativeJIT::compile(Node* node)
                     emitBigEndianCode();
                     done.link(this);
                 }
+
+                break;
+            }
+            case 8: {
+                RELEASE_ASSERT(valueEdge.useKind() == HeapBigIntUse);
+                RELEASE_ASSERT(valueGPR != InvalidGPRReg);
+
+                toBigInt64(valueGPR, t3);
+
+                if (data.isLittleEndian == TriState::False)
+                    byteSwap64(t3);
+                else if (data.isLittleEndian == TriState::Indeterminate) {
+                    RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
+                    auto isLittleEndian = branchTest32(NonZero, isLittleEndianGPR, TrustedImm32(1));
+                    byteSwap64(t3);
+                    isLittleEndian.link(this);
+                }
+                store64(t3, baseIndex);
 
                 break;
             }

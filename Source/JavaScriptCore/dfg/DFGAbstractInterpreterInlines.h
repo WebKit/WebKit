@@ -5891,12 +5891,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         DataViewData data = node->dataViewData();
         if (data.byteSize < 4)
             setNonCellTypeForNode(node, SpecInt32Only);
-        else {
-            ASSERT(data.byteSize == 4);
+        else if (data.byteSize == 4) {
             if (data.isSigned)
                 setNonCellTypeForNode(node, SpecInt32Only);
             else
                 setNonCellTypeForNode(node, SpecInt52Any);
+        } else {
+            ASSERT(data.byteSize == 8);
+            setTypeForNode(node, SpecHeapBigInt);
         }
         break;
     }

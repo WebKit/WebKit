@@ -14,6 +14,8 @@ let getOps = {
     getInt32: 4,
     getFloat32: 4,
     getFloat64: 8,
+    getBigInt64: 8,
+    getBigUint64: 8,
 };
 
 let setOps = {
@@ -25,6 +27,8 @@ let setOps = {
     setInt32: 4,
     setFloat32: 4,
     setFloat64: 8,
+    setBigInt64: 8,
+    setBigUint64: 8,
 };
 
 let getFuncs = [];
@@ -55,6 +59,10 @@ for (let p of Object.keys(setOps)) {
     setFuncs.push(func);
 }
 
+function valueFor(name) {
+    return name.indexOf("Big") !== -1 ? 10n : 10;
+}
+
 function assertThrowsRangeError(f) {
     let e = null;
     try {
@@ -75,7 +83,7 @@ function test(warmup) {
         }
 
         for (let f of setFuncs) {
-            f(dv, 0, 10);
+            f(dv, 0, valueFor(f.name));
         }
     }
 
@@ -97,15 +105,15 @@ function test(warmup) {
     for (let f of setFuncs) {
         assertThrowsRangeError(() => {
             let index = size - setOps[f.name] + 1;
-            f(dv, index, 10);
+            f(dv, index, valueFor(f.name));
         });
         assertThrowsRangeError(() => {
             let index = -1;
-            f(dv, index, 10);
+            f(dv, index, valueFor(f.name));
         });
         assertThrowsRangeError(() => {
             let index = -2147483648;
-            f(dv, index, 10);
+            f(dv, index, valueFor(f.name));
         });
     }
 }

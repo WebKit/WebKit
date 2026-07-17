@@ -14,6 +14,8 @@ let getOps = {
     getInt32: 4,
     getFloat32: 4,
     getFloat64: 8,
+    getBigInt64: 8,
+    getBigUint64: 8,
 };
 
 let setOps = {
@@ -25,6 +27,8 @@ let setOps = {
     setInt32: 4,
     setFloat32: 4,
     setFloat64: 8,
+    setBigInt64: 8,
+    setBigUint64: 8,
 };
 
 let getFuncs = [];
@@ -67,7 +71,7 @@ function test() {
         }
 
         for (let f of setFuncs) {
-            f(dv, index, 10);
+            f(dv, index, f.name.indexOf("Big") !== -1 ? 10n : 10);
         }
     }
 

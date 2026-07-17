@@ -3697,6 +3697,9 @@ private:
                     else
                         node->setResult(NodeResultInt52);
                     break;
+                case 8:
+                    node->setResult(NodeResultJS);
+                    break;
                 default:
                     RELEASE_ASSERT_NOT_REACHED();
                 }
@@ -3725,6 +3728,9 @@ private:
                         fixEdge<Int32Use>(valueToStore);
                     else
                         fixEdge<Int52RepUse>(valueToStore);
+                    break;
+                case 8:
+                    fixEdge<HeapBigIntUse>(valueToStore);
                     break;
                 }
             }
