@@ -56,7 +56,6 @@ const ClassInfo WebAssemblyMemoryPrototype::s_info = { "WebAssembly.Memory"_s, &
 @begin prototypeTableWebAssemblyMemory
  grow   webAssemblyMemoryProtoFuncGrow      Function 1
  buffer webAssemblyMemoryProtoGetterBuffer  ReadOnly|CustomAccessor
- type   webAssemblyMemoryProtoFuncType      Function 0
 @end
 */
 // two more functions are added if Options::useWasmMemoryToBufferAPIs() is true; see finishCreation()
@@ -154,6 +153,9 @@ void WebAssemblyMemoryPrototype::finishCreation(VM& vm, JSGlobalObject* globalOb
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+
+    if (Options::useWasmJSTypes())
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("type"_s, webAssemblyMemoryProtoFuncType, static_cast<unsigned>(PropertyAttribute::None), 0, ImplementationVisibility::Public);
 
     if (Options::useWasmMemoryToBufferAPIs()) {
         JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toFixedLengthBuffer"_s, webAssemblyMemoryProtoFuncToFixedLengthBuffer, static_cast<unsigned>(PropertyAttribute::None), 0, ImplementationVisibility::Public);

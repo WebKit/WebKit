@@ -59,7 +59,6 @@ const ClassInfo WebAssemblyTablePrototype::s_info = { "WebAssembly.Table"_s, &Ba
  grow   webAssemblyTableProtoFuncGrow   Function 1
  get    webAssemblyTableProtoFuncGet    Function 1
  set    webAssemblyTableProtoFuncSet    Function 1
- type   webAssemblyTableProtoFuncType   Function 0
  @end
  */
 
@@ -178,10 +177,10 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncType, (JSGlobalObject* globalO
     RELEASE_AND_RETURN(throwScope, JSValue::encode(typeDescriptor));
 }
 
-WebAssemblyTablePrototype* WebAssemblyTablePrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
+WebAssemblyTablePrototype* WebAssemblyTablePrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
     auto* object = new (NotNull, allocateCell<WebAssemblyTablePrototype>(vm)) WebAssemblyTablePrototype(vm, structure);
-    object->finishCreation(vm);
+    object->finishCreation(vm, globalObject);
     return object;
 }
 
@@ -190,11 +189,14 @@ Structure* WebAssemblyTablePrototype::createStructure(VM& vm, JSGlobalObject* gl
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-void WebAssemblyTablePrototype::finishCreation(VM& vm)
+void WebAssemblyTablePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+
+    if (Options::useWasmJSTypes())
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("type"_s, webAssemblyTableProtoFuncType, static_cast<unsigned>(PropertyAttribute::None), 0, ImplementationVisibility::Public);
 }
 
 WebAssemblyTablePrototype::WebAssemblyTablePrototype(VM& vm, Structure* structure)

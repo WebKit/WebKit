@@ -1,3 +1,4 @@
+//@ requireOptions("--useWasmJSTypes=true")
 import * as assert from '../assert.js'
 
 let parameters = ["i32", "f32", "externref"];

@@ -32,30 +32,20 @@
 #include "JSObjectInlines.h"
 #include "JSWebAssemblyTag.h"
 #include "ObjectConstructor.h"
+#include "Options.h"
 #include "StructureInlines.h"
 #include "WasmFormat.h"
 
 namespace JSC {
+
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyTagProtoFuncType);
-}
 
-#include "WebAssemblyTagPrototype.lut.h"
+const ClassInfo WebAssemblyTagPrototype::s_info = { "WebAssembly.Tag"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyTagPrototype) };
 
-namespace JSC {
-
-const ClassInfo WebAssemblyTagPrototype::s_info = { "WebAssembly.Tag"_s, &Base::s_info, &prototypeTableWebAssemblyTag, nullptr, CREATE_METHOD_TABLE(WebAssemblyTagPrototype) };
-
-/* Source for WebAssemblyTagPrototype.lut.h
- @begin prototypeTableWebAssemblyTag
- type   webAssemblyTagProtoFuncType   Function 0
- @end
- */
-
-
-WebAssemblyTagPrototype* WebAssemblyTagPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
+WebAssemblyTagPrototype* WebAssemblyTagPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
     auto* object = new (NotNull, allocateCell<WebAssemblyTagPrototype>(vm)) WebAssemblyTagPrototype(vm, structure);
-    object->finishCreation(vm);
+    object->finishCreation(vm, globalObject);
     return object;
 }
 
@@ -64,11 +54,14 @@ Structure* WebAssemblyTagPrototype::createStructure(VM& vm, JSGlobalObject* glob
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-void WebAssemblyTagPrototype::finishCreation(VM& vm)
+void WebAssemblyTagPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+
+    if (Options::useWasmJSTypes())
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("type"_s, webAssemblyTagProtoFuncType, static_cast<unsigned>(PropertyAttribute::None), 0, ImplementationVisibility::Public);
 }
 
 WebAssemblyTagPrototype::WebAssemblyTagPrototype(VM& vm, Structure* structure)

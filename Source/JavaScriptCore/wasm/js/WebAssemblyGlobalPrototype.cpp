@@ -50,8 +50,6 @@ const ClassInfo WebAssemblyGlobalPrototype::s_info = { "WebAssembly.Global"_s, &
 /* Source for WebAssemblyGlobalPrototype.lut.h
  @begin prototypeGlobalWebAssemblyGlobal
  valueOf webAssemblyGlobalProtoFuncValueOf Function 0
- type    webAssemblyGlobalProtoFuncType    Function 0
-
  @end
  */
 
@@ -145,6 +143,9 @@ void WebAssemblyGlobalPrototype::finishCreation(VM& vm, JSGlobalObject* globalOb
     GetterSetter* valueAccessor = GetterSetter::create(vm, globalObject, valueGetterFunction, valueSetterFunction);
     putDirectNonIndexAccessorWithoutTransition(vm, Identifier::fromString(vm, "value"_s), valueAccessor, static_cast<unsigned>(PropertyAttribute::Accessor));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+
+    if (Options::useWasmJSTypes())
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("type"_s, webAssemblyGlobalProtoFuncType, static_cast<unsigned>(PropertyAttribute::None), 0, ImplementationVisibility::Public);
 }
 
 WebAssemblyGlobalPrototype::WebAssemblyGlobalPrototype(VM& vm, Structure* structure)

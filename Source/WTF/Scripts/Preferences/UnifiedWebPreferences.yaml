@@ -9663,6 +9663,19 @@ WasmJSStringBuiltinsEnabled:
     WebKit:
       default: true
 
+WasmJSTypesEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "WebAssembly JS Types"
+  humanReadableDescription: "Enable the js-types proposal type() methods on WebAssembly.Memory/Table/Global/Tag prototypes."
+  webcoreBinding: none
+  jscOptionName: useWasmJSTypes
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: false
+
 WasmMemory64Enabled:
   type: bool
   status: testable

@@ -1,3 +1,4 @@
+//@ requireOptions("--useWasmJSTypes=true")
 //@ runDefaultWasm("-m", "--useWasmMemory64=1")
 import * as assert from "../assert.js";
 

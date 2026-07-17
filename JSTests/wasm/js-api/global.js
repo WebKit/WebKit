@@ -1,3 +1,4 @@
+//@ requireOptions("--useWasmJSTypes=true")
 import * as assert from '../assert.js';
 {
     assert.throws(() => {

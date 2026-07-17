@@ -1,3 +1,4 @@
+//@ requireOptions("--useWasmJSTypes=true")
 import Builder from '../Builder.js';
 import * as assert from '../assert.js';
 
