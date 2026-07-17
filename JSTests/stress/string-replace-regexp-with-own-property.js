@@ -1,3 +1,4 @@
+//@ skip if not $jitTests
 //@ runDefault("--validateOptions=true", "--useConcurrentJIT=0")
 
 // FixupPhase guards StringReplace(RegExp) with a CheckStructure on the original

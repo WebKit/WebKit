@@ -1,3 +1,4 @@
+//@ skip if not $jitTests
 //@ runDefault("--validateOptions=true", "--useConcurrentJIT=0")
 
 // PromisePrototypeCatchIntrinsic guards the receiver with Check(PromiseObjectUse),
