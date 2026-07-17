@@ -135,11 +135,23 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # -----------------------------------------------------------------------------
     # Use MSVC_CXX_ARCHITECTURE_ID instead of CMAKE_SYSTEM_PROCESSOR when defined,
     # since the later one just resolves to the host processor on Windows.
+    #
+    # Likewise, on Apple platforms CMAKE_SYSTEM_PROCESSOR resolves to the host,
+    # while CMAKE_OSX_ARCHITECTURES selects the target -- these differ when
+    # building x86_64 under Rosetta on an Apple Silicon host. Prefer
+    # CMAKE_OSX_ARCHITECTURES when it names a single architecture so that the
+    # CPU detection below (and everything keyed off WTF_CPU_*, e.g. the
+    # offlineasm backend) matches the code the compiler actually emits. Universal
+    # builds (multiple architectures) fall back to CMAKE_SYSTEM_PROCESSOR.
+    list(LENGTH CMAKE_OSX_ARCHITECTURES _osx_architectures_count)
     if (MSVC_CXX_ARCHITECTURE_ID)
         string(TOLOWER ${MSVC_CXX_ARCHITECTURE_ID} LOWERCASE_CMAKE_SYSTEM_PROCESSOR)
+    elseif (APPLE AND _osx_architectures_count EQUAL 1)
+        string(TOLOWER "${CMAKE_OSX_ARCHITECTURES}" LOWERCASE_CMAKE_SYSTEM_PROCESSOR)
     else ()
         string(TOLOWER ${CMAKE_SYSTEM_PROCESSOR} LOWERCASE_CMAKE_SYSTEM_PROCESSOR)
     endif ()
+    unset(_osx_architectures_count)
     if (LOWERCASE_CMAKE_SYSTEM_PROCESSOR MATCHES "^(arm|aarch32|cortex-(a(5|7|8|9|1[2-7]|32)|m[0-9]|r[0-9]([^0-9]|$)))"
             AND NOT LOWERCASE_CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)")
         set(WTF_CPU_ARM 1)

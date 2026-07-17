@@ -185,6 +185,11 @@ if (CMAKE_OSX_DEPLOYMENT_TARGET)
     unset(_arch_count)
 endif ()
 
+# Building x86_64 on an Apple Silicon host means the result only ever runs under Rosetta.
+if (CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64" AND WTF_HOST_SYSTEM_MACHINE STREQUAL "arm64")
+    add_compile_definitions(HAVE_CPU_TRANSLATION_CAPABILITY=0)
+endif ()
+
 # Fail loudly if an ASan build dir lost its CMakeCache.txt and reconfigured
 # without ENABLE_SANITIZERS — otherwise the tree silently rebuilds uninstrumented.
 get_filename_component(_bindir_name "${CMAKE_BINARY_DIR}" NAME)

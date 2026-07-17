@@ -121,11 +121,20 @@ function(WEBKIT_PROCESS_ENTITLEMENTS _target)
         set(_arg_PRODUCT_NAME ${_target})
     endif ()
     set(_xcent ${CMAKE_CURRENT_BINARY_DIR}/${_target}.xcent)
+    set(_env_args
+        WK_PROCESSED_XCENT_FILE=${_xcent}
+        WK_PLATFORM_NAME=${WEBKIT_SDK_NAME}
+        PRODUCT_NAME=${_arg_PRODUCT_NAME}
+    )
+    # An x86_64 build on Apple Silicon runs under Rosetta, where the arm64e
+    # JIT-hardening entitlements (com.apple.private.verified-jit,
+    # com.apple.security.cs.single-jit) prevent the process from launching.
+    if (CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
+        list(APPEND _env_args SKIP_ROSETTA_BREAKING_ENTITLEMENTS=1)
+    endif ()
     add_custom_command(TARGET ${_target} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E env
-            WK_PROCESSED_XCENT_FILE=${_xcent}
-            WK_PLATFORM_NAME=${WEBKIT_SDK_NAME}
-            PRODUCT_NAME=${_arg_PRODUCT_NAME}
+            ${_env_args}
             ${CMAKE_SOURCE_DIR}/Source/${_arg_PROJECT}/Scripts/process-entitlements.sh
         COMMAND codesign --force --sign - --entitlements ${_xcent} $<TARGET_FILE:${_target}>
         VERBATIM
