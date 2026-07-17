@@ -2511,6 +2511,21 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_multi_line_lint('#if __has_include(<ApplicationServices/ApplicationServicesPriv.h>)\n', '')
         self.assert_multi_line_lint('#elif __has_include(<ApplicationServices/ApplicationServicesPriv.h>)\n', '')
         self.assert_multi_line_lint('#endif // __has_include(<ApplicationServices/ApplicationServicesPriv.h>)\n', '')
+        # The '/' in an include path within __has_include(<...>) is not a division operator,
+        # even when the __has_include lands on a preprocessor continuation line that does not
+        # itself begin with #if/#elif.
+        self.assert_multi_line_lint('#if !defined(HAVE_FOO) \\\n'
+                                    '    && __has_include(<Foo/Bar.h>)\n'
+                                    '#define HAVE_FOO 1\n'
+                                    '#endif\n', '')
+        self.assert_multi_line_lint('#if PLATFORM(FOO) \\\n'
+                                    '    || __has_include(<Foo/Bar/Baz.h>)\n'
+                                    '#endif\n', '')
+        # But genuine division on a continuation line is still flagged.
+        self.assert_multi_line_lint('#if FOO \\\n'
+                                    '    && (a/b)\n'
+                                    '#endif\n',
+                                    'Missing spaces around /  [whitespace/operators] [3]')
         self.assert_lint('Foo&& a = bar();', '')
 
     def test_operator_methods(self):

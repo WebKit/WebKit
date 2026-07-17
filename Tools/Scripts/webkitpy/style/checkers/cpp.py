@@ -2342,6 +2342,10 @@ def check_spacing(file_extension, clean_lines, line_number, file_state, error):
 
     # Don't try to do spacing checks for operator methods
     line = sub(r'operator(==|!=|<|<<|<=|>=|>>|>|\+=|-=|\*=|/=|%=|&=|\|=|^=|<<=|>>=|/|\|)\(', r'operator\(', line)
+    # Don't try to do spacing checks on the include path within __has_include(<...>),
+    # since the '/' path separator is not a division operator. Such a path can appear
+    # on a preprocessor continuation line that the check below does not skip.
+    line = sub(r'(__has_include\s*\(\s*<)[^>]*(>)', r'\1\2', line)
     # Don't try to do spacing checks for #include, #import, #if, or #elif statements at
     # minimum because it messes up checks for spacing around /
     if match(r'\s*#\s*(?:include|import|if|elif)', line):
