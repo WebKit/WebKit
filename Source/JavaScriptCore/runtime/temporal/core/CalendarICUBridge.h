@@ -111,20 +111,18 @@ JS_EXPORT_PRIVATE TemporalResult<ISO8601::PlainDate> calendarDateAdd(CalendarID,
 
 TemporalResult<ISO8601::Duration> calendarDateUntil(CalendarID, const ISO8601::PlainDate& one, const ISO8601::PlainDate& two, TemporalUnit largestUnit);
 
-// EcmaReferenceYear — returns the extended calendar year whose ISO date falls nearest 1972 for (monthNumber, day).
+// EcmaReferenceYear — extended calendar year whose ISO date falls nearest 1972 for (monthNumber, day).
 // Used by PlainMonthDay to choose a stable reference ISO year for non-ISO calendars.
-// Sentinel: ecmaReferenceYear returns this when the leap month doesn't exist near 1972
-// and the caller should use the non-leap month reference year if overflow=Constrain,
-// or throw RangeError if overflow=Reject.
-// icu4x: EcmaReferenceYearError::UseRegularIfConstrain
-static constexpr int32_t ecmaRefYearUseRegular = INT32_MIN;
+// icu4x: EcmaReferenceYearError (components/calendar/src/error.rs).
+enum class EcmaReferenceYearError : uint8_t {
+    // (calendar, monthCode) has no representation — e.g. Hebrew M01L, or a leap monthCode on a solar calendar.
+    MonthNotInCalendar,
+    // Leap month exists but not near 1972. Constrain: retry non-leap variant and drop the leap flag.
+    // Reject: throw RangeError.
+    UseRegularIfConstrain,
+};
 
-// Sentinel: ecmaReferenceYear returns this when the month code is invalid for this calendar
-// (the month simply doesn't exist, regardless of overflow mode).
-// icu4x: EcmaReferenceYearError::MonthNotInCalendar
-static constexpr int32_t ecmaRefYearNotInCalendar = INT32_MIN + 1;
-
-int32_t ecmaReferenceYear(CalendarID, uint8_t monthNumber, bool isLeapMonth, uint8_t day);
+Expected<int32_t, EcmaReferenceYearError> ecmaReferenceYear(CalendarID, uint8_t monthNumber, bool isLeapMonth, uint8_t day);
 
 JS_EXPORT_PRIVATE int32_t lunarCalendarExtendedYearFor1972(CalendarID);
 

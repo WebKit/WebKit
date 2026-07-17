@@ -277,3 +277,158 @@ function shouldThrowAny(fn, msg) {
     shouldThrow(() => Temporal.PlainMonthDay.from({ year: 2018, era: "ce", eraYear: 2024, month: 3, day: 15, calendar: "gregory" }),
         RangeError, "PMD gregory from year+era inconsistent");
 }
+
+// ------------------------------------------------------------------
+// from() non-ISO — second-pass re-resolve must canonicalize the PMD
+// to the ECMA reference year (1972) even when the first-pass result
+// is a lunisolar leap month whose near-1972 slot is UseRegularIfConstrain.
+// Regression: without the guards in monthDayFromFields' second pass,
+// the sentinel refYear was passed straight through to the ICU bridge,
+// which failed silently and left the PMD carrying the user's year.
+// ------------------------------------------------------------------
+{
+    // ICU4C Chinese year 1651 has a real M01L. Guarded by pd.monthCode/day
+    // in case a future ICU update changes the leap-month layout for that year.
+    const pd = Temporal.PlainDate.from({ calendar: "chinese", year: 1651, monthCode: "M01L", day: 29 });
+    if (pd.monthCode === "M01L" && pd.day === 29) {
+        const pmd = Temporal.PlainMonthDay.from({ calendar: "chinese", year: 1651, monthCode: "M01L", day: 29 });
+        const pmdYear = Number(pmd.toString().split("-")[0]);
+        shouldBe(pmdYear, 1972, "PMD chinese M01L D29 uses reference year 1972");
+    }
+    // Reject overflow variant: leap month with no near-1972 slot must throw
+    // (only when the guard input is a real leap month, else first-pass constrain
+    // rewrites the flag away and this test would silently no-op).
+    shouldThrow(() => Temporal.PlainMonthDay.from({ calendar: "chinese", year: 1651, monthCode: "M01L", day: 29 }, { overflow: "reject" }),
+        RangeError, "PMD chinese M01L D29 reject → RangeError");
+}
+
+// ------------------------------------------------------------------
+// ecmaReferenceYear edge cases — icu4x line-for-line alignment.
+// icu4x reference: components/calendar/src/cal/{east_asian_traditional,hijri,hebrew,coptic,persian,indian}.rs
+// ------------------------------------------------------------------
+
+// Chinese/Dangi UseRegularIfConstrain — every icu4x-flagged leap slot.
+// Constrain must drop the leap flag; Reject must throw.
+{
+    const trigger = [
+        { monthCode: "M01L", day: 15 }, // any day → UseRegular
+        { monthCode: "M01L", day: 30 },
+        { monthCode: "M02L", day: 30 }, // bigDay → UseRegular
+        { monthCode: "M08L", day: 30 },
+        { monthCode: "M09L", day: 30 },
+        { monthCode: "M10L", day: 30 },
+        { monthCode: "M11L", day: 30 },
+        { monthCode: "M12L", day: 15 }, // any day → UseRegular
+    ];
+    for (const cal of ["chinese", "dangi"]) {
+        for (const { monthCode, day } of trigger) {
+            const nonLeap = monthCode.slice(0, 3);
+            const pmd = Temporal.PlainMonthDay.from({ calendar: cal, monthCode, day });
+            shouldBe(pmd.monthCode, nonLeap, `${cal} ${monthCode} D${day} constrain drops leap flag`);
+            shouldThrow(() => Temporal.PlainMonthDay.from({ calendar: cal, monthCode, day }, { overflow: "reject" }),
+                RangeError, `${cal} ${monthCode} D${day} reject`);
+        }
+    }
+}
+
+// Chinese/Dangi non-UseRegular leap slots — leap flag preserved.
+{
+    const preserve = [
+        { monthCode: "M02L", day: 15 },
+        { monthCode: "M03L", day: 15 },
+        { monthCode: "M04L", day: 15 },
+        { monthCode: "M05L", day: 15 },
+        { monthCode: "M06L", day: 15 },
+        { monthCode: "M07L", day: 15 },
+        { monthCode: "M08L", day: 15 },
+        { monthCode: "M09L", day: 15 },
+        { monthCode: "M10L", day: 15 },
+        { monthCode: "M11L", day: 15 },
+    ];
+    for (const cal of ["chinese", "dangi"]) {
+        for (const { monthCode, day } of preserve) {
+            const pmd = Temporal.PlainMonthDay.from({ calendar: cal, monthCode, day });
+            shouldBe(pmd.monthCode, monthCode, `${cal} ${monthCode} D${day} preserves leap flag`);
+            shouldBe(pmd.day, day, `${cal} ${monthCode} D${day} preserves day`);
+        }
+    }
+}
+
+// Hebrew Cheshvan/Kislev/Tevet day-boundary: 5733 has 29 days in M02/M03 and Dec 31 = M04 D26.
+{
+    const boundaries = [
+        { monthCode: "M02", day: 29 }, { monthCode: "M02", day: 30 },
+        { monthCode: "M03", day: 29 }, { monthCode: "M03", day: 30 },
+        { monthCode: "M04", day: 26 }, { monthCode: "M04", day: 27 },
+    ];
+    for (const { monthCode, day } of boundaries) {
+        const pmd = Temporal.PlainMonthDay.from({ calendar: "hebrew", monthCode, day });
+        shouldBe(pmd.monthCode, monthCode, `hebrew ${monthCode} D${day} monthCode`);
+        shouldBe(pmd.day, day, `hebrew ${monthCode} D${day} day`);
+    }
+    // Adar I (M05L) — only valid Hebrew leap monthCode.
+    const adarI = Temporal.PlainMonthDay.from({ calendar: "hebrew", monthCode: "M05L", day: 15 });
+    shouldBe(adarI.monthCode, "M05L", "hebrew M05L (Adar I)");
+    shouldBe(adarI.day, 15, "hebrew M05L day");
+}
+
+// Coptic / Ethiopic / Ethioaa Nasi (M13) day-6 leap-year boundary.
+{
+    for (const cal of ["coptic", "ethiopic", "ethioaa"]) {
+        const nasi5 = Temporal.PlainMonthDay.from({ calendar: cal, monthCode: "M13", day: 5 });
+        shouldBe(nasi5.monthCode, "M13", `${cal} M13 D5`);
+        shouldBe(nasi5.day, 5, `${cal} M13 D5 day`);
+        const nasi6 = Temporal.PlainMonthDay.from({ calendar: cal, monthCode: "M13", day: 6 });
+        shouldBe(nasi6.monthCode, "M13", `${cal} M13 D6 (leap)`);
+        shouldBe(nasi6.day, 6, `${cal} M13 D6 day`);
+    }
+}
+
+// Persian / Indian M10 day-10 boundary.
+{
+    for (const cal of ["persian", "indian"]) {
+        const inYear = Temporal.PlainMonthDay.from({ calendar: cal, monthCode: "M10", day: 10 });
+        shouldBe(inYear.day, 10, `${cal} M10 D10`);
+        const nextDay = Temporal.PlainMonthDay.from({ calendar: cal, monthCode: "M10", day: 11 });
+        shouldBe(nextDay.day, 11, `${cal} M10 D11`);
+    }
+}
+
+// Islamic UmmAlQura big-day fallback + civil/tbla M11 epoch difference.
+{
+    const cases = [
+        { monthCode: "M02", day: 30 },
+        { monthCode: "M03", day: 30 },
+        { monthCode: "M05", day: 30 },
+        { monthCode: "M07", day: 30 },
+        { monthCode: "M10", day: 30 },
+        { monthCode: "M11", day: 26 },
+        { monthCode: "M12", day: 30 },
+        { monthCode: "M12", day: 29 },
+    ];
+    for (const { monthCode, day } of cases) {
+        const pmd = Temporal.PlainMonthDay.from({ calendar: "islamic-umalqura", monthCode, day });
+        shouldBe(pmd.monthCode, monthCode, `islamic-umalqura ${monthCode} D${day}`);
+        shouldBe(pmd.day, day, `islamic-umalqura ${monthCode} D${day} day`);
+    }
+    // civil = Friday epoch, day<26 boundary; tbla = Thursday epoch, day<27 boundary.
+    shouldBe(Temporal.PlainMonthDay.from({ calendar: "islamic-civil", monthCode: "M11", day: 25 }).day, 25);
+    shouldBe(Temporal.PlainMonthDay.from({ calendar: "islamic-civil", monthCode: "M11", day: 26 }).day, 26);
+    shouldBe(Temporal.PlainMonthDay.from({ calendar: "islamic-tbla",  monthCode: "M11", day: 26 }).day, 26);
+    shouldBe(Temporal.PlainMonthDay.from({ calendar: "islamic-tbla",  monthCode: "M11", day: 27 }).day, 27);
+}
+
+// MonthNotInCalendar rejections.
+{
+    for (const cal of ["coptic", "ethiopic", "ethioaa", "persian", "indian", "islamic-umalqura", "islamic-civil", "islamic-tbla"]) {
+        shouldThrow(() => Temporal.PlainMonthDay.from({ calendar: cal, monthCode: "M02L", day: 15 }),
+            RangeError, `${cal} rejects M02L`);
+        shouldThrow(() => Temporal.PlainMonthDay.from({ calendar: cal, monthCode: "M05L", day: 15 }),
+            RangeError, `${cal} rejects M05L`);
+    }
+    // Hebrew: only M05L (Adar I) is valid.
+    for (const mc of ["M01L", "M02L", "M03L", "M04L", "M06L", "M07L", "M08L", "M09L", "M10L", "M11L", "M12L"]) {
+        shouldThrow(() => Temporal.PlainMonthDay.from({ calendar: "hebrew", monthCode: mc, day: 15 }),
+            RangeError, `hebrew rejects ${mc}`);
+    }
+}

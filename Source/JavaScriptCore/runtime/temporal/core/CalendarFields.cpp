@@ -356,20 +356,23 @@ TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID calendarId, c
     if (fields.year)
         localYear = *fields.year;
     else if (fields.monthCode) {
-        int32_t refYear = ecmaReferenceYear(calendarId, fields.monthCode->monthNumber, fields.monthCode->isLeapMonth, fields.day ? *fields.day : 1);
-        // icu4x: UseRegularIfConstrain — leap month has no reference year near 1972.
-        // Constrain: fall back to the non-leap version's reference year AND strip the leap flag.
-        // Reject: throw RangeError (this leap month configuration doesn't exist).
-        if (refYear == ecmaRefYearNotInCalendar)
-            return makeUnexpected(rangeError("This month code does not exist in this calendar"_s));
-        if (refYear == ecmaRefYearUseRegular) {
-            if (overflow == TemporalOverflow::Constrain) {
-                refYear = ecmaReferenceYear(calendarId, fields.monthCode->monthNumber, false, fields.day ? *fields.day : 1);
+        auto refYear = ecmaReferenceYear(calendarId, fields.monthCode->monthNumber, fields.monthCode->isLeapMonth, fields.day ? *fields.day : 1);
+        if (!refYear) {
+            switch (refYear.error()) {
+            case EcmaReferenceYearError::MonthNotInCalendar:
+                return makeUnexpected(rangeError("This month code does not exist in this calendar"_s));
+            case EcmaReferenceYearError::UseRegularIfConstrain:
+                // Constrain: retry non-leap variant and drop the leap flag from monthCode.
+                if (overflow == TemporalOverflow::Reject)
+                    return makeUnexpected(rangeError("This leap month does not exist in this calendar near the reference year"_s));
+                auto fallback = ecmaReferenceYear(calendarId, fields.monthCode->monthNumber, /* isLeapMonth */ false, fields.day ? *fields.day : 1);
+                RELEASE_ASSERT(fallback);
+                localYear = *fallback;
                 usedRegularMonthFallback = true;
-            } else
-                return makeUnexpected(rangeError("This leap month does not exist in this calendar near the reference year"_s));
-        }
-        localYear = refYear;
+                break;
+            }
+        } else
+            localYear = *refYear;
     }
 
     // ecmaReferenceYear returns ISO proleptic years. On older Apple ICU, UCAL_EXTENDED_YEAR
@@ -410,10 +413,27 @@ TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID calendarId, c
         if (resolvedFields && !resolvedFields->monthCode.isEmpty()) {
             auto resolvedMonthCode = ISO8601::parseMonthCode(resolvedFields->monthCode);
             if (resolvedMonthCode) {
-                int32_t refYear = ecmaReferenceYear(calendarId, resolvedMonthCode->monthNumber, resolvedMonthCode->isLeapMonth, resolvedFields->day);
+                auto refYearOr = ecmaReferenceYear(calendarId, resolvedMonthCode->monthNumber, resolvedMonthCode->isLeapMonth, resolvedFields->day);
+                int32_t refYear;
+                std::optional<ParsedMonthCode> effectiveRefMonthCode = resolvedMonthCode;
+                if (!refYearOr) {
+                    switch (refYearOr.error()) {
+                    case EcmaReferenceYearError::MonthNotInCalendar:
+                        return makeUnexpected(rangeError("This month code does not exist in this calendar"_s));
+                    case EcmaReferenceYearError::UseRegularIfConstrain:
+                        if (overflow == TemporalOverflow::Reject)
+                            return makeUnexpected(rangeError("Leap month does not exist near the reference year"_s));
+                        auto fallback = ecmaReferenceYear(calendarId, resolvedMonthCode->monthNumber, /* isLeapMonth */ false, resolvedFields->day);
+                        RELEASE_ASSERT(fallback);
+                        refYear = *fallback;
+                        effectiveRefMonthCode = ParsedMonthCode { resolvedMonthCode->monthNumber, /* isLeapMonth */ false };
+                        break;
+                    }
+                } else
+                    refYear = *refYearOr;
                 if (isChineseOrDangi)
                     refYear += lunarCalendarExtendedYearFor1972(calendarId) - 1972;
-                auto refResult = calendarDateFromFields(calendarId, std::optional<int32_t>(refYear), resolvedFields->month, resolvedFields->day, std::nullopt, std::nullopt, resolvedMonthCode, TemporalOverflow::Constrain);
+                auto refResult = calendarDateFromFields(calendarId, std::optional<int32_t>(refYear), resolvedFields->month, resolvedFields->day, std::nullopt, std::nullopt, effectiveRefMonthCode, TemporalOverflow::Constrain);
                 if (refResult)
                     return ResolvedCalendarDate { *refResult, calendarId };
             }
