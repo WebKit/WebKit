@@ -1,0 +1,4 @@
+
+PASS dialog.show() nested in a hint dismisses unrelated auto popovers but keeps the ancestor hint
+PASS dialog.showModal() nested in a hint dismisses unrelated auto popovers but keeps the ancestor hint
+

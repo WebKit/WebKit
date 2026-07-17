@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008-2014 Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
@@ -11040,30 +11040,55 @@ void Document::keyframesRuleDidChange(const String& name)
     }
 }
 
+void Document::addPopoverToList(PopoverListType listType, HTMLElement& popover)
+{
+    auto& list = listType == PopoverListType::Auto ? m_autoPopoverList : m_hintPopoverList;
+#if ENABLE(IOS_TOUCH_EVENTS)
+    bool neededEventHandling = needsPointerEventHandlingForPopoverOrDialog();
+#endif
+    auto result = list.add(popover);
+#if ENABLE(IOS_TOUCH_EVENTS)
+    if (!neededEventHandling) {
+        invalidateRenderingDependentRegions();
+        invalidateEventListenerRegions();
+    }
+#endif
+    RELEASE_ASSERT(result.isNewEntry);
+}
+
+void Document::removePopoverFromList(PopoverListType listType, HTMLElement& popover)
+{
+    auto& list = listType == PopoverListType::Auto ? m_autoPopoverList : m_hintPopoverList;
+    list.remove(popover);
+#if ENABLE(IOS_TOUCH_EVENTS)
+    if (!needsPointerEventHandlingForPopoverOrDialog()) {
+        invalidateRenderingDependentRegions();
+        invalidateEventListenerRegions();
+    }
+#endif
+}
+
 void Document::addTopLayerElement(Element& element)
 {
     RELEASE_ASSERT(&element.document() == this && !element.isInTopLayer());
     auto result = m_topLayerElements.add(element);
     RELEASE_ASSERT(result.isNewEntry);
-    if (auto* candidatePopover = dynamicDowncast<HTMLElement>(element); candidatePopover && candidatePopover->popoverState() == PopoverState::Auto) {
+    RefPtr candidatePopover = dynamicDowncast<HTMLElement>(element);
+    if (!candidatePopover)
+        return;
+
 #if ENABLE(FULLSCREEN_API)
-        if (candidatePopover->hasFullscreenFlag())
-            return;
+    if (candidatePopover->hasFullscreenFlag())
+        return;
 #endif
-        CheckedPtr dialogElement = dynamicDowncast<HTMLDialogElement>(*candidatePopover);
-        if (dialogElement && dialogElement->isModal())
-            return;
-#if ENABLE(IOS_TOUCH_EVENTS)
-        bool neededEventHandling = needsPointerEventHandlingForPopoverOrDialog();
-#endif
-        auto result = m_autoPopoverList.add(*candidatePopover);
-#if ENABLE(IOS_TOUCH_EVENTS)
-        if (!neededEventHandling) {
-            invalidateRenderingDependentRegions();
-            invalidateEventListenerRegions();
-        }
-#endif
-        RELEASE_ASSERT(result.isNewEntry);
+
+    RefPtr dialogElement = dynamicDowncast<HTMLDialogElement>(*candidatePopover);
+    if (dialogElement && dialogElement->isModal())
+        return;
+
+    if (candidatePopover->popoverState() == PopoverState::Auto || candidatePopover->popoverState() == PopoverState::Hint) {
+        bool asHint = candidatePopover->popoverData() && candidatePopover->popoverData()->showingAsHint();
+        addPopoverToList(asHint ? PopoverListType::Hint : PopoverListType::Auto, *candidatePopover);
     }
 }
 
@@ -11072,14 +11097,11 @@ void Document::removeTopLayerElement(Element& element)
     RELEASE_ASSERT(&element.document() == this && element.isInTopLayer());
     auto didRemove = m_topLayerElements.remove(element);
     RELEASE_ASSERT(didRemove);
-    if (auto* candidatePopover = dynamicDowncast<HTMLElement>(element); candidatePopover && candidatePopover->isPopoverShowing() && candidatePopover->popoverState() == PopoverState::Auto) {
-        m_autoPopoverList.remove(*candidatePopover);
-#if ENABLE(IOS_TOUCH_EVENTS)
-        if (!needsPointerEventHandlingForPopoverOrDialog()) {
-            invalidateRenderingDependentRegions();
-            invalidateEventListenerRegions();
+    if (RefPtr candidatePopover = dynamicDowncast<HTMLElement>(element); candidatePopover && candidatePopover->isPopoverShowing()) {
+        if (candidatePopover->popoverState() == PopoverState::Auto || candidatePopover->popoverState() == PopoverState::Hint) {
+            bool asHint = candidatePopover->popoverData() && candidatePopover->popoverData()->showingAsHint();
+            removePopoverFromList(asHint ? PopoverListType::Hint : PopoverListType::Auto, *candidatePopover);
         }
-#endif
     }
 }
 
@@ -11098,6 +11120,60 @@ HTMLElement* Document::topmostAutoPopover() const
     if (m_autoPopoverList.isEmpty())
         return nullptr;
     return m_autoPopoverList.last().ptr();
+}
+
+HTMLElement* Document::topmostHintPopover() const
+{
+    if (m_hintPopoverList.isEmpty())
+        return nullptr;
+    return m_hintPopoverList.last().ptr();
+}
+
+// Popover ancestor relationships are defined over the flat/composed tree, so a hint popover
+// slotted into shadow content is still considered nested inside its host's popover. See the
+// "nearest inclusive open popover" definition: https://html.spec.whatwg.org/#nearest-inclusive-open-popover
+HTMLElement* Document::nearestOpenHintAncestor(Element& element) const
+{
+    for (Ref ancestor : composedTreeLineage(element)) {
+        auto* htmlElement = dynamicDowncast<HTMLElement>(ancestor.ptr());
+        if (htmlElement && htmlElement->popoverState() == PopoverState::Hint
+            && htmlElement->popoverData()
+            && htmlElement->popoverData()->visibilityState() == PopoverVisibilityState::Showing)
+            return htmlElement;
+    }
+    return nullptr;
+}
+
+void Document::closeAllHintPopovers(FocusPreviousElement focusPreviousElement, FireEvents fireEvents)
+{
+    while (RefPtr popover = topmostHintPopover())
+        popover->hidePopoverInternal(focusPreviousElement, fireEvents);
+    m_popoverHintPointerDownTarget = nullptr;
+}
+
+void Document::closeHintPopoversUntil(const HTMLElement* endpoint, FocusPreviousElement focusPreviousElement, FireEvents fireEvents)
+{
+    if (!endpoint)
+        return closeAllHintPopovers(focusPreviousElement, fireEvents);
+
+    while (RefPtr topHint = topmostHintPopover()) {
+        if (topHint == endpoint)
+            break;
+        topHint->hidePopoverInternal(focusPreviousElement, fireEvents);
+    }
+}
+
+// Used when a dialog is shown or an element enters fullscreen. Such an element joins the top layer
+// and must light-dismiss every popover that is not one of its ancestors: auto popovers up to the
+// nearest ancestor auto, and hint popovers up to the nearest ancestor hint. Both are dismissed
+// unconditionally — an unrelated auto must still be hidden even when the element is nested inside a
+// hint (in which case there is no ancestor auto and every auto is hidden).
+void Document::hidePopoversForTopLayerElement(Element& element, FireEvents fireEvents)
+{
+    RefPtr hideUntil = element.topmostPopoverAncestor(Element::TopLayerElementType::Other);
+    RefPtr hintAncestor = nearestOpenHintAncestor(element);
+    hideAutoPopoversUntil(hideUntil.get(), FocusPreviousElement::No, fireEvents);
+    closeHintPopoversUntil(hintAncestor.get(), FocusPreviousElement::No, fireEvents);
 }
 
 RefPtr<HTMLDialogElement> Document::nearestClickedDialog(const PointerEvent& event, Node& target) const
@@ -11129,14 +11205,17 @@ RefPtr<HTMLDialogElement> Document::nearestClickedDialog(const PointerEvent& eve
 }
 
 // https://html.spec.whatwg.org/#hide-all-popovers-until
-void Document::hideAllPopoversUntil(HTMLElement* endpoint, FocusPreviousElement focusPreviousElement, FireEvents fireEvents)
+void Document::hideAutoPopoversUntil(HTMLElement* endpoint, FocusPreviousElement focusPreviousElement, FireEvents fireEvents)
 {
-    auto closeAllOpenPopovers = [&]() {
+    auto closeAllAutoPopovers = [&]() {
         while (RefPtr popover = topmostAutoPopover())
             popover->hidePopoverInternal(focusPreviousElement, fireEvents);
     };
-    if (!endpoint)
-        return closeAllOpenPopovers();
+
+    if (!endpoint) {
+        closeAllAutoPopovers();
+        return;
+    }
 
     bool repeatingHide = false;
     do {
@@ -11150,8 +11229,10 @@ void Document::hideAllPopoversUntil(HTMLElement* endpoint, FocusPreviousElement 
                 break;
             }
         }
-        if (!foundEndPoint)
-            return closeAllOpenPopovers();
+        if (!foundEndPoint) {
+            closeAllAutoPopovers();
+            return;
+        }
         while (lastToHide && lastToHide->isPopoverShowing()) {
             RefPtr topmostAutoPopover = this->topmostAutoPopover();
             if (!topmostAutoPopover)
@@ -11170,20 +11251,19 @@ void Document::handlePopoverLightDismiss(const PointerEvent& event, Node& target
     ASSERT(event.isTrusted());
 
     RefPtr topmostAutoPopover = this->topmostAutoPopover();
-    if (!topmostAutoPopover)
+    RefPtr topmostHintPopover = this->topmostHintPopover();
+    if (!topmostAutoPopover && !topmostHintPopover)
         return;
 
     RefPtr popoverToAvoidHiding = [&]() -> HTMLElement* {
-        auto* targetElement = dynamicDowncast<Element>(target);
-        RefPtr startElement = targetElement ? targetElement : target.parentElement();
         auto [clickedPopover, invokerPopover] = [&]() {
             RefPtr<HTMLElement> clickedPopover;
             RefPtr<HTMLElement> invokerPopover;
             auto isShowingAutoPopover = [](HTMLElement& element) -> bool {
                 return element.popoverState() == PopoverState::Auto && element.popoverData()->visibilityState() == PopoverVisibilityState::Showing;
             };
-            for (RefPtr element = WTF::move(startElement); element; element = element->parentElementInComposedTree()) {
-                if (RefPtr htmlElement = dynamicDowncast<HTMLElement>(*element)) {
+            auto checkElement = [&](Element& element) {
+                if (RefPtr htmlElement = dynamicDowncast<HTMLElement>(element)) {
                     if (!clickedPopover && isShowingAutoPopover(*htmlElement))
                         clickedPopover = htmlElement;
 
@@ -11203,6 +11283,13 @@ void Document::handlePopoverLightDismiss(const PointerEvent& event, Node& target
                             }
                         }
                     }
+                }
+            };
+            if (auto* targetElement = dynamicDowncast<Element>(target))
+                checkElement(*targetElement);
+            if (!clickedPopover || !invokerPopover) {
+                for (Ref element : composedTreeAncestors(target)) {
+                    checkElement(element);
                     if (clickedPopover && invokerPopover)
                         break;
                 }
@@ -11225,15 +11312,40 @@ void Document::handlePopoverLightDismiss(const PointerEvent& event, Node& target
         return highestInTopLayer(clickedPopover.get(), invokerPopover.get());
     }();
 
+    // Find the showing hint popover (if any) that contains the pointer target.
+    RefPtr<HTMLElement> clickedHintPopover;
+    if (RefPtr targetElement = dynamicDowncast<Element>(target))
+        clickedHintPopover = nearestOpenHintAncestor(*targetElement);
+    else if (RefPtr parent = target.parentElementInComposedTree())
+        clickedHintPopover = nearestOpenHintAncestor(*parent);
+
     if (event.type() == eventNames().pointerdownEvent) {
         m_popoverPointerDownTarget = popoverToAvoidHiding;
+        m_popoverHintPointerDownTarget = clickedHintPopover;
         return;
     }
 
     ASSERT(event.type() == eventNames().pointerupEvent);
-    if (m_popoverPointerDownTarget == popoverToAvoidHiding.get())
-        hideAllPopoversUntil(popoverToAvoidHiding.get(), FocusPreviousElement::No, FireEvents::Yes);
+
+    bool clickedInsideHint = clickedHintPopover || m_popoverHintPointerDownTarget;
+
+    if (clickedInsideHint) {
+        // Click was inside a hint popover — close hints stacked above the clicked one, keep the
+        // clicked hint, but still light-dismiss auto popovers that are not ancestors of the click
+        // (popoverToAvoidHiding is the nearest auto containing the click).
+        if (clickedHintPopover && m_popoverHintPointerDownTarget == clickedHintPopover)
+            closeHintPopoversUntil(clickedHintPopover.get(), FocusPreviousElement::No, FireEvents::Yes);
+        if (m_popoverPointerDownTarget == popoverToAvoidHiding.get())
+            hideAutoPopoversUntil(popoverToAvoidHiding.get(), FocusPreviousElement::No, FireEvents::Yes);
+    } else {
+        // Click was outside all hint popovers — perform auto and hint light dismiss.
+        if (m_popoverPointerDownTarget == popoverToAvoidHiding.get())
+            hideAutoPopoversUntil(popoverToAvoidHiding.get(), FocusPreviousElement::No, FireEvents::Yes);
+        closeAllHintPopovers(FocusPreviousElement::No, FireEvents::Yes);
+    }
+
     m_popoverPointerDownTarget = nullptr;
+    m_popoverHintPointerDownTarget = nullptr;
 }
 
 // https://html.spec.whatwg.org/multipage/interactive-elements.html#dialog-light-dismiss

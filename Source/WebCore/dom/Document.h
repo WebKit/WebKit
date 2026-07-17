@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2011 Google Inc. All rights reserved.
@@ -1885,17 +1885,35 @@ public:
     bool hasTopLayerElement() const { return !m_topLayerElements.isEmpty(); }
 
     const OrderedHashSet<Ref<HTMLElement>>& autoPopoverList() const LIFETIME_BOUND { return m_autoPopoverList; }
+    const OrderedHashSet<Ref<HTMLElement>>& hintPopoverList() const LIFETIME_BOUND { return m_hintPopoverList; }
 
     OrderedHashSet<Ref<HTMLDialogElement>>& openDialogsList() { return m_openDialogsList; }
 
     HTMLDialogElement* activeModalDialog() const;
     HTMLElement* NODELETE topmostAutoPopover() const;
+    HTMLElement* NODELETE topmostHintPopover() const;
+    HTMLElement* NODELETE nearestOpenHintAncestor(Element&) const;
     RefPtr<HTMLDialogElement> nearestClickedDialog(const PointerEvent&, Node&) const;
 
-    void hideAllPopoversUntil(HTMLElement*, FocusPreviousElement, FireEvents);
+    void hideAutoPopoversUntil(HTMLElement*, FocusPreviousElement, FireEvents);
+    void closeAllHintPopovers(FocusPreviousElement, FireEvents);
+    void closeHintPopoversUntil(const HTMLElement* endpoint, FocusPreviousElement, FireEvents);
+    void hidePopoversForTopLayerElement(Element&, FireEvents);
     void handlePopoverLightDismiss(const PointerEvent&, Node&);
     void handleDialogLightDismiss(const PointerEvent&, Node&);
-    bool needsPointerEventHandlingForPopoverOrDialog() const { return !m_autoPopoverList.isEmpty() || !m_openDialogsList.isEmpty(); }
+    bool needsPointerEventHandlingForPopoverOrDialog() const { return !m_autoPopoverList.isEmpty() || !m_hintPopoverList.isEmpty() || !m_openDialogsList.isEmpty(); }
+
+    // True while a popover show or hide algorithm is running (including during the beforetoggle
+    // event it dispatches). Showing a popover reentrantly during this window must throw.
+    bool isRunningPopoverShowOrHide() const { return m_popoverShowOrHideDepth; }
+    class PopoverShowOrHideScope {
+    public:
+        explicit PopoverShowOrHideScope(Document& document)
+            : m_document(document) { ++m_document->m_popoverShowOrHideDepth; }
+        ~PopoverShowOrHideScope() { ASSERT(m_document->m_popoverShowOrHideDepth); --m_document->m_popoverShowOrHideDepth; }
+    private:
+        const Ref<Document> m_document;
+    };
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     void registerAttachmentIdentifier(const String&, const AttachmentAssociatedElement&);
@@ -2106,6 +2124,10 @@ protected:
     void clearXMLVersion() { m_xmlVersion = String(); }
 
 private:
+    enum class PopoverListType : bool { Auto, Hint };
+    void addPopoverToList(PopoverListType, HTMLElement&);
+    void removePopoverFromList(PopoverListType, HTMLElement&);
+
     friend class DocumentParserYieldToken;
     friend class DocumentSyncData;
     friend class IgnoreDestructiveWriteCountIncrementer;
@@ -2617,9 +2639,12 @@ private:
 
     OrderedHashSet<Ref<Element>> m_topLayerElements;
     OrderedHashSet<Ref<HTMLElement>> m_autoPopoverList;
+    OrderedHashSet<Ref<HTMLElement>> m_hintPopoverList;
     OrderedHashSet<Ref<HTMLDialogElement>> m_openDialogsList;
+    unsigned m_popoverShowOrHideDepth { 0 };
 
     WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_popoverPointerDownTarget;
+    WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_popoverHintPointerDownTarget;
     WeakPtr<HTMLDialogElement, WeakPtrImplWithEventTargetData> m_dialogPointerDownTarget;
 
 #if ENABLE(WEB_RTC)

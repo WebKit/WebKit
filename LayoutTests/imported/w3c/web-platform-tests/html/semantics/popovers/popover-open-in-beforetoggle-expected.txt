@@ -1,11 +1,8 @@
 Outside
-p6
 
-Harness Error (FAIL), message = Error: assert_throws_dom: function "() => p6.showPopover()" did not throw
-
-FAIL Open popover from closing beforetoggle event assert_false: expected false got true
-FAIL Open double-nested popovers from closing beforetoggle event assert_false: expected false got true
+PASS Open popover from closing beforetoggle event
+PASS Open double-nested popovers from closing beforetoggle event
 PASS Open double-nested popovers from closing beforetoggle event, dialog open
 PASS Open double-nested popovers from closing beforetoggle event, light dismiss
-FAIL Showing a hint during a showPopover that hides an auto should throw InvalidStateError assert_false: p6 should be closed expected false got true
+PASS Showing a hint during a showPopover that hides an auto should throw InvalidStateError
 

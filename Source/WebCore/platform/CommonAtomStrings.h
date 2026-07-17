@@ -45,6 +45,7 @@ namespace WebCore {
     macro(eager, "eager") \
     macro(email, "email") \
     macro(false, "false") \
+    macro(hint, "hint") \
     macro(imageSVGContentType, "image/svg+xml") \
     macro(lazy, "lazy") \
     macro(main, "main") \

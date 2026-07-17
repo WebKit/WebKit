@@ -6769,6 +6769,20 @@ PopoverAttributeEnabled:
     WebCore:
       default: true
 
+PopoverHintEnabled:
+  type: bool
+  status: preview
+  category: html
+  humanReadableName: "HTML popover hint type"
+  humanReadableDescription: "Enable popover='hint' type support"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 PreferFasterClickOverDoubleTap:
   type: bool
   status: internal

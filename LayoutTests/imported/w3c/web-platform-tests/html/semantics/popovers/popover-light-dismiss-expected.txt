@@ -1,7 +1,5 @@
 Popover 1 Popover 1 Outside all popovers  Next control after popover1  Popover 3 - button 3   Popover8 invoker (no action)  Open convoluted popover  Example 2  Open popover 29   Open popover 30 Non-invoker
 
-Harness Error (FAIL), message = Error: assert_throws_dom: function "() => p28.showPopover()" did not throw
-
 PASS Clicking outside a popover will dismiss the popover
 PASS Canceling pointer events should not keep clicks from light dismissing popovers
 PASS Clicking inside a popover does not close that popover
@@ -24,15 +22,15 @@ PASS Moving focus back to the invoker element should not dismiss the popover
 PASS Ensure circular/convoluted ancestral relationships are functional
 PASS Ensure circular/convoluted ancestral relationships are functional, with a direct showPopover()
 PASS Hide the target popover during "hide all popovers until"
-FAIL Show a sibling popover during "hide all popovers until" assert_array_equals: There should not be a hide event for p17 lengths differ, expected array ["hide p18", "hide p16"] length 2, got ["hide p18", "show p17", "hide p16"] length 3
-FAIL Show an unrelated popover during "hide popover" assert_array_equals: There should not be a second hide event for 19 lengths differ, expected array ["hide p19"] length 1, got ["hide p19", "show p20"] length 2
-FAIL Show other auto popover during "hide all popover until" assert_array_equals: hiding p24 does not fire event lengths differ, expected array ["show p23", "hide p22"] length 2, got ["show p23", "hide p22", "show p24"] length 3
-FAIL Nested showPopover assert_array_equals: Nested showPopover should not fire event for its HideAllPopoversUntil lengths differ, expected array ["show p27", "hide p26"] length 2, got ["show p27", "hide p26", "show p28", "show p27"] length 4
+PASS Show a sibling popover during "hide all popovers until"
+PASS Show an unrelated popover during "hide popover"
+PASS Show other auto popover during "hide all popover until"
+PASS Nested showPopover
 PASS Pointer down in one document and pointer up in another document shouldn't dismiss popover
 PASS Pointer down inside invoker and up outside that invoker shouldn't dismiss popover
 PASS Invoker and DOM ancestor relationship - "latest" wins
-FAIL Test "hint stack parent" behavior assert_false: p36 should be closed - p34 is still its hint stack parent expected false got true
-FAIL Opening a new auto popover should hide all hint popovers, even in the nested case assert_false: expected false got true
-FAIL Test "hint stack parent" behavior with deep nested auto popovers - closing grandparent closes hint assert_false: p40 should be closed - closing grandparent auto popover closes child hint popover expected false got true
-FAIL Test "hint stack parent" behavior with deep nested auto popovers - closing parent closes hint assert_false: expected false got true
+PASS Test "hint stack parent" behavior
+PASS Opening a new auto popover should hide all hint popovers, even in the nested case
+PASS Test "hint stack parent" behavior with deep nested auto popovers - closing grandparent closes hint
+PASS Test "hint stack parent" behavior with deep nested auto popovers - closing parent closes hint
 

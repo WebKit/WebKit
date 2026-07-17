@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -150,9 +150,7 @@ ExceptionOr<void> HTMLDialogElement::show()
     Ref document = this->document();
     m_previouslyFocusedElement = document->focusedElement();
 
-    RefPtr hideUntil = topmostPopoverAncestor(TopLayerElementType::Other);
-
-    document->hideAllPopoversUntil(hideUntil.get(), FocusPreviousElement::No, FireEvents::No);
+    document->hidePopoversForTopLayerElement(*this, FireEvents::No);
 
     runFocusingSteps();
 
@@ -220,9 +218,7 @@ ExceptionOr<void> HTMLDialogElement::showModal(Element* source)
 
     m_previouslyFocusedElement = document->focusedElement();
 
-    RefPtr hideUntil = topmostPopoverAncestor(TopLayerElementType::Other);
-
-    document->hideAllPopoversUntil(hideUntil.get(), FocusPreviousElement::No, FireEvents::No);
+    document->hidePopoversForTopLayerElement(*this, FireEvents::No);
 
     runFocusingSteps();
 
