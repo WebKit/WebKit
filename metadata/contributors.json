@@ -9122,6 +9122,17 @@
    },
    {
       "emails" : [
+         "z_jiangli@apple.com",
+         "zhuoyingjiangli@gmail.com"
+      ],
+      "github" : "RoundofThree",
+      "name" : "Zhuo Ying Jiang Li",
+      "nicks" : [
+         "RoundofThree"
+      ]
+   },
+   {
+      "emails" : [
          "zsun@igalia.com"
       ],
       "github" : "ziransun",
