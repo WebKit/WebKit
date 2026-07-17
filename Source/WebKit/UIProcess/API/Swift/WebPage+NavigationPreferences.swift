@@ -149,6 +149,13 @@ extension WebPage {
         @available(watchOS, unavailable)
         @available(tvOS, unavailable)
         public var isGlobalPrivacyControlEnabled: Bool = false
+
+        /// Indicates whether `window.webkit.createJSHandle` will be available in `WKContentWorld.page`
+        /// The default value of this property is `false`.
+        @available(anyAppleOSAndDownlevels 27.0, *)
+        @available(watchOS, unavailable)
+        @available(tvOS, unavailable)
+        public var allowsJSHandleCreationInPageWorld: Bool = false
     }
 }
 
@@ -210,6 +217,7 @@ extension WebPage.NavigationPreferences {
         self.alternateRequest = wrapped.alternateRequest
         self.overrideReferrer = wrapped.overrideReferrer
         self.isGlobalPrivacyControlEnabled = wrapped.globalPrivacyControlEnabled
+        self.allowsJSHandleCreationInPageWorld = wrapped.allowsJSHandleCreationInPageWorld
     }
 }
 
