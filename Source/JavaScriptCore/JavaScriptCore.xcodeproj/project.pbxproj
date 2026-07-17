@@ -13262,7 +13262,7 @@
 				53609F9021DFFA9C008FA60A /* Check .xcfilelists */,
 				6577FFC6276AC8D20011AEC8 /* Create Symlink to Cryptex Path */,
 				DD9C4CC52A05D4FB00D52E2E /* Fix up SDKROOT path in TAPI filelists (install only) */,
-				DDA8F1542A15BEEA00BE8D11 /* Work around rdar://109484516 */,
+				DDA8F1542A15BEEA00BE8D11 /* Work around 109484516 */,
 			);
 			buildRules = (
 				DDE7487C2F7B35DC008013AB /* PBXBuildRule */,
@@ -13703,7 +13703,7 @@
 			shellPath = /bin/sh;
 			shellScript = "for ((i=0; i<${SCRIPT_INPUT_FILE_COUNT}; i++)); do\n    eval input=\"\\${SCRIPT_INPUT_FILE_$i}\"\n    eval output=\"\\${SCRIPT_OUTPUT_FILE_$i}\"\n    sed -e \"s;<SDKROOT>;${SDKROOT};\" \"${input}\" > \"${output}\"\ndone\n";
 		};
-		DDA8F1542A15BEEA00BE8D11 /* Work around rdar://109484516 */ = {
+		DDA8F1542A15BEEA00BE8D11 /* Work around 109484516 */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -13712,7 +13712,7 @@
 			);
 			inputPaths = (
 			);
-			name = "Work around rdar://109484516";
+			name = "Work around 109484516";
 			outputFileListPaths = (
 			);
 			outputPaths = (

@@ -3149,7 +3149,7 @@
 				532424B1254905FE00A6975B /* Check For Inappropriate Files In Framework */,
 				537CF83A22EFBFB100C6EBB3 /* Check .xcfilelists */,
 				650473452789431C00AF78A2 /* Create Symlink to Cryptex Path */,
-				DD00C28C2A37905800CBB4D9 /* Work around rdar://109484516 */,
+				DD00C28C2A37905800CBB4D9 /* Work around 109484516 */,
 			);
 			buildRules = (
 				DDE748862F7B43BF008013AB /* PBXBuildRule */,
@@ -3404,7 +3404,7 @@
 			shellPath = /bin/sh;
 			shellScript = "${SRCROOT}/mac/Scripts/generate-preferences.sh\n";
 		};
-		DD00C28C2A37905800CBB4D9 /* Work around rdar://109484516 */ = {
+		DD00C28C2A37905800CBB4D9 /* Work around 109484516 */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3413,7 +3413,7 @@
 			);
 			inputPaths = (
 			);
-			name = "Work around rdar://109484516";
+			name = "Work around 109484516";
 			outputFileListPaths = (
 			);
 			outputPaths = (
