@@ -68,7 +68,7 @@ inline void setOptionalUInt32Value(std::optional<uint32_t>& optional, uint32_t v
 using WebBackForwardListItemFilter = WTF::RefCountable<WTF::Function<bool (WebKit::WebBackForwardListItem&)>>;
 
 // Workaround for rdar://168057355
-inline WebKit::FrameState* getFrameState(WebKit::WebBackForwardListFrameItem& item)
+inline SWIFT_RETURNS_UNRETAINED WebKit::FrameState* getFrameState(WebKit::WebBackForwardListFrameItem& item)
 {
     return &item.frameState();
 }

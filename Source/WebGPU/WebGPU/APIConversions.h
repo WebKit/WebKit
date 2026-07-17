@@ -60,147 +60,147 @@ namespace WebGPU {
 
 // FIXME: It would be cool if we didn't have to list all these overloads, but instead could do something like bridge_cast() in WTF.
 
-inline Adapter& fromAPI(WGPUAdapter adapter)
+inline SWIFT_RETURNS_UNRETAINED Adapter& fromAPI(WGPUAdapter adapter)
 {
     return static_cast<Adapter&>(*adapter);
 }
 
-inline BindGroup& fromAPI(WGPUBindGroup bindGroup)
+inline SWIFT_RETURNS_UNRETAINED BindGroup& fromAPI(WGPUBindGroup bindGroup)
 {
     return static_cast<BindGroup&>(*bindGroup);
 }
 
-inline BindGroupLayout& fromAPI(WGPUBindGroupLayout bindGroupLayout)
+inline SWIFT_RETURNS_UNRETAINED BindGroupLayout& fromAPI(WGPUBindGroupLayout bindGroupLayout)
 {
     return static_cast<BindGroupLayout&>(*bindGroupLayout);
 }
 
-inline Buffer& fromAPI(WGPUBuffer buffer)
+inline SWIFT_RETURNS_UNRETAINED Buffer& fromAPI(WGPUBuffer buffer)
 {
     return static_cast<Buffer&>(*buffer);
 }
 
-inline CommandBuffer& fromAPI(WGPUCommandBuffer commandBuffer)
+inline SWIFT_RETURNS_UNRETAINED CommandBuffer& fromAPI(WGPUCommandBuffer commandBuffer)
 {
     return static_cast<CommandBuffer&>(*commandBuffer);
 }
 
-inline CommandEncoder& fromAPI(WGPUCommandEncoder commandEncoder)
+inline SWIFT_RETURNS_UNRETAINED CommandEncoder& fromAPI(WGPUCommandEncoder commandEncoder)
 {
     return static_cast<CommandEncoder&>(*commandEncoder);
 }
 
-inline ComputePassEncoder& fromAPI(WGPUComputePassEncoder computePassEncoder)
+inline SWIFT_RETURNS_UNRETAINED ComputePassEncoder& fromAPI(WGPUComputePassEncoder computePassEncoder)
 {
     return static_cast<ComputePassEncoder&>(*computePassEncoder);
 }
 
-inline ComputePipeline& fromAPI(WGPUComputePipeline computePipeline)
+inline SWIFT_RETURNS_UNRETAINED ComputePipeline& fromAPI(WGPUComputePipeline computePipeline)
 {
     return static_cast<ComputePipeline&>(*computePipeline);
 }
 
-inline Device& fromAPI(WGPUDevice device)
+inline SWIFT_RETURNS_UNRETAINED Device& fromAPI(WGPUDevice device)
 {
     return static_cast<Device&>(*device);
 }
 
-inline ExternalTexture& fromAPI(WGPUExternalTexture texture)
+inline SWIFT_RETURNS_UNRETAINED ExternalTexture& fromAPI(WGPUExternalTexture texture)
 {
     return static_cast<ExternalTexture&>(*texture);
 }
 
-inline Instance& fromAPI(WGPUInstance instance)
+inline SWIFT_RETURNS_UNRETAINED Instance& fromAPI(WGPUInstance instance)
 {
     return static_cast<Instance&>(*instance);
 }
 
-inline PipelineLayout& fromAPI(WGPUPipelineLayout pipelineLayout)
+inline SWIFT_RETURNS_UNRETAINED PipelineLayout& fromAPI(WGPUPipelineLayout pipelineLayout)
 {
     return static_cast<PipelineLayout&>(*pipelineLayout);
 }
 
-inline QuerySet& fromAPI(WGPUQuerySet querySet)
+inline SWIFT_RETURNS_UNRETAINED QuerySet& fromAPI(WGPUQuerySet querySet)
 {
     return static_cast<QuerySet&>(*querySet);
 }
 
-inline Queue& fromAPI(WGPUQueue queue)
+inline SWIFT_RETURNS_UNRETAINED Queue& fromAPI(WGPUQueue queue)
 {
     return static_cast<Queue&>(*queue);
 }
 
-inline RenderBundle& fromAPI(WGPURenderBundle renderBundle)
+inline SWIFT_RETURNS_UNRETAINED RenderBundle& fromAPI(WGPURenderBundle renderBundle)
 {
     return static_cast<RenderBundle&>(*renderBundle);
 }
 
-inline RenderBundleEncoder& fromAPI(WGPURenderBundleEncoder renderBundleEncoder)
+inline SWIFT_RETURNS_UNRETAINED RenderBundleEncoder& fromAPI(WGPURenderBundleEncoder renderBundleEncoder)
 {
     return static_cast<RenderBundleEncoder&>(*renderBundleEncoder);
 }
 
-inline RenderPassEncoder& fromAPI(WGPURenderPassEncoder renderPassEncoder)
+inline SWIFT_RETURNS_UNRETAINED RenderPassEncoder& fromAPI(WGPURenderPassEncoder renderPassEncoder)
 {
     return static_cast<RenderPassEncoder&>(*renderPassEncoder);
 }
 
-inline RenderPipeline& fromAPI(WGPURenderPipeline renderPipeline)
+inline SWIFT_RETURNS_UNRETAINED RenderPipeline& fromAPI(WGPURenderPipeline renderPipeline)
 {
     return static_cast<RenderPipeline&>(*renderPipeline);
 }
 
-inline Sampler& fromAPI(WGPUSampler sampler)
+inline SWIFT_RETURNS_UNRETAINED Sampler& fromAPI(WGPUSampler sampler)
 {
     return static_cast<Sampler&>(*sampler);
 }
 
-inline ShaderModule& fromAPI(WGPUShaderModule shaderModule)
+inline SWIFT_RETURNS_UNRETAINED ShaderModule& fromAPI(WGPUShaderModule shaderModule)
 {
     return static_cast<ShaderModule&>(*shaderModule);
 }
 
-inline PresentationContext& fromAPI(WGPUSurface surface)
+inline SWIFT_RETURNS_UNRETAINED PresentationContext& fromAPI(WGPUSurface surface)
 {
     return static_cast<PresentationContext&>(*surface);
 }
 
-inline PresentationContext& fromAPI(WGPUSwapChain swapChain)
+inline SWIFT_RETURNS_UNRETAINED PresentationContext& fromAPI(WGPUSwapChain swapChain)
 {
     return static_cast<PresentationContext&>(*swapChain);
 }
 
-inline Texture& fromAPI(WGPUTexture texture)
+inline SWIFT_RETURNS_UNRETAINED Texture& fromAPI(WGPUTexture texture)
 {
     return static_cast<Texture&>(*texture);
 }
 
-inline TextureView& fromAPI(WGPUTextureView textureView)
+inline SWIFT_RETURNS_UNRETAINED TextureView& fromAPI(WGPUTextureView textureView)
 {
     return static_cast<TextureView&>(*textureView);
 }
 
-inline XRBinding& fromAPI(WGPUXRBinding binding)
+inline SWIFT_RETURNS_UNRETAINED XRBinding& fromAPI(WGPUXRBinding binding)
 {
     return static_cast<XRBinding&>(*binding);
 }
 
-inline XRSubImage& fromAPI(WGPUXRSubImage subImage)
+inline SWIFT_RETURNS_UNRETAINED XRSubImage& fromAPI(WGPUXRSubImage subImage)
 {
     return static_cast<XRSubImage&>(*subImage);
 }
 
-inline XRProjectionLayer& fromAPI(WGPUXRProjectionLayer layer)
+inline SWIFT_RETURNS_UNRETAINED XRProjectionLayer& fromAPI(WGPUXRProjectionLayer layer)
 {
     return static_cast<XRProjectionLayer&>(*layer);
 }
 
-inline XRView& fromAPI(WGPUXRView view)
+inline SWIFT_RETURNS_UNRETAINED XRView& fromAPI(WGPUXRView view)
 {
     return static_cast<XRView&>(*view);
 }
 
-inline String fromAPI(const char* string)
+inline SWIFT_RETURNS_UNRETAINED String fromAPI(const char* string)
 {
     return String::fromUTF8(string);
 }
