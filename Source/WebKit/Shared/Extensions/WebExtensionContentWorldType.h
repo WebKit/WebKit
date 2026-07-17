@@ -67,6 +67,9 @@ inline String toDebugString(WebExtensionContentWorldType contentWorldType)
         return "inspector"_s;
 #endif
     }
+
+    ASSERT_NOT_REACHED();
+    return emptyString();
 }
 
 } // namespace WebKit

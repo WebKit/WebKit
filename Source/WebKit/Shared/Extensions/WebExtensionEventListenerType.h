@@ -230,6 +230,9 @@ inline String toAPIString(WebExtensionEventListenerType eventType)
     case WebExtensionEventListenerType::WindowsOnRemoved:
         return "onRemoved"_s;
     }
+
+    ASSERT_NOT_REACHED();
+    return emptyString();
 }
 
 using WebExtensionEventListenerTypeWorldPair = std::pair<WebExtensionEventListenerType, WebExtensionContentWorldType>;

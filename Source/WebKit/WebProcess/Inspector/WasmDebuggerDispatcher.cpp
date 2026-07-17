@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include "WasmDebuggerDispatcherMessages.h"
 #include "WebProcess.h"
+#include <JavaScriptCore/VM.h>
 #include <JavaScriptCore/WasmDebugServer.h>
 #include <wtf/WorkQueue.h>
 

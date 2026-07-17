@@ -65,6 +65,8 @@ public:
 
     T get() const { return m_value; }
 
+    JSRetainPtr<JSGlobalContextRef> context() const { return m_context; }
+
     explicit operator bool() const { return !!m_value; }
 
     bool operator==(const Protected& other) const { return m_value == other.m_value; }

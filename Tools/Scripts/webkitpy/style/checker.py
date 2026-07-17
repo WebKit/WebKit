@@ -207,6 +207,11 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/naming/acronym", "-readability/naming/underscores"]),
 
     ([
+        # Style checker assumes that all files that have Test as a suffix do not have a primary header.
+        os.path.join('Source', 'WebKit', 'WebProcess', 'Extensions', 'API', 'WebExtensionAPITest.cpp')],
+     ["-build/include_order"]),
+
+    ([
       # The GTK+ and WPE APIs use upper case, underscore separated, words in
       # certain types of enums (e.g. signals, properties).
       os.path.join('Source', 'JavaScriptCore', 'API', 'glib'),

@@ -95,7 +95,9 @@ public:
 #endif
     WebExtensionAPIStorage& storage();
     WebExtensionAPITabs& tabs();
+#endif
     WebExtensionAPITest& test();
+#if PLATFORM(COCOA)
     WebExtensionAPIWindows& windows();
     WebExtensionAPIWebNavigation& webNavigation();
     WebExtensionAPIWebRequest& webRequest();

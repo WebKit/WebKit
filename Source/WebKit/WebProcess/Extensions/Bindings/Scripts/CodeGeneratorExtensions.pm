@@ -287,17 +287,20 @@ sub _generateImplementationFile
     my $idlType = $interface->type;
     my $className = _className($idlType);
     my $implementationClassName = _implementationClassName($idlType);
-    my $filename = $className . ".mm";
+    my $filename = $interface->extendedAttributes->{"UseCPPAPI"} ? $className . ".cpp" : $className . ".mm";
 
     push(@contentsPrefix, $self->_licenseBlock());
     push(@contentsPrefix, "\n\n");
 
-    push(@contentsPrefix, <<EOF);
+    if (!$interface->extendedAttributes->{"UseCPPAPI"})
+    {
+        push(@contentsPrefix, <<EOF);
 #if !__has_feature(objc_arc)
 #error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
 #endif
 
 EOF
+    }
 
     push(@contentsPrefix, "#include \"config.h\"\n\n");
 
@@ -545,10 +548,10 @@ EOF
                 die "Property functions can't take optional arguments" if $isPropertyFunction;
 
                 foreach my $parameter (@specifiedParameters) {
-                    push(@contents, "    " . $self->_platformTypeVariableDeclaration($parameter, $parameter->name) . "\n");
+                    push(@contents, "    " . $self->_platformTypeVariableDeclaration($interface, $parameter, $parameter->name) . "\n");
                     push(@parameters, $parameter->name . ".releaseNonNull()") if $parameter->extendedAttributes->{"CallbackHandler"} && $parameter->extendedAttributes->{"Optional"};
-                    push(@parameters, $parameter->name . ".createNSString().get()") if $parameter->type->name eq "DOMString" && !$parameter->extendedAttributes->{"URL"};
-                    push(@parameters, $parameter->name) unless ($parameter->extendedAttributes->{"CallbackHandler"} && $parameter->extendedAttributes->{"Optional"}) || ($parameter->type->name eq "DOMString" && !$parameter->extendedAttributes->{"URL"});
+                    push(@parameters, $parameter->name . ".createNSString().get()") if $parameter->type->name eq "DOMString" && !$parameter->extendedAttributes->{"URL"} && !$interface->extendedAttributes->{"UseCPPAPI"};
+                    push(@parameters, $parameter->name) unless ($parameter->extendedAttributes->{"CallbackHandler"} && $parameter->extendedAttributes->{"Optional"}) || ($parameter->type->name eq "DOMString" && !$parameter->extendedAttributes->{"URL"} && !$interface->extendedAttributes->{"UseCPPAPI"});
                 }
 
                 push(@contents, "\n");
@@ -564,7 +567,7 @@ EOF
 
                 foreach my $i (0..$#specifiedParameters) {
                     my $parameter = $specifiedParameters[$i];
-                    push(@contents, "        " . $self->_platformTypeVariableDeclaration($parameter, $parameter->name, "arguments[${i}]", undef, 1) . "\n");
+                    push(@contents, "        " . $self->_platformTypeVariableDeclaration($interface, $parameter, $parameter->name, "arguments[${i}]", undef, 1) . "\n");
                 }
 
                 if ($hasSimpleOptionalArgumentHandling && $argumentCount > 1) {
@@ -578,13 +581,13 @@ EOF
 
                     foreach my $i (0..$#specifiedParameters - 1) {
                         my $parameter = $specifiedParameters[$i];
-                        push(@contents, "        " . $self->_platformTypeVariableDeclaration($parameter, $parameter->name, "arguments[${i}]", undef, 1) . "\n");
+                        push(@contents, "        " . $self->_platformTypeVariableDeclaration($interface, $parameter, $parameter->name, "arguments[${i}]", undef, 1) . "\n");
                     }
 
                     if ($hasOptionalAsLastArgument && $requiredArgumentCount ne ($argumentCount - 1)) {
                         push(@contents, "    } else if (argumentCount == 1) {\n");
                         $self->_installArgumentTypeExceptions(\@contents, $lastParameter, $idlType, "arguments[0]", $lastParameter->name, $defaultEarlyReturnValue, \%contentsIncludes, $function, 1, 2);
-                        push(@contents, "        " . $self->_platformTypeVariableDeclaration($lastParameter, $lastParameter->name, "arguments[0]", undef, 1) . "\n");
+                        push(@contents, "        " . $self->_platformTypeVariableDeclaration($interface, $lastParameter, $lastParameter->name, "arguments[0]", undef, 1) . "\n");
                     }
                 } elsif ($argumentCount > 1) {
                     push(@contents, "    } else {\n");
@@ -601,7 +604,7 @@ EOF
                         my $optionalCondition = $requiredArgumentCount ? "allowedOptionalArgumentCount && " : "";
                         push(@contents, "\n");
                         push(@contents, "        if ($optionalCondition(currentArgument = arguments[argumentCount - 1]) && (" . $self->_javaScriptTypeCondition($parameter, "currentArgument") . ")) {\n");
-                        push(@contents, "            " . $self->_platformTypeVariableDeclaration($parameter, $parameter->name, "currentArgument", undef, 1) . "\n");
+                        push(@contents, "            " . $self->_platformTypeVariableDeclaration($interface, $parameter, $parameter->name, "currentArgument", undef, 1) . "\n");
                         push(@contents, "            --allowedOptionalArgumentCount;\n") if $requiredArgumentCount;
                         push(@contents, "            if (argumentCount)\n");
                         push(@contents, "                --argumentCount;\n");
@@ -624,13 +627,13 @@ EOF
 
                         if ($parameter->extendedAttributes->{"Optional"}) {
                             push(@contents, "            if (" . $self->_javaScriptTypeCondition($parameter, "currentArgument") . ") {\n");
-                            push(@contents, "                " . $self->_platformTypeVariableDeclaration($parameter, $parameter->name, "currentArgument", undef, 1) . "\n");
+                            push(@contents, "                " . $self->_platformTypeVariableDeclaration($interface, $parameter, $parameter->name, "currentArgument", undef, 1) . "\n");
                             push(@contents, "                ++processedOptionalArgumentCount;\n") if $requiredArgumentCount;
                             push(@contents, "                $nextArgumentIndex;\n");
                             push(@contents, "            }\n");
                         } else {
                             $self->_installArgumentTypeExceptions(\@contents, $parameter, $idlType, "currentArgument", $parameter->name, $defaultEarlyReturnValue, \%contentsIncludes, $function, 1, 3);
-                            push(@contents, "            " . $self->_platformTypeVariableDeclaration($parameter, $parameter->name, "currentArgument", undef, 1) . "\n");
+                            push(@contents, "            " . $self->_platformTypeVariableDeclaration($interface, $parameter, $parameter->name, "currentArgument", undef, 1) . "\n");
                             push(@contents, "            $nextArgumentIndex;\n");
                         }
 
@@ -655,7 +658,7 @@ EOF
 
                         die "GetProperty and DeleteProperty functions only take one argument" if $isGetPropertyFunction || $isDeletePropertyFunction;
 
-                        push(@contents, "    " . $self->_platformTypeVariableDeclaration($parameter, $parameter->name, $argument) . "\n");
+                        push(@contents, "    " . $self->_platformTypeVariableDeclaration($interface, $parameter, $parameter->name, $argument) . "\n");
                     }
 
                     push(@parameters, $parameter->name . ".releaseNonNull()") if $parameter->extendedAttributes->{"CallbackHandler"} && $parameter->extendedAttributes->{"Optional"};
@@ -672,7 +675,7 @@ EOF
             my @methodSignatureNames = map(&$mapFunction, @specifiedParameters);
 
             foreach my $parameter (@specifiedParameters) {
-                $self->_installAutomaticExceptions(\@contents, $parameter, $idlType, $parameter->name, $parameter->name, $defaultEarlyReturnValue, \%contentsIncludes, $function, 1);
+                $self->_installAutomaticExceptions(\@contents, $interface, $parameter, $idlType, $parameter->name, $parameter->name, $defaultEarlyReturnValue, \%contentsIncludes, $function, 1);
             }
 
             if (!$hasSimpleOptionalArgumentHandling) {
@@ -815,7 +818,7 @@ ${functionSignature}
 EOF
 
                 my $keyArgumentName = $specifiedParameters[0]->name;
-                push(@contents, "    auto ${keyArgumentName} = toJSString(argumentCount > 0 ? " . $self->_platformTypeConstructor($specifiedParameters[0], "arguments[0]") . "_s : emptyString());\n");
+                push(@contents, "    auto ${keyArgumentName} = toJSString(argumentCount > 0 ? " . $self->_platformTypeConstructor($interface, $specifiedParameters[0], "arguments[0]") . "_s : emptyString());\n");
 
                 if ($isGetPropertyFunction) {
                     push(@contents, "\n");
@@ -964,10 +967,10 @@ EOF
                 my $platformValue;
                 if ($self->_hasAutomaticExceptions($attribute)) {
                     $platformValue = "platformValue";
-                    push(@contents, "    " . $self->_platformTypeVariableDeclaration($attribute, "platformValue", "value") . "\n");
-                    $self->_installAutomaticExceptions(\@contents, $attribute, $idlType, "platformValue", $attribute->name, "false", \%contentsIncludes, $attribute);
+                    push(@contents, "    " . $self->_platformTypeVariableDeclaration($interface, $attribute, "platformValue", "value") . "\n");
+                    $self->_installAutomaticExceptions(\@contents, $interface, $attribute, $idlType, "platformValue", $attribute->name, "false", \%contentsIncludes, $attribute);
                 } else {
-                    $platformValue = $self->_platformTypeConstructor($attribute, "value");
+                    $platformValue = $self->_platformTypeConstructor($interface, $attribute, "value");
                 }
 
                 if ($needsPage || $needsPageIdentifier) {
@@ -1207,7 +1210,7 @@ EOF
 
 sub _installAutomaticExceptions
 {
-    my ($self, $contents, $signature, $classIDLType, $variable, $variableLabel, $result, $contentsIncludes, $functionOrAttribute, $isFunction) = @_;
+    my ($self, $contents, $interface, $signature, $classIDLType, $variable, $variableLabel, $result, $contentsIncludes, $functionOrAttribute, $isFunction) = @_;
 
     my $call = _callString($classIDLType, $functionOrAttribute, $isFunction);
 
@@ -1264,7 +1267,7 @@ EOF
 EOF
     }
 
-    if ($signature->type->name eq "any" && !($signature->extendedAttributes->{"NSDictionary"} || $signature->extendedAttributes->{"NSObject"} || $signature->extendedAttributes->{"Serialization"}) && !$signature->extendedAttributes->{"Optional"} && !$signature->extendedAttributes->{"ValuesAllowed"}) {
+    if (!$interface->extendedAttributes->{"UseCPPAPI"} && $signature->type->name eq "any" && !($signature->extendedAttributes->{"NSDictionary"} || $signature->extendedAttributes->{"NSObject"} || $signature->extendedAttributes->{"Serialization"}) && !$signature->extendedAttributes->{"Optional"} && !$signature->extendedAttributes->{"ValuesAllowed"}) {
         $hasExceptions = 1;
 
         push(@$contents, <<EOF);
@@ -1276,7 +1279,19 @@ EOF
 EOF
     }
 
-    if ($signature->type->name eq "array" && !$signature->extendedAttributes->{"Optional"}) {
+    if ($interface->extendedAttributes->{"UseCPPAPI"} && $signature->type->name eq "any" && !($signature->extendedAttributes->{"NSDictionary"} || $signature->extendedAttributes->{"NSObject"} || $signature->extendedAttributes->{"Serialization"}) && !$signature->extendedAttributes->{"Optional"} && !$signature->extendedAttributes->{"ValuesAllowed"}) {
+        $hasExceptions = 1;
+
+        push(@$contents, <<EOF);
+
+    if ($variable && !JSValueIsObject(context, $variable)) [[unlikely]] {
+        *exception = toJSError(context, "${call}"_s, "${variableLabel}"_s, "an object is expected"_s);
+        return ${result};
+    }
+EOF
+    }
+
+    if (!$signature->extendedAttributes->{"Vector"} && $signature->type->name eq "array" && !$signature->extendedAttributes->{"Optional"}) {
         $hasExceptions = 1;
 
         push(@$contents, <<EOF);
@@ -1426,19 +1441,24 @@ sub _javaScriptTypeCondition
 
 sub _platformType
 {
-    my ($self, $idlType, $signature) = @_;
+    my ($self, $idlType, $interface, $signature) = @_;
 
     return undef unless defined $idlType;
 
     my $idlTypeName = $idlType;
     $idlTypeName = $idlType->name if ref($idlType) eq "IDLType";
 
+    my $arrayType = $signature->extendedAttributes->{"Vector"};
+
     return "RefPtr<WebExtensionCallbackHandler>" if $idlTypeName eq "function" && $signature->extendedAttributes->{"CallbackHandler"};
-    return "NSArray" if $idlTypeName eq "array";
+    return "NSArray" if !$interface->extendedAttributes->{"UseCPPAPI"} && $idlTypeName eq "array";
+    return "Vector<$arrayType>" if $interface->extendedAttributes->{"UseCPPAPI"} && $idlTypeName eq "array" && $arrayType ne "JSValueRef";
+    return "Vector<Protected<$arrayType>>" if $interface->extendedAttributes->{"UseCPPAPI"} && $idlTypeName eq "array" && $arrayType eq "JSValueRef";
     return "String" if $idlTypeName eq "any" && $signature->extendedAttributes->{"Serialization"};
     return "NSDictionary" if $idlTypeName eq "any" && $signature && $signature->extendedAttributes->{"NSDictionary"};
     return "NSObject" if $idlTypeName eq "any" && $signature && $signature->extendedAttributes->{"NSObject"};
-    return "JSValue" if $idlTypeName eq "DOMWindow" || $idlTypeName eq "function" || $idlTypeName eq "any";
+    return "JSValue" if !$interface->extendedAttributes->{"UseCPPAPI"} && ($idlTypeName eq "DOMWindow" || $idlTypeName eq "function" || $idlTypeName eq "any");
+    return "JSValueRef" if $interface->extendedAttributes->{"UseCPPAPI"} && ($idlTypeName eq "DOMWindow" || $idlTypeName eq "function" || $idlTypeName eq "any");
     return "bool" if $idlTypeName eq "boolean";
 
     return unless ref($idlType) eq "IDLType";
@@ -1452,7 +1472,7 @@ sub _platformType
 
 sub _platformTypeConstructor
 {
-    my ($self, $signature, $argumentName) = @_;
+    my ($self, $interface, $signature, $argumentName) = @_;
 
     my $idlType = $signature->type;
 
@@ -1460,7 +1480,7 @@ sub _platformTypeConstructor
     $idlTypeName = $idlType->name if ref($idlType) eq "IDLType";
 
     my $nullStringPolicy = _nullStringPolicy($signature);
-    my $arrayType = $signature->extendedAttributes->{"NSArray"};
+    my $arrayType = $interface->extendedAttributes->{"UseCPPAPI"} ? $signature->extendedAttributes->{"Vector"} : $signature->extendedAttributes->{"NSArray"};
 
     if ($idlTypeName eq "any") {
         return "serializeJSObject(context, $argumentName, exception)" if $signature->extendedAttributes->{"Serialization"} && $signature->extendedAttributes->{"Serialization"} eq "JSON";
@@ -1470,13 +1490,17 @@ sub _platformTypeConstructor
         return "toNSObject(context, $argumentName, Nil, NullValuePolicy::Allowed, ValuePolicy::StopAtTopLevel)" if $signature->extendedAttributes->{"NSObject"} && $signature->extendedAttributes->{"NSObject"} eq "StopAtTopLevel";
         return "toNSObject(context, $argumentName, Nil, NullValuePolicy::Allowed)" if $signature->extendedAttributes->{"NSObject"} && $signature->extendedAttributes->{"NSObject"} eq "NullAllowed";
         return "toNSObject(context, $argumentName)" if $signature->extendedAttributes->{"NSObject"};
+        return "$argumentName" if $interface->extendedAttributes->{"UseCPPAPI"};
         return "toJSValue(context, $argumentName)";
     }
 
     return "toJSCallbackHandler(context, $argumentName, protect(impl->runtime()))" if $idlTypeName eq "function" && $signature->extendedAttributes->{"CallbackHandler"};
-    return "toNSArray(context, $argumentName, $arrayType.class)" if $idlTypeName eq "array" && $arrayType;
-    return "toNSArray(context, $argumentName)" if $idlTypeName eq "array";
+    return "toNSArray(context, $argumentName, $arrayType.class)" if !$interface->extendedAttributes->{"UseCPPAPI"} && $idlTypeName eq "array" && $arrayType;
+    return "toNSArray(context, $argumentName)" if !$interface->extendedAttributes->{"UseCPPAPI"} && $idlTypeName eq "array";
+    return "toVector<$arrayType>(context, $argumentName)" if $interface->extendedAttributes->{"UseCPPAPI"} && $idlTypeName eq "array" && $arrayType ne "JSValueRef";
+    return "toVector<Protected<$arrayType>>(context, $argumentName)" if $interface->extendedAttributes->{"UseCPPAPI"} && $idlTypeName eq "array" && $arrayType eq "JSValueRef";
     return "JSValueToBoolean(context, $argumentName)" if $idlTypeName eq "boolean";
+    return "$argumentName" if $interface->extendedAttributes->{"UseCPPAPI"} && $idlTypeName eq "function";
     return "toJSValue(context, $argumentName)" if $idlTypeName eq "function";
 
     return unless ref($idlType) eq "IDLType";
@@ -1489,12 +1513,12 @@ sub _platformTypeConstructor
 
 sub _platformTypeVariableDeclaration
 {
-    my ($self, $signature, $variableName, $argumentName, $condition, $hideType) = @_;
+    my ($self, $interface, $signature, $variableName, $argumentName, $condition, $hideType) = @_;
 
     my $idlType = $signature->type;
     my $idlTypeName = $idlType->name;
-    my $platformType = $self->_platformType($idlType, $signature);
-    my $constructor = $self->_platformTypeConstructor($signature, $argumentName) if $argumentName;
+    my $platformType = $self->_platformType($idlType, $interface, $signature);
+    my $constructor = $self->_platformTypeConstructor($interface, $signature, $argumentName) if $argumentName;
 
     my %objCTypes = (
         "JSValue"       => 1,
@@ -1520,7 +1544,7 @@ sub _platformTypeVariableDeclaration
         die "DefaultValue extended attribute is currently only supported for numeric types";
     }
 
-    if ($platformType eq "JSValueRef" or $platformType eq "JSObjectRef" or $platformType eq "RefPtr<WebExtensionCallbackHandler>" or $platformType eq "double" or $platformType eq "bool" or $platformType eq "String") {
+    if ($platformType eq "JSValueRef" or $platformType eq "JSObjectRef" or $platformType eq "RefPtr<WebExtensionCallbackHandler>" or $platformType eq "double" or $platformType eq "bool" or $platformType eq "String" or $signature->extendedAttributes->{"Vector"}) {
         $platformType .= " ";
     } else {
         $platformType .= $isObjCType ? " *" : "* ";

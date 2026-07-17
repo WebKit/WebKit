@@ -706,6 +706,8 @@ WebProcess/EncryptedMedia/MediaKeySystemPermissionRequestManager.cpp
 WebProcess/Extensions/WebExtensionContextProxy.cpp
 WebProcess/Extensions/WebExtensionControllerProxy.cpp
 
+WebProcess/Extensions/API/WebExtensionAPITest.cpp
+
 WebProcess/FileAPI/BlobRegistryProxy.cpp
 
 WebProcess/FullScreen/WebFullScreenManager.cpp @cost:8

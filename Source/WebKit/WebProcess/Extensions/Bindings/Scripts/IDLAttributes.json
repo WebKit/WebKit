@@ -106,6 +106,9 @@
         "NSArray": {
             "contextsAllowed": ["argument", "attribute", "operation"]
         },
+        "Vector": {
+            "contextsAllowed": ["argument", "attribute", "operation"]
+        },
         "NSDictionary": {
             "contextsAllowed": ["argument", "attribute", "operation"]
         },
@@ -126,6 +129,9 @@
         },
         "ReturnsPromiseWhenCallbackIsOmitted": {
             "contextsAllowed": ["interface", "operation"]
+        },
+        "UseCPPAPI": {
+            "contextsAllowed": ["interface"]
         },
         "Serialization": {
             "contextsAllowed": ["argument"],

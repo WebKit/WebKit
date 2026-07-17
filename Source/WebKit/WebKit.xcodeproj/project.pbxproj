@@ -1768,6 +1768,7 @@
 		7E70A07B501701FB501FB516 /* GeneratedSerializersSharedWebCoreArgumentCodersPayment.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E70A07B501701FB501FB517 /* GeneratedSerializersSharedWebCoreArgumentCodersPayment.mm */; };
 		7E70A07B501701FB501FB518 /* GeneratedSerializersSharedWebCoreArgumentCodersStorage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E70A07B501701FB501FB519 /* GeneratedSerializersSharedWebCoreArgumentCodersStorage.mm */; };
 		7EB6760501701FB501FB7E05 /* GeneratedSerializersSharedWebGPU.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7EB6760501701FB501FB7E06 /* GeneratedSerializersSharedWebGPU.mm */; };
+		7DF6CAA12EC06B0D00AE220C /* JSWebExtensionAPITest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C15497E2926C05A001B9E5B /* JSWebExtensionAPITest.cpp */; };
 		8310428B1BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 831042891BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.h */; };
 		8313F7EC1F7DAE0800B944EB /* SharedStringHashStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8313F7E91F7DAE0300B944EB /* SharedStringHashStore.h */; };
 		8313F7EE1F7DAE0800B944EB /* SharedStringHashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 8313F7E71F7DAE0300B944EB /* SharedStringHashTable.h */; };
@@ -4187,7 +4188,7 @@
 		1C1549792926BF02001B9E5B /* WebExtensionAPITestCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPITestCocoa.mm; sourceTree = "<group>"; };
 		1C15497B2926BF6F001B9E5B /* WebExtensionAPITest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPITest.h; sourceTree = "<group>"; };
 		1C15497D2926C05A001B9E5B /* JSWebExtensionAPITest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPITest.h; sourceTree = "<group>"; };
-		1C15497E2926C05A001B9E5B /* JSWebExtensionAPITest.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPITest.mm; sourceTree = "<group>"; };
+		1C15497E2926C05A001B9E5B /* JSWebExtensionAPITest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPITest.cpp; sourceTree = "<group>"; };
 		1C1549812926E7CC001B9E5B /* WebExtensionControllerAPITestCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionControllerAPITestCocoa.mm; sourceTree = "<group>"; };
 		1C1549832926F04E001B9E5B /* WKWebExtensionControllerDelegatePrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebExtensionControllerDelegatePrivate.h; sourceTree = "<group>"; };
 		1C1549CE293812F8001B9E5B /* WebExtensionControllerConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionControllerConfiguration.h; sourceTree = "<group>"; };
@@ -7259,6 +7260,7 @@
 		7E70A07B501701FB501FB517 /* GeneratedSerializersSharedWebCoreArgumentCodersPayment.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GeneratedSerializersSharedWebCoreArgumentCodersPayment.mm; sourceTree = "<group>"; };
 		7E70A07B501701FB501FB519 /* GeneratedSerializersSharedWebCoreArgumentCodersStorage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GeneratedSerializersSharedWebCoreArgumentCodersStorage.mm; sourceTree = "<group>"; };
 		7EB6760501701FB501FB7E06 /* GeneratedSerializersSharedWebGPU.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GeneratedSerializersSharedWebGPU.mm; sourceTree = "<group>"; };
+		7DF6CAA52EC1365500AE220C /* WebExtensionAPITest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebExtensionAPITest.cpp; sourceTree = "<group>"; };
 		7EC4F0F918E4A945008056AF /* NetworkProcessCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkProcessCocoa.mm; sourceTree = "<group>"; };
 		816C18758ACB9F66D87FBE39 /* WKImmersiveEnvironmentInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKImmersiveEnvironmentInternal.h; sourceTree = "<group>"; };
 		831042891BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheSubresourcesEntry.h; sourceTree = "<group>"; };
@@ -11108,6 +11110,7 @@
 				B651BC5B2B460C9C009654A9 /* WebExtensionAPIStorage.h */,
 				B651BC5A2B460C9C009654A9 /* WebExtensionAPIStorageArea.h */,
 				1C5ACFAD2A96F9D300C041C0 /* WebExtensionAPITabs.h */,
+				7DF6CAA52EC1365500AE220C /* WebExtensionAPITest.cpp */,
 				1C15497B2926BF6F001B9E5B /* WebExtensionAPITest.h */,
 				3375A37329429DF50028536D /* WebExtensionAPIWebNavigation.h */,
 				33F6833D293FFA4B005C63C0 /* WebExtensionAPIWebNavigationEvent.h */,
@@ -17286,8 +17289,8 @@
 				B63C10362B51C0E5004A69B8 /* JSWebExtensionAPIStorageArea.mm */,
 				1C5ACFAA2A96F8D500C041C0 /* JSWebExtensionAPITabs.h */,
 				1C5ACFA92A96F8D400C041C0 /* JSWebExtensionAPITabs.mm */,
+				1C15497E2926C05A001B9E5B /* JSWebExtensionAPITest.cpp */,
 				1C15497D2926C05A001B9E5B /* JSWebExtensionAPITest.h */,
-				1C15497E2926C05A001B9E5B /* JSWebExtensionAPITest.mm */,
 				1C0F05BD2CFA5D2E007D1F62 /* JSWebExtensionAPIUnified.mm */,
 				3399E14F2B59EFD6008BFB60 /* JSWebExtensionAPIWebNavigation.h */,
 				3375A3762942A19C0028536D /* JSWebExtensionAPIWebNavigation.mm */,
@@ -22138,6 +22141,7 @@
 				074D6A652F385435006089F6 /* IntRectCG.swift in Sources */,
 				5CF250AF2EE06491006A7172 /* IPCTesterReceiver.swift in Sources */,
 				5C448C662EE06E11008931C7 /* IPCTesterReceiverMessageReceiver.swift in Sources */,
+				7DF6CAA12EC06B0D00AE220C /* JSWebExtensionAPITest.cpp in Sources */,
 				1C0F05BE2CFA5D2E007D1F62 /* JSWebExtensionAPIUnified.mm in Sources */,
 				E385F3672E86D6C900461B0C /* LaunchLogHook.mm in Sources */,
 				C14D37FE24ACE086007FF014 /* LaunchServicesDatabaseManager.mm in Sources */,

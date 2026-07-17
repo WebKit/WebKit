@@ -169,7 +169,6 @@ set(WebKit_BINDINGS_IN_FILES
     WebProcess/Extensions/Interfaces/WebExtensionAPIStorage
     WebProcess/Extensions/Interfaces/WebExtensionAPIStorageArea
     WebProcess/Extensions/Interfaces/WebExtensionAPITabs
-    WebProcess/Extensions/Interfaces/WebExtensionAPITest
     WebProcess/Extensions/Interfaces/WebExtensionAPIWebNavigation
     WebProcess/Extensions/Interfaces/WebExtensionAPIWebNavigationEvent
     WebProcess/Extensions/Interfaces/WebExtensionAPIWebPageNamespace
@@ -178,6 +177,10 @@ set(WebKit_BINDINGS_IN_FILES
     WebProcess/Extensions/Interfaces/WebExtensionAPIWebRequestEvent
     WebProcess/Extensions/Interfaces/WebExtensionAPIWindows
     WebProcess/Extensions/Interfaces/WebExtensionAPIWindowsEvent
+)
+
+set(WebKit_CPP_BINDINGS_IN_FILES
+    WebProcess/Extensions/Interfaces/WebExtensionAPITest
 )
 
 set(WebKit_MESSAGES_IN_FILES
@@ -1094,7 +1097,8 @@ list(APPEND WebKit_UNIFIED_SOURCE_EXCLUDES "^[A-Za-z0-9_]+MessageReceiver\\.cpp"
 # Helper macro which wraps the bindings script
 #   _output_source is a list name which will contain generated sources.(eg. WebKit_SOURCES)
 #   _inputs are .idl files to generate.
-macro(GENERATE_IDL_BINDINGS _output_source _inputs)
+#   _cpp_inputs are .idl files to generate (CPP sources only).
+macro(GENERATE_IDL_BINDINGS _output_source _inputs _cpp_inputs)
     unset(_input_files)
     unset(_outputs)
     unset(_import_names)
@@ -1107,6 +1111,17 @@ macro(GENERATE_IDL_BINDINGS _output_source _inputs)
             ${WebKit_DERIVED_SOURCES_DIR}/JS${_name}.h
         )
         list(APPEND _import_names JS${_name}.mm)
+        list(APPEND ${_output_source} ${WebKit_DERIVED_SOURCES_DIR}/JS${_name}.h)
+    endforeach ()
+    foreach (_file IN ITEMS ${_cpp_inputs})
+        get_filename_component(_name ${_file} NAME_WE)
+        list(APPEND _input_files ${WEBKIT_DIR}/${_file}.idl)
+
+        list(APPEND _outputs
+            ${WebKit_DERIVED_SOURCES_DIR}/JS${_name}.cpp
+
+            ${WebKit_DERIVED_SOURCES_DIR}/JS${_name}.h
+        )
         list(APPEND ${_output_source} ${WebKit_DERIVED_SOURCES_DIR}/JS${_name}.h)
     endforeach ()
 
@@ -1129,7 +1144,7 @@ macro(GENERATE_IDL_BINDINGS _output_source _inputs)
         VERBATIM
     )
 endmacro()
-GENERATE_IDL_BINDINGS(WebKit_DERIVED_SOURCES "${WebKit_BINDINGS_IN_FILES}")
+GENERATE_IDL_BINDINGS(WebKit_DERIVED_SOURCES "${WebKit_BINDINGS_IN_FILES}" "${WebKit_CPP_BINDINGS_IN_FILES}")
 
 foreach (in_file ${WebKit_SERIALIZATION_IN_FILES})
     list(APPEND WebKit_SERIALIZATION_DEPENDENCIES "${WEBKIT_DIR}/${in_file}")

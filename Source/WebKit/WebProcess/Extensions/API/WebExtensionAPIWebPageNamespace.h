@@ -45,12 +45,14 @@ public:
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 
     WebExtensionAPIWebPageRuntime& runtime() const;
+#endif
     WebExtensionAPITest& test();
 
 private:
+#if PLATFORM(COCOA)
     mutable RefPtr<WebExtensionAPIWebPageRuntime> m_runtime;
-    RefPtr<WebExtensionAPITest> m_test;
 #endif
+    RefPtr<WebExtensionAPITest> m_test;
 };
 
 } // namespace WebKit

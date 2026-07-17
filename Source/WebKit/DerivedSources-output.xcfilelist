@@ -581,7 +581,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIStorageArea.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPITabs.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPITabs.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPITest.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPITest.mm
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPITest.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIUnified.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIWebNavigation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIWebNavigation.mm

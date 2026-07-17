@@ -1034,6 +1034,7 @@ EXTENSIONS_SCRIPTS_DIR = $(EXTENSIONS_DIR)/Bindings/Scripts
 EXTENSIONS_INTERFACES_DIR = $(EXTENSIONS_DIR)/Interfaces
 IDL_ATTRIBUTES_FILE = $(EXTENSIONS_SCRIPTS_DIR)/IDLAttributes.json
 IDL_FILE_NAMES_LIST = WebExtensionIDLFileNamesList.txt
+CPP_IDL_FILE_NAMES_LIST = WebExtensionCPPIDLFileNamesList.txt
 
 BINDINGS_SCRIPTS = \
     $(WebCorePrivateHeaders)/generate-bindings.pl \
@@ -1071,7 +1072,6 @@ EXTENSION_INTERFACES = \
     WebExtensionAPIStorage \
     WebExtensionAPIStorageArea \
     WebExtensionAPITabs \
-    WebExtensionAPITest \
     WebExtensionAPIWebNavigation \
     WebExtensionAPIWebNavigationEvent \
     WebExtensionAPIWebPageNamespace \
@@ -1082,18 +1082,29 @@ EXTENSION_INTERFACES = \
     WebExtensionAPIWindowsEvent \
 #
 
+CPP_EXTENSION_INTERFACES = \
+    WebExtensionAPITest \
+#
+
 $(IDL_FILE_NAMES_LIST) : $(EXTENSION_INTERFACES:%=%.idl)
+	echo $^ | tr " " "\n" > $@
+
+$(CPP_IDL_FILE_NAMES_LIST) : $(CPP_EXTENSION_INTERFACES:%=%.idl)
 	echo $^ | tr " " "\n" > $@
 
 JS%.h JS%.mm : %.idl $(BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(FEATURE_AND_PLATFORM_FLAGS_RESPONSE_FILE) $(IDL_FILE_NAMES_LIST)
 	@echo Generating bindings for $*...
 	$(PERL) -I $(WebCorePrivateHeaders) -I $(EXTENSIONS_SCRIPTS_DIR) $(WebCorePrivateHeaders)/generate-bindings.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES)" --outputDir . --generator Extensions --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --idlFileNamesList $(IDL_FILE_NAMES_LIST) $<
 
+JS%.h JS%.cpp : %.idl $(BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(FEATURE_AND_PLATFORM_FLAGS_RESPONSE_FILE) $(CPP_IDL_FILE_NAMES_LIST)
+	@echo Generating bindings for $*...
+	$(PERL) -I $(WebCorePrivateHeaders) -I $(EXTENSIONS_SCRIPTS_DIR) $(WebCorePrivateHeaders)/generate-bindings.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES)" --outputDir . --generator Extensions --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --idlFileNamesList $(CPP_IDL_FILE_NAMES_LIST) $<
+
 JSWebExtensionAPIUnified.mm: $(BINDINGS_SCRIPTS) $(EXTENSION_INTERFACES:%=JS%.mm)
 	@echo "Generating $@..."
 	$(PERL) $(EXTENSIONS_SCRIPTS_DIR)/GenerateImports.pl $@ $(EXTENSION_INTERFACES:%=JS%.mm)
 
-all : JSWebExtensionAPIUnified.mm $(EXTENSION_INTERFACES:%=JS%.h) $(EXTENSION_INTERFACES:%=JS%.mm)
+all : JSWebExtensionAPIUnified.mm $(EXTENSION_INTERFACES:%=JS%.h) $(EXTENSION_INTERFACES:%=JS%.mm) $(CPP_EXTENSION_INTERFACES:%=JS%.cpp)
 
 ifeq ($(USE_INTERNAL_SDK),YES)
 WEBKIT_ADDITIONS_SWIFT_FILES = \

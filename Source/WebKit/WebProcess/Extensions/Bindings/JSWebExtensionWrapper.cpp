@@ -111,12 +111,12 @@ template<size_t ArgumentCount>
 JSValueRef callWithArguments(JSObjectRef callbackFunction, JSRetainPtr<JSGlobalContextRef>& globalContext, std::array<JSValueRef, ArgumentCount>&& arguments)
 {
     if (!globalContext || !callbackFunction)
-        return nil;
+        return nullptr;
 
     auto* globalObject = toJS(globalContext.get());
     RefPtr context = globalObject ? downcast<WebCore::JSDOMGlobalObject>(globalObject)->scriptExecutionContext() : nullptr;
     if (!context || context->activeDOMObjectsAreStopped())
-        return nil;
+        return nullptr;
 
     JSValueRef exception = nullptr;
     JSValueRef result = JSObjectCallAsFunction(globalContext.get(), callbackFunction, nullptr, ArgumentCount, arguments.data(), &exception);
@@ -129,6 +129,7 @@ JSValueRef callWithArguments(JSObjectRef callbackFunction, JSRetainPtr<JSGlobalC
 
     return result;
 }
+
 
 void WebExtensionCallbackHandler::reportError(const String& message)
 {
@@ -602,6 +603,32 @@ bool isThenable(JSContextRef context, JSValueRef value)
     SUPPRESS_UNCOUNTED_ARG JSValueRef thenableObject = JSObjectGetProperty(context, valueObject, thenableString.get(), nullptr);
 
     return isFunction(context, thenableObject);
+}
+
+template<>
+Vector<Protected<JSValueRef>> toVector<Protected<JSValueRef>>(JSContextRef context, JSValueRef value)
+{
+    ASSERT(context);
+
+    if (!value)
+        return { };
+
+    if (!JSValueIsArray(context, value))
+        return { };
+
+    JSObjectRef object = JSValueToObject(context, value, nullptr);
+    // This is a safer cpp false positive (rdar://163760990).
+    SUPPRESS_UNCOUNTED_ARG int32_t length = JSValueToInt32(context, JSObjectGetProperty(context, object, toJSString("length"_s).get(), nullptr), nullptr);
+    Vector<Protected<JSValueRef>> result;
+
+    if (length >= 0) {
+        for (size_t i = 0; i < static_cast<size_t>(length); ++i) {
+            JSValueRef itemValue = JSObjectGetPropertyAtIndex(context, object, i, nullptr);
+            result.append(Protected(JSContextGetGlobalContext(context), itemValue));
+        }
+    }
+
+    return result;
 }
 
 } // namespace WebKit

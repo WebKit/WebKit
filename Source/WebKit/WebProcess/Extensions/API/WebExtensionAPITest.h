@@ -33,47 +33,44 @@
 #include "WebExtensionAPIWebNavigationEvent.h"
 #include <wtf/Deque.h>
 
-OBJC_CLASS NSString;
-
 namespace WebKit {
 
 class WebExtensionAPITest : public WebExtensionAPIObject, public JSWebExtensionWrappable {
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPITest, test, test);
 
 public:
-#if PLATFORM(COCOA)
-    void notifyFail(JSContextRef, NSString *message);
-    void notifyPass(JSContextRef, NSString *message);
+    void notifyFail(JSContextRef, const String& message);
+    void notifyPass(JSContextRef, const String& message);
 
-    void sendMessage(JSContextRef, NSString *message, JSValue *argument);
+    void sendMessage(JSContextRef, const String& message, JSValueRef argument);
     WebExtensionAPIEvent& onMessage();
     WebExtensionAPIEvent& onTestStarted();
     WebExtensionAPIEvent& onTestFinished();
 
-    JSValue *runWithUserGesture(WebFrame&, JSValue *function);
+    JSValueRef runWithUserGesture(WebFrame&, JSContextRef, JSValueRef function);
     bool isProcessingUserGesture();
 
-    void log(JSContextRef, JSValue *);
+    void log(JSContextRef, JSValueRef);
 
-    void fail(JSContextRef, NSString *message);
-    void succeed(JSContextRef, NSString *message);
+    void fail(JSContextRef, const String& message);
+    void succeed(JSContextRef, const String& message);
 
-    void assertTrue(JSContextRef, bool testValue, NSString *message, NSString **outExceptionString);
-    void assertFalse(JSContextRef, bool testValue, NSString *message, NSString **outExceptionString);
+    void assertTrue(JSContextRef, bool testValue, const String& message, String& outExceptionString);
+    void assertFalse(JSContextRef, bool testValue, const String& message, String& outExceptionString);
 
-    void assertDeepEq(JSContextRef, JSValue *actualValue, JSValue *expectedValue, NSString *message, NSString **outExceptionString);
-    void assertEq(JSContextRef, JSValue *actualValue, JSValue *expectedValue, NSString *message, NSString **outExceptionString);
+    void assertDeepEq(JSContextRef, JSValueRef actualValue, JSValueRef expectedValue, const String& message, String& outExceptionString);
+    void assertEq(JSContextRef, JSValueRef actualValue, JSValueRef expectedValue, const String& message, String& outExceptionString);
 
-    JSValue *assertRejects(JSContextRef, JSValue *promise, JSValue *expectedError, NSString *message);
-    JSValue *assertResolves(JSContextRef, JSValue *promise, NSString *message);
+    JSValueRef assertRejects(JSContextRef, JSValueRef promise, JSValueRef expectedError, const String& message);
+    JSValueRef assertResolves(JSContextRef, JSValueRef promise, const String& message);
 
-    void assertThrows(JSContextRef, JSValue *function, JSValue *expectedError, NSString *message, NSString **outExceptionString);
-    JSValue *assertSafe(JSContextRef, JSValue *function, NSString *message);
+    void assertThrows(JSContextRef, JSValueRef function, JSValueRef expectedError, const String& message, String& outExceptionString);
+    JSValueRef assertSafe(JSContextRef, JSValueRef function, const String& message);
 
-    JSValue *assertSafeResolve(JSContextRef, JSValue *function, NSString *message);
+    JSValueRef assertSafeResolve(JSContextRef, JSValueRef function, const String& message);
 
-    JSValue *addTest(JSContextRef, JSValue *testFunction);
-    JSValue *runTests(JSContextRef, NSArray *testFunctions);
+    JSValueRef addTest(JSContextRef, JSValueRef testFunction);
+    JSValueRef runTests(JSContextRef, Vector<Protected<JSValueRef>> testFunctions);
 
 private:
     RefPtr<WebExtensionAPIEvent> m_onMessage;
@@ -84,9 +81,9 @@ private:
         String testName;
         std::pair<String, unsigned> location;
         WebExtensionControllerIdentifier webExtensionControllerIdentifier;
-        RetainPtr<JSValue> testFunction;
-        RetainPtr<JSValue> resolveCallback;
-        RetainPtr<JSValue> rejectCallback;
+        Protected<JSValueRef> testFunction;
+        Protected<JSValueRef> resolveCallback;
+        Protected<JSValueRef> rejectCallback;
     };
 
     Deque<Test> m_testQueue;
@@ -94,11 +91,16 @@ private:
     bool m_hitAssertion { false };
     String m_assertionMessage;
 
-    JSValue *addTest(JSContextRef, JSValue *testFunction, String callingAPIName);
-    void assertEquals(JSContextRef, bool result, NSString *expectedString, NSString *actualString, NSString *message, NSString **outExceptionString);
+    template<size_t ArgumentCount>
+    JSValueRef invokeMethod(JSContextRef, JSValueRef, const String& method, std::array<JSValueRef, ArgumentCount>&& arguments, JSValueRef* exception = nullptr);
+    std::pair<String, unsigned> scriptLocation(JSContextRef);
+    String debugString(JSContextRef, JSValueRef);
+    String combineMessages(const String& messageOne, const String& messageTwo);
+
+    JSValueRef addTest(JSContextRef, JSValueRef testFunction, String callingAPIName);
+    void assertEquals(JSContextRef, bool result, const String& expectedString, const String& actualString, const String& message, String& outExceptionString);
     void startNextTest();
-    void recordAssertionIfNeeded(bool result, const String& message, std::pair<String, unsigned> location, NSString **outExceptionString);
-#endif
+    void recordAssertionIfNeeded(bool result, const String& message, std::pair<String, unsigned> location, String& outExceptionString);
 };
 
 } // namespace WebKit
