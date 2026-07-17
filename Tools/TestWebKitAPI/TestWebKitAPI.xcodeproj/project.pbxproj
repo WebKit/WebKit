@@ -585,6 +585,7 @@
 				"cocoa/Foundation+Extras.swift",
 				cocoa/HTTPServer.mm,
 				cocoa/HTTPServer.swift,
+				cocoa/ImageAnalysisTestingUtilities.swift,
 				cocoa/JavaScriptMessages.swift,
 				cocoa/JavaScriptTypes.swift,
 				cocoa/StdLibExtras.swift,

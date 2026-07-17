@@ -26,6 +26,8 @@
 #import "config.h"
 #import "Helpers/cocoa/ImageAnalysisTestingUtilities.h"
 
+// FIXME: Merge this with the Swift version of these utilities.
+
 #if HAVE(VK_IMAGE_ANALYSIS)
 
 #import <wtf/BlockPtr.h>
@@ -288,6 +290,11 @@ RemoveBackgroundSwizzler::RemoveBackgroundSwizzler(CGImageRef image, CGRect crop
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
+
+Class getImageAnalyzerClass()
+{
+    return PAL::getVKCImageAnalyzerClassSingleton();
+}
 
 } // namespace TestWebKitAPI
 

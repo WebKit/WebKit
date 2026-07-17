@@ -671,7 +671,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func scrollInputSourceUpdatesrubberbandHyperbolicCoefficient() async throws {
+    func scrollInputSourceUpdatesRubberbandHyperbolicCoefficient() async throws {
         let html = """
             <body style="margin: 0; width: 100%; height: 20000px;
                          background: repeating-linear-gradient(to bottom, blue 0 50px, white 50px 100px);">
@@ -1133,6 +1133,43 @@ extension AppKitGesturesTests.Basic {
         #expect(page.url == urlBeforeGesture)
         #expect(page.backForwardList.backList.count == 1)
     }
+
+    @Test(.disabled())
+    func longPressAndDragOnImageSelectsEntireTextUsingLiveText() async throws {
+        let baseURL = try #require(Bundle.testResources.resourceURL)
+        let html = """
+            <img id="img" src="love-and-coffee.jpeg" style="display: block; height: 100vh; margin: 0">
+            """
+        try await page.load(html: html, baseURL: baseURL).wait()
+
+        let imageViewportBounds = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: "img"))
+        let imageScreenBounds = screenBounds(ofRectInViewportCoordinates: imageViewportBounds)
+
+        await page.waitForNextPresentationUpdate()
+
+        let responseURL = try #require(Bundle.testResources.url(forResource: "love-and-coffee-analysis", withExtension: "json"))
+        let analysis = try ImageAnalysisResult(parsing: responseURL)
+
+        let firstWord = try #require(analysis.lines.first?.children.first?.quad)
+        let lastWord = try #require(analysis.lines.last?.children.last?.quad)
+
+        let start = firstWord.center.normalized(in: imageScreenBounds)
+        let end = lastWord.center.normalized(in: imageScreenBounds)
+
+        await withMockedImageAnalyzer(response: .success(analysis)) {
+            await recap.play { composer in
+                composer._wk_drag(withStart: start, end: end, duration: .seconds(2), pressAndWait: .seconds(1.0))
+            }
+        }
+
+        let selection = try await page.callJavaScript(returning: String.self) {
+            """
+            return window.getSelection().toString();
+            """
+        }
+
+        #expect(selection == "EVERYONE\nDESERVES\nLOVE AND\nCOFFEE")
+    }
 }
 
 nonisolated(nonsending) private func withSwizzledContextMenu(perform body: () async -> Void) async {
@@ -1155,6 +1192,20 @@ nonisolated(nonsending) private func withSwizzledContextMenu(perform body: () as
         await body()
 
         await future.wait()
+    }
+}
+
+extension ImageAnalysisResult.Quad {
+    fileprivate var center: CGPoint {
+        let x = (topLeft.x + topRight.x + bottomLeft.x + bottomRight.x) / 4.0
+        let y = (topLeft.y + topRight.y + bottomLeft.y + bottomRight.y) / 4.0
+        return CGPoint(x: x, y: y)
+    }
+}
+
+extension CGPoint {
+    fileprivate func normalized(in rect: CGRect) -> CGPoint {
+        CGPoint(x: rect.minX + x * rect.width, y: rect.minY + y * rect.height)
     }
 }
 
