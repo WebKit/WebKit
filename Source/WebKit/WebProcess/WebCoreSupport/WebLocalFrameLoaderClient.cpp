@@ -1474,22 +1474,13 @@ void WebLocalFrameLoaderClient::shouldGoToHistoryItemAsync(HistoryItem& item, Co
     webPage->sendWithAsyncReply(Messages::WebPageProxy::ShouldGoToBackForwardListItem(item.itemID(), item.isInBackForwardCache()), WTF::move(completionHandler));
 }
 
-void WebLocalFrameLoaderClient::dispatchGoToBackForwardItemAtIndex(int steps)
+void WebLocalFrameLoaderClient::dispatchGoToBackForwardItemAtIndex(int steps, FrameLoadType frameLoadType)
 {
     RefPtr webPage = m_frame->page();
     if (!webPage)
         return;
 
-    webPage->send(Messages::WebPageProxy::GoToBackForwardItemAtIndex(steps));
-}
-
-void WebLocalFrameLoaderClient::dispatchEnqueueHistoryTraversalDelta(int delta)
-{
-    RefPtr webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    webPage->send(Messages::WebPageProxy::EnqueueHistoryTraversalDelta(delta));
+    webPage->send(Messages::WebPageProxy::GoToBackForwardItemAtIndex(steps, frameLoadType));
 }
 
 bool WebLocalFrameLoaderClient::shouldFallBack(const ResourceError& error) const
