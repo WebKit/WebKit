@@ -547,37 +547,14 @@ pas_mte_tag_region_from_pointer(
         b &= ~PAS_MTE_TAG_MASK; \
     } while (0)
 
-// Use these to configure the tagging policy for different sizes. Currently we only
-// tag small and medium allocations, in both segregated and bitfit pages. Medium
-// allocations should be additionally guarded at runtime by PAS_MTE_MEDIUM_TAGGING_ENABLED.
-#define PAS_MTE_ALLOW_TAG_SMALL 1
-#define PAS_MTE_ALLOW_TAG_MEDIUM 1
-
-#if PAS_MTE_ALLOW_TAG_SMALL && PAS_MTE_ALLOW_TAG_MEDIUM
 #define PAS_MTE_SHOULD_TAG_ALLOCATOR(allocator) (allocator)->is_mte_tagged
 #define PAS_MTE_DECIDE_PAGE_CONFIG_TAGGEDNESS(size_category) \
     (size_category == pas_page_config_size_category_small || size_category == pas_page_config_size_category_medium)
-// TODO: once we drop support for runtime-differentiating medium tagging, we can
-// drop the second half of this statement
-#define PAS_MTE_SHOULD_TAG_PAGE(page_config) ((page_config).base.allow_mte_tagging && \
-                                          (PAS_MTE_MEDIUM_TAGGING_ENABLED || (page_config).base.page_config_size_category != pas_page_config_size_category_medium))
+#define PAS_MTE_CAN_TAG_SIZE_CATEGORY(size_category) ((size_category) == pas_page_config_size_category_small || (size_category) == pas_page_config_size_category_medium)
+#define PAS_MTE_SHOULD_TAG_PAGE(page_config) ((page_config).base.allow_mte_tagging && PAS_MTE_CAN_TAG_SIZE_CATEGORY((page_config).base.page_config_size_category))
 #define PAS_MTE_IS_KNOWN_MEDIUM_BUMP(allocator) !(allocator)->is_small
 #define PAS_MTE_IS_KNOWN_MEDIUM_PAGE(page_config_base) (page_config_base.page_config_size_category == pas_page_config_size_category_medium)
 #define PAS_MTE_SHOULD_TAG_SEGREGATED_HEAP(segregated_heap) (segregated_heap->parent_heap && segregated_heap->parent_heap->is_non_compact_heap)
-#elif PAS_MTE_ALLOW_TAG_SMALL
-#define PAS_MTE_DECIDE_PAGE_CONFIG_TAGGEDNESS(size_category) (size_category == pas_page_config_size_category_small)
-#define PAS_MTE_SHOULD_TAG_ALLOCATOR(allocator) (allocator)->is_mte_tagged
-#define PAS_MTE_SHOULD_TAG_PAGE(page_config) ((page_config).base.allow_mte_tagging)
-#define PAS_MTE_IS_KNOWN_MEDIUM_BUMP(allocator) 0
-#define PAS_MTE_IS_KNOWN_MEDIUM_PAGE(page_config) 0
-#else
-#define PAS_MTE_DECIDE_PAGE_CONFIG_TAGGEDNESS(size_category) (false)
-
-#define PAS_MTE_SHOULD_TAG_ALLOCATOR(allocator) 0
-#define PAS_MTE_SHOULD_TAG_PAGE(page_config) 0
-#define PAS_MTE_IS_KNOWN_MEDIUM_BUMP(allocator) 0
-#define PAS_MTE_IS_KNOWN_MEDIUM_PAGE(page_config) 0
-#endif
 
 static PAS_ALWAYS_INLINE uintptr_t
 pas_mte_generate_random_tag(
@@ -915,8 +892,6 @@ pas_mte_retag_freed_region_if_tagged(
 // Used to clear pointer tag bits when summarizing a range in the large sharing pool.
 #define PAS_MTE_HANDLE_LARGE_SHARING_POOL_COMPUTE_SUMMARY(a, b) PAS_MTE_CLEAR_PAIR(a, b)
 
-#define PAS_SHOULD_MTE_TAG_BASIC_HEAP_PAGE(size_category) PAS_MTE_DECIDE_PAGE_CONFIG_TAGGEDNESS(size_category)
-
 struct __pas_heap;
 
 #ifdef __cplusplus
@@ -1048,11 +1023,11 @@ void* pas_mte_system_heap_realloc_zero_tagged(malloc_zone_t* zone, void* ptr, si
 
 // Used to redirect medium megapage allocations when medium object tagging is not enabled to the respective untagged megapage cache.
 #define PAS_MTE_HANDLE_MEDIUM_SEGREGATED_PAGE_ALLOCATION(heap, megapage_cache) do { \
-        if (!PAS_MTE_MEDIUM_TAGGING_ENABLED || !heap->parent_heap->is_non_compact_heap) \
+        if (!PAS_USE_MTE || !heap->parent_heap->is_non_compact_heap) \
             megapage_cache = &page_caches->medium_compact_megapage_cache; \
     } while (false)
 #define PAS_MTE_HANDLE_MEDIUM_BITFIT_PAGE_ALLOCATION(heap, megapage_cache) do { \
-        if (!PAS_MTE_MEDIUM_TAGGING_ENABLED || !heap->parent_heap->is_non_compact_heap) \
+        if (!PAS_USE_MTE || !heap->parent_heap->is_non_compact_heap) \
             megapage_cache = &page_caches->medium_compact_megapage_cache; \
     } while (false)
 
@@ -1122,10 +1097,8 @@ PAS_IGNORE_WARNINGS_END
 
 #else // !PAS_ENABLE_MTE
 #define PAS_MTE_HANDLE(kind, ...) PAS_UNUSED_V(__VA_ARGS__)
-#define PAS_SHOULD_MTE_TAG_BASIC_HEAP_PAGE(size_category) (false)
 #endif // PAS_ENABLE_MTE
 #else // defined(PAS_USE_OPENSOURCE_MTE) && PAS_USE_OPENSOURCE_MTE
 #define PAS_MTE_HANDLE(kind, ...) PAS_UNUSED_V(__VA_ARGS__)
-#define PAS_SHOULD_MTE_TAG_BASIC_HEAP_PAGE(size_category) (false)
 #endif // PAS_ENABLE_MTE
 #endif // PAS_MTE_H

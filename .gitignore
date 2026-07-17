@@ -4,6 +4,7 @@
 .DS_Store
 .directory
 /WebKitBuild/
+/WebKitBuild*/
 /.clangd
 .claude/agents/
 /update-compile-commands-symlink.conf
@@ -97,3 +98,5 @@ CLAUDE.md
 *.profraw
 *.pas_stats.jsonl
 
+# Ignore libpas builds and log-outputs
+/Source/bmalloc/build*/

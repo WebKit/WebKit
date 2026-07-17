@@ -161,13 +161,11 @@ static void pas_mte_do_initialization(void)
             wcp_is_hardened = true;
 
         if (wcp_is_hardened) {
-            config->medium_tagging_enabled = true;
             config->enabled = true;
             config->is_hardened = true;
 
             pas_mte_force_nontaggable_user_allocations_into_large_heap();
         } else {
-            config->medium_tagging_enabled = false;
             config->is_hardened = false;
 #if !PAS_USE_MTE_IN_WEBCONTENT
             // Disable tagging in libpas by default in WebContent process
@@ -181,18 +179,14 @@ static void pas_mte_do_initialization(void)
         if (is_env_true("MTE_disableForWebContent")) {
             PAS_ASSERT(!is_env_true("MTE_overrideEnablementForWebContent"));
             config->enabled = false;
-            config->medium_tagging_enabled = false;
         }
 #endif
         if (is_env_true("MTE_overrideEnablementForWebContent")) {
             config->enabled = true;
-            config->medium_tagging_enabled = true;
         } else if (is_env_false("MTE_overrideEnablementForWebContent")) {
             config->enabled = false;
-            config->medium_tagging_enabled = false;
         }
     } else {
-        config->medium_tagging_enabled = true; // Tag libpas medium objects in privileged processes
         config->is_hardened = true;
     }
 
@@ -280,7 +274,7 @@ static void pas_report_config(void)
         "%s(%d,0x%x) malloc: libpas config:"
         "\n\tDeallocation Log (Max Entries, Max Bytes): %zu, %zuB"
         "\n\tScavenger (Period, Deep-Sleep Timeout, Epoch-Delta): %.2fms, %.2fms, %llu"
-        "\n\tMTE (Enabled/Medium-Enabled/Lockdown/Hardened/ATE/RoS/ZTA): (%u, %u, %u, %u, %u, %u, %u)"
+        "\n\tMTE (Enabled/Lockdown/Hardened/ATE/RoS/ZTA): (%u, %u, %u, %u, %u, %u)"
 #if PAS_ENABLE_BMALLOC
         "\n\tForwarding to System Heap: %u"
         LOG_FMT_STR_FOR_HEAP_CONFIG(bmalloc)
@@ -305,7 +299,7 @@ static void pas_report_config(void)
         progname, pid, (int)threadno,
         (size_t)PAS_DEALLOCATION_LOG_SIZE, (size_t)PAS_DEALLOCATION_LOG_MAX_BYTES,
         pas_scavenger_period_in_milliseconds, pas_scavenger_deep_sleep_timeout_in_milliseconds, pas_scavenger_max_epoch_delta,
-        config->enabled, config->medium_tagging_enabled, config->is_lockdown_mode, config->is_hardened,
+        config->enabled, config->is_lockdown_mode, config->is_hardened,
         config->mode_bits.adjacent_tag_exclusion, config->mode_bits.retag_on_scavenge, config->mode_bits.zero_tag_all,
 #if PAS_ENABLE_BMALLOC
         pas_system_heap_should_supplant_bmalloc(pas_heap_config_kind_bmalloc),

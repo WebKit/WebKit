@@ -77,7 +77,6 @@ typedef struct {
         uint8_t check_tag_on_dealloc : 1;
     } mode_bits;
 
-    bool medium_tagging_enabled;
     bool is_lockdown_mode;
     bool is_hardened;
 } pas_runtime_config;
