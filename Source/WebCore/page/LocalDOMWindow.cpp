@@ -1605,6 +1605,20 @@ void LocalDOMWindow::consumeLastActivationIfNecessary()
         m_lastActivationTimestamp = -MonotonicTime::infinity();
 }
 
+void LocalDOMWindow::carryOverStickyActivationFromPreviousWindow(const LocalDOMWindow& previousWindow, const SecurityOrigin& previousOrigin, const SecurityOrigin& targetOrigin, bool hadCrossOriginRedirect)
+{
+    RefPtr frame = this->frame();
+    if (!frame || !frame->settings().stickyUserActivationAcrossSameOriginNavigationsEnabled())
+        return;
+    if (hadCrossOriginRedirect)
+        return;
+    if (!previousWindow.hasStickyActivation())
+        return;
+    if (!previousOrigin.isSameOriginAs(targetOrigin))
+        return;
+    m_hasStickyActivation = true;
+}
+
 // https://html.spec.whatwg.org/multipage/interaction.html#consume-history-action-user-activation
 bool LocalDOMWindow::consumeHistoryActionUserActivation()
 {

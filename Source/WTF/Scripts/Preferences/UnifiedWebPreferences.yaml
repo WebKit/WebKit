@@ -8403,6 +8403,20 @@ StandardFontFamily:
     WebCore:
       default: '""_str'
 
+StickyUserActivationAcrossSameOriginNavigationsEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "Sticky user activation across same-origin navigations"
+  humanReadableDescription: "Preserve sticky user activation when navigating to a same-origin page (per whatwg/html#11454)"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 StorageAPIEnabled:
   type: bool
   status: stable
