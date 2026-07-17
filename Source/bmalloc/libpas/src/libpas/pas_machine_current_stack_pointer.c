@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia, S.L. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +24,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include <wtf/StackPointer.h>
+#include "pas_machine_current_stack_pointer.h"
 
-#include <wtf/InlineASM.h>
+#if PAS_OS(DARWIN)
+#define SYMBOL_STRING(name) "_" #name
+#else
+#define SYMBOL_STRING(name) #name
+#endif
 
-namespace WTF {
+#if PAS_PLATFORM(IOS_FAMILY)
+#define THUMB_FUNC_PARAM(name) SYMBOL_STRING(name)
+#else
+#define THUMB_FUNC_PARAM(name)
+#endif
 
-#if USE(ASM_CURRENT_STACK_POINTER)
+PAS_BEGIN_EXTERN_C;
 
-#if CPU(X86) && COMPILER(MSVC)
-extern "C" __declspec(naked) void currentStackPointer()
-{
-    __asm {
-        mov eax, esp
-        add eax, 4
-        ret
-    }
-}
+#if !(defined(NDEBUG) && (PAS_X86_64 || PAS_ARM64 || PAS_ARM))
 
-#elif CPU(X86)
-__asm__(
-    ".text" "\n"
-    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
-    SYMBOL_STRING(currentStackPointer) ":" "\n"
-    "movl %esp, %eax" "\n"
-    "addl $4, %eax" "\n"
-    "ret" "\n"
-    ".previous" "\n"
-);
-
-#elif CPU(X86_64) && OS(WINDOWS)
+#if PAS_X86_64 && PAS_OS(WINDOWS)
 
 __asm__(
     ".text" "\n"
-    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
-    SYMBOL_STRING(currentStackPointer) ":" "\n"
+    ".globl " SYMBOL_STRING(pas_machine_current_stack_pointer) "\n"
+    SYMBOL_STRING(pas_machine_current_stack_pointer) ":" "\n"
 
     "movq %rsp, %rax" "\n"
     "addq $40, %rax" "\n" // Account for return address and shadow stack
     "ret" "\n"
 
     ".section .drectve" "\n"
-    ".ascii \"-export:currentStackPointer\"" "\n"
+    ".ascii \"-export:pas_machine_current_stack_pointer\"" "\n"
 );
 
-#elif CPU(X86_64)
+#elif PAS_X86_64
 __asm__(
     ".text" "\n"
-    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
-    SYMBOL_STRING(currentStackPointer) ":" "\n"
+    ".globl " SYMBOL_STRING(pas_machine_current_stack_pointer) "\n"
+    SYMBOL_STRING(pas_machine_current_stack_pointer) ":" "\n"
 
     "movq  %rsp, %rax" "\n"
     "addq $8, %rax" "\n" // Account for return address.
@@ -80,12 +69,12 @@ __asm__(
     ".previous" "\n"
 );
 
-#elif CPU(ARM64E)
+#elif PAS_ARM64E
 __asm__(
     ".text" "\n"
     ".balign 16" "\n"
-    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
-    SYMBOL_STRING(currentStackPointer) ":" "\n"
+    ".globl " SYMBOL_STRING(pas_machine_current_stack_pointer) "\n"
+    SYMBOL_STRING(pas_machine_current_stack_pointer) ":" "\n"
 
     "pacibsp" "\n"
     "mov x0, sp" "\n"
@@ -93,51 +82,51 @@ __asm__(
     ".previous" "\n"
 );
 
-#elif CPU(ARM64) && OS(WINDOWS)
+#elif PAS_ARM64 && PAS_OS(WINDOWS)
 __asm__(
     ".text" "\n"
     ".align 4" "\n"
-    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
-    SYMBOL_STRING(currentStackPointer) ":" "\n"
+    ".globl " SYMBOL_STRING(pas_machine_current_stack_pointer) "\n"
+    SYMBOL_STRING(pas_machine_current_stack_pointer) ":" "\n"
 
     "mov x0, sp" "\n"
     "ret" "\n"
 
     ".section .drectve" "\n"
-    ".ascii \"-export:currentStackPointer\"" "\n"
+    ".ascii \"-export:pas_machine_current_stack_pointer\"" "\n"
 );
 
-#elif CPU(ARM64)
+#elif PAS_ARM64
 __asm__(
     ".text" "\n"
     ".balign 16" "\n"
-    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
-    SYMBOL_STRING(currentStackPointer) ":" "\n"
+    ".globl " SYMBOL_STRING(pas_machine_current_stack_pointer) "\n"
+    SYMBOL_STRING(pas_machine_current_stack_pointer) ":" "\n"
 
     "mov x0, sp" "\n"
     "ret" "\n"
     ".previous" "\n"
 );
 
-#elif CPU(ARM_THUMB2)
+#elif PAS_ARM32
 __asm__(
     ".text" "\n"
     ".align 2" "\n"
-    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
+    ".globl " SYMBOL_STRING(pas_machine_current_stack_pointer) "\n"
     ".thumb" "\n"
-    ".thumb_func " THUMB_FUNC_PARAM(currentStackPointer) "\n"
-    SYMBOL_STRING(currentStackPointer) ":" "\n"
+    ".thumb_func " THUMB_FUNC_PARAM(pas_machine_current_stack_pointer) "\n"
+    SYMBOL_STRING(pas_machine_current_stack_pointer) ":" "\n"
 
     "mov r0, sp" "\n"
     "bx  lr" "\n"
     ".previous" "\n"
 );
 
-#elif CPU(MIPS)
+#elif PAS_MIPS
 __asm__(
     ".text" "\n"
-    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
-    SYMBOL_STRING(currentStackPointer) ":" "\n"
+    ".globl " SYMBOL_STRING(pas_machine_current_stack_pointer) "\n"
+    SYMBOL_STRING(pas_machine_current_stack_pointer) ":" "\n"
     ".set push" "\n"
     ".set noreorder" "\n"
     ".set noat" "\n"
@@ -149,22 +138,22 @@ __asm__(
     ".previous" "\n"
 );
 
-#elif CPU(RISCV64)
+#elif PAS_RISCV
 __asm__(
     ".text" "\n"
-    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
-    SYMBOL_STRING(currentStackPointer) ":" "\n"
+    ".globl " SYMBOL_STRING(pas_machine_current_stack_pointer) "\n"
+    SYMBOL_STRING(pas_machine_current_stack_pointer) ":" "\n"
 
      "mv x10, sp" "\n"
      "ret" "\n"
      ".previous" "\n"
 );
 
-#elif CPU(LOONGARCH64)
+#elif PAS_LOONGARCH64
 __asm__(
     ".text" "\n"
-    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
-    SYMBOL_STRING(currentStackPointer) ":" "\n"
+    ".globl " SYMBOL_STRING(pas_machine_current_stack_pointer) "\n"
+    SYMBOL_STRING(pas_machine_current_stack_pointer) ":" "\n"
 
      "move $r4, $r3" "\n"
      "jr   $r1" "\n"
@@ -172,21 +161,9 @@ __asm__(
 );
 
 #else
-#error "Unsupported platform: need implementation of currentStackPointer."
-#endif
+#error "Unsupported platform: need implementation of pas_machine_current_stack_pointer."
+#endif // CPU cases
 
-#elif USE(GENERIC_CURRENT_STACK_POINTER)
-constexpr size_t sizeOfFrameHeader = 2 * sizeof(void*);
+#endif // NDEBUG && (PAS_X86_64 || PAS_ARM64 || PAS_ARM)
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
-SUPPRESS_ASAN NEVER_INLINE
-void* currentStackPointer()
-{
-    return reinterpret_cast<uint8_t*>(__builtin_frame_address(0)) + sizeOfFrameHeader;
-}
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-#endif // USE(GENERIC_CURRENT_STACK_POINTER)
-
-} // namespace WTF
+PAS_END_EXTERN_C;

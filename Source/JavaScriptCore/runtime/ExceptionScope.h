@@ -30,7 +30,7 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #include <JavaScriptCore/VM.h>
-#include <wtf/StackPointer.h>
+#include <bmalloc/StackPointer.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 

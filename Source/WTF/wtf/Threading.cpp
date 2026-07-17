@@ -49,10 +49,7 @@
 #include <wtf/darwin/LibraryPathDiagnostics.h>
 #endif
 
-#if BENABLE(LIBPAS)
-#define USE_LIBPAS_THREAD_SUSPEND_LOCK 1
 #include <bmalloc/pas_thread_suspend_lock.h>
-#endif
 #if USE(TZONE_MALLOC)
 #if BUSE(TZONE)
 #include <bmalloc/TZoneHeapManager.h>
@@ -74,7 +71,6 @@ namespace WTF {
 // Your issuing thread (A) attempts to suspend the target thread (B). Then, you will suspend the thread (C) additionally.
 // This case frequently happens if you stop threads to perform stack scanning. But thread (B) may hold the lock of thread (C).
 // In that case, dead lock happens. Using global lock here avoids this dead lock.
-#if USE(LIBPAS_THREAD_SUSPEND_LOCK)
 ThreadSuspendLocker::ThreadSuspendLocker()
 {
     pas_thread_suspend_lock_lock();
@@ -84,19 +80,6 @@ ThreadSuspendLocker::~ThreadSuspendLocker()
 {
     pas_thread_suspend_lock_unlock();
 }
-#else
-static Lock globalSuspendLock;
-
-ThreadSuspendLocker::ThreadSuspendLocker()
-{
-    globalSuspendLock.lock();
-}
-
-ThreadSuspendLocker::~ThreadSuspendLocker()
-{
-    globalSuspendLock.unlock();
-}
-#endif
 
 static std::optional<size_t> NODELETE stackSize(ThreadType threadType)
 {

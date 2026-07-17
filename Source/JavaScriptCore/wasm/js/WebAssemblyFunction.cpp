@@ -52,6 +52,7 @@
 #include "WasmModuleInformation.h"
 #include "WasmOperations.h"
 #include "WasmTypeDefinitionInlines.h"
+#include <bmalloc/StackPointer.h>
 
 namespace JSC {
 

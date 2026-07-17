@@ -87,6 +87,7 @@
 #include <wtf/Threading.h>
 
 #include <bmalloc/BPlatform.h>
+#include <bmalloc/ThreadSuspend.h>
 #include <bmalloc/pas_process.h>
 #include <errno.h>
 #include <process.h>
@@ -140,6 +141,7 @@ void Thread::initializeCurrentThreadInternal(const char* szThreadName)
 
 void Thread::initializePlatformThreading()
 {
+    bmalloc::api::threadSuspendSignalHandlerInstall();
 }
 
 static unsigned __stdcall wtfThreadEntryPoint(void* data)
@@ -213,23 +215,39 @@ void Thread::detach()
 auto Thread::suspend(const ThreadSuspendLocker&) -> Expected<void, PlatformSuspendError>
 {
     RELEASE_ASSERT_WITH_MESSAGE(this != &Thread::currentSingleton(), "We do not support suspending the current thread itself.");
-    DWORD result = SuspendThread(m_handle);
-    if (result != (DWORD)-1)
-        return { };
-    return makeUnexpected(result);
+    if (!m_suspendCount) {
+        ASSERT(!m_suspendData);
+        m_suspendData.emplace(m_handle, m_stack.origin(), m_stack.end());
+        if (!bmalloc::api::suspendThread(*m_suspendData)) {
+            DWORD error = GetLastError();
+            m_suspendData.reset();
+            return makeUnexpected(error);
+        }
+    }
+    ++m_suspendCount;
+    return { };
 }
 
 // During resume, suspend or resume should not be executed from the other threads.
 void Thread::resume(const ThreadSuspendLocker&)
 {
-    ResumeThread(m_handle);
+    ASSERT(m_suspendCount);
+    --m_suspendCount;
+    if (!m_suspendCount) {
+        ASSERT(m_suspendData);
+        bmalloc::api::resumeThread(*m_suspendData);
+        m_suspendData.reset();
+        ++m_suspendGeneration;
+    }
 }
 
-size_t Thread::getRegisters(const ThreadSuspendLocker&, PlatformRegisters& registers)
+SuspendedThreadRegisters Thread::getRegisters(const ThreadSuspendLocker&, PlatformRegisters& scratch)
 {
-    registers.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
-    GetThreadContext(m_handle, &registers);
-    return sizeof(CONTEXT);
+    ASSERT(m_suspendCount);
+    static_assert(sizeof(PlatformRegisters) == sizeof(pas_machine_registers));
+    PlatformRegisters& registers = *std::bit_cast<PlatformRegisters*>(
+        m_suspendData->getRegisters(std::bit_cast<pas_machine_registers*>(&scratch)));
+    return SuspendedThreadRegisters { registers, sizeof(PlatformRegisters), m_suspendGeneration };
 }
 
 Thread& Thread::initializeCurrentTLS()

@@ -25,8 +25,6 @@
 
 #include "pas_config.h"
 
-#if LIBPAS_ENABLED
-
 #include "pas_lock.h"
 #if PAS_OS(DARWIN)
 #include <mach/mach_traps.h>
@@ -117,4 +115,3 @@ void pas_lock_unlock_slow(pas_lock* lock)
 
 #endif /* PAS_OS(LINUX) || PAS_OS(WINDOWS) || PAS_OS(FREEBSD) */
 
-#endif /* LIBPAS_ENABLED */

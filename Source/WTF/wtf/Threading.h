@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include <bmalloc/ThreadSuspend.h>
 #include <mutex>
 #include <optional>
 #include <stdint.h>
@@ -41,6 +42,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
+#include <wtf/Platform.h>
 #include <wtf/PlatformRegisters.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
@@ -91,6 +93,33 @@ class ThreadSuspendLocker {
 public:
     WTF_EXPORT_PRIVATE ThreadSuspendLocker();
     WTF_EXPORT_PRIVATE ~ThreadSuspendLocker();
+};
+
+class SuspendedThreadRegisters {
+public:
+    SuspendedThreadRegisters(PlatformRegisters& registers LIFETIME_BOUND, size_t size, const unsigned& suspendGeneration)
+        : m_registers(&registers)
+        , m_size(size)
+        , m_suspendGeneration(&suspendGeneration)
+        , m_expectedGeneration(suspendGeneration)
+    {
+    }
+
+    PlatformRegisters& get() const
+    {
+        RELEASE_ASSERT_WITH_MESSAGE(*m_suspendGeneration == m_expectedGeneration, "PlatformRegisters accessed after the thread was resumed");
+        return *m_registers;
+    }
+
+    operator PlatformRegisters&() const { return get(); }
+
+    size_t size() const { return m_size; }
+
+private:
+    PlatformRegisters* m_registers;
+    size_t m_size;
+    const unsigned* m_suspendGeneration;
+    unsigned m_expectedGeneration;
 };
 
 class WTF_CAPABILITY("is current") Thread : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Thread>, ThreadLike {
@@ -185,7 +214,8 @@ public:
 
     WTF_EXPORT_PRIVATE Expected<void, PlatformSuspendError> suspend(const ThreadSuspendLocker&);
     WTF_EXPORT_PRIVATE void resume(const ThreadSuspendLocker&);
-    WTF_EXPORT_PRIVATE size_t getRegisters(const ThreadSuspendLocker&, PlatformRegisters&);
+    // Returns a view of the suspended thread's registers, using either the suspended thread's stack or scratch as storage.
+    WTF_EXPORT_PRIVATE SuspendedThreadRegisters getRegisters(const ThreadSuspendLocker&, PlatformRegisters& scratch LIFETIME_BOUND);
 
 #if USE(PTHREADS)
 #if OS(LINUX)
@@ -383,16 +413,17 @@ protected:
     ThreadSafeWeakHashSet<ThreadGroup> m_threadGroups;
     PlatformThreadHandle m_handle;
     const uint32_t m_uid;
-#if OS(WINDOWS)
-    ThreadIdentifier m_id { 0 };
-#elif OS(DARWIN)
+
+    unsigned m_suspendGeneration { 0 };
+
+#if OS(DARWIN)
     mach_port_t m_platformThread { MACH_PORT_NULL };
-#elif USE(PTHREADS)
-#if OS(LINUX)
+#else
+    std::optional<bmalloc::api::ThreadSuspendData> m_suspendData;
+    unsigned m_suspendCount { 0 };
+#if OS(LINUX) || OS(WINDOWS)
     ThreadIdentifier m_id { 0 };
 #endif
-    PlatformRegisters* m_platformRegisters { nullptr };
-    unsigned m_suspendCount { 0 };
 #endif
 
 #if OS(WINDOWS)

@@ -53,6 +53,7 @@ __PAS_BEGIN_EXTERN_C;
 
 #define __PAS_ALWAYS_INLINE inline __PAS_ALWAYS_INLINE_BUT_NOT_INLINE
 
+#define __PAS_ALWAYS_INLINE_FOR_CORRECTNESS inline __attribute__((__always_inline__))
 #define __PAS_NEVER_INLINE __attribute__((__noinline__))
 #define __PAS_NO_RETURN __attribute((__noreturn__))
 
@@ -61,14 +62,17 @@ __PAS_BEGIN_EXTERN_C;
 #define PAS_BMALLOC_HIDDEN 1
 #endif
 
+// Careful: this will mean that users of libpas will transitively export this API.
+#define __PAS_API_NEVER_HIDDEN __attribute__((visibility("default")))
+
 #if defined(PAS_LIBMALLOC) && PAS_LIBMALLOC || defined(PAS_BMALLOC_HIDDEN) && PAS_BMALLOC_HIDDEN
 #define __PAS_API __attribute__((visibility("hidden")))
 #else
-#define __PAS_API __attribute__((visibility("default")))
+#define __PAS_API __PAS_API_NEVER_HIDDEN
 #endif
 
 #if defined(PAS_BMALLOC) && PAS_BMALLOC && !(defined(PAS_BMALLOC_HIDDEN) && PAS_BMALLOC_HIDDEN)
-#define __PAS_BAPI __attribute__((visibility("default")))
+#define __PAS_BAPI __PAS_API_NEVER_HIDDEN
 #else
 #define __PAS_BAPI __PAS_API
 #endif

@@ -48,13 +48,11 @@ typedef uint64_t Slot;
 #ifdef __cplusplus
 extern "C" {
 #endif
-#if LIBPAS_ENABLED
 #if defined(PAS_BMALLOC)
 BEXPORT extern Slot g_config[];
-#else // !defined(PAS_BMALLOC)
+#elif LIBPAS_ENABLED
 extern Slot g_config[];
-#endif // defined(PAS_BMALLOC)
-#endif // LIBPAS_ENABLED
+#endif
 #ifdef __cplusplus
 }
 #endif
@@ -79,6 +77,7 @@ typedef struct {
 
     bool is_lockdown_mode;
     bool is_hardened;
+    int thread_suspend_signal;
 } pas_runtime_config;
 
 #if PAS_COMPILER(CLANG)

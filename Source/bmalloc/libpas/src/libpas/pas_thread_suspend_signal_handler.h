@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia, S.L. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +24,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include <wtf/ThreadMessage.h>
+#ifndef PAS_THREAD_SUSPEND_SIGNAL_HANDLER_H
+#define PAS_THREAD_SUSPEND_SIGNAL_HANDLER_H
 
+#include "pas_config.h"
 
-namespace WTF {
+#if !PAS_OS(DARWIN) && !PAS_OS(WINDOWS)
 
-MessageStatus sendMessageScoped(const ThreadSuspendLocker& locker, Thread& thread, const ThreadMessage& message)
-{
-    auto result = thread.suspend(locker);
-    if (!result)
-        return MessageStatus::ThreadExited;
+#include "pas_thread_suspend.h"
+#include "pas_utils.h"
 
-    PlatformRegisters scratch;
-    auto registers = thread.getRegisters(locker, scratch);
+PAS_BEGIN_EXTERN_C;
 
-    message(registers);
+// Do not use these directly, use pas_thread_suspend.
+void pas_thread_suspend_signal_handler_install(void);
+bool pas_thread_suspend_signal_handler_suspend(pas_thread_suspend_data*);
+void pas_thread_suspend_signal_handler_resume(pas_thread_suspend_data*);
+PAS_API int pas_thread_suspend_signal_number(void);
+PAS_API void pas_thread_suspend_set_signal(int signal);
 
-    thread.resume(locker);
-    return MessageStatus::MessageRan;
-}
+#if PAS_ENABLE_TESTING
+PAS_API unsigned pas_thread_suspend_signal_handler_retry_count(void);
+#endif
 
-} // namespace WTF
+PAS_END_EXTERN_C;
+
+#endif /* !PAS_OS(DARWIN) && !PAS_OS(WINDOWS) */
+
+#endif /* PAS_THREAD_SUSPEND_SIGNAL_HANDLER_H */

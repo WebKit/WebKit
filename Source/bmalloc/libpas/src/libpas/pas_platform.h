@@ -149,6 +149,30 @@
 #define PAS_OS_FREEBSD 1
 #endif
 
+#if defined(__Fuchsia__)
+#define PAS_OS_FUCHSIA 1
+#endif
+
+#if defined(__HAIKU__)
+#define PAS_OS_HAIKU 1
+#endif
+
+#if defined(__GNU__)
+#define PAS_OS_HURD 1
+#endif
+
+#if defined(__NetBSD__)
+#define PAS_OS_NETBSD 1
+#endif
+
+#if defined(__OpenBSD__)
+#define PAS_OS_OPENBSD 1
+#endif
+
+#if defined(__QNX__)
+#define PAS_OS_QNX 1
+#endif
+
 #if defined(WIN32) || defined(_WIN32)
 #define PAS_OS_WINDOWS 1
 #endif

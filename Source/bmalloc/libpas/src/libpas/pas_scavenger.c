@@ -42,6 +42,7 @@
 #include "pas_page_sharing_pool.h"
 #include "pas_status_reporter.h"
 #include "pas_thread_local_cache.h"
+#include "pas_thread_suspend.h"
 #include "pas_utility_heap.h"
 #include "pas_utils.h"
 #include <stdio.h>

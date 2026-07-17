@@ -121,4 +121,46 @@ TEST(WTF_Thread, ThreadSafetyAnalysisAssertIsCurrentWorks)
         EXPECT_EQ(2u, holder.result);
 }
 
+TEST(WTF_Thread, NestedSuspendAndResume)
+{
+    std::atomic_bool allowExit { false };
+    std::atomic_int counter { 0 };
+    BinarySemaphore threadStarted;
+
+    Ref thread = Thread::create("WTF::Test::NestedSuspend"_s, [&] {
+        threadStarted.signal();
+        while (!allowExit.load(std::memory_order_relaxed))
+            counter.fetch_add(1, std::memory_order_relaxed);
+    });
+
+    threadStarted.wait();
+
+    {
+        ThreadSuspendLocker locker;
+
+        auto suspendResult = thread->suspend(locker);
+        EXPECT_TRUE(suspendResult.has_value());
+
+        int after_first_suspend = counter.load(std::memory_order_relaxed);
+
+        // Second suspend should succeed and not assert.
+        suspendResult = thread->suspend(locker);
+        EXPECT_TRUE(suspendResult.has_value());
+
+        // Counter should be frozen across both suspends.
+        EXPECT_EQ(counter.load(std::memory_order_relaxed), after_first_suspend);
+
+        // First resume should NOT actually resume the thread (still nested).
+        thread->resume(locker);
+        EXPECT_EQ(counter.load(std::memory_order_relaxed), after_first_suspend);
+
+        // Second resume actually wakes it.
+        thread->resume(locker);
+    }
+
+    allowExit.store(true);
+    thread->waitForCompletion();
+    EXPECT_GT(counter.load(), 0);
+}
+
 } // namespace TestWebKitAPI

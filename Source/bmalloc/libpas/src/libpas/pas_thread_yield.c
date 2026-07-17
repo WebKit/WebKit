@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia, S.L. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include <wtf/ThreadMessage.h>
+#include "pas_thread_yield.h"
 
+#if PAS_OS(DARWIN)
+#include <mach/mach.h>
+#include <mach/thread_switch.h>
+#elif PAS_OS(WINDOWS)
+#include <windows.h>
+#else
+#include <sched.h>
+#endif
 
-namespace WTF {
+PAS_BEGIN_EXTERN_C;
 
-MessageStatus sendMessageScoped(const ThreadSuspendLocker& locker, Thread& thread, const ThreadMessage& message)
+void pas_thread_yield(void)
 {
-    auto result = thread.suspend(locker);
-    if (!result)
-        return MessageStatus::ThreadExited;
-
-    PlatformRegisters scratch;
-    auto registers = thread.getRegisters(locker, scratch);
-
-    message(registers);
-
-    thread.resume(locker);
-    return MessageStatus::MessageRan;
+#if PAS_OS(DARWIN)
+    const mach_msg_timeout_t timeoutInMS = 1;
+    thread_switch(MACH_PORT_NULL, SWITCH_OPTION_DEPRESS, timeoutInMS);
+#elif PAS_OS(WINDOWS)
+    if (!SwitchToThread())
+        Sleep(0);
+#else
+    sched_yield();
+#endif
 }
 
-} // namespace WTF
+PAS_END_EXTERN_C;

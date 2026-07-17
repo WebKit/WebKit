@@ -27,7 +27,7 @@
 #pragma once
 
 #include <algorithm>
-#include <wtf/StackPointer.h>
+#include <bmalloc/StackPointer.h>
 #include <wtf/ThreadingPrimitives.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

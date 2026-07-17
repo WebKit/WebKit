@@ -29,6 +29,10 @@
 #include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
 
+#if !OS(DARWIN)
+#include <bmalloc/ThreadSuspend.h>
+#endif
+
 #if OS(DARWIN)
 #include <mach/exception_types.h>
 #include <mach/thread_act.h>

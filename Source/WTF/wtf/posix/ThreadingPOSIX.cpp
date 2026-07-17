@@ -34,6 +34,7 @@
 
 #if USE(PTHREADS)
 
+#include <bmalloc/ThreadSuspend.h>
 #include <errno.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/NeverDestroyed.h>
@@ -82,99 +83,6 @@ namespace WTF {
 
 Thread::~Thread() = default;
 
-#if !OS(DARWIN)
-class Semaphore final {
-    WTF_MAKE_NONCOPYABLE(Semaphore);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Semaphore);
-public:
-    explicit Semaphore(unsigned initialValue)
-    {
-        int sharedBetweenProcesses = 0;
-        sem_init(&m_platformSemaphore, sharedBetweenProcesses, initialValue);
-    }
-
-    ~Semaphore()
-    {
-        sem_destroy(&m_platformSemaphore);
-    }
-
-    void wait()
-    {
-        sem_wait(&m_platformSemaphore);
-    }
-
-    void post()
-    {
-        sem_post(&m_platformSemaphore);
-    }
-
-private:
-    sem_t m_platformSemaphore;
-};
-static LazyNeverDestroyed<Semaphore> globalSemaphoreForSuspendResume;
-
-static std::atomic<Thread*> targetThread { nullptr };
-
-void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
-{
-    // Touching a global variable atomic types from signal handlers is allowed.
-    Thread* thread = targetThread.load();
-
-    if (thread->m_suspendCount) {
-        // This is signal handler invocation that is intended to be used to resume sigsuspend.
-        // So this handler invocation itself should not process.
-        //
-        // When signal comes, first, the system calls signal handler. And later, sigsuspend will be resumed. Signal handler invocation always precedes.
-        // So, the problem never happens that suspended.store(true, ...) will be executed before the handler is called.
-        // http://pubs.opengroup.org/onlinepubs/009695399/functions/sigsuspend.html
-        return;
-    }
-
-    void* approximateStackPointer = currentStackPointer();
-    if (!thread->m_stack.contains(approximateStackPointer)) {
-        // This happens if we use an alternative signal stack.
-        // 1. A user-defined signal handler is invoked with an alternative signal stack.
-        // 2. In the middle of the execution of the handler, we attempt to suspend the target thread.
-        // 3. A nested signal handler is executed.
-        // 4. The stack pointer saved in the machine context will be pointing to the alternative signal stack.
-        // In this case, we back off the suspension and retry a bit later.
-        thread->m_platformRegisters = nullptr;
-        globalSemaphoreForSuspendResume->post();
-        return;
-    }
-
-#if HAVE(MACHINE_CONTEXT)
-    ucontext_t* userContext = static_cast<ucontext_t*>(ucontext);
-    thread->m_platformRegisters = &registersFromUContext(userContext);
-#else
-    UNUSED_PARAM(ucontext);
-    PlatformRegisters platformRegisters { approximateStackPointer };
-    thread->m_platformRegisters = &platformRegisters;
-#endif
-
-    // Allow suspend caller to see that this thread is suspended.
-    // sem_post is async-signal-safe function. It means that we can call this from a signal handler.
-    // http://pubs.opengroup.org/onlinepubs/009695399/functions/xsh_chap02_04.html#tag_02_04_03
-    //
-    // And sem_post emits memory barrier that ensures that PlatformRegisters are correctly saved.
-    // http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html#tag_04_11
-    globalSemaphoreForSuspendResume->post();
-
-    // Reaching here, sigThreadSuspendResume is blocked in this handler (this is configured by sigaction's sa_mask).
-    // So before calling sigsuspend, sigThreadSuspendResume to this thread is deferred. This ensures that the handler is not executed recursively.
-    sigset_t blockedSignalSet;
-    sigfillset(&blockedSignalSet);
-    sigdelset(&blockedSignalSet, g_wtfConfig.sigThreadSuspendResume);
-    sigsuspend(&blockedSignalSet);
-
-    thread->m_platformRegisters = nullptr;
-
-    // Allow resume caller to see that this thread is resumed.
-    globalSemaphoreForSuspendResume->post();
-}
-
-#endif // !OS(DARWIN)
-
 void Thread::initializePlatformThreading()
 {
     if (!g_wtfConfig.isUserSpecifiedThreadSuspendResumeSignalConfigured) {
@@ -188,36 +96,12 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         }
     }
     g_wtfConfig.isThreadSuspendResumeSignalConfigured = true;
-
 #if !OS(DARWIN)
-    globalSemaphoreForSuspendResume.construct(0);
-
-    // Signal handlers are process global configuration.
-    // Intentionally block sigThreadSuspendResume in the handler.
-    // sigThreadSuspendResume will be allowed in the handler by sigsuspend.
-    auto attemptToSetSignal = [](int signal) -> bool {
-        struct sigaction action;
-        sigemptyset(&action.sa_mask);
-        sigaddset(&action.sa_mask, signal);
-
-        action.sa_sigaction = &signalHandlerSuspendResume;
-        action.sa_flags = SA_RESTART | SA_SIGINFO;
-
-        // Theoretically, this can have race conditions but currently, there is no way to deal with it,
-        // plus, we do not expect that this initialization is executed concurrently with the other
-        // initialization which also installs specific signals. If this is the problem, applications should
-        // change how to initialize things.
-        struct sigaction oldAction;
-        if (sigaction(signal, nullptr, &oldAction))
-            return false;
-        // It has signal already.
-        if (oldAction.sa_handler != SIG_DFL || std::bit_cast<void*>(oldAction.sa_sigaction) != std::bit_cast<void*>(SIG_DFL))
-            WTFLogAlways("Overriding existing handler for signal %d. Set JSC_SIGNAL_FOR_GC if you want WebKit to use a different signal", signal);
-        return !sigaction(signal, &action, 0);
-    };
-
-    bool signalIsInstalled = attemptToSetSignal(g_wtfConfig.sigThreadSuspendResume);
-    RELEASE_ASSERT(signalIsInstalled);
+    bmalloc::api::setThreadSuspendSignal(g_wtfConfig.sigThreadSuspendResume);
+#endif // !OS(DARWIN)
+    bmalloc::api::threadSuspendSignalHandlerInstall();
+#if !OS(DARWIN)
+    ASSERT(g_wtfConfig.sigThreadSuspendResume == bmalloc::api::threadSuspendSignalNumber());
 #endif
 }
 
@@ -477,53 +361,37 @@ auto Thread::suspend(const ThreadSuspendLocker&) -> Expected<void, PlatformSuspe
 {
     RELEASE_ASSERT_WITH_MESSAGE(this != &Thread::currentSingleton(), "We do not support suspending the current thread itself.");
 #if OS(DARWIN)
-    kern_return_t result = thread_suspend(m_platformThread);
-    if (result != KERN_SUCCESS)
-        return makeUnexpected(result);
-    return { };
+    if (!bmalloc::api::suspendThread(m_handle))
+        return makeUnexpected(-1);
 #else
     if (!m_suspendCount) {
-        targetThread.store(this);
-
-        while (true) {
-            // We must use pthread_kill to avoid queue-overflow problem with real-time signals.
-            int result = pthread_kill(m_handle, g_wtfConfig.sigThreadSuspendResume);
-            if (result)
-                return makeUnexpected(result);
-            globalSemaphoreForSuspendResume->wait();
-            if (m_platformRegisters)
-                break;
-            // Because of an alternative signal stack, we failed to suspend this thread.
-            // Retry suspension again after yielding.
-            Thread::yield();
+        ASSERT(!m_suspendData);
+        m_suspendData.emplace(m_handle, m_stack.origin(), m_stack.end());
+        if (!bmalloc::api::suspendThread(*m_suspendData)) {
+            m_suspendData.reset();
+            return makeUnexpected(-1);
         }
     }
     ++m_suspendCount;
-    return { };
 #endif
+    return { };
 }
 
 void Thread::resume(const ThreadSuspendLocker&)
 {
 #if OS(DARWIN)
-    thread_resume(m_platformThread);
+    bmalloc::api::resumeThread(m_handle);
+    ++m_suspendGeneration;
 #else
-    if (m_suspendCount == 1) {
-        // When allowing sigThreadSuspendResume interrupt in the signal handler by sigsuspend and SigThreadSuspendResume is actually issued,
-        // the signal handler itself will be called once again.
-        // There are several ways to distinguish the handler invocation for suspend and resume.
-        // 1. Use different signal numbers. And check the signal number in the handler.
-        // 2. Use some arguments to distinguish suspend and resume in the handler.
-        // 3. Use thread's flag.
-        // In this implementaiton, we take (3). m_suspendCount is used to distinguish it.
-        // Note that we must use pthread_kill to avoid queue-overflow problem with real-time signals.
-        targetThread.store(this);
-        if (pthread_kill(m_handle, g_wtfConfig.sigThreadSuspendResume) == ESRCH)
-            return;
-        globalSemaphoreForSuspendResume->wait();
-    }
+    ASSERT(m_suspendCount);
     --m_suspendCount;
-#endif
+    if (!m_suspendCount) {
+        ASSERT(m_suspendData);
+        bmalloc::api::resumeThread(*m_suspendData);
+        m_suspendData.reset();
+        ++m_suspendGeneration;
+    }
+#endif // !OS(DARWIN)
 }
 
 #if OS(DARWIN)
@@ -560,21 +428,22 @@ static ThreadStateMetadata NODELETE threadStateMetadata()
 }
 #endif // OS(DARWIN)
 
-size_t Thread::getRegisters(const ThreadSuspendLocker&, PlatformRegisters& registers)
+SuspendedThreadRegisters Thread::getRegisters(const ThreadSuspendLocker&, PlatformRegisters& scratch)
 {
 #if OS(DARWIN)
     auto metadata = threadStateMetadata();
-    kern_return_t result = thread_get_state(m_platformThread, metadata.flavor, (thread_state_t)&registers, &metadata.userCount);
+    kern_return_t result = thread_get_state(m_platformThread, metadata.flavor, (thread_state_t)&scratch, &metadata.userCount);
     if (result != KERN_SUCCESS) {
         WTFReportFatalError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, "JavaScript garbage collection failed because thread_get_state returned an error (%d). This is probably the result of running inside Rosetta, which is not supported.", result);
         CRASH_WITH_INFO(result, KERN_SUCCESS);
     }
-    return metadata.userCount * sizeof(uintptr_t);
+    return SuspendedThreadRegisters { scratch, metadata.userCount * sizeof(uintptr_t), m_suspendGeneration };
 #else
     ASSERT_WITH_MESSAGE(m_suspendCount, "We can get registers only if the thread is suspended.");
-    ASSERT(m_platformRegisters);
-    registers = *m_platformRegisters;
-    return sizeof(PlatformRegisters);
+    static_assert(sizeof(PlatformRegisters) == sizeof(pas_machine_registers));
+    PlatformRegisters& registers = *std::bit_cast<PlatformRegisters*>(
+        m_suspendData->getRegisters(std::bit_cast<pas_machine_registers*>(&scratch)));
+    return SuspendedThreadRegisters { registers, sizeof(PlatformRegisters), m_suspendGeneration };
 #endif
 }
 

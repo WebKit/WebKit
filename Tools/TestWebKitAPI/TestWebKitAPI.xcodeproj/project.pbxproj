@@ -680,6 +680,7 @@
 				WebKit/WKWebView/WKWebExtensionAPILocalization.mm = "-fobjc-arc";
 			};
 			membershipExceptions = (
+				JavaScriptCore/ConfigureSignalForGC.cpp,
 				JavaScriptCore/DisallowVMEntry.cpp,
 				JavaScriptCore/InspectorConsoleMessage.cpp,
 				JavaScriptCore/JSRunLoopTimer.mm,
@@ -1178,6 +1179,7 @@
 				WTF/Condition.cpp,
 				WTF/CrossThreadCopierTests.cpp,
 				WTF/CrossThreadTask.cpp,
+				WTF/CurrentStackPointer.cpp,
 				WTF/CString.cpp,
 				WTF/CStringView.cpp,
 				WTF/darwin/MachSendRight.cpp,

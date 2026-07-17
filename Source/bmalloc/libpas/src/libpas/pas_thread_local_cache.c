@@ -35,6 +35,7 @@
 #include "pas_heap_lock.h"
 #include "pas_large_utility_free_heap.h"
 #include "pas_log.h"
+#include "pas_machine_registers.h"
 #include "pas_process.h"
 #include "pas_scavenger.h"
 #include "pas_segregated_deallocation_mode.h"
@@ -42,6 +43,7 @@
 #include "pas_system_heap.h"
 #include "pas_thread_local_cache_layout.h"
 #include "pas_thread_local_cache_node.h"
+#include "pas_thread_suspend.h"
 #include "pas_thread_suspend_lock.h"
 #include "pas_zero_memory.h"
 #if PAS_OS(WINDOWS)
@@ -109,6 +111,11 @@ static void deallocate(pas_thread_local_cache* thread_local_cache)
     char* begin;
     size_t size;
 
+#if PAS_OS(WINDOWS)
+    if (thread_local_cache->native_thread_handle)
+        CloseHandle((HANDLE)thread_local_cache->native_thread_handle);
+#endif
+
     pas_large_utility_free_heap_deallocate(
         thread_local_cache->should_stop_bitvector,
         PAS_BITVECTOR_NUM_BYTES(thread_local_cache->allocator_index_capacity));
@@ -122,8 +129,8 @@ static void deallocate(pas_thread_local_cache* thread_local_cache)
         thread_local_cache->allocator_index_capacity);
 
     /* If we're doing symmetric decommit, then we need to commit the memory for the TLC now. */
-    pas_page_malloc_commit_without_mprotect(begin, size, /* is_symmetric */ !!PAS_USE_SYMMETRIC_PAGE_ALLOCATION, pas_page_flags_none);
-    
+    pas_page_malloc_commit_without_mprotect(begin, size, /* is_symmetric */ false, pas_page_flags_none);
+
     pas_large_utility_free_heap_deallocate(begin, size);
 }
 
@@ -277,7 +284,9 @@ static void dump_thread_diagnostics(pthread_t thread)
         pas_log("[%d] thread %p does not have id\n", getpid(), thread);
 #endif
 #if PAS_PLATFORM(PLAYSTATION)
-    getname_result = pthread_get_name_np(thread, thread_name);
+    /* The PlayStation SDK does not expose a pthread getname API. */
+    PAS_UNUSED_PARAM(thread_name);
+    getname_result = -1;
 #else
     getname_result = pthread_getname_np(thread, thread_name, sizeof(thread_name));
 #endif
@@ -306,6 +315,19 @@ pas_thread_local_cache* pas_thread_local_cache_create(void)
         dump_thread_diagnostics(pthread_self());
     }
     thread_local_cache->thread = pthread_self();
+
+#if PAS_OS(WINDOWS)
+    {
+        HANDLE handle = NULL;
+        BOOL ok = DuplicateHandle(GetCurrentProcess(), GetCurrentThread(),
+                                  GetCurrentProcess(), &handle,
+                                  0, FALSE, DUPLICATE_SAME_ACCESS);
+        PAS_ASSERT(ok);
+        thread_local_cache->native_thread_handle = handle;
+    }
+#endif
+
+    pas_thread_suspend_initialize();
 
     pas_compiler_fence();
     thread_local_cache->allocator_index_upper_bound = allocator_index_upper_bound;
@@ -407,9 +429,14 @@ pas_local_allocator_result pas_thread_local_cache_get_local_allocator_slow(
             pas_log("[%d] Reallocating TLC %p -> %p\n", getpid(), thread_local_cache, new_thread_local_cache);
     
         new_thread_local_cache->node = thread_local_cache->node;
-    
+
         new_thread_local_cache->thread = thread_local_cache->thread;
-    
+
+#if PAS_OS(WINDOWS)
+        new_thread_local_cache->native_thread_handle = thread_local_cache->native_thread_handle;
+        thread_local_cache->native_thread_handle = NULL;
+#endif
+
         new_thread_local_cache->allocator_index_upper_bound =
             thread_local_cache->allocator_index_upper_bound;
 
@@ -548,7 +575,7 @@ void pas_thread_local_cache_ensure_committed(pas_thread_local_cache* thread_loca
         pas_page_malloc_commit_without_mprotect(
             (char*)thread_local_cache + (page_index << pas_page_malloc_alignment_shift()),
             pas_page_malloc_alignment(),
-            /* is_symmetric */ !!PAS_USE_SYMMETRIC_PAGE_ALLOCATION,
+            /* is_symmetric */ false,
             pas_page_flags_none);
 
         pas_bitvector_set(thread_local_cache->pages_committed, page_index, true);
@@ -854,79 +881,60 @@ void pas_thread_local_cache_flush_deallocation_log_direct(pas_thread_local_cache
         thread_local_cache, heap_lock_hold_mode, pas_segregated_deallocation_direct_mode);
 }
 
-typedef struct scavenger_thread_suspend_data {
-    bool did_suspend;
-    bool is_scavenger_itself;
-#if PAS_OS(DARWIN)
-    mach_port_t mach_thread;
-#endif
-} scavenger_thread_suspend_data;
-
-static scavenger_thread_suspend_data scavenger_thread_suspend_data_create(void)
-{
-    scavenger_thread_suspend_data thread_suspend_data;
-    thread_suspend_data.did_suspend = false;
-    thread_suspend_data.is_scavenger_itself = false;
-    return thread_suspend_data;
-}
-
-#if PAS_OS(DARWIN)
-
-static void suspend(pas_thread_local_cache* cache, scavenger_thread_suspend_data* thread_suspend_data)
+static void suspend(pas_thread_local_cache* cache, pas_thread_suspend_data* thread_suspend_data)
 {
     static const bool verbose = false;
-
-    pthread_t thread;
-    kern_return_t result;
 
     if (thread_suspend_data->did_suspend)
         return;
 
-    thread_suspend_data->did_suspend = true;
-    
     if (verbose)
-        pas_log("Suspending TLC %p with thread %p.\n", cache, cache->thread);
+        pas_log("[%d] Suspending TLC %p.\n", getpid(), cache);
 
-    thread = cache->thread;
-    PAS_ASSERT(thread);
-    
-    thread_suspend_data->is_scavenger_itself = thread == pthread_self();
-    if (thread_suspend_data->is_scavenger_itself)
+    if (cache->thread == pthread_self())
         return;
 
-    thread_suspend_data->mach_thread = pthread_mach_thread_np(thread);
-    result = thread_suspend(thread_suspend_data->mach_thread);
-    
     /* Fun fact: it's impossible for us to try to suspend a thread that has exited, since
        thread exit for any thread with a TLC needs to grab the heap lock and we hold the
        heap lock. */
 
-    if (result != KERN_SUCCESS) {
-        pas_log("[%d] Failed to suspend pthread %p (mach thread %d) associated with TLC %p: %d\n",
-                getpid(), thread, thread_suspend_data->mach_thread, cache, result);
-        dump_thread_diagnostics(thread);
-        PAS_ASSERT(result == KERN_SUCCESS);
+#if PAS_OS(DARWIN)
+    if (!pas_thread_suspend_suspend(thread_suspend_data->native_thread)) {
+        pas_log("[%d] Failed to suspend thread associated with TLC %p\n",
+            getpid(), cache);
+        dump_thread_diagnostics(thread_suspend_data->native_thread);
+        PAS_ASSERT(false);
     }
+    thread_suspend_data->did_suspend = true;
+#else
+    if (!pas_thread_suspend_suspend(thread_suspend_data)) {
+        pas_log("[%d] Failed to suspend thread associated with TLC %p\n",
+            getpid(), cache);
+#if !PAS_OS(WINDOWS)
+        dump_thread_diagnostics(thread_suspend_data->native_thread);
+#endif
+        PAS_ASSERT(false);
+    }
+    PAS_ASSERT(thread_suspend_data->did_suspend);
+#endif
 }
 
-static void resume(pas_thread_local_cache* cache, scavenger_thread_suspend_data* thread_suspend_data)
+static void resume(pas_thread_local_cache* cache, pas_thread_suspend_data* thread_suspend_data)
 {
     static const bool verbose = false;
-    
-    kern_return_t result;
 
     if (verbose)
-        pas_log("Resuming TLC %p with thread %p.\n", cache, cache->thread);
-    
-    if (thread_suspend_data->is_scavenger_itself)
+        pas_log("[%d] Resuming TLC %p.\n", getpid(), cache);
+
+    if (cache->thread == pthread_self())
         return;
 
-    result = thread_resume(thread_suspend_data->mach_thread);
-    
-    PAS_ASSERT(result == KERN_SUCCESS);
-}
-
+#if PAS_OS(DARWIN)
+    pas_thread_suspend_resume(thread_suspend_data->native_thread);
+#else
+    pas_thread_suspend_resume(thread_suspend_data);
 #endif
+}
 
 static void decommit_allocator_range(pas_thread_local_cache* cache,
                                      pas_thread_local_cache_layout_segment* begin_segment,
@@ -936,9 +944,7 @@ static void decommit_allocator_range(pas_thread_local_cache* cache,
                                      pas_thread_local_cache_layout_segment* end_segment,
                                      uintptr_t end_node_index)
 {
-#if PAS_OS(DARWIN)
     static const bool verbose = false;
-    
     uintptr_t begin_page_index;
     uintptr_t end_page_index;
     pas_thread_local_cache_layout_node inner_node;
@@ -946,6 +952,9 @@ static void decommit_allocator_range(pas_thread_local_cache* cache,
     size_t page_size;
     size_t page_size_shift;
     pas_range decommit_range;
+
+    if (verbose && start_of_possible_decommit != end_of_possible_decommit)
+        pas_log("Trying to decommit allocator range %p...%p\n", (void*)start_of_possible_decommit, (void*)end_of_possible_decommit);
 
     pas_heap_lock_assert_held();
     pas_lock_assert_held(&cache->node->scavenger_lock);
@@ -969,18 +978,24 @@ static void decommit_allocator_range(pas_thread_local_cache* cache,
         for (inner_node = pas_thread_local_cache_layout_segment_get_node(segment, node_index); !(segment == end_segment && node_index == end_node_index); inner_node = pas_thread_local_cache_layout_segment_next_node(&segment, &node_index))
             pas_thread_local_cache_layout_node_prepare_to_decommit(inner_node, cache, decommit_range);
     }
-    
+
     for (page_index = begin_page_index; page_index < end_page_index; ++page_index) {
         PAS_ASSERT(pas_bitvector_get(cache->pages_committed, page_index));
         pas_bitvector_set(cache->pages_committed, page_index, false);
     }
 
-    if (verbose)
+    if (verbose) {
         pas_log("Decommitting %p...%p\n", (void*)decommit_range.begin, (void*)decommit_range.end);
+        pas_log("Num committed pages in the range before decommit: %zu\n",
+                pas_count_committed_pages(
+                    (char*)cache + decommit_range.begin,
+                    pas_range_size(decommit_range),
+                    &pas_large_utility_free_heap_allocation_config));
+    }
 
-    pas_page_malloc_decommit_without_mprotect(
+        pas_page_malloc_decommit_without_mprotect(
         (char*)cache + decommit_range.begin, pas_range_size(decommit_range),
-        /* is_symmetric */ !!PAS_USE_SYMMETRIC_PAGE_ALLOCATION, pas_page_flags_none);
+        /* is_symmetric */ false, pas_page_flags_none);
 
     if (verbose) {
         pas_log("Num committed pages in the range we just decommitted: %zu\n",
@@ -989,15 +1004,6 @@ static void decommit_allocator_range(pas_thread_local_cache* cache,
                     pas_range_size(decommit_range),
                     &pas_large_utility_free_heap_allocation_config));
     }
-#else /* PAS_OS(DARWIN) -> so !PAS_OS(DARWIN) */
-    PAS_UNUSED_PARAM(cache);
-    PAS_UNUSED_PARAM(begin_segment);
-    PAS_UNUSED_PARAM(begin_node_index);
-    PAS_UNUSED_PARAM(start_of_possible_decommit);
-    PAS_UNUSED_PARAM(end_of_possible_decommit);
-    PAS_UNUSED_PARAM(end_segment);
-    PAS_UNUSED_PARAM(end_node_index);
-#endif /* PAS_OS(DARWIN) -> so end of !PAS_OS(DARWIN) */
 }
 
 static void stop_allocator(pas_thread_local_cache* cache,
@@ -1005,16 +1011,16 @@ static void stop_allocator(pas_thread_local_cache* cache,
                            pas_allocator_index allocator_index,
                            pas_local_allocator_scavenger_data* scavenger_data,
                            bool* result,
-                           scavenger_thread_suspend_data* thread_suspend_data)
+                           pas_thread_suspend_data* thread_suspend_data)
 {
     static const bool verbose = false;
-    
+
     if (allocator_action == pas_allocator_scavenge_request_stop_action) {
         uint8_t should_stop_count;
-                    
+
         if (verbose)
-            pas_log("Doing the request thingy.\n");
-                    
+            pas_log("pas_allocator_scavenge_request_stop_action\n");
+
         if (scavenger_data->dirty) {
             if (verbose)
                 pas_log("It was dirty.\n");
@@ -1063,15 +1069,16 @@ static void stop_allocator(pas_thread_local_cache* cache,
         return;
     }
 
-#if PAS_OS(DARWIN)
     if (verbose)
         pas_log("Need to suspend for allocator %p\n", scavenger_data);
 
     suspend(cache, thread_suspend_data);
 
-    PAS_ASSERT(thread_suspend_data->did_suspend);
-                
+    PAS_ASSERT(thread_suspend_data->did_suspend || cache->thread == pthread_self());
+
     if (scavenger_data->is_in_use) {
+        if (verbose)
+            pas_log("Allocator %p in use\n", scavenger_data);
         *result = true;
         return;
     }
@@ -1085,9 +1092,6 @@ static void stop_allocator(pas_thread_local_cache* cache,
     if (!pas_local_allocator_scavenger_data_stop(
             scavenger_data, pas_lock_lock_mode_try_lock, pas_lock_is_held))
         *result = true;
-#else
-    PAS_UNUSED_PARAM(thread_suspend_data);
-#endif
 }
 
 bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_action,
@@ -1152,7 +1156,15 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
         }
 
         if (allocator_action != pas_allocator_scavenge_no_action) {
-            scavenger_thread_suspend_data thread_suspend_data;
+            // Stack bounds intentionally NULL: the scavenger does not read register state.
+#if PAS_OS(WINDOWS)
+            pas_native_thread_handle native_thread =
+                (pas_native_thread_handle)cache->native_thread_handle;
+#else
+            pas_native_thread_handle native_thread = (pas_native_thread_handle)cache->thread;
+#endif
+            pas_thread_suspend_data thread_suspend_data =
+                pas_thread_suspend_data_create(native_thread, (pas_machine_stack_bounds) { NULL, NULL });
             pas_thread_local_cache_layout_node layout_node;
             pas_thread_local_cache_layout_segment* segment;
             pas_thread_local_cache_layout_segment* begin_segment;
@@ -1160,13 +1172,8 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
             uintptr_t page_index;
             uintptr_t node_index;
             uintptr_t begin_node_index;
-            
-            thread_suspend_data = scavenger_thread_suspend_data_create();
-
             start_of_possible_decommit =
                 pas_thread_local_cache_offset_of_allocator(PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES);
-
-            PAS_ASSERT(!thread_suspend_data.did_suspend);
 
             begin_segment = NULL;
             begin_node_index = 0;
@@ -1221,11 +1228,8 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
                 } else
                     stop_allocator(cache, allocator_action, allocator_index, scavenger_data, &result, &thread_suspend_data);
             }
-            
-#if PAS_OS(DARWIN)
             if (thread_suspend_data.did_suspend)
                 resume(cache, &thread_suspend_data);
-#endif
 
             if (thread_local_cache_decommit_action == pas_thread_local_cache_decommit_if_possible_action) {
                 uintptr_t begin_page_index =

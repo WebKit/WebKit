@@ -399,8 +399,8 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
             RegExp* regExp = nullptr;
             void* llintPC;
             {
-                PlatformRegisters registers;
-                m_jscExecutionThread->getRegisters(threadSuspendLocker, registers);
+                PlatformRegisters scratch;
+                auto registers = m_jscExecutionThread->getRegisters(threadSuspendLocker, scratch);
                 machineFrame = MachineContext::framePointer(registers);
                 callFrame = static_cast<CallFrame*>(machineFrame);
                 auto instructionPointer = MachineContext::instructionPointer(registers);

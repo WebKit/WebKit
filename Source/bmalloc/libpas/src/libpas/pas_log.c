@@ -25,8 +25,6 @@
 
 #include "pas_config.h"
 
-#if LIBPAS_ENABLED
-
 #include "pas_log.h"
 
 #include <errno.h>
@@ -128,5 +126,3 @@ void pas_start_crash_logging(void)
     pas_thread_that_is_crash_logging = pthread_self();
     pas_fence();
 }
-
-#endif /* LIBPAS_ENABLED */
