@@ -453,13 +453,23 @@ void CurlHandle::appendRequestHeader(const String& name, const String& value)
 
 void CurlHandle::removeRequestHeader(const String& name)
 {
-    // Add a header with no content, the internally used header will get disabled. 
+    // Add a header with no content, the internally used header will get disabled.
     auto header = makeString(name, ':');
     appendRequestHeader(WTF::move(header));
 }
 
 void CurlHandle::appendRequestHeader(const String& header)
 {
+    if (startsWithLettersIgnoringASCIICase(header, "proxy-"_s)) {
+        bool needToEnable = m_proxyRequestHeaders.isEmpty();
+
+        m_proxyRequestHeaders.append(header);
+
+        if (needToEnable)
+            enableProxyRequestHeaders();
+        return;
+    }
+
     bool needToEnable = m_requestHeaders.isEmpty();
 
     m_requestHeaders.append(header);
@@ -475,6 +485,15 @@ void CurlHandle::enableRequestHeaders()
 
     const struct curl_slist* headers = m_requestHeaders.head();
     curl_easy_setopt(m_handle, CURLOPT_HTTPHEADER, headers);
+}
+
+void CurlHandle::enableProxyRequestHeaders()
+{
+    if (m_proxyRequestHeaders.isEmpty())
+        return;
+
+    const struct curl_slist* headers = m_proxyRequestHeaders.head();
+    curl_easy_setopt(m_handle, CURLOPT_PROXYHEADER, headers);
 }
 
 void CurlHandle::enableHttp()
