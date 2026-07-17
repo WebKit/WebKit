@@ -91,8 +91,6 @@ struct FlexLayoutConstraints {
     // flow; availableLogicalHeight for column flow). Unlike mainAxisAvailableSpace this never carries the indefinite
     // LayoutUnit::max() marker, since a percentage main-size must resolve against a real size.
     LayoutUnit mainAxisSizeForLengthResolution;
-    // The minimum logical height the container needs when it has a line even while empty (nullopt when it does not).
-    std::optional<LayoutUnit> minimumHeightForLineIfEmpty;
 };
 
 // The layout logic for a legacy flex container, factored out of RenderFlexibleBox (mirrors the

@@ -231,10 +231,9 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
 
         if (!layoutUsingFlexFormattingContext()) {
             auto flexItems = collectFlexItems(relayoutChildren);
-            if (flexItems.isEmpty()) {
-                adjustLogicalHeightForLineIfEmpty();
-                updateLogicalHeight();
-            } else {
+            if (flexItems.isEmpty())
+                updateFlexContainerLogicalHeight();
+            else {
                 auto flexLayoutResult = FlexLayout(*this, flexLayoutConstraints()).performFlexLayout(flexItems, relayoutChildren);
                 if (flexLayoutResult.alignContentStartOverflow)
                     m_alignContentStartOverflow = *flexLayoutResult.alignContentStartOverflow;
@@ -1105,7 +1104,6 @@ FlexLayoutConstraints RenderFlexibleBox::flexLayoutConstraints()
         .flowAwarePaddingBlock = { utils.flowAwarePaddingBefore(), utils.flowAwarePaddingAfter() },
         .mainAxisAvailableSpace = mainAxisAvailableSpace(),
         .mainAxisSizeForLengthResolution = utils.isColumnFlow() ? availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding) : contentBoxLogicalWidth(),
-        .minimumHeightForLineIfEmpty = minimumHeightForLineIfEmpty(),
     };
 }
 
@@ -1131,19 +1129,11 @@ LayoutUnit RenderFlexibleBox::mainAxisAvailableSpace()
     return logicalHeight == LayoutUnit::max() ? logicalHeight : std::max(0_lu, logicalHeight - (borderAndPaddingLogicalHeight() + scrollbarLogicalHeight()));
 }
 
-void RenderFlexibleBox::setLogicalHeightForRowFlexContent(LayoutUnit contentLogicalHeight)
-{
-    // Row flow's cross size is the content extent FlexLayout accumulated from the lines, including the gaps
-    // between them. (Column flow's logical height is its main size, already set while placing the items.)
-    setLogicalHeight(contentLogicalHeight);
-}
-
-void RenderFlexibleBox::finalizeFlexContainerLogicalHeight(std::optional<LayoutUnit> minimumHeightForLineIfEmpty)
+void RenderFlexibleBox::updateFlexContainerLogicalHeight()
 {
     // Reserve a line's worth of height if the container has a line even while empty, then resolve the final
     // logical height against the container's own specified/min/max height and box-sizing.
-    if (minimumHeightForLineIfEmpty && borderBoxHeight() < *minimumHeightForLineIfEmpty)
-        setLogicalHeight(*minimumHeightForLineIfEmpty);
+    adjustLogicalHeightForLineIfEmpty();
     updateLogicalHeight();
 }
 
