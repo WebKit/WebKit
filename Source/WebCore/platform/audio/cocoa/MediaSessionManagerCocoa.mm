@@ -90,7 +90,7 @@ Ref<MediaSessionManagerCocoa> MediaSessionManagerCocoa::create(PageIdentifier pa
 }
 #endif // !PLATFORM(MAC)
 
-MediaSessionManagerCocoa::MediaSessionManagerCocoa(PageIdentifier pageIdentifier)
+MediaSessionManagerCocoa::MediaSessionManagerCocoa(std::optional<PageIdentifier> pageIdentifier)
     : PlatformMediaSessionManager(pageIdentifier)
     , m_nowPlayingManager(hasPlatformStrategies() ? platformStrategies()->mediaStrategy()->createNowPlayingManager() : nullptr)
     , m_nowPlayingUpdateTimer(RunLoop::mainSingleton(), "MediaSessionManagerCocoa::NowPlayingUpdateTimer"_s, this, &MediaSessionManagerCocoa::updateNowPlayingInfo)
@@ -313,7 +313,8 @@ void MediaSessionManagerCocoa::removeSession(PlatformMediaSessionInterface& sess
 
     if (session.isActiveNowPlayingSession()) {
         session.setActiveNowPlayingSession(false);
-        if (RefPtr page = Page::fromPageIdentifier(pageIdentifier()))
+        // FIXME: Make a better abstraction so we don't need to access a WebCore::Page from a PlatformMediaSessionManager.
+        if (RefPtr page = pageIdentifier() ? Page::fromPageIdentifier(*pageIdentifier()) : nullptr)
             page->hasActiveNowPlayingSessionChanged();
     }
 
@@ -525,7 +526,8 @@ void MediaSessionManagerCocoa::updateActiveNowPlayingSession(RefPtr<PlatformMedi
     });
 
     if (activeSessionChanged) {
-        if (RefPtr page = Page::fromPageIdentifier(pageIdentifier()))
+        // FIXME: Make a better abstraction so we don't need to access a WebCore::Page from a PlatformMediaSessionManager.
+        if (RefPtr page = pageIdentifier() ? Page::fromPageIdentifier(*pageIdentifier()) : nullptr)
             page->hasActiveNowPlayingSessionChanged();
 
         adjustNowPlayingUpdateInterval();

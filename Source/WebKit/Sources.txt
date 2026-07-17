@@ -426,7 +426,6 @@ UIProcess/ProvisionalFrameProxy.cpp
 UIProcess/ProvisionalPageProxy.cpp
 UIProcess/RemotePageDrawingAreaProxy.cpp
 UIProcess/RemotePageFullscreenManagerProxy.cpp
-UIProcess/RemotePageMediaSessionManagerProxy.cpp
 UIProcess/RemotePagePlaybackSessionManagerProxy.cpp
 UIProcess/RemotePageProxy.cpp
 UIProcess/RemotePageScreenOrientationManagerProxy.cpp

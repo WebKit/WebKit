@@ -157,6 +157,11 @@
 #import <pal/system/ios/Device.h>
 #endif
 
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+#include "RemoteMediaSessionManagerProxy.h"
+#include "RemoteMediaSessionManagerProxyMessages.h"
+#endif
+
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromWebProcess(url), connection())
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection(), completion)
@@ -1398,6 +1403,12 @@ bool WebProcessProxy::dispatchMessage(IPC::Connection& connection, IPC::Decoder&
             WebFrameProxy::sendCancelReply(connection, decoder);
         return true;
     }
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+    if (messageName == Messages::RemoteMediaSessionManagerProxy::messageReceiverName()) {
+        RemoteMediaSessionManagerProxy::singleton()->didReceiveMessage(connection, decoder);
+        return true;
+    }
+#endif
 
     // FIXME: Add unhandled message logging.
     // WebProcessProxy will receive messages to instances that were removed from

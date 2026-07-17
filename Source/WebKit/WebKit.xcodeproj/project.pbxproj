@@ -7089,8 +7089,6 @@
 		7B9FC5E028A54373007570E7 /* XPCUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XPCUtilities.mm; sourceTree = "<group>"; };
 		7BAB110F25DD02B2008FC479 /* ScopedActiveMessageReceiveQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopedActiveMessageReceiveQueue.h; sourceTree = "<group>"; };
 		7BB28D832E49EA58004EBEBC /* RemoteGraphicsContextGLFunctionsGenerated.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLFunctionsGenerated.cpp; sourceTree = "<group>"; };
-		7BB99B5C2FCA4D6500BA6146 /* RemotePageMediaSessionManagerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemotePageMediaSessionManagerProxy.h; sourceTree = "<group>"; };
-		7BB99B5D2FCA4EC800BA6146 /* RemotePageMediaSessionManagerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemotePageMediaSessionManagerProxy.cpp; sourceTree = "<group>"; };
 		7BBA63DC280E93B500B04823 /* IPCConnectionTesterIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCConnectionTesterIdentifier.h; sourceTree = "<group>"; };
 		7BBA63DD280E93B600B04823 /* IPCConnectionTester.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IPCConnectionTester.cpp; sourceTree = "<group>"; };
 		7BBA63DE280E93B600B04823 /* IPCConnectionTester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCConnectionTester.h; sourceTree = "<group>"; };
@@ -16132,8 +16130,6 @@
 				5CCB54DB2A4FEA6A0005FAA8 /* RemotePageDrawingAreaProxy.h */,
 				FABBBC802D35AC6800820017 /* RemotePageFullscreenManagerProxy.cpp */,
 				FABBBC7F2D35AC6800820017 /* RemotePageFullscreenManagerProxy.h */,
-				7BB99B5D2FCA4EC800BA6146 /* RemotePageMediaSessionManagerProxy.cpp */,
-				7BB99B5C2FCA4D6500BA6146 /* RemotePageMediaSessionManagerProxy.h */,
 				FA4EFC4F2E024493005DADAF /* RemotePagePlaybackSessionManagerProxy.cpp */,
 				FA4EFC4E2E024493005DADAF /* RemotePagePlaybackSessionManagerProxy.h */,
 				5C907E9A294D507100B3402D /* RemotePageProxy.cpp */,

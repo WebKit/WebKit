@@ -418,10 +418,6 @@
 #include "WebDeviceOrientationUpdateProviderProxy.h"
 #endif
 
-#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-#include "RemoteMediaSessionManagerProxy.h"
-#endif
-
 #if ENABLE(DATA_DETECTION)
 #include "DataDetectionResult.h"
 #endif
@@ -492,7 +488,6 @@
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 #include "RemoteAudioSessionConfiguration.h"
-#include "RemoteMediaSessionManagerProxy.h"
 #endif
 
 #if HAVE(ENHANCED_SECURITY_LINKS)
@@ -1731,13 +1726,6 @@ void WebPageProxy::didAttachToRunningProcess()
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
     ASSERT(!m_webDeviceOrientationUpdateProviderProxy);
     m_webDeviceOrientationUpdateProviderProxy = WebDeviceOrientationUpdateProviderProxy::create(*this);
-#endif
-
-#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    if (protect(preferences())->remoteMediaSessionManagerEnabled() || protect(preferences())->siteIsolationEnabled()) {
-        ASSERT(!m_mediaSessionManagerProxy);
-        m_mediaSessionManagerProxy = RemoteMediaSessionManagerProxy::create(*this);
-    }
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
@@ -13857,10 +13845,6 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_webDeviceOrientationUpdateProviderProxy = nullptr;
 #endif
 
-#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    m_mediaSessionManagerProxy = nullptr;
-#endif
-
     for (Ref editCommand : std::exchange(m_editCommandSet, { }))
         editCommand->invalidate();
 
@@ -19647,13 +19631,6 @@ bool NODELETE shouldShowSwiftDemoLogo()
 RefPtr<WebDeviceOrientationUpdateProviderProxy> WebPageProxy::webDeviceOrientationUpdateProviderProxy()
 {
     return m_webDeviceOrientationUpdateProviderProxy;
-}
-#endif
-
-#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-RemoteMediaSessionManagerProxy* WebPageProxy::remoteMediaSessionManagerProxy()
-{
-    return m_mediaSessionManagerProxy.get();
 }
 #endif
 

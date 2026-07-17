@@ -64,7 +64,7 @@ public:
     USING_CAN_MAKE_WEAKPTR(MediaSessionHelperClient);
 
 protected:
-    explicit MediaSessionManageriOS(PageIdentifier);
+    explicit MediaSessionManageriOS(std::optional<PageIdentifier>);
 
 #if !PLATFORM(MACCATALYST)
     void resetRestrictions() override;

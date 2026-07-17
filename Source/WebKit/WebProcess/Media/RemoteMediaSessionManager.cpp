@@ -47,9 +47,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionManager);
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionState);
 
-RefPtr<RemoteMediaSessionManager> RemoteMediaSessionManager::create(WebPage& webPage)
+Ref<RemoteMediaSessionManager> RemoteMediaSessionManager::create(WebPage& webPage)
 {
-    return adoptRef(new RemoteMediaSessionManager(webPage));
+    return adoptRef(*new RemoteMediaSessionManager(webPage));
 }
 
 RemoteMediaSessionManager::RemoteMediaSessionManager(WebPage& webPage)

@@ -164,7 +164,7 @@ public:
 #endif
 
 protected:
-    explicit MediaSessionManagerInterface(PageIdentifier);
+    explicit MediaSessionManagerInterface(std::optional<PageIdentifier>);
 
     virtual WeakListHashSet<PlatformMediaSessionInterface>& sessions() const = 0;
     virtual Vector<WeakPtr<PlatformMediaSessionInterface>> copySessionsToVector() const = 0;
@@ -188,7 +188,7 @@ protected:
     void scheduleUpdateSessionState();
     virtual void updateSessionState() { }
 
-    PageIdentifier pageIdentifier() const { return m_pageIdentifier; }
+    std::optional<PageIdentifier> pageIdentifier() const { return m_pageIdentifier; }
 
 #if !RELEASE_LOG_DISABLED
     void scheduleStateLog();
@@ -213,7 +213,7 @@ private:
     WeakHashSet<NowPlayingMetadataObserver> m_nowPlayingMetadataObservers;
     TaskCancellationGroup m_taskGroup;
 
-    PageIdentifier m_pageIdentifier;
+    Markable<PageIdentifier> m_pageIdentifier;
 #if !RELEASE_LOG_DISABLED
     UniqueRef<Timer> m_stateLogTimer;
     const Ref<AggregateLogger> m_logger;

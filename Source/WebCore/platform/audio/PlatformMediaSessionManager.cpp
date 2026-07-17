@@ -61,7 +61,7 @@ RefPtr<PlatformMediaSessionManager> PlatformMediaSessionManager::create(PageIden
 }
 #endif // !PLATFORM(COCOA) && (!USE(GLIB) || !ENABLE(MEDIA_SESSION))
 
-PlatformMediaSessionManager::PlatformMediaSessionManager(PageIdentifier pageIdentifier)
+PlatformMediaSessionManager::PlatformMediaSessionManager(std::optional<PageIdentifier> pageIdentifier)
     : MediaSessionManagerInterface(pageIdentifier)
 {
 }

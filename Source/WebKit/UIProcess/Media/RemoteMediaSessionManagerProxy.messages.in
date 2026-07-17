@@ -23,6 +23,7 @@
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 [
+    SharedPreferencesNeedsConnection,
     DispatchedFrom=WebContent,
     DispatchedTo=UI,
     EnabledBy=RemoteMediaSessionManagerEnabled || SiteIsolationEnabled

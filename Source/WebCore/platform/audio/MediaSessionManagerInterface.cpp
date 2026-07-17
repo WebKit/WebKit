@@ -44,7 +44,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSessionManagerInterface);
 
-MediaSessionManagerInterface::MediaSessionManagerInterface(PageIdentifier pageIdentifier)
+MediaSessionManagerInterface::MediaSessionManagerInterface(std::optional<PageIdentifier> pageIdentifier)
     : m_pageIdentifier(pageIdentifier)
 #if !RELEASE_LOG_DISABLED
     , m_stateLogTimer(makeUniqueRef<Timer>(*this, &MediaSessionManagerInterface::dumpSessionStates))

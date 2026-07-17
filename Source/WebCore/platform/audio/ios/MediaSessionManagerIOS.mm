@@ -55,7 +55,7 @@ Ref<MediaSessionManageriOS> MediaSessionManageriOS::create(PageIdentifier pageId
     return adoptRef(*new MediaSessionManageriOS(pageIdentifier));
 }
 
-MediaSessionManageriOS::MediaSessionManageriOS(PageIdentifier pageIdentifier)
+MediaSessionManageriOS::MediaSessionManageriOS(std::optional<PageIdentifier> pageIdentifier)
     : MediaSessionManagerCocoa(pageIdentifier)
 {
     MediaSessionHelper::sharedHelper().addClient(*this);

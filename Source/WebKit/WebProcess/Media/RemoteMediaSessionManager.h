@@ -57,7 +57,7 @@ class RemoteMediaSessionManager
     , public IPC::MessageSender {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaSessionManager);
 public:
-    static RefPtr<RemoteMediaSessionManager> create(WebPage&);
+    static Ref<RemoteMediaSessionManager> create(WebPage&);
 
     virtual ~RemoteMediaSessionManager();
 

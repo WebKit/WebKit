@@ -44,7 +44,7 @@ public:
     void forEachMatchingSession(NOESCAPE const Function<bool(const PlatformMediaSessionInterface&)>& predicate, NOESCAPE const Function<void(PlatformMediaSessionInterface&)>& matchingCallback) final;
 
 protected:
-    explicit PlatformMediaSessionManager(PageIdentifier);
+    explicit PlatformMediaSessionManager(std::optional<PageIdentifier>);
 
     void addSession(PlatformMediaSessionInterface&) override;
     void removeSession(PlatformMediaSessionInterface&) override;

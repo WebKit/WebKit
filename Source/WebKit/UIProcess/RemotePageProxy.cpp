@@ -38,7 +38,6 @@
 #include "RemoteMediaSessionManagerProxy.h"
 #include "RemotePageDrawingAreaProxy.h"
 #include "RemotePageFullscreenManagerProxy.h"
-#include "RemotePageMediaSessionManagerProxy.h"
 #include "RemotePageScreenOrientationManagerProxy.h"
 #include "RemotePageVisitedLinkStoreRegistration.h"
 #include "RemotePageWebAuthenticatorCoordinatorProxy.h"
@@ -147,9 +146,6 @@ void RemotePageProxy::disconnect()
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
     m_webDeviceOrientationUpdateProvider = nullptr;
 #endif
-#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    m_mediaSessionManager = nullptr;
-#endif
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     m_playbackSessionManager = nullptr;
 #endif
@@ -186,9 +182,6 @@ void RemotePageProxy::injectPageIntoNewProcess()
 #endif
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
     m_webDeviceOrientationUpdateProvider = RemotePageWebDeviceOrientationUpdateProviderProxy::create(pageID(), m_process, page->webDeviceOrientationUpdateProviderProxy());
-#endif
-#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    m_mediaSessionManager = RemotePageMediaSessionManagerProxy::create(pageID(), m_process, protect(page->remoteMediaSessionManagerProxy()));
 #endif
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     m_playbackSessionManager = RemotePagePlaybackSessionManagerProxy::create(pageID(), protect(page->playbackSessionManager()), m_process);
