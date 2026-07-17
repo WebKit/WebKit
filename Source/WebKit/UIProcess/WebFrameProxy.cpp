@@ -1241,10 +1241,18 @@ void WebFrameProxy::waitForCertificateInfoFromNetworkProcess(const String& hostA
     RefPtr connection = networkProcess->connection();
     if (!connection)
         return;
+
+    // waitForAndDispatchImmediately dispatches messages besides the one being waited for.
+    // If another Messages::WebPageProxy::DidCommitLoadForFrame is received, we can get Error::MultipleWaitingClients.
+    // To prevent this, only be in one waitForAndDispatchImmediately call at a time per connection for this.
+    // If the next frame commit is also missing certificate info after this, then it will wait too.
+    if (networkProcess->isWaitingForCertificateInfo())
+        return;
+    networkProcess->setIsWaitingForCertificateInfo(true);
     if (connection->waitForAndDispatchImmediately<Messages::WebFrameProxyFromNetworkProcess::ReceivedMainResourceResponseWithCertificateInfo>(frameID(), 0_s) != IPC::Error::NoError) {
         RELEASE_LOG_ERROR(Network, "Unexpectedly missing certificate info from IPC");
-        return;
     }
+    networkProcess->setIsWaitingForCertificateInfo(false);
 }
 
 void WebFrameProxy::commitCertificateInfo(const URL& url)
@@ -1261,7 +1269,7 @@ void WebFrameProxy::commitCertificateInfo(const URL& url)
             waitForCertificateInfoFromNetworkProcess(hostAndPort);
             certificateInfo = m_hostAndPortToCertificateInfo.get(hostAndPort);
             if (certificateInfo.isEmpty())
-            RELEASE_LOG_ERROR(Network, "Unexpectedly missing certificate info");
+                RELEASE_LOG_ERROR(Network, "Unexpectedly missing certificate info");
         }
     }
 
