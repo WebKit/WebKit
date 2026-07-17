@@ -88,15 +88,13 @@ FlexLayout::Result FlexLayout::performFlexLayout(FlexLayoutItems& flexItems, Rel
 
     // Record each line's cross-axis offset, growing the container's cross size to fit the lines (row flow).
     // Column flow's logical height is its main size, set later while placing the items, so accumulate here for row.
-    std::optional<LayoutUnit> contentLogicalHeightForRowFlow;
-    if (!m_constraints.isColumnFlow)
-        contentLogicalHeightForRowFlow = m_flexBox.logicalHeight();
+    auto contentLogicalHeightForRowFlow = m_flexBox.logicalHeight();
     auto flexLinesCrossPositionList = Vector<LayoutUnit>(flexLines.ranges.size());
     auto crossAxisOffset = m_constraints.flowAwareBorderBlock.first + m_constraints.flowAwarePaddingBlock.first;
     for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
         InspectorInstrumentation::flexibleBoxRendererWrappedToNextLine(m_flexBox, flexLines.ranges[lineIndex].end());
         if (!m_constraints.isColumnFlow)
-            contentLogicalHeightForRowFlow = std::max(*contentLogicalHeightForRowFlow, crossAxisOffset + m_constraints.flowAwareBorderBlock.second + m_constraints.flowAwarePaddingBlock.second + flexLinesCrossSizeList[lineIndex] + flexLayoutUtils().crossAxisScrollbarExtent());
+            contentLogicalHeightForRowFlow = std::max(contentLogicalHeightForRowFlow, crossAxisOffset + m_constraints.flowAwareBorderBlock.second + m_constraints.flowAwarePaddingBlock.second + flexLinesCrossSizeList[lineIndex] + flexLayoutUtils().crossAxisScrollbarExtent());
         flexLinesCrossPositionList[lineIndex] = crossAxisOffset;
         crossAxisOffset += flexLinesCrossSizeList[lineIndex];
     }
@@ -109,10 +107,14 @@ FlexLayout::Result FlexLayout::performFlexLayout(FlexLayoutItems& flexItems, Rel
         positionList = handleMainAxisAlignment(flexLines, flexItems, flexItemsMainSizeList, flexLinesCrossPositionList);
         setFlexItemCountsForFirstAndLastLine(flexLines);
 
-        // 9.6. (#15) Determine the flex container's used cross size: hand the accumulated content extent to the
-        // container so it resolves its own logical height (specified vs content, min/max, box-sizing).
-        auto interLineGapTotal = !m_constraints.isColumnFlow && flexLines.ranges.size() > 1 ? flexLayoutUtils().computeGap(FlexLayoutUtils::GapType::BetweenLines) * (flexLines.ranges.size() - 1) : 0_lu;
-        m_flexBox.updateLogicalHeightForFlexContent(contentLogicalHeightForRowFlow, m_constraints.minimumHeightForLineIfEmpty, interLineGapTotal);
+        // 9.6. (#15) Determine the flex container's used cross size. Row flow's is the content extent accumulated
+        // from the lines plus the gaps between them; column flow's height was already set while placing the items.
+        // Either way the container then resolves its own logical height (specified vs content, min/max, box-sizing).
+        if (!m_constraints.isColumnFlow) {
+            auto totalGapBetweenLines = flexLines.ranges.size() > 1 ? flexLayoutUtils().computeGap(FlexLayoutUtils::GapType::BetweenLines) * (flexLines.ranges.size() - 1) : 0_lu;
+            m_flexBox.setLogicalHeightForRowFlexContent(contentLogicalHeightForRowFlow + totalGapBetweenLines);
+        }
+        m_flexBox.finalizeFlexContainerLogicalHeight(m_constraints.minimumHeightForLineIfEmpty);
 
         // Multi-line column flex only knows its main size now, so re-resolve the flexible lengths of any lines that were left short.
         distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(flexLines, flexItems, flexBaseAndHypotheticalMainSizeList.span(), flexItemsMainSizeList, positionList, flexLinesCrossPositionList);

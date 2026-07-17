@@ -1131,16 +1131,19 @@ LayoutUnit RenderFlexibleBox::mainAxisAvailableSpace()
     return logicalHeight == LayoutUnit::max() ? logicalHeight : std::max(0_lu, logicalHeight - (borderAndPaddingLogicalHeight() + scrollbarLogicalHeight()));
 }
 
-void RenderFlexibleBox::updateLogicalHeightForFlexContent(std::optional<LayoutUnit> contentLogicalHeightForRowFlow, std::optional<LayoutUnit> minimumHeightForLineIfEmpty, LayoutUnit interLineGapTotal)
+void RenderFlexibleBox::setLogicalHeightForRowFlexContent(LayoutUnit contentLogicalHeight)
 {
-    // Row flow's cross size is the content extent FlexLayout accumulated from the lines; column flow's logical
-    // height is its main size, already set while placing the items, so this is provided only for row flow.
-    if (contentLogicalHeightForRowFlow)
-        setLogicalHeight(*contentLogicalHeightForRowFlow);
+    // Row flow's cross size is the content extent FlexLayout accumulated from the lines, including the gaps
+    // between them. (Column flow's logical height is its main size, already set while placing the items.)
+    setLogicalHeight(contentLogicalHeight);
+}
+
+void RenderFlexibleBox::finalizeFlexContainerLogicalHeight(std::optional<LayoutUnit> minimumHeightForLineIfEmpty)
+{
+    // Reserve a line's worth of height if the container has a line even while empty, then resolve the final
+    // logical height against the container's own specified/min/max height and box-sizing.
     if (minimumHeightForLineIfEmpty && borderBoxHeight() < *minimumHeightForLineIfEmpty)
         setLogicalHeight(*minimumHeightForLineIfEmpty);
-    if (interLineGapTotal)
-        setLogicalHeight(logicalHeight() + interLineGapTotal);
     updateLogicalHeight();
 }
 
