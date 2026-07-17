@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 
 #include "FloatPoint.h"
+#include "FloatRect.h"
 #include "InlineIteratorInlineBox.h"
 #include "RenderBlockFlow.h"
 
@@ -49,16 +50,16 @@ private:
     void layout() override;
 
     bool isOutside() const;
-    bool rectIsWithinContainer(const IntRect&) const;
+    bool rectIsWithinContainer(const FloatRect&) const;
     bool isOverlapping() const;
     RenderVTTCue* overlappingObject() const;
-    RenderVTTCue* overlappingObjectForRect(const IntRect&) const;
+    RenderVTTCue* overlappingObjectForRect(const FloatRect&) const;
     bool shouldSwitchDirection(const InlineIterator::InlineBox&, LayoutUnit) const;
 
     void NODELETE moveBoxesByStep(LayoutUnit);
     bool NODELETE switchDirection(bool&, LayoutUnit&);
     void moveIfNecessaryToKeepWithinContainer();
-    bool findNonOverlappingPosition(int& x, int& y) const;
+    bool findNonOverlappingPosition(float& x, float& y) const;
 
     bool initializeLayoutParameters(LayoutUnit&, LayoutUnit&);
     void NODELETE placeBoxInDefaultPosition(LayoutUnit, bool&);
@@ -68,6 +69,7 @@ private:
 
     RenderBlockFlow* backdropBox() const;
     RenderInline* cueBox() const;
+    static FloatRect unroundedAbsoluteBoundingBoxRect(const RenderBox&);
 
     WeakPtr<VTTCue, WeakPtrImplWithEventTargetData> m_cue;
     FloatPoint m_fallbackPosition;

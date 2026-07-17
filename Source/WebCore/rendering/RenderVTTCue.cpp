@@ -35,6 +35,7 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderInline.h"
 #include "RenderLayoutState.h"
+#include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "TextTrackCueGeneric.h"
 #include "VTTCue.h"
@@ -174,19 +175,32 @@ void RenderVTTCue::placeBoxInDefaultPosition(LayoutUnit position, bool& switched
     switched = false;
 }
 
+FloatRect RenderVTTCue::unroundedAbsoluteBoundingBoxRect(const RenderBox& box)
+{
+    // Unlike RenderObject::absoluteBoundingBoxRect(), this does not round the
+    // result to an IntRect. Sibling cues are compared against each other and
+    // against their container to decide whether they overlap and to compute
+    // how far to move them; rounding each box's edges to the nearest pixel
+    // independently before doing that comparison can make boxes whose true
+    // (subpixel) edges already touch appear to have a gap between them, or
+    // vice-versa appear to overlap when they don't.
+    FloatRect localRect(0, 0, box.borderBoxWidth(), box.borderBoxHeight());
+    return box.localToAbsoluteQuad(localRect).boundingBox();
+}
+
 bool RenderVTTCue::isOutside() const
 {
     if (!firstChild())
         return false;
 
     if (auto* backdropBox = this->backdropBox())
-        return !rectIsWithinContainer(backdropBox->absoluteBoundingBoxRect());
+        return !rectIsWithinContainer(unroundedAbsoluteBoundingBoxRect(*backdropBox));
     return false;
 }
 
-bool RenderVTTCue::rectIsWithinContainer(const IntRect& rect) const
+bool RenderVTTCue::rectIsWithinContainer(const FloatRect& rect) const
 {
-    return containingBlock()->absoluteBoundingBoxRect().contains(rect);
+    return unroundedAbsoluteBoundingBoxRect(*containingBlock()).contains(rect);
 }
 
 
@@ -203,11 +217,11 @@ RenderVTTCue* RenderVTTCue::overlappingObject() const
     ASSERT(firstChild());
 
     if (auto* backdropBox = this->backdropBox())
-        return overlappingObjectForRect(backdropBox->absoluteBoundingBoxRect());
+        return overlappingObjectForRect(unroundedAbsoluteBoundingBoxRect(*backdropBox));
     return nullptr;
 }
 
-RenderVTTCue* RenderVTTCue::overlappingObjectForRect(const IntRect& rect) const
+RenderVTTCue* RenderVTTCue::overlappingObjectForRect(const FloatRect& rect) const
 {
     for (RenderObject* sibling = previousSibling(); sibling; sibling = sibling->previousSibling()) {
         auto* previousCue = downcast<RenderVTTCue>(sibling);
@@ -215,7 +229,7 @@ RenderVTTCue* RenderVTTCue::overlappingObjectForRect(const IntRect& rect) const
             continue;
 
         auto* previousCueBackdropBox = previousCue->backdropBox();
-        if (previousCueBackdropBox && rect.intersects(previousCueBackdropBox->absoluteBoundingBoxRect()))
+        if (previousCueBackdropBox && rect.intersects(unroundedAbsoluteBoundingBoxRect(*previousCueBackdropBox)))
             return previousCue;
     }
 
@@ -297,13 +311,13 @@ void RenderVTTCue::moveIfNecessaryToKeepWithinContainer()
     if (!backdropBox)
         return;
 
-    IntRect containerRect = containingBlock()->absoluteBoundingBoxRect();
-    IntRect cueRect = backdropBox->absoluteBoundingBoxRect();
+    FloatRect containerRect = unroundedAbsoluteBoundingBoxRect(*containingBlock());
+    FloatRect cueRect = unroundedAbsoluteBoundingBoxRect(*backdropBox);
 
-    int topOverflow = cueRect.y() - containerRect.y();
-    int bottomOverflow = containerRect.maxY() - cueRect.maxY();
+    float topOverflow = cueRect.y() - containerRect.y();
+    float bottomOverflow = containerRect.maxY() - cueRect.maxY();
 
-    int verticalAdjustment = 0;
+    float verticalAdjustment = 0;
     if (topOverflow < 0)
         verticalAdjustment = -topOverflow;
     else if (bottomOverflow < 0)
@@ -312,10 +326,10 @@ void RenderVTTCue::moveIfNecessaryToKeepWithinContainer()
     if (verticalAdjustment)
         setY(y() + verticalAdjustment);
 
-    int leftOverflow = cueRect.x() - containerRect.x();
-    int rightOverflow = containerRect.maxX() - cueRect.maxX();
+    float leftOverflow = cueRect.x() - containerRect.x();
+    float rightOverflow = containerRect.maxX() - cueRect.maxX();
 
-    int horizontalAdjustment = 0;
+    float horizontalAdjustment = 0;
     if (leftOverflow < 0)
         horizontalAdjustment = -leftOverflow;
     else if (rightOverflow < 0)
@@ -325,7 +339,7 @@ void RenderVTTCue::moveIfNecessaryToKeepWithinContainer()
         setX(x() + horizontalAdjustment);
 }
 
-bool RenderVTTCue::findNonOverlappingPosition(int& newX, int& newY) const
+bool RenderVTTCue::findNonOverlappingPosition(float& newX, float& newY) const
 {
     if (!firstChild())
         return false;
@@ -336,8 +350,8 @@ bool RenderVTTCue::findNonOverlappingPosition(int& newX, int& newY) const
 
     newX = x();
     newY = y();
-    IntRect srcRect = backdropBox->absoluteBoundingBoxRect();
-    IntRect destRect = srcRect;
+    FloatRect srcRect = unroundedAbsoluteBoundingBoxRect(*backdropBox);
+    FloatRect destRect = srcRect;
 
     // Move the box up, looking for a non-overlapping position:
     while (RenderVTTCue* cue = overlappingObjectForRect(destRect)) {
@@ -345,9 +359,9 @@ bool RenderVTTCue::findNonOverlappingPosition(int& newX, int& newY) const
         if (!cueBackdropBox)
             continue;
         if (m_cue->vertical() == VTTCue::DirectionSetting::Horizontal)
-            destRect.setY(cueBackdropBox->absoluteBoundingBoxRect().y() - destRect.height());
+            destRect.setY(unroundedAbsoluteBoundingBoxRect(*cueBackdropBox).y() - destRect.height());
         else
-            destRect.setX(cueBackdropBox->absoluteBoundingBoxRect().x() - destRect.width());
+            destRect.setX(unroundedAbsoluteBoundingBoxRect(*cueBackdropBox).x() - destRect.width());
     }
 
     if (rectIsWithinContainer(destRect)) {
@@ -364,9 +378,9 @@ bool RenderVTTCue::findNonOverlappingPosition(int& newX, int& newY) const
         if (!cueBackdropBox)
             continue;
         if (m_cue->vertical() == VTTCue::DirectionSetting::Horizontal)
-            destRect.setY(cueBackdropBox->absoluteBoundingBoxRect().maxY());
+            destRect.setY(unroundedAbsoluteBoundingBoxRect(*cueBackdropBox).maxY());
         else
-            destRect.setX(cueBackdropBox->absoluteBoundingBoxRect().maxX());
+            destRect.setX(unroundedAbsoluteBoundingBoxRect(*cueBackdropBox).maxX());
     }
 
     if (rectIsWithinContainer(destRect)) {
@@ -450,7 +464,7 @@ void RenderVTTCue::repositionCueSnapToLinesNotSet()
 
     // ↳ If cue’s WebVTT cue snap-to-lines flag is false
     // 1. Let bounding box be the bounding box of the boxes in boxes.
-    auto boundingBox = backdropBox->absoluteBoundingBoxRect();
+    auto boundingBox = unroundedAbsoluteBoundingBoxRect(*backdropBox);
 
     // 2. Run the appropriate steps from the following list:
     switch (m_cue->vertical()) {
@@ -497,8 +511,8 @@ void RenderVTTCue::repositionCueSnapToLinesNotSet()
     // from their current position, use the highest one amongst them; if there are several at that height,
     // then use the leftmost one amongst them.
     moveIfNecessaryToKeepWithinContainer();
-    int x = 0;
-    int y = 0;
+    float x = 0;
+    float y = 0;
     if (findNonOverlappingPosition(x, y)) {
         setX(x);
         setY(y);
