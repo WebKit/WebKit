@@ -1167,6 +1167,109 @@ TEST(WKScrollViewTests, VisibleContentRectUpdatesDuringInteractiveObscuredInsets
     EXPECT_TRUE([webView _hasPendingVisibleContentRectUpdateTimerForTesting]);
 }
 
+TEST(WKScrollViewTests, VisibleContentRectUpdatesDuringInteractiveObscuredInsetsChangeAreNotThrottledForMainThreadScrollDrivenAnimation)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 800)]);
+
+    auto insets = UIEdgeInsetsMake(50, 0, 0, 0);
+    [webView _setObscuredInsets:insets];
+
+    RetainPtr scrollView = [webView scrollView];
+    [scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
+    [scrollView setContentInset:insets];
+
+    // The fixed element runs a scroll-driven animation on 'top', a non-accelerated property, so it must be
+    // updated on the main thread for every scroll delta. Throttling visible content rect updates would make
+    // it advance in coarse steps while the page scrolls smoothly (jitter), so it must not be throttled.
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><html><head><style>"
+        "body { height: 3000px; margin: 0; }"
+        "#logo { position: fixed; top: 0; left: 0; width: 50px; height: 50px; background: red;"
+        " animation: logo-scroll linear; animation-timeline: scroll(root); }"
+        "@keyframes logo-scroll { from { top: 0; } to { top: 100px; } }"
+        "</style></head><body><div id=\"logo\"></div></body></html>"];
+    [webView waitForNextPresentationUpdate];
+
+    [scrollView setContentOffset:CGPointMake(0, 500)];
+    [webView waitForNextVisibleContentRectUpdate];
+
+    [webView _beginInteractiveObscuredInsetsChange];
+
+    // First scroll within interactive mode would normally trigger the throttle timer.
+    [scrollView setContentOffset:CGPointMake(0, 510)];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_FALSE([webView _hasPendingVisibleContentRectUpdateTimerForTesting]);
+
+    // Subsequent scrolls should not be throttled either.
+    [scrollView setContentOffset:CGPointMake(0, 520)];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_FALSE([webView _hasPendingVisibleContentRectUpdateTimerForTesting]);
+}
+
+TEST(WKScrollViewTests, ScrollDrivenAnimationTracksScrollDuringInteractiveObscuredInsetsChange)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 800)]);
+
+    // The fixed element runs a scroll-driven animation on 'top' (a non-accelerated property), so its position
+    // is recomputed on the main thread from the scroll offset. It moves from top:0 to top:1000 across the
+    // scroll range, so a large scroll should move it substantially.
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'>"
+        "<style>"
+        "body { margin: 0; height: 10000px; }"
+        "#logo { position: fixed; top: 0; left: 0; width: 50px; height: 50px; background: red;"
+        " animation: logo-scroll linear; animation-timeline: scroll(root); }"
+        "@keyframes logo-scroll { from { top: 0px; } to { top: 1000px; } }"
+        "</style>"
+        "<div id='logo'></div>"];
+
+    auto insets = UIEdgeInsetsMake(50, 0, 0, 0);
+    [webView _setObscuredInsets:insets];
+    RetainPtr scrollView = [webView scrollView];
+    [scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
+    [scrollView setContentInset:insets];
+    [webView waitForNextPresentationUpdate];
+
+    // Read the animation's applied value directly. getComputedStyle gives the raw animated 'top' in px;
+    // getBoundingClientRect would be offset by the obscured insets for a fixed element.
+    auto animatedTop = ^{
+        return [[webView objectByEvaluatingJavaScript:@"parseFloat(getComputedStyle(document.getElementById('logo')).top)"] floatValue];
+    };
+
+    auto scrollAndSync = ^(CGFloat y) {
+        [scrollView setContentOffset:CGPointMake(0, y)];
+        [webView waitForNextVisibleContentRectUpdate];
+        [webView waitForNextPresentationUpdate];
+        [webView waitForNextPresentationUpdate];
+    };
+
+    // Control: with updates un-throttled, the animation advances substantially between the two scroll offsets.
+    scrollAndSync(200);
+    CGFloat controlLow = animatedTop();
+    scrollAndSync(3000);
+    CGFloat controlHigh = animatedTop();
+    EXPECT_GT(controlHigh - controlLow, 100);
+
+    // Now the interactive (throttled) path: sync back to the low offset...
+    scrollAndSync(200);
+    CGFloat baselineTop = animatedTop();
+
+    // ...then simulate the URL bar animating and scroll a large delta.
+    [webView _beginInteractiveObscuredInsetsChange];
+    [scrollView setContentOffset:CGPointMake(0, 3000)];
+
+    // Only wait for presentation updates here. Waiting for a visible content rect update would block on the
+    // throttle timer (and thereby mask the bug); presentation updates arrive every frame regardless.
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+    CGFloat interactiveTop = animatedTop();
+
+    [webView _endInteractiveObscuredInsetsChange];
+
+    // With the throttle bypassed for main-thread scroll-driven animations, the animation keeps advancing with
+    // the scroll. If updates were throttled, it would stay frozen near its baseline value between the coarse
+    // (~10Hz) updates while the page scrolls smoothly, i.e. jitter.
+    EXPECT_GT(interactiveTop - baselineTop, 100);
+}
+
 TEST(WKScrollViewTests, ThrottledVisibleContentRectUpdateTimerCancelledWhenEndingInteractiveUpdates)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 800)]);

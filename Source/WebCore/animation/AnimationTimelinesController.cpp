@@ -264,6 +264,20 @@ void AnimationTimelinesController::updateStaleScrollTimelines()
         scrollTimeline->updateCurrentTimeIfStale();
 }
 
+bool AnimationTimelinesController::hasProgressBasedScrollDrivenAnimation() const
+{
+    for (Ref timeline : m_timelines) {
+        if (!timeline->isProgressBased())
+            continue;
+        for (auto& animation : timeline->relevantAnimations()) {
+            RefPtr effect = animation->keyframeEffect();
+            if (effect && !effect->isCompletelyAccelerated())
+                return true;
+        }
+    }
+    return false;
+}
+
 #if ENABLE(THREADED_ANIMATIONS)
 void AnimationTimelinesController::runPostRenderingUpdateTasks()
 {
