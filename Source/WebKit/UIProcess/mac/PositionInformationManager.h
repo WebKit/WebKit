@@ -86,7 +86,7 @@ private:
     // Invokes (exactly once) and removes every queued callback whose request satisfies `matches`,
     // passing `information` to each. Reentrancy-safe: callbacks may re-enter and mutate the queue, so
     // consumed slots are left as tombstones and only compacted once the outermost invocation unwinds.
-    void invokeAndRemovePendingHandlers(Function<bool(InteractionInformationRequest)>&& matches, const std::optional<InteractionInformationAtPosition>&);
+    void invokeAndRemovePendingHandlers(Function<bool(const InteractionInformationRequest&)>&& matches, const std::optional<InteractionInformationAtPosition>&);
 
     struct RequestAndCallback {
         InteractionInformationRequest request;

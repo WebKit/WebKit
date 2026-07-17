@@ -134,13 +134,16 @@ bool PositionInformationManager::hasValidOutstandingRequest(const InteractionInf
     }).value_or(false);
 }
 
-void PositionInformationManager::invokeAndRemovePendingHandlers(Function<bool(InteractionInformationRequest)>&& matches, const std::optional<InteractionInformationAtPosition>& information)
+void PositionInformationManager::invokeAndRemovePendingHandlers(Function<bool(const InteractionInformationRequest&)>&& matches, const std::optional<InteractionInformationAtPosition>& information)
 {
     ++m_callbackDepth;
 
-    for (auto& slot : m_pendingHandlers) {
+    // This is intentionally not a range-based for-loop as doing so can result in a reentrancy UAF due to stale iterator pointers.
+    for (size_t index = 0; index < m_pendingHandlers.size(); ++index) {
+        auto& slot = m_pendingHandlers[index];
         if (!slot)
             continue;
+
         if (!matches(slot->request))
             continue;
 
