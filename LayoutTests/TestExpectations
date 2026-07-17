@@ -8261,3 +8261,7 @@ webkit.org/b/318777 fast/block/out-of-flow-intrinsic-height.html [ Timeout Pass 
 webkit.org/b/318779 fast/css/has-lang-jit-crash.html [ Failure Pass ]
 
 webkit.org/b/315806 imported/w3c/web-platform-tests/gpc/sec-gpc.https.html [ Failure Pass ]
+
+# webkit.org/b/319643 http/tests/inspector/target/pause-on-inline-debugger-statement.html (layout-tests) is a flaky timeout/crash.
+[ Release arm64 ] http/tests/inspector/target/pause-on-inline-debugger-statement.html [ Pass Timeout ]
+[ Debug arm64 ] http/tests/inspector/target/pause-on-inline-debugger-statement.html [ Pass Crash ]
