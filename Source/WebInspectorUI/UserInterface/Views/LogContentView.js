@@ -772,7 +772,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
                 if (i >= newRange[0] && i <= newRange[1] && !messageInRange.classList.contains(WI.LogContentView.SelectedStyleClassName)) {
                     messageInRange.classList.add(WI.LogContentView.SelectedStyleClassName);
                     this._selectedMessages.push(messageInRange);
-                } else if (i < newRange[0] || i > newRange[1] && messageInRange.classList.contains(WI.LogContentView.SelectedStyleClassName)) {
+                } else if ((i < newRange[0] || i > newRange[1]) && messageInRange.classList.contains(WI.LogContentView.SelectedStyleClassName)) {
                     messageInRange.classList.remove(WI.LogContentView.SelectedStyleClassName);
                     this._selectedMessages.remove(messageInRange);
                 }
