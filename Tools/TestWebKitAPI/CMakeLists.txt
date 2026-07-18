@@ -215,6 +215,7 @@ if (ENABLE_WEBCORE)
 
         Tests/WebCore/AffineTransform.cpp
         Tests/WebCore/AudioSampleFormat.cpp
+        Tests/WebCore/BezierUtilitiesTests.cpp
         Tests/WebCore/CSSParser.cpp
         Tests/WebCore/CSSTokenizerTests.cpp
         Tests/WebCore/CachedMatchFinder.cpp

@@ -26,9 +26,11 @@
 #include "CornerShapeUtilities.h"
 
 #include "FloatPoint.h"
+#include "FloatRect.h"
 #include "FloatSize.h"
 #include "GeometryUtilities.h"
 #include "Path.h"
+#include <WebCore/BezierUtilities.h>
 
 #include <algorithm>
 #include <cmath>
@@ -301,7 +303,16 @@ static void addCurvedCorner(Path& path, const Corner& corner)
         return;
     }
 
-    // TODO: squircle and the general superellipse curve
+    // TODO: squircle and the general superellipse curve.
+    // FIXME (bug 319603 follow-up): stub in-framework consumer of trimBezierToRect() while the
+    // real superellipse trimming is developed. Behavior is unchanged (still a sharp vertex);
+    // the clipped result is intentionally unused for now.
+    BezierSegment cornerSegment { corner.start, corner.outer, corner.outer, corner.end };
+    FloatRect cornerBounds { corner.start, FloatSize { } };
+    cornerBounds.extend(corner.outer);
+    cornerBounds.extend(corner.end);
+    trimBezierToRect(cornerSegment, cornerBounds);
+
     path.addLineTo(corner.start);
     path.addLineTo(corner.outer);
     path.addLineTo(corner.end);

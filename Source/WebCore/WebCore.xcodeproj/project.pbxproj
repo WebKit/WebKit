@@ -937,7 +937,7 @@
 		22441CD42FEB275500BD3B41 /* CornerShapeUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 22441CD32FEB273C00BD3B41 /* CornerShapeUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		225A16B50D5C11E900090295 /* WebEventRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 225A16B30D5C11E900090295 /* WebEventRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		228C284510D82500009D0D0E /* ScriptWrappable.h in Headers */ = {isa = PBXBuildFile; fileRef = 228C284410D82500009D0D0E /* ScriptWrappable.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		22F021A02FFF3E3500B13642 /* BezierUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = BE21E01000000000000000B1 /* BezierUtilities.h */; };
+		22F021A02FFF3E3500B13642 /* BezierUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = BE21E01000000000000000B1 /* BezierUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		23CED0538221E00106965803 /* Play.svg in Copy Modern Media Controls Images */ = {isa = PBXBuildFile; fileRef = DC8EA0C37B0638710AE9B150 /* Play.svg */; platformFilters = (macos, ); };
 		244447FB2ECD1F8E00EED177 /* WebTransportReliabilityMode.h in Headers */ = {isa = PBXBuildFile; fileRef = FAC3C3EF2A996700001E2EB8 /* WebTransportReliabilityMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2444CEB42ECC4E7F00C09DC6 /* WebTransportConnectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2444CEB32ECC4E7F00C09DC6 /* WebTransportConnectionInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };

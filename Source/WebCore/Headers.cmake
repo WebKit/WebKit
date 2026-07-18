@@ -2452,6 +2452,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/AudioTrackPrivate.h
     platform/graphics/AudioTrackPrivateClient.h
     platform/graphics/AudioVideoRenderer.h
+    platform/graphics/BezierUtilities.h
     platform/graphics/BifurcatedGraphicsContext.h
     platform/graphics/BitmapImage.h
     platform/graphics/CachedSubimage.h

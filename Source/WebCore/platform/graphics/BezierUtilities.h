@@ -25,27 +25,18 @@
 #pragma once
 
 #include <WebCore/FloatPoint.h>
-#include <array>
-#include <utility>
+#include <WebCore/FloatRect.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-// A cubic Bézier curve segment, ordered { start, control1, control2, end }
-using CubicBezier = std::array<FloatPoint, 4>;
-
-struct BezierIntersection {
-    float parameterOnFirst { 0 };
-    float parameterOnSecond { 0 };
-    FloatPoint point;
+struct BezierSegment {
+    FloatPoint start;
+    FloatPoint controlPoint1;
+    FloatPoint controlPoint2;
+    FloatPoint end;
 };
 
-// TODO: implement.
-Vector<BezierIntersection> intersectBezierAndLine(const CubicBezier&, const FloatPoint& lineStart, const FloatPoint& lineEnd);
-
-// Splits `curve` at `parameter` (a fraction in [0, 1]) into two sub-curves that together retrace
-// the original, using de Casteljau subdivision.
-// TODO: implement.
-std::pair<CubicBezier, CubicBezier> splitBezier(const CubicBezier& curve, float parameter);
+WEBCORE_EXPORT Vector<BezierSegment> trimBezierToRect(const BezierSegment& curve, const FloatRect&);
 
 } // namespace WebCore
