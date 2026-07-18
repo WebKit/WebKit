@@ -232,7 +232,7 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
         if (!layoutUsingFlexFormattingContext()) {
             auto flexItems = collectFlexItems(relayoutChildren);
             if (flexItems.isEmpty())
-                updateFlexContainerLogicalHeight();
+                updateFlexContainerLogicalHeight(0_lu);
             else {
                 auto flexLayoutResult = FlexLayout(*this, flexLayoutConstraints()).layout(flexItems);
                 if (flexLayoutResult.alignContentStartOverflow)
@@ -1079,13 +1079,6 @@ std::optional<LayoutUnit> RenderFlexibleBox::minimumHeightForLineIfEmpty() const
     return borderAndPaddingLogicalHeight() + lineHeight() + scrollbarLogicalHeight();
 }
 
-void RenderFlexibleBox::adjustLogicalHeightForLineIfEmpty()
-{
-    auto minHeight = minimumHeightForLineIfEmpty();
-    if (minHeight && borderBoxHeight() < *minHeight)
-        setLogicalHeight(*minHeight);
-}
-
 FlexLayoutConstraints RenderFlexibleBox::flexLayoutConstraints()
 {
     auto& utils = flexLayoutUtils();
@@ -1129,13 +1122,16 @@ LayoutUnit RenderFlexibleBox::mainAxisAvailableSpace()
     return logicalHeight == LayoutUnit::max() ? logicalHeight : std::max(0_lu, logicalHeight - (borderAndPaddingLogicalHeight() + scrollbarLogicalHeight()));
 }
 
-FlexContainerCrossExtents RenderFlexibleBox::updateFlexContainerLogicalHeight()
+FlexContainerCrossExtents RenderFlexibleBox::updateFlexContainerLogicalHeight(LayoutUnit flexContentBlockExtent)
 {
-    // Reserve a line's worth of height if the container has a line even while empty, then resolve the final
-    // logical height against the container's own specified/min/max height and box-sizing. Return the resulting
-    // used cross extents (content-box and border-box) so FlexLayout takes them as values rather than reading
-    // them back off the container.
-    adjustLogicalHeightForLineIfEmpty();
+    // Adopt the block-axis extent FlexLayout built from its line sizes as the content height (row flow); column flow
+    // already set its main size while placing the items, so keep the larger. Then, for a container that still
+    // establishes a line with no in-flow items (e.g. all children are out of flow), reserve at least a line's worth of
+    // height. Finally resolve the logical height against the container's own specified/min/max height and box-sizing,
+    // and return the used cross extents (content-box and border-box) so FlexLayout takes them as values.
+    setLogicalHeight(std::max(logicalHeight(), borderAndPaddingLogicalHeight() + flexContentBlockExtent));
+    if (auto minimumHeightForEmptyLine = minimumHeightForLineIfEmpty(); minimumHeightForEmptyLine && borderBoxHeight() < *minimumHeightForEmptyLine)
+        setLogicalHeight(*minimumHeightForEmptyLine);
     updateLogicalHeight();
     return { flexLayoutUtils().crossAxisContentExtent(), flexLayoutUtils().crossAxisExtent() };
 }
