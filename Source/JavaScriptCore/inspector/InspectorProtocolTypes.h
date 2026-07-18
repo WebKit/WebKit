@@ -29,6 +29,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/Expected.h>
 #include <wtf/JSONValues.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -83,6 +84,14 @@ template<> struct BindingTraits<String> : PrimitiveBindingTraits<JSON::Value::Ty
 template<> struct BindingTraits<bool> : PrimitiveBindingTraits<JSON::Value::Type::Boolean> { };
 template<> struct BindingTraits<double> : PrimitiveBindingTraits<JSON::Value::Type::Double> { };
 template<> struct BindingTraits<int> : PrimitiveBindingTraits<JSON::Value::Type::Integer> { };
+
+template<typename T> Ref<JSON::ArrayOf<JSON::Value>> buildArray(const Vector<T>& vector)
+{
+    auto array = JSON::ArrayOf<JSON::Value>::create();
+    for (auto& item : vector)
+        array->addItem(item);
+    return array;
+}
 
 }
 

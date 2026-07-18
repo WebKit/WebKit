@@ -350,14 +350,6 @@ auto InspectorCanvasArgumentProcessor<IDLUint32ListUnion>::operator()(InspectorC
 
 // MARK: - Sequences
 
-static Ref<JSON::ArrayOf<JSON::Value>> mapToArray(const auto& range)
-{
-    auto array = JSON::ArrayOf<JSON::Value>::create();
-    for (auto& item : range)
-        array->addItem(item);
-    return array;
-}
-
 static Ref<JSON::ArrayOf<JSON::Value>> mapToArray(const auto& range, NOESCAPE auto&& functor)
 {
     auto array = JSON::ArrayOf<JSON::Value>::create();
@@ -373,12 +365,12 @@ auto InspectorCanvasArgumentProcessor<IDLSequence<IDLDOMString>>::operator()(Ins
 
 auto InspectorCanvasArgumentProcessor<IDLSequence<IDLUnrestrictedDouble>>::operator()(InspectorCanvas&, const Vector<double>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
-    return {{ mapToArray(argument), RecordingSwizzleType::Array }};
+    return {{ Inspector::Protocol::buildArray(argument), RecordingSwizzleType::Array }};
 }
 
 auto InspectorCanvasArgumentProcessor<IDLSequence<IDLUnrestrictedFloat>>::operator()(InspectorCanvas&, const Vector<float>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
-    return {{ mapToArray(argument), RecordingSwizzleType::Array }};
+    return {{ Inspector::Protocol::buildArray(argument), RecordingSwizzleType::Array }};
 }
 
 auto InspectorCanvasArgumentProcessor<IDLSequence<IDLUnsignedLong>>::operator()(InspectorCanvas&, const Vector<uint32_t>& argument) -> std::optional<InspectorCanvasProcessedArgument>

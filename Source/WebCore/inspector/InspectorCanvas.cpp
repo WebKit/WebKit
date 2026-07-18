@@ -181,14 +181,6 @@ bool InspectorCanvas::currentFrameHasData() const
     return !!m_frames;
 }
 
-template<typename T> static Ref<JSON::ArrayOf<JSON::Value>> buildArrayForVector(const Vector<T>& vector)
-{
-    auto array = JSON::ArrayOf<JSON::Value>::create();
-    for (auto& item : vector)
-        array->addItem(item);
-    return array;
-}
-
 static bool shouldSnapshotBitmapRendererAction(const String& name)
 {
     return name == "transferFromImageBitmap"_s;
@@ -712,7 +704,7 @@ Ref<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildInitialS
             // The parameter to `setLineDash` is itself an array, so we need to wrap the parameters
             // list in an array to allow spreading.
             auto setLineDash = JSON::ArrayOf<JSON::Value>::create();
-            setLineDash->addItem(buildArrayForVector(state.lineDash));
+            setLineDash->addItem(Inspector::Protocol::buildArray(state.lineDash));
             statePayload->setArray(stringIndexForKey("setLineDash"_s), WTF::move(setLineDash));
 
             statePayload->setDouble(stringIndexForKey("lineDashOffset"_s), state.lineDashOffset);
