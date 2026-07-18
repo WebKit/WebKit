@@ -1274,6 +1274,49 @@ TEST(TextExtractionTests, ResolveTargetNodeFromSelectorData)
     EXPECT_WK_STREQ(debugText.get(), @"root\n\tlabel=Heading 'Subject'");
 }
 
+TEST(TextExtractionTests, ClickInteractionWithElementHandle)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView synchronouslyLoadHTMLString:@R"HTML(
+        <!DOCTYPE html>
+        <html>
+        <head><meta name='viewport' content='width=device-width, initial-scale=1'></head>
+        <body>
+            <button id='submit' onclick="document.getElementById('result').textContent = 'clicked'">Submit</button>
+            <div id='result'>none</div>
+        </body>
+        </html>
+    )HTML"];
+
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:^{
+        RetainPtr worldConfiguration = adoptNS([_WKContentWorldConfiguration new]);
+        [worldConfiguration setAllowJSHandleCreation:YES];
+        return worldConfiguration.autorelease();
+    }()];
+
+    RetainPtr buttonHandle = [webView querySelector:@"#submit" frame:nil world:world];
+    RetainPtr selectorData = [webView synchronouslyGetSelectorPathDataForNode:buttonHandle];
+    RetainPtr elementHandle = [webView synchronouslyGetNodeForSelectorPathData:selectorData];
+    EXPECT_NOT_NULL(elementHandle);
+
+    RetainPtr click = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [click setElementHandle:elementHandle];
+    [click setNodeIdentifier:@"0_99999"]; // Intentionally invalid node UID.
+
+    NSError *error = nil;
+    RetainPtr description = [click debugDescriptionInWebView:webView error:&error];
+    EXPECT_NULL(error);
+    EXPECT_TRUE([description containsString:@"Submit"]);
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:click];
+    EXPECT_NULL([result error]);
+
+    EXPECT_WK_STREQ("clicked", [webView stringByEvaluatingJavaScript:@"document.getElementById('result').textContent"]);
+}
+
 #if HAVE(SAFARI_SAFE_BROWSING_NAMESPACED_LISTS)
 
 typedef void(^WKSafeBrowsingNamespacedListBlock)(NSDictionary<NSString *, NSArray<NSString *> *> *, NSError *);

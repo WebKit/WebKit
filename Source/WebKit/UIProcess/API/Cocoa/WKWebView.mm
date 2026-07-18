@@ -7170,7 +7170,7 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
     if (!protect(page->preferences())->textExtractionEnabled())
         return completionHandler(adoptNS([[_WKTextExtractionInteractionResult alloc] initWithErrorDescription:@"Text extraction is unavailable" summary:nil interactedElementBounds:CGRectNull]).get());
 
-    auto nodeIdentifierString = String { wkInteraction.nodeIdentifier };
+    auto nodeIdentifierString = wkInteraction.elementHandle ? emptyString() : String { wkInteraction.nodeIdentifier };
     auto conversionResult = [self _convertToWebCoreInteraction:wkInteraction nodeIdentifier:nodeIdentifierString];
     if (!conversionResult) {
         RELEASE_LOG_ERROR(TextExtraction, "<%@: %p> Interaction conversion failed", [self class], self);

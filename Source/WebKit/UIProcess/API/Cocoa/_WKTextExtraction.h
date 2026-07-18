@@ -326,6 +326,13 @@ NS_REQUIRES_PROPERTY_DEFINITIONS
 - (void)debugDescriptionInWebView:(WKWebView *)webView completionHandler:(void (^)(NSString * _Nullable, NSError * _Nullable))completionHandler;
 
 @property (nonatomic, readonly) _WKTextExtractionAction action;
+
+/*!
+ A direct handle to the target element.
+ When set, this takes precedence over `nodeIdentifier`.
+ */
+@property (nonatomic, copy, nullable) WKJSHandle *elementHandle WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 @property (nonatomic, copy, nullable) NSString *nodeIdentifier;
 @property (nonatomic, copy, nullable) NSString *text;
 @property (nonatomic) BOOL replaceAll;

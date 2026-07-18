@@ -4861,6 +4861,7 @@ header: <WebCore/TextExtractionTypes.h>
     String text;
     std::optional<WebCore::FloatPoint> locationInRootView;
     std::optional<WebCore::NodeIdentifier> nodeIdentifier;
+    std::optional<WebCore::JSHandleIdentifier> targetNodeHandleIdentifier;
     WebCore::FloatSize scrollDelta;
     bool replaceAll;
     bool scrollToVisible;

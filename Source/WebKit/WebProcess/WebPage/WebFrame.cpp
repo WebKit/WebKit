@@ -1785,13 +1785,25 @@ void WebFrame::takeSnapshotOfExtractedText(TextExtraction::ExtractedText&& extra
     completion(TextIndicator::createWithRange(*range, options, TextIndicatorPresentationTransition::None));
 }
 
+static TextExtraction::Interaction interactionWithResolvedTargetNode(TextExtraction::Interaction interaction)
+{
+    if (interaction.nodeIdentifier || !interaction.targetNodeHandleIdentifier)
+        return interaction;
+
+    if (RefPtr node = nodeFromJSHandleIdentifier(*interaction.targetNodeHandleIdentifier))
+        interaction.nodeIdentifier = node->nodeIdentifier();
+
+    return interaction;
+}
+
 void WebFrame::describeTextExtractionInteraction(TextExtraction::Interaction&& interaction, CompletionHandler<void(TextExtraction::InteractionDescription&&)>&& completion)
 {
     RefPtr frame = coreLocalFrame();
     if (!frame)
         return completion({ { }, { }, false });
 
-    completion(TextExtraction::interactionDescription(interaction, *frame));
+    auto resolvedInteraction = interactionWithResolvedTargetNode(WTF::move(interaction));
+    completion(TextExtraction::interactionDescription(resolvedInteraction, *frame));
 }
 
 void WebFrame::handleTextExtractionInteraction(TextExtraction::Interaction&& interaction, CompletionHandler<void(bool, String&&, FloatRect)>&& completion)
@@ -1800,8 +1812,9 @@ void WebFrame::handleTextExtractionInteraction(TextExtraction::Interaction&& int
     if (!frame)
         return completion(false, "Browsing context is unavailable"_s, { });
 
-    auto summary = TextExtraction::interactionDescription(interaction, *frame, TextExtraction::Tense::Past).description;
-    TextExtraction::handleInteraction(WTF::move(interaction), *frame, [completion = WTF::move(completion), summary = WTF::move(summary)](bool success, String&& message, FloatRect interactedElementBounds) mutable {
+    auto resolvedInteraction = interactionWithResolvedTargetNode(WTF::move(interaction));
+    auto summary = TextExtraction::interactionDescription(resolvedInteraction, *frame, TextExtraction::Tense::Past).description;
+    TextExtraction::handleInteraction(WTF::move(resolvedInteraction), *frame, [completion = WTF::move(completion), summary = WTF::move(summary)](bool success, String&& message, FloatRect interactedElementBounds) mutable {
         if (success && message.isEmpty())
             message = WTF::move(summary);
         completion(success, WTF::move(message), interactedElementBounds);

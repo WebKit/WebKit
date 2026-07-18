@@ -64,6 +64,7 @@ struct Interaction {
     String text;
     std::optional<FloatPoint> locationInRootView;
     std::optional<NodeIdentifier> nodeIdentifier;
+    std::optional<JSHandleIdentifier> targetNodeHandleIdentifier;
     FloatSize scrollDelta;
     bool replaceAll { false };
     bool scrollToVisible { false };
