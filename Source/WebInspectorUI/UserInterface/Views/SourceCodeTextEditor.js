@@ -2108,7 +2108,8 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
     {
         this.tokenTrackingController.removeHighlightedRange();
 
-        this.target.RuntimeAgent.releaseObjectGroup("popover");
+        let target = WI.debuggerManager.activeCallFrame?.target || this.target;
+        target?.RuntimeAgent.releaseObjectGroup("popover");
     }
 
     _dismissPopover()
