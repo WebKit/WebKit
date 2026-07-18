@@ -43,6 +43,7 @@
 #include "JSFetchResponse.h"
 #include "JSNode.h"
 #include "JSTrustedScript.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "Microtasks.h"
@@ -153,6 +154,11 @@ void JSDOMWindowBase::finishCreation(VM& vm, JSWindowProxy* proxy)
 
     if ((m_wrapped->frame() && m_wrapped->frame()->settings().showModalDialogEnabled()) || (m_wrapped->documentIfLocal() && protect(m_wrapped->documentIfLocal())->quirks().shouldExposeShowModalDialog()))
         putDirectCustomAccessor(vm, builtinNames(vm).showModalDialogPublicName(), CustomGetterSetter::create(vm, showModalDialogGetter, nullptr), std::to_underlying(PropertyAttribute::CustomValue));
+
+    if (worldIsNormal()) {
+        if (auto* window = dynamicDowncast<LocalDOMWindow>(m_wrapped.get()))
+            window->setCachedMainWorldGlobalObject(this);
+    }
 }
 
 void JSDOMWindowBase::destroy(JSCell* cell)

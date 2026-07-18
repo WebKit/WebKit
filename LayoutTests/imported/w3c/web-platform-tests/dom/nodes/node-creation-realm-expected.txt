@@ -12,5 +12,5 @@ PASS DOMImplementation.createHTMLDocument() creates the document and its content
 PASS cloneNode() clones into the node's node document realm
 PASS importNode() imports into the target document's realm
 PASS Range.cloneContents() builds the fragment in the range's node document realm
-FAIL innerHTML parses Text and Comment nodes in the node document's realm after adoption assert_true: is a top-level-realm Text expected true got false
+PASS innerHTML parses Text and Comment nodes in the node document's realm after adoption
 

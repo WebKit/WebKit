@@ -272,7 +272,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/name-validation.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/node-appendchild-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/node-creation-realm.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/node-realm-adoption-after-frame-removal.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/node-realm-mixed-across-adoption.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/node-realm-preserved-across-adoption.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/node-realm-preserved-across-frameless-adoption.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/pre-insertion-validation-hierarchy.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/pre-insertion-validation-notfound.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/prepend-on-Document.html

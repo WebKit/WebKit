@@ -27,6 +27,7 @@
 #pragma once
 
 #include <JavaScriptCore/HandleForward.h>
+#include <JavaScriptCore/Weak.h>
 #include <WebCore/ContextDestructionObserver.h>
 #include <WebCore/DOMHighResTimeStamp.h>
 #include <WebCore/DOMWindow.h>
@@ -55,6 +56,7 @@ template <typename, ShouldStrongDestructorGrabLock> class Strong;
 namespace WebCore {
 
 class CloseWatcherManager;
+class JSDOMGlobalObject;
 class SecurityOriginData;
 struct ScrollToOptions;
 struct UserGestureTokenData;
@@ -362,6 +364,9 @@ public:
     void willDetachDocumentFromFrame();
     void willDestroyCachedFrame();
 
+    JSDOMGlobalObject* cachedMainWorldGlobalObject() const;
+    void setCachedMainWorldGlobalObject(JSDOMGlobalObject*);
+
     void enableSuddenTermination();
     void disableSuddenTermination();
 
@@ -522,6 +527,8 @@ private:
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     const std::unique_ptr<PushManager> m_pushManager;
 #endif
+
+    JSC::Weak<JSDOMGlobalObject> m_cachedMainWorldGlobalObject;
 };
 
 inline String LocalDOMWindow::status() const

@@ -45,6 +45,7 @@
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSElement.h"
+#include "JSNodeCustom.h"
 #include "JSNodeList.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreJSClientData.h"
@@ -1315,6 +1316,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestDOMJIT>(impl.ptr());
 #endif
+    globalObject = globalObjectForNode(impl.get(), globalObject);
     return createWrapper<TestDOMJIT>(globalObject, WTF::move(impl));
 }
 

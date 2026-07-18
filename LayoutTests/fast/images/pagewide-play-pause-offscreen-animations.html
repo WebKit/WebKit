@@ -89,8 +89,8 @@ async function verifyAnimationsArePaused(expectPaused) {
     svgSvgElement = element;
     testOutput += `Testing #${svgSvgElement.id}.\n`;
 
-    if (!(svgSvgElement.children[0] instanceof SVGRectElement))
-      testOutput += `FAIL: 'children[0]' of ${svgSvgElement.id} should've been an SVGRectElement but wasn't, so this test won't behave as expected.\n`;
+    if (svgSvgElement.children[0].localName !== "rect")
+      testOutput += `FAIL: 'children[0]' of ${svgSvgElement.id} should've been an SVG rect but wasn't, so this test won't behave as expected.\n`;
 
     testOutput += expect(`svgSvgElement.children[0].x.animVal.value ${expectPaused ? "===" : "!=="} 0`, "true");
   }

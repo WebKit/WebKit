@@ -1,7 +1,7 @@
 
 
 PASS Precondition (built-in host): node document and relevant realm differ after adoption
-FAIL attachShadow() on an adopted built-in host: shadow root uses the node document realm assert_true: shadow root is from the node document's (top-level) realm expected true got false
+PASS attachShadow() on an adopted built-in host: shadow root uses the node document realm
 PASS Precondition (custom element host): node document and relevant realm differ after adoption
 PASS attachShadow() on an adopted custom element host: shadow root uses the node document realm
 PASS attachShadow() invoked via another realm's method uses the node document realm

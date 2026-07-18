@@ -149,7 +149,7 @@ JSValue toJS(JSGlobalObject*, JSDOMGlobalObject* globalObject, HTMLElement& elem
 {
     if (auto* wrapper = getCachedWrapper(globalObject->world(), element))
         return wrapper;
-    return createJSHTMLWrapper(globalObject, element);
+    return createJSHTMLWrapper(globalObjectForNode(element, globalObject), element);
 }
 
 JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<HTMLElement>&& element)
@@ -161,7 +161,7 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<H
         ASSERT(!globalObject->vm().exceptionForInspection());
     }
     ASSERT(!getCachedWrapper(globalObject->world(), element));
-    return createJSHTMLWrapper(globalObject, WTF::move(element));
+    return createJSHTMLWrapper(globalObjectForNode(element, globalObject), WTF::move(element));
 }
 
 } // namespace WebCore

@@ -1,0 +1,9 @@
+
+text
+x
+
+PASS Built-in element from a frameless document keeps its creation realm after adoption
+PASS Text node from a frameless document keeps its creation realm after adoption
+PASS Comment node from a frameless document keeps its creation realm after adoption
+PASS Never-wrapped descendant from a frameless document keeps its creation realm after adoption
+

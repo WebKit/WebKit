@@ -5765,6 +5765,10 @@ END
 #endif
 END
         AddToImplIncludes("JSDOMWrapperCache.h");
+        if ($codeGenerator->InheritsInterface($interface, "Node")) {
+            AddToImplIncludes("JSNodeCustom.h");
+            push(@implContent, "    globalObject = globalObjectForNode(impl.get(), globalObject);\n");
+        }
         push(@implContent, "    return createWrapper<${implType}>(globalObject, WTF::move(impl));\n");
         push(@implContent, "}\n\n");
 
