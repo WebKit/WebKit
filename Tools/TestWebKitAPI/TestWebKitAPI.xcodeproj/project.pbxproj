@@ -180,11 +180,6 @@
 			);
 			script = (
 				"\"${SCRIPT_INPUT_FILE_0}\"",
-				"",
-				"",
-				"",
-				"",
-				"",
 			);
 		};
 /* End PBXBuildRule section */
@@ -2700,6 +2695,143 @@
 			};
 			name = Release;
 		};
+		441828632F97C67700CEC637 /* Production configuration for PBXProject "TestWebKitAPI" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = Base.xcconfig;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		441828642F97C67700CEC637 /* Production configuration for PBXAggregateTarget "All" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		441828652F97C67700CEC637 /* Production configuration for PBXAggregateTarget "Derived Sources" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		441828662F97C67700CEC637 /* Production configuration for PBXAggregateTarget "Generate Unified Sources" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		441828672F97C67700CEC637 /* Production configuration for PBXNativeTarget "TestWebKitAPILibrary" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWebKitAPILibrary.xcconfig;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		441828682F97C67700CEC637 /* Production configuration for PBXNativeTarget "TestWTFLibrary" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWTFLibrary.xcconfig;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Tests/WTF/darwin",
+				);
+			};
+			name = Production;
+		};
+		441828692F97C67700CEC637 /* Production configuration for PBXNativeTarget "TestIPC" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestIPC.xcconfig;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		4418286A2F97C67700CEC637 /* Production configuration for PBXNativeTarget "TestWebKitAPI" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWebKitAPI.xcconfig;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		4418286B2F97C67700CEC637 /* Production configuration for PBXNativeTarget "TestWebKitAPIApp" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWebKitAPIApp.xcconfig;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		4418286C2F97C67700CEC637 /* Production configuration for PBXNativeTarget "TestWebKitAPIBundle" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWebKitAPIBundle.xcconfig;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		4418286D2F97C67700CEC637 /* Production configuration for PBXNativeTarget "TestWebKitAPIResources" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWebKitAPIResources.xcconfig;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		4418286E2F97C67700CEC637 /* Production configuration for PBXNativeTarget "TestWGSL" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWGSL.xcconfig;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		4418286F2F97C67700CEC637 /* Production configuration for PBXNativeTarget "TestWTF" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWTF.xcconfig;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		441828702F97C67700CEC637 /* Production configuration for PBXNativeTarget "InjectedBundleTestWebKitAPI" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = InjectedBundle.xcconfig;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		441828712F97C67700CEC637 /* Production configuration for PBXNativeTarget "WebProcessPlugIn" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = WebProcessPlugIn.xcconfig;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		441828722F97C67700CEC637 /* Production configuration for PBXAggregateTarget "Apply Configuration to XCFileLists" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		44F8AAC9300AF10C00FF922E /* Production configuration for PBXAggregateTarget "Testing.framework Overlays" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Testing.framework Overlays";
+			};
+			name = Production;
+		};
 		537CF84422EFD64100C6EBB3 /* Debug configuration for PBXAggregateTarget "Apply Configuration to XCFileLists" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2904,136 +3036,153 @@
 			buildConfigurations = (
 				0723A74A2F80357300CB96E7 /* Debug configuration for PBXAggregateTarget "Derived Sources" */,
 				0723A74B2F80357300CB96E7 /* Release configuration for PBXAggregateTarget "Derived Sources" */,
+				441828652F97C67700CEC637 /* Production configuration for PBXAggregateTarget "Derived Sources" */,
 			);
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		07A11A5702F9C0FE00000002 /* Build configuration list for PBXAggregateTarget "Testing.framework Overlays" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				07A11A5702F9C0FE00000003 /* Debug configuration for PBXAggregateTarget "Testing.framework Overlays" */,
 				07A11A5702F9C0FE00000004 /* Release configuration for PBXAggregateTarget "Testing.framework Overlays" */,
+				44F8AAC9300AF10C00FF922E /* Production configuration for PBXAggregateTarget "Testing.framework Overlays" */,
 			);
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "TestWebKitAPI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB927508733DD40010E9CD /* Debug configuration for PBXNativeTarget "TestWebKitAPI" */,
 				1DEB927608733DD40010E9CD /* Release configuration for PBXNativeTarget "TestWebKitAPI" */,
+				4418286A2F97C67700CEC637 /* Production configuration for PBXNativeTarget "TestWebKitAPI" */,
 			);
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "TestWebKitAPI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB927908733DD40010E9CD /* Debug configuration for PBXProject "TestWebKitAPI" */,
 				1DEB927A08733DD40010E9CD /* Release configuration for PBXProject "TestWebKitAPI" */,
+				441828632F97C67700CEC637 /* Production configuration for PBXProject "TestWebKitAPI" */,
 			);
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		3A15785028D1505B00142DB1 /* Build configuration list for PBXNativeTarget "TestWGSL" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3A15785128D1505B00142DB1 /* Debug configuration for PBXNativeTarget "TestWGSL" */,
 				3A15785228D1505B00142DB1 /* Release configuration for PBXNativeTarget "TestWGSL" */,
+				4418286E2F97C67700CEC637 /* Production configuration for PBXNativeTarget "TestWGSL" */,
 			);
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		537CF84622EFD64100C6EBB3 /* Build configuration list for PBXAggregateTarget "Apply Configuration to XCFileLists" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				537CF84422EFD64100C6EBB3 /* Debug configuration for PBXAggregateTarget "Apply Configuration to XCFileLists" */,
 				537CF84522EFD64100C6EBB3 /* Release configuration for PBXAggregateTarget "Apply Configuration to XCFileLists" */,
+				441828722F97C67700CEC637 /* Production configuration for PBXAggregateTarget "Apply Configuration to XCFileLists" */,
 			);
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		5C9D921922D7DA02008E9266 /* Build configuration list for PBXAggregateTarget "Generate Unified Sources" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5C9D921A22D7DA02008E9266 /* Debug configuration for PBXAggregateTarget "Generate Unified Sources" */,
 				5C9D921B22D7DA02008E9266 /* Release configuration for PBXAggregateTarget "Generate Unified Sources" */,
+				441828662F97C67700CEC637 /* Production configuration for PBXAggregateTarget "Generate Unified Sources" */,
 			);
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		7B9FC57B28A26137007570E7 /* Build configuration list for PBXNativeTarget "TestIPC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7B9FC57C28A26137007570E7 /* Debug configuration for PBXNativeTarget "TestIPC" */,
 				7B9FC57D28A26137007570E7 /* Release configuration for PBXNativeTarget "TestIPC" */,
+				441828692F97C67700CEC637 /* Production configuration for PBXNativeTarget "TestIPC" */,
 			);
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		7C83DF651D0A590C00FEBCF3 /* Build configuration list for PBXNativeTarget "TestWTFLibrary" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7C83DF661D0A590C00FEBCF3 /* Debug configuration for PBXNativeTarget "TestWTFLibrary" */,
 				7C83DF671D0A590C00FEBCF3 /* Release configuration for PBXNativeTarget "TestWTFLibrary" */,
+				441828682F97C67700CEC637 /* Production configuration for PBXNativeTarget "TestWTFLibrary" */,
 			);
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		7C83E0201D0A5AE400FEBCF3 /* Build configuration list for PBXNativeTarget "TestWTF" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7C83E0211D0A5AE400FEBCF3 /* Debug configuration for PBXNativeTarget "TestWTF" */,
 				7C83E0221D0A5AE400FEBCF3 /* Release configuration for PBXNativeTarget "TestWTF" */,
+				4418286F2F97C67700CEC637 /* Production configuration for PBXNativeTarget "TestWTF" */,
 			);
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		7C83E02C1D0A5E1000FEBCF3 /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7C83E02D1D0A5E1000FEBCF3 /* Debug configuration for PBXAggregateTarget "All" */,
 				7C83E02E1D0A5E1000FEBCF3 /* Release configuration for PBXAggregateTarget "All" */,
+				441828642F97C67700CEC637 /* Production configuration for PBXAggregateTarget "All" */,
 			);
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		7CCE7EA11A41144E00447C4C /* Build configuration list for PBXNativeTarget "TestWebKitAPILibrary" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7CCE7E9D1A41144E00447C4C /* Debug configuration for PBXNativeTarget "TestWebKitAPILibrary" */,
 				7CCE7E9E1A41144E00447C4C /* Release configuration for PBXNativeTarget "TestWebKitAPILibrary" */,
+				441828672F97C67700CEC637 /* Production configuration for PBXNativeTarget "TestWebKitAPILibrary" */,
 			);
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		A13EBB4C1B87339E00097110 /* Build configuration list for PBXNativeTarget "WebProcessPlugIn" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A13EBB4D1B87339E00097110 /* Debug configuration for PBXNativeTarget "WebProcessPlugIn" */,
 				A13EBB4E1B87339E00097110 /* Release configuration for PBXNativeTarget "WebProcessPlugIn" */,
+				441828712F97C67700CEC637 /* Production configuration for PBXNativeTarget "WebProcessPlugIn" */,
 			);
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		A17C46472C98E3440023F3C7 /* Build configuration list for PBXNativeTarget "TestWebKitAPIResources" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A17C46482C98E3440023F3C7 /* Debug configuration for PBXNativeTarget "TestWebKitAPIResources" */,
 				A17C46492C98E3440023F3C7 /* Release configuration for PBXNativeTarget "TestWebKitAPIResources" */,
+				4418286D2F97C67700CEC637 /* Production configuration for PBXNativeTarget "TestWebKitAPIResources" */,
 			);
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		A17C58212C9AA132009DD0B5 /* Build configuration list for PBXNativeTarget "TestWebKitAPIApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A17C58182C9AA132009DD0B5 /* Debug configuration for PBXNativeTarget "TestWebKitAPIApp" */,
 				A17C58192C9AA132009DD0B5 /* Release configuration for PBXNativeTarget "TestWebKitAPIApp" */,
+				4418286B2F97C67700CEC637 /* Production configuration for PBXNativeTarget "TestWebKitAPIApp" */,
 			);
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		A17C583D2C9B3EAE009DD0B5 /* Build configuration list for PBXNativeTarget "TestWebKitAPIBundle" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A17C58342C9B3EAE009DD0B5 /* Debug configuration for PBXNativeTarget "TestWebKitAPIBundle" */,
 				A17C58352C9B3EAE009DD0B5 /* Release configuration for PBXNativeTarget "TestWebKitAPIBundle" */,
+				4418286C2F97C67700CEC637 /* Production configuration for PBXNativeTarget "TestWebKitAPIBundle" */,
 			);
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		BC575986126E74AF006F0F12 /* Build configuration list for PBXNativeTarget "InjectedBundleTestWebKitAPI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BC575984126E74AF006F0F12 /* Debug configuration for PBXNativeTarget "InjectedBundleTestWebKitAPI" */,
 				BC575985126E74AF006F0F12 /* Release configuration for PBXNativeTarget "InjectedBundleTestWebKitAPI" */,
+				441828702F97C67700CEC637 /* Production configuration for PBXNativeTarget "InjectedBundleTestWebKitAPI" */,
 			);
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 /* End XCConfigurationList section */
 	};
