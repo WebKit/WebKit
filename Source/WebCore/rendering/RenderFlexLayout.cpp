@@ -75,6 +75,8 @@ FlexLayout::Result FlexLayout::layout(FlexLayoutItems& flexItems)
         InspectorInstrumentation::flexibleBoxRendererBeganLayout(m_flexBox);
         // 9.3. (#5) Collect the flex items into flex lines.
         flexLines = computeFlexLines(flexItems, flexBaseAndHypotheticalMainSizeList.span());
+        for (auto lineRange : flexLines.ranges)
+            InspectorInstrumentation::flexibleBoxRendererWrappedToNextLine(m_flexBox, lineRange.end());
         // 9.3. (#6) Resolve the flexible lengths to find the used main size of each item.
         flexItemsMainSizeList = computeMainSizeForFlexItems(flexItems, flexLines, flexBaseAndHypotheticalMainSizeList.span());
         trimCrossAxisMarginsForFlexItems(flexItems, flexLines);
@@ -95,7 +97,6 @@ FlexLayout::Result FlexLayout::layout(FlexLayoutItems& flexItems)
         auto contentStart = m_constraints.flowAwareBorderBlock.first + m_constraints.flowAwarePaddingBlock.first;
         auto crossAxisOffset = contentStart;
         for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
-            InspectorInstrumentation::flexibleBoxRendererWrappedToNextLine(m_flexBox, flexLines.ranges[lineIndex].end());
             flexLinesCrossPositionList[lineIndex] = crossAxisOffset;
             crossAxisOffset += flexLinesCrossSizeList[lineIndex];
         }
