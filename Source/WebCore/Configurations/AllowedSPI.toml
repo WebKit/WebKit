@@ -186,6 +186,8 @@ requires-sdk = ["iOS < 27.0"]
 [[temporary-usage]]
 request = "rdar://182597756"
 cleanup = "rdar://182597920"
+requires-sdk = ["iOS >= 27"]
+allow-unused = true
 swift-decls = [
     { name = "Foundation.ContiguousBytes.withBytes(_:)", type_kinds = { "ContiguousBytes" = "protocol" } },
 ]
