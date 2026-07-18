@@ -81,8 +81,10 @@ bool MediaPlaybackTargetCocoa::hasActiveRoute() const
 bool MediaPlaybackTargetCocoa::supportsCustomProtocolVideoPlayback() const
 {
     for (AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
         if (outputDevice.deviceType == AVOutputDeviceTypeCustomProtocol && outputDevice.deviceFeatures & AVOutputDeviceFeatureVideo)
             return true;
+ALLOW_NEW_API_WITHOUT_GUARDS_END
     }
 
     return false;
