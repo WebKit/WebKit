@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,19 +46,20 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionSidebar, WebExtensionSideba
 
 - (WKWebExtensionContext *)webExtensionContext
 {
-    return _webExtensionSidebar->extensionContext()
-        .transform([](auto const& context) { return context->wrapper(); })
-        .value_or(nil);
+    RefPtr context = _webExtensionSidebar->extensionContext();
+    return context ? context->wrapper() : nil;
 }
 
 - (NSString *)title
 {
-    return _webExtensionSidebar->title();
+    return _webExtensionSidebar->title().createNSString().get();
 }
 
 - (CocoaImage *)iconForSize:(CGSize)size
 {
-    return WebKit::toCocoaImage(_webExtensionSidebar->icon(WebCore::FloatSize(size)));
+    return _webExtensionSidebar->icon(WebCore::FloatSize(size))
+        .transform([](Ref<WebCore::Icon> icon) { return WebKit::toCocoaImage(icon.ptr()); })
+        .value_or(nullptr);
 }
 
 - (SidebarViewControllerType *)viewController

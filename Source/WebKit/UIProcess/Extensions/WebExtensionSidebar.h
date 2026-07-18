@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@ using SidebarViewControllerType = NSViewController;
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
 #include "APIObject.h"
+#include <WebCore/Icon.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -73,7 +74,7 @@ public:
 
     bool operator==(const WebExtensionSidebar&) const;
 
-    std::optional<Ref<WebExtensionContext>> extensionContext() const;
+    RefPtr<WebExtensionContext> extensionContext() const;
     const std::optional<Ref<WebExtensionTab>> tab() const;
     const std::optional<Ref<WebExtensionWindow>> window() const;
     std::optional<Ref<WebExtensionSidebar>> parent() const;
@@ -81,8 +82,8 @@ public:
     void propertiesDidChange();
 
     /// `icon()` will return the overridden icon of this sidebar, or the icon of the first parent sidebar in which the icon is set
-    RefPtr<WebCore::Icon> icon(WebCore::FloatSize);
-    void setIconsDictionary(RefPtr<JSON::Object>);
+    std::optional<Ref<WebCore::Icon>> icon(WebCore::FloatSize);
+    void setIconsDictionary(std::optional<Ref<JSON::Object>>);
 
     /// `title()` will return the overridden title of this sidebar, or the title of the first parent sidebar in which the title is set
     String title() const;
@@ -92,7 +93,11 @@ public:
     void setEnabled(bool);
 
     bool isOpen() const { return m_isOpen; }
-    bool opensSidebar() { return !sidebarPath().isEmpty(); };
+    bool opensSidebar()
+    {
+        auto path = resolvedSidebarPath();
+        return path && !path->isEmpty();
+    }
 
     /// `sidebarPath()` will return the overriden path of this sidebar, or the path of the first parent sidebar in which the path is set
     String sidebarPath() const;
@@ -130,7 +135,10 @@ private:
 
     void reloadWebView();
 
-    std::optional<RefPtr<JSON::Object>> m_iconsOverride;
+    /// The configured panel path from this sidebar's override/parent chain
+    std::optional<String> resolvedSidebarPath() const;
+
+    std::optional<Ref<JSON::Object>> m_iconsOverride;
     std::optional<String> m_titleOverride;
     std::optional<String> m_sidebarPathOverride;
     std::optional<bool> m_isEnabled;

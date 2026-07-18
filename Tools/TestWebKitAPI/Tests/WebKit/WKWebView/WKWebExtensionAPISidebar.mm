@@ -85,6 +85,28 @@ static auto *sidePanelManifest = @{
     },
 };
 
+static auto *sidePanelNoPathManifest = @{
+    @"manifest_version": @3,
+
+    @"name": @"SidePanel No Path Test",
+    @"description": @"SidePanel No Path Test",
+    @"version": @"1",
+
+    @"permissions": @[ @"sidePanel" ],
+    @"background": @{
+        @"scripts": @[ @"background.js" ],
+        @"type": @"module",
+        @"persistent": @NO,
+    },
+
+    @"side_panel": @{ },
+
+    @"action": @{
+        @"default_title": @"Test Action",
+        @"default_popup": @"popup.html",
+    },
+};
+
 static auto *sidebarActionAndPanelManifest = @{
     @"manifest_version": @3,
 
@@ -132,7 +154,7 @@ class WKWebExtensionAPISidebar : public testing::Test {
 protected:
     WKWebExtensionAPISidebar()
     {
-        sidebarConfig = WKWebExtensionControllerConfiguration.nonPersistantConfiguration;
+        sidebarConfig = WKWebExtensionControllerConfiguration.nonPersistentConfiguration;
         if (!sidebarConfig.webViewConfiguration)
             sidebarConfig.webViewConfiguration = [[WKWebViewConfiguration alloc] init];
 
@@ -1372,6 +1394,43 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelOpensSidebarOnActionClickWhenConfigure
     [manager run];
 
     EXPECT_EQ(presentSidebarCallCount, 1);
+    EXPECT_EQ(presentActionPopupCallCount, 1);
+}
+
+// Ensure we don't open a sidebar on about:blank if the extension has not configured a target URL
+TEST_F(WKWebExtensionAPISidebar, SidePanelActionClickDoesNotOpenPathlessSidebar)
+{
+    auto *script = @[
+        @"await browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: true })",
+        @"browser.test.sendMessage('Perform action')",
+    ];
+
+    auto *resources = @{
+        @"background.js": Util::constructScript(script),
+        @"popup.html": @"<h1>Popup</h1>",
+    };
+
+    int presentSidebarCallCount = 0;
+    int *presentSidebarCallCountPtr = &presentSidebarCallCount;
+    int presentActionPopupCallCount = 0;
+    int *presentActionPopupCallCountPtr = &presentActionPopupCallCount;
+
+    auto manager = getManagerFor(resources, sidePanelNoPathManifest);
+    manager.get().internalDelegate.presentSidebar = ^(_WKWebExtensionSidebar *) {
+        (*presentSidebarCallCountPtr)++;
+    };
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *) {
+        (*presentActionPopupCallCountPtr)++;
+        [manager done];
+    };
+
+    [manager load];
+    [manager runUntilTestMessage:@"Perform action"];
+
+    [manager.get().context performActionForTab:manager.get().defaultTab];
+    [manager run];
+
+    EXPECT_EQ(presentSidebarCallCount, 0);
     EXPECT_EQ(presentActionPopupCallCount, 1);
 }
 

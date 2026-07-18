@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +35,7 @@ OBJC_CLASS NSString;
 
 namespace WebKit {
 
-using SidebarError = RetainPtr<NSString>;
-// In this variant, `monostate` indicates that we have neither a window or tab identifier, but no error
-using ParseResult = Variant<std::monostate, WebExtensionTabIdentifier, WebExtensionWindowIdentifier, SidebarError>;
+using ParseResult = Expected<std::optional<Variant<WebExtensionTabIdentifier, WebExtensionWindowIdentifier>>, WebExtensionError>;
 
 template<typename T, typename VARIANT_T>
 struct isVariantMember;
@@ -52,14 +50,12 @@ std::optional<OptType> toOptional(Variant<Types...>& variant)
     return std::nullopt;
 }
 
-template<typename VariantType>
-SidebarError indicatesError(const VariantType& variant)
+template<typename SuccessType>
+RetainPtr<NSString> indicatesError(const Expected<SuccessType, WebExtensionError>& result)
 {
-    static_assert(isVariantMember<SidebarError, VariantType>::value);
-
-    if (std::holds_alternative<SidebarError>(variant))
-        return WTF::move(std::get<SidebarError>(variant));
-    return nil;
+    if (result.has_value())
+        return nil;
+    return result.error().createNSString();
 }
 
 class WebExtensionAPISidebarAction : public WebExtensionAPIObject, public JSWebExtensionWrappable {

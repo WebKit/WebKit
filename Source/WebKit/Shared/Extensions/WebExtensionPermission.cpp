@@ -97,12 +97,12 @@ String WebExtensionPermission::scripting()
     return "scripting"_s;
 }
 
-#if ENABLE(WK_WEB_EXTENSION_SIDEBAR)
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 String WebExtensionPermission::sidePanel()
 {
     return "sidePanel"_s;
 }
-#endif // ENABLE(WK_WEB_EXTENSION_SIDEBAR)
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
 String WebExtensionPermission::storage()
 {

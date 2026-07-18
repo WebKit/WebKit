@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,7 +64,10 @@ static Expected<Ref<WebExtensionSidebar>, WebExtensionError> getSidebarWithIdent
         if (!tab)
             return makeUnexpected(@"the tab was not found");
         return context.getSidebar(*tab)
-            .or_else([&] { return context.getSidebar(*(tab->window())); })
+            .or_else([&] -> std::optional<Ref<WebExtensionSidebar>> {
+                RefPtr window = tab->window();
+                return window ? context.getSidebar(*window) : std::nullopt;
+            })
             .value_or(context.defaultSidebar());
     }
 

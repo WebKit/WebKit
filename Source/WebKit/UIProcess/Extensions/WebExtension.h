@@ -278,8 +278,8 @@ public:
     bool hasSidePanel();
     bool hasAnySidebar();
     RefPtr<WebCore::Icon> sidebarIcon(WebCore::FloatSize idealSize);
-    const Sring& sidebarDocumentPath();
-    const String& sidebarTitle();
+    const std::optional<String>& sidebarDocumentPath();
+    const std::optional<String>& sidebarTitle();
 #endif
 
     Expected<Ref<WebCore::Icon>, RefPtr<API::Error>> iconForPath(const String&, WebCore::FloatSize sizeForResizing = { }, std::optional<double> displayScale = std::nullopt);
@@ -383,8 +383,8 @@ private:
     void populateExternallyConnectableIfNeeded();
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
     void populateSidebarPropertiesIfNeeded();
-    void populateSidebarActionProperties(RetainPtr<NSDictionary>);
-    void populateSidePanelProperties(RetainPtr<NSDictionary>);
+    void populateSidebarActionProperties(const JSON::Object&);
+    void populateSidePanelProperties(const JSON::Object&);
 #endif
 
     URL resourceFileURLForPath(const String&);
@@ -436,9 +436,9 @@ private:
     String m_actionPopupPath;
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-    IconsCache m_sidebarIconsCache;
-    String m_sidebarDocumentPath;
-    String m_sidebarTitle;
+    std::optional<IconsCache> m_sidebarIconsCache;
+    std::optional<String> m_sidebarDocumentPath;
+    std::optional<String> m_sidebarTitle;
 #endif
 
     String m_contentSecurityPolicy;

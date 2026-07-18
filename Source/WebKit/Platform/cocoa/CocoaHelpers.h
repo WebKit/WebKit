@@ -87,6 +87,14 @@ inline std::optional<RetainPtr<T>> toOptional(T *maybeNil)
     return std::nullopt;
 }
 
+template<typename T>
+inline std::optional<Ref<T>> toOptional(RefPtr<T> maybeNull)
+{
+    if (maybeNull)
+        return maybeNull.releaseNonNull();
+    return std::nullopt;
+}
+
 inline std::optional<String> toOptional(NSString *maybeNil)
 {
     if (maybeNil)
