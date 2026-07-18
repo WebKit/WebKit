@@ -1058,37 +1058,35 @@ Value BBQJIT::exception(const ControlData& control)
 
 void BBQJIT::emitWriteBarrier(GPRReg cellGPR)
 {
-    GPRReg vmGPR;
-    GPRReg cellStateGPR;
-    {
-        ScratchScope<2, 0> scratches(*this);
-        vmGPR = scratches.gpr(0);
-        cellStateGPR = scratches.gpr(1);
-    }
-
-    // We must flush everything first. Jumping over flush (emitCCall) is wrong since paths need to get merged.
-    flushRegisters();
+    ScratchScope<2, 0> scratches(*this, Location::fromGPR(cellGPR));
+    GPRReg vmGPR = scratches.gpr(0);
+    GPRReg cellStateGPR = scratches.gpr(1);
+    ASSERT(vmGPR != cellGPR);
+    ASSERT(cellStateGPR != cellGPR);
 
     m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), vmGPR);
     m_jit.load8(Address(cellGPR, JSCell::cellStateOffset()), cellStateGPR);
-    auto noFenceCheck = m_jit.branch32(RelationalCondition::Above, cellStateGPR, Address(vmGPR, VM::offsetOfHeapBarrierThreshold()));
 
-    // Fence check path
-    auto toSlowPath = m_jit.branchTest8(ResultCondition::Zero, Address(vmGPR, VM::offsetOfHeapMutatorShouldBeFenced()));
+    JumpList slowPath;
+    slowPath.append(m_jit.branch32(RelationalCondition::BelowOrEqual, cellStateGPR, Address(vmGPR, VM::offsetOfHeapBarrierThreshold())));
 
-    // Fence path
-    m_jit.memoryFence();
-    Jump belowBlackThreshold = m_jit.branch8(RelationalCondition::Above, Address(cellGPR, JSCell::cellStateOffset()), TrustedImm32(blackThreshold));
+    // FIXME: We should only spill the register bindings when actually taking the call.
+    MacroAssembler::Label done = m_jit.label();
+    m_slowPaths.append({ origin(), WTF::move(slowPath), done, copyBindings(), [cellGPR](BBQJIT&, CCallHelpers& jit) {
+        jit.move(cellGPR, GPRInfo::argumentGPR0);
+        jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), wasmScratchGPR);
 
-    // Slow path
-    toSlowPath.link(&m_jit);
-    m_jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
-    m_jit.setupArguments<decltype(operationWasmWriteBarrierSlowPath)>(cellGPR, vmGPR);
-    m_jit.callOperation<OperationPtrTag>(operationWasmWriteBarrierSlowPath);
+        auto toSlowPath = jit.branchTest8(ResultCondition::Zero, Address(wasmScratchGPR, VM::offsetOfHeapMutatorShouldBeFenced()));
+        jit.memoryFence();
+        auto belowBlackThreshold = jit.branch8(RelationalCondition::Above, Address(GPRInfo::argumentGPR0, JSCell::cellStateOffset()), TrustedImm32(blackThreshold));
 
-    // Continuation
-    noFenceCheck.link(&m_jit);
-    belowBlackThreshold.link(&m_jit);
+        toSlowPath.link(&jit);
+        jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
+        jit.setupArguments<decltype(operationWasmWriteBarrierSlowPath)>(GPRInfo::argumentGPR0, wasmScratchGPR);
+        jit.callOperation<OperationPtrTag>(operationWasmWriteBarrierSlowPath);
+
+        belowBlackThreshold.link(&jit);
+    } });
 }
 
 void BBQJIT::emitMutatorFence()
