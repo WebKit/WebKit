@@ -31,6 +31,7 @@
 #include <optional>
 #include <pal/crypto/CryptoTypes.h>
 #include <span>
+#include <wtf/BorrowedBytes.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace PAL::Crypto {
@@ -88,9 +89,11 @@ void CryptoDigest::addBytes(std::span<const uint8_t> input)
     case CryptoDigest::Algorithm::SHA_1:
     case CryptoDigest::Algorithm::SHA_256:
     case CryptoDigest::Algorithm::SHA_384:
-    case CryptoDigest::Algorithm::SHA_512:
-        m_context->ccContext->update(input);
+    case CryptoDigest::Algorithm::SHA_512: {
+        WTF::BorrowedSpanScope inputScope(input);
+        m_context->ccContext->update(protect(inputScope.bytes()).ptr());
         return;
+    }
     case CryptoDigest::Algorithm::DEPRECATED_SHA_224:
         RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("SHA224 is not supported.");
         return;

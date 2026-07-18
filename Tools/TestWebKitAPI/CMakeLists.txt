@@ -35,6 +35,7 @@ set(TestWTF_SOURCES
     Tests/WTF/BitSet.cpp
     Tests/WTF/BitVector.cpp
     Tests/WTF/BloomFilter.cpp
+    Tests/WTF/BorrowedBytes.cpp
     Tests/WTF/BoxPtr.cpp
     Tests/WTF/BumpPointerAllocator.cpp
     Tests/WTF/CString.cpp

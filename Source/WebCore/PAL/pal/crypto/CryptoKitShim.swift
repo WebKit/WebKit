@@ -23,23 +23,21 @@
 
 private import CryptoKit
 import Foundation
-
 public import pal.Core.crypto.CryptoTypes
-
-// FIXME: (rdar://164560176) resolve the many 'unsafe' statements here
 
 private enum LocalErrors: Error {
     case invalidArgument
+    case emptySpan
 }
 
 @_expose(Cxx)
 final class AesGcm {
     @_expose(Cxx)
     static func encrypt(
-        key: PAL.Crypto.SpanConstUInt8,
-        iv: PAL.Crypto.SpanConstUInt8,
-        ad: PAL.Crypto.SpanConstUInt8,
-        message: PAL.Crypto.SpanConstUInt8,
+        key: WTF.BorrowedBytes,
+        iv: WTF.BorrowedBytes,
+        ad: WTF.BorrowedBytes,
+        message: WTF.BorrowedBytes,
         desiredTagLengthInBytes: Int
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
@@ -48,7 +46,14 @@ final class AesGcm {
                 returnValue.errorCode = .InvalidArgument
                 return returnValue
             }
-            let sealedBox: AES.GCM.SealedBox = try unsafe AES.GCM.seal(message, key: key, iv: iv, ad: ad)
+            let key = SymmetricKey(data: key.asNonNullBytes)
+            let nonce = try AES.GCM.Nonce(data: iv.asNonNullBytes)
+            let sealedBox: AES.GCM.SealedBox
+            if ad.size() > 0 {
+                sealedBox = try AES.GCM.seal(message.asNonNullBytes, using: key, nonce: nonce, authenticating: ad.asNonNullBytes)
+            } else {
+                sealedBox = try AES.GCM.seal(message.asNonNullBytes, using: key, nonce: nonce)
+            }
             if desiredTagLengthInBytes > sealedBox.tag.count {
                 returnValue.errorCode = .InvalidArgument
                 return returnValue
@@ -60,7 +65,7 @@ final class AesGcm {
                 ]
             )
             returnValue.errorCode = .Success
-            returnValue.result = result.copyToVectorUInt8()
+            returnValue.result = makeVectorUInt8(copying: result)
             return returnValue
         } catch {
             returnValue.errorCode = .EncryptionFailed
@@ -73,14 +78,17 @@ final class AesGcm {
 final class AesKw {
     @_expose(Cxx)
     static func wrap(
-        keyToWrap: PAL.Crypto.SpanConstUInt8,
-        using: PAL.Crypto.SpanConstUInt8
+        keyToWrap: WTF.BorrowedBytes,
+        using: WTF.BorrowedBytes
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
         do {
-            let result = try unsafe AES.KeyWrap.wrap(keyToWrap, using: using)
+            let result = try AES.KeyWrap.wrap(
+                SymmetricKey(data: keyToWrap.asNonNullBytes),
+                using: SymmetricKey(data: using.asNonNullBytes)
+            )
             returnValue.errorCode = .Success
-            returnValue.result = result
+            returnValue.result = makeVectorUInt8(copying: result)
         } catch {
             returnValue.errorCode = .EncryptionFailed
         }
@@ -89,17 +97,17 @@ final class AesKw {
 
     @_expose(Cxx)
     static func unwrap(
-        wrappedKey: PAL.Crypto.SpanConstUInt8,
-        using: PAL.Crypto.SpanConstUInt8
+        wrappedKey: WTF.BorrowedBytes,
+        using: WTF.BorrowedBytes
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
         do {
-            let result = try unsafe AES.KeyWrap.unwrap(
-                wrappedKey,
-                using: using
+            let result = try AES.KeyWrap.unwrap(
+                wrappedKey.asNonNullBytes,
+                using: SymmetricKey(data: using.asNonNullBytes)
             )
             returnValue.errorCode = .Success
-            returnValue.result = result.copyToVectorUInt8()
+            returnValue.result = makeVectorUInt8(copying: result)
         } catch {
             returnValue.errorCode = .EncryptionFailed
         }
@@ -136,58 +144,58 @@ final class Digest {
     }
 
     @_expose(Cxx)
-    func update(_ data: PAL.Crypto.SpanConstUInt8) {
-        unsafe ctx.update(data: data)
+    func update(_ data: WTF.BorrowedBytes) {
+        ctx.update(data: data.asNonNullBytes)
     }
 
     @_expose(Cxx)
     func finalize() -> PAL.Crypto.VectorUInt8 {
-        ctx.finalize().copyToVectorUInt8()
+        makeVectorUInt8(copying: ctx.finalize())
     }
 
     @_expose(Cxx)
-    static func sha1(_ data: PAL.Crypto.SpanConstUInt8) -> PAL.Crypto.VectorUInt8 {
-        unsafe digest(data, t: Insecure.SHA1.self)
+    static func sha1(_ data: WTF.BorrowedBytes) -> PAL.Crypto.VectorUInt8 {
+        digest(data, t: Insecure.SHA1.self)
     }
 
     @_expose(Cxx)
-    static func sha256(_ data: PAL.Crypto.SpanConstUInt8) -> PAL.Crypto.VectorUInt8 {
-        unsafe digest(data, t: SHA256.self)
+    static func sha256(_ data: WTF.BorrowedBytes) -> PAL.Crypto.VectorUInt8 {
+        digest(data, t: SHA256.self)
     }
 
     @_expose(Cxx)
-    static func sha384(_ data: PAL.Crypto.SpanConstUInt8) -> PAL.Crypto.VectorUInt8 {
-        unsafe digest(data, t: SHA384.self)
+    static func sha384(_ data: WTF.BorrowedBytes) -> PAL.Crypto.VectorUInt8 {
+        digest(data, t: SHA384.self)
     }
 
     @_expose(Cxx)
-    static func sha512(_ data: PAL.Crypto.SpanConstUInt8) -> PAL.Crypto.VectorUInt8 {
-        unsafe digest(data, t: SHA512.self)
+    static func sha512(_ data: WTF.BorrowedBytes) -> PAL.Crypto.VectorUInt8 {
+        digest(data, t: SHA512.self)
     }
 
-    fileprivate static func digest<T: CryptoKit.HashFunction>(_ data: PAL.Crypto.SpanConstUInt8, _: T.Type) -> T.Digest {
+    fileprivate static func digest<T: CryptoKit.HashFunction>(_ data: WTF.BorrowedBytes, _: T.Type) -> T.Digest {
         var hasher = T()
-        unsafe hasher.update(data: data)
+        hasher.update(data: data.asNonNullBytes)
         return hasher.finalize()
     }
 
-    fileprivate static func digest<T: CryptoKit.HashFunction>(_ data: PAL.Crypto.SpanConstUInt8, t: T.Type) -> PAL.Crypto.VectorUInt8 {
-        unsafe Self.digest(data, t).copyToVectorUInt8()
+    fileprivate static func digest<T: CryptoKit.HashFunction>(_ data: WTF.BorrowedBytes, t: T.Type) -> PAL.Crypto.VectorUInt8 {
+        makeVectorUInt8(copying: Self.digest(data, t))
     }
 
     fileprivate static func digest(
-        _ data: PAL.Crypto.SpanConstUInt8,
+        _ data: WTF.BorrowedBytes,
         hashFunction: PAL.Crypto.CryptoDigestHashFunction
     ) -> any CryptoKit.Digest {
         switch hashFunction {
         case .SHA_256:
-            return unsafe digest(data, SHA256.self)
+            return digest(data, SHA256.self)
         case .SHA_384:
-            return unsafe digest(data, SHA384.self)
+            return digest(data, SHA384.self)
         case .SHA_512:
-            return unsafe digest(data, SHA512.self)
+            return digest(data, SHA512.self)
         case .SHA_1:
-            return unsafe digest(data, Insecure.SHA1.self)
+            return digest(data, Insecure.SHA1.self)
         case .DEPRECATED_SHA_224:
             fatalError("DEPRECATED_SHA_224 is not supported")
         @unknown default:
@@ -261,15 +269,15 @@ struct ECKey {
     }
 
     @_expose(Cxx)
-    static func importX963Pub(data: PAL.Crypto.SpanConstUInt8, curve: PAL.Crypto.ECNamedCurve) -> ECKey? {
+    static func importX963Pub(data: WTF.BorrowedBytes, curve: PAL.Crypto.ECNamedCurve) -> ECKey? {
         do {
             return switch curve {
             case .P256:
-                unsafe ECKey(internalKey: .publicKey(.p256(try P256.Signing.PublicKey(span: data))))
+                ECKey(internalKey: .publicKey(.p256(try P256.Signing.PublicKey(span: data))))
             case .P384:
-                unsafe ECKey(internalKey: .publicKey(.p384(try P384.Signing.PublicKey(span: data))))
+                ECKey(internalKey: .publicKey(.p384(try P384.Signing.PublicKey(span: data))))
             case .P521:
-                unsafe ECKey(internalKey: .publicKey(.p521(try P521.Signing.PublicKey(span: data))))
+                ECKey(internalKey: .publicKey(.p521(try P521.Signing.PublicKey(span: data))))
             @unknown default:
                 fatalError()
             }
@@ -284,11 +292,11 @@ struct ECKey {
         do {
             switch try getInternalPublic() {
             case .p256(let k):
-                returnValue.result = k.x963Representation.copyToVectorUInt8()
+                returnValue.result = makeVectorUInt8(copying: k.x963Representation)
             case .p384(let k):
-                returnValue.result = k.x963Representation.copyToVectorUInt8()
+                returnValue.result = makeVectorUInt8(copying: k.x963Representation)
             case .p521(let k):
-                returnValue.result = k.x963Representation.copyToVectorUInt8()
+                returnValue.result = makeVectorUInt8(copying: k.x963Representation)
             }
             returnValue.errorCode = .Success
         } catch {
@@ -298,15 +306,15 @@ struct ECKey {
     }
 
     @_expose(Cxx)
-    static func importCompressedPub(data: PAL.Crypto.SpanConstUInt8, curve: PAL.Crypto.ECNamedCurve) -> ECKey? {
+    static func importCompressedPub(data: WTF.BorrowedBytes, curve: PAL.Crypto.ECNamedCurve) -> ECKey? {
         do {
             return switch curve {
             case .P256:
-                unsafe ECKey(publicKey: .p256(try P256.Signing.PublicKey(spanCompressed: data)))
+                ECKey(publicKey: .p256(try P256.Signing.PublicKey(spanCompressed: data)))
             case .P384:
-                unsafe ECKey(publicKey: .p384(try P384.Signing.PublicKey(spanCompressed: data)))
+                ECKey(publicKey: .p384(try P384.Signing.PublicKey(spanCompressed: data)))
             case .P521:
-                unsafe ECKey(publicKey: .p521(try P521.Signing.PublicKey(spanCompressed: data)))
+                ECKey(publicKey: .p521(try P521.Signing.PublicKey(spanCompressed: data)))
             @unknown default:
                 fatalError()
             }
@@ -316,15 +324,15 @@ struct ECKey {
     }
 
     @_expose(Cxx)
-    static func importX963Private(data: PAL.Crypto.SpanConstUInt8, curve: PAL.Crypto.ECNamedCurve) -> ECKey? {
+    static func importX963Private(data: WTF.BorrowedBytes, curve: PAL.Crypto.ECNamedCurve) -> ECKey? {
         do {
             return switch curve {
             case .P256:
-                unsafe ECKey(privateKey: .p256(try P256.Signing.PrivateKey(span: data)))
+                ECKey(privateKey: .p256(try P256.Signing.PrivateKey(span: data)))
             case .P384:
-                unsafe ECKey(privateKey: .p384(try P384.Signing.PrivateKey(span: data)))
+                ECKey(privateKey: .p384(try P384.Signing.PrivateKey(span: data)))
             case .P521:
-                unsafe ECKey(privateKey: .p521(try P521.Signing.PrivateKey(span: data)))
+                ECKey(privateKey: .p521(try P521.Signing.PrivateKey(span: data)))
             @unknown default:
                 fatalError()
             }
@@ -339,11 +347,11 @@ struct ECKey {
         do {
             switch try getInternalPrivate() {
             case .p256(let k):
-                returnValue.result = k.x963Representation.copyToVectorUInt8()
+                returnValue.result = makeVectorUInt8(copying: k.x963Representation)
             case .p384(let k):
-                returnValue.result = k.x963Representation.copyToVectorUInt8()
+                returnValue.result = makeVectorUInt8(copying: k.x963Representation)
             case .p521(let k):
-                returnValue.result = k.x963Representation.copyToVectorUInt8()
+                returnValue.result = makeVectorUInt8(copying: k.x963Representation)
             }
             returnValue.errorCode = .Success
         } catch {
@@ -354,7 +362,7 @@ struct ECKey {
 
     @_expose(Cxx)
     func sign(
-        message: PAL.Crypto.SpanConstUInt8,
+        message: WTF.BorrowedBytes,
         hashFunction: PAL.Crypto.CryptoDigestHashFunction
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
@@ -362,16 +370,19 @@ struct ECKey {
             switch try getInternalPrivate() {
             case .p256(let cryptoKey):
                 returnValue.result =
-                    try unsafe cryptoKey.signature(for: Digest.digest(message, hashFunction: hashFunction))
-                    .rawRepresentation.copyToVectorUInt8()
+                    try makeVectorUInt8(
+                        copying: cryptoKey.signature(for: Digest.digest(message, hashFunction: hashFunction)).rawRepresentation
+                    )
             case .p384(let cryptoKey):
                 returnValue.result =
-                    try unsafe cryptoKey.signature(for: Digest.digest(message, hashFunction: hashFunction))
-                    .rawRepresentation.copyToVectorUInt8()
+                    try makeVectorUInt8(
+                        copying: cryptoKey.signature(for: Digest.digest(message, hashFunction: hashFunction)).rawRepresentation
+                    )
             case .p521(let cryptoKey):
                 returnValue.result =
-                    try unsafe cryptoKey.signature(for: Digest.digest(message, hashFunction: hashFunction))
-                    .rawRepresentation.copyToVectorUInt8()
+                    try makeVectorUInt8(
+                        copying: cryptoKey.signature(for: Digest.digest(message, hashFunction: hashFunction)).rawRepresentation
+                    )
             }
             returnValue.errorCode = .Success
         } catch {
@@ -382,8 +393,8 @@ struct ECKey {
 
     @_expose(Cxx)
     func verify(
-        message: PAL.Crypto.SpanConstUInt8,
-        signature: PAL.Crypto.SpanConstUInt8,
+        message: WTF.BorrowedBytes,
+        signature: WTF.BorrowedBytes,
         hashFunction: PAL.Crypto.CryptoDigestHashFunction
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
@@ -392,21 +403,21 @@ struct ECKey {
             switch internalPublic {
             case .p256(let cryptoKey):
                 returnValue.errorCode =
-                    unsafe cryptoKey.isValidSignature(
+                    cryptoKey.isValidSignature(
                         try P256.Signing.ECDSASignature(span: signature),
                         for: Digest.digest(message, hashFunction: hashFunction)
                     )
                     ? .Success : .FailedToVerify
             case .p384(let cryptoKey):
                 returnValue.errorCode =
-                    unsafe cryptoKey.isValidSignature(
+                    cryptoKey.isValidSignature(
                         try P384.Signing.ECDSASignature(span: signature),
                         for: Digest.digest(message, hashFunction: hashFunction)
                     )
                     ? .Success : .FailedToVerify
             case .p521(let cryptoKey):
                 returnValue.errorCode =
-                    unsafe cryptoKey.isValidSignature(
+                    cryptoKey.isValidSignature(
                         try P521.Signing.ECDSASignature(span: signature),
                         for: Digest.digest(message, hashFunction: hashFunction)
                     )
@@ -453,7 +464,7 @@ struct ECKey {
                             rawRepresentation: publicKey.rawRepresentation
                         )
                     )
-                    returnValue.result = derived.copyToVectorUInt8()
+                    returnValue.result = makeVectorUInt8(copying: derived)
                     break
                 }
                 returnValue.errorCode = .InvalidArgument
@@ -467,7 +478,7 @@ struct ECKey {
                             rawRepresentation: publicKey.rawRepresentation
                         )
                     )
-                    returnValue.result = derived.copyToVectorUInt8()
+                    returnValue.result = makeVectorUInt8(copying: derived)
                     break
                 }
                 returnValue.errorCode = .InvalidArgument
@@ -481,7 +492,7 @@ struct ECKey {
                             rawRepresentation: publicKey.rawRepresentation
                         )
                     )
-                    returnValue.result = derived.copyToVectorUInt8()
+                    returnValue.result = makeVectorUInt8(copying: derived)
                     break
                 }
                 returnValue.errorCode = .InvalidArgument
@@ -500,9 +511,9 @@ final class EdKey {
     static func generatePrivateKey(algo: PAL.Crypto.EdSigningAlgorithm) -> PAL.Crypto.VectorUInt8 {
         switch algo {
         case .ED25519:
-            Curve25519.Signing.PrivateKey().rawRepresentation.copyToVectorUInt8()
+            makeVectorUInt8(copying: Curve25519.Signing.PrivateKey().rawRepresentation)
         case .ED448:
-            Data(count: 0).copyToVectorUInt8()
+            makeVectorUInt8(copying: Data(count: 0))
         @unknown default:
             fatalError()
         }
@@ -512,9 +523,9 @@ final class EdKey {
     static func generatePrivateKeyKeyAgreement(algo: PAL.Crypto.EdKeyAgreementAlgorithm) -> PAL.Crypto.VectorUInt8 {
         switch algo {
         case .X25519:
-            Curve25519.KeyAgreement.PrivateKey().rawRepresentation.copyToVectorUInt8()
+            makeVectorUInt8(copying: Curve25519.KeyAgreement.PrivateKey().rawRepresentation)
         case .X448:
-            Data(count: 0).copyToVectorUInt8()
+            makeVectorUInt8(copying: Data(count: 0))
         @unknown default:
             fatalError()
         }
@@ -523,7 +534,7 @@ final class EdKey {
     @_expose(Cxx)
     static func privateToPublic(
         algo: PAL.Crypto.EdSigningAlgorithm,
-        privateKey: PAL.Crypto.SpanConstUInt8
+        privateKey: WTF.BorrowedBytes
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
         do {
@@ -532,8 +543,9 @@ final class EdKey {
             }
             switch algo {
             case .ED25519:
-                returnValue.result = try unsafe Curve25519.Signing.PrivateKey(span: privateKey).publicKey
-                    .rawRepresentation.copyToVectorUInt8()
+                returnValue.result = try makeVectorUInt8(
+                    copying: Curve25519.Signing.PrivateKey(span: privateKey).publicKey.rawRepresentation
+                )
                 if returnValue.result.size() != 32 {
                     throw LocalErrors.invalidArgument
                 }
@@ -552,7 +564,7 @@ final class EdKey {
     @_expose(Cxx)
     static func privateToPublicKeyAgreement(
         algo: PAL.Crypto.EdKeyAgreementAlgorithm,
-        privateKey: PAL.Crypto.SpanConstUInt8
+        privateKey: WTF.BorrowedBytes
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
         do {
@@ -561,8 +573,9 @@ final class EdKey {
             }
             switch algo {
             case .X25519:
-                returnValue.result = try unsafe Curve25519.KeyAgreement.PrivateKey(span: privateKey).publicKey
-                    .rawRepresentation.copyToVectorUInt8()
+                returnValue.result = try makeVectorUInt8(
+                    copying: Curve25519.KeyAgreement.PrivateKey(span: privateKey).publicKey.rawRepresentation
+                )
                 if returnValue.result.size() != 32 {
                     throw LocalErrors.invalidArgument
                 }
@@ -581,8 +594,8 @@ final class EdKey {
     @_expose(Cxx)
     static func validateKeyPair(
         algo: PAL.Crypto.EdSigningAlgorithm,
-        privateKey: PAL.Crypto.SpanConstUInt8,
-        publicKey: PAL.Crypto.SpanConstUInt8
+        privateKey: WTF.BorrowedBytes,
+        publicKey: WTF.BorrowedBytes
     ) -> Bool {
         do {
             if privateKey.size() != 32 || publicKey.size() != 32 {
@@ -590,8 +603,8 @@ final class EdKey {
             }
             switch algo {
             case .ED25519:
-                let derivedPublicKey = try unsafe Curve25519.Signing.PrivateKey(span: privateKey).publicKey.rawRepresentation
-                let importedPublicKey = try unsafe Curve25519.Signing.PublicKey(span: publicKey).rawRepresentation
+                let derivedPublicKey = try Curve25519.Signing.PrivateKey(span: privateKey).publicKey.rawRepresentation
+                let importedPublicKey = try Curve25519.Signing.PublicKey(span: publicKey).rawRepresentation
                 return derivedPublicKey == importedPublicKey
             case .ED448:
                 return false
@@ -606,8 +619,8 @@ final class EdKey {
     @_expose(Cxx)
     static func validateKeyPairKeyAgreement(
         algo: PAL.Crypto.EdKeyAgreementAlgorithm,
-        privateKey: PAL.Crypto.SpanConstUInt8,
-        publicKey: PAL.Crypto.SpanConstUInt8
+        privateKey: WTF.BorrowedBytes,
+        publicKey: WTF.BorrowedBytes
     ) -> Bool {
         do {
             if privateKey.size() != 32 || publicKey.size() != 32 {
@@ -615,8 +628,8 @@ final class EdKey {
             }
             switch algo {
             case .X25519:
-                let derivedPublicKey = try unsafe Curve25519.KeyAgreement.PrivateKey(span: privateKey).publicKey.rawRepresentation
-                let importedPublicKey = try unsafe Curve25519.KeyAgreement.PublicKey(span: publicKey).rawRepresentation
+                let derivedPublicKey = try Curve25519.KeyAgreement.PrivateKey(span: privateKey).publicKey.rawRepresentation
+                let importedPublicKey = try Curve25519.KeyAgreement.PublicKey(span: publicKey).rawRepresentation
                 return derivedPublicKey == importedPublicKey
             case .X448:
                 return false
@@ -631,15 +644,15 @@ final class EdKey {
     @_expose(Cxx)
     static func sign(
         algo: PAL.Crypto.EdSigningAlgorithm,
-        privateKey: PAL.Crypto.SpanConstUInt8,
-        data: PAL.Crypto.SpanConstUInt8
+        privateKey: WTF.BorrowedBytes,
+        data: WTF.BorrowedBytes
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
         do {
             switch algo {
             case .ED25519:
-                let privateKeyImported = try unsafe Curve25519.Signing.PrivateKey(span: privateKey)
-                returnValue.result = try unsafe privateKeyImported.signature(span: data)
+                let privateKeyImported = try Curve25519.Signing.PrivateKey(span: privateKey)
+                returnValue.result = try privateKeyImported.signature(span: data)
                 returnValue.errorCode = .Success
             case .ED448:
                 returnValue.errorCode = .UnsupportedAlgorithm
@@ -655,17 +668,17 @@ final class EdKey {
     @_expose(Cxx)
     static func verify(
         algo: PAL.Crypto.EdSigningAlgorithm,
-        publicKey: PAL.Crypto.SpanConstUInt8,
-        signature: PAL.Crypto.SpanConstUInt8,
-        data: PAL.Crypto.SpanConstUInt8
+        publicKey: WTF.BorrowedBytes,
+        signature: WTF.BorrowedBytes,
+        data: WTF.BorrowedBytes
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
         do {
             switch algo {
             case .ED25519:
-                let publicKeyImported = try unsafe Curve25519.Signing.PublicKey(span: publicKey)
+                let publicKeyImported = try Curve25519.Signing.PublicKey(span: publicKey)
                 returnValue.errorCode =
-                    unsafe publicKeyImported.isValidSignature(signature: signature, data: data)
+                    publicKeyImported.isValidSignature(signature: signature, data: data)
                     ? .Success : .FailedToVerify
             case .ED448:
                 returnValue.errorCode = .UnsupportedAlgorithm
@@ -681,15 +694,15 @@ final class EdKey {
     @_expose(Cxx)
     static func deriveBits(
         algo: PAL.Crypto.EdKeyAgreementAlgorithm,
-        privateKey: PAL.Crypto.SpanConstUInt8,
-        publicKey: PAL.Crypto.SpanConstUInt8
+        privateKey: WTF.BorrowedBytes,
+        publicKey: WTF.BorrowedBytes
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
         do {
             switch algo {
             case .X25519:
-                let privateKeyImported = try unsafe Curve25519.KeyAgreement.PrivateKey(span: privateKey)
-                returnValue.result = try unsafe privateKeyImported.sharedSecretFromKeyAgreement(pubSpan: publicKey)
+                let privateKeyImported = try Curve25519.KeyAgreement.PrivateKey(span: privateKey)
+                returnValue.result = try privateKeyImported.sharedSecretFromKeyAgreement(pubSpan: publicKey)
                 returnValue.errorCode = .Success
             case .X448:
                 returnValue.errorCode = .UnsupportedAlgorithm
@@ -707,19 +720,20 @@ final class EdKey {
 final class HMAC {
     @_expose(Cxx)
     static func sign(
-        key: PAL.Crypto.SpanConstUInt8,
-        data: PAL.Crypto.SpanConstUInt8,
+        key: WTF.BorrowedBytes,
+        data: WTF.BorrowedBytes,
         hashFunction: PAL.Crypto.CryptoDigestHashFunction
     ) -> PAL.Crypto.VectorUInt8 {
+        let key = SymmetricKey(data: key.asNonNullBytes)
         switch hashFunction {
         case .SHA_1:
-            return unsafe CryptoKit.HMAC<Insecure.SHA1>.authenticationCode(data: data, key: key)
+            return makeVectorUInt8(copying: CryptoKit.HMAC<Insecure.SHA1>.authenticationCode(for: data.asNonNullBytes, using: key))
         case .SHA_256:
-            return unsafe CryptoKit.HMAC<SHA256>.authenticationCode(data: data, key: key)
+            return makeVectorUInt8(copying: CryptoKit.HMAC<SHA256>.authenticationCode(for: data.asNonNullBytes, using: key))
         case .SHA_384:
-            return unsafe CryptoKit.HMAC<SHA384>.authenticationCode(data: data, key: key)
+            return makeVectorUInt8(copying: CryptoKit.HMAC<SHA384>.authenticationCode(for: data.asNonNullBytes, using: key))
         case .SHA_512:
-            return unsafe CryptoKit.HMAC<SHA512>.authenticationCode(data: data, key: key)
+            return makeVectorUInt8(copying: CryptoKit.HMAC<SHA512>.authenticationCode(for: data.asNonNullBytes, using: key))
         case .DEPRECATED_SHA_224:
             fatalError("DEPRECATED_SHA_224 is not supported")
         @unknown default:
@@ -729,25 +743,22 @@ final class HMAC {
 
     @_expose(Cxx)
     static func verify(
-        mac: PAL.Crypto.SpanConstUInt8,
-        key: PAL.Crypto.SpanConstUInt8,
-        data: PAL.Crypto.SpanConstUInt8,
+        mac: WTF.BorrowedBytes,
+        key: WTF.BorrowedBytes,
+        data: WTF.BorrowedBytes,
         hashFunction: PAL.Crypto.CryptoDigestHashFunction
     ) -> Bool {
+        let key = SymmetricKey(data: key.asNonNullBytes)
         switch hashFunction {
         case .SHA_1:
-            return unsafe CryptoKit.HMAC<Insecure.SHA1>
-                .isValidAuthenticationCode(
-                    mac: mac,
-                    data: data,
-                    key: key
-                )
+            return CryptoKit.HMAC<Insecure.SHA1>
+                .isValidAuthenticationCode(mac.asNonNullBytes, authenticating: data.asNonNullBytes, using: key)
         case .SHA_256:
-            return unsafe CryptoKit.HMAC<SHA256>.isValidAuthenticationCode(mac: mac, data: data, key: key)
+            return CryptoKit.HMAC<SHA256>.isValidAuthenticationCode(mac.asNonNullBytes, authenticating: data.asNonNullBytes, using: key)
         case .SHA_384:
-            return unsafe CryptoKit.HMAC<SHA384>.isValidAuthenticationCode(mac: mac, data: data, key: key)
+            return CryptoKit.HMAC<SHA384>.isValidAuthenticationCode(mac.asNonNullBytes, authenticating: data.asNonNullBytes, using: key)
         case .SHA_512:
-            return unsafe CryptoKit.HMAC<SHA512>.isValidAuthenticationCode(mac: mac, data: data, key: key)
+            return CryptoKit.HMAC<SHA512>.isValidAuthenticationCode(mac.asNonNullBytes, authenticating: data.asNonNullBytes, using: key)
         case .DEPRECATED_SHA_224:
             fatalError("DEPRECATED_SHA_224 is not supported")
         @unknown default:
@@ -766,9 +777,9 @@ private let hkdfInputSizeLimitSHA512 = 255 * SHA512.byteCount * 8
 final class HKDF {
     @_expose(Cxx)
     static func deriveBits(
-        key: PAL.Crypto.SpanConstUInt8,
-        salt: PAL.Crypto.SpanConstUInt8,
-        info: PAL.Crypto.SpanConstUInt8,
+        key: WTF.BorrowedBytes,
+        salt: WTF.BorrowedBytes,
+        info: WTF.BorrowedBytes,
         outputBitCount: Int,
         hashFunction: PAL.Crypto.CryptoDigestHashFunction
     ) -> PAL.Crypto.CryptoOperationReturnValue {
@@ -779,62 +790,71 @@ final class HKDF {
         } else {
             returnValue.errorCode = .Success
         }
+        let key = SymmetricKey(data: key.asNonNullBytes)
         switch hashFunction {
         case .SHA_1:
             if outputBitCount > hkdfInputSizeLimitSHA1 {
                 returnValue.errorCode = .InvalidArgument
                 break
             }
-            returnValue.result =
-                unsafe CryptoKit.HKDF<Insecure.SHA1>
-                .deriveKey(
-                    inputKeyMaterial: key,
-                    salt: salt,
-                    info: info,
-                    outputByteCount: outputBitCount / 8
-                )
+            returnValue.result = makeVectorUInt8(
+                copying:
+                    CryptoKit.HKDF<Insecure.SHA1>
+                    .deriveKey(
+                        inputKeyMaterial: key,
+                        salt: salt.asNonNullBytes,
+                        info: info.asNonNullBytes,
+                        outputByteCount: outputBitCount / 8
+                    )
+            )
 
         case .SHA_256:
             if outputBitCount > hkdfInputSizeLimitSHA256 {
                 returnValue.errorCode = .InvalidArgument
                 break
             }
-            returnValue.result =
-                unsafe CryptoKit.HKDF<SHA256>
-                .deriveKey(
-                    inputKeyMaterial: key,
-                    salt: salt,
-                    info: info,
-                    outputByteCount: outputBitCount / 8
-                )
+            returnValue.result = makeVectorUInt8(
+                copying:
+                    CryptoKit.HKDF<SHA256>
+                    .deriveKey(
+                        inputKeyMaterial: key,
+                        salt: salt.asNonNullBytes,
+                        info: info.asNonNullBytes,
+                        outputByteCount: outputBitCount / 8
+                    )
+            )
 
         case .SHA_384:
             if outputBitCount > hkdfInputSizeLimitSHA384 {
                 returnValue.errorCode = .InvalidArgument
                 break
             }
-            returnValue.result =
-                unsafe CryptoKit.HKDF<SHA384>
-                .deriveKey(
-                    inputKeyMaterial: key,
-                    salt: salt,
-                    info: info,
-                    outputByteCount: outputBitCount / 8
-                )
+            returnValue.result = makeVectorUInt8(
+                copying:
+                    CryptoKit.HKDF<SHA384>
+                    .deriveKey(
+                        inputKeyMaterial: key,
+                        salt: salt.asNonNullBytes,
+                        info: info.asNonNullBytes,
+                        outputByteCount: outputBitCount / 8
+                    )
+            )
 
         case .SHA_512:
             if outputBitCount > hkdfInputSizeLimitSHA512 {
                 returnValue.errorCode = .InvalidArgument
                 break
             }
-            returnValue.result =
-                unsafe CryptoKit.HKDF<SHA512>
-                .deriveKey(
-                    inputKeyMaterial: key,
-                    salt: salt,
-                    info: info,
-                    outputByteCount: outputBitCount / 8
-                )
+            returnValue.result = makeVectorUInt8(
+                copying:
+                    CryptoKit.HKDF<SHA512>
+                    .deriveKey(
+                        inputKeyMaterial: key,
+                        salt: salt.asNonNullBytes,
+                        info: info.asNonNullBytes,
+                        outputByteCount: outputBitCount / 8
+                    )
+            )
 
         case .DEPRECATED_SHA_224:
             fatalError("DEPRECATED_SHA_224 is not supported")
@@ -844,5 +864,128 @@ final class HKDF {
         }
 
         return returnValue
+    }
+}
+
+// Thin wrappers adapting WTF.BorrowedBytes (which conforms to ContiguousBytes and
+// DataProtocol) to the CryptoKit key/signature initializers and helpers. No
+// `unsafe`: BorrowedBytes borrows the C++ bytes with no copy and crashes cleanly
+// if the borrow has been revoked.
+
+extension WTF.BorrowedBytes {
+    // The key/signature decoders below all reject empty input up front, because
+    // CryptoKit's representation initializers mishandle it. Returns self so a
+    // decoder can guard and forward in a single expression.
+    fileprivate func requireNonEmpty() throws -> WTF.BorrowedBytes {
+        if isEmpty {
+            throw LocalErrors.emptySpan
+        }
+        return self
+    }
+}
+
+extension P256.Signing.ECDSASignature {
+    init(span: WTF.BorrowedBytes) throws {
+        try self.init(rawRepresentation: span.requireNonEmpty())
+    }
+}
+
+extension P384.Signing.ECDSASignature {
+    init(span: WTF.BorrowedBytes) throws {
+        try self.init(rawRepresentation: span.requireNonEmpty())
+    }
+}
+
+extension P521.Signing.ECDSASignature {
+    init(span: WTF.BorrowedBytes) throws {
+        try self.init(rawRepresentation: span.requireNonEmpty())
+    }
+}
+
+extension P256.Signing.PublicKey {
+    init(span: WTF.BorrowedBytes) throws {
+        try self.init(x963Representation: span.requireNonEmpty())
+    }
+
+    init(spanCompressed: WTF.BorrowedBytes) throws {
+        try self.init(compressedRepresentation: spanCompressed.requireNonEmpty())
+    }
+}
+
+extension P384.Signing.PublicKey {
+    init(span: WTF.BorrowedBytes) throws {
+        try self.init(x963Representation: span.requireNonEmpty())
+    }
+
+    init(spanCompressed: WTF.BorrowedBytes) throws {
+        try self.init(compressedRepresentation: spanCompressed.requireNonEmpty())
+    }
+}
+
+extension P521.Signing.PublicKey {
+    init(span: WTF.BorrowedBytes) throws {
+        try self.init(x963Representation: span.requireNonEmpty())
+    }
+
+    init(spanCompressed: WTF.BorrowedBytes) throws {
+        try self.init(compressedRepresentation: spanCompressed.requireNonEmpty())
+    }
+}
+
+extension P256.Signing.PrivateKey {
+    init(span: WTF.BorrowedBytes) throws {
+        try self.init(x963Representation: span.requireNonEmpty())
+    }
+}
+
+extension P384.Signing.PrivateKey {
+    init(span: WTF.BorrowedBytes) throws {
+        try self.init(x963Representation: span.requireNonEmpty())
+    }
+}
+
+extension P521.Signing.PrivateKey {
+    init(span: WTF.BorrowedBytes) throws {
+        try self.init(x963Representation: span.requireNonEmpty())
+    }
+}
+
+extension Curve25519.Signing.PrivateKey {
+    init(span: WTF.BorrowedBytes) throws {
+        try self.init(rawRepresentation: span.requireNonEmpty())
+    }
+
+    func signature(span: WTF.BorrowedBytes) throws -> PAL.Crypto.VectorUInt8 {
+        makeVectorUInt8(copying: try self.signature(for: span.asNonNullBytes))
+    }
+}
+
+extension Curve25519.Signing.PublicKey {
+    init(span: WTF.BorrowedBytes) throws {
+        try self.init(rawRepresentation: span.requireNonEmpty())
+    }
+
+    func isValidSignature(signature: WTF.BorrowedBytes, data: WTF.BorrowedBytes) -> Bool {
+        if signature.isEmpty || data.isEmpty {
+            return false
+        }
+        return self.isValidSignature(signature, for: data)
+    }
+}
+
+extension Curve25519.KeyAgreement.PrivateKey {
+    init(span: WTF.BorrowedBytes) throws {
+        try self.init(rawRepresentation: span.requireNonEmpty())
+    }
+
+    func sharedSecretFromKeyAgreement(pubSpan: WTF.BorrowedBytes) throws -> PAL.Crypto.VectorUInt8 {
+        let pub = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: pubSpan.requireNonEmpty())
+        return makeVectorUInt8(copying: try self.sharedSecretFromKeyAgreement(with: pub))
+    }
+}
+
+extension Curve25519.KeyAgreement.PublicKey {
+    init(span: WTF.BorrowedBytes) throws {
+        try self.init(rawRepresentation: span.requireNonEmpty())
     }
 }

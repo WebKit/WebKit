@@ -30,6 +30,7 @@ set(WTF_PUBLIC_HEADERS
     BloomFilter.h
     BooleanLattice.h
     Borrow.h
+    BorrowedBytes.h
     Box.h
     BoxPtr.h
     Brigand.h

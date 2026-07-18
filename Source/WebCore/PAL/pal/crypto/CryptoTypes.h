@@ -27,11 +27,12 @@
 
 #include <cstdint>
 #include <span>
+#include <wtf/BorrowedBytes.h>
 #include <wtf/Vector.h>
 
 namespace PAL::Crypto {
 
-using VectorUInt8 = WTF::Vector<uint8_t>;
+using VectorUInt8 = WTF::VectorUInt8;
 
 using SpanConstUInt8 = std::span<const uint8_t>;
 
