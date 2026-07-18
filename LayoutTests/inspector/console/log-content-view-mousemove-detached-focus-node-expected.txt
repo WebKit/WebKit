@@ -1,0 +1,9 @@
+Testing that WI.LogContentView.prototype._mousemove does not throw when the selection's focus node has no parentElement.
+
+
+== Running test suite: WI.LogContentView.prototype._mousemove
+-- Running test case: LogContentView.mousemove.SelectionFocusNodeIsDocument
+PASS: Selection should not be collapsed.
+PASS: Selection's focusNode should be the Document.
+PASS: Should not throw when focusNode is a Document node with no parentElement.
+
