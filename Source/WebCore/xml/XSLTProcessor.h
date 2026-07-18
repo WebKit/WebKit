@@ -51,8 +51,8 @@ public:
     {
         m_stylesheetRootNode = WTF::move(style);
     }
-    RefPtr<DocumentFragment> transformToFragment(Node& source, Document& ouputDocument);
-    RefPtr<Document> transformToDocument(Node& source);
+    RefPtr<DocumentFragment> transformToFragment(Document& callerDocument, Node& source, Document& ouputDocument);
+    RefPtr<Document> transformToDocument(Document& callerDocument, Node& source);
     
     void setParameter(const String& namespaceURI, const String& localName, const String& value);
     String getParameter(const String& namespaceURI, const String& localName) const;

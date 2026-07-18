@@ -7980,6 +7980,14 @@ void Document::applyPendingXSLTransformsNowIfScheduled()
     applyPendingXSLTransformsTimerFired();
 }
 
+void Document::logXSLTDeprecationWarningIfNeeded()
+{
+    if (m_hasLoggedXSLTDeprecationWarning)
+        return;
+    m_hasLoggedXSLTDeprecationWarning = true;
+    addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "XSLT is deprecated and will be removed in a future version of WebKit."_s);
+}
+
 void Document::applyPendingXSLTransformsTimerFired()
 {
     ASSERT(settings().isXSLTEnabled());
@@ -8006,6 +8014,8 @@ void Document::applyPendingXSLTransformsTimerFired()
         // changing to a new document, don't attempt to create a new Document from the XSLT.
         if (!frame() || frame()->documentIsBeingReplaced())
             return;
+
+        logXSLTDeprecationWarningIfNeeded();
 
         Ref processor = XSLTProcessor::create();
         processor->setXSLStyleSheet(downcast<XSLStyleSheet>(processingInstruction->sheet()));

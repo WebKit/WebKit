@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
 Verify that generate-id() returns the same value each time it is called for a given node in the current document in the current transform.
 
 Value 1 IDs matched as expected: PASSED

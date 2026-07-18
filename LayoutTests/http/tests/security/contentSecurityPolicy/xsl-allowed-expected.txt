@@ -1,2 +1,3 @@
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
 The text below should indicate that the style sheet was applied.
 Style sheet applied.

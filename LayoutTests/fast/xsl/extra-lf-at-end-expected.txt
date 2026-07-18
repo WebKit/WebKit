@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
 Test for bug 15919: XSLTProcessor.transformToFragment creates an extra not defined TEXT_NODE at the end.
 
 PASS: oResult.nodeType should of type DOCUMENT_FRAGMENT_NODE(11)

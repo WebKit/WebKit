@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
+This test ensures the XSLT deprecation warning is logged only once per page, even when multiple transforms are performed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result1 is non-null.
+PASS result2 is non-null.
+PASS result3 is non-null.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

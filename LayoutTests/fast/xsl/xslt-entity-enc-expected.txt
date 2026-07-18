@@ -1,1 +1,2 @@
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
 The letters in quotes should look similar (first is Roman, second is Cyrillic): "B", "В".

@@ -113,8 +113,10 @@ Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString
     return result.releaseNonNull();
 }
 
-RefPtr<Document> XSLTProcessor::transformToDocument(Node& sourceNode)
+RefPtr<Document> XSLTProcessor::transformToDocument(Document& callerDocument, Node& sourceNode)
 {
+    callerDocument.logXSLTDeprecationWarningIfNeeded();
+
     String resultMIMEType;
     String resultString;
     String resultEncoding;
@@ -123,8 +125,10 @@ RefPtr<Document> XSLTProcessor::transformToDocument(Node& sourceNode)
     return createDocumentFromSource(resultString, resultEncoding, resultMIMEType, &sourceNode, nullptr);
 }
 
-RefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Node& sourceNode, Document& outputDocument)
+RefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Document& callerDocument, Node& sourceNode, Document& outputDocument)
 {
+    callerDocument.logXSLTDeprecationWarningIfNeeded();
+
     String resultMIMEType;
     String resultString;
     String resultEncoding;

@@ -2,5 +2,6 @@ CONSOLE MESSAGE: Unsafe attempt to load URL http://localhost:8000/security/resou
 
 CONSOLE MESSAGE: Document is empty
 
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
 This test loads the XML document in an iframe so that it can call dumpAsText(). This test passes if the iframe below does not contain a message starting with "FAIL".
 

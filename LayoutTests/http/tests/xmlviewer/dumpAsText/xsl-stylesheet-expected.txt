@@ -1,1 +1,2 @@
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
 This tests that xml viewer is not used when there is an XSL stylesheet. SUCCESS

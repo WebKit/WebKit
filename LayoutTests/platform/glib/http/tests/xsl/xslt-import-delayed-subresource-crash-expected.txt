@@ -1,5 +1,6 @@
 CONSOLE MESSAGE: Document is empty
 
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
 This test passes if it does not crash.
 
 

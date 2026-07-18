@@ -8,5 +8,6 @@ CONSOLE MESSAGE: Opening and ending tag mismatch: template line 4 and stylesheet
 
 CONSOLE MESSAGE: Premature end of data in tag stylesheet line 2
 
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600

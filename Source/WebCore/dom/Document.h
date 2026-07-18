@@ -1313,6 +1313,7 @@ public:
 #if ENABLE(XSLT)
     void scheduleToApplyXSLTransforms();
     void applyPendingXSLTransformsNowIfScheduled();
+    void logXSLTDeprecationWarningIfNeeded();
     RefPtr<Document> transformSourceDocument() { return m_transformSourceDocument; }
     void setTransformSourceDocument(Document* document) { m_transformSourceDocument = document; }
 
@@ -2819,6 +2820,7 @@ private:
 
 #if ENABLE(XSLT)
     bool m_hasPendingXSLTransforms { false };
+    bool m_hasLoggedXSLTDeprecationWarning { false };
 #endif
 
 #if ENABLE(MEDIA_STREAM)

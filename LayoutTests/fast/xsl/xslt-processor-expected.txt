@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
 0.1 original xml:
 <?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="xslt-text.xsl"?><TEST>SOURCE XML: &lt;&lt;&lt;&amp;тест&amp;&gt;&gt;&gt;</TEST>
 0.2 xsl1:

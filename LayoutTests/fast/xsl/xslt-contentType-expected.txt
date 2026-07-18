@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
 PASS doc.contentType is "text/html"
 PASS doc.contentType is "application/xml"
 PASS doc.contentType is "application/xhtml+xml"

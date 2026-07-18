@@ -1,5 +1,6 @@
 CONSOLE MESSAGE: Namespace prefix foo on bar is not defined
 
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x289

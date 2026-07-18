@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("This test ensures a deprecation warning is logged to the console when using xml-stylesheet processing instruction.");
+
+jsTestIsAsync = true;
+
+var xmlDocumentBody;
+
+function runTest() {
+    var iframe = document.getElementById("xml-iframe");
+    var xmlDocument = iframe.contentDocument;
+    xmlDocumentBody = xmlDocument.body;
+    shouldBeNonNull("xmlDocumentBody");
+    finishJSTest();
+}
+</script>
+<iframe id="xml-iframe" src="resources/document.xml" onload="runTest()"></iframe>
+</body>
+</html>

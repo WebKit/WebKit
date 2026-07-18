@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("This test ensures the XSLT deprecation warning is logged only once per page, even when multiple transforms are performed.");
+
+jsTestIsAsync = true;
+
+var xslText = `<?xml version="1.0"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:output method="text"/>
+  <xsl:template match="/">
+    <xsl:value-of select="."/>
+  </xsl:template>
+</xsl:stylesheet>`;
+
+var xmlText = `<?xml version="1.0"?>
+<doc>Hello World</doc>`;
+
+var parser = new DOMParser();
+var xslDoc = parser.parseFromString(xslText, "application/xml");
+var xmlDoc = parser.parseFromString(xmlText, "application/xml");
+
+// Perform multiple XSLT transforms - only one warning should be emitted.
+var processor = new XSLTProcessor();
+processor.importStylesheet(xslDoc);
+
+var result1 = processor.transformToFragment(xmlDoc, document);
+shouldBeNonNull("result1");
+
+var result2 = processor.transformToFragment(xmlDoc, document);
+shouldBeNonNull("result2");
+
+var result3 = processor.transformToDocument(xmlDoc);
+shouldBeNonNull("result3");
+
+finishJSTest();
+</script>
+</body>
+</html>

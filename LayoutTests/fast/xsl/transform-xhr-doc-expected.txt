@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
 CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'doc.documentElement')
 Test for bug 10313: xsl:import doesn't work in stylesheets loaded via XMLHttpRequest.
 

@@ -1,1 +1,2 @@
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
 <html xmlns="http://www.w3.org/1999/xhtml"><head></head><body><a href="javascript:alert(1)">test word</a></body></html>
