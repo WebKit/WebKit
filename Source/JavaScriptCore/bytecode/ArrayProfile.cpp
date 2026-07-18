@@ -145,8 +145,11 @@ void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock, Structure* las
 
     JSGlobalObject* globalObject = codeBlock->globalObject();
     bool isResizableOrGrowableShared = false;
-    if (!globalObject->isOriginalArrayStructure(lastSeenStructure) && !globalObject->isOriginalTypedArrayStructure(lastSeenStructure, isResizableOrGrowableShared))
+    if (!globalObject->isOriginalArrayStructure(lastSeenStructure) && !globalObject->isOriginalTypedArrayStructure(lastSeenStructure, isResizableOrGrowableShared)) {
         m_arrayProfileFlags.add(ArrayProfileFlag::UsesNonOriginalArrayStructures);
+        if (lastSeenStructure == globalObject->regExpMatchesArrayStructure() || lastSeenStructure == globalObject->regExpMatchesArrayWithIndicesStructure())
+            m_arrayProfileFlags.add(ArrayProfileFlag::MayBeRegExpMatchesArray);
+    }
 
     if (isTypedArrayTypeIncludingDataView(lastSeenStructure->typeInfo().type())) {
         if (isResizableOrGrowableSharedTypedArrayIncludingDataView(lastSeenStructure->classInfoForCells()))
