@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!--
+Verifies AXTextMarker::lineIndex() returns the correct line number for markers deep inside a
+single large block that wraps onto many lines (a long flat list of links separated by <br>, like
+the Apple Maps "Acknowledgements" page). This exercises the same-containing-block fast path added
+to lineIndex(): the start marker (document start) and the target marker share the block's line
+numbering, so the line index is computed directly.
+
+The content is pure text (no inline replaced elements), so the computed line index is unambiguous
+and identical on the live and isolated trees.
+-->
+
+<div id="container" style="font-family: monospace;"></div>
+
+<script>
+var output = "This test verifies lineIndex() returns the correct line number for markers deep inside a single large block.\n\n";
+
+const lineCount = 40;
+
+function buildLines() {
+    let markup = "";
+    for (let i = 0; i < lineCount; ++i)
+        markup += `<a id="line${i}" href="#">Line ${i}</a><br>`;
+    document.getElementById("container").innerHTML = markup;
+}
+
+function lineIndexForLine(i) {
+    const item = accessibilityController.accessibleElementById(`line${i}`);
+    if (!item)
+        return "no element";
+    const range = item.textMarkerRangeForElement(item);
+    const marker = item.startTextMarkerForTextMarkerRange(range);
+    return item.lineIndexForTextMarker(marker);
+}
+
+async function runTest() {
+    buildLines();
+    await waitForElementById(`line${lineCount - 1}`);
+
+    // Check a spread of lines, including ones far from the start of the block.
+    for (const i of [0, 1, 20, lineCount - 1])
+        output += expect(`lineIndexForLine(${i})`, `${i}`);
+
+    document.getElementById("container").innerHTML = "";
+
+    debug(output);
+    finishJSTest();
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    runTest();
+}
+</script>
+</body>
+</html>

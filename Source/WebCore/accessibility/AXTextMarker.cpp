@@ -721,6 +721,26 @@ int AXTextMarker::lineIndex() const
     if (currentLineID == targetLineID)
         return 0;
 
+    // Fast path: when the start marker and this marker share a containing block, both
+    // line IDs are drawn from that block's own monotonic line numbering (the line-box
+    // index within the RenderBlock), so the number of lines between them is simply the
+    // difference of their line indices. This avoids the line-by-line walk below, which
+    // starts at the beginning of the document (or editable/text-control root) and is
+    // therefore O(lines-from-start) on every call. That is pathological on a page that
+    // is a single large block wrapping onto thousands of lines (e.g. a long flat list
+    // of links), where an assistive technology requests the line index on every caret
+    // movement, making a full traversal O(lines^2).
+    //
+    // Only out-of-flow (float / position:absolute) replaced elements and boxless line breaks
+    // store their own renderer in the lineID's containing-block slot (see
+    // AccessibilityRenderObject::textRuns); their synthetic lineIDs don't compare equal here and
+    // fall through to the walk. Everything else — including a normal in-flow inline <img>, which
+    // uses box->lineIndex() against the real containing block — compares equal and takes this
+    // fast path, which is correct because its line index is real.
+    if (currentLineID.containingBlock && currentLineID.containingBlock == targetLineID.containingBlock
+        && targetLineID.lineIndex >= currentLineID.lineIndex)
+        return static_cast<int>(targetLineID.lineIndex - currentLineID.lineIndex);
+
     auto currentMarker = WTF::move(startMarker);
     if (!currentMarker.atLineEnd()) {
         // Start from a line end, so that subsequent calls to nextLineEnd() yield a new line.
