@@ -35,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/connected-callbacks-html-fragment-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/connected-callbacks-template.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/connected-callbacks.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/createElement-reentrant-construction.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/cross-realm-callback-report-exception.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/custom-element-reaction-queue.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/customized-built-in-constructor-exceptions.html

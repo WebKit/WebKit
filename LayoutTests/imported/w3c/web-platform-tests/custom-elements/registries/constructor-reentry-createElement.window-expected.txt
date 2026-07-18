@@ -1,0 +1,6 @@
+
+PASS Re-entry via createElement with a different registry after super()
+PASS Re-entry via createElement with a different registry before super()
+PASS Direct construction of a global-only element after super() during a scoped createElement construction
+PASS Direct construction of a global-only element before super() during a scoped createElement construction
+

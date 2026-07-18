@@ -30,6 +30,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/ShadowRoot-innerHTML.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/adoption.window.js
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/constructor-direct-call-fallback-registry.window.js
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/constructor-reentry-createElement.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/constructor-reentry-with-different-definition.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/define-customized-builtins.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/define.html

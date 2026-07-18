@@ -83,6 +83,7 @@
 namespace JSC {
 class CallFrame;
 class InputCursor;
+class JSObject;
 }
 
 namespace WTF {
@@ -590,8 +591,9 @@ public:
     RefPtr<CustomElementRegistry> customElementRegistryForBindings();
     CustomElementRegistry* NODELETE effectiveGlobalCustomElementRegistry();
     static CustomElementNameValidationStatus validateCustomElementName(const AtomString&);
-    void setActiveCustomElementRegistry(CustomElementRegistry*);
-    CustomElementRegistry* activeCustomElementRegistry() { return m_activeCustomElementRegistry.get(); }
+    CustomElementRegistry* activeCustomElementConstructorRegistry(JSC::JSObject* constructor);
+    void addToActiveCustomElementConstructorMap(JSC::JSObject* constructor, CustomElementRegistry&);
+    void removeFromActiveCustomElementConstructorMap(JSC::JSObject* constructor);
 
     WEBCORE_EXPORT RefPtr<Range> caretRangeFromPoint(int x, int y, HitTestSource = HitTestSource::Script);
     std::optional<BoundaryPoint> caretPositionFromPoint(const LayoutPoint& clientPoint, HitTestSource);
@@ -2571,7 +2573,7 @@ private:
 
     WeakListHashSet<ShadowRoot, WeakPtrImplWithEventTargetData> m_inDocumentShadowRoots;
 
-    RefPtr<CustomElementRegistry> m_activeCustomElementRegistry;
+    HashMap<uintptr_t, RefPtr<CustomElementRegistry>> m_activeCustomElementConstructorMap;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     using TargetIdToClientMap = HashMap<PlaybackTargetClientContextIdentifier, WeakPtr<MediaPlaybackTargetClient>>;

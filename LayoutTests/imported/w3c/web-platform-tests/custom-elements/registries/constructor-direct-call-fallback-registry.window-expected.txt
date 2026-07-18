@@ -1,0 +1,4 @@
+
+PASS Direct construction of a global-only element after super() during a scoped upgrade
+PASS Direct construction of a global-only element before super() during a scoped upgrade
+

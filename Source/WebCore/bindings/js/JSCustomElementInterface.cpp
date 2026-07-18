@@ -130,10 +130,14 @@ RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& 
     ASSERT(lexicalGlobalObject);
     if (!lexicalGlobalObject)
         return nullptr;
-    auto* oldRegistry = contextDocument->activeCustomElementRegistry();
-    contextDocument->setActiveCustomElementRegistry(&registry);
-    auto element = constructCustomElementSynchronously(document, vm, *lexicalGlobalObject, m_constructor.get(), localName, parserConstructElementWithEmptyStack);
-    contextDocument->setActiveCustomElementRegistry(oldRegistry);
+    auto* constructor = m_constructor.get();
+    RefPtr previousRegistry = contextDocument->activeCustomElementConstructorRegistry(constructor);
+    contextDocument->addToActiveCustomElementConstructorMap(constructor, registry);
+    RefPtr element = constructCustomElementSynchronously(document, vm, *lexicalGlobalObject, constructor, localName, parserConstructElementWithEmptyStack);
+    if (previousRegistry)
+        contextDocument->addToActiveCustomElementConstructorMap(constructor, *previousRegistry);
+    else
+        contextDocument->removeFromActiveCustomElementConstructorMap(constructor);
     EXCEPTION_ASSERT(!!scope.exception() == !element);
     if (!element) {
         auto* exception = scope.exception();
@@ -255,16 +259,20 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     if (m_isFormAssociated)
         downcast<HTMLMaybeFormAssociatedCustomElement>(element).willUpgradeFormAssociated();
 
-    auto* oldRegistry = document->activeCustomElementRegistry();
-    document->setActiveCustomElementRegistry(registry.get());
+    auto* constructor = m_constructor.get();
+    RefPtr previousRegistry = document->activeCustomElementConstructorRegistry(constructor);
+    document->addToActiveCustomElementConstructorMap(constructor, *registry);
 
     MarkedArgumentBuffer args;
     ASSERT(!args.hasOverflowed());
     JSExecState::instrumentFunction(context.get(), constructData);
-    JSValue returnedElement = construct(lexicalGlobalObject, m_constructor.get(), constructData, args);
+    JSValue returnedElement = construct(lexicalGlobalObject, constructor, constructData, args);
     InspectorInstrumentation::didCallFunction(context.get());
 
-    document->setActiveCustomElementRegistry(oldRegistry);
+    if (previousRegistry)
+        document->addToActiveCustomElementConstructorMap(constructor, *previousRegistry);
+    else
+        document->removeFromActiveCustomElementConstructorMap(constructor);
 
     m_constructionStack.removeLast();
 

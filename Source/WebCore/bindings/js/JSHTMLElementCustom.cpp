@@ -72,7 +72,7 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
 
     Ref document = downcast<Document>(*context);
 
-    RefPtr registry = document->activeCustomElementRegistry();
+    RefPtr registry = document->activeCustomElementConstructorRegistry(newTarget);
     if (!registry) {
         RefPtr window = document->window();
         if (!window)
