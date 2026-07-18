@@ -36,6 +36,7 @@ WEBKIT_CHECKERS = [
     'alpha.webkit.NoUnretainedMemberChecker',
     'alpha.webkit.RetainPtrCtorAdoptChecker',
     'alpha.webkit.UncheckedCallArgsChecker',
+    'alpha.webkit.UncheckedLambdaCapturesChecker',
     'alpha.webkit.UncheckedLocalVarsChecker',
     'alpha.webkit.UncountedCallArgsChecker',
     'alpha.webkit.UncountedLocalVarsChecker',
@@ -108,6 +109,13 @@ def make_analyzer_flags(output_dir, args):
 
     if args.only_smart_pointers:
         additional_checkers.extend(WEBKIT_CHECKERS)
+
+    # FIXME: Remove this code once we've fully migrated to 2026-07-17 merge.
+    if args.toolchains:
+        result = subprocess.run(['xcrun', 'clang', '-cc1', '-analyzer-checker-help-alpha'], env={'TOOLCHAINS': args.toolchains}, capture_output=True, encoding='ascii')
+        # Remove checker if not available in the specified toolchain.
+        if 'alpha.webkit.UncheckedLambdaCapturesChecker' not in result.stdout:
+            additional_checkers.remove('alpha.webkit.UncheckedLambdaCapturesChecker')
 
     if additional_checkers:
         analyzer_flags.extend(args_for_additional_checkers(additional_checkers))
