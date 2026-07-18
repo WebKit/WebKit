@@ -23,6 +23,7 @@
 
 import os
 import argparse
+import datetime
 import sys
 import re
 import time
@@ -31,20 +32,21 @@ import time
 # by buildbot because "command timed out: XXX seconds without output running YYY"
 class KeepAliveStdoutProgress:
 
-    def __init__(self, interval_seconds=300, check_every_n_lines=100):
+    def __init__(self, interval_seconds=60):
         self.line_count = 0
         self.last_progress_time = time.time()
         self.interval_seconds = interval_seconds
-        self.check_every_n_lines = check_every_n_lines
+        self.last_count = 0
 
     def maybe_update_progress(self):
         self.line_count += 1
-        # Only check time every N lines to avoid expensive system calls
-        if self.line_count % self.check_every_n_lines == 0:
-            current_time = time.time()
-            if current_time - self.last_progress_time >= self.interval_seconds:
-                print(f'filter-test-logs progress: {self.line_count} lines processed', flush=True)
-                self.last_progress_time = current_time
+        current_time = time.time()
+        if current_time - self.last_progress_time >= self.interval_seconds:
+            delta = self.line_count - self.last_count
+            timestamp = datetime.datetime.now().astimezone().strftime("%Y-%m-%d|%H:%M:%S|%Z")
+            print(f"[{timestamp}] filter-test-logs progress: {self.line_count} lines processed ({delta} since last update)", flush=True)
+            self.last_progress_time = current_time
+            self.last_count = self.line_count
 
 
 def parser():
