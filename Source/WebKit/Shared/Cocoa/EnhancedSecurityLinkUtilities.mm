@@ -28,9 +28,49 @@
 
 #if HAVE(ENHANCED_SECURITY_LINKS)
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/EnhancedSecurityLinkAdditions.mm>)
-#import <WebKitAdditions/EnhancedSecurityLinkAdditions.mm>
+#import <LinkSecurity/LinkSecurity.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/CompletionHandler.h>
+#import <wtf/MainThread.h>
+#import <wtf/SoftLinking.h>
+#import <wtf/URL.h>
+
+SOFT_LINK_FRAMEWORK_OPTIONAL(LinkSecurity)
+SOFT_LINK_CLASS_OPTIONAL(LinkSecurity, LSLinkSecurityManager)
+
+namespace WebKit {
+
+bool hasURLsRequiringEnhancedSecurityCheck()
+{
+    if (!LinkSecurityLibrary())
+        return false;
+
+    LSLinkSecurityManager* manager = [getLSLinkSecurityManagerClassSingleton() sharedManager];
+    return manager.hasFlaggedURLs;
+}
+
+void isEnhancedSecurityEnabledForURL(const WTF::URL& url, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (!LinkSecurityLibrary())
+        return completionHandler(false);
+
+    RetainPtr<NSURL> testURL = url.createNSURL();
+    if (url.isEmpty() || !testURL)
+        return completionHandler(false);
+
+    LSLinkSecurityManager* manager = [getLSLinkSecurityManagerClassSingleton() sharedManager];
+
+    [manager checkIsFlaggedURL:testURL.get() completion:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL result) mutable {
+        ensureOnMainThread([completionHandler = WTF::move(completionHandler), result]() mutable {
+            completionHandler(result);
+        });
+    }).get()];
+}
+
+} // namespace WebKit
+
 #else
+
 namespace WebKit {
 
 bool hasURLsRequiringEnhancedSecurityCheck()
@@ -38,12 +78,11 @@ bool hasURLsRequiringEnhancedSecurityCheck()
     return false;
 }
 
-void isEnhancedSecurityEnabledForURL(const WTF::URL& url, CompletionHandler<void(bool)>&& completionHandler)
+void isEnhancedSecurityEnabledForURL(const WTF::URL&, CompletionHandler<void(bool)>&& completionHandler)
 {
     completionHandler(false);
 }
 
-}
-#endif
+} // namespace WebKit
 
 #endif // HAVE(ENHANCED_SECURITY_LINKS)

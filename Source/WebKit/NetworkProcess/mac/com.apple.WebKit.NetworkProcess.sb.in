@@ -883,6 +883,9 @@
     (global-name "com.apple.familycontrols"))
 #endif
 
-#if HAVE(ENHANCED_SECURITY_LINKS) && __has_include(<WebKitAdditions/EnhancedSecurityLinks-macos.sb>)
-#include <WebKitAdditions/EnhancedSecurityLinks-macos.sb>
+#if HAVE(ENHANCED_SECURITY_LINKS)
+(with-filter (require-not (state-flag "BlockEnhancedSecurityLinks"))
+    ;; <rdar://problem/162785415>
+    (allow mach-lookup
+        (global-name "com.apple.imagent.EnhancedLinkSecurityStore")))
 #endif

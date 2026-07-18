@@ -181,8 +181,11 @@
         (extension-class "com.apple.app-sandbox.read" "com.apple.app-sandbox.read-write")
         (extension "com.apple.app-sandbox.read-write")))
 
-#if HAVE(ENHANCED_SECURITY_LINKS) && __has_include(<WebKitAdditions/EnhancedSecurityLinks-ios.sb>)
-#include <WebKitAdditions/EnhancedSecurityLinks-ios.sb>
+#if HAVE(ENHANCED_SECURITY_LINKS)
+(with-filter (require-not (state-flag "BlockEnhancedSecurityLinks"))
+    ;; <rdar://problem/162785415>
+    (allow mach-lookup
+        (global-name "com.apple.imagent.EnhancedLinkSecurityStore")))
 #endif
 
 #endif // !ENABLE(DEVELOPMENT_SANDBOX_FALLBACK)
