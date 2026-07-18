@@ -90,14 +90,17 @@
 #include <JavaScriptCore/InspectorDebuggerAgent.h>
 #include <JavaScriptCore/ScriptArguments.h>
 #include <JavaScriptCore/ScriptCallStack.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
 using namespace Inspector;
 
-namespace {
-static HashSet<InstrumentingAgents*>* s_instrumentingAgentsSet = nullptr;
+static HashSet<InstrumentingAgents*>& instrumentingAgentsSet()
+{
+    static NeverDestroyed<HashSet<InstrumentingAgents*>> set;
+    return set;
 }
 
 void InspectorInstrumentation::firstFrontendCreated()
@@ -967,10 +970,7 @@ void InspectorInstrumentation::defaultAppearanceDidChangeImpl(InstrumentingAgent
 
 void InspectorInstrumentation::willDestroyCachedResourceImpl(CachedResource& cachedResource)
 {
-    if (!s_instrumentingAgentsSet)
-        return;
-
-    for (RefPtr instrumentingAgent : *s_instrumentingAgentsSet) {
+    for (RefPtr instrumentingAgent : instrumentingAgentsSet()) {
         if (CheckedPtr inspectorNetworkAgent = instrumentingAgent->enabledNetworkAgent())
             inspectorNetworkAgent->willDestroyCachedResource(cachedResource);
     }
@@ -1414,22 +1414,12 @@ void InspectorInstrumentation::didFireObserverCallbackImpl(InstrumentingAgents& 
 
 void InspectorInstrumentation::registerInstrumentingAgents(InstrumentingAgents& instrumentingAgents)
 {
-    if (!s_instrumentingAgentsSet)
-        s_instrumentingAgentsSet = new HashSet<InstrumentingAgents*>();
-
-    s_instrumentingAgentsSet->add(&instrumentingAgents);
+    instrumentingAgentsSet().add(&instrumentingAgents);
 }
 
 void InspectorInstrumentation::unregisterInstrumentingAgents(InstrumentingAgents& instrumentingAgents)
 {
-    if (!s_instrumentingAgentsSet)
-        return;
-
-    s_instrumentingAgentsSet->remove(&instrumentingAgents);
-    if (s_instrumentingAgentsSet->isEmpty()) {
-        delete s_instrumentingAgentsSet;
-        s_instrumentingAgentsSet = nullptr;
-    }
+    instrumentingAgentsSet().remove(&instrumentingAgents);
 }
 
 InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(const RenderObject& renderer)
