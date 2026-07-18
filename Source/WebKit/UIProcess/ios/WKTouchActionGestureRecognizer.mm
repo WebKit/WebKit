@@ -114,8 +114,8 @@
             // Pinch-to-zoom is only allowed if "pinch-zoom" or "manipulation" is specified.
             if (mayPinchToZoom && !iterator->value.containsAny({ WebCore::TouchAction::PinchZoom, WebCore::TouchAction::Manipulation }))
                 return YES;
-            // Double-tap-to-zoom is only disallowed if "none" is specified.
-            if (mayDoubleTapToZoom && iterator->value.contains(WebCore::TouchAction::None))
+            // Double-tap-to-zoom is disallowed if "none" or "manipulation" is specified.
+            if (mayDoubleTapToZoom && iterator->value.containsAny({ WebCore::TouchAction::None, WebCore::TouchAction::Manipulation }))
                 return YES;
         }
     }

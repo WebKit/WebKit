@@ -21,12 +21,12 @@ target_test({ width: "200px", height: "200px" }, (target, test) => {
     requestAnimationFrame(() => {
         const initialPageScaleFactor = window.internals.pageScaleFactor();
         ui.doubleTapToZoom({ x: 10, y: 10 }).then(() => {
-            assert_not_equals(window.internals.pageScaleFactor(), initialPageScaleFactor, "The page was scaled.");
+            assert_equals(window.internals.pageScaleFactor(), initialPageScaleFactor, "The page was not scaled.");
             test.done();
         });
     })
 
-}, "Testing that setting touch-action: manipulation on an element allows double tap to zoom.");
+}, "Testing that setting touch-action: manipulation on an element prevents double tap to zoom.");
 
 </script>
 </body>
