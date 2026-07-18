@@ -1124,14 +1124,15 @@ LayoutUnit RenderFlexibleBox::mainAxisAvailableSpace()
 
 FlexContainerCrossExtents RenderFlexibleBox::updateFlexContainerLogicalHeight(LayoutUnit flexContentBlockExtent)
 {
-    // Adopt the block-axis extent FlexLayout built from its line sizes as the content height (row flow); column flow
-    // already set its main size while placing the items, so keep the larger. Then, for a container that still
-    // establishes a line with no in-flow items (e.g. all children are out of flow), reserve at least a line's worth of
-    // height. Finally resolve the logical height against the container's own specified/min/max height and box-sizing,
-    // and return the used cross extents (content-box and border-box) so FlexLayout takes them as values.
-    setLogicalHeight(std::max(logicalHeight(), borderAndPaddingLogicalHeight() + flexContentBlockExtent));
-    if (auto minimumHeightForEmptyLine = minimumHeightForLineIfEmpty(); minimumHeightForEmptyLine && borderBoxHeight() < *minimumHeightForEmptyLine)
-        setLogicalHeight(*minimumHeightForEmptyLine);
+    // Resolve the container's logical height to the largest of: what is already set, the block-axis extent FlexLayout
+    // built from its line sizes (row flow; column flow already set its main size while placing the items), and the
+    // empty-line minimum for a container that establishes a line with no in-flow items (e.g. all children are out of
+    // flow). The empty-line minimum is a block-axis floor, so it is folded into the block-axis max here rather than
+    // compared against the physical borderBoxHeight() (which is the inline extent in a vertical writing mode). Then
+    // resolve against the container's own specified/min/max height and box-sizing, and return the used cross extents
+    // (content-box and border-box) so FlexLayout takes them as values.
+    auto minimumHeight = minimumHeightForLineIfEmpty();
+    setLogicalHeight(std::max(minimumHeight.value_or(0_lu), std::max(logicalHeight(), borderAndPaddingLogicalHeight() + flexContentBlockExtent)));
     updateLogicalHeight();
     return { flexLayoutUtils().crossAxisContentExtent(), flexLayoutUtils().crossAxisExtent() };
 }
