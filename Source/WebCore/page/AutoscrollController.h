@@ -77,7 +77,7 @@ public:
     RenderBox* NODELETE autoscrollRenderer() const;
     bool NODELETE autoscrollInProgress() const;
     bool NODELETE panScrollInProgress() const;
-    void startAutoscrollForSelection(RenderObject*);
+    bool startAutoscrollForSelection(RenderObject*);
     void stopAutoscrollTimer(bool rendererIsBeingDestroyed = false);
     void updateAutoscrollRenderer();
     void updateDragAndDrop(Node* targetNode, const IntPoint& eventPosition, MonotonicTime eventTime);

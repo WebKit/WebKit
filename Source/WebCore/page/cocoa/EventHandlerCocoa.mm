@@ -79,12 +79,12 @@ void EventHandler::dispatchSyntheticMouseMove(const PlatformMouseEvent& platform
 
 #endif // ENABLE(TWO_PHASE_CLICKS)
 
-void EventHandler::startSelectionAutoscroll(RenderObject* renderer, const FloatPoint& positionInWindow)
+bool EventHandler::startSelectionAutoscroll(RenderObject* renderer, const FloatPoint& positionInWindow)
 {
     Ref frame = m_frame.get();
     RefPtr frameView = frame->view();
     if (!frameView)
-        return;
+        return false;
 
     m_targetAutoscrollPositionInRootView = roundedIntPoint(positionInWindow);
 
@@ -95,8 +95,8 @@ void EventHandler::startSelectionAutoscroll(RenderObject* renderer, const FloatP
         m_initialAutoscrollPositionInUnscrolledRootView = m_targetAutoscrollPositionInUnscrolledRootView;
 #endif // PLATFORM(IOS_FAMILY)
 
-    m_isAutoscrolling = true;
-    m_autoscrollController->startAutoscrollForSelection(renderer);
+    m_isAutoscrolling = m_autoscrollController->startAutoscrollForSelection(renderer);
+    return m_isAutoscrolling;
 }
 
 void EventHandler::cancelSelectionAutoscroll()

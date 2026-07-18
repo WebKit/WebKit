@@ -1,0 +1,12 @@
+
+Verifies that dragging a selection handle inside a text field that lives in a position: fixed container does not autoscroll the main frame. To run manually: scroll to the very bottom of the page, focus the text field pinned to the top, select a word, then drag a selection handle up to the top edge of the viewport and hold. The page should stay put.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS offsetBefore > 0 is true
+PASS verticalMovement <= 1 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

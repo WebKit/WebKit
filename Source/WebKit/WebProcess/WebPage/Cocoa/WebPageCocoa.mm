@@ -2938,14 +2938,17 @@ RenderObject* WebPage::rendererForSelectionAutoscroll(LocalFrame& frame) const
     return range->start.container->renderer();
 }
 
-void WebPage::startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow)
+void WebPage::startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow, CompletionHandler<void(bool)>&& completionHandler)
 {
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
-        return;
+        return completionHandler(false);
 
-    if (CheckedPtr renderer = rendererForSelectionAutoscroll(*frame))
-        frame->eventHandler().startSelectionAutoscroll(renderer.get(), positionInWindow);
+    CheckedPtr renderer = rendererForSelectionAutoscroll(*frame);
+    if (!renderer)
+        return completionHandler(false);
+
+    completionHandler(frame->eventHandler().startSelectionAutoscroll(renderer.get(), positionInWindow));
 }
 
 void WebPage::cancelAutoscroll()
