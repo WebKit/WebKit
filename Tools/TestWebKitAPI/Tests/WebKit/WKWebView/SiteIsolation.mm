@@ -2678,6 +2678,41 @@ TEST(SiteIsolation, AppKitText)
         Util::runFor(10_ms);
     }
 }
+
+TEST(SiteIsolation, HandleAcceptedCandidateInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://domain2.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<body><input id='input' value='a'></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [webView _setContinuousSpellCheckingEnabledForTesting:YES];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrameInfo = [webView firstChildFrame];
+    RetainPtr candidate = [NSTextCheckingResult replacementCheckingResultWithRange:NSMakeRange(0, 0) replacementString:@"b"];
+
+    // Accept a candidate while the cross-origin iframe's input is focused with its text selected.
+    // The IPC must reach the iframe's process; if it is routed to the main frame the candidate is
+    // dropped (the main process has no local focused frame) and the input is never updated.
+    // Use WithUserGesture because Element::focus() is a no-op for cross-origin non-main-frame
+    // iframes without a user gesture.
+    while ("b"_s != String([webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()])) {
+        [webView objectByEvaluatingJavaScriptWithUserGesture:@"input.focus(); input.select()" inFrame:childFrameInfo.get()];
+        Util::runFor(10_ms);
+        [webView _forceRequestCandidates];
+        Util::runFor(10_ms);
+        [webView _handleAcceptedCandidate:candidate.get()];
+        Util::runFor(10_ms);
+    }
+}
 #endif
 
 TEST(SiteIsolation, SetFocusedFrame)
