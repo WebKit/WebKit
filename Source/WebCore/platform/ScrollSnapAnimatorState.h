@@ -28,6 +28,7 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/LayoutPoint.h>
+#include <WebCore/LayoutSize.h>
 #include <WebCore/PlatformWheelEvent.h>
 #include <WebCore/ScrollAnimationMomentum.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
@@ -113,6 +114,14 @@ private:
     // order — the per-axis candidate list after the spec's ancestor-removal step.
     Vector<size_t, 1> innermostAlignedAreaIndicesForAxis(ScrollEventAxis) const;
 
+    // This axis's focused/targeted snapped box, skipping any whose area is off-screen in a
+    // non-snapping cross axis.
+    std::optional<NodeIdentifier> focusedOrTargetedBox(ScrollEventAxis, const HashSet<NodeIdentifier>& snappedBoxes) const;
+
+    // Whether the snap area is within the snapport in the (non-snapping) cross axis at the last known
+    // scroll position; true (no filtering) when the cross axis snaps or no viewport is known yet.
+    bool isSnapAreaVisibleInCrossAxis(size_t areaIndex, ScrollEventAxis) const;
+
     bool setNearestScrollSnapIndexForAxisAndOffsetInternal(ScrollEventAxis, ScrollOffset, const ScrollExtents&, float pageScale);
     void updateCurrentlySnappedBoxes();
 
@@ -135,6 +144,11 @@ private:
     HashSet<NodeIdentifier> m_currentlySnappedBoxes;
     Markable<NodeIdentifier> m_currentSnapTargetForHorizontalAxis;
     Markable<NodeIdentifier> m_currentSnapTargetForVerticalAxis;
+
+    // Scroll offset and viewport size from the last snap/re-snap, for cross-axis
+    // visibility checks.
+    LayoutPoint m_lastLayoutScrollOffset;
+    LayoutSize m_lastViewportSize;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ScrollSnapAnimatorState&);

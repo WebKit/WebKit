@@ -178,11 +178,21 @@ std::optional<NodeIdentifier> ScrollSnapAnimatorState::selectSnapTargetForAxis(S
         return std::nullopt;
     const auto& offset = offsets[0];
 
-    // A focused or fragment-targeted box wins outright.
-    if ((offset.isFocused || offset.isTarget) && offset.snapTargetID)
-        return *offset.snapTargetID;
-
     const auto& areaIDs = m_snapOffsetsInfo.snapAreasIDs;
+
+    // A focused or fragment-targeted box wins outright, unless its area is scrolled out of the
+    // snapport in a non-snapping cross axis (not a valid snap position).
+    if ((offset.isFocused || offset.isTarget) && offset.snapTargetID) {
+        bool representativeAreaIsVisible = true;
+        for (auto areaIndex : offset.snapAreaIndices) {
+            if (areaIndex < areaIDs.size() && areaIDs[areaIndex] == *offset.snapTargetID) {
+                representativeAreaIsVisible = isSnapAreaVisibleInCrossAxis(areaIndex, axis);
+                break;
+            }
+        }
+        if (representativeAreaIsVisible)
+            return *offset.snapTargetID;
+    }
 
     // Candidate boxes after removing any area that encloses another aligned area (its ancestors), so
     // a nested area supersedes a co-located ancestor, including an ancestor aligned in both axes.
@@ -231,7 +241,7 @@ Vector<size_t, 1> ScrollSnapAnimatorState::innermostAlignedAreaIndicesForAxis(Sc
     };
 
     for (auto areaIndex : indices) {
-        if (areaIndex < areas.size() && areaIndex < areaIDs.size() && !enclosesAnotherArea(areaIndex))
+        if (areaIndex < areas.size() && areaIndex < areaIDs.size() && isSnapAreaVisibleInCrossAxis(areaIndex, axis) && !enclosesAnotherArea(areaIndex))
             candidateIndices.append(areaIndex);
     }
     return candidateIndices;
@@ -247,13 +257,44 @@ void ScrollSnapAnimatorState::updateCurrentlySnappedBoxes()
     m_currentSnapTargetForVerticalAxis = selectSnapTargetForAxis(ScrollEventAxis::Vertical);
 }
 
-// Returns the snapped box this axis is focused/targeted on, evaluated fresh: focus and :target can
-// change after the snap, and the re-snap algorithm evaluates them at re-snap time.
-static std::optional<NodeIdentifier> focusedOrTargetedBox(const Vector<SnapOffset<LayoutUnit>>& offsets, const HashSet<NodeIdentifier>& snappedBoxes)
+// True if the snap area is at least partly within the snapport in the (non-snapping) cross axis at
+// the last known scroll position. When the cross axis also snaps (2D case, handled by
+// closestSnapOffset) or no viewport is known yet, we don't filter. Mirrors findCompatibleSnapArea().
+bool ScrollSnapAnimatorState::isSnapAreaVisibleInCrossAxis(size_t areaIndex, ScrollEventAxis axis) const
 {
+    auto crossAxis = axis == ScrollEventAxis::Horizontal ? ScrollEventAxis::Vertical : ScrollEventAxis::Horizontal;
+    if (!snapOffsetsForAxis(crossAxis).isEmpty() || m_lastViewportSize.isEmpty())
+        return true;
+    if (areaIndex >= m_snapOffsetsInfo.snapAreas.size())
+        return true;
+
+    const auto& area = m_snapOffsetsInfo.snapAreas[areaIndex];
+    auto crossMin = crossAxis == ScrollEventAxis::Horizontal ? area.x() : area.y();
+    auto crossMax = crossAxis == ScrollEventAxis::Horizontal ? area.maxX() : area.maxY();
+    auto crossScroll = crossAxis == ScrollEventAxis::Horizontal ? m_lastLayoutScrollOffset.x() : m_lastLayoutScrollOffset.y();
+    auto crossViewport = crossAxis == ScrollEventAxis::Horizontal ? m_lastViewportSize.width() : m_lastViewportSize.height();
+    return (crossScroll + crossViewport) >= crossMin && crossScroll <= crossMax;
+}
+
+// This axis's focused/targeted snapped box, evaluated fresh (focus and :target can change after the
+// snap). A focused/targeted area scrolled out of the snapport in a non-snapping cross axis is skipped:
+// it isn't a valid snap position, so it must not win the preference.
+std::optional<NodeIdentifier> ScrollSnapAnimatorState::focusedOrTargetedBox(ScrollEventAxis axis, const HashSet<NodeIdentifier>& snappedBoxes) const
+{
+    const auto& offsets = snapOffsetsForAxis(axis);
+    const auto& areaIDs = m_snapOffsetsInfo.snapAreasIDs;
+
+    auto representativeAreaIsVisible = [&](const SnapOffset<LayoutUnit>& offset) {
+        for (auto areaIndex : offset.snapAreaIndices) {
+            if (areaIndex < areaIDs.size() && areaIDs[areaIndex] == *offset.snapTargetID)
+                return isSnapAreaVisibleInCrossAxis(areaIndex, axis);
+        }
+        return true;
+    };
+
     auto findFlagged = [&](bool SnapOffset<LayoutUnit>::*flag) -> std::optional<NodeIdentifier> {
         auto found = std::ranges::find_if(offsets, [&](const SnapOffset<LayoutUnit>& offset) {
-            return offset.snapTargetID && snappedBoxes.contains(*offset.snapTargetID) && offset.*flag;
+            return offset.snapTargetID && snappedBoxes.contains(*offset.snapTargetID) && offset.*flag && representativeAreaIsVisible(offset);
         });
         if (found != offsets.end())
             return *found->snapTargetID;
@@ -270,6 +311,8 @@ static std::optional<NodeIdentifier> focusedOrTargetedBox(const Vector<SnapOffse
 bool ScrollSnapAnimatorState::resnapAfterLayout(ScrollOffset scrollOffset, const ScrollExtents& scrollExtents, float pageScale)
 {
     bool snapPointChanged = false;
+    m_lastLayoutScrollOffset = LayoutPoint(scrollOffset.x() / pageScale, scrollOffset.y() / pageScale);
+    m_lastViewportSize = LayoutSize(scrollExtents.viewportSize);
     auto activeHorizontalIndex = activeSnapIndexForAxis(ScrollEventAxis::Horizontal);
     auto activeVerticalIndex = activeSnapIndexForAxis(ScrollEventAxis::Vertical);
     auto previouslySnappedBoxes = std::exchange(m_currentlySnappedBoxes, { });
@@ -291,7 +334,7 @@ bool ScrollSnapAnimatorState::resnapAfterLayout(ScrollOffset scrollOffset, const
     // other axis from dragging this axis off its snap position.
     if (previouslySnappedBoxes.size() > 1) {
         auto targetForAxis = [&](ScrollEventAxis axis, const Markable<NodeIdentifier>& recordedTarget) -> std::optional<NodeIdentifier> {
-            if (auto box = focusedOrTargetedBox(snapOffsetsForAxis(axis), previouslySnappedBoxes))
+            if (auto box = focusedOrTargetedBox(axis, previouslySnappedBoxes))
                 return box;
             return recordedTarget ? std::optional<NodeIdentifier> { *recordedTarget } : std::nullopt;
         };
@@ -334,6 +377,8 @@ bool ScrollSnapAnimatorState::setNearestScrollSnapIndexForAxisAndOffsetInternal(
 bool ScrollSnapAnimatorState::setNearestScrollSnapIndexForOffset(ScrollOffset scrollOffset, const ScrollExtents& scrollExtents, float pageScale)
 {
     bool snapIndexChanged = false;
+    m_lastLayoutScrollOffset = LayoutPoint(scrollOffset.x() / pageScale, scrollOffset.y() / pageScale);
+    m_lastViewportSize = LayoutSize(scrollExtents.viewportSize);
     snapIndexChanged |= setNearestScrollSnapIndexForAxisAndOffsetInternal(ScrollEventAxis::Horizontal, scrollOffset, scrollExtents, pageScale);
     snapIndexChanged |= setNearestScrollSnapIndexForAxisAndOffsetInternal(ScrollEventAxis::Vertical, scrollOffset, scrollExtents, pageScale);
 
