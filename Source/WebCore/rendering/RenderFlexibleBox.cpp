@@ -1070,15 +1070,6 @@ void RenderFlexibleBox::prepareOrderIteratorAndMargins()
     }
 }
 
-std::optional<LayoutUnit> RenderFlexibleBox::minimumHeightForLineIfEmpty() const
-{
-    // Even if we collected a flex line, the flexbox might not have a line because all our children
-    // might be out of flow positioned. Make sure the flexbox has at least a line's worth of height.
-    if (!hasLineIfEmpty())
-        return { };
-    return borderAndPaddingLogicalHeight() + lineHeight() + scrollbarLogicalHeight();
-}
-
 FlexLayoutConstraints RenderFlexibleBox::flexLayoutConstraints()
 {
     auto& utils = flexLayoutUtils();
@@ -1131,8 +1122,8 @@ FlexContainerCrossExtents RenderFlexibleBox::updateFlexContainerLogicalHeight(La
     // compared against the physical borderBoxHeight() (which is the inline extent in a vertical writing mode). Then
     // resolve against the container's own specified/min/max height and box-sizing, and return the used cross extents
     // (content-box and border-box) so FlexLayout takes them as values.
-    auto minimumHeight = minimumHeightForLineIfEmpty();
-    setLogicalHeight(std::max(minimumHeight.value_or(0_lu), std::max(logicalHeight(), borderAndPaddingLogicalHeight() + flexContentBlockExtent)));
+    auto minimumHeightForEmptyLine = hasLineIfEmpty() ? borderAndPaddingLogicalHeight() + lineHeight() + scrollbarLogicalHeight() : 0_lu;
+    setLogicalHeight(std::max(minimumHeightForEmptyLine, std::max(logicalHeight(), borderAndPaddingLogicalHeight() + flexContentBlockExtent)));
     updateLogicalHeight();
     return { flexLayoutUtils().crossAxisContentExtent(), flexLayoutUtils().crossAxisExtent() };
 }

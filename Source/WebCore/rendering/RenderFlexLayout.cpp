@@ -86,13 +86,12 @@ FlexLayout::Result FlexLayout::layout(FlexLayoutItems& flexItems)
     };
     performContentSizing();
 
-    Vector<LayoutUnit> flexLinesCrossPositionList;
+    Vector<LayoutUnit> flexLinesCrossPositionList(flexLines.ranges.size());
     auto computeFlexLineCrossPositions = [&] -> LayoutUnit {
         // Stack the flex lines along the cross axis, recording each line's position, and return the flex content's
         // block-axis extent (line cross sizes + inter-line gaps + cross-axis scrollbar). RenderFlexibleBox resolves
         // this into the container's logical height in updateFlexContainerLogicalHeight. Column flow's block axis is
         // its main axis, sized later while placing the items, so nothing is returned there.
-        flexLinesCrossPositionList = Vector<LayoutUnit>(flexLines.ranges.size());
         auto contentStart = m_constraints.flowAwareBorderBlock.first + m_constraints.flowAwarePaddingBlock.first;
         auto crossAxisOffset = contentStart;
         for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
@@ -116,31 +115,24 @@ FlexLayout::Result FlexLayout::layout(FlexLayoutItems& flexItems)
         // 9.5. (#12) Main-Axis Alignment.
         flexItemsPositionList = handleMainAxisAlignment(flexLines, flexItems, flexItemsMainSizeList, flexLinesCrossPositionList);
         setFlexItemCountsForFirstAndLastLine(flexLines);
-
         // 9.6. (#15) Finalize the container's logical height from the block extent computeFlexLineCrossPositions built
         // (row flow) or the main size set while placing the items (column flow): apply the empty-line minimum, then
         // resolve it against the container's own specified/min/max height and box-sizing.
         flexContainerCrossExtents = m_flexBox.updateFlexContainerLogicalHeight(flexContentBlockExtent);
-
         // Multi-line column flex only knows its main size now, so re-resolve the flexible lengths of any lines that were left short.
         distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(flexLines, flexItems, flexBaseAndHypotheticalMainSizeList.span(), flexItemsMainSizeList, flexItemsPositionList, flexLinesCrossPositionList);
-
         // 9.5. (#12) For column-reverse, reposition each line's items from the finalized container main-axis end.
         reverseColumnLinesFromContainerMainEndIfNeeded(flexLines, flexItems, flexItemsMainSizeList, flexItemsPositionList, flexLinesCrossPositionList);
-
         // 9.6. (#13 - #16) Cross-Axis Alignment.
         crossAxisStartEdge = flexLinesCrossPositionList.isEmpty() ? 0_lu : flexLinesCrossPositionList[0];
         // If we have a single line flexbox, the line height is all the available space. For flex-direction: row,
         // this means we need to use the height, so we do this after calling updateLogicalHeight.
         if (!m_constraints.isMultiline && !flexLinesCrossSizeList.isEmpty())
             flexLinesCrossSizeList[0] = flexContainerCrossExtents.contentBox;
-
         // 9.4. (#9) Handle 'align-content: stretch' and 9.6. (#16) align all flex lines per align-content.
         handleCrossAxisAlignmentForFlexLines(flexLines, flexItemsPositionList, flexLinesCrossPositionList, flexLinesCrossSizeList, flexContainerCrossExtents.contentBox);
-
         // 9.4. (#11) Determine the used cross size of each flex item.
         flexItemsCrossSizeList = computeCrossSizeForFlexItems(flexLines, flexItems, flexLinesCrossSizeList, flexContainerCrossExtents.contentBox);
-
         // 9.6. (#13 - #14) Resolve cross-axis auto margins and align each item per align-self.
         handleCrossAxisAlignmentForFlexItems(flexLines, flexItems, flexItemsCrossSizeList, flexLinesCrossSizeList, flexItemsPositionList);
     };

@@ -167,7 +167,6 @@ private:
     LayoutUnit mainAxisAvailableSpace();
     FlexContainerCrossExtents updateFlexContainerLogicalHeight(LayoutUnit flexContentBlockExtent);
     void prepareFlexItemForPositionedLayout(RenderBox& flexItem);
-    std::optional<LayoutUnit> minimumHeightForLineIfEmpty() const;
 
     void resetHasDefiniteHeight() { m_hasDefiniteHeight = SizeDefiniteness::Unknown; }
 
