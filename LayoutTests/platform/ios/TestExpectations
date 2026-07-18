@@ -8599,7 +8599,6 @@ editing/input/ios/typing-with-inline-predictions.html [ Pass Timeout ] # webkit.
 imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure ] # webkit.org/b/318255
 http/wpt/identity/formats/ISO18013/mixed-requests.https.html [ Failure ] # webkit.org/b/318256
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/number-constraint-validation.html [ Pass Failure ] # webkit.org/b/318257
-ipc/fecolormatrix-type-values-mismatch-crash.html [ Failure ] # webkit.org/b/318258
 
 webkit.org/b/317884 imported/w3c/web-platform-tests/digital-credentials/get-non-fully-active.https.html [ Skip ]
 
@@ -8611,3 +8610,5 @@ webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-c
 webkit.org/b/318375 imported/w3c/web-platform-tests/css/css-anchor-position/scroll-to-anchored-fixed-001.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/319606 [ Debug ] http/tests/ipc/createnewpage-file-body-sandbox-extension.html [ Failure ]
+
+webkit.org/b/318258 [ Debug ] ipc/fecolormatrix-type-values-mismatch-crash.html [ Failure ]
