@@ -53,7 +53,7 @@ This will define the following variables in your project:
 #]=======================================================================]
 
 find_package(PkgConfig QUIET)
-pkg_check_modules(PC_LIBUDEV QUIET libusev)
+pkg_check_modules(PC_LIBUDEV QUIET libudev)
 set(Udev_COMPILE_OPTIONS ${PC_LIBUDEV_CFLAGS_OTHER})
 set(Udev_VERSION ${PC_LIBUDEV_VERSION})
 
