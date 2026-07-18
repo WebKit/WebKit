@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function removeElement(id)
+{
+    document.getElementById(id).remove();
+}
+</script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOM.resolveNodeAfterNodeRemoved");
+
+    async function getRemovedNode(id) {
+        let documentNode = await WI.domManager.requestDocument();
+        let nodeId = await documentNode.querySelector("#" + id);
+        let node = WI.domManager.nodeForId(nodeId);
+        InspectorTest.assert(node, "Missing test node for id " + id);
+
+        InspectorTest.log(`Removing #${id} from the page...`);
+        await Promise.all([
+            InspectorTest.evaluateInPage(`removeElement("${id}")`),
+            WI.domManager.awaitEvent(WI.DOMManager.Event.NodeRemoved),
+        ]);
+
+        InspectorTest.expectTrue(node.destroyed, `#${id} should be marked as destroyed.`);
+        return node;
+    }
+
+    async function expectNoUnhandledPromiseRejection(work) {
+        let sawUnhandledRejection = false;
+        let handler = (event) => { sawUnhandledRejection = true; };
+
+        window.addEventListener("unhandledrejection", handler);
+
+        work();
+
+        // Give the unhandled promise rejection, if any, a chance to be reported.
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        window.removeEventListener("unhandledrejection", handler);
+
+        InspectorTest.expectFalse(sawUnhandledRejection, "Should not cause an unhandled promise rejection.");
+    }
+
+    suite.addTestCase({
+        name: "DOM.resolveNodeAfterNodeRemoved.ResolveNodeDirectly",
+        description: "WI.RemoteObject.resolveNode should reject its promise, not throw, when called with an already-removed node.",
+        async test() {
+            let node = await getRemovedNode("resolve-node-target");
+
+            await InspectorTest.expectException(async () => {
+                await WI.RemoteObject.resolveNode(node);
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.resolveNodeAfterNodeRemoved.ToggleClass",
+        description: "Calling WI.DOMNode.prototype.toggleClass on an already-removed node should not cause an unhandled promise rejection.",
+        async test() {
+            let node = await getRemovedNode("toggle-class-target");
+
+            await expectNoUnhandledPromiseRejection(() => {
+                node.toggleClass("test-class", true);
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.resolveNodeAfterNodeRemoved.ScrollIntoView",
+        description: "Calling WI.DOMNode.prototype.scrollIntoView on an already-removed node should not cause an unhandled promise rejection.",
+        async test() {
+            let node = await getRemovedNode("scroll-into-view-target");
+
+            await expectNoUnhandledPromiseRejection(() => {
+                node.scrollIntoView();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Testing that resolving a DOM node that has already been removed from the page rejects gracefully instead of causing an unhandled promise rejection.</p>
+<div id="resolve-node-target"></div>
+<div id="toggle-class-target"></div>
+<div id="scroll-into-view-target"></div>
+</body>
+</html>

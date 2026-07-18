@@ -1,0 +1,20 @@
+Testing that resolving a DOM node that has already been removed from the page rejects gracefully instead of causing an unhandled promise rejection.
+
+
+== Running test suite: DOM.resolveNodeAfterNodeRemoved
+-- Running test case: DOM.resolveNodeAfterNodeRemoved.ResolveNodeDirectly
+Removing #resolve-node-target from the page...
+PASS: #resolve-node-target should be marked as destroyed.
+PASS: Should produce an exception.
+ERROR: node is destroyed
+
+-- Running test case: DOM.resolveNodeAfterNodeRemoved.ToggleClass
+Removing #toggle-class-target from the page...
+PASS: #toggle-class-target should be marked as destroyed.
+PASS: Should not cause an unhandled promise rejection.
+
+-- Running test case: DOM.resolveNodeAfterNodeRemoved.ScrollIntoView
+Removing #scroll-into-view-target from the page...
+PASS: #scroll-into-view-target should be marked as destroyed.
+PASS: Should not cause an unhandled promise rejection.
+
