@@ -242,7 +242,7 @@ Vector<LayoutUnit> FlexLayout::computeMainSizeForFlexItems(FlexLayoutItems& flex
         auto lineItems = flexItems.mutableSpan().subspan(lineRange.begin(), lineRange.distance());
         auto lineFlexBaseAndHypotheticalMainSizeList = flexBaseAndHypotheticalMainSizeList.subspan(lineRange.begin(), lineRange.distance());
         auto lineFlexItemsMainSizeList = flexItemsMainSizeList.mutableSpan().subspan(lineRange.begin(), lineRange.distance());
-        auto flexContainerInnerMainSize = m_constraints.isColumnFlow ? flexLayoutUtils().columnInnerMainSize(flexLines.hypotheticalMainSizes[lineIndex]) : m_flexBox.contentBoxLogicalWidth();
+        auto flexContainerInnerMainSize = m_constraints.isColumnFlow ? flexLayoutUtils().columnInnerMainSize(flexLines.hypotheticalMainSizes[lineIndex]) : m_constraints.mainAxisAvailableSpace;
         resolveFlexibleLengthsForLineItems(lineItems, lineFlexBaseAndHypotheticalMainSizeList, lineFlexItemsMainSizeList, flexContainerInnerMainSize);
     }
     return flexItemsMainSizeList;
@@ -502,7 +502,7 @@ Vector<LayoutPoint> FlexLayout::handleMainAxisAlignment(const FlexLines& flexLin
     Vector<LayoutPoint> flexItemsPositionList(flexItems.size());
     for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
         auto lineRange = flexLines.ranges[lineIndex];
-        auto containerMainInnerSize = m_constraints.isColumnFlow ? flexLayoutUtils().columnInnerMainSize(flexLines.hypotheticalMainSizes[lineIndex]) : m_flexBox.contentBoxLogicalWidth();
+        auto containerMainInnerSize = m_constraints.isColumnFlow ? flexLayoutUtils().columnInnerMainSize(flexLines.hypotheticalMainSizes[lineIndex]) : m_constraints.mainAxisAvailableSpace;
 
         // The remaining free space is the space available to the line's items (its inner main size less inter-item
         // gaps) minus their used outer main sizes.
