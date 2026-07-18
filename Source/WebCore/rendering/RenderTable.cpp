@@ -64,6 +64,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
+#include "StyleSizing.h"
 #include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -359,24 +360,48 @@ template<typename SizeType> LayoutUnit RenderTable::convertStyleLogicalWidthToCo
 
 template<typename SizeType> LayoutUnit RenderTable::convertStyleLogicalHeightToComputedHeight(const SizeType& styleLogicalHeight)
 {
+    CheckedRef checkedThis { *this };
     LayoutUnit borderAndPaddingBefore = borderBefore() + (collapseBorders() ? 0_lu : paddingBefore());
     LayoutUnit borderAndPaddingAfter = borderAfter() + (collapseBorders() ? 0_lu : paddingAfter());
     LayoutUnit borderAndPadding = borderAndPaddingBefore + borderAndPaddingAfter;
-    if (auto fixedStyleLogicalHeight =  styleLogicalHeight.tryFixed()) {
-        // HTML tables size as though CSS height includes border/padding, CSS tables do not.
-        LayoutUnit borders;
-        // FIXME: We cannot apply box-sizing: content-box on <table> which other browsers allow.
-        if (is<HTMLTableElement>(element()) || style().boxSizing() == BoxSizing::BorderBox) {
-            borders = borderAndPadding;
+    return WTF::switchOn(styleLogicalHeight,
+        [&](const typename SizeType::Fixed& fixedStyleLogicalHeight) {
+            // HTML tables size as though CSS height includes border/padding, CSS tables do not.
+            LayoutUnit borders;
+            // FIXME: We cannot apply box-sizing: content-box on <table> which other browsers allow.
+            if (is<HTMLTableElement>(checkedThis->element()) || checkedThis->style().boxSizing() == BoxSizing::BorderBox)
+                borders = borderAndPadding;
+            return Style::evaluate<LayoutUnit>(fixedStyleLogicalHeight, checkedThis->style().usedZoomForLength()) - borders;
+        },
+        [&](const typename SizeType::Percentage&) {
+            return checkedThis->computePercentageLogicalHeight(styleLogicalHeight).value_or(0_lu);
+        },
+        [&](const typename SizeType::Calc& calc) {
+            return checkedThis->computePercentageLogicalHeight(calc).value_or(0_lu);
+        },
+        [&](Style::IsIntrinsicOrStretchSizeKeyword auto const&) {
+            return checkedThis->computeSizingKeywordLogicalContentHeightUsing(styleLogicalHeight, checkedThis->logicalHeight() - borderAndPadding, borderAndPadding).value_or(0_lu);
+        },
+        // The remaining keywords are not valid computed values for a table's logical height. They are
+        // enumerated explicitly (rather than caught by a generic handler) so that adding a new keyword
+        // to any of the sizing types fails to compile here and forces this switch to be revisited.
+        [&](const CSS::Keyword::Auto&) {
+            ASSERT_NOT_REACHED();
+            return 0_lu;
+        },
+        [&](const CSS::Keyword::None&) {
+            ASSERT_NOT_REACHED();
+            return 0_lu;
+        },
+        [&](const CSS::Keyword::Intrinsic&) {
+            ASSERT_NOT_REACHED();
+            return 0_lu;
+        },
+        [&](const CSS::Keyword::MinIntrinsic&) {
+            ASSERT_NOT_REACHED();
+            return 0_lu;
         }
-        return Style::evaluate<LayoutUnit>(*fixedStyleLogicalHeight, style().usedZoomForLength()) - borders;
-    } else if (styleLogicalHeight.isPercentOrCalculated())
-        return computePercentageLogicalHeight(styleLogicalHeight).value_or(0);
-    else if (styleLogicalHeight.isIntrinsicOrStretch())
-        return computeSizingKeywordLogicalContentHeightUsing(styleLogicalHeight, logicalHeight() - borderAndPadding, borderAndPadding).value_or(0);
-    else
-        ASSERT_NOT_REACHED();
-    return 0_lu;
+    );
 }
 
 void RenderTable::layoutCaption(RenderTableCaption& caption)

@@ -5406,6 +5406,7 @@
 		BC675B6C2DEE8BB700AD4D79 /* StyleMaximumSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC675B672DEE8B7100AD4D79 /* StyleMaximumSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC675B6D2DEE8BB700AD4D79 /* StyleFlexBasis.h in Headers */ = {isa = PBXBuildFile; fileRef = BC675B692DEE8B8200AD4D79 /* StyleFlexBasis.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC675B6E2DEE8BB700AD4D79 /* StylePreferredSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC675B642DEE883300AD4D79 /* StylePreferredSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		214FAAB5DFD52EFEDBCC69DA /* StyleSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = F3A8E16BBFC5C15C30A27B8F /* StyleSizing.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6932740D7E293900AE44D1 /* JSDOMWindowBase.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6932720D7E293900AE44D1 /* JSDOMWindowBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6A708F2FDC6D3800872C12 /* StylePrimitiveNumericTypes+EvaluationMinimum.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6A708E2FDC695D00872C12 /* StylePrimitiveNumericTypes+EvaluationMinimum.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6A7EB52FDCDCDE00872C12 /* StylePrimitiveData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6A7EB32FDCDCD300872C12 /* StylePrimitiveData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -19839,6 +19840,7 @@
 		BC675B672DEE8B7100AD4D79 /* StyleMaximumSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleMaximumSize.h; sourceTree = "<group>"; };
 		BC675B682DEE8B7100AD4D79 /* StyleMinimumSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleMinimumSize.h; sourceTree = "<group>"; };
 		BC675B692DEE8B8200AD4D79 /* StyleFlexBasis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleFlexBasis.h; sourceTree = "<group>"; };
+		F3A8E16BBFC5C15C30A27B8F /* StyleSizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleSizing.h; sourceTree = "<group>"; };
 		BC675B722DEEB1A600AD4D79 /* StyleFlexBasis.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleFlexBasis.cpp; sourceTree = "<group>"; };
 		BC6768342CE5116A0087ED47 /* CSSValueTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueTypes.cpp; sourceTree = "<group>"; };
 		BC6932710D7E293900AE44D1 /* JSDOMWindowBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowBase.cpp; sourceTree = "<group>"; };
@@ -38175,6 +38177,7 @@
 				BC675B682DEE8B7100AD4D79 /* StyleMinimumSize.h */,
 				BC675B652DEE883300AD4D79 /* StylePreferredSize.cpp */,
 				BC675B642DEE883300AD4D79 /* StylePreferredSize.h */,
+				F3A8E16BBFC5C15C30A27B8F /* StyleSizing.h */,
 			);
 			path = sizing;
 			sourceTree = "<group>";
@@ -49129,6 +49132,7 @@
 				BCCE02912E766AA30028EA38 /* StyleSingleTransitionDelay.h in Headers */,
 				BCCE02922E766AAA0028EA38 /* StyleSingleTransitionDuration.h in Headers */,
 				BC7320022E732F3F00A6584F /* StyleSingleTransitionProperty.h in Headers */,
+				214FAAB5DFD52EFEDBCC69DA /* StyleSizing.h in Headers */,
 				BC4F32B52E89C4DA00F6AEC1 /* StyleSkewTransformFunction.h in Headers */,
 				BC4529E92ECBAD6E00FD066C /* StyleSpeakAs.h in Headers */,
 				BC66AF692F7E152000345E91 /* StyleString.h in Headers */,
