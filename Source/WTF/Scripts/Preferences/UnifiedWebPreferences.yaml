@@ -1310,6 +1310,20 @@ CSSIfFunctionEnabled:
     WebCore:
       default: true
 
+CSSInitialLetterEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS Initial Letter"
+  humanReadableDescription: "Enable the standard initial-letter CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSInputSecurityEnabled:
   type: bool
   status: testable

@@ -123,6 +123,18 @@ bool PlacedFloats::Item::isInFormattingContextOf(const ElementBox& formattingCon
     return false;
 }
 
+void PlacedFloats::moveFloatVertically(const Box& floatBox, LayoutUnit delta)
+{
+    if (!delta)
+        return;
+    for (auto& floatItem : m_list) {
+        if (floatItem.layoutBox() == &floatBox) {
+            floatItem.moveVertically(delta);
+            return;
+        }
+    }
+}
+
 void PlacedFloats::clear()
 {
     m_list.clear();

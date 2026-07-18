@@ -80,8 +80,12 @@ LineBox LineBoxBuilder::build(size_t lineIndex)
                 inlineBox.setLogicalHeight({ });
             }
         }
-        if (m_lineHasNonLineSpanningRubyContent)
-            RubyFormattingContext::applyAnnotationContributionToLayoutBounds(lineBox, formattingContext());
+        if (m_lineHasNonLineSpanningRubyContent) {
+            // A raised initial letter reserves clear-gap space above the first line; an over annotation is
+            // absorbed into it instead of stretching the line (see adjustLayoutBoundsAndStretchAncestorRubyBase).
+            auto spaceAboveFirstLine = lineLayoutResult.lineGeometry.initialLetterClearGap.value_or(0_lu);
+            RubyFormattingContext::applyAnnotationContributionToLayoutBounds(lineBox, formattingContext(), lineLayoutResult.isFirstLast.isLastLineWithInlineContent, spaceAboveFirstLine);
+        }
         computeLineBoxGeometry(lineBox);
         adjustOutsideListMarkersPosition(lineBox);
 
@@ -640,8 +644,11 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox
         auto initialLetterAscent = fontMetrics.capHeight().value_or(0.f);
         auto initialLetterDescent = InlineLayoutUnit { };
 
+        // Bidi (e.g. RTL) may split the initial letter into multiple runs (such as a leading tab
+        // followed by the letter), so enclose all of them rather than assuming a single run.
+        auto glyphInkAscent = InlineLayoutUnit { };
+        auto glyphInkDescent = InlineLayoutUnit { };
         for (auto run : lineLayoutResult().runs) {
-            // We really should only have one text run for initial letter.
             if (!run.isText())
                 continue;
 
@@ -650,10 +657,16 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox
             auto& style = isFirstFormattedLine() ? textBox.firstLineStyle() : textBox.style();
             auto ascentAndDescent = TextUtil::enclosingGlyphBoundsForText(StringView(textBox.content()).substring(textContent.start, textContent.length), style, textBox.shouldUseSimpleGlyphOverflowCodePath() ? TextUtil::ShouldUseSimpleGlyphOverflowCodePath::Yes : TextUtil::ShouldUseSimpleGlyphOverflowCodePath::No);
 
-            initialLetterDescent = ascentAndDescent.descent;
-            if (lineBox.baselineType() != FontBaseline::Alphabetic)
-                initialLetterAscent = -ascentAndDescent.ascent;
-            break;
+            glyphInkAscent = std::max(glyphInkAscent, -ascentAndDescent.ascent);
+            glyphInkDescent = std::max(glyphInkDescent, ascentAndDescent.descent);
+        }
+        initialLetterDescent = glyphInkDescent;
+        if (lineBox.baselineType() != FontBaseline::Alphabetic) {
+            // In vertical typographic modes the initial letter is centered on the central (ideographic)
+            // baseline, so split its ink box symmetrically rather than hanging it from the alphabetic cap.
+            auto half = (glyphInkAscent + glyphInkDescent) / 2;
+            initialLetterAscent = half;
+            initialLetterDescent = half;
         }
         inlineBoxBoundsMap.set(&rootInlineBox, TextUtil::EnclosingAscentDescent { initialLetterAscent, initialLetterDescent });
     }
@@ -826,7 +839,13 @@ InlineLayoutUnit LineBoxBuilder::applyTextBoxTrimOnLineBoxIfNeeded(InlineLayoutU
             rootInlineBox.setLogicalTop(rootInlineBox.logicalTop() - needToTrimThisMuch);
         };
         adjustRootInlineAndBottomAlignedBoxes();
-        m_lineLayoutResult.firstLineStartTrim = needToTrimThisMuch;
+        // The root inline box (and content) is trimmed by the full amount; record it so the initial
+        // letter's over-annotation offset can undo this shift.
+        m_lineLayoutResult.firstLineRootInlineBoxTrimShift = needToTrimThisMuch;
+        // The standard initial-letter's extra clear-gap line is a content-only push: excluding it here
+        // keeps the initial letter float from being moved up an additional line by the float's
+        // text-box-trim adjustment.
+        m_lineLayoutResult.firstLineStartTrim = needToTrimThisMuch - lineLayoutResult().lineGeometry.initialLetterStandardExtraClearGap;
     }
     return lineBoxLogicalHeight;
 }

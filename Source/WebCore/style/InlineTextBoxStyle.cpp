@@ -330,6 +330,16 @@ float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineB
         underlineOffset = computedUnderlineOffset({ style, TextUnderlinePositionUnder { inlineBoxContentBoxHeight(inlineBox), textRunOffset }, offsetOverride }, &renderer);
     }
 
+    // An initial letter is laid out with its own scaled-up font. Its underline must sit at the
+    // initial letter's baseline, but keep the gap propagated from the surrounding text rather than
+    // scaling it up with the large font. Shift the offset by the difference in ascents.
+    auto& letterStyle = renderer.style();
+    if (inlineBox.isRootInlineBox() && letterStyle.usedInitialLetterHeight() > 1) {
+        auto bodyAscent = style.metricsOfPrimaryFont().ascent();
+        auto letterAscent = letterStyle.metricsOfPrimaryFont().ascent();
+        underlineOffset += letterAscent - bodyAscent;
+    }
+
     return underlineOffset - (!inlineBox.isRootInlineBox() ? textBoxEdgeAdjustmentForUnderline(style) : 0.f);
 }
 

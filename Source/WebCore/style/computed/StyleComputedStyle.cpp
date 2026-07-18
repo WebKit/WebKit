@@ -481,6 +481,21 @@ Style::Contain ComputedStyle::usedContain() const
     return result;
 }
 
+float ComputedStyle::usedInitialLetterHeight() const
+{
+    return webkitInitialLetter().isNormal() ? initialLetter().height() : webkitInitialLetter().height();
+}
+
+float ComputedStyle::usedInitialLetterDrop() const
+{
+    return webkitInitialLetter().isNormal() ? initialLetter().drop() : webkitInitialLetter().drop();
+}
+
+bool ComputedStyle::usesStandardInitialLetter() const
+{
+    return webkitInitialLetter().isNormal() && !initialLetter().isNormal();
+}
+
 UsedClear ComputedStyle::usedClear(const RenderElement& renderer)
 {
     auto computedClear = renderer.style().clear();

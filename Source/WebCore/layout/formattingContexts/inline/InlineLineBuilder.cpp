@@ -369,15 +369,16 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
         , WTF::move(result.runs)
         , { WTF::move(m_placedFloats), WTF::move(m_suspendedFloats), m_lineIsConstrainedByFloat }
         , { contentLogicalLeft, result.contentLogicalWidth, contentLogicalLeft + result.contentLogicalRight, lineContent->overflowLogicalWidth }
-        , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineInitialLogicalRect.topLeft(), m_initialIntrusiveFloatsWidth, m_initialLetterClearGap }
+        , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineInitialLogicalRect.topLeft(), m_initialIntrusiveFloatsWidth, m_initialLetterClearGap, m_initialLetterStandardExtraClearGap }
         , { !result.isHangingTrailingContentWhitespace, result.hangingTrailingContentWidth, result.hangablePunctuationStartWidth }
         , { WTF::move(visualOrderList), inlineBaseDirection }
         , { isFirstFormattedLineCandidate && inlineContentEnding.has_value() ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, isLastInlineContent }
         , { WTF::move(lineContent->rubyBaseAlignmentOffsetList), lineContent->rubyAnnotationOffset }
         , inlineContentEnding
         , result.nonSpanningInlineLevelBoxCount
-        , { }
-        , { }
+        , { } // trimmedTrailingWhitespaceWidth
+        , { } // firstLineStartTrim
+        , { } // firstLineRootInlineBoxTrimShift
         , lineContent->range.isEmpty() ? std::make_optional(m_lineLogicalRect.top() + m_candidateContentMaximumHeight) : std::nullopt
     };
 }
@@ -442,6 +443,7 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Inl
     m_overflowingLogicalWidth = { };
     m_partialLeadingTextItem = { };
     m_initialLetterClearGap = { };
+    m_initialLetterStandardExtraClearGap = { };
     m_candidateContentMaximumHeight = { };
     inlineContentBreaker().setHyphenationDisabled(layoutState().isHyphenationDisabled());
 
@@ -1240,7 +1242,9 @@ LineBuilder::RectAndFloatConstraints LineBuilder::adjustedLineRectWithCandidateI
 
 std::optional<LineBuilder::InitialLetterOffsets> LineBuilder::adjustLineRectForInitialLetterIfApplicable(const Box& floatBox)
 {
-    auto drop = floatBox.style().initialLetter().drop();
+    // The standard `initial-letter` property takes precedence over the legacy
+    // `-webkit-initial-letter` property when specified.
+    auto drop = floatBox.style().usedInitialLetterDrop();
     auto isInitialLetter = floatBox.isFloatingPositioned() && floatBox.style().pseudoElementType() == PseudoElementType::FirstLetter && drop;
     if (!isInitialLetter)
         return { };
@@ -1255,20 +1259,26 @@ std::optional<LineBuilder::InitialLetterOffsets> LineBuilder::adjustLineRectForI
 
     auto clearGapBeforeFirstLine = InlineLayoutUnit { };
     if (intrusiveBottom) {
-        // When intrusive initial letter is cleared, we introduce a clear gap. This is (with proper floats) normally computed before starting
-        // line layout but intrusive initial letters are cleared only when another initial letter shows up. Regular inline content
-        // does not need clearance.
-        auto intrusiveInitialLetterWidth = std::max(0.f, m_lineLogicalRect.left() - m_lineInitialLogicalRect.left());
-        m_lineLogicalRect.setLeft(m_lineInitialLogicalRect.left());
-        m_lineLogicalRect.expandHorizontally(intrusiveInitialLetterWidth);
+        // When an intrusive initial letter (from a previous short paragraph) is cleared, we introduce a clear gap.
+        // This is (with proper floats) normally computed before starting line layout, but intrusive initial letters
+        // are cleared only when another initial letter shows up. We must not widen the line here: this block has its
+        // own initial letter float, whose horizontal inset needs to be preserved on the first line.
         clearGapBeforeFirstLine = *intrusiveBottom;
     }
 
     auto sunkenBelowFirstLineOffset = LayoutUnit { };
-    auto letterHeight = floatBox.style().initialLetter().height();
+    auto letterHeight = floatBox.style().usedInitialLetterHeight();
     if (drop < letterHeight) {
         // Sunken/raised initial letter pushes contents of the first line down.
         auto numberOfSunkenLines = letterHeight - drop;
+        // The standard `initial-letter` property pushes the paragraph content one additional
+        // line compared to the legacy -webkit-initial-letter (per CSS Inline Layout Module Level 3).
+        if (floatBox.style().usesStandardInitialLetter()) {
+            numberOfSunkenLines += 1;
+            // This extra line pushes content, but must not move the initial letter float an extra line
+            // when text-box-trim adjusts the float (see LineGeometry::initialLetterStandardExtraClearGap).
+            m_initialLetterStandardExtraClearGap = rootStyle().computedLineHeight();
+        }
         auto verticalGapForInlineContent = numberOfSunkenLines * rootStyle().computedLineHeight();
         clearGapBeforeFirstLine += verticalGapForInlineContent;
         // And we pull the initial letter up.
@@ -1336,6 +1346,9 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
     if (!shouldTryToPlaceFloatBox(floatBox, boxGeometry.marginBoxWidth(), mayOverConstrainLine))
         return false;
 
+    // Unlike regular floats, an initial letter is affected by text-indent: the indent is applied to
+    // the initial letter itself (not to the text beside it).
+    auto isInitialLetter = floatBox.style().pseudoElementType() == PseudoElementType::FirstLetter && floatBox.style().usedInitialLetterDrop() > 0;
     auto lineMarginBoxLeft = std::max(0.f, m_lineLogicalRect.left() - m_lineMarginStart);
     auto computeFloatBoxPosition = [&] {
         // Set static position first.
@@ -1344,6 +1357,11 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
             staticPosition.setY(m_lineLogicalRect.top() + additionalOffsets->capHeightOffset);
             boxGeometry.setVerticalMargin({ boxGeometry.marginBefore() + additionalOffsets->sunkenBelowFirstLineOffset, boxGeometry.marginAfter() });
         }
+        // Indent the initial letter by text-indent relative to the (already text-indented) line
+        // content start. Model this as an extra start margin so float positioning honors it in both
+        // writing directions.
+        if (isInitialLetter && m_lineMarginStart)
+            boxGeometry.setMarginStart(boxGeometry.marginStart() + LayoutUnit { 2 * m_lineMarginStart });
         staticPosition.move(boxGeometry.marginStart(), boxGeometry.marginBefore());
         boxGeometry.setTopLeft(staticPosition);
         // Compute float position by running float layout.
@@ -1392,7 +1410,10 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
             // This float is placed outside the line box. No need to shrink the current line.
             return;
         }
-        auto constraints = floatAvoidingRect(m_lineLogicalRect, m_lineMarginStart);
+        // The initial letter has consumed the text-indent (applied as its start margin above), so the
+        // text beside it must not be indented again.
+        auto lineMarginStart = isInitialLetter ? InlineLayoutUnit { } : m_lineMarginStart;
+        auto constraints = floatAvoidingRect(m_lineLogicalRect, lineMarginStart);
         m_lineLogicalRect = constraints.logicalRect;
         m_lineIsConstrainedByFloat.add(constraints.constrainedSideSet);
     };

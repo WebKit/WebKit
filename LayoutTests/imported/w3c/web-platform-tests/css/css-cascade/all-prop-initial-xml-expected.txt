@@ -189,6 +189,7 @@ PASS hyphenate-character
 PASS hyphens
 PASS image-orientation
 PASS image-rendering
+PASS initial-letter
 PASS inline-size
 PASS input-security
 PASS inset-block-end

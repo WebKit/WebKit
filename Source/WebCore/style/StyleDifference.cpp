@@ -228,7 +228,7 @@ public:
     {
         ASSERT(&a != &b);
 
-        if (a.lineClamp != b.lineClamp || a.initialLetter != b.initialLetter)
+        if (a.lineClamp != b.lineClamp || a.webkitInitialLetter != b.webkitInitialLetter || a.initialLetter != b.initialLetter)
             return true;
 
         if (a.shapeMargin != b.shapeMargin)

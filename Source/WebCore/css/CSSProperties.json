@@ -5191,6 +5191,30 @@
                 "url": "https://drafts.csswg.org/css-images-3/#propdef-image-rendering"
             }
         },
+        "initial-letter": {
+            "animation-type": "discrete",
+            "initial": "normal",
+            "values": [
+                "normal"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssInitialLetterEnabled",
+                "computed-style-initial-constexpr": true,
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
+                "computed-style-storage-kind": "reference",
+                "computed-style-type": "Style::InitialLetter",
+                "parser-function": "consumeInitialLetter",
+                "parser-grammar-unused": "normal | [ <number [1,inf]> <integer [1,inf]> ] | [ <number [1,inf]> && [ drop | raise ]? ]",
+                "parser-grammar-unused-reason": "The && combinator with an optional keyword, combined with the alternative integer-sink branch and the number-vs-integer range distinctions, is not expressible in the grammar DSL."
+            },
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "category": "css-inline",
+                "url": "https://www.w3.org/TR/css-inline/#propdef-initial-letter"
+            }
+        },
         "inline-size": {
             "animation-type": "by computed value",
             "initial": "auto",
@@ -11221,6 +11245,7 @@
             ],
             "codegen-properties": {
                 "computed-style-initial-constexpr": true,
+                "computed-style-name-for-methods": "WebkitInitialLetter",
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::WebkitInitialLetter",
