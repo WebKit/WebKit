@@ -80,12 +80,12 @@ bool MediaPlaybackTargetCocoa::hasActiveRoute() const
 // AVSystemRouting will not even notify us of routes that do no support the video feature.
 bool MediaPlaybackTargetCocoa::supportsCustomProtocolVideoPlayback() const
 {
+#if HAVE(AVOUTPUTDEVICE_CUSTOM_PROTOCOL)
     for (AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {
-ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
         if (outputDevice.deviceType == AVOutputDeviceTypeCustomProtocol && outputDevice.deviceFeatures & AVOutputDeviceFeatureVideo)
             return true;
-ALLOW_NEW_API_WITHOUT_GUARDS_END
     }
+#endif
 
     return false;
 }
