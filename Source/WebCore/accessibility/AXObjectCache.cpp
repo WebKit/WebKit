@@ -462,6 +462,19 @@ AXObjectCache::AXObjectCache(LocalFrame& localFrame, Document* document)
     if (RefPtr page = localFrame.page())
         page->chrome().client().requestFrameScreenPosition(m_frameID);
 #endif
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (isIsolatedTreeEnabled() && !clientIsInTestMode()) {
+        // Proactively (and asynchronously) queue up the build of the isolated tree associated with this cache,
+        // guaranteeing it gets built rather than implicitly relying on something later calling getOrCreateIsolatedTree()
+        // on |this| instance. Doing this here is critical — otherwise, after navigation, nothing may actually
+        // call getOrCreateIsolatedTree() on |this|, leaving web content empty forever.
+        //
+        // Do not do this in test mode, for which we build the full tree synchronously in getOrCreateIsolatedTree()
+        // (unlike the real-AT path, where we serve a placeholder while the full tree gets built via this timer).
+        m_buildIsolatedTreeTimer.startOneShot(0_s);
+    }
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 }
 
 AXObjectCache::~AXObjectCache()
