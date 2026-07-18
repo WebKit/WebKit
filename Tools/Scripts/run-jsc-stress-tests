@@ -2098,6 +2098,142 @@ def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)
     run("default-wasm", "--useConcurrentGC=0" , "--useConcurrentJIT=0", "--jitMemoryReservationSize=80000", "--useBaselineJIT=0", "--useDFGJIT=0", "--useFTLJIT=0", "-m")
 end
 
+# Support for running the imported WPT WebAssembly tests
+# (LayoutTests/imported/w3c/web-platform-tests/wasm) in the jsc shell. Results are diffed against
+# the committed -expected.txt baselines.
+WPT_PATH = LAYOUTTESTS_PATH + "imported/w3c/web-platform-tests"
+
+# The wasm JIT-configuration matrix, mirroring runWebAssemblySpecTestBase. Returns [kind, options].
+def wasmWPTConfigs(*extraOptions)
+    configs = [["default-wasm", FTL_OPTIONS + extraOptions]]
+    if $mode != :quick
+        configs << ["wasm-no-cjit", FTL_OPTIONS + NO_CJIT_OPTIONS + extraOptions]
+        configs << ["wasm-eager-jettison", ["--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true"] + FTL_OPTIONS + extraOptions]
+        configs << ["wasm-collect-continuously", ["--collectContinuously=true", "--verifyGC=true"] + FTL_OPTIONS + extraOptions] if shouldCollectContinuously?
+        configs << ["wasm-bbq", ["--useWasmIPInt=false"] + FTL_OPTIONS + extraOptions]
+        configs << ["wasm-bbq-no-consts", ["--useWasmIPInt=false", "--disableBBQConsts=true"] + FTL_OPTIONS + extraOptions]
+        configs << ["wasm-omg", ["--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0"] + FTL_OPTIONS + extraOptions] if $isOMGPlatform
+        configs << ["wasm-simd", ["--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1"] + FTL_OPTIONS + extraOptions] if $isFTLPlatform
+    end
+    configs
+end
+
+# Leading `// META: ...` comment lines of a WPT test (parsing stops at the first non-comment line).
+def wptMetaLines(path)
+    lines = []
+    File.open(path) { | inp |
+        inp.each_line { | line |
+            break unless line =~ /^\s*\/\//
+            lines << line
+        }
+    }
+    lines
+end
+
+def wptIsJSShell?(path)
+    line = wptMetaLines(path).find { | l | l =~ /\/\/\s*META:\s*global=/ }
+    !line.nil? && line.include?("jsshell")
+end
+
+def wptMetaScripts(path)
+    wptMetaLines(path).map { | l | l =~ /\/\/\s*META:\s*script=(\S+)/ ? $1 : nil }.compact
+end
+
+# Title WPT gives the generated page: the test's file name (basename, no subdirectory) without the
+# .any/.window/.worker.js suffix. The shell names an unnamed block-body test "Untitled";
+# wpt-harness-post.js remaps that to this.
+def wptTitle(benchmark)
+    File.basename(benchmark.to_s).sub(/\.js$/, '').sub(/\.(any|window|worker)$/, '')
+end
+
+# Copies a file (given as a path relative to sourceDir) into the collection root in the bundle
+# ($benchmarkDirectory), so it can be referenced by that same relative path from the run's working
+# directory. Recursive collections keep $benchmarkDirectory at the collection root and carry the
+# subdirectory in $benchmark, so harness files copied here are shared by every test in the tree.
+def wptCopyBeside(relativeName, sourceDir)
+    prepareExtraRelativeFilesWithBaseDirectory([relativeName], $benchmarkDirectory, sourceDir)
+end
+
+# Maps each `// META: script=` dependency to a load path relative to the run's working directory
+# (the collection root). prepareCollection copies the whole collection tree into the bundle, so a
+# dependency within it is already present: a /-absolute (/wasm/...) dep resolves to its
+# collection-relative path, a relative dep to the benchmark's own directory. A /-absolute dep
+# pointing outside the collection would not be in the bundle, so raise rather than reference a
+# missing file (no jsshell test does this today).
+def wptPrepareScripts(scripts)
+    collectionPrefix = $extraFilesBaseDir.relative_path_from(WPT_PATH.realpath)
+    scripts.map { | s |
+        if s.start_with?("/")
+            rel = Pathname.new(s.sub(%r{^/}, '')).relative_path_from(collectionPrefix)
+            raise "WPT script dependency #{s} is outside the #{collectionPrefix} collection" if rel.to_s.start_with?("..")
+            rel.to_s
+        else
+            ($benchmark.dirname + s).to_s
+        end
+    }
+end
+
+def runWebAssemblyWPT(expectedFile, harnessBeforeBenchmark, *extraOptions)
+    FileUtils.mkdir_p((Pathname.new($collectionName) + $benchmark.dirname).to_s)
+
+    # Copy the harness into the collection root so these references resolve from the run directory.
+    # Use the imported WPT copy of testharness.js (not LayoutTests/resources/testharness.js): it is
+    # the version the browser loads for these imported tests and thus the one that generated the
+    # committed baselines.
+    wptCopyBeside("resources/testharness.js", WPT_PATH)
+    wptCopyBeside("wpt-harness-pre.js", WASMTESTS_PATH + "wpt")
+    wptCopyBeside("wpt-harness-mid.js", WASMTESTS_PATH + "wpt")
+    wptCopyBeside("wpt-harness-post.js", WASMTESTS_PATH + "wpt")
+
+    before = ["wpt-harness-pre.js", "resources/testharness.js"] + harnessBeforeBenchmark + ["wpt-harness-mid.js"]
+    after = ["wpt-harness-post.js", "--", wptTitle($benchmark)]
+
+    # Enable the in-development JSC features the same way WebKitTestRunner does for the browser
+    # layout-test run, so these tests exercise the same feature set (and match the baselines the
+    # browser generated) rather than only the shipped defaults.
+    wasmWPTConfigs(*extraOptions).each { | kind, options |
+        args = vmCommand + BASE_OPTIONS + ["--enable-all-experimental-features"] + options + $testSpecificRequiredOptions +
+            before + [$benchmark.to_s] + after
+        addRunCommand(kind, args, noisyOutputHandler, diffErrorHandler(expectedFile))
+    }
+end
+
+def runWebAssemblyWPTJSAPI(*extraOptions)
+    return unless $isWasmPlatform
+    raise unless $benchmark.to_s =~ /\.js$/
+    testName = $~.pre_match
+    return unless wptIsJSShell?($benchmarkDirectory + $benchmark)
+    return if $benchmark.to_s =~ /\.tentative\./
+
+    # The -expected.txt baseline sits next to the test and is already in the bundle via cp_r.
+    # jsshell-only tests (global=jsshell, no window/worker) are never run in the browser and so
+    # have no committed baseline to diff against; skip them.
+    expectedFile = ($benchmarkDirectory + "#{testName}-expected.txt").to_s
+    return unless File.exist?(expectedFile)
+
+    scripts = wptPrepareScripts(wptMetaScripts($benchmarkDirectory + $benchmark))
+    runWebAssemblyWPT(expectedFile, scripts, *extraOptions)
+end
+
+def runWebAssemblyWPTCore(*extraOptions)
+    return unless $isWasmPlatform
+    raise unless $benchmark.to_s =~ /\.js$/
+
+    # Core baselines live in the parallel core/<proposal>/ tree: the test's path with the "js/"
+    # segment dropped (core/js[/<proposal>]/foo.wast.js -> core[/<proposal>]/foo.wast.js-expected.txt).
+    # $benchmark carries the proposal subdirectory, and $extraFilesBaseDir is the collection source
+    # (.../core/js) whose dirname (.../core) is that parallel tree's root; joining them yields the
+    # baseline. Copy it into the bundle at the same relative path so the diff path matches.
+    baselineSource = $extraFilesBaseDir.dirname + "#{$benchmark}-expected.txt"
+    return unless File.exist?(baselineSource.to_s)
+    wptCopyBeside("#{$benchmark}-expected.txt", $extraFilesBaseDir.dirname)
+    expectedFile = ($benchmarkDirectory + "#{$benchmark}-expected.txt").to_s
+
+    # harness/async_index.js is inside the collection, so prepareCollection already copied it into
+    # the bundle; reference it directly.
+    runWebAssemblyWPT(expectedFile, ["harness/async_index.js"], *extraOptions)
+end
+
 def runChakra(mode, exception, baselineFile, extraFiles)
     raise unless $benchmark.to_s =~ /\.js$/
     failsWithException = exception != "NoException"
@@ -2415,6 +2551,17 @@ def allJSFiles(path)
     end
 end
 
+# Like allJSFiles, but descends into subdirectories. Used by collections whose yaml entry sets
+# "recursive: true" (e.g. the imported WPT wasm tests, whose proposal subdirectories would
+# otherwise each need their own entry). Sorted for deterministic test ordering.
+def allJSFilesRecursive(path)
+    if path.file?
+        [path]
+    else
+        Dir.glob((path + "**" + "*.{js,mjs}").to_s).sort.map { | f | Pathname.new(f) }.select { | f | f.file? }
+    end
+end
+
 def uniqueifyName(names, name)
     result = name.to_s
     toAdd = 1
@@ -2526,12 +2673,22 @@ def handleCollectionFile(collection)
             end
             pathsToSearch.each {
                 | pathToSearch |
-                allJSFiles(pathToSearch).each {
+                jsFiles = entry["recursive"] ? allJSFilesRecursive(pathToSearch) : allJSFiles(pathToSearch)
+                jsFiles.each {
                     | path |
 
                     next if not $isWasmPlatform and isWasmTest(path)
-                    $benchmark = path.basename
-                    $benchmarkDirectory = path.dirname
+                    if entry["recursive"]
+                        # Preserve the subdirectory path in the benchmark identity so nested tests
+                        # sharing a basename (e.g. core/js/memory_grow and core/js/multi-memory/
+                        # memory_grow) do not collide in their output files, and the bundle layout
+                        # mirrors the source tree. $benchmarkDirectory stays at the collection root.
+                        $benchmark = path.relative_path_from(pathToSearch)
+                        $benchmarkDirectory = pathToSearch
+                    else
+                        $benchmark = path.basename
+                        $benchmarkDirectory = path.dirname
+                    end
                     $skipModes = Set.new
                     $runCommandOptions = {}
                     $testSpecificRequiredOptions = []

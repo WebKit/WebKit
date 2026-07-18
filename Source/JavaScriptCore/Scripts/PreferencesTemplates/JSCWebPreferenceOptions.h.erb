@@ -45,3 +45,12 @@
 -%>
     v(Bool, <%= pref.jscOptionName %>, <%= jscDefault %>, Normal, <%= jscDescription %>) \
 <% end %>
+
+// The subset of the above whose feature status is "experimental" (developer/testable/preview/
+// stable)
+#define FOR_EACH_JSC_EXPERIMENTAL_WEB_PREFERENCE_OPTION(v) \
+<% @jscOptions.each do |pref| -%>
+<% if pref.experimental? -%>
+    v(<%= pref.jscOptionName %>) \
+<% end -%>
+<% end %>

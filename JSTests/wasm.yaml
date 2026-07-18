@@ -78,3 +78,13 @@
 - path: ../PerformanceTests/JetStream2/wasm-cli.js
   cmd: runWebAssemblyJetStream2 unless parseRunCommands
 
+# Imported WPT WebAssembly tests, these are diffed against their committed -expected.txt baselines.
+# recursive: true so proposal subdirectories (core/js/gc, core/js/simd, jsapi/*, ...) are picked
+# up automatically as WPT adds them. .tentative.js tests are skipped inside run-jsc-stress-tests.
+- path: ../LayoutTests/imported/w3c/web-platform-tests/wasm/core/js
+  cmd: runWebAssemblyWPTCore unless parseRunCommands
+  recursive: true
+- path: ../LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi
+  cmd: runWebAssemblyWPTJSAPI unless parseRunCommands
+  recursive: true
+

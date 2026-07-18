@@ -331,14 +331,14 @@ PASS #329 Test that WebAssembly compilation fails (align.wast:891)
 PASS #330 Test that WebAssembly compilation fails (align.wast:910)
 PASS #331 Test that WebAssembly compilation fails (align.wast:929)
 PASS #332 Test that WebAssembly compilation fails (align.wast:948)
-FAIL #333 Test that WebAssembly compilation fails (align.wast:967) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-align_wast_js@http://web-platform.test:8800/wasm/core/js/align.wast.js:562:17
-global code@http://web-platform.test:8800/wasm/core/js/align.wast.js:573:3 expected true got false
-FAIL #334 Test that WebAssembly compilation fails (align.wast:986) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-align_wast_js@http://web-platform.test:8800/wasm/core/js/align.wast.js:565:17
-global code@http://web-platform.test:8800/wasm/core/js/align.wast.js:573:3 expected true got false
+FAIL #333 Test that WebAssembly compilation fails (align.wast:967) assert_true: module@async_index.js:175:29
+assert_invalid@async_index.js:204:9
+align_wast_js@align.wast.js:562:17
+global code@align.wast.js:573:3 expected true got false
+FAIL #334 Test that WebAssembly compilation fails (align.wast:986) assert_true: module@async_index.js:175:29
+assert_invalid@async_index.js:204:9
+align_wast_js@align.wast.js:565:17
+global code@align.wast.js:573:3 expected true got false
 PASS #335 Test that WebAssembly compilation fails (align.wast:1004)
 PASS #336 Test that WebAssembly compilation fails (align.wast:1016)
 

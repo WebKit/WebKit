@@ -153,6 +153,18 @@ function binary(bytes) {
   return buffer;
 }
 
+// Captures the current call site as a stack string for use in assertion descriptions. Each
+// frame's path is reduced to its basename so the text is identical whether the tests are served
+// over HTTP (the WPT server bakes its scheme/host/port into stack URLs) or loaded from local
+// files by a command-line shell (which embeds environment-specific paths). This function's own
+// frame is elided so the location points at the caller.
+function callerLocation() {
+  let lines = new Error().stack.toString().split("\n");
+  // V8 prefixes the stack with an "Error" line; JavaScriptCore and SpiderMonkey start with frames.
+  let firstFrame = /@|^\s*at\s/.test(lines[0]) ? 0 : 1;
+  return lines.slice(firstFrame + 1).join("\n").replace(/[^\s@(]*\//g, "");
+}
+
 /**
  * Returns a compiled module, or throws if there was an error at compilation.
  */
@@ -160,7 +172,7 @@ function module(bytes, source, valid = true) {
   const test = `${ valid ? "Test that WebAssembly compilation succeeds" :
                 "Test that WebAssembly compilation fails"} (${source})`;
 
-  const loc = new Error().stack.toString().replace("Error", "");
+  const loc = callerLocation();
   let buffer = binary(bytes);
   let validated = WebAssembly.validate(buffer);
 
@@ -204,7 +216,7 @@ function instance(module, imports, valid = true) {
   let test = valid
     ? "Test that WebAssembly instantiation succeeds"
     : "Test that WebAssembly instantiation fails";
-  const loc = new Error().stack.toString().replace("Error", "");
+  const loc = callerLocation();
   chain = Promise.all([module, imports, chain])
     .then(values => {
       let imports = values[1] ? values[1] : registry;
@@ -245,7 +257,7 @@ function call(instance, name, args) {
 
 function run(action, source) {
   const test = `Run a WebAssembly test without special assertions (${source})`;
-  const loc = new Error().stack.toString().replace("Error", "");
+  const loc = callerLocation();
   chain = Promise.all([chain, action()])
     .then(
       _ => {
@@ -266,7 +278,7 @@ function run(action, source) {
 
 function assert_trap(action, source) {
   const test = `Test that a WebAssembly code traps (${source})`;
-  const loc = new Error().stack.toString().replace("Error", "");
+  const loc = callerLocation();
   chain = Promise.all([chain, action()])
     .then(
       result => {
@@ -289,7 +301,7 @@ function assert_trap(action, source) {
 
 function assert_exception(action, source) {
   const test = `Test that a WebAssembly code throws an exception (${source})`;
-  const loc = new Error().stack.toString().replace("Error", "");
+  const loc = callerLocation();
   chain = Promise.all([chain, action()])
     .then(
       result => {
@@ -309,7 +321,7 @@ function assert_exception(action, source) {
 
 function assert_return(action, source, ...expected) {
   const test = `Test that a WebAssembly code returns a specific result (${source})`;
-  const loc = new Error().stack.toString().replace("Error", "");
+  const loc = callerLocation();
   chain = Promise.all([action(), chain])
     .then(
       values => {
@@ -384,7 +396,7 @@ try {
 
 function assert_exhaustion(action) {
   const test = "Test that a WebAssembly code exhausts the stack space";
-  const loc = new Error().stack.toString().replace("Error", "");
+  const loc = callerLocation();
   chain = Promise.all([action(), chain])
     .then(
       _ => {
@@ -407,7 +419,7 @@ function assert_exhaustion(action) {
 
 function assert_unlinkable(bytes) {
   const test = "Test that a WebAssembly module is unlinkable";
-  const loc = new Error().stack.toString().replace("Error", "");
+  const loc = callerLocation();
   instance(bytes, registry, EXPECT_INVALID)
     .then(
       result => {
@@ -430,7 +442,7 @@ function assert_unlinkable(bytes) {
 
 function assert_uninstantiable(bytes) {
   const test = "Test that a WebAssembly module is uninstantiable";
-  const loc = new Error().stack.toString().replace("Error", "");
+  const loc = callerLocation();
   instance(bytes, registry, EXPECT_INVALID)
     .then(
       result => {
@@ -454,7 +466,7 @@ function assert_uninstantiable(bytes) {
 function register(name, instance) {
   const test =
     "Test that the exports of a WebAssembly module can be registered";
-  const loc = new Error().stack.toString().replace("Error", "");
+  const loc = callerLocation();
   let stack = new Error();
   chain = Promise.all([instance, chain])
     .then(
@@ -473,7 +485,7 @@ function register(name, instance) {
 
 function get(instance, name) {
   const test = "Test that an export of a WebAssembly instance can be acquired";
-  const loc = new Error().stack.toString().replace("Error", "");
+  const loc = callerLocation();
   chain = Promise.all([instance, chain]).then(
     values => {
       let v = values[0].exports[name];
