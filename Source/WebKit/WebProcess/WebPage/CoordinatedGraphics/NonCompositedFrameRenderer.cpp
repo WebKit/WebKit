@@ -262,6 +262,7 @@ void NonCompositedFrameRenderer::updateRendering()
     }
 
     m_surface->didRenderFrame();
+    webPage->flushPendingIntrinsicContentSizeUpdate();
     webPage->didUpdateRendering();
 
     if (drawingArea) {

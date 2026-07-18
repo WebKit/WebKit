@@ -355,6 +355,11 @@ void PageClientImpl::didChangeContentSize(const IntSize& size)
     webkitWebViewBaseSetContentsSize(WEBKIT_WEB_VIEW_BASE(m_viewWidget), size);
 }
 
+void PageClientImpl::intrinsicContentSizeDidChange(const IntSize& size)
+{
+    webkitWebViewBaseSetIntrinsicContentSize(WEBKIT_WEB_VIEW_BASE(m_viewWidget), size);
+}
+
 #if ENABLE(DRAG_SUPPORT)
 void PageClientImpl::startDrag(SelectionData&& selection, OptionSet<DragOperation> dragOperationMask, RefPtr<ShareableBitmap>&& dragImage, IntPoint&& dragImageHotspot)
 {

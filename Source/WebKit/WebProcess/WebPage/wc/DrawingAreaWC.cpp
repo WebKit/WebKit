@@ -244,6 +244,7 @@ void DrawingAreaWC::updateRendering()
 
     OptionSet<FinalizeRenderingUpdateFlags> flags;
     webPage->finalizeRenderingUpdate(flags);
+    webPage->flushPendingIntrinsicContentSizeUpdate();
     webPage->didUpdateRendering();
 
     willStartRenderingUpdateDisplay();

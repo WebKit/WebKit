@@ -635,6 +635,20 @@ webkit_web_view_set_zoom_level                       (WebKitWebView             
 WEBKIT_API gdouble
 webkit_web_view_get_zoom_level                       (WebKitWebView             *web_view);
 
+#if PLATFORM(GTK)
+WEBKIT_API void
+webkit_web_view_set_main_frame_scrolling_enabled     (WebKitWebView             *web_view,
+                                                      gboolean                   enabled);
+WEBKIT_API gboolean
+webkit_web_view_get_main_frame_scrolling_enabled     (WebKitWebView             *web_view);
+
+WEBKIT_API void
+webkit_web_view_set_fit_content_height               (WebKitWebView             *web_view,
+                                                      gboolean                   fit_content_height);
+WEBKIT_API gboolean
+webkit_web_view_get_fit_content_height               (WebKitWebView             *web_view);
+#endif
+
 WEBKIT_API void
 webkit_web_view_can_execute_editing_command          (WebKitWebView             *web_view,
                                                       const gchar               *command,

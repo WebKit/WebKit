@@ -1361,7 +1361,6 @@ public:
     RemoteObjectRegistry* uiRemoteObjectRegistry();
 
     void windowAndViewFramesChanged(const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
-    void setMainFrameIsScrollable(bool);
     bool shouldDelayWindowOrderingForEvent(const WebMouseEvent&);
     void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*);
 
@@ -1619,6 +1618,8 @@ public:
 
     void setAlwaysShowsHorizontalScroller(bool);
     void setAlwaysShowsVerticalScroller(bool);
+    void setMainFrameIsScrollable(bool);
+    bool mainFrameIsScrollable() const { return m_mainFrameIsScrollable; }
     bool alwaysShowsHorizontalScroller() const { return m_alwaysShowsHorizontalScroller; }
     bool alwaysShowsVerticalScroller() const { return m_alwaysShowsVerticalScroller; }
 
@@ -3978,6 +3979,7 @@ private:
 
     bool m_alwaysShowsHorizontalScroller { false };
     bool m_alwaysShowsVerticalScroller { false };
+    bool m_mainFrameIsScrollable { true };
 
     bool m_suppressScrollbarAnimations { false };
 

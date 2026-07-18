@@ -79,6 +79,9 @@ GUniquePtr<GdkEvent> webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase*);
 void webkitWebViewBaseSetInputMethodState(WebKitWebViewBase*, std::optional<WebKit::InputMethodState>&&);
 void webkitWebViewBaseUpdateTextInputState(WebKitWebViewBase*);
 void webkitWebViewBaseSetContentsSize(WebKitWebViewBase*, const WebCore::IntSize&);
+void webkitWebViewBaseSetIntrinsicContentSize(WebKitWebViewBase*, const WebCore::IntSize&);
+void webkitWebViewBaseSetFitContentHeight(WebKitWebViewBase*, bool);
+bool webkitWebViewBaseGetFitContentHeight(WebKitWebViewBase*);
 
 void webkitWebViewBaseSetFocus(WebKitWebViewBase*, bool focused);
 void webkitWebViewBaseSetEditable(WebKitWebViewBase*, bool editable);

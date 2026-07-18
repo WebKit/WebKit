@@ -584,7 +584,6 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #if PLATFORM(COCOA)
     WindowAndViewFramesChanged(struct WebKit::ViewWindowCoordinates coordinates) -> () Async
     UpdateMouseEventTargetAfterWindowAndViewFramesChanged(WebCore::DoublePoint mousePositionInView, WebCore::DoublePoint currentMouseGlobalPosition)
-    SetMainFrameIsScrollable(bool isScrollable)
     RegisterUIProcessAccessibilityTokens(struct WebCore::AccessibilityRemoteToken elementToken, struct WebCore::AccessibilityRemoteToken windowToken)
     GetStringSelectionForPasteboard() -> (String stringValue) Synchronous
     GetDataSelectionForPasteboard(String pasteboardType) -> (RefPtr<WebCore::SharedBuffer> buffer) Synchronous
@@ -629,6 +628,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     ShouldAllowRemoveBackground(struct WebCore::ElementContext context) -> (bool result)
 #endif
 
+    SetMainFrameIsScrollable(bool isScrollable)
     SetAlwaysShowsHorizontalScroller(bool alwaysShowsHorizontalScroller)
     SetAlwaysShowsVerticalScroller(bool alwaysShowsVerticalScroller)
 

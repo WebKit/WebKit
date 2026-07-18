@@ -142,6 +142,7 @@ struct WebPageCreationParameters {
 
     bool alwaysShowsHorizontalScroller { false };
     bool alwaysShowsVerticalScroller { false };
+    bool mainFrameIsScrollable { true };
 
     bool suppressScrollbarAnimations { false };
 
