@@ -1444,6 +1444,8 @@ localizedStrings["Requesting \u201C%s\u201D"] = "Requesting \u201C%s\u201D";
 localizedStrings["Required"] = "Required";
 /* Context menu action for resetting the breakpoint to its initial configuration. */
 localizedStrings["Reset Breakpoint @ Breakpoint Context Menu"] = "Reset Breakpoint";
+/* Context menu action for restoring the default set of visible table columns. */
+localizedStrings["Reset Columns"] = "Reset Columns";
 /* Title for Resolution row in Media Sidebar */
 localizedStrings["Resolution @ Media Sidebar"] = "Resolution";
 localizedStrings["Resource"] = "Resource";

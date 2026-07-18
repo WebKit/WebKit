@@ -528,6 +528,22 @@ WI.Table = class Table extends WI.View
         }
     }
 
+    resetColumnVisibility()
+    {
+        for (let column of this._columnSpecs.values()) {
+            if (column.locked || !column.hideable)
+                continue;
+
+            if (column.hidden === column.defaultHidden)
+                continue;
+
+            if (column.defaultHidden)
+                this.hideColumn(column);
+            else
+                this.showColumn(column);
+        }
+    }
+
     hideColumn(column)
     {
         console.assert(this._columnSpecs.get(column.identifier) === column, "Column not in this table.");
@@ -1434,6 +1450,13 @@ WI.Table = class Table extends WI.View
                 else
                     this.hideColumn(column);
             }, checked);
+        }
+
+        if (didAppendHeaderItem) {
+            contextMenu.appendSeparator();
+            contextMenu.appendItem(WI.UIString("Reset Columns"), () => {
+                this.resetColumnVisibility();
+            });
         }
     }
 
