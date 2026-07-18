@@ -1129,12 +1129,15 @@ LayoutUnit RenderFlexibleBox::mainAxisAvailableSpace()
     return logicalHeight == LayoutUnit::max() ? logicalHeight : std::max(0_lu, logicalHeight - (borderAndPaddingLogicalHeight() + scrollbarLogicalHeight()));
 }
 
-void RenderFlexibleBox::updateFlexContainerLogicalHeight()
+FlexContainerCrossExtents RenderFlexibleBox::updateFlexContainerLogicalHeight()
 {
     // Reserve a line's worth of height if the container has a line even while empty, then resolve the final
-    // logical height against the container's own specified/min/max height and box-sizing.
+    // logical height against the container's own specified/min/max height and box-sizing. Return the resulting
+    // used cross extents (content-box and border-box) so FlexLayout takes them as values rather than reading
+    // them back off the container.
     adjustLogicalHeightForLineIfEmpty();
     updateLogicalHeight();
+    return { flexLayoutUtils().crossAxisContentExtent(), flexLayoutUtils().crossAxisExtent() };
 }
 
 FlexLayoutItems RenderFlexibleBox::collectFlexItems(RelayoutChildren relayoutChildren)
