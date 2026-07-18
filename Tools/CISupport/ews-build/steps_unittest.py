@@ -7363,6 +7363,37 @@ class TestCheckStatusOfPR(BuildStepMixinAdditions, unittest.TestCase):
         rc = self.run_step()
         return rc
 
+    def test_glib_branch_checks_only_linux(self):
+        self.setup_step(CheckStatusOfPR())
+        self.setProperty('github.number', 12345)
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.base.ref', 'webkitglib/2.46')
+        self.setProperty('project', 'WebKit/WebKit')
+        self.setProperty('list_of_prs', [])
+        self.setProperty('passed_status_check', [])
+        self.setProperty('unsafe_passed_status_check', [])
+        self.setProperty('failed_status_check', [])
+        self.setProperty('pending_prs', [])
+
+        CheckStatusOfPR.query_graph_ql = lambda self, query: {
+            'data': {'repository': {'pullRequest': {'commits': {'edges': [
+                {'node': {'commit': {'oid': '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c'}}}
+            ]}}}}
+        }
+
+        # All Linux checks pass; Apple and Windows checks fail to prove they are not required for glib branches
+        queue_statuses = {queue: {'state': 0} for queue in CheckStatusOfPR.LINUX_CHECKS + CheckStatusOfPR.EXTRA_LINUX_CHECKS}
+        for queue in CheckStatusOfPR.MACOS_CHECKS + CheckStatusOfPR.EMBEDDED_CHECKS + CheckStatusOfPR.WINDOWS_CHECKS:
+            queue_statuses[queue] = {'state': 2}
+
+        TwistedAdditions.request = lambda *args, **kwargs: TwistedAdditions.Response(
+            status_code=200,
+            content=json.dumps(queue_statuses).encode('utf-8'),
+        )
+
+        self.expect_outcome(result=SUCCESS, state_string='PR 12345 marked safe for merge-queue')
+        return self.run_step()
+
 
 class TestAddMergeLabelsToPRs(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -7378,6 +7409,14 @@ class TestAddMergeLabelsToPRs(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=SUCCESS, state_string="Started PR labelling process successfully")
         rc = self.run_step()
         return rc
+
+    def test_glib_stable_branch(self):
+        self.setup_step(AddMergeLabelsToPRs())
+        self.setProperty('passed_status_check', [])
+        self.setProperty('failed_status_check', [])
+        self.setProperty('unsafe_passed_status_check', [12345])
+        self.expect_outcome(result=SUCCESS, state_string='Started PR labelling process successfully')
+        return self.run_step()
 
 
 class TestRemoveAndAddLabels(BuildStepMixinAdditions, unittest.TestCase):
@@ -7429,6 +7468,27 @@ class TestRemoveAndAddLabels(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=FAILURE, state_string='Failed to label PR  with merge-queue')
         rc = self.run_step()
         self.expect_property('passed_status_check', [])
+        return rc
+
+    def test_success_unsafe_merge_queue(self):
+        self.setup_step(RemoveAndAddLabels(label_to_add='unsafe-merge-queue'))
+        self.setProperty('buildername', 'Safe-Merge-Queue')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('unsafe_passed_status_check', [17451])
+        RemoveAndAddLabels.update_labels = lambda self, pr_number: SUCCESS
+        self.expect_outcome(result=SUCCESS, state_string='Labelled PR 17451 with unsafe-merge-queue')
+        rc = self.run_step()
+        self.expect_property('unsafe_passed_status_check', [])
+        return rc
+
+    def test_failure_unsafe_merge_queue(self):
+        self.setup_step(RemoveAndAddLabels(label_to_add='unsafe-merge-queue'))
+        self.setProperty('buildername', 'Safe-Merge-Queue')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('unsafe_passed_status_check', [])
+        self.expect_outcome(result=FAILURE, state_string='Failed to label PR  with unsafe-merge-queue')
+        rc = self.run_step()
+        self.expect_property('unsafe_passed_status_check', [])
         return rc
 
 
@@ -7916,6 +7976,29 @@ class TestDetermineLabelOwner(BuildStepMixinAdditions, unittest.TestCase):
             self.expect_outcome(result=FAILURE, state_string='Unable to determine owner of PR 17518\n')
             yield self.run_step()
             self.assertTrue(any(isinstance(step, RemoveLabelsFromPullRequest) for step in next_steps))
+
+    def test_safe_merge_queue_sets_base_ref(self):
+        self.setup_step(DetermineLabelOwner())
+        self.setProperty('buildername', 'Safe-Merge-Queue')
+        self.setProperty('list_of_prs', [17519])
+        self.setProperty('all_pr_data', [{'node': {
+            'number': 17519,
+            'title': 'Fix a bug in WPE',
+            'baseRefName': 'webkitglib/2.46',
+            'commits': {'nodes': [{'commit': {
+                'commitUrl': 'https://github.com/WebKit/WebKit/commit/7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c'
+            }}]},
+        }}])
+        response = {'data': {'repository': {'pullRequest': {'timelineItems': {'nodes': [{
+            'actor': {'login': 'csaavedra'},
+            'label': {'name': 'safe-merge-queue'},
+            'createdAt': '2024-01-01T00:00:00Z',
+        }]}}}}}
+        GitHubMixin.query_graph_ql = lambda self, query: response
+        Contributors.load = lambda *args, **kwargs: ({}, [])
+        self.expect_outcome(result=SUCCESS, state_string='Owner of PR 17519 determined to be csaavedra\n')
+        self.run_step()
+        self.expect_property('github.base.ref', 'webkitglib/2.46')
 
 
 class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):

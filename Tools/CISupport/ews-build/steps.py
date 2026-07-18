@@ -2315,6 +2315,7 @@ class DetermineLabelOwner(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             self.setProperty('list_of_prs', list_of_prs)
             self.setProperty('github.title', pr_title)
             self.setProperty('github.head.sha', commit_hash)
+            self.setProperty('github.base.ref', pr_data['node']['baseRefName'])
 
         if not pr_number:
             yield self._addToLog('stdio', 'Unable to fetch PR number.\n')
@@ -2531,6 +2532,8 @@ class RemoveAndAddLabels(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     def run(self):
         if self.label_to_add == GitHub.MERGE_QUEUE_LABEL:
             pr_status = 'passed_status_check'
+        elif self.label_to_add == GitHub.UNSAFE_MERGE_QUEUE_LABEL:
+            pr_status = 'unsafe_passed_status_check'
         elif self.label_to_add == GitHub.BLOCKED_LABEL:
             pr_status = 'failed_status_check'
         else:
@@ -2609,6 +2612,7 @@ class RetrievePRDataFromLabel(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             return defer.returnValue(FAILURE)
 
         self.setProperty('passed_status_check', [])
+        self.setProperty('unsafe_passed_status_check', [])
         self.setProperty('failed_status_check', [])
         self.setProperty('pending_prs', [])
 
@@ -2628,7 +2632,7 @@ class RetrievePRDataFromLabel(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     @defer.inlineCallbacks
     def getAllPRData(self, limit, label, retry=0):
         project = self.getProperty('project') or CANONICAL_GITHUB_PROJECT
-        query_body = '{search(query: "repo:%s is:pr label:%s", type: ISSUE, last: %s) { edges { node { ... on PullRequest { title number commits(last: 3) { nodes { commit { commitUrl status { state contexts { context state } } } } } } } } } }' % (project, label, limit)
+        query_body = '{search(query: "repo:%s is:pr label:%s", type: ISSUE, last: %s) { edges { node { ... on PullRequest { title number baseRefName commits(last: 3) { nodes { commit { commitUrl status { state contexts { context state } } } } } } } } } }' % (project, label, limit)
         query = {'query': query_body}
 
         yield self._addToLog('stdio', f"Fetching all PRs with label {label}...\n")
@@ -2671,6 +2675,7 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     EMBEDDED_CHECKS = ['ios', 'ios-safer-cpp', 'ios-sim', 'ios-wk2', 'ios-wk2-wpt', 'api-ios', 'vision', 'vision-sim', 'vision-wk2', 'tv', 'tv-sim', 'watch', 'watch-sim']
     MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'api-mac-debug', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress', 'mac-safer-cpp', 'jsc-x86-64', 'jsc-debug-arm64']
     LINUX_CHECKS = ['gtk', 'gtk-wk2', 'api-gtk', 'wpe', 'gtk3-libwebrtc', 'wpe-wk2', 'api-wpe']
+    EXTRA_LINUX_CHECKS = ['jsc-armv7', 'jsc-armv7-tests']
     WINDOWS_CHECKS = ['win']
     EWS_WEBKIT_FAILED = 0
     EWS_WEBKIT_PASSED = 1
@@ -2758,10 +2763,15 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
                     break
 
         # FIXME: safe-merge-queue should obtain skipped status from EWS instead of hardcoding
-        queues_for_safe_merge = self.EMBEDDED_CHECKS + self.MACOS_CHECKS
-        if self.getProperty('project') == CANONICAL_GITHUB_PROJECT:
-            queues_for_safe_merge += self.LINUX_CHECKS
-            queues_for_safe_merge += self.WINDOWS_CHECKS
+        branch = self.getProperty('github.base.ref', DEFAULT_BRANCH)
+        is_glib_stable_branch = bool(re.match(r'webkitglib/\d+\.\d+', branch))
+        if is_glib_stable_branch:
+            queues_for_safe_merge = self.LINUX_CHECKS + self.EXTRA_LINUX_CHECKS
+        else:
+            queues_for_safe_merge = self.EMBEDDED_CHECKS + self.MACOS_CHECKS
+            if self.getProperty('project') == CANONICAL_GITHUB_PROJECT:
+                queues_for_safe_merge += self.LINUX_CHECKS
+                queues_for_safe_merge += self.WINDOWS_CHECKS
 
         for queue in queues_for_safe_merge:
             queue_data = response.json().get(queue, None)
@@ -2807,8 +2817,13 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             self.steps_to_add += [LeaveComment()]
             defer.returnValue(self.EWS_WEBKIT_FAILED)
         else:
-            passed_status_check.append(pr_number)
-            self.setProperty('passed_status_check', passed_status_check)
+            if is_glib_stable_branch:
+                unsafe_passed_status_check = self.getProperty('unsafe_passed_status_check')
+                unsafe_passed_status_check.append(pr_number)
+                self.setProperty('unsafe_passed_status_check', unsafe_passed_status_check)
+            else:
+                passed_status_check.append(pr_number)
+                self.setProperty('passed_status_check', passed_status_check)
             yield self._addToLog('stdio', 'Passed status check.\n')
             defer.returnValue(self.EWS_WEBKIT_PASSED)
 
@@ -2823,6 +2838,8 @@ class AddMergeLabelsToPRs(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         steps_to_add = []
         label_as_safe = self.getProperty('passed_status_check', '')
         yield self._addToLog('stdio', f'PRs to merge: {label_as_safe}.\n')
+        label_as_unsafe = self.getProperty('unsafe_passed_status_check', '')
+        yield self._addToLog('stdio', f'PRs to add to unsafe-merge-queue: {label_as_unsafe}.\n')
         label_as_blocked = self.getProperty('failed_status_check', '')
         yield self._addToLog('stdio', f'PRs to block: {label_as_blocked}.\n')
         pending_prs = self.getProperty('pending_prs', '')
@@ -2830,6 +2847,8 @@ class AddMergeLabelsToPRs(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
 
         if len(label_as_safe):
             steps_to_add.append(RemoveAndAddLabels(label_to_add=GitHub.MERGE_QUEUE_LABEL, labels_to_remove=[GitHub.SAFE_MERGE_QUEUE_LABEL]))
+        if len(label_as_unsafe):
+            steps_to_add.append(RemoveAndAddLabels(label_to_add=GitHub.UNSAFE_MERGE_QUEUE_LABEL, labels_to_remove=[GitHub.SAFE_MERGE_QUEUE_LABEL]))
         if len(label_as_blocked):
             steps_to_add.append(RemoveAndAddLabels(label_to_add=GitHub.BLOCKED_LABEL, labels_to_remove=[GitHub.SAFE_MERGE_QUEUE_LABEL]))
         self.build.addStepsAfterCurrentStep(steps_to_add)
