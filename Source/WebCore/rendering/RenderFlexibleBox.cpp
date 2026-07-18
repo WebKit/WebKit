@@ -1113,7 +1113,7 @@ LayoutUnit RenderFlexibleBox::mainAxisAvailableSpace()
     return logicalHeight == LayoutUnit::max() ? logicalHeight : std::max(0_lu, logicalHeight - (borderAndPaddingLogicalHeight() + scrollbarLogicalHeight()));
 }
 
-FlexContainerCrossExtents RenderFlexibleBox::updateFlexContainerLogicalHeight(LayoutUnit flexContentBlockExtent)
+FlexContainerUsedExtents RenderFlexibleBox::updateFlexContainerLogicalHeight(LayoutUnit flexContentBlockExtent)
 {
     // Resolve the container's logical height to the largest of: what is already set, the block-axis extent FlexLayout
     // built from its line sizes (row flow; column flow already set its main size while placing the items), and the
@@ -1121,11 +1121,12 @@ FlexContainerCrossExtents RenderFlexibleBox::updateFlexContainerLogicalHeight(La
     // flow). The empty-line minimum is a block-axis floor, so it is folded into the block-axis max here rather than
     // compared against the physical borderBoxHeight() (which is the inline extent in a vertical writing mode). Then
     // resolve against the container's own specified/min/max height and box-sizing, and return the used cross extents
-    // (content-box and border-box) so FlexLayout takes them as values.
+    // (line positioning / item cross sizing / rtl-column flip) and block extents (column re-resolve / column-reverse
+    // placement) so FlexLayout takes them as values rather than reading them back off the container.
     auto minimumHeightForEmptyLine = hasLineIfEmpty() ? borderAndPaddingLogicalHeight() + lineHeight() + scrollbarLogicalHeight() : 0_lu;
     setLogicalHeight(std::max(minimumHeightForEmptyLine, std::max(logicalHeight(), borderAndPaddingLogicalHeight() + flexContentBlockExtent)));
     updateLogicalHeight();
-    return { flexLayoutUtils().crossAxisContentExtent(), flexLayoutUtils().crossAxisExtent() };
+    return { flexLayoutUtils().crossAxisContentExtent(), flexLayoutUtils().crossAxisExtent(), contentBoxLogicalHeight(), logicalHeight() };
 }
 
 FlexLayoutItems RenderFlexibleBox::collectFlexItems(RelayoutChildren relayoutChildren)

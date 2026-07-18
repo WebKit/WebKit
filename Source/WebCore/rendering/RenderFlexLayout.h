@@ -96,13 +96,16 @@ struct FlexLayoutConstraints {
     LayoutUnit mainAxisSizeForLengthResolution;
 };
 
-// The flex container's used cross-axis size once 9.6 (#15) has finalized its logical height: the content-box
-// extent (used for line positioning, align-content, and resolving each item's cross size) and the border-box
-// extent (used for the right-to-left column flip). FlexLayout takes these from updateFlexContainerLogicalHeight
-// as values rather than reading them back off the container.
-struct FlexContainerCrossExtents {
-    LayoutUnit contentBox;
-    LayoutUnit borderBox;
+// The flex container's used size once 9.6 (#15) has finalized its logical height, so FlexLayout takes these
+// from updateFlexContainerLogicalHeight as values rather than reading them back off the container. Cross-axis:
+// the content-box extent (line positioning, align-content, resolving each item's cross size) and the border-box
+// extent (the right-to-left column flip). Block-axis (its logical height, which for column flow is the main
+// axis): the content-box and border-box extents that the column re-resolve and column-reverse placement consume.
+struct FlexContainerUsedExtents {
+    LayoutUnit crossContentBox;
+    LayoutUnit crossBorderBox;
+    LayoutUnit blockContentBox;
+    LayoutUnit blockBorderBox;
 };
 
 // The layout logic for a legacy flex container, factored out of RenderFlexibleBox (mirrors the
@@ -158,7 +161,7 @@ private:
     // Resolves each flex item's flexed main size (spec 9.7) for every line, and returns the used main size of each item.
     Vector<LayoutUnit> computeMainSizeForFlexItems(FlexLayoutItems& flexItems, const FlexLines&, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList);
     void resolveFlexibleLengthsForLineItems(std::span<FlexLayoutItem> lineItems, std::span<const FlexBaseAndHypotheticalMainSize> lineFlexBaseAndHypotheticalMainSizeList, std::span<LayoutUnit> flexItemsMainSizeList, LayoutUnit flexContainerInnerMainSize);
-    void distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(const FlexLines&, FlexLayoutItems&, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList, Vector<LayoutUnit>& flexItemsMainSizeList, Vector<LayoutPoint>& flexItemsPositionList, const Vector<LayoutUnit>& flexLinesCrossPositionList);
+    void distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(const FlexLines&, FlexLayoutItems&, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList, Vector<LayoutUnit>& flexItemsMainSizeList, Vector<LayoutPoint>& flexItemsPositionList, const Vector<LayoutUnit>& flexLinesCrossPositionList, LayoutUnit containerMainBlockContentExtent);
     // CSS Flexbox 9.7/9.6: the space available to distribute among a line's items (respectively among the lines
     // within the container) is the container's inner main (cross) size minus the gaps between them.
     LayoutUnit mainAxisAvailableSpaceForItemAlignment(LayoutUnit mainAxisAvailableSpace, size_t numberOfFlexItems) const;
@@ -177,7 +180,7 @@ private:
     void computeFlexItemRects(const FlexLines&, FlexLayoutItems&, const Vector<LayoutPoint>& flexItemsPositionList, const Vector<LayoutUnit>& flexLinesCrossPositionList, const Vector<LayoutUnit>& flexLinesCrossSizeList, const Vector<LayoutUnit>& flexItemsCrossSizeList, LayoutUnit crossAxisStartEdge, LayoutUnit crossContentExtent, LayoutUnit crossExtent);
 
     void placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayoutItem>, std::span<LayoutPoint> positions, LayoutUnit availableFreeSpace);
-    void reverseColumnLinesFromContainerMainEndIfNeeded(const FlexLines&, FlexLayoutItems&, const Vector<LayoutUnit>& flexItemsMainSizeList, Vector<LayoutPoint>& flexItemsPositionList, const Vector<LayoutUnit>& flexLinesCrossPositionList);
+    void reverseColumnLinesFromContainerMainEndIfNeeded(const FlexLines&, FlexLayoutItems&, const Vector<LayoutUnit>& flexItemsMainSizeList, Vector<LayoutPoint>& flexItemsPositionList, const Vector<LayoutUnit>& flexLinesCrossPositionList, LayoutUnit containerMainBlockContentExtent, LayoutUnit containerMainBorderBoxExtent);
     void layoutColumnReverse(std::span<FlexLayoutItem>, std::span<LayoutPoint> positions, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit columnMainBorderBoxExtent);
     void setFlexItemCountsForFirstAndLastLine(const FlexLines&);
 

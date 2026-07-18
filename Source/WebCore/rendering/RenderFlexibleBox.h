@@ -165,7 +165,7 @@ private:
     FlexLayoutItems collectFlexItems(RelayoutChildren);
     FlexLayoutConstraints flexLayoutConstraints();
     LayoutUnit mainAxisAvailableSpace();
-    FlexContainerCrossExtents updateFlexContainerLogicalHeight(LayoutUnit flexContentBlockExtent);
+    FlexContainerUsedExtents updateFlexContainerLogicalHeight(LayoutUnit flexContentBlockExtent);
     void prepareFlexItemForPositionedLayout(RenderBox& flexItem);
 
     void resetHasDefiniteHeight() { m_hasDefiniteHeight = SizeDefiniteness::Unknown; }
