@@ -3,7 +3,7 @@
 # on. Update this list when new major versions are released, to support
 # building downlevels targeting those OS versions. Remove from this list when
 # WebKit drops downlevel support for an OS version.
-SUPPORTED_MAC_OS_VERSIONS = 15 26
+SUPPORTED_MAC_OS_VERSIONS = 15 27
 
 DeploymentTargets.xcconfig: Scripts/generate-deployment-target-xcconfig.py Makefile
 	./$< $(SUPPORTED_MAC_OS_VERSIONS) > $@

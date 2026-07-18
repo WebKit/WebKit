@@ -370,7 +370,9 @@ def run_test(name: str, command: str, stdout_filter: str | None = None) -> TestR
 # --- Test runner ------------------------------------------------------------
 
 DEFAULT_MAKE_COMMAND = (
-    'make -C {workspace_dir} {configuration} ARGS=-showBuildTimingSummary'
+    'make -C {workspace_dir} {configuration} ARGS="'
+    'WK_MACOSX_DEPLOYMENT_TARGET= COMPILATION_CACHE_ENABLE_CACHING=NO -showBuildTimingSummary'
+    '"'
 )
 DEFAULT_CMAKE_BUILD_COMMAND = (
     'xcrun ninja -C {build_dir}'
