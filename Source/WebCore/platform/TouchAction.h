@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/OptionSet.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -37,6 +38,12 @@ enum class TouchAction : uint8_t {
     PanY         = 1 << 4,
     PinchZoom    = 1 << 5,
 };
+
+// https://www.w3.org/TR/pointerevents/#dfn-touch-action-values
+inline bool touchActionAllowsDoubleTapToZoom(OptionSet<TouchAction> touchActions)
+{
+    return !touchActions.containsAny({ TouchAction::None, TouchAction::Manipulation });
+}
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, TouchAction);
 
