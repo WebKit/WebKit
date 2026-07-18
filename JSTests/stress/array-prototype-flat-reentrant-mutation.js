@@ -1,6 +1,5 @@
-//@ skip if $addressBits <= 32
-//@ runDefault
-//@ memoryHog!
+//@ skip if $memoryLimited or $addressBits <= 32
+//@ runDefault()
 
 try {
     let iterations = 0;
