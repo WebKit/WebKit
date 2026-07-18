@@ -94,6 +94,10 @@ struct FlexLayoutConstraints {
     // flow; availableLogicalHeight for column flow). Unlike mainAxisAvailableSpace this never carries the indefinite
     // LayoutUnit::max() marker, since a percentage main-size must resolve against a real size.
     LayoutUnit mainAxisSizeForLengthResolution;
+    // The container's outer (border-box) main-axis extent, used by the right-to-left row flip while placing items.
+    // Row flow only; it is fixed before the algorithm runs (recomputeLogicalWidth settles the inline size, and flex
+    // layout never changes the container's inline size).
+    LayoutUnit mainAxisBorderBoxExtent;
 };
 
 // The flex container's used size once 9.6 (#15) has finalized its logical height, so FlexLayout takes these

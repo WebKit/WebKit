@@ -724,7 +724,7 @@ void FlexLayout::placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayout
         m_result.justifyContentStartOverflow = std::max(m_result.justifyContentStartOverflow, overflow);
     }
 
-    LayoutUnit totalMainExtent = flexLayoutUtils().mainAxisExtent();
+    LayoutUnit totalMainExtent = m_constraints.mainAxisBorderBoxExtent;
 
     auto resolvedJustifyContent = m_constraints.style.justifyContent().resolve(FlexLayoutUtils::contentAlignmentNormalBehavior());
     auto distribution = resolvedJustifyContent.distribution();
