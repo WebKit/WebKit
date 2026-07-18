@@ -256,15 +256,16 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForNonParserInsertedScripts(const String& nonce, const Vector<ContentSecurityPolicyHash>& hashes, const Vector<ResourceCryptographicDigest>& subResourceIntegrityDigests, const URL& url, ParserInserted parserInserted) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForScriptUnderStrictDynamic(const String& nonce, const Vector<ContentSecurityPolicyHash>& hashes, const Vector<ResourceCryptographicDigest>& subResourceIntegrityDigests, const URL& url, ParserInserted parserInserted) const
 {
     auto* operativeDirective = this->operativeDirectiveScript(m_scriptSrcElem.get(), ContentSecurityPolicyDirectiveNames::scriptSrcElem);
-    if (checkHashes(operativeDirective, hashes)
+    bool isInline = url.isEmpty();
+    if ((isInline && checkHashes(operativeDirective, hashes))
         || checkNonParserInsertedScripts(operativeDirective, parserInserted)
         || checkNonce(operativeDirective, nonce)
         || operativeDirective->containsAllHashes(subResourceIntegrityDigests)
         || (checkSource(operativeDirective, url) && !strictDynamicIncluded())
-        || (url.isEmpty() && checkInline(operativeDirective)))
+        || (isInline && checkInline(operativeDirective)))
         return nullptr;
     return operativeDirective;
 }

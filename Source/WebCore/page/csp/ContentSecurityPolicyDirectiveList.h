@@ -51,7 +51,7 @@ public:
     const ContentSecurityPolicyDirective* violatedDirectiveForInlineJavascriptURL(const Vector<ContentSecurityPolicyHash>&) const LIFETIME_BOUND;
     const ContentSecurityPolicyDirective* violatedDirectiveForInlineEventHandlers(const Vector<ContentSecurityPolicyHash>&) const LIFETIME_BOUND;
     const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineScriptElement(const String&, const Vector<ContentSecurityPolicyHash>&) const LIFETIME_BOUND;
-    const ContentSecurityPolicyDirective* violatedDirectiveForNonParserInsertedScripts(const String&, const Vector<ContentSecurityPolicyHash>&, const Vector<ResourceCryptographicDigest>&, const URL&, ParserInserted) const LIFETIME_BOUND;
+    const ContentSecurityPolicyDirective* violatedDirectiveForScriptUnderStrictDynamic(const String&, const Vector<ContentSecurityPolicyHash>&, const Vector<ResourceCryptographicDigest>&, const URL&, ParserInserted) const LIFETIME_BOUND;
     const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineStyleElement(const String&, const Vector<ContentSecurityPolicyHash>&) const LIFETIME_BOUND;
     const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineStyleAttribute(const String&, const Vector<ContentSecurityPolicyHash>&) const LIFETIME_BOUND;
 
