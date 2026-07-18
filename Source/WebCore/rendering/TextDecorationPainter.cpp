@@ -180,6 +180,7 @@ bool TextDecorationPainter::Styles::operator==(const Styles& other) const
     return underline.color == other.underline.color && overline.color == other.overline.color && linethrough.color == other.linethrough.color
         && underline.decorationStyle == other.underline.decorationStyle && overline.decorationStyle == other.overline.decorationStyle && linethrough.decorationStyle == other.linethrough.decorationStyle
         && underline.thickness == other.underline.thickness && overline.thickness == other.overline.thickness && linethrough.thickness == other.linethrough.thickness
+        && underlineOffset == other.underlineOffset
         && inset == other.inset && boxDecorationBreak == other.boxDecorationBreak;
 }
 

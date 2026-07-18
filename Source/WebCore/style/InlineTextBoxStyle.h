@@ -28,6 +28,7 @@
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
 #include "RenderStyleConstants.h"
+#include "StyleTextUnderlineOffset.h"
 
 namespace WebCore {
 
@@ -74,7 +75,7 @@ InkOverflowForDecorations inkOverflowForDecorations(const Style::ComputedStyle&)
 InkOverflowForDecorations inkOverflowForDecorations(const Style::ComputedStyle&, TextUnderlinePositionUnder);
 bool NODELETE isAlignedForUnder(const Style::ComputedStyle& decoratingBoxStyle);
 
-float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox&, const Style::ComputedStyle&);
+float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox&, const Style::ComputedStyle&, std::optional<Style::TextUnderlineOffset> offsetOverride);
 float overlineOffsetForTextBoxPainting(const InlineIterator::InlineBox&, const Style::ComputedStyle&);
 float textBoxEdgeAdjustmentForUnderline(const Style::ComputedStyle&);
 

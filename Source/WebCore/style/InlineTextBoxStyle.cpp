@@ -43,6 +43,7 @@ namespace WebCore {
 struct UnderlineOffsetArguments {
     const Style::ComputedStyle& lineStyle;
     std::optional<TextUnderlinePositionUnder> textUnderlinePositionUnder { };
+    std::optional<Style::TextUnderlineOffset> offsetOverride { };
 };
 
 static bool NODELETE isAncestorAndWithinBlock(const RenderInline& ancestor, const RenderObject* child)
@@ -129,6 +130,7 @@ static float computedUnderlineOffset(const UnderlineOffsetArguments& context, co
         return fontMetrics.intAscent();
     };
     auto underlineOffset = 0.f;
+    auto textUnderlineOffset = context.offsetOverride.value_or(styleToUse.textUnderlineOffset());
     auto textUnderlinePosition = styleToUse.textUnderlinePosition();
 
     if (isAlignedForUnder(styleToUse)) {
@@ -136,17 +138,17 @@ static float computedUnderlineOffset(const UnderlineOffsetArguments& context, co
         // FIXME: This needs to be flipped for sideways-lr.
         if (styleToUse.writingMode().isVerticalTypographic() && textUnderlinePosition.verticalTypographySide() == Style::TextUnderlinePosition::Side::Right) {
             // In vertical typographic modes, the underline is aligned as for under, except it is always aligned to the right edge of the text.
-            underlineOffset = 0.f - (styleToUse.textUnderlineOffset().resolve(styleToUse) + defaultGap(styleToUse));
+            underlineOffset = 0.f - (textUnderlineOffset.resolve(styleToUse) + defaultGap(styleToUse));
         } else {
             // Position underline relative to the bottom edge of the lowest element's content box.
             auto desiredOffset = context.textUnderlinePositionUnder->textRunLogicalHeight + std::max(context.textUnderlinePositionUnder->textRunOffsetFromBottomMost, 0.f);
-            desiredOffset += styleToUse.textUnderlineOffset().resolve(styleToUse) + defaultGap(styleToUse);
+            desiredOffset += textUnderlineOffset.resolve(styleToUse) + defaultGap(styleToUse);
             underlineOffset = std::max<float>(desiredOffset, ascent());
         }
     } else if (textUnderlinePosition.isFromFont())
-        underlineOffset = ascent() + fontMetrics.underlinePosition().value_or(0) + styleToUse.textUnderlineOffset().resolve(styleToUse);
+        underlineOffset = ascent() + fontMetrics.underlinePosition().value_or(0) + textUnderlineOffset.resolve(styleToUse);
     else
-        underlineOffset = ascent() + styleToUse.textUnderlineOffset().resolve(styleToUse, defaultGap(styleToUse));
+        underlineOffset = ascent() + textUnderlineOffset.resolve(styleToUse, defaultGap(styleToUse));
     return underlineOffset;
 }
 
@@ -317,15 +319,15 @@ float textBoxEdgeAdjustmentForUnderline(const Style::ComputedStyle& style)
     }
 }
 
-float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBox, const Style::ComputedStyle& style)
+float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBox, const Style::ComputedStyle& style, std::optional<Style::TextUnderlineOffset> offsetOverride)
 {
     auto underlineOffset = 0.f;
     auto& renderer = inlineBox.renderer();
     if (!isAlignedForUnder(style))
-        underlineOffset = computedUnderlineOffset({ style, { } }, &renderer);
+        underlineOffset = computedUnderlineOffset({ style, { }, offsetOverride }, &renderer);
     else {
         auto textRunOffset = boxOffsetFromBottomMost(inlineBox.lineBox(), renderer, inlineBox.logicalTop(), inlineBox.logicalBottom());
-        underlineOffset = computedUnderlineOffset({ style, TextUnderlinePositionUnder { inlineBoxContentBoxHeight(inlineBox), textRunOffset } }, &renderer);
+        underlineOffset = computedUnderlineOffset({ style, TextUnderlinePositionUnder { inlineBoxContentBoxHeight(inlineBox), textRunOffset }, offsetOverride }, &renderer);
     }
 
     return underlineOffset - (!inlineBox.isRootInlineBox() ? textBoxEdgeAdjustmentForUnderline(style) : 0.f);

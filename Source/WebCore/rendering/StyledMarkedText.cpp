@@ -55,6 +55,7 @@ static void computeStyleForPseudoElementStyle(StyledMarkedText::Style& style, co
         style.textDecorationStyles.underline.color = color;
         style.textDecorationStyles.underline.decorationStyle = decorationStyle;
         style.textDecorationStyles.underline.thickness = thickness;
+        style.textDecorationStyles.underlineOffset = pseudoElementStyle->textUnderlineOffset();
     }
     if (decorations.hasOverline()) {
         style.textDecorationStyles.overline.color = color;
@@ -181,6 +182,7 @@ static TextDecorationPainter::Styles NODELETE computeStylesForTextDecorations(co
         textDecorationStyles.underline.color = currentTextDecorationStyles.underline.color;
         textDecorationStyles.underline.decorationStyle = currentTextDecorationStyles.underline.decorationStyle;
         textDecorationStyles.underline.thickness = currentTextDecorationStyles.underline.thickness;
+        textDecorationStyles.underlineOffset = currentTextDecorationStyles.underlineOffset;
     }
     if (textDecorations.hasOverline()) {
         textDecorationStyles.overline.color = currentTextDecorationStyles.overline.color;
