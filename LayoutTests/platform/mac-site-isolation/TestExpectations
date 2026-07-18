@@ -114,10 +114,6 @@ inspector/dom/willDestroyDOMNode.html [ Failure ]
 inspector/dom-debugger/attribute-modified-style.html [ Failure ]
 inspector/runtime/executionContextCreated-onEnable.html [ Failure ]
 svg/webarchive/svg-cursor-subresources.svg [ Failure ]
-wktr/force-immediate-completion-moment-dump-as-text-onload-async.html [ Failure ]
-wktr/force-immediate-completion-moment-dump-as-text-onload-sync.html [ Failure ]
-wktr/force-immediate-completion-moment-dump-as-text-sync.html [ Failure ]
-wktr/notify-done-moment-dump-as-text-onload-async.html [ Failure ]
 
 #########################
 # Tests that Image fail #

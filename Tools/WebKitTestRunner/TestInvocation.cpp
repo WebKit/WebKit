@@ -631,10 +631,10 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "ResolveNotifyDone"))
-        return adoptWK(WKBooleanCreate(resolveNotifyDone()));
+        return adoptWK(WKBooleanCreate(resolveNotifyDone(booleanValue(messageBody))));
 
     if (WKStringIsEqualToUTF8CString(messageName, "ResolveForceImmediateCompletion"))
-        return adoptWK(WKBooleanCreate(resolveForceImmediateCompletion()));
+        return adoptWK(WKBooleanCreate(resolveForceImmediateCompletion(booleanValue(messageBody))));
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetWindowIsKey")) {
         TestController::singleton().mainWebView()->setWindowIsKey(booleanValue(messageBody));
@@ -1475,15 +1475,19 @@ void TestInvocation::setWaitUntilDone(bool waitUntilDone)
         initializeWaitToDumpWatchdogTimerIfNeeded();
 }
 
-bool TestInvocation::resolveNotifyDone()
+bool TestInvocation::resolveNotifyDone(bool canCompleteSynchronously)
 {
     if (!m_waitUntilDone)
         return false;
     m_waitUntilDone = false;
     if (m_options.siteIsolationEnabled()) {
-        m_notifyDoneMessageSent = true;
         // If notifyDone() arrived mid-work-queue, defer it until the queue drains.
-        if (TestController::singleton().useWorkQueue() && !TestController::singleton().workQueueManager().isWorkQueueEmpty())
+        bool deferForWorkQueue = TestController::singleton().useWorkQueue() && !TestController::singleton().workQueueManager().isWorkQueueEmpty();
+        // The caller can dump synchronously only if it hosts the local main frame and nothing is pending.
+        if (canCompleteSynchronously && !deferForWorkQueue)
+            return true;
+        m_notifyDoneMessageSent = true;
+        if (deferForWorkQueue)
             m_notifyDoneDeferredForWorkQueue = true;
         else
             postPageMessage("NotifyDone");
@@ -1492,12 +1496,15 @@ bool TestInvocation::resolveNotifyDone()
     return true;
 }
 
-bool TestInvocation::resolveForceImmediateCompletion()
+bool TestInvocation::resolveForceImmediateCompletion(bool canCompleteSynchronously)
 {
     if (!m_waitUntilDone)
         return false;
     m_waitUntilDone = false;
     if (m_options.siteIsolationEnabled()) {
+        // Dump synchronously if the caller hosts the local main frame; otherwise route to the process that does.
+        if (canCompleteSynchronously)
+            return true;
         m_notifyDoneMessageSent = true;
         postPageMessage("ForceImmediateCompletion");
         return false;

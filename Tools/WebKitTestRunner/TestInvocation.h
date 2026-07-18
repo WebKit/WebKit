@@ -107,11 +107,11 @@ private:
     void done();
     void setWaitUntilDone(bool);
 
-    // Returns true if the caller bundle should proceed with dumping.
+    // Returns true if the caller bundle should proceed with dumping synchronously.
     // Returns false if the WKTR invokes dumping through page, asynchronously.
-    // Resets waitUntilDone.
-    bool resolveNotifyDone();
-    bool resolveForceImmediateCompletion();
+    // Resets waitUntilDone. canCompleteSynchronously is true when the caller hosts the local main frame.
+    bool resolveNotifyDone(bool canCompleteSynchronously);
+    bool resolveForceImmediateCompletion(bool canCompleteSynchronously);
 
     void dumpResults();
     static void dump(const char* textToStdout, const char* textToStderr = 0, bool seenError = false);

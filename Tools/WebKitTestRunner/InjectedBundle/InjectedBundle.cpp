@@ -187,6 +187,15 @@ WKBundlePageRef InjectedBundle::pageRef() const
     return page ? page->page() : nullptr;
 }
 
+bool InjectedBundle::pageHasLocalMainFrame() const
+{
+    auto page = this->page();
+    // WKBundleFrameGetJavaScriptContext returns null for remote frames; a local main frame has one.
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    return page && WKBundleFrameGetJavaScriptContext(WKBundlePageGetMainFrame(page->page()));
+    ALLOW_DEPRECATED_DECLARATIONS_END
+}
+
 void InjectedBundle::didReceiveMessage(WKStringRef, WKTypeRef)
 {
     WKBundlePostMessage(m_bundle.get(), toWK("Error").get(), toWK("Unknown").get());

@@ -247,7 +247,11 @@ void TestRunner::notifyDone()
     auto& injectedBundle = InjectedBundle::singleton();
     if (!injectedBundle.isTestRunning())
         return;
-    if (!postSynchronousMessageReturningBoolean("ResolveNotifyDone"))
+    // notifyDone() defers the dump while the main frame is still loading (see InjectedBundlePage::notifyDone),
+    // so it can only complete synchronously once loading has finished. When called mid-load, fall back to the
+    // asynchronous path that dumps after load, matching non-site-isolation behavior.
+    bool canCompleteSynchronously = injectedBundle.pageHasLocalMainFrame() && !injectedBundle.topLoadingFrame();
+    if (!postSynchronousMessageReturningBoolean("ResolveNotifyDone", adoptWK(WKBooleanCreate(canCompleteSynchronously))))
         return;
     if (!injectedBundle.page())
         return;
@@ -259,7 +263,8 @@ void TestRunner::forceImmediateCompletion()
     auto& injectedBundle = InjectedBundle::singleton();
     if (!injectedBundle.isTestRunning())
         return;
-    if (!postSynchronousMessageReturningBoolean("ResolveForceImmediateCompletion"))
+    bool canCompleteSynchronously = injectedBundle.pageHasLocalMainFrame();
+    if (!postSynchronousMessageReturningBoolean("ResolveForceImmediateCompletion", adoptWK(WKBooleanCreate(canCompleteSynchronously))))
         return;
     if (!injectedBundle.page())
         return;

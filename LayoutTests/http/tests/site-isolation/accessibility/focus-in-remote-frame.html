@@ -40,8 +40,8 @@ function notificationCallback(element, notificationName) {
             output += expect("focusedObject.isRemotePlatformElement", "true");
 
             accessibilityController.removeNotificationListener();
-            finishJSTest();
             debug(output);
+            finishJSTest();
         }
     }
 }
