@@ -125,6 +125,9 @@ FlexLayout::Result FlexLayout::layout(FlexLayoutItems& flexItems)
         // Multi-line column flex only knows its main size now, so re-resolve the flexible lengths of any lines that were left short.
         distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(flexLines, flexItems, flexBaseAndHypotheticalMainSizeList.span(), flexItemsMainSizeList, flexItemsPositionList, flexLinesCrossPositionList);
 
+        // 9.5. (#12) For column-reverse, reposition each line's items from the finalized container main-axis end.
+        reverseColumnLinesFromContainerMainEndIfNeeded(flexLines, flexItems, flexItemsMainSizeList, flexItemsPositionList, flexLinesCrossPositionList);
+
         // 9.6. (#13 - #16) Cross-Axis Alignment.
         crossAxisStartEdge = flexLinesCrossPositionList.isEmpty() ? 0_lu : flexLinesCrossPositionList[0];
         // If we have a single line flexbox, the line height is all the available space. For flex-direction: row,
@@ -762,22 +765,37 @@ void FlexLayout::placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayout
 
     if (m_constraints.isColumnFlow)
         m_flexBox.setLogicalHeight(std::max(m_flexBox.logicalHeight(), mainAxisOffset + m_constraints.flowAwareBorderInline.second + m_constraints.flowAwarePaddingInline.second + m_flexBox.scrollbarLogicalHeight()));
+}
 
-    if (m_constraints.style.flexDirection() == FlexDirection::ColumnReverse) {
-        // We have to do an extra pass for column-reverse to reposition the flex
-        // items since the start depends on the height of the flexbox, which we
-        // only know after we've positioned all the flex items.
-        m_flexBox.updateLogicalHeight();
-        layoutColumnReverse(flexLayoutItems, positions, crossAxisOffset, availableFreeSpace);
+void FlexLayout::reverseColumnLinesFromContainerMainEndIfNeeded(const FlexLines& flexLines, FlexLayoutItems& flexItems, const Vector<LayoutUnit>& flexItemsMainSizeList, Vector<LayoutPoint>& flexItemsPositionList, const Vector<LayoutUnit>& flexLinesCrossPositionList)
+{
+    // The container's main size is settled by now (9.2 determines it before 9.5 places the items), so every line
+    // is reversed against the one finalized height rather than growing and reading it back per line.
+    if (m_constraints.style.flexDirection() != FlexDirection::ColumnReverse)
+        return;
+
+    auto columnMainBorderBoxExtent = m_flexBox.logicalHeight();
+    auto containerMainInnerSize = m_flexBox.contentBoxLogicalHeight();
+    for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
+        auto lineRange = flexLines.ranges[lineIndex];
+        auto lineItems = flexItems.mutableSpan().subspan(lineRange.begin(), lineRange.distance());
+        auto linePositions = flexItemsPositionList.mutableSpan().subspan(lineRange.begin(), lineRange.distance());
+        auto remainingFreeSpace = mainAxisAvailableSpaceForItemAlignment(containerMainInnerSize, lineItems.size());
+        for (size_t index = 0; index < lineItems.size(); ++index)
+            remainingFreeSpace -= lineItems[index].flexedMarginBoxSize(flexItemsMainSizeList[lineRange.begin() + index]);
+        layoutColumnReverse(lineItems, linePositions, flexLinesCrossPositionList[lineIndex], remainingFreeSpace, columnMainBorderBoxExtent);
     }
 }
 
-void FlexLayout::layoutColumnReverse(std::span<FlexLayoutItem> flexLayoutItems, std::span<LayoutPoint> positions, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace)
+void FlexLayout::layoutColumnReverse(std::span<FlexLayoutItem> flexLayoutItems, std::span<LayoutPoint> positions, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit columnMainBorderBoxExtent)
 {
     // This is similar to the logic in placeFlexItems, except we place
     // the children starting from the end of the flexbox. We also don't need to
     // layout anything since we're just moving the children to a new position.
-    LayoutUnit mainAxisOffset = m_flexBox.logicalHeight() - m_constraints.flowAwareBorderInline.second - m_constraints.flowAwarePaddingInline.second;
+    // The flex container's main size (its logical height) has been finalized by now, so it is passed in
+    // rather than read back off the container (css-flexbox-1 9.2 determines the container main size before
+    // 9.5 main-axis alignment places the items).
+    LayoutUnit mainAxisOffset = columnMainBorderBoxExtent - m_constraints.flowAwareBorderInline.second - m_constraints.flowAwarePaddingInline.second;
     mainAxisOffset -= FlexLayoutUtils::initialJustifyContentOffset(m_constraints.style, availableFreeSpace, flexLayoutItems.size(), m_constraints.isColumnOrRowReverse);
     mainAxisOffset -= m_constraints.isHorizontalFlow ? m_flexBox.verticalScrollbarWidth() : m_flexBox.horizontalScrollbarHeight();
 
