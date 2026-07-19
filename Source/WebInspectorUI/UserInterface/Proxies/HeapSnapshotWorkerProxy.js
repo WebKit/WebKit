@@ -123,7 +123,10 @@ WI.HeapSnapshotWorkerProxy = class HeapSnapshotWorkerProxy extends WI.Object
         // Error.
         if (data.error) {
             console.assert(data.callId);
-            this._callbacks.delete(data.callId);
+            let callback = this._callbacks.take(data.callId);
+            WI.reportInternalError("HeapSnapshotWorker Error:", data.error);
+            if (callback)
+                callback(null);
             return;
         }
 

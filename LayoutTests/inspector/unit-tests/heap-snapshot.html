@@ -260,6 +260,21 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "HeapSnapshotWorkerProxy.prototype.callMethod error response invokes callback",
+        test(resolve, reject) {
+            // An objectId that the HeapSnapshotWorker has never seen triggers its
+            // "No such object." error response. The pending callback must still be
+            // invoked (with `null`) instead of being silently dropped, or callers
+            // awaiting a result would hang forever.
+            let bogusObjectId = 0xffffffff;
+            WI.HeapSnapshotWorkerProxy.singleton().callMethod(bogusObjectId, "update", (result) => {
+                InspectorTest.expectThat(result === null, "Callback should be invoked with null when the worker reports an error.");
+                resolve();
+            });
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

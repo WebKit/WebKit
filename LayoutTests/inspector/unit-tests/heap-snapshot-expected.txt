@@ -43,3 +43,7 @@ PASS: Number of retainer nodes should match.
 PASS: Number of edges should match the number of nodes.
 PASS: Node values should match.
 
+-- Running test case: HeapSnapshotWorkerProxy.prototype.callMethod error response invokes callback
+ERROR: HeapSnapshotWorker Error:
+PASS: Callback should be invoked with null when the worker reports an error.
+
