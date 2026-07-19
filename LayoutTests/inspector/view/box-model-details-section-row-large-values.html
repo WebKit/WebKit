@@ -69,6 +69,50 @@ function test()
         },
     });
 
+    suite.addTestCase({
+        name: "BoxModelDetailsSectionRow.LargeFractionalBorderRadius",
+        test() {
+            let row = createRow("10000.42");
+            let valueElement = row.element.querySelector(".box.border > .top-left");
+
+            InspectorTest.expectEqual(
+                valueElement.textContent,
+                "~10000",
+                "A large fractional value should drop insignificant decimal precision."
+            );
+
+            InspectorTest.expectEqual(
+                valueElement.title,
+                "10000.42",
+                "The tooltip should preserve the exact fractional value."
+            );
+
+            return true;
+        },
+    });
+
+    suite.addTestCase({
+        name: "BoxModelDetailsSectionRow.MaximumLengthBorderRadius",
+        test() {
+            let row = createRow("12345678");
+            let valueElement = row.element.querySelector(".box.border > .top-left");
+
+            InspectorTest.expectEqual(
+                valueElement.textContent,
+                "12345678",
+                "A value at the maximum length should remain unchanged."
+            );
+
+            InspectorTest.expectEqual(
+                valueElement.title,
+                "",
+                "An unchanged value should not need a tooltip."
+            );
+
+            return true;
+        },
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

@@ -155,35 +155,38 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
 
         function createValueElement(type, value, name, propertyName)
         {
-            const maximumValueLength = 10;
+            const maximumValueLength = 8;
 
-            let originalValue = String(value);
-            let floatValue = parseFloat(originalValue);
+            let floatValue = parseFloat(value);
             let displayValue = figureDash;
 
             if (!isNaN(floatValue)) {
-                displayValue = originalValue;
+                displayValue = value;
 
-                // Round fractional values to two decimal places.
                 if (floatValue % 1 !== 0)
-                    displayValue = "~" + Math.round(floatValue * 100) / 100;
+                    displayValue = "~" + floatValue.maxDecimals(2);
 
-                // Large computed values can contain dozens of digits and break the box model preview.
-                // Keep the exact value available through the tooltip and while editing.
-                if (displayValue.length > maximumValueLength) {
-                    let exponentialValue = floatValue.toExponential(1).replace(/\.0e/, "e");
-                    displayValue = "~" + exponentialValue;
+                if (String(displayValue).length > maximumValueLength) {
+                    let integerValue = "~" + floatValue.maxDecimals(0);
+
+                    if (integerValue.length <= maximumValueLength)
+                        displayValue = integerValue;
+                    else {
+                        let exponentialValue = "~" + floatValue.toExponential(1);
+                        displayValue = exponentialValue.length < integerValue.length ? exponentialValue : integerValue;
+                    }
                 }
             }
 
             let element = document.createElement(type);
             element.textContent = displayValue;
-            if (displayValue !== originalValue && displayValue !== figureDash)
-                element.title = originalValue;
+
+            if (displayValue !== value && displayValue !== figureDash)
+                element.title = value;
+
             element.addEventListener("dblclick", this._startEditing.bind(this, element, name, propertyName, style), false);
             return element;
         }
-
         function createBoxPartElement(name, side)
         {
             let prefix = this._getComponentPrefix(name);

@@ -7,3 +7,9 @@ PASS: The tooltip should preserve the exact computed value.
 -- Running test case: BoxModelDetailsSectionRow.RegularBorderRadius
 PASS: A regular fractional value should retain the existing rounding behavior.
 PASS: The tooltip should preserve the unrounded value.
+-- Running test case: BoxModelDetailsSectionRow.LargeFractionalBorderRadius
+PASS: A large fractional value should drop insignificant decimal precision.
+PASS: The tooltip should preserve the exact fractional value.
+-- Running test case: BoxModelDetailsSectionRow.MaximumLengthBorderRadius
+PASS: A value at the maximum length should remain unchanged.
+PASS: An unchanged value should not need a tooltip.
