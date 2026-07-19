@@ -98,6 +98,10 @@ struct FlexLayoutConstraints {
     // Row flow only; it is fixed before the algorithm runs (recomputeLogicalWidth settles the inline size, and flex
     // layout never changes the container's inline size).
     LayoutUnit mainAxisBorderBoxExtent;
+    // The container's logical inline content size, which a column flex item's aspect-ratio percentage/calc cross size
+    // resolves against (in column flow the cross axis is the inline axis). Fixed before the algorithm runs, like the
+    // main-axis sizes above; consumed only in the column aspect-ratio path.
+    LayoutUnit crossAxisSizeForLengthResolution;
 };
 
 // The flex container's used size once 9.6 (#15) has finalized its logical height, so FlexLayout takes these

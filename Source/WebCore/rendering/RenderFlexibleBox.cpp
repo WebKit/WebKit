@@ -1089,6 +1089,7 @@ FlexLayoutConstraints RenderFlexibleBox::flexLayoutConstraints()
         .mainAxisAvailableSpace = mainAxisAvailableSpace(),
         .mainAxisSizeForLengthResolution = utils.isColumnFlow() ? availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding) : contentBoxLogicalWidth(),
         .mainAxisBorderBoxExtent = utils.mainAxisExtent(),
+        .crossAxisSizeForLengthResolution = contentBoxLogicalWidth(),
     };
 }
 
