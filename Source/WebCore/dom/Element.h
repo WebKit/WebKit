@@ -108,6 +108,7 @@ enum class ParserContentPolicy : uint8_t;
 enum class PopoverState : uint8_t { None, Auto, Manual, Hint };
 enum class ResolveURLs : uint8_t { No, NoExcludingURLsForPrivacy, Yes, YesExcludingURLsForPrivacy };
 enum class SelectionRestorationMode : uint8_t;
+enum class ScrollFocusLayoutBehavior: bool { AllowLayoutUpdate, DoNotForceLayout };
 enum class ShadowRootDelegatesFocus : bool { No, Yes };
 enum class ShadowRootMode : uint8_t;
 enum class ShadowRootClonable : bool { No, Yes };
@@ -312,6 +313,9 @@ public:
     void scrollBy(double x, double y);
     virtual void scrollTo(const ScrollToOptions&, ScrollClamping = ScrollClamping::Clamped, ScrollSnapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest, std::optional<FloatSize> originalScrollDelta = std::nullopt);
     void scrollTo(double x, double y);
+
+    bool isScrollFocusableContainer(ScrollFocusLayoutBehavior) const;
+    bool hasKeyboardFocusableDescendants() const;
 
     WEBCORE_EXPORT int offsetLeftForBindings();
     WEBCORE_EXPORT int offsetLeft();

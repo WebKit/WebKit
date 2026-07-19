@@ -1017,6 +1017,13 @@ bool AccessibilityRenderObject::computeIsIgnored() const
         return false;
     }
 
+    // Scrollable containers with overflow that are implicitly keyboard-focusable,
+    // and do not contain keyboard-focusable descendants, should not be ignored.
+    if (RefPtr element = dynamicDowncast<Element>(node())) {
+        if (element->isScrollFocusableContainer(ScrollFocusLayoutBehavior::DoNotForceLayout) && !element->hasKeyboardFocusableDescendants())
+            return false;
+    }
+
     if (!m_renderer)
         return AccessibilityNodeObject::computeIsIgnored();
 
@@ -2533,6 +2540,13 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 
     if (m_renderer->isRenderTableSection())
         return AccessibilityRole::Ignored;
+
+    // Scrollable containers with overflow that are implicitly keyboard-focusable,
+    // and do not contain keyboard-focusable descendants, should become a ScrollArea.
+    if (RefPtr element = dynamicDowncast<Element>(node)) {
+        if (element->isScrollFocusableContainer(ScrollFocusLayoutBehavior::DoNotForceLayout) && !element->hasKeyboardFocusableDescendants())
+            return AccessibilityRole::ScrollArea;
+    }
 
     auto treatStyleFormatGroupAsInline = is<RenderInline>(*m_renderer) ? TreatStyleFormatGroupAsInline::Yes : TreatStyleFormatGroupAsInline::No;
     auto roleFromNode = determineAccessibilityRoleFromNode(treatStyleFormatGroupAsInline);

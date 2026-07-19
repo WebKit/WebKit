@@ -3343,6 +3343,20 @@ FlexFormattingContextIntegrationEnabled:
     WebCore:
       default: true
 
+FocusableScrollableOverflowContainersEnabled:
+  type: bool
+  status: unstable
+  category: css
+  humanReadableName: "Focusable Scrollable Overflow Containers"
+  humanReadableDescription: "Enable focusable scrollable overflow containers"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 FontFaceSetConstructorEnabled:
   type: bool
   status: developer
