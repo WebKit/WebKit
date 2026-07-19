@@ -1115,12 +1115,12 @@ template<typename SizeType> LayoutUnit FlexLayout::computeMainSizeFromAspectRati
         [&](const SizeType::Percentage& percentageCrossSizeLength) -> std::optional<LayoutUnit> {
             return flexLayoutItem.mainAxisIsInlineAxis
                 ? flexItem.computePercentageLogicalHeight(SizeType { percentageCrossSizeLength })
-                : m_flexBox.adjustBorderBoxLogicalWidthForBoxSizing(Style::evaluate<LayoutUnit>(percentageCrossSizeLength, m_flexBox.contentBoxWidth()));
+                : m_flexBox.adjustBorderBoxLogicalWidthForBoxSizing(Style::evaluate<LayoutUnit>(percentageCrossSizeLength, m_flexBox.contentBoxLogicalWidth()));
         },
         [&](const SizeType::Calc& calcCrossSizeLength) -> std::optional<LayoutUnit> {
             return flexLayoutItem.mainAxisIsInlineAxis
                 ? flexItem.computePercentageLogicalHeight(calcCrossSizeLength)
-                : m_flexBox.adjustBorderBoxLogicalWidthForBoxSizing(Style::evaluate<LayoutUnit>(calcCrossSizeLength, m_flexBox.contentBoxWidth(), flexItem.style().usedZoomForLength()));
+                : m_flexBox.adjustBorderBoxLogicalWidthForBoxSizing(Style::evaluate<LayoutUnit>(calcCrossSizeLength, m_flexBox.contentBoxLogicalWidth(), flexItem.style().usedZoomForLength()));
         },
         [&](const CSS::Keyword::Auto&) -> std::optional<LayoutUnit> {
             ASSERT(flexLayoutUtils().hasDefiniteCrossSizeForFlexItem(flexItem));
