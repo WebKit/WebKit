@@ -8310,6 +8310,21 @@ SpatialNavigationEnabled:
     WebCore:
       default: false
 
+SpatialPortalEnabled:
+  type: bool
+  status: testable
+  category: css
+  condition: ENABLE(SPATIAL_PORTAL)
+  humanReadableName: "Spatial CSS Portals"
+  humanReadableDescription: "Enable the spatial: portal CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 SpeakerSelectionRequiresUserGesture:
   type: bool

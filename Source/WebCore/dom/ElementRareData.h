@@ -48,6 +48,10 @@
 #include <wtf/HashMap.h>
 #include <wtf/Markable.h>
 
+#if ENABLE(SPATIAL_PORTAL)
+#include "SpatialPortalController.h"
+#endif
+
 namespace WebCore {
 
 class ElementRareData : public NodeRareData {
@@ -157,6 +161,11 @@ public:
 
     OptionSet<VisibilityAdjustment> visibilityAdjustment() const { return m_visibilityAdjustment; }
     void setVisibilityAdjustment(OptionSet<VisibilityAdjustment> adjustment) { m_visibilityAdjustment = adjustment; }
+
+#if ENABLE(SPATIAL_PORTAL)
+    SpatialPortalController* spatialPortalController() const { return m_spatialPortalController.get(); }
+    void setSpatialPortalController(std::unique_ptr<SpatialPortalController>&& controller) { m_spatialPortalController = WTF::move(controller); }
+#endif
 
     Ref<CSSCalc::RandomCachingKeyMap> ensureRandomCachingKeyMap(const std::optional<Style::PseudoElementIdentifier>&);
     bool hasRandomCachingKeyMap() const;
@@ -272,6 +281,10 @@ private:
     RefPtr<CustomStateSet> m_customStateSet;
 
     OptionSet<VisibilityAdjustment> m_visibilityAdjustment;
+
+#if ENABLE(SPATIAL_PORTAL)
+    std::unique_ptr<SpatialPortalController> m_spatialPortalController;
+#endif
 
     HashMap<std::optional<Style::PseudoElementIdentifier>, Ref<CSSCalc::RandomCachingKeyMap>> m_randomCachingKeyMaps;
 };

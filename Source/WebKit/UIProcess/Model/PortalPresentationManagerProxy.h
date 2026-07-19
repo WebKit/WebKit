@@ -33,7 +33,7 @@
 #import <wtf/TZoneMalloc.h>
 #import <wtf/UniqueRef.h>
 
-OBJC_CLASS WKPageHostedModelView;
+OBJC_CLASS WKPageHostedPortalView;
 OBJC_CLASS UIView;
 OBJC_CLASS _UIRemoteView;
 
@@ -41,17 +41,17 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class ModelPresentationManagerProxy : public RefCounted<ModelPresentationManagerProxy> {
-    WTF_MAKE_TZONE_ALLOCATED(ModelPresentationManagerProxy);
+class PortalPresentationManagerProxy : public RefCounted<PortalPresentationManagerProxy> {
+    WTF_MAKE_TZONE_ALLOCATED(PortalPresentationManagerProxy);
 public:
-    static Ref<ModelPresentationManagerProxy> create(WebPageProxy& page)
+    static Ref<PortalPresentationManagerProxy> create(WebPageProxy& page)
     {
-        return adoptRef(*new ModelPresentationManagerProxy(page));
+        return adoptRef(*new PortalPresentationManagerProxy(page));
     }
 
-    virtual ~ModelPresentationManagerProxy();
+    virtual ~PortalPresentationManagerProxy();
 
-    RetainPtr<WKPageHostedModelView> setUpModelView(Ref<WebCore::ModelContext>);
+    RetainPtr<WKPageHostedPortalView> setUpModelView(Ref<WebCore::ModelContext>);
     RetainPtr<UIView> startDragForModel(const WebCore::PlatformLayerIdentifier&);
     void doneWithCurrentDragSession();
     void invalidateModel(const WebCore::PlatformLayerIdentifier&);
@@ -59,20 +59,20 @@ public:
     void pageScaleDidChange(CGFloat);
 
 private:
-    explicit ModelPresentationManagerProxy(WebPageProxy&);
+    explicit PortalPresentationManagerProxy(WebPageProxy&);
 
-    struct ModelPresentation {
-        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ModelPresentation);
+    struct PortalPresentation {
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PortalPresentation);
 
     public:
         Ref<WebCore::ModelContext> modelContext;
         RetainPtr<_UIRemoteView> remoteModelView;
-        RetainPtr<WKPageHostedModelView> pageHostedModelView;
+        RetainPtr<WKPageHostedPortalView> pageHostedPortalView;
     };
 
-    ModelPresentation& ensureModelPresentation(Ref<WebCore::ModelContext>, const WebPageProxy&);
+    PortalPresentation& ensurePortalPresentation(Ref<WebCore::ModelContext>, const WebPageProxy&);
 
-    HashMap<WebCore::PlatformLayerIdentifier, UniqueRef<ModelPresentation>> m_modelPresentations;
+    HashMap<WebCore::PlatformLayerIdentifier, UniqueRef<PortalPresentation>> m_portalPresentations;
     HashSet<WebCore::PlatformLayerIdentifier> m_activelyDraggedModelLayerIDs;
     WeakPtr<WebPageProxy> m_page;
 };

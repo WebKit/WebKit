@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+#include "config.h"
+#include "SpatialPortalController.h"
 
-#import "RemoteLayerTreeViews.h"
-#import <WebCore/Color.h>
+#if ENABLE(SPATIAL_PORTAL)
 
-NS_ASSUME_NONNULL_BEGIN
+namespace WebCore {
 
-@interface WKPageHostedModelView : WKCompositingView
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpatialPortalController);
 
-@property (nonatomic, retain) UIView *remoteModelView;
-@property (nonatomic) BOOL shouldDisablePortal;
-- (void)applyBackgroundColor:(std::optional<WebCore::Color>)backgroundColor;
-- (void)setPortalCrossing:(BOOL)enabled;
+SpatialPortalController::SpatialPortalController() = default;
 
-@end
+SpatialPortalController::~SpatialPortalController() = default;
 
-NS_ASSUME_NONNULL_END
+} // namespace WebCore
 
-#endif // PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+#endif // ENABLE(SPATIAL_PORTAL)

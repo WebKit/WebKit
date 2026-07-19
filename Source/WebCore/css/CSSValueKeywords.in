@@ -1979,3 +1979,6 @@ will-change
 
 // block-ellipsis
 no-ellipsis
+
+// CSS Spatial Layout (spatial: portal)
+portal enable-if=ENABLE_SPATIAL_PORTAL

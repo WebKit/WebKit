@@ -278,6 +278,11 @@ enum class TableLayoutType : bool {
     Fixed
 };
 
+enum class SpatialType : bool {
+    None,
+    Portal
+};
+
 enum class TextCombine : bool {
     None,
     All
@@ -1211,6 +1216,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapAxisAlignType);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapStop);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapStrictness);
 WTF::TextStream& operator<<(WTF::TextStream&, Scroller);
+WTF::TextStream& operator<<(WTF::TextStream&, SpatialType);
 WTF::TextStream& operator<<(WTF::TextStream&, TableLayoutType);
 WTF::TextStream& operator<<(WTF::TextStream&, TextCombine);
 WTF::TextStream& operator<<(WTF::TextStream&, TextDecorationSkipInk);

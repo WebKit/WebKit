@@ -104,7 +104,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
-#include "ModelPresentationManagerProxy.h"
+#include "PortalPresentationManagerProxy.h"
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
@@ -401,7 +401,7 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
-    RefPtr<ModelPresentationManagerProxy> modelPresentationManagerProxy;
+    RefPtr<PortalPresentationManagerProxy> portalPresentationManagerProxy;
 #endif
 
     bool allowsLayoutViewportHeightExpansion { true };

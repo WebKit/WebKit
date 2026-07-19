@@ -610,7 +610,7 @@ UIProcess/ios/WKImageAnalysisGestureRecognizer.mm @nonARC
 UIProcess/ios/WKKeyboardScrollingAnimator.mm @nonARC
 UIProcess/ios/WKMouseDeviceObserver.mm @nonARC
 UIProcess/ios/WKMouseInteraction.mm @nonARC
-UIProcess/ios/WKPageHostedModelView.mm @nonARC
+UIProcess/ios/WKPageHostedPortalView.mm @nonARC
 UIProcess/ios/WKPasswordView.mm @nonARC
 UIProcess/ios/WKScrollView.mm @nonARC
 UIProcess/ios/WKScrollViewTrackingTapGestureRecognizer.mm @nonARC
@@ -662,7 +662,7 @@ UIProcess/mac/WebViewImpl.mm @nonARC
 UIProcess/Media/cocoa/AudioSessionRoutingArbitratorProxyCocoa.mm @nonARC
 UIProcess/Media/cocoa/MediaUsageManagerCocoa.mm @nonARC
 
-UIProcess/Model/ModelPresentationManagerProxy.mm @nonARC
+UIProcess/Model/PortalPresentationManagerProxy.mm @nonARC
 UIProcess/Model/cocoa/ModelProcessProxyCocoa.mm @nonARC
 
 UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp

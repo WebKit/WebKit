@@ -539,6 +539,10 @@
 #define ENABLE_SEPARATED_WX_HEAP 0
 #endif
 
+#if !defined(ENABLE_SPATIAL_PORTAL)
+#define ENABLE_SPATIAL_PORTAL 0
+#endif
+
 #if !defined(ENABLE_SPEECH_SYNTHESIS)
 #define ENABLE_SPEECH_SYNTHESIS 0
 #endif

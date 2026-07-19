@@ -306,6 +306,7 @@ Modules/model-element/ModelPlayerAnimationState.cpp
 Modules/model-element/ModelPlayerClient.cpp
 Modules/model-element/ModelPlayerProvider.cpp
 Modules/model-element/PlaceholderModelPlayer.cpp
+Modules/model-element/SpatialPortalController.cpp
 Modules/model-element/dummy/DummyModelPlayer.cpp
 Modules/model-element/dummy/DummyModelPlayerProvider.cpp
 Modules/notifications/Notification.cpp

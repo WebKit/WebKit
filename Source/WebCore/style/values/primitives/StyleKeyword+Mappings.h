@@ -998,6 +998,14 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
+#if ENABLE(SPATIAL_PORTAL)
+#define TYPE SpatialType
+#define FOR_EACH(CASE) CASE(None) CASE(Portal)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+#endif
+
 constexpr CSSValueID toCSSValueID(Style::TextAlign e)
 {
     switch (e) {

@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WKPageHostedModelView.h"
+#import "WKPageHostedPortalView.h"
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS) && HAVE(CORE_RE)
 
@@ -42,7 +42,7 @@
 
 #import "WebKitSwiftSoftLink.h"
 
-@implementation WKPageHostedModelView {
+@implementation WKPageHostedPortalView {
     RetainPtr<UIView> _remoteModelView;
     RetainPtr<UIView> _containerView;
     REPtr<REEntityRef> _rootEntity;
@@ -87,7 +87,7 @@
     [portalLayer setValue:@YES forKeyPath:@"separatedOptions.updates.texture"];
 
 #if HAVE(RE_STEREO_CONTENT_SUPPORT)
-    if ([WKPageHostedModelView _usesStereoContent])
+    if ([WKPageHostedPortalView _usesStereoContent])
         [portalLayer setSeparatedState:kCALayerSeparatedStateTracked];
     else
 #endif
@@ -99,13 +99,13 @@
     REPtr<REComponentRef> clientComponent = RECALayerGetCALayerClientComponent(portalLayer);
     if (clientComponent) {
         _rootEntity = REComponentGetEntity(clientComponent.get());
-        REEntitySetName(_rootEntity.get(), "WebKit:PageHostedModelViewEntity");
+        REEntitySetName(_rootEntity.get(), "WebKit:PageHostedPortalViewEntity");
     }
 
 #if HAVE(RE_STEREO_CONTENT_SUPPORT)
-    if ([WKPageHostedModelView _usesStereoContent]) {
+    if ([WKPageHostedPortalView _usesStereoContent]) {
         _stereoContentEntity = adoptRE(REEntityCreate());
-        REEntitySetName(_stereoContentEntity.get(), "WebKit:ModelStereoContentEntity");
+        REEntitySetName(_stereoContentEntity.get(), "WebKit:PortalStereoContentEntity");
         REEntityAddComponentByClass(_stereoContentEntity.get(), RENetworkComponentGetComponentType());
         REPtr<REComponentRef> stereoContentComponent = REEntityGetOrAddComponentByClass(_stereoContentEntity.get(), REEmbeddedStereoContentComponentGetComponentType());
         REPtr<REComponentRef> worldRootComponent = REEntityGetOrAddComponentByClass(_stereoContentEntity.get(), REWorldRootComponentGetComponentType());
@@ -132,7 +132,7 @@
 
             _stereoContentLayer = [CALayer layer];
             [_stereoContentLayer setFrame:CGRectMake(0, 0, [portalLayer frame].size.width, [portalLayer frame].size.height)];
-            [_stereoContentLayer setName:@"WebKit:ModelStereoContentLayer"];
+            [_stereoContentLayer setName:@"WebKit:PortalStereoContentLayer"];
             RECALayerSetEmbeddedStereoContent(_stereoContentLayer.get(), _stereoContentEntity.get());
             [portalLayer addSublayer:_stereoContentLayer.get()];
         }
@@ -143,16 +143,16 @@
     [_containerView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
     [self addSubview:_containerView.get()];
     CALayer *containerViewLayer = [_containerView layer];
-    containerViewLayer.name = @"ModelContainerLayer";
+    containerViewLayer.name = @"PortalContainerLayer";
     [containerViewLayer setValue:@NO forKeyPath:@"separatedOptions.updates.transform"];
     containerViewLayer.separatedState = kCALayerSeparatedStateTracked;
     REPtr<REComponentRef> containerViewLayerClientComponent = RECALayerGetCALayerClientComponent(containerViewLayer);
     if (containerViewLayerClientComponent) {
         _containerEntity = REComponentGetEntity(containerViewLayerClientComponent.get());
-        REEntitySetName(_containerEntity.get(), "WebKit:ModelContainerEntity");
+        REEntitySetName(_containerEntity.get(), "WebKit:PortalContainerEntity");
 
 #if HAVE(RE_STEREO_CONTENT_SUPPORT)
-        if ([WKPageHostedModelView _usesStereoContent]) {
+        if ([WKPageHostedPortalView _usesStereoContent]) {
             REEntitySetParent(_containerEntity.get(), _stereoContentEntity.get());
             REEntitySubtreeAddNetworkComponentRecursive(_stereoContentEntity.get());
             RENetworkMarkEntityMetadataDirty(_stereoContentEntity.get());
@@ -225,7 +225,7 @@
     _shouldDisablePortal = shouldDisablePortal;
 
 #if HAVE(RE_STEREO_CONTENT_SUPPORT)
-    if ([WKPageHostedModelView _usesStereoContent]) {
+    if ([WKPageHostedPortalView _usesStereoContent]) {
         if (_shouldDisablePortal) {
             REEntityRemoveFromSceneOrParent(_stereoContentEntity.get());
             [[_containerView layer] removeFromSuperlayer];
@@ -256,7 +256,7 @@
 - (void)applyBackgroundColor:(std::optional<WebCore::Color>)backgroundColor
 {
 #if HAVE(RE_STEREO_CONTENT_SUPPORT)
-    if ([WKPageHostedModelView _usesStereoContent]) {
+    if ([WKPageHostedPortalView _usesStereoContent]) {
         ASSERT(_stereoContentEntity);
 
         simd_float3 clearColorComponents = simd_make_float3(1, 1, 1);
@@ -265,12 +265,12 @@
             auto opaqueColor = backgroundColor->opaqueColor();
             auto [r, g, b, a] = opaqueColor.toResolvedColorComponentsInColorSpace(WebCore::ColorSpace::LinearSRGB);
             clearColorComponents = simd_make_float3(r, g, b);
-            RELEASE_LOG_INFO(ModelElement, "WKPageHostedModelView applyBackgroundColor: %f, %f, %f (%@)", clearColorComponents.x, clearColorComponents.y, clearColorComponents.z, self);
+            RELEASE_LOG_INFO(ModelElement, "WKPageHostedPortalView applyBackgroundColor: %f, %f, %f (%@)", clearColorComponents.x, clearColorComponents.y, clearColorComponents.z, self);
         }
 
         REPtr<REComponentRef> stereoContentComponent = REEntityGetOrAddComponentByClass(_stereoContentEntity.get(), REEmbeddedStereoContentComponentGetComponentType());
         if (!stereoContentComponent.get()) {
-            RELEASE_LOG_ERROR(ModelElement, "WKPageHostedModelView applyBackgroundColor failed to get embedded stereo component");
+            RELEASE_LOG_ERROR(ModelElement, "WKPageHostedPortalView applyBackgroundColor failed to get embedded stereo component");
             return;
         }
 

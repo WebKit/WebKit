@@ -96,7 +96,7 @@
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-#import "ModelPresentationManagerProxy.h"
+#import "PortalPresentationManagerProxy.h"
 #endif
 
 #import "AppKitSoftLink.h"
@@ -1093,8 +1093,8 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 #if ENABLE(MODEL_PROCESS)
 - (void)_setTransform3DForModelViews:(CGFloat)newScale
 {
-    if (RefPtr modelPresentationManager = _page->modelPresentationManagerProxy())
-        modelPresentationManager->pageScaleDidChange(newScale);
+    if (RefPtr portalPresentationManager = _page->portalPresentationManagerProxy())
+        portalPresentationManager->pageScaleDidChange(newScale);
 }
 #endif
 

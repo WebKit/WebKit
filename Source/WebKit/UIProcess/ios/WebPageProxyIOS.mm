@@ -1893,9 +1893,9 @@ void WebPageProxy::setPromisedDataForImage(IPC::Connection&, const String&, Shar
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
-RefPtr<ModelPresentationManagerProxy> WebPageProxy::modelPresentationManagerProxy() const
+RefPtr<PortalPresentationManagerProxy> WebPageProxy::portalPresentationManagerProxy() const
 {
-    return internals().modelPresentationManagerProxy;
+    return internals().portalPresentationManagerProxy;
 }
 #endif
 

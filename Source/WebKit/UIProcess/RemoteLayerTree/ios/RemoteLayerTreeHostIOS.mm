@@ -40,9 +40,9 @@
 #import <wtf/MachSendRightAnnotated.h>
 
 #if ENABLE(MODEL_PROCESS)
-#import "ModelPresentationManagerProxy.h"
+#import "PortalPresentationManagerProxy.h"
 #if HAVE(CORE_RE)
-#import "WKPageHostedModelView.h"
+#import "WKPageHostedPortalView.h"
 #endif
 #endif
 
@@ -124,8 +124,8 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeT
 
 #if ENABLE(MODEL_PROCESS) && HAVE(CORE_RE)
         if (auto modelContext = properties.modelContext()) {
-            if (auto modelPresentationManager = m_drawingArea->page() ? m_drawingArea->page()->modelPresentationManagerProxy() : nullptr) {
-                if (auto view = modelPresentationManager->setUpModelView(*modelContext)) {
+            if (auto portalPresentationManager = m_drawingArea->page() ? m_drawingArea->page()->portalPresentationManagerProxy() : nullptr) {
+                if (auto view = portalPresentationManager->setUpModelView(*modelContext)) {
                     m_modelLayers.add(modelContext->modelLayerIdentifier());
                     return makeWithView(WTF::move(view));
                 }

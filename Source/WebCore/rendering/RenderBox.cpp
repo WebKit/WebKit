@@ -342,6 +342,16 @@ void RenderBox::invalidateAncestorBackgroundObscurationStatus()
     }
 }
 
+#if ENABLE(SPATIAL_PORTAL)
+static void spatialPortalStyleDidChange(Element& element, SpatialType oldSpatial, SpatialType newSpatial)
+{
+    if (oldSpatial == SpatialType::None && newSpatial == SpatialType::Portal)
+        element.ensureSpatialPortalController();
+    else if (oldSpatial == SpatialType::Portal && newSpatial == SpatialType::None)
+        element.clearSpatialPortalController();
+}
+#endif
+
 void RenderBox::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     // Horizontal writing mode definition is updated in RenderBoxModelObject::updateFromStyle,
@@ -456,6 +466,14 @@ void RenderBox::styleDidChange(Style::Difference diff, const Style::ComputedStyl
     if ((layer() && diff == Style::DifferenceResult::Layout && hasNonVisibleOverflow())
         || (oldStyle && oldStyle->isOverflowVisible() != style().isOverflowVisible()))
         layoutContext().invalidateAnchorDependenciesForScroller(*this);
+
+#if ENABLE(SPATIAL_PORTAL)
+    auto oldSpatial = oldStyle ? oldStyle->spatial() : SpatialType::None;
+    if (oldSpatial != newStyle.spatial()) {
+        if (RefPtr element = this->element())
+            spatialPortalStyleDidChange(*element, oldSpatial, newStyle.spatial());
+    }
+#endif
 }
 
 static bool NODELETE hasEquivalentGridPositioningStyle(const Style::ComputedStyle& style, const Style::ComputedStyle& oldStyle)
@@ -5603,6 +5621,9 @@ bool RenderBox::requiresLayer() const
         || style().specifiesColumns()
         || style().usedContain().contains(Style::ContainValue::Layout)
         || !style().usedZIndex().isAuto()
+#if ENABLE(SPATIAL_PORTAL)
+        || style().spatial() == SpatialType::Portal
+#endif
         || hasRunningAcceleratedAnimations();
 }
 

@@ -1041,6 +1041,15 @@ TextStream& operator<<(TextStream& ts, TableLayoutType layoutType)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, SpatialType spatial)
+{
+    switch (spatial) {
+    case SpatialType::None: ts << "None"_s; break;
+    case SpatialType::Portal: ts << "Portal"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, TextCombine textCombine)
 {
     switch (textCombine) {

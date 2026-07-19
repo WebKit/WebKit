@@ -611,7 +611,7 @@ class WebWheelEventCoalescer;
 class WebsiteDataStore;
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
-class ModelPresentationManagerProxy;
+class PortalPresentationManagerProxy;
 #endif
 
 struct AppPrivacyReportTestingData;
@@ -2966,7 +2966,7 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
-    RefPtr<ModelPresentationManagerProxy> modelPresentationManagerProxy() const;
+    RefPtr<PortalPresentationManagerProxy> portalPresentationManagerProxy() const;
 #endif
 
     bool canStartNavigationSwipeAtLastInteractionLocation() const;

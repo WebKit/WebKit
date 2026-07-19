@@ -56,7 +56,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIView.h>
 #if ENABLE(MODEL_PROCESS)
-#import "ModelPresentationManagerProxy.h"
+#import "PortalPresentationManagerProxy.h"
 #endif
 #endif
 
@@ -313,8 +313,8 @@ void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::ProcessIdentifier processI
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
     if (m_modelLayers.contains(layerID)) {
         RefPtr page = drawingArea().page();
-        if (auto modelPresentationManager = page ? page->modelPresentationManagerProxy() : nullptr)
-            modelPresentationManager->invalidateModel(layerID);
+        if (auto portalPresentationManager = page ? page->portalPresentationManagerProxy() : nullptr)
+            portalPresentationManager->invalidateModel(layerID);
         m_modelLayers.remove(layerID);
     }
 #endif

@@ -92,6 +92,7 @@ enum class CompositingReason {
     Model                                  = 1 << 27,
     BackdropRoot                           = 1 << 28,
     AnchorPositioning                      = 1 << 29,
+    SpatialPortal                          = 1 << 30,
 };
 
 enum class ScrollCoordinationRole {
@@ -546,6 +547,7 @@ private:
     bool NODELETE requiresCompositingForFilters(RenderLayerModelObject&) const;
     bool requiresCompositingForWillChange(RenderLayerModelObject&) const;
     bool NODELETE requiresCompositingForModel(RenderLayerModelObject&) const;
+    bool NODELETE requiresCompositingForSpatialPortal(RenderLayerModelObject&) const;
 
     // Layout-dependent
     bool requiresCompositingForPlugin(RenderLayerModelObject&, RequiresCompositingData&) const;

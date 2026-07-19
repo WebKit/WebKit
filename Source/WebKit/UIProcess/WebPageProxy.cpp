@@ -480,7 +480,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
-#include "ModelPresentationManagerProxy.h"
+#include "PortalPresentationManagerProxy.h"
 #endif
 
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=306415
@@ -1741,7 +1741,7 @@ void WebPageProxy::didAttachToRunningProcess()
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
-    internals().modelPresentationManagerProxy = ModelPresentationManagerProxy::create(*this);
+    internals().portalPresentationManagerProxy = PortalPresentationManagerProxy::create(*this);
 #endif
 }
 
@@ -13843,8 +13843,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
         pageClient->hasActiveNowPlayingSessionChanged(false);
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
-    if (auto modelPresentationManager = modelPresentationManagerProxy())
-        modelPresentationManager->invalidateAllModels();
+    if (auto portalPresentationManager = portalPresentationManagerProxy())
+        portalPresentationManager->invalidateAllModels();
 #endif
 
 #if HAVE(SAFE_BROWSING)

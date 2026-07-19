@@ -392,6 +392,9 @@ static bool shouldTreatAutoZIndexAsZero(const Style::ComputedStyle& style)
         || style.isolation() != Isolation::Auto
         || style.position() == PositionType::Sticky
         || style.position() == PositionType::Fixed
+#if ENABLE(SPATIAL_PORTAL)
+        || style.spatial() == SpatialType::Portal
+#endif
         || style.willChange().canCreateStackingContext();
 }
 

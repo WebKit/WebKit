@@ -216,6 +216,7 @@ public:
     PREFERRED_TYPE(BlockStepAlign) unsigned blockStepAlign : 2;
     PREFERRED_TYPE(BlockStepInsert) unsigned blockStepInsert : 2;
     PREFERRED_TYPE(BlockStepRound) unsigned blockStepRound : 2;
+    PREFERRED_TYPE(SpatialType) unsigned spatial : 1;
 
     PREFERRED_TYPE(OverscrollBehavior) unsigned overscrollBehaviorX : 2;
     PREFERRED_TYPE(OverscrollBehavior) unsigned overscrollBehaviorY : 2;

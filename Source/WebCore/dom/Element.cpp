@@ -196,6 +196,10 @@
 #import <pal/system/ios/UserInterfaceIdiom.h>
 #endif
 
+#if ENABLE(SPATIAL_PORTAL)
+#include "SpatialPortalController.h"
+#endif
+
 template class mpark::variant<WebCore::CSSPropertyID, WTF::AtomString>;
 
 namespace WebCore {
@@ -5770,6 +5774,29 @@ void Element::clearShouldNotifyTextManipulationControllerIfDisplayed()
 {
     clearStateFlag(StateFlag::ShouldNotifyTextManipulationControllerIfDisplayed);
 }
+
+#if ENABLE(SPATIAL_PORTAL)
+SpatialPortalController& Element::ensureSpatialPortalController()
+{
+    auto& rareData = ensureElementRareData();
+    if (!rareData.spatialPortalController())
+        rareData.setSpatialPortalController(makeUnique<SpatialPortalController>());
+    return *rareData.spatialPortalController();
+}
+
+SpatialPortalController* Element::spatialPortalController() const
+{
+    if (!hasRareData())
+        return nullptr;
+    return elementRareData()->spatialPortalController();
+}
+
+void Element::clearSpatialPortalController()
+{
+    if (hasRareData())
+        elementRareData()->setSpatialPortalController(nullptr);
+}
+#endif
 
 void Element::willModifyAttribute(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue)
 {

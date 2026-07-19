@@ -187,7 +187,7 @@
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/WebItemProviderPasteboard.h>
 #if ENABLE(MODEL_PROCESS)
-#import "ModelPresentationManagerProxy.h"
+#import "PortalPresentationManagerProxy.h"
 #endif
 #endif
 
@@ -10817,8 +10817,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(MODEL_PROCESS)
     _dragDropInteractionState.setElementIdentifier(nodeID);
     if (item.modelLayerID && _page) {
-        if (RefPtr modelPresentationManager = _page->modelPresentationManagerProxy()) {
-            if (RetainPtr viewForDragPreview = modelPresentationManager->startDragForModel(*item.modelLayerID)) {
+        if (RefPtr portalPresentationManager = _page->portalPresentationManagerProxy()) {
+            if (RetainPtr viewForDragPreview = portalPresentationManager->startDragForModel(*item.modelLayerID)) {
                 _dragDropInteractionState.stageDragItem(item, viewForDragPreview);
                 return;
             }
@@ -10958,8 +10958,8 @@ static std::optional<WebCore::DragOperation> coreDragOperationForUIDropOperation
 
 #if ENABLE(MODEL_PROCESS)
     if (_page) {
-        if (RefPtr modelPresentationManager = _page->modelPresentationManagerProxy())
-            modelPresentationManager->doneWithCurrentDragSession();
+        if (RefPtr portalPresentationManager = _page->portalPresentationManagerProxy())
+            portalPresentationManager->doneWithCurrentDragSession();
 
         if (_dragDropInteractionState.nodeIdentifier())
             _page->modelDragEnded(_dragDropInteractionState.nodeIdentifier().value());
