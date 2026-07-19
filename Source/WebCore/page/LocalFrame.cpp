@@ -1919,7 +1919,7 @@ RefPtr<Node> LocalFrame::nodeRespondingToDoubleClickEvent(const FloatPoint& view
         for (; node && node != terminationNode; node = node->parentInComposedTree()) {
             if (!node->hasEventListeners(eventNames().dblclickEvent))
                 continue;
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TWO_PHASE_CLICKS)
             if (!node->allowsDoubleTapGesture())
                 continue;
 #endif
