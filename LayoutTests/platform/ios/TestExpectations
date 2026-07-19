@@ -4825,6 +4825,7 @@ imported/w3c/web-platform-tests/css/css-scroll-snap/snap-at-user-scroll-end.html
 imported/w3c/web-platform-tests/css/css-transforms/scroll-preserve-3d.html [ Skip ]
 
 # These tests assume synthesized 'wheel' events.
+imported/w3c/web-platform-tests/css/css-scroll-snap/input/mouse-wheel.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/overscroll-snap.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/common-to-both-axes-supercedes-first-in-tree-order.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/prefer-common-to-both-axes.html [ Skip ]

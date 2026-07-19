@@ -7083,8 +7083,6 @@ webkit.org/b/261916 media/video-pause-while-seeking.html [ Pass Failure ]
 
 webkit.org/b/263434 imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/wheel-basic.html [ Skip ]
 
-webkit.org/b/261810 imported/w3c/web-platform-tests/css/css-scroll-snap/input/mouse-wheel.html [ Skip ]
-
 webkit.org/b/237552 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same-hash.html [ Pass Failure ]
 
 # scroll-animations timeouts

@@ -227,14 +227,13 @@ async function dispatchWheelActions(actions)
             await pause(action.duration);
             break;
         case "scroll":
-            // FIXME(261810): Follow tick-based event dispatch logic rather than sending scroll events instantaneously
             // https://w3c.github.io/webdriver/#dfn-perform-a-scroll
             let { x, y, origin, deltaX, deltaY, duration } = action;
             if ((x < 0) || (x > window.innerWidth) || (y < 0) || (y > window.innerHeight))
                 throw new Error('Move target out of bounds');
             if (duration === undefined)
                 duration = computeTickDuration(actions, "wheel");
-
+ 
             const originWindow = origin?.ownerDocument?.defaultView;
             if (originWindow && origin instanceof originWindow.Element) {
                 const bounds = origin.getBoundingClientRect();
@@ -242,26 +241,68 @@ async function dispatchWheelActions(actions)
                 x += bounds.left + (bounds.width / 2.0);
                 y += bounds.top + (bounds.height / 2.0);
             }
-            const scrollEvents = [
-                {
-                    type : "wheel",
-                    viewX : x,
-                    viewY : y,
-                    deltaX : 0,
-                    deltaY : -deltaY,
-                    phase : "began"
-                },
-                {
-                    type : "wheel",
-                    deltaX : -deltaX,
-                    deltaY : 0,
-                    phase : "changed"
-                },
-                {
-                    type : "wheel",
-                    momentumPhase : "ended"
+
+            const eventInterval = 1000. / 60.; // Matches the hardcoded interval in sendEventStream()
+            const eventCount = Math.ceil(duration / eventInterval);
+            const scrollEvents = [];
+
+            if (eventCount === 1 && deltaX && deltaY) {
+                // Special-case single-event cases; separate out the X and Y deltas into different events,
+                // to avoid the axis-locking code from zeroing out one of them.
+                scrollEvents.push({
+                        type : "wheel",
+                        viewX : x,
+                        viewY : y,
+                        deltaX : 0,
+                        deltaY : -deltaY,
+                        phase : "began"
+                    });
+                scrollEvents.push({
+                        type : "wheel",
+                        deltaX : -deltaX,
+                        deltaY : 0,
+                        phase : "changed"
+                    });
+            } else {
+                const perEventDeltaX = Math.floor(deltaX / eventCount);
+                const perEventDeltaY = Math.floor(deltaY / eventCount);
+
+                scrollEvents.push({
+                        type : "wheel",
+                        viewX : x,
+                        viewY : y,
+                        deltaX : -perEventDeltaX,
+                        deltaY : -perEventDeltaY,
+                        phase : "began"
+                    });
+
+                for (let i = 1; i < eventCount; ++i) {
+                    scrollEvents.push({
+                            type : "wheel",
+                            deltaX : -perEventDeltaX,
+                            deltaY : -perEventDeltaY,
+                            phase : "changed"
+                        });
                 }
-            ];
+
+                const remainingDeltaX = deltaX - (eventCount * perEventDeltaX);
+                const remainingDeltaY = deltaY - (eventCount * perEventDeltaY);
+
+                if (remainingDeltaX || remainingDeltaY) {
+                    scrollEvents.push({
+                            type : "wheel",
+                            deltaX : -remainingDeltaX,
+                            deltaY : -remainingDeltaY,
+                            phase : "changed"
+                        });
+                }
+            }
+
+            scrollEvents.push({
+                    type : "wheel",
+                    phase : "ended"
+                });
+
             eventSender.monitorWheelEvents();
             await ensurePresentationUpdate();
             const eventStreamAsString = JSON.stringify({ events: scrollEvents });

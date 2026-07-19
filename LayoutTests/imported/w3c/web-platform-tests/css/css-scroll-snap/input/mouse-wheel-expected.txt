@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Wheel-scroll triggers snap to target position immediately. Test timed out
+PASS Wheel-scroll triggers snap to target position without intermediate pause.
 
