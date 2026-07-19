@@ -14,7 +14,7 @@ URL: <style> on inspector/css/getAllStyleSheets.html
 OFFSET: (6, 7)
 PASS: Stylesheet should have a frame.
 
-URL: inspector/css/getAllStyleSheets.html
+URL: (anonymous)
 OFFSET: (0, 0)
 PASS: Stylesheet should have a frame.
 

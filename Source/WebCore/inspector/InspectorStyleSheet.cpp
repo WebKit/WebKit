@@ -616,6 +616,11 @@ static String sourceURLForCSSRule(CSSRule& rule)
         if (auto sourceURL = parentStyleSheet->contents().baseURL().string(); !sourceURL.isEmpty())
             return sourceURL;
 
+        // See the comment in InspectorStyleSheet::finalURL() for why an inline stylesheet
+        // without a trustworthy parser position shouldn't be attributed to its owner document's URL.
+        if (parentStyleSheet->isInline() && parentStyleSheet->startPosition() == TextPosition())
+            return nullString();
+
         if (RefPtr ownerDocument = parentStyleSheet->ownerDocument())
             return InspectorDOMAgent::documentURLString(ownerDocument.get());
     }
@@ -1056,6 +1061,13 @@ InspectorStyleSheet::~InspectorStyleSheet()
 
 String InspectorStyleSheet::finalURL() const
 {
+    // A <style> element that wasn't created by the document's parser (e.g. cloned into a
+    // shadow tree, or inserted via document.write) has no meaningful position within any
+    // document's source text, so falling back to the document URL would produce a source
+    // location that doesn't correspond to where this stylesheet's content actually lives.
+    if (RefPtr styleSheet = m_pageStyleSheet; styleSheet && styleSheet->isInline() && styleSheet->startPosition() == TextPosition())
+        return emptyString();
+
     String url = styleSheetURL(m_pageStyleSheet.get());
     return url.isEmpty() ? m_documentURL : url;
 }
