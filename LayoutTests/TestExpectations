@@ -5634,8 +5634,6 @@ imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-i
 js/throw-large-string-oom.html [ Skip ]
 
 # Newly imported scroll-snap tests that are failing
-imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-align-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-align-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-writing-mode-000.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-style-change-respects-scroll-behavior.html [ Pass Failure ]
 webkit.org/b/218325 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-001.html [ Pass ImageOnlyFailure ]

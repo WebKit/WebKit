@@ -36,6 +36,7 @@
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
+#include "ScrollAlignment.h"
 #include "ScrollableArea.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include <ranges>
@@ -300,6 +301,43 @@ static LayoutUnit NODELETE computeScrollSnapAlignOffset(LayoutUnit minLocation, 
     }
 }
 
+// https://drafts.csswg.org/css-scroll-snap-1/#scroll-snap-align
+void adjustScrollAlignmentForScrollSnapAlign(const RenderElement& renderer, ScrollAlignment* alignX, ScrollAlignment* alignY)
+{
+    if (!alignX && !alignY)
+        return;
+
+    auto snapAlign = renderer.style().scrollSnapAlign();
+    if (snapAlign.isNone())
+        return;
+
+    auto writingMode = renderer.writingMode();
+    bool hasVerticalWritingMode = writingMode.isVertical();
+
+    auto alignmentForAxis = [](ScrollSnapAxisAlignType type, bool axisIsFlipped, const ScrollAlignment& startAlignment, const ScrollAlignment& endAlignment, const ScrollAlignment& fallback) -> ScrollAlignment {
+        switch (type) {
+        case ScrollSnapAxisAlignType::Start:
+            return axisIsFlipped ? endAlignment : startAlignment;
+        case ScrollSnapAxisAlignType::Center:
+            return ScrollAlignment::alignCenterAlways;
+        case ScrollSnapAxisAlignType::End:
+            return axisIsFlipped ? startAlignment : endAlignment;
+        case ScrollSnapAxisAlignType::None:
+            break;
+        }
+        return fallback;
+    };
+
+    // scroll-snap-align is specified as block / inline; resolve to physical axes and directions.
+    auto xAlignType = hasVerticalWritingMode ? snapAlign.blockAlign : snapAlign.inlineAlign;
+    auto yAlignType = hasVerticalWritingMode ? snapAlign.inlineAlign : snapAlign.blockAlign;
+
+    if (alignX)
+        *alignX = alignmentForAxis(xAlignType, !writingMode.isAnyLeftToRight(), ScrollAlignment::alignLeftAlways, ScrollAlignment::alignRightAlways, *alignX);
+    if (alignY)
+        *alignY = alignmentForAxis(yAlignType, !writingMode.isAnyTopToBottom(), ScrollAlignment::alignTopAlways, ScrollAlignment::alignBottomAlways, *alignY);
+}
+
 bool mayHaveScrollSnappedBoxes(const RenderBox& scrollingElementBox)
 {
     if (scrollingElementBox.style().scrollSnapType().isNone())
@@ -415,8 +453,8 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
             areaYAxisFlipped = !child->writingMode().isAnyTopToBottom();
         }
 
-        ScrollSnapAxisAlignType xAlign = scrollerHasVerticalWritingMode ? alignment.blockAlign : alignment.inlineAlign;
-        ScrollSnapAxisAlignType yAlign = scrollerHasVerticalWritingMode ? alignment.inlineAlign : alignment.blockAlign;
+        auto xAlign = scrollerHasVerticalWritingMode ? alignment.blockAlign : alignment.inlineAlign;
+        auto yAlign = scrollerHasVerticalWritingMode ? alignment.inlineAlign : alignment.blockAlign;
         bool snapsHorizontally = hasHorizontalSnapOffsets && xAlign != ScrollSnapAxisAlignType::None;
         bool snapsVertically = hasVerticalSnapOffsets && yAlign != ScrollSnapAxisAlignType::None;
 

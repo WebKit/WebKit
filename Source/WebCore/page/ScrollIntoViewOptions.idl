@@ -19,8 +19,10 @@
 
 // https://drafts.csswg.org/cssom-view/#dictdef-scrollintoviewoptions
 dictionary ScrollIntoViewOptions : ScrollOptions {
-    [ImplementedAs=blockPosition] ScrollLogicalPosition block = "start";
-    [ImplementedAs=inlinePosition] ScrollLogicalPosition inline = "nearest";
+    // No default values so we can distinguish an author-specified alignment (which must be honored)
+    // from an unspecified one (which defaults to start/nearest and may be adjusted for scroll-snap-align).
+    [ImplementedAs=blockPosition] ScrollLogicalPosition block;
+    [ImplementedAs=inlinePosition] ScrollLogicalPosition inline;
     // FIXME: Add support for `container`.
     // ScrollIntoViewContainer container = "all";
 };

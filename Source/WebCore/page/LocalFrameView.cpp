@@ -4676,14 +4676,26 @@ void LocalFrameView::scrollToAnchor()
 
     LOG_WITH_STREAM(Scrolling, stream << " anchor node rect " << rect);
 
+    CheckedRef renderer = *anchorNode->renderer();
+
     // Scroll nested layers and frames to reveal the anchor.
     // Align to the top and to the closest side (this matches other browsers).
-    if (anchorNode->renderer()->writingMode().isHorizontal())
-        scrollRectToVisible(rect, *anchorNode->renderer(), insideFixed, { SelectionRevealMode::Reveal, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignTopAlways, ShouldAllowCrossOriginScrolling::No });
-    else if (anchorNode->renderer()->writingMode().blockDirection() == FlowDirection::RightToLeft)
-        scrollRectToVisible(rect, *anchorNode->renderer(), insideFixed, { SelectionRevealMode::Reveal, ScrollAlignment::alignRightAlways, ScrollAlignment::alignToEdgeIfNeeded, ShouldAllowCrossOriginScrolling::No });
-    else
-        scrollRectToVisible(rect, *anchorNode->renderer(), insideFixed, { SelectionRevealMode::Reveal, ScrollAlignment::alignLeftAlways, ScrollAlignment::alignToEdgeIfNeeded, ShouldAllowCrossOriginScrolling::No });
+    ScrollAlignment alignX;
+    ScrollAlignment alignY;
+    if (renderer->writingMode().isHorizontal()) {
+        alignX = ScrollAlignment::alignToEdgeIfNeeded;
+        alignY = ScrollAlignment::alignTopAlways;
+    } else if (renderer->writingMode().blockDirection() == FlowDirection::RightToLeft) {
+        alignX = ScrollAlignment::alignRightAlways;
+        alignY = ScrollAlignment::alignToEdgeIfNeeded;
+    } else {
+        alignX = ScrollAlignment::alignLeftAlways;
+        alignY = ScrollAlignment::alignToEdgeIfNeeded;
+    }
+
+    adjustScrollAlignmentForScrollSnapAlign(renderer, &alignX, &alignY);
+
+    scrollRectToVisible(rect, renderer, insideFixed, { SelectionRevealMode::Reveal, alignX, alignY, ShouldAllowCrossOriginScrolling::No });
 
     if (AXObjectCache* cache = protect(m_frame->document())->existingAXObjectCache())
         cache->handleScrolledToAnchor(*anchorNode);

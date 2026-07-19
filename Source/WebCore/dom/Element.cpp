@@ -143,6 +143,7 @@
 #include "ScriptDisallowedScope.h"
 #include "ScrollIntoViewOptions.h"
 #include "ScrollLatchingController.h"
+#include "ScrollSnapOffsetsInfo.h"
 #include "ScrollToOptions.h"
 #include "SecurityPolicyViolationEvent.h"
 #include "SelectorQuery.h"
@@ -1258,8 +1259,9 @@ void Element::scrollIntoView(Variant<bool, ScrollIntoViewOptions>&& arg)
     auto options = WTF::switchOn(arg,
         [&](bool boolArg) -> ScrollIntoViewOptions {
             ScrollIntoViewOptions options;
-            if (!boolArg)
-                options.blockPosition = ScrollLogicalPosition::End;
+            // The legacy boolean argument explicitly requests top (true) or bottom (false) alignment,
+            // so treat the block axis as author-specified (not eligible for scroll-snap adjustment).
+            options.blockPosition = boolArg ? ScrollLogicalPosition::Start : ScrollLogicalPosition::End;
             return options;
         },
         [](ScrollIntoViewOptions options) -> ScrollIntoViewOptions {
@@ -1273,10 +1275,21 @@ void Element::scrollIntoView(Variant<bool, ScrollIntoViewOptions>&& arg)
     alignX.disableLegacyHorizontalVisibilityThreshold();
 
     bool isHorizontal = writingMode.isHorizontal();
+    auto physicalAlignX = isHorizontal ? alignX : alignY;
+    auto physicalAlignY = isHorizontal ? alignY : alignX;
+
+    // Honor the target's scroll-snap-align even when the scroll container has scroll-snap-type: none, but only
+    // for an axis whose alignment the author did not explicitly specify. https://drafts.csswg.org/cssom-view/#determine-the-scroll-into-view-position
+    bool blockSpecified = options.blockPosition.has_value();
+    bool inlineSpecified = options.inlinePosition.has_value();
+    bool adjustX = isHorizontal ? !inlineSpecified : !blockSpecified;
+    bool adjustY = isHorizontal ? !blockSpecified : !inlineSpecified;
+    adjustScrollAlignmentForScrollSnapAlign(*renderer, adjustX ? &physicalAlignX : nullptr, adjustY ? &physicalAlignY : nullptr);
+
     auto visibleOptions = ScrollRectToVisibleOptions {
         .revealMode = SelectionRevealMode::Reveal,
-        .alignX = isHorizontal ? alignX : alignY,
-        .alignY = isHorizontal ? alignY : alignX,
+        .alignX = physicalAlignX,
+        .alignY = physicalAlignY,
         .behavior = options.behavior,
         .skipScrollingTargetElement = SkipScrollingTargetElement::Yes
     };

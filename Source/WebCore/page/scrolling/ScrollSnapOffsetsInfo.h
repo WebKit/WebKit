@@ -36,9 +36,11 @@
 
 namespace WebCore {
 
-class ScrollableArea;
-class RenderBox;
 class Element;
+class RenderBox;
+class RenderElement;
+class ScrollableArea;
+struct ScrollAlignment;
 
 namespace Style {
 class ComputedStyle;
@@ -115,6 +117,10 @@ WEBCORE_EXPORT std::pair<LayoutUnit, std::optional<unsigned>> LayoutScrollSnapOf
 // the scrolling container's border box.
 bool NODELETE mayHaveScrollSnappedBoxes(const RenderBox& scrollingElementBox);
 void updateSnapOffsetsForScrollableArea(ScrollableArea&, const RenderBox& scrollingElementBox, const Style::ComputedStyle& scrollingElementStyle, LayoutRect viewportRectInBorderBoxCoordinates, WritingMode, Element* focusedElement, Element* targetElement);
+// Adjust the scroll-into-view alignment of each axis to honor the target's scroll-snap-align. Only axes
+// without an author-specified alignment (adjustX / adjustY) are adjusted, per the CSSOM View rule that an
+// explicitly requested scrollIntoView() alignment must be used as-is.
+void adjustScrollAlignmentForScrollSnapAlign(const RenderElement&, ScrollAlignment* alignX, ScrollAlignment* alignY);
 
 template <typename T> WTF::TextStream& operator<<(WTF::TextStream& ts, SnapOffset<T> offset)
 {
