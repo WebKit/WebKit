@@ -96,6 +96,7 @@
     "web-platform-tests/css/css-images": "import",
     "web-platform-tests/css/css-inline": "import",
     "web-platform-tests/css/css-layout-api": "skip",
+    "web-platform-tests/css/css-link-params": "import",
     "web-platform-tests/css/css-lists": "import",
     "web-platform-tests/css/css-logical": "import",
     "web-platform-tests/css/css-masking": "import",
