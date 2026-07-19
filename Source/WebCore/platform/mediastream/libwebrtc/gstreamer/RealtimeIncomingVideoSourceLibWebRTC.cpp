@@ -78,12 +78,14 @@ void RealtimeIncomingVideoSourceLibWebRTC::OnFrame(const webrtc::VideoFrame& fra
     GST_TRACE("Handling incoming video frame");
 #endif
 
-    auto presentationTime = MediaTime(frame.timestamp_us(), G_USEC_PER_SEC);
     auto sample = convertLibWebRTCVideoFrameToGStreamerSample(frame);
     VideoFrameGStreamer::CreateOptions options;
     options.timeMetadata = std::make_optional(metadataFromVideoFrame(frame));
-    options.presentationTime = presentationTime;
+    options.presentationTime = MediaTime(frame.timestamp_us(), G_USEC_PER_SEC);
+    options.presentationSize = { frame.width(), frame.height() };
     options.rotation = videoRotationFromLibWebRTCVideoFrame(frame);
+    options.colorSpace = colorSpaceFromLibWebRTCVideoFrame(frame);
+    options.contentHint = VideoFrameContentHint::WebRTC;
     videoFrameAvailable(VideoFrameGStreamer::create(WTF::move(sample), options), { });
 }
 

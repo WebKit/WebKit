@@ -152,6 +152,14 @@ Ref<VideoEncoder::EncodePromise> GStreamerVideoEncoder::encode(RawFrame&& frame,
     });
 }
 
+bool GStreamerVideoEncoder::encodeSync(RawFrame&& frame, bool shouldGenerateKeyFrame)
+{
+    auto result = m_internalEncoder->encode(WTF::move(frame), shouldGenerateKeyFrame);
+    if (result)
+        m_internalEncoder->harness()->processOutputSamples();
+    return result;
+}
+
 Ref<GenericPromise> GStreamerVideoEncoder::flush()
 {
     return invokeAsync(gstEncoderWorkQueue(), [encoder = m_internalEncoder] {

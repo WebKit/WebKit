@@ -132,8 +132,14 @@ void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
     options.presentationTime = fromGstClockTime(gst_util_uint64_scale(m_frameNumber, frameRateDenominator * GST_SECOND, frameRateNumerator));
     options.rotation = videoFrameRotation();
     options.timeMetadata = WTF::move(metadata);
+    options.presentationSize = size();
 
-    auto videoFrame = VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull(), m_capturer->size(), frameRate(), options);
+    PlatformVideoColorSpace colorSpace;
+    colorSpace.matrix = PlatformVideoMatrixCoefficients::Bt709;
+    colorSpace.primaries = PlatformVideoColorPrimaries::Bt709;
+    colorSpace.transfer = PlatformVideoTransferCharacteristics::Bt709;
+    colorSpace.fullRange = false;
+    auto videoFrame = VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull(), m_capturer->size(), frameRate(), options, WTF::move(colorSpace));
     if (!videoFrame)
         return;
 

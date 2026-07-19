@@ -48,6 +48,7 @@ WTF_DEFINE_GPTR_DELETER(GstByteReader, gst_byte_reader_free)
 WTF_DEFINE_GPTR_DELETER(GstVideoConverter, gst_video_converter_free)
 WTF_DEFINE_GPTR_DELETER(GstAudioConverter, gst_audio_converter_free)
 WTF_DEFINE_GPTR_DELETER(GstAudioInfo, gst_audio_info_free)
+WTF_DEFINE_GPTR_DELETER(GstVideoInfo, gst_video_info_free)
 WTF_DEFINE_GPTR_DELETER(GstFFTF32, gst_fft_f32_free)
 
 #if defined(BUILDING_WebCore) && USE(GSTREAMER_WEBRTC)

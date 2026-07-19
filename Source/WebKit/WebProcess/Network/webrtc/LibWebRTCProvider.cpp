@@ -60,11 +60,7 @@ LibWebRTCProvider::LibWebRTCProvider(WebPage& webPage)
     : m_webPage(webPage)
 {
     m_useNetworkThreadWithSocketServer = false;
-#if PLATFORM(GTK) || PLATFORM(WPE)
-    m_supportsMDNS = false;
-#else
     m_supportsMDNS = true;
-#endif
 }
 
 LibWebRTCProvider::~LibWebRTCProvider() = default;

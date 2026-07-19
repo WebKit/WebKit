@@ -46,6 +46,7 @@ public:
     void close() final;
     Ref<GenericPromise> setRates(uint64_t bitRate, double frameRate) final;
 
+    bool encodeSync(RawFrame&&, bool shouldGenerateKeyFrame);
     Ref<GenericPromise> setBitRateAllocation(RefPtr<WebKitVideoEncoderBitRateAllocation>&&, double frameRate);
 
 private:

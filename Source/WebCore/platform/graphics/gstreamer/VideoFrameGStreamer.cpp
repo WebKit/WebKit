@@ -39,6 +39,7 @@
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <skia/core/SkData.h>
 #include <skia/core/SkImage.h>
+#include <wtf/glib/GMallocString.h>
 
 #if USE(GBM)
 #include <drm_fourcc.h>
@@ -143,9 +144,10 @@ VideoFrameGStreamer::Info VideoFrameGStreamer::infoFromCaps(const GRefPtr<GstCap
     return { videoInfo, { } };
 }
 
-RefPtr<VideoFrame> VideoFrame::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, PlatformVideoColorSpace&& colorSpace)
+RefPtr<VideoFrame> VideoFrame::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, PlatformVideoColorSpace&&)
 {
-    return VideoFrameGStreamer::createFromPixelBuffer(WTF::move(pixelBuffer), { }, 1, { }, WTF::move(colorSpace));
+    // Setting the colorSpace on the caps leads to VP8 full-cycle webcodecs test failures, so don't do that for the time being.
+    return VideoFrameGStreamer::createFromPixelBuffer(WTF::move(pixelBuffer), { }, 1, { }, { });
 }
 
 static RefPtr<ImageGStreamer> convertSampleToImage(const GRefPtr<GstSample>& sample, const GstVideoInfo& videoInfo)
@@ -370,7 +372,7 @@ Ref<VideoFrameGStreamer> VideoFrameGStreamer::create(GRefPtr<GstSample>&& sample
 {
     CreateOptions newOptions = options;
     auto caps = gst_sample_get_caps(sample.get());
-    if (!colorSpace.primaries && doCapsHaveType(caps, GST_VIDEO_CAPS_TYPE_PREFIX))
+    if (!colorSpace.isValid() && doCapsHaveType(caps, GST_VIDEO_CAPS_TYPE_PREFIX))
         colorSpace = videoColorSpaceFromCaps(caps);
 
     if (options.presentationTime.isInvalid())
@@ -437,6 +439,14 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
     if (frameRate)
         gst_caps_set_simple(caps.get(), "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr);
 
+    GMallocString colorimetry;
+    if (colorSpace.isValid()) {
+        auto gstColorimetry = colorimetryFromColorSpace(colorSpace);
+        colorimetry = GMallocString::unsafeAdoptFromUTF8(gst_video_colorimetry_to_string(&gstColorimetry));
+    }
+    if (!colorimetry.isEmpty())
+        gst_caps_set_simple(caps.get(), "colorimetry", G_TYPE_STRING, colorimetry.utf8(), nullptr);
+
     GRefPtr<GstSample> sample;
     Info info;
 
@@ -454,6 +464,8 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
             "height", G_TYPE_INT, height, nullptr));
         if (frameRate)
             gst_caps_set_simple(outputCaps.get(), "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr);
+        if (!colorimetry.isEmpty())
+            gst_caps_set_simple(outputCaps.get(), "colorimetry", G_TYPE_STRING, colorimetry.utf8(), nullptr);
 
         GRefPtr inputSample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
         sample = GStreamerVideoFrameConverter::singleton().convert(inputSample, outputCaps);
@@ -463,7 +475,6 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
         info = infoFromCaps(outputCaps);
         GRefPtr buffer = gst_sample_get_buffer(sample.get());
         auto outputBuffer = webkitGstBufferSetVideoFrameMetadata(WTF::move(buffer), options.timeMetadata, options.rotation, options.isMirrored, options.contentHint);
-        gst_buffer_add_video_meta(outputBuffer.get(), GST_VIDEO_FRAME_FLAG_NONE, format, width, height);
         setBufferFields(outputBuffer.get(), options.presentationTime, frameRate);
         sample = adoptGRef(gst_sample_make_writable(sample.leakRef()));
         gst_sample_set_buffer(sample.get(), outputBuffer.get());
@@ -496,7 +507,7 @@ VideoFrameGStreamer::VideoFrameGStreamer(GRefPtr<GstSample>&& sample, const Crea
     if (!GST_IS_BUFFER(gst_sample_get_buffer(m_sample.get())))
         return;
 
-    setMetadataAndContentHint(options.timeMetadata, options.contentHint);
+    setMetadata(options.timeMetadata, options.contentHint, options.colorSpace);
 }
 
 VideoFrameGStreamer::VideoFrameGStreamer(const GRefPtr<GstSample>& sample, const CreateOptions& options, PlatformVideoColorSpace&& colorSpace)
@@ -547,11 +558,11 @@ void VideoFrameGStreamer::setPresentationTime(const MediaTime& presentationTime)
     GST_BUFFER_PTS(buffer) = GST_BUFFER_DTS(buffer) = toGstClockTime(presentationTime);
 }
 
-void VideoFrameGStreamer::setMetadataAndContentHint(std::optional<VideoFrameTimeMetadata> metadata, VideoFrameContentHint hint)
+void VideoFrameGStreamer::setMetadata(std::optional<VideoFrameTimeMetadata> metadata, VideoFrameContentHint hint, std::optional<PlatformVideoColorSpace> colorSpace)
 {
     GRefPtr buffer = gst_sample_get_buffer(m_sample.get());
     RELEASE_ASSERT(buffer);
-    auto modifiedBuffer = webkitGstBufferSetVideoFrameMetadata(WTF::move(buffer), metadata, rotation(), isMirrored(), hint);
+    auto modifiedBuffer = webkitGstBufferSetVideoFrameMetadata(WTF::move(buffer), metadata, rotation(), isMirrored(), hint, colorSpace);
     m_sample = adoptGRef(gst_sample_make_writable(m_sample.leakRef()));
     gst_sample_set_buffer(m_sample.get(), modifiedBuffer.get());
 }
@@ -717,7 +728,7 @@ GRefPtr<GstSample> VideoFrameGStreamer::resizedSample(const IntSize& destination
     return convert(static_cast<GstVideoFormat>(pixelFormat()), destinationSize);
 }
 
-GRefPtr<GstSample> VideoFrameGStreamer::convert(GstVideoFormat format, const IntSize& destinationSize)
+GRefPtr<GstSample> VideoFrameGStreamer::convert(GstVideoFormat format, const IntSize& destinationSize, std::optional<PlatformVideoColorSpace> colorSpace)
 {
     auto* caps = gst_sample_get_caps(m_sample.get());
     const auto* structure = gst_caps_get_structure(caps, 0);
@@ -732,9 +743,15 @@ GRefPtr<GstSample> VideoFrameGStreamer::convert(GstVideoFormat format, const Int
     auto formatName = CStringView::unsafeFromUTF8(gst_video_format_to_string(format));
     GRefPtr outputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, formatName.utf8(), "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr));
 
-    if (gst_caps_is_equal(caps, outputCaps.get()))
-        return GRefPtr<GstSample>(m_sample);
+    if (colorSpace) {
+        auto gstColorimetry = colorimetryFromColorSpace(*colorSpace);
+        auto colorimetry = GMallocString::unsafeAdoptFromUTF8(gst_video_colorimetry_to_string(&gstColorimetry));
+        if (!colorimetry.isEmpty())
+            gst_caps_set_simple(outputCaps.get(), "colorimetry", G_TYPE_STRING, colorimetry.utf8(), nullptr);
+    }
 
+    if (gst_caps_is_equal(caps, outputCaps.get()))
+        return m_sample;
     return GStreamerVideoFrameConverter::singleton().convert(m_sample, outputCaps);
 }
 
@@ -874,6 +891,11 @@ VideoFrameContentHint VideoFrameGStreamer::contentHint() const
 {
     auto buffer = gst_sample_get_buffer(m_sample.get());
     return webkitGstBufferGetContentHint(buffer);
+}
+
+PlatformVideoColorSpace VideoFrameGStreamer::nativeColorSpace() const
+{
+    return webkitGstBufferGetNativeColorSpace(gst_sample_get_buffer(m_sample.get()));
 }
 
 bool VideoFrameGStreamer::isEncoded() const

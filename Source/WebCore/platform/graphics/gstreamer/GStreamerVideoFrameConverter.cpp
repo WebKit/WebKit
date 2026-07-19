@@ -22,6 +22,7 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
+#include "FloatSize.h"
 #include "GStreamerCommon.h"
 #include <gst/allocators/gstdmabuf.h>
 #include <gst/app/gstappsink.h>
@@ -113,6 +114,9 @@ GRefPtr<GstSample> GStreamerVideoFrameConverter::Pipeline::run(const GRefPtr<Gst
         gst_structure_remove_field(modifiedStructure, "framerate");
         gst_caps_append_structure(newCaps.get(), modifiedStructure);
     }
+
+    auto destinationSize = getVideoResolutionFromCaps(newCaps.get());
+    ASSERT_UNUSED(destinationSize, destinationSize && !destinationSize->isEmpty());
 
     GST_TRACE_OBJECT(m_pipeline.get(), "Converting sample with caps %" GST_PTR_FORMAT " to %" GST_PTR_FORMAT, gst_sample_get_caps(sample.get()), newCaps.get());
     g_object_set(m_sink.get(), "caps", newCaps.get(), nullptr);
@@ -213,12 +217,13 @@ IGNORE_WARNINGS_END
 
     auto structure = gst_caps_get_structure(destinationCaps.get(), 0);
     auto width = gstStructureGet<int>(structure, "width"_s);
+    RELEASE_ASSERT(width && *width);
     auto height = gstStructureGet<int>(structure, "height"_s);
+    RELEASE_ASSERT(height && *height);
     auto formatString = gstStructureGetString(structure, "format"_s);
-    if (width && height && !formatString.isEmpty()) {
-        auto format = gst_video_format_from_string(formatString.utf8());
-        gst_buffer_add_video_meta(writableBuffer.get(), GST_VIDEO_FRAME_FLAG_NONE, format, *width, *height);
-    }
+    RELEASE_ASSERT(!formatString.isEmpty());
+    auto format = gst_video_format_from_string(formatString.utf8());
+    gst_buffer_add_video_meta(writableBuffer.get(), GST_VIDEO_FRAME_FLAG_NONE, format, *width, *height);
     gst_sample_set_buffer(convertedSample.get(), writableBuffer.get());
 
     return convertedSample;

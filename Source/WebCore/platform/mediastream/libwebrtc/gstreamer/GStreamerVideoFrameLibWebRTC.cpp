@@ -21,9 +21,10 @@
 #if USE(GSTREAMER) && USE(LIBWEBRTC)
 #include "GStreamerVideoFrameLibWebRTC.h"
 
+#include "GStreamerCommon.h"
 #include "GStreamerVideoFrameConverter.h"
-#include <gst/video/video-format.h>
-#include <gst/video/video-info.h>
+#include "LibWebRTCVideoFrameUtilities.h"
+
 #include <wtf/MediaTime.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -59,6 +60,10 @@ GRefPtr<GstSample> convertLibWebRTCVideoFrameToGStreamerSample(const webrtc::Vid
     };
     GstVideoInfo info;
     gst_video_info_set_format(&info, GST_VIDEO_FORMAT_I420, frame.width(), frame.height());
+
+    if (auto colorSpace = colorSpaceFromLibWebRTCVideoFrame(frame))
+        fillVideoInfoColorimetryFromColorSpace(&info, *colorSpace);
+
     GRefPtr buffer = adoptGRef(gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(GST_MEMORY_FLAG_NO_SHARE | GST_MEMORY_FLAG_READONLY),
         const_cast<gpointer>(reinterpret_cast<const void*>(i420Buffer->DataY())), info.size, 0, info.size, i420Buffer, [](gpointer buffer) {
             reinterpret_cast<webrtc::I420Buffer*>(buffer)->Release();
@@ -103,14 +108,11 @@ webrtc::scoped_refptr<webrtc::I420BufferInterface> GStreamerVideoFrameLibWebRTC:
     }
 
     if (inFrame.format() != GST_VIDEO_FORMAT_I420) {
-        GstVideoInfo outInfo;
-        gst_video_info_set_format(&outInfo, GST_VIDEO_FORMAT_I420, inFrame.width(), inFrame.height());
+        GUniquePtr<GstVideoInfo> outInfo(gst_video_info_copy(inFrame.info()));
+        outInfo->finfo = gst_video_format_get_info(GST_VIDEO_FORMAT_I420);
+        GRefPtr caps = adoptGRef(gst_video_info_to_caps(outInfo.get()));
 
-        auto info = inFrame.info();
-        outInfo.fps_n = info->fps_n;
-        outInfo.fps_d = info->fps_d;
-        GRefPtr caps = adoptGRef(gst_video_info_to_caps(&outInfo));
-
+        GST_TRACE("Converting frame to I420");
         auto& converter = GStreamerVideoFrameConverter::singleton();
         auto sample = converter.convert(m_sample, caps);
         if (!sample) [[unlikely]]

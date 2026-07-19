@@ -1802,133 +1802,136 @@ PlatformVideoColorSpace videoColorSpaceFromInfo(const GstVideoInfo& info)
     return colorSpace;
 }
 
-void fillVideoInfoColorimetryFromColorSpace(GstVideoInfo* info, const PlatformVideoColorSpace& colorSpace)
+GstVideoColorimetry colorimetryFromColorSpace(const PlatformVideoColorSpace& colorSpace)
 {
     ensureGStreamerInitialized();
+    GstVideoColorimetry result;
     if (colorSpace.matrix) {
         switch (*colorSpace.matrix) {
         case PlatformVideoMatrixCoefficients::Rgb:
-            GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_RGB;
+            result.matrix = GST_VIDEO_COLOR_MATRIX_RGB;
             break;
         case PlatformVideoMatrixCoefficients::Bt709:
-            GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_BT709;
+            result.matrix = GST_VIDEO_COLOR_MATRIX_BT709;
             break;
         case PlatformVideoMatrixCoefficients::Smpte170m:
-            GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_BT601;
+            result.matrix = GST_VIDEO_COLOR_MATRIX_BT601;
             break;
         case PlatformVideoMatrixCoefficients::Smpte240m:
-            GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_SMPTE240M;
+            result.matrix = GST_VIDEO_COLOR_MATRIX_SMPTE240M;
             break;
         case PlatformVideoMatrixCoefficients::Fcc:
-            GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_FCC;
+            result.matrix = GST_VIDEO_COLOR_MATRIX_FCC;
             break;
         case PlatformVideoMatrixCoefficients::Bt2020NonconstantLuminance:
-            GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_BT2020;
+            result.matrix = GST_VIDEO_COLOR_MATRIX_BT2020;
             break;
         case PlatformVideoMatrixCoefficients::Unspecified:
-            GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_UNKNOWN;
+            result.matrix = GST_VIDEO_COLOR_MATRIX_UNKNOWN;
             break;
         default:
             break;
         };
-    } else
-        GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_UNKNOWN;
+    }
 
     if (colorSpace.transfer) {
         switch (*colorSpace.transfer) {
         case PlatformVideoTransferCharacteristics::Iec6196621:
-            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_SRGB;
+            result.transfer = GST_VIDEO_TRANSFER_SRGB;
             break;
         case PlatformVideoTransferCharacteristics::Bt709:
-            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_BT709;
+            result.transfer = GST_VIDEO_TRANSFER_BT709;
             break;
         case PlatformVideoTransferCharacteristics::Smpte170m:
-            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_BT601;
+            result.transfer = GST_VIDEO_TRANSFER_BT601;
             break;
         case PlatformVideoTransferCharacteristics::SmpteSt2084:
-            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_SMPTE2084;
+            result.transfer = GST_VIDEO_TRANSFER_SMPTE2084;
             break;
         case PlatformVideoTransferCharacteristics::AribStdB67Hlg:
-            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_ARIB_STD_B67;
+            result.transfer = GST_VIDEO_TRANSFER_ARIB_STD_B67;
             break;
         case PlatformVideoTransferCharacteristics::Bt2020_10bit:
-            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_BT2020_10;
+            result.transfer = GST_VIDEO_TRANSFER_BT2020_10;
             break;
         case PlatformVideoTransferCharacteristics::Bt2020_12bit:
-            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_BT2020_12;
+            result.transfer = GST_VIDEO_TRANSFER_BT2020_12;
             break;
         case PlatformVideoTransferCharacteristics::Linear:
-            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_GAMMA10;
+            result.transfer = GST_VIDEO_TRANSFER_GAMMA10;
             break;
         case PlatformVideoTransferCharacteristics::Gamma22curve:
-            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_GAMMA22;
+            result.transfer = GST_VIDEO_TRANSFER_GAMMA22;
             break;
         case PlatformVideoTransferCharacteristics::Gamma28curve:
-            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_GAMMA28;
+            result.transfer = GST_VIDEO_TRANSFER_GAMMA28;
             break;
         case PlatformVideoTransferCharacteristics::Smpte240m:
-            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_SMPTE240M;
+            result.transfer = GST_VIDEO_TRANSFER_SMPTE240M;
             break;
         case PlatformVideoTransferCharacteristics::Log:
-            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_LOG100;
+            result.transfer = GST_VIDEO_TRANSFER_LOG100;
             break;
         case PlatformVideoTransferCharacteristics::LogSqrt:
-            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_LOG316;
+            result.transfer = GST_VIDEO_TRANSFER_LOG316;
             break;
         case PlatformVideoTransferCharacteristics::Unspecified:
-            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_UNKNOWN;
+            result.transfer = GST_VIDEO_TRANSFER_UNKNOWN;
             break;
         default:
             break;
         }
-    } else
-        GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_UNKNOWN;
+    }
 
     if (colorSpace.primaries) {
         switch (*colorSpace.primaries) {
         case PlatformVideoColorPrimaries::Bt709:
-            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_BT709;
+            result.primaries = GST_VIDEO_COLOR_PRIMARIES_BT709;
             break;
         case PlatformVideoColorPrimaries::Bt470bg:
-            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_BT470BG;
+            result.primaries = GST_VIDEO_COLOR_PRIMARIES_BT470BG;
             break;
         case PlatformVideoColorPrimaries::Bt470m:
-            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_BT470M;
+            result.primaries = GST_VIDEO_COLOR_PRIMARIES_BT470M;
             break;
         case PlatformVideoColorPrimaries::Smpte170m:
-            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_SMPTE170M;
+            result.primaries = GST_VIDEO_COLOR_PRIMARIES_SMPTE170M;
             break;
         case PlatformVideoColorPrimaries::SmpteRp431:
-            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_SMPTERP431;
+            result.primaries = GST_VIDEO_COLOR_PRIMARIES_SMPTERP431;
             break;
         case PlatformVideoColorPrimaries::SmpteEg432:
-            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_SMPTEEG432;
+            result.primaries = GST_VIDEO_COLOR_PRIMARIES_SMPTEEG432;
             break;
         case PlatformVideoColorPrimaries::Film:
-            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_FILM;
+            result.primaries = GST_VIDEO_COLOR_PRIMARIES_FILM;
             break;
         case PlatformVideoColorPrimaries::Bt2020:
-            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_BT2020;
+            result.primaries = GST_VIDEO_COLOR_PRIMARIES_BT2020;
             break;
         case PlatformVideoColorPrimaries::Smpte240m:
-            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_SMPTE240M;
+            result.primaries = GST_VIDEO_COLOR_PRIMARIES_SMPTE240M;
             break;
         case PlatformVideoColorPrimaries::JedecP22Phosphors:
-            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_EBU3213;
+            result.primaries = GST_VIDEO_COLOR_PRIMARIES_EBU3213;
             break;
         case PlatformVideoColorPrimaries::Unspecified:
-            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_UNKNOWN;
+            result.primaries = GST_VIDEO_COLOR_PRIMARIES_UNKNOWN;
             break;
         default:
             break;
         }
-    } else
-        GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_UNKNOWN;
+    }
 
     if (colorSpace.fullRange)
-        GST_VIDEO_INFO_COLORIMETRY(info).range = *colorSpace.fullRange ? GST_VIDEO_COLOR_RANGE_0_255 : GST_VIDEO_COLOR_RANGE_16_235;
-    else
-        GST_VIDEO_INFO_COLORIMETRY(info).range = GST_VIDEO_COLOR_RANGE_UNKNOWN;
+        result.range = *colorSpace.fullRange ? GST_VIDEO_COLOR_RANGE_0_255 : GST_VIDEO_COLOR_RANGE_16_235;
+    return result;
+}
+
+void fillVideoInfoColorimetryFromColorSpace(GstVideoInfo* info, const PlatformVideoColorSpace& colorSpace)
+{
+    auto colorimetry = colorimetryFromColorSpace(colorSpace);
+    GST_VIDEO_INFO_COLORIMETRY(info) = colorimetry;
 }
 
 void configureAudioDecoderForHarnessing(const GRefPtr<GstElement>& element)

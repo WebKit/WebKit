@@ -28,6 +28,7 @@
 #include "GStreamerVideoCommon.h"
 #include "GStreamerVideoFrameLibWebRTC.h"
 #include "IntSize.h"
+#include "LibWebRTCUtils.h"
 #include "webrtc/modules/video_coding/codecs/vp8/libvpx_vp8_decoder.h"
 #include "webrtc/modules/video_coding/include/video_error_codes.h"
 #include <gst/app/gstappsink.h>
@@ -175,9 +176,10 @@ public:
             return WEBRTC_VIDEO_CODEC_OK;
 
         disconnectSimpleBusMessageCallback(m_pipeline.get());
-        GRefPtr bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
-        gst_bus_disable_sync_message_emission(bus.get());
-
+        if (m_requireParse) {
+            GRefPtr bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
+            gst_bus_disable_sync_message_emission(bus.get());
+        }
         gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
         m_src = nullptr;
         m_sink = nullptr;
@@ -395,14 +397,16 @@ private:
 
 std::unique_ptr<webrtc::VideoDecoder> GStreamerVideoDecoderFactory::Create(const webrtc::Environment& environment, const webrtc::SdpVideoFormat& format)
 {
-    if (format.name == "H264")
+    auto formatName = fromStdString(format.name);
+    // Check format ignoring ascii case, see also: webrtc/video-lowercase-media-subtype.html.
+    if (WTF::equalLettersIgnoringASCIICase(formatName, "h264"_s))
         return std::unique_ptr<webrtc::VideoDecoder>(new H264Decoder());
-    if (format == webrtc::SdpVideoFormat::VP8())
+    if (WTF::equalLettersIgnoringASCIICase(formatName, "vp8"_s))
         return VP8Decoder::Create(environment);
-    if (format.name == "VP9")
+    if (WTF::equalLettersIgnoringASCIICase(formatName, "vp9"_s))
         return VP9Decoder::Create();
 
-    GST_ERROR("Could not create decoder for %s", format.name.c_str());
+    GST_ERROR("Could not create decoder for %s", formatName.ascii().data());
     return nullptr;
 }
 

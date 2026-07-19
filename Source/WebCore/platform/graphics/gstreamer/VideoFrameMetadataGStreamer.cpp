@@ -38,6 +38,7 @@ struct VideoFrameMetadataPrivate {
     VideoFrameContentHint contentHint { VideoFrameContentHint::None };
     Lock lock;
     HashMap<GstElement*, std::pair<GstClockTime, GstClockTime>> processingTimes WTF_GUARDED_BY_LOCK(lock);
+    PlatformVideoColorSpace nativeColorSpace;
 };
 
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(VideoFrameMetadataPrivate);
@@ -102,6 +103,7 @@ const GstMetaInfo* videoFrameMetadataGetInfo()
                 copyMeta->priv->rotation = frameMeta->priv->rotation;
                 copyMeta->priv->isMirrored = frameMeta->priv->isMirrored;
                 copyMeta->priv->contentHint = frameMeta->priv->contentHint;
+                copyMeta->priv->nativeColorSpace = frameMeta->priv->nativeColorSpace;
 
                 Locker frameMetaLocker { frameMeta->priv->lock };
                 Locker copyMetaLocker { copyMeta->priv->lock };
@@ -114,7 +116,7 @@ const GstMetaInfo* videoFrameMetadataGetInfo()
 
 // NOTE: The buffer here cannot be a const GRefPtr<>&, that would mean its refcount would be greater
 // than 1, hence it wouldn't be writable.
-void webkitGstBufferAddVideoFrameMetadata(GstBuffer* buffer, std::optional<WebCore::VideoFrameTimeMetadata> metadata, VideoFrame::Rotation rotation, bool isMirrored, VideoFrameContentHint hint)
+void webkitGstBufferAddVideoFrameMetadata(GstBuffer* buffer, std::optional<WebCore::VideoFrameTimeMetadata> metadata, VideoFrame::Rotation rotation, bool isMirrored, VideoFrameContentHint hint, std::optional<WebCore::PlatformVideoColorSpace> colorSpace)
 {
     if (!gst_buffer_is_writable(buffer)) {
         GST_ERROR("Unable to add video frame metadata on read-only buffer");
@@ -129,6 +131,8 @@ void webkitGstBufferAddVideoFrameMetadata(GstBuffer* buffer, std::optional<WebCo
         meta->priv->rotation = rotation;
         meta->priv->isMirrored = isMirrored;
         meta->priv->contentHint = hint;
+        if (colorSpace)
+            meta->priv->nativeColorSpace = *colorSpace;
         return;
     }
 
@@ -137,14 +141,16 @@ void webkitGstBufferAddVideoFrameMetadata(GstBuffer* buffer, std::optional<WebCo
     meta->priv->rotation = rotation;
     meta->priv->isMirrored = isMirrored;
     meta->priv->contentHint = hint;
+    if (colorSpace)
+        meta->priv->nativeColorSpace = *colorSpace;
 }
 
-GRefPtr<GstBuffer> webkitGstBufferSetVideoFrameMetadata(GRefPtr<GstBuffer>&& buffer, std::optional<WebCore::VideoFrameTimeMetadata> metadata, VideoFrame::Rotation rotation, bool isMirrored, VideoFrameContentHint hint)
+GRefPtr<GstBuffer> webkitGstBufferSetVideoFrameMetadata(GRefPtr<GstBuffer>&& buffer, std::optional<WebCore::VideoFrameTimeMetadata> metadata, VideoFrame::Rotation rotation, bool isMirrored, VideoFrameContentHint hint, std::optional<WebCore::PlatformVideoColorSpace> colorSpace)
 {
     IGNORE_WARNINGS_BEGIN("cast-align");
     GRefPtr modifiedBuffer = adoptGRef(gst_buffer_make_writable(buffer.leakRef()));
     IGNORE_WARNINGS_END;
-    webkitGstBufferAddVideoFrameMetadata(modifiedBuffer.get(), metadata, rotation, isMirrored, hint);
+    webkitGstBufferAddVideoFrameMetadata(modifiedBuffer.get(), metadata, rotation, isMirrored, hint, colorSpace);
     return modifiedBuffer;
 }
 
@@ -252,6 +258,17 @@ VideoFrameContentHint webkitGstBufferGetContentHint(GstBuffer* buffer)
         return meta->priv->contentHint;
 
     return VideoFrameContentHint::None;
+}
+
+PlatformVideoColorSpace webkitGstBufferGetNativeColorSpace(GstBuffer* buffer)
+{
+    if (!GST_IS_BUFFER(buffer))
+        return { };
+
+    if (auto meta = getInternalVideoFrameMetadata(buffer))
+        return meta->priv->nativeColorSpace;
+
+    return { };
 }
 
 MediaTime webkitGstBufferGetProcessingTime(GstBuffer* buffer, GstElement* element)

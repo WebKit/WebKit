@@ -74,11 +74,33 @@ void RealtimeOutgoingVideoSourceLibWebRTC::videoFrameAvailable(VideoFrame& video
         break;
     }
 
-    GST_TRACE("Sending video frame");
-    sendFrame(GStreamerVideoFrameLibWebRTC::create(GRefPtr(static_cast<VideoFrameGStreamer&>(videoFrame).sample())), videoFrame.colorSpace());
+    auto colorSpace = [&] {
+        if (auto pixelFormat = convertVideoFramePixelFormat(videoFrame.pixelFormat(), true)) {
+            if (isRGBVideoPixelFormat(*pixelFormat))
+                return PlatformVideoColorSpace { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Bt709, PlatformVideoMatrixCoefficients::Bt709, false };
+        }
+        return videoFrame.colorSpace();
+    }();
+
+    auto& gstFrame = downcast<VideoFrameGStreamer>(videoFrame);
+    auto frameSize = gstFrame.presentationSize();
+    if (frameSize.isEmpty())
+        return;
+
+    frameSize.scale(this->videoFrameScaling());
+    auto sample = gstFrame.convert(GST_VIDEO_FORMAT_I420, frameSize, colorSpace);
+    if (!sample)
+        return;
+
+    // Clear the segment otherwise a bytes segment will be pushed on the encoder, leading to
+    // potential critical warnings in videoflip which expects a time segment.
+    GRefPtr writableSample = adoptGRef(gst_sample_make_writable(sample.leakRef()));
+    gst_sample_set_segment(writableSample.get(), nullptr);
+    GST_TRACE("Sending video frame with caps %" GST_PTR_FORMAT, gst_sample_get_caps(writableSample.get()));
+    sendFrame(GStreamerVideoFrameLibWebRTC::create(WTF::move(writableSample)), colorSpace);
 }
 
-webrtc::scoped_refptr<webrtc::VideoFrameBuffer> RealtimeOutgoingVideoSourceLibWebRTC::createBlackFrame(size_t  width, size_t  height)
+webrtc::scoped_refptr<webrtc::VideoFrameBuffer> RealtimeOutgoingVideoSourceLibWebRTC::createBlackFrame(size_t width, size_t height)
 {
     GST_TRACE("Creating black video frame");
 
