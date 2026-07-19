@@ -317,8 +317,10 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> si
 }
 
 enum class EnableProcessCache : bool { No, Yes };
+enum class EnableBackForwardCache : bool { No, Yes };
 static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewWithSharedProcess(const HTTPServer& server,
-    EnableProcessCache enableProcessCache = EnableProcessCache::No, NSURL *dataStoreDirectory = nil, NSURL *itpRoot = nil, NSString *domainsWithUserInteraction = nil)
+    EnableProcessCache enableProcessCache = EnableProcessCache::No, NSURL *dataStoreDirectory = nil, NSURL *itpRoot = nil, NSString *domainsWithUserInteraction = nil,
+    EnableBackForwardCache enableBackForwardCache = EnableBackForwardCache::No)
 {
     RetainPtr<_WKWebsiteDataStoreConfiguration> dataStoreConfiguration;
     if (!dataStoreDirectory || !itpRoot)
@@ -341,8 +343,10 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> si
         processPoolConfiguration.get().usesWebProcessCache = YES;
         processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
         // These tests assert WebProcessCache process-reuse semantics; disable BFCache so it
-        // does not compete with WebProcessCache for the cached processes' lifetime.
-        processPoolConfiguration.get().pageCacheEnabled = NO;
+        // does not compete with WebProcessCache for the cached processes' lifetime, unless a
+        // test explicitly needs both caches enabled together (as Safari has them).
+        if (enableBackForwardCache == EnableBackForwardCache::No)
+            processPoolConfiguration.get().pageCacheEnabled = NO;
         RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
         [configuration setProcessPool:processPool.get()];
     }
@@ -351,6 +355,8 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> si
     [navigationDelegate allowAnyTLSCertificate];
     enableSiteIsolation(configuration.get());
     enableFeature(configuration.get(), @"SiteIsolationSharedProcessEnabled");
+    if (enableBackForwardCache == EnableBackForwardCache::Yes)
+        enableFeature(configuration.get(), @"MultiProcessBackForwardCacheEnabled");
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     webView.get().navigationDelegate = navigationDelegate.get();
     return { WTF::move(webView), WTF::move(navigationDelegate) };
@@ -7134,6 +7140,43 @@ TEST(SiteIsolation, SharedProcessBasicWebProcessCache)
     EXPECT_EQ(mainFrameProcessC, mainFrameProcess);
     EXPECT_EQ(childFrameProcess1C, childFrameProcess1);
     EXPECT_EQ(childFrameProcess2C, childFrameProcess2);
+}
+
+TEST(SiteIsolation, SharedProcessInProcessCacheAfterNavigation)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe><iframe src='https://apple.com/apple'></iframe><iframe src='https://w3.org/w3c'></iframe>"_s } },
+        { "/other"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/plain"_s, { "<!DOCTYPE html><p>plain"_s } },
+        { "/webkit"_s, { "webkit"_s } },
+        { "/apple"_s, { "apple"_s } },
+        { "/w3c"_s, { "w3c"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewWithSharedProcess(server, EnableProcessCache::Yes, nil, nil, nil, EnableBackForwardCache::Yes);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block bool finished = false;
+    navigationDelegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finished = true;
+    };
+
+    for (unsigned i = 0; i < 25; ++i) {
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://other.com/plain"]]];
+        TestWebKitAPI::Util::run(&finished);
+        finished = false;
+
+        [webView goBack];
+        TestWebKitAPI::Util::run(&finished);
+        finished = false;
+
+        [webView reload];
+        Util::runFor(0.1_s);
+        [webView reload];
+        TestWebKitAPI::Util::run(&finished);
+        finished = false;
+    }
 }
 
 TEST(SiteIsolation, WebProcessCacheCrashWithZeroSharedProcess)

@@ -638,7 +638,7 @@ public:
     bool isEligibleForWebProcessCache() const { return m_isEligibleForWebProcessCache; }
 
     void incrementFrameProcessCount() { ++m_frameProcessCount; }
-    void decrementFrameProcessCount() { --m_frameProcessCount; }
+    void decrementFrameProcessCount();
     uint64_t frameProcessCount() const { return m_frameProcessCount; }
 
     enum class FirstPartyAccessResult {
