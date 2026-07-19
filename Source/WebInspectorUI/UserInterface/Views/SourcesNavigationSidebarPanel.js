@@ -386,9 +386,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         if (WI.SourcesNavigationSidebarPanel.shouldPlaceResourcesAtTopLevel()) {
             this._resourcesTreeOutline.disclosureButtons = false;
-            WI.SourceCode.addEventListener(WI.SourceCode.Event.SourceMapAdded, function(event) {
-                this._resourcesTreeOutline.disclosureButtons = true;
-            }, this);
+            WI.SourceCode.addEventListener(WI.SourceCode.Event.SourceMapAdded, this._handleSourceCodeSourceMapAdded, this);
         }
 
         if (WI.debuggerManager.debuggerStatementsBreakpoint)
@@ -488,6 +486,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
     closed()
     {
         WI.settings.resourceGroupingMode.removeEventListener(WI.Setting.Event.Changed, this._handleResourceGroupingModeChanged, this);
+
+        if (WI.SourcesNavigationSidebarPanel.shouldPlaceResourcesAtTopLevel())
+            WI.SourceCode.removeEventListener(WI.SourceCode.Event.SourceMapAdded, this._handleSourceCodeSourceMapAdded, this);
 
         WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._handleFrameMainResourceDidChange, this);
         WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, this._handleResourceAdded, this);
@@ -2357,6 +2358,11 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 }
             }
         }
+    }
+
+    _handleSourceCodeSourceMapAdded(event)
+    {
+        this._resourcesTreeOutline.disclosureButtons = true;
     }
 
     _handleResourceGroupingModeChanged(event)
