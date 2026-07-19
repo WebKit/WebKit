@@ -249,6 +249,8 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
         this._timelineContentBrowser.contentViewContainer.closeAllContentViews();
 
+        this._timelineOverview.closed();
+
         this._recording.removeEventListener(WI.TimelineRecording.Event.InstrumentAdded, this._instrumentAdded, this);
         this._recording.removeEventListener(WI.TimelineRecording.Event.InstrumentRemoved, this._instrumentRemoved, this);
         this._recording.removeEventListener(WI.TimelineRecording.Event.Reset, this._recordingReset, this);
