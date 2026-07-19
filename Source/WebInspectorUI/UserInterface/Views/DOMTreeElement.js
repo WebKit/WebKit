@@ -672,7 +672,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
                     currentElement.parent.expand();
 
                 // Some subclasses may hide elements by default to avoid showing too many items initially, but to reveal
-                // an element we must load that element and previous sibilings as well.
+                // an element we must load that element and previous siblings as well.
                 currentElement.parent.showChildNode(currentElement);
 
                 currentElement = currentElement.parent;
@@ -1568,7 +1568,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         var node = this.representedObject;
         var info = {titleDOM: document.createDocumentFragment(), hasChildren: this.hasChildren};
 
-        function trimedNodeValue()
+        function trimmedNodeValue()
         {
             // Trim empty lines from the beginning and extra space at the end since most style and script tags begin with a newline
             // and end with a newline and indentation for the end tag.
@@ -1674,10 +1674,10 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             case Node.TEXT_NODE:
                 if (node.parentNode && node.parentNode.nodeName().toLowerCase() === "script") {
                     var newNode = info.titleDOM.createChild("span", "html-text-node large");
-                    newNode.appendChild(WI.syntaxHighlightStringAsDocumentFragment(trimedNodeValue(), "text/javascript"));
+                    newNode.appendChild(WI.syntaxHighlightStringAsDocumentFragment(trimmedNodeValue(), "text/javascript"));
                 } else if (node.parentNode && node.parentNode.nodeName().toLowerCase() === "style") {
                     var newNode = info.titleDOM.createChild("span", "html-text-node large");
-                    newNode.appendChild(WI.syntaxHighlightStringAsDocumentFragment(trimedNodeValue(), "text/css"));
+                    newNode.appendChild(WI.syntaxHighlightStringAsDocumentFragment(trimmedNodeValue(), "text/css"));
                 } else {
                     info.titleDOM.append("\"");
                     var textNodeElement = info.titleDOM.createChild("span", "html-text-node");

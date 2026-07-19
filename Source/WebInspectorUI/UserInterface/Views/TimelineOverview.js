@@ -464,7 +464,7 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         let currentTime = this._currentTime;
         if (this._viewMode === WI.TimelineOverview.ViewMode.RenderingFrames) {
             let renderingFramesTimeline = this._recording.timelines.get(WI.TimelineRecord.Type.RenderingFrame);
-            console.assert(renderingFramesTimeline, "Recoring missing rendering frames timeline");
+            console.assert(renderingFramesTimeline, "Recording missing rendering frames timeline");
 
             startTime = 0;
             endTime = renderingFramesTimeline.records.length;

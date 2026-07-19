@@ -134,7 +134,7 @@ ScriptExecutionContext* PageNetworkAgent::scriptExecutionContext(Inspector::Prot
 
     SUPPRESS_UNCOUNTED_LOCAL auto* document = frame->document();
     if (!document) {
-        errorString = "Missing frame of docuemnt for given frameId"_s;
+        errorString = "Missing frame of document for given frameId"_s;
         return nullptr;
     }
 

@@ -374,7 +374,7 @@ void InspectorTimelineAgent::startProgrammaticCapture()
     } else
         m_programmaticCaptureRestoreBreakpointActiveValue = false;
 
-    toggleScriptProfilerInstrument(InstrumentState::Start); // Ensure JavaScript samping data.
+    toggleScriptProfilerInstrument(InstrumentState::Start); // Ensure JavaScript sampling data.
     toggleTimelineInstrument(InstrumentState::Start); // Ensure Console Profile event records.
     toggleInstruments(InstrumentState::Start); // Any other instruments the frontend wants us to record.
 }

@@ -114,7 +114,7 @@ WI.OverrideDeviceSettingsPopover = class OverrideDeviceSettingsPopover extends W
 
                 let checkboxElement = labelElement.appendChild(document.createElement("input"));
                 checkboxElement.type = "checkbox";
-                checkboxElement.checked = WI.deviceSettingsManager.overridenDeviceSettings.has(setting);
+                checkboxElement.checked = WI.deviceSettingsManager.overriddenDeviceSettings.has(setting);
                 checkboxElement.addEventListener("change", (event) => {
                     WI.deviceSettingsManager.overrideDeviceSetting(setting, value, (enabled) => {
                         checkboxElement.checked = enabled;
@@ -181,7 +181,7 @@ WI.OverrideDeviceSettingsPopover = class OverrideDeviceSettingsPopover extends W
                 optionElement.value = value;
                 optionElement.textContent = name;
 
-                if (value === WI.deviceSettingsManager.overridenDeviceUserAgent)
+                if (value === WI.deviceSettingsManager.overriddenDeviceUserAgent)
                     selectedOptionElement = optionElement;
             }
 
@@ -197,7 +197,7 @@ WI.OverrideDeviceSettingsPopover = class OverrideDeviceSettingsPopover extends W
 
             userAgentValueInput = userAgentValue.appendChild(document.createElement("input"));
             userAgentValueInput.spellcheck = false;
-            userAgentValueInput.value = userAgentValueInput.placeholder = WI.deviceSettingsManager.overridenDeviceUserAgent || WI.deviceSettingsManager.deviceUserAgent;
+            userAgentValueInput.value = userAgentValueInput.placeholder = WI.deviceSettingsManager.overriddenDeviceUserAgent || WI.deviceSettingsManager.deviceUserAgent;
             userAgentValueInput.addEventListener("change", (inputEvent) => {
                WI.deviceSettingsManager.overrideUserAgent(userAgentValueInput.value, true);
             });
@@ -207,7 +207,7 @@ WI.OverrideDeviceSettingsPopover = class OverrideDeviceSettingsPopover extends W
 
         if (selectedOptionElement)
             userAgentValueSelect.value = selectedOptionElement.value;
-        else if (WI.deviceSettingsManager.overridenDeviceUserAgent) {
+        else if (WI.deviceSettingsManager.overriddenDeviceUserAgent) {
             userAgentValueSelect.value = WI.OverrideDeviceSettingsPopover.OtherValue;
             showUserAgentInput();
         }
@@ -265,7 +265,7 @@ WI.OverrideDeviceSettingsPopover = class OverrideDeviceSettingsPopover extends W
                 optionElement.value = value;
                 optionElement.textContent = name;
 
-                if (value === WI.deviceSettingsManager.overridenDeviceScreenSize)
+                if (value === WI.deviceSettingsManager.overriddenDeviceScreenSize)
                     selectedScreenSizeOptionElement = optionElement;
             }
 
@@ -281,7 +281,7 @@ WI.OverrideDeviceSettingsPopover = class OverrideDeviceSettingsPopover extends W
 
             screenSizeValueInput = screenSizeValue.appendChild(document.createElement("input"));
             screenSizeValueInput.spellcheck = false;
-            screenSizeValueInput.value = screenSizeValueInput.placeholder = WI.deviceSettingsManager.overridenDeviceScreenSize || (window.screen.width + "x" + window.screen.height);
+            screenSizeValueInput.value = screenSizeValueInput.placeholder = WI.deviceSettingsManager.overriddenDeviceScreenSize || (window.screen.width + "x" + window.screen.height);
             screenSizeValueInput.addEventListener("change", (inputEvent) => {
                 WI.deviceSettingsManager.overrideScreenSize(screenSizeValueInput.value, true);
             });
@@ -291,7 +291,7 @@ WI.OverrideDeviceSettingsPopover = class OverrideDeviceSettingsPopover extends W
 
         if (selectedScreenSizeOptionElement)
             screenSizeValueSelect.value = selectedScreenSizeOptionElement.value;
-        else if (WI.deviceSettingsManager.overridenDeviceScreenSize) {
+        else if (WI.deviceSettingsManager.overriddenDeviceScreenSize) {
             screenSizeValueSelect.value = WI.OverrideDeviceSettingsPopover.OtherValue;
             showScreenSizeInput();
         }

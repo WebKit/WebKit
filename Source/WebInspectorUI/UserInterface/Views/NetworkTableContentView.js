@@ -2614,7 +2614,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             delay = 100;
         else if (duration >= 60_000) // 60 seconds
             delay = 1_000;
-        else if (duration >= 3_600_000) // 1 minute
+        else if (duration >= 3_600_000) // 1 hour
             delay = 10_000;
 
         if (delay !== loadTimeStatistic.delay) {

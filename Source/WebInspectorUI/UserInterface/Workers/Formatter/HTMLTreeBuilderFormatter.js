@@ -244,7 +244,7 @@ HTMLTreeBuilderFormatter = class HTMLTreeBuilderFormatter
         if (existingOpenTagIndex === -1)
             return false;
 
-        // Disallow impliticly closing beyond the container tag boundary.
+        // Disallow implicitly closing beyond the container tag boundary.
         if (containerScopeTagNames) {
             for (let i = existingOpenTagIndex + 1; i < this._stackOfOpenElements.length; ++i) {
                 let stackNode = this._stackOfOpenElements[i];

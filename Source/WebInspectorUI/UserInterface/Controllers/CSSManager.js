@@ -883,7 +883,7 @@ WI.CSSManager.Event = {
     StyleSheetRemoved: "css-manager-style-sheet-removed",
     ModifiedStylesChanged: "css-manager-modified-styles-changed",
     DefaultUserPreferencesDidChange: "css-manager-default-user-preferences-did-change",
-    OverriddenUserPreferencesDidChange: "css-manager-overriden-user-preferences-did-change",
+    OverriddenUserPreferencesDidChange: "css-manager-overridden-user-preferences-did-change",
 };
 
 WI.CSSManager.UserPreferenceDefaultValue = "System";
