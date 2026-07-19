@@ -93,6 +93,8 @@ void InspectorNodeFinder::searchUsingDOMTreeTraversal(Node& parentNode)
                 m_results.add(node);
             if (RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(*node))
                 performSearch(protect(frameOwner->contentDocument()).get());
+            if (RefPtr shadowRoot = downcast<Element>(*node).shadowRoot())
+                performSearch(shadowRoot.get());
             break;
         default:
             break;
