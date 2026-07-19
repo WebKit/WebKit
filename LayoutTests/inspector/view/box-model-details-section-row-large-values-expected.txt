@@ -1,0 +1,9 @@
+Testing compact display of large values in BoxModelDetailsSectionRow.
+
+== Running test suite: BoxModelDetailsSectionRow.LargeValues
+-- Running test case: BoxModelDetailsSectionRow.LargeBorderRadius
+PASS: A large value should use compact scientific notation.
+PASS: The tooltip should preserve the exact computed value.
+-- Running test case: BoxModelDetailsSectionRow.RegularBorderRadius
+PASS: A regular fractional value should retain the existing rounding behavior.
+PASS: The tooltip should preserve the unrounded value.

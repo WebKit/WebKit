@@ -155,17 +155,31 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
 
         function createValueElement(type, value, name, propertyName)
         {
-            // Check if the value is a float and whether it should be rounded.
-            let floatValue = parseFloat(value);
-            let shouldRoundValue = !isNaN(floatValue) && (floatValue % 1 !== 0);
+            const maximumValueLength = 10;
 
-            if (isNaN(floatValue))
-                value = figureDash;
+            let originalValue = String(value);
+            let floatValue = parseFloat(originalValue);
+            let displayValue = figureDash;
+
+            if (!isNaN(floatValue)) {
+                displayValue = originalValue;
+
+                // Round fractional values to two decimal places.
+                if (floatValue % 1 !== 0)
+                    displayValue = "~" + Math.round(floatValue * 100) / 100;
+
+                // Large computed values can contain dozens of digits and break the box model preview.
+                // Keep the exact value available through the tooltip and while editing.
+                if (displayValue.length > maximumValueLength) {
+                    let exponentialValue = floatValue.toExponential(1).replace(/\.0e/, "e");
+                    displayValue = "~" + exponentialValue;
+                }
+            }
 
             let element = document.createElement(type);
-            element.textContent = shouldRoundValue ? ("~" + Math.round(floatValue * 100) / 100) : value;
-            if (shouldRoundValue)
-                element.title = value;
+            element.textContent = displayValue;
+            if (displayValue !== originalValue && displayValue !== figureDash)
+                element.title = originalValue;
             element.addEventListener("dblclick", this._startEditing.bind(this, element, name, propertyName, style), false);
             return element;
         }

@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    const hugeBorderRadius = "340282001837565597733306976381245063168";
+
+    function createComputedStyle(borderRadius)
+    {
+        let values = new Map([
+            ["display", "block"],
+            ["position", "static"],
+            ["box-sizing", "content-box"],
+            ["width", "100px"],
+            ["height", "100px"],
+        ]);
+
+        for (let side of ["top", "right", "bottom", "left"]) {
+            values.set(`padding-${side}`, "0px");
+            values.set(`border-${side}-width`, "0px");
+            values.set(`margin-${side}`, "0px");
+        }
+
+        for (let corner of ["top-left", "top-right", "bottom-right", "bottom-left"])
+            values.set(`border-${corner}-radius`, corner === "top-left" ? `${borderRadius}px` : "0px");
+
+        return {
+            enabledProperties: [{}],
+            propertyForName(name) {
+                let value = values.get(name);
+                return value === undefined ? null : {value};
+            },
+        };
+    }
+
+    function createRow(borderRadius)
+    {
+        let row = new WI.BoxModelDetailsSectionRow;
+        row._nodeStyles = {computedStyle: createComputedStyle(borderRadius)};
+        row._updateMetrics();
+        return row;
+    }
+
+    let suite = InspectorTest.createSyncSuite("BoxModelDetailsSectionRow.LargeValues");
+
+    suite.addTestCase({
+        name: "BoxModelDetailsSectionRow.LargeBorderRadius",
+        test() {
+            let row = createRow(hugeBorderRadius);
+            let valueElement = row.element.querySelector(".box.border > .top-left");
+
+            InspectorTest.expectEqual(valueElement.textContent, "~3.4e+38", "A large value should use compact scientific notation.");
+            InspectorTest.expectEqual(valueElement.title, hugeBorderRadius, "The tooltip should preserve the exact computed value.");
+            return true;
+        },
+    });
+
+    suite.addTestCase({
+        name: "BoxModelDetailsSectionRow.RegularBorderRadius",
+        test() {
+            let row = createRow("12.3456");
+            let valueElement = row.element.querySelector(".box.border > .top-left");
+
+            InspectorTest.expectEqual(valueElement.textContent, "~12.35", "A regular fractional value should retain the existing rounding behavior.");
+            InspectorTest.expectEqual(valueElement.title, "12.3456", "The tooltip should preserve the unrounded value.");
+            return true;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Testing compact display of large values in BoxModelDetailsSectionRow.</p>
+</body>
+</html>
