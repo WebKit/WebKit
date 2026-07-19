@@ -634,13 +634,13 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
     _rangeAfterPropertyAtIndex(index)
     {
         if (index < 0)
-            return this._styleSheetTextRange.collapseToStart();
+            return this._styleSheetTextRange?.collapseToStart() || null;
 
         if (index >= this.visibleProperties.length)
-            return this._styleSheetTextRange.collapseToEnd();
+            return this._styleSheetTextRange?.collapseToEnd() || null;
 
         let property = this.visibleProperties[index];
-        return property.styleSheetTextRange.collapseToEnd();
+        return property.styleSheetTextRange?.collapseToEnd() || null;
     }
 };
 

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("AddCSSPropertyWithoutSourceRange");
+
+    suite.addTestCase({
+        name: "AddCSSPropertyWithoutSourceRange",
+        description: "newBlankProperty should not throw for a style that has no source range, such as a user agent rule.",
+        async test() {
+            let documentNode = await WI.domManager.requestDocument();
+            let nodeId = await documentNode.querySelector("#target");
+            let domNode = WI.domManager.nodeForId(nodeId);
+            let nodeStyles = WI.cssManager.stylesForNode(domNode);
+            await nodeStyles.refreshIfNeeded();
+
+            let style = nodeStyles.matchedRules.map((rule) => rule.style).find((rule) => !rule.styleSheetTextRange);
+            InspectorTest.expectThat(style, "Should have a matched style with no source range.");
+            if (!style)
+                return;
+
+            for (let index of [0, 1, 2]) {
+                let threw = false;
+                let property = null;
+                try {
+                    property = style.newBlankProperty(index);
+                } catch (exception) {
+                    threw = true;
+                    InspectorTest.log(`newBlankProperty(${index}) threw: ${exception}`);
+                }
+                InspectorTest.expectThat(!threw, `newBlankProperty(${index}) should not throw for a style with no source range.`);
+                InspectorTest.expectThat(property, `newBlankProperty(${index}) should return a property.`);
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Testing that adding a CSS property to a style with no source range does not throw.</p>
+<div id="target"></div>
+</body>
+</html>
