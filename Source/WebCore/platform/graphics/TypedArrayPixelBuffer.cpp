@@ -108,8 +108,7 @@ RefPtr<TypedArrayPixelBuffer<pixelBufferType, JSCTypedArrayAdaptor, pixelFormats
 
 template<PixelBuffer::Type pixelBufferType, typename JSCTypedArrayAdaptor, PixelFormat... pixelFormats>
 TypedArrayPixelBuffer<pixelBufferType, JSCTypedArrayAdaptor, pixelFormats...>::TypedArrayPixelBuffer(const PixelBufferFormat& format, const IntSize& size, Ref<JSCTypedArray>&& data)
-    : PixelBuffer(format, size, data->mutableSpan())
-    , m_data(WTF::move(data))
+    : ArrayPixelBuffer(format, size, WTF::move(data))
 {
 }
 

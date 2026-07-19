@@ -57,7 +57,7 @@ static ImageDataPixelFormat NODELETE computePixelFormat(std::optional<ImageDataS
 Ref<ImageData> ImageData::create(Ref<ByteArrayPixelBuffer>&& pixelBuffer, std::optional<ImageDataPixelFormat> overridingPixelFormat)
 {
     auto colorSpace = toPredefinedColorSpace(pixelBuffer->format().colorSpace);
-    return adoptRef(*new ImageData(pixelBuffer->size(), pixelBuffer->takeData(), *colorSpace, overridingPixelFormat));
+    return adoptRef(*new ImageData(pixelBuffer->size(), WTF::move(pixelBuffer.get()).takeData(), *colorSpace, overridingPixelFormat));
 }
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)

@@ -3073,6 +3073,7 @@
 		72FD88D1295E3C40006FACDC /* MenuListPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 72FD88D0295D56E2006FACDC /* MenuListPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		733212D86D36C78C04928DF8 /* UnifiedSource57-header-RenderStyleGetters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EAFEE1BA6EC72445F6539574 /* UnifiedSource57-header-RenderStyleGetters.cpp */; };
 		7410760E2D6BDCA9000EC9C0 /* PlatformDynamicRangeLimitCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 7410760D2D6BDB77000EC9C0 /* PlatformDynamicRangeLimitCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		74A860E93006046D00A943A1 /* ArrayPixelBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 74A860E63006046D00A943A1 /* ArrayPixelBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		74C2F53E29AC9B0B006C5F97 /* ApplePayDeferredPaymentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 74C2F53D29AC9B0A006C5F97 /* ApplePayDeferredPaymentRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		74DB626230009D7000996038 /* TypedArrayPixelBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 74DB625F30009D7000996038 /* TypedArrayPixelBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		74FAB9C02F7B956700DBDF82 /* TextShapingResultAndDisplayList.h in Headers */ = {isa = PBXBuildFile; fileRef = 74FAB9BF2F7B956700DBDF82 /* TextShapingResultAndDisplayList.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14705,6 +14706,8 @@
 		73C6E6F635A4B4C36B107EAE /* UnifiedSource54-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource54-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
 		7410760D2D6BDB77000EC9C0 /* PlatformDynamicRangeLimitCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformDynamicRangeLimitCocoa.h; sourceTree = "<group>"; };
 		746357992D7F91B200AFA625 /* PlatformDynamicRangeLimitCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformDynamicRangeLimitCocoa.mm; sourceTree = "<group>"; };
+		74A860E63006046D00A943A1 /* ArrayPixelBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArrayPixelBuffer.h; sourceTree = "<group>"; };
+		74A860E73006046D00A943A1 /* ArrayPixelBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayPixelBuffer.cpp; sourceTree = "<group>"; };
 		74C2F53D29AC9B0A006C5F97 /* ApplePayDeferredPaymentRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePayDeferredPaymentRequest.h; sourceTree = "<group>"; };
 		74C2F53F29AC9B1C006C5F97 /* ApplePayDeferredPaymentRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ApplePayDeferredPaymentRequest.idl; sourceTree = "<group>"; };
 		74CE9900299503A200096552 /* attachmentElementShadow.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = attachmentElementShadow.css; sourceTree = "<group>"; };
@@ -36602,6 +36605,8 @@
 				7299BC6423D686A600CC6883 /* AlphaPremultiplication.h */,
 				0F7E475125EEB79A0013F909 /* AnimationFrameRate.cpp */,
 				722A815C238FD50500C00583 /* AnimationFrameRate.h */,
+				74A860E73006046D00A943A1 /* ArrayPixelBuffer.cpp */,
+				74A860E63006046D00A943A1 /* ArrayPixelBuffer.h */,
 				BEF29EE91715DD0900C4B4C9 /* AudioTrackPrivate.h */,
 				CD1F9B152702360E00617EB6 /* AudioTrackPrivateClient.h */,
 				5128B71E2E4B221B00975E0A /* AudioVideoRenderer.h */,
@@ -44111,6 +44116,7 @@
 				512DD8F80D91E6AF000F89EE /* ArchiveResourceCollection.h in Headers */,
 				42DBC44C2EB97E1B001D7310 /* AriaNotifyOptions.h in Headers */,
 				716C4C3627EB60C900531467 /* ARKitBadgeSystemImage.h in Headers */,
+				74A860E93006046D00A943A1 /* ArrayPixelBuffer.h in Headers */,
 				FD5686CA13AC180200B69C68 /* AsyncAudioDecoder.h in Headers */,
 				E1CDE9221501916900862CC5 /* AsyncFileStream.h in Headers */,
 				01D22A1F2CFD826C002DC857 /* AsyncNodeDeletionQueue.h in Headers */,

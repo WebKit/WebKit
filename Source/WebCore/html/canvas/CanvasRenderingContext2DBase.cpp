@@ -2593,10 +2593,11 @@ RefPtr<ImageData> CanvasRenderingContext2DBase::makeImageDataIfContentsCached(co
         return nullptr;
 
     auto size = pixelBuffer->size();
-    auto data = pixelBuffer->takeData();
+    auto format = pixelBuffer->format();
+    auto data = WTF::move(pixelBuffer.get()).takeData();
     unsigned bytesPerRow = static_cast<unsigned>(size.width()) * 4u;
     ConstPixelBufferConversionView source {
-        .format = pixelBuffer->format(),
+        .format = format,
         .bytesPerRow = bytesPerRow,
         .rows = data->span(),
     };

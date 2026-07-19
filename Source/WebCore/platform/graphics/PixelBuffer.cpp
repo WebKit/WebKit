@@ -97,8 +97,6 @@ PixelBuffer::PixelBuffer(const PixelBufferFormat& format, const IntSize& size, s
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(computeBufferSize(format.pixelFormat, size).value() <= bytes.size());
 }
 
-PixelBuffer::~PixelBuffer() = default;
-
 bool PixelBuffer::setRange(std::span<const uint8_t> data, size_t byteOffset)
 {
     if (!isSumSmallerThanOrEqual(byteOffset, data.size(), m_bytes.size()))

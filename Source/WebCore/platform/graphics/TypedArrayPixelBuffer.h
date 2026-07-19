@@ -27,12 +27,12 @@
 
 #include <JavaScriptCore/GenericTypedArrayView.h>
 #include <JavaScriptCore/TypedArrayAdaptors.h>
-#include <WebCore/PixelBuffer.h>
+#include <WebCore/ArrayPixelBuffer.h>
 
 namespace WebCore {
 
 template<PixelBuffer::Type pixelBufferType, typename JSCTypedArrayAdaptor, PixelFormat... pixelFormats>
-class TypedArrayPixelBuffer final : public PixelBuffer {
+class TypedArrayPixelBuffer final : public ArrayPixelBuffer {
 public:
     using JSCTypedArray = JSC::GenericTypedArrayView<JSCTypedArrayAdaptor>;
     using ComponentType = typename JSCTypedArrayAdaptor::Type;
@@ -43,16 +43,14 @@ public:
     static RefPtr<TypedArrayPixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
     static RefPtr<TypedArrayPixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBuffer>&&);
 
-    JSCTypedArray& data() const LIFETIME_BOUND { return m_data.get(); }
-    Ref<JSCTypedArray>&& takeData() { return WTF::move(m_data); }
+    JSCTypedArray& data() const LIFETIME_BOUND { return uncheckedDowncast<JSCTypedArray>(ArrayPixelBuffer::data()); }
+    Ref<JSCTypedArray> takeData() && { return adoptRef(uncheckedDowncast<JSCTypedArray>(WTF::move(*this).ArrayPixelBuffer::takeData().leakRef())); }
 
     Type type() const final { return pixelBufferType; }
     RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const final;
 
 private:
     TypedArrayPixelBuffer(const PixelBufferFormat&, const IntSize&, Ref<JSCTypedArray>&&);
-
-    Ref<JSCTypedArray> m_data;
 };
 
 using ByteArrayPixelBuffer = TypedArrayPixelBuffer<WebCore::PixelBuffer::Type::ByteArray, JSC::Uint8ClampedAdaptor, PixelFormat::RGBA8, PixelFormat::BGRA8>;

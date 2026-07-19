@@ -52,7 +52,7 @@ public:
 
     WEBCORE_EXPORT static bool NODELETE supportedPixelFormat(PixelFormat);
 
-    WEBCORE_EXPORT virtual ~PixelBuffer();
+    virtual ~PixelBuffer() = default;
 
     const PixelBufferFormat& format() const LIFETIME_BOUND { return m_format; }
     const IntSize& size() const LIFETIME_BOUND { return m_size; }
@@ -66,7 +66,7 @@ public:
 #endif
         Other
     };
-    virtual Type type() const { return Type::Other; }
+    virtual Type type() const = 0;
     virtual RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const = 0;
 
     bool setRange(std::span<const uint8_t> data, size_t byteOffset);
@@ -79,10 +79,11 @@ public:
 protected:
     WEBCORE_EXPORT PixelBuffer(const PixelBufferFormat&, const IntSize&, std::span<uint8_t> bytes);
 
-    PixelBufferFormat m_format;
-    IntSize m_size;
+private:
+    const PixelBufferFormat m_format;
+    const IntSize m_size;
 
-    std::span<uint8_t> m_bytes;
+    const std::span<uint8_t> m_bytes;
 };
 
 // Type to use for functions that use the PixelBuffer data as source during the call, but do not store a reference to the object or modify the data.
@@ -116,9 +117,9 @@ private:
     {
     }
 
-    PixelBufferFormat m_format;
-    IntSize m_size;
-    std::span<const uint8_t> m_bytes;
+    const PixelBufferFormat m_format;
+    const IntSize m_size;
+    const std::span<const uint8_t> m_bytes;
 };
 
 constexpr uint32_t PixelBuffer::bytesPerPixelComponent(PixelFormat pixelFormat)

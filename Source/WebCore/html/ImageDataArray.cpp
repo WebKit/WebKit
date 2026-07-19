@@ -29,18 +29,9 @@
 #include "config.h"
 #include "ImageDataArray.h"
 
-#include <JavaScriptCore/Float16Array.h>
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
-#include <JavaScriptCore/Uint8ClampedArray.h>
+#include <WebCore/ArrayPixelBuffer.h>
 #include <wtf/StdLibExtras.h>
-
-// Needed for `downcast` below.
-SPECIALIZE_TYPE_TRAITS_BEGIN(JSC::Uint8ClampedArray)
-    static bool NODELETE isType(const JSC::ArrayBufferView& arrayBufferView) { return arrayBufferView.getType() == JSC::TypeUint8Clamped; }
-SPECIALIZE_TYPE_TRAITS_END()
-SPECIALIZE_TYPE_TRAITS_BEGIN(JSC::Float16Array)
-    static bool NODELETE isType(const JSC::ArrayBufferView& arrayBufferView) { return arrayBufferView.getType() == JSC::TypeFloat16; }
-SPECIALIZE_TYPE_TRAITS_END()
 
 namespace WebCore {
 
