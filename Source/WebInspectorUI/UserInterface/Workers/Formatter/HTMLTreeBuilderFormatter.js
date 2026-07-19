@@ -179,13 +179,13 @@ HTMLTreeBuilderFormatter = class HTMLTreeBuilderFormatter
         case "tbody": {
             let didClose = this._implicitlyCloseTagNamesInsideParentTagNames(["thead"], ["table"]);
             if (!didClose)
-                didClose = this._implicitlyCloseTagNamesInsideParentTagNames(["tr"], ["table"]);
+                this._implicitlyCloseTagNamesInsideParentTagNames(["tr"], ["table"]);
             break;
         }
         case "tfoot": {
             let didClose = this._implicitlyCloseTagNamesInsideParentTagNames(["tbody"], ["table"]);
             if (!didClose)
-                didClose = this._implicitlyCloseTagNamesInsideParentTagNames(["tr"], ["table"]);
+                this._implicitlyCloseTagNamesInsideParentTagNames(["tr"], ["table"]);
             break;
         }
         case "colgroup":
