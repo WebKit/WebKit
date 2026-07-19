@@ -104,7 +104,7 @@ FlexLayout::Result FlexLayout::layout(FlexLayoutItems& flexItems)
             return { };
 
         auto totalGapBetweenLines = flexLines.ranges.size() > 1 ? flexLayoutUtils().computeGap(FlexLayoutUtils::GapType::BetweenLines) * (flexLines.ranges.size() - 1) : 0_lu;
-        return (crossAxisOffset - contentStart) + totalGapBetweenLines + flexLayoutUtils().crossAxisScrollbarExtent();
+        return (crossAxisOffset - contentStart) + totalGapBetweenLines + m_constraints.crossAxisScrollbarExtent;
     };
     auto flexContentBlockExtent = computeFlexLineCrossPositions();
 
@@ -700,7 +700,7 @@ void FlexLayout::computeFlexItemRects(const FlexLines& flexLines, FlexLayoutItem
                 // y, so using the y axis for a column cross axis extent is correct.
                 location.setY(crossExtent - flexItemsCrossSizeList[flexItemIndex] - location.y());
                 if (!m_constraints.style.writingMode().isHorizontal())
-                    location.move(LayoutSize(0, -m_flexBox.horizontalScrollbarHeight()));
+                    location.move(LayoutSize(0, -m_constraints.crossAxisScrollbarExtent));
             }
             setFlexItemGeometry(flexItems[flexItemIndex], location);
         }
@@ -715,7 +715,7 @@ LayoutUnit FlexLayout::placeFlexItems(LayoutUnit crossAxisOffset, std::span<Flex
     LayoutUnit mainAxisOffset = m_constraints.flowAwareBorderInline.first + m_constraints.flowAwarePaddingInline.first;
     mainAxisOffset += FlexLayoutUtils::initialJustifyContentOffset(m_constraints.style, availableFreeSpace, flexLayoutItems.size(), m_constraints.isColumnOrRowReverse);
     if (m_constraints.style.flexDirection() == FlexDirection::RowReverse)
-        mainAxisOffset += m_constraints.isHorizontalFlow ? m_flexBox.verticalScrollbarWidth() : m_flexBox.horizontalScrollbarHeight();
+        mainAxisOffset += m_constraints.mainAxisScrollbarExtent;
 
     if (availableFreeSpace < 0) {
         auto resolvedJustifyContent = m_constraints.style.justifyContent().resolve(FlexLayoutUtils::contentAlignmentNormalBehavior());
@@ -744,7 +744,7 @@ LayoutUnit FlexLayout::placeFlexItems(LayoutUnit crossAxisOffset, std::span<Flex
         LayoutUnit flexItemMainExtent = flexLayoutUtils().mainAxisExtentForFlexItem(flexItem);
         // In an RTL column situation, this will apply the margin-right/margin-end
         // on the left. This will be fixed later by the rtl-column flip in computeFlexItemRects.
-        auto leadingScrollbarSize = m_constraints.style.writingMode().isInlineFlipped() && m_constraints.style.writingMode().isVertical() ? flexLayoutUtils().mainAxisScrollbarExtent() : LayoutUnit();
+        auto leadingScrollbarSize = m_constraints.style.writingMode().isInlineFlipped() && m_constraints.style.writingMode().isVertical() ? m_constraints.mainAxisScrollbarExtent : LayoutUnit();
         LayoutPoint location(shouldFlipMainAxis ? totalMainExtent - mainAxisOffset - flexItemMainExtent - leadingScrollbarSize : mainAxisOffset, crossAxisOffset + flexLayoutUtils().flowAwareMarginBeforeForFlexItem(flexItem));
         positions[i] = location;
         setFlexItemGeometry(flexLayoutItems[i], positions[i]);
@@ -763,7 +763,7 @@ LayoutUnit FlexLayout::placeFlexItems(LayoutUnit crossAxisOffset, std::span<Flex
     // 9.6 finalize instead of growing the container here. Row flow builds its block extent elsewhere, so return 0.
     if (!m_constraints.isColumnFlow)
         return { };
-    return mainAxisOffset - (m_constraints.flowAwareBorderInline.first + m_constraints.flowAwarePaddingInline.first) + m_flexBox.scrollbarLogicalHeight();
+    return mainAxisOffset - (m_constraints.flowAwareBorderInline.first + m_constraints.flowAwarePaddingInline.first) + m_constraints.mainAxisScrollbarExtent;
 }
 
 void FlexLayout::reverseColumnLinesFromContainerMainEndIfNeeded(const FlexLines& flexLines, FlexLayoutItems& flexItems, const Vector<LayoutUnit>& flexItemsMainSizeList, Vector<LayoutPoint>& flexItemsPositionList, const Vector<LayoutUnit>& flexLinesCrossPositionList, LayoutUnit containerMainBlockContentExtent, LayoutUnit containerMainBorderBoxExtent)
@@ -794,7 +794,7 @@ void FlexLayout::layoutColumnReverse(std::span<FlexLayoutItem> flexLayoutItems, 
     // 9.5 main-axis alignment places the items).
     LayoutUnit mainAxisOffset = columnMainBorderBoxExtent - m_constraints.flowAwareBorderInline.second - m_constraints.flowAwarePaddingInline.second;
     mainAxisOffset -= FlexLayoutUtils::initialJustifyContentOffset(m_constraints.style, availableFreeSpace, flexLayoutItems.size(), m_constraints.isColumnOrRowReverse);
-    mainAxisOffset -= m_constraints.isHorizontalFlow ? m_flexBox.verticalScrollbarWidth() : m_flexBox.horizontalScrollbarHeight();
+    mainAxisOffset -= m_constraints.mainAxisScrollbarExtent;
 
     auto distribution = m_constraints.style.justifyContent().resolve(FlexLayoutUtils::contentAlignmentNormalBehavior()).distribution();
     auto gapBetweenItems = flexLayoutUtils().computeGap(FlexLayoutUtils::GapType::BetweenItems);

@@ -102,6 +102,11 @@ struct FlexLayoutConstraints {
     // resolves against (in column flow the cross axis is the inline axis). Fixed before the algorithm runs, like the
     // main-axis sizes above; consumed only in the column aspect-ratio path.
     LayoutUnit crossAxisSizeForLengthResolution;
+    // The container's scrollbar thickness along the main and cross axes, used while placing items and sizing the
+    // container. Constant during layout: the container's scrollbars are established before flex layout and only
+    // re-evaluated afterwards. (Legacy is the sole handler of scroll-container flex boxes; FFC excludes them.)
+    LayoutUnit mainAxisScrollbarExtent;
+    LayoutUnit crossAxisScrollbarExtent;
 };
 
 // The flex container's used size once 9.6 (#15) has finalized its logical height, so FlexLayout takes these
