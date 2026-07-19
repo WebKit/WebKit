@@ -397,7 +397,8 @@ static inline bool rendererObscuresBackground(const RenderElement& rootElement)
     if (!rendererForBackground)
         return false;
 
-    if (rendererForBackground->style().backgroundLayers().usedFirst().clip() == FillBox::Text)
+    if (rendererForBackground->style().backgroundLayers().usedFirst().clip() == FillBox::Text
+        || rendererForBackground->style().backgroundLayers().usedFirst().clip() == FillBox::BorderAreaText)
         return false;
 
     return true;

@@ -1623,7 +1623,7 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, LayoutPoi
 
     bool hasBackgroundClipText = false;
     for (auto& backgroundLayer : style.backgroundLayers().usedValues()) {
-        if (backgroundLayer.clip() == FillBox::Text)
+        if (backgroundLayer.clip() == FillBox::Text || backgroundLayer.clip() == FillBox::BorderAreaText)
             hasBackgroundClipText = true;
     }
 

@@ -3530,7 +3530,8 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer(PaintedContentsInfo& 
     if (contentsInfo.paintsBoxDecorations() || contentsInfo.paintsContent())
         return false;
 
-    if (renderer().style().backgroundLayers().usedFirst().clip() == FillBox::Text)
+    if (renderer().style().backgroundLayers().usedFirst().clip() == FillBox::Text
+        || renderer().style().backgroundLayers().usedFirst().clip() == FillBox::BorderAreaText)
         return false;
     
     if (renderer().isDocumentElementRenderer() && m_owningLayer.isolatesCompositedBlending())

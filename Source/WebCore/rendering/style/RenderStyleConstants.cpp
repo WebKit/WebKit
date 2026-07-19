@@ -551,6 +551,7 @@ TextStream& operator<<(TextStream& ts, FillBox fill)
     case FillBox::ContentBox: ts << "content-box"_s; break;
     case FillBox::BorderArea: ts << "border-area"_s; break;
     case FillBox::Text: ts << "text"_s; break;
+    case FillBox::BorderAreaText: ts << "border-area text"_s; break;
     case FillBox::NoClip: ts << "no-clip"_s; break;
     }
     return ts;

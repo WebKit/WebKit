@@ -472,6 +472,57 @@ RefPtr<CSSValue> consumeRepeatStyle(CSSParserTokenRange& range, CSS::PropertyPar
     return CSSBackgroundRepeatValue::create(*value1, *value2);
 }
 
+// MARK: - Background Clip
+
+RefPtr<CSSValue> consumeSingleBackgroundClipValue(CSSParserTokenRange& range)
+{
+    // <single-background-clip> = <visual-box> | [ border-area || text ] | -webkit-text
+    // https://www.w3.org/TR/css-backgrounds-4/#background-clip
+    auto keyword = range.peek().id();
+
+    if (keyword == CSSValueBorderArea) {
+        range.consumeIncludingWhitespace();
+        if (range.peek().id() == CSSValueText) {
+            range.consumeIncludingWhitespace();
+            return CSSValuePair::createNoncoalescing(
+                CSSKeywordValue::create(CSSValueBorderArea),
+                CSSKeywordValue::create(CSSValueText));
+        }
+        return CSSKeywordValue::create(CSSValueBorderArea);
+    }
+
+    if (keyword == CSSValueText) {
+        range.consumeIncludingWhitespace();
+        if (range.peek().id() == CSSValueBorderArea) {
+            range.consumeIncludingWhitespace();
+            return CSSValuePair::createNoncoalescing(
+                CSSKeywordValue::create(CSSValueBorderArea),
+                CSSKeywordValue::create(CSSValueText));
+        }
+        return CSSKeywordValue::create(CSSValueText);
+    }
+
+    switch (keyword) {
+    case CSSValueBorderBox:
+    case CSSValuePaddingBox:
+    case CSSValueContentBox:
+    case CSSValueWebkitText:
+        range.consumeIncludingWhitespace();
+        return CSSKeywordValue::create(keyword);
+    default:
+        return nullptr;
+    }
+}
+
+RefPtr<CSSValue> consumeBackgroundClipLonghand(CSSParserTokenRange& range, CSS::PropertyParserState&)
+{
+    // <'background-clip'> = <single-background-clip>#
+    // https://www.w3.org/TR/css-backgrounds-4/#background-clip
+    return consumeListSeparatedBy<',', ListBounds::minimumOf(1), ListOptimization::SingleValue>(range, [](CSSParserTokenRange& range) {
+        return consumeSingleBackgroundClipValue(range);
+    });
+}
+
 // MARK: - Box Shadows
 
 static std::optional<CSS::BoxShadow> consumeSingleUnresolvedBoxShadow(CSSParserTokenRange& range, CSS::PropertyParserState& state, bool isWebkitBoxShadow)
