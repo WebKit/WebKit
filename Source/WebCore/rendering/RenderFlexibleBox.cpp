@@ -1117,12 +1117,12 @@ LayoutUnit RenderFlexibleBox::mainAxisAvailableSpace()
 FlexContainerUsedExtents RenderFlexibleBox::updateFlexContainerLogicalHeight(LayoutUnit flexContentBlockExtent)
 {
     // Resolve the container's logical height to the largest of: what is already set, the block-axis extent FlexLayout
-    // built from its line sizes (row flow; column flow already set its main size while placing the items), and the
-    // empty-line minimum for a container that establishes a line with no in-flow items (e.g. all children are out of
-    // flow). The empty-line minimum is a block-axis floor, so it is folded into the block-axis max here rather than
-    // compared against the physical borderBoxHeight() (which is the inline extent in a vertical writing mode). Then
-    // resolve against the container's own specified/min/max height and box-sizing, and return the used cross extents
-    // (line positioning / item cross sizing / rtl-column flip) and block extents (column re-resolve / column-reverse
+    // built from its line sizes (row flow) or its column lines' main content extent (column flow), and the empty-line
+    // minimum for a container that establishes a line with no in-flow items (e.g. all children are out of flow). The
+    // empty-line minimum is a block-axis floor, so it is folded into the block-axis max here rather than compared
+    // against the physical borderBoxHeight() (which is the inline extent in a vertical writing mode). Then resolve
+    // against the container's own specified/min/max height and box-sizing, and return the used cross extents (line
+    // positioning / item cross sizing / rtl-column flip) and block extents (column re-resolve / column-reverse
     // placement) so FlexLayout takes them as values rather than reading them back off the container.
     auto minimumHeightForEmptyLine = hasLineIfEmpty() ? borderAndPaddingLogicalHeight() + lineHeight() + scrollbarLogicalHeight() : 0_lu;
     setLogicalHeight(std::max(minimumHeightForEmptyLine, std::max(logicalHeight(), borderAndPaddingLogicalHeight() + flexContentBlockExtent)));

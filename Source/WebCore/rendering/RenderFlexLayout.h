@@ -176,14 +176,22 @@ private:
     void layoutFlexItems(std::span<FlexLayoutItem>, std::span<const LayoutUnit> flexItemsMainSizeList);
     Vector<LayoutUnit> hypotheticalCrossSizeForFlexItems(const FlexLayoutItems&);
     Vector<LayoutUnit> crossSizeForFlexLines(const FlexLines&, const FlexLayoutItems&, const Vector<LayoutUnit>& flexItemsHypotheticalCrossSizeList);
-    Vector<LayoutPoint> handleMainAxisAlignment(const FlexLines&, FlexLayoutItems&, const Vector<LayoutUnit>& flexItemsMainSizeList, const Vector<LayoutUnit>& flexLinesCrossPositionList);
+    // What 9.5 (#12) main-axis alignment produces: each item's in-container position, and (column flow only) the
+    // largest line's main-axis content extent, which the 9.6 finalize turns into the container's logical height.
+    struct MainAxisAlignment {
+        Vector<LayoutPoint> positions;
+        LayoutUnit columnMainContentExtent;
+    };
+    MainAxisAlignment handleMainAxisAlignment(const FlexLines&, FlexLayoutItems&, const Vector<LayoutUnit>& flexItemsMainSizeList, const Vector<LayoutUnit>& flexLinesCrossPositionList);
     Vector<LayoutUnit> computeCrossSizeForFlexItems(const FlexLines&, FlexLayoutItems&, const Vector<LayoutUnit>& flexLinesCrossSizeList, LayoutUnit crossContentExtent);
     void handleCrossAxisAlignmentForFlexLines(const FlexLines&, Vector<LayoutPoint>& flexItemsPositionList, Vector<LayoutUnit>& flexLinesCrossPositionList, Vector<LayoutUnit>& flexLinesCrossSizeList, LayoutUnit crossContentExtent);
     void handleCrossAxisAlignmentForFlexItems(const FlexLines&, FlexLayoutItems&, const Vector<LayoutUnit>& flexItemsCrossSizeList, const Vector<LayoutUnit>& flexLinesCrossSizeList, Vector<LayoutPoint>& flexItemsPositionList);
     void performBaselineAlignment(WTF::Range<size_t> lineRange, FlexLayoutItems&, Vector<LayoutUnit>& flexItemsCrossOffsetList, const Vector<LayoutUnit>& flexItemsCrossSizeList, LayoutUnit lineCrossAxisExtent);
     void computeFlexItemRects(const FlexLines&, FlexLayoutItems&, const Vector<LayoutPoint>& flexItemsPositionList, const Vector<LayoutUnit>& flexLinesCrossPositionList, const Vector<LayoutUnit>& flexLinesCrossSizeList, const Vector<LayoutUnit>& flexItemsCrossSizeList, LayoutUnit crossAxisStartEdge, LayoutUnit crossContentExtent, LayoutUnit crossExtent);
 
-    void placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayoutItem>, std::span<LayoutPoint> positions, LayoutUnit availableFreeSpace);
+    // Places a flex line's items along the main axis and writes their positions; returns the line's main-axis content
+    // extent for column flow (0 for row flow, which builds its block extent elsewhere).
+    LayoutUnit placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayoutItem>, std::span<LayoutPoint> positions, LayoutUnit availableFreeSpace);
     void reverseColumnLinesFromContainerMainEndIfNeeded(const FlexLines&, FlexLayoutItems&, const Vector<LayoutUnit>& flexItemsMainSizeList, Vector<LayoutPoint>& flexItemsPositionList, const Vector<LayoutUnit>& flexLinesCrossPositionList, LayoutUnit containerMainBlockContentExtent, LayoutUnit containerMainBorderBoxExtent);
     void layoutColumnReverse(std::span<FlexLayoutItem>, std::span<LayoutPoint> positions, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit columnMainBorderBoxExtent);
     void setFlexItemCountsForFirstAndLastLine(const FlexLines&);

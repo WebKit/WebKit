@@ -114,12 +114,13 @@ FlexLayout::Result FlexLayout::layout(FlexLayoutItems& flexItems)
     Vector<LayoutUnit> flexItemsCrossSizeList;
     auto performContentAlignment = [&] {
         // 9.5. (#12) Main-Axis Alignment.
-        flexItemsPositionList = handleMainAxisAlignment(flexLines, flexItems, flexItemsMainSizeList, flexLinesCrossPositionList);
+        auto mainAxisAlignment = handleMainAxisAlignment(flexLines, flexItems, flexItemsMainSizeList, flexLinesCrossPositionList);
+        flexItemsPositionList = WTF::move(mainAxisAlignment.positions);
         setFlexItemCountsForFirstAndLastLine(flexLines);
         // 9.6. (#15) Finalize the container's logical height from the block extent computeFlexLineCrossPositions built
-        // (row flow) or the main size set while placing the items (column flow): apply the empty-line minimum, then
-        // resolve it against the container's own specified/min/max height and box-sizing.
-        flexContainerUsedExtents = m_flexBox.updateFlexContainerLogicalHeight(flexContentBlockExtent);
+        // (row flow) or the main content extent handleMainAxisAlignment built while placing the items (column flow):
+        // apply the empty-line minimum, then resolve it against the container's own specified/min/max height and box-sizing.
+        flexContainerUsedExtents = m_flexBox.updateFlexContainerLogicalHeight(m_constraints.isColumnFlow ? mainAxisAlignment.columnMainContentExtent : flexContentBlockExtent);
         // Multi-line column flex only knows its main size now, so re-resolve the flexible lengths of any lines that were left short.
         distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(flexLines, flexItems, flexBaseAndHypotheticalMainSizeList.span(), flexItemsMainSizeList, flexItemsPositionList, flexLinesCrossPositionList, flexContainerUsedExtents.blockContentBox);
         // 9.5. (#12) For column-reverse, reposition each line's items from the finalized container main-axis end.
@@ -490,9 +491,10 @@ Vector<LayoutUnit> FlexLayout::crossSizeForFlexLines(const FlexLines& flexLines,
     return flexLinesCrossSizeList;
 }
 
-Vector<LayoutPoint> FlexLayout::handleMainAxisAlignment(const FlexLines& flexLines, FlexLayoutItems& flexItems, const Vector<LayoutUnit>& flexItemsMainSizeList, const Vector<LayoutUnit>& flexLinesCrossPositionList)
+FlexLayout::MainAxisAlignment FlexLayout::handleMainAxisAlignment(const FlexLines& flexLines, FlexLayoutItems& flexItems, const Vector<LayoutUnit>& flexItemsMainSizeList, const Vector<LayoutUnit>& flexLinesCrossPositionList)
 {
     Vector<LayoutPoint> flexItemsPositionList(flexItems.size());
+    LayoutUnit columnMainContentExtent;
     for (size_t lineIndex = 0; lineIndex < flexLines.ranges.size(); ++lineIndex) {
         auto lineRange = flexLines.ranges[lineIndex];
         auto containerMainInnerSize = m_constraints.isColumnFlow ? flexLayoutUtils().columnInnerMainSize(flexLines.hypotheticalMainSizes[lineIndex]) : m_constraints.mainAxisAvailableSpace;
@@ -506,9 +508,9 @@ Vector<LayoutPoint> FlexLayout::handleMainAxisAlignment(const FlexLines& flexLin
             remainingFreeSpace -= flexItemsMainSizeList[flexItemIndex] + flexItems[flexItemIndex].mainAxisBorderAndPadding + flexItems[flexItemIndex].mainAxisMargin;
         }
 
-        placeFlexItems(flexLinesCrossPositionList[lineIndex], flexItems.mutableSpan().subspan(lineRange.begin(), lineRange.distance()), flexItemsPositionList.mutableSpan().subspan(lineRange.begin(), lineRange.distance()), remainingFreeSpace);
+        columnMainContentExtent = std::max(columnMainContentExtent, placeFlexItems(flexLinesCrossPositionList[lineIndex], flexItems.mutableSpan().subspan(lineRange.begin(), lineRange.distance()), flexItemsPositionList.mutableSpan().subspan(lineRange.begin(), lineRange.distance()), remainingFreeSpace));
     }
-    return flexItemsPositionList;
+    return { WTF::move(flexItemsPositionList), columnMainContentExtent };
 }
 
 Vector<LayoutUnit> FlexLayout::computeCrossSizeForFlexItems(const FlexLines& flexLines, FlexLayoutItems& flexItems, const Vector<LayoutUnit>& flexLinesCrossSizeList, LayoutUnit crossContentExtent)
@@ -705,7 +707,7 @@ void FlexLayout::computeFlexItemRects(const FlexLines& flexLines, FlexLayoutItem
     }
 }
 
-void FlexLayout::placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayoutItem> flexLayoutItems, std::span<LayoutPoint> positions, LayoutUnit availableFreeSpace)
+LayoutUnit FlexLayout::placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayoutItem> flexLayoutItems, std::span<LayoutPoint> positions, LayoutUnit availableFreeSpace)
 {
     // 9.5. (#12) Position the items along the main axis: first give any positive free space to main-axis auto
     // margins, then place each item per justify-content (the initial offset plus the spacing between items).
@@ -756,8 +758,12 @@ void FlexLayout::placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayout
         // FIXME: Deal with pagination.
     }
 
-    if (m_constraints.isColumnFlow)
-        m_flexBox.setLogicalHeight(std::max(m_flexBox.logicalHeight(), mainAxisOffset + m_constraints.flowAwareBorderInline.second + m_constraints.flowAwarePaddingInline.second + m_flexBox.scrollbarLogicalHeight()));
+    // For column flow, return the line's main-axis content extent (its main content size plus the cross-axis
+    // scrollbar); handleMainAxisAlignment folds the largest line's extent into the container's logical height at the
+    // 9.6 finalize instead of growing the container here. Row flow builds its block extent elsewhere, so return 0.
+    if (!m_constraints.isColumnFlow)
+        return { };
+    return mainAxisOffset - (m_constraints.flowAwareBorderInline.first + m_constraints.flowAwarePaddingInline.first) + m_flexBox.scrollbarLogicalHeight();
 }
 
 void FlexLayout::reverseColumnLinesFromContainerMainEndIfNeeded(const FlexLines& flexLines, FlexLayoutItems& flexItems, const Vector<LayoutUnit>& flexItemsMainSizeList, Vector<LayoutPoint>& flexItemsPositionList, const Vector<LayoutUnit>& flexLinesCrossPositionList, LayoutUnit containerMainBlockContentExtent, LayoutUnit containerMainBorderBoxExtent)
