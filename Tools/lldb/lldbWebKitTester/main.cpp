@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,16 +58,16 @@ enum class ExampleFlags {
 static void testSummaryProviders()
 {
     String aNullString { ""_s };
-    StringImpl* aNullStringImpl = aNullString.impl();
+    [[maybe_unused]] StringImpl* aNullStringImpl = aNullString.impl();
 
     String anEmptyString { ""_s };
-    StringImpl* anEmptyStringImpl = anEmptyString.impl();
+    [[maybe_unused]] StringImpl* anEmptyStringImpl = anEmptyString.impl();
 
     auto an8BitString = String::fromLatin1("résumé");
     StringImpl* an8BitStringImpl = an8BitString.impl();
 
     String a16BitString = utf16String(u"\u1680Cappuccino\u1680");
-    StringImpl* a16BitStringImpl = a16BitString.impl();
+    [[maybe_unused]] StringImpl* a16BitStringImpl = a16BitString.impl();
 
     Vector<int> anEmptyVector;
     Vector<int> aVectorWithOneItem;
