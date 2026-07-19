@@ -2610,12 +2610,12 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         let duration = Date.now() - loadTimeStatistic.start;
 
         let delay = loadTimeStatistic.delay;
-        if (duration >= 1_000) // 1 second
-            delay = 100;
+        if (duration >= 3_600_000) // 1 hour
+            delay = 10_000;
         else if (duration >= 60_000) // 60 seconds
             delay = 1_000;
-        else if (duration >= 3_600_000) // 1 minute
-            delay = 10_000;
+        else if (duration >= 1_000) // 1 second
+            delay = 100;
 
         if (delay !== loadTimeStatistic.delay) {
             loadTimeStatistic.delay = delay;
