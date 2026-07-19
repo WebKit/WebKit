@@ -55,6 +55,8 @@ public:
 #if defined(__OBJC__)
     static NSEventModifierFlags NODELETE toNSEventModifierFlags(OptionSet<WebKit::WebEventModifier>);
     static NSInteger NODELETE toNSButtonNumber(WebKit::WebMouseEventButton);
+
+    static OptionSet<WebKit::WebEventModifier> NODELETE toWebEventModifierFlags(NSEventModifierFlags);
 #endif
 #endif // USE(APPKIT)
 };
