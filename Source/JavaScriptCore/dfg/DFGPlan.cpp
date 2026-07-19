@@ -160,6 +160,20 @@ void Plan::finalizeInGC()
     ASSERT(m_vm);
     if (m_recordedStatuses)
         m_recordedStatuses->finalizeWithoutDeleting(*m_vm);
+
+    // The compiler threads are suspended here, so it is OK to null out the entries
+    // that nothing else marked -- every reader of mustHandleValues treats nullopt as unknown.
+    cleanMustHandleValuesIfNecessary();
+    {
+        Locker locker { m_mustHandleValueCleaningLock };
+        for (unsigned i = m_mustHandleValues.size(); i--;) {
+            std::optional<JSValue>& value = m_mustHandleValues[i];
+            if (!value || !*value || !value->isCell())
+                continue;
+            if (!m_vm->heap.isMarked(value->asCell()))
+                value = std::nullopt;
+        }
+    }
 }
 
 void Plan::notifyReady()
@@ -658,13 +672,7 @@ bool Plan::checkLivenessAndVisitChildren(AbstractSlotVisitor& visitor)
     if (!Base::checkLivenessAndVisitChildren(visitor))
         return false;
 
-    cleanMustHandleValuesIfNecessary();
-    for (unsigned i = m_mustHandleValues.size(); i--;) {
-        std::optional<JSValue> value = m_mustHandleValues[i];
-        if (value)
-            visitor.appendUnbarriered(value.value());
-    }
-
+    // m_mustHandleValues is deliberately not visited here; see finalizeInGC().
     if (m_recordedStatuses) {
         m_recordedStatuses->visitAggregate(visitor);
         m_recordedStatuses->markIfCheap(visitor);
