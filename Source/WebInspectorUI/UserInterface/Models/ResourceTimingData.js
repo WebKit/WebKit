@@ -71,11 +71,10 @@ WI.ResourceTimingData = class ResourceTimingData
         if (isNaN(fetchStart) || fetchStart < startTime)
             fetchStart = startTime;
 
-        if (redirectStart < startTime || redirectStart > fetchStart || redirectStart > redirectEnd)
+        if (redirectStart < startTime || redirectEnd < startTime || redirectStart > fetchStart || redirectEnd > fetchStart || redirectStart > redirectEnd) {
             redirectStart = NaN;
-
-        if (redirectEnd < startTime || redirectEnd > fetchStart || redirectEnd < redirectStart)
             redirectEnd = NaN;
+        }
 
         function offsetToTimestamp(offset) {
             return offset > 0 ? fetchStart + (offset / 1000) : NaN;
