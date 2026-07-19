@@ -21,14 +21,17 @@ var notificationCount = 0;
 var testFinished = false;
 
 function notificationCallback(object, notification, userInfo) {
-    if (notification == "AXAnnouncementRequested") {
-        output += `Received announcement request:\n`;
-        output += formatAnnouncementUserInfo(userInfo);
-        output += `\n`;
+    // Only react to announcements. Other notifications (e.g. AXLayoutComplete) can fire repeatedly;
+    // running the logic below on them would re-set textContent in a loop and coalesce/duplicate announcements.
+    if (notification != "AXAnnouncementRequested")
+        return;
 
-        notificationCount++;  
-    }
-	
+    output += `Received announcement request:\n`;
+    output += formatAnnouncementUserInfo(userInfo);
+    output += `\n`;
+
+    notificationCount++;
+
     if (notificationCount == 1)
         document.getElementById('assertive-region').textContent = "Count: 5";
     else if (notificationCount == 2)

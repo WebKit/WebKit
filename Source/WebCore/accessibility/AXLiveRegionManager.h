@@ -53,6 +53,11 @@ public:
     void unregisterLiveRegion(AXID axID) { m_liveRegions.remove(axID); }
 
     void handleLiveRegionChange(AccessibilityObject&, AnnouncementContents = AnnouncementContents::Changes);
+
+    // Testing-only: number of times a live region snapshot has been (re)computed. Used to verify
+    // that redundant changes to the same region within a run loop iteration are coalesced.
+    unsigned snapshotBuildCount() const { return m_snapshotBuildCount; }
+    void resetSnapshotBuildCount() { m_snapshotBuildCount = 0; }
 private:
     struct LiveRegionDiff {
         Vector<LiveRegionObject> added;
@@ -68,6 +73,7 @@ private:
 
     CheckedRef<AXObjectCache> m_cache;
     HashMap<AXID, LiveRegionSnapshot> m_liveRegions;
+    mutable unsigned m_snapshotBuildCount { 0 };
 };
 
 } // namespace WebCore
