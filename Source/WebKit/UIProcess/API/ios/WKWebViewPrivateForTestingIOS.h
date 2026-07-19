@@ -103,6 +103,10 @@
 
 - (UIView *)_colorExtensionViewForTesting:(UIRectEdge)edge;
 
+// Returns the current selection's bounding rect converted to main-frame (root view) coordinates,
+// exercising the site-isolation conversion used to anchor Look Up / Translate / Share popovers.
+- (void)_selectionBoundingRectInMainFrameCoordinatesForTesting:(void (^)(CGRect))completionHandler;
+
 @property (nonatomic, readonly) BOOL _hasPendingVisibleContentRectUpdateTimerForTesting;
 @property (nonatomic, readonly) CGRect _fixedClippingViewBoundsForTesting;
 

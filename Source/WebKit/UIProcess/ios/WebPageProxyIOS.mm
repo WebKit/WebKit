@@ -1302,6 +1302,18 @@ WebCore::FloatRect WebPageProxy::selectionBoundingRectInRootViewCoordinates() co
     return bounds;
 }
 
+void WebPageProxy::convertEditorStateSelectionRectToMainFrameCoordinates(WebCore::FloatRect rect, CompletionHandler<void(WebCore::FloatRect)>&& completionHandler)
+{
+    if (!editorState().hasVisualData()) {
+        completionHandler(rect);
+        return;
+    }
+
+    convertRectToMainFrameCoordinates(rect, editorState().visualData->rootFrameID, [rect, completionHandler = WTF::move(completionHandler)](std::optional<WebCore::FloatRect> convertedRect) mutable {
+        completionHandler(convertedRect.value_or(rect));
+    });
+}
+
 void WebPageProxy::requestDocumentEditingContext(WebKit::DocumentEditingContextRequest&& request, CompletionHandler<void(WebKit::DocumentEditingContext&&)>&& completionHandler)
 {
     if (!hasRunningProcess()) {

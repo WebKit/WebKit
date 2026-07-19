@@ -443,6 +443,13 @@ static void dumpUIView(TextStream& ts, UIView *view, bool traverse)
     return [_contentView focusedElementInformation].interactionRect;
 }
 
+- (void)_selectionBoundingRectInMainFrameCoordinatesForTesting:(void (^)(CGRect))completionHandler
+{
+    _page->convertEditorStateSelectionRectToMainFrameCoordinates(_page->selectionBoundingRectInRootViewCoordinates(), [completionHandler = makeBlockPtr(completionHandler)](WebCore::FloatRect rect) {
+        completionHandler(rect);
+    });
+}
+
 - (UIGestureRecognizer *)_imageAnalysisGestureRecognizer
 {
     return [_contentView imageAnalysisGestureRecognizer];

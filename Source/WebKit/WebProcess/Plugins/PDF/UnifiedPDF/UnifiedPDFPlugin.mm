@@ -4646,9 +4646,16 @@ DocumentEditingContext UnifiedPDFPlugin::documentEditingContext(DocumentEditingC
 
 bool UnifiedPDFPlugin::platformPopulateEditorStateIfNeeded(EditorState& state) const
 {
+    RefPtr frame = m_frame.get();
+    RefPtr coreFrame = frame ? frame->coreLocalFrame() : nullptr;
+    if (!coreFrame)
+        return false;
+    auto rootFrameID = coreFrame->rootFrame().frameID();
+
     RetainPtr selection = m_currentSelection;
     if (!selection) {
         state.visualData = EditorState::VisualData { };
+        state.visualData->rootFrameID = rootFrameID;
         state.postLayoutData = EditorState::PostLayoutData { };
 #if PLATFORM(IOS_FAMILY)
         state.postLayoutData->isStableStateUpdate = true;
@@ -4707,6 +4714,7 @@ bool UnifiedPDFPlugin::platformPopulateEditorStateIfNeeded(EditorState& state) c
     state.postLayoutData->canCopy = !selectedString.isEmpty();
 
     state.visualData = EditorState::VisualData { };
+    state.visualData->rootFrameID = rootFrameID;
     state.visualData->selectionGeometries = WTF::move(selectionGeometries);
 
 #if PLATFORM(IOS_FAMILY)

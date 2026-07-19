@@ -8572,6 +8572,129 @@ TEST(SiteIsolation, ApplyAutocorrectionInCrossOriginIframe)
     EXPECT_WK_STREQ("the", [webView stringByEvaluatingJavaScript:@"document.body.textContent" inFrame:childFrame.get()]);
 }
 
+TEST(SiteIsolation, SelectionBoundingRectInCrossOriginIframeUsesMainFrameCoordinates)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'>test</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:nil];
+    while (![childFrame _isFocused])
+        childFrame = [webView firstChildFrame];
+
+    [webView _synchronouslyExecuteEditCommand:@"SelectAll" argument:nil];
+    while (![webView selectionRangeHasStartOffset:0 endOffset:4 inFrame:childFrame.get()])
+        Util::spinRunLoop();
+
+    // The iframe is at (100, 100) in the main frame, so the subframe selection rect must be
+    // converted to main-frame coordinates; without the fix it would be near the origin.
+    __block CGRect rect = CGRectZero;
+    while (true) {
+        __block bool didReceiveRect = false;
+        [webView _selectionBoundingRectInMainFrameCoordinatesForTesting:^(CGRect receivedRect) {
+            rect = receivedRect;
+            didReceiveRect = true;
+        }];
+        Util::run(&didReceiveRect);
+        if (!CGRectIsEmpty(rect))
+            break;
+        Util::spinRunLoop();
+    }
+
+    EXPECT_GE(CGRectGetMinX(rect), 100);
+    EXPECT_GE(CGRectGetMinY(rect), 100);
+}
+
+TEST(SiteIsolation, SelectionBoundingRectInNestedCrossOriginIframesUsesMainFrameCoordinates)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/middle'></iframe></body>"_s } },
+        { "/middle"_s, { "<!DOCTYPE html><body style='margin: 0'><iframe id='inner' style='margin: 50px; width: 200px; height: 150px; border: none;' src='https://domain3.com/inner'></iframe></body>"_s } },
+        { "/inner"_s, { "<!DOCTYPE html><body style='margin: 0'>test</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    // Wait for the deepest cross-origin iframe (domain3) to appear in the frame tree, then focus it
+    // from its parent (domain2) and select its text.
+    while (![webView mainFrame].childFrames.firstObject.childFrames.firstObject)
+        Util::spinRunLoop();
+
+    [webView evaluateJavaScript:@"document.getElementById('inner').focus()" inFrame:[webView mainFrame].childFrames.firstObject.info completionHandler:nil];
+    while (![[webView mainFrame].childFrames.firstObject.childFrames.firstObject.info _isFocused])
+        Util::spinRunLoop();
+
+    [webView _synchronouslyExecuteEditCommand:@"SelectAll" argument:nil];
+    while (![webView selectionRangeHasStartOffset:0 endOffset:4 inFrame:[webView mainFrame].childFrames.firstObject.childFrames.firstObject.info])
+        Util::spinRunLoop();
+
+    // The domain2 iframe is at (100, 100) in the main frame and the domain3 iframe is at (50, 50)
+    // within it, so the selection's bounding rect must be converted through both cross-process hops
+    // to land at >= (150, 150) in main-frame coordinates.
+    __block CGRect rect = CGRectZero;
+    while (true) {
+        __block bool didReceiveRect = false;
+        [webView _selectionBoundingRectInMainFrameCoordinatesForTesting:^(CGRect receivedRect) {
+            rect = receivedRect;
+            didReceiveRect = true;
+        }];
+        Util::run(&didReceiveRect);
+        if (!CGRectIsEmpty(rect))
+            break;
+        Util::spinRunLoop();
+    }
+
+    EXPECT_GE(CGRectGetMinX(rect), 150);
+    EXPECT_GE(CGRectGetMinY(rect), 150);
+}
+
+TEST(SiteIsolation, SelectionBoundingRectInMainFrameIsNotOffset)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'>test</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    [webView _synchronouslyExecuteEditCommand:@"SelectAll" argument:nil];
+    while (![webView selectionRangeHasStartOffset:0 endOffset:4])
+        Util::spinRunLoop();
+
+    // The selection is in the main frame, so no conversion is needed and the rect must stay near the
+    // top-left where the text is laid out (margin: 0). A spurious conversion would push it past 100.
+    __block CGRect rect = CGRectZero;
+    while (true) {
+        __block bool didReceiveRect = false;
+        [webView _selectionBoundingRectInMainFrameCoordinatesForTesting:^(CGRect receivedRect) {
+            rect = receivedRect;
+            didReceiveRect = true;
+        }];
+        Util::run(&didReceiveRect);
+        if (!CGRectIsEmpty(rect))
+            break;
+        Util::spinRunLoop();
+    }
+
+    EXPECT_LT(CGRectGetMinX(rect), 50);
+    EXPECT_LT(CGRectGetMinY(rect), 50);
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(IMAGE_ANALYSIS)

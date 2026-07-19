@@ -1831,8 +1831,10 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
         result.postLayoutData->canCopy = editor->canCopy();
         result.postLayoutData->canPaste = editor->canEdit();
 
-        if (!result.visualData)
-            result.visualData = std::optional<EditorState::VisualData> { EditorState::VisualData { } };
+        if (!result.visualData) {
+            result.visualData = EditorState::VisualData { };
+            result.visualData->rootFrameID = frame->rootFrame().frameID();
+        }
     }
 
     getPlatformEditorState(*frame, result);

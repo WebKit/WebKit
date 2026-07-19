@@ -4397,8 +4397,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
         auto selectionContext = makeString(textBefore, selectedText, textAfter);
         NSRange selectedRangeInContext = NSMakeRange(textBefore.length(), selectedText.length());
 
-        if (auto textSelectionAssistant = view->_textInteractionWrapper)
-            [textSelectionAssistant lookup:selectionContext.createNSString().get() withRange:selectedRangeInContext fromRect:presentationRect];
+        page->convertEditorStateSelectionRectToMainFrameCoordinates(presentationRect, [view, selectionContext, selectedRangeInContext](WebCore::FloatRect convertedRect) {
+            if (auto textSelectionAssistant = view->_textInteractionWrapper)
+                [textSelectionAssistant lookup:selectionContext.createNSString().get() withRange:selectedRangeInContext fromRect:convertedRect];
+        });
     });
 }
 
@@ -4424,7 +4426,9 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
         if (selectionGeometries.isEmpty())
             return;
 
-        [view->_textInteractionWrapper showShareSheetFor:string.createNSString().get() fromRect:selectionGeometries.first().rect()];
+        page->convertEditorStateSelectionRectToMainFrameCoordinates(selectionGeometries.first().rect(), [view, string](WebCore::FloatRect convertedRect) {
+            [view->_textInteractionWrapper showShareSheetFor:string.createNSString().get() fromRect:convertedRect];
+        });
     });
 }
 
@@ -4452,7 +4456,9 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
         if (page->editorState().visualData->selectionGeometries.isEmpty())
             return;
 
-        [strongSelf->_textInteractionWrapper translate:string.createNSString().get() fromRect:page->selectionBoundingRectInRootViewCoordinates()];
+        page->convertEditorStateSelectionRectToMainFrameCoordinates(page->selectionBoundingRectInRootViewCoordinates(), [strongSelf, string](WebCore::FloatRect convertedRect) {
+            [strongSelf->_textInteractionWrapper translate:string.createNSString().get() fromRect:convertedRect];
+        });
     });
 }
 
@@ -4468,7 +4474,16 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     Ref page = *_page;
     if (!page->editorState().visualData)
         return;
-    [_textInteractionWrapper showTextServiceFor:[self selectedText] fromRect:page->editorState().visualData->selectionGeometries[0].rect()];
+    auto& selectionGeometries = page->editorState().visualData->selectionGeometries;
+    if (selectionGeometries.isEmpty())
+        return;
+    RetainPtr selectedText = [self selectedText];
+    page->convertEditorStateSelectionRectToMainFrameCoordinates(selectionGeometries.first().rect(), [weakSelf = WeakObjCPtr<WKContentView>(self), selectedText](WebCore::FloatRect convertedRect) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
+        [strongSelf->_textInteractionWrapper showTextServiceFor:selectedText.get() fromRect:convertedRect];
+    });
 }
 
 - (NSString *)selectedText

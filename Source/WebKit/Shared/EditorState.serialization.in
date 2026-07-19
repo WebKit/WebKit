@@ -116,6 +116,7 @@ using WebCore::ScrollOffset = WebCore::IntPoint;
 };
 
 [Nested] struct WebKit::EditorState::VisualData {
+    Markable<WebCore::FrameIdentifier> rootFrameID;
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     WebCore::IntRect caretRectAtStart;
 #endif
