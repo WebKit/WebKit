@@ -2006,7 +2006,7 @@ static Expected<ResolvedMouseTarget, String> resolveMouseTarget(Node& targetNode
     std::optional<SimpleRange> foundRange;
     if (!searchText.isEmpty()) {
         foundRange = searchForClickTarget(*element, searchText);
-        if (!foundRange)
+        if (!foundRange && !normalizedLabelText(*element).containsIgnoringASCIICase(normalizeText(searchText)))
             return makeUnexpected(searchTextNotFoundDescription(searchText));
     }
 

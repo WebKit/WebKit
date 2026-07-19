@@ -468,6 +468,48 @@ TEST(TextExtractionTests, InteractionResultSummary)
     }
 }
 
+TEST(TextExtractionTests, InteractionSearchTextMatchesAccessibilityLabel)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr testButtonID = extractNodeIdentifier(debugText, @"Test");
+
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+        [interaction setNodeIdentifier:testButtonID];
+        [interaction setText:@"Click Me"];
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction];
+        EXPECT_NULL([result error]);
+        EXPECT_EQ(1, [[webView objectByEvaluatingJavaScript:@"document.querySelector('.click-count').textContent"] intValue]);
+    }
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+        [interaction setNodeIdentifier:testButtonID];
+        [interaction setText:@"lick m"];
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction];
+        EXPECT_NULL([result error]);
+        EXPECT_EQ(2, [[webView objectByEvaluatingJavaScript:@"document.querySelector('.click-count').textContent"] intValue]);
+    }
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+        [interaction setNodeIdentifier:testButtonID];
+        [interaction setText:@"not the label"];
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction];
+        EXPECT_NOT_NULL([result error]);
+        EXPECT_EQ(2, [[webView objectByEvaluatingJavaScript:@"document.querySelector('.click-count').textContent"] intValue]);
+    }
+}
+
 TEST(TextExtractionTests, InteractionRemapsStaleNodeIdentifier)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
