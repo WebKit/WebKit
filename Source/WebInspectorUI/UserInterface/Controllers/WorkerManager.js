@@ -66,13 +66,13 @@ WI.WorkerManager = class WorkerManager extends WI.Object
     workerTerminated(workerId)
     {
         let worker = this._workerForId.take(workerId);
-        let subworkers = this._subworkersForWorker.take(worker) || new Set;
 
-        WI.targetManager.removeTarget(worker);
+        // This may already have been cleaned up if it was a nested subworker
+        // of another worker that was terminated first.
+        if (!worker)
+            return;
 
-        // The main `Worker` will be destroyed before any sub-`Worker`, so manually do cleanup here.
-        for (let subworker of subworkers)
-            WI.targetManager.removeTarget(subworker);
+        this._cleanUpWorker(worker);
     }
 
     dispatchMessageFromWorker(workerId, message)
@@ -84,5 +84,18 @@ WI.WorkerManager = class WorkerManager extends WI.Object
             return;
 
         worker.connection.dispatch(message);
+    }
+
+    // Private
+
+    _cleanUpWorker(worker)
+    {
+        // The main `Worker` will be destroyed before any sub-`Worker`, so manually do cleanup here.
+        for (let subworker of (this._subworkersForWorker.take(worker) || [])) {
+            this._workerForId.delete(subworker.identifier);
+            this._cleanUpWorker(subworker);
+        }
+
+        WI.targetManager.removeTarget(worker);
     }
 };

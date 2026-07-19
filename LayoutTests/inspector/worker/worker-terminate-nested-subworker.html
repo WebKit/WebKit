@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/worker-utilities.js"></script>
+<script>
+let worker = new Worker("resources/subworker-manager.js");
+
+function createSubworker() {
+    worker.postMessage({url: "subworker-manager.js", data: null});
+}
+
+function createGrandchildWorker() {
+    worker.postMessage({url: "subworker-manager.js", data: {url: "worker-1.js", data: null}});
+}
+
+function terminateWorker() {
+    worker.terminate();
+}
+
+async function test()
+{
+    function isTopWorker(target) {
+        return target instanceof WI.WorkerTarget && target.displayName.endsWith("subworker-manager.js") && !(target.parentTarget instanceof WI.WorkerTarget);
+    }
+
+    function isSubworker(target) {
+        return target instanceof WI.WorkerTarget && target.displayName.endsWith("subworker-manager.js") && target.parentTarget instanceof WI.WorkerTarget;
+    }
+
+    function isGrandchildWorker(target) {
+        return target instanceof WI.WorkerTarget && target.displayName.endsWith("worker-1.js");
+    }
+
+    let topWorkerTarget = await window.awaitTarget(isTopWorker);
+
+    await Promise.all([
+        window.awaitTarget(isSubworker),
+        InspectorTest.evaluateInPage("createSubworker()"),
+    ]);
+
+    let [grandchildWorkerTarget] = await Promise.all([
+        window.awaitTarget(isGrandchildWorker),
+        InspectorTest.evaluateInPage("createGrandchildWorker()"),
+    ]);
+
+    let subworkerTarget = grandchildWorkerTarget.parentTarget;
+
+    let suite = InspectorTest.createAsyncSuite("Worker.Terminate.NestedSubworker");
+
+    suite.addTestCase({
+        name: "Worker.Terminate.NestedSubworker.SetUp",
+        description: "There should be Targets for the Worker, its Subworker, and the Subworker's Subworker.",
+        async test() {
+            InspectorTest.expectThat(WI.targetManager.workerTargets.includes(topWorkerTarget), "Should have a Target for the top-level Worker.");
+            InspectorTest.expectThat(WI.targetManager.workerTargets.includes(subworkerTarget), "Should have a Target for the Subworker.");
+            InspectorTest.expectThat(WI.targetManager.workerTargets.includes(grandchildWorkerTarget), "Should have a Target for the Subworker's Subworker.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Worker.Terminate.NestedSubworker.Terminate",
+        description: "Terminating the top-level Worker should remove Targets for all of its nested Subworkers.",
+        async test() {
+            let removedTargets = [];
+            let listener = WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, (event) => {
+                removedTargets.push(event.data.target);
+            });
+
+            await InspectorTest.evaluateInPage("terminateWorker()");
+
+            // Give any (incorrect) asynchronous cleanup a chance to happen before checking.
+            await new Promise((resolve) => setTimeout(resolve, 0));
+
+            WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetRemoved, listener);
+
+            InspectorTest.expectThat(removedTargets.includes(topWorkerTarget), "Should remove the Target for the top-level Worker.");
+            InspectorTest.expectThat(removedTargets.includes(subworkerTarget), "Should remove the Target for the Subworker.");
+            InspectorTest.expectThat(removedTargets.includes(grandchildWorkerTarget), "Should remove the Target for the Subworker's Subworker.");
+
+            InspectorTest.expectFalse(WI.targetManager.workerTargets.includes(topWorkerTarget), "Worker Targets should no longer include the top-level Worker.");
+            InspectorTest.expectFalse(WI.targetManager.workerTargets.includes(subworkerTarget), "Worker Targets should no longer include the Subworker.");
+            InspectorTest.expectFalse(WI.targetManager.workerTargets.includes(grandchildWorkerTarget), "Worker Targets should no longer include the Subworker's Subworker.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that terminating a Worker also removes Targets for its nested (grandchild) Subworkers.</p>
+</body>
+</html>
