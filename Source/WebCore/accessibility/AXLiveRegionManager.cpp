@@ -183,6 +183,8 @@ static constexpr size_t maximumSnapshotObjects = 512;
 
 LiveRegionSnapshot AXLiveRegionManager::buildLiveRegionSnapshot(AccessibilityObject& object) const
 {
+    ++m_snapshotBuildCount;
+
     LiveRegionSnapshot snapshot;
     snapshot.liveRegionStatus = stringToLiveRegionStatus(object.liveRegionStatus());
     snapshot.liveRegionRelevant = stringToLiveRegionRelevant(object.liveRegionRelevant());

@@ -690,6 +690,10 @@ public:
     void postTextStateChangeNotification(const Position&, const AXTextStateChangeIntent&, const VisibleSelection&);
     void postLiveRegionChangeNotification(AccessibilityObject&);
 
+    // Testing-only: number of times a live region snapshot has been (re)computed since the last reset.
+    WEBCORE_EXPORT unsigned liveRegionSnapshotBuildCount() const;
+    WEBCORE_EXPORT void resetLiveRegionSnapshotBuildCount();
+
     void frameLoadingEventNotification(LocalFrame*, AXLoadingEvent);
 
     void prepareForDocumentDestruction(const Document&);

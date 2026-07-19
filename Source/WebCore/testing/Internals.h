@@ -791,6 +791,8 @@ public:
     String toolTipFromElement(Element&) const;
 
     void forceAXObjectCacheUpdate() const;
+    unsigned liveRegionSnapshotBuildCount() const;
+    void resetLiveRegionSnapshotBuildCount() const;
     void setShouldMockParentSearchResultsForTesting(bool);
     void setShouldMockChildFrameSearchResultsForTesting(bool);
     void forceReload(bool endToEnd);

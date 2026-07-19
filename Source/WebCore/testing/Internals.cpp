@@ -4770,6 +4770,23 @@ void Internals::forceAXObjectCacheUpdate() const
     }
 }
 
+unsigned Internals::liveRegionSnapshotBuildCount() const
+{
+    if (RefPtr document = contextDocument()) {
+        if (CheckedPtr cache = document->axObjectCache())
+            return cache->liveRegionSnapshotBuildCount();
+    }
+    return 0;
+}
+
+void Internals::resetLiveRegionSnapshotBuildCount() const
+{
+    if (RefPtr document = contextDocument()) {
+        if (CheckedPtr cache = document->axObjectCache())
+            cache->resetLiveRegionSnapshotBuildCount();
+    }
+}
+
 void Internals::setShouldMockParentSearchResultsForTesting(bool enabled)
 {
     WebCore::setShouldMockParentSearchResultsForTesting(enabled);

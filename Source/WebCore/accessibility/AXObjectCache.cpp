@@ -3304,15 +3304,30 @@ void AXObjectCache::frameLoadingEventNotification(LocalFrame* frame, AXLoadingEv
     }
 }
 
-void AXObjectCache::postLiveRegionChangeNotification(AccessibilityObject& object)
+unsigned AXObjectCache::liveRegionSnapshotBuildCount() const
 {
 #if PLATFORM(COCOA)
-    if (m_liveRegionManager) {
-        m_liveRegionManager->handleLiveRegionChange(object);
-        return;
-    }
+    if (m_liveRegionManager)
+        return m_liveRegionManager->snapshotBuildCount();
 #endif
+    return 0;
+}
 
+void AXObjectCache::resetLiveRegionSnapshotBuildCount()
+{
+#if PLATFORM(COCOA)
+    if (m_liveRegionManager)
+        m_liveRegionManager->resetSnapshotBuildCount();
+#endif
+}
+
+void AXObjectCache::postLiveRegionChangeNotification(AccessibilityObject& object)
+{
+    // Consolidate multiple live region changes to the same object within a run loop iteration.
+    // Web content (e.g. rebuilding a large calendar) can fire hundreds of text changes that each
+    // walk up to a live-region ancestor; deduplicating here and processing once when the timer fires
+    // collapses that into a single snapshot rebuild per region. On COCOA, the timer drives
+    // AXLiveRegionManager; elsewhere it posts a LiveRegionChanged notification.
     if (m_liveRegionChangedPostTimer.isActive())
         m_liveRegionChangedPostTimer.stop();
 
@@ -3329,6 +3344,15 @@ void AXObjectCache::liveRegionChangedNotificationPostTimerFired()
 
     if (m_changedLiveRegions.isEmpty())
         return;
+
+#if PLATFORM(COCOA)
+    if (m_liveRegionManager) {
+        for (auto& object : m_changedLiveRegions)
+            m_liveRegionManager->handleLiveRegionChange(object.get());
+        m_changedLiveRegions.clear();
+        return;
+    }
+#endif
 
     for (auto& object : m_changedLiveRegions)
         postNotification(object.ptr(), protect(object->document()).get(), AXNotification::LiveRegionChanged);
