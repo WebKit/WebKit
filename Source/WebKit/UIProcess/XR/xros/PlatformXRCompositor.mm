@@ -142,7 +142,7 @@ void CompositorCoordinator::getPrimaryDeviceInfo(WebPageProxy& page, DeviceInfoC
         callback(std::nullopt);
         return;
     }
-    double minimumNearClipPlane = cp_layer_renderer_capabilities_supported_minimum_near_plane_distance(defaultRenderCapabilities.get());
+    m_minimumDepth = cp_layer_renderer_capabilities_supported_minimum_near_plane_distance(defaultRenderCapabilities.get());
 
     ASSERT(m_headsetIdentifier);
     CompositorCoordinator::getSupportedFeatures(page);
@@ -163,7 +163,7 @@ void CompositorCoordinator::getPrimaryDeviceInfo(WebPageProxy& page, DeviceInfoC
         .vrFeatures = m_supportedVRFeatures,
         .arFeatures = m_supportedARFeatures,
         .recommendedResolution = *recommendedResolution,
-        .minimumNearClipPlane = minimumNearClipPlane
+        .minimumNearClipPlane = m_minimumDepth
     };
 
     callback(WTF::move(deviceInfo));
@@ -502,8 +502,13 @@ void CompositorCoordinator::render(cp_frame_t frame, cp_drawable_t drawable, NST
 
         frameData.inputSources = [m_xrTrackingManager collectInputSources];
 
-        cp_drawable_set_write_forward_depth(drawable, m_depthRange.near < m_depthRange.far);
-        cp_drawable_set_depth_range(drawable, simd_make_float2(std::max(m_depthRange.near, m_depthRange.far), std::min(m_depthRange.near, m_depthRange.far)));
+        bool forwardZ = m_depthRange.near < m_depthRange.far;
+        cp_drawable_set_write_forward_depth(drawable, forwardZ);
+        auto depthRange = simd_make_float2(
+            std::max(m_depthRange.near, m_depthRange.far),
+            std::min(m_depthRange.near, m_depthRange.far));
+        depthRange.y = std::max(depthRange.y, m_minimumDepth);
+        cp_drawable_set_depth_range(drawable, depthRange);
 
         size_t viewCount = cp_drawable_get_view_count(drawable);
         if (!viewCount) {
@@ -511,10 +516,14 @@ void CompositorCoordinator::render(cp_frame_t frame, cp_drawable_t drawable, NST
             return;
         }
 
+        auto axisDirectionConvention = forwardZ
+            ? cp_axis_direction_convention_right_up_forward
+            : cp_axis_direction_convention_right_up_back;
+
         for (size_t i = 0; i < viewCount; ++i) {
             auto view = cp_drawable_get_view(drawable, i);
             PlatformXR::FrameData::View frameDataView;
-            auto projection = cp_drawable_compute_projection(drawable, cp_axis_direction_convention_right_up_forward, i);
+            auto projection = cp_drawable_compute_projection(drawable, axisDirectionConvention, i);
             frameDataView.projection = WebCore::TransformationMatrix(projection).toColumnMajorFloatArray();
 
             PlatformXRPose pose(cp_view_get_transform(view));
