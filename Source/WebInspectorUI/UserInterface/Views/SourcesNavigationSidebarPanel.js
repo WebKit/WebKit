@@ -908,6 +908,23 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     // Private
 
+    _originForURLComponents(urlComponents, securityOrigin)
+    {
+        if (urlComponents.origin)
+            return urlComponents.origin;
+
+        if (securityOrigin && (securityOrigin === "file://" || parseURL(securityOrigin).origin === securityOrigin))
+            return securityOrigin;
+
+        if (urlComponents.scheme === "file")
+            return "file://";
+
+        if (urlComponents.scheme)
+            return urlComponents.scheme + ":";
+
+        return WI.Resource.displayNameForType(WI.Resource.Type.Other);
+    }
+
     _willDismissLocalOverridePopover(popover)
     {
         let serializedData = popover.serializedData;
@@ -1077,7 +1094,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             }
             this._originTreeElementMap.clear();
 
-            let origin = mainFrame.urlComponents.origin;
+            let origin = this._originForURLComponents(mainFrame.urlComponents, mainFrame.securityOrigin);
             this._mainFrameTreeElement = new WI.OriginTreeElement(origin, mainFrame, {hasChildren: true});
             this._originTreeElementMap.set(origin, this._mainFrameTreeElement);
             break;
@@ -1151,25 +1168,19 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             }
 
             if (!parentTreeElement) {
-                let origin = resource.urlComponents.origin;
-                if (origin) {
-                    let originTreeElement = this._originTreeElementMap.get(origin);
-                    if (!originTreeElement) {
-                        let representedObject = resource.type === WI.Resource.Type.Document ? resource.parentFrame : null;
-                        originTreeElement = new WI.OriginTreeElement(origin, representedObject, {hasChildren: true});
-                        this._originTreeElementMap.set(origin, originTreeElement);
+                let origin = this._originForURLComponents(resource.urlComponents, resource.parentFrame?.securityOrigin);
+                let originTreeElement = this._originTreeElementMap.get(origin);
+                if (!originTreeElement) {
+                    let representedObject = resource.type === WI.Resource.Type.Document ? resource.parentFrame : null;
+                    originTreeElement = new WI.OriginTreeElement(origin, representedObject, {hasChildren: true});
+                    this._originTreeElementMap.set(origin, originTreeElement);
 
-                        let index = insertionIndexForObjectInListSortedByFunction(originTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
-                        this._resourcesTreeOutline.insertChild(originTreeElement, index);
-                    }
+                    let index = insertionIndexForObjectInListSortedByFunction(originTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
+                    this._resourcesTreeOutline.insertChild(originTreeElement, index);
+                }
 
-                    let subpath = resource.urlComponents.path;
-                    if (subpath && subpath[0] === "/")
-                        subpath = subpath.substring(1);
-
-                    parentTreeElement = originTreeElement.createFoldersAsNeededForSubpath(subpath, this._boundCompareTreeElements);
-                } else
-                    parentTreeElement = this._resourcesTreeOutline;
+                let subpath = resource.urlComponents.scheme === "blob" ? resource.urlComponents.lastPathComponent : resource.urlComponents.path;
+                parentTreeElement = originTreeElement.createFoldersAsNeededForSubpath(subpath, this._boundCompareTreeElements);
             }
 
             let resourceTreeElement = null;

@@ -197,8 +197,7 @@ WI.GeneralTreeElement = class GeneralTreeElement extends WI.TreeElement
             return this;
 
         let components = subpath.split("/");
-        if (components.length === 1)
-            return this;
+        components.pop();
 
         if (!this._subpathFolderTreeElementMap)
             this._subpathFolderTreeElementMap = new Map;
@@ -207,8 +206,8 @@ WI.GeneralTreeElement = class GeneralTreeElement extends WI.TreeElement
         let currentFolderTreeElement = this;
 
         for (let component of components) {
-            if (component === components.lastValue)
-                break;
+            if (!component)
+                continue;
 
             if (currentPath)
                 currentPath += "/";
