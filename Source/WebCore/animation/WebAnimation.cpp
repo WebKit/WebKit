@@ -1664,7 +1664,21 @@ void WebAnimation::stop()
 bool WebAnimation::virtualHasPendingActivity() const
 {
     // Keep the JS wrapper alive if the animation is considered relevant or could become relevant again by virtue of having a timeline.
-    return m_timeline || m_isRelevant;
+
+    if (m_isRelevant)
+        return true;
+    if (!m_timeline)
+        return false;
+
+    // Progress-based (scroll/view) timelines can make an animation relevant again without script, so their wrappers must stay alive.
+    if (m_timeline->isProgressBased())
+        return true;
+
+    ASSERT(m_timeline->isMonotonic());
+
+    // On a monotonic timeline, a canceled (idle) animation cannot become relevant again unless script holds a reference to it.
+    auto playStateIsIdle = !m_holdTime && !m_startTime && !pending();
+    return !playStateIsIdle;
 }
 
 void WebAnimation::updateRelevance()
