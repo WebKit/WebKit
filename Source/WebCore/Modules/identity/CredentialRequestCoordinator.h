@@ -67,9 +67,9 @@ public:
     void contextDestroyed() final;
 
 private:
-    void settleTheCredentialRequest(ExceptionOr<RefPtr<BasicCredential>>&&);
     void rejectTheCredentialRequestWith(Exception&&);
     void clearAbortAlgorithm();
+    template<typename SettleFunction> void queuePromiseSettlement(SettleFunction);
 
     class InteractionStateGuard final {
     public:
