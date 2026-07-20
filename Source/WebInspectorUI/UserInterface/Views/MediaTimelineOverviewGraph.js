@@ -117,16 +117,7 @@ WI.MediaTimelineOverviewGraph = class MediaTimelineOverviewGraph extends WI.Time
     {
         super.updateSelectedRecord();
 
-        for (let {recordBars} of this._timelineRecordGridRows) {
-            for (let recordBar of recordBars) {
-                if (recordBar.records.includes(this.selectedRecord)) {
-                    this.selectedRecordBar = recordBar;
-                    return;
-                }
-            }
-        }
-
-        this.selectedRecordBar = null;
+        this.updateSelectedRecordBar(Array.from(this._timelineRecordGridRows, ({recordBars}) => recordBars));
     }
 
     // Private

@@ -77,16 +77,7 @@ WI.LayoutTimelineOverviewGraph = class LayoutTimelineOverviewGraph extends WI.Ti
     {
         super.updateSelectedRecord();
 
-        for (let recordRow of [this._timelineLayoutRecordRow, this._timelinePaintRecordRow]) {
-            for (let recordBar of recordRow.recordBars) {
-                if (recordBar.records.includes(this.selectedRecord)) {
-                    this.selectedRecordBar = recordBar;
-                    return;
-                }
-            }
-        }
-
-        this.selectedRecordBar = null;
+        this.updateSelectedRecordBar([this._timelineLayoutRecordRow.recordBars, this._timelinePaintRecordRow.recordBars]);
     }
 
     // Private

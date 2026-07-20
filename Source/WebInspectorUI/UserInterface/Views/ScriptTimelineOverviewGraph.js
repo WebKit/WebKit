@@ -109,16 +109,7 @@ WI.ScriptTimelineOverviewGraph = class ScriptTimelineOverviewGraph extends WI.Ti
     {
         super.updateSelectedRecord();
 
-        for (let recordBars of this._recordBarsForTarget.values()) {
-            for (let recordBar of recordBars) {
-                if (recordBar.records.includes(this.selectedRecord)) {
-                    this.selectedRecordBar = recordBar;
-                    return;
-                }
-            }
-        }
-
-        this.selectedRecordBar = null;
+        this.updateSelectedRecordBar(this._recordBarsForTarget.values());
     }
 
     // Private

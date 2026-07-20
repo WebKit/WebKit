@@ -274,6 +274,20 @@ WI.TimelineOverviewGraph = class TimelineOverviewGraph extends WI.View
         // Implemented by sub-classes if needed.
     }
 
+    updateSelectedRecordBar(recordBarsList)
+    {
+        for (let recordBars of recordBarsList) {
+            for (let recordBar of recordBars) {
+                if (recordBar.records.includes(this.selectedRecord)) {
+                    this.selectedRecordBar = recordBar;
+                    return;
+                }
+            }
+        }
+
+        this.selectedRecordBar = null;
+    }
+
     // Private
 
     _needsSelectedRecordLayout()
