@@ -1583,18 +1583,18 @@ CSSSelectorJITCompilerEnabled:
 
 CSSTextDecorationInsetEnabled:
   type: bool
-  status: preview
+  status: stable
   category: css
   webcoreOnChange: setNeedsRecalcStyleInAllFrames
   humanReadableName: "CSS text-decoration-inset property"
   humanReadableDescription: "Enable the text-decoration-inset property, defined in CSS Text Decoration 4"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSTextDecorationLineErrorValues:
   type: bool
