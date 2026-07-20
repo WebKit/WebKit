@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/ax-text-marker-helper.js"></script>
+</head>
+<body>
+
+<div id="container" role="group">
+<div>Section 0</div><div><div>Nested block 0</div></div>
+<div>Section 1</div><div><div>Nested block 1</div></div>
+<div>Section 2</div><div><div>Nested block 2</div></div>
+<div>Section 3</div><div><div>Nested block 3</div></div>
+<div>Section 4</div><div><div>Nested block 4</div></div>
+<div>Section 5</div><div><div>Nested block 5</div></div>
+<div>Section 6</div><div><div>Nested block 6</div></div>
+<div>Section 7</div><div><div>Nested block 7</div></div>
+<div>Section 8</div><div><div>Nested block 8</div></div>
+<div>Section 9</div><div><div>Nested block 9</div></div>
+</div>
+
+<script>
+var output = "Verifies round-trip does not accumulate error across nested block wrappers (a block whose only child is another block).\n\n";
+window.jsTestIsAsync = true;
+
+async function runTest() {
+    if (window.accessibilityController) {
+        await waitForFrameGeometryReady();
+        var container = await waitForElementById("container");
+
+        // The critical property (VoiceOver relies on it) is that converting a marker to an index and
+        // back does not ACCUMULATE error. Bounded, non-accumulating quirks are acceptable (snapping
+        // at newlines, or a +/-1 at a table cell boundary), so the pattern is repeated many times and
+        // we assert only that the worst round-trip drift -- and the worst index-vs-string-length
+        // difference -- stays within a small tolerance that does not grow with the number of
+        // repetitions. A regression that reintroduces per-element drift accumulates past the tolerance.
+        var result = checkRoundTripAllTextMarkerIndicesWithinContainer(container);
+        worstRoundTripDrift = result.worstRoundTripDrift;
+        worstLengthDifference = result.worstLengthDifference;
+        // Guard against a collapsed/degenerate index space passing vacuously: every character of the
+        // container's text must have been covered by the index walk, so none go unchecked.
+        uncheckedCharacters = result.containerTextLength - result.indicesChecked;
+        output += expectNumber("worstRoundTripDrift", 0, 2);
+        output += expectNumber("worstLengthDifference", 0, 2);
+        output += expectNumber("uncheckedCharacters", 0, 2);
+
+        // Hide the fixture so the dumped result is just the assertions, not the test markup.
+        document.getElementById("container").hidden = true;
+        debug(output);
+    }
+    finishJSTest();
+}
+runTest();
+</script>
+</body>
+</html>

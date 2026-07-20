@@ -1,0 +1,10 @@
+Verifies round-trip does not accumulate error across nested block wrappers (a block whose only child is another block).
+
+PASS: worstRoundTripDrift was equal or approximately equal to 0.
+PASS: worstLengthDifference was equal or approximately equal to 0.
+PASS: uncheckedCharacters was equal or approximately equal to 0.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
