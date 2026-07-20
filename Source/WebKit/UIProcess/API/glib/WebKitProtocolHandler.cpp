@@ -221,18 +221,18 @@ static String webkitDrmGetFormatName(uint32_t format)
     if (!format)
         return "INVALID"_s;
 
-    std::span<char> buffer;
-    CString code = CString::newUninitialized(4, buffer);
+    std::array<char, 4> buffer;
     buffer[0] = static_cast<char>((format >> 0) & 0xFF);
     buffer[1] = static_cast<char>((format >> 8) & 0xFF);
     buffer[2] = static_cast<char>((format >> 16) & 0xFF);
     buffer[3] = static_cast<char>((format >> 24) & 0xFF);
 
     // Trim spaces at the end.
-    for (size_t i = 3; i > 0 && buffer[i] == ' '; --i)
-        buffer[i] = '\0';
+    size_t bufferSize = buffer.size();
+    while (bufferSize > 1 && buffer[bufferSize - 1] == ' ')
+        bufferSize--;
 
-    return makeString(code, isBigEndian ? "_BE"_s : ""_s);
+    return makeString(unsafeMakeSpan(buffer.data(), bufferSize), isBigEndian ? "_BE"_s : ""_s);
 }
 
 static String webkitDrmGetModifierName(uint64_t modifier)
