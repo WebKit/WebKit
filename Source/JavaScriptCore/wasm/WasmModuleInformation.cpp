@@ -30,6 +30,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "Options.h"
 #include "WasmNameSection.h"
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
@@ -60,6 +61,8 @@ void ModuleInformation::setNameSection(Ref<NameSection>&& section)
     if (m_hasCustomNameSection)
         return;
     m_hasCustomNameSection = true;
+    if (Options::useEagerWasmModuleHashing() && !section->moduleHash.size())
+        section->setHash(std::nullopt);
     m_retiredNameSection = WTF::move(m_nameSection);
     m_nameSection = WTF::move(section);
     m_nameSectionPtr.store(m_nameSection.ptr(), std::memory_order_release);
