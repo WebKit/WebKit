@@ -2079,12 +2079,6 @@ def runWebAssemblyTailCallSpecTest(mode)
     runWebAssemblySpecTestBase(mode, "tail-call-spec-harness", nil, "--useWasmTailCalls=true")
 end
 
-def runWebAssemblyMemory64SpecTest(mode)
-    return
-    # FIXME: turn this on once memory64 is implemented
-    # runWebAssemblySpecTestBase(mode, "spec-harness", nil, "--useWasmMemory64=true")
-end
-
 def runWebAssemblyMultiMemorySpecTest(mode)
     runWebAssemblySpecTestBase(mode, "multi-memory-spec-harness", nil, "--useWasmMultiMemory=true")
 end
