@@ -123,7 +123,7 @@ constexpr UnsignedIntegralType saturatingSum(UnsignedIntegralType a, UnsignedInt
 }
 
 template<typename IntegralType, typename... ArgumentTypes>
-constexpr uint32_t saturatingSum(IntegralType value, ArgumentTypes... arguments)
+constexpr IntegralType saturatingSum(IntegralType value, ArgumentTypes... arguments)
 {
     return saturatingSum<IntegralType>(value, saturatingSum<IntegralType>(arguments...));
 }

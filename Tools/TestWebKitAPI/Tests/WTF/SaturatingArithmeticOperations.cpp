@@ -32,6 +32,8 @@
 #include "config.h"
 
 #include <limits.h>
+#include <limits>
+#include <type_traits>
 #include <wtf/SaturatingArithmetic.h>
 
 namespace TestWebKitAPI {
@@ -90,6 +92,17 @@ TEST(WTF, SaturatingArithmeticAddition)
     EXPECT_EQ(UINT_MAX, saturatingSum<uint32_t>(UINT_MAX / 2U + 1U, UINT_MAX / 2U + 1U));
     EXPECT_EQ(UINT_MAX, saturatingSum<uint32_t>(UINT_MAX / 3U + 1U, UINT_MAX / 3U, UINT_MAX / 3U));
     EXPECT_EQ(UINT_MAX, saturatingSum<uint32_t>(UINT_MAX / 3U + 1U, UINT_MAX / 3U + 1U, UINT_MAX / 3U + 1U));
+
+    // The variadic (3+ argument) overload must preserve the operand type in its result
+    // rather than narrowing to uint32_t, otherwise wide-type sums are silently truncated.
+    static_assert(std::same_as<decltype(saturatingSum<uint64_t>(uint64_t { 1 }, uint64_t { 1 }, uint64_t { 1 })), uint64_t>);
+
+    constexpr uint64_t big = static_cast<uint64_t>(UINT_MAX) + 1;
+    constexpr uint64_t uint64Max = std::numeric_limits<uint64_t>::max();
+    EXPECT_EQ(3 * big, saturatingSum<uint64_t>(big, big, big));
+    EXPECT_EQ(big + 3, saturatingSum<uint64_t>(big, uint64_t { 1 }, uint64_t { 2 }));
+    EXPECT_EQ(uint64Max, saturatingSum<uint64_t>(uint64Max, uint64_t { 1 }, uint64_t { 1 }));
+    EXPECT_EQ(uint64Max, saturatingSum<uint64_t>(uint64Max / 2 + 1, uint64Max / 2 + 1, uint64_t { 1 }));
 }
 
 TEST(WTF, SaturatingArithmeticSubtraction)
