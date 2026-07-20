@@ -60,6 +60,13 @@ enum UserInterfaceLayoutDirection {
     "RTL"
 };
 
+// FIXME: Remove this enum, and the stub it configures, once a real permission prompt exists.
+enum LocalNetworkAccessPermissionDecision {
+    "granted",
+    "denied",
+    "prompt"
+};
+
 enum BaseWritingDirection {
     "Natural",
     "Ltr",
@@ -1161,6 +1168,8 @@ enum ContentsFormat {
     File? createFile(DOMString url);
     Promise<File> asyncCreateFile(DOMString url);
     DOMString createTemporaryFile(DOMString name, DOMString contents);
+
+    Promise<undefined> setLocalNetworkAccessPermissionForTesting(DOMString originURL, IPAddressSpace addressSpace, LocalNetworkAccessPermissionDecision decision);
 
     undefined queueMicroTask(long testNumber);
     boolean testPreloaderSettingViewport();

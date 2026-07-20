@@ -25,50 +25,25 @@
 
 #pragma once
 
-#include <wtf/HashFunctions.h>
-#include <wtf/HashTraits.h>
+#include "ResourceError.h"
+#include <optional>
+#include <wtf/Forward.h>
+#include <wtf/Function.h>
 
 namespace WebCore {
 
-class IPAddress;
+enum class IPAddressSpace : uint8_t;
+class ResourceRequest;
+class SecurityOriginData;
 
-enum class IPAddressSpace : uint8_t {
-    Public,
-    Local,
-    Loopback,
-    Unknown
+enum class LocalNetworkAccessPermissionDecision : uint8_t {
+    Granted,
+    Denied,
+    Prompt
 };
 
-constexpr uint8_t publicnessRank(IPAddressSpace space)
-{
-    switch (space) {
-    case IPAddressSpace::Loopback:
-        return 0;
-    case IPAddressSpace::Local:
-        return 1;
-    case IPAddressSpace::Public:
-        return 2;
-    case IPAddressSpace::Unknown:
-        return 0;
-    }
-    return 2;
-}
+using LocalNetworkAccessPermissionCheckFunction = Function<LocalNetworkAccessPermissionDecision(const SecurityOriginData& clientOrigin, IPAddressSpace connectionAddressSpace)>;
 
-inline bool isLessPublicThan(IPAddressSpace a, IPAddressSpace b)
-{
-    return publicnessRank(a) < publicnessRank(b);
-}
-
-WEBCORE_EXPORT IPAddressSpace determineIPAddressSpace(const WTF::URL&);
-
-WEBCORE_EXPORT IPAddressSpace classifyIPAddressSpace(const IPAddress&);
+WEBCORE_EXPORT std::optional<ResourceError> performLocalNetworkAccessCheck(const ResourceRequest&, IPAddressSpace connectionAddressSpace, IPAddressSpace clientPolicyContainerAddressSpace, bool clientIsSecureContext, const SecurityOriginData& clientOrigin, NOESCAPE const LocalNetworkAccessPermissionCheckFunction&);
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct DefaultHash<WebCore::IPAddressSpace> : IntHash<WebCore::IPAddressSpace> { };
-template<> struct HashTraits<WebCore::IPAddressSpace> : StrongEnumHashTraits<WebCore::IPAddressSpace> { };
-
-} // namespace WTF
-

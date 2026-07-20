@@ -182,8 +182,10 @@ enum class AXTextChange : uint8_t;
 enum class BroadcastFocusedElement : bool;
 enum class ContentChange : uint8_t;
 enum class DidFilterLinkDecoration : bool { No, Yes };
+enum class IPAddressSpace : uint8_t;
 enum class IsLoggedIn : uint8_t;
 enum class LinkDecorationFilteringTrigger : uint8_t;
+enum class LocalNetworkAccessPermissionDecision : uint8_t;
 enum class ModalContainerControlType : uint8_t;
 enum class ModalContainerDecision : uint8_t;
 enum class PlatformEventModifier : uint8_t;
@@ -471,6 +473,8 @@ public:
     virtual RefPtr<ShapeDetection::TextDetector> createTextDetector() const;
 
     virtual void registerBlobPathForTesting(const String&, CompletionHandler<void()>&&) { }
+
+    virtual void setLocalNetworkAccessPermissionForTesting(SecurityOriginData&&, IPAddressSpace, LocalNetworkAccessPermissionDecision, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 
     // Pass nullptr as the GraphicsLayer to detatch the root layer.
     virtual void attachRootGraphicsLayer(LocalFrame&, GraphicsLayer*) = 0;

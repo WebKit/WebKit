@@ -88,10 +88,13 @@ class LoginStatus;
 class MockContentFilterSettings;
 class ResourceError;
 class ResourceRequest;
+class SecurityOriginData;
 class Site;
 enum class AdvancedPrivacyProtections : uint16_t;
 enum class StorageAccessScope : bool;
 enum class IsLoggedIn : uint8_t;
+enum class IPAddressSpace : uint8_t;
+enum class LocalNetworkAccessPermissionDecision : uint8_t;
 enum class ShouldPartitionCookie : bool;
 struct ClientOrigin;
 struct Cookie;
@@ -346,6 +349,7 @@ private:
     void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&&);
     void registerBlobPathForTesting(const String& path, CompletionHandler<void()>&&);
     void generalStoragePathForTesting(CompletionHandler<void(String&&)>&&);
+    void setLocalNetworkAccessPermissionForTesting(WebCore::SecurityOriginData&&, WebCore::IPAddressSpace, WebCore::LocalNetworkAccessPermissionDecision, CompletionHandler<void()>&&);
     bool isFilePathAllowed(String path);
 
     void registerBlobURLHandle(const URL&, const std::optional<WebCore::SecurityOriginData>& topOrigin);

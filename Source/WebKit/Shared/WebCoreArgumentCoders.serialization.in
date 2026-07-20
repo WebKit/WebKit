@@ -41,6 +41,14 @@ enum class WebCore::IPAddressSpace : uint8_t {
     Unknown
 };
 
+header: <WebCore/LocalNetworkAccess.h>
+
+enum class WebCore::LocalNetworkAccessPermissionDecision : uint8_t {
+    Granted,
+    Denied,
+    Prompt
+};
+
 enum class WebCore::NotificationEventType : bool;
 
 enum class WebCore::PermissionName : uint8_t {

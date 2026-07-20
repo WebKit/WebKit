@@ -131,6 +131,7 @@
 #include "HitTestResult.h"
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
+#include "IPAddressSpace.h"
 #include "ImageData.h"
 #include "ImageOverlay.h"
 #include "ImageOverlayController.h"
@@ -153,6 +154,7 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "LocalNetworkAccess.h"
 #include "LocalizedStrings.h"
 #include "Location.h"
 #include "MallocStatistics.h"
@@ -230,6 +232,7 @@
 #include "ScrollingCoordinator.h"
 #include "ScrollingMomentumCalculator.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginData.h"
 #include "SelectorFilter.h"
 #include "SerializedScriptValue.h"
 #include "ServiceWorker.h"
@@ -6149,6 +6152,41 @@ String Internals::createTemporaryFile(const String& name, const String& contents
 
     file.write(byteCast<uint8_t>(contents.utf8().span()));
     return path;
+}
+
+static WebCore::LocalNetworkAccessPermissionDecision toLocalNetworkAccessPermissionDecision(Internals::LocalNetworkAccessPermissionDecision decision)
+{
+    switch (decision) {
+    case Internals::LocalNetworkAccessPermissionDecision::Granted:
+        return WebCore::LocalNetworkAccessPermissionDecision::Granted;
+    case Internals::LocalNetworkAccessPermissionDecision::Denied:
+        return WebCore::LocalNetworkAccessPermissionDecision::Denied;
+    case Internals::LocalNetworkAccessPermissionDecision::Prompt:
+        return WebCore::LocalNetworkAccessPermissionDecision::Prompt;
+    }
+    return WebCore::LocalNetworkAccessPermissionDecision::Denied;
+}
+
+void Internals::setLocalNetworkAccessPermissionForTesting(const String& originURL, IPAddressSpace addressSpace, LocalNetworkAccessPermissionDecision decision, DOMPromiseDeferred<void>&& promise)
+{
+    Document* document = contextDocument();
+    if (!document) {
+        promise.reject(ExceptionCode::InvalidStateError);
+        return;
+    }
+
+    URL url = document->encodingParseURL(originURL);
+    auto origin = SecurityOriginData::fromURL(url);
+
+    RefPtr page = document->page();
+    if (!page) {
+        promise.reject(ExceptionCode::InvalidStateError);
+        return;
+    }
+
+    page->chrome().client().setLocalNetworkAccessPermissionForTesting(WTF::move(origin), addressSpace, toLocalNetworkAccessPermissionDecision(decision), [promise = WTF::move(promise)]() mutable {
+        promise.resolve();
+    });
 }
 
 void Internals::queueMicroTask(int testNumber)

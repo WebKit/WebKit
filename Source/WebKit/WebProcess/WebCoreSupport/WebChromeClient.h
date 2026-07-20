@@ -250,6 +250,7 @@ private:
     void renderingUpdateFramesPerSecondChanged() final;
     unsigned remoteImagesCountForTesting() const final;
     void registerBlobPathForTesting(const String& path, CompletionHandler<void()>&&) final;
+    void setLocalNetworkAccessPermissionForTesting(WebCore::SecurityOriginData&&, WebCore::IPAddressSpace, WebCore::LocalNetworkAccessPermissionDecision, CompletionHandler<void()>&&) final;
 
     void contentRuleListNotification(const URL&, const WebCore::ContentRuleListResults&) final;
     void contentRuleListMatchedRule(const WebCore::ContentRuleListMatchedRule&) final;
