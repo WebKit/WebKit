@@ -63,7 +63,10 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
 
     // Public
 
-    get domStorageObjects() { return this._domStorageObjects; }
+    get domStorageObjects()
+    {
+        return [...this._localStorageObjects.values(), ...this._sessionStorageObjects.values()];
+    }
 
     get cookieStorageObjects()
     {
@@ -160,7 +163,8 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
 
     _reset()
     {
-        this._domStorageObjects = [];
+        this._localStorageObjects = new Map;
+        this._sessionStorageObjects = new Map;
         this._cookieStorageObjects = {};
 
         this.dispatchEventToListeners(DOMStorageManager.Event.Cleared);
@@ -174,13 +178,8 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
 
     _domStorageForIdentifier(id)
     {
-        for (var storageObject of this._domStorageObjects) {
-            // The id is an object, so we need to compare the properties using Object.shallowEqual.
-            if (Object.shallowEqual(storageObject.id, id))
-                return storageObject;
-        }
-
-        return null;
+        let domStorageObjects = id.isLocalStorage ? this._localStorageObjects : this._sessionStorageObjects;
+        return domStorageObjects.get(id.securityOrigin) || null;
     }
 
     _addDOMStorageIfNeeded(frame)
@@ -203,7 +202,8 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
                 return;
 
             let domStorage = new WI.DOMStorageObject(identifier, frame.mainResource.urlComponents.host, identifier.isLocalStorage);
-            this._domStorageObjects.push(domStorage);
+            let domStorageObjects = identifier.isLocalStorage ? this._localStorageObjects : this._sessionStorageObjects;
+            domStorageObjects.set(identifier.securityOrigin, domStorage);
             this.dispatchEventToListeners(DOMStorageManager.Event.DOMStorageObjectWasAdded, {domStorage});
         };
         addDOMStorage(true);
