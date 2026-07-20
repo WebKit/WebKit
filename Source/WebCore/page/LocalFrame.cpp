@@ -1933,6 +1933,15 @@ RefPtr<Node> LocalFrame::nodeRespondingToDoubleClickEvent(const FloatPoint& view
     return qualifyingNodeAtViewportLocation(viewportLocation, adjustedViewportLocation, WTF::move(ancestorRespondingToDoubleClickEvent), ShouldApproximate::Yes);
 }
 
+RefPtr<LocalDOMWindow> LocalFrame::windowWithDoubleClickEventListener() const
+{
+    RefPtr window = this->window();
+    if (!window || !window->hasEventListeners(eventNames().dblclickEvent))
+        return nullptr;
+
+    return window;
+}
+
 #endif // PLATFORM(COCOA)
 
 } // namespace WebCore

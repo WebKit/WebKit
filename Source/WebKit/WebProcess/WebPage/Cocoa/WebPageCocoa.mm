@@ -3494,7 +3494,7 @@ void WebPage::handleDoubleTapForDoubleClickAtPoint(const IntPoint& point, Option
     RefPtr localMainFrame = protect(*m_page)->localMainFrame();
     RefPtr nodeRespondingToDoubleClick = localMainFrame ? localMainFrame->nodeRespondingToDoubleClickEvent(point, adjustedPoint) : nullptr;
 
-    RefPtr windowListeningToDoubleClickEvents = windowWithDoubleClickEventListener(localMainFrame);
+    RefPtr windowListeningToDoubleClickEvents = localMainFrame ? localMainFrame->windowWithDoubleClickEventListener() : nullptr;
 
     if (!nodeRespondingToDoubleClick && !windowListeningToDoubleClickEvents)
         return;

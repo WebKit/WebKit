@@ -244,6 +244,8 @@ public:
     WEBCORE_EXPORT RefPtr<Node> nodeRespondingToDoubleClickEvent(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation);
 
     static bool nodeWillRespondToMouseEvents(Node&);
+
+    WEBCORE_EXPORT RefPtr<LocalDOMWindow> windowWithDoubleClickEventListener() const;
 #endif // PLATFORM(COCOA)
 
 #if PLATFORM(IOS_FAMILY)

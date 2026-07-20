@@ -25,15 +25,9 @@
 
 #pragma once
 
-#import <wtf/Forward.h>
 #import <wtf/Platform.h>
 
 #if PLATFORM(COCOA)
-
-namespace WebCore {
-class LocalDOMWindow;
-class LocalFrame;
-}
 
 namespace WebKit {
 
@@ -42,7 +36,6 @@ struct InteractionInformationAtPosition;
 struct InteractionInformationRequest;
 
 InteractionInformationAtPosition positionInformationForWebPage(WebPage&, const InteractionInformationRequest&);
-RefPtr<WebCore::LocalDOMWindow> windowWithDoubleClickEventListener(RefPtr<WebCore::LocalFrame>);
 
 };
 
