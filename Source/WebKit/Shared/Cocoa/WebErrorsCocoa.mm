@@ -59,4 +59,9 @@ ResourceError decodeError(const URL& url)
     return ResourceError(createNSError(NSURLErrorDomain, NSURLErrorCannotDecodeContentData, url.createNSURL().get()).get());
 }
 
+ResourceError imageDataExceedsMaximumSizeError(const URL& url)
+{
+    return ResourceError(createNSError(NSURLErrorDomain, NSURLErrorDataLengthExceedsMaximum, url.createNSURL().get()).get());
+}
+
 } // namespace WebKit

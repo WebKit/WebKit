@@ -62,6 +62,7 @@ WebCore::ResourceError downloadDestinationError(const WebCore::ResourceResponse&
 #endif
 
 WebCore::ResourceError decodeError(const URL&);
+WebCore::ResourceError imageDataExceedsMaximumSizeError(const URL&);
 
 #if PLATFORM(GTK)
 WebCore::ResourceError invalidPageRangeToPrint(const URL&);

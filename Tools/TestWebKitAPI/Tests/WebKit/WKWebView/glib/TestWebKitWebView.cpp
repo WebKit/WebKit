@@ -62,6 +62,31 @@ private:
     uint32_t m_tickCount { 0 };
 };
 
+#if ENABLE(2022_GLIB_API) && ENABLE(APPLICATION_MANIFEST)
+class ApplicationManifestWebViewTest : public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(ApplicationManifestWebViewTest);
+
+    WebKitApplicationManifest* getApplicationManifest(GCancellable* cancellable = nullptr)
+    {
+        m_manifest = nullptr;
+        webkit_web_view_get_application_manifest(webView(), cancellable, [](GObject* object, GAsyncResult* result, gpointer userData) {
+            auto* test = static_cast<ApplicationManifestWebViewTest*>(userData);
+            test->m_manifest = adoptGRef(webkit_web_view_get_application_manifest_finish(WEBKIT_WEB_VIEW(object), result, &test->m_error.outPtr()));
+            test->quitMainLoop();
+        }, this);
+        g_main_loop_run(m_mainLoop);
+        return m_manifest.get();
+    }
+
+    const GError* error() const { return m_error.get(); }
+
+private:
+    GRefPtr<WebKitApplicationManifest> m_manifest;
+    GUniqueOutPtr<GError> m_error;
+};
+#endif // ENABLE(2022_GLIB_API) && ENABLE(APPLICATION_MANIFEST)
+
 static WebKitTestServer* gServer;
 
 static void testWebViewWebContext(WebViewTest* test, gconstpointer)
@@ -103,6 +128,143 @@ static void testWebViewWebContextLifetime(WebViewTest* test, gconstpointer)
     g_assert_true(WEBKIT_IS_WEB_CONTEXT(webContext2));
     g_object_unref(webContext2);
 }
+
+#if ENABLE(2022_GLIB_API) && ENABLE(APPLICATION_MANIFEST)
+static void testWebViewApplicationManifest(ApplicationManifestWebViewTest* test, gconstpointer)
+{
+    test->loadURI(gServer->getURIForPath("/application-manifest"));
+    test->waitUntilLoadFinished();
+
+    GRefPtr<WebKitApplicationManifest> manifestRef = test->getApplicationManifest();
+    g_assert_no_error(test->error());
+    auto* manifest = manifestRef.get();
+    g_assert_nonnull(manifest);
+    g_assert_cmpstr(webkit_application_manifest_get_name(manifest), ==, "WebKit PWA");
+    g_assert_cmpstr(webkit_application_manifest_get_short_name(manifest), ==, "PWA");
+    g_assert_cmpstr(webkit_application_manifest_get_description(manifest), ==, "An application manifest test.");
+    ASSERT_CMP_CSTRING(webkit_application_manifest_get_start_uri(manifest), ==, gServer->getURIForPath("/application/"));
+    ASSERT_CMP_CSTRING(webkit_application_manifest_get_scope(manifest), ==, gServer->getURIForPath("/application/"));
+    g_assert_cmpstr(webkit_application_manifest_get_display_mode(manifest), ==, "standalone");
+
+#if PLATFORM(GTK)
+    using ManifestColor = GdkRGBA;
+#elif PLATFORM(WPE)
+    using ManifestColor = WebKitColor;
+#endif
+    const ManifestColor* color = webkit_application_manifest_get_background_color(manifest);
+    g_assert_nonnull(color);
+    g_assert_cmpfloat(color->red, ==, 1);
+    g_assert_cmpfloat(color->green, ==, 0);
+    g_assert_cmpfloat(color->blue, ==, 0);
+    g_assert_cmpfloat(color->alpha, ==, 1);
+    color = webkit_application_manifest_get_background_color_dark(manifest);
+    g_assert_nonnull(color);
+    g_assert_cmpfloat(color->red, ==, 0);
+    g_assert_cmpfloat(color->green, ==, 1);
+    g_assert_cmpfloat(color->blue, ==, 0);
+    g_assert_cmpfloat(color->alpha, ==, 1);
+    color = webkit_application_manifest_get_theme_color(manifest);
+    g_assert_nonnull(color);
+    g_assert_cmpfloat(color->red, ==, 0);
+    g_assert_cmpfloat(color->green, ==, 0);
+    g_assert_cmpfloat(color->blue, ==, 1);
+    g_assert_cmpfloat(color->alpha, ==, 1);
+    color = webkit_application_manifest_get_theme_color_dark(manifest);
+    g_assert_null(color);
+
+    auto* fullManifest = webkit_application_manifest_get_full_manifest(manifest);
+    g_assert_true(g_variant_is_of_type(fullManifest, G_VARIANT_TYPE_VARDICT));
+    g_assert_true(fullManifest == webkit_application_manifest_get_full_manifest(manifest));
+    const char* arbitraryString = nullptr;
+    g_assert_true(g_variant_lookup(fullManifest, "arbitrary_string", "&s", &arbitraryString));
+    g_assert_cmpstr(arbitraryString, ==, "value");
+    gboolean arbitraryBoolean = FALSE;
+    g_assert_true(g_variant_lookup(fullManifest, "arbitrary_boolean", "b", &arbitraryBoolean));
+    g_assert_true(arbitraryBoolean);
+    double arbitraryInteger = 0;
+    g_assert_true(g_variant_lookup(fullManifest, "arbitrary_integer", "d", &arbitraryInteger));
+    g_assert_cmpfloat(arbitraryInteger, ==, 42);
+    double arbitraryNumber = 0;
+    g_assert_true(g_variant_lookup(fullManifest, "arbitrary_number", "d", &arbitraryNumber));
+    g_assert_cmpfloat(arbitraryNumber, ==, 2.5);
+    GRefPtr<GVariant> arbitraryNull = adoptGRef(g_variant_lookup_value(fullManifest, "arbitrary_null", G_VARIANT_TYPE("mv")));
+    g_assert_nonnull(arbitraryNull);
+    g_assert_cmpuint(g_variant_n_children(arbitraryNull.get()), ==, 0);
+    GRefPtr<GVariant> arbitraryObject = adoptGRef(g_variant_lookup_value(fullManifest, "arbitrary_object", G_VARIANT_TYPE_VARDICT));
+    g_assert_nonnull(arbitraryObject);
+    const char* nestedValue = nullptr;
+    g_assert_true(g_variant_lookup(arbitraryObject.get(), "nested", "&s", &nestedValue));
+    g_assert_cmpstr(nestedValue, ==, "value");
+    GRefPtr<GVariant> arbitraryArray = adoptGRef(g_variant_lookup_value(fullManifest, "arbitrary_array", G_VARIANT_TYPE("av")));
+    g_assert_nonnull(arbitraryArray);
+    g_assert_cmpuint(g_variant_n_children(arbitraryArray.get()), ==, 3);
+    GRefPtr<GVariant> arrayItem = adoptGRef(g_variant_get_child_value(arbitraryArray.get(), 1));
+    GRefPtr<GVariant> arrayValue = adoptGRef(g_variant_get_variant(arrayItem.get()));
+    g_assert_cmpstr(g_variant_get_string(arrayValue.get(), nullptr), ==, "two");
+
+    auto* shortcuts = webkit_application_manifest_get_shortcuts(manifest);
+    g_assert_nonnull(shortcuts);
+    auto* shortcut = shortcuts[0];
+    g_assert_true(WEBKIT_IS_APPLICATION_MANIFEST_SHORTCUT(shortcut));
+    g_assert_cmpstr(webkit_application_manifest_shortcut_get_name(shortcut), ==, "Compose");
+    ASSERT_CMP_CSTRING(webkit_application_manifest_shortcut_get_uri(shortcut), ==, gServer->getURIForPath("/application/compose"));
+    auto* shortcutIcons = webkit_application_manifest_shortcut_get_icons(shortcut);
+    g_assert_nonnull(shortcutIcons);
+    auto* shortcutIcon = shortcutIcons[0];
+    g_assert_true(WEBKIT_IS_APPLICATION_MANIFEST_ICON(shortcutIcon));
+    g_assert_null(shortcutIcons[1]);
+    ASSERT_CMP_CSTRING(webkit_application_manifest_icon_get_uri(shortcutIcon), ==, gServer->getURIForPath("/shortcut-icon.png"));
+    auto* shortcutIconSizes = webkit_application_manifest_icon_get_sizes(shortcutIcon);
+    g_assert_cmpstr(shortcutIconSizes[0], ==, "32x32");
+    g_assert_null(shortcutIconSizes[1]);
+    g_assert_cmpstr(webkit_application_manifest_icon_get_mime_type(shortcutIcon), ==, "image/png");
+    g_assert_false(webkit_application_manifest_icon_get_is_maskable(shortcutIcon));
+    g_assert_true(webkit_application_manifest_icon_get_is_monochrome(shortcutIcon));
+    g_assert_true(G_IS_LOADABLE_ICON(shortcutIcon));
+
+    auto* shortcutWithoutIcons = shortcuts[1];
+    g_assert_true(WEBKIT_IS_APPLICATION_MANIFEST_SHORTCUT(shortcutWithoutIcons));
+    g_assert_cmpstr(webkit_application_manifest_shortcut_get_name(shortcutWithoutIcons), ==, "Settings");
+    ASSERT_CMP_CSTRING(webkit_application_manifest_shortcut_get_uri(shortcutWithoutIcons), ==, gServer->getURIForPath("/settings"));
+    g_assert_null(webkit_application_manifest_shortcut_get_icons(shortcutWithoutIcons)[0]);
+    g_assert_null(shortcuts[2]);
+
+    auto* icons = webkit_application_manifest_get_icons(manifest);
+    g_assert_nonnull(icons);
+    auto* icon = icons[0];
+    g_assert_true(WEBKIT_IS_APPLICATION_MANIFEST_ICON(icon));
+    g_assert_null(icons[1]);
+    ASSERT_CMP_CSTRING(webkit_application_manifest_icon_get_uri(icon), ==, gServer->getURIForPath("/icon.png"));
+    auto* sizes = webkit_application_manifest_icon_get_sizes(icon);
+    g_assert_cmpstr(sizes[0], ==, "48x48");
+    g_assert_cmpstr(sizes[1], ==, "96x96");
+    g_assert_null(sizes[2]);
+    g_assert_cmpstr(webkit_application_manifest_icon_get_mime_type(icon), ==, "image/png");
+    g_assert_true(webkit_application_manifest_icon_get_is_maskable(icon));
+    g_assert_false(webkit_application_manifest_icon_get_is_monochrome(icon));
+    g_assert_true(G_IS_LOADABLE_ICON(icon));
+
+    GUniqueOutPtr<gchar> MIMEType;
+    GUniqueOutPtr<GError> error;
+    GRefPtr<GInputStream> stream = adoptGRef(g_loadable_icon_load(G_LOADABLE_ICON(icon), 0, &MIMEType.outPtr(), nullptr, &error.outPtr()));
+    g_assert_no_error(error.get());
+    g_assert_nonnull(stream);
+    g_assert_cmpstr(MIMEType.get(), ==, "image/png");
+    g_autoptr(GBytes) iconData = g_input_stream_read_bytes(stream.get(), 1, nullptr, &error.outPtr());
+    g_assert_no_error(error.get());
+    g_assert_cmpuint(g_bytes_get_size(iconData), ==, 1);
+
+    GRefPtr<GCancellable> cancellable = adoptGRef(g_cancellable_new());
+    g_cancellable_cancel(cancellable.get());
+    g_assert_null(test->getApplicationManifest(cancellable.get()));
+    g_assert_error(test->error(), G_IO_ERROR, G_IO_ERROR_CANCELLED);
+
+    test->loadURI(gServer->getURIForPath("/"));
+    test->waitUntilLoadFinished();
+    g_assert_null(test->getApplicationManifest());
+    g_assert_no_error(test->error());
+}
+#endif // ENABLE(2022_GLIB_API) && ENABLE(APPLICATION_MANIFEST)
 
 static void testWebViewCloseQuickly(WebViewTest* test, gconstpointer)
 {
@@ -2481,7 +2643,26 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
         return;
     }
 
-    if (g_str_equal(path, "/")) {
+    if (g_str_equal(path, "/application-manifest")) {
+        static const char html[] = "<html><head><link rel='manifest' href='/application-manifest.json'></head><body></body></html>";
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+        soup_server_message_set_response(message, "text/html", SOUP_MEMORY_STATIC, html, strlen(html));
+    } else if (g_str_equal(path, "/application-manifest.json")) {
+        static const char manifest[] = "{\"name\":\"WebKit PWA\",\"short_name\":\"PWA\",\"description\":\"An application manifest test.\",\"start_url\":\"/application/\",\"scope\":\"/application/\",\"display\":\"standalone\",\"background_color\":\"#ff0000\",\"theme_color\":\"#0000ff\",\"color_scheme_dark\":{\"background_color\":\"#00ff00\"},\"icons\":[{\"src\":\"/icon.png\",\"sizes\":\"48x48 96x96\",\"type\":\"image/png\",\"purpose\":\"any maskable\"}],\"shortcuts\":[{\"name\":\"Compose\",\"url\":\"application/compose\",\"icons\":[{\"src\":\"shortcut-icon.png\",\"sizes\":\"32x32\",\"type\":\"image/png\",\"purpose\":\"monochrome\"}]},{\"name\":\"Settings\",\"url\":\"settings\"}],\"arbitrary_string\":\"value\",\"arbitrary_boolean\":true,\"arbitrary_integer\":42,\"arbitrary_number\":2.5,\"arbitrary_null\":null,\"arbitrary_object\":{\"nested\":\"value\"},\"arbitrary_array\":[1,\"two\",false]}";
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+        soup_message_headers_append(soup_server_message_get_response_headers(message), "Access-Control-Allow-Origin", "*");
+        soup_server_message_set_response(message, "application/manifest+json", SOUP_MEMORY_STATIC, manifest, strlen(manifest));
+    } else if (g_str_equal(path, "/icon.png") || g_str_equal(path, "/shortcut-icon.png")) {
+        static const guint8 icon[] = {
+            0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
+            0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
+            0x89, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x44, 0x41, 0x54, 0x08, 0xD7, 0x63, 0xF8, 0xCF, 0xC0, 0xF0,
+            0x1F, 0x00, 0x05, 0x00, 0x01, 0xFF, 0x89, 0x99, 0x3D, 0x1D, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45,
+            0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82
+        };
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+        soup_server_message_set_response(message, "image/png", SOUP_MEMORY_STATIC, reinterpret_cast<const char*>(icon), sizeof(icon));
+    } else if (g_str_equal(path, "/")) {
         soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
         soup_message_body_complete(soup_server_message_get_response_body(message));
     } else
@@ -2571,6 +2752,9 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "disable-web-security", testWebViewDisableWebSecurity);
     WebViewTest::add("WebKitWebView", "enable-html5-database", testWebViewEnableHTML5Database);
     WebViewTest::add("WebKitWebView", "load-alternate-html-from-page-with-csp", testWebViewLoadAlternateHTMLFromPageWithCSP);
+#if ENABLE(2022_GLIB_API) && ENABLE(APPLICATION_MANIFEST)
+    ApplicationManifestWebViewTest::add("WebKitWebView", "application-manifest", testWebViewApplicationManifest);
+#endif
 }
 
 void afterAll()
