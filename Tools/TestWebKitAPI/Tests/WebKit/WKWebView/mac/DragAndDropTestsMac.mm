@@ -309,6 +309,205 @@ TEST(DragAndDropTests, DraggableElementWithOnlyCustomPasteboardDataFiresDragEven
     EXPECT_TRUE([simulator containsDraggedType:@"Apple WebKit dummy pasteboard type"]);
 }
 
+#if ENABLE(DRAG_SOURCE_CUSTOMIZATION)
+
+TEST(DragAndDropTests, DraggingItemsForDraggingItemReplacesDragData)
+{
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"draggable-only-custom-data"];
+
+    [simulator setDraggingItemsForDraggingItemBlock:^NSArray<NSDraggingItem *> *(NSDraggingItem *defaultItem) {
+        RetainPtr writer = adoptNS([[NSPasteboardItem alloc] init]);
+        [writer setString:@"substituted!" forType:@"org.webkit.test.substituted-drag-data"];
+        RetainPtr item = adoptNS([[NSDraggingItem alloc] initWithPasteboardWriter:writer]);
+        [item setDraggingFrame:defaultItem.draggingFrame];
+        [item setImageComponentsProvider:defaultItem.imageComponentsProvider];
+        return @[ item ];
+    }];
+
+    [simulator runFrom:NSMakePoint(150, 50) to:NSMakePoint(150, 200)];
+
+    EXPECT_TRUE([simulator containsDraggedType:@"org.webkit.test.substituted-drag-data"]);
+    EXPECT_FALSE([simulator containsDraggedType:@"Apple WebKit dummy pasteboard type"]);
+    // WebKit's own web content data (serialized under the custom pasteboard type) must be replaced too.
+    EXPECT_FALSE([simulator containsDraggedType:@"com.apple.WebKit.custom-pasteboard-data"]);
+}
+
+TEST(DragAndDropTests, DraggingItemsForDraggingItemSupportsMultipleItems)
+{
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"draggable-only-custom-data"];
+
+    [simulator setDraggingItemsForDraggingItemBlock:^NSArray<NSDraggingItem *> *(NSDraggingItem *defaultItem) {
+        RetainPtr firstWriter = adoptNS([[NSPasteboardItem alloc] init]);
+        [firstWriter setString:@"first!" forType:@"org.webkit.test.substituted-drag-data-1"];
+        RetainPtr firstItem = adoptNS([[NSDraggingItem alloc] initWithPasteboardWriter:firstWriter]);
+        [firstItem setDraggingFrame:defaultItem.draggingFrame];
+        [firstItem setImageComponentsProvider:defaultItem.imageComponentsProvider];
+
+        RetainPtr secondWriter = adoptNS([[NSPasteboardItem alloc] init]);
+        [secondWriter setString:@"second!" forType:@"org.webkit.test.substituted-drag-data-2"];
+        RetainPtr secondItem = adoptNS([[NSDraggingItem alloc] initWithPasteboardWriter:secondWriter]);
+        [secondItem setDraggingFrame:defaultItem.draggingFrame];
+
+        return @[ firstItem, secondItem ];
+    }];
+
+    [simulator runFrom:NSMakePoint(150, 50) to:NSMakePoint(150, 200)];
+
+    RetainPtr draggingPasteboard = [NSPasteboard pasteboardWithName:NSPasteboardNameDrag];
+    RetainPtr pasteboardItems = [draggingPasteboard pasteboardItems];
+    EXPECT_EQ(2UL, [pasteboardItems count]);
+
+    bool foundFirstItem = false;
+    bool foundSecondItem = false;
+    for (NSPasteboardItem *item in pasteboardItems.get()) {
+        if ([item.types containsObject:@"org.webkit.test.substituted-drag-data-1"])
+            foundFirstItem = true;
+        if ([item.types containsObject:@"org.webkit.test.substituted-drag-data-2"])
+            foundSecondItem = true;
+    }
+    EXPECT_TRUE(foundFirstItem);
+    EXPECT_TRUE(foundSecondItem);
+
+    // WebKit's own web content data must not appear alongside the delegate's substituted items.
+    EXPECT_FALSE([simulator containsDraggedType:@"com.apple.WebKit.custom-pasteboard-data"]);
+}
+
+TEST(DragAndDropTests, DraggingItemsForDraggingItemFallsBackWhenDelegateDeclines)
+{
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"draggable-only-custom-data"];
+
+    __block BOOL delegateConsulted = NO;
+    [simulator setDraggingItemsForDraggingItemBlock:^NSArray<NSDraggingItem *> *(NSDraggingItem *) {
+        delegateConsulted = YES;
+        return nil;
+    }];
+
+    [simulator runFrom:NSMakePoint(150, 50) to:NSMakePoint(150, 200)];
+
+    EXPECT_TRUE(delegateConsulted);
+    EXPECT_FALSE([simulator containsDraggedType:@"org.webkit.test.substituted-drag-data"]);
+    EXPECT_TRUE([simulator containsDraggedType:@"Apple WebKit dummy pasteboard type"]);
+    // The web content's custom pasteboard data is present when WebKit's default items are used; this is
+    // what DraggingItemsForDraggingItemReplacesDragData asserts is gone after substitution.
+    EXPECT_TRUE([simulator containsDraggedType:@"com.apple.WebKit.custom-pasteboard-data"]);
+}
+
+TEST(DragAndDropTests, DraggingItemForDraggingItemUsesDragOriginLocation)
+{
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"draggable-only-custom-data"];
+
+    [simulator runFrom:NSMakePoint(150, 50) to:NSMakePoint(150, 200)];
+
+    EXPECT_TRUE([simulator delegateDidRequestDraggingItems]);
+
+    NSPoint location = [simulator delegateDraggingItemLocation];
+    EXPECT_NEAR(location.x, 150, 4);
+    EXPECT_NEAR(location.y, 50, 4);
+    EXPECT_FALSE(NSEqualPoints(location, [simulator delegateDefaultDraggingItemFrame].origin));
+    EXPECT_TRUE(NSPointInRect(location, [simulator delegateDefaultDraggingItemFrame]));
+}
+
+TEST(DragAndDropTests, SourceOperationMaskDefaultsWithinApplication)
+{
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"draggable-only-custom-data"];
+
+    [simulator runFrom:NSMakePoint(150, 50) to:NSMakePoint(150, 200)];
+
+    EXPECT_TRUE([simulator delegateDidRequestSourceOperationMask]);
+    EXPECT_EQ([simulator delegateDefaultSourceOperationMask], NSDragOperationGeneric | NSDragOperationMove | NSDragOperationCopy);
+    EXPECT_EQ([simulator delegateSourceOperationMask], [simulator delegateDefaultSourceOperationMask]);
+}
+
+TEST(DragAndDropTests, SourceOperationMaskOutsideApplicationDefaultsToCopy)
+{
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"draggable-only-custom-data"];
+
+    [simulator setSourceOperationMaskQueryContext:NSDraggingContextOutsideApplication];
+    [simulator runFrom:NSMakePoint(150, 50) to:NSMakePoint(150, 200)];
+
+    EXPECT_TRUE([simulator delegateDidRequestSourceOperationMask]);
+    EXPECT_EQ([simulator delegateDefaultSourceOperationMask], NSDragOperationCopy);
+}
+
+TEST(DragAndDropTests, SourceOperationMaskDelegateOverride)
+{
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"draggable-only-custom-data"];
+
+    __block NSDraggingContext observedContext = NSDraggingContextOutsideApplication;
+    __block NSDragOperation observedDefault = NSDragOperationNone;
+    [simulator setSourceOperationMaskBlock:^NSDragOperation(NSDraggingContext context, NSDragOperation defaultMask) {
+        observedContext = context;
+        observedDefault = defaultMask;
+        return NSDragOperationCopy;
+    }];
+
+    [simulator runFrom:NSMakePoint(150, 50) to:NSMakePoint(150, 200)];
+
+    EXPECT_TRUE([simulator delegateDidRequestSourceOperationMask]);
+    EXPECT_EQ(observedContext, NSDraggingContextWithinApplication);
+    EXPECT_EQ(observedDefault, NSDragOperationGeneric | NSDragOperationMove | NSDragOperationCopy);
+    EXPECT_EQ([simulator delegateSourceOperationMask], NSDragOperationCopy);
+}
+
+TEST(DragAndDropTests, DraggingSessionLifecycleIsForwardedToDelegate)
+{
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"draggable-only-custom-data"];
+
+    [simulator runFrom:NSMakePoint(150, 50) to:NSMakePoint(150, 200)];
+
+    EXPECT_TRUE([simulator delegateDidBeginDraggingSession]);
+    EXPECT_TRUE([simulator delegateDidEndDraggingSession]);
+    EXPECT_EQ([simulator delegateDraggingSessionEndedOperation], [simulator currentDragOperation]);
+    EXPECT_FALSE(NSEqualPoints([simulator delegateDraggingSessionWillBeginPoint], NSZeroPoint));
+    EXPECT_FALSE(NSEqualPoints([simulator delegateDraggingSessionEndedPoint], NSZeroPoint));
+}
+
+TEST(DragAndDropTests, DraggingItemsForDraggingItemClearsPromisedImageStateAfterSubstitution)
+{
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    RetainPtr webView = [simulator webView];
+
+    // Substitute an image drag. Because the delegate supplies the items, WebKit must not hold on to the
+    // promised-image data it computed for this drag.
+    [webView synchronouslyLoadTestPageNamed:@"image-and-file-upload"];
+    [simulator setDraggingItemsForDraggingItemBlock:^NSArray<NSDraggingItem *> *(NSDraggingItem *defaultItem) {
+        RetainPtr writer = adoptNS([[NSPasteboardItem alloc] init]);
+        [writer setString:@"substituted!" forType:@"org.webkit.test.substituted-drag-data"];
+        RetainPtr item = adoptNS([[NSDraggingItem alloc] initWithPasteboardWriter:writer]);
+        [item setDraggingFrame:defaultItem.draggingFrame];
+        [item setImageComponentsProvider:defaultItem.imageComponentsProvider];
+        return @[ item ];
+    }];
+    [simulator runFrom:NSMakePoint(100, 100) to:NSMakePoint(100, 300)];
+    EXPECT_TRUE([simulator containsDraggedType:@"org.webkit.test.substituted-drag-data"]);
+
+    // A subsequent non-image drag where the delegate declines must fall back to WebKit's legacy path.
+    // If the previous drag's promised-image data leaked, this drag would be treated as an image drag
+    // and would not write the dummy pasteboard type.
+    [webView synchronouslyLoadTestPageNamed:@"draggable-only-custom-data"];
+    [simulator setDraggingItemsForDraggingItemBlock:nil];
+    [simulator runFrom:NSMakePoint(150, 50) to:NSMakePoint(150, 200)];
+    EXPECT_TRUE([simulator containsDraggedType:@"Apple WebKit dummy pasteboard type"]);
+}
+
+#endif // ENABLE(DRAG_SOURCE_CUSTOMIZATION)
+
 TEST(DragAndDropTests, DropUserSelectAllUserDragElementDiv)
 {
     RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 320, 500)]);

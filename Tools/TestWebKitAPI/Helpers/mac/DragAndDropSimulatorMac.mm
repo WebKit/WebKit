@@ -96,6 +96,10 @@ static RetainPtr<NSImage> defaultExternalDragImage()
     RetainPtr<NSMutableArray<NSFilePromiseProvider *>> _filePromiseProviders;
     BlockPtr<void()> _willBeginDraggingHandler;
     BlockPtr<void()> _willEndDraggingHandler;
+#if ENABLE(DRAG_SOURCE_CUSTOMIZATION)
+    BlockPtr<NSArray<NSDraggingItem *> *(NSDraggingItem *)> _draggingItemsForDraggingItemBlock;
+    BlockPtr<NSDragOperation(NSDraggingContext, NSDragOperation)> _sourceOperationMaskBlock;
+#endif
     NSPoint _startLocationInWindow;
     NSPoint _endLocationInWindow;
     double _progress;
@@ -105,6 +109,20 @@ static RetainPtr<NSImage> defaultExternalDragImage()
 
 @synthesize currentDragOperation = _currentDragOperation;
 @synthesize initialDragImageLocationInView = _initialDragImageLocationInView;
+#if ENABLE(DRAG_SOURCE_CUSTOMIZATION)
+@synthesize delegateDidRequestDraggingItems = _didRequestDraggingItems;
+@synthesize delegateDraggingItemLocation = _draggingItemLocation;
+@synthesize delegateDefaultDraggingItemFrame = _defaultDraggingItemFrame;
+@synthesize sourceOperationMaskQueryContext = _sourceOperationMaskQueryContext;
+@synthesize delegateDidRequestSourceOperationMask = _didRequestSourceOperationMask;
+@synthesize delegateDefaultSourceOperationMask = _defaultSourceOperationMask;
+@synthesize delegateSourceOperationMask = _sourceOperationMask;
+@synthesize delegateDidBeginDraggingSession = _didBeginDraggingSession;
+@synthesize delegateDraggingSessionWillBeginPoint = _draggingSessionWillBeginPoint;
+@synthesize delegateDidEndDraggingSession = _didEndDraggingSession;
+@synthesize delegateDraggingSessionEndedPoint = _draggingSessionEndedPoint;
+@synthesize delegateDraggingSessionEndedOperation = _draggingSessionEndedOperation;
+#endif
 
 - (instancetype)initWithWebViewFrame:(CGRect)frame
 {
@@ -118,6 +136,9 @@ static RetainPtr<NSImage> defaultExternalDragImage()
         _filePromiseDestinationURLs = adoptNS([NSMutableArray new]);
         [_webView setUIDelegate:self];
         self.dragDestinationAction = WKDragDestinationActionAny & ~WKDragDestinationActionLoad;
+#if ENABLE(DRAG_SOURCE_CUSTOMIZATION)
+        _sourceOperationMaskQueryContext = NSDraggingContextWithinApplication;
+#endif
 
         [[NSPasteboard pasteboardWithName:NSPasteboardNameDrag] clearContents];
     }
@@ -228,6 +249,12 @@ static RetainPtr<NSImage> defaultExternalDragImage()
     }
 
     _draggingSession = adoptNS([[NSDraggingSession alloc] init]);
+
+#if ENABLE(DRAG_SOURCE_CUSTOMIZATION)
+    _sourceOperationMask = [source draggingSession:_draggingSession.get() sourceOperationMaskForDraggingContext:_sourceOperationMaskQueryContext];
+    [source draggingSession:_draggingSession.get() willBeginAtPoint:_startLocationInWindow];
+#endif
+
     _doneWaitingForDraggingSession = false;
     _initialDragImageLocationInView = items[0].draggingFrame.origin;
     id dragImageContents = items[0].imageComponents.firstObject.contents;
@@ -374,6 +401,28 @@ static RetainPtr<NSImage> defaultExternalDragImage()
 {
     _willBeginDraggingHandler = makeBlockPtr(willBeginDraggingHandler);
 }
+
+#if ENABLE(DRAG_SOURCE_CUSTOMIZATION)
+- (NSArray<NSDraggingItem *> *(^)(NSDraggingItem *))draggingItemsForDraggingItemBlock
+{
+    return _draggingItemsForDraggingItemBlock.get();
+}
+
+- (void)setDraggingItemsForDraggingItemBlock:(NSArray<NSDraggingItem *> *(^)(NSDraggingItem *))block
+{
+    _draggingItemsForDraggingItemBlock = makeBlockPtr(block);
+}
+
+- (NSDragOperation (^)(NSDraggingContext, NSDragOperation))sourceOperationMaskBlock
+{
+    return _sourceOperationMaskBlock.get();
+}
+
+- (void)setSourceOperationMaskBlock:(NSDragOperation (^)(NSDraggingContext, NSDragOperation))block
+{
+    _sourceOperationMaskBlock = makeBlockPtr(block);
+}
+#endif
 
 - (dispatch_block_t)willEndDraggingHandler
 {
@@ -531,6 +580,42 @@ static BOOL getFilePathsAndTypeIdentifiers(NSArray<NSURL *> *fileURLs, NSArray<N
 {
     _doneWaitingForDrop = true;
 }
+
+#if ENABLE(DRAG_SOURCE_CUSTOMIZATION)
+- (void)_webView:(WKWebView *)webView draggingItemsForDraggingItem:(NSDraggingItem *)draggingItem atLocation:(NSPoint)viewLocation completionHandler:(void (^)(NSArray<NSDraggingItem *> *draggingItems))completionHandler
+{
+    _didRequestDraggingItems = YES;
+    _draggingItemLocation = viewLocation;
+    _defaultDraggingItemFrame = draggingItem.draggingFrame;
+    if (!_draggingItemsForDraggingItemBlock) {
+        completionHandler(nil);
+        return;
+    }
+    completionHandler(_draggingItemsForDraggingItemBlock(draggingItem));
+}
+
+- (NSDragOperation)_webView:(WKWebView *)webView sourceOperationMaskForDraggingContext:(NSDraggingContext)context defaultOperationMask:(NSDragOperation)defaultOperationMask
+{
+    _didRequestSourceOperationMask = YES;
+    _defaultSourceOperationMask = defaultOperationMask;
+    if (_sourceOperationMaskBlock)
+        return _sourceOperationMaskBlock(context, defaultOperationMask);
+    return defaultOperationMask;
+}
+
+- (void)_webView:(WKWebView *)webView draggingSession:(NSDraggingSession *)session willBeginAtPoint:(NSPoint)screenPoint
+{
+    _didBeginDraggingSession = YES;
+    _draggingSessionWillBeginPoint = screenPoint;
+}
+
+- (void)_webView:(WKWebView *)webView draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation
+{
+    _didEndDraggingSession = YES;
+    _draggingSessionEndedPoint = screenPoint;
+    _draggingSessionEndedOperation = operation;
+}
+#endif
 
 - (WKDragDestinationAction)_webView:(WKWebView *)webView dragDestinationActionMaskForDraggingInfo:(id)draggingInfo
 {

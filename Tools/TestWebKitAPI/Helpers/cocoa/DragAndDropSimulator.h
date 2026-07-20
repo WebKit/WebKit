@@ -146,6 +146,25 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 @property (nonatomic, readonly) NSArray<NSURL *> *externalPromisedFiles;
 @property (nonatomic, copy) dispatch_block_t willBeginDraggingHandler;
 @property (nonatomic, copy) dispatch_block_t willEndDraggingHandler;
+#if ENABLE(DRAG_SOURCE_CUSTOMIZATION)
+// The block/context properties are test inputs that configure how the simulator (acting as the UI delegate) responds.
+// The delegate-prefixed properties record what WebKit asked the delegate and what the delegate returned,
+// which is distinct from the simulated drag state (e.g. draggingInfo.draggingSourceOperationMask).
+@property (nonatomic, copy) NSArray<NSDraggingItem *> *(^draggingItemsForDraggingItemBlock)(NSDraggingItem *);
+@property (nonatomic, readonly) BOOL delegateDidRequestDraggingItems;
+@property (nonatomic, readonly) NSPoint delegateDraggingItemLocation;
+@property (nonatomic, readonly) NSRect delegateDefaultDraggingItemFrame;
+@property (nonatomic, copy) NSDragOperation (^sourceOperationMaskBlock)(NSDraggingContext, NSDragOperation);
+@property (nonatomic) NSDraggingContext sourceOperationMaskQueryContext;
+@property (nonatomic, readonly) BOOL delegateDidRequestSourceOperationMask;
+@property (nonatomic, readonly) NSDragOperation delegateDefaultSourceOperationMask;
+@property (nonatomic, readonly) NSDragOperation delegateSourceOperationMask;
+@property (nonatomic, readonly) BOOL delegateDidBeginDraggingSession;
+@property (nonatomic, readonly) NSPoint delegateDraggingSessionWillBeginPoint;
+@property (nonatomic, readonly) BOOL delegateDidEndDraggingSession;
+@property (nonatomic, readonly) NSPoint delegateDraggingSessionEndedPoint;
+@property (nonatomic, readonly) NSDragOperation delegateDraggingSessionEndedOperation;
+#endif
 
 - (void)writePromisedFiles:(NSArray<NSURL *> *)fileURLs;
 - (void)writePromisedFilesWithWebArchive:(NSArray<NSURL *> *)fileURLs;

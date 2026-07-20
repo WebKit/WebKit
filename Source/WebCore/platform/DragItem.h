@@ -46,6 +46,7 @@ struct DragItem final {
     std::optional<DragSourceAction> sourceAction;
     std::optional<FrameIdentifier> rootFrameID;
     IntPoint eventPositionInContentCoordinates;
+    IntPoint eventPositionInRootViewCoordinates;
     IntPoint dragLocationInContentCoordinates;
     IntPoint dragLocationInWindowCoordinates;
     String title;
