@@ -5367,7 +5367,8 @@ void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
     OptionSet<JSC::VM::SchedulerOptions> options;
     if (m_opportunisticTaskScheduler->hasImminentlyScheduledWork())
         options.add(JSC::VM::SchedulerOptions::HasImminentlyScheduledWork);
-    commonVM().performOpportunisticallyScheduledTasks(deadline, options);
+
+    commonVM().performOpportunisticallyScheduledTasks(deadline.approximate<ApproximateTime>(), options);
 
     deleteRemovedNodesAndDetachedRenderers();
 }
