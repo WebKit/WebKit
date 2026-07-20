@@ -3488,18 +3488,6 @@ void WebPage::completeSyntheticClick(std::optional<WebCore::FrameIdentifier> fra
 #endif
 }
 
-static RefPtr<LocalDOMWindow> windowWithDoubleClickEventListener(RefPtr<LocalFrame> frame)
-{
-    if (!frame)
-        return nullptr;
-
-    RefPtr window = frame->window();
-    if (!window || !window->hasEventListeners(WebCore::eventNames().dblclickEvent))
-        return nullptr;
-
-    return window;
-}
-
 void WebPage::handleDoubleTapForDoubleClickAtPoint(const IntPoint& point, OptionSet<WebEventModifier> modifiers, TransactionID lastLayerTreeTransactionId, WebEventInputSource inputSource, WebMouseEventSyntheticClickType webSyntheticClickType)
 {
     FloatPoint adjustedPoint;

@@ -625,7 +625,7 @@ static void animationPositionInformation(WebPage& page, const InteractionInforma
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 }
 
-static RefPtr<WebCore::LocalDOMWindow> windowWithDoubleClickEventListener(RefPtr<WebCore::LocalFrame> frame)
+RefPtr<WebCore::LocalDOMWindow> windowWithDoubleClickEventListener(RefPtr<WebCore::LocalFrame> frame)
 {
     if (!frame)
         return nullptr;
