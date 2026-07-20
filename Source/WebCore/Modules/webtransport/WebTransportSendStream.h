@@ -48,8 +48,8 @@ public:
     void getStats(ScriptExecutionContext&, Ref<DeferredPromise>&&);
     WebTransportSendGroup* NODELETE sendGroup();
     ExceptionOr<void> setSendGroup(WebTransportSendGroup*);
-    std::optional<int64_t> sendOrder() { return m_sendOrder; }
-    void setSendOrder(std::optional<int64_t> order) { m_sendOrder = order; }
+    int64_t sendOrder() { return m_sendOrder; }
+    void setSendOrder(int64_t order) { m_sendOrder = order; }
 private:
     WebTransportSendStream(WebTransportStreamIdentifier, WebTransport&, Ref<InternalWritableStream>&&);
 
@@ -58,7 +58,7 @@ private:
     const WebTransportStreamIdentifier m_identifier;
     const ThreadSafeWeakPtr<WebTransport> m_transport;
     RefPtr<WebTransportSendGroup> m_sendGroup;
-    std::optional<int64_t> m_sendOrder;
+    int64_t m_sendOrder { 0 };
 };
 
 }

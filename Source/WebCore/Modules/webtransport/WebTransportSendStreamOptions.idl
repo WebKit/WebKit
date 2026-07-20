@@ -24,12 +24,9 @@
  */
 
 // https://w3c.github.io/webtransport/#dictdef-webtransportsendstreamoptions
-// FIXME: `WebTransportSendStreamOptions` should have a parent dictionary `WebTransportSendOptions`.
 [
     EnabledBySetting=WebTransportEnabled,
-] dictionary WebTransportSendStreamOptions {
-    // FIXME: `sendOrder` should be in parent dictionary `WebTransportSendOptions`.
-    long long? sendOrder = null;
+] dictionary WebTransportSendStreamOptions : WebTransportSendOptions {
     // FIXME: Add support for `waitUntilAvailable`.
     // boolean waitUntilAvailable = false;
 };
