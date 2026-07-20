@@ -55,8 +55,8 @@ OptionSet<WebKit::ContentWorldOption> ContentWorldConfiguration::optionSet() con
         result.add(WebKit::ContentWorldOption::DisableLegacyBuiltinOverrides);
     if (allowJSHandleCreation())
         result.add(WebKit::ContentWorldOption::AllowJSHandleCreation);
-    if (allowNodeSerialization())
-        result.add(WebKit::ContentWorldOption::AllowNodeSerialization);
+    if (allowNodeSnapshotCreation())
+        result.add(WebKit::ContentWorldOption::AllowNodeSnapshotCreation);
     if (isInspectable())
         result.add(WebKit::ContentWorldOption::Inspectable);
 
@@ -130,14 +130,14 @@ void ContentWorldConfiguration::setAllowJSHandleCreation(bool allow)
     m_data.allowJSHandleCreation = allow;
 }
 
-bool ContentWorldConfiguration::allowNodeSerialization() const
+bool ContentWorldConfiguration::allowNodeSnapshotCreation() const
 {
-    return m_data.allowNodeSerialization;
+    return m_data.allowNodeSnapshotCreation;
 }
 
-void ContentWorldConfiguration::setAllowNodeSerialization(bool allow)
+void ContentWorldConfiguration::setAllowNodeSnapshotCreation(bool allow)
 {
-    m_data.allowNodeSerialization = allow;
+    m_data.allowNodeSnapshotCreation = allow;
 }
 
 bool ContentWorldConfiguration::isInspectable() const

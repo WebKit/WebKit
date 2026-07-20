@@ -135,9 +135,9 @@ void InjectedBundleScriptWorld::setAllowJSHandleCreation()
     m_world->setAllowsJSHandleCreation();
 }
 
-void InjectedBundleScriptWorld::setAllowNodeSerialization()
+void InjectedBundleScriptWorld::setAllowNodeSnapshotCreation()
 {
-    m_world->setAllowNodeSerialization();
+    m_world->setAllowNodeSnapshotCreation();
 }
 
 void InjectedBundleScriptWorld::setAllowPostingLegacySynchronousMessages()

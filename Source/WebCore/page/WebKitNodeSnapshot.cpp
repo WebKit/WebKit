@@ -23,24 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKJSSerializedNodeInternal.h"
+#include "config.h"
+#include "WebKitNodeSnapshot.h"
 
-#import <WebCore/WebCoreObjCExtras.h>
+#include "Node.h"
 
-@implementation WKJSSerializedNode
+namespace WebCore {
 
-- (void)dealloc
+WebKitNodeSnapshot::WebKitNodeSnapshot(const Node& node, bool deep)
+    : m_serializedNode(node.serializeNode(deep ? Node::CloningOperation::Everything : Node::CloningOperation::SelfOnly))
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKJSSerializedNode.class, self))
-        return;
-    SUPPRESS_UNRETAINED_ARG _node->API::SerializedNode::~SerializedNode();
-    [super dealloc];
 }
 
-- (API::Object&)_apiObject
-{
-    return *_node;
 }
-
-@end

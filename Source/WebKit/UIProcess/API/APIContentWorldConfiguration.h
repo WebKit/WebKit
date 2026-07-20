@@ -61,8 +61,8 @@ public:
     bool NODELETE allowJSHandleCreation() const;
     void NODELETE setAllowJSHandleCreation(bool);
 
-    bool NODELETE allowNodeSerialization() const;
-    void NODELETE setAllowNodeSerialization(bool);
+    bool NODELETE allowNodeSnapshotCreation() const;
+    void NODELETE setAllowNodeSnapshotCreation(bool);
 
     bool NODELETE isInspectable() const;
     void NODELETE setInspectable(bool);
@@ -79,7 +79,7 @@ private:
         bool allowElementUserInfo : 1 { false };
         bool disableLegacyBuiltinOverrides : 1 { false };
         bool allowJSHandleCreation : 1 { false };
-        bool allowNodeSerialization : 1 { false };
+        bool allowNodeSnapshotCreation : 1 { false };
         bool inspectable : 1 { true };
     };
 

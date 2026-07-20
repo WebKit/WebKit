@@ -172,8 +172,8 @@ void WebUserContentController::addContentWorldIfNecessary(const ContentWorldData
         scriptWorld->disableOverrideBuiltinsBehavior();
     if (world.options.contains(ContentWorldOption::AllowJSHandleCreation))
         scriptWorld->setAllowJSHandleCreation();
-    if (world.options.contains(ContentWorldOption::AllowNodeSerialization))
-        scriptWorld->setAllowNodeSerialization();
+    if (world.options.contains(ContentWorldOption::AllowNodeSnapshotCreation))
+        scriptWorld->setAllowNodeSnapshotCreation();
 
     Page::forEachPage([&] (auto& page) {
         Ref mainFrame = page.mainFrame();

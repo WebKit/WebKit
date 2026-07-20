@@ -368,12 +368,12 @@ UIProcess/API/Cocoa/WKFrameInfo.mm @nonARC
 UIProcess/API/Cocoa/WKHTTPCookieStore.mm @nonARC
 UIProcess/API/Cocoa/WKImmersiveEnvironment.mm @nonARC
 UIProcess/API/Cocoa/WKJSHandle.mm @nonARC
-UIProcess/API/Cocoa/WKJSSerializedNode.mm @nonARC
 UIProcess/API/Cocoa/WKMenuItemIdentifiers.mm @nonARC
 UIProcess/API/Cocoa/WKNavigation.mm @nonARC
 UIProcess/API/Cocoa/WKNavigationAction.mm @nonARC
 UIProcess/API/Cocoa/WKNavigationData.mm @nonARC
 UIProcess/API/Cocoa/WKNavigationResponse.mm @nonARC
+UIProcess/API/Cocoa/WKDOMNodeSnapshot.mm @nonARC
 UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.mm @nonARC
 UIProcess/API/Cocoa/WKOpenPanelParameters.mm @nonARC
 UIProcess/API/Cocoa/WKPDFConfiguration.mm @nonARC

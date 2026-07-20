@@ -38,7 +38,7 @@
 #import <WebKit/WKContentWorld.h>
 #import <WebKit/WKContentWorldConfiguration.h>
 #import <WebKit/WKContentWorldPrivate.h>
-#import <WebKit/WKJSSerializedNode.h>
+#import <WebKit/WKDOMNodeSnapshot.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKScriptMessage.h>
 #import <WebKit/WKScriptMessageHandlerWithReply.h>
@@ -2024,9 +2024,9 @@ TEST(WKUserContentController, EvaluateLargeJavaScriptStringInAutoFillWorld)
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message replyHandler:(void (^)(id, NSString *errorMessage))replyHandler
 {
     WKWebView *webView = message.webView;
-    [webView evaluateJavaScript:@"window.webkit.serializeNode(document.createElement('div'))" inFrame:nil inContentWorld:self.world completionHandler:^(id result, NSError *error) {
+    [webView evaluateJavaScript:@"window.webkit.createNodeSnapshot(document.createElement('div'))" inFrame:nil inContentWorld:self.world completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(error);
-        EXPECT_TRUE([result isKindOfClass:WKJSSerializedNode.class]);
+        EXPECT_TRUE([result isKindOfClass:WKDOMNodeSnapshot.class]);
         replyHandler(result, nil);
     }];
 }
@@ -2036,7 +2036,7 @@ TEST(WKUserContentController, EvaluateLargeJavaScriptStringInAutoFillWorld)
 TEST(WKUserContentController, MessageHandlerReplyWithSerializedNode)
 {
     RetainPtr worldConfiguration = adoptNS([WKContentWorldConfiguration new]);
-    worldConfiguration.get().nodeSerializationEnabled = YES;
+    worldConfiguration.get().nodeSnapshotCreationEnabled = YES;
     RetainPtr world = [WKContentWorld worldWithConfiguration:worldConfiguration.get()];
 
     RetainPtr handler = adoptNS([SerializedNodeReplyHandler new]);
@@ -2071,7 +2071,7 @@ TEST(WKUserContentController, MessageHandlerInjectsWebKitNamespace)
     // The other WebKitNamespace attributes shouldn't be accessible.
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"window.webkit.evaluateScript"] boolValue]);
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"window.webkit.createJSHandle"] boolValue]);
-    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"window.webkit.serializeNode"] boolValue]);
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"window.webkit.createNodeSnapshot"] boolValue]);
 }
 
 TEST(WKUserContentController, PostMessageDuringPageClose)

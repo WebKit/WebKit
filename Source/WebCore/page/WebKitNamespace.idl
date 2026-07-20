@@ -34,9 +34,9 @@
     readonly attribute WebKitBufferNamespace buffers;
     [EnabledForWorld=isNonNormal, CallWith=CurrentGlobalObject] any evaluateScript(DOMString source, optional USVString? url = null);
     [EnabledForGlobalObject=allowsJSHandleCreation] WebKitJSHandle createJSHandle(object object);
-    [EnabledForWorld=allowNodeSerialization] WebKitSerializedNode serializeNode(Node node, optional WebKitSerializedNodeInit init = {});
+    [EnabledForWorld=allowNodeSnapshotCreation] WebKitNodeSnapshot createNodeSnapshot(Node node, optional WebKitNodeSnapshotInit init = {});
 };
 
-dictionary WebKitSerializedNodeInit {
+dictionary WebKitNodeSnapshotInit {
     boolean deep = false;
 };

@@ -33,12 +33,12 @@
 #import "WKContentWorldConfigurationInternal.h"
 #import "WKContentWorldInternal.h"
 #import "WKContextMenuElementInfoInternal.h"
+#import "WKDOMNodeSnapshotInternal.h"
 #import "WKDownloadInternal.h"
 #import "WKFormInfoInternal.h"
 #import "WKFrameInfoInternal.h"
 #import "WKHTTPCookieStoreInternal.h"
 #import "WKJSHandleInternal.h"
-#import "WKJSSerializedNodeInternal.h"
 #import "WKNSArray.h"
 #import "WKNSData.h"
 #import "WKNSDictionary.h"
@@ -534,7 +534,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 
     case Type::SerializedNode:
-        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKJSSerializedNode alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKDOMNodeSnapshot alloc];
         break;
 
     case Type::JSHandle:

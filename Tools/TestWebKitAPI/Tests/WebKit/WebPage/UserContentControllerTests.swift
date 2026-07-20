@@ -56,24 +56,24 @@ struct UserContentControllerTests {
 
         let evaluateScript: Void? = try await page.callJavaScript(returning: Void?.self) {
             """
-            return window.webkit.evaluateScript;
+            return !!window.webkit.evaluateScript;
             """
         }
-        #expect(evaluateScript == nil)
+        #expect(evaluateScript == false)
 
         let createJSHandle: Void? = try await page.callJavaScript(returning: Void?.self) {
             """
-            return window.webkit.createJSHandle;
+            return !!window.webkit.createJSHandle;
             """
         }
-        #expect(createJSHandle == nil)
+        #expect(createJSHandle == false)
 
-        let serializeNode: Void? = try await page.callJavaScript(returning: Void?.self) {
+        let nodeSnapshotCreator: Void? = try await page.callJavaScript(returning: Void?.self) {
             """
-            return window.webkit.serializeNode;
+            return !!window.webkit.createNodeSnapshot;
             """
         }
-        #expect(serializeNode == nil)
+        #expect(cloneNode == false)
     }
 }
 

@@ -47,7 +47,7 @@ enum class ContentWorldOption : uint8_t {
     AllowElementUserInfo = 1 << 2,
     DisableLegacyBuiltinOverrides = 1 << 3,
     AllowJSHandleCreation = 1 << 4,
-    AllowNodeSerialization = 1 << 5,
+    AllowNodeSnapshotCreation = 1 << 5,
     Inspectable = 1 << 6,
 };
 

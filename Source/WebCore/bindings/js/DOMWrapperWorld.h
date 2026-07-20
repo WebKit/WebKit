@@ -82,8 +82,8 @@ public:
     bool allowsJSHandleCreation() const { return m_allowsJSHandleCreation; }
     void setAllowsJSHandleCreation() { m_allowsJSHandleCreation = true; }
 
-    void setAllowNodeSerialization() { m_allowNodeSerialization = true; }
-    bool allowNodeSerialization() const { return m_allowNodeSerialization; }
+    void setAllowNodeSnapshotCreation() { m_allowNodeSnapshotCreation = true; }
+    bool allowNodeSnapshotCreation() const { return m_allowNodeSnapshotCreation; }
 
     void setAllowElementUserInfo() { m_allowElementUserInfo = true; }
     bool allowElementUserInfo() const { return m_allowElementUserInfo; }
@@ -151,7 +151,7 @@ private:
     bool m_closedShadowRootIsExposedForExtensions : 1 { false };
     bool m_shouldDisableLegacyOverrideBuiltInsBehavior : 1 { false };
     bool m_allowsJSHandleCreation : 1 { false };
-    bool m_allowNodeSerialization : 1 { false };
+    bool m_allowNodeSnapshotCreation : 1 { false };
     bool m_allowPostLegacySynchronousMessage : 1 { false };
     bool m_isMediaControls : 1 { false };
 };

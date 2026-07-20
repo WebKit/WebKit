@@ -39,7 +39,7 @@
 #include "WebKitBuffer.h"
 #include "WebKitBufferNamespace.h"
 #include "WebKitJSHandle.h"
-#include "WebKitSerializedNode.h"
+#include "WebKitNodeSnapshot.h"
 #include <JavaScriptCore/JSCellInlines.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <wtf/SystemTracing.h>
@@ -102,11 +102,11 @@ Ref<WebKitJSHandle> WebKitNamespace::createJSHandle(JSC::Strong<JSC::JSObject> o
     return WebKitJSHandle::create(object.get());
 }
 
-ExceptionOr<Ref<WebKitSerializedNode>> WebKitNamespace::serializeNode(Node& node, SerializedNodeInit&& init)
+ExceptionOr<Ref<WebKitNodeSnapshot>> WebKitNamespace::createNodeSnapshot(Node& node, NodeSnapshotInit&& init)
 {
     if (node.isShadowRoot()) [[unlikely]]
         return Exception { ExceptionCode::NotSupportedError };
-    return WebKitSerializedNode::create(node, init.deep);
+    return WebKitNodeSnapshot::create(node, init.deep);
 }
 
 } // namespace WebCore
