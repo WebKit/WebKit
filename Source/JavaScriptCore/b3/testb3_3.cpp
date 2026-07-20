@@ -878,6 +878,84 @@ void testExtractSignedBitfield64()
     }
 }
 
+void testExtractSignedBitfieldNonCanonical32()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+
+    Vector<int32_t> srcs = {
+        0x12345678,
+        static_cast<int32_t>(0xffffffff),
+        static_cast<int32_t>(0x80000000),
+        0x00abcdef,
+    };
+    Vector<int32_t> leftAmts = { 4, 8, 16 };
+    Vector<int32_t> lsbs = { 2, 3, 4 };
+
+    for (int32_t src : srcs) {
+        for (size_t i = 0; i < leftAmts.size(); ++i) {
+            int32_t leftAmt = leftAmts.at(i);
+            int32_t lsb = lsbs.at(i);
+            int32_t rightAmt = leftAmt + lsb;
+
+            Procedure proc;
+            BasicBlock* root = proc.addBlock();
+            auto arguments = cCallArgumentValues<int32_t>(proc, root);
+
+            Value* srcValue = arguments[0];
+            Value* leftShiftValue = root->appendNew<Value>(proc, Shl, Origin(), srcValue,
+                root->appendNew<Const32Value>(proc, Origin(), leftAmt));
+            root->appendNewControlValue(proc, Return, Origin(),
+                root->appendNew<Value>(proc, SShr, Origin(), leftShiftValue,
+                    root->appendNew<Const32Value>(proc, Origin(), rightAmt)));
+
+            auto code = compileProc(proc);
+            if (isARM64())
+                checkUsesInstruction(*code, "sbfx");
+            CHECK_EQ(invoke<int32_t>(*code, src), (src << leftAmt) >> rightAmt);
+        }
+    }
+}
+
+void testExtractSignedBitfieldNonCanonical64()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+
+    Vector<int64_t> srcs = {
+        0x123456789abcdef0ll,
+        static_cast<int64_t>(0xffffffffffffffffull),
+        static_cast<int64_t>(0x8000000000000000ull),
+        0x0000ffffffffffffll,
+    };
+    Vector<int32_t> leftAmts = { 4, 16, 32 };
+    Vector<int32_t> lsbs = { 2, 8, 4 };
+
+    for (int64_t src : srcs) {
+        for (size_t i = 0; i < leftAmts.size(); ++i) {
+            int32_t leftAmt = leftAmts.at(i);
+            int32_t lsb = lsbs.at(i);
+            int32_t rightAmt = leftAmt + lsb;
+
+            Procedure proc;
+            BasicBlock* root = proc.addBlock();
+            auto arguments = cCallArgumentValues<int64_t>(proc, root);
+
+            Value* srcValue = arguments[0];
+            Value* leftShiftValue = root->appendNew<Value>(proc, Shl, Origin(), srcValue,
+                root->appendNew<Const32Value>(proc, Origin(), leftAmt));
+            root->appendNewControlValue(proc, Return, Origin(),
+                root->appendNew<Value>(proc, SShr, Origin(), leftShiftValue,
+                    root->appendNew<Const32Value>(proc, Origin(), rightAmt)));
+
+            auto code = compileProc(proc);
+            if (isARM64())
+                checkUsesInstruction(*code, "sbfx");
+            CHECK_EQ(invoke<int64_t>(*code, src), (src << leftAmt) >> rightAmt);
+        }
+    }
+}
+
 void testBitOrBitOrArgImmImm32(int32_t a, int32_t b, int32_t c)
 {
     Procedure proc;

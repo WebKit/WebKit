@@ -7849,6 +7849,8 @@ void addBitTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& ta
     RUN(testInsertSignedBitfieldInZero64());
     RUN(testExtractSignedBitfield32());
     RUN(testExtractSignedBitfield64());
+    RUN(testExtractSignedBitfieldNonCanonical32());
+    RUN(testExtractSignedBitfieldNonCanonical64());
     RUN(testAddWithLeftShift32());
     RUN(testAddWithRightShift32());
     RUN(testAddWithUnsignedRightShift32());

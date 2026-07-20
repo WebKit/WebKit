@@ -4673,40 +4673,60 @@ private:
             Value* left = m_value->child(0);
             Value* right = m_value->child(1);
 
-            // SBFX Pattern: ((src >> lsb) << amount) >> amount
-            // Where: amount = datasize - width
             auto tryAppendSBFX = [&] () -> bool {
                 Air::Opcode opcode = opcodeForType(ExtractSignedBitfield32, ExtractSignedBitfield64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp))
                     return false;
-                if (left->opcode() != Shl || (left->child(0)->opcode() != ZShr && left->child(0)->opcode() != SShr))
+                if (left->opcode() != Shl)
+                    return false;
+                if (!imm(right) || right->asInt() < 0)
                     return false;
 
-                Value* srcValue = left->child(0)->child(0);
-                Value* lsbValue = left->child(0)->child(1);
-                Value* amount1Value = left->child(1);
-                Value* amount2Value = right;
+                uint64_t datasize = opcode == ExtractSignedBitfield32 ? 32 : 64;
+                uint64_t amount = right->asInt();
+                if (amount >= datasize)
+                    return false;
+                uint64_t width = datasize - amount;
+                ASSERT(width);
+
+                Value* srcValue = nullptr;
+                uint64_t lsb = 0;
+
+                // SBFX Pattern: ((src >> lsb) << amount) >> amount
+                // Where: amount = datasize - width
+                if (left->child(0)->opcode() == ZShr || left->child(0)->opcode() == SShr) {
+                    Value* amount1Value = left->child(1);
+                    Value* lsbValue = left->child(0)->child(1);
+                    if (!imm(amount1Value) || !imm(lsbValue))
+                        return false;
+                    if (amount1Value->asInt() < 0 || lsbValue->asInt() < 0)
+                        return false;
+                    if (static_cast<uint64_t>(amount1Value->asInt()) != amount)
+                        return false;
+                    srcValue = left->child(0)->child(0);
+                    lsb = lsbValue->asInt();
+                } else {
+                    // SBFX Pattern (non-canonical): (src << leftAmt) >> rightAmt
+                    // Where: rightAmt > leftAmt, lsb = rightAmt - leftAmt, width = datasize - rightAmt
+                    Value* leftAmtValue = left->child(1);
+                    if (!imm(leftAmtValue) || leftAmtValue->asInt() < 0)
+                        return false;
+                    uint64_t leftAmt = leftAmtValue->asInt();
+                    if (amount <= leftAmt)
+                        return false;
+                    srcValue = left->child(0);
+                    lsb = amount - leftAmt;
+                    ASSERT(lsb);
+                }
+
                 if (m_locked.contains(srcValue))
                     return false;
-                if (!imm(lsbValue) || !imm(amount1Value) || !imm(amount2Value))
-                    return false;
-                if (lsbValue->asInt() < 0 || amount1Value->asInt() < 0 || amount2Value->asInt() < 0)
-                    return false;
 
-                uint64_t amount1 = amount1Value->asInt();
-                uint64_t amount2 = amount2Value->asInt();
-                uint64_t lsb = lsbValue->asInt();
-                uint64_t datasize = opcode == ExtractSignedBitfield32 ? 32 : 64;
-
-                if (amount1 >= datasize)
-                    return false;
-
-                uint64_t width = datasize - amount1;
                 uint64_t resultDataSize = 0;
-                if (!WTF::safeAdd(lsb, width, resultDataSize) || amount1 != amount2 || !width || resultDataSize > datasize)
+                if (!WTF::safeAdd(lsb, width, resultDataSize) || resultDataSize > datasize)
                     return false;
 
-                append(opcode, tmp(srcValue), imm(lsbValue), imm(width), tmp(m_value));
+                append(opcode, tmp(srcValue), imm(lsb), imm(width), tmp(m_value));
                 return true;
             };
 

@@ -636,6 +636,8 @@ void testInsertSignedBitfieldInZero32();
 void testInsertSignedBitfieldInZero64();
 void testExtractSignedBitfield32();
 void testExtractSignedBitfield64();
+void testExtractSignedBitfieldNonCanonical32();
+void testExtractSignedBitfieldNonCanonical64();
 void testBitAndZeroShiftRightArgImmMask32();
 void testBitAndZeroShiftRightArgImmMask64();
 void testBasicSelect();
