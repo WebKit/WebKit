@@ -1770,18 +1770,18 @@ CSSUnprefixedBackdropFilterEnabled:
 
 CSSWhiteSpaceTrimEnabled:
   type: bool
-  status: preview
+  status: stable
   category: css
   webcoreOnChange: setNeedsRecalcStyleInAllFrames
   humanReadableName: "CSS white-space-trim property"
   humanReadableDescription: "Enable the property white-space-trim, defined in CSS Text 4"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSWordBreakAutoPhraseEnabled:
   type: bool
