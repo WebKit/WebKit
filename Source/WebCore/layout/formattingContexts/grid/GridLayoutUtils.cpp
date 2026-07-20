@@ -46,7 +46,7 @@ namespace GridLayoutUtils {
 LayoutUnit totalGuttersSize(size_t tracksCount, LayoutUnit gapsSize)
 {
     ASSERT(tracksCount);
-    return gapsSize * (tracksCount - 1);
+    return tracksCount ? gapsSize * (tracksCount - 1) : LayoutUnit { };
 }
 
 // https://drafts.csswg.org/css-sizing-4/#aspect-ratio
