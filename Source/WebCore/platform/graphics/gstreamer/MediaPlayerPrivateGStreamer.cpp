@@ -1153,6 +1153,15 @@ void MediaPlayerPrivateGStreamer::sourceSetup(GstElement* sourceElement)
     m_source = sourceElement;
 
     if (WEBKIT_IS_WEB_SRC(m_source.get())) {
+
+        if (m_isLegacyPlaybin) {
+            // Give meaningful unique name to our HTTP source elements. uridecodebin hardcodes it to
+            // "source", which doesn't ease debugging involving multiple players.
+            static Atomic<unsigned> id = 0;
+            auto newName = makeString("http-src-"_s, id.exchangeAdd(1));
+            gst_object_set_name(GST_OBJECT_CAST(m_source.get()), newName.ascii().data());
+        }
+
         auto* source = WEBKIT_WEB_SRC_CAST(m_source.get());
         webKitWebSrcSetReferrer(source, m_referrer);
         webKitWebSrcSetResourceLoader(source, m_loader);
