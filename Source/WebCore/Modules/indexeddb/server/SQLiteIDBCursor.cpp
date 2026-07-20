@@ -442,12 +442,11 @@ bool SQLiteIDBCursor::fetch()
 
     while (fetchNextRecord(m_fetchedRecords.last())) {
         m_fetchedRecordsSize += m_fetchedRecords.last().record.size();
+        if (m_fetchedRecords.last().completed)
+            return true;
 
         if (m_currentKeyForUniqueness != m_fetchedRecords.last().record.key)
             return true;
-
-        if (m_fetchedRecords.last().completed)
-            return false;
 
         m_fetchedRecordsSize -= m_fetchedRecords.last().record.size();
     }
