@@ -4447,8 +4447,6 @@ fast/html/body-color-legacy-parsing-3.html [ Pass ImageOnlyFailure ]
 # Fails on Buildbot
 fast/picture/viewport-resize.html [ Pass Failure ]
 
-imported/w3c/web-platform-tests/css/css-viewport/zoom/iframe-zoom-nested.html [ ImageOnlyFailure Pass ]
-
 fast/text/backslash-to-yen-sign.html [ Pass Failure ]
 
 fast/text/all-small-caps-whitespace.html [ ImageOnlyFailure ]

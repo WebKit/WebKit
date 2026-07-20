@@ -509,6 +509,22 @@ void RenderView::repaintRootContents()
     repaintUsingContainer(repaintContainer.get(), computeRectForRepaint(layoutOverflowRect(), repaintContainer.get()));
 }
 
+static LayoutRect mapRepaintRectToOwnerCoordinates(LayoutRect rect, const RenderView& renderView, const RenderBox& ownerRenderer)
+{
+    // A dirty rect in an iframe is relative to the contents of that iframe.
+    // When we traverse between parent frames and child frames, we need to make sure
+    // that the coordinate system is mapped appropriately between the iframe's contents
+    // and the Renderer that contains the iframe. This transformation must account for a
+    // left scrollbar (if one exists).
+    Ref frameView = renderView.frameView();
+    rect.moveBy(-renderView.viewRect().location());
+    rect.scale(frameView->frameScaleFactor());
+    rect.moveBy(ownerRenderer.contentBoxRect().location());
+    if (frameView->verticalScrollbar() && frameView->shouldPlaceVerticalScrollbarOnLeft())
+        rect.move(LayoutSize(protect(frameView->verticalScrollbar())->occupiedWidth(), 0));
+    return rect;
+}
+
 void RenderView::repaintViewRectangle(const LayoutRect& repaintRect)
 {
     if (!shouldRepaint(repaintRect))
@@ -540,19 +556,7 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect)
                 frameView().layoutContext().setNeedsFullRepaint();
             }
 
-            adjustedRect.moveBy(-viewRect.location());
-            adjustedRect.moveBy(ownerBox->contentBoxRect().location());
-
-            // A dirty rect in an iframe is relative to the contents of that iframe.
-            // When we traverse between parent frames and child frames, we need to make sure
-            // that the coordinate system is mapped appropriately between the iframe's contents
-            // and the Renderer that contains the iframe. This transformation must account for a
-            // left scrollbar (if one exists).
-            Ref frameView = this->frameView();
-            if (frameView->verticalScrollbar() && frameView->shouldPlaceVerticalScrollbarOnLeft())
-                adjustedRect.move(LayoutSize(protect(frameView->verticalScrollbar())->occupiedWidth(), 0));
-
-            ownerBox->repaintRectangle(adjustedRect);
+            ownerBox->repaintRectangle(mapRepaintRectToOwnerCoordinates(adjustedRect, *this, *ownerBox));
         }
         return;
     }
@@ -592,8 +596,6 @@ bool RenderView::accumulateRepaintRect(IntRect rect, IntRect viewRect)
 
 void RenderView::flushAccumulatedRepaintRegion() const
 {
-    IntSize rectOffset;
-
     CheckedPtr<RenderBox> iframeOwnerRenderer;
     if (RefPtr ownerElement = document().ownerElement()) {
         iframeOwnerRenderer = ownerElement->renderBox();
@@ -601,29 +603,14 @@ void RenderView::flushAccumulatedRepaintRegion() const
             m_accumulatedRepaintRegion = nullptr;
             return;
         }
-
-        auto viewRect = this->viewRect();
-        auto rectOffsetLayoutSize = toLayoutSize(-viewRect.location() + iframeOwnerRenderer->contentBoxRect().location());
-
-        // A dirty rect in an iframe is relative to the contents of that iframe.
-        // When we traverse between parent frames and child frames, we need to make sure
-        // that the coordinate system is mapped appropriately between the iframe's contents
-        // and the Renderer that contains the iframe. This transformation must account for a
-        // left scrollbar (if one exists).
-        Ref frameView = this->frameView();
-        if (frameView->verticalScrollbar() && frameView->shouldPlaceVerticalScrollbarOnLeft())
-            rectOffsetLayoutSize += LayoutSize { protect(frameView->verticalScrollbar())->occupiedWidth(), 0 };
-
-        rectOffset = roundedIntSize(rectOffsetLayoutSize);
     }
 
     ASSERT(m_accumulatedRepaintRegion);
     auto repaintRects = m_accumulatedRepaintRegion->rects();
     for (auto rect : repaintRects) {
-        if (iframeOwnerRenderer) {
-            rect.move(rectOffset);
-            iframeOwnerRenderer->repaintRectangle(rect);
-        } else
+        if (iframeOwnerRenderer)
+            iframeOwnerRenderer->repaintRectangle(mapRepaintRectToOwnerCoordinates(rect, *this, *iframeOwnerRenderer));
+        else
             frameView().repaintContentRectangle(rect);
     }
     m_accumulatedRepaintRegion = nullptr;
