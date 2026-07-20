@@ -1354,17 +1354,17 @@ CSSLineFitEdgeEnabled:
 
 CSSMarkerContentEnabled:
   type: bool
-  status: preview
+  status: stable
   category: css
   humanReadableName: "CSS content on ::marker"
   humanReadableDescription: "Enable the content property on the ::marker pseudo-element"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSMathDepthEnabled:
   type: bool
