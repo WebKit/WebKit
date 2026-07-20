@@ -52,6 +52,21 @@ function shouldThrow(func, errorType, label) {
     const pd = Temporal.PlainDate.from({era:"am", eraYear:2016, month:1, day:1, calendar:"ethiopic"});
     shouldBe(pd.toString(), "2023-09-12[u-ca=ethiopic]", "ethiopic am 2016 -> ISO 2023-09-12");
     shouldBe(pd.year, 2016, "ethiopic .year");
+    shouldBe(pd.era, "am", "ethiopic .era");
+    shouldBe(pd.eraYear, 2016, "ethiopic .eraYear");
+}
+
+// Ethiopic `aa` era: ISO 0001-01-01 is AA 5493 M05 D08.
+{
+    const historical = Temporal.PlainDate.from({era:"aa", eraYear:-1, monthCode:"M02", day:21, calendar:"ethiopic"}, {overflow:"reject"});
+    shouldBe(historical.toString(), "-005494-09-05[u-ca=ethiopic]", "ethiopic aa -1 -> ISO -5494-09-05");
+    shouldBe(historical.year, -5501, "ethiopic aa -1 -> year");
+    shouldBe(historical.era, "aa", "ethiopic aa -1 -> era");
+    shouldBe(historical.eraYear, -1, "ethiopic aa -1 -> eraYear");
+    const pd = Temporal.PlainDate.from("0001-01-01[u-ca=ethiopic]");
+    shouldBe(pd.year, -7, "ethiopic historical .year");
+    shouldBe(pd.era, "aa", "ethiopic historical .era");
+    shouldBe(pd.eraYear, 5493, "ethiopic historical .eraYear");
 }
 
 // Ethioaa has one era, so its arithmetic year is the same as its era year.
