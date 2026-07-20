@@ -39,7 +39,7 @@ SVGTextLayoutEngineBaseline::SVGTextLayoutEngineBaseline(const FontCascade& font
 
 float SVGTextLayoutEngineBaseline::calculateBaselineShift(const Style::ComputedStyle& style) const
 {
-    return WTF::switchOn(style.baselineShift(),
+    return WTF::switchOn(style.svgBaselineShift(),
         [](const CSS::Keyword::Baseline&) -> float {
             return 0;
         },
@@ -109,7 +109,7 @@ float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVertic
     CheckedPtr textRendererParent = textRenderer.parent();
     ASSERT(textRendererParent);
 
-    AlignmentBaseline baseline = textRenderer.style().alignmentBaseline();
+    AlignmentBaseline baseline = textRenderer.style().svgAlignmentBaseline();
     if (baseline == AlignmentBaseline::Baseline) {
         baseline = dominantBaselineToAlignmentBaseline(isVerticalText, *textRendererParent);
         ASSERT(baseline != AlignmentBaseline::Baseline);

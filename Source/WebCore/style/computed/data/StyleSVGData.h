@@ -85,7 +85,7 @@ public:
         void dumpDifferences(TextStream&, const NonInheritedFlags&) const;
 #endif
 
-        PREFERRED_TYPE(AlignmentBaseline) unsigned alignmentBaseline : 4;
+        PREFERRED_TYPE(AlignmentBaseline) unsigned svgAlignmentBaseline : 4;
         PREFERRED_TYPE(DominantBaseline) unsigned dominantBaseline : 4;
         PREFERRED_TYPE(VectorEffect) unsigned vectorEffect : 1;
         PREFERRED_TYPE(BufferedRendering) unsigned bufferedRendering : 2;

@@ -1793,6 +1793,8 @@
                 "computed-style-storage-container": "struct",
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "AlignmentBaseline",
+                "computed-style-name-for-methods": "SVGAlignmentBaseline",
+                "computed-style-getter": "svgAlignmentBaseline",
                 "parser-grammar": "<<values>>"
             },
             "specification": {
@@ -2469,6 +2471,8 @@
                 "computed-style-storage-path": ["m_svgData", "miscData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::SVGBaselineShift",
+                "computed-style-name-for-methods": "SVGBaselineShift",
+                "computed-style-getter": "svgBaselineShift",
                 "parser-grammar": "baseline | sub | super | <length-percentage>"
             },
             "specification": {
