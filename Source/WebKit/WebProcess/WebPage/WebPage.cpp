@@ -5456,8 +5456,8 @@ void WebPage::didUpdateRendering(OptionSet<DidUpdateRenderingFlags> flags)
 {
     if (flags & DidUpdateRenderingFlags::PaintedLayers) {
 #if ENABLE(GPU_PROCESS)
-        if (RefPtr proxy = m_remoteRenderingBackendProxy)
-            proxy->didPaintLayers();
+        if (m_remoteRenderingBackendProxy)
+            m_remoteRenderingBackendProxy->didPaintLayers();
 #endif
     }
 
@@ -5480,8 +5480,7 @@ bool WebPage::shouldTriggerRenderingUpdate(unsigned rescheduledRenderingUpdateCo
         return true;
 
     static constexpr unsigned maxDelayedRenderingUpdateCount = 2;
-    auto* proxy = m_remoteRenderingBackendProxy.get();
-    if (proxy && proxy->delayedRenderingUpdateCount() > maxDelayedRenderingUpdateCount)
+    if (m_remoteRenderingBackendProxy && m_remoteRenderingBackendProxy->delayedRenderingUpdateCount() > maxDelayedRenderingUpdateCount)
         return false;
 #endif
     return true;
@@ -5495,8 +5494,8 @@ void WebPage::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> fl
 
     protect(corePage())->finalizeRenderingUpdate(flags);
 #if ENABLE(GPU_PROCESS)
-    if (RefPtr proxy = m_remoteRenderingBackendProxy)
-        proxy->finalizeRenderingUpdate();
+    if (m_remoteRenderingBackendProxy)
+        m_remoteRenderingBackendProxy->finalizeRenderingUpdate();
 #endif
     flushDeferredDidReceiveMouseEvent();
 
@@ -5529,8 +5528,8 @@ void WebPage::didCompleteRenderingFrame()
 void WebPage::releaseMemory(Critical critical)
 {
 #if ENABLE(GPU_PROCESS)
-    if (RefPtr renderingBackend = m_remoteRenderingBackendProxy)
-        renderingBackend->releaseMemory();
+    if (m_remoteRenderingBackendProxy)
+        m_remoteRenderingBackendProxy->releaseMemory();
 #endif
 
 #if USE(COORDINATED_GRAPHICS)
@@ -5548,8 +5547,8 @@ void WebPage::willDestroyDecodedDataForAllImages()
 unsigned WebPage::remoteImagesCountForTesting() const
 {
 #if ENABLE(GPU_PROCESS)
-    if (auto* renderingBackend = m_remoteRenderingBackendProxy.get())
-        return renderingBackend->nativeImageCountForTesting();
+    if (m_remoteRenderingBackendProxy)
+        return m_remoteRenderingBackendProxy->nativeImageCountForTesting();
 #endif
     return 0;
 }
@@ -9849,7 +9848,7 @@ void WebPage::notifyPageOfAppBoundBehavior()
 RemoteRenderingBackendProxy& WebPage::ensureRemoteRenderingBackendProxy()
 {
     if (!m_remoteRenderingBackendProxy)
-        m_remoteRenderingBackendProxy = RemoteRenderingBackendProxy::create(*this);
+        lazyInitialize(m_remoteRenderingBackendProxy, RemoteRenderingBackendProxy::create(*this));
     return *m_remoteRenderingBackendProxy;
 }
 #endif

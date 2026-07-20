@@ -1127,15 +1127,15 @@ bool WebFrame::containsAnyFormElements() const
 
 bool WebFrame::containsAnyFormControls() const
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
     if (!localFrame)
         return false;
 
-    auto* document = localFrame->document();
+    RefPtr document = localFrame->document();
     if (!document)
         return false;
 
-    for (auto& child : childrenOfType<Element>(*document)) {
+    for (Ref child : childrenOfType<Element>(*document)) {
         if (is<HTMLTextFormControlElement>(child) || is<HTMLSelectElement>(child))
             return true;
     }

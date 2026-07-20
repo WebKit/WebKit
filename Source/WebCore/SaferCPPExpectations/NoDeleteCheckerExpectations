@@ -1,4 +1,3 @@
-Modules/WebGPU/Implementation/WebGPUAdapterImpl.cpp
 Modules/indexeddb/server/IndexValueStore.cpp
 Modules/notifications/NotificationPayload.cpp
 Modules/streams/ReadableByteStreamController.cpp
@@ -12,7 +11,6 @@ css/DOMMatrixReadOnly.cpp
 css/PropertySetCSSDescriptors.cpp
 css/SelectorChecker.cpp
 css/StyleSheetList.cpp
-css/calc/CSSCalcType.cpp
 css/parser/CSSPropertyParserConsumer+String.cpp
 dom/ContainerNode.cpp
 dom/Document.cpp
@@ -23,12 +21,10 @@ editing/FrameSelection.cpp
 html/HTMLFormControlsCollection.cpp
 html/HTMLTableElement.cpp
 html/HTMLTableRowsCollection.cpp
-html/parser/HTMLEntityParser.cpp
 [ macOS ] inspector/InspectorFrontendHost.cpp
 layout/formattingContexts/inline/InlineLineBuilder.cpp
 layout/formattingContexts/inline/InlineTextItem.cpp
 loader/EmptyClients.cpp
-loader/ResourceMonitor.cpp
 loader/TextResourceDecoder.cpp
 loader/cache/CachedSVGFont.cpp
 page/DragController.cpp
@@ -37,15 +33,7 @@ page/LocalFrameView.cpp
 [ iOS ] page/Quirks.cpp
 page/scrolling/ScrollingStateNode.cpp
 page/text-extraction/TextExtraction.cpp
-platform/audio/cocoa/CARingBuffer.cpp
-platform/graphics/GraphicsContextGL.cpp
-platform/graphics/ImageBufferBackend.cpp
-platform/graphics/IntRect.cpp
-platform/graphics/PixelBuffer.cpp
-platform/graphics/Region.cpp
-platform/graphics/cg/ImageBufferCGBackend.cpp
 platform/sql/SQLiteStatementAutoResetScope.cpp
-rendering/CounterNode.cpp
 rendering/RenderGeometryMap.cpp
 rendering/RenderObject.cpp
 rendering/StyledMarkedText.cpp

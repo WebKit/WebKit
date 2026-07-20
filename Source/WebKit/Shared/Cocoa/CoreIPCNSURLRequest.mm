@@ -119,7 +119,7 @@ static bool isReservedProtocolPropertyKeyPrefix(NSString *key)
 
 static bool isTypedAllowlistKey(NSString *key)
 {
-    static NSSet<NSString *> *allowlist = [[NSSet alloc] initWithArray:@[
+    static NeverDestroyed<RetainPtr<NSSet<NSString *>>> allowlist = adoptNS([[NSSet alloc] initWithArray:@[
         @"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation",
         @"kCFURLRequestAllowAllPOSTCaching",
         @"_kCFHTTPCookiePolicyPropertySiteForCookies",
@@ -132,8 +132,8 @@ static bool isTypedAllowlistKey(NSString *key)
         @"maximumRequestCount",
         @"com.apple.ap.pc.proxy-is-recursive",
         @"requestType",
-    ]];
-    return [allowlist containsObject:key];
+    ]]);
+    return [allowlist.get() containsObject:key];
 }
 
 static void populateAppProperties(NSDictionary *protocolPropertiesDict, ProtocolProperties& props)

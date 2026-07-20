@@ -3903,7 +3903,7 @@ void WebViewImpl::contentRelativeViewsHysteresisTimerFired(PAL::HysteresisState 
     }
 
     if (m_contentRelativeViewsNeedToBeRepositioned != started && std::exchange(m_contentRelativeViewsNeedToBeRepositioned, started))
-        [inputContextForSelectionUpdates() textInputClientDidUpdateSelection];
+        [protect(inputContextForSelectionUpdates()) textInputClientDidUpdateSelection];
 }
 
 void WebViewImpl::pageScrollingHysteresisFired(PAL::HysteresisState state)

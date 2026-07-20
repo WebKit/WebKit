@@ -1,8 +1,1 @@
-Platform/IPC/cocoa/MachMessage.cpp
-UIProcess/WebFullScreenManagerProxy.cpp
-WebProcess/GPU/graphics/ImageBufferRemotePDFDocumentBackend.cpp
-WebProcess/Network/WebResourceLoader.cpp
-WebProcess/Network/webrtc/WebRTCResolver.cpp
 WebProcess/WebPage/WebFrame.cpp
-WebProcess/WebPage/WebPage.cpp
-WebProcess/WebProcess.cpp

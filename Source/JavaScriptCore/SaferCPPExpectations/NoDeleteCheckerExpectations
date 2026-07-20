@@ -1,8 +1,6 @@
-b3/B3ReduceStrength.cpp
 dfg/DFGIntegerRangeOptimizationPhase.cpp
 jit/ScratchRegisterAllocator.cpp
 jsc.cpp
-runtime/ISO8601.cpp
 runtime/IndexingType.cpp
 runtime/JSObject.cpp
 yarr/YarrInterpreter.cpp

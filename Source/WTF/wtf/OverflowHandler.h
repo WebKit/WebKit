@@ -41,7 +41,7 @@ public:
 
     void clearOverflow() { }
 
-    static NO_RETURN_DUE_TO_CRASH void crash()
+    SUPPRESS_NODELETE static NO_RETURN_DUE_TO_CRASH void NODELETE crash()
     {
         CRASH();
     }
@@ -82,7 +82,7 @@ protected:
         m_overflowed = false;
     }
 
-    static NO_RETURN_DUE_TO_CRASH void crash()
+    SUPPRESS_NODELETE static NO_RETURN_DUE_TO_CRASH void NODELETE crash()
     {
         CRASH();
     }

@@ -83,7 +83,7 @@ private:
 
     WeakPtr<WebBackForwardListItem> m_backForwardListItem;
     const WebCore::BackForwardFrameItemIdentifier m_identifier;
-    Ref<FrameState> m_frameState;
+    const Ref<FrameState> m_frameState;
     WeakPtr<WebBackForwardListFrameItem> m_parent;
     Vector<Ref<WebBackForwardListFrameItem>> m_children;
 

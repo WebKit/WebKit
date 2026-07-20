@@ -3354,7 +3354,7 @@ private:
 #endif
 
 #if ENABLE(GPU_PROCESS)
-    RefPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
+    const RefPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)

@@ -194,7 +194,8 @@ void WebFullScreenManagerProxy::detachFromClient()
     m_client = nullptr;
 }
 
-void WebFullScreenManagerProxy::attachToNewClient(WebFullScreenManagerProxyClient& client)
+// FIXME: This should be detected as NODELETE (rdar://182377452).
+SUPPRESS_NODELETE void WebFullScreenManagerProxy::attachToNewClient(WebFullScreenManagerProxyClient& client)
 {
     m_client = &client;
 }

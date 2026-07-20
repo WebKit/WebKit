@@ -1350,7 +1350,7 @@ void WebProcess::setInjectedBundleParameters(std::span<const uint8_t> value)
     injectedBundle->setBundleParameters(value);
 }
 
-[[noreturn]] inline void NODELETE failedToGetNetworkProcessConnection()
+[[noreturn]] inline void failedToGetNetworkProcessConnection()
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
     // GTK and WPE ports don't exit on send sync message failure.

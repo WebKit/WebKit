@@ -2411,8 +2411,8 @@ void WebPage::didFlushLayerTreeAtTime(MonotonicTime timestamp, bool flushSucceed
 #endif
 #if ENABLE(GPU_PROCESS)
     if (!flushSucceeded) {
-        if (RefPtr proxy = m_remoteRenderingBackendProxy)
-            proxy->didBecomeUnresponsive();
+        if (m_remoteRenderingBackendProxy)
+            m_remoteRenderingBackendProxy->didBecomeUnresponsive();
     }
 #endif
 }
