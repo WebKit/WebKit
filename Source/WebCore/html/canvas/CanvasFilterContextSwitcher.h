@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Filter.h"
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
@@ -39,14 +40,15 @@ class CanvasFilterContextSwitcher {
 public:
     static std::unique_ptr<CanvasFilterContextSwitcher> create(CanvasRenderingContext2DBase&, const FloatRect& bounds);
 
-    CanvasFilterContextSwitcher(CanvasRenderingContext2DBase&);
+    CanvasFilterContextSwitcher(CanvasRenderingContext2DBase&, const FloatRect&, RefPtr<Filter>&&);
     ~CanvasFilterContextSwitcher();
 
     FloatRect expandedBounds() const;
 
 private:
     Ref<CanvasRenderingContext2DBase> context() const { return m_context.get(); }
-    WeakRef<CanvasRenderingContext2DBase> m_context;
+    const WeakRef<CanvasRenderingContext2DBase> m_context;
+    RefPtr<CanvasLayerContextSwitcher> m_contextOldTargetSwitcher;
 };
 
 } // namespace WebCore

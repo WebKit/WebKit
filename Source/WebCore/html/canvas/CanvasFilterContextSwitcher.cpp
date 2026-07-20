@@ -44,25 +44,21 @@ std::unique_ptr<CanvasFilterContextSwitcher> CanvasFilterContextSwitcher::create
     if (!filter)
         return nullptr;
 
-    auto filterSwitcher = makeUnique<CanvasFilterContextSwitcher>(context);
-    auto targetSwitcher = CanvasLayerContextSwitcher::create(context, bounds, WTF::move(filter));
-    if (!targetSwitcher)
-        return nullptr;
-
-    context.modifiableState().targetSwitcher = WTF::move(targetSwitcher);
-    return filterSwitcher;
+    return makeUnique<CanvasFilterContextSwitcher>(context, bounds, WTF::move(filter));
 }
 
-CanvasFilterContextSwitcher::CanvasFilterContextSwitcher(CanvasRenderingContext2DBase& context)
+CanvasFilterContextSwitcher::CanvasFilterContextSwitcher(CanvasRenderingContext2DBase& context, const FloatRect& bounds, RefPtr<Filter>&& filter)
     : m_context(context)
+    , m_contextOldTargetSwitcher(context.state().targetSwitcher)
 {
-    context.save();
-    context.realizeSaves();
+    // Only use the new target switcher if it's non-null. Otherwise keep using the old one.
+    if (auto targetSwitcher = CanvasLayerContextSwitcher::create(context, bounds, WTF::move(filter)))
+        m_context->modifiableState().targetSwitcher = targetSwitcher;
 }
 
 CanvasFilterContextSwitcher::~CanvasFilterContextSwitcher()
 {
-    context()->restore();
+    m_context->modifiableState().targetSwitcher = WTF::move(m_contextOldTargetSwitcher);
 }
 
 FloatRect CanvasFilterContextSwitcher::expandedBounds() const
