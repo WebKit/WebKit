@@ -40,6 +40,7 @@
 #import "CocoaAccessibilityConstants.h"
 #import "DeprecatedGlobalSettings.h"
 #import "DocumentView.h"
+#import "FrameTree.h"
 #import "LocalFrameInlines.h"
 #import "LocalFrameView.h"
 #import "RenderObject.h"
@@ -572,6 +573,28 @@ void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObj
         if (root->wrapper() != axObject->wrapper())
             AXPostNotificationWithUserInfo(axObject->wrapper(), NSAccessibilitySelectedTextChangedNotification, userInfo.get());
     }
+
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    // A selection change inside an in-process (local) child frame is posted above only on that child
+    // frame's own web area and text control. VoiceOver tracks the document's text-selection context on
+    // the MAIN frame's web area, and a child frame's root web area does not connect to it through the
+    // ordinary parentObject() chain (AccessibilityScrollView::parentObject() returns nullptr for a root
+    // web area; the link exists only via crossFrameParentObject()). So VoiceOver never associates the
+    // child-frame selection change with the document and announces nothing when arrowing through a text
+    // field inside an iframe. Also post the notification on each ancestor frame's web area (up to the
+    // main frame's), reusing the same userInfo — its marker range and TextChangeElement carry their own
+    // (child) tree identifiers, so the announced selection resolves correctly cross-frame.
+    RefPtr document = this->document();
+    RefPtr frame = document ? document->frame() : nullptr;
+    for (RefPtr<Frame> ancestor = frame ? frame->tree().parent() : nullptr; ancestor; ancestor = ancestor->tree().parent()) {
+        if (RefPtr localAncestorFrame = dynamicDowncast<LocalFrame>(ancestor.get())) {
+            RefPtr ancestorDocument = localAncestorFrame->document();
+            CheckedPtr ancestorCache = ancestorDocument ? ancestorDocument->existingAXObjectCache() : nullptr;
+            if (RefPtr ancestorRoot = ancestorCache ? ancestorCache->rootWebArea() : nullptr)
+                AXPostNotificationWithUserInfo(ancestorRoot->wrapper(), NSAccessibilitySelectedTextChangedNotification, userInfo.get());
+        }
+    }
+#endif // ENABLE(ACCESSIBILITY_LOCAL_FRAME)
 }
 
 static void addTextMarkerForVisiblePosition(NSMutableDictionary *change, AXObjectCache& cache, const VisiblePosition& position)
