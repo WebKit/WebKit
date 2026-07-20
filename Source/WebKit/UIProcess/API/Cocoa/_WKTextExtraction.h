@@ -126,6 +126,13 @@ WK_CLASS_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4))
 @property (nonatomic) BOOL includeRects;
 
 /*!
+ Prefix each element line in `.textTree` output with its lowercased tag name (e.g. `h1 'Title'`), including
+ for elements that would otherwise render as bare text such as headings and paragraphs. Only affects the
+ `.textTree` output format. The default value is `NO`.
+ */
+@property (nonatomic) BOOL includeTagName;
+
+/*!
  Include options for `select` elements in text extraction output.
  The default value is `YES`.
  */

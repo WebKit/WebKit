@@ -50,6 +50,7 @@
     _filterOptions = _WKTextExtractionFilterAll;
     _includeURLs = YES;
     _includeRects = YES;
+    _includeTagName = NO;
     _includeSelectOptions = YES;
     _nodeIdentifierInclusion = _WKTextExtractionNodeIdentifierInclusionInteractive;
     _eventListenerCategories = _WKTextExtractionEventListenerCategoryAll;
@@ -75,6 +76,7 @@
     _outputFormat = _WKTextExtractionOutputFormatPlainText;
     _includeURLs = NO;
     _includeRects = NO;
+    _includeTagName = NO;
     _includeSelectOptions = NO;
     _nodeIdentifierInclusion = _WKTextExtractionNodeIdentifierInclusionNone;
     _eventListenerCategories = _WKTextExtractionEventListenerCategoryNone;

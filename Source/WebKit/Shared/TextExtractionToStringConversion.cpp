@@ -705,6 +705,11 @@ public:
         return !usePlainTextOutput() && m_options.flags.contains(TextExtractionOptionFlag::IncludeSelectOptions);
     }
 
+    bool NODELETE includeTagName() const
+    {
+        return useTextTreeOutput() && m_options.flags.contains(TextExtractionOptionFlag::IncludeTagName);
+    }
+
     bool NODELETE includeURLs() const
     {
         return !usePlainTextOutput() && m_options.flags.contains(TextExtractionOptionFlag::IncludeURLs);
@@ -1638,6 +1643,8 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                 bool isGenericContainer = containerString.isEmpty();
                 if (!containerString.isEmpty())
                     parts.append(WTF::move(containerString));
+                else if (aggregator.includeTagName() && !item.nodeName.isEmpty())
+                    parts.append(item.nodeName.convertToASCIILowercase());
 
                 parts.appendVector(partsForItem(item, aggregator, includeRectForParentItem));
 

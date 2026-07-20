@@ -260,6 +260,7 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
         filterUsingRules,
         includeURLs = configuration.includeURLs,
         includeRects = configuration.includeRects,
+        includeTagName = configuration.includeTagName,
         includeSelectOptions = configuration.includeSelectOptions,
         applyDiscretionaryWordLimit = configuration.maxWordsPerParagraphPolicy == _WKTextExtractionWordLimitPolicyDiscretionary,
         shortenURLs = configuration.shortenURLs,
@@ -359,6 +360,8 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
             optionFlags.add(ShortenURLs);
         if (includeSelectOptions)
             optionFlags.add(IncludeSelectOptions);
+        if (includeTagName)
+            optionFlags.add(IncludeTagName);
         RefPtr urlCache = strongSelf->_textExtractionURLCache;
         WebKit::TextExtractionOptions options {
             WTF::move(mainFrameIdentifier),
@@ -754,6 +757,7 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
             .includeAccessibilityAttributes = !!configuration.includeAccessibilityAttributes,
             .includeTextInAutoFilledControls = !!configuration.includeTextInAutoFilledControls,
             .includeOffscreenPasswordFields = !!configuration.includeOffscreenPasswordFields,
+            .includeTagName = !!configuration.includeTagName,
 #if ENABLE(DATA_DETECTION)
             .dataDetectorTypes = coreDataDetectorTypes(configuration.dataDetectorTypes),
 #endif

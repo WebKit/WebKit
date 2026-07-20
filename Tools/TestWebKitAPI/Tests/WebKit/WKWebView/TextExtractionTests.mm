@@ -615,6 +615,177 @@ TEST(TextExtractionTests, TargetNodeWithSameOriginSubframe)
     EXPECT_TRUE([debugText containsString:@"subframe content"]);
 }
 
+TEST(TextExtractionTests, IncludeTagNamePrefixesContentBlocks)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<h1>Alpha</h1><p>Bravo</p><div><h2>Charlie</h2></div>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatTextTree];
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        [configuration setIncludeTagName:YES];
+        return configuration.autorelease();
+    }()];
+
+    // A block that renders its own inline content is prefixed with its lowercased tag name.
+    EXPECT_TRUE([debugText containsString:@"h1 'Alpha'"]);
+    EXPECT_TRUE([debugText containsString:@"p 'Bravo'"]);
+    EXPECT_TRUE([debugText containsString:@"h2 'Charlie'"]);
+
+    // The <div> only holds a block-level child, so it is a structural wrapper and collapses rather than being tagged.
+    EXPECT_FALSE([debugText containsString:@"div"]);
+}
+
+TEST(TextExtractionTests, IncludeTagNameTagsBlockWithOnlyInlineContent)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<div>Delta</div>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatTextTree];
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        [configuration setIncludeTagName:YES];
+        return configuration.autorelease();
+    }()];
+
+    // A generic block whose children are all inline (here, just text) renders its own text, so it is tagged.
+    EXPECT_TRUE([debugText containsString:@"div 'Delta'"]);
+}
+
+TEST(TextExtractionTests, IncludeTagNameDisabledByDefault)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<h1>Alpha</h1><p>Bravo</p>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatTextTree];
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        return configuration.autorelease();
+    }()];
+
+    // Without includeTagName the text is still extracted, but no tag-name prefix is emitted.
+    EXPECT_TRUE([debugText containsString:@"'Alpha'"]);
+    EXPECT_TRUE([debugText containsString:@"'Bravo'"]);
+    EXPECT_FALSE([debugText containsString:@"h1 '"]);
+    EXPECT_FALSE([debugText containsString:@"p '"]);
+}
+
+TEST(TextExtractionTests, IncludeTagNameCollapsesMixedInlineAndBlockContent)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<div>lead text<h2>Charlie</h2></div>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatTextTree];
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        [configuration setIncludeTagName:YES];
+        return configuration.autorelease();
+    }()];
+
+    // The <div> mixes direct text with a block-level child, which forces a block formatting context, so it is a
+    // structural wrapper and collapses. Its own text is still extracted (untagged) and the inner block is tagged.
+    EXPECT_TRUE([debugText containsString:@"h2 'Charlie'"]);
+    EXPECT_TRUE([debugText containsString:@"'lead text'"]);
+    EXPECT_FALSE([debugText containsString:@"div"]);
+}
+
+TEST(TextExtractionTests, IncludeTagNameDropsEmptyAndWhitespaceBlocks)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<p>Alpha</p><div>   </div>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatTextTree];
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        [configuration setIncludeTagName:YES];
+        return configuration.autorelease();
+    }()];
+
+    // A whitespace-only block has an inline formatting context, but pruning drops it once its whitespace text is
+    // removed, so it is never tagged.
+    EXPECT_TRUE([debugText containsString:@"p 'Alpha'"]);
+    EXPECT_FALSE([debugText containsString:@"div"]);
+}
+
+TEST(TextExtractionTests, IncludeTagNameKeepsSemanticLabelForStructuralContainers)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<blockquote>Quote text.</blockquote>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatTextTree];
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        [configuration setIncludeTagName:YES];
+        return configuration.autorelease();
+    }()];
+
+    // Semantic containers are extracted independently of includeTagName and keep their descriptive label rather
+    // than the raw tag name; the flag only tags otherwise-generic blocks.
+    EXPECT_TRUE([debugText containsString:@"block-quote 'Quote text.'"]);
+    EXPECT_FALSE([debugText containsString:@"blockquote"]);
+}
+
+TEST(TextExtractionTests, IncludeTagNameFlattensInlineElementsIntoBlockText)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<p>First <b>bold</b> and <span>emphasized</span> text.</p>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatTextTree];
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        [configuration setIncludeTagName:YES];
+        return configuration.autorelease();
+    }()];
+
+    // Inline elements (<b>, <span>, …) have inline renderers, so they collapse and their text merges into the
+    // enclosing block's single text run; only the block itself is tagged.
+    EXPECT_TRUE([debugText containsString:@"p 'First bold and emphasized text.'"]);
+    EXPECT_FALSE([debugText containsString:@"b '"]);
+    EXPECT_FALSE([debugText containsString:@"span"]);
+}
+
 TEST(TextExtractionTests, ExtractFromDocumentWithoutBody)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{

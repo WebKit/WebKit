@@ -1152,6 +1152,15 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
         if (shouldIdentifyClickableElement)
             return FallbackPolicy::Extract;
 
+        // With tag names requested, also extract a generic block that renders its own inline content like
+        // a paragraph, heading, caption, etc so its tag prefixes that text. Semantic containers are already
+        // extracted above; a generic structural wrapper (block-level children) still collapses.
+        if (context.originalRequest.includeTagName && isBlock) {
+            CheckedPtr renderer = node.renderer();
+            if (renderer->childrenInline())
+                return FallbackPolicy::Extract;
+        }
+
         return FallbackPolicy::Skip;
     }();
 

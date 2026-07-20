@@ -55,6 +55,7 @@ enum class TextExtractionOptionFlag : uint8_t {
     IncludeRects         = 1 << 1,
     ShortenURLs          = 1 << 2,
     IncludeSelectOptions = 1 << 3,
+    IncludeTagName       = 1 << 4,
 };
 
 enum class TextExtractionOutputFormat : uint8_t {
