@@ -478,6 +478,8 @@ TemporalResult<CalendarFields> isoToCalendarFields(CalendarID calendarId, const 
     fields.year = raw.extendedYear;
     if (calendarId == rocCalendarID())
         fields.year = !raw.ucalEra ? -(raw.ucalYear - 1) : raw.ucalYear;
+    else if (calendarId == ethioaaCalendarID())
+        fields.year = raw.ucalYear;
     fields.month = *raw.ordinalMonth;
     fields.day = static_cast<uint8_t>(raw.day);
     fields.monthCode = WTF::move(*raw.monthCode);
@@ -527,8 +529,9 @@ TemporalResult<int32_t> calendarYear(CalendarID calendarId, const ISO8601::Plain
                 return makeUnexpected(rangeError(icuReadCalendarFailed));
             return !era ? -(eraYear - 1) : eraYear;
         }
-        // Buddhist: UCAL_EXTENDED_YEAR is the Gregorian year; UCAL_YEAR is the BE year.
-        if (calendarId == buddhistCalendarID()) {
+        // Use UCAL_YEAR for these calendars' native arithmetic year. Older ICU versions expose an
+        // Amete Mihret-relative UCAL_EXTENDED_YEAR for Ethioaa; newer versions may make the fields equal.
+        if (calendarId == buddhistCalendarID() || calendarId == ethioaaCalendarID()) {
             int32_t eraYear = ucal_get(cal, UCAL_YEAR, &status);
             if (U_FAILURE(status)) [[unlikely]]
                 return makeUnexpected(rangeError(icuReadCalendarFailed));
@@ -1687,9 +1690,9 @@ TemporalResult<ISO8601::PlainDate> calendarDateFromFields(CalendarID calendarId,
                 ucal_set(cal, UCAL_ERA, 1); // roc
                 ucal_set(cal, UCAL_YEAR, y);
             }
-        } else if (calendarId == buddhistCalendarID()) {
-            // Buddhist: `year` is the BE year (= Gregorian + 543). UCAL_YEAR is BE; UCAL_EXTENDED_YEAR is Gregorian.
-            ucal_set(cal, UCAL_ERA, 0); // be
+        } else if (calendarId == buddhistCalendarID() || calendarId == ethioaaCalendarID()) {
+            // These one-era calendars use calendar-native UCAL_YEAR for arithmetic.
+            ucal_set(cal, UCAL_ERA, 0);
             ucal_set(cal, UCAL_YEAR, year.value_or(0));
         } else
             ucal_set(cal, UCAL_EXTENDED_YEAR, year.value_or(0));
@@ -1934,7 +1937,9 @@ TemporalResult<ISO8601::PlainDate> calendarDateFromFields(CalendarID calendarId,
                 int32_t era = ucal_get(cal, UCAL_ERA, &yearStatus);
                 int32_t ey = ucal_get(cal, UCAL_YEAR, &yearStatus);
                 resolvedYear = !era ? -(ey - 1) : ey;
-            } else
+            } else if (calendarId == ethioaaCalendarID())
+                resolvedYear = ucal_get(cal, UCAL_YEAR, &yearStatus);
+            else
                 resolvedYear = ucal_get(cal, UCAL_EXTENDED_YEAR, &yearStatus);
             if (!U_FAILURE(yearStatus) && resolvedYear != *year) [[unlikely]]
                 return makeUnexpected(rangeError("year is inconsistent with era and eraYear"_s));

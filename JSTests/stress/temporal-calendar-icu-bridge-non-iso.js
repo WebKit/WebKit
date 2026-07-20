@@ -5,6 +5,17 @@ function shouldBe(actual, expected, label) {
         throw new Error(`${label}: expected ${expected}, got ${actual}`);
 }
 
+function shouldThrow(func, errorType, label) {
+    try {
+        func();
+    } catch (error) {
+        if (error instanceof errorType)
+            return;
+        throw new Error(`${label}: expected ${errorType.name}, got ${error.constructor.name}`);
+    }
+    throw new Error(`${label}: expected ${errorType.name}, but no exception was thrown`);
+}
+
 // Buddhist: `year` is BE (Gregorian + 543). BE 2567 = Gregorian 2024.
 {
     const pd = Temporal.PlainDate.from({year:2567, month:1, day:1, calendar:"buddhist"});
@@ -41,6 +52,32 @@ function shouldBe(actual, expected, label) {
     const pd = Temporal.PlainDate.from({era:"am", eraYear:2016, month:1, day:1, calendar:"ethiopic"});
     shouldBe(pd.toString(), "2023-09-12[u-ca=ethiopic]", "ethiopic am 2016 -> ISO 2023-09-12");
     shouldBe(pd.year, 2016, "ethiopic .year");
+}
+
+// Ethioaa has one era, so its arithmetic year is the same as its era year.
+const modernEthioaaYear = 7518; // ICU 74 reports extended year 2018 here; ICU 78 reports 7518.
+for (const year of [-1, 0, 1, modernEthioaaYear]) {
+    const fromEra = Temporal.PlainDate.from({era:"aa", eraYear:year, month:1, day:1, calendar:"ethioaa"}, {overflow:"reject"});
+    shouldBe(fromEra.year, year, `ethioaa eraYear:${year} -> year`);
+    shouldBe(fromEra.era, "aa", `ethioaa eraYear:${year} -> era`);
+    shouldBe(fromEra.eraYear, year, `ethioaa eraYear:${year} round-trip`);
+
+    const fromYear = Temporal.PlainDate.from({year, month:1, day:1, calendar:"ethioaa"}, {overflow:"reject"});
+    shouldBe(fromYear.toString(), fromEra.toString(), `ethioaa year:${year} matches eraYear:${year}`);
+
+    const consistent = Temporal.PlainDate.from({year, era:"aa", eraYear:year, month:1, day:1, calendar:"ethioaa"}, {overflow:"reject"});
+    shouldBe(consistent.toString(), fromEra.toString(), `ethioaa consistent year and eraYear ${year}`);
+    shouldBe(fromEra.with({day:2}).year, year, `ethioaa year ${year} survives with()`);
+}
+
+// Inconsistent year and eraYear must be rejected across distinct calendar field-resolution paths.
+shouldThrow(() => Temporal.PlainDate.from({year:-1, era:"aa", eraYear:0, month:1, day:1, calendar:"ethioaa"}), RangeError, "ethioaa PlainDate inconsistent non-positive years");
+shouldThrow(() => Temporal.PlainYearMonth.from({year:0, era:"aa", eraYear:-1, month:1, calendar:"ethioaa"}), RangeError, "ethioaa PlainYearMonth inconsistent non-positive years");
+shouldThrow(() => Temporal.PlainMonthDay.from({year:-1, era:"aa", eraYear:0, monthCode:"M01", day:1, calendar:"ethioaa"}), RangeError, "ethioaa PlainMonthDay inconsistent non-positive years");
+
+{
+    const date = Temporal.PlainDate.from({era:"aa", eraYear:-1, month:1, day:1, calendar:"ethioaa"});
+    shouldThrow(() => date.with({year:0, era:"aa", eraYear:-1}), RangeError, "ethioaa PlainDate.with inconsistent non-positive years");
 }
 
 // Japanese pre-1582: proleptic Gregorian. 1500 is Julian-leap but not Gregorian-leap.
