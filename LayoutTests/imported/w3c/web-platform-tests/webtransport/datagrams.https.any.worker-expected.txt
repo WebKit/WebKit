@@ -1,14 +1,12 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Datagrams are echoed successfully Test timed out
-NOTRUN Successfully reading datagrams with BYOB reader.
-NOTRUN Reading datagrams with insufficient buffer should be rejected.
-NOTRUN Transfer max-size datagram
-NOTRUN Fail to transfer max-size+1 datagram
-NOTRUN Sending and receiving datagrams is ready to use before session is established
-NOTRUN Datagram's outgoingHighWaterMark correctly regulates written datagrams
-NOTRUN Datagrams read is less than or equal to the incomingHighWaterMark
-NOTRUN Datagram MaxAge getters/setters work correctly
-NOTRUN Datagram HighWaterMark getters/setters work correctly
+PASS Datagrams are echoed successfully
+FAIL Successfully reading datagrams with BYOB reader. promise_test: Unhandled rejection with value: object "TypeError: Invalid mode is specified"
+FAIL Reading datagrams with insufficient buffer should be rejected. promise_test: Unhandled rejection with value: object "TypeError: Invalid mode is specified"
+FAIL Transfer max-size datagram promise_test: Unhandled rejection with value: object "NetworkError:  A network error occurred."
+FAIL Fail to transfer max-size+1 datagram, handle PMTUD increases promise_test: Unhandled rejection with value: object "NetworkError:  A network error occurred."
+PASS Sending and receiving datagrams is ready to use before session is established
+FAIL Datagram's outgoingMaxBufferedDatagrams correctly regulates written datagrams assert_true: expected true got false
+FAIL Datagrams read is less than or equal to the incomingMaxBufferedDatagrams assert_less_than_equal: expected a number less than or equal to 5 but got 47
+PASS Datagram MaxAge getters/setters work correctly
+FAIL Datagram MaxBufferedDatagrams getters/setters work correctly assert_greater_than_equal: expected a number but got a "undefined"
 

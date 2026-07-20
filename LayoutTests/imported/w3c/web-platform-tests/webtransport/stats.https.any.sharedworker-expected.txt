@@ -1,12 +1,10 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT WebTransport client should be able to provide stats after connection has been established Test timed out
-NOTRUN WebTransport client should be able to provide stats after connection has been closed
-NOTRUN WebTransport client should be able to provide stats requested right before connection has been closed
-NOTRUN WebTransport client should be able to provide valid stats when requested before connection established
-NOTRUN WebTransport client should throw an error when stats are requested for a failed connection
-NOTRUN WebTransport client should be able to handle multiple concurrent stats requests
-NOTRUN WebTransport client should be able to handle multiple sequential stats requests
-NOTRUN WebTransport client should be able to provide droppedIncoming values for datagrams
+FAIL WebTransport client should be able to provide stats after connection has been established assert_greater_than: minRtt expected a number greater than 0 but got 0
+FAIL WebTransport client should be able to provide stats after connection has been closed promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL WebTransport client should be able to provide stats requested right before connection has been closed assert_greater_than: minRtt expected a number greater than 0 but got 0
+FAIL WebTransport client should be able to provide valid stats when requested before connection established assert_greater_than: minRtt expected a number greater than 0 but got 0
+FAIL WebTransport client should throw an error when stats are requested for a failed connection assert_equals: expected (number) 11 but got (undefined) undefined
+FAIL WebTransport client should be able to handle multiple concurrent stats requests assert_greater_than: minRtt expected a number greater than 0 but got 0
+FAIL WebTransport client should be able to handle multiple sequential stats requests assert_greater_than: minRtt expected a number greater than 0 but got 0
+FAIL WebTransport client should be able to provide droppedIncoming values for datagrams assert_greater_than: expected a number greater than 0 but got 0
 

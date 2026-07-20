@@ -1,14 +1,12 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Close outgoing stream / bidi-1 Test timed out
-NOTRUN Close outgoing stream / bidi-2
-NOTRUN Close outgoing stream / uni
-NOTRUN Abort client-created bidirectional stream
-NOTRUN Abort server-initiated bidirectional stream
-NOTRUN Abort unidirectional stream with WebTransportError
-NOTRUN Close and abort unidirectional stream
-NOTRUN Abort unidirectional stream with default error code
-NOTRUN STOP_SENDING coming from server
-NOTRUN RESET_STREAM coming from server
+PASS Close outgoing stream / bidi-1
+PASS Close outgoing stream / bidi-2
+PASS Close outgoing stream / uni
+PASS Abort client-created bidirectional stream
+PASS Abort server-initiated bidirectional stream
+PASS Abort unidirectional stream with WebTransportError
+FAIL Close and abort unidirectional stream assert_unreached: Should have rejected: close_promise Reached unreachable code
+PASS Abort unidirectional stream with default error code
+PASS STOP_SENDING coming from server
+PASS RESET_STREAM coming from server
 
