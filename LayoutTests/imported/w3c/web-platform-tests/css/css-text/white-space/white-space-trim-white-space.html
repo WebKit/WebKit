@@ -8,8 +8,8 @@
 <link rel="match" href="reference/white-space-trim-white-space-ref.html">
 <meta name="assert" content="discard-before/discard-after only affect collapsible white space; preserved white space (pre / pre-wrap / break-spaces) is left intact. Collapsibility is determined by the white space's own containing style, not by the box carrying white-space-trim.">
 <style>
-  .db { white-space-trim: discard-before; }
-  .da { white-space-trim: discard-after; }
+  .db { white-space-trim: discard-before !important; }
+  .da { white-space-trim: discard-after !important; }
 </style>
 </head>
 <body>

@@ -44,4 +44,55 @@ PASS e.style['white-space'] = "collapse balance" should not set the property val
 PASS e.style['white-space'] = "balance collapse" should not set the property value
 PASS e.style['white-space'] = "preserve balance" should not set the property value
 PASS e.style['white-space'] = "balance preserve" should not set the property value
+PASS e.style['white-space'] = "discard-before" should set the property value
+PASS Property white-space value 'discard-before'
+PASS e.style['white-space'] = "discard-after" should set the property value
+PASS Property white-space value 'discard-after'
+PASS e.style['white-space'] = "discard-inner" should set the property value
+PASS Property white-space value 'discard-inner'
+PASS e.style['white-space'] = "collapse wrap discard-before" should set the property value
+PASS Property white-space value 'collapse wrap discard-before'
+PASS e.style['white-space'] = "wrap collapse discard-before" should set the property value
+PASS Property white-space value 'wrap collapse discard-before'
+PASS e.style['white-space'] = "discard-before collapse wrap" should set the property value
+PASS Property white-space value 'discard-before collapse wrap'
+PASS e.style['white-space'] = "preserve discard-before" should set the property value
+PASS Property white-space value 'preserve discard-before'
+PASS e.style['white-space'] = "discard-before preserve" should set the property value
+PASS Property white-space value 'discard-before preserve'
+PASS e.style['white-space'] = "nowrap discard-after" should set the property value
+PASS Property white-space value 'nowrap discard-after'
+PASS e.style['white-space'] = "discard-after nowrap" should set the property value
+PASS Property white-space value 'discard-after nowrap'
+PASS e.style['white-space'] = "preserve nowrap discard-inner" should set the property value
+PASS Property white-space value 'preserve nowrap discard-inner'
+PASS e.style['white-space'] = "discard-inner nowrap preserve" should set the property value
+PASS Property white-space value 'discard-inner nowrap preserve'
+PASS e.style['white-space'] = "discard-inner preserve nowrap" should set the property value
+PASS Property white-space value 'discard-inner preserve nowrap'
+PASS e.style['white-space'] = "discard-after discard-before" should set the property value
+PASS Property white-space value 'discard-after discard-before'
+PASS e.style['white-space'] = "collapse wrap discard-after discard-before" should set the property value
+PASS Property white-space value 'collapse wrap discard-after discard-before'
+PASS e.style['white-space'] = "discard-before discard-after discard-inner" should set the property value
+PASS Property white-space value 'discard-before discard-after discard-inner'
+PASS e.style['white-space'] = "discard-inner discard-after discard-before" should set the property value
+PASS Property white-space value 'discard-inner discard-after discard-before'
+PASS e.style['white-space'] = "discard-after discard-inner discard-before" should set the property value
+PASS Property white-space value 'discard-after discard-inner discard-before'
+PASS e.style['white-space'] = "collapse wrap discard-before discard-after discard-inner" should set the property value
+PASS Property white-space value 'collapse wrap discard-before discard-after discard-inner'
+PASS e.style['white-space'] = "discard-inner discard-before discard-after collapse wrap" should set the property value
+PASS Property white-space value 'discard-inner discard-before discard-after collapse wrap'
+PASS e.style['white-space'] = "preserve nowrap discard-inner discard-before discard-after" should set the property value
+PASS Property white-space value 'preserve nowrap discard-inner discard-before discard-after'
+PASS e.style['white-space'] = "discard-after discard-inner discard-before preserve nowrap" should set the property value
+PASS Property white-space value 'discard-after discard-inner discard-before preserve nowrap'
+PASS e.style['white-space'] = "normal discard-before" should not set the property value
+PASS e.style['white-space'] = "discard-before normal" should not set the property value
+PASS e.style['white-space'] = "pre discard-before" should not set the property value
+PASS e.style['white-space'] = "pre-wrap discard-before" should not set the property value
+PASS e.style['white-space'] = "pre-line discard-before" should not set the property value
+PASS e.style['white-space'] = "discard-before discard-before" should not set the property value
+PASS e.style['white-space'] = "discard-before discard-after discard-inner discard-before" should not set the property value
 

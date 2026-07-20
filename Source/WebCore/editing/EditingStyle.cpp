@@ -115,7 +115,8 @@ static constexpr std::array editingProperties {
     CSSPropertyTextDecorationLine,
     CSSPropertyTextDecorationThickness,
     CSSPropertyTextDecorationStyle,
-    CSSPropertyTextDecorationColor
+    CSSPropertyTextDecorationColor,
+    CSSPropertyWhiteSpaceTrim
 };
 
 static constexpr std::array postLayoutEditingProperties {
@@ -128,7 +129,7 @@ static constexpr std::array postLayoutEditingProperties {
 };
 
 const unsigned numAllEditingProperties = std::size(editingProperties);
-const unsigned numInheritableEditingProperties = numAllEditingProperties - 5;
+const unsigned numInheritableEditingProperties = numAllEditingProperties - 6;
 
 enum class EditingPropertiesToInclude { OnlyInheritableEditingProperties, AllEditingProperties, PostLayoutProperties };
 template <class StyleDeclarationType>
@@ -579,6 +580,8 @@ void EditingStyle::init(Node* initialNode, PropertiesToInclude propertiesToInclu
             mutableStyle->setProperty(CSSPropertyTextDecorationColor, CSSValueCurrentcolor);
             mutableStyle->removeProperty(CSSPropertyWebkitTextDecorationsInEffect);
         }
+        if (RefPtr value = computedStyleAtPosition.propertyValue(CSSPropertyWhiteSpaceTrim))
+            mutableStyle->setProperty(CSSPropertyWhiteSpaceTrim, value->cssText(CSS::defaultSerializationContext()));
     }
 
     if (node && node->computedStyle()) {
@@ -1010,7 +1013,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
         auto propertyID = property.id();
 
         // We don't override whitespace property of a tab span because that would collapse the tab into a space.
-        if ((propertyID == CSSPropertyWhiteSpaceCollapse || propertyID == CSSPropertyTextWrapMode) && tabSpanNode(&element))
+        if ((propertyID == CSSPropertyWhiteSpaceCollapse || propertyID == CSSPropertyTextWrapMode || propertyID == CSSPropertyWhiteSpaceTrim) && tabSpanNode(&element))
             continue;
 
         if (propertyID == CSSPropertyWebkitTextDecorationsInEffect && inlineStyle->getPropertyCSSValue(CSSPropertyTextDecorationLine)) {
@@ -1512,9 +1515,13 @@ void EditingStyle::removeStyleInContextNotOverridenByMatchedRules(StyledElement&
         auto textWrapMode = mutableStyle->getPropertyCSSValue(CSSPropertyTextWrapMode);
         auto contextTextWrapMode = computedStyleMutableStyle->getPropertyCSSValue(CSSPropertyTextWrapMode);
 
-        if (whiteSpaceCollapse != contextWhiteSpaceCollapse || textWrapMode != contextTextWrapMode) {
+        auto whiteSpaceTrim = mutableStyle->getPropertyCSSValue(CSSPropertyWhiteSpaceTrim);
+        auto contextWhiteSpaceTrim = computedStyleMutableStyle->getPropertyCSSValue(CSSPropertyWhiteSpaceTrim);
+
+        if (whiteSpaceCollapse != contextWhiteSpaceCollapse || textWrapMode != contextTextWrapMode || whiteSpaceTrim != contextWhiteSpaceTrim) {
             computedStyleMutableStyle->removeProperty(CSSPropertyWhiteSpaceCollapse);
             computedStyleMutableStyle->removeProperty(CSSPropertyTextWrapMode);
+            computedStyleMutableStyle->removeProperty(CSSPropertyWhiteSpaceTrim);
         }
 
         RefPtr<EditingStyle> computedStyleOfElement;
@@ -1958,6 +1965,7 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
         if (parentTabSpanNode(positionDeprecatedNode.get()) || tabSpanNode(positionDeprecatedNode.get())) {
             mutableStyle->removeProperty(CSSPropertyWhiteSpaceCollapse);
             mutableStyle->removeProperty(CSSPropertyTextWrapMode);
+            mutableStyle->removeProperty(CSSPropertyWhiteSpaceTrim);
         }
     }
 
