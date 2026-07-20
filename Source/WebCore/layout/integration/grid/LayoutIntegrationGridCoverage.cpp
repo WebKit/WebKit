@@ -90,7 +90,6 @@ enum class GridAvoidanceReason : uint8_t {
     GridItemHasUnsupportedColumnEnd,
 
     GridNeedsImplicitColumnsForItemsLockedToRow,
-    GridItemHasAutomaticRowStartPlacement,
     GridItemRowStartHasLineName,
     GridItemRowStartHasNegativeLineNumber,
     GridItemRowStartHasSpan,
@@ -125,7 +124,6 @@ static bool avoidanceReasonIsColumnPlacementRelated(GridAvoidanceReason gridAvoi
 static bool avoidanceReasonIsRowPlacementRelated(GridAvoidanceReason gridAvoidanceReason)
 {
     switch (gridAvoidanceReason) {
-    case GridAvoidanceReason::GridItemHasAutomaticRowStartPlacement:
     case GridAvoidanceReason::GridItemRowStartHasLineName:
     case GridAvoidanceReason::GridItemRowStartHasNegativeLineNumber:
     case GridAvoidanceReason::GridItemRowStartHasSpan:
@@ -204,11 +202,31 @@ static bool hasValidColumnEnd(const CSS::Keyword::Auto& autoColumnStart, const S
     );
 }
 
+static bool hasValidRowEnd(const CSS::Keyword::Auto& autoRowStart, const Style::GridPosition rowEnd)
+{
+    UNUSED_PARAM(autoRowStart);
+
+    return WTF::switchOn(rowEnd,
+        [](const CSS::Keyword::Auto&) {
+            return true;
+        },
+        [](const Style::GridPositionExplicit&) {
+            return false;
+        },
+        [](const Style::GridPositionSpan&) {
+            return false;
+        },
+        [](const Style::CustomIdent&) {
+            return false;
+        }
+    );
+}
+
 static bool hasValidRowEnd(const Style::GridPositionExplicit& explicitRowStart, const Style::GridPosition rowEnd, size_t linesFromGridTemplateRowsCount)
 {
     return WTF::switchOn(rowEnd,
         [&](const CSS::Keyword::Auto&) {
-            return false;
+            return true;
         },
         [&](const Style::GridPositionExplicit&) {
             if (!rowEnd.namedGridLine().value.isEmpty() || rowEnd.explicitPosition() < 0 || rowEnd.explicitPosition() > static_cast<int>(linesFromGridTemplateRowsCount))
@@ -545,8 +563,10 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
         auto& rowStart = gridItemStyle->gridItemRowStart();
         auto rowPositioningAvoidanceReason = WTF::switchOn(rowStart,
-            [&](const CSS::Keyword::Auto&) -> std::optional<GridAvoidanceReason> {
-                return GridAvoidanceReason::GridItemHasAutomaticRowStartPlacement;
+            [&](const CSS::Keyword::Auto& autoPosition) -> std::optional<GridAvoidanceReason> {
+                if (!hasValidRowEnd(autoPosition, gridItemStyle->gridItemRowEnd()))
+                    return GridAvoidanceReason::GridItemHasUnsupportedRowEnd;
+                return { };
             },
             [&](const Style::GridPositionExplicit& explicitPosition) -> std::optional<GridAvoidanceReason> {
                 auto rowStartLineNumber = explicitPosition.position.value;
@@ -797,9 +817,6 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridNeedsImplicitColumnsForItemsLockedToRow:
         stream << "grid needs implicit columns for items locked to row";
-        break;
-    case GridAvoidanceReason::GridItemHasAutomaticRowStartPlacement:
-        stream << "grid item has automatic row start placement";
         break;
     case GridAvoidanceReason::GridItemRowStartHasLineName:
         stream << "grid item row start has line name";
