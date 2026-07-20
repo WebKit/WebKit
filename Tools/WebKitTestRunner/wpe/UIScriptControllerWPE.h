@@ -50,6 +50,7 @@ public:
     void addViewToWindow(JSValueRef) override;
     double zoomScale() const override;
     void zoomToScale(double, JSValueRef) override;
+    void sendEventStream(JSStringRef, JSValueRef) override;
 };
 
 } // namespace WTR

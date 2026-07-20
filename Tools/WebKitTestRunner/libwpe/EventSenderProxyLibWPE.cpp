@@ -129,6 +129,15 @@ void EventSenderProxy::continuousMouseScrollBy(int, int, bool)
 {
 }
 
+void EventSenderProxy::sendWheelEvent(double time, double x, double y, double deltaX, double deltaY, WheelEventPhase phase, WheelEventPhase momentumPhase)
+{
+    auto endsScroll = [](WheelEventPhase phase) {
+        return phase == WheelEventPhase::Ended || phase == WheelEventPhase::Cancelled;
+    };
+    bool isEnd = phase != WheelEventPhase::None ? endsScroll(phase) : endsScroll(momentumPhase);
+    m_client->sendWheelEvent(deltaX, deltaY, time, x, y, isEnd);
+}
+
 void EventSenderProxy::leapForward(int milliseconds)
 {
     m_time += milliseconds / 1000.0;

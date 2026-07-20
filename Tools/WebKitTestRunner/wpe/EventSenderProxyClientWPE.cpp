@@ -173,6 +173,14 @@ void EventSenderProxyClientWPE::mouseScrollBy(int horizontal, int vertical, doub
     wpe_event_unref(event);
 }
 
+void EventSenderProxyClientWPE::sendWheelEvent(double deltaX, double deltaY, double time, double x, double y, bool isEnd)
+{
+    auto* view = WKViewGetView(m_testController.targetView()->platformView());
+    auto* event = wpe_event_scroll_new(view, WPE_INPUT_SOURCE_MOUSE, secToMsTimestamp(time), static_cast<WPEModifiers>(0), deltaX, deltaY, TRUE, isEnd, x, y);
+    wpe_view_event(view, event);
+    wpe_event_unref(event);
+}
+
 static unsigned wpeKeyvalForKeyRef(WKStringRef keyRef, unsigned location, unsigned& modifiers)
 {
     if (location == DOMKeyLocationNumpad) {

@@ -56,6 +56,7 @@ public:
     void setWebViewEditable(bool) override;
     double zoomScale() const override;
     void zoomToScale(double, JSValueRef) override;
+    void sendEventStream(JSStringRef, JSValueRef) override;
 
 private:
     void overridePreference(JSStringRef, JSStringRef) override;

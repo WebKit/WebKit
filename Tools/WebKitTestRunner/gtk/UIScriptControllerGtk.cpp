@@ -36,6 +36,7 @@
 #include <WebKit/WKTextCheckerGLib.h>
 #include <WebKit/WKViewPrivate.h>
 #include <gtk/gtk.h>
+#include <webkit/WebKitWebViewBaseInternal.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RunLoop.h>
 
@@ -226,6 +227,97 @@ double UIScriptControllerGtk::zoomScale() const
 {
     auto page = TestController::singleton().mainWebView()->page();
     return WKPageGetScaleFactor(page);
+}
+
+static WheelEventPhase wheelEventPhaseFromString(const String& phase)
+{
+    if (phase == "began"_s)
+        return WheelEventPhase::Began;
+    if (phase == "changed"_s || phase == "continue"_s) // Allow "continue" for ease of conversion from mouseScrollByWithWheelAndMomentumPhases values.
+        return WheelEventPhase::Changed;
+    if (phase == "ended"_s)
+        return WheelEventPhase::Ended;
+    if (phase == "cancelled"_s)
+        return WheelEventPhase::Cancelled;
+    if (phase == "maybegin"_s)
+        return WheelEventPhase::MayBegin;
+
+    ASSERT_NOT_REACHED();
+    return WheelEventPhase::NoPhase;
+}
+
+void UIScriptControllerGtk::sendEventStream(JSStringRef eventsJSON, JSValueRef callback)
+{
+    auto* eventSender = TestController::singleton().eventSenderProxy();
+    if (!eventSender) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    auto jsonValue = JSON::Value::parseJSON(eventsJSON->string());
+    auto jsonObject = jsonValue ? jsonValue->asObject() : nullptr;
+    auto eventsArray = jsonObject ? jsonObject->getArray("events"_s) : nullptr;
+    if (!eventsArray) {
+        WTFLogAlways("JSON is not convertible to a dictionary with an `events` array");
+        return;
+    }
+
+    double currentViewRelativeX = 0;
+    double currentViewRelativeY = 0;
+
+    for (unsigned i = 0; i < eventsArray->length(); ++i) {
+        auto eventObject = eventsArray->get(i)->asObject();
+        if (!eventObject) {
+            WTFLogAlways("Event is not a dictionary");
+            break;
+        }
+
+        auto eventTypeString = eventObject->getString("type"_s);
+        if (!eventTypeString) {
+            WTFLogAlways("Failed to find type key in %s", eventTypeString.utf8().data());
+            break;
+        }
+
+        if (eventTypeString == "wheel"_s) {
+            auto phase = WheelEventPhase::NoPhase;
+            auto momentumPhase = WheelEventPhase::NoPhase;
+
+            auto phaseString = eventObject->getString("phase"_s);
+            if (!phaseString.isNull())
+                phase = wheelEventPhaseFromString(phaseString);
+
+            auto momentumPhaseString = eventObject->getString("momentumPhase"_s);
+            if (!momentumPhaseString.isNull()) {
+                momentumPhase = wheelEventPhaseFromString(momentumPhaseString);
+                if (momentumPhase == WheelEventPhase::Cancelled || momentumPhase == WheelEventPhase::MayBegin) {
+                    WTFLogAlways("Invalid value %s for momentumPhase", momentumPhaseString.utf8().data());
+                    break;
+                }
+            }
+
+            ASSERT_IMPLIES(phase == WheelEventPhase::NoPhase, momentumPhase != WheelEventPhase::NoPhase);
+            ASSERT_IMPLIES(momentumPhase == WheelEventPhase::NoPhase, phase != WheelEventPhase::NoPhase);
+
+            if (auto x = eventObject->getDouble("viewX"_s))
+                currentViewRelativeX = *x;
+
+            if (auto y = eventObject->getDouble("viewY"_s))
+                currentViewRelativeY = *y;
+
+            double deltaX = eventObject->getDouble("deltaX"_s).value_or(0);
+            double deltaY = eventObject->getDouble("deltaY"_s).value_or(0);
+
+            eventSender->sendWheelEvent(currentViewRelativeX, currentViewRelativeY, deltaX, deltaY, phase, momentumPhase);
+        }
+    }
+
+    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, callbackID] {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    });
 }
 
 } // namespace WTR

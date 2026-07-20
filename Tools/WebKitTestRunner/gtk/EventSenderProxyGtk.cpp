@@ -394,6 +394,12 @@ void EventSenderProxy::setWheelHasPreciseDeltas(bool hasPreciseDeltas)
     m_hasPreciseDeltas = hasPreciseDeltas;
 }
 
+void EventSenderProxy::sendWheelEvent(double x, double y, double deltaX, double deltaY, WheelEventPhase phase, WheelEventPhase momentumPhase)
+{
+    webkitWebViewBaseSynthesizeWheelEvent(toWebKitGLibAPI(m_testController->targetView()->platformView()),
+        deltaX, deltaY, x, y, phase, momentumPhase, true);
+}
+
 void EventSenderProxy::leapForward(int milliseconds)
 {
     m_time += milliseconds / 1000.0;
