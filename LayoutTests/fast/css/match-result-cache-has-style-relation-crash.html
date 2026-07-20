@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<style>
+.subject:has(& + :nth-last-child(even)) { background-color: green }
+</style>
+<div class="subject"><div id="middle"><div id="victim"><span></span></div></div></div>
+<p>This test passes if it does not crash.</p>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+let subject = document.querySelector('.subject');
+let victim = document.getElementById('victim');
+
+// Populate the match-result cache for `subject`. Matching :has() walks descendants and
+// records an AffectedByHasWithBackwardSiblingRelationship style relation targeting `victim`
+// (the parent in the :nth-last-child check on <span>).
+subject.style.backgroundSize = 'cover';
+subject.offsetTop;
+
+// Remove and free the relation target while the cache entry persists.
+victim.remove();
+victim = null;
+if (window.GCController)
+    GCController.collect();
+
+// Mutating the same inline property takes the FullWithMatchResultCache path,
+// which previously committed the cached relation pointing to freed memory.
+subject.style.backgroundSize = 'contain';
+subject.offsetTop;
+</script>
+
