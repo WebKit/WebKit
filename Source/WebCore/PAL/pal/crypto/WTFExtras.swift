@@ -22,7 +22,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 public import Foundation
-internal import wtf
+import wtf
 
 // BorrowedBytes exposes borrowed C++ bytes to Foundation/CryptoKit consumers
 // with no copy and no `unsafe` at the call sites. The single audited `unsafe`
@@ -34,9 +34,9 @@ internal import wtf
 @safe
 extension WTF.BorrowedBytes: ContiguousBytes {
     /// Calls `body` with a raw buffer pointer over the borrowed bytes, valid only for the call.
-    public func withUnsafeBytes<R>(_ body: (UnsafeRawBufferPointer) throws -> R) rethrows -> R {
+    public func withUnsafeBytes<R, E>(_ body: (UnsafeRawBufferPointer) throws(E) -> R) throws(E) -> R where E: Error {
         // Safe: data()/size() describe the same live span, and data() traps if the borrow was revoked, so misuse crashes rather than reading freed memory.
-        try unsafe body(UnsafeRawBufferPointer(start: self.data(), count: self.size()))
+        try unsafe body(UnsafeRawBufferPointer(start: data(), count: size()))
     }
 }
 
@@ -44,12 +44,14 @@ extension WTF.BorrowedBytes: ContiguousBytes {
 extension WTF.BorrowedBytes: RandomAccessCollection {
     /// The position of the first byte.
     public var startIndex: Int { 0 }
+
     /// The position one past the last byte.
-    public var endIndex: Int { self.size() }
+    public var endIndex: Int { size() }
+
     /// The byte at `position`.
     public subscript(position: Int) -> UInt8 {
         // Safe: UnsafeRawBufferPointer's own subscript bounds-checks position and traps if it's out of range.
-        unsafe UnsafeRawBufferPointer(start: self.data(), count: self.size())[position]
+        unsafe UnsafeRawBufferPointer(start: data(), count: size())[position]
     }
 }
 
@@ -74,13 +76,13 @@ public struct NonNullBytes: ContiguousBytes, DataProtocol, RandomAccessCollectio
     }
 
     /// Calls `body` with a raw buffer pointer over the bytes, valid only for the call.
-    public func withUnsafeBytes<R>(_ body: (UnsafeRawBufferPointer) throws -> R) rethrows -> R {
+    public func withUnsafeBytes<R, E>(_ body: (UnsafeRawBufferPointer) throws(E) -> R) throws(E) -> R where E: Error {
         if bytes.isEmpty {
             // Safe: `placeholder` is a live local, so its address is non-null; we expose it
             // with a zero count, so `body` can never read through it. This gives CryptoKit the
             // non-null base pointer it requires even for an empty buffer.
             var placeholder: UInt8 = 0
-            return try unsafe Swift.withUnsafeBytes(of: &placeholder) { raw in
+            return try unsafe Swift.withUnsafeBytes(of: &placeholder) { (raw: UnsafeRawBufferPointer) throws(E) in
                 try unsafe body(UnsafeRawBufferPointer(start: raw.baseAddress, count: 0))
             }
         }
