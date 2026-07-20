@@ -33,6 +33,7 @@
 #include <WebCore/BezierUtilities.h>
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <numbers>
 #include <utility>
@@ -89,6 +90,10 @@ static bool isEmpty(const Corner& corner)
 {
     return (corner.outer - corner.start).diagonalLength() < limit
         || (corner.end - corner.outer).diagonalLength() < limit;
+}
+static bool isSuperellipse(const Corner& corner)
+{
+    return !isBevel(corner) && !isRound(corner) && !isScoop(corner) && !isNotch(corner) && !isSquare(corner) && !isEmpty(corner);
 }
 
 static Corner inverseCorner(const Corner& corner)
@@ -227,10 +232,16 @@ static Corner adjustCornerForInset(const Corner& original, double startInset, do
     if (isNotch(original)) {
         strokeA = -1;
         strokeB = 1;
-    } else if (isSquare(original)) {
+    } else if (isSquare(original))
         strokeB = 1;
+    else {
+        // General: offset each corner vertex inward along the curve's hull direction by the border thickness, keeping the curvature.
+        double clampedCurvature = std::clamp(original.curvature, -1.0, 1.0);
+        double convexHalfCorner = std::pow(0.5, std::exp2(-clampedCurvature));
+        auto hullDirection = FloatSize(float(convexHalfCorner * 2.0 - 0.5), float(1.5 - convexHalfCorner * 2.0)).normalized();
+        strokeA = -hullDirection.height();
+        strokeB = hullDirection.width();
     }
-    // TODO: implement inset for squircle (§3.9.4.2 hull direction).
 
     auto offset1 = (original.outer - original.start).directionScaledBy(float(startInset * strokeA));
     auto offset2 = (original.end - original.outer).directionScaledBy(float(startInset * strokeB));
@@ -253,17 +264,22 @@ static Corner adjustCornerForInset(const Corner& original, double startInset, do
     };
 }
 
+static bool extendPathForSharpCorner(Path& path, const Corner& corner)
+{
+    if (corner.radii.width() >= limit && corner.radii.height() >= limit)
+        return false;
+    path.addLineTo(corner.outer);
+    path.addLineTo(corner.end);
+    return true;
+}
+
 static void addEllipticalArc(Path& path, const Corner& corner)
 {
+    if (extendPathForSharpCorner(path, corner))
+        return;
+
     float radiusX = corner.radii.width();
     float radiusY = corner.radii.height();
-
-    // Border ate the whole radius: the inner corner collapses to a sharp vertex
-    if (radiusX < limit || radiusY < limit) {
-        path.addLineTo(corner.outer);
-        path.addLineTo(corner.end);
-        return;
-    }
 
     float startAngle = eccentricAngle(corner.start, corner.center, radiusX, radiusY);
     float endAngle = eccentricAngle(corner.end, corner.center, radiusX, radiusY);
@@ -274,48 +290,132 @@ static void addEllipticalArc(Path& path, const Corner& corner)
     path.addEllipse(corner.center, radiusX, radiusY, 0.0f, startAngle, startAngle + delta, direction);
 }
 
+// Defined in https://drafts.csswg.org/css-borders-4/#corner-shape-interpolation
+static double normalizedSuperellipseHalfCorner(double superellipseParameter)
+{
+    if (std::isinf(superellipseParameter))
+        return superellipseParameter < 0.0 ? 0.0 : 1.0;
+    double exponent = std::pow(0.5, std::abs(superellipseParameter));
+    double convexHalfCorner = std::pow(0.5, exponent);
+    return superellipseParameter < 0.0 ? 1.0 - convexHalfCorner : convexHalfCorner;
+}
+
+struct SuperellipseBezierHandles {
+    double handleA;
+    double handleB;
+    double halfCorner;
+};
+static SuperellipseBezierHandles superellipseBezierHandles(double parameter)
+{
+    static constexpr double fitCoefficients[7] = {
+        1.2430920942724248, 2.010479023614843, 0.32922901179443753,
+        0.2823023142212073, 1.3473704261055421, 2.9149468637949814, 0.9106507102917086
+    };
+    double slope = fitCoefficients[0] + (fitCoefficients[6] - fitCoefficients[0]) * 0.5 * (1.0 + std::tanh(fitCoefficients[5] * (parameter - fitCoefficients[1])));
+    double base = 1.0 / (1.0 + std::exp(slope * fitCoefficients[1]));
+    double logistic = 1.0 / (1.0 + std::exp(slope * (fitCoefficients[1] - parameter)));
+    double handleA = (logistic - base) / (1.0 - base);
+    double handleB = fitCoefficients[2] * std::exp(-fitCoefficients[3] * std::pow(parameter, fitCoefficients[4]));
+    double halfCorner = normalizedSuperellipseHalfCorner(parameter);
+    return { handleA, handleB, halfCorner };
+}
+
+static FloatPoint mapPointToCorner(const Corner& corner, FloatSize normalizedPoint)
+{
+    auto curveCenter = corner.center;
+    auto centerToEnd = corner.end - curveCenter;
+    auto centerToStart = corner.start - curveCenter;
+    return curveCenter + centerToEnd * normalizedPoint.width() + centerToStart * normalizedPoint.height();
+}
+
+static FloatSize transpose(FloatSize size) { return FloatSize(size.height(), size.width()); }
+
+static std::array<BezierSegment, 2> superellipseCornerBeziers(const Corner& cornerInput)
+{
+    auto corner = isConcave(cornerInput) ? inverseCorner(cornerInput) : cornerInput;
+    auto [handleA, handleB, halfCorner] = superellipseBezierHandles(corner.curvature);
+    FloatSize firstControl { float(handleA), 1.0f };
+    FloatSize secondControl { float(halfCorner - handleB), float(halfCorner + handleB) };
+    FloatSize midpointNormalized { float(halfCorner), float(halfCorner) };
+    auto midpoint = mapPointToCorner(corner, midpointNormalized);
+    BezierSegment firstHalf { corner.start, mapPointToCorner(corner, firstControl), mapPointToCorner(corner, secondControl), midpoint };
+    BezierSegment secondHalf { midpoint, mapPointToCorner(corner, transpose(secondControl)), mapPointToCorner(corner, transpose(firstControl)), corner.end };
+    return { firstHalf, secondHalf };
+}
+
 static void addCurvedCorner(Path& path, const Corner& corner)
 {
-    if (isBevel(corner)) {
-        path.addLineTo(corner.start);
-        path.addLineTo(corner.end);
-        return;
-    }
     if (isNotch(corner)) {
         path.addLineTo(corner.start);
         path.addLineTo(corner.center);
         path.addLineTo(corner.end);
         return;
     }
+
     if (isConcave(corner)) {
         addCurvedCorner(path, inverseCorner(corner));
         return;
     }
+
+    path.addLineTo(corner.start);
+
+    if (isBevel(corner)) {
+        path.addLineTo(corner.end);
+        return;
+    }
     if (isRound(corner)) {
-        path.addLineTo(corner.start);
         addEllipticalArc(path, corner);
         return;
     }
     if (isSquare(corner)) {
-        path.addLineTo(corner.start);
         path.addLineTo(corner.outer);
         path.addLineTo(corner.end);
         return;
     }
 
-    // TODO: squircle and the general superellipse curve.
-    // FIXME (bug 319603 follow-up): stub in-framework consumer of trimBezierToRect() while the
-    // real superellipse trimming is developed. Behavior is unchanged (still a sharp vertex);
-    // the clipped result is intentionally unused for now.
-    BezierSegment cornerSegment { corner.start, corner.outer, corner.outer, corner.end };
-    FloatRect cornerBounds { corner.start, FloatSize { } };
-    cornerBounds.extend(corner.outer);
-    cornerBounds.extend(corner.end);
-    trimBezierToRect(cornerSegment, cornerBounds);
+    // General superellipse: squircle (s=2) and superellipse(n)
+    if (extendPathForSharpCorner(path, corner))
+        return;
+    for (const auto& curve : superellipseCornerBeziers(corner))
+        path.addBezierCurveTo(curve.controlPoint1, curve.controlPoint2, curve.end);
+}
 
-    path.addLineTo(corner.start);
-    path.addLineTo(corner.outer);
-    path.addLineTo(corner.end);
+static FloatPoint sharpInnerCornerPoint(const FloatRect& innerRect, BoxCorner orientation)
+{
+    switch (orientation) {
+    case BoxCorner::TopRight:    return innerRect.maxXMinYCorner();
+    case BoxCorner::BottomRight: return innerRect.maxXMaxYCorner();
+    case BoxCorner::BottomLeft:  return innerRect.minXMaxYCorner();
+    case BoxCorner::TopLeft:     return innerRect.minXMinYCorner();
+    }
+    return { };
+}
+
+// rect ∩ corner-carve
+static void addTrimmedSuperellipseCorner(Path& path, const Corner& corner, const FloatRect& innerRect, bool& started)
+{
+    auto lineOrMoveTo = [&](FloatPoint point) {
+        if (!started) {
+            path.moveTo(point);
+            started = true;
+        } else
+            path.addLineTo(point);
+    };
+
+    Vector<BezierSegment> clippedCurves;
+    for (const auto& bezier : superellipseCornerBeziers(corner)) {
+        for (const auto& curve : trimBezierToRect(bezier, innerRect))
+            clippedCurves.append(curve);
+    }
+
+    if (clippedCurves.isEmpty()) {
+        lineOrMoveTo(sharpInnerCornerPoint(innerRect, corner.orientation));
+        return;
+    }
+    for (const auto& curve : clippedCurves) {
+        lineOrMoveTo(curve.start);
+        path.addBezierCurveTo(curve.controlPoint1, curve.controlPoint2, curve.end);
+    }
 }
 
 static void buildCorners(RectCorners<Corner>& corners, const RectCorners<CornerInput>& cornerRects)
@@ -331,13 +431,24 @@ static void buildCorners(RectCorners<Corner>& corners, const RectCorners<CornerI
 } // namespace
 
 // https://drafts.csswg.org/css-borders-4/#contour-path
-void borderContourPath(Path& path, const RectCorners<CornerInput>& cornerRects)
+void borderContourPath(Path& path, const RectCorners<CornerInput>& cornerRects, const FloatRect* innerTrimRect)
 {
     RectCorners<Corner> corners;
     buildCorners(corners, cornerRects);
-    path.moveTo(corners.topRight().start);
-    for (auto key : { BoxCorner::TopRight, BoxCorner::BottomRight, BoxCorner::BottomLeft, BoxCorner::TopLeft })
-        addCurvedCorner(path, corners[key]);
+
+    bool started = false;
+    for (auto key : { BoxCorner::TopRight, BoxCorner::BottomRight, BoxCorner::BottomLeft, BoxCorner::TopLeft }) {
+        const auto& corner = corners[key];
+        if (innerTrimRect && isSuperellipse(corner)) {
+            addTrimmedSuperellipseCorner(path, corner, *innerTrimRect, started);
+            continue;
+        }
+        if (!started) {
+            path.moveTo(corner.start);
+            started = true;
+        }
+        addCurvedCorner(path, corner);
+    }
     path.closeSubpath();
 }
 

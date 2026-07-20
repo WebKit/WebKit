@@ -372,7 +372,7 @@ static void addInnerCornerShapeToPath(Path& path, const FloatRoundedRect& outerS
 
     RectCorners<CornerInput> cornerRects;
     buildScaledCornerInputs(outerSnapped, cornerCurvatures, leftWidth, topWidth, rightWidth, bottomWidth, cornerRects);
-    borderContourPath(path, cornerRects);
+    borderContourPath(path, cornerRects, &innerRect);
 }
 
 Path BorderShape::pathForInnerCornerShape(const FloatRoundedRect& outerSnapped, const FloatRoundedRect& innerSnapped) const

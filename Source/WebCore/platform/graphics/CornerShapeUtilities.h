@@ -28,6 +28,7 @@
 
 namespace WebCore {
 
+class FloatRect;
 class Path;
 
 struct CornerInput {
@@ -42,7 +43,7 @@ struct CornerInput {
 };
 
 // https://drafts.csswg.org/css-borders-4/#contour-path
-void borderContourPath(Path&, const RectCorners<CornerInput>&);
+void borderContourPath(Path&, const RectCorners<CornerInput>&, const FloatRect* innerTrimRect = nullptr);
 
 // https://drafts.csswg.org/css-borders-4/#corner-shape-constrain-radii
 double oppositeCornerScaleFactor(const RectCorners<CornerInput>&);
