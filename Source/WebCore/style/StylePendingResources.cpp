@@ -37,10 +37,13 @@
 #include "NodeInlinesLight.h"
 #include "ResourceRequest.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGElement.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleCursor.h"
+#include "StyleFilter.h"
+#include "StyleFilterReference.h"
 #include "StyleImage.h"
 
 namespace WebCore {
@@ -77,37 +80,37 @@ static void loadPendingImage(Document& document, const Image* image, const Eleme
     const_cast<Image&>(*image).load(protect(document.cachedResourceLoader()), options);
 }
 
-static void loadPendingExternalSVGPaint(Document& document, const Style::SVGPaint& paint)
+static void loadExternalSVGResource(Document& document, const WTF::URL& url)
 {
-    auto url = paint.tryAnyURL();
-    if (!url)
+    if (url.isNull())
         return;
 
-    auto& resolved = url->resolved;
-    if (resolved.isNull())
+    if (!url.protocolIsData() && !SVGURIReference::isExternalURIReference(url.string(), document))
         return;
 
-    if (!resolved.protocolIsData() && !SVGURIReference::isExternalURIReference(resolved.string(), document))
-        return;
-
-    auto documentURL = *url;
-    documentURL.resolved.removeFragmentIdentifier();
+    auto documentURL = url;
+    documentURL.removeFragmentIdentifier();
 
     CheckedRef extensions = document.svgExtensions();
-    auto key = documentURL.resolved;
-    if (extensions->hasExternalSVGPaintResource(key))
+    if (extensions->hasExternalSVGResource(documentURL))
         return;
 
     auto options = CachedResourceLoader::defaultCachedResourceOptions();
     options.mode = FetchOptions::Mode::SameOrigin;
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
 
-    CachedResourceRequest request(ResourceRequest(WTF::URL { documentURL.resolved }), options);
+    CachedResourceRequest request(ResourceRequest(WTF::URL { documentURL }), options);
     request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
     RefPtr cachedImage = protect(document.cachedResourceLoader())->requestImage(WTF::move(request)).value_or(nullptr);
     if (!cachedImage)
         return;
-    extensions->addExternalSVGPaintResource(key, *cachedImage, document);
+    extensions->addExternalSVGResource(documentURL, *cachedImage, document);
+}
+
+static void loadPendingExternalSVGPaint(Document& document, const Style::SVGPaint& paint)
+{
+    if (auto url = paint.tryAnyURL())
+        loadExternalSVGResource(document, url->resolved);
 }
 
 void loadPendingResources(Style::ComputedStyle& style, Document& document, const Element* element)
@@ -147,9 +150,21 @@ void loadPendingResources(Style::ComputedStyle& style, Document& document, const
     if (RefPtr shapeValueImage = style.shapeOutside().image())
         loadPendingImage(document, shapeValueImage.get(), element, LoadPolicy::Anonymous);
 
-    if (document.settings().svgExternalResourcesEnabled()) {
+    // External/data: SVG paint servers and filters resolve through SVGResources, which only applies
+    // to SVG elements. Restrict loading to them so CSS filter on non-SVG elements (a separate path)
+    // isn't pulled through here.
+    if (document.settings().svgExternalResourcesEnabled() && element && is<SVGElement>(*element)) {
         loadPendingExternalSVGPaint(document, style.fill());
         loadPendingExternalSVGPaint(document, style.stroke());
+
+        if (style.filter().size() == 1) {
+            WTF::switchOn(style.filter().first(),
+                [&](const Style::FilterReference& filterReference) {
+                    loadExternalSVGResource(document, filterReference.url.resolved);
+                },
+                [](const auto&) { }
+            );
+        }
     }
 
     // Are there other pseudo-elements that need resource loading?

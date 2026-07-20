@@ -174,20 +174,20 @@ void SVGDocumentExtensions::unregisterSVGFontFaceElement(SVGFontFaceElement& ele
     m_svgFontFaceElements.remove(element);
 }
 
-bool SVGDocumentExtensions::hasExternalSVGPaintResource(const URL& url) const
+bool SVGDocumentExtensions::hasExternalSVGResource(const URL& url) const
 {
-    return m_externalSVGPaintDocuments.contains(url);
+    return m_externalSVGDocuments.contains(url);
 }
 
-void SVGDocumentExtensions::addExternalSVGPaintResource(const URL& url, CachedImage& cachedImage, Document& document)
+void SVGDocumentExtensions::addExternalSVGResource(const URL& url, CachedImage& cachedImage, Document& document)
 {
-    m_externalSVGPaintDocuments.set(url, IsolatedSVGDocumentContext::create(cachedImage, document));
+    m_externalSVGDocuments.set(url, IsolatedSVGDocumentContext::create(cachedImage, document));
 }
 
-IsolatedSVGDocumentContext* SVGDocumentExtensions::isolatedSVGPaintDocument(const URL& url) const
+IsolatedSVGDocumentContext* SVGDocumentExtensions::isolatedSVGDocumentContext(const URL& url) const
 {
-    auto it = m_externalSVGPaintDocuments.find(url);
-    return it != m_externalSVGPaintDocuments.end() ? it->value.ptr() : nullptr;
+    auto it = m_externalSVGDocuments.find(url);
+    return it != m_externalSVGDocuments.end() ? it->value.ptr() : nullptr;
 }
 
 }

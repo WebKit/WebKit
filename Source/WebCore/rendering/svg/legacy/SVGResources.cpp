@@ -204,6 +204,26 @@ static CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromTreeScop
     return container;
 }
 
+// The return value is tri-state because callers need to distinguish whether the reference is external at
+// all, and if so whether it's loaded yet: nullopt = not an external/data reference (resolve locally);
+// null RefPtr = external but not loaded yet (resolve to nothing); non-null = the isolated document to
+// resolve in.
+// FIXME: The external-or-not classification could be computed once at style-build time on Style::URL.
+static std::optional<RefPtr<SVGDocument>> externalSVGResourceDocument(Document& document, const WTF::URL& url)
+{
+    if (!document.settings().svgExternalResourcesEnabled())
+        return std::nullopt;
+
+    if (!url.protocolIsData() && !SVGURIReference::isExternalURIReference(url.string(), document))
+        return std::nullopt;
+
+    auto documentURL = url;
+    documentURL.removeFragmentIdentifier();
+
+    RefPtr isolatedContext = document.svgExtensions().isolatedSVGDocumentContext(documentURL);
+    return RefPtr { isolatedContext ? isolatedContext->document() : nullptr };
+}
+
 static inline CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromSVGPaint(TreeScope& treeScope, const Style::SVGPaint& paint, AtomString& id, bool& hasPendingResource)
 {
     auto paintURL = paint.tryAnyURL();
@@ -212,26 +232,15 @@ static inline CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromS
 
     Ref document = treeScope.documentScope();
 
-    if (document->settings().svgExternalResourcesEnabled()
-        && (paintURL->resolved.protocolIsData() || SVGURIReference::isExternalURIReference(paintURL->resolved.string(), document))) {
+    if (auto externalDocument = externalSVGResourceDocument(document, paintURL->resolved)) {
         id = paintURL->resolved.fragmentIdentifier().toAtomString();
-        if (id.isEmpty())
-            return nullptr;
-
-        auto documentURL = *paintURL;
-        documentURL.resolved.removeFragmentIdentifier();
-
-        RefPtr isolatedDocument = document->svgExtensions().isolatedSVGPaintDocument(documentURL.resolved);
-        if (!isolatedDocument)
-            return nullptr;
-
-        RefPtr externalDocument = isolatedDocument->document();
-        if (!externalDocument)
+        RefPtr resolvedDocument = *externalDocument;
+        if (id.isEmpty() || !resolvedDocument)
             return nullptr;
 
         // The resource lives in the isolated document, which is realized separately and does not use
         // this document's pending-resource mechanism so no hasPendingResource.
-        return paintingResourceFromTreeScopeAndId(*externalDocument, id, nullptr);
+        return paintingResourceFromTreeScopeAndId(*resolvedDocument, id, nullptr);
     }
 
     id = SVGURIReference::fragmentIdentifierFromIRIString(*paintURL, document);
@@ -277,6 +286,13 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
             WTF::switchOn(style.filter().first(),
                 [&](const Style::FilterReference& filterReference) {
                     auto& id = filterReference.cachedFragment;
+                    if (auto externalDocument = externalSVGResourceDocument(document, filterReference.url.resolved)) {
+                        if (RefPtr resolvedDocument = *externalDocument) {
+                            if (auto* filter = getRenderSVGResourceById<LegacyRenderSVGResourceFilter>(*resolvedDocument, id))
+                                ensureResources(foundResources).setFilter(filter);
+                        }
+                        return;
+                    }
                     if (auto* filter = getRenderSVGResourceById<LegacyRenderSVGResourceFilter>(treeScope, id))
                         ensureResources(foundResources).setFilter(filter);
                     else

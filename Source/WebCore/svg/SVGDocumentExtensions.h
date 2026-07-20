@@ -75,9 +75,9 @@ public:
     void registerSVGFontFaceElement(SVGFontFaceElement&);
     void unregisterSVGFontFaceElement(SVGFontFaceElement&);
 
-    bool hasExternalSVGPaintResource(const URL&) const;
-    void addExternalSVGPaintResource(const URL&, CachedImage&, Document&);
-    IsolatedSVGDocumentContext* isolatedSVGPaintDocument(const URL&) const;
+    bool hasExternalSVGResource(const URL&) const;
+    void addExternalSVGResource(const URL&, CachedImage&, Document&);
+    IsolatedSVGDocumentContext* isolatedSVGDocumentContext(const URL&) const;
 
 private:
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
@@ -88,7 +88,7 @@ private:
     Vector<Ref<SVGElement>> m_rebuildElements;
     bool m_areAnimationsPaused;
 
-    HashMap<URL, Ref<IsolatedSVGDocumentContext>> m_externalSVGPaintDocuments;
+    HashMap<URL, Ref<IsolatedSVGDocumentContext>> m_externalSVGDocuments;
 };
 
 } // namespace WebCore
