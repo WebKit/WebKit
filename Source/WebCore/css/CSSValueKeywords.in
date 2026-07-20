@@ -1202,6 +1202,11 @@ before
 inter-character
 legacy-inter-character
 
+// ruby-overhang
+// auto
+// none (legacy alias of spaces)
+spaces
+
 // -webkit-text-combine
 // horizontal
 

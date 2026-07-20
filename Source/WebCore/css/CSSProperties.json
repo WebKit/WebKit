@@ -8064,13 +8064,15 @@
             "initial": "auto",
             "values": [
                 "auto",
+                "spaces",
                 "none"
             ],
             "codegen-properties": {
                 "computed-style-storage-path": ["m_inheritedRareData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "RubyOverhang",
-                "parser-grammar": "<<values>>"
+                "parser-grammar": "auto | spaces | none@(aliased-to=spaces)",
+                "parser-grammar-comment": "'none' is a legacy value alias of 'spaces'."
             },
             "specification": {
                 "category": "css-ruby",

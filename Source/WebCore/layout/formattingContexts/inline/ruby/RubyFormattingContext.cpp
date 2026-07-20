@@ -26,18 +26,28 @@
 #include "config.h"
 #include "RubyFormattingContext.h"
 
+#include "FontCascade.h"
 #include "InlineContentAligner.h"
 #include "InlineFormattingContext.h"
 #include "InlineLine.h"
+#include "LayoutInlineTextBox.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "TextSpacing.h"
+#include "TextUtil.h"
 #include <ranges>
 
 namespace WebCore {
 namespace Layout {
 
+static inline InlineLayoutUnit NODELETE fullWidthAdvance(const Box& box)
+{
+    // A fullwidth character (including fullwidth punctuation) advances one em.
+    return box.style().computedFontSize();
+}
+
 static inline InlineLayoutUnit NODELETE halfOfAFullWidthCharacter(const Box& annotationBox)
 {
-    return annotationBox.style().computedFontSize() / 2.f;
+    return fullWidthAdvance(annotationBox) / 2.f;
 }
 
 static inline size_t NODELETE baseContentIndex(size_t rubyBaseStart, std::span<InlineDisplay::Box> boxes)
@@ -111,6 +121,71 @@ static bool annotationOverlapCheck(const InlineDisplay::Box& adjacentDisplayBox,
     if (adjacentLayoutBox->isRubyBase() && adjacentLayoutBox->associatedRubyAnnotationBox())
         return annotationMarginBoxVisualRect(*adjacentLayoutBox->associatedRubyAnnotationBox(), lineLogicalHeight, inlineFormattingContext).intersects(overhangingRect);
     return false;
+}
+
+enum class AdjacentEdge : bool { Leading, Trailing };
+static InlineLayoutUnit overhangableSpaceAdvance(const InlineDisplay::Box& adjacentDisplayBox, AdjacentEdge edge)
+{
+    // https://drafts.csswg.org/css-ruby-1/#propdef-ruby-overhang
+    // For 'ruby-overhang: spaces' the annotation may overhang adjacent content only over "spaces":
+    // preserved white space, no-break space and other space separators, half of the advance of a
+    // fullwidth opening (inline-start) or closing (inline-end) punctuation, and a quarter of the
+    // advance of a fullwidth middle dot punctuation (either side). This returns that advance at the
+    // given edge of the adjacent display box.
+    // FIXME: Reduce the fullwidth punctuation advance when it has been trimmed by 'text-spacing-trim'.
+    if (!adjacentDisplayBox.isText())
+        return { };
+
+    CheckedPtr adjacentTextBox = dynamicDowncast<InlineTextBox>(adjacentDisplayBox.layoutBox());
+    if (!adjacentTextBox)
+        return { };
+
+    auto& displayText = adjacentDisplayBox.text();
+    if (displayText.start() >= displayText.end())
+        return { };
+
+    auto content = StringView { adjacentTextBox->content() };
+    auto edgeCharacter = edge == AdjacentEdge::Trailing ? content[displayText.end() - 1] : content[displayText.start()];
+
+    auto punctuationAdvance = [&]() -> InlineLayoutUnit {
+        // A fullwidth punctuation exposes a fixed fraction of one fullwidth advance (one em): half of an
+        // opening punctuation on its inline-start side, half of a closing punctuation on its inline-end
+        // side, and a quarter of a middle dot punctuation on either side.
+        auto fullWidth = fullWidthAdvance(*adjacentTextBox);
+        switch (TextSpacing::characterClass(edgeCharacter)) {
+        case TextSpacing::CharacterClass::FullWidthOpeningPunctuation:
+            return edge == AdjacentEdge::Leading ? fullWidth / 2.f : InlineLayoutUnit { };
+        case TextSpacing::CharacterClass::FullWidthClosingPunctuation:
+            return edge == AdjacentEdge::Trailing ? fullWidth / 2.f : InlineLayoutUnit { };
+        case TextSpacing::CharacterClass::FullWidthMiddleDotPunctuation:
+            return fullWidth / 4.f;
+        default:
+            return { };
+        }
+    };
+    if (auto advance = punctuationAdvance())
+        return advance;
+
+    // Otherwise the edge character may be a space. Preserved white space, no-break space and other space
+    // separators are overhangable up to their full advance. Spaces are not laid out in their own display box
+    // (they share a box with the adjacent glyphs, e.g. "X " or " X"), and the box ink overflow does not
+    // isolate them either, so measure the contiguous run of white space at the given edge from the font.
+    if (!isUnicodeWhitespace(edgeCharacter))
+        return { };
+
+    auto [whitespaceStart, whitespaceEnd] = [&]() -> std::pair<size_t, size_t> {
+        if (edge == AdjacentEdge::Trailing) {
+            auto start = displayText.end();
+            while (start > displayText.start() && isUnicodeWhitespace(content[start - 1]))
+                --start;
+            return { start, displayText.end() };
+        }
+        auto end = displayText.start();
+        while (end < displayText.end() && isUnicodeWhitespace(content[end]))
+            ++end;
+        return { displayText.start(), end };
+    }();
+    return TextUtil::width(*adjacentTextBox, adjacentDisplayBox.style().fontCascade(), whitespaceStart, whitespaceEnd, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
 }
 
 InlineLayoutUnit RubyFormattingContext::annotationBoxLogicalWidth(const Box& rubyBaseLayoutBox, InlineFormattingContext& inlineFormattingContext)
@@ -412,6 +487,12 @@ InlineLayoutUnit RubyFormattingContext::overhangForAnnotationBefore(const Box& r
         return std::max(0.f, contentVisualRect.y() - baseVisualRect.y());
     };
     auto overhangValue = std::min(halfOfAFullWidthCharacter(*annotationBox), gapBetweenBaseAndContent());
+    if (rubyBaseLayoutBox.style().rubyOverhang() == RubyOverhang::Spaces) {
+        // The annotation may only overhang adjacent spaces (the immediately preceding content's trailing edge).
+        overhangValue = std::min(overhangValue, overhangableSpaceAdvance(boxes[rubyBaseStart - 2], AdjacentEdge::Trailing));
+        if (!overhangValue)
+            return { };
+    }
     auto wouldAnnotationOrBaseOverlapAdjacentContent = [&] {
         // Check of adjacent (previous) content for overlapping.
         auto overhangingAnnotationVisualRect = annotationMarginBoxVisualRect(*annotationBox, lineLogicalHeight, inlineFormattingContext);
@@ -454,6 +535,12 @@ InlineLayoutUnit RubyFormattingContext::overhangForAnnotationAfter(const Box& ru
         return std::max(0.f, baseStartVisualRect.maxY() - baseContentEndVisualRect.maxY());
     };
     auto overhangValue = std::min(halfOfAFullWidthCharacter(*annotationBox), gapBetweenBaseEndAndContent());
+    if (rubyBaseLayoutBox.style().rubyOverhang() == RubyOverhang::Spaces) {
+        // The annotation may only overhang adjacent spaces (the immediately following content's leading edge).
+        overhangValue = std::min(overhangValue, overhangableSpaceAdvance(boxes[rubyBaseRange.end()], AdjacentEdge::Leading));
+        if (!overhangValue)
+            return { };
+    }
     auto wouldAnnotationOrBaseOverlapLineContent = [&] {
         // Check of adjacent (next) content for overlapping.
         auto overhangingAnnotationVisualRect = annotationMarginBoxVisualRect(*annotationBox, lineLogicalHeight, inlineFormattingContext);
@@ -510,9 +597,9 @@ void RubyFormattingContext::applyRubyOverhang(InlineFormattingContext& parentFor
         CheckedRef rubyBaseLayoutBox = displayBoxes[rubyBaseStart].layoutBox();
         ASSERT(rubyBaseLayoutBox->isRubyBase());
         ASSERT(hasInterlinearAnnotation(rubyBaseLayoutBox));
-        if (rubyBaseLayoutBox->style().rubyOverhang() == RubyOverhang::None)
-            continue;
 
+        // Both 'auto' and 'spaces' allow overhang; overhangForAnnotationBefore/After restrict
+        // the 'spaces' case to the advance of adjacent spaces.
         auto beforeOverhang = overhangForAnnotationBefore(rubyBaseLayoutBox, rubyBaseStart, displayBoxes, lineLogicalHeight, parentFormattingContext);
         auto afterOverhang = overhangForAnnotationAfter(rubyBaseLayoutBox, { rubyBaseStart, startEndPair.end() }, displayBoxes, lineLogicalHeight, parentFormattingContext);
 

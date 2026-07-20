@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>ruby-overhang computed value: 'none' is a legacy alias of 'spaces'</title>
+<link rel="help" href="https://drafts.csswg.org/css-ruby-1/#propdef-ruby-overhang">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<div id="target"></div>
+<script>
+function test_computed_value(value, expected) {
+  test(() => {
+    const target = document.getElementById('target');
+    target.style.setProperty('ruby-overhang', '');
+    target.style.setProperty('ruby-overhang', value);
+    assert_equals(getComputedStyle(target).getPropertyValue('ruby-overhang'), expected);
+  }, `Property ruby-overhang value "${value}" computes to "${expected}"`);
+}
+test_computed_value('auto', 'auto');
+test_computed_value('spaces', 'spaces');
+test_computed_value('none', 'spaces');
+</script>

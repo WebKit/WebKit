@@ -871,7 +871,7 @@ enum class RubyAlign : uint8_t {
 
 enum class RubyOverhang : bool {
     Auto,
-    None
+    Spaces
 };
 
 enum class ColorScheme : uint8_t {
