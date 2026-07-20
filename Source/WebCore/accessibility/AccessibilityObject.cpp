@@ -97,6 +97,7 @@
 #include "PositionInlines.h"
 #include "ProgressTracker.h"
 #include "Range.h"
+#include "RemoteFrame.h"
 #include "RenderElementInlines.h"
 #include "RenderImage.h"
 #include "RenderImageResource.h"
@@ -1613,6 +1614,73 @@ bool AccessibilityObject::press()
     }
 
     return pressElement->accessKeyAction(true) || pressElement->dispatchSimulatedClick(nullptr, SendMouseUpDownEvents);
+}
+
+bool AccessibilityObject::pressPreservingFocus()
+{
+    RefPtr document = this->document();
+    RefPtr page = document ? document->page() : nullptr;
+    WeakPtr cache = axObjectCache();
+    if (!cache || !document || !page) {
+        // Without a cache to suppress notifications through, or a document / page to reason about
+        // focus within, there's nothing to preserve, so just perform the press.
+        return press();
+    }
+
+    // The focus we want to preserve is the page's focused element, which need not live in the
+    // action target's document. If it's in a remote (out-of-process) frame we can't reach it as an
+    // Element at all. If it's in a different local frame, we can't cleanly suppress its notifications
+    // from here (a cross-document focus change fires onFocusChange on both documents' caches). In
+    // either case, fall back to a plain press, which may move focus to the target as it did before
+    // this change.
+    // FIXME: Preserve focus across frames (local *and* remote) too.
+    auto& focusController = page->focusController();
+    if (is<RemoteFrame>(focusController.focusedFrame()))
+        return press();
+    RefPtr focusedLocalFrame = focusController.localFocusedFrame();
+    RefPtr originalFocusedElement = focusedLocalFrame ? focusedLocalFrame->document()->focusedElement() : nullptr;
+    if (originalFocusedElement && &originalFocusedElement->document() != document.get())
+        return press();
+
+    RefPtr actionTarget = dynamicDowncast<Element>(node());
+    cache->beginSuppressingFocusChange(actionTarget.get());
+    bool result = press();
+
+    if (!cache) {
+        // press() can run author script that tears down the cache, in which case the WeakPtr is nulled
+        // and there's nothing left to clean up.
+        return result;
+    }
+    cache->endSuppressingFocusChange();
+
+    if (!actionTarget || document->focusedElement() != actionTarget) {
+        // Pressing didn't move focus, or author script moved it somewhere else (which we don't
+        // want to overwrite).
+        return result;
+    }
+
+    // Pressing the action target moved focus onto it. Restore focus to where it was (the original
+    // element, or nothing if nothing was focused). We suppress that notification too, since as far
+    // as assistive technology is concerned, focus never left where it was before the action.
+    cache->beginSuppressingFocusChange(originalFocusedElement.get());
+    if (originalFocusedElement)
+        originalFocusedElement->focus();
+    else
+        document->setFocusedElement(nullptr);
+
+    if (!cache) {
+        // focus() / setFocusedElement() can also run author script that tears down the cache.
+        return result;
+    }
+    cache->endSuppressingFocusChange();
+
+    // If focus didn't end up where we intended (e.g. author script disconnected the origin during
+    // the press so it couldn't take focus back), surface the real focus now so assistive technology
+    // moves to it, rather than being left pointed at the stale origin whose focus change we suppressed above.
+    if (RefPtr currentFocusedElement = document->focusedElement(); currentFocusedElement && currentFocusedElement != originalFocusedElement)
+        cache->onFocusChange(nullptr, currentFocusedElement.get());
+
+    return result;
 }
 
 bool AccessibilityObject::performShowMenuAction()

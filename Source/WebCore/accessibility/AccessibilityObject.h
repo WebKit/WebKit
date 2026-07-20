@@ -578,6 +578,11 @@ public:
     void performDismissActionIgnoringResult() final { performDismissAction(); }
     bool press() override;
     bool syncPress() override { return press(); }
+    // Presses this object as an aria-actions action target, then restores focus to wherever it was
+    // beforehand (not only when the action's host was focused) if pressing moved focus onto this
+    // object, e.g. because it's a focusable button. The intervening focus movement is not surfaced
+    // to assistive technology, so invoking an action never moves the user's focus.
+    bool pressPreservingFocus();
     bool performShowMenuAction();
 
     std::optional<AccessibilityOrientation> explicitOrientation() const override { return std::nullopt; }

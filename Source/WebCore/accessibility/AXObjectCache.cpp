@@ -2395,6 +2395,20 @@ static bool shouldDeferFocusChange(Element* element)
 
 void AXObjectCache::onFocusChange(Element* oldElement, Element* newElement)
 {
+    if (m_suppressedFocusChange && m_suppressedFocusChange->get() == newElement) {
+        // We deliberately don't want to surface this focus change to assistive technology.
+        // One situation where this is relevant is downstream of invoking an aria-action.
+        // Inherently, the simulated click that results from invoking the action moves
+        // focus to the action target, but the user experience for aria-actions demands
+        // that focus "stay on" (or immediately bounce back to) the originating element.
+        // We explicitly do not want assistive technologies to actually bounce back and forth
+        // as that would cause confusing announcements, so we supress the focus change.
+        //
+        // A null suppressed element matches a clearing of focus, used when the focus we're
+        // restoring had no origin (nothing was focused before the action).
+        return;
+    }
+
     if (m_deferredRemoteFrameFocus) {
         if (newElement) {
             // Focus is going to a local element, not the remote frame.

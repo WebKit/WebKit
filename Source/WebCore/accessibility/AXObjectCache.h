@@ -683,6 +683,11 @@ public:
     void NODELETE setTextSelectionIntent(const AXTextStateChangeIntent&);
     void NODELETE setIsSynchronizingSelection(bool);
 
+    // While non-std::nullopt, a focus change onto the given element will not be surfaced to assistive
+    // technology. A null target suppresses a *clearing* of focus instead.
+    void beginSuppressingFocusChange(Element* target) { m_suppressedFocusChange = WeakPtr { target }; }
+    void endSuppressingFocusChange() { m_suppressedFocusChange = std::nullopt; }
+
     void postTextStateChangeNotification(Node*, AXTextEditType, const String&, const VisiblePosition&);
     void postTextReplacementNotification(Node*, AXTextEditType deletionType, const String& deletedText, AXTextEditType insertionType, const String& insertedText, const VisiblePosition&);
     void postTextReplacementNotificationForTextControl(HTMLTextFormControlElement&, const String& deletedText, const String& insertedText);
@@ -1108,6 +1113,13 @@ private:
     Vector<CanvasFocusPathBoundsChange> m_deferredCanvasFocusPathBoundsChanges;
     std::optional<std::pair<WeakPtr<Element, WeakPtrImplWithEventTargetData>, WeakPtr<Element, WeakPtrImplWithEventTargetData>>> m_deferredFocusedNodeChange;
     std::optional<DeferredRemoteFrameFocus> m_deferredRemoteFrameFocus;
+    // A std::nullopt means no focus change is set up for suppression.
+    // A non-std::nullopt value of nullptr means to suppress the next focus clear.
+    // A non-std::nullopt value of an element means to suppress the focus change to that element.
+    //
+    // In all three cases, the term "suppression" refers to the act of not surfacing a focus
+    // change notification to assistive technologies.
+    std::optional<WeakPtr<Element, WeakPtrImplWithEventTargetData>> m_suppressedFocusChange;
     WeakHashSet<AccessibilityObject> m_deferredUnconnectedObjects;
 #if PLATFORM(MAC)
     HashMap<PreSortedObjectType, Vector<Ref<AccessibilityObject>>, IntHash<PreSortedObjectType>, WTF::StrongEnumHashTraits<PreSortedObjectType>> m_deferredUnsortedObjects;
