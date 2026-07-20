@@ -28,6 +28,7 @@
 #include <JavaScriptCore/BytecodeIndex.h>
 #include <JavaScriptCore/CalleeBits.h>
 #include <JavaScriptCore/LineColumn.h>
+#include <JavaScriptCore/NativeCallee.h>
 #include <JavaScriptCore/SourceID.h>
 #include <JavaScriptCore/WasmIndexOrName.h>
 #include <wtf/Function.h>
@@ -148,6 +149,9 @@ public:
         bool m_isWasmFrame : 1 { false };
         Wasm::IndexOrName m_wasmFunctionIndexOrName { };
         size_t m_wasmFunctionIndex { 0 };
+        // See the comments for these types for an explanation of the difference between them.
+        CallSiteInlinedFrameState m_callSiteInlinedFrameState { };
+        CallSiteFrameState m_callSiteFrameState { };
         uint32_t m_wasmCallSiteIndexBits { };
 
         friend class StackVisitor;

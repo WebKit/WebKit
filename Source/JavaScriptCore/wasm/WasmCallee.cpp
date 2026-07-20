@@ -44,6 +44,7 @@
 #include "WasmModuleInformation.h"
 #include "WebAssemblyBuiltin.h"
 #include "WebAssemblyBuiltinTrampoline.h"
+#include <wtf/Range.h>
 #include <wtf/SHA1.h>
 #include <wtf/SixCharacterHash.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -422,7 +423,7 @@ unsigned IPIntCallee::computeCodeHashImpl() const
 }
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-void OptimizingJITCallee::addCodeOrigin(unsigned firstInlineCSI, unsigned lastInlineCSI, const Wasm::ModuleInformation& info, uint32_t functionIndex)
+void OptimizingJITCallee::addCodeOrigin(unsigned firstInlineCSI, unsigned lastInlineCSI, const Wasm::ModuleInformation& info, uint32_t functionIndex, CallSiteInlinedFrameState frameState)
 {
     if (!nameSections.size())
         nameSections.append(info.nameSection());
@@ -431,25 +432,27 @@ void OptimizingJITCallee::addCodeOrigin(unsigned firstInlineCSI, unsigned lastIn
 #if ASSERT_ENABLED
     ASSERT(firstInlineCSI <= lastInlineCSI);
     for (unsigned i = 0; i + 1 < codeOrigins.size(); ++i)
-        ASSERT(codeOrigins[i].lastInlineCSI <= codeOrigins[i + 1].lastInlineCSI);
+        ASSERT(codeOrigins[i].lastInlineCSI() <= codeOrigins[i + 1].lastInlineCSI());
     for (unsigned i = 0; i < codeOrigins.size(); ++i)
-        ASSERT(codeOrigins[i].lastInlineCSI <= lastInlineCSI);
+        ASSERT(codeOrigins[i].lastInlineCSI() <= lastInlineCSI);
     ASSERT(nameSections.size() == 1);
     ASSERT(nameSections[0].ptr() == &info.nameSection());
 #endif
-    codeOrigins.append({ firstInlineCSI, lastInlineCSI, functionIndex, 0 });
+    if (frameState == CallSiteInlinedFrameState::InlinedTailCall)
+        m_hasInlinedTailCall = true;
+    codeOrigins.append({ firstInlineCSI, lastInlineCSI, functionIndex, 0, frameState });
 }
 
 const WasmCodeOrigin* OptimizingJITCallee::getCodeOrigin(unsigned csi, unsigned depth, bool& isInlined) const
 {
     isInlined = false;
-    auto iter = std::lower_bound(codeOrigins.begin(), codeOrigins.end(), WasmCodeOrigin { 0, csi, 0, 0 }, [&](const auto& a, const auto& b) {
-        return b.lastInlineCSI - a.lastInlineCSI;
+    auto iter = std::lower_bound(codeOrigins.begin(), codeOrigins.end(), WasmCodeOrigin { 0, csi, 0, 0, CallSiteInlinedFrameState::NormalFrame }, [&](const auto& a, const auto& b) {
+        return b.lastInlineCSI() - a.lastInlineCSI();
     });
     if (!iter || iter == codeOrigins.end())
         iter = codeOrigins.begin();
     while (iter != codeOrigins.end()) {
-        if (iter->firstInlineCSI <= csi && iter->lastInlineCSI >= csi && !(depth--)) {
+        if (iter->firstInlineCSI() <= csi && iter->lastInlineCSI() >= csi && !(depth--)) {
             isInlined = true;
             return iter;
         }
@@ -463,7 +466,7 @@ IndexOrName OptimizingJITCallee::getIndexOrName(const WasmCodeOrigin* codeOrigin
 {
     if (!codeOrigin)
         return indexOrName();
-    return IndexOrName(codeOrigin->functionIndex, nameSections[codeOrigin->moduleIndex]->get(codeOrigin->functionIndex));
+    return IndexOrName(codeOrigin->functionIndex(), nameSections[codeOrigin->moduleIndex()]->get(codeOrigin->functionIndex()));
 }
 
 IndexOrName OptimizingJITCallee::getOrigin(unsigned csi, unsigned depth, bool& isInlined) const
@@ -473,14 +476,18 @@ IndexOrName OptimizingJITCallee::getOrigin(unsigned csi, unsigned depth, bool& i
     return indexOrName();
 }
 
-std::optional<CallSiteIndex> OptimizingJITCallee::tryGetCallSiteIndex(const void* pc) const
+std::optional<CallSiteIndex> OptimizingJITCallee::tryGetCallSiteIndex(const void* pc, CallSiteFrameState& frameState) const
 {
     constexpr bool verbose = false;
+    frameState = CallSiteFrameState::NormalFrame;
     if (m_callSiteIndexMap) {
         dataLogLnIf(verbose, "Querying ", RawPointer(pc));
         if (std::optional<CodeOrigin> codeOrigin = m_callSiteIndexMap->findPC(removeCodePtrTag<void*>(pc))) {
             dataLogLnIf(verbose, "Found ", *codeOrigin);
-            return CallSiteIndex { codeOrigin->bytecodeIndex().offset() };
+            auto csi = CallSiteIndex { codeOrigin->bytecodeIndex().offset() };
+            if (m_callSiteIndexMap->hasPoppedDeepestInlineFrame(csi))
+                frameState = CallSiteFrameState::PoppedDeepestInlineFrame;
+            return csi;
         }
     }
     return std::nullopt;
@@ -507,15 +514,7 @@ Box<PCToCodeOriginMap> OptimizingJITCallee::materializePCToOriginMap(B3::PCToOri
     ASSERT(originMap.ranges().size());
     dataLogLnIf(verbose, "Materializing PCToOriginMap of size: ", originMap.ranges().size());
     constexpr bool shouldBuildMapping = true;
-    PCToCodeOriginMapBuilder builder(shouldBuildMapping);
-    for (const B3::PCToOriginMap::OriginRange& originRange : originMap.ranges()) {
-        B3::Origin b3Origin = originRange.origin;
-        if (auto* origin = b3Origin.maybeWasmOrigin()) {
-            // We stash the location into a BytecodeIndex.
-            builder.appendItem(originRange.label, CodeOrigin(BytecodeIndex(origin->m_callSiteIndex.bits())));
-        } else
-            builder.appendItem(originRange.label, PCToCodeOriginMapBuilder::defaultCodeOrigin());
-    }
+    PCToCodeOriginMapBuilder builder(PCToCodeOriginMapBuilder::WasmCodeOriginMap, originMap);
     auto map = Box<PCToCodeOriginMap>::create(WTF::move(builder), linkBuffer);
     WTF::storeStoreFence();
     m_callSiteIndexMap = WTF::move(map);
@@ -579,14 +578,190 @@ const RegisterAtOffsetList* JSToWasmCallee::calleeSaveRegistersImpl()
 
 void OptimizingJITCallee::linkExceptionHandlers(Vector<UnlinkedHandlerInfo> unlinkedExceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>> exceptionHandlerLocations)
 {
+    constexpr bool verbose = false;
     size_t count = unlinkedExceptionHandlers.size();
-    m_exceptionHandlers = FixedVector<HandlerInfo>(count);
-    for (size_t i = 0; i < count; i++) {
-        HandlerInfo& handler = m_exceptionHandlers[i];
-        const UnlinkedHandlerInfo& unlinkedHandler = unlinkedExceptionHandlers[i];
-        CodeLocationLabel<ExceptionHandlerPtrTag> location = exceptionHandlerLocations[i];
-        handler.initialize(unlinkedHandler, location);
+
+    if (verbose)
+        dataLogLn("linkExceptionHandlers: ", indexOrName(), " count=", count);
+
+    auto fastPath = [&]() {
+        m_exceptionHandlers = FixedVector<HandlerInfo>(count);
+        for (size_t i = 0; i < count; i++) {
+            const UnlinkedHandlerInfo& unlinkedHandler = unlinkedExceptionHandlers[i];
+            HandlerInfo& handler = m_exceptionHandlers[i];
+            handler.initialize(unlinkedHandler, exceptionHandlerLocations[i]);
+        }
+    };
+
+    auto canUseFastPath = [&]() {
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+        if (compilationMode() != CompilationMode::OMGMode && compilationMode() != CompilationMode::OMGForOSREntryMode)
+            return true;
+        if (m_hasInlinedTailCall)
+            return false;
+        if (m_callSiteIndexMap && !m_callSiteIndexMap->callSiteIndicesWithPoppedDeepestInlineFrame().isEmpty())
+            return false;
+#endif
+        return true;
+    };
+
+    if (canUseFastPath()) {
+        fastPath();
+        return;
     }
+
+    // We need to process the list of handlers to punch out some ranges:
+    // popInlinedFrame(): these sites have popped their deepest inline frame (ex: tail call that became a normal call due to inlining)
+
+    // A:
+    // ...
+    // call B
+    //   B (inlined): (CSI X)
+    //   ...
+    //   (CSI Y)
+    //   tail call C (must become an explicit regular non-inline call)
+    //   (CSI Z)
+    //   return from B to A
+    //   (more code from B)
+    //   (CSI W)
+    // ...
+    // return from A
+
+    // CSIs originating from B overlapping with (Y, Z) need to be skipped.
+    // If a handler exists entirely in [X, W), then it is from B or one of B's inline children. There
+    // cannot be any inline child in [Y, Z), hence we should remove (Y, Z) from the ranges of any
+    // handlers that are entirely inside [X, W).
+
+    // InlinedTailCall: the entire body of the tail call should hide handlers from the deepest inline caller.
+
+    // A:
+    // ...
+    // call B
+    //   B (inlined): (CSI X)
+    //   ...
+    //   (CSI Y)
+    //   tail call C
+    //      C (inlined): (CSI Z)
+    //      ...
+    //      return from C to B
+    //      (CSI W)
+    //   return from B to A
+    //   (more code from B)
+    //   (CSI V)
+    // ...
+    // return from A
+
+    // Here, we need to remove [Z, W) from all handlers that are from B. C can have further inline bodies, as can
+    // B. Functions inlined into B before the call to C will not overlap [Z, inf), similarly for calls after, so this
+    // subtraction is a no-op. Sibbling inlinees to B will not be entirely inside [X, V), so also a no-op in that case.
+    // However, it is not correct to touch a handler entirely contained in [Z, W), since it could be an inline child of C
+    // or from C itself.
+    // Hence, we remove [Z, W) from handlers that start in [X, Z) and end in (W, V].
+
+    // These removals may create disjoint handler ranges, and we need to make sure that we don't try to remove anything from those twice.
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+    struct Removal {
+        Range<uint32_t> toRemove;
+        Range<uint32_t> handlerStart;
+        Range<uint32_t> handlerEnd;
+    };
+    Vector<Removal, 0> removals;
+
+    if (verbose) {
+        for (const auto& co : codeOrigins)
+            dataLogLn("  codeOrigin fn=", co.functionIndex(), " first=", co.firstInlineCSI(), " last=", co.lastInlineCSI(), " state=", co.frameState() == CallSiteInlinedFrameState::InlinedTailCall ? "InlinedTailCall" : "NormalFrame");
+    }
+
+    for (const auto& codeOrigin : codeOrigins) {
+        if (codeOrigin.frameState() == CallSiteInlinedFrameState::InlinedTailCall) {
+            bool ignored = false;
+            const auto& parent = *getCodeOrigin(codeOrigin.firstInlineCSI(), 1, ignored);
+            if (verbose)
+                dataLogLn("  InlinedTailCall removal for fn=", codeOrigin.functionIndex(), ": toRemove=[", codeOrigin.firstInlineCSI(), ",", codeOrigin.lastInlineCSI(), ") handlerStart=[", parent.firstInlineCSI(), ",", codeOrigin.firstInlineCSI(), ") handlerEnd=[", codeOrigin.lastInlineCSI() + 1, ",", parent.lastInlineCSI() + 1, ")");
+            removals.append({
+                { codeOrigin.firstInlineCSI(), codeOrigin.lastInlineCSI() },
+                { parent.firstInlineCSI(), codeOrigin.firstInlineCSI() },
+                { codeOrigin.lastInlineCSI() + 1, parent.lastInlineCSI() + 1 }
+            });
+        }
+        if (!m_callSiteIndexMap)
+            continue;
+        Range<uint32_t> handlerStartFilter { codeOrigin.firstInlineCSI(), codeOrigin.lastInlineCSI() + 1 };
+        Range<uint32_t> handlerEndFilter { codeOrigin.firstInlineCSI(), codeOrigin.lastInlineCSI() + 2 };
+        auto range = Range<uint32_t> { 0, 0 };
+        auto flushRange = [&] {
+            if (range.begin() == range.end())
+                return;
+            if (verbose)
+                dataLogLn("  popInlinedFrame removal for fn=", codeOrigin.functionIndex(), ": toRemove=[", range.begin(), ",", range.end(), ") handlerStart=[", handlerStartFilter.begin(), ",", handlerStartFilter.end(), ") handlerEnd=[", handlerEndFilter.begin(), ",", handlerEndFilter.end(), ")");
+            removals.append({ range, handlerStartFilter, handlerEndFilter });
+            range = { 0, 0 };
+        };
+        for (uint32_t csi = codeOrigin.firstInlineCSI(); csi <= codeOrigin.lastInlineCSI(); ++csi) {
+            if (m_callSiteIndexMap->hasPoppedDeepestInlineFrame(CallSiteIndex { csi })) {
+                bool ignored;
+                if (getCodeOrigin(csi, 0, ignored) != &codeOrigin)
+                    continue;
+                if (range.begin() == range.end())
+                    range = { csi, csi + 1 };
+                else if (csi == range.end())
+                    range = { range.begin(), csi + 1 };
+                else {
+                    flushRange();
+                    range = { csi, csi + 1 };
+                }
+            }
+        }
+        flushRange();
+    }
+
+    if (removals.isEmpty()) {
+        fastPath();
+        return;
+    }
+
+    Vector<HandlerInfo> newHandlers;
+    // Randomly picked average case size
+    newHandlers.reserveInitialCapacity(count + removals.size());
+
+    for (size_t i = 0; i < count; i++) {
+        const UnlinkedHandlerInfo& unlinkedHandler = unlinkedExceptionHandlers[i];
+        size_t currentIndex = newHandlers.size();
+        newHandlers.append({ });
+        newHandlers[currentIndex].initialize(unlinkedHandler, exceptionHandlerLocations[i]);
+
+        if (verbose)
+            dataLogLn("  handler[", i, "] start=", unlinkedHandler.m_start, " end=", unlinkedHandler.m_end, " type=", unlinkedHandler.typeName());
+
+        Vector<Range<uint32_t>, 1> filtered;
+        for (auto& removal : removals) {
+            if (removal.handlerStart.contains(unlinkedHandler.m_start)
+                && removal.handlerEnd.contains(unlinkedHandler.m_end)
+                && removal.toRemove.overlaps(Range { unlinkedHandler.m_start, unlinkedHandler.m_end }))
+                filtered.append(removal.toRemove);
+        }
+        std::sort(filtered.begin(), filtered.end(), [](const auto& a, const auto& b) {
+            return a.begin() < b.begin();
+        });
+
+        for (auto& removal : filtered) {
+            ASSERT(newHandlers[currentIndex].m_start <= newHandlers[currentIndex].m_end);
+            ASSERT(removal.begin() <= removal.end());
+            auto currentStart = newHandlers[currentIndex].m_start;
+            auto currentEnd = newHandlers[currentIndex].m_end;
+            auto oldEnd = std::max(std::min(currentEnd, removal.begin()), currentStart);
+            auto newStart = std::max(std::min(currentEnd, removal.end()), currentStart);
+            auto newHandler = newHandlers[currentIndex];
+            newHandler.m_start = newStart;
+            newHandlers[currentIndex].m_end = oldEnd;
+            newHandlers.append(newHandler);
+            currentIndex = newHandlers.size() - 1;
+        }
+    }
+#endif
+
+    m_exceptionHandlers = FixedVector<HandlerInfo>(newHandlers.size());
+    std::ranges::move(newHandlers.begin(), newHandlers.end(), m_exceptionHandlers.begin());
 }
 
 unsigned OptimizingJITCallee::computeCodeHashImpl() const

@@ -34,6 +34,10 @@
 namespace JSC {
 namespace Wasm {
 
+namespace HandlerInternal {
+constexpr bool verbose = false;
+}
+
 void HandlerInfo::initialize(const UnlinkedHandlerInfo& unlinkedInfo, CodePtr<ExceptionHandlerPtrTag> label)
 {
     m_type = unlinkedInfo.m_type;
@@ -66,6 +70,7 @@ const HandlerInfo* HandlerInfo::handlerForIndex(JSWebAssemblyInstance& instance,
 {
     bool delegating = false;
     unsigned delegateTarget = 0;
+    SUPPRESS_NODELETE dataLogLnIf(HandlerInternal::verbose, "Searching for handler for index ", index);
     for (auto& handler : exceptionHandlers) {
         // Handlers are ordered innermost first, so the first handler we encounter
         // that contains the source address is the correct handler to use.
@@ -83,14 +88,18 @@ const HandlerInfo* HandlerInfo::handlerForIndex(JSWebAssemblyInstance& instance,
             case HandlerType::TryTableCatch:
             case HandlerType::TryTableCatchRef:
                 match = exceptionTag && instance.tag(handler.m_tag) == *exceptionTag;
+                if (match)
+                    SUPPRESS_NODELETE dataLogLnIf(HandlerInternal::verbose, "Found catch handler ", handler.m_start, " to ", handler.m_end, " at depth ", handler.m_tryDepth);
                 break;
             case HandlerType::CatchAll:
             case HandlerType::TryTableCatchAll:
             case HandlerType::TryTableCatchAllRef:
                 match = true;
+                SUPPRESS_NODELETE dataLogLnIf(HandlerInternal::verbose, "Found catchall handler ", handler.m_start, " to ", handler.m_end, " at depth ", handler.m_tryDepth);
                 break;
             case HandlerType::Delegate:
                 delegating = true;
+                SUPPRESS_NODELETE dataLogLnIf(HandlerInternal::verbose, "Found delegate handler ", handler.m_start, " to ", handler.m_end, " at depth ", handler.m_tryDepth, " target ", handler.m_delegateTarget);
                 delegateTarget = handler.m_delegateTarget;
                 break;
             }

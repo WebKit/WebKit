@@ -69,6 +69,9 @@ bool InliningDecision::canInline(InliningNode* target, size_t initialWasmSize, s
     if (wasmSize > Options::wasmInliningMaximumWasmCalleeSize())
         return false;
 
+    if (!Options::wasmFunctionIndexRangeToCompile().isInRange(target->callee().index())) [[unlikely]]
+        return false;
+
     // For tiny functions, let's be a bit more generous.
     if (wasmSize < Options::wasmInliningTinyFunctionThreshold()) {
         if (inlinedWasmSize > 100)
@@ -215,26 +218,26 @@ void InliningDecision::expand()
 
     uint32_t initialWasmSize = m_root.wasmSize();
     uint32_t inlinedWasmSize = 0;
+    auto rootName = m_root.callee().indexOrName();
 
-
-    dataLogIf(WasmInliningDecisionInternal::verbose, "[function ", m_root.callee().index(), ": expanding topmost caller... ");
+    dataLogIf(WasmInliningDecisionInternal::verbose, "[function ", rootName, ": expanding topmost caller... ");
     m_root.inlineNode(*this);
     ++m_inlinedCount;
     addChildrenToQueue(&m_root);
 
     while (!queue.isEmpty()) {
         if (!Options::useOMGInlining()) {
-            dataLogLnIf(WasmInliningDecisionInternal::verbose, "    [function ", m_root.callee().index(), ": inlining is disabled, stopping...]");
+            dataLogLnIf(WasmInliningDecisionInternal::verbose, "    [function ", rootName, ": inlining is disabled, stopping...]");
             break;
         }
 
         if (m_inlinedCount >= Options::wasmInliningMaximumCount()) {
-            dataLogLnIf(WasmInliningDecisionInternal::verbose, "    [function ", m_root.callee().index(), ": too many inlining candidates, stopping...]");
+            dataLogLnIf(WasmInliningDecisionInternal::verbose, "    [function ", rootName, ": too many inlining candidates, stopping...]");
             break;
         }
 
         auto* target = queue.dequeue();
-        dataLogIf(WasmInliningDecisionInternal::verbose, "    [function ", m_root.callee().index(), ": in function ", target->caller()->callee().index(), ", considering call #", target->callProfileIndex(), ", case #", target->caseIndex(), ", to function ", target->callee().index(), " relativeCallCount:(", target->relativeCallCount(), "),size:(", target->wasmSize(), "),score:(", target->score(), ")... ");
+        dataLogIf(WasmInliningDecisionInternal::verbose, "    [function ", rootName, ": in function ", target->caller()->callee().indexOrName(), ", considering call #", target->callProfileIndex(), ", case #", target->caseIndex(), ", to function ", target->callee().indexOrName(), " relativeCallCount:(", target->relativeCallCount(), "),size:(", target->wasmSize(), "),score:(", target->score(), ")... ");
 
         if (target->wasmSize() >= Options::wasmInliningTinyFunctionThreshold()) {
             if (target->score() < 0.0001) {

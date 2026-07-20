@@ -269,11 +269,38 @@ private:
 
 #if ENABLE(WEBASSEMBLY_BBQJIT) || ENABLE(WEBASSEMBLY_OMGJIT)
 
-struct WasmCodeOrigin {
-    unsigned firstInlineCSI;
-    unsigned lastInlineCSI;
-    unsigned functionIndex;
-    unsigned moduleIndex;
+class WasmCodeOrigin {
+public:
+    static constexpr unsigned frameStateBits = 1;
+    static constexpr unsigned frameStateShift = 32 - frameStateBits;
+    static constexpr unsigned frameStateMask = ((1u << frameStateBits) - 1) << frameStateShift;
+    static constexpr unsigned moduleIndexMask = ~frameStateMask;
+    static constexpr unsigned maxModuleIndex = moduleIndexMask;
+    static constexpr unsigned maxFrameStateValue = (1u << frameStateBits) - 1;
+
+    WasmCodeOrigin(unsigned firstInlineCSI, unsigned lastInlineCSI, unsigned functionIndex, unsigned moduleIndex, CallSiteInlinedFrameState frameState)
+        : m_firstInlineCSI(firstInlineCSI)
+        , m_lastInlineCSI(lastInlineCSI)
+        , m_functionIndex(functionIndex)
+        , m_moduleIndex(moduleIndex | (static_cast<unsigned>(frameState) << frameStateShift))
+    {
+        RELEASE_ASSERT(moduleIndex <= maxModuleIndex);
+        RELEASE_ASSERT(static_cast<unsigned>(frameState) <= maxFrameStateValue);
+        ASSERT(this->frameState() == frameState);
+        ASSERT(this->moduleIndex() == moduleIndex);
+    }
+
+    unsigned firstInlineCSI() const { return m_firstInlineCSI; }
+    unsigned lastInlineCSI() const { return m_lastInlineCSI; }
+    unsigned functionIndex() const { return m_functionIndex; }
+    unsigned moduleIndex() const { return m_moduleIndex & moduleIndexMask; }
+    CallSiteInlinedFrameState frameState() const { return static_cast<CallSiteInlinedFrameState>(m_moduleIndex >> frameStateShift); }
+
+private:
+    unsigned m_firstInlineCSI;
+    unsigned m_lastInlineCSI;
+    unsigned m_functionIndex;
+    unsigned m_moduleIndex;
 };
 
 class OptimizingJITCallee : public JITCallee {
@@ -281,11 +308,11 @@ class OptimizingJITCallee : public JITCallee {
 public:
     const StackMap& stackmap(CallSiteIndex) const;
 
-    void addCodeOrigin(unsigned firstInlineCSI, unsigned lastInlineCSI, const Wasm::ModuleInformation&, uint32_t functionIndex);
+    void addCodeOrigin(unsigned firstInlineCSI, unsigned lastInlineCSI, const Wasm::ModuleInformation&, uint32_t functionIndex, CallSiteInlinedFrameState);
     const WasmCodeOrigin* getCodeOrigin(unsigned csi, unsigned depth, bool& isInlined) const;
     IndexOrName getOrigin(unsigned csi, unsigned depth, bool& isInlined) const;
     IndexOrName getIndexOrName(const WasmCodeOrigin*) const;
-    std::optional<CallSiteIndex> tryGetCallSiteIndex(const void*) const;
+    std::optional<CallSiteIndex> tryGetCallSiteIndex(const void*, CallSiteFrameState&) const;
 
     Box<PCToCodeOriginMap> materializePCToOriginMap(B3::PCToOriginMap&&, LinkBuffer&);
 
@@ -319,6 +346,7 @@ private:
     Box<PCToCodeOriginMap> m_callSiteIndexMap;
     Box<PCToCodeOriginMap> m_pcToCodeOriginMap;
     const Ref<IPIntCallee> m_profiledCallee;
+    bool m_hasInlinedTailCall { false };
 };
 
 constexpr int32_t stackCheckUnset = 0;

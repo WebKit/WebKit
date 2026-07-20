@@ -53,7 +53,14 @@ public:
         DFGOriginPtr,
         WasmOriginPtr,
         PackedWasmOrigin,
+        PoppedDeepestInlineFrame,
     };
+
+    enum class PoppedDeepestInlineFrameTag { PoppedDeepestInlineFrame };
+    explicit Origin(const Wasm::WasmOrigin* data, PoppedDeepestInlineFrameTag)
+        : m_data(data, PoppedDeepestInlineFrame)
+    {
+    }
 
     explicit Origin(const Wasm::WasmOrigin* data)
         : m_data(data, WasmOriginPtr)
@@ -72,8 +79,9 @@ public:
     explicit operator bool() const { return !!m_data.bits(); }
 
     bool isDFGOrigin() const { return !m_data.bits() || m_data.tag() == DFGOriginPtr; }
-    bool isWasmOrigin() const { return !m_data.bits() || m_data.tag() == WasmOriginPtr; }
+    bool isWasmOrigin() const { return !m_data.bits() || m_data.tag() == WasmOriginPtr || hasPoppedDeepestInlineFrame(); }
     bool isPackedWasmOrigin() const { return !m_data.bits() || m_data.tag() == PackedWasmOrigin; }
+    bool hasPoppedDeepestInlineFrame() const { return m_data.tag() == PoppedDeepestInlineFrame; }
 
     Wasm::WasmOrigin* wasmOrigin() const
     {
