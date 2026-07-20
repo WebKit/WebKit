@@ -748,6 +748,7 @@ public:
     virtual void didEndSyntheticMomentumScrolling() { }
 
     virtual void didRestoreScrollPosition() = 0;
+    virtual void pageScaleFactorDidChange() { }
 
     virtual bool windowIsFrontWindowUnderMouse(const NativeWebMouseEvent&) { return false; }
 

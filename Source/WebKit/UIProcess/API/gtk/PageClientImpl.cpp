@@ -540,6 +540,12 @@ void PageClientImpl::didRestoreScrollPosition()
     webkitWebViewBaseDidRestoreScrollPosition(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
+void PageClientImpl::pageScaleFactorDidChange()
+{
+    if (WEBKIT_IS_WEB_VIEW(m_viewWidget))
+        webkitWebViewDidChangePageScale(WEBKIT_WEB_VIEW(m_viewWidget));
+}
+
 void PageClientImpl::didChangeBackgroundColor()
 {
 }

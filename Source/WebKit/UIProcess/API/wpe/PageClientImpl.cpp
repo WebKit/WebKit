@@ -436,6 +436,11 @@ void PageClientImpl::didRestoreScrollPosition()
 {
 }
 
+void PageClientImpl::pageScaleFactorDidChange()
+{
+    m_view.pageScaleFactorDidChange();
+}
+
 WebCore::UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirection()
 {
     return WebCore::UserInterfaceLayoutDirection::LTR;

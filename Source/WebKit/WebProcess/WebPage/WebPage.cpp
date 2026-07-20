@@ -2972,7 +2972,7 @@ void WebPage::platformDidScalePage()
 void WebPage::scalePage(double scale, const IntPoint& origin)
 {
     didScalePage(scale, origin);
-    send(Messages::WebPageProxy::PageScaleFactorDidChange(scale));
+    send(Messages::WebPageProxy::DidSetPageScaleFactor(scale));
 }
 
 double WebPage::totalScaleFactor() const

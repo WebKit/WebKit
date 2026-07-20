@@ -79,6 +79,8 @@
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebCore/CertificateInfo.h>
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatSize.h>
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/RunJavaScriptParameters.h>
 #include <WebCore/SharedBuffer.h>
@@ -238,6 +240,7 @@ enum {
 
     PROP_URI,
     PROP_ZOOM_LEVEL,
+    PROP_MAGNIFICATION,
     PROP_IS_LOADING,
     PROP_IS_PLAYING_AUDIO,
 #if !ENABLE(2022_GLIB_API)
@@ -590,6 +593,11 @@ WebKitWebResourceLoadManager* WebKitWebViewClient::webResourceLoadManager()
 void WebKitWebViewClient::themeColorDidChange()
 {
     webkitWebViewEmitThemeColorChanged(m_webView);
+}
+
+void WebKitWebViewClient::pageScaleFactorDidChange(WKWPE::View&)
+{
+    webkitWebViewDidChangePageScale(m_webView);
 }
 
 #if ENABLE(FULLSCREEN_API)
@@ -1104,6 +1112,9 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
     case PROP_ZOOM_LEVEL:
         webkit_web_view_set_zoom_level(webView, g_value_get_double(value));
         break;
+    case PROP_MAGNIFICATION:
+        webkit_web_view_set_magnification(webView, g_value_get_double(value));
+        break;
 #if !ENABLE(2022_GLIB_API)
     case PROP_IS_EPHEMERAL:
         webView->priv->isEphemeral = g_value_get_boolean(value);
@@ -1195,6 +1206,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
         break;
     case PROP_ZOOM_LEVEL:
         g_value_set_double(value, webkit_web_view_get_zoom_level(webView));
+        break;
+    case PROP_MAGNIFICATION:
+        g_value_set_double(value, webkit_web_view_get_magnification(webView));
         break;
     case PROP_IS_LOADING:
         g_value_set_boolean(value, webkit_web_view_is_loading(webView));
@@ -1523,6 +1537,25 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             "zoom-level",
             nullptr, nullptr,
             0, G_MAXDOUBLE, 1,
+            WEBKIT_PARAM_READWRITE);
+
+    /**
+     * WebKitWebView:magnification:
+     *
+     * The magnification factor of the #WebKitWebView content.
+     *
+     * The magnification factor represents the visual scaling of the page (similar
+     * to pinch-to-zoom). This is independent of the layout zoom level. Setting
+     * the magnification factor scales the rendered page visually without affecting
+     * page layout or text wrapping.
+     *
+     * Since: 2.54
+     */
+    sObjProperties[PROP_MAGNIFICATION] =
+        g_param_spec_double(
+            "magnification",
+            nullptr, nullptr,
+            G_MINDOUBLE, G_MAXDOUBLE, 1,
             WEBKIT_PARAM_READWRITE);
 
     /**
@@ -3211,6 +3244,11 @@ void webkitWebViewSelectionDidChange(WebKitWebView* webView)
     webkitEditorStateChanged(webView->priv->editorState.get(), getPage(webView).editorState());
 }
 
+void webkitWebViewDidChangePageScale(WebKitWebView* webView)
+{
+    g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_MAGNIFICATION]);
+}
+
 WebKitWebsiteDataManager* webkitWebViewGetWebsiteDataManager(WebKitWebView* webView)
 {
 #if ENABLE(2022_GLIB_API)
@@ -4231,6 +4269,57 @@ gdouble webkit_web_view_get_zoom_level(WebKitWebView* webView)
     Ref page = getPage(webView);
     gboolean zoomTextOnly = webkit_settings_get_zoom_text_only(webView->priv->settings.get());
     return zoomTextOnly ? page->textZoomFactor() : page->pageZoomFactor() / pageScale;
+}
+
+/**
+ * webkit_web_view_set_magnification:
+ * @web_view: a #WebKitWebView
+ * @magnification: the magnification factor
+ *
+ * Set the magnification factor of @web_view.
+ *
+ * The magnification factor represents the visual scaling of the page (similar
+ * to pinch-to-zoom). This is independent of the layout zoom level (which is
+ * set with webkit_web_view_set_zoom_level()). Setting the magnification factor
+ * scales the rendered page visually around the center of the view without
+ * affecting page layout or text wrapping.
+ *
+ * Since: 2.54
+ */
+void webkit_web_view_set_magnification(WebKitWebView* webView, gdouble magnification)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(magnification > 0);
+
+    Ref page = getPage(webView);
+    if (page->pageScaleFactor() == magnification)
+        return;
+
+    // Dividing by 2 gives the midpoint of the view. This scales the page around
+    // the visual center of the WebKitWebView.
+    WebCore::FloatPoint center(WebCore::FloatSize(page->viewSize()) / 2);
+    page->scalePageInViewCoordinates(magnification, WebCore::roundedIntPoint(center));
+}
+
+/**
+ * webkit_web_view_get_magnification:
+ * @web_view: a #WebKitWebView
+ *
+ * Get the magnification factor of @web_view.
+ *
+ * The magnification factor represents the visual scaling of the page (similar
+ * to pinch-to-zoom). This is independent of the layout zoom level (which is
+ * obtained with webkit_web_view_get_zoom_level()).
+ *
+ * Returns: the current magnification factor of @web_view
+ *
+ * Since: 2.54
+ */
+gdouble webkit_web_view_get_magnification(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 1.0);
+
+    return getPage(webView).pageScaleFactor();
 }
 
 /**

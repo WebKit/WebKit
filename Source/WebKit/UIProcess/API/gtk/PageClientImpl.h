@@ -160,6 +160,7 @@ private:
     void derefView() override;
 
     void didRestoreScrollPosition() override;
+    void pageScaleFactorDidChange() override;
     void isPlayingAudioWillChange() final { }
     void isPlayingAudioDidChange() final { }
 

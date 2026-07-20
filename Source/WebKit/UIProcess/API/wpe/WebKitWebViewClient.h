@@ -56,6 +56,7 @@ private:
     void didReceiveUserMessage(WKWPE::View&, WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&)>&&) override;
     WebKit::WebKitWebResourceLoadManager* webResourceLoadManager() override;
     void themeColorDidChange() override;
+    void pageScaleFactorDidChange(WKWPE::View&) override;
 
 #if ENABLE(FULLSCREEN_API)
     bool enterFullScreen(WKWPE::View&) override;

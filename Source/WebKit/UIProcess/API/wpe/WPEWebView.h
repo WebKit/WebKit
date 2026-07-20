@@ -76,6 +76,7 @@ public:
     void setInputMethodState(std::optional<WebKit::InputMethodState>&&);
 
     void themeColorDidChange();
+    void pageScaleFactorDidChange();
 
 #if ENABLE(FULLSCREEN_API)
     bool isFullScreen() const;

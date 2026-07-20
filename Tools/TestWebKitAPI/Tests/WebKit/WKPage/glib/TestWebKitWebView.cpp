@@ -358,6 +358,37 @@ static void testWebViewZoomLevel(WebViewTest* test, gconstpointer)
     g_assert_cmpfloat(webkit_web_view_get_zoom_level(test->webView()), ==, 2.5);
 }
 
+static void magnificationChangedCallback(WebKitWebView*, GParamSpec*, bool* magnificationChanged)
+{
+    *magnificationChanged = true;
+}
+
+static void testWebViewMagnification(WebViewTest* test, gconstpointer)
+{
+    g_assert_cmpfloat(webkit_web_view_get_magnification(test->webView()), ==, 1.0);
+
+    bool magnificationChanged = false;
+    gulong handlerId = g_signal_connect(test->webView(), "notify::magnification", G_CALLBACK(magnificationChangedCallback), &magnificationChanged);
+
+    webkit_web_view_set_magnification(test->webView(), 2.5);
+    g_assert_true(magnificationChanged);
+    g_assert_cmpfloat(webkit_web_view_get_magnification(test->webView()), ==, 2.5);
+    g_signal_handler_disconnect(test->webView(), handlerId);
+
+    // Magnification change should be independent of zoom level.
+    g_assert_cmpfloat(webkit_web_view_get_zoom_level(test->webView()), ==, 1.0);
+
+    // Zoom level change should be independent of magnification level.
+    webkit_web_view_set_zoom_level(test->webView(), 1.5);
+    g_assert_cmpfloat(webkit_web_view_get_zoom_level(test->webView()), ==, 1.5);
+    g_assert_cmpfloat(webkit_web_view_get_magnification(test->webView()), ==, 2.5);
+
+    // Revert magnification back to 1.0, zoom level should remain 1.5.
+    webkit_web_view_set_magnification(test->webView(), 1.0);
+    g_assert_cmpfloat(webkit_web_view_get_magnification(test->webView()), ==, 1.0);
+    g_assert_cmpfloat(webkit_web_view_get_zoom_level(test->webView()), ==, 1.5);
+}
+
 static void testWebViewRunAsyncFunctions(WebViewTest* test, gconstpointer)
 {
     GUniqueOutPtr<GError> error;
@@ -2289,6 +2320,7 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "custom-charset", testWebViewCustomCharset);
     WebViewTest::add("WebKitWebView", "settings", testWebViewSettings);
     WebViewTest::add("WebKitWebView", "zoom-level", testWebViewZoomLevel);
+    WebViewTest::add("WebKitWebView", "magnification", testWebViewMagnification);
     WebViewTest::add("WebKitWebView", "run-javascript", testWebViewRunJavaScript);
     WebViewTest::add("WebKitWebView", "run-async-js-functions", testWebViewRunAsyncFunctions);
 #if ENABLE(FULLSCREEN_API)

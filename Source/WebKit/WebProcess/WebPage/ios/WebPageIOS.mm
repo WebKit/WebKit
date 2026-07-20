@@ -3686,7 +3686,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
                 setCorePageScaleFactor(scaleFromUIProcess.value(), scrollPosition, m_isInStableState);
 
             hasSetPageScale = true;
-            send(Messages::WebPageProxy::PageScaleFactorDidChange(scaleFromUIProcess.value()));
+            send(Messages::WebPageProxy::DidSetPageScaleFactor(scaleFromUIProcess.value()));
         }
 
         if (!hasSetPageScale && m_isInStableState && shouldSetCorePageScale)

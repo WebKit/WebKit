@@ -167,6 +167,7 @@ private:
     void derefView() override;
 
     void didRestoreScrollPosition() override;
+    void pageScaleFactorDidChange() override;
 
 #if ENABLE(FULLSCREEN_API)
     WebFullScreenManagerProxyClient& NODELETE fullScreenManagerProxyClient() final;

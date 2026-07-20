@@ -6652,6 +6652,7 @@ void WebPageProxy::scalePage(double scale, const IntPoint& origin, CompletionHan
     ASSERT(scale > 0);
 
     m_pageScaleFactor = scale;
+    pageScaleFactorDidChange();
 
     if (!hasRunningProcess()) {
         completionHandler();
@@ -6672,6 +6673,7 @@ void WebPageProxy::scalePageInViewCoordinates(double scale, const IntPoint& cent
     ASSERT(scale > 0);
 
     m_pageScaleFactor = scale;
+    pageScaleFactorDidChange();
 
     if (!hasRunningProcess())
         return;
@@ -6689,6 +6691,7 @@ void WebPageProxy::scalePageRelativeToScrollPosition(double scale, const IntPoin
     ASSERT(scale > 0);
 
     m_pageScaleFactor = scale;
+    pageScaleFactorDidChange();
 
     if (!hasRunningProcess())
         return;
@@ -7149,7 +7152,7 @@ static bool NODELETE scaleFactorIsValid(double scaleFactor)
     return scaleFactor > 0 && scaleFactor <= 100;
 }
 
-void WebPageProxy::pageScaleFactorDidChange(IPC::Connection& connection, double scaleFactor)
+void WebPageProxy::didSetPageScaleFactor(IPC::Connection& connection, double scaleFactor)
 {
     MESSAGE_CHECK_BASE(scaleFactorIsValid(scaleFactor), connection);
     if (!legacyMainFrameProcess().hasConnection(connection))
@@ -7166,6 +7169,14 @@ void WebPageProxy::pageScaleFactorDidChange(IPC::Connection& connection, double 
     // If the page's scale factor changes, the UI process needs to send an updated AffineTransform to each frame.
     updateAccessibilityFrameGeometry();
 #endif
+
+    pageScaleFactorDidChange();
+}
+
+void WebPageProxy::pageScaleFactorDidChange()
+{
+    if (RefPtr protectedPageClient = this->pageClient())
+        protectedPageClient->pageScaleFactorDidChange();
 }
 
 void WebPageProxy::viewScaleFactorDidChange(IPC::Connection& connection, double scaleFactor)

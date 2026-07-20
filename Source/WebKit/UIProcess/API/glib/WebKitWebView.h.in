@@ -636,6 +636,12 @@ WEBKIT_API gdouble
 webkit_web_view_get_zoom_level                       (WebKitWebView             *web_view);
 
 WEBKIT_API void
+webkit_web_view_set_magnification                    (WebKitWebView             *web_view,
+                                                      gdouble                    magnification);
+WEBKIT_API gdouble
+webkit_web_view_get_magnification                    (WebKitWebView             *web_view);
+
+WEBKIT_API void
 webkit_web_view_can_execute_editing_command          (WebKitWebView             *web_view,
                                                       const gchar               *command,
                                                       GCancellable              *cancellable,

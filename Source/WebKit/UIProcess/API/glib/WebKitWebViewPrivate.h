@@ -100,6 +100,7 @@ void webkitWebViewWebProcessTerminated(WebKitWebView*, WebKitWebProcessTerminati
 void webkitWebViewIsPlayingAudioChanged(WebKitWebView*);
 void webkitWebViewMediaCaptureStateDidChange(WebKitWebView*, WebCore::MediaProducer::MediaStateFlags);
 void webkitWebViewSelectionDidChange(WebKitWebView*);
+void webkitWebViewDidChangePageScale(WebKitWebView*);
 WebKitWebsiteDataManager* webkitWebViewGetWebsiteDataManager(WebKitWebView*);
 void webkitWebViewPermissionStateQuery(WebKitWebView*, WebKitPermissionStateQuery*);
 
