@@ -10748,6 +10748,42 @@ class TestScanBuild(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=SUCCESS, state_string='Found 0 issues')
         return self.run_step()
 
+    def test_compile_failure(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'/bin/rm -rf wkdir/build/{SCAN_BUILD_OUTPUT_DIR}'],
+                        log_environ=False,
+                        timeout=2 * 60 * 60)
+            .exit(0),
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=self.EXPECTED_BUILD_COMMAND,
+                        log_environ=False,
+                        timeout=2 * 60 * 60)
+            .log('stdio', stdout='error: use of undeclared identifier\nANALYZE FAILED\n')
+            .exit(2)
+        )
+        self.expect_outcome(result=FAILURE, state_string='Failed to build and analyze WebKit')
+        return self.run_step()
+
+    def test_partial_compile_failure(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'/bin/rm -rf wkdir/build/{SCAN_BUILD_OUTPUT_DIR}'],
+                        log_environ=False,
+                        timeout=2 * 60 * 60)
+            .exit(0),
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=self.EXPECTED_BUILD_COMMAND,
+                        log_environ=False,
+                        timeout=2 * 60 * 60)
+            .log('stdio', stdout='ANALYZE SUCCEEDED\nThe following build commands failed:\n')
+            .exit(2)
+        )
+        self.expect_outcome(result=FAILURE, state_string='Failed to build and analyze WebKit')
+        return self.run_step()
+
 
 class TestScanBuildWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
     WORK_DIR = 'wkdir'

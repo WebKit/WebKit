@@ -8115,7 +8115,7 @@ class ScanBuild(steps.ShellSequence, ShellMixin):
                 self.bugs += int(match.group(1))
 
         f_index = log_text.rfind('ANALYZE SUCCEEDED')
-        if f_index == -1:
+        if rc != SUCCESS or f_index == -1:
             self.analyze_failed = True
             rc = FAILURE
 

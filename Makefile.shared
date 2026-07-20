@@ -201,7 +201,7 @@ testing t: force
 
 analyze:
 	@$(call set_webkit_configuration,)
-	@$(call invoke_xcode,analyze,$(ANALYZER_XCODE_SETTINGS)) || true
+	@$(call invoke_xcode,analyze,$(ANALYZER_XCODE_SETTINGS))
 	@for dir in $$(ls -d $(ANALYZER_OUTPUT)/StaticAnalyzer/*); do \
 		mkdir -p $$dir/StaticAnalyzerReports; \
 		find $$dir -name 'report-*.html' -exec sh -c 'mv "$$@" "$$0"' $$dir/StaticAnalyzerReports/ {} +; \
