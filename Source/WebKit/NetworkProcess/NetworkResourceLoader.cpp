@@ -1476,12 +1476,16 @@ void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& 
         if (!protectedThis)
             return completionHandler({ });
 
+        Ref connection = protectedThis->m_connection;
+        if (!connection->connection().isValid())
+            return completionHandler({ });
+
+        if (newRequest.isNull())
+            return completionHandler({ });
+
         if (newRequest.firstPartyForCookies() != firstPartyForCookiesFromRedirectRequest) {
-            Ref connection = protectedThis->m_connection;
-            auto allowCookieAccess = connection->networkProcess().allowsFirstPartyForCookies(
-                connection->webProcessIdentifier(), newRequest.firstPartyForCookies());
-            MESSAGE_CHECK_COMPLETION_BASE(allowCookieAccess == NetworkProcess::AllowCookieAccess::Allow,
-                connection->connection(), completionHandler({ }));
+            auto allowCookieAccess = connection->networkProcess().allowsFirstPartyForCookies(connection->webProcessIdentifier(), newRequest.firstPartyForCookies());
+            MESSAGE_CHECK_COMPLETION_BASE(allowCookieAccess == NetworkProcess::AllowCookieAccess::Allow, connection->connection(), completionHandler({ }));
         }
 
         protectedThis->continueWillSendRequest(WTF::move(newRequest), isAllowedToAskUserForCredentials, WTF::move(completionHandler));
