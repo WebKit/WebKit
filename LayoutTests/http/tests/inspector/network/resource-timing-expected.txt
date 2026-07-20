@@ -6,6 +6,9 @@ Tests that a resource has timing information.
 PASS: Resource should be created.
 PASS: Added Resource received a response.
 PASS: Added Resource did finish loading.
+PASS: Should have captured a raw ResourceTiming payload.
+PASS: Non-redirected resource should have a redirectStart of 0 in the raw protocol payload.
+PASS: Non-redirected resource should have a redirectEnd of 0 in the raw protocol payload.
 PASS: Newly added resource should have a resource timing model.
 PASS: Resource should have a start time.
 PASS: Resource should have a fetch start time.
