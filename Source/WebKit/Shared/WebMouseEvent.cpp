@@ -92,4 +92,15 @@ WebMouseEventSyntheticClickType syntheticClickType(const WebCore::NavigationActi
     return WebMouseEventSyntheticClickType::NoTap;
 }
 
+WebCore::SyntheticClickType NODELETE coreSyntheticClickType(WebMouseEventSyntheticClickType type)
+{
+    switch (type) {
+    case WebMouseEventSyntheticClickType::NoTap: return WebCore::SyntheticClickType::NoTap;
+    case WebMouseEventSyntheticClickType::OneFingerTap: return WebCore::SyntheticClickType::OneFingerTap;
+    case WebMouseEventSyntheticClickType::TwoFingerTap: return WebCore::SyntheticClickType::TwoFingerTap;
+    }
+    ASSERT_NOT_REACHED();
+    return WebCore::SyntheticClickType::NoTap;
+}
+
 } // namespace WebKit

@@ -37,6 +37,7 @@
 
 namespace WebCore {
 class NavigationAction;
+enum class SyntheticClickType : uint8_t;
 }
 
 namespace WebKit {
@@ -59,6 +60,7 @@ enum class WebMouseEventSyntheticClickType : uint8_t {
     TwoFingerTap
 };
 WebMouseEventSyntheticClickType NODELETE syntheticClickType(const WebCore::NavigationAction&);
+WebCore::SyntheticClickType NODELETE coreSyntheticClickType(WebMouseEventSyntheticClickType);
 
 class WebMouseEvent : public WebEvent {
 public:

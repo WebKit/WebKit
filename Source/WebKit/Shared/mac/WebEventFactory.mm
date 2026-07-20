@@ -290,6 +290,11 @@ NSInteger WebEventFactory::toNSButtonNumber(WebKit::WebMouseEventButton mouseBut
     return 0;
 }
 
+OptionSet<WebKit::WebEventModifier> WebEventFactory::toWebEventModifierFlags(NSEventModifierFlags modifiers)
+{
+    return kit(WebCore::modifiersForModifierFlags(modifiers));
+}
+
 } // namespace WebKit
 
 #endif // USE(APPKIT)
