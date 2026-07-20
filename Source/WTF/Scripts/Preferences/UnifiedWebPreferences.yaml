@@ -9746,7 +9746,7 @@ WasmMultiMemoryEnabled:
 
 WasmRelaxedSIMDEnabled:
   type: bool
-  status: testable
+  status: stable
   category: javascript
   humanReadableName: "WebAssembly Relaxed SIMD"
   humanReadableDescription: "Allow the relaxed simd instructions and types from the wasm relaxed simd spec."
@@ -9755,7 +9755,7 @@ WasmRelaxedSIMDEnabled:
   sharedPreferenceForWebProcess: true
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 WasmSIMDEnabled:
   type: bool
