@@ -87,6 +87,8 @@ public:
     std::span<const char> span() const LIFETIME_BOUND; // Any encoding
     std::span<const char> spanIncludingNullTerminator() const LIFETIME_BOUND; // Any encoding
 
+    CString isolatedCopy() const { return CString { span() }; }
+
     // Copy-on-write
     WTF_EXPORT_PRIVATE std::span<char> mutableSpan() LIFETIME_BOUND;
     WTF_EXPORT_PRIVATE std::span<char> mutableSpanIncludingNullTerminator() LIFETIME_BOUND;
