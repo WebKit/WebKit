@@ -40,10 +40,21 @@ static void testURIForDisplayAffected(Test*, gconstpointer)
     g_assert_cmpstr(displayURI.get(), ==, "http://site.com\xC3\xB7othersite.org");
 }
 
+static void testURIForDisplayShortPercentEncoded(Test*, gconstpointer)
+{
+    // A '-' that lands before four bytes have been written to the output buffer
+    // used to index it out of bounds while probing for "xn--". The leading
+    // percent escape decodes to one byte, so the input index runs ahead of the
+    // output index.
+    GUniquePtr<char> displayURI(webkit_uri_for_display("%AB-"));
+    g_assert_cmpstr(displayURI.get(), ==, "%AB-");
+}
+
 void beforeAll()
 {
     Test::add("WebKitURIUtilities", "uri-for-display-unaffected", testURIForDisplayUnaffected);
     Test::add("WebKitURIUtilities", "uri-for-display-affected", testURIForDisplayAffected);
+    Test::add("WebKitURIUtilities", "uri-for-display-short-percent-encoded", testURIForDisplayShortPercentEncoded);
 }
 
 void afterAll()
