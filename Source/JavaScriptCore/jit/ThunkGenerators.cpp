@@ -802,10 +802,10 @@ static void stringCharLoad(SpecializedThunkJIT& jit)
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT1); // regT1 contains the index
 
     if constexpr (relativeNegativeIndex == RelativeNegativeIndex::Yes) {
-        SpecializedThunkJIT::Jump positiveIndex = jit.branch32(MacroAssembler::GreaterThanOrEqual, SpecializedThunkJIT::regT1, MacroAssembler ::TrustedImm32(0));
-        // Adjust negative index: index = length + index
-        jit.add32(SpecializedThunkJIT::regT2, SpecializedThunkJIT::regT1);
-        positiveIndex.link(jit);
+        // Adjust a negative index branchlessly: index = index < 0 ? length + index : index.
+        // regT3 is free here, and regT2 (length) is preserved for the bounds check below.
+        jit.add32(SpecializedThunkJIT::regT2, SpecializedThunkJIT::regT1, SpecializedThunkJIT::regT3);
+        jit.moveConditionally32(MacroAssembler::LessThan, SpecializedThunkJIT::regT1, MacroAssembler::TrustedImm32(0), SpecializedThunkJIT::regT3, SpecializedThunkJIT::regT1, SpecializedThunkJIT::regT1);
     }
 
     // Do an unsigned compare to simultaneously filter negative indices as well as indices that are too large
