@@ -25,35 +25,18 @@
 
 #pragma once
 
-#include "JSInternalFieldObjectImpl.h"
+#include "IterationModeMetadata.h"
+#include "JSObject.h"
 
 namespace JSC {
 
-const static uint8_t JSAsyncFromSyncIteratorNumberOfInternalFields = 2;
-
-class JSAsyncFromSyncIterator final : public JSInternalFieldObjectImpl<JSAsyncFromSyncIteratorNumberOfInternalFields> {
+class JSAsyncFromSyncIterator final : public JSNonFinalObject {
 public:
-    using Base = JSInternalFieldObjectImpl<JSAsyncFromSyncIteratorNumberOfInternalFields>;
+    using Base = JSNonFinalObject;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     DECLARE_EXPORT_INFO;
     DECLARE_VISIT_CHILDREN;
-
-    enum class Field : uint8_t {
-        SyncIterator = 0,
-        NextMethod,
-    };
-    static_assert(numberOfInternalFields == JSAsyncFromSyncIteratorNumberOfInternalFields);
-
-    static std::array<JSValue, numberOfInternalFields> initialValues()
-    {
-        return { {
-            jsNull(),
-            jsNull(),
-        } };
-    }
-
-    const WriteBarrier<Unknown>& internalField(Field field) const { return Base::internalField(static_cast<uint32_t>(field)); }
-    WriteBarrier<Unknown>& internalField(Field field) { return Base::internalField(static_cast<uint32_t>(field)); }
 
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
@@ -63,23 +46,46 @@ public:
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    static JSAsyncFromSyncIterator* createWithInitialValues(VM&, Structure*);
-    static JSAsyncFromSyncIterator* create(VM&, Structure*, JSValue syncIterator, JSValue nextMethod);
+    static JSAsyncFromSyncIterator* create(VM&, Structure*, JSObject* syncIterator, JSValue nextMethod, IterationMode);
 
-    void setSyncIterator(VM& vm, JSValue syncIterator) { internalField(Field::SyncIterator).set(vm, this, syncIterator); }
-    void setNextMethod(VM& vm, JSValue nextMethod) { internalField(Field::NextMethod).set(vm, this, nextMethod); }
+    JSObject* syncIterator() const { return asObject(m_syncIterator.pointer()); }
+    JSValue nextMethod() const { return m_nextMethod.get(); }
+    IterationMode iterationMode() const { return m_syncIterator.type(); }
+
+    void setTarget(VM& vm, JSObject* target, bool closeSyncIteratorOnRejection)
+    {
+        m_target.setPointer(target);
+        m_target.setType(closeSyncIteratorOnRejection);
+        vm.writeBarrier(this, target);
+    }
+
+    std::tuple<JSObject*, bool> extractTarget()
+    {
+        auto* target = m_target.pointer();
+        bool result = m_target.type();
+        m_target = { };
+        return { target, result };
+    }
 
 private:
-    JSAsyncFromSyncIterator(VM& vm, Structure* structure)
+    JSAsyncFromSyncIterator(VM& vm, Structure* structure, JSObject* syncIterator, JSValue nextMethod, IterationMode mode)
         : Base(vm, structure)
+        , m_syncIterator(syncIterator, mode)
+        , m_nextMethod(nextMethod, WriteBarrierEarlyInit)
+        , m_target(nullptr, false)
     {
     }
 
-    void finishCreation(VM&, JSValue syncIterator, JSValue nextMethod);
+    DECLARE_DEFAULT_FINISH_CREATION;
+
+    CompactPointerTuple<JSObject*, IterationMode> m_syncIterator;
+    WriteBarrier<Unknown> m_nextMethod;
+    CompactPointerTuple<JSObject*, bool> m_target;
 };
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSAsyncFromSyncIterator);
 
-JSC_DECLARE_HOST_FUNCTION(asyncFromSyncIteratorPrivateFuncCreate);
+void driveAsyncFromSyncIteratorWithDriver(JSGlobalObject*, JSAsyncFromSyncIterator*, JSObject* driver);
+JSValue asyncFromSyncIteratorNext(JSGlobalObject*, JSAsyncFromSyncIterator*, JSValue argument);
 
 } // namespace JSC

@@ -106,7 +106,6 @@ BUILTINS_GENERATOR_SCRIPTS = \
 #
 
 JavaScriptCore_BUILTINS_SOURCES = \
-    $(JavaScriptCore)/builtins/AsyncFromSyncIteratorPrototype.js \
     $(JavaScriptCore)/builtins/ArrayConstructor.js \
     $(JavaScriptCore)/builtins/ArrayIteratorPrototype.js \
     $(JavaScriptCore)/builtins/ArrayPrototype.js \
@@ -148,7 +147,6 @@ $(JSC_BUILTINS_FILES_PATTERNS) : $(BUILTINS_GENERATOR_SCRIPTS) $(JavaScriptCore_
 # Perfect hash lookup tables for JavaScript classes.
 
 OBJECT_LUT_HEADERS = \
-    AsyncFromSyncIteratorPrototype.lut.h \
     ArrayConstructor.lut.h \
     AsyncGeneratorPrototype.lut.h \
     BigIntConstructor.lut.h \

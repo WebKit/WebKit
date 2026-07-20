@@ -46,6 +46,7 @@
 #include "InterpreterInlines.h"
 #include "JITExceptions.h"
 #include "JITWorklist.h"
+#include "JSAsyncFromSyncIterator.h"
 #include "JSAsyncFunction.h"
 #include "JSAsyncGenerator.h"
 #include "JSAsyncGeneratorFunction.h"

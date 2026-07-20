@@ -4956,33 +4956,9 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
         if (isAsyncFunctionParseMode(parseMode())) {
             emitExpressionInfo(node->divot(), node->divotStart(), node->divotEnd());
             symbolAsyncIterator = emitGetById(newTemporary(), subject.get(), propertyNames().asyncIteratorSymbol);
-
-            Ref<Label> asyncIteratorNotFound = newLabel();
-            Ref<Label> iteratorAcquired = newLabel();
-            emitJumpIfTrue(emitIsUndefinedOrNull(newTemporary(), symbolAsyncIterator.get()), asyncIteratorNotFound.get());
-
-            {
-                CallArguments args(*this, nullptr, 0);
-                move(args.thisRegister(), subject.get());
-                emitAsyncIteratorOpen(iterator.get(), nextMethod.get(), symbolAsyncIterator.get(), args, node);
-            }
-            emitJump(iteratorAcquired.get());
-
-            // Async-from-sync fallback: GetIterator(subject, sync) then CreateAsyncFromSyncIterator.
-            emitLabel(asyncIteratorNotFound.get());
-            {
-                RefPtr<RegisterID> syncIterator = emitGetGenericIterator(subject.get(), node);
-                RefPtr<RegisterID> syncNextMethod = emitGetById(newTemporary(), syncIterator.get(), propertyNames().next);
-                RefPtr<RegisterID> createAsyncFromSyncIterator = moveLinkTimeConstant(nullptr, LinkTimeConstant::createAsyncFromSyncIterator);
-                CallArguments args(*this, nullptr, 2);
-                emitLoad(args.thisRegister(), jsUndefined());
-                move(args.argumentRegister(0), syncIterator.get());
-                move(args.argumentRegister(1), syncNextMethod.get());
-                JSTextPosition divot(m_scopeNode->firstLine(), m_scopeNode->startOffset(), m_scopeNode->lineStartOffset());
-                emitCall(iterator.get(), createAsyncFromSyncIterator.get(), NoExpectedFunction, args, divot, divot, divot, DebuggableCall::No);
-                emitGetById(nextMethod.get(), iterator.get(), propertyNames().next);
-            }
-            emitLabel(iteratorAcquired.get());
+            CallArguments args(*this, nullptr, 0);
+            move(args.thisRegister(), subject.get());
+            emitAsyncIteratorOpen(iterator.get(), nextMethod.get(), symbolAsyncIterator.get(), args, node);
         } else {
             // Module top-level await. `driver` is an AbstractModuleRecord, which AsyncGeneratorDriverResume
             // cannot drive, so acquire generically -- op_async_iterator_next then always takes its real-call branch.
@@ -5555,15 +5531,12 @@ RegisterID* BytecodeGenerator::emitGetAsyncIterator(RegisterID* argument, Throwa
     RefPtr<RegisterID> commonIterator = emitGetGenericIterator(argument, node);
     move(iterator.get(), commonIterator.get());
 
-    RefPtr<RegisterID> nextMethod = emitGetById(newTemporary(), iterator.get(), propertyNames().next);
+    RefPtr<RegisterID> createAsyncFromSyncIterator = moveLinkTimeConstant(nullptr, LinkTimeConstant::asyncFromSyncIteratorCreate);
 
-    RefPtr<RegisterID> createAsyncFromSyncIterator = moveLinkTimeConstant(nullptr, LinkTimeConstant::createAsyncFromSyncIterator);
-
-    CallArguments args(*this, nullptr, 2);
+    CallArguments args(*this, nullptr, 1);
     emitLoad(args.thisRegister(), jsUndefined());
 
     move(args.argumentRegister(0), iterator.get());
-    move(args.argumentRegister(1), nextMethod.get());
 
     JSTextPosition divot(m_scopeNode->firstLine(), m_scopeNode->startOffset(), m_scopeNode->lineStartOffset());
     emitCall(iterator.get(), createAsyncFromSyncIterator.get(), NoExpectedFunction, args, divot, divot, divot, DebuggableCall::No);

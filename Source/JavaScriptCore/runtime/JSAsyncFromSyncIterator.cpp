@@ -27,32 +27,15 @@
 #include "JSAsyncFromSyncIterator.h"
 
 #include "JSCInlines.h"
-#include "JSInternalFieldObjectImplInlines.h"
 
 namespace JSC {
 
 const ClassInfo JSAsyncFromSyncIterator::s_info = { "AsyncFromSyncIterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAsyncFromSyncIterator) };
 
-void JSAsyncFromSyncIterator::finishCreation(VM& vm, JSValue syncIterator, JSValue nextMethod)
+JSAsyncFromSyncIterator* JSAsyncFromSyncIterator::create(VM& vm, Structure* structure, JSObject* syncIterator, JSValue nextMethod, IterationMode iterationMode)
 {
-    Base::finishCreation(vm);
-    this->setSyncIterator(vm, syncIterator);
-    this->setNextMethod(vm, nextMethod);
-}
-
-JSAsyncFromSyncIterator* JSAsyncFromSyncIterator::createWithInitialValues(VM& vm, Structure* structure)
-{
-    auto values = initialValues();
-    JSAsyncFromSyncIterator* result = new (NotNull, allocateCell<JSAsyncFromSyncIterator>(vm)) JSAsyncFromSyncIterator(vm, structure);
-    result->finishCreation(vm, values[0], values[1]);
-    return result;
-}
-
-JSAsyncFromSyncIterator* JSAsyncFromSyncIterator::create(VM& vm, Structure* structure, JSValue syncIterator, JSValue nextMethod)
-{
-    ASSERT(syncIterator.isObject());
-    JSAsyncFromSyncIterator* result = new (NotNull, allocateCell<JSAsyncFromSyncIterator>(vm)) JSAsyncFromSyncIterator(vm, structure);
-    result->finishCreation(vm, syncIterator, nextMethod);
+    JSAsyncFromSyncIterator* result = new (NotNull, allocateCell<JSAsyncFromSyncIterator>(vm)) JSAsyncFromSyncIterator(vm, structure, syncIterator, nextMethod, iterationMode);
+    result->finishCreation(vm);
     return result;
 }
 
@@ -62,14 +45,11 @@ void JSAsyncFromSyncIterator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     auto* thisObject = uncheckedDowncast<JSAsyncFromSyncIterator>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
+    visitor.appendUnbarriered(thisObject->m_syncIterator.pointer());
+    visitor.append(thisObject->m_nextMethod);
+    visitor.appendUnbarriered(thisObject->m_target.pointer());
 }
 
 DEFINE_VISIT_CHILDREN(JSAsyncFromSyncIterator);
-
-JSC_DEFINE_HOST_FUNCTION(asyncFromSyncIteratorPrivateFuncCreate, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    ASSERT(callFrame->uncheckedArgument(0).isObject());
-    return JSValue::encode(JSAsyncFromSyncIterator::create(globalObject->vm(), globalObject->asyncFromSyncIteratorStructure(), callFrame->uncheckedArgument(0), callFrame->uncheckedArgument(1)));
-}
 
 } // namespace JSC
