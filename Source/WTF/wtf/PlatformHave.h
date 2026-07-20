@@ -1986,3 +1986,7 @@
     && __has_include(<LinkSecurity/LinkSecurity.h>)
 #define HAVE_ENHANCED_SECURITY_LINKS 1
 #endif
+
+#if !defined(HAVE_FULLSCREEN_LIGHTSPILL) && PLATFORM(VISION) && __VISION_OS_VERSION_MIN_REQUIRED >= 270000
+#define HAVE_FULLSCREEN_LIGHTSPILL 1
+#endif
