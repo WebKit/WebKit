@@ -253,7 +253,7 @@ public:
     void drawSpecial(SkSpecialImage*, const SkMatrix& localToDevice,
                      const SkSamplingOptions&, const SkPaint&,
                      SkCanvas::SrcRectConstraint) override;
-    void drawCoverageMask(const SkSpecialImage*, const SkMatrix& localToDevice,
+    void drawCoverageMask(const SkSpecialImage*, const SkMatrix& maskToDevice,
                           const SkSamplingOptions&, const SkPaint&) override;
 
     bool drawBlurredRRect(const SkRRect&, const SkPaint&, float deviceSigma) override;

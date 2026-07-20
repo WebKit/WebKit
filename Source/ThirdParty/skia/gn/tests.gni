@@ -32,6 +32,7 @@ tests_sources = [
   "$_tests/CanvasStateHelpers.h",
   "$_tests/CanvasStateTest.cpp",
   "$_tests/CanvasTest.cpp",
+  "$_tests/CappedHairlinesTest.cpp",
   "$_tests/CharToGlyphCache.cpp",
   "$_tests/ChecksumTest.cpp",
   "$_tests/ClipCubicTest.cpp",
@@ -358,8 +359,10 @@ precompile_tests_sources = [
 ]
 
 sparse_strips_test_sources = [
+  "$_tests/graphite/sparse_strips/FlattenTest.cpp",
   "$_tests/graphite/sparse_strips/LUTTest.cpp",
   "$_tests/graphite/sparse_strips/PolylineTest.cpp",
+  "$_tests/graphite/sparse_strips/TilerTest.cpp",
 ]
 
 graphite_dawn_tests_sources = [ "$_tests/graphite/DawnBackendTextureTest.cpp" ]

@@ -26,7 +26,9 @@ std::unique_ptr<ColorProfile> MakeICCProfileWithRust(
                         new rust_icc::IccProfile(std::move(rust_profile)));
 
                 skcms_ICCProfile profile;
-                rust_icc::ToSkcmsIccProfile(*retained, &profile);
+                if (!rust_icc::ToSkcmsIccProfile(*retained, &profile)) {
+                    return nullptr;
+                }
                 auto result = std::unique_ptr<ColorProfile>(
                         new ColorProfile(profile, std::move(data)));
                 result->fRetainedData = retained;

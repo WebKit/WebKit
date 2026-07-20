@@ -29,6 +29,7 @@ cc_library(
         "include/vulkan/vulkan_android.h",
         "include/vulkan/vulkan_core.h",
         "include/vulkan/vulkan_xcb.h",
+        "include/vulkan/vulkan_xlib.h",
     ],
     includes = ["include"],
     visibility = ["//visibility:public"],

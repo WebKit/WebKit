@@ -17,6 +17,7 @@ type depConfig struct {
 	bazelNameOverride string // Bazel style uses underscores not dashes, so we fix those if needed.
 	needsBazelFile    bool
 	patches           []string
+	patchArgs         []string
 	patchCmds         []string
 	patchCmdsWin      []string
 	isIndirect        bool // if True, it's used by another dependency, not by Skia directly
@@ -33,9 +34,14 @@ var depsOverrides = map[string]depConfig{
 	// This name is important because spirv_tools expects @spirv_headers to exist by that name.
 	"spirv-headers": {bazelNameOverride: "spirv_headers"},
 
-	"dawn":           {needsBazelFile: true},
+	"dawn": {
+		needsBazelFile: true,
+		patches:        []string{"//bazel/external/dawn:fix_tint_conditional_deps.patch"},
+		patchArgs:      []string{"-p1"},
+	},
 	"delaunator-cpp": {bazelNameOverride: "delaunator", needsBazelFile: true},
 	"dng_sdk":        {needsBazelFile: true},
+	"egl-registry":   {bazelNameOverride: "egl_registry", needsBazelFile: true},
 	"expat": {
 		needsBazelFile: true,
 		patches:        []string{"//bazel/external/expat:config_files.patch"},
@@ -62,15 +68,34 @@ var depsOverrides = map[string]depConfig{
 			"del source/stubdata/BUILD.bazel",
 		},
 	},
-	"icu4x":                    {needsBazelFile: true},
-	"imgui":                    {needsBazelFile: true},
-	"libavif":                  {needsBazelFile: true},
-	"libgav1":                  {needsBazelFile: true},
-	"libjpeg-turbo":            {bazelNameOverride: "libjpeg_turbo", needsBazelFile: true},
-	"libjxl":                   {needsBazelFile: true},
-	"libpng":                   {needsBazelFile: true},
-	"libwebp":                  {needsBazelFile: true},
-	"libyuv":                   {needsBazelFile: true},
+	"icu4x": {needsBazelFile: true},
+	"imgui": {needsBazelFile: true},
+	"jinja2": {
+		needsBazelFile: true,
+		patchCmds: []string{
+			"mkdir tmp_jinja2",
+			"mv * tmp_jinja2 || true",
+			"mv tmp_jinja2 jinja2",
+			"mv jinja2/BUILD.bazel .",
+		},
+	},
+	"libavif":       {needsBazelFile: true},
+	"libgav1":       {needsBazelFile: true},
+	"libjpeg-turbo": {bazelNameOverride: "libjpeg_turbo", needsBazelFile: true},
+	"libjxl":        {needsBazelFile: true},
+	"libpng":        {needsBazelFile: true},
+	"libwebp":       {needsBazelFile: true},
+	"libyuv":        {needsBazelFile: true},
+	"markupsafe": {
+		needsBazelFile: true,
+		patchCmds: []string{
+			"mkdir tmp_markupsafe",
+			"mv * tmp_markupsafe || true",
+			"mv tmp_markupsafe markupsafe",
+			"mv markupsafe/BUILD.bazel .",
+		},
+	},
+	"opengl-registry":          {bazelNameOverride: "opengl_registry", needsBazelFile: true},
 	"spirv-cross":              {bazelNameOverride: "spirv_cross", needsBazelFile: true},
 	"perfetto":                 {needsBazelFile: true},
 	"piex":                     {needsBazelFile: true},
@@ -135,6 +160,7 @@ type repoConfig struct {
 	BuildFile    string   `json:"build_file,omitempty"`
 	Commit       string   `json:"commit"`
 	Name         string   `json:"name"`
+	PatchArgs    []string `json:"patch_args,omitempty"`
 	PatchCmds    []string `json:"patch_cmds,omitempty"`
 	PatchCmdsWin []string `json:"patch_cmds_win,omitempty"`
 	Patches      []string `json:"patches,omitempty"`
@@ -169,6 +195,7 @@ func parseDEPSFile(contents []string) (string, int, error) {
 				rc.Name = cfg.bazelNameOverride
 			}
 			rc.Patches = cfg.patches
+			rc.PatchArgs = cfg.patchArgs
 			rc.PatchCmds = cfg.patchCmds
 			rc.PatchCmdsWin = cfg.patchCmdsWin
 			if cfg.needsBazelFile {

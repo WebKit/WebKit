@@ -21,6 +21,7 @@
 #include "src/gpu/graphite/PrecompileInternal.h"
 #include "src/gpu/graphite/precompile/PrecompileBasePriv.h"
 #include "src/gpu/graphite/precompile/PrecompileBlenderPriv.h"
+#include "src/gpu/graphite/precompile/PrecompileColorFiltersPriv.h"
 #include "src/gpu/graphite/precompile/PrecompileShaderPriv.h"
 
 namespace skgpu::graphite {
@@ -80,27 +81,38 @@ void PaintOption::toKey(const KeyContext& keyContext) const {
             this->finalBlender() ? this->finalBlender()->priv().asBlendMode()
                                  : SkBlendMode::kSrcOver;
 
-    Coverage finalCoverage = fRendererCoverage;
-    if ((fClipShader.first || fAnalyticClip) && fRendererCoverage == Coverage::kNone) {
-        finalCoverage = Coverage::kSingleChannel;
-    }
-    bool dstReadReq = !finalBlendMode.has_value() ||
-                      !CanUseHardwareBlending(keyContext.caps(),
-                                              fTargetFormat,
-                                              *finalBlendMode,
-                                              finalCoverage);
-
-    if (finalBlendMode) {
+    if (!finalBlendMode) {
+        SkASSERT(this->finalBlender());
+        fFinalBlender.first->priv().addToKey(keyContext, fFinalBlender.second);
+    } else {
         // Clears are converted to kSrc + SolidColor in the constructor
         SkASSERT(finalBlendMode != SkBlendMode::kClear);
-        if (!dstReadReq) {
+
+        const bool hasAnalyticClip = fClipShader.first || fAnalyticClip;
+        Coverage effectiveCoverage = fRendererCoverage;
+        if (effectiveCoverage == Coverage::kNone && hasAnalyticClip) {
+            effectiveCoverage = Coverage::kSingleChannel;
+        }
+
+        // If the KeyContext has opted into prioritizing Src (no blending) and we don't need
+        // blending or only need it for the renderer (e.g. inner fill eligible), then try to keep
+        // the final blend snippet as Src when it wouldn't impact the rendering.
+        // NOTE: The first two terms here are equivalent to PaintParams::toKey()'s check for
+        // (dstUsage == kNone || dstUsage = kDstOnlyUsedByRenderer)
+        const bool optimizeSrcBlend =
+                !hasAnalyticClip &&
+                (finalBlendMode == SkBlendMode::kSrc || finalBlendMode == SkBlendMode::kSrcOver) &&
+                SkToBool(keyContext.flags() & KeyGenFlags::kPreferFixedSrcBlend);
+
+        const bool dstReadReq = !CanUseHardwareBlending(keyContext.caps(),
+                                                        fTargetFormat,
+                                                        *finalBlendMode,
+                                                        effectiveCoverage);
+        if (!dstReadReq || (finalBlendMode == SkBlendMode::kSrc && optimizeSrcBlend)) {
             AddFixedBlendMode(keyContext, *finalBlendMode);
         } else {
             AddBlendMode(keyContext, *finalBlendMode);
         }
-    } else {
-        SkASSERT(this->finalBlender());
-        fFinalBlender.first->priv().addToKey(keyContext, fFinalBlender.second);
     }
 
     // Optional Root Node 2 is the clip

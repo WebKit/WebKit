@@ -35,7 +35,7 @@ PathAtlas::PathAtlas(Recorder* recorder, uint32_t requestedWidth, uint32_t reque
 
 PathAtlas::~PathAtlas() = default;
 
-std::pair<const Renderer*, std::optional<PathAtlas::MaskAndOrigin>> PathAtlas::addShape(
+std::pair<const Renderer*, std::optional<CoverageMaskShape>> PathAtlas::addShape(
         const Rect& transformedShapeBounds,
         const Shape& shape,
         const Transform& localToDevice,
@@ -71,12 +71,11 @@ std::pair<const Renderer*, std::optional<PathAtlas::MaskAndOrigin>> PathAtlas::a
     if (!atlasProxy) {
         return std::make_pair(nullptr, std::nullopt);
     }
-
-    std::optional<PathAtlas::MaskAndOrigin> atlasMask =
-            std::make_pair(CoverageMaskShape(shape, std::move(atlasProxy), localToDevice.inverse(),
-                                             maskInfo),
-                           SkIPoint{(int) maskBounds.left(), (int) maskBounds.top()});
-    return std::make_pair(fRecorder->priv().rendererProvider()->coverageMask(), atlasMask);
+    return std::make_pair(fRecorder->priv().rendererProvider()->coverageMask(),
+                          CoverageMaskShape(shape,
+                                            std::move(atlasProxy),
+                                            SkM44::Translate(maskBounds.left(), maskBounds.top()),
+                                            maskInfo));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

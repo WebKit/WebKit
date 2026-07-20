@@ -7,11 +7,14 @@ package(
 licenses(["notice"])
 
 SPARSE_STRIPS_FILES = [
+    "Flatten.cpp",
+    "Flatten.h",
     "MSAA_LUT.h",
     "Polyline.h",
     "SparseStripsTypes.h",
     "StripGenerator.cpp",
     "StripGenerator.h",
+    "Tiler.h",
 ]
 
 split_srcs_and_hdrs(

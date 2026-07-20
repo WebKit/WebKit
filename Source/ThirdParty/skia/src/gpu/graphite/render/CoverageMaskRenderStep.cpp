@@ -83,7 +83,7 @@ CoverageMaskRenderStep::CoverageMaskRenderStep(Layout layout)
                       {"deviceOrigin", VertexAttribType::kFloat2, SkSLType::kFloat2},
                       {"depth"     , VertexAttribType::kFloat, SkSLType::kFloat},
                       {"ssboIndex", VertexAttribType::kUInt, SkSLType::kUInt},
-                      // deviceToLocal matrix for producing local coords for shader evaluation
+                      // localToDevice matrix for producing local coords for shader evaluation
                       {"mat0", VertexAttribType::kFloat3, SkSLType::kFloat3},
                       {"mat1", VertexAttribType::kFloat3, SkSLType::kFloat3},
                       {"mat2", VertexAttribType::kFloat3, SkSLType::kFloat3}}},
@@ -133,7 +133,7 @@ void CoverageMaskRenderStep::writeVertices(DrawWriter* dw,
 
     // The device origin is the  translation extracted from the mask-to-device matrix so
     // that the remaining matrix uniform has less variance between draws.
-    const auto& maskToDevice = params.transform().matrix();
+    const SkM44& maskToDevice = coverageMask.maskToDevice();
     skvx::float2 deviceOrigin = get_device_translation(maskToDevice);
 
     // Relative to mask space (device origin and mask-to-device remainder must be applied in shader)
@@ -203,7 +203,7 @@ void CoverageMaskRenderStep::writeVertices(DrawWriter* dw,
     SkASSERT(all((maskBounds >= 0.f) & (maskBounds <= 1.f)));
     maskBounds = 65535.f * maskBounds + 0.5f;
 
-    const SkM44& m = coverageMask.deviceToLocal();
+    const SkM44& m = params.transform().matrix(); // local-to-device
     instances.append(1) << drawBounds << skvx::cast<uint16_t>(maskBounds) << deviceOrigin
                         << params.order().depthAsFloat() << ssboIndex
                         << m.rc(0,0) << m.rc(1,0) << m.rc(3,0)   // mat0
@@ -224,22 +224,22 @@ void CoverageMaskRenderStep::writeUniformsAndTextures(const DrawParams& params,
     // integer translation matrix. This translation is extracted as an instance attribute so that
     // the remaining transform has a much lower frequency of changing (only complex-transformed
     // mask filters).
-    skvx::float2 deviceOrigin = get_device_translation(params.transform().matrix());
-    SkMatrix maskToDevice = params.transform().matrix().asM33();
-    maskToDevice.preTranslate(-deviceOrigin.x(), -deviceOrigin.y());
+    skvx::float2 deviceOrigin = get_device_translation(coverageMask.maskToDevice());
+    SkMatrix maskToDeviceRemainder = coverageMask.maskToDevice().asM33();
+    maskToDeviceRemainder.preTranslate(-deviceOrigin.x(), -deviceOrigin.y());
+
+    // Check pixel alignment before we fold in coord normalization scaling
+    const bool pixelAligned = maskToDeviceRemainder.isIdentity() &&
+                              all(deviceOrigin == floor(deviceOrigin + SK_ScalarNearlyZero));
 
     // The mask coordinates in the vertex shader will be normalized, so scale by the proxy size
     // to get back to Skia's texel-based coords.
-    maskToDevice.preScale(proxy->dimensions().width(), proxy->dimensions().height());
+    maskToDeviceRemainder.preScale(proxy->dimensions().width(), proxy->dimensions().height());
 
     // Write uniforms:
-    gatherer->write(maskToDevice);
+    gatherer->write(maskToDeviceRemainder);
 
     // Write textures and samplers:
-    const bool pixelAligned =
-            params.transform().type() <= Transform::Type::kSimpleRectStaysRect &&
-            params.transform().maxScaleFactor() == 1.f &&
-            all(deviceOrigin == floor(deviceOrigin + SK_ScalarNearlyZero));
     gatherer->add(sk_ref_sp(proxy), {pixelAligned ? SkFilterMode::kNearest : SkFilterMode::kLinear,
                                      SkTileMode::kClamp});
 }

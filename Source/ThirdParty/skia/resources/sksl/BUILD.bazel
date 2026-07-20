@@ -85,6 +85,7 @@ skia_filegroup(
         ":sksl_folding_tests",
         ":sksl_rte_tests",
         ":sksl_shared_tests",
+        ":sksl_skrp_tests",
     ],
     visibility = ["//tools/skslc:__pkg__"],
 )
@@ -1208,5 +1209,12 @@ skia_filegroup(
         "wgsl/VertexPositionOutputIsAlwaysDeclared.vert",
         "wgsl/WorkgroupSize.compute",
         "workarounds/LastFragColor.sksl",
+    ],
+)
+
+skia_filegroup(
+    name = "sksl_skrp_tests",
+    srcs = [
+        "skrp/ImmediateOpsOpt.sksl",
     ],
 )

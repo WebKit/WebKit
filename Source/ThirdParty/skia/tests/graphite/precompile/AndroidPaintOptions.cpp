@@ -219,8 +219,7 @@ static sk_sp<PrecompileShader> create_tone_map(RuntimeEffectManager& effectManag
             effectManager.getKnownRuntimeEffect(
                     RuntimeEffectManager::KnownId::kMouriMap_TonemapEffect),
             {{ {{ std::move(input) }}, {{ std::move(lux) }} }});
-    sk_sp<PrecompileShader> inLinear =
-            toneMap->makeWithWorkingColorSpace(luxCI.refColorSpace());
+    sk_sp<PrecompileShader> inLinear = toneMap->makeWithWorkingColorSpace(luxCI.refColorSpace());
 
     return inLinear;
 }
@@ -230,6 +229,37 @@ skgpu::graphite::PaintOptions MouriMapToneMap(RuntimeEffectManager& effectManage
     PaintOptions paintOptions;
     paintOptions.setShaders({{ create_tone_map(effectManager) }});
     paintOptions.setBlendModes(SKSPAN_INIT_ONE( SkBlendMode::kSrc ));
+    return paintOptions;
+}
+
+skgpu::graphite::PaintOptions GainMap(RuntimeEffectManager& effectManager) {
+
+    SkColorInfo hdrCI { kRGBA_F16_SkColorType,
+                        kPremul_SkAlphaType,
+                        SkColorSpace::MakeSRGB() };
+    sk_sp<PrecompileShader> hdr = PrecompileShaders::Image(ImageShaderFlags::kExcludeCubic,
+                                                            { &hdrCI, 1 },
+                                                            {});
+
+    sk_sp<PrecompileShader> gainMap = PrecompileRuntimeEffects::MakePrecompileShader(
+            effectManager.getKnownRuntimeEffect(
+                    RuntimeEffectManager::KnownId::kGainmapEffect),
+            {{ {{ create_tone_map(effectManager) }}, {{ std::move(hdr) }} }});
+
+    PaintOptions paintOptions;
+    paintOptions.setShaders({{ std::move(gainMap) }});
+    paintOptions.setBlendModes(SKSPAN_INIT_ONE( SkBlendMode::kSrc ));
+    return paintOptions;
+}
+
+skgpu::graphite::PaintOptions BoxShadow(RuntimeEffectManager& effectManager) {
+    sk_sp<PrecompileShader> boxShadow = PrecompileRuntimeEffects::MakePrecompileShader(
+            effectManager.getKnownRuntimeEffect(
+                    RuntimeEffectManager::KnownId::kBoxShadowEffect));
+
+    PaintOptions paintOptions;
+    paintOptions.setShaders({{ std::move(boxShadow) }});
+    paintOptions.setBlendModes(SKSPAN_INIT_ONE( SkBlendMode::kSrcOver ));
     return paintOptions;
 }
 
@@ -248,7 +278,7 @@ skgpu::graphite::PaintOptions BlurFilterMix(RuntimeEffectManager& effectManager)
 
     PaintOptions paintOptions;
     paintOptions.setShaders({{ std::move(mix) }});
-    paintOptions.setBlendModes(SKSPAN_INIT_ONE( SkBlendMode::kSrc ));
+    paintOptions.setBlendModes({ SkBlendMode::kSrc, SkBlendMode::kSrcOver });
     return paintOptions;
 }
 
@@ -596,6 +626,13 @@ const skgpu::graphite::RenderPassProperties kRGBA_1_D_SRGB {
         /* fRequiresMSAA= */ false
 };
 
+const skgpu::graphite::RenderPassProperties kRGBA_1_D_Linear {
+    skgpu::graphite::DepthStencilFlags::kDepth,
+    kRGBA_8888_SkColorType,
+    SkColorSpace::MakeSRGBLinear(),
+    /* fRequiresMSAA= */ false
+};
+
 // MSAA RGBA w/ depth and stencil
 const skgpu::graphite::RenderPassProperties kRGBA_4_DS {
         skgpu::graphite::DepthStencilFlags::kDepthStencil,
@@ -641,6 +678,7 @@ const skgpu::graphite::RenderPassProperties kRGBA16F_1_D_Linear {
 const RenderPassProperties kCombo_RGBA_1D_4DS[2] = { kRGBA_1_D, kRGBA_4_DS };
 const RenderPassProperties kCombo_RGBA_1D_4DS_SRGB[2] = { kRGBA_1_D_SRGB, kRGBA_4_DS_SRGB };
 const RenderPassProperties kCombo_RGBA_1D_SRGB_w16F[2] = { kRGBA_1_D_SRGB, kRGBA16F_1_D_SRGB };
+const RenderPassProperties kCombo_RGBA_1D_4DS_16F[3] = { kRGBA_1_D, kRGBA_4_DS, kRGBA16F_1_D };
 
 // =======================================
 //            DrawTypeFlags
@@ -653,6 +691,106 @@ constexpr bool kWithAnalyticClip = true;
 constexpr DrawTypeFlags kRRectAndNonAARect =
         static_cast<DrawTypeFlags>(DrawTypeFlags::kAnalyticRRect |
                                    DrawTypeFlags::kNonAAFillRect);
+
+PrecompileSettings linear_and_tonemap(RuntimeEffectManager* effectManager,
+                                      sk_sp<SkRuntimeEffect> rte) {
+    return { LinearEffect(std::move(rte),
+                          create_tone_map(*effectManager),
+                          SkBlendMode::kSrcOver,
+                          /* paintColorIsOpaque= */ true,
+                          /* matrixColorFilter= */ false,
+                          /* dither= */ false,
+                          SkColorSpace::MakeSRGBLinear()),
+             kRRectAndNonAARect,
+             kCombo_RGBA_1D_SRGB_w16F };
+}
+
+// The 'rrectStyle' flag selects between:
+//    rect with and w/o an analytic clip
+//    rrects
+// This is to avoid overgenerating rrects w/ analytic clips
+PrecompileSettings linear_hw_image(sk_sp<SkRuntimeEffect> rte,
+                                   bool rrectStyle,
+                                   bool opaquePaint = true) {
+    return { LinearEffect(rte,
+                          create_hw_image_precompile_shader(),
+                          SkBlendMode::kSrcOver,
+                          /* paintColorIsOpaque= */ opaquePaint,
+                          /* matrixColorFilter= */ false,
+                          /* dither= */ false,
+                          SkColorSpace::MakeSRGBLinear()),
+             rrectStyle ? DrawTypeFlags::kAnalyticRRect: DrawTypeFlags::kNonAAFillRect,
+             kCombo_RGBA_1D_4DS_SRGB,
+             rrectStyle ? false : kWithAnalyticClip };
+}
+
+// This is the same as linear_hw_image but with a different color space
+PrecompileSettings linear_hw_image_srgb(sk_sp<SkRuntimeEffect> rte,
+                                        bool rrectStyle,
+                                        bool opaquePaint = true) {
+    return { LinearEffect(rte,
+                          create_hw_image_precompile_shader(),
+                          SkBlendMode::kSrcOver,
+                          /* paintColorIsOpaque= */ opaquePaint,
+                          /* matrixColorFilter= */ false,
+                          /* dither= */ false,
+                          SkColorSpace::MakeSRGB()), // note: not MakeSRGBLinear
+             rrectStyle ? DrawTypeFlags::kAnalyticRRect: DrawTypeFlags::kNonAAFillRect,
+             kCombo_RGBA_1D_4DS_SRGB,
+             rrectStyle ? false : kWithAnalyticClip };
+}
+
+PrecompileSettings linear_hw_image_matrixfilter(sk_sp<SkRuntimeEffect> rte, bool rrectStyle) {
+    return { LinearEffect(rte,
+                          create_hw_image_precompile_shader(),
+                          SkBlendMode::kSrcOver,
+                          /* paintColorIsOpaque= */ true,
+                          /* matrixColorFilter= */ true,
+                          /* dither= */ false,
+                          SkColorSpace::MakeSRGBLinear()),
+             rrectStyle ? DrawTypeFlags::kAnalyticRRect: DrawTypeFlags::kNonAAFillRect,
+             kRGBA_1_D_SRGB,
+             rrectStyle ? false : kWithAnalyticClip };
+}
+
+// This is the same as linear_hw_image_matrixfilter but with a different color space and dest
+PrecompileSettings linear_hw_image_matrixfilter_srgb(sk_sp<SkRuntimeEffect> rte, bool rrectStyle) {
+    return { LinearEffect(rte,
+                          create_hw_image_precompile_shader(),
+                          SkBlendMode::kSrcOver,
+                          /* paintColorIsOpaque= */ true,
+                          /* matrixColorFilter= */ true,
+                          /* dither= */ false,
+                          SkColorSpace::MakeSRGB()), // note: not MakeSRGBLinear
+             rrectStyle ? DrawTypeFlags::kAnalyticRRect: DrawTypeFlags::kNonAAFillRect,
+             kRGBA_1_D,
+             rrectStyle ? false : kWithAnalyticClip };
+}
+
+PrecompileSettings linear_hw_image_matrixfilter_dither(sk_sp<SkRuntimeEffect> rte, bool rrectStyle) {
+    return { LinearEffect(rte,
+                          create_hw_image_precompile_shader(),
+                          SkBlendMode::kSrcOver,
+                          /* paintColorIsOpaque= */ true,
+                          /* matrixColorFilter= */ true,
+                          /* dither= */ true,
+                          SkColorSpace::MakeSRGBLinear()),
+             rrectStyle ? DrawTypeFlags::kAnalyticRRect: DrawTypeFlags::kNonAAFillRect,
+             kCombo_RGBA_1D_4DS_SRGB,
+             rrectStyle ? false : kWithAnalyticClip };
+}
+
+PrecompileSettings linear_solid(sk_sp<SkRuntimeEffect> rte) {
+    return { LinearEffect(rte,
+                          PrecompileShaders::Color(),
+                          SkBlendMode::kSrc,
+                          /* paintColorIsOpaque= */ true,
+                          /* matrixColorFilter= */ false,
+                          /* dither= */ false,
+                          SkColorSpace::MakeSRGBLinear()),
+             DrawTypeFlags::kNonAAFillRect,
+             kRGBA_1_D };
+}
 
 // clang-format on
 
@@ -674,6 +812,15 @@ void VisitAndroidPrecompileSettings_Old(
                     /* type= */ shaders::LinearEffect::SkSLType::Shader,
             });
 
+    const auto kBT2020_ITU_PQ__DISPLAY_P3__false__0x90a0000__Shader =
+            effectManager.getOrCreateLinearRuntimeEffect({
+                    /* inputDataspace= */ ui::Dataspace::BT2020_ITU_PQ, // BT2020 SMPTE 2084 Limited range
+                    /* outputDataspace= */ ui::Dataspace::DISPLAY_P3, // DCI-P3 sRGB Full range
+                    /* undoPremultipliedAlpha= */ false,
+                    /* fakeOutputDataspace= */ static_cast<ui::Dataspace>(0x90a0000), // DCI-P3 gamma 2.2 Full range
+                    /* type= */ shaders::LinearEffect::SkSLType::Shader,
+            });
+
     const auto kBT2020_ITU_PQ__BT2020__false__UNKNOWN__Shader =
             effectManager.getOrCreateLinearRuntimeEffect({
                     /* inputDataspace= */ ui::Dataspace::BT2020_ITU_PQ, // BT2020 SMPTE 2084 Limited range
@@ -689,6 +836,15 @@ void VisitAndroidPrecompileSettings_Old(
                     /* outputDataspace= */ ui::Dataspace::DISPLAY_P3, // DCI-P3 sRGB Full range
                     /* undoPremultipliedAlpha= */ false,
                     /* fakeOutputDataspace= */ static_cast<ui::Dataspace>(0x90a0000), // DCI-P3 gamma 2.2 Full range
+                    /* type= */ shaders::LinearEffect::SkSLType::Shader,
+            });
+
+    const auto kBT2020_HLG__UNKNOWN__false__UNKNOWN__Shader =
+            effectManager.getOrCreateLinearRuntimeEffect({
+                    /* inputDataspace= */ ui::Dataspace::BT2020_HLG,
+                    /* outputDataspace= */ ui::Dataspace::UNKNOWN,
+                    /* undoPremultipliedAlpha= */ false,
+                    /* fakeOutputDataspace= */ ui::Dataspace::UNKNOWN, // Default
                     /* type= */ shaders::LinearEffect::SkSLType::Shader,
             });
 
@@ -736,275 +892,405 @@ void VisitAndroidPrecompileSettings_Old(
     // then Render Pass Properties.
     // This helps observe DrawTypeFlags distributions.
     const PrecompileSettings precompileCases[] = {
-        // 100% (1/1) handles: 0
+        // 0: 100% (1/1) handles: 0
         { Builder().hwImg(kPremul).srcOver(),
           DrawTypeFlags::kNonAAFillRect,
           kRGBA16F_1_D },
 
-        // 100% (4/4) handles: 22 23 42 43
+        // 1: 100% (4/4) handles: 22 23 42 43
         { Builder().hwImg(kPremul).srcOver(),
           kRRectAndNonAARect,
           kRGBA_1_D,
           kWithAnalyticClip },
 
-        // 100% (4/4) handles: 63 72 (+2 matching synthetic)
+        // 2: 100% (2/2) handles: 165 171
         { Builder().hwImg(kPremul).srcOver(),
           kRRectAndNonAARect,
           kRGBA_4_DS },
 
-        // 100% (1/1) handles: 1
+        // 3: 100% (1/1) handles: 1
         { Builder().hwImg(kSRGB).srcOver(),
           DrawTypeFlags::kNonAAFillRect,
           kRGBA16F_1_D_SRGB },
 
-        // 100% (4/4) handles: 24 44 45 110
+        // 4: 100% (4/4) handles: 24 44 45 110
         { Builder().hwImg(kSRGB).srcOver(),
           kRRectAndNonAARect,
           kRGBA_1_D_SRGB,
           kWithAnalyticClip },
 
-        // 100% (4/4) handles: 9 28 95 106
+        // 5: 100% (4/4) handles: 9 28 95 106
         { Builder().transparent().hwImg(kPremul).srcOver(),
           kRRectAndNonAARect,
           kRGBA_1_D,
           kWithAnalyticClip },
 
-        // 100% (4/4) handles 61 66 (+2 matching synthetic)
+        // 6: 100% (2/2) handles: 164 166
         { Builder().transparent().hwImg(kPremul).srcOver(),
           kRRectAndNonAARect,
           kRGBA_4_DS },
 
-        // 100% (2/2) handles 10 29
+        // 7: 75% (3/4) handles: 10 29 208
         { Builder().transparent().hwImg(kSRGB).srcOver(),
           kRRectAndNonAARect,
-          kRGBA_1_D_SRGB },
+          kCombo_RGBA_1D_4DS_SRGB },
 
-        // 63% (5/8) handles 27 56 57 58 94
+        // 8: 75% (9/12) handles: 56 57 58 89 92 94 172 250 251
         { Builder().src().srcOver(),
-          kRRectAndNonAARect,
-          kRGBA_1_D,
+          DrawTypeFlags::kNonAAFillRect,
+          kCombo_RGBA_1D_4DS_16F,
           kWithAnalyticClip },
 
-        // 75% (3/4) handles 74 86 (+1 matching synthetic)
+        // 9: 100% (2/2) handles: 27 86
         { Builder().srcOver(),
-          kRRectAndNonAARect,
-          kRGBA_4_DS },
+          DrawTypeFlags::kAnalyticRRect,
+          kCombo_RGBA_1D_4DS },
 
-        // 10: 75% (3/4) handles 19 38 128
+        // 10: 75% (3/4) handles: 19 38 128
         { Builder().hwImg(kPremul).matrixCF().srcOver(),
           kRRectAndNonAARect,
           kRGBA_1_D,
           kWithAnalyticClip },
 
-        // 75% (3/4) handles 12 123 124
+        // 11: 75% (3/4) handles: 12 123 124
         { Builder().transparent().hwImg(kPremul).matrixCF().srcOver(),
           kRRectAndNonAARect,
           kRGBA_1_D,
           kWithAnalyticClip },
 
-        // 100% (2/2) handles 14 30
+        // 12: 100% (1/1) handles: 14
         { Builder().transparent().hwImg(kPremul).matrixCF().dither().srcOver(),
-          kRRectAndNonAARect,
+          DrawTypeFlags::kAnalyticRRect,
           kRGBA_1_D },
 
-        // 100% (2/2) handles 68 (+1 matching synthetic)
+        // 13: 100% (1/1) handles: 168
         { Builder().transparent().hwImg(kPremul).matrixCF().dither().srcOver(),
           DrawTypeFlags::kNonAAFillRect,
           kRGBA_4_DS },
 
-        // 75% (3/4) handles 16 32 33
+        // 14: 75% (3/4) handles: 16 32 33
         { Builder().hwImg(kPremul).matrixCF().dither().srcOver(),
           kRRectAndNonAARect,
           kRGBA_1_D,
           kWithAnalyticClip },
 
-        // 100% (2/2) handles 69 (+1 matching synthetic)
+        // 15: 100% (1/1) handles: 169
         { Builder().hwImg(kPremul).matrixCF().dither().srcOver(),
           DrawTypeFlags::kNonAAFillRect,
           kRGBA_4_DS },
 
-        // 100% (2/2) handles 15 31
+        // 16: 100% (2/2) handles: 15 31
         { Builder().transparent().hwImg(kSRGB).matrixCF().dither().srcOver(),
           kRRectAndNonAARect,
           kRGBA_1_D_SRGB },
 
-        // 75% (3/4) handles 17 34 35
+        // 17: 75% (3/4) handles: 17 34 35
         { Builder().hwImg(kSRGB).matrixCF().dither().srcOver(),
           kRRectAndNonAARect,
           kRGBA_1_D_SRGB,
           kWithAnalyticClip },
 
-        // 50% (1/2) handles 77 - due to the w/o msaa load variants not being used
+        // 18: 100% (1/1) handles: 77
         { Builder().hwImg(kSRGB).matrixCF().dither().srcOver(),
           DrawTypeFlags::kAnalyticRRect,
           kRGBA_4_DS_SRGB },
 
-        // 67% (2/3) handles 37 70 - due to the w/o msaa load variants not being used
+        // 19: 50% (1/2) handles: 37
         { Builder().hwImg(kAlphaSRGB).matrixCF().srcOver(),
           DrawTypeFlags::kNonAAFillRect,
           kCombo_RGBA_1D_4DS_SRGB },
 
-        // 20: 100% (2/2) handles 41 100
+        // 20: 100% (1/1) handles: 100
         { Builder().hwImg(kPremul).src(),
-          kRRectAndNonAARect,
+          DrawTypeFlags::kAnalyticRRect,
           kRGBA_1_D },
 
-        // 100% (1/1) handles 59
+        // 21: 100% (1/1) handles: 59
         { Builder().hwImg(kPremul).src(),
           DrawTypeFlags::kPerEdgeAAQuad,
           kRGBA_1_D },
 
-        // 100% (2/2) handles 71 (+1 matching synthetic)
+        // 22: 100% (1/1) handles: 170
         { Builder().hwImg(kPremul).src(),
           DrawTypeFlags::kNonAAFillRect,
           kRGBA_4_DS },
 
         // TODO(b/426601394): Group these paint option settings into a function that accepts an
         // input image color space so that the intermediate linear color spaces adapt correctly.
-        // 100% (1/1) handles 5
+        // 23: 100% (1/1) handles: 5
         { MouriMapBlur(effectManager),
           DrawTypeFlags::kNonAAFillRect,
           kRGBA16F_1_D_Linear },
 
-        // 24: 100% (1/1) handles 55
+        // 24: 100% (1/1) handles: 55
         { MouriMapToneMap(effectManager),
           DrawTypeFlags::kNonAAFillRect,
           kRGBA_1_D_SRGB },
 
-        // 100% (1/1) handles 7
+        // 25: 100% (1/1) handles: 7
         { MouriMapCrosstalkAndChunk16x16Passthrough(effectManager),
           DrawTypeFlags::kNonAAFillRect,
           kRGBA16F_1_D_Linear },
 
-        // 100% (1/1) handles 6
+        // 26: 100% (1/1) handles: 6
         { MouriMapChunk8x8Effect(effectManager),
           DrawTypeFlags::kNonAAFillRect,
           kRGBA16F_1_D_Linear },
 
-        // 100% (2/2) handles 49 99
+        // 27: 100% (4/4) handles: 49 99 199 305
         { BlurFilterMix(effectManager),
           kRRectAndNonAARect,
           kRGBA_1_D },
 
         // These two are solid colors drawn w/ a LinearEffect
 
-        // 30: 100% (1/1) handles 4
-        { LinearEffect(kUNKNOWN__SRGB__false__UNKNOWN__Shader,
-                       PrecompileShaders::Color(),
-                       SkBlendMode::kSrcOver),
+        // 28: 67% (8/12) handles: 78 80 81 83 84 157 159 161
+        { Builder().srcOver(),
+          DrawTypeFlags::kNonSimpleShape,
+          kRGBA_4_DS },
+
+        // Note: this didn't get folded into #2 since the RRect draw isn't appearing w/ a clip
+        // 29: 100% (1/1) handles: 91
+        { Builder().hwImg(kPremul).srcOver(),
+          DrawTypeFlags::kNonAAFillRect | DrawTypeFlags::kAnalyticClip,
+          kRGBA_4_DS },
+
+        // 30: 50% (1/2) handles: 60
+        { {}, // ignored
+          DrawTypeFlags::kDropShadows,
+          kRGBA_1_D },
+
+        // 31: 100% (2/2) handles: 82 85
+        { {}, // ignored
+          DrawTypeFlags::kDropShadows,
+          kRGBA_4_DS },
+
+        // 32: 100% (2/2) handles: 96 112
+        { EdgeExtensionPremulSrcover(effectManager),
+          kRRectAndNonAARect,
+          kRGBA_1_D },
+
+        // 33: 100% (1/1) handles: 126
+        { TransparentPaintEdgeExtensionPassthroughMatrixCFDitherSrcover(effectManager),
+          DrawTypeFlags::kNonAAFillRect,
+          kRGBA_1_D },
+
+        // 34: 100% (1/1) handles: 97
+        { TransparentPaintEdgeExtensionPassthroughSrcover(effectManager),
+          DrawTypeFlags::kNonAAFillRect,
+          kRGBA_1_D },
+
+        // 35: 100% (2/2) handles: 98 211
+        { TransparentPaintEdgeExtensionPremulSrcover(effectManager),
+          kRRectAndNonAARect,
+          kRGBA_1_D },
+
+        // 36: 100% (2/2) handles: 137 13
+        { EdgeExtensionPassthroughSrcover(effectManager),
+          DrawTypeFlags::kNonAAFillRect,
+          kRGBA_1_D,
+          kWithAnalyticClip },
+
+        // 37: 50% (1/2) handles: 101
+        { Builder().hwImg(kAlpha, kClamp).src(),
+          DrawTypeFlags::kNonAAFillRect,
+          kR_1_D },
+
+        // 38: 100% (2/2) handles: 109 129
+        { Builder().hwImg(kSRGB).matrixCF().srcOver(),
+          kRRectAndNonAARect,
+          kRGBA_1_D_SRGB },
+
+        // 39: 100% (1/1) handles: 104
+        { MouriMapCrosstalkAndChunk16x16Premul(effectManager),
           DrawTypeFlags::kNonAAFillRect,
           kRGBA16F_1_D_SRGB },
 
-        // 100% (1/1) handles 54
+        // 40: 100% (2/2) handles: 107 146
+        { Builder().blend().srcOver(),
+          DrawTypeFlags::kAnalyticRRect,
+          kCombo_RGBA_1D_4DS },
+
+        // 41: 100% (1/1) handles: 122
+        { Builder().blend().srcOver(),
+          DrawTypeFlags::kNonAAFillRect | DrawTypeFlags::kAnalyticClip,
+          kRGBA_1_D },
+
+        // 42: 100% (1/1) handles: 117
+        { Builder().transparent().blend().srcOver(),
+          DrawTypeFlags::kNonAAFillRect,
+          kRGBA_1_D },
+
+        // 43: 100% (1/1) handles: 197
+        { BoxShadow(effectManager),
+          DrawTypeFlags::kNonAAFillRect,
+          kRGBA_1_D  },
+
+        // 44: 100% (1/1) handles: 198
+        { GainMap(effectManager),
+          DrawTypeFlags::kNonAAFillRect,
+          kRGBA_1_D_Linear  },
+
+        // 45: 100% (1/1) handles: 202
+        // Just 52 but for RRects w/o clips
+        { EdgeExtensionPassthroughSrcover(effectManager),
+          DrawTypeFlags::kAnalyticRRect,
+          kRGBA_1_D, },
+
+        // 46: 100% (2/2) handles: 30 204
+        // Just 12 for rects with and w/o clips
+        { Builder().transparent().hwImg(kPremul).matrixCF().dither().srcOver(),
+          DrawTypeFlags::kNonAAFillRect,
+          kRGBA_1_D,
+          kWithAnalyticClip},
+
+        // 47: 100% (2/2) handles: 41 212
+        { Builder().hwImg(kPremul).src(),
+          DrawTypeFlags::kNonAAFillRect,
+          kRGBA_1_D,
+          kWithAnalyticClip },
+
+        //------------------------------------------------------------------------------------------
+
+        // 48: 100% (1/1) handles: 201
+        linear_solid(kBT2020_HLG__UNKNOWN__false__UNKNOWN__Shader),
+
+        //------------------------------------------------------------------------------------------
+        // 49: 100% (1/1) handles: 265
+        linear_solid(kBT2020_ITU_PQ__BT2020__false__UNKNOWN__Shader),
+
+        // 50: 100% (1/1) handles: 54
         { LinearEffect(kBT2020_ITU_PQ__BT2020__false__UNKNOWN__Shader,
                        PrecompileShaders::Color(),
                        SkBlendMode::kSrc),
           DrawTypeFlags::kNonAAFillRect,
           kRGBA_1_D_SRGB },
 
-        // 100% (2/2) handles 2 141
-        { LinearEffect(kUNKNOWN__SRGB__false__UNKNOWN__Shader,
-                       create_hw_image_precompile_shader(),
-                       SkBlendMode::kSrcOver),
-          DrawTypeFlags::kNonAAFillRect,
-          kCombo_RGBA_1D_SRGB_w16F },
+        //------------------------------------------------------------------------------------------
+        // k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader
 
-        // 67% (2/3) handles 26 64 - due to the w/o msaa load variants not being used
-        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
-                       create_hw_image_precompile_shader(),
-                       SkBlendMode::kSrcOver),
-          DrawTypeFlags::kAnalyticRRect,
-          kCombo_RGBA_1D_4DS_SRGB },
+        // 51: 75% (3/4) handles: 180 227 229
+        linear_hw_image(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader, /* rrectStyle= */ false),
 
-        // 100% (2/2) handles 139 140
-        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
-                       create_hw_image_precompile_shader(),
-                       SkBlendMode::kSrcOver),
-          DrawTypeFlags::kNonAAFillRect,
-          kRGBA_1_D_SRGB,
-          kWithAnalyticClip },
+        // 52: 100% (2/2) handles: 228 230
+        linear_hw_image(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader, /* rrectStyle= */ true),
 
-        // 67% (2/3) handles 11 62 - due to the w/o msaa load variants not being used
-        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
-                       create_hw_image_precompile_shader(),
-                       SkBlendMode::kSrcOver,
-                       /* paintColorIsOpaque= */ false),
-          DrawTypeFlags::kAnalyticRRect,
-          kCombo_RGBA_1D_4DS_SRGB },
+        // 53: 75% (3/4) handles: 176 205 234
+        linear_hw_image(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+                        /* rrectStyle= */ false, /* opaquePaint= */ false),
 
-        // The next 3 have a RE_LinearEffect and a MatrixFilter along w/ different ancillary
-        // additions
-        // 34: 100% (1/1) handles 20
-        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
-                       create_hw_image_precompile_shader(),
-                       SkBlendMode::kSrcOver,
-                       /* paintColorIsOpaque= */ true,
-                       /* matrixColorFilter= */ true,
-                       /* dither= */ false),
-          DrawTypeFlags::kAnalyticRRect,
-          kRGBA_1_D_SRGB },
+        // 54: 100% (2/2) handles: 231 233
+        linear_hw_image(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+                        /* rrectStyle= */ true, /* opaquePaint= */ false),
 
-        // 35: 100% (1/1) handles 13
+        // 55: 100% (1/1) handles: 174
+        linear_hw_image_matrixfilter(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+                                     /* rrectStyle= */true),
+
+        // 56: 100% (2/2) handles: 177 255
+        linear_hw_image_matrixfilter(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+                                     /* rrectStyle= */false),
+
+        // 57: 100% (1/1) handles: 173
         { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
                        create_hw_image_precompile_shader(),
                        SkBlendMode::kSrcOver,
                        /* paintColorIsOpaque= */ false,
                        /* matrixColorFilter= */ true,
-                       /* dither= */ false),
+                       /* dither= */ false,
+                       SkColorSpace::MakeSRGBLinear()),
           DrawTypeFlags::kAnalyticRRect,
           kRGBA_1_D_SRGB },
 
-        // 36: 100% (1/1) handles 18
+        // 58: 50% (2/4) handles: 179 246
+        linear_hw_image_matrixfilter_dither(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+                                            /* rrectStyle= */ false),
+        // 59: 50% (1/2) handles: 175
+        linear_hw_image_matrixfilter_dither(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+                                            /* rrectStyle= */ true),
+
+        // 60: 75% (3/4) handles: 196 209 275
+        linear_hw_image_srgb(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+                             /* rrectStyle= */ false),
+        // 61: 50% (1/2) handles: 187
+        linear_hw_image_srgb(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+                             /* rrectStyle= */ true),
+
+        // 62: 75% (3/4) handles: 189 259 260
+        linear_hw_image_srgb(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+                             /* rrectStyle= */ false, /* opaquePaint= */ false),
+        // 63: 100% (2/2) handles: 184 261
+        linear_hw_image_srgb(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+                             /* rrectStyle= */ true, /* opaquePaint= */ false),
+
+        // 64: 100% (1/1) handles: 266
+        linear_solid(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader),
+
+        // 65: 100% (2/2) handles: 194 195
+        linear_hw_image_matrixfilter_srgb(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader, false),
+        // 66: 100% (1/1) handles: 186
+        linear_hw_image_matrixfilter_srgb(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader, true),
+
+        // 67: 100% (1/1) handles: 207
+        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+               create_hw_image_precompile_shader(),
+               SkBlendMode::kSrcOver,
+               /* paintColorIsOpaque= */ false,
+               /* matrixColorFilter= */ true,
+               /* dither= */ true,
+               SkColorSpace::MakeSRGBLinear()),
+        DrawTypeFlags::kAnalyticRRect,
+        kRGBA_1_D  },
+
+        // 68: 50% (1/2) handles: 252
+        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+               create_hw_image_precompile_shader(),
+               SkBlendMode::kSrcOver,
+               /* paintColorIsOpaque= */ false,
+               /* matrixColorFilter= */ true,
+               /* dither= */ true,
+               SkColorSpace::MakeSRGBLinear()),
+        DrawTypeFlags::kNonAAFillRect,
+        kRGBA_1_D,
+        kWithAnalyticClip },
+
+        // 69: 100% (1/1) handles: 190
+        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+                       create_hw_image_precompile_shader(),
+                       SkBlendMode::kSrcOver,
+                       /* paintColorIsOpaque= */ false,
+                       /* matrixColorFilter= */ true,
+                       /* dither= */ false,
+                       SkColorSpace::MakeSRGB()), // note: not MakeSRGBLinear
+          DrawTypeFlags::kNonAAFillRect,
+          kRGBA_1_D  },
+
+        // 70: 100% (1/1) handles: 191
+        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+                       create_hw_image_precompile_shader(),
+                       SkBlendMode::kSrcOver,
+                       /* paintColorIsOpaque= */ false,
+                       /* matrixColorFilter= */ true,
+                       /* dither= */ true,
+                       SkColorSpace::MakeSRGB()), // note: not MakeSRGBLinear
+          DrawTypeFlags::kNonAAFillRect,
+          kRGBA_1_D  },
+
+        // 71: 75% (3/4) handles: 185 192 193
+        // This is a modified version of 67:
+        //    opaque, matrix color filter, dither and analytic clip
         { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
                        create_hw_image_precompile_shader(),
                        SkBlendMode::kSrcOver,
                        /* paintColorIsOpaque= */ true,
                        /* matrixColorFilter= */ true,
-                       /* dither= */ true),
-          DrawTypeFlags::kAnalyticRRect,
-          kRGBA_1_D_SRGB },
+                       /* dither= */ true,
+                       SkColorSpace::MakeSRGB()), // note: not MakeSRGBLinear
+          kRRectAndNonAARect,
+          kRGBA_1_D,
+          kWithAnalyticClip  },
 
-        // 100% (1/1) handles 103
-        { LinearEffect(kV0_SRGB__V0_SRGB__true__UNKNOWN__Shader,
-                       create_hw_image_precompile_shader(),
-                       SkBlendMode::kSrcOver,
-                       /* paintColorIsOpaque= */ true,
-                       /* matrixColorFilter= */ false,
-                       /* dither= */ false),
-          DrawTypeFlags::kNonAAFillRect,
-          kRGBA16F_1_D_SRGB },
-
-        // 40: 100% (1/1) handles 114
-        { LinearEffect(kV0_SRGB__V0_SRGB__true__UNKNOWN__Shader,
-                       create_hw_image_precompile_shader(),
-                       SkBlendMode::kSrcOver,
-                       /* paintColorIsOpaque= */ true,
-                       /* matrixColorFilter= */ false,
-                       /* dither= */ false),
-          DrawTypeFlags::kAnalyticRRect,
-          kRGBA_1_D_SRGB },
-
-        // 100% (1/1) handles 108
-        { LinearEffect(k0x188a0000__V0_SRGB__true__0x9010000__Shader,
-                       create_hw_image_precompile_shader(),
-                       SkBlendMode::kSrcOver,
-                       /* paintColorIsOpaque= */ true,
-                       /* matrixColorFilter= */ true,
-                       /* dither= */ true),
-          DrawTypeFlags::kAnalyticRRect,
-          kRGBA_1_D_SRGB },
-
-        // 100% (1/1) handles 113
-        { LinearEffect(k0x188a0000__V0_SRGB__true__0x9010000__Shader,
-                       create_hw_image_precompile_shader(),
-                       SkBlendMode::kSrcOver,
-                       /* paintColorIsOpaque= */ true,
-                       /* matrixColorFilter= */ false,
-                       /* dither= */ false),
-          DrawTypeFlags::kAnalyticRRect,
-          kRGBA_1_D_SRGB },
-
-        // 100% (1/1) handles 120
+        // 72: 100% (1/1) handles: 120
         { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
                        create_hw_image_precompile_shader(),
                        SkBlendMode::kSrcOver,
@@ -1012,7 +1298,7 @@ void VisitAndroidPrecompileSettings_Old(
           DrawTypeFlags::kNonAAFillRect | DrawTypeFlags::kAnalyticClip,
           kRGBA_1_D_SRGB },
 
-        // 100% (1/1) handles 131
+        // 73: 100% (1/1) handles: 131
         { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
                        create_hw_image_precompile_shader(),
                        SkBlendMode::kSrcOver,
@@ -1021,163 +1307,246 @@ void VisitAndroidPrecompileSettings_Old(
           DrawTypeFlags::kNonAAFillRect | DrawTypeFlags::kAnalyticClip,
           kRGBA_1_D_SRGB },
 
-        // 62% (15/24) handles 65 75 76 78 80 81 83 84 (+7 synthetic for non-convex draws)
-        { Builder().srcOver(),
-          DrawTypeFlags::kNonSimpleShape,
-          kRGBA_4_DS },
-
-        // Note: this didn't get folded into #2 since the RRect draw isn't appearing w/ a clip
-        // 50% (1/2) handles: 91
-        { Builder().hwImg(kPremul).srcOver(),
-          DrawTypeFlags::kNonAAFillRect | DrawTypeFlags::kAnalyticClip,
-          kRGBA_4_DS },
-
-        // Note: this didn't get folded into #9 since the RRect draw isn't appearing w/ a clip
-        // 75% (3/4) handles 89 92 (144)
-        { Builder().src().srcOver(),
-          DrawTypeFlags::kNonAAFillRect | DrawTypeFlags::kAnalyticClip,
-          kRGBA_4_DS },
-
-        // 50% (1/2) handles 60
-        { {}, // ignored
-          DrawTypeFlags::kDropShadows,
-          kRGBA_1_D },
-
-        // 75% (3/4) handles 82 85 (145)
-        { {}, // ignored
-          DrawTypeFlags::kDropShadows,
-          kRGBA_4_DS },
-
-        // 50: 100% (2/2) handles 96 112
-        { EdgeExtensionPremulSrcover(effectManager),
-          kRRectAndNonAARect,
-          kRGBA_1_D },
-
-        // 100% (1/1) handles: 126
-        { TransparentPaintEdgeExtensionPassthroughMatrixCFDitherSrcover(effectManager),
-          DrawTypeFlags::kNonAAFillRect,
-          kRGBA_1_D },
-
-        // 100% (1/1) handles 97
-        { TransparentPaintEdgeExtensionPassthroughSrcover(effectManager),
-          DrawTypeFlags::kNonAAFillRect,
-          kRGBA_1_D },
-
-        // 100% (1/1) handles 98
-        { TransparentPaintEdgeExtensionPremulSrcover(effectManager),
-          DrawTypeFlags::kNonAAFillRect,
-          kRGBA_1_D },
-
-        // 100% (2/2) handles 137 138
-        { EdgeExtensionPassthroughSrcover(effectManager),
-          DrawTypeFlags::kNonAAFillRect,
-          kRGBA_1_D,
-          kWithAnalyticClip },
-
-        // 50% (1/2) handles 101
-        { Builder().hwImg(kAlpha, kClamp).src(),
-          DrawTypeFlags::kNonAAFillRect,
-          kR_1_D },
-
-        // 100% (2/2) handles 109 129
-        { Builder().hwImg(kSRGB).matrixCF().srcOver(),
-          kRRectAndNonAARect,
+        // The next 3 have a RE_LinearEffect and a MatrixFilter along w/ different ancillary
+        // additions
+        // 74: 100% (1/1) handles: 20
+        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+                       create_hw_image_precompile_shader(),
+                       SkBlendMode::kSrcOver,
+                       /* paintColorIsOpaque= */ true,
+                       /* matrixColorFilter= */ true,
+                       /* dither= */ false),
+          DrawTypeFlags::kAnalyticRRect,
           kRGBA_1_D_SRGB },
 
-        // 100% (1/1) handles 104
-        { MouriMapCrosstalkAndChunk16x16Premul(effectManager),
+        // 75: 100% (1/1) handles: 13
+        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+                       create_hw_image_precompile_shader(),
+                       SkBlendMode::kSrcOver,
+                       /* paintColorIsOpaque= */ false,
+                       /* matrixColorFilter= */ true,
+                       /* dither= */ false),
+          DrawTypeFlags::kAnalyticRRect,
+          kRGBA_1_D_SRGB },
+
+        // 76: 100% (1/1) handles: 18
+        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+                       create_hw_image_precompile_shader(),
+                       SkBlendMode::kSrcOver,
+                       /* paintColorIsOpaque= */ true,
+                       /* matrixColorFilter= */ true,
+                       /* dither= */ true),   // note: null colorspace
+          DrawTypeFlags::kAnalyticRRect,
+          kRGBA_1_D_SRGB },
+
+        // 77: 50% (1/2) handles: 26
+        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+                       create_hw_image_precompile_shader(),
+                       SkBlendMode::kSrcOver),
+          DrawTypeFlags::kAnalyticRRect,
+          kCombo_RGBA_1D_4DS_SRGB },
+
+        // 78: 100% (2/2) handles: 139 140
+        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+                       create_hw_image_precompile_shader(),
+                       SkBlendMode::kSrcOver),
+          DrawTypeFlags::kNonAAFillRect,
+          kRGBA_1_D_SRGB,
+          kWithAnalyticClip },
+
+        // 79: 50% (1/2) handles: 11
+        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
+                       create_hw_image_precompile_shader(),
+                       SkBlendMode::kSrcOver,
+                       /* paintColorIsOpaque= */ false),
+          DrawTypeFlags::kAnalyticRRect,
+          kCombo_RGBA_1D_4DS_SRGB },
+
+        //------------------------------------------------------------------------------------------
+        // k0x188a0000__V0_SRGB__true__0x9010000__Shader
+
+        // 80: 75% (3/4) handles: 222 223 226
+        linear_hw_image(k0x188a0000__V0_SRGB__true__0x9010000__Shader, /* rrectStyle= */ false),
+        // 81: 50% (1/2) handles: 224
+        linear_hw_image(k0x188a0000__V0_SRGB__true__0x9010000__Shader, /* rrectStyle= */ true),
+
+        // 82: 75% (3/4) handles: 235 236 238
+        linear_hw_image(k0x188a0000__V0_SRGB__true__0x9010000__Shader,
+                        /* rrectStyle= */ false, /* opaquePaint= */ false),
+        // 83: 100% (2/2) handles: 237 239
+        linear_hw_image(k0x188a0000__V0_SRGB__true__0x9010000__Shader,
+                        /* rrectStyle= */ true, /* opaquePaint= */ false),
+
+        // 84: 100% (1/1) handles: 210
+        linear_hw_image_matrixfilter(k0x188a0000__V0_SRGB__true__0x9010000__Shader,
+                                     /* rrectStyle= */ true),
+
+        // 85: 50% (1/2) handles: 258
+        linear_hw_image_matrixfilter(k0x188a0000__V0_SRGB__true__0x9010000__Shader,
+                                     /* rrectStyle= */ false),
+
+// No matching labels
+//        linear_hw_image_matrixfilter_dither(k0x188a0000__V0_SRGB__true__0x9010000__Shader,
+//                                            /* rrectStyle= */ false),
+        // 86: 50% (1/2) handles: 248
+        linear_hw_image_matrixfilter_dither(k0x188a0000__V0_SRGB__true__0x9010000__Shader,
+                                            /* rrectStyle= */ true),
+
+// No matching labels
+//        linear_hw_image_srgb(k0x188a0000__V0_SRGB__true__0x9010000__Shader,
+//                             /* rrectStyle= */ false),
+        // 87: 50% (1/2) handles: 213
+        linear_hw_image_srgb(k0x188a0000__V0_SRGB__true__0x9010000__Shader,
+                             /* rrectStyle= */ true),
+
+        // 88: 50% (2/4) handles: 262 263
+        linear_hw_image_srgb(k0x188a0000__V0_SRGB__true__0x9010000__Shader,
+                             /* rrectStyle= */ false, /* opaquePaint= */ false),
+        // 89: 50% (1/2) handles: 264
+        linear_hw_image_srgb(k0x188a0000__V0_SRGB__true__0x9010000__Shader,
+                             /* rrectStyle= */ true, /* opaquePaint= */ false),
+
+        // 90: 100% (1/1) handles: 270(fake)
+        linear_solid(k0x188a0000__V0_SRGB__true__0x9010000__Shader),
+
+        // 91: 50% (1/2) handles: 272(fake)
+        linear_hw_image_matrixfilter_srgb(k0x188a0000__V0_SRGB__true__0x9010000__Shader, false),
+        // 92: 100% (1/1) handles: 273
+        linear_hw_image_matrixfilter_srgb(k0x188a0000__V0_SRGB__true__0x9010000__Shader, true),
+
+        // 93: 100% (1/1) handles: 108
+        { LinearEffect(k0x188a0000__V0_SRGB__true__0x9010000__Shader,
+                       create_hw_image_precompile_shader(),
+                       SkBlendMode::kSrcOver,
+                       /* paintColorIsOpaque= */ true,
+                       /* matrixColorFilter= */ true,
+                       /* dither= */ true),  // note: null colorspace
+          DrawTypeFlags::kAnalyticRRect,
+          kRGBA_1_D_SRGB },
+
+        // 94: 100% (1/1) handles: 113
+        { LinearEffect(k0x188a0000__V0_SRGB__true__0x9010000__Shader,
+                       create_hw_image_precompile_shader(),
+                       SkBlendMode::kSrcOver),
+          DrawTypeFlags::kAnalyticRRect,
+          kRGBA_1_D_SRGB },
+
+        //------------------------------------------------------------------------------------------
+        // kUNKNOWN__SRGB__false__UNKNOWN__Shader
+
+        // 95: 50% (2/4) handles: 214 215
+        linear_hw_image(kUNKNOWN__SRGB__false__UNKNOWN__Shader, /* rrectStyle= */ false),
+        // 96: 50% (1/2) handles: 216
+        linear_hw_image(kUNKNOWN__SRGB__false__UNKNOWN__Shader, /* rrectStyle= */ true),
+        // 66 is in this set for 16F/182
+
+        // 97: 50% (2/4) handles: 240 241
+        linear_hw_image(kUNKNOWN__SRGB__false__UNKNOWN__Shader,
+                        /* rrectStyle= */ false, /* opaquePaint= */ false),
+        // 98: 50% (1/2) handles: 242
+        linear_hw_image(kUNKNOWN__SRGB__false__UNKNOWN__Shader,
+                        /* rrectStyle= */ true, /* opaquePaint= */ false),
+
+        // 99: 100% (1/1) handles: 182
+        // A linear_hw_image but 16F
+        { LinearEffect(kUNKNOWN__SRGB__false__UNKNOWN__Shader,
+                       create_hw_image_precompile_shader(),
+                       SkBlendMode::kSrcOver,
+                       /* paintColorIsOpaque= */ true,
+                       /* matrixColorFilter= */ false,
+                       /* dither= */ false,
+                       SkColorSpace::MakeSRGBLinear()),
           DrawTypeFlags::kNonAAFillRect,
           kRGBA16F_1_D_SRGB },
 
-        // 67% (2/3) handles 107 146
-        { Builder().blend().srcOver(),
-          DrawTypeFlags::kAnalyticRRect,
-          kCombo_RGBA_1D_4DS },
-
-        // 100% (1/1) handles 122
-        { Builder().blend().srcOver(),
-          DrawTypeFlags::kNonAAFillRect | DrawTypeFlags::kAnalyticClip,
-          kRGBA_1_D },
-
-        // 100% (1/1) handles 117
-        { Builder().transparent().blend().srcOver(),
-          DrawTypeFlags::kNonAAFillRect,
-          kRGBA_1_D },
-
-        // TODO(robertphillips): The following 3 paint options duplicate earlier ones but add
-        // an SRGB working colorspace. It is likely the 3 paint options w/o the colorspace are
-        // now redundant.
-
-        // 59: 100% (2/2) handles 174 177
-        // This is just 34 w/ an SRGB working colorspace
-        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
-                       create_hw_image_precompile_shader(),
-                       SkBlendMode::kSrcOver,
-                       /* paintColorIsOpaque= */ true,
-                       /* matrixColorFilter= */ true,
-                       /* dither= */ false,
-                       SkColorSpace::MakeSRGBLinear()),
-          kRRectAndNonAARect,
-          kRGBA_1_D_SRGB },
-
-        // 60: 100% (1/1) handles 173
-        // This is just 35 w/ an SRGB working colorspace
-        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
-                       create_hw_image_precompile_shader(),
-                       SkBlendMode::kSrcOver,
-                       /* paintColorIsOpaque= */ false,
-                       /* matrixColorFilter= */ true,
-                       /* dither= */ false,
-                       SkColorSpace::MakeSRGBLinear()),
-          DrawTypeFlags::kAnalyticRRect,
-          kRGBA_1_D_SRGB },
-
-        // 61: 100% (2/2) handles 175 179
-        // This is just 36 w/ an SRGB working colorspace
-        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
-                       create_hw_image_precompile_shader(),
-                       SkBlendMode::kSrcOver,
-                       /* paintColorIsOpaque= */ true,
-                       /* matrixColorFilter= */ true,
-                       /* dither= */ true,
-                       SkColorSpace::MakeSRGBLinear()),
-          kRRectAndNonAARect,
-          kRGBA_1_D_SRGB },
-
-        // 62: 100% (1/1) handles 176
-        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
-                       create_hw_image_precompile_shader(),
-                       SkBlendMode::kSrcOver,
-                       /* paintColorIsOpaque= */ false,
-                       /* matrixColorFilter= */ false,
-                       /* dither= */ false,
-                       SkColorSpace::MakeSRGBLinear()),
-          DrawTypeFlags::kNonAAFillRect,
-          kRGBA_1_D_SRGB },
-
-        // 63: 100% (1/1) handles 180
-        // Just 62 w/ and opaque Paint color
-        { LinearEffect(k0x188a0000__DISPLAY_P3__false__0x90a0000__Shader,
-                       create_hw_image_precompile_shader(),
-                       SkBlendMode::kSrcOver,
-                       /* paintColorIsOpaque= */ true,
-                       /* matrixColorFilter= */ false,
-                       /* dither= */ false,
-                       SkColorSpace::MakeSRGBLinear()),
-          DrawTypeFlags::kNonAAFillRect,
-          kRGBA_1_D_SRGB },
-
-        // 64: 100% (1/1) handles: 178
+        // 100: 75% (3/4) handles: 178 181 188
         // This is just 24 wrapped in a very specific LinearEffect
+        linear_and_tonemap(&effectManager, kUNKNOWN__SRGB__false__UNKNOWN__Shader),
+
+        // 101: 100% (1/1) handles: 203
         { LinearEffect(kUNKNOWN__SRGB__false__UNKNOWN__Shader,
                        create_tone_map(effectManager),
                        SkBlendMode::kSrcOver,
+                       /* paintColorIsOpaque= */ false,
+                       /* matrixColorFilter= */ false,
+                       /* dither= */ false,
+                       SkColorSpace::MakeSRGBLinear()),
+          DrawTypeFlags::kNonAAFillRect,
+          kRGBA_1_D },
+
+        // 102: 100% (2/2) handles: 2 141
+        { LinearEffect(kUNKNOWN__SRGB__false__UNKNOWN__Shader,
+                       create_hw_image_precompile_shader(),
+                       SkBlendMode::kSrcOver),
+          DrawTypeFlags::kNonAAFillRect,
+          kCombo_RGBA_1D_SRGB_w16F },
+
+        // 103: 100% (1/1) handles: 183
+        { LinearEffect(kUNKNOWN__SRGB__false__UNKNOWN__Shader,
+                       PrecompileShaders::Color(),
+                       SkBlendMode::kSrcOver,
                        /* paintColorIsOpaque= */ true,
                        /* matrixColorFilter= */ false,
                        /* dither= */ false,
                        SkColorSpace::MakeSRGBLinear()),
           DrawTypeFlags::kNonAAFillRect,
+          kRGBA16F_1_D_SRGB },                                // note: 16F
+
+        // 104: 100% (1/1) handles: 4
+        { LinearEffect(kUNKNOWN__SRGB__false__UNKNOWN__Shader,
+                       PrecompileShaders::Color(),
+                       SkBlendMode::kSrcOver),
+          DrawTypeFlags::kNonAAFillRect,
+          kRGBA16F_1_D_SRGB },
+
+        //------------------------------------------------------------------------------------------
+        // kV0_SRGB__V0_SRGB__true__UNKNOWN__Shader
+
+        // 105: 75% (3/4) handles: 217 218 220
+        linear_hw_image(kV0_SRGB__V0_SRGB__true__UNKNOWN__Shader, /* rrectStyle= */ false),
+        // 106: 50% (1/2) handles: 219
+        linear_hw_image(kV0_SRGB__V0_SRGB__true__UNKNOWN__Shader, /* rrectStyle= */ true),
+
+        // 107: 50% (2/4) handles: 243 244(fake)
+        linear_hw_image(kV0_SRGB__V0_SRGB__true__UNKNOWN__Shader,
+                        /* rrectStyle= */ false, /* opaquePaint= */ false),
+        // 108: 50% (1/2) handles: 245
+        linear_hw_image(kV0_SRGB__V0_SRGB__true__UNKNOWN__Shader,
+                        /* rrectStyle= */ true, /* opaquePaint= */ false),
+
+        // 109: 75% (3/4) handles: 206 249 310
+        linear_and_tonemap(&effectManager, kV0_SRGB__V0_SRGB__true__UNKNOWN__Shader),
+
+        // 110: 100% (1/1) handles: 254
+        { LinearEffect(k0x188a0000__V0_SRGB__true__0x9010000__Shader,
+                       create_hw_image_precompile_shader(),
+                       SkBlendMode::kSrcOver,
+                       /* paintColorIsOpaque= */ false,
+                       /* matrixColorFilter= */ true,
+                       /* dither= */ true,
+                       SkColorSpace::MakeSRGBLinear()),
+          DrawTypeFlags::kAnalyticRRect,
           kRGBA_1_D_SRGB },
+
+        // 111: 100% (1/1) handles: 103
+        { LinearEffect(kV0_SRGB__V0_SRGB__true__UNKNOWN__Shader,
+                       create_hw_image_precompile_shader(),
+                       SkBlendMode::kSrcOver),
+          DrawTypeFlags::kNonAAFillRect,
+          kRGBA16F_1_D_SRGB },
+
+        // 112: 100% (1/1) handles: 114
+        { LinearEffect(kV0_SRGB__V0_SRGB__true__UNKNOWN__Shader,
+                       create_hw_image_precompile_shader(),
+                       SkBlendMode::kSrcOver),
+          DrawTypeFlags::kAnalyticRRect,
+          kRGBA_1_D_SRGB },
+
+        //------------------------------------------------------------------------------------------
+        // kBT2020_ITU_PQ__DISPLAY_P3__false__0x90a0000__Shader
+
+        // 113: 100% (1/1) handles: 268
+        linear_solid(kBT2020_ITU_PQ__DISPLAY_P3__false__0x90a0000__Shader),
 
 #if defined(SK_VULKAN) && defined(SK_BUILD_FOR_ANDROID)
 

@@ -30,6 +30,8 @@ public:
     sk_sp<SkShader> shader() const { return fShader; }
     SkRect subset() const { return fSubset; }
 
+    bool isOpaque() const override { return fShader->isOpaque(); }
+
 protected:
     SkCoordClampShader(SkReadBuffer&);
     void flatten(SkWriteBuffer&) const override;

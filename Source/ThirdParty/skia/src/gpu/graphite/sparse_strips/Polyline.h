@@ -8,6 +8,7 @@
 #define skgpu_graphite_sparse_strips_Polyline_DEFINED
 
 #include "include/core/SkScalar.h"
+#include "include/core/SkSpan.h"
 #include "include/private/base/SkTDArray.h"
 #include "src/gpu/graphite/sparse_strips/SparseStripsTypes.h"
 
@@ -37,6 +38,27 @@ public:
         SkASSERT(!std::isnan(pt.fX) && !std::isnan(pt.fY));
         if (fPoints.empty() || fPoints.back() != pt) {
             fPoints.push_back(pt);
+        }
+    }
+
+    // Bulk append to eliminate repetitive capacity checks and memory hits.
+    void appendPoints(SkSpan<const SkPoint> pts) {
+        if (pts.empty()) {
+            return;
+        }
+
+        fPoints.reserve(fPoints.size() + pts.size());
+
+        // Cache the last point in a local register.
+        // Note: If fPoints.back() is a NaN sentinel, pt != lastPt correctly evaluates to true.
+        SkPoint lastPt = fPoints.empty() ? SkPoint{SK_ScalarNaN, SK_ScalarNaN} : fPoints.back();
+
+        for (SkPoint pt : pts) {
+            SkASSERT(!std::isnan(pt.fX) && !std::isnan(pt.fY));
+            if (pt != lastPt) {
+                fPoints.push_back(pt);
+                lastPt = pt;
+            }
         }
     }
 

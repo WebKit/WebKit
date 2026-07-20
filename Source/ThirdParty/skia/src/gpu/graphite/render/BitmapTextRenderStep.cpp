@@ -60,9 +60,8 @@ BitmapTextRenderStep::BitmapTextRenderStep(Layout layout, skgpu::MaskFormat vari
         : RenderStep(layout,
                      variant_id(variant),
                      Flags(variant) | Flags::kAppendInstances,
-                     /*uniforms=*/{{"subRunDeviceMatrix", SkSLType::kFloat4x4},
-                                   {"deviceToLocal"     , SkSLType::kFloat4x4},
-                                   {"atlasSizeInv"      , SkSLType::kFloat2}},
+                     /*uniforms=*/{{"maskToDevice", SkSLType::kFloat4x4},
+                                   {"localToDevice", SkSLType::kFloat4x4}},
                      PrimitiveType::kTriangleStrip,
                      kDirectDepthLEqualPass,
                      /*staticAttrs=*/ {},
@@ -75,7 +74,7 @@ BitmapTextRenderStep::BitmapTextRenderStep(Layout layout, skgpu::MaskFormat vari
                       {"depth", VertexAttribType::kFloat, SkSLType::kFloat},
                       {"ssboIndex", VertexAttribType::kUInt, SkSLType::kUInt}}},
                      /*varyings=*/
-                     {{{"textureCoords", SkSLType::kFloat2},
+                     {{{"unormTexCoords", SkSLType::kFloat2},
                       {"texIndex", SkSLType::kHalf},
                       {"maskFormat", SkSLType::kHalf}}}) {}
 
@@ -100,17 +99,14 @@ std::string BitmapTextRenderStep::vertexSkSL() const {
     // must write to an already-defined float2 stepLocalCoords variable.
     return "texIndex = half(indexAndFlags.x);"
            "maskFormat = half(indexAndFlags.y);"
-           "float2 unormTexCoords;"
            "float4 devPosition = text_vertex_fn(float2(sk_VertexID >> 1, sk_VertexID & 1), "
-                                               "subRunDeviceMatrix, "
-                                               "deviceToLocal, "
-                                               "atlasSizeInv, "
+                                               "maskToDevice, "
+                                               "localToDevice, "
                                                "float2(size), "
                                                "float2(uvPos), "
                                                "xyPos, "
                                                "strikeToSourceScale, "
                                                "depth, "
-                                               "textureCoords, "
                                                "unormTexCoords, "
                                                "stepLocalCoords);";
 }
@@ -132,7 +128,7 @@ const char* BitmapTextRenderStep::fragmentColorSkSL() const {
     // The returned SkSL must write its color into a 'half4 primitiveColor' variable
     // (defined in the calling code).
     static_assert(kNumTextAtlasTextures == 4);
-    return "primitiveColor = sample_indexed_atlas(textureCoords, "
+    return "primitiveColor = sample_indexed_atlas(unormTexCoords, "
                                                  "int(texIndex), "
                                                  "text_atlas_0, "
                                                  "text_atlas_1, "
@@ -144,7 +140,7 @@ const char* BitmapTextRenderStep::fragmentCoverageSkSL() const {
     // The returned SkSL must write its coverage into a 'half4 outputCoverage' variable (defined in
     // the calling code) with the actual coverage splatted out into all four channels.
     static_assert(kNumTextAtlasTextures == 4);
-    return "outputCoverage = bitmap_text_coverage_fn(sample_indexed_atlas(textureCoords, "
+    return "outputCoverage = bitmap_text_coverage_fn(sample_indexed_atlas(unormTexCoords, "
                                                                          "int(texIndex), "
                                                                          "text_atlas_0, "
                                                                          "text_atlas_1, "
@@ -184,11 +180,15 @@ void BitmapTextRenderStep::writeUniformsAndTextures(const DrawParams& params,
     SkASSERT(proxies && numProxies > 0);
 
     // write uniforms
-    gatherer->write(params.transform().matrix());  // subRunDeviceMatrix
-    gatherer->write(subRunData.deviceToLocal());
-    SkV2 atlasDimensionsInverse = {1.f/proxies[0]->dimensions().width(),
-                                   1.f/proxies[0]->dimensions().height()};
-    gatherer->write(atlasDimensionsInverse);
+    // TODO(b/238753996): The maskToDevice should be adjusted similar to CoverageMaskRenderStep so
+    // that the integer translation is pulled into the instance data and this uniform is less likely
+    // to change.
+    // TODO(b/307766179): Similarly, we should discard the local-to-device matrix uniform value (and
+    // just set identity) if the paint doesn't actually require local coords.
+    // TODO(b/351923375): Precompute the 3x3 inverse of the local-to-device since it's shared by all
+    // instances? We can derive it from the Transform's existing 4x4 inverse.
+    gatherer->write(subRunData.maskToDevice());
+    gatherer->write(params.transform().matrix()); // local-to-device
 
     // write textures and samplers
     for (unsigned int i = 0; i < numProxies; ++i) {

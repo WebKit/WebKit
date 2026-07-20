@@ -129,6 +129,12 @@ void write_structured_document(SkWStream& outputStream, SkPDF::Metadata::Outline
     canvas->translate(72, 72);
     canvas->drawString(message, 0, 0, font, paint);
 
+    SkPDF::SetNodeId(canvas, 1);
+    font.setSize(12);
+    message = "Some document text";
+    canvas->translate(0, 20);
+    canvas->drawString(message, 0, 0, font, paint);
+
     SkPDF::SetNodeId(canvas, 3);
     font.setSize(14);
     message = "This is a simple paragraph.";
@@ -156,6 +162,12 @@ void write_structured_document(SkWStream& outputStream, SkPDF::Metadata::Outline
     canvas->translate(36, 0);
     canvas->drawString(message, 0, 0, font, paint);
 
+    SkPDF::SetNodeId(canvas, 1);
+    font.setSize(12);
+    message = "Some document text";
+    canvas->translate(0, 20);
+    canvas->drawString(message, 0, 0, font, paint);
+
     SkPDF::SetNodeId(canvas, 10);
     message = "This is a paragraph that starts on one page";
     canvas->translate(-36, 6 * 72);
@@ -172,7 +184,14 @@ void write_structured_document(SkWStream& outputStream, SkPDF::Metadata::Outline
 
     SkPDF::SetNodeId(canvas, 10);
     message = "and finishes on the second page.";
-    canvas->drawString(message, 72, 72, font, paint);
+    canvas->translate(72, 72);
+    canvas->drawString(message, 0, 0, font, paint);
+
+    SkPDF::SetNodeId(canvas, 1);
+    font.setSize(12);
+    message = "Some document text";
+    canvas->translate(0, 20);
+    canvas->drawString(message, 0, 0, font, paint);
 
     // Test a tagged image with alt text.
     SkPDF::SetNodeId(canvas, 11);
@@ -180,6 +199,11 @@ void write_structured_document(SkWStream& outputStream, SkPDF::Metadata::Outline
     testBitmap.allocN32Pixels(72, 72);
     testBitmap.eraseColor(SK_ColorRED);
     canvas->drawImage(testBitmap.asImage(), 72, 144);
+
+    SkPDF::SetNodeId(canvas, 10);
+    message = "and finishes on the second page.";
+    canvas->translate(72, 72);
+    canvas->drawString(message, 0, 0, font, paint);
 
     // This has a node ID but never shows up in the tag tree so it
     // won't be tagged.

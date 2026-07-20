@@ -1092,9 +1092,8 @@ float4 circular_arc_vertex_fn(float3 position,
 
 float4 text_vertex_fn(float2 baseCoords,
                       // Uniforms
-                      float4x4 subRunDeviceMatrix,
-                      float4x4 deviceToLocal,
-                      float2 atlasSizeInv,
+                      float4x4 maskToDevice,
+                      float4x4 localToDevice,
                       // Instance Attributes
                       float2 size,
                       float2 uvPos,
@@ -1102,25 +1101,23 @@ float4 text_vertex_fn(float2 baseCoords,
                       float strikeToSourceScale,
                       float depth,
                       // Varyings
-                      out float2 textureCoords,
-                      out float2 unormTexCoords,  // used as varying in SDFText
+                      out float2 unormTexCoords,
                       // Render Step
                       out float2 stepLocalCoords) {
     baseCoords.xy *= float2(size);
 
     // Sub runs have a decomposed transform and are sometimes already transformed into device
     // space, in which `subRunCoords` represents the bounds projected to device space without
-    // the local-to-device translation and `subRunDeviceMatrix` contains the translation.
+    // the local-to-device translation and `maskToDevice` contains the translation.
     float2 subRunCoords = strikeToSourceScale * baseCoords + xyPos;
-    float4 position = subRunDeviceMatrix * subRunCoords.xy01;
+    float4 position = maskToDevice * subRunCoords.xy01;
 
     // Calculate the local coords used for shading.
     // TODO(b/246963258): This is incorrect if the transform has perspective, which would
     // require a division + a valid z coordinate (which is currently set to 0).
-    stepLocalCoords = (deviceToLocal * position).xy;
+    stepLocalCoords = (inverse(localToDevice) * position).xy;
 
     unormTexCoords = baseCoords + uvPos;
-    textureCoords = unormTexCoords * atlasSizeInv;
 
     return float4(position.xy, depth*position.w, position.w);
 }
@@ -1133,7 +1130,7 @@ float4 coverage_mask_vertex_fn(float2 quadCoords,
                                float4 maskBoundsIn,
                                float2 deviceOrigin,
                                float depth,
-                               float3x3 deviceToLocal,
+                               float3x3 localToDevice,
                                // Varyings
                                out float4 maskBounds,
                                out float2 textureCoords,
@@ -1150,7 +1147,7 @@ float4 coverage_mask_vertex_fn(float2 quadCoords,
 
     // Local coordinates used for shading are derived from the final device coords and the inverse
     // of the original local-to-device matrix.
-    float3 localCoords = deviceToLocal * drawCoords;
+    float3 localCoords = inverse(localToDevice) * drawCoords;
     // TODO: Support float3 local coordinates if the matrix has perspective so that W is
     // interpolated correctly to the fragment shader.
     stepLocalCoords = localCoords.xy / localCoords.z;

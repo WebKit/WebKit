@@ -5,6 +5,9 @@
  * found in the LICENSE file.
  */
 
+#include "include/core/SkMatrix.h"
+#include "include/core/SkPathBuilder.h"
+#include "src/gpu/graphite/sparse_strips/Flatten.h"
 #include "src/gpu/graphite/sparse_strips/Polyline.h"
 #include "tests/Test.h"
 
@@ -147,6 +150,240 @@ DEF_TEST(SparseStrips_Polyline, reporter) {
         Polyline::LineIterator end(pts, 1, 1);
 
         REPORTER_ASSERT(reporter, !(it != end));
+    }
+}
+
+DEF_TEST(SparseStrips_Polyline_Integrated, reporter) {
+    // Simple rect
+    {
+        SkPathBuilder builder;
+        builder.addRect(SkRect::MakeXYWH(10, 10, 50, 50));
+        SkPath path = builder.detach();
+
+        Flatten flatten;
+        Polyline polyline;
+
+        flatten.processPaths<FlattenMode::kScalar>(path, SkMatrix::I(), 100.0f, 100.0f, &polyline);
+
+        REPORTER_ASSERT(reporter, polyline.count() == 6);
+        const auto& pts = polyline.points();
+        REPORTER_ASSERT(reporter, pts[0] == SkPoint::Make(10, 10));
+        REPORTER_ASSERT(reporter, pts[4] == SkPoint::Make(10, 10));
+        REPORTER_ASSERT(reporter, std::isnan(pts[5].fX));
+
+        int lineCount = 0;
+        for (auto [line, index] : polyline) {
+            lineCount++;
+            REPORTER_ASSERT(reporter, !std::isnan(line.p0.fX) && !std::isnan(line.p1.fX));
+        }
+        REPORTER_ASSERT(reporter, lineCount == 4);
+    }
+
+    // NaN injection between sub-paths
+    {
+        SkPathBuilder builder;
+        builder.moveTo(0, 0);
+        builder.lineTo(10, 0);
+
+        builder.moveTo(20, 20); // Triggers sentinel for previous open path
+        builder.lineTo(30, 20);
+        SkPath path = builder.detach();
+
+        Flatten flatten;
+        Polyline polyline;
+
+        flatten.processPaths<FlattenMode::kScalar>(path, SkMatrix::I(), 100.0f, 100.0f, &polyline);
+
+        REPORTER_ASSERT(reporter, polyline.count() == 8);
+
+        const auto& pts = polyline.points();
+        REPORTER_ASSERT(reporter, pts[1] == SkPoint::Make(10, 0));
+        REPORTER_ASSERT(reporter, pts[2] == SkPoint::Make(0, 0));
+        REPORTER_ASSERT(reporter, std::isnan(pts[3].fX));
+
+        REPORTER_ASSERT(reporter, pts[4] == SkPoint::Make(20, 20));
+        REPORTER_ASSERT(reporter, std::isnan(pts[7].fX));
+
+        int lineCount = 0;
+        for (auto [line, index] : polyline) {
+            lineCount++;
+            REPORTER_ASSERT(reporter, index != 2 && index != 3 && index != 6 && index != 7);
+        }
+        REPORTER_ASSERT(reporter, lineCount == 4);
+    }
+
+    // Deduplication
+    {
+        SkPathBuilder builder;
+        builder.moveTo(0, 0);
+        builder.lineTo(10, 10);
+        builder.lineTo(10, 10);
+        builder.lineTo(20, 0);
+        builder.close();
+        SkPath path = builder.detach();
+
+        Flatten flatten;
+        Polyline polyline;
+
+        flatten.processPaths<FlattenMode::kScalar>(path, SkMatrix::I(), 100.0f, 100.0f, &polyline);
+
+        REPORTER_ASSERT(reporter, polyline.count() == 5);
+        const auto& pts = polyline.points();
+        REPORTER_ASSERT(reporter, pts[1] == SkPoint::Make(10, 10));
+        REPORTER_ASSERT(reporter, pts[2] == SkPoint::Make(20, 0));
+    }
+
+    // Simplification
+    {
+        SkPathBuilder builder;
+
+        // Left of Viewport
+        // Quad
+        builder.moveTo(-10, 10);
+        builder.quadTo(-20, 20, -30, 10);
+        // Conic
+        builder.moveTo(-10, 30);
+        builder.conicTo(-20, 40, -30, 30, 0.5f);
+        // Cubic
+        builder.moveTo(-10, 50);
+        builder.cubicTo(-20, 60, -30, 60, -40, 50);
+
+        // Visually flat
+        // Quad (Control point is collinear with start and end)
+        builder.moveTo(10, 10);
+        builder.quadTo(20, 10, 30, 10);
+        // Conic (Control point is collinear)
+        builder.moveTo(10, 30);
+        builder.conicTo(20, 30, 30, 30, 0.5f);
+        // Cubic (Both control points are collinear)
+        builder.moveTo(10, 50);
+        builder.cubicTo(20, 50, 30, 50, 40, 50);
+
+        SkPath path = builder.detach();
+
+        Flatten flatten;
+        Polyline polyline;
+        flatten.processPaths<FlattenMode::kScalar>(path, SkMatrix::I(), 100.0f, 100.0f, &polyline);
+        // Expected per contour: Start Pt, Simplified End Pt, Implicit Close Pt, NaN.
+        // 6 contours * 4 pts = 24 points total
+        REPORTER_ASSERT(reporter, polyline.count() == 24);
+        const auto& pts = polyline.points();
+
+        // Left of Viewport Simplification
+        REPORTER_ASSERT(reporter, pts[0] == SkPoint::Make(-10, 10));
+        REPORTER_ASSERT(reporter, pts[1] == SkPoint::Make(-30, 10)); // Quad simplified
+        REPORTER_ASSERT(reporter, pts[2] == SkPoint::Make(-10, 10)); // Close
+        REPORTER_ASSERT(reporter, std::isnan(pts[3].fX));
+
+        REPORTER_ASSERT(reporter, pts[4] == SkPoint::Make(-10, 30));
+        REPORTER_ASSERT(reporter, pts[5] == SkPoint::Make(-30, 30)); // Conic simplified
+        REPORTER_ASSERT(reporter, pts[6] == SkPoint::Make(-10, 30)); // Close
+        REPORTER_ASSERT(reporter, std::isnan(pts[7].fX));
+
+        REPORTER_ASSERT(reporter, pts[8] == SkPoint::Make(-10, 50));
+        REPORTER_ASSERT(reporter, pts[9] == SkPoint::Make(-40, 50)); // Cubic simplified
+        REPORTER_ASSERT(reporter, pts[10] == SkPoint::Make(-10, 50)); // Close
+        REPORTER_ASSERT(reporter, std::isnan(pts[11].fX));
+
+        // Visually Flat Simplification
+        REPORTER_ASSERT(reporter, pts[12] == SkPoint::Make(10, 10));
+        REPORTER_ASSERT(reporter, pts[13] == SkPoint::Make(30, 10)); // Quad flat
+        REPORTER_ASSERT(reporter, pts[14] == SkPoint::Make(10, 10)); // Close
+        REPORTER_ASSERT(reporter, std::isnan(pts[15].fX));
+
+        REPORTER_ASSERT(reporter, pts[16] == SkPoint::Make(10, 30));
+        REPORTER_ASSERT(reporter, pts[17] == SkPoint::Make(30, 30)); // Conic flat
+        REPORTER_ASSERT(reporter, pts[18] == SkPoint::Make(10, 30)); // Close
+        REPORTER_ASSERT(reporter, std::isnan(pts[19].fX));
+
+        REPORTER_ASSERT(reporter, pts[20] == SkPoint::Make(10, 50));
+        REPORTER_ASSERT(reporter, pts[21] == SkPoint::Make(40, 50)); // Cubic flat
+        REPORTER_ASSERT(reporter, pts[22] == SkPoint::Make(10, 50)); // Close
+        REPORTER_ASSERT(reporter, std::isnan(pts[23].fX));
+    }
+
+    // Culling (Entirely top, right, or bottom of the viewport)
+    {
+        SkPathBuilder builder;
+        builder.moveTo(10, -10);
+        builder.quadTo(20, -20, 30, -10);
+
+        builder.moveTo(110, 10);
+        builder.conicTo(120, 20, 130, 10, 0.5f);
+
+        builder.moveTo(10, 110);
+        builder.cubicTo(20, 120, 30, 120, 40, 110);
+        SkPath path = builder.detach();
+
+        Flatten flatten;
+        Polyline polyline;
+        flatten.processPaths<FlattenMode::kScalar>(path, SkMatrix::I(), 100.0f, 100.0f, &polyline);
+
+        // Curves are fully dropped. The implicit close points match the moveTo points
+        // exactly, so Polyline drops the close point via deduplication!
+        // Expected per contour: Start Pt, NaN. (2 pts * 3 = 6)
+        REPORTER_ASSERT(reporter, polyline.count() == 6);
+        const auto& pts = polyline.points();
+
+        REPORTER_ASSERT(reporter, pts[0] == SkPoint::Make(10, -10));
+        REPORTER_ASSERT(reporter, std::isnan(pts[1].fX));
+
+        REPORTER_ASSERT(reporter, pts[2] == SkPoint::Make(110, 10));
+        REPORTER_ASSERT(reporter, std::isnan(pts[3].fX));
+
+        REPORTER_ASSERT(reporter, pts[4] == SkPoint::Make(10, 110));
+        REPORTER_ASSERT(reporter, std::isnan(pts[5].fX));
+    }
+
+    // Interleaved valid geometry with culling and simplification
+    {
+        SkPathBuilder builder;
+
+        // Contour 1: Weaves outside to the left and back
+        builder.moveTo(10, 10);
+        builder.lineTo(20, 10);
+        builder.lineTo(-10, 10); // Exits left
+        builder.quadTo(-20, 20, -30, 10); // Simplifies to line (-30, 10)
+        builder.lineTo(10, 20); // Re-enters viewport
+
+        // Contour 2: Completely culled contour
+        builder.moveTo(150, 150);
+        builder.cubicTo(160, 160, 170, 160, 180, 150);
+
+        // Contour 3: Valid normal contour
+        builder.moveTo(30, 30);
+        builder.lineTo(40, 30);
+
+        SkPath path = builder.detach();
+
+        Flatten flatten;
+        Polyline polyline;
+        flatten.processPaths<FlattenMode::kScalar>(path, SkMatrix::I(), 100.0f, 100.0f, &polyline);
+
+        // Contour 1: moveTo + 3 lineTos + simplified quad + lineTo + close + NaN = 7 points
+        // Contour 2: moveTo + NaN (close is deduplicated due to complete culling) = 2 points
+        // Contour 3: moveTo + lineTo + close + NaN = 4 points
+        // Total expected = 13 points
+        REPORTER_ASSERT(reporter, polyline.count() == 13);
+
+        const auto& pts = polyline.points();
+
+        // Verify Contour 1 simplified correctly without dropping points
+        REPORTER_ASSERT(reporter, pts[0] == SkPoint::Make(10, 10));
+        REPORTER_ASSERT(reporter, pts[3] == SkPoint::Make(-30, 10)); // Simplified Quad
+        REPORTER_ASSERT(reporter, pts[4] == SkPoint::Make(10, 20));  // Return line
+        REPORTER_ASSERT(reporter, pts[5] == SkPoint::Make(10, 10));  // Implicit close
+        REPORTER_ASSERT(reporter, std::isnan(pts[6].fX));
+
+        // Verify Contour 2 was fully culled
+        REPORTER_ASSERT(reporter, pts[7] == SkPoint::Make(150, 150));
+        REPORTER_ASSERT(reporter, std::isnan(pts[8].fX));
+
+        // Verify Contour 3 generated successfully despite the previous culling
+        REPORTER_ASSERT(reporter, pts[9] == SkPoint::Make(30, 30));
+        REPORTER_ASSERT(reporter, pts[10] == SkPoint::Make(40, 30));
+        REPORTER_ASSERT(reporter, pts[11] == SkPoint::Make(30, 30));
+        REPORTER_ASSERT(reporter, std::isnan(pts[12].fX));
     }
 }
 

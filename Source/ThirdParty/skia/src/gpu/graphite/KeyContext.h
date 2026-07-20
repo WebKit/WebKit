@@ -11,6 +11,7 @@
 #include "include/core/SkImageInfo.h"
 #include "include/core/SkM44.h"
 #include "include/core/SkMatrix.h"
+#include "include/core/SkRect.h"
 #include "src/base/SkEnumBitMask.h"
 #include "src/core/SkColorData.h"
 #include "src/core/SkColorSpaceXformSteps.h"
@@ -31,19 +32,23 @@ class RuntimeEffectDictionary;
 class ShaderCodeDictionary;
 
 enum class KeyGenFlags : uint8_t {
-    kDefault = 0b0,
+    kDefault = 0x0,
     // By default, linear sampling can be optimized to nearest when it's visually equivalent.
     // This flag disables this behavior.
-    kDisableSamplingOptimization       = 0b001,
+    kDisableSamplingOptimization       = 0x1,
     // By default, identity color conversions map to ColorSpaceTransformPremul as a reasonably
     // performant baseline that avoids shader combinatorics. However, in certain contexts (such as
     // image filters or runtime effects) that sample an image many times *and* perform up front
     // work to ensure there doesn't need to be any color conversion, skipping color space conversion
     // in the shader produces meaningful performance improvements.
-    kEnableIdentityColorSpaceXform     = 0b010,
+    kEnableIdentityColorSpaceXform     = 0x2,
     // By default, alpha-only image shaders are colorized by the paint's color. In the context of
     // a runtime effect this is disabled.
-    kDisableAlphaOnlyImageColorization = 0b100,
+    kDisableAlphaOnlyImageColorization = 0x4,
+    // By default, key generation maintains the requested blend mode; if this flag is added it is
+    // a hint to keep the final blend as kSrc (so that either the draw or its corresponding inner
+    // fill benefit from disabling HW blending).
+    kPreferFixedSrcBlend               = 0x8
 };
 SK_MAKE_BITMASK_OPS(KeyGenFlags)
 
@@ -68,12 +73,15 @@ public:
                PaintParamsKeyBuilder*,
                PipelineDataGatherer*,
                const SkM44& local2Dev,
+               const SkRect& clipDrawBounds,
                const SkColorInfo& dstColorInfo,
                SkEnumBitMask<KeyGenFlags> initialFlags,
                const SkColor4f& paintColor);
 
     KeyContext(const KeyContext&, SkEnumBitMask<KeyGenFlags> xtraFlags=KeyGenFlags::kDefault);
     ~KeyContext();
+
+    KeyContext& operator=(const KeyContext&);
 
     // Create scoped KeyContexts that allow child effects to be processed differently.
     KeyContext withColorInfo(const SkColorInfo& info) const {
@@ -119,6 +127,8 @@ public:
 
     SkEnumBitMask<KeyGenFlags> flags() const { return fKeyGenFlags; }
 
+    const SkRect& clipDrawBounds() const { return fClipDrawBounds; }
+
 private:
     // Fields which will not change over the course of building a paint key
     const Caps* fCaps;
@@ -130,6 +140,7 @@ private:
     ShaderCodeDictionary* fDictionary;
     sk_sp<RuntimeEffectDictionary> fRTEffectDict;
     SkM44 fLocal2Dev;
+    SkRect fClipDrawBounds;
 
 protected:
     // Fields that can be modified while walking a paint's effects for a key

@@ -372,6 +372,7 @@ void fuzz_graphite(Fuzz* fuzz, Context* context, int depth = 9) {
                           &builder,
                           &gatherer,
                           {},
+                          SkRect::MakeEmpty(),
                           ci,
                           KeyGenFlags::kDisableSamplingOptimization,
                           paintParams.color());

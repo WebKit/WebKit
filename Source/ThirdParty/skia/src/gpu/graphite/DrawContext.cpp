@@ -93,11 +93,13 @@ DrawContext::DrawContext(const Caps* caps,
         , fDstReadStrategy(caps->getDstReadStrategy())
         , fSupportsHardwareAdvancedBlend(caps->supportsHardwareAdvancedBlending())
         , fAdvancedBlendsRequireBarrier(caps->blendEquationSupport() ==
-                                            Caps::BlendEquationSupport::kAdvancedNoncoherent)
+                                        Caps::BlendEquationSupport::kAdvancedNoncoherent)
         , fCurrentDrawTask(sk_make_sp<DrawTask>(fTarget.refProxy()))
-        , fPendingDraws(caps->useDrawListLayer() ?
-                        std::unique_ptr<DrawListBase>(std::make_unique<DrawListLayer>()) :
-                        std::unique_ptr<DrawListBase>(std::make_unique<DrawList>()))
+        , fPendingDraws(
+                  caps->useDrawListLayer()
+                          ? std::unique_ptr<DrawListBase>(std::make_unique<DrawListLayer>(
+                                   caps->storageBufferSupport()))
+                          : std::unique_ptr<DrawListBase>(std::make_unique<DrawList>()))
         , fPendingUploads(std::make_unique<UploadList>()) {
     // Must determine a valid strategy to use should a dst texture read be required.
     SkASSERT(fDstReadStrategy != DstReadStrategy::kNoneRequired);
@@ -186,23 +188,11 @@ std::pair<DrawParams*, Insertion> DrawContext::recordDraw(
 }
 
 bool DrawContext::recordUpload(Recorder* recorder,
-                               const TextureProxyView& dstView,
-                               const SkColorInfo& srcColorInfo,
-                               const SkColorInfo& dstColorInfo,
                                const UploadSource& source,
-                               const SkIRect& dstRect,
                                std::unique_ptr<ConditionalUploadContext> condContext) {
-    // Our caller should have clipped to the bounds of the surface already.
-    SkASSERT(dstView.proxy()->isFullyLazy() ||
-             SkIRect::MakeSize(dstView.dimensions()).contains(dstRect));
-    SkASSERT(source.isValid());
-    return fPendingUploads->recordUpload(recorder,
-                                         std::move(dstView),
-                                         srcColorInfo,
-                                         dstColorInfo,
-                                         source,
-                                         dstRect,
-                                         std::move(condContext));
+    // Since this upload is inline with the DrawContext's tasks, we do not attempt to upload it
+    // directly via the host, we want to keep it as a repeatable task.
+    return fPendingUploads->recordUpload(recorder, source, std::move(condContext));
 }
 
 void DrawContext::recordDependency(sk_sp<Task> task) {

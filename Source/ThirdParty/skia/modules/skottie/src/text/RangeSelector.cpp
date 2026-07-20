@@ -17,9 +17,11 @@
 #include "modules/skottie/src/SkottieJson.h"
 #include "modules/skottie/src/SkottiePriv.h"
 #include "modules/skottie/src/animator/Animator.h"
+#include "modules/skottie/src/text/TextAnimator.h"
 
 #include <algorithm>
 #include <limits>
+#include <random>
 #include <vector>
 
 namespace skottie {
@@ -78,30 +80,16 @@ struct UnitTraits<RangeSelector::Units::kIndex> {
 
 class CoverageProcessor {
 public:
-    CoverageProcessor(const TextAnimator::DomainMaps& maps,
+    CoverageProcessor(const TextAnimator::DomainMap* map,
                       RangeSelector::Domain domain,
                       RangeSelector::Mode mode,
                       TextAnimator::ModulatorBuffer& dst)
         : fDst(dst)
+        , fMap(map)
         , fDomainSize(dst.size()) {
 
         SkASSERT(mode == RangeSelector::Mode::kAdd);
         fProc = &CoverageProcessor::add_proc;
-
-        switch (domain) {
-        case RangeSelector::Domain::kChars:
-            // Direct (1-to-1) index mapping.
-            break;
-        case RangeSelector::Domain::kCharsExcludingSpaces:
-            fMap = &maps.fNonWhitespaceMap;
-            break;
-        case RangeSelector::Domain::kWords:
-            fMap = &maps.fWordsMap;
-            break;
-        case RangeSelector::Domain::kLines:
-            fMap = &maps.fLinesMap;
-            break;
-        }
 
         // When no domain map is active, fProc points directly to the mode proc.
         // Otherwise, we punt through a domain mapper proxy.
@@ -284,11 +272,15 @@ sk_sp<RangeSelector> RangeSelector::Make(const skjson::ObjectValue* jrange,
         Shape::kSmooth,      // 'sh': 6
     };
 
+    // 'rn': 0 | 1
+    const bool randomize_order = SkToBool(ParseDefault((*jrange)["rn"], 0));
+
     auto selector = sk_sp<RangeSelector>(
             new RangeSelector(ParseEnum<Units> (gUnitMap  , (*jrange)["r" ], abuilder, "units" ),
                               ParseEnum<Domain>(gDomainMap, (*jrange)["b" ], abuilder, "domain"),
                               ParseEnum<Mode>  (gModeMap  , (*jrange)["m" ], abuilder, "mode"  ),
-                              ParseEnum<Shape> (gShapeMap , (*jrange)["sh"], abuilder, "shape" )));
+                              ParseEnum<Shape> (gShapeMap , (*jrange)["sh"], abuilder, "shape" ),
+                              randomize_order));
 
     acontainer->bind(*abuilder, (*jrange)["s" ], &selector->fStart );
     acontainer->bind(*abuilder, (*jrange)["e" ], &selector->fEnd   );
@@ -305,11 +297,12 @@ sk_sp<RangeSelector> RangeSelector::Make(const skjson::ObjectValue* jrange,
     return selector;
 }
 
-RangeSelector::RangeSelector(Units u, Domain d, Mode m, Shape sh)
+RangeSelector::RangeSelector(Units u, Domain d, Mode m, Shape sh, bool ro)
     : fUnits(u)
     , fDomain(d)
     , fMode(m)
-    , fShape(sh) {
+    , fShape(sh)
+    , fRandomizeOrder(ro) {
 
     // Range defaults are unit-specific.
     switch (fUnits) {
@@ -338,6 +331,51 @@ std::tuple<float, float> RangeSelector::resolve(size_t len) const {
     return std::make_tuple(f_i0, f_i1);
 }
 
+void RangeSelector::updateDomainMap(const TextAnimator::DomainMaps& maps, size_t fragment_count) {
+    switch (fDomain) {
+        case Domain::kChars:
+            fMap = nullptr;
+            break;
+        case Domain::kCharsExcludingSpaces:
+            fMap = &maps.fNonWhitespaceMap;
+            break;
+        case Domain::kWords:
+            fMap = &maps.fWordsMap;
+            break;
+        case Domain::kLines:
+            fMap = &maps.fLinesMap;
+            break;
+    }
+
+    if (fRandomizeOrder) {
+        if (fMap) {
+            fLocalMap = *fMap;
+        } else {
+            SkASSERT(fDomain == Domain::kChars);
+            // We don't normally generate a map for Domain::kChars, since it's trivial (1:1).
+            // So we generate one on the fly here, for randomization.
+            if (!fLocalMap) {
+                fLocalMap.emplace();
+            } else {
+                fLocalMap->clear();
+            }
+            fLocalMap->reserve(fragment_count);
+            for (size_t i = 0; i < fragment_count; ++i) {
+                fLocalMap->push_back({
+                    .fOffset  = i,
+                    .fCount   = 1,
+                    .fAdvance = 0,  // not used for range selectors
+                    .fAscent  = 0,  // not used for range selectors
+                });
+            }
+        }
+
+        static constexpr int kSeed = 42;
+        std::mt19937 rng_engine(kSeed);
+        std::shuffle(fLocalMap->begin(), fLocalMap->end(), rng_engine);
+    }
+}
+
 /*
  * General RangeSelector operation:
  *
@@ -352,9 +390,9 @@ std::tuple<float, float> RangeSelector::resolve(size_t len) const {
  *   4) Finally, the resulting coverage is accumulated to existing fragment coverage based on
  *      the specified Mode (add, difference, etc).
  */
-void RangeSelector::modulateCoverage(const TextAnimator::DomainMaps& maps,
-                                     TextAnimator::ModulatorBuffer& mbuf) const {
-    const CoverageProcessor coverage_proc(maps, fDomain, fMode, mbuf);
+void RangeSelector::modulateCoverage(TextAnimator::ModulatorBuffer& mbuf) const {
+    const TextAnimator::DomainMap* map = fLocalMap ? &fLocalMap.value() : fMap;
+    const CoverageProcessor coverage_proc(map, fDomain, fMode, mbuf);
     if (coverage_proc.size() == 0) {
         return;
     }

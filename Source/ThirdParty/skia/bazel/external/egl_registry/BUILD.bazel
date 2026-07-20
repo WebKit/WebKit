@@ -1,0 +1,22 @@
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
+exports_files(["api/egl.xml"])
+
+cc_library(
+    name = "egl_registry",
+    srcs = [
+        "api/1.0/EGL/egl.h",
+        "api/1.0/egl.h",
+        "api/1.1/EGL/egl.h",
+        "api/1.2/EGL/egl.h",
+        "api/1.2/egl.h",
+    ],
+    hdrs = [
+        "api/EGL/egl.h",
+        "api/EGL/eglext.h",
+        "api/EGL/eglplatform.h",
+        "api/KHR/khrplatform.h",
+    ],
+    includes = ["api"],
+    visibility = ["//visibility:public"],
+)

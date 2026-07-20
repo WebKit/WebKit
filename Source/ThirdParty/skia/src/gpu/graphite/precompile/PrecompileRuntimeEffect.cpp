@@ -89,11 +89,13 @@ bool children_are_valid(SkRuntimeEffect* effect,
 
 } // anonymous namespace
 
-template<typename T>
-class PrecompileRTEffect : public T {
+template <typename Base>
+class PrecompileRTEffectBase : public Base {
+    static_assert(std::is_base_of<PrecompileBase, Base>::value);
+
 public:
-    PrecompileRTEffect(sk_sp<SkRuntimeEffect> effect,
-                       SkSpan<const PrecompileChildOptions> childOptions)
+    PrecompileRTEffectBase(sk_sp<SkRuntimeEffect> effect,
+                           SkSpan<const PrecompileChildOptions> childOptions)
             : fEffect(std::move(effect)) {
         fChildOptions.reserve(childOptions.size());
         for (PrecompileChildOptions c : childOptions) {
@@ -110,11 +112,10 @@ public:
         SkASSERT(fChildOptions.size() == fEffect->children().size());
     }
 
-private:
+protected:
     int numChildCombinations() const override { return fNumChildCombinations; }
 
     void addToKey(const KeyContext& keyContext, int desiredCombination) const override {
-
         SkASSERT(desiredCombination < this->numCombinations());
 
         SkSpan<const SkRuntimeEffect::Child> childInfo = fEffect->children();
@@ -134,7 +135,7 @@ private:
             remainingCombinations /= numSlotCombinations;
 
             auto [option, childOptions] = PrecompileBase::SelectOption(
-                    SkSpan<const sk_sp<PrecompileBase>>(slotOptions),
+                    SkSpan(slotOptions),
                     slotOption);
 
             KeyContext childContext = keyContext.forRuntimeEffect(fEffect.get(), rowIndex);
@@ -177,6 +178,39 @@ private:
     int fNumChildCombinations;
 };
 
+class PrecompileRTShader : public PrecompileRTEffectBase<PrecompileShader> {
+public:
+    PrecompileRTShader(sk_sp<SkRuntimeEffect> effect,
+                       SkSpan<const PrecompileChildOptions> childOptions)
+            : PrecompileRTEffectBase(std::move(effect), childOptions) {}
+
+private:
+    bool isOpaque(int /*desiredCombination*/) const override {
+        // Runtime effect's analysis is not dependent on the actual bound children.
+        return SkRuntimeEffectPriv::AlwaysOpaque(fEffect.get());
+    }
+};
+
+class PrecompileRTColorFilter : public PrecompileRTEffectBase<PrecompileColorFilter> {
+public:
+    PrecompileRTColorFilter(sk_sp<SkRuntimeEffect> effect,
+                            SkSpan<const PrecompileChildOptions> childOptions)
+            : PrecompileRTEffectBase(std::move(effect), childOptions) {}
+
+private:
+    bool isAlphaUnchanged(int /*desiredOption*/) const override {
+        // Runtime effect's analysis is not dependent on the actual bound children.
+        return SkRuntimeEffectPriv::IsAlphaUnchanged(fEffect.get());
+    }
+};
+
+class PrecompileRTBlender : public PrecompileRTEffectBase<PrecompileBlender> {
+public:
+    PrecompileRTBlender(sk_sp<SkRuntimeEffect> effect,
+                        SkSpan<const PrecompileChildOptions> childOptions)
+            : PrecompileRTEffectBase(std::move(effect), childOptions) {}
+};
+
 sk_sp<PrecompileShader> PrecompileRuntimeEffects::MakePrecompileShader(
         sk_sp<SkRuntimeEffect> effect,
         SkSpan<const PrecompileChildOptions> childOptions) {
@@ -188,7 +222,7 @@ sk_sp<PrecompileShader> PrecompileRuntimeEffects::MakePrecompileShader(
         return nullptr;
     }
 
-    return sk_make_sp<PrecompileRTEffect<PrecompileShader>>(std::move(effect), childOptions);
+    return sk_make_sp<PrecompileRTShader>(std::move(effect), childOptions);
 }
 
 sk_sp<PrecompileColorFilter> PrecompileRuntimeEffects::MakePrecompileColorFilter(
@@ -202,7 +236,7 @@ sk_sp<PrecompileColorFilter> PrecompileRuntimeEffects::MakePrecompileColorFilter
         return nullptr;
     }
 
-    return sk_make_sp<PrecompileRTEffect<PrecompileColorFilter>>(std::move(effect), childOptions);
+    return sk_make_sp<PrecompileRTColorFilter>(std::move(effect), childOptions);
 }
 
 sk_sp<PrecompileBlender> PrecompileRuntimeEffects::MakePrecompileBlender(
@@ -216,7 +250,7 @@ sk_sp<PrecompileBlender> PrecompileRuntimeEffects::MakePrecompileBlender(
         return nullptr;
     }
 
-    return sk_make_sp<PrecompileRTEffect<PrecompileBlender>>(std::move(effect), childOptions);
+    return sk_make_sp<PrecompileRTBlender>(std::move(effect), childOptions);
 }
 
 } // namespace skgpu::graphite

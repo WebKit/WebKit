@@ -306,6 +306,7 @@ void extract_vs_build_subtest(skiatest::Reporter* reporter,
                               precompileKeyContext.paintParamsKeyBuilder(),
                               &paramsGatherer,
                               {},
+                              SkRect::MakeEmpty(),
                               precompileKeyContext.dstColorInfo(),
                               KeyGenFlags::kDisableSamplingOptimization,
                               paintParams.color());

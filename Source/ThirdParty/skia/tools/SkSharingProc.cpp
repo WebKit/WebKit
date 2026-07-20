@@ -14,10 +14,66 @@
 #include "include/core/SkData.h"
 #include "include/core/SkImage.h"
 #include "include/core/SkPicture.h"
+#include "include/core/SkPixmap.h"
 #include "include/core/SkSerialProcs.h"
 #include "include/core/SkStream.h"
 #include "include/encode/SkPngEncoder.h"
 #include "include/private/base/SkLog.h"
+
+#if defined(SK_GRAPHITE)
+#include "include/gpu/graphite/Context.h"
+#endif
+
+static sk_sp<SkImage> make_raster_image(SkImage* img, GrDirectContext* dctx,
+                                        skgpu::graphite::Context* gctx) {
+    if (!img || !img->isTextureBacked()) {
+        return sk_ref_sp(img);
+    }
+    if (dctx) {
+        return img->makeRasterImage(dctx);
+    }
+#if defined(SK_GRAPHITE)
+    if (!gctx) {
+        return nullptr;
+    }
+    SkImageInfo info = img->imageInfo().makeColorType(kRGBA_8888_SkColorType)
+                                       .makeAlphaType(kPremul_SkAlphaType);
+    SkBitmap bitmap;
+    if (!bitmap.tryAllocPixels(info)) {
+        return nullptr;
+    }
+
+    struct AsyncContext {
+        SkBitmap fBitmap;
+        bool fCalled = false;
+        bool fSuccess = false;
+    } asyncContext;
+    asyncContext.fBitmap = bitmap;
+
+    auto callback = [](SkImage::ReadPixelsContext context,
+                       std::unique_ptr<const SkImage::AsyncReadResult> result) {
+        AsyncContext* ctx = reinterpret_cast<AsyncContext*>(context);
+        if (result && result->count() == 1) {
+            SkPixmap src(ctx->fBitmap.info(), result->data(0), result->rowBytes(0));
+            ctx->fBitmap.writePixels(src);
+            ctx->fSuccess = true;
+        }
+        ctx->fCalled = true;
+    };
+    gctx->asyncRescaleAndReadPixels(img, info, img->bounds(),
+                                    SkImage::RescaleGamma::kSrc,
+                                    SkImage::RescaleMode::kNearest,
+                                    callback, &asyncContext);
+    gctx->submit(skgpu::graphite::SyncToCpu::kYes);
+    while (!asyncContext.fCalled) {
+        gctx->checkAsyncWorkCompletion();
+    }
+    if (asyncContext.fSuccess) {
+        return asyncContext.fBitmap.asImage();
+    }
+#endif
+    return nullptr;
+}
 
 static SkSerialReturnType collect_nontexture_images_proc(SkImage* img, void* ctx) {
     SkASSERT(img);
@@ -25,7 +81,8 @@ static SkSerialReturnType collect_nontexture_images_proc(SkImage* img, void* ctx
     uint32_t originalId = img->uniqueID();
     sk_sp<SkImage>* imageInMap = context->fNonTexMap.find(originalId);
     if (!imageInMap) {
-        context->fNonTexMap[originalId] = img->makeRasterImage(context->fDirectContext);
+        context->fNonTexMap[originalId] = make_raster_image(img, context->fDirectContext,
+                                                            context->fGraphiteContext);
     }
 
     // This function implements a proc that is more generally for serialization, but
@@ -46,6 +103,10 @@ void SkSharingSerialContext::setDirectContext(GrDirectContext* ctx) {
     fDirectContext = ctx;
 }
 
+void SkSharingSerialContext::setGraphiteContext(skgpu::graphite::Context* ctx) {
+    fGraphiteContext = ctx;
+}
+
 namespace SkSharingContext {
 
 SkSerialReturnType serializeImage(SkImage* img, void* ctx) {
@@ -56,13 +117,23 @@ SkSerialReturnType serializeImage(SkImage* img, void* ctx) {
     if (!fid) {
         // encode the image or it's non-texture replacement if one was collected
         sk_sp<SkImage>* replacementImage = context->fNonTexMap.find(id);
-        if (replacementImage) {
+        sk_sp<SkImage> raster;
+        if (replacementImage && replacementImage->get()) {
             img = replacementImage->get();
+        } else {
+            raster = make_raster_image(img, context->fDirectContext, context->fGraphiteContext);
+            if (raster) {
+                img = raster.get();
+            }
         }
-        auto data = SkPngEncoder::Encode(context->fDirectContext, img, {});
+        sk_sp<SkData> data;
+        if (img) {
+            data = SkPngEncoder::Encode(context->fDirectContext, img, {});
+        }
         if (!data) {
             // If encoding fails, we must return something. If we return null then SkWriteBuffer's
             // serialize_image which calls this proc will continue to try writing to the mskp file.
+            SKIA_LOG_W("SkSharingContext::serializeImage failed. Encoding magenta placeholder.\n");
             SkBitmap bm;
             bm.allocPixels(SkImageInfo::Make(10, 10, kRGBA_8888_SkColorType, kPremul_SkAlphaType));
             SkCanvas canvas = SkCanvas(bm);

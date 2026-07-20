@@ -122,7 +122,7 @@ crate.annotation(
 )
 crate.spec(
     package = "font-types",
-    version = "=0.11.2",
+    version = "=0.11.3",
 )
 crate.spec(
     features = [
@@ -165,7 +165,7 @@ crate.spec(
 )
 crate.spec(
     package = "read-fonts",
-    version = "=0.39.1",
+    version = "=0.39.2",
 )
 crate.spec(
     package = "regex",
@@ -173,7 +173,7 @@ crate.spec(
 )
 crate.spec(
     package = "skrifa",
-    version = "=0.42.0",
+    version = "=0.42.1",
 )
 crate.spec(
     package = "thiserror",
@@ -265,12 +265,14 @@ use_repo(
     "dawn",
     "delaunator",
     "dng_sdk",
+    "egl_registry",
     "expat",
     "freetype",
     "harfbuzz",
     "icu",
     "icu4x",
     "imgui",
+    "jinja2",
     "libavif",
     "libgav1",
     "libjpeg_turbo",
@@ -278,6 +280,8 @@ use_repo(
     "libpng",
     "libwebp",
     "libyuv",
+    "markupsafe",
+    "opengl_registry",
     "perfetto",
     "piex",
     "spirv_cross",

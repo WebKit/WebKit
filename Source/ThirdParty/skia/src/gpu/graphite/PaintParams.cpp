@@ -17,6 +17,7 @@
 #include "src/gpu/Blend.h"
 #include "src/gpu/DitherUtils.h"
 #include "src/gpu/graphite/ContextUtils.h"
+#include "src/gpu/graphite/DrawContext.h"
 #include "src/gpu/graphite/KeyContext.h"
 #include "src/gpu/graphite/KeyHelpers.h"
 #include "src/gpu/graphite/PaintParamsKey.h"
@@ -47,25 +48,6 @@ bool should_dither(const PaintParams& p, SkColorType dstCT) {
     return p.imageShader() || (p.shader() && !as_SB(p.shader())->isConstant());
 }
 
-bool blendmode_depends_on_dst(SkBlendMode blendMode, bool srcIsOpaque) {
-    // kClear doesn't depend on dst, but it should have been converted to kSrc already.
-    SkASSERT(blendMode != SkBlendMode::kClear);
-    if (blendMode == SkBlendMode::kSrc) {
-        // src blending never depends on dst
-        return false;
-    }
-
-    // kDstOut can simplify to kClear when srcIsOpaque, but we assume that kDstOut is only really
-    // used in scenarios where it's meant to be transparent. If it is transiently opaque, we keep it
-    // as the original pipeline.
-    if (blendMode == SkBlendMode::kSrcOver) {
-        // src-over depends on dst if src is transparent (a != 1)
-        return !srcIsOpaque;
-    }
-
-    return true;
-}
-
 std::pair<const SkBlender*, SkBlendMode> get_final_blend(const SkBlender* blender) {
     if (!blender) {
         return {nullptr, SkBlendMode::kSrcOver};
@@ -79,44 +61,51 @@ std::pair<const SkBlender*, SkBlendMode> get_final_blend(const SkBlender* blende
     }
 }
 
+// This produces the final DstUsage flags except for the src-over case, which returns flags assuming
+// that it is opaque and optimized to src. Once toKey() determines opacity, the flags only need to
+// be adjusted if that assumption no longer holds.
 SkEnumBitMask<DstUsage> get_dst_usage(const Caps* caps,
                                       TextureFormat targetFormat,
                                       const PaintParams& paint,
                                       Coverage rendererCoverage,
                                       const SkShader* clipShader,
                                       const NonMSAAClip& nonMSAAClip) {
-    SkEnumBitMask<DstUsage> dstUsage;
-    Coverage effectiveCoverage = rendererCoverage;
-    if (clipShader || !nonMSAAClip.isEmpty()) {
-        // Analytic AA is being added through clipping (outside of any geometry the Renderer is
-        // in control of).
-        dstUsage = DstUsage::kDependsOnDst;
-        if (effectiveCoverage == Coverage::kNone) {
-            effectiveCoverage = Coverage::kSingleChannel;
-        }
-    } else if (rendererCoverage != Coverage::kNone) {
-        // Analytic AA is added through the Renderer
-        dstUsage = DstUsage::kDependsOnDst | DstUsage::kDstOnlyUsedByRenderer;
-    } else {
-        // kDependsOnDst as a result of shading/blending will be handled in toKey() as it depends on
-        // the analyzed opacity of the shader.
-        dstUsage = DstUsage::kNone;
-    }
-
+    SkEnumBitMask<DstUsage> dstUsage = DstUsage::kDependsOnDst;
     if (paint.finalBlender()) {
-        // Runtime blenders always require the dst in the shader
         dstUsage |= DstUsage::kDstReadRequired;
     } else {
-        SkBlendMode finalBlendMode = paint.finalBlendMode();
+        const bool hasAnalyticClip = clipShader || !nonMSAAClip.isEmpty();
+        Coverage effectiveCoverage = rendererCoverage;
+        if (effectiveCoverage == Coverage::kNone && hasAnalyticClip) {
+            effectiveCoverage = Coverage::kSingleChannel;
+        }
+
+        const SkBlendMode finalBlendMode = paint.finalBlendMode();
         if (!CanUseHardwareBlending(caps, targetFormat, finalBlendMode, effectiveCoverage)) {
             dstUsage |= DstUsage::kDstReadRequired;
         }
-        // Even if we're using HW blending, we flag advanced blends because they might need barriers
         if (finalBlendMode > SkBlendMode::kLastCoeffMode) {
             dstUsage |= DstUsage::kAdvancedBlend;
         }
-    }
 
+        if (!hasAnalyticClip && (finalBlendMode == SkBlendMode::kSrc ||
+                                 finalBlendMode == SkBlendMode::kSrcOver)) {
+            if (rendererCoverage != Coverage::kNone) {
+                // For kSrc, kDstOnlyUsedByRenderer is the correct final usage. For kSrcOver,
+                // we optimistically add it on the assumption the rest of the paint will be
+                // opaque. toKey() must remove this flag if it's not opaque.
+                dstUsage |= DstUsage::kDstOnlyUsedByRenderer;
+            } else {
+                // For kSrc, we definitely now do not depend on the dst so we can remove that
+                // flag entirely. Optimistically we also remove it for kSrcOver under the
+                // assumption that the paint is opaque; if toKey() finds that is not the case,
+                // it must restore the flag.
+                SkASSERT(dstUsage == DstUsage::kDependsOnDst);
+                dstUsage = DstUsage::kNone;
+            }
+        }
+
+    }
     return dstUsage;
 }
 
@@ -226,9 +215,7 @@ ShadingParams::ShadingParams(const Caps* caps,
         , fClipShader(clipShader)
         , fDstUsage(get_dst_usage(caps, targetFormat, paint, coverage, fClipShader, fNonMSAAClip))
 #if defined(SK_DEBUG)
-        , fDstUsageNoCoverage(get_dst_usage(caps, targetFormat, paint,
-                                            Coverage::kNone, fClipShader, fNonMSAAClip))
-        , fRendererCoverage(coverage)
+        , fCoverage(coverage)
 #endif
         {}
 
@@ -440,27 +427,45 @@ void ShadingParams::handleClipping(const KeyContext& keyContext) const {
 std::optional<ShadingParams::Result> ShadingParams::toKey(const KeyContext& keyContext) const {
     SkDEBUGCODE(keyContext.pipelineDataGatherer()->checkReset());
     SkDEBUGCODE(keyContext.paintParamsKeyBuilder()->checkReset());
+    SkDEBUGCODE(const Caps* caps = keyContext.caps();)
+    SkDEBUGCODE(TextureFormat targetFormat = keyContext.drawContext()->target().proxy()->format();)
+    SkDEBUGCODE(bool paintDependsOnDst = true;)
 
     // Root Node 0 is the source color, which is the output of all effects post dithering
     bool isOpaque = this->handleDithering(keyContext);
 
     // Root Node 1 is the final blender
-    bool paintDependsOnDst = false;
+    SkEnumBitMask<DstUsage> dstUsage = fDstUsage;
     if (fPaint.finalBlender()) {
         AddToKey(keyContext, fPaint.finalBlender());
-        // Cannot inspect runtime blenders to pessimistically assume they will always use the dst.
-        paintDependsOnDst = true;
     } else {
         // We converted kClear blends to kSrc; the PaintParams constructor already set every other
         // paint effect to match a transparent solid color.
         SkBlendMode finalBlendMode = fPaint.finalBlendMode();
         SkASSERT(finalBlendMode != SkBlendMode::kClear);
 
-        if (!(fDstUsage & DstUsage::kDstReadRequired)) {
-            // With no shader blending, be as explicit as possible about the final blend
+        // If the KeyContext has opted into prioritizing Src (no blending) and we actually don't
+        // need blending or only need blending due to the renderer (e.g. inner fill eligible), then
+        // try to keep the final blend snippet as Src when it wouldn't impact the rendering.
+        const bool optimizeSrcBlend =
+                (dstUsage == DstUsage::kNone || dstUsage == DstUsage::kDstOnlyUsedByRenderer) &&
+                SkToBool(keyContext.flags() & KeyGenFlags::kPreferFixedSrcBlend);
+
+        // fDstUsage was almost fully specified, except for kSrcOver, which was assumed to be
+        // opaque. If we're src over and not opaque, we have to adjust flags.
+        if (finalBlendMode == SkBlendMode::kSrcOver && !isOpaque) {
+            dstUsage &= ~DstUsage::kDstOnlyUsedByRenderer;
+            dstUsage |= DstUsage::kDependsOnDst;
+        }
+
+        SkDEBUGCODE(paintDependsOnDst =
+                    !(finalBlendMode == SkBlendMode::kSrc ||
+                     (finalBlendMode == SkBlendMode::kSrcOver && isOpaque)));
+        if (!(dstUsage & DstUsage::kDstReadRequired) ||
+            (finalBlendMode == SkBlendMode::kSrc && optimizeSrcBlend)) {
+            // With no shader blending, be as explicit as possible about the final blend. We also
+            // keep a fixed Src mode if it means a follow-up inner fill could be used.
             AddFixedBlendMode(keyContext, finalBlendMode);
-            // Blend modes can be analyzed to determine if specific src colors depend on the dst.
-            paintDependsOnDst = blendmode_depends_on_dst(finalBlendMode, isOpaque);
         } else {
             // With shader blending, use AddBlendMode() to select the more universal blend functions
             // when possible. Technically we could always use a fixed blend mode but would then
@@ -468,25 +473,11 @@ std::optional<ShadingParams::Result> ShadingParams::toKey(const KeyContext& keyC
             // on devices that wouldn't support dual-source blending, so help them out by at least
             // not requiring lots of pipelines.
             AddBlendMode(keyContext, finalBlendMode);
-            // TODO(b/478239991): With shader-based blending, always treat the paint as depending
-            // on the dst. Almost all blend modes that trigger a dst read wouldn't have returned
-            // true from `blendmode_depends_on_dst`, but the exception is kSrc triggering a dst
-            // read when the renderer has coverage and there's no dual-src blending support. In that
-            // case we can't support an inner fill operation w/o coverage that shares the same
-            // paint key (it would be expecting a fixed blend mode node here).
-            paintDependsOnDst = true;
         }
     }
 
     // Optional Root Node 2 is the clip
     this->handleClipping(keyContext);
-
-    SkEnumBitMask<DstUsage> dstUsage = fDstUsage;
-    if (paintDependsOnDst) {
-        // Must add kDependsOnDst and remove kDstOnlyUsedByRenderer
-        dstUsage |= DstUsage::kDependsOnDst;
-        dstUsage &= ~DstUsage::kDstOnlyUsedByRenderer;
-    }
 
     // If dstUsage is not kNone, then kDependsOnDst must be set (all other bits only apply *because*
     // the shading depends on dst).
@@ -497,12 +488,14 @@ std::optional<ShadingParams::Result> ShadingParams::toKey(const KeyContext& keyC
     SkASSERT(dstUsage != DstUsage::kNone || !(paintDependsOnDst ||
                                               fClipShader ||
                                               !fNonMSAAClip.isEmpty() ||
-                                              fRendererCoverage != Coverage::kNone));
+                                              fCoverage != Coverage::kNone));
 
     // If kDstOnlyUsedByRenderer is set, the paint shouldn't depend on the dst and the dst usage
     // when the Renderer has Coverage::kNone should equal kNone
+    SkDEBUGCODE(auto dstUsageNoCoverage =
+            get_dst_usage(caps, targetFormat, fPaint, Coverage::kNone, fClipShader, fNonMSAAClip);)
     SkASSERT(!(dstUsage & DstUsage::kDstOnlyUsedByRenderer) ||
-             (!paintDependsOnDst && fDstUsageNoCoverage == DstUsage::kNone));
+             (!paintDependsOnDst && dstUsageNoCoverage == DstUsage::kNone));
     UniquePaintParamsID paintID =
             keyContext.recorder()->priv().shaderCodeDictionary()->findOrCreate(
                     keyContext.paintParamsKeyBuilder());

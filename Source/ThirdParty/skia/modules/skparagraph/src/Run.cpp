@@ -57,6 +57,7 @@ Run::Run(ParagraphImpl* owner,
     fOffsets[info.glyphCount] = {0, 0};
     fClusterIndexes[info.glyphCount] = this->leftToRight() ? info.utf8Range.end() : info.utf8Range.begin();
     fEllipsis = false;
+    fHyphen = false;
     fPlaceholderIndex = std::numeric_limits<size_t>::max();
 }
 
@@ -363,6 +364,17 @@ SkFont Cluster::font() const {
 bool Cluster::isSoftBreak() const {
     return fOwner->codeUnitHasProperty(fTextRange.end,
                                        SkUnicode::CodeUnitFlags::kSoftLineBreakBefore);
+}
+
+bool Cluster::isSoftHyphen() const {
+    auto text = fOwner->text();
+    const char* p = text.begin() + fTextRange.start;
+    const char* end = text.begin() + fTextRange.end;
+    if (p >= end) {
+        return false;
+    }
+    SkUnichar cp = SkUTF::NextUTF8(&p, end);
+    return cp == 0x00AD && p == end;
 }
 
 bool Cluster::isGraphemeBreak() const {

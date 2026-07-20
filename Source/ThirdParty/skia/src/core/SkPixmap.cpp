@@ -281,7 +281,7 @@ SkColor SkPixmap::getColor(int x, int y) const {
             g *= 255.0f;
             b *= 255.0f;
             a *= 255.0f;
-            return SkColorSetARGB(r, g, b, a);
+            return SkColorSetARGB(a, r, g, b);
         }
         case kRGB_101010x_SkColorType: {
             uint32_t value = *this->addr32(x, y);
@@ -301,13 +301,16 @@ SkColor SkPixmap::getColor(int x, int y) const {
                                  ((value >> 10) & 0x3ff) * (255/1023.0f),
                                  ((value >>  0) & 0x3ff) * (255/1023.0f));
         }
-        case kRGBA_1010102_SkColorType:
-        case kBGRA_1010102_SkColorType: {
+        case kBGRA_1010102_SkColorType:
+        case kRGBA_1010102_SkColorType: {
             uint32_t value = *this->addr32(x, y);
-            float b = ((value >>  0) & 0x3ff) * (1/1023.0f),
+            float r = ((value >>  0) & 0x3ff) * (1/1023.0f),
                   g = ((value >> 10) & 0x3ff) * (1/1023.0f),
-                  r = ((value >> 20) & 0x3ff) * (1/1023.0f),
+                  b = ((value >> 20) & 0x3ff) * (1/1023.0f),
                   a = ((value >> 30) & 0x3  ) * (1/   3.0f);
+            if (this->colorType() == kBGRA_1010102_SkColorType) {
+                std::swap(r, b);
+            }
             if (a != 0 && needsUnpremul) {
                 r = SkTPin(r/a, 0.0f, 1.0f);
                 g = SkTPin(g/a, 0.0f, 1.0f);
@@ -325,10 +328,10 @@ SkColor SkPixmap::getColor(int x, int y) const {
         }
         case kRGBA_10x6_SkColorType: {
             uint64_t value = *this->addr64(x, y);
-            return SkColorSetARGB(((value >> 54) & 0x3ff) * (1/1023.0f),
-                                  ((value >>  6) & 0x3ff) * (1/1023.0f),
-                                  ((value >> 22) & 0x3ff) * (1/1023.0f),
-                                  ((value >> 38) & 0x3ff) * (1/1023.0f));
+            return SkColorSetARGB(((value >> 54) & 0x3ff) * (255/1023.0f),
+                                  ((value >>  6) & 0x3ff) * (255/1023.0f),
+                                  ((value >> 22) & 0x3ff) * (255/1023.0f),
+                                  ((value >> 38) & 0x3ff) * (255/1023.0f));
         }
         case kR16G16B16A16_unorm_SkColorType: {
             uint64_t value = *this->addr64(x, y);
@@ -345,7 +348,7 @@ SkColor SkPixmap::getColor(int x, int y) const {
             g *= 255.0f;
             b *= 255.0f;
             a *= 255.0f;
-            return SkColorSetARGB(r, g, b, a);
+            return SkColorSetARGB(a, r, g, b);
         }
         case kRGB_F16F16F16x_SkColorType: {
             const uint64_t* addr =

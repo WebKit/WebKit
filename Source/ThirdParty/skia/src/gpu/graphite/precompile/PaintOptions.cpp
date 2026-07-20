@@ -297,6 +297,14 @@ void PaintOptions::buildCombinations(
         }
     } else {
         int numCombinations = this->numCombinations();
+
+        // This matches the logic in Device::drawGeometry() that optimizes inner-fill capable and
+        // non-AA draws to disable HW blending when possible.
+        KeyContext finalContext = keyContext;
+        if (drawTypes & kSimpleShape || coverage == Coverage::kNone) {
+            finalContext = keyContext.withExtraFlags(KeyGenFlags::kPreferFixedSrcBlend);
+        }
+
         for (int i = 0; i < numCombinations; ++i) {
             // Since the precompilation path's uniforms aren't used and don't change the key,
             // the exact layout doesn't matter
@@ -304,14 +312,14 @@ void PaintOptions::buildCombinations(
             keyContext.pipelineDataGatherer()->resetForDraw();
             keyContext.paintParamsKeyBuilder()->resetForDraw();
 
-            this->createKey(keyContext, renderPassDesc.fColorAttachment.fFormat,
+            this->createKey(finalContext, renderPassDesc.fColorAttachment.fFormat,
                             i, withPrimitiveBlender,
                             SkToBool(drawTypes & DrawTypeFlags::kAnalyticClip), coverage);
 
             // Reset the builder after we get the paintID, we don't need the key anymore
             // for precompilation.
-            UniquePaintParamsID paintID = keyContext.dict()->findOrCreate(
-                    keyContext.paintParamsKeyBuilder());
+            UniquePaintParamsID paintID = finalContext.dict()->findOrCreate(
+                    finalContext.paintParamsKeyBuilder());
 
             processCombination(paintID, drawTypes, withPrimitiveBlender, coverage, renderPassDesc);
         }

@@ -38,6 +38,7 @@ KeyContext::KeyContext(skgpu::graphite::Recorder* recorder,
                        PaintParamsKeyBuilder* paintParamsKeyBuilder,
                        PipelineDataGatherer* pipelineDataGatherer,
                        const SkM44& local2Dev,
+                       const SkRect& clipDrawBounds,
                        const SkColorInfo& dstColorInfo,
                        SkEnumBitMask<KeyGenFlags> initialFlags,
                        const SkColor4f& paintColor)
@@ -50,9 +51,10 @@ KeyContext::KeyContext(skgpu::graphite::Recorder* recorder,
         , fDictionary(recorder->priv().shaderCodeDictionary())
         , fRTEffectDict(recorder->priv().runtimeEffectDictionary())
         , fLocal2Dev(local2Dev)
+        , fClipDrawBounds(clipDrawBounds)
         , fLocalMatrix(nullptr)
         , fDstColorInfo(dstColorInfo)
-        , fKeyGenFlags(initialFlags) {\
+        , fKeyGenFlags(initialFlags) {
     fPaintColor = PaintParams::Color4fPrepForDst(paintColor, fDstColorInfo).makeOpaque().premul();
     fPaintColor.fA = paintColor.fA;
 }
@@ -68,12 +70,15 @@ KeyContext::KeyContext(const KeyContext& other,
         , fDictionary(other.fDictionary)
         , fRTEffectDict(other.fRTEffectDict)
         , fLocal2Dev(other.fLocal2Dev)
+        , fClipDrawBounds(other.fClipDrawBounds)
         , fLocalMatrix(other.fLocalMatrix)
         , fDstColorInfo(other.fDstColorInfo)
         , fPaintColor(other.fPaintColor)
         , fKeyGenFlags(other.fKeyGenFlags | xtraFlags) {}
 
 KeyContext::~KeyContext() {}
+
+KeyContext& KeyContext::operator=(const KeyContext&) = default;
 
 sk_sp<RuntimeEffectDictionary> KeyContext::rtEffectDict() const { return fRTEffectDict; }
 

@@ -67,21 +67,30 @@ void DrawListLayer::recordBackwards(int stepIndex,
         // it drew into.
         targetLayer = stop.fLayer ? stop.fLayer : fLayers.head();
         if (targetLayer) {
-            targetMatch = targetLayer->searchBinding(key, stop.fList);
+            targetMatch = targetLayer->searchBinding</*kForwards=*/false>(
+                    key, stop.fList, !fStorageBufferSupport);
         }
     } else {
         current = fLayers.tail();
+        int32_t limit = kMaxSearchLimit;
         auto processLayer = [&](BindingList* boundary) -> bool {
-            auto result =
+            auto [overlapType, match] =
                     isStencil
                             ? current->test</*kIsStencil=*/true, kIsDepthOnly, /*kForwards=*/false>(
-                                      drawParams->drawBounds(), key, requiresBarrier, boundary)
+                                      drawParams->drawBounds(),
+                                      key,
+                                      requiresBarrier,
+                                      boundary,
+                                      !fStorageBufferSupport)
                             : current->test</*kIsStencil=*/false,
                                             kIsDepthOnly,
-                                            /*kForwards=*/false>(
-                                      drawParams->drawBounds(), key, requiresBarrier, boundary);
+                                            /*kForwards=*/false>(drawParams->drawBounds(),
+                                                                 key,
+                                                                 requiresBarrier,
+                                                                 boundary,
+                                                                 !fStorageBufferSupport);
 
-            if (result.first == BoundsTest::kIncompatibleOverlap) {
+            if (overlapType == BoundsTest::kIncompatibleOverlap) {
                 // If we need to read the dst, we cannot go earlier than this layer.
                 if (dependsOnDst) {
                     // Forward merging attempts to pull an earlier, compatible draw out of the
@@ -134,44 +143,62 @@ void DrawListLayer::recordBackwards(int stepIndex,
                     //        clipped draw to execute before Clip B's mask is rendered. Restricting
                     //        forward merges to the tail guarantees our assigned ordering is always
                     //        valid.
-                    if (canForwardMerge && current == fLayers.tail()) {
-                        if (result.second && current->fBindings.head() != current->fBindings.tail()
-                            && (!requiresBarrier ||
-                                !result.second->fBounds.intersects(drawParams->drawBounds()))) {
-                            forwardMerge = result.second;
+                    if (match && current == fLayers.tail() && canForwardMerge) {
+                        if (current->fBindings.head() != current->fBindings.tail() &&
+                            (!requiresBarrier ||
+                             !match->fBounds.intersects(drawParams->drawBounds()))) {
+                            forwardMerge = match;
                             targetMatch = forwardMerge;
                         }
                     }
                     return true;
-                } else {
-                    // If !dependsOnDst and we're not a stencil, keep searching backwards. If we are
-                    // a stencil, we must stop the traversal here, because insertion risks
-                    // interleaving between an existing stencil's parent and child steps.
-                    return isStencil; // TODO (thomsmit): fastrack where stencils can bound over the
-                                      // enclosed stencil region?
                 }
+                // If !dependsOnDst, simply keep searching backwards. Since we guarantee stencil
+                // atomicity to a layer, a stencil intersection can still safely bypass this layer,
+                // because an insertion downstream cannot disrupt this stencil region.
+                return false;
             } else {
                 // Found a valid layer (Compatible or Disjoint)
                 targetLayer = current;
-                targetMatch = result.second;
+                targetMatch = match;
 
-                // If it was compatible, we expect a match. If disjoint, match is nullptr.
-                return result.first == BoundsTest::kCompatibleOverlap;
+                // In stencil-heavy scenes, we want to search deeper into the list than the first
+                // compatible overlap we encounter. An earlier match likely contains fewer draws and
+                // less draw coverage, while a later match is likely denser. Stopping at the first
+                // match minimizes search time but fragments batching. Inserting early carries a
+                // dual penalty: it 1) blocks subsequent draws from reaching those denser, later
+                // candidates, and it 2) consumes draw space in the early layer that a succeeding
+                // draw could have utilized.
+                //
+                // To mitigate this, we allow stencils to continue searching even after finding a
+                // CompatibleOverlap, but we penalize the remaining search limit by subtracting half
+                // of kMaxSearchLimit. This heuristic ensures:
+                //  1) The search typically isn't blocked by the first compatible overlap, unless
+                //     the match was found deep (over half the limit) into the search.
+                //  2) If two matches are found, the search halts.
+                //
+                // Ultimately, this is an imprecise heuristic. In an ideal world, we would maximize
+                // batching by exhaustively searching to the end of the list, but that would degrade
+                // insertion performance to O(n^2).
+                if (overlapType == BoundsTest::kCompatibleOverlap) {
+                    if (isStencil) {
+                        limit -= kMaxSearchLimit >> 1;
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
             }
             SkUNREACHABLE;
         };
 
-        // Check current here for safety?
-        for (uint32_t limit = 0; limit < kMaxSearchLimit && current != stop.fLayer; ++limit) {
-#if defined(__GNUC__) || defined(__clang__)
-            __builtin_prefetch(current->fPrev);
-#endif
-            if (processLayer(nullptr)) {
+        for (; limit >= 0; --limit) {
+            if (current == stop.fLayer || processLayer(nullptr)) {
                 break;
             }
             current = current->fPrev;
         }
-        if (current && current == stop.fLayer) {
+        if (!targetMatch && current == stop.fLayer && current) {
             processLayer(stop.fList);
         }
     }
@@ -191,9 +218,11 @@ void DrawListLayer::recordBackwards(int stepIndex,
 
     SkASSERT(targetLayer);
     Draw* draw = fStorage.make<Draw>(drawParams, uniformIndex);
-    bool notStopLayer = targetLayer != stop.fLayer;
+    bool notParentList = targetMatch != stop.fList;
+    // We pass `kIsDepthOnly` so that depth lists are prepended and shading lists are appended,
+    // guaranteeing that depth draws always come before shading draws within a layer.
     BindingList* insertedList = targetLayer->add<kIsDepthOnly>(
-            &fStorage, targetMatch, key, draw, step, !dependsOnDst && notStopLayer);
+            &fStorage, targetMatch, key, draw, step, !dependsOnDst && notParentList);
 
     if (capture) {
         SkASSERT(insertedList);
@@ -217,67 +246,21 @@ void DrawListLayer::recordForwards(int stepIndex,
                                    const LayerKey& key,
                                    const DrawParams* drawParams,
                                    Insertion& start) {
-    Layer* current = const_cast<Layer*>(start.fLayer);
-    Layer* targetLayer = nullptr;
-    BindingList* targetMatch = nullptr;
-
-    auto processLayer = [&](BindingList* boundary) -> bool {
-        auto result = isStencil ? current->test</*kIsStencil=*/true,
-                                                /*kIsDepthOnly*/ false,
-                                                /*kForwards=*/true>(
-                                          drawParams->drawBounds(), key, requiresBarrier, boundary)
-                                : current->test</*kIsStencil=*/false,
-                                                /*kIsDepthOnly*/ false,
-                                                /*kForwards=*/true>(
-                                          drawParams->drawBounds(), key, requiresBarrier, boundary);
-        if (result.first != BoundsTest::kIncompatibleOverlap) {
-            targetLayer = current;
-            targetMatch = result.second;
-            return true;
-        } else {
-            return isStencil;
-        }
-        SkUNREACHABLE;
-    };
-
-    SkASSERT(current);
+    // If we're recording forwards, there better have been a draw that recorded backwards first!
+    SkASSERT(start.fLayer);
     SkASSERT(start.fList);
-
-    // If we are a stencil renderer, ratchet the starting list forward. This prevents the child
-    // renderstep from self-intersecting with its parent and uncessessarily creating a new layer.
-    // TODO (thomsmit): make all draws take the next list? No draw that self matches (and thus
-    // could) benefit from matching on itself will be two rendersteps, because that should have been
-    // handled at the renderstep level?
-    BindingList* bound = isStencil ? start.fList->fNext : start.fList;
-    if (!bound) {
-        targetLayer = current;
-    } else if (!processLayer(bound)) {
-        current = current->fNext;
-        for (uint32_t limit = 0; limit < kMaxSearchLimit && current; ++limit) {
-#if defined(__GNUC__) || defined(__clang__)
-            __builtin_prefetch(current->fNext);
-#endif
-            if (processLayer(nullptr)) {
-                break;
-            }
-            current = current->fNext;
-        }
+    BindingList* targetMatch = nullptr;
+    if (start.fList->fNext) {
+        targetMatch = start.fLayer->searchBinding</*kForwards=*/true>(
+                key, start.fList->fNext, !fStorageBufferSupport);
     }
-
-    if (!targetLayer) {
-        fOrderCounter = fOrderCounter.next();
-        targetLayer = fStorage.make<Layer>(fOrderCounter);
-        fLayers.addAfter(targetLayer, start.fLayer);
-    }
-
-    SkASSERT(targetLayer);
     Draw* draw = fStorage.make<Draw>(drawParams, uniformIndex);
-    bool notStartLayer = targetLayer != start.fLayer;
-    BindingList* insertedList = targetLayer->add<false>(
-            &fStorage, targetMatch, key, draw, step, !dependsOnDst && notStartLayer);
-
-    // Ratchet forward
-    start = {targetLayer, insertedList};
+    // Because depth-only draws exclusively `recordBackwards`, it is safe to pass false for
+    // `kIsDepthOnly`. This guarantees that new BindingLists append to the end of the layer and
+    // draws after their parent.
+    BindingList* insertedList = start.fLayer->add</*kIsDepthOnly*/ false>(
+            &fStorage, targetMatch, key, draw, step, true);
+    start.fList = insertedList;
 }
 
 // Layer has dual purpose here:
@@ -300,23 +283,20 @@ std::pair<DrawParams*, Insertion> DrawListLayer::recordDraw(const Renderer* rend
     SkASSERT(localToDevice.valid());
     SkASSERT(!geometry.isEmpty() && !clip.drawBounds().isEmptyNegativeOrNaN());
 
-    // Stencil-based renderers consist a non-shading "producer" step, which writes into the stencil
-    // buffer, and shading "consumer" render steps which test against the stencil mask and clear the
-    // buffer afterwards. Because both types of step modify the buffer, we treat all steps as
-    // stenciling operations.
+    // Stencil-based renderers consist of a non-shading "producer" step, which writes into the
+    // stencil buffer, and shading "consumer" render steps which test against the stencil mask and
+    // clear the buffer afterwards. Because both types of step modify the buffer, we treat all steps
+    // as stenciling operations.
     //
-    // Interleaving one stencil sequence into another corrupts the stencil buffer state and the
-    // shading results that depend on it. This effectively creates "stencil regions" in the draw
-    // list enclosed by the first stencil draw from a renderer and its corresponding last shading
-    // draw. Incoming stencil draws must respect these regions and cannot interleave. To enforce
-    // this, any stencil step that encounters an incompatible overlap during traversal is forced to
-    // immediately halt.
+    // Previously, interleaving one stencil sequence into another could corrupt the stencil buffer
+    // state, forcing stencil steps to immediately halt upon any overlap to protect "stencil
+    // regions." However, the current system guarantees stencil atomicity within a single layer. The
+    // first step of a stencil sequence finds a safe layer, and all subsequent steps are explicitly
+    // recorded forwards into that exact same layer.
     //
-    // While it might be theoretically possible to evaluate stencil steps individually (e.g.,
-    // allowing non-interfering depth-only stencils or transparent shading steps to bypass each
-    // other for better batching), empirical testing shows this is slow. Forcing all stencil steps
-    // to halt on any collision guarantees the integrity of the stencil buffer and appears to
-    // provide a performance benefit by allowing the list traversal to early-exit.
+    // Because an entire stencil sequence is fully self-contained within a single layer, incoming
+    // stencil draws that encounter an incompatible overlap during their backwards traversal do not
+    // need to halt. They can safely bypass the intersecting layer and continue searching backwards.
     bool rendererIsStencil = SkToBool(renderer->depthStencilFlags() & DepthStencilFlags::kStencil);
     bool dependsOnDst = SkToBool(dstUsage & DstUsage::kDependsOnDst);
     bool requiresBarrier = barrierBeforeDraws != BarrierType::kNone;
@@ -365,7 +345,7 @@ std::pair<DrawParams*, Insertion> DrawListLayer::recordDraw(const Renderer* rend
                     requiresBarrier,
                     step,
                     uniformIndex,
-                    LayerKey{pipelineIndex, textureBindingIndex},
+                    LayerKey{pipelineIndex, textureBindingIndex, uniformIndex},
                     drawParams,
                     /*stop=*/{},
                     &stepInsertion,
@@ -379,7 +359,7 @@ std::pair<DrawParams*, Insertion> DrawListLayer::recordDraw(const Renderer* rend
                         requiresBarrier,
                         step,
                         uniformIndex,
-                        LayerKey{pipelineIndex, textureBindingIndex},
+                        LayerKey{pipelineIndex, textureBindingIndex, uniformIndex},
                         drawParams,
                         latestInsertion,
                         &stepInsertion,
@@ -391,7 +371,7 @@ std::pair<DrawParams*, Insertion> DrawListLayer::recordDraw(const Renderer* rend
                                      requiresBarrier,
                                      step,
                                      uniformIndex,
-                                     LayerKey{pipelineIndex, textureBindingIndex},
+                                     LayerKey{pipelineIndex, textureBindingIndex, uniformIndex},
                                      drawParams,
                                      stepInsertion);
             }
@@ -439,9 +419,7 @@ std::unique_ptr<DrawPass> DrawListLayer::snapDrawPass(Recorder* recorder,
              SkIRect::MakeSize(drawPass->fTarget->dimensions()).contains(lastScissor));
     drawPass->fCommandList.setScissor(lastScissor);
 
-    const Caps* caps = recorder->priv().caps();
-    const bool useStorageBuffers = caps->storageBufferSupport();
-    UniformTracker uniformTracker(useStorageBuffers);
+    UniformTracker uniformTracker(fStorageBufferSupport);
 
     const bool rebindTexturesOnPipelineChange = dstReadStrategy == DstReadStrategy::kTextureCopy;
     CompressedPaintersOrder priorDrawPaintOrder{};
@@ -505,7 +483,7 @@ std::unique_ptr<DrawPass> DrawListLayer::snapDrawPass(Recorder* recorder,
             lastScissor = *newScissor;
         }
 
-        uint32_t uniformSsboIndex = useStorageBuffers ? uniformTracker.ssboIndex() : 0;
+        uint32_t uniformSsboIndex = fStorageBufferSupport ? uniformTracker.ssboIndex() : 0;
         renderStep->writeVertices(&drawWriter, drawParams, uniformSsboIndex);
 
         if (bufferMgr->hasMappingFailed()) {

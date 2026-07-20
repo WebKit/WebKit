@@ -158,8 +158,21 @@ public:
     static void WriteChildEffects(SkWriteBuffer& buffer,
                                   SkSpan<const SkRuntimeEffect::ChildPtr> children);
 
+    // Analysis from the runtime SkSL
+    static bool UsesSampleCoords(const SkRuntimeEffect* effect) {
+        return effect->usesSampleCoords();
+    }
+    static bool SamplesOutsideMain(const SkRuntimeEffect* effect) {
+        return effect->samplesOutsideMain();
+    }
     static bool UsesColorTransform(const SkRuntimeEffect* effect) {
         return effect->usesColorTransform();
+    }
+    static bool AlwaysOpaque(const SkRuntimeEffect* effect) {
+        return effect->alwaysOpaque();
+    }
+    static bool IsAlphaUnchanged(const SkRuntimeEffect* effect) {
+        return effect->isAlphaUnchanged();
     }
     static SkSL::SampleUsage ChildSampleUsage(const SkRuntimeEffect* effect, int child) {
         return effect->fSampleUsages[child];

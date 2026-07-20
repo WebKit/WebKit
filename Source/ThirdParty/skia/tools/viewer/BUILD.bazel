@@ -127,6 +127,8 @@ skia_cc_binary(
         "//tools:mskp_player",
         "//tools:registry",
         "//tools:runtime_blend_utils",
+        "//tools:url_data_manager",
+        "//tools/debugger",
         "//tools/flags:common_flags",
         "//tools/flags:ganesh_flags",
         "//tools/flags:graphite_flags",

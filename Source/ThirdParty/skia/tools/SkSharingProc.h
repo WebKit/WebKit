@@ -16,6 +16,10 @@
 #include "include/core/SkSerialProcs.h"
 #include "src/core/SkTHash.h"
 
+namespace skgpu::graphite {
+class Context;
+}
+
 /**
  * This serial proc serializes each image it encounters only once, using their uniqueId as the
  * property for sameness.
@@ -40,13 +44,15 @@ struct SkSharingSerialContext {
     // A map from uniqueID of images referenced by commands to non-texture images
     // collected at the end of each frame.
     skia_private::THashMap<uint32_t, sk_sp<SkImage>> fNonTexMap;
-    GrDirectContext* fDirectContext;
+    GrDirectContext* fDirectContext = nullptr;
+    skgpu::graphite::Context* fGraphiteContext = nullptr;
 
     // Collects any non-texture images referenced by the picture and stores non-texture copies
     // in the fNonTexMap of the provided SkSharingContext
     static void collectNonTextureImagesFromPicture(const SkPicture*, SkSharingSerialContext* ctx);
 
     void setDirectContext(GrDirectContext* ctx);
+    void setGraphiteContext(skgpu::graphite::Context* ctx);
 
     // --- Data and serialization function for regular use --- //
 

@@ -453,7 +453,7 @@ void SkPicturePlayback::handleOp(SkReadBuffer* reader,
             const SkPaint* paint = fPictureData->optionalPaint(reader);
             const SkImage* image = fPictureData->getImage(reader);
             SkCanvas::Lattice lattice;
-            (void)SkCanvasPriv::ReadLattice(*reader, &lattice);
+            reader->validate(SkCanvasPriv::ReadLattice(*reader, &lattice));
             const SkRect* dst = reader->skipT<SkRect>();
             BREAK_ON_READ_ERROR(reader);
 
@@ -463,7 +463,7 @@ void SkPicturePlayback::handleOp(SkReadBuffer* reader,
             const SkPaint* paint = fPictureData->optionalPaint(reader);
             const SkImage* image = fPictureData->getImage(reader);
             SkCanvas::Lattice lattice;
-            (void)SkCanvasPriv::ReadLattice(*reader, &lattice);
+            reader->validate(SkCanvasPriv::ReadLattice(*reader, &lattice));
             const SkRect* dst = reader->skipT<SkRect>();
             SkFilterMode filter = reader->read32LE(SkFilterMode::kLinear);
             BREAK_ON_READ_ERROR(reader);

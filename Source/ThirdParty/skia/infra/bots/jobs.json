@@ -9,13 +9,15 @@
     "name": "BazelBuild-full_library-for_windows_x64_release-windows_x64"
   },
   {
-    "name": "BazelBuild-full_library-release-linux_x64"
+    "name": "BazelBuild-full_library-release-linux_x64",
+    "cq_config": {}
   },
   {
     "name": "BazelBuild-ganesh_gl-release-linux_x64"
   },
   {
-    "name": "BazelBuild-modules_canvaskit-ck_full_webgl2_debug-linux_x64"
+    "name": "BazelBuild-modules_canvaskit-ck_full_webgl2_debug-linux_x64",
+    "cq_config": {}
   },
   {
     "name": "BazelBuild-use_ganesh_gl-for_windows_x64_release-windows_x64"
@@ -60,7 +62,8 @@
     "name": "BazelTest-external_client-use_ganesh_vulkan-default-linux_x64"
   },
   {
-    "name": "BazelTest-external_client-use_graphite_native_vulkan-default-linux_x64"
+    "name": "BazelTest-external_client-use_graphite_native_vulkan-default-linux_x64",
+    "cq_config": {}
   },
   {
     "name": "BazelTest-external_client-use_skresources-default-linux_x64"
@@ -1068,6 +1071,9 @@
     "name": "Perf-ChromeOS-Clang-Octopus-GPU-IntelUHDGraphics600-x86_64-Release-All"
   },
   {
+    "name": "Perf-ChromeOS-Clang-Rauru-GPU-MT8196-arm64-Release-All"
+  },
+  {
     "name": "Perf-ChromeOS-Clang-Trogdor-GPU-Adreno618-arm64-Release-All"
   },
   {
@@ -1225,12 +1231,6 @@
   },
   {
     "name": "Perf-Win11-Clang-NUC11TZi5-GPU-IntelIrisXe-x86_64-Release-All-Vulkan"
-  },
-  {
-    "name": "Perf-Win11-Clang-NUC5i7RYH-GPU-IntelIris6100-x86_64-Release-All-ANGLE"
-  },
-  {
-    "name": "Perf-Win11-Clang-NUC5i7RYH-GPU-IntelIris6100-x86_64-Release-All-Graphite_Dawn_D3D11"
   },
   {
     "name": "Perf-Win11-Clang-NUC6i5SYK-GPU-IntelIris540-x86_64-Release-All-ANGLE"
@@ -1682,6 +1682,12 @@
   },
   {
     "name": "Test-ChromeOS-Clang-Octopus-GPU-IntelUHDGraphics600-x86_64-Release-All"
+  },
+  {
+    "name": "Test-ChromeOS-Clang-Rauru-GPU-MT8196-arm64-Debug-All"
+  },
+  {
+    "name": "Test-ChromeOS-Clang-Rauru-GPU-MT8196-arm64-Release-All"
   },
   {
     "name": "Test-ChromeOS-Clang-Trogdor-GPU-Adreno618-arm64-Debug-All"
@@ -2239,9 +2245,6 @@
     "name": "Test-Win11-Clang-NUC11TZi5-GPU-IntelIrisXe-x86_64-Debug-All-Vulkan"
   },
   {
-    "name": "Test-Win11-Clang-NUC11TZi5-GPU-IntelIrisXe-x86_64-Release-All-ANGLE"
-  },
-  {
     "name": "Test-Win11-Clang-NUC11TZi5-GPU-IntelIrisXe-x86_64-Release-All-Graphite_Dawn_D3D11"
   },
   {
@@ -2252,18 +2255,6 @@
   },
   {
     "name": "Test-Win11-Clang-NUC11TZi5-GPU-IntelIrisXe-x86_64-Release-All-Vulkan"
-  },
-  {
-    "name": "Test-Win11-Clang-NUC5i7RYH-GPU-IntelIris6100-x86_64-Debug-All-ANGLE"
-  },
-  {
-    "name": "Test-Win11-Clang-NUC5i7RYH-GPU-IntelIris6100-x86_64-Debug-All-Graphite_Dawn_D3D11"
-  },
-  {
-    "name": "Test-Win11-Clang-NUC5i7RYH-GPU-IntelIris6100-x86_64-Release-All-ANGLE"
-  },
-  {
-    "name": "Test-Win11-Clang-NUC5i7RYH-GPU-IntelIris6100-x86_64-Release-All-Graphite_Dawn_D3D11"
   },
   {
     "name": "Test-Win11-Clang-NUC6i5SYK-GPU-IntelIris540-x86_64-Debug-All-ANGLE"

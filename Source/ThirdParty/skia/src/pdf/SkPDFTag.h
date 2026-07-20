@@ -75,6 +75,8 @@ public:
     // Returns -1 if elemId does not refer to a StructElem.
     SkPDFParentTreeKey createStructParentKeyForElemId(int elemId, unsigned pageIndex,
                                                       SkPDFIndirectReference contentItemRef);
+    SkPDFIndirectReference getContentItemRefForStructParentKey(
+            SkPDFParentTreeKey structParentKey) const;
 
     void addStructElemTitle(int elemId, SkSpan<const char>);
     SkPDFIndirectReference emitStructTreeRoot(SkPDFDocument* doc) const;
@@ -97,6 +99,7 @@ private:
 
     struct Item {
         SkPDFStructElem* fStructElem;
+        SkPDFIndirectReference fContentItemRef;
     };
     struct Stream {
         skia_private::TArray<SkPDFStructElem*> fChildren; // indexed by mcid

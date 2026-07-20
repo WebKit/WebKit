@@ -1016,6 +1016,44 @@ DEF_TEST(SkPathBuilder_dump, reporter) {
     REPORTER_ASSERT(reporter, str.equals(expected));
 }
 
+DEF_TEST(SkPathBuilder_trailingmove_addpath, reporter) {
+    auto test_with_matrix = [&reporter](const SkMatrix& m) {
+        {
+            // empty src
+            const SkPath src = SkPath();
+            SkPathBuilder b = SkPathBuilder().lineTo(10, 10).moveTo(20, 20);
+
+            const SkPath res = b.addPath(src, m).detach();
+            REPORTER_ASSERT(reporter, !res.isEmpty());
+            REPORTER_ASSERT(reporter, (res.points().back() == SkPoint{20, 20}));
+        }
+
+        {
+            // (implied) moveTo + lineTo
+            const SkPath src = SkPathBuilder().lineTo(100, 100).detach();
+            SkPathBuilder b = SkPathBuilder().lineTo(10, 10).moveTo(20, 20);
+
+            const SkPath res = b.addPath(src, m).detach();
+            REPORTER_ASSERT(reporter, !res.isEmpty());
+            REPORTER_ASSERT(reporter, (res.points().back() != SkPoint{20, 20}));
+        }
+
+        {
+            // moveTo only
+            const SkPath src = SkPathBuilder().moveTo(100, 100).detach();
+            SkPathBuilder b = SkPathBuilder().lineTo(10, 10).moveTo(20, 20);
+
+            const SkPath res = b.addPath(src, m).detach();
+            REPORTER_ASSERT(reporter, !res.isEmpty());
+            REPORTER_ASSERT(reporter, (res.points().back() != SkPoint{20, 20}));
+        }
+    };
+
+    test_with_matrix(SkMatrix::I());
+    // Perspective matrices trigger a different append code path.
+    test_with_matrix(SkMatrix::MakeAll(1,0,0, 0,1,0, .005f,.001f,1));
+}
+
 DEF_TEST(SkPathBuilder_b_463584612, reporter) {
     SkPathBuilder b;
 #ifdef SK_SUPPORT_LEGACY_PATHBUILDER_SETLASTPT
@@ -1032,4 +1070,39 @@ DEF_TEST(SkPathBuilder_b_463584612, reporter) {
 
     SkPath p = builder.detach();
     REPORTER_ASSERT(reporter, !p.isEmpty());
+}
+
+DEF_TEST(SkPathBuilder_conic_semantics, reporter) {
+    {
+        // If w is finite and not one, appends kConic_Verb to verb array;
+        // and pt1, pt2 to SkPoint array; and w to conic weights.
+        SkPath p = SkPathBuilder().conicTo({10, 5}, {10, 10}, 0.5f).detach();
+        REPORTER_ASSERT(reporter, !p.isEmpty());
+        REPORTER_ASSERT(reporter, p.verbs().size() == 2u); // moveTo, conicTo
+        REPORTER_ASSERT(reporter, p.points().size() == 3u);
+        REPORTER_ASSERT(reporter, p.conicWeights().size() == 1u);
+        REPORTER_ASSERT(reporter, p.getSegmentMasks() == SkPath::kConic_SegmentMask);
+    }
+
+    {
+        // If w is one, appends kQuad_Verb to verb array, and
+        // pt1, pt2 to SkPoint array.
+        SkPath p = SkPathBuilder().conicTo({10, 5}, {10, 10}, 1).detach();
+        REPORTER_ASSERT(reporter, !p.isEmpty());
+        REPORTER_ASSERT(reporter, p.verbs().size() == 2u); // moveTo, quadTo
+        REPORTER_ASSERT(reporter, p.points().size() == 3u);
+        REPORTER_ASSERT(reporter, p.conicWeights().empty());
+        REPORTER_ASSERT(reporter, p.getSegmentMasks() == SkPath::kQuad_SegmentMask);
+    }
+
+    {
+        // If w is not finite, appends kLine_Verb twice to verb array, and
+        // pt1, pt2 to SkPoint array.
+        SkPath p = SkPathBuilder().conicTo({10, 5}, {10, 10}, SK_ScalarInfinity).detach();
+        REPORTER_ASSERT(reporter, !p.isEmpty());
+        REPORTER_ASSERT(reporter, p.verbs().size() == 3u); // moveTo, lineTo, lineTo
+        REPORTER_ASSERT(reporter, p.points().size() == 3u);
+        REPORTER_ASSERT(reporter, p.conicWeights().empty());
+        REPORTER_ASSERT(reporter, p.getSegmentMasks() == SkPath::kLine_SegmentMask);
+    }
 }

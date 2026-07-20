@@ -51,6 +51,15 @@ namespace skgpu::graphite {
  *  - RG formats sample in the shader as RG01; and store only RG of the out color.
  *  - RGB/BGR formats sample as RGB1; and store only RGB of the out color.
  *  - RGBA/BGRA/ARGB/ABGR all sample as RGBA and store RGBA.
+ *
+ * Multiplanar formats likely require the use of an immutable sampler built into the pipeline
+ * (for the driver to handle merging the multiple planes and color conversion), or will only be
+ * used as the base format for texture views that have a single planar aspect (whose type then
+ * matches the plane's layout). The Metal API does not expose formats for the multiplanar textures,
+ * which can be described by CoreVideo. These can only be ingested by Metal as texture views of
+ * the planar data, which happens as part of creating a MTLTexture from the CoreVideo object.
+ * The table below lists the CVPixelFormat that would correspond in this case, although there is
+ * no matching MTLPixelFormat.
  */
 enum class TextureFormat : uint8_t {
     kUnsupported,
@@ -98,10 +107,18 @@ enum class TextureFormat : uint8_t {
     kRGBA8_BC1,      // _BC1_RGBA_UNORM_BLOCK      | ::BC1RGBAUnorm          | BC1_RGBA
     kRGBA8_BC1_sRGB, // _BC1_RGBA_SRGB_BLOCK       | ::BC1RGBAUnormSrgb      | BC1_RGBA_sRGB
     // Multi-planar  //----------------------------|-------------------------|----------------------
-    kYUV8_P2_420,    // _G8_B8R8_2PLANE_420_UNORM  | ::R8BG8Biplanar420Unorm |          -
+    kYUV8_P2_420,    // _G8_B8R8_2PLANE_420_UNORM  | ::R8BG8Biplanar420Unorm | CVPixelFormat('420v')
     kYUV8_P3_420,    // _G8_B8_R8_3PLANE_420_UNORM |            -            |          -
-    kYUV10x6_P2_420, // _G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16           |          -
+    kYUV10x6_P2_420, // _G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16           | CVPixelFormat('x420')
                      //                            | ::R10X6BG10X6Biplanar420Unorm
+    kYUV8_P2_422,    // _G8_B8R8_2PLANE_422_UNORM  | ::R8BG8Biplanar422Unorm | CVPixelFormat('422v')
+    kYUV8_P3_422,    // _G8_B8_R8_3PLANE_422_UNORM |            -            |          -
+    kYUV10x6_P2_422, // _G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16           | CVPixelFormat('x420')
+                     //                            | ::R10X6BG10X6Biplanar422Unorm
+    kYUV8_P2_444,    // _G8_B8R8_2PLANE_444_UNORM  | ::R8BG8Biplanar444Unorm | CVPixelFormat('444v')
+    kYUV8_P3_444,    // _G8_B8_R8_3PLANE_444_UNORM |            -            |          -
+    kYUV10x6_P2_444, // _G10X6_B10X6R10X6_2PLANE_444_UNORM_3PACK16           | CVPixelFormat('x444')
+                     //                            | ::R10X6BG10X6Biplanar444Unorm
     kExternal,       // VkExternalFormatANDROID    | ::External              |          -
     // Non-color     //----------------------------|-------------------------|----------------------
     kS8,             // _S8_UINT                   | ::Stencil8              | Stencil8

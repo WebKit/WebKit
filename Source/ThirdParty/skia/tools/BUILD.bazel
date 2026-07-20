@@ -78,6 +78,7 @@ skia_cc_library(
     visibility = [
         "//dm:__pkg__",
         "//tools/debugger:__pkg__",
+        "//tools/viewer:__pkg__",
     ],
     deps = ["//:core"],
 )

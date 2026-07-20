@@ -634,6 +634,10 @@ void TextAdapter::buildDomainMaps(const Shaper::Result& shape_result) {
     if (i > line_start) {
         fMaps.fLinesMap.push_back({line_start, i - line_start, line_advance, line_ascent});
     }
+
+    for (auto& animator : fAnimators) {
+        animator->updateDomainMaps(fMaps, shape_result.fFragments.size());
+    }
 }
 
 void TextAdapter::setText(const TextValue& txt) {
@@ -803,7 +807,7 @@ void TextAdapter::onSync() {
 
     // Apply all animators to the modulator buffer.
     for (const auto& animator : fAnimators) {
-        animator->modulateProps(fMaps, buf);
+        animator->modulateProps(buf);
     }
 
     const TextAnimator::DomainMap* grouping_domain = nullptr;

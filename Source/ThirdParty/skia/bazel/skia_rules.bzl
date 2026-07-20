@@ -276,6 +276,7 @@ _ALLOWED_TEST_UTIL_NAMES = set([
     "ganesh_vulkan",
     "glx_factory",
     "graphite",
+    "graphite_native_dawn",
     "graphite_native_metal",
     "graphite_native_vulkan",
     "precompile",
@@ -293,6 +294,7 @@ _REWRITE_TEST_UTIL_DEPS = {
     "//src/gpu/ganesh/vk:ganesh_vulkan": "//src/gpu/ganesh/vk:ganesh_vulkan_TEST_UTIL",
     "//src/gpu/graphite": "//src/gpu/graphite:graphite_TEST_UTIL",
     "//src/gpu/graphite/mtl:graphite_native_metal": "//src/gpu/graphite/mtl:graphite_native_metal_TEST_UTIL",
+    "//src/gpu/graphite/dawn:graphite_native_dawn": "//src/gpu/graphite/dawn:graphite_native_dawn_TEST_UTIL",
     "//src/gpu/graphite/precompile": "//src/gpu/graphite/precompile:precompile_TEST_UTIL",
     "//src/gpu/graphite/vk:graphite_native_vulkan": "//src/gpu/graphite/vk:graphite_native_vulkan_TEST_UTIL",
 }

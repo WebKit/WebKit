@@ -1031,10 +1031,10 @@ void add_color_space_uniforms(const KeyContext& keyContext,
     const bool alphaSwizzleR = readSwizzle[3] == 'r';
     const bool alphaSwizzle1 = readSwizzle[3] == '1';
 
-    // It doesn't make sense to unpremul/premul in opaque cases, but we might get a request to
-    // anyways, which we can just ignore.
-    const bool unpremul = alphaSwizzle1 ? false : steps.fFlags.unpremul;
-    const bool premul = alphaSwizzle1 ? false : steps.fFlags.premul;
+    // It doesn't make sense to unpremul/premul in opaque or alpha-only cases, but we might get a
+    // request to anyways, which we can just ignore.
+    const bool unpremul = alphaSwizzle1 || alphaSwizzleR ? false : steps.fFlags.unpremul;
+    const bool premul   = alphaSwizzle1 || alphaSwizzleR ? false : steps.fFlags.premul;
 
     const float srcW = unpremul ? -1.f :
                        (alphaSwizzleR || alphaSwizzle1) ? 1.f :
@@ -1982,6 +1982,37 @@ static void add_image_to_key(const KeyContext& keyContext,
     SkASSERT(keyContext.drawContext());
     static_cast<Image_Base*>(imageToDraw.get())->notifyInUse(keyContext.recorder(),
                                                              keyContext.drawContext());
+
+    // Here we detect pixel aligned blit-like image draws. Some devices have low precision filtering
+    // and will produce degraded (blurry) images unexpectedly for sequential exact pixel blits when
+    // not using nearest filtering. This is common for canvas scrolling implementations. Forcing
+    // nearest filtering when possible can also be a minor perf/power optimization depending on the
+    // hardware.
+    bool samplingHasNoEffect = false;
+    // Cubic sampling is will not filter the same as nearest even when pixel aligned.
+    if (!(keyContext.flags() & KeyGenFlags::kDisableSamplingOptimization || newSampling.useCubic)) {
+        SkMatrix totalM = keyContext.local2Dev().asM33();
+        if (keyContext.localMatrix()) {
+            totalM.preConcat(*keyContext.localMatrix());
+        }
+        totalM.normalizePerspective();
+        // The matrix should be translation with only pixel aligned 2d translation.
+        if (totalM.isTranslate() && SkScalarIsInt(totalM.getTranslateX()) &&
+            SkScalarIsInt(totalM.getTranslateY())) {
+            samplingHasNoEffect = true;
+            newSampling = SkFilterMode::kNearest;
+        }
+
+        if (samplingHasNoEffect && !keyContext.clipDrawBounds().isEmpty()) {
+            SkRect localDrawBounds = keyContext.clipDrawBounds();
+            localDrawBounds.offset(-totalM.getTranslateX(), -totalM.getTranslateY());
+            if (subset.contains(localDrawBounds)) {
+                // The draw is strictly within the subset, so we don't need to clamp.
+                subset = SkRect::Make(imageToDraw->dimensions());
+            }
+        }
+    }
+
     if (as_IB(imageToDraw)->isYUVA()) {
         return add_yuv_image_to_key(keyContext,
                                     imageToDraw.get(),
@@ -2001,25 +2032,6 @@ static void add_image_to_key(const KeyContext& keyContext,
                                         view.proxy()->dimensions(),
                                         subset);
 
-    // Here we detect pixel aligned blit-like image draws. Some devices have low precision filtering
-    // and will produce degraded (blurry) images unexpectedly for sequential exact pixel blits when
-    // not using nearest filtering. This is common for canvas scrolling implementations. Forcing
-    // nearest filtering when possible can also be a minor perf/power optimization depending on the
-    // hardware.
-    bool samplingHasNoEffect = false;
-    // Cubic sampling is will not filter the same as nearest even when pixel aligned.
-    if (!(keyContext.flags() & KeyGenFlags::kDisableSamplingOptimization || newSampling.useCubic)) {
-        SkMatrix totalM = keyContext.local2Dev().asM33();
-        if (keyContext.localMatrix()) {
-            totalM.preConcat(*keyContext.localMatrix());
-        }
-        totalM.normalizePerspective();
-        // The matrix should be translation with only pixel aligned 2d translation.
-        samplingHasNoEffect = totalM.isTranslate() && SkScalarIsInt(totalM.getTranslateX()) &&
-                              SkScalarIsInt(totalM.getTranslateY());
-    }
-
-    imgData.fSampling = samplingHasNoEffect ? SkFilterMode::kNearest : newSampling;
     imgData.fTextureProxy = view.refProxy();
     skgpu::Swizzle readSwizzle = view.swizzle();
     ColorSpaceTransformBlock::ColorSpaceTransformData colorXformData(readSwizzle);

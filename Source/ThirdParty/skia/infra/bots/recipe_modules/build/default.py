@@ -177,6 +177,7 @@ def get_compile_flags(api, checkout_root, out_dir, workdir):
       'skia_use_runtime_icu': 'true',
       'skia_enable_optimize_size': 'true',
       'skia_use_jpeg_gainmaps': 'false',
+      'skia_use_partition_alloc': 'false',
     })
 
   if 'Exceptions' in extra_tokens:

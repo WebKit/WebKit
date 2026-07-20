@@ -1244,13 +1244,14 @@ void ClipStack::SaveRecord::replaceWithElement(RawElement&& toAdd,
 class ClipStack::DrawShape {
 public:
     DrawShape(const Transform& localToDevice, const Geometry& geometry)
-            : fLocalToDevice(&localToDevice)
+            : fLocalToDevice(geometry.maskToDevice() ? *geometry.maskToDevice() : localToDevice)
             , fEdgeFlags(EdgeAAQuad::Flags::kAll)
             , fScissor(Rect::Infinite())
             , fShapeWasModified(false) {
         if (geometry.isShape()) {
             fShape = geometry.shape();
             fShapeMatchesGeometry = true;
+            SkASSERT(!geometry.maskToDevice()); // should be local
         } else {
             // The geometry is something special like text or vertices, in which case it's
             // definitely not a shape that could simplify cleanly with the clip stack, so just track
@@ -1260,6 +1261,7 @@ public:
             if (geometry.isEdgeAAQuad()) {
                 fEdgeFlags = geometry.edgeAAQuad().edgeFlags();
                 fShapeMatchesGeometry = geometry.edgeAAQuad().isRect();
+                SkASSERT(!geometry.maskToDevice()); // should be local
             } else {
                 fShapeMatchesGeometry = false;
             }
@@ -1281,7 +1283,7 @@ public:
         // contains check, but that would cause path rendering draws to potentially change in hard
         // to predict ways.
         SkClipOp op = fShape.inverted() ? SkClipOp::kDifference : SkClipOp::kIntersect;
-        return TransformedShape{*fLocalToDevice, fShape, fOuterBounds, fInnerBounds, op,
+        return TransformedShape{fLocalToDevice, fShape, fOuterBounds, fInnerBounds, op,
                                 /*containsChecksOnlyBounds=*/!this->shapeCanBeModified()};
     }
 
@@ -1300,7 +1302,7 @@ public:
     Clip toClip(Geometry* geometry, const NonMSAAClip& analyticClip, const SkShader* clipShader);
 
 private:
-    const Transform* fLocalToDevice;
+    Transform fLocalToDevice;
 
     // When 'style' isn't fill, the original geometry describes the pre-stroked shape, so 'fShape'
     // is updated to include the bounds post-stroking. `fShape` may also include local AA outsets
@@ -1332,9 +1334,6 @@ private:
 };
 
 bool ClipStack::DrawShape::applyStyle(const SkStrokeRec& style, const Rect& deviceBounds) {
-    // For overriding fLocalToDevice when the shape is only tracking device-space bounds
-    static const Transform kIdentity = Transform::Identity();
-
     fTransformedShapeBounds = fShape.bounds(); // not scissor'ed, regular fill rule bounds
     auto origSize = fTransformedShapeBounds.size();
     if (!SkIsFinite(origSize.x(), origSize.y())) {
@@ -1354,9 +1353,9 @@ bool ClipStack::DrawShape::applyStyle(const SkStrokeRec& style, const Rect& devi
     }
 
     // Anti-aliasing makes shapes larger than their original coordinates, but we only care about
-    // that for local clip checks in certain cases (see above).
+    // that for local clip checks in certain cases (see below).
     // NOTE: After this if-else block, `transformedShapeBounds` will be in device space.
-    float localAAOutset = fLocalToDevice->localAARadius(fTransformedShapeBounds);
+    float localAAOutset = fLocalToDevice.localAARadius(fTransformedShapeBounds);
     if (!SkIsFinite(localAAOutset)) SK_UNLIKELY {
         // We cannot calculate an accurate local shape bounds, and transformedShapeBounds is meant
         // to be unclipped. This is to maximize atlas reuse for mostly unclipped draws and to detect
@@ -1364,7 +1363,7 @@ bool ClipStack::DrawShape::applyStyle(const SkStrokeRec& style, const Rect& devi
         // is harmless in this case as these benefits are unlikely to apply for this transform.
         fTransformedShapeBounds = deviceBounds;
         fShape.setRect(deviceBounds);
-        fLocalToDevice = &kIdentity;
+        fLocalToDevice = Transform::Identity();
         fShapeMatchesGeometry = false;
     } else {
         // SkStrokeRec::GetInflationRadius() returns a device-space inflation for hairlines.
@@ -1411,19 +1410,19 @@ bool ClipStack::DrawShape::applyStyle(const SkStrokeRec& style, const Rect& devi
             fShapeMatchesGeometry = false;
         }
 
-        fTransformedShapeBounds = fLocalToDevice->mapRect(fTransformedShapeBounds);
+        fTransformedShapeBounds = fLocalToDevice.mapRect(fTransformedShapeBounds);
     }
 
     fOuterBounds = fTransformedShapeBounds;
     fInnerBounds = Rect::InfiniteInverted();
 
-    if (this->shapeCanBeModified() && fLocalToDevice->type() <= Transform::Type::kRectStaysRect) {
+    if (this->shapeCanBeModified() && fLocalToDevice.type() <= Transform::Type::kRectStaysRect) {
         if (fShape.isRect()) {
             fInnerBounds = fOuterBounds;
         } else if (fShape.isRRect()) {
             SkRect rrectInnerBounds = SkRRectPriv::InnerBounds(fShape.rrect());
             if (!rrectInnerBounds.isEmpty()) {
-                fInnerBounds = fLocalToDevice->mapRect(rrectInnerBounds);
+                fInnerBounds = fLocalToDevice.mapRect(rrectInnerBounds);
             }
         }
         // Otherwise it's a flood fill, but should have empty bounds anyways
@@ -1459,7 +1458,7 @@ Clip ClipStack::DrawShape::toClip(Geometry* geometry,
             geometry->setShape(fShape);
         }
         // Reconstruct new transformedShapeBounds and outer bounds
-        fTransformedShapeBounds = fLocalToDevice->mapRect(fShape.bounds());
+        fTransformedShapeBounds = fLocalToDevice.mapRect(fShape.bounds());
         fOuterBounds = fTransformedShapeBounds.makeIntersect(fScissor);
     }
 
@@ -1488,7 +1487,7 @@ bool ClipStack::DrawShape::intersectClipElement(const RawElement& clip) {
     SkASSERT(clip.op() == SkClipOp::kIntersect);
     if (this->shapeCanBeModified() &&
         intersect_shape(clip.localToDevice(), clip.shape(),
-                        *fLocalToDevice, &fShape, &fEdgeFlags)) {
+                        fLocalToDevice, &fShape, &fEdgeFlags)) {
         SkASSERT(!fShape.inverted());
         if (fOuterBounds.isEmptyNegativeOrNaN()) {
             // Changing from a flood fill to the clip's shape

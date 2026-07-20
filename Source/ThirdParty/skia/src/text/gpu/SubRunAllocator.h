@@ -126,8 +126,8 @@ public:
     // Allocates 1 aligned byte if n == 0.
     template <size_t Size, size_t Alignment> char* allocateBytesFor(int n = 1)
         requires (Alignment <= kMaxAlignment && Size < kMaxByteSize && Size % Alignment == 0) {
+        SkASSERT_RELEASE(0 <= n && static_cast<size_t>(n) <= kMaxByteSize / Size);
         int size = n ? n * Size : 1;
-        SkASSERT_RELEASE(size <= kMaxByteSize);
         return this->allocateBytes(size, Alignment);
     }
 

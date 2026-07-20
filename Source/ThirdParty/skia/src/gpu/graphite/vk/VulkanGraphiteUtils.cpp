@@ -165,6 +165,12 @@ VkDescriptorType DsTypeEnumToVkDs(DescriptorType type) {
     M(TextureFormat::kYUV8_P2_420,    VK_FORMAT_G8_B8R8_2PLANE_420_UNORM)                  \
     M(TextureFormat::kYUV8_P3_420,    VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM)                 \
     M(TextureFormat::kYUV10x6_P2_420, VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16) \
+    M(TextureFormat::kYUV8_P2_422,    VK_FORMAT_G8_B8R8_2PLANE_422_UNORM)                  \
+    M(TextureFormat::kYUV8_P3_422,    VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM)                 \
+    M(TextureFormat::kYUV10x6_P2_422, VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16) \
+    M(TextureFormat::kYUV8_P2_444,    VK_FORMAT_G8_B8R8_2PLANE_444_UNORM)                  \
+    M(TextureFormat::kYUV8_P3_444,    VK_FORMAT_G8_B8_R8_3PLANE_444_UNORM)                 \
+    M(TextureFormat::kYUV10x6_P2_444, VK_FORMAT_G10X6_B10X6R10X6_2PLANE_444_UNORM_3PACK16) \
     /*TextureFormat::kExternal        VK_FORMAT_UNDEFINED w/ uint64_t sidecar */           \
     M(TextureFormat::kS8,             VK_FORMAT_S8_UINT)                                   \
     M(TextureFormat::kD16,            VK_FORMAT_D16_UNORM)                                 \

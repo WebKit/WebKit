@@ -839,6 +839,38 @@ static const FormatExpectation kExpectations[] {
      .fXferSwizzle=std::nullopt,
      .fCompatibleColorTypes={{kRGBA_10x6_SkColorType, Swizzle::RGBA(), std::nullopt}}},
 
+    {.fFormat=TextureFormat::kYUV8_P2_422,
+     .fChannels={{'y', 8, UNorm}, {'u', 8, UNorm}, {'v', 8, UNorm}},
+     .fXferSwizzle=std::nullopt,
+     .fCompatibleColorTypes={{kRGB_888x_SkColorType, Swizzle::RGBA(), std::nullopt}}},
+
+    {.fFormat=TextureFormat::kYUV8_P3_422,
+     .fChannels={{'y', 8, UNorm}, {'u', 8, UNorm}, {'v', 8, UNorm}},
+     .fXferSwizzle=std::nullopt,
+     .fCompatibleColorTypes={{kRGB_888x_SkColorType, Swizzle::RGBA(), std::nullopt}}},
+
+    {.fFormat=TextureFormat::kYUV10x6_P2_422,
+     .fChannels={{'y', 10, UNorm}, {'x', 6, Pad}, {'u', 10, UNorm}, {'x', 6, Pad},
+                 {'v', 10, UNorm}, {'x', 6, Pad}},
+     .fXferSwizzle=std::nullopt,
+     .fCompatibleColorTypes={{kRGBA_10x6_SkColorType, Swizzle::RGBA(), std::nullopt}}},
+
+    {.fFormat=TextureFormat::kYUV8_P2_444,
+     .fChannels={{'y', 8, UNorm}, {'u', 8, UNorm}, {'v', 8, UNorm}},
+     .fXferSwizzle=std::nullopt,
+     .fCompatibleColorTypes={{kRGB_888x_SkColorType, Swizzle::RGBA(), std::nullopt}}},
+
+    {.fFormat=TextureFormat::kYUV8_P3_444,
+     .fChannels={{'y', 8, UNorm}, {'u', 8, UNorm}, {'v', 8, UNorm}},
+     .fXferSwizzle=std::nullopt,
+     .fCompatibleColorTypes={{kRGB_888x_SkColorType, Swizzle::RGBA(), std::nullopt}}},
+
+    {.fFormat=TextureFormat::kYUV10x6_P2_444,
+     .fChannels={{'y', 10, UNorm}, {'x', 6, Pad}, {'u', 10, UNorm}, {'x', 6, Pad},
+                 {'v', 10, UNorm}, {'x', 6, Pad}},
+     .fXferSwizzle=std::nullopt,
+     .fCompatibleColorTypes={{kRGBA_10x6_SkColorType, Swizzle::RGBA(), std::nullopt}}},
+
     {.fFormat=TextureFormat::kExternal,
      // We don't really know this, but most Skia behavior defaults to assuming 8-bit color
      .fChannels={{'r', 8, UNorm}, {'g', 8, UNorm}, {'b', 8, UNorm}, {'a', 8, UNorm}},

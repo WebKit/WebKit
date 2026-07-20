@@ -13,6 +13,7 @@
 #include "include/core/SkTypes.h"
 #include "src/pdf/SkPDFUnion.h"
 
+#include <compare>
 #include <cstddef>
 #include <cstdint>
 #include <memory>
@@ -39,26 +40,14 @@ struct SkPDFIndirectReference {
     int fValue = -1;
     explicit operator bool() const { return fValue >= 0; }
 
-    bool operator==(SkPDFIndirectReference v) const {
-        return fValue == v.fValue;
-    }
-
-    bool operator!=(SkPDFIndirectReference v) const {
-        return fValue != v.fValue;
-    }
+    std::strong_ordering operator<=>(const SkPDFIndirectReference&) const = default;
 };
 
 struct SkPDFParentTreeKey {
     int fValue = -1;
     explicit operator bool() const { return fValue >= 0; }
 
-    bool operator==(SkPDFParentTreeKey v) const {
-        return fValue == v.fValue;
-    }
-
-    bool operator!=(SkPDFParentTreeKey v) const {
-        return fValue != v.fValue;
-    }
+    std::strong_ordering operator<=>(const SkPDFParentTreeKey&) const = default;
 };
 
 /** \class SkPDFObject

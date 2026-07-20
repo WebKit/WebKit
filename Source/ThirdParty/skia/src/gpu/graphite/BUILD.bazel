@@ -212,12 +212,14 @@ skia_cc_library_with_testutil(
     features = ["layering_check"],
     priv_visibility = [
         "//dm:__pkg__",
+        "//src/gpu/graphite/dawn:__pkg__",
         "//src/gpu/graphite/mtl:__pkg__",
         "//src/gpu/graphite/precompile:__pkg__",
         "//src/gpu/graphite/vk:__pkg__",
         "//tools:__subpackages__",
     ],
     visibility = [
+        "//src/gpu/graphite/dawn:__pkg__",
         "//src/gpu/graphite/mtl:__pkg__",
         "//src/gpu/graphite/precompile:__pkg__",
         "//src/gpu/graphite/vk:__pkg__",

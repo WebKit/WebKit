@@ -296,6 +296,8 @@ SKCMS_API bool skcms_TRCs_AreApproximateInverse(const skcms_ICCProfile* profile,
 // Parse an ICC profile and return true if possible, otherwise return false.
 // Selects an A2B profile (if present) according to priority list (each entry 0-2).
 // The buffer is not copied; it must remain valid as long as the skcms_ICCProfile will be used.
+// The parse will fail if there is not enough padding (typically 1-2 bytes) past the end of the
+// profile for internally optimized read calls.
 SKCMS_API bool skcms_ParseWithA2BPriority(const void*, size_t,
                                           const int priority[], int priorities,
                                           skcms_ICCProfile*);

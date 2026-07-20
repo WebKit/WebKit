@@ -16,6 +16,8 @@
 #include "include/core/SkScalar.h"
 #include "include/core/SkSurface.h"
 #include "include/core/SkTypes.h"
+#include "src/capture/SkCaptureManager.h"
+#include "src/image/SkImage_Base.h"
 
 #include <cstdint>
 #include <memory>
@@ -58,10 +60,7 @@ public:
         kRaster,
     };
 
-    // TODO(kjlubick) Android directly subclasses SkSurface_Base for tests, so we
-    // cannot make this a pure virtual. They seem to want a surface that is spy-able
-    // or mockable, so maybe we should provide something like that.
-    virtual Type type() const { return Type::kNull; }
+    virtual Type type() const = 0;
 
     // True for surfaces instantiated by pixels in CPU memory
     bool isRasterBacked() const { return this->type() == Type::kRaster; }
@@ -166,15 +165,15 @@ public:
     virtual bool onCharacterize(GrSurfaceCharacterization*) const { return false; }
     virtual bool onIsCompatible(const GrSurfaceCharacterization&) const { return false; }
 
-    // TODO: Remove this (make it pure virtual) after updating Android (which has a class derived
-    // from SkSurface_Base).
-    virtual sk_sp<const SkCapabilities> onCapabilities();
+    virtual sk_sp<const SkCapabilities> onCapabilities() = 0;
+
+    virtual uint32_t getPixelStorageID() const = 0;
 
     /**
      * If capturing, signals to the capture manager and capture canvas to break off the recording
      * SkPicture into a new SkPicture.
      */
-    void createCaptureBreakpoint();
+    SkContentID createCaptureBreakpoint();
 
     inline SkCanvas* getCachedCanvas();
     inline sk_sp<SkImage> refCachedImage();
@@ -225,9 +224,13 @@ sk_sp<SkImage> SkSurface_Base::refCachedImage() {
     if (fCachedImage) {
         return fCachedImage;
     }
-    this->createCaptureBreakpoint();
+    SkContentID contentID = this->createCaptureBreakpoint();
 
     fCachedImage = this->onNewImageSnapshot();
+    if (fCachedImage) {
+        as_IB(fCachedImage)->setDerivedSurfaceID(this->getPixelStorageID());
+        as_IB(fCachedImage)->setContentID(contentID);
+    }
 
     SkASSERT(!fCachedCanvas || fCachedCanvas->getSurfaceBase() == this);
     return fCachedImage;

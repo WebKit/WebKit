@@ -178,6 +178,8 @@ public:
         }
     }
 
+    // Bounds are relative to the mask coordinate space defined by maskToDevice(). If maskToDevice()
+    // returns null, the bounds are relative to the original local-to-device transofrm of the draw.
     Rect bounds() const {
         switch (fType) {
             case Type::kEmpty: return Rect(0, 0, 0, 0);
@@ -189,6 +191,29 @@ public:
             case Type::kAnalyticBlur: return fAnalyticBlurMask.drawBounds();
         }
         SkUNREACHABLE;
+    }
+
+    // Normally there are two coordinate spaces in play: local coords that parameters to drawX()
+    // calls are defined in, and device coords representing the pixel coords of the SkDevice.
+    // Some draws get mapped to an intermediate Geometry that can add a third coordinate space:
+    // the mask space. This may differ from device coords by only an integer translation or could
+    // include everything except perspective, etc.
+    //
+    // If this is non-null, the returned transform represents the transform to be applied by the
+    // Renderer to the geometry but *not* the local coordinates. If null is returned, it is assumed
+    // that the "mask" space is identical to the local coord space.
+    const SkM44* maskToDevice() const {
+        if (fType == Type::kCoverageMaskShape) {
+            return &this->coverageMaskShape().maskToDevice();
+        } else if (fType == Type::kSubRun) {
+            return &this->subRunData().maskToDevice();
+        } else {
+            // Everything is defined relative to the local coordinate space.
+            // TODO(michaelludwig): AnalyticBlur might by simplified using this instead of
+            // deviceToScaledShape(), but it already tracks its original local bounds and not just
+            // mask-space bounds so analytic blurs may be fine.
+            return nullptr;
+        }
     }
 
 private:

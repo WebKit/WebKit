@@ -1,4 +1,4 @@
-load("//bazel:skia_rules.bzl", "split_srcs_and_hdrs")
+load("//bazel:skia_rules.bzl", "skia_cc_library", "skia_cc_library_with_testutil", "split_srcs_and_hdrs")
 
 package(
     default_applicable_licenses = ["//:license"],
@@ -38,6 +38,57 @@ DAWN_FILES = [
 ]
 
 split_srcs_and_hdrs(
-    name = "_dawn",
+    name = "dawn",
     files = DAWN_FILES,
+)
+
+skia_cc_library(
+    name = "dawn_backend_defines",
+    defines = ["SK_DAWN"] + select({
+        "@platforms//os:linux": [
+            "SK_DAWN_HAS_VULKAN",
+            "SK_DAWN_HAS_OPENGLES",
+        ],
+        "@platforms//os:android": ["SK_DAWN_HAS_VULKAN"],
+        "@platforms//os:macos": ["SK_DAWN_HAS_METAL"],
+        "@platforms//os:ios": ["SK_DAWN_HAS_METAL"],
+        "@platforms//os:windows": [
+            "SK_DAWN_HAS_VULKAN",
+            "SK_DAWN_HAS_D3D11",
+            "SK_DAWN_HAS_D3D12",
+        ],
+        "//conditions:default": [],
+    }),
+    visibility = ["//visibility:private"],
+)
+
+skia_cc_library_with_testutil(
+    name = "graphite_native_dawn",
+    srcs = [
+        ":dawn_hdrs",
+        ":dawn_srcs",
+    ],
+    hdrs = [
+        "//include/gpu:shared_gpu_hdrs",
+        "//include/gpu/graphite:public_hdrs",
+        "//include/gpu/graphite/dawn:public_hdrs",
+    ],
+    defines = ["SK_DAWN"],
+    features = ["layering_check"],
+    priv_visibility = [
+        "//tools:__subpackages__",
+        "//tools/window:__pkg__",
+    ],
+    visibility = ["//:__pkg__"],
+    deps = [
+        ":dawn_backend_defines",
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+        "//src/gpu",
+        "//src/gpu/graphite",
+        "//src/sksl/codegen:wgsl",
+        "//src/utils:shader_utils",
+        "@dawn",
+    ],
 )

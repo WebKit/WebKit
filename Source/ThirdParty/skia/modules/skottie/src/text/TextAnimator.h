@@ -87,7 +87,8 @@ public:
                   fLinesMap;
     };
 
-    void modulateProps(const DomainMaps&, ModulatorBuffer&) const;
+    void updateDomainMaps(const DomainMaps&, size_t fragment_count);
+    void modulateProps(ModulatorBuffer&) const;
 
     bool hasBlur() const { return fHasBlur; }
 

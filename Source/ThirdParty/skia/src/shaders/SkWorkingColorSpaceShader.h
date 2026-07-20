@@ -31,6 +31,8 @@ public:
 
     ShaderType type() const override { return ShaderType::kWorkingColorSpace; }
 
+    bool isOpaque() const override { return fShader->isOpaque(); }
+
     sk_sp<SkShader> shader() const { return fShader; }
 
     std::tuple</*inputCS=*/sk_sp<SkColorSpace>,

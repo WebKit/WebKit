@@ -57,6 +57,12 @@ const char* TextureFormatName(TextureFormat format) {
         case TF::kYUV8_P2_420:    return "YUV8_P2_420";
         case TF::kYUV8_P3_420:    return "YUV8_P3_420";
         case TF::kYUV10x6_P2_420: return "YUV10x6_P2_420";
+        case TF::kYUV8_P2_422:    return "YUV8_P2_422";
+        case TF::kYUV8_P3_422:    return "YUV8_P3_422";
+        case TF::kYUV10x6_P2_422: return "YUV10x6_P2_422";
+        case TF::kYUV8_P2_444:    return "YUV8_P2_444";
+        case TF::kYUV8_P3_444:    return "YUV8_P3_444";
+        case TF::kYUV10x6_P2_444: return "YUV10x6_P2_444";
         case TF::kExternal:       return "External";
         case TF::kS8:             return "S8";
         case TF::kD16:            return "D16";
@@ -146,8 +152,14 @@ int TextureFormatBytesPerBlock(TextureFormat format) {
         // calculating size.
         case TF::kYUV8_P2_420:
         case TF::kYUV8_P3_420:
+        case TF::kYUV8_P2_422:
+        case TF::kYUV8_P3_422:
+        case TF::kYUV8_P2_444:
+        case TF::kYUV8_P3_444:
             return 3;
         case TF::kYUV10x6_P2_420:
+        case TF::kYUV10x6_P2_422:
+        case TF::kYUV10x6_P2_444:
             return 6;
     }
     SkUNREACHABLE;
@@ -181,7 +193,13 @@ uint32_t TextureFormatChannelMask(TextureFormat format) {
         case TF::kRGB8_BC1:
         case TF::kYUV8_P2_420:
         case TF::kYUV8_P3_420:
-        case TF::kYUV10x6_P2_420: return kRGB_SkColorChannelFlags;
+        case TF::kYUV10x6_P2_420:
+        case TF::kYUV8_P2_422:
+        case TF::kYUV8_P3_422:
+        case TF::kYUV10x6_P2_422:
+        case TF::kYUV8_P2_444:
+        case TF::kYUV8_P3_444:
+        case TF::kYUV10x6_P2_444: return kRGB_SkColorChannelFlags;
 
         case TF::kRGBA8:          [[fallthrough]];
         case TF::kRGBA16:
@@ -266,6 +284,12 @@ bool TextureFormatIsFloatingPoint(TextureFormat format) {
         case TF::kYUV8_P2_420:
         case TF::kYUV8_P3_420:
         case TF::kYUV10x6_P2_420:
+        case TF::kYUV8_P2_422:
+        case TF::kYUV8_P3_422:
+        case TF::kYUV10x6_P2_422:
+        case TF::kYUV8_P2_444:
+        case TF::kYUV8_P3_444:
+        case TF::kYUV10x6_P2_444:
         case TF::kExternal:
         case TF::kS8:
         case TF::kD16:
@@ -315,6 +339,12 @@ bool TextureFormatIsMultiplanar(TextureFormat format) {
         case TF::kYUV8_P2_420:    [[fallthrough]];
         case TF::kYUV8_P3_420:
         case TF::kYUV10x6_P2_420:
+        case TF::kYUV8_P2_422:
+        case TF::kYUV8_P3_422:
+        case TF::kYUV10x6_P2_422:
+        case TF::kYUV8_P2_444:
+        case TF::kYUV8_P3_444:
+        case TF::kYUV10x6_P2_444:
             return true;
         default:
             return false;
@@ -533,6 +563,12 @@ TextureFormatColorTypeInfo(TextureFormat format) {
         CASE(TF::kYUV8_P2_420,    kRGB_888x_SkColorType,           X::kDisabled)
         CASE(TF::kYUV8_P3_420,    kRGB_888x_SkColorType,           X::kDisabled)
         CASE(TF::kYUV10x6_P2_420, kRGBA_10x6_SkColorType,          X::kDisabled)
+        CASE(TF::kYUV8_P2_422,    kRGB_888x_SkColorType,           X::kDisabled)
+        CASE(TF::kYUV8_P3_422,    kRGB_888x_SkColorType,           X::kDisabled)
+        CASE(TF::kYUV10x6_P2_422, kRGBA_10x6_SkColorType,          X::kDisabled)
+        CASE(TF::kYUV8_P2_444,    kRGB_888x_SkColorType,           X::kDisabled)
+        CASE(TF::kYUV8_P3_444,    kRGB_888x_SkColorType,           X::kDisabled)
+        CASE(TF::kYUV10x6_P2_444, kRGBA_10x6_SkColorType,          X::kDisabled)
         CASE(TF::kExternal,       kRGBA_8888_SkColorType,          X::kDisabled)
 
         // Non color texture formats can't be used with SkColorType

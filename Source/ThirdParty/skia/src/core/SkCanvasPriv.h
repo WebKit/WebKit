@@ -38,7 +38,7 @@ private:
 class SkCanvasPriv {
 public:
     // The lattice has pointers directly into the readbuffer
-    static bool ReadLattice(SkReadBuffer&, SkCanvas::Lattice*);
+    [[nodiscard]] static bool ReadLattice(SkReadBuffer&, SkCanvas::Lattice*);
 
     static void WriteLattice(SkWriteBuffer&, const SkCanvas::Lattice&);
 

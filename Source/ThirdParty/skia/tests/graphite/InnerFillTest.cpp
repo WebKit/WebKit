@@ -8,10 +8,12 @@
 #include "tests/Test.h"
 
 #include "include/core/SkBlendMode.h"
+#include "include/gpu/graphite/Recorder.h"
 #include "src/gpu/SkBackingFit.h"
 #include "src/gpu/graphite/ContextPriv.h"
 #include "src/gpu/graphite/ContextUtils.h"
 #include "src/gpu/graphite/Device.h"
+#include "src/gpu/graphite/RecorderPriv.h"
 #include "src/gpu/graphite/Renderer.h"
 #include "src/gpu/graphite/TextureInfoPriv.h"
 #include "src/gpu/graphite/TextureProxyView.h"
@@ -40,14 +42,12 @@ DEF_GRAPHITE_TEST_FOR_ALL_CONTEXTS(InnerFillTest, reporter, context,
         SkRRect rrect = SkRRect::MakeRectXY(SkRect::MakeXYWH(0.f, 0.f, rrectSize, rrectSize),
                                             0.1f * rrectSize, 0.1f * rrectSize);
         int initialRenderSteps = device->testingOnly_pendingRenderSteps();
+        int initialTasks = recorder->priv().numRootTasks();
         device->drawRRect(rrect, paint);
-        int actualRenderSteps = device->testingOnly_pendingRenderSteps();
 
-        if (actualRenderSteps == 1) {
-            // This either represents the first draw of the tests, or it represents the draw after
-            // a dst-read texture copy flush (which should only happen if we are not expecting an
-            // inner fill draw as well).
-            SkASSERT(initialRenderSteps == 0 || !innerFillExpected);
+        int actualRenderSteps = device->testingOnly_pendingRenderSteps();
+        if (recorder->priv().numRootTasks() != initialTasks) {
+            // Flushed for a dst read copy before appending the new draw and possibly inner fill.
             initialRenderSteps = 0;
         }
 
@@ -58,12 +58,6 @@ DEF_GRAPHITE_TEST_FOR_ALL_CONTEXTS(InnerFillTest, reporter, context,
         REPORTER_ASSERT(reporter, actualRenderSteps == expectedRenderSteps,
                         "Expected (%d) vs Actual (%d)", expectedRenderSteps, actualRenderSteps);
     };
-
-    const bool srcWithCoverageIsHW =
-            CanUseHardwareBlending(context->priv().caps(),
-                                   TextureInfoPriv::ViewFormat(device->target().proxy()->textureInfo()),
-                                   SkBlendMode::kSrc,
-                                   Coverage::kSingleChannel);
 
     // ** Test cases that should not produce an inner fill:
     // 1. A transparent paint, so the draw is not eligible for an inner fill
@@ -85,22 +79,24 @@ DEF_GRAPHITE_TEST_FOR_ALL_CONTEXTS(InnerFillTest, reporter, context,
         opaqueBlendedPaint.setBlendMode(SkBlendMode::kSrcIn);
         testRRect(opaqueBlendedPaint, /*innerFillExpected=*/false);
     }
+
+    // ** Test cases that shouldn't produce an inner fill due to analytic clipping
+    device->pushClipStack();
+    device->clipShader(SkShaders::Color({0.1f, 0.2f, 0.3f, 0.5f}, nullptr),
+                        SkClipOp::kIntersect);
     // 4. An opaque paint but with an analytic clip
     {
-        skiatest::ReporterContext label{reporter, "analytic clip"};
-        device->pushClipStack();
-        device->clipShader(SkShaders::Color({0.1f, 0.2f, 0.3f, 0.5f}, nullptr),
-                           SkClipOp::kIntersect);
+        skiatest::ReporterContext label{reporter, "opaque src-over analytic clip"};
         testRRect(SkPaint(), /*innerFillExpected=*/false);
-        device->popClipStack();
     }
-    // 5. A kSrc paint but the device requires shader blending since there's coverage
-    if (!srcWithCoverageIsHW) {
-        skiatest::ReporterContext label{reporter, "src w/o dual-src blending"};
+    // 5. A kSrc paint but there is analytic clip
+    {
+        skiatest::ReporterContext label{reporter, "src w/ analytic clip"};
         SkPaint srcPaint;
         srcPaint.setBlendMode(SkBlendMode::kSrc);
         testRRect(srcPaint, /*innerFillExpected=*/false);
     }
+    device->popClipStack();
 
     // ** Test cases that should produce an inner fill:
     // 1. A kSrcOver paint with opaque color (or shader)
@@ -109,8 +105,8 @@ DEF_GRAPHITE_TEST_FOR_ALL_CONTEXTS(InnerFillTest, reporter, context,
         testRRect(SkPaint(), /*innerFillExpected=*/true);
     }
     // 2. A kSrc paint when the device supports HW blending regardless of coverage
-    if (srcWithCoverageIsHW) {
-        skiatest::ReporterContext label{reporter, "src w/ dual-src blending"};
+    {
+        skiatest::ReporterContext label{reporter, "src"};
         SkPaint srcPaint;
         srcPaint.setBlendMode(SkBlendMode::kSrc);
         srcPaint.setAlphaf(0.5f); // emphasize it's src color is not opaque

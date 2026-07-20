@@ -438,18 +438,29 @@ DEF_GRAPHITE_TEST_FOR_RENDERING_CONTEXTS(Make_TextureImage_Subset_Test, reporter
 
 namespace {
 
+// NOTE: makeColorTypeAndSpace relies on rendering; depending on the path renderer strategy, this
+// also can require that it support MSAA attachments (required at a higher level in Device).
+// Technically, these internal operations wouldn't trigger MSAA, but there isn't a system to have
+// internal surfaces skip that validation. b/507427401 would address this, in which case we can
+// remove the MSAA checks.
 SkColorType pick_colortype(const Caps* caps, bool mipmapped) {
     auto mm = mipmapped ? skgpu::Mipmapped::kYes : skgpu::Mipmapped::kNo;
     TextureInfo info = caps->getDefaultSampledTextureInfo(
             kRGB_565_SkColorType, mm, skgpu::Protected::kNo, skgpu::Renderable::kYes);
-    if (info.isValid()) {
+    if (info.isValid() && caps->getCompatibleMSAASampleCount(info) > SampleCount::k1) {
         return kRGB_565_SkColorType;
     }
 
     info = caps->getDefaultSampledTextureInfo(
             kRGBA_F16_SkColorType, mm, skgpu::Protected::kNo, skgpu::Renderable::kYes);
-    if (info.isValid()) {
+    if (info.isValid() && caps->getCompatibleMSAASampleCount(info) > SampleCount::k1) {
         return kRGBA_F16_SkColorType;
+    }
+
+    info = caps->getDefaultSampledTextureInfo(
+            kRGBA_1010102_SkColorType, mm, skgpu::Protected::kNo, skgpu::Renderable::kYes);
+    if (info.isValid() && caps->getCompatibleMSAASampleCount(info) > SampleCount::k1) {
+        return kRGBA_1010102_SkColorType;
     }
 
     return kUnknown_SkColorType;
@@ -505,6 +516,10 @@ DEF_GRAPHITE_TEST_FOR_RENDERING_CONTEXTS(MakeColorSpace_Test, reporter, context,
             }
 
             SkColorType altCT = pick_colortype(caps, mipmapped);
+            if (altCT == kUnknown_SkColorType) {
+                // Unsupported on current device
+                continue;
+            }
             i = orig->makeColorTypeAndColorSpace(recorder.get(), altCT, spin, {mipmapped});
 
             REPORTER_ASSERT(reporter, i != nullptr);

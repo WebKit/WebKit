@@ -223,6 +223,8 @@ sk_sp<SkPathData> SkPathData::Alloc(size_t npts, size_t nvbs, size_t ncns) {
 }
 
 bool SkPathData::finishInit(std::optional<SkRect> bounds, std::optional<uint8_t> segmentMask) {
+    SkASSERT(valid_path_data(fPoints, fVerbs, fConics));
+
     if (fPoints.empty()) {
         fBounds = SkRect::MakeEmpty();
         fSegmentMask = 0;

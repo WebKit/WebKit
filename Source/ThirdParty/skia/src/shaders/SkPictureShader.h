@@ -45,6 +45,9 @@ public:
     SkPictureShader(sk_sp<SkPicture>, SkTileMode, SkTileMode, SkFilterMode, const SkRect*);
 
     ShaderType type() const override { return ShaderType::kPicture; }
+    // NOTE: With some inspection, we could derive these from the SkPicture if it recorded a
+    // drawPaint() call with an opaque color for instance.
+    bool isOpaque() const override { return false; }
 
     sk_sp<SkPicture> picture() const { return fPicture; }
     SkRect tile() const { return fTile; }

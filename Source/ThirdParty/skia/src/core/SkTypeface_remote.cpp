@@ -44,7 +44,7 @@ SkScalerContext::GlyphMetrics SkScalerContextProxy::generateMetrics(const SkGlyp
     return {glyph.maskFormat()};
 }
 
-void SkScalerContextProxy::generateImage(const SkGlyph& glyph, void*) {
+void SkScalerContextProxy::generateImage(const SkGlyph& glyph, void* imageBuffer) {
     TRACE_EVENT1("skia", "generateImage", "rec", TRACE_STR_COPY(this->getRec().dump().c_str()));
     if (this->getProxyTypeface()->isLogging()) {
         SkDebugf("GlyphCacheMiss generateImage: %s\n", this->getRec().dump().c_str());
@@ -54,6 +54,8 @@ void SkScalerContextProxy::generateImage(const SkGlyph& glyph, void*) {
     // copied over with the metrics search.
     fDiscardableManager->notifyCacheMiss(
             SkStrikeClient::CacheMissType::kGlyphImage, fRec.fTextSize);
+    // Fill the glyph image with zeros so the missing glyph doesn't display unitialized memory.
+    sk_bzero(imageBuffer, glyph.imageSize());
 }
 
 std::optional<SkScalerContext::GeneratedPath> SkScalerContextProxy::generatePath(const SkGlyph&) {

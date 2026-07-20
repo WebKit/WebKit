@@ -25,15 +25,8 @@ class Recorder;
  * SubRunData represents an AtlasSubRun subspan for which per-pixel coverage data comes from a
  * persistent glyph atlas texture.
  *
- * The bounds() represent the bounds of the entire AtlasSubRun and does not directly map to the
- * local coordinates of this particular subspan. Rather, the dimensions and offset coordinates of a
- * subspan are defined in a coordinate space that is partially transformed by a decomposition of
- * the local-to-device matrix computed by the AtlasSubRun per instance. The transform of the draw is
- * the rest of the decomposed transform (often only a translation) that maps this intermediate space
- * to the device-space coordinates of the draw.
- *
- * The local coordinates used in shading are derived by transforming the final device coordinates
- * using the inverse of the local-to-device matrix.
+ * Like CoverageMaskShape, this is defined relative to an intermediate mask space that is specified
+ * by a matrix stored on each SubRunData.
  */
 class SubRunData {
 public:
@@ -43,8 +36,8 @@ public:
 
     SubRunData(const sktext::gpu::AtlasSubRun* subRun,
                sk_sp<SkRefCnt> supportDataKeepAlive,
-               Rect deviceBounds,
-               const SkM44& deviceToLocal,
+               Rect maskBounds,
+               const SkM44& maskToDevice,
                int startGlyphIndex,
                int glyphCount,
                SkColor luminanceColor,
@@ -54,8 +47,8 @@ public:
                sktext::gpu::RendererData rendererData)
         : fSubRun(subRun)
         , fSupportDataKeepAlive(std::move(supportDataKeepAlive))
-        , fBounds(deviceBounds)
-        , fDeviceToLocal(deviceToLocal)
+        , fBounds(maskBounds)
+        , fMaskToDevice(maskToDevice)
         , fStartGlyphIndex(startGlyphIndex)
         , fGlyphCount(glyphCount)
         , fLuminanceColor(luminanceColor)
@@ -71,11 +64,11 @@ public:
     SubRunData& operator=(SubRunData&&) = delete;
     SubRunData& operator=(const SubRunData& that) = default;
 
-    // The bounding box of the originating AtlasSubRun.
+    // The bounding box of the originating AtlasSubRun in mask (texture) space
     Rect bounds() const { return fBounds; }
 
-    // The inverse local-to-device matrix.
-    const SkM44& deviceToLocal() const { return fDeviceToLocal; }
+    // The transform from the mask texture to device coordinates.
+    const SkM44& maskToDevice() const { return fMaskToDevice; }
 
     // Access the individual elements of the subrun data.
     const sktext::gpu::AtlasSubRun* subRun() const { return fSubRun; }
@@ -93,7 +86,7 @@ private:
     sk_sp<SkRefCnt> fSupportDataKeepAlive;
 
     Rect fBounds;  // bounds of the data stored in the SubRun
-    SkM44 fDeviceToLocal;
+    SkM44 fMaskToDevice;
     int fStartGlyphIndex;
     int fGlyphCount;
     SkColor fLuminanceColor;            // only used by SDFTextRenderStep

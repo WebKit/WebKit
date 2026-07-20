@@ -27,6 +27,8 @@ public:
 
     ShaderType type() const override { return ShaderType::kBlend; }
 
+    bool isOpaque() const override;
+
     sk_sp<SkShader> dst() const { return fDst; }
     sk_sp<SkShader> src() const { return fSrc; }
     SkBlendMode mode() const { return fMode; }
