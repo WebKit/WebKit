@@ -379,9 +379,10 @@ void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, Re
 
         switch (policyAction) {
         case PolicyAction::Download:
-            if (!frame->effectiveSandboxFlags().contains(SandboxFlag::Downloads))
+            if (!frame->effectiveSandboxFlags().contains(SandboxFlag::Downloads)) {
+                frame->loader().setOriginalURLForDownloadRequest(request);
                 frame->loader().client().startDownload(request);
-            else if (RefPtr document = frame->document())
+            } else if (RefPtr document = frame->document())
                 document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to download due to sandboxing"_s);
             [[fallthrough]];
         case PolicyAction::Ignore:
