@@ -467,6 +467,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebKit_LIBRARIES
+    GLib::GioUnix
     GLib::Module
     Soup3::Soup3
 )
