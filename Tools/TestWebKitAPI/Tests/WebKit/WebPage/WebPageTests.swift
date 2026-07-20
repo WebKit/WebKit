@@ -117,6 +117,23 @@ struct WebPageTests {
         #expect(result == enabled)
     }
 
+    @Test(arguments: [true, false])
+    func allowsJSHandleCreationInPageWorld(enabled: Bool) async throws {
+        let decider = TestNavigationDecider()
+        decider.preferencesMutation = { preferences in
+            preferences.allowsJSHandleCreationInPageWorld = enabled
+        }
+        let page = WebPage(navigationDecider: decider)
+        try await page.load(html: "hi", baseURL: URL(string: "http://webkit.org")!).wait()
+
+        let result = try await page.callJavaScript(returning: Bool.self) {
+            """
+            return !!window.webkit && !!window.webkit.createJSHandle;
+            """
+        }
+        #expect(result == enabled)
+    }
+
     @Test
     func javaScriptEvaluation() async throws {
         let page = WebPage()
