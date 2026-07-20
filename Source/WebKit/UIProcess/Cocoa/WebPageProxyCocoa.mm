@@ -2308,6 +2308,11 @@ void WebPageProxy::commitPotentialTapFailed()
         pageClient->commitPotentialTapFailed();
 }
 
+void WebPageProxy::handleDoubleTapForDoubleClickAtPoint(const WebCore::IntPoint& point, OptionSet<WebEventModifier> modifiers, TransactionID layerTreeTransactionIdAtLastInteractionStart, WebEventInputSource inputSource, WebMouseEventSyntheticClickType syntheticClickType)
+{
+    protect(legacyMainFrameProcess())->send(Messages::WebPage::HandleDoubleTapForDoubleClickAtPoint(point, modifiers, layerTreeTransactionIdAtLastInteractionStart, inputSource, syntheticClickType), webPageIDInMainFrameProcess());
+}
+
 void WebPageProxy::didNotHandleTapAsClick(const WebCore::IntPoint& point)
 {
     if (RefPtr pageClient = this->pageClient())

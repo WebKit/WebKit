@@ -898,54 +898,6 @@ void WebPage::attemptSyntheticClick(const IntPoint& point, OptionSet<WebEventMod
         handleSyntheticClick(std::nullopt, *nodeRespondingToClick, adjustedPoint, modifiers);
 }
 
-static RefPtr<LocalDOMWindow> windowWithDoubleClickEventListener(RefPtr<LocalFrame> frame)
-{
-    if (!frame)
-        return nullptr;
-
-    RefPtr window = frame->window();
-    if (!window || !window->hasEventListeners(WebCore::eventNames().dblclickEvent))
-        return nullptr;
-
-    return window;
-}
-
-void WebPage::handleDoubleTapForDoubleClickAtPoint(const IntPoint& point, OptionSet<WebEventModifier> modifiers, TransactionID lastLayerTreeTransactionId)
-{
-    FloatPoint adjustedPoint;
-    RefPtr localMainFrame = protect(*m_page)->localMainFrame();
-    RefPtr nodeRespondingToDoubleClick = localMainFrame ? localMainFrame->nodeRespondingToDoubleClickEvent(point, adjustedPoint) : nullptr;
-
-    RefPtr windowListeningToDoubleClickEvents = windowWithDoubleClickEventListener(localMainFrame);
-
-    if (!nodeRespondingToDoubleClick && !windowListeningToDoubleClickEvents)
-        return;
-
-    RefPtr<LocalFrame> frameRespondingToDoubleClick;
-    if (nodeRespondingToDoubleClick)
-        frameRespondingToDoubleClick = nodeRespondingToDoubleClick->document().frame();
-    else if (windowListeningToDoubleClickEvents) {
-        RefPtr document = windowListeningToDoubleClickEvents->documentIfLocal();
-        frameRespondingToDoubleClick = document ? document->frame() : nullptr;
-    }
-
-    if (!frameRespondingToDoubleClick)
-        return;
-
-    auto firstTransactionID = WebFrame::fromCoreFrame(*frameRespondingToDoubleClick)->firstLayerTreeTransactionIDAfterDidCommitLoad();
-    if (!firstTransactionID || lastLayerTreeTransactionId.lessThanSameProcess(*firstTransactionID))
-        return;
-
-    SetForScope userIsInteractingChange { m_userIsInteracting, true };
-
-    auto platformModifiers = platform(modifiers);
-    auto roundedAdjustedPoint = roundedIntPoint(adjustedPoint);
-    frameRespondingToDoubleClick->eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, MouseButton::Left, PlatformEvent::Type::MousePressed, 2, platformModifiers, MonotonicTime::now(), 0, WebCore::SyntheticClickType::OneFingerTap, WebCore::MouseEventInputSource::UserDriven));
-    if (m_isClosed)
-        return;
-    frameRespondingToDoubleClick->eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, MouseButton::Left, PlatformEvent::Type::MouseReleased, 2, platformModifiers, MonotonicTime::now(), 0, WebCore::SyntheticClickType::OneFingerTap, WebCore::MouseEventInputSource::UserDriven));
-}
-
 void WebPage::requestFocusedElementInformation(CompletionHandler<void(const std::optional<FocusedElementInformation>&)>&& completionHandler)
 {
     flushPendingFocusedElementUpdateIfNeeded();

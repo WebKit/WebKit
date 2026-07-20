@@ -1676,6 +1676,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebKit::WebGPU::VertexState': ['"WebGPUVertexState.h"'],
         'WebKit::WebGPU::XREye': ['"WebGPUXREye.h"'],
         'WebKit::WebJSBufferData': ['"WebUserContentControllerDataTypes.h"'],
+        'WebKit::WebMouseEventSyntheticClickType': ['"WebMouseEvent.h"'],
         'WebKit::WebPushD::PushMessageForTesting': ['"PushMessageForTesting.h"'],
         'WebKit::WebPushD::WebPushDaemonConnectionConfiguration': ['"WebPushDaemonConnectionConfiguration.h"'],
         'WebKit::WebScriptMessageHandlerData': ['"WebUserContentControllerDataTypes.h"'],
