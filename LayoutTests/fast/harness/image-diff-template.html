@@ -210,7 +210,8 @@ function cycleImages()
 }
 
 function copyToClipboardFuzzyMetaTag() {
-    var metaTag = `<meta name="fuzzy" content="${document.getElementById("fuzzy-match-data").value}" />`;
+    var metaTag = `<meta name="fuzzy" content="${document.getElementById("fuzzy-match-data").value}"`;
+    metaTag += "__TEST_NAME__".endsWith(".html") ? ">" : " />";
     navigator.clipboard.writeText(metaTag);
 
     document.getElementById("fuzzy-match-form").append("Copied! ");
