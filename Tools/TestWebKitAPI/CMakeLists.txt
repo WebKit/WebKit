@@ -243,6 +243,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/KeyedCoding.cpp
         Tests/WebCore/LayoutRoundedRectTests.cpp
         Tests/WebCore/LayoutUnitTests.cpp
+        Tests/WebCore/LocalNetworkAccess.cpp
         Tests/WebCore/MIMESniffer.cpp
         Tests/WebCore/MIMETypeRegistry.cpp
         Tests/WebCore/MediaConstraintsTests.cpp

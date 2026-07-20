@@ -57,7 +57,7 @@ public:
 
     enum IsolatedCopyTag { IsolatedCopy };
     IDBRequestData(const IDBRequestData&, IsolatedCopyTag);
-    WEBCORE_EXPORT IDBRequestData NODELETE isolatedCopy() const;
+    WEBCORE_EXPORT IDBRequestData isolatedCopy() const;
 
     IDBConnectionIdentifier NODELETE serverConnectionIdentifier() const;
     WEBCORE_EXPORT IDBResourceIdentifier NODELETE requestIdentifier() const;
