@@ -51,6 +51,11 @@ enum class BoxAxis : uint8_t {
     HighestEnumValue = Vertical
 };
 
+enum class AxisDirection : bool {
+    Normal = 0,
+    Reverse = 1,
+};
+
 constexpr BoxAxis mapAxisLogicalToPhysical(const WritingMode, const LogicalBoxAxis);
 constexpr LogicalBoxAxis mapAxisPhysicalToLogical(const WritingMode, const BoxAxis);
 constexpr LogicalBoxAxis oppositeAxis(LogicalBoxAxis axis) { return axis == LogicalBoxAxis::Inline ? LogicalBoxAxis::Block : LogicalBoxAxis::Inline; }

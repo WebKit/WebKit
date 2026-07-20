@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <WebCore/BoxSides.h>
 #include <initializer_list>
 #include <limits>
 #include <optional>
@@ -404,6 +405,9 @@ enum class FlexWrap : uint8_t {
     Wrap,
     Reverse
 };
+
+inline AxisDirection toAxisDirection(FlexDirection direction) { return static_cast<AxisDirection>(direction == FlexDirection::RowReverse || direction == FlexDirection::ColumnReverse); }
+inline AxisDirection toAxisDirection(FlexWrap wrap) { return static_cast<AxisDirection>(wrap == FlexWrap::Reverse); }
 
 enum class ItemPosition : uint8_t {
     Legacy,

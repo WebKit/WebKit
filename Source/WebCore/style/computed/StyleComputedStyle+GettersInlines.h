@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/FlowMode.h>
 #include <WebCore/StyleComputedStyle.h>
 
 #define COMPUTED_STYLE_PROPERTIES_GETTERS_INLINES_INCLUDE_TRAP 1
@@ -409,6 +410,17 @@ inline bool ComputedStyle::isRowFlexDirection() const
     return flexDirection() == FlexDirection::Row || flexDirection() == FlexDirection::RowReverse;
 }
 
+inline bool ComputedStyle::isReverseFlexDirection() const
+{
+    return flexDirection() == FlexDirection::RowReverse || flexDirection() == FlexDirection::ColumnReverse;
+}
+
+inline FlowMode ComputedStyle::flexFlowMode() const
+{
+    return { writingMode(), isRowFlexDirection() ? LogicalBoxAxis::Inline : LogicalBoxAxis::Block,
+        { toAxisDirection(flexDirection()), toAxisDirection(flexWrap()) } };
+}
+
 inline bool ComputedStyle::isFixedTableLayout() const
 {
     return tableLayout() == TableLayoutType::Fixed
@@ -421,11 +433,6 @@ inline bool ComputedStyle::isFixedTableLayout() const
 inline bool ComputedStyle::isOverflowVisible() const
 {
     return overflowX() == Overflow::Visible || overflowY() == Overflow::Visible;
-}
-
-inline bool ComputedStyle::isReverseFlexDirection() const
-{
-    return flexDirection() == FlexDirection::RowReverse || flexDirection() == FlexDirection::ColumnReverse;
 }
 
 inline bool ComputedStyle::isSkippedRootOrSkippedContent() const

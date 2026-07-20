@@ -2217,6 +2217,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/FileStreamClient.h
     platform/FixedContainerEdges.h
     platform/FloatConversion.h
+    platform/FlowMode.h
     platform/FrameRateMonitor.h
     platform/GraphicsClient.h
     platform/HostWindow.h

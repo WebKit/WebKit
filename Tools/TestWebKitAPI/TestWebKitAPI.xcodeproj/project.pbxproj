@@ -744,6 +744,7 @@
 				WebCore/FloatRectTests.cpp,
 				WebCore/FloatSegmentTest.cpp,
 				WebCore/FloatSizeTests.cpp,
+				WebCore/FlowModeTests.cpp,
 				WebCore/FontCascade.cpp,
 				WebCore/FontShadowTests.cpp,
 				WebCore/GridPosition.cpp,
