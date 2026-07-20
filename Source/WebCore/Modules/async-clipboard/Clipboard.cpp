@@ -293,6 +293,17 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
         resultAsString = markupReader.takeMarkup();
     }
 
+    if (type == imageSVGContentTypeAtom()) {
+        ClipboardImageReader imageReader { frame->document(), type };
+        activePasteboard().read(imageReader, itemIndex);
+        auto imageBlob = imageReader.takeResult();
+        if (updateSessionValidity() == SessionIsValid::Yes && imageBlob)
+            promise->resolve<IDLInterface<Blob>>(imageBlob.releaseNonNull());
+        else
+            promise->reject(ExceptionCode::NotAllowedError);
+        return;
+    }
+
     // FIXME: Support reading custom data.
     if (updateSessionValidity() == SessionIsValid::No || resultAsString.isNull()) {
         promise->reject(ExceptionCode::NotAllowedError);

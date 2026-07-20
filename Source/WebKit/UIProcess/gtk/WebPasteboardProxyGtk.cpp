@@ -143,6 +143,8 @@ void WebPasteboardProxy::writeCustomData(IPC::Connection&, const Vector<Pasteboa
                 selectionData.setMarkup(std::get<String>(stringOrBuffer));
             else if (type == "text/uri-list"_s)
                 selectionData.setURIList(std::get<String>(stringOrBuffer));
+            else if (type == "image/svg+xml"_s)
+                selectionData.addBuffer(type, SharedBuffer::create(std::get<String>(stringOrBuffer).utf8().span()));
         }
     });
 
@@ -163,6 +165,8 @@ static WebCore::PasteboardItemInfo pasteboardItemInfoFromFormats(Vector<String>&
         info.webSafeTypesByFidelity.append("text/uri-list"_s);
     if (formats.contains("image/png"_s))
         info.webSafeTypesByFidelity.append("image/png"_s);
+    if (formats.contains("image/svg+xml"_s))
+        info.webSafeTypesByFidelity.append("image/svg+xml"_s);
     info.platformTypesByFidelity = WTF::move(formats);
     return info;
 }

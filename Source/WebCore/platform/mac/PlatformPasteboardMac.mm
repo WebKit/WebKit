@@ -350,6 +350,9 @@ String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite
     if (includeImageTypes == IncludeImageTypes::Yes && domType == "image/png"_s)
         return legacyPNGPasteboardTypeSingleton();
 
+    if (includeImageTypes == IncludeImageTypes::Yes && domType == "image/svg+xml"_s)
+        return UTTypeSVG.identifier;
+
     return { };
 }
 
@@ -495,6 +498,8 @@ static String webSafeMIMETypeForModernPasteboardType(NSPasteboardType platformTy
         return "text/uri-list"_s;
     if ([platformType isEqual:NSPasteboardTypePNG] || [platformType isEqual:NSPasteboardTypeTIFF])
         return "image/png"_s;
+    if ([platformType isEqual:UTTypeSVG.identifier])
+        return "image/svg+xml"_s;
     return { };
 }
 

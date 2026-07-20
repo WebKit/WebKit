@@ -15,7 +15,7 @@ PASS supports(text/plain) returns true
 PASS supports(text/html) returns true
 PASS supports(image/png) returns true
 PASS supports(text/uri-list) returns true
-FAIL supports(image/svg+xml) returns true assert_equals: expected true but got false
+PASS supports(image/svg+xml) returns true
 FAIL supports(web foo/bar) returns true assert_equals: expected true but got false
 FAIL supports(web text/html) returns true assert_equals: expected true but got false
 PASS supports(web ) returns false

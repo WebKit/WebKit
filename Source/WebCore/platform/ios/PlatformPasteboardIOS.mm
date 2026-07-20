@@ -176,6 +176,9 @@ static const char *safeTypeForDOMToReadAndWriteForPlatformType(NSString *platfor
     if (includeImageTypes == PlatformPasteboard::IncludeImageTypes::Yes && [utType conformsToType:UTTypePNG])
         return "image/png"_s;
 
+    if (includeImageTypes == PlatformPasteboard::IncludeImageTypes::Yes && [utType conformsToType:UTTypeSVG])
+        return "image/svg+xml"_s;
+
     return nullptr;
 }
 
@@ -387,6 +390,9 @@ String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite
 
     if (includeImageTypes == IncludeImageTypes::Yes && domType == "image/png"_s)
         return UTTypePNG.identifier;
+
+    if (includeImageTypes == IncludeImageTypes::Yes && domType == "image/svg+xml"_s)
+        return UTTypeSVG.identifier;
 
     return { };
 }

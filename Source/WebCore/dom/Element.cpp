@@ -2839,6 +2839,12 @@ bool Element::hasDisplayNone() const
     return style && style->display() == Style::DisplayType::None;
 }
 
+bool Element::computedStyleIsDisplayNone()
+{
+    CheckedPtr style = computedStyle();
+    return style && style->display() == Style::DisplayType::None;
+}
+
 void Element::storeDisplayContentsOrNoneStyle(std::unique_ptr<Style::ComputedStyle> style)
 {
     // This is used by RenderTreeUpdater to store the style for Elements with display:{contents|none}.

@@ -54,6 +54,7 @@ enum class ImageType {
     PNG,
     JPEG,
     GIF,
+    SVG,
 };
 
 static ImageType cocoaTypeToImageType(const String& cocoaType)
@@ -74,6 +75,8 @@ static ImageType cocoaTypeToImageType(const String& cocoaType)
         return ImageType::JPEG;
     if (cocoaType == String(UTTypeGIF.identifier))
         return ImageType::GIF;
+    if (cocoaType == String(UTTypeSVG.identifier))
+        return ImageType::SVG;
 
     return ImageType::Invalid;
 }
@@ -97,6 +100,8 @@ static ASCIILiteral imageTypeToMIMEType(ImageType type)
         return "image/jpeg"_s;
     case ImageType::GIF:
         return "image/gif"_s;
+    case ImageType::SVG:
+        return "image/svg+xml"_s;
     }
 }
 
@@ -119,6 +124,8 @@ static ASCIILiteral imageTypeToFakeFilename(ImageType type)
         return "image.jpeg"_s;
     case ImageType::GIF:
         return "image.gif"_s;
+    case ImageType::SVG:
+        return "image.svg"_s;
     }
 }
 

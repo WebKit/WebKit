@@ -62,8 +62,9 @@ void removeSubresourceURLAttributes(Ref<DocumentFragment>&&, Function<bool(const
 
 Ref<Page> createPageForSanitizingWebContent(Document* destinationDocument, std::optional<PageConfiguration>&& = { });
 enum class MSOListQuirks : bool { CheckIfNeeded, Disabled };
-String sanitizeMarkup(const String&, Document* destinationDocument, MSOListQuirks = MSOListQuirks::Disabled, std::optional<Function<void(DocumentFragment&)>> fragmentSanitizer = std::nullopt);
-String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&&, Document&, MSOListQuirks, const String& originalMarkup);
+String sanitizeMarkup(const String&, Document* destinationDocument, MSOListQuirks = MSOListQuirks::Disabled, NOESCAPE const Function<void(DocumentFragment&)>& fragmentSanitizer = nullptr, NOESCAPE const Function<void(Element& stagingBody)>& postLayoutSanitizer = nullptr);
+WEBCORE_EXPORT String sanitizeSVG(const String& svg, Document* destinationDocument);
+String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&&, Document&, MSOListQuirks, const String& originalMarkup, NOESCAPE const Function<void(Element& stagingBody)>& postLayoutSanitizer = nullptr);
 
 class UserSelectNoneStateCache {
 public:

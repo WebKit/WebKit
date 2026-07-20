@@ -858,6 +858,7 @@ public:
 
     bool NODELETE hasDisplayContents() const;
     bool NODELETE hasDisplayNone() const;
+    bool computedStyleIsDisplayNone();
     void storeDisplayContentsOrNoneStyle(std::unique_ptr<Style::ComputedStyle>);
     void clearDisplayContentsOrNoneStyle();
 

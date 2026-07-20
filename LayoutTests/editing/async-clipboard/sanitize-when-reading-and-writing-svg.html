@@ -1,0 +1,245 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncClipboardAPIEnabled=true ] -->
+<meta charset="utf-8">
+<title>navigator.clipboard round-trips and sanitizes image/svg+xml</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="./resources/async-clipboard-helpers.js"></script>
+
+<body>
+    <script>
+        'use strict';
+
+        const SVG_NS = "http://www.w3.org/2000/svg";
+        const XLINK_NS = "http://www.w3.org/1999/xlink";
+        const XHTML_NS = "http://www.w3.org/1999/xhtml";
+
+        function svg(inner, extraRootAttributes = "") {
+            return `<svg xmlns="${SVG_NS}" xmlns:xlink="${XLINK_NS}" width="100" height="100" ${extraRootAttributes}>${inner}</svg>`;
+        }
+
+        async function pressButtonAndRun(action) {
+            const button = document.createElement("button");
+            document.body.appendChild(button);
+
+            await UIHelper.ensurePresentationUpdate();
+
+            const done = new Promise((resolve, reject) => {
+                button.addEventListener("click", () => {
+                    action().then(resolve, reject);
+                }, {once: true});
+            });
+
+            UIHelper.activateElement(button);
+            try {
+                return await done;
+            } finally {
+                button.remove();
+            }
+        }
+
+        async function copy(svg) {
+            await pressButtonAndRun(() => navigator.clipboard.write([
+                new ClipboardItem({"image/svg+xml": svg})
+            ]));
+        }
+
+        async function paste() {
+            return await pressButtonAndRun(async () => {
+                const [item] = await navigator.clipboard.read();
+                const blob = await item.getType("image/svg+xml");
+                return blob.text();
+            });
+        }
+
+        async function roundTripSVG(markup) {
+            await copy(new Blob([markup], {type: "image/svg+xml"}));
+            const pastedMarkup = await paste();
+            const doc = new DOMParser().parseFromString(pastedMarkup, "image/svg+xml");
+            assert_equals(doc.querySelector("parsererror"), null,
+                `sanitized SVG should still parse as well-formed XML (got: ${pastedMarkup})`);
+            return doc;
+        }
+
+        function elementsNamed(doc, localName) {
+            return doc.getElementsByTagNameNS("*", localName);
+        }
+
+        function allElements(doc) {
+            return [...doc.getElementsByTagName("*")];
+        }
+
+        function commentNodes(doc) {
+            const walker = doc.createTreeWalker(doc, NodeFilter.SHOW_COMMENT);
+            const comments = [];
+            while (walker.nextNode())
+                comments.push(walker.currentNode);
+            return comments;
+        }
+
+        promise_test(async t => {
+            const doc = await roundTripSVG(svg(
+                `<script xmlns="${XHTML_NS}">window.ranHTMLScript = true;<\/script>`
+                + `<rect width="10" height="10" fill="green"/>`));
+            assert_equals(elementsNamed(doc, "script").length, 0, "HTML <script> should be stripped");
+            assert_equals(elementsNamed(doc, "rect").length, 1, "benign sibling should survive");
+        }, "HTML script elements are removed from pasted SVG");
+
+        promise_test(async t => {
+            const doc = await roundTripSVG(svg(
+                `<script>window.ranSVGScript = true;<\/script>`
+                + `<rect width="10" height="10" fill="green"/>`));
+            assert_equals(elementsNamed(doc, "script").length, 0, "SVG <script> should be stripped");
+            assert_equals(elementsNamed(doc, "rect").length, 1, "benign sibling should survive");
+        }, "SVG script elements are removed from pasted SVG");
+
+        promise_test(async t => {
+            const doc = await roundTripSVG(svg(
+                `<foreignObject width="50" height="50">`
+                + `<div xmlns="${XHTML_NS}"><p>hello</p></div>`
+                + `</foreignObject>`
+                + `<rect width="10" height="10" fill="green"/>`));
+            assert_equals(elementsNamed(doc, "foreignObject").length, 0, "<foreignObject> should be stripped");
+            assert_equals(elementsNamed(doc, "rect").length, 1, "benign sibling should survive");
+        }, "foreignObject elements are removed from pasted SVG");
+
+        promise_test(async t => {
+            const doc = await roundTripSVG(svg(
+                `<style><a onclick="window.styleMutationXSS = true">x</a></style>`
+                + `<rect width="10" height="10" fill="green"/>`));
+            assert_equals(elementsNamed(doc, "style").length, 0, "<style> should be stripped");
+            assert_false(allElements(doc).some(element => element.hasAttribute("onclick")),
+                "no element smuggled inside <style> should retain an event handler");
+            assert_equals(elementsNamed(doc, "rect").length, 1, "benign sibling should survive");
+        }, "style elements are removed from pasted SVG");
+
+        promise_test(async t => {
+            const doc = await roundTripSVG(
+                `<base href="https://evil.example/"/>`
+                + `<link rel="stylesheet" href="https://evil.example/style.css"/>`
+                + `<meta http-equiv="refresh" content="0;url=https://evil.example/"/>`
+                + `<title>hijacked</title>`
+                + svg(`<rect width="10" height="10" fill="green"/>`));
+            for (const name of ["base", "link", "meta", "title"])
+                assert_equals(elementsNamed(doc, name).length, 0, `<${name}> should be stripped`);
+            assert_equals(elementsNamed(doc, "rect").length, 1, "benign sibling should survive");
+        }, "base/link/meta/title elements are removed from pasted SVG");
+
+        promise_test(async t => {
+            const doc = await roundTripSVG(svg(
+                `<defs><rect id="icon" width="10" height="10" fill="green"/></defs>`
+                + `<use href="#icon"/>`
+                + `<use xlink:href="#icon"/>`
+                + `<use href="https://evil.example/x.svg#icon"/>`
+                + `<use xlink:href="data:image/svg+xml,&lt;svg xmlns='${SVG_NS}'&gt;&lt;script/&gt;&lt;/svg&gt;#icon"/>`
+                + `<rect width="10" height="10" fill="green"/>`));
+            assert_equals(elementsNamed(doc, "use").length, 0, "<use> should be stripped (fragment, external, and data: refs alike)");
+            assert_equals(elementsNamed(doc, "rect").length, 2, "the referenced <defs> target and benign sibling should survive");
+        }, "use elements are removed from pasted SVG");
+
+        promise_test(async t => {
+            const doc = await roundTripSVG(
+                `<embed src="https://evil.example/x"/>`
+                + `<frame src="https://evil.example/x"/>`
+                + `<iframe src="https://evil.example/x"></iframe>`
+                + `<object data="https://evil.example/x"></object>`
+                + svg(`<rect width="10" height="10" fill="green"/>`));
+            for (const name of ["embed", "frame", "iframe", "object"])
+                assert_equals(elementsNamed(doc, name).length, 0, `<${name}> should be stripped`);
+            assert_equals(elementsNamed(doc, "rect").length, 1, "benign sibling should survive");
+        }, "embed/frame/iframe/object elements are removed from pasted SVG");
+
+        promise_test(async t => {
+            const doc = await roundTripSVG(svg(
+                `<rect width="10" height="10" fill="green" onload="window.x = 1" onclick="window.y = 1"/>`));
+            const rect = elementsNamed(doc, "rect")[0];
+            assert_not_equals(rect, undefined, "rect element should survive");
+            const onAttributes = allElements(doc).flatMap(element =>
+                [...element.attributes].filter(attribute => attribute.localName.toLowerCase().startsWith("on")));
+            assert_equals(onAttributes.length, 0, "on* event handler attributes should be removed");
+            assert_equals(rect.getAttribute("fill"), "green", "benign attributes should be preserved");
+        }, "on* event handler attributes are removed from pasted SVG");
+
+        promise_test(async t => {
+            const doc = await roundTripSVG(svg(
+                `<a xlink:href="javascript:window.x = 1"><rect width="10" height="10" fill="green"/></a>`
+                + `<image href="javascript:window.y = 1" width="10" height="10"/>`));
+            const hasJavaScriptURL = allElements(doc).some(element =>
+                [...element.attributes].some(attribute =>
+                    attribute.value.replace(/\s/g, "").toLowerCase().includes("javascript:")));
+            assert_false(hasJavaScriptURL, "attributes containing javascript: URLs should be removed");
+            assert_equals(elementsNamed(doc, "a").length, 1, "the anchor element itself should survive");
+        }, "attributes with javascript: URLs are removed from pasted SVG");
+
+        promise_test(async t => {
+            const doc = await roundTripSVG(svg(
+                `<a xlink:href="https://example.com/"><rect width="10" height="10" fill="green"/>`
+                + `<set attributeName="xlink:href" to="javascript:window.a = 1"/>`
+                + `<animate attributeName="xlink:href" values="0;javascript:window.b = 1" dur="1s"/>`
+                + `<animate attributeName="xlink:href" to="javascript:window.c = 1" dur="1s"/>`
+                + `</a>`));
+            const hasJavaScriptURL = allElements(doc).some(element =>
+                [...element.attributes].some(attribute =>
+                    attribute.value.replace(/\s/g, "").toLowerCase().includes("javascript:")));
+            assert_false(hasJavaScriptURL, "animation values that set a navigating attribute to a javascript: URL should be removed");
+            assert_equals(elementsNamed(doc, "a")[0].getAttributeNS(XLINK_NS, "href"), "https://example.com/", "the static safe href should survive");
+        }, "SVG animation of a navigating attribute to a javascript: URL is neutralized");
+
+        promise_test(async t => {
+            const doc = await roundTripSVG(svg(
+                `<!-- <script>window.commentXSS = true;<\/script> -->`
+                + `<rect width="10" height="10" fill="green"/>`));
+            assert_equals(commentNodes(doc).length, 0, "comment nodes should be stripped");
+            assert_equals(commentNodes(doc).length + elementsNamed(doc, "script").length, 0, "comment nodes should be stripped");
+        }, "comment nodes are removed from pasted SVG");
+
+        promise_test(async t => {
+            const doc = await roundTripSVG(svg(
+                `<g style="display:none">`
+                + `<script>window.hiddenScript = true;<\/script>`
+                + `<rect id="hidden" width="10" height="10" fill="red"/>`
+                + `</g>`
+                + `<rect display="none" width="10" height="10" fill="red"/>`
+                + `<rect width="10" height="10" fill="green"/>`));
+            assert_equals(elementsNamed(doc, "script").length, 0, "script inside display:none content should be stripped");
+            assert_equals(elementsNamed(doc, "g").length, 0, "the display:none container (inline style) and its subtree should be dropped");
+            const rects = [...elementsNamed(doc, "rect")];
+            assert_equals(rects.length, 1, "the hidden subtree rect and the display=\"none\" rect should be dropped");
+            assert_equals(rects[0].getAttribute("fill"), "green", "only the visible rect should survive");
+        }, "display:none content is removed from pasted SVG");
+
+        promise_test(async t => {
+            const doc = await roundTripSVG(svg(
+                `<style>.hidden { display: none; }</style>`
+                + `<g class="hidden">`
+                + `<script>window.styleSheetHiddenScript = true;<\/script>`
+                + `<rect id="hidden" width="10" height="10" fill="red"/>`
+                + `</g>`
+                + `<rect width="10" height="10" fill="green"/>`));
+            assert_equals(elementsNamed(doc, "script").length, 0, "script inside style-sheet-hidden content should be stripped");
+            assert_equals(elementsNamed(doc, "g").length, 0, "the display:none container (style sheet rule) and its subtree should be dropped");
+            const rects = [...elementsNamed(doc, "rect")];
+            assert_equals(rects.length, 1, "the style-sheet-hidden rect should be dropped");
+            assert_equals(rects[0].getAttribute("fill"), "green", "only the visible rect should survive");
+        }, "display:none content from a style sheet is removed from pasted SVG");
+
+        promise_test(async t => {
+            const doc = await roundTripSVG(svg(
+                `<g id="group" fill="green" transform="translate(5, 5)">`
+                + `<rect x="1" y="2" width="10" height="20" fill="blue" stroke="black"/>`
+                + `<circle cx="5" cy="5" r="3"/>`
+                + `<a xlink:href="https://example.com/"><text x="0" y="10">label</text></a>`
+                + `</g>`));
+            const group = elementsNamed(doc, "g")[0];
+            assert_equals(group.getAttribute("fill"), "green", "group fill should be preserved");
+            assert_equals(group.getAttribute("transform"), "translate(5, 5)", "group transform should be preserved");
+            const rect = elementsNamed(doc, "rect")[0];
+            assert_equals(rect.getAttribute("stroke"), "black", "rect stroke should be preserved");
+            assert_equals(rect.getAttribute("width"), "10", "rect width should be preserved");
+            assert_equals(elementsNamed(doc, "circle").length, 1, "circle should be preserved");
+            const anchor = elementsNamed(doc, "a")[0];
+            assert_equals(anchor.getAttributeNS(XLINK_NS, "href"), "https://example.com/", "safe xlink:href should be preserved");
+            assert_equals(elementsNamed(doc, "text").length, 1, "text should be preserved");
+        }, "benign SVG content is preserved through a clipboard round-trip");
+    </script>
+</body>

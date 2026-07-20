@@ -106,15 +106,11 @@ bool ClipboardItem::supports(const String& type)
     // FIXME: Custom format starts with `"web "`("web" followed by U+0020 SPACE) prefix
     // and suffix (after stripping out `"web "`) passes the parsing a MIME type check.
     // https://webkit.org/b/280664
-    // FIXME: add type == "image/svg+xml"_s when we have sanitized copy/paste for SVG data
-    // https://webkit.org/b/280726
-    if (type == textPlainContentTypeAtom()
+    return type == textPlainContentTypeAtom()
         || type == textHTMLContentTypeAtom()
         || type == "image/png"_s
-        || type == "text/uri-list"_s) {
-        return true;
-        }
-    return false;
+        || type == "text/uri-list"_s
+        || type == "image/svg+xml"_s;
 }
 
 void ClipboardItem::collectDataForWriting(Clipboard& destination, CompletionHandler<void(std::optional<PasteboardCustomData>)>&& completion)

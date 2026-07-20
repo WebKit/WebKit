@@ -146,6 +146,8 @@ list(APPEND WebKitTestRunner_SOURCES
     ${WebKitTestRunner_DIR}/mac/WebKitTestRunnerWindow.mm
     ${WebKitTestRunner_DIR}/mac/main.mm
 
+    ${WebKitTestRunner_SHARED_DIR}/mac/NSPasteboardAdditions.mm
+
     ${WebKitTestRunner_SHARED_DIR}/cocoa/ClassMethodSwizzler.mm
     ${WebKitTestRunner_SHARED_DIR}/cocoa/InstanceMethodSwizzler.mm
     ${WebKitTestRunner_SHARED_DIR}/cocoa/LayoutTestSpellChecker.mm

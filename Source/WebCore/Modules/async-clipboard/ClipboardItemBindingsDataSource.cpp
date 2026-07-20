@@ -45,6 +45,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
+#include "NodeName.h"
 #include "Page.h"
 #include "PasteboardCustomData.h"
 #include "SharedBuffer.h"
@@ -315,6 +316,15 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
 
         RefPtr document = documentFromClipboard(m_writingDestination.get());
         m_data = { sanitizeMarkup(markupToSanitize, document.get()) };
+    }
+
+    if (m_type == imageSVGContentTypeAtom()) {
+        auto markupToSanitize = dataAsString();
+        if (markupToSanitize.isEmpty())
+            return;
+
+        RefPtr document = documentFromClipboard(m_writingDestination.get());
+        m_data = { sanitizeSVG(markupToSanitize, document.get()) };
     }
 
     if (m_type == "image/png"_s) {

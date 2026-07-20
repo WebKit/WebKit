@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "DocumentPage.h"
 #include "SharedBuffer.h"
+#include "markup.h"
 
 namespace WebCore {
 
@@ -38,9 +39,17 @@ void ClipboardImageReader::readBuffer(const String&, const String&, Ref<SharedBu
 {
     if (m_mimeType == "image/png"_s)
         m_result = Blob::create(m_document.get(), buffer->extractData(), m_mimeType);
+    else if (m_mimeType == "image/svg+xml"_s)
+        readSVG(buffer);
 }
 
 #endif // !PLATFORM(COCOA)
+
+void ClipboardImageReader::readSVG(const SharedBuffer& buffer)
+{
+    auto sanitizedMarkup = sanitizeSVG(String::fromUTF8(buffer.span()), m_document.get());
+    m_result = Blob::create(m_document.get(), Vector<uint8_t>(sanitizedMarkup.utf8().span()), m_mimeType);
+}
 
 bool ClipboardImageReader::shouldReadBuffer(const String& mimeType) const
 {

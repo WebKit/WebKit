@@ -30,6 +30,7 @@
 
 #import "Document.h"
 #import "SharedBuffer.h"
+#import "markup.h"
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebCore {
@@ -44,6 +45,8 @@ void ClipboardImageReader::readBuffer(const String&, const String&, Ref<SharedBu
             m_result = Blob::create(m_document.get(), makeVector(nsData.get()), m_mimeType);
         }
     }
+    if (m_mimeType == "image/svg+xml"_s)
+        readSVG(buffer);
 }
 
 } // namespace WebCore
