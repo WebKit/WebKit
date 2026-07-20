@@ -923,7 +923,7 @@ String userVisibleURL(const CString& url)
                 after[afterIndex++] = c;
                 
                 // Check for "xn--" in an efficient, non-case-sensitive, way.
-                if (c == '-' && i >= 3 && !mayNeedHostNameDecoding && (after[afterIndex - 4] | 0x20) == 'x' && (after[afterIndex - 3] | 0x20) == 'n' && after[afterIndex - 2] == '-')
+                if (c == '-' && afterIndex >= 4 && !mayNeedHostNameDecoding && (after[afterIndex - 4] | 0x20) == 'x' && (after[afterIndex - 3] | 0x20) == 'n' && after[afterIndex - 2] == '-')
                     mayNeedHostNameDecoding = true;
             }
         }
