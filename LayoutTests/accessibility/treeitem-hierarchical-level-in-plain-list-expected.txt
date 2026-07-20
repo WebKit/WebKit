@@ -1,0 +1,9 @@
+This tests that a treeitem nested in a plain list (a ul with no role) does not gain a hierarchical level, while a treeitem nested in a role=group gains one.
+
+PASS: plainInner.hierarchicalLevel === plainOuter.hierarchicalLevel
+PASS: groupInner.hierarchicalLevel === groupOuter.hierarchicalLevel + 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

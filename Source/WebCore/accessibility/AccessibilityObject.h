@@ -396,6 +396,7 @@ public:
     virtual void recomputeAriaRole() { }
     virtual AccessibilityRole ariaRoleAttribute() const { return AccessibilityRole::Unknown; }
     bool hasExplicitGenericRole() const { return ariaRoleAttribute() == AccessibilityRole::Generic; }
+    bool hasExplicitGroupRole() const final { return ariaRoleAttribute() == AccessibilityRole::Group; }
     bool hasImplicitGenericRole() const { return role() == AccessibilityRole::Generic && !hasExplicitGenericRole(); }
     bool ariaRoleHasPresentationalChildren() const;
     bool inheritsPresentationalRole() const override { return false; }
