@@ -1458,9 +1458,8 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
 #else
     unboxDouble(value, valueAsFPR);
 #endif
-    move(invert ? TrustedImm32(1) : TrustedImm32(0), result);
-    done.append(branchDoubleZeroOrNaN(valueAsFPR, tempFPR));
-    move(invert ? TrustedImm32(0) : TrustedImm32(1), result);
+    moveZeroToDouble(tempFPR);
+    compareDouble(invert ? DoubleEqualOrUnordered : DoubleNotEqualAndOrdered, valueAsFPR, tempFPR, result);
     done.append(jump());
 
     notDouble.link(this);
