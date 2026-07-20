@@ -364,13 +364,13 @@ enum class ScrollPositioningBehavior : uint8_t {
     Stationary
 };
 
-// This value controls the method used to select snap points during scrolling. This may either
-// be "directional" or "closest." The directional method only chooses snap points that are at or
-// beyond the scroll destination in the direction of the scroll. The "closest" method does not
-// have this constraint.
+// Directional: chooses snap points that are at or beyond the scroll destination in the direction of the scroll.
+// Closest: chooses snap points that are closest in the direction of the scroll.
+// Paging: chooses the farthest snap point that is within one page of the current position in the scroll direction, otherwise the nearest snap point beyond it.
 enum class ScrollSnapPointSelectionMethod : uint8_t {
     Directional,
     Closest,
+    Paging,
 };
 
 using ScrollbarControlState = unsigned;

@@ -226,6 +226,9 @@ TextStream& operator<<(TextStream& ts, ScrollSnapPointSelectionMethod option)
     case ScrollSnapPointSelectionMethod::Closest:
         ts << "Closest"_s;
         break;
+    case ScrollSnapPointSelectionMethod::Paging:
+        ts << "Paging"_s;
+        break;
     }
     return ts;
 }

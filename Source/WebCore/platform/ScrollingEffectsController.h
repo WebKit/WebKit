@@ -184,7 +184,7 @@ public:
     void resnapAfterLayout();
 
     std::optional<unsigned> NODELETE activeScrollSnapIndexForAxis(ScrollEventAxis) const;
-    float adjustedScrollDestination(ScrollEventAxis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset) const;
+    float adjustedScrollDestination(ScrollEventAxis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset, ScrollSnapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest) const;
 
     bool activeScrollSnapIndexDidChange() const { return m_activeScrollSnapIndexDidChange; }
     // FIXME: This is never called. We never set m_activeScrollSnapIndexDidChange back to false.

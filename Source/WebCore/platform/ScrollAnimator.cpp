@@ -67,7 +67,7 @@ ScrollAnimator::~ScrollAnimator()
     m_scrollController.stopAllTimers();
 }
 
-bool ScrollAnimator::singleAxisScroll(ScrollEventAxis axis, float scrollDelta, OptionSet<ScrollBehavior> behavior)
+bool ScrollAnimator::singleAxisScroll(ScrollEventAxis axis, float scrollDelta, EnumSet<ScrollBehavior> behavior)
 {
     CheckedRef scrollableArea = m_scrollableArea;
     scrollableArea->scrollbarsController().setScrollbarAnimationsUnsuspendedByUserInteraction(true);
@@ -78,7 +78,8 @@ bool ScrollAnimator::singleAxisScroll(ScrollEventAxis axis, float scrollDelta, O
         auto currentOffset = offsetFromPosition(currentPosition());
         auto newOffset = currentOffset + delta;
         auto velocity = copysignf(1.0f, scrollDelta);
-        auto newOffsetOnAxis = m_scrollController.adjustedScrollDestination(axis, newOffset, velocity, valueForAxis(currentOffset, axis));
+        auto selectionMethod = behavior.contains(ScrollBehavior::Paged) ? ScrollSnapPointSelectionMethod::Paging : ScrollSnapPointSelectionMethod::Directional;
+        auto newOffsetOnAxis = m_scrollController.adjustedScrollDestination(axis, newOffset, velocity, valueForAxis(currentOffset, axis), selectionMethod);
         newOffset = setValueForAxis(newOffset, axis, newOffsetOnAxis);
         delta = newOffset - currentOffset;
     } else {
@@ -212,7 +213,7 @@ bool ScrollAnimator::handleSteppedScrolling(const PlatformWheelEvent& wheelEvent
         || (deltaY > 0 && maxBackwardScrollDelta.height() > 0)) {
         handled = true;
 
-        OptionSet<ScrollBehavior> behavior = { ScrollBehavior::RespectScrollSnap };
+        EnumSet<ScrollBehavior> behavior = { ScrollBehavior::RespectScrollSnap };
         if (wheelEvent.hasPreciseScrollingDeltas())
             behavior.add(ScrollBehavior::NeverAnimate);
 

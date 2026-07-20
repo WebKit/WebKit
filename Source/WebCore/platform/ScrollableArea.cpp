@@ -155,11 +155,15 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
         step = adjustVerticalPageScrollStepForFixedContent(step);
 
     auto scrollDelta = step * stepCount;
-    
+
     if (direction == ScrollDirection::ScrollUp || direction == ScrollDirection::ScrollLeft)
         scrollDelta = -scrollDelta;
 
-    return scrollAnimator().singleAxisScroll(axis, scrollDelta, ScrollAnimator::ScrollBehavior::RespectScrollSnap);
+    EnumSet<ScrollAnimator::ScrollBehavior> behavior = ScrollAnimator::ScrollBehavior::RespectScrollSnap;
+    if (granularity == ScrollGranularity::Page)
+        behavior.add(ScrollAnimator::ScrollBehavior::Paged);
+
+    return scrollAnimator().singleAxisScroll(axis, scrollDelta, behavior);
 }
 
 void ScrollableArea::beginKeyboardScroll(const KeyboardScroll& scrollData)

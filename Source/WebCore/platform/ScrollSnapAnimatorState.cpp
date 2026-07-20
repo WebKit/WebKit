@@ -84,7 +84,7 @@ std::optional<unsigned> ScrollSnapAnimatorState::closestSnapPointForOffset(Scrol
     return activeIndex;
 }
 
-float ScrollSnapAnimatorState::adjustedScrollDestination(ScrollEventAxis axis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset, const ScrollExtents& scrollExtents, float pageScale) const
+float ScrollSnapAnimatorState::adjustedScrollDestination(ScrollEventAxis axis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset, const ScrollExtents& scrollExtents, float pageScale, ScrollSnapPointSelectionMethod selectionMethod) const
 {
     auto snapOffsets = snapOffsetsForAxis(axis);
     if (!snapOffsets.size())
@@ -95,7 +95,7 @@ float ScrollSnapAnimatorState::adjustedScrollDestination(ScrollEventAxis axis, F
         originalOffsetInLayoutUnits = LayoutUnit(*originalOffset / pageScale);
     LayoutSize viewportSize(scrollExtents.viewportSize);
     LayoutPoint layoutDestinationOffset(destinationOffset.x() / pageScale, destinationOffset.y() / pageScale);
-    LayoutUnit offset = snapOffsetInfo().closestSnapOffset(axis, viewportSize, layoutDestinationOffset, velocity, originalOffsetInLayoutUnits).first;
+    LayoutUnit offset = snapOffsetInfo().closestSnapOffset(axis, viewportSize, layoutDestinationOffset, velocity, originalOffsetInLayoutUnits, selectionMethod).first;
     return offset * pageScale;
 }
 
