@@ -3854,8 +3854,6 @@ webkit.org/b/171945 perf/class-list-remove.html [ Pass Failure Timeout ]
 webkit.org/b/166025 http/tests/fetch/fetching-same-resource-with-different-options.html [ Pass Failure ]
 
 # WPT css/css-pseudo import (webkit.org/b/235197, webkit.org/b/266986, webkit.org/b/277692)
-imported/w3c/web-platform-tests/css/css-pseudo/active-selection-011.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-pseudo/active-selection-016.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/cascade-highlight-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ ImageOnlyFailure ]
@@ -3865,7 +3863,6 @@ imported/w3c/web-platform-tests/css/css-pseudo/first-letter-with-preceding-new-l
 imported/w3c/web-platform-tests/css/css-pseudo/first-line-line-height-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-painting-properties-001.html [ ImageOnlyFailure Timeout Pass ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-painting-properties-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-painting-text-shadow-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-painting-text-shadow-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-root-explicit-default-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-root-implicit-default-001.html [ ImageOnlyFailure ]

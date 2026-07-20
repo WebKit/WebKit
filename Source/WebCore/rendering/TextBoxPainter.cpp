@@ -552,20 +552,24 @@ void TextBoxPainter::paintBackgroundFill()
     markedTexts.appendVector(MarkedText::collectForDocumentMarkers(m_renderer, m_selectableRange, MarkedText::PaintPhase::Background));
     markedTexts.appendVector(MarkedText::collectForHighlights(m_renderer, m_selectableRange, MarkedText::PaintPhase::Background));
 
-#if ENABLE(TEXT_SELECTION)
-    auto hasSelectionWithNonCustomUnderline = m_haveSelection && !m_compositionWithCustomUnderlines;
-    if (hasSelectionWithNonCustomUnderline && !m_paintInfo.context().paintingDisabled()) {
-        auto selectionMarkedText = createMarkedTextFromSelectionInBox();
-        if (!selectionMarkedText.isEmpty())
-            markedTexts.append(WTF::move(selectionMarkedText));
-    }
-#endif
     auto styledMarkedTexts = StyledMarkedText::subdivideAndResolve(markedTexts, m_renderer, m_isFirstLine, m_paintInfo);
 
     // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
     auto coalescedStyledMarkedTexts = StyledMarkedText::coalesceAdjacentWithEqualBackground(styledMarkedTexts);
     for (auto& markedText : coalescedStyledMarkedTexts)
         paintBackgroundFillForRange(markedText.startOffset, markedText.endOffset, markedText.style.backgroundColor, BackgroundStyle::Normal);
+
+#if ENABLE(TEXT_SELECTION)
+    auto hasSelectionWithNonCustomUnderline = m_haveSelection && !m_compositionWithCustomUnderlines;
+    if (hasSelectionWithNonCustomUnderline && !m_paintInfo.context().paintingDisabled()) {
+        auto selectionMarkedText = createMarkedTextFromSelectionInBox();
+        if (!selectionMarkedText.isEmpty()) {
+            auto selectionMarkedTexts = Vector<MarkedText>::from(WTF::move(selectionMarkedText));
+            for (auto& markedText : StyledMarkedText::subdivideAndResolve(selectionMarkedTexts, m_renderer, m_isFirstLine, m_paintInfo))
+                paintBackgroundFillForRange(markedText.startOffset, markedText.endOffset, markedText.style.backgroundColor, BackgroundStyle::Normal);
+        }
+    }
+#endif
 }
 
 LayoutRect TextBoxPainter::selectionRectForRange(unsigned startOffset, unsigned endOffset) const
