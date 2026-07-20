@@ -75,8 +75,8 @@ public:
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) override { closeWindow(); }
 
     // Called by WebInspectorUI messages
-    void establishConnection(WebPageProxyIdentifier inspectedPageIdentifier, const DebuggableInfoData&, bool underTest, unsigned inspectionLevel);
-    void updateConnection();
+    void establishConnection(WebPageProxyIdentifier inspectedPageIdentifier, const DebuggableInfoData&, bool underTest, unsigned inspectionLevel, bool wasmDebuggerEnabled);
+    void updateConnection(bool wasmDebuggerEnabled);
 
     void showConsole();
     void showResources();
@@ -126,6 +126,7 @@ public:
     String targetProductVersion() const override;
     bool targetIsSimulator() const final { return false; }
     unsigned inspectionLevel() const override { return m_inspectionLevel; }
+    bool wasmDebuggerEnabled() const final { return m_wasmDebuggerEnabled; }
 
     void bringToFront() override;
     void closeWindow() override;
@@ -189,6 +190,7 @@ public:
 
 private:
     explicit WebInspectorUI(WebPage&);
+    void reconnectToBackend();
 
     void NODELETE didEstablishConnection();
 
@@ -221,6 +223,7 @@ private:
     Markable<WebPageProxyIdentifier> m_inspectedPageIdentifier;
     bool m_underTest { false };
     DebuggableInfoData m_debuggableInfo;
+    bool m_wasmDebuggerEnabled { false };
     bool m_dockingUnavailable { false };
     bool m_isVisible { false };
 #if ENABLE(INSPECTOR_TELEMETRY)

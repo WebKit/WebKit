@@ -72,6 +72,16 @@ const unsigned WebInspectorUIProxy::minimumWindowHeight = 400;
 const unsigned WebInspectorUIProxy::initialWindowWidth = 1000;
 const unsigned WebInspectorUIProxy::initialWindowHeight = 650;
 
+static bool wasmDebuggerEnabled(WebPageProxy& page)
+{
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
+    return protect(page.preferences())->webAssemblyDebuggerEnabled();
+#else // ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
+    UNUSED_PARAM(page);
+    return false;
+#endif // !(ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR))
+}
+
 WebInspectorUIProxy::WebInspectorUIProxy(WebPageProxy& inspectedPage)
     : m_backend(adoptRef(*new WebInspectorBackendProxy(*this)))
     , m_inspectedPage(inspectedPage)
@@ -249,7 +259,7 @@ void WebInspectorUIProxy::updateForNewPageProcess(WebPageProxy& inspectedPage)
     protect(inspectedPage.legacyMainFrameProcess())->addMessageReceiver(Messages::WebInspectorBackendProxy::messageReceiverName(), m_inspectedPage->webPageIDInMainFrameProcess(), m_backend.get());
 
     if (RefPtr inspectorPage = m_inspectorPage.get())
-        protect(inspectorPage->legacyMainFrameProcess())->send(Messages::WebInspectorUI::UpdateConnection(), m_inspectorPage->webPageIDInMainFrameProcess());
+        protect(inspectorPage->legacyMainFrameProcess())->send(Messages::WebInspectorUI::UpdateConnection(wasmDebuggerEnabled(inspectedPage)), m_inspectorPage->webPageIDInMainFrameProcess());
 }
 
 void WebInspectorUIProxy::setFrontendConnection(IPC::Connection::Handle&& connectionIdentifier)
@@ -493,7 +503,7 @@ void WebInspectorUIProxy::openLocalInspectorFrontend()
     if (!inspectorPage)
         return;
 
-    protect(inspectorPage->legacyMainFrameProcess())->send(Messages::WebInspectorUI::EstablishConnection(m_inspectedPageIdentifier, infoForLocalDebuggable(), m_underTest, inspectionLevel()), m_inspectorPage->webPageIDInMainFrameProcess());
+    protect(inspectorPage->legacyMainFrameProcess())->send(Messages::WebInspectorUI::EstablishConnection(m_inspectedPageIdentifier, infoForLocalDebuggable(), m_underTest, inspectionLevel(), wasmDebuggerEnabled(*inspectedPage)), m_inspectorPage->webPageIDInMainFrameProcess());
 
     ASSERT(!m_isActiveFrontend);
     m_isActiveFrontend = true;

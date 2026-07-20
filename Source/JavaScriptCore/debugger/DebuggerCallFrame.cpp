@@ -30,17 +30,23 @@
 #include "DebuggerCallFrame.h"
 
 #include "CodeBlock.h"
+#include "Completion.h"
+#include "Debugger.h"
 #include "DebuggerEvalEnabler.h"
 #include "DebuggerScope.h"
 #include "DirectEvalExecutable.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
+#include "JSWebAssemblyInstance.h"
+#include "JSWebAssemblyModule.h"
 #include "JSWithScope.h"
 #include "ShadowChickenInlines.h"
 #include "StackVisitor.h"
 #include "StrongInlines.h"
 #include "TopExceptionScope.h"
 #include "VMEntryScopeInlines.h"
+#include "WasmDebugServerUtilities.h"
+#include <limits>
 
 namespace JSC {
 
@@ -96,9 +102,83 @@ Ref<DebuggerCallFrame> DebuggerCallFrame::create(VM& vm, CallFrame* callFrame)
     return *currentParent;
 }
 
-DebuggerCallFrame::DebuggerCallFrame(VM& vm, CallFrame* callFrame, const ShadowChicken::Frame& frame)
+#if ENABLE(WEBASSEMBLY)
+
+Ref<DebuggerCallFrame> DebuggerCallFrame::create(CallFrame* callFrame, SourceID sourceID, unsigned bytecodeOffset)
+{
+    ShadowChicken::Frame frame;
+    Ref result = adoptRef(*new DebuggerCallFrame(callFrame, frame));
+    result->setWebAssemblyLocation(sourceID, bytecodeOffset);
+    return result;
+}
+
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+
+Ref<DebuggerCallFrame> DebuggerCallFrame::create(Debugger& debugger, VM& vm, CallFrame* callFrame, SourceID sourceID, unsigned bytecodeOffset, JSWebAssemblyInstance* instance, Wasm::IPIntCallee* callee, uint8_t* pc)
+{
+    Ref result = create(callFrame, sourceID, bytecodeOffset);
+
+    auto callStack = Wasm::collectCallStack(Wasm::VirtualAddress::toVirtual(instance, callee->functionIndex(), pc), callFrame, vm, std::numeric_limits<unsigned>::max());
+    if (callStack.size() <= 1)
+        return result;
+
+    RefPtr<DebuggerCallFrame> nextJavaScriptFrame;
+    for (auto& frame : callStack) {
+        if (!frame.isWasmFrame()) {
+            nextJavaScriptFrame = create(vm, frame.callFrame);
+            break;
+        }
+    }
+
+    RefPtr tail = result.ptr();
+    auto appendFrame = [&](RefPtr<DebuggerCallFrame>&& frame) {
+        RefPtr caller = std::exchange(frame->m_caller, nullptr);
+        tail->m_caller = frame;
+        tail = WTF::move(frame);
+        return caller;
+    };
+
+    for (size_t i = 1; i < callStack.size(); ++i) {
+        auto& frame = callStack[i];
+        if (!frame.isWasmFrame()) {
+            bool foundJavaScriptFrame = false;
+            while (nextJavaScriptFrame && nextJavaScriptFrame->m_validMachineFrame == frame.callFrame) {
+                foundJavaScriptFrame = true;
+                nextJavaScriptFrame = appendFrame(WTF::move(nextJavaScriptFrame));
+            }
+            while (foundJavaScriptFrame && nextJavaScriptFrame && nextJavaScriptFrame->isTailDeleted())
+                nextJavaScriptFrame = appendFrame(WTF::move(nextJavaScriptFrame));
+            continue;
+        }
+
+        JSWebAssemblyInstance* callerInstance = frame.callFrame->wasmInstance();
+        JSWebAssemblyModule* callerModule = callerInstance->jsModule();
+        SourceID callerSourceID = debugger.sourceID(callerModule);
+        if (callerSourceID == noSourceID)
+            continue;
+
+        Ref caller = create(frame.callFrame, callerSourceID, frame.address.offset());
+        appendFrame(caller.ptr());
+    }
+
+    while (nextJavaScriptFrame)
+        nextJavaScriptFrame = appendFrame(WTF::move(nextJavaScriptFrame));
+
+    return result;
+}
+
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)
+
+#endif // ENABLE(WEBASSEMBLY)
+
+DebuggerCallFrame::DebuggerCallFrame(CallFrame* callFrame, const ShadowChicken::Frame& frame)
     : m_validMachineFrame(callFrame)
     , m_shadowChickenFrame(frame)
+{
+}
+
+DebuggerCallFrame::DebuggerCallFrame(VM& vm, CallFrame* callFrame, const ShadowChicken::Frame& frame)
+    : DebuggerCallFrame(callFrame, frame)
 {
     m_position = currentPosition(vm);
 }
@@ -122,6 +202,10 @@ SourceID DebuggerCallFrame::sourceID() const
     ASSERT(isValid());
     if (!isValid())
         return noSourceID;
+#if ENABLE(WEBASSEMBLY)
+    if (m_wasmSourceID != noSourceID)
+        return m_wasmSourceID;
+#endif // ENABLE(WEBASSEMBLY)
     if (isTailDeleted())
         return m_shadowChickenFrame.codeBlock->ownerExecutable()->sourceID();
     return sourceIDForCallFrame(m_validMachineFrame);
@@ -139,6 +223,11 @@ String DebuggerCallFrame::functionName(VM& vm) const
         return String::fromLatin1(m_shadowChickenFrame.codeBlock->inferredName().data());
     }
 
+#if ENABLE(WEBASSEMBLY)
+    if (isWebAssemblyFrame())
+        return { };
+#endif // ENABLE(WEBASSEMBLY)
+
     return m_validMachineFrame->friendlyFunctionName();
 }
 
@@ -150,11 +239,18 @@ DebuggerScope* DebuggerCallFrame::scope(VM& vm)
 
     if (!m_scope) {
         JSScope* scope;
-        CodeBlock* codeBlock = m_validMachineFrame->isNativeCalleeFrame() ? nullptr : m_validMachineFrame->codeBlock();
+        bool hasJavaScriptCodeBlock = !m_validMachineFrame->isNativeCalleeFrame();
+#if ENABLE(WEBASSEMBLY)
+        if (isWebAssemblyFrame())
+            hasJavaScriptCodeBlock = false;
+#endif // ENABLE(WEBASSEMBLY)
+        CodeBlock* codeBlock = hasJavaScriptCodeBlock ? m_validMachineFrame->codeBlock() : nullptr;
         if (isTailDeleted())
             scope = m_shadowChickenFrame.scope;
         else if (codeBlock && codeBlock->scopeRegister().isValid())
             scope = m_validMachineFrame->scope(codeBlock->scopeRegister().offset());
+        else if (!hasJavaScriptCodeBlock)
+            scope = m_validMachineFrame->lexicalGlobalObject(vm)->globalLexicalEnvironment();
         else if (JSCallee* callee = dynamicDowncast<JSCallee>(m_validMachineFrame->jsCallee()))
             scope = callee->scope();
         else
@@ -174,6 +270,11 @@ DebuggerCallFrame::Type DebuggerCallFrame::type(VM&) const
     if (isTailDeleted())
         return FunctionType;
 
+#if ENABLE(WEBASSEMBLY)
+    if (isWebAssemblyFrame())
+        return ProgramType;
+#endif // ENABLE(WEBASSEMBLY)
+
     if (is<JSFunction>(m_validMachineFrame->jsCallee()))
         return FunctionType;
 
@@ -185,6 +286,11 @@ JSValue DebuggerCallFrame::thisValue(VM& vm) const
     ASSERT(isValid());
     if (!isValid())
         return jsUndefined();
+
+#if ENABLE(WEBASSEMBLY)
+    if (isWebAssemblyFrame())
+        return jsUndefined();
+#endif // ENABLE(WEBASSEMBLY)
 
     CodeBlock* codeBlock = nullptr;
     JSValue thisValue;
@@ -208,6 +314,15 @@ JSValue DebuggerCallFrame::thisValue(VM& vm) const
 // Evaluate some JavaScript code in the scope of this frame.
 JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& script, JSObject* scopeExtensionObject, NakedPtr<Exception>& exception)
 {
+#if ENABLE(WEBASSEMBLY)
+    if (m_wasmSourceID != noSourceID) {
+        JSLockHolder lock(vm);
+        JSGlobalObject* globalObject = m_validMachineFrame->lexicalGlobalObject(vm);
+        DebuggerEvalEnabler evalEnabler(globalObject, DebuggerEvalEnabler::Mode::EvalOnGlobalObjectAtDebuggerEntry);
+        return JSC::evaluateWithScopeExtension(globalObject, makeSource(script, SourceOrigin { m_validMachineFrame->wasmInstance()->sourceURL() }, SourceTaintedOrigin::Untainted), scopeExtensionObject, exception);
+    }
+#endif // ENABLE(WEBASSEMBLY)
+
     CallFrame* callFrame = nullptr;
     CodeBlock* codeBlock = nullptr;
 

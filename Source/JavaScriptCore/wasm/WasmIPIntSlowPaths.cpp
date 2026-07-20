@@ -1113,6 +1113,13 @@ WASM_IPINT_EXTERN_CPP_DECL(ref_cast, int32_t heapType, bool allowNull, EncodedJS
 WASM_IPINT_EXTERN_CPP_DECL(prepare_function_body, CallFrame* callFrame)
 {
     Wasm::IPIntCallee* callee = IPINT_CALLEE(callFrame);
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+    if (Options::enableWasmDebugger()) [[unlikely]] {
+        Wasm::DebugServer& debugServer = Wasm::DebugServer::singleton();
+        if (debugServer.hasExecutionHandler())
+            debugServer.execution().rearmInspectorBreakpointIfNeeded();
+    }
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)
     instance->ensureBaselineData(callee->functionIndex()).incrementTotalCount();
     WASM_RETURN_TWO(callee, nullptr);
 }
@@ -1513,7 +1520,7 @@ WASM_IPINT_EXTERN_CPP_DECL(handle_debugger_trap_if_needed, CallFrame* callFrame,
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
     if (Options::enableWasmDebugger()) [[unlikely]] {
         Wasm::DebugServer& debugServer = Wasm::DebugServer::singleton();
-        if (debugServer.hasDebugger()) {
+        if (debugServer.hasDebugger() || (debugServer.hasExecutionHandler() && debugServer.execution().hasBreakpoints())) {
             uint8_t* pc = static_cast<uint8_t*>(sp[2].pointer());
             uint8_t* mc = static_cast<uint8_t*>(sp[3].pointer());
             auto* callee = static_cast<Wasm::IPIntCallee*>(sp[1].pointer());

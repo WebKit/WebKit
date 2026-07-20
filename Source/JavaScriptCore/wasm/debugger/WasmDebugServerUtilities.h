@@ -104,6 +104,9 @@ struct Breakpoint {
 
         // One-time breakpoint (auto-removed after each stop)
         Step = 1,
+
+        Inspector = 2,
+        InspectorStep = 3,
     };
 
     Breakpoint() = default;
@@ -117,7 +120,8 @@ struct Breakpoint {
     void patchBreakpoint() { *pc = 0x00; }
     void restorePatch() { *pc = originalBytecode; }
 
-    bool isOneTimeBreakpoint() { return type != Type::Regular; }
+    bool isOneTimeBreakpoint() { return type == Type::Step || type == Type::InspectorStep; }
+    bool isInspectorBreakpoint() { return type == Type::Inspector || type == Type::InspectorStep; }
 
     void dump(PrintStream& out) const
     {
@@ -191,9 +195,11 @@ struct DebugState {
     {
         switch (type) {
         case Breakpoint::Type::Step:
+        case Breakpoint::Type::InspectorStep:
             stopReason = Reason::Step;
             break;
         case Breakpoint::Type::Regular:
+        case Breakpoint::Type::Inspector:
             stopReason = Reason::Breakpoint;
             break;
         }
@@ -307,7 +313,7 @@ bool getWasmReturnPC(CallFrame* currentFrame, uint8_t*& returnPC, VirtualAddress
 
 struct FrameInfo {
     VirtualAddress address;
-    CallFrame* wasmCallFrame { nullptr };
+    CallFrame* callFrame { nullptr };
     RefPtr<IPIntCallee> wasmCallee;
 
     bool isWasmFrame() const { return !!wasmCallee; }

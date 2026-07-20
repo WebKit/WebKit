@@ -244,13 +244,13 @@ Vector<FrameInfo> collectCallStack(VirtualAddress stopAddress, CallFrame* startF
                             else
                                 dataLogLn("  [", frames.size(), "] [JS] ", frame->codeBlock()->inferredNameWithHash());
                         }
-                        frames.append({ VirtualAddress(VirtualAddress::JS_FRAME_BASE), nullptr, { } });
+                        frames.append({ VirtualAddress(VirtualAddress::JS_FRAME_BASE), frame, { } });
                     }
                 });
             } else {
 #endif
                 dataLogLnIf(Options::verboseWasmDebugger(), "  [", frames.size(), "] [JS] ", frame->codeBlock()->inferredNameWithHash());
-                frames.append({ VirtualAddress(VirtualAddress::JS_FRAME_BASE), nullptr, { } });
+                frames.append({ VirtualAddress(VirtualAddress::JS_FRAME_BASE), frame, { } });
 #if ENABLE(DFG_JIT)
             }
 #endif

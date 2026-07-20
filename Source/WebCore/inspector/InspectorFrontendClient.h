@@ -106,6 +106,7 @@ public:
     virtual String targetProductVersion() const = 0;
     virtual bool targetIsSimulator() const = 0;
     virtual unsigned inspectionLevel() const = 0;
+    virtual bool wasmDebuggerEnabled() const { return false; }
 
     virtual void bringToFront() = 0;
     virtual void closeWindow() = 0;

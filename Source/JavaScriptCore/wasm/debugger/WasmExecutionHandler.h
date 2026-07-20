@@ -55,6 +55,7 @@ namespace Wasm {
 
 class IPIntCallee;
 class BreakpointManager;
+class Module;
 
 class ExecutionHandler {
     WTF_MAKE_TZONE_ALLOCATED(ExecutionHandler);
@@ -89,7 +90,12 @@ public:
     JS_EXPORT_PRIVATE void reset();
 
     JS_EXPORT_PRIVATE void setBreakpointAtEntry(JSWebAssemblyInstance*, IPIntCallee*, Breakpoint::Type);
-    void setBreakpointAtPC(JSWebAssemblyInstance*, FunctionCodeIndex, Breakpoint::Type, const uint8_t* pc);
+    bool setBreakpointAtPC(JSWebAssemblyInstance*, FunctionCodeIndex, Breakpoint::Type, const uint8_t* pc);
+    bool setBreakpointAtPC(Module&, FunctionCodeIndex, Breakpoint::Type, const uint8_t* pc);
+    void removeBreakpointAtPC(Module&, FunctionCodeIndex, const uint8_t* pc);
+    void prepareInspectorResume(Module&, IPIntCallee*, uint8_t* pc);
+    void rearmInspectorBreakpointIfNeeded();
+    void clearBreakpointsForModule(uint32_t moduleID);
     void setBreakpoint(StringView packet);
     void removeBreakpoint(StringView packet);
     JS_EXPORT_PRIVATE BreakpointManager* breakpointManager() { return m_breakpointManager.get(); };
@@ -171,6 +177,8 @@ private:
     bool m_awaitingResumeNotification WTF_GUARDED_BY_LOCK(m_lock) { false };
     VM* m_debuggee WTF_GUARDED_BY_LOCK(m_lock) { nullptr };
     std::optional<uint64_t> m_debugServerThreadId;
+    std::optional<VirtualAddress> m_inspectorRearmAddress;
+    bool m_inspectorSilentStep { false };
 };
 
 StopTheWorldStatus wasmDebuggerOnStopCallback(VM&, StopTheWorldEvent);

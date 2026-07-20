@@ -48,10 +48,13 @@ class FunctionCodeIndex;
 
 struct FunctionDebugInfo {
     JS_EXPORT_PRIVATE UncheckedKeyHashSet<uint32_t>* NODELETE findNextInstructions(uint32_t offset);
+    bool hasInstructionAtOffset(uint32_t) const;
+    void addInstruction(uint32_t);
     void addNextInstruction(uint32_t offset, uint32_t nextInstruction);
     void addLocalType(Type);
 
     using OffsetToNextInstructions = UncheckedKeyHashMap<uint32_t, UncheckedKeyHashSet<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    UncheckedKeyHashSet<uint32_t> instructionOffsets;
     OffsetToNextInstructions offsetToNextInstructions;
     Vector<Type> locals;
 };

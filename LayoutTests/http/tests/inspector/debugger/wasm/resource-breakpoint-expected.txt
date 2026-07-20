@@ -1,0 +1,15 @@
+Tests breakpoints in WebAssembly scripts associated with network Resources.
+
+
+== Running test suite: WI.Script.Resource.WebAssemblyBreakpoint
+-- Running test case: WI.Script.Resource.WebAssemblyBreakpoint.ByteOffset
+PASS: The WebAssembly script should be associated with its Resource.
+PASS: The pause should belong to the Resource's WebAssembly script.
+PASS: The pause should map to the selected instruction.
+
+-- Running test case: WI.Script.Resource.WebAssemblyBreakpoint.SourceMap
+PASS: The original-source breakpoint should map to the add instruction.
+PASS: The generated pause should belong to the Resource's WebAssembly script.
+PASS: The pause should map back to the original source.
+PASS: The pause should map back to the selected original line.
+

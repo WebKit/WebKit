@@ -108,6 +108,7 @@ public:
         bool targetIsSimulator;
     };
     DebuggableInfo debuggableInfo() const;
+    bool wasmDebuggerEnabled() const;
 
     void copyText(const String& text);
     void killText(const String& text, bool shouldPrependToKillRing, bool shouldStartNewSequence);

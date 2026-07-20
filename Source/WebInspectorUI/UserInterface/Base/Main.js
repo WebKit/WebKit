@@ -137,6 +137,7 @@ WI.loaded = function()
     // Register for events.
     WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, WI._debuggerDidPause, WI);
     WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Resumed, WI._debuggerDidResume, WI);
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ActiveCallFrameDidChange, WI._handleDebuggerActiveCallFrameDidChange, WI);
     WI.deviceSettingsManager.addEventListener(WI.DeviceSettingsManager.Event.SettingChanged, WI._handleDeviceSettingChanged, WI);
     WI.domManager.addEventListener(WI.DOMManager.Event.InspectModeStateChanged, WI._inspectModeStateChanged, WI);
     WI.domManager.addEventListener(WI.DOMManager.Event.DOMNodeWasInspected, WI._domNodeWasInspected, WI);
@@ -1693,21 +1694,26 @@ WI._debuggerDidResume = function(event)
     WI._updateDebuggerKeyboardShortcuts();
 };
 
+WI._handleDebuggerActiveCallFrameDidChange = function(event)
+{
+    WI._updateDebuggerKeyboardShortcuts();
+};
+
 WI._updateDebuggerKeyboardShortcuts = function()
 {
-    let paused = WI.debuggerManager.paused;
+    let steppingEnabled = WI.debuggerManager.paused && !WI.debuggerManager.pausedInWebAssembly;
 
-    WI.stepOverKeyboardShortcut.disabled = !paused;
-    WI.stepIntoKeyboardShortcut.disabled = !paused;
-    WI.stepOutKeyboardShortcut.disabled = !paused;
-    WI.stepOverAlternateKeyboardShortcut.disabled = !paused;
-    WI.stepIntoAlternateKeyboardShortcut.disabled = !paused;
-    WI.stepOutAlternateKeyboardShortcut.disabled = !paused;
+    WI.stepOverKeyboardShortcut.disabled = !steppingEnabled;
+    WI.stepIntoKeyboardShortcut.disabled = !steppingEnabled;
+    WI.stepOutKeyboardShortcut.disabled = !steppingEnabled;
+    WI.stepOverAlternateKeyboardShortcut.disabled = !steppingEnabled;
+    WI.stepIntoAlternateKeyboardShortcut.disabled = !steppingEnabled;
+    WI.stepOutAlternateKeyboardShortcut.disabled = !steppingEnabled;
 
     // COMPATIBILITY (iOS 13.4): Debugger.stepNext did not exist.
     if (InspectorBackend.hasCommand("Debugger.stepNext")) {
-        WI.stepNextKeyboardShortcut.disabled = !paused;
-        WI.stepNextAlternateKeyboardShortcut.disabled = !paused;
+        WI.stepNextKeyboardShortcut.disabled = !steppingEnabled;
+        WI.stepNextAlternateKeyboardShortcut.disabled = !steppingEnabled;
     }
 };
 

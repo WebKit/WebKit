@@ -1290,6 +1290,9 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
     get _supportsDebugging()
     {
+        if (WI.Script.isWebAssembly(this._sourceCode) && !InspectorFrontendHost.wasmDebuggerEnabled)
+            return false;
+
         if (this._sourceCode instanceof WI.Resource) {
             if (this._sourceCode.localResourceOverride)
                 return false;
@@ -1298,10 +1301,8 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
                 return false;
             return this._sourceCode.type === WI.Resource.Type.Document || this._sourceCode.type === WI.Resource.Type.Script;
         }
-        if (this._sourceCode instanceof WI.Script) {
-            // FIXME: Support breakpoints and stepping in WebAssembly.
-            return !(this._sourceCode instanceof WI.LocalScript) && this._sourceCode.sourceType !== WI.Script.SourceType.WebAssembly;
-        }
+        if (this._sourceCode instanceof WI.Script)
+            return !(this._sourceCode instanceof WI.LocalScript);
         return false;
     }
 

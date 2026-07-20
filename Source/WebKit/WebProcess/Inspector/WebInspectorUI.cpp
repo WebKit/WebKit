@@ -63,12 +63,13 @@ WebInspectorUI::WebInspectorUI(WebPage& page)
 
 WebInspectorUI::~WebInspectorUI() = default;
 
-void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIdentifier, const DebuggableInfoData& debuggableInfo, bool underTest, unsigned inspectionLevel)
+void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIdentifier, const DebuggableInfoData& debuggableInfo, bool underTest, unsigned inspectionLevel, bool wasmDebuggerEnabled)
 {
     m_inspectedPageIdentifier = inspectedPageIdentifier;
     m_debuggableInfo = debuggableInfo;
     m_underTest = underTest;
     m_inspectionLevel = inspectionLevel;
+    m_wasmDebuggerEnabled = wasmDebuggerEnabled;
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     if (!m_extensionController)
@@ -79,12 +80,12 @@ void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIde
     m_frontendController = m_page->corePage()->inspectorController();
     m_frontendController->setInspectorFrontendClient(this);
 
-    updateConnection();
+    reconnectToBackend();
 
     didEstablishConnection();
 }
 
-void WebInspectorUI::updateConnection()
+void WebInspectorUI::reconnectToBackend()
 {
     RefPtr backendConnection = m_backendConnection;
     if (backendConnection) {
@@ -100,6 +101,12 @@ void WebInspectorUI::updateConnection()
     backendConnection->open(*this);
 
     sendToParentProcess(Messages::WebInspectorUIProxy::SetFrontendConnection(WTF::move(connectionIdentifiers->client)));
+}
+
+void WebInspectorUI::updateConnection(bool wasmDebuggerEnabled)
+{
+    m_wasmDebuggerEnabled = wasmDebuggerEnabled;
+    reconnectToBackend();
 }
 
 void WebInspectorUI::windowObjectCleared()

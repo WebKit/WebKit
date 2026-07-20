@@ -379,9 +379,9 @@ void QueryHandler::handleWasmLocal(StringView packet)
             return;
         }
         const auto& frameInfo = frames[frameIndex];
-        localCallFrame = frameInfo.wasmCallFrame;
+        localCallFrame = frameInfo.callFrame;
         localCallee = frameInfo.wasmCallee;
-        instance = frameInfo.wasmCallFrame->wasmInstance();
+        instance = frameInfo.callFrame->wasmInstance();
     }
 
     auto functionIndex = localCallee->functionIndex();
@@ -457,7 +457,7 @@ void QueryHandler::handleWasmGlobal(StringView packet)
             m_debugServer.sendErrorReply(ProtocolError::UnknownCommand);
             return;
         }
-        instance = frames[frameIndex].wasmCallFrame->wasmInstance();
+        instance = frames[frameIndex].callFrame->wasmInstance();
     }
 
     const auto& moduleInfo = instance->module().moduleInformation();

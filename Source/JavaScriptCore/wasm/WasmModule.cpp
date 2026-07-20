@@ -33,6 +33,7 @@
 #include "WasmIPIntPlan.h"
 #include "WasmInstanceAnchor.h"
 #include "WasmMergedProfile.h"
+#include "WasmModuleDebugInfo.h"
 #include "WasmModuleInformation.h"
 #include "WasmWorklist.h"
 
@@ -178,9 +179,16 @@ std::unique_ptr<MergedProfile> Module::createMergedProfile(const IPIntCallee& ca
 }
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
+ModuleDebugInfo& Module::ensureDebugInfo()
+{
+    if (!m_moduleInformation->debugInfo)
+        m_moduleInformation->debugInfo = makeUnique<ModuleDebugInfo>(m_moduleInformation.get());
+    return *m_moduleInformation->debugInfo;
+}
+
 uint32_t Module::debugId() const { return m_moduleInformation->debugInfo->id; }
 void Module::setDebugId(uint32_t id) { m_moduleInformation->debugInfo->id = id; }
-#endif
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)
 
 } } // namespace JSC::Wasm
 

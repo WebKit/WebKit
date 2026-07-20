@@ -34,7 +34,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         WI.JavaScriptBreakpoint.addEventListener(WI.Breakpoint.Event.IgnoreCountDidChange, this._breakpointEditablePropertyDidChange, this);
         WI.JavaScriptBreakpoint.addEventListener(WI.Breakpoint.Event.AutoContinueDidChange, this._breakpointEditablePropertyDidChange, this);
         WI.JavaScriptBreakpoint.addEventListener(WI.Breakpoint.Event.ActionsDidChange, this._handleBreakpointActionsDidChange, this);
-        WI.JavaScriptBreakpoint.addEventListener(WI.JavaScriptBreakpoint.Event.DisplayLocationDidChange, this._breakpointDisplayLocationDidChange, this);
+        WI.JavaScriptBreakpoint.addEventListener(WI.JavaScriptBreakpoint.Event.LocationDidChange, this._handleJavaScriptBreakpointLocationDidChange, this);
+        WI.JavaScriptBreakpoint.addEventListener(WI.JavaScriptBreakpoint.Event.DisplayLocationDidChange, this._handleJavaScriptBreakpointDisplayLocationDidChange, this);
 
         WI.SymbolicBreakpoint.addEventListener(WI.Breakpoint.Event.DisabledStateDidChange, this._handleSymbolicBreakpointDisabledStateChanged, this);
         WI.SymbolicBreakpoint.addEventListener(WI.Breakpoint.Event.ConditionDidChange, this._handleSymbolicBreakpointEditablePropertyChanged, this);
@@ -351,6 +352,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         }
 
         return false;
+    }
+
+    get pausedInWebAssembly()
+    {
+        return this._activeCallFrame?.sourceCodeLocation.sourceCode.sourceType === WI.Script.SourceType.WebAssembly;
     }
 
     get activeCallFrame()
@@ -1214,6 +1220,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (!script)
             return null;
 
+        if (script.sourceType === WI.Script.SourceType.WebAssembly)
+            return script.createSourceCodeLocationForBytecodeOffset(payload.columnNumber);
+
         return script.createSourceCodeLocation(payload.lineNumber, payload.columnNumber);
     }
 
@@ -1296,6 +1305,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (!specificTarget)
             breakpoint.clearResolvedLocations();
 
+        let sourceCode = breakpoint.sourceCodeLocation.sourceCode;
+        let wasmScript = (sourceCode instanceof WI.Script && sourceCode.sourceType === WI.Script.SourceType.WebAssembly) ? sourceCode : null;
+
         if (breakpoint.contentIdentifier) {
             let targets = specificTarget ? [specificTarget] : this.#allSupportedTargets();
             for (let target of targets) {
@@ -1307,6 +1319,13 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
                     options: breakpoint.optionsToProtocol(),
                 }, didSetBreakpoint.bind(this, target));
             }
+        } else if (wasmScript) {
+            let sourceCodeLocation = breakpoint.sourceCodeLocation;
+            let bytecodeOffset = wasmScript.bytecodeOffsetForPosition(sourceCodeLocation.lineNumber, sourceCodeLocation.columnNumber);
+            wasmScript.target.DebuggerAgent.setBreakpoint.invoke({
+                location: {scriptId: wasmScript.id, lineNumber: 0, columnNumber: bytecodeOffset},
+                options: breakpoint.optionsToProtocol(),
+            }, didSetBreakpoint.bind(this, wasmScript.target));
         } else if (breakpoint.scriptIdentifier) {
             let target = breakpoint.target;
             target.DebuggerAgent.setBreakpoint.invoke({
@@ -1527,7 +1546,24 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         }
     }
 
-    _breakpointDisplayLocationDidChange(event)
+    _handleJavaScriptBreakpointLocationDidChange(event)
+    {
+        if (this._ignoreBreakpointDisplayLocationDidChangeEvent)
+            return;
+
+        if (this._restoringBreakpoints)
+            return;
+
+        let breakpoint = event.target;
+
+        // The stored key is derived from the breakpoint's original location, so first get rid
+        // of that association before saving the new location (which creates a new association).
+        let oldKey = breakpoint.contentIdentifier + ":" + event.data.oldLineNumber + ":" + event.data.oldColumnNumber;
+        WI.objectStores.breakpoints.delete(oldKey);
+        WI.objectStores.breakpoints.putObject(breakpoint);
+    }
+
+    _handleJavaScriptBreakpointDisplayLocationDidChange(event)
     {
         if (this._ignoreBreakpointDisplayLocationDidChangeEvent)
             return;
@@ -1535,13 +1571,6 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         let breakpoint = event.target;
         if (!breakpoint.identifier || breakpoint.disabled)
             return;
-
-        if (!this._restoringBreakpoints) {
-            // The stored key is derived from the breakpoint's original location, so first get rid
-            // of that association before saving the new location (which creates a new association).
-            WI.objectStores.breakpoints.deleteObject(breakpoint);
-            WI.objectStores.breakpoints.putObject(breakpoint);
-        }
 
         // Remove the breakpoint with its old id.
         this._removeBreakpoint(breakpoint, (target) => {

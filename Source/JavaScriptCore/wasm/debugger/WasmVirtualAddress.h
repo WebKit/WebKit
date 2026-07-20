@@ -44,6 +44,7 @@ class JSWebAssemblyInstance;
 namespace Wasm {
 
 enum class ProtocolError : uint8_t;
+class Module;
 class ModuleManager;
 class FunctionCodeIndex;
 
@@ -135,6 +136,7 @@ public:
     }
 
     JS_EXPORT_PRIVATE static VirtualAddress toVirtual(JSWebAssemblyInstance*, FunctionCodeIndex, const uint8_t* pc);
+    JS_EXPORT_PRIVATE static VirtualAddress toVirtual(Module&, FunctionCodeIndex, const uint8_t* pc);
     JS_EXPORT_PRIVATE uint8_t* toPhysicalPC(const ModuleManager&);
 
     operator uint64_t() const { return m_value; }

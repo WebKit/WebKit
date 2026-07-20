@@ -38,22 +38,51 @@
 
 namespace JSC {
 
+class Debugger;
 class DebuggerScope;
 class Exception;
+
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+class JSWebAssemblyInstance;
+
+namespace Wasm {
+class IPIntCallee;
+}
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)
 
 class DebuggerCallFrame : public RefCounted<DebuggerCallFrame> {
 public:
     enum Type { ProgramType, FunctionType };
 
     static Ref<DebuggerCallFrame> create(VM&, CallFrame*);
+#if ENABLE(WEBASSEMBLY)
+    static Ref<DebuggerCallFrame> create(CallFrame*, SourceID, unsigned bytecodeOffset);
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+    static Ref<DebuggerCallFrame> create(Debugger&, VM&, CallFrame*, SourceID, unsigned bytecodeOffset, JSWebAssemblyInstance*, Wasm::IPIntCallee*, uint8_t* pc);
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)
+#endif // ENABLE(WEBASSEMBLY)
 
     JS_EXPORT_PRIVATE RefPtr<DebuggerCallFrame> NODELETE callerFrame();
     JSGlobalObject* globalObject(VM&);
     JS_EXPORT_PRIVATE SourceID sourceID() const;
 
     // line and column are in base 0 e.g. the first line is line 0.
-    int NODELETE line() const { return m_position.m_line.zeroBasedInt(); }
-    int NODELETE column() const { return m_position.m_column.zeroBasedInt(); }
+    int NODELETE line() const
+    {
+#if ENABLE(WEBASSEMBLY)
+        if (m_wasmSourceID != noSourceID)
+            return 0;
+#endif // ENABLE(WEBASSEMBLY)
+        return m_position.m_line.zeroBasedInt();
+    }
+    int NODELETE column() const
+    {
+#if ENABLE(WEBASSEMBLY)
+        if (m_wasmSourceID != noSourceID)
+            return m_wasmBytecodeOffset;
+#endif // ENABLE(WEBASSEMBLY)
+        return m_position.m_column.zeroBasedInt();
+    }
     JS_EXPORT_PRIVATE const TextPosition& position() const LIFETIME_BOUND { return m_position; }
 
     JS_EXPORT_PRIVATE DebuggerScope* scope(VM&);
@@ -75,7 +104,17 @@ public:
 
     bool isTailDeleted() const { return m_shadowChickenFrame.isTailDeleted; }
 
+#if ENABLE(WEBASSEMBLY)
+    bool isWebAssemblyFrame() const { return m_wasmSourceID != noSourceID; }
+    void setWebAssemblyLocation(SourceID sourceID, unsigned bytecodeOffset)
+    {
+        m_wasmSourceID = sourceID;
+        m_wasmBytecodeOffset = bytecodeOffset;
+    }
+#endif // ENABLE(WEBASSEMBLY)
+
 private:
+    DebuggerCallFrame(CallFrame*, const ShadowChicken::Frame&);
     DebuggerCallFrame(VM&, CallFrame*, const ShadowChicken::Frame&);
 
     CallFrame* m_validMachineFrame;
@@ -85,6 +124,11 @@ private:
     // in turn, will clear this strong ref.
     Strong<DebuggerScope> m_scope;
     ShadowChicken::Frame m_shadowChickenFrame;
+
+#if ENABLE(WEBASSEMBLY)
+    SourceID m_wasmSourceID { noSourceID };
+    unsigned m_wasmBytecodeOffset { 0 };
+#endif // ENABLE(WEBASSEMBLY)
 };
 
 } // namespace JSC

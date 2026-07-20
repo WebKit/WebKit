@@ -1,0 +1,37 @@
+Tests frontend WebAssembly breakpoints in a Worker using module byte offsets and source-mapped original code.
+
+
+== Running test suite: Worker.Debugger.WebAssemblyBreakpoint
+-- Running test case: Worker.Debugger.WebAssemblyBreakpoint.FrontendUnavailable
+PASS: This build should support WebAssembly debugging.
+PASS: The Inspector frontend host should report that WebAssembly debugging is disabled.
+
+-- Running test case: Worker.Debugger.WebAssemblyBreakpoint.Locations
+PASS: The Worker module should expose four breakpoint locations.
+PASS: The frontend locations should use the canonical WebAssembly line.
+PASS: The frontend locations should preserve every instruction byte offset.
+
+-- Running test case: Worker.Debugger.WebAssemblyBreakpoint.ByteOffset
+PASS: The paused call frame should belong to the Worker.
+PASS: The pause should belong to the Worker's WebAssembly script.
+PASS: The pause should use the canonical WebAssembly line.
+PASS: The pause should preserve the selected module byte offset.
+PASS: The debugger should identify the WebAssembly pause.
+
+-- Running test case: Worker.Debugger.WebAssemblyBreakpoint.SourceMap
+PASS: The source-mapped breakpoint should use the canonical WebAssembly line.
+PASS: The source-mapped breakpoint should preserve module byte offset 53.
+PASS: The generated position should map back to module byte offset 53.
+PASS: The paused call frame should belong to the Worker.
+PASS: The pause should map back to the original source.
+PASS: The pause should map back to the selected original line.
+PASS: The debugger should identify the WebAssembly pause.
+
+-- Running test case: Worker.Debugger.WebAssemblyBreakpoint.PersistentURLAfterRestart
+PASS: The breakpoint resolved in the replacement Worker.
+PASS: The replacement Worker should pause.
+PASS: The replacement Worker's WebAssembly script should pause.
+PASS: The replacement Worker should pause on the canonical WebAssembly line.
+PASS: The replacement Worker should pause at the persisted module byte offset.
+PASS: The debugger should identify the WebAssembly pause.
+

@@ -53,7 +53,9 @@ public:
     void setBreakpoint(VirtualAddress, Breakpoint&&);
     bool removeBreakpoint(VirtualAddress);
     void clearAllOneTimeBreakpoints();
+    void clearInspectorStepBreakpoints();
     void clearAllBreakpoints();
+    void clearBreakpointsForModule(uint32_t moduleID);
 
 private:
     bool removeBreakpointImpl(VirtualAddress) WTF_REQUIRES_LOCK(m_lock);

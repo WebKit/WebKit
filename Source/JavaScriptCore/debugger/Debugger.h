@@ -28,6 +28,7 @@
 #include <JavaScriptCore/JSRunLoopTimer.h>
 #include <JavaScriptCore/Microtask.h>
 #include <JavaScriptCore/Weak.h>
+#include <optional>
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
@@ -50,7 +51,12 @@ class SourceProvider;
 class VM;
 
 #if ENABLE(WEBASSEMBLY)
+class JSWebAssemblyInstance;
 class JSWebAssemblyModule;
+
+namespace Wasm {
+class IPIntCallee;
+}
 #endif
 
 enum class ProfilingReason : uint8_t;
@@ -153,7 +159,12 @@ public:
     JS_EXPORT_PRIVATE virtual void sourceParsed(JSGlobalObject*, SourceProvider*, int errorLineNumber, const WTF::String& errorMessage);
 #if ENABLE(WEBASSEMBLY)
     JS_EXPORT_PRIVATE virtual void sourceParsed(JSGlobalObject*, JSWebAssemblyModule*);
-#endif
+    JS_EXPORT_PRIVATE SourceID sourceID(JSWebAssemblyModule*) const;
+    JS_EXPORT_PRIVATE bool breakProgram(JSGlobalObject*, CallFrame*, JSWebAssemblyInstance*, Wasm::IPIntCallee*, uint8_t* pc, SourceID, unsigned bytecodeOffset);
+    JS_EXPORT_PRIVATE std::optional<unsigned> setBreakpoint(SourceID, unsigned bytecodeOffset, Breakpoint&);
+    JS_EXPORT_PRIVATE void removeBreakpoint(SourceID, unsigned bytecodeOffset, Breakpoint&);
+    JS_EXPORT_PRIVATE void forEachWebAssemblyBreakpointBytecodeOffset(SourceID, unsigned startBytecodeOffset, unsigned endBytecodeOffset, Function<void(unsigned)>&&);
+#endif // ENABLE(WEBASSEMBLY)
 
     void exception(JSGlobalObject*, CallFrame*, JSValue exceptionValue, bool hasCatchHandler);
     void atStatement(CallFrame*);
@@ -339,6 +350,9 @@ private:
     UncheckedKeyHashSet<JSGlobalObject*> m_globalObjects;
     UncheckedKeyHashMap<SourceID, DebuggerParseData, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_parseDataMap;
     UncheckedKeyHashSet<SourceID, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_reportedSourceIDs;
+#if ENABLE(WEBASSEMBLY)
+    UncheckedKeyHashMap<SourceID, Weak<JSWebAssemblyModule>> m_wasmModuleForSourceID;
+#endif // ENABLE(WEBASSEMBLY)
     UncheckedKeyHashMap<SourceID, BlackboxConfiguration, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_blackboxConfigurations;
     bool m_blackboxBreakpointEvaluations : 1;
 
@@ -361,6 +375,16 @@ private:
     unsigned m_lastExecutedLine;
     SourceID m_lastExecutedSourceID;
     bool m_afterBlackboxedScript { false };
+
+#if ENABLE(WEBASSEMBLY)
+    SourceID m_wasmPauseSourceID { noSourceID };
+    unsigned m_wasmPauseBytecodeOffset { 0 };
+    Weak<JSWebAssemblyInstance> m_wasmPauseInstance;
+    RefPtr<Wasm::IPIntCallee> m_wasmPauseCallee;
+    uint8_t* m_wasmPausePC { nullptr };
+    using WebAssemblyBreakpointMap = UncheckedKeyHashMap<unsigned, BreakpointsVector, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
+    UncheckedKeyHashMap<SourceID, WebAssemblyBreakpointMap, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_wasmBreakpoints;
+#endif // ENABLE(WEBASSEMBLY)
 
     class AbandonPauseInAwaitTimer final : public JSRunLoopTimer {
     public:

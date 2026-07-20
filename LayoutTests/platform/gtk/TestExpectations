@@ -1327,3 +1327,8 @@ webkit.org/b/322818 [ Debug ] imported/w3c/web-platform-tests/wasm/core/simd/sim
 webkit.org/b/322819 [ Debug ] imported/w3c/web-platform-tests/wasm/core/simd/simd_f64x2_cmp.wast.js.html [ Pass Timeout ]
 webkit.org/b/319070 [ Debug ] imported/w3c/web-platform-tests/wasm/core/simd/simd_f32x4_rounding.wast.js.html [ Pass Timeout ]
 webkit.org/b/322820 [ Release ] media/video-seek-past-end-paused.html [ Failure Pass ]
+
+http/tests/inspector/debugger/wasm/resource-breakpoint.html [ Skip ]
+inspector/debugger/wasm/breakpoint.html [ Skip ]
+inspector/debugger/wasm/breakpoint-frontend.html [ Skip ]
+inspector/worker/debugger-breakpoint-wasm.html [ Skip ]

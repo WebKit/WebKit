@@ -1,0 +1,749 @@
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--enableWasmDebugger=true ] -->
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+let wasmModules = new Map;
+let wasmInstances = new Map;
+let breakpointConditionHitCount = 0;
+let breakpointActionValues = [];
+
+function wasmBytesFromBase64(base64)
+{
+    return Uint8Array.from(atob(base64), (character) => character.charCodeAt(0));
+}
+
+function createWasmModule(name, base64)
+{
+    let module = new WebAssembly.Module(wasmBytesFromBase64(base64));
+    wasmModules.set(name, module);
+    return module;
+}
+
+function createWasmInstance(name, moduleName = name, imports = {})
+{
+    let instance = new WebAssembly.Instance(wasmModules.get(moduleName), imports);
+    wasmInstances.set(name, instance);
+    return instance;
+}
+
+function createWasm(name, base64, imports = {})
+{
+    createWasmModule(name, base64);
+    return createWasmInstance(name, name, imports);
+}
+
+function invokeWasm(instanceName, exportName, ...args)
+{
+    return wasmInstances.get(instanceName).exports[exportName](...args);
+}
+
+function callInnerWasm(value)
+{
+    let innerLocal = value + 1;
+    let result = wasmInstances.get("mixed-stack-inner").exports.add(innerLocal, 3);
+    return result + innerLocal;
+}
+
+function callOuterWasm(value)
+{
+    let outerLocal = value + 1;
+    wasmInstances.get("mixed-stack-outer").exports.call();
+    return outerLocal;
+}
+
+function tailCallInnerWasm()
+{
+    "use strict";
+    let tailLocal = 10;
+    return callInnerWasm(tailLocal);
+}
+
+function resetBreakpointState()
+{
+    breakpointConditionHitCount = 0;
+    breakpointActionValues = [];
+}
+
+function test()
+{
+    const addBase64 = "AGFzbQEAAAABBwFgAn9/AX8DAgEABQMBAAEHEAIDYWRkAAAGbWVtb3J5AgAKCQEHACAAIAFqCw==";
+    const callbackBase64 = "AGFzbQEAAAABBAFgAAACEAEDZW52CGNhbGxiYWNrAAADAgEABwgBBGNhbGwAAQoGAQQAEAAL";
+    const multipleExportsBase64 = "AGFzbQEAAAABBgFgAX8BfwMDAgAABxICBWZpcnN0AAAGc2Vjb25kAAEKEQIHACAAQQFqCwcAIABBAmoL";
+    const loopBase64 = "AGFzbQEAAAABBgFgAX8BfwMCAQAHCQEFY291bnQAAAodARsBAX8DQCABIABqIQEgAEEBayEAIAANAAsgAQs=";
+
+    let pendingWasmScripts = [];
+    let unclaimedWasmScripts = [];
+    let activePauseCollection = null;
+    let breakpointActionLogs = [];
+    let breakpointActionSounds = [];
+    let breakpointActionSamples = [];
+
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function({params: script}) {
+        if (script.scriptType !== "webassembly")
+            return;
+
+        if (pendingWasmScripts.length)
+            pendingWasmScripts.shift().resolve(script);
+        else
+            unclaimedWasmScripts.push(script);
+    };
+
+    InspectorProtocol.eventHandler["Debugger.paused"] = function({params}) {
+        let pauseCollection = activePauseCollection;
+        let topFrame = params.callFrames[0];
+        let pause = {
+            reason: params.reason,
+            scriptId: topFrame.location.scriptId,
+            columnNumber: topFrame.location.columnNumber,
+            data: params.data,
+            callFrames: params.callFrames.map((callFrame) => ({
+                functionName: callFrame.functionName,
+                scriptId: callFrame.location.scriptId,
+                isTailDeleted: callFrame.isTailDeleted,
+            })),
+        };
+
+        let finished = false;
+        function finish(error, inspection)
+        {
+            if (finished)
+                return;
+            finished = true;
+
+            if (inspection !== undefined)
+                pause.inspection = inspection;
+            if (error)
+                pause.inspectionError = String(error);
+
+            if (!pauseCollection)
+                ProtocolTest.fail("Unexpected pause.");
+            else {
+                pauseCollection.pauses.push(pause);
+                if (pauseCollection.pauses.length > pauseCollection.expectedCount)
+                    ProtocolTest.fail("Paused more times than expected.");
+            }
+
+            InspectorProtocol.sendCommand({
+                method: "Debugger.resume",
+                params: {},
+                handler(response) {
+                    if (response.error) {
+                        let resumeError = new Error(JSON.stringify(response.error));
+                        if (pauseCollection?.completion)
+                            pauseCollection.completion.reject(resumeError);
+                        else
+                            ProtocolTest.fail(String(resumeError));
+                        return;
+                    }
+
+                    if (pauseCollection?.pauses.length === pauseCollection.expectedCount)
+                        pauseCollection.completion?.resolve();
+                },
+            });
+        }
+
+        if (!pauseCollection?.inspect) {
+            finish();
+            return;
+        }
+
+        try {
+            pauseCollection.inspect(params, finish);
+        } catch (error) {
+            finish(error);
+        }
+    };
+
+    InspectorProtocol.eventHandler["Console.messageAdded"] = function({params}) {
+        if (params.message.text === "WebAssembly log action")
+            breakpointActionLogs.push(params.message);
+    };
+
+    InspectorProtocol.eventHandler["Debugger.playBreakpointActionSound"] = function({params}) {
+        breakpointActionSounds.push(params.breakpointActionId);
+    };
+
+    InspectorProtocol.eventHandler["Debugger.didSampleProbe"] = function({params}) {
+        breakpointActionSamples.push(params.sample);
+    };
+
+    function awaitNextWasmScript()
+    {
+        if (unclaimedWasmScripts.length)
+            return Promise.resolve(unclaimedWasmScripts.shift());
+
+        let promise = Promise.withResolvers();
+        pendingWasmScripts.push(promise);
+        return promise.promise;
+    }
+
+    async function evaluate(expression)
+    {
+        let response = await InspectorProtocol.awaitCommand({
+            method: "Runtime.evaluate",
+            params: {expression, returnByValue: true},
+        });
+        if (response.wasThrown)
+            throw new Error(JSON.stringify(response));
+        return response.result.value;
+    }
+
+    async function createWasmScript(expression)
+    {
+        let scriptPromise = awaitNextWasmScript();
+        await evaluate(expression);
+        return scriptPromise;
+    }
+
+    async function instructionsForScript(script)
+    {
+        let {locations} = await InspectorProtocol.awaitCommand({
+            method: "Debugger.getBreakpointLocations",
+            params: {
+                start: {scriptId: script.scriptId, lineNumber: 0, columnNumber: 0},
+                end: {scriptId: script.scriptId, lineNumber: 0, columnNumber: script.endColumn},
+            },
+        });
+        return locations;
+    }
+
+    async function setBreakpointAtLocation(script, lineNumber, columnNumber, options = {})
+    {
+        return InspectorProtocol.awaitCommand({
+            method: "Debugger.setBreakpoint",
+            params: {location: {scriptId: script.scriptId, lineNumber, columnNumber}, options},
+        });
+    }
+
+    async function setBreakpoint(script, columnNumber, options = {})
+    {
+        return setBreakpointAtLocation(script, 0, columnNumber, options);
+    }
+
+    async function createLoopBreakpoint(name, options = {})
+    {
+        let script = await createWasmScript(`createWasm(${JSON.stringify(name)}, ${JSON.stringify(loopBase64)})`);
+        let instructions = await instructionsForScript(script);
+        let instruction = instructions[0];
+        let response = await setBreakpoint(script, instruction.columnNumber, options);
+        return {script, instruction, ...response};
+    }
+
+    function scopeVariableValue(callFrame, variableName, complete)
+    {
+        if (!callFrame) {
+            complete(new Error(`Could not find the call frame containing ${variableName}.`));
+            return;
+        }
+
+        function nextScope(index)
+        {
+            if (index === callFrame.scopeChain.length) {
+                complete(null, undefined);
+                return;
+            }
+
+            let objectId = callFrame.scopeChain[index].object.objectId;
+            if (!objectId) {
+                nextScope(index + 1);
+                return;
+            }
+
+            InspectorProtocol.sendCommand({
+                method: "Runtime.getProperties",
+                params: {objectId, ownProperties: true},
+                handler(response) {
+                    if (response.error) {
+                        complete(new Error(JSON.stringify(response.error)));
+                        return;
+                    }
+
+                    let property = response.result.properties.find((property) => property.name === variableName);
+                    if (property) {
+                        complete(null, property.value?.value);
+                        return;
+                    }
+                    nextScope(index + 1);
+                },
+            });
+        }
+
+        nextScope(0);
+    }
+
+    async function evaluateWithPauses(expression, expectedCount, inspect)
+    {
+        console.assert(!activePauseCollection);
+
+        let completion = expectedCount ? Promise.withResolvers() : null;
+        activePauseCollection = {completion, expectedCount, inspect, pauses: []};
+
+        let evaluationPromise = evaluate(expression);
+        if (completion)
+            await completion.promise;
+        let result = await evaluationPromise;
+
+        let pauses = activePauseCollection.pauses;
+        activePauseCollection = null;
+        ProtocolTest.expectEqual(pauses.length, expectedCount, `Should pause ${expectedCount} time(s).`);
+        for (let pause of pauses) {
+            if (pause.inspectionError)
+                throw new Error(pause.inspectionError);
+            ProtocolTest.expectEqual(pause.reason, "Breakpoint", "Should pause for a breakpoint.");
+        }
+        return {pauses, result};
+    }
+
+    let debuggerEnabled = Promise.all([
+        InspectorProtocol.awaitCommand({method: "Console.enable", params: {}}),
+        (async () => {
+            await InspectorProtocol.awaitCommand({method: "Debugger.enable", params: {}});
+            await InspectorProtocol.awaitCommand({method: "Debugger.setBreakpointsActive", params: {active: true}});
+        })(),
+    ]);
+    let suite = ProtocolTest.createAsyncSuite("Debugger.WebAssemblyBreakpoint");
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.Locations",
+        description: "WebAssembly breakpoint locations should cover canonical module byte-offset ranges without source content.",
+        async test() {
+            await debuggerEnabled;
+            let script = await createWasmScript(`createWasm("locations", ${JSON.stringify(addBase64)})`);
+            let instructions = await instructionsForScript(script);
+
+            ProtocolTest.expectEqual(JSON.stringify(instructions.map((location) => location.columnNumber)), JSON.stringify([49, 51, 53, 54]), "The full module byte-offset range should contain every instruction.");
+            ProtocolTest.expectTrue(instructions.every((location) => location.lineNumber === 0), "Breakpoint locations should use canonical WebAssembly protocol lines.");
+
+            let bytecodeRangeResponse = await InspectorProtocol.awaitCommand({
+                method: "Debugger.getBreakpointLocations",
+                params: {
+                    start: {scriptId: script.scriptId, lineNumber: 0, columnNumber: 51},
+                    end: {scriptId: script.scriptId, lineNumber: 0, columnNumber: 54},
+                },
+            });
+            ProtocolTest.expectEqual(JSON.stringify(bytecodeRangeResponse.locations.map((location) => location.columnNumber)), JSON.stringify([51, 53]), "A canonical byte-offset range should include its start and exclude its end.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.Instruction",
+        description: "A breakpoint on a non-entry WebAssembly instruction should report the corresponding module byte offset every time it executes.",
+        async test() {
+            await debuggerEnabled;
+            let script = await createWasmScript(`createWasm("instruction", ${JSON.stringify(addBase64)})`);
+            let instructions = await instructionsForScript(script);
+            let add = instructions[2];
+            let {actualLocation} = await setBreakpoint(script, add.columnNumber);
+            ProtocolTest.expectEqual(actualLocation.columnNumber, add.columnNumber, "The breakpoint should resolve to the requested instruction.");
+
+            let {pauses, result} = await evaluateWithPauses(`invokeWasm("instruction", "add", 2, 3) + invokeWasm("instruction", "add", 4, 5)`, 2);
+            ProtocolTest.expectEqual(result, 14, "Both invocations should complete.");
+            ProtocolTest.expectTrue(pauses.every((pause) => pause.scriptId === script.scriptId && pause.columnNumber === add.columnNumber), "Both pauses should use the requested module byte offset.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.MixedCallStack",
+        description: "A WebAssembly pause should preserve JavaScript and WebAssembly callers across repeated boundary crossings.",
+        async test() {
+            let innerScript = await createWasmScript(`createWasm("mixed-stack-inner", ${JSON.stringify(addBase64)})`);
+            let outerScript = await createWasmScript(`createWasm("mixed-stack-outer", ${JSON.stringify(callbackBase64)}, {env: {callback: tailCallInnerWasm}})`);
+            let [innerEntry] = await instructionsForScript(innerScript);
+            await setBreakpoint(innerScript, innerEntry.columnNumber);
+
+            let inspect = ({callFrames}, complete) => {
+                let variables = [
+                    {functionName: "callInnerWasm", variableName: "innerLocal"},
+                    {functionName: "tailCallInnerWasm", variableName: "tailLocal"},
+                    {functionName: "callOuterWasm", variableName: "outerLocal"},
+                ];
+                let values = {};
+                function next(index)
+                {
+                    if (index === variables.length) {
+                        complete(null, values);
+                        return;
+                    }
+
+                    let {functionName, variableName} = variables[index];
+                    let callFrame = callFrames.find((callFrame) => callFrame.functionName === functionName);
+                    scopeVariableValue(callFrame, variableName, (error, value) => {
+                        if (error) {
+                            complete(error);
+                            return;
+                        }
+                        values[variableName] = value;
+                        next(index + 1);
+                    });
+                }
+                next(0);
+            };
+            let {pauses} = await evaluateWithPauses("callOuterWasm(30)", 1, inspect);
+            let relevantCallFrames = pauses[0].callFrames.filter((callFrame) => {
+                return callFrame.scriptId === innerScript.scriptId
+                    || callFrame.scriptId === outerScript.scriptId
+                    || callFrame.functionName === "callInnerWasm"
+                    || callFrame.functionName === "tailCallInnerWasm"
+                    || callFrame.functionName === "callOuterWasm";
+            });
+
+            ProtocolTest.expectEqual(relevantCallFrames.length, 5, "The mixed call stack should contain both WebAssembly and all three JavaScript frames.");
+            ProtocolTest.expectEqual(relevantCallFrames[0]?.scriptId, innerScript.scriptId, "The inner WebAssembly frame should be first.");
+            ProtocolTest.expectEqual(relevantCallFrames[1]?.functionName, "callInnerWasm", "The imported JavaScript callback should follow the inner WebAssembly frame.");
+            ProtocolTest.expectEqual(relevantCallFrames[2]?.functionName, "tailCallInnerWasm", "The tail-deleted JavaScript wrapper should remain in its logical call-stack position.");
+            ProtocolTest.expectTrue(relevantCallFrames[2]?.isTailDeleted, "The JavaScript wrapper should be represented as a tail-deleted frame.");
+            ProtocolTest.expectEqual(relevantCallFrames[3]?.scriptId, outerScript.scriptId, "The outer WebAssembly frame should follow the JavaScript callback chain.");
+            ProtocolTest.expectEqual(relevantCallFrames[4]?.functionName, "callOuterWasm", "The JavaScript entry point should follow the outer WebAssembly frame.");
+            ProtocolTest.expectEqual(pauses[0].inspection.innerLocal, 11, "The direct JavaScript caller's local scope should remain inspectable.");
+            ProtocolTest.expectEqual(pauses[0].inspection.tailLocal, 10, "The tail-deleted JavaScript caller's local scope should remain inspectable.");
+            ProtocolTest.expectEqual(pauses[0].inspection.outerLocal, 31, "The outer JavaScript caller's local scope should remain inspectable.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.MultipleExports",
+        description: "Breakpoints in different exported functions should pause only when their function executes.",
+        async test() {
+            let script = await createWasmScript(`createWasm("multiple-exports", ${JSON.stringify(multipleExportsBase64)})`);
+            let instructions = await instructionsForScript(script);
+            let firstFunctionInstruction = instructions[0];
+            let secondFunctionInstruction = instructions.lastValue;
+            await setBreakpoint(script, firstFunctionInstruction.columnNumber);
+            await setBreakpoint(script, secondFunctionInstruction.columnNumber);
+
+            let second = await evaluateWithPauses(`invokeWasm("multiple-exports", "second", 5)`, 1);
+            ProtocolTest.expectEqual(second.pauses[0].columnNumber, secondFunctionInstruction.columnNumber, "The second export should pause in the second function.");
+            let first = await evaluateWithPauses(`invokeWasm("multiple-exports", "first", 5)`, 1);
+            ProtocolTest.expectEqual(first.pauses[0].columnNumber, firstFunctionInstruction.columnNumber, "The first export should pause in the first function.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.MultipleInstances",
+        description: "A breakpoint on a module should apply to every instance created from that module.",
+        async test() {
+            let script = await createWasmScript(`createWasmModule("shared", ${JSON.stringify(addBase64)}); createWasmInstance("shared-a", "shared"); createWasmInstance("shared-b", "shared")`);
+            let [entry] = await instructionsForScript(script);
+            await setBreakpoint(script, entry.columnNumber);
+
+            let {pauses, result} = await evaluateWithPauses(`invokeWasm("shared-a", "add", 1, 2) + invokeWasm("shared-b", "add", 3, 4)`, 2);
+            ProtocolTest.expectEqual(result, 10, "Both instances should complete.");
+            ProtocolTest.expectTrue(pauses.every((pause) => pause.scriptId === script.scriptId && pause.columnNumber === entry.columnNumber), "Both instances should pause at the shared module breakpoint.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.MultipleModules",
+        description: "Equivalent offsets in independently compiled modules should remain associated with the correct script.",
+        async test() {
+            let firstScript = await createWasmScript(`createWasm("module-a", ${JSON.stringify(addBase64)})`);
+            let secondScript = await createWasmScript(`createWasm("module-b", ${JSON.stringify(addBase64)})`);
+            let [firstEntry] = await instructionsForScript(firstScript);
+            let [secondEntry] = await instructionsForScript(secondScript);
+            await setBreakpoint(firstScript, firstEntry.columnNumber);
+            await setBreakpoint(secondScript, secondEntry.columnNumber);
+
+            let first = await evaluateWithPauses(`invokeWasm("module-a", "add", 1, 2)`, 1);
+            ProtocolTest.expectEqual(first.pauses[0].scriptId, firstScript.scriptId, "The first module should pause in its script.");
+            let second = await evaluateWithPauses(`invokeWasm("module-b", "add", 3, 4)`, 1);
+            ProtocolTest.expectEqual(second.pauses[0].scriptId, secondScript.scriptId, "The second module should pause in its script.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.Adjacent",
+        description: "Adjacent breakpoints should each remain active across multiple invocations.",
+        async test() {
+            let script = await createWasmScript(`createWasm("adjacent", ${JSON.stringify(addBase64)})`);
+            let instructions = await instructionsForScript(script);
+            await setBreakpoint(script, instructions[0].columnNumber);
+            await setBreakpoint(script, instructions[1].columnNumber);
+
+            let {pauses} = await evaluateWithPauses(`invokeWasm("adjacent", "add", 1, 2) + invokeWasm("adjacent", "add", 3, 4)`, 4);
+            ProtocolTest.expectEqual(pauses.map((pause) => pause.columnNumber).join(", "), `${instructions[0].columnNumber}, ${instructions[1].columnNumber}, ${instructions[0].columnNumber}, ${instructions[1].columnNumber}`, "The adjacent breakpoints should fire in execution order.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.FunctionEnd",
+        description: "A breakpoint at the end of a function should be rearmed before the function executes again.",
+        async test() {
+            let script = await createWasmScript(`createWasm("function-end", ${JSON.stringify(addBase64)})`);
+            let instructions = await instructionsForScript(script);
+            let end = instructions.lastValue;
+            await setBreakpoint(script, end.columnNumber);
+
+            let first = await evaluateWithPauses(`invokeWasm("function-end", "add", 1, 2)`, 1);
+            ProtocolTest.expectEqual(first.pauses[0].columnNumber, end.columnNumber, "The first invocation should pause at the function end.");
+            let second = await evaluateWithPauses(`invokeWasm("function-end", "add", 3, 4)`, 1);
+            ProtocolTest.expectEqual(second.pauses[0].columnNumber, end.columnNumber, "The second invocation should pause at the function end.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.Loop",
+        description: "A breakpoint inside a loop should pause once per iteration.",
+        async test() {
+            let script = await createWasmScript(`createWasm("loop", ${JSON.stringify(loopBase64)})`);
+            let instructions = await instructionsForScript(script);
+            let loopBody = instructions[1];
+            await setBreakpoint(script, loopBody.columnNumber);
+
+            let {pauses, result} = await evaluateWithPauses(`invokeWasm("loop", "count", 3)`, 3);
+            ProtocolTest.expectEqual(result, 6, "The loop should complete.");
+            ProtocolTest.expectTrue(pauses.every((pause) => pause.columnNumber === loopBody.columnNumber), "Every iteration should pause at the loop body breakpoint.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.SharedInstruction",
+        description: "Distinct logical breakpoints should independently share one patched WebAssembly instruction.",
+        async test() {
+            let script = await createWasmScript(`createWasm("shared-instruction", ${JSON.stringify(addBase64)})`);
+            let instructions = await instructionsForScript(script);
+            let add = instructions[2];
+
+            let canonicalBreakpoint = await setBreakpoint(script, add.columnNumber);
+            let urlBreakpoint = await InspectorProtocol.awaitCommand({
+                method: "Debugger.setBreakpointByUrl",
+                params: {lineNumber: 0, url: script.url, columnNumber: add.columnNumber},
+            });
+            ProtocolTest.expectEqual(urlBreakpoint.locations[0].columnNumber, add.columnNumber, "The URL breakpoint should share the canonical instruction.");
+
+            try {
+                await setBreakpoint(script, add.columnNumber);
+                ProtocolTest.fail("An exact duplicate breakpoint should be rejected.");
+            } catch {
+                ProtocolTest.pass("An exact duplicate breakpoint was rejected.");
+            }
+
+            await InspectorProtocol.awaitCommand({method: "Debugger.removeBreakpoint", params: {breakpointId: canonicalBreakpoint.breakpointId}});
+            let withURLOwner = await evaluateWithPauses(`invokeWasm("shared-instruction", "add", 2, 3)`, 1);
+            ProtocolTest.expectEqual(withURLOwner.result, 5, "Removing one logical owner should leave the shared instruction active.");
+
+            await InspectorProtocol.awaitCommand({method: "Debugger.removeBreakpoint", params: {breakpointId: urlBreakpoint.breakpointId}});
+            let withoutOwners = await evaluateWithPauses(`invokeWasm("shared-instruction", "add", 4, 5)`, 0);
+            ProtocolTest.expectEqual(withoutOwners.result, 9, "Removing the final logical owner should restore the instruction.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.ActiveState",
+        description: "Disabling breakpoints should suppress patched WebAssembly instruction breakpoints without removing them.",
+        async test() {
+            let script = await createWasmScript(`createWasm("active-state", ${JSON.stringify(addBase64)})`);
+            let instructions = await instructionsForScript(script);
+            let add = instructions[2];
+            let {breakpointId} = await setBreakpoint(script, add.columnNumber);
+
+            await InspectorProtocol.awaitCommand({method: "Debugger.setBreakpointsActive", params: {active: false}});
+            let disabled = await evaluateWithPauses(`invokeWasm("active-state", "add", 2, 3)`, 0);
+            ProtocolTest.expectEqual(disabled.result, 5, "Execution should continue while breakpoints are disabled.");
+
+            await InspectorProtocol.awaitCommand({method: "Debugger.setBreakpointsActive", params: {active: true}});
+            let enabled = await evaluateWithPauses(`invokeWasm("active-state", "add", 4, 5)`, 1);
+            ProtocolTest.expectEqual(enabled.result, 9, "The existing breakpoint should pause again after breakpoints are enabled.");
+            await InspectorProtocol.awaitCommand({method: "Debugger.removeBreakpoint", params: {breakpointId}});
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.Remove",
+        description: "Removing a WebAssembly breakpoint should restore the original instruction.",
+        async test() {
+            let script = await createWasmScript(`createWasm("remove", ${JSON.stringify(addBase64)})`);
+            let instructions = await instructionsForScript(script);
+            let add = instructions[2];
+            let {breakpointId} = await setBreakpoint(script, add.columnNumber);
+            await InspectorProtocol.awaitCommand({method: "Debugger.removeBreakpoint", params: {breakpointId}});
+
+            let {result} = await evaluateWithPauses(`invokeWasm("remove", "add", 2, 3)`, 0);
+            ProtocolTest.expectEqual(result, 5, "Execution should complete without pausing.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.LocalsDeclaration",
+        description: "A breakpoint in a function's locals declaration should resolve to its first instruction.",
+        async test() {
+            let script = await createWasmScript(`createWasm("locals", ${JSON.stringify(addBase64)})`);
+            let [entry] = await instructionsForScript(script);
+            let {actualLocation} = await setBreakpoint(script, entry.columnNumber - 1);
+            ProtocolTest.expectEqual(actualLocation.columnNumber, entry.columnNumber, "The breakpoint should resolve to the function entry.");
+
+            let {pauses} = await evaluateWithPauses(`invokeWasm("locals", "add", 2, 3)`, 1);
+            ProtocolTest.expectEqual(pauses[0].columnNumber, entry.columnNumber, "Execution should pause at the resolved function entry.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.InvalidOffset",
+        description: "A breakpoint inside an instruction immediate should be rejected without modifying the function.",
+        async test() {
+            let script = await createWasmScript(`createWasm("invalid", ${JSON.stringify(addBase64)})`);
+            let [entry] = await instructionsForScript(script);
+            try {
+                await setBreakpoint(script, entry.columnNumber + 1);
+                ProtocolTest.fail("The invalid breakpoint should be rejected.");
+            } catch {
+                ProtocolTest.pass("The invalid breakpoint was rejected.");
+            }
+
+            let {result} = await evaluateWithPauses(`invokeWasm("invalid", "add", 2, 3)`, 0);
+            ProtocolTest.expectEqual(result, 5, "Rejecting the breakpoint should leave the function unchanged.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.URLByteOffset",
+        description: "A URL breakpoint restored from a canonical module byte offset should resolve without source content.",
+        async test() {
+            let script = await createWasmScript(`createWasm("url-byte-offset", ${JSON.stringify(addBase64)})`);
+            let instructions = await instructionsForScript(script);
+            let add = instructions[2];
+            let {breakpointId, locations} = await InspectorProtocol.awaitCommand({
+                method: "Debugger.setBreakpointByUrl",
+                params: {lineNumber: 0, url: script.url, columnNumber: add.columnNumber},
+            });
+            ProtocolTest.expectEqual(locations.length, 1, "The URL breakpoint should resolve in the module.");
+            ProtocolTest.expectEqual(locations[0].columnNumber, add.columnNumber, "The URL breakpoint should preserve its module byte offset.");
+
+            let {pauses} = await evaluateWithPauses(`invokeWasm("url-byte-offset", "add", 2, 3)`, 1);
+            ProtocolTest.expectEqual(pauses[0].columnNumber, add.columnNumber, "Execution should pause at the restored module byte offset.");
+            await InspectorProtocol.awaitCommand({method: "Debugger.removeBreakpoint", params: {breakpointId}});
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.Condition",
+        description: "A WebAssembly breakpoint condition should be evaluated for every hit and pause only when truthy.",
+        async test() {
+            await evaluate("resetBreakpointState()");
+            let {breakpointId, instruction} = await createLoopBreakpoint("condition", {condition: "++breakpointConditionHitCount === 2"});
+            let {pauses} = await evaluateWithPauses(`invokeWasm("condition", "count", 3)`, 1);
+            ProtocolTest.expectEqual(pauses[0].columnNumber, instruction.columnNumber, "The truthy condition should pause at the configured instruction.");
+            ProtocolTest.expectEqual(await evaluate("breakpointConditionHitCount"), 3, "The condition should be evaluated for every hit.");
+            await InspectorProtocol.awaitCommand({method: "Debugger.removeBreakpoint", params: {breakpointId}});
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.SharedInstructionConfiguration",
+        description: "Each logical breakpoint that shares a WebAssembly instruction should independently evaluate its configuration.",
+        async test() {
+            await evaluate("resetBreakpointState()");
+            let script = await createWasmScript(`createWasm("shared-configuration", ${JSON.stringify(addBase64)})`);
+            let instructions = await instructionsForScript(script);
+            let add = instructions[2];
+            let falsyBreakpoint = await setBreakpoint(script, add.columnNumber, {condition: "(++breakpointConditionHitCount, false)"});
+            let truthyBreakpoint = await InspectorProtocol.awaitCommand({
+                method: "Debugger.setBreakpointByUrl",
+                params: {
+                    lineNumber: add.lineNumber,
+                    url: script.url,
+                    columnNumber: add.columnNumber,
+                    options: {condition: "(++breakpointConditionHitCount, true)"},
+                },
+            });
+
+            let {pauses} = await evaluateWithPauses(`invokeWasm("shared-configuration", "add", 2, 3)`, 1);
+            ProtocolTest.expectEqual(await evaluate("breakpointConditionHitCount"), 2, "Both logical breakpoint conditions should be evaluated.");
+            ProtocolTest.expectEqual(pauses[0].data.breakpointId, truthyBreakpoint.breakpointId, "The pausing logical breakpoint should identify itself.");
+
+            await InspectorProtocol.awaitCommand({method: "Debugger.removeBreakpoint", params: {breakpointId: falsyBreakpoint.breakpointId}});
+            await InspectorProtocol.awaitCommand({method: "Debugger.removeBreakpoint", params: {breakpointId: truthyBreakpoint.breakpointId}});
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.ConditionAndIgnoreCount",
+        description: "The ignore count should advance only after the breakpoint condition is truthy.",
+        async test() {
+            await evaluate("resetBreakpointState()");
+            let {breakpointId} = await createLoopBreakpoint("condition-ignore", {condition: "++breakpointConditionHitCount > 1", ignoreCount: 1});
+            await evaluateWithPauses(`invokeWasm("condition-ignore", "count", 3)`, 1);
+            ProtocolTest.expectEqual(await evaluate("breakpointConditionHitCount"), 3, "Falsy condition results should not advance the ignore count.");
+            await InspectorProtocol.awaitCommand({method: "Debugger.removeBreakpoint", params: {breakpointId}});
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.ConditionException",
+        description: "An exception thrown while evaluating a WebAssembly breakpoint condition should not pause execution.",
+        async test() {
+            let {breakpointId} = await createLoopBreakpoint("condition-exception", {condition: "thisFunctionDoesNotExist()"});
+            await evaluateWithPauses(`invokeWasm("condition-exception", "count", 3)`, 0);
+            ProtocolTest.pass("Condition exceptions did not pause execution.");
+            await InspectorProtocol.awaitCommand({method: "Debugger.removeBreakpoint", params: {breakpointId}});
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.IgnoreCount",
+        description: "A WebAssembly breakpoint should pause only after its ignore count is exhausted.",
+        async test() {
+            let {breakpointId} = await createLoopBreakpoint("ignore", {ignoreCount: 2});
+            await evaluateWithPauses(`invokeWasm("ignore", "count", 3)`, 1);
+            ProtocolTest.pass("The breakpoint paused after ignoring two hits.");
+            await InspectorProtocol.awaitCommand({method: "Debugger.removeBreakpoint", params: {breakpointId}});
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.AutoContinue",
+        description: "An auto-continuing WebAssembly breakpoint should not notify the frontend.",
+        async test() {
+            let {breakpointId} = await createLoopBreakpoint("auto-continue", {autoContinue: true});
+            await evaluateWithPauses(`invokeWasm("auto-continue", "count", 3)`, 0);
+            ProtocolTest.pass("The auto-continuing breakpoint did not pause.");
+            await InspectorProtocol.awaitCommand({method: "Debugger.removeBreakpoint", params: {breakpointId}});
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.Actions",
+        description: "WebAssembly breakpoint actions should run before auto-continuing.",
+        async test() {
+            await evaluate("resetBreakpointState()");
+            breakpointActionLogs = [];
+            breakpointActionSounds = [];
+            breakpointActionSamples = [];
+            let options = {
+                autoContinue: true,
+                actions: [
+                    {type: "log", data: "WebAssembly log action", id: 1},
+                    {type: "evaluate", data: "breakpointActionValues.push(42)", id: 2},
+                    {type: "sound", id: 3},
+                    {type: "probe", data: "6 * 7", id: 4},
+                ],
+            };
+            let {breakpointId} = await createLoopBreakpoint("actions", options);
+            await evaluateWithPauses(`invokeWasm("actions", "count", 3)`, 0);
+            ProtocolTest.expectEqual(breakpointActionLogs.length, 1, "The log action should emit a console message.");
+            ProtocolTest.expectEqual((await evaluate("breakpointActionValues")).join(", "), "42, 42, 42", "The evaluate action should run for every hit.");
+            ProtocolTest.expectEqual(breakpointActionSounds.join(", "), "3, 3, 3", "The sound action should run for every hit.");
+            ProtocolTest.expectEqual(breakpointActionSamples.map((sample) => sample.payload.value).join(", "), "42, 42, 42", "The probe action should run for every hit.");
+            await InspectorProtocol.awaitCommand({method: "Debugger.removeBreakpoint", params: {breakpointId}});
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.WebAssemblyBreakpoint.PauseReason",
+        description: "A configured WebAssembly breakpoint pause should report its protocol breakpoint identifier.",
+        async test() {
+            let {breakpointId} = await createLoopBreakpoint("pause-reason", {ignoreCount: 2});
+            let {pauses} = await evaluateWithPauses(`invokeWasm("pause-reason", "count", 3)`, 1);
+            ProtocolTest.expectEqual(pauses[0].data.breakpointId, breakpointId, "The pause should identify the configured breakpoint.");
+            await InspectorProtocol.awaitCommand({method: "Debugger.removeBreakpoint", params: {breakpointId}});
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests setting, resolving, repeatedly hitting, and removing WebAssembly instruction breakpoints.</p>
+</body>
+</html>
