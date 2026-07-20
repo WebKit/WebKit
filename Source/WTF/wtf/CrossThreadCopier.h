@@ -255,8 +255,10 @@ template<typename T, typename HashFunctions, typename Traits, typename TableTrai
 
 template<typename T, typename U, typename V>
 struct CrossThreadCopierBase<false, false, HashSet<ObjectIdentifierGeneric<T, U, V>>> {
-    typedef HashSet<ObjectIdentifierGeneric<T, U, V>> Type;
+    using Type = HashSet<ObjectIdentifierGeneric<T, U, V>>;
+    static constexpr bool IsNeeded = false;
     static Type copy(const Type& identifiers) { return identifiers; }
+    static Type copy(Type&& identifiers) { return WTF::move(identifiers); }
 };
 
 // Default specialization for HashMaps of CrossThreadCopyable classes
