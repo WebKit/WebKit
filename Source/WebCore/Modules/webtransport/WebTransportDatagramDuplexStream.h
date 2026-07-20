@@ -54,12 +54,12 @@ public:
     unsigned maxDatagramSize() const { return std::numeric_limits<uint16_t>::max(); }
     std::optional<double> incomingMaxAge() const { return m_incomingMaxAge; }
     std::optional<double> outgoingMaxAge() const { return m_outgoingMaxAge; }
-    double incomingHighWaterMark() const { return m_incomingHighWaterMark; }
-    double outgoingHighWaterMark() const { return m_outgoingHighWaterMark; }
+    uint32_t incomingMaxBufferedDatagrams() const { return m_incomingMaxBufferedDatagrams; }
+    uint32_t outgoingMaxBufferedDatagrams() const { return m_outgoingMaxBufferedDatagrams; }
     ExceptionOr<void> setIncomingMaxAge(std::optional<double>);
     ExceptionOr<void> setOutgoingMaxAge(std::optional<double>);
-    ExceptionOr<void> setIncomingHighWaterMark(double);
-    ExceptionOr<void> setOutgoingHighWaterMark(double);
+    void setIncomingMaxBufferedDatagrams(uint32_t);
+    void setOutgoingMaxBufferedDatagrams(uint32_t);
 
     void attachTo(WebTransport&);
 
@@ -69,8 +69,8 @@ private:
     RefPtr<WebTransportSession> session();
 
     const Ref<ReadableStream> m_readable;
-    double m_incomingHighWaterMark { 1 };
-    double m_outgoingHighWaterMark { 1 };
+    uint32_t m_incomingMaxBufferedDatagrams { std::numeric_limits<uint32_t>::max() };
+    uint32_t m_outgoingMaxBufferedDatagrams { std::numeric_limits<uint32_t>::max() };
     std::optional<double> m_incomingMaxAge;
     std::optional<double> m_outgoingMaxAge;
     ThreadSafeWeakPtr<WebTransport> m_transport;

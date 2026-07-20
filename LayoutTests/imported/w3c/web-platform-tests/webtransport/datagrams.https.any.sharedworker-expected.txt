@@ -7,7 +7,7 @@ FAIL Transfer max-size datagram promise_test: Unhandled rejection with value: ob
 FAIL Fail to transfer max-size+1 datagram, handle PMTUD increases promise_test: Unhandled rejection with value: object "NetworkError:  A network error occurred."
 PASS Sending and receiving datagrams is ready to use before session is established
 FAIL Datagram's outgoingMaxBufferedDatagrams correctly regulates written datagrams assert_true: expected true got false
-FAIL Datagrams read is less than or equal to the incomingMaxBufferedDatagrams assert_less_than_equal: expected a number less than or equal to 5 but got 46
+PASS Datagrams read is less than or equal to the incomingMaxBufferedDatagrams
 PASS Datagram MaxAge getters/setters work correctly
-FAIL Datagram MaxBufferedDatagrams getters/setters work correctly assert_greater_than_equal: expected a number but got a "undefined"
+PASS Datagram MaxBufferedDatagrams getters/setters work correctly
 

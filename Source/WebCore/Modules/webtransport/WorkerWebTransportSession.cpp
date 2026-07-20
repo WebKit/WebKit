@@ -270,20 +270,20 @@ void WorkerWebTransportSession::datagramOutgoingMaxAgeUpdated(std::optional<doub
         ASSERT_NOT_REACHED_WITH_MESSAGE("Session should be set up before use then never removed.");
 }
 
-void WorkerWebTransportSession::datagramIncomingHighWaterMarkUpdated(double watermark)
+void WorkerWebTransportSession::incomingMaxBufferedDatagramsUpdated(uint32_t value)
 {
     ASSERT(!RunLoop::isMain());
     if (RefPtr session = m_session)
-        session->datagramIncomingHighWaterMarkUpdated(watermark);
+        session->incomingMaxBufferedDatagramsUpdated(value);
     else
         ASSERT_NOT_REACHED_WITH_MESSAGE("Session should be set up before use then never removed.");
 }
 
-void WorkerWebTransportSession::datagramOutgoingHighWaterMarkUpdated(double watermark)
+void WorkerWebTransportSession::outgoingMaxBufferedDatagramsUpdated(uint32_t value)
 {
     ASSERT(!RunLoop::isMain());
     if (RefPtr session = m_session)
-        session->datagramOutgoingHighWaterMarkUpdated(watermark);
+        session->outgoingMaxBufferedDatagramsUpdated(value);
     else
         ASSERT_NOT_REACHED_WITH_MESSAGE("Session should be set up before use then never removed.");
 }

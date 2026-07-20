@@ -40,6 +40,6 @@ messages -> NetworkTransportSession {
     Terminate(uint32_t code, CString reason)
     DatagramIncomingMaxAgeUpdated(std::optional<double> maxAge)
     DatagramOutgoingMaxAgeUpdated(std::optional<double> maxAge)
-    DatagramIncomingHighWaterMarkUpdated(double watermark)
-    DatagramOutgoingHighWaterMarkUpdated(double watermark)
+    IncomingMaxBufferedDatagramsUpdated(uint32_t value)
+    OutgoingMaxBufferedDatagramsUpdated(uint32_t value)
 }

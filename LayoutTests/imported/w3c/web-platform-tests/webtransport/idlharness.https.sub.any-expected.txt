@@ -22,8 +22,8 @@ PASS WebTransportDatagramDuplexStream interface: attribute readable
 PASS WebTransportDatagramDuplexStream interface: attribute maxDatagramSize
 PASS WebTransportDatagramDuplexStream interface: attribute incomingMaxAge
 PASS WebTransportDatagramDuplexStream interface: attribute outgoingMaxAge
-PASS WebTransportDatagramDuplexStream interface: attribute incomingHighWaterMark
-PASS WebTransportDatagramDuplexStream interface: attribute outgoingHighWaterMark
+PASS WebTransportDatagramDuplexStream interface: attribute incomingMaxBufferedDatagrams
+PASS WebTransportDatagramDuplexStream interface: attribute outgoingMaxBufferedDatagrams
 PASS WebTransport interface: existence and properties of interface object
 PASS WebTransport interface object length
 PASS WebTransport interface object name

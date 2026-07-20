@@ -101,8 +101,8 @@ private:
     void terminate(WebCore::WebTransportSessionErrorCode, CString&&) final;
     void datagramIncomingMaxAgeUpdated(std::optional<double>) final;
     void datagramOutgoingMaxAgeUpdated(std::optional<double>) final;
-    void datagramIncomingHighWaterMarkUpdated(double) final;
-    void datagramOutgoingHighWaterMarkUpdated(double) final;
+    void incomingMaxBufferedDatagramsUpdated(uint32_t) final;
+    void outgoingMaxBufferedDatagramsUpdated(uint32_t) final;
 
     // MessageSender
     IPC::Connection* messageSenderConnection() const final;

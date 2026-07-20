@@ -245,14 +245,14 @@ void WebTransportSession::datagramOutgoingMaxAgeUpdated(std::optional<double> ma
     send(Messages::NetworkTransportSession::DatagramOutgoingMaxAgeUpdated(maxAge));
 }
 
-void WebTransportSession::datagramIncomingHighWaterMarkUpdated(double watermark)
+void WebTransportSession::incomingMaxBufferedDatagramsUpdated(uint32_t value)
 {
-    send(Messages::NetworkTransportSession::DatagramIncomingHighWaterMarkUpdated(watermark));
+    send(Messages::NetworkTransportSession::IncomingMaxBufferedDatagramsUpdated(value));
 }
 
-void WebTransportSession::datagramOutgoingHighWaterMarkUpdated(double watermark)
+void WebTransportSession::outgoingMaxBufferedDatagramsUpdated(uint32_t value)
 {
-    send(Messages::NetworkTransportSession::DatagramOutgoingHighWaterMarkUpdated(watermark));
+    send(Messages::NetworkTransportSession::OutgoingMaxBufferedDatagramsUpdated(value));
 }
 
 }

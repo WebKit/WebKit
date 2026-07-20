@@ -1,5 +1,5 @@
 
 PASS WebTransportDatagramDuplexStream#writable is removed
-FAIL WebTransportDatagramDuplexStream#incomingHighWaterMark is removed assert_false: expected false got true
-FAIL WebTransportDatagramDuplexStream#outgoingHighWaterMark is removed assert_false: expected false got true
+PASS WebTransportDatagramDuplexStream#incomingHighWaterMark is removed
+PASS WebTransportDatagramDuplexStream#outgoingHighWaterMark is removed
 

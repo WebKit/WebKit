@@ -97,30 +97,24 @@ ExceptionOr<void> WebTransportDatagramDuplexStream::setOutgoingMaxAge(std::optio
     return { };
 }
 
-ExceptionOr<void> WebTransportDatagramDuplexStream::setIncomingHighWaterMark(double mark)
+void WebTransportDatagramDuplexStream::setIncomingMaxBufferedDatagrams(uint32_t value)
 {
-    // https://www.w3.org/TR/webtransport/#dom-webtransportdatagramduplexstream-incominghighwatermark
-    if (std::isnan(mark) || mark < 0)
-        return Exception { ExceptionCode::RangeError };
-    if (mark < 1)
-        mark = 1;
-    m_incomingHighWaterMark = mark;
+    // https://www.w3.org/TR/webtransport/#dom-webtransportdatagramduplexstream-incomingmaxbuffereddatagrams
+    if (value < 1)
+        value = 1;
+    m_incomingMaxBufferedDatagrams = value;
     if (RefPtr session = this->session())
-        session->datagramIncomingHighWaterMarkUpdated(m_incomingHighWaterMark);
-    return { };
+        session->incomingMaxBufferedDatagramsUpdated(m_incomingMaxBufferedDatagrams);
 }
 
-ExceptionOr<void> WebTransportDatagramDuplexStream::setOutgoingHighWaterMark(double mark)
+void WebTransportDatagramDuplexStream::setOutgoingMaxBufferedDatagrams(uint32_t value)
 {
-    // https://www.w3.org/TR/webtransport/#dom-webtransportdatagramduplexstream-outgoinghighwatermark
-    if (std::isnan(mark) || mark < 0)
-        return Exception { ExceptionCode::RangeError };
-    if (mark < 1)
-        mark = 1;
-    m_outgoingHighWaterMark = mark;
+    // https://www.w3.org/TR/webtransport/#dom-webtransportdatagramduplexstream-outgoingmaxbuffereddatagrams
+    if (value < 1)
+        value = 1;
+    m_outgoingMaxBufferedDatagrams = value;
     if (RefPtr session = this->session())
-        session->datagramOutgoingHighWaterMarkUpdated(m_outgoingHighWaterMark);
-    return { };
+        session->outgoingMaxBufferedDatagramsUpdated(m_outgoingMaxBufferedDatagrams);
 }
 
 }

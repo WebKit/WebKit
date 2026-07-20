@@ -69,8 +69,8 @@ private:
     void terminate(WebTransportSessionErrorCode, CString&&) final;
     void datagramIncomingMaxAgeUpdated(std::optional<double>) final;
     void datagramOutgoingMaxAgeUpdated(std::optional<double>) final;
-    void datagramIncomingHighWaterMarkUpdated(double) final;
-    void datagramOutgoingHighWaterMarkUpdated(double) final;
+    void incomingMaxBufferedDatagramsUpdated(uint32_t) final;
+    void outgoingMaxBufferedDatagramsUpdated(uint32_t) final;
 
     const ScriptExecutionContextIdentifier m_contextID;
     ThreadSafeWeakPtr<WebTransportSessionClient> m_client;

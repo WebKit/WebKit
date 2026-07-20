@@ -154,12 +154,12 @@ void NetworkTransportSession::datagramOutgoingMaxAgeUpdated(std::optional<double
     // FIXME: Use this value.
 }
 
-void NetworkTransportSession::datagramIncomingHighWaterMarkUpdated(double)
+void NetworkTransportSession::incomingMaxBufferedDatagramsUpdated(uint32_t)
 {
     // FIXME: Use this value.
 }
 
-void NetworkTransportSession::datagramOutgoingHighWaterMarkUpdated(double)
+void NetworkTransportSession::outgoingMaxBufferedDatagramsUpdated(uint32_t)
 {
     // FIXME: Use this value.
 }
