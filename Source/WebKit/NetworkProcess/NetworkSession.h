@@ -123,7 +123,7 @@ public:
     virtual HashSet<WebCore::SecurityOriginData> originsWithCredentials() { return { }; }
     virtual void removeCredentialsForOrigins(const Vector<WebCore::SecurityOriginData>&) { }
     virtual void clearCredentials(WallTime) { }
-    virtual void loadImageForDecoding(WebCore::ResourceRequest&&, WebPageProxyIdentifier, size_t, CompletionHandler<void(Expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError>&&)>&&) { ASSERT_NOT_REACHED(); }
+    void loadImageForDecoding(WebCore::ResourceRequest&&, WebPageProxyIdentifier, size_t, CompletionHandler<void(Expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError>&&)>&&);
 
     // CanMakeCheckedPtr.
     uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
