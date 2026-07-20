@@ -142,13 +142,18 @@ static_assert(sizeof(IndexingType) <= sizeof(unsigned));
 static_assert(sizeof(NewArrayBufferData) == sizeof(uint64_t));
 
 struct NewArrayWithSpeciesData {
-    unsigned arrayMode { 0 };
-    unsigned indexingMode { 0 };
-
-    uint64_t asQuadWord() const { return std::bit_cast<uint64_t>(*this); }
+    union {
+        struct {
+            unsigned arrayMode;
+            uint8_t indexingMode;
+            uint8_t vectorLengthHint;
+        };
+        uint64_t asQuadWord;
+    };
 };
-static_assert(sizeof(IndexingType) <= sizeof(unsigned));
+static_assert(sizeof(IndexingType) <= sizeof(uint8_t));
 static_assert(sizeof(ArrayMode) <= sizeof(unsigned));
+static_assert(sizeof(NewArrayWithSpeciesData) == sizeof(uint64_t));
 
 struct DataViewData {
     union {
@@ -1494,18 +1499,30 @@ public:
         case NewArray:
         case NewArrayBuffer:
         case PhantomNewArrayBuffer:
+        case NewArrayWithSize:
+        case NewButterflyWithSize:
+        case PhantomNewButterflyWithSize:
+        case NewArrayWithSpecies:
             return true;
         default:
             return false;
         }
     }
-    
+
     unsigned vectorLengthHint()
     {
         ASSERT(hasVectorLengthHint());
-        if (op() == NewArray)
+        switch (op()) {
+        case NewArray:
+        case NewArrayWithSize:
+        case NewButterflyWithSize:
+        case PhantomNewButterflyWithSize:
             return m_opInfo2.as<unsigned>();
-        return newArrayBufferData().vectorLengthHint;
+        case NewArrayWithSpecies:
+            return newArrayWithSpeciesData().vectorLengthHint;
+        default:
+            return newArrayBufferData().vectorLengthHint;
+        }
     }
 
     bool hasIndexingType()
@@ -2820,7 +2837,7 @@ public:
         case NewArrayWithSpecies: {
             auto data = newArrayWithSpeciesData();
             data.arrayMode = arrayMode.asWord();
-            m_opInfo = data.asQuadWord();
+            m_opInfo = data.asQuadWord;
             return true;
         }
         case MultiGetByVal:

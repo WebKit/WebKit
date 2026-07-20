@@ -11002,9 +11002,11 @@ IGNORE_CLANG_WARNINGS_END
         ASSERT(!isCopyOnWrite(m_node->indexingMode()));
 
         LValue publicLength = lowInt32(m_node->child1());
+        LValue vectorLengthHint = m_out.constInt32(m_node->vectorLengthHint());
+        LValue vectorLength = m_out.select(m_out.aboveOrEqual(publicLength, vectorLengthHint), publicLength, vectorLengthHint);
         LValue indexingType = m_out.constInt32(m_node->indexingType());
 
-        LValue butterfly = allocateButterfly(indexingType, m_out.int32Zero, publicLength, publicLength);
+        LValue butterfly = allocateButterfly(indexingType, m_out.int32Zero, publicLength, vectorLength);
 
         setStorage(butterfly);
         // No mutator fence is needed. Butterflies are only scanned when the GC discovers them in an object not on the stack.

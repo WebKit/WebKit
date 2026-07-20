@@ -1157,7 +1157,7 @@ private:
                                 m_interpreter.execute(indexInBlock); // Push CFA over this node after we get the state before.
                                 alreadyHandled = true; // Don't allow the default constant folder to do things to this.
 
-                                Node* butterfly = m_insertionSet.insertNode(indexInBlock, SpecNone, NewButterflyWithSize, node->origin, OpInfo(node->indexingType()), node->child1());
+                                Node* butterfly = m_insertionSet.insertNode(indexInBlock, SpecNone, NewButterflyWithSize, node->origin, OpInfo(node->indexingType()), OpInfo(node->vectorLengthHint()), node->child1());
                                 node->convertToNewArrayWithButterfly(m_graph, butterfly);
                                 changed = true;
                         }

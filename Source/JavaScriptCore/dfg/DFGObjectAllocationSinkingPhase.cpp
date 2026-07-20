@@ -1882,7 +1882,7 @@ escapeChildren:
             Node* node = allocation.identifier();
 
             return m_graph.addNode(node->prediction(),  NewButterflyWithSize,
-                where->origin.withSemantic(node->origin.semantic), OpInfo(node->indexingType()));
+                where->origin.withSemantic(node->origin.semantic), OpInfo(node->indexingType()), OpInfo(node->vectorLengthHint()));
         }
 
         case Allocation::Kind::Object: {

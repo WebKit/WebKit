@@ -263,9 +263,11 @@ void Node::convertToNewArrayWithSize()
 {
     ASSERT(op() == NewArrayWithSpecies);
     IndexingType indexingType = this->indexingType();
+    unsigned vectorLengthHint = this->vectorLengthHint();
     setOpAndDefaultFlags(NewArrayWithSize);
     children.child2() = Edge();
     m_opInfo = indexingType;
+    m_opInfo2 = vectorLengthHint;
 }
 
 void Node::convertToNewArrayWithButterfly(Graph&, Node* butterfly)

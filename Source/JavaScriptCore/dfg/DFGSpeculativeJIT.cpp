@@ -15740,11 +15740,12 @@ void SpeculativeJIT::compileNewButterflyWithSize(Node* node)
     IndexingType indexingMode = node->indexingMode();
     ASSERT(!hasAnyArrayStorage(indexingMode));
     ASSERT(!isCopyOnWrite(indexingMode));
-    unsigned butterflyLength = node->child1()->asInt32();
-    ASSERT(butterflyLength < MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH);
+    unsigned publicLength = node->child1()->asInt32();
+    unsigned vectorLength = std::max(publicLength, node->vectorLengthHint());
+    ASSERT(vectorLength < MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH);
 
     constexpr bool hasIndexingHeader = true;
-    size_t allocationSize = Butterfly::totalSize(0, 0, hasIndexingHeader, butterflyLength * sizeof(JSValue));
+    size_t allocationSize = Butterfly::totalSize(0, 0, hasIndexingHeader, vectorLength * sizeof(JSValue));
 
     JumpList slowCases;
     emitAllocate(storageGPR, JITAllocator::constant(vm().auxiliarySpace().allocatorForNonInline(allocationSize, AllocatorForMode::EnsureAllocator)), scratchGPR, scratch2GPR, slowCases, SlowAllocationResult::UndefinedBehavior);
@@ -15753,19 +15754,20 @@ void SpeculativeJIT::compileNewButterflyWithSize(Node* node)
 
     GPRReg sizeGPR = scratch2GPR;
 
-    move(Imm32(butterflyLength), sizeGPR);
+    move(Imm32(vectorLength), sizeGPR);
+    move(Imm32(publicLength), scratchGPR);
 
     // FIXME: do post increment store pair.
     addPtr(TrustedImm32(sizeof(IndexingHeader)), storageGPR);
     static_assert(Butterfly::offsetOfPublicLength() + static_cast<ptrdiff_t>(sizeof(uint32_t)) == Butterfly::offsetOfVectorLength());
-    storePair32(sizeGPR, sizeGPR, storageGPR, TrustedImm32(Butterfly::offsetOfPublicLength()));
+    storePair32(scratchGPR, sizeGPR, storageGPR, TrustedImm32(Butterfly::offsetOfPublicLength()));
 
     constexpr unsigned zeroFillUnrollLimit = 16;
-    if (butterflyLength <= zeroFillUnrollLimit) {
+    if (vectorLength <= zeroFillUnrollLimit) {
         if (hasDouble(indexingMode))
-            emitFillStorageWithDoubleEmpty(storageGPR, 0, butterflyLength, scratchGPR);
+            emitFillStorageWithDoubleEmpty(storageGPR, 0, vectorLength, scratchGPR);
         else
-            emitFillStorageWithJSEmpty(storageGPR, 0, butterflyLength, scratchGPR);
+            emitFillStorageWithJSEmpty(storageGPR, 0, vectorLength, scratchGPR);
     } else {
         if (hasDouble(indexingMode))
             moveTrustedValue(jsNaN(), scratchRegs);
