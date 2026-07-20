@@ -196,7 +196,7 @@ private:
     float m_currentEDRHeadroom { 1.f };
     float m_lastSentContentsHeadroom { -1.f };
     bool m_suppressEDR { false };
-    WebCore::PlatformDynamicRangeLimit m_dynamicRangeLimit { WebCore::PlatformDynamicRangeLimit::initialValue() };
+    WebCore::PlatformDynamicRangeLimit m_dynamicRangeLimit { WebCore::PlatformDynamicRangeLimit::standard() };
     bool m_usingStandardDynamicRange { false };
 #endif
 };
