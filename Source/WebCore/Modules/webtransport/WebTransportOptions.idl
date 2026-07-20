@@ -34,5 +34,5 @@
     [EnforceRange] unsigned short? anticipatedConcurrentIncomingUnidirectionalStreams = null;
     [EnforceRange] unsigned short? anticipatedConcurrentIncomingBidirectionalStreams = null;
     sequence<DOMString> protocols = [];
-    DatagramsReadableMode datagramsReadableMode;
+    ReadableStreamType datagramsReadableType;
 };

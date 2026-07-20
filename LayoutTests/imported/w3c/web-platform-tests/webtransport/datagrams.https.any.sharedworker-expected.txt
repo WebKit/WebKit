@@ -1,7 +1,8 @@
 
 PASS Datagrams are echoed successfully
-FAIL Successfully reading datagrams with BYOB reader. promise_test: Unhandled rejection with value: object "TypeError: Invalid mode is specified"
-FAIL Reading datagrams with insufficient buffer should be rejected. promise_test: Unhandled rejection with value: object "TypeError: Invalid mode is specified"
+PASS Successfully reading datagrams with BYOB reader.
+PASS Reading datagrams with BYOB reader without datagramsReadableType should fail.
+PASS Reading datagrams with insufficient buffer should be rejected.
 FAIL Transfer max-size datagram promise_test: Unhandled rejection with value: object "NetworkError:  A network error occurred."
 FAIL Fail to transfer max-size+1 datagram, handle PMTUD increases promise_test: Unhandled rejection with value: object "NetworkError:  A network error occurred."
 PASS Sending and receiving datagrams is ready to use before session is established

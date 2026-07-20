@@ -27,6 +27,6 @@
 
 namespace WebCore {
 
-enum ReadableStreamType : bool { Bytes };
+enum class ReadableStreamType : uint8_t { Bytes };
 
 } // namespace WebCore

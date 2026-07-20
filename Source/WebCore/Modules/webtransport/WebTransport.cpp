@@ -112,7 +112,7 @@ ExceptionOr<Ref<WebTransport>> WebTransport::create(ScriptExecutionContext& cont
 
     RefPtr<DatagramSource> datagramSource;
     RefPtr<ReadableStream> incomingDatagrams;
-    if (options.datagramsReadableMode) {
+    if (options.datagramsReadableType) {
         Ref datagramByteSource = DatagramByteSource::create();
         ReadableByteStreamController::PullAlgorithm pullAlgorithm = [datagramByteSource](auto& globalObject, auto&& controller) {
             auto [promise, deferred] = createPromiseAndWrapper(globalObject);

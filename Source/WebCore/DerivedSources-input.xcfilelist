@@ -1101,7 +1101,6 @@ $(PROJECT_DIR)/Modules/webdatabase/SQLTransactionErrorCallback.idl
 $(PROJECT_DIR)/Modules/webdriver/Navigator+WebDriver.idl
 $(PROJECT_DIR)/Modules/websockets/CloseEvent.idl
 $(PROJECT_DIR)/Modules/websockets/WebSocket.idl
-$(PROJECT_DIR)/Modules/webtransport/DatagramsReadableMode.idl
 $(PROJECT_DIR)/Modules/webtransport/WebTransport.idl
 $(PROJECT_DIR)/Modules/webtransport/WebTransportBidirectionalStream.idl
 $(PROJECT_DIR)/Modules/webtransport/WebTransportCloseInfo.idl
