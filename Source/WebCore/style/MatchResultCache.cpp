@@ -78,9 +78,10 @@ MatchResultCache::~MatchResultCache() = default;
 
 inline UnadjustedStyle copy(const UnadjustedStyle& other)
 {
+    // Relations hold raw Element pointers valid only for a single style resolution. They should not be cached.
     return {
         .style = ComputedStyle::clonePtr(*other.style),
-        .relations = other.relations ? makeUnique<Relations>(*other.relations) : std::unique_ptr<Relations> { },
+        .relations = { },
         .matchResult = other.matchResult
     };
 }
