@@ -1,0 +1,10 @@
+Verifies that AXIndexForTextMarker and AXTextMarkerForIndex round-trip without accumulating error across paragraphs and hard line breaks.
+
+PASS: worstRoundTripDrift was equal or approximately equal to 0.
+PASS: worstLengthDifference was equal or approximately equal to 0.
+PASS: uncheckedCharacters was equal or approximately equal to 0.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

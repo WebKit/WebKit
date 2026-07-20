@@ -1,6 +1,6 @@
-This test ensures we can get the index of a zero offset text marker without crashing.
+This test ensures we can get the index of a zero offset text marker without crashing, and that the index is consistent with the string length up to that marker.
 
-PASS: axElement.indexForTextMarker(startMarker) === 39
+PASS: index === prefixLength
 
 PASS successfullyParsed is true
 

@@ -12,14 +12,26 @@ This is static text<br>with a line break.
 <p>This is text in a p tag with no line break</p>
 
 <script>
-let output = "This test ensures we can get the index of a zero offset text marker without crashing.\n\n";
+let output = "This test ensures we can get the index of a zero offset text marker without crashing, and that the index is consistent with the string length up to that marker.\n\n";
 
 if (window.accessibilityController) {
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
     var axElement = accessibilityController.accessibleElementById("p");
     const range = axElement.textMarkerRangeForElement(axElement);
     var startMarker = axElement.startTextMarkerForTextMarkerRange(range);
 
-    output += expect("axElement.indexForTextMarker(startMarker)", "39");
+    // The index of a marker must equal the number of characters before it — i.e. the length of
+    // the string from the document start up to the marker. Asserting this invariant (rather than a
+    // hard-coded number) keeps the test correct regardless of how block boundaries are counted,
+    // which differs between the isolated tree and the main thread (e.g. a paragraph boundary that
+    // emits one newline vs. two).
+    var fullRange = webArea.textMarkerRangeForElement(webArea);
+    var documentStart = webArea.startTextMarkerForTextMarkerRange(fullRange);
+    var prefixRange = webArea.textMarkerRangeForMarkers(documentStart, startMarker);
+    var index = webArea.indexForTextMarker(startMarker);
+    var prefixLength = webArea.stringForTextMarkerRange(prefixRange).length;
+
+    output += expect("index", "prefixLength");
     debug(output);
 }
 </script>
