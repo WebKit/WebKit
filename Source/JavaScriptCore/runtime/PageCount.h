@@ -74,10 +74,15 @@ public:
 
     static PageCount fromBytes(uint64_t bytes)
     {
+        PageCount count = fromBytesUnchecked(bytes);
+        RELEASE_ASSERT(count.isValid());
+        return count;
+    }
+
+    static PageCount fromBytesUnchecked(uint64_t bytes)
+    {
         RELEASE_ASSERT(bytes % pageSize == 0);
-        uint32_t numPages = bytes / pageSize;
-        RELEASE_ASSERT(PageCount::isValid(numPages));
-        return PageCount(numPages);
+        return PageCount(bytes / pageSize);
     }
 
     static PageCount fromBytesWithRoundUp(uint64_t bytes)

@@ -312,7 +312,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoFuncResize, (JSGlobalObject* globalObje
             return throwVMRangeError(globalObject, scope, makeString("WebAssembly memory cannot be resized to new byte length "_s, newByteLength, " because it is not a multiple of "_s, PageCount::pageSize));
         size_t delta = newByteLength - oldByteLength;
         if (delta) {
-            auto result = jsMemory->memory().grow(vm, PageCount::fromBytes(delta));
+            auto result = jsMemory->memory().grow(vm, PageCount::fromBytesUnchecked(delta));
             if (!result)
                 return throwVMRangeError(globalObject, scope, makeString("ArrayBuffer resize failed with new byte length "_s, newByteLength));
         }
