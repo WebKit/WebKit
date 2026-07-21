@@ -208,6 +208,15 @@ def parse_args(args):
                  "directories enumerated with the option. Some ports may ignore this "
                  "option while others can have a default value that can be overridden here."),
 
+        optparse.make_option("--check-pre-existing-failures", action="store_true",
+                             default=False, dest="check_pre_existing_failures",
+                             help="After the run, consult results.webkit.org to annotate each unexpected "
+                                  "failure as pre-existing (historically failing on CI) or possibly new. "
+                                  "Capped at --max-pre-existing-checks tests."),
+        optparse.make_option("--max-pre-existing-checks", type="int", default=0,
+                             dest="max_pre_existing_checks",
+                             help="Maximum number of failing tests to look up in results.webkit.org when "
+                                  "--check-pre-existing-failures is set. Use 0 for no limit. (default: 0)"),
         optparse.make_option("--skip-failing-tests", action="store_true",
             default=False, help="Skip tests that are marked as failing or flaky. "
                  "Note: When using this option, you might miss new crashes "

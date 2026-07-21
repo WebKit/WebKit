@@ -31,6 +31,7 @@ from webkitpy.api_tests.test_expectations import (
     APITestExpectations, PASS, FAIL, CRASH, TIMEOUT,
     runner_status_to_expectation,
 )
+from webkitpy.common.net import results_database
 from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.results.upload import Upload
@@ -465,6 +466,14 @@ class Manager(object):
                 }.get(test_result[0], 'Failed')
                 result_dictionary['UnexpectedFailures'].append({'name': test, 'output': test_result[1], 'status': status_str})
                 result_dictionary[status_str].append({'name': test, 'output': test_result[1]})
+
+            if self._options.check_pre_existing_failures:
+                results_database.check_pre_existing_failures(
+                    unexpected_failures.keys(),
+                    self._options.suite or 'api-tests',
+                    self._options.max_pre_existing_checks,
+                    self._stream.writeln,
+                )
 
         if expected_failures:
             self._stream.writeln('Expected failures (not blocking):')
