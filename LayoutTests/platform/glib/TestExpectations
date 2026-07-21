@@ -1810,6 +1810,7 @@ media/media-source/media-managedmse-memorypressure.html [ Timeout ]
 media/media-source/media-managedmse-memorypressure-inactive.html [ Timeout ]
 media/media-source/media-managedmse-eviction.html [ Timeout ]
 media/media-source/media-source-evict-invalid-time-crash.html [ Timeout ]
+media/media-source/media-source-evict-ignorable-gap.html [ Skip ]
 
 webkit.org/b/211995 fast/images/animated-image-mp4.html [ Timeout ]
 

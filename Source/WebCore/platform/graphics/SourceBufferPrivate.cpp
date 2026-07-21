@@ -639,25 +639,20 @@ void SourceBufferPrivate::computeEvictionData(ComputeEvictionDataRule rule)
             if (!buffered.length())
                 return evictableSize;
 
-            // We can evict everything from currentTime+timeChunk (3s) to the end of the buffer, not contiguous in current range.
-            auto rangeStartAfterCurrentTime = currentTime + timeChunk;
+            // Playback bridges gaps within the media source gap policy, so only
+            // data located after the current playable segment is evictable. That
+            // segment ends at the next real stall (nextStallTime evaluated against
+            // this SourceBuffer's ranges).
+            // When currentTime is not buffered here there is no playable segment,
+            // so keep currentTime + timeChunk of look-ahead.
+            const bool currentTimeBuffered = buffered.contain(currentTime);
+            const MediaTime currentPlayableEnd = currentTimeBuffered ? mediaSource->nextStallTime(currentTime, buffered) : MediaTime::invalidTime();
+            const auto rangeStartAfterCurrentTime = currentTimeBuffered ? currentPlayableEnd : currentTime + timeChunk;
             const auto rangeEndAfterCurrentTime = buffered.maximumBufferedTime();
             ASSERT(rangeEndAfterCurrentTime.isValid());
 
             if (rangeStartAfterCurrentTime >= rangeEndAfterCurrentTime)
                 return evictableSize;
-
-            // Do not evict data from the time range that contains currentTime.
-            size_t currentTimeRange = buffered.find(currentTime);
-            size_t startTimeRange = buffered.find(rangeStartAfterCurrentTime);
-            if (currentTimeRange != notFound && startTimeRange == currentTimeRange) {
-                currentTimeRange++;
-                if (currentTimeRange == buffered.length())
-                    return evictableSize;
-                rangeStartAfterCurrentTime = buffered.start(currentTimeRange);
-                if (rangeStartAfterCurrentTime >= rangeEndAfterCurrentTime)
-                    return evictableSize;
-            }
 
             iterateTrackBuffers([&](auto& trackBuffer) {
                 evictableSize += trackBuffer.codedFramesIntervalSize(rangeStartAfterCurrentTime, rangeEndAfterCurrentTime);
@@ -1789,16 +1784,27 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, const MediaTime& cur
     if (!isBufferFull)
         return false;
 
+    RefPtr mediaSource = m_mediaSource.get();
+
     timeChunkAsMilliseconds = evictionAlgorithmInitialTimeChunk;
     do {
         const auto timeChunk = MediaTime(timeChunkAsMilliseconds, 1000);
-        const auto minimumRangeStartAfterCurrentTime = currentTime + timeChunk;
 
         do {
             PlatformTimeRanges buffered { currentTime, MediaTime::positiveInfiniteTime() };
             iterateTrackBuffers([&](const TrackBuffer& trackBuffer) {
                 buffered.intersectWith(trackBuffer.buffered());
             });
+
+            // Playback bridges gaps within the media source gap policy, so only
+            // data located after the current playable segment is evictable. That
+            // segment ends at the next real stall (nextStallTime evaluated against
+            // this SourceBuffer's ranges).
+            // When currentTime is not buffered here there is no playable segment,
+            // so keep currentTime + timeChunk of look-ahead.
+            const bool currentTimeBuffered = mediaSource && buffered.contain(currentTime);
+            const MediaTime currentPlayableEnd = currentTimeBuffered ? mediaSource->nextStallTime(currentTime, buffered) : MediaTime::invalidTime();
+            const auto minimumRangeStartAfterCurrentTime = currentTimeBuffered ? currentPlayableEnd : currentTime + timeChunk;
 
             auto rangeEndAfterCurrentTime = buffered.maximumBufferedTime();
             if (!buffered.length())
@@ -1812,18 +1818,6 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, const MediaTime& cur
 
             if (rangeStartAfterCurrentTime >= rangeEndAfterCurrentTime)
                 break;
-
-            // Do not evict data from the time range that contains currentTime.
-            size_t currentTimeRange = buffered.find(currentTime);
-            size_t startTimeRange = buffered.find(rangeStartAfterCurrentTime);
-            if (currentTimeRange != notFound && startTimeRange == currentTimeRange) {
-                currentTimeRange++;
-                if (currentTimeRange == buffered.length())
-                    break;
-                rangeStartAfterCurrentTime = buffered.start(currentTimeRange);
-                if (rangeStartAfterCurrentTime >= rangeEndAfterCurrentTime)
-                    break;
-            }
 
             // 4. For each range in removal ranges, run the coded frame removal algorithm with start and
             // end equal to the removal range start and end timestamp respectively.
