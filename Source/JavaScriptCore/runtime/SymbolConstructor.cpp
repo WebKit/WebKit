@@ -132,7 +132,8 @@ JSC_DEFINE_HOST_FUNCTION(symbolConstructorKeyFor, (JSGlobalObject* globalObject,
         return JSValue::encode(jsUndefined());
 
     ASSERT(uid.symbolRegistry() == &vm.symbolRegistry());
-    return JSValue::encode(jsString(vm, String { uid }));
+    ASSERT(!uid.isNullSymbol());
+    return JSValue::encode(asSymbol(symbolValue)->description(vm));
 }
 
 } // namespace JSC
