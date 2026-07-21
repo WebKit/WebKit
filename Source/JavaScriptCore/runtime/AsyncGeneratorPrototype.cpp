@@ -30,6 +30,7 @@
 #include "JSCInlines.h"
 #include "IteratorOperations.h"
 #include "JSAsyncGenerator.h"
+#include "JSAsyncGeneratorInlines.h"
 #include "JSGenerator.h"
 #include "JSMicrotask.h"
 #include "JSPromise.h"
@@ -67,7 +68,8 @@ JSValue asyncGeneratorNext(JSGlobalObject* globalObject, JSAsyncGenerator* gener
     if (state == static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Completed)) {
         // 6.a. Let iteratorResult be CreateIteratorResultObject(undefined, true).
         // 6.b. Perform ! Call(promiseCapability.[[Resolve]], undefined, « iteratorResult »).
-        auto* iteratorResult = createIteratorResultObject(globalObject, jsUndefined(), /* done */ true);
+        // The iterator result object belongs to the generator's realm.
+        auto* iteratorResult = createIteratorResultObject(generator->realm(), jsUndefined(), /* done */ true);
         promise->resolve(globalObject, vm, iteratorResult);
         return promise;
     }

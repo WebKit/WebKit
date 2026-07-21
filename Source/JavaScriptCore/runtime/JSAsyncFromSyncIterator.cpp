@@ -48,6 +48,7 @@ void JSAsyncFromSyncIterator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.appendUnbarriered(thisObject->m_syncIterator.pointer());
     visitor.append(thisObject->m_nextMethod);
     visitor.appendUnbarriered(thisObject->m_target.pointer());
+    visitor.append(thisObject->m_cachedResult);
 }
 
 DEFINE_VISIT_CHILDREN(JSAsyncFromSyncIterator);

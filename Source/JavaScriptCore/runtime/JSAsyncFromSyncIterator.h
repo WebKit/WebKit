@@ -67,12 +67,16 @@ public:
         return { target, result };
     }
 
+    JSValue cachedDriverResult() const { return m_cachedResult.get(); }
+    void setCachedDriverResult(VM& vm, JSObject* result) { m_cachedResult.set(vm, this, result); }
+
 private:
     JSAsyncFromSyncIterator(VM& vm, Structure* structure, JSObject* syncIterator, JSValue nextMethod, IterationMode mode)
         : Base(vm, structure)
         , m_syncIterator(syncIterator, mode)
         , m_nextMethod(nextMethod, WriteBarrierEarlyInit)
         , m_target(nullptr, false)
+        , m_cachedResult(jsUndefined(), WriteBarrierEarlyInit)
     {
     }
 
@@ -81,6 +85,7 @@ private:
     CompactPointerTuple<JSObject*, IterationMode> m_syncIterator;
     WriteBarrier<Unknown> m_nextMethod;
     CompactPointerTuple<JSObject*, bool> m_target;
+    WriteBarrier<Unknown> m_cachedResult;
 };
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSAsyncFromSyncIterator);
