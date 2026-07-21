@@ -211,6 +211,96 @@ class TestIterator extends Iterator {
     sameValue(iter.isClosed, false, `${TEST_NAME}: iterator should not be closed`);
 }
 
+{
+    const TEST_NAME = 'calling .includes() should raise a thrown error in |IteratorClose| in step 10-d: return is method'
+
+    class ExpectedError extends Error {
+        constructor(...args) {
+            super(...args);
+            this.name = new.target.name;
+        }
+    }
+
+    class ThisTestIterator extends TestIterator {
+        constructor() {
+            super(5);
+        }
+
+        return() {
+            throw new ExpectedError('this error should be propagated to the caller'); 
+        }
+    }
+
+    const iter = new ThisTestIterator();
+    shouldThrow(TEST_NAME, () => {
+        callTestTargetFunction(iter, 2);
+    }, ExpectedError, 'this error should be propagated to the caller');
+}
+
+{
+    const TEST_NAME = 'calling .includes() should raise a thrown error in |IteratorClose| in step 10-d: return is getter'
+
+    class ExpectedError extends Error {
+        constructor(...args) {
+            super(...args);
+            this.name = new.target.name;
+        }
+    }
+
+    class ThisTestIterator extends TestIterator {
+        constructor() {
+            super(5);
+        }
+
+        get return() {
+            throw new ExpectedError('this error should be propagated to the caller'); 
+        }
+    }
+
+    const iter = new ThisTestIterator();
+    shouldThrow(TEST_NAME, () => {
+        callTestTargetFunction(iter, 2);
+    }, ExpectedError, 'this error should be propagated to the caller');
+}
+
+{
+    const TEST_NAME = 'calling .includes() should raise a thrown error in |IteratorClose| in step 10-d: return is not a function'
+
+    class ThisTestIterator extends TestIterator {
+        constructor() {
+            super(5);
+        }
+
+        return = 'return';
+    }
+
+    const iter = new ThisTestIterator();
+    shouldThrow(TEST_NAME, () => {
+        callTestTargetFunction(iter, 2);
+    }, TypeError, 'Type error');
+}
+
+{
+    const TEST_NAME = 'calling .includes() should raise a thrown error in |IteratorClose| in step 10-d: the returned value of .return() is invalid'
+
+    class ThisTestIterator extends TestIterator {
+        constructor() {
+            super(5);
+        }
+
+        return() {
+            // |IteratorClose| would throw a TypeError in the step 7 if the returned value is not an object.
+            // https://tc39.es/ecma262/2026/#sec-iteratorclose
+            return true;
+        }
+    }
+
+    const iter = new ThisTestIterator();
+    shouldThrow(TEST_NAME, () => {
+        callTestTargetFunction(iter, 2);
+    }, TypeError, `Iterator result interface is not an object.`);
+}
+
 // with second argument
 
 {
@@ -508,6 +598,96 @@ class TestIterator extends Iterator {
         sameValue(iter.isDone, false, `${testName}: iterator should be done`);
         sameValue(iter.isClosed, true, `${testName}: iterator should not be closed`);
     }
+}
+
+{
+    const TEST_NAME = 'call with 2nd arg: calling .includes() should raise a thrown error in |IteratorClose| in step 10-d: return is method'
+
+    class ExpectedError extends Error {
+        constructor(...args) {
+            super(...args);
+            this.name = new.target.name;
+        }
+    }
+
+    class ThisTestIterator extends TestIterator {
+        constructor() {
+            super(5);
+        }
+
+        return() {
+            throw new ExpectedError('this error should be propagated to the caller'); 
+        }
+    }
+
+    const iter = new ThisTestIterator();
+    shouldThrow(TEST_NAME, () => {
+        callTestTargetFunction(iter, 2, 1);
+    }, ExpectedError, 'this error should be propagated to the caller');
+}
+
+{
+    const TEST_NAME = 'call with 2nd arg: calling .includes() should raise a thrown error in |IteratorClose| in step 10-d: return is not a function'
+
+    class ThisTestIterator extends TestIterator {
+        constructor() {
+            super(5);
+        }
+
+        return = 'return';
+    }
+
+    const iter = new ThisTestIterator();
+    shouldThrow(TEST_NAME, () => {
+        callTestTargetFunction(iter, 2, 1);
+    }, TypeError, 'Type error');
+}
+
+{
+    const TEST_NAME = 'call with 2nd arg: calling .includes() should raise a thrown error in |IteratorClose| in step 10-d: return is getter'
+
+    class ExpectedError extends Error {
+        constructor(...args) {
+            super(...args);
+            this.name = new.target.name;
+        }
+    }
+
+    class ThisTestIterator extends TestIterator {
+        constructor() {
+            super(5);
+        }
+
+        get return() {
+            throw new ExpectedError('this error should be propagated to the caller'); 
+        }
+    }
+
+    const iter = new ThisTestIterator();
+    shouldThrow(TEST_NAME, () => {
+        callTestTargetFunction(iter, 2, 1);
+    }, ExpectedError, 'this error should be propagated to the caller');
+}
+
+{
+    const TEST_NAME = 'call with 2nd arg: calling .includes() should raise a thrown error in |IteratorClose| in step 10-d: the returned value of .return() is invalid'
+
+    class ThisTestIterator extends TestIterator {
+        constructor() {
+            super(5);
+        }
+
+        return() {
+            // |IteratorClose| would throw a TypeError in the step 7 if the returned value is not an object.
+            // https://tc39.es/ecma262/2026/#sec-iteratorclose
+            return true;
+        }
+    }
+
+    const iter = new ThisTestIterator();
+    shouldThrow(TEST_NAME, () => {
+        callTestTargetFunction(iter, 2, 1);
+    }, TypeError, `Iterator result interface is not an object.`);
 }
 
 // invalid

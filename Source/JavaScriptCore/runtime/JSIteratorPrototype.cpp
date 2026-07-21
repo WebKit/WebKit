@@ -310,7 +310,7 @@ JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncIncludes, (JSGlobalObject* globalObjec
 
         if (isEqual) {
             iteratorClose(globalObject, iterationRecord.iterator);
-            TRY_CLEAR_EXCEPTION(scope, { });
+            RETURN_IF_EXCEPTION(scope, { });
             return JSValue::encode(jsBoolean(true));
         }
     }
