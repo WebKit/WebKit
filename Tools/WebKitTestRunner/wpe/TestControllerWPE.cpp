@@ -35,6 +35,15 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
 
+#if ENABLE(WPE_PLATFORM)
+#include <wpe/wpe-platform.h>
+#endif
+
+#if USE(LIBWPE)
+#include "PlatformWebViewClientLibWPE.h"
+#include <WPEToolingBackends/HeadlessViewBackend.h>
+#endif
+
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkData.h>
 #include <skia/encode/SkPngEncoder.h>
@@ -46,8 +55,25 @@ void TestController::notifyDone()
 {
 }
 
-void TestController::setHidden(bool)
+void TestController::setHidden(bool hidden)
 {
+    auto* view = mainWebView();
+    if (!view)
+        return;
+
+#if ENABLE(WPE_PLATFORM)
+    if (!useWPELegacyAPI()) {
+        wpe_view_set_visible(WKViewGetView(view->platformView()), !hidden);
+        return;
+    }
+#endif
+#if USE(LIBWPE)
+    auto* client = static_cast<PlatformWebViewClientLibWPE*>(view->platformWindow());
+    if (hidden)
+        client->backend()->removeActivityState(wpe_view_activity_state_visible);
+    else
+        client->backend()->addActivityState(wpe_view_activity_state_visible);
+#endif
 }
 
 void TestController::platformInitialize(const Options&)
