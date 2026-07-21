@@ -414,7 +414,8 @@ public:
                     || a.nonInheritedData().boxData->maxHeight != b.nonInheritedData().boxData->maxHeight)
                     return true;
 
-                if (a.nonInheritedData().boxData->verticalAlign != b.nonInheritedData().boxData->verticalAlign)
+                if (a.nonInheritedData().boxData->baselineShift != b.nonInheritedData().boxData->baselineShift
+                    || a.nonInheritedData().boxData->alignmentBaseline != b.nonInheritedData().boxData->alignmentBaseline)
                     return true;
 
                 if (a.nonInheritedData().boxData->boxSizing != b.nonInheritedData().boxData->boxSizing)

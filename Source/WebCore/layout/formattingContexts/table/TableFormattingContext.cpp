@@ -128,22 +128,22 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
             auto intrinsicPaddingTop = LayoutUnit { };
             auto intrinsicPaddingBottom = LayoutUnit { };
 
-            WTF::switchOn(cellBox->style().verticalAlign(),
-                [&](const CSS::Keyword::Middle&) {
-                    auto intrinsicVerticalPadding = std::max(0_lu, cellLogicalHeight - cellBoxGeometry.verticalMarginBorderAndPadding() - cellBoxGeometry.contentBoxHeight());
-                    intrinsicPaddingTop = intrinsicVerticalPadding / 2;
-                    intrinsicPaddingBottom = intrinsicVerticalPadding / 2;
-                },
-                [&](const CSS::Keyword::Baseline&) {
-                    auto rowBaseline = LayoutUnit { rowList[cell->startRow()].baseline() };
-                    auto cellBaseline = LayoutUnit { cell->baseline() };
-                    intrinsicPaddingTop = std::max(0_lu, rowBaseline - cellBaseline - cellBoxGeometry.borderBefore());
-                    intrinsicPaddingBottom = std::max(0_lu, cellLogicalHeight - cellBoxGeometry.verticalMarginBorderAndPadding() - intrinsicPaddingTop - cellBoxGeometry.contentBoxHeight());
-                },
-                [&](const auto&) {
-                    ASSERT_NOT_IMPLEMENTED_YET();
-                }
-            );
+            // `vertical-align` is stored decomposed into the box alignment-baseline
+            // and baseline-shift longhands. Only the unshifted `middle` and `baseline`
+            // values are currently handled here.
+            auto& verticalAlignBaselineShift = cellBox->style().baselineShift();
+            auto verticalAlignBaseline = cellBox->style().alignmentBaseline();
+            if (verticalAlignBaselineShift.isBaseline() && verticalAlignBaseline == AlignmentBaseline::Middle) {
+                auto intrinsicVerticalPadding = std::max(0_lu, cellLogicalHeight - cellBoxGeometry.verticalMarginBorderAndPadding() - cellBoxGeometry.contentBoxHeight());
+                intrinsicPaddingTop = intrinsicVerticalPadding / 2;
+                intrinsicPaddingBottom = intrinsicVerticalPadding / 2;
+            } else if (verticalAlignBaselineShift.isBaseline() && verticalAlignBaseline == AlignmentBaseline::Baseline) {
+                auto rowBaseline = LayoutUnit { rowList[cell->startRow()].baseline() };
+                auto cellBaseline = LayoutUnit { cell->baseline() };
+                intrinsicPaddingTop = std::max(0_lu, rowBaseline - cellBaseline - cellBoxGeometry.borderBefore());
+                intrinsicPaddingBottom = std::max(0_lu, cellLogicalHeight - cellBoxGeometry.verticalMarginBorderAndPadding() - intrinsicPaddingTop - cellBoxGeometry.contentBoxHeight());
+            } else
+                ASSERT_NOT_IMPLEMENTED_YET();
             if (intrinsicPaddingTop && cellBox->hasInFlowOrFloatingChild()) {
                 auto adjustCellContentWithInstrinsicPaddingBefore = [&] {
                     // Child boxes (and runs) are always in the coordinate system of the containing block's border box.

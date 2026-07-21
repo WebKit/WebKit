@@ -141,6 +141,10 @@ float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVertic
     case AlignmentBaseline::Baseline:
         ASSERT_NOT_REACHED();
         return 0;
+    case AlignmentBaseline::WebkitBaselineMiddle:
+        // Non-standard value reachable only via the `vertical-align` decomposition; never produced for SVG text.
+        ASSERT_NOT_REACHED();
+        return 0;
     }
     ASSERT_NOT_REACHED();
     return 0;

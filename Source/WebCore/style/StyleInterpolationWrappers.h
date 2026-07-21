@@ -297,6 +297,54 @@ public:
     }
 };
 
+// `vertical-align` stores its value decomposed into the box `alignment-baseline`
+// and `baseline-shift` longhands. The alignment-baseline component animates
+// discretely; the baseline-shift component animates by computed value. The whole
+// property can only interpolate when the alignment-baseline endpoints match and
+// the baseline-shift endpoints are blendable.
+class VerticalAlignWrapper final : public WrapperBase {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(VerticalAlignWrapper, Animation);
+public:
+    VerticalAlignWrapper()
+        : WrapperBase(CSSPropertyID::CSSPropertyVerticalAlign)
+    {
+    }
+
+    bool equals(const Style::ComputedStyle& a, const Style::ComputedStyle& b) const final
+    {
+        if (&a == &b)
+            return true;
+        return a.alignmentBaseline() == b.alignmentBaseline()
+            && Style::equalsForBlending(a.baselineShift(), b.baselineShift(), a, b);
+    }
+
+    bool canInterpolate(const Style::ComputedStyle& from, const Style::ComputedStyle& to, CompositeOperation operation) const final
+    {
+        return from.alignmentBaseline() == to.alignmentBaseline()
+            && Style::canBlend(from.baselineShift(), to.baselineShift(), from, to, operation);
+    }
+
+    bool requiresInterpolationForAccumulativeIteration(const Style::ComputedStyle& from, const Style::ComputedStyle& to) const final
+    {
+        if (from.alignmentBaseline() != to.alignmentBaseline())
+            return true;
+        return Style::requiresInterpolationForAccumulativeIteration(from.baselineShift(), to.baselineShift(), from, to);
+    }
+
+    void interpolate(Style::ComputedStyle& destination, const Style::ComputedStyle& from, const Style::ComputedStyle& to, const Context& context) const final
+    {
+        destination.setAlignmentBaseline(context.progress < 0.5 ? from.alignmentBaseline() : to.alignmentBaseline());
+        destination.setBaselineShift(Style::blend(from.baselineShift(), to.baselineShift(), from, to, context));
+    }
+
+#if !LOG_DISABLED
+    void log(const Style::ComputedStyle& from, const Style::ComputedStyle& to, const Style::ComputedStyle&, double progress) const final
+    {
+        LOG_WITH_STREAM(Animations, stream << "  blending " << property() << " (baseline-shift) from " << from.baselineShift() << " to " << to.baselineShift() << " at " << TextStream::FormatNumberRespectingIntegers(progress));
+    }
+#endif
+};
+
 // MARK: - Color Property Wrappers
 
 class ColorWrapper final : public WrapperWithGetter<const WebCore::Color&> {

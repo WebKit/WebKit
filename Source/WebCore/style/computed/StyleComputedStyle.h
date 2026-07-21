@@ -257,7 +257,6 @@ WEBCORE_EXPORT TextDecorationLine NODELETE textDecorationLineInEffect(const Comp
 WEBCORE_EXPORT const FontCascade& NODELETE fontCascade(const ComputedStyle&);
 
 SpeakAs NODELETE speakAs(const ComputedStyle&);
-const VerticalAlign& NODELETE verticalAlign(const ComputedStyle&);
 const TextShadows& NODELETE textShadow(const ComputedStyle&);
 bool NODELETE effectiveInert(const ComputedStyle&);
 

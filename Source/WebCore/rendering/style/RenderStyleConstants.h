@@ -1103,7 +1103,11 @@ enum class AlignmentBaseline : uint8_t {
     Ideographic,
     Alphabetic,
     Hanging,
-    Mathematical
+    Mathematical,
+    // Non-standard value used only as the decomposed target of the legacy
+    // `vertical-align: -webkit-baseline-middle` keyword. Not accepted by the
+    // `alignment-baseline` property grammar and never produced for SVG.
+    WebkitBaselineMiddle
 };
 
 enum class DominantBaseline : uint8_t {

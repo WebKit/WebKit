@@ -3360,11 +3360,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/images/kinds/StyleImage.h
 
+    style/values/inline/StyleBaselineShift.h
     style/values/inline/StyleLineFitEdge.h
     style/values/inline/StyleLineHeight.h
     style/values/inline/StyleTextBoxEdge.h
     style/values/inline/StyleTextEdge.h
-    style/values/inline/StyleVerticalAlign.h
     style/values/inline/StyleWebKitInitialLetter.h
 
     style/values/line-grid/StyleWebKitLineGrid.h

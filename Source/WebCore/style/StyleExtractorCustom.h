@@ -92,6 +92,7 @@ public:
     static Ref<CSSValue> extractLetterSpacing(ExtractorState&);
     static Ref<CSSValue> extractWordSpacing(ExtractorState&);
     static Ref<CSSValue> extractLineHeight(ExtractorState&);
+    static Ref<CSSValue> extractVerticalAlign(ExtractorState&);
     static Ref<CSSValue> extractFontFamily(ExtractorState&);
     static Ref<CSSValue> extractFontSize(ExtractorState&);
     static Ref<CSSValue> extractTop(ExtractorState&);
@@ -193,6 +194,7 @@ public:
     static void extractLetterSpacingSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractWordSpacingSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractLineHeightSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractVerticalAlignSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractFontFamilySerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractFontSizeSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractTopSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
@@ -2025,6 +2027,42 @@ inline Ref<CSSValue> ExtractorCustom::extractLineHeight(ExtractorState& state)
 inline void ExtractorCustom::extractLineHeightSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     extractSerialization<CSSPropertyLineHeight>(state, builder, context);
+}
+
+inline Ref<CSSValue> ExtractorCustom::extractVerticalAlign(ExtractorState& state)
+{
+    // `vertical-align` storage is decomposed into the box alignment-baseline and
+    // baseline-shift longhands. Reconstruct the CSS 2 value: a non-initial
+    // baseline-shift determines the value, otherwise the alignment-baseline does.
+    auto& baselineShift = state.style.baselineShift();
+    if (baselineShift.isSub())
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Sub { });
+    if (baselineShift.isSuper())
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Super { });
+    if (baselineShift.isTop())
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Top { });
+    if (baselineShift.isBottom())
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Bottom { });
+    if (auto length = baselineShift.tryLengthPercentage())
+        return createCSSValue(state.pool, state.style, *length);
+
+    switch (state.style.alignmentBaseline()) {
+    case AlignmentBaseline::TextBeforeEdge:
+        return createCSSValue(state.pool, state.style, CSS::Keyword::TextTop { });
+    case AlignmentBaseline::TextAfterEdge:
+        return createCSSValue(state.pool, state.style, CSS::Keyword::TextBottom { });
+    case AlignmentBaseline::Middle:
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Middle { });
+    case AlignmentBaseline::WebkitBaselineMiddle:
+        return createCSSValue(state.pool, state.style, CSS::Keyword::WebkitBaselineMiddle { });
+    default:
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Baseline { });
+    }
+}
+
+inline void ExtractorCustom::extractVerticalAlignSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    builder.append(extractVerticalAlign(state)->cssText(context));
 }
 
 inline Ref<CSSValue> ExtractorCustom::extractFontFamily(ExtractorState& state)

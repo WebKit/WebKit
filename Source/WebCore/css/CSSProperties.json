@@ -2501,6 +2501,38 @@
             },
             "status": "experimental"
         },
+        "-internal-box-alignment-baseline": {
+            "animation-type": "not animatable (internal)",
+            "initial": "baseline",
+            "codegen-properties": {
+                "internal-only": true,
+                "skip-parser": true,
+                "skip-style-builder": true,
+                "computed-style-storage-path": ["m_nonInheritedData", "boxData"],
+                "computed-style-storage-kind": "enum",
+                "computed-style-type": "AlignmentBaseline",
+                "computed-style-name-for-methods": "AlignmentBaseline",
+                "computed-style-getter": "alignmentBaseline",
+                "comment": "Non-SVG (box) storage for the decomposed 'vertical-align' shorthand. Written by the custom vertical-align style builder; not web-exposed yet. See css-inline-3 alignment-baseline."
+            },
+            "status": "non-standard"
+        },
+        "-internal-box-baseline-shift": {
+            "animation-type": "not animatable (internal)",
+            "initial": "baseline",
+            "codegen-properties": {
+                "internal-only": true,
+                "skip-parser": true,
+                "skip-style-builder": true,
+                "computed-style-storage-path": ["m_nonInheritedData", "boxData"],
+                "computed-style-storage-kind": "reference",
+                "computed-style-type": "Style::BaselineShift",
+                "computed-style-name-for-methods": "BaselineShift",
+                "computed-style-getter": "baselineShift",
+                "comment": "Non-SVG (box) storage for the decomposed 'vertical-align' shorthand. Written by the custom vertical-align style builder; not web-exposed yet. See css-inline-3 baseline-shift."
+            },
+            "status": "non-standard"
+        },
         "block-ellipsis": {
             "animation-type": "discrete",
             "inherited": true,
@@ -9034,11 +9066,13 @@
             ],
             "codegen-properties": {
                 "accepts-quirky-length": true,
-                "computed-style-storage-path": ["m_nonInheritedData", "boxData"],
-                "computed-style-storage-kind": "reference",
-                "computed-style-type": "Style::VerticalAlign",
+                "skip-computed-style": true,
+                "style-builder-custom": "All",
+                "style-extractor-custom": true,
+                "animation-wrapper": "VerticalAlignWrapper",
+                "animation-wrapper-requires-override-parameters": [],
                 "parser-grammar": "<<values>> | <length-percentage>",
-                "parser-grammar-comment": "Current spec has 'vertical-align' specified as a shorthand with grammar '[ first | last] || <<'alignment-baseline'>> || <<'baseline-shift'>>'"
+                "parser-grammar-comment": "Current spec has 'vertical-align' specified as a shorthand with grammar '[ first | last] || <<'alignment-baseline'>> || <<'baseline-shift'>>'. Storage is decomposed into the internal box alignment-baseline + baseline-shift longhands; the custom builder/extractor/animation-wrapper bridge between the CSS 2 value and that decomposed storage."
             },
             "specification": {
                 "category": "css-inline",

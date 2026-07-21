@@ -1396,6 +1396,7 @@ TextStream& operator<<(TextStream& ts, AlignmentBaseline value)
     case AlignmentBaseline::Alphabetic: ts << "alphabetic"_s; break;
     case AlignmentBaseline::Hanging: ts << "hanging"_s; break;
     case AlignmentBaseline::Mathematical: ts << "mathematical"_s; break;
+    case AlignmentBaseline::WebkitBaselineMiddle: ts << "-webkit-baseline-middle"_s; break;
     }
     return ts;
 }

@@ -143,9 +143,14 @@ bool RenderInline::mayAffectLayout() const
     auto* parentRenderInline = dynamicDowncast<RenderInline>(*parent());
     auto hasHardLineBreakChildOnly = firstChild() && firstChild() == lastChild() && firstChild()->isBR();
     bool checkFonts = document().inNoQuirksMode();
+    // `vertical-align` is stored decomposed into the box alignment-baseline and
+    // baseline-shift longhands; the `baseline` keyword is the unshifted default.
+    auto isBaselineVerticalAlign = [](const Style::ComputedStyle& style) {
+        return style.alignmentBaseline() == AlignmentBaseline::Baseline && style.baselineShift().isBaseline();
+    };
     auto mayAffectLayout = (parentRenderInline && parentRenderInline->mayAffectLayout())
-        || (parentRenderInline && !WTF::holdsAlternative<CSS::Keyword::Baseline>(parentStyle->verticalAlign()))
-        || !WTF::holdsAlternative<CSS::Keyword::Baseline>(style().verticalAlign())
+        || (parentRenderInline && !isBaselineVerticalAlign(*parentStyle))
+        || !isBaselineVerticalAlign(style())
         || !style().textEmphasisStyle().isNone()
         || (checkFonts && (!parentStyle->fontCascade().metricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(style().fontCascade().metricsOfPrimaryFont())
         || parentStyle->lineHeight() != style().lineHeight()))
@@ -156,7 +161,7 @@ bool RenderInline::mayAffectLayout() const
         parentStyle = &parent()->firstLineStyle();
         auto& childStyle = firstLineStyle();
         mayAffectLayout = !parentStyle->fontCascade().metricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().metricsOfPrimaryFont())
-            || !WTF::holdsAlternative<CSS::Keyword::Baseline>(childStyle.verticalAlign())
+            || !isBaselineVerticalAlign(childStyle)
             || parentStyle->lineHeight() != childStyle.lineHeight();
     }
     return mayAffectLayout;

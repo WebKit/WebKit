@@ -33,7 +33,7 @@ namespace Style {
 
 struct SameSizeAsStyleBoxData : public RefCounted<SameSizeAsStyleBoxData> {
     PrimitiveData length[6];
-    VerticalAlign verticalAlign;
+    BaselineShift baselineShift;
     uint8_t bitfield;
     int m_zIndex[2];
 };
@@ -48,12 +48,13 @@ BoxData::BoxData()
     , minHeight(ComputedStyle::initialMinHeight())
     , maxWidth(ComputedStyle::initialMaxWidth())
     , maxHeight(ComputedStyle::initialMaxHeight())
-    , verticalAlign(ComputedStyle::initialVerticalAlign())
+    , baselineShift(ComputedStyle::initialBaselineShift())
     , hasAutoSpecifiedZIndex(static_cast<uint8_t>(ComputedStyle::initialSpecifiedZIndex().m_isAuto))
     , hasAutoUsedZIndex(static_cast<uint8_t>(ComputedStyle::initialUsedZIndex().m_isAuto))
     , boxSizing(static_cast<uint8_t>(BoxSizing::ContentBox))
     , boxDecorationBreak(static_cast<uint8_t>(BoxDecorationBreak::Slice))
     , baselineSource(static_cast<uint8_t>(ComputedStyle::initialBaselineSource()))
+    , alignmentBaseline(static_cast<uint8_t>(ComputedStyle::initialAlignmentBaseline()))
     , specifiedZIndexValue(ComputedStyle::initialSpecifiedZIndex().m_value)
     , usedZIndexValue(ComputedStyle::initialUsedZIndex().m_value)
 {
@@ -67,12 +68,13 @@ inline BoxData::BoxData(const BoxData& o)
     , minHeight(o.minHeight)
     , maxWidth(o.maxWidth)
     , maxHeight(o.maxHeight)
-    , verticalAlign(o.verticalAlign)
+    , baselineShift(o.baselineShift)
     , hasAutoSpecifiedZIndex(o.hasAutoSpecifiedZIndex)
     , hasAutoUsedZIndex(o.hasAutoUsedZIndex)
     , boxSizing(o.boxSizing)
     , boxDecorationBreak(o.boxDecorationBreak)
     , baselineSource(o.baselineSource)
+    , alignmentBaseline(o.alignmentBaseline)
     , specifiedZIndexValue(o.specifiedZIndexValue)
     , usedZIndexValue(o.usedZIndexValue)
 {
@@ -91,7 +93,8 @@ bool BoxData::operator==(const BoxData& o) const
         && minHeight == o.minHeight
         && maxWidth == o.maxWidth
         && maxHeight == o.maxHeight
-        && verticalAlign == o.verticalAlign
+        && baselineShift == o.baselineShift
+        && alignmentBaseline == o.alignmentBaseline
         && usedZIndexValue == o.usedZIndexValue
         && hasAutoUsedZIndex == o.hasAutoUsedZIndex
         && boxSizing == o.boxSizing
@@ -113,7 +116,8 @@ void BoxData::dumpDifferences(TextStream& ts, const BoxData& other) const
     LOG_IF_DIFFERENT(maxWidth);
     LOG_IF_DIFFERENT(maxHeight);
 
-    LOG_IF_DIFFERENT(verticalAlign);
+    LOG_IF_DIFFERENT(baselineShift);
+    LOG_IF_DIFFERENT_WITH_CAST(AlignmentBaseline, alignmentBaseline);
 
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasAutoSpecifiedZIndex);
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasAutoUsedZIndex);

@@ -31,11 +31,12 @@
 
 #import "AXObjectCacheInlines.h"
 #import "FontCascadeInlines.h"
+#import "StyleBaselineShift.h"
+#import "StyleComputedStyle+GettersInlines.h"
 #import "StyleComputedStyle.h"
 #import "StyleShadow.h"
 #import "StyleSpeakAs.h"
 #import "StyleTextShadow.h"
-#import "StyleVerticalAlign.h"
 #import "TextIterator.h"
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
@@ -239,13 +240,13 @@ Color AccessibilityObject::backgroundColor() const
 bool AccessibilityObject::isSubscript() const
 {
     const CheckedPtr style = this->style();
-    return style && WTF::holdsAlternative<CSS::Keyword::Sub>(Style::verticalAlign(*style));
+    return style && style->baselineShift().isSub();
 }
 
 bool AccessibilityObject::isSuperscript() const
 {
     const CheckedPtr style = this->style();
-    return style && WTF::holdsAlternative<CSS::Keyword::Super>(Style::verticalAlign(*style));
+    return style && style->baselineShift().isSuper();
 }
 
 bool AccessibilityObject::hasTextShadow() const
@@ -266,13 +267,13 @@ AttributedStringStyle AccessibilityObject::stylesForAttributedString() const
     if (!style)
         return { };
 
-    auto& alignment = Style::verticalAlign(*style);
+    auto& baselineShift = style->baselineShift();
     return {
         fontFrom(*style),
         textColorFrom(*style),
         backgroundColorFrom(*style),
-        WTF::holdsAlternative<CSS::Keyword::Sub>(alignment),
-        WTF::holdsAlternative<CSS::Keyword::Super>(alignment),
+        baselineShift.isSub(),
+        baselineShift.isSuper(),
         !Style::textShadow(*style).isNone(),
         lineDecorationStyle()
     };
