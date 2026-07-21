@@ -2211,6 +2211,7 @@ public:
 #endif
 
     RefPtr<WebCore::ShareableBitmap> shareableBitmapSnapshotForNode(WebCore::Node&);
+    RefPtr<WebCore::ShareableBitmap> shareableBitmapForNodeIncludingOffscreen(WebCore::Node&);
 
     void paintRemoteFrameContents(WebCore::FrameIdentifier, const WebCore::IntRect&, WebCore::GraphicsContext&);
 

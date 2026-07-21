@@ -60,5 +60,16 @@
         <div class="transformed">
             <div class="child-box"></div>
         </div>
+        <canvas class="visible-canvas" width="60" height="60"></canvas>
+        <canvas class="offscreen-canvas" width="60" height="60" style="display: none"></canvas>
+        <img class="offscreen-img" src="icon.png" style="display: none" />
+        <picture class="picture-box" style="display: none"><img src="icon.png" /></picture>
+        <script>
+            for (const canvas of document.querySelectorAll("canvas")) {
+                const context = canvas.getContext("2d");
+                context.fillStyle = "rgb(0, 0, 255)";
+                context.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        </script>
     </body>
 </html>

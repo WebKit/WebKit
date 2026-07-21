@@ -190,6 +190,7 @@
 #include <WebCore/BackForwardCache.h>
 #include <WebCore/BackForwardController.h>
 #include <WebCore/BitmapImage.h>
+#include <WebCore/CachedImage.h>
 #include <WebCore/CachedPage.h>
 #include <WebCore/CaptionUserPreferences.h>
 #include <WebCore/Chrome.h>
@@ -224,6 +225,7 @@
 #include <WebCore/Editing.h>
 #include <WebCore/Editor.h>
 #include <WebCore/ElementAncestorIteratorInlines.h>
+#include <WebCore/ElementChildIteratorInlines.h>
 #include <WebCore/ElementTargetingController.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/EventNames.h>
@@ -246,12 +248,14 @@
 #include <WebCore/GeometryUtilities.h>
 #include <WebCore/HTMLAttachmentElement.h>
 #include <WebCore/HTMLBodyElement.h>
+#include <WebCore/HTMLCanvasElement.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/HTMLIFrameElement.h>
 #include <WebCore/HTMLImageElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLModelElement.h>
+#include <WebCore/HTMLPictureElement.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/HTMLTextAreaElement.h>
@@ -265,6 +269,7 @@
 #include <WebCore/HistoryItem.h>
 #include <WebCore/HitTestResult.h>
 #include <WebCore/ImageAnalysisQueue.h>
+#include <WebCore/ImageBuffer.h>
 #include <WebCore/ImageOverlay.h>
 #include <WebCore/ImageUtilities.h>
 #include <WebCore/JSDOMExceptionHandling.h>
@@ -280,6 +285,7 @@
 #include <WebCore/MediaDocument.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MouseEvent.h>
+#include <WebCore/NativeImage.h>
 #include <WebCore/NavigationScheduler.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/NotificationController.h>
@@ -3393,6 +3399,37 @@ RefPtr<ShareableBitmap> WebPage::shareableBitmapSnapshotForNode(Node& node)
     if (RefPtr snapshot = snapshotNode(node, SnapshotOption::Shareable, 600 * 1024))
         return snapshot->bitmap();
     return nullptr;
+}
+
+RefPtr<ShareableBitmap> WebPage::shareableBitmapForNodeIncludingOffscreen(Node& node)
+{
+    RefPtr bitmap = shareableBitmapSnapshotForNode(node);
+
+    // Snapshotting requires a renderer, so an off-screen node yields no bitmap.
+    // Fall back to decoded image data for image elements, and paint canvas elements into an image buffer.
+    if (!bitmap) {
+        RefPtr imageElement = dynamicDowncast<HTMLImageElement>(node);
+        if (!imageElement) {
+            if (RefPtr pictureElement = dynamicDowncast<HTMLPictureElement>(node))
+                imageElement = childrenOfType<HTMLImageElement>(*pictureElement).first();
+        }
+
+        if (imageElement) {
+            if (RefPtr cachedImage = imageElement->cachedImage()) {
+                if (RefPtr image = cachedImage->image()) {
+                    if (RefPtr nativeImage = image->currentNativeImage())
+                        bitmap = ShareableBitmap::createFromImageDraw(*nativeImage, DestinationColorSpace::SRGB());
+                }
+            }
+        } else if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(node)) {
+            if (RefPtr imageBuffer = canvasElement->makeRenderingResultsAvailable()) {
+                if (RefPtr nativeImage = imageBuffer->copyNativeImage())
+                    bitmap = ShareableBitmap::createFromImageDraw(*nativeImage, DestinationColorSpace::SRGB());
+            }
+        }
+    }
+
+    return bitmap;
 }
 
 void WebPage::takeRemoteSnapshot(IntRect snapshotRect, IntSize bitmapSize, SnapshotOptions snapshotOptions, RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& completionHandler)

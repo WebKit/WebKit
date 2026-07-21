@@ -74,7 +74,7 @@ public:
     const IntSize& size() const LIFETIME_BOUND { return m_size; }
     virtual void setSizeForControllingContext(IntSize) = 0;
 
-    RefPtr<ImageBuffer> makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect = ShouldApplyPostProcessingToDirtyRect::Yes);
+    WEBCORE_EXPORT RefPtr<ImageBuffer> makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect = ShouldApplyPostProcessingToDirtyRect::Yes);
 
     void setOriginClean() { m_originClean = true; }
     void setOriginTainted() { m_originClean = false; }

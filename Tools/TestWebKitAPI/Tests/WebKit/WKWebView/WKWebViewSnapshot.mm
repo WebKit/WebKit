@@ -764,14 +764,14 @@ TEST(WKWebView, SnapshotNodeByJSHandle)
 
     RetainPtr world = [WKContentWorld _worldWithConfiguration:worldConfiguration.get()];
     auto querySelector = [&](ASCIILiteral selector) -> RetainPtr<_WKJSHandle> {
-        return [webView querySelector:@(selector.characters()) frame:nil world:world.get()];
+        return [webView querySelector:@(selector.characters()) frame:nil world:world];
     };
 
     {
         auto [image, error] = [webView takeSnapshotOfNode:querySelector(".red-box"_s).get()];
         EXPECT_NULL(error);
 
-        CGImagePixelReader reader { Util::convertToCGImage(image.get()).get() };
+        CGImagePixelReader reader { Util::convertToCGImage(image) };
         EXPECT_WK_STREQ("rgb(255, 0, 0)", reader.cssColorAt(2, 2));
         EXPECT_WK_STREQ("rgb(255, 0, 0)", reader.cssColorAt(reader.width() / 2, reader.height() / 2));
     }
@@ -780,7 +780,7 @@ TEST(WKWebView, SnapshotNodeByJSHandle)
         auto [image, error] = [webView takeSnapshotOfNode:querySelector("img"_s).get()];
         EXPECT_NULL(error);
 
-        CGImagePixelReader reader { Util::convertToCGImage(image.get()).get() };
+        CGImagePixelReader reader { Util::convertToCGImage(image) };
         EXPECT_TRUE(reader.isTransparentBlack(2, 2));
         EXPECT_FALSE(reader.isTransparentBlack(reader.width() / 2, reader.height() / 2));
     }
@@ -789,9 +789,39 @@ TEST(WKWebView, SnapshotNodeByJSHandle)
         auto [image, error] = [webView takeSnapshotOfNode:querySelector("h2"_s).get()];
         EXPECT_NULL(error);
 
-        CGImagePixelReader reader { Util::convertToCGImage(image.get()).get() };
+        CGImagePixelReader reader { Util::convertToCGImage(image) };
         EXPECT_WK_STREQ("rgb(0, 0, 0)", reader.cssColorAt(2, 2));
         EXPECT_FALSE(reader.isTransparentBlack(reader.width() / 2, reader.height() / 2));
+    }
+
+    {
+        // An ImageData handle has no renderer; it is rasterized directly from its pixel buffer.
+        NSString *scriptToRun = @"const imageData = new ImageData(20, 20);"
+            "for (let i = 0; i < imageData.data.length; i += 4) { imageData.data[i + 2] = 255; imageData.data[i + 3] = 255; }"
+            "webkit.createJSHandle(imageData)";
+
+        RetainPtr handle = dynamic_objc_cast<_WKJSHandle>([webView objectByEvaluatingJavaScript:scriptToRun inFrame:nil inContentWorld:world]);
+        auto [image, error] = [webView takeSnapshotOfNode:handle.get()];
+        EXPECT_NULL(error);
+
+        CGImagePixelReader reader { Util::convertToCGImage(image) };
+        EXPECT_WK_STREQ("rgb(0, 0, 255)", reader.cssColorAt(reader.width() / 2, reader.height() / 2));
+    }
+
+    {
+        // An OffscreenCanvas handle has no renderer; it is captured from its backing store.
+        NSString *scriptToRun = @"const offscreen = new OffscreenCanvas(20, 20);"
+            "const context = offscreen.getContext('2d');"
+            "context.fillStyle = 'rgb(0, 255, 0)';"
+            "context.fillRect(0, 0, 20, 20);"
+            "webkit.createJSHandle(offscreen)";
+
+        RetainPtr handle = dynamic_objc_cast<_WKJSHandle>([webView objectByEvaluatingJavaScript:scriptToRun inFrame:nil inContentWorld:world]);
+        auto [image, error] = [webView takeSnapshotOfNode:handle.get()];
+        EXPECT_NULL(error);
+
+        CGImagePixelReader reader { Util::convertToCGImage(image) };
+        EXPECT_WK_STREQ("rgb(0, 255, 0)", reader.cssColorAt(reader.width() / 2, reader.height() / 2));
     }
 
     {
@@ -802,10 +832,63 @@ TEST(WKWebView, SnapshotNodeByJSHandle)
 
     {
         NSString *scriptToRun = @"window.randomObject = {'foo': 1}; webkit.createJSHandle(randomObject)";
-        RetainPtr handle = dynamic_objc_cast<_WKJSHandle>([webView objectByEvaluatingJavaScript:scriptToRun inFrame:nil inContentWorld:world.get()]);
+        RetainPtr handle = dynamic_objc_cast<_WKJSHandle>([webView objectByEvaluatingJavaScript:scriptToRun inFrame:nil inContentWorld:world]);
         auto [image, error] = [webView takeSnapshotOfNode:handle.get()];
         EXPECT_NOT_NULL(error);
         EXPECT_NULL(image);
+    }
+}
+
+TEST(WKWebView, SnapshotNodeIncludingOffscreen)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    [webView synchronouslyLoadTestPageNamed:@"node-snapshotting"];
+
+    RetainPtr worldConfiguration = adoptNS([_WKContentWorldConfiguration new]);
+    [worldConfiguration setAllowJSHandleCreation:YES];
+
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:worldConfiguration.get()];
+    auto querySelector = [&](ASCIILiteral selector) -> RetainPtr<_WKJSHandle> {
+        return [webView querySelector:@(selector.characters()) frame:nil world:world];
+    };
+
+    {
+        // An on-screen <canvas> is snapshotted through its renderer, producing its drawn content.
+        auto [image, error] = [webView takeSnapshotOfNode:querySelector("canvas.visible-canvas"_s).get()];
+        EXPECT_NULL(error);
+
+        CGImagePixelReader reader { Util::convertToCGImage(image) };
+        EXPECT_WK_STREQ("rgb(0, 0, 255)", reader.cssColorAt(reader.width() / 2, reader.height() / 2));
+    }
+
+    {
+        // An off-screen <canvas> has no renderer, so it falls back to its backing store.
+        auto [image, error] = [webView takeSnapshotOfNode:querySelector("canvas.offscreen-canvas"_s).get()];
+        EXPECT_NULL(error);
+
+        CGImagePixelReader reader { Util::convertToCGImage(image) };
+        EXPECT_WK_STREQ("rgb(0, 0, 255)", reader.cssColorAt(reader.width() / 2, reader.height() / 2));
+    }
+
+    {
+        // An off-screen <img> has no renderer, so it falls back to its decoded image data.
+        auto [image, error] = [webView takeSnapshotOfNode:querySelector("img.offscreen-img"_s).get()];
+        EXPECT_NULL(error);
+
+        CGImagePixelReader reader { Util::convertToCGImage(image) };
+        EXPECT_TRUE(reader.isTransparentBlack(2, 2));
+        EXPECT_FALSE(reader.isTransparentBlack(reader.width() / 2, reader.height() / 2));
+    }
+
+    {
+        // An off-screen <picture> has no renderer and no image data of its own, so it falls back to the decoded
+        // image data of its selected <img> child.
+        auto [image, error] = [webView takeSnapshotOfNode:querySelector("picture.picture-box"_s).get()];
+        EXPECT_NULL(error);
+
+        CGImagePixelReader reader { Util::convertToCGImage(image) };
+        EXPECT_TRUE(reader.isTransparentBlack(2, 2));
+        EXPECT_FALSE(reader.isTransparentBlack(reader.width() / 2, reader.height() / 2));
     }
 }
 
