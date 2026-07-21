@@ -35,6 +35,10 @@
 
 namespace JSC {
 
+namespace Yarr {
+struct YarrPattern;
+}
+
 struct RegExpRepresentation;
 class VM;
 
@@ -182,6 +186,8 @@ private:
     friend class RegExpCache;
     RegExp(VM&, const String&, OptionSet<Yarr::Flags>);
     void finishCreation(VM&);
+
+    void updateMetadataFromPattern(Yarr::YarrPattern&);
 
     static RegExp* createWithoutCaching(VM&, const String&, OptionSet<Yarr::Flags>);
 
