@@ -79,6 +79,10 @@ static std::optional<DigitalCredentialPresentationProtocol> convertProtocolStrin
 
 static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCredentialRequest(const Document& document, const DigitalCredentialGetRequest& request)
 {
+    auto protocol = convertProtocolString(request.protocol);
+    if (!protocol)
+        return std::optional<UnvalidatedDigitalCredentialRequest> { std::nullopt }; // Skip requests with an unsupported protocol.
+
     auto scope = DECLARE_THROW_SCOPE(document.globalObject()->vm());
     auto* globalObject = document.globalObject();
 
@@ -86,10 +90,6 @@ static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCrede
     JSC::JSONStringify(globalObject, request.data.get(), 0);
     if (scope.exception()) [[unlikely]]
         return Exception { ExceptionCode::ExistingExceptionError };
-
-    auto protocol = convertProtocolString(request.protocol);
-    if (!protocol)
-        return std::optional<UnvalidatedDigitalCredentialRequest> { std::nullopt }; // Return empty optional for unknown protocols
 
     switch (*protocol) {
     case DigitalCredentialPresentationProtocol::OrgIsoMdoc: {
