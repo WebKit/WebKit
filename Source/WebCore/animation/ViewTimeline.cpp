@@ -613,27 +613,27 @@ std::pair<double, double> ViewTimeline::offsetIntervalForTimelineRangeName(const
     return { computeOffset(0), computeOffset(1) };
 }
 
-std::pair<double, double> ViewTimeline::offsetIntervalForAttachmentRange(const Style::SingleAnimationRange& attachmentRange) const
+std::pair<double, double> ViewTimeline::offsetIntervalForAttachmentRange(const ResolvableTimelineRange& resolvableTimelineRange) const
 {
     auto data = computeTimelineData();
     auto timelineRange = data.rangeEnd - data.rangeStart;
     ASSERT(timelineRange);
 
-    auto offsetForSingleTimelineRange = [&](const auto& rangeToConvert) {
-        auto [conversionRangeStart, conversionRangeEnd] = intervalForTimelineRangeName(data, rangeToConvert.name());
+    auto offsetForSingleTimelineRange = [&](const auto& edge, auto zoom) {
+        auto [conversionRangeStart, conversionRangeEnd] = intervalForTimelineRangeName(data, edge.name());
         auto conversionRange = conversionRangeEnd - conversionRangeStart;
-        auto convertedValue = Style::evaluate<float>(rangeToConvert.offset(), conversionRange, Style::ZoomNeeded { });
+        auto convertedValue = Style::evaluate<float>(edge.offset(), conversionRange, zoom);
         auto position = conversionRangeStart + convertedValue;
         return (position - data.rangeStart) / timelineRange;
     };
 
     return {
-        offsetForSingleTimelineRange(attachmentRange.start),
-        offsetForSingleTimelineRange(attachmentRange.end)
+        offsetForSingleTimelineRange(resolvableTimelineRange.start, resolvableTimelineRange.startZoom),
+        offsetForSingleTimelineRange(resolvableTimelineRange.end, resolvableTimelineRange.endZoom)
     };
 }
 
-std::pair<WebAnimationTime, WebAnimationTime> ViewTimeline::intervalForAttachmentRange(const Style::SingleAnimationRange& attachmentRange) const
+std::pair<WebAnimationTime, WebAnimationTime> ViewTimeline::intervalForAttachmentRange(const ResolvableTimelineRange& resolvableTimelineRange) const
 {
     // https://drafts.csswg.org/scroll-animations-1/#view-timelines-ranges
     auto data = computeTimelineData();
@@ -641,17 +641,24 @@ std::pair<WebAnimationTime, WebAnimationTime> ViewTimeline::intervalForAttachmen
     if (!timelineRange)
         return { WebAnimationTime::fromPercentage(0), WebAnimationTime::fromPercentage(100) };
 
-    auto computeTime = [&](const auto& rangeToConvert) {
-        auto mappedOffset = mapOffsetToTimelineRange(data, rangeToConvert.name(), [&](const float& subjectRange) {
-            return Style::evaluate<float>(rangeToConvert.offset(), subjectRange, Style::ZoomNeeded { });
+    auto computeTime = [&](const auto& edge, auto zoom) {
+        auto mappedOffset = mapOffsetToTimelineRange(data, edge.name(), [&](const float& subjectRange) {
+            return Style::evaluate<float>(edge.offset(), subjectRange, zoom);
         });
         return WebAnimationTime::fromPercentage(mappedOffset * 100);
     };
 
-    auto attachmentRangeOrDefault = attachmentRange.isDefault() ? defaultRange() : attachmentRange;
+    if (resolvableTimelineRange.isDefault()) {
+        auto range = defaultRange();
+        return {
+            computeTime(range.start, Style::ZoomFactor::none()),
+            computeTime(range.end, Style::ZoomFactor::none()),
+        };
+    }
+
     return {
-        computeTime(attachmentRangeOrDefault.start),
-        computeTime(attachmentRangeOrDefault.end),
+        computeTime(resolvableTimelineRange.start, resolvableTimelineRange.startZoom),
+        computeTime(resolvableTimelineRange.end, resolvableTimelineRange.endZoom),
     };
 }
 

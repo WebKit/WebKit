@@ -44,10 +44,6 @@
 
 namespace WebCore {
 
-namespace Style {
-struct SingleAnimationRange;
-}
-
 class AnimationEffect : public RefCountedAndCanMakeWeakPtr<AnimationEffect> {
     WTF_MAKE_TZONE_ALLOCATED(AnimationEffect);
 public:
@@ -70,7 +66,7 @@ public:
     virtual void animationTimelineDidChange();
     virtual void animationDidFinish() { };
     virtual void animationPlaybackRateDidChange();
-    virtual void animationProgressBasedTimelineSourceDidChangeMetrics(const Style::SingleAnimationRange&);
+    virtual void animationProgressBasedTimelineSourceDidChangeMetrics(const ResolvableTimelineRange&);
     void NODELETE animationRangeDidChange();
 
     AnimationEffectTiming timing() const { return m_timing; }

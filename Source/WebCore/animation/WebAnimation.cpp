@@ -117,7 +117,12 @@ WebAnimation::WebAnimation(Document& document)
     : ActiveDOMObject(document)
     , m_readyPromise(makeUniqueRef<ReadyPromise>(*this, &WebAnimation::readyPromiseResolve))
     , m_finishedPromise(makeUniqueRef<FinishedPromise>(*this, &WebAnimation::finishedPromiseResolve))
-    , m_timelineRange({ Style::SingleAnimationRangeStart { CSS::Keyword::Normal { } }, Style::SingleAnimationRangeEnd { CSS::Keyword::Normal { } } })
+    , m_timelineRange({
+        .start = Style::SingleAnimationRangeStart { CSS::Keyword::Normal { } },
+        .end = Style::SingleAnimationRangeEnd { CSS::Keyword::Normal { } },
+        .startZoom = Style::ZoomFactor::none(),
+        .endZoom = Style::ZoomFactor::none(),
+    })
 {
     instances().add(*this);
 }
@@ -2047,41 +2052,51 @@ void WebAnimation::setBindingsRangeEnd(TimelineRangeValue&& rangeEndValue)
         effect->animationRangeDidChange();
 }
 
-void WebAnimation::setRangeStart(Style::SingleAnimationRangeStart&& rangeStart)
+void WebAnimation::setRangeStart(Style::SingleAnimationRangeStart&& start, Style::ZoomFactor startZoom)
 {
-    if (m_timelineRange.start == rangeStart)
+    if (m_timelineRange.start == start && m_timelineRange.startZoom == startZoom)
         return;
 
-    m_timelineRange.start = WTF::move(rangeStart);
+    m_timelineRange.start = WTF::move(start);
+    m_timelineRange.startZoom = WTF::move(startZoom);
+
     if (auto* effect = this->effect())
         effect->animationRangeDidChange();
 }
 
-void WebAnimation::setRangeEnd(Style::SingleAnimationRangeEnd&& rangeEnd)
+void WebAnimation::setRangeEnd(Style::SingleAnimationRangeEnd&& end, Style::ZoomFactor endZoom)
 {
-    if (m_timelineRange.end == rangeEnd)
+    if (m_timelineRange.end == end && m_timelineRange.endZoom == endZoom)
         return;
 
-    m_timelineRange.end = WTF::move(rangeEnd);
+    m_timelineRange.end = WTF::move(end);
+    m_timelineRange.endZoom = WTF::move(endZoom);
+
     if (auto* effect = this->effect())
         effect->animationRangeDidChange();
 }
 
-const Style::SingleAnimationRange& WebAnimation::range()
+const ResolvableTimelineRange& WebAnimation::range()
 {
-    if (RefPtr keyframeEffect = this->keyframeEffect()) {
-        auto conversionData = CSSToLengthConversionData::tryCreateForNonStyleBuildingResolution(keyframeEffect->target());
+    if (m_specifiedRangeStart || m_specifiedRangeEnd) {
+        if (RefPtr keyframeEffect = this->keyframeEffect()) {
+            auto conversionData = CSSToLengthConversionData::tryCreateForNonStyleBuildingResolution(keyframeEffect->target());
 
-        auto computedEdge = [&]<typename To>(const CSSValue& specifiedEdge, To&& defaultValue) {
-            if (!conversionData)
-                return Style::deprecatedToStyleFromCSSValue<To>(specifiedEdge).value_or(defaultValue);
-            return Style::toStyleFromCSSValue<To>(*conversionData, specifiedEdge);
-        };
+            auto computedEdge = [&]<typename To>(const CSSValue& specifiedEdge, To&& defaultValue) {
+                if (!conversionData)
+                    return Style::deprecatedToStyleFromCSSValue<To>(specifiedEdge).value_or(defaultValue);
+                return Style::toStyleFromCSSValue<To>(*conversionData, specifiedEdge);
+            };
 
-        if (m_specifiedRangeStart)
-            m_timelineRange.start = computedEdge(protect(*m_specifiedRangeStart), Style::SingleAnimationRangeStart { CSS::Keyword::Normal { } });
-        if (m_specifiedRangeEnd)
-            m_timelineRange.end = computedEdge(protect(*m_specifiedRangeEnd), Style::SingleAnimationRangeEnd { CSS::Keyword::Normal { } });
+            if (m_specifiedRangeStart) {
+                m_timelineRange.start = computedEdge(protect(*m_specifiedRangeStart), Style::SingleAnimationRangeStart { CSS::Keyword::Normal { } });
+                m_timelineRange.startZoom = Style::ZoomFactor::none();
+            }
+            if (m_specifiedRangeEnd) {
+                m_timelineRange.end = computedEdge(protect(*m_specifiedRangeEnd), Style::SingleAnimationRangeEnd { CSS::Keyword::Normal { } });
+                m_timelineRange.endZoom = Style::ZoomFactor::none();
+            }
+        }
     }
 
     return m_timelineRange;

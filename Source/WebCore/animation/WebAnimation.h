@@ -34,7 +34,7 @@
 #include <WebCore/EventTargetInterfaces.h>
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/IDLTypes.h>
-#include <WebCore/StyleSingleAnimationRange.h>
+#include <WebCore/ResolvableTimelineRange.h>
 #include <WebCore/Styleable.h>
 #include <WebCore/TimelineRangeValue.h>
 #include <WebCore/WebAnimationTypes.h>
@@ -150,13 +150,13 @@ public:
     virtual void setBindingsFrameRate(Variant<FramesPerSecond, AnimationFrameRatePreset>&&);
     std::optional<FramesPerSecond> frameRate() const { return m_effectiveFrameRate; }
 
-    TimelineRangeValue bindingsRangeStart() const { return m_timelineRange.start.toTimelineRangeValue(); }
-    TimelineRangeValue bindingsRangeEnd() const { return m_timelineRange.end.toTimelineRangeValue(); }
+    TimelineRangeValue bindingsRangeStart() const { return m_timelineRange.start.toTimelineRangeValue(m_timelineRange.startZoom); }
+    TimelineRangeValue bindingsRangeEnd() const { return m_timelineRange.end.toTimelineRangeValue(m_timelineRange.endZoom); }
     virtual void setBindingsRangeStart(TimelineRangeValue&&);
     virtual void setBindingsRangeEnd(TimelineRangeValue&&);
-    void setRangeStart(Style::SingleAnimationRangeStart&&);
-    void setRangeEnd(Style::SingleAnimationRangeEnd&&);
-    const Style::SingleAnimationRange& range() LIFETIME_BOUND;
+    void setRangeStart(Style::SingleAnimationRangeStart&&, Style::ZoomFactor);
+    void setRangeEnd(Style::SingleAnimationRangeEnd&&, Style::ZoomFactor);
+    const ResolvableTimelineRange& range() LIFETIME_BOUND;
 
     bool needsTick() const;
     virtual void tick();
@@ -272,7 +272,8 @@ private:
     TimeToRunPendingTask m_timeToRunPendingPauseTask { TimeToRunPendingTask::NotScheduled };
     ReplaceState m_replaceState { ReplaceState::Active };
     uint64_t m_globalPosition { 0 };
-    Style::SingleAnimationRange m_timelineRange;
+
+    ResolvableTimelineRange m_timelineRange;
 };
 
 } // namespace WebCore

@@ -44,6 +44,8 @@ struct ZoomFactor {
 
     // Special zoom factor to use when zoom has already been applied to a value.
     static constexpr ZoomFactor none() { return ZoomFactor { 1 }; }
+
+    constexpr bool operator==(const ZoomFactor&) const = default;
 };
 
 // Map from computed style values (which take zoom into account) to web-exposed values, which are zoom-independent.
