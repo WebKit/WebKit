@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ScriptExecutionContext.h"
 #include "URLPatternInit.h"
 
 namespace WebCore {
@@ -46,10 +45,10 @@ enum class URLPatternConstructorStringParserState : uint8_t { Init, Protocol, Au
 class URLPatternConstructorStringParser {
 public:
     explicit URLPatternConstructorStringParser(StringView input);
-    ExceptionOr<URLPatternInit> parse(ScriptExecutionContext&);
+    ExceptionOr<URLPatternInit> parse();
 
 private:
-    void performParse(ScriptExecutionContext&);
+    void performParse();
     void NODELETE rewind();
     const URLPatternUtilities::Token& NODELETE getSafeToken(size_t index) const;
     bool NODELETE isNonSpecialPatternChararacter(size_t index, char value) const;
@@ -57,8 +56,8 @@ private:
     bool NODELETE isAuthoritySlashesNext() const;
     String makeComponentString() const;
     void changeState(URLPatternConstructorStringParserState, size_t skip);
-    void updateState(ScriptExecutionContext&);
-    ExceptionOr<void> computeProtocolMatchSpecialSchemeFlag(ScriptExecutionContext&);
+    void updateState();
+    ExceptionOr<void> computeProtocolMatchSpecialSchemeFlag();
 
     StringView m_input;
     Vector<URLPatternUtilities::Token> m_tokenList;
