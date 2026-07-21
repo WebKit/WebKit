@@ -586,6 +586,48 @@ macro(_WEBKIT_LIBRARY_LINK_FRAMEWORK _target)
     endif ()
 endmacro()
 
+function(_WEBKIT_ADD_CODE_SIGN _target)
+    get_target_property(_skip_codesign ${_target} SKIP_CODESIGN)
+    if (_skip_codesign)
+        return()
+    endif ()
+    set(_identity ${WEBKIT_CODE_SIGN_IDENTITY})
+    if (NOT _identity)
+        set(_identity "-")
+    endif ()
+    cmake_parse_arguments(_arg "" "" "DEPENDS" ${ARGN})
+    get_target_property(_is_framework ${_target} FRAMEWORK)
+    if (_is_framework)
+        set(_sign_path "$<TARGET_BUNDLE_DIR:${_target}>")
+        if (PORT STREQUAL Mac)
+            set(_cstemp_path "${_sign_path}/Versions/A/$<TARGET_FILE_BASE_NAME:${_target}>.cstemp")
+        else ()
+            set(_cstemp_path "${_sign_path}/$<TARGET_FILE_BASE_NAME:${_target}>.cstemp")
+        endif ()
+    else ()
+        set(_sign_path "$<TARGET_FILE:${_target}>")
+        set(_cstemp_path "${_sign_path}.cstemp")
+    endif ()
+    if (${_target}_CODE_SIGN_ENTITLEMENTS)
+        set(_entitlements --entitlements ${${_target}_CODE_SIGN_ENTITLEMENTS})
+    endif ()
+    set(_stamp "${CMAKE_CURRENT_BINARY_DIR}/${_target}-codesign.stamp")
+    add_custom_command(
+        OUTPUT ${_stamp}
+        DEPENDS $<TARGET_FILE:${_target}> ${_arg_DEPENDS}
+        # Work around rdar://145010536 when a previous codesign task was interrupted.
+        COMMAND rm -f ${_cstemp_path}
+        COMMAND set -o pipefail &&
+            ${WEBKITADDITIONS_CODESIGN_PRELUDE}
+            /usr/bin/codesign --force --sign ${_identity} ${_entitlements} ${_sign_path} 2>&1 |
+            sed "/replacing existing signature/d"
+        COMMAND ${CMAKE_COMMAND} -E touch ${_stamp}
+        VERBATIM
+        COMMENT "Code signing ${_target}")
+    add_custom_target(${_target}_CodeSign ALL DEPENDS ${_stamp})
+    add_dependencies(${_target}_CodeSign ${_target})
+endfunction()
+
 macro(_WEBKIT_TARGET_INTERFACE _target)
     add_library(${_target}_PostBuild INTERFACE)
     target_link_libraries(${_target}_PostBuild INTERFACE ${${_target}_INTERFACE_LIBRARIES})
@@ -599,6 +641,9 @@ macro(_WEBKIT_TARGET_INTERFACE _target)
     endif ()
     if (NOT ${_target}_LIBRARY_TYPE STREQUAL "SHARED")
         target_compile_definitions(${_target}_PostBuild INTERFACE "STATICALLY_LINKED_WITH_${_target}")
+    endif ()
+    if (TARGET ${_target}_CodeSign)
+        add_dependencies(${_target}_PostBuild ${_target}_CodeSign)
     endif ()
     add_library(WebKit::${_target} ALIAS ${_target}_PostBuild)
 endmacro()
@@ -632,6 +677,7 @@ macro(WEBKIT_FRAMEWORK _target)
         target_compile_options(${_target} BEFORE PUBLIC -F${CMAKE_BINARY_DIR})
         install(TARGETS ${_target} FRAMEWORK DESTINATION ${LIB_INSTALL_DIR})
         _WEBKIT_CREATE_FRAMEWORK_BUNDLE_STRUCTURE(${_target})
+        _WEBKIT_ADD_CODE_SIGN(${_target} DEPENDS ${${_target}_CODE_SIGN_INPUTS})
     endif ()
 
     _WEBKIT_TARGET_INTERFACE(${_target})
@@ -652,6 +698,10 @@ macro(WEBKIT_LIBRARY _target)
         set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${${_target}_OUTPUT_NAME})
     endif ()
 
+    if (APPLE AND ${${_target}_LIBRARY_TYPE} MATCHES SHARED)
+        _WEBKIT_ADD_CODE_SIGN(${_target} DEPENDS ${${_target}_CODE_SIGN_INPUTS})
+    endif ()
+
     _WEBKIT_TARGET_INTERFACE(${_target})
 endmacro()
 
@@ -662,6 +712,10 @@ macro(WEBKIT_EXECUTABLE _target)
 
     if (${_target}_OUTPUT_NAME)
         set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${${_target}_OUTPUT_NAME})
+    endif ()
+
+    if (APPLE)
+        _WEBKIT_ADD_CODE_SIGN(${_target} DEPENDS ${${_target}_CODE_SIGN_INPUTS})
     endif ()
 endmacro()
 

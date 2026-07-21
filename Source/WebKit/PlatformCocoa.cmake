@@ -24,6 +24,13 @@ list(APPEND WebKit_COMPILE_OPTIONS
 
 set(MACOSX_FRAMEWORK_IDENTIFIER com.apple.WebKit)
 
+# FIXME: Generate WebKit.framework and XPC service entitlements
+set(WebKit_CODE_SIGN_INPUTS
+    "$<TARGET_FILE:GPUProcess>"
+    "$<TARGET_FILE:NetworkProcess>"
+    "$<TARGET_FILE:WebProcess>"
+)
+
 include(Headers.cmake)
 
 list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES

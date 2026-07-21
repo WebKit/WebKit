@@ -103,8 +103,13 @@ function(WEBKIT_RESOLVE_TOOL OUTPUT_VAR _tool)
 endfunction()
 
 # Run Source/${PROJECT}/Scripts/process-entitlements.sh against an executable
-# target and ad-hoc codesign it with the resulting entitlements. Mirrors the
-# Xcode build's "Process Entitlements" build phase plus the signing step.
+# target to produce its ${target}.xcent, and publish that path as
+# ${target}_CODE_SIGN_ENTITLEMENTS so the centralized signer (_WEBKIT_ADD_CODE_SIGN,
+# invoked from WEBKIT_EXECUTABLE) signs the binary with it.
+#
+# The .xcent generation is a POST_BUILD registered here; because this is called
+# before the target's WEBKIT_EXECUTABLE finalization, that generation runs before
+# the centralized sign. Callers must therefore invoke this before WEBKIT_EXECUTABLE.
 #
 # Usage:
 #   WEBKIT_PROCESS_ENTITLEMENTS(target PROJECT name [PRODUCT_NAME name])
@@ -112,6 +117,7 @@ endfunction()
 # PROJECT names the directory under Source/ containing Scripts/process-entitlements.sh
 # (e.g. JavaScriptCore, WebKit). PRODUCT_NAME defaults to the CMake target name;
 # set it explicitly when the script's dispatcher keys off a different name.
+# FIXME: This isn't related to SDK selection, move it.
 function(WEBKIT_PROCESS_ENTITLEMENTS _target)
     cmake_parse_arguments(_arg "" "PROJECT;PRODUCT_NAME" "" ${ARGN})
     if (NOT _arg_PROJECT)
@@ -127,9 +133,9 @@ function(WEBKIT_PROCESS_ENTITLEMENTS _target)
             WK_PLATFORM_NAME=${WEBKIT_SDK_NAME}
             PRODUCT_NAME=${_arg_PRODUCT_NAME}
             ${CMAKE_SOURCE_DIR}/Source/${_arg_PROJECT}/Scripts/process-entitlements.sh
-        COMMAND codesign --force --sign - --entitlements ${_xcent} $<TARGET_FILE:${_target}>
         VERBATIM
     )
+    set(${_target}_CODE_SIGN_ENTITLEMENTS ${_xcent} PARENT_SCOPE)
 endfunction()
 
 
