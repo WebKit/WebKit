@@ -2344,6 +2344,12 @@ webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/broadcastchanne
 # This webmessaging WPT test is flaky.
 webkit.org/b/289126 imported/w3c/web-platform-tests/webmessaging/broadcastchannel/cross-partition.https.tentative.html [ Skip ]
 
+# Timeout because we don't have MessagePort.onclose (see https://github.com/whatwg/html/issues/10201)
+webkit.org/b/267567 imported/w3c/web-platform-tests/webmessaging/message-channels/close-event/document-destroyed.tentative.window.html [ Skip ]
+webkit.org/b/267567 imported/w3c/web-platform-tests/webmessaging/message-channels/close-event/explicitly-closed.tentative.window.html [ Skip ]
+webkit.org/b/267567 imported/w3c/web-platform-tests/webmessaging/message-channels/close-event/garbage-collected.tentative.any.html [ Skip ]
+webkit.org/b/267567 imported/w3c/web-platform-tests/webmessaging/message-channels/close-event/garbage-collected.tentative.any.worker.html [ Skip ]
+
 webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/body-fills-html-quirk-vertical.html [ ImageOnlyFailure ]
 webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/body-fills-html-quirk.html [ ImageOnlyFailure ]
 webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/percentage-height-quirk-excludes-flex-grid-001.html [ ImageOnlyFailure ]

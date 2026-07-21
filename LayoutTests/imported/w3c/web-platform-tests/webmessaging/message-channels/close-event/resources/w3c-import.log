@@ -12,5 +12,4 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/webmessaging/message-channels/resources/cross-document-1.html
-/LayoutTests/imported/w3c/web-platform-tests/webmessaging/message-channels/resources/cross-document-2.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/message-channels/close-event/resources/helper.js

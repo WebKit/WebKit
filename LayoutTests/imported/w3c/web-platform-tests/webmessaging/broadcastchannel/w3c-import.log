@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/basics.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/blobs.html
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/cross-origin.html

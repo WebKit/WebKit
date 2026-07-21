@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/with-options/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/with-options/broken-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/with-options/host-specific-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/with-options/message-channel-transferable.html
