@@ -6040,6 +6040,64 @@ Ran 1296 tests of 1298 with 1293 successful
         return self.run_step()
 
 
+class TestAnalyzeAPITestsResults(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self):
+        self.setup_step(AnalyzeAPITestsResults())
+        self.setProperty('clean_tree_run_failures', [])
+
+    def test_new_failure_introduced_by_change(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['suite.test1'])
+        self.setProperty('second_run_failures', ['suite.test1'])
+        self.expect_outcome(result=FAILURE, state_string='Found 1 new API test failure: suite.test1 (failure)')
+        return self.run_step()
+
+    def test_pre_existing_failure_on_clean_tree(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['suite.test1'])
+        self.setProperty('second_run_failures', ['suite.test1'])
+        self.setProperty('clean_tree_run_failures', ['suite.test1'])
+        self.expect_outcome(result=SUCCESS, state_string='Passed API tests')
+        return self.run_step()
+
+    def test_flaky_failure(self):
+        # test1 and test2 fail in different runs (never both), so they are flaky, not new failures.
+        self.configureStep()
+        self.setProperty('first_run_failures', ['suite.test1'])
+        self.setProperty('second_run_failures', ['suite.test2'])
+        self.expect_outcome(result=SUCCESS, state_string='Passed API tests')
+        return self.run_step()
+
+    def test_retry_when_both_runs_empty(self):
+        # This step runs only after both runs failed, so empty failure lists mean the results could
+        # not be parsed (an infrastructure issue), which should retry.
+        self.configureStep()
+        self.setProperty('first_run_failures', [])
+        self.setProperty('second_run_failures', [])
+        self.expect_outcome(result=RETRY, state_string='analyze-api-tests-results (retry)')
+        return self.run_step()
+
+    def test_retry_when_results_missing(self):
+        # A missing first_run_failures/second_run_failures property means the run step produced no
+        # parseable results, which is an infrastructure issue that should retry.
+        self.configureStep()
+        self.expect_outcome(result=RETRY, state_string='analyze-api-tests-results (retry)')
+        return self.run_step()
+
+    def test_retry_when_second_run_results_missing(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['suite.test1'])
+        self.expect_outcome(result=RETRY, state_string='analyze-api-tests-results (retry)')
+        return self.run_step()
+
+
 class TestRunAPITestsParallelSafety(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
