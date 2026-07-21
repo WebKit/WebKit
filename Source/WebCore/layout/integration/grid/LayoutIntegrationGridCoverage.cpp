@@ -74,6 +74,7 @@ enum class GridAvoidanceReason : uint8_t {
     GridItemHasBorder,
     GridItemHasPadding,
     GridItemHasMargin,
+    GridItemHasBorderBoxSizing,
     GridItemHasVerticalWritingMode,
     GridItemHasRTLDirection,
     GridItemHasAspectRatio,
@@ -526,6 +527,9 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         if (gridItemHasMargins())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasMargin, reasons, reasonCollectionMode);
 
+        if (gridItemStyle->boxSizing() == BoxSizing::BorderBox)
+            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasBorderBoxSizing, reasons, reasonCollectionMode);
+
         auto linesFromGridTemplateColumnsCount = gridTemplateColumns.sizes.size() + 1;
         auto linesFromGridTemplateRowsCount = gridTemplateRows.sizes.size() + 1;
         auto& columnStart = gridItemStyle->gridItemColumnStart();
@@ -775,6 +779,9 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridItemHasMargin:
         stream << "grid item has margin";
+        break;
+    case GridAvoidanceReason::GridItemHasBorderBoxSizing:
+        stream << "grid item has border-box box-sizing";
         break;
     case GridAvoidanceReason::GridItemHasVerticalWritingMode:
         stream << "grid item has vertical writing mode";
