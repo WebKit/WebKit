@@ -6599,46 +6599,31 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tear_down_test_build_step()
 
+    def default_remote_commands(self, branch='main', remote='origin', platform='unix', switch_exit=0):
+        shell = 'bash' if platform == 'win' else '/bin/bash'
+        exit_0 = 'exit 0' if platform == 'win' else 'true'
+        stale_files = ['gc.log', 'index.lock', 'packed-refs.lock', 'packed-refs.new', 'HEAD.lock', 'config.lock', 'FETCH_HEAD.lock']
+        if platform == 'win':
+            stale_commands = [ExpectShell(command=[shell, '--posix', '-o', 'pipefail', '-c', rf'del .git\{f} || {exit_0}'], workdir='wkdir', timeout=300, log_environ=False).exit(0).log('stdio', stdout='') for f in stale_files]
+        else:
+            stale_commands = [ExpectShell(command=[shell, '--posix', '-o', 'pipefail', '-c', f'rm -f .git/{f} || {exit_0}'], workdir='wkdir', timeout=300, log_environ=False).exit(0).log('stdio', stdout='') for f in stale_files]
+        return [
+            *stale_commands,
+            ExpectShell(command=[shell, '--posix', '-o', 'pipefail', '-c', f'git rebase --abort || {exit_0}'], workdir='wkdir', timeout=300, log_environ=False).exit(0).log('stdio', stdout=''),
+            ExpectShell(command=[shell, '--posix', '-o', 'pipefail', '-c', f'git am --abort || {exit_0}'], workdir='wkdir', timeout=300, log_environ=False).exit(0).log('stdio', stdout=''),
+            ExpectShell(command=[shell, '--posix', '-o', 'pipefail', '-c', f'git cherry-pick --abort || {exit_0}'], workdir='wkdir', timeout=300, log_environ=False).exit(0).log('stdio', stdout=''),
+            ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, log_environ=False).exit(0).log('stdio', stdout=''),
+            ExpectShell(command=[shell, '--posix', '-o', 'pipefail', '-c', f'git switch --progress -d --discard-changes {remote}/{branch} || git switch --progress -d --discard-changes {branch} || git switch --progress -d --discard-changes'], workdir='wkdir', timeout=300, log_environ=False).exit(switch_exit).log('stdio', stdout='' if switch_exit else 'HEAD is now at 57015967fef9'),
+            ExpectShell(command=[shell, '--posix', '-o', 'pipefail', '-c', f"git for-each-ref --format='delete %(refname) %(objectname)' refs/heads | git update-ref --stdin || {exit_0}"], workdir='wkdir', timeout=300, log_environ=False).exit(0).log('stdio', stdout=''),
+            ExpectShell(command=['git', 'branch', '--no-track', branch], workdir='wkdir', timeout=300, log_environ=False).exit(0).log('stdio', stdout=''),
+            ExpectShell(command=[shell, '--posix', '-o', 'pipefail', '-c', f"git remote | grep -v '{remote}$' | xargs -L 1 git remote rm || {exit_0}"], workdir='wkdir', timeout=300, log_environ=False).exit(0).log('stdio', stdout=''),
+            ExpectShell(command=['git', 'prune'], workdir='wkdir', timeout=300, log_environ=False).exit(0).log('stdio', stdout=''),
+        ]
+
     def test_success(self):
         self.setup_step(CleanGitRepo())
         self.setProperty('buildername', 'Style-EWS')
-
-        self.expectRemoteCommands(
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/gc.log || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/index.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/packed-refs.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/packed-refs.new || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/HEAD.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/config.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/FETCH_HEAD.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git rebase --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git am --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git cherry-pick --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'checkout', '--progress', 'origin/main', '-f'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout='You are in detached HEAD state.'),
-            ExpectShell(command=['git', 'branch', '-D', 'main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
-            ExpectShell(command=['git', 'branch', 'main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git branch | grep -v ' main$' | grep -v 'HEAD detached at' | xargs git branch -D || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'prune'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-        )
+        self.expectRemoteCommands(*self.default_remote_commands())
         self.expect_outcome(result=SUCCESS, state_string='Cleaned up git repository')
         return self.run_step()
 
@@ -6646,129 +6631,21 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setup_step(CleanGitRepo())
         self.setProperty('buildername', 'Win-Build-EWS')
         self.setProperty('platform', 'win')
-
-        self.expectRemoteCommands(
-            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', r'del .git\gc.log || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', r'del .git\index.lock || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', r'del .git\packed-refs.lock || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', r'del .git\packed-refs.new || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', r'del .git\HEAD.lock || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', r'del .git\config.lock || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', r'del .git\FETCH_HEAD.lock || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', 'git rebase --abort || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', 'git am --abort || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', 'git cherry-pick --abort || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'checkout', '--progress', 'origin/main', '-f'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout='You are in detached HEAD state.'),
-            ExpectShell(command=['git', 'branch', '-D', 'main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
-            ExpectShell(command=['git', 'branch', 'main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', "git branch | grep -v ' main$' | grep -v 'HEAD detached at' | xargs git branch -D || exit 0"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || exit 0"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'prune'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-        )
+        self.expectRemoteCommands(*self.default_remote_commands(platform='win'))
         self.expect_outcome(result=SUCCESS, state_string='Cleaned up git repository')
         return self.run_step()
 
     def test_success_master(self):
         self.setup_step(CleanGitRepo(default_branch='master'))
         self.setProperty('buildername', 'Commit-Queue')
-
-        self.expectRemoteCommands(
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/gc.log || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/index.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/packed-refs.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/packed-refs.new || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/HEAD.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/config.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/FETCH_HEAD.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git rebase --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git am --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git cherry-pick --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'checkout', '--progress', 'origin/master', '-f'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout='You are in detached HEAD state.'),
-            ExpectShell(command=['git', 'branch', '-D', 'master'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout='Deleted branch master (was 57015967fef9).'),
-            ExpectShell(command=['git', 'branch', 'master'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout="Switched to a new branch 'master'"),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git branch | grep -v ' master$' | grep -v 'HEAD detached at' | xargs git branch -D || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'prune'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-        )
+        self.expectRemoteCommands(*self.default_remote_commands(branch='master'))
         self.expect_outcome(result=SUCCESS, state_string='Cleaned up git repository')
         return self.run_step()
 
     def test_failure(self):
         self.setup_step(CleanGitRepo())
         self.setProperty('buildername', 'Commit-Queue')
-
-        self.expectRemoteCommands(
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/gc.log || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/index.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/packed-refs.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/packed-refs.new || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/HEAD.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/config.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/FETCH_HEAD.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git rebase --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git am --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git cherry-pick --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'checkout', '--progress', 'origin/main', '-f'], workdir='wkdir', timeout=300, log_environ=False).exit(128)
-            .log('stdio', stdout='You are in detached HEAD state.'),
-            ExpectShell(command=['git', 'branch', '-D', 'main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
-            ExpectShell(command=['git', 'branch', 'main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git branch | grep -v ' main$' | grep -v 'HEAD detached at' | xargs git branch -D || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'prune'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-        )
+        self.expectRemoteCommands(*self.default_remote_commands(switch_exit=128))
         self.expect_outcome(result=FAILURE, state_string='Encountered some issues during cleanup')
         return self.run_step()
 
@@ -6776,43 +6653,7 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setup_step(CleanGitRepo())
         self.setProperty('buildername', 'Commit-Queue')
         self.setProperty('basename', 'safari-612-branch')
-
-        self.expectRemoteCommands(
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/gc.log || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/index.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/packed-refs.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/packed-refs.new || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/HEAD.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/config.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/FETCH_HEAD.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git rebase --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git am --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git cherry-pick --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'checkout', '--progress', 'origin/main', '-f'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout='You are in detached HEAD state.'),
-            ExpectShell(command=['git', 'branch', '-D', 'main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
-            ExpectShell(command=['git', 'branch', 'main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git branch | grep -v ' main$' | grep -v 'HEAD detached at' | xargs git branch -D || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'prune'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout=''),
-        )
+        self.expectRemoteCommands(*self.default_remote_commands())
         self.expect_outcome(result=SUCCESS, state_string='Cleaned up git repository')
         return self.run_step()
 
