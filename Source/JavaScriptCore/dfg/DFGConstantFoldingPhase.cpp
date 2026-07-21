@@ -1719,6 +1719,7 @@ private:
                 case NewAsyncFunction: {
                     node->convertToIdentityOn(node->child1()->child1().node());
                     node->child1().setUseKind(KnownCellUse);
+                    m_interpreter.execute(indexInBlock); // Catch the fact that we may overwrite a stale AbstractValue.
                     eliminated = true;
                     break;
                 }
