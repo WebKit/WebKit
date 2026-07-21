@@ -166,14 +166,16 @@ public:
 
     
 protected:
-    
+
     void generateFastCommon(CCallHelpers&, size_t size);
-    
+    void emitDataICSlowPath(CCallHelpers&, GPRReg propertyCacheGPR);
+
     JSValueRegs m_base;
     JSValueRegs m_value;
 
 public:
     CCallHelpers::Jump m_slowPathJump;
+    CCallHelpers::JumpList m_dataICHandlerCases;
 };
 
 class JITGetByIdGenerator final : public JITByIdGenerator {
@@ -186,6 +188,7 @@ public:
     
     void generateFastPath(CCallHelpers&);
     void generateDataICFastPath(CCallHelpers&);
+    void generateDataICSlowPath(CCallHelpers&);
 
     template<typename PropertyInlineCache>
     static void setUpPropertyInlineCache(PropertyInlineCache& propertyCache, CodeBlock* codeBlock,
@@ -210,6 +213,7 @@ public:
 
     void generateFastPath(CCallHelpers&);
     void generateDataICFastPath(CCallHelpers&);
+    void generateDataICSlowPath(CCallHelpers&);
 
     template<typename PropertyInlineCache>
     static void setUpPropertyInlineCache(PropertyInlineCache& propertyCache, CodeBlock* codeBlock,
@@ -237,6 +241,7 @@ public:
     
     void generateFastPath(CCallHelpers&);
     void generateDataICFastPath(CCallHelpers&);
+    void generateDataICSlowPath(CCallHelpers&);
 
     template<typename PropertyInlineCache>
     static void setUpPropertyInlineCache(PropertyInlineCache& propertyCache, CodeBlock* codeBlock,
@@ -448,6 +453,7 @@ public:
 
     void generateFastPath(CCallHelpers&);
     void generateDataICFastPath(CCallHelpers&);
+    void generateDataICSlowPath(CCallHelpers&);
 
     template<typename PropertyInlineCache>
     static void setUpPropertyInlineCache(PropertyInlineCache& propertyCache, CodeBlock* codeBlock,
