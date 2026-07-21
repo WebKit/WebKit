@@ -123,6 +123,7 @@ Tests/WebKit/WKWebView/DeviceOrientation.mm @nonARC
 Tests/WebKit/WKWebView/DisableSpellcheck.mm @nonARC
 Tests/WebKit/WKWebView/DisplayName.mm @nonARC
 Tests/WebKit/WKWebView/DoAfterNextPresentationUpdateAfterCrash.mm @nonARC
+Tests/WebKit/WKWebView/DoAfterNextPresentationUpdateOffscreen.mm @nonARC
 Tests/WebKit/WKWebView/DocumentEditingContext.mm @nonARC
 Tests/WebKit/WKWebView/Download.mm @nonARC
 Tests/WebKit/WKWebView/DownloadProgress.mm @nonARC
