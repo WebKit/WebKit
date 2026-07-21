@@ -30,6 +30,6 @@
     Transferable
 ] interface WebTransportSendStream : WritableStream {
     attribute WebTransportSendGroup? sendGroup;
-    attribute long long? sendOrder;
+    attribute long long sendOrder;
     [CallWith=CurrentScriptExecutionContext] Promise<WebTransportSendStreamStats> getStats();
 };

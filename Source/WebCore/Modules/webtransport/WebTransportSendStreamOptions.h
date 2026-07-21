@@ -25,10 +25,11 @@
 
 #pragma once
 
+#include "WebTransportSendOptions.h"
+
 namespace WebCore {
 
-struct WebTransportSendStreamOptions {
-    std::optional<int64_t> sendOrder;
+struct WebTransportSendStreamOptions : WebTransportSendOptions {
 };
 
 }
