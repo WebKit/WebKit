@@ -1,0 +1,55 @@
+<!DOCTYPE html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<html>
+<body>
+<p>This test passes it it does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+// Large logical File so the async blob load is still in flight when window.stop() runs.
+let chunk = new Blob([new ArrayBuffer(1 << 20)]);
+let big = chunk;
+for (let i = 0; i < 13; i++)
+    big = new Blob([big, big]);   // 8 GiB logical
+let hugeFile = new File([big], "huge.bin", {type: "application/octet-stream"});
+
+// Child iframe; retain only its Navigator.
+let f = document.createElement('iframe');
+document.body.appendChild(f);
+let childNav = f.contentWindow.navigator;
+
+// Cross-realm share(): receiver = child Navigator, [CallWith=CurrentDocument] binds the parent Document,
+// so the blob load is registered against the parent and survives child-frame removal.
+internals.withUserGesture(() => {
+    Navigator.prototype.share.call(childNav, { files: [hugeFile] });
+});
+
+// Drop the child realm; after GC, the only remaining Ref<Navigator> is the one captured
+// inside ShareDataReader::m_completionHandler.
+childNav = null;
+f.remove();
+f = null;
+for (let i = 0; i < 10; i++)  {
+    if (window.GCController)
+        GCController.collect();
+}
+
+// Yield, GC again, then cancel the in-flight blob load via window.stop().
+// FileReaderLoader::failed -> BlobLoader::didFail -> ShareDataReader::didFinishLoading (error branch)
+// invokes and destroys the local completionHandler, which releases the last Ref<Navigator>;
+// ~Navigator -> ~m_loader -> ~ShareDataReader frees `this`; the next statement cancel() is a UAF.
+setTimeout(() => {
+    for (let i = 0; i < 10; i++) {
+        if (window.GCController)
+            GCController.collect();
+    }
+    
+    window.stop();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 100);
+</script>
+</body>
+</html>
