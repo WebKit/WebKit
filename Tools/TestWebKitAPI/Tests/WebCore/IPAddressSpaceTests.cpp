@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include <WebCore/DNS.h>
 #include <WebCore/IPAddressSpace.h>
 #include <wtf/URL.h>
 
@@ -283,6 +284,18 @@ TEST(IPAddressSpace, IPv4BoundaryConditions)
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://198.19.255.255/"_s)), WebCore::IPAddressSpace::Local);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://198.17.255.255/"_s)), WebCore::IPAddressSpace::Public);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://198.20.0.0/"_s)), WebCore::IPAddressSpace::Public);
+}
+
+// classifyIPAddressSpace() goes through IPAddress::fromString() -> inet_ntop() rather than URL
+// parsing, so it's worth confirming it agrees with determineIPAddressSpace() above.
+TEST(IPAddressSpace, ClassifyIPAddressSpaceFromResolvedAddress)
+{
+    EXPECT_EQ(WebCore::classifyIPAddressSpace(*WebCore::IPAddress::fromString("127.0.0.1"_s)), WebCore::IPAddressSpace::Loopback);
+    EXPECT_EQ(WebCore::classifyIPAddressSpace(*WebCore::IPAddress::fromString("::1"_s)), WebCore::IPAddressSpace::Loopback);
+    EXPECT_EQ(WebCore::classifyIPAddressSpace(*WebCore::IPAddress::fromString("192.168.1.1"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::classifyIPAddressSpace(*WebCore::IPAddress::fromString("fc00::1"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::classifyIPAddressSpace(*WebCore::IPAddress::fromString("8.8.8.8"_s)), WebCore::IPAddressSpace::Public);
+    EXPECT_EQ(WebCore::classifyIPAddressSpace(*WebCore::IPAddress::fromString("2001:4860:4860::8888"_s)), WebCore::IPAddressSpace::Public);
 }
 
 }
