@@ -1097,6 +1097,9 @@ private:
                     }
                     
                     if (structure) {
+                        m_interpreter.execute(indexInBlock); // Push CFA over this node after we get the state before.
+                        alreadyHandled = true; // Don't allow the default constant folder to do things to this.
+                        m_insertionSet.insertCheck(indexInBlock, node->origin, node->children);
                         node->convertToNewObject(m_graph.registerStructure(structure));
                         changed = true;
                         break;
