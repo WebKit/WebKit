@@ -8874,6 +8874,9 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     if (![self _isSameAsFocusedElement:context])
         return;
 
+    if (_usingGestureForSelection || _selectionChangeNestingLevel)
+        return;
+
     [self _internalInvalidateTextEntryContext];
 }
 
