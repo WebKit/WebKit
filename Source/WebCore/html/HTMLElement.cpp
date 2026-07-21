@@ -1399,15 +1399,19 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
             options.preventScroll = true;
             element->focus(options);
         }
-        popoverData()->setPreviouslyFocusedElement(nullptr);
+
+        if (auto* popoverData = this->popoverData())
+            popoverData->setPreviouslyFocusedElement(nullptr);
     }
 
     if (CheckedPtr cache = document->existingAXObjectCache())
         cache->onPopoverToggle(*this);
 
-    if (RefPtr closeWatcher = popoverData()->closeWatcher()) {
-        closeWatcher->destroy();
-        popoverData()->setCloseWatcher(nullptr);
+    if (auto* popoverData = this->popoverData()) {
+        if (RefPtr closeWatcher = popoverData->closeWatcher()) {
+            closeWatcher->destroy();
+            popoverData->setCloseWatcher(nullptr);
+        }
     }
 
     return { };

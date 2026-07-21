@@ -95,7 +95,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-invoker-reset.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-invoking-attribute-hint.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-invoking-attribute.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-command-edge-cases.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-command-edge-cases.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-command.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-contextmenu.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-disabled-button.html
