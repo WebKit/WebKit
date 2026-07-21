@@ -137,6 +137,9 @@ public:
 
 private:
     RemotePageProxy(WebPageProxy&, WebProcessProxy&, const WebCore::Site&, WebPageProxyMessageReceiverRegistration*, std::optional<WebCore::PageIdentifier>);
+
+    void initializeAfterAdoption();
+
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
     void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags);

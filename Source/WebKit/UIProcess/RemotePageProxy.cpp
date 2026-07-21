@@ -91,7 +91,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePageProxy);
 
 Ref<RemotePageProxy> RemotePageProxy::create(WebPageProxy& page, WebProcessProxy& process, const WebCore::Site& site, WebPageProxyMessageReceiverRegistration* registrationToTransfer, std::optional<WebCore::PageIdentifier> pageIDToTransfer)
 {
-    return adoptRef(*new RemotePageProxy(page, process, site, registrationToTransfer, pageIDToTransfer));
+    Ref remotePageProxy = adoptRef(*new RemotePageProxy(page, process, site, registrationToTransfer, pageIDToTransfer));
+    remotePageProxy->initializeAfterAdoption();
+    return remotePageProxy;
 }
 
 RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebProcessProxy& process, const WebCore::Site& site, WebPageProxyMessageReceiverRegistration* registrationToTransfer, std::optional<WebCore::PageIdentifier> pageIDToTransfer)
@@ -105,7 +107,10 @@ RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebProcessProxy& process, c
         m_messageReceiverRegistration.transferMessageReceivingFrom(*registrationToTransfer, *this, page.backForwardListMessageReceiver());
     else
         m_messageReceiverRegistration.startReceivingMessages(m_process, m_webPageID, *this, page.backForwardListMessageReceiver());
+}
 
+void RemotePageProxy::initializeAfterAdoption()
+{
     RefPtr protectedPage = m_page.get();
     if (!protectedPage)
         return;
