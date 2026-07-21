@@ -71,7 +71,6 @@ enum class GridAvoidanceReason : uint8_t {
     GridHasUnsupportedMaxHeight,
     GridItemHasNonInitialMaxWidth,
     GridItemHasNonInitialMaxHeight,
-    GridItemHasBorder,
     GridItemHasPercentOrCalcPadding,
     GridItemHasMargin,
     GridItemHasBorderBoxSizing,
@@ -508,9 +507,6 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         if (!gridItemStyle->maxHeight().isNone())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasNonInitialMaxHeight, reasons, reasonCollectionMode);
 
-        if (gridItemStyle->border().hasBorder())
-            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasBorder, reasons, reasonCollectionMode);
-
         // Fixed padding is threaded into item and track sizing as part of the border-box size and lays
         // out identically to legacy RenderGrid. Percentage and calc() padding resolve against the grid
         // item's grid area, which needs additional plumbing, so keep those items on the legacy path.
@@ -774,9 +770,6 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridItemHasNonInitialMaxHeight:
         stream << "grid item has non-initial max-height";
-        break;
-    case GridAvoidanceReason::GridItemHasBorder:
-        stream << "grid item has border";
         break;
     case GridAvoidanceReason::GridItemHasPercentOrCalcPadding:
         stream << "grid item has percent or calc padding";
