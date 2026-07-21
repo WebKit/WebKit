@@ -554,9 +554,6 @@ void CanvasRenderingContext2DBase::beginLayer()
     save();
     realizeSaves();
 
-    if (m_unrealizedSaveCount)
-        return;
-
     RefPtr<Filter> filter;
     if (!state().filter.isNone())
         filter = createFilter(backingStoreBounds());
