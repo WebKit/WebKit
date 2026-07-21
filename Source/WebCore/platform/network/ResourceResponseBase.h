@@ -63,8 +63,8 @@ enum class WasPrivateRelayed : bool { No, Yes };
 static constexpr unsigned bitWidthOfWasPrivateRelayed = 1;
 static_assert(static_cast<unsigned>(WasPrivateRelayed::Yes) <= ((1U << bitWidthOfWasPrivateRelayed) - 1));
 
-static constexpr unsigned bitWidthOfIPAddressSpace = 1;
-static_assert(static_cast<unsigned>(IPAddressSpace::Local) <= ((1U << bitWidthOfIPAddressSpace) - 1));
+static constexpr unsigned bitWidthOfIPAddressSpace = 2;
+static_assert(((1U << bitWidthOfIPAddressSpace) - 1) >= static_cast<unsigned>(IPAddressSpace::Loopback));
 
 enum class ResourceResponseBaseType : uint8_t { Basic, Cors, Default, Error, Opaque, Opaqueredirect };
 enum class ResourceResponseBaseTainting : uint8_t { Basic, Cors, Opaque, Opaqueredirect };

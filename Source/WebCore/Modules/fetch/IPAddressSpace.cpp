@@ -36,27 +36,22 @@
 
 namespace WebCore {
 
-IPAddressSpace determineIPAddressSpace(const URL& url)
+static IPAddressSpace classifyHost(String host)
 {
-    // Defined in https://wicg.github.io/local-network-access/#ip-address-space-section
-    String host = url.host().toString();
-    host = makeStringByReplacingAll(host, '[', ""_s);
-    host = makeStringByReplacingAll(host, ']', ""_s);
-
     if (!URL::hostIsIPAddress(host))
         return IPAddressSpace::Public;
 
     // Handle IPv6 addresses (check for colon to distinguish from IPv4)
     if (host.contains(':')) {
-        // ::1/128 - IPv6 Local - loopback
+        // ::1/128 - IPv6 Loopback
         if (host == "::1")
-            return IPAddressSpace::Local;
+            return IPAddressSpace::Loopback;
 
-        // fc00::/7 - Unique Loopback - local
+        // fc00::/7 - Unique Local - local
         if (host.startsWith("fc"_s) || host.startsWith("fd"_s))
             return IPAddressSpace::Local;
 
-        // fe80::/10 - Link-Loopback Unicast - local
+        // fe80::/10 - Link-Local Unicast - local
         if (host.startsWith("fe8"_s) || host.startsWith("fe9"_s) || host.startsWith("fea"_s) || host.startsWith("feb"_s))
             return IPAddressSpace::Local;
         // ::ffff: - IPv4 Mapped IPv6 Addresses - format for parsing by IPv4 Algorithm.
@@ -104,9 +99,9 @@ IPAddressSpace determineIPAddressSpace(const URL& url)
 
         // Check IPv4 address blocks according to spec table:
 
-        // 127.0.0.0/8 - IPv4 Loopback - loopback
+        // 127.0.0.0/8 - IPv4 Loopback
         if (parts[0] == 127)
-            return IPAddressSpace::Local;
+            return IPAddressSpace::Loopback;
 
         // 10.0.0.0/8 - Local Use - local
         if (parts[0] == 10)
@@ -137,9 +132,14 @@ IPAddressSpace determineIPAddressSpace(const URL& url)
     return IPAddressSpace::Public;
 }
 
-bool isLocalIPAddressSpace(const URL& url)
+IPAddressSpace determineIPAddressSpace(const URL& url)
 {
-    return determineIPAddressSpace(url) == IPAddressSpace::Local;
+    // Defined in https://wicg.github.io/local-network-access/#ip-address-space-section
+    StringView host = url.host();
+    if (host.startsWith('[') && host.endsWith(']'))
+        host = host.substring(1, host.length() - 2);
+
+    return classifyHost(host.toString());
 }
 
 } // namespace WebCore

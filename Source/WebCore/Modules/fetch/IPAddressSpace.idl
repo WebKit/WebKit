@@ -23,4 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
  
- enum IPAddressSpace { "public", "local" };
+[
+    ExportMacro=WEBCORE_EXPORT
+] enum IPAddressSpace { "public", "local", "loopback" };
