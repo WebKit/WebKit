@@ -36,6 +36,7 @@
 #include "DocumentPage.h"
 #include "DocumentSecurityOrigin.h"
 #include "ExceptionOr.h"
+#include "FocusController.h"
 #include "FrameDestructionObserverInlines.h"
 #include "IDLTypes.h"
 #include "JSDOMConvertDictionary.h"
@@ -176,8 +177,9 @@ void DigitalCredential::discoverFromExternalSource(const Document& document, Cre
         return;
     }
 
-    if (!document.hasFocus()) {
-        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not focused."_s });
+    CheckedRef focusController = page->focusController();
+    if (!focusController->isActive() || !focusController->isFocused()) {
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "The top-level browsing context does not have user attention."_s });
         return;
     }
 
