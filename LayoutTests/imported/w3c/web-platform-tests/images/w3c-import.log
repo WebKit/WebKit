@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/images/100px-green-rect.svg
@@ -19,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/images/README.md
 /LayoutTests/imported/w3c/web-platform-tests/images/anim-gr.gif
 /LayoutTests/imported/w3c/web-platform-tests/images/anim-gr.png
+/LayoutTests/imported/w3c/web-platform-tests/images/anim-rgb.gif
 /LayoutTests/imported/w3c/web-platform-tests/images/anim-tao.png
 /LayoutTests/imported/w3c/web-platform-tests/images/anim-tao.png.headers
 /LayoutTests/imported/w3c/web-platform-tests/images/animated-avif.avif
@@ -27,17 +26,24 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/images/background.png
 /LayoutTests/imported/w3c/web-platform-tests/images/black-rectangle.png
 /LayoutTests/imported/w3c/web-platform-tests/images/blank-highlight.png
+/LayoutTests/imported/w3c/web-platform-tests/images/blue-100x100.png
+/LayoutTests/imported/w3c/web-platform-tests/images/blue-100x100.svg
+/LayoutTests/imported/w3c/web-platform-tests/images/blue-100x50-transparent-100x50.png
+/LayoutTests/imported/w3c/web-platform-tests/images/blue-100x50-transparent-100x50.svg
 /LayoutTests/imported/w3c/web-platform-tests/images/blue-area.png
 /LayoutTests/imported/w3c/web-platform-tests/images/blue-border.png
 /LayoutTests/imported/w3c/web-platform-tests/images/blue-png-cachable.py
 /LayoutTests/imported/w3c/web-platform-tests/images/blue.png
 /LayoutTests/imported/w3c/web-platform-tests/images/blue96x96.png
 /LayoutTests/imported/w3c/web-platform-tests/images/broken.png
+/LayoutTests/imported/w3c/web-platform-tests/images/checkerboard.svg
 /LayoutTests/imported/w3c/web-platform-tests/images/clear-100x50.png
 /LayoutTests/imported/w3c/web-platform-tests/images/colors.svg
 /LayoutTests/imported/w3c/web-platform-tests/images/computer.jpg
 /LayoutTests/imported/w3c/web-platform-tests/images/fail.gif
 /LayoutTests/imported/w3c/web-platform-tests/images/ggrr-256x256.png
+/LayoutTests/imported/w3c/web-platform-tests/images/green-100x100.png
+/LayoutTests/imported/w3c/web-platform-tests/images/green-100x100.svg
 /LayoutTests/imported/w3c/web-platform-tests/images/green-100x50.png
 /LayoutTests/imported/w3c/web-platform-tests/images/green-16x16.png
 /LayoutTests/imported/w3c/web-platform-tests/images/green-1x1.png
@@ -56,13 +62,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/images/lcp-256x256.png
 /LayoutTests/imported/w3c/web-platform-tests/images/lcp-2x2.png
 /LayoutTests/imported/w3c/web-platform-tests/images/lcp-96x96.png
+/LayoutTests/imported/w3c/web-platform-tests/images/left-half-rectangle-50.png
+/LayoutTests/imported/w3c/web-platform-tests/images/left-half-rectangle-50.svg
 /LayoutTests/imported/w3c/web-platform-tests/images/movie_300_frame_0.png
 /LayoutTests/imported/w3c/web-platform-tests/images/pattern-nosize.svg
 /LayoutTests/imported/w3c/web-platform-tests/images/pattern.mp4
 /LayoutTests/imported/w3c/web-platform-tests/images/pattern.png
 /LayoutTests/imported/w3c/web-platform-tests/images/pattern.svg
 /LayoutTests/imported/w3c/web-platform-tests/images/pattern.webm
+/LayoutTests/imported/w3c/web-platform-tests/images/red-100x100.png
+/LayoutTests/imported/w3c/web-platform-tests/images/red-100x100.svg
 /LayoutTests/imported/w3c/web-platform-tests/images/red-16x16.png
+/LayoutTests/imported/w3c/web-platform-tests/images/red-green-animated.gif
 /LayoutTests/imported/w3c/web-platform-tests/images/red-zeroheight.svg
 /LayoutTests/imported/w3c/web-platform-tests/images/red-zerosize.svg
 /LayoutTests/imported/w3c/web-platform-tests/images/red-zerowidth.svg
@@ -73,6 +84,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/images/smiley.png
 /LayoutTests/imported/w3c/web-platform-tests/images/smiley.png.headers
 /LayoutTests/imported/w3c/web-platform-tests/images/threecolors.png
+/LayoutTests/imported/w3c/web-platform-tests/images/transparent-100x50-blue-100x50.png
+/LayoutTests/imported/w3c/web-platform-tests/images/transparent-100x50-blue-100x50.svg
 /LayoutTests/imported/w3c/web-platform-tests/images/transparent.png
 /LayoutTests/imported/w3c/web-platform-tests/images/transparent50.png
 /LayoutTests/imported/w3c/web-platform-tests/images/undecodable.png

@@ -3365,6 +3365,9 @@ webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization
 webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization-conic.html [ Pass ]
 webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization-conic-2.html [ Pass ]
 
+imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-exif-png-3.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-images/infinite-radial-gradient-refcrash.html [ ImageOnlyFailure ]
+
 webkit.org/b/203448 imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-table-cell.html [ Pass ]
 
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-001.html [ Pass ]
