@@ -2533,7 +2533,6 @@ imported/w3c/web-platform-tests/svg/animations/cyclic-syncbase-events.html [ Ski
 imported/w3c/web-platform-tests/svg/painting/marker-orient-001.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/mask-containing-image-with-clip-path.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/gradient-external-reference.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/painting/reftests/marker-external-reference.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-004.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-006.svg [ ImageOnlyFailure ]

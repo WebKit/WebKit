@@ -316,6 +316,16 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
 
     if (markerTags().contains(tagName) && style.hasMarkers()) {
         auto buildCachedMarkerResource = [&](const Style::SVGMarkerResource& markerResource, bool (SVGResources::*setMarker)(LegacyRenderSVGResourceMarker*)) {
+            if (auto markerURL = markerResource.tryURL()) {
+                if (auto externalDocument = externalSVGResourceDocument(document, markerURL->resolved)) {
+                    if (RefPtr resolvedDocument = *externalDocument) {
+                        auto markerId = markerURL->resolved.fragmentIdentifier().toAtomString();
+                        if (auto* marker = getRenderSVGResourceById<LegacyRenderSVGResourceMarker>(*resolvedDocument, markerId))
+                            (ensureResources(foundResources).*setMarker)(marker);
+                    }
+                    return;
+                }
+            }
             auto markerId = SVGURIReference::fragmentIdentifierFromIRIString(markerResource, document);
             if (auto* marker = getRenderSVGResourceById<LegacyRenderSVGResourceMarker>(treeScope, markerId))
                 (ensureResources(foundResources).*setMarker)(marker);
