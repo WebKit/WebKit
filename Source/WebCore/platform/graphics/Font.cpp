@@ -705,13 +705,13 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const GlyphBuffer& glyphBuffer)
     ts << ", initial advance: width:" <<  width(initialAdvance) << " height:" << height(initialAdvance);
     for (size_t index = 0; index < glyphBuffer.size(); ++index) {
         auto advance = glyphBuffer.advanceAt(index);
-        auto& font = glyphBuffer.fontAt(index);
+        Ref font = glyphBuffer.fontAt(index);
         auto glyph =  glyphBuffer.glyphAt(index);
-        auto bounds = font.boundsForGlyph(glyph);
+        auto bounds = font->boundsForGlyph(glyph);
         ts << "\n"_s;
         ts << "glyph index: " << index;
         ts << ", glyph: " << glyph;
-        ts << ", font: " <<  &font;
+        ts << ", font: " <<  font.ptr();
         ts << ", advance: width:" <<  width(advance) << " height:" << height(advance);
         ts << ", string index: "  << glyphBuffer.uncheckedStringOffsetAt(index);
         ts << ", origin: " << DoublePoint(glyphBuffer.originAt(index));

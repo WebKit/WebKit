@@ -1560,19 +1560,19 @@ inline bool NODELETE shouldDrawIfLoading(const Font& font, FontCascade::CustomFo
 void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& glyphBuffer, FloatPoint& point, CustomFontNotReadyAction customFontNotReadyAction) const
 {
     ASSERT(glyphBuffer.isFlattened());
-    RefPtr fontData = glyphBuffer.fontAt(0);
+    Ref fontData = glyphBuffer.fontAt(0);
     FloatPoint startPoint = point;
     float nextX = startPoint.x() + WebCore::width(glyphBuffer.advanceAt(0));
     float nextY = startPoint.y() + height(glyphBuffer.advanceAt(0));
     unsigned lastFrom = 0;
     unsigned nextGlyph = 1;
     while (nextGlyph < glyphBuffer.size()) {
-        RefPtr nextFontData = glyphBuffer.fontAt(nextGlyph);
+        Ref nextFontData = glyphBuffer.fontAt(nextGlyph);
 
         if (nextFontData != fontData) {
-            if (shouldDrawIfLoading(*fontData, customFontNotReadyAction)) {
+            if (shouldDrawIfLoading(fontData.get(), customFontNotReadyAction)) {
                 size_t glyphCount = nextGlyph - lastFrom;
-                context.drawGlyphs(*fontData, glyphBuffer.glyphs(lastFrom, glyphCount), glyphBuffer.advances(lastFrom, glyphCount), startPoint, m_fontDescription.usedFontSmoothing());
+                context.drawGlyphs(fontData.get(), glyphBuffer.glyphs(lastFrom, glyphCount), glyphBuffer.advances(lastFrom, glyphCount), startPoint, m_fontDescription.usedFontSmoothing());
             }
             lastFrom = nextGlyph;
             fontData = WTF::move(nextFontData);
@@ -1584,9 +1584,9 @@ void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& g
         nextGlyph++;
     }
 
-    if (shouldDrawIfLoading(*fontData, customFontNotReadyAction)) {
+    if (shouldDrawIfLoading(fontData.get(), customFontNotReadyAction)) {
         size_t glyphCount = nextGlyph - lastFrom;
-        context.drawGlyphs(*fontData, glyphBuffer.glyphs(lastFrom, glyphCount), glyphBuffer.advances(lastFrom, glyphCount), startPoint, m_fontDescription.usedFontSmoothing());
+        context.drawGlyphs(fontData.get(), glyphBuffer.glyphs(lastFrom, glyphCount), glyphBuffer.advances(lastFrom, glyphCount), startPoint, m_fontDescription.usedFontSmoothing());
     }
     point.setX(nextX);
 }
