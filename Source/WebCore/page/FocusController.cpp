@@ -1172,6 +1172,13 @@ bool FocusController::setFocusedElement(Element* element, Frame* newFocusedFrame
     
     RefPtr oldFocusedElement = oldDocument ? oldDocument->focusedElement() : nullptr;
     Ref page = m_page.get();
+
+    // When clearing focus while the focused element lives in another process (the focused frame is
+    // remote), clearing focus locally does nothing to the remote document. Broadcast the change so the
+    // remote frame's process clears its own focused element.
+    if (!element && broadcast == BroadcastFocusedElement::Yes && newLocalFocusedFrame && is<RemoteFrame>(m_focusedFrame.get()))
+        page->chrome().focusedElementChanged(nullptr, newLocalFocusedFrame.get(), options, BroadcastFocusedElement::Yes);
+
     if (oldFocusedElement == element) {
         if (element) {
             page->chrome().client().elementDidRefocus(*element, options);
