@@ -40,6 +40,7 @@
 #include "SVGElement.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
+#include "StyleClipPath.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleCursor.h"
 #include "StyleFilter.h"
@@ -120,6 +121,12 @@ static void loadPendingExternalSVGMarker(Document& document, const Style::SVGMar
         loadExternalSVGResource(document, url->resolved);
 }
 
+static void loadPendingExternalSVGClipPath(Document& document, const Style::ClipPath& clipPath)
+{
+    if (auto referencePath = clipPath.tryReference())
+        loadExternalSVGResource(document, referencePath->url().resolved);
+}
+
 void loadPendingResources(Style::ComputedStyle& style, Document& document, const Element* element)
 {
     for (auto& backgroundLayer : style.backgroundLayers().usedValues())
@@ -167,6 +174,8 @@ void loadPendingResources(Style::ComputedStyle& style, Document& document, const
         loadPendingExternalSVGMarker(document, style.markerStart());
         loadPendingExternalSVGMarker(document, style.markerMid());
         loadPendingExternalSVGMarker(document, style.markerEnd());
+
+        loadPendingExternalSVGClipPath(document, style.clipPath());
 
         if (style.filter().size() == 1) {
             WTF::switchOn(style.filter().first(),

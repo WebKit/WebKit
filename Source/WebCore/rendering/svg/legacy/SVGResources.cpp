@@ -272,8 +272,14 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
     if (clipperFilterMaskerTags().contains(tagName)) {
         WTF::switchOn(style.clipPath(),
             [&](const Style::ReferencePath& clipPath) {
-                // FIXME: -webkit-clip-path should support external resources
-                // https://bugs.webkit.org/show_bug.cgi?id=127032
+                if (auto externalDocument = externalSVGResourceDocument(document, clipPath.url().resolved)) {
+                    if (RefPtr resolvedDocument = *externalDocument) {
+                        auto id = clipPath.url().resolved.fragmentIdentifier().toAtomString();
+                        if (auto* clipper = getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(*resolvedDocument, id))
+                            ensureResources(foundResources).setClipper(clipper);
+                    }
+                    return;
+                }
                 if (auto* clipper = getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(treeScope, clipPath.fragment()))
                     ensureResources(foundResources).setClipper(clipper);
                 else
