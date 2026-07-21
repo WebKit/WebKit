@@ -1659,12 +1659,15 @@ target_compile_options(WebKitSwift PRIVATE
 
 # Explicit-module-build for WebKitSwift Swift compile. Mirrors the macro
 # WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER's enablement of the
-# same flag for WebKit / WebGPU / PAL. https://bugs.webkit.org/show_bug.cgi?id=312083
+# same flags for WebKit / WebGPU / PAL. https://bugs.webkit.org/show_bug.cgi?id=312083
 target_compile_options(WebKitSwift PRIVATE
     "$<$<COMPILE_LANGUAGE:Swift>:-explicit-module-build>"
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -fexperimental-late-parse-attributes>"
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -fexperimental-bounds-safety-attributes>"
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-module-cache-path ${CMAKE_BINARY_DIR}/SwiftModuleCache>"
+    # Swift macro expansion runs swift-plugin-server under sandbox-exec;
+    # -disable-sandbox avoids a nested sandbox_apply failure in a sandboxed build.
+    "$<$<COMPILE_LANGUAGE:Swift>:-disable-sandbox>"
 )
 
 target_compile_options(WebKitSwift PRIVATE
@@ -1776,6 +1779,9 @@ target_compile_options(_WebKit_SwiftUI PRIVATE
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -fexperimental-late-parse-attributes>"
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -fexperimental-bounds-safety-attributes>"
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-module-cache-path ${CMAKE_BINARY_DIR}/SwiftModuleCache>"
+    # @Entry and other SwiftUI macros run swift-plugin-server under sandbox-exec;
+    # -disable-sandbox avoids a nested sandbox_apply failure in a sandboxed build.
+    "$<$<COMPILE_LANGUAGE:Swift>:-disable-sandbox>"
 )
 
 target_link_libraries(_WebKit_SwiftUI PRIVATE

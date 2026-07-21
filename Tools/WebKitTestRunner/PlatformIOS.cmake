@@ -38,7 +38,6 @@ target_sources(TestRunnerInjectedBundle PRIVATE ${_wktr_fonts})
 list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
     ${WebKit_FRAMEWORK_HEADERS_DIR}
     ${WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR}
-    ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}
     ${WEBKIT_DIR}/UIProcess/API/C/mac
     ${WEBKIT_DIR}/UIProcess/API/Cocoa
     ${WEBKIT_DIR}/UIProcess/Cocoa

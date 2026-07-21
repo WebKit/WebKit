@@ -28,7 +28,9 @@ set(WebKitTestRunner_FRAMEWORKS
     WebKit
     bmalloc
 )
-if (APPLE)
+# WKTR uses WebKit2 only and needs no WebKitLegacy (WebKit1) headers, so skip it
+# on iOS. It is kept on macOS for now; removing it there is separate cleanup.
+if (APPLE AND NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
     list(APPEND WebKitTestRunner_FRAMEWORKS WebKitLegacy)
 endif ()
 
