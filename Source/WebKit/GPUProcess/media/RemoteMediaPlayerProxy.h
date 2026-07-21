@@ -344,6 +344,8 @@ private:
     void maybeUpdateCachedVideoMetrics();
     void updateCachedVideoMetrics();
 
+    void updateCachedMediaCharacteristics();
+
     void createAudioSourceProvider();
     void setShouldEnableAudioSourceProvider(bool);
 

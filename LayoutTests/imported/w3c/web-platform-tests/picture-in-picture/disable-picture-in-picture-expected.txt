@@ -1,0 +1,8 @@
+
+PASS Test disablePictureInPicture IDL attribute
+FAIL Request Picture-in-Picture rejects if disablePictureInPicture is true assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Request Picture-in-Picture rejects if disablePictureInPicture becomes true before promise resolves. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS pictureInPictureElement is unset if disablePictureInPicture becomes true
+PASS pictureInPictureElement is unchanged if disablePictureInPicture becomes false
+PASS pictureInPictureElement is unchanged if disablePictureInPicture becomes true for another video
+

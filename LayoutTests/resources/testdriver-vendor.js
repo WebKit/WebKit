@@ -1,5 +1,11 @@
 const isDebug = false;
 
+// Mock video presentation mode is required so tests that enter Picture-in-Picture
+// (or otherwise transition presentation mode) do not compete for the singleton system
+// PiP window when tests run in parallel.
+if (window.internals && window.internals.setMockVideoPresentationModeEnabled)
+    window.internals.setMockVideoPresentationModeEnabled(true);
+
 function logDebug(msg) {
     if (isDebug)
         console.log(msg);
@@ -436,7 +442,7 @@ window.test_driver_internal.click = async function (element, coords)
         };
     }
 
-    if (testRunner.isIOSFamily && testRunner.isWebKit2) {
+    if (testRunner?.isIOSFamily && testRunner?.isWebKit2) {
         await new Promise((resolve) => {
             testRunner.runUIScript(`
                 uiController.singleTapAtPoint(${point.x}, ${point.y}, function() {

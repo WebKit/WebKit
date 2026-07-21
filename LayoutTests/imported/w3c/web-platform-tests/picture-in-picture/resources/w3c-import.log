@@ -10,8 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/resources/permissions-policy-helper.html
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/resources/permissions-policy-nested-helper.html
 /LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/resources/picture-in-picture-helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/resources/unload-document-helper.html

@@ -3684,6 +3684,7 @@ webkit.org/b/202756 media/modern-media-controls/pip-placard [ Skip ]
 webkit.org/b/202756 media/modern-media-controls/pip-support [ Skip ]
 webkit.org/b/202756 media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
 webkit.org/b/202756 media/picture-in-picture/ [ Skip ]
+webkit.org/b/202756 imported/w3c/web-platform-tests/picture-in-picture/ [ Skip ]
 webkit.org/b/211569 media/video-presentation-mode.html [ Skip ]
 webkit.org/b/206584 media/video-set-presentation-mode-to-inline.html [ Skip ]
 # Also crashing with others in webkit.org/b/198830

@@ -427,7 +427,9 @@ compositing/geometry/frame-clipping-layer-with-top-left-inset.html [ Skip ]
 # A rounding error may cause 90deg 3d-rotated elements to count as painted
 imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-invisible-3d-rotate-descendant.html
 
-webkit.org/b/202617 imported/w3c/web-platform-tests/picture-in-picture [ Skip ]
+webkit.org/b/202617 imported/w3c/web-platform-tests/picture-in-picture/leave-picture-in-picture-disable-attribute.optional.html [ Skip ]
+webkit.org/b/202617 imported/w3c/web-platform-tests/picture-in-picture/mediastream.html [ Skip ]
+webkit.org/b/202617 imported/w3c/web-platform-tests/picture-in-picture/permissions-policy.https.sub.html [ Skip ]
 
 # PiP API tests are only relevant on mac and iPad
 media/picture-in-picture [ Skip ]
