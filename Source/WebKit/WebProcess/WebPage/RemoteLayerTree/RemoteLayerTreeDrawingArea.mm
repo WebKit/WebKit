@@ -51,9 +51,11 @@
 #import <WebCore/PageOverlayController.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
+#import <WebCore/RunLoopObserver.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TiledBacking.h>
+#import <WebCore/WindowEventLoop.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/SetForScope.h>
@@ -72,6 +74,9 @@ constexpr FramesPerSecond DefaultPreferredFramesPerSecond = 60;
 RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(parameters.drawingAreaIdentifier, webPage)
     , m_remoteLayerTreeContext(RemoteLayerTreeContext::create(webPage))
+    , m_renderingUpdateRunLoopObserver(makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::RenderingUpdate, [this] {
+        renderingUpdateRunLoopObserverFired();
+    }))
     , m_updateRenderingTimer(*this, &RemoteLayerTreeDrawingArea::updateRendering)
     , m_commitQueue(WorkQueue::create("com.apple.WebKit.WebContent.RemoteLayerTreeDrawingArea.CommitQueue"_s, WorkQueue::QOS::UserInteractive))
     , m_backingStoreFlusher(BackingStoreFlusher::create(*WebProcess::singleton().parentProcessConnection()))
@@ -82,7 +87,10 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
         setViewExposedRect(viewExposedRect);
 }
 
-RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea() = default;
+RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea()
+{
+    invalidateRenderingUpdateObserver();
+}
 
 void RemoteLayerTreeDrawingArea::setNeedsDisplay()
 {
@@ -237,7 +245,12 @@ void RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
 
     m_isRenderingSuspended = isFrozen;
 
-    if (!m_isRenderingSuspended && m_hasDeferredRenderingUpdate) {
+    if (m_isRenderingSuspended) {
+        if (m_renderingUpdateRunLoopObserver->isScheduled()) {
+            invalidateRenderingUpdateObserver();
+            m_hasDeferredRenderingUpdate = true;
+        }
+    } else if (m_hasDeferredRenderingUpdate) {
         m_hasDeferredRenderingUpdate = false;
         startRenderingUpdateTimer();
     }
@@ -299,11 +312,31 @@ void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedC
 
 void RemoteLayerTreeDrawingArea::startRenderingUpdateTimer()
 {
-    if (m_updateRenderingTimer.isActive())
+    if (m_updateRenderingTimer.isActive() || m_renderingUpdateRunLoopObserver->isScheduled())
         return;
     if (!m_updateStartTime)
         m_updateStartTime = MonotonicTime::now();
     m_updateRenderingTimer.startOneShot(0_s);
+}
+
+void RemoteLayerTreeDrawingArea::startRenderingUpdateObserver()
+{
+    if (m_renderingUpdateRunLoopObserver->isScheduled())
+        return;
+
+    m_renderingUpdateRunLoopObserver->schedule();
+    WindowEventLoop::breakToAllowRenderingUpdate();
+}
+
+void RemoteLayerTreeDrawingArea::invalidateRenderingUpdateObserver()
+{
+    m_renderingUpdateRunLoopObserver->invalidate();
+}
+
+void RemoteLayerTreeDrawingArea::renderingUpdateRunLoopObserverFired()
+{
+    invalidateRenderingUpdateObserver();
+    updateRendering();
 }
 
 void RemoteLayerTreeDrawingArea::triggerRenderingUpdate()
@@ -314,6 +347,19 @@ void RemoteLayerTreeDrawingArea::triggerRenderingUpdate()
     }
 
     startRenderingUpdateTimer();
+}
+
+void RemoteLayerTreeDrawingArea::prioritizeRenderingUpdate()
+{
+    if (m_isRenderingSuspended)
+        return;
+    if (!m_isScheduled && !m_scheduleRenderingTimer.isActive() && !m_updateRenderingTimer.isActive())
+        return;
+
+    m_isScheduled = false;
+    m_scheduleRenderingTimer.stop();
+    m_updateRenderingTimer.stop();
+    startRenderingUpdateObserver();
 }
 
 void RemoteLayerTreeDrawingArea::updateRendering()
@@ -466,7 +512,7 @@ void RemoteLayerTreeDrawingArea::displayDidRefresh(MonotonicTime start)
         triggerRenderingUpdate();
         m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = false;
         m_isScheduled = false;
-    } else if (wasWaitingForBackingStoreSwap && m_updateRenderingTimer.isActive())
+    } else if (wasWaitingForBackingStoreSwap && (m_updateRenderingTimer.isActive() || m_renderingUpdateRunLoopObserver->isScheduled()))
         m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = true;
     else
         send(Messages::RemoteLayerTreeDrawingAreaProxy::NotifyPendingCommitLayerTree(std::nullopt));
@@ -573,10 +619,10 @@ bool RemoteLayerTreeDrawingArea::scheduleRenderingUpdate()
             return true;
 
         callOnMainRunLoop([self = WeakPtr { this }] () {
-            if (self) {
-                self->m_isScheduled = false;
-                self->triggerRenderingUpdate();
-            }
+            if (!self || !self->m_isScheduled)
+                return;
+            self->m_isScheduled = false;
+            self->triggerRenderingUpdate();
         });
     } else
         m_scheduleRenderingTimer.startOneShot(m_preferredRenderingUpdateInterval);

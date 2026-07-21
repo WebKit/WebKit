@@ -138,6 +138,7 @@ public:
 
     // Cause a rendering update to happen as soon as possible.
     virtual void triggerRenderingUpdate() = 0;
+    virtual void prioritizeRenderingUpdate() { }
     virtual bool scheduleRenderingUpdate() { return false; }
     virtual void renderingUpdateFramesPerSecondChanged() { }
 

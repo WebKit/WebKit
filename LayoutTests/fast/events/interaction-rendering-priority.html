@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<label id="target"><input id="choice" type="radio" name="choice">Choose</label>
+<script>
+
+'use strict';
+
+description('Tests that a pending interaction rendering update runs before a DOM timer.');
+window.jsTestIsAsync = true;
+let order;
+
+function busyWait(milliseconds)
+{
+    const endTime = performance.now() + milliseconds;
+    while (performance.now() < endTime) { }
+}
+
+async function runTest()
+{
+    if (!window.eventSender || !window.internals) {
+        testFailed('This test requires eventSender and internals.');
+        finishJSTest();
+        return;
+    }
+
+    await testRunner.displayAndTrackRepaints();
+
+    order = [];
+    choice.addEventListener('change', () => {
+        target.style.backgroundColor = 'green';
+        // Create the delayed timer first to verify that prioritizing rendering does not
+        // disturb the timers' eligibility order.
+        setTimeout(() => {
+            order.push('delayed timer');
+            shouldBeEqualToString('order.join(\',\')', 'raf,first immediate timer,second immediate timer,delayed timer');
+            finishJSTest();
+        }, 10);
+        setTimeout(() => order.push('first immediate timer'), 0);
+        setTimeout(() => order.push('second immediate timer'), 0);
+        requestAnimationFrame(() => order.push('raf'));
+
+        // Match the manual repro by crossing at least two rendering opportunities.
+        busyWait((internals.timeToNextRenderingUpdate() || 16) + internals.preferredRenderingUpdateInterval() + 2);
+    });
+
+    await eventSender.asyncMouseMoveTo(choice.offsetLeft + choice.offsetWidth / 2, choice.offsetTop + choice.offsetHeight / 2);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+}
+
+runTest();
+
+</script>
+</body>
+</html>

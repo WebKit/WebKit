@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<button id="target">Click</button>
+<script>
+
+'use strict';
+
+description('Tests that rendering requested by an interaction microtask runs before a DOM timer.');
+window.jsTestIsAsync = true;
+let order;
+
+function busyWait(milliseconds)
+{
+    const endTime = performance.now() + milliseconds;
+    while (performance.now() < endTime) { }
+}
+
+async function runTest()
+{
+    if (!window.eventSender || !window.internals) {
+        testFailed('This test requires eventSender and internals.');
+        finishJSTest();
+        return;
+    }
+
+    await testRunner.displayAndTrackRepaints();
+
+    order = [];
+    target.addEventListener('click', () => {
+        setTimeout(() => {
+            order.push('timer');
+            shouldBeEqualToString('order.join(\',\')', 'raf,timer');
+            finishJSTest();
+        }, 0);
+
+        queueMicrotask(() => {
+            target.style.backgroundColor = 'green';
+            requestAnimationFrame(() => order.push('raf'));
+
+            // Make the timer eligible before the pending rendering update runs.
+            busyWait((internals.timeToNextRenderingUpdate() || 16) + internals.preferredRenderingUpdateInterval() + 2);
+        });
+    }, { once: true });
+
+    await eventSender.asyncMouseMoveTo(target.offsetLeft + target.offsetWidth / 2, target.offsetTop + target.offsetHeight / 2);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+}
+
+runTest();
+
+</script>
+</body>
+</html>

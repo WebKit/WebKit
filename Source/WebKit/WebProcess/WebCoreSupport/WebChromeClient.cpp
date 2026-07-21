@@ -1329,6 +1329,16 @@ void WebChromeClient::triggerRenderingUpdate()
         drawingArea->triggerRenderingUpdate();
 }
 
+void WebChromeClient::prioritizeRenderingUpdate()
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    if (RefPtr drawingArea = page->drawingArea())
+        drawingArea->prioritizeRenderingUpdate();
+}
+
 bool WebChromeClient::scheduleRenderingUpdate()
 {
     RefPtr page = m_page.get();

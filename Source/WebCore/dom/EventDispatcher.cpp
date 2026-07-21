@@ -27,8 +27,10 @@
 #include "EventDispatcher.h"
 
 #include "CompositionEvent.h"
+#include "DocumentPage.h"
 #include "DocumentView.h"
 #include "EventContext.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "EventPath.h"
 #include "FrameDestructionObserverInlines.h"
@@ -41,6 +43,7 @@
 #include "Logging.h"
 #include "MouseEvent.h"
 #include "NodeDocument.h"
+#include "Page.h"
 #include "ScopedEventQueue.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
@@ -189,6 +192,18 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
 
     auto typeInfo = eventNames().typeInfoForEvent(event.type());
     auto listenerCounts = eventListenerCounts(document, event);
+
+    bool shouldPrioritizeInteractionRendering = document->page() && event.isTrusted() && typeInfo.isInCategory(EventCategory::EventTimingEligible);
+    auto prioritizeInteractionRendering = makeScopeExit([&] {
+        if (!shouldPrioritizeInteractionRendering)
+            return;
+        document->eventLoop().runAtEndOfMicrotaskCheckpoint([weakDocument = WeakPtr<Document, WeakPtrImplWithEventTargetData> { document }] {
+            if (RefPtr document = weakDocument.get()) {
+                if (RefPtr page = document->page())
+                    page->prioritizeRenderingUpdateAfterInteraction(*document);
+            }
+        });
+    });
 
     RefPtr window = document->window();
     std::optional<PerformanceEventTimingCandidate> pendingEventTiming;

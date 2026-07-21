@@ -40,6 +40,7 @@
 
 namespace WebCore {
 class PlatformCALayer;
+class RunLoopObserver;
 class ThreadSafeImageBufferFlusher;
 class TiledBacking;
 }
@@ -87,6 +88,7 @@ private:
     void addRootFrame(WebCore::FrameIdentifier) final;
     void removeRootFrame(WebCore::FrameIdentifier) final;
     void triggerRenderingUpdate() final;
+    void prioritizeRenderingUpdate() final;
     bool scheduleRenderingUpdate() final;
     void renderingUpdateFramesPerSecondChanged() final;
     void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) final;
@@ -134,6 +136,9 @@ private:
 
     void addCommitHandlers();
     void startRenderingUpdateTimer();
+    void startRenderingUpdateObserver();
+    void invalidateRenderingUpdateObserver();
+    void renderingUpdateRunLoopObserverFired();
     void didCompleteRenderingUpdateDisplayFlush(bool flushSucceeded);
 
     TransactionID takeNextTransactionID() { return m_currentTransactionID.increment(); }
@@ -178,6 +183,7 @@ private:
 
     std::optional<WebCore::FloatRect> m_viewExposedRect;
 
+    std::unique_ptr<WebCore::RunLoopObserver> m_renderingUpdateRunLoopObserver;
     WebCore::Timer m_updateRenderingTimer;
     Markable<MonotonicTime> m_updateStartTime;
     bool m_isRenderingSuspended { false };

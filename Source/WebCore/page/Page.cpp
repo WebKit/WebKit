@@ -2170,6 +2170,18 @@ std::optional<Seconds> Page::timeToNextRenderingUpdateForTesting() const
     return *nextUpdate - MonotonicTime::now();
 }
 
+void Page::prioritizeRenderingUpdateAfterInteraction(Document& document)
+{
+    if (!document.isFullyActive() || document.page() != this)
+        return;
+    if (!isVisibleAndActive() || chrome().client().layerTreeStateIsFrozen())
+        return;
+    if (!m_renderingUpdateIsScheduled)
+        return;
+
+    chrome().client().prioritizeRenderingUpdate();
+}
+
 void Page::didScheduleRenderingUpdate()
 {
 #if ENABLE(ASYNC_SCROLLING)
