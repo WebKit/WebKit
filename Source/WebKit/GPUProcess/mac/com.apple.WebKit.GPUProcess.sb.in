@@ -1497,6 +1497,7 @@
         SYS_necp_open
         SYS_open_dprotected_np
         SYS_open_nocancel
+        SYS_openat_dprotected_np
         SYS_pathconf
         SYS_pread
         SYS_proc_rlimit_control
@@ -1513,6 +1514,7 @@
         SYS_read_nocancel
         SYS_readlink
         SYS_rename
+        SYS_renameat
         SYS_sendto
         SYS_setrlimit
         SYS_setsockopt
